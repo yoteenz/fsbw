@@ -18,6 +18,7 @@ import {
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
+import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
 
 const BRAND_RED = '#EB1C24';
 /** TV frame grow + curtain close. */
@@ -155,9 +156,43 @@ function LoungeTvScreen({
   onMainTabChange: (tab: LoungeTvMainTab) => void;
   onSidebarChange: (id: string) => void;
 }) {
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const tiles = getLoungeTvTiles(mainTab, sidebarId);
   const academy = mainTab === 'academy';
+  const isWatchLearn = mainTab === 'watch-learn';
+  const selectedTile =
+    isWatchLearn && selectedVideoId && tiles
+      ? tiles.find((t) => t.id === selectedVideoId && t.videoSrc) ?? null
+      : null;
+
+  useEffect(() => {
+    if (!isWatchLearn) setSelectedVideoId(null);
+  }, [isWatchLearn]);
+
+  useEffect(() => {
+    setSelectedVideoId(null);
+  }, [sidebarId]);
+
+  const handleMainTabClick = useCallback(
+    (tab: LoungeTvMainTab) => {
+      if (tab === 'watch-learn' && mainTab === 'watch-learn') {
+        setSelectedVideoId(null);
+        return;
+      }
+      setSelectedVideoId(null);
+      onMainTabChange(tab);
+    },
+    [mainTab, onMainTabChange]
+  );
+
+  const handleSidebarClick = useCallback(
+    (id: string) => {
+      setSelectedVideoId(null);
+      onSidebarChange(id);
+    },
+    [onSidebarChange]
+  );
 
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -213,7 +248,7 @@ function LoungeTvScreen({
             key={tab.id}
             type="button"
             style={mainTabNavStyle(mainTab === tab.id)}
-            onClick={() => onMainTabChange(tab.id)}
+            onClick={() => handleMainTabClick(tab.id)}
           >
             {tab.label}
           </button>
@@ -242,7 +277,7 @@ function LoungeTvScreen({
                 width: '100%',
                 textAlign: 'left',
               }}
-              onClick={() => onSidebarChange(item.id)}
+              onClick={() => handleSidebarClick(item.id)}
             >
               {item.label}
             </button>
@@ -274,6 +309,8 @@ function LoungeTvScreen({
             >
               {loungeTvAcademyMessage(sidebarId)}
             </p>
+          ) : selectedTile ? (
+            <LoungeTvWatchLearnPlayer tile={selectedTile} />
           ) : tiles && tiles.length > 0 ? (
             <div
               style={{
@@ -298,6 +335,9 @@ function LoungeTvScreen({
                     overflow: 'hidden',
                   }}
                   aria-label={tile.title}
+                  onClick={() => {
+                    if (isWatchLearn && tile.videoSrc) setSelectedVideoId(tile.id);
+                  }}
                 >
                   {tile.thumbSrc ? (
                     <img
