@@ -22047,3 +22047,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Panel fallback was changed to **`#1a1a1a`** (much darker than medium-gray velvet). When **`100dvh`** did not reach the true viewport bottom (mobile chrome / safe area), that dark panel color read as a full-width horizontal strip.
 
 **Change:** **`LoungeTvOverlay`** — restore velvet-matched **`CURTAIN_PANEL_BG`** **`#4a4a4a`**; extend panels with **`CURTAIN_PANEL_BOTTOM_BLEED_PX`** (48px) via negative **`bottom`** + **`calc(100dvh + bleed + safe-area)`**; fabric overscan **142%** height, **114%** width, **`scale(1.1)`** bottom-anchored (no gradient overlay).
+
+---
+
+## 2026-05-30 — Loading screen: full cover on large screens (lobby/lounge)
+
+**Context:** User reported loading screen still not covering entire **lobby/lounge** landing pages on **larger screens** (after prior mobile **`100dvh`** fix).
+
+**Cause:** Overlay used **`top/bottom: 0`** plus conflicting **`height: calc(100% + 32px)`**; **`100dvh`** alone did not always match **`window.innerHeight`** on desktop/large viewports; horizontal carousel (**`200vw`**) could peek beside a **`width: 100%`** overlay when the document scrolled.
+
+**Change:** **`LoadingScreen.tsx`** — measure **`visualViewport`** / **`innerWidth`×`innerHeight`** and set explicit pixel **`width`/`height`** (+ **48px** bleed); CSS fallback **`min-height: max(105vh, 100dvh, 100vh)`**; lock **`html`/`body`** **`overflow: hidden`** while visible; **`100vw`** min width; removed conflicting percent height.
