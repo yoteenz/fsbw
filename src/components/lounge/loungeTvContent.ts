@@ -17,8 +17,16 @@ export type LoungeTvVideoTile = {
   description?: string;
 };
 
+import { LOUNGE_TV_CONTENT_VIDEO_SRC, LOUNGE_TV_PLUCKING_LACE_TILE_ID } from './loungeTvAssets';
+
+/** Stock clip for non–plucking-lace Watch + Learn tiles (remote fallback). */
 export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+
+function watchLearnVideoSrcForTile(tileId: string): string | undefined {
+  if (tileId === LOUNGE_TV_PLUCKING_LACE_TILE_ID) return LOUNGE_TV_CONTENT_VIDEO_SRC;
+  return LOUNGE_TV_PLACEHOLDER_VIDEO_SRC;
+}
 
 export const LOUNGE_TV_MAIN_TABS: { id: LoungeTvMainTab; label: string }[] = [
   { id: 'brand', label: 'BRAND' },
@@ -70,31 +78,31 @@ const BRAND_NEW_DROPS: LoungeTvVideoTile[] = [
 const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; description: string }> = {
   'cutting-lace': {
     durationLabel: '5:12',
-    description: 'Trim and shape your lace front for a clean hairline before install.',
+    description: 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
   },
   'tinting-lace': {
     durationLabel: '4:48',
-    description: 'Custom tint lace to match your skin tone for an undetectable blend.',
+    description: 'CUSTOM TINT LACE TO MATCH YOUR SKIN TONE FOR AN UNDETECTABLE BLEND.',
   },
   'bleaching-knots': {
     durationLabel: '6:05',
-    description: 'Lighten knots safely so part lines and edges disappear on camera.',
+    description: 'LIGHTEN KNOTS SAFELY SO PART LINES AND EDGES DISAPPEAR ON CAMERA.',
   },
   'plucking-lace': {
     durationLabel: '7:20',
-    description: 'Pluck density along the hairline for a natural, less wiggy finish.',
+    description: 'PLUCK DENSITY ALONG THE HAIRLINE FOR A NATURAL, LESS WIGGY FINISH.',
   },
   'melting-lace': {
     durationLabel: '4:32',
-    description: 'Melt lace into the skin using the right adhesive and pressure technique.',
+    description: 'MELT LACE INTO THE SKIN USING THE RIGHT ADHESIVE AND PRESSURE TECHNIQUE.',
   },
   'extending-install': {
     durationLabel: '8:15',
-    description: 'Extend wear time with reinforcement zones and tension-free stitching.',
+    description: 'EXTEND WEAR TIME WITH REINFORCEMENT ZONES AND TENSION-FREE STITCHING.',
   },
   'cleaning-lace': {
     durationLabel: '3:54',
-    description: 'Remove buildup and reset lace without damaging fibers or tint.',
+    description: 'REMOVE BUILDUP AND RESET LACE WITHOUT DAMAGING FIBERS OR TINT.',
   },
 };
 
@@ -102,13 +110,14 @@ function withWatchLearnVideoMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[
   return tiles.map((tile) => {
     const copy = WATCH_LEARN_VIDEO_COPY[tile.id] ?? {
       durationLabel: '4:32',
-      description: 'Watch and learn with step-by-step guidance from the Frontal Slayer team.',
+      description: 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE FROM THE FRONTAL SLAYER TEAM.',
     };
+    const videoSrc = watchLearnVideoSrcForTile(tile.id);
     return {
       ...tile,
-      videoSrc: LOUNGE_TV_PLACEHOLDER_VIDEO_SRC,
-      durationLabel: copy.durationLabel,
+      videoSrc,
       description: copy.description,
+      ...(tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID ? {} : { durationLabel: copy.durationLabel }),
     };
   });
 }

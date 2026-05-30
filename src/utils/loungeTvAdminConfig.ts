@@ -1,5 +1,13 @@
 import type { LoungeTvMainTab, LoungeTvVideoTile } from '../components/lounge/loungeTvContent';
-import { LOUNGE_TV_MAIN_TABS, LOUNGE_TV_SIDEBAR, getLoungeTvTilesStatic } from '../components/lounge/loungeTvContent';
+import {
+  LOUNGE_TV_MAIN_TABS,
+  LOUNGE_TV_SIDEBAR,
+  getLoungeTvTilesStatic,
+} from '../components/lounge/loungeTvContent';
+import {
+  LOUNGE_TV_CONTENT_VIDEO_SRC,
+  LOUNGE_TV_PLUCKING_LACE_TILE_ID,
+} from '../components/lounge/loungeTvAssets';
 
 export type LoungeTvAdminMediaType = 'image' | 'video';
 
@@ -33,12 +41,17 @@ function placementKey(mainTab: LoungeTvMainTab, sidebarId: string): string {
 
 function tileToAdminItem(tile: LoungeTvVideoTile): LoungeTvAdminItem {
   const isVideo = Boolean(tile.videoSrc);
+  const isPlucking = tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID;
   return {
     id: tile.id,
     title: tile.title,
     body: tile.description ?? '',
-    mediaType: isVideo ? 'video' : 'image',
-    mediaUrl: isVideo ? tile.videoSrc! : tile.thumbSrc ?? '',
+    mediaType: isVideo || isPlucking ? 'video' : 'image',
+    mediaUrl: isPlucking
+      ? LOUNGE_TV_CONTENT_VIDEO_SRC
+      : isVideo
+        ? tile.videoSrc!
+        : (tile.thumbSrc ?? ''),
     thumbSrc: tile.thumbSrc,
     isNew: tile.isNew,
     durationLabel: tile.durationLabel,
@@ -159,15 +172,36 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
     isNew: item.isNew,
     thumbSrc,
   };
-  if (item.body.trim()) tile.description = item.body.trim();
-  if (mainTab === 'watch-learn' && item.mediaType === 'video') {
-    tile.videoSrc = item.mediaUrl;
-    tile.durationLabel = item.durationLabel ?? '4:32';
-    if (!tile.description) {
-      tile.description = item.body.trim() || 'Watch and learn with step-by-step guidance.';
+  if (item.body.trim()) tile.description = item.body.trim().toUpperCase();
+  if (mainTab === 'watch-learn') {
+    if (item.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID) {
+      tile.videoSrc = LOUNGE_TV_CONTENT_VIDEO_SRC;
+      if (!tile.description) {
+        tile.description =
+          item.body.trim().toUpperCase() || 'PLUCK DENSITY ALONG THE HAIRLINE FOR A NATURAL, LESS WIGGY FINISH.';
+      }
+    } else if (item.mediaType === 'video') {
+      tile.videoSrc = item.mediaUrl;
+      if (!tile.description) {
+        tile.description =
+          item.body.trim().toUpperCase() || 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE.';
+      }
+      if (item.durationLabel) tile.durationLabel = item.durationLabel;
     }
   }
   return tile;
+}
+
+function applyWatchLearnTileOverrides(
+  mainTab: LoungeTvMainTab,
+  tiles: LoungeTvVideoTile[] | null
+): LoungeTvVideoTile[] | null {
+  if (!tiles || mainTab !== 'watch-learn') return tiles;
+  return tiles.map((tile) =>
+    tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID
+      ? { ...tile, videoSrc: LOUNGE_TV_CONTENT_VIDEO_SRC, durationLabel: undefined }
+      : tile
+  );
 }
 
 export function getLoungeTvTilesFromAdminConfig(
@@ -184,8 +218,8 @@ export function getLoungeTvTilesFromAdminConfig(
 /** Admin config when present, otherwise built-in lounge TV tiles. */
 export function resolveLoungeTvTiles(mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvVideoTile[] | null {
   const fromAdmin = getLoungeTvTilesFromAdminConfig(mainTab, sidebarId);
-  if (fromAdmin !== null) return fromAdmin;
-  return getLoungeTvTilesStatic(mainTab, sidebarId);
+  if (fromAdmin !== null) return applyWatchLearnTileOverrides(mainTab, fromAdmin);
+  return applyWatchLearnTileOverrides(mainTab, getLoungeTvTilesStatic(mainTab, sidebarId));
 }
 
 export async function hydrateLoungeTvAdminConfig(

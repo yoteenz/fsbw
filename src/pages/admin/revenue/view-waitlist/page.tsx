@@ -225,7 +225,7 @@ export default function AdminViewWaitlistPage() {
       />
       <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader
-          title="VIEW WAITLIST"
+          title="WAITLIST"
           showBack
           onBack={() => navigate('/admin/revenue')}
           breadcrumbParentLabel="REVENUE"
