@@ -1,5 +1,10 @@
 import type { LoungeTvMainTab, LoungeTvVideoTile } from '../components/lounge/loungeTvContent';
-import { LOUNGE_TV_MAIN_TABS, LOUNGE_TV_SIDEBAR, getLoungeTvTilesStatic } from '../components/lounge/loungeTvContent';
+import {
+  LOUNGE_TV_MAIN_TABS,
+  LOUNGE_TV_SIDEBAR,
+  getLoungeTvTilesStatic,
+} from '../components/lounge/loungeTvContent';
+import { LOUNGE_TV_CONTENT_VIDEO_SRC } from '../components/lounge/loungeTvAssets';
 
 export type LoungeTvAdminMediaType = 'image' | 'video';
 
@@ -159,12 +164,14 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
     isNew: item.isNew,
     thumbSrc,
   };
-  if (item.body.trim()) tile.description = item.body.trim();
+  if (item.body.trim()) tile.description = item.body.trim().toUpperCase();
   if (mainTab === 'watch-learn' && item.mediaType === 'video') {
-    tile.videoSrc = item.mediaUrl;
+    tile.videoSrc =
+      item.id === 'plucking-lace' ? LOUNGE_TV_CONTENT_VIDEO_SRC : item.mediaUrl;
     tile.durationLabel = item.durationLabel ?? '4:32';
     if (!tile.description) {
-      tile.description = item.body.trim() || 'Watch and learn with step-by-step guidance.';
+      tile.description =
+        item.body.trim().toUpperCase() || 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE.';
     }
   }
   return tile;

@@ -266,6 +266,7 @@ function LoungeTvScreen({
         padding: '10px 10px 12px 18px',
         boxSizing: 'border-box',
         overflow: 'hidden',
+        textTransform: 'uppercase',
       }}
     >
       <nav

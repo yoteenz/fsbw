@@ -84,6 +84,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         flexDirection: 'column',
         gap: '6px',
         minHeight: 0,
+        textTransform: 'uppercase',
       }}
     >
       <div
@@ -132,7 +133,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               background: 'rgba(0,0,0,0.25)',
             }}
           >
-            Paused
+            PAUSED
           </span>
         ) : null}
       </div>
@@ -182,7 +183,6 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           lineHeight: 1.35,
           color: '#b5b5b5',
           textAlign: 'left',
-          textTransform: 'none',
         }}
       >
         {tile.description}

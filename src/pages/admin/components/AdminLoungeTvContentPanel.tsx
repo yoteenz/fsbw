@@ -19,6 +19,13 @@ import { getLoungeTvAdminConfig, putAdminLoungeTvConfig } from '../../../utils/a
 
 const MAX_INLINE_VIDEO_BYTES = 4 * 1024 * 1024;
 
+const adminTvUppercaseStyle: React.CSSProperties = { textTransform: 'uppercase' };
+
+const adminTvFieldStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  textTransform: 'uppercase',
+};
+
 type TvCategory = {
   key: string;
   mainTab: LoungeTvMainTab;
@@ -84,19 +91,19 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
     const isVideo = file.type.startsWith('video/');
     const isImage = file.type.startsWith('image/');
     if (kind === 'media' && item.mediaType === 'video' && !isVideo) {
-      setUploadError('Choose a video file or paste a URL below.');
+      setUploadError('CHOOSE A VIDEO FILE OR PASTE A URL BELOW.');
       return;
     }
     if (kind === 'media' && item.mediaType === 'image' && !isImage) {
-      setUploadError('Choose an image file or paste a URL below.');
+      setUploadError('CHOOSE AN IMAGE FILE OR PASTE A URL BELOW.');
       return;
     }
     if (kind === 'thumb' && !isImage) {
-      setUploadError('Thumbnail must be an image.');
+      setUploadError('THUMBNAIL MUST BE AN IMAGE.');
       return;
     }
     if (isVideo && file.size > MAX_INLINE_VIDEO_BYTES) {
-      setUploadError('Video is too large to embed. Paste a hosted URL instead (max ~4MB for upload).');
+      setUploadError('VIDEO IS TOO LARGE TO EMBED. PASTE A HOSTED URL INSTEAD (MAX ~4MB FOR UPLOAD).');
       return;
     }
     try {
@@ -112,14 +119,14 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         onChange({ ...item, thumbSrc: dataUrl });
       }
     } catch {
-      setUploadError('Could not read file.');
+      setUploadError('COULD NOT READ FILE.');
     }
   };
 
   return (
     <div
       className="border border-gray-300 rounded p-3 mb-3"
-      style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
+      style={{ backgroundColor: 'rgba(255,255,255,0.85)', ...adminTvUppercaseStyle }}
     >
       <div className="flex justify-between items-start gap-2 mb-2">
         <p className="text-xs font-medium text-black" style={{ fontFamily: '"Futura PT Demi"' }}>
@@ -141,9 +148,9 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
       <input
         type="text"
         value={item.title}
-        onChange={(e) => onChange({ ...item, title: e.target.value })}
+        onChange={(e) => onChange({ ...item, title: e.target.value.toUpperCase() })}
         className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2"
-        style={{ fontFamily: '"Futura PT Medium"' }}
+        style={adminTvFieldStyle}
       />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
@@ -151,10 +158,10 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
       </label>
       <textarea
         value={item.body}
-        onChange={(e) => onChange({ ...item, body: e.target.value })}
+        onChange={(e) => onChange({ ...item, body: e.target.value.toUpperCase() })}
         rows={3}
         className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2 resize-y"
-        style={{ fontFamily: '"Futura PT Medium"' }}
+        style={adminTvFieldStyle}
       />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
@@ -180,10 +187,10 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
       <input
         type="text"
         value={item.mediaUrl.startsWith('data:') ? '' : item.mediaUrl}
-        placeholder={item.mediaType === 'video' ? 'https://…' : 'https://… or upload below'}
+        placeholder={item.mediaType === 'video' ? 'HTTPS://…' : 'HTTPS://… OR UPLOAD BELOW'}
         onChange={(e) => onChange({ ...item, mediaUrl: e.target.value })}
         className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-1"
-        style={{ fontFamily: '"Futura PT Medium"' }}
+        style={adminTvFieldStyle}
       />
       <input
         type="file"
@@ -196,7 +203,7 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
       />
       {item.mediaUrl ? (
         <p className="text-[10px] text-gray-500 mb-2 truncate">
-          {item.mediaUrl.startsWith('data:') ? 'Media attached (embedded)' : item.mediaUrl}
+          {item.mediaUrl.startsWith('data:') ? 'MEDIA ATTACHED (EMBEDDED)' : item.mediaUrl}
         </p>
       ) : null}
 
@@ -222,9 +229,9 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
               <input
                 type="text"
                 value={item.durationLabel ?? ''}
-                onChange={(e) => onChange({ ...item, durationLabel: e.target.value })}
+                onChange={(e) => onChange({ ...item, durationLabel: e.target.value.toUpperCase() })}
                 className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2"
-                style={{ fontFamily: '"Futura PT Medium"' }}
+                style={adminTvFieldStyle}
               />
             </>
           ) : null}
@@ -301,11 +308,11 @@ export default function AdminLoungeTvContentPanel() {
         saveLoungeTvAdminConfigToStorage(next);
         setConfig(next);
         await putAdminLoungeTvConfig(next as unknown as Record<string, unknown>);
-        setFeedback({ type: 'success', msg: 'Content saved.' });
+        setFeedback({ type: 'success', msg: 'CONTENT SAVED.' });
       } catch (e) {
         setFeedback({
           type: 'error',
-          msg: e instanceof Error ? e.message : 'Save failed',
+          msg: (e instanceof Error ? e.message : 'SAVE FAILED').toUpperCase(),
         });
       } finally {
         setSaving(false);
@@ -324,7 +331,14 @@ export default function AdminLoungeTvContentPanel() {
     const placement = getPlacement(expandedCategory.mainTab, expandedCategory.sidebarId);
     let items = [...placement.items];
     if (draftItem && draftItem.title.trim()) {
-      items = [...items, { ...draftItem, title: draftItem.title.trim() }];
+      items = [
+        ...items,
+        {
+          ...draftItem,
+          title: draftItem.title.trim().toUpperCase(),
+          body: draftItem.body.toUpperCase(),
+        },
+      ];
       setDraftItem(null);
     }
     const nextPlacement: LoungeTvAdminPlacement = {
@@ -337,11 +351,15 @@ export default function AdminLoungeTvContentPanel() {
   };
 
   if (loading) {
-    return <p className="py-6 text-gray-500 text-sm">Loading TV content...</p>;
+    return (
+      <p className="py-6 text-gray-500 text-sm" style={adminTvUppercaseStyle}>
+        LOADING TV CONTENT…
+      </p>
+    );
   }
 
   return (
-    <div className="mt-2">
+    <div className="mt-2" style={adminTvUppercaseStyle}>
       {feedback ? (
         <div
           className="mb-3 px-3 py-2 text-sm"
@@ -355,7 +373,7 @@ export default function AdminLoungeTvContentPanel() {
       ) : null}
 
       <p className="text-xs text-gray-600 mb-3" style={{ fontFamily: '"Futura PT Medium"', lineHeight: 1.4 }}>
-        Tap a category to expand and manage tiles. Upload a photo or video, set title and body, then save.
+        TAP A CATEGORY TO EXPAND AND MANAGE TILES. UPLOAD A PHOTO OR VIDEO, SET TITLE AND BODY, THEN SAVE.
       </p>
 
       <div className="space-y-2">
@@ -388,7 +406,7 @@ export default function AdminLoungeTvContentPanel() {
               {isOpen ? (
                 <div className="px-3 pb-3 pt-1 border-t border-gray-200">
                   {placement.items.length === 0 ? (
-                    <p className="text-xs text-gray-500 py-2">No items yet.</p>
+                    <p className="text-xs text-gray-500 py-2">NO ITEMS YET.</p>
                   ) : (
                     placement.items.map((item) => (
                       <ItemEditor
