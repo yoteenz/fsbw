@@ -13,6 +13,8 @@ const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
 const CURTAIN_PANEL_WIDTH = '54vw';
+/** Bezel around the glass area so the overlay reads as a TV, not a floating black card. */
+const TV_BEZEL = { top: 11, right: 11, bottom: 16, left: 11 };
 
 type LoungeTvOverlayProps = {
   isOpen: boolean;
@@ -54,17 +56,14 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
         draggable={false}
         style={{
           position: 'absolute',
-          top: '50%',
-          height: '88%',
-          width: 'auto',
-          minWidth: '135%',
-          maxWidth: 'none',
+          inset: 0,
+          width: '100%',
+          height: '100%',
           display: 'block',
           objectFit: 'cover',
           objectPosition: isLeft ? 'left center' : 'right center',
-          transform: `translateY(-50%) ${isLeft ? 'translateX(-4%)' : 'translateX(4%)'}`,
+          transform: isLeft ? 'translateX(-3%)' : 'translateX(3%)',
           transformOrigin: isLeft ? 'left center' : 'right center',
-          ...(isLeft ? { left: 0 } : { right: 0 }),
           pointerEvents: 'none',
           userSelect: 'none',
         }}
@@ -315,17 +314,40 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const startLeft = originRect ? originRect.left + originRect.width / 2 - startW / 2 : targetLeft;
   const startTop = originRect ? originRect.top + originRect.height / 2 - startH / 2 : targetTop;
 
-  const screenStyle: React.CSSProperties = {
+  const frameW = targetW + TV_BEZEL.left + TV_BEZEL.right;
+  const frameH = targetH + TV_BEZEL.top + TV_BEZEL.bottom;
+  const frameLeft = (vw - frameW) / 2;
+  const frameTop = (vh - frameH) / 2;
+  const startFrameW = startW + TV_BEZEL.left + TV_BEZEL.right;
+  const startFrameH = startH + TV_BEZEL.top + TV_BEZEL.bottom;
+  const startFrameLeft = startLeft - TV_BEZEL.left;
+  const startFrameTop = startTop - TV_BEZEL.top;
+
+  const frameStyle: React.CSSProperties = {
     position: 'fixed',
     zIndex: 110,
+    boxSizing: 'border-box',
+    padding: `${TV_BEZEL.top}px ${TV_BEZEL.right}px ${TV_BEZEL.bottom}px ${TV_BEZEL.left}px`,
+    background: 'linear-gradient(165deg, #454545 0%, #262626 38%, #121212 100%)',
+    borderRadius: 5,
+    border: '1px solid #0a0a0a',
+    boxShadow:
+      '0 14px 42px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 4px rgba(0,0,0,0.45)',
+    transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+    left: animatedIn ? frameLeft : startFrameLeft,
+    top: animatedIn ? frameTop : startFrameTop,
+    width: animatedIn ? frameW : startFrameW,
+    height: animatedIn ? frameH : startFrameH,
+  };
+
+  const screenStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
     backgroundColor: '#000000',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-    left: animatedIn ? targetLeft : startLeft,
-    top: animatedIn ? targetTop : startTop,
-    width: animatedIn ? targetW : startW,
-    height: animatedIn ? targetH : startH,
+    borderRadius: 2,
+    boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06)',
   };
 
   return createPortal(
@@ -348,13 +370,15 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       />
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
-      <div style={screenStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
+      <div style={frameStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
+        <div style={screenStyle}>
         <LoungeTvScreen
           mainTab={mainTab}
           sidebarId={sidebarId}
           onMainTabChange={handleMainTab}
           onSidebarChange={setSidebarId}
         />
+        </div>
       </div>
     </div>,
     document.body
