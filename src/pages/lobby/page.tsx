@@ -18,17 +18,19 @@ import {
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
+import {
+  LOUNGE_SALON_CHAIRS_HEIGHT_PX,
+  LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX,
+  LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX,
+  LOUNGE_SALON_CHAIRS_OFFSET_X_PX,
+  LOUNGE_SALON_CHAIRS_OFFSET_Y_PX,
+} from '../../utils/loungeSceneLayout';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
   LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
   LoungeTvFrame,
   loungeTvDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
-import {
-  loungeSalonChairsHeightCss,
-  loungeSalonChairsOffsetXCss,
-  loungeSalonChairsTopCss,
-} from '../../utils/loungeSceneLayout';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -488,7 +490,29 @@ const LoungePage: React.FC = () => {
   }, []);
   
   return (
-    <div className="bg-white relative" style={{ minHeight: '105vh', width: '100vw', overflow: 'visible', display: 'block', margin: 0, padding: 0, flexShrink: 0, backgroundColor: 'white' }}>
+    <div className="bg-white relative lounge-page" style={{ minHeight: '105vh', width: '100vw', overflow: 'visible', display: 'block', margin: 0, padding: 0, flexShrink: 0, backgroundColor: 'white' }}>
+      <style>{`
+        .lounge-salon-chairs-anchor {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX}px));
+          z-index: 10;
+          width: fit-content;
+        }
+        .lounge-salon-chairs-anchor img.lounge-salon-chairs-img {
+          width: auto;
+          height: ${LOUNGE_SALON_CHAIRS_HEIGHT_PX}px;
+          margin: 0;
+          padding: 0;
+          display: block;
+        }
+        @media (min-width: ${LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX}px) {
+          .lounge-salon-chairs-anchor {
+            transform: translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX + LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX}px));
+          }
+        }
+      `}</style>
       {/* Background Image - Using landing2-background */}
       <div 
         style={{ 
@@ -597,29 +621,14 @@ const LoungePage: React.FC = () => {
 
       <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
       
-      {/* Salon Chairs — Y scales with landing2 background (100% auto), not fixed vh offset */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: loungeSalonChairsTopCss(),
-          transform: `translate(${loungeSalonChairsOffsetXCss()}, -100%)`,
-          zIndex: 10,
-          width: 'fit-content',
-        }}
-      >
+      {/* Salon Chairs — viewport-centered; large screens nudged down via .lounge-salon-chairs-anchor */}
+      <div className="lounge-salon-chairs-anchor">
         <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
           <img
             src="/assets/salon-chairs.png"
             alt="Salon Chairs"
-            style={{
-              width: 'auto',
-              height: loungeSalonChairsHeightCss(),
-              cursor: 'pointer',
-              margin: 0,
-              padding: 0,
-              display: 'block',
-            }}
+            className="lounge-salon-chairs-img"
+            style={{ cursor: 'pointer' }}
           />
         </div>
       </div>
