@@ -408,7 +408,11 @@ function WishlistListOverviewThumb({
         boxSizing: 'border-box',
         ...(firstItem
           ? bcfThumb
-            ? { overflow: 'hidden' }
+            ? {
+                border: '1.3px solid #000',
+                boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                overflow: 'hidden',
+              }
             : {
                 backgroundImage: "url('/assets/leaf-brick-resize.png')",
                 backgroundSize: 'cover',

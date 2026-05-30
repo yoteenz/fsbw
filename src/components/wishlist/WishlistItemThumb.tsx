@@ -14,13 +14,18 @@ const LEAF_BRICK_UNIT_IMG_STYLE: CSSProperties = {
   zIndex: 1,
 };
 
+const THUMB_BORDER_FRAME_STYLE: CSSProperties = {
+  border: '1.3px solid #000',
+  overflow: 'hidden',
+  boxSizing: 'border-box',
+};
+
 const LEAF_BRICK_FRAME_STYLE: CSSProperties = {
   backgroundImage: "url('/assets/leaf-brick-resize.png')",
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  border: '1.3px solid #000',
+  ...THUMB_BORDER_FRAME_STYLE,
   boxShadow: 'inset 0 0 0 3px #fff',
-  overflow: 'hidden',
 };
 
 type WishlistItemThumbProps = {
@@ -52,7 +57,12 @@ export function WishlistItemThumb({
         onClick={onActivate}
         onKeyDown={handleKeyDown}
         className="flex items-center justify-center cursor-pointer"
-        style={{ width: widthPx, height: heightPx }}
+        style={{
+          width: widthPx,
+          height: heightPx,
+          ...THUMB_BORDER_FRAME_STYLE,
+          boxShadow: `inset 0 0 0 ${frameInsetPx}px #fff`,
+        }}
       >
         <img
           src={bcfThumb}
