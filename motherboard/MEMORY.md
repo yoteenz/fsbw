@@ -22244,3 +22244,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted **CUTTING YOUR LACE**, **TINTING YOUR LACE**, etc. on the **same text rows** whether or not **\*NEW\*** appears above.
 
 **Fix:** **`LoungeTvTileLabel`** in **`LoungeTvOverlay.tsx`** — fixed-height **\*NEW\*** row (`minHeight: 8px`, empty when not new); title lines always below; label stack **`justifyContent: flex-end`** on thumb overlay.
+
+---
+
+## 2026-05-29 — Lounge TV: admin video on TV + centered labels with *NEW* overlay
+
+**Context:** User said admin video upload works on backend but **not on TV after save**; rejected bottom-pinned labels — wanted titles **centered** with **\*NEW\*** in a **separate container** that does not shift title text.
+
+**Video sync fix (`loungeTvAdminConfig.ts`, admin panel, overlay):**
+- **`updatedAt`** on admin save; **`mergeLoungeTvAdminConfigs`** on hydrate so **newer local save** is not overwritten by **stale Supabase** config (common when large embed fails server sync).
+- TV **re-hydrates when overlay opens** (`isOpen`).
+- Admin save: local always saved; API failure shows **saved on this device** message.
+- **Plucking lace** uses admin **`mediaUrl`** when set; bundled asset is fallback only.
+
+**Label fix:** **\*NEW\*** `position: absolute` at top of thumb overlay; title stack stays **`justifyContent: center`**.
+
+**Commits:** `5c87319e` on **`master`** / **`preview/mobile`**.
