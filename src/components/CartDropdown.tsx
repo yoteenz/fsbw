@@ -1271,26 +1271,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   
                     {/* Item Details */}
                    <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: isViewingDetails ? 'auto' : '100%', minHeight: isViewingDetails ? '120px' : '100%' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: isViewingDetails ? 'flex-start' : 'center', alignItems: 'flex-start', margin: '0', padding: '0', transform: productTextTransform, height: isViewingDetails ? 'auto' : '100%', position: isViewingDetails ? 'relative' : 'static', top: isViewingDetails ? (() => {
-                        // Count detail selections
-                        let detailCount = 0;
-                        if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) detailCount++;
-                        if (item.length && item.length !== '24"') detailCount++;
-                        const defaultDensityForCount = item.name === 'BLANCO' ? '250%' : '200%';
-                        if (item.density && item.density !== defaultDensityForCount) detailCount++;
-                        if (item.lace && item.lace !== '13X6') detailCount++;
-                        // BLANCO default colors: PLATINUM (build-a-wig/product), OFF WHITE (units page), OFF BLACK (legacy)
-                        const blancoDefaultColors = ['PLATINUM', 'OFF WHITE', 'OFF BLACK'];
-                        const isDefaultBlancoColor = item.name === 'BLANCO' && item.color && blancoDefaultColors.includes(item.color);
-                        const isDefaultOtherColor = item.name !== 'BLANCO' && item.color && item.color === 'OFF BLACK';
-                        if (item.color && !isDefaultBlancoColor && !isDefaultOtherColor) detailCount++;
-                        if (item.hairline && item.hairline !== 'NATURAL') detailCount++;
-                        const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
-                        if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) detailCount++;
-                        if (item.addOns && item.addOns.length > 0) detailCount++;
-                        // Base 6px, add 4px for each detail after the first (detailCount - 1)
-                        return `${6 + (detailCount - 1) * 4}px`;
-                      })() : 'auto' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: isViewingDetails ? 'flex-start' : 'center',
+                          alignItems: 'flex-start',
+                          margin: 0,
+                          padding: 0,
+                          transform: productTextTransform,
+                          height: isViewingDetails ? 'auto' : '100%',
+                          position: isViewingDetails ? 'relative' : 'static',
+                          /* Do not set positive `top` here — it fought translateY lift when 6+ detail lines. */
+                        }}
+                      >
                         <CartLineProductTextStack>
                         <CartLineTextLayer slot="name">
                         <p 
