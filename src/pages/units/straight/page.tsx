@@ -843,7 +843,7 @@ function StraightUnitsPage() {
                         fontSize: '10px',
                         color: '#EB1C24',
                         textTransform: 'uppercase',
-                        margin: '0 0 5px 0',
+                        margin: '2px 0 7px 0',
                         fontWeight: '500',
                         lineHeight: '0.84',
                         transform: 'translateY(4px)',
