@@ -26,10 +26,8 @@ const ANIM_MS = 1400;
 const HAND_REVEAL_MS = 2200;
 /** Hand fade-out after screen is blank on power-off. */
 const HAND_HIDE_MS = 850;
-/** Pause after hand is fully visible before CRT static (“hand pressed power”). */
-const STATIC_DELAY_MS = 280;
-/** CRT static on screen before menu content. */
-const STATIC_PHASE_MS = 900;
+/** Pause after hand is visible, then CRT static on screen — same duration for both beats. */
+const STATIC_BEAT_MS = 500;
 
 type LoungeTvClosePhase = 'idle' | 'zap' | 'hand-out' | 'shrink';
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
@@ -469,7 +467,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     if (!handRevealDone || closePhase !== 'idle' || showContent || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setShowStatic(true);
-    }, STATIC_DELAY_MS);
+    }, STATIC_BEAT_MS);
     return () => window.clearTimeout(timer);
   }, [handRevealDone, closePhase, showContent]);
 
@@ -480,7 +478,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         setShowStatic(false);
         setShowContent(true);
       }
-    }, STATIC_PHASE_MS);
+    }, STATIC_BEAT_MS);
     return () => window.clearTimeout(timer);
   }, [showStatic, closePhase]);
 
