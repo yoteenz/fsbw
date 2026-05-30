@@ -22092,6 +22092,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Lounge TV close: fix loop; zap-only power-off
+
+**Context:** Close looped static/zap ( **`animatedIn`** re-set true while **`isOpen`** still true after power-off); user wanted **no static on close** — static **turn-on only**.
+
+**Change:** **`isClosingRef`** blocks re-open effects during power-off; **`onClose()`** after zap only ( **`animatedIn` false** when **`isOpen` false**). **`LoungeTvPowerOffEffect`** — horizontal beam + collapse only (~480ms).
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
