@@ -21670,6 +21670,14 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Cart dropdown VIEW DETAILS text: −10px net (was −21px)
+
+**Context:** User wanted product text lower than **−21px** net translate after the 14px down-nudge; target **−10px** for long BCF detail blocks (7 lines).
+
+**Change:** **`CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX` `14` → `25`** (`netY = 25 - liftPx`; 7 lines **−21px → −10px**). Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
