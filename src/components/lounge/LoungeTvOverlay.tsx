@@ -1,0 +1,329 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import {
+  getLoungeTvTiles,
+  LOUNGE_TV_MAIN_TABS,
+  LOUNGE_TV_SIDEBAR,
+  loungeTvAcademyMessage,
+  type LoungeTvMainTab,
+} from './loungeTvContent';
+
+const BRAND_RED = '#EB1C24';
+const ANIM_MS = 1400;
+
+type LoungeTvOverlayProps = {
+  isOpen: boolean;
+  originRect: DOMRect | null;
+  onClose: () => void;
+};
+
+const curtainPanelStyle = (side: 'left' | 'right', closed: boolean): React.CSSProperties => ({
+  position: 'fixed',
+  top: 0,
+  bottom: 0,
+  width: '52vw',
+  maxWidth: '280px',
+  zIndex: 100,
+  backgroundColor: '#e4e4e4',
+  backgroundImage:
+    'repeating-linear-gradient(90deg, #d0d0d0 0px, #d0d0d0 2px, #ececec 2px, #ececec 14px)',
+  boxShadow: side === 'left' ? '4px 0 24px rgba(0,0,0,0.12)' : '-4px 0 24px rgba(0,0,0,0.12)',
+  transition: `transform ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+  transform:
+    side === 'left'
+      ? closed
+        ? 'translateX(0)'
+        : 'translateX(-105%)'
+      : closed
+        ? 'translateX(0)'
+        : 'translateX(105%)',
+  ...(side === 'left' ? { left: 0 } : { right: 0 }),
+});
+
+function LoungeTvScreen({
+  mainTab,
+  sidebarId,
+  onMainTabChange,
+  onSidebarChange,
+}: {
+  mainTab: LoungeTvMainTab;
+  sidebarId: string;
+  onMainTabChange: (tab: LoungeTvMainTab) => void;
+  onSidebarChange: (id: string) => void;
+}) {
+  const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
+  const tiles = getLoungeTvTiles(mainTab, sidebarId);
+  const academy = mainTab === 'academy';
+
+  const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
+    fontFamily: '"Futura PT Medium", Futura, sans-serif',
+    fontSize: '9px',
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
+    color: active || accent ? BRAND_RED : '#ffffff',
+    background: 'none',
+    border: 'none',
+    padding: '2px 0',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  });
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '10px 8px 12px',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+      }}
+    >
+      <nav
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          gap: '6px 4px',
+          marginBottom: '10px',
+          flexShrink: 0,
+        }}
+        aria-label="Lounge TV categories"
+      >
+        {LOUNGE_TV_MAIN_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            style={navLinkStyle(mainTab === tab.id)}
+            onClick={() => onMainTabChange(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
+      <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: '8px' }}>
+        <aside
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+            flexShrink: 0,
+            width: '72px',
+            paddingTop: '2px',
+          }}
+          aria-label="Subcategories"
+        >
+          {sidebar.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              style={navLinkStyle(sidebarId === item.id, item.id === 'new-drops' && sidebarId === item.id)}
+              onClick={() => onSidebarChange(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </aside>
+
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: academy || tiles?.length === 0 ? 'center' : 'flex-start',
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {academy ? (
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium", Futura, sans-serif',
+                fontSize: '11px',
+                color: BRAND_RED,
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                margin: 0,
+                letterSpacing: '0.06em',
+              }}
+            >
+              {loungeTvAcademyMessage(sidebarId)}
+            </p>
+          ) : tiles && tiles.length > 0 ? (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                gap: '6px',
+                width: '100%',
+              }}
+            >
+              {tiles.map((tile) => (
+                <button
+                  key={tile.id}
+                  type="button"
+                  style={{
+                    position: 'relative',
+                    aspectRatio: '1',
+                    padding: 0,
+                    border: 'none',
+                    background: '#1a1a1a',
+                    cursor: 'pointer',
+                    overflow: 'hidden',
+                  }}
+                  aria-label={tile.title}
+                >
+                  {tile.thumbSrc ? (
+                    <img
+                      src={tile.thumbSrc}
+                      alt=""
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        opacity: 0.85,
+                        display: 'block',
+                      }}
+                    />
+                  ) : null}
+                  <span
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px',
+                      textAlign: 'center',
+                      fontFamily: '"Futura PT Medium", Futura, sans-serif',
+                      fontSize: '6px',
+                      lineHeight: 1.15,
+                      color: '#fff',
+                      textTransform: 'uppercase',
+                      background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.65))',
+                    }}
+                  >
+                    {tile.isNew ? (
+                      <>
+                        <span style={{ color: BRAND_RED }}>*NEW* </span>
+                        {tile.title}
+                      </>
+                    ) : (
+                      tile.title
+                    )}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium", Futura, sans-serif',
+                fontSize: '10px',
+                color: '#888',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                margin: 0,
+              }}
+            >
+              COMING SOON
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlayProps) {
+  const [animatedIn, setAnimatedIn] = useState(false);
+  const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
+  const [sidebarId, setSidebarId] = useState('new-drops');
+
+  useEffect(() => {
+    if (!isOpen) {
+      setAnimatedIn(false);
+      return;
+    }
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setAnimatedIn(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
+  const handleMainTab = useCallback((tab: LoungeTvMainTab) => {
+    setMainTab(tab);
+    setSidebarId(LOUNGE_TV_SIDEBAR[tab][0]?.id ?? '');
+  }, []);
+
+  if (!isOpen || typeof document === 'undefined') return null;
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const targetW = Math.min(vw * 0.92, 380);
+  const targetH = Math.min(vh * 0.58, targetW * 0.72);
+  const targetLeft = (vw - targetW) / 2;
+  const targetTop = (vh - targetH) / 2;
+
+  const startW = originRect ? Math.max(originRect.width, 40) : targetW * 0.28;
+  const startH = originRect ? Math.max(originRect.height, 30) : targetH * 0.28;
+  const startLeft = originRect ? originRect.left + originRect.width / 2 - startW / 2 : targetLeft;
+  const startTop = originRect ? originRect.top + originRect.height / 2 - startH / 2 : targetTop;
+
+  const screenStyle: React.CSSProperties = {
+    position: 'fixed',
+    zIndex: 110,
+    backgroundColor: '#000000',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+    left: animatedIn ? targetLeft : startLeft,
+    top: animatedIn ? targetTop : startTop,
+    width: animatedIn ? targetW : startW,
+    height: animatedIn ? targetH : startH,
+  };
+
+  return createPortal(
+    <div role="presentation" aria-hidden={!isOpen}>
+      <button
+        type="button"
+        aria-label="Close lounge TV"
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 99,
+          border: 'none',
+          padding: 0,
+          margin: 0,
+          background: animatedIn ? 'rgba(0,0,0,0.35)' : 'transparent',
+          cursor: 'pointer',
+          transition: `background ${ANIM_MS}ms ease`,
+        }}
+      />
+      <div style={curtainPanelStyle('left', animatedIn)} aria-hidden />
+      <div style={curtainPanelStyle('right', animatedIn)} aria-hidden />
+      <div style={screenStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
+        <LoungeTvScreen
+          mainTab={mainTab}
+          sidebarId={sidebarId}
+          onMainTabChange={handleMainTab}
+          onSidebarChange={setSidebarId}
+        />
+      </div>
+    </div>,
+    document.body
+  );
+}

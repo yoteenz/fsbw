@@ -14,6 +14,7 @@ import {
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
+import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -450,6 +451,20 @@ const LobbyPage: React.FC = () => {
 const LoungePage: React.FC = () => {
   const navigate = useNavigate();
   console.log('LoungePage component is rendering');
+
+  const tvFrameRef = useRef<HTMLDivElement>(null);
+  const [tvOpen, setTvOpen] = useState(false);
+  const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
+
+  const openLoungeTv = useCallback(() => {
+    const rect = tvFrameRef.current?.getBoundingClientRect() ?? null;
+    setTvOriginRect(rect);
+    setTvOpen(true);
+  }, []);
+
+  const closeLoungeTv = useCallback(() => {
+    setTvOpen(false);
+  }, []);
   
   const handlePrevious = useCallback(() => {
     // This will be handled by parent component
@@ -508,49 +523,64 @@ const LoungePage: React.FC = () => {
         </div>
       </div>
       
-      {/* TV Screen - Independent container with absolute positioning */}
-       <div style={{ 
-         position: 'absolute', 
-         top: '50%', 
-         left: '50%', 
-         transform: 'translate(calc(-50% + 58px), calc(-50% + 50px))', 
-         zIndex: 10, 
-         width: 'fit-content'
-       }}>
+      {/* TV + play — play opens animated black screen + theater curtains */}
+       <div
+         ref={tvFrameRef}
+         style={{
+           position: 'absolute',
+           top: '50%',
+           left: '50%',
+           transform: 'translate(calc(-50% + 58px), calc(-50% + 50px))',
+           zIndex: tvOpen ? 8 : 10,
+           width: 'fit-content',
+         }}
+       >
          <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-           <img 
-             src="/assets/tv-screen.png" 
-             alt="TV Screen" 
-             style={{ 
-               width: 'auto', 
-               height: '146px', 
-               cursor: 'pointer', 
-               margin: 0, 
-               padding: 0, 
+           <img
+             src="/assets/tv-screen.png"
+             alt="TV Screen"
+             style={{
+               width: 'auto',
+               height: '146px',
+               margin: 0,
+               padding: 0,
                display: 'block',
-               maxWidth: 'none'
+               maxWidth: 'none',
+               opacity: tvOpen ? 0.35 : 1,
+               transition: 'opacity 0.4s ease',
              }}
            />
+           {!tvOpen && (
+             <button
+               type="button"
+               onClick={openLoungeTv}
+               aria-label="Play lounge media"
+               style={{
+                 position: 'absolute',
+                 left: '50%',
+                 top: '50%',
+                 transform: 'translate(-50%, -50%)',
+                 margin: 0,
+                 padding: '12px',
+                 border: 'none',
+                 background: 'transparent',
+                 cursor: 'pointer',
+                 WebkitTapHighlightColor: 'transparent',
+                 touchAction: 'manipulation',
+                 zIndex: 2,
+               }}
+             >
+               <img
+                 src="/assets/play-button.png"
+                 alt=""
+                 style={{ width: 'auto', height: '15px', display: 'block', pointerEvents: 'none' }}
+               />
+             </button>
+           )}
          </div>
        </div>
-      
-      {/* Play Button - Independent container with absolute positioning */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '50%', 
-        left: '50%', 
-        transform: 'translate(calc(-50% + 60px), calc(-50% + 49px))', 
-        zIndex: 10, 
-        width: 'fit-content'
-      }}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img 
-            src="/assets/play-button.png" 
-            alt="Play Button" 
-            style={{ width: 'auto', height: '15px', cursor: 'pointer', margin: 0, padding: 0, display: 'block' }}
-          />
-        </div>
-      </div>
+
+      <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
       
       {/* Salon Chairs - Independent container with absolute positioning */}
       <div style={{ 
