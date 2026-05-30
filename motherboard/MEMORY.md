@@ -21894,3 +21894,11 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 **Context:** User wanted the lounge TV **play** control to slowly enlarge a **black screen** from the TV frame with **theater curtains** closing behind it; inner UI mirrors reference mocks (top tabs, sidebar, video tiles; academy **COMING SOON** copy).
 
 **Changes:** **`src/components/lounge/LoungeTvOverlay.tsx`**, **`loungeTvContent.ts`**, **`lobby/page.tsx`** (`LoungePage`). Play opens portal overlay (~1.4s animation); **Escape** or backdrop tap closes. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Home/shop BCF copy spacing matches UNITS row
+
+**Context:** User wanted BCF marble text (**STRAIGHT**, **RAW HUMAN HAIR**, price) on **`/home/shop`** to use the same line spacing as the **UNITS** container above.
+
+**Changes:** **`shopProductGridCopyStyles.ts`** — **`shopProductGridCellBandStyle`**, **`shopProductGridThumbWrapStyle`** (shared band **`translateY(-14px)`**, thumb **`marginBottom: 5px`**). **`products/page.tsx`** — BCF cells use same band/thumb as UNITS; BCF price via **`WigProductPriceDisplay`** + **`labelStyle: translateY(1px)`** (was raw **`<p>`** + **`translateY(-2px)`** band / **`translateY(3px)`** thumb nudges). Pushed **`master`** + **`preview/mobile`**.
