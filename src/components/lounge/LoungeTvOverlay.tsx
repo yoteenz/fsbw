@@ -123,12 +123,12 @@ const loungeTvThumbLabelStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
-/** Split titles like "CUTTING YOUR LACE" → lead "CUTTING", trail "YOUR LACE". */
-function loungeTvTitleParts(title: string): { lead: string; trail: string } {
+/** "CUTTING YOUR LACE" → "YOUR LACE"; "EXTENDING YOUR INSTALL" → "YOUR INSTALL". */
+function loungeTvTitleYourLine(title: string): string {
   const marker = ' YOUR ';
   const i = title.indexOf(marker);
-  if (i === -1) return { lead: title, trail: '' };
-  return { lead: title.slice(0, i), trail: title.slice(i + 1) };
+  if (i === -1) return title;
+  return title.slice(i + 1);
 }
 
 function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean }) {
@@ -136,12 +136,10 @@ function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean })
     return <span style={loungeTvThumbLabelStyle}>{title}</span>;
   }
 
-  const { lead, trail } = loungeTvTitleParts(title);
   return (
     <span style={loungeTvThumbLabelStyle}>
       <span style={{ color: BRAND_RED }}>*NEW*</span>
-      {lead ? <span>{lead}</span> : null}
-      <span>{trail || title}</span>
+      <span>{loungeTvTitleYourLine(title)}</span>
     </span>
   );
 }
