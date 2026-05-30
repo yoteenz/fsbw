@@ -56,22 +56,25 @@ interface CartDropdownProps {
 
 const CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD = 6;
 /** Extra lift for product name/subtitle/details block when many VIEW DETAILS lines (not the toggle). */
-const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX = 10;
+const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX = 28;
+/** Per detail line beyond threshold (keeps long lists from sitting low in the card). */
+const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX = 3;
 
-function countDetailHtmlRows(html: string): number {
-  return html.split(/<br\s*\/?>/i).filter((line) => line.trim().length > 0).length;
-}
+type UnitCartDetailDescriptor = { type: string; value?: unknown; partSelection?: string };
 
-function cartDropdownUnitDetailRowCount(item: CartItem): number {
-  let rowCount = 0;
-
-  if (item.length && item.length !== '24"') rowCount++;
-
+/** Same option list as unit VIEW DETAILS HTML (one row per option; add-ons = one row each). */
+function buildUnitCartViewDetailItemDescriptors(item: CartItem): UnitCartDetailDescriptor[] {
+  const items: UnitCartDetailDescriptor[] = [];
+  if (item.length && item.length !== '24"') {
+    items.push({ type: 'length', value: item.length });
+  }
   const defaultDensity = item.name === 'BLANCO' ? '250%' : '200%';
-  if (item.density && item.density !== defaultDensity) rowCount++;
-
-  if (item.lace && item.lace !== '13X6') rowCount++;
-
+  if (item.density && item.density !== defaultDensity) {
+    items.push({ type: 'density', value: item.density });
+  }
+  if (item.lace && item.lace !== '13X6') {
+    items.push({ type: 'lace', value: item.lace });
+  }
   let itemColor = item.color;
   if (item.name === 'BLANCO') {
     const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
@@ -83,22 +86,49 @@ function cartDropdownUnitDetailRowCount(item: CartItem): number {
   const isDefaultColor = item.name === 'BLANCO'
     ? blancoDefaultColors.includes(itemColor || '')
     : itemColor === 'OFF BLACK';
-  if (itemColor && !isDefaultColor) rowCount++;
-
-  if (item.hairline && item.hairline !== 'NATURAL') rowCount++;
-
+  if (itemColor && !isDefaultColor) {
+    items.push({ type: 'color', value: itemColor });
+  }
+  if (item.hairline && item.hairline !== 'NATURAL') {
+    items.push({ type: 'hairline', value: item.hairline });
+  }
   const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
   if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
-    rowCount++;
+    items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection });
   }
-
-  if (Array.isArray(item.addOns)) {
-    rowCount += item.addOns.length;
-  } else if (item.addOns) {
-    rowCount++;
+  if (item.addOns && (Array.isArray(item.addOns) ? item.addOns.length > 0 : true)) {
+    items.push({ type: 'addOns', value: item.addOns });
   }
+  return items;
+}
 
-  return rowCount;
+function cartDropdownUnitViewDetailsLineCount(item: CartItem): number {
+  let lines = 0;
+  for (const descriptor of buildUnitCartViewDetailItemDescriptors(item)) {
+    if (descriptor.type === 'addOns' && Array.isArray(descriptor.value)) {
+      lines += descriptor.value.length;
+    } else {
+      lines += 1;
+    }
+  }
+  return lines;
+}
+
+function cartDropdownProductTextTranslateY(detailLineCount: number, isViewingDetails: boolean): string | undefined {
+  if (!isViewingDetails) return undefined;
+  if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
+    const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
+    const liftPx =
+      4 +
+      CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX +
+      extraRows * CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX;
+    return `translateY(-${liftPx}px)`;
+  }
+  return 'translateY(-4px)';
+}
+
+function countDetailHtmlRows(html: string): number {
+  return html.split(/<br\s*\/?>/i).filter((line) => line.trim().length > 0).length;
 }
 
 function cartDropdownDetailTextRowCount(item: CartItem): number {
@@ -108,7 +138,7 @@ function cartDropdownDetailTextRowCount(item: CartItem): number {
   if (item.type === 'shop-texture-category') {
     return countDetailHtmlRows(bcfCartViewDetailsHtml(item as CartItem & Record<string, unknown>));
   }
-  return cartDropdownUnitDetailRowCount(item);
+  return cartDropdownUnitViewDetailsLineCount(item);
 }
 
 export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdownProps) {
@@ -957,11 +987,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBcfShopItem = item.type === 'shop-texture-category';
                     const isViewingDetails = viewingDetailsFor === item.id;
                     const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
-                    const productTextTransform = isViewingDetails
-                      ? detailTextRowCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD
-                        ? `translateY(-${4 + CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX}px)`
-                        : 'translateY(-4px)'
-                      : undefined;
+                    const productTextTransform = cartDropdownProductTextTranslateY(detailTextRowCount, isViewingDetails);
                     /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
                     const hideMetaForDetails =
                       isViewingDetails &&
@@ -983,7 +1009,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             : unitThumbPx;
                     return (
                     <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(isViewingDetails ? { paddingBottom: '16px' } : {}) }}>
-                    <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: isViewingDetails ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
+                    <div
+                      className={`flex justify-start space-x-3 ${isViewingDetails ? 'items-start' : 'items-center'}`}
+                      style={{ minHeight: '120px', height: isViewingDetails ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}
+                    >
                     {/* Thumbnail Container */}
                     <div
                       className="flex flex-col items-center justify-center"
@@ -1270,7 +1299,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                   
                     {/* Item Details */}
-                   <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: isViewingDetails ? 'auto' : '100%', minHeight: isViewingDetails ? '120px' : '100%' }}>
+                   <div
+                     className={`flex-1 min-w-0 flex flex-col relative ${isViewingDetails ? 'justify-start' : 'justify-center'}`}
+                     style={{ marginLeft: '18px', height: isViewingDetails ? 'auto' : '100%', minHeight: isViewingDetails ? '0' : '100%' }}
+                   >
                       <div
                         style={{
                           display: 'flex',
@@ -1285,7 +1317,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           /* Do not set positive `top` here — it fought translateY lift when 6+ detail lines. */
                         }}
                       >
-                        <CartLineProductTextStack>
+                        <CartLineProductTextStack
+                          style={isViewingDetails ? { justifyContent: 'flex-start' } : undefined}
+                        >
                         <CartLineTextLayer slot="name">
                         <p 
                           className="font-medium truncate cart-product-name"
