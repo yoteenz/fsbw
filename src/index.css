@@ -4101,6 +4101,11 @@ p.bcf-bundles-pdp-product-name {
   padding: 0 !important;
 }
 
+/* Main /wishlist page (account wishlist) — +2px above black price row */
+.cart-line-text-layer--price.wishlist-account-page-price-layer {
+  margin-top: 2px !important;
+}
+
 /* Wishlist expanded list line (lists page + shared) — price in price layer */
 .wishlist-expanded-list-line-price {
   margin-top: 0 !important;
@@ -4127,9 +4132,9 @@ p.bcf-bundles-pdp-product-name {
   margin-bottom: 8px !important;
 }
 
-/* /wishlist/lists/:id line view — +1px above star row (shared list keeps 1px). */
+/* /wishlist/lists/:id line view — +2px above star row vs shared list (1px). */
 .wishlist-expanded-list-line-stars--list.wishlist-lists-page-expanded-line-stars {
-  margin-top: 2px !important;
+  margin-top: 4px !important;
 }
 
 .wishlist-expanded-list-view-details-toggle {
@@ -4156,7 +4161,7 @@ p.bcf-bundles-pdp-product-name {
 
 .wishlist-expanded-list-view-details-toggle--list-view-only {
   margin-left: 1px !important;
-  margin-top: -3px !important;
+  margin-top: -4px !important;
   font-size: 9px !important;
 }
 

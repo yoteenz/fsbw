@@ -1,4 +1,6 @@
 /** CSS classes in index.css — inline margin on VIEW DETAILS is overridden by global rules. */
+/** Main `/wishlist` page only — +2px above black price row. */
+export const WISHLIST_ACCOUNT_PAGE_PRICE_LAYER_CLASS = 'wishlist-account-page-price-layer';
 export const WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS = 'wishlist-expanded-list-line-price';
 /** Expanded list line (lists + shared): spacing above black price. */
 export const WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS = 'wishlist-expanded-list-line-price--list';
@@ -7,7 +9,7 @@ export const WISHLIST_EXPANDED_LIST_LINE_PRICE_LAYER_LIST_CLASS =
   'wishlist-expanded-list-line-price-layer--list';
 /** List line view only — extra spacing above star row. */
 export const WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS = 'wishlist-expanded-list-line-stars--list';
-/** `/wishlist/lists/:id` line view only — +1px above stars vs shared list. */
+/** `/wishlist/lists/:id` line view only — +3px above stars vs shared list (1px). */
 export const WISHLIST_LISTS_PAGE_LINE_STARS_CLASS = 'wishlist-lists-page-expanded-line-stars';
 export const WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS = 'wishlist-expanded-list-view-details-toggle';
 /** List line view only — tighter above VIEW/CLOSE DETAILS than default toggle. */

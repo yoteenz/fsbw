@@ -32,6 +32,7 @@ import {
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
+import { WISHLIST_ACCOUNT_PAGE_PRICE_LAYER_CLASS } from './wishlistExpandedListLineClasses';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -931,7 +932,10 @@ function WishlistSelection() {
                           </p>
                           </CartLineTextLayer>
                           <WishlistItemCapSizeLine item={item} />
-                          <CartLineTextLayer slot="price">
+                          <CartLineTextLayer
+                            slot="price"
+                            className={`cart-line-text-layer cart-line-text-layer--price ${WISHLIST_ACCOUNT_PAGE_PRICE_LAYER_CLASS}`}
+                          >
                           <WigLineStockPrice
                             item={item}
                             priceHtml={formatPrice(itemPrice)}
