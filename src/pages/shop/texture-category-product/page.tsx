@@ -167,6 +167,32 @@ function bundlePdpHeroMaxWidthPx(tex: Texture): number {
   );
 }
 
+/** Bundles straight Kling .mov is letterboxed in-file — scale so VIDEO matches PHOTO footprint. */
+const BUNDLE_STRAIGHT_VIDEO_HERO_SCALE = 1.22;
+
+function bcfPdpHeroVideoStyle(texture: Texture, category: Category): React.CSSProperties {
+  const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+  let transform =
+    y != null ? `translate(-50%, calc(-50% + ${y}px))` : 'translate(-50%, -50%)';
+  if (category === 'bundles' && texture === 'straight') {
+    transform += ` scale(${BUNDLE_STRAIGHT_VIDEO_HERO_SCALE})`;
+  }
+  return {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform,
+    width: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+    height: '100%',
+    maxWidth: '100%',
+    objectFit: 'contain',
+    display: 'block',
+    zIndex: 1,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  };
+}
+
 /** BCF hero column: max width across textures (bundles + closures + frontals). */
 const BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX = Math.max(...TEXTURE_ORDER.map((t) => bundlePdpHeroMaxWidthPx(t)));
 
@@ -279,7 +305,7 @@ export default function ShopTextureCategoryProductPage() {
   const [bcfCfShowVideo, setBcfCfShowVideo] = useState(false);
   const bundleVideoRef = useRef<HTMLVideoElement>(null);
   const bcfCfVideoRef = useRef<HTMLVideoElement>(null);
-  /** Until true, hero video stays transparent so the JPG underlay shows (avoids white flash while buffering). */
+  /** Until true, hero video stays transparent so `poster` shows while buffering (no JPG underlay). */
   const [bcfHeroVideoPaintReady, setBcfHeroVideoPaintReady] = useState(false);
 
   const [bcfOrigin, setBcfOrigin] = useState<BcfOriginId>(() =>
@@ -1114,30 +1140,10 @@ export default function ShopTextureCategoryProductPage() {
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   width: '100%',
-                                  height: '100%'
+                                  height: '100%',
+                                  overflow: 'hidden',
                                 }}
                               >
-                                <img
-                                  src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
-                                  alt=""
-                                  aria-hidden
-                                  draggable={false}
-                                  style={{
-                                    position: 'absolute',
-                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                    maxHeight: '100%',
-                                    width: 'auto',
-                                    height: 'auto',
-                                    objectFit: 'contain',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
-                                    left: '50%',
-                                    top: '50%',
-                                    transform: 'translate(-50%, -50%)',
-                                    pointerEvents: 'none',
-                                    userSelect: 'none'
-                                  }}
-                                />
                                 <video
                                   key={`${texture}-video`}
                                   ref={bundleVideoRef}
@@ -1151,19 +1157,10 @@ export default function ShopTextureCategoryProductPage() {
                                   onLoadedData={() => setBcfHeroVideoPaintReady(true)}
                                   onCanPlay={() => setBcfHeroVideoPaintReady(true)}
                                   style={{
-                                    position: 'relative',
-                                    zIndex: 1,
-                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                    maxHeight: '100%',
-                                    width: 'auto',
-                                    height: 'auto',
-                                    display: 'block',
-                                    objectFit: 'contain',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
+                                    ...bcfPdpHeroVideoStyle(texture, 'bundles'),
                                     opacity: bcfHeroVideoPaintReady ? 1 : 0,
                                     transition: 'opacity 0.2s ease-out',
-                                    backgroundColor: 'transparent'
+                                    backgroundColor: '#FFFFFF',
                                   }}
                                 />
                               </div>
@@ -1210,34 +1207,10 @@ export default function ShopTextureCategoryProductPage() {
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   width: '100%',
-                                  height: '100%'
+                                  height: '100%',
+                                  overflow: 'hidden',
                                 }}
                               >
-                                <img
-                                  src={BCF_CF_PHOTO[category][texture]}
-                                  alt=""
-                                  aria-hidden
-                                  draggable={false}
-                                  style={{
-                                    position: 'absolute',
-                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                    maxHeight: '100%',
-                                    width: 'auto',
-                                    height: 'auto',
-                                    objectFit: 'contain',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
-                                    left: '50%',
-                                    top: '50%',
-                                    transform: ((): string => {
-                                      const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
-                                      const base = 'translate(-50%, -50%)';
-                                      return y != null ? `${base} translateY(${y}px)` : base;
-                                    })(),
-                                    pointerEvents: 'none',
-                                    userSelect: 'none'
-                                  }}
-                                />
                                 <video
                                   key={`${category}-${texture}-video`}
                                   ref={bcfCfVideoRef}
@@ -1251,23 +1224,10 @@ export default function ShopTextureCategoryProductPage() {
                                   onLoadedData={() => setBcfHeroVideoPaintReady(true)}
                                   onCanPlay={() => setBcfHeroVideoPaintReady(true)}
                                   style={{
-                                    position: 'relative',
-                                    zIndex: 1,
-                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                    maxHeight: '100%',
-                                    width: 'auto',
-                                    height: 'auto',
-                                    display: 'block',
-                                    objectFit: 'contain',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
+                                    ...bcfPdpHeroVideoStyle(texture, category),
                                     opacity: bcfHeroVideoPaintReady ? 1 : 0,
                                     transition: 'opacity 0.2s ease-out',
-                                    backgroundColor: 'transparent',
-                                    ...((): { transform?: string } => {
-                                      const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
-                                      return y != null ? { transform: `translateY(${y}px)` } : {};
-                                    })()
+                                    backgroundColor: '#FFFFFF',
                                   }}
                                 />
                               </div>
