@@ -295,14 +295,14 @@ const LIST_OVERVIEW_VISIBILITY_GRID_STYLE: React.CSSProperties = {
   margin: '0 0 -2px 0',
 };
 
-/** Red "EDIT LIST NAME" link below the gray visibility label (list view only). */
+/** Red "EDIT LIST NAME" link below the gray visibility label (list view only).
+ * Vertical offset: `.wishlist-lists-overview-edit-list-name-wrap` in index.css (not inline). */
 const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
   color: '#EB1C24',
   textTransform: 'uppercase',
   cursor: 'pointer',
-  display: 'inline-block',
 };
 
 const LIST_OVERVIEW_COUNT_STYLE: React.CSSProperties = {

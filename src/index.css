@@ -4160,17 +4160,25 @@ p.bcf-bundles-pdp-product-name {
   font-size: 9px !important;
 }
 
-/* /wishlist/lists overview line view — EDIT LIST NAME vertical position (list view only). */
+/* /wishlist/lists overview line view — EDIT LIST NAME vertical position (list view only).
+ * Lift must be on the wrapper <p>, not the inner span: sibling <p> blocks (PRIVATE then
+ * edit wrap) keep normal block gap; span margin-top does not move the wrap box up.
+ * Do not use margin: 0 shorthand on wrap — it zeroes margin-top and blocks the lift. */
 .wishlist-lists-overview-edit-list-name-wrap {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.wishlist-lists-overview-edit-list-name {
   margin-top: -20px !important;
   margin-right: 0 !important;
   margin-bottom: 0 !important;
   margin-left: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+.wishlist-lists-overview-edit-list-name {
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  display: inline-block !important;
   position: relative !important;
   top: 0 !important;
 }
