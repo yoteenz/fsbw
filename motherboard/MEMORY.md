@@ -21886,3 +21886,11 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 **Context:** User reported prior BCF +20% work incorrectly enlarged the **container**; they wanted only the **image inside** enlarged while frame dimensions match unit thumbs.
 
 **Change:** **`lists/page.tsx`** — overview frames stay **`88×110`**; expanded line/grid frames stay **`EXPANDED_LIST_ITEM_THUMB_WIDTH_PX` × height** (same as units). **`LISTS_PAGE_BCF_THUMB_SCALE`** (`0.9 × 1.2 × 1.2`) applies to BCF **art** via **`LISTS_PAGE_BCF_THUMB_IMG_STYLE`** and **`WishlistItemThumb`** prop **`bcfImageScale`**. Removed **`listsPageBcfThumbWidthPx`** / height helpers that scaled the frame. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge landing: interactive TV + theater curtains
+
+**Context:** User wanted the lounge TV **play** control to slowly enlarge a **black screen** from the TV frame with **theater curtains** closing behind it; inner UI mirrors reference mocks (top tabs, sidebar, video tiles; academy **COMING SOON** copy).
+
+**Changes:** **`src/components/lounge/LoungeTvOverlay.tsx`**, **`loungeTvContent.ts`**, **`lobby/page.tsx`** (`LoungePage`). Play opens portal overlay (~1.4s animation); **Escape** or backdrop tap closes. Pushed **`master`** + **`preview/mobile`**.
