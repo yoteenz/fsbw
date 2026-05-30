@@ -192,11 +192,11 @@ export function beginEditAppointmentFromCart(
 export const bookingEditLinkClassName = 'font-bold text-center cursor-pointer hover:opacity-80 transition-opacity';
 
 export const bookingEditLinkStyle: CSSProperties = {
-  fontFamily: '"Futura PT Book"',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#EB1C24',
   textTransform: 'uppercase',
-  fontSize: '8px',
+  fontSize: '9px',
   marginTop: '4px',
   marginBottom: '0',
-  lineHeight: '1.1'
+  lineHeight: '1.1',
 };

@@ -33,6 +33,10 @@ import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnap
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
 import { WISHLIST_ACCOUNT_PAGE_PRICE_LAYER_CLASS } from './wishlistExpandedListLineClasses';
+import {
+  bookingEditLinkClassName,
+  bookingEditLinkStyle,
+} from '../../utils/bookingAppointmentFormDraft';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -894,16 +898,8 @@ function WishlistSelection() {
                           </div>
                           {showBuildAWigEdit && (
                             <p
-                              className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                fontSize: '8px',
-                                marginTop: '4px',
-                                marginBottom: '0',
-                                lineHeight: '1.1'
-                              }}
+                              className={bookingEditLinkClassName}
+                              style={bookingEditLinkStyle}
                               onClick={() => handleEdit(item)}
                               role="button"
                               tabIndex={0}

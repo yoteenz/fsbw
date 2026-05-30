@@ -3934,11 +3934,11 @@ img.object-contain {
 
 /* EDIT IN BUILD-A-WIG: allow wrap on very small screens only so text doesn’t overflow */
 .edit-in-build-text {
-  font-size: 8px !important;
+  font-size: 9px !important;
 }
 @media (max-width: 480px) {
   .edit-in-build-text {
-    font-size: clamp(6px, 1.6vw, 8px) !important;
+    font-size: clamp(6px, 1.6vw, 9px) !important;
   }
 }
 @media (max-width: 360px) {

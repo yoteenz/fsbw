@@ -1178,17 +1178,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           item.type === 'booking-appointment' ||
                           item.type === 'shop-texture-category'
                         ) && (
-                          <p 
-                            className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ 
-                              fontFamily: '"Futura PT Book"',
-                              color: '#EB1C24',
-                              textTransform: 'uppercase',
-                              fontSize: '8px',
-                              marginTop: '4px',
-                              marginBottom: '0',
-                              lineHeight: '1.1'
-                            }}
+                          <p
+                            className={bookingEditLinkClassName}
+                            style={bookingEditLinkStyle}
                           onClick={() => {
                             const signedIn =
                               typeof window !== 'undefined' &&
