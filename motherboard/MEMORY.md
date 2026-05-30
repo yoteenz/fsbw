@@ -22007,3 +22007,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted smaller expanded/animated TV; lounge static TV wider by 12px only (height unchanged).
 
 **Changes:** **`LOUNGE_TV_OVERLAY_SIZE_SCALE`** `0.8` in **`LoungeTvOverlay`**. **`LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX`** `12` on lobby **`LoungeTvFrame`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Loading screen: white overlay covers full mobile viewport
+
+**Context:** On **`/lobby`** load, landing imagery peeked below white loading screen (mobile **`100vh`** / browser chrome gap).
+
+**Change:** **`LoadingScreen.tsx`** — portal to **`document.body`**, **`min-height: calc(100dvh + 32px)`**, safe-area padding, bottom bleed; flex-centered GIF (removed over-specified img styles).
