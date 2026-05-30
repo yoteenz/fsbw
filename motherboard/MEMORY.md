@@ -21983,3 +21983,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Curtains showed white at bottom; overlay TV went flat after **`tv-screen.png`** swap; user wanted animated **charcoal bezel** TV on lobby too; hand/close position tweaks.
 
 **Changes:** Shared **`loungeTvFrame.tsx`** (`LoungeTvFrame`) — gradient bezel + black glass on **lobby** and **overlay** (reverts flat PNG overlay). Curtains **`scale(1.1)`** anchored **bottom**. Hand **`bottom - 32px`**. Close **`top/right -8`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge refresh lands on lobby (carousel URL)
+
+**Context:** Refresh while on lounge slide reset carousel to lobby ( **`currentPage`** always 0).
+
+**Fix:** **`lobbyCarouselRoutes.ts`** — **`/lobby`** vs **`/lobby/lounge`**; **`LobbyApp`** derives slide from **`useLocation()`** and updates URL on arrow/swipe. **`/lounge`** → redirect **`/lobby/lounge`**. Refresh on lounge keeps lounge centered.
