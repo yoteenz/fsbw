@@ -21860,3 +21860,21 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-30 — BCF PDP default hair length 16"
 
 **Change:** **`BCF_DEFAULT_LENGTH_ID = '16"'`** in **`bcfProductOptions.ts`**; **`texture-category-product/page.tsx`** initial **`bcfLength`** uses it (was **`24"`**). Base price on load reflects 16" length adjustment (−$50 vs 24"). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Product grid copy spacing unified (/shop/units reference)
+
+**Context:** User wanted product text line spacing on **home/shop**, **`/units/*`**, and **BCF** PDP strips to match **`/shop/units`** (`products/units/page.tsx`), which had the correct name / RAW / price / cap-size rhythm.
+
+**Changes:**
+- **`src/utils/shopProductGridCopyStyles.ts`** — shared **`shopProductGridTextColStyle`**, **`shopProductGridNameStyle`**, **`shopProductGridRedLineStyle`** (`margin: 2px 0 5px 0`, `translateY(1px)`), **`shopProductGridPriceStyle`**, **`shopProductGridCapSizeRowStyle`**.
+- **`marbleStripStyles.ts`** — **`marbleStripTextCol`** and **`marbleStripProduct{Name,RedLine,Price}Style`** delegate to shared util for similar/recently-viewed strips.
+- **`products/page.tsx`** — home/shop UNITS + BCF grids use shared styles; removed **`shop-bcf-curly-product-copy-lift`** wrapper usage.
+- **`units/straight|wavy|curly/page.tsx`** — replaced **`-10px` margins**, **`translateY(4px)`**, and per-page RAW margins with shared wrapper.
+- **`products/units/page.tsx`** — refactored to import shared util (canonical reference).
+- **`texture-category-product/page.tsx`** — SIMILAR + RECENTLY VIEWED strips use **`marbleStripProduct*`** helpers; removed **`translateX(10px)`** copy hacks.
+
+**Convention:** For new shop product grids under thumbs, import from **`shopProductGridCopyStyles`** (or **`marbleStripStyles`** for marble strips) instead of duplicating inline margins/transforms.
+
+Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
