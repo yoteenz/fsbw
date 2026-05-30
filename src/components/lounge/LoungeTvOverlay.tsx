@@ -27,8 +27,8 @@ const ANIM_MS = 1400;
 const HAND_REVEAL_MS = 960;
 /** Hand fade-out after screen is blank on power-off. */
 const HAND_HIDE_MS = 850;
-/** Pause after hand is visible before CRT static (~80% shorter than 200ms). */
-const STATIC_DELAY_MS = 40;
+/** Pause after hand is visible before CRT static. */
+const STATIC_DELAY_MS = 15;
 /** How long CRT static stays on screen before menu content. */
 const STATIC_ON_MS = 500;
 
