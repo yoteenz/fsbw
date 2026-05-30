@@ -280,19 +280,28 @@ function preloadImage(src: string): Promise<void> {
 }
 
 export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlayProps) {
+  const [visible, setVisible] = useState(false);
   const [animatedIn, setAnimatedIn] = useState(false);
   const [curtainsReady, setCurtainsReady] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
 
+  const requestClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (isOpen) setVisible(true);
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) {
-      setAnimatedIn(false);
-      setCurtainsReady(false);
       setShowContent(false);
+      setAnimatedIn(false);
       return;
     }
+    setCurtainsReady(false);
     let cancelled = false;
     Promise.all([
       preloadImage(LOUNGE_CURTAIN_LEFT_SRC),
@@ -306,6 +315,15 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen]);
 
   useEffect(() => {
+    if (isOpen || !visible) return;
+    const timer = window.setTimeout(() => {
+      setVisible(false);
+      setCurtainsReady(false);
+    }, ANIM_MS);
+    return () => window.clearTimeout(timer);
+  }, [isOpen, visible]);
+
+  useEffect(() => {
     if (!isOpen || !curtainsReady) return;
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => setAnimatedIn(true));
@@ -314,29 +332,26 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen, curtainsReady]);
 
   useEffect(() => {
-    if (!isOpen || !animatedIn || !curtainsReady) {
-      if (!isOpen) setShowContent(false);
-      return;
-    }
+    if (!isOpen || !animatedIn || !curtainsReady) return;
     const timer = window.setTimeout(() => setShowContent(true), ANIM_MS);
     return () => window.clearTimeout(timer);
   }, [isOpen, animatedIn, curtainsReady]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!visible) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') requestClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [isOpen, onClose]);
+  }, [visible, requestClose]);
 
   const handleMainTab = useCallback((tab: LoungeTvMainTab) => {
     setMainTab(tab);
     setSidebarId(LOUNGE_TV_SIDEBAR[tab][0]?.id ?? '');
   }, []);
 
-  if (!isOpen || typeof document === 'undefined') return null;
+  if (!visible || typeof document === 'undefined') return null;
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -365,7 +380,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     boxSizing: 'border-box',
     padding: `${TV_BEZEL.top}px ${TV_BEZEL.right}px ${TV_BEZEL.bottom}px ${TV_BEZEL.left}px`,
     background: 'linear-gradient(165deg, #454545 0%, #262626 38%, #121212 100%)',
-    borderRadius: 5,
+    borderRadius: 0,
     border: '1px solid #0a0a0a',
     boxShadow:
       '0 14px 42px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 4px rgba(0,0,0,0.45)',
@@ -382,7 +397,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     backgroundColor: '#000000',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    borderRadius: 2,
+    borderRadius: 0,
     boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06)',
   };
 
@@ -391,7 +406,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       <button
         type="button"
         aria-label="Close lounge TV"
-        onClick={onClose}
+        onClick={requestClose}
         style={{
           position: 'fixed',
           inset: 0,
@@ -407,6 +422,33 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
       <div style={frameStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
+        <button
+          type="button"
+          aria-label="Close lounge TV"
+          onClick={(e) => {
+            e.stopPropagation();
+            requestClose();
+          }}
+          style={{
+            position: 'absolute',
+            top: 6,
+            right: 6,
+            zIndex: 3,
+            margin: 0,
+            padding: 6,
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            lineHeight: 0,
+            WebkitTapHighlightColor: 'transparent',
+            touchAction: 'manipulation',
+            opacity: animatedIn ? 1 : 0,
+            pointerEvents: animatedIn ? 'auto' : 'none',
+            transition: 'opacity 200ms ease',
+          }}
+        >
+          <img src="/assets/close-icon.svg" alt="" width={16} height={16} draggable={false} />
+        </button>
         <div
           style={{
             ...screenStyle,

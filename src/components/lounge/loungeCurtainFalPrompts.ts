@@ -1,6 +1,6 @@
 /**
  * Fal prompts for lounge theater curtains (Flux 2 Max / Pro edit).
- * Replace `public/assets/lounge-curtain-*.png` after export.
+ * Replace `public/assets/lounge-curtain-left.jpeg` and `lounge-curtain-right.jpeg` after export.
  *
  * **Recommended:** Workflow B — generate LEFT, then RIGHT using the LEFT PNG as reference.
  */
