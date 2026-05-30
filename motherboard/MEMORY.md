@@ -21577,3 +21577,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User wanted low/back-in-stock wishlist alerts to actually appear on Account → Alerts (not only the wishlist banner). Prior logic required `in_stock → low_stock` transition and skipped first baseline; BCF was not tracked.
 
 **Change:** `wishlistStockAlerts.ts` — track wig units + **`BCF`** key when any `shop-texture-category` on wishlist/`userLists`; use `getBcfStockStatus()` / `getWishlistItemRoute` for BCF **VIEW PRODUCT**; alert on transition **or** first seen while already **`low_stock`**; stable ids `wishlist_low_stock_*` / `wishlist_back_in_stock_*` in `notifications_{email}`. `notifications/page.tsx` listens to **`wishlistStockAlertsUpdated`** to refresh list. Still requires signed-in user; runs via **`ProductInventorySync`**. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Admin Revenue: VIEW WAITLIST (notify-me signups)
+
+**Context:** User wanted **VIEW WAITLIST** below **EDIT INVENTORY** on Admin → Revenue **Products** tab (same button styling), listing each unit SKU + signup count from **`unitStockNotifyWaitlist_v1`**; expand row shows **NAME** (client details / **NULL**), **EMAIL**, **VIEW CLIENT** or **NULL** → `/admin/clients/overview?email=`.
+
+**Change:** `adminUnitStockNotifyWaitlist.ts`, `revenue/view-waitlist/page.tsx`, route in **`App.tsx`**, Products tab actions in **`revenue/page.tsx`**. Pushed `master` + `preview/mobile`.
