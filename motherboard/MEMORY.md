@@ -21398,3 +21398,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked to (1) remove gray leaf-brick behind BCF on `/wishlist` and `/wishlist/lists`, (2) remove red **EDIT IN BUILD-A-WIG** under thumbs on lists only (keep on `/wishlist`), (3) tighten gray **PRIVATE/SHARED** spacing ±2px on lists overview **grid** only, (4) tighten **EDIT LIST NAME** margin −4px on lists overview **line** view.
 
 **Change:** `WishlistItemThumb.tsx` + `getWishlistUnitThumbImage` — BCF = plain marble; units keep brick. `lists/page.tsx` + `shared/page.tsx` use component; removed list-line **EDIT IN BUILD-A-WIG** and `prepareBuildAWigEditSession` from lists page. `LIST_OVERVIEW_VISIBILITY_GRID_STYLE` + count `marginTop` 2px; `LIST_OVERVIEW_EDIT_NAME_STYLE` margin `-16px`. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF cart/bag/checkout thumbs = shop grid marbles
+
+**Context:** User asked cart, bag, and checkout BCF thumbnails to use home/shop marbles only (not separate cart URLs or PDP heroes).
+
+**Change:** `bcfProductOptions.ts` — `shopBcfCartLineThumbnailSrc` removed straight-bundle `ZYNxZol48…` override; bundle lines always `shopTextureCategoryThumbSrc(texture, 'bundles')`. Surfaces: `CartDropdown`, `shopping-bag`, `checkoutOrderStripDisplay` / checkout confirm. Pushed `master` + `preview/mobile`.
