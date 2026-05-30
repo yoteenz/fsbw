@@ -72,7 +72,7 @@ function inferWishlistBcfTexture(item: any): ShopTextureCategoryThumbTexture | n
 
 /**
  * BCF thumbnail on `/wishlist` and `/wishlist/lists` — same image as `/products` shop marble
- * (`shopTextureCategoryThumbSrc`), including straight bundles. Null for non-BCF.
+ * (`shopTextureCategoryThumbSrc` → `/assets/*-{bundle|closure|frontal}.png`). Null for non-BCF.
  */
 export function getWishlistBcfThumbSrc(item: any): string | null {
   if (item?.type !== 'shop-texture-category') return null;

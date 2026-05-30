@@ -1,43 +1,44 @@
-/** BCF thumbnails for `/shop/*` PDP strips, `/products` shop grid, and related product-page surfaces. */
+/** Home/shop marbles, cart/bag/checkout, wishlist BCF lines — `public/assets` PNGs (with marble background). */
 export type ShopTextureCategoryThumbTexture = 'straight' | 'wavy' | 'curly';
 export type ShopTextureCategoryThumbCategory = 'bundles' | 'closures' | 'frontals';
-
-/** Home/shop grid + cart/bag/checkout/wishlist marbles — not PDP hero photos (those live on the BCF PDP page). */
-const BCF_THUMB_PHOTO_BY_TEXTURE: Record<
-  ShopTextureCategoryThumbCategory,
-  Record<ShopTextureCategoryThumbTexture, string>
-> = {
-  bundles: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/_6biiXliVwiLZhD23zVMx_ikG2kkur.jpeg',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/8XBa-oP-wP7tmQSFYMN62_9tFh7bo7.jpeg',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/opLZf4GQ8_KuizHCa_5gZ_QGYh1ZNb.jpeg',
-  },
-  closures: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/uzxxkL1smy3pZ2ObGuiEx_nuxYnKn5.jpeg',
-  },
-  frontals: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg',
-  },
-};
 
 export function shopTextureCategoryThumbSrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
 ): string {
-  return BCF_THUMB_PHOTO_BY_TEXTURE[category][texture];
+  if (texture === 'straight' && category === 'bundles') {
+    return '/assets/bundle-straight.png';
+  }
+  if (texture === 'wavy' && category === 'bundles') {
+    return '/assets/bundle-wavy.png';
+  }
+  if (texture === 'curly' && category === 'bundles') {
+    return '/assets/bundle-curly.png';
+  }
+  if (texture === 'straight' && category === 'closures') {
+    return '/assets/closure-straight.png';
+  }
+  if (texture === 'wavy' && category === 'closures') {
+    return '/assets/closure-wavy.png';
+  }
+  if (texture === 'curly' && category === 'closures') {
+    return '/assets/closure-curly.png';
+  }
+  if (texture === 'straight' && category === 'frontals') {
+    return '/assets/frontal-straight.png';
+  }
+  if (texture === 'wavy' && category === 'frontals') {
+    return '/assets/frontal-wavy.png';
+  }
+  if (texture === 'curly' && category === 'frontals') {
+    return '/assets/frontal-curly.png';
+  }
+  const suffix =
+    category === 'bundles' ? 'bundle' : category === 'closures' ? 'closure' : 'frontal';
+  return `/assets/${texture}-${suffix}.png`;
 }
 
-/** Same marbles as `/products` grid — used by wishlist BCF lines; not PDP hero URLs. */
+/** Same PNG marbles as `/products` grid — not BCF PDP hero JPG/Supabase URLs. */
 export function shopTextureCategoryHeroPhotoSrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
