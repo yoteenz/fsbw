@@ -22076,6 +22076,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Lounge TV: CRT static before menu content
+
+**Context:** User wanted a **TV turning on** effect — static across the screen before lounge TV UI loads (after curtains / bezel animation).
+
+**Change:** **`LoungeTvPowerOnStatic.tsx`** — canvas noise + SVG turbulence, scanlines, vertical **power-on reveal**; shown while **`animatedIn && !showContent`** (~1.4s). **`LoungeTvOverlay`** — glass visible during static; menu fades in via **`lounge-tv-content-in`**. Styles in **`index.css`**.
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
