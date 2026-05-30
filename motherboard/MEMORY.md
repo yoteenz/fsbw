@@ -21878,3 +21878,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Convention:** For new shop product grids under thumbs, import from **`shopProductGridCopyStyles`** (or **`marbleStripStyles`** for marble strips) instead of duplicating inline margins/transforms.
 
 Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
+
+---
+
+## 2026-05-30 — Wishlist lists BCF thumbs: image scale only (not frame)
+
+**Context:** User reported prior BCF +20% work incorrectly enlarged the **container**; they wanted only the **image inside** enlarged while frame dimensions match unit thumbs.
+
+**Change:** **`lists/page.tsx`** — overview frames stay **`88×110`**; expanded line/grid frames stay **`EXPANDED_LIST_ITEM_THUMB_WIDTH_PX` × height** (same as units). **`LISTS_PAGE_BCF_THUMB_SCALE`** (`0.9 × 1.2 × 1.2`) applies to BCF **art** via **`LISTS_PAGE_BCF_THUMB_IMG_STYLE`** and **`WishlistItemThumb`** prop **`bcfImageScale`**. Removed **`listsPageBcfThumbWidthPx`** / height helpers that scaled the frame. Pushed **`master`** + **`preview/mobile`**.
