@@ -28,6 +28,7 @@ import {
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
   LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
+  LOUNGE_TV_PLAY_BUTTON_COLOR,
   LoungeTvFrame,
   loungeTvDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
@@ -608,10 +609,23 @@ const LoungePage: React.FC = () => {
                    zIndex: 2,
                  }}
                >
-                 <img
-                   src="/assets/play-button.png"
-                   alt=""
-                   style={{ width: 'auto', height: '15px', display: 'block', pointerEvents: 'none' }}
+                 <span
+                   aria-hidden
+                   style={{
+                     display: 'block',
+                     height: '15px',
+                     width: '18px',
+                     pointerEvents: 'none',
+                     backgroundColor: LOUNGE_TV_PLAY_BUTTON_COLOR,
+                     WebkitMaskImage: 'url(/assets/play-button.png)',
+                     maskImage: 'url(/assets/play-button.png)',
+                     WebkitMaskSize: 'contain',
+                     maskSize: 'contain',
+                     WebkitMaskRepeat: 'no-repeat',
+                     maskRepeat: 'no-repeat',
+                     WebkitMaskPosition: 'center',
+                     maskPosition: 'center',
+                   }}
                  />
                </button>
              )}

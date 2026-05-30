@@ -12,6 +12,9 @@ export const LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX = 32;
 /** Expanded overlay TV size multiplier (1 = full computed size). */
 export const LOUNGE_TV_OVERLAY_SIZE_SCALE = 0.896;
 
+/** Lobby lounge TV play control tint (white PNG masked to this color). */
+export const LOUNGE_TV_PLAY_BUTTON_COLOR = '#535453';
+
 /** Matches affiliate photo delete control (`account/affiliate/page.tsx`). */
 export const AFFILIATE_CLOSE_ICON_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';

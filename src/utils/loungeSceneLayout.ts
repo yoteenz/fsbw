@@ -7,6 +7,6 @@ export const LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX = 1024;
 /** Default Y nudge from viewport center (mobile / tablet). */
 export const LOUNGE_SALON_CHAIRS_OFFSET_Y_PX = 290;
 /** Extra downward nudge on large screens only (added to offset above). */
-export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 52;
+export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 62;
 export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 160;
 export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 25;
