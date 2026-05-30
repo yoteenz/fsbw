@@ -16,6 +16,7 @@ import {
   loungeTvDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
+import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 
 const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
@@ -435,17 +436,29 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           closeVisible={animatedIn}
           onClose={() => requestClose()}
           screenStyle={{
-            opacity: showContent ? 1 : 0,
-            transition: showContent ? 'opacity 280ms ease' : 'none',
+            opacity: animatedIn ? 1 : 0,
+            transition: animatedIn ? 'opacity 220ms ease' : 'none',
           }}
         >
+          <LoungeTvPowerOnStatic active={animatedIn && !showContent} />
           {showContent ? (
-            <LoungeTvScreen
-              mainTab={mainTab}
-              sidebarId={sidebarId}
-              onMainTabChange={handleMainTab}
-              onSidebarChange={setSidebarId}
-            />
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 6,
+                width: '100%',
+                height: '100%',
+                opacity: 1,
+                animation: 'lounge-tv-content-in 0.35s ease forwards',
+              }}
+            >
+              <LoungeTvScreen
+                mainTab={mainTab}
+                sidebarId={sidebarId}
+                onMainTabChange={handleMainTab}
+                onSidebarChange={setSidebarId}
+              />
+            </div>
           ) : null}
         </LoungeTvFrame>
       </div>

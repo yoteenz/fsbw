@@ -4266,3 +4266,116 @@ html[data-loading-screen='true'] #root {
     ) !important;
   }
 }
+
+/* Lounge TV overlay — CRT static before menu content loads */
+.lounge-tv-power-on-static {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  background: #0c0c0c;
+  transform-origin: center center;
+  pointer-events: none;
+  animation: lounge-tv-power-on-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.lounge-tv-power-on-static--out {
+  animation: lounge-tv-power-on-fade 0.28s ease forwards;
+}
+
+.lounge-tv-power-on-static__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  opacity: 0.88;
+}
+
+.lounge-tv-power-on-static__noise {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  opacity: 0.35;
+  background: #808080;
+  animation: lounge-tv-static-jitter 0.14s steps(4) infinite;
+}
+
+.lounge-tv-power-on-static__svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.lounge-tv-power-on-static__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  opacity: 0.45;
+}
+
+.lounge-tv-power-on-static__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes lounge-tv-power-on-reveal {
+  0% {
+    transform: scaleY(0.035) scaleX(0.9);
+    opacity: 0.55;
+  }
+  35% {
+    transform: scaleY(0.55) scaleX(0.98);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes lounge-tv-power-on-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lounge-tv-static-jitter {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2%, 1%);
+  }
+  50% {
+    transform: translate(1%, -1%);
+  }
+  75% {
+    transform: translate(2%, 2%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes lounge-tv-content-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
