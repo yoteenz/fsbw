@@ -15,7 +15,7 @@ export function LoungeTvRemoteHand({ visible }: LoungeTvRemoteHandProps) {
       style={{
         position: 'fixed',
         left: '50%',
-        bottom: 'max(10px, env(safe-area-inset-bottom, 0px))',
+        bottom: 'calc(max(10px, env(safe-area-inset-bottom, 0px)) - 20px)',
         width: 'min(38vw, 240px)',
         maxWidth: 'calc(100vw - 32px)',
         height: 'auto',

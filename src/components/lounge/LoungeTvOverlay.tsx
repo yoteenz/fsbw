@@ -7,15 +7,25 @@ import {
   loungeTvAcademyMessage,
   type LoungeTvMainTab,
 } from './loungeTvContent';
-import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
+import {
+  LOUNGE_CURTAIN_LEFT_SRC,
+  LOUNGE_CURTAIN_RIGHT_SRC,
+  LOUNGE_TV_FRAME_SRC,
+  LOUNGE_TV_REMOTE_HAND_SRC,
+} from './loungeTvAssets';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 
 const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
 const CURTAIN_PANEL_WIDTH = '54vw';
-/** Bezel around the glass area so the overlay reads as a TV, not a floating black card. */
-const TV_BEZEL = { top: 11, right: 11, bottom: 16, left: 11 };
+/** `tv-screen.png` natural aspect (964×568). */
+const LOUNGE_TV_FRAME_ASPECT = 964 / 568;
+/** UI layer inset over the screen area of `tv-screen.png`. */
+const LOUNGE_TV_SCREEN_INSET = { top: '6%', right: '5.5%', bottom: '12%', left: '5.5%' };
+/** Matches affiliate photo delete control (`account/affiliate/page.tsx`). */
+const AFFILIATE_CLOSE_ICON_FILTER =
+  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
 type LoungeTvOverlayProps = {
   isOpen: boolean;
@@ -307,6 +317,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     Promise.all([
       preloadImage(LOUNGE_CURTAIN_LEFT_SRC),
       preloadImage(LOUNGE_CURTAIN_RIGHT_SRC),
+      preloadImage(LOUNGE_TV_FRAME_SRC),
       preloadImage(LOUNGE_TV_REMOTE_HAND_SRC),
     ]).then(() => {
       if (!cancelled) setCurtainsReady(true);
@@ -357,50 +368,47 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const targetW = Math.min(vw * 0.92, 380);
-  const targetH = Math.min(vh * 0.58, targetW * 0.72);
-  const targetLeft = (vw - targetW) / 2;
-  const targetTop = (vh - targetH) / 2;
+  let targetFrameW = Math.min(vw * 0.92, 400);
+  let targetFrameH = targetFrameW / LOUNGE_TV_FRAME_ASPECT;
+  if (targetFrameH > vh * 0.62) {
+    targetFrameH = vh * 0.62;
+    targetFrameW = targetFrameH * LOUNGE_TV_FRAME_ASPECT;
+  }
+  const frameLeft = (vw - targetFrameW) / 2;
+  const frameTop = (vh - targetFrameH) / 2;
 
-  const startW = originRect ? Math.max(originRect.width, 40) : targetW * 0.28;
-  const startH = originRect ? Math.max(originRect.height, 30) : targetH * 0.28;
-  const startLeft = originRect ? originRect.left + originRect.width / 2 - startW / 2 : targetLeft;
-  const startTop = originRect ? originRect.top + originRect.height / 2 - startH / 2 : targetTop;
-
-  const frameW = targetW + TV_BEZEL.left + TV_BEZEL.right;
-  const frameH = targetH + TV_BEZEL.top + TV_BEZEL.bottom;
-  const frameLeft = (vw - frameW) / 2;
-  const frameTop = (vh - frameH) / 2;
-  const startFrameW = startW + TV_BEZEL.left + TV_BEZEL.right;
-  const startFrameH = startH + TV_BEZEL.top + TV_BEZEL.bottom;
-  const startFrameLeft = startLeft - TV_BEZEL.left;
-  const startFrameTop = startTop - TV_BEZEL.top;
+  const startFrameW = originRect ? Math.max(originRect.width, 40) : targetFrameW * 0.28;
+  const startFrameH = originRect ? Math.max(originRect.height, 30) : targetFrameH * 0.28;
+  const startFrameLeft = originRect
+    ? originRect.left + originRect.width / 2 - startFrameW / 2
+    : frameLeft;
+  const startFrameTop = originRect
+    ? originRect.top + originRect.height / 2 - startFrameH / 2
+    : frameTop;
 
   const frameStyle: React.CSSProperties = {
     position: 'fixed',
     zIndex: 110,
     boxSizing: 'border-box',
-    padding: `${TV_BEZEL.top}px ${TV_BEZEL.right}px ${TV_BEZEL.bottom}px ${TV_BEZEL.left}px`,
-    background: 'linear-gradient(165deg, #454545 0%, #262626 38%, #121212 100%)',
-    borderRadius: 0,
-    border: '1px solid #0a0a0a',
-    boxShadow:
-      '0 14px 42px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 4px rgba(0,0,0,0.45)',
+    overflow: 'visible',
+    background: 'transparent',
+    boxShadow: '0 14px 42px rgba(0,0,0,0.55)',
     transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
     left: animatedIn ? frameLeft : startFrameLeft,
     top: animatedIn ? frameTop : startFrameTop,
-    width: animatedIn ? frameW : startFrameW,
-    height: animatedIn ? frameH : startFrameH,
+    width: animatedIn ? targetFrameW : startFrameW,
+    height: animatedIn ? targetFrameH : startFrameH,
   };
 
   const screenStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#000000',
+    position: 'absolute',
+    top: LOUNGE_TV_SCREEN_INSET.top,
+    right: LOUNGE_TV_SCREEN_INSET.right,
+    bottom: LOUNGE_TV_SCREEN_INSET.bottom,
+    left: LOUNGE_TV_SCREEN_INSET.left,
     boxSizing: 'border-box',
     overflow: 'hidden',
-    borderRadius: 0,
-    boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06)',
+    backgroundColor: '#000000',
   };
 
   return createPortal(
@@ -425,6 +433,19 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       <LoungeCurtainPanel side="right" closed={animatedIn} />
       <LoungeTvRemoteHand visible={showContent} />
       <div style={frameStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
+        <img
+          src={LOUNGE_TV_FRAME_SRC}
+          alt=""
+          draggable={false}
+          aria-hidden
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+        />
         <button
           type="button"
           aria-label="Close lounge TV"
@@ -434,15 +455,21 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           }}
           style={{
             position: 'absolute',
-            top: 6,
-            right: 6,
+            top: -10,
+            right: -10,
             zIndex: 3,
+            width: 22,
+            height: 22,
             margin: 0,
-            padding: 6,
-            border: 'none',
-            background: 'transparent',
+            padding: 0,
+            border: '0.97px solid #000000',
+            borderRadius: '50%',
+            backgroundColor: '#FFFFFF',
             cursor: 'pointer',
-            lineHeight: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
             WebkitTapHighlightColor: 'transparent',
             touchAction: 'manipulation',
             opacity: animatedIn ? 1 : 0,
@@ -450,7 +477,18 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
             transition: 'opacity 200ms ease',
           }}
         >
-          <img src="/assets/close-icon.svg" alt="" width={16} height={16} draggable={false} />
+          <img
+            src="/assets/close-icon.svg"
+            alt=""
+            width={12}
+            height={12}
+            draggable={false}
+            style={{
+              display: 'block',
+              objectFit: 'contain',
+              filter: AFFILIATE_CLOSE_ICON_FILTER,
+            }}
+          />
         </button>
         <div
           style={{
