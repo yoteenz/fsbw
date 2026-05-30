@@ -21839,6 +21839,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-30 — Units pages: +2px around red RAW line
+
+**Change:** **`units/straight`**, **`units/wavy`**, **`units/curly`** — red **`{length} RAW {origin}`** line margin **`0 0 5px` → `2px 0 7px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-05-30 — BCF PDP default hair length 16"
 
 **Change:** **`BCF_DEFAULT_LENGTH_ID = '16"'`** in **`bcfProductOptions.ts`**; **`texture-category-product/page.tsx`** initial **`bcfLength`** uses it (was **`24"`**). Base price on load reflects 16" length adjustment (−$50 vs 24"). Pushed **`master`** + **`preview/mobile`**.
