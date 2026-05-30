@@ -1364,7 +1364,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               textTransform: 'uppercase',
                               marginBottom: '10px',
                               lineHeight: 1.44,
-                              // BCF detail lines (e.g. TREATMENT: PLUCK, BLEACH/TINT) must stay on one row:
+                              // BCF detail lines (e.g. TREATMENT: PLUCK + BLEACH/TINT) must stay on one row:
                               // drop the right cap + let it use the full (widened) column with no wrap.
                               ...(item.type === 'shop-texture-category'
                                 ? { fontSize: '8px', whiteSpace: 'nowrap', marginRight: '0', maxWidth: 'none', wordBreak: 'normal' }
