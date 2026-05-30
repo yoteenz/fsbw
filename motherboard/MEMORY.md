@@ -21641,3 +21641,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** On `/wishlist/lists` overview **line** view, move red **EDIT LIST NAME** down **2px** (no override fights). On expanded list **line** view, reduce space above gray **VIEW DETAILS** by **1px** (lists page only).
 
 **Change:** `index.css` — `.wishlist-lists-overview-edit-list-name-wrap` **`margin-top` `-2px` → `0`** (`!important`). `.wishlist-expanded-list-view-details-toggle--list-view-only` **`margin-top` `-2px` → `-3px`** (VIEW DETAILS only; CLOSE DETAILS unchanged). `lists/page.tsx` — **`LIST_OVERVIEW_EDIT_NAME_STYLE`** sets **`margin: 0`**, **`position: static`** so inline style does not fight wrap. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
+
+**Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
+
+**Change:** **`adminUnitStockNotifyWaitlist.ts`** — **`buildWaitlistCatalogSections`**, **`enrichWaitlistGroupsWithMockSignups`** (2 mock emails per SKU, deduped). **`view-waitlist/page.tsx`** — meetings-style summary tiles, white category panels, panel swap + **`WaitlistSignupTable`**. **`lists/page.tsx`** — single **`listsViewMode`** in **`sessionStorage`** (`wishlist_lists_view_mode`) for overview + expanded. Pushed `master` + `preview/mobile`.
