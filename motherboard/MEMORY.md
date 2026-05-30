@@ -22147,3 +22147,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Chairs fix:** **`loungePageMinHeightCss()`** = **`max(105vh, art height)`** on lounge page + carousel slide. Background layer height = full art height; removed **`contain`**. Large screens (**1024px+**): **`top: calc(artHeight * 0.538)`**, **`translateY(-100% + 82px)`**; mobile keeps viewport-center **`290px`** offset.
 
 **Files:** **`loungeSceneLayout.ts`**, **`LoungeTvOverlay.tsx`**, **`LoungeTvRemoteHand.tsx`**, **`src/pages/lobby/page.tsx`**. Commit **`62c3b39a`** on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Lounge TV open sequence: grow + hand, static, content
+
+**Context:** User wanted explicit order: **press play → TV enlarges while hand slowly appears → static (hand “turned on” TV) → content on TV**.
+
+**Change:** **`LoungeTvOverlay`** phases: (1) preload curtains + hand; (2) **`animatedIn`** starts grow + **`LoungeTvRemoteHand`** fade over **`ANIM_MS`** (1400ms); (3) after grow, **`showStatic`** CRT for **`STATIC_PHASE_MS`**; (4) **`showContent`** menu. Static no longer runs during TV grow (black screen only). Hand stays visible through static and content. **`LoungeTvRemoteHand`** accepts **`revealDurationMs`** synced to TV grow.
