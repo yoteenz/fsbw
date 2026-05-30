@@ -601,8 +601,7 @@ export default function ShopTextureCategoryProductPage() {
           name: cartLineName,
           price: displayPrice,
           quantity: 1,
-          image:
-            category === 'bundles' ? shopTextureCategoryThumbSrc(texture, 'bundles') : heroThumbSrc,
+          image: heroThumbSrc,
           type: 'shop-texture-category',
           texture,
           category,
@@ -649,7 +648,7 @@ export default function ShopTextureCategoryProductPage() {
           name: cartLineName,
           price: unitPrice,
           quantity: BUNDLE_DEAL_QTY,
-          image: shopTextureCategoryThumbSrc(texture, 'bundles'),
+          image: BUNDLE_PHOTO_BY_TEXTURE[texture],
           type: 'shop-texture-category',
           texture,
           category: 'bundles' as const,
@@ -1930,7 +1929,7 @@ export default function ShopTextureCategoryProductPage() {
                           {otherTextures.map((ot) => {
                             const om = TEXTURE_META[ot];
                             const simTitle = `${om.label} ${categoryTitle}`;
-                            const simThumbSrc = shopTextureCategoryThumbSrc(ot, category);
+                            const simThumbSrc = bcfHeroThumbSrcForTexture(ot);
                             return (
                               <div
                                 key={ot}
