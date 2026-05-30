@@ -21991,3 +21991,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Refresh while on lounge slide reset carousel to lobby ( **`currentPage`** always 0).
 
 **Fix:** **`lobbyCarouselRoutes.ts`** — **`/lobby`** vs **`/lobby/lounge`**; **`LobbyApp`** derives slide from **`useLocation()`** and updates URL on arrow/swipe. **`/lounge`** → redirect **`/lobby/lounge`**. Refresh on lounge keeps lounge centered.
+
+---
+
+## 2026-05-30 — Lounge curtains: stronger bottom cover (white hem)
+
+**Context:** White still visible between pleats at bottom after 1.1× scale.
+
+**Change:** **`LoungeTvOverlay`** curtains **1.22×** scale, **128%** height / **114%** width anchored bottom, panel bg **`#4a4a4a`**, bottom gradient hem.
