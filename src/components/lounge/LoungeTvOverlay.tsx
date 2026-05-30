@@ -295,8 +295,15 @@ function LoungeTvScreen({
 function preloadImage(src: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
-    img.onload = () => resolve();
-    img.onerror = () => resolve();
+    const done = () => resolve();
+    img.onload = () => {
+      if (typeof img.decode === 'function') {
+        img.decode().then(done).catch(done);
+      } else {
+        done();
+      }
+    };
+    img.onerror = done;
     img.src = src;
   });
 }
@@ -305,6 +312,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const [visible, setVisible] = useState(false);
   const [animatedIn, setAnimatedIn] = useState(false);
   const [curtainsReady, setCurtainsReady] = useState(false);
+  const [remoteHandReady, setRemoteHandReady] = useState(false);
+  const [staticPhaseDone, setStaticPhaseDone] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [poweringOff, setPoweringOff] = useState(false);
   const isClosingRef = useRef(false);
@@ -338,6 +347,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   useEffect(() => {
     if (!isOpen) {
       setShowContent(false);
+      setStaticPhaseDone(false);
+      setRemoteHandReady(false);
       setPoweringOff(false);
       setAnimatedIn(false);
       isClosingRef.current = false;
@@ -346,13 +357,14 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     isClosingRef.current = false;
     setPoweringOff(false);
     setCurtainsReady(false);
+    setRemoteHandReady(false);
+    setStaticPhaseDone(false);
     let cancelled = false;
-    Promise.all([
-      preloadImage(LOUNGE_CURTAIN_LEFT_SRC),
-      preloadImage(LOUNGE_CURTAIN_RIGHT_SRC),
-      preloadImage(LOUNGE_TV_REMOTE_HAND_SRC),
-    ]).then(() => {
+    Promise.all([preloadImage(LOUNGE_CURTAIN_LEFT_SRC), preloadImage(LOUNGE_CURTAIN_RIGHT_SRC)]).then(() => {
       if (!cancelled) setCurtainsReady(true);
+    });
+    preloadImage(LOUNGE_TV_REMOTE_HAND_SRC).then(() => {
+      if (!cancelled) setRemoteHandReady(true);
     });
     return () => {
       cancelled = true;
@@ -364,6 +376,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     const timer = window.setTimeout(() => {
       setVisible(false);
       setCurtainsReady(false);
+      setStaticPhaseDone(false);
+      setRemoteHandReady(false);
     }, ANIM_MS);
     return () => window.clearTimeout(timer);
   }, [isOpen, visible]);
@@ -381,10 +395,22 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   useEffect(() => {
     if (!isOpen || !animatedIn || !curtainsReady || isClosingRef.current || poweringOff) return;
     const timer = window.setTimeout(() => {
-      if (!isClosingRef.current && !poweringOff) setShowContent(true);
+      if (!isClosingRef.current && !poweringOff) setStaticPhaseDone(true);
     }, ANIM_MS);
     return () => window.clearTimeout(timer);
   }, [isOpen, animatedIn, curtainsReady, poweringOff]);
+
+  useEffect(() => {
+    if (!staticPhaseDone || !remoteHandReady || isClosingRef.current || poweringOff) {
+      if (!isOpen) setShowContent(false);
+      return;
+    }
+    setShowContent(true);
+  }, [staticPhaseDone, remoteHandReady, isOpen, poweringOff]);
+
+  const handleRemoteHandLoaded = useCallback(() => {
+    setRemoteHandReady(true);
+  }, []);
 
   useEffect(() => {
     if (!visible) return;
@@ -459,7 +485,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       />
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
-      <LoungeTvRemoteHand visible={showContent && !poweringOff} />
+      <LoungeTvRemoteHand
+        visible={showContent && !poweringOff}
+        onLoaded={handleRemoteHandLoaded}
+      />
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
         <LoungeTvFrame
           fill

@@ -2,16 +2,18 @@ import { LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 
 type LoungeTvRemoteHandProps = {
   visible: boolean;
+  onLoaded?: () => void;
 };
 
 /** Hand + remote composited at bottom of viewport (chroma-keyed asset). */
-export function LoungeTvRemoteHand({ visible }: LoungeTvRemoteHandProps) {
+export function LoungeTvRemoteHand({ visible, onLoaded }: LoungeTvRemoteHandProps) {
   return (
     <img
       src={LOUNGE_TV_REMOTE_HAND_SRC}
       alt=""
       aria-hidden
       draggable={false}
+      onLoad={onLoaded}
       style={{
         position: 'fixed',
         left: '50%',

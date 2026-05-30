@@ -19,6 +19,8 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import {
+  loungeBackgroundArtHeightCss,
+  loungePageMinHeightCss,
   loungeSalonChairsAnchorStyle,
   loungeSalonChairsImageStyle,
   useLoungeLargeViewport,
@@ -493,7 +495,7 @@ const LoungePage: React.FC = () => {
     <div
       className="bg-white relative lounge-page"
       style={{
-        minHeight: '105vh',
+        minHeight: loungePageMinHeightCss(),
         width: '100vw',
         overflow: 'visible',
         display: 'block',
@@ -510,16 +512,14 @@ const LoungePage: React.FC = () => {
           top: 0, 
           left: 0, 
           right: 0,
-          bottom: 0,
           width: '100%',
-          height: '100%',
+          height: loungeBackgroundArtHeightCss(),
           backgroundImage: 'url(/assets/landing2-background.png)',
           backgroundSize: '100% auto',
           backgroundPosition: 'center top',
           backgroundRepeat: 'no-repeat',
           backgroundColor: 'white',
           willChange: 'auto',
-          contain: 'layout style paint'
         }}
       />
       
@@ -862,7 +862,7 @@ const LobbyApp: React.FC = () => {
               style={{
                 width: '100vw',
                 flexShrink: 0,
-                minHeight: index === 0 ? '100vh' : '105vh',
+                minHeight: index === 0 ? '100vh' : loungePageMinHeightCss(),
               }}
             >
               {page}

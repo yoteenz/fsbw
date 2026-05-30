@@ -5,6 +5,19 @@ import type React from 'react';
 export const LOUNGE_BG_REFERENCE_WIDTH = 1560;
 export const LOUNGE_BG_REFERENCE_HEIGHT = 3376;
 
+/** Vertical position of salon chair bases on the background art (0–1 from top). */
+export const LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO = 0.538;
+
+/** Rendered height when background is `background-size: 100% auto`. */
+export function loungeBackgroundArtHeightCss(): string {
+  return `calc(100vw * ${LOUNGE_BG_REFERENCE_HEIGHT} / ${LOUNGE_BG_REFERENCE_WIDTH})`;
+}
+
+/** Lounge slide must be at least viewport and full art height so floor anchors work. */
+export function loungePageMinHeightCss(): string {
+  return `max(105vh, ${loungeBackgroundArtHeightCss()})`;
+}
+
 /** Lounge salon chairs placement (inline styles on lounge page — not index.css). */
 export const LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX = 1024;
 /** Default Y nudge from viewport center (mobile / tablet). */
@@ -36,14 +49,25 @@ export function useLoungeLargeViewport(): boolean {
 
 /** Anchor box for salon chairs — must be inline (index.css used !important and blocked TS/CSS var updates). */
 export function loungeSalonChairsAnchorStyle(isLargeViewport: boolean): React.CSSProperties {
-  const offsetY = isLargeViewport ? LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX : LOUNGE_SALON_CHAIRS_OFFSET_Y_PX;
-  return {
+  const base: React.CSSProperties = {
     position: 'absolute',
-    top: '50%',
     left: '50%',
     zIndex: 10,
     width: 'fit-content',
-    transform: `translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-50% + ${offsetY}px))`,
+  };
+
+  if (!isLargeViewport) {
+    return {
+      ...base,
+      top: '50%',
+      transform: `translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX}px))`,
+    };
+  }
+
+  return {
+    ...base,
+    top: `calc(${loungeBackgroundArtHeightCss()} * ${LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO})`,
+    transform: `translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-100% + ${LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX}px))`,
   };
 }
 
