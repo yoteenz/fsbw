@@ -21,9 +21,14 @@ const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
 const CURTAIN_PANEL_WIDTH = '54vw';
-/** Overscan curtain art so the hem covers the viewport bottom (no panel/gradient strip). */
-const CURTAIN_IMAGE_WIDTH = '112%';
-const CURTAIN_IMAGE_HEIGHT = '132%';
+/** Velvet tone — must match curtain art so any sliver at the hem is invisible. */
+const CURTAIN_PANEL_BG = '#4a4a4a';
+/** Extra length below 100dvh for mobile browser chrome / safe-area gaps. */
+const CURTAIN_PANEL_BOTTOM_BLEED_PX = 48;
+/** Overscan curtain art so the hem covers the viewport bottom (no panel strip). */
+const CURTAIN_IMAGE_WIDTH = '114%';
+const CURTAIN_IMAGE_HEIGHT = '142%';
+const CURTAIN_IMAGE_SCALE = 1.1;
 
 type LoungeTvOverlayProps = {
   isOpen: boolean;
@@ -35,12 +40,12 @@ function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSPr
   return {
     position: 'fixed',
     top: 0,
-    bottom: 0,
-    minHeight: '100dvh',
+    bottom: `-${CURTAIN_PANEL_BOTTOM_BLEED_PX}px`,
+    minHeight: `calc(100dvh + ${CURTAIN_PANEL_BOTTOM_BLEED_PX}px + env(safe-area-inset-bottom, 0px))`,
     width: CURTAIN_PANEL_WIDTH,
     zIndex: 100,
     overflow: 'hidden',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: CURTAIN_PANEL_BG,
     boxShadow: side === 'left' ? '6px 0 28px rgba(0,0,0,0.35)' : '-6px 0 28px rgba(0,0,0,0.35)',
     transition: `transform ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
     transform:
@@ -66,7 +71,7 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
         draggable={false}
         style={{
           position: 'absolute',
-          bottom: '-1px',
+          bottom: `-${Math.round(CURTAIN_PANEL_BOTTOM_BLEED_PX * 0.35)}px`,
           left: isLeft ? 0 : undefined,
           right: isLeft ? undefined : 0,
           width: CURTAIN_IMAGE_WIDTH,
@@ -75,7 +80,9 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
           display: 'block',
           objectFit: 'cover',
           objectPosition: isLeft ? 'left bottom' : 'right bottom',
-          transform: isLeft ? 'translateX(-3%)' : 'translateX(3%)',
+          transform: isLeft
+            ? `translateX(-3%) scale(${CURTAIN_IMAGE_SCALE})`
+            : `translateX(3%) scale(${CURTAIN_IMAGE_SCALE})`,
           transformOrigin: isLeft ? 'left bottom' : 'right bottom',
           pointerEvents: 'none',
           userSelect: 'none',

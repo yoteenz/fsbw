@@ -22037,3 +22037,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Gray horizontal band at bottom of curtain overlay (hem gradient + **`#4a4a4a`** panel showing).
 
 **Change:** **`LoungeTvOverlay`** — removed bottom gradient div; fabric **132%** height overscan; panel fallback **`#1a1a1a`**; **`minHeight: 100dvh`** on panels.
+
+---
+
+## 2026-05-30 — Lounge curtains: fix dark gray hem band (follow-up)
+
+**Context (full chat):** Lounge TV overlay with theater curtains; user reported a **weird gray strip** at the bottom of the curtains (after prior fix removed hem gradient but left a visible band on mobile).
+
+**Cause:** Panel fallback was changed to **`#1a1a1a`** (much darker than medium-gray velvet). When **`100dvh`** did not reach the true viewport bottom (mobile chrome / safe area), that dark panel color read as a full-width horizontal strip.
+
+**Change:** **`LoungeTvOverlay`** — restore velvet-matched **`CURTAIN_PANEL_BG`** **`#4a4a4a`**; extend panels with **`CURTAIN_PANEL_BOTTOM_BLEED_PX`** (48px) via negative **`bottom`** + **`calc(100dvh + bleed + safe-area)`**; fabric overscan **142%** height, **114%** width, **`scale(1.1)`** bottom-anchored (no gradient overlay).
