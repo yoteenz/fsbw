@@ -21745,3 +21745,17 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** Gray strips above/below BCF art inside black frames on **`/wishlist/lists`** (overview + expanded line/grid).
 
 **Change:** **`LISTS_PAGE_BCF_THUMB_FRAME_BG` `#FFFFFF`** on **`WishlistListOverviewThumb`** + **`WishlistItemThumb`** (`bcfFrameBackgroundColor`, lists page only). Inset ring + frame background match. Shared/main wishlist unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Bundles PDP straight VIDEO hero (Supabase .mov)
+
+**Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_VIDEO_BY_TEXTURE.straight`** → Supabase **`make_this_image_shake_the_hair_Kling_30__36738.mov`** on **`/shop/bundles`** only; wavy/curly videos unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF PDP VIDEO: no photo underlay, hero-sized video
+
+**Context:** On bundles (and BCF) PDP, VIDEO mode showed PHOTO behind a smaller video.
+
+**Change:** **`texture-category-product/page.tsx`** — removed JPG underlay; **`poster`** only while buffering; **`bcfPdpHeroVideoStyle`** fills hero slot (`width` + `height: 100%`, `object-fit: contain`); bundles **straight** **`scale(1.22)`** for Kling `.mov`. Pushed `master` + `preview/mobile`.
