@@ -21767,3 +21767,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** With VIEW DETAILS open, QTY + remove + CLOSE DETAILS sat at row top; compact list had them vertically centered on the 120px row.
 
 **Change:** **`CartDropdown.tsx`** — **`CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX` (30)** on right column when details open. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-30 — Bundles straight VIDEO not loading (Supabase 404 + local fallback)
+
+**Context:** Straight bundle VIDEO on `/shop/bundles` did not play; Supabase URL returned **404 Object not found** (file not in `live-preview` bucket at that path).
+
+**Change:** **`texture-category-product/page.tsx`** — keep **`BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC`** as primary; **`onError`** → **`/assets/straight-bundle-video.MP4`**; reset remote URL when re-opening VIDEO / switching texture. Pushed `master` + `preview/mobile`.
