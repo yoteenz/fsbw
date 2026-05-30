@@ -332,7 +332,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </span>
         <span
           style={{
-            fontFamily: BODY_FONT,
+            fontFamily: TIME_FONT,
             fontSize: '7px',
             letterSpacing: '0.06em',
             color: BRAND_RED,
