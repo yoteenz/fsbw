@@ -153,7 +153,7 @@ function LoungeTvScreen({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '10px 8px 12px',
+        padding: '10px 10px 12px 18px',
         boxSizing: 'border-box',
         overflow: 'hidden',
       }}
@@ -162,8 +162,8 @@ function LoungeTvScreen({
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'space-between',
-          gap: '6px 4px',
+          justifyContent: 'flex-start',
+          gap: '6px 10px',
           marginBottom: '10px',
           flexShrink: 0,
         }}
