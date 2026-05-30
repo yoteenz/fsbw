@@ -123,6 +123,23 @@ export const marbleStripTextCol: CSSProperties = {
   boxSizing: 'border-box',
 };
 
+/** Class for similar / recently viewed black price — +2px top in index.css (beats inline margin shorthand). */
+export const MARBLE_STRIP_PRODUCT_PRICE_CLASS = 'marble-strip-product-price';
+
+/** Default black price line styles for marble strips (margin top applied via class). */
+export function marbleStripProductPriceStyle(extra?: CSSProperties): CSSProperties {
+  return {
+    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+    fontSize: '12px',
+    color: 'black',
+    textTransform: 'uppercase',
+    margin: '0 0 5px 0',
+    fontWeight: '500',
+    lineHeight: '0.84',
+    ...extra,
+  };
+}
+
 /**
  * Nav row: full width of the backdrop card. Side arrows are `position: absolute` (see
  * `marbleStripNavArrowStyle`) so they do not steal main-axis space — the middle column

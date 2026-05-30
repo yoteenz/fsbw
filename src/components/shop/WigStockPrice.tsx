@@ -142,19 +142,24 @@ export function WigStripPrice({
   style,
   priceHtml,
   children,
+  className,
 }: {
   productName?: string;
   soldOut?: boolean;
   style?: CSSProperties;
   priceHtml?: PriceHtml;
   children?: ReactNode;
+  className?: string;
 }) {
   const soldOut = soldOutProp ?? (productName ? isWigUnitSoldOut(productName) : false);
   const finalStyle: CSSProperties | undefined = soldOut
     ? { ...style, color: '#808080', textDecoration: 'line-through', margin: style?.margin ?? 0 }
     : style;
-  if (priceHtml) return <p style={finalStyle} dangerouslySetInnerHTML={priceHtml} />;
-  return <p style={finalStyle}>{children}</p>;
+  const priceClassName = ['marble-strip-product-price', className].filter(Boolean).join(' ');
+  if (priceHtml) {
+    return <p className={priceClassName} style={finalStyle} dangerouslySetInnerHTML={priceHtml} />;
+  }
+  return <p className={priceClassName} style={finalStyle}>{children}</p>;
 }
 
 export function WigOutOfStockActionLabel({

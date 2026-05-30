@@ -51,7 +51,9 @@ import {
   marbleStripTextColStrip,
   marbleStripThumbImg,
   marbleStripThumbWrap,
-  marbleStripViewportStyle
+  marbleStripViewportStyle,
+  MARBLE_STRIP_PRODUCT_PRICE_CLASS,
+  marbleStripProductPriceStyle,
 } from '../../../utils/marbleStripStyles';
 
 type Texture = 'straight' | 'wavy' | 'curly';
@@ -1960,15 +1962,8 @@ export default function ShopTextureCategoryProductPage() {
                                       {categoryTitle} · RAW HUMAN HAIR
                                     </p>
                                     <p
-                                      style={{
-                                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                                        fontSize: '12px',
-                                        color: 'black',
-                                        textTransform: 'uppercase',
-                                        margin: '0 0 5px 0',
-                                        fontWeight: '500',
-                                        lineHeight: '0.84'
-                                      }}
+                                      className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
+                                      style={marbleStripProductPriceStyle()}
                                       dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
                                     />
                                     <div style={marbleStripStarsRowStyle(false)}>
@@ -2140,16 +2135,10 @@ export default function ShopTextureCategoryProductPage() {
                               24&quot; RAW INDONESIAN
                             </p>
                             <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '12px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(-1px)'
-                              }}
+                              className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
+                              style={marbleStripProductPriceStyle({
+                                transform: 'translateX(10px) translateY(-1px)',
+                              })}
                               dangerouslySetInnerHTML={formatPrice(760)}
                             />
                             <div
@@ -2235,16 +2224,10 @@ export default function ShopTextureCategoryProductPage() {
                               24&quot; RAW FILIPINO
                             </p>
                             <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '12px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(-1px)'
-                              }}
+                              className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
+                              style={marbleStripProductPriceStyle({
+                                transform: 'translateX(10px) translateY(-1px)',
+                              })}
                               dangerouslySetInnerHTML={formatPrice(780)}
                             />
                             <div
@@ -2330,16 +2313,10 @@ export default function ShopTextureCategoryProductPage() {
                               24&quot; RAW CAMBODIAN
                             </p>
                             <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '12px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(-1px)'
-                              }}
+                              className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
+                              style={marbleStripProductPriceStyle({
+                                transform: 'translateX(10px) translateY(-1px)',
+                              })}
                               dangerouslySetInnerHTML={formatPrice(740)}
                             />
                             <div
@@ -2425,16 +2402,10 @@ export default function ShopTextureCategoryProductPage() {
                               24&quot; RAW RUSSIAN
                             </p>
                             <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '12px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(-1px)'
-                              }}
+                              className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
+                              style={marbleStripProductPriceStyle({
+                                transform: 'translateX(10px) translateY(-1px)',
+                              })}
                               dangerouslySetInnerHTML={formatPrice(820)}
                             />
                             <div

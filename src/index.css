@@ -4101,6 +4101,12 @@ p.bcf-bundles-pdp-product-name {
   padding: 0 !important;
 }
 
+/* Similar / recently viewed strips on product PDPs — +2px above black price */
+p.marble-strip-product-price,
+.marble-strip-product-price {
+  margin-top: 2px !important;
+}
+
 /* Main /wishlist page (account wishlist) — +2px above black price row */
 .cart-line-text-layer--price.wishlist-account-page-price-layer {
   margin-top: 2px !important;
