@@ -4,6 +4,7 @@ import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
   LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
+  LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG,
   LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL,
   LOBBY_PAYMENT_EXPRESS_LABEL,
   LOBBY_PAYMENT_PAY_OVER_TIME_LABEL,
@@ -152,6 +153,9 @@ function PaymentIconCell({
   maxHeightPx: number;
   justifySelf?: React.CSSProperties['justifySelf'];
 }) {
+  const tiltDeg =
+    icon.rotationDeg ?? (icon.id === 'klarna' ? LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG : 0);
+
   return (
     <div
       style={{
@@ -173,8 +177,8 @@ function PaymentIconCell({
           ...paymentLogoImgStyle,
           maxWidth: '100%',
           maxHeight: `${maxHeightPx}px`,
-          ...(icon.rotationDeg
-            ? { transform: `rotate(${icon.rotationDeg}deg)`, transformOrigin: 'center center' }
+          ...(tiltDeg
+            ? { transform: `rotate(${tiltDeg}deg)`, transformOrigin: 'center center' }
             : null),
         }}
       />

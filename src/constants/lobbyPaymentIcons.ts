@@ -70,7 +70,15 @@ const paypal = { id: 'paypal', label: 'PayPal', src: paymentIconPath('paypal') }
 const googlePay = { id: 'google-pay', label: 'Google Pay', src: paymentIconPath('google-pay') };
 const afterpay = { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afterpay') };
 const affirm = { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') };
-const klarna = { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') };
+/** Clockwise tilt in register popover — bottom-right lower than bottom-left. */
+export const LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG = 24;
+
+const klarna = {
+  id: 'klarna',
+  label: 'Klarna',
+  src: paymentIconPath('klarna'),
+  rotationDeg: LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG,
+};
 
 /** Register popover: three Bohemy-labeled single rows (cards, express, pay over time). */
 export const LOBBY_PAYMENT_POPOVER_LAYOUT: LobbyPaymentPopoverLayout = {
