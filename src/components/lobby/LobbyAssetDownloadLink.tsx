@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import { downloadAssetFile } from '../../utils/downloadAssetFile';
 
 const downloadLinkStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -32,15 +33,34 @@ export function LobbyAssetDownloadLink({
   falPrompt,
   style,
 }: LobbyAssetDownloadLinkProps) {
+  const [busy, setBusy] = useState(false);
+
+  const handleClick = useCallback(
+    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (busy) return;
+      setBusy(true);
+      try {
+        await downloadAssetFile(href, downloadFilename);
+      } catch {
+        window.open(href, '_blank', 'noopener,noreferrer');
+      } finally {
+        setBusy(false);
+      }
+    },
+    [busy, downloadFilename, href],
+  );
+
   return (
     <a
       href={href}
       download={downloadFilename}
       title={falPrompt ? `Fal prompt: ${falPrompt}` : `Download ${downloadFilename}`}
-      style={{ ...downloadLinkStyle, ...style }}
-      onClick={(e) => e.stopPropagation()}
+      style={{ ...downloadLinkStyle, ...style, opacity: busy ? 0.6 : 1 }}
+      onClick={handleClick}
     >
-      DOWNLOAD
+      {busy ? '…' : 'DOWNLOAD'}
     </a>
   );
 }
@@ -81,7 +101,11 @@ export function LobbyAssetDownloadAnchor({
         href={href}
         downloadFilename={downloadFilename}
         falPrompt={falPrompt}
-        style={{ position: 'absolute', ...placementStyle[placement] }}
+        style={{
+          position: 'absolute',
+          ...placementStyle[placement],
+          pointerEvents: 'auto',
+        }}
       />
     </div>
   );

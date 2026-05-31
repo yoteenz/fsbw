@@ -34,13 +34,26 @@ import {
   LOBBY_CASE_PHONE_DOWNLOAD_SRC,
   LOBBY_CASE_REGISTER_SRC,
   LOBBY_CASE_SRC,
+  LOBBY_NEON_BOOKING_FALLBACK_SRC,
+  LOBBY_NEON_BOOKING_SRC,
   LOBBY_NEON_LOGO_SRC,
+  LOBBY_NEON_PRODUCTS_SRC,
+  LOBBY_NEON_TOOLS_SRC,
   LOBBY_ROSE_BACKGROUND_SRC,
   LOBBY_SCENE_FAL_PROMPTS,
   LOBBY_SHELF_CUSTOM_SRC,
   LOBBY_SHELF_HD_SRC,
   LOBBY_SHELF_TRANSPARENT_SRC,
 } from '../../constants/lobbySceneAssets';
+import {
+  LOUNGE_CURTAIN_LEFT_SRC,
+  LOUNGE_CURTAIN_RIGHT_SRC,
+  LOUNGE_NEON_LOGO_SRC,
+  LOUNGE_ROSE_BACKGROUND_SRC,
+  LOUNGE_SALON_CHAIRS_SRC,
+  LOUNGE_SCENE_FAL_PROMPTS,
+  LOUNGE_TV_REMOTE_HAND_SRC,
+} from '../../constants/loungeSceneAssets';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_PHONE_POPOVER_SECTIONS,
@@ -123,7 +136,7 @@ const LobbyPage: React.FC = () => {
     navigate('/home/tools');
   }, [navigate]);
 
-  const [bookingNeonSrc, setBookingNeonSrc] = useState('/assets/neon-booking.png');
+  const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
 
   return (
@@ -146,16 +159,26 @@ const LobbyPage: React.FC = () => {
           willChange: 'auto',
           contain: 'layout style paint'
         }}
-      >
-        {showAssetDownloads ? (
+      />
+
+      {showAssetDownloads ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 8,
+            left: 8,
+            zIndex: 500,
+            pointerEvents: 'none',
+          }}
+        >
           <LobbyAssetDownloadLink
             href={LOBBY_ROSE_BACKGROUND_SRC}
             downloadFilename="landing-background.png"
             falPrompt={LOBBY_SCENE_FAL_PROMPTS.roseBackground}
-            style={{ position: 'absolute', top: 8, left: 8, zIndex: 200 }}
+            style={{ pointerEvents: 'auto' }}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
       
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
@@ -173,20 +196,22 @@ const LobbyPage: React.FC = () => {
           zIndex: 20,
           width: 'fit-content'
         }}>
-          <LobbyAssetDownloadAnchor
-            visible={showAssetDownloads}
-            href={LOBBY_NEON_LOGO_SRC}
-            downloadFilename="neon-logo.png"
-            falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonLogo}
-            placement="bottom-center"
-          >
-            <img 
+          <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={LOBBY_NEON_LOGO_SRC}
+                downloadFilename="neon-logo.png"
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonLogo}
+                style={{ position: 'absolute', top: 4, left: 0, zIndex: 60 }}
+              />
+            ) : null}
+            <img
               src={LOBBY_NEON_LOGO_SRC}
-              alt="Frontal Slayer" 
+              alt="Frontal Slayer"
               onClick={goToHomeShop}
               style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
-          </LobbyAssetDownloadAnchor>
+          </div>
         </div>
         
         {/* Navigation Links Container */}
@@ -224,8 +249,16 @@ const LobbyPage: React.FC = () => {
             }}
             aria-label="Go to shop"
           >
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={LOBBY_NEON_PRODUCTS_SRC}
+                downloadFilename="neon-products.png"
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonProducts}
+                style={{ position: 'absolute', top: -14, left: 0, zIndex: 50 }}
+              />
+            ) : null}
             <img
-              src="/assets/neon-products.png"
+              src={LOBBY_NEON_PRODUCTS_SRC}
               alt=""
               draggable={false}
               style={{
@@ -263,8 +296,16 @@ const LobbyPage: React.FC = () => {
             }}
             aria-label="Go to tools"
           >
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={LOBBY_NEON_TOOLS_SRC}
+                downloadFilename="neon-tools.png"
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonTools}
+                style={{ position: 'absolute', top: -14, left: 0, zIndex: 50 }}
+              />
+            ) : null}
             <img
-              src="/assets/neon-tools.png"
+              src={LOBBY_NEON_TOOLS_SRC}
               alt=""
               draggable={false}
               style={{
@@ -291,11 +332,21 @@ const LobbyPage: React.FC = () => {
               alignItems: 'center',
             }}
           >
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={bookingNeonSrc}
+                downloadFilename={
+                  bookingNeonSrc.endsWith('.svg') ? 'neon-booking.svg' : 'neon-booking.png'
+                }
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonBooking}
+                style={{ position: 'absolute', top: -14, right: 0, zIndex: 50 }}
+              />
+            ) : null}
             <img
               src={bookingNeonSrc}
               alt=""
               onError={() => {
-                if (bookingNeonSrc.endsWith('.png')) setBookingNeonSrc('/assets/neon-booking.svg');
+                if (bookingNeonSrc.endsWith('.png')) setBookingNeonSrc(LOBBY_NEON_BOOKING_FALLBACK_SRC);
               }}
               className="w-auto pointer-events-none select-none"
               style={{
@@ -584,7 +635,7 @@ const LobbyPage: React.FC = () => {
 // Lounge Component
 const LoungePage: React.FC = () => {
   const navigate = useNavigate();
-  console.log('LoungePage component is rendering');
+  const showAssetDownloads = useLobbyAssetDownloadsVisible();
 
   const tvFrameRef = useRef<HTMLDivElement>(null);
   const [tvOpen, setTvOpen] = useState(false);
@@ -631,7 +682,7 @@ const LoungePage: React.FC = () => {
           right: 0,
           width: '100%',
           height: loungeBackgroundArtHeightCss(),
-          backgroundImage: 'url(/assets/landing2-background.png)',
+          backgroundImage: `url(${LOUNGE_ROSE_BACKGROUND_SRC})`,
           backgroundSize: '100% auto',
           backgroundPosition: 'center top',
           backgroundRepeat: 'no-repeat',
@@ -639,6 +690,25 @@ const LoungePage: React.FC = () => {
           willChange: 'auto',
         }}
       />
+
+      {showAssetDownloads ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 8,
+            left: 8,
+            zIndex: 500,
+            pointerEvents: 'none',
+          }}
+        >
+          <LobbyAssetDownloadLink
+            href={LOUNGE_ROSE_BACKGROUND_SRC}
+            downloadFilename="landing2-background.png"
+            falPrompt={LOUNGE_SCENE_FAL_PROMPTS.roseBackground}
+            style={{ pointerEvents: 'auto' }}
+          />
+        </div>
+      ) : null}
       
       {/* Neon Logo - Independent container with absolute positioning */}
       <div style={{ 
@@ -649,22 +719,30 @@ const LoungePage: React.FC = () => {
         zIndex: 10, 
         width: 'fit-content'
       }}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img 
-            src="/assets/neon-logo.png" 
-            alt="Frontal Slayer" 
+        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content', lineHeight: 0 }}>
+          {showAssetDownloads ? (
+            <LobbyAssetDownloadLink
+              href={LOUNGE_NEON_LOGO_SRC}
+              downloadFilename="neon-logo.png"
+              falPrompt={LOUNGE_SCENE_FAL_PROMPTS.neonLogo}
+              style={{ position: 'absolute', top: 4, left: 0, zIndex: 60 }}
+            />
+          ) : null}
+          <img
+            src={LOUNGE_NEON_LOGO_SRC}
+            alt="Frontal Slayer"
             onClick={() => navigate('/shop/units')}
-            style={{ 
-              width: 'auto', 
-              height: '265px', 
+            style={{
+              width: 'auto',
+              height: '265px',
               maxWidth: 'none',
-              maxHeight: '265px', 
-              margin: 0, 
+              maxHeight: '265px',
+              margin: 0,
               padding: 0,
               display: 'block',
               visibility: 'visible',
               opacity: 1,
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           />
         </div>
@@ -691,6 +769,36 @@ const LoungePage: React.FC = () => {
              transition: 'opacity 0.4s ease',
            }}
          >
+           {showAssetDownloads ? (
+             <div
+               style={{
+                 position: 'absolute',
+                 top: -14,
+                 right: 0,
+                 zIndex: 60,
+                 display: 'flex',
+                 flexDirection: 'column',
+                 alignItems: 'flex-end',
+                 gap: 2,
+               }}
+             >
+               <LobbyAssetDownloadLink
+                 href={LOUNGE_CURTAIN_LEFT_SRC}
+                 downloadFilename="lounge-curtain-left.jpeg"
+                 falPrompt={LOUNGE_SCENE_FAL_PROMPTS.curtainLeft}
+               />
+               <LobbyAssetDownloadLink
+                 href={LOUNGE_CURTAIN_RIGHT_SRC}
+                 downloadFilename="lounge-curtain-right.jpeg"
+                 falPrompt={LOUNGE_SCENE_FAL_PROMPTS.curtainRight}
+               />
+               <LobbyAssetDownloadLink
+                 href={LOUNGE_TV_REMOTE_HAND_SRC}
+                 downloadFilename="lounge-tv-remote-hand.png"
+                 falPrompt={LOUNGE_SCENE_FAL_PROMPTS.tvRemoteHand}
+               />
+             </div>
+           ) : null}
            <LoungeTvFrame
              frameWidth={loungeLobbyTvFrame.frameW + LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX}
              frameHeight={loungeLobbyTvFrame.frameH}
@@ -743,8 +851,16 @@ const LoungePage: React.FC = () => {
       
       {/* Salon Chairs — inline placement (large viewport uses larger Y offset from loungeSceneLayout) */}
       <div style={loungeSalonChairsAnchorStyle(isLargeLoungeViewport)}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img src="/assets/salon-chairs.png" alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
+        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content', lineHeight: 0 }}>
+          {showAssetDownloads ? (
+            <LobbyAssetDownloadLink
+              href={LOUNGE_SALON_CHAIRS_SRC}
+              downloadFilename="salon-chairs.png"
+              falPrompt={LOUNGE_SCENE_FAL_PROMPTS.salonChairs}
+              style={{ position: 'absolute', top: -14, left: 0, zIndex: 60 }}
+            />
+          ) : null}
+          <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
         </div>
       </div>
       

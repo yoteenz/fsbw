@@ -1,9 +1,17 @@
 import { isAdminEmail, isSignedIn } from '../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
+import {
+  LOBBY_ROSE_BACKGROUND_FAL_BASE,
+  SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT,
+} from './sceneRoseBackgroundFal';
 
 /** Lobby scene art paths (see `src/pages/lobby/page.tsx`). */
 
 export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
+export const LOBBY_NEON_PRODUCTS_SRC = '/assets/neon-products.png';
+export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
+export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
+export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
 export const LOBBY_ROSE_BACKGROUND_SRC = '/assets/landing-background.png';
 export const LOBBY_SHELF_HD_SRC = '/assets/hd-group.png';
 export const LOBBY_SHELF_TRANSPARENT_SRC = '/assets/transparent-group.png';
@@ -45,7 +53,13 @@ export function isLobbyAssetDownloadsVisibleForAdmin(): boolean {
 export const LOBBY_SCENE_FAL_PROMPTS = {
   neonLogo: `Photorealistic neon sign for a luxury wig boutique brand "Frontal Slayer". Hot pink and red neon glass tubing, soft bloom and wall reflection, shot straight-on on a dark charcoal wall. Premium salon aesthetic, crisp letterforms, no extra text. Export as a high-resolution PNG with a fully transparent background (alpha), no border, no floor, no mockup frame.`,
 
-  roseBackground: `Photorealistic empty luxury hair boutique interior wall for a mobile app hero background. Soft dusty rose plaster walls, subtle wainscoting, warm salon lighting, faint marble or brass accents at the edges only. Center area kept calm and uncluttered for UI overlay. Straight-on composition, 9:16 vertical feel, no people, no products, no text, no logos. High detail, natural shadows, seamless edges.`,
+  roseBackground: `${LOBBY_ROSE_BACKGROUND_FAL_BASE} ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`,
+
+  neonProducts: `Photorealistic neon sign reading "PRODUCTS" for a luxury wig boutique. Hot pink and red neon glass tubing, same typeface weight and glow as the "Frontal Slayer" main logo, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
+
+  neonTools: `Photorealistic neon sign reading "TOOLS" for a luxury wig boutique. Hot pink and red neon glass tubing, matching PRODUCTS/BOOKING neon style, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
+
+  neonBooking: `Photorealistic neon sign reading "BOOKING" for a luxury wig boutique. Hot pink and red neon glass tubing, matching PRODUCTS/TOOLS neon style, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
 
   shelfHdLace: `Photorealistic wall-mounted retail shelf graphic for "HD LACE" luxury wigs. Slim floating shelf with 3–4 premium wig boxes in neutral packaging, subtle HD LACE label area. Front-facing or slight 3/4 view, soft studio light, boutique styling. PNG with fully transparent background, no wall, no text outside product labels on boxes.`,
 
