@@ -390,7 +390,7 @@ const LobbyPage: React.FC = () => {
             {/* Phone — tap for business contact popover */}
             <div
               className="absolute right-8"
-              style={{ top: '-33px', zIndex: 25, transform: 'translateX(-2px)' }}
+              style={{ top: '-33px', zIndex: 25, transform: 'translateX(-6px)' }}
             >
               <LobbyCasePropPopover
                 popoverId="phone"
