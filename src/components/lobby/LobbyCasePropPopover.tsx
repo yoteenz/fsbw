@@ -14,6 +14,9 @@ function lobbyPopoverPx(px: number): number {
   return Math.round(px * LOBBY_CASE_POPOVER_SCALE);
 }
 
+const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 2;
+const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
+
 export type LobbyCasePropPopoverSection = {
   heading: string;
   lines: readonly string[];
@@ -53,7 +56,7 @@ const lobbyBohemyLabelStyle: React.CSSProperties = {
   lineHeight: 1.2,
   textTransform: 'none',
   fontFamily: '"Bohemy", cursive',
-  fontSize: `${lobbyPopoverPx(15)}px`,
+  fontSize: `${LOBBY_POPOVER_BOHEMY_FONT_PX}px`,
   color: '#808080',
   fontWeight: 400,
 };
@@ -191,7 +194,7 @@ function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayo
       <LobbyPaymentIconSection
         label={LOBBY_PAYMENT_PAY_OVER_TIME_LABEL}
         icons={layout.payOverTime}
-        maxHeightPx={lobbyPopoverPx(22)}
+        maxHeightPx={LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX}
       />
     </div>
   );

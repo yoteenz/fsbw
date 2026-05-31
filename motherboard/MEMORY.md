@@ -22492,3 +22492,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Swap **Discover/Amex** and **PayPal/Shop Pay** display order; **`textAlign: center`** on Bohemy section labels. **Discover** + **Apple Pay** PNGs were wrong (Discover JPEG **(7)** was Mastercard; Apple Pay standalone chroma corrupt) — rebake **discover** + **apple-pay** from payment sheet crops in **`lobby-bake-payment-icons.mjs`**; **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz5`**. Commit **`4f151e52`**.
 
 **Update (same chat):** Shrink contact + payment popovers **35%** (**`LOBBY_CASE_POPOVER_SCALE` 0.65** → **143×130** shell); scale padding, type, logo rows via **`lobbyPopoverPx`**. Contact section headers (**email**, **hours**, **inquiries**) → gray **Bohemy** (**#808080**) instead of red Futura. Commit **`96b6f732`**.
+
+**Update (same chat):** Bohemy headers **+2px** (**12px**, was 10) on contact + payment popovers; **pay over time** logo row only **+2px** max height (**16px**, was 14). Commit **`d2070282`**.
