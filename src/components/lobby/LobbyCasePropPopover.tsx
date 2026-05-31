@@ -3,7 +3,9 @@ import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constant
 import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
   LOBBY_CASE_POPOVER_WIDTH_PX,
+  LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL,
   LOBBY_PAYMENT_EXPRESS_LABEL,
+  LOBBY_PAYMENT_PAY_OVER_TIME_LABEL,
 } from '../../constants/lobbyPaymentIcons';
 
 export type LobbyCasePropPopoverSection = {
@@ -136,51 +138,54 @@ function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPo
   );
 }
 
-function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayout }) {
+function LobbyPaymentIconSection({
+  label,
+  icons,
+  maxHeightPx,
+}: {
+  label: string;
+  icons: readonly LobbyPaymentIcon[];
+  maxHeightPx: number;
+}) {
+  if (icons.length === 0) return null;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <p style={lobbyPaymentBohemyLabelStyle}>{label}</p>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-          gap: '8px 10px',
+          gridTemplateColumns: `repeat(${icons.length}, minmax(0, 1fr))`,
+          gap: '4px',
+          alignItems: 'center',
         }}
       >
-        {layout.cards.map((icon) => (
-          <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={30} />
+        {icons.map((icon) => (
+          <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={maxHeightPx} />
         ))}
       </div>
+    </div>
+  );
+}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-        <p style={lobbyPaymentBohemyLabelStyle}>{LOBBY_PAYMENT_EXPRESS_LABEL}</p>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${layout.express.length}, minmax(0, 1fr))`,
-            gap: '4px',
-            alignItems: 'center',
-          }}
-        >
-          {layout.express.map((icon) => (
-            <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={24} />
-          ))}
-        </div>
-      </div>
-
-      {layout.payOverTime.length > 0 ? (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-            gap: '6px 4px',
-            alignItems: 'center',
-          }}
-        >
-          {layout.payOverTime.map((icon) => (
-            <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={22} />
-          ))}
-        </div>
-      ) : null}
+function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayout }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+      <LobbyPaymentIconSection
+        label={LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL}
+        icons={layout.cards}
+        maxHeightPx={26}
+      />
+      <LobbyPaymentIconSection
+        label={LOBBY_PAYMENT_EXPRESS_LABEL}
+        icons={layout.express}
+        maxHeightPx={24}
+      />
+      <LobbyPaymentIconSection
+        label={LOBBY_PAYMENT_PAY_OVER_TIME_LABEL}
+        icons={layout.payOverTime}
+        maxHeightPx={22}
+      />
     </div>
   );
 }

@@ -61,15 +61,17 @@ const afterpay = { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afte
 const affirm = { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') };
 const klarna = { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') };
 
-/** Register popover: cards grid, then express row with Bohemy label. */
+/** Register popover: three Bohemy-labeled single rows (cards, express, pay over time). */
 export const LOBBY_PAYMENT_POPOVER_LAYOUT: LobbyPaymentPopoverLayout = {
   cards: [visa, mastercard, amex, discover],
   express: [applePay, shopPay, paypal, googlePay],
   payOverTime: [afterpay, affirm, klarna],
 };
 
-/** Bohemy subheading above express checkout logos. */
+/** Bohemy subheadings (gray, 15px) above each payment row in the register popover. */
+export const LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL = 'accepted cards';
 export const LOBBY_PAYMENT_EXPRESS_LABEL = 'express payment';
+export const LOBBY_PAYMENT_PAY_OVER_TIME_LABEL = 'pay over time';
 
 /** Flat list (legacy / tests). */
 export const LOBBY_PAYMENT_ICONS: readonly LobbyPaymentIcon[] = [
