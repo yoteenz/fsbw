@@ -22450,3 +22450,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User supplied green-screen phone JPEG on Supabase; replace lobby **PHONE.png** with keyed asset (transparent background).
 
 **Changes:** Downloaded **`khlsfm9OB1hT9DTC41Zsn_D10nFkMT.jpeg`** → **`public/assets/lobby-phone.png`** (corner-sampled green key, crop, max height 512px). **`lobbyCaseAssets.ts`** + **`LOBBY_PHONE_SRC`**; **`lobby/page.tsx`** uses new art (~44px tall, **`objectFit: contain`**). Re-bake: **`npm run lobby:bake-phone`** (`scripts/lobby-bake-phone-asset.mjs`). Remote URL in **`LOBBY_PHONE_SRC_REMOTE`**. Pushed **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** Replaced with **`sLVJYq1o8i6oxuURN73ik_RisdwVxj.jpeg`** — re-ran **`npm run lobby:bake-phone`**; **`LOBBY_PHONE_SRC_REMOTE`** + bundled PNG updated.
