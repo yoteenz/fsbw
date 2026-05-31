@@ -22324,3 +22324,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Change (`loungeTvFrame.tsx`, `LoungeTvCloseButton`):** Background **`#454545`** (`LOUNGE_TV_CLOSE_BUTTON_BG`, same highlight as bezel gradient); border **`#0a0a0a`**; subtle inset highlight like shell. Icon filter **`LOUNGE_TV_CLOSE_ICON_FILTER`** (~78% invert) instead of **`AFFILIATE_CLOSE_ICON_FILTER`** (brand red). Applies to lobby + overlay TV via shared **`LoungeTvFrame`**.
 
 **Commit:** `b1ac2163` on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Lounge TV close: always on top (z-index / DOM order)
+
+**Context:** User reported the TV close chip sometimes renders **behind** the TV (overlapped by screen content).
+
+**Fix:** **`loungeTvFrame.tsx`** — render close **after** the screen in DOM; **`LOUNGE_TV_CLOSE_BUTTON_Z_INDEX` (100)**; frame shell **`isolation: isolate`** + **`overflow: visible`**; screen **`zIndex: 0`**. **`LoungeTvOverlay.tsx`** — **`isolation: isolate`** on fixed TV wrapper. Commit **`061e1299`**.
