@@ -22415,4 +22415,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Cause:** **Products / Tools / Booking** used **`translateX`** kerning while flex layout kept each item’s box in the unshifted row; **Booking** (later in DOM) has an **`inset: 0`** tap layer that overlapped the visually shifted **Tools** neon and captured taps (premium booking route instead of tools).
 
-**Fix:** **`src/pages/lobby/page.tsx`** — replace **`translateX`** with **`marginLeft`** kerning (**`4px`**, **`-50px`**, **`-104px`**) so layout boxes match visuals; **`zIndex`**: Tools **2**, Products/Booking **1** so Tools wins overlaps. Pushed **`master`** + **`preview/mobile`**.
+**Fix (superseded):** **`marginLeft`** kerning moved Tools/Booking visuals — user asked to revert.
+
+**Correct fix (2026-05-31 follow-up):** Restore legacy **`translateX`** kerning (**`4px`**, **`-50px`**, **`-104px`**) on Products / Tools / Booking so asset positions unchanged. Tools keeps full-asset **`goToHomeTools`** button + **`zIndex: 2`** only (Booking overlay no longer steals taps). No **`marginLeft`** on nav neons.
