@@ -22478,3 +22478,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update:** Lobby phone display **`height: 34px`**, **`maxWidth: 46px`** (was 40 / 52, −6px).
 
 **Update:** Replaced lobby payment PNGs from **`Payment/`** Supabase files — **visa (8), amex (6), discover (7), affirm, apple-pay (3), paypal (4), afterpay (2)**; **mastercard** + **klarna** still sheet-cropped. **`LOBBY_PAYMENT_ICON_REMOTES`**, **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz4`**. Refactored **`lobby-bake-payment-icons.mjs`**.
+
+---
+
+## 2026-05-31 — Lobby register popover: express payment section
+
+**Context:** User asked to separate and organize **express payment** options below the card logos: gray **Bohemy** label, express wallets in **one row**.
+
+**Changes:** **`lobbyPaymentIcons.ts`** — **`LobbyPaymentPopoverLayout`** with **`cards`** (Visa, Mastercard, Amex, Discover), **`express`** (Apple Pay, Shop Pay, PayPal, Google Pay), **`payOverTime`** (Afterpay, Affirm, Klarna); **`LOBBY_PAYMENT_EXPRESS_LABEL`** = **`express payment`**. **`LobbyCasePropPopover.tsx`** — 2×2 card grid, Bohemy subheading (**#808080**, 15px), dynamic 4-column express row, 3-column BNPL row; register uses **`paymentLayout`** instead of flat **`paymentIcons`**. **`lobby/page.tsx`** — **`paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}`**. Commit **`7064cede`** on **`master`** + **`preview/mobile`**.
