@@ -22510,3 +22510,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Root cause:** Links only rendered when **`import.meta.env.DEV`** or **`?lobbyAssets=1`**; production/preview builds hide them by default. Comment said **`/?lobbyAssets=1`** but **`/`** redirects to **`/home/shop`** — correct URL is **`/lobby?lobbyAssets=1`**. Carousel **`navigate(path)`** dropped the query string when swiping to lounge.
 
 **Changes:** **`useLobbyAssetDownloadsVisible`** hook — dev, **`lobbyAssets=1`** (persisted in **`sessionStorage`** via **`LOBBY_ASSET_DOWNLOADS_SESSION_KEY`**), or **signed-in admin** (**`isAdminEmail`**). **`LobbyApp`** carousel preserves **`location.search`**. **`LobbyAssetDownloadLink`** — **10px** type, **z-index 200**, stronger pill shadow; rose-bg link **z-index 200**. Commit **`fb4d3c30`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby/lounge DOWNLOAD fixes, neon nav, aligned Fal backgrounds
+
+**Context (this chat):** User could not see lobby DOWNLOAD links (fixed earlier **`fb4d3c30`**); then asked for **lounge** scene DOWNLOAD + Fal prompts with **landing2** ceiling/floor aligned to lobby **landing-background** for seamless carousel transition; reported **lobby background download broken**, **logo DOWNLOAD** overlapped shop navigation, and wanted DOWNLOAD on **products/tools/booking** neon assets.
+
+**Changes:** **`downloadAssetFile.ts`** — fetch + blob download (fixes blocked `<a download>` and iOS). Lobby rose DOWNLOAD moved to **z-index 500** above main content (was under **`z-10`** overlay). Logo DOWNLOAD **top-left** sibling (not bottom on clickable img). Neon **`neon-products`**, **`neon-tools`**, **`neon-booking`** paths + Fal prompts in **`lobbySceneAssets.ts`**. **`loungeSceneAssets.ts`** + **`sceneRoseBackgroundFal.ts`** — shared **`SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT`** on lobby + lounge rose prompts; lounge downloads: **`landing2-background`**, logo, salon chairs, TV curtains L/R, remote hand. Commit **`7929308a`** on **`master`** + **`preview/mobile`**.
