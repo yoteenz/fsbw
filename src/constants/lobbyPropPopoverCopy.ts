@@ -3,11 +3,16 @@ import { BRAND_CONTACT_EMAIL, BRAND_CONTACT_INTRO_HOURS } from './brandContactCo
 /** Lobby display-case phone popover — business contact (aligned with brand contact). */
 export const LOBBY_PHONE_POPOVER_TITLE = 'CONTACT';
 
-export type LobbyPhonePopoverLine = {
+export type LobbyPhonePopoverLinePart = {
   text: string;
-  /** Red Futura PT Medium (email, holidays note). */
+  /** Red Futura PT Medium. */
   emphasis?: 'brand-red-medium';
 };
+
+/** Single-style line, or mixed spans (e.g. red “72 HOURS” mid-sentence). */
+export type LobbyPhonePopoverLine =
+  | { text: string; emphasis?: 'brand-red-medium' }
+  | { parts: readonly LobbyPhonePopoverLinePart[] };
 
 export type LobbyPhonePopoverSection = {
   heading: string;
@@ -29,7 +34,15 @@ export const LOBBY_PHONE_POPOVER_SECTIONS: readonly LobbyPhonePopoverSection[] =
   },
   {
     heading: 'questions',
-    lines: [{ text: 'PLEASE ALLOW UP TO 72 HOURS FOR A RESPONSE' }],
+    lines: [
+      {
+        parts: [
+          { text: 'PLEASE ALLOW ' },
+          { text: '72 HOURS', emphasis: 'brand-red-medium' },
+          { text: ' FOR A RESPONSE' },
+        ],
+      },
+    ],
   },
 ];
 

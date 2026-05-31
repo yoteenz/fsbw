@@ -17,9 +17,13 @@ function lobbyPopoverPx(px: number): number {
 const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 2;
 const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
 
+type ContactPopoverLine =
+  | { text: string; emphasis?: 'brand-red-medium' }
+  | { parts: readonly { text: string; emphasis?: 'brand-red-medium' }[] };
+
 export type LobbyCasePropPopoverSection = {
   heading: string;
-  lines: readonly { text: string; emphasis?: 'brand-red-medium' }[];
+  lines: readonly ContactPopoverLine[];
 };
 
 type LobbyCasePropPopoverProps = {
@@ -88,6 +92,32 @@ function contactLineStyle(line: { emphasis?: 'brand-red-medium' }): React.CSSPro
   return line.emphasis === 'brand-red-medium' ? contactLineRedMediumStyle : lineStyle;
 }
 
+function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
+  const paragraphStyle = {
+    ...lineStyle,
+    marginBottom: `${lobbyPopoverPx(2)}px`,
+  };
+
+  if ('parts' in line) {
+    return (
+      <p style={paragraphStyle}>
+        {line.parts.map((part, index) => (
+          <span
+            key={`${index}-${part.text}`}
+            style={part.emphasis === 'brand-red-medium' ? contactLineRedMediumStyle : undefined}
+          >
+            {part.text}
+          </span>
+        ))}
+      </p>
+    );
+  }
+
+  return (
+    <p style={{ ...contactLineStyle(line), marginBottom: `${lobbyPopoverPx(2)}px` }}>{line.text}</p>
+  );
+}
+
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
   ...lobbyBohemyLabelStyle,
   textAlign: 'center',
@@ -148,13 +178,11 @@ function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPo
       {sections.map((section) => (
         <div key={section.heading}>
           <p style={contactSectionHeadingStyle}>{section.heading}</p>
-          {section.lines.map((line) => (
-            <p
-              key={line.text}
-              style={{ ...contactLineStyle(line), marginBottom: `${lobbyPopoverPx(2)}px` }}
-            >
-              {line.text}
-            </p>
+          {section.lines.map((line, index) => (
+            <ContactPopoverLine
+              key={'parts' in line ? `parts-${index}` : line.text}
+              line={line}
+            />
           ))}
         </div>
       ))}
