@@ -25,7 +25,14 @@ import {
   loungeSalonChairsImageStyle,
   useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
+import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import {
+  LOBBY_PHONE_POPOVER_SECTIONS,
+  LOBBY_PHONE_POPOVER_TITLE,
+  LOBBY_REGISTER_POPOVER_SECTIONS,
+  LOBBY_REGISTER_POPOVER_TITLE,
+} from '../../constants/lobbyPropPopoverCopy';
 import {
   LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
@@ -103,6 +110,7 @@ const LobbyPage: React.FC = () => {
   }, [navigate]);
 
   const [bookingNeonSrc, setBookingNeonSrc] = useState('/assets/neon-booking.png');
+  const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
 
   return (
     <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
@@ -354,24 +362,52 @@ const LobbyPage: React.FC = () => {
               style={{ display: 'block', width: '230px', maxWidth: '230px' }}
             />
             
-            {/* Register - Left side of case */}
-            <div className="absolute left-8" style={{ top: '-39px' }}>
-            <img 
-              src="/assets/REGISTER.png" 
-              alt="Register" 
-              className="md:w-10 md:h-8"
-              style={{ width: '52px', height: '44px' }}
-            />
+            {/* Register — tap for payment methods popover */}
+            <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>
+              <LobbyCasePropPopover
+                popoverId="register"
+                activeId={lobbyCasePopover}
+                onActivate={(id) => {
+                  if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
+                }}
+                onClose={() => setLobbyCasePopover(null)}
+                ariaLabel="View accepted payment methods"
+                title={LOBBY_REGISTER_POPOVER_TITLE}
+                sections={LOBBY_REGISTER_POPOVER_SECTIONS}
+                align="left"
+              >
+                <img
+                  src="/assets/REGISTER.png"
+                  alt=""
+                  draggable={false}
+                  className="md:w-10 md:h-8 pointer-events-none select-none"
+                  style={{ width: '52px', height: '44px', display: 'block' }}
+                />
+              </LobbyCasePropPopover>
             </div>
-            
-            {/* Phone - Right side of case */}
-            <div className="absolute right-8" style={{ top: '-31px' }}>
-              <img 
-                src="/assets/PHONE.png" 
-                alt="Phone" 
-                className="md:w-10 md:h-8"
-                style={{ width: '32px', height: '34px' }}
-              />
+
+            {/* Phone — tap for business contact popover */}
+            <div className="absolute right-8" style={{ top: '-31px', zIndex: 25 }}>
+              <LobbyCasePropPopover
+                popoverId="phone"
+                activeId={lobbyCasePopover}
+                onActivate={(id) => {
+                  if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
+                }}
+                onClose={() => setLobbyCasePopover(null)}
+                ariaLabel="View business contact information"
+                title={LOBBY_PHONE_POPOVER_TITLE}
+                sections={LOBBY_PHONE_POPOVER_SECTIONS}
+                align="right"
+              >
+                <img
+                  src="/assets/PHONE.png"
+                  alt=""
+                  draggable={false}
+                  className="md:w-10 md:h-8 pointer-events-none select-none"
+                  style={{ width: '32px', height: '34px', display: 'block' }}
+                />
+              </LobbyCasePropPopover>
             </div>
           </div>
         </div>
