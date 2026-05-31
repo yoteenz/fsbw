@@ -22426,3 +22426,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move the hand below the TV **12px to the right** only.
 
 **Change:** **`src/components/lounge/LoungeTvRemoteHand.tsx`** — **`LOUNGE_TV_REMOTE_HAND_OFFSET_X_PX = 12`**; visible/hidden transforms use **`translate(calc(-38% + 12px), …)`** (was **`translate(-38%, …)`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Booking NEW INSTALL: left-align unit attach block
+
+**Context:** User mockup on premium appointment booking: **select your unit** / **ATTACH UNIT** / UNIT picker / **ATTACH ORDER** inside expanded **NEW INSTALL** card was centered; should be **left-aligned**.
+
+**Change:** **`src/pages/booking/appointment/page.tsx`** — NEW INSTALL attach block only: Bohemy **select your unit** + labels **`textAlign: 'left'`**; UNIT box row **`justify-start`**; attached-build + empty-order copy left-aligned. Other addon Bohemy labels (shade/volume) unchanged (still centered). Pushed **`master`** + **`preview/mobile`**.
