@@ -388,7 +388,10 @@ const LobbyPage: React.FC = () => {
             </div>
 
             {/* Phone — tap for business contact popover */}
-            <div className="absolute right-8" style={{ top: '-33px', zIndex: 25 }}>
+            <div
+              className="absolute right-8"
+              style={{ top: '-33px', zIndex: 25, transform: 'translateX(-2px)' }}
+            >
               <LobbyCasePropPopover
                 popoverId="phone"
                 activeId={lobbyCasePopover}
@@ -406,7 +409,7 @@ const LobbyPage: React.FC = () => {
                   alt=""
                   draggable={false}
                   className="pointer-events-none select-none"
-                  style={{ width: 'auto', height: '44px', maxWidth: '56px', display: 'block', objectFit: 'contain' }}
+                  style={{ width: 'auto', height: '40px', maxWidth: '52px', display: 'block', objectFit: 'contain' }}
                 />
               </LobbyCasePropPopover>
             </div>
