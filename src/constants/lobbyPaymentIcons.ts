@@ -1,5 +1,5 @@
 /** Bump when re-baking `public/assets/lobby-payment/*` (Vercel caches `/assets/*` for 1 year). */
-export const LOBBY_PAYMENT_ICONS_VERSION = 'taW3ckz2';
+export const LOBBY_PAYMENT_ICONS_VERSION = 'taW3ckz3';
 
 /** Supabase green-screen sheet (re-bake with `npm run lobby:bake-payment-icons`). */
 export const LOBBY_PAYMENT_ICONS_SRC_REMOTE =
@@ -8,6 +8,10 @@ export const LOBBY_PAYMENT_ICONS_SRC_REMOTE =
 /** Google Pay logo (separate file on Supabase). */
 export const LOBBY_GOOGLE_PAY_ICON_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg';
+
+/** Shop Pay logo (separate file on Supabase). */
+export const LOBBY_SHOP_PAY_ICON_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg';
 
 /** Shared popover shell size (phone contact + register payment). */
 export const LOBBY_CASE_POPOVER_WIDTH_PX = 220;

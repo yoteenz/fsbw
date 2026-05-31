@@ -12,6 +12,8 @@ const REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg';
 const GOOGLE_PAY_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg';
+const SHOP_PAY_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const tmpSrc = path.join(root, 'tmp/lobby-payment-cards-src.jpeg');
