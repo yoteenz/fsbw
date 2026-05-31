@@ -81,7 +81,7 @@ const afterpay = {
 };
 const affirm = { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') };
 /** Clockwise tilt in register popover — bottom-right lower than bottom-left. */
-export const LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG = 3;
+export const LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG = 5;
 
 const klarna = {
   id: 'klarna',
