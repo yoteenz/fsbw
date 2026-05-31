@@ -22442,3 +22442,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for popups on lobby **phone** and **cash register** assets that hover over each prop, matching **cart dropdown** glass style (`bg-white/60`, `backdrop-blur-md`, **1.3px** black border). Phone = business contact; register = payment methods.
 
 **Changes:** **`LobbyCasePropPopover.tsx`** — tap toggle, positioned above asset (`bottom: calc(100% + 10px)`), outside-tap close, one open at a time. **`lobbyPropPopoverCopy.ts`** — contact from **`brandContactCopy`** (email, hours, inquiry note); register lists cards / express / pay-over-time aligned with checkout. **`lobby/page.tsx`** — wrap **REGISTER.png** + **PHONE.png** on display case. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby phone asset: Supabase JPEG → chroma-keyed PNG
+
+**Context:** User supplied green-screen phone JPEG on Supabase; replace lobby **PHONE.png** with keyed asset (transparent background).
+
+**Changes:** Downloaded **`khlsfm9OB1hT9DTC41Zsn_D10nFkMT.jpeg`** → **`public/assets/lobby-phone.png`** (corner-sampled green key, crop, max height 512px). **`lobbyCaseAssets.ts`** + **`LOBBY_PHONE_SRC`**; **`lobby/page.tsx`** uses new art (~44px tall, **`objectFit: contain`**). Re-bake: **`npm run lobby:bake-phone`** (`scripts/lobby-bake-phone-asset.mjs`). Remote URL in **`LOBBY_PHONE_SRC_REMOTE`**. Pushed **`master`** + **`preview/mobile`**.
