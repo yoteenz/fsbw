@@ -46,7 +46,7 @@ export type LobbyPaymentIcon = {
   id: string;
   label: string;
   src: string;
-  /** Clockwise tilt (bottom-right lower than bottom-left). */
+  /** Tilt in degrees (positive = clockwise, negative = counterclockwise). */
   rotationDeg?: number;
 };
 
@@ -65,10 +65,20 @@ const mastercard = { id: 'mastercard', label: 'Mastercard', src: paymentIconPath
 const amex = { id: 'amex', label: 'American Express', src: paymentIconPath('amex') };
 const discover = { id: 'discover', label: 'Discover', src: paymentIconPath('discover') };
 const applePay = { id: 'apple-pay', label: 'Apple Pay', src: paymentIconPath('apple-pay') };
-const shopPay = { id: 'shop-pay', label: 'Shop Pay', src: paymentIconPath('shop-pay') };
+const shopPay = {
+  id: 'shop-pay',
+  label: 'Shop Pay',
+  src: paymentIconPath('shop-pay'),
+  rotationDeg: 3,
+};
 const paypal = { id: 'paypal', label: 'PayPal', src: paymentIconPath('paypal') };
 const googlePay = { id: 'google-pay', label: 'Google Pay', src: paymentIconPath('google-pay') };
-const afterpay = { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afterpay') };
+const afterpay = {
+  id: 'afterpay',
+  label: 'Afterpay',
+  src: paymentIconPath('afterpay'),
+  rotationDeg: -3,
+};
 const affirm = { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') };
 /** Clockwise tilt in register popover — bottom-right lower than bottom-left. */
 export const LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG = 3;
