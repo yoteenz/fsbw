@@ -1,5 +1,5 @@
 /** Bump when re-baking `public/assets/lobby-payment/*` (Vercel caches `/assets/*` for 1 year). */
-export const LOBBY_PAYMENT_ICONS_VERSION = 'taW3ckz4';
+export const LOBBY_PAYMENT_ICONS_VERSION = 'taW3ckz5';
 
 const PAYMENT_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder';
@@ -11,9 +11,7 @@ export const LOBBY_PAYMENT_ICONS_SHEET_SRC_REMOTE = `${PAYMENT_BASE}/taW3ckzkvXh
 export const LOBBY_PAYMENT_ICON_REMOTES = {
   visa: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(8).jpeg`,
   amex: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(6).jpeg`,
-  discover: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(7).jpeg`,
   affirm: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg`,
-  'apple-pay': `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(3).jpeg`,
   paypal: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(4).jpeg`,
   'shop-pay': `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
   'google-pay': `${PAYMENT_BASE}/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
@@ -63,8 +61,8 @@ const klarna = { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') }
 
 /** Register popover: three Bohemy-labeled single rows (cards, express, pay over time). */
 export const LOBBY_PAYMENT_POPOVER_LAYOUT: LobbyPaymentPopoverLayout = {
-  cards: [visa, mastercard, amex, discover],
-  express: [applePay, shopPay, paypal, googlePay],
+  cards: [visa, mastercard, discover, amex],
+  express: [applePay, paypal, shopPay, googlePay],
   payOverTime: [afterpay, affirm, klarna],
 };
 

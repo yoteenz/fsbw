@@ -65,6 +65,7 @@ const lineStyle: React.CSSProperties = {
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
   margin: 0,
   lineHeight: 1.2,
+  textAlign: 'center',
   textTransform: 'none',
   fontFamily: '"Bohemy", cursive',
   fontSize: '15px',

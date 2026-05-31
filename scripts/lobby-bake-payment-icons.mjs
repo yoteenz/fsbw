@@ -18,9 +18,7 @@ const SHEET_REMOTE = `${PAYMENT_BASE}/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg`;
 const STANDALONE_REMOTES = {
   visa: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(8).jpeg`,
   amex: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(6).jpeg`,
-  discover: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(7).jpeg`,
   affirm: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg`,
-  'apple-pay': `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(3).jpeg`,
   paypal: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(4).jpeg`,
   'shop-pay': `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
   'google-pay': `${PAYMENT_BASE}/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
@@ -51,7 +49,7 @@ r,g,b = arr[:,:,0], arr[:,:,1], arr[:,:,2]
 cr,cg,cb = r.astype(np.float32), g.astype(np.float32), b.astype(np.float32)
 dist = np.sqrt((cr-br)**2+(cg-bgc)**2+(cb-bb)**2)
 ge = cg - np.maximum(cr, cb)
-alpha = np.clip((dist-65)*(255/30), 0, 255)
+alpha = np.clip((dist-55)*(255/35), 0, 255)
 alpha = np.where(ge>40, np.minimum(alpha, np.clip((ge-40)*5,0,255)), alpha).astype(np.uint8)
 oa = np.array(im); oa[:,:,3] = alpha
 out_im = Image.fromarray(oa)
@@ -70,9 +68,11 @@ import numpy as np, os, sys
 src, out_dir = sys.argv[1], sys.argv[2]
 im = Image.open(src).convert('RGBA')
 w, h = im.size
-# mastercard col 1, klarna col 4 — row 1 band
+# Cropped from multi-logo sheet (standalone JPEGs mislabeled for discover / apple-pay).
 crops = {
     'mastercard': (1000, 60, 1790, 620),
+    'discover': (60, 1900, 900, 2460),
+    'apple-pay': (3450, 1300, 4230, 1860),
     'klarna': (3450, 60, 4230, 620),
 }
 def chroma_key_crop(box):
@@ -89,7 +89,7 @@ def chroma_key_crop(box):
     br, bgc, bb = bg
     dist = np.sqrt((cr-br)**2+(cg-bgc)**2+(cb-bb)**2)
     ge = cg.astype(np.float32) - np.maximum(cr.astype(np.float32), cb.astype(np.float32))
-    alpha = np.clip((dist-65)*(255/30), 0, 255)
+    alpha = np.clip((dist-55)*(255/35), 0, 255)
     alpha = np.where(ge>40, np.minimum(alpha, np.clip((ge-40)*5,0,255)), alpha).astype(np.uint8)
     out = crop.convert('RGBA')
     oa = np.array(out)
