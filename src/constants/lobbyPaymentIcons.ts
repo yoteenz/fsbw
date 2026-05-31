@@ -27,9 +27,19 @@ export const LOBBY_GOOGLE_PAY_ICON_SRC_REMOTE = LOBBY_PAYMENT_ICON_REMOTES['goog
 /** @deprecated Use LOBBY_PAYMENT_ICON_REMOTES */
 export const LOBBY_SHOP_PAY_ICON_SRC_REMOTE = LOBBY_PAYMENT_ICON_REMOTES['shop-pay'];
 
+/** Shared popover scale (phone contact + register payment) — 35% smaller than base. */
+export const LOBBY_CASE_POPOVER_SCALE = 0.65;
+
+const LOBBY_CASE_POPOVER_BASE_WIDTH_PX = 220;
+const LOBBY_CASE_POPOVER_BASE_MIN_HEIGHT_PX = 200;
+
 /** Shared popover shell size (phone contact + register payment). */
-export const LOBBY_CASE_POPOVER_WIDTH_PX = 220;
-export const LOBBY_CASE_POPOVER_MIN_HEIGHT_PX = 200;
+export const LOBBY_CASE_POPOVER_WIDTH_PX = Math.round(
+  LOBBY_CASE_POPOVER_BASE_WIDTH_PX * LOBBY_CASE_POPOVER_SCALE
+);
+export const LOBBY_CASE_POPOVER_MIN_HEIGHT_PX = Math.round(
+  LOBBY_CASE_POPOVER_BASE_MIN_HEIGHT_PX * LOBBY_CASE_POPOVER_SCALE
+);
 
 export type LobbyPaymentIcon = {
   id: string;

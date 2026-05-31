@@ -2,11 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
+  LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
   LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL,
   LOBBY_PAYMENT_EXPRESS_LABEL,
   LOBBY_PAYMENT_PAY_OVER_TIME_LABEL,
 } from '../../constants/lobbyPaymentIcons';
+
+/** Scale base popover px values (35% reduction = 0.65 scale). */
+function lobbyPopoverPx(px: number): number {
+  return Math.round(px * LOBBY_CASE_POPOVER_SCALE);
+}
 
 export type LobbyCasePropPopoverSection = {
   heading: string;
@@ -34,7 +40,7 @@ const popoverShellClassName =
 
 const titleStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '10px',
+  fontSize: `${lobbyPopoverPx(10)}px`,
   fontWeight: 500,
   color: '#000',
   textTransform: 'uppercase',
@@ -42,19 +48,25 @@ const titleStyle: React.CSSProperties = {
   letterSpacing: '0.02em',
 };
 
-const sectionHeadingStyle: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '9px',
-  fontWeight: 500,
-  color: '#EB1C24',
-  textTransform: 'uppercase',
-  margin: '0 0 4px',
-  letterSpacing: '0.02em',
+const lobbyBohemyLabelStyle: React.CSSProperties = {
+  margin: 0,
+  lineHeight: 1.2,
+  textTransform: 'none',
+  fontFamily: '"Bohemy", cursive',
+  fontSize: `${lobbyPopoverPx(15)}px`,
+  color: '#808080',
+  fontWeight: 400,
+};
+
+const contactSectionHeadingStyle: React.CSSProperties = {
+  ...lobbyBohemyLabelStyle,
+  textAlign: 'left',
+  margin: `0 0 ${lobbyPopoverPx(4)}px`,
 };
 
 const lineStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Book", Futura, sans-serif',
-  fontSize: '9px',
+  fontSize: `${lobbyPopoverPx(9)}px`,
   color: '#000',
   textTransform: 'uppercase',
   margin: 0,
@@ -63,14 +75,8 @@ const lineStyle: React.CSSProperties = {
 };
 
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
-  margin: 0,
-  lineHeight: 1.2,
+  ...lobbyBohemyLabelStyle,
   textAlign: 'center',
-  textTransform: 'none',
-  fontFamily: '"Bohemy", cursive',
-  fontSize: '15px',
-  color: '#808080',
-  fontWeight: 400,
 };
 
 const paymentLogoImgStyle: React.CSSProperties = {
@@ -104,8 +110,8 @@ function PaymentIconCell({
         alignItems: 'center',
         justifyContent: 'center',
         minWidth: 0,
-        minHeight: `${maxHeightPx + 4}px`,
-        padding: '2px 0',
+        minHeight: `${maxHeightPx + lobbyPopoverPx(4)}px`,
+        padding: `${lobbyPopoverPx(2)}px 0`,
       }}
     >
       <img
@@ -124,12 +130,12 @@ function PaymentIconCell({
 
 function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPopoverSection[] }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: `${lobbyPopoverPx(10)}px`, flex: 1 }}>
       {sections.map((section) => (
         <div key={section.heading}>
-          <p style={sectionHeadingStyle}>{section.heading}</p>
+          <p style={contactSectionHeadingStyle}>{section.heading}</p>
           {section.lines.map((line) => (
-            <p key={line} style={{ ...lineStyle, marginBottom: '2px' }}>
+            <p key={line} style={{ ...lineStyle, marginBottom: `${lobbyPopoverPx(2)}px` }}>
               {line}
             </p>
           ))}
@@ -151,13 +157,13 @@ function LobbyPaymentIconSection({
   if (icons.length === 0) return null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: `${lobbyPopoverPx(6)}px` }}>
       <p style={lobbyPaymentBohemyLabelStyle}>{label}</p>
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${icons.length}, minmax(0, 1fr))`,
-          gap: '4px',
+          gap: `${lobbyPopoverPx(4)}px`,
           alignItems: 'center',
         }}
       >
@@ -171,21 +177,21 @@ function LobbyPaymentIconSection({
 
 function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayout }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: `${lobbyPopoverPx(8)}px`, flex: 1 }}>
       <LobbyPaymentIconSection
         label={LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL}
         icons={layout.cards}
-        maxHeightPx={26}
+        maxHeightPx={lobbyPopoverPx(26)}
       />
       <LobbyPaymentIconSection
         label={LOBBY_PAYMENT_EXPRESS_LABEL}
         icons={layout.express}
-        maxHeightPx={24}
+        maxHeightPx={lobbyPopoverPx(24)}
       />
       <LobbyPaymentIconSection
         label={LOBBY_PAYMENT_PAY_OVER_TIME_LABEL}
         icons={layout.payOverTime}
-        maxHeightPx={22}
+        maxHeightPx={lobbyPopoverPx(22)}
       />
     </div>
   );
@@ -257,15 +263,15 @@ export function LobbyCasePropPopover({
           className={popoverShellClassName}
           style={{
             position: 'absolute',
-            bottom: 'calc(100% + 10px)',
+            bottom: `calc(100% + ${lobbyPopoverPx(10)}px)`,
             ...panelPositionStyle(align),
             zIndex: 60,
             width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
             minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
             maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
-            borderWidth: '1.3px',
+            borderWidth: `${lobbyPopoverPx(1.3)}px`,
             boxSizing: 'border-box',
-            padding: '10px 12px',
+            padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
             pointerEvents: 'auto',
             display: 'flex',
             flexDirection: 'column',
@@ -275,8 +281,8 @@ export function LobbyCasePropPopover({
           <p
             style={{
               ...titleStyle,
-              marginBottom: '8px',
-              paddingBottom: '6px',
+              marginBottom: `${lobbyPopoverPx(8)}px`,
+              paddingBottom: `${lobbyPopoverPx(6)}px`,
               borderBottom: '1px solid rgba(0,0,0,0.12)',
               flexShrink: 0,
             }}

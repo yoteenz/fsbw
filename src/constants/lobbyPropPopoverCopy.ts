@@ -8,15 +8,15 @@ export const LOBBY_PHONE_POPOVER_SECTIONS: ReadonlyArray<{
   lines: readonly string[];
 }> = [
   {
-    heading: 'EMAIL',
+    heading: 'email',
     lines: [BRAND_CONTACT_EMAIL],
   },
   {
-    heading: 'HOURS',
+    heading: 'hours',
     lines: [BRAND_CONTACT_INTRO_HOURS, 'WEEKDAYS ONLY', 'MAJOR US HOLIDAYS EXCLUDED'],
   },
   {
-    heading: 'INQUIRIES',
+    heading: 'inquiries',
     lines: ['ALLOW 72 HOURS FOR A RESPONSE', 'VISIT BRAND > CONTACT FOR THE FORM'],
   },
 ];
