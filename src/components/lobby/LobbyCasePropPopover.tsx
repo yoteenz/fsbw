@@ -155,6 +155,8 @@ function PaymentIconCell({
 }) {
   const tiltDeg =
     icon.rotationDeg ?? (icon.id === 'klarna' ? LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG : 0);
+  /** Extra room so rotated logos are not squeezed by maxWidth: 100% in a narrow grid cell. */
+  const tiltPadPx = tiltDeg ? Math.max(3, Math.round(Math.abs(tiltDeg) * 0.75)) : 0;
 
   return (
     <div
@@ -163,25 +165,36 @@ function PaymentIconCell({
         alignItems: 'center',
         justifyContent: 'center',
         minWidth: 0,
-        minHeight: `${maxHeightPx + lobbyPopoverPx(4)}px`,
-        padding: `${lobbyPopoverPx(2)}px 0`,
+        minHeight: `${maxHeightPx + lobbyPopoverPx(4) + tiltPadPx * 2}px`,
+        padding: `${lobbyPopoverPx(2) + tiltPadPx}px ${tiltPadPx}px`,
         overflow: 'visible',
         justifySelf,
       }}
     >
-      <img
-        src={icon.src}
-        alt={icon.label}
-        draggable={false}
+      <div
         style={{
-          ...paymentLogoImgStyle,
-          maxWidth: '100%',
-          maxHeight: `${maxHeightPx}px`,
-          ...(tiltDeg
-            ? { transform: `rotate(${tiltDeg}deg)`, transformOrigin: 'center center' }
-            : null),
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          lineHeight: 0,
+          transform: tiltDeg ? `rotate(${tiltDeg}deg)` : undefined,
+          transformOrigin: 'center center',
         }}
-      />
+      >
+        <img
+          src={icon.src}
+          alt={icon.label}
+          draggable={false}
+          style={{
+            ...paymentLogoImgStyle,
+            width: 'auto',
+            height: 'auto',
+            maxHeight: `${maxHeightPx}px`,
+            maxWidth: tiltDeg ? `${maxHeightPx * 2.2}px` : '100%',
+          }}
+        />
+      </div>
     </div>
   );
 }
