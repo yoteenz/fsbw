@@ -22454,3 +22454,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Replaced with **`sLVJYq1o8i6oxuURN73ik_RisdwVxj.jpeg`** — re-ran **`npm run lobby:bake-phone`**; **`LOBBY_PHONE_SRC_REMOTE`** + bundled PNG updated.
 
 **Update:** Latest phone source **`d35m8u3jneLSkpJrHKouG_Z4VtKzzm.jpeg`** — re-baked **`lobby-phone.png`** (348×512).
+
+**Why lobby looked unchanged:** **`vercel.json`** sets **`/assets/*`** to **`Cache-Control: public, max-age=31536000, immutable`**. Replacing **`lobby-phone.png`** at the same URL left browsers/CDN on the old file. Fix: **`LOBBY_PHONE_SRC`** = **`/assets/lobby-phone.png?v=${LOBBY_PHONE_ASSET_VERSION}`** — bump **`LOBBY_PHONE_ASSET_VERSION`** (`d35m8u3`) whenever the PNG is re-baked.
