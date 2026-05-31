@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   LOUNGE_TV_MAIN_TABS,
@@ -116,13 +116,11 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
-/** Top tabs only: 4 equal columns so col 2 = SLAY TIPS, col 4 = ACADEMY (body sidebar stays fixed 72px). */
-const LOUNGE_TV_NAV_TAB_GRID = 'repeat(4, minmax(0, 1fr))';
-const LOUNGE_TV_NAV_TAB_GAP_PX = 8;
-/** Thumb/video span from SLAY TIPS (25%) to screen right; sidebar position unchanged. */
-const LOUNGE_TV_MEDIA_AREA_LEFT = '25%';
 const LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX = 12;
 const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
+
+/** Default media insets until nav tabs are measured (sidebar + gap reserved). */
+const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
 
 const LOUNGE_TV_THUMB_LABEL_GRAY = '#9a9a9a';
 
@@ -224,6 +222,9 @@ function LoungeTvScreen({
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [tilesRevision, setTilesRevision] = useState(0);
   const [viewedRevision, setViewedRevision] = useState(0);
+  const bodyRowRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const [mediaInsets, setMediaInsets] = useState(LOUNGE_TV_MEDIA_INSET_DEFAULT);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const tiles = useMemo(
     () => resolveLoungeTvTiles(mainTab, sidebarId),
@@ -260,6 +261,32 @@ function LoungeTvScreen({
   useEffect(() => {
     setSelectedVideoId(null);
   }, [sidebarId]);
+
+  const measureMediaInsets = useCallback(() => {
+    const bodyEl = bodyRowRef.current;
+    const navEl = navRef.current;
+    if (!bodyEl || !navEl) return;
+    const slayBtn = navEl.querySelector<HTMLElement>('[data-lounge-tv-tab="slay-tips"]');
+    const academyBtn = navEl.querySelector<HTMLElement>('[data-lounge-tv-tab="academy"]');
+    if (!slayBtn || !academyBtn) return;
+    const bodyRect = bodyEl.getBoundingClientRect();
+    const slayRect = slayBtn.getBoundingClientRect();
+    const academyRect = academyBtn.getBoundingClientRect();
+    setMediaInsets({
+      left: Math.max(0, Math.round(slayRect.left - bodyRect.left)),
+      right: Math.max(0, Math.round(bodyRect.right - academyRect.right)),
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    measureMediaInsets();
+    const raf = requestAnimationFrame(measureMediaInsets);
+    window.addEventListener('resize', measureMediaInsets);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measureMediaInsets);
+    };
+  }, [measureMediaInsets, mainTab]);
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
@@ -321,11 +348,11 @@ function LoungeTvScreen({
       }}
     >
       <nav
+        ref={navRef}
         style={{
-          display: 'grid',
-          gridTemplateColumns: LOUNGE_TV_NAV_TAB_GRID,
-          columnGap: `${LOUNGE_TV_NAV_TAB_GAP_PX}px`,
+          display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           width: '100%',
           marginBottom: '10px',
           flexShrink: 0,
@@ -336,11 +363,8 @@ function LoungeTvScreen({
           <button
             key={tab.id}
             type="button"
-            style={{
-              ...mainTabNavStyle(mainTab === tab.id),
-              textAlign: 'left',
-              justifySelf: 'start',
-            }}
+            data-lounge-tv-tab={tab.id}
+            style={mainTabNavStyle(mainTab === tab.id)}
             onClick={() => handleMainTabClick(tab.id)}
           >
             {tab.label}
@@ -349,6 +373,7 @@ function LoungeTvScreen({
       </nav>
 
       <div
+        ref={bodyRowRef}
         style={{
           position: 'relative',
           display: 'flex',
@@ -388,8 +413,8 @@ function LoungeTvScreen({
         <div
           style={{
             position: 'absolute',
-            left: LOUNGE_TV_MEDIA_AREA_LEFT,
-            right: 0,
+            left: `${mediaInsets.left}px`,
+            right: `${mediaInsets.right}px`,
             top: 0,
             bottom: 0,
             minWidth: 0,

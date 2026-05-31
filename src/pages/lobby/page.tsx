@@ -98,16 +98,9 @@ const LobbyPage: React.FC = () => {
     navigate('/home/shop');
   }, [navigate]);
 
-  // Measure Tools image size so invisible overlay matches asset
-  const toolsImgRef = useRef<HTMLImageElement>(null);
-  const [toolsSize, setToolsSize] = useState<{ w: number; h: number } | null>(null);
-  const measureTools = useCallback(() => {
-    const el = toolsImgRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setToolsSize({ w: r.width, h: r.height });
-    }
-  }, []);
+  const goToHomeTools = useCallback(() => {
+    navigate('/home/tools');
+  }, [navigate]);
 
   const [bookingNeonSrc, setBookingNeonSrc] = useState('/assets/neon-booking.png');
 
@@ -211,37 +204,43 @@ const LobbyPage: React.FC = () => {
               aria-hidden
             />
           </span>
-          {/* Tools: overlay sized from measured image so debug square matches asset */}
-          <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
-            <img 
-              ref={toolsImgRef}
-              src="/assets/neon-tools.png" 
-              alt="Tools" 
-              onLoad={measureTools}
-              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top', position: 'relative', zIndex: 0 }}
+          {/* Tools → /home/tools (full asset is the hit target) */}
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={goToHomeTools}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goToHomeTools();
+              }
+            }}
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+              flexShrink: 0,
+              pointerEvents: 'auto',
+              cursor: 'pointer',
+              transform: 'translateX(-50px)',
+            }}
+            aria-label="Go to tools"
+          >
+            <img
+              src="/assets/neon-tools.png"
+              alt=""
+              draggable={false}
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'block',
+                height: '41px',
+                maxWidth: 'none',
+                width: 'auto',
+                pointerEvents: 'none',
+                verticalAlign: 'top',
+              }}
               aria-hidden
             />
-            {toolsSize && (
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate('/home/tools')}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/tools'); } }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: Math.max(0, toolsSize.w - 70),
-                  height: toolsSize.h,
-                  transform: 'translateX(-14px)',
-                  boxSizing: 'border-box',
-                  cursor: 'pointer',
-                  zIndex: 1,
-                  background: 'transparent'
-                }}
-                aria-label="Go to tools"
-              />
-            )}
           </span>
           {/* Booking: to the right of tools (same kern as legacy PNG layout). PNG if present in public/assets; else SVG. */}
           <span
