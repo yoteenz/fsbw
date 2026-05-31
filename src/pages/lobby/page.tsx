@@ -27,6 +27,7 @@ import {
 } from '../../utils/loungeSceneLayout';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
 import {
   LOBBY_PHONE_POPOVER_SECTIONS,
   LOBBY_PHONE_POPOVER_TITLE,
@@ -401,11 +402,11 @@ const LobbyPage: React.FC = () => {
                 align="right"
               >
                 <img
-                  src="/assets/PHONE.png"
+                  src={LOBBY_PHONE_SRC}
                   alt=""
                   draggable={false}
-                  className="md:w-10 md:h-8 pointer-events-none select-none"
-                  style={{ width: '32px', height: '34px', display: 'block' }}
+                  className="pointer-events-none select-none"
+                  style={{ width: 'auto', height: '44px', maxWidth: '56px', display: 'block', objectFit: 'contain' }}
                 />
               </LobbyCasePropPopover>
             </div>
