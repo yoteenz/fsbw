@@ -22463,4 +22463,4 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Update:** New phone **`q-oa7o-GX24j6k742w0p8_omgBoTaL.jpeg`** — re-baked **`lobby-phone.png`** (271×512), **`LOBBY_PHONE_ASSET_VERSION`** = **`q-oa7o8`**.
 
-**Update:** Lobby phone display — **`height: 40px`** (was 44), **`maxWidth: 52px`** (was 56); wrapper **`translateX(-2px)`** (2px left). **`top: -33px`** unchanged.
+**Update:** Lobby phone display — **`height: 40px`** (was 44), **`maxWidth: 52px`** (was 56); wrapper **`translateX(-6px)`** (6px left from anchor; was **-2px** then **-6px**). **`top: -33px`** unchanged.
