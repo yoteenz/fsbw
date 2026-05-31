@@ -1,10 +1,10 @@
 /** Bump when re-baking `public/assets/lobby-payment/*` (Vercel caches `/assets/*` for 1 year). */
-export const LOBBY_PAYMENT_ICONS_VERSION = 'taW3ckz5';
+export const LOBBY_PAYMENT_ICONS_VERSION = 'G7FSLKz4';
 
 const PAYMENT_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder';
 
-/** Multi-logo sheet — only Mastercard + Klarna still cropped here. */
+/** Multi-logo sheet — only Mastercard, Discover, Apple Pay still cropped here. */
 export const LOBBY_PAYMENT_ICONS_SHEET_SRC_REMOTE = `${PAYMENT_BASE}/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg`;
 
 /** Per-logo Supabase sources (re-bake with `npm run lobby:bake-payment-icons`). */
@@ -16,6 +16,7 @@ export const LOBBY_PAYMENT_ICON_REMOTES = {
   'shop-pay': `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
   'google-pay': `${PAYMENT_BASE}/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
   afterpay: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(2).jpeg`,
+  klarna: `${PAYMENT_BASE}/Payment/G7FSLK_RM0zy4fC1qM1ab_UWvrk83X.jpeg`,
 } as const;
 
 /** @deprecated Use LOBBY_PAYMENT_ICONS_SHEET_SRC_REMOTE */

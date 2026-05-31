@@ -23,6 +23,7 @@ const STANDALONE_REMOTES = {
   'shop-pay': `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
   'google-pay': `${PAYMENT_BASE}/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg`,
   afterpay: `${PAYMENT_BASE}/Payment/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(2).jpeg`,
+  klarna: `${PAYMENT_BASE}/Payment/G7FSLK_RM0zy4fC1qM1ab_UWvrk83X.jpeg`,
 };
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -73,7 +74,6 @@ crops = {
     'mastercard': (1000, 60, 1790, 620),
     'discover': (60, 1900, 900, 2460),
     'apple-pay': (3450, 1300, 4230, 1860),
-    'klarna': (3450, 60, 4230, 620),
 }
 def chroma_key_crop(box):
     crop = im.crop(box)
