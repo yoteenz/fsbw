@@ -10,6 +10,8 @@ import path from 'node:path';
 
 const REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg';
+const GOOGLE_PAY_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/taW3ckzkvXh5AtWqFCTrG_0QGW1Akz%20(1).jpeg';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const tmpSrc = path.join(root, 'tmp/lobby-payment-cards-src.jpeg');
@@ -72,6 +74,40 @@ mkdirSync(path.dirname(tmpSrc), { recursive: true });
 mkdirSync(outDir, { recursive: true });
 execFileSync('curl', ['-fsSL', '-o', tmpSrc, REMOTE], { stdio: 'inherit' });
 execFileSync('python3', ['-c', py, tmpSrc, outDir], { stdio: 'inherit', cwd: root });
+
+const tmpGoogle = path.join(root, 'tmp/lobby-google-pay-src.jpeg');
+const pyGoogle = `
+from PIL import Image
+import numpy as np, sys
+src, out = sys.argv[1], sys.argv[2]
+im = Image.open(src).convert('RGBA')
+arr = np.array(im.convert('RGB'))
+r,g,b = arr[:,:,0], arr[:,:,1], arr[:,:,2]
+corners = np.vstack([arr[0:40,0:40,:3].reshape(-1,3), arr[0:40,-40:,:3].reshape(-1,3),
+    arr[-40:,0:40,:3].reshape(-1,3), arr[-40:,-40:,:3].reshape(-1,3)])
+bg = corners.mean(axis=0)
+br,bgc,bb = bg
+cr,cg,cb = r.astype(np.float32), g.astype(np.float32), b.astype(np.float32)
+dist = np.sqrt((cr-br)**2+(cg-bgc)**2+(cb-bb)**2)
+ge = cg - np.maximum(cr, cb)
+alpha = np.clip((dist-65)*(255/30), 0, 255)
+alpha = np.where(ge>40, np.minimum(alpha, np.clip((ge-40)*5,0,255)), alpha).astype(np.uint8)
+oa = np.array(im); oa[:,:,3] = alpha
+out_im = Image.fromarray(oa)
+bbox = out_im.getbbox()
+if bbox: out_im = out_im.crop(bbox)
+max_h = 512
+w2,h2 = out_im.size
+if h2 > max_h: out_im = out_im.resize((int(w2*max_h/h2), max_h), Image.Resampling.LANCZOS)
+out_im.save(out, 'PNG')
+print('google-pay', out_im.size)
+`;
+execFileSync('curl', ['-fsSL', '-o', tmpGoogle, GOOGLE_PAY_REMOTE], { stdio: 'inherit' });
+execFileSync('python3', ['-c', pyGoogle, tmpGoogle, path.join(outDir, 'google-pay.png')], {
+  stdio: 'inherit',
+  cwd: root,
+});
+
 console.log('Wrote icons to', outDir);
 console.log(
   'Bump LOBBY_PAYMENT_ICONS_VERSION in src/constants/lobbyPaymentIcons.ts after deploy if icons look cached.'
