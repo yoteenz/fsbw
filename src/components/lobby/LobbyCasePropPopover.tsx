@@ -15,6 +15,8 @@ function lobbyPopoverPx(px: number): number {
 }
 
 const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 2;
+/** Payment popover section labels only — 2px smaller than contact Bohemy headers. */
+const LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX = LOBBY_POPOVER_BOHEMY_FONT_PX - 2;
 const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
 
 type ContactPopoverLine =
@@ -121,6 +123,7 @@ function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
   ...lobbyBohemyLabelStyle,
   textAlign: 'center',
+  fontSize: `${LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX}px`,
 };
 
 const paymentLogoImgStyle: React.CSSProperties = {
