@@ -22332,3 +22332,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User reported the TV close chip sometimes renders **behind** the TV (overlapped by screen content).
 
 **Fix:** **`loungeTvFrame.tsx`** — render close **after** the screen in DOM; **`LOUNGE_TV_CLOSE_BUTTON_Z_INDEX` (100)**; frame shell **`isolation: isolate`** + **`overflow: visible`**; screen **`zIndex: 0`**. **`LoungeTvOverlay.tsx`** — **`isolation: isolate`** on fixed TV wrapper. Commit **`061e1299`**.
+
+---
+
+## 2026-05-29 — Restore BCF closures/frontals LACE TREATMENT (removed in live-image fix)
+
+**Context:** User reported **LACE TREATMENT** (PLUCK HAIRLINE / BLEACH/TINT KNOTS) missing from closures & frontals PDP and cart VIEW DETAILS **`TREATMENT: PLUCK + BLEACH/TINT`** no longer appearing.
+
+**Cause:** Accidentally removed in **`26638129`** (“Fix live BCF product and wishlist images”) while refactoring the PDP.
+
+**Restore (`texture-category-product/page.tsx`):** `bcfLaceTreatment` state; multi-select chips after **hair length**, before **hair color** (closures/frontals only); premium gate + price via **`bcfLaceTreatmentPrice`**; **`laceTreatment`** on add-to-bag lines. Cart copy unchanged in **`cartLineRedAndDetails.ts`**. Build passes. Pushed **`master`** + **`preview/mobile`**.
