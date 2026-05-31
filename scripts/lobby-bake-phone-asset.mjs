@@ -53,3 +53,6 @@ mkdirSync(path.dirname(tmpSrc), { recursive: true });
 execFileSync('curl', ['-fsSL', '-o', tmpSrc, REMOTE], { stdio: 'inherit' });
 execFileSync('python3', ['-c', py, tmpSrc, outPath], { stdio: 'inherit', cwd: root });
 console.log('Wrote', outPath);
+console.log(
+  'If the lobby still shows the old phone after deploy, bump LOBBY_PHONE_ASSET_VERSION in src/constants/lobbyCaseAssets.ts (Vercel caches /assets/* for 1 year).'
+);
