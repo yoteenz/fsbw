@@ -22352,3 +22352,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Line UI showed **per-unit** `item.price` only (not `price × quantity`). Subtotal used **`cartBillableSubtotal`** correctly in theory but BCF unit price could be stale vs lace-treatment options.
 
 **Fix:** **`bcfResolveCartLineUnitPriceUsd`** recomputes unit price from cart line options (incl. **`laceTreatment`**). **`cartLineExtendedPriceUsd`** uses it for **`shop-texture-category`** lines. **Cart dropdown:** +/- stepper for regular BCF (not bundle deal); **`handleQuantityChange`** persists qty + refreshed unit price. **Shopping bag:** line display uses **`cartLineExtendedPriceUsd`**; qty handlers refresh BCF **`price`**. Subtotal unchanged formula but now matches displayed line totals.
+
+---
+
+## 2026-05-29 — Lounge TV layout: align thumbs + video with SLAY TIPS tab
+
+**Context:** User mockup showed first thumbnail column and Watch + Learn video/title block should left-align with **SLAY TIPS** top-tab text (not **WATCH + LEARN**). Increase spacing/width of content area as needed.
+
+**Fix (`LoungeTvOverlay.tsx` — `LoungeTvScreen`):** Shared **`LOUNGE_TV_MAIN_TAB_GRID`** (`repeat(4, minmax(0, 1fr))`) on main nav and body. Main tabs: CSS grid, left-aligned labels. Body: sidebar **`gridColumn: 1`**; content **`gridColumn: 2 / 5`** (spans cols 2–4 = SLAY TIPS through ACADEMY). Symmetric screen padding **`10px`** (was **`18px`** left). Thumb grid **`columnGap: 10px`**, full width inside content span; player **`width: 100%`** → left edge lines up with SLAY TIPS.
+
+**Commit:** `bf55acf5` on **`master`** / **`preview/mobile`**.
