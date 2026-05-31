@@ -3,6 +3,9 @@ import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
+const TIME_FONT = '"Futura PT Book", Futura, sans-serif';
+const BRAND_RED = '#EB1C24';
+const BODY_GRAY = '#808080';
 const TAP_DELAY_MS = 280;
 
 type LoungeTvWatchLearnPlayerProps = {
@@ -32,10 +35,22 @@ type ElementWithLegacyFullscreen = HTMLElement & {
   webkitRequestFullscreen?: () => Promise<void> | void;
 };
 
+function isSameOriginMediaUrl(url: string): boolean {
+  if (!url || url.startsWith('data:') || url.startsWith('blob:')) return true;
+  if (typeof window === 'undefined') return false;
+  try {
+    return new URL(url, window.location.origin).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps) {
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const blobUrlRef = useRef<string | null>(null);
+  const [videoSrc, setVideoSrc] = useState(tile.videoSrc ?? '');
   const [paused, setPaused] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -48,8 +63,45 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   }, []);
 
   useEffect(() => {
+    const src = tile.videoSrc ?? '';
+    setVideoSrc(src);
+    if (!src) return;
+
+    let cancelled = false;
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = null;
+    }
+
+    if (isSameOriginMediaUrl(src)) {
+      void fetch(src)
+        .then((res) => {
+          if (!res.ok) throw new Error('fetch failed');
+          return res.blob();
+        })
+        .then((blob) => {
+          if (cancelled) return;
+          const blobUrl = URL.createObjectURL(blob);
+          blobUrlRef.current = blobUrl;
+          setVideoSrc(blobUrl);
+        })
+        .catch(() => {
+          if (!cancelled) setVideoSrc(src);
+        });
+    }
+
+    return () => {
+      cancelled = true;
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+    };
+  }, [tile.id, tile.videoSrc]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video || !tile.videoSrc) return;
+    if (!video || !videoSrc) return;
     video.currentTime = 0;
     setCurrentTime(0);
     setDuration(0);
@@ -60,7 +112,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       });
     }
     setPaused(false);
-  }, [tile.id, tile.videoSrc]);
+  }, [tile.id, videoSrc]);
 
   useEffect(() => {
     return () => {
@@ -156,7 +208,10 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   if (!tile.videoSrc) return null;
 
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
-  const durationDisplay = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
+  const elapsedLabel = formatLoungeTvVideoDuration(currentTime);
+  const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
+  const progressLabel =
+    duration > 0 ? `${elapsedLabel}/${totalLabel}` : elapsedLabel !== '—' ? `${elapsedLabel}/—` : '—';
 
   return (
     <div
@@ -182,10 +237,14 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       >
         <video
           ref={videoRef}
-          src={tile.videoSrc}
+          src={videoSrc}
           playsInline
           loop
           preload="auto"
+          controls={false}
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          disablePictureInPicture
+          disableRemotePlayback
           aria-label={tile.title}
           onPlay={() => setPaused(false)}
           onPause={() => {
@@ -242,7 +301,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               right: 0,
               bottom: 0,
               zIndex: 2,
-              padding: '4px 30px 6px 6px',
+              padding: '4px 6px 6px',
               background: 'linear-gradient(transparent, rgba(0,0,0,0.72))',
               boxSizing: 'border-box',
             }}
@@ -264,60 +323,50 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           </div>
         ) : null}
 
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            right: '32px',
-            bottom: paused ? '24px' : '7px',
-            zIndex: 3,
-            fontFamily: BODY_FONT,
-            fontSize: '7px',
-            letterSpacing: '0.06em',
-            color: 'rgba(255,255,255,0.92)',
-            textTransform: 'uppercase',
-            pointerEvents: 'none',
-            textShadow: '0 1px 2px rgba(0,0,0,0.85)',
-            transition: 'bottom 0.15s ease',
-          }}
-        >
-          {durationDisplay}
-        </span>
-
-        <button
-          type="button"
-          aria-label="Full screen"
-          onPointerDown={handleFullscreenPress}
-          onPointerUp={(e) => e.stopPropagation()}
-          onClick={handleFullscreenPress}
-          style={{
-            position: 'absolute',
-            right: '5px',
-            bottom: paused ? '22px' : '5px',
-            zIndex: 10,
-            width: '22px',
-            height: '22px',
-            margin: 0,
-            padding: 0,
-            border: 'none',
-            borderRadius: '2px',
-            background: 'rgba(0,0,0,0.5)',
-            color: '#ffffff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            WebkitTapHighlightColor: 'transparent',
-            touchAction: 'manipulation',
-            transition: 'bottom 0.15s ease',
-            pointerEvents: 'auto',
-          }}
-        >
-          <FullscreenExpandIcon />
-        </button>
+        {!paused ? (
+          <button
+            type="button"
+            aria-label="Full screen"
+            onPointerDown={handleFullscreenPress}
+            onPointerUp={(e) => e.stopPropagation()}
+            onClick={handleFullscreenPress}
+            style={{
+              position: 'absolute',
+              right: '5px',
+              bottom: '5px',
+              zIndex: 10,
+              width: '22px',
+              height: '22px',
+              margin: 0,
+              padding: 0,
+              border: 'none',
+              borderRadius: '2px',
+              background: 'rgba(0,0,0,0.5)',
+              color: '#ffffff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'manipulation',
+              pointerEvents: 'auto',
+            }}
+          >
+            <FullscreenExpandIcon />
+          </button>
+        ) : null}
       </div>
 
-      <div style={{ width: '100%' }}>
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: '8px',
+          minWidth: 0,
+        }}
+      >
         <span
           style={{
             fontFamily: BODY_FONT,
@@ -326,10 +375,29 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             color: '#ffffff',
             textTransform: 'uppercase',
             textAlign: 'left',
-            display: 'block',
+            flex: '1 1 auto',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           {tile.title}
+        </span>
+        <span
+          style={{
+            fontFamily: TIME_FONT,
+            fontSize: '7px',
+            letterSpacing: '0.06em',
+            color: BRAND_RED,
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+          }}
+          aria-label={`Playback ${progressLabel}`}
+        >
+          {progressLabel}
         </span>
       </div>
 
@@ -339,7 +407,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           fontFamily: BODY_FONT,
           fontSize: '7px',
           lineHeight: 1.35,
-          color: '#b5b5b5',
+          color: BODY_GRAY,
           textAlign: 'left',
         }}
       >

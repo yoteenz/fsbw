@@ -25,7 +25,14 @@ import {
   loungeSalonChairsImageStyle,
   useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
+import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import {
+  LOBBY_PHONE_POPOVER_SECTIONS,
+  LOBBY_PHONE_POPOVER_TITLE,
+  LOBBY_REGISTER_POPOVER_SECTIONS,
+  LOBBY_REGISTER_POPOVER_TITLE,
+} from '../../constants/lobbyPropPopoverCopy';
 import {
   LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
@@ -94,27 +101,16 @@ const LobbyPage: React.FC = () => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-next'));
   }, []);
 
-  // Measure Products/Tools image size so debug overlay matches asset exactly
-  const productsImgRef = useRef<HTMLImageElement>(null);
-  const toolsImgRef = useRef<HTMLImageElement>(null);
-  const [productsSize, setProductsSize] = useState<{ w: number; h: number } | null>(null);
-  const [toolsSize, setToolsSize] = useState<{ w: number; h: number } | null>(null);
-  const measureProducts = useCallback(() => {
-    const el = productsImgRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setProductsSize({ w: r.width, h: r.height });
-    }
-  }, []);
-  const measureTools = useCallback(() => {
-    const el = toolsImgRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setToolsSize({ w: r.width, h: r.height });
-    }
-  }, []);
+  const goToHomeShop = useCallback(() => {
+    navigate('/home/shop');
+  }, [navigate]);
+
+  const goToHomeTools = useCallback(() => {
+    navigate('/home/tools');
+  }, [navigate]);
 
   const [bookingNeonSrc, setBookingNeonSrc] = useState('/assets/neon-booking.png');
+  const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
 
   return (
     <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
@@ -158,7 +154,7 @@ const LobbyPage: React.FC = () => {
             <img 
               src="/assets/neon-logo.png" 
               alt="Frontal Slayer" 
-              onClick={() => navigate('/home/shop')}
+              onClick={goToHomeShop}
               style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
           </div>
@@ -178,69 +174,82 @@ const LobbyPage: React.FC = () => {
             pointerEvents: 'none'
           }}
         >
-          {/* Products: overlay sized from measured image so debug square matches asset */}
-          <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
-            <img 
-              ref={productsImgRef}
-              src="/assets/neon-products.png" 
-              alt="Products" 
-              onLoad={measureProducts}
-              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top', position: 'relative', zIndex: 0 }}
+          {/* Products → /home/shop (full asset is the hit target) */}
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={goToHomeShop}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goToHomeShop();
+              }
+            }}
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+              flexShrink: 0,
+              pointerEvents: 'auto',
+              cursor: 'pointer',
+              transform: 'translateX(4px)',
+            }}
+            aria-label="Go to shop"
+          >
+            <img
+              src="/assets/neon-products.png"
+              alt=""
+              draggable={false}
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'block',
+                height: '41px',
+                maxWidth: 'none',
+                width: 'auto',
+                pointerEvents: 'none',
+                verticalAlign: 'top',
+              }}
               aria-hidden
             />
-            {productsSize && (
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate('/home/shop')}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/shop'); } }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: Math.max(0, productsSize.w - 40),
-                  height: productsSize.h,
-                  transform: 'translateX(24px)',
-                  boxSizing: 'border-box',
-                  cursor: 'pointer',
-                  zIndex: 1,
-                  background: 'transparent'
-                }}
-                aria-label="Go to home shop"
-              />
-            )}
           </span>
-          {/* Tools: overlay sized from measured image so debug square matches asset */}
-          <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
-            <img 
-              ref={toolsImgRef}
-              src="/assets/neon-tools.png" 
-              alt="Tools" 
-              onLoad={measureTools}
-              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(-50px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top', position: 'relative', zIndex: 0 }}
+          {/* Tools → /home/tools (full asset is the hit target) */}
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={goToHomeTools}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goToHomeTools();
+              }
+            }}
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+              flexShrink: 0,
+              pointerEvents: 'auto',
+              cursor: 'pointer',
+              transform: 'translateX(-50px)',
+              zIndex: 2,
+            }}
+            aria-label="Go to tools"
+          >
+            <img
+              src="/assets/neon-tools.png"
+              alt=""
+              draggable={false}
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'block',
+                height: '41px',
+                maxWidth: 'none',
+                width: 'auto',
+                pointerEvents: 'none',
+                verticalAlign: 'top',
+              }}
               aria-hidden
             />
-            {toolsSize && (
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate('/home/tools')}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/tools'); } }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: Math.max(0, toolsSize.w - 70),
-                  height: toolsSize.h,
-                  transform: 'translateX(-14px)',
-                  boxSizing: 'border-box',
-                  cursor: 'pointer',
-                  zIndex: 1,
-                  background: 'transparent'
-                }}
-                aria-label="Go to tools"
-              />
-            )}
           </span>
           {/* Booking: to the right of tools (same kern as legacy PNG layout). PNG if present in public/assets; else SVG. */}
           <span
@@ -250,7 +259,7 @@ const LobbyPage: React.FC = () => {
               flexShrink: 0,
               transform: 'translateX(-104px)',
               pointerEvents: 'auto',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             <img
@@ -353,24 +362,52 @@ const LobbyPage: React.FC = () => {
               style={{ display: 'block', width: '230px', maxWidth: '230px' }}
             />
             
-            {/* Register - Left side of case */}
-            <div className="absolute left-8" style={{ top: '-39px' }}>
-            <img 
-              src="/assets/REGISTER.png" 
-              alt="Register" 
-              className="md:w-10 md:h-8"
-              style={{ width: '52px', height: '44px' }}
-            />
+            {/* Register — tap for payment methods popover */}
+            <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>
+              <LobbyCasePropPopover
+                popoverId="register"
+                activeId={lobbyCasePopover}
+                onActivate={(id) => {
+                  if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
+                }}
+                onClose={() => setLobbyCasePopover(null)}
+                ariaLabel="View accepted payment methods"
+                title={LOBBY_REGISTER_POPOVER_TITLE}
+                sections={LOBBY_REGISTER_POPOVER_SECTIONS}
+                align="left"
+              >
+                <img
+                  src="/assets/REGISTER.png"
+                  alt=""
+                  draggable={false}
+                  className="md:w-10 md:h-8 pointer-events-none select-none"
+                  style={{ width: '52px', height: '44px', display: 'block' }}
+                />
+              </LobbyCasePropPopover>
             </div>
-            
-            {/* Phone - Right side of case */}
-            <div className="absolute right-8" style={{ top: '-31px' }}>
-              <img 
-                src="/assets/PHONE.png" 
-                alt="Phone" 
-                className="md:w-10 md:h-8"
-                style={{ width: '32px', height: '34px' }}
-              />
+
+            {/* Phone — tap for business contact popover */}
+            <div className="absolute right-8" style={{ top: '-31px', zIndex: 25 }}>
+              <LobbyCasePropPopover
+                popoverId="phone"
+                activeId={lobbyCasePopover}
+                onActivate={(id) => {
+                  if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
+                }}
+                onClose={() => setLobbyCasePopover(null)}
+                ariaLabel="View business contact information"
+                title={LOBBY_PHONE_POPOVER_TITLE}
+                sections={LOBBY_PHONE_POPOVER_SECTIONS}
+                align="right"
+              >
+                <img
+                  src="/assets/PHONE.png"
+                  alt=""
+                  draggable={false}
+                  className="md:w-10 md:h-8 pointer-events-none select-none"
+                  style={{ width: '32px', height: '34px', display: 'block' }}
+                />
+              </LobbyCasePropPopover>
             </div>
           </div>
         </div>

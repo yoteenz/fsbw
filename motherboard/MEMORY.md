@@ -22220,3 +22220,225 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **Brand admin**: both tab rows use **`flexWrap: 'nowrap'`**, smaller font, horizontal scroll.
 
 **Changes:** `src/utils/loungeTvAdminConfig.ts`, `api/lounge-tv-config.ts`, `api/admin/lounge-tv-config.ts`, `src/utils/api.ts`, `src/pages/admin/components/AdminLoungeTvContentPanel.tsx`, `src/pages/admin/backend/page.tsx`, `src/pages/admin/brand/page.tsx`, `src/components/lounge/LoungeTvOverlay.tsx`, `src/components/lounge/loungeTvContent.ts` (`getLoungeTvTilesStatic` rename).
+
+---
+
+## 2026-05-29 — Admin CONTENT video picker: nothing happens on iPhone
+
+**Context:** User reported choosing a video on **`/admin/backend` → CONTENT** did nothing (no preview, no feedback). Prior chat had drafted a fix locally but it was uncommitted.
+
+**Root cause:** Mobile Safari often leaves **`file.type` empty** for `.mp4`/`.mov`, so **`file.type.startsWith('video/')`** failed and the upload was rejected; errors were easy to miss.
+
+**Fix (`AdminLoungeTvContentPanel.tsx`, commit `e9f36b2f` on `master` / `preview/mobile`):**
+- **`fileLooksLikeVideo` / `fileLooksLikeImage`** with extension fallback (`.mp4`, `.mov`, etc.).
+- Auto-detect media type from picked file (video vs photo).
+- Red **CHOOSE VIDEO FILE** button, **LOADING FILE…**, green success notice, visible red error box (includes file size; **>4MB** must use hosted URL).
+- **`<video>` preview** for embedded or HTTPS URLs.
+
+**User workflow:** Select **VIDEO** (or pick a video file — type auto-detects), upload or paste URL, **SAVE CATEGORY**. Clips over ~4MB need Supabase/public URL paste, not inline embed.
+
+---
+
+## 2026-05-29 — Lounge TV thumb labels: align title rows with/without *NEW*
+
+**Context:** User wanted **CUTTING YOUR LACE**, **TINTING YOUR LACE**, etc. on the **same text rows** whether or not **\*NEW\*** appears above.
+
+**Fix:** **`LoungeTvTileLabel`** in **`LoungeTvOverlay.tsx`** — fixed-height **\*NEW\*** row (`minHeight: 8px`, empty when not new); title lines always below; label stack **`justifyContent: flex-end`** on thumb overlay.
+
+---
+
+## 2026-05-29 — Lounge TV: admin video on TV + centered labels with *NEW* overlay
+
+**Context:** User said admin video upload works on backend but **not on TV after save**; rejected bottom-pinned labels — wanted titles **centered** with **\*NEW\*** in a **separate container** that does not shift title text.
+
+**Video sync fix (`loungeTvAdminConfig.ts`, admin panel, overlay):**
+- **`updatedAt`** on admin save; **`mergeLoungeTvAdminConfigs`** on hydrate so **newer local save** is not overwritten by **stale Supabase** config (common when large embed fails server sync).
+- TV **re-hydrates when overlay opens** (`isOpen`).
+- Admin save: local always saved; API failure shows **saved on this device** message.
+- **Plucking lace** uses admin **`mediaUrl`** when set; bundled asset is fallback only.
+
+**Label fix:** **\*NEW\*** `position: absolute` at top of thumb overlay; title stack stays **`justifyContent: center`**.
+
+**Commits:** `5c87319e` on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge TV *NEW* blur until viewed
+
+**Context:** User wanted tiles marked **\*NEW\*** to show a **slight blur** on the thumb until opened; then remove blur and **\*NEW\***.
+
+**Implementation:** **`src/utils/loungeTvViewedTiles.ts`** — `loungeTvViewedTileIds` in localStorage, **`markLoungeTvTileViewed`**, **`loungeTvTileShowsAsNew`**, **`LOUNGE_TV_VIEWED_UPDATED_EVENT`**. **`LoungeTvOverlay`** grid: `blur(4px)` + scale on thumb when unseen; **\*NEW\*** + white title only while unseen; mark viewed on tile tap or Watch + Learn video open.
+
+---
+
+## 2026-05-29 — Lounge TV: player polish, admin CONTENT tabs, capture guard; DRM deferred (academy / paid content)
+
+**Context:** Long chat continuing Lounge TV overlay work (after prior MEMORY entries on curtains, static, Watch + Learn player, admin CONTENT accordion). User polished labels/player, fixed deploy/chunk errors and admin category UX, asked for Netflix-level screenshot blocking, got an honest DRM outline, then asked to **store this whole conversation in motherboard** and **revisit DRM later** once the **academy & paid content** system is fleshed out.
+
+**Topics covered (full chat arc):**
+- **Thumbnail labels:** **\*NEW\*** in a separate absolute layer so titles stay vertically centered; title block nudged down (`marginTop: 8px` on label stack). White title on thumb; gray body copy elsewhere per mocks.
+- **Watch + Learn player (`LoungeTvWatchLearnPlayer.tsx`):** Title + **live** progress `0:00/0:03` on one line; duration from **`video.duration`** (not static label only); duration text **Futura PT Book**, red **`#EB1C24`**; description/body gray **`#808080`**. Paused seek bar: symmetric padding (no extra right inset for hidden fullscreen control). **Fullscreen** icon hidden while paused. **iOS:** `webkitEnterFullscreen` on video element. Removed **COMING SOON** / academy placeholder copy on TV screen.
+- **\*NEW\* until viewed:** Blur + badge until tile opened; **`markLoungeTvTileViewed`** on tap or opening Watch + Learn video; admin re-enabling **`isNew`** clears viewed id for that tile. Remote/local merge uses **`updatedAt`** in **`loungeTvAdminConfig.ts`** so stale Supabase does not wipe newer local saves.
+- **Admin CONTENT (`/admin/backend` → CONTENT):** Tap a **main category** (BRAND, SLAY TIPS, etc.) → top tabs become **that category’s subcategories** (e.g. NEW DROPS / CAMPAIGNS), not AUDIT LOG / USERS / CONTENT. One sub-tab editor at a time; **REMOVE** uses **`ConfirmationModal`**. Video upload: MIME/extension fallbacks, merge local+remote config, clearer **403 FORBIDDEN** messaging when **`PUT /api/admin/lounge-tv-config`** fails (local save still works — need admin Supabase session / email in **`ADMIN_EMAILS`**).
+- **Red screen / chunk load after deploy:** “Importing a module script failed” — **`src/utils/chunkLoadRecovery.ts`**, global listeners in **`main.tsx`**, cache-bust reload, friendlier **`App.tsx`** error UI; **`vercel.json`** no-cache on **`index.html`**. Commit **`7fd6eb62`**.
+- **Capture protection (shipped, best-effort — not DRM):** **`LoungeTvContentProtection`**, **`useLoungeTvCaptureGuard`** — black shield on suspected capture/recording; video **`controlsList` nodownload**, no PiP; same-origin blob playback where applicable. Commit **`e4e025d2`**. User wanted Netflix-level blocking; **web cannot fully prevent iOS screenshots/screen record on plain MP4** without **EME (FairPlay / Widevine)**.
+- **DRM outline (discussion only — NOT implemented):** Phased plan documented for a future chat:
+  - **Phase A:** Move Watch + Learn off inline/public MP4s → hosted **HLS** (Cloudflare Stream, Mux, or Bunny) with **signed URLs**; store **`videoAssetId`** (or provider id) on lounge TV admin tiles instead of huge **`data:`** embeds.
+  - **Phase B:** Enable provider **DRM** (FairPlay + Widevine); playback only inside **`LoungeTvWatchLearnPlayer`** via Shaka or Mux player; short-lived tokens from **`GET /api/lounge-tv/playback`** (or admin upload pipeline to provider).
+  - **Phase C:** Ops — migrate existing tiles, cap admin inline upload size, retire public **`/assets/tv-content-video.mp4`** for paid clips once provider hosts them.
+- **Build fix:** Unused **`BRAND_RED`** / **`BODY_GRAY`** in overlay caused Vercel TS fail — wired into player/label styles. Commit **`4b2856e3`**.
+- **Admin category tabs:** Commit **`51317bde`**.
+
+**Decisions / outcomes:**
+- **Do not start DRM implementation** until user defines **academy & paid content** architecture (entitlements, checkout, which routes are gated).
+- **Current lounge TV video security** = UX deterrents + signed/hosted URLs when Phase A happens; true screenshot block on iPhone requires Phase B.
+- **Plucking lace / bundled MP4:** Fallback **`public/assets/tv-content-video.mp4`** only when admin has no **`mediaUrl`**; user may need to push real binary to GitHub for bundled asset to match content.
+
+**Changes (key paths):**
+| Area | Paths |
+|------|--------|
+| TV overlay / grid | `src/components/lounge/LoungeTvOverlay.tsx` |
+| Player | `src/components/lounge/LoungeTvWatchLearnPlayer.tsx`, `src/index.css` (`.lounge-tv-seek-range`) |
+| Config | `src/utils/loungeTvAdminConfig.ts`, `api/lounge-tv-config.ts`, `api/admin/lounge-tv-config.ts` |
+| Viewed *NEW* | `src/utils/loungeTvViewedTiles.ts` |
+| Capture guard | `src/hooks/useLoungeTvCaptureGuard.ts`, `src/components/lounge/LoungeTvContentProtection.tsx` |
+| Chunk recovery | `src/utils/chunkLoadRecovery.ts`, `src/main.tsx`, `src/App.tsx` |
+| Admin CONTENT | `src/pages/admin/components/AdminLoungeTvContentPanel.tsx`, `src/pages/admin/backend/page.tsx` |
+
+**Notable commits (on `master` / `preview/mobile`):** `51317bde` admin category tabs, `7fd6eb62` chunk recovery, `e4e025d2` capture protection, `4b2856e3` color constants, plus earlier label/player/admin sync entries in same thread.
+
+**Conventions for future agents:**
+- User explicitly parked DRM — load this entry before proposing EME/Stream/Mux work.
+- When resuming: confirm provider (Cloudflare Stream vs Mux), implement **one** Watch + Learn tile on hosted HLS + signed URL (Phase A), then DRM + iPhone screen-record test (Phase B).
+- Push **`master`** and **`preview/mobile`** only (no `cursor/*` branches).
+- Admin server sync 403: sign in with admin Supabase email; large videos → paste hosted URL, not inline embed.
+
+**User ask (this message):** Store conversation in motherboard; revisit DRM after academy/paid-content system is designed.
+
+---
+
+## 2026-05-29 — Lounge TV close button: bezel gray chip, light gray X
+
+**Context:** After motherboard storage of the long lounge TV / DRM thread, user asked to restyle the lounge TV **close** control: white circular background → **dark gray** matching TV bezel tones; red **X** → **light gray**.
+
+**Change (`loungeTvFrame.tsx`, `LoungeTvCloseButton`):** Background **`#454545`** (`LOUNGE_TV_CLOSE_BUTTON_BG`, same highlight as bezel gradient); border **`#0a0a0a`**; subtle inset highlight like shell. Icon filter **`LOUNGE_TV_CLOSE_ICON_FILTER`** (~78% invert) instead of **`AFFILIATE_CLOSE_ICON_FILTER`** (brand red). Applies to lobby + overlay TV via shared **`LoungeTvFrame`**.
+
+**Commit:** `b1ac2163` on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Lounge TV close: always on top (z-index / DOM order)
+
+**Context:** User reported the TV close chip sometimes renders **behind** the TV (overlapped by screen content).
+
+**Fix:** **`loungeTvFrame.tsx`** — render close **after** the screen in DOM; **`LOUNGE_TV_CLOSE_BUTTON_Z_INDEX` (100)**; frame shell **`isolation: isolate`** + **`overflow: visible`**; screen **`zIndex: 0`**. **`LoungeTvOverlay.tsx`** — **`isolation: isolate`** on fixed TV wrapper. Commit **`061e1299`**.
+
+---
+
+## 2026-05-29 — Restore BCF closures/frontals LACE TREATMENT (removed in live-image fix)
+
+**Context:** User reported **LACE TREATMENT** (PLUCK HAIRLINE / BLEACH/TINT KNOTS) missing from closures & frontals PDP and cart VIEW DETAILS **`TREATMENT: PLUCK + BLEACH/TINT`** no longer appearing.
+
+**Cause:** Accidentally removed in **`26638129`** (“Fix live BCF product and wishlist images”) while refactoring the PDP.
+
+**Restore (`texture-category-product/page.tsx`):** `bcfLaceTreatment` state; multi-select chips after **hair length**, before **hair color** (closures/frontals only); premium gate + price via **`bcfLaceTreatmentPrice`**; **`laceTreatment`** on add-to-bag lines. Cart copy unchanged in **`cartLineRedAndDetails.ts`**. Build passes. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — BCF cart/bag quantity: line price + subtotal follow qty
+
+**Context:** User reported BCF **quantity counter** in **cart dropdown** and **shopping bag** did not update **line price** or **subtotal** when qty changed.
+
+**Cause:** Line UI showed **per-unit** `item.price` only (not `price × quantity`). Subtotal used **`cartBillableSubtotal`** correctly in theory but BCF unit price could be stale vs lace-treatment options.
+
+**Fix:** **`bcfResolveCartLineUnitPriceUsd`** recomputes unit price from cart line options (incl. **`laceTreatment`**). **`cartLineExtendedPriceUsd`** uses it for **`shop-texture-category`** lines. **Cart dropdown:** +/- stepper for regular BCF (not bundle deal); **`handleQuantityChange`** persists qty + refreshed unit price. **Shopping bag:** line display uses **`cartLineExtendedPriceUsd`**; qty handlers refresh BCF **`price`**. Subtotal unchanged formula but now matches displayed line totals.
+
+---
+
+## 2026-05-29 — Lounge TV layout: align thumbs + video with SLAY TIPS tab
+
+**Context:** User mockup showed first thumbnail column and Watch + Learn video/title block should left-align with **SLAY TIPS** top-tab text (not **WATCH + LEARN**). Increase spacing/width of content area as needed.
+
+**Fix (`LoungeTvOverlay.tsx` — `LoungeTvScreen`):** Shared **`LOUNGE_TV_MAIN_TAB_GRID`** (`repeat(4, minmax(0, 1fr))`) on main nav and body. Main tabs: CSS grid, left-aligned labels. Body: sidebar **`gridColumn: 1`**; content **`gridColumn: 2 / 5`** (spans cols 2–4 = SLAY TIPS through ACADEMY). Symmetric screen padding **`10px`** (was **`18px`** left). Thumb grid **`columnGap: 10px`**, full width inside content span; player **`width: 100%`** → left edge lines up with SLAY TIPS.
+
+**Commit:** `bf55acf5` on **`master`** / **`preview/mobile`**.
+
+**Superseded (2026-05-29):** User reported that approach was wrong — it moved **LACE / INSTALL / STYLING** sidebar. Correct fix: **`58ccc34a`** — restore **`72px`** sidebar + **`18px`** left screen padding; top tabs only use 4-col grid; thumb grid + video use **`position: absolute; left: 25%; right: 0`** so col 1 = **SLAY TIPS**, col 3 = **ACADEMY**, **`columnGap: 12px`** unchanged between thumbs.
+
+---
+
+## 2026-05-29 — Admin backend CONTENT tab matches revenue waitlist UI
+
+**Context:** User asked to redesign **Admin → Backend → CONTENT** (lounge TV admin) like **Revenue → View waitlist** — border lines and spacing were off.
+
+**Fix:** **`backend/page.tsx`** — hub card uses waitlist flex layout (`minHeight: calc(100dvh - 160px)`, `px-5`, `admin-hub-tab-scroll`); removed fixed `420px` scroll and double padding. **`AdminLoungeTvContentPanel.tsx`** — waitlist **`panelStyle`** (`#fff`, `1px solid #d1d5db`); category list as single panel with **`#e5e7eb`** row dividers; stat tiles (CATEGORIES / ITEMS); drill-in header + close matches waitlist product panel; internal scroll when editing; inputs use square **`#d1d5db`** borders.
+
+**Commits:** `12564d45`, input border follow-up on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Cart dropdown: restore QTY/× icons after BCF pricing fix
+
+**Context:** BCF quantity **pricing** fix (`4183be0d`) was correct but wrongly added **+/- stepper** in **cart dropdown**; user wanted original **QTY: n** label + **×** remove only in dropdown.
+
+**Fix:** **`CartDropdown.tsx`** — removed stepper + **`handleQuantityChange`** / **`persistCartItems`** from dropdown; restored static **QTY:** line. Kept **`cartLineExtendedPriceUsd`** for BCF line totals. **`shopping-bag/page.tsx`** unchanged (bag still has stepper + refreshed unit price on qty change).
+
+---
+
+## 2026-05-29 — Lobby Products neon: fix /home/shop tap target
+
+**Context:** **Products** asset on lobby (`/lobby`) did not reliably open **`/home/shop`** — invisible overlay was offset (`translateX(24px)`, width `w - 40`) so taps on the neon text missed the handler.
+
+**Fix:** **`lobby/page.tsx`** — wrap **neon-products** in a single **`role="button"`** span with **`goToHomeShop()`** → **`navigate('/home/shop')`**; full asset is the hit area (same route as center logo). Removed **`productsSize`** overlay measurement. **`CORE.md`** — Products + logo → **`/home/shop`**; lounge slide logo → **`/shop/units`**.
+
+---
+
+## 2026-05-29 — Lounge TV ACADEMY tab position + lobby Tools routing
+
+**Context:** (1) **ACADEMY** top-tab text on lounge TV was shifted left after equal 4-column nav grid. (2) Lobby **Tools** neon did not reliably open **`/home/tools`** (misaligned overlay, same issue as Products).
+
+**Fix:** **`LoungeTvOverlay.tsx`** — restore main nav **`justifyContent: space-between`** (original ACADEMY placement). Media (thumbs/video) uses measured insets from **SLAY TIPS** left and **ACADEMY** right (`data-lounge-tv-tab` + **`getBoundingClientRect`**); sidebar stays **72px**. **`lobby/page.tsx`** — **Tools** full-asset button → **`goToHomeTools()`** / **`/home/tools`** (removed tools overlay measurement).
+
+---
+
+## 2026-05-31 — Lounge TV thumbnail grid: symmetric gutters
+
+**Context:** User mockup on lounge TV **Watch + Learn** (e.g. **LACE** subcategory): horizontal gaps between the 3-column thumbnail grid looked wider than vertical row gaps (blue vs yellow annotation lines). Wanted column spacing symmetrical with row spacing.
+
+**Fix:** **`src/components/lounge/LoungeTvOverlay.tsx`** — replaced **`LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX` (12)** with shared **`LOUNGE_TV_THUMB_GRID_GAP_PX` (6)** for both **`columnGap`** and **`rowGap`** on the thumb grid (reverts asymmetric **`92ab16d9`** split of 12px / 6px). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby Tools neon: restore /home/tools routing
+
+**Context:** User reported **Tools** asset on lobby still not navigating to **`/home/tools`** after prior full-asset button change (**`b377adca`**).
+
+**Cause:** **Products / Tools / Booking** used **`translateX`** kerning while flex layout kept each item’s box in the unshifted row; **Booking** (later in DOM) has an **`inset: 0`** tap layer that overlapped the visually shifted **Tools** neon and captured taps (premium booking route instead of tools).
+
+**Fix (superseded):** **`marginLeft`** kerning moved Tools/Booking visuals — user asked to revert.
+
+**Correct fix (2026-05-31 follow-up):** Restore legacy **`translateX`** kerning (**`4px`**, **`-50px`**, **`-104px`**) on Products / Tools / Booking so asset positions unchanged. Tools keeps full-asset **`goToHomeTools`** button + **`zIndex: 2`** only (Booking overlay no longer steals taps). No **`marginLeft`** on nav neons.
+
+---
+
+## 2026-05-31 — Lounge TV remote hand +12px right
+
+**Context:** User asked to move the hand below the TV **12px to the right** only.
+
+**Change:** **`src/components/lounge/LoungeTvRemoteHand.tsx`** — **`LOUNGE_TV_REMOTE_HAND_OFFSET_X_PX = 12`**; visible/hidden transforms use **`translate(calc(-38% + 12px), …)`** (was **`translate(-38%, …)`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Booking NEW INSTALL: left-align unit attach block
+
+**Context:** User mockup on premium appointment booking: **select your unit** / **ATTACH UNIT** / UNIT picker / **ATTACH ORDER** inside expanded **NEW INSTALL** card was centered; should be **left-aligned**.
+
+**Change:** **`src/pages/booking/appointment/page.tsx`** — NEW INSTALL attach block only: Bohemy **select your unit** + labels **`textAlign: 'left'`**; UNIT box row **`justify-start`**; attached-build + empty-order copy left-aligned. Other addon Bohemy labels (shade/volume) unchanged (still centered). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby case props: phone + register glass popovers
+
+**Context:** User asked for popups on lobby **phone** and **cash register** assets that hover over each prop, matching **cart dropdown** glass style (`bg-white/60`, `backdrop-blur-md`, **1.3px** black border). Phone = business contact; register = payment methods.
+
+**Changes:** **`LobbyCasePropPopover.tsx`** — tap toggle, positioned above asset (`bottom: calc(100% + 10px)`), outside-tap close, one open at a time. **`lobbyPropPopoverCopy.ts`** — contact from **`brandContactCopy`** (email, hours, inquiry note); register lists cards / express / pay-over-time aligned with checkout. **`lobby/page.tsx`** — wrap **REGISTER.png** + **PHONE.png** on display case. Pushed **`master`** + **`preview/mobile`**.

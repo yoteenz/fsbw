@@ -4409,6 +4409,24 @@ html[data-loading-screen='true'] #root {
   box-shadow: none;
 }
 
+/* Lounge TV — discourage save/share (best-effort; true DRM requires EME) */
+.lounge-tv-protected {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.lounge-tv-protected img,
+.lounge-tv-protected video {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+.lounge-tv-capture-shield {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* Lounge TV overlay — CRT power off (horizontal zap only, no static) */
 .lounge-tv-power-off {
   position: absolute;

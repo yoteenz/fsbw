@@ -146,8 +146,3 @@ export function getLoungeTvTilesStatic(mainTab: LoungeTvMainTab, sidebarId: stri
   }
   return [];
 }
-
-export function loungeTvAcademyMessage(sidebarId: string): string {
-  if (sidebarId === 'events') return 'EVENTS COMING SOON!';
-  return 'CLASSES COMING SOON!';
-}

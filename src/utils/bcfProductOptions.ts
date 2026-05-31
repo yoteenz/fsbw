@@ -214,6 +214,51 @@ export function bcfLaceTreatmentPrice(ids: string[]): number {
   );
 }
 
+/** Per-unit USD for a BCF cart line from saved options (lace treatment, length, etc.). */
+export function bcfResolveCartLineUnitPriceUsd(item: {
+  type?: string;
+  id?: string;
+  name?: string;
+  category?: string;
+  texture?: string;
+  length?: string;
+  color?: string;
+  lace?: string;
+  hairWeight?: string;
+  laceTreatment?: string[];
+  bcfBundleDeal?: boolean;
+  price?: number;
+}): number {
+  if (item.bcfBundleDeal) return Number(item.price) || 0;
+  if (String(item.type || '') !== 'shop-texture-category') return Number(item.price) || 0;
+
+  const cat =
+    item.category === 'bundles' || item.category === 'closures' || item.category === 'frontals'
+      ? item.category
+      : bcfCartCategoryFromShopId(item.id);
+  if (!cat) return Number(item.price) || 0;
+
+  const tex =
+    normalizeBcfCartTexture(item.texture) ??
+    bcfCartTextureFromShopId(item.id) ??
+    bcfCartTextureFromName(item.name);
+  if (!tex) return Number(item.price) || 0;
+
+  const lengthId = item.length || BCF_DEFAULT_LENGTH_ID;
+  const colorId = item.color || 'OFF BLACK';
+  const laceId =
+    cat === 'bundles'
+      ? null
+      : item.lace || bcfLaceOptionsForCategory(cat)[0]?.id || null;
+  const weightId = cat === 'bundles' ? item.hairWeight || BCF_DEFAULT_WEIGHT_ID : null;
+
+  return (
+    bcfBasePriceUsd(cat, tex) +
+    bcfPriceAdjustments(lengthId, colorId, laceId, weightId) +
+    (cat === 'bundles' ? 0 : bcfLaceTreatmentPrice(Array.isArray(item.laceTreatment) ? item.laceTreatment : []))
+  );
+}
+
 export function bcfPriceAdjustments(
   lengthId: string,
   colorId: string,

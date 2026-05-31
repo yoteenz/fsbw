@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
@@ -9,6 +10,7 @@ import {
   getLoungeTvAdminPlacement,
   hydrateLoungeTvAdminConfig,
   saveLoungeTvAdminConfigToStorage,
+  touchLoungeTvAdminConfigUpdatedAt,
   upsertLoungeTvAdminPlacement,
   type LoungeTvAdminConfig,
   type LoungeTvAdminItem,
@@ -16,40 +18,81 @@ import {
   type LoungeTvAdminPlacement,
 } from '../../../utils/loungeTvAdminConfig';
 import { getLoungeTvAdminConfig, putAdminLoungeTvConfig } from '../../../utils/api';
+import {
+  clearLoungeTvTileViewed,
+  resetLoungeTvViewedForNewAdminItems,
+} from '../../../utils/loungeTvViewedTiles';
 
+/** Inline embed limit (localStorage + JSON config); larger files must use a hosted URL. */
 const MAX_INLINE_VIDEO_BYTES = 4 * 1024 * 1024;
 
 const adminTvUppercaseStyle: React.CSSProperties = { textTransform: 'uppercase' };
+
+/** Match admin revenue waitlist panels (`view-waitlist/page.tsx`). */
+const adminHubPanelStyle: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid #d1d5db',
+  borderRadius: 0,
+  padding: '10px',
+};
+
+const adminHubRowLabelStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '11px',
+  color: '#808080',
+};
+
+const adminHubRowValueStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '11px',
+  color: '#EB1C24',
+};
+
+const adminHubSectionTitleStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '10px',
+  color: '#000',
+  margin: 0,
+  textTransform: 'uppercase',
+};
+
+function formatFileSizeMb(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function fileLooksLikeVideo(file: File): boolean {
+  const type = (file.type || '').toLowerCase();
+  if (type.startsWith('video/')) return true;
+  return /\.(mp4|mov|webm|m4v)$/i.test(file.name);
+}
+
+function fileLooksLikeImage(file: File): boolean {
+  const type = (file.type || '').toLowerCase();
+  if (type.startsWith('image/')) return true;
+  return /\.(jpg|jpeg|png|webp|gif|heic)$/i.test(file.name);
+}
+
+const VIDEO_FILE_ACCEPT = 'video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm,.m4v';
+const IMAGE_FILE_ACCEPT = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp,.heic';
 
 const adminTvFieldStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium"',
   textTransform: 'uppercase',
 };
 
-type TvCategory = {
-  key: string;
-  mainTab: LoungeTvMainTab;
-  sidebarId: string;
-  label: string;
+const adminTvInputStyle: React.CSSProperties = {
+  border: '1px solid #d1d5db',
+  borderRadius: 0,
 };
 
-function buildTvCategories(): TvCategory[] {
-  const rows: TvCategory[] = [];
-  for (const tab of LOUNGE_TV_MAIN_TABS) {
-    const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
-    for (const sidebar of sidebars) {
-      rows.push({
-        key: `${tab.id}:${sidebar.id}`,
-        mainTab: tab.id,
-        sidebarId: sidebar.id,
-        label: `${tab.label} · ${sidebar.label}`,
-      });
-    }
-  }
-  return rows;
-}
-
-const TV_CATEGORIES = buildTvCategories();
+export type AdminLoungeTvContentPanelProps = {
+  editingMainTab: LoungeTvMainTab | null;
+  sidebarId: string;
+  onOpenMainTab: (mainTab: LoungeTvMainTab) => void;
+  onCloseEditing: () => void;
+};
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -84,17 +127,30 @@ type ItemEditorProps = {
 
 function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadNotice, setUploadNotice] = useState<string | null>(null);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const displayTitle = item.title.trim() ? item.title.trim().toUpperCase() : 'UNTITLED';
 
   const handleMediaFile = async (file: File | undefined, kind: 'media' | 'thumb') => {
-    if (!file) return;
-    setUploadError(null);
-    const isVideo = file.type.startsWith('video/');
-    const isImage = file.type.startsWith('image/');
-    if (kind === 'media' && item.mediaType === 'video' && !isVideo) {
-      setUploadError('CHOOSE A VIDEO FILE OR PASTE A URL BELOW.');
+    if (!file || file.size === 0) {
+      setUploadError('NO FILE RECEIVED — TRY AGAIN OR PASTE A URL.');
+      setUploadNotice(null);
       return;
     }
-    if (kind === 'media' && item.mediaType === 'image' && !isImage) {
+    setUploadError(null);
+    setUploadNotice(null);
+    const isVideo = fileLooksLikeVideo(file);
+    const isImage = fileLooksLikeImage(file);
+    const mediaTypeForUpload =
+      kind === 'media' ? (isVideo ? 'video' : isImage ? 'image' : item.mediaType) : item.mediaType;
+    if (kind === 'media' && mediaTypeForUpload === 'video' && !isVideo) {
+      setUploadError(
+        `NOT RECOGNIZED AS VIDEO (${file.name || 'UNNAMED'}). USE .MP4/.MOV OR PASTE A HOSTED URL.`
+      );
+      return;
+    }
+    if (kind === 'media' && mediaTypeForUpload === 'image' && !isImage) {
       setUploadError('CHOOSE AN IMAGE FILE OR PASTE A URL BELOW.');
       return;
     }
@@ -102,31 +158,40 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
       setUploadError('THUMBNAIL MUST BE AN IMAGE.');
       return;
     }
-    if (isVideo && file.size > MAX_INLINE_VIDEO_BYTES) {
-      setUploadError('VIDEO IS TOO LARGE TO EMBED. PASTE A HOSTED URL INSTEAD (MAX ~4MB FOR UPLOAD).');
+    if (kind === 'media' && isVideo && file.size > MAX_INLINE_VIDEO_BYTES) {
+      setUploadError(
+        `VIDEO IS ${formatFileSizeMb(file.size)} — TOO LARGE TO EMBED (MAX ${formatFileSizeMb(MAX_INLINE_VIDEO_BYTES)}). PASTE A SUPABASE OR HOSTED URL ABOVE INSTEAD.`
+      );
       return;
     }
+    setUploading(true);
     try {
       const dataUrl = await readFileAsDataUrl(file);
       if (kind === 'media') {
         onChange({
           ...item,
           mediaUrl: dataUrl,
-          mediaType: isVideo ? 'video' : 'image',
-          thumbSrc: isImage ? dataUrl : item.thumbSrc,
+          mediaType: mediaTypeForUpload,
+          thumbSrc: isImage && mediaTypeForUpload === 'image' ? dataUrl : item.thumbSrc,
         });
+        setUploadNotice(
+          `${isVideo ? 'VIDEO' : 'PHOTO'} ADDED: ${file.name || 'FILE'} (${formatFileSizeMb(file.size)}). TAP SAVE CATEGORY.`
+        );
       } else {
         onChange({ ...item, thumbSrc: dataUrl });
+        setUploadNotice(`THUMBNAIL ADDED: ${file.name || 'FILE'}. TAP SAVE CATEGORY.`);
       }
     } catch {
-      setUploadError('COULD NOT READ FILE.');
+      setUploadError('COULD NOT READ FILE — TRY A SMALLER CLIP OR PASTE A URL.');
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
     <div
-      className="border border-gray-300 rounded p-3 mb-3"
-      style={{ backgroundColor: 'rgba(255,255,255,0.85)', ...adminTvUppercaseStyle }}
+      className="mb-3"
+      style={{ ...adminHubPanelStyle, ...adminTvUppercaseStyle }}
     >
       <div className="flex justify-between items-start gap-2 mb-2">
         <p className="text-xs font-medium text-black" style={{ fontFamily: '"Futura PT Demi"' }}>
@@ -134,13 +199,27 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         </p>
         <button
           type="button"
-          onClick={onRemove}
+          onClick={() => setShowRemoveConfirm(true)}
           className="text-xs text-red-600 shrink-0"
           style={{ fontFamily: '"Futura PT Medium"' }}
         >
           REMOVE
         </button>
       </div>
+
+      <ConfirmationModal
+        isOpen={showRemoveConfirm}
+        onClose={() => setShowRemoveConfirm(false)}
+        onConfirm={() => {
+          setShowRemoveConfirm(false);
+          onRemove();
+        }}
+        title="REMOVE CONTENT"
+        message={`Remove "${displayTitle}" from this category? Tap SAVE CATEGORY afterward for changes to apply on the lounge TV.`}
+        confirmText="REMOVE"
+        cancelText="CANCEL"
+        dataAttribute="lounge-tv-content-remove-confirm"
+      />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
         TITLE
@@ -149,8 +228,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         type="text"
         value={item.title}
         onChange={(e) => onChange({ ...item, title: e.target.value.toUpperCase() })}
-        className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2"
-        style={adminTvFieldStyle}
+        className="w-full px-2 py-1 text-xs mb-2"
+        style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
       />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
@@ -160,8 +239,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         value={item.body}
         onChange={(e) => onChange({ ...item, body: e.target.value.toUpperCase() })}
         rows={3}
-        className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2 resize-y"
-        style={adminTvFieldStyle}
+        className="w-full px-2 py-1 text-xs mb-2 resize-y"
+        style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
       />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
@@ -188,23 +267,68 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         type="text"
         value={item.mediaUrl.startsWith('data:') ? '' : item.mediaUrl}
         placeholder={item.mediaType === 'video' ? 'HTTPS://…' : 'HTTPS://… OR UPLOAD BELOW'}
-        onChange={(e) => onChange({ ...item, mediaUrl: e.target.value })}
-        className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-1"
-        style={adminTvFieldStyle}
-      />
-      <input
-        type="file"
-        accept={item.mediaType === 'video' ? 'video/*' : 'image/*'}
-        className="text-xs mb-2 w-full"
         onChange={(e) => {
-          void handleMediaFile(e.target.files?.[0], 'media');
-          e.target.value = '';
+          setUploadNotice(null);
+          onChange({ ...item, mediaUrl: e.target.value });
         }}
+        className="w-full px-2 py-1 text-xs mb-1"
+        style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
       />
-      {item.mediaUrl ? (
-        <p className="text-[10px] text-gray-500 mb-2 truncate">
-          {item.mediaUrl.startsWith('data:') ? 'MEDIA ATTACHED (EMBEDDED)' : item.mediaUrl}
+      <label
+        className="block w-full text-center py-2 mb-2 text-xs cursor-pointer"
+        style={{
+          fontFamily: '"Futura PT Demi"',
+          backgroundColor: uploading ? '#808080' : '#EB1C24',
+          color: '#fff',
+          opacity: uploading ? 0.7 : 1,
+        }}
+      >
+        {uploading
+          ? 'LOADING FILE…'
+          : item.mediaType === 'video'
+            ? 'CHOOSE VIDEO FILE'
+            : 'CHOOSE PHOTO FILE'}
+        <input
+          type="file"
+          accept={item.mediaType === 'video' ? VIDEO_FILE_ACCEPT : IMAGE_FILE_ACCEPT}
+          disabled={uploading}
+          className="sr-only"
+          onChange={(e) => {
+            const picked = e.target.files?.[0];
+            e.target.value = '';
+            void handleMediaFile(picked, 'media');
+          }}
+        />
+      </label>
+      {uploadNotice ? (
+        <p className="text-[10px] mb-2 px-2 py-1" style={{ color: '#166534', backgroundColor: 'rgba(34,197,94,0.12)' }}>
+          {uploadNotice}
         </p>
+      ) : null}
+      {item.mediaUrl ? (
+        <div className="mb-2">
+          <p className="text-[10px] text-gray-600 mb-1 truncate">
+            {item.mediaUrl.startsWith('data:')
+              ? `EMBEDDED ${item.mediaType === 'video' ? 'VIDEO' : 'PHOTO'} READY`
+              : item.mediaUrl}
+          </p>
+          {item.mediaType === 'video' && item.mediaUrl ? (
+            <video
+              src={item.mediaUrl}
+              controls
+              playsInline
+              preload="metadata"
+              style={{ width: '100%', maxHeight: '120px', background: '#000' }}
+            />
+          ) : null}
+          {item.mediaType === 'image' && item.mediaUrl.startsWith('data:') ? (
+            <img
+              src={item.mediaUrl}
+              alt=""
+              style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', display: 'block' }}
+            />
+          ) : null}
+        </div>
       ) : null}
 
       {item.mediaType === 'video' ? (
@@ -230,8 +354,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
                 type="text"
                 value={item.durationLabel ?? ''}
                 onChange={(e) => onChange({ ...item, durationLabel: e.target.value.toUpperCase() })}
-                className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2"
-                style={adminTvFieldStyle}
+                className="w-full px-2 py-1 text-xs mb-2"
+                style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
               />
             </>
           ) : null}
@@ -242,21 +366,33 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         <input
           type="checkbox"
           checked={Boolean(item.isNew)}
-          onChange={(e) => onChange({ ...item, isNew: e.target.checked })}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            if (checked) clearLoungeTvTileViewed(item.id);
+            onChange({ ...item, isNew: checked });
+          }}
         />
         SHOW *NEW* BADGE
       </label>
 
-      {uploadError ? <p className="text-xs text-red-600 mt-2">{uploadError}</p> : null}
+      {uploadError ? (
+        <p className="text-xs text-red-600 mt-2 px-2 py-1" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
+          {uploadError}
+        </p>
+      ) : null}
     </div>
   );
 }
 
-export default function AdminLoungeTvContentPanel() {
+export default function AdminLoungeTvContentPanel({
+  editingMainTab,
+  sidebarId,
+  onOpenMainTab,
+  onCloseEditing,
+}: AdminLoungeTvContentPanelProps) {
   const [config, setConfig] = useState<LoungeTvAdminConfig>(() => buildDefaultLoungeTvAdminConfig());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedCategoryKey, setSelectedCategoryKey] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const [draftItem, setDraftItem] = useState<LoungeTvAdminItem | null>(null);
 
@@ -274,20 +410,15 @@ export default function AdminLoungeTvContentPanel() {
   }, []);
 
   useEffect(() => {
-    if (selectedCategoryKey) setDraftItem(emptyDraft());
+    if (editingMainTab) setDraftItem(emptyDraft());
     else setDraftItem(null);
-  }, [selectedCategoryKey]);
-
-  const openCategory = useCallback((key: string) => {
-    setSelectedCategoryKey(key);
-    setFeedback(null);
-  }, []);
+  }, [editingMainTab, sidebarId]);
 
   const closeCategory = useCallback(() => {
-    setSelectedCategoryKey(null);
+    onCloseEditing();
     setDraftItem(null);
     setFeedback(null);
-  }, []);
+  }, [onCloseEditing]);
 
   const getPlacement = useCallback(
     (mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvAdminPlacement => {
@@ -310,15 +441,23 @@ export default function AdminLoungeTvContentPanel() {
     async (next: LoungeTvAdminConfig) => {
       setSaving(true);
       setFeedback(null);
+      const stamped = touchLoungeTvAdminConfigUpdatedAt(next);
+      resetLoungeTvViewedForNewAdminItems(
+        stamped.placements.flatMap((placement) => placement.items)
+      );
+      saveLoungeTvAdminConfigToStorage(stamped);
+      setConfig(stamped);
       try {
-        saveLoungeTvAdminConfigToStorage(next);
-        setConfig(next);
-        await putAdminLoungeTvConfig(next as unknown as Record<string, unknown>);
+        await putAdminLoungeTvConfig(stamped as unknown as Record<string, unknown>);
         setFeedback({ type: 'success', msg: 'CONTENT SAVED.' });
       } catch (e) {
+        const detail = (e instanceof Error ? e.message : 'SAVE FAILED').toUpperCase();
+        const forbidden = /FORBIDDEN|403|ADMIN ACCESS DENIED/i.test(detail);
         setFeedback({
           type: 'error',
-          msg: (e instanceof Error ? e.message : 'SAVE FAILED').toUpperCase(),
+          msg: forbidden
+            ? `SAVED ON THIS DEVICE — SERVER SYNC DENIED (${detail}). SIGN OUT AND SIGN IN WITH YOUR ADMIN SUPABASE EMAIL, THEN SAVE AGAIN. LOUNGE TV ON THIS PHONE USES THE LOCAL COPY.`
+            : `SAVED ON THIS DEVICE — SERVER SYNC FAILED (${detail}). TV USES THIS DEVICE COPY; FOR OTHER DEVICES USE A HOSTED HTTPS VIDEO URL.`,
         });
       } finally {
         setSaving(false);
@@ -327,14 +466,29 @@ export default function AdminLoungeTvContentPanel() {
     []
   );
 
-  const selectedCategory = useMemo(
-    () => TV_CATEGORIES.find((c) => c.key === selectedCategoryKey) ?? null,
-    [selectedCategoryKey]
+  const editingMainTabLabel = useMemo(
+    () => LOUNGE_TV_MAIN_TABS.find((t) => t.id === editingMainTab)?.label ?? '',
+    [editingMainTab]
+  );
+
+  const totalItemsAll = useMemo(
+    () =>
+      LOUNGE_TV_MAIN_TABS.reduce((sum, tab) => {
+        const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
+        return (
+          sum +
+          sidebars.reduce(
+            (inner, sidebar) => inner + getPlacement(tab.id, sidebar.id).items.length,
+            0
+          )
+        );
+      }, 0),
+    [getPlacement]
   );
 
   const handleSaveCategory = () => {
-    if (!selectedCategory) return;
-    const placement = getPlacement(selectedCategory.mainTab, selectedCategory.sidebarId);
+    if (!editingMainTab || !sidebarId) return;
+    const placement = getPlacement(editingMainTab, sidebarId);
     let items = [...placement.items];
     if (draftItem && draftItem.title.trim()) {
       items = [
@@ -348,8 +502,8 @@ export default function AdminLoungeTvContentPanel() {
       setDraftItem(null);
     }
     const nextPlacement: LoungeTvAdminPlacement = {
-      mainTab: selectedCategory.mainTab,
-      sidebarId: selectedCategory.sidebarId,
+      mainTab: editingMainTab,
+      sidebarId,
       items,
     };
     const next = upsertLoungeTvAdminPlacement(config, nextPlacement);
@@ -364,11 +518,13 @@ export default function AdminLoungeTvContentPanel() {
     );
   }
 
-  if (selectedCategory) {
-    const placement = getPlacement(selectedCategory.mainTab, selectedCategory.sidebarId);
+  if (editingMainTab && sidebarId) {
+    const placement = getPlacement(editingMainTab, sidebarId);
+    const activeSidebarLabel =
+      LOUNGE_TV_SIDEBAR[editingMainTab]?.find((s) => s.id === sidebarId)?.label ?? sidebarId;
 
     return (
-      <div className="mt-2 flex flex-col min-h-0" style={adminTvUppercaseStyle}>
+      <div className="flex flex-col flex-1 min-h-0" style={adminTvUppercaseStyle}>
         <div className="flex-shrink-0 pb-2">
           <div className="flex items-center justify-between" style={{ minWidth: 0 }}>
             <h2
@@ -387,7 +543,7 @@ export default function AdminLoungeTvContentPanel() {
                 paddingRight: '8px',
               }}
             >
-              {selectedCategory.label}
+              {editingMainTabLabel}
             </h2>
             <button
               type="button"
@@ -414,13 +570,30 @@ export default function AdminLoungeTvContentPanel() {
             style={{
               backgroundColor: feedback.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
               color: feedback.type === 'success' ? '#166534' : '#b91c1c',
+              fontSize: '10px',
             }}
           >
             {feedback.msg}
           </div>
         ) : null}
 
-        <div className="min-h-0 overflow-y-auto" style={{ paddingTop: '4px' }}>
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '9px',
+            color: '#808080',
+            margin: '0 0 8px 0',
+            lineHeight: 1.4,
+            flexShrink: 0,
+          }}
+        >
+          EDITING {activeSidebarLabel}. TAP SAVE CATEGORY AFTER CHANGES.
+        </p>
+
+        <div
+          className="flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll"
+          style={{ paddingTop: '4px' }}
+        >
           {placement.items.length === 0 ? (
             <p className="text-xs text-gray-500 py-2">NO ITEMS YET.</p>
           ) : (
@@ -428,7 +601,7 @@ export default function AdminLoungeTvContentPanel() {
               <ItemEditor
                 key={item.id}
                 item={item}
-                mainTab={selectedCategory.mainTab}
+                mainTab={editingMainTab}
                 onChange={(updated) => {
                   const items = placement.items.map((row) => (row.id === item.id ? updated : row));
                   updatePlacement({ ...placement, items });
@@ -444,13 +617,19 @@ export default function AdminLoungeTvContentPanel() {
           )}
 
           {draftItem ? (
-            <div className="border border-dashed border-gray-400 rounded p-3 mt-2">
+            <div
+              className="mt-2"
+              style={{
+                ...adminHubPanelStyle,
+                borderStyle: 'dashed',
+              }}
+            >
               <p className="text-xs mb-2" style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>
                 ADD NEW
               </p>
               <ItemEditor
                 item={draftItem}
-                mainTab={selectedCategory.mainTab}
+                mainTab={editingMainTab}
                 onChange={setDraftItem}
                 onRemove={() => setDraftItem(emptyDraft())}
               />
@@ -472,88 +651,124 @@ export default function AdminLoungeTvContentPanel() {
   }
 
   return (
-    <div className="mt-2" style={adminTvUppercaseStyle}>
+    <div style={adminTvUppercaseStyle}>
       {feedback ? (
         <div
-          className="mb-3 px-3 py-2 text-sm"
+          className="mb-3 px-3 py-2 shrink-0"
           style={{
             backgroundColor: feedback.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
             color: feedback.type === 'success' ? '#166534' : '#b91c1c',
+            fontSize: '10px',
           }}
         >
           {feedback.msg}
         </div>
       ) : null}
 
-      <p className="text-xs text-gray-600 mb-3" style={{ fontFamily: '"Futura PT Medium"', lineHeight: 1.4 }}>
-        TAP A CATEGORY TO MANAGE TILES. UPLOAD A PHOTO OR VIDEO, SET TITLE AND BODY, THEN SAVE.
+      <div className="grid grid-cols-2 gap-4" style={{ marginTop: '12px' }}>
+        <div
+          className="text-center py-3"
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.04)',
+            borderRadius: '4px',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: '"Covered By Your Grace", cursive',
+              fontSize: '22px',
+              color: '#000',
+              margin: 0,
+              lineHeight: 1,
+            }}
+          >
+            {LOUNGE_TV_MAIN_TABS.length}
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '9px',
+              color: '#808080',
+              margin: '4px 0 0 0',
+            }}
+          >
+            CATEGORIES
+          </p>
+        </div>
+        <div
+          className="text-center py-3"
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.04)',
+            borderRadius: '4px',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: '"Covered By Your Grace", cursive',
+              fontSize: '22px',
+              color: '#EB1C24',
+              margin: 0,
+              lineHeight: 1,
+            }}
+          >
+            {totalItemsAll}
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '9px',
+              color: '#808080',
+              margin: '4px 0 0 0',
+            }}
+          >
+            ITEMS
+          </p>
+        </div>
+      </div>
+
+      <p
+        style={{
+          fontFamily: '"Futura PT Book"',
+          fontSize: '9px',
+          color: '#808080',
+          margin: '12px 0 0 0',
+          lineHeight: 1.4,
+        }}
+      >
+        TAP A CATEGORY TO EDIT LOUNGE TV TILES AND VIDEOS. USE SUB-TABS TO SWITCH SIDEBARS.
       </p>
 
-      <div className="space-y-3">
-        {LOUNGE_TV_MAIN_TABS.map((tab) => {
-          const sectionCategories = TV_CATEGORIES.filter((c) => c.mainTab === tab.id);
-          if (sectionCategories.length === 0) return null;
-
-          return (
-            <div
-              key={tab.id}
-              className="border border-gray-300 rounded"
-              style={{ backgroundColor: 'rgba(255,255,255,0.85)', padding: '10px' }}
-            >
-              <p
-                style={{
-                  fontFamily: '"Futura PT Demi"',
-                  fontSize: '10px',
-                  color: '#000',
-                  margin: '0 0 8px 0',
-                }}
-              >
-                {tab.label}
-              </p>
-              <div>
-                {sectionCategories.map((cat) => {
-                  const placement = getPlacement(cat.mainTab, cat.sidebarId);
-                  const count = placement.items.length;
-                  return (
-                    <button
-                      key={cat.key}
-                      type="button"
-                      onClick={() => openCategory(cat.key)}
-                      className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
-                      style={{
-                        border: 'none',
-                        borderBottom: '1px solid #e5e7eb',
-                        background: 'none',
-                        padding: '8px 0',
-                        margin: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '11px',
-                          color: '#808080',
-                        }}
-                      >
-                        {LOUNGE_TV_SIDEBAR[cat.mainTab]?.find((s) => s.id === cat.sidebarId)?.label ?? cat.sidebarId}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          color: '#EB1C24',
-                        }}
-                      >
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+      <div className="space-y-3" style={{ marginTop: '12px' }}>
+        <div style={adminHubPanelStyle}>
+          <p style={adminHubSectionTitleStyle}>LOUNGE TV</p>
+          <div>
+            {LOUNGE_TV_MAIN_TABS.map((tab) => {
+              const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
+              const totalItems = sidebars.reduce(
+                (sum, sidebar) => sum + getPlacement(tab.id, sidebar.id).items.length,
+                0
+              );
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => onOpenMainTab(tab.id)}
+                  className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
+                  style={{
+                    border: 'none',
+                    borderBottom: '1px solid #e5e7eb',
+                    background: 'none',
+                    padding: '8px 0',
+                    margin: 0,
+                  }}
+                >
+                  <span style={adminHubRowLabelStyle}>{tab.label}</span>
+                  <span style={adminHubRowValueStyle}>{totalItems}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
-  loungeTvAcademyMessage,
   type LoungeTvMainTab,
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
@@ -18,12 +17,18 @@ import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
 import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
+import { LoungeTvContentProtection } from './LoungeTvContentProtection';
 import {
   hydrateLoungeTvAdminConfig,
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
   resolveLoungeTvTiles,
 } from '../../utils/loungeTvAdminConfig';
 import { getLoungeTvAdminConfig } from '../../utils/api';
+import {
+  LOUNGE_TV_VIEWED_UPDATED_EVENT,
+  loungeTvTileShowsAsNew,
+  markLoungeTvTileViewed,
+} from '../../utils/loungeTvViewedTiles';
 
 const BRAND_RED = '#EB1C24';
 /** TV frame grow + curtain close. */
@@ -111,6 +116,13 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
+/** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
+const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
+const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
+
+/** Default media insets until nav tabs are measured (sidebar + gap reserved). */
+const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
+
 const LOUNGE_TV_THUMB_LABEL_GRAY = '#9a9a9a';
 
 const loungeTvThumbLabelBase: React.CSSProperties = {
@@ -131,6 +143,37 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
+const loungeTvThumbTitleBlockStyle: React.CSSProperties = {
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginTop: '8px',
+};
+
+const loungeTvNewBadgeOverlayStyle: React.CSSProperties = {
+  position: 'absolute',
+  bottom: '100%',
+  left: 0,
+  right: 0,
+  marginBottom: '1px',
+  textAlign: 'center',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '8px',
+  lineHeight: 1,
+  textTransform: 'uppercase',
+  pointerEvents: 'none',
+};
+
+const loungeTvThumbTitleStackStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 0,
+  textAlign: 'center',
+};
+
 /** "TINTING YOUR LACE" → { head: "TINTING", trail: "YOUR LACE" }. */
 function loungeTvTitleSplit(title: string): { head: string; trail: string } | null {
   const marker = ' YOUR ';
@@ -139,35 +182,31 @@ function loungeTvTitleSplit(title: string): { head: string; trail: string } | nu
   return { head: title.slice(0, i), trail: title.slice(i + 1) };
 }
 
-function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean }) {
+function LoungeTvTileLabel({ title, showNew }: { title: string; showNew?: boolean }) {
   const split = loungeTvTitleSplit(title);
+  const titleColor = showNew ? '#ffffff' : LOUNGE_TV_THUMB_LABEL_GRAY;
 
-  if (isNew) {
-    return (
-      <span style={{ ...loungeTvThumbLabelBase, color: '#ffffff' }}>
-        <span style={{ color: BRAND_RED }}>*NEW*</span>
-        {split ? (
-          <>
-            <span>{split.head}</span>
-            <span>{split.trail}</span>
-          </>
-        ) : (
-          <span>{title}</span>
-        )}
+  return (
+    <span style={loungeTvThumbLabelBase}>
+      <span style={loungeTvThumbTitleBlockStyle}>
+        {showNew ? (
+          <span style={loungeTvNewBadgeOverlayStyle}>
+            <span style={{ color: BRAND_RED }}>*NEW*</span>
+          </span>
+        ) : null}
+        <span style={loungeTvThumbTitleStackStyle}>
+          {split ? (
+            <>
+              <span style={{ color: titleColor }}>{split.head}</span>
+              <span style={{ color: titleColor }}>{split.trail}</span>
+            </>
+          ) : (
+            <span style={{ color: titleColor }}>{title}</span>
+          )}
+        </span>
       </span>
-    );
-  }
-
-  if (split) {
-    return (
-      <span style={{ ...loungeTvThumbLabelBase, color: LOUNGE_TV_THUMB_LABEL_GRAY }}>
-        <span>{split.head}</span>
-        <span>{split.trail}</span>
-      </span>
-    );
-  }
-
-  return <span style={{ ...loungeTvThumbLabelBase, color: LOUNGE_TV_THUMB_LABEL_GRAY }}>{title}</span>;
+    </span>
+  );
 }
 
 function LoungeTvScreen({
@@ -183,11 +222,15 @@ function LoungeTvScreen({
 }) {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [tilesRevision, setTilesRevision] = useState(0);
+  const [viewedRevision, setViewedRevision] = useState(0);
+  const bodyRowRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const [mediaInsets, setMediaInsets] = useState(LOUNGE_TV_MEDIA_INSET_DEFAULT);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const tiles = useMemo(
     () => resolveLoungeTvTiles(mainTab, sidebarId),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when admin saves TV content
-    [mainTab, sidebarId, tilesRevision]
+    [mainTab, sidebarId, tilesRevision, viewedRevision]
   );
 
   useEffect(() => {
@@ -195,7 +238,17 @@ function LoungeTvScreen({
     window.addEventListener(LOUNGE_TV_CONFIG_UPDATED_EVENT, onConfigUpdated);
     return () => window.removeEventListener(LOUNGE_TV_CONFIG_UPDATED_EVENT, onConfigUpdated);
   }, []);
-  const academy = mainTab === 'academy';
+
+  useEffect(() => {
+    const onViewedUpdated = () => setViewedRevision((n) => n + 1);
+    window.addEventListener(LOUNGE_TV_VIEWED_UPDATED_EVENT, onViewedUpdated);
+    return () => window.removeEventListener(LOUNGE_TV_VIEWED_UPDATED_EVENT, onViewedUpdated);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedVideoId) return;
+    markLoungeTvTileViewed(selectedVideoId);
+  }, [selectedVideoId]);
   const isWatchLearn = mainTab === 'watch-learn';
   const selectedTile =
     isWatchLearn && selectedVideoId && tiles
@@ -209,6 +262,32 @@ function LoungeTvScreen({
   useEffect(() => {
     setSelectedVideoId(null);
   }, [sidebarId]);
+
+  const measureMediaInsets = useCallback(() => {
+    const bodyEl = bodyRowRef.current;
+    const navEl = navRef.current;
+    if (!bodyEl || !navEl) return;
+    const slayBtn = navEl.querySelector<HTMLElement>('[data-lounge-tv-tab="slay-tips"]');
+    const academyBtn = navEl.querySelector<HTMLElement>('[data-lounge-tv-tab="academy"]');
+    if (!slayBtn || !academyBtn) return;
+    const bodyRect = bodyEl.getBoundingClientRect();
+    const slayRect = slayBtn.getBoundingClientRect();
+    const academyRect = academyBtn.getBoundingClientRect();
+    setMediaInsets({
+      left: Math.max(0, Math.round(slayRect.left - bodyRect.left)),
+      right: Math.max(0, Math.round(bodyRect.right - academyRect.right)),
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    measureMediaInsets();
+    const raf = requestAnimationFrame(measureMediaInsets);
+    window.addEventListener('resize', measureMediaInsets);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measureMediaInsets);
+    };
+  }, [measureMediaInsets, mainTab]);
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
@@ -270,6 +349,7 @@ function LoungeTvScreen({
       }}
     >
       <nav
+        ref={navRef}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -284,6 +364,7 @@ function LoungeTvScreen({
           <button
             key={tab.id}
             type="button"
+            data-lounge-tv-tab={tab.id}
             style={mainTabNavStyle(mainTab === tab.id)}
             onClick={() => handleMainTabClick(tab.id)}
           >
@@ -292,7 +373,16 @@ function LoungeTvScreen({
         ))}
       </nav>
 
-      <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: '8px' }}>
+      <div
+        ref={bodyRowRef}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flex: 1,
+          minHeight: 0,
+          gap: `${LOUNGE_TV_BODY_SIDEBAR_GAP_PX}px`,
+        }}
+      >
         <aside
           style={{
             display: 'flex',
@@ -323,42 +413,34 @@ function LoungeTvScreen({
 
         <div
           style={{
-            flex: 1,
+            position: 'absolute',
+            left: `${mediaInsets.left}px`,
+            right: `${mediaInsets.right}px`,
+            top: 0,
+            bottom: 0,
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: academy || tiles?.length === 0 ? 'center' : 'flex-start',
+            justifyContent: 'flex-start',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
           }}
         >
-          {academy ? (
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                fontSize: '11px',
-                color: BRAND_RED,
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                margin: 0,
-                letterSpacing: '0.06em',
-              }}
-            >
-              {loungeTvAcademyMessage(sidebarId)}
-            </p>
-          ) : selectedTile ? (
+          {selectedTile ? (
             <LoungeTvWatchLearnPlayer tile={selectedTile} />
           ) : tiles && tiles.length > 0 ? (
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                columnGap: '12px',
-                rowGap: '6px',
+                columnGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
+                rowGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
                 width: '100%',
               }}
             >
-              {tiles.map((tile) => (
+              {tiles.map((tile) => {
+                const showNew = loungeTvTileShowsAsNew(tile);
+                return (
                 <button
                   key={tile.id}
                   type="button"
@@ -373,6 +455,7 @@ function LoungeTvScreen({
                   }}
                   aria-label={tile.title}
                   onClick={() => {
+                    if (showNew) markLoungeTvTileViewed(tile.id);
                     if (isWatchLearn && tile.videoSrc) setSelectedVideoId(tile.id);
                   }}
                 >
@@ -380,33 +463,26 @@ function LoungeTvScreen({
                     <img
                       src={tile.thumbSrc}
                       alt=""
+                      draggable={false}
                       style={{
                         width: '100%',
                         height: '100%',
                         objectFit: 'cover',
                         opacity: 0.85,
                         display: 'block',
-                      }}
+                        filter: showNew ? 'blur(4px)' : 'none',
+                        transform: showNew ? 'scale(1.06)' : 'none',
+                        transition: 'filter 0.25s ease',
+                        WebkitUserDrag: 'none',
+                      } as React.CSSProperties}
                     />
                   ) : null}
-                  <LoungeTvTileLabel title={tile.title} isNew={tile.isNew} />
+                  <LoungeTvTileLabel title={tile.title} showNew={showNew} />
                 </button>
-              ))}
+              );
+              })}
             </div>
-          ) : (
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                fontSize: '10px',
-                color: '#888',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                margin: 0,
-              }}
-            >
-              COMING SOON
-            </p>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
@@ -492,8 +568,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
     void hydrateLoungeTvAdminConfig(getLoungeTvAdminConfig);
-  }, []);
+  }, [isOpen]);
 
   const resetOverlayState = useCallback(() => {
     setShowContent(false);
@@ -632,6 +709,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     position: 'fixed',
     zIndex: 110,
     overflow: 'visible',
+    isolation: 'isolate',
     transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
     left: animatedIn ? frameLeft : startFrameLeft,
     top: animatedIn ? frameTop : startFrameTop,
@@ -681,12 +759,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
           <LoungeTvPowerOffEffect active={poweringOff} />
           {showContent && !poweringOff ? (
-            <div
+            <LoungeTvContentProtection
+              active
               style={{
-                position: 'relative',
                 zIndex: 6,
-                width: '100%',
-                height: '100%',
                 opacity: 1,
                 animation: 'lounge-tv-content-in 0.35s ease forwards',
               }}
@@ -697,7 +773,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
                 onMainTabChange={handleMainTab}
                 onSidebarChange={setSidebarId}
               />
-            </div>
+            </LoungeTvContentProtection>
           ) : null}
         </LoungeTvFrame>
       </div>

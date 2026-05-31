@@ -1,5 +1,8 @@
 import { LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 
+/** Nudge hand + remote horizontally under the TV bezel. */
+const LOUNGE_TV_REMOTE_HAND_OFFSET_X_PX = 12;
+
 type LoungeTvRemoteHandProps = {
   visible: boolean;
   /** Fade/slide in after TV grow. */
@@ -40,7 +43,9 @@ export function LoungeTvRemoteHand({
         pointerEvents: 'none',
         userSelect: 'none',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translate(-38%, 0)' : 'translate(-38%, 12%)',
+        transform: visible
+          ? `translate(calc(-38% + ${LOUNGE_TV_REMOTE_HAND_OFFSET_X_PX}px), 0)`
+          : `translate(calc(-38% + ${LOUNGE_TV_REMOTE_HAND_OFFSET_X_PX}px), 12%)`,
         transition,
       }}
     />

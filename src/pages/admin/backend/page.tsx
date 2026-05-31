@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { getAdminAuditLog, getAdminUsers, postAdminUserAction } from '../../../utils/api';
@@ -7,6 +7,10 @@ import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import AdminLoungeTvContentPanel from '../components/AdminLoungeTvContentPanel';
+import {
+  LOUNGE_TV_SIDEBAR,
+  type LoungeTvMainTab,
+} from '../../../components/lounge/loungeTvContent';
 
 const BACKEND_TABS = ['AUDIT LOG', 'USERS', 'CONTENT'] as const;
 
@@ -35,6 +39,27 @@ export default function AdminBackend() {
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const [page, setPage] = useState(1);
   const perPage = 50;
+
+  const [contentEditingMainTab, setContentEditingMainTab] = useState<LoungeTvMainTab | null>(null);
+  const [contentSidebarId, setContentSidebarId] = useState('');
+
+  const openContentMainTab = useCallback((mainTab: LoungeTvMainTab) => {
+    const firstSidebar = LOUNGE_TV_SIDEBAR[mainTab]?.[0]?.id ?? '';
+    setContentEditingMainTab(mainTab);
+    setContentSidebarId(firstSidebar);
+  }, []);
+
+  const closeContentEditing = useCallback(() => {
+    setContentEditingMainTab(null);
+    setContentSidebarId('');
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'CONTENT') {
+      setContentEditingMainTab(null);
+      setContentSidebarId('');
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -145,57 +170,90 @@ export default function AdminBackend() {
           breadcrumbParentPath="/admin/dashboard"
         />
 
-        <div className="pb-6 px-4">
-          <div className="max-w-md mx-auto">
+        <div className="pb-8 px-4 max-w-md mx-auto">
             <div
-              className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
-              style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
+              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}
             >
-              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
-
               <div
-                className="flex justify-center px-5 overflow-x-auto"
-                style={{ flexWrap: 'nowrap', gap: '10px', WebkitOverflowScrolling: 'touch' }}
+                className="flex-shrink-0 flex justify-center px-5 overflow-x-auto"
+                style={{
+                  marginTop: '10px',
+                  flexWrap: 'nowrap',
+                  gap: '10px',
+                  WebkitOverflowScrolling: 'touch',
+                }}
               >
-                {BACKEND_TABS.map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className="py-3 px-1 font-medium transition-colors shrink-0"
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '9px',
-                      whiteSpace: 'nowrap',
-                      color: activeTab === tab ? '#EB1C24' : '#808080',
-                      border: 'none',
-                      paddingBottom: '4px',
-                      background: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <span
+                {contentEditingMainTab ? (
+                  (LOUNGE_TV_SIDEBAR[contentEditingMainTab] ?? []).map((sidebar) => (
+                    <button
+                      key={sidebar.id}
+                      type="button"
+                      onClick={() => setContentSidebarId(sidebar.id)}
+                      className="py-3 px-1 font-medium transition-colors shrink-0"
                       style={{
-                        display: 'inline-block',
-                        borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '9px',
+                        whiteSpace: 'nowrap',
+                        color: contentSidebarId === sidebar.id ? '#EB1C24' : '#808080',
+                        border: 'none',
                         paddingBottom: '4px',
+                        background: 'none',
+                        cursor: 'pointer',
                       }}
                     >
-                      {tab}
-                    </span>
-                  </button>
-                ))}
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          borderBottom:
+                            contentSidebarId === sidebar.id ? '1px solid #EB1C24' : '1px solid transparent',
+                          paddingBottom: '4px',
+                        }}
+                      >
+                        {sidebar.label}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  BACKEND_TABS.map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveTab(tab)}
+                      className="py-3 px-1 font-medium transition-colors shrink-0"
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '9px',
+                        whiteSpace: 'nowrap',
+                        color: activeTab === tab ? '#EB1C24' : '#808080',
+                        border: 'none',
+                        paddingBottom: '4px',
+                        background: 'none',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          borderBottom: activeTab === tab ? '1px solid #EB1C24' : '1px solid transparent',
+                          paddingBottom: '4px',
+                        }}
+                      >
+                        {tab}
+                      </span>
+                    </button>
+                  ))
+                )}
               </div>
 
-              <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
-                <div
-                  className="overflow-y-auto"
-                  style={{
-                    maxHeight: '420px',
-                    paddingTop: '2px',
-                    boxSizing: 'border-box',
-                  }}
-                >
+              <div
+                className={
+                  activeTab === 'CONTENT' && contentEditingMainTab
+                    ? 'flex flex-col flex-1 min-h-0 px-5 pb-4'
+                    : 'flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll px-5 pb-4'
+                }
+                style={{ paddingTop: activeTab === 'CONTENT' && contentEditingMainTab ? '4px' : '2px' }}
+              >
                 {activeTab === 'AUDIT LOG' && (
                   <>
                     {auditLoading ? (
@@ -230,7 +288,14 @@ export default function AdminBackend() {
                   </>
                 )}
 
-                {activeTab === 'CONTENT' && <AdminLoungeTvContentPanel />}
+                {activeTab === 'CONTENT' && (
+                  <AdminLoungeTvContentPanel
+                    editingMainTab={contentEditingMainTab}
+                    sidebarId={contentSidebarId}
+                    onOpenMainTab={openContentMainTab}
+                    onCloseEditing={closeContentEditing}
+                  />
+                )}
 
                 {activeTab === 'USERS' && (
                   <>
@@ -294,10 +359,8 @@ export default function AdminBackend() {
                     )}
                   </>
                 )}
-                </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>

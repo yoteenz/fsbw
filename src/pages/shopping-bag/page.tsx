@@ -23,7 +23,8 @@ import {
 import {
   shopBcfPdpHrefFromCartItem,
   shopBcfCartLineThumbnailSrc,
-  bcfBundleDealResolvedListSubtotal
+  bcfBundleDealResolvedListSubtotal,
+  bcfResolveCartLineUnitPriceUsd,
 } from '../../utils/bcfProductOptions';
 import {
   CART_RED_LINE_BCF_BOOKING,
@@ -65,7 +66,11 @@ import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin'
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
-import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../../utils/cartBillableLines';
+import {
+  cartBillablePointsEligibleSubtotal,
+  cartBillableSubtotal,
+  cartLineExtendedPriceUsd,
+} from '../../utils/cartBillableLines';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -660,7 +665,11 @@ function ShoppingBagPage() {
       const clampedQty = Math.max(0, Math.min(maxQty, newQty));
       const newItems = cartItems.map((i) => {
         if (i.id !== itemId) return i;
-        return { ...i, quantity: clampedQty };
+        const next = { ...i, quantity: clampedQty };
+        if (i.type === 'shop-texture-category' && !i.bcfBundleDeal) {
+          next.price = bcfResolveCartLineUnitPriceUsd(i);
+        }
+        return next;
       });
       setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
@@ -871,7 +880,11 @@ function ShoppingBagPage() {
       const clampedSavedQty = Math.max(0, Math.min(maxQty, newQty));
       const newSavedForLater = savedForLater.map((i) => {
         if (i.id !== itemId) return i;
-        return { ...i, quantity: clampedSavedQty };
+        const next = { ...i, quantity: clampedSavedQty };
+        if (i.type === 'shop-texture-category' && !i.bcfBundleDeal) {
+          next.price = bcfResolveCartLineUnitPriceUsd(i);
+        }
+        return next;
       });
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
@@ -1533,6 +1546,13 @@ function ShoppingBagPage() {
                       const consultOfferLineTotUsd = itemPrice * (isGiftLine ? 1 : itemQuantity);
                       const bundleDealListTot = bcfBundleDealResolvedListSubtotal(item);
                       const bundleDealLineTot = itemPrice * (isGiftLine ? 1 : itemQuantity);
+                      const itemLineDisplayUsd = isGiftLine
+                        ? itemPrice
+                        : isBundleDealLine
+                          ? bundleDealLineTot
+                          : item.type === 'shop-texture-category'
+                            ? cartLineExtendedPriceUsd(item)
+                            : itemPrice * itemQuantity;
 
                        return (
                          <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
@@ -1707,7 +1727,7 @@ function ShoppingBagPage() {
                               ) : (
                               <WigLineStockPrice
                                 item={item}
-                                priceHtml={formatPrice(itemPrice)}
+                                priceHtml={formatPrice(itemLineDisplayUsd)}
                                 priceStyle={{
                                   fontFamily: '"Futura PT Book"',
                                   color: '#000000',
@@ -2089,6 +2109,13 @@ function ShoppingBagPage() {
                   const isSavedBundleDeal = Boolean(item.bcfBundleDeal);
                   const savedBundleListTot = bcfBundleDealResolvedListSubtotal(item);
                   const savedBundleLineTot = itemPrice * (isSavedGiftLine ? 1 : itemQuantity);
+                  const savedLineDisplayUsd = isSavedGiftLine
+                    ? itemPrice
+                    : isSavedBundleDeal
+                      ? savedBundleLineTot
+                      : item.type === 'shop-texture-category'
+                        ? cartLineExtendedPriceUsd(item)
+                        : itemPrice * itemQuantity;
                   const isSavedBookingLine =
                     item.type === 'booking-consult' || item.type === 'booking-appointment';
                   const isSavedQtyOnlyLine = isSavedBookingLine || isSavedBundleDeal;
@@ -2237,7 +2264,7 @@ function ShoppingBagPage() {
                            ) : (
                            <WigLineStockPrice
                              item={item}
-                             priceHtml={formatPrice(itemPrice)}
+                             priceHtml={formatPrice(savedLineDisplayUsd)}
                              priceStyle={{
                                fontFamily: '"Futura PT Book"',
                                color: '#000000',

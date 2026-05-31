@@ -21,6 +21,8 @@ import {
   BCF_LENGTH_OPTIONS,
   BCF_ORIGIN_OPTIONS,
   BCF_TEXTURE_LABELS,
+  BCF_LACE_TREATMENT_OPTIONS,
+  bcfLaceTreatmentPrice,
   bcfColorOptionsForOrigin,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
@@ -390,6 +392,8 @@ export default function ShopTextureCategoryProductPage() {
   );
   const [bcfLength, setBcfLength] = useState(BCF_DEFAULT_LENGTH_ID);
   const [bcfColor, setBcfColor] = useState('OFF BLACK');
+  /** Closures/frontals only — premium-only lace treatments (PLUCK / BLEACH), multi-select. */
+  const [bcfLaceTreatment, setBcfLaceTreatment] = useState<string[]>([]);
   const [bcfLace, setBcfLace] = useState(() => {
     if (typeof window === 'undefined') return '13X6';
     const cat = parseShopBcfCategory(window.location.pathname);
@@ -663,6 +667,18 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleBcfColorUpgradeClose = () => setShowBcfColorUpgradeModal(false);
 
+  const handleBcfLaceTreatmentToggle = React.useCallback((id: string) => {
+    const opt = BCF_LACE_TREATMENT_OPTIONS.find((o) => o.id === id);
+    if (!opt) return;
+    if (opt.premium && !isPremiumMemberForGatedFeatures()) {
+      setShowBcfColorUpgradeModal(true);
+      return;
+    }
+    setBcfLaceTreatment((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }, []);
+
   const handleSimilarProductsLeftArrow = () => setSimilarProductsScroll(0);
   const handleSimilarProductsRightArrow = () => setSimilarProductsScroll(-similarSnapPx);
   const handleRecentlyViewedLeftArrow = () => setRecentlyViewedScroll(0);
@@ -680,9 +696,12 @@ export default function ShopTextureCategoryProductPage() {
     if (!category) return 0;
     return (
       basePrice +
-      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace)
+      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace) +
+      (category === 'bundles' ? 0 : bcfLaceTreatmentPrice(bcfLaceTreatment))
     );
-  }, [category, basePrice, bcfLength, bcfColor, bcfLace]);
+  }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfLaceTreatment]);
+  /** Premium gate for member-only options (lace treatment chips, etc.). */
+  const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
@@ -720,7 +739,12 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
-          ...(category === 'bundles' ? {} : { lace: bcfLace })
+          ...(category === 'bundles'
+            ? {}
+            : {
+                lace: bcfLace,
+                ...(bcfLaceTreatment.length ? { laceTreatment: bcfLaceTreatment } : {})
+              })
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -1652,6 +1676,33 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
+                      {(category === 'closures' || category === 'frontals') && (
+                        <>
+                          <p style={bcfBohemySubLabelStyle}>lace treatment</p>
+                          <div className="flex flex-wrap justify-center gap-3 mb-3">
+                            {BCF_LACE_TREATMENT_OPTIONS.map((t) => {
+                              const sel = bcfLaceTreatment.includes(t.id);
+                              const locked = !!t.premium && !isBcfPremiumMember;
+                              return (
+                                <button
+                                  key={t.id}
+                                  type="button"
+                                  onClick={() => handleBcfLaceTreatmentToggle(t.id)}
+                                  style={{
+                                    ...bcfOptionBtnTypography,
+                                    ...bcfOptionSelectedChrome(sel),
+                                    ...(locked && !sel
+                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
+                                      : {})
+                                  }}
+                                >
+                                  {t.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
                       <p style={bcfBohemySubLabelStyle}>hair color</p>
                       <div className="flex flex-wrap justify-center gap-x-3 gap-y-3 mb-6">
                         {bcfColorsAvailable.map((c) => {

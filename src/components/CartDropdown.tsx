@@ -47,7 +47,11 @@ import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from './shop/WigStockPrice';
 import { attachStockStatusToLineItem, isWigUnitProductName } from '../utils/productInventoryAvailability';
-import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
+import {
+  cartBillablePointsEligibleSubtotal,
+  cartBillableSubtotal,
+  cartLineExtendedPriceUsd,
+} from '../utils/cartBillableLines';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1698,7 +1702,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               </div>
                             );
                           }
-                          const linePrice = isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0;
+                          const linePrice = isGiftCardCartLine(item)
+                            ? giftCardLineTotalUsd(item)
+                            : isBcfShopItem && !(item as CartItem).bcfBundleDeal
+                              ? cartLineExtendedPriceUsd(item as CartItem)
+                              : item.price || 0;
                           return (
                             <WigLineStockPrice
                               item={item}
@@ -1741,7 +1749,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           fontSize: '8px',
                           color: '#000000',
                           textTransform: 'uppercase',
-                          marginBottom: '6px'
+                          marginBottom: '6px',
                         }}
                       >
                         QTY: {item.quantity ?? 1}
