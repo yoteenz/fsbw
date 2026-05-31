@@ -658,6 +658,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     position: 'fixed',
     zIndex: 110,
     overflow: 'visible',
+    isolation: 'isolate',
     transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
     left: animatedIn ? frameLeft : startFrameLeft,
     top: animatedIn ? frameTop : startFrameTop,

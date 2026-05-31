@@ -26,6 +26,9 @@ export const LOUNGE_TV_CLOSE_BUTTON_BG = '#454545';
 export const LOUNGE_TV_CLOSE_ICON_FILTER =
   'brightness(0) saturate(100%) invert(78%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)';
 
+/** Above all in-screen layers (static z-index 4, power-off 8, content/capture up to 50). */
+export const LOUNGE_TV_CLOSE_BUTTON_Z_INDEX = 100;
+
 export function loungeTvDimensionsFromScreenWidth(screenW: number) {
   const screenH = screenW * LOUNGE_TV_SCREEN_ASPECT;
   return {
@@ -65,6 +68,7 @@ export function loungeTvScreenStyle(overrides?: React.CSSProperties): React.CSSP
     borderRadius: 0,
     boxShadow: 'inset 0 0 16px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.05)',
     position: 'relative',
+    zIndex: 0,
     ...overrides,
   };
 }
@@ -84,7 +88,7 @@ export function LoungeTvCloseButton({ visible, onClick }: LoungeTvCloseButtonPro
         position: 'absolute',
         top: -8,
         right: -8,
-        zIndex: 3,
+        zIndex: LOUNGE_TV_CLOSE_BUTTON_Z_INDEX,
         width: 22,
         height: 22,
         margin: 0,
@@ -150,9 +154,12 @@ export function LoungeTvFrame({
         position: 'relative',
         width: fill ? '100%' : frameWidth,
         height: fill ? '100%' : frameHeight,
+        overflow: 'visible',
+        isolation: 'isolate',
         ...loungeTvFrameShellStyle(shellStyle),
       }}
     >
+      <div style={loungeTvScreenStyle(screenStyle)}>{children}</div>
       {onClose ? (
         <LoungeTvCloseButton
           visible={closeVisible ?? false}
@@ -162,7 +169,6 @@ export function LoungeTvFrame({
           }}
         />
       ) : null}
-      <div style={loungeTvScreenStyle(screenStyle)}>{children}</div>
     </div>
   );
 }
