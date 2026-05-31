@@ -29,8 +29,8 @@ import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopove
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import { LobbyAssetDownloadAnchor, LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
+import { useLobbyAssetDownloadsVisible } from '../../hooks/useLobbyAssetDownloadsVisible';
 import {
-  isLobbyAssetDownloadsVisible,
   LOBBY_CASE_PHONE_DOWNLOAD_SRC,
   LOBBY_CASE_REGISTER_SRC,
   LOBBY_CASE_SRC,
@@ -57,9 +57,7 @@ import {
 // Lobby Component
 const LobbyPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const showAssetDownloads = isLobbyAssetDownloadsVisible(location.search);
-  console.log('✅✅✅ LobbyPage component rendering - ROOT ROUTE');
+  const showAssetDownloads = useLobbyAssetDownloadsVisible();
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
   useEffect(() => {
@@ -154,7 +152,7 @@ const LobbyPage: React.FC = () => {
             href={LOBBY_ROSE_BACKGROUND_SRC}
             downloadFilename="landing-background.png"
             falPrompt={LOBBY_SCENE_FAL_PROMPTS.roseBackground}
-            style={{ position: 'absolute', top: 8, left: 8, zIndex: 5 }}
+            style={{ position: 'absolute', top: 8, left: 8, zIndex: 200 }}
           />
         ) : null}
       </div>
@@ -893,11 +891,11 @@ const LobbyApp: React.FC = () => {
       const path = lobbyCarouselPathFromIndex(pageIndex);
       setIsTransitioning(true);
       if (location.pathname !== path) {
-        navigate(path, { replace: true });
+        navigate({ pathname: path, search: location.search }, { replace: true });
       }
       setTimeout(() => setIsTransitioning(false), 800);
     },
-    [currentPage, isTransitioning, location.pathname, navigate]
+    [currentPage, isTransitioning, location.pathname, location.search, navigate]
   );
 
   const handlePrevious = useCallback(() => {

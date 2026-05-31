@@ -2,7 +2,7 @@ import React from 'react';
 
 const downloadLinkStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '8px',
+  fontSize: '10px',
   fontWeight: 500,
   color: '#EB1C24',
   textTransform: 'uppercase',
@@ -11,8 +11,9 @@ const downloadLinkStyle: React.CSSProperties = {
   lineHeight: 1,
   whiteSpace: 'nowrap',
   pointerEvents: 'auto',
-  zIndex: 60,
-  background: 'rgba(255,255,255,0.85)',
+  zIndex: 200,
+  background: 'rgba(255,255,255,0.92)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
   padding: '2px 4px',
   borderRadius: '2px',
 };
@@ -62,7 +63,7 @@ const placementStyle: Record<
   'bottom-center': { bottom: 0, left: '50%', transform: 'translateX(-50%)' },
 };
 
-/** Wraps a lobby asset; shows DOWNLOAD in dev or when `?lobbyAssets=1`. */
+/** Wraps a lobby asset; shows DOWNLOAD in dev, `?lobbyAssets=1`, or signed-in admin. */
 export function LobbyAssetDownloadAnchor({
   href,
   downloadFilename,

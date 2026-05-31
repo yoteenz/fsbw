@@ -1,3 +1,6 @@
+import { isAdminEmail, isSignedIn } from '../utils/adminAuth';
+import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
+
 /** Lobby scene art paths (see `src/pages/lobby/page.tsx`). */
 
 export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
@@ -9,10 +12,33 @@ export const LOBBY_CASE_SRC = '/assets/CASE.png';
 export const LOBBY_CASE_REGISTER_SRC = '/assets/REGISTER.png';
 export const LOBBY_CASE_PHONE_DOWNLOAD_SRC = '/assets/lobby-phone.png';
 
-/** Show small DOWNLOAD links on lobby art (dev, or `/?lobbyAssets=1`). */
-export function isLobbyAssetDownloadsVisible(search: string): boolean {
+/** Set when user opens `/lobby?lobbyAssets=1` so carousel swipes keep downloads visible. */
+export const LOBBY_ASSET_DOWNLOADS_SESSION_KEY = 'baw_lobby_asset_downloads';
+
+/** Show small DOWNLOAD links on lobby art (dev, `?lobbyAssets=1`, or signed-in admin). */
+export function isLobbyAssetDownloadsVisibleFromSearch(search: string): boolean {
   if (import.meta.env.DEV) return true;
-  return new URLSearchParams(search).get('lobbyAssets') === '1';
+  const params = new URLSearchParams(search);
+  if (params.get('lobbyAssets') === '1') {
+    try {
+      sessionStorage.setItem(LOBBY_ASSET_DOWNLOADS_SESSION_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    return true;
+  }
+  try {
+    return sessionStorage.getItem(LOBBY_ASSET_DOWNLOADS_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function isLobbyAssetDownloadsVisibleForAdmin(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (!isSignedIn()) return false;
+  const email = getCurrentUserEmailFromStorage();
+  return Boolean(email && isAdminEmail(email));
 }
 
 /** Fal / image-model prompts for replacing lobby PNGs (transparent PNG where noted). */
