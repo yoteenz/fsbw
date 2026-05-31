@@ -1,6 +1,8 @@
 import {
-  LOUNGE_ROSE_BACKGROUND_FAL_BASE,
-  SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT,
+  LOUNGE_ROSE_BACKGROUND_FAL_EDIT,
+  SCENE_FAL_EDIT_STRENGTH_LOUNGE,
+  SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
+  sceneRoseBackgroundFalWorkflowNote,
 } from './sceneRoseBackgroundFal';
 import { LOBBY_NEON_LOGO_SRC } from './lobbySceneAssets';
 
@@ -18,7 +20,7 @@ export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
 /** Fal prompts for replacing lounge scene PNGs/JPEGs. */
 export const LOUNGE_SCENE_FAL_PROMPTS = {
-  roseBackground: `${LOUNGE_ROSE_BACKGROUND_FAL_BASE} ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`,
+  roseBackground: `${sceneRoseBackgroundFalWorkflowNote('landing2-background', SCENE_FAL_EDIT_STRENGTH_LOUNGE)} ${LOUNGE_ROSE_BACKGROUND_FAL_EDIT} Negative: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE}`,
 
   neonLogo: `Photorealistic neon sign for a luxury wig boutique brand "Frontal Slayer". Hot pink and red neon glass tubing, soft bloom and wall reflection, shot straight-on on a dark charcoal wall. Premium salon aesthetic, crisp letterforms, no extra text. PNG with fully transparent background (alpha), no border, no floor, no mockup frame.`,
 
