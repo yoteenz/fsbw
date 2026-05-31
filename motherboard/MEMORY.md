@@ -22476,3 +22476,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update:** **`google-pay.png`** from separate Supabase JPEG **`taW3ckzkvXh5AtWqFCTrG_0QGW1Akz (1).jpeg`** (chroma-keyed); added to grid after PayPal; **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz2`**.
 
 **Update:** Lobby phone display **`height: 34px`**, **`maxWidth: 46px`** (was 40 / 52, −6px).
+
+**Update:** Replaced lobby payment PNGs from **`Payment/`** Supabase files — **visa (8), amex (6), discover (7), affirm, apple-pay (3), paypal (4), afterpay (2)**; **mastercard** + **klarna** still sheet-cropped. **`LOBBY_PAYMENT_ICON_REMOTES`**, **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz4`**. Refactored **`lobby-bake-payment-icons.mjs`**.
