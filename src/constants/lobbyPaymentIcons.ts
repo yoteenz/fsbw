@@ -73,14 +73,14 @@ const klarna = { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') }
 /** Register popover: three Bohemy-labeled single rows (cards, express, pay over time). */
 export const LOBBY_PAYMENT_POPOVER_LAYOUT: LobbyPaymentPopoverLayout = {
   cards: [visa, mastercard, discover, amex],
-  express: [applePay, paypal, shopPay, googlePay],
+  express: [paypal, applePay, googlePay, shopPay],
   payOverTime: [afterpay, affirm, klarna],
 };
 
 /** Bohemy subheadings (gray, 15px) above each payment row in the register popover. */
 export const LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL = 'accepted cards';
 export const LOBBY_PAYMENT_EXPRESS_LABEL = 'express payment';
-export const LOBBY_PAYMENT_PAY_OVER_TIME_LABEL = 'pay over time';
+export const LOBBY_PAYMENT_PAY_OVER_TIME_LABEL = 'pay in four';
 
 /** Flat list (legacy / tests). */
 export const LOBBY_PAYMENT_ICONS: readonly LobbyPaymentIcon[] = [

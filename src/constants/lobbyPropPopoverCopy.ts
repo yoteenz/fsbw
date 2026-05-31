@@ -1,7 +1,7 @@
 import { BRAND_CONTACT_EMAIL, BRAND_CONTACT_INTRO_HOURS } from './brandContactCopy';
 
 /** Lobby display-case phone popover — business contact (aligned with brand contact). */
-export const LOBBY_PHONE_POPOVER_TITLE = 'CONTACT';
+export const LOBBY_PHONE_POPOVER_TITLE = 'CONTACT US';
 
 export type LobbyPhonePopoverLinePart = {
   text: string;
