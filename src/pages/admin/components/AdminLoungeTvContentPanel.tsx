@@ -228,8 +228,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         type="text"
         value={item.title}
         onChange={(e) => onChange({ ...item, title: e.target.value.toUpperCase() })}
-        className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2"
-        style={adminTvFieldStyle}
+        className="w-full px-2 py-1 text-xs mb-2"
+        style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
       />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
@@ -239,8 +239,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         value={item.body}
         onChange={(e) => onChange({ ...item, body: e.target.value.toUpperCase() })}
         rows={3}
-        className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2 resize-y"
-        style={adminTvFieldStyle}
+        className="w-full px-2 py-1 text-xs mb-2 resize-y"
+        style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
       />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
@@ -271,8 +271,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
           setUploadNotice(null);
           onChange({ ...item, mediaUrl: e.target.value });
         }}
-        className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-1"
-        style={adminTvFieldStyle}
+        className="w-full px-2 py-1 text-xs mb-1"
+        style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
       />
       <label
         className="block w-full text-center py-2 mb-2 text-xs cursor-pointer"
@@ -354,8 +354,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
                 type="text"
                 value={item.durationLabel ?? ''}
                 onChange={(e) => onChange({ ...item, durationLabel: e.target.value.toUpperCase() })}
-                className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-2"
-                style={adminTvFieldStyle}
+                className="w-full px-2 py-1 text-xs mb-2"
+                style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
               />
             </>
           ) : null}
