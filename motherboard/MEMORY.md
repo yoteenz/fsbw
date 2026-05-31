@@ -22474,3 +22474,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`LOBBY_CASE_POPOVER_WIDTH_PX` 220**, **`MIN_HEIGHT` 200** (`lobbyPaymentIcons.ts`). Register: **`LOBBY_PAYMENT_ICONS`** — 10 PNGs in **`public/assets/lobby-payment/`** (visa, mastercard, amex, discover, apple-pay, shop-pay, paypal, afterpay, affirm, klarna); **`?v=taW3ckz1`**. **`LobbyCasePropPopover`** — **`paymentIcons`** 2-col grid (32px max logo height). Phone unchanged (contact sections). **`npm run lobby:bake-payment-icons`**. Google Pay not on source sheet / not in grid.
 
 **Update:** **`google-pay.png`** from separate Supabase JPEG **`taW3ckzkvXh5AtWqFCTrG_0QGW1Akz (1).jpeg`** (chroma-keyed); added to grid after PayPal; **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz2`**.
+
+**Update:** Lobby phone display **`height: 34px`**, **`maxWidth: 46px`** (was 40 / 52, −6px).
