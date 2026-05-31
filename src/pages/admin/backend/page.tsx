@@ -170,17 +170,19 @@ export default function AdminBackend() {
           breadcrumbParentPath="/admin/dashboard"
         />
 
-        <div className="pb-6 px-4">
-          <div className="max-w-md mx-auto">
+        <div className="pb-8 px-4 max-w-md mx-auto">
             <div
-              className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
-              style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
+              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}
             >
-              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
-
               <div
-                className="flex justify-center px-5 overflow-x-auto"
-                style={{ flexWrap: 'nowrap', gap: '10px', WebkitOverflowScrolling: 'touch' }}
+                className="flex-shrink-0 flex justify-center px-5 overflow-x-auto"
+                style={{
+                  marginTop: '10px',
+                  flexWrap: 'nowrap',
+                  gap: '10px',
+                  WebkitOverflowScrolling: 'touch',
+                }}
               >
                 {contentEditingMainTab ? (
                   (LOUNGE_TV_SIDEBAR[contentEditingMainTab] ?? []).map((sidebar) => (
@@ -244,15 +246,14 @@ export default function AdminBackend() {
                 )}
               </div>
 
-              <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
-                <div
-                  className="overflow-y-auto"
-                  style={{
-                    maxHeight: '420px',
-                    paddingTop: '2px',
-                    boxSizing: 'border-box',
-                  }}
-                >
+              <div
+                className={
+                  activeTab === 'CONTENT' && contentEditingMainTab
+                    ? 'flex flex-col flex-1 min-h-0 px-5 pb-4'
+                    : 'flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll px-5 pb-4'
+                }
+                style={{ paddingTop: activeTab === 'CONTENT' && contentEditingMainTab ? '4px' : '2px' }}
+              >
                 {activeTab === 'AUDIT LOG' && (
                   <>
                     {auditLoading ? (
@@ -358,10 +359,8 @@ export default function AdminBackend() {
                     )}
                   </>
                 )}
-                </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>

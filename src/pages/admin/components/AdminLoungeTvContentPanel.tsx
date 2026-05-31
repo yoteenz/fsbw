@@ -28,6 +28,34 @@ const MAX_INLINE_VIDEO_BYTES = 4 * 1024 * 1024;
 
 const adminTvUppercaseStyle: React.CSSProperties = { textTransform: 'uppercase' };
 
+/** Match admin revenue waitlist panels (`view-waitlist/page.tsx`). */
+const adminHubPanelStyle: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid #d1d5db',
+  borderRadius: 0,
+  padding: '10px',
+};
+
+const adminHubRowLabelStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '11px',
+  color: '#808080',
+};
+
+const adminHubRowValueStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '11px',
+  color: '#EB1C24',
+};
+
+const adminHubSectionTitleStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '10px',
+  color: '#000',
+  margin: 0,
+  textTransform: 'uppercase',
+};
+
 function formatFileSizeMb(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -52,6 +80,11 @@ const IMAGE_FILE_ACCEPT = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp
 const adminTvFieldStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium"',
   textTransform: 'uppercase',
+};
+
+const adminTvInputStyle: React.CSSProperties = {
+  border: '1px solid #d1d5db',
+  borderRadius: 0,
 };
 
 export type AdminLoungeTvContentPanelProps = {
@@ -157,8 +190,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
 
   return (
     <div
-      className="border border-gray-300 rounded p-3 mb-3"
-      style={{ backgroundColor: 'rgba(255,255,255,0.85)', ...adminTvUppercaseStyle }}
+      className="mb-3"
+      style={{ ...adminHubPanelStyle, ...adminTvUppercaseStyle }}
     >
       <div className="flex justify-between items-start gap-2 mb-2">
         <p className="text-xs font-medium text-black" style={{ fontFamily: '"Futura PT Demi"' }}>
@@ -438,6 +471,21 @@ export default function AdminLoungeTvContentPanel({
     [editingMainTab]
   );
 
+  const totalItemsAll = useMemo(
+    () =>
+      LOUNGE_TV_MAIN_TABS.reduce((sum, tab) => {
+        const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
+        return (
+          sum +
+          sidebars.reduce(
+            (inner, sidebar) => inner + getPlacement(tab.id, sidebar.id).items.length,
+            0
+          )
+        );
+      }, 0),
+    [getPlacement]
+  );
+
   const handleSaveCategory = () => {
     if (!editingMainTab || !sidebarId) return;
     const placement = getPlacement(editingMainTab, sidebarId);
@@ -472,9 +520,11 @@ export default function AdminLoungeTvContentPanel({
 
   if (editingMainTab && sidebarId) {
     const placement = getPlacement(editingMainTab, sidebarId);
+    const activeSidebarLabel =
+      LOUNGE_TV_SIDEBAR[editingMainTab]?.find((s) => s.id === sidebarId)?.label ?? sidebarId;
 
     return (
-      <div className="mt-2 flex flex-col min-h-0" style={adminTvUppercaseStyle}>
+      <div className="flex flex-col flex-1 min-h-0" style={adminTvUppercaseStyle}>
         <div className="flex-shrink-0 pb-2">
           <div className="flex items-center justify-between" style={{ minWidth: 0 }}>
             <h2
@@ -520,13 +570,30 @@ export default function AdminLoungeTvContentPanel({
             style={{
               backgroundColor: feedback.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
               color: feedback.type === 'success' ? '#166534' : '#b91c1c',
+              fontSize: '10px',
             }}
           >
             {feedback.msg}
           </div>
         ) : null}
 
-        <div className="min-h-0 overflow-y-auto" style={{ paddingTop: '4px' }}>
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '9px',
+            color: '#808080',
+            margin: '0 0 8px 0',
+            lineHeight: 1.4,
+            flexShrink: 0,
+          }}
+        >
+          EDITING {activeSidebarLabel}. TAP SAVE CATEGORY AFTER CHANGES.
+        </p>
+
+        <div
+          className="flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll"
+          style={{ paddingTop: '4px' }}
+        >
           {placement.items.length === 0 ? (
             <p className="text-xs text-gray-500 py-2">NO ITEMS YET.</p>
           ) : (
@@ -550,7 +617,13 @@ export default function AdminLoungeTvContentPanel({
           )}
 
           {draftItem ? (
-            <div className="border border-dashed border-gray-400 rounded p-3 mt-2">
+            <div
+              className="mt-2"
+              style={{
+                ...adminHubPanelStyle,
+                borderStyle: 'dashed',
+              }}
+            >
               <p className="text-xs mb-2" style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>
                 ADD NEW
               </p>
@@ -578,62 +651,124 @@ export default function AdminLoungeTvContentPanel({
   }
 
   return (
-    <div className="mt-2" style={adminTvUppercaseStyle}>
+    <div style={adminTvUppercaseStyle}>
       {feedback ? (
         <div
-          className="mb-3 px-3 py-2 text-sm"
+          className="mb-3 px-3 py-2 shrink-0"
           style={{
             backgroundColor: feedback.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
             color: feedback.type === 'success' ? '#166534' : '#b91c1c',
+            fontSize: '10px',
           }}
         >
           {feedback.msg}
         </div>
       ) : null}
 
-      <div className="space-y-2">
-        {LOUNGE_TV_MAIN_TABS.map((tab) => {
-          const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
-          const totalItems = sidebars.reduce(
-            (sum, sidebar) => sum + getPlacement(tab.id, sidebar.id).items.length,
-            0
-          );
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => onOpenMainTab(tab.id)}
-              className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
-              style={{
-                border: '1px solid #d1d5db',
-                borderRadius: 0,
-                backgroundColor: 'rgba(255,255,255,0.85)',
-                padding: '12px 10px',
-                margin: 0,
-                textAlign: 'left',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: '"Futura PT Demi"',
-                  fontSize: '11px',
-                  color: '#000',
-                }}
-              >
-                {tab.label}
-              </span>
-              <span
-                style={{
-                  fontFamily: '"Futura PT Book"',
-                  fontSize: '11px',
-                  color: '#EB1C24',
-                }}
-              >
-                {totalItems}
-              </span>
-            </button>
-          );
-        })}
+      <div className="grid grid-cols-2 gap-4" style={{ marginTop: '12px' }}>
+        <div
+          className="text-center py-3"
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.04)',
+            borderRadius: '4px',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: '"Covered By Your Grace", cursive',
+              fontSize: '22px',
+              color: '#000',
+              margin: 0,
+              lineHeight: 1,
+            }}
+          >
+            {LOUNGE_TV_MAIN_TABS.length}
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '9px',
+              color: '#808080',
+              margin: '4px 0 0 0',
+            }}
+          >
+            CATEGORIES
+          </p>
+        </div>
+        <div
+          className="text-center py-3"
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.04)',
+            borderRadius: '4px',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: '"Covered By Your Grace", cursive',
+              fontSize: '22px',
+              color: '#EB1C24',
+              margin: 0,
+              lineHeight: 1,
+            }}
+          >
+            {totalItemsAll}
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '9px',
+              color: '#808080',
+              margin: '4px 0 0 0',
+            }}
+          >
+            ITEMS
+          </p>
+        </div>
+      </div>
+
+      <p
+        style={{
+          fontFamily: '"Futura PT Book"',
+          fontSize: '9px',
+          color: '#808080',
+          margin: '12px 0 0 0',
+          lineHeight: 1.4,
+        }}
+      >
+        TAP A CATEGORY TO EDIT LOUNGE TV TILES AND VIDEOS. USE SUB-TABS TO SWITCH SIDEBARS.
+      </p>
+
+      <div className="space-y-3" style={{ marginTop: '12px' }}>
+        <div style={adminHubPanelStyle}>
+          <p style={adminHubSectionTitleStyle}>LOUNGE TV</p>
+          <div>
+            {LOUNGE_TV_MAIN_TABS.map((tab) => {
+              const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
+              const totalItems = sidebars.reduce(
+                (sum, sidebar) => sum + getPlacement(tab.id, sidebar.id).items.length,
+                0
+              );
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => onOpenMainTab(tab.id)}
+                  className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
+                  style={{
+                    border: 'none',
+                    borderBottom: '1px solid #e5e7eb',
+                    background: 'none',
+                    padding: '8px 0',
+                    margin: 0,
+                  }}
+                >
+                  <span style={adminHubRowLabelStyle}>{tab.label}</span>
+                  <span style={adminHubRowValueStyle}>{totalItems}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
