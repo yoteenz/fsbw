@@ -22460,3 +22460,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update:** User preferred **`sLVJYq1o8i6oxuURN73ik_RisdwVxj.jpeg`** over **`d35m8u3…`** — re-baked PNG (324×512), **`LOBBY_PHONE_ASSET_VERSION`** = **`sLVJYq1`**.
 
 **Update:** Restored **`d35m8u3jneLSkpJrHKouG_Z4VtKzzm.jpeg`** (348×512), **`?v=d35m8u3`**; phone wrapper **`top: -33px`** (was **-31px**, +2px up).
+
+**Update:** New phone **`q-oa7o-GX24j6k742w0p8_omgBoTaL.jpeg`** — re-baked **`lobby-phone.png`** (271×512), **`LOBBY_PHONE_ASSET_VERSION`** = **`q-oa7o8`**.
