@@ -19,7 +19,7 @@ const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
 
 export type LobbyCasePropPopoverSection = {
   heading: string;
-  lines: readonly string[];
+  lines: readonly { text: string; emphasis?: 'brand-red-medium' }[];
 };
 
 type LobbyCasePropPopoverProps = {
@@ -76,6 +76,17 @@ const lineStyle: React.CSSProperties = {
   lineHeight: 1.45,
   letterSpacing: '0.02em',
 };
+
+const contactLineRedMediumStyle: React.CSSProperties = {
+  ...lineStyle,
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontWeight: 500,
+  color: '#EB1C24',
+};
+
+function contactLineStyle(line: { emphasis?: 'brand-red-medium' }): React.CSSProperties {
+  return line.emphasis === 'brand-red-medium' ? contactLineRedMediumStyle : lineStyle;
+}
 
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
   ...lobbyBohemyLabelStyle,
@@ -138,8 +149,11 @@ function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPo
         <div key={section.heading}>
           <p style={contactSectionHeadingStyle}>{section.heading}</p>
           {section.lines.map((line) => (
-            <p key={line} style={{ ...lineStyle, marginBottom: `${lobbyPopoverPx(2)}px` }}>
-              {line}
+            <p
+              key={line.text}
+              style={{ ...contactLineStyle(line), marginBottom: `${lobbyPopoverPx(2)}px` }}
+            >
+              {line.text}
             </p>
           ))}
         </div>
