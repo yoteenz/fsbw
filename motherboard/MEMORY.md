@@ -22498,3 +22498,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Contact popover — **inquiries** → **questions**; copy **PLEASE ALLOW UP TO 72 HOURS FOR A RESPONSE**; removed **VISIT BRAND > CONTACT FOR THE FORM**; **email** + **MAJOR US HOLIDAYS EXCLUDED** → red **Futura PT Medium** (**#EB1C24**) via **`LobbyPhonePopoverLine.emphasis`**. Commit **`cc1722a0`**.
 
 **Update (same chat):** **Klarna** pay-over-time icon from **`Payment/G7FSLK_RM0zy4fC1qM1ab_UWvrk83X.jpeg`** (chroma-keyed PNG); removed sheet crop that showed Apple Pay. **`LOBBY_PAYMENT_ICONS_VERSION`** = **`G7FSLKz4`**. Commit **`b9a392a3`**.
+
+**Update (same chat):** Lobby scene **DOWNLOAD** links (dev or **`/?lobbyAssets=1`**) on neon logo, rose background (**`landing-background.png`**), shelves (**`hd-group`**, **`transparent-group`**, **`custom-group`**), case (**`CASE.png`**, **`REGISTER.png`**, **`lobby-phone.png`**). **`lobbySceneAssets.ts`** + **`LobbyAssetDownloadLink`**; Fal prompts in **`LOBBY_SCENE_FAL_PROMPTS`** (hover title on link). Commit **`bd673a0c`**.
