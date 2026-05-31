@@ -116,6 +116,11 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
+/** Main tabs + content share 4 columns so col 2 (SLAY TIPS) lines up with thumb col 1 / video. */
+const LOUNGE_TV_MAIN_TAB_GRID = 'repeat(4, minmax(0, 1fr))';
+const LOUNGE_TV_LAYOUT_COLUMN_GAP_PX = 8;
+const LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX = 10;
+
 const LOUNGE_TV_THUMB_LABEL_GRAY = '#9a9a9a';
 
 const loungeTvThumbLabelBase: React.CSSProperties = {
@@ -297,6 +302,9 @@ function LoungeTvScreen({
     padding: '2px 0',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+    textAlign: 'left',
+    justifySelf: 'start',
+    width: '100%',
   });
 
   return (
@@ -306,7 +314,7 @@ function LoungeTvScreen({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '10px 10px 12px 18px',
+        padding: '10px 10px 12px 10px',
         boxSizing: 'border-box',
         overflow: 'hidden',
         textTransform: 'uppercase',
@@ -314,9 +322,10 @@ function LoungeTvScreen({
     >
       <nav
         style={{
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: LOUNGE_TV_MAIN_TAB_GRID,
+          columnGap: `${LOUNGE_TV_LAYOUT_COLUMN_GAP_PX}px`,
           alignItems: 'center',
-          justifyContent: 'space-between',
           width: '100%',
           marginBottom: '10px',
           flexShrink: 0,
@@ -335,15 +344,24 @@ function LoungeTvScreen({
         ))}
       </nav>
 
-      <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: '8px' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: LOUNGE_TV_MAIN_TAB_GRID,
+          columnGap: `${LOUNGE_TV_LAYOUT_COLUMN_GAP_PX}px`,
+          flex: 1,
+          minHeight: 0,
+          alignItems: 'stretch',
+        }}
+      >
         <aside
           style={{
+            gridColumn: '1',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
             gap: '6px',
-            flexShrink: 0,
-            width: '72px',
+            minWidth: 0,
             paddingTop: '2px',
           }}
           aria-label="Subcategories"
@@ -366,7 +384,7 @@ function LoungeTvScreen({
 
         <div
           style={{
-            flex: 1,
+            gridColumn: '2 / 5',
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -382,7 +400,7 @@ function LoungeTvScreen({
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                columnGap: '12px',
+                columnGap: `${LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX}px`,
                 rowGap: '6px',
                 width: '100%',
               }}
