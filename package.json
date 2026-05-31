@@ -13,7 +13,8 @@
     "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
     "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs",
     "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs",
-    "lobby:bake-phone": "node scripts/lobby-bake-phone-asset.mjs"
+    "lobby:bake-phone": "node scripts/lobby-bake-phone-asset.mjs",
+    "lobby:bake-payment-icons": "node scripts/lobby-bake-payment-icons.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",

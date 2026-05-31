@@ -21,23 +21,5 @@ export const LOBBY_PHONE_POPOVER_SECTIONS: ReadonlyArray<{
   },
 ];
 
-/** Lobby cash register popover — matches checkout payment options. */
+/** Lobby cash register popover — logo grid from `LOBBY_PAYMENT_ICONS`. */
 export const LOBBY_REGISTER_POPOVER_TITLE = 'PAYMENT METHODS';
-
-export const LOBBY_REGISTER_POPOVER_SECTIONS: ReadonlyArray<{
-  heading: string;
-  lines: readonly string[];
-}> = [
-  {
-    heading: 'CARDS',
-    lines: ['VISA', 'MASTERCARD', 'AMERICAN EXPRESS', 'DISCOVER'],
-  },
-  {
-    heading: 'EXPRESS CHECKOUT',
-    lines: ['APPLE PAY', 'SHOP PAY', 'PAYPAL', 'GOOGLE PAY'],
-  },
-  {
-    heading: 'PAY OVER TIME',
-    lines: ['AFFIRM', 'AFTERPAY', 'KLARNA'],
-  },
-];

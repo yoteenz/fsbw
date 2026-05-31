@@ -1,4 +1,9 @@
 import React, { useEffect, useRef } from 'react';
+import type { LobbyPaymentIcon } from '../../constants/lobbyPaymentIcons';
+import {
+  LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
+  LOBBY_CASE_POPOVER_WIDTH_PX,
+} from '../../constants/lobbyPaymentIcons';
 
 export type LobbyCasePropPopoverSection = {
   heading: string;
@@ -12,7 +17,10 @@ type LobbyCasePropPopoverProps = {
   onClose: () => void;
   ariaLabel: string;
   title: string;
-  sections: readonly LobbyCasePropPopoverSection[];
+  /** Contact copy (phone). */
+  sections?: readonly LobbyCasePropPopoverSection[];
+  /** Payment logos (register). */
+  paymentIcons?: readonly LobbyPaymentIcon[];
   /** Nudge panel when anchored near viewport edge (register = left, phone = right). */
   align?: 'center' | 'left' | 'right';
   children: React.ReactNode;
@@ -61,6 +69,64 @@ function panelPositionStyle(align: 'center' | 'left' | 'right'): React.CSSProper
   return { left: '50%', transform: 'translateX(-50%)' };
 }
 
+function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPopoverSection[] }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+      {sections.map((section) => (
+        <div key={section.heading}>
+          <p style={sectionHeadingStyle}>{section.heading}</p>
+          {section.lines.map((line) => (
+            <p key={line} style={{ ...lineStyle, marginBottom: '2px' }}>
+              {line}
+            </p>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LobbyPopoverPaymentGrid({ icons }: { icons: readonly LobbyPaymentIcon[] }) {
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        gap: '10px 12px',
+        flex: 1,
+        alignContent: 'start',
+      }}
+    >
+      {icons.map((icon) => (
+        <div
+          key={icon.id}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '36px',
+            padding: '2px 0',
+          }}
+        >
+          <img
+            src={icon.src}
+            alt={icon.label}
+            draggable={false}
+            style={{
+              display: 'block',
+              maxWidth: '100%',
+              maxHeight: '32px',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** Tap target + glass popover over lobby case props (phone, register). */
 export function LobbyCasePropPopover({
   popoverId,
@@ -70,6 +136,7 @@ export function LobbyCasePropPopover({
   ariaLabel,
   title,
   sections,
+  paymentIcons,
   align = 'center',
   children,
 }: LobbyCasePropPopoverProps) {
@@ -86,6 +153,12 @@ export function LobbyCasePropPopover({
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [open, onClose]);
+
+  const panelBody = paymentIcons?.length ? (
+    <LobbyPopoverPaymentGrid icons={paymentIcons} />
+  ) : sections?.length ? (
+    <LobbyPopoverSections sections={sections} />
+  ) : null;
 
   return (
     <div ref={rootRef} style={{ position: 'relative', display: 'inline-block' }}>
@@ -123,30 +196,30 @@ export function LobbyCasePropPopover({
             bottom: 'calc(100% + 10px)',
             ...panelPositionStyle(align),
             zIndex: 60,
-            width: 'max-content',
-            maxWidth: 'min(248px, calc(100vw - 40px))',
+            width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
+            minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
+            maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
             borderWidth: '1.3px',
             boxSizing: 'border-box',
             padding: '10px 12px',
             pointerEvents: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
           }}
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <p style={{ ...titleStyle, marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+          <p
+            style={{
+              ...titleStyle,
+              marginBottom: '8px',
+              paddingBottom: '6px',
+              borderBottom: '1px solid rgba(0,0,0,0.12)',
+              flexShrink: 0,
+            }}
+          >
             {title}
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {sections.map((section) => (
-              <div key={section.heading}>
-                <p style={sectionHeadingStyle}>{section.heading}</p>
-                {section.lines.map((line) => (
-                  <p key={line} style={{ ...lineStyle, marginBottom: '2px' }}>
-                    {line}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
+          {panelBody}
         </div>
       ) : null}
     </div>
