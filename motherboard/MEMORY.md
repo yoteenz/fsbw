@@ -22390,3 +22390,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** **Products** asset on lobby (`/lobby`) did not reliably open **`/home/shop`** — invisible overlay was offset (`translateX(24px)`, width `w - 40`) so taps on the neon text missed the handler.
 
 **Fix:** **`lobby/page.tsx`** — wrap **neon-products** in a single **`role="button"`** span with **`goToHomeShop()`** → **`navigate('/home/shop')`**; full asset is the hit area (same route as center logo). Removed **`productsSize`** overlay measurement. **`CORE.md`** — Products + logo → **`/home/shop`**; lounge slide logo → **`/shop/units`**.
+
+---
+
+## 2026-05-29 — Lounge TV ACADEMY tab position + lobby Tools routing
+
+**Context:** (1) **ACADEMY** top-tab text on lounge TV was shifted left after equal 4-column nav grid. (2) Lobby **Tools** neon did not reliably open **`/home/tools`** (misaligned overlay, same issue as Products).
+
+**Fix:** **`LoungeTvOverlay.tsx`** — restore main nav **`justifyContent: space-between`** (original ACADEMY placement). Media (thumbs/video) uses measured insets from **SLAY TIPS** left and **ACADEMY** right (`data-lounge-tv-tab` + **`getBoundingClientRect`**); sidebar stays **72px**. **`lobby/page.tsx`** — **Tools** full-asset button → **`goToHomeTools()`** / **`/home/tools`** (removed tools overlay measurement).
