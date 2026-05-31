@@ -94,18 +94,13 @@ const LobbyPage: React.FC = () => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-next'));
   }, []);
 
-  // Measure Products/Tools image size so debug overlay matches asset exactly
-  const productsImgRef = useRef<HTMLImageElement>(null);
+  const goToHomeShop = useCallback(() => {
+    navigate('/home/shop');
+  }, [navigate]);
+
+  // Measure Tools image size so invisible overlay matches asset
   const toolsImgRef = useRef<HTMLImageElement>(null);
-  const [productsSize, setProductsSize] = useState<{ w: number; h: number } | null>(null);
   const [toolsSize, setToolsSize] = useState<{ w: number; h: number } | null>(null);
-  const measureProducts = useCallback(() => {
-    const el = productsImgRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setProductsSize({ w: r.width, h: r.height });
-    }
-  }, []);
   const measureTools = useCallback(() => {
     const el = toolsImgRef.current;
     if (el) {
@@ -158,7 +153,7 @@ const LobbyPage: React.FC = () => {
             <img 
               src="/assets/neon-logo.png" 
               alt="Frontal Slayer" 
-              onClick={() => navigate('/home/shop')}
+              onClick={goToHomeShop}
               style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
           </div>
@@ -178,37 +173,43 @@ const LobbyPage: React.FC = () => {
             pointerEvents: 'none'
           }}
         >
-          {/* Products: overlay sized from measured image so debug square matches asset */}
-          <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
-            <img 
-              ref={productsImgRef}
-              src="/assets/neon-products.png" 
-              alt="Products" 
-              onLoad={measureProducts}
-              style={{ margin: 0, padding: 0, display: 'block', transform: 'translateX(4px)', height: '41px', maxWidth: 'none', width: 'auto', pointerEvents: 'none', verticalAlign: 'top', position: 'relative', zIndex: 0 }}
+          {/* Products → /home/shop (full asset is the hit target) */}
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={goToHomeShop}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goToHomeShop();
+              }
+            }}
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+              flexShrink: 0,
+              pointerEvents: 'auto',
+              cursor: 'pointer',
+              transform: 'translateX(4px)',
+            }}
+            aria-label="Go to shop"
+          >
+            <img
+              src="/assets/neon-products.png"
+              alt=""
+              draggable={false}
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'block',
+                height: '41px',
+                maxWidth: 'none',
+                width: 'auto',
+                pointerEvents: 'none',
+                verticalAlign: 'top',
+              }}
               aria-hidden
             />
-            {productsSize && (
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate('/home/shop')}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/home/shop'); } }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: Math.max(0, productsSize.w - 40),
-                  height: productsSize.h,
-                  transform: 'translateX(24px)',
-                  boxSizing: 'border-box',
-                  cursor: 'pointer',
-                  zIndex: 1,
-                  background: 'transparent'
-                }}
-                aria-label="Go to home shop"
-              />
-            )}
           </span>
           {/* Tools: overlay sized from measured image so debug square matches asset */}
           <span style={{ position: 'relative', display: 'inline-block', flexShrink: 0, pointerEvents: 'auto' }}>
