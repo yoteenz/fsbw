@@ -22374,3 +22374,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix:** **`backend/page.tsx`** — hub card uses waitlist flex layout (`minHeight: calc(100dvh - 160px)`, `px-5`, `admin-hub-tab-scroll`); removed fixed `420px` scroll and double padding. **`AdminLoungeTvContentPanel.tsx`** — waitlist **`panelStyle`** (`#fff`, `1px solid #d1d5db`); category list as single panel with **`#e5e7eb`** row dividers; stat tiles (CATEGORIES / ITEMS); drill-in header + close matches waitlist product panel; internal scroll when editing; inputs use square **`#d1d5db`** borders.
 
 **Commits:** `12564d45`, input border follow-up on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Cart dropdown: restore QTY/× icons after BCF pricing fix
+
+**Context:** BCF quantity **pricing** fix (`4183be0d`) was correct but wrongly added **+/- stepper** in **cart dropdown**; user wanted original **QTY: n** label + **×** remove only in dropdown.
+
+**Fix:** **`CartDropdown.tsx`** — removed stepper + **`handleQuantityChange`** / **`persistCartItems`** from dropdown; restored static **QTY:** line. Kept **`cartLineExtendedPriceUsd`** for BCF line totals. **`shopping-bag/page.tsx`** unchanged (bag still has stepper + refreshed unit price on qty change).
