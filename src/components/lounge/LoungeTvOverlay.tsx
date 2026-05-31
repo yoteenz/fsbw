@@ -116,10 +116,13 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
-/** Main tabs + content share 4 columns so col 2 (SLAY TIPS) lines up with thumb col 1 / video. */
-const LOUNGE_TV_MAIN_TAB_GRID = 'repeat(4, minmax(0, 1fr))';
-const LOUNGE_TV_LAYOUT_COLUMN_GAP_PX = 8;
-const LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX = 10;
+/** Top tabs only: 4 equal columns so col 2 = SLAY TIPS, col 4 = ACADEMY (body sidebar stays fixed 72px). */
+const LOUNGE_TV_NAV_TAB_GRID = 'repeat(4, minmax(0, 1fr))';
+const LOUNGE_TV_NAV_TAB_GAP_PX = 8;
+/** Thumb/video span from SLAY TIPS (25%) to screen right; sidebar position unchanged. */
+const LOUNGE_TV_MEDIA_AREA_LEFT = '25%';
+const LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX = 12;
+const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
 
 const LOUNGE_TV_THUMB_LABEL_GRAY = '#9a9a9a';
 
@@ -302,9 +305,6 @@ function LoungeTvScreen({
     padding: '2px 0',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    textAlign: 'left',
-    justifySelf: 'start',
-    width: '100%',
   });
 
   return (
@@ -314,7 +314,7 @@ function LoungeTvScreen({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '10px 10px 12px 10px',
+        padding: '10px 10px 12px 18px',
         boxSizing: 'border-box',
         overflow: 'hidden',
         textTransform: 'uppercase',
@@ -323,8 +323,8 @@ function LoungeTvScreen({
       <nav
         style={{
           display: 'grid',
-          gridTemplateColumns: LOUNGE_TV_MAIN_TAB_GRID,
-          columnGap: `${LOUNGE_TV_LAYOUT_COLUMN_GAP_PX}px`,
+          gridTemplateColumns: LOUNGE_TV_NAV_TAB_GRID,
+          columnGap: `${LOUNGE_TV_NAV_TAB_GAP_PX}px`,
           alignItems: 'center',
           width: '100%',
           marginBottom: '10px',
@@ -336,7 +336,11 @@ function LoungeTvScreen({
           <button
             key={tab.id}
             type="button"
-            style={mainTabNavStyle(mainTab === tab.id)}
+            style={{
+              ...mainTabNavStyle(mainTab === tab.id),
+              textAlign: 'left',
+              justifySelf: 'start',
+            }}
             onClick={() => handleMainTabClick(tab.id)}
           >
             {tab.label}
@@ -346,22 +350,21 @@ function LoungeTvScreen({
 
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: LOUNGE_TV_MAIN_TAB_GRID,
-          columnGap: `${LOUNGE_TV_LAYOUT_COLUMN_GAP_PX}px`,
+          position: 'relative',
+          display: 'flex',
           flex: 1,
           minHeight: 0,
-          alignItems: 'stretch',
+          gap: `${LOUNGE_TV_BODY_SIDEBAR_GAP_PX}px`,
         }}
       >
         <aside
           style={{
-            gridColumn: '1',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
             gap: '6px',
-            minWidth: 0,
+            flexShrink: 0,
+            width: '72px',
             paddingTop: '2px',
           }}
           aria-label="Subcategories"
@@ -384,7 +387,11 @@ function LoungeTvScreen({
 
         <div
           style={{
-            gridColumn: '2 / 5',
+            position: 'absolute',
+            left: LOUNGE_TV_MEDIA_AREA_LEFT,
+            right: 0,
+            top: 0,
+            bottom: 0,
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
