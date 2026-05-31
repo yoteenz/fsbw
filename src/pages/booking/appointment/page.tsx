@@ -1007,7 +1007,14 @@ export default function BookingAppointmentPage() {
                       onMouseDown={(e) => e.stopPropagation()}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <p style={{ ...appointmentAddonBohemyLabelStyle, marginTop: '4px', marginBottom: '10px' }}>
+                      <p
+                        style={{
+                          ...appointmentAddonBohemyLabelStyle,
+                          marginTop: '4px',
+                          marginBottom: '10px',
+                          textAlign: 'left'
+                        }}
+                      >
                         select your unit
                       </p>
                       <p
@@ -1018,12 +1025,12 @@ export default function BookingAppointmentPage() {
                           color: '#000',
                           margin: '0 0 8px',
                           letterSpacing: '0.02em',
-                          textAlign: 'center'
+                          textAlign: 'left'
                         }}
                       >
                         attach unit
                       </p>
-                      <div className="flex justify-center w-full" style={{ marginBottom: '14px' }}>
+                      <div className="flex justify-start w-full" style={{ marginBottom: '14px' }}>
                         <div
                           className="bg-white"
                           style={{
@@ -1070,7 +1077,7 @@ export default function BookingAppointmentPage() {
                             textTransform: 'uppercase',
                             margin: '0 0 10px',
                             letterSpacing: '0.02em',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             lineHeight: 1.4
                           }}
                         >
@@ -1104,7 +1111,7 @@ export default function BookingAppointmentPage() {
                           color: '#000',
                           margin: '0 0 8px',
                           letterSpacing: '0.02em',
-                          textAlign: 'center'
+                          textAlign: 'left'
                         }}
                       >
                         attach order
@@ -1118,7 +1125,7 @@ export default function BookingAppointmentPage() {
                             textTransform: 'uppercase',
                             margin: 0,
                             letterSpacing: '0.02em',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             lineHeight: 1.45
                           }}
                         >
