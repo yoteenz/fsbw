@@ -22362,3 +22362,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (`LoungeTvOverlay.tsx` — `LoungeTvScreen`):** Shared **`LOUNGE_TV_MAIN_TAB_GRID`** (`repeat(4, minmax(0, 1fr))`) on main nav and body. Main tabs: CSS grid, left-aligned labels. Body: sidebar **`gridColumn: 1`**; content **`gridColumn: 2 / 5`** (spans cols 2–4 = SLAY TIPS through ACADEMY). Symmetric screen padding **`10px`** (was **`18px`** left). Thumb grid **`columnGap: 10px`**, full width inside content span; player **`width: 100%`** → left edge lines up with SLAY TIPS.
 
 **Commit:** `bf55acf5` on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Admin backend CONTENT tab matches revenue waitlist UI
+
+**Context:** User asked to redesign **Admin → Backend → CONTENT** (lounge TV admin) like **Revenue → View waitlist** — border lines and spacing were off.
+
+**Fix:** **`backend/page.tsx`** — hub card uses waitlist flex layout (`minHeight: calc(100dvh - 160px)`, `px-5`, `admin-hub-tab-scroll`); removed fixed `420px` scroll and double padding. **`AdminLoungeTvContentPanel.tsx`** — waitlist **`panelStyle`** (`#fff`, `1px solid #d1d5db`); category list as single panel with **`#e5e7eb`** row dividers; stat tiles (CATEGORIES / ITEMS); drill-in header + close matches waitlist product panel; internal scroll when editing; inputs use square **`#d1d5db`** borders.
+
+**Commits:** `12564d45`, input border follow-up on **`master`** / **`preview/mobile`**.
