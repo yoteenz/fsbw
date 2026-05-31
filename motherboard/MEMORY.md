@@ -22342,3 +22342,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Accidentally removed in **`26638129`** (“Fix live BCF product and wishlist images”) while refactoring the PDP.
 
 **Restore (`texture-category-product/page.tsx`):** `bcfLaceTreatment` state; multi-select chips after **hair length**, before **hair color** (closures/frontals only); premium gate + price via **`bcfLaceTreatmentPrice`**; **`laceTreatment`** on add-to-bag lines. Cart copy unchanged in **`cartLineRedAndDetails.ts`**. Build passes. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — BCF cart/bag quantity: line price + subtotal follow qty
+
+**Context:** User reported BCF **quantity counter** in **cart dropdown** and **shopping bag** did not update **line price** or **subtotal** when qty changed.
+
+**Cause:** Line UI showed **per-unit** `item.price` only (not `price × quantity`). Subtotal used **`cartBillableSubtotal`** correctly in theory but BCF unit price could be stale vs lace-treatment options.
+
+**Fix:** **`bcfResolveCartLineUnitPriceUsd`** recomputes unit price from cart line options (incl. **`laceTreatment`**). **`cartLineExtendedPriceUsd`** uses it for **`shop-texture-category`** lines. **Cart dropdown:** +/- stepper for regular BCF (not bundle deal); **`handleQuantityChange`** persists qty + refreshed unit price. **Shopping bag:** line display uses **`cartLineExtendedPriceUsd`**; qty handlers refresh BCF **`price`**. Subtotal unchanged formula but now matches displayed line totals.
