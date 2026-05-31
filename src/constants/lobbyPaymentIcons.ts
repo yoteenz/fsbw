@@ -43,17 +43,37 @@ function paymentIconPath(slug: string): string {
   return `/assets/lobby-payment/${slug}.png?v=${LOBBY_PAYMENT_ICONS_VERSION}`;
 }
 
-/** Row-major in a 2-column grid: cards → express → pay over time. */
+export type LobbyPaymentPopoverLayout = {
+  cards: readonly LobbyPaymentIcon[];
+  express: readonly LobbyPaymentIcon[];
+  payOverTime: readonly LobbyPaymentIcon[];
+};
+
+const visa = { id: 'visa', label: 'Visa', src: paymentIconPath('visa') };
+const mastercard = { id: 'mastercard', label: 'Mastercard', src: paymentIconPath('mastercard') };
+const amex = { id: 'amex', label: 'American Express', src: paymentIconPath('amex') };
+const discover = { id: 'discover', label: 'Discover', src: paymentIconPath('discover') };
+const applePay = { id: 'apple-pay', label: 'Apple Pay', src: paymentIconPath('apple-pay') };
+const shopPay = { id: 'shop-pay', label: 'Shop Pay', src: paymentIconPath('shop-pay') };
+const paypal = { id: 'paypal', label: 'PayPal', src: paymentIconPath('paypal') };
+const googlePay = { id: 'google-pay', label: 'Google Pay', src: paymentIconPath('google-pay') };
+const afterpay = { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afterpay') };
+const affirm = { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') };
+const klarna = { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') };
+
+/** Register popover: cards grid, then express row with Bohemy label. */
+export const LOBBY_PAYMENT_POPOVER_LAYOUT: LobbyPaymentPopoverLayout = {
+  cards: [visa, mastercard, amex, discover],
+  express: [applePay, shopPay, paypal, googlePay],
+  payOverTime: [afterpay, affirm, klarna],
+};
+
+/** Bohemy subheading above express checkout logos. */
+export const LOBBY_PAYMENT_EXPRESS_LABEL = 'express payment';
+
+/** Flat list (legacy / tests). */
 export const LOBBY_PAYMENT_ICONS: readonly LobbyPaymentIcon[] = [
-  { id: 'visa', label: 'Visa', src: paymentIconPath('visa') },
-  { id: 'mastercard', label: 'Mastercard', src: paymentIconPath('mastercard') },
-  { id: 'amex', label: 'American Express', src: paymentIconPath('amex') },
-  { id: 'discover', label: 'Discover', src: paymentIconPath('discover') },
-  { id: 'apple-pay', label: 'Apple Pay', src: paymentIconPath('apple-pay') },
-  { id: 'shop-pay', label: 'Shop Pay', src: paymentIconPath('shop-pay') },
-  { id: 'paypal', label: 'PayPal', src: paymentIconPath('paypal') },
-  { id: 'google-pay', label: 'Google Pay', src: paymentIconPath('google-pay') },
-  { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afterpay') },
-  { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') },
-  { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') },
+  ...LOBBY_PAYMENT_POPOVER_LAYOUT.cards,
+  ...LOBBY_PAYMENT_POPOVER_LAYOUT.express,
+  ...LOBBY_PAYMENT_POPOVER_LAYOUT.payOverTime,
 ];

@@ -28,7 +28,7 @@ import {
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
-import { LOBBY_PAYMENT_ICONS } from '../../constants/lobbyPaymentIcons';
+import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_PHONE_POPOVER_SECTIONS,
   LOBBY_PHONE_POPOVER_TITLE,
@@ -374,7 +374,7 @@ const LobbyPage: React.FC = () => {
                 onClose={() => setLobbyCasePopover(null)}
                 ariaLabel="View accepted payment methods"
                 title={LOBBY_REGISTER_POPOVER_TITLE}
-                paymentIcons={LOBBY_PAYMENT_ICONS}
+                paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
                 align="left"
               >
                 <img

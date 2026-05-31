@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import type { LobbyPaymentIcon } from '../../constants/lobbyPaymentIcons';
+import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
   LOBBY_CASE_POPOVER_WIDTH_PX,
+  LOBBY_PAYMENT_EXPRESS_LABEL,
 } from '../../constants/lobbyPaymentIcons';
 
 export type LobbyCasePropPopoverSection = {
@@ -19,8 +20,8 @@ type LobbyCasePropPopoverProps = {
   title: string;
   /** Contact copy (phone). */
   sections?: readonly LobbyCasePropPopoverSection[];
-  /** Payment logos (register). */
-  paymentIcons?: readonly LobbyPaymentIcon[];
+  /** Payment logos (register) — grouped layout. */
+  paymentLayout?: LobbyPaymentPopoverLayout;
   /** Nudge panel when anchored near viewport edge (register = left, phone = right). */
   align?: 'center' | 'left' | 'right';
   children: React.ReactNode;
@@ -59,6 +60,23 @@ const lineStyle: React.CSSProperties = {
   letterSpacing: '0.02em',
 };
 
+const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
+  margin: 0,
+  lineHeight: 1.2,
+  textTransform: 'none',
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '15px',
+  color: '#808080',
+  fontWeight: 400,
+};
+
+const paymentLogoImgStyle: React.CSSProperties = {
+  display: 'block',
+  width: 'auto',
+  height: 'auto',
+  objectFit: 'contain',
+};
+
 function panelPositionStyle(align: 'center' | 'left' | 'right'): React.CSSProperties {
   if (align === 'left') {
     return { left: 0, transform: 'none' };
@@ -67,6 +85,38 @@ function panelPositionStyle(align: 'center' | 'left' | 'right'): React.CSSProper
     return { right: 0, left: 'auto', transform: 'none' };
   }
   return { left: '50%', transform: 'translateX(-50%)' };
+}
+
+function PaymentIconCell({
+  icon,
+  maxHeightPx,
+}: {
+  icon: LobbyPaymentIcon;
+  maxHeightPx: number;
+}) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 0,
+        minHeight: `${maxHeightPx + 4}px`,
+        padding: '2px 0',
+      }}
+    >
+      <img
+        src={icon.src}
+        alt={icon.label}
+        draggable={false}
+        style={{
+          ...paymentLogoImgStyle,
+          maxWidth: '100%',
+          maxHeight: `${maxHeightPx}px`,
+        }}
+      />
+    </div>
+  );
 }
 
 function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPopoverSection[] }) {
@@ -86,43 +136,51 @@ function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPo
   );
 }
 
-function LobbyPopoverPaymentGrid({ icons }: { icons: readonly LobbyPaymentIcon[] }) {
+function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayout }) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-        gap: '10px 12px',
-        flex: 1,
-        alignContent: 'start',
-      }}
-    >
-      {icons.map((icon) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gap: '8px 10px',
+        }}
+      >
+        {layout.cards.map((icon) => (
+          <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={30} />
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <p style={lobbyPaymentBohemyLabelStyle}>{LOBBY_PAYMENT_EXPRESS_LABEL}</p>
         <div
-          key={icon.id}
           style={{
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: `repeat(${layout.express.length}, minmax(0, 1fr))`,
+            gap: '4px',
             alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '36px',
-            padding: '2px 0',
           }}
         >
-          <img
-            src={icon.src}
-            alt={icon.label}
-            draggable={false}
-            style={{
-              display: 'block',
-              maxWidth: '100%',
-              maxHeight: '32px',
-              width: 'auto',
-              height: 'auto',
-              objectFit: 'contain',
-            }}
-          />
+          {layout.express.map((icon) => (
+            <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={24} />
+          ))}
         </div>
-      ))}
+      </div>
+
+      {layout.payOverTime.length > 0 ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: '6px 4px',
+            alignItems: 'center',
+          }}
+        >
+          {layout.payOverTime.map((icon) => (
+            <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={22} />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -136,7 +194,7 @@ export function LobbyCasePropPopover({
   ariaLabel,
   title,
   sections,
-  paymentIcons,
+  paymentLayout,
   align = 'center',
   children,
 }: LobbyCasePropPopoverProps) {
@@ -154,8 +212,8 @@ export function LobbyCasePropPopover({
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [open, onClose]);
 
-  const panelBody = paymentIcons?.length ? (
-    <LobbyPopoverPaymentGrid icons={paymentIcons} />
+  const panelBody = paymentLayout ? (
+    <LobbyPopoverPaymentLayout layout={paymentLayout} />
   ) : sections?.length ? (
     <LobbyPopoverSections sections={sections} />
   ) : null;
