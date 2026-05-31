@@ -409,7 +409,7 @@ const LobbyPage: React.FC = () => {
                   alt=""
                   draggable={false}
                   className="pointer-events-none select-none"
-                  style={{ width: 'auto', height: '40px', maxWidth: '52px', display: 'block', objectFit: 'contain' }}
+                  style={{ width: 'auto', height: '34px', maxWidth: '46px', display: 'block', objectFit: 'contain' }}
                 />
               </LobbyCasePropPopover>
             </div>
