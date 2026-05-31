@@ -116,7 +116,8 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
-const LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX = 12;
+/** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
+const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
 const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
 
 /** Default media insets until nav tabs are measured (sidebar + gap reserved). */
@@ -432,8 +433,8 @@ function LoungeTvScreen({
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                columnGap: `${LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX}px`,
-                rowGap: '6px',
+                columnGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
+                rowGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
                 width: '100%',
               }}
             >
