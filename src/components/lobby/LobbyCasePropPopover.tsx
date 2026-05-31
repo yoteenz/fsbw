@@ -146,9 +146,11 @@ function panelPositionStyle(align: 'center' | 'left' | 'right'): React.CSSProper
 function PaymentIconCell({
   icon,
   maxHeightPx,
+  justifySelf,
 }: {
   icon: LobbyPaymentIcon;
   maxHeightPx: number;
+  justifySelf?: React.CSSProperties['justifySelf'];
 }) {
   return (
     <div
@@ -159,6 +161,8 @@ function PaymentIconCell({
         minWidth: 0,
         minHeight: `${maxHeightPx + lobbyPopoverPx(4)}px`,
         padding: `${lobbyPopoverPx(2)}px 0`,
+        overflow: 'visible',
+        justifySelf,
       }}
     >
       <img
@@ -196,14 +200,27 @@ function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPo
   );
 }
 
+function payInFourIconJustifySelf(
+  index: number,
+  count: number
+): React.CSSProperties['justifySelf'] | undefined {
+  if (count !== 3) return undefined;
+  if (index === 0) return 'end';
+  if (index === count - 1) return 'start';
+  return 'center';
+}
+
 function LobbyPaymentIconSection({
   label,
   icons,
   maxHeightPx,
+  clusterOuterIconsToCenter,
 }: {
   label: string;
   icons: readonly LobbyPaymentIcon[];
   maxHeightPx: number;
+  /** Pull first/third icons toward the middle (pay in four row). */
+  clusterOuterIconsToCenter?: boolean;
 }) {
   if (icons.length === 0) return null;
 
@@ -218,8 +235,15 @@ function LobbyPaymentIconSection({
           alignItems: 'center',
         }}
       >
-        {icons.map((icon) => (
-          <PaymentIconCell key={icon.id} icon={icon} maxHeightPx={maxHeightPx} />
+        {icons.map((icon, index) => (
+          <PaymentIconCell
+            key={icon.id}
+            icon={icon}
+            maxHeightPx={maxHeightPx}
+            justifySelf={
+              clusterOuterIconsToCenter ? payInFourIconJustifySelf(index, icons.length) : undefined
+            }
+          />
         ))}
       </div>
     </div>
@@ -243,6 +267,7 @@ function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayo
         label={LOBBY_PAYMENT_PAY_OVER_TIME_LABEL}
         icons={layout.payOverTime}
         maxHeightPx={LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX}
+        clusterOuterIconsToCenter
       />
     </div>
   );
