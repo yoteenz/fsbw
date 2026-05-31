@@ -22398,3 +22398,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** (1) **ACADEMY** top-tab text on lounge TV was shifted left after equal 4-column nav grid. (2) Lobby **Tools** neon did not reliably open **`/home/tools`** (misaligned overlay, same issue as Products).
 
 **Fix:** **`LoungeTvOverlay.tsx`** — restore main nav **`justifyContent: space-between`** (original ACADEMY placement). Media (thumbs/video) uses measured insets from **SLAY TIPS** left and **ACADEMY** right (`data-lounge-tv-tab` + **`getBoundingClientRect`**); sidebar stays **72px**. **`lobby/page.tsx`** — **Tools** full-asset button → **`goToHomeTools()`** / **`/home/tools`** (removed tools overlay measurement).
+
+---
+
+## 2026-05-31 — Lounge TV thumbnail grid: symmetric gutters
+
+**Context:** User mockup on lounge TV **Watch + Learn** (e.g. **LACE** subcategory): horizontal gaps between the 3-column thumbnail grid looked wider than vertical row gaps (blue vs yellow annotation lines). Wanted column spacing symmetrical with row spacing.
+
+**Fix:** **`src/components/lounge/LoungeTvOverlay.tsx`** — replaced **`LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX` (12)** with shared **`LOUNGE_TV_THUMB_GRID_GAP_PX` (6)** for both **`columnGap`** and **`rowGap`** on the thumb grid (reverts asymmetric **`92ab16d9`** split of 12px / 6px). Pushed **`master`** + **`preview/mobile`**.
