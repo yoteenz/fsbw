@@ -22406,3 +22406,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User mockup on lounge TV **Watch + Learn** (e.g. **LACE** subcategory): horizontal gaps between the 3-column thumbnail grid looked wider than vertical row gaps (blue vs yellow annotation lines). Wanted column spacing symmetrical with row spacing.
 
 **Fix:** **`src/components/lounge/LoungeTvOverlay.tsx`** — replaced **`LOUNGE_TV_THUMB_GRID_COLUMN_GAP_PX` (12)** with shared **`LOUNGE_TV_THUMB_GRID_GAP_PX` (6)** for both **`columnGap`** and **`rowGap`** on the thumb grid (reverts asymmetric **`92ab16d9`** split of 12px / 6px). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby Tools neon: restore /home/tools routing
+
+**Context:** User reported **Tools** asset on lobby still not navigating to **`/home/tools`** after prior full-asset button change (**`b377adca`**).
+
+**Cause:** **Products / Tools / Booking** used **`translateX`** kerning while flex layout kept each item’s box in the unshifted row; **Booking** (later in DOM) has an **`inset: 0`** tap layer that overlapped the visually shifted **Tools** neon and captured taps (premium booking route instead of tools).
+
+**Fix:** **`src/pages/lobby/page.tsx`** — replace **`translateX`** with **`marginLeft`** kerning (**`4px`**, **`-50px`**, **`-104px`**) so layout boxes match visuals; **`zIndex`**: Tools **2**, Products/Booking **1** so Tools wins overlaps. Pushed **`master`** + **`preview/mobile`**.
