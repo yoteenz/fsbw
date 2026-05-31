@@ -27,7 +27,20 @@ import {
 } from '../../utils/loungeSceneLayout';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import { LobbyAssetDownloadAnchor, LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
+import {
+  isLobbyAssetDownloadsVisible,
+  LOBBY_CASE_PHONE_DOWNLOAD_SRC,
+  LOBBY_CASE_REGISTER_SRC,
+  LOBBY_CASE_SRC,
+  LOBBY_NEON_LOGO_SRC,
+  LOBBY_ROSE_BACKGROUND_SRC,
+  LOBBY_SCENE_FAL_PROMPTS,
+  LOBBY_SHELF_CUSTOM_SRC,
+  LOBBY_SHELF_HD_SRC,
+  LOBBY_SHELF_TRANSPARENT_SRC,
+} from '../../constants/lobbySceneAssets';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_PHONE_POPOVER_SECTIONS,
@@ -44,6 +57,8 @@ import {
 // Lobby Component
 const LobbyPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const showAssetDownloads = isLobbyAssetDownloadsVisible(location.search);
   console.log('✅✅✅ LobbyPage component rendering - ROOT ROUTE');
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
@@ -126,14 +141,23 @@ const LobbyPage: React.FC = () => {
           bottom: 0,
           width: '100%',
           height: '100%',
-          backgroundImage: 'url(/assets/landing-background.png)',
+          backgroundImage: `url(${LOBBY_ROSE_BACKGROUND_SRC})`,
           backgroundSize: '100% 100%',
           backgroundPosition: 'center center',
           backgroundColor: 'white',
           willChange: 'auto',
           contain: 'layout style paint'
         }}
-      />
+      >
+        {showAssetDownloads ? (
+          <LobbyAssetDownloadLink
+            href={LOBBY_ROSE_BACKGROUND_SRC}
+            downloadFilename="landing-background.png"
+            falPrompt={LOBBY_SCENE_FAL_PROMPTS.roseBackground}
+            style={{ position: 'absolute', top: 8, left: 8, zIndex: 5 }}
+          />
+        ) : null}
+      </div>
       
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
@@ -151,14 +175,20 @@ const LobbyPage: React.FC = () => {
           zIndex: 20,
           width: 'fit-content'
         }}>
-          <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
+          <LobbyAssetDownloadAnchor
+            visible={showAssetDownloads}
+            href={LOBBY_NEON_LOGO_SRC}
+            downloadFilename="neon-logo.png"
+            falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonLogo}
+            placement="bottom-center"
+          >
             <img 
-              src="/assets/neon-logo.png" 
+              src={LOBBY_NEON_LOGO_SRC}
               alt="Frontal Slayer" 
               onClick={goToHomeShop}
               style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
             />
-          </div>
+          </LobbyAssetDownloadAnchor>
         </div>
         
         {/* Navigation Links Container */}
@@ -316,32 +346,56 @@ const LobbyPage: React.FC = () => {
         }}>
           {/* HD LACE Shelf */}
           <div className="flex flex-col items-center">
-            <img 
-              src="/assets/hd-group.png" 
-              alt="HD Lace Collection" 
-              className="w-auto md:h-20 lg:h-24"
-              style={{ height: '56px' }}
-            />
+            <LobbyAssetDownloadAnchor
+              visible={showAssetDownloads}
+              href={LOBBY_SHELF_HD_SRC}
+              downloadFilename="hd-group.png"
+              falPrompt={LOBBY_SCENE_FAL_PROMPTS.shelfHdLace}
+              placement="bottom-center"
+            >
+              <img 
+                src={LOBBY_SHELF_HD_SRC}
+                alt="HD Lace Collection" 
+                className="w-auto md:h-20 lg:h-24"
+                style={{ height: '56px' }}
+              />
+            </LobbyAssetDownloadAnchor>
           </div>
           
           {/* TRANSPARENT LACE Shelf */}
           <div className="flex flex-col items-center">
-            <img 
-              src="/assets/transparent-group.png" 
-              alt="Transparent Lace Collection" 
-              className="w-auto md:h-20 lg:h-24"
-              style={{ height: '56px' }}
-            />
+            <LobbyAssetDownloadAnchor
+              visible={showAssetDownloads}
+              href={LOBBY_SHELF_TRANSPARENT_SRC}
+              downloadFilename="transparent-group.png"
+              falPrompt={LOBBY_SCENE_FAL_PROMPTS.shelfTransparentLace}
+              placement="bottom-center"
+            >
+              <img 
+                src={LOBBY_SHELF_TRANSPARENT_SRC}
+                alt="Transparent Lace Collection" 
+                className="w-auto md:h-20 lg:h-24"
+                style={{ height: '56px' }}
+              />
+            </LobbyAssetDownloadAnchor>
           </div>
           
           {/* CUSTOM UNITS Shelf */}
           <div className="flex flex-col items-center">
-            <img 
-              src="/assets/custom-group.png" 
-              alt="Custom Units Collection" 
-              className="w-auto md:h-20 lg:h-24"
-              style={{ height: '56px' }}
-            />
+            <LobbyAssetDownloadAnchor
+              visible={showAssetDownloads}
+              href={LOBBY_SHELF_CUSTOM_SRC}
+              downloadFilename="custom-group.png"
+              falPrompt={LOBBY_SCENE_FAL_PROMPTS.shelfCustomUnits}
+              placement="bottom-center"
+            >
+              <img 
+                src={LOBBY_SHELF_CUSTOM_SRC}
+                alt="Custom Units Collection" 
+                className="w-auto md:h-20 lg:h-24"
+                style={{ height: '56px' }}
+              />
+            </LobbyAssetDownloadAnchor>
           </div>
         </div>
         
@@ -356,15 +410,31 @@ const LobbyPage: React.FC = () => {
         }}>
           {/* Acrylic Case */}
           <div className="relative">
-            <img 
-              src="/assets/CASE.png" 
-              alt="Display Case" 
-              className="h-auto"
-              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
-            />
+            <LobbyAssetDownloadAnchor
+              visible={showAssetDownloads}
+              href={LOBBY_CASE_SRC}
+              downloadFilename="CASE.png"
+              falPrompt={LOBBY_SCENE_FAL_PROMPTS.displayCase}
+              placement="bottom-right"
+            >
+              <img 
+                src={LOBBY_CASE_SRC}
+                alt="Display Case" 
+                className="h-auto"
+                style={{ display: 'block', width: '230px', maxWidth: '230px' }}
+              />
+            </LobbyAssetDownloadAnchor>
             
             {/* Register — tap for payment methods popover */}
             <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>
+              {showAssetDownloads ? (
+                <LobbyAssetDownloadLink
+                  href={LOBBY_CASE_REGISTER_SRC}
+                  downloadFilename="REGISTER.png"
+                  falPrompt={LOBBY_SCENE_FAL_PROMPTS.caseRegister}
+                  style={{ position: 'absolute', top: -14, left: 0, zIndex: 30 }}
+                />
+              ) : null}
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
@@ -378,7 +448,7 @@ const LobbyPage: React.FC = () => {
                 align="left"
               >
                 <img
-                  src="/assets/REGISTER.png"
+                  src={LOBBY_CASE_REGISTER_SRC}
                   alt=""
                   draggable={false}
                   className="md:w-10 md:h-8 pointer-events-none select-none"
@@ -392,6 +462,14 @@ const LobbyPage: React.FC = () => {
               className="absolute right-8"
               style={{ top: '-33px', zIndex: 25, transform: 'translateX(-6px)' }}
             >
+              {showAssetDownloads ? (
+                <LobbyAssetDownloadLink
+                  href={LOBBY_CASE_PHONE_DOWNLOAD_SRC}
+                  downloadFilename="lobby-phone.png"
+                  falPrompt={LOBBY_SCENE_FAL_PROMPTS.casePhone}
+                  style={{ position: 'absolute', top: -14, right: 0, zIndex: 30 }}
+                />
+              ) : null}
               <LobbyCasePropPopover
                 popoverId="phone"
                 activeId={lobbyCasePopover}
