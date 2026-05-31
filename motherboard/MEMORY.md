@@ -22314,3 +22314,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - Admin server sync 403: sign in with admin Supabase email; large videos → paste hosted URL, not inline embed.
 
 **User ask (this message):** Store conversation in motherboard; revisit DRM after academy/paid-content system is designed.
+
+---
+
+## 2026-05-29 — Lounge TV close button: bezel gray chip, light gray X
+
+**Context:** After motherboard storage of the long lounge TV / DRM thread, user asked to restyle the lounge TV **close** control: white circular background → **dark gray** matching TV bezel tones; red **X** → **light gray**.
+
+**Change (`loungeTvFrame.tsx`, `LoungeTvCloseButton`):** Background **`#454545`** (`LOUNGE_TV_CLOSE_BUTTON_BG`, same highlight as bezel gradient); border **`#0a0a0a`**; subtle inset highlight like shell. Icon filter **`LOUNGE_TV_CLOSE_ICON_FILTER`** (~78% invert) instead of **`AFFILIATE_CLOSE_ICON_FILTER`** (brand red). Applies to lobby + overlay TV via shared **`LoungeTvFrame`**.
+
+**Commit:** `b1ac2163` on **`master`** / **`preview/mobile`**.
