@@ -22500,3 +22500,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Klarna** pay-over-time icon from **`Payment/G7FSLK_RM0zy4fC1qM1ab_UWvrk83X.jpeg`** (chroma-keyed PNG); removed sheet crop that showed Apple Pay. **`LOBBY_PAYMENT_ICONS_VERSION`** = **`G7FSLKz4`**. Commit **`b9a392a3`**.
 
 **Update (same chat):** Lobby scene **DOWNLOAD** links (dev or **`/?lobbyAssets=1`**) on neon logo, rose background (**`landing-background.png`**), shelves (**`hd-group`**, **`transparent-group`**, **`custom-group`**), case (**`CASE.png`**, **`REGISTER.png`**, **`lobby-phone.png`**). **`lobbySceneAssets.ts`** + **`LobbyAssetDownloadLink`**; Fal prompts in **`LOBBY_SCENE_FAL_PROMPTS`** (hover title on link). Commit **`bd673a0c`**.
+
+---
+
+## 2026-05-31 — Lobby scene DOWNLOAD links not visible (visibility fix)
+
+**Context (this chat):** User could not see red **DOWNLOAD** text links for lobby scene assets. Prior chat covered Fal model advice (Flux 2 Pro/Max + BiRefNet for lobby PNGs) and extensive lobby popover/payment work.
+
+**Root cause:** Links only rendered when **`import.meta.env.DEV`** or **`?lobbyAssets=1`**; production/preview builds hide them by default. Comment said **`/?lobbyAssets=1`** but **`/`** redirects to **`/home/shop`** — correct URL is **`/lobby?lobbyAssets=1`**. Carousel **`navigate(path)`** dropped the query string when swiping to lounge.
+
+**Changes:** **`useLobbyAssetDownloadsVisible`** hook — dev, **`lobbyAssets=1`** (persisted in **`sessionStorage`** via **`LOBBY_ASSET_DOWNLOADS_SESSION_KEY`**), or **signed-in admin** (**`isAdminEmail`**). **`LobbyApp`** carousel preserves **`location.search`**. **`LobbyAssetDownloadLink`** — **10px** type, **z-index 200**, stronger pill shadow; rose-bg link **z-index 200**. Commit **`fb4d3c30`** on **`master`** + **`preview/mobile`**.
