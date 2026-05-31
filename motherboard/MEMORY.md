@@ -22382,3 +22382,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** BCF quantity **pricing** fix (`4183be0d`) was correct but wrongly added **+/- stepper** in **cart dropdown**; user wanted original **QTY: n** label + **×** remove only in dropdown.
 
 **Fix:** **`CartDropdown.tsx`** — removed stepper + **`handleQuantityChange`** / **`persistCartItems`** from dropdown; restored static **QTY:** line. Kept **`cartLineExtendedPriceUsd`** for BCF line totals. **`shopping-bag/page.tsx`** unchanged (bag still has stepper + refreshed unit price on qty change).
+
+---
+
+## 2026-05-29 — Lobby Products neon: fix /home/shop tap target
+
+**Context:** **Products** asset on lobby (`/lobby`) did not reliably open **`/home/shop`** — invisible overlay was offset (`translateX(24px)`, width `w - 40`) so taps on the neon text missed the handler.
+
+**Fix:** **`lobby/page.tsx`** — wrap **neon-products** in a single **`role="button"`** span with **`goToHomeShop()`** → **`navigate('/home/shop')`**; full asset is the hit area (same route as center logo). Removed **`productsSize`** overlay measurement. **`CORE.md`** — Products + logo → **`/home/shop`**; lounge slide logo → **`/shop/units`**.
