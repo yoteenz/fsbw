@@ -19,6 +19,13 @@ export const LOUNGE_TV_PLAY_BUTTON_COLOR = '#535453';
 export const AFFILIATE_CLOSE_ICON_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
+/** Lounge TV close chip — mid bezel gray (`loungeTvFrameShellStyle` gradient). */
+export const LOUNGE_TV_CLOSE_BUTTON_BG = '#454545';
+
+/** Light gray X on lounge TV close (not brand red). */
+export const LOUNGE_TV_CLOSE_ICON_FILTER =
+  'brightness(0) saturate(100%) invert(78%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)';
+
 export function loungeTvDimensionsFromScreenWidth(screenW: number) {
   const screenH = screenW * LOUNGE_TV_SCREEN_ASPECT;
   return {
@@ -82,9 +89,10 @@ export function LoungeTvCloseButton({ visible, onClick }: LoungeTvCloseButtonPro
         height: 22,
         margin: 0,
         padding: 0,
-        border: '0.97px solid #000000',
+        border: '0.97px solid #0a0a0a',
         borderRadius: '50%',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: LOUNGE_TV_CLOSE_BUTTON_BG,
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -106,7 +114,7 @@ export function LoungeTvCloseButton({ visible, onClick }: LoungeTvCloseButtonPro
         style={{
           display: 'block',
           objectFit: 'contain',
-          filter: AFFILIATE_CLOSE_ICON_FILTER,
+          filter: LOUNGE_TV_CLOSE_ICON_FILTER,
         }}
       />
     </button>
