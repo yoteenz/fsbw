@@ -22464,3 +22464,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update:** New phone **`q-oa7o-GX24j6k742w0p8_omgBoTaL.jpeg`** — re-baked **`lobby-phone.png`** (271×512), **`LOBBY_PHONE_ASSET_VERSION`** = **`q-oa7o8`**.
 
 **Update:** Lobby phone display — **`height: 40px`** (was 44), **`maxWidth: 52px`** (was 56); wrapper **`translateX(-6px)`** (6px left from anchor; was **-2px** then **-6px**). **`top: -33px`** unchanged.
+
+---
+
+## 2026-05-31 — Lobby popovers: matching size + payment logo grid
+
+**Context:** Phone and cash-register popovers should match **width/height**; register should show **payment card logos** cropped from Supabase sheet **`taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg`** with green screen removed (not text lists).
+
+**Changes:** **`LOBBY_CASE_POPOVER_WIDTH_PX` 220**, **`MIN_HEIGHT` 200** (`lobbyPaymentIcons.ts`). Register: **`LOBBY_PAYMENT_ICONS`** — 10 PNGs in **`public/assets/lobby-payment/`** (visa, mastercard, amex, discover, apple-pay, shop-pay, paypal, afterpay, affirm, klarna); **`?v=taW3ckz1`**. **`LobbyCasePropPopover`** — **`paymentIcons`** 2-col grid (32px max logo height). Phone unchanged (contact sections). **`npm run lobby:bake-payment-icons`**. Google Pay not on source sheet / not in grid.

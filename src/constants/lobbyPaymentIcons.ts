@@ -20,15 +20,16 @@ function paymentIconPath(slug: string): string {
 }
 
 /** Checkout-aligned methods present on the payment sheet (no Google Pay in source art). */
+/** Row-major in a 2-column grid: cards → express → pay over time. */
 export const LOBBY_PAYMENT_ICONS: readonly LobbyPaymentIcon[] = [
   { id: 'visa', label: 'Visa', src: paymentIconPath('visa') },
   { id: 'mastercard', label: 'Mastercard', src: paymentIconPath('mastercard') },
   { id: 'amex', label: 'American Express', src: paymentIconPath('amex') },
   { id: 'discover', label: 'Discover', src: paymentIconPath('discover') },
-  { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') },
-  { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') },
   { id: 'apple-pay', label: 'Apple Pay', src: paymentIconPath('apple-pay') },
+  { id: 'shop-pay', label: 'Shop Pay', src: paymentIconPath('shop-pay') },
   { id: 'paypal', label: 'PayPal', src: paymentIconPath('paypal') },
   { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afterpay') },
-  { id: 'shop-pay', label: 'Shop Pay', src: paymentIconPath('shop-pay') },
+  { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') },
+  { id: 'klarna', label: 'Klarna', src: paymentIconPath('klarna') },
 ];
