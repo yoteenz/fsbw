@@ -22268,3 +22268,49 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted tiles marked **\*NEW\*** to show a **slight blur** on the thumb until opened; then remove blur and **\*NEW\***.
 
 **Implementation:** **`src/utils/loungeTvViewedTiles.ts`** — `loungeTvViewedTileIds` in localStorage, **`markLoungeTvTileViewed`**, **`loungeTvTileShowsAsNew`**, **`LOUNGE_TV_VIEWED_UPDATED_EVENT`**. **`LoungeTvOverlay`** grid: `blur(4px)` + scale on thumb when unseen; **\*NEW\*** + white title only while unseen; mark viewed on tile tap or Watch + Learn video open.
+
+---
+
+## 2026-05-29 — Lounge TV: player polish, admin CONTENT tabs, capture guard; DRM deferred (academy / paid content)
+
+**Context:** Long chat continuing Lounge TV overlay work (after prior MEMORY entries on curtains, static, Watch + Learn player, admin CONTENT accordion). User polished labels/player, fixed deploy/chunk errors and admin category UX, asked for Netflix-level screenshot blocking, got an honest DRM outline, then asked to **store this whole conversation in motherboard** and **revisit DRM later** once the **academy & paid content** system is fleshed out.
+
+**Topics covered (full chat arc):**
+- **Thumbnail labels:** **\*NEW\*** in a separate absolute layer so titles stay vertically centered; title block nudged down (`marginTop: 8px` on label stack). White title on thumb; gray body copy elsewhere per mocks.
+- **Watch + Learn player (`LoungeTvWatchLearnPlayer.tsx`):** Title + **live** progress `0:00/0:03` on one line; duration from **`video.duration`** (not static label only); duration text **Futura PT Book**, red **`#EB1C24`**; description/body gray **`#808080`**. Paused seek bar: symmetric padding (no extra right inset for hidden fullscreen control). **Fullscreen** icon hidden while paused. **iOS:** `webkitEnterFullscreen` on video element. Removed **COMING SOON** / academy placeholder copy on TV screen.
+- **\*NEW\* until viewed:** Blur + badge until tile opened; **`markLoungeTvTileViewed`** on tap or opening Watch + Learn video; admin re-enabling **`isNew`** clears viewed id for that tile. Remote/local merge uses **`updatedAt`** in **`loungeTvAdminConfig.ts`** so stale Supabase does not wipe newer local saves.
+- **Admin CONTENT (`/admin/backend` → CONTENT):** Tap a **main category** (BRAND, SLAY TIPS, etc.) → top tabs become **that category’s subcategories** (e.g. NEW DROPS / CAMPAIGNS), not AUDIT LOG / USERS / CONTENT. One sub-tab editor at a time; **REMOVE** uses **`ConfirmationModal`**. Video upload: MIME/extension fallbacks, merge local+remote config, clearer **403 FORBIDDEN** messaging when **`PUT /api/admin/lounge-tv-config`** fails (local save still works — need admin Supabase session / email in **`ADMIN_EMAILS`**).
+- **Red screen / chunk load after deploy:** “Importing a module script failed” — **`src/utils/chunkLoadRecovery.ts`**, global listeners in **`main.tsx`**, cache-bust reload, friendlier **`App.tsx`** error UI; **`vercel.json`** no-cache on **`index.html`**. Commit **`7fd6eb62`**.
+- **Capture protection (shipped, best-effort — not DRM):** **`LoungeTvContentProtection`**, **`useLoungeTvCaptureGuard`** — black shield on suspected capture/recording; video **`controlsList` nodownload**, no PiP; same-origin blob playback where applicable. Commit **`e4e025d2`**. User wanted Netflix-level blocking; **web cannot fully prevent iOS screenshots/screen record on plain MP4** without **EME (FairPlay / Widevine)**.
+- **DRM outline (discussion only — NOT implemented):** Phased plan documented for a future chat:
+  - **Phase A:** Move Watch + Learn off inline/public MP4s → hosted **HLS** (Cloudflare Stream, Mux, or Bunny) with **signed URLs**; store **`videoAssetId`** (or provider id) on lounge TV admin tiles instead of huge **`data:`** embeds.
+  - **Phase B:** Enable provider **DRM** (FairPlay + Widevine); playback only inside **`LoungeTvWatchLearnPlayer`** via Shaka or Mux player; short-lived tokens from **`GET /api/lounge-tv/playback`** (or admin upload pipeline to provider).
+  - **Phase C:** Ops — migrate existing tiles, cap admin inline upload size, retire public **`/assets/tv-content-video.mp4`** for paid clips once provider hosts them.
+- **Build fix:** Unused **`BRAND_RED`** / **`BODY_GRAY`** in overlay caused Vercel TS fail — wired into player/label styles. Commit **`4b2856e3`**.
+- **Admin category tabs:** Commit **`51317bde`**.
+
+**Decisions / outcomes:**
+- **Do not start DRM implementation** until user defines **academy & paid content** architecture (entitlements, checkout, which routes are gated).
+- **Current lounge TV video security** = UX deterrents + signed/hosted URLs when Phase A happens; true screenshot block on iPhone requires Phase B.
+- **Plucking lace / bundled MP4:** Fallback **`public/assets/tv-content-video.mp4`** only when admin has no **`mediaUrl`**; user may need to push real binary to GitHub for bundled asset to match content.
+
+**Changes (key paths):**
+| Area | Paths |
+|------|--------|
+| TV overlay / grid | `src/components/lounge/LoungeTvOverlay.tsx` |
+| Player | `src/components/lounge/LoungeTvWatchLearnPlayer.tsx`, `src/index.css` (`.lounge-tv-seek-range`) |
+| Config | `src/utils/loungeTvAdminConfig.ts`, `api/lounge-tv-config.ts`, `api/admin/lounge-tv-config.ts` |
+| Viewed *NEW* | `src/utils/loungeTvViewedTiles.ts` |
+| Capture guard | `src/hooks/useLoungeTvCaptureGuard.ts`, `src/components/lounge/LoungeTvContentProtection.tsx` |
+| Chunk recovery | `src/utils/chunkLoadRecovery.ts`, `src/main.tsx`, `src/App.tsx` |
+| Admin CONTENT | `src/pages/admin/components/AdminLoungeTvContentPanel.tsx`, `src/pages/admin/backend/page.tsx` |
+
+**Notable commits (on `master` / `preview/mobile`):** `51317bde` admin category tabs, `7fd6eb62` chunk recovery, `e4e025d2` capture protection, `4b2856e3` color constants, plus earlier label/player/admin sync entries in same thread.
+
+**Conventions for future agents:**
+- User explicitly parked DRM — load this entry before proposing EME/Stream/Mux work.
+- When resuming: confirm provider (Cloudflare Stream vs Mux), implement **one** Watch + Learn tile on hosted HLS + signed URL (Phase A), then DRM + iPhone screen-record test (Phase B).
+- Push **`master`** and **`preview/mobile`** only (no `cursor/*` branches).
+- Admin server sync 403: sign in with admin Supabase email; large videos → paste hosted URL, not inline embed.
+
+**User ask (this message):** Store conversation in motherboard; revisit DRM after academy/paid-content system is designed.
