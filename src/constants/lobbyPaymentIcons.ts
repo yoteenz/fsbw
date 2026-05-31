@@ -46,6 +46,8 @@ export type LobbyPaymentIcon = {
   id: string;
   label: string;
   src: string;
+  /** Clockwise tilt (bottom-right lower than bottom-left). */
+  rotationDeg?: number;
 };
 
 function paymentIconPath(slug: string): string {

@@ -169,6 +169,9 @@ function PaymentIconCell({
           ...paymentLogoImgStyle,
           maxWidth: '100%',
           maxHeight: `${maxHeightPx}px`,
+          ...(icon.rotationDeg
+            ? { transform: `rotate(${icon.rotationDeg}deg)`, transformOrigin: 'center center' }
+            : null),
         }}
       />
     </div>
