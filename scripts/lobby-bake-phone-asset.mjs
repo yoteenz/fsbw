@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/d35m8u3jneLSkpJrHKouG_Z4VtKzzm.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/q-oa7o-GX24j6k742w0p8_omgBoTaL.jpeg';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outPath = path.join(root, 'public/assets/lobby-phone.png');
 const tmpSrc = path.join(root, 'tmp/lobby-phone-src.jpeg');
