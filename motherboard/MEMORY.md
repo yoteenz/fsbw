@@ -22493,4 +22493,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Update (same chat):** Shrink contact + payment popovers **35%** (**`LOBBY_CASE_POPOVER_SCALE` 0.65** → **143×130** shell); scale padding, type, logo rows via **`lobbyPopoverPx`**. Contact section headers (**email**, **hours**, **inquiries**) → gray **Bohemy** (**#808080**) instead of red Futura. Commit **`96b6f732`**.
 
-**Update (same chat):** Bohemy headers **+2px** (**12px**, was 10) on contact + payment popovers; **pay over time** logo row only **+2px** max height (**16px**, was 14). Commit **`d2070282`**.
+**Update (same chat):** Bohemy headers **+2px** (**12px**, was 10) on contact + payment popovers; **pay over time** logo row only **+2px** max height (**16px**, was 14). Commit **`89b13026`**.
+
+**Update (same chat):** Contact popover — **inquiries** → **questions**; copy **PLEASE ALLOW UP TO 72 HOURS FOR A RESPONSE**; removed **VISIT BRAND > CONTACT FOR THE FORM**; **email** + **MAJOR US HOLIDAYS EXCLUDED** → red **Futura PT Medium** (**#EB1C24**) via **`LobbyPhonePopoverLine.emphasis`**. Commit **`cc1722a0`**.
