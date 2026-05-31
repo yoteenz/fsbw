@@ -22363,6 +22363,8 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Commit:** `bf55acf5` on **`master`** / **`preview/mobile`**.
 
+**Superseded (2026-05-29):** User reported that approach was wrong — it moved **LACE / INSTALL / STYLING** sidebar. Correct fix: **`58ccc34a`** — restore **`72px`** sidebar + **`18px`** left screen padding; top tabs only use 4-col grid; thumb grid + video use **`position: absolute; left: 25%; right: 0`** so col 1 = **SLAY TIPS**, col 3 = **ACADEMY**, **`columnGap: 12px`** unchanged between thumbs.
+
 ---
 
 ## 2026-05-29 — Admin backend CONTENT tab matches revenue waitlist UI
