@@ -31,7 +31,7 @@ w, h = im.size
 rows = [(60, 620), (1250, 1810)]
 cols = [(180, 990), (1000, 1790), (1820, 2590), (2650, 3420), (3450, 4230), (4260, 5030)]
 labels_r1 = ['visa', 'mastercard', 'amex', 'discover', 'klarna', 'affirm']
-labels_r2 = ['apple-pay', 'paypal', 'afterpay', 'shop-pay']
+labels_r2 = ['apple-pay', 'paypal', 'afterpay']
 
 def chroma_key_crop(box):
     crop = im.crop(box)
@@ -106,6 +106,13 @@ print('google-pay', out_im.size)
 `;
 execFileSync('curl', ['-fsSL', '-o', tmpGoogle, GOOGLE_PAY_REMOTE], { stdio: 'inherit' });
 execFileSync('python3', ['-c', pyGoogle, tmpGoogle, path.join(outDir, 'google-pay.png')], {
+  stdio: 'inherit',
+  cwd: root,
+});
+
+const tmpShop = path.join(root, 'tmp/lobby-shop-pay-src.jpeg');
+execFileSync('curl', ['-fsSL', '-o', tmpShop, SHOP_PAY_REMOTE], { stdio: 'inherit' });
+execFileSync('python3', ['-c', pyGoogle, tmpShop, path.join(outDir, 'shop-pay.png')], {
   stdio: 'inherit',
   cwd: root,
 });
