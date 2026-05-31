@@ -71,7 +71,7 @@ const googlePay = { id: 'google-pay', label: 'Google Pay', src: paymentIconPath(
 const afterpay = { id: 'afterpay', label: 'Afterpay', src: paymentIconPath('afterpay') };
 const affirm = { id: 'affirm', label: 'Affirm', src: paymentIconPath('affirm') };
 /** Clockwise tilt in register popover — bottom-right lower than bottom-left. */
-export const LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG = 24;
+export const LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG = 3;
 
 const klarna = {
   id: 'klarna',
