@@ -47,7 +47,13 @@ import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from './shop/WigStockPrice';
 import { attachStockStatusToLineItem, isWigUnitProductName } from '../utils/productInventoryAvailability';
-import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
+import {
+  cartBillablePointsEligibleSubtotal,
+  cartBillableSubtotal,
+  cartLineExtendedPriceUsd,
+} from '../utils/cartBillableLines';
+import { bcfResolveCartLineUnitPriceUsd } from '../utils/bcfProductOptions';
+import { applyGiftCardBagQuantityDelta } from '../utils/giftCardCheckout';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -725,6 +731,57 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     setShowRemoveConfirm(true);
   };
 
+  const persistCartItems = useCallback((newItems: CartItem[]) => {
+    localStorage.setItem('cartItems', JSON.stringify(newItems));
+    const newCount = newItems.reduce((sum, ci) => sum + (ci.quantity ?? 1), 0);
+    localStorage.setItem('cartCount', String(newCount));
+    setCartItems(newItems);
+    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: newItems, count: newCount } }));
+    window.dispatchEvent(new Event('cartItemsChanged'));
+  }, []);
+
+  const handleQuantityChange = useCallback(
+    (itemId: string, delta: number) => {
+      const currentItem = cartItems.find((i) => i.id === itemId);
+      if (!currentItem) return;
+      if (currentItem.type !== 'shop-texture-category' || currentItem.bcfBundleDeal) return;
+      if ((currentItem as CartItem & { consultOfferQtyLocked?: boolean }).consultOfferQtyLocked === true) return;
+
+      const giftDelta = applyGiftCardBagQuantityDelta(currentItem, delta > 0 ? 1 : -1);
+      if (giftDelta) {
+        if (giftDelta.atMax) return;
+        if (giftDelta.removeLine) {
+          handleRemoveItemClick(itemId);
+          return;
+        }
+        const newItems = cartItems.map((i) => (i.id === itemId ? giftDelta.next : i));
+        persistCartItems(newItems);
+        return;
+      }
+
+      const maxQty = (currentItem as CartItem & { isSpecialOffer?: boolean }).isSpecialOffer ? 2 : 10;
+      const currentQty = currentItem.quantity ?? 1;
+      const newQty = currentQty + delta;
+      if (newQty < 1) {
+        handleRemoveItemClick(itemId);
+        return;
+      }
+
+      const clampedQty = Math.max(1, Math.min(maxQty, newQty));
+      const newItems = cartItems.map((i) => {
+        if (i.id !== itemId) return i;
+        const next: CartItem = { ...i, quantity: clampedQty };
+        if (i.type === 'shop-texture-category' && !i.bcfBundleDeal) {
+          next.price = bcfResolveCartLineUnitPriceUsd(i);
+        }
+        return next;
+      });
+      persistCartItems(newItems);
+    },
+    [cartItems, persistCartItems]
+  );
+
   const confirmRemoveItem = () => {
     if (!itemToRemove) return;
 
@@ -973,6 +1030,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBookingCartThumb =
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
                     const isBcfShopItem = item.type === 'shop-texture-category';
+                    const isBcfQtyStepper =
+                      isBcfShopItem && !(item as CartItem).bcfBundleDeal;
+                    const bcfItemQty = item.quantity ?? 1;
                     const isViewingDetails = viewingDetailsFor === item.id;
                     const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
                     const productTextTransform = cartDropdownProductTextTranslateY(detailTextRowCount, isViewingDetails);
@@ -1698,7 +1758,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               </div>
                             );
                           }
-                          const linePrice = isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0;
+                          const linePrice = isGiftCardCartLine(item)
+                            ? giftCardLineTotalUsd(item)
+                            : isBcfShopItem && !(item as CartItem).bcfBundleDeal
+                              ? cartLineExtendedPriceUsd(item as CartItem)
+                              : item.price || 0;
                           return (
                             <WigLineStockPrice
                               item={item}
@@ -1735,17 +1799,89 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           : {}),
                       }}
                     >
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '8px',
-                          color: '#000000',
-                          textTransform: 'uppercase',
-                          marginBottom: '6px'
-                        }}
-                      >
-                        QTY: {item.quantity ?? 1}
-                      </span>
+                      {isBcfQtyStepper ? (
+                        <div
+                          className="flex items-center"
+                          style={{ marginBottom: '6px' }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleQuantityChange(item.id, -1)}
+                            className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center cursor-pointer"
+                            style={{
+                              borderTop: '1.3px solid black',
+                              borderLeft: '1.3px solid black',
+                              borderBottom: '1.3px solid black',
+                              borderRight: 'none',
+                              height: '20.25px',
+                              minHeight: '20.25px',
+                              maxHeight: '20.25px',
+                              boxSizing: 'border-box',
+                              outline: 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
+                          </button>
+                          <div
+                            className="px-2 py-0.5 text-black bg-white flex items-center justify-center relative"
+                            style={{
+                              borderTop: '1.3px solid black',
+                              borderBottom: '1.3px solid black',
+                              fontFamily: '"Futura PT Medium"',
+                              fontWeight: 500,
+                              fontSize: '9px',
+                              height: '20.25px',
+                              minHeight: '20.25px',
+                              maxHeight: '20.25px',
+                              boxSizing: 'border-box',
+                              minWidth: '22px',
+                            }}
+                          >
+                            <div className="absolute left-0 top-0 bottom-0 w-px bg-black" />
+                            <div className="absolute right-0 top-0 bottom-0 w-px bg-black" />
+                            {bcfItemQty}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleQuantityChange(item.id, 1)}
+                            disabled={bcfItemQty >= 10}
+                            className={`px-2 py-0.5 text-red-500 bg-white flex items-center justify-center ${
+                              bcfItemQty >= 10 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
+                            }`}
+                            style={{
+                              borderTop: '1.3px solid black',
+                              borderRight: '1.3px solid black',
+                              borderBottom: '1.3px solid black',
+                              borderLeft: 'none',
+                              height: '20.25px',
+                              minHeight: '20.25px',
+                              maxHeight: '20.25px',
+                              boxSizing: 'border-box',
+                              outline: 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <span
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: '#000000',
+                            textTransform: 'uppercase',
+                            marginBottom: '6px',
+                          }}
+                        >
+                          QTY: {bcfItemQty}
+                        </span>
+                      )}
                       <button
                         onClick={() => handleRemoveItemClick(item.id)}
                         className="px-2 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center cursor-pointer"

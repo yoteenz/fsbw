@@ -1,4 +1,5 @@
 import { isSubscriptionTierId } from '../constants/subscriptionPricing';
+import { bcfResolveCartLineUnitPriceUsd } from './bcfProductOptions';
 import { giftCardLineTotalUsd, isGiftCardCartLine } from './giftCardCheckout';
 import { isLineItemOutOfStock } from './productInventoryAvailability';
 
@@ -37,9 +38,23 @@ export function cartLineExtendedPriceUsd(item: {
   quantity?: number;
   name?: string;
   type?: string;
+  category?: string;
+  texture?: string;
+  length?: string;
+  color?: string;
+  lace?: string;
+  hairWeight?: string;
+  laceTreatment?: string[];
+  bcfBundleDeal?: boolean;
+  id?: string;
 }): number {
   if (isGiftCardCartLine(item)) return giftCardLineTotalUsd(item);
-  return (Number(item.price) || 0) * (item.quantity ?? 1);
+  const qty = item.quantity ?? 1;
+  const unit =
+    String(item.type || '') === 'shop-texture-category' && !item.bcfBundleDeal
+      ? bcfResolveCartLineUnitPriceUsd(item)
+      : Number(item.price) || 0;
+  return unit * qty;
 }
 
 /** Sum of billable line totals only. */
