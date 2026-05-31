@@ -22418,3 +22418,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (superseded):** **`marginLeft`** kerning moved Tools/Booking visuals — user asked to revert.
 
 **Correct fix (2026-05-31 follow-up):** Restore legacy **`translateX`** kerning (**`4px`**, **`-50px`**, **`-104px`**) on Products / Tools / Booking so asset positions unchanged. Tools keeps full-asset **`goToHomeTools`** button + **`zIndex: 2`** only (Booking overlay no longer steals taps). No **`marginLeft`** on nav neons.
+
+---
+
+## 2026-05-31 — Lounge TV remote hand +12px right
+
+**Context:** User asked to move the hand below the TV **12px to the right** only.
+
+**Change:** **`src/components/lounge/LoungeTvRemoteHand.tsx`** — **`LOUNGE_TV_REMOTE_HAND_OFFSET_X_PX = 12`**; visible/hidden transforms use **`translate(calc(-38% + 12px), …)`** (was **`translate(-38%, …)`**). Pushed **`master`** + **`preview/mobile`**.
