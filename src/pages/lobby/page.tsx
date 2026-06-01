@@ -69,7 +69,7 @@ import {
   LOUNGE_LOBBY_TV_OFFSET_Y_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
   loungeLobbyTvDesignPlayButtonStyle,
-  loungeTvDimensionsFromFrameHeight,
+  loungeTvDesignDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
 
 // Lobby Component
@@ -577,7 +577,7 @@ const LoungePage: React.FC = () => {
     setTvOpen(false);
   }, []);
 
-  const loungeLobbyTvFrame = loungeTvDimensionsFromFrameHeight(146);
+  const loungeLobbyTvFrame = loungeTvDesignDimensionsFromFrameHeight(146);
   const isLargeLoungeViewport = useLoungeLargeViewport();
 
   const handlePrevious = useCallback(() => {

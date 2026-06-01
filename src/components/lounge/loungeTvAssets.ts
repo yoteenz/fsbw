@@ -14,6 +14,24 @@ export const LOUNGE_TV_DESIGN_SRC_REMOTE =
 /** Full TV bezel + off screen PNG; lounge slide renders this image (play overlay on top). */
 export const LOUNGE_TV_DESIGN_SRC = `/assets/lounge-tv-design.png?v=${LOUNGE_TV_DESIGN_ASSET_VERSION}`;
 
+/** Pixel size of bundled `lounge-tv-design.png` (keep in sync after re-bake). */
+export const LOUNGE_TV_DESIGN_PX = { width: 820, height: 631 } as const;
+
+/** Full-frame aspect (width ÷ height). */
+export const LOUNGE_TV_DESIGN_ASPECT =
+  LOUNGE_TV_DESIGN_PX.width / LOUNGE_TV_DESIGN_PX.height;
+
+/**
+ * Dark glass region inside `lounge-tv-design.png` (normalized 0–1).
+ * Measured from baked asset; used to inset overlay UI on the PNG bezel.
+ */
+export const LOUNGE_TV_DESIGN_SCREEN_RECT = {
+  left: 2 / LOUNGE_TV_DESIGN_PX.width,
+  top: 1 / LOUNGE_TV_DESIGN_PX.height,
+  width: (818 - 2) / LOUNGE_TV_DESIGN_PX.width,
+  height: (528 - 1) / LOUNGE_TV_DESIGN_PX.height,
+} as const;
+
 /**
  * Play control anchor on `lounge-tv-design.png` (fraction of image box).
  * Glass center is above geometric center because of the bottom chin in the asset.
