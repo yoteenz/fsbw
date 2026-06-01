@@ -22598,3 +22598,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **TV overlay** — menu/content rendered **below** PNG frame. Root cause: **`loungeTvDesignScreenInsetStyle`** spread **`loungeTvScreenStyle`** after **`position: absolute`**, which reset **`position: relative`** and **`width/height: 100%`**. Fixed by applying base screen styles first, then absolute inset from **`LOUNGE_TV_DESIGN_SCREEN_RECT`**.
 
 **Update (same chat):** **Salon chairs** bake — **`p6V1N9X4`** source is **gray-green studio** (not chroma green); old **`ge>42`** key left **0% transparent**. Rebaked with corner **`dist_bg`** smoothstep + subject protect + despill/premultiply (~**38%** transparent). **`p6V1N9X4-v2`**.
+
+**Update (same chat):** Lobby **neon logo** **5% smaller** — **`LOBBY_NEON_LOGO_HEIGHT_PX`** **250** (was **263**). **Register** + **phone** **DOWNLOAD** links already absent on lobby slide (plain **`LobbyCasePropPopover`** only).

@@ -11,6 +11,9 @@ import {
 /** Lobby scene art paths (see `src/pages/lobby/page.tsx`). */
 
 export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
+
+/** Main neon logo rendered height on lobby slide (263px baseline −5%). */
+export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
 export const LOBBY_NEON_PRODUCTS_SRC = '/assets/neon-products.png';
 export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
 export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';

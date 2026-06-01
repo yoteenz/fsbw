@@ -44,6 +44,7 @@ import {
   LOBBY_CASE_SRC,
   LOBBY_NEON_BOOKING_FALLBACK_SRC,
   LOBBY_NEON_BOOKING_SRC,
+  LOBBY_NEON_LOGO_HEIGHT_PX,
   LOBBY_NEON_LOGO_SRC,
   LOBBY_NEON_PRODUCTS_SRC,
   LOBBY_NEON_TOOLS_SRC,
@@ -178,7 +179,13 @@ const LobbyPage: React.FC = () => {
               src={LOBBY_NEON_LOGO_SRC}
               alt="Frontal Slayer"
               onClick={goToHomeShop}
-              style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
+              style={{
+                width: 'auto',
+                height: LOBBY_NEON_LOGO_HEIGHT_PX,
+                maxWidth: 'none',
+                display: 'block',
+                cursor: 'pointer',
+              }}
             />
           </div>
         </div>
