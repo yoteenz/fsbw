@@ -50,8 +50,15 @@ mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
 sat = mx - mn
 ge = g - np.maximum(r, b)
 
-# Mannequin / shelf glass neutrals — never punch holes (old key ate gray faces).
-protect = (ge < 18) | (sat < 32)
+lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+# Mannequin, acrylic shelf glass, white rim lights — keep opaque (avoid face/panel holes).
+protect = (
+    (ge < 18)
+    | (sat < 32)
+    | (lum > 145)
+    | ((lum > 50) & (ge < 30) & (sat < 95))
+)
 # True green-screen backdrop.
 is_bg = (ge > 42) & (g > 70)
 
@@ -69,19 +76,30 @@ alpha[spill] = np.maximum(alpha[spill], 200.0)
 
 arr[:, :, 3] = np.clip(alpha, 0, 255).astype(np.uint8)
 
-# Despill green cast on shelf glass / hair (opaque foreground).
+# Despill green on hair only — skip bright glass, white rims, red neon label.
 fg = arr[:, :, 3] > 20
 rb_max = np.maximum(r, b)
+despill_mask = fg & (lum < 130) & (r < g + 25)
 g_despill = np.where(g > rb_max, rb_max + (g - rb_max) * 0.12, g)
-arr[:, :, 1] = np.where(fg, np.clip(g_despill, 0, 255), arr[:, :, 1]).astype(np.uint8)
+arr[:, :, 1] = np.where(despill_mask, np.clip(g_despill, 0, 255), arr[:, :, 1]).astype(np.uint8)
 
-# Drop fringe pixels that are mostly green backdrop.
-fringe = (arr[:, :, 3] < 40) & (ge > 35) & (g > 65)
+hh, ww = arr.shape[:2]
+y_shelf = int(hh * 0.42)
+shelf_body = np.zeros((hh, ww), dtype=bool)
+shelf_body[y_shelf:, :] = True
+
+# Solidify acrylic shelf body (front panel + base) before fringe cleanup.
+acrylic = shelf_body & (lum > 35) & (ge < 34) & (arr[:, :, 3] > 0)
+arr[acrylic, 3] = np.maximum(arr[acrylic, 3], 235)
+
+# Drop green backdrop fringe only (not on shelf acrylic).
+fringe = (arr[:, :, 3] < 40) & (ge > 35) & (g > 65) & (lum < 90) & ~shelf_body
 arr[fringe, 3] = 0
 arr[fringe, :3] = 0
-# Remove wispy semi-transparent halos before crop.
-arr[arr[:, :, 3] < 28, 3] = 0
-arr[arr[:, :, 3] < 28, :3] = 0
+wispy = (arr[:, :, 3] < 28) & (ge > 22) & (lum < 85) & ~shelf_body
+arr[wispy, 3] = 0
+arr[wispy, :3] = 0
+
 out_im = Image.fromarray(arr)
 alpha = arr[:, :, 3]
 ys, xs = np.where(alpha > 128)

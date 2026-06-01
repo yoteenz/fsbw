@@ -394,56 +394,32 @@ const LobbyPage: React.FC = () => {
         }}>
           {/* HD LACE Shelf */}
           <div className="flex flex-col items-center">
-            <LobbyAssetDownloadAnchor
-              visible={showAssetDownloads}
-              href={LOBBY_SHELF_HD_SRC}
-              downloadFilename="hd-group.png"
-              falPrompt={LOBBY_SCENE_FAL_PROMPTS.shelfHdLace}
-              placement="bottom-center"
-            >
-              <img 
-                src={LOBBY_SHELF_HD_SRC}
-                alt="HD Lace Collection" 
-                className="w-auto md:h-20 lg:h-24"
-                style={{ height: '56px' }}
-              />
-            </LobbyAssetDownloadAnchor>
+            <img
+              src={LOBBY_SHELF_HD_SRC}
+              alt="HD Lace Collection"
+              className="w-auto md:h-20 lg:h-24"
+              style={{ height: '56px', display: 'block' }}
+            />
           </div>
-          
+
           {/* TRANSPARENT LACE Shelf */}
           <div className="flex flex-col items-center">
-            <LobbyAssetDownloadAnchor
-              visible={showAssetDownloads}
-              href={LOBBY_SHELF_TRANSPARENT_SRC}
-              downloadFilename="transparent-group.png"
-              falPrompt={LOBBY_SCENE_FAL_PROMPTS.shelfTransparentLace}
-              placement="bottom-center"
-            >
-              <img 
-                src={LOBBY_SHELF_TRANSPARENT_SRC}
-                alt="Transparent Lace Collection" 
-                className="w-auto md:h-20 lg:h-24"
-                style={{ height: '56px' }}
-              />
-            </LobbyAssetDownloadAnchor>
+            <img
+              src={LOBBY_SHELF_TRANSPARENT_SRC}
+              alt="Transparent Lace Collection"
+              className="w-auto md:h-20 lg:h-24"
+              style={{ height: '56px', display: 'block' }}
+            />
           </div>
-          
+
           {/* CUSTOM UNITS Shelf */}
           <div className="flex flex-col items-center">
-            <LobbyAssetDownloadAnchor
-              visible={showAssetDownloads}
-              href={LOBBY_SHELF_CUSTOM_SRC}
-              downloadFilename="custom-group.png"
-              falPrompt={LOBBY_SCENE_FAL_PROMPTS.shelfCustomUnits}
-              placement="bottom-center"
-            >
-              <img 
-                src={LOBBY_SHELF_CUSTOM_SRC}
-                alt="Custom Units Collection" 
-                className="w-auto md:h-20 lg:h-24"
-                style={{ height: '56px' }}
-              />
-            </LobbyAssetDownloadAnchor>
+            <img
+              src={LOBBY_SHELF_CUSTOM_SRC}
+              alt="Custom Units Collection"
+              className="w-auto md:h-20 lg:h-24"
+              style={{ height: '56px', display: 'block' }}
+            />
           </div>
         </div>
         
