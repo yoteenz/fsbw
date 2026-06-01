@@ -22556,3 +22556,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions:** Do **not** use **`fal-ai/birefnet/v2`** for final neon asset when glow matters. Use **`npm run lobby:bake-neon-logo`** — Python/Pillow script keyed off corner wall chroma + tube core halo mask (not full-frame dark key).
 
 **Changes:** Re-baked **`public/assets/neon-logo.png`** (845×1100, ~48% transparent pixels, corners alpha 0). **`LOBBY_NEON_LOGO_ASSET_VERSION`** = **`Y6K-Yipl7`**, **`LOBBY_NEON_LOGO_SRC_REMOTE`**, versioned **`LOBBY_NEON_LOGO_SRC`**. **`scripts/lobby-bake-neon-logo-asset.mjs`** + **`package.json`** script. **`sceneNeonLogoFal.ts`** — **`NEON_LOGO_BIREFNET_CUTOUT_NOTE`** documents prefer local bake. Commit **`9a66edae`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** User found baked glow **weird/artificial** — **reverted** **`neon-logo.png`** to pre-bake asset (912×1092, **`LOBBY_NEON_LOGO_SRC`** = **`/assets/neon-logo.png`** without Y6K cache-bust). **Removed neon logo from lounge only** — deleted **`LoungePage`** sign + **`LOUNGE_NEON_LOGO_SRC`** / lounge Fal **`neonLogo`** entry; lobby sign unchanged.
