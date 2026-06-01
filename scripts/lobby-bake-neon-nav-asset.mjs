@@ -21,7 +21,8 @@ const NAV = {
   },
   tools: {
     out: 'neon-tools.png',
-    remote: '',
+    remote:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg',
     maxDim: 900,
   },
   booking: {

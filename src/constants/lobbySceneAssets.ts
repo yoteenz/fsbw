@@ -26,7 +26,14 @@ export const LOBBY_NEON_PRODUCTS_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg';
 
 export const LOBBY_NEON_PRODUCTS_SRC = `/assets/neon-products.png?v=${LOBBY_NEON_PRODUCTS_ASSET_VERSION}`;
-export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
+
+/** Bump when re-baking `neon-tools.png` (`npm run lobby:bake-neon-tools`). */
+export const LOBBY_NEON_TOOLS_ASSET_VERSION = 'I78ubr42-v1';
+
+export const LOBBY_NEON_TOOLS_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg';
+
+export const LOBBY_NEON_TOOLS_SRC = `/assets/neon-tools.png?v=${LOBBY_NEON_TOOLS_ASSET_VERSION}`;
 
 /** Bump when re-baking `neon-booking.png` (`npm run lobby:bake-neon-booking`). */
 export const LOBBY_NEON_BOOKING_ASSET_VERSION = 'SnSxe3vt-v1';
