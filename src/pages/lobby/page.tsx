@@ -33,7 +33,10 @@ import {
   sceneCarouselSlideMinHeightCss,
 } from '../../utils/sceneCarouselBackground';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
-import { LOBBY_CASE_POPOVER_SCRIM_Z_INDEX } from '../../constants/lobbyPaymentIcons';
+import {
+  LOBBY_CASE_POPOVER_SCRIM_ALPHA,
+  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
+} from '../../constants/lobbyPaymentIcons';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
@@ -416,7 +419,6 @@ const LobbyPage: React.FC = () => {
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
-                keepVisibleAboveScrim={lobbyCasePopover !== null}
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
@@ -444,7 +446,6 @@ const LobbyPage: React.FC = () => {
               <LobbyCasePropPopover
                 popoverId="phone"
                 activeId={lobbyCasePopover}
-                keepVisibleAboveScrim={lobbyCasePopover !== null}
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
@@ -475,7 +476,7 @@ const LobbyPage: React.FC = () => {
             style={{
               position: 'fixed',
               inset: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
               backdropFilter: 'blur(3px)',
               WebkitBackdropFilter: 'blur(3px)',
               zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,

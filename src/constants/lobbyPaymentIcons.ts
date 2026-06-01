@@ -45,6 +45,9 @@ export const LOBBY_CASE_POPOVER_MIN_HEIGHT_PX = Math.round(
 /** Full-viewport dimmer when register/phone popover is open (`createPortal` to `document.body`). */
 export const LOBBY_CASE_POPOVER_SCRIM_Z_INDEX = 10000;
 
+/** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
+export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
+
 /** Lifts case props + popover above the scrim (parent stacking context must use this when open). */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
