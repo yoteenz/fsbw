@@ -22584,3 +22584,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **TV** — slide uses **`lounge-tv-design.png`** image (not CSS **`LoungeTvFrame`**); **DOWNLOAD** removed. **`lounge:bake-tv-design`**, **`LOUNGE_TV_DESIGN_SRC_REMOTE`** = user **`pNu1yJzm…` JPEG** (same file as salon chairs at time of bake — rebake when TV art is on that URL).
 
 **Update (same chat):** Lounge **TV asset** from **`kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg`** (4800×3520 studio gray) → **`lounge-tv-design.png`** 820×612; bake uses corner gray key (not green). **`LOUNGE_TV_DESIGN_ASSET_VERSION`** = **`kv6DR-SLY`**.
+
+**Update (same chat):** **TV regen** — removed floor-reflection artifacts (reflection mask + TV-core crop, premultiply). **`kv6DR-v2`**. Removed **curtain + remote hand DOWNLOAD** on lounge. **Chairs** +10% (**152px**), up **20px**, right **10px** (**X 45**, **Y 226** / large **18**).
