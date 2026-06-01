@@ -49,7 +49,24 @@ export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE = SCENE_ROSE_BACKGROUND_FAL_NEGA
 
 export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `When using the lobby panel as a reference for the lounge panel: match ceiling line, crown molding, side-wall dusty-rose plaster tone, center floral red saturation, and marble horizon so the horizontal swipe is seamless. Do not shift the floor line up or down.`;
 
-export const LOUNGE_ROSE_BACKGROUND_FAL_EDIT = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_REAR_LIGHT} Lounge: preserve extra marble floor in lower third. ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`;
+export const LOUNGE_ROSE_FAL_THREE_PASS_NOTE =
+  'THREE-PASS (same as lobby): Pass 1 = color + rear halo on landing2-background.png. Pass 2 = short front fill only. Pass 3 = brighter mid-panel (optional polish).';
+
+/** Pass 1 — upload original landing2-background.png. */
+export const LOUNGE_ROSE_BACKGROUND_FAL_PASS1 = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_REAR_LIGHT} Lounge panel: keep extra polished marble floor in the lower third and chair zone exactly as reference; match lobby ceiling and floor horizon for carousel swipe. ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`;
+
+/** Pass 2 — upload Pass 1 output; same front fill as lobby. */
+export const LOUNGE_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT = LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT;
+
+export const LOUNGE_ROSE_BACKGROUND_FAL_PASS2_NEGATIVE = SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2;
+
+/** Pass 3 — upload Pass 2 output; option that worked on lobby. */
+export const LOUNGE_ROSE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN = `Increase fill light strength on the center rose panel only. Slightly brighter mid-panel and lower rose area above the marble floor. Keep backlight halo, walls, floor veins, and layout unchanged.`;
+
+export const LOUNGE_ROSE_BACKGROUND_FAL_PASS3_NEGATIVE =
+  'remove backlight, change room, shift floor horizon, pink roses, dark panel';
+
+export const LOUNGE_ROSE_BACKGROUND_FAL_EDIT = `${LOUNGE_ROSE_FAL_THREE_PASS_NOTE} PASS 3: ${LOUNGE_ROSE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN} PASS 3 NEG: ${LOUNGE_ROSE_BACKGROUND_FAL_PASS3_NEGATIVE} PASS 2: ${LOUNGE_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 2 NEG: ${LOUNGE_ROSE_BACKGROUND_FAL_PASS2_NEGATIVE} PASS 1: ${LOUNGE_ROSE_BACKGROUND_FAL_PASS1} PASS 1 NEG: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1}`;
 
 /** @deprecated */
 export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
