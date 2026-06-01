@@ -51,6 +51,7 @@ import {
   LOBBY_NEON_BOOKING_SRC,
   LOBBY_NEON_LOGO_HEIGHT_PX,
   LOBBY_NEON_LOGO_SRC,
+  LOBBY_NEON_NAV_COMPOSITE_FILTER,
   LOBBY_NEON_NAV_HEIGHT_PX,
   LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX,
   LOBBY_NEON_NAV_ROW_OFFSET_Y_PX,
@@ -255,6 +256,7 @@ const LobbyPage: React.FC = () => {
                 width: 'auto',
                 pointerEvents: 'none',
                 verticalAlign: 'top',
+                filter: LOBBY_NEON_NAV_COMPOSITE_FILTER,
               }}
               aria-hidden
             />
@@ -295,6 +297,7 @@ const LobbyPage: React.FC = () => {
                 width: 'auto',
                 pointerEvents: 'none',
                 verticalAlign: 'top',
+                filter: LOBBY_NEON_NAV_COMPOSITE_FILTER,
               }}
               aria-hidden
             />
@@ -324,7 +327,8 @@ const LobbyPage: React.FC = () => {
                 height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 width: 'auto',
                 maxWidth: 'none',
-                verticalAlign: 'top'
+                verticalAlign: 'top',
+                filter: LOBBY_NEON_NAV_COMPOSITE_FILTER,
               }}
               aria-hidden
               draggable={false}
