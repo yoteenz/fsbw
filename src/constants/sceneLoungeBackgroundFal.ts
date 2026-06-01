@@ -5,6 +5,7 @@
 
 import {
   LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF,
+  LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT,
   SCENE_FAL_EDIT_CONTROLS_NOTE,
   SCENE_FAL_EDIT_MODEL,
   SCENE_LOUNGE_CEILING_MATCH_LOBBY,
@@ -29,7 +30,10 @@ export const LOUNGE_BACKGROUND_FAL_TRUE_RED_NEGATIVE =
 export const LOUNGE_BACKGROUND_FAL_CEILING_FLAT = `${LOUNGE_BACKGROUND_PRESERVE_BLOCK} ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} Do not change wall red tone, sofa, table, wine, plant, curtains, or furniture scale.`;
 
 export const LOUNGE_BACKGROUND_FAL_CEILING_FLAT_NEGATIVE =
-  'low ceiling, dropped ceiling, compressed room, less headroom, coffered ceiling, recessed ceiling panels, tray ceiling, paneled ceiling, second horizontal ceiling line, ceiling ledge, ceiling step, ceiling soffit, drop ceiling, ceiling grid, extra crown molding tiers, duplicate molding, change wall color, move furniture, shift floor horizon, crop furniture, people';
+  'low ceiling, dropped ceiling, lowering crown molding, moving molding down, compressed room, less headroom, less red wall, coffered ceiling, recessed ceiling panels, tray ceiling, paneled ceiling, second horizontal ceiling line, ceiling ledge, ceiling step, ceiling soffit, drop ceiling, ceiling grid, extra crown molding tiers, duplicate molding, change wall color, move furniture, shift floor horizon, crop furniture, people';
+
+export const LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_NEGATIVE =
+  'lowering crown molding, moving molding down, dropped ceiling, compressed room, second horizontal ceiling line, ceiling ledge, ceiling panel, move furniture, shift floor horizon, people';
 
 /** Step B — lobby uses this lounge file as 2nd image; see LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF in sceneRoseBackgroundFal.ts */
 
@@ -43,7 +47,7 @@ export const LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN = `Increase fill light in 
 export const LOUNGE_BACKGROUND_FAL_PASS3_NEGATIVE =
   'pink walls, change layout, shift floor horizon, coffered ceiling, paneled ceiling, dark center';
 
-export const LOUNGE_BACKGROUND_FAL_EDIT = `${LOUNGE_BACKGROUND_FAL_THREE_PASS_NOTE} STEP A TRUE RED+CEILING: ${LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS} STEP A NEG: ${LOUNGE_BACKGROUND_FAL_TRUE_RED_NEGATIVE} CEILING-ONLY (optional): ${LOUNGE_BACKGROUND_FAL_CEILING_FLAT} CEILING-ONLY NEG: ${LOUNGE_BACKGROUND_FAL_CEILING_FLAT_NEGATIVE} LOBBY SYNC (upload lobby + lounge): ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF} PASS 3: ${LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN} PASS 2: ${LOUNGE_BACKGROUND_FAL_PASS2_FRONT_LIGHT}`;
+export const LOUNGE_BACKGROUND_FAL_EDIT = `${LOUNGE_BACKGROUND_FAL_THREE_PASS_NOTE} STEP A TRUE RED+CEILING: ${LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS} STEP A NEG: ${LOUNGE_BACKGROUND_FAL_TRUE_RED_NEGATIVE} CEILING-ONLY (optional): ${LOUNGE_BACKGROUND_FAL_CEILING_FLAT} CEILING-ONLY NEG: ${LOUNGE_BACKGROUND_FAL_CEILING_FLAT_NEGATIVE} CEILING SHORT (crown locked): ${LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT} CEILING SHORT NEG: ${LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_NEGATIVE} LOBBY SYNC (upload lobby + lounge): ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF} PASS 3: ${LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN} PASS 2: ${LOUNGE_BACKGROUND_FAL_PASS2_FRONT_LIGHT}`;
 
 /** @deprecated — paneled dusty-rose walls; user prefers true red + lounge-led lobby sync. */
 export const LOUNGE_BACKGROUND_FAL_PASS1_WALLS_FROM_LOBBY_REF =

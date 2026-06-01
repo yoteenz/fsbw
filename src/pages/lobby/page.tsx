@@ -25,6 +25,7 @@ import {
   useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
 import {
+  loungeSceneBackgroundPositionY,
   sceneCarouselBackgroundLayerStyle,
   sceneCarouselSlideMinHeightCss,
 } from '../../utils/sceneCarouselBackground';
@@ -668,7 +669,11 @@ const LoungePage: React.FC = () => {
       }}
     >
       {/* Background Image - Using landing2-background */}
-      <div style={sceneCarouselBackgroundLayerStyle(LOUNGE_BACKGROUND_SRC)} />
+      <div
+        style={sceneCarouselBackgroundLayerStyle(LOUNGE_BACKGROUND_SRC, {
+          backgroundPosition: `center ${loungeSceneBackgroundPositionY()}`,
+        })}
+      />
 
       {showAssetDownloads ? (
         <div

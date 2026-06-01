@@ -49,7 +49,10 @@ export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `Carousel alignment with lobb
 /**
  * Lounge `landing2-background.png` must share the lobby ceiling architecture for horizontal swipe.
  */
-export const SCENE_LOUNGE_CEILING_MATCH_LOBBY = `CEILING FIX — IMAGE 1 = lounge to edit. IMAGE 2 = lobby ceiling reference only (landing-background.png). Copy lobby ceiling architecture onto lounge: ONE continuous tall flat off-white/cream ceiling filling the entire top of the frame — same crown-molding height and same amount of white ceiling above the molding as the lobby reference. EXTEND the white ceiling upward; do NOT lower, drop, or compress the ceiling. DELETE any second horizontal line, ledge, step, or recessed band between crown molding and the flat ceiling — no panel, no soffit, no tray. Only one simple white crown molding strip, then flat ceiling to the top edge. Walls meet molding at the same height as lobby; marble floor horizon unchanged.`;
+export const SCENE_LOUNGE_CEILING_MATCH_LOBBY = `CEILING OUTPAINT ONLY — IMAGE 1 = lounge. IMAGE 2 = lobby ceiling reference. LOCK RULE: the crown molding row in Image 1 must stay at the exact same pixel height — do not move it down or up. Do not compress the room. Only repaint pixels ABOVE the crown molding: remove the second horizontal ledge/panel/soffit and replace with one continuous flat off-white ceiling like Image 2, extending to the top edge. More white ceiling above the molding, never less red wall below it. Marble floor and all furniture unchanged.`;
+
+/** Short crown-locked pass when long prompts keep lowering the ceiling. */
+export const LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT = `Outpaint upward only. Crown molding line is frozen — same pixel row as input. Delete the extra horizontal ceiling band above the molding. Flat cream ceiling to the top. Do not lower the molding. Do not move sofa, floor, or walls.`;
 
 /**
  * Unified smooth red walls (user preference) — NOT pink/mauve, NOT lobby wainscoting.
