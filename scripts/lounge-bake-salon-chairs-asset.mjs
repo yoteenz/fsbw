@@ -4,7 +4,7 @@
  * Requires: python3 with pillow and numpy.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -87,8 +87,23 @@ print(out_im.size)
 `;
 
 mkdirSync(path.dirname(tmpSrc), { recursive: true });
-execFileSync('curl', ['-fsSL', '-o', tmpSrc, remote], { stdio: 'inherit' });
-execFileSync('python3', ['-c', py, tmpSrc, outPath, '960'], { stdio: 'inherit', cwd: root });
+const localArg = process.argv[2];
+let srcPath = tmpSrc;
+if (localArg && existsSync(localArg)) {
+  srcPath = localArg;
+} else {
+  const remoteUrl = localArg?.startsWith('http') ? localArg : remote;
+  try {
+    execFileSync('curl', ['-fsSL', '-o', tmpSrc, remoteUrl], { stdio: 'inherit' });
+  } catch {
+    if (existsSync(tmpSrc)) {
+      console.warn('Fetch failed — using cached', tmpSrc);
+    } else {
+      throw new Error(`Could not download ${remoteUrl} and no cached ${tmpSrc}`);
+    }
+  }
+}
+execFileSync('python3', ['-c', py, srcPath, outPath, '960'], { stdio: 'inherit', cwd: root });
 console.log('Wrote', outPath);
 console.log(
   'Bump LOUNGE_SALON_CHAIRS_ASSET_VERSION in src/constants/loungeSceneAssets.ts after deploy.'
