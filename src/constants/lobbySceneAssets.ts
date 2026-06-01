@@ -16,10 +16,10 @@ export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
 export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
 
 /** Bump when replacing `public/assets/landing-background.png` (Vercel caches `/assets/*`). */
-export const LOBBY_BACKGROUND_ASSET_VERSION = 'lpL3uOngFG';
+export const LOBBY_BACKGROUND_ASSET_VERSION = 'lpJgMOOyc0';
 
 export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/L3uOngFGJQ2LEM5npshed_sBBjoS6l.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/JgMOOyc0S2fwovqjnRGOA_xKRqBrUe.jpeg';
 
 export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 export const LOBBY_SHELF_HD_SRC = '/assets/hd-group.png';
