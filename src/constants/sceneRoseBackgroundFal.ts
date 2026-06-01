@@ -1,47 +1,55 @@
 /**
- * Fal prompts for lobby/lounge rose backgrounds and other scene plates.
+ * Fal prompts for lobby/lounge rose backgrounds.
  *
- * **Recommended:** `fal-ai/nano-banana-pro/edit` — upload current PNG from
- * `/lobby?lobbyAssets=1` DOWNLOAD. Preserve layout via prompt (not a strength slider).
+ * **Lobby rose wall:** Nano Banana Pro edit needs **two passes**. Pass 1 = color + rear halo.
+ * Pass 2 = **short relight prompt only** (long combined prompts skip front fill).
  */
 
 export const SCENE_FAL_EDIT_MODEL = 'fal-ai/nano-banana-pro/edit';
 
 export const SCENE_FAL_EDIT_CONTROLS_NOTE =
-  'Upload your PNG. resolution 2K or 4K, aspect_ratio auto. No strength slider — color/layout locked in prompt.';
+  'resolution 2K or 4K, aspect_ratio auto, output_format png.';
+
+export const LOBBY_ROSE_FAL_TWO_PASS_NOTE =
+  'TWO-PASS REQUIRED for front-lit roses: (1) Pass 1 on original PNG — color + rear halo. (2) Pass 2 upload Pass-1 output — use ONLY the short PASS 2 prompt below (not Pass 1 again).';
 
 /**
  * Central rose wall vs side walls — prevents pink/washed floral panel.
  */
-export const LOBBY_ROSE_PANEL_COLOR_LOCK = `COLOR LOCK — two different surfaces: (1) CENTER vertical rose panel: dense real roses in deep saturated true red and burgundy (#8B0000–#B22222 range), rich crimson petals with natural shadow variation — NOT pink, NOT coral, NOT dusty rose, NOT pastel, NOT desaturated or faint. Keep scattered cream/white roses and green leaves exactly as in the reference. (2) LEFT and RIGHT walls: muted dusty-rose / mauve-pink plaster wainscoting only — do NOT tint the side walls red and do NOT turn the center panel pink.`;
+export const LOBBY_ROSE_PANEL_COLOR_LOCK = `COLOR LOCK — two different surfaces: (1) CENTER vertical rose panel: dense real roses in deep saturated true red and burgundy (#8B0000–#B22222 range), rich crimson petals — NOT pink, NOT coral, NOT pastel, NOT faint. Keep cream/white roses and green leaves as in reference. (2) LEFT and RIGHT walls: muted dusty-rose / mauve-pink plaster wainscoting only.`;
+
+/** Pass 1 only — rear halo (NBP follows this; front light belongs in Pass 2). */
+export const LOBBY_ROSE_PANEL_REAR_LIGHT = `Add warm backlight behind the full-height center rose panel — soft halo at crown, edges, and through petals top to bottom. Side walls: soft reflected fill only.`;
+
+export const SCENE_ASSET_EDIT_PRESERVE_BLOCK = `Treat the uploaded image as the exact scene to preserve — same camera, crop, panel geometry, wainscoting, marble floor, pedestals and urn vases. Photoreal enhancement only. No people, products, text, or logos.`;
+
+export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1 =
+  'pink roses, dusty-rose floral panel, coral roses, faded red, different room layout, redesigned wainscoting, extra furniture, people, text, logos, plastic CGI look';
 
 /**
- * Dual lighting on center panel: rear halo (keep) + front fill (lift dark rose faces).
+ * Pass 2 — photographer-style relight (Chase Jarvis / NBP pattern). **Only** this text in the prompt box.
  */
-export const LOBBY_ROSE_PANEL_LIGHTING = `LIGHTING — center rose panel uses BOTH directions (not backlight-only):
+export const LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT = `Add a large soft fill light to the scene. Fill light is placed in front of the camera, facing the center rose wall panel, warm white 3200K, medium-strong — brighten the front faces of the crimson roses so every petal is clearly visible, dimensional, and saturated. Keep the existing warm backlight halo behind the rose panel edges exactly as-is. Do not change walls, floor, vases, layout, panel shape, or rose colors.`;
 
-(1) REAR (keep): continuous warm backlight behind the full-height floral wall, top to bottom — soft halo at crown and edges, gentle bloom through petals, subtle left/right rim. Same quality you already have; extend evenly through middle and lower center.
+export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2 =
+  'remove backlight, kill halo, silhouette roses, dark rose faces, underexposed petals, change room, move walls, pink roses, flat lighting';
 
-(2) FRONT (add): soft frontal key light from the camera / viewer side — large diffused salon fill illuminating the FACE of the roses across the entire panel height. Lift shadows on crimson petals so roses read bright, dimensional, and saturated (not a dark silhouette). Visible petal texture and highlight rolls; center column evenly lit for future floating shelves so props look front-lit AND wall-glows from behind.
+/** Pass 1 full prompt (upload original landing-background.png). */
+export const LOBBY_ROSE_BACKGROUND_FAL_PASS1 = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_REAR_LIGHT}`;
 
-Balance: rear glow + front fill together; front light must not kill the rear halo. Side plaster walls: softer reflected fill only.`;
+/** Tooltip / default: workflow + both passes. */
+export const LOBBY_ROSE_BACKGROUND_FAL_EDIT = `${LOBBY_ROSE_FAL_TWO_PASS_NOTE} PASS 2 PROMPT: ${LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 2 NEGATIVE: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2} PASS 1 PROMPT: ${LOBBY_ROSE_BACKGROUND_FAL_PASS1} PASS 1 NEGATIVE: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1}`;
 
-/** @deprecated alias */
-export const LOBBY_ROSE_PANEL_BACKLIGHT = LOBBY_ROSE_PANEL_LIGHTING;
+/** @deprecated Combined lighting block — NBP ignores front fill when bundled with preserve text. */
+export const LOBBY_ROSE_PANEL_LIGHTING = LOBBY_ROSE_PANEL_REAR_LIGHT;
 
-/**
- * Shared “do not repaint” block for scene plates (lobby wall, lounge wall, etc.).
- */
-export const SCENE_ASSET_EDIT_PRESERVE_BLOCK = `Treat the uploaded image as the exact scene to preserve — a photograph to enhance, not a new room to invent. Keep the same camera angle, crop, framing, panel geometry, wainscoting layout, baseboard height, marble floor position, slab scale, vein direction, and empty center for UI. Do not add, remove, or move architectural elements. Only increase photoreal depth: subtle plaster grain, crisp molding edges, gentle ambient occlusion in corners, refined marble reflectivity. Preserve clear acrylic pedestals and white urn vases with small red/white bouquets if present. No people, products, text, or logos.`;
+export const LOBBY_ROSE_PANEL_BACKLIGHT = LOBBY_ROSE_PANEL_REAR_LIGHT;
 
-export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE =
-  'pink roses, dusty-rose floral panel, coral roses, salmon roses, faded red, desaturated roses, pastel floral wall, wrong floral color, backlight only, rear light only, roses in shadow, dark front of floral panel, silhouette roses, underexposed petals, flat black rose faces, rim light only, backlight only at top, dark lower rose panel, uneven panel lighting, black void in center, flat unlit floral wall, different room layout, redesigned wainscoting, side walls turned red, extra furniture, visible clutter, people, products, text, logos, fisheye, shifted horizon, new floor pattern, plastic CGI look, over-smoothed blur';
+export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE = SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1;
 
 export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `When using the lobby panel as a reference for the lounge panel: match ceiling line, crown molding, side-wall dusty-rose plaster tone, center floral red saturation, and marble horizon so the horizontal swipe is seamless. Do not shift the floor line up or down.`;
 
-export const LOBBY_ROSE_BACKGROUND_FAL_EDIT = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_LIGHTING} Enhance plaster walls with warmer salon fill only; do not add new trim, brass strips, or side columns.`;
-
-export const LOUNGE_ROSE_BACKGROUND_FAL_EDIT = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} Lounge continuation: preserve extra marble floor in the lower third and chair-zone framing exactly as the reference; enhance texture and lighting only. ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`;
+export const LOUNGE_ROSE_BACKGROUND_FAL_EDIT = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_REAR_LIGHT} Lounge: preserve extra marble floor in lower third. ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`;
 
 /** @deprecated */
 export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
@@ -50,5 +58,5 @@ export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
 export const LOUNGE_ROSE_BACKGROUND_FAL_BASE = LOUNGE_ROSE_BACKGROUND_FAL_EDIT;
 
 export function sceneRoseBackgroundFalWorkflowNote(assetLabel: string): string {
-  return `[FAL EDIT] Model: ${SCENE_FAL_EDIT_MODEL}. Upload ${assetLabel} PNG. ${SCENE_FAL_EDIT_CONTROLS_NOTE}`;
+  return `[FAL] ${SCENE_FAL_EDIT_MODEL}. ${assetLabel}. ${SCENE_FAL_EDIT_CONTROLS_NOTE}`;
 }
