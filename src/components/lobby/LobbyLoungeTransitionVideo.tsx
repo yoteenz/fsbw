@@ -3,17 +3,18 @@ import {
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
+import { sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
 
 type Props = {
+  /** True while this slide is centered in the carousel (lobby → lounge path). */
   active: boolean;
   onComplete: () => void;
-  onSkip?: () => void;
 };
 
 /**
- * Full-viewport lobby → lounge transition clip. Sits above the carousel during playback.
+ * Middle carousel panel: Kling lobby→lounge clip plays in-place (same viewport as room slides).
  */
-export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete, onSkip }) => {
+export const LobbyLoungeTransitionSlide: React.FC<Props> = ({ active, onComplete }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const completedRef = useRef(false);
 
@@ -57,7 +58,7 @@ export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete
     let timer = window.setTimeout(finish, 8000);
     const setTimerFromMeta = () => {
       window.clearTimeout(timer);
-      const ms = Number.isFinite(el.duration) ? el.duration * 1000 + 500 : 6000;
+      const ms = Number.isFinite(el.duration) ? el.duration * 1000 + 400 : 6000;
       timer = window.setTimeout(finish, ms);
     };
     el.addEventListener('loadedmetadata', setTimerFromMeta);
@@ -69,66 +70,38 @@ export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete
     };
   }, [active, finish]);
 
-  if (!active) return null;
-
   return (
     <div
-      role="presentation"
+      className="relative"
       style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 2147483640,
+        width: '100vw',
+        flexShrink: 0,
+        minHeight: sceneCarouselSlideMinHeightCss(),
         backgroundColor: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        touchAction: 'none',
+        overflow: 'hidden',
       }}
-      onClick={() => onSkip?.()}
+      aria-hidden={!active}
     >
       <video
         ref={videoRef}
         playsInline
         muted
-        autoPlay
         preload="auto"
         onEnded={finish}
         onError={finish}
         style={{
+          position: 'absolute',
+          inset: 0,
           width: '100%',
           height: '100%',
           objectFit: 'cover',
           objectPosition: 'center top',
+          pointerEvents: 'none',
         }}
       >
         <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_SRC} type="video/mp4" />
         <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
       </video>
-      {onSkip ? (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSkip();
-          }}
-          style={{
-            position: 'absolute',
-            bottom: 'max(16px, env(safe-area-inset-bottom))',
-            right: 16,
-            zIndex: 2,
-            padding: '8px 14px',
-            fontSize: 11,
-            fontFamily: 'inherit',
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            background: 'rgba(255,255,255,0.85)',
-            border: '1px solid #000',
-            cursor: 'pointer',
-          }}
-        >
-          Skip
-        </button>
-      ) : null}
     </div>
   );
 };

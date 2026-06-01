@@ -10,7 +10,7 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_SRC = `/assets/lobby-lounge-transitio
 export const LOBBY_TRANSITION_VIDEO_SESSION_KEY = 'baw_lobby_transition_video';
 
 /**
- * Lobby → lounge plays the transition clip (not the CSS slide).
+ * Lobby → lounge: middle carousel panel plays the Kling clip in-place (not a fullscreen overlay).
  * Disable with `?lobbyTransitionVideo=0`. Default: on.
  */
 export function isLobbyTransitionVideoEnabledFromSearch(search: string): boolean {
