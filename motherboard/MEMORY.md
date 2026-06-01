@@ -22680,3 +22680,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context (chat):** User supplied desired display-case reference (clear acrylic, three red shelf labels **SLAY TOOLS / LACE PRODUCTS / HAIR PRODUCTS**, register + terminal on top, flat RGB ~140 gray backdrop) and asked to refine the Fal input prompt (MASTER + subject/preserve/background).
 
 **Changes:** **`src/constants/sceneLobbyDisplayCaseFal.ts`** — **`LOBBY_DISPLAY_CASE_FAL_EDIT`** (NBP edit, preserve labels/props/transparency, flat gray studio, no red/pink wash; bake via **`npm run lobby:bake-case`**). **`lobbySceneAssets.ts`** **`displayCase`** now points to that block. Commit **`b89d9af7`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby neon nav thirds on rose wall (layout fix)
+
+**Context (chat):** User reported **nothing changed** after display-case Fal prompt work; clarified **Products / Tools / Booking** must sit on **left / center / right thirds inside the rose floral column** (not spread across full viewport).
+
+**Why prior work looked unchanged:** Fal **`displayCase`** prompt only affects future source JPEG generation — not live lobby CSS. Earlier flex row used **`min(70vw, 500px)`**, wider than the narrow center rose panel, so signs sat over side walls.
+
+**Changes:** **`lobbySceneAssets.ts`** — row **`LOBBY_NEON_NAV_ROW_WIDTH_VW` 54**, max **340px**, padding **10px**, **`LOBBY_NEON_NAV_ROW_OFFSET_Y_PX` 131**. **`lobby/page.tsx`** — **CSS grid `1fr 1fr 1fr`**; Products **`flex-start`**, Tools **center**, Booking **`flex-end`** within thirds. Commit **`174ca209`** on **`master`** + **`preview/mobile`**.
