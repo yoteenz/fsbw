@@ -19,12 +19,15 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import {
-  loungeBackgroundArtHeightCss,
   loungePageMinHeightCss,
   loungeSalonChairsAnchorStyle,
   loungeSalonChairsImageStyle,
   useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
+import {
+  sceneCarouselBackgroundLayerStyle,
+  sceneCarouselSlideMinHeightCss,
+} from '../../utils/sceneCarouselBackground';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import { LobbyAssetDownloadAnchor, LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
@@ -140,26 +143,17 @@ const LobbyPage: React.FC = () => {
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
 
   return (
-    <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
-          backgroundImage: `url(${LOBBY_ROSE_BACKGROUND_SRC})`,
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center center',
-          backgroundColor: 'white',
-          willChange: 'auto',
-          contain: 'layout style paint'
-        }}
-      />
+    <div
+      className="relative"
+      style={{
+        minHeight: sceneCarouselSlideMinHeightCss(),
+        width: '100vw',
+        flexShrink: 0,
+        backgroundColor: '#ffffff',
+      }}
+    >
+      {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
+      <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
 
       {showAssetDownloads ? (
         <div
@@ -674,22 +668,7 @@ const LoungePage: React.FC = () => {
       }}
     >
       {/* Background Image - Using landing2-background */}
-      <div 
-        style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          right: 0,
-          width: '100%',
-          height: loungeBackgroundArtHeightCss(),
-          backgroundImage: `url(${LOUNGE_BACKGROUND_SRC})`,
-          backgroundSize: '100% auto',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: 'white',
-          willChange: 'auto',
-        }}
-      />
+      <div style={sceneCarouselBackgroundLayerStyle(LOUNGE_BACKGROUND_SRC)} />
 
       {showAssetDownloads ? (
         <div
@@ -1068,7 +1047,7 @@ const LobbyApp: React.FC = () => {
       <div
         style={{
           width: '100vw',
-          height: '100vh',
+          height: '100dvh',
           overflowX: 'hidden',
           overflowY: 'auto',
           position: 'relative',
@@ -1083,7 +1062,7 @@ const LobbyApp: React.FC = () => {
           style={{
             display: 'flex',
             width: `${pages.length * 100}vw`,
-            minHeight: '105vh',
+            minHeight: sceneCarouselSlideMinHeightCss(),
             transform: `translateX(-${currentPage * 100}vw)`,
             transition: isTransitioning ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
             willChange: isTransitioning ? 'transform' : 'auto',
@@ -1095,7 +1074,7 @@ const LobbyApp: React.FC = () => {
               style={{
                 width: '100vw',
                 flexShrink: 0,
-                minHeight: index === 0 ? '100vh' : loungePageMinHeightCss(),
+                minHeight: sceneCarouselSlideMinHeightCss(),
               }}
             >
               {page}

@@ -1,21 +1,27 @@
 import { useLayoutEffect, useState } from 'react';
 import type React from 'react';
+import {
+  SCENE_CAROUSEL_BG_HEIGHT,
+  SCENE_CAROUSEL_BG_WIDTH,
+  sceneCarouselBackgroundArtHeightCss,
+  sceneCarouselSlideMinHeightCss,
+} from './sceneCarouselBackground';
 
 /** `landing2-background.png` pixel size — reference for future scene hotspots. */
-export const LOUNGE_BG_REFERENCE_WIDTH = 3072;
-export const LOUNGE_BG_REFERENCE_HEIGHT = 5504;
+export const LOUNGE_BG_REFERENCE_WIDTH = SCENE_CAROUSEL_BG_WIDTH;
+export const LOUNGE_BG_REFERENCE_HEIGHT = SCENE_CAROUSEL_BG_HEIGHT;
 
 /** Vertical position of salon chair bases on the background art (0–1 from top). */
 export const LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO = 0.538;
 
 /** Rendered height when background is `background-size: 100% auto`. */
 export function loungeBackgroundArtHeightCss(): string {
-  return `calc(100vw * ${LOUNGE_BG_REFERENCE_HEIGHT} / ${LOUNGE_BG_REFERENCE_WIDTH})`;
+  return sceneCarouselBackgroundArtHeightCss();
 }
 
 /** Lounge slide must be at least viewport and full art height so floor anchors work. */
 export function loungePageMinHeightCss(): string {
-  return `max(105vh, ${loungeBackgroundArtHeightCss()})`;
+  return sceneCarouselSlideMinHeightCss();
 }
 
 /** Lounge salon chairs placement (inline styles on lounge page — not index.css). */
