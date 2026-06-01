@@ -44,7 +44,12 @@ export const LOBBY_ROSE_PANEL_BACKLIGHT = LOBBY_ROSE_PANEL_REAR_LIGHT;
 
 export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE = SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1;
 
-export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `When using the lobby panel as a reference for the lounge panel: match ceiling line, crown molding, side-wall dusty-rose plaster tone, center floral red saturation, and marble horizon so the horizontal swipe is seamless. Do not shift the floor line up or down.`;
+export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `Carousel alignment with lobby (landing-background.png): match marble floor horizon and ceiling crown-molding line exactly — do not shift the floor up or down.`;
+
+/**
+ * Lounge `landing2-background.png` must share the lobby ceiling architecture for horizontal swipe.
+ */
+export const SCENE_LOUNGE_CEILING_MATCH_LOBBY = `CEILING — MATCH LOBBY: one tall flat off-white/cream ceiling plane at the same height and crown-molding line as landing-background.png. Simple white crown molding where wall meets ceiling. NO coffered ceiling, NO recessed ceiling panels, NO tray ceiling, NO secondary horizontal ceiling band or soffit. If the lounge ceiling is lower or paneled, raise and flatten it until it matches the lobby's continuous flat white ceiling.`;
 
 /**
  * Unified smooth red walls (user preference) — NOT pink/mauve, NOT lobby wainscoting.
