@@ -220,7 +220,7 @@ const LobbyPage: React.FC = () => {
               flexShrink: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(2px)',
+              transform: 'translateX(3px)',
             }}
             aria-label="Go to shop"
           >
@@ -258,7 +258,7 @@ const LobbyPage: React.FC = () => {
               flexShrink: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(-20px)',
+              transform: 'translateX(-26px)',
               zIndex: 2,
             }}
             aria-label="Go to tools"
@@ -286,7 +286,7 @@ const LobbyPage: React.FC = () => {
               position: 'relative',
               display: 'inline-flex',
               flexShrink: 0,
-              transform: 'translateX(-42px)',
+              transform: 'translateX(-55px)',
               pointerEvents: 'auto',
               alignItems: 'center',
             }}
