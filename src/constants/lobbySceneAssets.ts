@@ -25,7 +25,7 @@ export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
 export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 
 /** Bump when re-baking shelf PNGs (`npm run lobby:bake-shelves`). */
-export const LOBBY_SHELF_ASSET_VERSION = 'RQY7-2fkX-AKow';
+export const LOBBY_SHELF_ASSET_VERSION = 'RQY7-v2';
 
 export const LOBBY_SHELF_HD_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/RQY7MNHaS7mk5m9RKKMd__Qtm01P5p.jpeg';

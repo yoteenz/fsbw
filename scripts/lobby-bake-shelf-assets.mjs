@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Download lobby shelf green-screen JPEGs and write chroma-keyed PNGs.
+ * Keys true green backdrop only; protects gray/white mannequin (avoids face holes).
  * Requires: python3 with pillow and numpy.
  */
 import { execFileSync } from 'node:child_process';
@@ -41,27 +42,65 @@ import sys
 src, out, max_w = sys.argv[1], sys.argv[2], int(sys.argv[3])
 im = Image.open(src).convert('RGBA')
 arr = np.array(im)
-h, w = arr.shape[:2]
-corners = [arr[0:80, 0:80, :3], arr[0:80, w-80:w, :3], arr[h-80:h, 0:80, :3], arr[h-80:h, w-80:w, :3]]
-samples = np.vstack([c.reshape(-1, 3) for c in corners])
-bg = samples.mean(axis=0)
-r = arr[:,:,0].astype(np.float32)
-g = arr[:,:,1].astype(np.float32)
-b = arr[:,:,2].astype(np.float32)
-br, bgc, bb = bg[0], bg[1], bg[2]
-dist = np.sqrt((r-br)**2 + (g-bgc)**2 + (b-bb)**2)
-green_excess = g - np.maximum(r, b)
-threshold, soft = 70, 35
-alpha = np.clip((dist - threshold) * (255 / soft), 0, 255)
-alpha = np.where(green_excess > 45, np.minimum(alpha, np.clip((green_excess - 45) * 5, 0, 255)), alpha)
-arr[:,:,3] = alpha.astype(np.uint8)
+r = arr[:, :, 0].astype(np.float32)
+g = arr[:, :, 1].astype(np.float32)
+b = arr[:, :, 2].astype(np.float32)
+mx = np.max(arr[:, :, :3], axis=2).astype(np.float32)
+mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
+sat = mx - mn
+ge = g - np.maximum(r, b)
+
+# Mannequin / shelf glass neutrals — never punch holes (old key ate gray faces).
+protect = (ge < 18) | (sat < 32)
+# True green-screen backdrop.
+is_bg = (ge > 42) & (g > 70)
+
+alpha = np.zeros(r.shape, dtype=np.float32)
+alpha[protect] = 255.0
+alpha[is_bg] = 0.0
+mid = ~protect & ~is_bg
+if np.any(mid):
+    t = np.clip((ge[mid] - 18.0) / 24.0, 0.0, 1.0)
+    alpha[mid] = 255.0 * (1.0 - t)
+
+# Feather green spill on hair edges only (keep mostly opaque).
+spill = mid & (ge >= 18) & (ge <= 38)
+alpha[spill] = np.maximum(alpha[spill], 200.0)
+
+arr[:, :, 3] = np.clip(alpha, 0, 255).astype(np.uint8)
+
+# Despill green cast on shelf glass / hair (opaque foreground).
+fg = arr[:, :, 3] > 20
+rb_max = np.maximum(r, b)
+g_despill = np.where(g > rb_max, rb_max + (g - rb_max) * 0.12, g)
+arr[:, :, 1] = np.where(fg, np.clip(g_despill, 0, 255), arr[:, :, 1]).astype(np.uint8)
+
+# Drop fringe pixels that are mostly green backdrop.
+fringe = (arr[:, :, 3] < 40) & (ge > 35) & (g > 65)
+arr[fringe, 3] = 0
+arr[fringe, :3] = 0
+# Remove wispy semi-transparent halos before crop.
+arr[arr[:, :, 3] < 28, 3] = 0
+arr[arr[:, :, 3] < 28, :3] = 0
 out_im = Image.fromarray(arr)
-bbox = out_im.getbbox()
-if bbox:
+alpha = arr[:, :, 3]
+ys, xs = np.where(alpha > 128)
+if len(xs):
+    pad = 2
+    bbox = (
+        max(0, int(xs.min()) - pad),
+        max(0, int(ys.min()) - pad),
+        min(alpha.shape[1], int(xs.max()) + pad + 1),
+        min(alpha.shape[0], int(ys.max()) + pad + 1),
+    )
     out_im = out_im.crop(bbox)
+else:
+    bbox = out_im.getbbox()
+    if bbox:
+        out_im = out_im.crop(bbox)
 w2, h2 = out_im.size
 if w2 > max_w:
-    out_im = out_im.resize((max_w, int(h2 * max_w / w2)), Image.Resampling.LANCZOS)
+    out_im = out_im.resize((max_w, max(1, int(h2 * max_w / w2))), Image.Resampling.LANCZOS)
 out_im.save(out, 'PNG', optimize=True)
 print(out_im.size)
 `;
