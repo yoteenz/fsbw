@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 
 def _ge(r: np.ndarray, g: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -139,8 +139,106 @@ def key_greenscreen(im: Image.Image, shelf_acrylic_band: bool) -> Image.Image:
     return Image.fromarray(arr)
 
 
+def _case_subject_hull(alpha_u8: np.ndarray) -> np.ndarray:
+    """Expand solid subject seeds so backdrop-colored acrylic stays inside the hull."""
+    seeds = alpha_u8 >= 200
+    if not np.any(seeds):
+        seeds = alpha_u8 >= 128
+    if not np.any(seeds):
+        return seeds
+    mask_im = Image.fromarray((seeds.astype(np.uint8) * 255))
+    for _ in range(10):
+        mask_im = mask_im.filter(ImageFilter.MaxFilter(7))
+    return np.array(mask_im) > 96
+
+
+def _fill_alpha_holes(arr: np.ndarray, min_neighbor_alpha: int = 200) -> None:
+    """Close 1–2px pinholes in alpha without growing the outer silhouette much."""
+    a = arr[:, :, 3]
+    hole = (a < 48) & (
+        (np.roll(a, 1, 0) >= min_neighbor_alpha)
+        | (np.roll(a, -1, 0) >= min_neighbor_alpha)
+        | (np.roll(a, 1, 1) >= min_neighbor_alpha)
+        | (np.roll(a, -1, 1) >= min_neighbor_alpha)
+    )
+    arr[hole, 3] = 220
+
+
+def solidify_case_glass(
+    arr: np.ndarray,
+    dist_bg: np.ndarray,
+    sat: np.ndarray,
+    lum: np.ndarray,
+    r: np.ndarray,
+    g: np.ndarray,
+) -> None:
+    """Display case acrylic reads near gray backdrop — keep panels solid, glass slightly soft."""
+    glass = (dist_bg > 14) & (sat < 56) & (lum > 58) & (lum < 232)
+    panels = glass & (dist_bg > 20)
+    arr[panels, 3] = np.maximum(arr[panels, 3], 210)
+    frame = (dist_bg > 46) | (lum < 94)
+    arr[frame, 3] = np.maximum(arr[frame, 3], 248)
+    neon = (r > 112) & (r > g + 10) & (sat > 38)
+    arr[neon, 3] = 255
+
+
+def key_studio_case(im: Image.Image) -> Image.Image:
+    """Gray cyclorama display case — acrylic is backdrop-colored; avoid fringe wipe on glass."""
+    arr = np.array(im.convert('RGBA'))
+    r = arr[:, :, 0].astype(np.float32)
+    g = arr[:, :, 1].astype(np.float32)
+    b = arr[:, :, 2].astype(np.float32)
+    mx = np.max(arr[:, :, :3], axis=2).astype(np.float32)
+    mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
+    sat = mx - mn
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    bg = _corner_bg(r, g, b)
+    dist_bg = np.sqrt((r - bg[0]) ** 2 + (g - bg[1]) ** 2 + (b - bg[2]) ** 2)
+
+    alpha = _smoothstep(18.0, 46.0, dist_bg)
+    alpha[dist_bg < 15.0] = 0.0
+
+    subject = (dist_bg > 52) | (lum < 88) | ((sat > 36) & (dist_bg > 26))
+    alpha = np.where(subject, np.maximum(alpha, 0.96), alpha)
+
+    # Acrylic / neutral panels (similar RGB to backdrop — must not be fringe-wiped).
+    glass = (dist_bg > 14) & (sat < 54) & (lum > 60) & (lum < 230)
+    alpha[glass] = np.maximum(alpha[glass], 0.78)
+
+    arr[:, :, 3] = (np.clip(alpha, 0.0, 1.0) * 255.0).astype(np.uint8)
+
+    fg = alpha > 0.06
+    rb_max = np.maximum(r, b)
+    despill = fg & (g > rb_max + 2) & (lum < 155)
+    g_fix = np.where(g > rb_max, rb_max + (g - rb_max) * 0.08, g)
+    arr[:, :, 1] = np.where(despill, np.clip(g_fix, 0, 255), arr[:, :, 1]).astype(np.uint8)
+
+    unspill_foreground(arr)
+    solidify_case_glass(arr, dist_bg, sat, lum, r, g)
+
+    hull = _case_subject_hull(arr[:, :, 3])
+    in_hull = hull & (dist_bg > 10)
+    arr[in_hull, 3] = np.maximum(arr[in_hull, 3], 200)
+    glass_in_hull = hull & (sat < 58) & (lum > 55)
+    arr[glass_in_hull, 3] = np.maximum(arr[glass_in_hull, 3], 225)
+    _fill_alpha_holes(arr)
+
+    alpha_f = arr[:, :, 3].astype(np.float32) / 255.0
+    # Only drop pixels that are clearly backdrop — not low-dist acrylic.
+    fringe = (alpha_f < 0.10) & (dist_bg < 16) & ~hull
+    arr[fringe, 3] = 0
+    arr[fringe, :3] = 0
+
+    a_norm = arr[:, :, 3].astype(np.float32) / 255.0
+    arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
+    return Image.fromarray(arr)
+
+
 def key_studio_backdrop(im: Image.Image, shelf_acrylic_band: bool) -> Image.Image:
     """Gray / neutral cyclorama — distance key from corner backdrop (not green excess)."""
+    if not shelf_acrylic_band:
+        return key_studio_case(im)
+
     arr = np.array(im.convert('RGBA'))
     r = arr[:, :, 0].astype(np.float32)
     g = arr[:, :, 1].astype(np.float32)
@@ -158,10 +256,6 @@ def key_studio_backdrop(im: Image.Image, shelf_acrylic_band: bool) -> Image.Imag
     subject = (dist_bg > 58) | (lum < 90) | ((sat > 40) & (dist_bg > 32))
     alpha = np.where(subject, np.maximum(alpha, 0.92), alpha)
 
-    case_core = (dist_bg > 42) & (lum < 210)
-    alpha[case_core] = np.maximum(alpha[case_core], 0.98)
-
-    # Only boost acrylic / neon on foreground pixels — not neutral backdrop.
     fg_zone = dist_bg > 30
     protect = fg_zone & (
         ((sat < 32) & (lum > 100) & (lum < 220))
@@ -197,7 +291,22 @@ def key_studio_backdrop(im: Image.Image, shelf_acrylic_band: bool) -> Image.Imag
 def post_resize_cleanup(out_im: Image.Image, shelf_acrylic_band: bool) -> Image.Image:
     arr = np.array(out_im)
     unspill_foreground(arr)
-    drop_green_haze(arr, shelf_acrylic_band)
+    if shelf_acrylic_band:
+        drop_green_haze(arr, shelf_acrylic_band)
+    else:
+        r = arr[:, :, 0].astype(np.float32)
+        g = arr[:, :, 1].astype(np.float32)
+        b = arr[:, :, 2].astype(np.float32)
+        mx = np.max(arr[:, :, :3], axis=2).astype(np.float32)
+        mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
+        sat = mx - mn
+        lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        fg = arr[:, :, 3] > 80
+        glass = fg & (sat < 56) & (lum > 58) & (lum < 232)
+        arr[glass, 3] = np.maximum(arr[glass, 3], 215)
+        frame = fg & (lum < 96)
+        arr[frame, 3] = np.maximum(arr[frame, 3], 248)
+        _fill_alpha_holes(arr)
     a_norm = arr[:, :, 3].astype(np.float32) / 255.0
     arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
     return Image.fromarray(arr)
