@@ -22654,3 +22654,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Tools** neon **`I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg`** → **`neon-tools.png`** (899×281, white studio key + halo). **`LOBBY_NEON_TOOLS_ASSET_VERSION`** **`I78ubr42-v1`**, versioned **`LOBBY_NEON_TOOLS_SRC`**. **`npm run lobby:bake-neon-tools`**.
 
 **Update (same chat):** Lobby **products / tools / booking** neon nav signs **−60%** render size: **`LOBBY_NEON_NAV_HEIGHT_PX`** **16** (was **41px**); horizontal **`translateX`** kern scaled (~**40%**) in **`page.tsx`**.
+
+**Update (same chat):** **Products** neon **`20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg`** → **`neon-products.png`** (900×289). **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`20O0Gotz-v1`**.
