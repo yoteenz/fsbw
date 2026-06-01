@@ -22690,3 +22690,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why prior work looked unchanged:** Fal **`displayCase`** prompt only affects future source JPEG generation — not live lobby CSS. Earlier flex row used **`min(70vw, 500px)`**, wider than the narrow center rose panel, so signs sat over side walls.
 
 **Changes:** **`lobbySceneAssets.ts`** — row **`LOBBY_NEON_NAV_ROW_WIDTH_VW` 54**, max **340px**, padding **10px**, **`LOBBY_NEON_NAV_ROW_OFFSET_Y_PX` 131**. **`lobby/page.tsx`** — **CSS grid `1fr 1fr 1fr`**; Products **`flex-start`**, Tools **center**, Booking **`flex-end`** within thirds. Commit **`174ca209`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Case popover z-index + display-case Fal “same image”
+
+**Context (chat):** User: phone/register must stay fully visible above popover scrim (were hidden under fixed **`z-index` 10000** backdrop). Asked if display-case Fal prompt returning the same image is correct.
+
+**Decisions / outcomes:** Scrim stays **10000** on **`document.body`**. When popover open, display-case block **`LOBBY_CASE_POPOVER_STACK_Z_INDEX` 10002**; acrylic **`CASE.png`** dimmed (**opacity 0.2**); register/phone + popover card (**10003**) fully visible. Full **`LOBBY_DISPLAY_CASE_FAL_EDIT`** is preserve-heavy — near-duplicate Fal output is expected if upload already matches; use new **`LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY`** for red/green → flat gray backdrop swap only (`LOBBY_SCENE_FAL_PROMPTS.displayCaseBackgroundOnly`).
+
+**Changes:** **`lobbyPaymentIcons.ts`**, **`lobby/page.tsx`**, **`LobbyCasePropPopover.tsx`**, **`sceneLobbyDisplayCaseFal.ts`**, **`lobbySceneAssets.ts`**. Commit **`05d0d03a`** on **`master`** + **`preview/mobile`**.
