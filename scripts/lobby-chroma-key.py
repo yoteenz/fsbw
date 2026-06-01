@@ -351,15 +351,21 @@ def key_studio_case(im: Image.Image) -> Image.Image:
     lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
     bg = _corner_bg(r, g, b)
     dist_bg = np.sqrt((r - bg[0]) ** 2 + (g - bg[1]) ** 2 + (b - bg[2]) ** 2)
+    white_bg = bool(bg[0] > 240 and bg[1] > 240 and bg[2] > 240)
 
-    alpha = _smoothstep(18.0, 46.0, dist_bg)
-    alpha[dist_bg < 15.0] = 0.0
+    if white_bg:
+        alpha = _smoothstep(10.0, 36.0, dist_bg)
+        alpha[dist_bg < 10.0] = 0.0
+        subject = (dist_bg > 36) | ((sat > 28) & (dist_bg > 16))
+        glass = (dist_bg > 5) & (sat < 60) & (lum > 48) & (lum < 252)
+    else:
+        alpha = _smoothstep(18.0, 46.0, dist_bg)
+        alpha[dist_bg < 15.0] = 0.0
+        subject = (dist_bg > 52) | (lum < 88) | ((sat > 36) & (dist_bg > 26))
+        glass = (dist_bg > 14) & (sat < 54) & (lum > 60) & (lum < 230)
 
-    subject = (dist_bg > 52) | (lum < 88) | ((sat > 36) & (dist_bg > 26))
     alpha = np.where(subject, np.maximum(alpha, 0.96), alpha)
-
     # Acrylic / neutral panels (similar RGB to backdrop — must not be fringe-wiped).
-    glass = (dist_bg > 14) & (sat < 54) & (lum > 60) & (lum < 230)
     alpha[glass] = np.maximum(alpha[glass], 0.78)
 
     arr[:, :, 3] = (np.clip(alpha, 0.0, 1.0) * 255.0).astype(np.uint8)
@@ -382,7 +388,8 @@ def key_studio_case(im: Image.Image) -> Image.Image:
 
     alpha_f = arr[:, :, 3].astype(np.float32) / 255.0
     # Only drop pixels that are clearly backdrop — not low-dist acrylic.
-    fringe = (alpha_f < 0.10) & (dist_bg < 16) & ~hull
+    fringe_cut = 10.0 if white_bg else 16.0
+    fringe = (alpha_f < 0.10) & (dist_bg < fringe_cut) & ~hull
     arr[fringe, 3] = 0
     arr[fringe, :3] = 0
 
