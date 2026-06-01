@@ -16,7 +16,7 @@ export const LOBBY_NEON_NAV_FAL_CUTOUT_MODEL = NEON_LOGO_FAL_CUTOUT_MODEL;
 
 export const LOBBY_NEON_NAV_FAL_CONTROLS_NOTE = NEON_LOGO_FAL_GLOW_CONTROLS_NOTE;
 
-/** Shared look for all three lobby nav word signs (~41px rendered height on slide). */
+/** Shared look for all three lobby nav word signs (see `LOBBY_NEON_NAV_HEIGHT_PX` on lobby slide). */
 export const LOBBY_NEON_NAV_FAL_STYLE_LOCK = `STYLE LOCK (match lobby main neon logo — Frontal Slayer / FS sign):
 Hot pink–red neon glass tubing (#EB1C24 core, deeper red in tube shadows), realistic bent-glass letterforms, visible tube thickness and mounting clips where appropriate.
 Strong inner glow plus soft outer bloom/halo (not a flat sticker). Boutique luxury wig salon — Futura PT Medium weight, uppercase, wide letter spacing, clean geometric sans (same family feel as main logo nav).

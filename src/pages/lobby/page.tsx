@@ -46,6 +46,7 @@ import {
   LOBBY_NEON_BOOKING_SRC,
   LOBBY_NEON_LOGO_HEIGHT_PX,
   LOBBY_NEON_LOGO_SRC,
+  LOBBY_NEON_NAV_HEIGHT_PX,
   LOBBY_NEON_PRODUCTS_SRC,
   LOBBY_NEON_TOOLS_SRC,
   LOBBY_ROSE_BACKGROUND_SRC,
@@ -219,7 +220,7 @@ const LobbyPage: React.FC = () => {
               flexShrink: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(4px)',
+              transform: 'translateX(2px)',
             }}
             aria-label="Go to shop"
           >
@@ -231,7 +232,7 @@ const LobbyPage: React.FC = () => {
                 margin: 0,
                 padding: 0,
                 display: 'block',
-                height: '41px',
+                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 maxWidth: 'none',
                 width: 'auto',
                 pointerEvents: 'none',
@@ -257,7 +258,7 @@ const LobbyPage: React.FC = () => {
               flexShrink: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(-50px)',
+              transform: 'translateX(-20px)',
               zIndex: 2,
             }}
             aria-label="Go to tools"
@@ -270,7 +271,7 @@ const LobbyPage: React.FC = () => {
                 margin: 0,
                 padding: 0,
                 display: 'block',
-                height: '41px',
+                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 maxWidth: 'none',
                 width: 'auto',
                 pointerEvents: 'none',
@@ -285,7 +286,7 @@ const LobbyPage: React.FC = () => {
               position: 'relative',
               display: 'inline-flex',
               flexShrink: 0,
-              transform: 'translateX(-104px)',
+              transform: 'translateX(-42px)',
               pointerEvents: 'auto',
               alignItems: 'center',
             }}
@@ -301,7 +302,7 @@ const LobbyPage: React.FC = () => {
                 margin: 0,
                 padding: 0,
                 display: 'block',
-                height: '41px',
+                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 width: 'auto',
                 maxWidth: 'none',
                 verticalAlign: 'top'
