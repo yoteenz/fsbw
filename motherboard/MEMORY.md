@@ -22672,3 +22672,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** Match unit PDP chart modal scrim — **`rgba(0, 0, 0, 0.7)`**, **`backdropFilter` / `WebkitBackdropFilter`: `blur(3px)`**, fixed full viewport, **`zIndex` 10000**, click to dismiss. Popover panel **`zIndex` 10001** so it stays above scrim.
 
 **Changes:** **`src/pages/lobby/page.tsx`** — **`createPortal`** body scrim when **`lobbyCasePopover`** is **`register`** or **`phone`**; **`closeLobbyCasePopover`** callback. **`src/components/lobby/LobbyCasePropPopover.tsx`** — dialog **`zIndex`** **10001**. Commit **`1c43a579`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby display case Fal prompt (labeled gray-studio reference)
+
+**Context (chat):** User supplied desired display-case reference (clear acrylic, three red shelf labels **SLAY TOOLS / LACE PRODUCTS / HAIR PRODUCTS**, register + terminal on top, flat RGB ~140 gray backdrop) and asked to refine the Fal input prompt (MASTER + subject/preserve/background).
+
+**Changes:** **`src/constants/sceneLobbyDisplayCaseFal.ts`** — **`LOBBY_DISPLAY_CASE_FAL_EDIT`** (NBP edit, preserve labels/props/transparency, flat gray studio, no red/pink wash; bake via **`npm run lobby:bake-case`**). **`lobbySceneAssets.ts`** **`displayCase`** now points to that block. Commit **`b89d9af7`** on **`master`** + **`preview/mobile`**.
