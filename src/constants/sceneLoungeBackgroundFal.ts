@@ -1,38 +1,46 @@
 /**
- * Fal prompts for `landing2-background.png` — luxury lounge interior
- * (sofa, side table with wine, plant, white curtains). NOT the lobby rose wall.
- *
- * **Model:** `fal-ai/nano-banana-pro/edit` — three passes (same pattern as lobby rose wall).
+ * Fal prompts for `landing2-background.png` — sofa, wine, plant, white curtains.
+ * Unified carousel: smooth true-red walls (not pink), no wainscoting — then sync lobby from lounge.
  */
 
-import { SCENE_FAL_EDIT_MODEL, SCENE_FAL_EDIT_CONTROLS_NOTE } from './sceneRoseBackgroundFal';
+import {
+  LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF,
+  SCENE_FAL_EDIT_CONTROLS_NOTE,
+  SCENE_FAL_EDIT_MODEL,
+  SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT,
+  SCENE_UNIFIED_TRUE_RED_WALL,
+} from './sceneRoseBackgroundFal';
 
 export { SCENE_FAL_EDIT_MODEL, SCENE_FAL_EDIT_CONTROLS_NOTE };
 
 export const LOUNGE_BACKGROUND_FAL_THREE_PASS_NOTE =
-  'THREE-PASS on landing2-background.png: Pass 1 = preserve layout + enhance. Pass 2 = front fill only. Pass 3 = brighter center (TV/chairs zone).';
+  'Order: (A) Fix lounge walls to true red, no panels. (B) Sync lobby walls FROM lounge (2 images). (C) Pass 2–3 lighting on lounge if needed.';
 
-export const LOUNGE_BACKGROUND_PRESERVE_BLOCK = `Treat the uploaded image as the exact lounge to preserve — photograph to enhance, not a new room. Keep the same camera, crop, and every object position: luxury sofa, side table with wine glass/bottle, potted plant, floor-to-ceiling white curtains, wall moldings, marble floor, and open center area for the TV. Do not add, remove, swap, or move furniture. No people, text, or logos.`;
+export const LOUNGE_BACKGROUND_PRESERVE_BLOCK = `Treat the uploaded image as the exact lounge to preserve — same camera, crop, white sofa, glass table with wine and small flower props, plant, white curtains, marble floor, center open for TV. Do not move furniture. No people, text, or logos.`;
 
-/** Match lobby carousel — walls/floor/ceiling only; lounge has no rose panel. */
-export const LOUNGE_LOBBY_TRANSITION_ALIGNMENT = `For horizontal swipe from lobby: match ceiling line, crown molding if visible, dusty-rose or mauve-pink side wall tone, and marble floor horizon/vein direction with the lobby panel — do not shift the floor line. This scene is a separate lounge with sofa and white curtains, not a floral rose wall.`;
+/** Step A — fix pink/mauve paneled walls → true red smooth walls. */
+export const LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS = `${LOUNGE_BACKGROUND_PRESERVE_BLOCK} ${SCENE_UNIFIED_TRUE_RED_WALL} Remove wainscoting panel rectangles and molding — smooth flat red plaster on all visible walls. ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT}`;
 
-export const LOUNGE_BACKGROUND_FAL_NEGATIVE_PASS1 =
-  'rose wall, floral wall, dense red roses, different sofa, missing wine table, missing plant, wrong curtains, pink walls, different room layout, extra furniture, people, text, logos, plastic CGI';
+export const LOUNGE_BACKGROUND_FAL_TRUE_RED_NEGATIVE =
+  'pink walls, dusty rose, mauve, coral, pastel, wainscoting, wall panels, molding, full rose floral wall on wall surface, change layout, people';
 
-export const LOUNGE_BACKGROUND_FAL_PASS1 = `${LOUNGE_BACKGROUND_PRESERVE_BLOCK} ${LOUNGE_LOBBY_TRANSITION_ALIGNMENT} Photoreal polish: fabric texture on sofa, glass and wine highlights on table, natural plant leaves, soft sheer white curtains with gentle window glow from behind curtains. Warm boutique salon mood.`;
+/** Step B — lobby uses this lounge file as 2nd image; see LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF in sceneRoseBackgroundFal.ts */
 
-export const LOUNGE_BACKGROUND_FAL_PASS2_FRONT_LIGHT = `Add a large soft fill light to the scene. Fill light is in front of the camera, warm white 3200K, medium-strong — brighten the front of the sofa, side table, wine, plant, and white curtains so they read clearly and dimensional. Keep existing soft backlight/window glow through the curtains unchanged. Do not change layout, objects, or colors.`;
+export const LOUNGE_BACKGROUND_FAL_PASS2_FRONT_LIGHT = `Add a large soft fill light in front of the camera, warm white 3200K, medium-strong — brighten sofa, table, wine, plant, and curtains. Keep true red walls and window glow unchanged.`;
 
 export const LOUNGE_BACKGROUND_FAL_PASS2_NEGATIVE =
-  'remove window glow, silhouette furniture, dark sofa, underexposed room, change layout, rose wall, floral panel, people';
+  'pink walls, mauve, silhouette furniture, change wall color, full floral wall, people';
 
-export const LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN = `Increase fill light strength in the center of the frame only — slightly brighter mid-area where the TV and salon chairs sit (sofa and table stay natural). Keep curtain glow, walls, marble floor, and all object positions unchanged.`;
+export const LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN = `Increase fill light in the center only — brighter mid-area for TV and salon chairs. Keep true red walls, curtains, marble, furniture unchanged.`;
 
 export const LOUNGE_BACKGROUND_FAL_PASS3_NEGATIVE =
-  'change layout, move sofa, shift floor horizon, remove curtains, rose wall, dark center';
+  'pink walls, change layout, shift floor horizon, dark center';
 
-export const LOUNGE_BACKGROUND_FAL_EDIT = `${LOUNGE_BACKGROUND_FAL_THREE_PASS_NOTE} PASS 3: ${LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN} PASS 3 NEG: ${LOUNGE_BACKGROUND_FAL_PASS3_NEGATIVE} PASS 2: ${LOUNGE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 2 NEG: ${LOUNGE_BACKGROUND_FAL_PASS2_NEGATIVE} PASS 1: ${LOUNGE_BACKGROUND_FAL_PASS1} PASS 1 NEG: ${LOUNGE_BACKGROUND_FAL_NEGATIVE_PASS1}`;
+export const LOUNGE_BACKGROUND_FAL_EDIT = `${LOUNGE_BACKGROUND_FAL_THREE_PASS_NOTE} STEP A TRUE RED: ${LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS} STEP A NEG: ${LOUNGE_BACKGROUND_FAL_TRUE_RED_NEGATIVE} LOBBY SYNC (upload lobby + lounge): ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF} PASS 3: ${LOUNGE_BACKGROUND_FAL_PASS3_MID_BRIGHTEN} PASS 2: ${LOUNGE_BACKGROUND_FAL_PASS2_FRONT_LIGHT}`;
+
+/** @deprecated — paneled dusty-rose walls; user prefers true red + lounge-led lobby sync. */
+export const LOUNGE_BACKGROUND_FAL_PASS1_WALLS_FROM_LOBBY_REF =
+  'Deprecated: use LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS then sync lobby from lounge instead.';
 
 export function loungeBackgroundFalWorkflowNote(): string {
   return `[FAL] ${SCENE_FAL_EDIT_MODEL}. landing2-background.png. ${SCENE_FAL_EDIT_CONTROLS_NOTE}`;
