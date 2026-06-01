@@ -22586,3 +22586,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **TV asset** from **`kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg`** (4800×3520 studio gray) → **`lounge-tv-design.png`** 820×612; bake uses corner gray key (not green). **`LOUNGE_TV_DESIGN_ASSET_VERSION`** = **`kv6DR-SLY`**.
 
 **Update (same chat):** **TV regen** — removed floor-reflection artifacts (reflection mask + TV-core crop, premultiply). **`kv6DR-v2`**. Removed **curtain + remote hand DOWNLOAD** on lounge. **Chairs** +10% (**152px**), up **20px**, right **10px** (**X 45**, **Y 226** / large **18**).
+
+**Update (same chat):** Lounge **TV** — user asked **5px right** + **center gray play** on screen. **`LOUNGE_LOBBY_TV_OFFSET_X_PX`** 48→**53**. Play anchored to glass center on **`lounge-tv-design.png`** via **`LOUNGE_TV_DESIGN_PLAY_ANCHOR`** `{ x: 0.5, y: 0.419 }` and **`loungeLobbyTvDesignPlayButtonStyle()`**; lobby TV wrapper uses **`height: frameH`**, **`width: auto`** on img (no extra frame width letterbox). Commit **`4a7fdf8a`** on **`master`** + **`preview/mobile`**.
