@@ -51,11 +51,11 @@ export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
 /** @deprecated Stack wrapper removed — asset/panel use separate body portals. */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
-/** Register / phone bitmap — `createPortal` on `document.body`, above scrim (10000). */
-export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = 10005;
+/** Register / phone bitmap — above lobby scrim and carousel slide (`transform` trap). */
+export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = 999998;
 
-/** Popover card — `createPortal` on `document.body`, above prop asset. */
-export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = 10006;
+/** Popover card — just above portaled prop asset. */
+export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = 999999;
 
 export type LobbyPaymentIcon = {
   id: string;
