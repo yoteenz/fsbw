@@ -358,7 +358,7 @@ export function LobbyCasePropPopover({
             position: 'absolute',
             bottom: `calc(100% + ${lobbyPopoverPx(10)}px)`,
             ...panelPositionStyle(align),
-            zIndex: 60,
+            zIndex: 10001,
             width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
             minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
             maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
