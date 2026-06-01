@@ -1,4 +1,5 @@
 import type React from 'react';
+import { LOUNGE_TV_DESIGN_PLAY_ANCHOR } from './loungeTvAssets';
 
 /** Charcoal plastic bezel (shared by lounge lobby TV + overlay animation). */
 export const LOUNGE_TV_BEZEL = { top: 5, right: 5, bottom: 8, left: 5 };
@@ -10,7 +11,7 @@ export const LOUNGE_TV_SCREEN_ASPECT = 0.72;
 export const LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX = 36;
 
 /** Lobby lounge slide — TV anchor nudge from viewport center. */
-export const LOUNGE_LOBBY_TV_OFFSET_X_PX = 48;
+export const LOUNGE_LOBBY_TV_OFFSET_X_PX = 53;
 export const LOUNGE_LOBBY_TV_OFFSET_Y_PX = -10;
 
 /** Expanded overlay TV size multiplier (1 = full computed size). */
@@ -47,6 +48,16 @@ export function loungeTvDimensionsFromFrameHeight(frameH: number) {
   const screenH = frameH - LOUNGE_TV_BEZEL.top - LOUNGE_TV_BEZEL.bottom;
   const screenW = screenH / LOUNGE_TV_SCREEN_ASPECT;
   return loungeTvDimensionsFromScreenWidth(screenW);
+}
+
+/** Absolute centering for the lobby static-TV play control on the design PNG. */
+export function loungeLobbyTvDesignPlayButtonStyle(): React.CSSProperties {
+  return {
+    position: 'absolute',
+    left: `${LOUNGE_TV_DESIGN_PLAY_ANCHOR.x * 100}%`,
+    top: `${LOUNGE_TV_DESIGN_PLAY_ANCHOR.y * 100}%`,
+    transform: 'translate(-50%, -50%)',
+  };
 }
 
 export function loungeTvFrameShellStyle(overrides?: React.CSSProperties): React.CSSProperties {

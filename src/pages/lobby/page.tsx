@@ -65,10 +65,10 @@ import {
   LOBBY_REGISTER_POPOVER_TITLE,
 } from '../../constants/lobbyPropPopoverCopy';
 import {
-  LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
   LOUNGE_LOBBY_TV_OFFSET_X_PX,
   LOUNGE_LOBBY_TV_OFFSET_Y_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
+  loungeLobbyTvDesignPlayButtonStyle,
   loungeTvDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
 
@@ -630,7 +630,7 @@ const LoungePage: React.FC = () => {
            <div
              style={{
                position: 'relative',
-               width: loungeLobbyTvFrame.frameW + LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
+               display: 'inline-block',
                height: loungeLobbyTvFrame.frameH,
                lineHeight: 0,
              }}
@@ -640,11 +640,9 @@ const LoungePage: React.FC = () => {
                alt=""
                draggable={false}
                style={{
-                 width: '100%',
                  height: '100%',
+                 width: 'auto',
                  display: 'block',
-                 objectFit: 'contain',
-                 objectPosition: 'center',
                }}
              />
              {!tvOpen ? (
@@ -653,10 +651,7 @@ const LoungePage: React.FC = () => {
                  onClick={openLoungeTv}
                  aria-label="Play lounge media"
                  style={{
-                   position: 'absolute',
-                   left: '50%',
-                   top: '50%',
-                   transform: 'translate(-50%, -50%)',
+                   ...loungeLobbyTvDesignPlayButtonStyle(),
                    margin: 0,
                    padding: '12px',
                    border: 'none',
