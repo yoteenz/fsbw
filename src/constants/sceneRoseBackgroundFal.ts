@@ -57,13 +57,30 @@ export const LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT = `Outpaint upward onl
 /**
  * Lobby thick white baseboard where red wall meets marble (not the thin lounge strip).
  */
-export const SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY = `BASEBOARD — MATCH LOBBY (Image 2): where red walls meet the marble floor, add the same thick white architectural baseboard as landing-background.png — multi-tiered crown/baseboard molding with stacked horizontal ridges, bright clean white, same height and depth as the lobby. Replace the thin flat white strip at the floor line. Marble floor pattern and horizon unchanged; do not move sofa, table, pedestal, or plant.`;
+export const SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY = `BASEBOARD — MATCH LOBBY (Image 2): where red walls meet the marble floor, add the same thick white architectural baseboard as landing-background.png — exactly TWO horizontal ridge lines (two-step profile), bright clean white, same height and depth as the lobby. Not three ridges. Not a thin flat strip. Marble floor pattern and horizon unchanged; do not move sofa, table, pedestal, or plant.`;
 
 /** Ceiling + baseboard pass on lounge (Image 1) using lobby trim reference (Image 2). */
 export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH = `IMAGE 1 = lounge to edit. IMAGE 2 = lobby (landing-background.png) — ceiling and baseboard reference only. ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} ${SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY} ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT} Keep true red walls, sofa, glass table, wine, plant, white curtains, and furniture positions unchanged.`;
 
 export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH_NEGATIVE =
   'lowering crown molding, moving ceiling down, low ceiling, thin baseboard, flat shoe molding only, no baseboard, missing baseboard, coffered ceiling, ceiling panel, ceiling ledge, second horizontal ceiling line, pink walls, move furniture, shift floor horizon, people, text, logos';
+
+/**
+ * Fix pass for lounge output that has 3 baseboard ridges, ceiling soffit panel, and floor almost aligned.
+ * Image 1 = current lounge render; Image 2 = lobby (landing-background.png).
+ */
+export const LOUNGE_BACKGROUND_FAL_FIX_TRIM_CURRENT_OUTPUT = `IMAGE 1 = lounge render to fix. IMAGE 2 = lobby (landing-background.png) — copy ceiling and floor trim only.
+
+FLOOR LOCK: marble floor horizon and veining are almost correct — do not shift the floor line up or down. Do not move sofa, table, wine, plant, curtains, or pedestal.
+
+CEILING — RAISE + REMOVE PANEL: delete the extra white horizontal ceiling band/soffit/panel between the flat ceiling and the crown molding (the tiered strip under the ceiling). Replace with one tall continuous flat off-white ceiling like Image 2, extending down to a single white crown molding line. Raise the visible ceiling (more flat white above the crown, same as lobby). Do not add a second ceiling step. Do not lower the crown molding row downward into the red wall.
+
+BASEBOARD — EXACTLY TWO RIDGES: at the red wall + marble junction, match Image 2 baseboard profile — thick white architectural baseboard with exactly TWO horizontal ridge lines (two steps), same height and depth as lobby. Remove the third ridge line — not three steps, not four. Not a thin flat strip.
+
+Keep true red walls and all furniture unchanged.`;
+
+export const LOUNGE_BACKGROUND_FAL_FIX_TRIM_CURRENT_OUTPUT_NEGATIVE =
+  'three baseboard ridges, third baseboard line, extra baseboard step, four baseboard lines, ceiling soffit, ceiling panel, tray ceiling, coffered ceiling, second horizontal ceiling line above crown, lowering crown molding, moving ceiling down, dropped ceiling, compressed room, shift floor horizon, move furniture, thin baseboard, pink walls, people, text, logos';
 
 /**
  * Unified smooth red walls (user preference) — NOT pink/mauve, NOT lobby wainscoting.
