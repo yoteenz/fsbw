@@ -14,6 +14,12 @@ export const LOUNGE_TV_DESIGN_SRC_REMOTE =
 /** Full TV bezel + off screen PNG; lounge slide renders this image (play overlay on top). */
 export const LOUNGE_TV_DESIGN_SRC = `/assets/lounge-tv-design.png?v=${LOUNGE_TV_DESIGN_ASSET_VERSION}`;
 
+/**
+ * Play control anchor on `lounge-tv-design.png` (fraction of image box).
+ * Glass center is above geometric center because of the bottom chin in the asset.
+ */
+export const LOUNGE_TV_DESIGN_PLAY_ANCHOR = { x: 0.5, y: 0.419 } as const;
+
 /** @deprecated Black screen plate only; use {@link LOUNGE_TV_DESIGN_SRC} for TV design downloads. */
 export const LOUNGE_TV_SCREEN_SRC = '/assets/tv-screen.png';
 
