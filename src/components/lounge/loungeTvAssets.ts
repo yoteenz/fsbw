@@ -6,7 +6,7 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
 /** Bump when replacing `public/assets/lounge-tv-design.png` (`npm run lounge:bake-tv-design`). */
-export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'kv6DR-SLY';
+export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'kv6DR-v2';
 
 export const LOUNGE_TV_DESIGN_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg';

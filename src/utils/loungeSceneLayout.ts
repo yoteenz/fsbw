@@ -27,14 +27,14 @@ export function loungePageMinHeightCss(): string {
 /** Lounge salon chairs placement (inline styles on lounge page — not index.css). */
 export const LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX = 1024;
 /** Default Y nudge from viewport center (mobile / tablet). */
-export const LOUNGE_SALON_CHAIRS_OFFSET_Y_PX = 246;
+export const LOUNGE_SALON_CHAIRS_OFFSET_Y_PX = 226;
 /** Extra downward nudge on large screens only (floor-anchored layout). */
-export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 38;
+export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 18;
 /** Y offset on large screens (1024px+). */
 export const LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX =
   LOUNGE_SALON_CHAIRS_OFFSET_Y_PX + LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX;
-export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 138;
-export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 35;
+export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 152;
+export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 45;
 
 export function useLoungeLargeViewport(): boolean {
   const [isLarge, setIsLarge] = useState(() => {
