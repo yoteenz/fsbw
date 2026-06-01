@@ -30,7 +30,7 @@ export const LOUNGE_SCENE_FAL_PROMPTS = {
   /** @deprecated use loungeBackground */
   roseBackground: `${loungeBackgroundFalWorkflowNote()} ${LOUNGE_BACKGROUND_FAL_EDIT}`,
 
-  neonLogo: `Photorealistic neon sign for a luxury wig boutique brand "Frontal Slayer". Hot pink and red neon glass tubing, soft bloom and wall reflection, shot straight-on on a dark charcoal wall. Premium salon aesthetic, crisp letterforms, no extra text. PNG with fully transparent background (alpha), no border, no floor, no mockup frame.`,
+  neonLogo: `Same as lobby — see LOBBY_SCENE_FAL_PROMPTS.neonLogo (two-pass glow then transparent cutout).`,
 
   salonChairs: `Photorealistic pair of luxury salon styling chairs for a high-end wig boutique lounge. Front 3/4 view, neutral upholstery (taupe or charcoal), chrome bases, boutique styling. PNG with fully transparent background, no floor shadow plate, no room behind chairs.`,
 
