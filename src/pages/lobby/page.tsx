@@ -47,6 +47,8 @@ import {
   LOBBY_NEON_LOGO_HEIGHT_PX,
   LOBBY_NEON_LOGO_SRC,
   LOBBY_NEON_NAV_HEIGHT_PX,
+  LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX,
+  LOBBY_NEON_NAV_ROW_PADDING_X_PX,
   LOBBY_NEON_PRODUCTS_SRC,
   LOBBY_NEON_TOOLS_SRC,
   LOBBY_ROSE_BACKGROUND_SRC,
@@ -189,18 +191,26 @@ const LobbyPage: React.FC = () => {
           </div>
         </div>
         
-        {/* Navigation Links Container */}
+        {/* Navigation Links Container — spaced evenly inside rose panel */}
         <div
-          className="flex flex-row justify-center items-center"
           style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
-            transform: 'translate(calc(-50% + 51px), calc(-50% - 131px))',
+            transform: 'translate(-50%, calc(-50% - 131px))',
             zIndex: 35,
             margin: 0,
             padding: 0,
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 'min(70vw, 100%)',
+            maxWidth: `${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px`,
+            paddingLeft: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
+            paddingRight: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
+            boxSizing: 'border-box',
           }}
         >
           {/* Products → /home/shop (full asset is the hit target) */}
@@ -216,11 +226,13 @@ const LobbyPage: React.FC = () => {
             }}
             style={{
               position: 'relative',
-              display: 'inline-block',
-              flexShrink: 0,
+              flex: '1 1 0',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minWidth: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(3px)',
             }}
             aria-label="Go to shop"
           >
@@ -254,11 +266,13 @@ const LobbyPage: React.FC = () => {
             }}
             style={{
               position: 'relative',
-              display: 'inline-block',
-              flexShrink: 0,
+              flex: '1 1 0',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minWidth: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(-26px)',
               zIndex: 2,
             }}
             aria-label="Go to tools"
@@ -284,11 +298,12 @@ const LobbyPage: React.FC = () => {
           <span
             style={{
               position: 'relative',
-              display: 'inline-flex',
-              flexShrink: 0,
-              transform: 'translateX(-55px)',
-              pointerEvents: 'auto',
+              flex: '1 1 0',
+              display: 'flex',
+              justifyContent: 'center',
               alignItems: 'center',
+              minWidth: 0,
+              pointerEvents: 'auto',
             }}
           >
             <img
