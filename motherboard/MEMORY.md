@@ -22700,3 +22700,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** Scrim stays **10000** on **`document.body`**. When popover open, display-case block **`LOBBY_CASE_POPOVER_STACK_Z_INDEX` 10002**; acrylic **`CASE.png`** dimmed (**opacity 0.2**); register/phone + popover card (**10003**) fully visible. Full **`LOBBY_DISPLAY_CASE_FAL_EDIT`** is preserve-heavy — near-duplicate Fal output is expected if upload already matches; use new **`LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY`** for red/green → flat gray backdrop swap only (`LOBBY_SCENE_FAL_PROMPTS.displayCaseBackgroundOnly`).
 
 **Changes:** **`lobbyPaymentIcons.ts`**, **`lobby/page.tsx`**, **`LobbyCasePropPopover.tsx`**, **`sceneLobbyDisplayCaseFal.ts`**, **`lobbySceneAssets.ts`**. Commit **`05d0d03a`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby PRODUCTS/TOOLS/BOOKING neon legibility (Fal + CSS)
+
+**Context (chat):** Nav neon signs barely visible/legible on lit rose wall (thin pink tubes on crimson petals). User asked how to prompt individual assets while keeping neon styling.
+
+**Decisions / outcomes:** Fal source must be **black plate only** (not rose wall in JPEG). Pass 1 adds **white-hot tube cores**, **pale outer halo**, **+15–25% stroke** if thin; optional Pass 2 short legibility pass. **`npm run lobby:bake-neon-*`** after Fal. Immediate UI: **`LOBBY_NEON_NAV_COMPOSITE_FILTER`** drop-shadow on lobby nav imgs.
+
+**Changes:** **`sceneLobbyNeonNavFal.ts`** — **`LOBBY_NEON_NAV_FAL_SOURCE_PLATE`**, **`LOBBY_NEON_NAV_FAL_LEGIBILITY_ON_ROSE`**, **`LOBBY_NEON_NAV_FAL_PASS2_ROSE_SEPARATION`**, updated PASS1 strings. **`lobbySceneAssets.ts`**, **`lobby/page.tsx`**. Commit **`f8eaf924`**.
