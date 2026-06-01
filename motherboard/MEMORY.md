@@ -22580,3 +22580,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Lounge TV design** — **`lounge-tv-design.png`** reference (820×602), **`sceneLoungeTvFal.ts`** NBP **`LOUNGE_TV_DESIGN_FAL_EDIT`**, **`LOUNGE_SCENE_FAL_PROMPTS.tvDesign`**. **DOWNLOAD** top-left on lounge **`LoungeTvFrame`** (dev/admin/**`?lobbyAssets=1`**). Live TV still CSS bezel; PNG is Fal/download reference.
 
 **Update (same chat):** Lounge **salon chairs** — **25% smaller** (**`LOUNGE_SALON_CHAIRS_HEIGHT_PX`** 160→120), **20px up** (mobile **`OFFSET_Y`** 290→270, large **`LARGE_EXTRA_Y`** 82→62) in **`loungeSceneLayout.ts`**.
+
+**Update (same chat):** Lounge **TV** — slide uses **`lounge-tv-design.png`** image (not CSS **`LoungeTvFrame`**); **DOWNLOAD** removed. **`lounge:bake-tv-design`**, **`LOUNGE_TV_DESIGN_SRC_REMOTE`** = user **`pNu1yJzm…` JPEG** (same file as salon chairs at time of bake — rebake when TV art is on that URL).
