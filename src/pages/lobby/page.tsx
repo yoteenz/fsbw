@@ -33,10 +33,7 @@ import {
   sceneCarouselSlideMinHeightCss,
 } from '../../utils/sceneCarouselBackground';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
-import {
-  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
-  LOBBY_CASE_POPOVER_STACK_Z_INDEX,
-} from '../../constants/lobbyPaymentIcons';
+import { LOBBY_CASE_POPOVER_SCRIM_Z_INDEX } from '../../constants/lobbyPaymentIcons';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
@@ -402,7 +399,7 @@ const LobbyPage: React.FC = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(calc(-50% + 4px), calc(-50% + 255px))',
-          zIndex: lobbyCasePopover !== null ? LOBBY_CASE_POPOVER_STACK_Z_INDEX : 20,
+          zIndex: 20,
           maxWidth: '753px',
         }}>
           {/* Acrylic Case */}
@@ -411,13 +408,7 @@ const LobbyPage: React.FC = () => {
               src={LOBBY_CASE_SRC}
               alt="Display Case"
               className="h-auto"
-              style={{
-                display: 'block',
-                width: '230px',
-                maxWidth: '230px',
-                opacity: lobbyCasePopover !== null ? 0.2 : 1,
-                transition: 'opacity 0.3s ease-out',
-              }}
+              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
             />
             
             {/* Register — tap for payment methods popover */}
@@ -425,6 +416,7 @@ const LobbyPage: React.FC = () => {
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
+                keepVisibleAboveScrim={lobbyCasePopover !== null}
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
@@ -452,6 +444,7 @@ const LobbyPage: React.FC = () => {
               <LobbyCasePropPopover
                 popoverId="phone"
                 activeId={lobbyCasePopover}
+                keepVisibleAboveScrim={lobbyCasePopover !== null}
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
