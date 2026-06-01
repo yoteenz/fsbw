@@ -713,17 +713,7 @@ const LoungePage: React.FC = () => {
       
       {/* Salon Chairs — inline placement (large viewport uses larger Y offset from loungeSceneLayout) */}
       <div style={loungeSalonChairsAnchorStyle(isLargeLoungeViewport)}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content', lineHeight: 0 }}>
-          {showAssetDownloads ? (
-            <LobbyAssetDownloadLink
-              href={LOUNGE_SALON_CHAIRS_SRC}
-              downloadFilename="salon-chairs.png"
-              falPrompt={LOUNGE_SCENE_FAL_PROMPTS.salonChairs}
-              style={{ position: 'absolute', top: -14, left: 0, zIndex: 60 }}
-            />
-          ) : null}
-          <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
-        </div>
+        <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
       </div>
       
       {/* Left Arrow Button - Part of page design, scrolls with content */}
