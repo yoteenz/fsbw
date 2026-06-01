@@ -22610,3 +22610,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lobby **display case** — **`RRrEEA6lu1lkeleVPTgsP_wgs8vmEv.jpeg`** → **`CASE.png`** (920×500, green key + acrylic protect). **`LOBBY_CASE_ASSET_VERSION`** **`RRrEEA6l-v1`**, **`npm run lobby:bake-case`**, **`lobbyCaseAssets.ts`**.
 
 **Update (same chat):** Lobby **shelves** green fringe fix — removed spill pass that held green at **α≈200**; stronger key/despill + post-resize fringe wipe. All three rebaked; **`LOBBY_SHELF_ASSET_VERSION`** **`5Cof6W3Y-v2`**.
+
+**Update (same chat):** **Display case DOWNLOAD** removed (plain **`<img>`**). Shared **`scripts/lobby-chroma-key.py`** — acrylic **unspill** (G→neutral glass), green **haze** removal, post-resize cleanup. Rebaked **CASE** + all shelves: **`RRrEEA6l-v2`**, **`5Cof6W3Y-v3`**. **`LOBBY_SCENE_FAL_PROMPTS.shelfBackdropNote`**: gray/off-white/magenta backdrop better than green for acrylic; green OK with bake scripts.

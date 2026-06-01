@@ -38,7 +38,7 @@ import {
   isLobbyTransitionVideoEnabledFromSearch,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import { LobbyAssetDownloadAnchor, LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
+import { LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
 import { useLobbyAssetDownloadsVisible } from '../../hooks/useLobbyAssetDownloadsVisible';
 import {
