@@ -160,25 +160,6 @@ const LobbyPage: React.FC = () => {
       {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
       <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
 
-      {showAssetDownloads ? (
-        <div
-          style={{
-            position: 'absolute',
-            top: 8,
-            left: 8,
-            zIndex: 500,
-            pointerEvents: 'none',
-          }}
-        >
-          <LobbyAssetDownloadLink
-            href={LOBBY_ROSE_BACKGROUND_SRC}
-            downloadFilename="landing-background.png"
-            falPrompt={LOBBY_SCENE_FAL_PROMPTS.roseBackground}
-            style={{ pointerEvents: 'auto' }}
-          />
-        </div>
-      ) : null}
-      
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
         {/* Placeholder for logo to maintain flex flow */}
@@ -196,14 +177,6 @@ const LobbyPage: React.FC = () => {
           width: 'fit-content'
         }}>
           <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
-            {showAssetDownloads ? (
-              <LobbyAssetDownloadLink
-                href={LOBBY_NEON_LOGO_SRC}
-                downloadFilename="neon-logo.png"
-                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonLogo}
-                style={{ position: 'absolute', top: 4, left: 0, zIndex: 60 }}
-              />
-            ) : null}
             <img
               src={LOBBY_NEON_LOGO_SRC}
               alt="Frontal Slayer"
@@ -654,25 +627,6 @@ const LoungePage: React.FC = () => {
         })}
       />
 
-      {showAssetDownloads ? (
-        <div
-          style={{
-            position: 'absolute',
-            top: 8,
-            left: 8,
-            zIndex: 500,
-            pointerEvents: 'none',
-          }}
-        >
-          <LobbyAssetDownloadLink
-            href={LOUNGE_BACKGROUND_SRC}
-            downloadFilename="landing2-background.png"
-            falPrompt={LOUNGE_SCENE_FAL_PROMPTS.loungeBackground}
-            style={{ pointerEvents: 'auto' }}
-          />
-        </div>
-      ) : null}
-      
       {/* TV + play — play opens animated black screen + theater curtains */}
        <div
          ref={tvFrameRef}
