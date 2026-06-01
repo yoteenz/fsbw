@@ -40,7 +40,6 @@ import { LobbyAssetDownloadAnchor, LobbyAssetDownloadLink } from '../../componen
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
 import { useLobbyAssetDownloadsVisible } from '../../hooks/useLobbyAssetDownloadsVisible';
 import {
-  LOBBY_CASE_PHONE_DOWNLOAD_SRC,
   LOBBY_CASE_REGISTER_SRC,
   LOBBY_CASE_SRC,
   LOBBY_NEON_BOOKING_FALLBACK_SRC,
@@ -424,14 +423,6 @@ const LobbyPage: React.FC = () => {
             
             {/* Register — tap for payment methods popover */}
             <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>
-              {showAssetDownloads ? (
-                <LobbyAssetDownloadLink
-                  href={LOBBY_CASE_REGISTER_SRC}
-                  downloadFilename="REGISTER.png"
-                  falPrompt={LOBBY_SCENE_FAL_PROMPTS.caseRegister}
-                  style={{ position: 'absolute', top: -14, left: 0, zIndex: 30 }}
-                />
-              ) : null}
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
@@ -459,14 +450,6 @@ const LobbyPage: React.FC = () => {
               className="absolute right-8"
               style={{ top: '-33px', zIndex: 25, transform: 'translateX(-6px)' }}
             >
-              {showAssetDownloads ? (
-                <LobbyAssetDownloadLink
-                  href={LOBBY_CASE_PHONE_DOWNLOAD_SRC}
-                  downloadFilename="lobby-phone.png"
-                  falPrompt={LOBBY_SCENE_FAL_PROMPTS.casePhone}
-                  style={{ position: 'absolute', top: -14, right: 0, zIndex: 30 }}
-                />
-              ) : null}
               <LobbyCasePropPopover
                 popoverId="phone"
                 activeId={lobbyCasePopover}
