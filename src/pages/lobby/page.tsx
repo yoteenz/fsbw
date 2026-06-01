@@ -70,6 +70,8 @@ import {
 } from '../../constants/lobbyPropPopoverCopy';
 import {
   LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
+  LOUNGE_LOBBY_TV_OFFSET_X_PX,
+  LOUNGE_LOBBY_TV_OFFSET_Y_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
   loungeTvDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
@@ -617,7 +619,7 @@ const LoungePage: React.FC = () => {
            position: 'absolute',
            top: '50%',
            left: '50%',
-           transform: 'translate(calc(-50% + 58px), calc(-50% + 50px))',
+           transform: `translate(calc(-50% + ${LOUNGE_LOBBY_TV_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_LOBBY_TV_OFFSET_Y_PX}px))`,
            zIndex: tvOpen ? 8 : 10,
            width: 'fit-content',
          }}
@@ -677,7 +679,7 @@ const LoungePage: React.FC = () => {
                  width: '100%',
                  height: '100%',
                  display: 'block',
-                 objectFit: 'contain',
+                 objectFit: 'fill',
                  objectPosition: 'center',
                }}
              />
