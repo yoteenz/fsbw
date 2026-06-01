@@ -60,29 +60,18 @@ protect = (
     | ((lum > 50) & (ge < 30) & (sat < 95))
     | ((r > 115) & (r > g + 12) & (sat > 40))
 )
-# True green-screen backdrop.
-is_bg = (ge > 42) & (g > 70)
+# True green-screen backdrop (slightly aggressive to drop green haze).
+is_bg = (ge > 36) & (g > 65)
 
 alpha = np.zeros(r.shape, dtype=np.float32)
 alpha[protect] = 255.0
 alpha[is_bg] = 0.0
 mid = ~protect & ~is_bg
 if np.any(mid):
-    t = np.clip((ge[mid] - 18.0) / 24.0, 0.0, 1.0)
+    t = np.clip((ge[mid] - 10.0) / 22.0, 0.0, 1.0)
     alpha[mid] = 255.0 * (1.0 - t)
 
-# Feather green spill on hair edges only (keep mostly opaque).
-spill = mid & (ge >= 18) & (ge <= 38)
-alpha[spill] = np.maximum(alpha[spill], 200.0)
-
 arr[:, :, 3] = np.clip(alpha, 0, 255).astype(np.uint8)
-
-# Despill green on hair only — skip bright glass, white rims, red neon label.
-fg = arr[:, :, 3] > 20
-rb_max = np.maximum(r, b)
-despill_mask = fg & (lum < 130) & (r < g + 25)
-g_despill = np.where(g > rb_max, rb_max + (g - rb_max) * 0.12, g)
-arr[:, :, 1] = np.where(despill_mask, np.clip(g_despill, 0, 255), arr[:, :, 1]).astype(np.uint8)
 
 hh, ww = arr.shape[:2]
 y_shelf = int(hh * 0.42)
@@ -93,13 +82,53 @@ shelf_body[y_shelf:, :] = True
 acrylic = shelf_body & (lum > 35) & (ge < 34) & (arr[:, :, 3] > 0)
 arr[acrylic, 3] = np.maximum(arr[acrylic, 3], 235)
 
-# Drop green backdrop fringe only (not on shelf acrylic).
-fringe = (arr[:, :, 3] < 40) & (ge > 35) & (g > 65) & (lum < 90) & ~shelf_body
-arr[fringe, 3] = 0
-arr[fringe, :3] = 0
-wispy = (arr[:, :, 3] < 28) & (ge > 22) & (lum < 85) & ~shelf_body
-arr[wispy, 3] = 0
-arr[wispy, :3] = 0
+def despill_green_channel():
+    global arr
+    fg = arr[:, :, 3] > 12
+    rb_max = np.maximum(r, b)
+    ge_fg = g - rb_max
+  # Strong despill on edges; gentle on bright glass / white rims.
+    strong = fg & (ge_fg > 6) & (lum < 150)
+    gentle = fg & (ge_fg > 3) & (lum >= 150)
+    g_strong = np.where(g > rb_max, rb_max + (g - rb_max) * 0.04, g)
+    g_gentle = np.where(g > rb_max, rb_max + (g - rb_max) * 0.1, g)
+    arr[:, :, 1] = np.where(strong, np.clip(g_strong, 0, 255), arr[:, :, 1]).astype(np.uint8)
+    arr[:, :, 1] = np.where(gentle, np.clip(g_gentle, 0, 255), arr[:, :, 1]).astype(np.uint8)
+
+def drop_green_fringe(include_acrylic=False):
+    global arr
+    ge2 = arr[:, :, 1].astype(np.float32) - np.maximum(
+        arr[:, :, 0].astype(np.float32), arr[:, :, 2].astype(np.float32)
+    )
+    lum2 = (
+        0.2126 * arr[:, :, 0]
+        + 0.7152 * arr[:, :, 1]
+        + 0.0722 * arr[:, :, 2]
+    ).astype(np.float32)
+    acrylic_mask = shelf_body if include_acrylic else np.zeros_like(shelf_body)
+    green_edge = (
+        (arr[:, :, 3] < 235)
+        & (ge2 > 10)
+        & (arr[:, :, 1] > np.maximum(arr[:, :, 0], arr[:, :, 2]) + 4)
+        & ~acrylic_mask
+    )
+    arr[green_edge, 3] = 0
+    arr[green_edge, :3] = 0
+    fringe = (
+        (arr[:, :, 3] < 55)
+        & (ge2 > 24)
+        & (arr[:, :, 1] > 58)
+        & (lum2 < 120)
+        & ~acrylic_mask
+    )
+    arr[fringe, 3] = 0
+    arr[fringe, :3] = 0
+    wispy = (arr[:, :, 3] < 32) & (ge2 > 16) & (lum2 < 100) & ~acrylic_mask
+    arr[wispy, 3] = 0
+    arr[wispy, :3] = 0
+
+despill_green_channel()
+drop_green_fringe(include_acrylic=False)
 
 # Premultiply RGB for clean compositing edges.
 a_norm = arr[:, :, 3].astype(np.float32) / 255.0
@@ -124,8 +153,25 @@ else:
 w2, h2 = out_im.size
 if w2 > max_w:
     out_im = out_im.resize((max_w, max(1, int(h2 * max_w / w2))), Image.Resampling.LANCZOS)
+    # Resize can reintroduce green halos — second fringe pass on output size.
+    arr = np.array(out_im)
+    hh2, ww2 = arr.shape[:2]
+    shelf_body2 = np.zeros((hh2, ww2), dtype=bool)
+    shelf_body2[int(hh2 * 0.42) :, :] = True
+    shelf_body = shelf_body2
+    drop_green_fringe(include_acrylic=False)
+    a_norm = arr[:, :, 3].astype(np.float32) / 255.0
+    arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
+    out_im = Image.fromarray(arr)
+
 out_im.save(out, 'PNG', optimize=True)
-print(out_im.size)
+alpha_out = np.array(out_im)[:, :, 3]
+ge_out = np.array(out_im)[:, :, 1].astype(np.float32) - np.maximum(
+    np.array(out_im)[:, :, 0].astype(np.float32),
+    np.array(out_im)[:, :, 2].astype(np.float32),
+)
+fg_out = alpha_out > 128
+print(out_im.size, 'transparent%', round(100 * (alpha_out < 10).mean(), 1), 'fg ge>15', int(((ge_out > 15) & fg_out).sum()))
 `;
 
 mkdirSync(tmpDir, { recursive: true });
