@@ -19,7 +19,13 @@ export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
 
 /** Main neon logo rendered height on lobby slide (263px baseline −5%). */
 export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
-export const LOBBY_NEON_PRODUCTS_SRC = '/assets/neon-products.png';
+/** Bump when re-baking `neon-products.png` (`npm run lobby:bake-neon-products`). */
+export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = '2qzZrBQ6-v1';
+
+export const LOBBY_NEON_PRODUCTS_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/2qzZrBQ-6_iHuRTvLDint_bgcwFyZn.jpeg';
+
+export const LOBBY_NEON_PRODUCTS_SRC = `/assets/neon-products.png?v=${LOBBY_NEON_PRODUCTS_ASSET_VERSION}`;
 export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
 export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
 export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
