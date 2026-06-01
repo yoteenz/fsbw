@@ -18,7 +18,7 @@ export const LOUNGE_BACKGROUND_SRC = `/assets/landing2-background.png?v=${LOUNGE
 export const LOUNGE_ROSE_BACKGROUND_SRC = LOUNGE_BACKGROUND_SRC;
 
 /** Bump when re-baking `salon-chairs.png` (`npm run lounge:bake-salon-chairs`). */
-export const LOUNGE_SALON_CHAIRS_ASSET_VERSION = 'p6V1N9X4-v1';
+export const LOUNGE_SALON_CHAIRS_ASSET_VERSION = 'p6V1N9X4-v2';
 
 export const LOUNGE_SALON_CHAIRS_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/p6V1N9X4lJoobnaRmSFSh_WE2x57MV.jpeg';
