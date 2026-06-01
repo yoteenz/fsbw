@@ -22574,3 +22574,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Removed **DOWNLOAD** links from **neon logo**, **lobby** (`landing-background`), and **lounge** (`landing2-background`) in **`page.tsx`**. Shelves already plain imgs; case/neon nav/TV downloads unchanged.
 
 **Update (same chat):** Removed **DOWNLOAD** from **cash register** (`REGISTER.png`) and **phone** (`lobby-phone.png`) popovers on lobby case — popovers unchanged.
+
+**Update (same chat):** New lounge **salon chairs** from **`pNu1yJzmL4dvFCWQy6wMl_Ueut2LUr.jpeg`** → **`salon-chairs.png`** (960×822, green-screen key). **`npm run lounge:bake-salon-chairs`**, **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** = **`pNu1yJzm`**. Removed chairs **DOWNLOAD** on lounge slide.
