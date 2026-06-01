@@ -22600,3 +22600,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Salon chairs** bake — **`p6V1N9X4`** source is **gray-green studio** (not chroma green); old **`ge>42`** key left **0% transparent**. Rebaked with corner **`dist_bg`** smoothstep + subject protect + despill/premultiply (~**38%** transparent). **`p6V1N9X4-v2`**.
 
 **Update (same chat):** Lobby **neon logo** **5% smaller** — **`LOBBY_NEON_LOGO_HEIGHT_PX`** **250** (was **263**). **Register** + **phone** **DOWNLOAD** links already absent on lobby slide (plain **`LobbyCasePropPopover`** only).
+
+**Update (same chat):** Lobby **custom units shelf** — **`7iUsTnn1PQRK9Io3291KW_pHVg5Q26.jpeg`** → **`custom-group.png`** (800×235, green key + mannequin/neon protect, premultiply). **`LOUNGE_SHELF_CUSTOM_SRC_REMOTE`** + bake default updated; **`LOBBY_SHELF_ASSET_VERSION`** **`7iUsTnn1-v1`**. **`lobby:bake-shelves custom`** for single-shelf rebake.
