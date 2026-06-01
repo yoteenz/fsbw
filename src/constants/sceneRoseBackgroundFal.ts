@@ -7,9 +7,13 @@
 
 export const SCENE_FAL_EDIT_MODEL = 'fal-ai/flux-2-max/edit';
 
-/** Typical strength for scene enhancement (lower = closer to your layout). */
-export const SCENE_FAL_EDIT_STRENGTH_LOBBY = '0.28–0.38';
-export const SCENE_FAL_EDIT_STRENGTH_LOUNGE = '0.30–0.42';
+/**
+ * flux-2-max/edit has **no strength / denoise slider** on Fal (mobile or desktop).
+ * Preservation is controlled by the edit prompt + uploading your PNG, not a dial.
+ * Optional: fal-ai/flux-2-flex/edit exposes guidance_scale + num_inference_steps in API/playground.
+ */
+export const SCENE_FAL_EDIT_CONTROLS_NOTE =
+  'No strength slider on flux-2-max/edit. Use preserve prompt + your PNG. image_size: auto. output_format: png.';
 
 /**
  * Shared “do not repaint” block for scene plates (lobby wall, lounge wall, etc.).
@@ -36,6 +40,6 @@ export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
 /** @deprecated Use LOUNGE_ROSE_BACKGROUND_FAL_EDIT */
 export const LOUNGE_ROSE_BACKGROUND_FAL_BASE = LOUNGE_ROSE_BACKGROUND_FAL_EDIT;
 
-export function sceneRoseBackgroundFalWorkflowNote(assetLabel: string, strength: string): string {
-  return `[FAL EDIT] Model: ${SCENE_FAL_EDIT_MODEL}. Upload your current ${assetLabel} PNG. Strength: ${strength}. Not text-to-image.`;
+export function sceneRoseBackgroundFalWorkflowNote(assetLabel: string): string {
+  return `[FAL EDIT] Model: ${SCENE_FAL_EDIT_MODEL}. Upload your current ${assetLabel} PNG. ${SCENE_FAL_EDIT_CONTROLS_NOTE} Not text-to-image.`;
 }

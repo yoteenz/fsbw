@@ -2,7 +2,6 @@ import { isAdminEmail, isSignedIn } from '../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
 import {
   LOBBY_ROSE_BACKGROUND_FAL_EDIT,
-  SCENE_FAL_EDIT_STRENGTH_LOBBY,
   SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
   sceneRoseBackgroundFalWorkflowNote,
 } from './sceneRoseBackgroundFal';
@@ -55,7 +54,7 @@ export function isLobbyAssetDownloadsVisibleForAdmin(): boolean {
 export const LOBBY_SCENE_FAL_PROMPTS = {
   neonLogo: `Photorealistic neon sign for a luxury wig boutique brand "Frontal Slayer". Hot pink and red neon glass tubing, soft bloom and wall reflection, shot straight-on on a dark charcoal wall. Premium salon aesthetic, crisp letterforms, no extra text. Export as a high-resolution PNG with a fully transparent background (alpha), no border, no floor, no mockup frame.`,
 
-  roseBackground: `${sceneRoseBackgroundFalWorkflowNote('landing-background', SCENE_FAL_EDIT_STRENGTH_LOBBY)} ${LOBBY_ROSE_BACKGROUND_FAL_EDIT} Negative: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE}`,
+  roseBackground: `${sceneRoseBackgroundFalWorkflowNote('landing-background')} ${LOBBY_ROSE_BACKGROUND_FAL_EDIT} Negative: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE}`,
 
   neonProducts: `Photorealistic neon sign reading "PRODUCTS" for a luxury wig boutique. Hot pink and red neon glass tubing, same typeface weight and glow as the "Frontal Slayer" main logo, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
 
