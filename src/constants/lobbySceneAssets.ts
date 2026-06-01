@@ -20,8 +20,8 @@ export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
 /** Main neon logo rendered height on lobby slide (263px baseline −5%). */
 export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
 
-/** PRODUCTS / TOOLS / BOOKING word signs under main logo (41px baseline −60%). */
-export const LOBBY_NEON_NAV_HEIGHT_PX = 16;
+/** PRODUCTS / TOOLS / BOOKING word signs under main logo (16px baseline +30%). */
+export const LOBBY_NEON_NAV_HEIGHT_PX = 21;
 /** Bump when re-baking `neon-products.png` (`npm run lobby:bake-neon-products`). */
 export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = '20O0Gotz-v1';
 
