@@ -43,7 +43,15 @@ import {
   isLobbyTransitionVideoEnabledFromSearch,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
+import {
+  LOBBY_CASE_DISPLAY_WIDTH_PX,
+  LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX,
+  LOBBY_CASE_PHONE_ANCHOR_TOP_PX,
+  LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX,
+  LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX,
+  LOBBY_CASE_REGISTER_ANCHOR_TOP_PX,
+  LOBBY_PHONE_SRC,
+} from '../../constants/lobbyCaseAssets';
 import {
   LOBBY_CASE_REGISTER_SRC,
   LOBBY_CASE_SRC,
@@ -411,11 +419,22 @@ const LobbyPage: React.FC = () => {
               src={LOBBY_CASE_SRC}
               alt="Display Case"
               className="h-auto"
-              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
+              style={{
+                display: 'block',
+                width: `${LOBBY_CASE_DISPLAY_WIDTH_PX}px`,
+                maxWidth: `${LOBBY_CASE_DISPLAY_WIDTH_PX}px`,
+              }}
             />
             
             {/* Register — tap for payment methods popover */}
-            <div className="absolute left-8" style={{ top: '-39px', zIndex: 2 }}>
+            <div
+              className="absolute"
+              style={{
+                left: `${LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX}px`,
+                top: `${LOBBY_CASE_REGISTER_ANCHOR_TOP_PX}px`,
+                zIndex: 2,
+              }}
+            >
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
@@ -440,8 +459,13 @@ const LobbyPage: React.FC = () => {
 
             {/* Phone — tap for business contact popover */}
             <div
-              className="absolute right-8"
-              style={{ top: '-33px', zIndex: 2, transform: 'translateX(-6px)' }}
+              className="absolute"
+              style={{
+                right: `${LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX}px`,
+                top: `${LOBBY_CASE_PHONE_ANCHOR_TOP_PX}px`,
+                zIndex: 2,
+                transform: `translateX(${LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX}px)`,
+              }}
             >
               <LobbyCasePropPopover
                 popoverId="phone"

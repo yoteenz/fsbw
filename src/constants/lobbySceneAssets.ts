@@ -21,8 +21,8 @@ import {
 
 export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
 
-/** Main neon logo rendered height on lobby slide (263px baseline −5%). */
-export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
+/** Main neon logo rendered height on lobby slide (250px −20%). */
+export const LOBBY_NEON_LOGO_HEIGHT_PX = 200;
 
 /** PRODUCTS / TOOLS / BOOKING word signs under main logo (16px baseline +30%). */
 export const LOBBY_NEON_NAV_HEIGHT_PX = 21;

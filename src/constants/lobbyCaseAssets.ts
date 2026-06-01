@@ -11,6 +11,23 @@ export const LOBBY_CASE_SRC_REMOTE =
 
 export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 
+/** Lobby slide: acrylic case width (230px baseline −20%). Register/phone icon px sizes stay fixed. */
+export const LOBBY_CASE_DISPLAY_WIDTH_PX = 184;
+
+/** Scales register/phone anchor offsets with the case; does not scale icon bitmaps. */
+export const LOBBY_CASE_PROP_LAYOUT_SCALE = 0.8;
+
+const lobbyCasePropOffset = (px: number) => Math.round(px * LOBBY_CASE_PROP_LAYOUT_SCALE);
+
+/** Register anchor on case (`left-8` / `top: -39px` at 100% case scale). */
+export const LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX = lobbyCasePropOffset(32);
+export const LOBBY_CASE_REGISTER_ANCHOR_TOP_PX = lobbyCasePropOffset(-39);
+
+/** Phone anchor on case (`right-8` / `top: -33px` / `translateX(-6px)` at 100% scale). */
+export const LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX = lobbyCasePropOffset(32);
+export const LOBBY_CASE_PHONE_ANCHOR_TOP_PX = lobbyCasePropOffset(-33);
+export const LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX = lobbyCasePropOffset(-6);
+
 export const LOBBY_PHONE_ASSET_VERSION = 'q-oa7o8';
 
 /** Lobby display-case phone (chroma-keyed PNG). */
