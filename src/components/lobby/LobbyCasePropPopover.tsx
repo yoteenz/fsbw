@@ -44,19 +44,19 @@ type LobbyCasePropPopoverProps = {
   paymentLayout?: LobbyPaymentPopoverLayout;
   /** Nudge panel when anchored near viewport edge (register = left, phone = right). */
   align?: 'center' | 'left' | 'right';
-  /** Keep tap target above lobby scrim while the sibling popover is open. */
-  keepVisibleAboveScrim?: boolean;
   children: React.ReactNode;
 };
 
 const popoverShellClassName = 'baw-brand-modal-shell border border-black shadow-lg';
 
+/** 25% white wash over marble so register/phone cards read brighter on the rose wall. */
 const popoverShellStyle: React.CSSProperties = {
-  backgroundImage: 'url(/assets/popup-marble.png)',
+  backgroundImage:
+    'linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), url(/assets/popup-marble.png)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
-  backgroundColor: 'rgba(255, 255, 255, 0.97)',
+  backgroundColor: '#ffffff',
 };
 
 const titleStyle: React.CSSProperties = {
@@ -316,7 +316,6 @@ export function LobbyCasePropPopover({
   sections,
   paymentLayout,
   align = 'center',
-  keepVisibleAboveScrim = false,
   children,
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -330,10 +329,8 @@ export function LobbyCasePropPopover({
     setAnchorRect(anchorRef.current.getBoundingClientRect());
   }, []);
 
-  const showPortaledLayer = open || keepVisibleAboveScrim;
-
   useLayoutEffect(() => {
-    if (!showPortaledLayer) {
+    if (!open) {
       setAnchorRect(null);
       return;
     }
@@ -344,7 +341,7 @@ export function LobbyCasePropPopover({
       window.removeEventListener('resize', measureAnchor);
       window.removeEventListener('scroll', measureAnchor, true);
     };
-  }, [showPortaledLayer, measureAnchor]);
+  }, [open, measureAnchor]);
 
   useEffect(() => {
     if (!open) return;
@@ -368,7 +365,7 @@ export function LobbyCasePropPopover({
   const panelGapPx = lobbyPopoverPx(10);
 
   const portaledOpenLayer =
-    showPortaledLayer && anchorRect
+    open && anchorRect
       ? createPortal(
           <div
             ref={open ? portalRef : undefined}
@@ -471,7 +468,7 @@ export function LobbyCasePropPopover({
           lineHeight: 0,
           WebkitTapHighlightColor: 'transparent',
           touchAction: 'manipulation',
-          visibility: showPortaledLayer ? 'hidden' : 'visible',
+          visibility: open ? 'hidden' : 'visible',
         }}
       >
         {children}
