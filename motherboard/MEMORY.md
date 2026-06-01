@@ -22578,3 +22578,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** New lounge **salon chairs** from **`pNu1yJzmL4dvFCWQy6wMl_Ueut2LUr.jpeg`** → **`salon-chairs.png`** (960×822, green-screen key). **`npm run lounge:bake-salon-chairs`**, **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** = **`pNu1yJzm`**. Removed chairs **DOWNLOAD** on lounge slide.
 
 **Update (same chat):** **Lounge TV design** — **`lounge-tv-design.png`** reference (820×602), **`sceneLoungeTvFal.ts`** NBP **`LOUNGE_TV_DESIGN_FAL_EDIT`**, **`LOUNGE_SCENE_FAL_PROMPTS.tvDesign`**. **DOWNLOAD** top-left on lounge **`LoungeTvFrame`** (dev/admin/**`?lobbyAssets=1`**). Live TV still CSS bezel; PNG is Fal/download reference.
+
+**Update (same chat):** Lounge **salon chairs** — **25% smaller** (**`LOUNGE_SALON_CHAIRS_HEIGHT_PX`** 160→120), **20px up** (mobile **`OFFSET_Y`** 290→270, large **`LARGE_EXTRA_Y`** 82→62) in **`loungeSceneLayout.ts`**.
