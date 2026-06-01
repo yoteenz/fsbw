@@ -9,7 +9,7 @@ export const SCENE_CAROUSEL_BG_HEIGHT = 5504;
  * Re-measure after replacing either background asset.
  */
 export const LOBBY_SCENE_BG_CROWN_Y_PX = 275;
-export const LOUNGE_SCENE_BG_CROWN_Y_PX = 604;
+export const LOUNGE_SCENE_BG_CROWN_Y_PX = 643;
 
 export const LOBBY_SCENE_BG_CROWN_Y_RATIO = LOBBY_SCENE_BG_CROWN_Y_PX / SCENE_CAROUSEL_BG_HEIGHT;
 export const LOUNGE_SCENE_BG_CROWN_Y_RATIO = LOUNGE_SCENE_BG_CROWN_Y_PX / SCENE_CAROUSEL_BG_HEIGHT;

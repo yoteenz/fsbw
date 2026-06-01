@@ -1,5 +1,6 @@
 import { isAdminEmail, isSignedIn } from '../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
+import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
 import {
   LOBBY_ROSE_BACKGROUND_FAL_EDIT,
   SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
@@ -15,10 +16,10 @@ export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
 export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
 
 /** Bump when replacing `public/assets/landing-background.png` (Vercel caches `/assets/*`). */
-export const LOBBY_BACKGROUND_ASSET_VERSION = 'lp6h5DuSde';
+export const LOBBY_BACKGROUND_ASSET_VERSION = 'lpL3uOngFG';
 
 export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/6h5DuSdeVthCY5iD-IoN2_R8Kc8d4G.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/L3uOngFGJQ2LEM5npshed_sBBjoS6l.jpeg';
 
 export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 export const LOBBY_SHELF_HD_SRC = '/assets/hd-group.png';
@@ -80,4 +81,7 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
   caseRegister: `Small photorealistic vintage-modern cash register prop for a luxury retail display case, 3/4 front angle. Metallic and matte materials, boutique styling, no brand text. PNG with fully transparent background, isolated product shot.`,
 
   casePhone: `Small photorealistic salon desk telephone prop for a luxury wig boutique display, 3/4 front angle. Elegant classic handset on base, neutral black or charcoal, no readable brand. PNG with fully transparent background, isolated product shot.`,
+
+  /** Seedance 2 — horizontal lobby → lounge transition (start/end frame URLs in copy block). */
+  roomTransitionSeedance: LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK,
 } as const;

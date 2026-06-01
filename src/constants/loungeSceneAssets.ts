@@ -1,11 +1,12 @@
+import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
 import { LOUNGE_BACKGROUND_FAL_EDIT, loungeBackgroundFalWorkflowNote } from './sceneLoungeBackgroundFal';
 import { LOBBY_NEON_LOGO_SRC } from './lobbySceneAssets';
 
 /** Bump when replacing `public/assets/landing2-background.png` (Vercel caches `/assets/*`). */
-export const LOUNGE_BACKGROUND_ASSET_VERSION = 'lpGG-SyHZy';
+export const LOUNGE_BACKGROUND_ASSET_VERSION = 'lpreC-MSzG';
 
 export const LOUNGE_BACKGROUND_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/GG_SyHZyTGLPrff43fuur_skpGuuqU.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/reC-MSzGPYe2PUbnVanQN_Kmj5vXBq.jpeg';
 
 /** Lounge slide background — sofa, table/wine, plant, white curtains (`LoungePage`). 3072×5504 art. */
 export const LOUNGE_BACKGROUND_SRC = `/assets/landing2-background.png?v=${LOUNGE_BACKGROUND_ASSET_VERSION}`;
@@ -38,4 +39,7 @@ export const LOUNGE_SCENE_FAL_PROMPTS = {
   curtainRight: `Right half matching the exported left curtain panel — mirror pleats, lighting, and gray tone. See loungeCurtainFalPrompts.ts WORKFLOW B step 2.`,
 
   tvRemoteHand: `Photorealistic hand holding a TV remote, lower edge of frame, soft studio light, PNG with fully transparent background for compositing over lounge TV overlay.`,
+
+  /** Seedance 2 — horizontal lobby → lounge transition (start/end frame URLs in copy block). */
+  roomTransitionSeedance: LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK,
 } as const;
