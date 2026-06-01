@@ -305,7 +305,6 @@ const LobbyPage: React.FC = () => {
                 width: 'auto',
                 pointerEvents: 'none',
                 verticalAlign: 'top',
-                filter: LOBBY_NEON_NAV_COMPOSITE_FILTER,
               }}
               aria-hidden
             />
@@ -336,7 +335,6 @@ const LobbyPage: React.FC = () => {
                 width: 'auto',
                 maxWidth: 'none',
                 verticalAlign: 'top',
-                filter: LOBBY_NEON_NAV_COMPOSITE_FILTER,
               }}
               aria-hidden
               draggable={false}
