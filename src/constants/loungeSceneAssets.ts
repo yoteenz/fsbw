@@ -1,8 +1,11 @@
-import { LOUNGE_ROSE_BACKGROUND_FAL_EDIT, sceneRoseBackgroundFalWorkflowNote } from './sceneRoseBackgroundFal';
+import { LOUNGE_BACKGROUND_FAL_EDIT, loungeBackgroundFalWorkflowNote } from './sceneLoungeBackgroundFal';
 import { LOBBY_NEON_LOGO_SRC } from './lobbySceneAssets';
 
-/** Lounge slide background (see `LoungePage` in `src/pages/lobby/page.tsx`). */
-export const LOUNGE_ROSE_BACKGROUND_SRC = '/assets/landing2-background.png';
+/** Lounge slide background — sofa, table/wine, plant, white curtains (`LoungePage`). */
+export const LOUNGE_BACKGROUND_SRC = '/assets/landing2-background.png';
+
+/** @deprecated Misnamed — same file as {@link LOUNGE_BACKGROUND_SRC}. */
+export const LOUNGE_ROSE_BACKGROUND_SRC = LOUNGE_BACKGROUND_SRC;
 
 export const LOUNGE_SALON_CHAIRS_SRC = '/assets/salon-chairs.png';
 
@@ -15,7 +18,10 @@ export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
 /** Fal prompts for replacing lounge scene PNGs/JPEGs. */
 export const LOUNGE_SCENE_FAL_PROMPTS = {
-  roseBackground: `${sceneRoseBackgroundFalWorkflowNote('landing2-background')} ${LOUNGE_ROSE_BACKGROUND_FAL_EDIT}`,
+  loungeBackground: `${loungeBackgroundFalWorkflowNote()} ${LOUNGE_BACKGROUND_FAL_EDIT}`,
+
+  /** @deprecated use loungeBackground */
+  roseBackground: `${loungeBackgroundFalWorkflowNote()} ${LOUNGE_BACKGROUND_FAL_EDIT}`,
 
   neonLogo: `Photorealistic neon sign for a luxury wig boutique brand "Frontal Slayer". Hot pink and red neon glass tubing, soft bloom and wall reflection, shot straight-on on a dark charcoal wall. Premium salon aesthetic, crisp letterforms, no extra text. PNG with fully transparent background (alpha), no border, no floor, no mockup frame.`,
 
