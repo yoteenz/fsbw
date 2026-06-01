@@ -23,10 +23,10 @@ export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
 /** PRODUCTS / TOOLS / BOOKING word signs under main logo (41px baseline −60%). */
 export const LOBBY_NEON_NAV_HEIGHT_PX = 16;
 /** Bump when re-baking `neon-products.png` (`npm run lobby:bake-neon-products`). */
-export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = 'XmqZbgWv-v1';
+export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = '20O0Gotz-v1';
 
 export const LOBBY_NEON_PRODUCTS_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg';
 
 export const LOBBY_NEON_PRODUCTS_SRC = `/assets/neon-products.png?v=${LOBBY_NEON_PRODUCTS_ASSET_VERSION}`;
 
