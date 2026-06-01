@@ -22596,3 +22596,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **salon chairs** asset from **`p6V1N9X4lJoobnaRmSFSh_WE2x57MV.jpeg`** → **`salon-chairs.png`** (960×822). **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** **`p6V1N9X4-v1`**; **`LOUNGE_SALON_CHAIRS_SRC_REMOTE`** + bake script default URL updated.
 
 **Update (same chat):** Lounge **TV overlay** — menu/content rendered **below** PNG frame. Root cause: **`loungeTvDesignScreenInsetStyle`** spread **`loungeTvScreenStyle`** after **`position: absolute`**, which reset **`position: relative`** and **`width/height: 100%`**. Fixed by applying base screen styles first, then absolute inset from **`LOUNGE_TV_DESIGN_SCREEN_RECT`**.
+
+**Update (same chat):** **Salon chairs** bake — **`p6V1N9X4`** source is **gray-green studio** (not chroma green); old **`ge>42`** key left **0% transparent**. Rebaked with corner **`dist_bg`** smoothstep + subject protect + despill/premultiply (~**38%** transparent). **`p6V1N9X4-v2`**.
