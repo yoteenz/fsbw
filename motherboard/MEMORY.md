@@ -22518,3 +22518,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context (this chat):** User could not see lobby DOWNLOAD links (fixed earlier **`fb4d3c30`**); then asked for **lounge** scene DOWNLOAD + Fal prompts with **landing2** ceiling/floor aligned to lobby **landing-background** for seamless carousel transition; reported **lobby background download broken**, **logo DOWNLOAD** overlapped shop navigation, and wanted DOWNLOAD on **products/tools/booking** neon assets.
 
 **Changes:** **`downloadAssetFile.ts`** — fetch + blob download (fixes blocked `<a download>` and iOS). Lobby rose DOWNLOAD moved to **z-index 500** above main content (was under **`z-10`** overlay). Logo DOWNLOAD **top-left** sibling (not bottom on clickable img). Neon **`neon-products`**, **`neon-tools`**, **`neon-booking`** paths + Fal prompts in **`lobbySceneAssets.ts`**. **`loungeSceneAssets.ts`** + **`sceneRoseBackgroundFal.ts`** — shared **`SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT`** on lobby + lounge rose prompts; lounge downloads: **`landing2-background`**, logo, salon chairs, TV curtains L/R, remote hand. Commit **`7929308a`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby/lounge Fal workflows + live-preview background swap
+
+**Context (full chat):** Fal model advice for lobby scene assets; DOWNLOAD links + Fal prompts for lobby/lounge (rose panel vs sofa/curtains lounge — **not** rose wall on lounge); fix broken background download and logo overlap; refine **nano-banana-pro/edit** prompts (short multi-pass relight, true red rose panel, front fill on center panel); user wanted **lounge true-red smooth walls** to drive lobby (no wainscoting panels on sides), not pink lounge or lobby panels copied onto lounge. Final ask: **replace backgrounds only** with two Supabase live-preview JPEGs to QA carousel alignment.
+
+**Fal conventions:** Scene work → **`fal-ai/nano-banana-pro/edit`**; avoid one long “preserve + backlight + fill” prompt — use **2–3 short passes**. Lobby rose: 3-pass on **`landing-background.png`**. Lounge-led wall sync: **`LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS`** then **`LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF`** (2-image upload). DOWNLOAD visibility: dev, **`/lobby?lobbyAssets=1`**, admin; carousel preserves query string.
+
+**Background swap (this task):** Downloaded Supabase JPEGs → **`public/assets/landing-background.png`** (lobby) and **`landing2-background.png`** (lounge), 3072×5504. **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`lp6h5DuSde`**, **`LOUNGE_BACKGROUND_ASSET_VERSION`** = **`lpGG-SyHZy`** with **`?v=`** on src URLs; **`LOBBY_ROSE_BACKGROUND_SRC_REMOTE`** / **`LOUNGE_BACKGROUND_SRC_REMOTE`** document sources. **`loungeSceneLayout.ts`**: **`LOUNGE_BG_REFERENCE_WIDTH/HEIGHT`** 3072×5504 (was 1560×3376). Commit **`770972b2`** on **`master`** + **`preview/mobile`**.
+
+**QA follow-up:** Swipe **`/lobby` ↔ `/lobby/lounge`** — check marble horizon, wall color continuity, chair/TV anchors; tune **`LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO`** if chairs float/sink after aspect change.
