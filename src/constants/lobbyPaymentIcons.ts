@@ -48,11 +48,14 @@ export const LOBBY_CASE_POPOVER_SCRIM_Z_INDEX = 10000;
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
 
-/** Lifts case props + popover above the scrim (parent stacking context must use this when open). */
+/** Lifts case props + popover above the scrim (`createPortal` to `document.body`). */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
-/** Popover card above register/phone tap targets within the lifted stack. */
-export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = 10003;
+/** Active register/phone bitmap above the scrim when its popover is open. */
+export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = 10003;
+
+/** Popover card above the lifted prop asset. */
+export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = 10004;
 
 export type LobbyPaymentIcon = {
   id: string;

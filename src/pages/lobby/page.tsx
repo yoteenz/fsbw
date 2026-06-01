@@ -45,6 +45,7 @@ import {
 } from '../../constants/lobbyLoungeTransitionVideo';
 import {
   LOBBY_CASE_DISPLAY_WIDTH_PX,
+  LOBBY_CASE_SLIDE_OFFSET_X_PX,
   LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX,
   LOBBY_CASE_PHONE_ANCHOR_TOP_PX,
   LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX,
@@ -409,7 +410,7 @@ const LobbyPage: React.FC = () => {
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: 'translate(calc(-50% + 4px), calc(-50% + 255px))',
+          transform: `translate(calc(-50% + ${LOBBY_CASE_SLIDE_OFFSET_X_PX}px), calc(-50% + 255px))`,
           zIndex: 20,
           maxWidth: '753px',
         }}>

@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
+  LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
+  LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
   LOBBY_CASE_POPOVER_STACK_Z_INDEX,
   LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
@@ -335,9 +337,11 @@ export function LobbyCasePropPopover({
       return;
     }
     measureAnchor();
+    const raf = window.requestAnimationFrame(measureAnchor);
     window.addEventListener('resize', measureAnchor);
     window.addEventListener('scroll', measureAnchor, true);
     return () => {
+      window.cancelAnimationFrame(raf);
       window.removeEventListener('resize', measureAnchor);
       window.removeEventListener('scroll', measureAnchor, true);
     };
@@ -398,8 +402,10 @@ export function LobbyCasePropPopover({
                 cursor: 'pointer',
                 lineHeight: 0,
                 pointerEvents: 'auto',
+                zIndex: LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
                 WebkitTapHighlightColor: 'transparent',
                 touchAction: 'manipulation',
+                opacity: 1,
               }}
             >
               {children}
@@ -415,6 +421,7 @@ export function LobbyCasePropPopover({
                   position: 'fixed',
                   left: `${panelFixedLeftPx(align, anchorRect, panelWidthPx)}px`,
                   bottom: `${window.innerHeight - anchorRect.top + panelGapPx}px`,
+                  zIndex: LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
                   width: `${panelWidthPx}px`,
                   minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
                   maxWidth: `min(${panelWidthPx}px, calc(100vw - 24px))`,
@@ -468,7 +475,8 @@ export function LobbyCasePropPopover({
           lineHeight: 0,
           WebkitTapHighlightColor: 'transparent',
           touchAction: 'manipulation',
-          visibility: open ? 'hidden' : 'visible',
+          opacity: open ? 0 : 1,
+          pointerEvents: open ? 'none' : 'auto',
         }}
       >
         {children}

@@ -14,6 +14,9 @@ export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 /** Lobby slide: acrylic case width (230px baseline −20%). Register/phone icon px sizes stay fixed. */
 export const LOBBY_CASE_DISPLAY_WIDTH_PX = 184;
 
+/** Horizontal nudge for case block on lobby slide (`translateX` after center), was 4px + 12px right. */
+export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 16;
+
 /** Scales register/phone anchor offsets with the case; does not scale icon bitmaps. */
 export const LOBBY_CASE_PROP_LAYOUT_SCALE = 0.8;
 
