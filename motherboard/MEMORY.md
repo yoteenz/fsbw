@@ -22568,3 +22568,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`npm run lobby:bake-shelves`** — **`scripts/lobby-bake-shelf-assets.mjs`** chroma-keys green, crops, resizes to **800×235** PNGs: **`hd-group.png`**, **`transparent-group.png`**, **`custom-group.png`**. **`LOBBY_SHELF_ASSET_VERSION`** = **`RQY7-2fkX-AKow`** with **`_SRC_REMOTE`** URLs in **`lobbySceneAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
 
 **Update (same chat):** First bake **broke mannequin faces** (aggressive green_excess key punched holes). **Regenerated** with mannequin-protect key (**`ge<18` / `sat<32`**), green **despill**, fringe drop, tight alpha crop. **`LOBBY_SHELF_ASSET_VERSION`** → **`RQY7-v2`**.
+
+**Update (same chat):** User: **acrylic front panel** rendering broken + remove **3 shelf DOWNLOAD links**. Rebaked with glass/rim protect, shelf-body alpha solidify, despill skip on bright/red neon; fringe wipe excludes shelf mask. **`RQY7-v3`**. **`page.tsx`** shelves use plain **`<img>`** (no **`LobbyAssetDownloadAnchor`**).
