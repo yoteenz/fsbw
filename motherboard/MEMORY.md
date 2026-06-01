@@ -22658,3 +22658,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Products** neon **`20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg`** → **`neon-products.png`** (900×289). **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`20O0Gotz-v1`**.
 
 **Update (same chat):** Lobby **products / tools / booking** neon nav **+30%** size: **`LOBBY_NEON_NAV_HEIGHT_PX`** **21** (was **16**); **`translateX`** kern scaled in **`page.tsx`**.
+
+**Update (same chat):** Neon nav row layout — removed legacy **`translateX`** stacking (**`−26px` / `−55px`**). Row centered on rose panel (**`translate(-50%, …)`**, no **`+51px`**). **`LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX`** **500** + padding; three equal **`flex: 1`** columns with centered signs.
