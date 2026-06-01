@@ -49,6 +49,11 @@ export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE = SCENE_ROSE_BACKGROUND_FAL_NEGA
 
 export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `When using the lobby panel as a reference for the lounge panel: match ceiling line, crown molding, side-wall dusty-rose plaster tone, center floral red saturation, and marble horizon so the horizontal swipe is seamless. Do not shift the floor line up or down.`;
 
+/**
+ * Shared wall architecture for lobby ↔ lounge carousel (lobby side walls + lounge — not the floral center).
+ */
+export const SCENE_LOBBY_WAINSCOTING_MATCH = `WALLS — MUST MATCH LOBBY PANELING: Same boutique architecture as the lobby room — soft dusty-rose / mauve-pink matte plaster with identical wainscoting on every visible wall: one large upper recessed rectangular panel and one smaller lower panel per wall, same molding profile, depth, spacing, and wall color as the lobby (landing-background). NOT a flat solid red paint wall, NOT a seamless sheet of crimson, NOT the lobby’s full-height dense rose floral panel. Red appears only as small prop flowers (table vase, pedestal bouquet), never as wall paint.`;
+
 /** @deprecated */
 export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
 
