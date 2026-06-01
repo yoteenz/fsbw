@@ -59,6 +59,7 @@ import {
   LOUNGE_BACKGROUND_SRC,
   LOUNGE_SALON_CHAIRS_SRC,
   LOUNGE_SCENE_FAL_PROMPTS,
+  LOUNGE_TV_DESIGN_SRC,
   LOUNGE_TV_REMOTE_HAND_SRC,
 } from '../../constants/loungeSceneAssets';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
@@ -631,6 +632,14 @@ const LoungePage: React.FC = () => {
              transition: 'opacity 0.4s ease',
            }}
          >
+           {showAssetDownloads ? (
+             <LobbyAssetDownloadLink
+               href={LOUNGE_TV_DESIGN_SRC}
+               downloadFilename="lounge-tv-design.png"
+               falPrompt={LOUNGE_SCENE_FAL_PROMPTS.tvDesign}
+               style={{ position: 'absolute', top: -14, left: 0, zIndex: 60 }}
+             />
+           ) : null}
            {showAssetDownloads ? (
              <div
                style={{

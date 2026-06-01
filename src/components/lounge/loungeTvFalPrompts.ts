@@ -14,7 +14,7 @@ export const LOUNGE_TV_FAL_PROMPT_FLATSCREEN = `Front-facing modern flat-panel t
 export const LOUNGE_TV_FAL_PROMPT_FOR_LOUNGE_COMPOSITE = `${LOUNGE_TV_FAL_PROMPT_FLATSCREEN} Isolated on transparent or solid neutral gray background for cutout. No curtains, no room.`;
 
 export const LOUNGE_TV_FAL_SETTINGS = {
-  model: 'fal-ai/flux-2-max or flux-pro',
-  aspectRatio: '16:9 or 4:3 landscape for screen plate; 1:1 for full set',
-  note: 'Overlay in app: use /assets/tv-screen.png in lounge + CSS bezel in LoungeTvOverlay; Fal optional for refreshed hardware art.',
+  model: 'fal-ai/nano-banana-pro/edit',
+  aspectRatio: 'auto (match reference)',
+  note: 'Download + Fal prompt: LOUNGE_SCENE_FAL_PROMPTS.tvDesign → sceneLoungeTvFal.ts. Asset: lounge-tv-design.png. Live slide uses CSS bezel in LoungeTvFrame.',
 } as const;
