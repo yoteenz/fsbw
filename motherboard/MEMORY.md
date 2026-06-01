@@ -22616,3 +22616,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Lobby nav neon Fal prompts** — **`sceneLobbyNeonNavFal.ts`** full NBP two-pass copy for **`neon-products.png`**, **`neon-tools.png`**, **`neon-booking.png`** (style-locked to main logo). **`LOBBY_SCENE_FAL_PROMPTS.neonProducts|neonTools|neonBooking`** use **`LOBBY_NEON_*_FAL_EDIT`** (DOWNLOAD tooltip on lobby when dev/admin/**`?lobbyAssets=1`**).
 
 **Update (same chat):** Lobby **display case** — **`wHPQKCAbC2LStCesR63Uy_VFNUqidw.jpeg`** → **`CASE.png`** (920×504, **`lobby-chroma-key.py`**). **`LOBBY_CASE_ASSET_VERSION`** **`wHPQKCAb-v1`**.
+
+---
+
+## 2026-06-01 — Lobby background dmdfZH + neon nav Fal prompts delivered
+
+**Context (chat):** User asked for **PRODUCTS / TOOLS / BOOKING** Fal edit prompts copied into chat, and to swap **lobby rose background** from Supabase **`dmdfZH_WdaOAJqCFVHi7K_jiWmVT0U.jpeg`**.
+
+**Changes:** Downloaded JPEG → **`public/assets/landing-background.png`** (3072×5504). **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`dmdfZH-v1`**; **`LOBBY_ROSE_BACKGROUND_SRC_REMOTE`** + **`LOBBY_ROSE_BACKGROUND_SRC`** `?v=` in **`lobbySceneAssets.ts`**. **`lobbyLoungeSeedancePrompt.ts`** start-frame URL updated. Commit **`26ce9948`** on **`master`** (sync **`preview/mobile`** as needed).
+
+**Prompts:** Full strings in **`src/constants/sceneLobbyNeonNavFal.ts`** — **`LOBBY_NEON_PRODUCTS_FAL_EDIT`**, **`LOBBY_NEON_TOOLS_FAL_EDIT`**, **`LOBBY_NEON_BOOKING_FAL_EDIT`** (NBP glow + BiRefNet cutout note; prefer local bake if glow matters).
