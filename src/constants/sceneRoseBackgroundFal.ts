@@ -55,6 +55,17 @@ export const SCENE_LOUNGE_CEILING_MATCH_LOBBY = `CEILING OUTPAINT ONLY — IMAGE
 export const LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT = `Outpaint upward only. Crown molding line is frozen — same pixel row as input. Delete the extra horizontal ceiling band above the molding. Flat cream ceiling to the top. Do not lower the molding. Do not move sofa, floor, or walls.`;
 
 /**
+ * Lobby thick white baseboard where red wall meets marble (not the thin lounge strip).
+ */
+export const SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY = `BASEBOARD — MATCH LOBBY (Image 2): where red walls meet the marble floor, add the same thick white architectural baseboard as landing-background.png — multi-tiered crown/baseboard molding with stacked horizontal ridges, bright clean white, same height and depth as the lobby. Replace the thin flat white strip at the floor line. Marble floor pattern and horizon unchanged; do not move sofa, table, pedestal, or plant.`;
+
+/** Ceiling + baseboard pass on lounge (Image 1) using lobby trim reference (Image 2). */
+export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH = `IMAGE 1 = lounge to edit. IMAGE 2 = lobby (landing-background.png) — ceiling and baseboard reference only. ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} ${SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY} ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT} Keep true red walls, sofa, glass table, wine, plant, white curtains, and furniture positions unchanged.`;
+
+export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH_NEGATIVE =
+  'lowering crown molding, moving ceiling down, low ceiling, thin baseboard, flat shoe molding only, no baseboard, missing baseboard, coffered ceiling, ceiling panel, ceiling ledge, second horizontal ceiling line, pink walls, move furniture, shift floor horizon, people, text, logos';
+
+/**
  * Unified smooth red walls (user preference) — NOT pink/mauve, NOT lobby wainscoting.
  */
 export const SCENE_UNIFIED_TRUE_RED_WALL = `Wall color: deep saturated true red / burgundy / crimson (#8B0000–#B22222), matte plaster — NOT pink, NOT dusty rose, NOT mauve, NOT coral, NOT pastel. Smooth flat walls with NO wainscoting panels and NO rectangular molding on side walls.`;

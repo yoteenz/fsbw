@@ -14,9 +14,13 @@ export const LOUNGE_SCENE_BG_CROWN_Y_PX = 604;
 export const LOBBY_SCENE_BG_CROWN_Y_RATIO = LOBBY_SCENE_BG_CROWN_Y_PX / SCENE_CAROUSEL_BG_HEIGHT;
 export const LOUNGE_SCENE_BG_CROWN_Y_RATIO = LOUNGE_SCENE_BG_CROWN_Y_PX / SCENE_CAROUSEL_BG_HEIGHT;
 
+/** Extra upward shift when QA says lounge ceiling/crown still reads low vs lobby under `cover`. */
+export const LOUNGE_SCENE_BG_POSITION_Y_EXTRA_RATIO = 0.06;
+
 /** Negative Y shifts lounge art up so crown meets lobby on carousel swipe (tune after new PNGs). */
 export function loungeSceneBackgroundPositionY(): string {
-  const deltaRatio = LOUNGE_SCENE_BG_CROWN_Y_RATIO - LOBBY_SCENE_BG_CROWN_Y_RATIO;
+  const deltaRatio =
+    LOUNGE_SCENE_BG_CROWN_Y_RATIO - LOBBY_SCENE_BG_CROWN_Y_RATIO + LOUNGE_SCENE_BG_POSITION_Y_EXTRA_RATIO;
   return `calc(0% - ${(deltaRatio * 100).toFixed(2)}%)`;
 }
 
