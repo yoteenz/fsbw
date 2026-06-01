@@ -28,7 +28,7 @@ export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
 export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 
 /** Bump when re-baking shelf PNGs (`npm run lobby:bake-shelves`). */
-export const LOBBY_SHELF_ASSET_VERSION = '5Cof6W3Y-v2';
+export const LOBBY_SHELF_ASSET_VERSION = '5Cof6W3Y-v3';
 
 export const LOBBY_SHELF_HD_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/5Cof6W3Y0p6Eyq8ew7Sil_dzSVHBRK.jpeg';
@@ -92,6 +92,10 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
   shelfTransparentLace: `Photorealistic wall-mounted retail shelf graphic for "TRANSPARENT LACE" luxury wigs. Same visual language as a high-end salon product bay: slim shelf, 3–4 elegant wig boxes, airy transparent-lace branding feel. Front-facing, soft shadows, PNG with fully transparent background, no wall.`,
 
   shelfCustomUnits: `Photorealistic wall-mounted retail shelf graphic for "CUSTOM UNITS" made-to-order wigs. Slim shelf with 3–4 luxury boxes, bespoke / atelier packaging cues. Front-facing, premium salon lighting, PNG with fully transparent background, no wall.`,
+
+  /** Prefer neutral gray, white, or magenta backdrop for new shelf/case photos — green spill on clear acrylic is hard to key cleanly. */
+  shelfBackdropNote:
+    'For Supabase source JPEGs: gray or off-white studio wall keys better than green for acrylic shelves/cases (less green cast on glass). If stuck on green screen, export high-res and use npm run lobby:bake-shelves / lobby:bake-case.',
 
   displayCase: `Photorealistic clear acrylic boutique display case for a wig salon counter. Front view, rounded corners, subtle reflections and thickness on edges, empty interior ready for small props on top. Soft studio lighting, PNG with fully transparent background, no products inside unless minimal glare only.`,
 

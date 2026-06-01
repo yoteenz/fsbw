@@ -413,20 +413,12 @@ const LobbyPage: React.FC = () => {
         }}>
           {/* Acrylic Case */}
           <div className="relative">
-            <LobbyAssetDownloadAnchor
-              visible={showAssetDownloads}
-              href={LOBBY_CASE_SRC}
-              downloadFilename="CASE.png"
-              falPrompt={LOBBY_SCENE_FAL_PROMPTS.displayCase}
-              placement="bottom-right"
-            >
-              <img 
-                src={LOBBY_CASE_SRC}
-                alt="Display Case" 
-                className="h-auto"
-                style={{ display: 'block', width: '230px', maxWidth: '230px' }}
-              />
-            </LobbyAssetDownloadAnchor>
+            <img
+              src={LOBBY_CASE_SRC}
+              alt="Display Case"
+              className="h-auto"
+              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
+            />
             
             {/* Register — tap for payment methods popover */}
             <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>

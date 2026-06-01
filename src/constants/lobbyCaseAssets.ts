@@ -4,7 +4,7 @@
  */
 
 /** Display-case acrylic (`CASE.png`) — `npm run lobby:bake-case`. */
-export const LOBBY_CASE_ASSET_VERSION = 'RRrEEA6l-v1';
+export const LOBBY_CASE_ASSET_VERSION = 'RRrEEA6l-v2';
 
 export const LOBBY_CASE_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/RRrEEA6lu1lkeleVPTgsP_wgs8vmEv.jpeg';
