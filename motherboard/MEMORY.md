@@ -22626,3 +22626,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** Downloaded JPEG → **`public/assets/landing-background.png`** (3072×5504). **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`dmdfZH-v1`**; **`LOBBY_ROSE_BACKGROUND_SRC_REMOTE`** + **`LOBBY_ROSE_BACKGROUND_SRC`** `?v=` in **`lobbySceneAssets.ts`**. **`lobbyLoungeSeedancePrompt.ts`** start-frame URL updated. Commit **`26ce9948`** on **`master`** (sync **`preview/mobile`** as needed).
 
 **Prompts:** Full strings in **`src/constants/sceneLobbyNeonNavFal.ts`** — **`LOBBY_NEON_PRODUCTS_FAL_EDIT`**, **`LOBBY_NEON_TOOLS_FAL_EDIT`**, **`LOBBY_NEON_BOOKING_FAL_EDIT`** (NBP glow + BiRefNet cutout note; prefer local bake if glow matters).
+
+---
+
+## 2026-06-01 — Lobby display case 3YeN5RF8 (studio gray key)
+
+**Context (chat):** User supplied new display-case JPEG **`3YeN5RF86itqbtBCkkFFk_HK9jI53s.jpeg`** for lobby **`CASE.png`**.
+
+**Changes:** **`npm run lobby:bake-case`** → **`public/assets/CASE.png`** (920×502, ~**65.5%** transparent). **`LOBBY_CASE_ASSET_VERSION`** **`3YeN5RF8-v1`**, **`LOBBY_CASE_SRC_REMOTE`** + bake script default URL updated.
+
+**Tech:** Source is **neutral gray studio** (not green screen). **`lobby-chroma-key.py`** auto-detects backdrop: green → existing key; else **`key_studio_backdrop`** (corner distance smoothstep). Fixed protect/solidify so gray backdrop is not treated as acrylic. Commit **`92653edf`** on **`master`** + **`preview/mobile`**.
