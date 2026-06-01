@@ -54,13 +54,9 @@ import {
   LOBBY_SHELF_TRANSPARENT_SRC,
 } from '../../constants/lobbySceneAssets';
 import {
-  LOUNGE_CURTAIN_LEFT_SRC,
-  LOUNGE_CURTAIN_RIGHT_SRC,
   LOUNGE_BACKGROUND_SRC,
   LOUNGE_SALON_CHAIRS_SRC,
-  LOUNGE_SCENE_FAL_PROMPTS,
   LOUNGE_TV_DESIGN_SRC,
-  LOUNGE_TV_REMOTE_HAND_SRC,
 } from '../../constants/loungeSceneAssets';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import {
@@ -567,8 +563,6 @@ const LobbyPage: React.FC = () => {
 
 // Lounge Component
 const LoungePage: React.FC = () => {
-  const showAssetDownloads = useLobbyAssetDownloadsVisible();
-
   const tvFrameRef = useRef<HTMLDivElement>(null);
   const [tvOpen, setTvOpen] = useState(false);
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
@@ -633,36 +627,6 @@ const LoungePage: React.FC = () => {
              transition: 'opacity 0.4s ease',
            }}
          >
-           {showAssetDownloads ? (
-             <div
-               style={{
-                 position: 'absolute',
-                 top: -14,
-                 right: 0,
-                 zIndex: 60,
-                 display: 'flex',
-                 flexDirection: 'column',
-                 alignItems: 'flex-end',
-                 gap: 2,
-               }}
-             >
-               <LobbyAssetDownloadLink
-                 href={LOUNGE_CURTAIN_LEFT_SRC}
-                 downloadFilename="lounge-curtain-left.jpeg"
-                 falPrompt={LOUNGE_SCENE_FAL_PROMPTS.curtainLeft}
-               />
-               <LobbyAssetDownloadLink
-                 href={LOUNGE_CURTAIN_RIGHT_SRC}
-                 downloadFilename="lounge-curtain-right.jpeg"
-                 falPrompt={LOUNGE_SCENE_FAL_PROMPTS.curtainRight}
-               />
-               <LobbyAssetDownloadLink
-                 href={LOUNGE_TV_REMOTE_HAND_SRC}
-                 downloadFilename="lounge-tv-remote-hand.png"
-                 falPrompt={LOUNGE_SCENE_FAL_PROMPTS.tvRemoteHand}
-               />
-             </div>
-           ) : null}
            <div
              style={{
                position: 'relative',
@@ -679,7 +643,7 @@ const LoungePage: React.FC = () => {
                  width: '100%',
                  height: '100%',
                  display: 'block',
-                 objectFit: 'fill',
+                 objectFit: 'contain',
                  objectPosition: 'center',
                }}
              />
