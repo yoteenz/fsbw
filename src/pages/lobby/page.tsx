@@ -49,7 +49,7 @@ import {
   LOUNGE_CURTAIN_LEFT_SRC,
   LOUNGE_CURTAIN_RIGHT_SRC,
   LOUNGE_NEON_LOGO_SRC,
-  LOUNGE_ROSE_BACKGROUND_SRC,
+  LOUNGE_BACKGROUND_SRC,
   LOUNGE_SALON_CHAIRS_SRC,
   LOUNGE_SCENE_FAL_PROMPTS,
   LOUNGE_TV_REMOTE_HAND_SRC,
@@ -682,7 +682,7 @@ const LoungePage: React.FC = () => {
           right: 0,
           width: '100%',
           height: loungeBackgroundArtHeightCss(),
-          backgroundImage: `url(${LOUNGE_ROSE_BACKGROUND_SRC})`,
+          backgroundImage: `url(${LOUNGE_BACKGROUND_SRC})`,
           backgroundSize: '100% auto',
           backgroundPosition: 'center top',
           backgroundRepeat: 'no-repeat',
@@ -702,9 +702,9 @@ const LoungePage: React.FC = () => {
           }}
         >
           <LobbyAssetDownloadLink
-            href={LOUNGE_ROSE_BACKGROUND_SRC}
+            href={LOUNGE_BACKGROUND_SRC}
             downloadFilename="landing2-background.png"
-            falPrompt={LOUNGE_SCENE_FAL_PROMPTS.roseBackground}
+            falPrompt={LOUNGE_SCENE_FAL_PROMPTS.loungeBackground}
             style={{ pointerEvents: 'auto' }}
           />
         </div>
