@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
-  LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
-  LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
+  LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
   LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
   LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG,
@@ -352,7 +351,7 @@ export function LobbyCasePropPopover({
       const target = e.target as HTMLElement;
       if (rootRef.current?.contains(target)) return;
       if (portalRef.current?.contains(target)) return;
-      if ((target as HTMLElement).closest?.('[data-lobby-prop-popover], [data-lobby-prop-popover-asset]')) return;
+      if ((target as HTMLElement).closest?.('[data-lobby-prop-popover-layer]')) return;
       onClose();
     };
     document.addEventListener('pointerdown', onPointerDown);
@@ -371,93 +370,94 @@ export function LobbyCasePropPopover({
   const portaledAboveScrim = Boolean(open && anchorRect);
   const hideInlineAnchor = open && portaledAboveScrim;
 
-  const portaledAssetLayer =
+  const portaledOpenLayer =
     portaledAboveScrim && anchorRect
       ? createPortal(
           <div
             ref={portalRef}
-            data-lobby-prop-popover-asset
+            data-lobby-prop-popover-layer
             style={{
               position: 'fixed',
-              left: `${anchorRect.left}px`,
-              top: `${anchorRect.top}px`,
-              width: `${Math.max(anchorRect.width, 1)}px`,
-              height: `${Math.max(anchorRect.height, 1)}px`,
-              margin: 0,
-              padding: 0,
-              zIndex: LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
-              pointerEvents: 'auto',
+              inset: 0,
+              zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
+              pointerEvents: 'none',
               isolation: 'isolate',
               transform: 'translateZ(0)',
             }}
           >
-            <button
-              type="button"
-              aria-label={ariaLabel}
-              aria-expanded
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
+            <div
+              data-lobby-prop-popover-asset
               style={{
-                display: 'block',
-                width: '100%',
-                height: '100%',
+                position: 'fixed',
+                left: `${anchorRect.left}px`,
+                top: `${anchorRect.top}px`,
+                width: `${Math.max(anchorRect.width, 1)}px`,
+                height: `${Math.max(anchorRect.height, 1)}px`,
                 margin: 0,
                 padding: 0,
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                lineHeight: 0,
-                WebkitTapHighlightColor: 'transparent',
-                touchAction: 'manipulation',
+                pointerEvents: 'auto',
               }}
             >
-              {children}
-            </button>
-          </div>,
-          document.body
-        )
-      : null;
-
-  const portaledPanelLayer =
-    portaledAboveScrim && anchorRect
-      ? createPortal(
-          <div
-            role="dialog"
-            aria-label={title}
-            data-lobby-prop-popover
-            className={popoverShellClassName}
-            style={{
-              ...popoverShellStyle,
-              position: 'fixed',
-              left: `${panelFixedLeftPx(align, anchorRect, panelWidthPx)}px`,
-              bottom: `${window.innerHeight - anchorRect.top + panelGapPx}px`,
-              zIndex: LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
-              width: `${panelWidthPx}px`,
-              minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
-              maxWidth: `min(${panelWidthPx}px, calc(100vw - 24px))`,
-              borderWidth: `${lobbyPopoverPx(1.3)}px`,
-              boxSizing: 'border-box',
-              padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
-              pointerEvents: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <p
+              <button
+                type="button"
+                aria-label={ariaLabel}
+                aria-expanded
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  height: '100%',
+                  margin: 0,
+                  padding: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  lineHeight: 0,
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation',
+                }}
+              >
+                {children}
+              </button>
+            </div>
+            <div
+              role="dialog"
+              aria-label={title}
+              data-lobby-prop-popover
+              className={popoverShellClassName}
               style={{
-                ...titleStyle,
-                marginBottom: `${lobbyPopoverPx(8)}px`,
-                paddingBottom: `${lobbyPopoverPx(6)}px`,
-                borderBottom: '1px solid rgba(0,0,0,0.12)',
-                flexShrink: 0,
+                ...popoverShellStyle,
+                position: 'fixed',
+                left: `${panelFixedLeftPx(align, anchorRect, panelWidthPx)}px`,
+                bottom: `${window.innerHeight - anchorRect.top + panelGapPx}px`,
+                width: `${panelWidthPx}px`,
+                minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
+                maxWidth: `min(${panelWidthPx}px, calc(100vw - 24px))`,
+                borderWidth: `${lobbyPopoverPx(1.3)}px`,
+                boxSizing: 'border-box',
+                padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
+                pointerEvents: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
               }}
+              onPointerDown={(e) => e.stopPropagation()}
             >
-              {title}
-            </p>
-            {panelBody}
+              <p
+                style={{
+                  ...titleStyle,
+                  marginBottom: `${lobbyPopoverPx(8)}px`,
+                  paddingBottom: `${lobbyPopoverPx(6)}px`,
+                  borderBottom: '1px solid rgba(0,0,0,0.12)',
+                  flexShrink: 0,
+                }}
+              >
+                {title}
+              </p>
+              {panelBody}
+            </div>
           </div>,
           document.body
         )
@@ -497,8 +497,7 @@ export function LobbyCasePropPopover({
       >
         {children}
       </button>
-      {portaledAssetLayer}
-      {portaledPanelLayer}
+      {portaledOpenLayer}
     </div>
   );
 }
