@@ -71,7 +71,6 @@ import {
 import {
   LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
-  LoungeTvFrame,
   loungeTvDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
 
@@ -633,14 +632,6 @@ const LoungePage: React.FC = () => {
            }}
          >
            {showAssetDownloads ? (
-             <LobbyAssetDownloadLink
-               href={LOUNGE_TV_DESIGN_SRC}
-               downloadFilename="lounge-tv-design.png"
-               falPrompt={LOUNGE_SCENE_FAL_PROMPTS.tvDesign}
-               style={{ position: 'absolute', top: -14, left: 0, zIndex: 60 }}
-             />
-           ) : null}
-           {showAssetDownloads ? (
              <div
                style={{
                  position: 'absolute',
@@ -670,11 +661,27 @@ const LoungePage: React.FC = () => {
                />
              </div>
            ) : null}
-           <LoungeTvFrame
-             frameWidth={loungeLobbyTvFrame.frameW + LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX}
-             frameHeight={loungeLobbyTvFrame.frameH}
+           <div
+             style={{
+               position: 'relative',
+               width: loungeLobbyTvFrame.frameW + LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
+               height: loungeLobbyTvFrame.frameH,
+               lineHeight: 0,
+             }}
            >
-             {!tvOpen && (
+             <img
+               src={LOUNGE_TV_DESIGN_SRC}
+               alt=""
+               draggable={false}
+               style={{
+                 width: '100%',
+                 height: '100%',
+                 display: 'block',
+                 objectFit: 'contain',
+                 objectPosition: 'center',
+               }}
+             />
+             {!tvOpen ? (
                <button
                  type="button"
                  onClick={openLoungeTv}
@@ -713,8 +720,8 @@ const LoungePage: React.FC = () => {
                    }}
                  />
                </button>
-             )}
-           </LoungeTvFrame>
+             ) : null}
+           </div>
          </div>
        </div>
 
