@@ -37,6 +37,17 @@ export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2 =
 /** Pass 1 full prompt (upload original landing-background.png). */
 export const LOBBY_ROSE_BACKGROUND_FAL_PASS1 = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_REAR_LIGHT}`;
 
+/**
+ * When the horizontal ceiling/soffit reads as covering the top of the rose panel (roses “behind” ceiling).
+ * Single short pass on `landing-background.png` — do not bundle with Pass 1 preserve block.
+ */
+export const LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX = `Depth and layering fix only. The center rose floral wall is a built-in vertical panel on the same plane as the red walls — it sits IN FRONT of the ceiling opening, not tucked behind it. Extend the dense crimson and white roses upward so the top rows of flowers fill the area under the ceiling recess and overlap in front of the ceiling edge (roses in front, ceiling surface behind). Keep the ceiling architecture, crown line, soffit shape, and ceiling color exactly unchanged — only fix rose-panel layering at the top. Do not lower the ceiling onto the roses. Keep side walls, floor, baseboard, pedestals, and vases unchanged.`;
+
+export const LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX_NEGATIVE =
+  'roses behind ceiling, ceiling covering roses, ceiling occluding floral panel, roses clipped under ceiling lip, lowering ceiling, compressed rose panel, shorter rose wall, change ceiling design, new ceiling, coffered ceiling, move floor horizon, pink roses, people, text, logos';
+
+/** @deprecated Combined lighting block — NBP ignores front fill when bundled with preserve text. */
+
 /** @deprecated Combined lighting block — NBP ignores front fill when bundled with preserve text. */
 export const LOBBY_ROSE_PANEL_LIGHTING = LOBBY_ROSE_PANEL_REAR_LIGHT;
 
@@ -105,7 +116,7 @@ export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NOTE =
   'LOUNGE-LED WALLS (2 images): upload landing-background.png + lounge render. Prompt LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF.';
 
 /** Tooltip / default: lounge-led wall sync + rose panel lighting passes. */
-export const LOBBY_ROSE_BACKGROUND_FAL_EDIT = `${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NOTE} WALL SYNC PROMPT: ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF} WALL SYNC NEG: ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NEGATIVE} --- ROSE PANEL PASSES: ${LOBBY_ROSE_FAL_TWO_PASS_NOTE} PASS 2: ${LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 1: ${LOBBY_ROSE_BACKGROUND_FAL_PASS1}`;
+export const LOBBY_ROSE_BACKGROUND_FAL_EDIT = `${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NOTE} WALL SYNC PROMPT: ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF} WALL SYNC NEG: ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NEGATIVE} --- ROSE PANEL PASSES: ${LOBBY_ROSE_FAL_TWO_PASS_NOTE} ROSE CEILING DEPTH (short pass if roses behind ceiling): ${LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX} ROSE CEILING DEPTH NEG: ${LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX_NEGATIVE} PASS 2: ${LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 1: ${LOBBY_ROSE_BACKGROUND_FAL_PASS1}`;
 
 /** @deprecated */
 export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
