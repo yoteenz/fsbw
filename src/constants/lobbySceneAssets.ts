@@ -28,7 +28,7 @@ export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
 export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 
 /** Bump when re-baking shelf PNGs (`npm run lobby:bake-shelves`). */
-export const LOBBY_SHELF_ASSET_VERSION = 'RQY7-v3';
+export const LOBBY_SHELF_ASSET_VERSION = '7iUsTnn1-v1';
 
 export const LOBBY_SHELF_HD_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/RQY7MNHaS7mk5m9RKKMd__Qtm01P5p.jpeg';
@@ -37,7 +37,7 @@ export const LOBBY_SHELF_TRANSPARENT_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/2fkXzNmBPwDypFe2xv4P__QY7xpaxh.jpeg';
 
 export const LOBBY_SHELF_CUSTOM_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/AKowa_ZYGg6DxNa2oiwsU_aMURAC98.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/7iUsTnn1PQRK9Io3291KW_pHVg5Q26.jpeg';
 
 export const LOBBY_SHELF_HD_SRC = `/assets/hd-group.png?v=${LOBBY_SHELF_ASSET_VERSION}`;
 export const LOBBY_SHELF_TRANSPARENT_SRC = `/assets/transparent-group.png?v=${LOBBY_SHELF_ASSET_VERSION}`;

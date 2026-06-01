@@ -25,7 +25,7 @@ const SHELVES = [
   {
     name: 'custom',
     remote:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/AKowa_ZYGg6DxNa2oiwsU_aMURAC98.jpeg',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/7iUsTnn1PQRK9Io3291KW_pHVg5Q26.jpeg',
     out: 'custom-group.png',
   },
 ];
@@ -52,12 +52,13 @@ ge = g - np.maximum(r, b)
 
 lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
 
-# Mannequin, acrylic shelf glass, white rim lights — keep opaque (avoid face/panel holes).
+# Mannequin, acrylic shelf glass, white rim lights, red neon labels — keep opaque.
 protect = (
     (ge < 18)
     | (sat < 32)
     | (lum > 145)
     | ((lum > 50) & (ge < 30) & (sat < 95))
+    | ((r > 115) & (r > g + 12) & (sat > 40))
 )
 # True green-screen backdrop.
 is_bg = (ge > 42) & (g > 70)
@@ -100,6 +101,10 @@ wispy = (arr[:, :, 3] < 28) & (ge > 22) & (lum < 85) & ~shelf_body
 arr[wispy, 3] = 0
 arr[wispy, :3] = 0
 
+# Premultiply RGB for clean compositing edges.
+a_norm = arr[:, :, 3].astype(np.float32) / 255.0
+arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
+
 out_im = Image.fromarray(arr)
 alpha = arr[:, :, 3]
 ys, xs = np.where(alpha > 128)
@@ -126,11 +131,20 @@ print(out_im.size)
 mkdirSync(tmpDir, { recursive: true });
 mkdirSync(assetsDir, { recursive: true });
 
-for (const shelf of SHELVES) {
+const onlyName = process.argv[2];
+const remoteOverride = process.argv[3];
+const targets = onlyName ? SHELVES.filter((s) => s.name === onlyName) : SHELVES;
+if (onlyName && targets.length === 0) {
+  console.error(`Unknown shelf "${onlyName}". Use: hd | transparent | custom`);
+  process.exit(1);
+}
+
+for (const shelf of targets) {
   const tmpSrc = path.join(tmpDir, `${shelf.name}.jpeg`);
   const outPath = path.join(assetsDir, shelf.out);
+  const remote = remoteOverride?.startsWith('http') ? remoteOverride : shelf.remote;
   console.log('Fetching', shelf.name, '…');
-  execFileSync('curl', ['-fsSL', '-o', tmpSrc, shelf.remote], { stdio: 'inherit' });
+  execFileSync('curl', ['-fsSL', '-o', tmpSrc, remote], { stdio: 'inherit' });
   execFileSync('python3', ['-c', py, tmpSrc, outPath, '800'], { stdio: 'inherit', cwd: root });
   console.log('Wrote', outPath);
 }
