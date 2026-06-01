@@ -49,7 +49,9 @@ import {
   LOBBY_NEON_LOGO_SRC,
   LOBBY_NEON_NAV_HEIGHT_PX,
   LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX,
+  LOBBY_NEON_NAV_ROW_OFFSET_Y_PX,
   LOBBY_NEON_NAV_ROW_PADDING_X_PX,
+  LOBBY_NEON_NAV_ROW_WIDTH_VW,
   LOBBY_NEON_PRODUCTS_SRC,
   LOBBY_NEON_TOOLS_SRC,
   LOBBY_ROSE_BACKGROUND_SRC,
@@ -193,22 +195,21 @@ const LobbyPage: React.FC = () => {
           </div>
         </div>
         
-        {/* Navigation Links Container — spaced evenly inside rose panel */}
+        {/* Navigation Links — left / center / right thirds inside rose floral column */}
         <div
           style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
-            transform: 'translate(-50%, calc(-50% - 131px))',
+            transform: `translate(-50%, calc(-50% - ${LOBBY_NEON_NAV_ROW_OFFSET_Y_PX}px))`,
             zIndex: 35,
             margin: 0,
             padding: 0,
             pointerEvents: 'none',
-            display: 'flex',
-            flexDirection: 'row',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
             alignItems: 'center',
-            justifyContent: 'center',
-            width: 'min(70vw, 100%)',
+            width: `min(${LOBBY_NEON_NAV_ROW_WIDTH_VW}vw, ${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px)`,
             maxWidth: `${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px`,
             paddingLeft: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
             paddingRight: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
@@ -228,9 +229,8 @@ const LobbyPage: React.FC = () => {
             }}
             style={{
               position: 'relative',
-              flex: '1 1 0',
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
               alignItems: 'center',
               minWidth: 0,
               pointerEvents: 'auto',
@@ -268,7 +268,6 @@ const LobbyPage: React.FC = () => {
             }}
             style={{
               position: 'relative',
-              flex: '1 1 0',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -300,9 +299,8 @@ const LobbyPage: React.FC = () => {
           <span
             style={{
               position: 'relative',
-              flex: '1 1 0',
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'flex-end',
               alignItems: 'center',
               minWidth: 0,
               pointerEvents: 'auto',

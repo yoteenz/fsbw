@@ -24,11 +24,20 @@ export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
 /** PRODUCTS / TOOLS / BOOKING word signs under main logo (16px baseline +30%). */
 export const LOBBY_NEON_NAV_HEIGHT_PX = 21;
 
-/** Horizontal row width for nav signs — aligned to center rose panel on lobby slide. */
-export const LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX = 500;
+/**
+ * Nav row width — tuned to the center rose floral column on `landing-background.png`
+ * under `background-size: cover` on mobile (not full viewport width).
+ */
+export const LOBBY_NEON_NAV_ROW_WIDTH_VW = 54;
+
+/** Cap row width on large viewports so signs stay inside the rose panel. */
+export const LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX = 340;
 
 /** Inset from rose-panel left/right edges so signs sit inside the floral column. */
-export const LOBBY_NEON_NAV_ROW_PADDING_X_PX = 16;
+export const LOBBY_NEON_NAV_ROW_PADDING_X_PX = 10;
+
+/** Vertical offset from slide center (px); pairs with lobby neon logo anchor. */
+export const LOBBY_NEON_NAV_ROW_OFFSET_Y_PX = 131;
 /** Bump when re-baking `neon-products.png` (`npm run lobby:bake-neon-products`). */
 export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = '20O0Gotz-v1';
 
