@@ -12,6 +12,10 @@ def _ge(r: np.ndarray, g: np.ndarray, b: np.ndarray) -> np.ndarray:
     return g - np.maximum(r, b)
 
 
+def _re(r: np.ndarray, g: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return r - np.maximum(g, b)
+
+
 def _smoothstep(edge0: float, edge1: float, x: np.ndarray) -> np.ndarray:
     t = np.clip((x - edge0) / (edge1 - edge0), 0.0, 1.0)
     return t * t * (3.0 - 2.0 * t)
@@ -33,6 +37,10 @@ def _is_greenscreen_bg(bg: np.ndarray) -> bool:
     return bool(bg[1] > bg[0] + 28 and bg[1] > bg[2] + 28)
 
 
+def _is_redscreen_bg(bg: np.ndarray) -> bool:
+    return bool(bg[0] > bg[1] + 28 and bg[0] > bg[2] + 28)
+
+
 def unspill_foreground(arr: np.ndarray) -> None:
     r = arr[:, :, 0].astype(np.float32)
     g = arr[:, :, 1].astype(np.float32)
@@ -51,6 +59,26 @@ def unspill_foreground(arr: np.ndarray) -> None:
     glass = fg & (sat < 80) & (lum > 35) & (lum < 195) & (ge > 2)
     g_fix = np.where(glass, rb_avg, g_fix)
     arr[:, :, 1] = np.clip(g_fix, 0, 255).astype(np.uint8)
+
+
+def unspill_red_foreground(arr: np.ndarray) -> None:
+    """Neutralize red cyclorama spill on acrylic edges and glass panels."""
+    r = arr[:, :, 0].astype(np.float32)
+    g = arr[:, :, 1].astype(np.float32)
+    b = arr[:, :, 2].astype(np.float32)
+    mx = np.max(arr[:, :, :3], axis=2).astype(np.float32)
+    mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
+    sat = mx - mn
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    re = _re(r, g, b)
+    fg = arr[:, :, 3] > 8
+    gb_avg = (g + b) * 0.5
+
+    spill = fg & (re > 4)
+    r_fix = np.where(spill, np.minimum(r, gb_avg + re * 0.08), r)
+    glass = fg & (sat < 80) & (lum > 35) & (lum < 195) & (re > 2)
+    r_fix = np.where(glass, gb_avg, r_fix)
+    arr[:, :, 0] = np.clip(r_fix, 0, 255).astype(np.uint8)
 
 
 def drop_green_haze(arr: np.ndarray, shelf_acrylic_band: bool) -> None:
@@ -79,6 +107,36 @@ def drop_green_haze(arr: np.ndarray, shelf_acrylic_band: bool) -> None:
     arr[fringe, :3] = 0
 
     wispy = (arr[:, :, 3] < 24) & (ge > 12) & (lum < 95)
+    if shelf_acrylic_band:
+        wispy = wispy & ~shelf_body
+    arr[wispy, 3] = 0
+    arr[wispy, :3] = 0
+
+
+def drop_red_haze(arr: np.ndarray, shelf_acrylic_band: bool) -> None:
+    r = arr[:, :, 0].astype(np.float32)
+    g = arr[:, :, 1].astype(np.float32)
+    b = arr[:, :, 2].astype(np.float32)
+    re = _re(r, g, b)
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    hh, ww = arr.shape[:2]
+    shelf_body = np.zeros((hh, ww), dtype=bool)
+    if shelf_acrylic_band:
+        shelf_body[int(hh * 0.42) :, :] = True
+
+    haze = (re > 14) & (r > 52) & (arr[:, :, 3] < 200) & (lum < 155)
+    core = (arr[:, :, 3] > 210) & (re < 12)
+    kill = haze & ~core
+    arr[kill, 3] = 0
+    arr[kill, :3] = 0
+
+    fringe = (arr[:, :, 3] < 48) & (re > 20) & (r > 50) & (lum < 115)
+    if shelf_acrylic_band:
+        fringe = fringe & ~shelf_body
+    arr[fringe, 3] = 0
+    arr[fringe, :3] = 0
+
+    wispy = (arr[:, :, 3] < 24) & (re > 12) & (lum < 95)
     if shelf_acrylic_band:
         wispy = wispy & ~shelf_body
     arr[wispy, 3] = 0
@@ -139,6 +197,104 @@ def key_greenscreen(im: Image.Image, shelf_acrylic_band: bool) -> Image.Image:
     return Image.fromarray(arr)
 
 
+def key_redscreen(im: Image.Image, shelf_acrylic_band: bool) -> Image.Image:
+    arr = np.array(im.convert('RGBA'))
+    r = arr[:, :, 0].astype(np.float32)
+    g = arr[:, :, 1].astype(np.float32)
+    b = arr[:, :, 2].astype(np.float32)
+    mx = np.max(arr[:, :, :3], axis=2).astype(np.float32)
+    mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
+    sat = mx - mn
+    re = _re(r, g, b)
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    protect = (
+        (re < 16)
+        | (sat < 32)
+        | (lum > 145)
+        | ((lum > 48) & (re < 28) & (sat < 95))
+        | ((r > 115) & (r > g + 12) & (sat > 40))
+    )
+    is_bg = (re > 34) & (r > 62)
+
+    alpha = np.zeros(r.shape, dtype=np.float32)
+    alpha[protect] = 255.0
+    alpha[is_bg] = 0.0
+    mid = ~protect & ~is_bg
+    if np.any(mid):
+        t = np.clip((re[mid] - 8.0) / 20.0, 0.0, 1.0)
+        alpha[mid] = 255.0 * (1.0 - t)
+
+    arr[:, :, 3] = np.clip(alpha, 0, 255).astype(np.uint8)
+    unspill_red_foreground(arr)
+    solidify_acrylic(arr, shelf_acrylic_band)
+    drop_red_haze(arr, shelf_acrylic_band)
+
+    a_norm = arr[:, :, 3].astype(np.float32) / 255.0
+    arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
+    return Image.fromarray(arr)
+
+
+def key_redscreen_case(im: Image.Image) -> Image.Image:
+    """Red cyclorama display case — preserve clear acrylic; remove red backdrop."""
+    arr = np.array(im.convert('RGBA'))
+    r = arr[:, :, 0].astype(np.float32)
+    g = arr[:, :, 1].astype(np.float32)
+    b = arr[:, :, 2].astype(np.float32)
+    mx = np.max(arr[:, :, :3], axis=2).astype(np.float32)
+    mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
+    sat = mx - mn
+    re = _re(r, g, b)
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    bg = _corner_bg(r, g, b)
+    dist_bg = np.sqrt((r - bg[0]) ** 2 + (g - bg[1]) ** 2 + (b - bg[2]) ** 2)
+
+    protect = (
+        (re < 16)
+        | (sat < 32)
+        | (lum > 145)
+        | ((lum > 48) & (re < 28) & (sat < 95))
+        | ((r > 115) & (r > g + 12) & (sat > 40))
+    )
+    is_bg = (re > 34) & (r > 62)
+
+    alpha = np.zeros(r.shape, dtype=np.float32)
+    alpha[protect] = 255.0
+    alpha[is_bg] = 0.0
+    mid = ~protect & ~is_bg
+    if np.any(mid):
+        t = np.clip((re[mid] - 8.0) / 20.0, 0.0, 1.0)
+        alpha[mid] = 255.0 * (1.0 - t)
+
+    # Clear acrylic (low red excess) — keep visible; do not use bare lum on red cyclorama.
+    glass = (re < 22) & (sat < 58) & (lum > 55) & (lum < 232)
+    alpha[glass] = np.maximum(alpha[glass], 0.82)
+    subject = (dist_bg > 50) | ((sat > 36) & (dist_bg > 24)) | ((re < 20) & (dist_bg > 28))
+    alpha = np.where(subject, np.maximum(alpha, 0.96), alpha)
+
+    arr[:, :, 3] = (np.clip(alpha, 0.0, 1.0) * 255.0).astype(np.uint8)
+    unspill_red_foreground(arr)
+    solidify_case_glass(arr, dist_bg, sat, lum, r, g)
+
+    hull = _case_subject_hull(arr[:, :, 3])
+    in_hull = hull & (dist_bg > 8)
+    arr[in_hull, 3] = np.maximum(arr[in_hull, 3], 200)
+    glass_in_hull = hull & (sat < 60) & (lum > 52)
+    arr[glass_in_hull, 3] = np.maximum(arr[glass_in_hull, 3], 225)
+    _fill_alpha_holes(arr)
+
+    alpha_f = arr[:, :, 3].astype(np.float32) / 255.0
+    fringe = ((alpha_f < 0.12) & (re > 28) & (r > 55)) | ((alpha_f < 0.08) & (dist_bg < 18))
+    fringe = fringe & ~hull
+    arr[fringe, 3] = 0
+    arr[fringe, :3] = 0
+    drop_red_haze(arr, shelf_acrylic_band=False)
+
+    a_norm = arr[:, :, 3].astype(np.float32) / 255.0
+    arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
+    return Image.fromarray(arr)
+
+
 def _case_subject_hull(alpha_u8: np.ndarray) -> np.ndarray:
     """Expand solid subject seeds so backdrop-colored acrylic stays inside the hull."""
     seeds = alpha_u8 >= 200
@@ -172,13 +328,14 @@ def solidify_case_glass(
     r: np.ndarray,
     g: np.ndarray,
 ) -> None:
-    """Display case acrylic reads near gray backdrop — keep panels solid, glass slightly soft."""
-    glass = (dist_bg > 14) & (sat < 56) & (lum > 58) & (lum < 232)
+    """Display case acrylic — only boost existing foreground (never the keyed-out backdrop)."""
+    fg = arr[:, :, 3] > 48
+    glass = fg & (dist_bg > 14) & (sat < 56) & (lum > 58) & (lum < 232)
     panels = glass & (dist_bg > 20)
     arr[panels, 3] = np.maximum(arr[panels, 3], 210)
-    frame = (dist_bg > 46) | (lum < 94)
+    frame = fg & ((dist_bg > 46) | ((lum < 94) & (dist_bg > 22)))
     arr[frame, 3] = np.maximum(arr[frame, 3], 248)
-    neon = (r > 112) & (r > g + 10) & (sat > 38)
+    neon = fg & (r > 112) & (r > g + 10) & (sat > 38)
     arr[neon, 3] = 255
 
 
@@ -301,12 +458,19 @@ def post_resize_cleanup(out_im: Image.Image, shelf_acrylic_band: bool) -> Image.
         mn = np.min(arr[:, :, :3], axis=2).astype(np.float32)
         sat = mx - mn
         lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        re = _re(r, g, b)
         fg = arr[:, :, 3] > 80
         glass = fg & (sat < 56) & (lum > 58) & (lum < 232)
         arr[glass, 3] = np.maximum(arr[glass, 3], 215)
         frame = fg & (lum < 96)
         arr[frame, 3] = np.maximum(arr[frame, 3], 248)
         _fill_alpha_holes(arr)
+        unspill_red_foreground(arr)
+        drop_red_haze(arr, shelf_acrylic_band=False)
+        # Remove residual red fringe after downscale.
+        fringe = (arr[:, :, 3] < 40) & (re > 22) & (r > 48)
+        arr[fringe, 3] = 0
+        arr[fringe, :3] = 0
     a_norm = arr[:, :, 3].astype(np.float32) / 255.0
     arr[:, :, :3] = np.clip(arr[:, :, :3] * a_norm[..., np.newaxis], 0, 255).astype(np.uint8)
     return Image.fromarray(arr)
@@ -322,6 +486,9 @@ def bake(src: str, out: str, max_w: int, shelf_acrylic_band: bool) -> None:
     if _is_greenscreen_bg(bg):
         out_im = key_greenscreen(im, shelf_acrylic_band)
         key_mode = 'green'
+    elif _is_redscreen_bg(bg):
+        out_im = key_redscreen_case(im) if not shelf_acrylic_band else key_redscreen(im, shelf_acrylic_band)
+        key_mode = 'red'
     else:
         out_im = key_studio_backdrop(im, shelf_acrylic_band)
         key_mode = 'studio'
