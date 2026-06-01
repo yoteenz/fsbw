@@ -14,6 +14,7 @@
     "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs",
     "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs",
     "lobby:bake-phone": "node scripts/lobby-bake-phone-asset.mjs",
+    "lobby:bake-neon-logo": "node scripts/lobby-bake-neon-logo-asset.mjs",
     "lobby:bake-payment-icons": "node scripts/lobby-bake-payment-icons.mjs"
   },
   "dependencies": {
