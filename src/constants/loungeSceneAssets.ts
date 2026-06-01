@@ -1,5 +1,9 @@
 import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
+import { LOUNGE_TV_DESIGN_SRC } from '../components/lounge/loungeTvAssets';
+import { LOUNGE_TV_DESIGN_FAL_EDIT } from './sceneLoungeTvFal';
 import { LOUNGE_BACKGROUND_FAL_EDIT, loungeBackgroundFalWorkflowNote } from './sceneLoungeBackgroundFal';
+
+export { LOUNGE_TV_DESIGN_SRC };
 
 /** Bump when replacing `public/assets/landing2-background.png` (Vercel caches `/assets/*`). */
 export const LOUNGE_BACKGROUND_ASSET_VERSION = 'lpreC-MSzG';
@@ -39,6 +43,8 @@ export const LOUNGE_SCENE_FAL_PROMPTS = {
   curtainRight: `Right half matching the exported left curtain panel — mirror pleats, lighting, and gray tone. See loungeCurtainFalPrompts.ts WORKFLOW B step 2.`,
 
   tvRemoteHand: `Photorealistic hand holding a TV remote, lower edge of frame, soft studio light, PNG with fully transparent background for compositing over lounge TV overlay.`,
+
+  tvDesign: LOUNGE_TV_DESIGN_FAL_EDIT,
 
   /** Seedance 2 — horizontal lobby → lounge transition (start/end frame URLs in copy block). */
   roomTransitionSeedance: LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK,

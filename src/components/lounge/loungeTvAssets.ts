@@ -5,6 +5,15 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
+/** Bump when replacing `public/assets/lounge-tv-design.png` (Fal / download reference for CSS TV). */
+export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'tv-design-1';
+
+/** Full TV bezel + off screen — Fal reference; live lounge slide uses CSS `LoungeTvFrame`. */
+export const LOUNGE_TV_DESIGN_SRC = `/assets/lounge-tv-design.png?v=${LOUNGE_TV_DESIGN_ASSET_VERSION}`;
+
+/** @deprecated Black screen plate only; use {@link LOUNGE_TV_DESIGN_SRC} for TV design downloads. */
+export const LOUNGE_TV_SCREEN_SRC = '/assets/tv-screen.png';
+
 /**
  * Plucking Your Lace / TV content clip — must be a real file at
  * `public/assets/tv-content-video.mp4` (not a symlink to another shop video).
