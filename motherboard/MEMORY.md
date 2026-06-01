@@ -22570,3 +22570,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** First bake **broke mannequin faces** (aggressive green_excess key punched holes). **Regenerated** with mannequin-protect key (**`ge<18` / `sat<32`**), green **despill**, fringe drop, tight alpha crop. **`LOBBY_SHELF_ASSET_VERSION`** → **`RQY7-v2`**.
 
 **Update (same chat):** User: **acrylic front panel** rendering broken + remove **3 shelf DOWNLOAD links**. Rebaked with glass/rim protect, shelf-body alpha solidify, despill skip on bright/red neon; fringe wipe excludes shelf mask. **`RQY7-v3`**. **`page.tsx`** shelves use plain **`<img>`** (no **`LobbyAssetDownloadAnchor`**).
+
+**Update (same chat):** Removed **DOWNLOAD** links from **neon logo**, **lobby** (`landing-background`), and **lounge** (`landing2-background`) in **`page.tsx`**. Shelves already plain imgs; case/neon nav/TV downloads unchanged.
