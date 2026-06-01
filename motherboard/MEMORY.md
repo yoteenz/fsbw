@@ -22648,3 +22648,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Products** neon **`XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg`** → **`neon-products.png`** (900×295, white studio key + halo). **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`XmqZbgWv-v1`**. **Display case** **`7mfZBdMQEOXkht8MamYaG_DIB2ZDCl.jpeg`** → **`CASE.png`** (920×466). **`LOBBY_CASE_ASSET_VERSION`** **`7mfZBdMQ-v1`**. White-backdrop handling in **`lobby-bake-neon-nav-asset.mjs`** + **`key_studio_case`**. Commit **`76671fd4`** on **`master`** + **`preview/mobile`**.
 
 **Update (same chat):** Display case **`37jR_8sOmtkmHDonwcu9i_RolTShHD.jpeg`** (white studio) → **`CASE.png`** (920×537, **`key_studio_case`**). **`LOBBY_CASE_ASSET_VERSION`** **`37jR_8sO-v1`**. Commit **`b3dbdb3f`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** **Booking** neon **`SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg`** → **`neon-booking.png`** (900×295, white studio key + halo). **`LOBBY_NEON_BOOKING_ASSET_VERSION`** **`SnSxe3vt-v1`**, versioned **`LOBBY_NEON_BOOKING_SRC`**. **`npm run lobby:bake-neon-booking`**.
