@@ -37,9 +37,6 @@ export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2 =
 /** Pass 1 full prompt (upload original landing-background.png). */
 export const LOBBY_ROSE_BACKGROUND_FAL_PASS1 = `${SCENE_ASSET_EDIT_PRESERVE_BLOCK} ${LOBBY_ROSE_PANEL_COLOR_LOCK} ${LOBBY_ROSE_PANEL_REAR_LIGHT}`;
 
-/** Tooltip / default: workflow + both passes. */
-export const LOBBY_ROSE_BACKGROUND_FAL_EDIT = `${LOBBY_ROSE_FAL_TWO_PASS_NOTE} PASS 2 PROMPT: ${LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 2 NEGATIVE: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2} PASS 1 PROMPT: ${LOBBY_ROSE_BACKGROUND_FAL_PASS1} PASS 1 NEGATIVE: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1}`;
-
 /** @deprecated Combined lighting block — NBP ignores front fill when bundled with preserve text. */
 export const LOBBY_ROSE_PANEL_LIGHTING = LOBBY_ROSE_PANEL_REAR_LIGHT;
 
@@ -50,9 +47,29 @@ export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE = SCENE_ROSE_BACKGROUND_FAL_NEGA
 export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `When using the lobby panel as a reference for the lounge panel: match ceiling line, crown molding, side-wall dusty-rose plaster tone, center floral red saturation, and marble horizon so the horizontal swipe is seamless. Do not shift the floor line up or down.`;
 
 /**
- * Shared wall architecture for lobby ↔ lounge carousel (lobby side walls + lounge — not the floral center).
+ * Unified smooth red walls (user preference) — NOT pink/mauve, NOT lobby wainscoting.
  */
-export const SCENE_LOBBY_WAINSCOTING_MATCH = `WALLS — MUST MATCH LOBBY PANELING: Same boutique architecture as the lobby room — soft dusty-rose / mauve-pink matte plaster with identical wainscoting on every visible wall: one large upper recessed rectangular panel and one smaller lower panel per wall, same molding profile, depth, spacing, and wall color as the lobby (landing-background). NOT a flat solid red paint wall, NOT a seamless sheet of crimson, NOT the lobby’s full-height dense rose floral panel. Red appears only as small prop flowers (table vase, pedestal bouquet), never as wall paint.`;
+export const SCENE_UNIFIED_TRUE_RED_WALL = `Wall color: deep saturated true red / burgundy / crimson (#8B0000–#B22222), matte plaster — NOT pink, NOT dusty rose, NOT mauve, NOT coral, NOT pastel. Smooth flat walls with NO wainscoting panels and NO rectangular molding on side walls.`;
+
+/**
+ * Alternate: lounge walls match lobby paneling (older carousel approach).
+ */
+export const SCENE_LOBBY_WAINSCOTING_MATCH = `WALLS — MATCH LOBBY PANELING: dusty-rose plaster + upper/lower wainscoting panels. NOT flat solid red paint. NOT full floral rose wall on lounge.`;
+
+/**
+ * Upload [landing-background.png, lounge PNG]. Lounge = color reference; lobby side walls lose panels.
+ */
+export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF = `Use the lounge reference image for wall color and finish only. Change the lobby LEFT and RIGHT wall areas: remove all wainscoting panels and molding — smooth matte deep true red burgundy walls matching the lounge reference, NOT pink. Keep the CENTER vertical dense rose floral panel exactly (crimson roses, cream accents). Keep marble floor, baseboard, clear pedestals, urn vases, ceiling, camera crop, and layout unchanged.`;
+
+export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NEGATIVE =
+  'pink walls, dusty rose walls, mauve, wainscoting, wall panels, rectangular molding, flat lobby without rose panel, remove floral center, change floor horizon, extra furniture, people, logos';
+
+/** Tooltip add-on for lobby DOWNLOAD — prepend to roseBackground when using lounge-led walls. */
+export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NOTE =
+  'LOUNGE-LED WALLS (2 images): upload landing-background.png + lounge render. Prompt LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF.';
+
+/** Tooltip / default: lounge-led wall sync + rose panel lighting passes. */
+export const LOBBY_ROSE_BACKGROUND_FAL_EDIT = `${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NOTE} WALL SYNC PROMPT: ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF} WALL SYNC NEG: ${LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NEGATIVE} --- ROSE PANEL PASSES: ${LOBBY_ROSE_FAL_TWO_PASS_NOTE} PASS 2: ${LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT} PASS 1: ${LOBBY_ROSE_BACKGROUND_FAL_PASS1}`;
 
 /** @deprecated */
 export const LOBBY_ROSE_BACKGROUND_FAL_BASE = LOBBY_ROSE_BACKGROUND_FAL_EDIT;
