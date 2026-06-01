@@ -5,10 +5,13 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
-/** Bump when replacing `public/assets/lounge-tv-design.png` (Fal / download reference for CSS TV). */
-export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'tv-design-1';
+/** Bump when replacing `public/assets/lounge-tv-design.png` (`npm run lounge:bake-tv-design`). */
+export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'pNu1yJzm';
 
-/** Full TV bezel + off screen — Fal reference; live lounge slide uses CSS `LoungeTvFrame`. */
+export const LOUNGE_TV_DESIGN_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/pNu1yJzmL4dvFCWQy6wMl_Ueut2LUr.jpeg';
+
+/** Full TV bezel + off screen PNG; lounge slide renders this image (play overlay on top). */
 export const LOUNGE_TV_DESIGN_SRC = `/assets/lounge-tv-design.png?v=${LOUNGE_TV_DESIGN_ASSET_VERSION}`;
 
 /** @deprecated Black screen plate only; use {@link LOUNGE_TV_DESIGN_SRC} for TV design downloads. */
