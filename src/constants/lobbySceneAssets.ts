@@ -27,6 +27,10 @@ export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
 /** PRODUCTS / TOOLS / BOOKING word signs under main logo (16px baseline +30%). */
 export const LOBBY_NEON_NAV_HEIGHT_PX = 21;
 
+/** Separation glow when nav PNGs sit over the lit crimson rose panel (pair with re-baked assets). */
+export const LOBBY_NEON_NAV_COMPOSITE_FILTER =
+  'drop-shadow(0 0 3px rgba(255,255,255,0.9)) drop-shadow(0 0 8px rgba(255,235,240,0.65)) drop-shadow(0 0 1px rgba(0,0,0,0.4))';
+
 /**
  * Nav row width — tuned to the center rose floral column on `landing-background.png`
  * under `background-size: cover` on mobile (not full viewport width).
