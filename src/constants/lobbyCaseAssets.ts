@@ -15,7 +15,7 @@ export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 export const LOBBY_CASE_DISPLAY_WIDTH_PX = 184;
 
 /** Horizontal nudge for case block on lobby slide (`translateX` after center). */
-export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 36;
+export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 32;
 
 /** Scales register/phone anchor offsets with the case; does not scale icon bitmaps. */
 export const LOBBY_CASE_PROP_LAYOUT_SCALE = 0.8;
@@ -30,6 +30,9 @@ export const LOBBY_CASE_REGISTER_ANCHOR_TOP_PX = lobbyCasePropOffset(-39);
 export const LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX = lobbyCasePropOffset(32);
 export const LOBBY_CASE_PHONE_ANCHOR_TOP_PX = lobbyCasePropOffset(-33);
 export const LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX = lobbyCasePropOffset(-6);
+
+/** Extra nudge left for phone only (px, not scaled with case). */
+export const LOBBY_CASE_PHONE_NUDGE_LEFT_PX = 16;
 
 export const LOBBY_PHONE_ASSET_VERSION = 'q-oa7o8';
 

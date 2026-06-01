@@ -321,7 +321,7 @@ export function LobbyCasePropPopover({
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const portalRef = useRef<HTMLButtonElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
   const open = activeId === popoverId;
 
@@ -352,7 +352,7 @@ export function LobbyCasePropPopover({
       const target = e.target as HTMLElement;
       if (rootRef.current?.contains(target)) return;
       if (portalRef.current?.contains(target)) return;
-      if ((target as HTMLElement).closest?.('[data-lobby-prop-popover]')) return;
+      if ((target as HTMLElement).closest?.('[data-lobby-prop-popover], [data-lobby-prop-popover-asset]')) return;
       onClose();
     };
     document.addEventListener('pointerdown', onPointerDown);
@@ -374,15 +374,9 @@ export function LobbyCasePropPopover({
   const portaledAssetLayer =
     portaledAboveScrim && anchorRect
       ? createPortal(
-          <button
+          <div
             ref={portalRef}
-            type="button"
-            aria-label={ariaLabel}
-            aria-expanded
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
+            data-lobby-prop-popover-asset
             style={{
               position: 'fixed',
               left: `${anchorRect.left}px`,
@@ -391,18 +385,37 @@ export function LobbyCasePropPopover({
               height: `${Math.max(anchorRect.height, 1)}px`,
               margin: 0,
               padding: 0,
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              lineHeight: 0,
-              pointerEvents: 'auto',
               zIndex: LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
-              WebkitTapHighlightColor: 'transparent',
-              touchAction: 'manipulation',
+              pointerEvents: 'auto',
+              isolation: 'isolate',
+              transform: 'translateZ(0)',
             }}
           >
-            {children}
-          </button>,
+            <button
+              type="button"
+              aria-label={ariaLabel}
+              aria-expanded
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              style={{
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                margin: 0,
+                padding: 0,
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                lineHeight: 0,
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation',
+              }}
+            >
+              {children}
+            </button>
+          </div>,
           document.body
         )
       : null;
@@ -459,8 +472,14 @@ export function LobbyCasePropPopover({
         aria-expanded={open}
         onClick={(e) => {
           e.stopPropagation();
-          if (open) onClose();
-          else onActivate(popoverId);
+          if (open) {
+            onClose();
+            return;
+          }
+          if (anchorRef.current) {
+            setAnchorRect(anchorRef.current.getBoundingClientRect());
+          }
+          onActivate(popoverId);
         }}
         style={{
           display: 'block',

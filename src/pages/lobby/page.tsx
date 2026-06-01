@@ -49,6 +49,7 @@ import {
   LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX,
   LOBBY_CASE_PHONE_ANCHOR_TOP_PX,
   LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX,
+  LOBBY_CASE_PHONE_NUDGE_LEFT_PX,
   LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX,
   LOBBY_CASE_REGISTER_ANCHOR_TOP_PX,
   LOBBY_PHONE_SRC,
@@ -465,7 +466,7 @@ const LobbyPage: React.FC = () => {
                 right: `${LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX}px`,
                 top: `${LOBBY_CASE_PHONE_ANCHOR_TOP_PX}px`,
                 zIndex: 2,
-                transform: `translateX(${LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX}px)`,
+                transform: `translateX(${LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX - LOBBY_CASE_PHONE_NUDGE_LEFT_PX}px)`,
               }}
             >
               <LobbyCasePropPopover
@@ -502,8 +503,6 @@ const LobbyPage: React.FC = () => {
               position: 'fixed',
               inset: 0,
               backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
-              backdropFilter: 'blur(3px)',
-              WebkitBackdropFilter: 'blur(3px)',
               zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
               margin: 0,
               padding: 0,
