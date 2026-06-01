@@ -33,6 +33,10 @@ import {
   sceneCarouselSlideMinHeightCss,
 } from '../../utils/sceneCarouselBackground';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
+import {
+  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
+  LOBBY_CASE_POPOVER_STACK_Z_INDEX,
+} from '../../constants/lobbyPaymentIcons';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
@@ -394,8 +398,8 @@ const LobbyPage: React.FC = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(calc(-50% + 4px), calc(-50% + 255px))',
-          zIndex: 20,
-          maxWidth: '753px'
+          zIndex: lobbyCasePopover !== null ? LOBBY_CASE_POPOVER_STACK_Z_INDEX : 20,
+          maxWidth: '753px',
         }}>
           {/* Acrylic Case */}
           <div className="relative">
@@ -403,11 +407,17 @@ const LobbyPage: React.FC = () => {
               src={LOBBY_CASE_SRC}
               alt="Display Case"
               className="h-auto"
-              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
+              style={{
+                display: 'block',
+                width: '230px',
+                maxWidth: '230px',
+                opacity: lobbyCasePopover !== null ? 0.2 : 1,
+                transition: 'opacity 0.3s ease-out',
+              }}
             />
             
             {/* Register — tap for payment methods popover */}
-            <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>
+            <div className="absolute left-8" style={{ top: '-39px', zIndex: 2 }}>
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
@@ -433,7 +443,7 @@ const LobbyPage: React.FC = () => {
             {/* Phone — tap for business contact popover */}
             <div
               className="absolute right-8"
-              style={{ top: '-33px', zIndex: 25, transform: 'translateX(-6px)' }}
+              style={{ top: '-33px', zIndex: 2, transform: 'translateX(-6px)' }}
             >
               <LobbyCasePropPopover
                 popoverId="phone"
@@ -471,7 +481,7 @@ const LobbyPage: React.FC = () => {
               backgroundColor: 'rgba(0, 0, 0, 0.7)',
               backdropFilter: 'blur(3px)',
               WebkitBackdropFilter: 'blur(3px)',
-              zIndex: 10000,
+              zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
               margin: 0,
               padding: 0,
             }}

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
+  LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
   LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
   LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG,
@@ -358,7 +359,7 @@ export function LobbyCasePropPopover({
             position: 'absolute',
             bottom: `calc(100% + ${lobbyPopoverPx(10)}px)`,
             ...panelPositionStyle(align),
-            zIndex: 10001,
+            zIndex: LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
             width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
             minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
             maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
