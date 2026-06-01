@@ -10,7 +10,7 @@ export const LOUNGE_TV_SCREEN_ASPECT = 0.72;
 export const LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX = 36;
 
 /** Lobby lounge slide — TV anchor nudge from viewport center. */
-export const LOUNGE_LOBBY_TV_OFFSET_X_PX = 58;
+export const LOUNGE_LOBBY_TV_OFFSET_X_PX = 48;
 export const LOUNGE_LOBBY_TV_OFFSET_Y_PX = -10;
 
 /** Expanded overlay TV size multiplier (1 = full computed size). */
