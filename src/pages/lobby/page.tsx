@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   lobbyCarouselIndexFromPath,
@@ -145,6 +146,7 @@ const LobbyPage: React.FC = () => {
 
   const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
+  const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
 
   return (
     <div
@@ -414,7 +416,7 @@ const LobbyPage: React.FC = () => {
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
-                onClose={() => setLobbyCasePopover(null)}
+                onClose={closeLobbyCasePopover}
                 ariaLabel="View accepted payment methods"
                 title={LOBBY_REGISTER_POPOVER_TITLE}
                 paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
@@ -441,7 +443,7 @@ const LobbyPage: React.FC = () => {
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
-                onClose={() => setLobbyCasePopover(null)}
+                onClose={closeLobbyCasePopover}
                 ariaLabel="View business contact information"
                 title={LOBBY_PHONE_POPOVER_TITLE}
                 sections={LOBBY_PHONE_POPOVER_SECTIONS}
@@ -459,6 +461,26 @@ const LobbyPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {lobbyCasePopover !== null &&
+        createPortal(
+          <div
+            role="presentation"
+            aria-hidden
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(3px)',
+              WebkitBackdropFilter: 'blur(3px)',
+              zIndex: 10000,
+              margin: 0,
+              padding: 0,
+            }}
+            onClick={closeLobbyCasePopover}
+          />,
+          document.body
+        )}
       
       {/* Right Arrow Button - Part of page design, scrolls with content */}
       <div style={{
