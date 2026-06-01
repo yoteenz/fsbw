@@ -38,9 +38,7 @@ import {
   isLobbyTransitionVideoEnabledFromSearch,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import { LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
-import { useLobbyAssetDownloadsVisible } from '../../hooks/useLobbyAssetDownloadsVisible';
 import {
   LOBBY_CASE_REGISTER_SRC,
   LOBBY_CASE_SRC,
@@ -51,7 +49,6 @@ import {
   LOBBY_NEON_PRODUCTS_SRC,
   LOBBY_NEON_TOOLS_SRC,
   LOBBY_ROSE_BACKGROUND_SRC,
-  LOBBY_SCENE_FAL_PROMPTS,
   LOBBY_SHELF_CUSTOM_SRC,
   LOBBY_SHELF_HD_SRC,
   LOBBY_SHELF_TRANSPARENT_SRC,
@@ -78,7 +75,6 @@ import {
 // Lobby Component
 const LobbyPage: React.FC = () => {
   const navigate = useNavigate();
-  const showAssetDownloads = useLobbyAssetDownloadsVisible();
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
   useEffect(() => {
@@ -227,14 +223,6 @@ const LobbyPage: React.FC = () => {
             }}
             aria-label="Go to shop"
           >
-            {showAssetDownloads ? (
-              <LobbyAssetDownloadLink
-                href={LOBBY_NEON_PRODUCTS_SRC}
-                downloadFilename="neon-products.png"
-                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonProducts}
-                style={{ position: 'absolute', top: -14, left: 0, zIndex: 50 }}
-              />
-            ) : null}
             <img
               src={LOBBY_NEON_PRODUCTS_SRC}
               alt=""
@@ -274,14 +262,6 @@ const LobbyPage: React.FC = () => {
             }}
             aria-label="Go to tools"
           >
-            {showAssetDownloads ? (
-              <LobbyAssetDownloadLink
-                href={LOBBY_NEON_TOOLS_SRC}
-                downloadFilename="neon-tools.png"
-                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonTools}
-                style={{ position: 'absolute', top: -14, left: 0, zIndex: 50 }}
-              />
-            ) : null}
             <img
               src={LOBBY_NEON_TOOLS_SRC}
               alt=""
@@ -310,16 +290,6 @@ const LobbyPage: React.FC = () => {
               alignItems: 'center',
             }}
           >
-            {showAssetDownloads ? (
-              <LobbyAssetDownloadLink
-                href={bookingNeonSrc}
-                downloadFilename={
-                  bookingNeonSrc.endsWith('.svg') ? 'neon-booking.svg' : 'neon-booking.png'
-                }
-                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonBooking}
-                style={{ position: 'absolute', top: -14, right: 0, zIndex: 50 }}
-              />
-            ) : null}
             <img
               src={bookingNeonSrc}
               alt=""

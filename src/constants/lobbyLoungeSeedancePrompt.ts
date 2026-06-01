@@ -3,7 +3,7 @@ export const LOBBY_LOUNGE_SEEDANCE_MODEL = 'seedance-2';
 
 /** First frame — lobby (`landing-background.png` source). */
 export const LOBBY_LOUNGE_SEEDANCE_START_FRAME_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/JgMOOyc0S2fwovqjnRGOA_xKRqBrUe.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/dmdfZH_WdaOAJqCFVHi7K_jiWmVT0U.jpeg';
 
 /** Last frame — lounge (`landing2-background.png` source). */
 export const LOBBY_LOUNGE_SEEDANCE_END_FRAME_REMOTE =

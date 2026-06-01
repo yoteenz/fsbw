@@ -4,10 +4,10 @@
  */
 
 /** Display-case acrylic (`CASE.png`) — `npm run lobby:bake-case`. */
-export const LOBBY_CASE_ASSET_VERSION = 'RRrEEA6l-v2';
+export const LOBBY_CASE_ASSET_VERSION = '37jR_8sO-v1';
 
 export const LOBBY_CASE_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/RRrEEA6lu1lkeleVPTgsP_wgs8vmEv.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/37jR_8sOmtkmHDonwcu9i_RolTShHD.jpeg';
 
 export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 

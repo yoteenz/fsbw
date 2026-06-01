@@ -22614,3 +22614,37 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Display case DOWNLOAD** removed (plain **`<img>`**). Shared **`scripts/lobby-chroma-key.py`** — acrylic **unspill** (G→neutral glass), green **haze** removal, post-resize cleanup. Rebaked **CASE** + all shelves: **`RRrEEA6l-v2`**, **`5Cof6W3Y-v3`**. **`LOBBY_SCENE_FAL_PROMPTS.shelfBackdropNote`**: gray/off-white/magenta backdrop better than green for acrylic; green OK with bake scripts.
 
 **Update (same chat):** **Lobby nav neon Fal prompts** — **`sceneLobbyNeonNavFal.ts`** full NBP two-pass copy for **`neon-products.png`**, **`neon-tools.png`**, **`neon-booking.png`** (style-locked to main logo). **`LOBBY_SCENE_FAL_PROMPTS.neonProducts|neonTools|neonBooking`** use **`LOBBY_NEON_*_FAL_EDIT`** (DOWNLOAD tooltip on lobby when dev/admin/**`?lobbyAssets=1`**).
+
+**Update (same chat):** Lobby **display case** — **`wHPQKCAbC2LStCesR63Uy_VFNUqidw.jpeg`** → **`CASE.png`** (920×504, **`lobby-chroma-key.py`**). **`LOBBY_CASE_ASSET_VERSION`** **`wHPQKCAb-v1`**.
+
+---
+
+## 2026-06-01 — Lobby background dmdfZH + neon nav Fal prompts delivered
+
+**Context (chat):** User asked for **PRODUCTS / TOOLS / BOOKING** Fal edit prompts copied into chat, and to swap **lobby rose background** from Supabase **`dmdfZH_WdaOAJqCFVHi7K_jiWmVT0U.jpeg`**.
+
+**Changes:** Downloaded JPEG → **`public/assets/landing-background.png`** (3072×5504). **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`dmdfZH-v1`**; **`LOBBY_ROSE_BACKGROUND_SRC_REMOTE`** + **`LOBBY_ROSE_BACKGROUND_SRC`** `?v=` in **`lobbySceneAssets.ts`**. **`lobbyLoungeSeedancePrompt.ts`** start-frame URL updated. Commit **`26ce9948`** on **`master`** (sync **`preview/mobile`** as needed).
+
+**Prompts:** Full strings in **`src/constants/sceneLobbyNeonNavFal.ts`** — **`LOBBY_NEON_PRODUCTS_FAL_EDIT`**, **`LOBBY_NEON_TOOLS_FAL_EDIT`**, **`LOBBY_NEON_BOOKING_FAL_EDIT`** (NBP glow + BiRefNet cutout note; prefer local bake if glow matters).
+
+---
+
+## 2026-06-01 — Lobby display case 3YeN5RF8 (studio gray key)
+
+**Context (chat):** User supplied new display-case JPEG **`3YeN5RF86itqbtBCkkFFk_HK9jI53s.jpeg`** for lobby **`CASE.png`**.
+
+**Changes:** **`npm run lobby:bake-case`** → **`public/assets/CASE.png`** (920×502, ~**65.5%** transparent). **`LOBBY_CASE_ASSET_VERSION`** **`3YeN5RF8-v1`**, **`LOBBY_CASE_SRC_REMOTE`** + bake script default URL updated.
+
+**Tech:** Source is **neutral gray studio** (not green screen). **`lobby-chroma-key.py`** auto-detects backdrop: green → existing key; else **`key_studio_backdrop`** (corner distance smoothstep). Fixed protect/solidify so gray backdrop is not treated as acrylic. Commit **`92653edf`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** Removed **DOWNLOAD** text links from lobby **products / tools / booking** neon nav signs in **`page.tsx`** (plain **`<img>`** only). Dropped unused **`LobbyAssetDownloadLink`**, **`useLobbyAssetDownloadsVisible`**, **`LOBBY_SCENE_FAL_PROMPTS`** imports on lobby page.
+
+**Update (same chat):** Display case **`3YeN5RF8`** rebake — studio gray source was punching holes in backdrop-colored acrylic. Added **`key_studio_case`**, subject **hull** dilation, gentler fringe wipe, **`solidify_case_glass`**. **`LOBBY_CASE_ASSET_VERSION`** **`3YeN5RF8-v2`** (~**27%** transparent outer margin; acrylic panels solid).
+
+**Update (same chat):** Lobby **products** neon — **`2qzZrBQ-6_iHuRTvLDint_bgcwFyZn.jpeg`** → **`neon-products.png`** (900×434, gray studio key + halo preserve). **`lobby-bake-neon-nav-asset.mjs`**, **`npm run lobby:bake-neon-products`**. **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`2qzZrBQ6-v1`**, **`LOBBY_NEON_PRODUCTS_SRC_REMOTE`**, versioned **`LOBBY_NEON_PRODUCTS_SRC`**.
+
+**Update (same chat):** Display case **`f2yXuce0ieTt_AyHAO-xD_xuDmtOA1.jpeg`** — **red cyclorama** source. **`key_redscreen_case`**, **`unspill_red_foreground`**, **`drop_red_haze`** in **`lobby-chroma-key.py`**; fixed **`solidify_case_glass`** to not opacify keyed backdrop (**`lum < 94`** trap). **`LOBBY_CASE_ASSET_VERSION`** **`f2yXuce0-v1`**. Rebaked **`CASE.png`** (920×507).
+
+**Update (same chat):** **Products** neon **`XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg`** → **`neon-products.png`** (900×295, white studio key + halo). **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`XmqZbgWv-v1`**. **Display case** **`7mfZBdMQEOXkht8MamYaG_DIB2ZDCl.jpeg`** → **`CASE.png`** (920×466). **`LOBBY_CASE_ASSET_VERSION`** **`7mfZBdMQ-v1`**. White-backdrop handling in **`lobby-bake-neon-nav-asset.mjs`** + **`key_studio_case`**. Commit **`76671fd4`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** Display case **`37jR_8sOmtkmHDonwcu9i_RolTShHD.jpeg`** (white studio) → **`CASE.png`** (920×537, **`key_studio_case`**). **`LOBBY_CASE_ASSET_VERSION`** **`37jR_8sO-v1`**. Commit **`b3dbdb3f`** on **`master`** + **`preview/mobile`**.
