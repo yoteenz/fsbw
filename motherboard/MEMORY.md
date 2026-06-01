@@ -22582,3 +22582,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **salon chairs** — **25% smaller** (**`LOUNGE_SALON_CHAIRS_HEIGHT_PX`** 160→120), **20px up** (mobile **`OFFSET_Y`** 290→270, large **`LARGE_EXTRA_Y`** 82→62) in **`loungeSceneLayout.ts`**.
 
 **Update (same chat):** Lounge **TV** — slide uses **`lounge-tv-design.png`** image (not CSS **`LoungeTvFrame`**); **DOWNLOAD** removed. **`lounge:bake-tv-design`**, **`LOUNGE_TV_DESIGN_SRC_REMOTE`** = user **`pNu1yJzm…` JPEG** (same file as salon chairs at time of bake — rebake when TV art is on that URL).
+
+**Update (same chat):** Lounge **TV asset** from **`kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg`** (4800×3520 studio gray) → **`lounge-tv-design.png`** 820×612; bake uses corner gray key (not green). **`LOUNGE_TV_DESIGN_ASSET_VERSION`** = **`kv6DR-SLY`**.
