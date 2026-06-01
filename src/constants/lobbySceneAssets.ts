@@ -1,6 +1,7 @@
 import { isAdminEmail, isSignedIn } from '../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
 import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
+import { LOBBY_NEON_LOGO_FAL_EDIT } from './sceneNeonLogoFal';
 import {
   LOBBY_ROSE_BACKGROUND_FAL_EDIT,
   SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
@@ -60,7 +61,7 @@ export function isLobbyAssetDownloadsVisibleForAdmin(): boolean {
 
 /** Fal / image-model prompts for replacing lobby PNGs (transparent PNG where noted). */
 export const LOBBY_SCENE_FAL_PROMPTS = {
-  neonLogo: `Photorealistic neon sign for a luxury wig boutique brand "Frontal Slayer". Hot pink and red neon glass tubing, soft bloom and wall reflection, shot straight-on on a dark charcoal wall. Premium salon aesthetic, crisp letterforms, no extra text. Export as a high-resolution PNG with a fully transparent background (alpha), no border, no floor, no mockup frame.`,
+  neonLogo: `[FAL] fal-ai/nano-banana-pro/edit. neon-logo.png. ${LOBBY_NEON_LOGO_FAL_EDIT}`,
 
   roseBackground: `${sceneRoseBackgroundFalWorkflowNote('landing-background')} ${LOBBY_ROSE_BACKGROUND_FAL_EDIT} Negative: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE}`,
 
