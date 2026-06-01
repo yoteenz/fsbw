@@ -93,14 +93,21 @@ if (localArg && existsSync(localArg)) {
   srcPath = localArg;
 } else {
   const remoteUrl = localArg?.startsWith('http') ? localArg : remote;
+  let fetchOk = false;
   try {
     execFileSync('curl', ['-fsSL', '-o', tmpSrc, remoteUrl], { stdio: 'inherit' });
+    fetchOk = true;
   } catch {
     if (existsSync(tmpSrc)) {
-      console.warn('Fetch failed — using cached', tmpSrc);
+      console.warn(
+        `Fetch failed for ${remoteUrl} — rebaking from cached ${tmpSrc} (re-upload to Supabase if source changed).`
+      );
     } else {
       throw new Error(`Could not download ${remoteUrl} and no cached ${tmpSrc}`);
     }
+  }
+  if (!fetchOk) {
+    console.warn('Remote returned an error (often 404 not_found). Confirm the object is public in Supabase.');
   }
 }
 execFileSync('python3', ['-c', py, srcPath, outPath, '960'], { stdio: 'inherit', cwd: root });

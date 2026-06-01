@@ -34,7 +34,7 @@ export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 18;
 export const LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX =
   LOUNGE_SALON_CHAIRS_OFFSET_Y_PX + LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX;
 export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 152;
-export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 45;
+export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 41;
 
 export function useLoungeLargeViewport(): boolean {
   const [isLarge, setIsLarge] = useState(() => {
