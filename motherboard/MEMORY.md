@@ -22638,3 +22638,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Tech:** Source is **neutral gray studio** (not green screen). **`lobby-chroma-key.py`** auto-detects backdrop: green → existing key; else **`key_studio_backdrop`** (corner distance smoothstep). Fixed protect/solidify so gray backdrop is not treated as acrylic. Commit **`92653edf`** on **`master`** + **`preview/mobile`**.
 
 **Update (same chat):** Removed **DOWNLOAD** text links from lobby **products / tools / booking** neon nav signs in **`page.tsx`** (plain **`<img>`** only). Dropped unused **`LobbyAssetDownloadLink`**, **`useLobbyAssetDownloadsVisible`**, **`LOBBY_SCENE_FAL_PROMPTS`** imports on lobby page.
+
+**Update (same chat):** Display case **`3YeN5RF8`** rebake — studio gray source was punching holes in backdrop-colored acrylic. Added **`key_studio_case`**, subject **hull** dilation, gentler fringe wipe, **`solidify_case_glass`**. **`LOBBY_CASE_ASSET_VERSION`** **`3YeN5RF8-v2`** (~**27%** transparent outer margin; acrylic panels solid).
