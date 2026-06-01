@@ -13,7 +13,13 @@ export const LOUNGE_BACKGROUND_SRC = `/assets/landing2-background.png?v=${LOUNGE
 /** @deprecated Misnamed — same file as {@link LOUNGE_BACKGROUND_SRC}. */
 export const LOUNGE_ROSE_BACKGROUND_SRC = LOUNGE_BACKGROUND_SRC;
 
-export const LOUNGE_SALON_CHAIRS_SRC = '/assets/salon-chairs.png';
+/** Bump when re-baking `salon-chairs.png` (`npm run lounge:bake-salon-chairs`). */
+export const LOUNGE_SALON_CHAIRS_ASSET_VERSION = 'pNu1yJzm';
+
+export const LOUNGE_SALON_CHAIRS_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/pNu1yJzmL4dvFCWQy6wMl_Ueut2LUr.jpeg';
+
+export const LOUNGE_SALON_CHAIRS_SRC = `/assets/salon-chairs.png?v=${LOUNGE_SALON_CHAIRS_ASSET_VERSION}`;
 
 export const LOUNGE_CURTAIN_LEFT_SRC = '/assets/lounge-curtain-left.jpeg';
 export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
