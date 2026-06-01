@@ -22592,3 +22592,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **salon chairs** — **4px left** (**`LOUNGE_SALON_CHAIRS_OFFSET_X_PX`** 45→**41**). User requested asset refresh from **`pNu1yJzm…` Supabase URL**; fetch returned **404 not_found** from deploy environment — **`npm run lounge:bake-salon-chairs`** rebaked from **`tmp/salon-chairs-src.jpeg`** cache (PNG unchanged). **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** → **`pNu1yJzm-v3`**. Bake script warns when remote fetch fails. Commit **`d627f30e`**.
 
 **Update (same chat):** Lounge **TV overlay animation** now uses baked **`lounge-tv-design.png`** (not CSS **`LoungeTvFrame`**). **`LoungeTvDesignFrame`** + **`LOUNGE_TV_DESIGN_SCREEN_RECT`** / **`loungeTvDesignDimensionsFromScreenWidth`** in **`loungeTvFrame.tsx`**; lobby static TV ref uses same PNG sizing for grow-from-origin continuity.
+
+**Update (same chat):** Lounge **salon chairs** asset from **`p6V1N9X4lJoobnaRmSFSh_WE2x57MV.jpeg`** → **`salon-chairs.png`** (960×822). **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** **`p6V1N9X4-v1`**; **`LOUNGE_SALON_CHAIRS_SRC_REMOTE`** + bake script default URL updated.
