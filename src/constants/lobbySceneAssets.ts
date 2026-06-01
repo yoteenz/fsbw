@@ -3,6 +3,11 @@ import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
 import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
 import { LOBBY_NEON_LOGO_FAL_EDIT } from './sceneNeonLogoFal';
 import {
+  LOBBY_NEON_BOOKING_FAL_EDIT,
+  LOBBY_NEON_PRODUCTS_FAL_EDIT,
+  LOBBY_NEON_TOOLS_FAL_EDIT,
+} from './sceneLobbyNeonNavFal';
+import {
   LOBBY_ROSE_BACKGROUND_FAL_EDIT,
   SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
   sceneRoseBackgroundFalWorkflowNote,
@@ -81,11 +86,11 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
 
   roseBackground: `${sceneRoseBackgroundFalWorkflowNote('landing-background')} ${LOBBY_ROSE_BACKGROUND_FAL_EDIT} Negative: ${SCENE_ROSE_BACKGROUND_FAL_NEGATIVE}`,
 
-  neonProducts: `Photorealistic neon sign reading "PRODUCTS" for a luxury wig boutique. Hot pink and red neon glass tubing, same typeface weight and glow as the "Frontal Slayer" main logo, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
+  neonProducts: LOBBY_NEON_PRODUCTS_FAL_EDIT,
 
-  neonTools: `Photorealistic neon sign reading "TOOLS" for a luxury wig boutique. Hot pink and red neon glass tubing, matching PRODUCTS/BOOKING neon style, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
+  neonTools: LOBBY_NEON_TOOLS_FAL_EDIT,
 
-  neonBooking: `Photorealistic neon sign reading "BOOKING" for a luxury wig boutique. Hot pink and red neon glass tubing, matching PRODUCTS/TOOLS neon style, soft bloom. Straight-on, PNG with fully transparent background, no extra text.`,
+  neonBooking: LOBBY_NEON_BOOKING_FAL_EDIT,
 
   shelfHdLace: `Photorealistic wall-mounted retail shelf graphic for "HD LACE" luxury wigs. Slim floating shelf with 3–4 premium wig boxes in neutral packaging, subtle HD LACE label area. Front-facing or slight 3/4 view, soft studio light, boutique styling. PNG with fully transparent background, no wall, no text outside product labels on boxes.`,
 
