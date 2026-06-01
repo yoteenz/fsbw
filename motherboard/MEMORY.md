@@ -22640,3 +22640,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Removed **DOWNLOAD** text links from lobby **products / tools / booking** neon nav signs in **`page.tsx`** (plain **`<img>`** only). Dropped unused **`LobbyAssetDownloadLink`**, **`useLobbyAssetDownloadsVisible`**, **`LOBBY_SCENE_FAL_PROMPTS`** imports on lobby page.
 
 **Update (same chat):** Display case **`3YeN5RF8`** rebake — studio gray source was punching holes in backdrop-colored acrylic. Added **`key_studio_case`**, subject **hull** dilation, gentler fringe wipe, **`solidify_case_glass`**. **`LOBBY_CASE_ASSET_VERSION`** **`3YeN5RF8-v2`** (~**27%** transparent outer margin; acrylic panels solid).
+
+**Update (same chat):** Lobby **products** neon — **`2qzZrBQ-6_iHuRTvLDint_bgcwFyZn.jpeg`** → **`neon-products.png`** (900×434, gray studio key + halo preserve). **`lobby-bake-neon-nav-asset.mjs`**, **`npm run lobby:bake-neon-products`**. **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`2qzZrBQ6-v1`**, **`LOBBY_NEON_PRODUCTS_SRC_REMOTE`**, versioned **`LOBBY_NEON_PRODUCTS_SRC`**.
