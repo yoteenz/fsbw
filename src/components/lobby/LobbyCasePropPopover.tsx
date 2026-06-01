@@ -321,7 +321,7 @@ export function LobbyCasePropPopover({
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const portalRef = useRef<HTMLDivElement>(null);
+  const portalRef = useRef<HTMLButtonElement>(null);
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
   const open = activeId === popoverId;
 
