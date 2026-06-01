@@ -13,7 +13,14 @@ export const LOBBY_NEON_PRODUCTS_SRC = '/assets/neon-products.png';
 export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
 export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
 export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
-export const LOBBY_ROSE_BACKGROUND_SRC = '/assets/landing-background.png';
+
+/** Bump when replacing `public/assets/landing-background.png` (Vercel caches `/assets/*`). */
+export const LOBBY_BACKGROUND_ASSET_VERSION = 'lp6h5DuSde';
+
+export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/6h5DuSdeVthCY5iD-IoN2_R8Kc8d4G.jpeg';
+
+export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 export const LOBBY_SHELF_HD_SRC = '/assets/hd-group.png';
 export const LOBBY_SHELF_TRANSPARENT_SRC = '/assets/transparent-group.png';
 export const LOBBY_SHELF_CUSTOM_SRC = '/assets/custom-group.png';

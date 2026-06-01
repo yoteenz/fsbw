@@ -1,8 +1,14 @@
 import { LOUNGE_BACKGROUND_FAL_EDIT, loungeBackgroundFalWorkflowNote } from './sceneLoungeBackgroundFal';
 import { LOBBY_NEON_LOGO_SRC } from './lobbySceneAssets';
 
-/** Lounge slide background — sofa, table/wine, plant, white curtains (`LoungePage`). */
-export const LOUNGE_BACKGROUND_SRC = '/assets/landing2-background.png';
+/** Bump when replacing `public/assets/landing2-background.png` (Vercel caches `/assets/*`). */
+export const LOUNGE_BACKGROUND_ASSET_VERSION = 'lpGG-SyHZy';
+
+export const LOUNGE_BACKGROUND_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/GG_SyHZyTGLPrff43fuur_skpGuuqU.jpeg';
+
+/** Lounge slide background — sofa, table/wine, plant, white curtains (`LoungePage`). 3072×5504 art. */
+export const LOUNGE_BACKGROUND_SRC = `/assets/landing2-background.png?v=${LOUNGE_BACKGROUND_ASSET_VERSION}`;
 
 /** @deprecated Misnamed — same file as {@link LOUNGE_BACKGROUND_SRC}. */
 export const LOUNGE_ROSE_BACKGROUND_SRC = LOUNGE_BACKGROUND_SRC;

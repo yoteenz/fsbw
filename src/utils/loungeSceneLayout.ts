@@ -2,8 +2,8 @@ import { useLayoutEffect, useState } from 'react';
 import type React from 'react';
 
 /** `landing2-background.png` pixel size — reference for future scene hotspots. */
-export const LOUNGE_BG_REFERENCE_WIDTH = 1560;
-export const LOUNGE_BG_REFERENCE_HEIGHT = 3376;
+export const LOUNGE_BG_REFERENCE_WIDTH = 3072;
+export const LOUNGE_BG_REFERENCE_HEIGHT = 5504;
 
 /** Vertical position of salon chair bases on the background art (0–1 from top). */
 export const LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO = 0.538;
