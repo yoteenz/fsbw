@@ -16,7 +16,7 @@ const NAV = {
   products: {
     out: 'neon-products.png',
     remote:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg',
     maxDim: 900,
   },
   tools: {
