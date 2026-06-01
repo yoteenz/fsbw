@@ -22546,3 +22546,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** User supplied Kling test MOV **`positive_Image-to-video_using__Kling_30__69734.mov`** — wired **`LobbyLoungeTransitionVideo`** overlay on lobby → lounge navigation. Enabled in **dev** or **`/lobby?lobbyTransitionVideo=1`** (session persisted). Lounge → lobby still uses CSS slide. Skip button on clip. **`lobbyLoungeTransitionVideo.ts`** + **`LobbyLoungeTransitionVideo.tsx`**.
 
 **Update (same chat):** Replaced lobby **`landing-background.png`** from **`JgMOOyc0S2fwovqjnRGOA_xKRqBrUe.jpeg`** (3072×5504). **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`lpJgMOOyc0`**; Seedance start frame URL updated. Commit **`28cf69a0`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-01 — Neon logo: glow-preserving local bake (not BiRefNet)
+
+**Context (full chat):** Lobby/lounge carousel, Fal NBP glow + BiRefNet cutout workflows, transition video in carousel, lobby/lounge background swaps. User reported **BiRefNet v2** on the neon sign **removes glow** and looks flat; asked to replace **`neon-logo.png`** from **`Y6K-Yipl7T4pc1DCirLsp_J40m9P3V.jpeg`** with background removed while **preserving halos/detail**.
+
+**Decisions:** Do **not** use **`fal-ai/birefnet/v2`** for final neon asset when glow matters. Use **`npm run lobby:bake-neon-logo`** — Python/Pillow script keyed off corner wall chroma + tube core halo mask (not full-frame dark key).
+
+**Changes:** Re-baked **`public/assets/neon-logo.png`** (845×1100, ~48% transparent pixels, corners alpha 0). **`LOBBY_NEON_LOGO_ASSET_VERSION`** = **`Y6K-Yipl7`**, **`LOBBY_NEON_LOGO_SRC_REMOTE`**, versioned **`LOBBY_NEON_LOGO_SRC`**. **`scripts/lobby-bake-neon-logo-asset.mjs`** + **`package.json`** script. **`sceneNeonLogoFal.ts`** — **`NEON_LOGO_BIREFNET_CUTOUT_NOTE`** documents prefer local bake. Commit **`9a66edae`** on **`master`** + **`preview/mobile`**.
