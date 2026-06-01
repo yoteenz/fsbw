@@ -28,13 +28,13 @@ export const LOBBY_ROSE_BACKGROUND_SRC_REMOTE =
 export const LOBBY_ROSE_BACKGROUND_SRC = `/assets/landing-background.png?v=${LOBBY_BACKGROUND_ASSET_VERSION}`;
 
 /** Bump when re-baking shelf PNGs (`npm run lobby:bake-shelves`). */
-export const LOBBY_SHELF_ASSET_VERSION = '7iUsTnn1-v1';
+export const LOBBY_SHELF_ASSET_VERSION = '5Cof6W3Y-v1';
 
 export const LOBBY_SHELF_HD_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/RQY7MNHaS7mk5m9RKKMd__Qtm01P5p.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/5Cof6W3Y0p6Eyq8ew7Sil_dzSVHBRK.jpeg';
 
 export const LOBBY_SHELF_TRANSPARENT_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/2fkXzNmBPwDypFe2xv4P__QY7xpaxh.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/7h5bbuiitNAnalQhkOszS_pP56MlDZ.jpeg';
 
 export const LOBBY_SHELF_CUSTOM_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/7iUsTnn1PQRK9Io3291KW_pHVg5Q26.jpeg';
