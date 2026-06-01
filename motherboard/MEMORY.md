@@ -22660,3 +22660,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lobby **products / tools / booking** neon nav **+30%** size: **`LOBBY_NEON_NAV_HEIGHT_PX`** **21** (was **16**); **`translateX`** kern scaled in **`page.tsx`**.
 
 **Update (same chat):** Neon nav row layout — removed legacy **`translateX`** stacking (**`−26px` / `−55px`**). Row centered on rose panel (**`translate(-50%, …)`**, no **`+51px`**). **`LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX`** **500** + padding; three equal **`flex: 1`** columns with centered signs.
+
+---
+
+## 2026-05-31 — Lobby phone/register popover backdrop (cap chart scrim)
+
+**Context (chat):** Continuation after lobby asset/layout work. User asked that when the **phone** or **cash register** pop-up is open on the lobby display case, the **page background** should use the same overlay as the **cap size chart** modal on unit PDPs (e.g. **`straight/noir`**).
+
+**Topics covered:** Prior chat: lobby Fal prompts, rose background, case/neon bakes, nav sizing/layout. This turn: popover scrim parity with chart modal.
+
+**Decisions / outcomes:** Match unit PDP chart modal scrim — **`rgba(0, 0, 0, 0.7)`**, **`backdropFilter` / `WebkitBackdropFilter`: `blur(3px)`**, fixed full viewport, **`zIndex` 10000**, click to dismiss. Popover panel **`zIndex` 10001** so it stays above scrim.
+
+**Changes:** **`src/pages/lobby/page.tsx`** — **`createPortal`** body scrim when **`lobbyCasePopover`** is **`register`** or **`phone`**; **`closeLobbyCasePopover`** callback. **`src/components/lobby/LobbyCasePropPopover.tsx`** — dialog **`zIndex`** **10001**. Commit **`1c43a579`** on **`master`** + **`preview/mobile`**.
