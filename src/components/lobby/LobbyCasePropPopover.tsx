@@ -5,7 +5,6 @@ import {
   LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
   LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
-  LOBBY_CASE_POPOVER_STACK_Z_INDEX,
   LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
   LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG,
@@ -353,6 +352,7 @@ export function LobbyCasePropPopover({
       const target = e.target as HTMLElement;
       if (rootRef.current?.contains(target)) return;
       if (portalRef.current?.contains(target)) return;
+      if ((target as HTMLElement).closest?.('[data-lobby-prop-popover]')) return;
       onClose();
     };
     document.addEventListener('pointerdown', onPointerDown);
@@ -368,86 +368,83 @@ export function LobbyCasePropPopover({
   const panelWidthPx = LOBBY_CASE_POPOVER_WIDTH_PX;
   const panelGapPx = lobbyPopoverPx(10);
 
-  const portaledOpenLayer =
-    open && anchorRect
+  const portaledAboveScrim = Boolean(open && anchorRect);
+  const hideInlineAnchor = open && portaledAboveScrim;
+
+  const portaledAssetLayer =
+    portaledAboveScrim && anchorRect
       ? createPortal(
-          <div
-            ref={open ? portalRef : undefined}
+          <button
+            ref={portalRef}
+            type="button"
+            aria-label={ariaLabel}
+            aria-expanded
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             style={{
               position: 'fixed',
-              inset: 0,
-              zIndex: LOBBY_CASE_POPOVER_STACK_Z_INDEX,
-              pointerEvents: 'none',
+              left: `${anchorRect.left}px`,
+              top: `${anchorRect.top}px`,
+              width: `${Math.max(anchorRect.width, 1)}px`,
+              height: `${Math.max(anchorRect.height, 1)}px`,
+              margin: 0,
+              padding: 0,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              lineHeight: 0,
+              pointerEvents: 'auto',
+              zIndex: LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'manipulation',
             }}
           >
-            <button
-              type="button"
-              aria-label={ariaLabel}
-              aria-expanded={open}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (open) onClose();
-                else onActivate(popoverId);
-              }}
+            {children}
+          </button>,
+          document.body
+        )
+      : null;
+
+  const portaledPanelLayer =
+    portaledAboveScrim && anchorRect
+      ? createPortal(
+          <div
+            role="dialog"
+            aria-label={title}
+            data-lobby-prop-popover
+            className={popoverShellClassName}
+            style={{
+              ...popoverShellStyle,
+              position: 'fixed',
+              left: `${panelFixedLeftPx(align, anchorRect, panelWidthPx)}px`,
+              bottom: `${window.innerHeight - anchorRect.top + panelGapPx}px`,
+              zIndex: LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
+              width: `${panelWidthPx}px`,
+              minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
+              maxWidth: `min(${panelWidthPx}px, calc(100vw - 24px))`,
+              borderWidth: `${lobbyPopoverPx(1.3)}px`,
+              boxSizing: 'border-box',
+              padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
+              pointerEvents: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <p
               style={{
-                position: 'fixed',
-                left: `${anchorRect.left}px`,
-                top: `${anchorRect.top}px`,
-                width: `${anchorRect.width}px`,
-                height: `${anchorRect.height}px`,
-                margin: 0,
-                padding: 0,
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                lineHeight: 0,
-                pointerEvents: 'auto',
-                zIndex: LOBBY_CASE_POPOVER_ASSET_Z_INDEX,
-                WebkitTapHighlightColor: 'transparent',
-                touchAction: 'manipulation',
-                opacity: 1,
+                ...titleStyle,
+                marginBottom: `${lobbyPopoverPx(8)}px`,
+                paddingBottom: `${lobbyPopoverPx(6)}px`,
+                borderBottom: '1px solid rgba(0,0,0,0.12)',
+                flexShrink: 0,
               }}
             >
-              {children}
-            </button>
-            {open ? (
-              <div
-                role="dialog"
-                aria-label={title}
-                data-lobby-prop-popover
-                className={popoverShellClassName}
-                style={{
-                  ...popoverShellStyle,
-                  position: 'fixed',
-                  left: `${panelFixedLeftPx(align, anchorRect, panelWidthPx)}px`,
-                  bottom: `${window.innerHeight - anchorRect.top + panelGapPx}px`,
-                  zIndex: LOBBY_CASE_POPOVER_PANEL_Z_INDEX,
-                  width: `${panelWidthPx}px`,
-                  minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
-                  maxWidth: `min(${panelWidthPx}px, calc(100vw - 24px))`,
-                  borderWidth: `${lobbyPopoverPx(1.3)}px`,
-                  boxSizing: 'border-box',
-                  padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
-                  pointerEvents: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <p
-                  style={{
-                    ...titleStyle,
-                    marginBottom: `${lobbyPopoverPx(8)}px`,
-                    paddingBottom: `${lobbyPopoverPx(6)}px`,
-                    borderBottom: '1px solid rgba(0,0,0,0.12)',
-                    flexShrink: 0,
-                  }}
-                >
-                  {title}
-                </p>
-                {panelBody}
-              </div>
-            ) : null}
+              {title}
+            </p>
+            {panelBody}
           </div>,
           document.body
         )
@@ -475,13 +472,14 @@ export function LobbyCasePropPopover({
           lineHeight: 0,
           WebkitTapHighlightColor: 'transparent',
           touchAction: 'manipulation',
-          opacity: open ? 0 : 1,
-          pointerEvents: open ? 'none' : 'auto',
+          opacity: hideInlineAnchor ? 0 : 1,
+          pointerEvents: hideInlineAnchor ? 'none' : 'auto',
         }}
       >
         {children}
       </button>
-      {portaledOpenLayer}
+      {portaledAssetLayer}
+      {portaledPanelLayer}
     </div>
   );
 }
