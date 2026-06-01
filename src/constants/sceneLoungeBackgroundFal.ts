@@ -25,11 +25,11 @@ export const LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS = `${LOUNGE_BACKGROUND_PRESERV
 export const LOUNGE_BACKGROUND_FAL_TRUE_RED_NEGATIVE =
   'pink walls, dusty rose, mauve, coral, pastel, wainscoting, wall panels, molding, coffered ceiling, recessed ceiling panels, tray ceiling, paneled ceiling, drop ceiling, ceiling soffit, horizontal ceiling band, lower ceiling than lobby, full rose floral wall on wall surface, change layout, people';
 
-/** Optional focused pass — ceiling only (upload current landing2-background.png). */
-export const LOUNGE_BACKGROUND_FAL_CEILING_FLAT = `${LOUNGE_BACKGROUND_PRESERVE_BLOCK} ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} Upload lobby landing-background.png as style reference if the model accepts a second image. Keep true red walls, sofa, table, plant, curtains, marble floor, and furniture positions unchanged.`;
+/** Optional focused pass — ceiling only. Image 1 = lounge PNG; image 2 = lobby (ceiling ref). */
+export const LOUNGE_BACKGROUND_FAL_CEILING_FLAT = `${LOUNGE_BACKGROUND_PRESERVE_BLOCK} ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} Do not change wall red tone, sofa, table, wine, plant, curtains, or furniture scale.`;
 
 export const LOUNGE_BACKGROUND_FAL_CEILING_FLAT_NEGATIVE =
-  'coffered ceiling, recessed ceiling panels, tray ceiling, paneled ceiling, drop ceiling, ceiling grid, extra crown molding tiers, change wall color, move furniture, shift floor horizon, people';
+  'low ceiling, dropped ceiling, compressed room, less headroom, coffered ceiling, recessed ceiling panels, tray ceiling, paneled ceiling, second horizontal ceiling line, ceiling ledge, ceiling step, ceiling soffit, drop ceiling, ceiling grid, extra crown molding tiers, duplicate molding, change wall color, move furniture, shift floor horizon, crop furniture, people';
 
 /** Step B — lobby uses this lounge file as 2nd image; see LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF in sceneRoseBackgroundFal.ts */
 
