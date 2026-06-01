@@ -10,13 +10,7 @@ import {
 
 /** Lobby scene art paths (see `src/pages/lobby/page.tsx`). */
 
-/** Bump when re-baking `neon-logo.png` (`npm run lobby:bake-neon-logo`). */
-export const LOBBY_NEON_LOGO_ASSET_VERSION = 'Y6K-Yipl7';
-
-export const LOBBY_NEON_LOGO_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/Y6K-Yipl7T4pc1DCirLsp_J40m9P3V.jpeg';
-
-export const LOBBY_NEON_LOGO_SRC = `/assets/neon-logo.png?v=${LOBBY_NEON_LOGO_ASSET_VERSION}`;
+export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
 export const LOBBY_NEON_PRODUCTS_SRC = '/assets/neon-products.png';
 export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
 export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
