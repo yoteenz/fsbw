@@ -21,7 +21,9 @@ import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import {
   loungePageMinHeightCss,
   loungeSalonChairsAnchorStyle,
+  loungeSalonChairsFloorShadowStyle,
   loungeSalonChairsImageStyle,
+  loungeSalonChairsStackStyle,
   useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
 import {
@@ -697,7 +699,10 @@ const LoungePage: React.FC = () => {
       
       {/* Salon Chairs — inline placement (large viewport uses larger Y offset from loungeSceneLayout) */}
       <div style={loungeSalonChairsAnchorStyle(isLargeLoungeViewport)}>
-        <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
+        <div style={loungeSalonChairsStackStyle()}>
+          <div aria-hidden style={loungeSalonChairsFloorShadowStyle()} />
+          <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
+        </div>
       </div>
       
       {/* Left Arrow Button - Part of page design, scrolls with content */}

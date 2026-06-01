@@ -36,6 +36,16 @@ export const LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX =
 export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 152;
 export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 41;
 
+/** Contact shadow under chair bases (floor anchor on lounge slide). */
+export const LOUNGE_SALON_CHAIRS_FLOOR_SHADOW = {
+  widthRatio: 0.9,
+  heightPx: 16,
+  offsetYRatio: 0.38,
+  blurPx: 6,
+  coreOpacity: 0.44,
+  midOpacity: 0.2,
+} as const;
+
 export function useLoungeLargeViewport(): boolean {
   const [isLarge, setIsLarge] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -77,13 +87,42 @@ export function loungeSalonChairsAnchorStyle(isLargeViewport: boolean): React.CS
   };
 }
 
+export function loungeSalonChairsStackStyle(): React.CSSProperties {
+  return {
+    position: 'relative',
+    display: 'inline-block',
+    lineHeight: 0,
+  };
+}
+
+/** Soft elliptical shadow on the floor beneath the chair PNG. */
+export function loungeSalonChairsFloorShadowStyle(): React.CSSProperties {
+  const s = LOUNGE_SALON_CHAIRS_FLOOR_SHADOW;
+  return {
+    position: 'absolute',
+    left: '50%',
+    bottom: 0,
+    transform: `translate(-50%, ${s.offsetYRatio * 100}%)`,
+    width: `${s.widthRatio * 100}%`,
+    height: s.heightPx,
+    borderRadius: '50%',
+    background: `radial-gradient(ellipse at center, rgba(0, 0, 0, ${s.coreOpacity}) 0%, rgba(0, 0, 0, ${s.midOpacity}) 45%, transparent 72%)`,
+    filter: `blur(${s.blurPx}px)`,
+    zIndex: 0,
+    pointerEvents: 'none',
+  };
+}
+
 export function loungeSalonChairsImageStyle(): React.CSSProperties {
   return {
+    position: 'relative',
+    zIndex: 1,
     width: 'auto',
     height: LOUNGE_SALON_CHAIRS_HEIGHT_PX,
     margin: 0,
     padding: 0,
     display: 'block',
     cursor: 'pointer',
+    filter: 'drop-shadow(0 12px 18px rgba(0, 0, 0, 0.2))',
   };
 }
