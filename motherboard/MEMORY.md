@@ -22442,3 +22442,175 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for popups on lobby **phone** and **cash register** assets that hover over each prop, matching **cart dropdown** glass style (`bg-white/60`, `backdrop-blur-md`, **1.3px** black border). Phone = business contact; register = payment methods.
 
 **Changes:** **`LobbyCasePropPopover.tsx`** — tap toggle, positioned above asset (`bottom: calc(100% + 10px)`), outside-tap close, one open at a time. **`lobbyPropPopoverCopy.ts`** — contact from **`brandContactCopy`** (email, hours, inquiry note); register lists cards / express / pay-over-time aligned with checkout. **`lobby/page.tsx`** — wrap **REGISTER.png** + **PHONE.png** on display case. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby phone asset: Supabase JPEG → chroma-keyed PNG
+
+**Context:** User supplied green-screen phone JPEG on Supabase; replace lobby **PHONE.png** with keyed asset (transparent background).
+
+**Changes:** Downloaded **`khlsfm9OB1hT9DTC41Zsn_D10nFkMT.jpeg`** → **`public/assets/lobby-phone.png`** (corner-sampled green key, crop, max height 512px). **`lobbyCaseAssets.ts`** + **`LOBBY_PHONE_SRC`**; **`lobby/page.tsx`** uses new art (~44px tall, **`objectFit: contain`**). Re-bake: **`npm run lobby:bake-phone`** (`scripts/lobby-bake-phone-asset.mjs`). Remote URL in **`LOBBY_PHONE_SRC_REMOTE`**. Pushed **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** Replaced with **`sLVJYq1o8i6oxuURN73ik_RisdwVxj.jpeg`** — re-ran **`npm run lobby:bake-phone`**; **`LOBBY_PHONE_SRC_REMOTE`** + bundled PNG updated.
+
+**Update:** Latest phone source **`d35m8u3jneLSkpJrHKouG_Z4VtKzzm.jpeg`** — re-baked **`lobby-phone.png`** (348×512).
+
+**Why lobby looked unchanged:** **`vercel.json`** sets **`/assets/*`** to **`Cache-Control: public, max-age=31536000, immutable`**. Replacing **`lobby-phone.png`** at the same URL left browsers/CDN on the old file. Fix: **`LOBBY_PHONE_SRC`** = **`/assets/lobby-phone.png?v=${LOBBY_PHONE_ASSET_VERSION}`** — bump **`LOBBY_PHONE_ASSET_VERSION`** whenever the PNG is re-baked.
+
+**Update:** User preferred **`sLVJYq1o8i6oxuURN73ik_RisdwVxj.jpeg`** over **`d35m8u3…`** — re-baked PNG (324×512), **`LOBBY_PHONE_ASSET_VERSION`** = **`sLVJYq1`**.
+
+**Update:** Restored **`d35m8u3jneLSkpJrHKouG_Z4VtKzzm.jpeg`** (348×512), **`?v=d35m8u3`**; phone wrapper **`top: -33px`** (was **-31px**, +2px up).
+
+**Update:** New phone **`q-oa7o-GX24j6k742w0p8_omgBoTaL.jpeg`** — re-baked **`lobby-phone.png`** (271×512), **`LOBBY_PHONE_ASSET_VERSION`** = **`q-oa7o8`**.
+
+**Update:** Lobby phone display — **`height: 40px`** (was 44), **`maxWidth: 52px`** (was 56); wrapper **`translateX(-6px)`** (6px left from anchor; was **-2px** then **-6px**). **`top: -33px`** unchanged.
+
+---
+
+## 2026-05-31 — Lobby popovers: matching size + payment logo grid
+
+**Context:** Phone and cash-register popovers should match **width/height**; register should show **payment card logos** cropped from Supabase sheet **`taW3ckzkvXh5AtWqFCTrG_0QGW1Akz.jpeg`** with green screen removed (not text lists).
+
+**Changes:** **`LOBBY_CASE_POPOVER_WIDTH_PX` 220**, **`MIN_HEIGHT` 200** (`lobbyPaymentIcons.ts`). Register: **`LOBBY_PAYMENT_ICONS`** — 10 PNGs in **`public/assets/lobby-payment/`** (visa, mastercard, amex, discover, apple-pay, shop-pay, paypal, afterpay, affirm, klarna); **`?v=taW3ckz1`**. **`LobbyCasePropPopover`** — **`paymentIcons`** 2-col grid (32px max logo height). Phone unchanged (contact sections). **`npm run lobby:bake-payment-icons`**. Google Pay not on source sheet / not in grid.
+
+**Update:** **`google-pay.png`** from separate Supabase JPEG **`taW3ckzkvXh5AtWqFCTrG_0QGW1Akz (1).jpeg`** (chroma-keyed); added to grid after PayPal; **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz2`**.
+
+**Update:** Lobby phone display **`height: 34px`**, **`maxWidth: 46px`** (was 40 / 52, −6px).
+
+**Update:** Replaced lobby payment PNGs from **`Payment/`** Supabase files — **visa (8), amex (6), discover (7), affirm, apple-pay (3), paypal (4), afterpay (2)**; **mastercard** + **klarna** still sheet-cropped. **`LOBBY_PAYMENT_ICON_REMOTES`**, **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz4`**. Refactored **`lobby-bake-payment-icons.mjs`**.
+
+---
+
+## 2026-05-31 — Lobby register popover: express payment section
+
+**Context:** User asked to separate and organize **express payment** options below the card logos: gray **Bohemy** label, express wallets in **one row**.
+
+**Changes:** **`lobbyPaymentIcons.ts`** — **`LobbyPaymentPopoverLayout`** with **`cards`** (Visa, Mastercard, Amex, Discover), **`express`** (Apple Pay, Shop Pay, PayPal, Google Pay), **`payOverTime`** (Afterpay, Affirm, Klarna); **`LOBBY_PAYMENT_EXPRESS_LABEL`** = **`express payment`**. **`LobbyCasePropPopover.tsx`** — 2×2 card grid, Bohemy subheading (**#808080**, 15px), dynamic 4-column express row, 3-column BNPL row; register uses **`paymentLayout`** instead of flat **`paymentIcons`**. **`lobby/page.tsx`** — **`paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}`**. Commit **`7064cede`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** User wanted cards on **one line** plus Bohemy headers for all three groups. **`LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL`** = **`accepted cards`**, **`LOBBY_PAYMENT_PAY_OVER_TIME_LABEL`** = **`pay over time`**; **`LobbyPaymentIconSection`** renders each gray Bohemy label + single icon row (4 / 4 / 3 columns). Commit **`bd693d42`**.
+
+**Update (same chat):** Swap **Discover/Amex** and **PayPal/Shop Pay** display order; **`textAlign: center`** on Bohemy section labels. **Discover** + **Apple Pay** PNGs were wrong (Discover JPEG **(7)** was Mastercard; Apple Pay standalone chroma corrupt) — rebake **discover** + **apple-pay** from payment sheet crops in **`lobby-bake-payment-icons.mjs`**; **`LOBBY_PAYMENT_ICONS_VERSION`** = **`taW3ckz5`**. Commit **`4f151e52`**.
+
+**Update (same chat):** Shrink contact + payment popovers **35%** (**`LOBBY_CASE_POPOVER_SCALE` 0.65** → **143×130** shell); scale padding, type, logo rows via **`lobbyPopoverPx`**. Contact section headers (**email**, **hours**, **inquiries**) → gray **Bohemy** (**#808080**) instead of red Futura. Commit **`96b6f732`**.
+
+**Update (same chat):** Bohemy headers **+2px** (**12px**, was 10) on contact + payment popovers; **pay over time** logo row only **+2px** max height (**16px**, was 14). Commit **`89b13026`**.
+
+**Update (same chat):** Contact popover — **inquiries** → **questions**; copy **PLEASE ALLOW UP TO 72 HOURS FOR A RESPONSE**; removed **VISIT BRAND > CONTACT FOR THE FORM**; **email** + **MAJOR US HOLIDAYS EXCLUDED** → red **Futura PT Medium** (**#EB1C24**) via **`LobbyPhonePopoverLine.emphasis`**. Commit **`cc1722a0`**.
+
+**Update (same chat):** **Klarna** pay-over-time icon from **`Payment/G7FSLK_RM0zy4fC1qM1ab_UWvrk83X.jpeg`** (chroma-keyed PNG); removed sheet crop that showed Apple Pay. **`LOBBY_PAYMENT_ICONS_VERSION`** = **`G7FSLKz4`**. Commit **`b9a392a3`**.
+
+**Update (same chat):** Lobby scene **DOWNLOAD** links (dev or **`/?lobbyAssets=1`**) on neon logo, rose background (**`landing-background.png`**), shelves (**`hd-group`**, **`transparent-group`**, **`custom-group`**), case (**`CASE.png`**, **`REGISTER.png`**, **`lobby-phone.png`**). **`lobbySceneAssets.ts`** + **`LobbyAssetDownloadLink`**; Fal prompts in **`LOBBY_SCENE_FAL_PROMPTS`** (hover title on link). Commit **`bd673a0c`**.
+
+---
+
+## 2026-05-31 — Lobby scene DOWNLOAD links not visible (visibility fix)
+
+**Context (this chat):** User could not see red **DOWNLOAD** text links for lobby scene assets. Prior chat covered Fal model advice (Flux 2 Pro/Max + BiRefNet for lobby PNGs) and extensive lobby popover/payment work.
+
+**Root cause:** Links only rendered when **`import.meta.env.DEV`** or **`?lobbyAssets=1`**; production/preview builds hide them by default. Comment said **`/?lobbyAssets=1`** but **`/`** redirects to **`/home/shop`** — correct URL is **`/lobby?lobbyAssets=1`**. Carousel **`navigate(path)`** dropped the query string when swiping to lounge.
+
+**Changes:** **`useLobbyAssetDownloadsVisible`** hook — dev, **`lobbyAssets=1`** (persisted in **`sessionStorage`** via **`LOBBY_ASSET_DOWNLOADS_SESSION_KEY`**), or **signed-in admin** (**`isAdminEmail`**). **`LobbyApp`** carousel preserves **`location.search`**. **`LobbyAssetDownloadLink`** — **10px** type, **z-index 200**, stronger pill shadow; rose-bg link **z-index 200**. Commit **`fb4d3c30`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby/lounge DOWNLOAD fixes, neon nav, aligned Fal backgrounds
+
+**Context (this chat):** User could not see lobby DOWNLOAD links (fixed earlier **`fb4d3c30`**); then asked for **lounge** scene DOWNLOAD + Fal prompts with **landing2** ceiling/floor aligned to lobby **landing-background** for seamless carousel transition; reported **lobby background download broken**, **logo DOWNLOAD** overlapped shop navigation, and wanted DOWNLOAD on **products/tools/booking** neon assets.
+
+**Changes:** **`downloadAssetFile.ts`** — fetch + blob download (fixes blocked `<a download>` and iOS). Lobby rose DOWNLOAD moved to **z-index 500** above main content (was under **`z-10`** overlay). Logo DOWNLOAD **top-left** sibling (not bottom on clickable img). Neon **`neon-products`**, **`neon-tools`**, **`neon-booking`** paths + Fal prompts in **`lobbySceneAssets.ts`**. **`loungeSceneAssets.ts`** + **`sceneRoseBackgroundFal.ts`** — shared **`SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT`** on lobby + lounge rose prompts; lounge downloads: **`landing2-background`**, logo, salon chairs, TV curtains L/R, remote hand. Commit **`7929308a`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby/lounge Fal workflows + live-preview background swap
+
+**Context (full chat):** Fal model advice for lobby scene assets; DOWNLOAD links + Fal prompts for lobby/lounge (rose panel vs sofa/curtains lounge — **not** rose wall on lounge); fix broken background download and logo overlap; refine **nano-banana-pro/edit** prompts (short multi-pass relight, true red rose panel, front fill on center panel); user wanted **lounge true-red smooth walls** to drive lobby (no wainscoting panels on sides), not pink lounge or lobby panels copied onto lounge. Final ask: **replace backgrounds only** with two Supabase live-preview JPEGs to QA carousel alignment.
+
+**Fal conventions:** Scene work → **`fal-ai/nano-banana-pro/edit`**; avoid one long “preserve + backlight + fill” prompt — use **2–3 short passes**. Lobby rose: 3-pass on **`landing-background.png`**. Lounge-led wall sync: **`LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS`** then **`LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF`** (2-image upload). DOWNLOAD visibility: dev, **`/lobby?lobbyAssets=1`**, admin; carousel preserves query string.
+
+**Background swap (this task):** Downloaded Supabase JPEGs → **`public/assets/landing-background.png`** (lobby) and **`landing2-background.png`** (lounge), 3072×5504. **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`lp6h5DuSde`**, **`LOUNGE_BACKGROUND_ASSET_VERSION`** = **`lpGG-SyHZy`** with **`?v=`** on src URLs; **`LOBBY_ROSE_BACKGROUND_SRC_REMOTE`** / **`LOUNGE_BACKGROUND_SRC_REMOTE`** document sources. **`loungeSceneLayout.ts`**: **`LOUNGE_BG_REFERENCE_WIDTH/HEIGHT`** 3072×5504 (was 1560×3376). Commit **`770972b2`** on **`master`** + **`preview/mobile`**.
+
+**QA follow-up:** Swipe **`/lobby` ↔ `/lobby/lounge`** — check marble horizon, wall color continuity, chair/TV anchors; tune **`LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO`** if chairs float/sink after aspect change.
+
+**Update (same chat):** User reported **black lines** at ceiling/floor on both lobby + lounge after background swap. Root cause: lobby used **`background-size: 100% 100%`** on **`100vh`** while lounge used **`100% auto`** + art height only; new **3072×5504** art aspect (**~1.79**) no longer matches old **1560×3376** phone viewport fit (**~2.16**), so stretch + mismatched slide heights left seams. Fix: **`sceneCarouselBackground.ts`** — shared **`cover` + `center top`**, **`minHeight: max(100dvh, art height)`** on both slides + carousel shell; lobby lost **`bg-contain`** / **`100% 100%`** stretch; carousel viewport **`100dvh`**. Tune **`LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO`** if chairs drift under cover crop.
+
+**Update (same chat):** Floors aligned after CSS fix; **ceilings still misaligned** — lobby has **flat white ceiling**, lounge art has **paneled/coffered ceiling** (user drew reference line). Updated lounge Fal prompts: **`SCENE_LOUNGE_CEILING_MATCH_LOBBY`** in **`sceneRoseBackgroundFal.ts`**; Step A **`LOUNGE_BACKGROUND_FAL_TRUE_RED_WALLS`** + negatives; optional **`LOUNGE_BACKGROUND_FAL_CEILING_FLAT`** ceiling-only pass in **`sceneLoungeBackgroundFal.ts`** (DOWNLOAD tooltip). Regen **`landing2-background.png`** in Fal, re-bake to **`public/assets/`**, bump **`LOUNGE_BACKGROUND_ASSET_VERSION`**.
+
+---
+
+## 2026-06-01 — Lobby/lounge new backgrounds + Seedance 2 transition prompt
+
+**Context (chat):** Continued lobby/lounge carousel alignment (ceiling/baseboard Fal passes, CSS **`sceneCarouselBackground`** crown offset). User supplied **new live-preview JPEGs** for lobby + lounge and asked to update the landing pages and provide a **Seedance 2** room-transition video prompt.
+
+**Changes:** Replaced **`public/assets/landing-background.png`** + **`landing2-background.png`** (3072×5504) from Supabase **`L3uOngFGJQ2LEM5npshed_sBBjoS6l.jpeg`** (lobby) and **`reC-MSzGPYe2PUbnVanQN_Kmj5vXBq.jpeg`** (lounge). Versions **`lpL3uOngFG`** / **`lpreC-MSzG`**; remotes in **`lobbySceneAssets.ts`** / **`loungeSceneAssets.ts`**. **`LOUNGE_SCENE_BG_CROWN_Y_PX`** → **643**. New **`lobbyLoungeSeedancePrompt.ts`** — I2V locked start/end photos + animation-style prompt (not T2I). **`LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX`** for roses in front of ceiling. Pushed **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** User supplied Kling test MOV **`positive_Image-to-video_using__Kling_30__69734.mov`** — wired **`LobbyLoungeTransitionVideo`** overlay on lobby → lounge navigation. Enabled in **dev** or **`/lobby?lobbyTransitionVideo=1`** (session persisted). Lounge → lobby still uses CSS slide. Skip button on clip. **`lobbyLoungeTransitionVideo.ts`** + **`LobbyLoungeTransitionVideo.tsx`**.
+
+**Update (same chat):** Replaced lobby **`landing-background.png`** from **`JgMOOyc0S2fwovqjnRGOA_xKRqBrUe.jpeg`** (3072×5504). **`LOBBY_BACKGROUND_ASSET_VERSION`** = **`lpJgMOOyc0`**; Seedance start frame URL updated. Commit **`28cf69a0`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-01 — Neon logo: glow-preserving local bake (not BiRefNet)
+
+**Context (full chat):** Lobby/lounge carousel, Fal NBP glow + BiRefNet cutout workflows, transition video in carousel, lobby/lounge background swaps. User reported **BiRefNet v2** on the neon sign **removes glow** and looks flat; asked to replace **`neon-logo.png`** from **`Y6K-Yipl7T4pc1DCirLsp_J40m9P3V.jpeg`** with background removed while **preserving halos/detail**.
+
+**Decisions:** Do **not** use **`fal-ai/birefnet/v2`** for final neon asset when glow matters. Use **`npm run lobby:bake-neon-logo`** — Python/Pillow script keyed off corner wall chroma + tube core halo mask (not full-frame dark key).
+
+**Changes:** Re-baked **`public/assets/neon-logo.png`** (845×1100, ~48% transparent pixels, corners alpha 0). **`LOBBY_NEON_LOGO_ASSET_VERSION`** = **`Y6K-Yipl7`**, **`LOBBY_NEON_LOGO_SRC_REMOTE`**, versioned **`LOBBY_NEON_LOGO_SRC`**. **`scripts/lobby-bake-neon-logo-asset.mjs`** + **`package.json`** script. **`sceneNeonLogoFal.ts`** — **`NEON_LOGO_BIREFNET_CUTOUT_NOTE`** documents prefer local bake. Commit **`9a66edae`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** User found baked glow **weird/artificial** — **reverted** **`neon-logo.png`** to pre-bake asset (912×1092, **`LOBBY_NEON_LOGO_SRC`** = **`/assets/neon-logo.png`** without Y6K cache-bust). **Removed neon logo from lounge only** — deleted **`LoungePage`** sign + **`LOUNGE_NEON_LOGO_SRC`** / lounge Fal **`neonLogo`** entry; lobby sign unchanged.
+
+---
+
+## 2026-06-01 — Lobby shelf graphics swap (HD / transparent / custom)
+
+**Context:** User supplied three Supabase green-screen JPEGs for lobby product shelves.
+
+**Changes:** **`npm run lobby:bake-shelves`** — **`scripts/lobby-bake-shelf-assets.mjs`** chroma-keys green, crops, resizes to **800×235** PNGs: **`hd-group.png`**, **`transparent-group.png`**, **`custom-group.png`**. **`LOBBY_SHELF_ASSET_VERSION`** = **`RQY7-2fkX-AKow`** with **`_SRC_REMOTE`** URLs in **`lobbySceneAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** First bake **broke mannequin faces** (aggressive green_excess key punched holes). **Regenerated** with mannequin-protect key (**`ge<18` / `sat<32`**), green **despill**, fringe drop, tight alpha crop. **`LOBBY_SHELF_ASSET_VERSION`** → **`RQY7-v2`**.
+
+**Update (same chat):** User: **acrylic front panel** rendering broken + remove **3 shelf DOWNLOAD links**. Rebaked with glass/rim protect, shelf-body alpha solidify, despill skip on bright/red neon; fringe wipe excludes shelf mask. **`RQY7-v3`**. **`page.tsx`** shelves use plain **`<img>`** (no **`LobbyAssetDownloadAnchor`**).
+
+**Update (same chat):** Removed **DOWNLOAD** links from **neon logo**, **lobby** (`landing-background`), and **lounge** (`landing2-background`) in **`page.tsx`**. Shelves already plain imgs; case/neon nav/TV downloads unchanged.
+
+**Update (same chat):** Removed **DOWNLOAD** from **cash register** (`REGISTER.png`) and **phone** (`lobby-phone.png`) popovers on lobby case — popovers unchanged.
+
+**Update (same chat):** New lounge **salon chairs** from **`pNu1yJzmL4dvFCWQy6wMl_Ueut2LUr.jpeg`** → **`salon-chairs.png`** (960×822, green-screen key). **`npm run lounge:bake-salon-chairs`**, **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** = **`pNu1yJzm`**. Removed chairs **DOWNLOAD** on lounge slide.
+
+**Update (same chat):** **Lounge TV design** — **`lounge-tv-design.png`** reference (820×602), **`sceneLoungeTvFal.ts`** NBP **`LOUNGE_TV_DESIGN_FAL_EDIT`**, **`LOUNGE_SCENE_FAL_PROMPTS.tvDesign`**. **DOWNLOAD** top-left on lounge **`LoungeTvFrame`** (dev/admin/**`?lobbyAssets=1`**). Live TV still CSS bezel; PNG is Fal/download reference.
+
+**Update (same chat):** Lounge **salon chairs** — **25% smaller** (**`LOUNGE_SALON_CHAIRS_HEIGHT_PX`** 160→120), **20px up** (mobile **`OFFSET_Y`** 290→270, large **`LARGE_EXTRA_Y`** 82→62) in **`loungeSceneLayout.ts`**.
+
+**Update (same chat):** Lounge **TV** — slide uses **`lounge-tv-design.png`** image (not CSS **`LoungeTvFrame`**); **DOWNLOAD** removed. **`lounge:bake-tv-design`**, **`LOUNGE_TV_DESIGN_SRC_REMOTE`** = user **`pNu1yJzm…` JPEG** (same file as salon chairs at time of bake — rebake when TV art is on that URL).
+
+**Update (same chat):** Lounge **TV asset** from **`kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg`** (4800×3520 studio gray) → **`lounge-tv-design.png`** 820×612; bake uses corner gray key (not green). **`LOUNGE_TV_DESIGN_ASSET_VERSION`** = **`kv6DR-SLY`**.
+
+**Update (same chat):** **TV regen** — removed floor-reflection artifacts (reflection mask + TV-core crop, premultiply). **`kv6DR-v2`**. Removed **curtain + remote hand DOWNLOAD** on lounge. **Chairs** +10% (**152px**), up **20px**, right **10px** (**X 45**, **Y 226** / large **18**).
+
+**Update (same chat):** Lounge **TV** — user asked **5px right** + **center gray play** on screen. **`LOUNGE_LOBBY_TV_OFFSET_X_PX`** 48→**53**. Play anchored to glass center on **`lounge-tv-design.png`** via **`LOUNGE_TV_DESIGN_PLAY_ANCHOR`** `{ x: 0.5, y: 0.419 }` and **`loungeLobbyTvDesignPlayButtonStyle()`**; lobby TV wrapper uses **`height: frameH`**, **`width: auto`** on img (no extra frame width letterbox). Commit **`4a7fdf8a`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** Lounge **salon chairs** — **4px left** (**`LOUNGE_SALON_CHAIRS_OFFSET_X_PX`** 45→**41**). User requested asset refresh from **`pNu1yJzm…` Supabase URL**; fetch returned **404 not_found** from deploy environment — **`npm run lounge:bake-salon-chairs`** rebaked from **`tmp/salon-chairs-src.jpeg`** cache (PNG unchanged). **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** → **`pNu1yJzm-v3`**. Bake script warns when remote fetch fails. Commit **`d627f30e`**.
+
+**Update (same chat):** Lounge **TV overlay animation** now uses baked **`lounge-tv-design.png`** (not CSS **`LoungeTvFrame`**). **`LoungeTvDesignFrame`** + **`LOUNGE_TV_DESIGN_SCREEN_RECT`** / **`loungeTvDesignDimensionsFromScreenWidth`** in **`loungeTvFrame.tsx`**; lobby static TV ref uses same PNG sizing for grow-from-origin continuity.
+
+**Update (same chat):** Lounge **salon chairs** asset from **`p6V1N9X4lJoobnaRmSFSh_WE2x57MV.jpeg`** → **`salon-chairs.png`** (960×822). **`LOUNGE_SALON_CHAIRS_ASSET_VERSION`** **`p6V1N9X4-v1`**; **`LOUNGE_SALON_CHAIRS_SRC_REMOTE`** + bake script default URL updated.
+
+**Update (same chat):** Lounge **TV overlay** — menu/content rendered **below** PNG frame. Root cause: **`loungeTvDesignScreenInsetStyle`** spread **`loungeTvScreenStyle`** after **`position: absolute`**, which reset **`position: relative`** and **`width/height: 100%`**. Fixed by applying base screen styles first, then absolute inset from **`LOUNGE_TV_DESIGN_SCREEN_RECT`**.
+
+**Update (same chat):** **Salon chairs** bake — **`p6V1N9X4`** source is **gray-green studio** (not chroma green); old **`ge>42`** key left **0% transparent**. Rebaked with corner **`dist_bg`** smoothstep + subject protect + despill/premultiply (~**38%** transparent). **`p6V1N9X4-v2`**.
+
+**Update (same chat):** Lobby **neon logo** **5% smaller** — **`LOBBY_NEON_LOGO_HEIGHT_PX`** **250** (was **263**). **Register** + **phone** **DOWNLOAD** links already absent on lobby slide (plain **`LobbyCasePropPopover`** only).
+
+**Update (same chat):** Lobby **custom units shelf** — **`7iUsTnn1PQRK9Io3291KW_pHVg5Q26.jpeg`** → **`custom-group.png`** (800×235, green key + mannequin/neon protect, premultiply). **`LOBBY_SHELF_CUSTOM_SRC_REMOTE`** + bake default updated; **`LOBBY_SHELF_ASSET_VERSION`** **`7iUsTnn1-v1`**. **`lobby:bake-shelves custom`** for single-shelf rebake.
+
+**Update (same chat):** Lounge **salon chairs** — elliptical **floor contact shadow** + **`drop-shadow`** on PNG (**`loungeSalonChairsFloorShadowStyle`**, **`LOUNGE_SALON_CHAIRS_FLOOR_SHADOW`** in **`loungeSceneLayout.ts`**).
+
+**Update (same chat):** Lobby **all three shelves** rebaked — **HD** **`5Cof6W3Y0p6Eyq8ew7Sil_dzSVHBRK.jpeg`**, **transparent** **`7h5bbuiitNAnalQhkOszS_pP56MlDZ.jpeg`**, **custom** **`7iUsTnn1…`**. **`LOBBY_SHELF_ASSET_VERSION`** **`5Cof6W3Y-v1`**; remotes + bake script defaults updated.
+
+**Update (same chat):** Lobby **display case** — **`RRrEEA6lu1lkeleVPTgsP_wgs8vmEv.jpeg`** → **`CASE.png`** (920×500, green key + acrylic protect). **`LOBBY_CASE_ASSET_VERSION`** **`RRrEEA6l-v1`**, **`npm run lobby:bake-case`**, **`lobbyCaseAssets.ts`**.
+
+**Update (same chat):** Lobby **shelves** green fringe fix — removed spill pass that held green at **α≈200**; stronger key/despill + post-resize fringe wipe. All three rebaked; **`LOBBY_SHELF_ASSET_VERSION`** **`5Cof6W3Y-v2`**.
+
+**Update (same chat):** **Display case DOWNLOAD** removed (plain **`<img>`**). Shared **`scripts/lobby-chroma-key.py`** — acrylic **unspill** (G→neutral glass), green **haze** removal, post-resize cleanup. Rebaked **CASE** + all shelves: **`RRrEEA6l-v2`**, **`5Cof6W3Y-v3`**. **`LOBBY_SCENE_FAL_PROMPTS.shelfBackdropNote`**: gray/off-white/magenta backdrop better than green for acrylic; green OK with bake scripts.
+
+**Update (same chat):** **Lobby nav neon Fal prompts** — **`sceneLobbyNeonNavFal.ts`** full NBP two-pass copy for **`neon-products.png`**, **`neon-tools.png`**, **`neon-booking.png`** (style-locked to main logo). **`LOBBY_SCENE_FAL_PROMPTS.neonProducts|neonTools|neonBooking`** use **`LOBBY_NEON_*_FAL_EDIT`** (DOWNLOAD tooltip on lobby when dev/admin/**`?lobbyAssets=1`**).

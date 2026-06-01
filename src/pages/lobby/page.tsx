@@ -19,31 +19,66 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import {
-  loungeBackgroundArtHeightCss,
   loungePageMinHeightCss,
   loungeSalonChairsAnchorStyle,
+  loungeSalonChairsFloorShadowStyle,
   loungeSalonChairsImageStyle,
+  loungeSalonChairsStackStyle,
   useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
+import {
+  loungeSceneBackgroundPositionY,
+  sceneCarouselBackgroundLayerStyle,
+  sceneCarouselSlideMinHeightCss,
+} from '../../utils/sceneCarouselBackground';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
+import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import {
+  isLobbyTransitionVideoEnabledFromSearch,
+  LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
+} from '../../constants/lobbyLoungeTransitionVideo';
+import { LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
+import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
+import { useLobbyAssetDownloadsVisible } from '../../hooks/useLobbyAssetDownloadsVisible';
+import {
+  LOBBY_CASE_REGISTER_SRC,
+  LOBBY_CASE_SRC,
+  LOBBY_NEON_BOOKING_FALLBACK_SRC,
+  LOBBY_NEON_BOOKING_SRC,
+  LOBBY_NEON_LOGO_HEIGHT_PX,
+  LOBBY_NEON_LOGO_SRC,
+  LOBBY_NEON_PRODUCTS_SRC,
+  LOBBY_NEON_TOOLS_SRC,
+  LOBBY_ROSE_BACKGROUND_SRC,
+  LOBBY_SCENE_FAL_PROMPTS,
+  LOBBY_SHELF_CUSTOM_SRC,
+  LOBBY_SHELF_HD_SRC,
+  LOBBY_SHELF_TRANSPARENT_SRC,
+} from '../../constants/lobbySceneAssets';
+import {
+  LOUNGE_BACKGROUND_SRC,
+  LOUNGE_SALON_CHAIRS_SRC,
+  LOUNGE_TV_DESIGN_SRC,
+} from '../../constants/loungeSceneAssets';
+import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_PHONE_POPOVER_SECTIONS,
   LOBBY_PHONE_POPOVER_TITLE,
-  LOBBY_REGISTER_POPOVER_SECTIONS,
   LOBBY_REGISTER_POPOVER_TITLE,
 } from '../../constants/lobbyPropPopoverCopy';
 import {
-  LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
+  LOUNGE_LOBBY_TV_OFFSET_X_PX,
+  LOUNGE_LOBBY_TV_OFFSET_Y_PX,
   LOUNGE_TV_PLAY_BUTTON_COLOR,
-  LoungeTvFrame,
-  loungeTvDimensionsFromFrameHeight,
+  loungeLobbyTvDesignPlayButtonStyle,
+  loungeTvDesignDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
   const navigate = useNavigate();
-  console.log('✅✅✅ LobbyPage component rendering - ROOT ROUTE');
+  const showAssetDownloads = useLobbyAssetDownloadsVisible();
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
   useEffect(() => {
@@ -109,31 +144,22 @@ const LobbyPage: React.FC = () => {
     navigate('/home/tools');
   }, [navigate]);
 
-  const [bookingNeonSrc, setBookingNeonSrc] = useState('/assets/neon-booking.png');
+  const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
 
   return (
-    <div className="bg-red-900 relative" style={{ minHeight: '100vh', width: '100vw', flexShrink: 0, backgroundColor: 'white' }}>
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
-          backgroundImage: 'url(/assets/landing-background.png)',
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center center',
-          backgroundColor: 'white',
-          willChange: 'auto',
-          contain: 'layout style paint'
-        }}
-      />
-      
+    <div
+      className="relative"
+      style={{
+        minHeight: sceneCarouselSlideMinHeightCss(),
+        width: '100vw',
+        flexShrink: 0,
+        backgroundColor: '#ffffff',
+      }}
+    >
+      {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
+      <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
+
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
         {/* Placeholder for logo to maintain flex flow */}
@@ -150,12 +176,18 @@ const LobbyPage: React.FC = () => {
           zIndex: 20,
           width: 'fit-content'
         }}>
-          <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-            <img 
-              src="/assets/neon-logo.png" 
-              alt="Frontal Slayer" 
+          <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
+            <img
+              src={LOBBY_NEON_LOGO_SRC}
+              alt="Frontal Slayer"
               onClick={goToHomeShop}
-              style={{ width: 'auto', height: '263px', maxWidth: 'none', display: 'block', cursor: 'pointer' }}
+              style={{
+                width: 'auto',
+                height: LOBBY_NEON_LOGO_HEIGHT_PX,
+                maxWidth: 'none',
+                display: 'block',
+                cursor: 'pointer',
+              }}
             />
           </div>
         </div>
@@ -195,8 +227,16 @@ const LobbyPage: React.FC = () => {
             }}
             aria-label="Go to shop"
           >
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={LOBBY_NEON_PRODUCTS_SRC}
+                downloadFilename="neon-products.png"
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonProducts}
+                style={{ position: 'absolute', top: -14, left: 0, zIndex: 50 }}
+              />
+            ) : null}
             <img
-              src="/assets/neon-products.png"
+              src={LOBBY_NEON_PRODUCTS_SRC}
               alt=""
               draggable={false}
               style={{
@@ -234,8 +274,16 @@ const LobbyPage: React.FC = () => {
             }}
             aria-label="Go to tools"
           >
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={LOBBY_NEON_TOOLS_SRC}
+                downloadFilename="neon-tools.png"
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonTools}
+                style={{ position: 'absolute', top: -14, left: 0, zIndex: 50 }}
+              />
+            ) : null}
             <img
-              src="/assets/neon-tools.png"
+              src={LOBBY_NEON_TOOLS_SRC}
               alt=""
               draggable={false}
               style={{
@@ -262,11 +310,21 @@ const LobbyPage: React.FC = () => {
               alignItems: 'center',
             }}
           >
+            {showAssetDownloads ? (
+              <LobbyAssetDownloadLink
+                href={bookingNeonSrc}
+                downloadFilename={
+                  bookingNeonSrc.endsWith('.svg') ? 'neon-booking.svg' : 'neon-booking.png'
+                }
+                falPrompt={LOBBY_SCENE_FAL_PROMPTS.neonBooking}
+                style={{ position: 'absolute', top: -14, right: 0, zIndex: 50 }}
+              />
+            ) : null}
             <img
               src={bookingNeonSrc}
               alt=""
               onError={() => {
-                if (bookingNeonSrc.endsWith('.png')) setBookingNeonSrc('/assets/neon-booking.svg');
+                if (bookingNeonSrc.endsWith('.png')) setBookingNeonSrc(LOBBY_NEON_BOOKING_FALLBACK_SRC);
               }}
               className="w-auto pointer-events-none select-none"
               style={{
@@ -315,31 +373,31 @@ const LobbyPage: React.FC = () => {
         }}>
           {/* HD LACE Shelf */}
           <div className="flex flex-col items-center">
-            <img 
-              src="/assets/hd-group.png" 
-              alt="HD Lace Collection" 
+            <img
+              src={LOBBY_SHELF_HD_SRC}
+              alt="HD Lace Collection"
               className="w-auto md:h-20 lg:h-24"
-              style={{ height: '56px' }}
+              style={{ height: '56px', display: 'block' }}
             />
           </div>
-          
+
           {/* TRANSPARENT LACE Shelf */}
           <div className="flex flex-col items-center">
-            <img 
-              src="/assets/transparent-group.png" 
-              alt="Transparent Lace Collection" 
+            <img
+              src={LOBBY_SHELF_TRANSPARENT_SRC}
+              alt="Transparent Lace Collection"
               className="w-auto md:h-20 lg:h-24"
-              style={{ height: '56px' }}
+              style={{ height: '56px', display: 'block' }}
             />
           </div>
-          
+
           {/* CUSTOM UNITS Shelf */}
           <div className="flex flex-col items-center">
-            <img 
-              src="/assets/custom-group.png" 
-              alt="Custom Units Collection" 
+            <img
+              src={LOBBY_SHELF_CUSTOM_SRC}
+              alt="Custom Units Collection"
               className="w-auto md:h-20 lg:h-24"
-              style={{ height: '56px' }}
+              style={{ height: '56px', display: 'block' }}
             />
           </div>
         </div>
@@ -355,9 +413,9 @@ const LobbyPage: React.FC = () => {
         }}>
           {/* Acrylic Case */}
           <div className="relative">
-            <img 
-              src="/assets/CASE.png" 
-              alt="Display Case" 
+            <img
+              src={LOBBY_CASE_SRC}
+              alt="Display Case"
               className="h-auto"
               style={{ display: 'block', width: '230px', maxWidth: '230px' }}
             />
@@ -373,11 +431,11 @@ const LobbyPage: React.FC = () => {
                 onClose={() => setLobbyCasePopover(null)}
                 ariaLabel="View accepted payment methods"
                 title={LOBBY_REGISTER_POPOVER_TITLE}
-                sections={LOBBY_REGISTER_POPOVER_SECTIONS}
+                paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
                 align="left"
               >
                 <img
-                  src="/assets/REGISTER.png"
+                  src={LOBBY_CASE_REGISTER_SRC}
                   alt=""
                   draggable={false}
                   className="md:w-10 md:h-8 pointer-events-none select-none"
@@ -387,7 +445,10 @@ const LobbyPage: React.FC = () => {
             </div>
 
             {/* Phone — tap for business contact popover */}
-            <div className="absolute right-8" style={{ top: '-31px', zIndex: 25 }}>
+            <div
+              className="absolute right-8"
+              style={{ top: '-33px', zIndex: 25, transform: 'translateX(-6px)' }}
+            >
               <LobbyCasePropPopover
                 popoverId="phone"
                 activeId={lobbyCasePopover}
@@ -401,11 +462,11 @@ const LobbyPage: React.FC = () => {
                 align="right"
               >
                 <img
-                  src="/assets/PHONE.png"
+                  src={LOBBY_PHONE_SRC}
                   alt=""
                   draggable={false}
-                  className="md:w-10 md:h-8 pointer-events-none select-none"
-                  style={{ width: '32px', height: '34px', display: 'block' }}
+                  className="pointer-events-none select-none"
+                  style={{ width: 'auto', height: '34px', maxWidth: '46px', display: 'block', objectFit: 'contain' }}
                 />
               </LobbyCasePropPopover>
             </div>
@@ -503,9 +564,6 @@ const LobbyPage: React.FC = () => {
 
 // Lounge Component
 const LoungePage: React.FC = () => {
-  const navigate = useNavigate();
-  console.log('LoungePage component is rendering');
-
   const tvFrameRef = useRef<HTMLDivElement>(null);
   const [tvOpen, setTvOpen] = useState(false);
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
@@ -520,7 +578,7 @@ const LoungePage: React.FC = () => {
     setTvOpen(false);
   }, []);
 
-  const loungeLobbyTvFrame = loungeTvDimensionsFromFrameHeight(146);
+  const loungeLobbyTvFrame = loungeTvDesignDimensionsFromFrameHeight(146);
   const isLargeLoungeViewport = useLoungeLargeViewport();
 
   const handlePrevious = useCallback(() => {
@@ -543,53 +601,12 @@ const LoungePage: React.FC = () => {
       }}
     >
       {/* Background Image - Using landing2-background */}
-      <div 
-        style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          right: 0,
-          width: '100%',
-          height: loungeBackgroundArtHeightCss(),
-          backgroundImage: 'url(/assets/landing2-background.png)',
-          backgroundSize: '100% auto',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: 'white',
-          willChange: 'auto',
-        }}
+      <div
+        style={sceneCarouselBackgroundLayerStyle(LOUNGE_BACKGROUND_SRC, {
+          backgroundPosition: `center ${loungeSceneBackgroundPositionY()}`,
+        })}
       />
-      
-      {/* Neon Logo - Independent container with absolute positioning */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '50%', 
-        left: '50%', 
-        transform: 'translate(calc(-50% + 56px), calc(-50% - 160px))', 
-        zIndex: 10, 
-        width: 'fit-content'
-      }}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img 
-            src="/assets/neon-logo.png" 
-            alt="Frontal Slayer" 
-            onClick={() => navigate('/shop/units')}
-            style={{ 
-              width: 'auto', 
-              height: '265px', 
-              maxWidth: 'none',
-              maxHeight: '265px', 
-              margin: 0, 
-              padding: 0,
-              display: 'block',
-              visibility: 'visible',
-              opacity: 1,
-              cursor: 'pointer'
-            }}
-          />
-        </div>
-      </div>
-      
+
       {/* TV + play — play opens animated black screen + theater curtains */}
        <div
          ref={tvFrameRef}
@@ -597,7 +614,7 @@ const LoungePage: React.FC = () => {
            position: 'absolute',
            top: '50%',
            left: '50%',
-           transform: 'translate(calc(-50% + 58px), calc(-50% + 50px))',
+           transform: `translate(calc(-50% + ${LOUNGE_LOBBY_TV_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_LOBBY_TV_OFFSET_Y_PX}px))`,
            zIndex: tvOpen ? 8 : 10,
            width: 'fit-content',
          }}
@@ -611,20 +628,31 @@ const LoungePage: React.FC = () => {
              transition: 'opacity 0.4s ease',
            }}
          >
-           <LoungeTvFrame
-             frameWidth={loungeLobbyTvFrame.frameW + LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX}
-             frameHeight={loungeLobbyTvFrame.frameH}
+           <div
+             style={{
+               position: 'relative',
+               display: 'inline-block',
+               height: loungeLobbyTvFrame.frameH,
+               lineHeight: 0,
+             }}
            >
-             {!tvOpen && (
+             <img
+               src={LOUNGE_TV_DESIGN_SRC}
+               alt=""
+               draggable={false}
+               style={{
+                 height: '100%',
+                 width: 'auto',
+                 display: 'block',
+               }}
+             />
+             {!tvOpen ? (
                <button
                  type="button"
                  onClick={openLoungeTv}
                  aria-label="Play lounge media"
                  style={{
-                   position: 'absolute',
-                   left: '50%',
-                   top: '50%',
-                   transform: 'translate(-50%, -50%)',
+                   ...loungeLobbyTvDesignPlayButtonStyle(),
                    margin: 0,
                    padding: '12px',
                    border: 'none',
@@ -654,8 +682,8 @@ const LoungePage: React.FC = () => {
                    }}
                  />
                </button>
-             )}
-           </LoungeTvFrame>
+             ) : null}
+           </div>
          </div>
        </div>
 
@@ -663,8 +691,9 @@ const LoungePage: React.FC = () => {
       
       {/* Salon Chairs — inline placement (large viewport uses larger Y offset from loungeSceneLayout) */}
       <div style={loungeSalonChairsAnchorStyle(isLargeLoungeViewport)}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img src="/assets/salon-chairs.png" alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
+        <div style={loungeSalonChairsStackStyle()}>
+          <div aria-hidden style={loungeSalonChairsFloorShadowStyle()} />
+          <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
         </div>
       </div>
       
@@ -761,10 +790,53 @@ const LobbyApp: React.FC = () => {
   console.log('🎯 LOBBY PAGE LOADING - This should show when visiting root path');
   const navigate = useNavigate();
   const location = useLocation();
-  const currentPage = lobbyCarouselIndexFromPath(location.pathname);
+  const routePage = lobbyCarouselIndexFromPath(location.pathname);
+  const transitionVideoEnabled = isLobbyTransitionVideoEnabledFromSearch(location.search);
+  const carouselSlideCount = transitionVideoEnabled ? 3 : 2;
+  const roomTransitionInProgressRef = useRef(false);
+
+  const visualIndexFromRoute = transitionVideoEnabled ? (routePage === 0 ? 0 : 2) : routePage;
+
+  const [visualIndex, setVisualIndex] = useState(visualIndexFromRoute);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!transitionVideoEnabled) return;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'video';
+    link.href = LOBBY_LOUNGE_TRANSITION_VIDEO_SRC;
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, [transitionVideoEnabled]);
+
+  useEffect(() => {
+    if (roomTransitionInProgressRef.current) return;
+    setVisualIndex(visualIndexFromRoute);
+  }, [visualIndexFromRoute]);
+
+  const applyCarouselPage = useCallback(
+    (pageIndex: number, options?: { animate?: boolean; visualTarget?: number }) => {
+      const path = lobbyCarouselPathFromIndex(pageIndex);
+      const animate = options?.animate !== false;
+      const nextVisual =
+        options?.visualTarget ?? (transitionVideoEnabled ? (pageIndex === 0 ? 0 : 2) : pageIndex);
+
+      if (animate) {
+        setIsTransitioning(true);
+        setTimeout(() => setIsTransitioning(false), 800);
+      }
+      setVisualIndex(nextVisual);
+      if (location.pathname !== path) {
+        navigate({ pathname: path, search: location.search }, { replace: true });
+      }
+    },
+    [location.pathname, location.search, navigate, transitionVideoEnabled]
+  );
 
   // Confirm membership by syncing the authenticated client's profile from the backend
   // (same underlying profile data the rewards page + admin client details display).
@@ -803,28 +875,40 @@ const LobbyApp: React.FC = () => {
     else navigate('/home/shop');
   };
 
-  const pages = [<LobbyPage key="lobby" />, <LoungePage key="lounge" />];
+  const completeRoomTransitionSlide = useCallback(() => {
+    roomTransitionInProgressRef.current = false;
+    applyCarouselPage(1, { animate: false, visualTarget: 2 });
+  }, [applyCarouselPage]);
 
   const goToCarouselPage = useCallback(
     (pageIndex: number) => {
-      if (isTransitioning || pageIndex === currentPage) return;
-      const path = lobbyCarouselPathFromIndex(pageIndex);
-      setIsTransitioning(true);
-      if (location.pathname !== path) {
-        navigate(path, { replace: true });
+      if (isTransitioning || roomTransitionInProgressRef.current || pageIndex === routePage) return;
+
+      if (transitionVideoEnabled && routePage === 0 && pageIndex === 1) {
+        roomTransitionInProgressRef.current = true;
+        setIsTransitioning(true);
+        setVisualIndex(1);
+        setTimeout(() => setIsTransitioning(false), 500);
+        return;
       }
-      setTimeout(() => setIsTransitioning(false), 800);
+
+      if (transitionVideoEnabled && routePage === 1 && pageIndex === 0) {
+        applyCarouselPage(0, { animate: true, visualTarget: 0 });
+        return;
+      }
+
+      applyCarouselPage(pageIndex);
     },
-    [currentPage, isTransitioning, location.pathname, navigate]
+    [applyCarouselPage, isTransitioning, routePage, transitionVideoEnabled]
   );
 
   const handlePrevious = useCallback(() => {
-    if (currentPage > 0) goToCarouselPage(currentPage - 1);
-  }, [currentPage, goToCarouselPage]);
+    if (routePage > 0) goToCarouselPage(routePage - 1);
+  }, [routePage, goToCarouselPage]);
 
   const handleNext = useCallback(() => {
-    if (currentPage < pages.length - 1) goToCarouselPage(currentPage + 1);
-  }, [currentPage, goToCarouselPage, pages.length]);
+    if (routePage < 1) goToCarouselPage(routePage + 1);
+  }, [routePage, goToCarouselPage]);
 
   // Handle keyboard arrow keys
   useEffect(() => {
@@ -843,10 +927,10 @@ const LobbyApp: React.FC = () => {
   // Listen for navigation events from page components
   useEffect(() => {
     const onNext = () => {
-      if (currentPage < pages.length - 1) goToCarouselPage(currentPage + 1);
+      if (routePage < 1) goToCarouselPage(routePage + 1);
     };
     const onPrevious = () => {
-      if (currentPage > 0) goToCarouselPage(currentPage - 1);
+      if (routePage > 0) goToCarouselPage(routePage - 1);
     };
 
     window.addEventListener('lobby-navigate-next', onNext);
@@ -856,7 +940,7 @@ const LobbyApp: React.FC = () => {
       window.removeEventListener('lobby-navigate-next', onNext);
       window.removeEventListener('lobby-navigate-previous', onPrevious);
     };
-  }, [currentPage, goToCarouselPage, pages.length]);
+  }, [routePage, goToCarouselPage]);
 
   // Hide loading screen after assets have time to load
   useEffect(() => {
@@ -872,7 +956,7 @@ const LobbyApp: React.FC = () => {
       <div
         style={{
           width: '100vw',
-          height: '100vh',
+          height: '100dvh',
           overflowX: 'hidden',
           overflowY: 'auto',
           position: 'relative',
@@ -886,25 +970,37 @@ const LobbyApp: React.FC = () => {
         <div
           style={{
             display: 'flex',
-            width: `${pages.length * 100}vw`,
-            minHeight: '105vh',
-            transform: `translateX(-${currentPage * 100}vw)`,
-            transition: isTransitioning ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+            width: `${carouselSlideCount * 100}vw`,
+            minHeight: sceneCarouselSlideMinHeightCss(),
+            transform: `translateX(-${visualIndex * 100}vw)`,
+            transition: isTransitioning ? 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
             willChange: isTransitioning ? 'transform' : 'auto',
           }}
         >
-          {pages.map((page, index) => (
-            <div
-              key={index}
-              style={{
-                width: '100vw',
-                flexShrink: 0,
-                minHeight: index === 0 ? '100vh' : loungePageMinHeightCss(),
-              }}
-            >
-              {page}
-            </div>
-          ))}
+          <div
+            style={{
+              width: '100vw',
+              flexShrink: 0,
+              minHeight: sceneCarouselSlideMinHeightCss(),
+            }}
+          >
+            <LobbyPage />
+          </div>
+          {transitionVideoEnabled ? (
+            <LobbyLoungeTransitionSlide
+              active={visualIndex === 1}
+              onComplete={completeRoomTransitionSlide}
+            />
+          ) : null}
+          <div
+            style={{
+              width: '100vw',
+              flexShrink: 0,
+              minHeight: sceneCarouselSlideMinHeightCss(),
+            }}
+          >
+            <LoungePage />
+          </div>
         </div>
       </div>
       

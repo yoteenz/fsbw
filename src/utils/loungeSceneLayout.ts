@@ -1,34 +1,50 @@
 import { useLayoutEffect, useState } from 'react';
 import type React from 'react';
+import {
+  SCENE_CAROUSEL_BG_HEIGHT,
+  SCENE_CAROUSEL_BG_WIDTH,
+  sceneCarouselBackgroundArtHeightCss,
+  sceneCarouselSlideMinHeightCss,
+} from './sceneCarouselBackground';
 
 /** `landing2-background.png` pixel size — reference for future scene hotspots. */
-export const LOUNGE_BG_REFERENCE_WIDTH = 1560;
-export const LOUNGE_BG_REFERENCE_HEIGHT = 3376;
+export const LOUNGE_BG_REFERENCE_WIDTH = SCENE_CAROUSEL_BG_WIDTH;
+export const LOUNGE_BG_REFERENCE_HEIGHT = SCENE_CAROUSEL_BG_HEIGHT;
 
 /** Vertical position of salon chair bases on the background art (0–1 from top). */
 export const LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO = 0.538;
 
 /** Rendered height when background is `background-size: 100% auto`. */
 export function loungeBackgroundArtHeightCss(): string {
-  return `calc(100vw * ${LOUNGE_BG_REFERENCE_HEIGHT} / ${LOUNGE_BG_REFERENCE_WIDTH})`;
+  return sceneCarouselBackgroundArtHeightCss();
 }
 
 /** Lounge slide must be at least viewport and full art height so floor anchors work. */
 export function loungePageMinHeightCss(): string {
-  return `max(105vh, ${loungeBackgroundArtHeightCss()})`;
+  return sceneCarouselSlideMinHeightCss();
 }
 
 /** Lounge salon chairs placement (inline styles on lounge page — not index.css). */
 export const LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX = 1024;
 /** Default Y nudge from viewport center (mobile / tablet). */
-export const LOUNGE_SALON_CHAIRS_OFFSET_Y_PX = 290;
-/** Extra downward nudge on large screens only (added to {@link LOUNGE_SALON_CHAIRS_OFFSET_Y_PX}). */
-export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 82;
+export const LOUNGE_SALON_CHAIRS_OFFSET_Y_PX = 226;
+/** Extra downward nudge on large screens only (floor-anchored layout). */
+export const LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX = 18;
 /** Y offset on large screens (1024px+). */
 export const LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX =
   LOUNGE_SALON_CHAIRS_OFFSET_Y_PX + LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX;
-export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 160;
-export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 25;
+export const LOUNGE_SALON_CHAIRS_HEIGHT_PX = 152;
+export const LOUNGE_SALON_CHAIRS_OFFSET_X_PX = 41;
+
+/** Contact shadow under chair bases (floor anchor on lounge slide). */
+export const LOUNGE_SALON_CHAIRS_FLOOR_SHADOW = {
+  widthRatio: 0.9,
+  heightPx: 16,
+  offsetYRatio: 0.38,
+  blurPx: 6,
+  coreOpacity: 0.44,
+  midOpacity: 0.2,
+} as const;
 
 export function useLoungeLargeViewport(): boolean {
   const [isLarge, setIsLarge] = useState(() => {
@@ -71,13 +87,42 @@ export function loungeSalonChairsAnchorStyle(isLargeViewport: boolean): React.CS
   };
 }
 
+export function loungeSalonChairsStackStyle(): React.CSSProperties {
+  return {
+    position: 'relative',
+    display: 'inline-block',
+    lineHeight: 0,
+  };
+}
+
+/** Soft elliptical shadow on the floor beneath the chair PNG. */
+export function loungeSalonChairsFloorShadowStyle(): React.CSSProperties {
+  const s = LOUNGE_SALON_CHAIRS_FLOOR_SHADOW;
+  return {
+    position: 'absolute',
+    left: '50%',
+    bottom: 0,
+    transform: `translate(-50%, ${s.offsetYRatio * 100}%)`,
+    width: `${s.widthRatio * 100}%`,
+    height: s.heightPx,
+    borderRadius: '50%',
+    background: `radial-gradient(ellipse at center, rgba(0, 0, 0, ${s.coreOpacity}) 0%, rgba(0, 0, 0, ${s.midOpacity}) 45%, transparent 72%)`,
+    filter: `blur(${s.blurPx}px)`,
+    zIndex: 0,
+    pointerEvents: 'none',
+  };
+}
+
 export function loungeSalonChairsImageStyle(): React.CSSProperties {
   return {
+    position: 'relative',
+    zIndex: 1,
     width: 'auto',
     height: LOUNGE_SALON_CHAIRS_HEIGHT_PX,
     margin: 0,
     padding: 0,
     display: 'block',
     cursor: 'pointer',
+    filter: 'drop-shadow(0 12px 18px rgba(0, 0, 0, 0.2))',
   };
 }

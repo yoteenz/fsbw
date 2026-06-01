@@ -7,11 +7,10 @@ import {
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
-  LOUNGE_TV_BEZEL,
-  LOUNGE_TV_SCREEN_ASPECT,
   LOUNGE_TV_OVERLAY_SIZE_SCALE,
-  LoungeTvFrame,
-  loungeTvDimensionsFromScreenWidth,
+  LoungeTvDesignFrame,
+  loungeTvDesignDimensionsFromFrameHeight,
+  loungeTvDesignDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
@@ -685,13 +684,12 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
-  let { frameW: targetFrameW, frameH: targetFrameH } = loungeTvDimensionsFromScreenWidth(targetScreenW);
+  let { frameW: targetFrameW, frameH: targetFrameH } =
+    loungeTvDesignDimensionsFromScreenWidth(targetScreenW);
   const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
-    targetFrameH = maxFrameH;
-    const targetScreenH = targetFrameH - LOUNGE_TV_BEZEL.top - LOUNGE_TV_BEZEL.bottom;
-    targetScreenW = targetScreenH / LOUNGE_TV_SCREEN_ASPECT;
-    ({ frameW: targetFrameW } = loungeTvDimensionsFromScreenWidth(targetScreenW));
+    ({ frameW: targetFrameW, frameH: targetFrameH } =
+      loungeTvDesignDimensionsFromFrameHeight(maxFrameH));
   }
   const frameLeft = (vw - targetFrameW) / 2;
   const frameTop = (vh - targetFrameH) / 2;
@@ -747,7 +745,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         />
       ) : null}
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvFrame
+        <LoungeTvDesignFrame
           fill
           closeVisible={animatedIn && closePhase === 'idle'}
           onClose={() => requestClose()}
@@ -775,7 +773,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvFrame>
+        </LoungeTvDesignFrame>
       </div>
     </div>,
     document.body

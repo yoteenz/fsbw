@@ -12,7 +12,14 @@
     "wig-preview:manifest:noir": "node scripts/generate-noir-wig-preview-manifest.mjs",
     "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
     "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs",
-    "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs"
+    "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs",
+    "lobby:bake-phone": "node scripts/lobby-bake-phone-asset.mjs",
+    "lobby:bake-case": "node scripts/lobby-bake-case-asset.mjs",
+    "lobby:bake-neon-logo": "node scripts/lobby-bake-neon-logo-asset.mjs",
+    "lobby:bake-shelves": "node scripts/lobby-bake-shelf-assets.mjs",
+    "lounge:bake-salon-chairs": "node scripts/lounge-bake-salon-chairs-asset.mjs",
+    "lounge:bake-tv-design": "node scripts/lounge-bake-tv-design-asset.mjs",
+    "lobby:bake-payment-icons": "node scripts/lobby-bake-payment-icons.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",
