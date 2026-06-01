@@ -22604,3 +22604,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lobby **custom units shelf** — **`7iUsTnn1PQRK9Io3291KW_pHVg5Q26.jpeg`** → **`custom-group.png`** (800×235, green key + mannequin/neon protect, premultiply). **`LOBBY_SHELF_CUSTOM_SRC_REMOTE`** + bake default updated; **`LOBBY_SHELF_ASSET_VERSION`** **`7iUsTnn1-v1`**. **`lobby:bake-shelves custom`** for single-shelf rebake.
 
 **Update (same chat):** Lounge **salon chairs** — elliptical **floor contact shadow** + **`drop-shadow`** on PNG (**`loungeSalonChairsFloorShadowStyle`**, **`LOUNGE_SALON_CHAIRS_FLOOR_SHADOW`** in **`loungeSceneLayout.ts`**).
+
+**Update (same chat):** Lobby **all three shelves** rebaked — **HD** **`5Cof6W3Y0p6Eyq8ew7Sil_dzSVHBRK.jpeg`**, **transparent** **`7h5bbuiitNAnalQhkOszS_pP56MlDZ.jpeg`**, **custom** **`7iUsTnn1…`**. **`LOBBY_SHELF_ASSET_VERSION`** **`5Cof6W3Y-v1`**; remotes + bake script defaults updated.
