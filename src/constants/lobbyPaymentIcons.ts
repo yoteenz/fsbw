@@ -48,14 +48,17 @@ export const LOBBY_CASE_POPOVER_SCRIM_Z_INDEX = 10000;
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
 
-/** @deprecated Stack wrapper removed — asset/panel use separate body portals. */
+/** @deprecated Stack wrapper removed — use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX`. */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
-/** Register / phone bitmap — above lobby scrim and carousel slide (`transform` trap). */
-export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = 999998;
+/** Single layer for portaled prop asset + popover card (above scrim, same visibility). */
+export const LOBBY_CASE_POPOVER_OPEN_Z_INDEX = 999999;
 
-/** Popover card — just above portaled prop asset. */
-export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = 999999;
+/** @deprecated Use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX` — asset and panel share one portal layer. */
+export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = LOBBY_CASE_POPOVER_OPEN_Z_INDEX;
+
+/** @deprecated Use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX`. */
+export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = LOBBY_CASE_POPOVER_OPEN_Z_INDEX;
 
 export type LobbyPaymentIcon = {
   id: string;
