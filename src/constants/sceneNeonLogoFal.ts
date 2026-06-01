@@ -11,7 +11,7 @@ export const NEON_LOGO_FAL_CUTOUT_MODEL = 'fal-ai/birefnet/v2';
 export const NEON_LOGO_FAL_GLOW_CONTROLS_NOTE = 'resolution 2K or 4K, aspect_ratio auto, output_format png.';
 
 export const NEON_LOGO_BIREFNET_CUTOUT_NOTE =
-  'CUTOUT (separate tool): fal-ai/birefnet/v2 — image_url = Pass-1 glow PNG URL, output_format png, refine_foreground true. For soft neon halos try model Matting or General Use (Light 2K). NBP does NOT produce transparent backgrounds.';
+  'CUTOUT: BiRefNet often strips neon glow — prefer npm run lobby:bake-neon-logo (dark-bg key preserves halo). If using birefnet/v2: Matting, refine_foreground OFF, png. NBP does NOT produce transparent backgrounds.';
 
 export const NEON_LOGO_FAL_TWO_PASS_NOTE =
   'WORKFLOW: (1) NBP edit — glow pass. (2) birefnet/v2 — remove background to transparent PNG. Do not ask NBP for alpha.';
