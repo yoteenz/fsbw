@@ -16,5 +16,5 @@ export const LOUNGE_TV_FAL_PROMPT_FOR_LOUNGE_COMPOSITE = `${LOUNGE_TV_FAL_PROMPT
 export const LOUNGE_TV_FAL_SETTINGS = {
   model: 'fal-ai/nano-banana-pro/edit',
   aspectRatio: 'auto (match reference)',
-  note: 'Download + Fal prompt: LOUNGE_SCENE_FAL_PROMPTS.tvDesign → sceneLoungeTvFal.ts. Asset: lounge-tv-design.png. Live slide uses CSS bezel in LoungeTvFrame.',
+  note: 'Download + Fal prompt: LOUNGE_SCENE_FAL_PROMPTS.tvDesign → sceneLoungeTvFal.ts. Asset: lounge-tv-design.png. Lounge slide + overlay use LoungeTvDesignFrame.',
 } as const;

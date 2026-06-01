@@ -1,5 +1,10 @@
 import type React from 'react';
-import { LOUNGE_TV_DESIGN_PLAY_ANCHOR } from './loungeTvAssets';
+import {
+  LOUNGE_TV_DESIGN_ASPECT,
+  LOUNGE_TV_DESIGN_PLAY_ANCHOR,
+  LOUNGE_TV_DESIGN_SCREEN_RECT,
+  LOUNGE_TV_DESIGN_SRC,
+} from './loungeTvAssets';
 
 /** Charcoal plastic bezel (shared by lounge lobby TV + overlay animation). */
 export const LOUNGE_TV_BEZEL = { top: 5, right: 5, bottom: 8, left: 5 };
@@ -48,6 +53,22 @@ export function loungeTvDimensionsFromFrameHeight(frameH: number) {
   const screenH = frameH - LOUNGE_TV_BEZEL.top - LOUNGE_TV_BEZEL.bottom;
   const screenW = screenH / LOUNGE_TV_SCREEN_ASPECT;
   return loungeTvDimensionsFromScreenWidth(screenW);
+}
+
+/** Overlay + animation sizing from `lounge-tv-design.png` glass width. */
+export function loungeTvDesignDimensionsFromScreenWidth(screenW: number) {
+  const frameW = screenW / LOUNGE_TV_DESIGN_SCREEN_RECT.width;
+  const frameH = frameW / LOUNGE_TV_DESIGN_ASPECT;
+  const screenH = frameH * LOUNGE_TV_DESIGN_SCREEN_RECT.height;
+  return { frameW, frameH, screenW, screenH };
+}
+
+/** Overlay + animation sizing from full PNG frame height. */
+export function loungeTvDesignDimensionsFromFrameHeight(frameH: number) {
+  const frameW = frameH * LOUNGE_TV_DESIGN_ASPECT;
+  const screenW = frameW * LOUNGE_TV_DESIGN_SCREEN_RECT.width;
+  const screenH = frameH * LOUNGE_TV_DESIGN_SCREEN_RECT.height;
+  return { frameW, frameH, screenW, screenH };
 }
 
 /** Absolute centering for the lobby static-TV play control on the design PNG. */
@@ -152,7 +173,80 @@ type LoungeTvFrameProps = {
   onClose?: (e: React.MouseEvent) => void;
 };
 
-/** Lounge TV hardware shell (bezel + black glass); same look on lobby and overlay. */
+function loungeTvDesignScreenInsetStyle(
+  overrides?: React.CSSProperties
+): React.CSSProperties {
+  const { left, top, width, height } = LOUNGE_TV_DESIGN_SCREEN_RECT;
+  return {
+    position: 'absolute',
+    left: `${left * 100}%`,
+    top: `${top * 100}%`,
+    width: `${width * 100}%`,
+    height: `${height * 100}%`,
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    ...loungeTvScreenStyle(overrides),
+  };
+}
+
+type LoungeTvDesignFrameProps = {
+  fill?: boolean;
+  frameWidth?: number;
+  frameHeight?: number;
+  children?: React.ReactNode;
+  screenStyle?: React.CSSProperties;
+  closeVisible?: boolean;
+  onClose?: (e: React.MouseEvent) => void;
+};
+
+/** Lounge TV shell using baked `lounge-tv-design.png` (lobby overlay animation). */
+export function LoungeTvDesignFrame({
+  fill = false,
+  frameWidth,
+  frameHeight,
+  children,
+  screenStyle,
+  closeVisible = false,
+  onClose,
+}: LoungeTvDesignFrameProps) {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: fill ? '100%' : frameWidth,
+        height: fill ? '100%' : frameHeight,
+        overflow: 'visible',
+        isolation: 'isolate',
+        lineHeight: 0,
+      }}
+    >
+      <img
+        src={LOUNGE_TV_DESIGN_SRC}
+        alt=""
+        draggable={false}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
+      />
+      <div style={loungeTvDesignScreenInsetStyle(screenStyle)}>{children}</div>
+      {onClose ? (
+        <LoungeTvCloseButton
+          visible={closeVisible ?? false}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose(e);
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/** @deprecated CSS gradient bezel — overlay uses {@link LoungeTvDesignFrame}. */
 export function LoungeTvFrame({
   fill = false,
   frameWidth,
