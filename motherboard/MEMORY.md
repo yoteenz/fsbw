@@ -22606,3 +22606,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Lounge **salon chairs** — elliptical **floor contact shadow** + **`drop-shadow`** on PNG (**`loungeSalonChairsFloorShadowStyle`**, **`LOUNGE_SALON_CHAIRS_FLOOR_SHADOW`** in **`loungeSceneLayout.ts`**).
 
 **Update (same chat):** Lobby **all three shelves** rebaked — **HD** **`5Cof6W3Y0p6Eyq8ew7Sil_dzSVHBRK.jpeg`**, **transparent** **`7h5bbuiitNAnalQhkOszS_pP56MlDZ.jpeg`**, **custom** **`7iUsTnn1…`**. **`LOBBY_SHELF_ASSET_VERSION`** **`5Cof6W3Y-v1`**; remotes + bake script defaults updated.
+
+**Update (same chat):** Lobby **display case** — **`RRrEEA6lu1lkeleVPTgsP_wgs8vmEv.jpeg`** → **`CASE.png`** (920×500, green key + acrylic protect). **`LOBBY_CASE_ASSET_VERSION`** **`RRrEEA6l-v1`**, **`npm run lobby:bake-case`**, **`lobbyCaseAssets.ts`**.

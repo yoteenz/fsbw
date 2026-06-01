@@ -42,7 +42,7 @@ export const LOBBY_SHELF_CUSTOM_SRC_REMOTE =
 export const LOBBY_SHELF_HD_SRC = `/assets/hd-group.png?v=${LOBBY_SHELF_ASSET_VERSION}`;
 export const LOBBY_SHELF_TRANSPARENT_SRC = `/assets/transparent-group.png?v=${LOBBY_SHELF_ASSET_VERSION}`;
 export const LOBBY_SHELF_CUSTOM_SRC = `/assets/custom-group.png?v=${LOBBY_SHELF_ASSET_VERSION}`;
-export const LOBBY_CASE_SRC = '/assets/CASE.png';
+export { LOBBY_CASE_SRC, LOBBY_CASE_SRC_REMOTE } from './lobbyCaseAssets';
 export const LOBBY_CASE_REGISTER_SRC = '/assets/REGISTER.png';
 export const LOBBY_CASE_PHONE_DOWNLOAD_SRC = '/assets/lobby-phone.png';
 
