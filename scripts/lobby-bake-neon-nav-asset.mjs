@@ -26,7 +26,8 @@ const NAV = {
   },
   booking: {
     out: 'neon-booking.png',
-    remote: '',
+    remote:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg',
     maxDim: 900,
   },
 };

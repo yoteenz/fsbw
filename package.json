@@ -17,6 +17,7 @@
     "lobby:bake-case": "node scripts/lobby-bake-case-asset.mjs",
     "lobby:bake-neon-logo": "node scripts/lobby-bake-neon-logo-asset.mjs",
     "lobby:bake-neon-products": "node scripts/lobby-bake-neon-nav-asset.mjs products",
+    "lobby:bake-neon-booking": "node scripts/lobby-bake-neon-nav-asset.mjs booking",
     "lobby:bake-neon-nav": "node scripts/lobby-bake-neon-nav-asset.mjs",
     "lobby:bake-shelves": "node scripts/lobby-bake-shelf-assets.mjs",
     "lounge:bake-salon-chairs": "node scripts/lounge-bake-salon-chairs-asset.mjs",
