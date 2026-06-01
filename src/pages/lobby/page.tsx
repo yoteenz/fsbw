@@ -57,7 +57,6 @@ import {
 import {
   LOUNGE_CURTAIN_LEFT_SRC,
   LOUNGE_CURTAIN_RIGHT_SRC,
-  LOUNGE_NEON_LOGO_SRC,
   LOUNGE_BACKGROUND_SRC,
   LOUNGE_SALON_CHAIRS_SRC,
   LOUNGE_SCENE_FAL_PROMPTS,
@@ -634,7 +633,6 @@ const LobbyPage: React.FC = () => {
 
 // Lounge Component
 const LoungePage: React.FC = () => {
-  const navigate = useNavigate();
   const showAssetDownloads = useLobbyAssetDownloadsVisible();
 
   const tvFrameRef = useRef<HTMLDivElement>(null);
@@ -698,44 +696,6 @@ const LoungePage: React.FC = () => {
           />
         </div>
       ) : null}
-      
-      {/* Neon Logo - Independent container with absolute positioning */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '50%', 
-        left: '50%', 
-        transform: 'translate(calc(-50% + 56px), calc(-50% - 160px))', 
-        zIndex: 10, 
-        width: 'fit-content'
-      }}>
-        <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content', lineHeight: 0 }}>
-          {showAssetDownloads ? (
-            <LobbyAssetDownloadLink
-              href={LOUNGE_NEON_LOGO_SRC}
-              downloadFilename="neon-logo.png"
-              falPrompt={LOUNGE_SCENE_FAL_PROMPTS.neonLogo}
-              style={{ position: 'absolute', top: 4, left: 0, zIndex: 60 }}
-            />
-          ) : null}
-          <img
-            src={LOUNGE_NEON_LOGO_SRC}
-            alt="Frontal Slayer"
-            onClick={() => navigate('/shop/units')}
-            style={{
-              width: 'auto',
-              height: '265px',
-              maxWidth: 'none',
-              maxHeight: '265px',
-              margin: 0,
-              padding: 0,
-              display: 'block',
-              visibility: 'visible',
-              opacity: 1,
-              cursor: 'pointer',
-            }}
-          />
-        </div>
-      </div>
       
       {/* TV + play — play opens animated black screen + theater curtains */}
        <div

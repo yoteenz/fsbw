@@ -1,6 +1,5 @@
 import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
 import { LOUNGE_BACKGROUND_FAL_EDIT, loungeBackgroundFalWorkflowNote } from './sceneLoungeBackgroundFal';
-import { LOBBY_NEON_LOGO_SRC } from './lobbySceneAssets';
 
 /** Bump when replacing `public/assets/landing2-background.png` (Vercel caches `/assets/*`). */
 export const LOUNGE_BACKGROUND_ASSET_VERSION = 'lpreC-MSzG';
@@ -16,9 +15,6 @@ export const LOUNGE_ROSE_BACKGROUND_SRC = LOUNGE_BACKGROUND_SRC;
 
 export const LOUNGE_SALON_CHAIRS_SRC = '/assets/salon-chairs.png';
 
-/** Re-export for download links on lounge neon (same file as lobby). */
-export { LOBBY_NEON_LOGO_SRC as LOUNGE_NEON_LOGO_SRC };
-
 export const LOUNGE_CURTAIN_LEFT_SRC = '/assets/lounge-curtain-left.jpeg';
 export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
@@ -29,8 +25,6 @@ export const LOUNGE_SCENE_FAL_PROMPTS = {
 
   /** @deprecated use loungeBackground */
   roseBackground: `${loungeBackgroundFalWorkflowNote()} ${LOUNGE_BACKGROUND_FAL_EDIT}`,
-
-  neonLogo: `Same as lobby — see LOBBY_SCENE_FAL_PROMPTS.neonLogo (two-pass glow then transparent cutout).`,
 
   salonChairs: `Photorealistic pair of luxury salon styling chairs for a high-end wig boutique lounge. Front 3/4 view, neutral upholstery (taupe or charcoal), chrome bases, boutique styling. PNG with fully transparent background, no floor shadow plate, no room behind chairs.`,
 
