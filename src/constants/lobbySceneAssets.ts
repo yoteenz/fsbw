@@ -27,7 +27,14 @@ export const LOBBY_NEON_PRODUCTS_SRC_REMOTE =
 
 export const LOBBY_NEON_PRODUCTS_SRC = `/assets/neon-products.png?v=${LOBBY_NEON_PRODUCTS_ASSET_VERSION}`;
 export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
-export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
+
+/** Bump when re-baking `neon-booking.png` (`npm run lobby:bake-neon-booking`). */
+export const LOBBY_NEON_BOOKING_ASSET_VERSION = 'SnSxe3vt-v1';
+
+export const LOBBY_NEON_BOOKING_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg';
+
+export const LOBBY_NEON_BOOKING_SRC = `/assets/neon-booking.png?v=${LOBBY_NEON_BOOKING_ASSET_VERSION}`;
 export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
 
 /** Bump when replacing `public/assets/landing-background.png` (Vercel caches `/assets/*`). */
