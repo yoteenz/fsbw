@@ -32,7 +32,10 @@ import {
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import { LobbyLoungeTransitionVideo } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
-import { isLobbyTransitionVideoEnabledFromSearch } from '../../constants/lobbyLoungeTransitionVideo';
+import {
+  isLobbyTransitionVideoEnabledFromSearch,
+  LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
+} from '../../constants/lobbyLoungeTransitionVideo';
 import { LobbyAssetDownloadAnchor, LobbyAssetDownloadLink } from '../../components/lobby/LobbyAssetDownloadLink';
 import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
 import { useLobbyAssetDownloadsVisible } from '../../hooks/useLobbyAssetDownloadsVisible';
@@ -949,6 +952,18 @@ const LobbyApp: React.FC = () => {
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showRoomTransitionVideo, setShowRoomTransitionVideo] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!transitionVideoEnabled) return;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'video';
+    link.href = LOBBY_LOUNGE_TRANSITION_VIDEO_SRC;
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, [transitionVideoEnabled]);
 
   const applyCarouselPage = useCallback(
     (pageIndex: number, options?: { animate?: boolean }) => {

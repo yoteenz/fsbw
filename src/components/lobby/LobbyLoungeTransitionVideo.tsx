@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE } from '../../constants/lobbyLoungeTransitionVideo';
+import {
+  LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
+  LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
+} from '../../constants/lobbyLoungeTransitionVideo';
 
 type Props = {
   active: boolean;
@@ -8,7 +11,7 @@ type Props = {
 };
 
 /**
- * Full-viewport lobby → lounge transition clip (test). Sits above the carousel during playback.
+ * Full-viewport lobby → lounge transition clip. Sits above the carousel during playback.
  */
 export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete, onSkip }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -34,20 +37,36 @@ export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete
     const el = videoRef.current;
     if (!el) return;
 
-    const play = async () => {
+    const playWithRetry = async () => {
       try {
         el.currentTime = 0;
+        el.load();
         await el.play();
       } catch {
-        finish();
+        try {
+          await new Promise((r) => setTimeout(r, 120));
+          await el.play();
+        } catch {
+          finish();
+        }
       }
     };
 
-    void play();
+    void playWithRetry();
 
-    const fallbackMs = 12000;
-    const timer = window.setTimeout(finish, fallbackMs);
-    return () => window.clearTimeout(timer);
+    let timer = window.setTimeout(finish, 8000);
+    const setTimerFromMeta = () => {
+      window.clearTimeout(timer);
+      const ms = Number.isFinite(el.duration) ? el.duration * 1000 + 500 : 6000;
+      timer = window.setTimeout(finish, ms);
+    };
+    el.addEventListener('loadedmetadata', setTimerFromMeta);
+    if (el.readyState >= 1) setTimerFromMeta();
+
+    return () => {
+      window.clearTimeout(timer);
+      el.removeEventListener('loadedmetadata', setTimerFromMeta);
+    };
   }, [active, finish]);
 
   if (!active) return null;
@@ -69,9 +88,9 @@ export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete
     >
       <video
         ref={videoRef}
-        src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE}
         playsInline
         muted
+        autoPlay
         preload="auto"
         onEnded={finish}
         onError={finish}
@@ -81,7 +100,10 @@ export const LobbyLoungeTransitionVideo: React.FC<Props> = ({ active, onComplete
           objectFit: 'cover',
           objectPosition: 'center top',
         }}
-      />
+      >
+        <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_SRC} type="video/mp4" />
+        <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+      </video>
       {onSkip ? (
         <button
           type="button"
