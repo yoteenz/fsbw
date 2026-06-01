@@ -42,6 +42,15 @@ export const LOBBY_CASE_POPOVER_MIN_HEIGHT_PX = Math.round(
   LOBBY_CASE_POPOVER_BASE_MIN_HEIGHT_PX * LOBBY_CASE_POPOVER_SCALE
 );
 
+/** Full-viewport dimmer when register/phone popover is open (`createPortal` to `document.body`). */
+export const LOBBY_CASE_POPOVER_SCRIM_Z_INDEX = 10000;
+
+/** Lifts case props + popover above the scrim (parent stacking context must use this when open). */
+export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
+
+/** Popover card above register/phone tap targets within the lifted stack. */
+export const LOBBY_CASE_POPOVER_PANEL_Z_INDEX = 10003;
+
 export type LobbyPaymentIcon = {
   id: string;
   label: string;

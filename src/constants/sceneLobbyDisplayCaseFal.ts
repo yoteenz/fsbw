@@ -1,6 +1,9 @@
 /**
- * Fal prompt for lobby display-case source JPEG (`CASE.png` after `npm run lobby:bake-case`).
- * Upload reference: clear acrylic counter, three red shelf labels, top props, flat gray studio wall.
+ * Fal prompts for lobby display-case source JPEG (`CASE.png` after `npm run lobby:bake-case`).
+ *
+ * **If Fal returns almost the same image:** expected when the upload already matches the reference
+ * and you use `LOBBY_DISPLAY_CASE_FAL_EDIT` (heavy “preserve” language). That pass is for QA polish,
+ * not redesign. To change only the backdrop for chroma key, use `LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY`.
  */
 
 import { SCENE_FAL_EDIT_CONTROLS_NOTE, SCENE_FAL_EDIT_MODEL } from './sceneRoseBackgroundFal';
@@ -28,5 +31,17 @@ ${LOBBY_DISPLAY_CASE_FAL_PRESERVE}
 ${LOBBY_DISPLAY_CASE_FAL_SUBJECT}
 
 ${LOBBY_DISPLAY_CASE_FAL_BACKGROUND}
+
+Negative: ${LOBBY_DISPLAY_CASE_FAL_NEGATIVE}`;
+
+/**
+ * Short pass when the case already matches the desired art — swap backdrop only (red/green → flat gray).
+ * Use this instead of `LOBBY_DISPLAY_CASE_FAL_EDIT` if the full preserve prompt returns a duplicate.
+ */
+export const LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY = `[FAL] ${LOBBY_DISPLAY_CASE_FAL_MODEL}. CASE.png. ${SCENE_FAL_EDIT_CONTROLS_NOTE}
+
+BACKGROUND SWAP ONLY: Replace every pixel behind the display case with a flat uniform neutral studio gray (RGB ~140, 140, 140). No gradient, texture, red cyclorama, green screen, or room.
+
+Do not change the case, shelf labels (SLAY TOOLS, LACE PRODUCTS, HAIR PRODUCTS), register, terminal, vases, lighting on the case, crop, or camera angle — case and props must match the upload exactly.
 
 Negative: ${LOBBY_DISPLAY_CASE_FAL_NEGATIVE}`;
