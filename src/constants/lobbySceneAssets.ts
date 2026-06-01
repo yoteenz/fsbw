@@ -7,6 +7,7 @@ import {
   LOBBY_NEON_PRODUCTS_FAL_EDIT,
   LOBBY_NEON_TOOLS_FAL_EDIT,
 } from './sceneLobbyNeonNavFal';
+import { LOBBY_DISPLAY_CASE_FAL_EDIT } from './sceneLobbyDisplayCaseFal';
 import {
   LOBBY_ROSE_BACKGROUND_FAL_EDIT,
   SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
@@ -131,7 +132,7 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
   shelfBackdropNote:
     'For Supabase source JPEGs: gray or off-white studio wall keys better than green for acrylic shelves/cases (less green cast on glass). If stuck on green screen, export high-res and use npm run lobby:bake-shelves / lobby:bake-case.',
 
-  displayCase: `Photorealistic clear acrylic boutique display case for a wig salon counter. Front view, rounded corners, subtle reflections and thickness on edges, empty interior ready for small props on top. Soft studio lighting, PNG with fully transparent background, no products inside unless minimal glare only.`,
+  displayCase: LOBBY_DISPLAY_CASE_FAL_EDIT,
 
   caseRegister: `Small photorealistic vintage-modern cash register prop for a luxury retail display case, 3/4 front angle. Metallic and matte materials, boutique styling, no brand text. PNG with fully transparent background, isolated product shot.`,
 
