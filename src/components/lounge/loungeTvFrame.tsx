@@ -177,7 +177,14 @@ function loungeTvDesignScreenInsetStyle(
   overrides?: React.CSSProperties
 ): React.CSSProperties {
   const { left, top, width, height } = LOUNGE_TV_DESIGN_SCREEN_RECT;
+  const {
+    position: _position,
+    width: _width,
+    height: _height,
+    ...screenBase
+  } = loungeTvScreenStyle(overrides);
   return {
+    ...screenBase,
     position: 'absolute',
     left: `${left * 100}%`,
     top: `${top * 100}%`,
@@ -185,7 +192,7 @@ function loungeTvDesignScreenInsetStyle(
     height: `${height * 100}%`,
     boxSizing: 'border-box',
     overflow: 'hidden',
-    ...loungeTvScreenStyle(overrides),
+    zIndex: 1,
   };
 }
 
