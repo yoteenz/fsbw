@@ -22650,3 +22650,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** Display case **`37jR_8sOmtkmHDonwcu9i_RolTShHD.jpeg`** (white studio) → **`CASE.png`** (920×537, **`key_studio_case`**). **`LOBBY_CASE_ASSET_VERSION`** **`37jR_8sO-v1`**. Commit **`b3dbdb3f`** on **`master`** + **`preview/mobile`**.
 
 **Update (same chat):** **Booking** neon **`SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg`** → **`neon-booking.png`** (900×295, white studio key + halo). **`LOBBY_NEON_BOOKING_ASSET_VERSION`** **`SnSxe3vt-v1`**, versioned **`LOBBY_NEON_BOOKING_SRC`**. **`npm run lobby:bake-neon-booking`**.
+
+**Update (same chat):** **Tools** neon **`I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg`** → **`neon-tools.png`** (899×281, white studio key + halo). **`LOBBY_NEON_TOOLS_ASSET_VERSION`** **`I78ubr42-v1`**, versioned **`LOBBY_NEON_TOOLS_SRC`**. **`npm run lobby:bake-neon-tools`**.
