@@ -16,7 +16,7 @@ const NAV = {
   products: {
     out: 'neon-products.png',
     remote:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/2qzZrBQ-6_iHuRTvLDint_bgcwFyZn.jpeg',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg',
     maxDim: 900,
   },
   tools: {
@@ -70,12 +70,16 @@ corners = np.vstack([
 bg = corners.mean(axis=0)
 bg_dist = np.sqrt((r - bg[0]) ** 2 + (g - bg[1]) ** 2 + (b - bg[2]) ** 2)
 bg_dist_n = bg_dist / 255.0
+white_bg = bg[0] > 240 and bg[1] > 240 and bg[2] > 240
 
-# Bbox from sign + glow only (gray studio has mild red cast — do not use red_excess alone).
-neon = (bg_dist > 42) | (red_excess > 0.18) | (lum > 0.52)
+# Bbox from sign + glow only — white/gray studio: ignore bare luminance (entire frame reads bright).
+if white_bg:
+    neon = (bg_dist > 28) | (red_excess > 0.10) | ((lum > 0.35) & (lum < 0.97) & (red_excess > 0.04))
+else:
+    neon = (bg_dist > 42) | (red_excess > 0.18) | (lum > 0.52)
 ys, xs = np.where(neon)
 if len(xs) == 0:
-    neon = (red_excess > 0.14) | (lum > 0.45)
+    neon = (red_excess > 0.10) | (bg_dist > 24)
     ys, xs = np.where(neon)
 pad = int(max(w, h) * 0.03)
 minx, maxx = max(0, int(xs.min()) - pad), min(w - 1, int(xs.max()) + pad)
@@ -110,11 +114,14 @@ a_red = smoothstep(0.10, 0.22, cred)
 a_bg = smoothstep(0.06, 0.20, cbg)
 alpha = np.maximum(a_red, np.maximum(a_lum * 0.9, a_dist * 0.75))
 alpha = np.maximum(alpha, a_bg)
-# Hard-remove neutral gray studio inside crop.
-backdrop = raw_bg < 44
+# Hard-remove neutral studio inside crop.
+if white_bg:
+    backdrop = (raw_bg < 52) | ((clum > 0.90) & (cred < 0.10))
+else:
+    backdrop = raw_bg < 44
 alpha = np.where(backdrop, 0.0, alpha)
 alpha = np.where((raw_bg < 58) & (cred < 0.12) & (clum < 0.48), np.minimum(alpha, 0.08), alpha)
-alpha = np.where(clum > 0.5, np.minimum(1, alpha + (clum - 0.5) * 0.4), alpha)
+alpha = np.where((cred > 0.08) & (clum > 0.5), np.minimum(1, alpha + (clum - 0.5) * 0.4), alpha)
 alpha *= halo
 alpha = clamp01(alpha)
 
