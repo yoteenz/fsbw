@@ -16,5 +16,5 @@ export const LOUNGE_TV_FAL_PROMPT_FOR_LOUNGE_COMPOSITE = `${LOUNGE_TV_FAL_PROMPT
 export const LOUNGE_TV_FAL_SETTINGS = {
   model: 'fal-ai/nano-banana-pro/edit',
   aspectRatio: 'auto (match reference)',
-  note: 'Download + Fal prompt: LOUNGE_SCENE_FAL_PROMPTS.tvDesign → sceneLoungeTvFal.ts. Asset: lounge-tv-design.png. Lounge slide + overlay use LoungeTvDesignFrame. Seedance 2 open/close I2V: loungeTvSeedancePrompt.ts → LOUNGE_SCENE_FAL_PROMPTS.tvOpenSeedance / tvCloseSeedance.',
+  note: 'Lounge TV overlay: Final LP/video.mov (loungeTvAnimationVideo.ts) forward open + reverse close in app. Fal prompts: loungeTvSeedancePrompt.ts → tvOpenSeedance / tvCloseSeedance (close matches open / reverse). Legacy lounge-tv-design.png deprecated on slide.',
 } as const;

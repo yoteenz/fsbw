@@ -29,6 +29,10 @@ import {
   loungeTvTileShowsAsNew,
   markLoungeTvTileViewed,
 } from '../../utils/loungeTvViewedTiles';
+import { LOUNGE_TV_ANIMATION_VIDEO_ENABLED } from '../../constants/loungeTvAnimationVideo';
+import { LoungeTvAnimationVideo } from './LoungeTvAnimationVideo';
+
+type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'closing';
 
 const BRAND_RED = '#EB1C24';
 /** TV frame grow + curtain close. */
@@ -578,9 +582,21 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const isClosingRef = useRef(false);
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
+  const [seedancePhase, setSeedancePhase] = useState<SeedanceTvPhase>('idle');
+
+  const useSeedanceClip = LOUNGE_TV_ANIMATION_VIDEO_ENABLED;
 
   const requestClose = useCallback(() => {
+    if (seedancePhase === 'opening' || seedancePhase === 'closing') return;
     if (closePhase !== 'idle' || isClosingRef.current) return;
+
+    if (useSeedanceClip && seedancePhase === 'ready') {
+      isClosingRef.current = true;
+      setShowContent(false);
+      setSeedancePhase('closing');
+      return;
+    }
+
     if (!animatedIn) {
       onClose();
       return;
@@ -590,7 +606,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setShowStatic(false);
     setClosePhase('zap');
     setPoweringOff(true);
-  }, [closePhase, animatedIn, onClose]);
+  }, [closePhase, animatedIn, onClose, seedancePhase, useSeedanceClip]);
 
   /** Close: zap → hand fades after black screen → TV shrinks + curtains open. */
   useEffect(() => {
@@ -642,7 +658,36 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setAnimatedIn(false);
     setCurtainsReady(false);
     isClosingRef.current = false;
+    setSeedancePhase('idle');
   }, []);
+
+  const handleOpenVideoComplete = useCallback(() => {
+    setSeedancePhase('ready');
+    setAnimatedIn(true);
+    setShowContent(true);
+    setCurtainsReady(true);
+    setTvGrowDone(true);
+    setHandRevealDone(true);
+    setRemoteHandReady(true);
+  }, []);
+
+  const handleCloseVideoComplete = useCallback(() => {
+    isClosingRef.current = false;
+    setSeedancePhase('idle');
+    resetOverlayState();
+    setVisible(false);
+    onClose();
+  }, [onClose, resetOverlayState]);
+
+  useEffect(() => {
+    if (!isOpen || !useSeedanceClip) return;
+    if (seedancePhase === 'idle') setSeedancePhase('opening');
+  }, [isOpen, seedancePhase, useSeedanceClip]);
+
+  useEffect(() => {
+    if (isOpen || seedancePhase === 'closing') return;
+    if (seedancePhase !== 'idle') setSeedancePhase('idle');
+  }, [isOpen, seedancePhase]);
 
   useEffect(() => {
     if (isOpen) {
@@ -671,6 +716,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   /** Grow TV once curtains are ready (hand reveals after grow completes). */
   useEffect(() => {
+    if (useSeedanceClip) return;
     if (!isOpen || !curtainsReady || closePhase !== 'idle' || isClosingRef.current) return;
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -678,33 +724,37 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       });
     });
     return () => cancelAnimationFrame(id);
-  }, [isOpen, curtainsReady, closePhase]);
+  }, [isOpen, curtainsReady, closePhase, useSeedanceClip]);
 
   useEffect(() => {
+    if (useSeedanceClip) return;
     if (!isOpen || !animatedIn || closePhase !== 'idle' || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setTvGrowDone(true);
     }, ANIM_MS);
     return () => window.clearTimeout(timer);
-  }, [isOpen, animatedIn, closePhase]);
+  }, [isOpen, animatedIn, closePhase, useSeedanceClip]);
 
   useEffect(() => {
+    if (useSeedanceClip) return;
     if (!tvGrowDone || !remoteHandReady || closePhase !== 'idle' || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setHandRevealDone(true);
     }, HAND_REVEAL_MS);
     return () => window.clearTimeout(timer);
-  }, [tvGrowDone, remoteHandReady, closePhase]);
+  }, [tvGrowDone, remoteHandReady, closePhase, useSeedanceClip]);
 
   useEffect(() => {
+    if (useSeedanceClip) return;
     if (!handRevealDone || closePhase !== 'idle' || showContent || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setShowStatic(true);
     }, STATIC_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [handRevealDone, closePhase, showContent]);
+  }, [handRevealDone, closePhase, showContent, useSeedanceClip]);
 
   useEffect(() => {
+    if (useSeedanceClip) return;
     if (!showStatic || closePhase !== 'idle' || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) {
@@ -713,7 +763,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       }
     }, STATIC_ON_MS);
     return () => window.clearTimeout(timer);
-  }, [showStatic, closePhase]);
+  }, [showStatic, closePhase, useSeedanceClip]);
 
   const handleRemoteHandLoaded = useCallback(() => {
     setRemoteHandReady(true);
@@ -735,11 +785,16 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   if (!visible || typeof document === 'undefined') return null;
 
-  const handMounted = tvGrowDone && remoteHandReady && closePhase !== 'shrink';
+  const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
+  const showLegacyChoreography = !useSeedanceClip;
+  const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
+
+  const handMounted =
+    showLegacyChoreography && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
   const handVisible = handMounted && (closePhase === 'idle' || closePhase === 'zap');
 
   /** Black glass through static, power-off, hand exit, and shrink-back to lobby. */
-  const showTvBlackScreen = animatedIn || !isOpen || closePhase !== 'idle';
+  const showTvBlackScreen = frameExpanded || !isOpen || closePhase !== 'idle';
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -769,14 +824,23 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     overflow: 'visible',
     isolation: 'isolate',
     transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-    left: animatedIn ? frameLeft : startFrameLeft,
-    top: animatedIn ? frameTop : startFrameTop,
-    width: animatedIn ? targetFrameW : startFrameW,
-    height: animatedIn ? targetFrameH : startFrameH,
+    left: frameExpanded ? frameLeft : startFrameLeft,
+    top: frameExpanded ? frameTop : startFrameTop,
+    width: frameExpanded ? targetFrameW : startFrameW,
+    height: frameExpanded ? targetFrameH : startFrameH,
   };
 
   return createPortal(
     <div role="presentation" aria-hidden={!isOpen}>
+      {useSeedanceClip && (seedancePhase === 'opening' || seedancePhase === 'closing') ? (
+        <LoungeTvAnimationVideo
+          active
+          direction={seedancePhase === 'opening' ? 'forward' : 'reverse'}
+          onComplete={
+            seedancePhase === 'opening' ? handleOpenVideoComplete : handleCloseVideoComplete
+          }
+        />
+      ) : null}
       <button
         type="button"
         aria-label="Close lounge TV"
@@ -788,28 +852,39 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           border: 'none',
           padding: 0,
           margin: 0,
-          background: animatedIn && closePhase === 'idle' ? 'rgba(0,0,0,0.35)' : 'transparent',
-          backdropFilter: animatedIn && closePhase === 'idle' ? 'blur(10px)' : 'none',
-          WebkitBackdropFilter: animatedIn && closePhase === 'idle' ? 'blur(10px)' : 'none',
-          cursor: closePhase === 'idle' && isOpen ? 'pointer' : 'default',
-          pointerEvents: closePhase === 'idle' && isOpen ? 'auto' : 'none',
+          background:
+            frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
+              ? 'rgba(0,0,0,0.35)'
+              : 'transparent',
+          backdropFilter:
+            frameExpanded && closePhase === 'idle' && seedancePhase === 'ready' ? 'blur(10px)' : 'none',
+          WebkitBackdropFilter:
+            frameExpanded && closePhase === 'idle' && seedancePhase === 'ready' ? 'blur(10px)' : 'none',
+          cursor: closePhase === 'idle' && isOpen && seedancePhase !== 'opening' ? 'pointer' : 'default',
+          pointerEvents:
+            closePhase === 'idle' && isOpen && seedancePhase !== 'opening' ? 'auto' : 'none',
           transition: `background ${ANIM_MS}ms ease`,
         }}
       />
-      <LoungeCurtainPanel side="left" closed={animatedIn} />
-      <LoungeCurtainPanel side="right" closed={animatedIn} />
-      {handMounted ? (
-        <LoungeTvRemoteHand
-          visible={handVisible}
-          revealDurationMs={HAND_REVEAL_MS}
-          hideDurationMs={HAND_HIDE_MS}
-          onLoaded={handleRemoteHandLoaded}
-        />
+      {showLegacyChoreography ? (
+        <>
+          <LoungeCurtainPanel side="left" closed={animatedIn} />
+          <LoungeCurtainPanel side="right" closed={animatedIn} />
+          {handMounted ? (
+            <LoungeTvRemoteHand
+              visible={handVisible}
+              revealDurationMs={HAND_REVEAL_MS}
+              hideDurationMs={HAND_HIDE_MS}
+              onLoaded={handleRemoteHandLoaded}
+            />
+          ) : null}
+        </>
       ) : null}
+      {showTvChrome ? (
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
         <LoungeTvFrame
           fill
-          closeVisible={animatedIn && closePhase === 'idle'}
+          closeVisible={frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'}
           onClose={() => requestClose()}
           screenStyle={{
             opacity: showTvBlackScreen ? 1 : 0,
@@ -837,6 +912,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           ) : null}
         </LoungeTvFrame>
       </div>
+      ) : null}
     </div>,
     document.body
   );
