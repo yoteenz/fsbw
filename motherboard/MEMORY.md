@@ -22743,3 +22743,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `sceneLobbyDisplayCaseFal.ts`, `lobbySceneAssets.ts`, `scripts/lobby-fal-*.mjs`, `package.json`. Commit **`b0f76e8c`** on **`master`** + **`preview/mobile`**.
 
 **Conventions:** In-app case slot: **`translate(calc(-50% + 32px), calc(-50% + 255px))`**, width **`LOBBY_CASE_DISPLAY_WIDTH_PX` (184)**. For Fal on a full hero JPEG, pass the composite as IMAGE 1 + **`CASE.png`** as IMAGE 2.
+
+---
+
+## 2026-06-02 — Lobby display-case phone nudge +10px left (props only)
+
+**Context:** User asked to move **only** the lobby display-case phone prop **10px** to the left; register and case block positions unchanged.
+
+**Topics covered (entire conversation so far):**
+- Prior same-chat lobby work: case width **200px**, slide offset **26px**, register anchor **26px**, phone nudge **14px** (`0837cd4c`); popover scrim blur, Fal display-case prompts, original **`CASE.png`** restore.
+- Phone horizontal position uses **`translateX(LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX - LOBBY_CASE_PHONE_NUDGE_LEFT_PX)`** in **`src/pages/lobby/page.tsx`** — increasing **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** shifts phone left only.
+
+**Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **14 → 24** (+10px left). Register **`LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX`** stays **26**; **`LOBBY_CASE_SLIDE_OFFSET_X_PX`** stays **26**.
+
+**Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`e7bbe6aa`** on **`master`** and **`preview/mobile`**.
+
+**Conventions:** For “phone only” lobby nudges, change **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** only; sync file from **`master`** before edit if workspace drifts to old rebake constants.
