@@ -47,8 +47,8 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
-/** In-screen play tap — center of gray play icon on `final-lounge.png` (928×1680 image space). */
-export const FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER = { x: 0.529, y: 0.258 } as const;
+/** In-screen play icon — center of gray triangle on TV glass (`final-lounge.png`, 928×1680). */
+export const FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER = { x: 0.528, y: 0.31 } as const;
 
 /** Transparent tap over baked play icon — mapped on {@link sceneCarouselViewportStageStyle}. */
 export const FINAL_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {

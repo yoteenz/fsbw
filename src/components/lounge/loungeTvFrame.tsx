@@ -168,8 +168,12 @@ export function loungeTvScreenStyle(overrides?: React.CSSProperties): React.CSSP
 type LoungeTvCloseButtonProps = {
   visible: boolean;
   onClick: (e: React.MouseEvent) => void;
-  /** Default `-8px` corner; content frame uses bezel anchor on the PNG. */
-  position?: { top: number | string; right: number | string };
+  /** Default `-8px` corner; fullscreen shell maps bezel point on the PNG. */
+  position?: {
+    top: number | string;
+    right?: number | string;
+    left?: number | string;
+  };
 };
 
 export function LoungeTvCloseButton({
@@ -185,7 +189,9 @@ export function LoungeTvCloseButton({
       style={{
         position: 'absolute',
         top: position.top,
-        right: position.right,
+        right: position.right ?? 'auto',
+        left: position.left ?? 'auto',
+        transform: position.left != null ? 'translate(-50%, -50%)' : undefined,
         zIndex: LOUNGE_TV_CLOSE_BUTTON_Z_INDEX,
         width: 22,
         height: 22,

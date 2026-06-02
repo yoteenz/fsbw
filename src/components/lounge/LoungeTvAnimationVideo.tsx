@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
+import { LOUNGE_TV_CONTENT_FRAME_SRC } from './loungeTvAssets';
 import {
   LOUNGE_TV_ANIMATION_VIDEO_REMOTE,
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
@@ -28,7 +28,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
   const src = loungeTvAnimationVideoSrc();
-  const poster = FINAL_LOUNGE_BACKGROUND_SRC;
+  /** End still — matches {@link LoungeTvFullscreenShell} for seamless handoff. */
+  const poster = LOUNGE_TV_CONTENT_FRAME_SRC;
 
   const finish = useCallback(() => {
     setFrameVisible(false);
