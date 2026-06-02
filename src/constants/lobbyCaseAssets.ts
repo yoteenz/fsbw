@@ -33,7 +33,7 @@ export const LOBBY_CASE_PHONE_ANCHOR_TOP_PX = lobbyCasePropOffset(-33);
 export const LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX = lobbyCasePropOffset(-6);
 
 /** Extra nudge left for phone only (px, not scaled with case). */
-export const LOBBY_CASE_PHONE_NUDGE_LEFT_PX = 14;
+export const LOBBY_CASE_PHONE_NUDGE_LEFT_PX = 24;
 
 export const LOBBY_PHONE_ASSET_VERSION = 'q-oa7o8';
 
