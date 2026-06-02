@@ -149,6 +149,9 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
   /** Use when full preserve pass returns a duplicate — backdrop swap for `lobby:bake-case` only. */
   displayCaseBackgroundOnly: LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY,
 
+  /** Full lobby hero (IMAGE 1) + CASE reference (IMAGE 2) — `npm run lobby:fal-add-display-case`. */
+  displayCaseOnLobbyScene: LOBBY_DISPLAY_CASE_ON_SCENE_FAL_EDIT,
+
   caseRegister: `Small photorealistic vintage-modern cash register prop for a luxury retail display case, 3/4 front angle. Metallic and matte materials, boutique styling, no brand text. PNG with fully transparent background, isolated product shot.`,
 
   casePhone: `Small photorealistic salon desk telephone prop for a luxury wig boutique display, 3/4 front angle. Elegant classic handset on base, neutral black or charcoal, no readable brand. PNG with fully transparent background, isolated product shot.`,
