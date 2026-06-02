@@ -28,41 +28,66 @@ export function sceneCarouselSlideMinHeightCss(): string {
   return `max(100dvh, ${sceneCarouselBackgroundArtHeightCss()})`;
 }
 
-/** Lobby/lounge slide shell — explicit height so absolute children + cover hit maps get layout. */
+/** Carousel slide wrapper — tall enough for horizontal swipe parity; scene paints in viewport stage. */
 export function sceneSlideShellStyle(): React.CSSProperties {
-  const slideHeight = sceneCarouselSlideMinHeightCss();
   return {
     position: 'relative',
     width: '100vw',
     flexShrink: 0,
-    minHeight: slideHeight,
-    height: slideHeight,
+    minHeight: sceneCarouselSlideMinHeightCss(),
     overflow: 'visible',
     backgroundColor: '#ffffff',
   };
 }
 
-/** Viewport fallback when a measure node has no layout yet (e.g. only `minHeight` ancestors). */
-export function defaultSceneSlideMetricsFromViewport(): { width: number; height: number } {
-  if (typeof window === 'undefined') {
-    return { width: SCENE_CAROUSEL_BG_WIDTH, height: SCENE_CAROUSEL_BG_HEIGHT };
-  }
-  const width = window.innerWidth;
-  const artHeight = (width * SCENE_CAROUSEL_BG_HEIGHT) / SCENE_CAROUSEL_BG_WIDTH;
-  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-  return { width, height: Math.max(viewportHeight, artHeight) };
-}
-
-/**
- * Full-bleed scene background for lobby/lounge carousel slides.
- * `cover` + top anchor fills the viewport (no ceiling/floor letterbox gaps) while
- * keeping both slides on the same scale/anchor for horizontal swipe alignment.
- */
 export type SceneCarouselBackgroundLayerOptions = {
   /** e.g. `center top` (lobby) or {@link loungeSceneBackgroundPositionY} (lounge crown align). */
   backgroundPosition?: string;
 };
 
+/** Fixed scene box — what the user sees in the `100dvh` scroll shell (cover math uses this). */
+export function sceneCarouselViewportStageStyle(): React.CSSProperties {
+  return {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: '100dvh',
+    overflow: 'hidden',
+    isolation: 'isolate',
+  };
+}
+
+export function sceneCarouselViewportBackgroundStyle(
+  backgroundSrc: string,
+  options?: SceneCarouselBackgroundLayerOptions,
+): React.CSSProperties {
+  return {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: `url(${backgroundSrc})`,
+    backgroundSize: 'cover',
+    backgroundPosition: options?.backgroundPosition ?? 'center top',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: '#ffffff',
+  };
+}
+
+/** Cover hit-map fallback — viewport size only (not full art-height slide). */
+export function defaultSceneSlideMetricsFromViewport(): { width: number; height: number } {
+  if (typeof window === 'undefined') {
+    return { width: SCENE_CAROUSEL_BG_WIDTH, height: SCENE_CAROUSEL_BG_HEIGHT };
+  }
+  const width = window.innerWidth;
+  const height = window.visualViewport?.height ?? window.innerHeight;
+  return { width, height };
+}
+
+/**
+ * Full-bleed scene background on the tall slide shell.
+ * Prefer {@link sceneCarouselViewportBackgroundStyle} inside {@link sceneCarouselViewportStageStyle}.
+ */
 export function sceneCarouselBackgroundLayerStyle(
   backgroundSrc: string,
   options?: SceneCarouselBackgroundLayerOptions

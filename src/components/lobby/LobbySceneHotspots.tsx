@@ -15,9 +15,7 @@ import {
   LOBBY_REGISTER_POPOVER_TITLE,
 } from '../../constants/lobbyPropPopoverCopy';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
-import { FINAL_LOBBY_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
-import { LobbyCasePropPeel } from './LobbyCasePropPeel';
 import { LobbyCasePropPopover } from './LobbyCasePropPopover';
 import { rectToPercentStyle, SceneHitRegion } from './SceneHitRegion';
 
@@ -81,13 +79,6 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext }: Props) {
             zIndex: LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
           }}
         />
-      ) : null}
-
-      {lobbyCasePopover === 'register' ? (
-        <LobbyCasePropPeel backgroundSrc={FINAL_LOBBY_BACKGROUND_SRC} rect={FINAL_LOBBY_HIT_REGIONS.caseRegister} />
-      ) : null}
-      {lobbyCasePopover === 'phone' ? (
-        <LobbyCasePropPeel backgroundSrc={FINAL_LOBBY_BACKGROUND_SRC} rect={FINAL_LOBBY_HIT_REGIONS.casePhone} />
       ) : null}
 
       <div
