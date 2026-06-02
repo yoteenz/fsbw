@@ -22817,3 +22817,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (`bf600e0f`):** Restored slide scrim + z-index **30** constants; kept **inline** `position: absolute` popover above asset (no body portal duplicate); stable prop wrapper `zIndex` (not toggled on open); active register/phone anchor **z-index 25** on slide; removed popover shell `transition-all` on open.
 
 **Conventions:** When editing `lobbyPaymentIcons.ts`, never revert `SCRIM_SLIDE` / `OPEN_Z_INDEX=30` from the zoom-anchor pass.
+
+---
+
+## 2026-06-02 — Lobby shelf graphics: tap routes to shop categories
+
+**Context:** User asked to wire lobby wall shelf graphics to shop routes: HD lace → **`/shop/frontals`**, extensions (middle/transparent graphic) → **`/shop/bundles`**, custom units → **`/shop/units`**.
+
+**Changes:** **`src/pages/lobby/page.tsx`** — `goToShopFrontals` / `goToShopBundles` / `goToShopUnits` + invisible overlay spans on each shelf (same pattern as neon booking). Middle shelf uses **`LOBBY_SHELF_TRANSPARENT_SRC`** asset, labeled extensions in UI copy. Commit **`a261a0a3`** on **`master`** and **`preview/mobile`**.
