@@ -1,3 +1,5 @@
+import type React from 'react';
+
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
@@ -12,13 +14,34 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'seedance98495';
 /** Reverse playback when using forward MP4 backwards (`playbackRate` or RAF fallback). */
 export const LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE = 2;
 
-/** Nudge transition video/poster down to match composite `cover` backgrounds on device. */
-export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
+/**
+ * Nudge lobby/lounge Seedance overlay down to match composite `cover` backgrounds.
+ * Applied only via {@link lobbyLoungeTransitionMediaLayerStyle} — do not set `top` / `objectPosition` elsewhere.
+ */
+export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 4;
 
-export function lobbyLoungeTransitionMediaPosition(): string {
+/** Shared video + poster layer — single source of truth for transition alignment. */
+export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
   const offsetY = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
-  if (!offsetY) return 'center top';
-  return `center ${offsetY}px`;
+  return {
+    position: 'absolute',
+    top: offsetY,
+    left: 0,
+    width: '100%',
+    height: offsetY > 0 ? `calc(100% + ${offsetY}px)` : '100%',
+    objectFit: 'cover',
+    objectPosition: 'center top',
+  };
+}
+
+export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.CSSProperties {
+  return {
+    ...lobbyLoungeTransitionMediaLayerStyle(),
+    backgroundImage: `url(${posterSrc})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center top',
+    backgroundRepeat: 'no-repeat',
+  };
 }
 
 /** H.264 for mobile; MOV kept as remote fallback in video element. */
