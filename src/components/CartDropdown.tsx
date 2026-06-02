@@ -124,8 +124,24 @@ function cartDropdownUnitViewDetailsLineCount(item: CartItem): number {
   return lines;
 }
 
-function cartDropdownProductTextTranslateY(detailLineCount: number, isViewingDetails: boolean): string | undefined {
+function cartDropdownProductTextTranslateY(
+  detailLineCount: number,
+  isViewingDetails: boolean,
+  isBcfShopItem: boolean,
+): string | undefined {
   if (!isViewingDetails) return undefined;
+  // BCF: pre-down-nudge lift only (units use net down-nudge below).
+  if (isBcfShopItem) {
+    if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
+      const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
+      const liftPx =
+        4 +
+        CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX +
+        extraRows * CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX;
+      return `translateY(-${liftPx}px)`;
+    }
+    return 'translateY(-4px)';
+  }
   let liftPx = 4;
   if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
     const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
@@ -1371,10 +1387,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         {viewingDetailsFor === item.id && (
                           <CartLineTextLayer slot="details">
                           <p 
+                            className="font-bold"
                             style={{ 
                               ...cartLineLayerInnerStyle(),
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                              fontWeight: 400,
+                              fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               textTransform: 'uppercase',
                               marginBottom: '10px',
