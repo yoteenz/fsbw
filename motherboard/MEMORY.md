@@ -22958,3 +22958,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (`71d070a3`):** Overlay animation uses `LoungeTvFrame` (CSS gradient bezel) + `loungeTvDimensionsFromScreenWidth` again. Restored `measureMediaTop`, sidebar gap 10px, aside `paddingTop: 4px`, nav `lineHeight: 1.35`, media area `paddingBottom: 8px`.
 
 **Conventions:** Expanded lounge TV overlay = CSS bezel (`LoungeTvFrame`); lobby static slide may still use `lounge-tv-design.png`. Do not swap overlay back to `LoungeTvDesignFrame` without widening visible bezel in the asset.
+
+---
+
+## 2026-06-02 — Final LP composite lobby/lounge + Seedance carousel transition
+
+**Context (full chat arc):** User struggled with degraded Fal-regenerated lobby art (smudgy roses, wrong ceiling, orange gel). We iterated many single/two-image Fal restore prompts (quality from IMAGE 1, lighting from IMAGE 2, ceiling indent + wall spot pools). User then supplied **final composite PNGs** and asked to **replace layered backgrounds** with one image per slide, **transparent hit regions** for routing, **TV aligned to baked-in screen**, and **Seedance transition** on arrow (reverse clip TBD).
+
+**Decisions / outcomes:**
+- Lobby/lounge slides use **`public/assets/final-lobby.png`** and **`final-lounge.png`** (928×1680, Supabase `Final LP/`) via `src/constants/finalLobbySceneAssets.ts`. Removed separate neon/shelf/case/chair/TV PNG layers from `src/pages/lobby/page.tsx`.
+- **`LobbySceneHotspots`** — percent-based transparent buttons: logo + SHOP/TOOLS/BOOKING, shelf rows (frontals/bundles/units), register/phone popovers on case art.
+- **`LoungeSceneTvHotspot`** — play control over TV rect on composite; **`LoungeTvOverlay`** still expands from measured rect (no `lounge-tv-design.png` on slide).
+- **`sceneCarouselBackground.ts`** — art size 928×1680; both slides `center top` (no crown offset).
+- **Transition:** `lobby-lounge-transition-seedance.mp4` (+ `.mov` remote) from Seedance 2.0; **`LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = true`**. Forward lobby→lounge plays middle slide; lounge→lobby uses reverse when **`LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE`** or **`lobby-lounge-transition-seedance-reverse.mp4`** is set (else CSS carousel).
+- Hit rects tunable in **`FINAL_LOBBY_HIT_REGIONS`** / **`FINAL_LOUNGE_TV_*`** — QA on device.
+
+**Changes:** `finalLobbySceneAssets.ts`, `LobbySceneHotspots.tsx`, `SceneHitRegion.tsx`, `LoungeSceneTvHotspot.tsx`, `lobby/page.tsx`, `lobbyLoungeTransitionVideo.ts`, `LobbyLoungeTransitionVideo.tsx`, `sceneCarouselBackground.ts`, new assets under `public/assets/`. Pushed **`master`** + **`preview/mobile`** (`4ae1cf71` / merge).
+
+**Conventions:** Final LP = composite background only + invisible hotspots; do not re-stack old `neon-*.png` / `landing-background.png` without product ask. Reverse transition: set `LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE` in `lobbyLoungeTransitionVideo.ts` when clip arrives.
