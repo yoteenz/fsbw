@@ -8,10 +8,11 @@ import {
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
   LOUNGE_TV_OVERLAY_SIZE_SCALE,
-  LoungeTvFrame,
-  loungeTvDimensionsFromFrameHeight,
-  loungeTvDimensionsFromScreenWidth,
+  LoungeTvContentFrame,
+  loungeTvContentFrameDimensionsFromFrameHeight,
+  loungeTvContentFrameDimensionsFromScreenWidth,
 } from './loungeTvFrame';
+import { LOUNGE_TV_CONTENT_FRAME_SRC } from './loungeTvAssets';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
@@ -647,6 +648,12 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     void hydrateLoungeTvAdminConfig(getLoungeTvAdminConfig);
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const img = new Image();
+    img.src = LOUNGE_TV_CONTENT_FRAME_SRC;
+  }, [isOpen]);
+
   const resetOverlayState = useCallback(() => {
     setShowContent(false);
     setShowStatic(false);
@@ -793,18 +800,15 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     showLegacyChoreography && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
   const handVisible = handMounted && (closePhase === 'idle' || closePhase === 'zap');
 
-  /** Black glass through static, power-off, hand exit, and shrink-back to lobby. */
-  const showTvBlackScreen = frameExpanded || !isOpen || closePhase !== 'idle';
-
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   let { frameW: targetFrameW, frameH: targetFrameH } =
-    loungeTvDimensionsFromScreenWidth(targetScreenW);
-  const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
+    loungeTvContentFrameDimensionsFromScreenWidth(targetScreenW);
+  const maxFrameH = vh * 0.88 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
     ({ frameW: targetFrameW, frameH: targetFrameH } =
-      loungeTvDimensionsFromFrameHeight(maxFrameH));
+      loungeTvContentFrameDimensionsFromFrameHeight(maxFrameH));
   }
   const frameLeft = (vw - targetFrameW) / 2;
   const frameTop = (vh - targetFrameH) / 2;
@@ -882,17 +886,23 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       ) : null}
       {showTvChrome ? (
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvFrame
+        <LoungeTvContentFrame
           fill
           closeVisible={frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'}
           onClose={() => requestClose()}
           screenStyle={{
-            opacity: showTvBlackScreen ? 1 : 0,
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+            opacity: showContent && frameExpanded ? 1 : 0,
             transition: 'opacity 220ms ease',
           }}
         >
-          <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
-          <LoungeTvPowerOffEffect active={poweringOff} />
+          {showLegacyChoreography ? (
+            <>
+              <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
+              <LoungeTvPowerOffEffect active={poweringOff} />
+            </>
+          ) : null}
           {showContent && !poweringOff ? (
             <LoungeTvContentProtection
               active
@@ -910,7 +920,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvFrame>
+        </LoungeTvContentFrame>
       </div>
       ) : null}
     </div>,

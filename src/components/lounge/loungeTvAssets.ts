@@ -5,6 +5,33 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
+/** End-of-open still — TV bezel + theater frame for overlay menu (`Final LP/ChatGPT Image…`). */
+export const LOUNGE_TV_CONTENT_FRAME_ASSET_VERSION = 'final-lp-tv-frame-jun2';
+
+export const LOUNGE_TV_CONTENT_FRAME_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP/ChatGPT%20Image%20Jun%202,%202026%20at%2006_28_39%20PM.png';
+
+export const LOUNGE_TV_CONTENT_FRAME_SRC = `/assets/lounge-tv-content-frame.png?v=${LOUNGE_TV_CONTENT_FRAME_ASSET_VERSION}`;
+
+export const LOUNGE_TV_CONTENT_FRAME_PX = { width: 940, height: 1672 } as const;
+
+export const LOUNGE_TV_CONTENT_FRAME_ASPECT =
+  LOUNGE_TV_CONTENT_FRAME_PX.width / LOUNGE_TV_CONTENT_FRAME_PX.height;
+
+/** Wall-mounted TV glass on {@link LOUNGE_TV_CONTENT_FRAME_SRC} (normalized 0–1). */
+export const LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT = {
+  left: 75 / LOUNGE_TV_CONTENT_FRAME_PX.width,
+  top: 133 / LOUNGE_TV_CONTENT_FRAME_PX.height,
+  width: (863 - 75) / LOUNGE_TV_CONTENT_FRAME_PX.width,
+  height: (918 - 133) / LOUNGE_TV_CONTENT_FRAME_PX.height,
+} as const;
+
+/** Close chip on TV bezel (fraction of full frame). */
+export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
+  top: 118 / LOUNGE_TV_CONTENT_FRAME_PX.height,
+  right: 62 / LOUNGE_TV_CONTENT_FRAME_PX.width,
+} as const;
+
 /** Bump when replacing `public/assets/lounge-tv-design.png` (`npm run lounge:bake-tv-design`). */
 export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'kv6DR-v2';
 
