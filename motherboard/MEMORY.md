@@ -23099,3 +23099,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to shift lobby/lounge Seedance transition down **4px** (was 2px) and ensure nothing overrides alignment.
 
 **Fix (`2004c924`):** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 4`**. Replaced `lobbyLoungeTransitionMediaPosition()` with **`lobbyLoungeTransitionMediaLayerStyle()`** + **`lobbyLoungeTransitionPosterLayerStyle()`** in `lobbyLoungeTransitionVideo.ts` — `top: 4px`, `height: calc(100% + 4px)`, `objectPosition` / `backgroundPosition: center top`. **`LobbyLoungeTransitionVideo.tsx`** uses only those helpers (no local `top` / `objectPosition`). Tune via constant only.
+
+---
+
+## 2026-06-02 — Lounge TV play button screen nudge
+
+**Context:** User asked to move lounge play button **60px down** and **16px right**.
+
+**Fix (`56d1f43b`):** **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 16`**, **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 60`** in `finalLobbySceneAssets.ts`; **`LoungeCompositeTvPlay`** applies `translate(16px, 60px)` after cover-mapped tap rect. TV overlay grow anchor unchanged (`FINAL_LOUNGE_TV_HIT_REGION`).
