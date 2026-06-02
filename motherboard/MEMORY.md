@@ -23032,3 +23032,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`LobbyLoungeTransitionOverlay`** — moved **inside** active slide page, **`inset: 0`**, same stack as **`sceneCarouselBackgroundLayerStyle`** (forward on lobby, reverse on lounge).
 
 **Conventions:** Case popover visibility = peel layer, not higher z-index on empty hit wrapper. Scene hotspots/transition/video must share one slide shell with explicit height + cover anchor `center top`.
+
+---
+
+## 2026-06-02 — Revert case peel; viewport stage; composite TV play
+
+**Context:** User rejected **`LobbyCasePropPeel`** (duplicated non-isolated art). Play still too high (legacy **`LoungeSceneTvHotspot`** + cover on full art-height slide). Seedance still **shifts outward/inward** at start/end of room transition.
+
+**Fixes (`e2af73ad`):**
+- **Removed** `LobbyCasePropPeel` and peel usage in **`LobbySceneHotspots`**.
+- **`SceneCarouselViewportStage`** — fixed **`100dvh`** box; background + transition + hotspots/TV share identical **`cover` / `center top`** geometry (not tall-slide cover).
+- **`LoungeCompositeTvPlay`** replaces **`LoungeSceneTvHotspot`**: transparent tap on **`FINAL_LOUNGE_TV_PLAY_TAP_RECT`** (image space on `final-lounge.png`); **`LoungeTvOverlay`** grow origin from cover-mapped TV region only (no mask play icon / `lounge-tv-design` layout).
+- Carousel **`transform` transition disabled** while **`roomTransitionOverlay`** is active.
+- **`defaultSceneSlideMetricsFromViewport`** uses viewport height only (not `max` with art height).
+
+**Conventions:** Lobby/lounge scene alignment = **`sceneCarouselViewportStageStyle`** + **`sceneCarouselViewportBackgroundStyle`**. Do not reintroduce case peel without isolated prop assets. TV slide control = composite cover map, not deprecated design-PNG anchors.
