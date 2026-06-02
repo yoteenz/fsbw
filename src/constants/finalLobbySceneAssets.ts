@@ -39,18 +39,18 @@ export const FINAL_LOBBY_HIT_REGIONS = {
   casePhone: { left: 0.6, top: 0.71, width: 0.16, height: 0.09 },
 } as const satisfies Record<string, FinalSceneHitRect>;
 
-/** Wall-mounted TV on lounge composite — play target + overlay origin. */
+/** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
-  left: 0.14,
-  top: 0.2,
-  width: 0.72,
-  height: 0.24,
+  left: 0.277,
+  top: 0.16,
+  width: 0.501,
+  height: 0.299,
 };
 
-/** In-screen play control (subset of TV frame). */
+/** In-screen play control — relative to {@link FINAL_LOUNGE_TV_HIT_REGION} (glass center). */
 export const FINAL_LOUNGE_TV_PLAY_HIT_REGION: FinalSceneHitRect = {
-  left: 0.38,
-  top: 0.28,
-  width: 0.24,
-  height: 0.1,
+  left: 0.4,
+  top: 0.34,
+  width: 0.2,
+  height: 0.14,
 };
