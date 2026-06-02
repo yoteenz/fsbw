@@ -23085,3 +23085,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** TV menu floated centered (lounge visible behind); content misaligned vs end-still PNG. Play tap invisible/wrong (near chandelier) — not on wall TV in `final-lounge.png`.
 
 **Fixes:** **`LoungeTvFullscreenShell`** — `fixed inset 0`, end-still `cover` + `center top`, menu via **`useCoverMappedLayout`** (same math as animation). Black scrim (no blur). **`LoungeTvAnimationVideo`** poster = content frame for seamless handoff. **`LoungeCompositeTvPlay`**: visible masked play icon; **`FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER`** → `{ x: 0.528, y: 0.31 }` (TV glass center).
+
+---
+
+## 2026-06-02 — Lobby/lounge transition 2px Y nudge
+
+**Fix (`6b708bf7`):** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** — `object-position` / `background-position` `center 2px` on Seedance overlay video + poster (`lobbyLoungeTransitionMediaPosition()`).
