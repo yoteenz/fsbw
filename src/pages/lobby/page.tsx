@@ -429,7 +429,7 @@ const LobbyPage: React.FC = () => {
           maxWidth: '753px',
         }}>
           {/* Acrylic Case */}
-          <div className="relative">
+          <div className="relative" style={{ overflow: lobbyCasePopover !== null ? 'visible' : undefined }}>
             <img
               src={LOBBY_CASE_SRC}
               alt="Display Case"
@@ -447,7 +447,7 @@ const LobbyPage: React.FC = () => {
               style={{
                 left: `${LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX}px`,
                 top: `${LOBBY_CASE_REGISTER_ANCHOR_TOP_PX}px`,
-                zIndex: 2,
+                zIndex: lobbyCasePopover === 'register' ? 25 : 2,
               }}
             >
               <LobbyCasePropPopover
@@ -478,7 +478,7 @@ const LobbyPage: React.FC = () => {
               style={{
                 right: `${LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX}px`,
                 top: `${LOBBY_CASE_PHONE_ANCHOR_TOP_PX}px`,
-                zIndex: 2,
+                zIndex: lobbyCasePopover === 'phone' ? 25 : 2,
                 transform: `translateX(${LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX - LOBBY_CASE_PHONE_NUDGE_LEFT_PX}px)`,
               }}
             >

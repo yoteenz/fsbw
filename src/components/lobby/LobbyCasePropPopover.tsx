@@ -47,7 +47,7 @@ type LobbyCasePropPopoverProps = {
 };
 
 const popoverShellClassName =
-  'bg-white/60 backdrop-blur-md border border-black shadow-lg transition-all duration-300 ease-out';
+  'bg-white/60 backdrop-blur-md border border-black shadow-lg';
 
 /** Brand red — matches account/affiliate close-icon filter. */
 const LOBBY_POPOVER_CLOSE_ICON_FILTER =
@@ -368,7 +368,8 @@ export function LobbyCasePropPopover({
       style={{
         position: 'relative',
         display: 'inline-block',
-        zIndex: open ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : undefined,
+        zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
+        verticalAlign: 'top',
       }}
     >
       <button
