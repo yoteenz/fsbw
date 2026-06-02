@@ -124,8 +124,24 @@ function cartDropdownUnitViewDetailsLineCount(item: CartItem): number {
   return lines;
 }
 
-function cartDropdownProductTextTranslateY(detailLineCount: number, isViewingDetails: boolean): string | undefined {
+function cartDropdownProductTextTranslateY(
+  detailLineCount: number,
+  isViewingDetails: boolean,
+  isBcfShopItem: boolean,
+): string | undefined {
   if (!isViewingDetails) return undefined;
+  // BCF: pre-down-nudge lift only (units use net down-nudge below).
+  if (isBcfShopItem) {
+    if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
+      const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
+      const liftPx =
+        4 +
+        CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX +
+        extraRows * CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX;
+      return `translateY(-${liftPx}px)`;
+    }
+    return 'translateY(-4px)';
+  }
   let liftPx = 4;
   if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
     const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
@@ -979,11 +995,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBcfShopItem = item.type === 'shop-texture-category';
                     const isViewingDetails = viewingDetailsFor === item.id;
                     const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
-                    const productTextTransform = cartDropdownProductTextTranslateY(
-                      detailTextRowCount,
-                      isViewingDetails,
-                      isBcfShopItem,
-                    );
+                    const productTextTransform = cartDropdownProductTextTranslateY(detailTextRowCount, isViewingDetails);
                     /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
                     const hideMetaForDetails =
                       isViewingDetails &&
