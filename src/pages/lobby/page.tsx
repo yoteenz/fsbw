@@ -36,9 +36,10 @@ type SceneTransitionOverlayProps = {
 };
 
 // Lobby Component
-const LobbyPage: React.FC<{ roomTransitionOverlay?: SceneTransitionOverlayProps | null }> = ({
-  roomTransitionOverlay = null,
-}) => {
+const LobbyPage: React.FC<{
+  roomTransitionOverlay?: SceneTransitionOverlayProps | null;
+  hideCarouselNav?: boolean;
+}> = ({ roomTransitionOverlay = null, hideCarouselNav = false }) => {
   const navigate = useNavigate();
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
@@ -113,7 +114,7 @@ const LobbyPage: React.FC<{ roomTransitionOverlay?: SceneTransitionOverlayProps 
         </div>
       </SceneCarouselViewportStage>
 
-      {/* Right Arrow Button - Part of page design, scrolls with content */}
+      {!hideCarouselNav ? (
       <div style={{
         position: 'absolute',
         right: '20px',
@@ -197,6 +198,7 @@ const LobbyPage: React.FC<{ roomTransitionOverlay?: SceneTransitionOverlayProps 
           lounge
         </div>
       </div>
+      ) : null}
     </div>
   );
 };
@@ -205,7 +207,8 @@ const LobbyPage: React.FC<{ roomTransitionOverlay?: SceneTransitionOverlayProps 
 const LoungePage: React.FC<{
   measureRef: RefObject<HTMLDivElement>;
   roomTransitionOverlay?: SceneTransitionOverlayProps | null;
-}> = ({ measureRef, roomTransitionOverlay = null }) => {
+  hideCarouselNav?: boolean;
+}> = ({ measureRef, roomTransitionOverlay = null, hideCarouselNav = false }) => {
   const handlePrevious = useCallback(() => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
   }, []);
@@ -224,7 +227,7 @@ const LoungePage: React.FC<{
         <LoungeCompositeTvPlay measureRef={measureRef} />
       </SceneCarouselViewportStage>
 
-      {/* Left Arrow Button - Part of page design, scrolls with content */}
+      {!hideCarouselNav ? (
       <div style={{
         position: 'absolute',
         left: '20px',
@@ -308,6 +311,7 @@ const LoungePage: React.FC<{
           lobby
         </div>
       </div>
+      ) : null}
     </div>
   );
 };
@@ -541,6 +545,7 @@ const LobbyApp: React.FC = () => {
         >
           <div style={{ flexShrink: 0 }}>
             <LobbyPage
+              hideCarouselNav={roomTransitionOverlay !== null}
               roomTransitionOverlay={
                 transitionVideoEnabled && roomTransitionOverlay === 'forward'
                   ? {
@@ -555,6 +560,7 @@ const LobbyApp: React.FC = () => {
           <div style={{ flexShrink: 0 }}>
             <LoungePage
               measureRef={loungeSlideMeasureRef}
+              hideCarouselNav={roomTransitionOverlay !== null}
               roomTransitionOverlay={
                 transitionVideoEnabled && roomTransitionOverlay === 'reverse'
                   ? {
