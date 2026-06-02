@@ -32,16 +32,10 @@ import {
   consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
-  orderUsesDigitalFulfillmentTimeline,
 } from '../../../utils/digitalOrderFulfillment';
 import {
-  getOrderTrackingStageFromOrder,
   ORDER_TRACKING_PULSATE_ANIMATION,
   ORDER_TRACKING_PULSATE_KEYFRAMES_CSS,
-  ORDER_TRACKING_STAGE_LABELS,
-  orderTrackingDeliveredRowIsCurrent,
-  orderTrackingStageRowIsCurrent,
-  orderShowsDeliveredTrackingLine,
 } from '../../../utils/orderTracking';
 import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
 import {
@@ -320,17 +314,7 @@ function CheckoutConfirmPage() {
   const summaryShowSignOrderFormButton =
     summaryRequiresOrderAuthorizationForm || summaryRequiresGiftCardIdentityForm;
 
-  const showLongPremiumConfirmSummary = React.useMemo(() => {
-    try {
-      const cu = localStorage.getItem('currentUser');
-      if (!cu) return false;
-      const u = JSON.parse(cu);
-      const st = getEffectiveSubscriptionTier(u);
-      return st === '6months' || st === '12months';
-    } catch {
-      return false;
-    }
-  }, []);
+  const isSubscriptionUpgrade = Boolean(orderData?.isSubscriptionUpgrade);
 
   const summaryOrderForTracking = React.useMemo(() => {
     const idRaw = (orderData as { orderInternalId?: string }).orderInternalId;
@@ -756,7 +740,7 @@ function CheckoutConfirmPage() {
     // Calculate total content width
     const totalContentWidth =
       orderStripExpandedEntries.reduce((sum, entry) => {
-        return sum + summaryScrollItemWidthPx(entry.item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
+        return sum + summaryScrollItemWidthPx(entry.item, isSubscriptionUpgrade) + gap;
       }, 0) +
       paddingRight -
       gap; // Subtract last gap, add padding
@@ -791,7 +775,7 @@ function CheckoutConfirmPage() {
     // Calculate total content width
     const totalContentWidth =
       orderStripExpandedEntries.reduce((sum, entry) => {
-        return sum + summaryScrollItemWidthPx(entry.item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
+        return sum + summaryScrollItemWidthPx(entry.item, isSubscriptionUpgrade) + gap;
       }, 0) +
       paddingRight -
       gap; // Subtract last gap, add padding
@@ -900,6 +884,15 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
           font-weight: 500 !important;
           color: #808080 !important;
           background-color: #FFFFFF !important;
+        }
+        @media (min-width: 1024px) {
+          .checkout-cart-items-center-lg {
+            display: flex;
+            width: 100%;
+            align-items: flex-start;
+            justify-content: center;
+            box-sizing: border-box;
+          }
         }
       `}</style>
       <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1172,16 +1165,20 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
               </div>
             ) : (
               /* REGULAR CONTENT */
-              <>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', rowGap: '24px' }}>
               {/* MAIN CARD */}
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                 style={{ 
                   borderWidth: '1.3px',
                   minWidth: '100%', 
                   maxWidth: 'none', 
                   overflow: 'visible',
-                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                  rowGap: '24px',
                 }}
               >
               {/* CONGRATS Header */}
@@ -1206,17 +1203,18 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                 </span>
               </div>
 
-              {/* Products Horizontal Scroll */}
+              {/* Products Horizontal Scroll — match checkout strip */}
+              <div style={{ paddingTop: '0px', marginTop: '-12px', flexShrink: 0 }}>
               <div 
                 ref={scrollContainerRef}
-                className="relative overflow-x-auto mb-6"
+                className="relative"
                 style={{ 
-                  height: '180px',
+                  minHeight: '200px',
+                  height: 'auto',
+                  overflowX: 'hidden',
+                  overflowY: 'visible',
                   cursor: isDragging ? 'grabbing' : 'grab',
                   userSelect: 'none',
-                  display: 'flex',
-                  justifyContent: orderStripExpandedEntries.length === 1 ? 'center' : 'flex-start',
-                  alignItems: 'center'
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -1226,34 +1224,25 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
+                <div className="checkout-cart-items-center-lg">
                 <div
                   className="flex"
                   style={{
-                    transform: `translateX(${scrollPosition}px)`,
+                    transform: orderStripExpandedEntries.length === 1 ? 'none' : `translateX(${scrollPosition}px)`,
                     transition: 'none',
                     gap: '20px',
-                    height: '100%',
                     alignItems: 'flex-start',
                     willChange: 'transform',
-                    paddingRight: '10px',
-                    justifyContent:
-                      orderStripExpandedEntries.length === 1
-                        ? 'center'
-                        : orderStripExpandedEntries.length === 2
-                          ? 'center'
-                          : 'flex-start',
-                    paddingLeft: orderStripExpandedEntries.length >= 3 ? 'calc(50% - 160px)' : undefined,
-                    marginLeft:
-                      orderStripExpandedEntries.length === 1
-                        ? 0
-                        : orderStripExpandedEntries.length >= 2
-                          ? '-10px'
-                          : undefined,
+                    paddingRight: orderStripExpandedEntries.length === 1 ? 0 : '10px',
+                    paddingTop: isSubscriptionUpgrade ? '0px' : '2px',
+                    paddingBottom: '4px',
+                    boxSizing: 'border-box',
+                    justifyContent: orderStripExpandedEntries.length === 1 ? 'center' : undefined,
                   }}
                 >
                   {orderStripExpandedEntries.map((stripEntry) => {
                     const item = stripEntry.item;
-                    const stripUpgrade = Boolean(orderData?.isSubscriptionUpgrade);
+                    const stripUpgrade = isSubscriptionUpgrade;
                     const thumbM = orderStripThumbMetrics(item, stripUpgrade, { checkoutStrip: true });
                     const itemImage = orderStripThumbnailSrc(item, stripUpgrade);
                     const displayTitle = orderStripTitleLine(item);
@@ -1278,10 +1267,16 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                           flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'flex-start',
-                          paddingTop:
-                            item?.type === 'booking-appointment' || item?.type === 'booking-consult'
-                              ? '2px'
-                              : '8px',
+                          paddingTop: (() => {
+                            if (stripUpgrade && thumbM.kind === 'membership') return '5px';
+                            if (
+                              item?.type === 'booking-appointment' ||
+                              item?.type === 'booking-consult'
+                            ) {
+                              return '2px';
+                            }
+                            return '8px';
+                          })(),
                           paddingRight: '8px',
                           paddingBottom: '8px',
                           paddingLeft: '8px'
@@ -1443,6 +1438,8 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     );
                   })}
                 </div>
+                </div>
+              </div>
               </div>
 
               {/* Border line above Order Processing Message */}
@@ -1480,21 +1477,28 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                 )}
               </p>
               </div>
-              </>
+              </div>
             )}
             </div>
 
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', rowGap: '24px' }}>
             {/* ORDER SUMMARY CARD - Only show when menu is closed */}
             {!showMobileMenu && (() => {
               const accountUser = (() => { try { const u = localStorage.getItem('currentUser'); return u ? JSON.parse(u) : null; } catch { return null; } })();
               const addr = accountUser?.defaultAddress || accountUser?.shippingAddress;
               return (
               <div
-                className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
-                style={{ borderWidth: '1.3px' }}
+                className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+                style={{
+                  borderWidth: '1.3px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                  rowGap: '24px',
+                }}
               >
               {/* ORDER SUMMARY */}
-              <div style={{ marginBottom: '20px' }}>
+              <div>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
                     style={{
@@ -1538,7 +1542,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
 
               {/* SHIPPING — hidden for digital / A&C / membership (no ship tracking on summary) */}
               {!isDigitalFulfillmentSummary && (
-              <div style={{ marginBottom: '20px' }}>
+              <div>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
                     style={{
@@ -1615,7 +1619,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
               )}
 
               {isDigitalFulfillmentSummary && (
-                <div style={{ marginBottom: '20px' }}>
+                <div>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                     <h2
                       style={{
@@ -1705,7 +1709,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
               )}
 
               {/* PAYMENT */}
-              <div style={{ marginBottom: '20px' }}>
+              <div>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
                     style={{
@@ -1803,88 +1807,6 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                 </div>
               </div>
 
-              {!isDigitalFulfillmentSummary &&
-                showLongPremiumConfirmSummary &&
-                !orderUsesDigitalFulfillmentTimeline(summaryOrderForTracking) && (
-                  <div style={{ marginBottom: '20px' }}>
-                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                      <h2
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '12px',
-                          color: '#EB1C24',
-                          fontWeight: '500',
-                          textTransform: 'uppercase',
-                          margin: '0',
-                        }}
-                      >
-                        ORDER TRACKING
-                      </h2>
-                      <img
-                        src="/assets/order-tracking.svg"
-                        alt=""
-                        style={{
-                          width: 18,
-                          height: 18
-                        }}
-                      />
-                    </div>
-                    {(() => {
-                      const ord = summaryOrderForTracking as unknown as Record<string, unknown>;
-                      const st = getOrderTrackingStageFromOrder(ord);
-                      const shift = Number((summaryOrderForTracking as { trackingTimelineShiftDays?: number }).trackingTimelineShiftDays) || 0;
-                      const deliveredRowCurrent = orderTrackingDeliveredRowIsCurrent(ord, st);
-                      return (
-                        <>
-                          {shift !== 0 && (
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                              TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
-                            </p>
-                          )}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
-                            {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
-                              const notes = (summaryOrderForTracking as { trackingStageNotes?: Record<string, string> }).trackingStageNotes;
-                              const note = notes?.[String(i)]?.trim();
-                              const isCurrent = orderTrackingStageRowIsCurrent(ord, i, st);
-                              return (
-                                <div key={`confirm-st-${i}`}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span style={orderTrackBubbleStyleConfirm(isCurrent, isCurrent)} aria-hidden />
-                                    <p style={orderTrackStepLabelStyleConfirm(isCurrent)}>{label}</p>
-                                  </div>
-                                  {note ? (
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        fontSize: '9px',
-                                        color: '#666',
-                                        margin: '2px 0 0 0',
-                                        textTransform: 'uppercase',
-                                        lineHeight: 1.35,
-                                        paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px`,
-                                      }}
-                                    >
-                                      {note}
-                                    </p>
-                                  ) : null}
-                                </div>
-                              );
-                            })}
-                            {orderShowsDeliveredTrackingLine(ord) ? (
-                              <div key="confirm-st-delivered">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                  <span style={orderTrackBubbleStyleConfirm(deliveredRowCurrent, deliveredRowCurrent)} aria-hidden />
-                                  <p style={orderTrackStepLabelStyleConfirm(deliveredRowCurrent)}>DELIVERED</p>
-                                </div>
-                              </div>
-                            ) : null}
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                )}
-
               {/* REWARDS - sessionStorage (from checkout) first, then compute from same logic as checkout so toggle + cart always match (hidden for premium membership — no points) */}
               {(() => {
                 if (isPremiumMembershipSummary) return null;
@@ -1944,7 +1866,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                 if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
                 const tierUpper = String(displayTier).toUpperCase();
                 return (
-                <div style={{ marginBottom: '5px' }}>
+                <div>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                     <h2
                       style={{
@@ -2021,23 +1943,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
               </div>
             )}
 
-            {showLongPremiumConfirmSummary && (orderData as { orderInternalId?: string }).orderInternalId && (
-              <div className="px-0 w-full" style={{ marginTop: '2px', marginBottom: '12px' }}>
-                <button
-                  type="button"
-                  className="relative z-10 border border-black w-full text-center py-2 bg-white cursor-pointer hover:bg-gray-50 uppercase"
-                  style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '11px', fontWeight: 500 }}
-                  onClick={() =>
-                    navigate(
-                      `/account/concierge?orderId=${encodeURIComponent(String((orderData as { orderInternalId?: string }).orderInternalId))}#order-tracking`
-                    )
-                  }
-                >
-                  GO TO CONCIERGE
-                </button>
-              </div>
-            )}
-
+            </div>
             {/* Navigation Buttons */}
             {!showMobileMenu && (
               <>
