@@ -23047,3 +23047,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`defaultSceneSlideMetricsFromViewport`** uses viewport height only (not `max` with art height).
 
 **Conventions:** Lobby/lounge scene alignment = **`sceneCarouselViewportStageStyle`** + **`sceneCarouselViewportBackgroundStyle`**. Do not reintroduce case peel without isolated prop assets. TV slide control = composite cover map, not deprecated design-PNG anchors.
+
+---
+
+## 2026-06-02 — Hide carousel arrows during room transition
+
+**Context:** User asked to hide lobby/lounge arrow + label text while Seedance room transition plays.
+
+**Fix (`652eb422`):** `LobbyApp` passes **`hideCarouselNav={roomTransitionOverlay !== null}`** to **`LobbyPage`** and **`LoungePage`**; arrow + “lounge” / “lobby” labels not rendered during forward/reverse clip.
