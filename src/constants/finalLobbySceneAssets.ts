@@ -47,10 +47,13 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
-/** In-screen play — slide-normalized; relative to {@link FINAL_LOUNGE_TV_HIT_REGION} (glass center). */
-export const FINAL_LOUNGE_TV_PLAY_HIT_REGION: FinalSceneHitRect = {
-  left: 0.4,
-  top: 0.44,
-  width: 0.18,
-  height: 0.11,
+/** In-screen play — normalized on source image (928×1680), mapped via {@link mapImageRectToCoverContainer}. */
+export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT: FinalSceneHitRect = {
+  left: 0.47,
+  top: 0.218,
+  width: 0.12,
+  height: 0.08,
 };
+
+/** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_IMAGE_RECT} + cover hit map. */
+export const FINAL_LOUNGE_TV_PLAY_HIT_REGION = FINAL_LOUNGE_TV_PLAY_IMAGE_RECT;

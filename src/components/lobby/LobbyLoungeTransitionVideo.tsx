@@ -9,6 +9,7 @@ import {
   FINAL_LOBBY_BACKGROUND_SRC,
   FINAL_LOUNGE_BACKGROUND_SRC,
 } from '../../constants/finalLobbySceneAssets';
+import { sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
 
 type Props = {
   active: boolean;
@@ -19,9 +20,20 @@ type Props = {
 const posterForDirection = (direction: LobbyLoungeTransitionDirection) =>
   direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
 
+/** Same box + crop as `sceneCarouselBackgroundLayerStyle` (cover, center top). */
+const transitionMediaStyle = {
+  position: 'absolute' as const,
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover' as const,
+  objectPosition: 'center top',
+};
+
 /**
- * Seedance clip over the current slide — `absolute` inside the lobby scroll shell (not `fixed`)
- * so removing the overlay does not shift scroll position vs the page.
+ * Seedance clip — mount inside the active lobby/lounge slide (`position: absolute; inset: 0`)
+ * so video/poster match the slide background geometry.
  */
 export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -181,6 +193,8 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     };
   }, [active, direction, finish, src]);
 
+  const slideHeight = sceneCarouselSlideMinHeightCss();
+
   return (
     <div
       aria-hidden={!active}
@@ -188,11 +202,13 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100vw',
-        height: '100dvh',
+        right: 0,
+        width: '100%',
+        height: slideHeight,
+        minHeight: slideHeight,
         zIndex: 200,
         overflow: 'hidden',
-        pointerEvents: active ? 'none' : 'none',
+        pointerEvents: 'none',
         visibility: active ? 'visible' : 'hidden',
         backgroundColor: 'transparent',
       }}
@@ -201,8 +217,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         <div
           aria-hidden
           style={{
-            position: 'absolute',
-            inset: 0,
+            ...transitionMediaStyle,
             backgroundImage: `url(${poster})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
@@ -218,12 +233,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         poster={poster}
         onError={finish}
         style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center top',
+          ...transitionMediaStyle,
           opacity: frameVisible ? 1 : 0,
           transition: 'opacity 60ms linear',
         }}
