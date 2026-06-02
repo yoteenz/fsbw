@@ -3,6 +3,7 @@ import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
+  lobbyLoungeTransitionMediaPosition,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
 import {
@@ -20,7 +21,9 @@ type Props = {
 const posterForDirection = (direction: LobbyLoungeTransitionDirection) =>
   direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
 
-/** Same box + crop as `sceneCarouselBackgroundLayerStyle` (cover, center top). */
+const transitionMediaPosition = lobbyLoungeTransitionMediaPosition();
+
+/** Same box + crop as `sceneCarouselBackgroundLayerStyle` (cover, center top + Y nudge). */
 const transitionMediaStyle = {
   position: 'absolute' as const,
   top: 0,
@@ -28,7 +31,7 @@ const transitionMediaStyle = {
   width: '100%',
   height: '100%',
   objectFit: 'cover' as const,
-  objectPosition: 'center top',
+  objectPosition: transitionMediaPosition,
 };
 
 /**
@@ -81,7 +84,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
             ...transitionMediaStyle,
             backgroundImage: `url(${poster})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center top',
+            backgroundPosition: transitionMediaPosition,
             backgroundRepeat: 'no-repeat',
           }}
         />

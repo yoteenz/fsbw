@@ -12,6 +12,15 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'seedance98495';
 /** Reverse playback when using forward MP4 backwards (`playbackRate` or RAF fallback). */
 export const LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE = 2;
 
+/** Nudge transition video/poster down to match composite `cover` backgrounds on device. */
+export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
+
+export function lobbyLoungeTransitionMediaPosition(): string {
+  const offsetY = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
+  if (!offsetY) return 'center top';
+  return `center ${offsetY}px`;
+}
+
 /** H.264 for mobile; MOV kept as remote fallback in video element. */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_SRC = `/assets/lobby-lounge-transition-seedance.mp4?v=${LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION}`;
 
