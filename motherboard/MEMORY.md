@@ -22783,3 +22783,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **32 → 34**. Register and case slide offset unchanged.
 
 **Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`3513623e`** on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lobby register/phone popovers: zoom-stable inline anchoring
+
+**Context:** User reported register/phone popover cards and assets jump to wrong positions when zooming; pop-ups should stay fixed above their props.
+
+**Root cause:** Open state portaled a **duplicate** register/phone asset + panel to `document.body` with `position: fixed` coords from `getBoundingClientRect()`. Browser zoom / visual viewport changes desync fixed viewport coords from the inline props still in the carousel transform tree.
+
+**Fix:** **`LobbyCasePropPopover.tsx`** — removed body portal layer; panel uses **`position: absolute`** + **`bottom: calc(100% + gap)`** on the same wrapper as the prop image (moves with zoom/scroll). **`lobby/page.tsx`** — scrim is **`position: absolute`** on the lobby slide (`LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX` **15**), display case stays **z-index 20**; no body `createPortal` scrim. **`lobbyPaymentIcons.ts`** — **`LOBBY_CASE_POPOVER_OPEN_Z_INDEX` 30** (was **999999** portaled stack).
+
+**Changes:** Commit **`0d37fe61`** on **`master`** and **`preview/mobile`**.
+
+**Conventions:** Lobby case props: anchor popovers in-document above the asset; avoid fixed body duplicates for zoom-sensitive UI.
