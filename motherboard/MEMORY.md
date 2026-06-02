@@ -22849,3 +22849,80 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (`a7b5f0f4`):** **`listsViewModeToggleRowStyle`** in **`src/pages/wishlist/lists/page.tsx`** — **`paddingRight: 2px`** on the toggle row to inset the control group from the clipping boundary.
 
 **Conventions:** Line/grid toggle on lists page — keep small right inset when parent uses overflow hidden.
+
+---
+
+## 2026-06-02 — Lobby animations off (carousel + TV); TV thumbnail Y-align with subcategories
+
+**Context:** User asked to remove lobby animation for now (needs improvement) and lower TV content popup thumbnails so their top aligns with the first subcategory text line (thumbs were too high vs NEW DROPS / CAMPAIGNS).
+
+**Changes (`a85d6498`):**
+- **`lobbyLoungeTransitionVideo.ts`** — **`LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = false`**; lobby→lounge Kling middle slide off by default; opt in **`?lobbyTransitionVideo=1`**.
+- **`loungeTvFrame.ts`** — **`LOUNGE_TV_OVERLAY_ANIMATION_ENABLED = false`**; play opens content TV instantly (no curtains, grow, hand, CRT static, shrink close).
+- **`LoungeTvOverlay.tsx`** — instant open/close when flag false; **`measureMediaTop`** aligns thumbnail grid **`top`** to first sidebar button text (button top + padding-top).
+- **`lobby/page.tsx`** — comment update on play control.
+
+**Re-enable later:** set both flags to **`true`** in constants when animation pass is ready.
+
+---
+
+## 2026-06-02 — Lounge TV: Slay Tips blog layout; Watch + Learn stays video
+
+**Context:** User asked for **SLAY TIPS** on the lounge content TV popup to use **blog-style** layout (header, body, attachments, comments) instead of the video thumbnail/player pattern; **WATCH + LEARN** should keep the current video UI.
+
+**Changes (`4c12911a`):**
+- **`LoungeTvBlogPostView.tsx`** — `LoungeTvBlogPostList` (vertical cards with title + excerpt) and `LoungeTvBlogPostDetail` (header, body paragraphs, ATTACHMENTS section with simple image/video embed, COMMENTS placeholder).
+- **`LoungeTvOverlay.tsx`** — `mainTab === 'slay-tips'` opens blog list/detail; `watch-learn` still uses 3×3 grid + `LoungeTvWatchLearnPlayer`.
+- **`loungeTvContent.ts`** — tile type extended with `format`, `body`, `attachmentSrc`/`attachmentType`; `withSlayTipsBlogMeta` seeds static slay-tips copy; watch-learn uses `format: 'video'`.
+- **`loungeTvAdminConfig.ts`** — slay-tips admin items map to blog tiles (no `videoSrc`); media URL becomes attachment.
+
+**Conventions:** Slay Tips = blog UX only; Watch + Learn = video grid + in-player controls; Brand = thumbnail grid (no expanded player).
+
+---
+
+## 2026-06-02 — Cart dropdown VIEW DETAILS body: Futura PT Book (not Medium)
+
+**Context:** User asked for the **details text** in the cart dropdown (expanded VIEW DETAILS content) to use **Futura Book**, not Futura Medium.
+
+**Topics covered (entire conversation so far in this chat):**
+- Prior work in session: lounge TV overlay fixes, wishlist grid toggle clip, lobby/TV animations disabled, TV thumbnail Y-align, Slay Tips blog vs Watch + Learn video, shelf overlay regression restore.
+- Cart dropdown typography: expanded details `<p>` already had `fontFamily: '"Futura PT Book"'` but also `className="font-bold"` (weight 700), which caused the browser to faux-bold Book and read as Medium.
+
+**Decisions / outcomes:**
+- Removed `font-bold` from the details layer; set explicit `fontWeight: 400` and full Book font stack on the expanded details block only (VIEW DETAILS / CLOSE DETAILS toggle labels remain Futura PT Medium).
+
+**Changes:**
+- `src/components/CartDropdown.tsx` — details `CartLineTextLayer` paragraph styling (`2de14de5` on `master` / `preview/mobile`).
+
+**Conventions:**
+- Futura PT Book `@font-face` is `font-weight: normal` only; do not pair Book with Tailwind `font-bold` on cart details lines.
+
+---
+
+## 2026-06-02 — Checkout order summary: black prices Futura PT Book
+
+**Context:** User asked for black price text in the checkout page summary section (below thumbnails) to be Futura Book, not Futura Medium.
+
+**Changes:**
+- `src/pages/checkout/page.tsx` — per-line item price under cart thumbnails (bundle + standard) and SUBTOTAL label/amount in ORDER SUMMARY cost breakdown: `Futura PT Book` with `fontWeight: 400` (red subtitle lines under thumbs unchanged at Medium).
+
+**Conventions:** Checkout ORDER SUMMARY black amounts align with other breakdown rows (already Book); only per-thumb prices and SUBTOTAL were still Medium.
+
+---
+
+## 2026-06-02 — Checkout: BCF price spacing; save shipping address checkbox behavior
+
+**Context:** User asked for (1) 1px less space above black price text for BCF products on checkout only, and (2) SAVE SHIPPING ADDRESS checkbox should not disable shipping inputs—only persist to account shipping addresses.
+
+**Changes (`453120e2`):**
+- `src/pages/checkout/page.tsx` — BCF `shop-texture-category` line price `marginTop` 5→4px; BCF bundle-deal price block 7→6px. Renamed `savePaymentMethod` → `saveShippingAddress`; removed `disabled` / `not-allowed` cursor on all shipping fields. On order submit when checked, append address to `savedAddresses` and set `defaultAddress` when none (country as full name via `countryCheckoutCodeToFullName`, same shape as account → shipping page).
+
+**Conventions:** SAVE SHIPPING ADDRESS is save-only; USE DEFAULT ADDRESS still loads/clears fields. Payment card save remains `savePaymentMethodCard`.
+
+---
+
+## 2026-06-02 — Checkout main card: restore bottom black border
+
+**Context:** User reported the bottom black border of the checkout MAIN card was broken (side borders visible, bottom horizontal line missing).
+
+**Fix:** `src/pages/checkout/page.tsx` — replaced `boxShadow: inset 0 0 0 1px #000` with `border border-black` + `borderWidth: 1.3px` (same pattern as shopping bag, order form, product pages). Inset shadow was unreliable at the bottom with backdrop-blur/flex layout on mobile.

@@ -7,15 +7,15 @@ import {
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
-  LOUNGE_TV_BEZEL,
   LOUNGE_TV_OVERLAY_SIZE_SCALE,
-  LOUNGE_TV_SCREEN_ASPECT,
-  LoungeTvFrame,
-  loungeTvDimensionsFromScreenWidth,
+  LoungeTvDesignFrame,
+  loungeTvDesignDimensionsFromFrameHeight,
+  loungeTvDesignDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
+import { LoungeTvBlogPostDetail, LoungeTvBlogPostList } from './LoungeTvBlogPostView';
 import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
 import { LoungeTvContentProtection } from './LoungeTvContentProtection';
 import {
@@ -119,8 +119,6 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
 /** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
 const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
 const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
-/** Vertical space between sidebar subcategory labels (NEW DROPS, CAMPAIGNS, etc.). */
-const LOUNGE_TV_SIDEBAR_ITEM_GAP_PX = 10;
 
 /** Default media insets until nav tabs are measured (sidebar + gap reserved). */
 const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
@@ -223,6 +221,7 @@ function LoungeTvScreen({
   onSidebarChange: (id: string) => void;
 }) {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [tilesRevision, setTilesRevision] = useState(0);
   const [viewedRevision, setViewedRevision] = useState(0);
   const bodyRowRef = useRef<HTMLDivElement>(null);
@@ -251,18 +250,32 @@ function LoungeTvScreen({
     if (!selectedVideoId) return;
     markLoungeTvTileViewed(selectedVideoId);
   }, [selectedVideoId]);
+
+  useEffect(() => {
+    if (!selectedPostId) return;
+    markLoungeTvTileViewed(selectedPostId);
+  }, [selectedPostId]);
+
   const isWatchLearn = mainTab === 'watch-learn';
-  const selectedTile =
+  const isSlayTips = mainTab === 'slay-tips';
+  const watchLearnTile =
     isWatchLearn && selectedVideoId && tiles
       ? tiles.find((t) => t.id === selectedVideoId && t.videoSrc) ?? null
       : null;
+  const slayTipsPost =
+    isSlayTips && selectedPostId && tiles ? tiles.find((t) => t.id === selectedPostId) ?? null : null;
 
   useEffect(() => {
     if (!isWatchLearn) setSelectedVideoId(null);
   }, [isWatchLearn]);
 
   useEffect(() => {
+    if (!isSlayTips) setSelectedPostId(null);
+  }, [isSlayTips]);
+
+  useEffect(() => {
     setSelectedVideoId(null);
+    setSelectedPostId(null);
   }, [sidebarId]);
 
   const measureMediaInsets = useCallback(() => {
@@ -297,7 +310,12 @@ function LoungeTvScreen({
         setSelectedVideoId(null);
         return;
       }
+      if (tab === 'slay-tips' && mainTab === 'slay-tips') {
+        setSelectedPostId(null);
+        return;
+      }
       setSelectedVideoId(null);
+      setSelectedPostId(null);
       onMainTabChange(tab);
     },
     [mainTab, onMainTabChange]
@@ -306,24 +324,32 @@ function LoungeTvScreen({
   const handleSidebarClick = useCallback(
     (id: string) => {
       setSelectedVideoId(null);
+      setSelectedPostId(null);
       onSidebarChange(id);
     },
     [onSidebarChange]
   );
 
+  const handleSlayTipsSelect = useCallback(
+    (tileId: string) => {
+      const tile = tiles?.find((t) => t.id === tileId);
+      if (tile && loungeTvTileShowsAsNew(tile)) markLoungeTvTileViewed(tileId);
+      setSelectedPostId(tileId);
+    },
+    [tiles]
+  );
+
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
     fontSize: '9px',
-    lineHeight: 1.35,
     letterSpacing: '0.04em',
     textTransform: 'uppercase',
     color: active || accent ? BRAND_RED : '#ffffff',
     background: 'none',
     border: 'none',
-    padding: '3px 0',
+    padding: '2px 0',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    display: 'block',
   });
 
   const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
@@ -392,10 +418,10 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            gap: `${LOUNGE_TV_SIDEBAR_ITEM_GAP_PX}px`,
+            gap: '6px',
             flexShrink: 0,
             width: '72px',
-            paddingTop: '4px',
+            paddingTop: '2px',
           }}
           aria-label="Subcategories"
         >
@@ -430,62 +456,68 @@ function LoungeTvScreen({
             WebkitOverflowScrolling: 'touch',
           }}
         >
-          {selectedTile ? (
-            <LoungeTvWatchLearnPlayer tile={selectedTile} />
+          {watchLearnTile ? (
+            <LoungeTvWatchLearnPlayer tile={watchLearnTile} />
+          ) : slayTipsPost ? (
+            <LoungeTvBlogPostDetail tile={slayTipsPost} onBack={() => setSelectedPostId(null)} />
           ) : tiles && tiles.length > 0 ? (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                columnGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
-                rowGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
-                width: '100%',
-              }}
-            >
-              {tiles.map((tile) => {
-                const showNew = loungeTvTileShowsAsNew(tile);
-                return (
-                <button
-                  key={tile.id}
-                  type="button"
-                  style={{
-                    position: 'relative',
-                    aspectRatio: '1',
-                    padding: 0,
-                    border: 'none',
-                    background: '#1a1a1a',
-                    cursor: 'pointer',
-                    overflow: 'hidden',
-                  }}
-                  aria-label={tile.title}
-                  onClick={() => {
-                    if (showNew) markLoungeTvTileViewed(tile.id);
-                    if (isWatchLearn && tile.videoSrc) setSelectedVideoId(tile.id);
-                  }}
-                >
-                  {tile.thumbSrc ? (
-                    <img
-                      src={tile.thumbSrc}
-                      alt=""
-                      draggable={false}
+            isSlayTips ? (
+              <LoungeTvBlogPostList tiles={tiles} onSelect={handleSlayTipsSelect} />
+            ) : (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                  columnGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
+                  rowGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
+                  width: '100%',
+                }}
+              >
+                {tiles.map((tile) => {
+                  const showNew = loungeTvTileShowsAsNew(tile);
+                  return (
+                    <button
+                      key={tile.id}
+                      type="button"
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        opacity: 0.85,
-                        display: 'block',
-                        filter: showNew ? 'blur(4px)' : 'none',
-                        transform: showNew ? 'scale(1.06)' : 'none',
-                        transition: 'filter 0.25s ease',
-                        WebkitUserDrag: 'none',
-                      } as React.CSSProperties}
-                    />
-                  ) : null}
-                  <LoungeTvTileLabel title={tile.title} showNew={showNew} />
-                </button>
-              );
-              })}
-            </div>
+                        position: 'relative',
+                        aspectRatio: '1',
+                        padding: 0,
+                        border: 'none',
+                        background: '#1a1a1a',
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                      }}
+                      aria-label={tile.title}
+                      onClick={() => {
+                        if (showNew) markLoungeTvTileViewed(tile.id);
+                        if (isWatchLearn && tile.videoSrc) setSelectedVideoId(tile.id);
+                      }}
+                    >
+                      {tile.thumbSrc ? (
+                        <img
+                          src={tile.thumbSrc}
+                          alt=""
+                          draggable={false}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            opacity: 0.85,
+                            display: 'block',
+                            filter: showNew ? 'blur(4px)' : 'none',
+                            transform: showNew ? 'scale(1.06)' : 'none',
+                            transition: 'filter 0.25s ease',
+                            WebkitUserDrag: 'none',
+                          } as React.CSSProperties}
+                        />
+                      ) : null}
+                      <LoungeTvTileLabel title={tile.title} showNew={showNew} />
+                    </button>
+                  );
+                })}
+              </div>
+            )
           ) : null}
         </div>
       </div>
@@ -689,13 +721,12 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
-  let { frameW: targetFrameW, frameH: targetFrameH } = loungeTvDimensionsFromScreenWidth(targetScreenW);
+  let { frameW: targetFrameW, frameH: targetFrameH } =
+    loungeTvDesignDimensionsFromScreenWidth(targetScreenW);
   const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
-    targetFrameH = maxFrameH;
-    const targetScreenH = targetFrameH - LOUNGE_TV_BEZEL.top - LOUNGE_TV_BEZEL.bottom;
-    targetScreenW = targetScreenH / LOUNGE_TV_SCREEN_ASPECT;
-    ({ frameW: targetFrameW } = loungeTvDimensionsFromScreenWidth(targetScreenW));
+    ({ frameW: targetFrameW, frameH: targetFrameH } =
+      loungeTvDesignDimensionsFromFrameHeight(maxFrameH));
   }
   const frameLeft = (vw - targetFrameW) / 2;
   const frameTop = (vh - targetFrameH) / 2;
@@ -751,7 +782,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         />
       ) : null}
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvFrame
+        <LoungeTvDesignFrame
           fill
           closeVisible={animatedIn && closePhase === 'idle'}
           onClose={() => requestClose()}
@@ -779,7 +810,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvFrame>
+        </LoungeTvDesignFrame>
       </div>
     </div>,
     document.body

@@ -716,7 +716,7 @@ const LoungePage: React.FC = () => {
         })}
       />
 
-      {/* TV + play — play opens animated black screen + theater curtains */}
+      {/* TV + play — opens lounge content TV (animation off while sequence is reworked) */}
        <div
          ref={tvFrameRef}
          style={{

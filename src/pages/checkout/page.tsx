@@ -3203,11 +3203,11 @@ function CheckoutPage() {
             </div>
           </div>
 
-          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form. Inset box-shadow used for even border on all sides (avoids subpixel unevenness with flex + % width). */}
+          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form. */}
           <div
-            className={showMobileMenu ? 'menu-toggle-card flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
+            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
-              boxShadow: 'inset 0 0 0 1px #000000',
+              borderWidth: '1.3px',
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
