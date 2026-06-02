@@ -22726,3 +22726,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `src/pages/lobby/page.tsx` — scrim `style` on `createPortal` dimmer when `lobbyCasePopover !== null`. Commit **`76295ff8`** on **`master`** and **`preview/mobile`**.
 
 **Conventions:** Lobby register/phone scrim: lighter alpha than cap chart (**0.525** vs **0.7**) but same **3px** backdrop blur as other modals.
+
+---
+
+## 2026-06-02 — Fal prompt: photoreal acrylic display case on full lobby hero
+
+**Context:** User asked to create and send a Fal prompt to add the acrylic display case to their lobby hero image (rose wall + neon + three shelf rows + pedestals) in the same position as `src/pages/lobby/page.tsx`, with 3D photorealistic acrylic detailing.
+
+**Topics covered:**
+- New **`LOBBY_DISPLAY_CASE_ON_SCENE_*`** in **`sceneLobbyDisplayCaseFal.ts`** — two-image **`fal-ai/nano-banana-pro/edit`**: IMAGE 1 = full lobby frame (preserve scene), IMAGE 2 = **`CASE.png`** reference; placement matches lobby case block (center + ~32px right, below bottom shelf, between pedestal urns); acrylic PMMA edge thickness, specular/neon reflections, transparent panels (not frosted), SLAY TOOLS / LACE PRODUCTS / HAIR PRODUCTS labels, register + terminal on top deck.
+- **`scripts/lobby-fal-display-case-prompt.mjs`** — resolved prompt string for Node runner (avoids reading TS template literals literally).
+- **`scripts/lobby-fal-add-display-case-to-scene.mjs`** + **`npm run lobby:fal-add-display-case`** — uploads scene + case ref, calls Fal, saves **`tmp/lobby-scene-with-display-case.png`** (override with **`OUTPUT_PATH`**, **`LOBBY_SCENE_IMAGE`**, **`LOBBY_CASE_REF_IMAGE`**, **`LOBBY_FAL_RESOLUTION`**).
+- **`LOBBY_SCENE_FAL_PROMPTS.displayCaseOnLobbyScene`** in **`lobbySceneAssets.ts`**.
+- Ran Fal successfully (2K): output **`https://v3b.fal.media/files/b/0a9c9f40/zOByeQ3Io3Ygn6F8jjIn5_hrX3DT7m.png`**, saved **`tmp/lobby-scene-with-display-case-v2.png`** (first run used unexpanded `${}` prompt; v2 uses resolved prompt). Default input was **`landing-background.png`** — user should re-run with their shelf composite: **`LOBBY_SCENE_IMAGE=/path/to/composite.jpeg npm run lobby:fal-add-display-case`**.
+
+**Changes:** `sceneLobbyDisplayCaseFal.ts`, `lobbySceneAssets.ts`, `scripts/lobby-fal-*.mjs`, `package.json`. Commit **`b0f76e8c`** on **`master`** + **`preview/mobile`**.
+
+**Conventions:** In-app case slot: **`translate(calc(-50% + 32px), calc(-50% + 255px))`**, width **`LOBBY_CASE_DISPLAY_WIDTH_PX` (184)**. For Fal on a full hero JPEG, pass the composite as IMAGE 1 + **`CASE.png`** as IMAGE 2.
