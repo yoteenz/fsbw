@@ -22926,3 +22926,23 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User reported the bottom black border of the checkout MAIN card was broken (side borders visible, bottom horizontal line missing).
 
 **Fix:** `src/pages/checkout/page.tsx` — replaced `boxShadow: inset 0 0 0 1px #000` with `border border-black` + `borderWidth: 1.3px` (same pattern as shopping bag, order form, product pages). Inset shadow was unreliable at the bottom with backdrop-blur/flex layout on mobile.
+
+---
+
+## 2026-06-02 — Checkout summary page aligned with checkout flow
+
+**Context:** User wanted `/checkout/summary` (`CheckoutConfirmPage`) aligned with checkout: section spacing (order summary, shipping, payment), tighter thumbnail scroll, remove extra bottom buttons, fix standard/premium logic to match checkout (order type, not subscription tier).
+
+**Topics covered (entire conversation so far):**
+- Earlier in chat: cart dropdown VIEW DETAILS Futura Book; checkout black prices Book + BCF margins; save-shipping-address no longer disables fields; checkout main card border; BCF cart VIEW DETAILS spacing.
+- Summary thumbnail strip matched checkout: `minHeight: 200px`, `overflowX: hidden`, `.checkout-cart-items-center-lg`, checkout scroll limits (no `calc(50% - 160px)` / `-10px` margin).
+- Summary card sections use `flexDirection: column` + `gap: 24px` instead of per-section `marginBottom: 20px`.
+- Removed `showLongPremiumConfirmSummary` (6/12mo tier): in-card ORDER TRACKING block and GO TO CONCIERGE button.
+- Kept checkout-aligned gating: `isPremiumMembershipSummary`, `isDigitalFulfillmentSummary`, digital ORDER STATUS, SIGN ORDER FORM / HOME / TRACK YOUR ORDERS when menu closed.
+- `isSubscriptionUpgrade` from `orderData` for thumbnail metrics and scroll handlers.
+
+**Decisions / outcomes:** Premium/standard on summary follows order/cart state from checkout navigation, not user's long-term premium subscription tier.
+
+**Changes:** `src/pages/checkout/confirm/page.tsx` (commit `4feefd37` on `master` + `preview/mobile`).
+
+**Conventions:** Reuse checkout strip CSS class and scroll width math when aligning confirm/summary thumbnails with checkout.
