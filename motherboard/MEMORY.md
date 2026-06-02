@@ -22797,3 +22797,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** Commit **`0d37fe61`** on **`master`** and **`preview/mobile`**.
 
 **Conventions:** Lobby case props: anchor popovers in-document above the asset; avoid fixed body duplicates for zoom-sensitive UI.
+
+---
+
+## 2026-06-02 — Lobby register popover: pay-in-four Bohemy header → payment plans
+
+**Context:** User asked to change the gray Bohemy **pay in four** section header on the cash register (register) popover to **payment plans**.
+
+**Changes:** **`LOBBY_PAYMENT_PAY_OVER_TIME_LABEL`** in **`src/constants/lobbyPaymentIcons.ts`**: **`pay in four`** → **`payment plans`**. Commit **`229bf120`** on **`master`** and **`preview/mobile`**.
