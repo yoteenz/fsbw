@@ -17,7 +17,11 @@ import {
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
-import { sceneCarouselBackgroundLayerStyle, sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
+import {
+  sceneCarouselBackgroundLayerStyle,
+  sceneCarouselSlideMinHeightCss,
+  sceneSlideShellStyle,
+} from '../../utils/sceneCarouselBackground';
 import { LobbyLoungeTransitionOverlay } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { LoungeSceneTvHotspot } from '../../components/lounge/LoungeSceneTvHotspot';
@@ -28,8 +32,16 @@ import {
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
 
+type SceneTransitionOverlayProps = {
+  active: boolean;
+  direction: LobbyLoungeTransitionDirection;
+  onComplete: () => void;
+};
+
 // Lobby Component
-const LobbyPage: React.FC = () => {
+const LobbyPage: React.FC<{ roomTransitionOverlay?: SceneTransitionOverlayProps | null }> = ({
+  roomTransitionOverlay = null,
+}) => {
   const navigate = useNavigate();
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
@@ -89,16 +101,16 @@ const LobbyPage: React.FC = () => {
   }, []);
 
   return (
-    <div
-      className="relative"
-      style={{
-        minHeight: sceneCarouselSlideMinHeightCss(),
-        width: '100vw',
-        flexShrink: 0,
-        backgroundColor: '#ffffff',
-      }}
-    >
+    <div className="relative" style={sceneSlideShellStyle()}>
       <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOBBY_BACKGROUND_SRC)} />
+
+      {roomTransitionOverlay ? (
+        <LobbyLoungeTransitionOverlay
+          active={roomTransitionOverlay.active}
+          direction={roomTransitionOverlay.direction}
+          onComplete={roomTransitionOverlay.onComplete}
+        />
+      ) : null}
 
       <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
         <LobbySceneHotspots />
@@ -193,27 +205,30 @@ const LobbyPage: React.FC = () => {
 };
 
 // Lounge Component
-const LoungePage: React.FC<{ measureRef: RefObject<HTMLDivElement> }> = ({ measureRef }) => {
+const LoungePage: React.FC<{
+  measureRef: RefObject<HTMLDivElement>;
+  roomTransitionOverlay?: SceneTransitionOverlayProps | null;
+}> = ({ measureRef, roomTransitionOverlay = null }) => {
   const handlePrevious = useCallback(() => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
   }, []);
 
   return (
-    <div
-      ref={measureRef}
-      className="bg-white relative lounge-page"
-      style={{
-        minHeight: sceneCarouselSlideMinHeightCss(),
-        width: '100vw',
-        overflow: 'visible',
-        display: 'block',
-        margin: 0,
-        padding: 0,
-        flexShrink: 0,
-        backgroundColor: 'white',
-      }}
-    >
+    <div className="bg-white relative lounge-page" style={sceneSlideShellStyle()}>
+      <div
+        ref={measureRef}
+        aria-hidden
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+      />
       <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOUNGE_BACKGROUND_SRC)} />
+
+      {roomTransitionOverlay ? (
+        <LobbyLoungeTransitionOverlay
+          active={roomTransitionOverlay.active}
+          direction={roomTransitionOverlay.direction}
+          onComplete={roomTransitionOverlay.onComplete}
+        />
+      ) : null}
 
       <LoungeSceneTvHotspot measureRef={measureRef} />
 
@@ -529,39 +544,32 @@ const LobbyApp: React.FC = () => {
             willChange: isTransitioning ? 'transform' : 'auto',
           }}
         >
-          <div
-            style={{
-              position: 'relative',
-              width: '100vw',
-              flexShrink: 0,
-              minHeight: sceneCarouselSlideMinHeightCss(),
-            }}
-          >
-            <LobbyPage />
-            {transitionVideoEnabled && roomTransitionOverlay === 'forward' ? (
-              <LobbyLoungeTransitionOverlay
-                active
-                direction="forward"
-                onComplete={() => completeRoomTransitionOverlay('forward')}
-              />
-            ) : null}
+          <div style={{ flexShrink: 0 }}>
+            <LobbyPage
+              roomTransitionOverlay={
+                transitionVideoEnabled && roomTransitionOverlay === 'forward'
+                  ? {
+                      active: true,
+                      direction: 'forward',
+                      onComplete: () => completeRoomTransitionOverlay('forward'),
+                    }
+                  : null
+              }
+            />
           </div>
-          <div
-            style={{
-              position: 'relative',
-              width: '100vw',
-              flexShrink: 0,
-              minHeight: sceneCarouselSlideMinHeightCss(),
-            }}
-          >
-            <LoungePage measureRef={loungeSlideMeasureRef} />
-            {transitionVideoEnabled && roomTransitionOverlay === 'reverse' ? (
-              <LobbyLoungeTransitionOverlay
-                active
-                direction="reverse"
-                onComplete={() => completeRoomTransitionOverlay('reverse')}
-              />
-            ) : null}
+          <div style={{ flexShrink: 0 }}>
+            <LoungePage
+              measureRef={loungeSlideMeasureRef}
+              roomTransitionOverlay={
+                transitionVideoEnabled && roomTransitionOverlay === 'reverse'
+                  ? {
+                      active: true,
+                      direction: 'reverse',
+                      onComplete: () => completeRoomTransitionOverlay('reverse'),
+                    }
+                  : null
+              }
+            />
           </div>
         </div>
       </div>
