@@ -1,27 +1,21 @@
 import type React from 'react';
 
-/** Shared lobby + lounge slide art (`landing-background.png`, `landing2-background.png`). */
-export const SCENE_CAROUSEL_BG_WIDTH = 3072;
-export const SCENE_CAROUSEL_BG_HEIGHT = 5504;
+import {
+  FINAL_SCENE_ART_HEIGHT,
+  FINAL_SCENE_ART_WIDTH,
+} from '../constants/finalLobbySceneAssets';
 
-/**
- * Crown molding row (center column sample on bundled PNGs). Used to align lounge under `cover`.
- * Re-measure after replacing either background asset.
- */
-export const LOBBY_SCENE_BG_CROWN_Y_PX = 275;
-export const LOUNGE_SCENE_BG_CROWN_Y_PX = 643;
+/** Shared lobby + lounge slide art (`final-lobby.png`, `final-lounge.png`). */
+export const SCENE_CAROUSEL_BG_WIDTH = FINAL_SCENE_ART_WIDTH;
+export const SCENE_CAROUSEL_BG_HEIGHT = FINAL_SCENE_ART_HEIGHT;
 
-export const LOBBY_SCENE_BG_CROWN_Y_RATIO = LOBBY_SCENE_BG_CROWN_Y_PX / SCENE_CAROUSEL_BG_HEIGHT;
-export const LOUNGE_SCENE_BG_CROWN_Y_RATIO = LOUNGE_SCENE_BG_CROWN_Y_PX / SCENE_CAROUSEL_BG_HEIGHT;
+/** @deprecated Final LP composites share geometry — both slides use `center top`. */
+export const LOBBY_SCENE_BG_CROWN_Y_PX = 0;
+export const LOUNGE_SCENE_BG_CROWN_Y_PX = 0;
 
-/** Extra upward shift when QA says lounge ceiling/crown still reads low vs lobby under `cover`. */
-export const LOUNGE_SCENE_BG_POSITION_Y_EXTRA_RATIO = 0.06;
-
-/** Negative Y shifts lounge art up so crown meets lobby on carousel swipe (tune after new PNGs). */
+/** @deprecated */
 export function loungeSceneBackgroundPositionY(): string {
-  const deltaRatio =
-    LOUNGE_SCENE_BG_CROWN_Y_RATIO - LOBBY_SCENE_BG_CROWN_Y_RATIO + LOUNGE_SCENE_BG_POSITION_Y_EXTRA_RATIO;
-  return `calc(0% - ${(deltaRatio * 100).toFixed(2)}%)`;
+  return 'center top';
 }
 
 /** Rendered height when background is `background-size: 100% auto` (no crop). */

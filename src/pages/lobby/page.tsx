@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   lobbyCarouselIndexFromPath,
@@ -9,7 +8,6 @@ import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { onSignInSuccess } from '../../utils/adminAuth';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
-import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
   syncAllFromApi,
@@ -19,78 +17,17 @@ import {
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
-import {
-  loungePageMinHeightCss,
-  loungeSalonChairsAnchorStyle,
-  loungeSalonChairsFloorShadowStyle,
-  loungeSalonChairsImageStyle,
-  loungeSalonChairsStackStyle,
-  useLoungeLargeViewport,
-} from '../../utils/loungeSceneLayout';
-import {
-  loungeSceneBackgroundPositionY,
-  sceneCarouselBackgroundLayerStyle,
-  sceneCarouselSlideMinHeightCss,
-} from '../../utils/sceneCarouselBackground';
-import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
-import {
-  LOBBY_CASE_POPOVER_SCRIM_ALPHA,
-  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
-} from '../../constants/lobbyPaymentIcons';
+import { sceneCarouselBackgroundLayerStyle, sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
-import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
+import { LoungeSceneTvHotspot } from '../../components/lounge/LoungeSceneTvHotspot';
+import { FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
 import {
+  isLobbyLoungeReverseTransitionAvailable,
   isLobbyTransitionVideoEnabledFromSearch,
+  type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import {
-  LOBBY_CASE_DISPLAY_WIDTH_PX,
-  LOBBY_CASE_SLIDE_OFFSET_X_PX,
-  LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX,
-  LOBBY_CASE_PHONE_ANCHOR_TOP_PX,
-  LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX,
-  LOBBY_CASE_PHONE_NUDGE_LEFT_PX,
-  LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX,
-  LOBBY_CASE_REGISTER_ANCHOR_TOP_PX,
-  LOBBY_PHONE_SRC,
-} from '../../constants/lobbyCaseAssets';
-import {
-  LOBBY_CASE_REGISTER_SRC,
-  LOBBY_CASE_SRC,
-  LOBBY_NEON_BOOKING_FALLBACK_SRC,
-  LOBBY_NEON_BOOKING_SRC,
-  LOBBY_NEON_LOGO_HEIGHT_PX,
-  LOBBY_NEON_LOGO_SRC,
-  LOBBY_NEON_NAV_HEIGHT_PX,
-  LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX,
-  LOBBY_NEON_NAV_ROW_OFFSET_Y_PX,
-  LOBBY_NEON_NAV_ROW_PADDING_X_PX,
-  LOBBY_NEON_NAV_ROW_WIDTH_VW,
-  LOBBY_NEON_PRODUCTS_SRC,
-  LOBBY_NEON_TOOLS_SRC,
-  LOBBY_ROSE_BACKGROUND_SRC,
-  LOBBY_SHELF_CUSTOM_SRC,
-  LOBBY_SHELF_HD_SRC,
-  LOBBY_SHELF_TRANSPARENT_SRC,
-} from '../../constants/lobbySceneAssets';
-import {
-  LOUNGE_BACKGROUND_SRC,
-  LOUNGE_SALON_CHAIRS_SRC,
-  LOUNGE_TV_DESIGN_SRC,
-} from '../../constants/loungeSceneAssets';
-import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
-import {
-  LOBBY_PHONE_POPOVER_SECTIONS,
-  LOBBY_PHONE_POPOVER_TITLE,
-  LOBBY_REGISTER_POPOVER_TITLE,
-} from '../../constants/lobbyPropPopoverCopy';
-import {
-  LOUNGE_LOBBY_TV_OFFSET_X_PX,
-  LOUNGE_LOBBY_TV_OFFSET_Y_PX,
-  LOUNGE_TV_PLAY_BUTTON_COLOR,
-  loungeLobbyTvDesignPlayButtonStyle,
-  loungeTvDesignDimensionsFromFrameHeight,
-} from '../../components/lounge/loungeTvFrame';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -152,30 +89,6 @@ const LobbyPage: React.FC = () => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-next'));
   }, []);
 
-  const goToHomeShop = useCallback(() => {
-    navigate('/home/shop');
-  }, [navigate]);
-
-  const goToHomeTools = useCallback(() => {
-    navigate('/home/tools');
-  }, [navigate]);
-
-  const goToShopFrontals = useCallback(() => {
-    navigate('/shop/frontals');
-  }, [navigate]);
-
-  const goToShopBundles = useCallback(() => {
-    navigate('/shop/bundles');
-  }, [navigate]);
-
-  const goToShopUnits = useCallback(() => {
-    navigate('/shop/units');
-  }, [navigate]);
-
-  const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
-  const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
-  const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
-
   return (
     <div
       className="relative"
@@ -186,403 +99,12 @@ const LobbyPage: React.FC = () => {
         backgroundColor: '#ffffff',
       }}
     >
-      {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
-      <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
+      <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOBBY_BACKGROUND_SRC)} />
 
-      {/* Main Content Container */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
-        {/* Placeholder for logo to maintain flex flow */}
-        <div style={{ height: '288px', width: '1px', opacity: 0, flexShrink: 0 }}>
-          {/* Invisible spacer to maintain layout */}
-        </div>
-        
-        {/* Neon Logo - Center - Absolute positioned to escape container */}
-        <div style={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, calc(-50% - 240px))', 
-          zIndex: 20,
-          width: 'fit-content'
-        }}>
-          <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
-            <img
-              src={LOBBY_NEON_LOGO_SRC}
-              alt="Frontal Slayer"
-              onClick={goToHomeShop}
-              style={{
-                width: 'auto',
-                height: LOBBY_NEON_LOGO_HEIGHT_PX,
-                maxWidth: 'none',
-                display: 'block',
-                cursor: 'pointer',
-              }}
-            />
-          </div>
-        </div>
-        
-        {/* Navigation Links — left / center / right thirds inside rose floral column */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: `translate(-50%, calc(-50% - ${LOBBY_NEON_NAV_ROW_OFFSET_Y_PX}px))`,
-            zIndex: 35,
-            margin: 0,
-            padding: 0,
-            pointerEvents: 'none',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
-            alignItems: 'center',
-            width: `min(${LOBBY_NEON_NAV_ROW_WIDTH_VW}vw, ${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px)`,
-            maxWidth: `${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px`,
-            paddingLeft: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
-            paddingRight: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
-            boxSizing: 'border-box',
-          }}
-        >
-          {/* Products → /home/shop (full asset is the hit target) */}
-          <span
-            role="button"
-            tabIndex={0}
-            onClick={goToHomeShop}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                goToHomeShop();
-              }
-            }}
-            style={{
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              minWidth: 0,
-              pointerEvents: 'auto',
-              cursor: 'pointer',
-            }}
-            aria-label="Go to shop"
-          >
-            <img
-              src={LOBBY_NEON_PRODUCTS_SRC}
-              alt=""
-              draggable={false}
-              style={{
-                margin: 0,
-                padding: 0,
-                display: 'block',
-                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
-                maxWidth: 'none',
-                width: 'auto',
-                pointerEvents: 'none',
-                verticalAlign: 'top',
-              }}
-              aria-hidden
-            />
-          </span>
-          {/* Tools → /home/tools (full asset is the hit target) */}
-          <span
-            role="button"
-            tabIndex={0}
-            onClick={goToHomeTools}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                goToHomeTools();
-              }
-            }}
-            style={{
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              minWidth: 0,
-              pointerEvents: 'auto',
-              cursor: 'pointer',
-              zIndex: 2,
-            }}
-            aria-label="Go to tools"
-          >
-            <img
-              src={LOBBY_NEON_TOOLS_SRC}
-              alt=""
-              draggable={false}
-              style={{
-                margin: 0,
-                padding: 0,
-                display: 'block',
-                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
-                maxWidth: 'none',
-                width: 'auto',
-                pointerEvents: 'none',
-                verticalAlign: 'top',
-              }}
-              aria-hidden
-            />
-          </span>
-          {/* Booking: to the right of tools (same kern as legacy PNG layout). PNG if present in public/assets; else SVG. */}
-          <span
-            style={{
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              minWidth: 0,
-              pointerEvents: 'auto',
-            }}
-          >
-            <img
-              src={bookingNeonSrc}
-              alt=""
-              onError={() => {
-                if (bookingNeonSrc.endsWith('.png')) setBookingNeonSrc(LOBBY_NEON_BOOKING_FALLBACK_SRC);
-              }}
-              className="w-auto pointer-events-none select-none"
-              style={{
-                margin: 0,
-                padding: 0,
-                display: 'block',
-                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
-                width: 'auto',
-                maxWidth: 'none',
-                verticalAlign: 'top',
-              }}
-              aria-hidden
-              draggable={false}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate(BOOKING_PATHS.PREMIUM_APPOINTMENT)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  navigate(BOOKING_PATHS.PREMIUM_APPOINTMENT);
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent'
-              }}
-              aria-label="Premium booking — wig installation appointment"
-            />
-          </span>
-        </div>
-        
-        {/* Product Display Shelves */}
-        <div className="flex flex-col" style={{ 
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, calc(-50% + 2px))',
-          zIndex: 20,
-          gap: '16px'
-        }}>
-          {/* HD LACE Shelf → /shop/frontals */}
-          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
-            <img
-              src={LOBBY_SHELF_HD_SRC}
-              alt="HD Lace Collection"
-              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
-              draggable={false}
-              style={{ height: '56px', display: 'block' }}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={goToShopFrontals}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  goToShopFrontals();
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent',
-              }}
-              aria-label="Shop HD lace frontals"
-            />
-          </div>
-
-          {/* Extensions shelf (transparent lace graphic) → /shop/bundles */}
-          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
-            <img
-              src={LOBBY_SHELF_TRANSPARENT_SRC}
-              alt="Extensions Collection"
-              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
-              draggable={false}
-              style={{ height: '56px', display: 'block' }}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={goToShopBundles}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  goToShopBundles();
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent',
-              }}
-              aria-label="Shop extensions bundles"
-            />
-          </div>
-
-          {/* CUSTOM UNITS Shelf → /shop/units */}
-          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
-            <img
-              src={LOBBY_SHELF_CUSTOM_SRC}
-              alt="Custom Units Collection"
-              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
-              draggable={false}
-              style={{ height: '56px', display: 'block' }}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={goToShopUnits}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  goToShopUnits();
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent',
-              }}
-              aria-label="Shop custom units"
-            />
-          </div>
-        </div>
-        
-        {/* Bottom Display Case and Accessories */}
-        <div className="relative w-3/5" style={{ 
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: `translate(calc(-50% + ${LOBBY_CASE_SLIDE_OFFSET_X_PX}px), calc(-50% + 255px))`,
-          zIndex: 20,
-          maxWidth: '753px',
-        }}>
-          {/* Acrylic Case */}
-          <div className="relative">
-            <img
-              src={LOBBY_CASE_SRC}
-              alt="Display Case"
-              className="h-auto"
-              style={{
-                display: 'block',
-                width: `${LOBBY_CASE_DISPLAY_WIDTH_PX}px`,
-                maxWidth: `${LOBBY_CASE_DISPLAY_WIDTH_PX}px`,
-              }}
-            />
-            
-            {/* Register — tap for payment methods popover */}
-            <div
-              className="absolute"
-              style={{
-                left: `${LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX}px`,
-                top: `${LOBBY_CASE_REGISTER_ANCHOR_TOP_PX}px`,
-                zIndex: 2,
-              }}
-            >
-              <LobbyCasePropPopover
-                popoverId="register"
-                activeId={lobbyCasePopover}
-                onActivate={(id) => {
-                  if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
-                }}
-                onClose={closeLobbyCasePopover}
-                ariaLabel="View accepted payment methods"
-                title={LOBBY_REGISTER_POPOVER_TITLE}
-                paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
-                align="left"
-              >
-                <img
-                  src={LOBBY_CASE_REGISTER_SRC}
-                  alt=""
-                  draggable={false}
-                  className="md:w-10 md:h-8 pointer-events-none select-none"
-                  style={{ width: '52px', height: '44px', display: 'block' }}
-                />
-              </LobbyCasePropPopover>
-            </div>
-
-            {/* Phone — tap for business contact popover */}
-            <div
-              className="absolute"
-              style={{
-                right: `${LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX}px`,
-                top: `${LOBBY_CASE_PHONE_ANCHOR_TOP_PX}px`,
-                zIndex: 2,
-                transform: `translateX(${LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX - LOBBY_CASE_PHONE_NUDGE_LEFT_PX}px)`,
-              }}
-            >
-              <LobbyCasePropPopover
-                popoverId="phone"
-                activeId={lobbyCasePopover}
-                onActivate={(id) => {
-                  if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
-                }}
-                onClose={closeLobbyCasePopover}
-                ariaLabel="View business contact information"
-                title={LOBBY_PHONE_POPOVER_TITLE}
-                sections={LOBBY_PHONE_POPOVER_SECTIONS}
-                align="right"
-              >
-                <img
-                  src={LOBBY_PHONE_SRC}
-                  alt=""
-                  draggable={false}
-                  className="pointer-events-none select-none"
-                  style={{ width: 'auto', height: '34px', maxWidth: '46px', display: 'block', objectFit: 'contain' }}
-                />
-              </LobbyCasePropPopover>
-            </div>
-          </div>
-        </div>
+      <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
+        <LobbySceneHotspots />
       </div>
 
-      {lobbyCasePopover !== null &&
-        createPortal(
-          <div
-            role="presentation"
-            aria-hidden
-            style={{
-              position: 'fixed',
-              inset: 0,
-              backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
-              zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
-              margin: 0,
-              padding: 0,
-            }}
-            onClick={closeLobbyCasePopover}
-          />,
-          document.body
-        )}
-      
       {/* Right Arrow Button - Part of page design, scrolls with content */}
       <div style={{
         position: 'absolute',
@@ -673,33 +195,15 @@ const LobbyPage: React.FC = () => {
 
 // Lounge Component
 const LoungePage: React.FC = () => {
-  const tvFrameRef = useRef<HTMLDivElement>(null);
-  const [tvOpen, setTvOpen] = useState(false);
-  const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
-
-  const openLoungeTv = useCallback(() => {
-    const rect = tvFrameRef.current?.getBoundingClientRect() ?? null;
-    setTvOriginRect(rect);
-    setTvOpen(true);
-  }, []);
-
-  const closeLoungeTv = useCallback(() => {
-    setTvOpen(false);
-  }, []);
-
-  const loungeLobbyTvFrame = loungeTvDesignDimensionsFromFrameHeight(146);
-  const isLargeLoungeViewport = useLoungeLargeViewport();
-
   const handlePrevious = useCallback(() => {
-    // This will be handled by parent component
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
   }, []);
-  
+
   return (
     <div
       className="bg-white relative lounge-page"
       style={{
-        minHeight: loungePageMinHeightCss(),
+        minHeight: sceneCarouselSlideMinHeightCss(),
         width: '100vw',
         overflow: 'visible',
         display: 'block',
@@ -709,103 +213,10 @@ const LoungePage: React.FC = () => {
         backgroundColor: 'white',
       }}
     >
-      {/* Background Image - Using landing2-background */}
-      <div
-        style={sceneCarouselBackgroundLayerStyle(LOUNGE_BACKGROUND_SRC, {
-          backgroundPosition: `center ${loungeSceneBackgroundPositionY()}`,
-        })}
-      />
+      <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOUNGE_BACKGROUND_SRC)} />
 
-      {/* TV + play — opens lounge content TV (animation off while sequence is reworked) */}
-       <div
-         ref={tvFrameRef}
-         style={{
-           position: 'absolute',
-           top: '50%',
-           left: '50%',
-           transform: `translate(calc(-50% + ${LOUNGE_LOBBY_TV_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_LOBBY_TV_OFFSET_Y_PX}px))`,
-           zIndex: tvOpen ? 8 : 10,
-           width: 'fit-content',
-         }}
-       >
-         <div
-           style={{
-             display: 'inline-block',
-             position: 'relative',
-             width: 'fit-content',
-             opacity: tvOpen ? 0.35 : 1,
-             transition: 'opacity 0.4s ease',
-           }}
-         >
-           <div
-             style={{
-               position: 'relative',
-               display: 'inline-block',
-               height: loungeLobbyTvFrame.frameH,
-               lineHeight: 0,
-             }}
-           >
-             <img
-               src={LOUNGE_TV_DESIGN_SRC}
-               alt=""
-               draggable={false}
-               style={{
-                 height: '100%',
-                 width: 'auto',
-                 display: 'block',
-               }}
-             />
-             {!tvOpen ? (
-               <button
-                 type="button"
-                 onClick={openLoungeTv}
-                 aria-label="Play lounge media"
-                 style={{
-                   ...loungeLobbyTvDesignPlayButtonStyle(),
-                   margin: 0,
-                   padding: '12px',
-                   border: 'none',
-                   background: 'transparent',
-                   cursor: 'pointer',
-                   WebkitTapHighlightColor: 'transparent',
-                   touchAction: 'manipulation',
-                   zIndex: 2,
-                 }}
-               >
-                 <span
-                   aria-hidden
-                   style={{
-                     display: 'block',
-                     height: '15px',
-                     width: '18px',
-                     pointerEvents: 'none',
-                     backgroundColor: LOUNGE_TV_PLAY_BUTTON_COLOR,
-                     WebkitMaskImage: 'url(/assets/play-button.png)',
-                     maskImage: 'url(/assets/play-button.png)',
-                     WebkitMaskSize: 'contain',
-                     maskSize: 'contain',
-                     WebkitMaskRepeat: 'no-repeat',
-                     maskRepeat: 'no-repeat',
-                     WebkitMaskPosition: 'center',
-                     maskPosition: 'center',
-                   }}
-                 />
-               </button>
-             ) : null}
-           </div>
-         </div>
-       </div>
+      <LoungeSceneTvHotspot />
 
-      <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
-      
-      {/* Salon Chairs — inline placement (large viewport uses larger Y offset from loungeSceneLayout) */}
-      <div style={loungeSalonChairsAnchorStyle(isLargeLoungeViewport)}>
-        <div style={loungeSalonChairsStackStyle()}>
-          <div aria-hidden style={loungeSalonChairsFloorShadowStyle()} />
-          <img src={LOUNGE_SALON_CHAIRS_SRC} alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
-        </div>
-      </div>
-      
       {/* Left Arrow Button - Part of page design, scrolls with content */}
       <div style={{
         position: 'absolute',
@@ -907,6 +318,7 @@ const LobbyApp: React.FC = () => {
   const visualIndexFromRoute = transitionVideoEnabled ? (routePage === 0 ? 0 : 2) : routePage;
 
   const [visualIndex, setVisualIndex] = useState(visualIndexFromRoute);
+  const [transitionDirection, setTransitionDirection] = useState<LobbyLoungeTransitionDirection>('forward');
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
@@ -986,8 +398,9 @@ const LobbyApp: React.FC = () => {
 
   const completeRoomTransitionSlide = useCallback(() => {
     roomTransitionInProgressRef.current = false;
-    applyCarouselPage(1, { animate: false, visualTarget: 2 });
-  }, [applyCarouselPage]);
+    const targetPage = transitionDirection === 'forward' ? 1 : 0;
+    applyCarouselPage(targetPage, { animate: false, visualTarget: targetPage === 0 ? 0 : 2 });
+  }, [applyCarouselPage, transitionDirection]);
 
   const goToCarouselPage = useCallback(
     (pageIndex: number) => {
@@ -995,6 +408,7 @@ const LobbyApp: React.FC = () => {
 
       if (transitionVideoEnabled && routePage === 0 && pageIndex === 1) {
         roomTransitionInProgressRef.current = true;
+        setTransitionDirection('forward');
         setIsTransitioning(true);
         setVisualIndex(1);
         setTimeout(() => setIsTransitioning(false), 500);
@@ -1002,6 +416,14 @@ const LobbyApp: React.FC = () => {
       }
 
       if (transitionVideoEnabled && routePage === 1 && pageIndex === 0) {
+        if (isLobbyLoungeReverseTransitionAvailable()) {
+          roomTransitionInProgressRef.current = true;
+          setTransitionDirection('reverse');
+          setIsTransitioning(true);
+          setVisualIndex(1);
+          setTimeout(() => setIsTransitioning(false), 500);
+          return;
+        }
         applyCarouselPage(0, { animate: true, visualTarget: 0 });
         return;
       }
@@ -1098,6 +520,7 @@ const LobbyApp: React.FC = () => {
           {transitionVideoEnabled ? (
             <LobbyLoungeTransitionSlide
               active={visualIndex === 1}
+              direction={transitionDirection}
               onComplete={completeRoomTransitionSlide}
             />
           ) : null}
