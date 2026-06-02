@@ -22896,3 +22896,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:**
 - Futura PT Book `@font-face` is `font-weight: normal` only; do not pair Book with Tailwind `font-bold` on cart details lines.
+
+---
+
+## 2026-06-02 — Checkout order summary: black prices Futura PT Book
+
+**Context:** User asked for black price text in the checkout page summary section (below thumbnails) to be Futura Book, not Futura Medium.
+
+**Changes:**
+- `src/pages/checkout/page.tsx` — per-line item price under cart thumbnails (bundle + standard) and SUBTOTAL label/amount in ORDER SUMMARY cost breakdown: `Futura PT Book` with `fontWeight: 400` (red subtitle lines under thumbs unchanged at Medium).
+
+**Conventions:** Checkout ORDER SUMMARY black amounts align with other breakdown rows (already Book); only per-thumb prices and SUBTOTAL were still Medium.
