@@ -23091,3 +23091,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Lobby/lounge transition 2px Y nudge
 
 **Fix (`6b708bf7`):** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** — `object-position` / `background-position` `center 2px` on Seedance overlay video + poster (`lobbyLoungeTransitionMediaPosition()`).
+
+---
+
+## 2026-06-02 — Lobby/lounge transition 4px alignment (single source)
+
+**Context:** User asked to shift lobby/lounge Seedance transition down **4px** (was 2px) and ensure nothing overrides alignment.
+
+**Fix (`2004c924`):** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 4`**. Replaced `lobbyLoungeTransitionMediaPosition()` with **`lobbyLoungeTransitionMediaLayerStyle()`** + **`lobbyLoungeTransitionPosterLayerStyle()`** in `lobbyLoungeTransitionVideo.ts` — `top: 4px`, `height: calc(100% + 4px)`, `objectPosition` / `backgroundPosition: center top`. **`LobbyLoungeTransitionVideo.tsx`** uses only those helpers (no local `top` / `objectPosition`). Tune via constant only.
