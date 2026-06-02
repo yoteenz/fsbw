@@ -22946,3 +22946,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `src/pages/checkout/confirm/page.tsx` (commit `4feefd37` on `master` + `preview/mobile`).
 
 **Conventions:** Reuse checkout strip CSS class and scroll width math when aligning confirm/summary thumbnails with checkout.
+
+---
+
+## 2026-06-02 — Lounge TV: bezel regression + subcategory/thumbnail spacing
+
+**Context:** User reported TV overlay showed only black screen (no outside bevel) during animation, and subcategory vs thumbnail spacing was wrong again after recent fixes.
+
+**Cause:** Commit `4c12911a` (Slay Tips blog layout) kept `LoungeTvDesignFrame` + `loungeTvDesignDimensionsFromScreenWidth`. The baked PNG’s glass rect is ~99.5% of the frame, so opaque black screen during power-on/static hides the thin PNG bezel. That commit also removed `measureMediaTop` / `firstSidebarRef` from `a85d6498`, setting media `top: 0` so thumbnails/blog content no longer align with the first subcategory row.
+
+**Fix (`71d070a3`):** Overlay animation uses `LoungeTvFrame` (CSS gradient bezel) + `loungeTvDimensionsFromScreenWidth` again. Restored `measureMediaTop`, sidebar gap 10px, aside `paddingTop: 4px`, nav `lineHeight: 1.35`, media area `paddingBottom: 8px`.
+
+**Conventions:** Expanded lounge TV overlay = CSS bezel (`LoungeTvFrame`); lobby static slide may still use `lounge-tv-design.png`. Do not swap overlay back to `LoungeTvDesignFrame` without widening visible bezel in the asset.
