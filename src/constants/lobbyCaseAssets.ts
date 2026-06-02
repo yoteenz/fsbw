@@ -12,11 +12,11 @@ export const LOBBY_CASE_SRC_REMOTE =
 
 export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 
-/** Lobby slide: acrylic case rendered width (full size before −20% Jun 2026). */
-export const LOBBY_CASE_DISPLAY_WIDTH_PX = 220;
+/** Lobby slide: acrylic case rendered width (230px original −30px). */
+export const LOBBY_CASE_DISPLAY_WIDTH_PX = 200;
 
-/** Horizontal nudge for case block on lobby slide (`translateX` after center). */
-export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 4;
+/** Horizontal nudge for case block on lobby slide (`translateX` after center); moves case + register + phone together. */
+export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 20;
 
 /** Register/phone anchors use full case scale (1:1 with pre–Jun 2026 lobby). */
 export const LOBBY_CASE_PROP_LAYOUT_SCALE = 1;
