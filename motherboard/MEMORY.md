@@ -23077,3 +23077,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** After `video.mov`, overlay used CSS gradient **`LoungeTvFrame`** (wrong). User supplied Final LP still for menu + close: `…/ChatGPT Image Jun 2, 2026 at 06_28_39 PM.png`.
 
 **Fix:** **`LoungeTvContentFrame`** + **`lounge-tv-content-frame.png`** — baked end still, React menu in **`LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT`**, close on bezel via **`LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR`**. Remote + bundled paths in **`loungeTvAssets.ts`**.
+
+---
+
+## 2026-06-02 — Lounge TV fullscreen shell + play on composite TV
+
+**Context:** TV menu floated centered (lounge visible behind); content misaligned vs end-still PNG. Play tap invisible/wrong (near chandelier) — not on wall TV in `final-lounge.png`.
+
+**Fixes:** **`LoungeTvFullscreenShell`** — `fixed inset 0`, end-still `cover` + `center top`, menu via **`useCoverMappedLayout`** (same math as animation). Black scrim (no blur). **`LoungeTvAnimationVideo`** poster = content frame for seamless handoff. **`LoungeCompositeTvPlay`**: visible masked play icon; **`FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER`** → `{ x: 0.528, y: 0.31 }` (TV glass center).
