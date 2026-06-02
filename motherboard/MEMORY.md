@@ -22805,3 +22805,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to change the gray Bohemy **pay in four** section header on the cash register (register) popover to **payment plans**.
 
 **Changes:** **`LOBBY_PAYMENT_PAY_OVER_TIME_LABEL`** in **`src/constants/lobbyPaymentIcons.ts`**: **`pay in four`** → **`payment plans`**. Commit **`229bf120`** on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lobby prop popovers: asset shift on open (constants regression fix)
+
+**Context:** User reported register/phone assets still jump upward when opening popovers despite prior inline-anchor fix (`0d37fe61`).
+
+**Root cause:** Commit **`229bf120`** (payment plans label) accidentally **reverted** `LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX` and `LOBBY_CASE_POPOVER_OPEN_Z_INDEX` (30 → 999999) while `lobby/page.tsx` still imported slide scrim — **build broke**; production may have served older portaled build where inline asset hides and a **fixed body duplicate** shifts on open/zoom.
+
+**Fix (`bf600e0f`):** Restored slide scrim + z-index **30** constants; kept **inline** `position: absolute` popover above asset (no body portal duplicate); stable prop wrapper `zIndex` (not toggled on open); active register/phone anchor **z-index 25** on slide; removed popover shell `transition-all` on open.
+
+**Conventions:** When editing `lobbyPaymentIcons.ts`, never revert `SCRIM_SLIDE` / `OPEN_Z_INDEX=30` from the zoom-anchor pass.
