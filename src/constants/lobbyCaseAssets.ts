@@ -16,7 +16,7 @@ export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 export const LOBBY_CASE_DISPLAY_WIDTH_PX = 200;
 
 /** Horizontal nudge for case block on lobby slide (`translateX` after center); moves case + register + phone together. */
-export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 40;
+export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 30;
 
 /** Register/phone anchors use full case scale (1:1 with pre–Jun 2026 lobby). */
 export const LOBBY_CASE_PROP_LAYOUT_SCALE = 1;
