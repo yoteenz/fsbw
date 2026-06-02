@@ -31,8 +31,8 @@ const transitionMediaStyle = {
 };
 
 /**
- * Seedance clip — mount inside the active lobby/lounge slide (`position: absolute; inset: 0`)
- * so video/poster match the slide background geometry.
+ * Seedance clip — mount inside {@link SceneCarouselViewportStage} (`inset: 0`, `100dvh`)
+ * so video/poster use the same cover box as the composite background.
  */
 export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);

@@ -50,13 +50,16 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
 /** In-screen play tap — center of gray play icon on `final-lounge.png` (928×1680 image space). */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER = { x: 0.529, y: 0.258 } as const;
 
-/** Hit box around {@link FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER}; mapped via {@link mapImageRectToCoverContainer}. */
-export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT: FinalSceneHitRect = {
-  left: FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER.x - 0.05,
-  top: FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER.y - 0.04,
-  width: 0.1,
-  height: 0.08,
+/** Transparent tap over baked play icon — mapped on {@link sceneCarouselViewportStageStyle}. */
+export const FINAL_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {
+  left: FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER.x - 0.045,
+  top: FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER.y - 0.035,
+  width: 0.09,
+  height: 0.07,
 };
 
-/** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_IMAGE_RECT} + cover hit map. */
-export const FINAL_LOUNGE_TV_PLAY_HIT_REGION = FINAL_LOUNGE_TV_PLAY_IMAGE_RECT;
+/** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_TAP_RECT}. */
+export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT = FINAL_LOUNGE_TV_PLAY_TAP_RECT;
+
+/** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_TAP_RECT}. */
+export const FINAL_LOUNGE_TV_PLAY_HIT_REGION = FINAL_LOUNGE_TV_PLAY_TAP_RECT;

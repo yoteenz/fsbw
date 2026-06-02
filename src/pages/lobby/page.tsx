@@ -17,14 +17,11 @@ import {
   didLastProfileSyncError,
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
-import {
-  sceneCarouselBackgroundLayerStyle,
-  sceneCarouselSlideMinHeightCss,
-  sceneSlideShellStyle,
-} from '../../utils/sceneCarouselBackground';
+import { sceneCarouselSlideMinHeightCss, sceneSlideShellStyle } from '../../utils/sceneCarouselBackground';
 import { LobbyLoungeTransitionOverlay } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
-import { LoungeSceneTvHotspot } from '../../components/lounge/LoungeSceneTvHotspot';
+import { SceneCarouselViewportStage } from '../../components/lobby/SceneCarouselViewportStage';
+import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTvPlay';
 import { FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
 import {
   isLobbyTransitionVideoEnabledFromSearch,
@@ -102,19 +99,19 @@ const LobbyPage: React.FC<{ roomTransitionOverlay?: SceneTransitionOverlayProps 
 
   return (
     <div className="relative" style={sceneSlideShellStyle()}>
-      <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOBBY_BACKGROUND_SRC)} />
+      <SceneCarouselViewportStage backgroundSrc={FINAL_LOBBY_BACKGROUND_SRC}>
+        {roomTransitionOverlay ? (
+          <LobbyLoungeTransitionOverlay
+            active={roomTransitionOverlay.active}
+            direction={roomTransitionOverlay.direction}
+            onComplete={roomTransitionOverlay.onComplete}
+          />
+        ) : null}
 
-      {roomTransitionOverlay ? (
-        <LobbyLoungeTransitionOverlay
-          active={roomTransitionOverlay.active}
-          direction={roomTransitionOverlay.direction}
-          onComplete={roomTransitionOverlay.onComplete}
-        />
-      ) : null}
-
-      <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
-        <LobbySceneHotspots />
-      </div>
+        <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
+          <LobbySceneHotspots />
+        </div>
+      </SceneCarouselViewportStage>
 
       {/* Right Arrow Button - Part of page design, scrolls with content */}
       <div style={{
@@ -215,22 +212,17 @@ const LoungePage: React.FC<{
 
   return (
     <div className="bg-white relative lounge-page" style={sceneSlideShellStyle()}>
-      <div
-        ref={measureRef}
-        aria-hidden
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-      />
-      <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOUNGE_BACKGROUND_SRC)} />
+      <SceneCarouselViewportStage backgroundSrc={FINAL_LOUNGE_BACKGROUND_SRC} measureRef={measureRef}>
+        {roomTransitionOverlay ? (
+          <LobbyLoungeTransitionOverlay
+            active={roomTransitionOverlay.active}
+            direction={roomTransitionOverlay.direction}
+            onComplete={roomTransitionOverlay.onComplete}
+          />
+        ) : null}
 
-      {roomTransitionOverlay ? (
-        <LobbyLoungeTransitionOverlay
-          active={roomTransitionOverlay.active}
-          direction={roomTransitionOverlay.direction}
-          onComplete={roomTransitionOverlay.onComplete}
-        />
-      ) : null}
-
-      <LoungeSceneTvHotspot measureRef={measureRef} />
+        <LoungeCompositeTvPlay measureRef={measureRef} />
+      </SceneCarouselViewportStage>
 
       {/* Left Arrow Button - Part of page design, scrolls with content */}
       <div style={{
@@ -540,7 +532,10 @@ const LobbyApp: React.FC = () => {
             width: `${carouselSlideCount * 100}vw`,
             minHeight: sceneCarouselSlideMinHeightCss(),
             transform: `translateX(-${visualIndex * 100}vw)`,
-            transition: isTransitioning ? 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+            transition:
+              roomTransitionOverlay || !isTransitioning
+                ? 'none'
+                : 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
             willChange: isTransitioning ? 'transform' : 'auto',
           }}
         >
