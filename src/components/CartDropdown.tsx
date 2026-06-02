@@ -1371,10 +1371,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         {viewingDetailsFor === item.id && (
                           <CartLineTextLayer slot="details">
                           <p 
-                            className="font-bold"
                             style={{ 
                               ...cartLineLayerInnerStyle(),
-                              fontFamily: '"Futura PT Book"',
+                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                              fontWeight: 400,
                               color: '#000000',
                               textTransform: 'uppercase',
                               marginBottom: '10px',
