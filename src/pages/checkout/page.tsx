@@ -5919,10 +5919,10 @@ function CheckoutPage() {
                     </div>
                     )}
                     <div style={{ borderTop: '1.3px solid #000000', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', fontWeight: '500' }}>
+                      <span style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#000000', fontWeight: 400 }}>
                         SUBTOTAL
                       </span>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', fontWeight: '500' }} dangerouslySetInnerHTML={formatPrice(subtotal)}></span>
+                      <span style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#000000', fontWeight: 400 }} dangerouslySetInnerHTML={formatPrice(subtotal)}></span>
                     </div>
                   </div>
                 </div>
