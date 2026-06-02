@@ -23008,3 +23008,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User re-ran Seedance TV **open** I2V; output used wrong hand, **gray** theater curtains instead of **sheer white** lounge drapes, lounge furniture/ceiling/floor still visible, TV grew an extra retro base, CRT static had corner vignette.
 
 **Decisions:** Seedance cannot reliably invent correct props from text — **build and lock END frame** from bundled assets. Updated **`loungeTvSeedancePrompt.ts`**: white curtains cropped from `final-lounge.png`, black void hides all room props, hand = `lounge-tv-remote-hand.png` URL in settings + END recipe, flat thin bezel TV scale-only, even static no vignette; expanded negatives (gray curtains, furniture visible, double bezel, vignette). Note: live overlay still uses gray `lounge-curtain-*.jpeg` — Seedance target is white lounge curtains per product.
+
+---
+
+## 2026-06-02 — Lobby popover glass, transition polish, TV play nudge
+
+**Context:** Register/phone/TV popovers missing blur; case art should read through glass at same stack as panel (+ register **+8px**, phone **+6px** up). Transition black flash before Seedance; reverse too slow/distorted; vertical page shift when clip ends; play button still high on lounge composite.
+
+**Fixes:** Scrim + panel **`backdrop-filter`**; case wrappers **`z-index 30`** when open. Transition overlay **`absolute`** in lobby shell, poster until **`playing`**, reverse rate **2.75×**, scroll lock. Play hit **`top: 0.44`** relative to TV box. Pushed **`master`** + **`preview/mobile`** (`6d471900`).
