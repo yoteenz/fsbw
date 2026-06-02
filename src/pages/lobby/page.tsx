@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   lobbyCarouselIndexFromPath,
@@ -34,7 +35,7 @@ import {
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import {
   LOBBY_CASE_POPOVER_SCRIM_ALPHA,
-  LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
+  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
 } from '../../constants/lobbyPaymentIcons';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
@@ -159,6 +160,18 @@ const LobbyPage: React.FC = () => {
     navigate('/home/tools');
   }, [navigate]);
 
+  const goToShopFrontals = useCallback(() => {
+    navigate('/shop/frontals');
+  }, [navigate]);
+
+  const goToShopBundles = useCallback(() => {
+    navigate('/shop/bundles');
+  }, [navigate]);
+
+  const goToShopUnits = useCallback(() => {
+    navigate('/shop/units');
+  }, [navigate]);
+
   const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
   const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
@@ -175,24 +188,6 @@ const LobbyPage: React.FC = () => {
     >
       {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
       <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
-
-      {lobbyCasePopover !== null ? (
-        <div
-          role="presentation"
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
-            backdropFilter: 'blur(3px)',
-            WebkitBackdropFilter: 'blur(3px)',
-            zIndex: LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
-            margin: 0,
-            padding: 0,
-            pointerEvents: 'none',
-          }}
-        />
-      ) : null}
 
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
@@ -388,33 +383,96 @@ const LobbyPage: React.FC = () => {
           zIndex: 20,
           gap: '16px'
         }}>
-          {/* HD LACE Shelf */}
-          <div className="flex flex-col items-center">
+          {/* HD LACE Shelf → /shop/frontals */}
+          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
             <img
               src={LOBBY_SHELF_HD_SRC}
               alt="HD Lace Collection"
-              className="w-auto md:h-20 lg:h-24"
+              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
+              draggable={false}
               style={{ height: '56px', display: 'block' }}
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={goToShopFrontals}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  goToShopFrontals();
+                }
+              }}
+              className="hover:opacity-90 transition-opacity"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                cursor: 'pointer',
+                zIndex: 1,
+                background: 'transparent',
+              }}
+              aria-label="Shop HD lace frontals"
             />
           </div>
 
-          {/* TRANSPARENT LACE Shelf */}
-          <div className="flex flex-col items-center">
+          {/* Extensions shelf (transparent lace graphic) → /shop/bundles */}
+          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
             <img
               src={LOBBY_SHELF_TRANSPARENT_SRC}
-              alt="Transparent Lace Collection"
-              className="w-auto md:h-20 lg:h-24"
+              alt="Extensions Collection"
+              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
+              draggable={false}
               style={{ height: '56px', display: 'block' }}
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={goToShopBundles}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  goToShopBundles();
+                }
+              }}
+              className="hover:opacity-90 transition-opacity"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                cursor: 'pointer',
+                zIndex: 1,
+                background: 'transparent',
+              }}
+              aria-label="Shop extensions bundles"
             />
           </div>
 
-          {/* CUSTOM UNITS Shelf */}
-          <div className="flex flex-col items-center">
+          {/* CUSTOM UNITS Shelf → /shop/units */}
+          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
             <img
               src={LOBBY_SHELF_CUSTOM_SRC}
               alt="Custom Units Collection"
-              className="w-auto md:h-20 lg:h-24"
+              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
+              draggable={false}
               style={{ height: '56px', display: 'block' }}
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={goToShopUnits}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  goToShopUnits();
+                }
+              }}
+              className="hover:opacity-90 transition-opacity"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                cursor: 'pointer',
+                zIndex: 1,
+                background: 'transparent',
+              }}
+              aria-label="Shop custom units"
             />
           </div>
         </div>
@@ -507,6 +565,23 @@ const LobbyPage: React.FC = () => {
         </div>
       </div>
 
+      {lobbyCasePopover !== null &&
+        createPortal(
+          <div
+            role="presentation"
+            aria-hidden
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
+              zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
+              margin: 0,
+              padding: 0,
+            }}
+            onClick={closeLobbyCasePopover}
+          />,
+          document.body
+        )}
       
       {/* Right Arrow Button - Part of page design, scrolls with content */}
       <div style={{
