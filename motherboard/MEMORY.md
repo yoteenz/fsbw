@@ -23055,3 +23055,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to hide lobby/lounge arrow + label text while Seedance room transition plays.
 
 **Fix (`652eb422`):** `LobbyApp` passes **`hideCarouselNav={roomTransitionOverlay !== null}`** to **`LobbyPage`** and **`LoungePage`**; arrow + “lounge” / “lobby” labels not rendered during forward/reverse clip.
+
+---
+
+## 2026-06-02 — Lounge TV `video.mov` + reverse close
+
+**Context:** User supplied **`Final LP/video.mov`** for lounge TV open animation; asked for close prompt to match or reverse playback like lobby/lounge room transition.
+
+**Shipped (`ca05c7ab`):**
+- **`loungeTvAnimationVideo.ts`** — remote `…/Final%20LP/video.mov`, bundled **`public/assets/lounge-tv-animation.mov`**, **`LOUNGE_TV_ANIMATION_VIDEO_ENABLED`**, reverse rate **2×**.
+- **`LoungeTvAnimationVideo`** + **`useSceneCoverVideoPlayback`** (shared with **`LobbyLoungeTransitionOverlay`**): forward open, reverse close.
+- **`LoungeTvOverlay`**: when enabled, CSS curtains/hand/grow skipped; clip plays fullscreen → menu UI → reverse on close.
+- **`loungeTvSeedancePrompt.ts`**: close prompt rewritten as temporal reverse of open / `video.mov`; copy block notes in-app reverse preferred.
+
+**Conventions:** Lounge TV open/close = one Seedance file; close = reverse unless QA fails (then use CLOSE I2V prompt).
