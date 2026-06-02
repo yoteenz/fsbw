@@ -13,7 +13,7 @@ export const LOBBY_CASE_SRC_REMOTE =
 export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 
 /** Lobby slide: acrylic case rendered width (full size before −20% Jun 2026). */
-export const LOBBY_CASE_DISPLAY_WIDTH_PX = 230;
+export const LOBBY_CASE_DISPLAY_WIDTH_PX = 220;
 
 /** Horizontal nudge for case block on lobby slide (`translateX` after center). */
 export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 4;
