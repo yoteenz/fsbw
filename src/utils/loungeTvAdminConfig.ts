@@ -250,7 +250,22 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
     isNew: item.isNew,
     thumbSrc,
   };
-  if (item.body.trim()) tile.description = item.body.trim().toUpperCase();
+  const bodyUpper = item.body.trim().toUpperCase();
+  if (bodyUpper) {
+    tile.description = bodyUpper;
+    tile.body = bodyUpper;
+  }
+  if (mainTab === 'slay-tips') {
+    tile.format = 'blog';
+    if (item.mediaUrl.trim()) {
+      tile.attachmentSrc = item.mediaUrl.trim();
+      tile.attachmentType = item.mediaType;
+      if (item.mediaType === 'image' && !item.thumbSrc?.trim()) {
+        tile.thumbSrc = item.mediaUrl.trim();
+      }
+    }
+    return tile;
+  }
   if (mainTab === 'watch-learn') {
     if (item.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID) {
       const customSrc = item.mediaType === 'video' && item.mediaUrl.trim() ? item.mediaUrl.trim() : '';

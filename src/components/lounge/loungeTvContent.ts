@@ -5,6 +5,8 @@ export type LoungeTvSidebarItem = {
   label: string;
 };
 
+export type LoungeTvContentFormat = 'video' | 'blog';
+
 export type LoungeTvVideoTile = {
   id: string;
   title: string;
@@ -15,6 +17,12 @@ export type LoungeTvVideoTile = {
   videoSrc?: string;
   durationLabel?: string;
   description?: string;
+  /** Blog tabs: full post body (defaults to description). */
+  body?: string;
+  format?: LoungeTvContentFormat;
+  /** Blog tabs: attachment below body (not the Watch + Learn player). */
+  attachmentSrc?: string;
+  attachmentType?: 'image' | 'video';
 };
 
 import { LOUNGE_TV_CONTENT_VIDEO_SRC, LOUNGE_TV_PLUCKING_LACE_TILE_ID } from './loungeTvAssets';
@@ -106,6 +114,28 @@ const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; descriptio
   },
 };
 
+const SLAY_TIPS_BLOG_BODY: Record<string, string> = {
+  'cutting-lace': 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
+  'tinting-lace': 'CUSTOM TINT LACE TO MATCH YOUR SKIN TONE FOR AN UNDETECTABLE BLEND.',
+  'bleaching-knots': 'LIGHTEN KNOTS SAFELY SO PART LINES AND EDGES DISAPPEAR ON CAMERA.',
+  'plucking-lace': 'PLUCK DENSITY ALONG THE HAIRLINE FOR A NATURAL, LESS WIGGY FINISH.',
+  'melting-lace': 'MELT LACE INTO THE SKIN USING THE RIGHT ADHESIVE AND PRESSURE TECHNIQUE.',
+  'extending-install': 'EXTEND WEAR TIME WITH REINFORCEMENT ZONES AND TENSION-FREE STITCHING.',
+  'cleaning-lace': 'REMOVE BUILDUP AND RESET LACE WITHOUT DAMAGING FIBERS OR TINT.',
+};
+
+function withSlayTipsBlogMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[] {
+  return tiles.map((tile) => {
+    const body = (tile.body ?? tile.description ?? SLAY_TIPS_BLOG_BODY[tile.id] ?? '').trim();
+    return {
+      ...tile,
+      format: 'blog',
+      body: body || 'SLAY TIPS AND CARE NOTES FROM THE FRONTAL SLAYER TEAM.',
+      description: body || tile.description,
+    };
+  });
+}
+
 function withWatchLearnVideoMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[] {
   return tiles.map((tile) => {
     const copy = WATCH_LEARN_VIDEO_COPY[tile.id] ?? {
@@ -115,8 +145,10 @@ function withWatchLearnVideoMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[
     const videoSrc = watchLearnVideoSrcForTile(tile.id);
     return {
       ...tile,
+      format: 'video',
       videoSrc,
       description: copy.description,
+      body: copy.description,
       ...(tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID ? {} : { durationLabel: copy.durationLabel }),
     };
   });
@@ -127,20 +159,26 @@ export function getLoungeTvTilesStatic(mainTab: LoungeTvMainTab, sidebarId: stri
   if (mainTab === 'brand' && sidebarId === 'new-drops') return BRAND_NEW_DROPS;
   if (mainTab === 'brand' && sidebarId === 'campaigns') return [];
   if (sidebarId === 'lace') {
-    return mainTab === 'watch-learn' ? withWatchLearnVideoMeta(LACE_TILES) : LACE_TILES;
+    if (mainTab === 'watch-learn') return withWatchLearnVideoMeta(LACE_TILES);
+    if (mainTab === 'slay-tips') return withSlayTipsBlogMeta(LACE_TILES);
+    return LACE_TILES;
   }
   if (mainTab === 'slay-tips' || mainTab === 'watch-learn') {
     if (sidebarId === 'install') {
       const installTiles = [
         { id: 'extending-install', title: 'EXTENDING YOUR INSTALL', thumbSrc: '/assets/NOIR/curl-thumb.png' },
       ];
-      return mainTab === 'watch-learn' ? withWatchLearnVideoMeta(installTiles) : installTiles;
+      if (mainTab === 'watch-learn') return withWatchLearnVideoMeta(installTiles);
+      if (mainTab === 'slay-tips') return withSlayTipsBlogMeta(installTiles);
+      return installTiles;
     }
     if (sidebarId === 'styling') {
       const stylingTiles = [
         { id: 'melting-lace', title: 'MELTING YOUR LACE', thumbSrc: '/assets/NOIR/wave-thumb.png' },
       ];
-      return mainTab === 'watch-learn' ? withWatchLearnVideoMeta(stylingTiles) : stylingTiles;
+      if (mainTab === 'watch-learn') return withWatchLearnVideoMeta(stylingTiles);
+      if (mainTab === 'slay-tips') return withSlayTipsBlogMeta(stylingTiles);
+      return stylingTiles;
     }
     if (sidebarId === 'care' || sidebarId === 'storage') return [];
   }
