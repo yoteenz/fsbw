@@ -10,8 +10,14 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_SRC = `/assets/lobby-lounge-transitio
 export const LOBBY_TRANSITION_VIDEO_SESSION_KEY = 'baw_lobby_transition_video';
 
 /**
+ * Lobby → lounge carousel transition clip (Kling). Off while animation is being reworked.
+ * Opt in with `?lobbyTransitionVideo=1`.
+ */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = false;
+
+/**
  * Lobby → lounge: middle carousel panel plays the Kling clip in-place (not a fullscreen overlay).
- * Disable with `?lobbyTransitionVideo=0`. Default: on.
+ * Default: off ({@link LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED}). Enable with `?lobbyTransitionVideo=1`.
  */
 export function isLobbyTransitionVideoEnabledFromSearch(search: string): boolean {
   try {
@@ -24,8 +30,11 @@ export function isLobbyTransitionVideoEnabledFromSearch(search: string): boolean
       sessionStorage.removeItem(LOBBY_TRANSITION_VIDEO_SESSION_KEY);
       return true;
     }
+    if (!LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED) {
+      return false;
+    }
     return sessionStorage.getItem(LOBBY_TRANSITION_VIDEO_SESSION_KEY) !== '0';
   } catch {
-    return true;
+    return LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED;
   }
 }

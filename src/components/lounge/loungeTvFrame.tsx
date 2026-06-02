@@ -22,6 +22,12 @@ export const LOUNGE_LOBBY_TV_OFFSET_Y_PX = -10;
 /** Expanded overlay TV size multiplier (1 = full computed size). */
 export const LOUNGE_TV_OVERLAY_SIZE_SCALE = 0.896;
 
+/**
+ * Curtains / grow / hand / CRT static on play. Off while lobby TV animation is being reworked;
+ * overlay still opens instantly with content. Re-enable when the sequence is ready.
+ */
+export const LOUNGE_TV_OVERLAY_ANIMATION_ENABLED = false;
+
 /** Lobby lounge TV play control tint (white PNG masked to this color). */
 export const LOUNGE_TV_PLAY_BUTTON_COLOR = '#535453';
 

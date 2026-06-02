@@ -7,11 +7,11 @@ import {
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
-  LOUNGE_TV_BEZEL,
+  LOUNGE_TV_OVERLAY_ANIMATION_ENABLED,
   LOUNGE_TV_OVERLAY_SIZE_SCALE,
-  LOUNGE_TV_SCREEN_ASPECT,
-  LoungeTvFrame,
-  loungeTvDimensionsFromScreenWidth,
+  LoungeTvDesignFrame,
+  loungeTvDesignDimensionsFromFrameHeight,
+  loungeTvDesignDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
@@ -119,8 +119,6 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
 /** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
 const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
 const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
-/** Vertical space between sidebar subcategory labels (NEW DROPS, CAMPAIGNS, etc.). */
-const LOUNGE_TV_SIDEBAR_ITEM_GAP_PX = 10;
 
 /** Default media insets until nav tabs are measured (sidebar + gap reserved). */
 const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
@@ -227,7 +225,9 @@ function LoungeTvScreen({
   const [viewedRevision, setViewedRevision] = useState(0);
   const bodyRowRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
+  const firstSidebarRef = useRef<HTMLButtonElement>(null);
   const [mediaInsets, setMediaInsets] = useState(LOUNGE_TV_MEDIA_INSET_DEFAULT);
+  const [mediaTopPx, setMediaTopPx] = useState(0);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const tiles = useMemo(
     () => resolveLoungeTvTiles(mainTab, sidebarId),
@@ -281,15 +281,31 @@ function LoungeTvScreen({
     });
   }, []);
 
+  const measureMediaTop = useCallback(() => {
+    const rowEl = bodyRowRef.current;
+    const firstBtn = firstSidebarRef.current;
+    if (!rowEl || !firstBtn) return;
+    const rowRect = rowEl.getBoundingClientRect();
+    const btnRect = firstBtn.getBoundingClientRect();
+    const padTop = parseFloat(getComputedStyle(firstBtn).paddingTop) || 0;
+    setMediaTopPx(Math.max(0, Math.round(btnRect.top - rowRect.top + padTop)));
+  }, []);
+
   useLayoutEffect(() => {
     measureMediaInsets();
-    const raf = requestAnimationFrame(measureMediaInsets);
+    measureMediaTop();
+    const raf = requestAnimationFrame(() => {
+      measureMediaInsets();
+      measureMediaTop();
+    });
     window.addEventListener('resize', measureMediaInsets);
+    window.addEventListener('resize', measureMediaTop);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', measureMediaInsets);
+      window.removeEventListener('resize', measureMediaTop);
     };
-  }, [measureMediaInsets, mainTab]);
+  }, [measureMediaInsets, measureMediaTop, mainTab, sidebar.length]);
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
@@ -314,16 +330,14 @@ function LoungeTvScreen({
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
     fontSize: '9px',
-    lineHeight: 1.35,
     letterSpacing: '0.04em',
     textTransform: 'uppercase',
     color: active || accent ? BRAND_RED : '#ffffff',
     background: 'none',
     border: 'none',
-    padding: '3px 0',
+    padding: '2px 0',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    display: 'block',
   });
 
   const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
@@ -392,16 +406,17 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            gap: `${LOUNGE_TV_SIDEBAR_ITEM_GAP_PX}px`,
+            gap: '6px',
             flexShrink: 0,
             width: '72px',
-            paddingTop: '4px',
+            paddingTop: '2px',
           }}
           aria-label="Subcategories"
         >
-          {sidebar.map((item) => (
+          {sidebar.map((item, index) => (
             <button
               key={item.id}
+              ref={index === 0 ? firstSidebarRef : undefined}
               type="button"
               style={{
                 ...navLinkStyle(sidebarId === item.id, item.id === 'new-drops' && sidebarId === item.id),
@@ -420,7 +435,7 @@ function LoungeTvScreen({
             position: 'absolute',
             left: `${mediaInsets.left}px`,
             right: `${mediaInsets.right}px`,
-            top: 0,
+            top: `${mediaTopPx}px`,
             bottom: 0,
             minWidth: 0,
             display: 'flex',
@@ -524,8 +539,27 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
 
+  const resetOverlayState = useCallback(() => {
+    setShowContent(false);
+    setShowStatic(false);
+    setTvGrowDone(false);
+    setHandRevealDone(false);
+    setRemoteHandReady(false);
+    setPoweringOff(false);
+    setClosePhase('idle');
+    setAnimatedIn(false);
+    setCurtainsReady(false);
+    isClosingRef.current = false;
+  }, []);
+
   const requestClose = useCallback(() => {
     if (closePhase !== 'idle' || isClosingRef.current) return;
+    if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) {
+      resetOverlayState();
+      setVisible(false);
+      onClose();
+      return;
+    }
     if (!animatedIn) {
       onClose();
       return;
@@ -535,7 +569,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setShowStatic(false);
     setClosePhase('zap');
     setPoweringOff(true);
-  }, [closePhase, animatedIn, onClose]);
+  }, [closePhase, animatedIn, onClose, resetOverlayState]);
 
   /** Close: zap → hand fades after black screen → TV shrinks + curtains open. */
   useEffect(() => {
@@ -576,29 +610,28 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     void hydrateLoungeTvAdminConfig(getLoungeTvAdminConfig);
   }, [isOpen]);
 
-  const resetOverlayState = useCallback(() => {
-    setShowContent(false);
-    setShowStatic(false);
-    setTvGrowDone(false);
-    setHandRevealDone(false);
-    setRemoteHandReady(false);
-    setPoweringOff(false);
-    setClosePhase('idle');
-    setAnimatedIn(false);
-    setCurtainsReady(false);
-    isClosingRef.current = false;
-  }, []);
-
   useEffect(() => {
     if (isOpen) {
       isClosingRef.current = false;
       setPoweringOff(false);
       setClosePhase('idle');
+      if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) {
+        setCurtainsReady(true);
+        setRemoteHandReady(true);
+        setTvGrowDone(true);
+        setHandRevealDone(true);
+        setShowStatic(false);
+        setShowContent(true);
+        setAnimatedIn(true);
+        return;
+      }
       setCurtainsReady(false);
       setRemoteHandReady(false);
       setTvGrowDone(false);
       setHandRevealDone(false);
       setShowStatic(false);
+      setShowContent(false);
+      setAnimatedIn(false);
       let cancelled = false;
       Promise.all([preloadImage(LOUNGE_CURTAIN_LEFT_SRC), preloadImage(LOUNGE_CURTAIN_RIGHT_SRC)]).then(() => {
         if (!cancelled) setCurtainsReady(true);
@@ -616,6 +649,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   /** Grow TV once curtains are ready (hand reveals after grow completes). */
   useEffect(() => {
+    if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) return;
     if (!isOpen || !curtainsReady || closePhase !== 'idle' || isClosingRef.current) return;
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -626,6 +660,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen, curtainsReady, closePhase]);
 
   useEffect(() => {
+    if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) return;
     if (!isOpen || !animatedIn || closePhase !== 'idle' || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setTvGrowDone(true);
@@ -634,6 +669,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen, animatedIn, closePhase]);
 
   useEffect(() => {
+    if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) return;
     if (!tvGrowDone || !remoteHandReady || closePhase !== 'idle' || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setHandRevealDone(true);
@@ -642,6 +678,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [tvGrowDone, remoteHandReady, closePhase]);
 
   useEffect(() => {
+    if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) return;
     if (!handRevealDone || closePhase !== 'idle' || showContent || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setShowStatic(true);
@@ -650,6 +687,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [handRevealDone, closePhase, showContent]);
 
   useEffect(() => {
+    if (!LOUNGE_TV_OVERLAY_ANIMATION_ENABLED) return;
     if (!showStatic || closePhase !== 'idle' || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) {
@@ -680,7 +718,11 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   if (!visible || typeof document === 'undefined') return null;
 
-  const handMounted = tvGrowDone && remoteHandReady && closePhase !== 'shrink';
+  const overlayUiReady = LOUNGE_TV_OVERLAY_ANIMATION_ENABLED
+    ? animatedIn && closePhase === 'idle'
+    : isOpen && closePhase === 'idle';
+  const handMounted =
+    LOUNGE_TV_OVERLAY_ANIMATION_ENABLED && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
   const handVisible = handMounted && (closePhase === 'idle' || closePhase === 'zap');
 
   /** Black glass through static, power-off, hand exit, and shrink-back to lobby. */
@@ -689,13 +731,12 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
-  let { frameW: targetFrameW, frameH: targetFrameH } = loungeTvDimensionsFromScreenWidth(targetScreenW);
+  let { frameW: targetFrameW, frameH: targetFrameH } =
+    loungeTvDesignDimensionsFromScreenWidth(targetScreenW);
   const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
-    targetFrameH = maxFrameH;
-    const targetScreenH = targetFrameH - LOUNGE_TV_BEZEL.top - LOUNGE_TV_BEZEL.bottom;
-    targetScreenW = targetScreenH / LOUNGE_TV_SCREEN_ASPECT;
-    ({ frameW: targetFrameW } = loungeTvDimensionsFromScreenWidth(targetScreenW));
+    ({ frameW: targetFrameW, frameH: targetFrameH } =
+      loungeTvDesignDimensionsFromFrameHeight(maxFrameH));
   }
   const frameLeft = (vw - targetFrameW) / 2;
   const frameTop = (vh - targetFrameH) / 2;
@@ -709,17 +750,28 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     ? originRect.top + originRect.height / 2 - startFrameH / 2
     : frameTop;
 
-  const framePositionStyle: React.CSSProperties = {
-    position: 'fixed',
-    zIndex: 110,
-    overflow: 'visible',
-    isolation: 'isolate',
-    transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-    left: animatedIn ? frameLeft : startFrameLeft,
-    top: animatedIn ? frameTop : startFrameTop,
-    width: animatedIn ? targetFrameW : startFrameW,
-    height: animatedIn ? targetFrameH : startFrameH,
-  };
+  const framePositionStyle: React.CSSProperties = LOUNGE_TV_OVERLAY_ANIMATION_ENABLED
+    ? {
+        position: 'fixed',
+        zIndex: 110,
+        overflow: 'visible',
+        isolation: 'isolate',
+        transition: `left ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), top ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), width ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+        left: animatedIn ? frameLeft : startFrameLeft,
+        top: animatedIn ? frameTop : startFrameTop,
+        width: animatedIn ? targetFrameW : startFrameW,
+        height: animatedIn ? targetFrameH : startFrameH,
+      }
+    : {
+        position: 'fixed',
+        zIndex: 110,
+        overflow: 'visible',
+        isolation: 'isolate',
+        left: frameLeft,
+        top: frameTop,
+        width: targetFrameW,
+        height: targetFrameH,
+      };
 
   return createPortal(
     <div role="presentation" aria-hidden={!isOpen}>
@@ -734,14 +786,18 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           border: 'none',
           padding: 0,
           margin: 0,
-          background: animatedIn && closePhase === 'idle' ? 'rgba(0,0,0,0.35)' : 'transparent',
+          background: overlayUiReady ? 'rgba(0,0,0,0.35)' : 'transparent',
           cursor: closePhase === 'idle' && isOpen ? 'pointer' : 'default',
           pointerEvents: closePhase === 'idle' && isOpen ? 'auto' : 'none',
           transition: `background ${ANIM_MS}ms ease`,
         }}
       />
-      <LoungeCurtainPanel side="left" closed={animatedIn} />
-      <LoungeCurtainPanel side="right" closed={animatedIn} />
+{LOUNGE_TV_OVERLAY_ANIMATION_ENABLED ? (
+        <>
+          <LoungeCurtainPanel side="left" closed={animatedIn} />
+          <LoungeCurtainPanel side="right" closed={animatedIn} />
+        </>
+      ) : null}
       {handMounted ? (
         <LoungeTvRemoteHand
           visible={handVisible}
@@ -751,9 +807,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         />
       ) : null}
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvFrame
+        <LoungeTvDesignFrame
           fill
-          closeVisible={animatedIn && closePhase === 'idle'}
+          closeVisible={overlayUiReady}
           onClose={() => requestClose()}
           screenStyle={{
             opacity: showTvBlackScreen ? 1 : 0,
@@ -768,7 +824,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               style={{
                 zIndex: 6,
                 opacity: 1,
-                animation: 'lounge-tv-content-in 0.35s ease forwards',
+                animation: LOUNGE_TV_OVERLAY_ANIMATION_ENABLED
+                  ? 'lounge-tv-content-in 0.35s ease forwards'
+                  : undefined,
               }}
             >
               <LoungeTvScreen
@@ -779,7 +837,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvFrame>
+        </LoungeTvDesignFrame>
       </div>
     </div>,
     document.body
