@@ -1,16 +1,21 @@
 import { useCallback, useRef, useState } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
-  FINAL_LOUNGE_TV_PLAY_HIT_REGION,
+  FINAL_LOUNGE_TV_PLAY_IMAGE_RECT,
 } from '../../constants/finalLobbySceneAssets';
+import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { LOUNGE_TV_PLAY_BUTTON_COLOR } from './loungeTvFrame';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 
 export function LoungeSceneTvHotspot() {
+  const slideRef = useRef<HTMLDivElement>(null);
   const tvFrameRef = useRef<HTMLDivElement>(null);
   const [tvOpen, setTvOpen] = useState(false);
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
+
+  const playHit = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_IMAGE_RECT, slideRef);
+  const tvHit = useSceneCoverHitRect(FINAL_LOUNGE_TV_HIT_REGION, slideRef);
 
   const openLoungeTv = useCallback(() => {
     const rect = tvFrameRef.current?.getBoundingClientRect() ?? null;
@@ -25,7 +30,7 @@ export function LoungeSceneTvHotspot() {
   return (
     <>
       <div
-        ref={tvFrameRef}
+        ref={slideRef}
         style={{
           position: 'absolute',
           inset: 0,
@@ -36,18 +41,19 @@ export function LoungeSceneTvHotspot() {
         <div
           ref={tvFrameRef}
           style={{
-            ...rectToPercentStyle(FINAL_LOUNGE_TV_HIT_REGION),
+            ...rectToPercentStyle(tvHit),
             position: 'absolute',
             pointerEvents: 'none',
           }}
-        >
+          aria-hidden
+        />
         {!tvOpen ? (
           <button
             type="button"
             onClick={openLoungeTv}
             aria-label="Play lounge media"
             style={{
-              ...rectToPercentStyle(FINAL_LOUNGE_TV_PLAY_HIT_REGION),
+              ...rectToPercentStyle(playHit),
               position: 'absolute',
               margin: 0,
               padding: 12,
@@ -82,7 +88,6 @@ export function LoungeSceneTvHotspot() {
             />
           </button>
         ) : null}
-        </div>
       </div>
 
       <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />

@@ -529,32 +529,39 @@ const LobbyApp: React.FC = () => {
         >
           <div
             style={{
+              position: 'relative',
               width: '100vw',
               flexShrink: 0,
               minHeight: sceneCarouselSlideMinHeightCss(),
             }}
           >
             <LobbyPage />
+            {transitionVideoEnabled && roomTransitionOverlay === 'forward' ? (
+              <LobbyLoungeTransitionOverlay
+                active
+                direction="forward"
+                onComplete={() => completeRoomTransitionOverlay('forward')}
+              />
+            ) : null}
           </div>
           <div
             style={{
+              position: 'relative',
               width: '100vw',
               flexShrink: 0,
               minHeight: sceneCarouselSlideMinHeightCss(),
             }}
           >
             <LoungePage />
+            {transitionVideoEnabled && roomTransitionOverlay === 'reverse' ? (
+              <LobbyLoungeTransitionOverlay
+                active
+                direction="reverse"
+                onComplete={() => completeRoomTransitionOverlay('reverse')}
+              />
+            ) : null}
           </div>
         </div>
-        {transitionVideoEnabled ? (
-          <LobbyLoungeTransitionOverlay
-            active={roomTransitionOverlay !== null}
-            direction={roomTransitionOverlay ?? 'forward'}
-            onComplete={() => {
-              if (roomTransitionOverlay) completeRoomTransitionOverlay(roomTransitionOverlay);
-            }}
-          />
-        ) : null}
       </div>
       
       {/* Upgrade Subscription Modal */}
