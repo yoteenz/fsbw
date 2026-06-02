@@ -28,6 +28,31 @@ export function sceneCarouselSlideMinHeightCss(): string {
   return `max(100dvh, ${sceneCarouselBackgroundArtHeightCss()})`;
 }
 
+/** Lobby/lounge slide shell — explicit height so absolute children + cover hit maps get layout. */
+export function sceneSlideShellStyle(): React.CSSProperties {
+  const slideHeight = sceneCarouselSlideMinHeightCss();
+  return {
+    position: 'relative',
+    width: '100vw',
+    flexShrink: 0,
+    minHeight: slideHeight,
+    height: slideHeight,
+    overflow: 'visible',
+    backgroundColor: '#ffffff',
+  };
+}
+
+/** Viewport fallback when a measure node has no layout yet (e.g. only `minHeight` ancestors). */
+export function defaultSceneSlideMetricsFromViewport(): { width: number; height: number } {
+  if (typeof window === 'undefined') {
+    return { width: SCENE_CAROUSEL_BG_WIDTH, height: SCENE_CAROUSEL_BG_HEIGHT };
+  }
+  const width = window.innerWidth;
+  const artHeight = (width * SCENE_CAROUSEL_BG_HEIGHT) / SCENE_CAROUSEL_BG_WIDTH;
+  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+  return { width, height: Math.max(viewportHeight, artHeight) };
+}
+
 /**
  * Full-bleed scene background for lobby/lounge carousel slides.
  * `cover` + top anchor fills the viewport (no ceiling/floor letterbox gaps) while

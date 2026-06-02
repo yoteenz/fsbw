@@ -52,7 +52,7 @@ export function LoungeSceneTvHotspot({ measureRef }: Props) {
             aria-hidden
           />
         ) : null}
-        {!tvOpen && playHit ? (
+        {!tvOpen && playHit != null ? (
           <button
             type="button"
             data-lounge-tv-play

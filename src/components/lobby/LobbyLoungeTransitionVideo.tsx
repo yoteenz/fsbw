@@ -9,7 +9,6 @@ import {
   FINAL_LOBBY_BACKGROUND_SRC,
   FINAL_LOUNGE_BACKGROUND_SRC,
 } from '../../constants/finalLobbySceneAssets';
-import { sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
 
 type Props = {
   active: boolean;
@@ -193,19 +192,12 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     };
   }, [active, direction, finish, src]);
 
-  const slideHeight = sceneCarouselSlideMinHeightCss();
-
   return (
     <div
       aria-hidden={!active}
       style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        width: '100%',
-        height: slideHeight,
-        minHeight: slideHeight,
+        inset: 0,
         zIndex: 200,
         overflow: 'hidden',
         pointerEvents: 'none',
