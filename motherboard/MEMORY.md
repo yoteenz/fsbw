@@ -22918,3 +22918,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - `src/pages/checkout/page.tsx` — BCF `shop-texture-category` line price `marginTop` 5→4px; BCF bundle-deal price block 7→6px. Renamed `savePaymentMethod` → `saveShippingAddress`; removed `disabled` / `not-allowed` cursor on all shipping fields. On order submit when checked, append address to `savedAddresses` and set `defaultAddress` when none (country as full name via `countryCheckoutCodeToFullName`, same shape as account → shipping page).
 
 **Conventions:** SAVE SHIPPING ADDRESS is save-only; USE DEFAULT ADDRESS still loads/clears fields. Payment card save remains `savePaymentMethodCard`.
+
+---
+
+## 2026-06-02 — Checkout main card: restore bottom black border
+
+**Context:** User reported the bottom black border of the checkout MAIN card was broken (side borders visible, bottom horizontal line missing).
+
+**Fix:** `src/pages/checkout/page.tsx` — replaced `boxShadow: inset 0 0 0 1px #000` with `border border-black` + `borderWidth: 1.3px` (same pattern as shopping bag, order form, product pages). Inset shadow was unreliable at the bottom with backdrop-blur/flex layout on mobile.

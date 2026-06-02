@@ -126,18 +126,6 @@ function countryFullNameToCheckoutCode(country: unknown): string {
   return '';
 }
 
-/** Match account → shipping saved address `country` field. */
-function countryCheckoutCodeToFullName(code: string): string {
-  const map: Record<string, string> = {
-    US: 'UNITED STATES OF AMERICA',
-    CA: 'CANADA',
-    GB: 'UNITED KINGDOM',
-    AU: 'AUSTRALIA',
-    OTHER: 'OTHER',
-  };
-  return map[code] || code;
-}
-
 /** Normalize unit display name so "Blanco" / "BLANCO" / " blanco " all match voucher + rush logic. */
 function normalizeCartUnitName(name: unknown): string {
   return (name || '').toString().toUpperCase().trim();
@@ -313,7 +301,7 @@ function CheckoutPage() {
   // Form state
   const [sameAsBilling, setSameAsBilling] = useState(false);
   const [useDefaultMethod, setUseDefaultMethod] = useState(false);
-  const [saveShippingAddress, setSaveShippingAddress] = useState(false);
+  const [savePaymentMethod, setSavePaymentMethod] = useState(false);
   const [useDefaultPaymentMethod, setUseDefaultPaymentMethod] = useState(false);
   const [savePaymentMethodCard, setSavePaymentMethodCard] = useState(false);
   const [bookingAutopayConsent, setBookingAutopayConsent] = useState(false);
@@ -1420,11 +1408,11 @@ function CheckoutPage() {
 
   // Save payment method when checkbox is checked and form is submitted
   useEffect(() => {
-    if (saveShippingAddress && isSignedIn && firstName && lastName && shippingAddress && city && state && zip) {
+    if (savePaymentMethod && isSignedIn && firstName && lastName && shippingAddress && city && state && zip) {
       // This will be saved when the order is placed
       // For now, we just track the state
     }
-  }, [saveShippingAddress, isSignedIn, firstName, lastName, shippingAddress, city, state, zip]);
+  }, [savePaymentMethod, isSignedIn, firstName, lastName, shippingAddress, city, state, zip]);
 
   // Auto-populate payment fields from default payment method when checkbox is checked
   useEffect(() => {
@@ -3215,11 +3203,11 @@ function CheckoutPage() {
             </div>
           </div>
 
-          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form. Inset box-shadow used for even border on all sides (avoids subpixel unevenness with flex + % width). */}
+          {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form. */}
           <div
-            className={showMobileMenu ? 'menu-toggle-card flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
+            className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
-              boxShadow: 'inset 0 0 0 1px #000000',
+              borderWidth: '1.3px',
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
@@ -3562,7 +3550,7 @@ function CheckoutPage() {
                                 {isBcfBundleDeal ? (
                                   <div
                                     style={{
-                                      margin: '6px 0 0 0',
+                                      margin: '7px 0 0 0',
                                       display: 'flex',
                                       flexDirection: 'column',
                                       alignItems: 'center',
@@ -3606,7 +3594,7 @@ function CheckoutPage() {
                                       useDigitalStack
                                         ? '4px 0 0 0'
                                         : item.type === 'shop-texture-category' && !isBcfBundleDeal
-                                          ? '4px 0 0 0'
+                                          ? '5px 0 0 0'
                                           : '1px 0 0 0',
                                     textTransform: 'uppercase',
                                     textAlign: 'center'
@@ -3989,6 +3977,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -4001,7 +3990,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none',
-                          cursor: 'text'
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -4032,6 +4021,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -4044,7 +4034,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none',
-                          cursor: 'text'
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                           }}
                         />
                       </div>
@@ -4076,6 +4066,7 @@ function CheckoutPage() {
                             });
                           }
                         }}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4088,7 +4079,7 @@ function CheckoutPage() {
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none',
-                          cursor: 'text'
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -4109,6 +4100,7 @@ function CheckoutPage() {
                         type="text"
                         value={aptSuite}
                         onChange={(e) => setAptSuite(e.target.value)}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4120,7 +4112,7 @@ function CheckoutPage() {
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          cursor: 'text'
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -4152,6 +4144,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -4164,7 +4157,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none',
-                          cursor: 'text'
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -4195,6 +4188,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                           style={{
                             width: '100%',
                             height: '36px',
@@ -4207,7 +4201,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none',
-                            cursor: 'text'
+                            cursor: savePaymentMethod ? 'not-allowed' : 'text'
                           }}
                         />
                       </div>
@@ -4238,6 +4232,7 @@ function CheckoutPage() {
                               });
                             }
                           }}
+                          disabled={savePaymentMethod}
                           style={{
                             width: '100%',
                             height: '36px',
@@ -4250,7 +4245,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none',
-                            cursor: 'text'
+                            cursor: savePaymentMethod ? 'not-allowed' : 'text'
                           }}
                         />
                       </div>
@@ -4282,6 +4277,7 @@ function CheckoutPage() {
                             });
                           }
                         }}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4294,7 +4290,7 @@ function CheckoutPage() {
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none',
-                          cursor: 'text'
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
                         }}
                       />
                     </div>
@@ -4325,6 +4321,7 @@ function CheckoutPage() {
                             });
                           }
                         }}
+                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4337,7 +4334,7 @@ function CheckoutPage() {
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none',
-                          cursor: 'text',
+                          cursor: savePaymentMethod ? 'not-allowed' : 'text',
                           textTransform: 'uppercase'
                         }}
                       />
@@ -4381,7 +4378,7 @@ function CheckoutPage() {
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div
-                          onClick={() => setSaveShippingAddress(!saveShippingAddress)}
+                          onClick={() => setSavePaymentMethod(!savePaymentMethod)}
                           style={{
                             width: '16px',
                             height: '16px',
@@ -4394,7 +4391,7 @@ function CheckoutPage() {
                             position: 'relative'
                           }}
                         >
-                          {saveShippingAddress && (
+                          {savePaymentMethod && (
                             <img 
                               src="/assets/checkbox.svg" 
                               alt="checked" 
@@ -4403,7 +4400,7 @@ function CheckoutPage() {
                           )}
                         </div>
                         <label 
-                          onClick={() => setSaveShippingAddress(!saveShippingAddress)}
+                          onClick={() => setSavePaymentMethod(!savePaymentMethod)}
                           style={{ 
                             fontFamily: '"Futura PT Book"',
                             fontSize: '10px',
@@ -6399,7 +6396,7 @@ function CheckoutPage() {
                   const processingTimeText = persistentProcessingTimeLabel;
                   
                   // Save payment method/address if checkbox is checked
-                  if (saveShippingAddress && isSignedIn) {
+                  if (savePaymentMethod && isSignedIn) {
                     try {
                       const currentUser = localStorage.getItem('currentUser');
                       if (currentUser) {
@@ -6414,15 +6411,16 @@ function CheckoutPage() {
                           zip: zip.trim(),
                           phoneNumber: phoneNumber.trim(),
                           email: email.trim(),
-                          country: countryCheckoutCodeToFullName(selectedCountry || 'US'),
-                          isDefault: !user.defaultAddress,
+                          country: selectedCountry || 'US',
+                          isDefault: !user.defaultAddress, // Set as default if no default exists
+                          savedAt: new Date().toISOString()
                         };
                         
-                        const saved = Array.isArray(user.savedAddresses) ? user.savedAddresses : [];
+                        // Update user with saved address
                         const updatedUser = {
                           ...user,
-                          defaultAddress: addressToSave.isDefault ? addressToSave : user.defaultAddress,
-                          savedAddresses: [...saved, addressToSave],
+                          defaultAddress: !user.defaultAddress ? addressToSave : user.defaultAddress,
+                          savedAddresses: user.savedAddresses ? [...user.savedAddresses, addressToSave] : [addressToSave]
                         };
                         
                         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
