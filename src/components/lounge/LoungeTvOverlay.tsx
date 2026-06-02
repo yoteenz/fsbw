@@ -7,10 +7,11 @@ import {
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
+  LOUNGE_TV_BEZEL,
   LOUNGE_TV_OVERLAY_SIZE_SCALE,
-  LoungeTvDesignFrame,
-  loungeTvDesignDimensionsFromFrameHeight,
-  loungeTvDesignDimensionsFromScreenWidth,
+  LOUNGE_TV_SCREEN_ASPECT,
+  LoungeTvFrame,
+  loungeTvDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
@@ -118,6 +119,8 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
 /** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
 const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
 const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
+/** Vertical space between sidebar subcategory labels (NEW DROPS, CAMPAIGNS, etc.). */
+const LOUNGE_TV_SIDEBAR_ITEM_GAP_PX = 10;
 
 /** Default media insets until nav tabs are measured (sidebar + gap reserved). */
 const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
@@ -311,14 +314,16 @@ function LoungeTvScreen({
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
     fontSize: '9px',
+    lineHeight: 1.35,
     letterSpacing: '0.04em',
     textTransform: 'uppercase',
     color: active || accent ? BRAND_RED : '#ffffff',
     background: 'none',
     border: 'none',
-    padding: '2px 0',
+    padding: '3px 0',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+    display: 'block',
   });
 
   const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
@@ -387,10 +392,10 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            gap: '6px',
+            gap: `${LOUNGE_TV_SIDEBAR_ITEM_GAP_PX}px`,
             flexShrink: 0,
             width: '72px',
-            paddingTop: '2px',
+            paddingTop: '4px',
           }}
           aria-label="Subcategories"
         >
@@ -684,12 +689,13 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
-  let { frameW: targetFrameW, frameH: targetFrameH } =
-    loungeTvDesignDimensionsFromScreenWidth(targetScreenW);
+  let { frameW: targetFrameW, frameH: targetFrameH } = loungeTvDimensionsFromScreenWidth(targetScreenW);
   const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
-    ({ frameW: targetFrameW, frameH: targetFrameH } =
-      loungeTvDesignDimensionsFromFrameHeight(maxFrameH));
+    targetFrameH = maxFrameH;
+    const targetScreenH = targetFrameH - LOUNGE_TV_BEZEL.top - LOUNGE_TV_BEZEL.bottom;
+    targetScreenW = targetScreenH / LOUNGE_TV_SCREEN_ASPECT;
+    ({ frameW: targetFrameW } = loungeTvDimensionsFromScreenWidth(targetScreenW));
   }
   const frameLeft = (vw - targetFrameW) / 2;
   const frameTop = (vh - targetFrameH) / 2;
@@ -745,7 +751,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         />
       ) : null}
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvDesignFrame
+        <LoungeTvFrame
           fill
           closeVisible={animatedIn && closePhase === 'idle'}
           onClose={() => requestClose()}
@@ -773,7 +779,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvDesignFrame>
+        </LoungeTvFrame>
       </div>
     </div>,
     document.body
