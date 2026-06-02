@@ -22710,3 +22710,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** Fal source must be **black plate only** (not rose wall in JPEG). Pass 1 adds **white-hot tube cores**, **pale outer halo**, **+15–25% stroke** if thin; optional Pass 2 short legibility pass. **`npm run lobby:bake-neon-*`** after Fal. Immediate UI: **`LOBBY_NEON_NAV_COMPOSITE_FILTER`** drop-shadow on lobby nav imgs.
 
 **Changes:** **`sceneLobbyNeonNavFal.ts`** — **`LOBBY_NEON_NAV_FAL_SOURCE_PLATE`**, **`LOBBY_NEON_NAV_FAL_LEGIBILITY_ON_ROSE`**, **`LOBBY_NEON_NAV_FAL_PASS2_ROSE_SEPARATION`**, updated PASS1 strings. **`lobbySceneAssets.ts`**, **`lobby/page.tsx`**. Commit **`f8eaf924`**.
+
+---
+
+## 2026-06-02 — Lobby register/phone popover scrim backdrop blur
+
+**Context:** User asked to add the same blur effect on the register and Phone pop-up background as the cap size chart uses on its pop-up.
+
+**Topics covered:**
+- Cap size chart enlarged modal (unit PDPs + NOIR) uses full-viewport scrim: `rgba(0, 0, 0, 0.7)` with `backdropFilter` / `WebkitBackdropFilter` **`blur(3px)`**.
+- Lobby register/phone already had a lighter portaled scrim (`LOBBY_CASE_POPOVER_SCRIM_ALPHA` **0.525**) in `src/pages/lobby/page.tsx` but no backdrop blur.
+
+**Decisions / outcomes:** Added **`blur(3px)`** (+ WebKit prefix) to the lobby case popover scrim so the rose wall and case blur behind register/phone popovers like the cap chart modal. Popover card shell unchanged (marble gradient).
+
+**Changes:** `src/pages/lobby/page.tsx` — scrim `style` on `createPortal` dimmer when `lobbyCasePopover !== null`. Commit **`76295ff8`** on **`master`** and **`preview/mobile`**.
+
+**Conventions:** Lobby register/phone scrim: lighter alpha than cap chart (**0.525** vs **0.7**) but same **3px** backdrop blur as other modals.
