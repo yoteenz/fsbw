@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   lobbyCarouselIndexFromPath,
@@ -35,7 +34,7 @@ import {
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
 import {
   LOBBY_CASE_POPOVER_SCRIM_ALPHA,
-  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
+  LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
 } from '../../constants/lobbyPaymentIcons';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
@@ -176,6 +175,24 @@ const LobbyPage: React.FC = () => {
     >
       {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
       <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
+
+      {lobbyCasePopover !== null ? (
+        <div
+          role="presentation"
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
+            backdropFilter: 'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+            zIndex: LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
+            margin: 0,
+            padding: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      ) : null}
 
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
@@ -490,25 +507,6 @@ const LobbyPage: React.FC = () => {
         </div>
       </div>
 
-      {lobbyCasePopover !== null &&
-        createPortal(
-          <div
-            role="presentation"
-            aria-hidden
-            style={{
-              position: 'fixed',
-              inset: 0,
-              backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
-              backdropFilter: 'blur(3px)',
-              WebkitBackdropFilter: 'blur(3px)',
-              zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
-              margin: 0,
-              padding: 0,
-              pointerEvents: 'none',
-            }}
-          />,
-          document.body
-        )}
       
       {/* Right Arrow Button - Part of page design, scrolls with content */}
       <div style={{
