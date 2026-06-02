@@ -22863,3 +22863,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`lobby/page.tsx`** — comment update on play control.
 
 **Re-enable later:** set both flags to **`true`** in constants when animation pass is ready.
+
+---
+
+## 2026-06-02 — Lounge TV: Slay Tips blog layout; Watch + Learn stays video
+
+**Context:** User asked for **SLAY TIPS** on the lounge content TV popup to use **blog-style** layout (header, body, attachments, comments) instead of the video thumbnail/player pattern; **WATCH + LEARN** should keep the current video UI.
+
+**Changes (`4c12911a`):**
+- **`LoungeTvBlogPostView.tsx`** — `LoungeTvBlogPostList` (vertical cards with title + excerpt) and `LoungeTvBlogPostDetail` (header, body paragraphs, ATTACHMENTS section with simple image/video embed, COMMENTS placeholder).
+- **`LoungeTvOverlay.tsx`** — `mainTab === 'slay-tips'` opens blog list/detail; `watch-learn` still uses 3×3 grid + `LoungeTvWatchLearnPlayer`.
+- **`loungeTvContent.ts`** — tile type extended with `format`, `body`, `attachmentSrc`/`attachmentType`; `withSlayTipsBlogMeta` seeds static slay-tips copy; watch-learn uses `format: 'video'`.
+- **`loungeTvAdminConfig.ts`** — slay-tips admin items map to blog tiles (no `videoSrc`); media URL becomes attachment.
+
+**Conventions:** Slay Tips = blog UX only; Watch + Learn = video grid + in-player controls; Brand = thumbnail grid (no expanded player).
