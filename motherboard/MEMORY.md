@@ -22773,3 +22773,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **24 → 32**. Register and case slide offset unchanged.
 
 **Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`975b55d3`** on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lobby display-case phone nudge +2px left (props only)
+
+**Context:** User asked to move **only** the lobby display-case phone **2px** further left (follow-up nudges: **24 → 32** then this pass).
+
+**Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **32 → 34**. Register and case slide offset unchanged.
+
+**Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`3513623e`** on **`master`** and **`preview/mobile`**.
