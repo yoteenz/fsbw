@@ -42,11 +42,8 @@ export const LOBBY_CASE_POPOVER_MIN_HEIGHT_PX = Math.round(
   LOBBY_CASE_POPOVER_BASE_MIN_HEIGHT_PX * LOBBY_CASE_POPOVER_SCALE
 );
 
-/** @deprecated Body-portal scrim — lobby uses `LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX` on the slide instead. */
+/** Full-viewport dimmer when register/phone popover is open (`createPortal` to `document.body`). */
 export const LOBBY_CASE_POPOVER_SCRIM_Z_INDEX = 10000;
-
-/** Dim layer on lobby slide (below display case `z-index: 20`); scrolls/zooms with the scene. */
-export const LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX = 15;
 
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
@@ -54,8 +51,8 @@ export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
 /** @deprecated Stack wrapper removed — use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX`. */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
-/** Popover card above register/phone asset and slide scrim (within case prop wrapper). */
-export const LOBBY_CASE_POPOVER_OPEN_Z_INDEX = 30;
+/** Single layer for portaled prop asset + popover card (above scrim, same visibility). */
+export const LOBBY_CASE_POPOVER_OPEN_Z_INDEX = 999999;
 
 /** @deprecated Use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX` — asset and panel share one portal layer. */
 export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = LOBBY_CASE_POPOVER_OPEN_Z_INDEX;
@@ -121,7 +118,7 @@ export const LOBBY_PAYMENT_POPOVER_LAYOUT: LobbyPaymentPopoverLayout = {
 /** Bohemy subheadings (gray, 15px) above each payment row in the register popover. */
 export const LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL = 'accepted cards';
 export const LOBBY_PAYMENT_EXPRESS_LABEL = 'express payment';
-export const LOBBY_PAYMENT_PAY_OVER_TIME_LABEL = 'pay in four';
+export const LOBBY_PAYMENT_PAY_OVER_TIME_LABEL = 'payment plans';
 
 /** Flat list (legacy / tests). */
 export const LOBBY_PAYMENT_ICONS: readonly LobbyPaymentIcon[] = [
