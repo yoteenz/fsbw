@@ -23069,3 +23069,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`loungeTvSeedancePrompt.ts`**: close prompt rewritten as temporal reverse of open / `video.mov`; copy block notes in-app reverse preferred.
 
 **Conventions:** Lounge TV open/close = one Seedance file; close = reverse unless QA fails (then use CLOSE I2V prompt).
+
+---
+
+## 2026-06-02 — Lounge TV content shell (Final LP end still)
+
+**Context:** After `video.mov`, overlay used CSS gradient **`LoungeTvFrame`** (wrong). User supplied Final LP still for menu + close: `…/ChatGPT Image Jun 2, 2026 at 06_28_39 PM.png`.
+
+**Fix:** **`LoungeTvContentFrame`** + **`lounge-tv-content-frame.png`** — baked end still, React menu in **`LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT`**, close on bezel via **`LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR`**. Remote + bundled paths in **`loungeTvAssets.ts`**.
