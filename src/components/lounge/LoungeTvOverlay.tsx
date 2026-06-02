@@ -8,9 +8,9 @@ import {
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
   LOUNGE_TV_OVERLAY_SIZE_SCALE,
-  LoungeTvDesignFrame,
-  loungeTvDesignDimensionsFromFrameHeight,
-  loungeTvDesignDimensionsFromScreenWidth,
+  LoungeTvFrame,
+  loungeTvDimensionsFromFrameHeight,
+  loungeTvDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
@@ -119,6 +119,7 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
 /** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
 const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
 const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
+const LOUNGE_TV_SIDEBAR_ITEM_GAP_PX = 10;
 
 /** Default media insets until nav tabs are measured (sidebar + gap reserved). */
 const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
@@ -226,7 +227,9 @@ function LoungeTvScreen({
   const [viewedRevision, setViewedRevision] = useState(0);
   const bodyRowRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
+  const firstSidebarRef = useRef<HTMLButtonElement>(null);
   const [mediaInsets, setMediaInsets] = useState(LOUNGE_TV_MEDIA_INSET_DEFAULT);
+  const [mediaTopPx, setMediaTopPx] = useState(0);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const tiles = useMemo(
     () => resolveLoungeTvTiles(mainTab, sidebarId),
@@ -294,15 +297,31 @@ function LoungeTvScreen({
     });
   }, []);
 
+  const measureMediaTop = useCallback(() => {
+    const rowEl = bodyRowRef.current;
+    const firstBtn = firstSidebarRef.current;
+    if (!rowEl || !firstBtn) return;
+    const rowRect = rowEl.getBoundingClientRect();
+    const btnRect = firstBtn.getBoundingClientRect();
+    const padTop = parseFloat(getComputedStyle(firstBtn).paddingTop) || 0;
+    setMediaTopPx(Math.max(0, Math.round(btnRect.top - rowRect.top + padTop)));
+  }, []);
+
   useLayoutEffect(() => {
     measureMediaInsets();
-    const raf = requestAnimationFrame(measureMediaInsets);
+    measureMediaTop();
+    const raf = requestAnimationFrame(() => {
+      measureMediaInsets();
+      measureMediaTop();
+    });
     window.addEventListener('resize', measureMediaInsets);
+    window.addEventListener('resize', measureMediaTop);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', measureMediaInsets);
+      window.removeEventListener('resize', measureMediaTop);
     };
-  }, [measureMediaInsets, mainTab]);
+  }, [measureMediaInsets, measureMediaTop, mainTab, sidebar.length]);
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
@@ -343,6 +362,7 @@ function LoungeTvScreen({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
     fontSize: '9px',
     letterSpacing: '0.04em',
+    lineHeight: 1.35,
     textTransform: 'uppercase',
     color: active || accent ? BRAND_RED : '#ffffff',
     background: 'none',
@@ -418,16 +438,17 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            gap: '6px',
+            gap: `${LOUNGE_TV_SIDEBAR_ITEM_GAP_PX}px`,
             flexShrink: 0,
             width: '72px',
-            paddingTop: '2px',
+            paddingTop: '4px',
           }}
           aria-label="Subcategories"
         >
-          {sidebar.map((item) => (
+          {sidebar.map((item, index) => (
             <button
               key={item.id}
+              ref={index === 0 ? firstSidebarRef : undefined}
               type="button"
               style={{
                 ...navLinkStyle(sidebarId === item.id, item.id === 'new-drops' && sidebarId === item.id),
@@ -446,7 +467,7 @@ function LoungeTvScreen({
             position: 'absolute',
             left: `${mediaInsets.left}px`,
             right: `${mediaInsets.right}px`,
-            top: 0,
+            top: `${mediaTopPx}px`,
             bottom: 0,
             minWidth: 0,
             display: 'flex',
@@ -454,6 +475,8 @@ function LoungeTvScreen({
             justifyContent: 'flex-start',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
+            paddingBottom: '8px',
+            boxSizing: 'border-box',
           }}
         >
           {watchLearnTile ? (
@@ -722,11 +745,11 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   let { frameW: targetFrameW, frameH: targetFrameH } =
-    loungeTvDesignDimensionsFromScreenWidth(targetScreenW);
+    loungeTvDimensionsFromScreenWidth(targetScreenW);
   const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
     ({ frameW: targetFrameW, frameH: targetFrameH } =
-      loungeTvDesignDimensionsFromFrameHeight(maxFrameH));
+      loungeTvDimensionsFromFrameHeight(maxFrameH));
   }
   const frameLeft = (vw - targetFrameW) / 2;
   const frameTop = (vh - targetFrameH) / 2;
@@ -782,7 +805,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         />
       ) : null}
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvDesignFrame
+        <LoungeTvFrame
           fill
           closeVisible={animatedIn && closePhase === 'idle'}
           onClose={() => requestClose()}
@@ -810,7 +833,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvDesignFrame>
+        </LoungeTvFrame>
       </div>
     </div>,
     document.body
