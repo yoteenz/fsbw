@@ -126,6 +126,18 @@ function countryFullNameToCheckoutCode(country: unknown): string {
   return '';
 }
 
+/** Match account → shipping saved address `country` field. */
+function countryCheckoutCodeToFullName(code: string): string {
+  const map: Record<string, string> = {
+    US: 'UNITED STATES OF AMERICA',
+    CA: 'CANADA',
+    GB: 'UNITED KINGDOM',
+    AU: 'AUSTRALIA',
+    OTHER: 'OTHER',
+  };
+  return map[code] || code;
+}
+
 /** Normalize unit display name so "Blanco" / "BLANCO" / " blanco " all match voucher + rush logic. */
 function normalizeCartUnitName(name: unknown): string {
   return (name || '').toString().toUpperCase().trim();
@@ -301,7 +313,7 @@ function CheckoutPage() {
   // Form state
   const [sameAsBilling, setSameAsBilling] = useState(false);
   const [useDefaultMethod, setUseDefaultMethod] = useState(false);
-  const [savePaymentMethod, setSavePaymentMethod] = useState(false);
+  const [saveShippingAddress, setSaveShippingAddress] = useState(false);
   const [useDefaultPaymentMethod, setUseDefaultPaymentMethod] = useState(false);
   const [savePaymentMethodCard, setSavePaymentMethodCard] = useState(false);
   const [bookingAutopayConsent, setBookingAutopayConsent] = useState(false);
@@ -1408,11 +1420,11 @@ function CheckoutPage() {
 
   // Save payment method when checkbox is checked and form is submitted
   useEffect(() => {
-    if (savePaymentMethod && isSignedIn && firstName && lastName && shippingAddress && city && state && zip) {
+    if (saveShippingAddress && isSignedIn && firstName && lastName && shippingAddress && city && state && zip) {
       // This will be saved when the order is placed
       // For now, we just track the state
     }
-  }, [savePaymentMethod, isSignedIn, firstName, lastName, shippingAddress, city, state, zip]);
+  }, [saveShippingAddress, isSignedIn, firstName, lastName, shippingAddress, city, state, zip]);
 
   // Auto-populate payment fields from default payment method when checkbox is checked
   useEffect(() => {
@@ -3550,7 +3562,7 @@ function CheckoutPage() {
                                 {isBcfBundleDeal ? (
                                   <div
                                     style={{
-                                      margin: '7px 0 0 0',
+                                      margin: '6px 0 0 0',
                                       display: 'flex',
                                       flexDirection: 'column',
                                       alignItems: 'center',
@@ -3575,9 +3587,9 @@ function CheckoutPage() {
                                       )}
                                     <span
                                       style={{
-                                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                        fontFamily: '"Futura PT Medium"',
                                         fontSize: '10px',
-                                        fontWeight: 400,
+                                        fontWeight: '500',
                                         color: '#000000'
                                       }}
                                       dangerouslySetInnerHTML={formatPrice(bundleLineTotalCheckout)}
@@ -3586,15 +3598,15 @@ function CheckoutPage() {
                                 ) : (
                                 <p
                                   style={{
-                                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                    fontFamily: '"Futura PT Medium"',
                                     fontSize: '10px',
-                                    fontWeight: 400,
+                                    fontWeight: '500',
                                     color: '#000000',
                                     margin:
                                       useDigitalStack
                                         ? '4px 0 0 0'
                                         : item.type === 'shop-texture-category' && !isBcfBundleDeal
-                                          ? '5px 0 0 0'
+                                          ? '4px 0 0 0'
                                           : '1px 0 0 0',
                                     textTransform: 'uppercase',
                                     textAlign: 'center'
@@ -3977,7 +3989,6 @@ function CheckoutPage() {
                               });
                             }
                           }}
-                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -3990,7 +4001,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                          cursor: 'text'
                         }}
                       />
                     </div>
@@ -4021,7 +4032,6 @@ function CheckoutPage() {
                               });
                             }
                           }}
-                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -4034,7 +4044,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                          cursor: 'text'
                           }}
                         />
                       </div>
@@ -4066,7 +4076,6 @@ function CheckoutPage() {
                             });
                           }
                         }}
-                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4079,7 +4088,7 @@ function CheckoutPage() {
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                          cursor: 'text'
                         }}
                       />
                     </div>
@@ -4100,7 +4109,6 @@ function CheckoutPage() {
                         type="text"
                         value={aptSuite}
                         onChange={(e) => setAptSuite(e.target.value)}
-                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4112,7 +4120,7 @@ function CheckoutPage() {
                           color: '#808080',
                           boxSizing: 'border-box',
                           borderRadius: '0',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                          cursor: 'text'
                         }}
                       />
                     </div>
@@ -4144,7 +4152,6 @@ function CheckoutPage() {
                               });
                             }
                           }}
-                          disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                             height: '36px',
@@ -4157,7 +4164,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                           outline: 'none',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                          cursor: 'text'
                         }}
                       />
                     </div>
@@ -4188,7 +4195,6 @@ function CheckoutPage() {
                               });
                             }
                           }}
-                          disabled={savePaymentMethod}
                           style={{
                             width: '100%',
                             height: '36px',
@@ -4201,7 +4207,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none',
-                            cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                            cursor: 'text'
                           }}
                         />
                       </div>
@@ -4232,7 +4238,6 @@ function CheckoutPage() {
                               });
                             }
                           }}
-                          disabled={savePaymentMethod}
                           style={{
                             width: '100%',
                             height: '36px',
@@ -4245,7 +4250,7 @@ function CheckoutPage() {
                             boxSizing: 'border-box',
                             borderRadius: '0',
                             outline: 'none',
-                            cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                            cursor: 'text'
                           }}
                         />
                       </div>
@@ -4277,7 +4282,6 @@ function CheckoutPage() {
                             });
                           }
                         }}
-                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4290,7 +4294,7 @@ function CheckoutPage() {
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text'
+                          cursor: 'text'
                         }}
                       />
                     </div>
@@ -4321,7 +4325,6 @@ function CheckoutPage() {
                             });
                           }
                         }}
-                        disabled={savePaymentMethod}
                         style={{
                           width: '100%',
                           height: '36px',
@@ -4334,7 +4337,7 @@ function CheckoutPage() {
                           boxSizing: 'border-box',
                           borderRadius: '0',
                           outline: 'none',
-                          cursor: savePaymentMethod ? 'not-allowed' : 'text',
+                          cursor: 'text',
                           textTransform: 'uppercase'
                         }}
                       />
@@ -4378,7 +4381,7 @@ function CheckoutPage() {
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div
-                          onClick={() => setSavePaymentMethod(!savePaymentMethod)}
+                          onClick={() => setSaveShippingAddress(!saveShippingAddress)}
                           style={{
                             width: '16px',
                             height: '16px',
@@ -4391,7 +4394,7 @@ function CheckoutPage() {
                             position: 'relative'
                           }}
                         >
-                          {savePaymentMethod && (
+                          {saveShippingAddress && (
                             <img 
                               src="/assets/checkbox.svg" 
                               alt="checked" 
@@ -4400,7 +4403,7 @@ function CheckoutPage() {
                           )}
                         </div>
                         <label 
-                          onClick={() => setSavePaymentMethod(!savePaymentMethod)}
+                          onClick={() => setSaveShippingAddress(!saveShippingAddress)}
                           style={{ 
                             fontFamily: '"Futura PT Book"',
                             fontSize: '10px',
@@ -5919,10 +5922,10 @@ function CheckoutPage() {
                     </div>
                     )}
                     <div style={{ borderTop: '1.3px solid #000000', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#000000', fontWeight: 400 }}>
+                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', fontWeight: '500' }}>
                         SUBTOTAL
                       </span>
-                      <span style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#000000', fontWeight: 400 }} dangerouslySetInnerHTML={formatPrice(subtotal)}></span>
+                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', fontWeight: '500' }} dangerouslySetInnerHTML={formatPrice(subtotal)}></span>
                     </div>
                   </div>
                 </div>
@@ -6396,7 +6399,7 @@ function CheckoutPage() {
                   const processingTimeText = persistentProcessingTimeLabel;
                   
                   // Save payment method/address if checkbox is checked
-                  if (savePaymentMethod && isSignedIn) {
+                  if (saveShippingAddress && isSignedIn) {
                     try {
                       const currentUser = localStorage.getItem('currentUser');
                       if (currentUser) {
@@ -6411,16 +6414,15 @@ function CheckoutPage() {
                           zip: zip.trim(),
                           phoneNumber: phoneNumber.trim(),
                           email: email.trim(),
-                          country: selectedCountry || 'US',
-                          isDefault: !user.defaultAddress, // Set as default if no default exists
-                          savedAt: new Date().toISOString()
+                          country: countryCheckoutCodeToFullName(selectedCountry || 'US'),
+                          isDefault: !user.defaultAddress,
                         };
                         
-                        // Update user with saved address
+                        const saved = Array.isArray(user.savedAddresses) ? user.savedAddresses : [];
                         const updatedUser = {
                           ...user,
-                          defaultAddress: !user.defaultAddress ? addressToSave : user.defaultAddress,
-                          savedAddresses: user.savedAddresses ? [...user.savedAddresses, addressToSave] : [addressToSave]
+                          defaultAddress: addressToSave.isDefault ? addressToSave : user.defaultAddress,
+                          savedAddresses: [...saved, addressToSave],
                         };
                         
                         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
