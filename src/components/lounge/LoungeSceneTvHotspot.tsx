@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, type RefObject } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
   FINAL_LOUNGE_TV_PLAY_IMAGE_RECT,
@@ -8,14 +8,18 @@ import { LOUNGE_TV_PLAY_BUTTON_COLOR } from './loungeTvFrame';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 
-export function LoungeSceneTvHotspot() {
-  const slideRef = useRef<HTMLDivElement>(null);
+type Props = {
+  /** Lounge slide shell — same box as `sceneCarouselBackgroundLayerStyle` (pass page root ref). */
+  measureRef: RefObject<HTMLDivElement>;
+};
+
+export function LoungeSceneTvHotspot({ measureRef }: Props) {
   const tvFrameRef = useRef<HTMLDivElement>(null);
   const [tvOpen, setTvOpen] = useState(false);
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
 
-  const playHit = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_IMAGE_RECT, slideRef);
-  const tvHit = useSceneCoverHitRect(FINAL_LOUNGE_TV_HIT_REGION, slideRef);
+  const playHit = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_IMAGE_RECT, measureRef);
+  const tvHit = useSceneCoverHitRect(FINAL_LOUNGE_TV_HIT_REGION, measureRef);
 
   const openLoungeTv = useCallback(() => {
     const rect = tvFrameRef.current?.getBoundingClientRect() ?? null;
@@ -30,7 +34,6 @@ export function LoungeSceneTvHotspot() {
   return (
     <>
       <div
-        ref={slideRef}
         style={{
           position: 'absolute',
           inset: 0,
@@ -38,18 +41,21 @@ export function LoungeSceneTvHotspot() {
           pointerEvents: 'none',
         }}
       >
-        <div
-          ref={tvFrameRef}
-          style={{
-            ...rectToPercentStyle(tvHit),
-            position: 'absolute',
-            pointerEvents: 'none',
-          }}
-          aria-hidden
-        />
-        {!tvOpen ? (
+        {tvHit ? (
+          <div
+            ref={tvFrameRef}
+            style={{
+              ...rectToPercentStyle(tvHit),
+              position: 'absolute',
+              pointerEvents: 'none',
+            }}
+            aria-hidden
+          />
+        ) : null}
+        {!tvOpen && playHit ? (
           <button
             type="button"
+            data-lounge-tv-play
             onClick={openLoungeTv}
             aria-label="Play lounge media"
             style={{
