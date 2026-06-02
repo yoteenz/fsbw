@@ -22849,3 +22849,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (`a7b5f0f4`):** **`listsViewModeToggleRowStyle`** in **`src/pages/wishlist/lists/page.tsx`** — **`paddingRight: 2px`** on the toggle row to inset the control group from the clipping boundary.
 
 **Conventions:** Line/grid toggle on lists page — keep small right inset when parent uses overflow hidden.
+
+---
+
+## 2026-06-02 — Lobby animations off (carousel + TV); TV thumbnail Y-align with subcategories
+
+**Context:** User asked to remove lobby animation for now (needs improvement) and lower TV content popup thumbnails so their top aligns with the first subcategory text line (thumbs were too high vs NEW DROPS / CAMPAIGNS).
+
+**Changes (`a85d6498`):**
+- **`lobbyLoungeTransitionVideo.ts`** — **`LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = false`**; lobby→lounge Kling middle slide off by default; opt in **`?lobbyTransitionVideo=1`**.
+- **`loungeTvFrame.ts`** — **`LOUNGE_TV_OVERLAY_ANIMATION_ENABLED = false`**; play opens content TV instantly (no curtains, grow, hand, CRT static, shrink close).
+- **`LoungeTvOverlay.tsx`** — instant open/close when flag false; **`measureMediaTop`** aligns thumbnail grid **`top`** to first sidebar button text (button top + padding-top).
+- **`lobby/page.tsx`** — comment update on play control.
+
+**Re-enable later:** set both flags to **`true`** in constants when animation pass is ready.
