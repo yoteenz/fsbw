@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState, type RefObject } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
+  FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
+  FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
 } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
@@ -58,6 +60,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           aria-label="Play lounge media"
           style={{
             ...rectToPercentStyle(playTap),
+            transform: `translate(${FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX}px, ${FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX}px)`,
             position: 'absolute',
             zIndex: 11,
             margin: 0,
