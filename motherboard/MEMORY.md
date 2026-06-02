@@ -22825,3 +22825,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to wire lobby wall shelf graphics to shop routes: HD lace → **`/shop/frontals`**, extensions (middle/transparent graphic) → **`/shop/bundles`**, custom units → **`/shop/units`**.
 
 **Changes:** **`src/pages/lobby/page.tsx`** — `goToShopFrontals` / `goToShopBundles` / `goToShopUnits` + invisible overlay spans on each shelf (same pattern as neon booking). Middle shelf uses **`LOBBY_SHELF_TRANSPARENT_SRC`** asset, labeled extensions in UI copy. Commit **`a261a0a3`** on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lounge content TV overlay: bezel frame + sidebar subcategory spacing
+
+**Context:** User reported the expanded lounge **content TV** animation showed only a flat black screen (no outer bevel/bezel) and **BRAND** subcategories (**NEW DROPS** / **CAMPAIGNS**) were vertically collapsed with incorrect spacing.
+
+**Root cause:** Overlay used **`LoungeTvDesignFrame`** + **`lounge-tv-design.png`** with **`LOUNGE_TV_DESIGN_SCREEN_RECT`** insets (~99.5% of frame), so the PNG bezel was invisible at mobile overlay sizes. Sidebar used tight **`gap: 6px`** and minimal link padding/line-height.
+
+**Fix (`76d9f6a4`):** **`LoungeTvOverlay.tsx`** — restored **`LoungeTvFrame`** (CSS gradient bezel via **`loungeTvFrameShellStyle`**) and **`loungeTvDimensionsFromScreenWidth`** sizing (with height cap using **`LOUNGE_TV_BEZEL`** / **`LOUNGE_TV_SCREEN_ASPECT`**). Sidebar: **`LOUNGE_TV_SIDEBAR_ITEM_GAP_PX` 10**, **`navLinkStyle`** `lineHeight: 1.35`, `padding: 3px 0`, `display: block`, aside `paddingTop: 4px`. Lobby static TV on slide still uses design PNG; only the **open animation overlay** uses CSS bezel.
+
+**Conventions:** Expanded overlay animation → **`LoungeTvFrame`**; lobby slide static TV → design PNG. If design PNG bezel is needed on overlay later, remeasure **`LOUNGE_TV_DESIGN_SCREEN_RECT`** instead of reverting to full-frame inset.
