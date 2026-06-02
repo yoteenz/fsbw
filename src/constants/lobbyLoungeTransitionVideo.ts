@@ -1,23 +1,38 @@
-/** Kling lobby → lounge transition test clip (Supabase MOV source). */
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/positive_Image-to-video_using__Kling_30__69734.mov';
+const FINAL_LP_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
-/** Bundled H.264 MP4 for reliable mobile/desktop playback (converted from REMOTE). */
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'kling69734';
+/** Seedance 2.0 lobby → lounge (forward). */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE = `${FINAL_LP_BASE}/positive_Image-to-video_using__Seedance_20_98495.mov`;
 
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_SRC = `/assets/lobby-lounge-transition.mp4?v=${LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION}`;
+/** Lounge → lobby reverse clip — set when asset is ready. */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE = '';
+
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'seedance98495';
+
+/** H.264 for mobile; MOV kept as remote fallback in video element. */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_SRC = `/assets/lobby-lounge-transition-seedance.mp4?v=${LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION}`;
+
+/** Reverse MP4 path (empty until bundled). */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_SRC = `/assets/lobby-lounge-transition-seedance-reverse.mp4?v=${LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION}`;
 
 export const LOBBY_TRANSITION_VIDEO_SESSION_KEY = 'baw_lobby_transition_video';
 
-/**
- * Lobby → lounge carousel transition clip (Kling). Off while animation is being reworked.
- * Opt in with `?lobbyTransitionVideo=1`.
- */
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = false;
+/** Final LP carousel uses Seedance transition on arrow navigation. Opt out with `?lobbyTransitionVideo=0`. */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = true;
+
+export type LobbyLoungeTransitionDirection = 'forward' | 'reverse';
+
+export function lobbyLoungeTransitionVideoSrc(direction: LobbyLoungeTransitionDirection): string {
+  if (direction === 'reverse') {
+    if (LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE) return LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE;
+    return LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_SRC;
+  }
+  return LOBBY_LOUNGE_TRANSITION_VIDEO_SRC;
+}
 
 /**
- * Lobby → lounge: middle carousel panel plays the Kling clip in-place (not a fullscreen overlay).
- * Default: off ({@link LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED}). Enable with `?lobbyTransitionVideo=1`.
+ * Middle carousel panel: Seedance clip between lobby and lounge slides.
+ * Opt out with `?lobbyTransitionVideo=0`.
  */
 export function isLobbyTransitionVideoEnabledFromSearch(search: string): boolean {
   try {
@@ -37,4 +52,8 @@ export function isLobbyTransitionVideoEnabledFromSearch(search: string): boolean
   } catch {
     return LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED;
   }
+}
+
+export function isLobbyLoungeReverseTransitionAvailable(): boolean {
+  return Boolean(LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE);
 }
