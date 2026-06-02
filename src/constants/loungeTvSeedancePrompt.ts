@@ -1,11 +1,13 @@
 /**
  * Seedance 2.0 (ByteDance) — lounge TV open / close overlay sequences.
- * Matches `LoungeTvOverlay.tsx` choreography (grow, curtains, hand, static, zap, shrink).
+ * Shipped in-app clip: {@link LOUNGE_TV_ANIMATION_VIDEO_REMOTE} (`Final LP/video.mov`).
+ * Close in production uses reverse playback of that clip (see `loungeTvAnimationVideo.ts`).
  */
 
-import {
-  FINAL_LOUNGE_BACKGROUND_SRC_REMOTE,
-} from './finalLobbySceneAssets';
+import { FINAL_LOUNGE_BACKGROUND_SRC_REMOTE } from './finalLobbySceneAssets';
+import { LOUNGE_TV_ANIMATION_VIDEO_REMOTE } from './loungeTvAnimationVideo';
+
+export { LOUNGE_TV_ANIMATION_VIDEO_REMOTE };
 
 export const LOUNGE_TV_SEEDANCE_MODEL = 'seedance-2';
 
@@ -16,6 +18,8 @@ export const LOUNGE_TV_SEEDANCE_HAND_DESCRIPTION = `At the bottom center of the 
  * NOT text-to-image. Use Seedance image-to-video / first-last-frame mode only.
  */
 export const LOUNGE_TV_SEEDANCE_SETTINGS_NOTE = `MODE: Image-to-video (NOT text-to-image). Upload START frame (final-lounge.png / small TV) and lock it. Upload or let Seedance infer END frame from the prompt below — lock END if your tool allows a still. Aspect 9:16 portrait (928×1680). Duration 4–5s open, 3–4s close. Motion strength medium-low. Camera locked — no pan, zoom, or roll.
+
+SHIPPED CLIP (in app): ${LOUNGE_TV_ANIMATION_VIDEO_REMOTE} — forward = TV open. Close in the app = same file played in reverse (like lobby→lounge room transition); only generate a separate CLOSE I2V if reverse looks wrong on device.
 
 CURTAINS: use the SHEER WHITE / off-white window drapes from the lounge START photo (left edge of final-lounge.png) — NOT gray theater velvet. Mirror the same fabric for left and right panels.
 
@@ -46,15 +50,16 @@ ${LOUNGE_TV_SEEDANCE_HAND_DESCRIPTION}
 
 ANIMATION STYLE (open, ~4–5 seconds, ease-in-out): single fixed camera. (1) The lounge dims to black as the same sheer WHITE curtain panels from the left window sweep inward from off-screen left and right, closing until the room is fully hidden — furniture and architecture never stay visible; only black behind the white drapes. (2) The wall TV scales up smoothly toward the viewer, centered between the closing white curtains, until it matches END size — bezel unchanged, no new base or CRT box during the grow. (3) The described hand and remote rise from the bottom into position; one press on the red power button. (4) Screen flashes once, then even flat CRT static (no vignette). Hold END composition 0.5s. No whole-room zoom, no shake, no gray curtains, no visible lounge props at the end.`;
 
-export const LOUNGE_TV_SEEDANCE_CLOSE_PROMPT = `Image-to-video using two locked reference photos — NOT text-to-image. FIRST frame = theater END state (black void, closed white lounge curtains, large flatscreen, hand on remote as described). LAST frame = lounge page with small TV exactly.
+/**
+ * Close prompt — mirror of {@link LOUNGE_TV_SEEDANCE_OPEN_PROMPT} / `video.mov` open clip.
+ * In-app default: play `video.mov` in reverse; use this only if generating a dedicated close render.
+ */
+export const LOUNGE_TV_SEEDANCE_CLOSE_PROMPT = `Image-to-video — exact temporal reverse of the approved OPEN clip (${LOUNGE_TV_ANIMATION_VIDEO_REMOTE}). NOT a new creative angle. FIRST frame = last frame of open (theater END). LAST frame = first frame of open (lounge page, small TV). Camera locked.
 
-WHAT THE START PHOTO SHOWS: black theater background; closed sheer WHITE / off-white lounge curtain pair; large flat charcoal flatscreen (thin bezel only, no retro base); CRT static off or black glass; hand and remote at bottom center:
+MATCH OPEN CLIP IN REVERSE ORDER (~3–4s, ease-in-out): (4)→(1) from open prompt: (1) Even CRT static on the large TV collapses with a fast horizontal power-off zap to black glass (not forward static snow). (2) The same hand — burnt-orange paisley stiletto nails, silver eternity ring, matte-black remote with red power button — exits downward and leaves frame. (3) TV scales down smoothly to the small wall-mounted size on the red boutique wall; thin bezel only — no extra base or double chin appears. (4) Sheer WHITE / off-white lounge curtain panels (same fabric as final-lounge left window drapes, NOT gray theater velvet) open outward; black theater void and furniture disappear as the full lounge composite is revealed — sofa, marble, pedestal, roses, open left drapes, small OFF TV. End pixel-aligned on final-lounge.png. No gray curtains, no visible salon at end, no hand at end.
 
-${LOUNGE_TV_SEEDANCE_HAND_DESCRIPTION}
-
-WHAT THE END PHOTO SHOWS: full lounge composite — small OFF TV on red wall, open sheer white left curtains, sofa, table, roses, pedestal, marble. No hand, no static, no black theater void, no closed drapes across the TV.
-
-ANIMATION STYLE (close, ~3–4 seconds, ease-in-out) — reverse of open, camera locked: (1) The same hand — burnt-orange paisley stiletto nails, silver eternity ring, black remote — finger presses the red power button; fast CRT shutdown zap (horizontal bright line collapsing to black), not static snow. (2) Hand and remote exit downward. (3) TV scales down to small wall size without gaining a double bezel or console base. (4) White lounge curtains open outward, revealing the lounge END frame — gray theater curtains must not appear. End exactly on the uploaded lounge photo.`;
+HAND (same as open, only while on screen before exit):
+${LOUNGE_TV_SEEDANCE_HAND_DESCRIPTION}`;
 
 export const LOUNGE_TV_SEEDANCE_OPEN_NEGATIVE = `text to image, t2i, generating new room from scratch, ignoring start frame, ignoring end frame, wrong lounge photo, wrong end frame, gray curtains, gray velvet theater curtains, charcoal drapes, medium-gray curtains, red walls visible at end, marble floor visible at end, sofa visible, salon chairs visible, ceiling visible at end, pedestal visible, furniture not hidden, open curtains at end, closed white curtains at start, TV same size in both frames, TV with extra bottom base, double bezel, second chin, retro CRT box, wood console under TV, tube TV cabinet, deep TV stand, missing hand at end, wrong hand, male hand, glove, short nails, natural bare nails, french tips, solid color nails without paisley, blue nails, pink nails, missing rhinestones on nails, gold ring, wedding band, missing eternity ring, wrong ring finger, white remote, silver remote, chunky remote, game controller, smartphone, generic remote, missing red power button, face visible, second hand, green screen spill, chroma key green on fingers, YouTube UI, Netflix UI, app interface, readable text, logos, watermarks, thumbnails on screen, bright picture on TV instead of static, static with dark corner vignette, radial vignette on screen, cartoon, low quality, fisheye, dutch angle, camera pan, camera zoom, strobing, glitch, black void between curtain panels, neon curtains, extra TVs, duplicate hands, zoom on whole room, morphing sofa, warped walls`;
 
@@ -76,11 +81,12 @@ ${LOUNGE_TV_SEEDANCE_OPEN_NEGATIVE}`;
 export const LOUNGE_TV_SEEDANCE_CLOSE_COPY_BLOCK = `[SEEDANCE 2 — LOUNGE TV CLOSE — IMAGE-TO-VIDEO, NOT T2I]
 ${LOUNGE_TV_SEEDANCE_SETTINGS_NOTE}
 
-START FRAME (theater END): ${LOUNGE_TV_SEEDANCE_CLOSE_START_FRAME_REMOTE || '(prompt-driven END from open)'}
+IN-APP (preferred): reverse ${LOUNGE_TV_ANIMATION_VIDEO_REMOTE} at 2× (see LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE). No second file unless reverse fails QA.
 
-END FRAME (lounge page, small TV): ${LOUNGE_TV_SEEDANCE_CLOSE_END_FRAME_REMOTE}
+OPTIONAL DEDICATED CLOSE RENDER — START (theater END): ${LOUNGE_TV_SEEDANCE_CLOSE_START_FRAME_REMOTE || '(last frame of open / video.mov)'}
+END (lounge, small TV): ${LOUNGE_TV_SEEDANCE_CLOSE_END_FRAME_REMOTE}
 
-PROMPT:
+PROMPT (must match open clip played backward):
 ${LOUNGE_TV_SEEDANCE_CLOSE_PROMPT}
 
 NEGATIVE:
