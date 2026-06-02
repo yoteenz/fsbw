@@ -9,6 +9,9 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE = '';
 
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'seedance98495';
 
+/** Reverse playback when using forward MP4 backwards (`playbackRate` or RAF fallback). */
+export const LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE = 2.75;
+
 /** H.264 for mobile; MOV kept as remote fallback in video element. */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_SRC = `/assets/lobby-lounge-transition-seedance.mp4?v=${LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION}`;
 

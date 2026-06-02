@@ -313,6 +313,7 @@ const LobbyApp: React.FC = () => {
   const transitionVideoEnabled = isLobbyTransitionVideoEnabledFromSearch(location.search);
   const carouselSlideCount = 2;
   const roomTransitionInProgressRef = useRef(false);
+  const lobbyScrollRef = useRef<HTMLDivElement>(null);
 
   const visualIndexFromRoute = routePage;
 
@@ -335,6 +336,17 @@ const LobbyApp: React.FC = () => {
       document.head.removeChild(link);
     };
   }, [transitionVideoEnabled]);
+
+  useEffect(() => {
+    if (!roomTransitionOverlay) return;
+    const shell = lobbyScrollRef.current;
+    if (shell) shell.scrollTop = 0;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [roomTransitionOverlay]);
 
   useEffect(() => {
     if (roomTransitionInProgressRef.current) return;
@@ -404,6 +416,8 @@ const LobbyApp: React.FC = () => {
       if (location.pathname !== path) {
         navigate({ pathname: path, search: location.search }, { replace: true });
       }
+      const shell = lobbyScrollRef.current;
+      if (shell) shell.scrollTop = 0;
       roomTransitionInProgressRef.current = false;
     },
     [location.pathname, location.search, navigate],
@@ -489,6 +503,7 @@ const LobbyApp: React.FC = () => {
     <>
       {showLoading && <LoadingScreen />}
       <div
+        ref={lobbyScrollRef}
         style={{
           width: '100vw',
           height: '100dvh',
@@ -531,11 +546,13 @@ const LobbyApp: React.FC = () => {
             <LoungePage />
           </div>
         </div>
-        {transitionVideoEnabled && roomTransitionOverlay ? (
+        {transitionVideoEnabled ? (
           <LobbyLoungeTransitionOverlay
-            active
-            direction={roomTransitionOverlay}
-            onComplete={() => completeRoomTransitionOverlay(roomTransitionOverlay)}
+            active={roomTransitionOverlay !== null}
+            direction={roomTransitionOverlay ?? 'forward'}
+            onComplete={() => {
+              if (roomTransitionOverlay) completeRoomTransitionOverlay(roomTransitionOverlay);
+            }}
           />
         ) : null}
       </div>

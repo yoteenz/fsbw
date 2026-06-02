@@ -43,11 +43,16 @@ type LobbyCasePropPopoverProps = {
   paymentLayout?: LobbyPaymentPopoverLayout;
   /** Nudge panel when anchored near viewport edge (register = left, phone = right). */
   align?: 'center' | 'left' | 'right';
+  /** Extra px above the prop (moves popover up). */
+  panelOffsetUpPx?: number;
   children: React.ReactNode;
 };
 
-const popoverShellClassName =
-  'bg-white/60 backdrop-blur-md border border-black shadow-lg';
+const popoverPanelGlassStyle: React.CSSProperties = {
+  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+};
 
 /** Brand red — matches account/affiliate close-icon filter. */
 const LOBBY_POPOVER_CLOSE_ICON_FILTER =
@@ -350,11 +355,13 @@ export function LobbyCasePropPopover({
   sections,
   paymentLayout,
   align = 'center',
+  panelOffsetUpPx = 0,
   children,
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const open = activeId === popoverId;
   const panelGapPx = lobbyPopoverPx(10);
+  const panelBottomPx = panelGapPx + panelOffsetUpPx;
 
   const panelBody = paymentLayout ? (
     <LobbyPopoverPaymentLayout layout={paymentLayout} />
@@ -370,7 +377,7 @@ export function LobbyCasePropPopover({
         display: 'block',
         width: '100%',
         height: '100%',
-        zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
+        zIndex: open ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
       }}
     >
       <button
@@ -407,21 +414,24 @@ export function LobbyCasePropPopover({
           role="dialog"
           aria-label={title}
           data-lobby-prop-popover
-          className={popoverShellClassName}
           style={{
             position: 'absolute',
-            bottom: `calc(100% + ${panelGapPx}px)`,
+            bottom: `calc(100% + ${panelBottomPx}px)`,
             ...panelPositionStyle(align),
+            ...popoverPanelGlassStyle,
             zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
             width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
             minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
             maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
             borderWidth: `${lobbyPopoverPx(1.3)}px`,
+            borderStyle: 'solid',
+            borderColor: '#000',
             boxSizing: 'border-box',
             padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
             pointerEvents: 'auto',
             display: 'flex',
             flexDirection: 'column',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.12)',
           }}
           onPointerDown={(e) => e.stopPropagation()}
         >

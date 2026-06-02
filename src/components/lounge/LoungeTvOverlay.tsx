@@ -789,6 +789,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           padding: 0,
           margin: 0,
           background: animatedIn && closePhase === 'idle' ? 'rgba(0,0,0,0.35)' : 'transparent',
+          backdropFilter: animatedIn && closePhase === 'idle' ? 'blur(10px)' : 'none',
+          WebkitBackdropFilter: animatedIn && closePhase === 'idle' ? 'blur(10px)' : 'none',
           cursor: closePhase === 'idle' && isOpen ? 'pointer' : 'default',
           pointerEvents: closePhase === 'idle' && isOpen ? 'auto' : 'none',
           transition: `background ${ANIM_MS}ms ease`,

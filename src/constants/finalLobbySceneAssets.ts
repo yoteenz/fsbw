@@ -47,10 +47,10 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
-/** In-screen play control — relative to {@link FINAL_LOUNGE_TV_HIT_REGION} (glass center). */
+/** In-screen play — slide-normalized; relative to {@link FINAL_LOUNGE_TV_HIT_REGION} (glass center). */
 export const FINAL_LOUNGE_TV_PLAY_HIT_REGION: FinalSceneHitRect = {
   left: 0.4,
-  top: 0.34,
-  width: 0.2,
-  height: 0.14,
+  top: 0.44,
+  width: 0.18,
+  height: 0.11,
 };
