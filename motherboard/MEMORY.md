@@ -22837,3 +22837,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (`76d9f6a4`):** **`LoungeTvOverlay.tsx`** — restored **`LoungeTvFrame`** (CSS gradient bezel via **`loungeTvFrameShellStyle`**) and **`loungeTvDimensionsFromScreenWidth`** sizing (with height cap using **`LOUNGE_TV_BEZEL`** / **`LOUNGE_TV_SCREEN_ASPECT`**). Sidebar: **`LOUNGE_TV_SIDEBAR_ITEM_GAP_PX` 10**, **`navLinkStyle`** `lineHeight: 1.35`, `padding: 3px 0`, `display: block`, aside `paddingTop: 4px`. Lobby static TV on slide still uses design PNG; only the **open animation overlay** uses CSS bezel.
 
 **Conventions:** Expanded overlay animation → **`LoungeTvFrame`**; lobby slide static TV → design PNG. If design PNG bezel is needed on overlay later, remeasure **`LOUNGE_TV_DESIGN_SCREEN_RECT`** instead of reverting to full-frame inset.
+
+---
+
+## 2026-06-02 — Wishlist lists page: grid view toggle right border clip
+
+**Context:** User reported the **grid** icon on `/wishlist/lists` (expanded list e.g. VACAY) had its **right red border cut off** when active; line/grid toggle sits top-right above the product grid.
+
+**Root cause:** Toggle row is `justify-content: flex-end` inside card panels with **`overflow: hidden`**; the rightmost button border painted flush against the clip edge and lost ~1px on mobile.
+
+**Fix (`a7b5f0f4`):** **`listsViewModeToggleRowStyle`** in **`src/pages/wishlist/lists/page.tsx`** — **`paddingRight: 2px`** on the toggle row to inset the control group from the clipping boundary.
+
+**Conventions:** Line/grid toggle on lists page — keep small right inset when parent uses overflow hidden.
