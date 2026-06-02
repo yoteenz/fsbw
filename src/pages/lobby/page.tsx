@@ -160,18 +160,6 @@ const LobbyPage: React.FC = () => {
     navigate('/home/tools');
   }, [navigate]);
 
-  const goToShopFrontals = useCallback(() => {
-    navigate('/shop/frontals');
-  }, [navigate]);
-
-  const goToShopBundles = useCallback(() => {
-    navigate('/shop/bundles');
-  }, [navigate]);
-
-  const goToShopUnits = useCallback(() => {
-    navigate('/shop/units');
-  }, [navigate]);
-
   const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
   const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
@@ -383,96 +371,33 @@ const LobbyPage: React.FC = () => {
           zIndex: 20,
           gap: '16px'
         }}>
-          {/* HD LACE Shelf → /shop/frontals */}
-          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
+          {/* HD LACE Shelf */}
+          <div className="flex flex-col items-center">
             <img
               src={LOBBY_SHELF_HD_SRC}
               alt="HD Lace Collection"
-              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
-              draggable={false}
+              className="w-auto md:h-20 lg:h-24"
               style={{ height: '56px', display: 'block' }}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={goToShopFrontals}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  goToShopFrontals();
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent',
-              }}
-              aria-label="Shop HD lace frontals"
             />
           </div>
 
-          {/* Extensions shelf (transparent lace graphic) → /shop/bundles */}
-          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
+          {/* TRANSPARENT LACE Shelf */}
+          <div className="flex flex-col items-center">
             <img
               src={LOBBY_SHELF_TRANSPARENT_SRC}
-              alt="Extensions Collection"
-              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
-              draggable={false}
+              alt="Transparent Lace Collection"
+              className="w-auto md:h-20 lg:h-24"
               style={{ height: '56px', display: 'block' }}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={goToShopBundles}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  goToShopBundles();
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent',
-              }}
-              aria-label="Shop extensions bundles"
             />
           </div>
 
-          {/* CUSTOM UNITS Shelf → /shop/units */}
-          <div className="flex flex-col items-center" style={{ position: 'relative' }}>
+          {/* CUSTOM UNITS Shelf */}
+          <div className="flex flex-col items-center">
             <img
               src={LOBBY_SHELF_CUSTOM_SRC}
               alt="Custom Units Collection"
-              className="w-auto md:h-20 lg:h-24 pointer-events-none select-none"
-              draggable={false}
+              className="w-auto md:h-20 lg:h-24"
               style={{ height: '56px', display: 'block' }}
-            />
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={goToShopUnits}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  goToShopUnits();
-                }
-              }}
-              className="hover:opacity-90 transition-opacity"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                cursor: 'pointer',
-                zIndex: 1,
-                background: 'transparent',
-              }}
-              aria-label="Shop custom units"
             />
           </div>
         </div>
