@@ -499,6 +499,8 @@ const LobbyPage: React.FC = () => {
               position: 'fixed',
               inset: 0,
               backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
+              backdropFilter: 'blur(3px)',
+              WebkitBackdropFilter: 'blur(3px)',
               zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
               margin: 0,
               padding: 0,
