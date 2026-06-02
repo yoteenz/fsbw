@@ -85,6 +85,8 @@ function listsViewModeToggleRowStyle(marginBottomPx: number): React.CSSPropertie
     marginTop: `${LISTS_VIEW_MODE_TOGGLE_ROW_MARGIN_TOP_PX}px`,
     marginBottom: marginBottomPx === 0 ? 0 : `${marginBottomPx}px`,
     flexShrink: 0,
+    /** Inset from card edge — `overflow: hidden` ancestors clip the grid toggle’s right border otherwise. */
+    paddingRight: '2px',
   };
 }
 
