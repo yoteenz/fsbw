@@ -3,7 +3,8 @@ import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
-  lobbyLoungeTransitionMediaPosition,
+  lobbyLoungeTransitionMediaLayerStyle,
+  lobbyLoungeTransitionPosterLayerStyle,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
 import {
@@ -20,19 +21,6 @@ type Props = {
 
 const posterForDirection = (direction: LobbyLoungeTransitionDirection) =>
   direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
-
-const transitionMediaPosition = lobbyLoungeTransitionMediaPosition();
-
-/** Same box + crop as `sceneCarouselBackgroundLayerStyle` (cover, center top + Y nudge). */
-const transitionMediaStyle = {
-  position: 'absolute' as const,
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover' as const,
-  objectPosition: transitionMediaPosition,
-};
 
 /**
  * Seedance clip — mount inside {@link SceneCarouselViewportStage} (`inset: 0`, `100dvh`)
@@ -78,16 +66,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
       }}
     >
       {!frameVisible && active ? (
-        <div
-          aria-hidden
-          style={{
-            ...transitionMediaStyle,
-            backgroundImage: `url(${poster})`,
-            backgroundSize: 'cover',
-            backgroundPosition: transitionMediaPosition,
-            backgroundRepeat: 'no-repeat',
-          }}
-        />
+        <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
       ) : null}
       <video
         ref={videoRef}
@@ -97,7 +76,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         poster={poster}
         onError={finish}
         style={{
-          ...transitionMediaStyle,
+          ...lobbyLoungeTransitionMediaLayerStyle(),
           opacity: frameVisible ? 1 : 0,
           transition: 'opacity 60ms linear',
         }}
