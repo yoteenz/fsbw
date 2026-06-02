@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
@@ -47,17 +47,56 @@ type LobbyCasePropPopoverProps = {
   children: React.ReactNode;
 };
 
-const popoverShellClassName = 'baw-brand-modal-shell border border-black shadow-lg';
+const popoverShellClassName =
+  'bg-white/60 backdrop-blur-md border border-black shadow-lg transition-all duration-300 ease-out';
 
-/** 25% white wash over marble so register/phone cards read brighter on the rose wall. */
-const popoverShellStyle: React.CSSProperties = {
-  backgroundImage:
-    'linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), url(/assets/popup-marble.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  backgroundColor: '#ffffff',
-};
+/** Brand red — matches account/affiliate close-icon filter. */
+const LOBBY_POPOVER_CLOSE_ICON_FILTER =
+  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
+
+function LobbyPopoverCloseButton({ onClose }: { onClose: () => void }) {
+  const btnPx = lobbyPopoverPx(18);
+  const iconPx = lobbyPopoverPx(10);
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+      aria-label="Close"
+      style={{
+        width: `${btnPx}px`,
+        height: `${btnPx}px`,
+        backgroundColor: '#FFFFFF',
+        border: '0.97px solid #000000',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0,
+        flexShrink: 0,
+        margin: 0,
+        WebkitTapHighlightColor: 'transparent',
+        touchAction: 'manipulation',
+      }}
+    >
+      <img
+        src="/assets/close-icon.svg"
+        alt=""
+        draggable={false}
+        style={{
+          width: `${iconPx}px`,
+          height: `${iconPx}px`,
+          display: 'block',
+          objectFit: 'contain',
+          filter: LOBBY_POPOVER_CLOSE_ICON_FILTER,
+        }}
+      />
+    </button>
+  );
+}
 
 const titleStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -345,18 +384,6 @@ export function LobbyCasePropPopover({
     };
   }, [open, measureAnchor]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as HTMLElement;
-      if (rootRef.current?.contains(target)) return;
-      if (portalRef.current?.contains(target)) return;
-      if ((target as HTMLElement).closest?.('[data-lobby-prop-popover-layer]')) return;
-      onClose();
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [open, onClose]);
 
   const panelBody = paymentLayout ? (
     <LobbyPopoverPaymentLayout layout={paymentLayout} />
@@ -429,7 +456,6 @@ export function LobbyCasePropPopover({
               data-lobby-prop-popover
               className={popoverShellClassName}
               style={{
-                ...popoverShellStyle,
                 position: 'fixed',
                 left: `${panelFixedLeftPx(align, anchorRect, panelWidthPx)}px`,
                 bottom: `${window.innerHeight - anchorRect.top + panelGapPx}px`,
@@ -445,17 +471,21 @@ export function LobbyCasePropPopover({
               }}
               onPointerDown={(e) => e.stopPropagation()}
             >
-              <p
+              <div
                 style={{
-                  ...titleStyle,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: `${lobbyPopoverPx(6)}px`,
                   marginBottom: `${lobbyPopoverPx(8)}px`,
                   paddingBottom: `${lobbyPopoverPx(6)}px`,
                   borderBottom: '1px solid rgba(0,0,0,0.12)',
                   flexShrink: 0,
                 }}
               >
-                {title}
-              </p>
+                <p style={{ ...titleStyle, flex: 1, minWidth: 0 }}>{title}</p>
+                <LobbyPopoverCloseButton onClose={onClose} />
+              </div>
               {panelBody}
             </div>
           </div>,
