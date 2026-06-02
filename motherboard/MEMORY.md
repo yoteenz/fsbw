@@ -22976,3 +22976,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `finalLobbySceneAssets.ts`, `LobbySceneHotspots.tsx`, `SceneHitRegion.tsx`, `LoungeSceneTvHotspot.tsx`, `lobby/page.tsx`, `lobbyLoungeTransitionVideo.ts`, `LobbyLoungeTransitionVideo.tsx`, `sceneCarouselBackground.ts`, new assets under `public/assets/`. Pushed **`master`** + **`preview/mobile`** (`4ae1cf71` / merge).
 
 **Conventions:** Final LP = composite background only + invisible hotspots; do not re-stack old `neon-*.png` / `landing-background.png` without product ask. Reverse transition: set `LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE` in `lobbyLoungeTransitionVideo.ts` when clip arrives.
+
+---
+
+## 2026-06-02 — Seedance 2 prompts for lounge TV open / close animation
+
+**Context:** User asked for **Seedance 2.0 image-to-video prompts** matching the lounge TV overlay sequence: (1) open — TV enlarges, gray theater curtains close, hand appears and presses power, CRT static before React content; (2) close — hand power press, CRT zap off, hand exits, TV shrinks, curtains open back to lounge slide. Prior chat also tracked lobby/lounge composite + carousel bugs (popovers, transition flash, TV hit rects) — not fixed in this turn.
+
+**Decisions / outcomes:** New **`src/constants/loungeTvSeedancePrompt.ts`** — open/close prompts, negatives, settings note, copy blocks. START for open/close end = **`FINAL_LOUNGE_BACKGROUND_SRC_REMOTE`** (`final-lounge.png`). END for open (and START for close) = empty URL until user uploads a theater-overlay still (closed curtains + large TV + static + hand). Wired into **`LOUNGE_SCENE_FAL_PROMPTS.tvOpenSeedance`** / **`tvCloseSeedance`** in `loungeSceneAssets.ts`.
+
+**Conventions:** I2V only — lock frames; no T2I. Open ~4–5s, close ~3–4s; camera locked. Screen shows **CRT static** on open end, **power-off zap** on close — not app UI (UI stays in React). Curtain style matches `loungeCurtainFalPrompts.ts` (medium-gray velvet, 10–12 pleats, no center gap).

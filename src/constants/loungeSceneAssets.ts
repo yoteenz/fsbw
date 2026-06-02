@@ -1,4 +1,8 @@
 import { LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK } from './lobbyLoungeSeedancePrompt';
+import {
+  LOUNGE_TV_SEEDANCE_CLOSE_COPY_BLOCK,
+  LOUNGE_TV_SEEDANCE_OPEN_COPY_BLOCK,
+} from './loungeTvSeedancePrompt';
 import { LOUNGE_TV_DESIGN_SRC } from '../components/lounge/loungeTvAssets';
 import { LOUNGE_TV_DESIGN_FAL_EDIT } from './sceneLoungeTvFal';
 import { LOUNGE_BACKGROUND_FAL_EDIT, loungeBackgroundFalWorkflowNote } from './sceneLoungeBackgroundFal';
@@ -48,4 +52,10 @@ export const LOUNGE_SCENE_FAL_PROMPTS = {
 
   /** Seedance 2 — horizontal lobby → lounge transition (start/end frame URLs in copy block). */
   roomTransitionSeedance: LOBBY_LOUNGE_SEEDANCE_COPY_BLOCK,
+
+  /** Seedance 2 — lounge TV tap open (curtains close, TV grow, hand, static). */
+  tvOpenSeedance: LOUNGE_TV_SEEDANCE_OPEN_COPY_BLOCK,
+
+  /** Seedance 2 — lounge TV close (power zap, hand out, TV shrink, curtains open). */
+  tvCloseSeedance: LOUNGE_TV_SEEDANCE_CLOSE_COPY_BLOCK,
 } as const;
