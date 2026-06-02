@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
 import {
   LOBBY_CASE_POPOVER_SCRIM_ALPHA,
-  LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
+  LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
 } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_PHONE_POPOVER_SECTIONS,
@@ -62,6 +61,20 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext }: Props) {
         zIndex={22}
       />
 
+      {lobbyCasePopover !== null ? (
+        <div
+          role="presentation"
+          aria-hidden
+          onClick={closeLobbyCasePopover}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
+            zIndex: LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
+          }}
+        />
+      ) : null}
+
       <div style={{ ...rectToPercentStyle(FINAL_LOBBY_HIT_REGIONS.caseRegister), position: 'absolute', zIndex: 24 }}>
         <LobbyCasePropPopover
           popoverId="register"
@@ -96,21 +109,6 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext }: Props) {
         </LobbyCasePropPopover>
       </div>
 
-      {lobbyCasePopover !== null &&
-        createPortal(
-          <div
-            role="presentation"
-            aria-hidden
-            onClick={closeLobbyCasePopover}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
-              zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
-            }}
-          />,
-          document.body,
-        )}
     </>
   );
 }

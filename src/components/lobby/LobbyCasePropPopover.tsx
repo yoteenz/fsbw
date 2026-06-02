@@ -367,9 +367,10 @@ export function LobbyCasePropPopover({
       ref={rootRef}
       style={{
         position: 'relative',
-        display: 'inline-block',
+        display: 'block',
+        width: '100%',
+        height: '100%',
         zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
-        verticalAlign: 'top',
       }}
     >
       <button
@@ -386,6 +387,9 @@ export function LobbyCasePropPopover({
         }}
         style={{
           display: 'block',
+          width: '100%',
+          height: '100%',
+          minHeight: 44,
           margin: 0,
           padding: 0,
           border: 'none',

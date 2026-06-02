@@ -18,12 +18,11 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { sceneCarouselBackgroundLayerStyle, sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
-import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
+import { LobbyLoungeTransitionOverlay } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { LoungeSceneTvHotspot } from '../../components/lounge/LoungeSceneTvHotspot';
 import { FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
 import {
-  isLobbyLoungeReverseTransitionAvailable,
   isLobbyTransitionVideoEnabledFromSearch,
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
@@ -312,13 +311,15 @@ const LobbyApp: React.FC = () => {
   const location = useLocation();
   const routePage = lobbyCarouselIndexFromPath(location.pathname);
   const transitionVideoEnabled = isLobbyTransitionVideoEnabledFromSearch(location.search);
-  const carouselSlideCount = transitionVideoEnabled ? 3 : 2;
+  const carouselSlideCount = 2;
   const roomTransitionInProgressRef = useRef(false);
 
-  const visualIndexFromRoute = transitionVideoEnabled ? (routePage === 0 ? 0 : 2) : routePage;
+  const visualIndexFromRoute = routePage;
 
   const [visualIndex, setVisualIndex] = useState(visualIndexFromRoute);
-  const [transitionDirection, setTransitionDirection] = useState<LobbyLoungeTransitionDirection>('forward');
+  const [roomTransitionOverlay, setRoomTransitionOverlay] = useState<LobbyLoungeTransitionDirection | null>(
+    null,
+  );
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
@@ -341,22 +342,20 @@ const LobbyApp: React.FC = () => {
   }, [visualIndexFromRoute]);
 
   const applyCarouselPage = useCallback(
-    (pageIndex: number, options?: { animate?: boolean; visualTarget?: number }) => {
+    (pageIndex: number, options?: { animate?: boolean }) => {
       const path = lobbyCarouselPathFromIndex(pageIndex);
       const animate = options?.animate !== false;
-      const nextVisual =
-        options?.visualTarget ?? (transitionVideoEnabled ? (pageIndex === 0 ? 0 : 2) : pageIndex);
 
       if (animate) {
         setIsTransitioning(true);
         setTimeout(() => setIsTransitioning(false), 800);
       }
-      setVisualIndex(nextVisual);
+      setVisualIndex(pageIndex);
       if (location.pathname !== path) {
         navigate({ pathname: path, search: location.search }, { replace: true });
       }
     },
-    [location.pathname, location.search, navigate, transitionVideoEnabled]
+    [location.pathname, location.search, navigate]
   );
 
   // Confirm membership by syncing the authenticated client's profile from the backend
@@ -396,41 +395,46 @@ const LobbyApp: React.FC = () => {
     else navigate('/home/shop');
   };
 
-  const completeRoomTransitionSlide = useCallback(() => {
-    roomTransitionInProgressRef.current = false;
-    const targetPage = transitionDirection === 'forward' ? 1 : 0;
-    applyCarouselPage(targetPage, { animate: false, visualTarget: targetPage === 0 ? 0 : 2 });
-  }, [applyCarouselPage, transitionDirection]);
+  const completeRoomTransitionOverlay = useCallback(
+    (direction: LobbyLoungeTransitionDirection) => {
+      const targetPage = direction === 'forward' ? 1 : 0;
+      setRoomTransitionOverlay(null);
+      setVisualIndex(targetPage);
+      const path = lobbyCarouselPathFromIndex(targetPage);
+      if (location.pathname !== path) {
+        navigate({ pathname: path, search: location.search }, { replace: true });
+      }
+      roomTransitionInProgressRef.current = false;
+    },
+    [location.pathname, location.search, navigate],
+  );
 
   const goToCarouselPage = useCallback(
     (pageIndex: number) => {
-      if (isTransitioning || roomTransitionInProgressRef.current || pageIndex === routePage) return;
+      if (
+        isTransitioning ||
+        roomTransitionInProgressRef.current ||
+        roomTransitionOverlay !== null ||
+        pageIndex === routePage
+      ) {
+        return;
+      }
 
       if (transitionVideoEnabled && routePage === 0 && pageIndex === 1) {
         roomTransitionInProgressRef.current = true;
-        setTransitionDirection('forward');
-        setIsTransitioning(true);
-        setVisualIndex(1);
-        setTimeout(() => setIsTransitioning(false), 500);
+        setRoomTransitionOverlay('forward');
         return;
       }
 
       if (transitionVideoEnabled && routePage === 1 && pageIndex === 0) {
-        if (isLobbyLoungeReverseTransitionAvailable()) {
-          roomTransitionInProgressRef.current = true;
-          setTransitionDirection('reverse');
-          setIsTransitioning(true);
-          setVisualIndex(1);
-          setTimeout(() => setIsTransitioning(false), 500);
-          return;
-        }
-        applyCarouselPage(0, { animate: true, visualTarget: 0 });
+        roomTransitionInProgressRef.current = true;
+        setRoomTransitionOverlay('reverse');
         return;
       }
 
       applyCarouselPage(pageIndex);
     },
-    [applyCarouselPage, isTransitioning, routePage, transitionVideoEnabled]
+    [applyCarouselPage, isTransitioning, roomTransitionOverlay, routePage, transitionVideoEnabled]
   );
 
   const handlePrevious = useCallback(() => {
@@ -517,13 +521,6 @@ const LobbyApp: React.FC = () => {
           >
             <LobbyPage />
           </div>
-          {transitionVideoEnabled ? (
-            <LobbyLoungeTransitionSlide
-              active={visualIndex === 1}
-              direction={transitionDirection}
-              onComplete={completeRoomTransitionSlide}
-            />
-          ) : null}
           <div
             style={{
               width: '100vw',
@@ -534,6 +531,13 @@ const LobbyApp: React.FC = () => {
             <LoungePage />
           </div>
         </div>
+        {transitionVideoEnabled && roomTransitionOverlay ? (
+          <LobbyLoungeTransitionOverlay
+            active
+            direction={roomTransitionOverlay}
+            onComplete={() => completeRoomTransitionOverlay(roomTransitionOverlay)}
+          />
+        ) : null}
       </div>
       
       {/* Upgrade Subscription Modal */}

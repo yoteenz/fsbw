@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import { sceneCarouselSlideMinHeightCss } from '../../utils/sceneCarouselBackground';
 
 type Props = {
   active: boolean;
@@ -13,45 +12,62 @@ type Props = {
 };
 
 /**
- * Middle carousel panel: Seedance lobby ↔ lounge clip (forward or reverse).
+ * Full-viewport Seedance clip over the current lobby/lounge slide (no carousel pan to a black panel).
  */
-export const LobbyLoungeTransitionSlide: React.FC<Props> = ({ active, direction, onComplete }) => {
+export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const completedRef = useRef(false);
+  const reverseRafRef = useRef<number | null>(null);
   const src = lobbyLoungeTransitionVideoSrc(direction);
 
   const finish = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
+    if (reverseRafRef.current !== null) {
+      cancelAnimationFrame(reverseRafRef.current);
+      reverseRafRef.current = null;
+    }
     const el = videoRef.current;
     if (el) {
       el.pause();
-      el.currentTime = 0;
+      el.playbackRate = 1;
+      el.currentTime = direction === 'reverse' ? 0 : el.currentTime;
     }
     onComplete();
-  }, [onComplete]);
+  }, [direction, onComplete]);
 
   useEffect(() => {
     if (!active) {
       completedRef.current = false;
+      if (reverseRafRef.current !== null) {
+        cancelAnimationFrame(reverseRafRef.current);
+        reverseRafRef.current = null;
+      }
       return;
     }
+
     completedRef.current = false;
     const el = videoRef.current;
     if (!el) return;
 
-    const playWithRetry = async () => {
+    let safetyTimer = window.setTimeout(finish, 12000);
+    const clearSafety = () => {
+      window.clearTimeout(safetyTimer);
+    };
+    const armSafetyFromDuration = () => {
+      clearSafety();
+      const ms = Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 + 500 : 6500;
+      safetyTimer = window.setTimeout(finish, ms);
+    };
+
+    const playForward = async () => {
+      el.playbackRate = 1;
+      el.currentTime = 0;
       try {
-        el.load();
-        if (direction === 'reverse' && Number.isFinite(el.duration) && el.duration > 0) {
-          el.currentTime = Math.max(0, el.duration - 0.05);
-        } else {
-          el.currentTime = 0;
-        }
         await el.play();
       } catch {
         try {
-          await new Promise((r) => setTimeout(r, 120));
+          await new Promise((r) => setTimeout(r, 80));
           await el.play();
         } catch {
           finish();
@@ -59,34 +75,88 @@ export const LobbyLoungeTransitionSlide: React.FC<Props> = ({ active, direction,
       }
     };
 
-    void playWithRetry();
+    const playReverse = async () => {
+      el.playbackRate = 1;
+      const startReversePlayback = () => {
+        const duration = el.duration;
+        if (!Number.isFinite(duration) || duration <= 0) {
+          void playForward();
+          return;
+        }
+        el.currentTime = Math.max(0, duration - 0.04);
+        el.playbackRate = -1;
+        void el.play().catch(() => {
+          el.playbackRate = 1;
+          el.pause();
+          let last = performance.now();
+          const tick = (now: number) => {
+            if (completedRef.current) return;
+            const dt = Math.min(now - last, 50);
+            last = now;
+            const next = Math.max(0, el.currentTime - dt / 1000);
+            el.currentTime = next;
+            if (next <= 0.04) {
+              finish();
+              return;
+            }
+            reverseRafRef.current = requestAnimationFrame(tick);
+          };
+          reverseRafRef.current = requestAnimationFrame(tick);
+        });
+      };
 
-    let timer = window.setTimeout(finish, 12000);
-    const setTimerFromMeta = () => {
-      window.clearTimeout(timer);
-      const ms = Number.isFinite(el.duration) ? el.duration * 1000 + 400 : 6000;
-      timer = window.setTimeout(finish, ms);
+      if (el.readyState >= 1 && Number.isFinite(el.duration)) {
+        startReversePlayback();
+        return;
+      }
+      const onMeta = () => {
+        el.removeEventListener('loadedmetadata', onMeta);
+        startReversePlayback();
+      };
+      el.addEventListener('loadedmetadata', onMeta);
+      el.load();
     };
-    el.addEventListener('loadedmetadata', setTimerFromMeta);
-    if (el.readyState >= 1) setTimerFromMeta();
+
+    const onEnded = () => {
+      if (direction === 'forward') finish();
+    };
+    const onTimeUpdate = () => {
+      if (direction !== 'reverse') return;
+      if (el.playbackRate < 0 && el.currentTime <= 0.05) finish();
+    };
+
+    el.addEventListener('ended', onEnded);
+    el.addEventListener('timeupdate', onTimeUpdate);
+    el.addEventListener('loadedmetadata', armSafetyFromDuration);
+    if (el.readyState >= 1) armSafetyFromDuration();
+
+    void (direction === 'reverse' ? playReverse() : playForward());
 
     return () => {
-      window.clearTimeout(timer);
-      el.removeEventListener('loadedmetadata', setTimerFromMeta);
+      clearSafety();
+      el.removeEventListener('ended', onEnded);
+      el.removeEventListener('timeupdate', onTimeUpdate);
+      el.removeEventListener('loadedmetadata', armSafetyFromDuration);
+      if (reverseRafRef.current !== null) {
+        cancelAnimationFrame(reverseRafRef.current);
+        reverseRafRef.current = null;
+      }
     };
   }, [active, direction, finish, src]);
 
+  if (!active) return null;
+
   return (
     <div
-      className="relative"
+      aria-hidden
       style={{
-        width: '100vw',
-        flexShrink: 0,
-        minHeight: sceneCarouselSlideMinHeightCss(),
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
         backgroundColor: '#000',
         overflow: 'hidden',
+        pointerEvents: 'none',
       }}
-      aria-hidden={!active}
     >
       <video
         key={`${direction}-${src}`}
@@ -94,7 +164,6 @@ export const LobbyLoungeTransitionSlide: React.FC<Props> = ({ active, direction,
         playsInline
         muted
         preload="auto"
-        onEnded={finish}
         onError={finish}
         style={{
           position: 'absolute',
@@ -103,7 +172,6 @@ export const LobbyLoungeTransitionSlide: React.FC<Props> = ({ active, direction,
           height: '100%',
           objectFit: 'cover',
           objectPosition: 'center top',
-          pointerEvents: 'none',
         }}
       >
         <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
@@ -111,4 +179,7 @@ export const LobbyLoungeTransitionSlide: React.FC<Props> = ({ active, direction,
       </video>
     </div>
   );
-};
+}
+
+/** @deprecated Carousel middle panel — use {@link LobbyLoungeTransitionOverlay}. */
+export const LobbyLoungeTransitionSlide = LobbyLoungeTransitionOverlay;

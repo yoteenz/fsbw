@@ -22986,3 +22986,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** New **`src/constants/loungeTvSeedancePrompt.ts`** — open/close prompts, negatives, settings note, copy blocks. START for open/close end = **`FINAL_LOUNGE_BACKGROUND_SRC_REMOTE`** (`final-lounge.png`). END for open (and START for close) = empty URL until user uploads a theater-overlay still (closed curtains + large TV + static + hand). Wired into **`LOUNGE_SCENE_FAL_PROMPTS.tvOpenSeedance`** / **`tvCloseSeedance`** in `loungeSceneAssets.ts`.
 
 **Conventions:** I2V only — lock frames; no T2I. Open ~4–5s, close ~3–4s; camera locked. Screen shows **CRT static** on open end, **power-off zap** on close — not app UI (UI stays in React). Curtain style matches `loungeCurtainFalPrompts.ts` (medium-gray velvet, 10–12 pleats, no center gap).
+
+---
+
+## 2026-06-02 — Lobby/lounge UX fixes (popovers, Seedance overlay, TV hits, reverse)
+
+**Context:** User confirmed earlier bug report was not addressed in the Seedance-prompt-only turn: register/phone popovers missing, arrow transition black flash before video, lobby flash at end, lounge TV play misaligned, lounge→lobby should reverse the same Seedance clip.
+
+**Fixes:**
+- **Popovers:** Removed body `createPortal` scrim (`z-index` 10000 hid panels at 30). Scrim on lobby slide at **`LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX` 15**; **`LobbyCasePropPopover`** tap target **`width/height 100%`**.
+- **Room transition:** **`LobbyLoungeTransitionOverlay`** — fixed fullscreen video over current slide; carousel stays 2 panels (no pan to black middle). On complete: set slide index + route in one step (no lobby flash).
+- **Reverse:** Lounge→lobby uses same **`lobby-lounge-transition-seedance.mp4`** with **`playbackRate -1`** or RAF step-back fallback.
+- **TV hits:** **`FINAL_LOUNGE_TV_HIT_REGION`** ~0.277/0.16/0.501/0.299; play ~0.4/0.34/0.2/0.14 relative to TV box (measured on `final-lounge.png`).
+
+**Files:** `LobbySceneHotspots.tsx`, `LobbyCasePropPopover.tsx`, `LobbyLoungeTransitionVideo.tsx`, `lobby/page.tsx`, `lobbyLoungeTransitionVideo.ts`, `finalLobbySceneAssets.ts`.

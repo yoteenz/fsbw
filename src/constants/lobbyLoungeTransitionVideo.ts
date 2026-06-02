@@ -23,9 +23,8 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED = true;
 export type LobbyLoungeTransitionDirection = 'forward' | 'reverse';
 
 export function lobbyLoungeTransitionVideoSrc(direction: LobbyLoungeTransitionDirection): string {
-  if (direction === 'reverse') {
-    if (LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE) return LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE;
-    return LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_SRC;
+  if (direction === 'reverse' && LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE) {
+    return LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE;
   }
   return LOBBY_LOUNGE_TRANSITION_VIDEO_SRC;
 }
@@ -54,6 +53,7 @@ export function isLobbyTransitionVideoEnabledFromSearch(search: string): boolean
   }
 }
 
+/** Reverse uses dedicated asset when set; otherwise forward MP4 with reverse playback. */
 export function isLobbyLoungeReverseTransitionAvailable(): boolean {
-  return Boolean(LOBBY_LOUNGE_TRANSITION_VIDEO_REVERSE_REMOTE);
+  return LOBBY_LOUNGE_TRANSITION_VIDEO_ENABLED;
 }
