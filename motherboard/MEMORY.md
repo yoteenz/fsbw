@@ -23016,3 +23016,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Register/phone/TV popovers missing blur; case art should read through glass at same stack as panel (+ register **+8px**, phone **+6px** up). Transition black flash before Seedance; reverse too slow/distorted; vertical page shift when clip ends; play button still high on lounge composite.
 
 **Fixes:** Scrim + panel **`backdrop-filter`**; case wrappers **`z-index 30`** when open. Transition overlay **`absolute`** in lobby shell, poster until **`playing`**, reverse rate **2.75×**, scroll lock. Play hit **`top: 0.44`** relative to TV box. Pushed **`master`** + **`preview/mobile`** (`6d471900`).
+
+---
+
+## 2026-06-02 — Lobby case peel, lounge play restore, transition in slide shell
+
+**Context (full chat):** After composite lobby/lounge + Seedance work, user still saw: register/phone **baked art invisible** when popover open (z-index on wrapper did not lift background pixels above scrim); **no play button** on lounge; Seedance overlay **misaligned** vs `cover` backgrounds (`100dvh` scroll shell vs `max(100dvh, art height)` slide).
+
+**Root causes:** Scrim at z 15 dims full composite including case props; z 30 on hit wrapper only stacks panel, not background art. Lounge slide had only absolutely positioned children — **`useSceneCoverHitRect`** returned null until measure box had size (play gated on non-null). Transition overlay was sibling outside **`LobbyPage`/`LoungePage`** background layer with mismatched height.
+
+**Fixes (`e44eefd9` on `master` + `preview/mobile`):**
+- **`LobbyCasePropPeel`** — clipped duplicate of `final-lobby.png` at `caseRegister` / `casePhone` rects, z **28** above scrim, below popover **30**.
+- **`sceneSlideShellStyle()`** — explicit `height: max(100dvh, art)` on lobby/lounge pages; lounge **`measureRef`** on `inset: 0` layer.
+- **`useSceneCoverHitRect`** — viewport fallback via **`defaultSceneSlideMetricsFromViewport()`**; initial mapped rect (play shows immediately).
+- **`LobbyLoungeTransitionOverlay`** — moved **inside** active slide page, **`inset: 0`**, same stack as **`sceneCarouselBackgroundLayerStyle`** (forward on lobby, reverse on lounge).
+
+**Conventions:** Case popover visibility = peel layer, not higher z-index on empty hit wrapper. Scene hotspots/transition/video must share one slide shell with explicit height + cover anchor `center top`.
