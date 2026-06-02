@@ -34,7 +34,7 @@ import {
 import { LOUNGE_TV_ANIMATION_VIDEO_ENABLED } from '../../constants/loungeTvAnimationVideo';
 import { LoungeTvAnimationVideo } from './LoungeTvAnimationVideo';
 
-type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'closing';
+type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'static-out' | 'closing';
 
 const BRAND_RED = '#EB1C24';
 /** TV frame grow + curtain close. */
@@ -47,6 +47,10 @@ const HAND_HIDE_MS = 850;
 const STATIC_DELAY_MS = 1;
 /** How long CRT static stays on screen before menu content. */
 const STATIC_ON_MS = 500;
+/** Static fade-out before reverse close clip (matches {@link LoungeTvPowerOnStatic} unmount). */
+const STATIC_FADE_OUT_MS = 320;
+/** CRT static on power-off, then black, then reverse Seedance close. */
+const SEEDANCE_CLOSE_STATIC_BEFORE_REVERSE_MS = STATIC_ON_MS + STATIC_FADE_OUT_MS;
 
 type LoungeTvClosePhase = 'idle' | 'zap' | 'hand-out' | 'shrink';
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
@@ -589,13 +593,16 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const useSeedanceClip = LOUNGE_TV_ANIMATION_VIDEO_ENABLED;
 
   const requestClose = useCallback(() => {
-    if (seedancePhase === 'opening' || seedancePhase === 'closing') return;
+    if (seedancePhase === 'opening' || seedancePhase === 'static-out' || seedancePhase === 'closing') {
+      return;
+    }
     if (closePhase !== 'idle' || isClosingRef.current) return;
 
     if (useSeedanceClip && seedancePhase === 'ready') {
       isClosingRef.current = true;
       setShowContent(false);
-      setSeedancePhase('closing');
+      setShowStatic(true);
+      setSeedancePhase('static-out');
       return;
     }
 
@@ -691,6 +698,16 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     if (!isOpen || !useSeedanceClip) return;
     if (seedancePhase === 'idle') setSeedancePhase('opening');
   }, [isOpen, seedancePhase, useSeedanceClip]);
+
+  /** Seedance close: CRT static → black glass → reverse clip. */
+  useEffect(() => {
+    if (seedancePhase !== 'static-out') return;
+    const timer = window.setTimeout(() => {
+      setShowStatic(false);
+      setSeedancePhase('closing');
+    }, SEEDANCE_CLOSE_STATIC_BEFORE_REVERSE_MS);
+    return () => window.clearTimeout(timer);
+  }, [seedancePhase]);
 
   useEffect(() => {
     if (isOpen || seedancePhase === 'closing') return;
@@ -793,15 +810,17 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   if (!visible || typeof document === 'undefined') return null;
 
-  const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
+  const frameExpanded = useSeedanceClip
+    ? seedancePhase === 'ready' || seedancePhase === 'static-out'
+    : animatedIn;
   const showLegacyChoreography = !useSeedanceClip;
-  const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
+  const showTvChrome =
+    !useSeedanceClip || seedancePhase === 'ready' || seedancePhase === 'static-out';
+  const useFullscreenShell = useSeedanceClip && showTvChrome;
 
   const handMounted =
     showLegacyChoreography && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
   const handVisible = handMounted && (closePhase === 'idle' || closePhase === 'zap');
-
-  const useFullscreenShell = useSeedanceClip && seedancePhase === 'ready';
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -877,9 +896,14 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
                 ? 'blur(10px)'
                 : 'none',
-          cursor: closePhase === 'idle' && isOpen && seedancePhase !== 'opening' ? 'pointer' : 'default',
+          cursor:
+            closePhase === 'idle' && isOpen && seedancePhase !== 'opening' && seedancePhase !== 'static-out'
+              ? 'pointer'
+              : 'default',
           pointerEvents:
-            closePhase === 'idle' && isOpen && seedancePhase !== 'opening' ? 'auto' : 'none',
+            closePhase === 'idle' && isOpen && seedancePhase !== 'opening' && seedancePhase !== 'static-out'
+              ? 'auto'
+              : 'none',
           transition: `background ${ANIM_MS}ms ease`,
         }}
       />
@@ -899,15 +923,16 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       ) : null}
       {showTvChrome && useFullscreenShell ? (
         <LoungeTvFullscreenShell
-          closeVisible={closePhase === 'idle'}
+          closeVisible={closePhase === 'idle' && seedancePhase === 'ready'}
           onClose={() => requestClose()}
           screenStyle={{
             backgroundColor: '#000000',
-            opacity: showContent ? 1 : 0,
+            opacity: showContent || showStatic ? 1 : 0,
             transition: 'opacity 120ms linear',
           }}
         >
-          {showContent && !poweringOff ? (
+          {showStatic && !showContent ? <LoungeTvPowerOnStatic active /> : null}
+          {showContent && !poweringOff && !showStatic ? (
             <LoungeTvContentProtection
               active
               style={{
