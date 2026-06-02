@@ -504,8 +504,8 @@ const LobbyPage: React.FC = () => {
               zIndex: LOBBY_CASE_POPOVER_SCRIM_Z_INDEX,
               margin: 0,
               padding: 0,
+              pointerEvents: 'none',
             }}
-            onClick={closeLobbyCasePopover}
           />,
           document.body
         )}
