@@ -979,7 +979,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBcfShopItem = item.type === 'shop-texture-category';
                     const isViewingDetails = viewingDetailsFor === item.id;
                     const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
-                    const productTextTransform = cartDropdownProductTextTranslateY(detailTextRowCount, isViewingDetails);
+                    const productTextTransform = cartDropdownProductTextTranslateY(
+                      detailTextRowCount,
+                      isViewingDetails,
+                      isBcfShopItem,
+                    );
                     /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
                     const hideMetaForDetails =
                       isViewingDetails &&
@@ -1371,10 +1375,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         {viewingDetailsFor === item.id && (
                           <CartLineTextLayer slot="details">
                           <p 
+                            className="font-bold"
                             style={{ 
                               ...cartLineLayerInnerStyle(),
-                              fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                              fontWeight: 400,
+                              fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               textTransform: 'uppercase',
                               marginBottom: '10px',
