@@ -3,36 +3,37 @@
  * (`vercel.json`), so same filename without `?v=` keeps serving the old PNG.
  */
 
-/** Display-case acrylic (`CASE.png`) — `npm run lobby:bake-case`. */
-export const LOBBY_CASE_ASSET_VERSION = '7mfZBdMQ-v1';
+/** Display-case acrylic (`CASE.png`) — original asset (restored pre–Jun 2026 rebake churn). */
+export const LOBBY_CASE_ASSET_VERSION = 'original-v1';
 
+/** @deprecated Rebake sources from Jun 2026 experiments — keep `public/assets/CASE.png` as canonical. */
 export const LOBBY_CASE_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/7mfZBdMQEOXkht8MamYaG_DIB2ZDCl.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/RRrEEA6lu1lkeleVPTgsP_wgs8vmEv.jpeg';
 
 export const LOBBY_CASE_SRC = `/assets/CASE.png?v=${LOBBY_CASE_ASSET_VERSION}`;
 
-/** Lobby slide: acrylic case width (230px baseline −20%). Register/phone icon px sizes stay fixed. */
-export const LOBBY_CASE_DISPLAY_WIDTH_PX = 184;
+/** Lobby slide: acrylic case rendered width (full size before −20% Jun 2026). */
+export const LOBBY_CASE_DISPLAY_WIDTH_PX = 230;
 
 /** Horizontal nudge for case block on lobby slide (`translateX` after center). */
-export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 32;
+export const LOBBY_CASE_SLIDE_OFFSET_X_PX = 4;
 
-/** Scales register/phone anchor offsets with the case; does not scale icon bitmaps. */
-export const LOBBY_CASE_PROP_LAYOUT_SCALE = 0.8;
+/** Register/phone anchors use full case scale (1:1 with pre–Jun 2026 lobby). */
+export const LOBBY_CASE_PROP_LAYOUT_SCALE = 1;
 
 const lobbyCasePropOffset = (px: number) => Math.round(px * LOBBY_CASE_PROP_LAYOUT_SCALE);
 
-/** Register anchor on case (`left-8` / `top: -39px` at 100% case scale). */
+/** Register anchor on case (`left-8` / `top: -39px`). */
 export const LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX = lobbyCasePropOffset(32);
 export const LOBBY_CASE_REGISTER_ANCHOR_TOP_PX = lobbyCasePropOffset(-39);
 
-/** Phone anchor on case (`right-8` / `top: -33px` / `translateX(-6px)` at 100% scale). */
+/** Phone anchor on case (`right-8` / `top: -33px` / `translateX(-6px)`). */
 export const LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX = lobbyCasePropOffset(32);
 export const LOBBY_CASE_PHONE_ANCHOR_TOP_PX = lobbyCasePropOffset(-33);
 export const LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX = lobbyCasePropOffset(-6);
 
 /** Extra nudge left for phone only (px, not scaled with case). */
-export const LOBBY_CASE_PHONE_NUDGE_LEFT_PX = 22;
+export const LOBBY_CASE_PHONE_NUDGE_LEFT_PX = 0;
 
 export const LOBBY_PHONE_ASSET_VERSION = 'q-oa7o8';
 
