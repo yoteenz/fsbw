@@ -1,9 +1,14 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type LobbyLoungeTransitionDirection,
+  LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
+import {
+  FINAL_LOBBY_BACKGROUND_SRC,
+  FINAL_LOUNGE_BACKGROUND_SRC,
+} from '../../constants/finalLobbySceneAssets';
 
 type Props = {
   active: boolean;
@@ -11,18 +16,25 @@ type Props = {
   onComplete: () => void;
 };
 
+const posterForDirection = (direction: LobbyLoungeTransitionDirection) =>
+  direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
+
 /**
- * Full-viewport Seedance clip over the current lobby/lounge slide (no carousel pan to a black panel).
+ * Seedance clip over the current slide — `absolute` inside the lobby scroll shell (not `fixed`)
+ * so removing the overlay does not shift scroll position vs the page.
  */
 export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const completedRef = useRef(false);
   const reverseRafRef = useRef<number | null>(null);
+  const [frameVisible, setFrameVisible] = useState(false);
   const src = lobbyLoungeTransitionVideoSrc(direction);
+  const poster = posterForDirection(direction);
 
   const finish = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
+    setFrameVisible(false);
     if (reverseRafRef.current !== null) {
       cancelAnimationFrame(reverseRafRef.current);
       reverseRafRef.current = null;
@@ -37,8 +49,16 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
   }, [direction, onComplete]);
 
   useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.preload = 'auto';
+    el.load();
+  }, [src]);
+
+  useEffect(() => {
     if (!active) {
       completedRef.current = false;
+      setFrameVisible(false);
       if (reverseRafRef.current !== null) {
         cancelAnimationFrame(reverseRafRef.current);
         reverseRafRef.current = null;
@@ -47,23 +67,38 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     }
 
     completedRef.current = false;
+    setFrameVisible(false);
     const el = videoRef.current;
     if (!el) return;
 
     let safetyTimer = window.setTimeout(finish, 12000);
-    const clearSafety = () => {
-      window.clearTimeout(safetyTimer);
-    };
+    const clearSafety = () => window.clearTimeout(safetyTimer);
     const armSafetyFromDuration = () => {
       clearSafety();
-      const ms = Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 + 500 : 6500;
+      const baseMs =
+        Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 + 500 : 6500;
+      const ms =
+        direction === 'reverse'
+          ? baseMs / LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE
+          : baseMs;
       safetyTimer = window.setTimeout(finish, ms);
     };
+
+    const onPlaying = () => setFrameVisible(true);
 
     const playForward = async () => {
       el.playbackRate = 1;
       el.currentTime = 0;
       try {
+        if (el.readyState < 2) {
+          await new Promise<void>((resolve) => {
+            const done = () => {
+              el.removeEventListener('canplay', done);
+              resolve();
+            };
+            el.addEventListener('canplay', done);
+          });
+        }
         await el.play();
       } catch {
         try {
@@ -76,7 +111,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     };
 
     const playReverse = async () => {
-      el.playbackRate = 1;
+      const rate = LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE;
       const startReversePlayback = () => {
         const duration = el.duration;
         if (!Number.isFinite(duration) || duration <= 0) {
@@ -84,7 +119,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
           return;
         }
         el.currentTime = Math.max(0, duration - 0.04);
-        el.playbackRate = -1;
+        el.playbackRate = -rate;
         void el.play().catch(() => {
           el.playbackRate = 1;
           el.pause();
@@ -93,7 +128,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
             if (completedRef.current) return;
             const dt = Math.min(now - last, 50);
             last = now;
-            const next = Math.max(0, el.currentTime - dt / 1000);
+            const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
             el.currentTime = next;
             if (next <= 0.04) {
               finish();
@@ -125,6 +160,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
       if (el.playbackRate < 0 && el.currentTime <= 0.05) finish();
     };
 
+    el.addEventListener('playing', onPlaying);
     el.addEventListener('ended', onEnded);
     el.addEventListener('timeupdate', onTimeUpdate);
     el.addEventListener('loadedmetadata', armSafetyFromDuration);
@@ -134,6 +170,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
 
     return () => {
       clearSafety();
+      el.removeEventListener('playing', onPlaying);
       el.removeEventListener('ended', onEnded);
       el.removeEventListener('timeupdate', onTimeUpdate);
       el.removeEventListener('loadedmetadata', armSafetyFromDuration);
@@ -144,26 +181,41 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     };
   }, [active, direction, finish, src]);
 
-  if (!active) return null;
-
   return (
     <div
-      aria-hidden
+      aria-hidden={!active}
       style={{
-        position: 'fixed',
-        inset: 0,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100dvh',
         zIndex: 200,
-        backgroundColor: '#000',
         overflow: 'hidden',
-        pointerEvents: 'none',
+        pointerEvents: active ? 'none' : 'none',
+        visibility: active ? 'visible' : 'hidden',
+        backgroundColor: 'transparent',
       }}
     >
+      {!frameVisible && active ? (
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${poster})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+      ) : null}
       <video
-        key={`${direction}-${src}`}
         ref={videoRef}
         playsInline
         muted
         preload="auto"
+        poster={poster}
         onError={finish}
         style={{
           position: 'absolute',
@@ -172,6 +224,8 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
           height: '100%',
           objectFit: 'cover',
           objectPosition: 'center top',
+          opacity: frameVisible ? 1 : 0,
+          transition: 'opacity 60ms linear',
         }}
       >
         <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />

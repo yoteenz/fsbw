@@ -45,8 +45,17 @@ export const LOBBY_CASE_POPOVER_MIN_HEIGHT_PX = Math.round(
 /** @deprecated Body-portal scrim — lobby uses `LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX` on the slide instead. */
 export const LOBBY_CASE_POPOVER_SCRIM_Z_INDEX = 10000;
 
-/** Dim layer on lobby slide (below display case `z-index: 20`); scrolls/zooms with the scene. */
+/** Dim layer on lobby slide (below case props at {@link LOBBY_CASE_POPOVER_OPEN_Z_INDEX}). */
 export const LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX = 15;
+
+/** Frosted scrim behind register/phone popovers (matches modal-style blur). */
+export const LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR = 'blur(10px)';
+
+/** Register panel nudge above prop (px). */
+export const LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX = 8;
+
+/** Phone panel nudge above prop (px). */
+export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = 6;
 
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;

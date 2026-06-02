@@ -1,5 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
-import { FINAL_LOUNGE_TV_HIT_REGION, FINAL_LOUNGE_TV_PLAY_HIT_REGION } from '../../constants/finalLobbySceneAssets';
+import {
+  FINAL_LOUNGE_TV_HIT_REGION,
+  FINAL_LOUNGE_TV_PLAY_HIT_REGION,
+} from '../../constants/finalLobbySceneAssets';
 import { LOUNGE_TV_PLAY_BUTTON_COLOR } from './loungeTvFrame';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
@@ -31,54 +34,54 @@ export function LoungeSceneTvHotspot() {
         }}
       >
         <div
+          ref={tvFrameRef}
           style={{
             ...rectToPercentStyle(FINAL_LOUNGE_TV_HIT_REGION),
             position: 'absolute',
-            pointerEvents: 'auto',
-            opacity: tvOpen ? 0.4 : 1,
-            transition: 'opacity 0.35s ease',
+            pointerEvents: 'none',
           }}
         >
-          {!tvOpen ? (
-            <button
-              type="button"
-              onClick={openLoungeTv}
-              aria-label="Play lounge media"
+        {!tvOpen ? (
+          <button
+            type="button"
+            onClick={openLoungeTv}
+            aria-label="Play lounge media"
+            style={{
+              ...rectToPercentStyle(FINAL_LOUNGE_TV_PLAY_HIT_REGION),
+              position: 'absolute',
+              margin: 0,
+              padding: 12,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'manipulation',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'auto',
+            }}
+          >
+            <span
+              aria-hidden
               style={{
-                ...rectToPercentStyle(FINAL_LOUNGE_TV_PLAY_HIT_REGION),
-                position: 'absolute',
-                margin: 0,
-                padding: 12,
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
-                touchAction: 'manipulation',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: 'block',
+                height: 18,
+                width: 22,
+                pointerEvents: 'none',
+                backgroundColor: LOUNGE_TV_PLAY_BUTTON_COLOR,
+                WebkitMaskImage: 'url(/assets/play-button.png)',
+                maskImage: 'url(/assets/play-button.png)',
+                WebkitMaskSize: 'contain',
+                maskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat',
+                maskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center',
+                maskPosition: 'center',
               }}
-            >
-              <span
-                aria-hidden
-                style={{
-                  display: 'block',
-                  height: 18,
-                  width: 22,
-                  pointerEvents: 'none',
-                  backgroundColor: LOUNGE_TV_PLAY_BUTTON_COLOR,
-                  WebkitMaskImage: 'url(/assets/play-button.png)',
-                  maskImage: 'url(/assets/play-button.png)',
-                  WebkitMaskSize: 'contain',
-                  maskSize: 'contain',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskPosition: 'center',
-                  maskPosition: 'center',
-                }}
-              />
-            </button>
-          ) : null}
+            />
+          </button>
+        ) : null}
         </div>
       </div>
 
