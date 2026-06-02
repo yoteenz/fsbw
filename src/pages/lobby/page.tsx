@@ -32,13 +32,27 @@ import {
   sceneCarouselSlideMinHeightCss,
 } from '../../utils/sceneCarouselBackground';
 import { LobbyCasePropPopover } from '../../components/lobby/LobbyCasePropPopover';
+import {
+  LOBBY_CASE_POPOVER_SCRIM_ALPHA,
+  LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
+} from '../../constants/lobbyPaymentIcons';
 import { LobbyLoungeTransitionSlide } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
   isLobbyTransitionVideoEnabledFromSearch,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import { LOBBY_PHONE_SRC } from '../../constants/lobbyCaseAssets';
+import {
+  LOBBY_CASE_DISPLAY_WIDTH_PX,
+  LOBBY_CASE_SLIDE_OFFSET_X_PX,
+  LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX,
+  LOBBY_CASE_PHONE_ANCHOR_TOP_PX,
+  LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX,
+  LOBBY_CASE_PHONE_NUDGE_LEFT_PX,
+  LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX,
+  LOBBY_CASE_REGISTER_ANCHOR_TOP_PX,
+  LOBBY_PHONE_SRC,
+} from '../../constants/lobbyCaseAssets';
 import {
   LOBBY_CASE_REGISTER_SRC,
   LOBBY_CASE_SRC,
@@ -46,6 +60,11 @@ import {
   LOBBY_NEON_BOOKING_SRC,
   LOBBY_NEON_LOGO_HEIGHT_PX,
   LOBBY_NEON_LOGO_SRC,
+  LOBBY_NEON_NAV_HEIGHT_PX,
+  LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX,
+  LOBBY_NEON_NAV_ROW_OFFSET_Y_PX,
+  LOBBY_NEON_NAV_ROW_PADDING_X_PX,
+  LOBBY_NEON_NAV_ROW_WIDTH_VW,
   LOBBY_NEON_PRODUCTS_SRC,
   LOBBY_NEON_TOOLS_SRC,
   LOBBY_ROSE_BACKGROUND_SRC,
@@ -142,6 +161,7 @@ const LobbyPage: React.FC = () => {
 
   const [bookingNeonSrc, setBookingNeonSrc] = useState(LOBBY_NEON_BOOKING_SRC);
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
+  const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
 
   return (
     <div
@@ -155,6 +175,24 @@ const LobbyPage: React.FC = () => {
     >
       {/* Background Image — same cover/top anchor as lounge for carousel alignment */}
       <div style={sceneCarouselBackgroundLayerStyle(LOBBY_ROSE_BACKGROUND_SRC)} />
+
+      {lobbyCasePopover !== null ? (
+        <div
+          role="presentation"
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: `rgba(0, 0, 0, ${LOBBY_CASE_POPOVER_SCRIM_ALPHA})`,
+            backdropFilter: 'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+            zIndex: LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
+            margin: 0,
+            padding: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      ) : null}
 
       {/* Main Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen" style={{ overflow: 'visible' }}>
@@ -188,18 +226,25 @@ const LobbyPage: React.FC = () => {
           </div>
         </div>
         
-        {/* Navigation Links Container */}
+        {/* Navigation Links — left / center / right thirds inside rose floral column */}
         <div
-          className="flex flex-row justify-center items-center"
           style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
-            transform: 'translate(calc(-50% + 51px), calc(-50% - 131px))',
+            transform: `translate(-50%, calc(-50% - ${LOBBY_NEON_NAV_ROW_OFFSET_Y_PX}px))`,
             zIndex: 35,
             margin: 0,
             padding: 0,
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            alignItems: 'center',
+            width: `min(${LOBBY_NEON_NAV_ROW_WIDTH_VW}vw, ${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px)`,
+            maxWidth: `${LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX}px`,
+            paddingLeft: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
+            paddingRight: `${LOBBY_NEON_NAV_ROW_PADDING_X_PX}px`,
+            boxSizing: 'border-box',
           }}
         >
           {/* Products → /home/shop (full asset is the hit target) */}
@@ -215,11 +260,12 @@ const LobbyPage: React.FC = () => {
             }}
             style={{
               position: 'relative',
-              display: 'inline-block',
-              flexShrink: 0,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              minWidth: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(4px)',
             }}
             aria-label="Go to shop"
           >
@@ -231,7 +277,7 @@ const LobbyPage: React.FC = () => {
                 margin: 0,
                 padding: 0,
                 display: 'block',
-                height: '41px',
+                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 maxWidth: 'none',
                 width: 'auto',
                 pointerEvents: 'none',
@@ -253,11 +299,12 @@ const LobbyPage: React.FC = () => {
             }}
             style={{
               position: 'relative',
-              display: 'inline-block',
-              flexShrink: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minWidth: 0,
               pointerEvents: 'auto',
               cursor: 'pointer',
-              transform: 'translateX(-50px)',
               zIndex: 2,
             }}
             aria-label="Go to tools"
@@ -270,7 +317,7 @@ const LobbyPage: React.FC = () => {
                 margin: 0,
                 padding: 0,
                 display: 'block',
-                height: '41px',
+                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 maxWidth: 'none',
                 width: 'auto',
                 pointerEvents: 'none',
@@ -283,11 +330,11 @@ const LobbyPage: React.FC = () => {
           <span
             style={{
               position: 'relative',
-              display: 'inline-flex',
-              flexShrink: 0,
-              transform: 'translateX(-104px)',
-              pointerEvents: 'auto',
+              display: 'flex',
+              justifyContent: 'flex-end',
               alignItems: 'center',
+              minWidth: 0,
+              pointerEvents: 'auto',
             }}
           >
             <img
@@ -301,10 +348,10 @@ const LobbyPage: React.FC = () => {
                 margin: 0,
                 padding: 0,
                 display: 'block',
-                height: '41px',
+                height: `${LOBBY_NEON_NAV_HEIGHT_PX}px`,
                 width: 'auto',
                 maxWidth: 'none',
-                verticalAlign: 'top'
+                verticalAlign: 'top',
               }}
               aria-hidden
               draggable={false}
@@ -377,9 +424,9 @@ const LobbyPage: React.FC = () => {
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: 'translate(calc(-50% + 4px), calc(-50% + 255px))',
+          transform: `translate(calc(-50% + ${LOBBY_CASE_SLIDE_OFFSET_X_PX}px), calc(-50% + 255px))`,
           zIndex: 20,
-          maxWidth: '753px'
+          maxWidth: '753px',
         }}>
           {/* Acrylic Case */}
           <div className="relative">
@@ -387,18 +434,29 @@ const LobbyPage: React.FC = () => {
               src={LOBBY_CASE_SRC}
               alt="Display Case"
               className="h-auto"
-              style={{ display: 'block', width: '230px', maxWidth: '230px' }}
+              style={{
+                display: 'block',
+                width: `${LOBBY_CASE_DISPLAY_WIDTH_PX}px`,
+                maxWidth: `${LOBBY_CASE_DISPLAY_WIDTH_PX}px`,
+              }}
             />
             
             {/* Register — tap for payment methods popover */}
-            <div className="absolute left-8" style={{ top: '-39px', zIndex: 25 }}>
+            <div
+              className="absolute"
+              style={{
+                left: `${LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX}px`,
+                top: `${LOBBY_CASE_REGISTER_ANCHOR_TOP_PX}px`,
+                zIndex: 2,
+              }}
+            >
               <LobbyCasePropPopover
                 popoverId="register"
                 activeId={lobbyCasePopover}
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
-                onClose={() => setLobbyCasePopover(null)}
+                onClose={closeLobbyCasePopover}
                 ariaLabel="View accepted payment methods"
                 title={LOBBY_REGISTER_POPOVER_TITLE}
                 paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
@@ -416,8 +474,13 @@ const LobbyPage: React.FC = () => {
 
             {/* Phone — tap for business contact popover */}
             <div
-              className="absolute right-8"
-              style={{ top: '-33px', zIndex: 25, transform: 'translateX(-6px)' }}
+              className="absolute"
+              style={{
+                right: `${LOBBY_CASE_PHONE_ANCHOR_RIGHT_PX}px`,
+                top: `${LOBBY_CASE_PHONE_ANCHOR_TOP_PX}px`,
+                zIndex: 2,
+                transform: `translateX(${LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX - LOBBY_CASE_PHONE_NUDGE_LEFT_PX}px)`,
+              }}
             >
               <LobbyCasePropPopover
                 popoverId="phone"
@@ -425,7 +488,7 @@ const LobbyPage: React.FC = () => {
                 onActivate={(id) => {
                   if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
                 }}
-                onClose={() => setLobbyCasePopover(null)}
+                onClose={closeLobbyCasePopover}
                 ariaLabel="View business contact information"
                 title={LOBBY_PHONE_POPOVER_TITLE}
                 sections={LOBBY_PHONE_POPOVER_SECTIONS}
@@ -443,6 +506,7 @@ const LobbyPage: React.FC = () => {
           </div>
         </div>
       </div>
+
       
       {/* Right Arrow Button - Part of page design, scrolls with content */}
       <div style={{

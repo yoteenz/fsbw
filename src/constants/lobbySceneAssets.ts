@@ -8,6 +8,11 @@ import {
   LOBBY_NEON_TOOLS_FAL_EDIT,
 } from './sceneLobbyNeonNavFal';
 import {
+  LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY,
+  LOBBY_DISPLAY_CASE_FAL_EDIT,
+  LOBBY_DISPLAY_CASE_ON_SCENE_FAL_EDIT,
+} from './sceneLobbyDisplayCaseFal';
+import {
   LOBBY_ROSE_BACKGROUND_FAL_EDIT,
   SCENE_ROSE_BACKGROUND_FAL_NEGATIVE,
   sceneRoseBackgroundFalWorkflowNote,
@@ -17,17 +22,49 @@ import {
 
 export const LOBBY_NEON_LOGO_SRC = '/assets/neon-logo.png';
 
-/** Main neon logo rendered height on lobby slide (263px baseline −5%). */
-export const LOBBY_NEON_LOGO_HEIGHT_PX = 250;
+/** Main neon logo rendered height on lobby slide (250px −20%). */
+export const LOBBY_NEON_LOGO_HEIGHT_PX = 200;
+
+/** PRODUCTS / TOOLS / BOOKING word signs under main logo (16px baseline +30%). */
+export const LOBBY_NEON_NAV_HEIGHT_PX = 21;
+
+/**
+ * Nav row width — tuned to the center rose floral column on `landing-background.png`
+ * under `background-size: cover` on mobile (not full viewport width).
+ */
+export const LOBBY_NEON_NAV_ROW_WIDTH_VW = 54;
+
+/** Cap row width on large viewports so signs stay inside the rose panel. */
+export const LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX = 340;
+
+/** Inset from rose-panel left/right edges so signs sit inside the floral column. */
+export const LOBBY_NEON_NAV_ROW_PADDING_X_PX = 10;
+
+/** Vertical offset from slide center (px); pairs with lobby neon logo anchor. */
+export const LOBBY_NEON_NAV_ROW_OFFSET_Y_PX = 131;
 /** Bump when re-baking `neon-products.png` (`npm run lobby:bake-neon-products`). */
-export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = 'XmqZbgWv-v1';
+export const LOBBY_NEON_PRODUCTS_ASSET_VERSION = '20O0Gotz-v1';
 
 export const LOBBY_NEON_PRODUCTS_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg';
 
 export const LOBBY_NEON_PRODUCTS_SRC = `/assets/neon-products.png?v=${LOBBY_NEON_PRODUCTS_ASSET_VERSION}`;
-export const LOBBY_NEON_TOOLS_SRC = '/assets/neon-tools.png';
-export const LOBBY_NEON_BOOKING_SRC = '/assets/neon-booking.png';
+
+/** Bump when re-baking `neon-tools.png` (`npm run lobby:bake-neon-tools`). */
+export const LOBBY_NEON_TOOLS_ASSET_VERSION = 'I78ubr42-v1';
+
+export const LOBBY_NEON_TOOLS_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg';
+
+export const LOBBY_NEON_TOOLS_SRC = `/assets/neon-tools.png?v=${LOBBY_NEON_TOOLS_ASSET_VERSION}`;
+
+/** Bump when re-baking `neon-booking.png` (`npm run lobby:bake-neon-booking`). */
+export const LOBBY_NEON_BOOKING_ASSET_VERSION = 'SnSxe3vt-v1';
+
+export const LOBBY_NEON_BOOKING_SRC_REMOTE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg';
+
+export const LOBBY_NEON_BOOKING_SRC = `/assets/neon-booking.png?v=${LOBBY_NEON_BOOKING_ASSET_VERSION}`;
 export const LOBBY_NEON_BOOKING_FALLBACK_SRC = '/assets/neon-booking.svg';
 
 /** Bump when replacing `public/assets/landing-background.png` (Vercel caches `/assets/*`). */
@@ -108,7 +145,13 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
   shelfBackdropNote:
     'For Supabase source JPEGs: gray or off-white studio wall keys better than green for acrylic shelves/cases (less green cast on glass). If stuck on green screen, export high-res and use npm run lobby:bake-shelves / lobby:bake-case.',
 
-  displayCase: `Photorealistic clear acrylic boutique display case for a wig salon counter. Front view, rounded corners, subtle reflections and thickness on edges, empty interior ready for small props on top. Soft studio lighting, PNG with fully transparent background, no products inside unless minimal glare only.`,
+  displayCase: LOBBY_DISPLAY_CASE_FAL_EDIT,
+
+  /** Use when full preserve pass returns a duplicate — backdrop swap for `lobby:bake-case` only. */
+  displayCaseBackgroundOnly: LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY,
+
+  /** Full lobby hero — add acrylic case (`npm run lobby:fal-add-display-case`). */
+  displayCaseOnLobbyScene: LOBBY_DISPLAY_CASE_ON_SCENE_FAL_EDIT,
 
   caseRegister: `Small photorealistic vintage-modern cash register prop for a luxury retail display case, 3/4 front angle. Metallic and matte materials, boutique styling, no brand text. PNG with fully transparent background, isolated product shot.`,
 

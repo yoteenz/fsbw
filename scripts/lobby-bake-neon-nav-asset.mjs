@@ -16,17 +16,19 @@ const NAV = {
   products: {
     out: 'neon-products.png',
     remote:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg',
     maxDim: 900,
   },
   tools: {
     out: 'neon-tools.png',
-    remote: '',
+    remote:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg',
     maxDim: 900,
   },
   booking: {
     out: 'neon-booking.png',
-    remote: '',
+    remote:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg',
     maxDim: 900,
   },
 };

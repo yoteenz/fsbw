@@ -22648,3 +22648,152 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Update (same chat):** **Products** neon **`XmqZbgWvltNaqQ7UNbrHu_2iaRxZwG.jpeg`** → **`neon-products.png`** (900×295, white studio key + halo). **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`XmqZbgWv-v1`**. **Display case** **`7mfZBdMQEOXkht8MamYaG_DIB2ZDCl.jpeg`** → **`CASE.png`** (920×466). **`LOBBY_CASE_ASSET_VERSION`** **`7mfZBdMQ-v1`**. White-backdrop handling in **`lobby-bake-neon-nav-asset.mjs`** + **`key_studio_case`**. Commit **`76671fd4`** on **`master`** + **`preview/mobile`**.
 
 **Update (same chat):** Display case **`37jR_8sOmtkmHDonwcu9i_RolTShHD.jpeg`** (white studio) → **`CASE.png`** (920×537, **`key_studio_case`**). **`LOBBY_CASE_ASSET_VERSION`** **`37jR_8sO-v1`**. Commit **`b3dbdb3f`** on **`master`** + **`preview/mobile`**.
+
+**Update (same chat):** **Booking** neon **`SnSxe3vtBubRiiMMlOn7M_O2Trudyn.jpeg`** → **`neon-booking.png`** (900×295, white studio key + halo). **`LOBBY_NEON_BOOKING_ASSET_VERSION`** **`SnSxe3vt-v1`**, versioned **`LOBBY_NEON_BOOKING_SRC`**. **`npm run lobby:bake-neon-booking`**.
+
+**Update (same chat):** **Tools** neon **`I78ubr42NjxdhQf0HyE9b_r0ibbtRX.jpeg`** → **`neon-tools.png`** (899×281, white studio key + halo). **`LOBBY_NEON_TOOLS_ASSET_VERSION`** **`I78ubr42-v1`**, versioned **`LOBBY_NEON_TOOLS_SRC`**. **`npm run lobby:bake-neon-tools`**.
+
+**Update (same chat):** Lobby **products / tools / booking** neon nav signs **−60%** render size: **`LOBBY_NEON_NAV_HEIGHT_PX`** **16** (was **41px**); horizontal **`translateX`** kern scaled (~**40%**) in **`page.tsx`**.
+
+**Update (same chat):** **Products** neon **`20O0GotzW7q-QmvLveXN9_YgD84Oqi.jpeg`** → **`neon-products.png`** (900×289). **`LOBBY_NEON_PRODUCTS_ASSET_VERSION`** **`20O0Gotz-v1`**.
+
+**Update (same chat):** Lobby **products / tools / booking** neon nav **+30%** size: **`LOBBY_NEON_NAV_HEIGHT_PX`** **21** (was **16**); **`translateX`** kern scaled in **`page.tsx`**.
+
+**Update (same chat):** Neon nav row layout — removed legacy **`translateX`** stacking (**`−26px` / `−55px`**). Row centered on rose panel (**`translate(-50%, …)`**, no **`+51px`**). **`LOBBY_NEON_NAV_ROW_MAX_WIDTH_PX`** **500** + padding; three equal **`flex: 1`** columns with centered signs.
+
+---
+
+## 2026-05-31 — Lobby phone/register popover backdrop (cap chart scrim)
+
+**Context (chat):** Continuation after lobby asset/layout work. User asked that when the **phone** or **cash register** pop-up is open on the lobby display case, the **page background** should use the same overlay as the **cap size chart** modal on unit PDPs (e.g. **`straight/noir`**).
+
+**Topics covered:** Prior chat: lobby Fal prompts, rose background, case/neon bakes, nav sizing/layout. This turn: popover scrim parity with chart modal.
+
+**Decisions / outcomes:** Match unit PDP chart modal scrim — **`rgba(0, 0, 0, 0.7)`**, **`backdropFilter` / `WebkitBackdropFilter`: `blur(3px)`**, fixed full viewport, **`zIndex` 10000**, click to dismiss. Popover panel **`zIndex` 10001** so it stays above scrim.
+
+**Changes:** **`src/pages/lobby/page.tsx`** — **`createPortal`** body scrim when **`lobbyCasePopover`** is **`register`** or **`phone`**; **`closeLobbyCasePopover`** callback. **`src/components/lobby/LobbyCasePropPopover.tsx`** — dialog **`zIndex`** **10001**. Commit **`1c43a579`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby display case Fal prompt (labeled gray-studio reference)
+
+**Context (chat):** User supplied desired display-case reference (clear acrylic, three red shelf labels **SLAY TOOLS / LACE PRODUCTS / HAIR PRODUCTS**, register + terminal on top, flat RGB ~140 gray backdrop) and asked to refine the Fal input prompt (MASTER + subject/preserve/background).
+
+**Changes:** **`src/constants/sceneLobbyDisplayCaseFal.ts`** — **`LOBBY_DISPLAY_CASE_FAL_EDIT`** (NBP edit, preserve labels/props/transparency, flat gray studio, no red/pink wash; bake via **`npm run lobby:bake-case`**). **`lobbySceneAssets.ts`** **`displayCase`** now points to that block. Commit **`b89d9af7`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby neon nav thirds on rose wall (layout fix)
+
+**Context (chat):** User reported **nothing changed** after display-case Fal prompt work; clarified **Products / Tools / Booking** must sit on **left / center / right thirds inside the rose floral column** (not spread across full viewport).
+
+**Why prior work looked unchanged:** Fal **`displayCase`** prompt only affects future source JPEG generation — not live lobby CSS. Earlier flex row used **`min(70vw, 500px)`**, wider than the narrow center rose panel, so signs sat over side walls.
+
+**Changes:** **`lobbySceneAssets.ts`** — row **`LOBBY_NEON_NAV_ROW_WIDTH_VW` 54**, max **340px**, padding **10px**, **`LOBBY_NEON_NAV_ROW_OFFSET_Y_PX` 131**. **`lobby/page.tsx`** — **CSS grid `1fr 1fr 1fr`**; Products **`flex-start`**, Tools **center**, Booking **`flex-end`** within thirds. Commit **`174ca209`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Case popover z-index + display-case Fal “same image”
+
+**Context (chat):** User: phone/register must stay fully visible above popover scrim (were hidden under fixed **`z-index` 10000** backdrop). Asked if display-case Fal prompt returning the same image is correct.
+
+**Decisions / outcomes:** Scrim stays **10000** on **`document.body`**. When popover open, display-case block **`LOBBY_CASE_POPOVER_STACK_Z_INDEX` 10002**; acrylic **`CASE.png`** dimmed (**opacity 0.2**); register/phone + popover card (**10003**) fully visible. Full **`LOBBY_DISPLAY_CASE_FAL_EDIT`** is preserve-heavy — near-duplicate Fal output is expected if upload already matches; use new **`LOBBY_DISPLAY_CASE_FAL_BACKGROUND_ONLY`** for red/green → flat gray backdrop swap only (`LOBBY_SCENE_FAL_PROMPTS.displayCaseBackgroundOnly`).
+
+**Changes:** **`lobbyPaymentIcons.ts`**, **`lobby/page.tsx`**, **`LobbyCasePropPopover.tsx`**, **`sceneLobbyDisplayCaseFal.ts`**, **`lobbySceneAssets.ts`**. Commit **`05d0d03a`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-31 — Lobby PRODUCTS/TOOLS/BOOKING neon legibility (Fal + CSS)
+
+**Context (chat):** Nav neon signs barely visible/legible on lit rose wall (thin pink tubes on crimson petals). User asked how to prompt individual assets while keeping neon styling.
+
+**Decisions / outcomes:** Fal source must be **black plate only** (not rose wall in JPEG). Pass 1 adds **white-hot tube cores**, **pale outer halo**, **+15–25% stroke** if thin; optional Pass 2 short legibility pass. **`npm run lobby:bake-neon-*`** after Fal. Immediate UI: **`LOBBY_NEON_NAV_COMPOSITE_FILTER`** drop-shadow on lobby nav imgs.
+
+**Changes:** **`sceneLobbyNeonNavFal.ts`** — **`LOBBY_NEON_NAV_FAL_SOURCE_PLATE`**, **`LOBBY_NEON_NAV_FAL_LEGIBILITY_ON_ROSE`**, **`LOBBY_NEON_NAV_FAL_PASS2_ROSE_SEPARATION`**, updated PASS1 strings. **`lobbySceneAssets.ts`**, **`lobby/page.tsx`**. Commit **`f8eaf924`**.
+
+---
+
+## 2026-06-02 — Lobby register/phone popover scrim backdrop blur
+
+**Context:** User asked to add the same blur effect on the register and Phone pop-up background as the cap size chart uses on its pop-up.
+
+**Topics covered:**
+- Cap size chart enlarged modal (unit PDPs + NOIR) uses full-viewport scrim: `rgba(0, 0, 0, 0.7)` with `backdropFilter` / `WebkitBackdropFilter` **`blur(3px)`**.
+- Lobby register/phone already had a lighter portaled scrim (`LOBBY_CASE_POPOVER_SCRIM_ALPHA` **0.525**) in `src/pages/lobby/page.tsx` but no backdrop blur.
+
+**Decisions / outcomes:** Added **`blur(3px)`** (+ WebKit prefix) to the lobby case popover scrim so the rose wall and case blur behind register/phone popovers like the cap chart modal. Popover card shell unchanged (marble gradient).
+
+**Changes:** `src/pages/lobby/page.tsx` — scrim `style` on `createPortal` dimmer when `lobbyCasePopover !== null`. Commit **`76295ff8`** on **`master`** and **`preview/mobile`**.
+
+**Conventions:** Lobby register/phone scrim: lighter alpha than cap chart (**0.525** vs **0.7**) but same **3px** backdrop blur as other modals.
+
+---
+
+## 2026-06-02 — Fal prompt: photoreal acrylic display case on full lobby hero
+
+**Context:** User asked to create and send a Fal prompt to add the acrylic display case to their lobby hero image (rose wall + neon + three shelf rows + pedestals) in the same position as `src/pages/lobby/page.tsx`, with 3D photorealistic acrylic detailing.
+
+**Topics covered:**
+- New **`LOBBY_DISPLAY_CASE_ON_SCENE_*`** in **`sceneLobbyDisplayCaseFal.ts`** — two-image **`fal-ai/nano-banana-pro/edit`**: IMAGE 1 = full lobby frame (preserve scene), IMAGE 2 = **`CASE.png`** reference; placement matches lobby case block (center + ~32px right, below bottom shelf, between pedestal urns); acrylic PMMA edge thickness, specular/neon reflections, transparent panels (not frosted), SLAY TOOLS / LACE PRODUCTS / HAIR PRODUCTS labels, register + terminal on top deck.
+- **`scripts/lobby-fal-display-case-prompt.mjs`** — resolved prompt string for Node runner (avoids reading TS template literals literally).
+- **`scripts/lobby-fal-add-display-case-to-scene.mjs`** + **`npm run lobby:fal-add-display-case`** — uploads scene + case ref, calls Fal, saves **`tmp/lobby-scene-with-display-case.png`** (override with **`OUTPUT_PATH`**, **`LOBBY_SCENE_IMAGE`**, **`LOBBY_CASE_REF_IMAGE`**, **`LOBBY_FAL_RESOLUTION`**).
+- **`LOBBY_SCENE_FAL_PROMPTS.displayCaseOnLobbyScene`** in **`lobbySceneAssets.ts`**.
+- Ran Fal successfully (2K): output **`https://v3b.fal.media/files/b/0a9c9f40/zOByeQ3Io3Ygn6F8jjIn5_hrX3DT7m.png`**, saved **`tmp/lobby-scene-with-display-case-v2.png`** (first run used unexpanded `${}` prompt; v2 uses resolved prompt). Default input was **`landing-background.png`** — user should re-run with their shelf composite: **`LOBBY_SCENE_IMAGE=/path/to/composite.jpeg npm run lobby:fal-add-display-case`**.
+
+**Changes:** `sceneLobbyDisplayCaseFal.ts`, `lobbySceneAssets.ts`, `scripts/lobby-fal-*.mjs`, `package.json`. Commit **`b0f76e8c`** on **`master`** + **`preview/mobile`**.
+
+**Conventions:** In-app case slot: **`translate(calc(-50% + 32px), calc(-50% + 255px))`**, width **`LOBBY_CASE_DISPLAY_WIDTH_PX` (184)**. For Fal on a full hero JPEG, pass the composite as IMAGE 1 + **`CASE.png`** as IMAGE 2.
+
+---
+
+## 2026-06-02 — Lobby display-case phone nudge +10px left (props only)
+
+**Context:** User asked to move **only** the lobby display-case phone prop **10px** to the left; register and case block positions unchanged.
+
+**Topics covered (entire conversation so far):**
+- Prior same-chat lobby work: case width **200px**, slide offset **26px**, register anchor **26px**, phone nudge **14px** (`0837cd4c`); popover scrim blur, Fal display-case prompts, original **`CASE.png`** restore.
+- Phone horizontal position uses **`translateX(LOBBY_CASE_PHONE_ANCHOR_TRANSLATE_X_PX - LOBBY_CASE_PHONE_NUDGE_LEFT_PX)`** in **`src/pages/lobby/page.tsx`** — increasing **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** shifts phone left only.
+
+**Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **14 → 24** (+10px left). Register **`LOBBY_CASE_REGISTER_ANCHOR_LEFT_PX`** stays **26**; **`LOBBY_CASE_SLIDE_OFFSET_X_PX`** stays **26**.
+
+**Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`e7bbe6aa`** on **`master`** and **`preview/mobile`**.
+
+**Conventions:** For “phone only” lobby nudges, change **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** only; sync file from **`master`** before edit if workspace drifts to old rebake constants.
+
+---
+
+## 2026-06-02 — Lobby display-case phone nudge +8px left (props only)
+
+**Context:** User asked to move **only** the lobby display-case phone **8px** further left (follow-up to prior +10px nudge).
+
+**Topics covered (entire conversation so far):**
+- Same chat: lobby case/register/phone layout iterations, popover scrim blur, Fal display-case tooling, original **`CASE.png`** restore; phone-only nudges via **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** (**14 → 24** in **`e7bbe6aa`**).
+- This request: additional **8px** left on phone only.
+
+**Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **24 → 32**. Register and case slide offset unchanged.
+
+**Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`975b55d3`** on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lobby display-case phone nudge +2px left (props only)
+
+**Context:** User asked to move **only** the lobby display-case phone **2px** further left (follow-up nudges: **24 → 32** then this pass).
+
+**Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **32 → 34**. Register and case slide offset unchanged.
+
+**Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`3513623e`** on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lobby register/phone popovers: zoom-stable inline anchoring
+
+**Context:** User reported register/phone popover cards and assets jump to wrong positions when zooming; pop-ups should stay fixed above their props.
+
+**Root cause:** Open state portaled a **duplicate** register/phone asset + panel to `document.body` with `position: fixed` coords from `getBoundingClientRect()`. Browser zoom / visual viewport changes desync fixed viewport coords from the inline props still in the carousel transform tree.
+
+**Fix:** **`LobbyCasePropPopover.tsx`** — removed body portal layer; panel uses **`position: absolute`** + **`bottom: calc(100% + gap)`** on the same wrapper as the prop image (moves with zoom/scroll). **`lobby/page.tsx`** — scrim is **`position: absolute`** on the lobby slide (`LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX` **15**), display case stays **z-index 20**; no body `createPortal` scrim. **`lobbyPaymentIcons.ts`** — **`LOBBY_CASE_POPOVER_OPEN_Z_INDEX` 30** (was **999999** portaled stack).
+
+**Changes:** Commit **`0d37fe61`** on **`master`** and **`preview/mobile`**.
+
+**Conventions:** Lobby case props: anchor popovers in-document above the asset; avoid fixed body duplicates for zoom-sensitive UI.

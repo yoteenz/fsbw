@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
+  LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
   LOBBY_CASE_POPOVER_SCALE,
   LOBBY_CASE_POPOVER_WIDTH_PX,
   LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG,
@@ -47,6 +48,54 @@ type LobbyCasePropPopoverProps = {
 
 const popoverShellClassName =
   'bg-white/60 backdrop-blur-md border border-black shadow-lg transition-all duration-300 ease-out';
+
+/** Brand red — matches account/affiliate close-icon filter. */
+const LOBBY_POPOVER_CLOSE_ICON_FILTER =
+  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
+
+function LobbyPopoverCloseButton({ onClose }: { onClose: () => void }) {
+  const btnPx = lobbyPopoverPx(18);
+  const iconPx = lobbyPopoverPx(10);
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+      aria-label="Close"
+      style={{
+        width: `${btnPx}px`,
+        height: `${btnPx}px`,
+        backgroundColor: '#FFFFFF',
+        border: '0.97px solid #000000',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0,
+        flexShrink: 0,
+        margin: 0,
+        WebkitTapHighlightColor: 'transparent',
+        touchAction: 'manipulation',
+      }}
+    >
+      <img
+        src="/assets/close-icon.svg"
+        alt=""
+        draggable={false}
+        style={{
+          width: `${iconPx}px`,
+          height: `${iconPx}px`,
+          display: 'block',
+          objectFit: 'contain',
+          filter: LOBBY_POPOVER_CLOSE_ICON_FILTER,
+        }}
+      />
+    </button>
+  );
+}
 
 const titleStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -305,17 +354,7 @@ export function LobbyCasePropPopover({
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const open = activeId === popoverId;
-
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as HTMLElement;
-      if (rootRef.current?.contains(target)) return;
-      onClose();
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [open, onClose]);
+  const panelGapPx = lobbyPopoverPx(10);
 
   const panelBody = paymentLayout ? (
     <LobbyPopoverPaymentLayout layout={paymentLayout} />
@@ -324,15 +363,25 @@ export function LobbyCasePropPopover({
   ) : null;
 
   return (
-    <div ref={rootRef} style={{ position: 'relative', display: 'inline-block' }}>
+    <div
+      ref={rootRef}
+      style={{
+        position: 'relative',
+        display: 'inline-block',
+        zIndex: open ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : undefined,
+      }}
+    >
       <button
         type="button"
         aria-label={ariaLabel}
         aria-expanded={open}
         onClick={(e) => {
           e.stopPropagation();
-          if (open) onClose();
-          else onActivate(popoverId);
+          if (open) {
+            onClose();
+            return;
+          }
+          onActivate(popoverId);
         }}
         style={{
           display: 'block',
@@ -356,9 +405,9 @@ export function LobbyCasePropPopover({
           className={popoverShellClassName}
           style={{
             position: 'absolute',
-            bottom: `calc(100% + ${lobbyPopoverPx(10)}px)`,
+            bottom: `calc(100% + ${panelGapPx}px)`,
             ...panelPositionStyle(align),
-            zIndex: 60,
+            zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
             width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
             minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
             maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
@@ -371,17 +420,21 @@ export function LobbyCasePropPopover({
           }}
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <p
+          <div
             style={{
-              ...titleStyle,
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: `${lobbyPopoverPx(6)}px`,
               marginBottom: `${lobbyPopoverPx(8)}px`,
               paddingBottom: `${lobbyPopoverPx(6)}px`,
               borderBottom: '1px solid rgba(0,0,0,0.12)',
               flexShrink: 0,
             }}
           >
-            {title}
-          </p>
+            <p style={{ ...titleStyle, flex: 1, minWidth: 0 }}>{title}</p>
+            <LobbyPopoverCloseButton onClose={onClose} />
+          </div>
           {panelBody}
         </div>
       ) : null}
