@@ -22907,3 +22907,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - `src/pages/checkout/page.tsx` — per-line item price under cart thumbnails (bundle + standard) and SUBTOTAL label/amount in ORDER SUMMARY cost breakdown: `Futura PT Book` with `fontWeight: 400` (red subtitle lines under thumbs unchanged at Medium).
 
 **Conventions:** Checkout ORDER SUMMARY black amounts align with other breakdown rows (already Book); only per-thumb prices and SUBTOTAL were still Medium.
+
+---
+
+## 2026-06-02 — Checkout: BCF price spacing; save shipping address checkbox behavior
+
+**Context:** User asked for (1) 1px less space above black price text for BCF products on checkout only, and (2) SAVE SHIPPING ADDRESS checkbox should not disable shipping inputs—only persist to account shipping addresses.
+
+**Changes (`453120e2`):**
+- `src/pages/checkout/page.tsx` — BCF `shop-texture-category` line price `marginTop` 5→4px; BCF bundle-deal price block 7→6px. Renamed `savePaymentMethod` → `saveShippingAddress`; removed `disabled` / `not-allowed` cursor on all shipping fields. On order submit when checked, append address to `savedAddresses` and set `defaultAddress` when none (country as full name via `countryCheckoutCodeToFullName`, same shape as account → shipping page).
+
+**Conventions:** SAVE SHIPPING ADDRESS is save-only; USE DEFAULT ADDRESS still loads/clears fields. Payment card save remains `savePaymentMethodCard`.
