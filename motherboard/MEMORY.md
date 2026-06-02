@@ -22877,3 +22877,22 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`loungeTvAdminConfig.ts`** — slay-tips admin items map to blog tiles (no `videoSrc`); media URL becomes attachment.
 
 **Conventions:** Slay Tips = blog UX only; Watch + Learn = video grid + in-player controls; Brand = thumbnail grid (no expanded player).
+
+---
+
+## 2026-06-02 — Cart dropdown VIEW DETAILS body: Futura PT Book (not Medium)
+
+**Context:** User asked for the **details text** in the cart dropdown (expanded VIEW DETAILS content) to use **Futura Book**, not Futura Medium.
+
+**Topics covered (entire conversation so far in this chat):**
+- Prior work in session: lounge TV overlay fixes, wishlist grid toggle clip, lobby/TV animations disabled, TV thumbnail Y-align, Slay Tips blog vs Watch + Learn video, shelf overlay regression restore.
+- Cart dropdown typography: expanded details `<p>` already had `fontFamily: '"Futura PT Book"'` but also `className="font-bold"` (weight 700), which caused the browser to faux-bold Book and read as Medium.
+
+**Decisions / outcomes:**
+- Removed `font-bold` from the details layer; set explicit `fontWeight: 400` and full Book font stack on the expanded details block only (VIEW DETAILS / CLOSE DETAILS toggle labels remain Futura PT Medium).
+
+**Changes:**
+- `src/components/CartDropdown.tsx` — details `CartLineTextLayer` paragraph styling (`2de14de5` on `master` / `preview/mobile`).
+
+**Conventions:**
+- Futura PT Book `@font-face` is `font-weight: normal` only; do not pair Book with Tailwind `font-bold` on cart details lines.
