@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, type RefObject } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   lobbyCarouselIndexFromPath,
@@ -193,13 +193,14 @@ const LobbyPage: React.FC = () => {
 };
 
 // Lounge Component
-const LoungePage: React.FC = () => {
+const LoungePage: React.FC<{ measureRef: RefObject<HTMLDivElement> }> = ({ measureRef }) => {
   const handlePrevious = useCallback(() => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
   }, []);
 
   return (
     <div
+      ref={measureRef}
       className="bg-white relative lounge-page"
       style={{
         minHeight: sceneCarouselSlideMinHeightCss(),
@@ -214,7 +215,7 @@ const LoungePage: React.FC = () => {
     >
       <div style={sceneCarouselBackgroundLayerStyle(FINAL_LOUNGE_BACKGROUND_SRC)} />
 
-      <LoungeSceneTvHotspot />
+      <LoungeSceneTvHotspot measureRef={measureRef} />
 
       {/* Left Arrow Button - Part of page design, scrolls with content */}
       <div style={{
@@ -314,6 +315,7 @@ const LobbyApp: React.FC = () => {
   const carouselSlideCount = 2;
   const roomTransitionInProgressRef = useRef(false);
   const lobbyScrollRef = useRef<HTMLDivElement>(null);
+  const loungeSlideMeasureRef = useRef<HTMLDivElement>(null);
 
   const visualIndexFromRoute = routePage;
 
@@ -552,7 +554,7 @@ const LobbyApp: React.FC = () => {
               minHeight: sceneCarouselSlideMinHeightCss(),
             }}
           >
-            <LoungePage />
+            <LoungePage measureRef={loungeSlideMeasureRef} />
             {transitionVideoEnabled && roomTransitionOverlay === 'reverse' ? (
               <LobbyLoungeTransitionOverlay
                 active

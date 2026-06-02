@@ -47,11 +47,14 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
-/** In-screen play — normalized on source image (928×1680), mapped via {@link mapImageRectToCoverContainer}. */
+/** In-screen play tap — center of gray play icon on `final-lounge.png` (928×1680 image space). */
+export const FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER = { x: 0.529, y: 0.258 } as const;
+
+/** Hit box around {@link FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER}; mapped via {@link mapImageRectToCoverContainer}. */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT: FinalSceneHitRect = {
-  left: 0.47,
-  top: 0.218,
-  width: 0.12,
+  left: FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER.x - 0.05,
+  top: FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER.y - 0.04,
+  width: 0.1,
   height: 0.08,
 };
 

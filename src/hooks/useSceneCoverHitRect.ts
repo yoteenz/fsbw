@@ -3,20 +3,29 @@ import type { FinalSceneHitRect } from '../constants/finalLobbySceneAssets';
 import { mapImageRectToCoverContainer } from '../utils/sceneCoverHitMap';
 
 /**
- * Re-map an image-normalized hit rect onto a slide that uses `cover` + `center top` backgrounds.
+ * Map an image-normalized hit rect onto a slide that uses `cover` + `center top` backgrounds.
+ * Returns `null` until the measure element has layout (avoids flashing wrong % from image coords).
  */
 export function useSceneCoverHitRect(
   imageRect: FinalSceneHitRect,
-  containerRef: RefObject<HTMLElement | null>,
-): FinalSceneHitRect {
-  const [containerRect, setContainerRect] = useState(imageRect);
+  measureRef: RefObject<HTMLElement | null>,
+): FinalSceneHitRect | null {
+  const [containerRect, setContainerRect] = useState<FinalSceneHitRect | null>(null);
 
   useLayoutEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    const el = measureRef.current;
+    if (!el) {
+      setContainerRect(null);
+      return;
+    }
 
     const update = () => {
-      const { width, height } = el.getBoundingClientRect();
+      const width = el.offsetWidth;
+      const height = el.offsetHeight;
+      if (width <= 0 || height <= 0) {
+        setContainerRect(null);
+        return;
+      }
       setContainerRect(mapImageRectToCoverContainer(imageRect, width, height));
     };
 
@@ -28,7 +37,7 @@ export function useSceneCoverHitRect(
       observer.disconnect();
       window.removeEventListener('resize', update);
     };
-  }, [containerRef, imageRect]);
+  }, [measureRef, imageRect.left, imageRect.top, imageRect.width, imageRect.height]);
 
   return containerRect;
 }
