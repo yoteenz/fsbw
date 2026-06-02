@@ -22759,3 +22759,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`e7bbe6aa`** on **`master`** and **`preview/mobile`**.
 
 **Conventions:** For “phone only” lobby nudges, change **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** only; sync file from **`master`** before edit if workspace drifts to old rebake constants.
+
+---
+
+## 2026-06-02 — Lobby display-case phone nudge +8px left (props only)
+
+**Context:** User asked to move **only** the lobby display-case phone **8px** further left (follow-up to prior +10px nudge).
+
+**Topics covered (entire conversation so far):**
+- Same chat: lobby case/register/phone layout iterations, popover scrim blur, Fal display-case tooling, original **`CASE.png`** restore; phone-only nudges via **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`** (**14 → 24** in **`e7bbe6aa`**).
+- This request: additional **8px** left on phone only.
+
+**Decisions / outcomes:** **`LOBBY_CASE_PHONE_NUDGE_LEFT_PX`**: **24 → 32**. Register and case slide offset unchanged.
+
+**Changes:** `src/constants/lobbyCaseAssets.ts`. Commit **`975b55d3`** on **`master`** and **`preview/mobile`**.
