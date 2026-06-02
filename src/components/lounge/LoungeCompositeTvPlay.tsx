@@ -5,6 +5,7 @@ import {
 } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
+import { LOUNGE_TV_PLAY_BUTTON_COLOR } from './loungeTvFrame';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 
 type Props = {
@@ -60,14 +61,36 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
             position: 'absolute',
             zIndex: 11,
             margin: 0,
-            padding: 10,
+            padding: 12,
             border: 'none',
             background: 'transparent',
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
             touchAction: 'manipulation',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-        />
+        >
+          <span
+            aria-hidden
+            style={{
+              display: 'block',
+              height: 18,
+              width: 22,
+              pointerEvents: 'none',
+              backgroundColor: LOUNGE_TV_PLAY_BUTTON_COLOR,
+              WebkitMaskImage: 'url(/assets/play-button.png)',
+              maskImage: 'url(/assets/play-button.png)',
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              maskPosition: 'center',
+            }}
+          />
+        </button>
       ) : null}
 
       <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />

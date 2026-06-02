@@ -13,6 +13,7 @@ import {
   loungeTvContentFrameDimensionsFromScreenWidth,
 } from './loungeTvFrame';
 import { LOUNGE_TV_CONTENT_FRAME_SRC } from './loungeTvAssets';
+import { LoungeTvFullscreenShell } from './LoungeTvFullscreenShell';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
@@ -800,12 +801,14 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     showLegacyChoreography && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
   const handVisible = handMounted && (closePhase === 'idle' || closePhase === 'zap');
 
+  const useFullscreenShell = useSeedanceClip && seedancePhase === 'ready';
+
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   let { frameW: targetFrameW, frameH: targetFrameH } =
     loungeTvContentFrameDimensionsFromScreenWidth(targetScreenW);
-  const maxFrameH = vh * 0.88 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
+  const maxFrameH = vh * 0.62 * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   if (targetFrameH > maxFrameH) {
     ({ frameW: targetFrameW, frameH: targetFrameH } =
       loungeTvContentFrameDimensionsFromFrameHeight(maxFrameH));
@@ -857,13 +860,23 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           padding: 0,
           margin: 0,
           background:
-            frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
-              ? 'rgba(0,0,0,0.35)'
-              : 'transparent',
+            useFullscreenShell
+              ? '#000000'
+              : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
+                ? 'rgba(0,0,0,0.35)'
+                : 'transparent',
           backdropFilter:
-            frameExpanded && closePhase === 'idle' && seedancePhase === 'ready' ? 'blur(10px)' : 'none',
+            useFullscreenShell
+              ? 'none'
+              : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
+                ? 'blur(10px)'
+                : 'none',
           WebkitBackdropFilter:
-            frameExpanded && closePhase === 'idle' && seedancePhase === 'ready' ? 'blur(10px)' : 'none',
+            useFullscreenShell
+              ? 'none'
+              : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
+                ? 'blur(10px)'
+                : 'none',
           cursor: closePhase === 'idle' && isOpen && seedancePhase !== 'opening' ? 'pointer' : 'default',
           pointerEvents:
             closePhase === 'idle' && isOpen && seedancePhase !== 'opening' ? 'auto' : 'none',
@@ -884,30 +897,22 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           ) : null}
         </>
       ) : null}
-      {showTvChrome ? (
-      <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <LoungeTvContentFrame
-          fill
-          closeVisible={frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'}
+      {showTvChrome && useFullscreenShell ? (
+        <LoungeTvFullscreenShell
+          closeVisible={closePhase === 'idle'}
           onClose={() => requestClose()}
           screenStyle={{
-            backgroundColor: 'transparent',
-            boxShadow: 'none',
-            opacity: showContent && frameExpanded ? 1 : 0,
-            transition: 'opacity 220ms ease',
+            backgroundColor: '#000000',
+            opacity: showContent ? 1 : 0,
+            transition: 'opacity 120ms linear',
           }}
         >
-          {showLegacyChoreography ? (
-            <>
-              <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
-              <LoungeTvPowerOffEffect active={poweringOff} />
-            </>
-          ) : null}
           {showContent && !poweringOff ? (
             <LoungeTvContentProtection
               active
               style={{
-                zIndex: 6,
+                width: '100%',
+                height: '100%',
                 opacity: 1,
                 animation: 'lounge-tv-content-in 0.35s ease forwards',
               }}
@@ -920,8 +925,46 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
               />
             </LoungeTvContentProtection>
           ) : null}
-        </LoungeTvContentFrame>
-      </div>
+        </LoungeTvFullscreenShell>
+      ) : null}
+      {showTvChrome && !useFullscreenShell ? (
+        <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
+          <LoungeTvContentFrame
+            fill
+            closeVisible={frameExpanded && closePhase === 'idle'}
+            onClose={() => requestClose()}
+            screenStyle={{
+              backgroundColor: 'transparent',
+              boxShadow: 'none',
+              opacity: showContent && frameExpanded ? 1 : 0,
+              transition: 'opacity 220ms ease',
+            }}
+          >
+            {showLegacyChoreography ? (
+              <>
+                <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
+                <LoungeTvPowerOffEffect active={poweringOff} />
+              </>
+            ) : null}
+            {showContent && !poweringOff ? (
+              <LoungeTvContentProtection
+                active
+                style={{
+                  zIndex: 6,
+                  opacity: 1,
+                  animation: 'lounge-tv-content-in 0.35s ease forwards',
+                }}
+              >
+                <LoungeTvScreen
+                  mainTab={mainTab}
+                  sidebarId={sidebarId}
+                  onMainTabChange={handleMainTab}
+                  onSidebarChange={setSidebarId}
+                />
+              </LoungeTvContentProtection>
+            ) : null}
+          </LoungeTvContentFrame>
+        </div>
       ) : null}
     </div>,
     document.body
