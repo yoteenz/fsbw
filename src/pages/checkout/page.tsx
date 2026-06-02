@@ -3575,9 +3575,9 @@ function CheckoutPage() {
                                       )}
                                     <span
                                       style={{
-                                        fontFamily: '"Futura PT Medium"',
+                                        fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                         fontSize: '10px',
-                                        fontWeight: '500',
+                                        fontWeight: 400,
                                         color: '#000000'
                                       }}
                                       dangerouslySetInnerHTML={formatPrice(bundleLineTotalCheckout)}
@@ -3586,9 +3586,9 @@ function CheckoutPage() {
                                 ) : (
                                 <p
                                   style={{
-                                    fontFamily: '"Futura PT Medium"',
+                                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                     fontSize: '10px',
-                                    fontWeight: '500',
+                                    fontWeight: 400,
                                     color: '#000000',
                                     margin:
                                       useDigitalStack
