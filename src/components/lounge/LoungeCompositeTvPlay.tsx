@@ -63,8 +63,29 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     link.as = 'video';
     link.href = LOUNGE_TV_ANIMATION_VIDEO_SRC;
     document.head.appendChild(link);
+
+    const warmup = document.createElement('video');
+    warmup.muted = true;
+    warmup.playsInline = true;
+    warmup.preload = 'auto';
+    warmup.src = LOUNGE_TV_ANIMATION_VIDEO_SRC;
+    warmup.setAttribute('aria-hidden', 'true');
+    warmup.tabIndex = -1;
+    Object.assign(warmup.style, {
+      position: 'fixed',
+      width: '1px',
+      height: '1px',
+      opacity: '0',
+      pointerEvents: 'none',
+      left: '-9999px',
+      top: '0',
+    });
+    document.body.appendChild(warmup);
+    warmup.load();
+
     return () => {
       document.head.removeChild(link);
+      warmup.remove();
     };
   }, []);
 

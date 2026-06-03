@@ -12,6 +12,8 @@ type Options = {
   onPlaying?: () => void;
   /** When false, `onPlaying` runs on `playing` only (not before `play()` at frame 0). */
   revealOnFirstDecodedFrame?: boolean;
+  /** When true, `onPlaying` fires synchronously (no `requestVideoFrameCallback` / double rAF). */
+  instantReveal?: boolean;
   safetyTimeoutMs?: number;
 };
 
@@ -28,6 +30,7 @@ export function useSceneCoverVideoPlayback(
     onComplete,
     onPlaying,
     revealOnFirstDecodedFrame = true,
+    instantReveal = false,
     safetyTimeoutMs = 12000,
   }: Options,
 ): void {
@@ -78,6 +81,10 @@ export function useSceneCoverVideoPlayback(
 
     const notifyPlaying = () => {
       const fire = () => onPlayingRef.current?.();
+      if (instantReveal) {
+        fire();
+        return;
+      }
       if (typeof el.requestVideoFrameCallback === 'function') {
         el.requestVideoFrameCallback(fire);
         return;
@@ -108,20 +115,35 @@ export function useSceneCoverVideoPlayback(
     const playForward = async () => {
       el.playbackRate = 1;
       el.currentTime = 0;
-      try {
-        await waitUntilCanStart();
-        if (revealOnFirstDecodedFrame) {
-          // Reveal frame 0 before `play()` — overlay is transparent; carousel shows through until then.
+
+      const revealIfDecoded = () => {
+        if (
+          revealOnFirstDecodedFrame &&
+          el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+        ) {
           notifyPlaying();
         }
+      };
+
+      revealIfDecoded();
+
+      try {
         await el.play();
       } catch {
         try {
-          await new Promise((r) => setTimeout(r, 40));
+          if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+            await waitUntilCanStart();
+            revealIfDecoded();
+          }
           await el.play();
         } catch {
           finish();
         }
+      }
+
+      if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+        await waitUntilCanStart();
+        revealIfDecoded();
       }
     };
 
@@ -221,6 +243,7 @@ export function useSceneCoverVideoPlayback(
     reversePlaybackRate,
     reverseStartFraction,
     revealOnFirstDecodedFrame,
+    instantReveal,
     safetyTimeoutMs,
     videoRef,
   ]);

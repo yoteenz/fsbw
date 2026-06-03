@@ -68,11 +68,17 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
   }, [onComplete]);
 
   useLayoutEffect(() => {
-    if (active && direction === 'reverse') {
-      setFrameVisible(true);
-    }
     if (!active) {
       setFrameVisible(false);
+      return;
+    }
+    if (direction === 'reverse') {
+      setFrameVisible(true);
+      return;
+    }
+    const el = videoRef.current;
+    if (el && el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      setFrameVisible(true);
     }
   }, [active, direction]);
 
@@ -108,6 +114,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
       direction === 'reverse' ? LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION : 1,
     onComplete: finish,
     onPlaying: () => setFrameVisible(true),
+    instantReveal: direction === 'forward',
     safetyTimeoutMs: 15000,
   });
 
@@ -120,7 +127,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         zIndex: 120,
         overflow: 'hidden',
         pointerEvents: 'none',
-        visibility: active ? 'visible' : 'hidden',
+        visibility: 'visible',
         backgroundColor: 'transparent',
       }}
     >
