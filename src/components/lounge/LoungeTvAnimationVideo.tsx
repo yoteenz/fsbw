@@ -128,8 +128,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         zIndex: 120,
         overflow: 'hidden',
         pointerEvents: 'none',
-        visibility: 'visible',
-        backgroundColor: LOUNGE_TV_ANIMATION_LETTERBOX_BG,
+        visibility: active ? 'visible' : 'hidden',
+        backgroundColor: active ? LOUNGE_TV_ANIMATION_LETTERBOX_BG : 'transparent',
       }}
     >
       <div style={loungeTvAnimationLetterboxShellStyle()}>
