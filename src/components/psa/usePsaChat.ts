@@ -48,7 +48,7 @@ export function usePsaChat(welcomeMessage: string) {
         ...prev,
         { id: nextId(), role: 'assistant', content: result.reply },
       ]);
-      return { premiumRequired: false as const };
+      return { premiumRequired: false as const, clientActions: result.clientActions };
     },
     [isSending, responseId]
   );

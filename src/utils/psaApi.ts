@@ -1,8 +1,12 @@
 import { getAccessToken } from './api';
 import { isSignedIn } from './adminAuth';
 
+export type PsaClientAction =
+  | { type: 'sync_cart' }
+  | { type: 'navigate'; path: string };
+
 export type PsaChatResult =
-  | { ok: true; reply: string; responseId: string | null; model: string }
+  | { ok: true; reply: string; responseId: string | null; model: string; clientActions?: PsaClientAction[] }
   | { ok: false; code: 'SIGN_IN_REQUIRED' | 'PREMIUM_REQUIRED' | 'NETWORK' | 'SERVER'; message: string };
 
 const API_BASE =
@@ -75,7 +79,14 @@ export async function postPsaChat(
     };
   }
 
-  let data: { error?: string; code?: string; reply?: string; responseId?: string | null; model?: string };
+  let data: {
+    error?: string;
+    code?: string;
+    reply?: string;
+    responseId?: string | null;
+    model?: string;
+    clientActions?: PsaClientAction[];
+  };
   try {
     data = (await res.json()) as typeof data;
   } catch {
@@ -103,10 +114,12 @@ export async function postPsaChat(
   }
 
   const reply = typeof data.reply === 'string' ? data.reply : '';
+  const clientActions = Array.isArray(data.clientActions) ? data.clientActions : undefined;
   return {
     ok: true,
     reply,
     responseId: data.responseId ?? null,
     model: data.model || 'gpt-5.4-mini',
+    clientActions,
   };
 }

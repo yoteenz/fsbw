@@ -107,9 +107,25 @@ export default function PsaAssistantWidget() {
       if (result?.premiumRequired) {
         setIsOpen(false);
         setShowUpgradeModal(true);
+        return;
+      }
+      if (result?.clientActions?.length) {
+        for (const action of result.clientActions) {
+          if (action.type === 'sync_cart') {
+            try {
+              const { syncCartFromApi } = await import('../../utils/syncFromApi');
+              await syncCartFromApi();
+            } catch {
+              /* ignore */
+            }
+          }
+          if (action.type === 'navigate' && action.path) {
+            navigate(action.path);
+          }
+        }
       }
     },
-    [sendMessage]
+    [sendMessage, navigate]
   );
 
   const handleUpgrade = useCallback(() => {

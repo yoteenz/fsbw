@@ -13,6 +13,13 @@ import {
   searchPsaProducts,
 } from '../_lib/psaKnowledge.js';
 import { buildPsaInstructions } from '../_lib/psaInstructions.js';
+import {
+  executePsaActionTool,
+  isPsaActionTool,
+  PSA_ACTION_TOOL_DEFINITIONS,
+  type PsaClientAction,
+  type PsaToolContext,
+} from '../_lib/psaTools.js';
 
 export const config = {
   maxDuration: 60,
@@ -92,6 +99,8 @@ const PSA_TOOLS = [
   },
 ] as const;
 
+const PSA_ALL_TOOLS = [...PSA_TOOLS, ...PSA_ACTION_TOOL_DEFINITIONS];
+
 function parseToolArgs(raw: string | undefined): Record<string, unknown> {
   if (!raw) return {};
   try {
@@ -101,7 +110,7 @@ function parseToolArgs(raw: string | undefined): Record<string, unknown> {
   }
 }
 
-function executePsaTool(name: string, args: Record<string, unknown>): string {
+function executePsaSearchTool(name: string, args: Record<string, unknown>): string {
   const query = typeof args.query === 'string' ? args.query : '';
 
   switch (name) {
@@ -130,7 +139,7 @@ function executePsaTool(name: string, args: Record<string, unknown>): string {
       );
     }
     default:
-      return JSON.stringify({ error: 'Unknown tool' });
+      return JSON.stringify({ error: 'Unknown search tool' });
   }
 }
 
@@ -224,30 +233,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       : undefined;
 
   try {
+    const toolCtx: PsaToolContext = {
+      userId: user.id,
+      email: user.email,
+      accessToken: user.accessToken,
+      premium,
+    };
+
+    const clientActions: PsaClientAction[] = [];
+
     let response = await callOpenAiResponses({
       model,
       instructions: buildPsaInstructions(),
       input: message,
       previous_response_id: previousResponseId,
       reasoning: { effort: 'none' },
-      tools: PSA_TOOLS,
+      tools: PSA_ALL_TOOLS,
       store: true,
     });
 
     let safety = 0;
-    while (safety < 4) {
+    while (safety < 6) {
       const calls = extractFunctionCalls(response.output);
       if (calls.length === 0) break;
 
-      const toolOutputs = calls.map((call) => {
-        const args = parseToolArgs(call.arguments);
-        const output = executePsaTool(call.name || '', args);
-        return {
-          type: 'function_call_output',
-          call_id: call.call_id,
-          output,
-        };
-      });
+      const toolOutputs = await Promise.all(
+        calls.map(async (call) => {
+          const args = parseToolArgs(call.arguments);
+          const toolName = call.name || '';
+          if (isPsaActionTool(toolName)) {
+            const result = await executePsaActionTool(toolName, args, toolCtx);
+            if (result.clientActions?.length) {
+              for (const action of result.clientActions) {
+                const dup =
+                  action.type === 'navigate'
+                    ? clientActions.some((a) => a.type === 'navigate' && a.path === action.path)
+                    : clientActions.some((a) => a.type === action.type);
+                if (!dup) clientActions.push(action);
+              }
+            }
+            return {
+              type: 'function_call_output',
+              call_id: call.call_id,
+              output: result.output,
+            };
+          }
+          return {
+            type: 'function_call_output',
+            call_id: call.call_id,
+            output: executePsaSearchTool(toolName, args),
+          };
+        })
+      );
 
       response = await callOpenAiResponses({
         model,
@@ -267,6 +304,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       reply,
       responseId: response.id ?? null,
       model,
+      clientActions: clientActions.length ? clientActions : undefined,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'PSA chat failed';

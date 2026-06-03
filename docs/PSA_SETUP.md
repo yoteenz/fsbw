@@ -225,14 +225,19 @@ Restart dev server after changing local env.
 
 ---
 
-## Phase 2 checklist (not in v1 — do later)
+## Phase 2 checklist
 
-- [ ] **Cart tool** — add to bag from chat (`localStorage` + cloud sync)
-- [ ] **Booking tool** — deep link + availability copy
-- [ ] **Priority message tool** — 6mo+ → Concierge pipeline
+- [x] **Order lookup tools** — `get_member_orders`, `get_order_status` (`api/_lib/psaTools.ts`)
+- [x] **Cart tools** — `get_member_cart`, `add_to_cart` (+ `clientActions: sync_cart`)
+- [x] **Booking handoff** — `prepare_booking_handoff` + `add_to_cart` booking lines → `/checkout/bookings`
+- [x] **Priority message tool** — `send_priority_message` (needs Supabase migration `20260603180000_priority_messages.sql`)
+- [ ] **Concierge page** — POST priority message to API (not localStorage-only)
+- [ ] **Admin inbox** — read `priority_messages` in admin hub
 - [ ] **Supabase threads** — `psa_threads` / `psa_messages` for history across devices
-- [ ] **Voice** — `gpt-realtime-2` via WebRTC (separate from text chat)
+- [ ] **Voice** — `gpt-realtime-2` via WebRTC
 - [ ] **3D avatar** — React Three Fiber + `.glb` only if 2D + CSS isn’t enough
+
+Full wiring guide: **`docs/PSA_TOOLS.md`**
 
 ---
 
