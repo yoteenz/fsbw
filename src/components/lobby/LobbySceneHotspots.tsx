@@ -1,6 +1,7 @@
-import { useCallback, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useState, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS,
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT,
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC,
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT,
@@ -36,6 +37,13 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMe
   const navigate = useNavigate();
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
   const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
+
+  useEffect(() => {
+    for (const src of FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS) {
+      const img = new Image();
+      img.src = src;
+    }
+  }, []);
 
   const goToHomeShop = useCallback(() => navigate('/home/shop'), [navigate]);
   const goToHomeTools = useCallback(() => navigate('/home/tools'), [navigate]);

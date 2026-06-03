@@ -91,44 +91,60 @@ export function useSceneCoverVideoPlayback(
 
     const playReverse = async () => {
       const rate = reversePlaybackRate;
-      const startReversePlayback = () => {
-        const duration = el.duration;
-        if (!Number.isFinite(duration) || duration <= 0) {
-          void playForward();
-          return;
-        }
-        el.currentTime = Math.max(0, duration - 0.04);
-        el.playbackRate = -rate;
-        void el.play().catch(() => {
-          el.playbackRate = 1;
-          el.pause();
-          let last = performance.now();
-          const tick = (now: number) => {
-            if (completedRef.current) return;
-            const dt = Math.min(now - last, 50);
-            last = now;
-            const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
-            el.currentTime = next;
-            if (next <= 0.04) {
-              finish();
-              return;
-            }
-            reverseRafRef.current = requestAnimationFrame(tick);
-          };
-          reverseRafRef.current = requestAnimationFrame(tick);
-        });
-      };
 
-      if (el.readyState >= 1 && Number.isFinite(el.duration)) {
-        startReversePlayback();
+      const waitForDuration = () =>
+        new Promise<void>((resolve) => {
+          if (el.readyState >= 1 && Number.isFinite(el.duration) && el.duration > 0) {
+            resolve();
+            return;
+          }
+          const onMeta = () => {
+            el.removeEventListener('loadedmetadata', onMeta);
+            resolve();
+          };
+          el.addEventListener('loadedmetadata', onMeta);
+          el.load();
+        });
+
+      await waitForDuration();
+
+      const duration = el.duration;
+      if (!Number.isFinite(duration) || duration <= 0) {
+        finish();
         return;
       }
-      const onMeta = () => {
-        el.removeEventListener('loadedmetadata', onMeta);
-        startReversePlayback();
+
+      el.pause();
+      el.playbackRate = 1;
+
+      const seekToEnd = () =>
+        new Promise<void>((resolve) => {
+          const done = () => {
+            el.removeEventListener('seeked', done);
+            resolve();
+          };
+          el.addEventListener('seeked', done);
+          el.currentTime = Math.max(0, duration - 0.02);
+        });
+
+      await seekToEnd();
+
+      onPlayingRef.current?.();
+
+      let last = performance.now();
+      const tick = (now: number) => {
+        if (completedRef.current) return;
+        const dt = Math.min(now - last, 50);
+        last = now;
+        const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
+        el.currentTime = next;
+        if (next <= 0.04) {
+          finish();
+          return;
+        }
+        reverseRafRef.current = requestAnimationFrame(tick);
       };
-      el.addEventListener('loadedmetadata', onMeta);
-      el.load();
+      reverseRafRef.current = requestAnimationFrame(tick);
     };
 
     const onEnded = () => {

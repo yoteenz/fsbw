@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
@@ -8,8 +8,21 @@ import {
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { applyScreenOffsetToCoverRect } from '../../utils/sceneCoverHitMap';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
-import { LOUNGE_TV_PLAY_BUTTON_COLOR } from './loungeTvFrame';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
+
+const PRESS_PLAY_LABEL_STYLE: CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '9px',
+  fontWeight: 500,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  color: '#808080',
+  lineHeight: 1.2,
+  textAlign: 'center',
+  pointerEvents: 'none',
+  whiteSpace: 'nowrap',
+  animation: 'lounge-tv-press-play-pulse 1.6s ease-in-out infinite',
+};
 
 type Props = {
   /** {@link SceneCarouselViewportStage} root — `100dvh` cover box on `final-lounge.png`. */
@@ -82,13 +95,13 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           type="button"
           data-lounge-tv-play
           onClick={openLoungeTv}
-          aria-label="Play lounge media"
+          aria-label="Press play for lounge media"
           style={{
             ...rectToPercentStyle(playTap),
             position: 'absolute',
             zIndex: 11,
             margin: 0,
-            padding: 12,
+            padding: 8,
             border: 'none',
             background: 'transparent',
             cursor: 'pointer',
@@ -99,24 +112,9 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
             justifyContent: 'center',
           }}
         >
-          <span
-            aria-hidden
-            style={{
-              display: 'block',
-              height: 18,
-              width: 22,
-              pointerEvents: 'none',
-              backgroundColor: LOUNGE_TV_PLAY_BUTTON_COLOR,
-              WebkitMaskImage: 'url(/assets/play-button.png)',
-              maskImage: 'url(/assets/play-button.png)',
-              WebkitMaskSize: 'contain',
-              maskSize: 'contain',
-              WebkitMaskRepeat: 'no-repeat',
-              maskRepeat: 'no-repeat',
-              WebkitMaskPosition: 'center',
-              maskPosition: 'center',
-            }}
-          />
+          <span aria-hidden style={PRESS_PLAY_LABEL_STYLE}>
+            PRESS PLAY
+          </span>
         </button>
       ) : null}
 

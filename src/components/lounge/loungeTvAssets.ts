@@ -36,7 +36,7 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
  * Nudge end-still frame + black glass + menu down together on {@link LoungeTvFullscreenShell}
  * (align TV glass with baked bezel on `lounge-tv-content-frame.png`).
  */
-export const LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = 40;
+export const LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = 100;
 
 /** Bump when replacing `public/assets/lounge-tv-design.png` (`npm run lounge:bake-tv-design`). */
 export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'kv6DR-v2';

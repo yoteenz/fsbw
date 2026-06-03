@@ -4352,6 +4352,16 @@ html[data-loading-screen='true'] #root {
   }
 }
 
+@keyframes lounge-tv-press-play-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* Watch + Learn player — thin red seek track, narrow white thumb (no track border) */
 .lounge-tv-seek-range {
   -webkit-appearance: none;
