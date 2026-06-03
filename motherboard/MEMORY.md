@@ -23616,3 +23616,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Root cause:** **`lobbyPopoverPx(5)`** at **`LOBBY_CASE_POPOVER_SCALE` 0.65** ≈ **3px**. **`Math.max(0, 3 − 4)`** and **`Math.max(0, 3 − 8)`** both equal **0**, so the first nudge already pinned the button to the corner and the second change had no effect.
 
 **Fix:** **`LobbyCasePropPopover.tsx`** — removed clamp; **`LOBBY_POPOVER_CLOSE_TOP_PX` / `RIGHT_PX`** = **`lobbyPopoverPx(5) − 8`** (~**−5px**) for the full **8px** up/right nudge from the original inset.
+
+---
+
+## 2026-06-02 — Register payment plans: Affirm spacing fix (Afterpay/Klarna nudge)
+
+**Context:** User reported **−4px** **`marginLeft`/`marginRight` on the Affirm cell** increased side spacing instead of tightening; asked to restore and correct.
+
+**Root cause:** In the 3-column grid with **`clusterOuterIconsToCenter`**, negative margins on the **center** Affirm cell fought **`justifySelf: center`** and expanded perceived gutters.
+
+**Fix:** Removed Affirm cell margins. **`paymentPlansIconCellMarginAdjust`** — **Afterpay** **`marginRight: −4`**, **Klarna** **`marginLeft: −4`** (pull outer logos toward Affirm); Affirm unchanged.
