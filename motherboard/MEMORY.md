@@ -23972,3 +23972,24 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted **`contain`** back (Watch + Learn + slides/transition/TV clip). Light **white strip at bottom** from **`#e8e4e0`** letterbox / transparent TV host during **`contain`**.
 
 **Fix:** Watch + Learn **`object-fit: contain`**. Slides + lobby transition + **`LoungeTvAnimationVideo`**: **`contain`** + **`center top`**; hit-map **`Math.min`**. Letterbox **`#000000`** — **`SCENE_CAROUSEL_LETTERBOX_BG`**, **`LOUNGE_TV_ANIMATION_LETTERBOX_BG`** on animation shell + host. TV close behavior unchanged (black scrim, menu shell unmount on **`closing`**, instant reverse frame).
+
+---
+
+## 2026-06-03 — PSA (Personal Slay Assistant) v1 scaffold + setup guide
+
+**Context:** User asked which AI model to use for a premium holographic avatar chatbot (PSA), compared ChatGPT’s Responses API / Three.js suggestions with agent recommendations, then said “yes let’s get this started” while designing the avatar — wanted step-by-step wiring instructions and a Fal prompt (reference photo, likeness of user).
+
+**Topics covered (full chat):**
+- **Architecture:** Separate avatar art (Fal + CSS hologram) from chat brain (OpenAI Responses API, gpt-5.4-mini default, gpt-5.5 / gpt-realtime-2 later). Backend proxy only; premium gate matches `isPremiumMemberForGatedFeatures`.
+- **ChatGPT comparison:** Agreed on Responses API + tiered models; deferred Three.js v1 in favor of 2D transparent PNG + CSS; brand styling over generic purple cyber UI.
+- **Implementation (v1):** FAQ + product catalog + navigation only — no cart/booking/priority tools yet.
+
+**Changes:**
+- **`api/psa/chat.ts`** — POST chat, OpenAI Responses API, tools `search_faq`, `search_products`, `suggest_navigation`.
+- **`api/_lib/psaPremiumCheck.ts`**, **`api/_lib/psaKnowledge.ts`** — server premium gate + static knowledge.
+- **`src/components/psa/`** — `PsaAssistantWidget`, avatar FAB, chat panel, holographic CSS; portal to `document.body`; upgrade modal for non-premium.
+- **`src/constants/psaConfig.ts`**, **`src/utils/psaApi.ts`**, **`App.tsx`** mount.
+- **`docs/PSA_SETUP.md`** — step-by-step after avatar ready + Fal prompt for reference-photo likeness.
+- **`.env.example`** — `OPENAI_API_KEY`, optional `PSA_OPENAI_MODEL`.
+
+**Conventions:** Avatar assets at **`public/assets/psa-avatar-idle.png`** (optional `-thinking.png`). PSA hidden on `/admin/*`. Non-premium signed-in users see upgrade modal; guests see no FAB.
