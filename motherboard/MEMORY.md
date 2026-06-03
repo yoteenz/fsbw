@@ -23710,3 +23710,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** TV open/close Seedance clip showed **red strip at top** (lounge slide peeking through letterbox gaps), similar to prior lobby transition letterbox issue.
 
 **Fix:** **`LoungeTvAnimationVideo`** — full-viewport **`cover`** (removed **`useLoungeTvAnimationLetterboxLayout`** top/bottom transparent bands + portrait frame). **`LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX = -2`** → **`loungeTvAnimationCoverPosition()`** = **`center calc(0% - 2px)`** on forward open only; reverse close stays **`contain`** + **`center center`**. Tune offset in **`loungeTvAnimationVideo.ts`**.
+
+---
+
+## 2026-06-02 — Lobby shelf debug: custom units box +20px down
+
+**Context:** User asked to move the **red custom units** debug square down **20px** only (cyan/green unchanged).
+
+**Fix:** **`SceneHitRegion`** **`debugOffsetY`** — applies **`translateY`** when **`debugOverlay`** is on. **`LobbySceneHotspots`** — **`debugOffsetY={20}`** on custom units shelf only.
