@@ -3,20 +3,17 @@ import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
-  lobbyLoungeTransitionFrameStyle,
-  lobbyLoungeTransitionLetterboxBottomBandStyle,
-  lobbyLoungeTransitionLetterboxShellStyle,
-  lobbyLoungeTransitionLetterboxTopBandStyle,
+  lobbyLoungeTransitionMediaShellStyle,
   lobbyLoungeTransitionVideoClipStyle,
   lobbyLoungeTransitionVideoElementStyle,
   lobbyLoungeTransitionPosterInFrameStyle,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
+import { SCENE_CAROUSEL_LETTERBOX_BG } from '../../utils/sceneCarouselBackground';
 import {
   FINAL_LOBBY_BACKGROUND_SRC,
   FINAL_LOUNGE_BACKGROUND_SRC,
 } from '../../constants/finalLobbySceneAssets';
-import { useLobbyLoungeTransitionLetterboxLayout } from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
 import { useLobbyLoungeTransitionDebug } from '../../utils/lobbyLoungeTransitionDebug';
 
@@ -51,8 +48,8 @@ type TransitionMediaProps = {
 };
 
 /**
- * Slide-sized portrait frame (928×1680 cover math) + transparent letterbox bands.
- * Carousel slide shows through until video crossfades in (no duplicate slide PNG poster).
+ * Full-viewport `contain` + `center top` — same geometry as lobby/lounge carousel slides.
+ * Black letterbox (no transparent bands) so the slide does not peek through at play start.
  */
 function LobbyLoungeTransitionMedia({
   active,
@@ -64,53 +61,53 @@ function LobbyLoungeTransitionMedia({
   onError,
   debug,
 }: TransitionMediaProps) {
-  const letterbox = useLobbyLoungeTransitionLetterboxLayout();
   const offsetY = debug.mediaOffsetYPx;
   const posterSrc = poster;
   const posterOpacity = active && posterSrc ? (frameVisible ? 0 : 1) : 0;
   const videoOpacity = active && frameVisible ? 1 : 0;
 
   return (
-    <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx)} />
-      <div style={lobbyLoungeTransitionFrameStyle(letterbox)}>
-        {posterSrc ? (
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              opacity: posterOpacity,
-              transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
-            }}
-          >
-            <div style={lobbyLoungeTransitionPosterInFrameStyle(posterSrc, direction, offsetY)} />
-          </div>
-        ) : null}
+    <div
+      style={{
+        ...lobbyLoungeTransitionMediaShellStyle(),
+        backgroundColor: frameVisible ? SCENE_CAROUSEL_LETTERBOX_BG : 'transparent',
+      }}
+    >
+      {posterSrc ? (
         <div
+          aria-hidden
           style={{
             position: 'absolute',
             inset: 0,
-            opacity: videoOpacity,
+            opacity: posterOpacity,
             transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
           }}
         >
-          <div style={lobbyLoungeTransitionVideoClipStyle()}>
-            <video
-              ref={videoRef}
-              playsInline
-              muted
-              preload="auto"
-              onError={onError}
-              style={lobbyLoungeTransitionVideoElementStyle(direction, offsetY)}
-            >
-              <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-              <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-            </video>
-          </div>
+          <div style={lobbyLoungeTransitionPosterInFrameStyle(posterSrc, direction, offsetY)} />
+        </div>
+      ) : null}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: videoOpacity,
+          transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
+        }}
+      >
+        <div style={lobbyLoungeTransitionVideoClipStyle()}>
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            preload="auto"
+            onError={onError}
+            style={lobbyLoungeTransitionVideoElementStyle(direction, offsetY)}
+          >
+            <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+            <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+          </video>
         </div>
       </div>
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx)} />
     </div>
   );
 }

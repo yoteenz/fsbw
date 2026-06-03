@@ -1,5 +1,10 @@
 import type React from 'react';
 
+import {
+  SCENE_CAROUSEL_LETTERBOX_BG,
+  sceneCarouselCoverBackgroundPosition,
+} from '../utils/sceneCarouselBackground';
+
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
@@ -19,10 +24,10 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH = 1080;
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
 
 /**
- * Seedance clip only — nudge cover anchor down to counter ~2px upward settle at play start.
- * Do **not** apply to lobby/lounge slide backgrounds (see `sceneCarouselCoverBackgroundPosition`).
+ * Optional px nudge on transition video/poster only (`?lobbyTransitionOffset=` overrides).
+ * Default **0** — same anchor as lobby/lounge slides (`center top`).
  */
-export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
+export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0;
 
 /**
  * Seedance `<video>` only — inside {@link lobbyLoungeTransitionVideoClipStyle}; portrait frame unchanged.
@@ -37,7 +42,7 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX = 0;
 export function lobbyLoungeTransitionCoverPosition(
   offsetY: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
 ): string {
-  if (!offsetY) return 'center top';
+  if (!offsetY) return sceneCarouselCoverBackgroundPosition();
   return `center calc(0% + ${offsetY}px)`;
 }
 
@@ -109,6 +114,7 @@ export function lobbyLoungeTransitionPosterInFrameStyle(
     backgroundSize: 'contain',
     backgroundPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     backgroundRepeat: 'no-repeat',
+    backgroundColor: SCENE_CAROUSEL_LETTERBOX_BG,
     pointerEvents: 'none',
   };
 }
@@ -118,65 +124,21 @@ export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.
 }
 
 /**
- * Letterbox root — transparent bands + shared portrait frame (see
- * {@link useLobbyLoungeTransitionLetterboxLayout}). Poster and video use the same
- * inset box and crossfade opacity (no DOM swap).
+ * Full-viewport media root — same box as {@link sceneCarouselViewportStageStyle}
+ * (no nested portrait frame; avoids double letterbox + bottom peek on play).
  */
-export function lobbyLoungeTransitionLetterboxShellStyle(): React.CSSProperties {
+export function lobbyLoungeTransitionMediaShellStyle(): React.CSSProperties {
   return {
     position: 'absolute',
     inset: 0,
     overflow: 'hidden',
-    backgroundColor: 'transparent',
+    backgroundColor: SCENE_CAROUSEL_LETTERBOX_BG,
     pointerEvents: 'none',
   };
 }
 
-/** Transparent band above the clip (carousel shows through the fixed host). */
-export function lobbyLoungeTransitionLetterboxTopBandStyle(heightPx: number): React.CSSProperties {
-  return {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: `${heightPx}px`,
-    backgroundColor: 'transparent',
-    pointerEvents: 'none',
-  };
-}
-
-/** Transparent band below the clip — sized for portrait letterbox + bounce pad. */
-export function lobbyLoungeTransitionLetterboxBottomBandStyle(heightPx: number): React.CSSProperties {
-  return {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: `${heightPx}px`,
-    backgroundColor: 'transparent',
-    pointerEvents: 'none',
-  };
-}
-
-/** Portrait frame — carousel-aligned shell; media scales inside, frame top unchanged. */
-export function lobbyLoungeTransitionFrameStyle(layout: {
-  frameWidth: number;
-  frameHeight: number;
-  topBandPx: number;
-}): React.CSSProperties {
-  return {
-    position: 'absolute',
-    top: `${layout.topBandPx}px`,
-    left: '50%',
-    width: `${layout.frameWidth}px`,
-    height: `${layout.frameHeight}px`,
-    maxWidth: '100vw',
-    transform: 'translateX(-50%)',
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
-    pointerEvents: 'none',
-  };
-}
+/** @deprecated Use {@link lobbyLoungeTransitionMediaShellStyle}. */
+export const lobbyLoungeTransitionLetterboxShellStyle = lobbyLoungeTransitionMediaShellStyle;
 
 /** Full-viewport poster while loading — matches slide contain in letterbox bands. */
 export function lobbyLoungeTransitionFullBleedPosterStyle(posterSrc: string): React.CSSProperties {

@@ -9,8 +9,9 @@ export type LobbyLoungeTransitionLetterboxLayout = {
 };
 
 /**
- * Portrait frame = Final LP slide `contain` math (928×1680). Transparent bands above/below
- * let the carousel show through; poster + video share the same clipped box inside the frame.
+ * Portrait frame metrics from slide `contain` math (928×1680).
+ * @deprecated Transition media uses full viewport ({@link lobbyLoungeTransitionMediaShellStyle});
+ * kept for debug / future frame tooling.
  */
 export function useLobbyLoungeTransitionLetterboxLayout(): LobbyLoungeTransitionLetterboxLayout {
   const [layout, setLayout] = useState<LobbyLoungeTransitionLetterboxLayout>(() =>
