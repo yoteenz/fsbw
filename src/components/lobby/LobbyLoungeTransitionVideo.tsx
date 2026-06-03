@@ -3,11 +3,19 @@ import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
-  lobbyLoungeTransitionCoverPosition,
+  lobbyLoungeTransitionFrameStyle,
+  lobbyLoungeTransitionLetterboxBottomBandStyle,
   lobbyLoungeTransitionLetterboxShellStyle,
+  lobbyLoungeTransitionLetterboxTopBandStyle,
   lobbyLoungeTransitionMediaLayerStyle,
+  lobbyLoungeTransitionPosterInFrameStyle,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
+import {
+  FINAL_LOBBY_BACKGROUND_SRC,
+  FINAL_LOUNGE_BACKGROUND_SRC,
+} from '../../constants/finalLobbySceneAssets';
+import { useLobbyLoungeTransitionLetterboxLayout } from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
 
 type OverlayProps = {
@@ -16,15 +24,14 @@ type OverlayProps = {
   onComplete: () => void;
 };
 
-/**
- * No slide PNG poster — it uses 928×1680 `cover` vs Seedance 1080×1920, so it sits lower than
- * video frame 0 and causes a drop-then-rise when `notifyPlaying()` swaps layers. The carousel
- * slide shows through the transparent overlay until the video fades in (aligned with the slide).
- */
-const transitionPosterSrc = (_direction: LobbyLoungeTransitionDirection): string | null => null;
+const transitionPosterSrc = (direction: LobbyLoungeTransitionDirection) =>
+  direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
+
+const MASKED_MEDIA_CROSSFADE_MS = 60;
 
 type TransitionMediaProps = {
   active: boolean;
+  direction: LobbyLoungeTransitionDirection;
   frameVisible: boolean;
   poster: string | null;
   videoRef: RefObject<HTMLVideoElement>;
@@ -32,48 +39,54 @@ type TransitionMediaProps = {
   onError: () => void;
 };
 
-/** Full-viewport `cover` + `center top` — same box as {@link SceneCarouselViewportStage} (no letterbox bands). */
+/**
+ * Slide-sized portrait frame (928×1680 cover math) + transparent letterbox bands.
+ * Poster and video share the same clipped box and crossfade — no layout swap on reveal.
+ */
 function LobbyLoungeTransitionMedia({
   active,
+  direction,
   frameVisible,
   poster,
   videoRef,
   src,
   onError,
 }: TransitionMediaProps) {
-  const showPoster = active && !frameVisible && poster;
+  const letterbox = useLobbyLoungeTransitionLetterboxLayout();
+  const posterOpacity = active && poster ? (frameVisible ? 0 : 1) : 0;
+  const videoOpacity = active && frameVisible ? 1 : 0;
 
   return (
     <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
-      {showPoster ? (
-        <div
-          aria-hidden
+      <div aria-hidden style={lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx)} />
+      <div style={lobbyLoungeTransitionFrameStyle(letterbox)}>
+        {poster ? (
+          <div
+            aria-hidden
+            style={{
+              ...lobbyLoungeTransitionPosterInFrameStyle(poster, direction),
+              opacity: posterOpacity,
+              transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
+            }}
+          />
+        ) : null}
+        <video
+          ref={videoRef}
+          playsInline
+          muted
+          preload="auto"
+          onError={onError}
           style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${poster})`,
-            backgroundSize: 'cover',
-            backgroundPosition: lobbyLoungeTransitionCoverPosition(),
-            backgroundRepeat: 'no-repeat',
-            pointerEvents: 'none',
+            ...lobbyLoungeTransitionMediaLayerStyle(direction),
+            opacity: videoOpacity,
+            transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
           }}
-        />
-      ) : null}
-      <video
-        ref={videoRef}
-        playsInline
-        muted
-        preload="auto"
-        onError={onError}
-        style={{
-          ...lobbyLoungeTransitionMediaLayerStyle(),
-          opacity: active && frameVisible ? 1 : 0,
-          transition: frameVisible ? 'opacity 60ms linear' : 'none',
-        }}
-      >
-        <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-        <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-      </video>
+        >
+          <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+          <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+        </video>
+      </div>
+      <div aria-hidden style={lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx)} />
     </div>
   );
 }
@@ -133,6 +146,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     >
       <LobbyLoungeTransitionMedia
         active={active}
+        direction={direction}
         frameVisible={frameVisible}
         poster={poster}
         videoRef={videoRef}
@@ -202,6 +216,7 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
     >
       <LobbyLoungeTransitionMedia
         active={active}
+        direction={direction}
         frameVisible={frameVisible}
         poster={poster}
         videoRef={videoRef}

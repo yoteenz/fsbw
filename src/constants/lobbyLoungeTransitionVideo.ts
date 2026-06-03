@@ -31,8 +31,10 @@ export function lobbyLoungeTransitionCoverPosition(): string {
   return `center calc(0% + ${offsetY}px)`;
 }
 
-/** Original transition video/poster layer (full bleed inside the portrait frame). */
-export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
+/** Video layer inside the shared portrait frame (same box as poster). */
+export function lobbyLoungeTransitionMediaLayerStyle(
+  _direction: LobbyLoungeTransitionDirection = 'forward',
+): React.CSSProperties {
   return {
     position: 'absolute',
     inset: 0,
@@ -44,17 +46,31 @@ export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
   };
 }
 
-export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.CSSProperties {
+/** Poster layer — identical geometry to {@link lobbyLoungeTransitionMediaLayerStyle}. */
+export function lobbyLoungeTransitionPosterInFrameStyle(
+  posterSrc: string,
+  _direction: LobbyLoungeTransitionDirection = 'forward',
+): React.CSSProperties {
   return {
-    ...lobbyLoungeTransitionMediaLayerStyle(),
+    position: 'absolute',
+    inset: 0,
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
     backgroundPosition: lobbyLoungeTransitionCoverPosition(),
     backgroundRepeat: 'no-repeat',
+    pointerEvents: 'none',
   };
 }
 
-/** Letterbox root — top-anchored frame; bands use fixed px heights (see letterbox layout hook). */
+export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.CSSProperties {
+  return lobbyLoungeTransitionPosterInFrameStyle(posterSrc, 'forward');
+}
+
+/**
+ * Letterbox root — transparent bands + shared portrait frame (see
+ * {@link useLobbyLoungeTransitionLetterboxLayout}). Poster and video use the same
+ * inset box and crossfade opacity (no DOM swap).
+ */
 export function lobbyLoungeTransitionLetterboxShellStyle(): React.CSSProperties {
   return {
     position: 'absolute',
