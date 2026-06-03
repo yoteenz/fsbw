@@ -23736,3 +23736,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why:** Poster **928×1680** + video **1080×1920** both `cover` + same `object-position` → different crop; poster reads lower. **`notifyPlaying()`** runs after **`HAVE_CURRENT_DATA`** (loaded), before **`play()`** — removes poster, fades video in.
 
 **Fix:** **`transitionPosterSrc()`** returns **`null`** — transparent overlay lets **carousel slide** show through until video frame 0 (matches slide geometry). No slide PNG layer.
+
+---
+
+## 2026-06-02 — Scene transition: masked frame + poster/video crossfade
+
+**Context:** User asked whether **transparent letterbox masks** can align poster + video symmetrically and avoid poster→video jump.
+
+**Approach:** **`useLobbyLoungeTransitionLetterboxLayout`** — frame sized with **`sceneCarouselCoverMetrics`** (928×1680, same as carousel). **Transparent** top/bottom bands; carousel shows through. Poster + video both **`inset: 0`** in the same frame with identical **`cover`** + **`lobbyLoungeTransitionCoverPosition()`**; **opacity crossfade** (no unmount). Poster = slide PNG (perfect in slide frame); video may still differ slightly (1080×1920) but **no layout shift** on reveal. Pixel-perfect: use MP4 frame 0 as poster (future).
