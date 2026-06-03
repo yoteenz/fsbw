@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  LOUNGE_TV_ANIMATION_VIDEO_REMOTE,
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
+  LOUNGE_TV_ANIMATION_VIDEO_SRC,
+  LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV,
   loungeTvAnimationMediaLayerStyle,
   loungeTvAnimationPosterSrc,
   loungeTvAnimationVideoSrc,
@@ -31,7 +32,10 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     const el = videoRef.current;
     if (!el) return;
     el.preload = 'auto';
-    el.load();
+    if (el.dataset.sceneCoverSrc !== src) {
+      el.dataset.sceneCoverSrc = src;
+      el.load();
+    }
   }, [src]);
 
   useSceneCoverVideoPlayback(videoRef, {
@@ -82,8 +86,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
           transition: 'opacity 60ms linear',
         }}
       >
-        <source src={src} type="video/quicktime" />
-        <source src={LOUNGE_TV_ANIMATION_VIDEO_REMOTE} type="video/quicktime" />
+        <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />
+        <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV} type="video/quicktime" />
       </video>
     </div>
   );

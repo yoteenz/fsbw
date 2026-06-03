@@ -7,19 +7,24 @@ export type LoungeTvAnimationDirection = 'forward' | 'reverse';
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
-/** Seedance lounge TV open clip (curtains, TV grow, hand, static). */
+/**
+ * Uncropped Supabase original — do **not** use as a `<video><source>` (reintroduces letterbox).
+ * Re-bake with `npm run lounge:bake-tv-animation-crop`; upload replacement to Supabase when ready.
+ */
 export const LOUNGE_TV_ANIMATION_VIDEO_REMOTE = `${FINAL_LP_BASE}/video.mov`;
 
-export const LOUNGE_TV_ANIMATION_VIDEO_VERSION = 'final-lp-video-crop-v1';
+export const LOUNGE_TV_ANIMATION_VIDEO_VERSION = 'final-lp-video-crop-v2';
 
-/** Bundled fallback when present (`public/assets/lounge-tv-animation.mov`). */
-export const LOUNGE_TV_ANIMATION_VIDEO_SRC = `/assets/lounge-tv-animation.mov?v=${LOUNGE_TV_ANIMATION_VIDEO_VERSION}`;
+/** Primary bundled clip (cropped). Prefer MP4; MOV kept for Safari fallback. */
+export const LOUNGE_TV_ANIMATION_VIDEO_SRC = `/assets/lounge-tv-animation.mp4?v=${LOUNGE_TV_ANIMATION_VIDEO_VERSION}`;
+
+export const LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV = `/assets/lounge-tv-animation.mov?v=${LOUNGE_TV_ANIMATION_VIDEO_VERSION}`;
 
 /**
- * Extra vertical zoom on the open/close clip if letterbox remains (1 = none).
- * Prefer `npm run lounge:bake-tv-animation-crop` — do not combine large scale with baked crop.
+ * Extra vertical zoom if letterbox remains after bake (1 = none).
+ * Do not stack with aggressive ffmpeg crop unless QA needs a small nudge.
  */
-export const LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE = 1;
+export const LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE = 1.08;
 
 /** Full-bleed layer for {@link LoungeTvAnimationVideo} — tune crop via bake script + scale above. */
 export function loungeTvAnimationMediaLayerStyle(): React.CSSProperties {
