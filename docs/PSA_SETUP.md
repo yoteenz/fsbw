@@ -169,6 +169,13 @@ Restart dev server after changing local env.
 
 6. **No quotes in Vercel value:** paste `sk-...` only, not `"sk-..."`.
 
+7. **Quota error but you have credits — wrong org/key:** OpenAI credits are **per organization**. API keys belong to whichever org was selected when the key was created.
+   - Open [platform.openai.com/api-keys](https://platform.openai.com/api-keys) — use the **org switcher** (top-left) and pick the org that has billing/credits.
+   - Create a **new secret key** while that org is selected.
+   - Match keys: open `https://fsbw.vercel.app/api/psa/health?probe=1` and compare **`keyFingerprint`** (first 8 + last 4 chars) with the key in OpenAI (or reveal `OPENAI_API_KEY` in Vercel and compare prefix/suffix).
+   - After PSA chat, check [platform.openai.com/usage](https://platform.openai.com/usage) — if **no requests** appear under the credited org, Vercel is still using a key from another org.
+   - Paste the new key into Vercel `OPENAI_API_KEY` → **Redeploy**.
+
 ---
 
 ### Step 4 — Test on mobile (premium account)
