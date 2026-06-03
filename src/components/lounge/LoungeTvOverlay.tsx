@@ -870,7 +870,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           margin: 0,
           background:
             useFullscreenShell
-              ? '#000000'
+              ? seedanceOpening
+                ? 'transparent'
+                : '#000000'
               : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
                 ? 'rgba(0,0,0,0.35)'
                 : 'transparent',
