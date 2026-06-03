@@ -63,7 +63,7 @@ export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 
 export const PSA_WELCOME_MESSAGE =
-  'Hey Beautiful — welcome back to Frontal Slayer. I\'m PSA. What are we working on today: new hair, maintenance, customization, or a little bit of everything?';
+  'Hey Beautiful, welcome back to Frontal Slayer. I\'m PSA. What are we working on today: new hair, maintenance, customization or a little bit of everything?';
 
 /** How long to show waving when the chat panel opens or during idle wave. */
 export const PSA_WAVING_MS = 3200;

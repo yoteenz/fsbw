@@ -4,6 +4,7 @@ import {
   PSA_CHAT_SUBTITLE,
   PSA_CHAT_TITLE,
 } from '../../constants/psaConfig';
+import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
 import type { PsaChatMessage } from './usePsaChat';
 
 type PsaChatPanelProps = {
@@ -15,6 +16,12 @@ type PsaChatPanelProps = {
   onInputFocusChange?: (focused: boolean) => void;
   onInputTextChange?: (hasText: boolean) => void;
 };
+
+/** Member-facing bubble copy — uppercase via CSS; voice-normalized for assistant/system. */
+function bubbleContent(msg: PsaChatMessage): string {
+  if (msg.role === 'user') return msg.content;
+  return formatPsaVoiceText(msg.content);
+}
 
 /** Extract in-app paths like /account/concierge from assistant text for tap-to-navigate. */
 function extractPaths(text: string): string[] {
@@ -66,11 +73,7 @@ export default function PsaChatPanel({
         <div className="psa-chat-header-text">
           <h2 className="psa-chat-title">{PSA_CHAT_TITLE}</h2>
           <p className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</p>
-          {usageLabel ? (
-            <p className="psa-chat-usage" style={{ margin: '4px 0 0', fontSize: '9px', opacity: 0.85 }}>
-              {usageLabel}
-            </p>
-          ) : null}
+          {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
         <button type="button" className="psa-chat-close" onClick={onClose} aria-label="Close PSA">
           ×
@@ -85,7 +88,7 @@ export default function PsaChatPanel({
               key={msg.id}
               className={`psa-chat-bubble psa-chat-bubble-${msg.role}`}
             >
-              {msg.content}
+              {bubbleContent(msg)}
               {paths.length > 0 ? (
                 <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {paths.map((path) => (
