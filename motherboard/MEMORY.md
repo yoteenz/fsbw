@@ -23406,3 +23406,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for the same shadow on lobby slide **lounge** arrow + label as lounge slide **lobby** back nav.
 
 **Fix (`4efa8627`):** **`LobbyPage`** right nav cluster — **`filter: LOUNGE_LOBBY_NAV_SHADOW_FILTER`**; **lounge** label **`textShadow: LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW`**; removed weaker inline SVG drop-shadow. Shared constants in **`lobby/page.tsx`** (both slides).
+
+---
+
+## 2026-06-02 — Phone offset + register/phone open asset −20%
+
+**Fix (`b5187632`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -10 }`. **`LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE`** **0.6** (was **0.75**, −20%) — both register + phone open PNGs; glass popovers unchanged. Register tandem offset still `{ x: 8, y: -8 }`.
