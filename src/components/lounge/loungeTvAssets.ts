@@ -65,7 +65,7 @@ export const LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX = 13;
  * TV glass + menu/static/video — {@link LoungeTvFullscreenShell} mapped screen inset only.
  * Scale and Y offset apply in tandem on the screen box (`transformOrigin: center top`).
  */
-export const LOUNGE_TV_CONTENT_SCREEN_SCALE = 0.96;
+export const LOUNGE_TV_CONTENT_SCREEN_SCALE: number = 0.96;
 
 /** Positive = down (applied with {@link LOUNGE_TV_CONTENT_SCREEN_SCALE}). */
 export const LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX = 124;
