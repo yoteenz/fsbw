@@ -23666,3 +23666,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix (revert offsets, keep structural improvements):** **`sceneCarouselCoverBackgroundPosition()`** → **`center top`** only (removed **`SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX`**). **`LobbyLoungeTransitionMedia`** — full-viewport **`cover`** + **`center top`** video/poster (no letterbox top/bottom bands or frame offset). Slides stay **`100dvh`** + **`overflow: hidden`**; shell/viewport fallback **`#e8e4e0`** (marble) instead of white. Deleted unused **`useLobbyLoungeTransitionLetterboxLayout`**. **Lesson:** tune bottom floor gaps with small px or matching **`background-color`**, not large paired Y offsets on bg + video.
 
 **Also in chat (prior pushes):** Popover centering, close X **`lobbyPopoverPx(5) − 8`** (no clamp), phone hours/email/holidays styling, Affirm spacing via Afterpay/Klarna **`margin ±4`**, shelf hit debug overlays, TV close reverse from hand-press (**`LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION`** 0.72).
+
+---
+
+## 2026-06-02 — Shelf hit debug: why overlays were invisible + UX fix
+
+**Context:** User did not see colored shelf hit boxes or route labels described in prior notes.
+
+**Why:** Overlays are **off by default** (`LOBBY_SHELF_HIT_DEBUG_OVERLAY = false`). They only render when **`/lobby?sceneHitDebug=1`** is loaded (not on `/` or `/home/shop`). Shelves are on the **lobby** slide only (`/lobby`), not the lounge slide (`/lobby/lounge`); lounge gets chandelier debug only.
+
+**Fix:** **`useLobbyShelfHitDebugEnabled`** / **`useLoungeChandelierHitDebugEnabled`** via **`useLocation().search`** + **`sessionStorage`** (`SCENE_HIT_DEBUG_SESSION_KEY`) when `?sceneHitDebug=1`. **`SceneHitDebugBanner`** fixed top-left when mode is on. Slightly larger route labels on hit buttons. Turn off: **`?sceneHitDebug=0`**.
