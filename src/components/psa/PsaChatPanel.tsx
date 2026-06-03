@@ -11,6 +11,8 @@ type PsaChatPanelProps = {
   isSending: boolean;
   onClose: () => void;
   onSend: (text: string) => Promise<{ premiumRequired?: boolean } | void>;
+  onInputFocusChange?: (focused: boolean) => void;
+  onInputTextChange?: (hasText: boolean) => void;
 };
 
 /** Extract in-app paths like /account/concierge from assistant text for tap-to-navigate. */
@@ -25,6 +27,8 @@ export default function PsaChatPanel({
   isSending,
   onClose,
   onSend,
+  onInputFocusChange,
+  onInputTextChange,
 }: PsaChatPanelProps) {
   const navigate = useNavigate();
   const [input, setInput] = useState('');
@@ -104,7 +108,12 @@ export default function PsaChatPanel({
         <input
           className="psa-chat-input"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            onInputTextChange?.(e.target.value.trim().length > 0);
+          }}
+          onFocus={() => onInputFocusChange?.(true)}
+          onBlur={() => onInputFocusChange?.(false)}
           onKeyDown={onInputKeyDown}
           placeholder="ASK PSA ANYTHING…"
           disabled={isSending}

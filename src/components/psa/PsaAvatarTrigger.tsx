@@ -1,36 +1,36 @@
-import { useEffect, useState } from 'react';
+import type { SyntheticEvent } from 'react';
 import {
-  PSA_AVATAR_IDLE_SRC,
-  PSA_AVATAR_THINKING_SRC,
+  getPsaAvatarSrc,
+  PSA_AVATAR_DEFAULT_EXPRESSION,
+  PSA_AVATAR_FALLBACK_SRC,
   PSA_WIDGET_LABEL,
   PSA_WIDGET_SUBLABEL,
+  type PsaAvatarExpression,
 } from '../../constants/psaConfig';
 
 type PsaAvatarTriggerProps = {
   onClick: () => void;
   isOpen: boolean;
-  isThinking?: boolean;
+  expression?: PsaAvatarExpression;
   'aria-label'?: string;
 };
 
 export default function PsaAvatarTrigger({
   onClick,
   isOpen,
-  isThinking = false,
+  expression = PSA_AVATAR_DEFAULT_EXPRESSION,
   'aria-label': ariaLabel = 'Open Personal Slay Assistant',
 }: PsaAvatarTriggerProps) {
-  const [imgSrc, setImgSrc] = useState(PSA_AVATAR_IDLE_SRC);
+  const primarySrc = getPsaAvatarSrc(expression);
 
-  useEffect(() => {
-    setImgSrc(isThinking ? PSA_AVATAR_THINKING_SRC : PSA_AVATAR_IDLE_SRC);
-  }, [isThinking]);
-
-  const handleImgError = () => {
-    if (imgSrc !== PSA_AVATAR_IDLE_SRC) {
-      setImgSrc(PSA_AVATAR_IDLE_SRC);
+  const handleImgError = (e: SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    if (img.src.includes('profile-thumb.png')) return;
+    if (!img.src.includes('psa-avatar-neutral.png')) {
+      img.src = PSA_AVATAR_FALLBACK_SRC;
       return;
     }
-    setImgSrc('/assets/profile-thumb.png');
+    img.src = '/assets/profile-thumb.png';
   };
 
   return (
@@ -43,8 +43,9 @@ export default function PsaAvatarTrigger({
     >
       <div className="psa-avatar-frame">
         <img
+          key={expression}
           className="psa-avatar-img"
-          src={isThinking ? PSA_AVATAR_THINKING_SRC : imgSrc}
+          src={primarySrc}
           alt=""
           onError={handleImgError}
         />

@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
   isPsaHiddenPath,
+  PSA_WAVING_MS,
+  PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
 } from '../../constants/psaConfig';
 import { isSignedIn } from '../../utils/adminAuth';
@@ -13,6 +15,7 @@ import {
 } from '../../utils/premiumMemberAccess';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
+import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
 import { usePsaChat } from './usePsaChat';
 import './psaAssistant.css';
 
@@ -23,8 +26,39 @@ export default function PsaAssistantWidget() {
   const [isPremium, setIsPremium] = useState(() => isPremiumMemberForGatedFeatures());
   const [isOpen, setIsOpen] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showWelcomeWave, setShowWelcomeWave] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [inputHasText, setInputHasText] = useState(false);
+  const [lastReplyAt, setLastReplyAt] = useState<number | null>(null);
+  const [expressionTick, setExpressionTick] = useState(0);
+  const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { messages, isSending, sendMessage } = usePsaChat(PSA_WELCOME_MESSAGE);
+
+  const prevMessageCountRef = useRef(messages.length);
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (messages.length > prevMessageCountRef.current && last?.role === 'assistant' && last.id !== 'welcome') {
+      setLastReplyAt(Date.now());
+    }
+    prevMessageCountRef.current = messages.length;
+  }, [messages]);
+
+  /** Re-resolve avatar after talking / waving timers elapse. */
+  useEffect(() => {
+    if (!isOpen && !showWelcomeWave && lastReplyAt == null) return;
+    const id = window.setInterval(() => setExpressionTick((t) => t + 1), 350);
+    return () => window.clearInterval(id);
+  }, [isOpen, showWelcomeWave, lastReplyAt]);
+
+  useEffect(() => {
+    if (lastReplyAt == null) return;
+    const id = window.setTimeout(
+      () => setExpressionTick((t) => t + 1),
+      PSA_TALKING_AFTER_REPLY_MS + 50
+    );
+    return () => window.clearTimeout(id);
+  }, [lastReplyAt]);
 
   useEffect(() => {
     const sync = () => {
@@ -40,14 +74,32 @@ export default function PsaAssistantWidget() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (welcomeTimerRef.current) clearTimeout(welcomeTimerRef.current);
+    };
+  }, []);
+
+  const startWelcomeWave = useCallback(() => {
+    if (welcomeTimerRef.current) clearTimeout(welcomeTimerRef.current);
+    setShowWelcomeWave(true);
+    welcomeTimerRef.current = setTimeout(() => {
+      setShowWelcomeWave(false);
+      welcomeTimerRef.current = null;
+    }, PSA_WAVING_MS);
+  }, []);
+
   const handleToggle = useCallback(() => {
     if (!signedIn) return;
     if (!isPremium) {
       setShowUpgradeModal(true);
       return;
     }
-    setIsOpen((open) => !open);
-  }, [signedIn, isPremium]);
+    setIsOpen((open) => {
+      if (!open) startWelcomeWave();
+      return !open;
+    });
+  }, [signedIn, isPremium, startWelcomeWave]);
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -66,6 +118,21 @@ export default function PsaAssistantWidget() {
     navigate('/account/rewards');
   }, [navigate]);
 
+  const avatarExpression = useMemo(
+    () =>
+      resolvePsaAvatarExpression({
+        isChatOpen: isOpen,
+        isSending,
+        isInputFocused,
+        inputHasText,
+        showWelcomeWave,
+        lastReplyAt,
+        messages,
+        now: Date.now() + expressionTick * 0,
+      }),
+    [isOpen, isSending, isInputFocused, inputHasText, showWelcomeWave, lastReplyAt, messages, expressionTick]
+  );
+
   if (!signedIn || isPsaHiddenPath(location.pathname)) {
     return null;
   }
@@ -79,12 +146,14 @@ export default function PsaAssistantWidget() {
             isSending={isSending}
             onClose={() => setIsOpen(false)}
             onSend={handleSend}
+            onInputFocusChange={setIsInputFocused}
+            onInputTextChange={setInputHasText}
           />
         ) : null}
         <PsaAvatarTrigger
           onClick={handleToggle}
           isOpen={isOpen}
-          isThinking={isSending}
+          expression={avatarExpression}
         />
       </div>
 

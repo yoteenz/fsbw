@@ -25,12 +25,25 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 
 Use **`fal-ai/nano-banana-pro/edit`** (same family as your NOIR live previews) or **`fal-ai/flux-pro`** for a crisp transparent character.
 
-**You need 1–2 PNG/WebP files:**
+**You need 11 PNG/WebP files** (transparent background) — see **Avatar expression filenames** below.
 
-| File | Purpose |
-|------|---------|
-| `public/assets/psa-avatar-idle.png` | Default FAB + chat (required) |
-| `public/assets/psa-avatar-thinking.png` | Optional “typing” state (falls back to idle) |
+| File | Expression | When the app shows it |
+|------|------------|------------------------|
+| `psa-avatar-neutral.png` | neutral | FAB default (chat closed) |
+| `psa-avatar-neutral-smiling.png` | neutral-smiling | Chat open, idle |
+| `psa-avatar-waving.png` | waving | ~2.2s when chat opens |
+| `psa-avatar-listening.png` | listening | Input focused, empty |
+| `psa-avatar-listening-smiling.png` | listening-smiling | Input focused, user typing |
+| `psa-avatar-thinking.png` | thinking | Waiting on PSA reply |
+| `psa-avatar-delighted.png` | delighted | Reply with positive keywords |
+| `psa-avatar-sorry.png` | sorry | Error / system message |
+| `psa-avatar-pointing.png` | pointing | Reply includes `/path` links |
+| `psa-avatar-talking.png` | talking | ~2.8s after assistant reply |
+| `psa-avatar-presenting.png` | presenting | Reply mentions units / products |
+
+All paths are defined in `src/constants/psaConfig.ts` as `PSA_AVATAR_SRC`.
+
+**Legacy names (no longer used):** `psa-avatar-idle.png` → use **`psa-avatar-neutral.png`** instead.
 
 **Recommended Fal settings**
 
@@ -79,7 +92,7 @@ OUTPUT: One character on transparent PNG, high resolution (1024×1024 or 768×76
 
 1. Download PNG(s).
 2. Optional: run through [remove.bg](https://www.remove.bg) or Photoshop if edges aren’t clean.
-3. Save to `public/assets/psa-avatar-idle.png` (and `-thinking.png` if you made one).
+3. Save to `public/assets/` using the filenames in the table above (e.g. `psa-avatar-neutral.png`).
 4. Redeploy or refresh dev — no code change needed unless you use different filenames (then edit `src/constants/psaConfig.ts`).
 
 ---
