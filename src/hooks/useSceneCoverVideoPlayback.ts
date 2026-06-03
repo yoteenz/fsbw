@@ -107,7 +107,7 @@ export function useSceneCoverVideoPlayback(
       el.currentTime = 0;
       try {
         await waitUntilCanStart();
-        // Show frame 0 before `playing` — avoids a lounge still poster flash under the overlay.
+        // Reveal frame 0 before `play()` — overlay is transparent; carousel slide shows through until then.
         notifyPlaying();
         await el.play();
       } catch {

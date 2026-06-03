@@ -8,10 +8,6 @@ import {
   lobbyLoungeTransitionMediaLayerStyle,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
-import {
-  FINAL_LOBBY_BACKGROUND_SRC,
-  FINAL_LOUNGE_BACKGROUND_SRC,
-} from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
 
 type OverlayProps = {
@@ -20,8 +16,12 @@ type OverlayProps = {
   onComplete: () => void;
 };
 
-const posterForDirection = (direction: LobbyLoungeTransitionDirection) =>
-  direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
+/**
+ * No slide PNG poster — it uses 928×1680 `cover` vs Seedance 1080×1920, so it sits lower than
+ * video frame 0 and causes a drop-then-rise when `notifyPlaying()` swaps layers. The carousel
+ * slide shows through the transparent overlay until the video fades in (aligned with the slide).
+ */
+const transitionPosterSrc = (_direction: LobbyLoungeTransitionDirection): string | null => null;
 
 type TransitionMediaProps = {
   active: boolean;
@@ -86,7 +86,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
   const src = lobbyLoungeTransitionVideoSrc(direction);
-  const poster = posterForDirection(direction);
+  const poster = transitionPosterSrc(direction);
 
   const finish = useCallback(() => {
     onComplete();
@@ -158,7 +158,7 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
   const active = phase !== null;
   const direction = phase ?? 'forward';
   const src = lobbyLoungeTransitionVideoSrc(direction);
-  const poster = active ? posterForDirection(direction) : null;
+  const poster = active ? transitionPosterSrc(direction) : null;
 
   const finish = useCallback(() => {
     if (!phase) return;
