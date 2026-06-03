@@ -66,7 +66,7 @@ export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 
 export const PSA_WELCOME_MESSAGE =
-  'Welcome back to Frontal Slayer. I\'m PSA. What are we working on today: new hair, maintenance, customization or a little bit of everything?';
+  'Welcome back to Frontal Slayer. I\'m your PSA. What are we working on today: new hair, maintenance, customization or a little bit of everything?';
 
 /** Starter quick-reply chips when the thread is welcome-only (empty chat). */
 export const PSA_STARTER_QUICK_REPLIES = [
