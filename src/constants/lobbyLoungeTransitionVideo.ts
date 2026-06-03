@@ -25,16 +25,13 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
 export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
 
 /**
- * Seedance `<video>` only — scale inside portrait frame (not slide backgrounds).
- * 0.98 ≈ 2% smaller; `center top` origin keeps top edge aligned with carousel.
+ * Seedance `<video>` only — inside {@link lobbyLoungeTransitionVideoClipStyle}; portrait frame unchanged.
+ * 0.98 ≈ 2% smaller; `transformOrigin: center top` keeps top edge aligned with carousel.
  */
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98;
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE: number = 0.98;
 
-/** Extra downward nudge on `<video>` transform inside portrait frame (with scale). */
+/** Extra downward nudge on `<video>` transform inside clip shell (with scale). */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX = 0;
-
-/** Portrait frame shell (poster + video) vs carousel — negative = up. */
-export const LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX = -2;
 
 /** Transition video + poster `object-position` / `background-position`. */
 export function lobbyLoungeTransitionCoverPosition(
@@ -44,8 +41,21 @@ export function lobbyLoungeTransitionCoverPosition(
   return `center calc(0% + ${offsetY}px)`;
 }
 
-/** Video layer inside the shared portrait frame (scaled vs poster when QA uses slide PNG). */
-export function lobbyLoungeTransitionMediaLayerStyle(
+/**
+ * Clip box inside portrait frame — full frame size; does not move with carousel.
+ * {@link lobbyLoungeTransitionVideoElementStyle} scales the `<video>` only inside this shell.
+ */
+export function lobbyLoungeTransitionVideoClipStyle(): React.CSSProperties {
+  return {
+    position: 'absolute',
+    inset: 0,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+  };
+}
+
+/** `<video>` inside clip shell — cover + optional scale (frame position unchanged). */
+export function lobbyLoungeTransitionVideoElementStyle(
   _direction: LobbyLoungeTransitionDirection = 'forward',
   mediaOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
   videoScale: number = LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE,
@@ -69,6 +79,21 @@ export function lobbyLoungeTransitionMediaLayerStyle(
       ? { transform: transformParts.join(' '), transformOrigin: 'center top' }
       : null),
   };
+}
+
+/** @deprecated Use {@link lobbyLoungeTransitionVideoElementStyle}. */
+export function lobbyLoungeTransitionMediaLayerStyle(
+  direction: LobbyLoungeTransitionDirection = 'forward',
+  mediaOffsetYPx?: number,
+  videoScale?: number,
+  videoTranslateYPx?: number,
+): React.CSSProperties {
+  return lobbyLoungeTransitionVideoElementStyle(
+    direction,
+    mediaOffsetYPx,
+    videoScale,
+    videoTranslateYPx,
+  );
 }
 
 /** Poster layer — identical geometry to {@link lobbyLoungeTransitionMediaLayerStyle}. */
@@ -133,16 +158,15 @@ export function lobbyLoungeTransitionLetterboxBottomBandStyle(heightPx: number):
   };
 }
 
-/** Portrait frame — fixed top offset; original cover video inside. */
-export function lobbyLoungeTransitionFrameStyle(
-  layout: { frameWidth: number; frameHeight: number; topBandPx: number },
-  frameOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX,
-): React.CSSProperties {
-  const frameTopPx =
-    layout.topBandPx + (Number.isFinite(frameOffsetYPx) ? frameOffsetYPx : 0);
+/** Portrait frame — carousel-aligned shell; media scales inside, frame top unchanged. */
+export function lobbyLoungeTransitionFrameStyle(layout: {
+  frameWidth: number;
+  frameHeight: number;
+  topBandPx: number;
+}): React.CSSProperties {
   return {
     position: 'absolute',
-    top: `${frameTopPx}px`,
+    top: `${layout.topBandPx}px`,
     left: '50%',
     width: `${layout.frameWidth}px`,
     height: `${layout.frameHeight}px`,
