@@ -7,7 +7,6 @@ import {
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
-  PSA_IDLE_EXPRESSION_MS,
   PSA_IDLE_WAVE_INTERVAL_MS,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
@@ -20,6 +19,7 @@ import {
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
 import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
+import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
 import './psaAssistant.css';
 
@@ -35,8 +35,8 @@ export default function PsaAssistantWidget() {
   const [inputHasText, setInputHasText] = useState(false);
   const [lastReplyAt, setLastReplyAt] = useState<number | null>(null);
   const [expressionTick, setExpressionTick] = useState(0);
-  const [idleExpressionFlip, setIdleExpressionFlip] = useState(0);
   const [showIdleWave, setShowIdleWave] = useState(false);
+  const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -65,23 +65,15 @@ export default function PsaAssistantWidget() {
     );
   }, [usage]);
 
-  useEffect(() => {
-    if (isOpen) return;
-    const id = window.setInterval(
-      () => setIdleExpressionFlip((n) => n + 1),
-      PSA_IDLE_EXPRESSION_MS
-    );
-    return () => window.clearInterval(id);
-  }, [isOpen]);
-
   const triggerIdleWave = useCallback(() => {
     if (idleWaveTimerRef.current) clearTimeout(idleWaveTimerRef.current);
     setShowIdleWave(true);
     idleWaveTimerRef.current = setTimeout(() => {
       setShowIdleWave(false);
+      idleExpressionCycle.resetToSoftLanding();
       idleWaveTimerRef.current = null;
     }, PSA_WAVING_MS);
-  }, []);
+  }, [idleExpressionCycle.resetToSoftLanding]);
 
   /** Closed FAB: brief wave every ~30s so the avatar feels alive, not static. */
   useEffect(() => {
@@ -228,9 +220,7 @@ export default function PsaAssistantWidget() {
       now: Date.now() + expressionTick * 0,
     });
     if (!isOpen && showIdleWave) return 'waving';
-    if (!isOpen && resolved === 'neutral') {
-      return idleExpressionFlip % 2 === 0 ? 'neutral' : 'neutral-smiling';
-    }
+    if (!isOpen) return idleExpressionCycle.expression;
     return resolved;
   }, [
     isOpen,
@@ -242,7 +232,7 @@ export default function PsaAssistantWidget() {
     lastReplyAt,
     messages,
     expressionTick,
-    idleExpressionFlip,
+    idleExpressionCycle.expression,
   ]);
 
   // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
