@@ -23956,3 +23956,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Press-to-play had a slight delay before the open animation.
 
 **Fix:** **`LoungeCompositeTvPlay`** — hidden **`video`** warmup + link preload on lounge mount. **`LoungeTvOverlay`** — render when **`isOpen`** (not one frame after **`visible`**); **`resolvedSeedancePhase`** treats idle+open as **`opening`**; mount clip when **`isOpen || phase !== idle`**. **`useSceneCoverVideoPlayback`** — forward **`play()`** without blocking on **`canplay`** first; **`instantReveal`** for lounge TV. **`LoungeTvAnimationVideo`** — **`instantReveal`** on forward open.
+
+---
+
+## 2026-06-02 — Watch + Learn video shell +12px height
+
+**Context:** User asked to increase Watch + Learn **video height only** by **12px** (keep **54%** cap, cover + center top, title/duration + scrollable description unchanged).
+
+**Fix:** **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX = 12`**; shell **`maxHeight: calc(54% + 12px)`** in **`LoungeTvWatchLearnPlayer.tsx`**.
