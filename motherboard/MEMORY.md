@@ -23315,3 +23315,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fixes:**
 - **`npm run lounge:bake-tv-animation-crop`** — `crop=720:1024:0:128` on bundled **`lounge-tv-animation.mov`**; source kept as **`lounge-tv-animation-source-letterbox.mov`**. **`LOUNGE_TV_ANIMATION_VIDEO_VERSION`** = **`final-lp-video-crop-v1`**; optional **`LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE`** (default 1).
 - **`LOUNGE_TV_CONTENT_SCREEN_HEIGHT_SCALE = 0.65`** — **`LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT`** centered in original glass inset on end-still PNG.
+
+---
+
+## 2026-06-02 — Lobby/lounge transition: faster start, no lobby end flash
+
+**Context:** User reported long pause before Seedance on arrow tap; lobby→lounge **flashed lobby** at clip end.
+
+**Causes:** Cold **`canplay`** wait; overlay on slide unmount showed **lobby poster** when **`frameVisible`** reset before carousel moved; **`completeRoomTransitionOverlay`** cleared overlay before **`visualIndex`** change.
+
+**Fix:** **`LobbyLoungeTransitionHost`** — fixed viewport, **`phase: null`** warm preload (single `<video>`). Complete: **`setVisualIndex`** + route first, **`requestAnimationFrame`** then clear overlay. **`finish()`** does not restore poster. Playback: **`loadeddata`** / skip **`load()`** when metadata exists; shorter retry delay.
