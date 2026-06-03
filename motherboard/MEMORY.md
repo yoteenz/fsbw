@@ -23478,3 +23478,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** On X while TV menu is open, reverse animation should start right away — static on TV in the clip → thumb on remote → zap — not ~820ms of fullscreen CRT static before the reverse video.
 
 **Fix:** **`LoungeTvOverlay`** — removed **`static-out`** phase and **`SEEDANCE_CLOSE_STATIC_BEFORE_REVERSE_MS`** timer. **`requestClose`** when **`seedancePhase === 'ready'`** sets **`closing`** immediately (hide menu shell/chrome; no **`LoungeTvPowerOnStatic`** pre-roll). **`showTvChrome`** / **`useFullscreenShell`** only during **`ready`**. **`loungeTvAnimationPosterSrc('reverse')`** = **`LOUNGE_TV_CONTENT_FRAME_SRC`** (theater end-still, matches **`LoungeTvFullscreenShell`**) to avoid black flash while reverse seeks.
+
+---
+
+## 2026-06-02 — Lounge TV open: no lounge still flash before Seedance
+
+**Context:** PRESS TO PLAY showed a duplicate **`FINAL_LOUNGE_BACKGROUND_SRC`** poster (cover + contain layers) before the open clip — lag/skip vs the live lounge carousel underneath.
+
+**Fix:** Forward **`loungeTvAnimationPosterSrc()`** = **`null`** (carousel shows through transparent overlay). Open clip uses **`cover` + `center top`** (matches carousel); reverse stays **`contain`**. **`useSceneCoverVideoPlayback`** reveals forward frame 0 after **`loadeddata`** (before **`playing`**). **`LoungeCompositeTvPlay`** preloads **`LOUNGE_TV_ANIMATION_VIDEO_SRC`** on mount.
