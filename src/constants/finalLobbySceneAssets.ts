@@ -39,6 +39,12 @@ export const FINAL_LOBBY_HIT_REGIONS = {
   casePhone: { left: 0.6, top: 0.71, width: 0.16, height: 0.09 },
 } as const satisfies Record<string, FinalSceneHitRect>;
 
+/** Lounge slide hotspots on `final-lounge.png` (928×1680). */
+export const FINAL_LOUNGE_HIT_REGIONS = {
+  /** Ceiling chandelier → account concierge */
+  chandelier: { left: 0.34, top: 0.03, width: 0.32, height: 0.14 },
+} as const satisfies Record<string, FinalSceneHitRect>;
+
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   left: 0.277,

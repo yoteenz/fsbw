@@ -23,11 +23,13 @@ import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { SceneCarouselViewportStage } from '../../components/lobby/SceneCarouselViewportStage';
 import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTvPlay';
 import { FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
+import type { LobbyCasePopoverId } from '../../constants/lobbyCasePopover';
 import {
   isLobbyTransitionVideoEnabledFromSearch,
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
+import { LoungeSceneHotspots } from '../../components/lounge/LoungeSceneHotspots';
 
 /** Carousel nav arrows/labels — readable on white curtain in composite art (lobby ↔ lounge). */
 const LOUNGE_LOBBY_NAV_SHADOW_FILTER =
@@ -38,9 +40,16 @@ const LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
 // Lobby Component
 const LobbyPage: React.FC<{
   hideCarouselNav?: boolean;
-}> = ({ hideCarouselNav = false }) => {
+  lobbyViewportRef: RefObject<HTMLDivElement | null>;
+  lobbyCasePopover: LobbyCasePopoverId | null;
+  onLobbyCasePopoverChange: (id: LobbyCasePopoverId | null) => void;
+}> = ({
+  hideCarouselNav = false,
+  lobbyViewportRef,
+  lobbyCasePopover,
+  onLobbyCasePopoverChange,
+}) => {
   const navigate = useNavigate();
-  const lobbyViewportRef = useRef<HTMLDivElement>(null);
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
   useEffect(() => {
@@ -105,7 +114,11 @@ const LobbyPage: React.FC<{
         measureRef={lobbyViewportRef}
       >
         <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
-          <LobbySceneHotspots viewportMeasureRef={lobbyViewportRef} />
+          <LobbySceneHotspots
+            viewportMeasureRef={lobbyViewportRef}
+            casePopover={lobbyCasePopover}
+            onCasePopoverChange={onLobbyCasePopoverChange}
+          />
         </div>
       </SceneCarouselViewportStage>
 
@@ -214,7 +227,10 @@ const LoungePage: React.FC<{
         backgroundSrc={FINAL_LOUNGE_BACKGROUND_SRC}
         measureRef={measureRef}
       >
-        <LoungeCompositeTvPlay measureRef={measureRef} />
+        <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
+          <LoungeSceneHotspots viewportMeasureRef={measureRef} />
+          <LoungeCompositeTvPlay measureRef={measureRef} />
+        </div>
       </SceneCarouselViewportStage>
 
       {!hideCarouselNav ? (
@@ -321,11 +337,14 @@ const LobbyApp: React.FC = () => {
   const carouselSlideCount = 2;
   const roomTransitionInProgressRef = useRef(false);
   const lobbyScrollRef = useRef<HTMLDivElement>(null);
+  const lobbyViewportRef = useRef<HTMLDivElement>(null);
   const loungeSlideMeasureRef = useRef<HTMLDivElement>(null);
 
   const visualIndexFromRoute = routePage;
 
   const [visualIndex, setVisualIndex] = useState(visualIndexFromRoute);
+  const [lobbyCasePopover, setLobbyCasePopover] = useState<LobbyCasePopoverId | null>(null);
+  const lobbyCasePopoverOpen = lobbyCasePopover !== null;
   const [roomTransitionOverlay, setRoomTransitionOverlay] = useState<LobbyLoungeTransitionDirection | null>(
     null,
   );
@@ -439,6 +458,7 @@ const LobbyApp: React.FC = () => {
         isTransitioning ||
         roomTransitionInProgressRef.current ||
         roomTransitionOverlay !== null ||
+        lobbyCasePopoverOpen ||
         pageIndex === routePage
       ) {
         return;
@@ -458,7 +478,7 @@ const LobbyApp: React.FC = () => {
 
       applyCarouselPage(pageIndex);
     },
-    [applyCarouselPage, isTransitioning, roomTransitionOverlay, routePage, transitionVideoEnabled]
+    [applyCarouselPage, isTransitioning, lobbyCasePopoverOpen, roomTransitionOverlay, routePage, transitionVideoEnabled]
   );
 
   const handlePrevious = useCallback(() => {
@@ -547,7 +567,12 @@ const LobbyApp: React.FC = () => {
           }}
         >
           <div style={{ flexShrink: 0 }}>
-            <LobbyPage hideCarouselNav={roomTransitionOverlay !== null} />
+            <LobbyPage
+              hideCarouselNav={roomTransitionOverlay !== null || lobbyCasePopoverOpen}
+              lobbyViewportRef={lobbyViewportRef}
+              lobbyCasePopover={lobbyCasePopover}
+              onLobbyCasePopoverChange={setLobbyCasePopover}
+            />
           </div>
           <div style={{ flexShrink: 0 }}>
             <LoungePage measureRef={loungeSlideMeasureRef} hideCarouselNav={roomTransitionOverlay !== null} />

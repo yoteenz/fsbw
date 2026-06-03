@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState, type RefObject } from 'react';
+import { useCallback, useEffect, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { LobbyCasePopoverId } from '../../constants/lobbyCasePopover';
 import {
   FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS,
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT,
@@ -36,12 +37,18 @@ type Props = {
   onNavigateNext?: () => void;
   /** {@link SceneCarouselViewportStage} — cover-map open prop overlays. */
   viewportMeasureRef: RefObject<HTMLElement | null>;
+  casePopover: LobbyCasePopoverId | null;
+  onCasePopoverChange: (id: LobbyCasePopoverId | null) => void;
 };
 
-export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMeasureRef }: Props) {
+export function LobbySceneHotspots({
+  onNavigateNext: _onNavigateNext,
+  viewportMeasureRef,
+  casePopover: lobbyCasePopover,
+  onCasePopoverChange: setLobbyCasePopover,
+}: Props) {
   const navigate = useNavigate();
-  const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
-  const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
+  const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), [setLobbyCasePopover]);
 
   useEffect(() => {
     for (const src of FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS) {

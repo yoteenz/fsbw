@@ -1,4 +1,4 @@
-import type { ReactNode, Ref } from 'react';
+import type { ReactNode, Ref, RefObject } from 'react';
 import {
   sceneCarouselViewportBackgroundStyle,
   sceneCarouselViewportStageStyle,
@@ -8,7 +8,7 @@ type Props = {
   backgroundSrc: string;
   /** Final LP composites use `center top` (default). */
   backgroundPosition?: string;
-  measureRef?: Ref<HTMLDivElement>;
+  measureRef?: RefObject<HTMLDivElement | null>;
   children?: ReactNode;
 };
 
@@ -20,7 +20,7 @@ export function SceneCarouselViewportStage({
   children,
 }: Props) {
   return (
-    <div ref={measureRef} style={sceneCarouselViewportStageStyle()}>
+    <div ref={measureRef as Ref<HTMLDivElement>} style={sceneCarouselViewportStageStyle()}>
       <div
         style={sceneCarouselViewportBackgroundStyle(backgroundSrc, {
           backgroundPosition,
