@@ -24060,3 +24060,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`docs/PSA_SETUP.md`**, **`motherboard/CORE.md`**
 
 **Conventions:** Founder bypass is **PSA chat only**, not lounge/cart gates. Re-tap **12 MONTH** on Rewards or visit Rewards once to push override to Supabase.
+
+---
+
+## 2026-06-03 — PSA personality + knowledge aligned with ChatGPT concierge spec
+
+**Context:** User shared ChatGPT PSA system prompt (luxury concierge personality, product/length/density advice, booking, orders, loyalty, affiliate, hair care). Asked if on par with existing PSA and to connect what’s missing.
+
+**Comparison:** PSA v1 already had tools (FAQ, products, nav) and basic tone; missing richer brand voice (Beautiful/Slayer/Love), expanded FAQ (loyalty, referral, affiliate, installation, cap size, returns detail), and explicit length/density/Build-a-Wig guidance. Still **navigate-only** for booking/orders (Phase 2 for live tools).
+
+**Changes:** `api/psa/chat.ts` — expanded `buildPsaInstructions()`; `api/_lib/psaKnowledge.ts` — +14 FAQ entries, referrals/affiliate/terms nav, Build-a-Wig context block; `src/constants/psaConfig.ts` welcome copy; `docs/PSA_SETUP.md` capability matrix.
+
+**Conventions:** Keep `psaKnowledge.ts` aligned with `brandFaqCopy.ts`; Phase 2 = cart/booking/order lookup tools.
