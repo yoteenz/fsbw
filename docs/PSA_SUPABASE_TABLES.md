@@ -9,6 +9,7 @@ Run migrations in **Supabase → SQL Editor** (in order when setting up fresh).
 | `20260603180000_priority_messages.sql` | **`priority_messages`** | Concierge + PSA `send_priority_message` inbox |
 | `20260604120000_security_profiles_orders_guard.sql` | *(trigger + RLS)* | Block client self-upgrade; orders write via webhook only |
 | `20260605120000_psa_message_usage.sql` | **`psa_message_usage`** | Tier-based PSA chat limits (daily + monthly counters) |
+| `20260606120000_psa_chat_threads.sql` | **`psa_threads`**, **`psa_messages`** | Cross-device PSA chat history |
 
 ### `priority_messages` columns
 
@@ -32,6 +33,17 @@ Run migrations in **Supabase → SQL Editor** (in order when setting up fresh).
 
 Enforced in `POST /api/psa/chat` via `psa_try_consume_message` RPC. Remaining allowance: `GET /api/psa/usage`.
 
+### Chat history (threads)
+
+| API | Purpose |
+|-----|---------|
+| `GET /api/psa/thread` | Latest thread + messages (or `?threadId=` for a past session) |
+| `GET /api/psa/threads` | List past sessions (newest first) |
+| `POST /api/psa/threads` | Start a new empty session (**NEW** in chat UI) |
+| `POST /api/psa/chat` | Saves each user + assistant turn; returns `threadId` |
+
+**Columns:** `psa_threads.last_openai_response_id` continues the OpenAI chain per session across devices.
+
 ## Already in project (non-PSA but PSA reads)
 
 | Table | PSA use |
@@ -45,9 +57,9 @@ Enforced in `POST /api/psa/chat` via `psa_try_consume_message` RPC. Remaining al
 
 | Table | Purpose |
 |-------|---------|
-| **`psa_threads`** | One row per member chat thread (`user_id`, `title`, `created_at`, `updated_at`) |
-| **`psa_messages`** | Messages (`thread_id`, `role` user/assistant, `content`, `openai_response_id`, `created_at`) |
 | **`psa_member_context`** | Optional snapshot JSON (tier, active orders, cart summary) refreshed each session |
+
+**Shipped:** `psa_threads` / `psa_messages` — see migration `20260606120000_psa_chat_threads.sql`.
 
 Example skeleton (not shipped yet):
 

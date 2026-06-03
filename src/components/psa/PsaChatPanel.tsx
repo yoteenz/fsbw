@@ -10,9 +10,18 @@ import type { PsaChatMessage } from './usePsaChat';
 type PsaChatPanelProps = {
   messages: PsaChatMessage[];
   isSending: boolean;
+  isLoadingHistory?: boolean;
   usageLabel?: string | null;
+  historyOpen?: boolean;
+  historyAvailable?: boolean;
+  threadList?: { id: string; title: string | null; updatedAt: string; preview: string | null }[];
+  activeThreadId?: string | null;
   onClose: () => void;
   onSend: (text: string) => Promise<{ premiumRequired?: boolean } | void>;
+  onNewChat?: () => void;
+  onOpenHistory?: () => void;
+  onCloseHistory?: () => void;
+  onSelectThread?: (threadId: string) => void;
   onInputFocusChange?: (focused: boolean) => void;
   onInputTextChange?: (hasText: boolean) => void;
 };
@@ -33,9 +42,18 @@ function extractPaths(text: string): string[] {
 export default function PsaChatPanel({
   messages,
   isSending,
+  isLoadingHistory = false,
   usageLabel,
+  historyOpen = false,
+  historyAvailable = true,
+  threadList = [],
+  activeThreadId = null,
   onClose,
   onSend,
+  onNewChat,
+  onOpenHistory,
+  onCloseHistory,
+  onSelectThread,
   onInputFocusChange,
   onInputTextChange,
 }: PsaChatPanelProps) {
@@ -75,12 +93,56 @@ export default function PsaChatPanel({
           <p className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</p>
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
-        <button type="button" className="psa-chat-close" onClick={onClose} aria-label="Close PSA">
-          ×
-        </button>
+        <div className="psa-chat-header-actions">
+          {historyAvailable && onOpenHistory ? (
+            <button
+              type="button"
+              className="psa-chat-header-btn"
+              onClick={historyOpen ? onCloseHistory : onOpenHistory}
+              aria-label={historyOpen ? 'Close chat history' : 'Open chat history'}
+            >
+              {historyOpen ? 'BACK' : 'HISTORY'}
+            </button>
+          ) : null}
+          {onNewChat ? (
+            <button type="button" className="psa-chat-header-btn" onClick={onNewChat} aria-label="Start new PSA chat">
+              NEW
+            </button>
+          ) : null}
+          <button type="button" className="psa-chat-close" onClick={onClose} aria-label="Close PSA">
+            ×
+          </button>
+        </div>
       </header>
 
+      {historyOpen ? (
+        <div className="psa-chat-history" aria-label="Past PSA chats">
+          {threadList.length === 0 ? (
+            <p className="psa-chat-history-empty">NO PAST CHATS YET</p>
+          ) : (
+            threadList.map((thread) => (
+              <button
+                key={thread.id}
+                type="button"
+                className={`psa-chat-history-item${thread.id === activeThreadId ? ' is-active' : ''}`}
+                onClick={() => onSelectThread?.(thread.id)}
+              >
+                <span className="psa-chat-history-item-title">
+                  {thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT'}
+                </span>
+                {thread.preview && thread.title ? (
+                  <span className="psa-chat-history-item-preview">{thread.preview}</span>
+                ) : null}
+              </button>
+            ))
+          )}
+        </div>
+      ) : (
+      <>
       <div className="psa-chat-messages" ref={scrollRef}>
+        {isLoadingHistory ? (
+          <div className="psa-chat-bubble psa-chat-bubble-system">LOADING YOUR CHAT…</div>
+        ) : null}
         {messages.map((msg) => {
           const paths = msg.role === 'assistant' ? extractPaths(msg.content) : [];
           return (
@@ -126,14 +188,16 @@ export default function PsaChatPanel({
           onBlur={() => onInputFocusChange?.(false)}
           onKeyDown={onInputKeyDown}
           placeholder="ASK PSA ANYTHING…"
-          disabled={isSending}
+          disabled={isSending || isLoadingHistory}
           autoComplete="off"
           enterKeyHint="send"
         />
-        <button className="psa-chat-send" type="submit" disabled={isSending || !input.trim()}>
+        <button className="psa-chat-send" type="submit" disabled={isSending || isLoadingHistory || !input.trim()}>
           SEND
         </button>
       </form>
+      </>
+      )}
     </div>
   );
 }

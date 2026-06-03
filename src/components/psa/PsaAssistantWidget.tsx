@@ -46,7 +46,23 @@ export default function PsaAssistantWidget() {
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const { messages, isSending, sendMessage, usage, setUsage } = usePsaChat(PSA_WELCOME_MESSAGE);
+  const {
+    messages,
+    isSending,
+    isLoadingHistory,
+    threadId,
+    threadList,
+    historyOpen,
+    historyAvailable,
+    sendMessage,
+    usage,
+    setUsage,
+    ensureHistoryLoaded,
+    startNewThread,
+    switchThread,
+    openHistory,
+    closeHistory,
+  } = usePsaChat(PSA_WELCOME_MESSAGE);
 
   useEffect(() => {
     const syncTheater = () => setLoungeTvTheater(isLoungeTvTheaterModeActive());
@@ -58,6 +74,11 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     if (loungeTvTheater) setIsOpen(false);
   }, [loungeTvTheater]);
+
+  useEffect(() => {
+    if (!isOpen || !isPremium) return;
+    void ensureHistoryLoaded();
+  }, [isOpen, isPremium, ensureHistoryLoaded]);
 
   useEffect(() => {
     if (!isOpen || !isPremium) return;
@@ -263,9 +284,18 @@ export default function PsaAssistantWidget() {
           <PsaChatPanel
             messages={messages}
             isSending={isSending}
+            isLoadingHistory={isLoadingHistory}
             usageLabel={usageLabel}
+            historyOpen={historyOpen}
+            historyAvailable={historyAvailable}
+            threadList={threadList}
+            activeThreadId={threadId}
             onClose={() => setIsOpen(false)}
             onSend={handleSend}
+            onNewChat={() => void startNewThread()}
+            onOpenHistory={() => void openHistory()}
+            onCloseHistory={closeHistory}
+            onSelectThread={(id) => void switchThread(id)}
             onInputFocusChange={setIsInputFocused}
             onInputTextChange={setInputHasText}
           />
