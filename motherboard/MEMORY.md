@@ -23160,6 +23160,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lounge play label, reverse transition, case overlays, TV shell +100px
+
+**Context:** User batch — (1) play → **PRESS PLAY** gray pulse, **+40px** down; (2) lounge→lobby transition **bounces** before start; (3) register/phone open PNGs too large + delayed; (4) TV menu shell **+60px** (40→100 total).
+
+**Fixes:**
+- **`LoungeCompositeTvPlay`** — pulsing **PRESS PLAY** (`#808080`, `lounge-tv-press-play-pulse`); **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 80`**.
+- **`useSceneCoverVideoPlayback`** — reverse uses **RAF step-back only** (no negative `playbackRate`); seek to end while hidden, then `onPlaying`; **`LobbyLoungeTransitionVideo`** drops native `poster` on `<video>`.
+- **Case overlays** — rects = **`FINAL_LOBBY_HIT_REGIONS.caseRegister` / `casePhone`**; preload **`FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS`** on lobby mount.
+- **`LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = 100`** (was 40).
+
+---
+
 ## 2026-06-02 — Lounge TV: no hand before Seedance open
 
 **Context:** Hand image visible before `video.mov` plays.
