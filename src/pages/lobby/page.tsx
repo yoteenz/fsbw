@@ -35,6 +35,12 @@ type SceneTransitionOverlayProps = {
   onComplete: () => void;
 };
 
+/** Lounge “lobby” back nav — readable on white curtain in composite art. */
+const LOUNGE_LOBBY_NAV_SHADOW_FILTER =
+  'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.32))';
+const LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
+  '0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35)';
+
 // Lobby Component
 const LobbyPage: React.FC<{
   roomTransitionOverlay?: SceneTransitionOverlayProps | null;
@@ -229,18 +235,21 @@ const LoungePage: React.FC<{
       </SceneCarouselViewportStage>
 
       {!hideCarouselNav ? (
-      <div style={{
-        position: 'absolute',
-        left: '20px',
-        top: 'calc(50vh - 5px)',
-        transform: 'translate(-17px, -50%)',
-        zIndex: 999999,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1px',
-        pointerEvents: 'auto'
-      }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: '20px',
+          top: 'calc(50vh - 5px)',
+          transform: 'translate(-17px, -50%)',
+          zIndex: 999999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '1px',
+          pointerEvents: 'auto',
+          filter: LOUNGE_LOBBY_NAV_SHADOW_FILTER,
+        }}
+      >
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -261,7 +270,7 @@ const LoungePage: React.FC<{
             opacity: 0.6,
             pointerEvents: 'auto',
             WebkitTapHighlightColor: 'transparent',
-            touchAction: 'manipulation'
+            touchAction: 'manipulation',
           }}
             onMouseEnter={(e) => {
               e.currentTarget.style.opacity = '0.8';
@@ -272,13 +281,12 @@ const LoungePage: React.FC<{
             e.currentTarget.style.transform = 'scale(1)';
           }}
         >
-          <svg 
-            width="27" 
-            height="19" 
-            viewBox="0 0 32 24" 
-            fill="none" 
+          <svg
+            width="27"
+            height="19"
+            viewBox="0 0 32 24"
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
           >
             <path 
               d="M18 18L12 12L18 6" 
@@ -298,17 +306,20 @@ const LoungePage: React.FC<{
             />
           </svg>
         </button>
-        <div style={{
-          fontFamily: '"Futura PT Medium"',
-          fontSize: '8px',
-          color: 'white',
-          opacity: 0.6,
-          letterSpacing: '1px',
-          textAlign: 'center',
-          width: '100%',
-          transform: 'translateX(3px)',
-          textTransform: 'uppercase'
-        }}>
+        <div
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            fontSize: '8px',
+            color: 'white',
+            opacity: 0.6,
+            letterSpacing: '1px',
+            textAlign: 'center',
+            width: '100%',
+            transform: 'translateX(3px)',
+            textTransform: 'uppercase',
+            textShadow: LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW,
+          }}
+        >
           lobby
         </div>
       </div>
