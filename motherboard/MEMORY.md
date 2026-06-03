@@ -23702,3 +23702,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Seedance transition still shifts **up ~2px** at play start then settles down; user asked to start clip **2px lower** without repeating the **40px** slide-background nudge (white strip / gap).
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** → **`lobbyLoungeTransitionCoverPosition()`** = **`center calc(0% + 2px)`** on transition **video** + **poster** only (`lobbyLoungeTransitionVideo.ts`, **`LobbyLoungeTransitionVideo`**). Lobby/lounge slide **`sceneCarouselCoverBackgroundPosition()`** stays **`center top`**. Tune **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX`** in constants if device QA needs more/less.
+
+---
+
+## 2026-06-02 — Lounge TV animation: align cover, shift up (red top strip)
+
+**Context:** TV open/close Seedance clip showed **red strip at top** (lounge slide peeking through letterbox gaps), similar to prior lobby transition letterbox issue.
+
+**Fix:** **`LoungeTvAnimationVideo`** — full-viewport **`cover`** (removed **`useLoungeTvAnimationLetterboxLayout`** top/bottom transparent bands + portrait frame). **`LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX = -2`** → **`loungeTvAnimationCoverPosition()`** = **`center calc(0% - 2px)`** on forward open only; reverse close stays **`contain`** + **`center center`**. Tune offset in **`loungeTvAnimationVideo.ts`**.
