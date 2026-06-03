@@ -181,7 +181,7 @@ function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
 
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
   ...lobbyBohemyLabelStyle,
-  textAlign: 'center',
+  textAlign: 'left',
   fontSize: `${LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX}px`,
 };
 
