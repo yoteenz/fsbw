@@ -11,9 +11,9 @@ import {
   LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
   LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
   LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE,
-  lobbyCasePropLayoutTransform,
 } from '../../constants/finalLobbyCasePropOverlays';
 import { FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
+import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import {
   LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
   LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX,
@@ -63,6 +63,17 @@ export function LobbySceneHotspots({
   const goToShopBundles = useCallback(() => navigate('/shop/bundles'), [navigate]);
   const goToShopUnits = useCallback(() => navigate('/shop/units'), [navigate]);
   const goToBooking = useCallback(() => navigate(BOOKING_PATHS.PREMIUM_APPOINTMENT), [navigate]);
+
+  const registerAnchorRect = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.caseRegister,
+    viewportMeasureRef,
+    LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
+  );
+  const phoneAnchorRect = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.casePhone,
+    viewportMeasureRef,
+    LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
+  );
 
   return (
     <>
@@ -127,11 +138,11 @@ export function LobbySceneHotspots({
         overlayScale={LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}
       />
 
+      {registerAnchorRect ? (
       <div
         style={{
-          ...rectToPercentStyle(FINAL_LOBBY_HIT_REGIONS.caseRegister),
+          ...rectToPercentStyle(registerAnchorRect),
           position: 'absolute',
-          transform: lobbyCasePropLayoutTransform(LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET),
           zIndex: lobbyCasePopover === 'register' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
         }}
       >
@@ -151,12 +162,13 @@ export function LobbySceneHotspots({
           <span style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }} aria-hidden />
         </LobbyCasePropPopover>
       </div>
+      ) : null}
 
+      {phoneAnchorRect ? (
       <div
         style={{
-          ...rectToPercentStyle(FINAL_LOBBY_HIT_REGIONS.casePhone),
+          ...rectToPercentStyle(phoneAnchorRect),
           position: 'absolute',
-          transform: lobbyCasePropLayoutTransform(LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET),
           zIndex: lobbyCasePopover === 'phone' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
         }}
       >
@@ -176,6 +188,7 @@ export function LobbySceneHotspots({
           <span style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }} aria-hidden />
         </LobbyCasePropPopover>
       </div>
+      ) : null}
 
     </>
   );

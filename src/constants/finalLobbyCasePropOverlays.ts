@@ -47,12 +47,16 @@ export function scaleLobbyCasePropOpenOverlayRect(
   };
 }
 
-/** Tandem nudge: open PNG + popover wrapper (register — up 30px, right 24px). */
+/**
+ * Cover-map nudge (screen px → container %) for register open PNG + popover anchor.
+ * Applied via {@link useSceneCoverHitRect} on {@link SceneCarouselViewportStage}.
+ */
 export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 24, y: -30 } as const;
 
-/** Tandem nudge: open PNG + popover wrapper (phone — up 32px, left 1px). */
+/** Cover-map nudge for phone open PNG + popover anchor. */
 export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -32 } as const;
 
+/** @deprecated Use {@link useSceneCoverHitRect} + {@link applyScreenOffsetToCoverRect} instead of CSS translate. */
 export function lobbyCasePropLayoutTransform(offset: { x: number; y: number }): string | undefined {
   if (!offset.x && !offset.y) return undefined;
   return `translate(${offset.x}px, ${offset.y}px)`;

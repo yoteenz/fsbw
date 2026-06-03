@@ -1,9 +1,6 @@
 import type { RefObject } from 'react';
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
-import {
-  lobbyCasePropLayoutTransform,
-  scaleLobbyCasePropOpenOverlayRect,
-} from '../../constants/finalLobbyCasePropOverlays';
+import { scaleLobbyCasePropOpenOverlayRect } from '../../constants/finalLobbyCasePropOverlays';
 import { LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX } from '../../constants/lobbyPaymentIcons';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { rectToPercentStyle } from './SceneHitRegion';
@@ -31,7 +28,7 @@ export function LobbyCasePropOpenArt({
   layoutOffset,
   overlayScale,
 }: Props) {
-  const mapped = useSceneCoverHitRect(imageRect, viewportMeasureRef);
+  const mapped = useSceneCoverHitRect(imageRect, viewportMeasureRef, layoutOffset);
   const displayRect = mapped ? scaleLobbyCasePropOpenOverlayRect(mapped, overlayScale) : null;
 
   if (!visible || !displayRect) return null;
@@ -53,7 +50,6 @@ export function LobbyCasePropOpenArt({
         pointerEvents: 'none',
         userSelect: 'none',
         opacity: 1,
-        transform: layoutOffset ? lobbyCasePropLayoutTransform(layoutOffset) : undefined,
       }}
     />
   );
