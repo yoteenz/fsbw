@@ -10,6 +10,7 @@ import {
   loungeTvAnimationPosterSrc,
   loungeTvAnimationVideoSrc,
 } from '../../constants/loungeTvAnimationVideo';
+import { useSceneCoverVideoPlayback, type SceneCoverVideoDirection } from '../../hooks/useSceneCoverVideoPlayback';
 
 function parkVideoAtReverseHandFrame(el: HTMLVideoElement): Promise<void> {
   const seek = (time: number) =>
@@ -46,7 +47,6 @@ function parkVideoAtReverseHandFrame(el: HTMLVideoElement): Promise<void> {
     await seek(t);
   });
 }
-import { useSceneCoverVideoPlayback, type SceneCoverVideoDirection } from '../../hooks/useSceneCoverVideoPlayback';
 
 type Props = {
   active: boolean;
@@ -68,7 +68,13 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
   }, [onComplete]);
 
   useEffect(() => {
-    if (!active) setFrameVisible(false);
+    if (!active) {
+      setFrameVisible(false);
+      return;
+    }
+    if (direction === 'reverse') {
+      setFrameVisible(true);
+    }
   }, [active, direction]);
 
   useEffect(() => {
