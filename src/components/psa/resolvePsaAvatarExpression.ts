@@ -45,7 +45,7 @@ export function resolvePsaAvatarExpression(input: ResolvePsaAvatarExpressionInpu
   if (input.showWelcomeWave && input.isChatOpen) return 'waving';
 
   if (input.isChatOpen && input.isInputFocused) {
-    return input.inputHasText ? 'listening-smiling' : 'listening';
+    return input.inputHasText ? 'thinking-smiling' : 'listening';
   }
 
   if (input.isChatOpen && last?.role === 'assistant') {
