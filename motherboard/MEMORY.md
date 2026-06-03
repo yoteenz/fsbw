@@ -23694,3 +23694,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why hidden:** **`LOBBY_SHELF_HIT_DEBUG_OVERLAY`** was **`false`** — overlays only with query param + sessionStorage. Easy to miss URL, wrong route (`/lobby/lounge` has no shelves), or stale deploy. Possible CSS: hit buttons used **`background: transparent`** shorthand conflicting with debug **`backgroundColor`**.
 
 **Fix:** **`LOBBY_SHELF_HIT_DEBUG_OVERLAY = true`** until regions are tuned (set **`false`** before ship). **`SceneHitRegion`** base style → **`backgroundColor: transparent`**. Debug shelf **`zIndex: 40`** (above nav 30). Query still supports **`sceneHitDebug=1|true|yes`**; **`?sceneHitDebug=0`** clears session override but constant stays on until set **`false`** in **`finalLobbySceneAssets.ts`**.
+
+---
+
+## 2026-06-02 — Lobby/lounge transition: +2px video anchor only (play-start bounce)
+
+**Context:** Seedance transition still shifts **up ~2px** at play start then settles down; user asked to start clip **2px lower** without repeating the **40px** slide-background nudge (white strip / gap).
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** → **`lobbyLoungeTransitionCoverPosition()`** = **`center calc(0% + 2px)`** on transition **video** + **poster** only (`lobbyLoungeTransitionVideo.ts`, **`LobbyLoungeTransitionVideo`**). Lobby/lounge slide **`sceneCarouselCoverBackgroundPosition()`** stays **`center top`**. Tune **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX`** in constants if device QA needs more/less.
