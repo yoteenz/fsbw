@@ -24254,3 +24254,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Member-facing PSA copy rules live in **`psaInstructions.ts`**; post-process safety net in **`formatPsaVoiceText`** (keep api + src copies in sync).
 
+---
+
+## 2026-06-03 — PSA hidden during lounge TV theater mode
+
+**Context:** User asked PSA to be off/hidden when lounge theater mode is active after **PRESS TO PLAY** on the TV.
+
+**Changes (commit `9ca38649`):**
+- **`src/utils/loungeTvTheaterMode.ts`** — module flag + **`loungeTvTheaterModeChanged`** window event.
+- **`LoungeTvOverlay.tsx`** — sets theater active while overlay is open or finishing close animation (`isOpen || visible`); clears on unmount.
+- **`PsaAssistantWidget.tsx`** — returns null when theater active; closes chat if open when theater starts.
+
+**Conventions:** Any full-screen lounge TV overlay should drive **`setLoungeTvTheaterMode`** so PSA and similar FABs stay hidden for the full open/close sequence.
+
