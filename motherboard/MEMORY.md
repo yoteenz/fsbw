@@ -24267,3 +24267,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Any full-screen lounge TV overlay should drive **`setLoungeTvTheaterMode`** so PSA and similar FABs stay hidden for the full open/close sequence.
 
+---
+
+## 2026-06-03 — PSA persistent chat history (cross-device threads)
+
+**Context:** User asked how to implement PSA storing past sessions instead of losing chat on refresh/device change.
+
+**Changes (commit `b68bad92`):**
+- **Migration `20260606120000_psa_chat_threads.sql`** — `psa_threads` + `psa_messages` (RLS read-own; writes via service role in API).
+- **`api/_lib/psaThreadStore.ts`** — create/list/load threads, append messages, store `last_openai_response_id`.
+- **`GET /api/psa/thread`**, **`GET/POST /api/psa/threads`** — load latest or specific session; list past chats; start new session.
+- **`POST /api/psa/chat`** — persists user + assistant turns; returns `threadId`; OpenAI chain from thread's stored response id.
+- **Client** — on chat open loads latest thread; **HISTORY** / **NEW** in panel header; `usePsaChat` + `psaApi` thread helpers.
+
+**User action:** Run **`20260606120000_psa_chat_threads.sql`** in Supabase SQL Editor (after prior PSA migrations).
+
+**Conventions:** One `psa_threads` row = one conversation; title auto-set from first user message; welcome message stays client-only when thread is empty.
+
