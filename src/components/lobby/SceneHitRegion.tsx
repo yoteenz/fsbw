@@ -13,6 +13,8 @@ type SceneHitRegionProps = {
   debugLabel?: string;
   /** Overrides default amber debug fill/border (per-shelf colors on lobby). */
   debugOverlayStyle?: React.CSSProperties;
+  /** QA only — shifts colored debug box (and its tap target while debug is on). */
+  debugOffsetY?: number;
 };
 
 const hitBaseStyle: React.CSSProperties = {
@@ -51,6 +53,7 @@ export function SceneHitRegion({
   debugOverlay = false,
   debugLabel,
   debugOverlayStyle,
+  debugOffsetY = 0,
 }: SceneHitRegionProps) {
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -79,6 +82,9 @@ export function SceneHitRegion({
         pointerEvents: disabled ? 'none' : 'auto',
         cursor: disabled ? 'default' : 'pointer',
         ...(debugOverlay ? { ...SCENE_HIT_DEBUG_OVERLAY_STYLE, ...debugOverlayStyle } : null),
+        ...(debugOverlay && debugOffsetY
+          ? { transform: `translateY(${debugOffsetY}px)` }
+          : null),
       }}
     >
       {debugOverlay && debugLabel ? (

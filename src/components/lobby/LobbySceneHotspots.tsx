@@ -168,6 +168,7 @@ export function LobbySceneHotspots({
             backgroundColor: 'rgba(235, 28, 36, 0.42)',
             border: '2px solid rgba(180, 20, 30, 0.95)',
           }}
+          debugOffsetY={20}
         />
       ) : null}
 
