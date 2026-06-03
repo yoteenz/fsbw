@@ -23792,3 +23792,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User requested three pixel tweaks: TV **content background** (end-still PNG only) **up 20px**; all **lobby mannequin shelf debug** squares **up 2px**; lobby→lounge **transition video** **up 2px** (scale stays **1**, only **`translateY`**).
 
 **Fix:** **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **60→40** in **`loungeTvAssets.ts`** (screen/menu offset **120** unchanged). Shelf debug Y: HD lace **15→13**, bundles **43→41**, custom units **72→70**. **`LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX`** **4→2** in **`lobbyLoungeTransitionVideo.ts`**.
+
+---
+
+## 2026-06-02 — HD lace debug +40px TV still, transition translateY to 0
+
+**Context:** User nudged **blue/cyan** (HD lace) shelf debug **up 1px**; TV content **background still only** **up 40px** more; transition video **`translateY` up 2px** again (from **2**).
+
+**Fix:** **`LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX`** **13→12**. **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **40→0** (screen **120** unchanged). **`LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX`** **2→0** (scale **1**).
