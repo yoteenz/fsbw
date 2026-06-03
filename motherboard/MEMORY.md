@@ -24284,3 +24284,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** One `psa_threads` row = one conversation; title auto-set from first user message; welcome message stays client-only when thread is empty.
 
+---
+
+## 2026-06-03 — PSA catalog pricing + empty-reply reliability
+
+**Context:** User approved implementing the highest-impact bundle: pricing in `search_products`, updated instructions, and empty-reply / invalid-response handling — to fix NOIR price questions and reduce "INVALID RESPONSE" errors.
+
+**Topics covered:** Prior chat covered PSA avatar transitions, uppercase chat styling, lounge theater hide, persistent chat history, and NOIR pricing diagnosis (catalog had no prices; instructions said PSA cannot price; empty model output caused 502).
+
+**Changes:**
+- **`api/_lib/psaCatalogPricing.ts`** — base USD prices synced with `resolveQuote.ts` (NOIR $740, BLANCO $820, waves $760, curls $780).
+- **`api/_lib/psaKnowledge.ts`** — `mapPsaProductForTool()` adds `startingPriceUsd`; FAQ `unit-base-pricing`; `buildPsaKnowledgeContext()` includes price lines.
+- **`api/_lib/psaInstructions.ts`** — three-lane rules (FS facts / hair education / other brands); pricing section; NOIR vs BLANCO comparison guidance.
+- **`api/psa/chat.ts`** — `search_products` returns prices; tool loop passes `instructions` + `tools` on continuation; `resolveAssistantReply()` nudge + `PSA_EMPTY_REPLY_FALLBACK` instead of 502 on empty output.
+- **`src/utils/psaApi.ts`** — `parsePsaJsonBody()` with timeout/HTML-aware messages; empty reply guard on client.
+- **`docs/PSA_SETUP.md`** — catalog pricing capability noted.
+
+**Conventions:** Keep `psaCatalogPricing.ts` in sync with `UNIT_BASE_USD_BY_NAME` in `resolveQuote.ts`. Always note customization changes totals when quoting base prices.
+
