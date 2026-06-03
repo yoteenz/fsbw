@@ -23378,3 +23378,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **PRESS TO PLAY fix:** Remove label **`pointer-events: none`**; raise play container **`zIndex`** to **20**. Transition preload **`video`** uses **`pointerEvents: 'none'`** so warm **`LobbyLoungeTransitionHost`** does not steal taps.
 
 **Transition bounce fix:** Replaced flex **`justify-content: center`** letterbox (symmetric spacers) with **`useLobbyLoungeTransitionLetterboxLayout()`** — top-anchored portrait frame, fixed **px** top/bottom transparent bands, **`LOBBY_LOUNGE_TRANSITION_LETTERBOX_BOUNCE_PAD_PX`** (16) split above/below frame to mask play settle. Tune pad in hook file.
+
+---
+
+## 2026-06-02 — Register/phone popover tandem offset retune
+
+**Context:** User asked smaller tandem nudges for open PNG + popover only.
+
+**Fix (`c560d02a`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -3, y: -3 }` (was −4/−12). **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 4, y: -4 }` (was 4/−12). Tune in **`finalLobbyCasePropOverlays.ts`**.
