@@ -217,7 +217,7 @@ function PaymentIconCell({
   icon: LobbyPaymentIcon;
   maxHeightPx: number;
   justifySelf?: React.CSSProperties['justifySelf'];
-  /** Register payment-plans row — tighten side gutters on a single logo (e.g. Affirm). */
+  /** Payment-plans row — per-logo margin nudge (e.g. pull Afterpay/Klarna toward Affirm). */
   cellMarginAdjust?: Pick<React.CSSProperties, 'marginLeft' | 'marginRight'>;
 }) {
   const tiltDeg =
@@ -267,14 +267,14 @@ function PaymentIconCell({
   );
 }
 
-/** Payment plans row only — pull Affirm 4px closer to Afterpay and Klarna. */
-const LOBBY_PAYMENT_PLANS_AFFIRM_CELL_MARGIN_ADJUST: Pick<
-  React.CSSProperties,
-  'marginLeft' | 'marginRight'
-> = {
-  marginLeft: -4,
-  marginRight: -4,
-};
+function paymentPlansIconCellMarginAdjust(
+  icon: LobbyPaymentIcon,
+): Pick<React.CSSProperties, 'marginLeft' | 'marginRight'> | undefined {
+  /** Outer logos already `justifySelf` toward center — nudge 4px into Affirm gutters. */
+  if (icon.id === 'afterpay') return { marginRight: -4 };
+  if (icon.id === 'klarna') return { marginLeft: -4 };
+  return undefined;
+}
 
 function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPopoverSection[] }) {
   return (
@@ -374,9 +374,7 @@ function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayo
         icons={layout.payOverTime}
         maxHeightPx={LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX}
         clusterOuterIconsToCenter
-        iconCellMarginAdjust={(icon) =>
-          icon.id === 'affirm' ? LOBBY_PAYMENT_PLANS_AFFIRM_CELL_MARGIN_ADJUST : undefined
-        }
+        iconCellMarginAdjust={paymentPlansIconCellMarginAdjust}
       />
     </div>
   );
