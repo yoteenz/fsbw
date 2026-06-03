@@ -23898,3 +23898,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Lounge TV screen −2%, up 10px
 
 **Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.99→0.97**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **150→140** (up 10px).
+
+---
+
+## 2026-06-02 — Lounge TV close: no black flash before reverse
+
+**Context:** Tapping close X flashed **black** before reverse hand-press clip.
+
+**Why:** Fullscreen scrim **`background`** transitioned **#000 → transparent** over **`ANIM_MS` (1400ms)**; shell unmounted exposing black viewport; reverse **`<video>`** stayed **`opacity: 0`** until first playback tick.
+
+**Fix:** Scrim **`transition: none`** with fullscreen shell; **`backdropTransparent`** on shell during **`closing`** (hide frame still + black screen inset); reverse sets **`frameVisible`** immediately when **`active && direction === 'reverse'`**.
