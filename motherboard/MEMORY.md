@@ -23726,3 +23726,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to reduce mannequin shelf **debug squares** height by **60%** and width by **30%** (all three shelves).
 
 **Fix:** **`LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7`**, **`LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE = 0.4`** — **`SceneHitRegion`** **`debugScale`** + **`transformOrigin: center top`** when debug on. Applied to HD lace, bundles, custom units (custom units keeps **`debugOffsetY={20}`**).
+
+---
+
+## 2026-06-02 — Scene transition pre-play jump: slide PNG poster removed
+
+**Context:** User confirmed drop-then-rise before Seedance plays — caused by **placeholder poster** (lobby/lounge slide PNG) positioned lower than video frame 0, then **`notifyPlaying()`** swap.
+
+**Why:** Poster **928×1680** + video **1080×1920** both `cover` + same `object-position` → different crop; poster reads lower. **`notifyPlaying()`** runs after **`HAVE_CURRENT_DATA`** (loaded), before **`play()`** — removes poster, fades video in.
+
+**Fix:** **`transitionPosterSrc()`** returns **`null`** — transparent overlay lets **carousel slide** show through until video frame 0 (matches slide geometry). No slide PNG layer.
