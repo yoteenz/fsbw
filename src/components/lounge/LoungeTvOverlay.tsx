@@ -804,8 +804,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const showLegacyChoreography = !useSeedanceClip;
   const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
   const showSeedanceMenuShell = useSeedanceClip && seedancePhase === 'ready';
-  const showSeedanceVideo =
-    useSeedanceClip && (isOpen || seedancePhase !== 'idle');
+  /** Only while clip plays — unmount at `ready` so black full-screen host does not cover menu shell. */
+  const showSeedanceVideo = useSeedanceClip && (seedanceOpening || seedanceClosing);
   const useFullscreenShell = useSeedanceClip && showTvChrome;
 
   const handMounted =
