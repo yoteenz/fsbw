@@ -47,14 +47,7 @@ export function LoungeTvFullscreenShell({
 
   const frameStillOffsetX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX;
   const frameStillOffsetY = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX;
-  const screenOffsetY = LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX;
-  const screenScale = LOUNGE_TV_CONTENT_SCREEN_SCALE;
-  const screenTransform = (() => {
-    const parts: string[] = [];
-    if (screenOffsetY) parts.push(`translateY(${screenOffsetY}px)`);
-    if (screenScale !== 1) parts.push(`scale(${screenScale})`);
-    return parts.length ? parts.join(' ') : undefined;
-  })();
+  const screenTransform = `translateY(${LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX}px) scale(${LOUNGE_TV_CONTENT_SCREEN_SCALE})`;
   const frameStillTransform =
     frameStillOffsetX || frameStillOffsetY
       ? `translate(${frameStillOffsetX}px, ${frameStillOffsetY}px)`
@@ -94,7 +87,7 @@ export function LoungeTvFullscreenShell({
           zIndex: 1,
           ...screenStyle,
           transform: screenTransform,
-          transformOrigin: screenScale !== 1 ? 'center top' : undefined,
+          transformOrigin: 'center top',
         }}
       >
         {children}
