@@ -23118,6 +23118,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lounge play nudge: why 16→10 / 60→40 looked unchanged
+
+**Context:** User saw no visual change after retuning play offsets 16/60 → 10/40.
+
+**Causes:** (1) Gray play triangle is **baked into `final-lounge.png`** — only the tap target + masked overlay move, not the background art. (2) **10/40 replaced 16/60** (6px left, 20px up), not an extra nudge — easy to miss. (3) **`transform: translate` on a button inside the carousel’s transformed slide** was unreliable for QA.
+
+**Fix:** **`applyScreenOffsetToCoverRect()`** — fold px offsets into the cover-mapped `%` rect; **`LoungeCompositeTvPlay`** drops `transform` nudge. Tune **`FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER`** for large alignment shifts; use screen offsets for small px tweaks.
+
+---
+
 ## 2026-06-02 — Lobby/lounge transition up 2px
 
 **Context:** Transition still slightly low vs composite; user asked **2px up** with no overrides.
