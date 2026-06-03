@@ -11,6 +11,7 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 const INPUT = path.join(ROOT, 'public/assets/lounge-tv-animation-source-letterbox.mov');
 const OUTPUT_MOV = path.join(ROOT, 'public/assets/lounge-tv-animation.mov');
 const OUTPUT_MP4 = path.join(ROOT, 'public/assets/lounge-tv-animation.mp4');
+const OUTPUT_FULL_MP4 = path.join(ROOT, 'public/assets/lounge-tv-animation-full.mp4');
 
 /** Pixels cropped from top/bottom of 720×1280 Seedance export (tune after QA). */
 const CROP_TOP_PX = 200;
@@ -33,3 +34,22 @@ for (const output of [OUTPUT_MOV, OUTPUT_MP4]) {
   );
   console.log('Wrote', output, `(${crop})`);
 }
+
+execFileSync(
+  'ffmpeg',
+  [
+    '-y',
+    '-i',
+    source,
+    '-c:v',
+    'libx264',
+    '-pix_fmt',
+    'yuv420p',
+    '-an',
+    '-movflags',
+    '+faststart',
+    OUTPUT_FULL_MP4,
+  ],
+  { stdio: 'inherit' },
+);
+console.log('Wrote', OUTPUT_FULL_MP4, '(full 720×1280, no crop)');

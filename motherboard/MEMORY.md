@@ -23453,6 +23453,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lounge TV animation: full frame + transparent letterbox (not zoomed crop)
+
+**Context:** PRESS TO PLAY TV clip still looked zoomed (`object-fit: cover` + **`LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE` 1.08** + cropped **720×880** MP4 only) — edges clipped; user wanted original full-frame playback + transparent top/bottom masks like lobby/lounge transition.
+
+**Fix:** **`LoungeTvAnimationVideo`** — top-anchored portrait frame (**720×1280**), **`object-fit: contain`**, transparent host + **`useLoungeTvAnimationLetterboxLayout()`** bands. Primary **`lounge-tv-animation-full.mp4`** + **`lounge-tv-animation-source-letterbox.mov`**; removed cropped MP4 from `<source>`. **`LOUNGE_TV_ANIMATION_VIDEO_VERSION`** = **`final-lp-video-full-letterbox-v3`**. Bake script also writes **`lounge-tv-animation-full.mp4`** (no crop).
+
+---
+
 ## 2026-06-02 — Phone popover down 6px
 
 **Fix (`4eaf2a32`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -30 }` (down 6px from −36).

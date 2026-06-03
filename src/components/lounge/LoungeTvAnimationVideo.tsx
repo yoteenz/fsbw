@@ -3,10 +3,17 @@ import {
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
   LOUNGE_TV_ANIMATION_VIDEO_SRC,
   LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV,
+  loungeTvAnimationFrameStyle,
+  loungeTvAnimationFullBleedPosterStyle,
+  loungeTvAnimationLetterboxBottomBandStyle,
+  loungeTvAnimationLetterboxShellStyle,
+  loungeTvAnimationLetterboxTopBandStyle,
   loungeTvAnimationMediaLayerStyle,
+  loungeTvAnimationPosterInFrameStyle,
   loungeTvAnimationPosterSrc,
   loungeTvAnimationVideoSrc,
 } from '../../constants/loungeTvAnimationVideo';
+import { useLoungeTvAnimationLetterboxLayout } from '../../hooks/useLoungeTvAnimationLetterboxLayout';
 import { useSceneCoverVideoPlayback, type SceneCoverVideoDirection } from '../../hooks/useSceneCoverVideoPlayback';
 
 type Props = {
@@ -15,13 +22,14 @@ type Props = {
   onComplete: () => void;
 };
 
-/** Full-screen TV open/close Seedance clip (`Final LP/video.mov`). */
+/** Full-screen TV open/close Seedance clip — full frame + transparent letterbox bands. */
 export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
   const src = loungeTvAnimationVideoSrc();
-  /** Lounge composite on open; black on reverse (end-still has hand — never use as pre-roll). */
   const poster = loungeTvAnimationPosterSrc(direction);
+  const letterbox = useLoungeTvAnimationLetterboxLayout();
+  const showPoster = !frameVisible && poster;
 
   const finish = useCallback(() => {
     setFrameVisible(false);
@@ -58,37 +66,36 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         zIndex: 120,
         overflow: 'hidden',
         pointerEvents: 'none',
-        backgroundColor: '#000000',
+        backgroundColor: 'transparent',
       }}
     >
-      {!frameVisible && poster ? (
-        <div
-          aria-hidden
-          style={{
-            ...loungeTvAnimationMediaLayerStyle(),
-            backgroundImage: `url(${poster})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
-            backgroundRepeat: 'no-repeat',
-          }}
-        />
-      ) : null}
-      <video
-        ref={videoRef}
-        playsInline
-        muted
-        preload="auto"
-        poster={poster ?? undefined}
-        onError={finish}
-        style={{
-          ...loungeTvAnimationMediaLayerStyle(),
-          opacity: frameVisible ? 1 : 0,
-          transition: 'opacity 60ms linear',
-        }}
-      >
-        <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />
-        <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV} type="video/quicktime" />
-      </video>
+      <div style={loungeTvAnimationLetterboxShellStyle()}>
+        {showPoster ? (
+          <div aria-hidden style={loungeTvAnimationFullBleedPosterStyle(poster)} />
+        ) : null}
+        <div aria-hidden style={loungeTvAnimationLetterboxTopBandStyle(letterbox.topBandPx)} />
+        <div style={loungeTvAnimationFrameStyle(letterbox)}>
+          {showPoster ? (
+            <div aria-hidden style={loungeTvAnimationPosterInFrameStyle(poster)} />
+          ) : null}
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            preload="auto"
+            onError={finish}
+            style={{
+              ...loungeTvAnimationMediaLayerStyle(),
+              opacity: frameVisible ? 1 : 0,
+              transition: frameVisible ? 'opacity 60ms linear' : 'none',
+            }}
+          >
+            <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />
+            <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV} type="video/quicktime" />
+          </video>
+        </div>
+        <div aria-hidden style={loungeTvAnimationLetterboxBottomBandStyle(letterbox.bottomBandPx)} />
+      </div>
     </div>
   );
 }
