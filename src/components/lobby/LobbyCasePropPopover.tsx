@@ -16,7 +16,7 @@ function lobbyPopoverPx(px: number): number {
   return Math.round(px * LOBBY_CASE_POPOVER_SCALE);
 }
 
-const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 2;
+const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 3;
 /** Payment popover section labels only — 2px smaller than contact Bohemy headers. */
 const LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX = LOBBY_POPOVER_BOHEMY_FONT_PX - 2;
 const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
