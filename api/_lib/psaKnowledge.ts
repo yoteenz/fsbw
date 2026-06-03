@@ -28,12 +28,15 @@ export const PSA_NAV_LINKS: PsaNavLink[] = [
   { label: 'CONCIERGE', path: '/account/concierge', description: 'Priority messages, special offers, Slay Challenge, and member perks.' },
   { label: 'REWARDS / MEMBERSHIP', path: '/account/rewards', description: 'Premium subscription chart and member rewards.' },
   { label: 'ORDERS', path: '/orders', description: 'Active and past order tracking.' },
+  { label: 'REFERRALS', path: '/account/referrals', description: 'Referral code, digital cash rewards, and share-with-friends perks.' },
+  { label: 'AFFILIATE', path: '/account/affiliate', description: 'Affiliate content submissions and community rewards for points.' },
   { label: 'BOOK CONSULTATION', path: '/booking/consultation', description: 'Standard consultation booking.' },
   { label: 'BOOK APPOINTMENT', path: '/booking/appointment', description: 'Hair install / appointment booking.' },
   { label: 'PREMIUM CONSULTATION', path: '/booking/premium/consultation', description: 'Premium-tier consult (premium members).' },
   { label: 'PREMIUM APPOINTMENT', path: '/booking/premium/appointment', description: 'Premium-tier appointment (premium members).' },
   { label: 'VIP LOUNGE', path: '/lobby/lounge', description: 'Members-only lounge experience.' },
   { label: 'FAQ', path: '/brand/faq', description: 'Full FAQ and ask-a-question form.' },
+  { label: 'TERMS OF SERVICE', path: '/brand/terms', description: 'Returns, refunds, and full policy terms.' },
   { label: 'CONTACT', path: '/brand/contact', description: 'Brand contact form.' },
   { label: 'GIFT CARD', path: '/tools/gift-card', description: 'Purchase a gift card.' },
 ];
@@ -169,6 +172,96 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     answer:
       'Premium members (6- and 12-month tiers per rewards chart) can send priority messages from Account → Concierge. Our team responds asynchronously — PSA can help with instant answers; Concierge handles human follow-up.',
   },
+  {
+    id: 'shed-tangle',
+    question: 'DOES THE HAIR SHED OR TANGLE?',
+    answer:
+      'Minimal shedding is normal with extensions and wigs, especially after customization. Proper maintenance, brushing technique, and nighttime care reduce tangling and extend hair life.',
+  },
+  {
+    id: 'bundle-count',
+    question: 'HOW MANY BUNDLES DO I NEED FOR A FULL INSTALL?',
+    answer:
+      'Depends on desired fullness and length. Typical guide: 12"–18" = 2–3 bundles; 20"–26" = 3–4 bundles; 28"+ = 4 or more. For units, use Build-a-Wig to set length and density on your chosen texture.',
+  },
+  {
+    id: 'beginner-friendly',
+    question: 'ARE YOUR WIGS BEGINNER FRIENDLY?',
+    answer:
+      'Yes — many units offer beginner-friendly customization options to make installation easier for everyday wear. Ask about pre-plucked hairlines, lace options, and cap size in Build-a-Wig or book a consult.',
+  },
+  {
+    id: 'pre-plucked',
+    question: 'DO YOUR WIGS COME PRE-PLUCKED OR CUSTOMIZED?',
+    answer:
+      'Customization varies by unit. Options include pre-plucking, bleached knots, styling, color, layering, and other upgrades at checkout or through Build-a-Wig.',
+  },
+  {
+    id: 'cap-size',
+    question: 'HOW DO I CHOOSE THE CORRECT WIG CAP SIZE?',
+    answer:
+      'Measure head circumference before ordering. Use the Build-a-Wig cap size step or product page cap options. When in doubt, book a consultation or contact support before purchasing.',
+  },
+  {
+    id: 'custom-color-style',
+    question: 'CAN I REQUEST A CUSTOM COLOR OR STYLE?',
+    answer:
+      'Yes — customization services personalize your unit. Availability depends on request complexity and production volume. Build-a-Wig color and styling steps show live options for premium members on select units.',
+  },
+  {
+    id: 'length-density',
+    question: 'HOW DO I CHOOSE LENGTH AND DENSITY?',
+    answer:
+      'In Build-a-Wig, pick your unit (texture), then set length, density, lace, hairline, color, and styling. Straight: NOIR or BLANCO. Wavy: SOFT WAVE or BEACH WAVE. Curly: SOFT CURL or OCEAN CURL. Higher density = fuller look; longer lengths may need higher density for balance.',
+  },
+  {
+    id: 'installation-care',
+    question: 'INSTALLATION AND MAINTENANCE TIPS?',
+    answer:
+      'Use a licensed professional for install and chemical services. Store on a wig stand, detangle gently from ends up, minimize heat, and follow night-care routines. Book an appointment at /booking/appointment for pro install; see FAQ for maintenance and longevity.',
+  },
+  {
+    id: 'loyalty',
+    question: 'HOW DOES THE LOYALTY REWARDS PROGRAM WORK?',
+    answer:
+      'Earn loyalty points through purchases, product reviews, referrals, social engagement, and promotions. Redeem toward discounts, perks, free gifts, and savings. View points and rewards at Account → Rewards.',
+  },
+  {
+    id: 'referral',
+    question: 'HOW DOES THE REFERRAL PROGRAM WORK?',
+    answer:
+      'After your first purchase, get a personalized referral code at Account → Referrals. When someone uses it on their first order, they get $20 off and you earn digital cash once their order is confirmed.',
+  },
+  {
+    id: 'affiliate',
+    question: 'HOW DOES THE AFFILIATE PROGRAM WORK?',
+    answer:
+      'Share your referral code and tag the brand on social to earn points and digital cash. Submit affiliate content for review at Account → Affiliate. Referrals and affiliate perks stack with loyalty rewards.',
+  },
+  {
+    id: 'member-perks',
+    question: 'DO YOU OFFER EXCLUSIVE PERKS FOR MEMBERS?',
+    answer:
+      'Yes — early drops, giveaways, promotional offers, loyalty rewards, exclusive discounts, and VIP community perks. Premium members also get lounge access, priority booking, and tier-specific benefits on Account → Rewards.',
+  },
+  {
+    id: 'returns-exchanges',
+    question: 'DO YOU ACCEPT RETURNS OR EXCHANGES?',
+    answer:
+      'Due to bespoke customization and hygiene standards, all sales are final — no refunds, returns, or exchanges. See /brand/terms. For wrong or damaged items, contact support within 48 hours with photos and order number.',
+  },
+  {
+    id: 'wrong-item',
+    question: 'WHAT IF I RECEIVE THE WRONG ITEM?',
+    answer:
+      'Contact customer support within 48 hours of delivery with clear photos and your order number. We investigate and, when appropriate, correct the shipment or issue store credit if the item is out of stock.',
+  },
+  {
+    id: 'contact-support',
+    question: 'HOW CAN I CONTACT CUSTOMER SUPPORT?',
+    answer:
+      'Use /brand/contact or Account → Concierge priority messages (6mo+ premium). Allow up to 72 hours for a response. Business hours: 10am–6pm CST weekdays, excluding major U.S. holidays.',
+  },
 ];
 
 function normalizeQuery(q: string): string {
@@ -241,5 +334,10 @@ export function searchPsaNavigation(query: string, limit = 5): PsaNavLink[] {
 export function buildPsaKnowledgeContext(): string {
   const products = PSA_PRODUCTS.map((p) => `- ${p.name} (${p.texture}): PDP ${p.path}, Build-a-Wig ${p.buildAWigPath}. ${p.summary}`).join('\n');
   const nav = PSA_NAV_LINKS.map((l) => `- ${l.label}: ${l.path} — ${l.description}`).join('\n');
-  return `## UNIT CATALOG\n${products}\n\n## SITE NAVIGATION\n${nav}`;
+  const customization = `## BUILD-A-WIG (LENGTH, TEXTURE, DENSITY)
+- Flow: /build-a-wig → pick unit → length → density → lace → hairline → color → styling → add-ons → cap size.
+- Texture guide: straight (NOIR, BLANCO), wavy (SOFT WAVE, BEACH WAVE), curly (SOFT CURL, OCEAN CURL).
+- Length/density: longer lengths often pair with higher density for fullness; use Build-a-Wig steps — PSA cannot price or save a build in v1.
+- Premium-only steps (live color preview, premium lounge options) require active premium membership.`;
+  return `## UNIT CATALOG\n${products}\n\n${customization}\n\n## SITE NAVIGATION\n${nav}`;
 }

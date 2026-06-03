@@ -1,24 +1,22 @@
-import { putOrders, patchProfile, getAccessToken } from './api';
+import { patchProfile, getAccessToken } from './api';
 import { isSupabaseConfigured } from './supabase';
 import { syncProfileFromApi } from './syncFromApi';
 
 /**
- * Mirror `userOrders_*` to the server after checkout (and optionally persist first-purchase on profile).
+ * After checkout: profile flags only. Orders are written by Stripe webhook (service role).
  */
 export async function pushLocalUserOrdersAfterCheckout(
-  userOrdersKey: string,
-  opts?: { markFirstPurchaseOnProfile?: boolean }
+  _userOrdersKey: string,
+  opts?: { markFirstPurchaseOnProfile?: boolean; stripePaymentIntentId?: string }
 ): Promise<void> {
   if (!isSupabaseConfigured()) return;
   if (!(await getAccessToken())) return;
   try {
-    const raw = localStorage.getItem(userOrdersKey);
-    const parsed = raw ? JSON.parse(raw) : { activeOrders: [], pastOrders: [] };
-    const activeOrders = Array.isArray(parsed.activeOrders) ? parsed.activeOrders : [];
-    const pastOrders = Array.isArray(parsed.pastOrders) ? parsed.pastOrders : [];
-    await putOrders(activeOrders, pastOrders);
-    if (opts?.markFirstPurchaseOnProfile) {
+    if (opts?.markFirstPurchaseOnProfile && !opts?.stripePaymentIntentId) {
       await patchProfile({ hasMadeFirstPurchase: true });
+    }
+    if (opts?.stripePaymentIntentId) {
+      // Webhook appends server order; refresh client from GET /api/orders on next sync.
     }
     await syncProfileFromApi().catch(() => {});
   } catch {

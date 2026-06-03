@@ -24023,3 +24023,190 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix:** Full-viewport media shell (same box as **`sceneCarouselViewportStageStyle`**): video/poster **`contain`** + **`center top`** on **`inset: 0`**, no top/bottom transparent bands or nested frame. Black letterbox (**`SCENE_CAROUSEL_LETTERBOX_BG`**) on the media shell only after **`frameVisible`** (carousel still shows through before first decoded frame). Offset default **0**; **`lobbyLoungeTransitionCoverPosition()`** defers to **`sceneCarouselCoverBackgroundPosition()`** when offset is 0.
 
 **Files:** `lobbyLoungeTransitionVideo.ts`, `LobbyLoungeTransitionVideo.tsx`, `useLobbyLoungeTransitionLetterboxLayout.ts` (deprecated note only). Pushed **`master`** + **`preview/mobile`** (`7e2a7a4f`).
+
+---
+
+## 2026-06-02 — Scene-lock lobby↔lounge transition + lounge TV to background viewport
+
+**Context:** User asked to lock scene transition animation and lounge TV Seedance/content to the lobby/lounge background image (like register/phone case props) so responsive resize keeps overlays aligned with the composite art.
+
+**Approach:** Same coordinate system as **`useSceneCoverHitRect`** — portals into **`SceneCarouselViewportStage`** (`absolute` + `inset: 0`, not `position: fixed` on `document.body`).
+
+**Changes:**
+- **`SceneViewportPortal`**, **`sceneCarouselViewportOverlayRootStyle`**, **`useSceneCarouselMeasureBox`**, **`sceneCoverContainerRect.ts`**
+- **`useCoverMappedLayout`** — optional `measureRef` for TV menu glass mapping
+- **Transition:** hosts inside lobby viewport (forward + warm preload) and lounge viewport (reverse only); **`LobbyLoungeTransitionHost`** `absolute` inside portal
+- **Lounge TV:** **`LoungeTvOverlay`** rendered via portal on lounge stage; animation, fullscreen shell, curtains, scrim, remote hand use `absolute`; grow origin rect scene-relative; frame sizing from measure box
+
+**Files:** `lobby/page.tsx`, `LobbyLoungeTransitionVideo.tsx`, `LoungeTvOverlay.tsx`, `LoungeCompositeTvPlay.tsx`, `LoungeTvAnimationVideo.tsx`, `LoungeTvFullscreenShell.tsx`, `LoungeTvRemoteHand.tsx`, `useCoverMappedLayout.ts`, `sceneCarouselBackground.ts`. Pushed **`master`** + **`preview/mobile`** (`5a1df866`).
+
+---
+
+## 2026-06-03 — PSA full chat + golden-models / golden-prompts motherboard folders
+
+**Context (entire chat arc):** User planned **PSA (Personal Slay Assistant)** — premium holographic chat FAB; compared ChatGPT (GPT-5.5 Responses API, Three.js) vs stack-native approach; scaffolded PSA v1 (OpenAI chat API, 11 avatar expressions, premium gate); fixed sign-in JWT/premium server checks; merged avatar assets preview/mobile → master; clarified **Ideogram on Fal** already removed backgrounds (no green screen, no flatten script).
+
+**Golden model notes (product owner):**
+- **NBP** (`nano-banana-pro`) — best for mannequins, people, **text accuracy**
+- **GPT Image 2** (`gpt-image-2`) — best for **detailed scenes**
+- **Ideogram** (on Fal) — best for **background removal** (PSA avatars confirmed best so far)
+
+**Changes:**
+- **`motherboard/golden-models/`** — README + `nbp-nano-banana-pro.md`, `gpt-image-2.md`, `ideogram.md`
+- **`motherboard/golden-prompts/`** — README + PSA likeness (NBP), bg removal (Ideogram), expressions (NBP)
+- **`motherboard/README.md`**, **`motherboard/CORE.md`** — index golden folders; Fal defaults
+- **`docs/PSA_SETUP.md`** — point to golden prompts/models; skip flatten for Ideogram PNGs
+- PSA code/docs from earlier in chat: `api/psa/chat.ts`, `src/components/psa/*`, transparent avatar restore (`PSA_AVATAR_ASSET_VERSION` v5), `psaApi.ts` session refresh
+
+**Conventions:** Add new winning models/prompts to **`golden-models/`** / **`golden-prompts/`** when confirmed; do not run **`psa-flatten-avatar-backgrounds.mjs`** on true-alpha Ideogram exports.
+
+---
+
+## 2026-06-03 — PSA premium mismatch fix (admin toggle → Supabase + founder bypass)
+
+**Context (entire chat):** PSA v1 shipped; user hit “upgrade subscription” despite premium UI after sign-out/in. Explained local vs Supabase premium checks (FAB vs `/api/psa/chat`). User asked for **both** fixes: admin subscription toggle sync to Supabase **and** founder PSA server bypass.
+
+**Root cause:** Rewards **STANDARD / 3 / 6 / 12 MONTH** admin toggles wrote only `localStorage.adminSubscriptionOverride`; PSA server reads Supabase `profiles.membership_type` / `subscription_tier`.
+
+**Changes:**
+- **`src/utils/adminSubscriptionOverrideSync.ts`** — `syncAdminSubscriptionOverrideToSupabase()` PATCHes profile + updates `currentUser`
+- **`src/pages/account/membership/page.tsx`** — toggle handlers call sync; one-time per-session sync when founder override already set
+- **`api/_lib/psaPremiumCheck.ts`** — `isFounderPsaPremiumBypass()` for `kateenaarmstrong@gmail.com` (PSA only)
+- **`api/psa/chat.ts`** — pass user email to premium check
+- **`docs/PSA_SETUP.md`**, **`motherboard/CORE.md`**
+
+**Conventions:** Founder bypass is **PSA chat only**, not lounge/cart gates. Re-tap **12 MONTH** on Rewards or visit Rewards once to push override to Supabase.
+
+---
+
+## 2026-06-03 — PSA personality + knowledge aligned with ChatGPT concierge spec
+
+**Context:** User shared ChatGPT PSA system prompt (luxury concierge personality, product/length/density advice, booking, orders, loyalty, affiliate, hair care). Asked if on par with existing PSA and to connect what’s missing.
+
+**Comparison:** PSA v1 already had tools (FAQ, products, nav) and basic tone; missing richer brand voice (Beautiful/Slayer/Love), expanded FAQ (loyalty, referral, affiliate, installation, cap size, returns detail), and explicit length/density/Build-a-Wig guidance. Still **navigate-only** for booking/orders (Phase 2 for live tools).
+
+**Changes:** `api/psa/chat.ts` — expanded `buildPsaInstructions()`; `api/_lib/psaKnowledge.ts` — +14 FAQ entries, referrals/affiliate/terms nav, Build-a-Wig context block; `src/constants/psaConfig.ts` welcome copy; `docs/PSA_SETUP.md` capability matrix.
+
+**Conventions:** Keep `psaKnowledge.ts` aligned with `brandFaqCopy.ts`; Phase 2 = cart/booking/order lookup tools.
+
+---
+
+## 2026-06-03 — PSA founder clone voice (not customer support)
+
+**Context:** User shared ChatGPT insight: PSA must sound like the **Frontal Slayer founder**, not a generic help desk — four pillars (luxury concierge, hair bestie, educator, no-gatekeeping), trust over sales, honest upselling, conversational patterns. Visual = holographic founder embodiment (avatar art separate).
+
+**Changes:** **`api/_lib/psaInstructions.ts`** — full founder personality framework; **`api/psa/chat.ts`** imports it; **`src/constants/psaConfig.ts`** welcome matches greeting energy; **`motherboard/golden-prompts/psa-founder-voice.md`**; **`motherboard/CORE.md`**, **`docs/PSA_SETUP.md`**, golden-prompts README.
+
+**Conventions:** Map colloquial “body wave” → BEACH WAVE / SOFT WAVE; never invent off-catalog textures; edit personality in `psaInstructions.ts`.
+
+---
+
+## 2026-06-03 — Full-site QA simulation (standard + premium) + security audit
+
+**Context:** User asked to simulate standard and premium users, exercise all features (shop, BAW, cart, checkout, booking, account, concierge, lounge, PSA), place an order, and identify bugs and security flaws.
+
+**Method:** Live probes against `https://fsbw.vercel.app` (unauthenticated + public API calls), codebase review of auth gates, checkout, profile/orders APIs, PSA, concierge, premium gating. No Playwright/E2E suite exists in repo.
+
+**Critical security (fix first):**
+1. **`POST /api/build-a-wig-unit-image`** — **no auth**; confirmed live Fal generation (~60s, returns `imageUrl`). Anyone can burn **FAL_KEY** budget (DoS/cost abuse).
+2. **Product checkout** — **`CONFIRM ORDER`** does **not** call `createProductPaymentIntent` / Stripe.js (`docs/CHECKOUT_SERVER_QUOTE.md` admits client-only totals). Card check is **Luhn + form validation only**; orders persist to **localStorage** + optional Supabase PUT without payment proof. Real Stripe path exists only for **membership** (`/checkout/upgrade`) and booking autopay metadata.
+3. **`PATCH /api/profile`** — client can send **`membershipType`**, **`subscriptionTier`**, **`role`**, **`loyaltyPoints`**, **`giftCardBalance`**; only Stripe billing ids are stripped. RLS `profiles_update_own` has no column guard → **self-upgrade / privilege escalation** if attacker PATCHes with valid JWT.
+4. **`PUT /api/orders`** — authenticated user can write arbitrary **`active_orders` / `past_orders`** JSON (fake COMPLETE orders, consult snapshots).
+
+**High:**
+5. **Premium gates are client-localStorage** (`isPremiumMemberForGatedFeatures`, BAW premium steps, lobby, PSA FAB) — DevTools can unlock UI; server must enforce on paid APIs (PSA chat does; BAW Fal mostly does; checkout/booking do not for cart contents).
+6. **`GET /api/psa/health`** — public **`keyFingerprint`** (`sk-proj-…last4`) aids key correlation; restrict or remove in production.
+7. **Concierge priority messages** — still **`localStorage.adminPriorityMessages`** only; PSA `send_priority_message` needs migration `20260603180000_priority_messages.sql` + admin inbox wiring.
+8. **Admin UI guard is client-only** (`AdminGuard` checks localStorage email list); API **`requireAdmin`** is correct (403 without JWT) — do not rely on hiding `/admin` routes alone.
+
+**Medium (bugs / abuse):**
+9. **`fetchCheckoutQuote`** / server quote **not used** in checkout UI; BCF bundle lines **`fullyResolved: false`** on server anyway.
+10. **Subscription upgrade on checkout** can set **`membershipType: PREMIUM`** in localStorage without Stripe when not using “Subscribe with card” path.
+11. **Public forms** (`/api/brand/contact-submit`, FAQ submit, analytics) — no rate limit; contact still **inserts DB row** when Resend missing.
+12. **Shared wishlist** tokens live in **localStorage** registry — not cross-device; predictable if token weak.
+13. **PSA chat** unauthenticated POST returned **500 FUNCTION_INVOCATION_FAILED** (empty body) vs clean 401 in some edge cases — verify deploy bundling.
+14. **AccountRouteGuard** trusts localStorage when Supabase session missing — signed-in UI without working API (PSA 401, profile fail).
+
+**Standard vs premium journey notes (code + live):**
+- **Guest:** bag/checkout allowed; BAW/edit gated; no PSA server chat without JWT+premium.
+- **Standard signed-in:** shop, consult (standard), orders, rewards upgrade path; premium booking/BAW options blocked client-side; premium cart lines stripped on load.
+- **Premium:** Stripe membership or profile flags; PSA server gate reads Supabase (+ founder bypass). Client/server premium mismatch still possible if profile stale.
+
+**Positive:** Admin API routes return **403** without admin JWT; user profile/orders/cart require Bearer; autopay cron requires **`BOOKING_AUTOPAY_CRON_SECRET`**; delete-account blocks founder email; live Fal regen requires auth when cache miss.
+
+**Recommended fix order:** (1) auth + rate limit on `build-a-wig-unit-image`, (2) wire product checkout to Stripe PI or disable CONFIRM ORDER in prod, (3) strip privileged profile fields server-side + RLS/trigger, (4) validate orders server-side or service-role-only writes, (5) lock down psa/health, (6) finish priority_messages + concierge server path.
+
+---
+
+## 2026-06-03 — Playwright mobile E2E suite added
+
+**Context:** User asked how to add full mobile browser click-through QA (not just API/architecture review). Also clarified `20260603180000_priority_messages.sql` exists on `master` (commit `6674f60d`) — pull or paste SQL in Supabase if missing locally.
+
+**Changes:** **`@playwright/test`** + **`playwright.config.ts`** (iPhone 13, default `E2E_BASE_URL=https://fsbw.vercel.app`); **`e2e/`** — `guest.spec.ts` (11 smoke routes), `standard-user.spec.ts`, `premium-user.spec.ts`, auth setup projects; **`docs/E2E_PLAYWRIGHT.md`**, **`.env.e2e.example`**; npm scripts `test:e2e`, `test:e2e:guest`, `test:e2e:ui`, `test:e2e:headed`, `test:e2e:install`.
+
+**Run:** `npm run test:e2e:install` then `npm run test:e2e:guest` (no credentials). Signed-in projects need **`E2E_STANDARD_*`** / **`E2E_PREMIUM_*`** in **`.env.e2e.local`**. Linux may need `sudo npx playwright install-deps webkit`.
+
+---
+
+## 2026-06-03 — Security hardening + Stripe product checkout + priority_messages wiring
+
+**Context:** User requested fixes from full-site QA security audit (auth/rate limit on Fal image API, Stripe PaymentIntent on product CONFIRM ORDER, server-only order writes, strip privileged profile fields + DB guard, lock down PSA health, run priority_messages migration + wire Concierge/admin inbox). Also Playwright E2E added earlier in same chat.
+
+**Topics covered:** Audit priority list implementation; Supabase migrations; Vercel env for Stripe; which PSA tables exist vs roadmap.
+
+**Changes (commit `8fc0cd76`, pushed `master` + `preview/mobile`):**
+1. **`POST /api/build-a-wig-unit-image`** — Supabase JWT required; rate limit 12/hr IP + 24/day user (`api/_lib/rateLimit.ts`).
+2. **`PATCH /api/profile`** — strips membership/tier/role/points/gift card (`api/_lib/profilePrivilegedFields.ts`); migration **`20260604120000_security_profiles_orders_guard.sql`** trigger preserves privileged columns for non–service-role.
+3. **`PUT /api/orders`** — **403** for clients; orders appended by Stripe **`payment_intent.succeeded`** webhook (`recordProductOrderFromPaymentIntent.ts`); migration drops `orders_insert_own` / `orders_update_own` RLS.
+4. **`GET /api/psa/health`** — public minimal `{ openaiConfigured, model }`; **`?probe=1`** admin JWT only.
+5. **Product checkout** — when Stripe publishable key set and **`ALLOW_LEGACY_CHECKOUT`≠1**, CONFIRM ORDER uses **`POST /api/stripe/create-product-payment-intent`** + Stripe.js Card Element (`CheckoutStripeCardSection.tsx`, `productCheckoutStripe.ts`); legacy founder PAN only with **`ALLOW_LEGACY_CHECKOUT=1`** (dev/preview).
+6. **Priority messages** — `POST /api/client/priority-messages`, admin `GET/PATCH /api/admin/priority-messages`; Concierge + admin Messages inbox wired; localStorage fallback retained.
+7. **Docs:** `docs/SECURITY_HARDENING.md`, `docs/PSA_SUPABASE_TABLES.md`.
+
+**User actions required:** Run in Supabase SQL Editor: **`20260603180000_priority_messages.sql`**, then **`20260604120000_security_profiles_orders_guard.sql`**. Vercel: set **`STRIPE_PUBLISHABLE_KEY`** + **`VITE_STRIPE_PUBLISHABLE_KEY`**, ensure webhook handles **`payment_intent.succeeded`**; **do not** set **`ALLOW_LEGACY_CHECKOUT`** in production; redeploy.
+
+**PSA tables:** **`priority_messages`** required now. Roadmap (not shipped): **`psa_threads`**, **`psa_messages`**, optional **`psa_member_context`** — see `docs/PSA_SUPABASE_TABLES.md`.
+
+**Conventions:** Product Stripe checkout requires signed-in user + fully server-priced cart (simple units/booking lines); BCF bundle/custom BAW still block until catalog expanded. Founder legacy checkout env vars are preview/local only.
+
+---
+
+## 2026-06-03 — PSA baked into membership marketing (upgrade chart + Become a Member)
+
+**Context:** User asked to add Personal Slay Assistant (PSA) to the website where membership/perks are marketed — especially premium upgrade chart and `/brand/member` Become a Member page — with clear copy on what PSA does and who it is for.
+
+**Changes (commit `74ffe14f`):**
+- **`src/constants/psaMembershipCopy.ts`** — shared PSA title/subtitle for perks lists.
+- **`src/constants/brandMemberPremiumRewards.ts`** — PSA as first unlock item; **`PremiumRewardsMarketingList`** component reused on Account → Rewards **UNLOCK PREMIUM REWARDS** and brand member page.
+- **`/brand/member`** — PSA explainer blocks in **`brandMemberCopy.ts`** (what it does, 3/6/12 premium only, lower-right FAB); **PREMIUM MEMBER PERKS** list at bottom of card.
+- **Premium upgrade chart** — new row **PERSONAL SLAY ASSISTANT (PSA)** (✓ all paid tiers, ✗ standard) in both **`PremiumSubscriptionUpgradeChart.tsx`** and inline membership page chart; **`premiumBenefitsByTier.ts`** bullet lists updated.
+
+**Conventions:** Edit PSA membership marketing in **`psaMembershipCopy.ts`** + **`brandMemberPremiumRewards.ts`**; chart row must stay in sync in membership page duplicate table until chart is fully deduplicated.
+
+---
+
+## 2026-06-03 — PSA tier-based engagement limits (cost control)
+
+**Context:** User asked to cap PSA chat usage per member by membership tier (3 month lowest, 12 month highest) to control OpenAI cost, and outline limits on the site.
+
+**Limits (UTC calendar day + month):** 3 month **45/mo (10/day)** · 6 month **90/mo (18/day)** · 12 month / BLACK **180/mo (30/day)**. Founder test email bypasses caps (PSA-only).
+
+**Changes:** **`api/_lib/psaEngagementLimits.ts`**, **`api/_lib/psaUsageLimit.ts`**, **`POST /api/psa/chat`** returns **429** `PSA_LIMIT_REACHED`, **`GET /api/psa/usage`**, migration **`20260605120000_psa_message_usage.sql`**, chat header shows remaining allowance, upgrade chart / Become a Member / VIEW ALL BENEFITS copy updated.
+
+**User action:** Run **`20260605120000_psa_message_usage.sql`** in Supabase SQL Editor (after prior PSA/security migrations).
+
+---
+
+## 2026-06-03 — PSA tier feature gates (priority messages, live tracking)
+
+**Context:** User asked PSA to enforce premium-chart perks — e.g. 3 Month cannot send priority messages; should be blocked with upgrade guidance.
+
+**Changes:** **`api/_lib/psaFeatureGates.ts`** + **`src/constants/psaFeatureGates.ts`** — gates: priority messages + live order tracking **6mo+**; special/exclusive rewards **12mo** (docs). **`send_priority_message`** removed from OpenAI tools for 3mo; execution returns **UPGRADE_REQUIRED** + `/account/rewards`. Order tools strip tracking timeline for 3mo. **`POST /api/client/priority-messages`** server gate. Concierge UI: upgrade card instead of priority form / live tracking for 3mo; no localStorage fallback on tier 403. **`buildPsaInstructions(profile)`** injects plan capabilities.
+
+---
+
+## 2026-06-03 — PSA hidden for standard members (lobby/lounge gate)
+
+**Context:** User asked PSA to not appear on standard member screens — same logic as lobby/lounge viewing gates.
+
+**Changes:** **`PsaAssistantWidget`** returns null unless **`isPremiumMemberForGatedFeatures()`** (active subscription tier or BLACK spend tier). Removed upgrade modal on FAB click for standard users (FAB no longer shown). Listens to **`membershipSubscriptionPreviewChanged`**. E2E standard-user: PSA FAB count 0.

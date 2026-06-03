@@ -1,9 +1,12 @@
+import { psaBenefitLabelForTier } from './psaMembershipCopy';
+
 export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
     '3months': [
       'BIRTHDAY GIFT',
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
+      psaBenefitLabelForTier('3months'),
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
       'CHALLENGES',
@@ -15,6 +18,7 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
+      psaBenefitLabelForTier('6months'),
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
       'CHALLENGES',
@@ -27,6 +31,7 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'DISCOUNTED SHIPPING',
       'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
       'ENTRY TO VIP MEMBERS ONLY LOUNGE',
+      psaBenefitLabelForTier('12months'),
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
       'CHALLENGES',

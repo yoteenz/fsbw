@@ -3,6 +3,8 @@ export const config = {
 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { getAuthUser } from './_lib/auth.js';
+import { checkRateLimit, clientIp, rateLimitResponse } from './_lib/rateLimit.js';
 import { basename } from 'node:path';
 import {
   buildGeneratedUnitColorPrompt,
@@ -287,6 +289,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     if (!process.env.FAL_KEY?.trim()) {
       sendJson(res, 503, { error: 'FAL_KEY is not configured on the server' });
+      return;
+    }
+
+    const user = await getAuthUser(req);
+    if (!user) {
+      sendJson(res, 401, { error: 'Sign in required' });
+      return;
+    }
+
+    const ipKey = `baw-unit-image:ip:${clientIp(req)}`;
+    const ipLimit = checkRateLimit(ipKey, { max: 12, windowMs: 60 * 60 * 1000 });
+    if (!ipLimit.ok) {
+      rateLimitResponse(res, ipLimit.retryAfterSec);
+      return;
+    }
+    const userLimit = checkRateLimit(`baw-unit-image:user:${user.id}`, { max: 24, windowMs: 24 * 60 * 60 * 1000 });
+    if (!userLimit.ok) {
+      rateLimitResponse(res, userLimit.retryAfterSec);
       return;
     }
 

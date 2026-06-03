@@ -1,4 +1,4 @@
-import { getAdminBrandContactInquiries } from './api';
+import { getAdminBrandContactInquiries, getAdminPriorityMessages } from './api';
 import { loadBrandContactInquiriesLocal } from './brandContactInquiries';
 import { loadBrandFaqQuestionsLocal, type BrandFaqQuestionRecord } from './brandFaqQuestions';
 import {
@@ -80,6 +80,37 @@ function formatRelativeTime(isoOrLabel: string): { label: string; sortTime: numb
     };
   }
   return { label: isoOrLabel.toUpperCase(), sortTime: 0 };
+}
+
+function inboxRowsFromPriorityRecords(
+  records: Array<{
+    id: string;
+    client_email: string;
+    client_name: string | null;
+    message: string;
+    created_at: string;
+    status: string;
+  }>,
+  readIds: Set<string>
+): AdminHubMessageRow[] {
+  return records.map((m) => {
+    const id = `inbox-${m.id}`;
+    const { label, sortTime } = formatRelativeTime(m.created_at);
+    const unread = m.status === 'new' && !readIds.has(id);
+    return {
+      id,
+      tab: 'INBOX' as const,
+      title: (m.client_name || 'CLIENT').toUpperCase(),
+      subtitle: (m.client_email || '').toUpperCase(),
+      body: m.message,
+      timestampLabel: label,
+      sortTime,
+      unread,
+      isPriority: true,
+      clientEmail: m.client_email,
+      meta: 'CONCIERGE PRIORITY',
+    };
+  });
 }
 
 function inboxRows(readIds: Set<string>): AdminHubMessageRow[] {
@@ -183,8 +214,20 @@ function reviewRows(readIds: Set<string>): AdminHubMessageRow[] {
 
 export async function loadAdminMessagesHubRows(): Promise<AdminHubMessageRow[]> {
   const readIds = loadReadIds();
+  let priorityInbox: AdminHubMessageRow[] = [];
+  try {
+    const remote = await getAdminPriorityMessages();
+    if (remote.storageAvailable) {
+      priorityInbox = inboxRowsFromPriorityRecords(remote.messages, readIds);
+    } else {
+      priorityInbox = inboxRows(readIds);
+    }
+  } catch {
+    priorityInbox = inboxRows(readIds);
+  }
+
   const rows: AdminHubMessageRow[] = [
-    ...inboxRows(readIds),
+    ...priorityInbox,
     ...faqRows(readIds),
     ...reviewRows(readIds),
   ];

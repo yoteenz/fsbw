@@ -83,5 +83,11 @@ export async function appendOrderFromProductPaymentIntent(
     updated_at: now
   });
   if (insErr) return { ok: false, error: insErr.message };
+
+  await supabase
+    .from('profiles')
+    .update({ has_made_first_purchase: true, updated_at: now })
+    .eq('id', userId);
+
   return { ok: true };
 }

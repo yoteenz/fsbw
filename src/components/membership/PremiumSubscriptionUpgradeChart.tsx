@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { PREMIUM_BENEFITS_BY_TIER } from '../../constants/premiumBenefitsByTier';
+import { PSA_ENGAGEMENT_LIMITS_SUMMARY } from '../../constants/psaMembershipCopy';
 import {
   BRAND_GRAY,
   CHART_BORDER,
@@ -179,6 +180,21 @@ export default function PremiumSubscriptionUpgradeChart({
         ))}
       </div>
     )}
+    <p
+      style={{
+        fontFamily: '"Futura PT Book"',
+        fontSize: '8px',
+        color: '#808080',
+        textTransform: 'uppercase',
+        textAlign: 'center',
+        margin: showAllBenefits ? '0 0 12px 0' : '0 0 16px 0',
+        lineHeight: 1.35,
+        paddingLeft: '4px',
+        paddingRight: '4px',
+      }}
+    >
+      {PSA_ENGAGEMENT_LIMITS_SUMMARY}
+    </p>
 
     {/* Comparison Table */}
       <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
@@ -338,6 +354,31 @@ export default function PremiumSubscriptionUpgradeChart({
             </tr>
             <tr>
               <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>LOUNGE ACCESS</span></td>
+              <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                </div>
+              </td>
+              <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                </div>
+              </td>
+              <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                </div>
+              </td>
+              <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                  </div>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>PERSONAL SLAY<br />ASSISTANT (PSA)</span></td>
               <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />

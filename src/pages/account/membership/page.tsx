@@ -26,6 +26,10 @@ import {
   FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY,
   excludeFounderSeedMockOrders,
 } from '../../../utils/adminAuth';
+import {
+  syncAdminSubscriptionOverrideToSupabase,
+  type AdminSubscriptionOverrideTier,
+} from '../../../utils/adminSubscriptionOverrideSync';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { trackActivity } from '../../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
@@ -33,6 +37,8 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 import RewardsHeaderIcon from '../../../components/icons/RewardsHeaderIcon';
+import PremiumRewardsMarketingList from '../../../components/membership/PremiumRewardsMarketingList';
+import { PSA_ENGAGEMENT_LIMITS_SUMMARY } from '../../../constants/psaMembershipCopy';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -776,6 +782,34 @@ function MembershipPage() {
     const v = localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY);
     return v && ['standard', '3months', '6months', '12months'].includes(v) ? v : null;
   });
+
+  const handleAdminSubscriptionOverrideChange = useCallback((tier: AdminSubscriptionOverrideTier) => {
+    setAdminSubscriptionOverride(tier);
+    localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
+    window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
+    void syncAdminSubscriptionOverrideToSupabase(tier).catch(() => {
+      /* local override still applies; PSA founder bypass covers stale Supabase */
+    });
+  }, []);
+
+  /** Align Supabase once per session when founder already has a premium override selected. */
+  useEffect(() => {
+    if (!showTierColorsForAdmin || founderViewAsClient) return;
+    const tier = (adminSubscriptionOverride ??
+      localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY)) as AdminSubscriptionOverrideTier | null;
+    if (!tier || !['standard', '3months', '6months', '12months'].includes(tier)) return;
+    if (typeof window === 'undefined') return;
+    const syncKey = `baw_admin_sub_supabase_synced_${tier}`;
+    if (sessionStorage.getItem(syncKey) === '1') return;
+    void syncAdminSubscriptionOverrideToSupabase(tier)
+      .then(() => {
+        sessionStorage.setItem(syncKey, '1');
+      })
+      .catch(() => {
+        /* founder PSA bypass still allows chat */
+      });
+  }, [showTierColorsForAdmin, founderViewAsClient, adminSubscriptionOverride]);
+
   /** Effective premium for display: when Standard tab (or no premium) show upgrade section; when 3/6/12 show INCLUDED section. */
   const hasEffectivePremium =
     founderViewAsClient && isAyoteenzAdminAccount(userData)
@@ -1521,6 +1555,22 @@ function MembershipPage() {
                         </div>
                       )}
 
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '8px',
+                          color: '#808080',
+                          textTransform: 'uppercase',
+                          textAlign: 'center',
+                          margin: showPremiumUpgradeAllBenefits ? '0 0 12px 0' : '0 0 16px 0',
+                          lineHeight: 1.35,
+                          paddingLeft: '4px',
+                          paddingRight: '4px',
+                        }}
+                      >
+                        {PSA_ENGAGEMENT_LIMITS_SUMMARY}
+                      </p>
+
                       {/* Comparison Table */}
                         <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
                           <table style={{ width: 'max-content', borderCollapse: 'collapse', fontSize: '9px', transform: 'translateZ(0)' }}>
@@ -1679,6 +1729,31 @@ function MembershipPage() {
                               </tr>
                               <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>LOUNGE ACCESS</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>PERSONAL SLAY<br />ASSISTANT (PSA)</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
@@ -2466,9 +2541,7 @@ fontFamily: '"Futura PT Book"',
                                         key={tier}
                                         type="button"
                                         onClick={() => {
-                                          setAdminSubscriptionOverride(tier);
-                                          localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
-                                          window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
+                                          handleAdminSubscriptionOverrideChange(tier);
                                         }}
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
@@ -2550,9 +2623,7 @@ fontFamily: '"Futura PT Book"',
                               key={tier}
                               type="button"
                               onClick={() => {
-                                setAdminSubscriptionOverride(tier);
-                                localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
-                                window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
+                                handleAdminSubscriptionOverrideChange(tier);
                               }}
                               style={{
                                 fontFamily: '"Futura PT Medium"',
@@ -2576,54 +2647,7 @@ fontFamily: '"Futura PT Book"',
                     <img src={additionalFeaturesIcon} alt="" style={{ width: '20px', height: '20px', flexShrink: 0, objectFit: 'contain', marginTop: '-2px' }} />
                   </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PREMIUM 3D WIG SELECTIONS
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        ENTRY TO MEMBERS ONLY LOUNGE
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARLY ACCESS TO SALES, NEW DROPS + RESTOCKS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        FAST TRACK CUSTOMER SUPPORT
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        PRIORITIZED SUPPORT WITH SIGNIFICANTLY REDUCED RESPONSE TIMES
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PRIORITY BOOKING + PROCESSING
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        OPTION TO SCHEDULE IN ADVANCE + PRIORITIZED CUSTOM ORDERS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        MEMBER REWARDS + CHALLENGES
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        ELIGIBLE FOR A CHANCE TO WIN RAFFLES, DISCOUNTS + VOUCHERS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        DOUBLE YOUR POINTS
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARN 2X LOYALTY POINTS UNLOCKING REWARDS FASTER
-                      </p>
-                    </div>
+                    <PremiumRewardsMarketingList />
                   </div>
                             </div>
                             </>

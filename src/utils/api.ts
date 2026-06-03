@@ -131,7 +131,9 @@ export async function getAccessToken(): Promise<string | null> {
     /* ignore */
   }
 
-  return readAccessTokenFromSupabaseStorage();
+  const stored = readAccessTokenFromSupabaseStorage();
+  if (stored && !isAccessTokenLikelyExpired(stored)) return stored;
+  return null;
 }
 
 /** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */
@@ -498,17 +500,89 @@ export async function getOrders(): Promise<{ activeOrders: unknown[]; pastOrders
 export async function putOrders(
   activeOrders: unknown[],
   pastOrders: unknown[]
-): Promise<{ activeOrders: unknown[]; pastOrders: unknown[] }> {
+): Promise<{ activeOrders: unknown[]; pastOrders: unknown[] } | null> {
   const res = await apiFetch('/api/orders', {
     method: 'PUT',
     body: { activeOrders, pastOrders },
   });
+  if (res.status === 403) return null;
   if (!res.ok) throw new Error(await res.text());
   const data = await res.json();
   return {
     activeOrders: Array.isArray(data.activeOrders) ? data.activeOrders : [],
     pastOrders: Array.isArray(data.pastOrders) ? data.pastOrders : [],
   };
+}
+
+export type PriorityMessageRecord = {
+  id: string;
+  user_id: string;
+  client_email: string;
+  client_name: string | null;
+  message: string;
+  is_order_related: boolean;
+  is_urgent: boolean;
+  related_order_id: string | null;
+  status: string;
+  source: string;
+  created_at: string;
+};
+
+export async function submitClientPriorityMessage(body: {
+  message: string;
+  clientName?: string;
+  isOrderRelated?: boolean;
+  isUrgent?: boolean;
+  relatedOrderId?: string;
+}): Promise<{ ok: boolean; error?: string; hint?: string; code?: string }> {
+  const res = await apiFetch('/api/client/priority-messages', {
+    method: 'POST',
+    body,
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    try {
+      const j = JSON.parse(text) as { error?: string; hint?: string; code?: string };
+      return { ok: false, error: j.error || text, hint: j.hint, code: j.code };
+    } catch {
+      return { ok: false, error: text || `HTTP ${res.status}` };
+    }
+  }
+  return { ok: true };
+}
+
+export async function getAdminPriorityMessages(): Promise<{
+  messages: PriorityMessageRecord[];
+  storageAvailable: boolean;
+}> {
+  const res = await apiFetch('/api/admin/priority-messages');
+  if (res.status === 403 || res.status === 401) return { messages: [], storageAvailable: false };
+  const text = await res.text();
+  if (!res.ok) {
+    try {
+      const j = JSON.parse(text) as { hint?: string };
+      if (j.hint) return { messages: [], storageAvailable: false };
+    } catch {
+      /* ignore */
+    }
+    return { messages: [], storageAvailable: false };
+  }
+  const data = JSON.parse(text) as { messages?: PriorityMessageRecord[] };
+  return {
+    messages: Array.isArray(data.messages) ? data.messages : [],
+    storageAvailable: true,
+  };
+}
+
+export async function patchAdminPriorityMessageStatus(
+  id: string,
+  status: 'new' | 'read' | 'archived'
+): Promise<void> {
+  const res = await apiFetch('/api/admin/priority-messages', {
+    method: 'PATCH',
+    body: { id, status },
+  });
+  if (!res.ok) throw new Error(await res.text());
 }
 
 export async function getCart(): Promise<{ items: unknown[]; version?: number }> {

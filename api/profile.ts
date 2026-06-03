@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { getAuthUser } from './_lib/auth.js';
 import { fromProfileRow } from './_lib/profileMapping.js';
+import { stripPrivilegedProfileBody } from './_lib/profilePrivilegedFields.js';
 
 /**
  * Profile API — uses createClient inline + manual JSON (same pattern as special-offer-config / session-restore)
@@ -237,7 +238,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
 
     if (req.method === 'PATCH') {
-      const body = parseJsonBody(req);
+      const body = stripPrivilegedProfileBody(parseJsonBody(req));
       // Never let clients set Stripe-managed billing ids (webhook / create-checkout only).
       const strip = [
         'stripeCustomerId',

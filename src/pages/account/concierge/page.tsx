@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
+import { getCurrentUser, getEffectiveSubscriptionTier, getEffectiveTierName, isMockDataAccount, isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
@@ -22,7 +22,13 @@ import {
   orderUsesDigitalFulfillmentTimeline,
 } from '../../../utils/digitalOrderFulfillment';
 import { BookingConsultHairInspoThumb } from '../../../utils/bookingConsultHairInspoThumb';
-import { getSpecialOfferAdminConfig } from '../../../utils/api';
+import { getSpecialOfferAdminConfig, submitClientPriorityMessage } from '../../../utils/api';
+import {
+  liveOrderTrackingUpgradeCopy,
+  memberHasPsaFeature,
+  priorityMessagesUpgradeCopy,
+  resolveClientEngagementTier,
+} from '../../../constants/psaFeatureGates';
 import {
   CONCIERGE_BIRTHDAY_ICON,
   CONCIERGE_FREE_GIFT_ICON,
@@ -95,6 +101,8 @@ function ConciergePage() {
     return false;
   });
 
+  const [showPriorityUpgradeModal, setShowPriorityUpgradeModal] = useState(false);
+  const [priorityUpgradeModalMessage, setPriorityUpgradeModalMessage] = useState('');
   // Priority message state
   const [priorityMessage, setPriorityMessage] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -621,8 +629,23 @@ function ConciergePage() {
   
   // Admin (mock-data) account only – gets test orders; all others start with no orders
   const isMockOrdersAccount = () => isMockDataAccount(getCurrentUser());
+  const currentUser = getCurrentUser() as {
+    email?: string;
+    role?: string;
+    membershipType?: string;
+    subscriptionTier?: string;
+    currentTierName?: string;
+  } | null;
+  const effectiveSubscriptionTier = getEffectiveSubscriptionTier(currentUser);
+  const memberFeatureInput = {
+    subscriptionTier: effectiveSubscriptionTier,
+    tierName: getEffectiveTierName(currentUser),
+    membershipType: currentUser?.membershipType,
+  };
+  const clientEngagementTier = resolveClientEngagementTier(memberFeatureInput);
+  const showPriorityMessages = memberHasPsaFeature(memberFeatureInput, 'priority_messages');
+  const showLiveOrderTracking = memberHasPsaFeature(memberFeatureInput, 'live_order_tracking');
   // Special Offer & Slay Challenge: only for 6-month or 12-month premium (not 3-month)
-  const effectiveSubscriptionTier = getEffectiveSubscriptionTier(getCurrentUser());
   const showSlayAndSpecialOffer = effectiveSubscriptionTier === '6months' || effectiveSubscriptionTier === '12months';
   
   // Order tracking state
@@ -1970,30 +1993,62 @@ function ConciergePage() {
     if (!priorityMessage.trim()) {
       return;
     }
-    
-    // Save to localStorage for admin dashboard
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const messages = JSON.parse(localStorage.getItem('adminPriorityMessages') || '[]');
-      const newMessage = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        message: priorityMessage,
-        type: 'priority',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      messages.unshift(newMessage);
-      localStorage.setItem('adminPriorityMessages', JSON.stringify(messages));
-      window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
 
-      setPriorityMessage('');
-      setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving priority message:', e);
-    }
+    void (async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || undefined;
+
+        const apiResult = await submitClientPriorityMessage({
+          message: priorityMessage.trim(),
+          clientName: userName,
+          isOrderRelated: isOrderRelated === 'yes',
+          isUrgent: isUrgent === 'yes',
+          relatedOrderId: isOrderRelated === 'yes' && relatedOrderId ? relatedOrderId : undefined,
+        });
+
+        if (!apiResult.ok) {
+          if (apiResult.code === 'UPGRADE_REQUIRED' || apiResult.code === 'PREMIUM_REQUIRED') {
+            setPriorityUpgradeModalMessage(
+              apiResult.error || priorityMessagesUpgradeCopy(clientEngagementTier)
+            );
+            setShowPriorityUpgradeModal(true);
+            return;
+          }
+          // Fallback: local inbox only when migration missing (not for tier gates).
+          if (apiResult.hint?.includes('migration')) {
+            const messages = JSON.parse(localStorage.getItem('adminPriorityMessages') || '[]');
+            const newMessage = {
+              id: Date.now().toString(),
+              userId: userData.email || 'unknown',
+              userName: userName || 'Unknown User',
+              message: priorityMessage,
+              type: 'priority',
+              timestamp: new Date().toISOString(),
+              status: 'new',
+            };
+            messages.unshift(newMessage);
+            localStorage.setItem('adminPriorityMessages', JSON.stringify(messages));
+            window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
+            console.warn('[concierge] priority message API:', apiResult.error, apiResult.hint);
+            setPriorityMessage('');
+            setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
+            setShowSuccessModal(true);
+            return;
+          }
+          setPriorityUpgradeModalMessage(apiResult.error || 'COULD NOT SUBMIT PRIORITY MESSAGE.');
+          setShowPriorityUpgradeModal(true);
+          return;
+        }
+
+        window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
+        setPriorityMessage('');
+        setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
+        setShowSuccessModal(true);
+      } catch (e) {
+        console.error('Error saving priority message:', e);
+      }
+    })();
   };
 
   // Helper function to get gift display name
@@ -2391,8 +2446,37 @@ function ConciergePage() {
                     iconHeight="19.76px"
                     iconAlt="Priority Messages"
                   />
-                  
-                  {/* IS THIS ORDER RELATED? Prompt */}
+
+                  {!showPriorityMessages ? (
+                    <>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#666666',
+                          fontSize: '10px',
+                          margin: '0 0 16px 0',
+                          textTransform: 'uppercase',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {priorityMessagesUpgradeCopy(clientEngagementTier)}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/account/rewards')}
+                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{
+                          borderWidth: '1.3px',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          backgroundColor: '#FFFFFF',
+                        }}
+                      >
+                        UPGRADE SUBSCRIPTION
+                      </button>
+                    </>
+                  ) : (
+                  <>
                   <div style={{ marginBottom: '12px' }}>
                   <p
                     style={{
@@ -2550,7 +2634,10 @@ function ConciergePage() {
                       borderRadius: '0'
                     }}
                   />
+                  </>
+                  )}
                 </div>
+                {showPriorityMessages ? (
                 <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                   <button
                     onClick={handleSubmitPriorityMessage}
@@ -2566,6 +2653,7 @@ function ConciergePage() {
                     SUBMIT MESSAGE
                   </button>
                 </div>
+                ) : null}
 
                 {/* Special Offer Section - 6 & 12 month premium only; below Priority Messages, above Order Tracking */}
                 {showSlayAndSpecialOffer && specialOffer && specialOffer.expiresAt > Date.now() && (
@@ -2722,7 +2810,35 @@ function ConciergePage() {
                     marginBottom="12px"
                     iconAlt="Order Tracking"
                   />
-                  {(activeOrders.length > 0) ? (
+                  {!showLiveOrderTracking ? (
+                    <>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#666666',
+                          fontSize: '10px',
+                          margin: '0 0 16px 0',
+                          textTransform: 'uppercase',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {liveOrderTrackingUpgradeCopy(clientEngagementTier)}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/account/rewards')}
+                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        style={{
+                          borderWidth: '1.3px',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          backgroundColor: '#FFFFFF',
+                        }}
+                      >
+                        UPGRADE SUBSCRIPTION
+                      </button>
+                    </>
+                  ) : (activeOrders.length > 0) ? (
                     <>
                       <select
                         value={selectedOrderId}
@@ -5322,6 +5438,20 @@ function ConciergePage() {
         message={birthdayGiftModalMessage}
         confirmText="CLOSE"
         cancelText=""
+      />
+
+      <ConfirmationModal
+        isOpen={showPriorityUpgradeModal}
+        onClose={() => setShowPriorityUpgradeModal(false)}
+        onConfirm={() => {
+          setShowPriorityUpgradeModal(false);
+          navigate('/account/rewards');
+        }}
+        title="UPGRADE YOUR SUBSCRIPTION"
+        message={priorityUpgradeModalMessage || priorityMessagesUpgradeCopy(clientEngagementTier)}
+        confirmText="UPGRADE"
+        cancelText="CLOSE"
+        dataAttribute="priority-messages-upgrade-modal"
       />
 
     </div>

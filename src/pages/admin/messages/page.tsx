@@ -4,7 +4,7 @@ import { AdminHubPageShell } from '../../../components/admin/AdminHubPageShell';
 import { AdminHubSortDropdown } from '../../../components/admin/AdminHubSortDropdown';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
-import { patchAdminBrandContactInquiry } from '../../../utils/api';
+import { patchAdminBrandContactInquiry, patchAdminPriorityMessageStatus } from '../../../utils/api';
 import { markBrandFaqQuestionReadLocal } from '../../../utils/brandFaqQuestions';
 import { PENDING_MOCK_REVIEWS_UPDATED_EVENT } from '../../../utils/adminPendingMockQueues';
 import {
@@ -101,6 +101,10 @@ export default function AdminMessagesPage() {
 
   const handleOpenRow = (row: AdminHubMessageRow) => {
     markAdminHubMessageRead(row.id);
+    if (row.tab === 'INBOX' && row.id.startsWith('inbox-')) {
+      const msgId = row.id.replace(/^inbox-/, '');
+      void patchAdminPriorityMessageStatus(msgId, 'read').catch(() => {});
+    }
     if (row.tab === 'FAQ') {
       const faqId = row.id.replace(/^faq-/, '');
       markBrandFaqQuestionReadLocal(faqId);

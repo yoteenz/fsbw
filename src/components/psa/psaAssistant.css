@@ -34,6 +34,7 @@
   border-radius: 50%;
   overflow: hidden;
   isolation: isolate;
+  background: transparent;
 }
 
 .psa-avatar-frame::before {
@@ -70,8 +71,9 @@
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  opacity: 0.88;
+  opacity: 1;
   filter: drop-shadow(0 0 14px rgba(160, 90, 255, 0.45));
+  background: transparent;
 }
 
 .psa-avatar-scanlines {
@@ -91,23 +93,43 @@
   animation: psa-scan 3s linear infinite;
 }
 
-.psa-avatar-label {
+.psa-avatar-cta {
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 8px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #eb1c24;
+  color: #808080;
   text-align: center;
   line-height: 1.2;
-  text-shadow: 0 0 12px rgba(235, 28, 36, 0.35);
+  max-width: 96px;
 }
 
-.psa-avatar-sublabel {
-  display: block;
-  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
-  font-size: 7px;
-  color: #808080;
-  letter-spacing: 0.06em;
+.psa-avatar-idle {
+  animation: psa-idle-float 3.2s ease-in-out infinite;
+}
+
+.psa-avatar-idle .psa-avatar-img {
+  animation: psa-idle-breathe 3.5s ease-in-out infinite;
+}
+
+@keyframes psa-idle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes psa-idle-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
 }
 
 .psa-chat-panel {
