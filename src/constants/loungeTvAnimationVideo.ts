@@ -132,8 +132,8 @@ export function loungeTvAnimationPosterInFrameStyle(
 /** @deprecated Use {@link LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX} — no CSS scale zoom. */
 export const LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE = 1;
 
-/** Reverse close uses forward clip + negative playback (same as lobby/lounge room transition). */
-export const LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE = 2;
+/** Reverse close — RAF step-back speed (lower = slower; was 2, eased for less rushed close). */
+export const LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE = 1.5;
 
 /** When true, open/close use `video.mov` instead of CSS curtains/hand/grow. */
 export const LOUNGE_TV_ANIMATION_VIDEO_ENABLED = true;
