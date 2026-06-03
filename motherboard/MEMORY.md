@@ -23676,3 +23676,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why:** Overlays are **off by default** (`LOBBY_SHELF_HIT_DEBUG_OVERLAY = false`). They only render when **`/lobby?sceneHitDebug=1`** is loaded (not on `/` or `/home/shop`). Shelves are on the **lobby** slide only (`/lobby`), not the lounge slide (`/lobby/lounge`); lounge gets chandelier debug only.
 
 **Fix:** **`useLobbyShelfHitDebugEnabled`** / **`useLoungeChandelierHitDebugEnabled`** via **`useLocation().search`** + **`sessionStorage`** (`SCENE_HIT_DEBUG_SESSION_KEY`) when `?sceneHitDebug=1`. **`SceneHitDebugBanner`** fixed top-left when mode is on. Slightly larger route labels on hit buttons. Turn off: **`?sceneHitDebug=0`**.
+
+---
+
+## 2026-06-02 — Phone popover: CONTACT US title left-aligned only
+
+**Context:** User asked for the **CONTACT US** header on the lobby phone glass pop-up to be **left-aligned only** (section Bohemy headings + body lines stay centered).
+
+**Fix:** **`LobbyCasePropPopover.tsx`** — contact popover main title (`sections` present): **`textAlign: 'left'`** instead of **`center`**. Register **PAYMENT METHODS** title unchanged (no `sections`).
