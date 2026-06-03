@@ -48,6 +48,9 @@ export const FINAL_LOUNGE_HIT_REGIONS = {
 /** Semi-transparent hit box over chandelier — off in production; `?sceneHitDebug=1` for QA. */
 export const LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY = false;
 
+/** Mannequin shelf hit boxes (HD lace / bundles / custom units) — `?sceneHitDebug=1` on `/lobby`. */
+export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = false;
+
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   left: 0.277,

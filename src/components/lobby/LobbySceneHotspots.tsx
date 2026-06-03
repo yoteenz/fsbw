@@ -29,6 +29,7 @@ import {
 } from '../../constants/lobbyPropPopoverCopy';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
+import { isLobbyShelfHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { LobbyCasePropOpenArt } from './LobbyCasePropOpenArt';
 import { LobbyCasePropPopover } from './LobbyCasePropPopover';
 import { rectToPercentStyle, SceneHitRegion } from './SceneHitRegion';
@@ -88,6 +89,7 @@ export function LobbySceneHotspots({
   );
 
   const lobbyLinksLocked = lobbyCasePopover !== null;
+  const shelfHitDebug = isLobbyShelfHitDebugEnabled();
 
   return (
     <>
@@ -124,8 +126,14 @@ export function LobbySceneHotspots({
           rect={shelfHdLaceRect}
           ariaLabel="Shop HD lace frontals"
           onActivate={goToShopFrontals}
-          zIndex={22}
+          zIndex={shelfHitDebug ? 26 : 22}
           disabled={lobbyLinksLocked}
+          debugOverlay={shelfHitDebug}
+          debugLabel="hd lace → /shop/frontals"
+          debugOverlayStyle={{
+            backgroundColor: 'rgba(0, 174, 239, 0.48)',
+            border: '2px solid rgba(0, 120, 200, 0.95)',
+          }}
         />
       ) : null}
       {shelfBundlesRect ? (
@@ -133,8 +141,14 @@ export function LobbySceneHotspots({
           rect={shelfBundlesRect}
           ariaLabel="Shop bundles"
           onActivate={goToShopBundles}
-          zIndex={22}
+          zIndex={shelfHitDebug ? 26 : 22}
           disabled={lobbyLinksLocked}
+          debugOverlay={shelfHitDebug}
+          debugLabel="bundles → /shop/bundles"
+          debugOverlayStyle={{
+            backgroundColor: 'rgba(76, 175, 80, 0.48)',
+            border: '2px solid rgba(46, 125, 50, 0.95)',
+          }}
         />
       ) : null}
       {shelfCustomUnitsRect ? (
@@ -142,8 +156,14 @@ export function LobbySceneHotspots({
           rect={shelfCustomUnitsRect}
           ariaLabel="Shop custom units"
           onActivate={goToShopUnits}
-          zIndex={22}
+          zIndex={shelfHitDebug ? 26 : 22}
           disabled={lobbyLinksLocked}
+          debugOverlay={shelfHitDebug}
+          debugLabel="custom units → /shop/units"
+          debugOverlayStyle={{
+            backgroundColor: 'rgba(235, 28, 36, 0.42)',
+            border: '2px solid rgba(180, 20, 30, 0.95)',
+          }}
         />
       ) : null}
 

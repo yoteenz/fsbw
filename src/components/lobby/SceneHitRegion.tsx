@@ -11,6 +11,8 @@ type SceneHitRegionProps = {
   /** QA: colored overlay so hit rect can be tuned against baked art. */
   debugOverlay?: boolean;
   debugLabel?: string;
+  /** Overrides default amber debug fill/border (per-shelf colors on lobby). */
+  debugOverlayStyle?: React.CSSProperties;
 };
 
 const hitBaseStyle: React.CSSProperties = {
@@ -48,6 +50,7 @@ export function SceneHitRegion({
   disabled = false,
   debugOverlay = false,
   debugLabel,
+  debugOverlayStyle,
 }: SceneHitRegionProps) {
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -75,7 +78,7 @@ export function SceneHitRegion({
         zIndex,
         pointerEvents: disabled ? 'none' : 'auto',
         cursor: disabled ? 'default' : 'pointer',
-        ...(debugOverlay ? SCENE_HIT_DEBUG_OVERLAY_STYLE : null),
+        ...(debugOverlay ? { ...SCENE_HIT_DEBUG_OVERLAY_STYLE, ...debugOverlayStyle } : null),
       }}
     >
       {debugOverlay && debugLabel ? (
