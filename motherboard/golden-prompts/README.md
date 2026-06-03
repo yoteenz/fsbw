@@ -17,3 +17,4 @@
 | `psa-avatar-likeness-nbp.md` | NBP | PSA character generation (reference photo) |
 | `psa-avatar-background-removal-ideogram.md` | Ideogram | PSA transparent cutout after generation |
 | `psa-avatar-expressions-nbp.md` | NBP | Expression variants from base avatar |
+| `psa-founder-voice.md` | — | Founder clone personality (wired in `api/_lib/psaInstructions.ts`) |

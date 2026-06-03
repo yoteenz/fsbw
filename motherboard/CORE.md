@@ -12,6 +12,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 - **Local:** `.env.local` for dev; copy from `.env.example`. Restart dev server after changing env.
 - **Fal image models (golden picks):** Curated model notes in **`motherboard/golden-models/`**; winning prompts in **`motherboard/golden-prompts/`**. Defaults for this stack: **NBP** (`fal-ai/nano-banana-pro/edit`) — mannequins, people, text accuracy; **GPT Image 2** (`openai/gpt-image-2/edit`) — detailed scenes; **Ideogram on Fal** — background removal (e.g. PSA avatars). Do not run `scripts/psa-flatten-avatar-backgrounds.mjs` on Ideogram-cut transparent PNGs.
 - **PSA premium gate:** Client uses `isPremiumMemberForGatedFeatures()` (localStorage); server reads Supabase `profiles` in `api/_lib/psaPremiumCheck.ts`. Founder admin Rewards **subscription toggles** sync to Supabase via `syncAdminSubscriptionOverrideToSupabase` (`src/utils/adminSubscriptionOverrideSync.ts`). **PSA-only bypass:** `kateenaarmstrong@gmail.com` passes server gate if profile is stale.
+- **PSA voice:** Founder hologram — trust over sales, four pillars (concierge / hair bestie / educator / no-gatekeeping). Instructions in **`api/_lib/psaInstructions.ts`**; reference **`motherboard/golden-prompts/psa-founder-voice.md`**. Only recommend real catalog units (NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL).
 
 ---
 

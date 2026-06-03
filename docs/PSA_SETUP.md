@@ -220,7 +220,7 @@ Restart dev server after changing local env.
 |------|--------|
 | Welcome message, avatar paths | `src/constants/psaConfig.ts` |
 | FAQ / product / nav data | `api/_lib/psaKnowledge.ts` (keep aligned with `src/constants/brandFaqCopy.ts`) |
-| PSA personality + rules | `buildPsaInstructions()` in `api/psa/chat.ts` |
+| PSA personality + rules | `api/_lib/psaInstructions.ts` (founder voice — not help desk); welcome copy `psaConfig.ts` |
 | Hide widget on routes | `PSA_HIDDEN_PATH_PREFIXES` in `psaConfig.ts` |
 
 ---
