@@ -23424,3 +23424,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Register popover tandem offset (up 22, right 16)
 
 **Fix (`d93e5e94`):** **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 16, y: -22 }`. Phone unchanged (`{ x: -1, y: -20 }`).
+
+---
+
+## 2026-06-02 — Phone popover +16px up
+
+**Fix (`dbc18bd3`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -36 }` (+16px from −20). Register unchanged (`{ x: 16, y: -22 }`).
