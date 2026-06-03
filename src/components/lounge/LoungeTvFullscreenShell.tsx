@@ -1,6 +1,7 @@
 import type React from 'react';
 import {
   LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR,
+  LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX,
   LOUNGE_TV_CONTENT_FRAME_PX,
   LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
   LOUNGE_TV_CONTENT_FRAME_SRC,
@@ -38,6 +39,8 @@ export function LoungeTvFullscreenShell({
     closePoint,
   );
 
+  const layerOffsetY = LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX;
+
   return (
     <div
       role="dialog"
@@ -52,42 +55,50 @@ export function LoungeTvFullscreenShell({
       }}
     >
       <div
-        aria-hidden
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-      <div
-        style={{
-          ...rectToPercentStyle(mappedScreen),
-          position: 'absolute',
-          boxSizing: 'border-box',
-          overflow: 'hidden',
-          zIndex: 1,
-          ...screenStyle,
+          transform: layerOffsetY ? `translateY(${layerOffsetY}px)` : undefined,
         }}
       >
-        {children}
-      </div>
-      {onClose && mappedClose ? (
-        <LoungeTvCloseButton
-          visible={closeVisible}
-          position={{
-            left: `${mappedClose.left * 100}%`,
-            top: `${mappedClose.top * 100}%`,
-            right: 'auto',
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose(e);
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
           }}
         />
-      ) : null}
+        <div
+          style={{
+            ...rectToPercentStyle(mappedScreen),
+            position: 'absolute',
+            boxSizing: 'border-box',
+            overflow: 'hidden',
+            zIndex: 1,
+            ...screenStyle,
+          }}
+        >
+          {children}
+        </div>
+        {onClose && mappedClose ? (
+          <LoungeTvCloseButton
+            visible={closeVisible}
+            position={{
+              left: `${mappedClose.left * 100}%`,
+              top: `${mappedClose.top * 100}%`,
+              right: 'auto',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose(e);
+            }}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }
