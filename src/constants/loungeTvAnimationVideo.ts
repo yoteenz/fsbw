@@ -1,3 +1,7 @@
+import { FINAL_LOUNGE_BACKGROUND_SRC } from './finalLobbySceneAssets';
+
+export type LoungeTvAnimationDirection = 'forward' | 'reverse';
+
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
@@ -17,4 +21,12 @@ export const LOUNGE_TV_ANIMATION_VIDEO_ENABLED = true;
 
 export function loungeTvAnimationVideoSrc(): string {
   return LOUNGE_TV_ANIMATION_VIDEO_SRC;
+}
+
+/**
+ * Pre-play placeholder for the Seedance clip — not the end-still (that frame includes the hand).
+ * Forward: lounge composite; reverse: none (black until frames play).
+ */
+export function loungeTvAnimationPosterSrc(direction: LoungeTvAnimationDirection): string | null {
+  return direction === 'forward' ? FINAL_LOUNGE_BACKGROUND_SRC : null;
 }
