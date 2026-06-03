@@ -1,7 +1,23 @@
 # PSA — Personal Slay Assistant setup
 
 PSA is the **premium members-only** holographic chat assistant (lower-right FAB + chat panel).  
-**v1 scope:** FAQ, product catalog, and in-app navigation — no cart/booking/priority-message tools yet.
+**v1 scope:** FAQ, product catalog, and in-app navigation — no cart/booking/priority-message **actions** yet (PSA guides members to the right page).
+
+### ChatGPT-style concierge spec vs PSA v1 (current)
+
+| Capability | ChatGPT prompt intent | PSA today |
+|------------|----------------------|-----------|
+| Personality / brand voice | Warm luxury concierge; Beautiful / Slayer / Love | **Yes** — `buildPsaInstructions()` in `api/psa/chat.ts` |
+| Product catalog | Raw hair / units | **Yes** — `search_products` + 6 units in `psaKnowledge.ts` |
+| Length, texture, density advice | Recommend | **Yes** — FAQ + Build-a-Wig context; directs to `/build-a-wig` |
+| FAQs, shipping, policies | Answer | **Yes** — `search_faq` (synced from `brandFaqCopy.ts` themes) |
+| Loyalty + referrals + affiliate | Explain | **Yes** — FAQ entries + nav to `/account/rewards`, `/referrals`, `/affiliate` |
+| Hair care + installation | Answer | **Yes** — FAQ (maintenance, bundles, cap size, beginner-friendly, etc.) |
+| Book appointments | Book | **Navigate only** → `/booking/*` (Phase 2: in-chat booking tool) |
+| Track orders | Live status | **Navigate only** → `/orders` (Phase 2: order lookup tool) |
+| Add to cart / checkout | Act | **No (Phase 2)** |
+
+Knowledge lives in **`api/_lib/psaKnowledge.ts`** (not a separate upload — append FAQ there; keep aligned with `src/constants/brandFaqCopy.ts`).
 
 ---
 

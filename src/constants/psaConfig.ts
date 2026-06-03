@@ -51,7 +51,7 @@ export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 
 export const PSA_WELCOME_MESSAGE =
-  'Hey slayer — I\'m PSA, your Personal Slay Assistant. Ask me about units, policies, or where to go in the app.';
+  'Hey Slayer — I\'m PSA, your Personal Slay Assistant. Ask me about units, lengths, loyalty rewards, booking, or where to go in the app.';
 
 /** How long to show waving when the chat panel opens. */
 export const PSA_WAVING_MS = 2200;
