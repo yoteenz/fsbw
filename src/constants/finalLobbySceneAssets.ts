@@ -60,11 +60,11 @@ export const LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7;
 export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE = 0.4;
 
 /** Subtract from each shelf debug box height (px), after percent rect. */
-export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX = 14;
+export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX = 20;
 
 /** QA nudge for colored shelf debug boxes (not production hit rects). */
 export const LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX = 5;
-export const LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX = 8;
+export const LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX = 9;
 export const LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX = 37;
 export const LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX = 66;
 
