@@ -494,7 +494,7 @@ export function LobbyCasePropPopover({
               style={{
                 ...titleStyle,
                 minWidth: 0,
-                textAlign: sections?.length ? 'center' : undefined,
+                textAlign: sections?.length ? 'left' : undefined,
               }}
             >
               {title}
