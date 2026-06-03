@@ -23556,3 +23556,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to center red Bohemy section headers on the register payment pop-up and center all text on the phone contact pop-up.
 
 **Fix:** **`LobbyCasePropPopover.tsx`** — **`lobbyPaymentBohemyLabelStyle`** **`textAlign: 'center'`** (accepted cards, express payment, payment plans). Phone: **`contactSectionHeadingStyle`** and **`lineStyle`** (incl. medium-gray emphasis) **`textAlign: 'center'`**; main title **`CONTACT US`** centered when **`sections`** present. Commit **`6a95f5e2`** on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-06-02 — Lobby wall shelves: cover-mapped taps → /shop/bundles & /shop/units
+
+**Context:** User asked for **BUNDLES** wall shelf → **`/shop/bundles`** and **CUSTOM UNITS** shelf → **`/shop/units`** on **`/lobby`**.
+
+**State:** **`LobbySceneHotspots`** already had **`goToShopBundles`** / **`goToShopUnits`** on **`shelfBundles`** / **`shelfCustomUnits`** since Final LP (**`4ae1cf71`**); raw viewport % rects could misalign under **`background-size: cover`**, so taps could hit the wrong shelf handler (e.g. middle shelf feeling like frontals).
+
+**Fix:** Map all three wall shelf hit rects with **`useSceneCoverHitRect`** (same as register/phone) before **`SceneHitRegion`**. Routes unchanged: HD lace → **`/shop/frontals`**, bundles → **`/shop/bundles`**, custom units → **`/shop/units`**.
