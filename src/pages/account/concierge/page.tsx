@@ -22,7 +22,7 @@ import {
   orderUsesDigitalFulfillmentTimeline,
 } from '../../../utils/digitalOrderFulfillment';
 import { BookingConsultHairInspoThumb } from '../../../utils/bookingConsultHairInspoThumb';
-import { getSpecialOfferAdminConfig } from '../../../utils/api';
+import { getSpecialOfferAdminConfig, submitClientPriorityMessage } from '../../../utils/api';
 import {
   CONCIERGE_BIRTHDAY_ICON,
   CONCIERGE_FREE_GIFT_ICON,
@@ -1970,30 +1970,49 @@ function ConciergePage() {
     if (!priorityMessage.trim()) {
       return;
     }
-    
-    // Save to localStorage for admin dashboard
-    try {
-      const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      const messages = JSON.parse(localStorage.getItem('adminPriorityMessages') || '[]');
-      const newMessage = {
-        id: Date.now().toString(),
-        userId: userData.email || 'unknown',
-        userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown User',
-        message: priorityMessage,
-        type: 'priority',
-        timestamp: new Date().toISOString(),
-        status: 'new'
-      };
-      messages.unshift(newMessage);
-      localStorage.setItem('adminPriorityMessages', JSON.stringify(messages));
-      window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
 
-      setPriorityMessage('');
-      setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
-      setShowSuccessModal(true);
-    } catch (e) {
-      console.error('Error saving priority message:', e);
-    }
+    void (async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || undefined;
+
+        const apiResult = await submitClientPriorityMessage({
+          message: priorityMessage.trim(),
+          clientName: userName,
+          isOrderRelated: isOrderRelated === 'yes',
+          isUrgent: isUrgent === 'yes',
+          relatedOrderId: isOrderRelated === 'yes' && relatedOrderId ? relatedOrderId : undefined,
+        });
+
+        if (!apiResult.ok) {
+          // Fallback: local inbox for admin on same browser until migration is applied.
+          const messages = JSON.parse(localStorage.getItem('adminPriorityMessages') || '[]');
+          const newMessage = {
+            id: Date.now().toString(),
+            userId: userData.email || 'unknown',
+            userName: userName || 'Unknown User',
+            message: priorityMessage,
+            type: 'priority',
+            timestamp: new Date().toISOString(),
+            status: 'new',
+          };
+          messages.unshift(newMessage);
+          localStorage.setItem('adminPriorityMessages', JSON.stringify(messages));
+          window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
+          if (apiResult.hint) {
+            console.warn('[concierge] priority message API:', apiResult.error, apiResult.hint);
+          }
+        } else {
+          window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
+        }
+
+        setPriorityMessage('');
+        setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
+        setShowSuccessModal(true);
+      } catch (e) {
+        console.error('Error saving priority message:', e);
+      }
+    })();
   };
 
   // Helper function to get gift display name

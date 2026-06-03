@@ -48,6 +48,12 @@ import {
 } from '../../utils/giftCardCheckoutSession';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import { pushLocalUserOrdersAfterCheckout } from '../../utils/checkoutOrderServerSync';
+import CheckoutStripeCardSection, {
+  type CheckoutStripeCardHandle,
+} from '../../components/checkout/CheckoutStripeCardSection';
+import { fetchProductCheckoutPolicy } from '../../utils/productCheckoutPolicy';
+import { shouldRunStripeProductPayment } from '../../utils/productCheckoutPolicy';
+import { cartItemsToQuoteLines, fetchCheckoutQuote } from '../../utils/checkoutQuote';
 import {
   discountPromoCheckoutBlockReason,
   findDiscountPromoByNormalizedCode,
@@ -759,8 +765,32 @@ function CheckoutPage() {
   const [stripeMembershipAvailable, setStripeMembershipAvailable] = useState(false);
   const [hasSupabaseSession, setHasSupabaseSession] = useState(false);
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
+  const [useStripeProductCardFields, setUseStripeProductCardFields] = useState(false);
+  const stripeCardRef = useRef<CheckoutStripeCardHandle | null>(null);
 
-  // Load cart items from localStorage
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const isUpgradeRoute = location.pathname === '/checkout/upgrade';
+      if (
+        isUpgradeRoute ||
+        location.pathname.includes('/checkout/bookings') ||
+        location.pathname.includes('/checkout/gift-card')
+      ) {
+        if (!cancelled) setUseStripeProductCardFields(false);
+        return;
+      }
+      const policy = await fetchProductCheckoutPolicy();
+      if (!cancelled) {
+        setUseStripeProductCardFields(
+          policy.stripeProductCheckoutAvailable && policy.requireStripePayment
+        );
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
   const loadCartItems = () => {
     try {
       // Check the route pathname to determine checkout type
@@ -2540,6 +2570,7 @@ function CheckoutPage() {
       subtotal: number;
       pointsEarned: number;
       appliedGiftCardBalance: number;
+      stripePaymentIntentId?: string;
     }) => {
       if (!isSignedIn || !email?.trim()) return;
       const {
@@ -2682,6 +2713,7 @@ function CheckoutPage() {
 
         void pushLocalUserOrdersAfterCheckout(userOrdersKey, {
           markFirstPurchaseOnProfile: wasFirstOrder,
+          stripePaymentIntentId: args.stripePaymentIntentId,
         });
       } catch (error) {
         console.error('Error saving order / first purchase:', error);
@@ -4801,6 +4833,14 @@ function CheckoutPage() {
                               }}
                             />
                           </div>
+                          {useStripeProductCardFields ? (
+                            <CheckoutStripeCardSection
+                              enabled={useStripeProductCardFields}
+                              handleRef={stripeCardRef}
+                            />
+                          ) : null}
+                          {!useStripeProductCardFields ? (
+                          <>
                           <div>
                             <label 
                               style={{ 
@@ -4968,6 +5008,8 @@ function CheckoutPage() {
                         />
                     </div>
                   </div>
+                          </>
+                          ) : null}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div
@@ -6142,7 +6184,8 @@ function CheckoutPage() {
           {!showMobileMenu && (
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                   <button
-                    onClick={() => {
+                    onClick={() => void (async () => {
+                  let stripePaymentIntentId: string | undefined;
                   // Validate required fields (shipping fields only when checkout collects shipping)
                   if (!checkoutSkipsShipping) {
                     if (!firstName.trim()) {
@@ -6209,6 +6252,7 @@ function CheckoutPage() {
                     setShowValidationModal(true);
                     return;
                   }
+                  if (!useStripeProductCardFields) {
                   if (!cardNumber.trim()) {
                     setValidationMessage('CARD NUMBER IS REQUIRED.');
                     setFieldToFocus('cardNumber');
@@ -6230,6 +6274,7 @@ function CheckoutPage() {
                     setShowValidationModal(true);
                     return;
                   }
+                  }
 
                   let signedInUserForCard: { email?: string } | null = null;
                   try {
@@ -6238,6 +6283,8 @@ function CheckoutPage() {
                   } catch {
                     signedInUserForCard = null;
                   }
+                  let usedFounderDummyPan = false;
+                  if (!useStripeProductCardFields) {
                   const cardCheck = validateCheckoutCardInput({
                     signedInUser: signedInUserForCard,
                     checkoutEmail: email,
@@ -6254,7 +6301,50 @@ function CheckoutPage() {
                     setShowValidationModal(true);
                     return;
                   }
-                  const usedFounderDummyPan = cardCheck.usedFounderDummyPan;
+                  usedFounderDummyPan = cardCheck.usedFounderDummyPan;
+                  }
+
+                  const stripePlan = await shouldRunStripeProductPayment({
+                    isSubscriptionUpgrade,
+                    isBookingsCheckoutRoute,
+                    isGiftCardCheckoutRoute,
+                    usedFounderDummyPan,
+                  });
+                  if (stripePlan.reason) {
+                    setValidationMessage(stripePlan.reason);
+                    setShowValidationModal(true);
+                    return;
+                  }
+                  if (stripePlan.run) {
+                    const quoteResult = await fetchCheckoutQuote(cartItemsToQuoteLines(cartItems));
+                    if (!quoteResult.ok || !quoteResult.quote.fullyResolved) {
+                      setValidationMessage(
+                        'THIS CART CANNOT BE PAID BY CARD YET. REMOVE BUNDLE OR UNPRICED LINES, OR CONTACT CONCIERGE.'
+                      );
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    if (!stripeCardRef.current?.isReady()) {
+                      setValidationMessage('SECURE CARD FIELD IS NOT READY. COMPLETE THE CARD DETAILS OR REFRESH.');
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    const pay = await stripeCardRef.current.confirmPayment({
+                      lines: cartItemsToQuoteLines(cartItems),
+                      billingName: cardholder.trim(),
+                      billingEmail: email.trim(),
+                    });
+                    if (!pay.ok) {
+                      setValidationMessage(pay.error.toUpperCase());
+                      setShowValidationModal(true);
+                      return;
+                    }
+                    stripePaymentIntentId = pay.paymentIntentId;
+                  } else if (stripePlan.blockLegacy && !usedFounderDummyPan) {
+                    setValidationMessage('SECURE STRIPE CHECKOUT IS REQUIRED FOR THIS ORDER.');
+                    setShowValidationModal(true);
+                    return;
+                  }
 
                   // Billing required when not same-as-shipping, or when checkout skips shipping
                   const requireBilling = !sameAsBilling || checkoutSkipsShipping;
@@ -6367,7 +6457,9 @@ function CheckoutPage() {
                   // Get payment method display (single brand: VISA, MASTERCARD, AMERICAN EXPRESS, etc.)
                   const cardBrandDisplay = getCardBrandDisplay(cardNumber);
                   const panDigits = cardNumber.replace(/\D/g, '');
-                  const paymentMethodDisplay = usedFounderDummyPan
+                  const paymentMethodDisplay = stripePaymentIntentId
+                    ? 'STRIPE CARD (PAID)'
+                    : usedFounderDummyPan
                     ? 'VISA (FOUNDER TEST) ENDING IN 4242'
                     : panDigits.length >= 4
                       ? `${cardBrandDisplay} ENDING IN ${panDigits.slice(-4)}`
@@ -6686,6 +6778,7 @@ function CheckoutPage() {
                       subtotal,
                       pointsEarned,
                       appliedGiftCardBalance,
+                      stripePaymentIntentId,
                     });
                   }
 
@@ -6824,7 +6917,7 @@ function CheckoutPage() {
                       }
                     });
                   })();
-                    }}
+                    })()}
                 className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={{
                   borderWidth: '1.3px', 
