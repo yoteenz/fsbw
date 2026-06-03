@@ -23278,6 +23278,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lobby/lounge transition bounce (object-position sync)
+
+**Context:** User still saw **down → up → play → down** on lobby↔lounge Seedance (both directions).
+
+**Cause:** **`translateY`** on full-bleed overlay exposed un-nudged scene bg in the top gap; poster/video vs static slide used different crop on complete.
+
+**Fix:** **`lobbyLoungeTransitionCoverPosition()`** — sub-pixel via **`object-position` / `background-position` only** (no transform). Final LP **`SceneCarouselViewportStage`** uses same position as overlay. Forward **`onPlaying`** deferred to **`requestVideoFrameCallback`** (or double rAF). Avoid redundant **`video.load()`** when src unchanged.
+
+---
+
 ## 2026-06-02 — Lounge TV label +3px down
 
 **Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 25`** (was 22). Label-only.
