@@ -23826,3 +23826,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** TV content **background still** **down 1px, right 1px**; Seedance transition clip **2% smaller** inside portrait frame — **frame container position unchanged**.
 
 **Fix:** **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX = 1`**, **`…_Y_PX`** **12→13** on **`LoungeTvFullscreenShell`** frame + close wrapper. **`LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98`** (`transformOrigin: center top`; **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX`** still **-2**).
+
+---
+
+## 2026-06-02 — Lounge TV screen + content 4% smaller, down 4px
+
+**Context:** User asked for TV **screen** and **content** on lounge (fullscreen menu shell) to shrink **4%** and move **down 4px** together.
+
+**Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE = 0.96`**, **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **120→124** — applied on mapped screen inset in **`LoungeTvFullscreenShell`** (`transformOrigin: center top`). Frame still offsets unchanged.

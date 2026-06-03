@@ -7,6 +7,7 @@ import {
   LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX,
   LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX,
   LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
+  LOUNGE_TV_CONTENT_SCREEN_SCALE,
 } from './loungeTvAssets';
 import { LoungeTvCloseButton } from './loungeTvFrame';
 import { useCoverMappedLayout } from '../../hooks/useCoverMappedLayout';
@@ -47,6 +48,13 @@ export function LoungeTvFullscreenShell({
   const frameStillOffsetX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX;
   const frameStillOffsetY = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX;
   const screenOffsetY = LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX;
+  const screenScale = LOUNGE_TV_CONTENT_SCREEN_SCALE;
+  const screenTransform = (() => {
+    const parts: string[] = [];
+    if (screenOffsetY) parts.push(`translateY(${screenOffsetY}px)`);
+    if (screenScale !== 1) parts.push(`scale(${screenScale})`);
+    return parts.length ? parts.join(' ') : undefined;
+  })();
   const frameStillTransform =
     frameStillOffsetX || frameStillOffsetY
       ? `translate(${frameStillOffsetX}px, ${frameStillOffsetY}px)`
@@ -85,7 +93,8 @@ export function LoungeTvFullscreenShell({
           overflow: 'hidden',
           zIndex: 1,
           ...screenStyle,
-          transform: screenOffsetY ? `translateY(${screenOffsetY}px)` : undefined,
+          transform: screenTransform,
+          transformOrigin: screenScale !== 1 ? 'center top' : undefined,
         }}
       >
         {children}
