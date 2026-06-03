@@ -23251,3 +23251,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move **PRESS TO PLAY** text down **6px**, right **4px** (label only).
 
 **Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 10`** (was 6), **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 18`** (was 12).
+
+---
+
+## 2026-06-02 — Lounge TV shell: split frame still vs screen offsets
+
+**Context:** User asked to nudge end-still PNG (after Seedance stops) **up 40px**; TV glass content (menu/static) **down 20px** only.
+
+**Fix:** Split **`LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX`** into **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX = 60`** (was 100, −40) and **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX = 120`** (+20 vs prior shared 100). **`LoungeTvFullscreenShell`** applies offsets separately on frame background + close wrapper vs mapped screen inset; tune only in `loungeTvAssets.ts`.
