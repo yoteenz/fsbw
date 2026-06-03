@@ -23447,6 +23447,12 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lobby/lounge nav red shadow
+
+**Fix (`2b477e53`):** **`LOUNGE_LOBBY_NAV_SHADOW_FILTER`** + **`LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW`** use brand red **`rgba(235, 28, 36, …)`** (#EB1C24) instead of black — lobby **lounge** nav + lounge **lobby** back nav in **`lobby/page.tsx`**.
+
+---
+
 ## 2026-06-02 — Phone popover down 6px
 
 **Fix (`4eaf2a32`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -30 }` (down 6px from −36).
