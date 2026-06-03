@@ -25,11 +25,27 @@ export const LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV = `/assets/lounge-tv-animation-so
 /** @deprecated Cropped bake — do not use as primary `<source>` (hides edges). */
 export const LOUNGE_TV_ANIMATION_VIDEO_SRC_CROPPED = `/assets/lounge-tv-animation.mp4?v=final-lp-video-crop-v2`;
 
-/** Extra transparent band (px) split above/below frame — masks play settle. */
-export const LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX = 16;
+/** @deprecated Full-viewport cover — no letterbox bounce bands. */
+export const LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX = 0;
 
 /**
- * Open: `cover` + `center top` to match the lounge carousel slide under the overlay.
+ * Open clip only — nudge cover anchor up to hide red lounge peek at top of frame.
+ * Do not apply to lobby/lounge slide backgrounds.
+ */
+export const LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX = -2;
+
+/** Open: `cover` + tuned top anchor; close: `contain` + centered. */
+export function loungeTvAnimationCoverPosition(
+  direction: LoungeTvAnimationDirection = 'forward',
+): string {
+  if (direction === 'reverse') return 'center center';
+  const offsetY = LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX;
+  if (!offsetY) return 'center top';
+  return `center calc(0% + ${offsetY}px)`;
+}
+
+/**
+ * Open: `cover` + {@link loungeTvAnimationCoverPosition} (matches lounge slide under overlay).
  * Close (reverse): `contain` so the full theater frame stays visible.
  */
 export function loungeTvAnimationMediaLayerStyle(
@@ -42,7 +58,7 @@ export function loungeTvAnimationMediaLayerStyle(
     width: '100%',
     height: '100%',
     objectFit: opening ? 'cover' : 'contain',
-    objectPosition: opening ? 'center top' : 'center center',
+    objectPosition: opening ? loungeTvAnimationCoverPosition('forward') : 'center center',
     pointerEvents: 'none',
   };
 }
@@ -107,7 +123,7 @@ export function loungeTvAnimationFullBleedPosterStyle(posterSrc: string): React.
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: 'center top',
+    backgroundPosition: loungeTvAnimationCoverPosition('forward'),
     backgroundRepeat: 'no-repeat',
     pointerEvents: 'none',
   };
@@ -122,7 +138,7 @@ export function loungeTvAnimationPosterInFrameStyle(
     ...loungeTvAnimationMediaLayerStyle(direction),
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: opening ? 'cover' : 'contain',
-    backgroundPosition: opening ? 'center top' : 'center center',
+    backgroundPosition: loungeTvAnimationCoverPosition(direction),
     backgroundRepeat: 'no-repeat',
   };
 }
