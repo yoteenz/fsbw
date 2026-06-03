@@ -31,11 +31,11 @@ import {
 } from '../../constants/lobbyLoungeTransitionVideo';
 import { LoungeSceneHotspots } from '../../components/lounge/LoungeSceneHotspots';
 
-/** Carousel nav arrows/labels — red shadow on white curtain (#EB1C24, lobby ↔ lounge). */
+/** Carousel nav arrows/labels — golden shadow on white curtain (lobby ↔ lounge). */
 const LOUNGE_LOBBY_NAV_SHADOW_FILTER =
-  'drop-shadow(0 1px 2px rgba(235, 28, 36, 0.5)) drop-shadow(0 2px 8px rgba(235, 28, 36, 0.32))';
+  'drop-shadow(0 1px 2px rgba(201, 162, 39, 0.55)) drop-shadow(0 2px 8px rgba(212, 175, 55, 0.38))';
 const LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
-  '0 1px 2px rgba(235, 28, 36, 0.55), 0 2px 6px rgba(235, 28, 36, 0.35)';
+  '0 1px 2px rgba(201, 162, 39, 0.6), 0 2px 6px rgba(212, 175, 55, 0.42)';
 
 // Lobby Component
 const LobbyPage: React.FC<{
