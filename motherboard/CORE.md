@@ -11,6 +11,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 - **Env:** Vite uses `VITE_*` (e.g. `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE`, `VITE_ADMIN_EMAILS`). Backend uses `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_EMAILS`. **Stripe membership (optional):** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID_3MONTHS` / `_6MONTHS` / `_12MONTHS`, `SITE_URL` — see `docs/STRIPE_MEMBERSHIP_SETUP.md`.
 - **Local:** `.env.local` for dev; copy from `.env.example`. Restart dev server after changing env.
 - **Fal image models (golden picks):** Curated model notes in **`motherboard/golden-models/`**; winning prompts in **`motherboard/golden-prompts/`**. Defaults for this stack: **NBP** (`fal-ai/nano-banana-pro/edit`) — mannequins, people, text accuracy; **GPT Image 2** (`openai/gpt-image-2/edit`) — detailed scenes; **Ideogram on Fal** — background removal (e.g. PSA avatars). Do not run `scripts/psa-flatten-avatar-backgrounds.mjs` on Ideogram-cut transparent PNGs.
+- **PSA premium gate:** Client uses `isPremiumMemberForGatedFeatures()` (localStorage); server reads Supabase `profiles` in `api/_lib/psaPremiumCheck.ts`. Founder admin Rewards **subscription toggles** sync to Supabase via `syncAdminSubscriptionOverrideToSupabase` (`src/utils/adminSubscriptionOverrideSync.ts`). **PSA-only bypass:** `kateenaarmstrong@gmail.com` passes server gate if profile is stale.
 
 ---
 

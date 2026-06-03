@@ -26,6 +26,10 @@ import {
   FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY,
   excludeFounderSeedMockOrders,
 } from '../../../utils/adminAuth';
+import {
+  syncAdminSubscriptionOverrideToSupabase,
+  type AdminSubscriptionOverrideTier,
+} from '../../../utils/adminSubscriptionOverrideSync';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { trackActivity } from '../../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
@@ -776,6 +780,34 @@ function MembershipPage() {
     const v = localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY);
     return v && ['standard', '3months', '6months', '12months'].includes(v) ? v : null;
   });
+
+  const handleAdminSubscriptionOverrideChange = useCallback((tier: AdminSubscriptionOverrideTier) => {
+    setAdminSubscriptionOverride(tier);
+    localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
+    window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
+    void syncAdminSubscriptionOverrideToSupabase(tier).catch(() => {
+      /* local override still applies; PSA founder bypass covers stale Supabase */
+    });
+  }, []);
+
+  /** Align Supabase once per session when founder already has a premium override selected. */
+  useEffect(() => {
+    if (!showTierColorsForAdmin || founderViewAsClient) return;
+    const tier = (adminSubscriptionOverride ??
+      localStorage.getItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY)) as AdminSubscriptionOverrideTier | null;
+    if (!tier || !['standard', '3months', '6months', '12months'].includes(tier)) return;
+    if (typeof window === 'undefined') return;
+    const syncKey = `baw_admin_sub_supabase_synced_${tier}`;
+    if (sessionStorage.getItem(syncKey) === '1') return;
+    void syncAdminSubscriptionOverrideToSupabase(tier)
+      .then(() => {
+        sessionStorage.setItem(syncKey, '1');
+      })
+      .catch(() => {
+        /* founder PSA bypass still allows chat */
+      });
+  }, [showTierColorsForAdmin, founderViewAsClient, adminSubscriptionOverride]);
+
   /** Effective premium for display: when Standard tab (or no premium) show upgrade section; when 3/6/12 show INCLUDED section. */
   const hasEffectivePremium =
     founderViewAsClient && isAyoteenzAdminAccount(userData)
@@ -2466,9 +2498,7 @@ fontFamily: '"Futura PT Book"',
                                         key={tier}
                                         type="button"
                                         onClick={() => {
-                                          setAdminSubscriptionOverride(tier);
-                                          localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
-                                          window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
+                                          handleAdminSubscriptionOverrideChange(tier);
                                         }}
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
@@ -2550,9 +2580,7 @@ fontFamily: '"Futura PT Book"',
                               key={tier}
                               type="button"
                               onClick={() => {
-                                setAdminSubscriptionOverride(tier);
-                                localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
-                                window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
+                                handleAdminSubscriptionOverrideChange(tier);
                               }}
                               style={{
                                 fontFamily: '"Futura PT Medium"',

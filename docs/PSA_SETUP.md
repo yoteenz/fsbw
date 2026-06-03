@@ -162,6 +162,8 @@ Restart dev server after changing local env.
 
 **Non-premium signed-in user:** tapping PSA shows **UPGRADE YOUR SUBSCRIPTION** modal → Rewards.
 
+**Founder admin testing:** Rewards **STANDARD / 3 / 6 / 12 MONTH** toggles now **`PATCH /api/profile`** (Supabase). PSA chat also allows **`kateenaarmstrong@gmail.com`** via server bypass if profile is stale (`api/_lib/psaPremiumCheck.ts`).
+
 **Guest:** PSA hidden until signed in.
 
 ---

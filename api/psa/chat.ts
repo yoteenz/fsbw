@@ -221,7 +221,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Unauthorized', code: 'SIGN_IN_REQUIRED' });
   }
 
-  const premium = await getPsaPremiumProfile(user.id, user.accessToken);
+  const premium = await getPsaPremiumProfile(user.id, user.accessToken, user.email);
   if (!premium?.isPremium) {
     return res.status(403).json({
       error: 'Premium membership required for PSA.',

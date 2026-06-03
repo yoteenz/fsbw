@@ -1,7 +1,9 @@
 /**
  * Server-side premium gate for PSA (Personal Slay Assistant).
  * Matches client `isPremiumMemberForGatedFeatures`: active subscription tier and/or BLACK spend tier.
+ * Founder admin email gets a PSA-only test bypass when Supabase profile is stale.
  */
+import { FOUNDER_PRIVILEGED_ADMIN_EMAIL } from './adminAuth.js';
 import { getSupabaseUser } from './supabase.js';
 
 const PREMIUM_TIERS = new Set(['3months', '6months', '12months']);
@@ -26,10 +28,19 @@ function isPremiumFromProfileRow(row: {
   return subscriptionTier !== '' && PREMIUM_TIERS.has(subscriptionTier);
 }
 
+/** PSA-only: founder Gmail can test chat when Rewards admin toggle has not synced to Supabase yet. */
+export function isFounderPsaPremiumBypass(email: string | null | undefined): boolean {
+  const normalized = (email ?? '').trim().toLowerCase();
+  return normalized === FOUNDER_PRIVILEGED_ADMIN_EMAIL;
+}
+
 export async function getPsaPremiumProfile(
   userId: string,
-  accessToken: string
+  accessToken: string,
+  email?: string
 ): Promise<PsaPremiumProfile | null> {
+  const founderBypass = isFounderPsaPremiumBypass(email);
+
   const supabase = getSupabaseUser(accessToken);
   const { data, error } = await supabase
     .from('profiles')
@@ -37,7 +48,17 @@ export async function getPsaPremiumProfile(
     .eq('id', userId)
     .maybeSingle();
 
-  if (error || !data) return null;
+  if (error || !data) {
+    if (founderBypass) {
+      return {
+        membershipType: null,
+        subscriptionTier: null,
+        tierName: null,
+        isPremium: true,
+      };
+    }
+    return null;
+  }
 
   const row = data as {
     membership_type?: string | null;
@@ -53,6 +74,6 @@ export async function getPsaPremiumProfile(
     membershipType,
     subscriptionTier,
     tierName,
-    isPremium: isPremiumFromProfileRow(row),
+    isPremium: isPremiumFromProfileRow(row) || founderBypass,
   };
 }
