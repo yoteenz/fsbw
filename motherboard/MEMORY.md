@@ -23219,3 +23219,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to shift lobby/lounge Seedance transition down another **0.5px**; ensure nothing overrides alignment.
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 1`** (was 0.5). **`LobbyLoungeTransitionOverlay`** uses only **`lobbyLoungeTransitionMediaLayerStyle()`** / **`lobbyLoungeTransitionPosterLayerStyle()`** — no local `top` / `objectPosition`.
+
+---
+
+## 2026-06-02 — Lobby/lounge transition up 0.2px (offset 0.8px)
+
+**Context:** User asked to shift lobby/lounge Seedance transition **up 0.2px**; no overrides elsewhere.
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0.8`** (was 1). Only **`lobbyLoungeTransitionMediaLayerStyle()`** / poster helper in `lobbyLoungeTransitionVideo.ts`.
