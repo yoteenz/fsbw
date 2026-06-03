@@ -24387,6 +24387,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-03 — PSA welcome: first unlock vs return session
+
+**Context:** User wanted "Welcome, {firstName}!" on first premium unlock that enables PSA; "Welcome back, {firstName}!" only when idle and returning to the site; same session should not repeat welcome prefixes.
+
+**Changes:** `src/utils/psaWelcomeState.ts` (per-user first-shown flag + session-scoped kind cache); `buildPsaWelcomeMessage({ kind })` in `psaConfig.ts`; session context + API instructions include `welcomeKind`.
+
+**Conventions:** Kind locked in `sessionStorage` for the tab session so focus/sync does not flip greeting mid-visit.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
