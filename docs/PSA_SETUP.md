@@ -142,9 +142,32 @@ Restart dev server after changing local env.
 
 | Status | Meaning |
 |--------|---------|
-| 401 | Not signed in / bad token |
-| 403 | Not premium (`PREMIUM_REQUIRED`) |
-| 500 + `OPENAI_API_KEY is not configured` | Key missing on Vercel |
+| 401 | Not signed in or expired JWT |
+| 403 `PREMIUM_REQUIRED` | Supabase profile not premium (founder: use Rewards toggle sync or bypass after deploy) |
+| 500 + `OPENAI_API_KEY is not configured` | Key missing **on the Vercel deployment that served the request** — see troubleshooting below |
+| 502 empty response | OpenAI returned no text |
+
+---
+
+### OPENAI_API_KEY troubleshooting (key “already added” but PSA still fails)
+
+**Important:** PSA chat runs on **Vercel serverless**, not in your browser. **`OPENAI_API_KEY` in `.env.local` does not affect `https://fsbw.vercel.app`** when you use the live site or `npm run dev` (Vite proxies `/api` to Vercel by default).
+
+1. **Verify the deployment** — after this doc was added, open:
+   ```
+   https://fsbw.vercel.app/api/psa/health
+   ```
+   Expect: `{ "openaiConfigured": true, ... }`. If `false`, Vercel still has no key on that deploy.
+
+2. **Variable name must be exact:** `OPENAI_API_KEY` (no `VITE_` prefix — Vite-prefixed vars are frontend-only and are **not** sent to API routes).
+
+3. **Environment scope in Vercel:** check **Production** and **Preview** (preview/mobile branch deploys use Preview). “Development” alone does **not** update live/preview URLs.
+
+4. **Redeploy required:** adding/changing env vars does not update already-running functions until you **Redeploy** (Deployments → … → Redeploy).
+
+5. **Local API with `.env.local`:** only works with **`npx vercel dev`** (loads server env). Plain **`npm run dev`** still proxies `/api/psa/chat` to Vercel unless you change proxy settings.
+
+6. **No quotes in Vercel value:** paste `sk-...` only, not `"sk-..."`.
 
 ---
 

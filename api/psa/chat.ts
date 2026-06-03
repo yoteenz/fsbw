@@ -184,9 +184,11 @@ function extractOutputText(data: OpenAiResponse): string {
 }
 
 async function callOpenAiResponses(body: Record<string, unknown>): Promise<OpenAiResponse> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = (process.env.OPENAI_API_KEY || '').trim();
   if (!apiKey) {
-    throw new Error('OPENAI_API_KEY is not configured on the server.');
+    throw new Error(
+      'OPENAI_API_KEY is not configured on the server. Add it in Vercel → Settings → Environment Variables (Production + Preview), then Redeploy. Local .env.local only applies when running vercel dev — not when the site calls fsbw.vercel.app.'
+    );
   }
 
   const res = await fetch('https://api.openai.com/v1/responses', {
