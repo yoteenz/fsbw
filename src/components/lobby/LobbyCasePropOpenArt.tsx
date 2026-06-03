@@ -14,7 +14,7 @@ type Props = {
 
 /**
  * Open-state register/phone art above the slide scrim, aligned to the composite
- * via the same cover map as the lobby background.
+ * via the same cover map as the lobby background. Assets are preloaded on lobby mount.
  */
 export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureRef }: Props) {
   const mapped = useSceneCoverHitRect(imageRect, viewportMeasureRef);
@@ -26,6 +26,8 @@ export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureR
       src={src}
       alt=""
       draggable={false}
+      decoding="sync"
+      fetchPriority="high"
       aria-hidden
       style={{
         position: 'absolute',
@@ -35,6 +37,7 @@ export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureR
         zIndex: LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX,
         pointerEvents: 'none',
         userSelect: 'none',
+        opacity: 1,
       }}
     />
   );

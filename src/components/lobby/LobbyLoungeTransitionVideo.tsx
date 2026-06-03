@@ -73,12 +73,11 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         playsInline
         muted
         preload="auto"
-        poster={poster}
         onError={finish}
         style={{
           ...lobbyLoungeTransitionMediaLayerStyle(),
           opacity: frameVisible ? 1 : 0,
-          transition: 'opacity 60ms linear',
+          transition: frameVisible ? 'opacity 60ms linear' : 'none',
         }}
       >
         <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
