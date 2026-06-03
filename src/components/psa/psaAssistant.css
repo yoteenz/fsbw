@@ -34,7 +34,7 @@
   border-radius: 50%;
   overflow: hidden;
   isolation: isolate;
-  background: #000000;
+  background: transparent;
 }
 
 .psa-avatar-frame::before {
@@ -73,7 +73,7 @@
   object-position: center top;
   opacity: 1;
   filter: drop-shadow(0 0 14px rgba(160, 90, 255, 0.45));
-  background: #000000;
+  background: transparent;
 }
 
 .psa-avatar-scanlines {
