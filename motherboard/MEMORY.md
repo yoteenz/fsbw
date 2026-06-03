@@ -23433,6 +23433,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Chandelier → concierge; popovers block lounge nav + transition
+
+**Context:** Chandelier tap on lounge → **`/account/concierge`**. Hide lobby **lounge** arrow/label when register/phone popovers open; no lobby↔lounge Seedance while popovers open.
+
+**Fix:** **`FINAL_LOUNGE_HIT_REGIONS.chandelier`** + **`LoungeSceneHotspots`**. **`lobbyCasePopover`** state in **`LobbyApp`** → **`LobbySceneHotspots`**; **`hideCarouselNav`** on **`LobbyPage`** when popover open; **`goToCarouselPage`** returns early if **`lobbyCasePopoverOpen`**. Tune chandelier rect in **`finalLobbySceneAssets.ts`**.
+
+---
+
 ## 2026-06-02 — Phone popover down 6px
 
 **Fix (`4eaf2a32`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -30 }` (down 6px from −36).
