@@ -1,4 +1,7 @@
-import { BRAND_CONTACT_EMAIL, BRAND_CONTACT_INTRO_HOURS } from './brandContactCopy';
+import { BRAND_CONTACT_EMAIL } from './brandContactCopy';
+
+/** Lobby phone popover hours line (popover only — brand contact page may differ). */
+export const LOBBY_PHONE_POPOVER_HOURS = '11 AM - 6 PM CST';
 
 /** Lobby display-case phone popover — business contact (aligned with brand contact). */
 export const LOBBY_PHONE_POPOVER_TITLE = 'CONTACT US';
@@ -27,7 +30,7 @@ export const LOBBY_PHONE_POPOVER_SECTIONS: readonly LobbyPhonePopoverSection[] =
   {
     heading: 'hours',
     lines: [
-      { text: BRAND_CONTACT_INTRO_HOURS },
+      { text: LOBBY_PHONE_POPOVER_HOURS },
       { text: 'WEEKDAYS ONLY' },
       { text: 'MAJOR US HOLIDAYS EXCLUDED' },
     ],
