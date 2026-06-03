@@ -31,10 +31,18 @@ type OverlayProps = {
   onComplete: () => void;
 };
 
-const transitionPosterSrc = (direction: LobbyLoungeTransitionDirection) =>
-  direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
-
 const MASKED_MEDIA_CROSSFADE_MS = 60;
+
+/** Production: no slide PNG — carousel lobby/lounge background shows through until video. */
+function resolveTransitionPoster(
+  direction: LobbyLoungeTransitionDirection,
+  debug: ReturnType<typeof useLobbyLoungeTransitionDebug>,
+): string | null {
+  if (debug.posterReveal === 'slide') {
+    return direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
+  }
+  return null;
+}
 
 type TransitionMediaProps = {
   active: boolean;
@@ -49,7 +57,7 @@ type TransitionMediaProps = {
 
 /**
  * Slide-sized portrait frame (928×1680 cover math) + transparent letterbox bands.
- * Poster and video share the same clipped box and crossfade — no layout swap on reveal.
+ * Carousel slide shows through until video crossfades in (no duplicate slide PNG poster).
  */
 function LobbyLoungeTransitionMedia({
   active,
@@ -63,7 +71,7 @@ function LobbyLoungeTransitionMedia({
 }: TransitionMediaProps) {
   const letterbox = useLobbyLoungeTransitionLetterboxLayout();
   const offsetY = debug.mediaOffsetYPx;
-  const posterSrc = debug.posterReveal === 'hidden' ? null : poster;
+  const posterSrc = poster;
   const posterOpacity = active && posterSrc ? (frameVisible ? 0 : 1) : 0;
   const videoOpacity = active && frameVisible ? 1 : 0;
   const showDebug = debug.showLayerOverlays;
@@ -107,7 +115,7 @@ function LobbyLoungeTransitionMedia({
             </div>
           ) : showDebug ? (
             <LobbyLoungeTransitionLayerOutline
-              label="POSTER hidden (?lobbyTransitionPoster=hidden)"
+              label="POSTER off — carousel shows through"
               color="#c2185b"
               fill="rgba(233, 30, 99, 0.12)"
               opacity={0}
@@ -173,7 +181,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
   const [frameVisible, setFrameVisible] = useState(false);
   const debug = useLobbyLoungeTransitionDebug();
   const src = lobbyLoungeTransitionVideoSrc(direction);
-  const poster = transitionPosterSrc(direction);
+  const poster = resolveTransitionPoster(direction, debug);
   const playbackOpts = useTransitionPlaybackOptions(debug, () => setFrameVisible(true));
 
   const finish = useCallback(() => {
@@ -250,7 +258,7 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
   const active = phase !== null;
   const direction = phase ?? 'forward';
   const src = lobbyLoungeTransitionVideoSrc(direction);
-  const poster = active ? transitionPosterSrc(direction) : null;
+  const poster = active ? resolveTransitionPoster(direction, debug) : null;
   const playbackOpts = useTransitionPlaybackOptions(debug, () => setFrameVisible(true));
 
   const finish = useCallback(() => {

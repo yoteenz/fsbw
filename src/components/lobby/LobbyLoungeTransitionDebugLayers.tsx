@@ -65,11 +65,13 @@ export function LobbyLoungeTransitionDebugBanner({ debug }: BannerProps) {
   if (!debug.showLayerOverlays) return null;
 
   const posterLine =
-    debug.posterReveal === 'hidden'
-      ? 'poster=hidden'
-      : debug.posterReveal === 'videoOnPlayingOnly'
-        ? 'poster until playing only'
-        : 'poster until frame0';
+    debug.posterReveal === 'slide'
+      ? 'poster=slide PNG (QA)'
+      : debug.posterReveal === 'hidden'
+        ? 'poster=hidden'
+        : debug.posterReveal === 'videoOnPlayingOnly'
+          ? 'carousel until playing'
+          : 'carousel until frame0 (no PNG)';
 
   return (
     <div
@@ -99,7 +101,7 @@ export function LobbyLoungeTransitionDebugBanner({ debug }: BannerProps) {
         offsetY={debug.mediaOffsetYPx}px · {posterLine}
       </div>
       <div style={{ marginTop: 4, opacity: 0.85 }}>
-        ?lobbyTransitionOffset=0 · ?lobbyTransitionPoster=hidden|afterPlaying ·
+        ?lobbyTransitionOffset=0 · ?lobbyTransitionPoster=slide|hidden|afterPlaying ·
         ?lobbyTransitionDebug=0
       </div>
     </div>

@@ -4,7 +4,11 @@ import { LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX } from '../constants/lobbyLou
 
 export const LOBBY_TRANSITION_DEBUG_SESSION_KEY = 'baw_lobby_transition_debug';
 
-export type LobbyLoungeTransitionPosterRevealMode = 'default' | 'hidden' | 'videoOnPlayingOnly';
+export type LobbyLoungeTransitionPosterRevealMode =
+  | 'default'
+  | 'hidden'
+  | 'slide'
+  | 'videoOnPlayingOnly';
 
 export type LobbyLoungeTransitionDebugState = {
   /** Magenta/lime layer overlays + frame/letterbox outlines. */
@@ -24,6 +28,7 @@ function parseOffsetOverride(search: string): number | null {
 function parsePosterReveal(search: string): LobbyLoungeTransitionPosterRevealMode | null {
   const raw = new URLSearchParams(search).get('lobbyTransitionPoster');
   if (raw === 'hidden' || raw === '0' || raw === 'none') return 'hidden';
+  if (raw === 'slide' || raw === 'png') return 'slide';
   if (raw === 'afterPlaying' || raw === 'onPlaying' || raw === 'playing') return 'videoOnPlayingOnly';
   return null;
 }
