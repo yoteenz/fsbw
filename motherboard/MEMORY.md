@@ -24229,6 +24229,7 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+<<<<<<< HEAD
 ## 2026-06-03 — Account Rewards: “MORE POINTS TO EARN” line — color label only
 
 **Context:** User reported the full progress hint line (e.g. `200 MORE POINTS TO EARN A VOUCHER!`) was red when only the reward type word should be color-coded (voucher/free gift red; discount/digital cash gray), matching the “NEXT REWARD:” row above.
@@ -24237,3 +24238,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`src/pages/account/membership/page.tsx`** — both loyalty progress blocks (main + duplicate layout): `<p>` base color `#000000`; wrap `nextReward.label` in `<span style={{ color: nextLabelColor }}>` only (digital cash label unwrapped; “A {label}” keeps “A” black for voucher/free gift/discount).
 
 **Conventions:** Loyalty reward type color applies only to the reward name span, not the surrounding Futura progress copy.
+=======
+## 2026-06-03 — PSA chat uppercase UI + anti-AI voice styling
+
+**Context:** User asked for all PSA chat text in uppercase; client/member bubbles red with red border and transparent background (mirroring PSA bubble style); PSA copy should avoid typical AI habits (em dashes, Oxford comma before "and").
+
+**Changes (commit `84c71425`):**
+- **`psaAssistant.css`** — `text-transform: uppercase` on `.psa-chat-panel`; user bubbles: transparent bg, `#eb1c24` text + border; restored subtitle/usage classes.
+- **`PsaChatPanel.tsx`** — `bubbleContent()` + **`formatPsaVoiceText`** for assistant/system display.
+- **`api/_lib/psaVoiceFormat.ts`** + **`src/utils/psaVoiceFormat.ts`** — strip em/en dashes → comma; remove Oxford comma (`, and` → ` and`).
+- **`api/psa/chat.ts`** — format replies server-side; limit error copy without em dash.
+- **`psaInstructions.ts`** — mandatory chat copy rules + example strings without em dashes/Oxford comma.
+- **`psaConfig.ts`** — welcome message updated (no em dash, no Oxford comma).
+
+**Conventions:** Member-facing PSA copy rules live in **`psaInstructions.ts`**; post-process safety net in **`formatPsaVoiceText`** (keep api + src copies in sync).
+>>>>>>> 1c874378 (Motherboard: PSA chat uppercase and voice styling)

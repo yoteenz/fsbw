@@ -166,6 +166,7 @@
   background-position: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 28px rgba(160, 90, 255, 0.2);
   overflow: hidden;
+  text-transform: uppercase;
 }
 
 .psa-chat-header {
@@ -196,9 +197,17 @@
   margin: 2px 0 0;
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 9px;
-  text-transform: uppercase;
   color: #808080;
   letter-spacing: 0.06em;
+}
+
+.psa-chat-usage {
+  margin: 4px 0 0;
+  font-size: 9px;
+  opacity: 0.85;
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  letter-spacing: 0.04em;
+  color: #808080;
 }
 
 .psa-chat-close {
@@ -236,9 +245,9 @@
 
 .psa-chat-bubble-user {
   align-self: flex-end;
-  background: rgba(235, 28, 36, 0.12);
-  border: 1px solid rgba(235, 28, 36, 0.35);
-  color: #000;
+  background: transparent;
+  border: 1px solid rgba(235, 28, 36, 0.75);
+  color: #eb1c24;
 }
 
 .psa-chat-bubble-assistant {
@@ -254,7 +263,6 @@
   border: none;
   color: #808080;
   font-size: 9px;
-  text-transform: uppercase;
   text-align: center;
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
 }
@@ -264,7 +272,6 @@
   margin-top: 6px;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 10px;
-  text-transform: uppercase;
   color: #eb1c24;
   text-decoration: underline;
   cursor: pointer;
@@ -294,7 +301,6 @@
 
 .psa-chat-input::placeholder {
   color: #808080;
-  text-transform: uppercase;
   font-size: 9px;
   letter-spacing: 0.04em;
 }
@@ -307,7 +313,6 @@
   padding: 8px 12px;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 10px;
-  text-transform: uppercase;
   cursor: pointer;
 }
 
