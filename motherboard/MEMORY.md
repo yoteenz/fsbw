@@ -23366,3 +23366,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move **phone** open asset + popover together **up 12px, left 4px**; **register** open asset + popover together **up 12px, right 4px** (glass cards move with props, not separate panel-only offsets).
 
 **Fix:** **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 4, y: -12 }`, **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -4, y: -12 }` + **`lobbyCasePropLayoutTransform()`** in **`finalLobbyCasePropOverlays.ts`**. Applied on **`LobbyCasePropOpenArt`** (`layoutOffset`) and case-prop wrapper divs in **`LobbySceneHotspots`**. **`LOBBY_CASE_POPOVER_*_OFFSET_UP_PX`** unchanged (relative panel gap above tap box).
+
+---
+
+## 2026-06-02 — PRESS TO PLAY + lobby/lounge transition bounce
+
+**Context:** User reported **PRESS TO PLAY** no longer opens lounge TV Seedance; lobby/lounge room transition still **bounces vertically** despite transparent letterbox bands.
+
+**PRESS TO PLAY cause:** Label had **`pointer-events: none`** + **`transform`** — clicks on visible text passed through to layers below the button.
+
+**PRESS TO PLAY fix:** Remove label **`pointer-events: none`**; raise play container **`zIndex`** to **20**. Transition preload **`video`** uses **`pointerEvents: 'none'`** so warm **`LobbyLoungeTransitionHost`** does not steal taps.
+
+**Transition bounce fix:** Replaced flex **`justify-content: center`** letterbox (symmetric spacers) with **`useLobbyLoungeTransitionLetterboxLayout()`** — top-anchored portrait frame, fixed **px** top/bottom transparent bands, **`LOBBY_LOUNGE_TRANSITION_LETTERBOX_BOUNCE_PAD_PX`** (16) split above/below frame to mask play settle. Tune pad in hook file.
