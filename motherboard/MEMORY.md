@@ -24397,6 +24397,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-03 — PSA copy: I'm your PSA!
+
+**Context:** User wanted exclamation on "I'm your PSA!" to match welcome greeting energy.
+
+**Changes:** `psaConfig.ts` welcome intro; `psaInstructions.ts` examples aligned.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
