@@ -23386,3 +23386,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked smaller tandem nudges for open PNG + popover only.
 
 **Fix (`c560d02a`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -3, y: -3 }` (was −4/−12). **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 4, y: -4 }` (was 4/−12). Tune in **`finalLobbyCasePropOverlays.ts`**.
+
+---
+
+## 2026-06-02 — Register popover tandem offset (up 8, right 8)
+
+**Fix (`5df1fb4c`):** **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 8, y: -8 }` — open register PNG + payment popover wrapper only; phone unchanged (`{ x: -3, y: -3 }`).
