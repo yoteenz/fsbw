@@ -1,10 +1,45 @@
 /** PSA (Personal Slay Assistant) frontend config — avatar assets and copy. */
 
-/** Replace with your Fal-generated transparent PNG when ready (see docs/PSA_SETUP.md). */
-export const PSA_AVATAR_IDLE_SRC = '/assets/psa-avatar-idle.png';
+/** All PSA avatar expression PNGs live in `public/assets/` (transparent background). */
+export type PsaAvatarExpression =
+  | 'neutral'
+  | 'neutral-smiling'
+  | 'waving'
+  | 'listening'
+  | 'listening-smiling'
+  | 'thinking'
+  | 'delighted'
+  | 'sorry'
+  | 'pointing'
+  | 'talking'
+  | 'presenting';
 
-/** Optional thinking state image (falls back to idle if missing). */
-export const PSA_AVATAR_THINKING_SRC = '/assets/psa-avatar-thinking.png';
+/** Expression → asset path (filename must match exactly in `public/assets/`). */
+export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
+  neutral: '/assets/psa-avatar-neutral.png',
+  'neutral-smiling': '/assets/psa-avatar-neutral-smiling.png',
+  waving: '/assets/psa-avatar-waving.png',
+  listening: '/assets/psa-avatar-listening.png',
+  'listening-smiling': '/assets/psa-avatar-listening-smiling.png',
+  thinking: '/assets/psa-avatar-thinking.png',
+  delighted: '/assets/psa-avatar-delighted.png',
+  sorry: '/assets/psa-avatar-sorry.png',
+  pointing: '/assets/psa-avatar-pointing.png',
+  talking: '/assets/psa-avatar-talking.png',
+  presenting: '/assets/psa-avatar-presenting.png',
+};
+
+/** Default FAB when chat is closed. */
+export const PSA_AVATAR_DEFAULT_EXPRESSION: PsaAvatarExpression = 'neutral';
+
+/** Fallback if a specific PNG is missing. */
+export const PSA_AVATAR_FALLBACK_SRC = PSA_AVATAR_SRC.neutral;
+
+/** @deprecated Use PSA_AVATAR_SRC.neutral — kept for older references. */
+export const PSA_AVATAR_IDLE_SRC = PSA_AVATAR_SRC.neutral;
+
+/** @deprecated Use PSA_AVATAR_SRC.thinking */
+export const PSA_AVATAR_THINKING_SRC = PSA_AVATAR_SRC.thinking;
 
 export const PSA_WIDGET_LABEL = 'PSA';
 export const PSA_WIDGET_SUBLABEL = 'PERSONAL SLAY ASSISTANT';
@@ -15,6 +50,12 @@ export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 export const PSA_WELCOME_MESSAGE =
   'Hey slayer — I\'m PSA, your Personal Slay Assistant. Ask me about units, policies, or where to go in the app.';
 
+/** How long to show waving when the chat panel opens. */
+export const PSA_WAVING_MS = 2200;
+
+/** How long to show talking after an assistant reply lands. */
+export const PSA_TALKING_AFTER_REPLY_MS = 2800;
+
 /** Routes where the floating PSA widget is hidden (admin chrome, full-screen checkout modals). */
 export const PSA_HIDDEN_PATH_PREFIXES = ['/admin'];
 
@@ -22,4 +63,8 @@ export function isPsaHiddenPath(pathname: string): boolean {
   return PSA_HIDDEN_PATH_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
   );
+}
+
+export function getPsaAvatarSrc(expression: PsaAvatarExpression): string {
+  return PSA_AVATAR_SRC[expression] ?? PSA_AVATAR_FALLBACK_SRC;
 }
