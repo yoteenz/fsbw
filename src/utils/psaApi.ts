@@ -1,14 +1,37 @@
 import { getAccessToken } from './api';
 import { isSignedIn } from './adminAuth';
+import type { PsaBawPrefillSelections } from './psaBawPrefill';
+import type { PsaClientSessionContext } from './psaSessionContext';
 
 export type PsaClientAction =
   | { type: 'sync_cart' }
-  | { type: 'navigate'; path: string };
+  | { type: 'navigate'; path: string }
+  | {
+      type: 'prefill_baw';
+      unitId: string;
+      path?: string;
+      selections?: PsaBawPrefillSelections;
+    };
+
+export type PsaChatCard =
+  | {
+      type: 'product';
+      name: string;
+      startingPriceUsd?: number | null;
+      path: string;
+      buildAWigPath: string;
+      summary?: string;
+    }
+  | { type: 'nav'; label: string; path: string; description?: string }
+  | { type: 'order'; orderNumber: string; status?: string; path: string; note?: string }
+  | { type: 'action'; label: string; path: string };
 
 export type PsaChatResult =
   | {
       ok: true;
       reply: string;
+      quickReplies?: string[];
+      cards?: PsaChatCard[];
       responseId: string | null;
       threadId: string | null;
       model: string;
@@ -165,7 +188,12 @@ async function psaAuthedFetch(path: string, init: RequestInit = {}): Promise<Res
 
 async function postPsaChatOnce(
   message: string,
-  options: { previousResponseId?: string | null; threadId?: string | null; newThread?: boolean },
+  options: {
+    previousResponseId?: string | null;
+    threadId?: string | null;
+    newThread?: boolean;
+    context?: PsaClientSessionContext;
+  },
   token: string
 ): Promise<Response> {
   const url = `${API_BASE.replace(/\/$/, '')}/api/psa/chat`;
@@ -180,6 +208,7 @@ async function postPsaChatOnce(
       previousResponseId: options.previousResponseId ?? undefined,
       threadId: options.threadId ?? undefined,
       newThread: options.newThread === true ? true : undefined,
+      context: options.context ?? undefined,
     }),
   });
 }
@@ -190,6 +219,7 @@ export async function postPsaChat(
     previousResponseId?: string | null;
     threadId?: string | null;
     newThread?: boolean;
+    context?: PsaClientSessionContext;
   }
 ): Promise<PsaChatResult> {
   const token = await getPsaAuthToken();
@@ -221,6 +251,8 @@ export async function postPsaChat(
     error?: string;
     code?: string;
     reply?: string;
+    quickReplies?: string[];
+    cards?: PsaChatCard[];
     responseId?: string | null;
     threadId?: string | null;
     model?: string;
@@ -275,9 +307,15 @@ export async function postPsaChat(
     };
   }
   const clientActions = Array.isArray(data.clientActions) ? data.clientActions : undefined;
+  const quickReplies = Array.isArray(data.quickReplies)
+    ? data.quickReplies.filter((q): q is string => typeof q === 'string' && q.trim().length > 0).slice(0, 4)
+    : undefined;
+  const cards = Array.isArray(data.cards) ? data.cards : undefined;
   return {
     ok: true,
     reply,
+    quickReplies,
+    cards,
     responseId: data.responseId ?? null,
     threadId: typeof data.threadId === 'string' ? data.threadId : null,
     model: data.model || 'gpt-5.4-mini',

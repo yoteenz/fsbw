@@ -390,6 +390,122 @@
   cursor: not-allowed;
 }
 
+.psa-chat-nav-links {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.psa-chat-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.psa-chat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  border: 1.3px solid rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.psa-chat-card-title {
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 10px;
+  color: #000;
+}
+
+.psa-chat-card-meta {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 9px;
+  color: #808080;
+}
+
+.psa-chat-card-body {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 9px;
+  color: #444;
+  line-height: 1.35;
+}
+
+.psa-chat-card-cta {
+  margin-top: 4px;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 9px;
+  color: #eb1c24;
+}
+
+.psa-chat-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 12px 8px;
+}
+
+.psa-chat-quick-reply {
+  border: 1.3px solid #eb1c24;
+  background: transparent;
+  color: #eb1c24;
+  padding: 6px 10px;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 9px;
+  cursor: pointer;
+  max-width: 100%;
+  text-align: left;
+}
+
+.psa-nudge-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #eb1c24;
+  border: 1.3px solid #fff;
+  box-shadow: 0 0 6px rgba(235, 28, 36, 0.6);
+}
+
+.psa-nudge-chip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  max-width: min(240px, 72vw);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1.3px solid #eb1c24;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  text-align: left;
+  z-index: 2;
+}
+
+.psa-nudge-chip-headline {
+  font-family: 'Covered By Your Grace', cursive;
+  font-size: 13px;
+  color: #000;
+  text-transform: uppercase;
+}
+
+.psa-nudge-chip-body {
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 9px;
+  color: #808080;
+  text-transform: uppercase;
+}
+
 @keyframes psa-holo-spin {
   to {
     transform: rotate(360deg);

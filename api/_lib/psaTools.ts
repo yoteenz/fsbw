@@ -20,9 +20,28 @@ export type PsaToolContext = {
   premium?: PsaPremiumProfile | null;
 };
 
+export type PsaBawPrefillSelections = {
+  capSize?: string;
+  length?: string;
+  density?: string;
+  color?: string;
+  texture?: string;
+  lace?: string;
+  hairline?: string;
+  styling?: string;
+  partSelection?: string;
+  addOns?: string[];
+};
+
 export type PsaClientAction =
   | { type: 'sync_cart' }
-  | { type: 'navigate'; path: string };
+  | { type: 'navigate'; path: string }
+  | {
+      type: 'prefill_baw';
+      unitId: string;
+      path?: string;
+      selections?: PsaBawPrefillSelections;
+    };
 
 export type PsaToolExecutionResult = {
   output: string;
@@ -113,6 +132,34 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
         collected: { type: 'object', additionalProperties: true },
       },
       required: ['bookingType'],
+      additionalProperties: false,
+    },
+    strict: false,
+  },
+  {
+    type: 'function',
+    name: 'open_build_a_wig',
+    description:
+      'Open Build-a-Wig for a catalog unit with optional pre-filled selections (length, density, color, lace, etc.). Use when recommending customization — closes the gap between advice and action.',
+    parameters: {
+      type: 'object',
+      properties: {
+        unitId: { type: 'string', description: 'Unit id: noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl.' },
+        capSize: { type: 'string' },
+        length: { type: 'string', description: 'e.g. 24"' },
+        density: { type: 'string', description: 'e.g. 200%' },
+        color: { type: 'string' },
+        texture: { type: 'string' },
+        lace: { type: 'string' },
+        hairline: { type: 'string' },
+        styling: { type: 'string' },
+        partSelection: { type: 'string', enum: ['MIDDLE', 'LEFT', 'RIGHT'] },
+        stepPath: {
+          type: 'string',
+          description: 'Optional BAW sub-route suffix, e.g. /customize/color or /customize/length',
+        },
+      },
+      required: ['unitId'],
       additionalProperties: false,
     },
     strict: false,
@@ -419,6 +466,49 @@ export async function executePsaActionTool(
           nextPath,
           collected,
         }),
+      };
+    }
+
+    case 'open_build_a_wig': {
+      const unitId = String(args.unitId ?? '').trim().toLowerCase();
+      const product = PSA_PRODUCTS.find((p) => p.id === unitId);
+      if (!product) {
+        return {
+          output: JSON.stringify({ error: 'Unknown unitId', validIds: PSA_PRODUCTS.map((p) => p.id) }),
+        };
+      }
+      const selections: PsaBawPrefillSelections = {};
+      if (typeof args.capSize === 'string' && args.capSize.trim()) selections.capSize = args.capSize.trim();
+      if (typeof args.length === 'string' && args.length.trim()) selections.length = args.length.trim();
+      if (typeof args.density === 'string' && args.density.trim()) selections.density = args.density.trim();
+      if (typeof args.color === 'string' && args.color.trim()) selections.color = args.color.trim();
+      if (typeof args.texture === 'string' && args.texture.trim()) selections.texture = args.texture.trim();
+      if (typeof args.lace === 'string' && args.lace.trim()) selections.lace = args.lace.trim();
+      if (typeof args.hairline === 'string' && args.hairline.trim()) selections.hairline = args.hairline.trim();
+      if (typeof args.styling === 'string' && args.styling.trim()) selections.styling = args.styling.trim();
+      if (typeof args.partSelection === 'string' && args.partSelection.trim()) {
+        selections.partSelection = args.partSelection.trim();
+      }
+      const stepPath = typeof args.stepPath === 'string' ? args.stepPath.trim() : '';
+      let path = product.buildAWigPath;
+      if (stepPath) {
+        if (stepPath.startsWith('/build-a-wig')) path = stepPath;
+        else if (stepPath.startsWith('/')) path = `${product.buildAWigPath}${stepPath}`;
+        else path = `${product.buildAWigPath}/${stepPath.replace(/^\//, '')}`;
+      }
+      const clientActions: PsaClientAction[] = [
+        { type: 'prefill_baw', unitId, path, selections: Object.keys(selections).length ? selections : undefined },
+        { type: 'navigate', path },
+      ];
+      return {
+        output: JSON.stringify({
+          ok: true,
+          unit: product.name,
+          path,
+          selections: Object.keys(selections).length ? selections : undefined,
+          note: 'Member will land in Build-a-Wig with selections pre-filled when supported.',
+        }),
+        clientActions,
       };
     }
 
