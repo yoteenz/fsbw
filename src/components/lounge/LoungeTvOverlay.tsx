@@ -797,9 +797,11 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   if (!visible || typeof document === 'undefined') return null;
 
   const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
+  const seedanceClosing = seedancePhase === 'closing';
   const showLegacyChoreography = !useSeedanceClip;
   const showTvChrome =
-    !useSeedanceClip || seedancePhase === 'ready' || seedancePhase === 'closing';
+    !useSeedanceClip || seedancePhase === 'ready' || seedanceClosing;
+  const showSeedanceVideo = useSeedanceClip && seedancePhase !== 'idle';
   const useFullscreenShell = useSeedanceClip && showTvChrome;
 
   const handMounted =
@@ -842,10 +844,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   return createPortal(
     <div role="presentation" aria-hidden={!isOpen}>
-      {useSeedanceClip && (seedancePhase === 'opening' || seedancePhase === 'closing') ? (
+      {showSeedanceVideo ? (
         <LoungeTvAnimationVideo
-          active
-          direction={seedancePhase === 'opening' ? 'forward' : 'reverse'}
+          active={seedancePhase === 'opening' || seedanceClosing}
+          direction={seedanceClosing ? 'reverse' : 'forward'}
           onComplete={
             seedancePhase === 'opening' ? handleOpenVideoComplete : handleCloseVideoComplete
           }
@@ -864,7 +866,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           margin: 0,
           background:
             useFullscreenShell
-              ? '#000000'
+              ? seedanceClosing
+                ? 'transparent'
+                : '#000000'
               : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
                 ? 'rgba(0,0,0,0.35)'
                 : 'transparent',
@@ -905,7 +909,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           ) : null}
         </>
       ) : null}
-      {showTvChrome && useFullscreenShell ? (
+      {showTvChrome && useFullscreenShell && !seedanceClosing ? (
         <LoungeTvFullscreenShell
           zIndex={110}
           closeVisible={closePhase === 'idle' && seedancePhase === 'ready'}

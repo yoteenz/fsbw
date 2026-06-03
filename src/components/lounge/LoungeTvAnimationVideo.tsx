@@ -10,6 +10,42 @@ import {
   loungeTvAnimationPosterSrc,
   loungeTvAnimationVideoSrc,
 } from '../../constants/loungeTvAnimationVideo';
+
+function parkVideoAtReverseHandFrame(el: HTMLVideoElement): Promise<void> {
+  const seek = (time: number) =>
+    new Promise<void>((resolve) => {
+      const done = () => {
+        el.removeEventListener('seeked', done);
+        resolve();
+      };
+      el.addEventListener('seeked', done);
+      el.currentTime = time;
+    });
+
+  const waitForDuration = () =>
+    new Promise<void>((resolve) => {
+      if (el.readyState >= 1 && Number.isFinite(el.duration) && el.duration > 0) {
+        resolve();
+        return;
+      }
+      const onMeta = () => {
+        el.removeEventListener('loadedmetadata', onMeta);
+        resolve();
+      };
+      el.addEventListener('loadedmetadata', onMeta);
+      if (el.readyState === HTMLMediaElement.HAVE_NOTHING) el.load();
+    });
+
+  return waitForDuration().then(async () => {
+    const duration = el.duration;
+    if (!Number.isFinite(duration) || duration <= 0) return;
+    const frac = Math.min(1, Math.max(0, LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION));
+    const t = frac >= 1 ? Math.max(0, duration - 0.02) : Math.max(0, duration * frac);
+    el.pause();
+    el.playbackRate = 1;
+    await seek(t);
+  });
+}
 import { useSceneCoverVideoPlayback, type SceneCoverVideoDirection } from '../../hooks/useSceneCoverVideoPlayback';
 
 type Props = {
@@ -45,6 +81,20 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     }
   }, [src]);
 
+  /** While menu is open, park on hand-press so close reverse starts instantly (no black lead-in). */
+  useEffect(() => {
+    if (active) return;
+    const el = videoRef.current;
+    if (!el) return;
+    let cancelled = false;
+    void parkVideoAtReverseHandFrame(el).then(() => {
+      if (!cancelled) setFrameVisible(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [active, src]);
+
   useSceneCoverVideoPlayback(videoRef, {
     active,
     direction,
@@ -56,8 +106,6 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     safetyTimeoutMs: 15000,
   });
 
-  if (!active) return null;
-
   return (
     <div
       aria-hidden={!active}
@@ -67,6 +115,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         zIndex: 120,
         overflow: 'hidden',
         pointerEvents: 'none',
+        visibility: active ? 'visible' : 'hidden',
         backgroundColor: 'transparent',
       }}
     >
