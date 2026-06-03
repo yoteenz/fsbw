@@ -1,0 +1,120 @@
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  PSA_CHAT_SUBTITLE,
+  PSA_CHAT_TITLE,
+} from '../../constants/psaConfig';
+import type { PsaChatMessage } from './usePsaChat';
+
+type PsaChatPanelProps = {
+  messages: PsaChatMessage[];
+  isSending: boolean;
+  onClose: () => void;
+  onSend: (text: string) => Promise<{ premiumRequired?: boolean } | void>;
+};
+
+/** Extract in-app paths like /account/concierge from assistant text for tap-to-navigate. */
+function extractPaths(text: string): string[] {
+  const matches = text.match(/\/(?:[a-z0-9-]+\/)*[a-z0-9-]+/gi) ?? [];
+  const unique = [...new Set(matches.map((m) => m.split(/[\s),."'<>]/)[0]))];
+  return unique.filter((p) => p.startsWith('/') && p.length > 1).slice(0, 4);
+}
+
+export default function PsaChatPanel({
+  messages,
+  isSending,
+  onClose,
+  onSend,
+}: PsaChatPanelProps) {
+  const navigate = useNavigate();
+  const [input, setInput] = useState('');
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, isSending]);
+
+  const submit = async () => {
+    const text = input.trim();
+    if (!text || isSending) return;
+    setInput('');
+    await onSend(text);
+  };
+
+  const onFormSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    void submit();
+  };
+
+  const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      void submit();
+    }
+  };
+
+  return (
+    <div className="psa-chat-panel" role="dialog" aria-label="Personal Slay Assistant chat">
+      <header className="psa-chat-header">
+        <div className="psa-chat-header-text">
+          <h2 className="psa-chat-title">{PSA_CHAT_TITLE}</h2>
+          <p className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</p>
+        </div>
+        <button type="button" className="psa-chat-close" onClick={onClose} aria-label="Close PSA">
+          ×
+        </button>
+      </header>
+
+      <div className="psa-chat-messages" ref={scrollRef}>
+        {messages.map((msg) => {
+          const paths = msg.role === 'assistant' ? extractPaths(msg.content) : [];
+          return (
+            <div
+              key={msg.id}
+              className={`psa-chat-bubble psa-chat-bubble-${msg.role}`}
+            >
+              {msg.content}
+              {paths.length > 0 ? (
+                <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {paths.map((path) => (
+                    <button
+                      key={path}
+                      type="button"
+                      className="psa-chat-nav-link"
+                      onClick={() => {
+                        onClose();
+                        navigate(path);
+                      }}
+                    >
+                      GO TO {path.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+        {isSending ? (
+          <div className="psa-chat-bubble psa-chat-bubble-system">PSA IS TYPING…</div>
+        ) : null}
+      </div>
+
+      <form className="psa-chat-input-row" onSubmit={onFormSubmit}>
+        <input
+          className="psa-chat-input"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={onInputKeyDown}
+          placeholder="ASK PSA ANYTHING…"
+          disabled={isSending}
+          autoComplete="off"
+          enterKeyHint="send"
+        />
+        <button className="psa-chat-send" type="submit" disabled={isSending || !input.trim()}>
+          SEND
+        </button>
+      </form>
+    </div>
+  );
+}
