@@ -78,6 +78,8 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 | `CODEBASE.md` | **Current codebase snapshot** (structure, paths). Refreshed by "Snapshot codebase to motherboard." |
 | `MEMORY.md` | Append-only log of conversation summaries and one-off decisions. |
 | `ADDING.md` | Protocol for how to add entries (format, deduplication, no overwrite). |
+| `golden-models/` | **Winning Fal/model picks** for this stack (one file per model). |
+| `golden-prompts/` | **Production-quality prompts** paired with golden models. |
 
 For **profiles table and sync** (name, photo, socials, birthday, rewards): see `docs/PROFILES_COLUMNS_AND_APP_MAPPING.md`.
 
@@ -88,3 +90,4 @@ For **profiles table and sync** (name, photo, socials, birthday, rewards): see `
 - **"Load motherboard"** → Read `README.md` → `CORE.md` → `CODEBASE.md` → `MEMORY.md` and use that context.
 - **"Add to motherboard"** → Add one entry now (per ADDING.md) and **enable auto-add for this chat**; thereafter add at the end of significant exchanges without being asked again. **"Stop adding to motherboard"** → disable auto-add for this chat.
 - **"Snapshot codebase to motherboard"** → Explore the repo and overwrite `motherboard/CODEBASE.md` with a structured summary of the current codebase so the motherboard has accurate, up-to-date code context.
+- **Golden models / prompts** → `motherboard/golden-models/` and `motherboard/golden-prompts/` store Fal models and prompts that work best in this stack; update when the product owner confirms a keeper.
