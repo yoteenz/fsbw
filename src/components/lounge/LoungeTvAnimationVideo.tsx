@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
+  LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION,
   LOUNGE_TV_ANIMATION_VIDEO_SRC,
   LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV,
   loungeTvAnimationFrameStyle,
@@ -20,18 +21,16 @@ type Props = {
   active: boolean;
   direction: SceneCoverVideoDirection;
   onComplete: () => void;
-  /** Hide poster + frames while parent runs instant CRT power-off over the shell. */
-  deferVisual?: boolean;
 };
 
 /** Full-screen TV open/close Seedance clip — full frame + transparent letterbox bands. */
-export function LoungeTvAnimationVideo({ active, direction, onComplete, deferVisual = false }: Props) {
+export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
   const src = loungeTvAnimationVideoSrc();
   const poster = loungeTvAnimationPosterSrc(direction);
   const letterbox = useLoungeTvAnimationLetterboxLayout();
-  const showPoster = !deferVisual && !frameVisible && poster;
+  const showPoster = !frameVisible && poster;
 
   const finish = useCallback(() => {
     setFrameVisible(false);
@@ -56,6 +55,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete, deferVis
     active,
     direction,
     reversePlaybackRate: LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
+    reverseStartFraction:
+      direction === 'reverse' ? LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION : 1,
     onComplete: finish,
     onPlaying: () => setFrameVisible(true),
     safetyTimeoutMs: 15000,
@@ -69,11 +70,10 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete, deferVis
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: deferVisual ? 105 : 120,
+        zIndex: 120,
         overflow: 'hidden',
         pointerEvents: 'none',
         backgroundColor: 'transparent',
-        visibility: deferVisual ? 'hidden' : 'visible',
       }}
     >
       <div style={loungeTvAnimationLetterboxShellStyle()}>
@@ -93,8 +93,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete, deferVis
             onError={finish}
             style={{
               ...loungeTvAnimationMediaLayerStyle(direction),
-              opacity: deferVisual ? 0 : frameVisible ? 1 : 0,
-              transition: deferVisual ? 'none' : frameVisible ? 'opacity 60ms linear' : 'none',
+              opacity: frameVisible ? 1 : 0,
+              transition: frameVisible ? 'opacity 60ms linear' : 'none',
             }}
           >
             <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />

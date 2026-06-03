@@ -1,7 +1,5 @@
 import type React from 'react';
 
-import { LOUNGE_TV_CONTENT_FRAME_SRC } from '../components/lounge/loungeTvAssets';
-
 export type LoungeTvAnimationDirection = 'forward' | 'reverse';
 
 const FINAL_LP_BASE =
@@ -135,6 +133,12 @@ export const LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE = 1;
 /** Reverse close — RAF step-back speed (lower = slower; was 2, eased for less rushed close). */
 export const LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE = 1.5;
 
+/**
+ * Reverse close begins here (forward timeline), not at clip end — skips end static + power-off zap.
+ * Open clip order: curtains → TV grow → hand power press → static. ~0.72 ≈ hand on red button.
+ */
+export const LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION = 0.72;
+
 /** When true, open/close use `video.mov` instead of CSS curtains/hand/grow. */
 export const LOUNGE_TV_ANIMATION_VIDEO_ENABLED = true;
 
@@ -146,6 +150,6 @@ export function loungeTvAnimationVideoSrc(): string {
  * Pre-play placeholder — forward: none (lounge carousel shows through until frame 0).
  * Reverse: theater end-still (matches {@link LoungeTvFullscreenShell}).
  */
-export function loungeTvAnimationPosterSrc(direction: LoungeTvAnimationDirection): string | null {
-  return direction === 'forward' ? null : LOUNGE_TV_CONTENT_FRAME_SRC;
+export function loungeTvAnimationPosterSrc(_direction: LoungeTvAnimationDirection): string | null {
+  return null;
 }

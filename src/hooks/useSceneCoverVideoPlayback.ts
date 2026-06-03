@@ -6,6 +6,8 @@ type Options = {
   active: boolean;
   direction: SceneCoverVideoDirection;
   reversePlaybackRate: number;
+  /** Forward-timeline fraction (0–1) where reverse begins; default 1 = clip end. */
+  reverseStartFraction?: number;
   onComplete: () => void;
   onPlaying?: () => void;
   safetyTimeoutMs?: number;
@@ -16,7 +18,15 @@ type Options = {
  */
 export function useSceneCoverVideoPlayback(
   videoRef: RefObject<HTMLVideoElement | null>,
-  { active, direction, reversePlaybackRate, onComplete, onPlaying, safetyTimeoutMs = 12000 }: Options,
+  {
+    active,
+    direction,
+    reversePlaybackRate,
+    reverseStartFraction = 1,
+    onComplete,
+    onPlaying,
+    safetyTimeoutMs = 12000,
+  }: Options,
 ): void {
   const completedRef = useRef(false);
   const reverseRafRef = useRef<number | null>(null);
@@ -138,17 +148,21 @@ export function useSceneCoverVideoPlayback(
       el.pause();
       el.playbackRate = 1;
 
-      const seekToEnd = () =>
+      const frac = Math.min(1, Math.max(0, reverseStartFraction));
+      const reverseStartTime =
+        frac >= 1 ? Math.max(0, duration - 0.02) : Math.max(0, duration * frac);
+
+      const seekToStart = () =>
         new Promise<void>((resolve) => {
           const done = () => {
             el.removeEventListener('seeked', done);
             resolve();
           };
           el.addEventListener('seeked', done);
-          el.currentTime = Math.max(0, duration - 0.02);
+          el.currentTime = reverseStartTime;
         });
 
-      await seekToEnd();
+      await seekToStart();
 
       let revealed = false;
       let last = performance.now();
@@ -199,5 +213,5 @@ export function useSceneCoverVideoPlayback(
         reverseRafRef.current = null;
       }
     };
-  }, [active, direction, reversePlaybackRate, safetyTimeoutMs, videoRef]);
+  }, [active, direction, reversePlaybackRate, reverseStartFraction, safetyTimeoutMs, videoRef]);
 }
