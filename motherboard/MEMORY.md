@@ -23626,3 +23626,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Root cause:** In the 3-column grid with **`clusterOuterIconsToCenter`**, negative margins on the **center** Affirm cell fought **`justifySelf: center`** and expanded perceived gutters.
 
 **Fix:** Removed Affirm cell margins. **`paymentPlansIconCellMarginAdjust`** — **Afterpay** **`marginRight: −4`**, **Klarna** **`marginLeft: −4`** (pull outer logos toward Affirm); Affirm unchanged.
+
+---
+
+## 2026-06-02 — Lobby shelf hit debug overlays (3 mannequin rows)
+
+**Context:** User asked for colored debug squares on **HD lace**, **bundles**, and **custom units** mannequin shelves to see tap/routing hit boxes while tuning **`FINAL_LOBBY_HIT_REGIONS`**.
+
+**Fix:** **`LobbySceneHotspots`** — **`SceneHitRegion`** **`debugOverlay`** per shelf when **`isLobbyShelfHitDebugEnabled()`** (`**?sceneHitDebug=1**` on **`/lobby`**, or **`LOBBY_SHELF_HIT_DEBUG_OVERLAY`** in **`finalLobbySceneAssets.ts`**). Colors: **cyan** HD lace → **`/shop/frontals`**, **green** bundles → **`/shop/bundles`**, **red** custom units → **`/shop/units`**; labels show route. **`SceneHitRegion`** accepts **`debugOverlayStyle`** override.
