@@ -58,8 +58,8 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
 export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX = -8;
 export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX = -8;
 
-/** Watch + Learn player — video shell max height (% of TV glass content area). */
-export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT = 42;
+/** Watch + Learn player — video shell max height (% of TV glass content area); tuned with `object-fit: cover`. */
+export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT = 54;
 
 /**
  * End-still PNG (`lounge-tv-content-frame.png`) after Seedance open — {@link LoungeTvFullscreenShell} only.

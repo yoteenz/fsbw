@@ -23932,3 +23932,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Move lounge TV fullscreen **close X** **down 6px** and **left 6px** on mapped glass. Revert lobby/lounge slides + Seedance transition/QA posters to **`cover`** + **`center top`** (fill clip, crop overflow, top-aligned) — user described cover behavior after brief contain experiment.
 
 **Fix:** **`LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP/RIGHT_PX`** **−14 → −8** (`loungeTvAssets.ts`). Restored **`cover`** / **`Math.max`** scale in **`sceneCarouselBackground.ts`**, **`sceneCoverHitMap.ts`**, **`lobbyLoungeTransitionVideo.ts`** (video + posters).
+
+---
+
+## 2026-06-02 — Watch + Learn: cover video, taller shell
+
+**Context:** Watch + Learn player should use **`object-fit: cover`** (not contain) but a **taller** video shell so the frame is not clipped; keep title/duration fixed under video and description-only scroll.
+
+**Fix:** **`LoungeTvWatchLearnPlayer`** — **`objectFit: 'cover'`**, **`objectPosition: 'center top'`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT`** **42 → 54** (`loungeTvAssets.ts`). Media column **`overflowY: hidden`** when player open unchanged in **`LoungeTvOverlay`**.
