@@ -6,6 +6,9 @@ import {
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC,
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT,
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC,
+  LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
+  LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
+  lobbyCasePropLayoutTransform,
 } from '../../constants/finalLobbyCasePropOverlays';
 import { FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
 import {
@@ -103,18 +106,21 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMe
         src={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC}
         imageRect={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT}
         viewportMeasureRef={viewportMeasureRef}
+        layoutOffset={LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET}
       />
       <LobbyCasePropOpenArt
         visible={lobbyCasePopover === 'phone'}
         src={FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC}
         imageRect={FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT}
         viewportMeasureRef={viewportMeasureRef}
+        layoutOffset={LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET}
       />
 
       <div
         style={{
           ...rectToPercentStyle(FINAL_LOBBY_HIT_REGIONS.caseRegister),
           position: 'absolute',
+          transform: lobbyCasePropLayoutTransform(LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET),
           zIndex: lobbyCasePopover === 'register' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
         }}
       >
@@ -139,6 +145,7 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMe
         style={{
           ...rectToPercentStyle(FINAL_LOBBY_HIT_REGIONS.casePhone),
           position: 'absolute',
+          transform: lobbyCasePropLayoutTransform(LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET),
           zIndex: lobbyCasePopover === 'phone' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
         }}
       >

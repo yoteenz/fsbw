@@ -23358,3 +23358,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to decrease **register and phone pop-up assets only** by **25%** (not the glass contact/payment popover cards).
 
 **Fix:** **`LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE = 0.75`** + **`scaleLobbyCasePropOpenOverlayRect()`** in **`finalLobbyCasePropOverlays.ts`**; **`LobbyCasePropOpenArt`** applies after cover-map. Bottom-center anchor matches **`object-position: center bottom`**. **`LOBBY_CASE_POPOVER_SCALE`** (0.65) unchanged.
+
+---
+
+## 2026-06-02 — Lobby register/phone tandem layout nudge
+
+**Context:** User asked to move **phone** open asset + popover together **up 12px, left 4px**; **register** open asset + popover together **up 12px, right 4px** (glass cards move with props, not separate panel-only offsets).
+
+**Fix:** **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 4, y: -12 }`, **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -4, y: -12 }` + **`lobbyCasePropLayoutTransform()`** in **`finalLobbyCasePropOverlays.ts`**. Applied on **`LobbyCasePropOpenArt`** (`layoutOffset`) and case-prop wrapper divs in **`LobbySceneHotspots`**. **`LOBBY_CASE_POPOVER_*_OFFSET_UP_PX`** unchanged (relative panel gap above tap box).

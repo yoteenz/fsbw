@@ -41,6 +41,17 @@ export function scaleLobbyCasePropOpenOverlayRect(
   };
 }
 
+/** Tandem nudge: open PNG + popover wrapper (register — up 12px, right 4px). */
+export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 4, y: -12 } as const;
+
+/** Tandem nudge: open PNG + popover wrapper (phone — up 12px, left 4px). */
+export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -4, y: -12 } as const;
+
+export function lobbyCasePropLayoutTransform(offset: { x: number; y: number }): string | undefined {
+  if (!offset.x && !offset.y) return undefined;
+  return `translate(${offset.x}px, ${offset.y}px)`;
+}
+
 export const FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS = [
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC,
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC,

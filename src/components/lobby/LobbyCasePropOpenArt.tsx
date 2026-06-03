@@ -1,6 +1,9 @@
 import type { RefObject } from 'react';
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
-import { scaleLobbyCasePropOpenOverlayRect } from '../../constants/finalLobbyCasePropOverlays';
+import {
+  lobbyCasePropLayoutTransform,
+  scaleLobbyCasePropOpenOverlayRect,
+} from '../../constants/finalLobbyCasePropOverlays';
 import { LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX } from '../../constants/lobbyPaymentIcons';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { rectToPercentStyle } from './SceneHitRegion';
@@ -11,13 +14,21 @@ type Props = {
   /** Normalized rect on `final-lobby.png` (928×1680). */
   imageRect: FinalSceneHitRect;
   viewportMeasureRef: RefObject<HTMLElement | null>;
+  /** Moves open PNG in tandem with the popover hit/panel wrapper. */
+  layoutOffset?: { x: number; y: number };
 };
 
 /**
  * Open-state register/phone art above the slide scrim, aligned to the composite
  * via the same cover map as the lobby background. Assets are preloaded on lobby mount.
  */
-export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureRef }: Props) {
+export function LobbyCasePropOpenArt({
+  visible,
+  src,
+  imageRect,
+  viewportMeasureRef,
+  layoutOffset,
+}: Props) {
   const mapped = useSceneCoverHitRect(imageRect, viewportMeasureRef);
   const displayRect = mapped ? scaleLobbyCasePropOpenOverlayRect(mapped) : null;
 
@@ -40,6 +51,7 @@ export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureR
         pointerEvents: 'none',
         userSelect: 'none',
         opacity: 1,
+        transform: layoutOffset ? lobbyCasePropLayoutTransform(layoutOffset) : undefined,
       }}
     />
   );
