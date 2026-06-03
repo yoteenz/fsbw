@@ -28,7 +28,7 @@ export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
  * Seedance `<video>` only — scale inside portrait frame (not slide backgrounds).
  * 0.98 ≈ 2% smaller; `center top` origin keeps top edge aligned with carousel.
  */
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.99;
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 1;
 
 /** Extra downward nudge on `<video>` transform inside portrait frame (with scale). */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX = 4;
