@@ -97,6 +97,8 @@ export function useSceneCoverVideoPlayback(
       el.currentTime = 0;
       try {
         await waitUntilCanStart();
+        // Show frame 0 before `playing` — avoids a lounge still poster flash under the overlay.
+        notifyPlaying();
         await el.play();
       } catch {
         try {

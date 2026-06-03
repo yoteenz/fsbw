@@ -76,7 +76,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         <div aria-hidden style={loungeTvAnimationLetterboxTopBandStyle(letterbox.topBandPx)} />
         <div style={loungeTvAnimationFrameStyle(letterbox)}>
           {showPoster ? (
-            <div aria-hidden style={loungeTvAnimationPosterInFrameStyle(poster)} />
+            <div aria-hidden style={loungeTvAnimationPosterInFrameStyle(poster, direction)} />
           ) : null}
           <video
             ref={videoRef}
@@ -85,7 +85,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
             preload="auto"
             onError={finish}
             style={{
-              ...loungeTvAnimationMediaLayerStyle(),
+              ...loungeTvAnimationMediaLayerStyle(direction),
               opacity: frameVisible ? 1 : 0,
               transition: frameVisible ? 'opacity 60ms linear' : 'none',
             }}

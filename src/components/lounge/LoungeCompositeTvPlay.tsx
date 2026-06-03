@@ -1,4 +1,8 @@
-import { useCallback, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import {
+  LOUNGE_TV_ANIMATION_VIDEO_ENABLED,
+  LOUNGE_TV_ANIMATION_VIDEO_SRC,
+} from '../../constants/loungeTvAnimationVideo';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
   FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX,
@@ -50,6 +54,18 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
 
   const closeLoungeTv = useCallback(() => {
     setTvOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!LOUNGE_TV_ANIMATION_VIDEO_ENABLED) return;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'video';
+    link.href = LOUNGE_TV_ANIMATION_VIDEO_SRC;
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
   }, []);
 
   const playContainerStyle: CSSProperties | null = playTapMapped

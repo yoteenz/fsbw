@@ -1,7 +1,6 @@
 import type React from 'react';
 
 import { LOUNGE_TV_CONTENT_FRAME_SRC } from '../components/lounge/loungeTvAssets';
-import { FINAL_LOUNGE_BACKGROUND_SRC } from './finalLobbySceneAssets';
 
 export type LoungeTvAnimationDirection = 'forward' | 'reverse';
 
@@ -31,15 +30,21 @@ export const LOUNGE_TV_ANIMATION_VIDEO_SRC_CROPPED = `/assets/lounge-tv-animatio
 /** Extra transparent band (px) split above/below frame — masks play settle. */
 export const LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX = 16;
 
-/** Original open clip: full frame inside portrait box (`contain`, not cover zoom). */
-export function loungeTvAnimationMediaLayerStyle(): React.CSSProperties {
+/**
+ * Open: `cover` + `center top` to match the lounge carousel slide under the overlay.
+ * Close (reverse): `contain` so the full theater frame stays visible.
+ */
+export function loungeTvAnimationMediaLayerStyle(
+  direction: LoungeTvAnimationDirection = 'forward',
+): React.CSSProperties {
+  const opening = direction === 'forward';
   return {
     position: 'absolute',
     inset: 0,
     width: '100%',
     height: '100%',
-    objectFit: 'contain',
-    objectPosition: 'center center',
+    objectFit: opening ? 'cover' : 'contain',
+    objectPosition: opening ? 'center top' : 'center center',
     pointerEvents: 'none',
   };
 }
@@ -110,12 +115,16 @@ export function loungeTvAnimationFullBleedPosterStyle(posterSrc: string): React.
   };
 }
 
-export function loungeTvAnimationPosterInFrameStyle(posterSrc: string): React.CSSProperties {
+export function loungeTvAnimationPosterInFrameStyle(
+  posterSrc: string,
+  direction: LoungeTvAnimationDirection,
+): React.CSSProperties {
+  const opening = direction === 'forward';
   return {
-    ...loungeTvAnimationMediaLayerStyle(),
+    ...loungeTvAnimationMediaLayerStyle(direction),
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'contain',
-    backgroundPosition: 'center center',
+    backgroundSize: opening ? 'cover' : 'contain',
+    backgroundPosition: opening ? 'center top' : 'center center',
     backgroundRepeat: 'no-repeat',
   };
 }
@@ -134,9 +143,9 @@ export function loungeTvAnimationVideoSrc(): string {
 }
 
 /**
- * Pre-play placeholder for the Seedance clip.
- * Forward: lounge composite; reverse: theater end-still (matches {@link LoungeTvFullscreenShell}).
+ * Pre-play placeholder — forward: none (lounge carousel shows through until frame 0).
+ * Reverse: theater end-still (matches {@link LoungeTvFullscreenShell}).
  */
 export function loungeTvAnimationPosterSrc(direction: LoungeTvAnimationDirection): string | null {
-  return direction === 'forward' ? FINAL_LOUNGE_BACKGROUND_SRC : LOUNGE_TV_CONTENT_FRAME_SRC;
+  return direction === 'forward' ? null : LOUNGE_TV_CONTENT_FRAME_SRC;
 }
