@@ -61,7 +61,7 @@ export function LoungeTvFullscreenShell({
         inset: 0,
         zIndex,
         overflow: 'hidden',
-        backgroundColor: backdropTransparent ? 'transparent' : '#000000',
+        backgroundColor: '#000000',
         pointerEvents: backdropTransparent ? 'none' : 'auto',
       }}
     >

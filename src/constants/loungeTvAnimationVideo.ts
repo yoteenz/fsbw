@@ -34,31 +34,28 @@ export const LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX = 0;
  */
 export const LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX = -2;
 
-/** Open: `cover` + tuned top anchor; close: `contain` + centered. */
+/** Open + reverse — `cover` + top anchor (same geometry; reverse must not letterbox or lounge peeks at sides). */
 export function loungeTvAnimationCoverPosition(
-  direction: LoungeTvAnimationDirection = 'forward',
+  _direction: LoungeTvAnimationDirection = 'forward',
 ): string {
-  if (direction === 'reverse') return 'center center';
   const offsetY = LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX;
   if (!offsetY) return 'center top';
   return `center calc(0% + ${offsetY}px)`;
 }
 
 /**
- * Open: `cover` + {@link loungeTvAnimationCoverPosition} (matches lounge slide under overlay).
- * Close (reverse): `contain` so the full theater frame stays visible.
+ * Full-viewport clip — `cover` + {@link loungeTvAnimationCoverPosition} for forward and reverse.
  */
 export function loungeTvAnimationMediaLayerStyle(
   direction: LoungeTvAnimationDirection = 'forward',
 ): React.CSSProperties {
-  const opening = direction === 'forward';
   return {
     position: 'absolute',
     inset: 0,
     width: '100%',
     height: '100%',
-    objectFit: opening ? 'cover' : 'contain',
-    objectPosition: opening ? loungeTvAnimationCoverPosition('forward') : 'center center',
+    objectFit: 'cover',
+    objectPosition: loungeTvAnimationCoverPosition(direction),
     pointerEvents: 'none',
   };
 }
@@ -133,11 +130,10 @@ export function loungeTvAnimationPosterInFrameStyle(
   posterSrc: string,
   direction: LoungeTvAnimationDirection,
 ): React.CSSProperties {
-  const opening = direction === 'forward';
   return {
     ...loungeTvAnimationMediaLayerStyle(direction),
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: opening ? 'cover' : 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: loungeTvAnimationCoverPosition(direction),
     backgroundRepeat: 'no-repeat',
   };
