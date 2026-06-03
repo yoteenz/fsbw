@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { computePsaProactiveNudge, type PsaProactiveNudge } from '../../utils/psaProactiveNudges';
 import { PRODUCT_INVENTORY_UPDATED_EVENT } from '../../utils/productInventoryAvailability';
 
@@ -13,8 +14,9 @@ const REFRESH_EVENTS = [
 
 /** Recompute proactive FAB nudge when cart, orders, or alerts change. */
 export function usePsaProactiveNudges(enabled: boolean) {
+  const location = useLocation();
   const [nudge, setNudge] = useState<PsaProactiveNudge | null>(() =>
-    enabled ? computePsaProactiveNudge() : null
+    enabled ? computePsaProactiveNudge(location.pathname) : null
   );
 
   const refresh = useCallback(() => {
@@ -22,8 +24,8 @@ export function usePsaProactiveNudges(enabled: boolean) {
       setNudge(null);
       return;
     }
-    setNudge(computePsaProactiveNudge());
-  }, [enabled]);
+    setNudge(computePsaProactiveNudge(location.pathname));
+  }, [enabled, location.pathname]);
 
   useEffect(() => {
     if (!enabled) {

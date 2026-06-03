@@ -1,5 +1,5 @@
 /**
- * Proactive PSA FAB nudges — unsigned forms, expiring consult offers, stock alerts.
+ * Proactive PSA FAB nudges — unsigned forms, consults, stock, BAW drafts, order celebrations.
  */
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
 import { buildConsultViewOfferOrdersHref } from './orderAccountAlerts';
@@ -7,16 +7,31 @@ import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { getWigUnitProductRoute } from './wigUnitProductRoutes';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
+import { detectPsaBawResumeTarget } from './psaBawDraft';
+import {
+  detectPsaOrderCelebration,
+  markOrderCelebrated,
+  type PsaOrderCelebrationKind,
+} from './psaOrderCelebrations';
+
+export type PsaProactiveNudgeKind =
+  | 'unsigned_form'
+  | 'expiring_consult'
+  | 'stock_alert'
+  | 'baw_draft'
+  | 'order_celebration';
 
 export type PsaProactiveNudge = {
   id: string;
-  kind: 'unsigned_form' | 'expiring_consult' | 'stock_alert';
+  kind: PsaProactiveNudgeKind;
   priority: number;
   headline: string;
   body?: string;
   actionPath: string;
   actionLabel: string;
   prefilledMessage?: string;
+  /** For order celebrations — mark seen when nudge shown. */
+  celebrationMeta?: { orderId: string; kind: PsaOrderCelebrationKind };
 };
 
 function readUserOrders(email: string): Record<string, unknown>[] {
@@ -46,12 +61,16 @@ function orderNum(order: Record<string, unknown>): string {
   return String(order.orderNumber ?? order.id ?? '').trim();
 }
 
+function orderId(order: Record<string, unknown>): string {
+  return String(order.id ?? order.orderNumber ?? '').trim();
+}
+
 function hoursUntil(ms: number): number {
   return Math.max(0, Math.ceil((ms - Date.now()) / (60 * 60 * 1000)));
 }
 
 /** Highest-priority nudge for the PSA FAB (null when none). */
-export function computePsaProactiveNudge(): PsaProactiveNudge | null {
+export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | null {
   const email = getCurrentUserEmailFromStorage();
   if (!email) return null;
 
@@ -123,6 +142,37 @@ export function computePsaProactiveNudge(): PsaProactiveNudge | null {
     });
   }
 
+  const baw = detectPsaBawResumeTarget(pathname);
+  if (baw) {
+    nudges.push({
+      id: `baw-${baw.unitId}`,
+      kind: 'baw_draft',
+      priority: 4,
+      headline: baw.source === 'draft' ? 'YOUR BAW DRAFT IS SAVED' : 'FINISH YOUR CUSTOMIZATION',
+      body: baw.unitLabel,
+      actionPath: baw.buildPath,
+      actionLabel: 'CONTINUE BAW',
+      prefilledMessage: `Help me finish my ${baw.unitLabel} Build-a-Wig configuration where I left off.`,
+    });
+  }
+
+  const celebration = detectPsaOrderCelebration(orders);
+  if (celebration) {
+    const match = orders.find((o) => orderNum(o) === celebration.orderNumber || orderId(o));
+    const id = match ? orderId(match) : celebration.orderNumber;
+    nudges.push({
+      id: `celebrate-${celebration.kind}-${id}`,
+      kind: 'order_celebration',
+      priority: 5,
+      headline: celebration.headline,
+      body: celebration.body,
+      actionPath: '/orders',
+      actionLabel: 'VIEW ORDER',
+      prefilledMessage: celebration.prefilledMessage,
+      celebrationMeta: id ? { orderId: id, kind: celebration.kind } : undefined,
+    });
+  }
+
   if (nudges.length === 0) {
     try {
       const raw = localStorage.getItem(`notifications_${email.trim().toLowerCase()}`);
@@ -140,7 +190,7 @@ export function computePsaProactiveNudge(): PsaProactiveNudge | null {
         nudges.push({
           id: `stock-alert-${stockNote.title}`,
           kind: 'stock_alert',
-          priority: 4,
+          priority: 6,
           headline: stockNote.title.includes('LOW STOCK') ? 'LOW STOCK ALERT' : 'BACK IN STOCK',
           body: 'ON YOUR WISHLIST',
           actionPath: stockNote.actionRoute || '/wishlist',
@@ -154,5 +204,9 @@ export function computePsaProactiveNudge(): PsaProactiveNudge | null {
   }
 
   nudges.sort((a, b) => a.priority - b.priority);
-  return nudges[0] ?? null;
+  const top = nudges[0] ?? null;
+  if (top?.celebrationMeta) {
+    markOrderCelebrated(top.celebrationMeta.orderId, top.celebrationMeta.kind);
+  }
+  return top;
 }

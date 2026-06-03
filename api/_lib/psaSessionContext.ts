@@ -18,6 +18,16 @@ export type PsaClientSessionContextPayload = {
     expiringConsultOrderNumbers: string[];
   };
   unreadStockAlertCount?: number;
+  slayReadiness?: {
+    percent: number;
+    checklist: { label: string; done: boolean }[];
+  };
+  bawDraft?: {
+    unitLabel: string;
+    buildPath: string;
+    source: 'draft' | 'session';
+  };
+  mode?: 'talk_me_out_of_it' | 'event_ready' | 'what_would_you_pick';
 };
 
 export function formatPsaSessionContextBlock(raw: unknown): string {
@@ -53,6 +63,35 @@ export function formatPsaSessionContextBlock(raw: unknown): string {
   }
   if (typeof ctx.unreadStockAlertCount === 'number' && ctx.unreadStockAlertCount > 0) {
     lines.push(`- Unread stock alerts on wishlist: ${ctx.unreadStockAlertCount}`);
+  }
+  if (ctx.slayReadiness) {
+    lines.push(`- Slay Readiness Score: **${ctx.slayReadiness.percent}%**`);
+    for (const item of ctx.slayReadiness.checklist) {
+      lines.push(`  - ${item.done ? '[x]' : '[ ]'} ${item.label}`);
+    }
+    if (ctx.slayReadiness.percent < 100) {
+      lines.push('- Mention readiness naturally when they are close to checkout or booking.');
+    }
+  }
+  if (ctx.bawDraft?.buildPath) {
+    lines.push(
+      `- Incomplete Build-a-Wig: **${ctx.bawDraft.unitLabel}** (${ctx.bawDraft.source === 'draft' ? 'saved draft' : 'in-progress session'}) → ${ctx.bawDraft.buildPath}`
+    );
+  }
+  if (ctx.mode === 'talk_me_out_of_it') {
+    lines.push(
+      '- **MODE: Talk Me Out Of It** — member wants honest "should I buy this?" feedback. Compare to cart, past orders, and rotation. Say no if it does not change their lineup enough.'
+    );
+  }
+  if (ctx.mode === 'event_ready') {
+    lines.push(
+      '- **MODE: Get Me Event Ready** — build a transformation roadmap: texture, length, install timing, appointment path. Not just products.'
+    );
+  }
+  if (ctx.mode === 'what_would_you_pick') {
+    lines.push(
+      '- **MODE: What Would You Pick** — answer with founder conviction: "If I were spending my own money today, I would choose…" and one clear reason.'
+    );
   }
 
   if (lines.length <= 1) return '';

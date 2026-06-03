@@ -8,6 +8,13 @@ import {
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
 import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
+import { detectPsaBawResumeTarget } from './psaBawDraft';
+import { computePsaSlayReadiness } from './psaSlayReadiness';
+
+export type PsaSessionMode =
+  | 'talk_me_out_of_it'
+  | 'event_ready'
+  | 'what_would_you_pick';
 
 export type PsaClientSessionContext = {
   pathname: string;
@@ -25,6 +32,16 @@ export type PsaClientSessionContext = {
     expiringConsultOrderNumbers: string[];
   };
   unreadStockAlertCount?: number;
+  slayReadiness?: {
+    percent: number;
+    checklist: { label: string; done: boolean }[];
+  };
+  bawDraft?: {
+    unitLabel: string;
+    buildPath: string;
+    source: 'draft' | 'session';
+  };
+  mode?: PsaSessionMode;
 };
 
 function readJsonArray(key: string): Record<string, unknown>[] {
@@ -87,8 +104,30 @@ function countUnreadStockAlerts(email: string): number {
   }
 }
 
+function inferModeFromMessage(message: string): PsaSessionMode | undefined {
+  const t = message.toUpperCase();
+  if (
+    t.includes('SHOULD I REALLY BUY') ||
+    t.includes('TALK ME OUT OF IT') ||
+    t.includes('SHOULD I UPGRADE') ||
+    t.includes('DO I NEED THIS')
+  ) {
+    return 'talk_me_out_of_it';
+  }
+  if (t.includes('EVENT READY') || t.includes('WEDDING') || t.includes('GET ME READY FOR')) {
+    return 'event_ready';
+  }
+  if (t.includes('WHAT WOULD YOU PICK') || t.includes('WHAT WOULD YOU CHOOSE')) {
+    return 'what_would_you_pick';
+  }
+  return undefined;
+}
+
 /** Build a compact session snapshot for PSA (no PII beyond order numbers already in app). */
-export function buildPsaClientSessionContext(pathname: string): PsaClientSessionContext {
+export function buildPsaClientSessionContext(
+  pathname: string,
+  pendingMessage?: string
+): PsaClientSessionContext {
   const ctx: PsaClientSessionContext = { pathname };
 
   try {
@@ -130,6 +169,22 @@ export function buildPsaClientSessionContext(pathname: string): PsaClientSession
     }
     const stockAlerts = countUnreadStockAlerts(email);
     if (stockAlerts > 0) ctx.unreadStockAlertCount = stockAlerts;
+  }
+
+  ctx.slayReadiness = computePsaSlayReadiness();
+
+  const bawTarget = detectPsaBawResumeTarget(pathname);
+  if (bawTarget) {
+    ctx.bawDraft = {
+      unitLabel: bawTarget.unitLabel,
+      buildPath: bawTarget.buildPath,
+      source: bawTarget.source,
+    };
+  }
+
+  if (pendingMessage) {
+    const mode = inferModeFromMessage(pendingMessage);
+    if (mode) ctx.mode = mode;
   }
 
   return ctx;

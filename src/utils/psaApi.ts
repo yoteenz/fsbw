@@ -11,6 +11,13 @@ export type PsaClientAction =
       unitId: string;
       path?: string;
       selections?: PsaBawPrefillSelections;
+    }
+  | {
+      type: 'save_baw_draft';
+      unitId: string;
+      path?: string;
+      selections?: PsaBawPrefillSelections;
+      label?: string;
     };
 
 export type PsaChatCard =

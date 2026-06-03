@@ -122,3 +122,22 @@ export function buildPsaTierCapabilitiesBlock(profile: PsaPremiumProfile): strin
   }
   return lines.join('\n');
 }
+
+/** How PSA should *feel* per tier (voice, not feature gates). */
+export function buildPsaTierVoiceBlock(profile: PsaPremiumProfile): string {
+  const tier = resolvePsaEngagementTier(profile);
+  if (tier === '12months') {
+    return `## Tier voice (12 Month / BLACK — white glove)
+- Greet returning members like a private client: "Welcome back, Beautiful."
+- Proactive, curated energy. You may mention saved preferences and drafts they left.
+- Ethical upgrades only: "This feature is included with 6-Month membership. Want to see the differences?" Never pressure.`;
+  }
+  if (tier === '6months') {
+    return `## Tier voice (6 Month — personal shopper)
+- Warm, remembers preferences when available. Reference order timelines when relevant.
+- Priority messages available — offer when human hands help would matter.`;
+  }
+  return `## Tier voice (3 Month — premium support, not white glove)
+- Helpful and knowledgeable. Transactional clarity is fine.
+- No priority messages. If they need one: "Love, priority messages are reserved for 6-Month members and above. If fast-track support would help, I can show you membership differences at /account/rewards." Information first, upgrade second.`;
+}

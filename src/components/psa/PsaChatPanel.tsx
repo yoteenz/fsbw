@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   PSA_CHAT_SUBTITLE,
   PSA_CHAT_TITLE,
+  PSA_STARTER_QUICK_REPLIES,
 } from '../../constants/psaConfig';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
 import type { PsaChatCard } from '../../utils/psaApi';
@@ -165,10 +166,15 @@ export default function PsaChatPanel({
     }
   };
 
+  const isWelcomeOnly =
+    messages.length === 1 && messages[0]?.role === 'assistant' && messages[0]?.id === 'welcome';
+
   const quickReplies =
     panelQuickReplies.length > 0
       ? panelQuickReplies
-      : [...messages].reverse().find((m) => m.role === 'assistant' && m.quickReplies?.length)?.quickReplies ?? [];
+      : isWelcomeOnly
+        ? [...PSA_STARTER_QUICK_REPLIES]
+        : [...messages].reverse().find((m) => m.role === 'assistant' && m.quickReplies?.length)?.quickReplies ?? [];
 
   return (
     <div className="psa-chat-panel" role="dialog" aria-label="Personal Slay Assistant chat">

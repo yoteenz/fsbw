@@ -7,6 +7,16 @@ import { getPsaEngagementLimits } from './psaEngagementLimits.js';
 import { canAccessLiveOrderTracking } from './psaFeatureGates.js';
 import { summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
 
+import type { PsaMemberMemory } from './psaMemberMemories.js';
+
+export type PsaBawDraftSnapshot = {
+  unitId: string;
+  unitLabel: string;
+  buildPath: string;
+  label?: string;
+  savedAt: string;
+};
+
 export type PsaMemberContextSnapshot = {
   tierLabel: string;
   subscriptionTier: string | null;
@@ -20,8 +30,13 @@ export type PsaMemberContextSnapshot = {
     productName: string | null;
     needsOrderForm: boolean;
   }[];
+  memories?: PsaMemberMemory[];
+  hairProfile?: string | null;
+  bawDraft?: PsaBawDraftSnapshot | null;
   refreshedAt: string;
 };
+
+import { formatPsaMemoriesBlock } from './psaMemberMemories.js';
 
 export function formatPsaMemberContextBlock(snapshot: PsaMemberContextSnapshot | null): string {
   if (!snapshot) return '';
@@ -41,8 +56,13 @@ export function formatPsaMemberContextBlock(snapshot: PsaMemberContextSnapshot |
   } else {
     lines.push('- Active orders: none');
   }
+  if (snapshot.bawDraft?.buildPath) {
+    lines.push(
+      `- Saved Build-a-Wig draft: ${snapshot.bawDraft.unitLabel} (${snapshot.bawDraft.buildPath})${snapshot.bawDraft.label ? ` — ${snapshot.bawDraft.label}` : ''}`
+    );
+  }
   lines.push(`- Snapshot refreshed: ${snapshot.refreshedAt}`);
-  return `\n${lines.join('\n')}\n`;
+  return `\n${lines.join('\n')}\n${formatPsaMemoriesBlock(snapshot)}`;
 }
 
 async function fetchOrdersForContext(userId: string, accessToken: string): Promise<unknown[]> {
@@ -114,18 +134,25 @@ export async function refreshPsaMemberContext(input: {
   accessToken: string;
   premium: PsaPremiumProfile;
 }): Promise<PsaMemberContextSnapshot> {
+  const existing = await getPsaMemberContext(input.userId);
   const snapshot = await buildPsaMemberContextSnapshot(input);
+  const merged: PsaMemberContextSnapshot = {
+    ...snapshot,
+    memories: existing?.memories ?? [],
+    hairProfile: existing?.hairProfile ?? null,
+    bawDraft: existing?.bawDraft ?? null,
+  };
   try {
     const supabase = getSupabaseAdminServiceRole();
     await supabase.from('psa_member_context').upsert({
       user_id: input.userId,
-      context: snapshot,
+      context: merged,
       updated_at: new Date().toISOString(),
     });
   } catch (err) {
     console.warn('[psaMemberContext] upsert failed', err);
   }
-  return snapshot;
+  return merged;
 }
 
 export async function getPsaMemberContext(userId: string): Promise<PsaMemberContextSnapshot | null> {

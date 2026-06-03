@@ -68,6 +68,15 @@ export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 export const PSA_WELCOME_MESSAGE =
   'Hey Beautiful, welcome back to Frontal Slayer. I\'m PSA. What are we working on today: new hair, maintenance, customization or a little bit of everything?';
 
+/** Starter quick-reply chips when the thread is welcome-only (empty chat). */
+export const PSA_STARTER_QUICK_REPLIES = [
+  'HELP ME CHOOSE',
+  'WHAT WOULD YOU PICK?',
+  'TRACK MY ORDER',
+  'SHOULD I REALLY BUY THIS?',
+  'GET ME EVENT READY',
+] as const;
+
 /** How long to show waving when the chat panel opens or during idle wave. */
 export const PSA_WAVING_MS = 3200;
 
