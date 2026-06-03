@@ -23494,3 +23494,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted golden (not red) shadow on **lobby** / **lounge** carousel labels and arrows.
 
 **Fix:** **`lobby/page.tsx`** — **`LOUNGE_LOBBY_NAV_SHADOW_FILTER`** + **`LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW`** use warm gold **`rgba(201, 162, 39, …)`** / **`rgba(212, 175, 55, …)`** instead of brand red.
+
+---
+
+## 2026-06-02 — Chandelier hit-box debug overlay (QA)
+
+**Context:** User needed a visible hit rect over the lounge chandelier to tune **`FINAL_LOUNGE_HIT_REGIONS.chandelier`**.
+
+**Fix:** **`SceneHitRegion`** optional **`debugOverlay`** (amber square + label). **`LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY`** = **`true`** in **`finalLobbySceneAssets.ts`** (set **`false`** before ship); also **`?sceneHitDebug=1`**. **`LoungeSceneHotspots`** + **`isLoungeChandelierHitDebugEnabled()`**.
