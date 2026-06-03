@@ -23776,3 +23776,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** After removing slide PNG poster, transition no longer dropped before play but still **shifted upward** vs carousel backgrounds.
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98`** on transition **`<video>`** only — **`transform: scale(0.98)`**, **`transformOrigin: center top`** in **`lobbyLoungeTransitionMediaLayerStyle`**. Slide backgrounds unchanged. Tune constant in **`lobbyLoungeTransitionVideo.ts`**.
+
+---
+
+## 2026-06-02 — Scene transition debug colors removed
+
+**Context:** User asked to remove colored transition QA overlays (magenta poster / lime video / orange frame / blue letterbox).
+
+**Fix:** Deleted **`LobbyLoungeTransitionDebugLayers.tsx`**; removed **`?lobbyTransitionDebug=1`** session overlays. **`lobbyLoungeTransitionDebug.ts`** keeps silent query tuning only: **`?lobbyTransitionOffset=`**, **`?lobbyTransitionPoster=hidden|slide|afterPlaying`**.
