@@ -10,6 +10,7 @@ Run migrations in **Supabase → SQL Editor** (in order when setting up fresh).
 | `20260604120000_security_profiles_orders_guard.sql` | *(trigger + RLS)* | Block client self-upgrade; orders write via webhook only |
 | `20260605120000_psa_message_usage.sql` | **`psa_message_usage`** | Tier-based PSA chat limits (daily + monthly counters) |
 | `20260606120000_psa_chat_threads.sql` | **`psa_threads`**, **`psa_messages`** | Cross-device PSA chat history |
+| `20260607120000_psa_threads_context.sql` | **`psa_threads`** columns + **`psa_member_context`** | Archive, rolling summary, member snapshot on thread load |
 
 ### `priority_messages` columns
 
@@ -57,9 +58,11 @@ Enforced in `POST /api/psa/chat` via `psa_try_consume_message` RPC. Remaining al
 
 | Table | Purpose |
 |-------|---------|
-| **`psa_member_context`** | Optional snapshot JSON (tier, active orders, cart summary) refreshed each session |
+| **`psa_member_context`** | **Shipped** — snapshot JSON (tier, cart, active orders) refreshed on `GET /api/psa/thread` |
 
 **Shipped:** `psa_threads` / `psa_messages` — see migration `20260606120000_psa_chat_threads.sql`.
+
+**Shipped:** thread `archived_at`, `thread_summary`, and `psa_member_context` — `20260607120000_psa_threads_context.sql`.
 
 Example skeleton (not shipped yet):
 

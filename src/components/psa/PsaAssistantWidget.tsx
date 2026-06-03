@@ -8,6 +8,8 @@ import {
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
   PSA_IDLE_WAVE_INTERVAL_MS,
+  PSA_WIDGET_CTA,
+  PSA_CONTINUE_CTA,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
@@ -62,15 +64,23 @@ export default function PsaAssistantWidget() {
     sendMessage,
     usage,
     panelQuickReplies,
+    continueHint,
     setUsage,
     ensureHistoryLoaded,
+    refreshContinueHint,
     startNewThread,
     switchThread,
     openHistory,
     closeHistory,
+    archiveThread,
+    removeThread,
   } = usePsaChat(PSA_WELCOME_MESSAGE, () => buildPsaClientSessionContext(location.pathname));
 
   const proactiveNudge = usePsaProactiveNudges(!isOpen);
+
+  const showContinueHint = !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
+  const fabCtaLabel = showContinueHint ? PSA_CONTINUE_CTA : PSA_WIDGET_CTA;
+  const fabCtaSubline = showContinueHint ? continueHint!.title : null;
 
   useEffect(() => {
     const syncTheater = () => setLoungeTvTheater(isLoungeTvTheaterModeActive());
@@ -82,6 +92,11 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     if (loungeTvTheater) setIsOpen(false);
   }, [loungeTvTheater]);
+
+  useEffect(() => {
+    if (!isPremium) return;
+    void refreshContinueHint();
+  }, [isPremium, refreshContinueHint]);
 
   useEffect(() => {
     if (!isOpen || !isPremium) return;
@@ -333,6 +348,8 @@ export default function PsaAssistantWidget() {
             onOpenHistory={() => void openHistory()}
             onCloseHistory={closeHistory}
             onSelectThread={(id) => void switchThread(id)}
+            onArchiveThread={(id) => void archiveThread(id)}
+            onDeleteThread={(id) => void removeThread(id)}
             onInputFocusChange={setIsInputFocused}
             onInputTextChange={setInputHasText}
             initialInput={prefillInput}
@@ -357,6 +374,8 @@ export default function PsaAssistantWidget() {
           idle={!isOpen}
           expression={avatarExpression}
           showNudgeBadge={Boolean(proactiveNudge) && !isOpen}
+          ctaLabel={fabCtaLabel}
+          ctaSubline={fabCtaSubline}
         />
       </div>
 

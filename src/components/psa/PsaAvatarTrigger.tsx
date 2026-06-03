@@ -11,6 +11,8 @@ type PsaAvatarTriggerProps = {
   idle?: boolean;
   expression?: PsaAvatarExpression;
   showNudgeBadge?: boolean;
+  ctaLabel?: string;
+  ctaSubline?: string | null;
   'aria-label'?: string;
 };
 
@@ -20,6 +22,8 @@ export default function PsaAvatarTrigger({
   idle = false,
   expression = PSA_AVATAR_DEFAULT_EXPRESSION,
   showNudgeBadge = false,
+  ctaLabel = PSA_WIDGET_CTA,
+  ctaSubline = null,
   'aria-label': ariaLabel = 'Open Personal Slay Assistant',
 }: PsaAvatarTriggerProps) {
   return (
@@ -35,7 +39,8 @@ export default function PsaAvatarTrigger({
         <div className="psa-avatar-scanlines" aria-hidden />
         {showNudgeBadge ? <span className="psa-nudge-badge" aria-hidden /> : null}
       </div>
-      <span className="psa-avatar-cta">{PSA_WIDGET_CTA}</span>
+      <span className="psa-avatar-cta">{ctaLabel}</span>
+      {ctaSubline ? <span className="psa-avatar-cta-subline">{ctaSubline}</span> : null}
     </button>
   );
 }

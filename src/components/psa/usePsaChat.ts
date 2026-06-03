@@ -1,9 +1,12 @@
 import { useCallback, useRef, useState } from 'react';
 import {
+  archivePsaThread,
   createPsaThread,
+  deletePsaThread,
   fetchPsaActiveThread,
   fetchPsaThreadList,
   postPsaChat,
+  type PsaContinueHint,
   type PsaChatCard,
   type PsaThreadSummary,
   type PsaUsagePayload,
@@ -41,6 +44,7 @@ export function usePsaChat(
   const [error, setError] = useState<string | null>(null);
   const [usage, setUsage] = useState<PsaUsagePayload | null>(null);
   const [panelQuickReplies, setPanelQuickReplies] = useState<string[]>([]);
+  const [continueHint, setContinueHint] = useState<PsaContinueHint | null>(null);
   const historyLoadedRef = useRef(false);
   const getSessionContextRef = useRef(getSessionContext);
   getSessionContextRef.current = getSessionContext;
@@ -83,6 +87,7 @@ export function usePsaChat(
       }
 
       setHistoryAvailable(result.historyAvailable);
+      setContinueHint(result.continueHint ?? null);
       applyThreadPayload({
         threadId: result.threadId,
         lastResponseId: result.lastResponseId,
@@ -120,6 +125,7 @@ export function usePsaChat(
     setThreadId(result.threadId);
     setResponseId(null);
     setPanelQuickReplies([]);
+    setContinueHint(null);
     setMessages(welcomeOnly(welcomeMessage));
     await refreshThreadList();
     return true;
@@ -139,6 +145,13 @@ export function usePsaChat(
     historyLoadedRef.current = true;
     await loadActiveThread();
   }, [loadActiveThread]);
+
+  const refreshContinueHint = useCallback(async () => {
+    const result = await fetchPsaActiveThread();
+    if (result.ok) {
+      setContinueHint(result.continueHint ?? null);
+    }
+  }, []);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -195,9 +208,48 @@ export function usePsaChat(
         },
       ]);
       void refreshThreadList();
+      void refreshContinueHint();
       return { premiumRequired: false as const, clientActions: result.clientActions };
     },
-    [isSending, responseId, threadId, refreshThreadList]
+    [isSending, responseId, threadId, refreshThreadList, refreshContinueHint]
+  );
+
+  const archiveThread = useCallback(
+    async (id: string) => {
+      const result = await archivePsaThread(id);
+      if (!result.ok) {
+        setError(result.message);
+        return false;
+      }
+      if (threadId === id) {
+        setThreadId(null);
+        setResponseId(null);
+        setMessages(welcomeOnly(welcomeMessage));
+        setContinueHint(null);
+      }
+      await refreshThreadList();
+      return true;
+    },
+    [threadId, refreshThreadList, welcomeMessage]
+  );
+
+  const removeThread = useCallback(
+    async (id: string) => {
+      const result = await deletePsaThread(id);
+      if (!result.ok) {
+        setError(result.message);
+        return false;
+      }
+      if (threadId === id) {
+        setThreadId(null);
+        setResponseId(null);
+        setMessages(welcomeOnly(welcomeMessage));
+        setContinueHint(null);
+      }
+      await refreshThreadList();
+      return true;
+    },
+    [threadId, refreshThreadList, welcomeMessage]
   );
 
   const resetChat = useCallback(() => {
@@ -206,6 +258,7 @@ export function usePsaChat(
     setResponseId(null);
     setError(null);
     setPanelQuickReplies([]);
+    setContinueHint(null);
     setHistoryOpen(false);
     historyLoadedRef.current = false;
   }, [welcomeMessage]);
@@ -221,11 +274,15 @@ export function usePsaChat(
     error,
     usage,
     panelQuickReplies,
+    continueHint,
     setUsage,
     sendMessage,
     resetChat,
+    archiveThread,
+    removeThread,
     loadActiveThread,
     ensureHistoryLoaded,
+    refreshContinueHint,
     startNewThread,
     switchThread,
     openHistory,

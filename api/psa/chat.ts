@@ -36,16 +36,30 @@ import {
 } from '../_lib/psaTools.js';
 import {
   appendPsaMessage,
+  ensurePsaThreadTitleFromUserMessage,
+  getPsaThreadMessages,
   isPsaThreadStoreConfigured,
   resolvePsaThreadForChat,
   touchPsaThreadAfterReply,
+  updatePsaThreadSummary,
 } from '../_lib/psaThreadStore.js';
+import {
+  formatPsaMemberContextBlock,
+  getPsaMemberContext,
+  refreshPsaMemberContext,
+} from '../_lib/psaMemberContext.js';
+import {
+  buildPsaThreadSummaryFromMessages,
+  formatPsaThreadSummaryBlock,
+  PSA_LONG_THREAD_MESSAGE_THRESHOLD,
+} from '../_lib/psaThreadSummary.js';
 
 export const config = {
   maxDuration: 60,
 };
 
 const DEFAULT_MODEL = 'gpt-5.4-mini';
+const MEMBER_CONTEXT_STALE_MS = 5 * 60 * 1000;
 
 type ChatRequestBody = {
   message?: string;
@@ -383,6 +397,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let activeThreadId: string | null = null;
     let chainPreviousResponseId = previousResponseId;
+    let activeThreadSummary: string | null = null;
 
     if (isPsaThreadStoreConfigured()) {
       try {
@@ -392,6 +407,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           createNew: createNewThread,
         });
         activeThreadId = thread.id;
+        activeThreadSummary = thread.thread_summary;
         if (!createNewThread && thread.last_openai_response_id) {
           chainPreviousResponseId = thread.last_openai_response_id;
         }
@@ -400,15 +416,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           role: 'user',
           content: message,
         });
+        await ensurePsaThreadTitleFromUserMessage(thread.id, message);
       } catch (persistErr) {
         console.error('[psa/chat] thread persist (user)', persistErr);
       }
     }
 
-    const sessionBlock = formatPsaSessionContextBlock(body.context);
+    let instructionContext = formatPsaSessionContextBlock(body.context);
+    if (activeThreadSummary?.trim()) {
+      instructionContext += formatPsaThreadSummaryBlock(activeThreadSummary);
+    } else if (activeThreadId) {
+      try {
+        const rows = await getPsaThreadMessages(activeThreadId);
+        if (rows.length >= PSA_LONG_THREAD_MESSAGE_THRESHOLD) {
+          const built = buildPsaThreadSummaryFromMessages(
+            rows.map((r) => ({ role: r.role, content: r.content }))
+          );
+          if (built) {
+            instructionContext += formatPsaThreadSummaryBlock(built);
+            void updatePsaThreadSummary(activeThreadId, built).catch(() => {});
+          }
+        }
+      } catch {
+        /* ignore summary build */
+      }
+    }
+
+    try {
+      let memberCtx = await getPsaMemberContext(user.id);
+      const stale =
+        !memberCtx?.refreshedAt ||
+        Date.now() - new Date(memberCtx.refreshedAt).getTime() > MEMBER_CONTEXT_STALE_MS;
+      if (!memberCtx || stale) {
+        memberCtx = await refreshPsaMemberContext({
+          userId: user.id,
+          accessToken: user.accessToken,
+          premium,
+        });
+      }
+      instructionContext += formatPsaMemberContextBlock(memberCtx);
+    } catch (ctxErr) {
+      console.warn('[psa/chat] member context', ctxErr);
+    }
+
     const aiCtx: PsaChatAiContext = {
       model,
-      instructions: buildPsaInstructions(premium, sessionBlock),
+      instructions: buildPsaInstructions(premium, instructionContext),
       tools: toolsForMember(premium),
     };
 
@@ -444,6 +497,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           lastOpenaiResponseId: responseIdOut,
           titleFromFirstUserMessage: message,
         });
+        const rows = await getPsaThreadMessages(activeThreadId);
+        if (rows.length >= PSA_LONG_THREAD_MESSAGE_THRESHOLD) {
+          const summary = buildPsaThreadSummaryFromMessages(
+            rows.map((r) => ({ role: r.role, content: r.content }))
+          );
+          if (summary) await updatePsaThreadSummary(activeThreadId, summary);
+        }
       } catch (persistErr) {
         console.error('[psa/chat] thread persist (assistant)', persistErr);
       }
