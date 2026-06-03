@@ -23486,3 +23486,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** PRESS TO PLAY showed a duplicate **`FINAL_LOUNGE_BACKGROUND_SRC`** poster (cover + contain layers) before the open clip — lag/skip vs the live lounge carousel underneath.
 
 **Fix:** Forward **`loungeTvAnimationPosterSrc()`** = **`null`** (carousel shows through transparent overlay). Open clip uses **`cover` + `center top`** (matches carousel); reverse stays **`contain`**. **`useSceneCoverVideoPlayback`** reveals forward frame 0 after **`loadeddata`** (before **`playing`**). **`LoungeCompositeTvPlay`** preloads **`LOUNGE_TV_ANIMATION_VIDEO_SRC`** on mount.
+
+---
+
+## 2026-06-02 — Lobby/lounge nav golden shadow
+
+**Context:** User wanted golden (not red) shadow on **lobby** / **lounge** carousel labels and arrows.
+
+**Fix:** **`lobby/page.tsx`** — **`LOUNGE_LOBBY_NAV_SHADOW_FILTER`** + **`LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW`** use warm gold **`rgba(201, 162, 39, …)`** / **`rgba(212, 175, 55, …)`** instead of brand red.
