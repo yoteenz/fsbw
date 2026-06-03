@@ -67,7 +67,7 @@ export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 120;
 
 /** Screen-space nudge for lounge TV **label** only (container / hit box unchanged). */
 export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 10;
-export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 22;
+export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 25;
 
 /** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_TAP_RECT}. */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT = FINAL_LOUNGE_TV_PLAY_TAP_RECT;
