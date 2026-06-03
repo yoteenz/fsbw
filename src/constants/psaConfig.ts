@@ -17,15 +17,15 @@ export type PsaAvatarExpression =
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
   neutral: '/assets/psa-avatar-neutral.png',
-  'neutral-smiling': '/assets/psa-avatar-neutral-smiling.png',
+  'neutral-smiling': '/assets/psa-avatar-neutral-smiling.jpg',
   waving: '/assets/psa-avatar-waving.png',
   listening: '/assets/psa-avatar-listening.png',
   'thinking-smiling': '/assets/psa-avatar-thinking-smiling.png',
   thinking: '/assets/psa-avatar-thinking.png',
   delighted: '/assets/psa-avatar-delighted.png',
-  sorry: '/assets/psa-avatar-sorry.png',
+  sorry: '/assets/psa-avatar-sorry.jpg',
   pointing: '/assets/psa-avatar-pointing.png',
-  talking: '/assets/psa-avatar-talking.png',
+  talking: '/assets/psa-avatar-talking.jpg',
   presenting: '/assets/psa-avatar-presenting.png',
 };
 
