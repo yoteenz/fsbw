@@ -15,6 +15,9 @@ type SceneHitRegionProps = {
   debugOverlayStyle?: React.CSSProperties;
   /** QA only — shifts colored debug box (and its tap target while debug is on). */
   debugOffsetY?: number;
+  /** QA only — scale debug box (e.g. shelf tuning); anchor {@link debugScaleOrigin}. */
+  debugScale?: { x: number; y: number };
+  debugScaleOrigin?: React.CSSProperties['transformOrigin'];
 };
 
 const hitBaseStyle: React.CSSProperties = {
@@ -54,7 +57,17 @@ export function SceneHitRegion({
   debugLabel,
   debugOverlayStyle,
   debugOffsetY = 0,
+  debugScale,
+  debugScaleOrigin = 'center top',
 }: SceneHitRegionProps) {
+  const debugTransform = (() => {
+    if (!debugOverlay) return undefined;
+    const parts: string[] = [];
+    if (debugOffsetY) parts.push(`translateY(${debugOffsetY}px)`);
+    if (debugScale) parts.push(`scale(${debugScale.x}, ${debugScale.y})`);
+    return parts.length ? parts.join(' ') : undefined;
+  })();
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (disabled) return;
@@ -82,8 +95,8 @@ export function SceneHitRegion({
         pointerEvents: disabled ? 'none' : 'auto',
         cursor: disabled ? 'default' : 'pointer',
         ...(debugOverlay ? { ...SCENE_HIT_DEBUG_OVERLAY_STYLE, ...debugOverlayStyle } : null),
-        ...(debugOverlay && debugOffsetY
-          ? { transform: `translateY(${debugOffsetY}px)` }
+        ...(debugTransform
+          ? { transform: debugTransform, transformOrigin: debugScale ? debugScaleOrigin : undefined }
           : null),
       }}
     >
@@ -110,3 +123,4 @@ export function SceneHitRegion({
     </button>
   );
 }
+

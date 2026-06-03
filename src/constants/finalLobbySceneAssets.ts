@@ -55,6 +55,10 @@ export const LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY = false;
  */
 export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = true;
 
+/** QA shelf overlay size — width ×70%, height ×40% (reduced 30% / 60% from mapped hit rect). */
+export const LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7;
+export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE = 0.4;
+
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   left: 0.277,

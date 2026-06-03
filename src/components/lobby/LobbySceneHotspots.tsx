@@ -12,7 +12,11 @@ import {
   LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
   LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE,
 } from '../../constants/finalLobbyCasePropOverlays';
-import { FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
+import {
+  FINAL_LOBBY_HIT_REGIONS,
+  LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE,
+  LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE,
+} from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import {
   LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
@@ -91,6 +95,9 @@ export function LobbySceneHotspots({
 
   const lobbyLinksLocked = lobbyCasePopover !== null;
   const shelfHitDebug = useLobbyShelfHitDebugEnabled();
+  const shelfDebugScale = shelfHitDebug
+    ? { x: LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE, y: LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE }
+    : undefined;
 
   return (
     <>
@@ -138,6 +145,7 @@ export function LobbySceneHotspots({
             backgroundColor: 'rgba(0, 174, 239, 0.48)',
             border: '2px solid rgba(0, 120, 200, 0.95)',
           }}
+          debugScale={shelfDebugScale}
         />
       ) : null}
       {shelfBundlesRect ? (
@@ -153,6 +161,7 @@ export function LobbySceneHotspots({
             backgroundColor: 'rgba(76, 175, 80, 0.48)',
             border: '2px solid rgba(46, 125, 50, 0.95)',
           }}
+          debugScale={shelfDebugScale}
         />
       ) : null}
       {shelfCustomUnitsRect ? (
@@ -169,6 +178,7 @@ export function LobbySceneHotspots({
             border: '2px solid rgba(180, 20, 30, 0.95)',
           }}
           debugOffsetY={20}
+          debugScale={shelfDebugScale}
         />
       ) : null}
 
