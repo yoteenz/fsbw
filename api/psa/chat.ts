@@ -27,6 +27,12 @@ import {
   type PsaClientAction,
   type PsaToolContext,
 } from '../_lib/psaTools.js';
+import {
+  appendPsaMessage,
+  isPsaThreadStoreConfigured,
+  resolvePsaThreadForChat,
+  touchPsaThreadAfterReply,
+} from '../_lib/psaThreadStore.js';
 
 export const config = {
   maxDuration: 60,
@@ -37,6 +43,9 @@ const DEFAULT_MODEL = 'gpt-5.4-mini';
 type ChatRequestBody = {
   message?: string;
   previousResponseId?: string | null;
+  threadId?: string | null;
+  /** When true, start a fresh thread even if threadId was sent. */
+  newThread?: boolean;
 };
 
 type OpenAiToolCall = {
@@ -260,6 +269,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     typeof body.previousResponseId === 'string' && body.previousResponseId.trim()
       ? body.previousResponseId.trim()
       : undefined;
+  const requestThreadId =
+    typeof body.threadId === 'string' && body.threadId.trim() ? body.threadId.trim() : undefined;
+  const createNewThread = body.newThread === true;
 
   try {
     const toolCtx: PsaToolContext = {
@@ -271,11 +283,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const clientActions: PsaClientAction[] = [];
 
+    let activeThreadId: string | null = null;
+    let chainPreviousResponseId = previousResponseId;
+
+    if (isPsaThreadStoreConfigured()) {
+      try {
+        const thread = await resolvePsaThreadForChat({
+          userId: user.id,
+          threadId: requestThreadId,
+          createNew: createNewThread,
+        });
+        activeThreadId = thread.id;
+        if (!createNewThread && thread.last_openai_response_id) {
+          chainPreviousResponseId = thread.last_openai_response_id;
+        }
+        await appendPsaMessage({
+          threadId: thread.id,
+          role: 'user',
+          content: message,
+        });
+      } catch (persistErr) {
+        console.error('[psa/chat] thread persist (user)', persistErr);
+      }
+    }
+
     let response = await callOpenAiResponses({
       model,
       instructions: buildPsaInstructions(premium),
       input: message,
-      previous_response_id: previousResponseId,
+      previous_response_id: chainPreviousResponseId,
       reasoning: { effort: 'none' },
       tools: toolsForMember(premium),
       store: true,
@@ -329,9 +365,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(502).json({ error: 'PSA returned an empty response. Please try again.' });
     }
 
+    const formattedReply = formatPsaVoiceText(reply);
+    const responseIdOut = response.id ?? null;
+
+    if (activeThreadId && isPsaThreadStoreConfigured()) {
+      try {
+        await appendPsaMessage({
+          threadId: activeThreadId,
+          role: 'assistant',
+          content: formattedReply,
+          openaiResponseId: responseIdOut,
+        });
+        await touchPsaThreadAfterReply({
+          threadId: activeThreadId,
+          lastOpenaiResponseId: responseIdOut,
+          titleFromFirstUserMessage: message,
+        });
+      } catch (persistErr) {
+        console.error('[psa/chat] thread persist (assistant)', persistErr);
+      }
+    }
+
     return res.status(200).json({
-      reply: formatPsaVoiceText(reply),
-      responseId: response.id ?? null,
+      reply: formattedReply,
+      responseId: responseIdOut,
+      threadId: activeThreadId,
       model,
       clientActions: clientActions.length ? clientActions : undefined,
     });

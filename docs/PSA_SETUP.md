@@ -26,6 +26,7 @@ Knowledge lives in **`api/_lib/psaKnowledge.ts`** (not a separate upload — app
 | Piece | Path |
 |-------|------|
 | Chat API | `api/psa/chat.ts` → `POST /api/psa/chat` |
+| Thread history API | `api/psa/thread.ts`, `api/psa/threads.ts` |
 | Usage API | `api/psa/usage.ts` → `GET /api/psa/usage` |
 | Premium gate (server) | `api/_lib/psaPremiumCheck.ts` |
 | Engagement limits | `api/_lib/psaEngagementLimits.ts` + `api/_lib/psaUsageLimit.ts` |
@@ -244,6 +245,7 @@ Restart dev server after changing local env.
 - [x] **Cart tools** — `get_member_cart`, `add_to_cart` (+ `clientActions: sync_cart`)
 - [x] **Booking handoff** — `prepare_booking_handoff` + `add_to_cart` booking lines → `/checkout/bookings`
 - [x] **Priority message tool** — `send_priority_message` (needs Supabase migration `20260603180000_priority_messages.sql`)
+- [x] **Supabase threads** — `psa_threads` / `psa_messages` for history across devices (`20260606120000_psa_chat_threads.sql`)
 - [ ] **Concierge page** — POST priority message to API (not localStorage-only)
 - [ ] **Admin inbox** — read `priority_messages` in admin hub
 - [ ] **Supabase threads** — `psa_threads` / `psa_messages` for history across devices
