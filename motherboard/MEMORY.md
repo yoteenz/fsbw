@@ -23800,3 +23800,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User nudged **blue/cyan** (HD lace) shelf debug **up 1px**; TV content **background still only** **up 40px** more; transition video **`translateY` up 2px** again (from **2**).
 
 **Fix:** **`LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX`** **13→12**. **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **40→0** (screen **120** unchanged). **`LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX`** **2→0** (scale **1**).
+
+---
+
+## 2026-06-02 — Shelf debug off; TV still down 10px; transition frame up 2px
+
+**Context:** User asked to **remove** colored mannequin shelf debug overlays on lobby; TV content **background still** **down 10px**; lobby↔lounge transition **portrait frame container** **up 2px**.
+
+**Fix:** **`LOBBY_SHELF_HIT_DEBUG_OVERLAY = false`** (QA still via **`?sceneHitDebug=1`**). **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **0→10**. **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX = -2`** applied in **`lobbyLoungeTransitionFrameStyle`** (frame top offset).
