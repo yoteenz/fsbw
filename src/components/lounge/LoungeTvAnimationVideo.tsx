@@ -127,7 +127,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     <div
       aria-hidden={!active}
       style={{
-        position: 'fixed',
+        position: 'absolute',
         inset: 0,
         zIndex: 120,
         overflow: 'hidden',

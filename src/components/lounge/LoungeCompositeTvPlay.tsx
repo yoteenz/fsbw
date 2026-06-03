@@ -12,8 +12,10 @@ import {
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
 } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
+import { domRectRelativeToContainer } from '../../utils/sceneCoverContainerRect';
 import { coverMappedRectScreenOffsetStyle } from '../../utils/sceneCoverHitMap';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
+import { SceneViewportPortal } from '../lobby/SceneViewportPortal';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 
 const PRESS_PLAY_LABEL_STYLE: CSSProperties = {
@@ -48,9 +50,16 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
   const playTapMapped = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_TAP_RECT, measureRef);
 
   const openLoungeTv = useCallback(() => {
-    setTvOriginRect(tvAnchorRef.current?.getBoundingClientRect() ?? null);
+    const anchor = tvAnchorRef.current;
+    const stage = measureRef.current;
+    if (anchor && stage) {
+      const r = domRectRelativeToContainer(anchor.getBoundingClientRect(), stage);
+      setTvOriginRect(new DOMRect(r.left, r.top, r.width, r.height));
+    } else {
+      setTvOriginRect(anchor?.getBoundingClientRect() ?? null);
+    }
     setTvOpen(true);
-  }, []);
+  }, [measureRef]);
 
   const closeLoungeTv = useCallback(() => {
     setTvOpen(false);
@@ -154,7 +163,14 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
         </div>
       ) : null}
 
-      <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
+      <SceneViewportPortal measureRef={measureRef}>
+        <LoungeTvOverlay
+          isOpen={tvOpen}
+          originRect={tvOriginRect}
+          onClose={closeLoungeTv}
+          viewportMeasureRef={measureRef}
+        />
+      </SceneViewportPortal>
     </>
   );
 }
