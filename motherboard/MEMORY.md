@@ -23123,3 +23123,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Transition still slightly low vs composite; user asked **2px up** with no overrides.
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** (was 4). Still only **`lobbyLoungeTransitionMediaLayerStyle()`** / poster helper in `lobbyLoungeTransitionVideo.ts`.
+
+---
+
+## 2026-06-02 — Lounge TV: no hand before Seedance open
+
+**Context:** Hand image visible before `video.mov` plays.
+
+**Cause:** **`LoungeTvAnimationVideo`** used **`LOUNGE_TV_CONTENT_FRAME_SRC`** (end still with hand) as pre-play poster.
+
+**Fix:** **`loungeTvAnimationPosterSrc()`** — forward = **`FINAL_LOUNGE_BACKGROUND_SRC`**; reverse = `null` (black). End still only on **`LoungeTvFullscreenShell`** after open completes.
