@@ -24072,3 +24072,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `api/psa/chat.ts` — expanded `buildPsaInstructions()`; `api/_lib/psaKnowledge.ts` — +14 FAQ entries, referrals/affiliate/terms nav, Build-a-Wig context block; `src/constants/psaConfig.ts` welcome copy; `docs/PSA_SETUP.md` capability matrix.
 
 **Conventions:** Keep `psaKnowledge.ts` aligned with `brandFaqCopy.ts`; Phase 2 = cart/booking/order lookup tools.
+
+---
+
+## 2026-06-03 — PSA founder clone voice (not customer support)
+
+**Context:** User shared ChatGPT insight: PSA must sound like the **Frontal Slayer founder**, not a generic help desk — four pillars (luxury concierge, hair bestie, educator, no-gatekeeping), trust over sales, honest upselling, conversational patterns. Visual = holographic founder embodiment (avatar art separate).
+
+**Changes:** **`api/_lib/psaInstructions.ts`** — full founder personality framework; **`api/psa/chat.ts`** imports it; **`src/constants/psaConfig.ts`** welcome matches greeting energy; **`motherboard/golden-prompts/psa-founder-voice.md`**; **`motherboard/CORE.md`**, **`docs/PSA_SETUP.md`**, golden-prompts README.
+
+**Conventions:** Map colloquial “body wave” → BEACH WAVE / SOFT WAVE; never invent off-catalog textures; edit personality in `psaInstructions.ts`.
