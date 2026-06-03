@@ -23684,3 +23684,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for the **CONTACT US** header on the lobby phone glass pop-up to be **left-aligned only** (section Bohemy headings + body lines stay centered).
 
 **Fix:** **`LobbyCasePropPopover.tsx`** — contact popover main title (`sections` present): **`textAlign: 'left'`** instead of **`center`**. Register **PAYMENT METHODS** title unchanged (no `sections`).
+
+---
+
+## 2026-06-02 — Shelf hit debug always visible for QA tuning
+
+**Context:** User still did not see colored shelf debug boxes on lobby after `?sceneHitDebug=1` instructions.
+
+**Why hidden:** **`LOBBY_SHELF_HIT_DEBUG_OVERLAY`** was **`false`** — overlays only with query param + sessionStorage. Easy to miss URL, wrong route (`/lobby/lounge` has no shelves), or stale deploy. Possible CSS: hit buttons used **`background: transparent`** shorthand conflicting with debug **`backgroundColor`**.
+
+**Fix:** **`LOBBY_SHELF_HIT_DEBUG_OVERLAY = true`** until regions are tuned (set **`false`** before ship). **`SceneHitRegion`** base style → **`backgroundColor: transparent`**. Debug shelf **`zIndex: 40`** (above nav 30). Query still supports **`sceneHitDebug=1|true|yes`**; **`?sceneHitDebug=0`** clears session override but constant stays on until set **`false`** in **`finalLobbySceneAssets.ts`**.
