@@ -18,7 +18,7 @@ export const LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE = 2;
  * Nudge lobby/lounge Seedance overlay down to match composite `cover` backgrounds.
  * Applied only via {@link lobbyLoungeTransitionMediaLayerStyle} — do not set `top` / `objectPosition` elsewhere.
  */
-export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 4;
+export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
 
 /** Shared video + poster layer — single source of truth for transition alignment. */
 export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
