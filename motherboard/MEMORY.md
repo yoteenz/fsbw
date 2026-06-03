@@ -23436,3 +23436,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Phone popover down 6px
 
 **Fix (`4eaf2a32`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -30 }` (down 6px from −36).
+
+---
+
+## 2026-06-02 — Register popover +12 up/right, open asset +5%
+
+**Fix:** Register tandem **`{ x: 28, y: -34 }`** (+12px up, +12px right from `{16,-22}`). **`LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE`** **0.63** (+5% vs phone **0.6**); phone scale/offset unchanged. Per-prop **`overlayScale`** on **`LobbyCasePropOpenArt`**.
