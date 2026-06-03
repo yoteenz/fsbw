@@ -23275,3 +23275,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Causes:** (1) **`top` + `calc(100% + offset)`** reflows when `<video>` mounts. (2) Reverse **`onPlaying`** fired right after seek-to-end, flashing last frame vs poster before step-back.
 
 **Fix (`0107a8ce`):** **`lobbyLoungeTransitionMediaLayerStyle()`** — `inset: 0` + **`translateY(offset)`** only. Reverse reveal on **first RAF step-back**. Reset **`frameVisible`** when overlay inactive.
+
+---
+
+## 2026-06-02 — Lounge TV label +3px down
+
+**Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 25`** (was 22). Label-only.
