@@ -58,7 +58,11 @@ export const FINAL_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {
   height: 0.07,
 };
 
-/** Screen-space nudge for lounge TV play tap (after cover mapping). */
+/**
+ * Screen-space nudge for lounge TV play tap (after cover mapping).
+ * Applied via `calc(% + px)` on the mapped rect — not `transform` (carousel transforms
+ * made px nudges easy to miss; baked play art on `final-lounge.png` does not move).
+ */
 export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 10;
 export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 40;
 

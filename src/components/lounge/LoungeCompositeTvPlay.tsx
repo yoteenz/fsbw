@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type RefObject } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
@@ -6,6 +6,7 @@ import {
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
 } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
+import { applyScreenOffsetToCoverRect } from '../../utils/sceneCoverHitMap';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 import { LOUNGE_TV_PLAY_BUTTON_COLOR } from './loungeTvFrame';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
@@ -26,7 +27,31 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
 
   const tvRegion = useSceneCoverHitRect(FINAL_LOUNGE_TV_HIT_REGION, measureRef);
-  const playTap = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_TAP_RECT, measureRef);
+  const playTapMapped = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_TAP_RECT, measureRef);
+  const [playTap, setPlayTap] = useState(playTapMapped);
+
+  useLayoutEffect(() => {
+    if (!playTapMapped) {
+      setPlayTap(null);
+      return;
+    }
+    const el = measureRef.current;
+    const width = el?.offsetWidth ?? 0;
+    const height = el?.offsetHeight ?? 0;
+    if (width <= 0 || height <= 0) {
+      setPlayTap(playTapMapped);
+      return;
+    }
+    setPlayTap(
+      applyScreenOffsetToCoverRect(
+        playTapMapped,
+        width,
+        height,
+        FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
+        FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
+      ),
+    );
+  }, [measureRef, playTapMapped]);
 
   const openLoungeTv = useCallback(() => {
     setTvOriginRect(tvAnchorRef.current?.getBoundingClientRect() ?? null);
@@ -60,7 +85,6 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           aria-label="Play lounge media"
           style={{
             ...rectToPercentStyle(playTap),
-            transform: `translate(${FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX}px, ${FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX}px)`,
             position: 'absolute',
             zIndex: 11,
             margin: 0,
