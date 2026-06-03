@@ -41,8 +41,8 @@ export function scaleLobbyCasePropOpenOverlayRect(
   };
 }
 
-/** Tandem nudge: open PNG + popover wrapper (register — up 12px, right 10px). */
-export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 10, y: -12 } as const;
+/** Tandem nudge: open PNG + popover wrapper (register — up 22px, right 16px). */
+export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 16, y: -22 } as const;
 
 /** Tandem nudge: open PNG + popover wrapper (phone — up 20px, left 1px). */
 export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -20 } as const;
