@@ -84,6 +84,22 @@ export function sceneCarouselViewportStageStyle(): React.CSSProperties {
   };
 }
 
+/**
+ * Root for portals inside {@link sceneCarouselViewportStageStyle} — transition clip, TV Seedance, etc.
+ * Uses `absolute` (not `fixed`) so overlays move with the slide background on resize.
+ */
+export function sceneCarouselViewportOverlayRootStyle(
+  zIndex = 200,
+): React.CSSProperties {
+  return {
+    position: 'absolute',
+    inset: 0,
+    zIndex,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+  };
+}
+
 export function sceneCarouselViewportBackgroundStyle(
   backgroundSrc: string,
   options?: SceneCarouselBackgroundLayerOptions,

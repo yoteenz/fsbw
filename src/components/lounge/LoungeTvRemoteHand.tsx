@@ -30,13 +30,13 @@ export function LoungeTvRemoteHand({
       draggable={false}
       onLoad={onLoaded}
       style={{
-        position: 'fixed',
+        position: 'absolute',
         left: '50%',
         bottom: 'calc(max(10px, env(safe-area-inset-bottom, 0px)) - 32px)',
-        width: 'min(38vw, 240px)',
-        maxWidth: 'calc(100vw - 32px)',
+        width: 'min(38%, 240px)',
+        maxWidth: 'calc(100% - 32px)',
         height: 'auto',
-        maxHeight: 'min(26vh, 220px)',
+        maxHeight: 'min(26%, 220px)',
         objectFit: 'contain',
         objectPosition: 'center bottom',
         zIndex: 108,

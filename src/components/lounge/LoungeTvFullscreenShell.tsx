@@ -1,4 +1,5 @@
 import type React from 'react';
+import type { RefObject } from 'react';
 import {
   LOUNGE_TV_CONTENT_FRAME_PX,
   LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
@@ -23,6 +24,8 @@ type Props = {
   backdropTransparent?: boolean;
   /** Override stack order (e.g. power-off kickoff above reverse clip). */
   zIndex?: number;
+  /** {@link SceneCarouselViewportStage} — maps screen glass to the lounge scene box. */
+  viewportMeasureRef?: RefObject<HTMLElement | null>;
 };
 
 /**
@@ -36,11 +39,14 @@ export function LoungeTvFullscreenShell({
   onClose,
   backdropTransparent = false,
   zIndex = 110,
+  viewportMeasureRef,
 }: Props) {
   const { mappedScreen } = useCoverMappedLayout(
     LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
     LOUNGE_TV_CONTENT_FRAME_PX.width,
     LOUNGE_TV_CONTENT_FRAME_PX.height,
+    undefined,
+    viewportMeasureRef,
   );
 
   const frameStillOffsetX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX;
@@ -57,7 +63,7 @@ export function LoungeTvFullscreenShell({
       aria-modal="true"
       aria-label="Lounge media"
       style={{
-        position: 'fixed',
+        position: 'absolute',
         inset: 0,
         zIndex,
         overflow: 'hidden',

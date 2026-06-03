@@ -1,8 +1,12 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { FinalSceneHitRect } from '../constants/finalLobbySceneAssets';
 import { mapImagePointToCoverContainer, mapImageRectToCoverContainer } from '../utils/sceneCoverHitMap';
+import {
+  measureSceneCarouselBox,
+  type SceneCarouselMeasureBox,
+} from './useSceneCarouselMeasureBox';
 
-function viewportBox(): { width: number; height: number } {
+function viewportBox(): SceneCarouselMeasureBox {
   if (typeof window === 'undefined') return { width: 390, height: 844 };
   return {
     width: window.innerWidth,
@@ -11,28 +15,36 @@ function viewportBox(): { width: number; height: number } {
 }
 
 /**
- * Map image-normalized rects/points to the viewport using `contain` + `center top`
- * (same as lounge TV animation + final-lounge composite).
+ * Map image-normalized rects/points using `contain` + `center top`.
+ * Pass {@link SceneCarouselViewportStage} `measureRef` so layout tracks the scene box (not raw viewport).
  */
 export function useCoverMappedLayout(
   screenRect: FinalSceneHitRect,
   imageWidth: number,
   imageHeight: number,
   closePoint?: { x: number; y: number },
+  measureRef?: RefObject<HTMLElement | null>,
 ) {
-  const [box, setBox] = useState(viewportBox);
+  const [box, setBox] = useState<SceneCarouselMeasureBox>(() =>
+    measureRef ? measureSceneCarouselBox(measureRef.current) : viewportBox(),
+  );
 
   useLayoutEffect(() => {
-    const update = () => setBox(viewportBox());
+    const update = () =>
+      setBox(measureRef ? measureSceneCarouselBox(measureRef.current) : viewportBox());
     update();
+    const el = measureRef?.current;
+    const observer = el ? new ResizeObserver(update) : null;
+    if (el && observer) observer.observe(el);
     window.addEventListener('resize', update);
     const vv = window.visualViewport;
     vv?.addEventListener('resize', update);
     return () => {
+      observer?.disconnect();
       window.removeEventListener('resize', update);
       vv?.removeEventListener('resize', update);
     };
-  }, []);
+  }, [measureRef]);
 
   const mappedScreen = mapImageRectToCoverContainer(
     screenRect,
