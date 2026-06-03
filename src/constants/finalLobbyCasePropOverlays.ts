@@ -4,8 +4,8 @@ import { FINAL_SCENE_ART_HEIGHT, FINAL_SCENE_ART_WIDTH } from './finalLobbyScene
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
-export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_VERSION = '524y401-v1';
-export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_VERSION = '8f5ce48-v1';
+export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_VERSION = '524y401-chroma-v2';
+export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_VERSION = '8f5ce48-chroma-v2';
 
 /** Open-state cash register — aligned to baked art on `final-lobby.png` (928×1680). */
 export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC_REMOTE = `${FINAL_LP_BASE}/524y401iPlVoR0f6uT0OP_AvC0J19z%20(1).png`;
@@ -17,9 +17,9 @@ export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC_REMOTE = `${FINAL_LP_BASE}/8f5ce
 
 export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC = `/assets/final-lobby-phone-open.png?v=${FINAL_LOBBY_PHONE_OPEN_OVERLAY_VERSION}`;
 
-/** Native pixel size of overlay PNGs (for aspect-preserving cover-map box). */
-export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_PX = { width: 1200, height: 704 } as const;
-export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_PX = { width: 1536, height: 1136 } as const;
+/** Native pixel size of chroma-keyed overlay PNGs (after crop; rebake updates via `lobby-bake-case-prop-overlays.mjs`). */
+export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_PX = { width: 474, height: 539 } as const;
+export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_PX = { width: 496, height: 951 } as const;
 
 /** Build normalized rect with fixed width on source art and height from asset aspect. */
 function openOverlayRect(
