@@ -23,8 +23,14 @@ export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT: FinalSceneHitRect =
 /** Same cover-map box as closed phone hit target (`FINAL_LOBBY_HIT_REGIONS.casePhone`). */
 export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT: FinalSceneHitRect = FINAL_LOBBY_HIT_REGIONS.casePhone;
 
-/** Open-state register/phone PNG scale (popover cards unchanged). Was 0.75; −20% → 0.6. */
-export const LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE = 0.6;
+/** Phone open PNG scale (popover cards unchanged). */
+export const LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE = 0.6;
+
+/** Register open PNG — 5% larger than phone (`0.6 × 1.05`). */
+export const LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE = 0.63;
+
+/** @deprecated Use {@link LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}. */
+export const LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE = LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE;
 
 /** Shrink overlay rect from bottom-center (matches `object-position: center bottom`). */
 export function scaleLobbyCasePropOpenOverlayRect(
@@ -41,8 +47,8 @@ export function scaleLobbyCasePropOpenOverlayRect(
   };
 }
 
-/** Tandem nudge: open PNG + popover wrapper (register — up 22px, right 16px). */
-export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 16, y: -22 } as const;
+/** Tandem nudge: open PNG + popover wrapper (register — up 34px, right 28px). */
+export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 28, y: -34 } as const;
 
 /** Tandem nudge: open PNG + popover wrapper (phone — up 30px, left 1px). */
 export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -30 } as const;

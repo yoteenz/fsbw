@@ -7,7 +7,9 @@ import {
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT,
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC,
   LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
+  LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
   LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
+  LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE,
   lobbyCasePropLayoutTransform,
 } from '../../constants/finalLobbyCasePropOverlays';
 import { FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
@@ -107,6 +109,7 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMe
         imageRect={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT}
         viewportMeasureRef={viewportMeasureRef}
         layoutOffset={LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET}
+        overlayScale={LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE}
       />
       <LobbyCasePropOpenArt
         visible={lobbyCasePopover === 'phone'}
@@ -114,6 +117,7 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMe
         imageRect={FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT}
         viewportMeasureRef={viewportMeasureRef}
         layoutOffset={LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET}
+        overlayScale={LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}
       />
 
       <div

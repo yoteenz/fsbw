@@ -16,6 +16,7 @@ type Props = {
   viewportMeasureRef: RefObject<HTMLElement | null>;
   /** Moves open PNG in tandem with the popover hit/panel wrapper. */
   layoutOffset?: { x: number; y: number };
+  overlayScale?: number;
 };
 
 /**
@@ -28,9 +29,10 @@ export function LobbyCasePropOpenArt({
   imageRect,
   viewportMeasureRef,
   layoutOffset,
+  overlayScale,
 }: Props) {
   const mapped = useSceneCoverHitRect(imageRect, viewportMeasureRef);
-  const displayRect = mapped ? scaleLobbyCasePropOpenOverlayRect(mapped) : null;
+  const displayRect = mapped ? scaleLobbyCasePropOpenOverlayRect(mapped, overlayScale) : null;
 
   if (!visible || !displayRect) return null;
 
