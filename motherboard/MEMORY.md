@@ -24369,6 +24369,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-03 — PSA welcome: "looking for" not "working on"
+
+**Context:** User said "working on" is wrong for a hair shop; should be "looking for" (purchase intent).
+
+**Changes:** `psaConfig.ts` welcome message; `psaInstructions.ts` greeting example; `psaFeatureGates.ts` 12mo tier example.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
