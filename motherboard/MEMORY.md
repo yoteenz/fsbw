@@ -24186,3 +24186,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked PSA to enforce premium-chart perks — e.g. 3 Month cannot send priority messages; should be blocked with upgrade guidance.
 
 **Changes:** **`api/_lib/psaFeatureGates.ts`** + **`src/constants/psaFeatureGates.ts`** — gates: priority messages + live order tracking **6mo+**; special/exclusive rewards **12mo** (docs). **`send_priority_message`** removed from OpenAI tools for 3mo; execution returns **UPGRADE_REQUIRED** + `/account/rewards`. Order tools strip tracking timeline for 3mo. **`POST /api/client/priority-messages`** server gate. Concierge UI: upgrade card instead of priority form / live tracking for 3mo; no localStorage fallback on tier 403. **`buildPsaInstructions(profile)`** injects plan capabilities.
+
+---
+
+## 2026-06-03 — PSA hidden for standard members (lobby/lounge gate)
+
+**Context:** User asked PSA to not appear on standard member screens — same logic as lobby/lounge viewing gates.
+
+**Changes:** **`PsaAssistantWidget`** returns null unless **`isPremiumMemberForGatedFeatures()`** (active subscription tier or BLACK spend tier). Removed upgrade modal on FAB click for standard users (FAB no longer shown). Listens to **`membershipSubscriptionPreviewChanged`**. E2E standard-user: PSA FAB count 0.
