@@ -20,21 +20,27 @@ type Props = {
   active: boolean;
   direction: SceneCoverVideoDirection;
   onComplete: () => void;
+  /** Hide poster + frames while parent runs instant CRT power-off over the shell. */
+  deferVisual?: boolean;
 };
 
 /** Full-screen TV open/close Seedance clip — full frame + transparent letterbox bands. */
-export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props) {
+export function LoungeTvAnimationVideo({ active, direction, onComplete, deferVisual = false }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
   const src = loungeTvAnimationVideoSrc();
   const poster = loungeTvAnimationPosterSrc(direction);
   const letterbox = useLoungeTvAnimationLetterboxLayout();
-  const showPoster = !frameVisible && poster;
+  const showPoster = !deferVisual && !frameVisible && poster;
 
   const finish = useCallback(() => {
     setFrameVisible(false);
     onComplete();
   }, [onComplete]);
+
+  useEffect(() => {
+    if (!active) setFrameVisible(false);
+  }, [active, direction]);
 
   useEffect(() => {
     const el = videoRef.current;
@@ -63,10 +69,11 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 120,
+        zIndex: deferVisual ? 105 : 120,
         overflow: 'hidden',
         pointerEvents: 'none',
         backgroundColor: 'transparent',
+        visibility: deferVisual ? 'hidden' : 'visible',
       }}
     >
       <div style={loungeTvAnimationLetterboxShellStyle()}>
@@ -86,8 +93,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
             onError={finish}
             style={{
               ...loungeTvAnimationMediaLayerStyle(direction),
-              opacity: frameVisible ? 1 : 0,
-              transition: frameVisible ? 'opacity 60ms linear' : 'none',
+              opacity: deferVisual ? 0 : frameVisible ? 1 : 0,
+              transition: deferVisual ? 'none' : frameVisible ? 'opacity 60ms linear' : 'none',
             }}
           >
             <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />

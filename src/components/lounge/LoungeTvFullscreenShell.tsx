@@ -16,6 +16,8 @@ type Props = {
   screenStyle?: React.CSSProperties;
   closeVisible?: boolean;
   onClose?: (e: React.MouseEvent) => void;
+  /** Override stack order (e.g. power-off kickoff above reverse clip). */
+  zIndex?: number;
 };
 
 /**
@@ -27,6 +29,7 @@ export function LoungeTvFullscreenShell({
   screenStyle,
   closeVisible = false,
   onClose,
+  zIndex = 110,
 }: Props) {
   const closePoint = {
     x: 1 - LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR.right,
@@ -51,7 +54,7 @@ export function LoungeTvFullscreenShell({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 110,
+        zIndex,
         overflow: 'hidden',
         backgroundColor: '#000000',
       }}

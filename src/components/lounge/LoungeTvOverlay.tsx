@@ -585,6 +585,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
   const [seedancePhase, setSeedancePhase] = useState<SeedanceTvPhase>('idle');
+  /** Instant CRT zap on X — reverse clip runs underneath, then reveals for shrink/curtains. */
+  const [seedanceClosePowerOff, setSeedanceClosePowerOff] = useState(false);
 
   const useSeedanceClip = LOUNGE_TV_ANIMATION_VIDEO_ENABLED;
 
@@ -598,6 +600,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       isClosingRef.current = true;
       setShowContent(false);
       setShowStatic(false);
+      setSeedanceClosePowerOff(true);
       setSeedancePhase('closing');
       return;
     }
@@ -670,7 +673,15 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setCurtainsReady(false);
     isClosingRef.current = false;
     setSeedancePhase('idle');
+    setSeedanceClosePowerOff(false);
   }, []);
+
+  /** Seedance close: power-off zap first, then show reverse clip (black → shrink → lounge). */
+  useEffect(() => {
+    if (!seedanceClosePowerOff || seedancePhase !== 'closing') return;
+    const timer = window.setTimeout(() => setSeedanceClosePowerOff(false), LOUNGE_TV_POWER_OFF_MS);
+    return () => window.clearTimeout(timer);
+  }, [seedanceClosePowerOff, seedancePhase]);
 
   const handleOpenVideoComplete = useCallback(() => {
     setSeedancePhase('ready');
@@ -798,8 +809,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
   const showLegacyChoreography = !useSeedanceClip;
-  const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
+  const showTvChrome =
+    !useSeedanceClip || seedancePhase === 'ready' || seedanceClosePowerOff;
   const useFullscreenShell = useSeedanceClip && showTvChrome;
+  const showSeedanceCloseKickoff = useSeedanceClip && seedanceClosePowerOff;
 
   const handMounted =
     showLegacyChoreography && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
@@ -845,6 +858,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         <LoungeTvAnimationVideo
           active
           direction={seedancePhase === 'opening' ? 'forward' : 'reverse'}
+          deferVisual={showSeedanceCloseKickoff}
           onComplete={
             seedancePhase === 'opening' ? handleOpenVideoComplete : handleCloseVideoComplete
           }
@@ -906,16 +920,20 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       ) : null}
       {showTvChrome && useFullscreenShell ? (
         <LoungeTvFullscreenShell
+          zIndex={showSeedanceCloseKickoff ? 130 : 110}
           closeVisible={closePhase === 'idle' && seedancePhase === 'ready'}
           onClose={() => requestClose()}
           screenStyle={{
             backgroundColor: '#000000',
-            opacity: showContent || showStatic ? 1 : 0,
-            transition: 'opacity 120ms linear',
+            opacity: showSeedanceCloseKickoff || showContent || showStatic ? 1 : 0,
+            transition: showSeedanceCloseKickoff ? 'none' : 'opacity 120ms linear',
           }}
         >
-          {showStatic && !showContent ? <LoungeTvPowerOnStatic active /> : null}
-          {showContent && !poweringOff && !showStatic ? (
+          {showSeedanceCloseKickoff ? <LoungeTvPowerOffEffect active /> : null}
+          {showStatic && !showContent && !showSeedanceCloseKickoff ? (
+            <LoungeTvPowerOnStatic active />
+          ) : null}
+          {showContent && !poweringOff && !showStatic && !showSeedanceCloseKickoff ? (
             <LoungeTvContentProtection
               active
               style={{
