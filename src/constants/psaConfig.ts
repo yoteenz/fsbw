@@ -97,7 +97,7 @@ export function buildPsaWelcomeMessage(options?: {
     greeting = formatted ? `Welcome back, ${formatted}!` : 'Welcome back!';
   }
 
-  const intro = greeting ? `${greeting} I'm your PSA.` : `I'm your PSA.`;
+  const intro = greeting ? `${greeting} I'm your PSA!` : `I'm your PSA!`;
   return `${intro} What are you looking for today: new hair, maintenance, customization or a little bit of everything?`;
 }
 
