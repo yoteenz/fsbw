@@ -799,8 +799,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
   const seedanceClosing = seedancePhase === 'closing';
   const showLegacyChoreography = !useSeedanceClip;
-  const showTvChrome =
-    !useSeedanceClip || seedancePhase === 'ready' || seedanceClosing;
+  const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
+  const showSeedanceMenuShell = useSeedanceClip && seedancePhase === 'ready';
   const showSeedanceVideo = useSeedanceClip && seedancePhase !== 'idle';
   const useFullscreenShell = useSeedanceClip && showTvChrome;
 
@@ -866,9 +866,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           margin: 0,
           background:
             useFullscreenShell
-              ? seedanceClosing
-                ? 'transparent'
-                : '#000000'
+              ? '#000000'
               : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
                 ? 'rgba(0,0,0,0.35)'
                 : 'transparent',
@@ -909,16 +907,15 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           ) : null}
         </>
       ) : null}
-      {showTvChrome && useFullscreenShell ? (
+      {showSeedanceMenuShell ? (
         <LoungeTvFullscreenShell
           zIndex={110}
-          backdropTransparent={seedanceClosing}
-          closeVisible={closePhase === 'idle' && seedancePhase === 'ready' && !seedanceClosing}
+          closeVisible={closePhase === 'idle' && seedancePhase === 'ready'}
           onClose={() => requestClose()}
           screenStyle={{
             backgroundColor: '#000000',
-            opacity: seedanceClosing ? 0 : showContent || showStatic ? 1 : 0,
-            transition: seedanceClosing ? 'none' : 'opacity 120ms linear',
+            opacity: showContent || showStatic ? 1 : 0,
+            transition: 'opacity 120ms linear',
           }}
         >
           {showStatic && !showContent ? <LoungeTvPowerOnStatic active /> : null}

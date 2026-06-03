@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
   LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION,
@@ -67,13 +67,12 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     onComplete();
   }, [onComplete]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (active && direction === 'reverse') {
+      setFrameVisible(true);
+    }
     if (!active) {
       setFrameVisible(false);
-      return;
-    }
-    if (direction === 'reverse') {
-      setFrameVisible(true);
     }
   }, [active, direction]);
 
@@ -133,7 +132,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
               position: 'absolute',
               inset: 0,
               backgroundImage: `url(${poster})`,
-              backgroundSize: direction === 'forward' ? 'cover' : 'contain',
+              backgroundSize: 'cover',
               backgroundPosition: loungeTvAnimationCoverPosition(direction),
               backgroundRepeat: 'no-repeat',
               pointerEvents: 'none',
@@ -148,8 +147,9 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
           onError={finish}
           style={{
             ...loungeTvAnimationMediaLayerStyle(direction),
-            opacity: frameVisible ? 1 : 0,
-            transition: frameVisible ? 'opacity 60ms linear' : 'none',
+            opacity: (active && direction === 'reverse') || frameVisible ? 1 : 0,
+            transition:
+              direction === 'forward' && frameVisible ? 'opacity 60ms linear' : 'none',
           }}
         >
           <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />
