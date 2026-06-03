@@ -23167,3 +23167,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User supplied Final LP open-state **register** + **phone** PNGs; show on top of props only when popover open, scaled to match baked art on `final-lobby.png`.
 
 **Fix:** **`finalLobbyCasePropOverlays.ts`** — remote + bundled `/assets/final-lobby-register-open.png`, `final-lobby-phone-open.png`; cover-mapped rects on 928×1680 (template-matched width/aspect). **`LobbyCasePropOpenArt`** z **28** (above scrim **15**, below popover **30**). **`LobbySceneHotspots`** + **`lobby/page.tsx`** pass **`viewportMeasureRef`** from **`SceneCarouselViewportStage`**. Tune **`FINAL_LOBBY_*_OPEN_OVERLAY_RECT`** in constants if QA misaligns.
+
+---
+
+## 2026-06-02 — Lobby register/phone overlays: chroma-key green screen
+
+**Context:** Open-state PNGs still showed green cyclorama when popover open.
+
+**Fix (`4a42daa8`):** Re-baked assets with **`scripts/lobby-chroma-key.py`**; **`npm run lobby:bake-case-prop-overlays`**. Cache-bust **`524y401-chroma-v2`** / **`8f5ce48-chroma-v2`**; **`FINAL_LOBBY_*_OPEN_OVERLAY_PX`** → 474×539 / 496×951 (cropped RGBA).
