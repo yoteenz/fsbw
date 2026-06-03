@@ -58,7 +58,7 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
  * End-still PNG (`lounge-tv-content-frame.png`) after Seedance open — {@link LoungeTvFullscreenShell} only.
  * Positive = down. Tune independently from {@link LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX}.
  */
-export const LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX = 0;
+export const LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX = 10;
 
 /**
  * TV glass content (menu / static / video) — {@link LoungeTvFullscreenShell} screen inset only.

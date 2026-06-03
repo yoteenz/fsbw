@@ -33,6 +33,9 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 1;
 /** Extra downward nudge on `<video>` transform inside portrait frame (with scale). */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX = 0;
 
+/** Portrait frame shell (poster + video) vs carousel — negative = up. */
+export const LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX = -2;
+
 /** Transition video + poster `object-position` / `background-position`. */
 export function lobbyLoungeTransitionCoverPosition(
   offsetY: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
@@ -133,10 +136,13 @@ export function lobbyLoungeTransitionLetterboxBottomBandStyle(heightPx: number):
 /** Portrait frame — fixed top offset; original cover video inside. */
 export function lobbyLoungeTransitionFrameStyle(
   layout: { frameWidth: number; frameHeight: number; topBandPx: number },
+  frameOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX,
 ): React.CSSProperties {
+  const frameTopPx =
+    layout.topBandPx + (Number.isFinite(frameOffsetYPx) ? frameOffsetYPx : 0);
   return {
     position: 'absolute',
-    top: `${layout.topBandPx}px`,
+    top: `${frameTopPx}px`,
     left: '50%',
     width: `${layout.frameWidth}px`,
     height: `${layout.frameHeight}px`,

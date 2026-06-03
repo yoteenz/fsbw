@@ -53,7 +53,7 @@ export const LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY = false;
  * **On** while tuning `FINAL_LOBBY_HIT_REGIONS` — set `false` before production ship.
  * Also toggled via `/lobby?sceneHitDebug=1` (see `sceneHitDebug.ts`).
  */
-export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = true;
+export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = false;
 
 /** QA shelf overlay size — width ×70%, height ×40% (reduced 30% / 60% from mapped hit rect). */
 export const LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7;
