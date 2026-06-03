@@ -24026,6 +24026,22 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Scene-lock lobby↔lounge transition + lounge TV to background viewport
+
+**Context:** User asked to lock scene transition animation and lounge TV Seedance/content to the lobby/lounge background image (like register/phone case props) so responsive resize keeps overlays aligned with the composite art.
+
+**Approach:** Same coordinate system as **`useSceneCoverHitRect`** — portals into **`SceneCarouselViewportStage`** (`absolute` + `inset: 0`, not `position: fixed` on `document.body`).
+
+**Changes:**
+- **`SceneViewportPortal`**, **`sceneCarouselViewportOverlayRootStyle`**, **`useSceneCarouselMeasureBox`**, **`sceneCoverContainerRect.ts`**
+- **`useCoverMappedLayout`** — optional `measureRef` for TV menu glass mapping
+- **Transition:** hosts inside lobby viewport (forward + warm preload) and lounge viewport (reverse only); **`LobbyLoungeTransitionHost`** `absolute` inside portal
+- **Lounge TV:** **`LoungeTvOverlay`** rendered via portal on lounge stage; animation, fullscreen shell, curtains, scrim, remote hand use `absolute`; grow origin rect scene-relative; frame sizing from measure box
+
+**Files:** `lobby/page.tsx`, `LobbyLoungeTransitionVideo.tsx`, `LoungeTvOverlay.tsx`, `LoungeCompositeTvPlay.tsx`, `LoungeTvAnimationVideo.tsx`, `LoungeTvFullscreenShell.tsx`, `LoungeTvRemoteHand.tsx`, `useCoverMappedLayout.ts`, `sceneCarouselBackground.ts`. Pushed **`master`** + **`preview/mobile`** (`5a1df866`).
+
+---
+
 ## 2026-06-03 — PSA full chat + golden-models / golden-prompts motherboard folders
 
 **Context (entire chat arc):** User planned **PSA (Personal Slay Assistant)** — premium holographic chat FAB; compared ChatGPT (GPT-5.5 Responses API, Three.js) vs stack-native approach; scaffolded PSA v1 (OpenAI chat API, 11 avatar expressions, premium gate); fixed sign-in JWT/premium server checks; merged avatar assets preview/mobile → master; clarified **Ideogram on Fal** already removed backgrounds (no green screen, no flatten script).
