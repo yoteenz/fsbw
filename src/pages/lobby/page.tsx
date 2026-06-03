@@ -29,7 +29,7 @@ import {
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
 
-/** Lounge “lobby” back nav — readable on white curtain in composite art. */
+/** Carousel nav arrows/labels — readable on white curtain in composite art (lobby ↔ lounge). */
 const LOUNGE_LOBBY_NAV_SHADOW_FILTER =
   'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.32))';
 const LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
@@ -120,7 +120,8 @@ const LobbyPage: React.FC<{
         flexDirection: 'column',
         alignItems: 'center',
         gap: '1px',
-        pointerEvents: 'auto'
+        pointerEvents: 'auto',
+        filter: LOUNGE_LOBBY_NAV_SHADOW_FILTER,
       }}>
         <button
           onClick={(e) => {
