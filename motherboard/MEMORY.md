@@ -23243,3 +23243,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to shift lobby/lounge Seedance transition **up 0.1px**; no overrides elsewhere.
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0.7`** (was 0.8). Only **`lobbyLoungeTransitionMediaLayerStyle()`** / poster helper.
+
+---
+
+## 2026-06-02 — Lounge TV label nudge +4px right, +6px down
+
+**Context:** User asked to move **PRESS TO PLAY** text down **6px**, right **4px** (label only).
+
+**Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 10`** (was 6), **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 18`** (was 12).
