@@ -1,8 +1,8 @@
 import { useLayoutEffect, useState } from 'react';
 import {
-  LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT,
-  LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH,
-} from '../constants/lobbyLoungeTransitionVideo';
+  SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX,
+  sceneCarouselCoverMetrics,
+} from '../utils/sceneCarouselBackground';
 
 export type LobbyLoungeTransitionLetterboxLayout = {
   frameWidth: number;
@@ -12,8 +12,8 @@ export type LobbyLoungeTransitionLetterboxLayout = {
 };
 
 /**
- * Fixed top-anchored portrait frame + transparent bands (no flex center bounce).
- * {@link LOBBY_LOUNGE_TRANSITION_LETTERBOX_BOUNCE_PAD_PX} adds slack above/below the frame.
+ * Portrait frame aligned to Final LP slide `cover` math (928×1680), not raw Seedance 1080×1920.
+ * Top-anchored with no bounce pad — avoids red peek-through and end-of-clip vertical bounce.
  */
 export function useLobbyLoungeTransitionLetterboxLayout(): LobbyLoungeTransitionLetterboxLayout {
   const [layout, setLayout] = useState<LobbyLoungeTransitionLetterboxLayout>(() =>
@@ -30,8 +30,8 @@ export function useLobbyLoungeTransitionLetterboxLayout(): LobbyLoungeTransition
   return layout;
 }
 
-/** Extra transparent band (px) split above/below frame — masks vertical settle during play. */
-export const LOBBY_LOUNGE_TRANSITION_LETTERBOX_BOUNCE_PAD_PX = 16;
+/** Pull transition frame up vs slide art so it lines up with lobby/lounge composites. */
+export const LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX = -SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX;
 
 function computeLetterboxLayout(): LobbyLoungeTransitionLetterboxLayout {
   if (typeof window === 'undefined') {
@@ -40,13 +40,11 @@ function computeLetterboxLayout(): LobbyLoungeTransitionLetterboxLayout {
 
   const vh = window.innerHeight;
   const vw = window.innerWidth;
-  const aspect = LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT / LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH;
-  const frameWidth = vw;
-  const frameHeight = Math.min(vh, frameWidth * aspect);
-  const letterboxPx = Math.max(0, vh - frameHeight);
-  const bounceHalf = LOBBY_LOUNGE_TRANSITION_LETTERBOX_BOUNCE_PAD_PX / 2;
-  const topBandPx = bounceHalf;
-  const bottomBandPx = letterboxPx + bounceHalf;
+  const { renderedWidth, renderedHeight } = sceneCarouselCoverMetrics(vw, vh);
+  const frameWidth = renderedWidth;
+  const frameHeight = renderedHeight;
+  const topBandPx = 0;
+  const bottomBandPx = Math.max(0, vh - frameHeight);
 
   return { frameWidth, frameHeight, topBandPx, bottomBandPx };
 }

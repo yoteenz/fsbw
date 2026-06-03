@@ -16,7 +16,10 @@ import {
   FINAL_LOBBY_BACKGROUND_SRC,
   FINAL_LOUNGE_BACKGROUND_SRC,
 } from '../../constants/finalLobbySceneAssets';
-import { useLobbyLoungeTransitionLetterboxLayout } from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
+import {
+  LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX,
+  useLobbyLoungeTransitionLetterboxLayout,
+} from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
 
 type OverlayProps = {
@@ -57,7 +60,12 @@ function LobbyLoungeTransitionMedia({
         <div aria-hidden style={lobbyLoungeTransitionFullBleedPosterStyle(poster)} />
       ) : null}
       <div aria-hidden style={lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx)} />
-      <div style={lobbyLoungeTransitionFrameStyle(letterbox)}>
+      <div
+        style={{
+          ...lobbyLoungeTransitionFrameStyle(letterbox),
+          top: `${letterbox.topBandPx + LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX}px`,
+        }}
+      >
         {showPoster ? (
           <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
         ) : null}

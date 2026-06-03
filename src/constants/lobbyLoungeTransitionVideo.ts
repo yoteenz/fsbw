@@ -1,5 +1,7 @@
 import type React from 'react';
 
+import { sceneCarouselCoverBackgroundPosition } from '../utils/sceneCarouselBackground';
+
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
@@ -24,9 +26,9 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
  */
 export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0;
 
-/** Final LP lobby/lounge slides — same as first transition ship (`center top`). */
+/** Final LP lobby/lounge slides — shared cover anchor (see `SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX`). */
 export function lobbyLoungeTransitionCoverPosition(): string {
-  return 'center top';
+  return sceneCarouselCoverBackgroundPosition();
 }
 
 /** Original transition video/poster layer (full bleed inside the portrait frame). */
@@ -37,7 +39,7 @@ export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    objectPosition: 'center top',
+    objectPosition: lobbyLoungeTransitionCoverPosition(),
     pointerEvents: 'none',
   };
 }
@@ -47,7 +49,7 @@ export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.
     ...lobbyLoungeTransitionMediaLayerStyle(),
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: 'center top',
+    backgroundPosition: lobbyLoungeTransitionCoverPosition(),
     backgroundRepeat: 'no-repeat',
   };
 }
@@ -114,7 +116,7 @@ export function lobbyLoungeTransitionFullBleedPosterStyle(posterSrc: string): Re
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: 'center top',
+    backgroundPosition: lobbyLoungeTransitionCoverPosition(),
     backgroundRepeat: 'no-repeat',
     pointerEvents: 'none',
   };

@@ -9,7 +9,40 @@ import {
 export const SCENE_CAROUSEL_BG_WIDTH = FINAL_SCENE_ART_WIDTH;
 export const SCENE_CAROUSEL_BG_HEIGHT = FINAL_SCENE_ART_HEIGHT;
 
-/** @deprecated Final LP composites share geometry — both slides use `center top`. */
+/**
+ * Nudge `background-size: cover` + `center top` down so the marble floor covers the slide
+ * bottom (avoids white `sceneSlideShellStyle` gap). Keep in sync with transition `object-position`.
+ */
+export const SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX = 40;
+
+/** Cover anchor for lobby, lounge, and Seedance transition (same math as {@link sceneCarouselCoverMetrics}). */
+export function sceneCarouselCoverBackgroundPosition(
+  offsetYPx: number = SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX,
+): string {
+  if (!offsetYPx) return 'center top';
+  return `center calc(0% + ${offsetYPx}px)`;
+}
+
+/** `cover` + `center top` metrics for a viewport box (matches slide + transition overlay). */
+export function sceneCarouselCoverMetrics(
+  containerWidth: number,
+  containerHeight: number,
+): { scale: number; renderedWidth: number; renderedHeight: number } {
+  if (containerWidth <= 0 || containerHeight <= 0) {
+    return { scale: 1, renderedWidth: containerWidth, renderedHeight: containerHeight };
+  }
+  const scale = Math.max(
+    containerWidth / SCENE_CAROUSEL_BG_WIDTH,
+    containerHeight / SCENE_CAROUSEL_BG_HEIGHT,
+  );
+  return {
+    scale,
+    renderedWidth: SCENE_CAROUSEL_BG_WIDTH * scale,
+    renderedHeight: SCENE_CAROUSEL_BG_HEIGHT * scale,
+  };
+}
+
+/** @deprecated Final LP composites share geometry — both slides use {@link sceneCarouselCoverBackgroundPosition}. */
 export const LOBBY_SCENE_BG_CROWN_Y_PX = 0;
 export const LOUNGE_SCENE_BG_CROWN_Y_PX = 0;
 
@@ -23,19 +56,20 @@ export function sceneCarouselBackgroundArtHeightCss(): string {
   return `calc(100vw * ${SCENE_CAROUSEL_BG_HEIGHT} / ${SCENE_CAROUSEL_BG_WIDTH})`;
 }
 
-/** Slide/page shell — at least one viewport tall and full uncropped art height. */
+/** Carousel slides — one viewport tall (no extra shell height that shows white below the scene). */
 export function sceneCarouselSlideMinHeightCss(): string {
-  return `max(100dvh, ${sceneCarouselBackgroundArtHeightCss()})`;
+  return '100dvh';
 }
 
-/** Carousel slide wrapper — tall enough for horizontal swipe parity; scene paints in viewport stage. */
+/** Carousel slide wrapper — matches visible lobby scrollport (`100dvh`). */
 export function sceneSlideShellStyle(): React.CSSProperties {
   return {
     position: 'relative',
     width: '100vw',
     flexShrink: 0,
     minHeight: sceneCarouselSlideMinHeightCss(),
-    overflow: 'visible',
+    height: sceneCarouselSlideMinHeightCss(),
+    overflow: 'hidden',
     backgroundColor: '#ffffff',
   };
 }
@@ -45,15 +79,12 @@ export type SceneCarouselBackgroundLayerOptions = {
   backgroundPosition?: string;
 };
 
-/** Fixed scene box — what the user sees in the `100dvh` scroll shell (cover math uses this). */
+/** Scene box — fills the slide shell (`100dvh`); cover math uses this size. */
 export function sceneCarouselViewportStageStyle(): React.CSSProperties {
   return {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    inset: 0,
     width: '100%',
-    height: '100dvh',
     overflow: 'hidden',
     isolation: 'isolate',
   };
@@ -68,7 +99,7 @@ export function sceneCarouselViewportBackgroundStyle(
     inset: 0,
     backgroundImage: `url(${backgroundSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: options?.backgroundPosition ?? 'center top',
+    backgroundPosition: options?.backgroundPosition ?? sceneCarouselCoverBackgroundPosition(),
     backgroundRepeat: 'no-repeat',
     backgroundColor: '#ffffff',
   };
@@ -102,7 +133,7 @@ export function sceneCarouselBackgroundLayerStyle(
     height: sceneCarouselSlideMinHeightCss(),
     backgroundImage: `url(${backgroundSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: options?.backgroundPosition ?? 'center top',
+    backgroundPosition: options?.backgroundPosition ?? sceneCarouselCoverBackgroundPosition(),
     backgroundRepeat: 'no-repeat',
     backgroundColor: '#ffffff',
   };
