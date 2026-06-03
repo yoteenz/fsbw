@@ -23574,3 +23574,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move the close **X** on both register and phone glass popovers **up 4px** and **right 4px** again (after prior **`lobbyPopoverPx(5) - 4`** inset).
 
 **Fix:** **`LobbyCasePropPopover.tsx`** — **`LOBBY_POPOVER_CLOSE_TOP_PX`** / **`LOBBY_POPOVER_CLOSE_RIGHT_PX`** → **`Math.max(0, lobbyPopoverPx(5) - 8)`** (shared by phone + register).
+
+---
+
+## 2026-06-02 — Phone popover: email + hours body → Futura Book black
+
+**Context:** User asked to change gray **email** and gray **hours** copy on the phone pop-up only to black **Futura PT Book** (not the gray **72 HOURS** emphasis in **questions**).
+
+**Fix:** **`lobbyPropPopoverCopy.ts`** — removed **`emphasis: 'futura-medium-gray'`** from **`BRAND_CONTACT_EMAIL`** and **`MAJOR US HOLIDAYS EXCLUDED`**; they inherit default **`lineStyle`** (**`#000`**, Futura PT Book). **72 HOURS** span unchanged.
