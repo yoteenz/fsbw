@@ -22,14 +22,14 @@ export type LobbyPhonePopoverSection = {
 export const LOBBY_PHONE_POPOVER_SECTIONS: readonly LobbyPhonePopoverSection[] = [
   {
     heading: 'email',
-    lines: [{ text: BRAND_CONTACT_EMAIL, emphasis: 'futura-medium-gray' }],
+    lines: [{ text: BRAND_CONTACT_EMAIL }],
   },
   {
     heading: 'hours',
     lines: [
       { text: BRAND_CONTACT_INTRO_HOURS },
       { text: 'WEEKDAYS ONLY' },
-      { text: 'MAJOR US HOLIDAYS EXCLUDED', emphasis: 'futura-medium-gray' },
+      { text: 'MAJOR US HOLIDAYS EXCLUDED' },
     ],
   },
   {
