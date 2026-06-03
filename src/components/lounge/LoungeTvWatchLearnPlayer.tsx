@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT } from './loungeTvAssets';
+import {
+  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT,
+} from './loungeTvAssets';
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 
@@ -241,7 +244,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           style={{
             position: 'relative',
             width: '100%',
-            maxHeight: `${LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT}%`,
+            maxHeight: `calc(${LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT}% + ${LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX}px)`,
             aspectRatio: '16 / 9',
             background: '#0a0a0a',
             overflow: 'hidden',
