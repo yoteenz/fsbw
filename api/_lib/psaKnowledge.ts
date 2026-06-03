@@ -2,6 +2,11 @@
  * Static knowledge for PSA v1: site navigation, unit catalog, and FAQ snippets.
  * Keep in sync with `src/constants/brandFaqCopy.ts` when FAQ changes materially.
  */
+import {
+  PSA_UNIT_PRICE_NOTE,
+  psaCatalogPricingSummaryLines,
+  psaStartingPriceUsdForUnitName,
+} from './psaCatalogPricing.js';
 
 export type PsaNavLink = {
   label: string;
@@ -17,6 +22,19 @@ export type PsaProduct = {
   buildAWigPath: string;
   summary: string;
 };
+
+export function mapPsaProductForTool(product: PsaProduct) {
+  const startingPriceUsd = psaStartingPriceUsdForUnitName(product.name);
+  return {
+    name: product.name,
+    texture: product.texture,
+    startingPriceUsd,
+    priceNote: PSA_UNIT_PRICE_NOTE,
+    productPage: product.path,
+    buildAWig: product.buildAWigPath,
+    summary: product.summary,
+  };
+}
 
 export const PSA_NAV_LINKS: PsaNavLink[] = [
   { label: 'SHOP UNITS', path: '/home/shop', description: 'Browse all wig units and storefront categories.' },
@@ -94,6 +112,12 @@ export const PSA_PRODUCTS: PsaProduct[] = [
 
 /** Condensed FAQ for PSA v1 — sourced from brand FAQ copy. */
 export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[] = [
+  {
+    id: 'unit-base-pricing',
+    question: 'HOW MUCH DO UNITS START AT? IS NOIR EXPENSIVE COMPARED TO OTHER UNITS?',
+    answer:
+      'Starting base prices before Build-a-Wig customization: NOIR $740, BLANCO $820, SOFT WAVE and BEACH WAVE $760 each, SOFT CURL and OCEAN CURL $780 each. NOIR is the most accessible straight unit on base price in our line. Length, density, lace, color, styling and add-ons increase your total in Build-a-Wig.',
+  },
   {
     id: 'processing-time',
     question: 'HOW LONG DOES PROCESSING TAKE?',
@@ -332,12 +356,19 @@ export function searchPsaNavigation(query: string, limit = 5): PsaNavLink[] {
 }
 
 export function buildPsaKnowledgeContext(): string {
-  const products = PSA_PRODUCTS.map((p) => `- ${p.name} (${p.texture}): PDP ${p.path}, Build-a-Wig ${p.buildAWigPath}. ${p.summary}`).join('\n');
-  const nav = PSA_NAV_LINKS.map((l) => `- ${l.label}: ${l.path} — ${l.description}`).join('\n');
-  const customization = `## BUILD-A-WIG (LENGTH, TEXTURE, DENSITY)
+  const pricingLines = psaCatalogPricingSummaryLines().join('\n');
+  const products = PSA_PRODUCTS.map((p) => {
+    const price = psaStartingPriceUsdForUnitName(p.name);
+    const priceLabel = price != null ? `from $${price} base` : 'see Build-a-Wig';
+    return `- ${p.name} (${p.texture}, ${priceLabel}): PDP ${p.path}, Build-a-Wig ${p.buildAWigPath}. ${p.summary}`;
+  }).join('\n');
+  const nav = PSA_NAV_LINKS.map((l) => `- ${l.label}: ${l.path}, ${l.description}`).join('\n');
+  const customization = `## BUILD-A-WIG (LENGTH, TEXTURE, DENSITY, PRICING)
 - Flow: /build-a-wig → pick unit → length → density → lace → hairline → color → styling → add-ons → cap size.
 - Texture guide: straight (NOIR, BLANCO), wavy (SOFT WAVE, BEACH WAVE), curly (SOFT CURL, OCEAN CURL).
-- Length/density: longer lengths often pair with higher density for fullness; use Build-a-Wig steps — PSA cannot price or save a build in v1.
+- Base starting prices (USD, before customization):\n${pricingLines}
+- ${PSA_UNIT_PRICE_NOTE}
+- Length/density: longer lengths often pair with higher density for fullness; final total is set in Build-a-Wig.
 - Premium-only steps (live color preview, premium lounge options) require active premium membership.`;
   return `## UNIT CATALOG\n${products}\n\n${customization}\n\n## SITE NAVIGATION\n${nav}`;
 }

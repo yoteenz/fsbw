@@ -8,8 +8,8 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 | Capability | ChatGPT prompt intent | PSA today |
 |------------|----------------------|-----------|
 | Personality / brand voice | Warm luxury concierge; Beautiful / Slayer / Love | **Yes** — `buildPsaInstructions()` in `api/psa/chat.ts` |
-| Product catalog | Raw hair / units | **Yes** — `search_products` + 6 units in `psaKnowledge.ts` |
-| Length, texture, density advice | Recommend | **Yes** — FAQ + Build-a-Wig context; directs to `/build-a-wig` |
+| Product catalog | Raw hair / units | **Yes** — `search_products` + 6 units in `psaKnowledge.ts`; **starting base USD prices** via `api/_lib/psaCatalogPricing.ts` (synced with `resolveQuote.ts`) |
+| Length, texture, density advice | Recommend | **Yes** — FAQ + Build-a-Wig context; directs to `/build-a-wig`; PSA can quote **starting base prices** and compare units (e.g. NOIR vs BLANCO) |
 | FAQs, shipping, policies | Answer | **Yes** — `search_faq` (synced from `brandFaqCopy.ts` themes) |
 | Loyalty + referrals + affiliate | Explain | **Yes** — FAQ entries + nav to `/account/rewards`, `/referrals`, `/affiliate` |
 | Hair care + installation | Answer | **Yes** — FAQ (maintenance, bundles, cap size, beginner-friendly, etc.) |
