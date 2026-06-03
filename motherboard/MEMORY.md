@@ -23201,3 +23201,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Open-state PNGs still showed green cyclorama when popover open.
 
 **Fix (`4a42daa8`):** Re-baked assets with **`scripts/lobby-chroma-key.py`**; **`npm run lobby:bake-case-prop-overlays`**. Cache-bust **`524y401-chroma-v2`** / **`8f5ce48-chroma-v2`**; **`FINAL_LOBBY_*_OPEN_OVERLAY_PX`** → 474×539 / 496×951 (cropped RGBA).
+
+---
+
+## 2026-06-02 — Lounge PRESS PLAY: move container (not label-only)
+
+**Context:** User asked to move the **container** for the press-play trigger down **40px**; prior offsets only seemed to move the **PRESS PLAY** text, not the tap/hit box.
+
+**Cause:** Offset was applied on the inner `<button>` (e.g. `transform`) while the positioned box stayed on the cover-mapped rect.
+
+**Fix (`a865f100`):** **`coverMappedRectScreenOffsetStyle()`** in **`sceneCoverHitMap.ts`** — `left`/`top` as `calc(${pct}% + ${px}px)`. **`LoungeCompositeTvPlay`** wraps tap in **`data-lounge-tv-play-container`** with that style; button is `width/height 100%`. **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 120`** (+40 from 80). Tune **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_*`** only on the container wrapper; large moves still use **`FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER`** / **`FINAL_LOUNGE_TV_PLAY_TAP_RECT`**.
