@@ -4,14 +4,18 @@ import {
   fetchPsaActiveThread,
   fetchPsaThreadList,
   postPsaChat,
+  type PsaChatCard,
   type PsaThreadSummary,
   type PsaUsagePayload,
 } from '../../utils/psaApi';
+import type { PsaClientSessionContext } from '../../utils/psaSessionContext';
 
 export type PsaChatMessage = {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
+  cards?: PsaChatCard[];
+  quickReplies?: string[];
 };
 
 function nextId(): string {
@@ -22,7 +26,10 @@ function welcomeOnly(welcomeMessage: string): PsaChatMessage[] {
   return [{ id: 'welcome', role: 'assistant', content: welcomeMessage }];
 }
 
-export function usePsaChat(welcomeMessage: string) {
+export function usePsaChat(
+  welcomeMessage: string,
+  getSessionContext?: () => PsaClientSessionContext
+) {
   const [messages, setMessages] = useState<PsaChatMessage[]>(() => welcomeOnly(welcomeMessage));
   const [isSending, setIsSending] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -33,7 +40,10 @@ export function usePsaChat(welcomeMessage: string) {
   const [responseId, setResponseId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [usage, setUsage] = useState<PsaUsagePayload | null>(null);
+  const [panelQuickReplies, setPanelQuickReplies] = useState<string[]>([]);
   const historyLoadedRef = useRef(false);
+  const getSessionContextRef = useRef(getSessionContext);
+  getSessionContextRef.current = getSessionContext;
 
   const applyThreadPayload = useCallback(
     (payload: {
@@ -43,6 +53,7 @@ export function usePsaChat(welcomeMessage: string) {
     }) => {
       setThreadId(payload.threadId);
       setResponseId(payload.lastResponseId);
+      setPanelQuickReplies([]);
       if (payload.messages.length > 0) {
         setMessages(
           payload.messages.map((m) => ({
@@ -108,6 +119,7 @@ export function usePsaChat(welcomeMessage: string) {
     }
     setThreadId(result.threadId);
     setResponseId(null);
+    setPanelQuickReplies([]);
     setMessages(welcomeOnly(welcomeMessage));
     await refreshThreadList();
     return true;
@@ -134,12 +146,15 @@ export function usePsaChat(welcomeMessage: string) {
       if (!trimmed || isSending) return { premiumRequired: false as const };
 
       setError(null);
+      setPanelQuickReplies([]);
       setMessages((prev) => [...prev, { id: nextId(), role: 'user', content: trimmed }]);
       setIsSending(true);
 
+      const context = getSessionContextRef.current?.();
       const result = await postPsaChat(trimmed, {
         previousResponseId: responseId,
         threadId,
+        context,
       });
       setIsSending(false);
 
@@ -168,9 +183,16 @@ export function usePsaChat(welcomeMessage: string) {
           dayCount: prev.dayCount + 1,
         };
       });
+      setPanelQuickReplies(result.quickReplies ?? []);
       setMessages((prev) => [
         ...prev,
-        { id: nextId(), role: 'assistant', content: result.reply },
+        {
+          id: nextId(),
+          role: 'assistant',
+          content: result.reply,
+          cards: result.cards,
+          quickReplies: result.quickReplies,
+        },
       ]);
       void refreshThreadList();
       return { premiumRequired: false as const, clientActions: result.clientActions };
@@ -183,6 +205,7 @@ export function usePsaChat(welcomeMessage: string) {
     setThreadId(null);
     setResponseId(null);
     setError(null);
+    setPanelQuickReplies([]);
     setHistoryOpen(false);
     historyLoadedRef.current = false;
   }, [welcomeMessage]);
@@ -197,6 +220,7 @@ export function usePsaChat(welcomeMessage: string) {
     historyAvailable,
     error,
     usage,
+    panelQuickReplies,
     setUsage,
     sendMessage,
     resetChat,

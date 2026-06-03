@@ -20,6 +20,12 @@ import {
 } from '../_lib/psaKnowledge.js';
 import { buildPsaInstructions } from '../_lib/psaInstructions.js';
 import { formatPsaVoiceText } from '../_lib/psaVoiceFormat.js';
+import { formatPsaSessionContextBlock } from '../_lib/psaSessionContext.js';
+import {
+  buildCardsFromToolTrace,
+  parseQuickRepliesFromReply,
+  type PsaToolTraceEntry,
+} from '../_lib/psaResponseUi.js';
 import { filterPsaActionToolsForProfile } from '../_lib/psaFeatureGates.js';
 import {
   executePsaActionTool,
@@ -47,6 +53,8 @@ type ChatRequestBody = {
   threadId?: string | null;
   /** When true, start a fresh thread even if threadId was sent. */
   newThread?: boolean;
+  /** Client session snapshot (page, cart, orders) — hints only. */
+  context?: Record<string, unknown>;
 };
 
 type OpenAiToolCall = {
@@ -197,7 +205,8 @@ async function runPsaToolLoop(
   initialResponse: OpenAiResponse,
   ctx: PsaChatAiContext,
   toolCtx: PsaToolContext,
-  clientActions: PsaClientAction[]
+  clientActions: PsaClientAction[],
+  toolTrace: PsaToolTraceEntry[]
 ): Promise<OpenAiResponse> {
   let response = initialResponse;
   let safety = 0;
@@ -212,6 +221,7 @@ async function runPsaToolLoop(
         const toolName = call.name || '';
         if (isPsaActionTool(toolName)) {
           const result = await executePsaActionTool(toolName, args, toolCtx);
+          if (result.output) toolTrace.push({ name: toolName, output: result.output });
           if (result.clientActions?.length) {
             for (const action of result.clientActions) {
               const dup =
@@ -227,10 +237,12 @@ async function runPsaToolLoop(
             output: result.output,
           };
         }
+        const searchOutput = executePsaSearchTool(toolName, args);
+        toolTrace.push({ name: toolName, output: searchOutput });
         return {
           type: 'function_call_output',
           call_id: call.call_id,
-          output: executePsaSearchTool(toolName, args),
+          output: searchOutput,
         };
       })
     );
@@ -367,6 +379,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
 
     const clientActions: PsaClientAction[] = [];
+    const toolTrace: PsaToolTraceEntry[] = [];
 
     let activeThreadId: string | null = null;
     let chainPreviousResponseId = previousResponseId;
@@ -392,9 +405,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    const sessionBlock = formatPsaSessionContextBlock(body.context);
     const aiCtx: PsaChatAiContext = {
       model,
-      instructions: buildPsaInstructions(premium),
+      instructions: buildPsaInstructions(premium, sessionBlock),
       tools: toolsForMember(premium),
     };
 
@@ -408,11 +422,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       store: true,
     });
 
-    response = await runPsaToolLoop(response, aiCtx, toolCtx, clientActions);
+    response = await runPsaToolLoop(response, aiCtx, toolCtx, clientActions, toolTrace);
 
     const { reply, response: finalResponse } = await resolveAssistantReply(response, aiCtx);
 
     const formattedReply = formatPsaVoiceText(reply);
+    const { reply: displayReply, quickReplies } = parseQuickRepliesFromReply(formattedReply);
+    const cards = buildCardsFromToolTrace(toolTrace);
     const responseIdOut = finalResponse.id ?? response.id ?? null;
 
     if (activeThreadId && isPsaThreadStoreConfigured()) {
@@ -420,7 +436,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         await appendPsaMessage({
           threadId: activeThreadId,
           role: 'assistant',
-          content: formattedReply,
+          content: displayReply,
           openaiResponseId: responseIdOut,
         });
         await touchPsaThreadAfterReply({
@@ -434,7 +450,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     return res.status(200).json({
-      reply: formattedReply,
+      reply: displayReply,
+      quickReplies: quickReplies.length ? quickReplies : undefined,
+      cards: cards.length ? cards : undefined,
       responseId: responseIdOut,
       threadId: activeThreadId,
       model,

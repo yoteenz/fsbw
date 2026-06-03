@@ -8,6 +8,11 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 | Capability | ChatGPT prompt intent | PSA today |
 |------------|----------------------|-----------|
 | Personality / brand voice | Warm luxury concierge; Beautiful / Slayer / Love | **Yes** — `buildPsaInstructions()` in `api/psa/chat.ts` |
+| Session context (page, cart, orders, tier) | Know where member is | **Yes** — client `buildPsaClientSessionContext()` → `POST /api/psa/chat` `context` → injected in instructions |
+| Persistent chat history | Cross-device threads | **Yes** — Supabase `psa_threads` / `psa_messages` + HISTORY / NEW in panel |
+| Rich cards + quick replies | Premium chat UI | **Yes** — product/nav/order cards from tool trace; `>>QUICK:` suffix chips |
+| Proactive FAB nudges | Unsigned forms, expiring consults, stock | **Yes** — `computePsaProactiveNudge()` + badge/chip on FAB |
+| Build-a-Wig deep links / pre-fill | Advice → action | **Yes** — `open_build_a_wig` tool + `prefill_baw` client action |
 | Product catalog | Raw hair / units | **Yes** — `search_products` + 6 units in `psaKnowledge.ts`; **starting base USD prices** via `api/_lib/psaCatalogPricing.ts` (synced with `resolveQuote.ts`) |
 | Length, texture, density advice | Recommend | **Yes** — FAQ + Build-a-Wig context; directs to `/build-a-wig`; PSA can quote **starting base prices** and compare units (e.g. NOIR vs BLANCO) |
 | FAQs, shipping, policies | Answer | **Yes** — `search_faq` (synced from `brandFaqCopy.ts` themes) |

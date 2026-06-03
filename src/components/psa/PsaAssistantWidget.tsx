@@ -25,6 +25,10 @@ import PsaChatPanel from './PsaChatPanel';
 import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
 import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
+import { usePsaProactiveNudges } from './usePsaProactiveNudges';
+import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
+import { applyPsaBawPrefill } from '../../utils/psaBawPrefill';
+import type { PsaClientAction } from '../../utils/psaApi';
 import './psaAssistant.css';
 
 export default function PsaAssistantWidget() {
@@ -41,6 +45,7 @@ export default function PsaAssistantWidget() {
   const [expressionTick, setExpressionTick] = useState(0);
   const [showIdleWave, setShowIdleWave] = useState(false);
   const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
+  const [prefillInput, setPrefillInput] = useState('');
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -56,13 +61,16 @@ export default function PsaAssistantWidget() {
     historyAvailable,
     sendMessage,
     usage,
+    panelQuickReplies,
     setUsage,
     ensureHistoryLoaded,
     startNewThread,
     switchThread,
     openHistory,
     closeHistory,
-  } = usePsaChat(PSA_WELCOME_MESSAGE);
+  } = usePsaChat(PSA_WELCOME_MESSAGE, () => buildPsaClientSessionContext(location.pathname));
+
+  const proactiveNudge = usePsaProactiveNudges(!isOpen);
 
   useEffect(() => {
     const syncTheater = () => setLoungeTvTheater(isLoungeTvTheaterModeActive());
@@ -212,8 +220,48 @@ export default function PsaAssistantWidget() {
     });
   }, [startWelcomeWave]);
 
+  const handleNudgeAction = useCallback(() => {
+    if (!proactiveNudge) return;
+    if (proactiveNudge.prefilledMessage) {
+      setPrefillInput(proactiveNudge.prefilledMessage);
+      setIsOpen(true);
+      startWelcomeWave();
+      return;
+    }
+    navigate(proactiveNudge.actionPath);
+  }, [proactiveNudge, navigate, startWelcomeWave]);
+
+  const runClientActions = useCallback(
+    async (actions: PsaClientAction[]) => {
+      for (const action of actions) {
+        if (action.type === 'sync_cart') {
+          try {
+            const { syncCartFromApi } = await import('../../utils/syncFromApi');
+            await syncCartFromApi();
+          } catch {
+            /* ignore */
+          }
+        }
+        if (action.type === 'prefill_baw') {
+          const path = applyPsaBawPrefill({
+            unitId: action.unitId,
+            path: action.path,
+            selections: action.selections,
+          });
+          navigate(path);
+          continue;
+        }
+        if (action.type === 'navigate' && action.path) {
+          navigate(action.path);
+        }
+      }
+    },
+    [navigate]
+  );
+
   const handleSend = useCallback(
     async (text: string) => {
+      setPrefillInput('');
       const result = await sendMessage(text);
       if (result?.premiumRequired) {
         setIsOpen(false);
@@ -221,22 +269,10 @@ export default function PsaAssistantWidget() {
         return;
       }
       if (result?.clientActions?.length) {
-        for (const action of result.clientActions) {
-          if (action.type === 'sync_cart') {
-            try {
-              const { syncCartFromApi } = await import('../../utils/syncFromApi');
-              await syncCartFromApi();
-            } catch {
-              /* ignore */
-            }
-          }
-          if (action.type === 'navigate' && action.path) {
-            navigate(action.path);
-          }
-        }
+        await runClientActions(result.clientActions);
       }
     },
-    [sendMessage, navigate]
+    [sendMessage, runClientActions]
   );
 
   const handleUpgrade = useCallback(() => {
@@ -286,6 +322,7 @@ export default function PsaAssistantWidget() {
             isSending={isSending}
             isLoadingHistory={isLoadingHistory}
             usageLabel={usageLabel}
+            panelQuickReplies={panelQuickReplies}
             historyOpen={historyOpen}
             historyAvailable={historyAvailable}
             threadList={threadList}
@@ -298,13 +335,28 @@ export default function PsaAssistantWidget() {
             onSelectThread={(id) => void switchThread(id)}
             onInputFocusChange={setIsInputFocused}
             onInputTextChange={setInputHasText}
+            initialInput={prefillInput}
           />
+        ) : null}
+        {!isOpen && proactiveNudge ? (
+          <button
+            type="button"
+            className="psa-nudge-chip"
+            onClick={handleNudgeAction}
+            aria-label={proactiveNudge.headline}
+          >
+            <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
+            {proactiveNudge.body ? (
+              <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
+            ) : null}
+          </button>
         ) : null}
         <PsaAvatarTrigger
           onClick={handleToggle}
           isOpen={isOpen}
           idle={!isOpen}
           expression={avatarExpression}
+          showNudgeBadge={Boolean(proactiveNudge) && !isOpen}
         />
       </div>
 
