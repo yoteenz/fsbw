@@ -119,6 +119,10 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     safetyTimeoutMs: 15000,
   });
 
+  /** Forward open: transparent until frame 0 (lounge shows through). Reverse: black immediately. */
+  const showLetterboxFill =
+    active && (direction === 'reverse' || frameVisible);
+
   return (
     <div
       aria-hidden={!active}
@@ -129,10 +133,15 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         overflow: 'hidden',
         pointerEvents: 'none',
         visibility: active ? 'visible' : 'hidden',
-        backgroundColor: active ? LOUNGE_TV_ANIMATION_LETTERBOX_BG : 'transparent',
+        backgroundColor: showLetterboxFill ? LOUNGE_TV_ANIMATION_LETTERBOX_BG : 'transparent',
       }}
     >
-      <div style={loungeTvAnimationLetterboxShellStyle()}>
+      <div
+        style={{
+          ...loungeTvAnimationLetterboxShellStyle(),
+          backgroundColor: showLetterboxFill ? LOUNGE_TV_ANIMATION_LETTERBOX_BG : 'transparent',
+        }}
+      >
         {showPoster ? (
           <div
             aria-hidden
