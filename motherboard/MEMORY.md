@@ -23534,3 +23534,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** On X, close should start immediately — TV black (zap), then shrink/curtains via reverse Seedance — not a static/menu hold or end-frame flash before reverse.
 
 **Fix:** **`seedanceClosePowerOff`** in **`LoungeTvOverlay`** — on X: menu hidden, **`LoungeTvPowerOffEffect`** on **`LoungeTvFullscreenShell`** (z130) instantly; reverse **`LoungeTvAnimationVideo`** runs underneath with **`deferVisual`**. After **`LOUNGE_TV_POWER_OFF_MS`**, shell hides and reverse clip reveals (black → hand exit → TV shrink → lounge).
+
+---
+
+## 2026-06-02 — Popover panels down 12px; chandelier hit +36px down
+
+**Fix:** **`LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX`** **−4**, **`LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX`** **−6** (glass card + title + close only; open PNG offsets unchanged). Chandelier **`top`** **0.1288** (+36px on 1680).
