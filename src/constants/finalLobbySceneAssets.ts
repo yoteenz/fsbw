@@ -59,8 +59,8 @@ export const FINAL_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {
 };
 
 /** Screen-space nudge for lounge TV play tap (after cover mapping). */
-export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 16;
-export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 60;
+export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 10;
+export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 40;
 
 /** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_TAP_RECT}. */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT = FINAL_LOUNGE_TV_PLAY_TAP_RECT;
