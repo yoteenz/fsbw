@@ -18,6 +18,7 @@ import {
   LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX,
   LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX,
   LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE,
+  LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX,
   LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX,
   LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE,
 } from '../../constants/finalLobbySceneAssets';
@@ -103,6 +104,7 @@ export function LobbySceneHotspots({
     ? { x: LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE, y: LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE }
     : undefined;
   const shelfDebugOffsetX = shelfHitDebug ? LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX : 0;
+  const shelfDebugHeightTrimPx = shelfHitDebug ? LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX : 0;
 
   return (
     <>
@@ -152,6 +154,7 @@ export function LobbySceneHotspots({
           }}
           debugOffsetX={shelfDebugOffsetX}
           debugOffsetY={LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX}
+          debugHeightTrimPx={shelfDebugHeightTrimPx}
           debugScale={shelfDebugScale}
         />
       ) : null}
@@ -170,6 +173,7 @@ export function LobbySceneHotspots({
           }}
           debugOffsetX={shelfDebugOffsetX}
           debugOffsetY={LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX}
+          debugHeightTrimPx={shelfDebugHeightTrimPx}
           debugScale={shelfDebugScale}
         />
       ) : null}
@@ -188,6 +192,7 @@ export function LobbySceneHotspots({
           }}
           debugOffsetX={shelfDebugOffsetX}
           debugOffsetY={LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX}
+          debugHeightTrimPx={shelfDebugHeightTrimPx}
           debugScale={shelfDebugScale}
         />
       ) : null}

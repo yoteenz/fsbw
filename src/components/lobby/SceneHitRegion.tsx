@@ -19,6 +19,8 @@ type SceneHitRegionProps = {
   /** QA only — scale debug box (e.g. shelf tuning); anchor {@link debugScaleOrigin}. */
   debugScale?: { x: number; y: number };
   debugScaleOrigin?: React.CSSProperties['transformOrigin'];
+  /** QA only — shortens debug box height (px) from mapped percent rect. */
+  debugHeightTrimPx?: number;
 };
 
 const hitBaseStyle: React.CSSProperties = {
@@ -61,6 +63,7 @@ export function SceneHitRegion({
   debugOffsetY = 0,
   debugScale,
   debugScaleOrigin = 'center top',
+  debugHeightTrimPx = 0,
 }: SceneHitRegionProps) {
   const debugTransform = (() => {
     if (!debugOverlay) return undefined;
@@ -94,6 +97,9 @@ export function SceneHitRegion({
       style={{
         ...hitBaseStyle,
         ...rectToPercentStyle(rect),
+        ...(debugOverlay && debugHeightTrimPx > 0
+          ? { height: `calc(${rect.height * 100}% - ${debugHeightTrimPx}px)`, boxSizing: 'border-box' }
+          : null),
         zIndex,
         pointerEvents: disabled ? 'none' : 'auto',
         cursor: disabled ? 'default' : 'pointer',
