@@ -23514,3 +23514,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Lobby page lounge nav red shadow only
 
 **Fix:** Split carousel nav shadows in **`lobby/page.tsx`**: **`LOBBY_PAGE_LOUNGE_NAV_*`** brand red on lobby slide (**lounge** label + arrow); **`LOUNGE_PAGE_LOBBY_NAV_*`** golden on lounge slide (**lobby** back nav).
+
+---
+
+## 2026-06-02 — Lounge TV close reverse slightly slower
+
+**Fix:** **`LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE`** **2** → **1.5** in **`loungeTvAnimationVideo.ts`** (RAF step-back on X close).
