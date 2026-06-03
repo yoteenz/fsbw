@@ -51,7 +51,7 @@ type TransitionMediaProps = {
 };
 
 /**
- * Slide-sized portrait frame (928×1680 cover math) + transparent letterbox bands.
+ * Slide-sized portrait frame (928×1680 contain math) + transparent letterbox bands.
  * Carousel slide shows through until video crossfades in (no duplicate slide PNG poster).
  */
 function LobbyLoungeTransitionMedia({
@@ -126,7 +126,7 @@ function useTransitionPlaybackOptions(
 }
 
 /**
- * Seedance clip — fixed viewport (`inset: 0`, `100dvh`) aligned with carousel cover math.
+ * Seedance clip — fixed viewport (`inset: 0`, `100dvh`) aligned with carousel contain math.
  * Prefer {@link LobbyLoungeTransitionHost} on {@link LobbyApp} (warm preload + no end flash).
  */
 export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: OverlayProps) {
