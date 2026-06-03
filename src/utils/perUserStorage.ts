@@ -47,3 +47,16 @@ export function getCurrentUserEmailFromStorage(): string | null {
     return null;
   }
 }
+
+/** First name from account Settings (`currentUser.firstName` / `first_name`). */
+export function getCurrentUserFirstNameFromStorage(): string | null {
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
+    if (!raw) return null;
+    const user = JSON.parse(raw) as { firstName?: string; first_name?: string };
+    const name = (user.firstName ?? user.first_name ?? '').trim();
+    return name || null;
+  } catch {
+    return null;
+  }
+}

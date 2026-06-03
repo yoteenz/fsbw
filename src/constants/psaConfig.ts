@@ -1,5 +1,7 @@
 /** PSA (Personal Slay Assistant) frontend config — avatar assets and copy. */
 
+import { getCurrentUserFirstNameFromStorage } from '../utils/perUserStorage';
+
 /** All PSA avatar expression PNGs live in `public/assets/` (transparent background). */
 export type PsaAvatarExpression =
   | 'neutral'
@@ -65,8 +67,30 @@ export const PSA_IDLE_WAVE_INTERVAL_MS = 30_000;
 export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 
-export const PSA_WELCOME_MESSAGE =
-  'Welcome back to Frontal Slayer. I\'m your PSA. What are you looking for today: new hair, maintenance, customization or a little bit of everything?';
+/** Title-case first name for greetings (Settings often stores ALL CAPS). */
+export function formatPsaMemberFirstName(raw: string): string {
+  const first = raw.trim().split(/\s+/)[0];
+  if (!first) return '';
+  if (first.length > 1 && first === first.toUpperCase()) {
+    return first.charAt(0) + first.slice(1).toLowerCase();
+  }
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
+
+/** Welcome bubble when chat opens with no prior thread. */
+export function buildPsaWelcomeMessage(firstName?: string | null): string {
+  const formatted = firstName?.trim() ? formatPsaMemberFirstName(firstName) : '';
+  const greeting = formatted ? `Welcome back, ${formatted}!` : 'Welcome back!';
+  return `${greeting} I'm your PSA. What are you looking for today: new hair, maintenance, customization or a little bit of everything?`;
+}
+
+/** Welcome message using first name from signed-in user settings. */
+export function readPsaWelcomeMessageFromStorage(): string {
+  return buildPsaWelcomeMessage(getCurrentUserFirstNameFromStorage());
+}
+
+/** @deprecated Prefer readPsaWelcomeMessageFromStorage() or buildPsaWelcomeMessage(). */
+export const PSA_WELCOME_MESSAGE = buildPsaWelcomeMessage();
 
 /** Starter quick-reply chips when the thread is welcome-only (empty chat). */
 export const PSA_STARTER_QUICK_REPLIES = [

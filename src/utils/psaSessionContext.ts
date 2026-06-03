@@ -5,7 +5,8 @@ import {
   getEffectiveSubscriptionTier,
   getEffectiveTierName,
 } from './adminAuth';
-import { getCurrentUserEmailFromStorage } from './perUserStorage';
+import { getCurrentUserEmailFromStorage, getCurrentUserFirstNameFromStorage } from './perUserStorage';
+import { formatPsaMemberFirstName } from '../constants/psaConfig';
 import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { detectPsaBawResumeTarget } from './psaBawDraft';
@@ -18,6 +19,7 @@ export type PsaSessionMode =
 
 export type PsaClientSessionContext = {
   pathname: string;
+  firstName?: string | null;
   tierLabel?: string | null;
   subscriptionTier?: string | null;
   cart?: {
@@ -129,6 +131,11 @@ export function buildPsaClientSessionContext(
   pendingMessage?: string
 ): PsaClientSessionContext {
   const ctx: PsaClientSessionContext = { pathname };
+
+  const storedFirstName = getCurrentUserFirstNameFromStorage();
+  if (storedFirstName) {
+    ctx.firstName = formatPsaMemberFirstName(storedFirstName);
+  }
 
   try {
     const rawUser = localStorage.getItem('currentUser');

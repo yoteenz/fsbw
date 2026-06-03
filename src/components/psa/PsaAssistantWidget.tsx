@@ -6,7 +6,7 @@ import {
   isPsaHiddenPath,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
-  PSA_WELCOME_MESSAGE,
+  readPsaWelcomeMessageFromStorage,
   PSA_IDLE_WAVE_INTERVAL_MS,
   PSA_WIDGET_CTA,
   PSA_CONTINUE_CTA,
@@ -66,6 +66,7 @@ export default function PsaAssistantWidget() {
   const [showIdleWave, setShowIdleWave] = useState(false);
   const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
   const [prefillInput, setPrefillInput] = useState('');
+  const [welcomeMessage, setWelcomeMessage] = useState(() => readPsaWelcomeMessageFromStorage());
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -92,7 +93,7 @@ export default function PsaAssistantWidget() {
     closeHistory,
     archiveThread,
     removeThread,
-  } = usePsaChat(PSA_WELCOME_MESSAGE, (pendingMessage) =>
+  } = usePsaChat(welcomeMessage, (pendingMessage) =>
     buildPsaClientSessionContext(location.pathname, pendingMessage)
   );
 
@@ -215,14 +216,17 @@ export default function PsaAssistantWidget() {
     const sync = () => {
       setSignedIn(isSignedIn());
       setIsPremium(isPremiumMemberForGatedFeatures());
+      setWelcomeMessage(readPsaWelcomeMessageFromStorage());
     };
     sync();
     window.addEventListener('signInStateChanged', sync);
     window.addEventListener('focus', sync);
+    window.addEventListener('storage', sync);
     window.addEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, sync);
     return () => {
       window.removeEventListener('signInStateChanged', sync);
       window.removeEventListener('focus', sync);
+      window.removeEventListener('storage', sync);
       window.removeEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, sync);
     };
   }, []);

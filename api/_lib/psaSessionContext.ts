@@ -4,6 +4,7 @@
 
 export type PsaClientSessionContextPayload = {
   pathname?: string;
+  firstName?: string | null;
   tierLabel?: string | null;
   subscriptionTier?: string | null;
   cart?: {
@@ -37,6 +38,11 @@ export function formatPsaSessionContextBlock(raw: unknown): string {
 
   if (typeof ctx.pathname === 'string' && ctx.pathname.trim()) {
     lines.push(`- Page: \`${ctx.pathname.trim()}\``);
+  }
+  if (typeof ctx.firstName === 'string' && ctx.firstName.trim()) {
+    lines.push(
+      `- Member first name (Settings): **${ctx.firstName.trim()}** — use in greetings when natural (e.g. "Welcome back, ${ctx.firstName.trim()}!").`
+    );
   }
   if (ctx.tierLabel || ctx.subscriptionTier) {
     lines.push(
