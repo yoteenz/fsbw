@@ -16,6 +16,10 @@ import {
   isPremiumMemberForGatedFeatures,
   prepareMembershipUpgradeNavigation,
 } from '../../utils/premiumMemberAccess';
+import {
+  isLoungeTvTheaterModeActive,
+  LOUNGE_TV_THEATER_MODE_CHANGED_EVENT,
+} from '../../utils/loungeTvTheaterMode';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
 import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
@@ -36,12 +40,24 @@ export default function PsaAssistantWidget() {
   const [lastReplyAt, setLastReplyAt] = useState<number | null>(null);
   const [expressionTick, setExpressionTick] = useState(0);
   const [showIdleWave, setShowIdleWave] = useState(false);
+  const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { messages, isSending, sendMessage, usage, setUsage } = usePsaChat(PSA_WELCOME_MESSAGE);
+
+  useEffect(() => {
+    const syncTheater = () => setLoungeTvTheater(isLoungeTvTheaterModeActive());
+    syncTheater();
+    window.addEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
+    return () => window.removeEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
+  }, []);
+
+  useEffect(() => {
+    if (loungeTvTheater) setIsOpen(false);
+  }, [loungeTvTheater]);
 
   useEffect(() => {
     if (!isOpen || !isPremium) return;
@@ -236,7 +252,7 @@ export default function PsaAssistantWidget() {
   ]);
 
   // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
-  if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname)) {
+  if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname) || loungeTvTheater) {
     return null;
   }
 
