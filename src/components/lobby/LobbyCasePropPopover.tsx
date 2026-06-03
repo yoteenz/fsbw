@@ -20,6 +20,10 @@ const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 2;
 /** Payment popover section labels only — 2px smaller than contact Bohemy headers. */
 const LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX = LOBBY_POPOVER_BOHEMY_FONT_PX - 2;
 const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
+/** Close X — top-right inset inside glass panel (phone + register). */
+const LOBBY_POPOVER_CLOSE_TOP_PX = lobbyPopoverPx(5);
+const LOBBY_POPOVER_CLOSE_RIGHT_PX = lobbyPopoverPx(5);
+const LOBBY_POPOVER_CLOSE_BTN_PX = lobbyPopoverPx(18);
 
 type ContactPopoverLine =
   | { text: string; emphasis?: 'futura-demi-gray' }
@@ -59,7 +63,7 @@ const LOBBY_POPOVER_CLOSE_ICON_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
 function LobbyPopoverCloseButton({ onClose }: { onClose: () => void }) {
-  const btnPx = lobbyPopoverPx(18);
+  const btnPx = LOBBY_POPOVER_CLOSE_BTN_PX;
   const iconPx = lobbyPopoverPx(10);
   return (
     <button
@@ -437,18 +441,24 @@ export function LobbyCasePropPopover({
         >
           <div
             style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              gap: `${lobbyPopoverPx(6)}px`,
+              position: 'absolute',
+              top: `${LOBBY_POPOVER_CLOSE_TOP_PX}px`,
+              right: `${LOBBY_POPOVER_CLOSE_RIGHT_PX}px`,
+              zIndex: 2,
+            }}
+          >
+            <LobbyPopoverCloseButton onClose={onClose} />
+          </div>
+          <div
+            style={{
               marginBottom: `${lobbyPopoverPx(8)}px`,
               paddingBottom: `${lobbyPopoverPx(6)}px`,
+              paddingRight: `${LOBBY_POPOVER_CLOSE_BTN_PX + lobbyPopoverPx(6)}px`,
               borderBottom: '1px solid rgba(0,0,0,0.12)',
               flexShrink: 0,
             }}
           >
-            <p style={{ ...titleStyle, flex: 1, minWidth: 0 }}>{title}</p>
-            <LobbyPopoverCloseButton onClose={onClose} />
+            <p style={{ ...titleStyle, minWidth: 0 }}>{title}</p>
           </div>
           {panelBody}
         </div>
