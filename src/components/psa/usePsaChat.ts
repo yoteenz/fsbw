@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   archivePsaThread,
   createPsaThread,
@@ -48,6 +48,15 @@ export function usePsaChat(
   const historyLoadedRef = useRef(false);
   const getSessionContextRef = useRef(getSessionContext);
   getSessionContextRef.current = getSessionContext;
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.id === 'welcome') {
+        return welcomeOnly(welcomeMessage);
+      }
+      return prev;
+    });
+  }, [welcomeMessage]);
 
   const applyThreadPayload = useCallback(
     (payload: {
