@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from '../_lib/auth.js';
 import { getSupabaseUser } from '../_lib/supabase.js';
+import { getPsaPremiumProfile } from '../_lib/psaPremiumCheck.js';
+import { canAccessPriorityMessages, psaFeatureGateDenial } from '../_lib/psaFeatureGates.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;
@@ -16,7 +18,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> {
   return {};
 }
 
-/** POST /api/client/priority-messages — member priority message (Concierge UI). */
+/** POST /api/client/priority-messages — member priority message (Concierge UI). 6mo+ / BLACK only. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -25,7 +27,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const user = await getAuthUser(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  if (!user) return res.status(401).json({ error: 'Unauthorized', code: 'SIGN_IN_REQUIRED' });
+
+  const premium = await getPsaPremiumProfile(user.id, user.accessToken, user.email);
+  if (!premium?.isPremium) {
+    return res.status(403).json({
+      error: 'Premium membership required for priority messages.',
+      code: 'PREMIUM_REQUIRED',
+      upgradePath: '/account/rewards',
+    });
+  }
+
+  const denial = psaFeatureGateDenial(premium, 'priority_messages');
+  if (denial) {
+    return res.status(403).json({
+      error: denial.message,
+      code: denial.code,
+      feature: denial.feature,
+      currentTier: denial.currentTier,
+      requiredTier: denial.requiredTier,
+      upgradePath: denial.upgradePath,
+    });
+  }
+
+  if (!canAccessPriorityMessages(premium)) {
+    return res.status(403).json({
+      error: 'Priority messages require 6 Month or 12 Month Premium.',
+      code: 'UPGRADE_REQUIRED',
+      upgradePath: '/account/rewards',
+    });
+  }
 
   const body = parseBody(req);
   const message = typeof body.message === 'string' ? body.message.trim() : '';

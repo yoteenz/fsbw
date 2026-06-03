@@ -18,6 +18,7 @@ import {
   searchPsaProducts,
 } from '../_lib/psaKnowledge.js';
 import { buildPsaInstructions } from '../_lib/psaInstructions.js';
+import { filterPsaActionToolsForProfile } from '../_lib/psaFeatureGates.js';
 import {
   executePsaActionTool,
   isPsaActionTool,
@@ -104,7 +105,9 @@ const PSA_TOOLS = [
   },
 ] as const;
 
-const PSA_ALL_TOOLS = [...PSA_TOOLS, ...PSA_ACTION_TOOL_DEFINITIONS];
+function toolsForMember(premium: NonNullable<Awaited<ReturnType<typeof getPsaPremiumProfile>>>) {
+  return [...PSA_TOOLS, ...filterPsaActionToolsForProfile(PSA_ACTION_TOOL_DEFINITIONS, premium)];
+}
 
 function parseToolArgs(raw: string | undefined): Record<string, unknown> {
   if (!raw) return {};
@@ -269,11 +272,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let response = await callOpenAiResponses({
       model,
-      instructions: buildPsaInstructions(),
+      instructions: buildPsaInstructions(premium),
       input: message,
       previous_response_id: previousResponseId,
       reasoning: { effort: 'none' },
-      tools: PSA_ALL_TOOLS,
+      tools: toolsForMember(premium),
       store: true,
     });
 

@@ -3,10 +3,14 @@
  * See docs/PSA_TOOLS.md
  */
 import { getSupabaseUser } from './supabase.js';
-import { summarizeOrderForPsa } from './psaOrderTracking.js';
+import { summarizeOrderForPsa, summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
 import { PSA_PRODUCTS } from './psaKnowledge.js';
 import { resolveQuote, type QuoteLineInput } from './pricing/resolveQuote.js';
 import type { PsaPremiumProfile } from './psaPremiumCheck.js';
+import {
+  canAccessLiveOrderTracking,
+  psaFeatureGateDenial,
+} from './psaFeatureGates.js';
 
 export type PsaToolContext = {
   userId: string;
@@ -205,12 +209,9 @@ function findOrder(orders: unknown[], query: string): Record<string, unknown> | 
   return null;
 }
 
-function canSendPriorityMessage(premium: PsaPremiumProfile | null | undefined): boolean {
-  if (!premium?.isPremium) return false;
-  const tier = (premium.subscriptionTier ?? '').toLowerCase();
-  if (tier === '6months' || tier === '12months') return true;
-  if ((premium.tierName ?? '').toUpperCase() === 'BLACK') return true;
-  return false;
+function orderSummaryForMember(order: Record<string, unknown>, premium: PsaPremiumProfile | null | undefined) {
+  const live = premium ? canAccessLiveOrderTracking(premium) : false;
+  return summarizeOrderForPsaWithTrackingGate(order, live);
 }
 
 function consultMissingFields(args: Record<string, unknown>, premium: PsaPremiumProfile | null | undefined): string[] {
@@ -251,7 +252,7 @@ export async function executePsaActionTool(
       const pool = [...active, ...(includePast ? past : [])].slice(0, limit);
       const orders = pool
         .filter((o) => o && typeof o === 'object')
-        .map((o) => summarizeOrderForPsa(o as Record<string, unknown>));
+        .map((o) => orderSummaryForMember(o as Record<string, unknown>, ctx.premium));
       return { output: JSON.stringify({ orders, count: orders.length }) };
     }
 
@@ -261,7 +262,7 @@ export async function executePsaActionTool(
       const { active, past } = await fetchOrders(ctx);
       const found = findOrder([...active, ...past], orderNumber);
       if (!found) return { output: JSON.stringify({ error: 'Order not found', orderNumber }) };
-      return { output: JSON.stringify({ order: summarizeOrderForPsa(found) }) };
+      return { output: JSON.stringify({ order: orderSummaryForMember(found, ctx.premium) }) };
     }
 
     case 'get_member_cart': {
@@ -422,12 +423,25 @@ export async function executePsaActionTool(
     }
 
     case 'send_priority_message': {
-      if (!canSendPriorityMessage(ctx.premium)) {
+      if (!ctx.premium?.isPremium) {
         return {
           output: JSON.stringify({
-            error: 'Priority messages require 6-month, 12-month premium, or BLACK tier.',
-            nextPath: '/brand/contact',
+            error: 'Premium membership required.',
+            upgradePath: '/account/rewards',
           }),
+        };
+      }
+      const denial = psaFeatureGateDenial(ctx.premium, 'priority_messages');
+      if (denial) {
+        return {
+          output: JSON.stringify({
+            error: denial.code,
+            message: denial.message,
+            currentTier: denial.currentTier,
+            requiredTier: denial.requiredTier,
+            upgradePath: denial.upgradePath,
+          }),
+          clientActions: [{ type: 'navigate', path: denial.upgradePath }],
         };
       }
       const message = typeof args.message === 'string' ? args.message.trim() : '';

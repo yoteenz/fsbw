@@ -280,6 +280,7 @@ for (const action of result.clientActions ?? []) {
 | `add_to_cart` unit | Premium |
 | `add_to_cart` appointment | Premium membership |
 | `send_priority_message` | 6mo / 12mo / BLACK (stricter than general PSA) |
+| `get_order_status` live timeline | 6mo / 12mo / BLACK — 3mo gets basic status only |
 
 ---
 
