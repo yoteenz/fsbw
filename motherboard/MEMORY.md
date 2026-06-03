@@ -24210,3 +24210,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked PSA to not appear on standard member screens — same logic as lobby/lounge viewing gates.
 
 **Changes:** **`PsaAssistantWidget`** returns null unless **`isPremiumMemberForGatedFeatures()`** (active subscription tier or BLACK spend tier). Removed upgrade modal on FAB click for standard users (FAB no longer shown). Listens to **`membershipSubscriptionPreviewChanged`**. E2E standard-user: PSA FAB count 0.
+
+---
+
+## 2026-06-03 — PSA avatar expression transitions (fluid idle + crossfade)
+
+**Context:** User reported PSA FAB avatar looked robotic — smiling then instantly snapping back to neutral. Wanted slower, more human transitions through neutral-smiling / listening / thinking-smiling rather than hard neutral ↔ smile flips.
+
+**Changes (commit `9ad53f14` on master, synced to `preview/mobile`):**
+- **`PsaAvatarImageCrossfade.tsx`** — 1.2s opacity crossfade between PNG layers instead of `key={expression}` remount.
+- **`psaIdleExpressionCycle.ts`** + **`usePsaIdleExpressionCycle.ts`** — slow closed-FAB loop: neutral (10s) → neutral-smiling (8s) → listening (6.5s) → neutral-smiling (7s) → thinking-smiling (5.5s) → neutral-smiling (7.5s). Cycle pauses during idle wave; after wave lands on neutral-smiling (`PSA_IDLE_POST_WAVE_STEP_INDEX`).
+- **`PsaAssistantWidget.tsx`** — removed fast `PSA_IDLE_EXPRESSION_MS` flip; wires idle cycle + soft landing after wave.
+- **`PsaAvatarTrigger.tsx`** — uses crossfade stack inside avatar frame.
+- **`psaAssistant.css`** — stack/layer styles; slower float (5.5s) and breathe (6s) on idle.
+- **`psaConfig.ts`** — `PSA_EXPRESSION_CROSSFADE_MS = 1200`, `PSA_WAVING_MS = 3200`; deprecated `PSA_IDLE_EXPRESSION_MS`.
+
+**Conventions:** Tune idle pacing in **`psaIdleExpressionCycle.ts`** holds; crossfade duration in **`PSA_EXPRESSION_CROSSFADE_MS`**. Chat-open expressions still resolved via **`resolvePsaAvatarExpression`** (defaults to neutral-smiling when open).
