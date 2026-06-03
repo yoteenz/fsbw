@@ -24302,3 +24302,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Keep `psaCatalogPricing.ts` in sync with `UNIT_BASE_USD_BY_NAME` in `resolveQuote.ts`. Always note customization changes totals when quoting base prices.
 
+---
+
+## 2026-06-03 — PSA elevation bundle (context, rich UI, nudges, BAW pre-fill)
+
+**Context:** User asked to incorporate everything that would improve PSA from the roadmap (excluding voice — user will set up voice later): session context, Supabase threads (already shipped), rich cards + quick replies, proactive FAB nudges, BAW deep links/pre-fill.
+
+**Changes:**
+- **Session context** — `src/utils/psaSessionContext.ts` sends page/tier/cart/orders/stock hints on each chat POST; `api/_lib/psaSessionContext.ts` injects into instructions.
+- **Rich UI** — `api/_lib/psaResponseUi.ts` builds product/nav/order cards from tool trace; parses `>>QUICK:` suffix for chip replies; `PsaChatPanel` renders cards + quick-reply row.
+- **Proactive FAB** — `src/utils/psaProactiveNudges.ts` + `usePsaProactiveNudges.ts`: unsigned order forms, expiring consult offers (48h), cart OOS + wishlist stock alerts; red badge + tap chip on FAB prefills chat.
+- **BAW pre-fill** — `open_build_a_wig` action tool + `prefill_baw` client action + `src/utils/psaBawPrefill.ts` (writes `selected*` / `customizeSelected*` keys, navigates to unit BAW route).
+- **`docs/PSA_SETUP.md`** — capability table updated.
+
+**Conventions:** Session `context` is hints only — tools remain source of truth for cart/orders. Voice/3D avatar deferred per user.
+
