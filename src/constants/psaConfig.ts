@@ -53,6 +53,9 @@ export const PSA_WIDGET_CTA = 'TAP TO CHAT';
 /** Idle FAB alternates neutral ↔ neutral-smiling (ms). */
 export const PSA_IDLE_EXPRESSION_MS = 3500;
 
+/** How often the closed FAB plays a brief waving expression (ms). */
+export const PSA_IDLE_WAVE_INTERVAL_MS = 30_000;
+
 export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 

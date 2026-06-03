@@ -8,6 +8,7 @@ import {
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
   PSA_IDLE_EXPRESSION_MS,
+  PSA_IDLE_WAVE_INTERVAL_MS,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
@@ -35,7 +36,10 @@ export default function PsaAssistantWidget() {
   const [lastReplyAt, setLastReplyAt] = useState<number | null>(null);
   const [expressionTick, setExpressionTick] = useState(0);
   const [idleExpressionFlip, setIdleExpressionFlip] = useState(0);
+  const [showIdleWave, setShowIdleWave] = useState(false);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleWaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { messages, isSending, sendMessage, usage, setUsage } = usePsaChat(PSA_WELCOME_MESSAGE);
 
@@ -70,6 +74,46 @@ export default function PsaAssistantWidget() {
     return () => window.clearInterval(id);
   }, [isOpen]);
 
+  const triggerIdleWave = useCallback(() => {
+    if (idleWaveTimerRef.current) clearTimeout(idleWaveTimerRef.current);
+    setShowIdleWave(true);
+    idleWaveTimerRef.current = setTimeout(() => {
+      setShowIdleWave(false);
+      idleWaveTimerRef.current = null;
+    }, PSA_WAVING_MS);
+  }, []);
+
+  /** Closed FAB: brief wave every ~30s so the avatar feels alive, not static. */
+  useEffect(() => {
+    if (isOpen) {
+      setShowIdleWave(false);
+      if (idleWaveIntervalRef.current) {
+        clearInterval(idleWaveIntervalRef.current);
+        idleWaveIntervalRef.current = null;
+      }
+      return;
+    }
+
+    const startInterval = () => {
+      triggerIdleWave();
+      idleWaveIntervalRef.current = setInterval(triggerIdleWave, PSA_IDLE_WAVE_INTERVAL_MS);
+    };
+
+    const initialDelay = setTimeout(startInterval, PSA_IDLE_WAVE_INTERVAL_MS);
+
+    return () => {
+      clearTimeout(initialDelay);
+      if (idleWaveIntervalRef.current) {
+        clearInterval(idleWaveIntervalRef.current);
+        idleWaveIntervalRef.current = null;
+      }
+      if (idleWaveTimerRef.current) {
+        clearTimeout(idleWaveTimerRef.current);
+        idleWaveTimerRef.current = null;
+      }
+    };
+  }, [isOpen, triggerIdleWave]);
+
   const prevMessageCountRef = useRef(messages.length);
   useEffect(() => {
     const last = messages[messages.length - 1];
@@ -81,10 +125,10 @@ export default function PsaAssistantWidget() {
 
   /** Re-resolve avatar after talking / waving timers elapse. */
   useEffect(() => {
-    if (!isOpen && !showWelcomeWave && lastReplyAt == null) return;
+    if (!isOpen && !showWelcomeWave && !showIdleWave && lastReplyAt == null) return;
     const id = window.setInterval(() => setExpressionTick((t) => t + 1), 350);
     return () => window.clearInterval(id);
-  }, [isOpen, showWelcomeWave, lastReplyAt]);
+  }, [isOpen, showWelcomeWave, showIdleWave, lastReplyAt]);
 
   useEffect(() => {
     if (lastReplyAt == null) return;
@@ -118,6 +162,8 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     return () => {
       if (welcomeTimerRef.current) clearTimeout(welcomeTimerRef.current);
+      if (idleWaveTimerRef.current) clearTimeout(idleWaveTimerRef.current);
+      if (idleWaveIntervalRef.current) clearInterval(idleWaveIntervalRef.current);
     };
   }, []);
 
@@ -181,6 +227,7 @@ export default function PsaAssistantWidget() {
       messages,
       now: Date.now() + expressionTick * 0,
     });
+    if (!isOpen && showIdleWave) return 'waving';
     if (!isOpen && resolved === 'neutral') {
       return idleExpressionFlip % 2 === 0 ? 'neutral' : 'neutral-smiling';
     }
@@ -191,6 +238,7 @@ export default function PsaAssistantWidget() {
     isInputFocused,
     inputHasText,
     showWelcomeWave,
+    showIdleWave,
     lastReplyAt,
     messages,
     expressionTick,
