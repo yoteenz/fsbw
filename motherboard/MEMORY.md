@@ -23305,3 +23305,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Lounge TV label +2px right, +6px down
 
 **Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 12`** (was 10), **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 31`** (was 25). Label-only **PRESS TO PLAY**.
+
+---
+
+## 2026-06-02 — Lounge TV animation crop + screen inset −35%
+
+**Context:** User asked to remove top/bottom black letterbox on TV **`video.mov`** open/close; shrink TV menu screen height **35%** for new bezel.
+
+**Fixes:**
+- **`npm run lounge:bake-tv-animation-crop`** — `crop=720:1024:0:128` on bundled **`lounge-tv-animation.mov`**; source kept as **`lounge-tv-animation-source-letterbox.mov`**. **`LOUNGE_TV_ANIMATION_VIDEO_VERSION`** = **`final-lp-video-crop-v1`**; optional **`LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE`** (default 1).
+- **`LOUNGE_TV_CONTENT_SCREEN_HEIGHT_SCALE = 0.65`** — **`LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT`** centered in original glass inset on end-still PNG.
