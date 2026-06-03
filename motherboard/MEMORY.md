@@ -23590,3 +23590,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to reduce spacing left and right of the **Affirm** logo on the **payment plans** row of the register pop-up only, by **4px** each side.
 
 **Fix:** **`LobbyCasePropPopover.tsx`** — **`LOBBY_PAYMENT_PLANS_AFFIRM_CELL_MARGIN_ADJUST`** (`marginLeft` / `marginRight` **−4**) on Affirm **`PaymentIconCell`** via **`iconCellMarginAdjust`** on the pay-over-time section only; cards + express rows unchanged.
+
+---
+
+## 2026-06-02 — Phone popover hours: 11AM–6PM CST
+
+**Context:** User asked to update lobby phone pop-up hours to **11AM - 6PM CST** (popover only, not brand contact page).
+
+**Fix:** **`lobbyPropPopoverCopy.ts`** — **`LOBBY_PHONE_POPOVER_HOURS`** (`11AM - 6PM CST`) replaces shared **`BRAND_CONTACT_INTRO_HOURS`** (`10AM - 6PM CST`) on the **hours** section first line.
