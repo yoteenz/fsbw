@@ -41,3 +41,11 @@ vite.config.js
 # Wrong motherboard file (real motherboard is folder motherboard/, not a root file)
 MOTHERBOARD.md
 Motherboard.md
+
+# Playwright E2E
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+e2e/.auth/
+.env.e2e.local

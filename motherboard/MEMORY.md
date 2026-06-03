@@ -24082,3 +24082,40 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`api/_lib/psaInstructions.ts`** — full founder personality framework; **`api/psa/chat.ts`** imports it; **`src/constants/psaConfig.ts`** welcome matches greeting energy; **`motherboard/golden-prompts/psa-founder-voice.md`**; **`motherboard/CORE.md`**, **`docs/PSA_SETUP.md`**, golden-prompts README.
 
 **Conventions:** Map colloquial “body wave” → BEACH WAVE / SOFT WAVE; never invent off-catalog textures; edit personality in `psaInstructions.ts`.
+
+---
+
+## 2026-06-03 — Full-site QA simulation (standard + premium) + security audit
+
+**Context:** User asked to simulate standard and premium users, exercise all features (shop, BAW, cart, checkout, booking, account, concierge, lounge, PSA), place an order, and identify bugs and security flaws.
+
+**Method:** Live probes against `https://fsbw.vercel.app` (unauthenticated + public API calls), codebase review of auth gates, checkout, profile/orders APIs, PSA, concierge, premium gating. No Playwright/E2E suite exists in repo.
+
+**Critical security (fix first):**
+1. **`POST /api/build-a-wig-unit-image`** — **no auth**; confirmed live Fal generation (~60s, returns `imageUrl`). Anyone can burn **FAL_KEY** budget (DoS/cost abuse).
+2. **Product checkout** — **`CONFIRM ORDER`** does **not** call `createProductPaymentIntent` / Stripe.js (`docs/CHECKOUT_SERVER_QUOTE.md` admits client-only totals). Card check is **Luhn + form validation only**; orders persist to **localStorage** + optional Supabase PUT without payment proof. Real Stripe path exists only for **membership** (`/checkout/upgrade`) and booking autopay metadata.
+3. **`PATCH /api/profile`** — client can send **`membershipType`**, **`subscriptionTier`**, **`role`**, **`loyaltyPoints`**, **`giftCardBalance`**; only Stripe billing ids are stripped. RLS `profiles_update_own` has no column guard → **self-upgrade / privilege escalation** if attacker PATCHes with valid JWT.
+4. **`PUT /api/orders`** — authenticated user can write arbitrary **`active_orders` / `past_orders`** JSON (fake COMPLETE orders, consult snapshots).
+
+**High:**
+5. **Premium gates are client-localStorage** (`isPremiumMemberForGatedFeatures`, BAW premium steps, lobby, PSA FAB) — DevTools can unlock UI; server must enforce on paid APIs (PSA chat does; BAW Fal mostly does; checkout/booking do not for cart contents).
+6. **`GET /api/psa/health`** — public **`keyFingerprint`** (`sk-proj-…last4`) aids key correlation; restrict or remove in production.
+7. **Concierge priority messages** — still **`localStorage.adminPriorityMessages`** only; PSA `send_priority_message` needs migration `20260603180000_priority_messages.sql` + admin inbox wiring.
+8. **Admin UI guard is client-only** (`AdminGuard` checks localStorage email list); API **`requireAdmin`** is correct (403 without JWT) — do not rely on hiding `/admin` routes alone.
+
+**Medium (bugs / abuse):**
+9. **`fetchCheckoutQuote`** / server quote **not used** in checkout UI; BCF bundle lines **`fullyResolved: false`** on server anyway.
+10. **Subscription upgrade on checkout** can set **`membershipType: PREMIUM`** in localStorage without Stripe when not using “Subscribe with card” path.
+11. **Public forms** (`/api/brand/contact-submit`, FAQ submit, analytics) — no rate limit; contact still **inserts DB row** when Resend missing.
+12. **Shared wishlist** tokens live in **localStorage** registry — not cross-device; predictable if token weak.
+13. **PSA chat** unauthenticated POST returned **500 FUNCTION_INVOCATION_FAILED** (empty body) vs clean 401 in some edge cases — verify deploy bundling.
+14. **AccountRouteGuard** trusts localStorage when Supabase session missing — signed-in UI without working API (PSA 401, profile fail).
+
+**Standard vs premium journey notes (code + live):**
+- **Guest:** bag/checkout allowed; BAW/edit gated; no PSA server chat without JWT+premium.
+- **Standard signed-in:** shop, consult (standard), orders, rewards upgrade path; premium booking/BAW options blocked client-side; premium cart lines stripped on load.
+- **Premium:** Stripe membership or profile flags; PSA server gate reads Supabase (+ founder bypass). Client/server premium mismatch still possible if profile stale.
+
+**Positive:** Admin API routes return **403** without admin JWT; user profile/orders/cart require Bearer; autopay cron requires **`BOOKING_AUTOPAY_CRON_SECRET`**; delete-account blocks founder email; live Fal regen requires auth when cache miss.
+
+**Recommended fix order:** (1) auth + rate limit on `build-a-wig-unit-image`, (2) wire product checkout to Stripe PI or disable CONFIRM ORDER in prod, (3) strip privileged profile fields server-side + RLS/trigger, (4) validate orders server-side or service-role-only writes, (5) lock down psa/health, (6) finish priority_messages + concierge server path.
