@@ -37,6 +37,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 import RewardsHeaderIcon from '../../../components/icons/RewardsHeaderIcon';
+import PremiumRewardsMarketingList from '../../../components/membership/PremiumRewardsMarketingList';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -1735,6 +1736,31 @@ function MembershipPage() {
                                 </td>
                               </tr>
                               <tr>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>PERSONAL SLAY<br />ASSISTANT (PSA)</span></td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                  </div>
+                                </td>
+                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
+                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
+                                    </div>
+                                  </span>
+                                </td>
+                              </tr>
+                              <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>VIP SUPPORT</span></td>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -2604,54 +2630,7 @@ fontFamily: '"Futura PT Book"',
                     <img src={additionalFeaturesIcon} alt="" style={{ width: '20px', height: '20px', flexShrink: 0, objectFit: 'contain', marginTop: '-2px' }} />
                   </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PREMIUM 3D WIG SELECTIONS
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        ADDITIONAL, MORE EXTENSIVE CUSTOMIZATION OPTIONS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        ENTRY TO MEMBERS ONLY LOUNGE
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARLY ACCESS TO SALES, NEW DROPS + RESTOCKS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        FAST TRACK CUSTOMER SUPPORT
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        PRIORITIZED SUPPORT WITH SIGNIFICANTLY REDUCED RESPONSE TIMES
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        PRIORITY BOOKING + PROCESSING
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        OPTION TO SCHEDULE IN ADVANCE + PRIORITIZED CUSTOM ORDERS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        MEMBER REWARDS + CHALLENGES
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        ELIGIBLE FOR A CHANCE TO WIN RAFFLES, DISCOUNTS + VOUCHERS
-                      </p>
-                    </div>
-                    <div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '14px', color: '#000000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                        DOUBLE YOUR POINTS
-                                  </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: BRAND_GRAY, margin: '0', textTransform: 'uppercase' }}>
-                        EARN 2X LOYALTY POINTS UNLOCKING REWARDS FASTER
-                      </p>
-                    </div>
+                    <PremiumRewardsMarketingList />
                   </div>
                             </div>
                             </>

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { BRAND_MEMBER_BLOCKS } from '../../constants/brandMemberCopy';
+import PremiumRewardsMarketingList from '../membership/PremiumRewardsMarketingList';
 
 const BODY_FONT_SIZE_PX = 10;
 const BRAND_GRAY = '#808080';
@@ -51,7 +52,7 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
   };
 }
 
-/** Become a Member marketing copy only, no included-benefits or unlock-rewards blocks on `/brand/member`. */
+/** Become a Member marketing copy + premium perks list on `/brand/member`. */
 export default function BrandMemberSection() {
   const bodyBlocks = BRAND_MEMBER_BLOCKS;
 
@@ -85,6 +86,15 @@ export default function BrandMemberSection() {
           </p>
         );
       })}
+      <div
+        style={{
+          borderTop: '1px solid #e5e7eb',
+          paddingTop: '16px',
+          marginTop: '4px',
+        }}
+      >
+        <PremiumRewardsMarketingList heading="PREMIUM MEMBER PERKS" />
+      </div>
     </div>
   );
 }

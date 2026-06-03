@@ -1,3 +1,8 @@
+import {
+  PSA_MEMBERSHIP_SUBTITLE,
+  PSA_MEMBERSHIP_TITLE,
+} from './psaMembershipCopy';
+
 /** Unlock premium rewards copy (matches Account → Rewards marketing list). */
 export type BrandUnlockPremiumRewardItem = {
   id: string;
@@ -6,6 +11,11 @@ export type BrandUnlockPremiumRewardItem = {
 };
 
 export const BRAND_UNLOCK_PREMIUM_REWARD_ITEMS: BrandUnlockPremiumRewardItem[] = [
+  {
+    id: 'psa',
+    title: PSA_MEMBERSHIP_TITLE,
+    subtitle: PSA_MEMBERSHIP_SUBTITLE,
+  },
   {
     id: 'wig-selections',
     title: 'PREMIUM 3D WIG SELECTIONS',
