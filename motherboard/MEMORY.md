@@ -23868,3 +23868,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why:** During **`ready`**, **`LoungeTvAnimationVideo`** unmounted → close remounted + seek delay; **`LoungeTvFullscreenShell`** black bg stayed visible until first reverse frame; reverse reveal waited for first RAF step.
 
 **Fix:** Keep clip mounted **`seedancePhase !== 'idle'`** (park at **`LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION`** 0.68 while menu open). Hide fullscreen shell + transparent scrim during **`closing`**. **`useSceneCoverVideoPlayback`**: **`notifyPlaying()`** right after reverse seek. Fraction **0.72→0.68** to skip trailing static after hand.
+
+---
+
+## 2026-06-02 — Lounge TV screen +4% size, down 20px
+
+**Context:** User asked TV screen + content **4% larger** and **down 20px** in tandem.
+
+**Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.95→0.99**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **130→150** (`LoungeTvFullscreenShell`).
