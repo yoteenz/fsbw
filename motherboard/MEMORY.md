@@ -23502,3 +23502,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User needed a visible hit rect over the lounge chandelier to tune **`FINAL_LOUNGE_HIT_REGIONS.chandelier`**.
 
 **Fix:** **`SceneHitRegion`** optional **`debugOverlay`** (amber square + label). **`LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY`** = **`true`** in **`finalLobbySceneAssets.ts`** (set **`false`** before ship); also **`?sceneHitDebug=1`**. **`LoungeSceneHotspots`** + **`isLoungeChandelierHitDebugEnabled()`**.
+
+---
+
+## 2026-06-02 — Register open +20%; phone tandem up 4px
+
+**Fix:** **`LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE`** **0.7938** (+20% from **0.6615**). **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -32 }` (phone open PNG + popover wrapper up 4px; register unchanged).
