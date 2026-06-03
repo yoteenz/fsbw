@@ -24166,3 +24166,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **Premium upgrade chart** — new row **PERSONAL SLAY ASSISTANT (PSA)** (✓ all paid tiers, ✗ standard) in both **`PremiumSubscriptionUpgradeChart.tsx`** and inline membership page chart; **`premiumBenefitsByTier.ts`** bullet lists updated.
 
 **Conventions:** Edit PSA membership marketing in **`psaMembershipCopy.ts`** + **`brandMemberPremiumRewards.ts`**; chart row must stay in sync in membership page duplicate table until chart is fully deduplicated.
+
+---
+
+## 2026-06-03 — PSA tier-based engagement limits (cost control)
+
+**Context:** User asked to cap PSA chat usage per member by membership tier (3 month lowest, 12 month highest) to control OpenAI cost, and outline limits on the site.
+
+**Limits (UTC calendar day + month):** 3 month **45/mo (10/day)** · 6 month **90/mo (18/day)** · 12 month / BLACK **180/mo (30/day)**. Founder test email bypasses caps (PSA-only).
+
+**Changes:** **`api/_lib/psaEngagementLimits.ts`**, **`api/_lib/psaUsageLimit.ts`**, **`POST /api/psa/chat`** returns **429** `PSA_LIMIT_REACHED`, **`GET /api/psa/usage`**, migration **`20260605120000_psa_message_usage.sql`**, chat header shows remaining allowance, upgrade chart / Become a Member / VIEW ALL BENEFITS copy updated.
+
+**User action:** Run **`20260605120000_psa_message_usage.sql`** in Supabase SQL Editor (after prior PSA/security migrations).
