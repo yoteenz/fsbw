@@ -4,6 +4,7 @@ import {
   LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION,
   LOUNGE_TV_ANIMATION_VIDEO_SRC,
   LOUNGE_TV_ANIMATION_VIDEO_SRC_MOV,
+  LOUNGE_TV_ANIMATION_LETTERBOX_BG,
   loungeTvAnimationCoverPosition,
   loungeTvAnimationLetterboxShellStyle,
   loungeTvAnimationMediaLayerStyle,
@@ -128,7 +129,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         overflow: 'hidden',
         pointerEvents: 'none',
         visibility: 'visible',
-        backgroundColor: 'transparent',
+        backgroundColor: LOUNGE_TV_ANIMATION_LETTERBOX_BG,
       }}
     >
       <div style={loungeTvAnimationLetterboxShellStyle()}>
@@ -139,7 +140,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
               position: 'absolute',
               inset: 0,
               backgroundImage: `url(${poster})`,
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               backgroundPosition: loungeTvAnimationCoverPosition(direction),
               backgroundRepeat: 'no-repeat',
               pointerEvents: 'none',

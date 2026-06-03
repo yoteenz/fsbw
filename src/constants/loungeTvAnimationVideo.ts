@@ -34,7 +34,7 @@ export const LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX = 0;
  */
 export const LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX = -2;
 
-/** Open + reverse — `cover` + top anchor (same geometry; reverse must not letterbox or lounge peeks at sides). */
+/** Open + reverse — `contain` + top anchor; letterbox bands use black (see shell styles). */
 export function loungeTvAnimationCoverPosition(
   _direction: LoungeTvAnimationDirection = 'forward',
 ): string {
@@ -43,8 +43,11 @@ export function loungeTvAnimationCoverPosition(
   return `center calc(0% + ${offsetY}px)`;
 }
 
+/** Letterbox fill behind contain-fit TV clip (not transparent / lounge slide). */
+export const LOUNGE_TV_ANIMATION_LETTERBOX_BG = '#000000';
+
 /**
- * Full-viewport clip — `cover` + {@link loungeTvAnimationCoverPosition} for forward and reverse.
+ * Full-viewport clip — `contain` + {@link loungeTvAnimationCoverPosition}; black letterbox avoids side/bottom strips.
  */
 export function loungeTvAnimationMediaLayerStyle(
   direction: LoungeTvAnimationDirection = 'forward',
@@ -54,7 +57,7 @@ export function loungeTvAnimationMediaLayerStyle(
     inset: 0,
     width: '100%',
     height: '100%',
-    objectFit: 'cover',
+    objectFit: 'contain',
     objectPosition: loungeTvAnimationCoverPosition(direction),
     pointerEvents: 'none',
   };
@@ -65,7 +68,7 @@ export function loungeTvAnimationLetterboxShellStyle(): React.CSSProperties {
     position: 'absolute',
     inset: 0,
     overflow: 'hidden',
-    backgroundColor: 'transparent',
+    backgroundColor: LOUNGE_TV_ANIMATION_LETTERBOX_BG,
     pointerEvents: 'none',
   };
 }
@@ -119,7 +122,7 @@ export function loungeTvAnimationFullBleedPosterStyle(posterSrc: string): React.
     position: 'absolute',
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'cover',
+    backgroundSize: 'contain',
     backgroundPosition: loungeTvAnimationCoverPosition('forward'),
     backgroundRepeat: 'no-repeat',
     pointerEvents: 'none',
@@ -133,7 +136,7 @@ export function loungeTvAnimationPosterInFrameStyle(
   return {
     ...loungeTvAnimationMediaLayerStyle(direction),
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'cover',
+    backgroundSize: 'contain',
     backgroundPosition: loungeTvAnimationCoverPosition(direction),
     backgroundRepeat: 'no-repeat',
   };

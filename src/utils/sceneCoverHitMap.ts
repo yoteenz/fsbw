@@ -6,8 +6,8 @@ import {
 
 /**
  * Map a hit rect in normalized **source image** space (0–1) to normalized **container** space
- * when the image is painted with `background-size: cover` + `background-position: center top`
- * (same as `sceneCarouselBackgroundLayerStyle` / transition video `object-fit: cover`).
+ * when the image is painted with `background-size: contain` + `background-position: center top`
+ * (same as `sceneCarouselBackgroundLayerStyle` / transition video `object-fit: contain`).
  */
 export function mapImageRectToCoverContainer(
   rect: FinalSceneHitRect,
@@ -18,7 +18,7 @@ export function mapImageRectToCoverContainer(
 ): FinalSceneHitRect {
   if (containerWidth <= 0 || containerHeight <= 0) return rect;
 
-  const scale = Math.max(containerWidth / imageWidth, containerHeight / imageHeight);
+  const scale = Math.min(containerWidth / imageWidth, containerHeight / imageHeight);
   const renderedW = imageWidth * scale;
   const offsetX = (containerWidth - renderedW) / 2;
   const offsetY = 0;
@@ -48,7 +48,7 @@ export function mapImagePointToCoverContainer(
     return { left: point.x, top: point.y };
   }
 
-  const scale = Math.max(containerWidth / imageWidth, containerHeight / imageHeight);
+  const scale = Math.min(containerWidth / imageWidth, containerHeight / imageHeight);
   const renderedW = imageWidth * scale;
   const offsetX = (containerWidth - renderedW) / 2;
   const offsetY = 0;
