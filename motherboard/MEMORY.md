@@ -24129,3 +24129,26 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`@playwright/test`** + **`playwright.config.ts`** (iPhone 13, default `E2E_BASE_URL=https://fsbw.vercel.app`); **`e2e/`** — `guest.spec.ts` (11 smoke routes), `standard-user.spec.ts`, `premium-user.spec.ts`, auth setup projects; **`docs/E2E_PLAYWRIGHT.md`**, **`.env.e2e.example`**; npm scripts `test:e2e`, `test:e2e:guest`, `test:e2e:ui`, `test:e2e:headed`, `test:e2e:install`.
 
 **Run:** `npm run test:e2e:install` then `npm run test:e2e:guest` (no credentials). Signed-in projects need **`E2E_STANDARD_*`** / **`E2E_PREMIUM_*`** in **`.env.e2e.local`**. Linux may need `sudo npx playwright install-deps webkit`.
+
+---
+
+## 2026-06-03 — Security hardening + Stripe product checkout + priority_messages wiring
+
+**Context:** User requested fixes from full-site QA security audit (auth/rate limit on Fal image API, Stripe PaymentIntent on product CONFIRM ORDER, server-only order writes, strip privileged profile fields + DB guard, lock down PSA health, run priority_messages migration + wire Concierge/admin inbox). Also Playwright E2E added earlier in same chat.
+
+**Topics covered:** Audit priority list implementation; Supabase migrations; Vercel env for Stripe; which PSA tables exist vs roadmap.
+
+**Changes (commit `8fc0cd76`, pushed `master` + `preview/mobile`):**
+1. **`POST /api/build-a-wig-unit-image`** — Supabase JWT required; rate limit 12/hr IP + 24/day user (`api/_lib/rateLimit.ts`).
+2. **`PATCH /api/profile`** — strips membership/tier/role/points/gift card (`api/_lib/profilePrivilegedFields.ts`); migration **`20260604120000_security_profiles_orders_guard.sql`** trigger preserves privileged columns for non–service-role.
+3. **`PUT /api/orders`** — **403** for clients; orders appended by Stripe **`payment_intent.succeeded`** webhook (`recordProductOrderFromPaymentIntent.ts`); migration drops `orders_insert_own` / `orders_update_own` RLS.
+4. **`GET /api/psa/health`** — public minimal `{ openaiConfigured, model }`; **`?probe=1`** admin JWT only.
+5. **Product checkout** — when Stripe publishable key set and **`ALLOW_LEGACY_CHECKOUT`≠1**, CONFIRM ORDER uses **`POST /api/stripe/create-product-payment-intent`** + Stripe.js Card Element (`CheckoutStripeCardSection.tsx`, `productCheckoutStripe.ts`); legacy founder PAN only with **`ALLOW_LEGACY_CHECKOUT=1`** (dev/preview).
+6. **Priority messages** — `POST /api/client/priority-messages`, admin `GET/PATCH /api/admin/priority-messages`; Concierge + admin Messages inbox wired; localStorage fallback retained.
+7. **Docs:** `docs/SECURITY_HARDENING.md`, `docs/PSA_SUPABASE_TABLES.md`.
+
+**User actions required:** Run in Supabase SQL Editor: **`20260603180000_priority_messages.sql`**, then **`20260604120000_security_profiles_orders_guard.sql`**. Vercel: set **`STRIPE_PUBLISHABLE_KEY`** + **`VITE_STRIPE_PUBLISHABLE_KEY`**, ensure webhook handles **`payment_intent.succeeded`**; **do not** set **`ALLOW_LEGACY_CHECKOUT`** in production; redeploy.
+
+**PSA tables:** **`priority_messages`** required now. Roadmap (not shipped): **`psa_threads`**, **`psa_messages`**, optional **`psa_member_context`** — see `docs/PSA_SUPABASE_TABLES.md`.
+
+**Conventions:** Product Stripe checkout requires signed-in user + fully server-priced cart (simple units/booking lines); BCF bundle/custom BAW still block until catalog expanded. Founder legacy checkout env vars are preview/local only.
