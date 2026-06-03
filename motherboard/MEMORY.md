@@ -23398,3 +23398,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Phone popover tandem offset (up 6, right 2)
 
 **Fix (`00c03663`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: 2, y: -6 }` — open phone PNG + contact popover wrapper only; register unchanged (`{ x: 8, y: -8 }`).
+
+---
+
+## 2026-06-02 — Lobby page lounge nav shadow (match lounge lobby nav)
+
+**Context:** User asked for the same shadow on lobby slide **lounge** arrow + label as lounge slide **lobby** back nav.
+
+**Fix (`4efa8627`):** **`LobbyPage`** right nav cluster — **`filter: LOUNGE_LOBBY_NAV_SHADOW_FILTER`**; **lounge** label **`textShadow: LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW`**; removed weaker inline SVG drop-shadow. Shared constants in **`lobby/page.tsx`** (both slides).

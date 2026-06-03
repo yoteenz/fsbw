@@ -160,7 +160,6 @@ const LobbyPage: React.FC<{
             viewBox="0 0 32 24" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
           >
             <path 
               d="M14 18L20 12L14 6" 
@@ -189,7 +188,8 @@ const LobbyPage: React.FC<{
           textAlign: 'center',
           width: '100%',
           transform: 'translateX(-2px)',
-          textTransform: 'uppercase'
+          textTransform: 'uppercase',
+          textShadow: LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW,
         }}>
           lounge
         </div>
