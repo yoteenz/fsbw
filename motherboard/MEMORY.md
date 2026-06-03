@@ -23520,3 +23520,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Lounge TV close reverse slightly slower
 
 **Fix:** **`LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE`** **2** → **1.5** in **`loungeTvAnimationVideo.ts`** (RAF step-back on X close).
+
+---
+
+## 2026-06-02 — Phone open −5%; register tandem down 6px, left 4px
+
+**Fix:** **`LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE`** **0.57** (−5% from **0.6**). **`LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET`** `{ x: 24, y: -28 }` (down 6px, left 4px from `{28,-34}`); phone offset unchanged.
