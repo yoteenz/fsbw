@@ -38,11 +38,15 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
   }, [onComplete]);
 
   useEffect(() => {
+    if (!active) {
+      setFrameVisible(false);
+      return;
+    }
     const el = videoRef.current;
     if (!el) return;
     el.preload = 'auto';
     el.load();
-  }, [src]);
+  }, [active, src]);
 
   useSceneCoverVideoPlayback(videoRef, {
     active,

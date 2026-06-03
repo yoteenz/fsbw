@@ -25,12 +25,13 @@ export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
   const offsetY = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
   return {
     position: 'absolute',
-    top: offsetY,
-    left: 0,
+    inset: 0,
     width: '100%',
-    height: offsetY > 0 ? `calc(100% + ${offsetY}px)` : '100%',
+    height: '100%',
     objectFit: 'cover',
     objectPosition: 'center top',
+    // translateY only — avoid top/height calc reflow when <video> mounts (pre-play bounce).
+    transform: offsetY ? `translateY(${offsetY}px)` : undefined,
   };
 }
 

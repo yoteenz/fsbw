@@ -129,8 +129,7 @@ export function useSceneCoverVideoPlayback(
 
       await seekToEnd();
 
-      onPlayingRef.current?.();
-
+      let revealed = false;
       let last = performance.now();
       const tick = (now: number) => {
         if (completedRef.current) return;
@@ -138,6 +137,11 @@ export function useSceneCoverVideoPlayback(
         last = now;
         const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
         el.currentTime = next;
+        if (!revealed) {
+          revealed = true;
+          // Reveal after first step-back — not on seeked end frame (avoids poster vs last-frame bounce).
+          onPlayingRef.current?.();
+        }
         if (next <= 0.04) {
           finish();
           return;
