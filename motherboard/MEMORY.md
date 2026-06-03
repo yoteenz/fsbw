@@ -23975,6 +23975,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — TV open: black screen after animation (menu never showed)
+
+**Context:** After play, Seedance open ran but only black remained — frame still + menu never appeared.
+
+**Cause:** **`showSeedanceVideo`** stayed true at **`ready`** (`phase !== idle`), so **`LoungeTvAnimationVideo`** full-screen **`#000`** host at **z120** sat above **`LoungeTvFullscreenShell`** at **z110**.
+
+**Fix:** Mount clip only during **`opening` || `closing`**; unmount at **`ready`**. Defensive: animation host **`visibility`/`background`** off when **`!active`**.
+
+---
+
 ## 2026-06-03 — PSA (Personal Slay Assistant) v1 scaffold + setup guide
 
 **Context:** User asked which AI model to use for a premium holographic avatar chatbot (PSA), compared ChatGPT’s Responses API / Three.js suggestions with agent recommendations, then said “yes let’s get this started” while designing the avatar — wanted step-by-step wiring instructions and a Fal prompt (reference photo, likeness of user).
