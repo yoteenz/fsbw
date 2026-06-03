@@ -23940,3 +23940,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Watch + Learn player should use **`object-fit: cover`** (not contain) but a **taller** video shell so the frame is not clipped; keep title/duration fixed under video and description-only scroll.
 
 **Fix:** **`LoungeTvWatchLearnPlayer`** — **`objectFit: 'cover'`**, **`objectPosition: 'center top'`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT`** **42 → 54** (`loungeTvAssets.ts`). Media column **`overflowY: hidden`** when player open unchanged in **`LoungeTvOverlay`**.
+
+---
+
+## 2026-06-02 — Lounge TV close: no pre-reverse flash, reverse cover width
+
+**Context:** Tapping close X still flashed another image before reverse Seedance; reverse clip **`contain`** letterboxed so lounge peeked left/right.
+
+**Fix:** Reverse uses **`object-fit: cover`** + same **`center top`** as open (`loungeTvAnimationVideo.ts`). **`LoungeTvOverlay`** — menu shell unmounts on **`closing`** (`showSeedanceMenuShell` = **`ready` only**); scrim stays **`#000000`**. **`LoungeTvFullscreenShell`** — root always black; **`backdropTransparent`** only hides frame still. **`LoungeTvAnimationVideo`** — reverse frame visible on first paint (`useLayoutEffect` + opacity when **`active && reverse`**).
