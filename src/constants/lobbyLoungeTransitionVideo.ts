@@ -19,14 +19,16 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH = 1080;
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
 
 /**
- * @deprecated Sub-pixel nudge removed — transition uses original `center top` cover in a
- * portrait frame; letterbox bands are transparent spacers (see letterbox layout helpers).
+ * Seedance clip only — nudge cover anchor down to counter ~2px upward settle at play start.
+ * Do **not** apply to lobby/lounge slide backgrounds (see `sceneCarouselCoverBackgroundPosition`).
  */
-export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0;
+export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
 
-/** Final LP lobby/lounge slides — `center top` cover (matches {@link SceneCarouselViewportStage}). */
+/** Transition video + poster `object-position` / `background-position`. */
 export function lobbyLoungeTransitionCoverPosition(): string {
-  return 'center top';
+  const offsetY = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
+  if (!offsetY) return 'center top';
+  return `center calc(0% + ${offsetY}px)`;
 }
 
 /** Original transition video/poster layer (full bleed inside the portrait frame). */

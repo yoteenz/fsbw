@@ -3,6 +3,7 @@ import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
+  lobbyLoungeTransitionCoverPosition,
   lobbyLoungeTransitionLetterboxShellStyle,
   lobbyLoungeTransitionMediaLayerStyle,
   lobbyLoungeTransitionVideoSrc,
@@ -52,7 +53,7 @@ function LobbyLoungeTransitionMedia({
             inset: 0,
             backgroundImage: `url(${poster})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center top',
+            backgroundPosition: lobbyLoungeTransitionCoverPosition(),
             backgroundRepeat: 'no-repeat',
             pointerEvents: 'none',
           }}
