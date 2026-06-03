@@ -23430,3 +23430,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Phone popover +16px up
 
 **Fix (`dbc18bd3`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -36 }` (+16px from −20). Register unchanged (`{ x: 16, y: -22 }`).
+
+---
+
+## 2026-06-02 — Phone popover down 6px
+
+**Fix (`4eaf2a32`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -30 }` (down 6px from −36).
