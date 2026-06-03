@@ -64,7 +64,7 @@ export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX = 20;
 
 /** QA nudge for colored shelf debug boxes (not production hit rects). */
 export const LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX = 5;
-export const LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX = 13;
+export const LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX = 12;
 export const LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX = 41;
 export const LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX = 70;
 
