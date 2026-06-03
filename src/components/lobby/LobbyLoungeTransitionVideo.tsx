@@ -17,6 +17,13 @@ import {
 } from '../../constants/finalLobbySceneAssets';
 import { useLobbyLoungeTransitionLetterboxLayout } from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
+import { useLobbyLoungeTransitionDebug } from '../../utils/lobbyLoungeTransitionDebug';
+import {
+  LobbyLoungeTransitionDebugBanner,
+  LobbyLoungeTransitionLayerOutline,
+  lobbyLoungeTransitionFrameDebugStyle,
+  lobbyLoungeTransitionLetterboxBandDebugStyle,
+} from './LobbyLoungeTransitionDebugLayers';
 
 type OverlayProps = {
   active: boolean;
@@ -37,6 +44,7 @@ type TransitionMediaProps = {
   videoRef: RefObject<HTMLVideoElement>;
   src: string;
   onError: () => void;
+  debug: ReturnType<typeof useLobbyLoungeTransitionDebug>;
 };
 
 /**
@@ -51,44 +59,109 @@ function LobbyLoungeTransitionMedia({
   videoRef,
   src,
   onError,
+  debug,
 }: TransitionMediaProps) {
   const letterbox = useLobbyLoungeTransitionLetterboxLayout();
-  const posterOpacity = active && poster ? (frameVisible ? 0 : 1) : 0;
+  const offsetY = debug.mediaOffsetYPx;
+  const posterSrc = debug.posterReveal === 'hidden' ? null : poster;
+  const posterOpacity = active && posterSrc ? (frameVisible ? 0 : 1) : 0;
   const videoOpacity = active && frameVisible ? 1 : 0;
+  const showDebug = debug.showLayerOverlays;
 
   return (
-    <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx)} />
-      <div style={lobbyLoungeTransitionFrameStyle(letterbox)}>
-        {poster ? (
-          <div
-            aria-hidden
-            style={{
-              ...lobbyLoungeTransitionPosterInFrameStyle(poster, direction),
-              opacity: posterOpacity,
-              transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
-            }}
-          />
-        ) : null}
-        <video
-          ref={videoRef}
-          playsInline
-          muted
-          preload="auto"
-          onError={onError}
+    <>
+      <LobbyLoungeTransitionDebugBanner debug={debug} />
+      <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
+        <div
+          aria-hidden
           style={{
-            ...lobbyLoungeTransitionMediaLayerStyle(direction),
-            opacity: videoOpacity,
-            transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
+            ...lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx),
+            ...lobbyLoungeTransitionLetterboxBandDebugStyle(showDebug),
+          }}
+        />
+        <div
+          style={{
+            ...lobbyLoungeTransitionFrameStyle(letterbox),
+            ...lobbyLoungeTransitionFrameDebugStyle(showDebug),
           }}
         >
-          <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-          <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-        </video>
+          {posterSrc ? (
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                inset: 0,
+                opacity: posterOpacity,
+                transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
+              }}
+            >
+              <div style={lobbyLoungeTransitionPosterInFrameStyle(posterSrc, direction, offsetY)} />
+              {showDebug ? (
+                <LobbyLoungeTransitionLayerOutline
+                  label={`POSTER · offsetY ${offsetY}px`}
+                  color="#c2185b"
+                  fill="rgba(233, 30, 99, 0.32)"
+                  opacity={posterOpacity}
+                />
+              ) : null}
+            </div>
+          ) : showDebug ? (
+            <LobbyLoungeTransitionLayerOutline
+              label="POSTER hidden (?lobbyTransitionPoster=hidden)"
+              color="#c2185b"
+              fill="rgba(233, 30, 99, 0.12)"
+              opacity={0}
+            />
+          ) : null}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              opacity: videoOpacity,
+              transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
+            }}
+          >
+            <video
+              ref={videoRef}
+              playsInline
+              muted
+              preload="auto"
+              onError={onError}
+              style={lobbyLoungeTransitionMediaLayerStyle(direction, offsetY)}
+            >
+              <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+              <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+            </video>
+            {showDebug ? (
+              <LobbyLoungeTransitionLayerOutline
+                label={`VIDEO · offsetY ${offsetY}px`}
+                color="#64dd17"
+                fill="rgba(118, 255, 3, 0.26)"
+                opacity={videoOpacity}
+              />
+            ) : null}
+          </div>
+        </div>
+        <div
+          aria-hidden
+          style={{
+            ...lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx),
+            ...lobbyLoungeTransitionLetterboxBandDebugStyle(showDebug),
+          }}
+        />
       </div>
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx)} />
-    </div>
+    </>
   );
+}
+
+function useTransitionPlaybackOptions(
+  debug: ReturnType<typeof useLobbyLoungeTransitionDebug>,
+  onPlaying: () => void,
+) {
+  return {
+    revealOnFirstDecodedFrame: debug.posterReveal !== 'videoOnPlayingOnly',
+    onPlaying,
+  };
 }
 
 /**
@@ -98,8 +171,10 @@ function LobbyLoungeTransitionMedia({
 export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: OverlayProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
+  const debug = useLobbyLoungeTransitionDebug();
   const src = lobbyLoungeTransitionVideoSrc(direction);
   const poster = transitionPosterSrc(direction);
+  const playbackOpts = useTransitionPlaybackOptions(debug, () => setFrameVisible(true));
 
   const finish = useCallback(() => {
     onComplete();
@@ -128,7 +203,8 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     direction,
     reversePlaybackRate: LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
     onComplete: finish,
-    onPlaying: () => setFrameVisible(true),
+    onPlaying: playbackOpts.onPlaying,
+    revealOnFirstDecodedFrame: playbackOpts.revealOnFirstDecodedFrame,
   });
 
   return (
@@ -152,6 +228,7 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         videoRef={videoRef}
         src={src}
         onError={finish}
+        debug={debug}
       />
     </div>
   );
@@ -169,10 +246,12 @@ type HostProps = {
 export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
+  const debug = useLobbyLoungeTransitionDebug();
   const active = phase !== null;
   const direction = phase ?? 'forward';
   const src = lobbyLoungeTransitionVideoSrc(direction);
   const poster = active ? transitionPosterSrc(direction) : null;
+  const playbackOpts = useTransitionPlaybackOptions(debug, () => setFrameVisible(true));
 
   const finish = useCallback(() => {
     if (!phase) return;
@@ -198,7 +277,8 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
     direction,
     reversePlaybackRate: LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
     onComplete: finish,
-    onPlaying: () => setFrameVisible(true),
+    onPlaying: playbackOpts.onPlaying,
+    revealOnFirstDecodedFrame: playbackOpts.revealOnFirstDecodedFrame,
   });
 
   return (
@@ -222,6 +302,7 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
         videoRef={videoRef}
         src={src}
         onError={finish}
+        debug={debug}
       />
     </div>
   );

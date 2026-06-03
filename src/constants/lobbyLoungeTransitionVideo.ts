@@ -25,8 +25,9 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
 export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
 
 /** Transition video + poster `object-position` / `background-position`. */
-export function lobbyLoungeTransitionCoverPosition(): string {
-  const offsetY = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
+export function lobbyLoungeTransitionCoverPosition(
+  offsetY: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
+): string {
   if (!offsetY) return 'center top';
   return `center calc(0% + ${offsetY}px)`;
 }
@@ -34,6 +35,7 @@ export function lobbyLoungeTransitionCoverPosition(): string {
 /** Video layer inside the shared portrait frame (same box as poster). */
 export function lobbyLoungeTransitionMediaLayerStyle(
   _direction: LobbyLoungeTransitionDirection = 'forward',
+  mediaOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
 ): React.CSSProperties {
   return {
     position: 'absolute',
@@ -41,7 +43,7 @@ export function lobbyLoungeTransitionMediaLayerStyle(
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    objectPosition: lobbyLoungeTransitionCoverPosition(),
+    objectPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     pointerEvents: 'none',
   };
 }
@@ -50,13 +52,14 @@ export function lobbyLoungeTransitionMediaLayerStyle(
 export function lobbyLoungeTransitionPosterInFrameStyle(
   posterSrc: string,
   _direction: LobbyLoungeTransitionDirection = 'forward',
+  mediaOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
 ): React.CSSProperties {
   return {
     position: 'absolute',
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: lobbyLoungeTransitionCoverPosition(),
+    backgroundPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     backgroundRepeat: 'no-repeat',
     pointerEvents: 'none',
   };

@@ -10,6 +10,8 @@ type Options = {
   reverseStartFraction?: number;
   onComplete: () => void;
   onPlaying?: () => void;
+  /** When false, `onPlaying` runs on `playing` only (not before `play()` at frame 0). */
+  revealOnFirstDecodedFrame?: boolean;
   safetyTimeoutMs?: number;
 };
 
@@ -25,6 +27,7 @@ export function useSceneCoverVideoPlayback(
     reverseStartFraction = 1,
     onComplete,
     onPlaying,
+    revealOnFirstDecodedFrame = true,
     safetyTimeoutMs = 12000,
   }: Options,
 ): void {
@@ -107,8 +110,10 @@ export function useSceneCoverVideoPlayback(
       el.currentTime = 0;
       try {
         await waitUntilCanStart();
-        // Reveal frame 0 before `play()` — overlay is transparent; carousel slide shows through until then.
-        notifyPlaying();
+        if (revealOnFirstDecodedFrame) {
+          // Reveal frame 0 before `play()` — overlay is transparent; carousel shows through until then.
+          notifyPlaying();
+        }
         await el.play();
       } catch {
         try {
@@ -213,5 +218,13 @@ export function useSceneCoverVideoPlayback(
         reverseRafRef.current = null;
       }
     };
-  }, [active, direction, reversePlaybackRate, reverseStartFraction, safetyTimeoutMs, videoRef]);
+  }, [
+    active,
+    direction,
+    reversePlaybackRate,
+    reverseStartFraction,
+    revealOnFirstDecodedFrame,
+    safetyTimeoutMs,
+    videoRef,
+  ]);
 }
