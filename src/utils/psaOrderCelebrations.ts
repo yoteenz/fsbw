@@ -82,7 +82,7 @@ export function detectPsaOrderCelebration(
         headline: 'YOUR ORDER IS IN MOTION',
         body: num || 'ORDER CONFIRMED',
         prefilledMessage: num
-          ? `Beautiful, my order ${num} just went through. What happens next?`
+          ? `My order ${num} just went through. What happens next?`
           : 'My order just went through. What happens next?',
       };
     }
