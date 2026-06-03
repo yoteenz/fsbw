@@ -643,9 +643,13 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     return () => window.clearTimeout(timer);
   }, [closePhase]);
 
-  useEffect(() => {
-    if (isOpen) setVisible(true);
-  }, [isOpen]);
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    setVisible(true);
+    if (useSeedanceClip && seedancePhase === 'idle') {
+      setSeedancePhase('opening');
+    }
+  }, [isOpen, useSeedanceClip, seedancePhase]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -689,11 +693,6 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setVisible(false);
     onClose();
   }, [onClose, resetOverlayState]);
-
-  useEffect(() => {
-    if (!isOpen || !useSeedanceClip) return;
-    if (seedancePhase === 'idle') setSeedancePhase('opening');
-  }, [isOpen, seedancePhase, useSeedanceClip]);
 
   useEffect(() => {
     if (isOpen || seedancePhase === 'closing') return;
@@ -794,14 +793,19 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setSidebarId(LOUNGE_TV_SIDEBAR[tab][0]?.id ?? '');
   }, []);
 
-  if (!visible || typeof document === 'undefined') return null;
+  if ((!isOpen && !visible) || typeof document === 'undefined') return null;
+
+  const resolvedSeedancePhase: SeedanceTvPhase =
+    isOpen && useSeedanceClip && seedancePhase === 'idle' ? 'opening' : seedancePhase;
+  const seedanceOpening = resolvedSeedancePhase === 'opening';
 
   const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
   const seedanceClosing = seedancePhase === 'closing';
   const showLegacyChoreography = !useSeedanceClip;
   const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
   const showSeedanceMenuShell = useSeedanceClip && seedancePhase === 'ready';
-  const showSeedanceVideo = useSeedanceClip && seedancePhase !== 'idle';
+  const showSeedanceVideo =
+    useSeedanceClip && (isOpen || seedancePhase !== 'idle');
   const useFullscreenShell = useSeedanceClip && showTvChrome;
 
   const handMounted =
@@ -846,10 +850,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     <div role="presentation" aria-hidden={!isOpen}>
       {showSeedanceVideo ? (
         <LoungeTvAnimationVideo
-          active={seedancePhase === 'opening' || seedanceClosing}
+          active={seedanceOpening || seedanceClosing}
           direction={seedanceClosing ? 'reverse' : 'forward'}
           onComplete={
-            seedancePhase === 'opening' ? handleOpenVideoComplete : handleCloseVideoComplete
+            seedanceOpening ? handleOpenVideoComplete : handleCloseVideoComplete
           }
         />
       ) : null}
@@ -883,11 +887,11 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
                 ? 'blur(10px)'
                 : 'none',
           cursor:
-            closePhase === 'idle' && isOpen && seedancePhase !== 'opening' && seedancePhase !== 'closing'
+            closePhase === 'idle' && isOpen && !seedanceOpening && !seedanceClosing
               ? 'pointer'
               : 'default',
           pointerEvents:
-            closePhase === 'idle' && isOpen && seedancePhase !== 'opening' && seedancePhase !== 'closing'
+            closePhase === 'idle' && isOpen && !seedanceOpening && !seedanceClosing
               ? 'auto'
               : 'none',
           transition: useFullscreenShell ? 'none' : `background ${ANIM_MS}ms ease`,
