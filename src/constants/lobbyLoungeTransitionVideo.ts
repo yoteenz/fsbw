@@ -26,9 +26,9 @@ export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
 
 /**
  * Seedance `<video>` only — inside {@link lobbyLoungeTransitionVideoClipStyle}; portrait frame unchanged.
- * 0.98 ≈ 2% smaller; `transformOrigin: center top` keeps top edge aligned with carousel.
+ * 1 = fill clip shell; 1.02 = +2% inside shell. `transformOrigin: center top` keeps top aligned with carousel.
  */
-export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE: number = 0.98;
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE: number = 1.02;
 
 /** Extra downward nudge on `<video>` transform inside clip shell (with scale). */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX = 0;
