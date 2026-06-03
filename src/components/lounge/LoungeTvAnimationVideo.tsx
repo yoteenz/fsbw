@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LOUNGE_TV_CONTENT_FRAME_SRC } from './loungeTvAssets';
 import {
   LOUNGE_TV_ANIMATION_VIDEO_REMOTE,
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
+  loungeTvAnimationPosterSrc,
   loungeTvAnimationVideoSrc,
 } from '../../constants/loungeTvAnimationVideo';
 import { useSceneCoverVideoPlayback, type SceneCoverVideoDirection } from '../../hooks/useSceneCoverVideoPlayback';
@@ -28,8 +28,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frameVisible, setFrameVisible] = useState(false);
   const src = loungeTvAnimationVideoSrc();
-  /** End still — matches {@link LoungeTvFullscreenShell} for seamless handoff. */
-  const poster = LOUNGE_TV_CONTENT_FRAME_SRC;
+  /** Lounge composite on open; black on reverse (end-still has hand — never use as pre-roll). */
+  const poster = loungeTvAnimationPosterSrc(direction);
 
   const finish = useCallback(() => {
     setFrameVisible(false);
@@ -66,7 +66,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         backgroundColor: '#000000',
       }}
     >
-      {!frameVisible ? (
+      {!frameVisible && poster ? (
         <div
           aria-hidden
           style={{
@@ -83,7 +83,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         playsInline
         muted
         preload="auto"
-        poster={poster}
+        poster={poster ?? undefined}
         onError={finish}
         style={{
           ...mediaStyle,
