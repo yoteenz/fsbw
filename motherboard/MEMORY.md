@@ -23211,3 +23211,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Offset was applied on the inner `<button>` (e.g. `transform`) while the positioned box stayed on the cover-mapped rect.
 
 **Fix (`a865f100`):** **`coverMappedRectScreenOffsetStyle()`** in **`sceneCoverHitMap.ts`** — `left`/`top` as `calc(${pct}% + ${px}px)`. **`LoungeCompositeTvPlay`** wraps tap in **`data-lounge-tv-play-container`** with that style; button is `width/height 100%`. **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 120`** (+40 from 80). Tune **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_*`** only on the container wrapper; large moves still use **`FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER`** / **`FINAL_LOUNGE_TV_PLAY_TAP_RECT`**.
+
+---
+
+## 2026-06-02 — Lobby/lounge transition down 0.5px (offset 1px)
+
+**Context:** User asked to shift lobby/lounge Seedance transition down another **0.5px**; ensure nothing overrides alignment.
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 1`** (was 0.5). **`LobbyLoungeTransitionOverlay`** uses only **`lobbyLoungeTransitionMediaLayerStyle()`** / **`lobbyLoungeTransitionPosterLayerStyle()`** — no local `top` / `objectPosition`.
