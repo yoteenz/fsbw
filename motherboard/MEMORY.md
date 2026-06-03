@@ -23128,6 +23128,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lounge TV menu shell down 40px (frame + black glass)
+
+**Context:** Open TV UI — black menu screen sat high vs TV glass on `lounge-tv-content-frame.png` (curtains/hand still).
+
+**Fix:** **`LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = 40`** — **`LoungeTvFullscreenShell`** wraps end-still background + mapped black glass + close in one `translateY(40px)` layer so frame art and menu move in tandem.
+
+---
+
 ## 2026-06-02 — Lobby/lounge transition up 2px
 
 **Context:** Transition still slightly low vs composite; user asked **2px up** with no overrides.
