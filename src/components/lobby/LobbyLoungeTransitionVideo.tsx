@@ -7,7 +7,8 @@ import {
   lobbyLoungeTransitionLetterboxBottomBandStyle,
   lobbyLoungeTransitionLetterboxShellStyle,
   lobbyLoungeTransitionLetterboxTopBandStyle,
-  lobbyLoungeTransitionMediaLayerStyle,
+  lobbyLoungeTransitionVideoClipStyle,
+  lobbyLoungeTransitionVideoElementStyle,
   lobbyLoungeTransitionPosterInFrameStyle,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
@@ -94,17 +95,19 @@ function LobbyLoungeTransitionMedia({
             transition: `opacity ${MASKED_MEDIA_CROSSFADE_MS}ms linear`,
           }}
         >
-          <video
-            ref={videoRef}
-            playsInline
-            muted
-            preload="auto"
-            onError={onError}
-            style={lobbyLoungeTransitionMediaLayerStyle(direction, offsetY)}
-          >
-            <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-            <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-          </video>
+          <div style={lobbyLoungeTransitionVideoClipStyle()}>
+            <video
+              ref={videoRef}
+              playsInline
+              muted
+              preload="auto"
+              onError={onError}
+              style={lobbyLoungeTransitionVideoElementStyle(direction, offsetY)}
+            >
+              <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+              <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+            </video>
+          </div>
         </div>
       </div>
       <div aria-hidden style={lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx)} />

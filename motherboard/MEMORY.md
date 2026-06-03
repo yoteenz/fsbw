@@ -23834,3 +23834,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for TV **screen** and **content** on lounge (fullscreen menu shell) to shrink **4%** and move **down 4px** together.
 
 **Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE = 0.96`**, **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **120→124** — applied on mapped screen inset in **`LoungeTvFullscreenShell`** (`transformOrigin: center top`). Frame still offsets unchanged.
+
+---
+
+## 2026-06-02 — Transition: video scale only; frame offset removed
+
+**Context:** User said **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX` (−2)** wrongly moved the portrait frame; only the Seedance clip should shrink (**0.98**) inside a clip shell so carousel alignment stays the same.
+
+**Fix:** Removed **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX`** — **`lobbyLoungeTransitionFrameStyle`** uses **`topBandPx`** only. Added **`lobbyLoungeTransitionVideoClipStyle`** wrapper; **`lobbyLoungeTransitionVideoElementStyle`** applies **`scale(0.98)`** on **`<video>`** only (`transformOrigin: center top`).
