@@ -23335,3 +23335,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** **`LoungeTvAnimationVideo`** second `<source>` was uncropped Supabase **`video.mov`** — browsers often played that instead of bundled crop. Fixed **128px** crop was too mild for dynamic letterbox.
 
 **Fix:** Removed remote `<source>`; play only bundled **`lounge-tv-animation.mp4`** + **`.mov`**. Re-bake **`crop=720:880:0:200`** (`npm run lounge:bake-tv-animation-crop`); **`LOUNGE_TV_ANIMATION_VIDEO_VERSION`** = **`final-lp-video-crop-v2`**; **`LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE`** = **1.08** safety zoom. Do not re-add **`LOUNGE_TV_ANIMATION_VIDEO_REMOTE`** as a video source.
+
+---
+
+## 2026-06-02 — Lobby/lounge Seedance transition: original cover + transparent letterbox
+
+**Context:** User asked to restore lobby/lounge **scene transition** (Seedance) to **original dimensions** when first added (`e2af73ad`: full bleed **`object-fit: cover`**, **`object-position: center top`**, no sub-pixel offset) and add **responsive transparent containers** above/below so black letterbox from dimension mismatch shows the carousel instead of a black matte.
+
+**Topics in chat:** Prior sub-pixel **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX`** tuning; lounge TV play label/shell offsets; transition bounce/flash fixes (**`LobbyLoungeTransitionHost`**); separate lounge TV letterbox crop work.
+
+**Fix (`7df6712a`):**
+- **`lobbyLoungeTransitionVideo.ts`** — offset **0**; media/poster **`center top`** only; portrait frame **`1080/1920`** via **`lobbyLoungeTransitionFrameStyle()`**; **`lobbyLoungeTransitionLetterboxShellStyle()`** + **`lobbyLoungeTransitionLetterboxSpacerStyle()`** (transparent **`flex: 1`** bands); full-bleed poster behind frame while loading.
+- **`LobbyLoungeTransitionVideo.tsx`** — shared **`LobbyLoungeTransitionMedia`** for overlay + host; host **`backgroundColor: transparent`** (was `#000`).
+- **`lobby/page.tsx`** — lobby/lounge slides use default **`center top`** (removed **`lobbyLoungeTransitionCoverPosition()`** on backgrounds).
+
+**Convention:** Tune room transition letterbox via frame/spacer layout helpers — not **`translateY`** or sub-pixel **`object-position`** on slides. Lounge TV animation is separate (**`loungeTvAnimationVideo.ts`**).
