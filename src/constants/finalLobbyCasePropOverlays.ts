@@ -26,8 +26,8 @@ export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT: FinalSceneHitRect = FINAL_LOBB
 /** Phone open PNG scale (popover cards unchanged). */
 export const LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE = 0.6;
 
-/** Register open PNG — 5% larger than phone (`0.6 × 1.05`). */
-export const LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE = 0.63;
+/** Register open PNG — 5% larger than phone, +5% asset bump (`0.6 × 1.05 × 1.05`). */
+export const LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE = 0.6615;
 
 /** @deprecated Use {@link LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}. */
 export const LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE = LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE;
@@ -50,8 +50,8 @@ export function scaleLobbyCasePropOpenOverlayRect(
 /** Tandem nudge: open PNG + popover wrapper (register — up 34px, right 28px). */
 export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 28, y: -34 } as const;
 
-/** Tandem nudge: open PNG + popover wrapper (phone — up 30px, left 1px). */
-export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -30 } as const;
+/** Tandem nudge: open PNG + popover wrapper (phone — up 28px, left 1px). */
+export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -28 } as const;
 
 export function lobbyCasePropLayoutTransform(offset: { x: number; y: number }): string | undefined {
   if (!offset.x && !offset.y) return undefined;
