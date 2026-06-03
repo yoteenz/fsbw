@@ -29,9 +29,10 @@ import {
 } from '../../constants/lobbyPropPopoverCopy';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
-import { isLobbyShelfHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { useLobbyShelfHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { LobbyCasePropOpenArt } from './LobbyCasePropOpenArt';
 import { LobbyCasePropPopover } from './LobbyCasePropPopover';
+import { SceneHitDebugBanner } from './SceneHitDebugBanner';
 import { rectToPercentStyle, SceneHitRegion } from './SceneHitRegion';
 
 type Props = {
@@ -89,10 +90,14 @@ export function LobbySceneHotspots({
   );
 
   const lobbyLinksLocked = lobbyCasePopover !== null;
-  const shelfHitDebug = isLobbyShelfHitDebugEnabled();
+  const shelfHitDebug = useLobbyShelfHitDebugEnabled();
 
   return (
     <>
+      <SceneHitDebugBanner active={shelfHitDebug}>
+        Hit debug ON — colored boxes on lobby mannequin shelves (HD lace / bundles / custom units).
+        Add <strong>?sceneHitDebug=0</strong> to turn off.
+      </SceneHitDebugBanner>
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.logo}
         ariaLabel="Go to shop"

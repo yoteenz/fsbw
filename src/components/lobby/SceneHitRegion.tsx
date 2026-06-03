@@ -89,7 +89,7 @@ export function SceneHitRegion({
             left: 2,
             top: 2,
             fontFamily: 'monospace',
-            fontSize: 9,
+            fontSize: 11,
             lineHeight: 1.2,
             color: '#000',
             background: 'rgba(255, 255, 255, 0.75)',
