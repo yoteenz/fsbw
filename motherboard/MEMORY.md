@@ -24043,3 +24043,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - PSA code/docs from earlier in chat: `api/psa/chat.ts`, `src/components/psa/*`, transparent avatar restore (`PSA_AVATAR_ASSET_VERSION` v5), `psaApi.ts` session refresh
 
 **Conventions:** Add new winning models/prompts to **`golden-models/`** / **`golden-prompts/`** when confirmed; do not run **`psa-flatten-avatar-backgrounds.mjs`** on true-alpha Ideogram exports.
+
+---
+
+## 2026-06-03 — PSA premium mismatch fix (admin toggle → Supabase + founder bypass)
+
+**Context (entire chat):** PSA v1 shipped; user hit “upgrade subscription” despite premium UI after sign-out/in. Explained local vs Supabase premium checks (FAB vs `/api/psa/chat`). User asked for **both** fixes: admin subscription toggle sync to Supabase **and** founder PSA server bypass.
+
+**Root cause:** Rewards **STANDARD / 3 / 6 / 12 MONTH** admin toggles wrote only `localStorage.adminSubscriptionOverride`; PSA server reads Supabase `profiles.membership_type` / `subscription_tier`.
+
+**Changes:**
+- **`src/utils/adminSubscriptionOverrideSync.ts`** — `syncAdminSubscriptionOverrideToSupabase()` PATCHes profile + updates `currentUser`
+- **`src/pages/account/membership/page.tsx`** — toggle handlers call sync; one-time per-session sync when founder override already set
+- **`api/_lib/psaPremiumCheck.ts`** — `isFounderPsaPremiumBypass()` for `kateenaarmstrong@gmail.com` (PSA only)
+- **`api/psa/chat.ts`** — pass user email to premium check
+- **`docs/PSA_SETUP.md`**, **`motherboard/CORE.md`**
+
+**Conventions:** Founder bypass is **PSA chat only**, not lounge/cart gates. Re-tap **12 MONTH** on Rewards or visit Rewards once to push override to Supabase.
