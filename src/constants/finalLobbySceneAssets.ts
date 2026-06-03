@@ -45,6 +45,9 @@ export const FINAL_LOUNGE_HIT_REGIONS = {
   chandelier: { left: 0.34, top: 0.03, width: 0.32, height: 0.14 },
 } as const satisfies Record<string, FinalSceneHitRect>;
 
+/** Semi-transparent hit box over chandelier — set false before ship. Also `?sceneHitDebug=1`. */
+export const LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY = true;
+
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   left: 0.277,
