@@ -23985,6 +23985,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — TV open: no black screen before Seedance first frame
+
+**Context:** Press play showed full-screen **black** before the open clip started (incorrect; lounge should show through until frame 0).
+
+**Fix:** Forward open — animation host + letterbox shell **`transparent`** until **`frameVisible`**; scrim **`transparent`** during **`opening`**, **`#000`** at **`ready`** / **`closing`**. Reverse close still uses black letterbox immediately.
+
+---
+
 ## 2026-06-03 — PSA (Personal Slay Assistant) v1 scaffold + setup guide
 
 **Context:** User asked which AI model to use for a premium holographic avatar chatbot (PSA), compared ChatGPT’s Responses API / Three.js suggestions with agent recommendations, then said “yes let’s get this started” while designing the avatar — wanted step-by-step wiring instructions and a Fal prompt (reference photo, likeness of user).
