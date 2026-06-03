@@ -63,6 +63,9 @@ export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
 /** @deprecated Stack wrapper removed — use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX`. */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
+/** Open-state prop PNG above scrim, below popover card. */
+export const LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX = 28;
+
 /** Popover card above register/phone asset and slide scrim (within case prop wrapper). */
 export const LOBBY_CASE_POPOVER_OPEN_Z_INDEX = 30;
 

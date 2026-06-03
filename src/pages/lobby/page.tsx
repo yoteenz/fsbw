@@ -41,6 +41,7 @@ const LobbyPage: React.FC<{
   hideCarouselNav?: boolean;
 }> = ({ roomTransitionOverlay = null, hideCarouselNav = false }) => {
   const navigate = useNavigate();
+  const lobbyViewportRef = useRef<HTMLDivElement>(null);
 
   // After email confirm Supabase redirects to Site URL (often /). Recover session here so user is signed in.
   useEffect(() => {
@@ -100,7 +101,7 @@ const LobbyPage: React.FC<{
 
   return (
     <div className="relative" style={sceneSlideShellStyle()}>
-      <SceneCarouselViewportStage backgroundSrc={FINAL_LOBBY_BACKGROUND_SRC}>
+      <SceneCarouselViewportStage backgroundSrc={FINAL_LOBBY_BACKGROUND_SRC} measureRef={lobbyViewportRef}>
         {roomTransitionOverlay ? (
           <LobbyLoungeTransitionOverlay
             active={roomTransitionOverlay.active}
@@ -110,7 +111,7 @@ const LobbyPage: React.FC<{
         ) : null}
 
         <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
-          <LobbySceneHotspots />
+          <LobbySceneHotspots viewportMeasureRef={lobbyViewportRef} />
         </div>
       </SceneCarouselViewportStage>
 

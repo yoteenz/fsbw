@@ -23133,3 +23133,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** **`LoungeTvAnimationVideo`** used **`LOUNGE_TV_CONTENT_FRAME_SRC`** (end still with hand) as pre-play poster.
 
 **Fix:** **`loungeTvAnimationPosterSrc()`** — forward = **`FINAL_LOUNGE_BACKGROUND_SRC`**; reverse = `null` (black). End still only on **`LoungeTvFullscreenShell`** after open completes.
+
+---
+
+## 2026-06-02 — Lobby register/phone open prop overlays (Final LP PNGs)
+
+**Context:** User supplied Final LP open-state **register** + **phone** PNGs; show on top of props only when popover open, scaled to match baked art on `final-lobby.png`.
+
+**Fix:** **`finalLobbyCasePropOverlays.ts`** — remote + bundled `/assets/final-lobby-register-open.png`, `final-lobby-phone-open.png`; cover-mapped rects on 928×1680 (template-matched width/aspect). **`LobbyCasePropOpenArt`** z **28** (above scrim **15**, below popover **30**). **`LobbySceneHotspots`** + **`lobby/page.tsx`** pass **`viewportMeasureRef`** from **`SceneCarouselViewportStage`**. Tune **`FINAL_LOBBY_*_OPEN_OVERLAY_RECT`** in constants if QA misaligns.
