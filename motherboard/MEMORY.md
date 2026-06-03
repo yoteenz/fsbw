@@ -23350,3 +23350,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`lobby/page.tsx`** — lobby/lounge slides use default **`center top`** (removed **`lobbyLoungeTransitionCoverPosition()`** on backgrounds).
 
 **Convention:** Tune room transition letterbox via frame/spacer layout helpers — not **`translateY`** or sub-pixel **`object-position`** on slides. Lounge TV animation is separate (**`loungeTvAnimationVideo.ts`**).
+
+---
+
+## 2026-06-02 — Lobby register/phone open overlay assets −25%
+
+**Context:** User asked to decrease **register and phone pop-up assets only** by **25%** (not the glass contact/payment popover cards).
+
+**Fix:** **`LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE = 0.75`** + **`scaleLobbyCasePropOpenOverlayRect()`** in **`finalLobbyCasePropOverlays.ts`**; **`LobbyCasePropOpenArt`** applies after cover-map. Bottom-center anchor matches **`object-position: center bottom`**. **`LOBBY_CASE_POPOVER_SCALE`** (0.65) unchanged.
