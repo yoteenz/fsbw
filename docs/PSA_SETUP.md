@@ -30,15 +30,15 @@ Use **`fal-ai/nano-banana-pro/edit`** (same family as your NOIR live previews) o
 | File | Expression | When the app shows it |
 |------|------------|------------------------|
 | `psa-avatar-neutral.png` | neutral | FAB default (chat closed) |
-| `psa-avatar-neutral-smiling.jpg` | neutral-smiling | Chat open, idle |
+| `psa-avatar-neutral-smiling.png` | neutral-smiling | Chat open, idle |
 | `psa-avatar-waving.png` | waving | ~2.2s when chat opens |
 | `psa-avatar-listening.png` | listening | Input focused, empty |
 | `psa-avatar-thinking-smiling.png` | thinking-smiling | Input focused, user typing |
 | `psa-avatar-thinking.png` | thinking | Waiting on PSA reply |
 | `psa-avatar-delighted.png` | delighted | Reply with positive keywords |
-| `psa-avatar-sorry.jpg` | sorry | Error / system message |
+| `psa-avatar-sorry.png` | sorry | Error / system message |
 | `psa-avatar-pointing.png` | pointing | Reply includes `/path` links |
-| `psa-avatar-talking.jpg` | talking | ~2.8s after assistant reply |
+| `psa-avatar-talking.png` | talking | ~2.8s after assistant reply |
 | `psa-avatar-presenting.png` | presenting | Reply mentions units / products |
 
 All paths are defined in `src/constants/psaConfig.ts` as `PSA_AVATAR_SRC`.

@@ -15,20 +15,20 @@ export type PsaAvatarExpression =
   | 'presenting';
 
 /** Bump when avatar PNGs change so browsers/CDN drop cached checkerboard versions. */
-export const PSA_AVATAR_ASSET_VERSION = '3';
+export const PSA_AVATAR_ASSET_VERSION = '4';
 
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
   neutral: '/assets/psa-avatar-neutral.png',
-  'neutral-smiling': '/assets/psa-avatar-neutral-smiling.jpg',
+  'neutral-smiling': '/assets/psa-avatar-neutral-smiling.png',
   waving: '/assets/psa-avatar-waving.png',
   listening: '/assets/psa-avatar-listening.png',
   'thinking-smiling': '/assets/psa-avatar-thinking-smiling.png',
   thinking: '/assets/psa-avatar-thinking.png',
   delighted: '/assets/psa-avatar-delighted.png',
-  sorry: '/assets/psa-avatar-sorry.jpg',
+  sorry: '/assets/psa-avatar-sorry.png',
   pointing: '/assets/psa-avatar-pointing.png',
-  talking: '/assets/psa-avatar-talking.jpg',
+  talking: '/assets/psa-avatar-talking.png',
   presenting: '/assets/psa-avatar-presenting.png',
 };
 
