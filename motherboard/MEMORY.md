@@ -23744,3 +23744,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked whether **transparent letterbox masks** can align poster + video symmetrically and avoid poster→video jump.
 
 **Approach:** **`useLobbyLoungeTransitionLetterboxLayout`** — frame sized with **`sceneCarouselCoverMetrics`** (928×1680, same as carousel). **Transparent** top/bottom bands; carousel shows through. Poster + video both **`inset: 0`** in the same frame with identical **`cover`** + **`lobbyLoungeTransitionCoverPosition()`**; **opacity crossfade** (no unmount). Poster = slide PNG (perfect in slide frame); video may still differ slightly (1080×1920) but **no layout shift** on reveal. Pixel-perfect: use MP4 frame 0 as poster (future).
+
+---
+
+## 2026-06-02 — Lobby/lounge transition: poster vs video debug overlays + QA query modes
+
+**Context:** User wanted visible debug colors on **poster** and **video** to track movement; diagnostic URLs for **offset=0**, **hide poster**, **video only after playing**.
+
+**Fix:** **`?lobbyTransitionDebug=1`** on `/lobby` — **magenta** POSTER, **lime** VIDEO outlines (dashed when layer opacity 0), **orange** shared frame, **blue** letterbox bands; banner shows **offsetY** + mode. **`lobbyLoungeTransitionDebug.ts`**: **`?lobbyTransitionOffset=0`** overrides **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX`**; **`?lobbyTransitionPoster=hidden`**; **`?lobbyTransitionPoster=afterPlaying`** → **`revealOnFirstDecodedFrame: false`** (video on `playing` only). **`?lobbyTransitionDebug=0`** clears session.
