@@ -23784,3 +23784,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to remove colored transition QA overlays (magenta poster / lime video / orange frame / blue letterbox).
 
 **Fix:** Deleted **`LobbyLoungeTransitionDebugLayers.tsx`**; removed **`?lobbyTransitionDebug=1`** session overlays. **`lobbyLoungeTransitionDebug.ts`** keeps silent query tuning only: **`?lobbyTransitionOffset=`**, **`?lobbyTransitionPoster=hidden|slide|afterPlaying`**.
+
+---
+
+## 2026-06-02 — TV content frame still, shelf debug, transition video Y nudges
+
+**Context:** User requested three pixel tweaks: TV **content background** (end-still PNG only) **up 20px**; all **lobby mannequin shelf debug** squares **up 2px**; lobby→lounge **transition video** **up 2px** (scale stays **1**, only **`translateY`**).
+
+**Fix:** **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **60→40** in **`loungeTvAssets.ts`** (screen/menu offset **120** unchanged). Shelf debug Y: HD lace **15→13**, bundles **43→41**, custom units **72→70**. **`LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX`** **4→2** in **`lobbyLoungeTransitionVideo.ts`**.
