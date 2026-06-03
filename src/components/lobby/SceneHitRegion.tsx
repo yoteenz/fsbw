@@ -20,7 +20,7 @@ const hitBaseStyle: React.CSSProperties = {
   margin: 0,
   padding: 0,
   border: 'none',
-  background: 'transparent',
+  backgroundColor: 'transparent',
   cursor: 'pointer',
   WebkitTapHighlightColor: 'transparent',
   touchAction: 'manipulation',

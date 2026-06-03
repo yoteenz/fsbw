@@ -95,8 +95,7 @@ export function LobbySceneHotspots({
   return (
     <>
       <SceneHitDebugBanner active={shelfHitDebug}>
-        Hit debug ON — colored boxes on lobby mannequin shelves (HD lace / bundles / custom units).
-        Add <strong>?sceneHitDebug=0</strong> to turn off.
+        Shelf hit debug — cyan HD lace, green bundles, red custom units (tap to test routes).
       </SceneHitDebugBanner>
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.logo}
@@ -131,7 +130,7 @@ export function LobbySceneHotspots({
           rect={shelfHdLaceRect}
           ariaLabel="Shop HD lace frontals"
           onActivate={goToShopFrontals}
-          zIndex={shelfHitDebug ? 26 : 22}
+          zIndex={shelfHitDebug ? 40 : 22}
           disabled={lobbyLinksLocked}
           debugOverlay={shelfHitDebug}
           debugLabel="hd lace → /shop/frontals"
@@ -146,7 +145,7 @@ export function LobbySceneHotspots({
           rect={shelfBundlesRect}
           ariaLabel="Shop bundles"
           onActivate={goToShopBundles}
-          zIndex={shelfHitDebug ? 26 : 22}
+          zIndex={shelfHitDebug ? 40 : 22}
           disabled={lobbyLinksLocked}
           debugOverlay={shelfHitDebug}
           debugLabel="bundles → /shop/bundles"
@@ -161,7 +160,7 @@ export function LobbySceneHotspots({
           rect={shelfCustomUnitsRect}
           ariaLabel="Shop custom units"
           onActivate={goToShopUnits}
-          zIndex={shelfHitDebug ? 26 : 22}
+          zIndex={shelfHitDebug ? 40 : 22}
           disabled={lobbyLinksLocked}
           debugOverlay={shelfHitDebug}
           debugLabel="custom units → /shop/units"

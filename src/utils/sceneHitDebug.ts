@@ -19,7 +19,8 @@ export function isSceneHitDebugEnabledFromSearch(search: string): boolean {
       sessionStorage.removeItem(SCENE_HIT_DEBUG_SESSION_KEY);
       return false;
     }
-    if (params.get('sceneHitDebug') === '1') {
+    const flag = params.get('sceneHitDebug');
+    if (flag === '1' || flag === 'true' || flag === 'yes') {
       sessionStorage.setItem(SCENE_HIT_DEBUG_SESSION_KEY, '1');
       return true;
     }

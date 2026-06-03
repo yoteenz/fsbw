@@ -50,9 +50,10 @@ export const LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY = false;
 
 /**
  * Mannequin shelf hit boxes (HD lace / bundles / custom units).
- * QA: `/lobby?sceneHitDebug=1` (persists in sessionStorage for the tab).
+ * **On** while tuning `FINAL_LOBBY_HIT_REGIONS` — set `false` before production ship.
+ * Also toggled via `/lobby?sceneHitDebug=1` (see `sceneHitDebug.ts`).
  */
-export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = false;
+export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = true;
 
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
