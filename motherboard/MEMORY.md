@@ -23654,3 +23654,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for colored debug squares on **HD lace**, **bundles**, and **custom units** mannequin shelves to see tap/routing hit boxes while tuning **`FINAL_LOBBY_HIT_REGIONS`**.
 
 **Fix:** **`LobbySceneHotspots`** — **`SceneHitRegion`** **`debugOverlay`** per shelf when **`isLobbyShelfHitDebugEnabled()`** (`**?sceneHitDebug=1**` on **`/lobby`**, or **`LOBBY_SHELF_HIT_DEBUG_OVERLAY`** in **`finalLobbySceneAssets.ts`**). Colors: **cyan** HD lace → **`/shop/frontals`**, **green** bundles → **`/shop/bundles`**, **red** custom units → **`/shop/units`**; labels show route. **`SceneHitRegion`** accepts **`debugOverlayStyle`** override.
+
+---
+
+## 2026-06-02 — Lobby↔lounge transition: dial back 40px offsets (white top band + animation gap)
+
+**Context:** After the cover-alignment fix (**`SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX`** 40 + **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX`** −40), user saw **spacing at the top of the animation** and a **large white strip above** lobby/lounge background images — the nudge was too aggressive and mis-offset.
+
+**Root cause:** **`center calc(0% + 40px)`** on slide backgrounds pushes art **down**, exposing shell **`#ffffff`** above; pulling the transition frame **up 40px** added a gap above the Seedance clip.
+
+**Fix (revert offsets, keep structural improvements):** **`sceneCarouselCoverBackgroundPosition()`** → **`center top`** only (removed **`SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX`**). **`LobbyLoungeTransitionMedia`** — full-viewport **`cover`** + **`center top`** video/poster (no letterbox top/bottom bands or frame offset). Slides stay **`100dvh`** + **`overflow: hidden`**; shell/viewport fallback **`#e8e4e0`** (marble) instead of white. Deleted unused **`useLobbyLoungeTransitionLetterboxLayout`**. **Lesson:** tune bottom floor gaps with small px or matching **`background-color`**, not large paired Y offsets on bg + video.
+
+**Also in chat (prior pushes):** Popover centering, close X **`lobbyPopoverPx(5) − 8`** (no clamp), phone hours/email/holidays styling, Affirm spacing via Afterpay/Klarna **`margin ±4`**, shelf hit debug overlays, TV close reverse from hand-press (**`LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION`** 0.72).
