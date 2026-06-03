@@ -23107,3 +23107,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move lounge play button **60px down** and **16px right**.
 
 **Fix (`56d1f43b`):** **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 16`**, **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 60`** in `finalLobbySceneAssets.ts`; **`LoungeCompositeTvPlay`** applies `translate(16px, 60px)` after cover-mapped tap rect. TV overlay grow anchor unchanged (`FINAL_LOUNGE_TV_HIT_REGION`).
+
+---
+
+## 2026-06-02 — Lobby/lounge transition up 2px
+
+**Context:** Transition still slightly low vs composite; user asked **2px up** with no overrides.
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** (was 4). Still only **`lobbyLoungeTransitionMediaLayerStyle()`** / poster helper in `lobbyLoungeTransitionVideo.ts`.
