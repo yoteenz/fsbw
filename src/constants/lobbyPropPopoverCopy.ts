@@ -32,7 +32,13 @@ export const LOBBY_PHONE_POPOVER_SECTIONS: readonly LobbyPhonePopoverSection[] =
     lines: [
       { text: LOBBY_PHONE_POPOVER_HOURS },
       { text: 'WEEKDAYS ONLY' },
-      { text: 'MAJOR US HOLIDAYS EXCLUDED' },
+      {
+        parts: [
+          { text: 'MAJOR ' },
+          { text: 'US HOLIDAYS', emphasis: 'futura-medium-gray' },
+          { text: ' EXCLUDED' },
+        ],
+      },
     ],
   },
   {
