@@ -29,7 +29,7 @@ function measureSlideBox(el: HTMLElement | null): { width: number; height: numbe
 }
 
 /**
- * Map an image-normalized hit rect onto a slide that uses `cover` + `center top` backgrounds.
+ * Map an image-normalized hit rect onto a slide that uses `contain` + `center top` backgrounds.
  * Uses viewport metrics when the measure node has no box yet (absolute-only slide shells).
  */
 export function useSceneCoverHitRect(

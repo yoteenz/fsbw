@@ -58,7 +58,7 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
 export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX = -10;
 export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX = -10;
 
-/** Watch + Learn player — video shell max height (% of TV glass content area); tuned with `object-fit: cover`. */
+/** Watch + Learn player — video shell max height (% of TV glass content area); tuned with `object-fit: contain`. */
 export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT = 54;
 /** Added to {@link LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT} cap (height only). */
 export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX = 12;

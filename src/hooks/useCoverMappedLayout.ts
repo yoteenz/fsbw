@@ -11,7 +11,7 @@ function viewportBox(): { width: number; height: number } {
 }
 
 /**
- * Map image-normalized rects/points to the viewport using `cover` + `center top`
+ * Map image-normalized rects/points to the viewport using `contain` + `center top`
  * (same as lounge TV animation + final-lounge composite).
  */
 export function useCoverMappedLayout(
