@@ -30,6 +30,9 @@ export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
  */
 export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98;
 
+/** Extra downward nudge on `<video>` transform inside portrait frame (with scale). */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX = 2;
+
 /** Transition video + poster `object-position` / `background-position`. */
 export function lobbyLoungeTransitionCoverPosition(
   offsetY: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
@@ -43,8 +46,14 @@ export function lobbyLoungeTransitionMediaLayerStyle(
   _direction: LobbyLoungeTransitionDirection = 'forward',
   mediaOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
   videoScale: number = LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE,
+  videoTranslateYPx: number = LOBBY_LOUNGE_TRANSITION_VIDEO_TRANSLATE_Y_PX,
 ): React.CSSProperties {
   const scale = Number.isFinite(videoScale) && videoScale > 0 ? videoScale : 1;
+  const translateY = Number.isFinite(videoTranslateYPx) ? videoTranslateYPx : 0;
+  const transformParts: string[] = [];
+  if (scale !== 1) transformParts.push(`scale(${scale})`);
+  if (translateY) transformParts.push(`translateY(${translateY}px)`);
+
   return {
     position: 'absolute',
     inset: 0,
@@ -53,8 +62,8 @@ export function lobbyLoungeTransitionMediaLayerStyle(
     objectFit: 'cover',
     objectPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     pointerEvents: 'none',
-    ...(scale !== 1
-      ? { transform: `scale(${scale})`, transformOrigin: 'center top' }
+    ...(transformParts.length
+      ? { transform: transformParts.join(' '), transformOrigin: 'center top' }
       : null),
   };
 }
