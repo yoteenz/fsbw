@@ -55,8 +55,8 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
 } as const;
 
 /** Close X inset from top-right of mapped TV glass / content ({@link LoungeTvFullscreenShell}). */
-export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX = 8;
-export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX = 8;
+export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX = -2;
+export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX = -2;
 
 /**
  * End-still PNG (`lounge-tv-content-frame.png`) after Seedance open — {@link LoungeTvFullscreenShell} only.
