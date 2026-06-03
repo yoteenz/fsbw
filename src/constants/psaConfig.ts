@@ -50,6 +50,9 @@ export const PSA_WIDGET_SUBLABEL = 'PERSONAL SLAY ASSISTANT';
 /** FAB caption under avatar — action-oriented so members know it is tappable. */
 export const PSA_WIDGET_CTA = 'TAP TO CHAT';
 
+/** When a recent thread exists, FAB shows continue copy instead. */
+export const PSA_CONTINUE_CTA = 'CONTINUE CHAT';
+
 /** Crossfade duration when switching avatar PNG expressions (ms). */
 export const PSA_EXPRESSION_CROSSFADE_MS = 1200;
 

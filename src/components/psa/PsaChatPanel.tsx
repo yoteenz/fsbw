@@ -24,6 +24,8 @@ type PsaChatPanelProps = {
   onOpenHistory?: () => void;
   onCloseHistory?: () => void;
   onSelectThread?: (threadId: string) => void;
+  onArchiveThread?: (threadId: string) => void;
+  onDeleteThread?: (threadId: string) => void;
   onInputFocusChange?: (focused: boolean) => void;
   onInputTextChange?: (hasText: boolean) => void;
   initialInput?: string;
@@ -120,6 +122,8 @@ export default function PsaChatPanel({
   onOpenHistory,
   onCloseHistory,
   onSelectThread,
+  onArchiveThread,
+  onDeleteThread,
   onInputFocusChange,
   onInputTextChange,
   initialInput = '',
@@ -202,19 +206,42 @@ export default function PsaChatPanel({
             <p className="psa-chat-history-empty">NO PAST CHATS YET</p>
           ) : (
             threadList.map((thread) => (
-              <button
-                key={thread.id}
-                type="button"
-                className={`psa-chat-history-item${thread.id === activeThreadId ? ' is-active' : ''}`}
-                onClick={() => onSelectThread?.(thread.id)}
-              >
-                <span className="psa-chat-history-item-title">
-                  {thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT'}
-                </span>
-                {thread.preview && thread.title ? (
-                  <span className="psa-chat-history-item-preview">{thread.preview}</span>
-                ) : null}
-              </button>
+              <div key={thread.id} className="psa-chat-history-row">
+                <button
+                  type="button"
+                  className={`psa-chat-history-item${thread.id === activeThreadId ? ' is-active' : ''}`}
+                  onClick={() => onSelectThread?.(thread.id)}
+                >
+                  <span className="psa-chat-history-item-title">
+                    {thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT'}
+                  </span>
+                  {thread.preview && thread.title ? (
+                    <span className="psa-chat-history-item-preview">{thread.preview}</span>
+                  ) : null}
+                </button>
+                <div className="psa-chat-history-actions">
+                  {onArchiveThread ? (
+                    <button
+                      type="button"
+                      className="psa-chat-history-action"
+                      aria-label="Archive chat"
+                      onClick={() => onArchiveThread(thread.id)}
+                    >
+                      ARCHIVE
+                    </button>
+                  ) : null}
+                  {onDeleteThread ? (
+                    <button
+                      type="button"
+                      className="psa-chat-history-action psa-chat-history-action-delete"
+                      aria-label="Delete chat"
+                      onClick={() => onDeleteThread(thread.id)}
+                    >
+                      DELETE
+                    </button>
+                  ) : null}
+                </div>
+              </div>
             ))
           )}
         </div>
