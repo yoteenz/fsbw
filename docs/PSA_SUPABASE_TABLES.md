@@ -8,6 +8,7 @@ Run migrations in **Supabase → SQL Editor** (in order when setting up fresh).
 |-----------|--------|---------|
 | `20260603180000_priority_messages.sql` | **`priority_messages`** | Concierge + PSA `send_priority_message` inbox |
 | `20260604120000_security_profiles_orders_guard.sql` | *(trigger + RLS)* | Block client self-upgrade; orders write via webhook only |
+| `20260605120000_psa_message_usage.sql` | **`psa_message_usage`** | Tier-based PSA chat limits (daily + monthly counters) |
 
 ### `priority_messages` columns
 
@@ -20,6 +21,16 @@ Run migrations in **Supabase → SQL Editor** (in order when setting up fresh).
 
 - Member: `POST /api/client/priority-messages`
 - Admin: `GET` / `PATCH /api/admin/priority-messages`
+
+### PSA engagement limits (server)
+
+| Tier | Monthly | Daily burst |
+|------|---------|-------------|
+| 3 month premium | 45 | 10 |
+| 6 month premium | 90 | 18 |
+| 12 month / BLACK | 180 | 30 |
+
+Enforced in `POST /api/psa/chat` via `psa_try_consume_message` RPC. Remaining allowance: `GET /api/psa/usage`.
 
 ## Already in project (non-PSA but PSA reads)
 

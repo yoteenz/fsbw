@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { PREMIUM_BENEFITS_BY_TIER } from '../../constants/premiumBenefitsByTier';
+import { PSA_ENGAGEMENT_LIMITS_SUMMARY } from '../../constants/psaMembershipCopy';
 import {
   BRAND_GRAY,
   CHART_BORDER,
@@ -179,6 +180,21 @@ export default function PremiumSubscriptionUpgradeChart({
         ))}
       </div>
     )}
+    <p
+      style={{
+        fontFamily: '"Futura PT Book"',
+        fontSize: '8px',
+        color: '#808080',
+        textTransform: 'uppercase',
+        textAlign: 'center',
+        margin: showAllBenefits ? '0 0 12px 0' : '0 0 16px 0',
+        lineHeight: 1.35,
+        paddingLeft: '4px',
+        paddingRight: '4px',
+      }}
+    >
+      {PSA_ENGAGEMENT_LIMITS_SUMMARY}
+    </p>
 
     {/* Comparison Table */}
       <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>

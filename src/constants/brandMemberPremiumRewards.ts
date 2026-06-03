@@ -1,4 +1,5 @@
 import {
+  PSA_ENGAGEMENT_LIMITS_SUMMARY,
   PSA_MEMBERSHIP_SUBTITLE,
   PSA_MEMBERSHIP_TITLE,
 } from './psaMembershipCopy';
@@ -14,7 +15,7 @@ export const BRAND_UNLOCK_PREMIUM_REWARD_ITEMS: BrandUnlockPremiumRewardItem[] =
   {
     id: 'psa',
     title: PSA_MEMBERSHIP_TITLE,
-    subtitle: PSA_MEMBERSHIP_SUBTITLE,
+    subtitle: `${PSA_MEMBERSHIP_SUBTITLE}. ${PSA_ENGAGEMENT_LIMITS_SUMMARY}`,
   },
   {
     id: 'wig-selections',

@@ -8,7 +8,9 @@ import {
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
 } from '../../constants/psaConfig';
+import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn } from '../../utils/adminAuth';
+import { fetchPsaUsage } from '../../utils/psaApi';
 import {
   isPremiumMemberForGatedFeatures,
   prepareMembershipUpgradeNavigation,
@@ -33,7 +35,29 @@ export default function PsaAssistantWidget() {
   const [expressionTick, setExpressionTick] = useState(0);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { messages, isSending, sendMessage } = usePsaChat(PSA_WELCOME_MESSAGE);
+  const { messages, isSending, sendMessage, usage, setUsage } = usePsaChat(PSA_WELCOME_MESSAGE);
+
+  useEffect(() => {
+    if (!isOpen || !isPremium) return;
+    let cancelled = false;
+    void fetchPsaUsage().then((result) => {
+      if (cancelled || !result.ok) return;
+      setUsage(result.usage);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, isPremium, setUsage]);
+
+  const usageLabel = useMemo(() => {
+    if (!usage || usage.unlimited) return null;
+    return formatPsaUsageRemaining(
+      usage.monthCount,
+      usage.monthLimit,
+      usage.dayCount,
+      usage.dayLimit
+    );
+  }, [usage]);
 
   const prevMessageCountRef = useRef(messages.length);
   useEffect(() => {
@@ -160,6 +184,7 @@ export default function PsaAssistantWidget() {
           <PsaChatPanel
             messages={messages}
             isSending={isSending}
+            usageLabel={usageLabel}
             onClose={() => setIsOpen(false)}
             onSend={handleSend}
             onInputFocusChange={setIsInputFocused}

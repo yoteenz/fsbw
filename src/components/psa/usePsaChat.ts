@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { postPsaChat } from '../../utils/psaApi';
+import { postPsaChat, type PsaUsagePayload } from '../../utils/psaApi';
 
 export type PsaChatMessage = {
   id: string;
@@ -18,6 +18,7 @@ export function usePsaChat(welcomeMessage: string) {
   const [isSending, setIsSending] = useState(false);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [usage, setUsage] = useState<PsaUsagePayload | null>(null);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -35,15 +36,26 @@ export function usePsaChat(welcomeMessage: string) {
         if (result.code === 'PREMIUM_REQUIRED') {
           return { premiumRequired: true as const, message: result.message };
         }
+        if (result.code === 'PSA_LIMIT_REACHED' && result.usage) {
+          setUsage(result.usage);
+        }
         setError(result.message);
         setMessages((prev) => [
           ...prev,
           { id: nextId(), role: 'system', content: result.message },
         ]);
-        return { premiumRequired: false as const };
+        return { premiumRequired: false as const, limitReached: result.code === 'PSA_LIMIT_REACHED' };
       }
 
       setResponseId(result.responseId);
+      setUsage((prev) => {
+        if (!prev || prev.unlimited) return prev;
+        return {
+          ...prev,
+          monthCount: prev.monthCount + 1,
+          dayCount: prev.dayCount + 1,
+        };
+      });
       setMessages((prev) => [
         ...prev,
         { id: nextId(), role: 'assistant', content: result.reply },
@@ -63,6 +75,8 @@ export function usePsaChat(welcomeMessage: string) {
     messages,
     isSending,
     error,
+    usage,
+    setUsage,
     sendMessage,
     resetChat,
   };

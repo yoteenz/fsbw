@@ -26,12 +26,25 @@ Knowledge lives in **`api/_lib/psaKnowledge.ts`** (not a separate upload — app
 | Piece | Path |
 |-------|------|
 | Chat API | `api/psa/chat.ts` → `POST /api/psa/chat` |
+| Usage API | `api/psa/usage.ts` → `GET /api/psa/usage` |
 | Premium gate (server) | `api/_lib/psaPremiumCheck.ts` |
+| Engagement limits | `api/_lib/psaEngagementLimits.ts` + `api/_lib/psaUsageLimit.ts` |
 | FAQ / products / nav knowledge | `api/_lib/psaKnowledge.ts` |
 | Floating widget | `src/components/psa/PsaAssistantWidget.tsx` |
 | Global mount | `src/App.tsx` (`<PsaAssistantWidget />`) |
 | Client API | `src/utils/psaApi.ts` |
 | Avatar config | `src/constants/psaConfig.ts` |
+| Marketing copy + limits | `src/constants/psaMembershipCopy.ts` |
+
+### Tier-based chat limits (cost control)
+
+| Plan | Messages / month | Messages / day |
+|------|------------------|----------------|
+| 3 month premium | 45 | 10 |
+| 6 month premium | 90 | 18 |
+| 12 month premium / BLACK | 180 | 30 |
+
+Run migration **`20260605120000_psa_message_usage.sql`** in Supabase. Limits reset on UTC calendar day / month. Founder test email bypasses caps (PSA-only).
 
 ---
 

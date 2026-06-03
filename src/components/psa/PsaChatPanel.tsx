@@ -9,6 +9,7 @@ import type { PsaChatMessage } from './usePsaChat';
 type PsaChatPanelProps = {
   messages: PsaChatMessage[];
   isSending: boolean;
+  usageLabel?: string | null;
   onClose: () => void;
   onSend: (text: string) => Promise<{ premiumRequired?: boolean } | void>;
   onInputFocusChange?: (focused: boolean) => void;
@@ -25,6 +26,7 @@ function extractPaths(text: string): string[] {
 export default function PsaChatPanel({
   messages,
   isSending,
+  usageLabel,
   onClose,
   onSend,
   onInputFocusChange,
@@ -64,6 +66,11 @@ export default function PsaChatPanel({
         <div className="psa-chat-header-text">
           <h2 className="psa-chat-title">{PSA_CHAT_TITLE}</h2>
           <p className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</p>
+          {usageLabel ? (
+            <p className="psa-chat-usage" style={{ margin: '4px 0 0', fontSize: '9px', opacity: 0.85 }}>
+              {usageLabel}
+            </p>
+          ) : null}
         </div>
         <button type="button" className="psa-chat-close" onClick={onClose} aria-label="Close PSA">
           ×

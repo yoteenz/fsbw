@@ -8,6 +8,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from '../_lib/auth.js';
 import { getPsaPremiumProfile } from '../_lib/psaPremiumCheck.js';
 import {
+  getPsaEngagementLimits,
+  isPsaEngagementUnlimited,
+} from '../_lib/psaEngagementLimits.js';
+import { consumePsaMessage } from '../_lib/psaUsageLimit.js';
+import {
   searchPsaFaq,
   searchPsaNavigation,
   searchPsaProducts,
@@ -218,6 +223,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'Premium membership required for PSA.',
       code: 'PREMIUM_REQUIRED',
     });
+  }
+
+  const engagementLimits = getPsaEngagementLimits(premium);
+
+  if (!isPsaEngagementUnlimited(user.email)) {
+    const consumed = await consumePsaMessage(user.id, engagementLimits);
+    if (!consumed.ok) {
+      const limitLabel =
+        consumed.reason === 'daily'
+          ? `Daily PSA limit reached (${consumed.usage.dayLimit} messages per day on ${engagementLimits.tierLabel}).`
+          : `Monthly PSA limit reached (${consumed.usage.monthLimit} messages per month on ${engagementLimits.tierLabel}).`;
+      res.setHeader('Retry-After', String(consumed.retryAfterSec ?? 3600));
+      return res.status(429).json({
+        error: `${limitLabel} Resets automatically — upgrade your plan for a higher limit, or use Concierge for hands-on help.`,
+        code: 'PSA_LIMIT_REACHED',
+        reason: consumed.reason,
+        usage: consumed.usage,
+        retryAfterSec: consumed.retryAfterSec,
+      });
+    }
   }
 
   const body = (req.body ?? {}) as ChatRequestBody;

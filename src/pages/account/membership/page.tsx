@@ -38,6 +38,7 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 import RewardsHeaderIcon from '../../../components/icons/RewardsHeaderIcon';
 import PremiumRewardsMarketingList from '../../../components/membership/PremiumRewardsMarketingList';
+import { PSA_ENGAGEMENT_LIMITS_SUMMARY } from '../../../constants/psaMembershipCopy';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -1553,6 +1554,22 @@ function MembershipPage() {
                           ))}
                         </div>
                       )}
+
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '8px',
+                          color: '#808080',
+                          textTransform: 'uppercase',
+                          textAlign: 'center',
+                          margin: showPremiumUpgradeAllBenefits ? '0 0 12px 0' : '0 0 16px 0',
+                          lineHeight: 1.35,
+                          paddingLeft: '4px',
+                          paddingRight: '4px',
+                        }}
+                      >
+                        {PSA_ENGAGEMENT_LIMITS_SUMMARY}
+                      </p>
 
                       {/* Comparison Table */}
                         <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '38px', display: 'flex', justifyContent: 'center' }}>
