@@ -23908,3 +23908,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why:** Fullscreen scrim **`background`** transitioned **#000 → transparent** over **`ANIM_MS` (1400ms)**; shell unmounted exposing black viewport; reverse **`<video>`** stayed **`opacity: 0`** until first playback tick.
 
 **Fix:** Scrim **`transition: none`** with fullscreen shell; **`backdropTransparent`** on shell during **`closing`** (hide frame still + black screen inset); reverse sets **`frameVisible`** immediately when **`active && direction === 'reverse'`**.
+
+---
+
+## 2026-06-02 — Checkout order strip: two visible thumbs; single item centered
+
+**Context:** User wanted checkout order-summary strip to show **only the first two** thumbnails in view (no peek of a third); with **one item**, thumbnail + labels **centered**.
+
+**Fix:** **`checkoutOrderStripDisplay.ts`** — **`ORDER_STRIP_CHECKOUT_VISIBLE_THUMBS` (2)**, **`orderStripCheckoutViewportWidthPx`**, **`orderStripExpandedEntriesContentWidthPx`**, **`orderStripCheckoutScrollLimitsPx`**. **`checkout/page.tsx`** + **`checkout/confirm/page.tsx`**: scroll container **`width`** = viewport px, **`margin: 0 auto`**, **`maxWidth: 100%`**; drag only when **>2** tiles; scroll limits from helpers (not full page width).
