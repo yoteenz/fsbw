@@ -207,10 +207,13 @@ function PaymentIconCell({
   icon,
   maxHeightPx,
   justifySelf,
+  cellMarginAdjust,
 }: {
   icon: LobbyPaymentIcon;
   maxHeightPx: number;
   justifySelf?: React.CSSProperties['justifySelf'];
+  /** Register payment-plans row — tighten side gutters on a single logo (e.g. Affirm). */
+  cellMarginAdjust?: Pick<React.CSSProperties, 'marginLeft' | 'marginRight'>;
 }) {
   const tiltDeg =
     icon.rotationDeg ?? (icon.id === 'klarna' ? LOBBY_KLARNA_PAYMENT_ICON_ROTATION_DEG : 0);
@@ -228,6 +231,7 @@ function PaymentIconCell({
         padding: `${lobbyPopoverPx(2) + tiltPadPx}px ${tiltPadPx}px`,
         overflow: 'visible',
         justifySelf,
+        ...cellMarginAdjust,
       }}
     >
       <div
@@ -257,6 +261,15 @@ function PaymentIconCell({
     </div>
   );
 }
+
+/** Payment plans row only — pull Affirm 4px closer to Afterpay and Klarna. */
+const LOBBY_PAYMENT_PLANS_AFFIRM_CELL_MARGIN_ADJUST: Pick<
+  React.CSSProperties,
+  'marginLeft' | 'marginRight'
+> = {
+  marginLeft: -4,
+  marginRight: -4,
+};
 
 function LobbyPopoverSections({ sections }: { sections: readonly LobbyCasePropPopoverSection[] }) {
   return (
@@ -292,6 +305,7 @@ function LobbyPaymentIconSection({
   maxHeightPx,
   clusterOuterIconsToCenter,
   iconRowMarginBottomPx,
+  iconCellMarginAdjust,
 }: {
   label: string;
   icons: readonly LobbyPaymentIcon[];
@@ -300,6 +314,10 @@ function LobbyPaymentIconSection({
   clusterOuterIconsToCenter?: boolean;
   /** Extra space below the icon row (register: accepted cards + express). */
   iconRowMarginBottomPx?: number;
+  iconCellMarginAdjust?: (icon: LobbyPaymentIcon) => Pick<
+    React.CSSProperties,
+    'marginLeft' | 'marginRight'
+  > | undefined;
 }) {
   if (icons.length === 0) return null;
 
@@ -323,6 +341,7 @@ function LobbyPaymentIconSection({
             justifySelf={
               clusterOuterIconsToCenter ? payInFourIconJustifySelf(index, icons.length) : undefined
             }
+            cellMarginAdjust={iconCellMarginAdjust?.(icon)}
           />
         ))}
       </div>
@@ -350,6 +369,9 @@ function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayo
         icons={layout.payOverTime}
         maxHeightPx={LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX}
         clusterOuterIconsToCenter
+        iconCellMarginAdjust={(icon) =>
+          icon.id === 'affirm' ? LOBBY_PAYMENT_PLANS_AFFIRM_CELL_MARGIN_ADJUST : undefined
+        }
       />
     </div>
   );
