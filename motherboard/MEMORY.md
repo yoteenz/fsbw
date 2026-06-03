@@ -23850,3 +23850,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked TV screen + content **2% smaller** and **down 8px** in tandem (fullscreen shell glass inset).
 
 **Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.96→0.98**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **124→128** (`LoungeTvFullscreenShell` screen transform).
+
+---
+
+## 2026-06-02 — Lounge TV screen 5% smaller, down 10px
+
+**Context:** User asked TV screen + content **5% smaller** and **down 10px** in tandem.
+
+**Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.98→0.95**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **128→130** (`LoungeTvFullscreenShell`).
