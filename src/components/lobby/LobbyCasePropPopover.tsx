@@ -20,9 +20,14 @@ const LOBBY_POPOVER_BOHEMY_FONT_PX = lobbyPopoverPx(15) + 3;
 /** Payment popover section labels only — 2px smaller than contact Bohemy headers. */
 const LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX = LOBBY_POPOVER_BOHEMY_FONT_PX - 2;
 const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
-/** Close X — top-right inset inside glass panel (phone + register). */
-const LOBBY_POPOVER_CLOSE_TOP_PX = Math.max(0, lobbyPopoverPx(5) - 8);
-const LOBBY_POPOVER_CLOSE_RIGHT_PX = Math.max(0, lobbyPopoverPx(5) - 8);
+/** Close X — top/right inset; nudge may be negative (see LOBBY_POPOVER_CLOSE_NUDGE_UP_RIGHT_PX). */
+const LOBBY_POPOVER_CLOSE_INSET_BASE_PX = lobbyPopoverPx(5);
+/** +8px up/right from base (do not clamp — scaled base is only ~3px). */
+const LOBBY_POPOVER_CLOSE_NUDGE_UP_RIGHT_PX = 8;
+const LOBBY_POPOVER_CLOSE_TOP_PX =
+  LOBBY_POPOVER_CLOSE_INSET_BASE_PX - LOBBY_POPOVER_CLOSE_NUDGE_UP_RIGHT_PX;
+const LOBBY_POPOVER_CLOSE_RIGHT_PX =
+  LOBBY_POPOVER_CLOSE_INSET_BASE_PX - LOBBY_POPOVER_CLOSE_NUDGE_UP_RIGHT_PX;
 const LOBBY_POPOVER_CLOSE_BTN_PX = lobbyPopoverPx(18);
 
 type ContactPopoverLine =
