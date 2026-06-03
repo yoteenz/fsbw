@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT } from './loungeTvAssets';
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 
@@ -217,53 +218,66 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     <div
       style={{
         width: '100%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         gap: '6px',
         minHeight: 0,
         textTransform: 'uppercase',
+        boxSizing: 'border-box',
       }}
     >
       <div
-        ref={shellRef}
         style={{
-          position: 'relative',
-          width: '100%',
-          aspectRatio: '16 / 9',
-          background: '#0a0a0a',
-          overflow: 'hidden',
-          cursor: 'pointer',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          minWidth: 0,
         }}
       >
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          playsInline
-          loop
-          preload="auto"
-          controls={false}
-          controlsList="nodownload noplaybackrate noremoteplayback"
-          disablePictureInPicture
-          disableRemotePlayback
-          aria-label={tile.title}
-          onPlay={() => setPaused(false)}
-          onPause={() => {
-            setPaused(true);
-            syncTimeFromVideo();
-          }}
-          onTimeUpdate={syncTimeFromVideo}
-          onLoadedMetadata={syncTimeFromVideo}
-          onLoadedData={syncTimeFromVideo}
-          onDurationChange={syncTimeFromVideo}
-          onPointerUp={handleVideoPointerUp}
-          onDoubleClick={handleVideoDoubleClick}
+        <div
+          ref={shellRef}
           style={{
+            position: 'relative',
             width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
+            maxHeight: `${LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT}%`,
+            aspectRatio: '16 / 9',
+            background: '#0a0a0a',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            flexShrink: 0,
           }}
-        />
+        >
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            playsInline
+            loop
+            preload="auto"
+            controls={false}
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            disablePictureInPicture
+            disableRemotePlayback
+            aria-label={tile.title}
+            onPlay={() => setPaused(false)}
+            onPause={() => {
+              setPaused(true);
+              syncTimeFromVideo();
+            }}
+            onTimeUpdate={syncTimeFromVideo}
+            onLoadedMetadata={syncTimeFromVideo}
+            onLoadedData={syncTimeFromVideo}
+            onDurationChange={syncTimeFromVideo}
+            onPointerUp={handleVideoPointerUp}
+            onDoubleClick={handleVideoDoubleClick}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
 
         {paused ? (
           <span
@@ -355,64 +369,76 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             <FullscreenExpandIcon />
           </button>
         ) : null}
+        </div>
+
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'space-between',
+            gap: '8px',
+            minWidth: 0,
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: BODY_FONT,
+              fontSize: '8px',
+              letterSpacing: '0.04em',
+              color: '#ffffff',
+              textTransform: 'uppercase',
+              textAlign: 'left',
+              flex: '1 1 auto',
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {tile.title}
+          </span>
+          <span
+            style={{
+              fontFamily: TIME_FONT,
+              fontSize: '7px',
+              letterSpacing: '0.06em',
+              color: BRAND_RED,
+              textTransform: 'uppercase',
+              lineHeight: 1,
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+            }}
+            aria-label={`Playback ${progressLabel}`}
+          >
+            {progressLabel}
+          </span>
+        </div>
       </div>
 
       <div
         style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
-          gap: '8px',
-          minWidth: 0,
+          flex: '1 1 auto',
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          paddingTop: '2px',
         }}
       >
-        <span
+        <p
           style={{
+            margin: 0,
             fontFamily: BODY_FONT,
-            fontSize: '8px',
-            letterSpacing: '0.04em',
-            color: '#ffffff',
-            textTransform: 'uppercase',
-            textAlign: 'left',
-            flex: '1 1 auto',
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {tile.title}
-        </span>
-        <span
-          style={{
-            fontFamily: TIME_FONT,
             fontSize: '7px',
-            letterSpacing: '0.06em',
-            color: BRAND_RED,
-            textTransform: 'uppercase',
-            lineHeight: 1,
-            flexShrink: 0,
-            whiteSpace: 'nowrap',
+            lineHeight: 1.35,
+            color: BODY_GRAY,
+            textAlign: 'left',
           }}
-          aria-label={`Playback ${progressLabel}`}
         >
-          {progressLabel}
-        </span>
+          {tile.description}
+        </p>
       </div>
-
-      <p
-        style={{
-          margin: 0,
-          fontFamily: BODY_FONT,
-          fontSize: '7px',
-          lineHeight: 1.35,
-          color: BODY_GRAY,
-          textAlign: 'left',
-        }}
-      >
-        {tile.description}
-      </p>
     </div>
   );
 }

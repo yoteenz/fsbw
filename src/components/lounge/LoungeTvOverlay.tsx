@@ -479,7 +479,7 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            overflowY: 'auto',
+            overflowY: watchLearnTile ? 'hidden' : 'auto',
             WebkitOverflowScrolling: 'touch',
             paddingBottom: '8px',
             boxSizing: 'border-box',
