@@ -23606,3 +23606,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for **US HOLIDAYS** only (within **MAJOR US HOLIDAYS EXCLUDED**) on the phone pop-up to use gray **Futura PT Medium**; rest of line stays black Futura Book.
 
 **Fix:** **`lobbyPropPopoverCopy.ts`** — holidays line split into **`parts`**: **`MAJOR `** + **`US HOLIDAYS`** (`futura-medium-gray`) + **` EXCLUDED`**.
+
+---
+
+## 2026-06-02 — Popover close X nudge: Math.max(0) clamp hid second move
+
+**Context:** User reported the close **X** did not move after the “another 4px up/right” change on register + phone popovers.
+
+**Root cause:** **`lobbyPopoverPx(5)`** at **`LOBBY_CASE_POPOVER_SCALE` 0.65** ≈ **3px**. **`Math.max(0, 3 − 4)`** and **`Math.max(0, 3 − 8)`** both equal **0**, so the first nudge already pinned the button to the corner and the second change had no effect.
+
+**Fix:** **`LobbyCasePropPopover.tsx`** — removed clamp; **`LOBBY_POPOVER_CLOSE_TOP_PX` / `RIGHT_PX`** = **`lobbyPopoverPx(5) − 8`** (~**−5px**) for the full **8px** up/right nudge from the original inset.
