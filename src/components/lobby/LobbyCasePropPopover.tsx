@@ -22,8 +22,8 @@ const LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX = LOBBY_POPOVER_BOHEMY_FONT_PX - 2;
 const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
 
 type ContactPopoverLine =
-  | { text: string; emphasis?: 'brand-red-medium' }
-  | { parts: readonly { text: string; emphasis?: 'brand-red-medium' }[] };
+  | { text: string; emphasis?: 'futura-demi-gray' }
+  | { parts: readonly { text: string; emphasis?: 'futura-demi-gray' }[] };
 
 export type LobbyCasePropPopoverSection = {
   heading: string;
@@ -118,7 +118,7 @@ const lobbyBohemyLabelStyle: React.CSSProperties = {
   textTransform: 'none',
   fontFamily: '"Bohemy", cursive',
   fontSize: `${LOBBY_POPOVER_BOHEMY_FONT_PX}px`,
-  color: '#808080',
+  color: '#EB1C24',
   fontWeight: 400,
 };
 
@@ -138,15 +138,15 @@ const lineStyle: React.CSSProperties = {
   letterSpacing: '0.02em',
 };
 
-const contactLineRedMediumStyle: React.CSSProperties = {
+const contactLineDemiGrayStyle: React.CSSProperties = {
   ...lineStyle,
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontWeight: 500,
-  color: '#EB1C24',
+  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontWeight: 600,
+  color: '#808080',
 };
 
-function contactLineStyle(line: { emphasis?: 'brand-red-medium' }): React.CSSProperties {
-  return line.emphasis === 'brand-red-medium' ? contactLineRedMediumStyle : lineStyle;
+function contactLineStyle(line: { emphasis?: 'futura-demi-gray' }): React.CSSProperties {
+  return line.emphasis === 'futura-demi-gray' ? contactLineDemiGrayStyle : lineStyle;
 }
 
 function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
@@ -161,7 +161,7 @@ function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
         {line.parts.map((part, index) => (
           <span
             key={`${index}-${part.text}`}
-            style={part.emphasis === 'brand-red-medium' ? contactLineRedMediumStyle : undefined}
+            style={part.emphasis === 'futura-demi-gray' ? contactLineDemiGrayStyle : undefined}
           >
             {part.text}
           </span>
