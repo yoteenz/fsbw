@@ -44,8 +44,8 @@ export function scaleLobbyCasePropOpenOverlayRect(
 /** Tandem nudge: open PNG + popover wrapper (register — up 22px, right 16px). */
 export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 16, y: -22 } as const;
 
-/** Tandem nudge: open PNG + popover wrapper (phone — up 36px, left 1px). */
-export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -36 } as const;
+/** Tandem nudge: open PNG + popover wrapper (phone — up 30px, left 1px). */
+export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -30 } as const;
 
 export function lobbyCasePropLayoutTransform(offset: { x: number; y: number }): string | undefined {
   if (!offset.x && !offset.y) return undefined;
