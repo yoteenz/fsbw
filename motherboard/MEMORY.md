@@ -24011,3 +24011,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`.env.example`** — `OPENAI_API_KEY`, optional `PSA_OPENAI_MODEL`.
 
 **Conventions:** Avatar assets at **`public/assets/psa-avatar-idle.png`** (optional `-thinking.png`). PSA hidden on `/admin/*`. Non-premium signed-in users see upgrade modal; guests see no FAB.
+
+---
+
+## 2026-06-02 — Lobby ↔ lounge transition: upward shift + bottom peek at play start
+
+**Context:** Scene transition animation shifted upward when it began; bottom of lobby/lounge slide peeked through at the bottom of the animation (incorrect alignment).
+
+**Cause:** **`LobbyLoungeTransitionMedia`** used a nested portrait frame sized with slide **`contain`** metrics, then **`object-fit: contain`** on the 1080×1920 Seedance clip **inside** that frame — double letterboxing. Transparent bottom band + transparent frame background let the carousel show through the gap when the video faded in. **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2`** added a separate anchor from slides.
+
+**Fix:** Full-viewport media shell (same box as **`sceneCarouselViewportStageStyle`**): video/poster **`contain`** + **`center top`** on **`inset: 0`**, no top/bottom transparent bands or nested frame. Black letterbox (**`SCENE_CAROUSEL_LETTERBOX_BG`**) on the media shell only after **`frameVisible`** (carousel still shows through before first decoded frame). Offset default **0**; **`lobbyLoungeTransitionCoverPosition()`** defers to **`sceneCarouselCoverBackgroundPosition()`** when offset is 0.
+
+**Files:** `lobbyLoungeTransitionVideo.ts`, `LobbyLoungeTransitionVideo.tsx`, `useLobbyLoungeTransitionLetterboxLayout.ts` (deprecated note only). Pushed **`master`** + **`preview/mobile`** (`7e2a7a4f`).
