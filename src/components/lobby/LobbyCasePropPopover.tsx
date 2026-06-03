@@ -128,7 +128,7 @@ const lobbyBohemyLabelStyle: React.CSSProperties = {
 
 const contactSectionHeadingStyle: React.CSSProperties = {
   ...lobbyBohemyLabelStyle,
-  textAlign: 'left',
+  textAlign: 'center',
   margin: `0 0 ${lobbyPopoverPx(4)}px`,
 };
 
@@ -140,6 +140,7 @@ const lineStyle: React.CSSProperties = {
   margin: 0,
   lineHeight: 1.45,
   letterSpacing: '0.02em',
+  textAlign: 'center',
 };
 
 const contactLineMediumGrayStyle: React.CSSProperties = {
@@ -181,7 +182,7 @@ function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
 
 const lobbyPaymentBohemyLabelStyle: React.CSSProperties = {
   ...lobbyBohemyLabelStyle,
-  textAlign: 'left',
+  textAlign: 'center',
   fontSize: `${LOBBY_POPOVER_PAYMENT_BOHEMY_FONT_PX}px`,
 };
 
@@ -464,7 +465,15 @@ export function LobbyCasePropPopover({
               flexShrink: 0,
             }}
           >
-            <p style={{ ...titleStyle, minWidth: 0 }}>{title}</p>
+            <p
+              style={{
+                ...titleStyle,
+                minWidth: 0,
+                textAlign: sections?.length ? 'center' : undefined,
+              }}
+            >
+              {title}
+            </p>
           </div>
           {panelBody}
         </div>
