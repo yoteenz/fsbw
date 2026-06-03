@@ -892,7 +892,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
             closePhase === 'idle' && isOpen && seedancePhase !== 'opening' && seedancePhase !== 'closing'
               ? 'auto'
               : 'none',
-          transition: `background ${ANIM_MS}ms ease`,
+          transition: useFullscreenShell ? 'none' : `background ${ANIM_MS}ms ease`,
         }}
       />
       {showLegacyChoreography ? (
@@ -909,15 +909,16 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           ) : null}
         </>
       ) : null}
-      {showTvChrome && useFullscreenShell && !seedanceClosing ? (
+      {showTvChrome && useFullscreenShell ? (
         <LoungeTvFullscreenShell
           zIndex={110}
-          closeVisible={closePhase === 'idle' && seedancePhase === 'ready'}
+          backdropTransparent={seedanceClosing}
+          closeVisible={closePhase === 'idle' && seedancePhase === 'ready' && !seedanceClosing}
           onClose={() => requestClose()}
           screenStyle={{
             backgroundColor: '#000000',
-            opacity: showContent || showStatic ? 1 : 0,
-            transition: 'opacity 120ms linear',
+            opacity: seedanceClosing ? 0 : showContent || showStatic ? 1 : 0,
+            transition: seedanceClosing ? 'none' : 'opacity 120ms linear',
           }}
         >
           {showStatic && !showContent ? <LoungeTvPowerOnStatic active /> : null}

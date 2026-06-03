@@ -19,6 +19,8 @@ type Props = {
   screenStyle?: React.CSSProperties;
   closeVisible?: boolean;
   onClose?: (e: React.MouseEvent) => void;
+  /** During Seedance close — no black viewport flash under reverse clip. */
+  backdropTransparent?: boolean;
   /** Override stack order (e.g. power-off kickoff above reverse clip). */
   zIndex?: number;
 };
@@ -32,6 +34,7 @@ export function LoungeTvFullscreenShell({
   screenStyle,
   closeVisible = false,
   onClose,
+  backdropTransparent = false,
   zIndex = 110,
 }: Props) {
   const { mappedScreen } = useCoverMappedLayout(
@@ -58,21 +61,24 @@ export function LoungeTvFullscreenShell({
         inset: 0,
         zIndex,
         overflow: 'hidden',
-        backgroundColor: '#000000',
+        backgroundColor: backdropTransparent ? 'transparent' : '#000000',
+        pointerEvents: backdropTransparent ? 'none' : 'auto',
       }}
     >
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat',
-          transform: frameStillTransform,
-        }}
-      />
+      {!backdropTransparent ? (
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+            transform: frameStillTransform,
+          }}
+        />
+      ) : null}
       <div
         style={{
           ...rectToPercentStyle(mappedScreen),
