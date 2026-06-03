@@ -23,6 +23,24 @@ export const FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT: FinalSceneHitRect =
 /** Same cover-map box as closed phone hit target (`FINAL_LOBBY_HIT_REGIONS.casePhone`). */
 export const FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT: FinalSceneHitRect = FINAL_LOBBY_HIT_REGIONS.casePhone;
 
+/** Open-state register/phone PNG scale (popover cards unchanged). */
+export const LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE = 0.75;
+
+/** Shrink overlay rect from bottom-center (matches `object-position: center bottom`). */
+export function scaleLobbyCasePropOpenOverlayRect(
+  rect: FinalSceneHitRect,
+  scale = LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE,
+): FinalSceneHitRect {
+  const width = rect.width * scale;
+  const height = rect.height * scale;
+  return {
+    left: rect.left + (rect.width - width) / 2,
+    top: rect.top + (rect.height - height),
+    width,
+    height,
+  };
+}
+
 export const FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS = [
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC,
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC,

@@ -1,5 +1,6 @@
 import type { RefObject } from 'react';
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
+import { scaleLobbyCasePropOpenOverlayRect } from '../../constants/finalLobbyCasePropOverlays';
 import { LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX } from '../../constants/lobbyPaymentIcons';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { rectToPercentStyle } from './SceneHitRegion';
@@ -18,8 +19,9 @@ type Props = {
  */
 export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureRef }: Props) {
   const mapped = useSceneCoverHitRect(imageRect, viewportMeasureRef);
+  const displayRect = mapped ? scaleLobbyCasePropOpenOverlayRect(mapped) : null;
 
-  if (!visible || !mapped) return null;
+  if (!visible || !displayRect) return null;
 
   return (
     <img
@@ -31,7 +33,7 @@ export function LobbyCasePropOpenArt({ visible, src, imageRect, viewportMeasureR
       aria-hidden
       style={{
         position: 'absolute',
-        ...rectToPercentStyle(mapped),
+        ...rectToPercentStyle(displayRect),
         objectFit: 'contain',
         objectPosition: 'center bottom',
         zIndex: LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX,
