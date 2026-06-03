@@ -23,7 +23,8 @@ import {
   orderStripTitleFontPx,
   orderStripTitleLine,
   orderStripUseDigitalStackLayout,
-  expandCartLinesForOrderStrip
+  expandCartLinesForOrderStrip,
+  orderStripCheckoutScrollLimitsPx,
 } from '../../../utils/checkoutOrderStripDisplay';
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -67,10 +68,6 @@ function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): bo
 }
 
 const ORDER_TRACK_BUBBLE_PX = 6;
-
-function summaryScrollItemWidthPx(item: any, isSubscriptionUpgrade: boolean): number {
-  return orderStripThumbMetrics(item, isSubscriptionUpgrade, { checkoutStrip: true }).cellWidthPx;
-}
 
 function CheckoutConfirmPage() {
   const inventory = useProductInventorySnapshot();
@@ -282,6 +279,22 @@ function CheckoutConfirmPage() {
     [billableCartItems]
   );
 
+  const isSubscriptionUpgrade = Boolean(orderData?.isSubscriptionUpgrade);
+
+  const orderStripCheckoutLayout = useMemo(
+    () => orderStripCheckoutScrollLimitsPx(orderStripExpandedEntries, isSubscriptionUpgrade),
+    [orderStripExpandedEntries, isSubscriptionUpgrade]
+  );
+
+  useEffect(() => {
+    setScrollPosition((pos) =>
+      Math.max(
+        orderStripCheckoutLayout.minScroll,
+        Math.min(orderStripCheckoutLayout.maxScroll, pos)
+      )
+    );
+  }, [orderStripCheckoutLayout.minScroll, orderStripCheckoutLayout.maxScroll]);
+
   const isOnlyDigitalProductsSummary = React.useMemo(
     () =>
       cartItems.length > 0 &&
@@ -313,8 +326,6 @@ function CheckoutConfirmPage() {
 
   const summaryShowSignOrderFormButton =
     summaryRequiresOrderAuthorizationForm || summaryRequiresGiftCardIdentityForm;
-
-  const isSubscriptionUpgrade = Boolean(orderData?.isSubscriptionUpgrade);
 
   const summaryOrderForTracking = React.useMemo(() => {
     const idRaw = (orderData as { orderInternalId?: string }).orderInternalId;
@@ -731,22 +742,7 @@ function CheckoutConfirmPage() {
     const currentX = e.clientX;
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
-    
-    // Calculate scroll limits dynamically based on container and item widths
-    const containerWidth = scrollContainerRef.current?.offsetWidth || 0;
-    const gap = 20;
-    const paddingRight = 10;
-    
-    // Calculate total content width
-    const totalContentWidth =
-      orderStripExpandedEntries.reduce((sum, entry) => {
-        return sum + summaryScrollItemWidthPx(entry.item, isSubscriptionUpgrade) + gap;
-      }, 0) +
-      paddingRight -
-      gap; // Subtract last gap, add padding
-    
-    const maxScroll = 0;
-    const minScroll = containerWidth - totalContentWidth;
+    const { minScroll, maxScroll } = orderStripCheckoutLayout;
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -766,22 +762,7 @@ function CheckoutConfirmPage() {
     const currentX = e.touches[0].clientX;
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
-    
-    // Calculate scroll limits dynamically based on container and item widths
-    const containerWidth = scrollContainerRef.current?.offsetWidth || 0;
-    const gap = 20;
-    const paddingRight = 10;
-    
-    // Calculate total content width
-    const totalContentWidth =
-      orderStripExpandedEntries.reduce((sum, entry) => {
-        return sum + summaryScrollItemWidthPx(entry.item, isSubscriptionUpgrade) + gap;
-      }, 0) +
-      paddingRight -
-      gap; // Subtract last gap, add padding
-    
-    const maxScroll = 0;
-    const minScroll = containerWidth - totalContentWidth;
+    const { minScroll, maxScroll } = orderStripCheckoutLayout;
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -1211,9 +1192,21 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                 style={{ 
                   minHeight: '200px',
                   height: 'auto',
+                  width:
+                    orderStripExpandedEntries.length > 0
+                      ? `${orderStripCheckoutLayout.viewportWidthPx}px`
+                      : undefined,
+                  maxWidth: '100%',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
                   overflowX: 'hidden',
                   overflowY: 'visible',
-                  cursor: isDragging ? 'grabbing' : 'grab',
+                  cursor:
+                    orderStripExpandedEntries.length > 2
+                      ? isDragging
+                        ? 'grabbing'
+                        : 'grab'
+                      : 'default',
                   userSelect: 'none',
                 }}
                 onMouseDown={handleMouseDown}

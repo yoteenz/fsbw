@@ -67,7 +67,8 @@ import {
   orderStripTitleFontPx,
   orderStripTitleLine,
   orderStripUseDigitalStackLayout,
-  expandCartLinesForOrderStrip
+  expandCartLinesForOrderStrip,
+  orderStripCheckoutScrollLimitsPx,
 } from '../../utils/checkoutOrderStripDisplay';
 import {
   cartHasAnyLoyaltyEarningLine,
@@ -731,6 +732,20 @@ function CheckoutPage() {
 
   // Check if this is a subscription upgrade
   const [isSubscriptionUpgrade, setIsSubscriptionUpgrade] = useState(false);
+
+  const orderStripCheckoutLayout = useMemo(
+    () => orderStripCheckoutScrollLimitsPx(orderStripExpandedEntries, isSubscriptionUpgrade),
+    [orderStripExpandedEntries, isSubscriptionUpgrade]
+  );
+
+  useEffect(() => {
+    setScrollPosition((pos) =>
+      Math.max(
+        orderStripCheckoutLayout.minScroll,
+        Math.min(orderStripCheckoutLayout.maxScroll, pos)
+      )
+    );
+  }, [orderStripCheckoutLayout.minScroll, orderStripCheckoutLayout.maxScroll]);
 
   /** Keep label + totals aligned: inventory load sets applied = full `byType` (multiple service rows). Discount only redeems one service voucher — normalize whenever cart or availability changes so refresh does not show phantom rows. */
   useEffect(() => {
@@ -1699,24 +1714,7 @@ function CheckoutPage() {
     const currentX = e.clientX;
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
-    
-    // Calculate scroll limits
-    const gap = 20;
-    const paddingRight = 10;
-    const containerWidth = scrollContainerRef.current?.offsetWidth || window.innerWidth - 32; // Account for page padding
-    
-    // Calculate total content width
-    let totalContentWidth = paddingRight; // Start with padding
-    orderStripExpandedEntries.forEach((entry, index) => {
-      const thumbM = orderStripThumbMetrics(entry.item, isSubscriptionUpgrade, { checkoutStrip: true });
-      totalContentWidth += thumbM.cellWidthPx;
-      if (index < orderStripExpandedEntries.length - 1) {
-        totalContentWidth += gap;
-      }
-    });
-    
-    const maxScroll = 0;
-    const minScroll = -(totalContentWidth - containerWidth);
+    const { minScroll, maxScroll } = orderStripCheckoutLayout;
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -1736,24 +1734,7 @@ function CheckoutPage() {
     const currentX = e.touches[0].clientX;
     const diff = currentX - startX;
     const newPosition = startScrollPosition + diff;
-    
-    // Calculate scroll limits
-    const gap = 20;
-    const paddingRight = 10;
-    const containerWidth = scrollContainerRef.current?.offsetWidth || window.innerWidth - 32; // Account for page padding
-    
-    // Calculate total content width
-    let totalContentWidth = paddingRight; // Start with padding
-    orderStripExpandedEntries.forEach((entry, index) => {
-      const thumbM = orderStripThumbMetrics(entry.item, isSubscriptionUpgrade, { checkoutStrip: true });
-      totalContentWidth += thumbM.cellWidthPx;
-      if (index < orderStripExpandedEntries.length - 1) {
-        totalContentWidth += gap;
-      }
-    });
-    
-    const maxScroll = 0;
-    const minScroll = -(totalContentWidth - containerWidth);
+    const { minScroll, maxScroll } = orderStripCheckoutLayout;
     setScrollPosition(Math.max(minScroll, Math.min(maxScroll, newPosition)));
   };
 
@@ -3365,9 +3346,21 @@ function CheckoutPage() {
                         style={{ 
                           minHeight: '200px',
                           height: 'auto',
+                          width:
+                            orderStripExpandedEntries.length > 0
+                              ? `${orderStripCheckoutLayout.viewportWidthPx}px`
+                              : undefined,
+                          maxWidth: '100%',
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
                           overflowX: 'hidden',
                           overflowY: 'visible',
-                          cursor: isDragging ? 'grabbing' : 'grab',
+                          cursor:
+                            orderStripExpandedEntries.length > 2
+                              ? isDragging
+                                ? 'grabbing'
+                                : 'grab'
+                              : 'default',
                           userSelect: 'none'
                         }}
                         onMouseDown={handleMouseDown}

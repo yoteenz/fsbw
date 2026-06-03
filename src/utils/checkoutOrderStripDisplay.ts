@@ -354,3 +354,92 @@ export function expandCartLinesForOrderStrip(cartItems: any[] | null | undefined
   });
   return out;
 }
+
+/** Horizontal gap between checkout / confirm order-strip tiles. */
+export const ORDER_STRIP_CHECKOUT_GAP_PX = 20;
+/** Trailing padding on the scrolling row when there are multiple tiles. */
+export const ORDER_STRIP_CHECKOUT_SCROLL_PADDING_RIGHT_PX = 10;
+/** Checkout + confirm: at most this many thumbnails visible in the clipped viewport. */
+export const ORDER_STRIP_CHECKOUT_VISIBLE_THUMBS = 2;
+
+function orderStripEntryCellWidthPx(
+  entry: OrderStripExpandedEntry,
+  isSubscriptionUpgrade: boolean,
+  checkoutStrip: boolean
+): number {
+  return orderStripThumbMetrics(entry.item, isSubscriptionUpgrade, { checkoutStrip }).cellWidthPx;
+}
+
+/**
+ * Full width of the horizontal scrolling row (all expanded tiles).
+ */
+export function orderStripExpandedEntriesContentWidthPx(
+  entries: OrderStripExpandedEntry[],
+  isSubscriptionUpgrade: boolean,
+  options?: {
+    gapPx?: number;
+    paddingRightPx?: number;
+    checkoutStrip?: boolean;
+  }
+): number {
+  const gap = options?.gapPx ?? ORDER_STRIP_CHECKOUT_GAP_PX;
+  const paddingRight = options?.paddingRightPx ?? ORDER_STRIP_CHECKOUT_SCROLL_PADDING_RIGHT_PX;
+  const checkoutStrip = options?.checkoutStrip ?? true;
+  if (!entries.length) return 0;
+
+  let total = paddingRight;
+  entries.forEach((entry, index) => {
+    total += orderStripEntryCellWidthPx(entry, isSubscriptionUpgrade, checkoutStrip);
+    if (index < entries.length - 1) {
+      total += gap;
+    }
+  });
+  return total;
+}
+
+/**
+ * Clipped viewport width on checkout / confirm: one tile when alone (centered); otherwise width of the first
+ * {@link ORDER_STRIP_CHECKOUT_VISIBLE_THUMBS} tiles only so a third item does not peek.
+ */
+export function orderStripCheckoutViewportWidthPx(
+  entries: OrderStripExpandedEntry[],
+  isSubscriptionUpgrade: boolean,
+  options?: {
+    visibleThumbs?: number;
+    gapPx?: number;
+    checkoutStrip?: boolean;
+  }
+): number {
+  const visibleThumbs = options?.visibleThumbs ?? ORDER_STRIP_CHECKOUT_VISIBLE_THUMBS;
+  const gap = options?.gapPx ?? ORDER_STRIP_CHECKOUT_GAP_PX;
+  const checkoutStrip = options?.checkoutStrip ?? true;
+  if (!entries.length) return 0;
+  if (entries.length === 1) {
+    return orderStripEntryCellWidthPx(entries[0], isSubscriptionUpgrade, checkoutStrip);
+  }
+
+  const visibleCount = Math.min(visibleThumbs, entries.length);
+  let width = 0;
+  for (let i = 0; i < visibleCount; i++) {
+    width += orderStripEntryCellWidthPx(entries[i], isSubscriptionUpgrade, checkoutStrip);
+    if (i < visibleCount - 1) {
+      width += gap;
+    }
+  }
+  return width;
+}
+
+/** `translateX` scroll limits for the checkout order strip (0 = start; negative = scrolled left). */
+export function orderStripCheckoutScrollLimitsPx(
+  entries: OrderStripExpandedEntry[],
+  isSubscriptionUpgrade: boolean
+): { maxScroll: number; minScroll: number; viewportWidthPx: number; totalContentWidthPx: number } {
+  const viewportWidthPx = orderStripCheckoutViewportWidthPx(entries, isSubscriptionUpgrade);
+  const totalContentWidthPx = orderStripExpandedEntriesContentWidthPx(entries, isSubscriptionUpgrade);
+  const maxScroll = 0;
+  const minScroll =
+    entries.length <= ORDER_STRIP_CHECKOUT_VISIBLE_THUMBS
+      ? 0
+      : -(totalContentWidthPx - viewportWidthPx);
+  return { maxScroll, minScroll, viewportWidthPx, totalContentWidthPx };
+}
