@@ -23768,3 +23768,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move **green** (bundles) debug square **down 40px**, **red** (custom units) **down 60px**, and **all three** shelves **right 10px**.
 
 **Fix:** **`LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX`** (10), **`…_BUNDLES_OFFSET_Y_PX`** (40), **`…_CUSTOM_UNITS_OFFSET_Y_PX`** (60); cyan HD lace Y=0. **`SceneHitRegion`** **`debugOffsetX`** + **`debugOffsetY`** transforms when debug on.
+
+---
+
+## 2026-06-02 — Scene transition video scaled 98% (upward shift tune)
+
+**Context:** After removing slide PNG poster, transition no longer dropped before play but still **shifted upward** vs carousel backgrounds.
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98`** on transition **`<video>`** only — **`transform: scale(0.98)`**, **`transformOrigin: center top`** in **`lobbyLoungeTransitionMediaLayerStyle`**. Slide backgrounds unchanged. Tune constant in **`lobbyLoungeTransitionVideo.ts`**.
