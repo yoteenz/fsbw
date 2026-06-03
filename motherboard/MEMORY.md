@@ -23227,3 +23227,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to shift lobby/lounge Seedance transition **up 0.2px**; no overrides elsewhere.
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0.8`** (was 1). Only **`lobbyLoungeTransitionMediaLayerStyle()`** / poster helper in `lobbyLoungeTransitionVideo.ts`.
+
+---
+
+## 2026-06-02 — Lounge TV label: PRESS TO PLAY, +6px right, +12px down
+
+**Context:** User asked to move lounge TV play **text** down **12px**, right **6px**; copy **PRESS TO PLAY** (container/hit box unchanged).
+
+**Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 6`**, **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 12`** — `translate()` on label `<span>` only in **`LoungeCompositeTvPlay`**. Container still uses **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_*`**.
