@@ -1,5 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT,
+  FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC,
+  FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT,
+  FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC,
+} from '../../constants/finalLobbyCasePropOverlays';
 import { FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
 import {
   LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
@@ -16,14 +22,17 @@ import {
 } from '../../constants/lobbyPropPopoverCopy';
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
+import { LobbyCasePropOpenArt } from './LobbyCasePropOpenArt';
 import { LobbyCasePropPopover } from './LobbyCasePropPopover';
 import { rectToPercentStyle, SceneHitRegion } from './SceneHitRegion';
 
 type Props = {
   onNavigateNext?: () => void;
+  /** {@link SceneCarouselViewportStage} — cover-map open prop overlays. */
+  viewportMeasureRef: RefObject<HTMLElement | null>;
 };
 
-export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext }: Props) {
+export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext, viewportMeasureRef }: Props) {
   const navigate = useNavigate();
   const [lobbyCasePopover, setLobbyCasePopover] = useState<'register' | 'phone' | null>(null);
   const closeLobbyCasePopover = useCallback(() => setLobbyCasePopover(null), []);
@@ -80,6 +89,19 @@ export function LobbySceneHotspots({ onNavigateNext: _onNavigateNext }: Props) {
           }}
         />
       ) : null}
+
+      <LobbyCasePropOpenArt
+        visible={lobbyCasePopover === 'register'}
+        src={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC}
+        imageRect={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT}
+        viewportMeasureRef={viewportMeasureRef}
+      />
+      <LobbyCasePropOpenArt
+        visible={lobbyCasePopover === 'phone'}
+        src={FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC}
+        imageRect={FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT}
+        viewportMeasureRef={viewportMeasureRef}
+      />
 
       <div
         style={{
