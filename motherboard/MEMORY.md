@@ -24178,3 +24178,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`api/_lib/psaEngagementLimits.ts`**, **`api/_lib/psaUsageLimit.ts`**, **`POST /api/psa/chat`** returns **429** `PSA_LIMIT_REACHED`, **`GET /api/psa/usage`**, migration **`20260605120000_psa_message_usage.sql`**, chat header shows remaining allowance, upgrade chart / Become a Member / VIEW ALL BENEFITS copy updated.
 
 **User action:** Run **`20260605120000_psa_message_usage.sql`** in Supabase SQL Editor (after prior PSA/security migrations).
+
+---
+
+## 2026-06-03 — PSA tier feature gates (priority messages, live tracking)
+
+**Context:** User asked PSA to enforce premium-chart perks — e.g. 3 Month cannot send priority messages; should be blocked with upgrade guidance.
+
+**Changes:** **`api/_lib/psaFeatureGates.ts`** + **`src/constants/psaFeatureGates.ts`** — gates: priority messages + live order tracking **6mo+**; special/exclusive rewards **12mo** (docs). **`send_priority_message`** removed from OpenAI tools for 3mo; execution returns **UPGRADE_REQUIRED** + `/account/rewards`. Order tools strip tracking timeline for 3mo. **`POST /api/client/priority-messages`** server gate. Concierge UI: upgrade card instead of priority form / live tracking for 3mo; no localStorage fallback on tier 403. **`buildPsaInstructions(profile)`** injects plan capabilities.
