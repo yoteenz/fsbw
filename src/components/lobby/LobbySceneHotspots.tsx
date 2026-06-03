@@ -74,6 +74,18 @@ export function LobbySceneHotspots({
     viewportMeasureRef,
     LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
   );
+  const shelfHdLaceRect = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.shelfHdLace,
+    viewportMeasureRef,
+  );
+  const shelfBundlesRect = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.shelfBundles,
+    viewportMeasureRef,
+  );
+  const shelfCustomUnitsRect = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.shelfCustomUnits,
+    viewportMeasureRef,
+  );
 
   const lobbyLinksLocked = lobbyCasePopover !== null;
 
@@ -107,27 +119,33 @@ export function LobbySceneHotspots({
         zIndex={30}
         disabled={lobbyLinksLocked}
       />
-      <SceneHitRegion
-        rect={FINAL_LOBBY_HIT_REGIONS.shelfHdLace}
-        ariaLabel="Shop HD lace frontals"
-        onActivate={goToShopFrontals}
-        zIndex={22}
-        disabled={lobbyLinksLocked}
-      />
-      <SceneHitRegion
-        rect={FINAL_LOBBY_HIT_REGIONS.shelfBundles}
-        ariaLabel="Shop bundles"
-        onActivate={goToShopBundles}
-        zIndex={22}
-        disabled={lobbyLinksLocked}
-      />
-      <SceneHitRegion
-        rect={FINAL_LOBBY_HIT_REGIONS.shelfCustomUnits}
-        ariaLabel="Shop custom units"
-        onActivate={goToShopUnits}
-        zIndex={22}
-        disabled={lobbyLinksLocked}
-      />
+      {shelfHdLaceRect ? (
+        <SceneHitRegion
+          rect={shelfHdLaceRect}
+          ariaLabel="Shop HD lace frontals"
+          onActivate={goToShopFrontals}
+          zIndex={22}
+          disabled={lobbyLinksLocked}
+        />
+      ) : null}
+      {shelfBundlesRect ? (
+        <SceneHitRegion
+          rect={shelfBundlesRect}
+          ariaLabel="Shop bundles"
+          onActivate={goToShopBundles}
+          zIndex={22}
+          disabled={lobbyLinksLocked}
+        />
+      ) : null}
+      {shelfCustomUnitsRect ? (
+        <SceneHitRegion
+          rect={shelfCustomUnitsRect}
+          ariaLabel="Shop custom units"
+          onActivate={goToShopUnits}
+          zIndex={22}
+          disabled={lobbyLinksLocked}
+        />
+      ) : null}
 
       {lobbyLinksLocked ? (
         <div
