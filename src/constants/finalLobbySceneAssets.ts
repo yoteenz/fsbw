@@ -59,6 +59,12 @@ export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = true;
 export const LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7;
 export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE = 0.4;
 
+/** QA nudge for colored shelf debug boxes (not production hit rects). */
+export const LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX = 10;
+export const LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX = 0;
+export const LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX = 40;
+export const LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX = 60;
+
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   left: 0.277,

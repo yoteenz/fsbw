@@ -23760,3 +23760,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to remove or match pre-transition poster so the scene stays visually the same before Seedance plays (slide PNG in overlay cropped differently than carousel).
 
 **Fix:** **`resolveTransitionPoster()`** returns **`null`** in production — transparent overlay + letterbox frame; **lobby/lounge carousel slide** visible until video crossfade. QA only: **`?lobbyTransitionPoster=slide`** restores slide PNG for comparison debug.
+
+---
+
+## 2026-06-02 — Lobby shelf debug box nudges (green +40, red +60, all +10 right)
+
+**Context:** User asked to move **green** (bundles) debug square **down 40px**, **red** (custom units) **down 60px**, and **all three** shelves **right 10px**.
+
+**Fix:** **`LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX`** (10), **`…_BUNDLES_OFFSET_Y_PX`** (40), **`…_CUSTOM_UNITS_OFFSET_Y_PX`** (60); cyan HD lace Y=0. **`SceneHitRegion`** **`debugOffsetX`** + **`debugOffsetY`** transforms when debug on.

@@ -14,6 +14,7 @@ type SceneHitRegionProps = {
   /** Overrides default amber debug fill/border (per-shelf colors on lobby). */
   debugOverlayStyle?: React.CSSProperties;
   /** QA only — shifts colored debug box (and its tap target while debug is on). */
+  debugOffsetX?: number;
   debugOffsetY?: number;
   /** QA only — scale debug box (e.g. shelf tuning); anchor {@link debugScaleOrigin}. */
   debugScale?: { x: number; y: number };
@@ -56,6 +57,7 @@ export function SceneHitRegion({
   debugOverlay = false,
   debugLabel,
   debugOverlayStyle,
+  debugOffsetX = 0,
   debugOffsetY = 0,
   debugScale,
   debugScaleOrigin = 'center top',
@@ -63,6 +65,7 @@ export function SceneHitRegion({
   const debugTransform = (() => {
     if (!debugOverlay) return undefined;
     const parts: string[] = [];
+    if (debugOffsetX) parts.push(`translateX(${debugOffsetX}px)`);
     if (debugOffsetY) parts.push(`translateY(${debugOffsetY}px)`);
     if (debugScale) parts.push(`scale(${debugScale.x}, ${debugScale.y})`);
     return parts.length ? parts.join(' ') : undefined;
