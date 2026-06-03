@@ -534,7 +534,7 @@ export async function submitClientPriorityMessage(body: {
   isOrderRelated?: boolean;
   isUrgent?: boolean;
   relatedOrderId?: string;
-}): Promise<{ ok: boolean; error?: string; hint?: string }> {
+}): Promise<{ ok: boolean; error?: string; hint?: string; code?: string }> {
   const res = await apiFetch('/api/client/priority-messages', {
     method: 'POST',
     body,
@@ -542,8 +542,8 @@ export async function submitClientPriorityMessage(body: {
   const text = await res.text();
   if (!res.ok) {
     try {
-      const j = JSON.parse(text) as { error?: string; hint?: string };
-      return { ok: false, error: j.error || text, hint: j.hint };
+      const j = JSON.parse(text) as { error?: string; hint?: string; code?: string };
+      return { ok: false, error: j.error || text, hint: j.hint, code: j.code };
     } catch {
       return { ok: false, error: text || `HTTP ${res.status}` };
     }

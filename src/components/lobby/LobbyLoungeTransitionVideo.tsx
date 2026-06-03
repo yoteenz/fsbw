@@ -171,7 +171,6 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
       style={{
         position: 'absolute',
         inset: 0,
-        zIndex: 200,
         overflow: 'hidden',
         pointerEvents: 'none',
         visibility: active ? 'visible' : 'hidden',
@@ -199,7 +198,8 @@ type HostProps = {
 };
 
 /**
- * Single fixed overlay for lobby ↔ lounge — keeps `<video>` warm and avoids lobby poster flash on complete.
+ * Scene-locked overlay for lobby ↔ lounge — render inside {@link SceneViewportPortal}
+ * on the active slide viewport (keeps `<video>` warm when `phase` is null on lobby).
  */
 export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -241,14 +241,13 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
 
   return (
     <div
-      aria-hidden={!active}
+      aria-hidden={!active && phase === null}
       style={{
-        position: 'fixed',
+        position: 'absolute',
         inset: 0,
-        zIndex: active ? 250 : -1,
         overflow: 'hidden',
         pointerEvents: 'none',
-        visibility: active ? 'visible' : 'hidden',
+        visibility: active || phase === null ? 'visible' : 'hidden',
         backgroundColor: 'transparent',
       }}
     >

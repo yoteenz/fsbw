@@ -19,6 +19,7 @@ import {
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { sceneCarouselSlideMinHeightCss, sceneSlideShellStyle } from '../../utils/sceneCarouselBackground';
 import { LobbyLoungeTransitionHost } from '../../components/lobby/LobbyLoungeTransitionVideo';
+import { SceneViewportPortal } from '../../components/lobby/SceneViewportPortal';
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { SceneCarouselViewportStage } from '../../components/lobby/SceneCarouselViewportStage';
 import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTvPlay';
@@ -49,11 +50,17 @@ const LobbyPage: React.FC<{
   lobbyViewportRef: RefObject<HTMLDivElement | null>;
   lobbyCasePopover: LobbyCasePopoverId | null;
   onLobbyCasePopoverChange: (id: LobbyCasePopoverId | null) => void;
+  transitionVideoEnabled?: boolean;
+  roomTransitionOverlay?: LobbyLoungeTransitionDirection | null;
+  onRoomTransitionComplete?: (direction: LobbyLoungeTransitionDirection) => void;
 }> = ({
   hideCarouselNav = false,
   lobbyViewportRef,
   lobbyCasePopover,
   onLobbyCasePopoverChange,
+  transitionVideoEnabled = false,
+  roomTransitionOverlay = null,
+  onRoomTransitionComplete,
 }) => {
   const navigate = useNavigate();
 
@@ -126,6 +133,14 @@ const LobbyPage: React.FC<{
             onCasePopoverChange={onLobbyCasePopoverChange}
           />
         </div>
+        {transitionVideoEnabled && onRoomTransitionComplete ? (
+          <SceneViewportPortal measureRef={lobbyViewportRef}>
+            <LobbyLoungeTransitionHost
+              phase={roomTransitionOverlay === 'reverse' ? null : roomTransitionOverlay}
+              onComplete={onRoomTransitionComplete}
+            />
+          </SceneViewportPortal>
+        ) : null}
       </SceneCarouselViewportStage>
 
       {!hideCarouselNav ? (
@@ -222,7 +237,16 @@ const LobbyPage: React.FC<{
 const LoungePage: React.FC<{
   measureRef: RefObject<HTMLDivElement>;
   hideCarouselNav?: boolean;
-}> = ({ measureRef, hideCarouselNav = false }) => {
+  transitionVideoEnabled?: boolean;
+  roomTransitionOverlay?: LobbyLoungeTransitionDirection | null;
+  onRoomTransitionComplete?: (direction: LobbyLoungeTransitionDirection) => void;
+}> = ({
+  measureRef,
+  hideCarouselNav = false,
+  transitionVideoEnabled = false,
+  roomTransitionOverlay = null,
+  onRoomTransitionComplete,
+}) => {
   const handlePrevious = useCallback(() => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
   }, []);
@@ -237,6 +261,16 @@ const LoungePage: React.FC<{
           <LoungeSceneHotspots viewportMeasureRef={measureRef} />
           <LoungeCompositeTvPlay measureRef={measureRef} />
         </div>
+        {transitionVideoEnabled &&
+        roomTransitionOverlay === 'reverse' &&
+        onRoomTransitionComplete ? (
+          <SceneViewportPortal measureRef={measureRef}>
+            <LobbyLoungeTransitionHost
+              phase="reverse"
+              onComplete={onRoomTransitionComplete}
+            />
+          </SceneViewportPortal>
+        ) : null}
       </SceneCarouselViewportStage>
 
       {!hideCarouselNav ? (
@@ -538,12 +572,6 @@ const LobbyApp: React.FC = () => {
   return (
     <>
       {showLoading && <LoadingScreen />}
-      {transitionVideoEnabled ? (
-        <LobbyLoungeTransitionHost
-          phase={roomTransitionOverlay}
-          onComplete={completeRoomTransitionOverlay}
-        />
-      ) : null}
       <div
         ref={lobbyScrollRef}
         style={{
@@ -578,10 +606,19 @@ const LobbyApp: React.FC = () => {
               lobbyViewportRef={lobbyViewportRef}
               lobbyCasePopover={lobbyCasePopover}
               onLobbyCasePopoverChange={setLobbyCasePopover}
+              transitionVideoEnabled={transitionVideoEnabled}
+              roomTransitionOverlay={roomTransitionOverlay}
+              onRoomTransitionComplete={completeRoomTransitionOverlay}
             />
           </div>
           <div style={{ flexShrink: 0 }}>
-            <LoungePage measureRef={loungeSlideMeasureRef} hideCarouselNav={roomTransitionOverlay !== null} />
+            <LoungePage
+              measureRef={loungeSlideMeasureRef}
+              hideCarouselNav={roomTransitionOverlay !== null}
+              transitionVideoEnabled={transitionVideoEnabled}
+              roomTransitionOverlay={roomTransitionOverlay}
+              onRoomTransitionComplete={completeRoomTransitionOverlay}
+            />
           </div>
         </div>
       </div>

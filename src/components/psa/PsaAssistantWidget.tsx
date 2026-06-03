@@ -7,9 +7,10 @@ import {
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
+  PSA_IDLE_WAVE_INTERVAL_MS,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
-import { isSignedIn } from '../../utils/adminAuth';
+import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
 import { fetchPsaUsage } from '../../utils/psaApi';
 import {
   isPremiumMemberForGatedFeatures,
@@ -18,6 +19,7 @@ import {
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
 import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
+import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
 import './psaAssistant.css';
 
@@ -33,7 +35,11 @@ export default function PsaAssistantWidget() {
   const [inputHasText, setInputHasText] = useState(false);
   const [lastReplyAt, setLastReplyAt] = useState<number | null>(null);
   const [expressionTick, setExpressionTick] = useState(0);
+  const [showIdleWave, setShowIdleWave] = useState(false);
+  const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleWaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { messages, isSending, sendMessage, usage, setUsage } = usePsaChat(PSA_WELCOME_MESSAGE);
 
@@ -59,6 +65,47 @@ export default function PsaAssistantWidget() {
     );
   }, [usage]);
 
+  const triggerIdleWave = useCallback(() => {
+    if (idleWaveTimerRef.current) clearTimeout(idleWaveTimerRef.current);
+    setShowIdleWave(true);
+    idleWaveTimerRef.current = setTimeout(() => {
+      setShowIdleWave(false);
+      idleExpressionCycle.resetToSoftLanding();
+      idleWaveTimerRef.current = null;
+    }, PSA_WAVING_MS);
+  }, [idleExpressionCycle.resetToSoftLanding]);
+
+  /** Closed FAB: brief wave every ~30s so the avatar feels alive, not static. */
+  useEffect(() => {
+    if (isOpen) {
+      setShowIdleWave(false);
+      if (idleWaveIntervalRef.current) {
+        clearInterval(idleWaveIntervalRef.current);
+        idleWaveIntervalRef.current = null;
+      }
+      return;
+    }
+
+    const startInterval = () => {
+      triggerIdleWave();
+      idleWaveIntervalRef.current = setInterval(triggerIdleWave, PSA_IDLE_WAVE_INTERVAL_MS);
+    };
+
+    const initialDelay = setTimeout(startInterval, PSA_IDLE_WAVE_INTERVAL_MS);
+
+    return () => {
+      clearTimeout(initialDelay);
+      if (idleWaveIntervalRef.current) {
+        clearInterval(idleWaveIntervalRef.current);
+        idleWaveIntervalRef.current = null;
+      }
+      if (idleWaveTimerRef.current) {
+        clearTimeout(idleWaveTimerRef.current);
+        idleWaveTimerRef.current = null;
+      }
+    };
+  }, [isOpen, triggerIdleWave]);
+
   const prevMessageCountRef = useRef(messages.length);
   useEffect(() => {
     const last = messages[messages.length - 1];
@@ -70,10 +117,10 @@ export default function PsaAssistantWidget() {
 
   /** Re-resolve avatar after talking / waving timers elapse. */
   useEffect(() => {
-    if (!isOpen && !showWelcomeWave && lastReplyAt == null) return;
+    if (!isOpen && !showWelcomeWave && !showIdleWave && lastReplyAt == null) return;
     const id = window.setInterval(() => setExpressionTick((t) => t + 1), 350);
     return () => window.clearInterval(id);
-  }, [isOpen, showWelcomeWave, lastReplyAt]);
+  }, [isOpen, showWelcomeWave, showIdleWave, lastReplyAt]);
 
   useEffect(() => {
     if (lastReplyAt == null) return;
@@ -92,15 +139,23 @@ export default function PsaAssistantWidget() {
     sync();
     window.addEventListener('signInStateChanged', sync);
     window.addEventListener('focus', sync);
+    window.addEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, sync);
     return () => {
       window.removeEventListener('signInStateChanged', sync);
       window.removeEventListener('focus', sync);
+      window.removeEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, sync);
     };
   }, []);
 
   useEffect(() => {
+    if (!isPremium) setIsOpen(false);
+  }, [isPremium]);
+
+  useEffect(() => {
     return () => {
       if (welcomeTimerRef.current) clearTimeout(welcomeTimerRef.current);
+      if (idleWaveTimerRef.current) clearTimeout(idleWaveTimerRef.current);
+      if (idleWaveIntervalRef.current) clearInterval(idleWaveIntervalRef.current);
     };
   }, []);
 
@@ -114,16 +169,11 @@ export default function PsaAssistantWidget() {
   }, []);
 
   const handleToggle = useCallback(() => {
-    if (!signedIn) return;
-    if (!isPremium) {
-      setShowUpgradeModal(true);
-      return;
-    }
     setIsOpen((open) => {
       if (!open) startWelcomeWave();
       return !open;
     });
-  }, [signedIn, isPremium, startWelcomeWave]);
+  }, [startWelcomeWave]);
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -158,29 +208,42 @@ export default function PsaAssistantWidget() {
     navigate('/account/rewards');
   }, [navigate]);
 
-  const avatarExpression = useMemo(
-    () =>
-      resolvePsaAvatarExpression({
-        isChatOpen: isOpen,
-        isSending,
-        isInputFocused,
-        inputHasText,
-        showWelcomeWave,
-        lastReplyAt,
-        messages,
-        now: Date.now() + expressionTick * 0,
-      }),
-    [isOpen, isSending, isInputFocused, inputHasText, showWelcomeWave, lastReplyAt, messages, expressionTick]
-  );
+  const avatarExpression = useMemo(() => {
+    const resolved = resolvePsaAvatarExpression({
+      isChatOpen: isOpen,
+      isSending,
+      isInputFocused,
+      inputHasText,
+      showWelcomeWave,
+      lastReplyAt,
+      messages,
+      now: Date.now() + expressionTick * 0,
+    });
+    if (!isOpen && showIdleWave) return 'waving';
+    if (!isOpen) return idleExpressionCycle.expression;
+    return resolved;
+  }, [
+    isOpen,
+    isSending,
+    isInputFocused,
+    inputHasText,
+    showWelcomeWave,
+    showIdleWave,
+    lastReplyAt,
+    messages,
+    expressionTick,
+    idleExpressionCycle.expression,
+  ]);
 
-  if (!signedIn || isPsaHiddenPath(location.pathname)) {
+  // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
+  if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname)) {
     return null;
   }
 
   const widget = (
     <>
       <div className="psa-widget-root" data-attribute="psa-assistant-widget">
-        {isOpen && isPremium ? (
+        {isOpen ? (
           <PsaChatPanel
             messages={messages}
             isSending={isSending}
@@ -194,6 +257,7 @@ export default function PsaAssistantWidget() {
         <PsaAvatarTrigger
           onClick={handleToggle}
           isOpen={isOpen}
+          idle={!isOpen}
           expression={avatarExpression}
         />
       </div>

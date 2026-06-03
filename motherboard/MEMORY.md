@@ -24026,6 +24026,22 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Scene-lock lobby↔lounge transition + lounge TV to background viewport
+
+**Context:** User asked to lock scene transition animation and lounge TV Seedance/content to the lobby/lounge background image (like register/phone case props) so responsive resize keeps overlays aligned with the composite art.
+
+**Approach:** Same coordinate system as **`useSceneCoverHitRect`** — portals into **`SceneCarouselViewportStage`** (`absolute` + `inset: 0`, not `position: fixed` on `document.body`).
+
+**Changes:**
+- **`SceneViewportPortal`**, **`sceneCarouselViewportOverlayRootStyle`**, **`useSceneCarouselMeasureBox`**, **`sceneCoverContainerRect.ts`**
+- **`useCoverMappedLayout`** — optional `measureRef` for TV menu glass mapping
+- **Transition:** hosts inside lobby viewport (forward + warm preload) and lounge viewport (reverse only); **`LobbyLoungeTransitionHost`** `absolute` inside portal
+- **Lounge TV:** **`LoungeTvOverlay`** rendered via portal on lounge stage; animation, fullscreen shell, curtains, scrim, remote hand use `absolute`; grow origin rect scene-relative; frame sizing from measure box
+
+**Files:** `lobby/page.tsx`, `LobbyLoungeTransitionVideo.tsx`, `LoungeTvOverlay.tsx`, `LoungeCompositeTvPlay.tsx`, `LoungeTvAnimationVideo.tsx`, `LoungeTvFullscreenShell.tsx`, `LoungeTvRemoteHand.tsx`, `useCoverMappedLayout.ts`, `sceneCarouselBackground.ts`. Pushed **`master`** + **`preview/mobile`** (`5a1df866`).
+
+---
+
 ## 2026-06-03 — PSA full chat + golden-models / golden-prompts motherboard folders
 
 **Context (entire chat arc):** User planned **PSA (Personal Slay Assistant)** — premium holographic chat FAB; compared ChatGPT (GPT-5.5 Responses API, Three.js) vs stack-native approach; scaffolded PSA v1 (OpenAI chat API, 11 avatar expressions, premium gate); fixed sign-in JWT/premium server checks; merged avatar assets preview/mobile → master; clarified **Ideogram on Fal** already removed backgrounds (no green screen, no flatten script).
@@ -24178,3 +24194,63 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`api/_lib/psaEngagementLimits.ts`**, **`api/_lib/psaUsageLimit.ts`**, **`POST /api/psa/chat`** returns **429** `PSA_LIMIT_REACHED`, **`GET /api/psa/usage`**, migration **`20260605120000_psa_message_usage.sql`**, chat header shows remaining allowance, upgrade chart / Become a Member / VIEW ALL BENEFITS copy updated.
 
 **User action:** Run **`20260605120000_psa_message_usage.sql`** in Supabase SQL Editor (after prior PSA/security migrations).
+
+---
+
+## 2026-06-03 — PSA tier feature gates (priority messages, live tracking)
+
+**Context:** User asked PSA to enforce premium-chart perks — e.g. 3 Month cannot send priority messages; should be blocked with upgrade guidance.
+
+**Changes:** **`api/_lib/psaFeatureGates.ts`** + **`src/constants/psaFeatureGates.ts`** — gates: priority messages + live order tracking **6mo+**; special/exclusive rewards **12mo** (docs). **`send_priority_message`** removed from OpenAI tools for 3mo; execution returns **UPGRADE_REQUIRED** + `/account/rewards`. Order tools strip tracking timeline for 3mo. **`POST /api/client/priority-messages`** server gate. Concierge UI: upgrade card instead of priority form / live tracking for 3mo; no localStorage fallback on tier 403. **`buildPsaInstructions(profile)`** injects plan capabilities.
+
+---
+
+## 2026-06-03 — PSA hidden for standard members (lobby/lounge gate)
+
+**Context:** User asked PSA to not appear on standard member screens — same logic as lobby/lounge viewing gates.
+
+**Changes:** **`PsaAssistantWidget`** returns null unless **`isPremiumMemberForGatedFeatures()`** (active subscription tier or BLACK spend tier). Removed upgrade modal on FAB click for standard users (FAB no longer shown). Listens to **`membershipSubscriptionPreviewChanged`**. E2E standard-user: PSA FAB count 0.
+
+---
+
+## 2026-06-03 — PSA avatar expression transitions (fluid idle + crossfade)
+
+**Context:** User reported PSA FAB avatar looked robotic — smiling then instantly snapping back to neutral. Wanted slower, more human transitions through neutral-smiling / listening / thinking-smiling rather than hard neutral ↔ smile flips.
+
+**Changes (commit `9ad53f14` on master, synced to `preview/mobile`):**
+- **`PsaAvatarImageCrossfade.tsx`** — 1.2s opacity crossfade between PNG layers instead of `key={expression}` remount.
+- **`psaIdleExpressionCycle.ts`** + **`usePsaIdleExpressionCycle.ts`** — slow closed-FAB loop: neutral (10s) → neutral-smiling (8s) → listening (6.5s) → neutral-smiling (7s) → thinking-smiling (5.5s) → neutral-smiling (7.5s). Cycle pauses during idle wave; after wave lands on neutral-smiling (`PSA_IDLE_POST_WAVE_STEP_INDEX`).
+- **`PsaAssistantWidget.tsx`** — removed fast `PSA_IDLE_EXPRESSION_MS` flip; wires idle cycle + soft landing after wave.
+- **`PsaAvatarTrigger.tsx`** — uses crossfade stack inside avatar frame.
+- **`psaAssistant.css`** — stack/layer styles; slower float (5.5s) and breathe (6s) on idle.
+- **`psaConfig.ts`** — `PSA_EXPRESSION_CROSSFADE_MS = 1200`, `PSA_WAVING_MS = 3200`; deprecated `PSA_IDLE_EXPRESSION_MS`.
+
+**Conventions:** Tune idle pacing in **`psaIdleExpressionCycle.ts`** holds; crossfade duration in **`PSA_EXPRESSION_CROSSFADE_MS`**. Chat-open expressions still resolved via **`resolvePsaAvatarExpression`** (defaults to neutral-smiling when open).
+
+---
+
+## 2026-06-03 — Account Rewards: “MORE POINTS TO EARN” line — color label only
+
+**Context:** User reported the full progress hint line (e.g. `200 MORE POINTS TO EARN A VOUCHER!`) was red when only the reward type word should be color-coded (voucher/free gift red; discount/digital cash gray), matching the “NEXT REWARD:” row above.
+
+**Changes (commit `e347d662` on `master`, synced to `preview/mobile`):**
+- **`src/pages/account/membership/page.tsx`** — both loyalty progress blocks (main + duplicate layout): `<p>` base color `#000000`; wrap `nextReward.label` in `<span style={{ color: nextLabelColor }}>` only (digital cash label unwrapped; “A {label}” keeps “A” black for voucher/free gift/discount).
+
+**Conventions:** Loyalty reward type color applies only to the reward name span, not the surrounding Futura progress copy.
+
+---
+
+## 2026-06-03 — PSA chat uppercase UI + anti-AI voice styling
+
+**Context:** User asked for all PSA chat text in uppercase; client/member bubbles red with red border and transparent background (mirroring PSA bubble style); PSA copy should avoid typical AI habits (em dashes, Oxford comma before "and").
+
+**Changes (commit `84c71425`):**
+- **`psaAssistant.css`** — `text-transform: uppercase` on `.psa-chat-panel`; user bubbles: transparent bg, `#eb1c24` text + border; restored subtitle/usage classes.
+- **`PsaChatPanel.tsx`** — `bubbleContent()` + **`formatPsaVoiceText`** for assistant/system display.
+- **`api/_lib/psaVoiceFormat.ts`** + **`src/utils/psaVoiceFormat.ts`** — strip em/en dashes → comma; remove Oxford comma (`, and` → ` and`).
+- **`api/psa/chat.ts`** — format replies server-side; limit error copy without em dash.
+- **`psaInstructions.ts`** — mandatory chat copy rules + example strings without em dashes/Oxford comma.
+- **`psaConfig.ts`** — welcome message updated (no em dash, no Oxford comma).
+
+**Conventions:** Member-facing PSA copy rules live in **`psaInstructions.ts`**; post-process safety net in **`formatPsaVoiceText`** (keep api + src copies in sync).
+

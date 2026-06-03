@@ -2137,9 +2137,9 @@ fontFamily: '"Futura PT Book"',
                                           />
                                         </div>
                                       </div>
-                                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', color: nextReward ? nextLabelColor : BRAND_GRAY, fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                                      <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', color: '#000000', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                         {nextReward
-                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <>{nextReward.label}</> : <>A {nextReward.label}</>}!</>
+                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor }}>{nextReward.label}</span></>}!</>
                                           : 'MAX REWARD REACHED'}
                                       </p>
                                     </div>

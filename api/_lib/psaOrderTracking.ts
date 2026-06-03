@@ -115,3 +115,26 @@ export function summarizeOrderForPsa(order: Record<string, unknown>): Record<str
     bookingFlowType: order.bookingFlowType ?? null,
   };
 }
+
+/** Strip live tracking fields when member tier does not include LIVE ORDER TRACKING. */
+export function summarizeOrderForPsaWithTrackingGate(
+  order: Record<string, unknown>,
+  includeLiveTracking: boolean
+): Record<string, unknown> {
+  const summary = summarizeOrderForPsa(order);
+  if (includeLiveTracking) {
+    return { ...summary, liveTrackingAvailable: true };
+  }
+  return {
+    id: summary.id,
+    orderNumber: summary.orderNumber,
+    status: summary.status,
+    productName: summary.productName,
+    total: summary.total,
+    placedAt: summary.placedAt,
+    liveTrackingAvailable: false,
+    note:
+      'Live stage timeline and carrier tracking require 6 Month or 12 Month Premium. Upgrade in Account → Rewards.',
+    upgradePath: '/account/rewards',
+  };
+}

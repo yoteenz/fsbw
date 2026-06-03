@@ -18,6 +18,8 @@ import {
   searchPsaProducts,
 } from '../_lib/psaKnowledge.js';
 import { buildPsaInstructions } from '../_lib/psaInstructions.js';
+import { formatPsaVoiceText } from '../_lib/psaVoiceFormat.js';
+import { filterPsaActionToolsForProfile } from '../_lib/psaFeatureGates.js';
 import {
   executePsaActionTool,
   isPsaActionTool,
@@ -104,7 +106,9 @@ const PSA_TOOLS = [
   },
 ] as const;
 
-const PSA_ALL_TOOLS = [...PSA_TOOLS, ...PSA_ACTION_TOOL_DEFINITIONS];
+function toolsForMember(premium: NonNullable<Awaited<ReturnType<typeof getPsaPremiumProfile>>>) {
+  return [...PSA_TOOLS, ...filterPsaActionToolsForProfile(PSA_ACTION_TOOL_DEFINITIONS, premium)];
+}
 
 function parseToolArgs(raw: string | undefined): Record<string, unknown> {
   if (!raw) return {};
@@ -236,7 +240,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           : `Monthly PSA limit reached (${consumed.usage.monthLimit} messages per month on ${engagementLimits.tierLabel}).`;
       res.setHeader('Retry-After', String(consumed.retryAfterSec ?? 3600));
       return res.status(429).json({
-        error: `${limitLabel} Resets automatically — upgrade your plan for a higher limit, or use Concierge for hands-on help.`,
+        error: `${limitLabel} Resets automatically. Upgrade your plan for a higher limit, or use Concierge for hands-on help.`,
         code: 'PSA_LIMIT_REACHED',
         reason: consumed.reason,
         usage: consumed.usage,
@@ -269,11 +273,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let response = await callOpenAiResponses({
       model,
-      instructions: buildPsaInstructions(),
+      instructions: buildPsaInstructions(premium),
       input: message,
       previous_response_id: previousResponseId,
       reasoning: { effort: 'none' },
-      tools: PSA_ALL_TOOLS,
+      tools: toolsForMember(premium),
       store: true,
     });
 
@@ -326,7 +330,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     return res.status(200).json({
-      reply,
+      reply: formatPsaVoiceText(reply),
       responseId: response.id ?? null,
       model,
       clientActions: clientActions.length ? clientActions : undefined,

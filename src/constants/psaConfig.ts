@@ -47,14 +47,26 @@ export const PSA_AVATAR_THINKING_SRC = PSA_AVATAR_SRC.thinking;
 export const PSA_WIDGET_LABEL = 'PSA';
 export const PSA_WIDGET_SUBLABEL = 'PERSONAL SLAY ASSISTANT';
 
+/** FAB caption under avatar — action-oriented so members know it is tappable. */
+export const PSA_WIDGET_CTA = 'TAP TO CHAT';
+
+/** Crossfade duration when switching avatar PNG expressions (ms). */
+export const PSA_EXPRESSION_CROSSFADE_MS = 1200;
+
+/** @deprecated Idle uses PSA_IDLE_EXPRESSION_CYCLE step holds instead. */
+export const PSA_IDLE_EXPRESSION_MS = 3500;
+
+/** How often the closed FAB plays a brief waving expression (ms). */
+export const PSA_IDLE_WAVE_INTERVAL_MS = 30_000;
+
 export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 
 export const PSA_WELCOME_MESSAGE =
-  'Hey Beautiful — welcome back to Frontal Slayer. I\'m PSA. What are we working on today: new hair, maintenance, customization, or a little bit of everything?';
+  'Hey Beautiful, welcome back to Frontal Slayer. I\'m PSA. What are we working on today: new hair, maintenance, customization or a little bit of everything?';
 
-/** How long to show waving when the chat panel opens. */
-export const PSA_WAVING_MS = 2200;
+/** How long to show waving when the chat panel opens or during idle wave. */
+export const PSA_WAVING_MS = 3200;
 
 /** How long to show talking after an assistant reply lands. */
 export const PSA_TALKING_AFTER_REPLY_MS = 2800;

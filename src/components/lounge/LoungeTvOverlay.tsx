@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
@@ -32,6 +31,7 @@ import {
   markLoungeTvTileViewed,
 } from '../../utils/loungeTvViewedTiles';
 import { LOUNGE_TV_ANIMATION_VIDEO_ENABLED } from '../../constants/loungeTvAnimationVideo';
+import { useSceneCarouselMeasureBox } from '../../hooks/useSceneCarouselMeasureBox';
 import { LoungeTvAnimationVideo } from './LoungeTvAnimationVideo';
 
 type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'closing';
@@ -50,7 +50,7 @@ const STATIC_ON_MS = 500;
 
 type LoungeTvClosePhase = 'idle' | 'zap' | 'hand-out' | 'shrink';
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
-const CURTAIN_PANEL_WIDTH = '54vw';
+const CURTAIN_PANEL_WIDTH = '54%';
 /** Velvet tone — must match curtain art so any sliver at the hem is invisible. */
 const CURTAIN_PANEL_BG = '#4a4a4a';
 /** Extra length below 100dvh for mobile browser chrome / safe-area gaps. */
@@ -64,14 +64,16 @@ type LoungeTvOverlayProps = {
   isOpen: boolean;
   originRect: DOMRect | null;
   onClose: () => void;
+  /** {@link SceneCarouselViewportStage} on the lounge slide (scene-locked overlay). */
+  viewportMeasureRef: RefObject<HTMLElement | null>;
 };
 
 function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSProperties {
   return {
-    position: 'fixed',
+    position: 'absolute',
     top: 0,
     bottom: `-${CURTAIN_PANEL_BOTTOM_BLEED_PX}px`,
-    minHeight: `calc(100dvh + ${CURTAIN_PANEL_BOTTOM_BLEED_PX}px + env(safe-area-inset-bottom, 0px))`,
+    minHeight: `calc(100% + ${CURTAIN_PANEL_BOTTOM_BLEED_PX}px)`,
     width: CURTAIN_PANEL_WIDTH,
     zIndex: 100,
     overflow: 'hidden',
@@ -570,7 +572,12 @@ function preloadImage(src: string): Promise<void> {
   });
 }
 
-export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlayProps) {
+export function LoungeTvOverlay({
+  isOpen,
+  originRect,
+  onClose,
+  viewportMeasureRef,
+}: LoungeTvOverlayProps) {
   const [visible, setVisible] = useState(false);
   const [animatedIn, setAnimatedIn] = useState(false);
   const [curtainsReady, setCurtainsReady] = useState(false);
@@ -793,7 +800,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setSidebarId(LOUNGE_TV_SIDEBAR[tab][0]?.id ?? '');
   }, []);
 
-  if ((!isOpen && !visible) || typeof document === 'undefined') return null;
+  const sceneBox = useSceneCarouselMeasureBox(viewportMeasureRef);
+
+  if (!isOpen && !visible) return null;
 
   const resolvedSeedancePhase: SeedanceTvPhase =
     isOpen && useSeedanceClip && seedancePhase === 'idle' ? 'opening' : seedancePhase;
@@ -812,8 +821,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     showLegacyChoreography && tvGrowDone && remoteHandReady && closePhase !== 'shrink';
   const handVisible = handMounted && (closePhase === 'idle' || closePhase === 'zap');
 
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const vw = sceneBox.width;
+  const vh = sceneBox.height;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
   let { frameW: targetFrameW, frameH: targetFrameH } =
     loungeTvContentFrameDimensionsFromScreenWidth(targetScreenW);
@@ -835,7 +844,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     : frameTop;
 
   const framePositionStyle: React.CSSProperties = {
-    position: 'fixed',
+    position: 'absolute',
     zIndex: 110,
     overflow: 'visible',
     isolation: 'isolate',
@@ -846,8 +855,16 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     height: frameExpanded ? targetFrameH : startFrameH,
   };
 
-  return createPortal(
-    <div role="presentation" aria-hidden={!isOpen}>
+  return (
+    <div
+      role="presentation"
+      aria-hidden={!isOpen}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: isOpen || visible ? 'auto' : 'none',
+      }}
+    >
       {showSeedanceVideo ? (
         <LoungeTvAnimationVideo
           active={seedanceOpening || seedanceClosing}
@@ -862,7 +879,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         aria-label="Close lounge TV"
         onClick={requestClose}
         style={{
-          position: 'fixed',
+          position: 'absolute',
           inset: 0,
           zIndex: 99,
           border: 'none',
@@ -916,6 +933,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       {showSeedanceMenuShell ? (
         <LoungeTvFullscreenShell
           zIndex={110}
+          viewportMeasureRef={viewportMeasureRef}
           closeVisible={closePhase === 'idle' && seedancePhase === 'ready'}
           onClose={() => requestClose()}
           screenStyle={{
@@ -984,7 +1002,6 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           </LoungeTvContentFrame>
         </div>
       ) : null}
-    </div>,
-    document.body
+    </div>
   );
 }
