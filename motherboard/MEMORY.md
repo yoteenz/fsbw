@@ -23948,3 +23948,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Tapping close X still flashed another image before reverse Seedance; reverse clip **`contain`** letterboxed so lounge peeked left/right.
 
 **Fix:** Reverse uses **`object-fit: cover`** + same **`center top`** as open (`loungeTvAnimationVideo.ts`). **`LoungeTvOverlay`** — menu shell unmounts on **`closing`** (`showSeedanceMenuShell` = **`ready` only**); scrim stays **`#000000`**. **`LoungeTvFullscreenShell`** — root always black; **`backdropTransparent`** only hides frame still. **`LoungeTvAnimationVideo`** — reverse frame visible on first paint (`useLayoutEffect` + opacity when **`active && reverse`**).
+
+---
+
+## 2026-06-02 — Lounge TV open: instant Seedance start on play
+
+**Context:** Press-to-play had a slight delay before the open animation.
+
+**Fix:** **`LoungeCompositeTvPlay`** — hidden **`video`** warmup + link preload on lounge mount. **`LoungeTvOverlay`** — render when **`isOpen`** (not one frame after **`visible`**); **`resolvedSeedancePhase`** treats idle+open as **`opening`**; mount clip when **`isOpen || phase !== idle`**. **`useSceneCoverVideoPlayback`** — forward **`play()`** without blocking on **`canplay`** first; **`instantReveal`** for lounge TV. **`LoungeTvAnimationVideo`** — **`instantReveal`** on forward open.
