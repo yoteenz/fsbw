@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
+  FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX,
+  FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
@@ -86,7 +88,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
             type="button"
             data-lounge-tv-play
             onClick={openLoungeTv}
-            aria-label="Press play for lounge media"
+            aria-label="Press to play lounge media"
             style={{
               width: '100%',
               height: '100%',
@@ -103,8 +105,14 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
               boxSizing: 'border-box',
             }}
           >
-            <span aria-hidden style={PRESS_PLAY_LABEL_STYLE}>
-              PRESS PLAY
+            <span
+              aria-hidden
+              style={{
+                ...PRESS_PLAY_LABEL_STYLE,
+                transform: `translate(${FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX}px, ${FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX}px)`,
+              }}
+            >
+              PRESS TO PLAY
             </span>
           </button>
         </div>
