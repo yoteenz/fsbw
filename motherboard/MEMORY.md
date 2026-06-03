@@ -24152,3 +24152,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **PSA tables:** **`priority_messages`** required now. Roadmap (not shipped): **`psa_threads`**, **`psa_messages`**, optional **`psa_member_context`** — see `docs/PSA_SUPABASE_TABLES.md`.
 
 **Conventions:** Product Stripe checkout requires signed-in user + fully server-priced cart (simple units/booking lines); BCF bundle/custom BAW still block until catalog expanded. Founder legacy checkout env vars are preview/local only.
+
+---
+
+## 2026-06-03 — PSA baked into membership marketing (upgrade chart + Become a Member)
+
+**Context:** User asked to add Personal Slay Assistant (PSA) to the website where membership/perks are marketed — especially premium upgrade chart and `/brand/member` Become a Member page — with clear copy on what PSA does and who it is for.
+
+**Changes (commit `74ffe14f`):**
+- **`src/constants/psaMembershipCopy.ts`** — shared PSA title/subtitle for perks lists.
+- **`src/constants/brandMemberPremiumRewards.ts`** — PSA as first unlock item; **`PremiumRewardsMarketingList`** component reused on Account → Rewards **UNLOCK PREMIUM REWARDS** and brand member page.
+- **`/brand/member`** — PSA explainer blocks in **`brandMemberCopy.ts`** (what it does, 3/6/12 premium only, lower-right FAB); **PREMIUM MEMBER PERKS** list at bottom of card.
+- **Premium upgrade chart** — new row **PERSONAL SLAY ASSISTANT (PSA)** (✓ all paid tiers, ✗ standard) in both **`PremiumSubscriptionUpgradeChart.tsx`** and inline membership page chart; **`premiumBenefitsByTier.ts`** bullet lists updated.
+
+**Conventions:** Edit PSA membership marketing in **`psaMembershipCopy.ts`** + **`brandMemberPremiumRewards.ts`**; chart row must stay in sync in membership page duplicate table until chart is fully deduplicated.
