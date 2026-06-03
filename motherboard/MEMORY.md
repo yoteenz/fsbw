@@ -23629,6 +23629,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lobby↔lounge transition: align cover, remove bounce gaps
+
+**Context:** User saw **red strip** + lobby/lounge peeking at top during Seedance transition, **white strip** below slide backgrounds, and vertical **bounce** at clip start/end.
+
+**Root cause:** Transition letterbox used **1080×1920** frame shorter than **`100dvh`** with **8px** top bounce pad (transparent bands showed carousel); slides used **`max(100dvh, artHeight)`** white shell below **`100dvh`** viewport; backgrounds at **`center top`** vs video misaligned.
+
+**Fix:** **`sceneCarouselCoverMetrics`** + **`SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX`** (40) on slide backgrounds; slides **`100dvh`** only (**`sceneSlideShellStyle`** **`overflow: hidden`**). **`useLobbyLoungeTransitionLetterboxLayout`** uses **928×1680** cover height, **0** bounce pad, **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX`** (−40) on frame. Transition **`object-position`** / posters match slide anchor.
+
+---
+
 ## 2026-06-02 — Register payment plans: Affirm spacing fix (Afterpay/Klarna nudge)
 
 **Context:** User reported **−4px** **`marginLeft`/`marginRight` on the Affirm cell** increased side spacing instead of tightening; asked to restore and correct.
