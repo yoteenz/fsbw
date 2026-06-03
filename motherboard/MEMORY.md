@@ -24377,6 +24377,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-03 — PSA welcome uses Settings first name
+
+**Context:** User wanted welcome to say "Welcome back, Ashley!" using first name from account Settings, not "Welcome back to Frontal Slayer."
+
+**Changes:** `buildPsaWelcomeMessage()` / `readPsaWelcomeMessageFromStorage()` in `psaConfig.ts`; `getCurrentUserFirstNameFromStorage()` in `perUserStorage.ts`; widget refreshes on sign-in/focus/storage; session context sends `firstName` to API; `usePsaChat` updates welcome bubble when name loads.
+
+**Fallback:** If no first name in Settings → "Welcome back!" (no invented name).
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
