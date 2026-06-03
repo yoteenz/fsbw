@@ -23566,3 +23566,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **State:** **`LobbySceneHotspots`** already had **`goToShopBundles`** / **`goToShopUnits`** on **`shelfBundles`** / **`shelfCustomUnits`** since Final LP (**`4ae1cf71`**); raw viewport % rects could misalign under **`background-size: cover`**, so taps could hit the wrong shelf handler (e.g. middle shelf feeling like frontals).
 
 **Fix:** Map all three wall shelf hit rects with **`useSceneCoverHitRect`** (same as register/phone) before **`SceneHitRegion`**. Routes unchanged: HD lace → **`/shop/frontals`**, bundles → **`/shop/bundles`**, custom units → **`/shop/units`**.
+
+---
+
+## 2026-06-02 — Register/phone popover close X +4px up/right (second nudge)
+
+**Context:** User asked to move the close **X** on both register and phone glass popovers **up 4px** and **right 4px** again (after prior **`lobbyPopoverPx(5) - 4`** inset).
+
+**Fix:** **`LobbyCasePropPopover.tsx`** — **`LOBBY_POPOVER_CLOSE_TOP_PX`** / **`LOBBY_POPOVER_CLOSE_RIGHT_PX`** → **`Math.max(0, lobbyPopoverPx(5) - 8)`** (shared by phone + register).
