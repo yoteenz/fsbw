@@ -41,8 +41,8 @@ export const FINAL_LOBBY_HIT_REGIONS = {
 
 /** Lounge slide hotspots on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_HIT_REGIONS = {
-  /** Ceiling chandelier → account concierge (+16px wide, +30px down vs prior rect on 928×1680). */
-  chandelier: { left: 0.3314, top: 0.0479, width: 0.3372, height: 0.14 },
+  /** Ceiling chandelier → account concierge (928×1680; +20px wide, +60px down from prior tune). */
+  chandelier: { left: 0.3206, top: 0.0836, width: 0.3588, height: 0.14 },
 } as const satisfies Record<string, FinalSceneHitRect>;
 
 /** Semi-transparent hit box over chandelier — set false before ship. Also `?sceneHitDebug=1`. */
