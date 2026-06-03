@@ -58,3 +58,20 @@ export function mapImagePointToCoverContainer(
 
   return { left: x / containerWidth, top: y / containerHeight };
 }
+
+/** Nudge a cover-mapped rect by screen pixels (stable across resize when container size is known). */
+export function applyScreenOffsetToCoverRect(
+  rect: FinalSceneHitRect,
+  containerWidth: number,
+  containerHeight: number,
+  offsetXPx: number,
+  offsetYPx: number,
+): FinalSceneHitRect {
+  if (containerWidth <= 0 || containerHeight <= 0) return rect;
+  return {
+    left: rect.left + offsetXPx / containerWidth,
+    top: rect.top + offsetYPx / containerHeight,
+    width: rect.width,
+    height: rect.height,
+  };
+}
