@@ -24317,3 +24317,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Session `context` is hints only — tools remain source of truth for cart/orders. Voice/3D avatar deferred per user.
 
+---
+
+## 2026-06-03 — PSA thread management + member context snapshot
+
+**Context:** User approved optional next steps: auto-title threads, delete/archive, thread summary for long chats, `psa_member_context` on thread load, continue-where-you-left-off FAB copy.
+
+**Changes:**
+- **Migration `20260607120000_psa_threads_context.sql`** — `psa_threads.archived_at`, `thread_summary`; **`psa_member_context`** table.
+- **`api/_lib/psaThreadSummary.ts`** — deterministic summary at 20+ messages; injected into chat instructions.
+- **`api/_lib/psaMemberContext.ts`** — server cart/orders/tier snapshot; refreshed on `GET /api/psa/thread` and stale refresh on chat.
+- **`api/psa/thread.ts`** — PATCH archive, DELETE thread, `continueHint` + `memberContext` on GET.
+- **Client** — HISTORY **ARCHIVE** / **DELETE**; FAB **CONTINUE CHAT** + thread title subline when recent session exists.
+- **Auto-title** — set on first user message (`ensurePsaThreadTitleFromUserMessage`), not only after assistant reply.
+
+**User action:** Run **`20260607120000_psa_threads_context.sql`** in Supabase SQL Editor.
+
+**Conventions:** Archived threads hidden from default HISTORY list; hard DELETE removes messages (cascade).
+

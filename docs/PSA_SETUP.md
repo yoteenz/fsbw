@@ -9,7 +9,7 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 |------------|----------------------|-----------|
 | Personality / brand voice | Warm luxury concierge; Beautiful / Slayer / Love | **Yes** — `buildPsaInstructions()` in `api/psa/chat.ts` |
 | Session context (page, cart, orders, tier) | Know where member is | **Yes** — client `buildPsaClientSessionContext()` → `POST /api/psa/chat` `context` → injected in instructions |
-| Persistent chat history | Cross-device threads | **Yes** — Supabase `psa_threads` / `psa_messages` + HISTORY / NEW in panel |
+| Persistent chat history | Cross-device threads | **Yes** — Supabase threads; auto-title from first question; **ARCHIVE** / **DELETE** in HISTORY; **CONTINUE CHAT** on FAB |
 | Rich cards + quick replies | Premium chat UI | **Yes** — product/nav/order cards from tool trace; `>>QUICK:` suffix chips |
 | Proactive FAB nudges | Unsigned forms, expiring consults, stock | **Yes** — `computePsaProactiveNudge()` + badge/chip on FAB |
 | Build-a-Wig deep links / pre-fill | Advice → action | **Yes** — `open_build_a_wig` tool + `prefill_baw` client action |
@@ -253,9 +253,9 @@ Restart dev server after changing local env.
 - [x] **Booking handoff** — `prepare_booking_handoff` + `add_to_cart` booking lines → `/checkout/bookings`
 - [x] **Priority message tool** — `send_priority_message` (needs Supabase migration `20260603180000_priority_messages.sql`)
 - [x] **Supabase threads** — `psa_threads` / `psa_messages` for history across devices (`20260606120000_psa_chat_threads.sql`)
+- [x] **Thread context** — archive/delete, rolling summary for long chats, `psa_member_context` snapshot (`20260607120000_psa_threads_context.sql`)
 - [ ] **Concierge page** — POST priority message to API (not localStorage-only)
 - [ ] **Admin inbox** — read `priority_messages` in admin hub
-- [ ] **Supabase threads** — `psa_threads` / `psa_messages` for history across devices
 - [ ] **Voice** — `gpt-realtime-2` via WebRTC
 - [ ] **3D avatar** — React Three Fiber + `.glb` only if 2D + CSS isn’t enough
 
