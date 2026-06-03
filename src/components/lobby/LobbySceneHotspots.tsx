@@ -14,13 +14,13 @@ import {
 } from '../../constants/finalLobbyCasePropOverlays';
 import {
   FINAL_LOBBY_HIT_REGIONS,
-  LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX,
-  LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX,
-  LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX,
-  LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE,
-  LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX,
-  LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX,
-  LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE,
+  LOBBY_SHELF_HIT_LAYOUT_BUNDLES_OFFSET_Y_PX,
+  LOBBY_SHELF_HIT_LAYOUT_CUSTOM_UNITS_OFFSET_Y_PX,
+  LOBBY_SHELF_HIT_LAYOUT_HD_LACE_OFFSET_Y_PX,
+  LOBBY_SHELF_HIT_LAYOUT_HEIGHT_SCALE,
+  LOBBY_SHELF_HIT_LAYOUT_HEIGHT_TRIM_PX,
+  LOBBY_SHELF_HIT_LAYOUT_OFFSET_X_PX,
+  LOBBY_SHELF_HIT_LAYOUT_WIDTH_SCALE,
 } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import {
@@ -100,11 +100,10 @@ export function LobbySceneHotspots({
 
   const lobbyLinksLocked = lobbyCasePopover !== null;
   const shelfHitDebug = useLobbyShelfHitDebugEnabled();
-  const shelfDebugScale = shelfHitDebug
-    ? { x: LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE, y: LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE }
-    : undefined;
-  const shelfDebugOffsetX = shelfHitDebug ? LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX : 0;
-  const shelfDebugHeightTrimPx = shelfHitDebug ? LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX : 0;
+  const shelfLayoutScale = {
+    x: LOBBY_SHELF_HIT_LAYOUT_WIDTH_SCALE,
+    y: LOBBY_SHELF_HIT_LAYOUT_HEIGHT_SCALE,
+  };
 
   return (
     <>
@@ -152,10 +151,10 @@ export function LobbySceneHotspots({
             backgroundColor: 'rgba(0, 174, 239, 0.48)',
             border: '2px solid rgba(0, 120, 200, 0.95)',
           }}
-          debugOffsetX={shelfDebugOffsetX}
-          debugOffsetY={LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX}
-          debugHeightTrimPx={shelfDebugHeightTrimPx}
-          debugScale={shelfDebugScale}
+          layoutOffsetX={LOBBY_SHELF_HIT_LAYOUT_OFFSET_X_PX}
+          layoutOffsetY={LOBBY_SHELF_HIT_LAYOUT_HD_LACE_OFFSET_Y_PX}
+          layoutHeightTrimPx={LOBBY_SHELF_HIT_LAYOUT_HEIGHT_TRIM_PX}
+          layoutScale={shelfLayoutScale}
         />
       ) : null}
       {shelfBundlesRect ? (
@@ -171,10 +170,10 @@ export function LobbySceneHotspots({
             backgroundColor: 'rgba(76, 175, 80, 0.48)',
             border: '2px solid rgba(46, 125, 50, 0.95)',
           }}
-          debugOffsetX={shelfDebugOffsetX}
-          debugOffsetY={LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX}
-          debugHeightTrimPx={shelfDebugHeightTrimPx}
-          debugScale={shelfDebugScale}
+          layoutOffsetX={LOBBY_SHELF_HIT_LAYOUT_OFFSET_X_PX}
+          layoutOffsetY={LOBBY_SHELF_HIT_LAYOUT_BUNDLES_OFFSET_Y_PX}
+          layoutHeightTrimPx={LOBBY_SHELF_HIT_LAYOUT_HEIGHT_TRIM_PX}
+          layoutScale={shelfLayoutScale}
         />
       ) : null}
       {shelfCustomUnitsRect ? (
@@ -190,10 +189,10 @@ export function LobbySceneHotspots({
             backgroundColor: 'rgba(235, 28, 36, 0.42)',
             border: '2px solid rgba(180, 20, 30, 0.95)',
           }}
-          debugOffsetX={shelfDebugOffsetX}
-          debugOffsetY={LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX}
-          debugHeightTrimPx={shelfDebugHeightTrimPx}
-          debugScale={shelfDebugScale}
+          layoutOffsetX={LOBBY_SHELF_HIT_LAYOUT_OFFSET_X_PX}
+          layoutOffsetY={LOBBY_SHELF_HIT_LAYOUT_CUSTOM_UNITS_OFFSET_Y_PX}
+          layoutHeightTrimPx={LOBBY_SHELF_HIT_LAYOUT_HEIGHT_TRIM_PX}
+          layoutScale={shelfLayoutScale}
         />
       ) : null}
 

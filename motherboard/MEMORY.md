@@ -23808,3 +23808,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to **remove** colored mannequin shelf debug overlays on lobby; TV content **background still** **down 10px**; lobby↔lounge transition **portrait frame container** **up 2px**.
 
 **Fix:** **`LOBBY_SHELF_HIT_DEBUG_OVERLAY = false`** (QA still via **`?sceneHitDebug=1`**). **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **0→10**. **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX = -2`** applied in **`lobbyLoungeTransitionFrameStyle`** (frame top offset).
+
+---
+
+## 2026-06-02 — Shelf taps match QA boxes; TV still +2px down
+
+**Context:** User asked **why** shelf routing no longer matched colored debug squares after overlays removed; TV content background **down 2px**.
+
+**Why mismatch:** **`SceneHitRegion`** only applied **`debugOffset*` / `debugScale` / `debugHeightTrimPx` when `debugOverlay` was on** — tuning moved the visible box + tap target together in QA, but production used full **`FINAL_LOBBY_HIT_REGIONS`** rects with no layout nudge.
+
+**Fix:** Renamed tuned values to **`LOBBY_SHELF_HIT_LAYOUT_*`**; **`layoutOffset*` / `layoutScale` / `layoutHeightTrimPx`** apply in production always (colors still **`?sceneHitDebug=1`** only). **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **10→12**.

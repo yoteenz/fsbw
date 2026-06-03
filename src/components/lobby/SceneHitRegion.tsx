@@ -13,14 +13,13 @@ type SceneHitRegionProps = {
   debugLabel?: string;
   /** Overrides default amber debug fill/border (per-shelf colors on lobby). */
   debugOverlayStyle?: React.CSSProperties;
-  /** QA only — shifts colored debug box (and its tap target while debug is on). */
-  debugOffsetX?: number;
-  debugOffsetY?: number;
-  /** QA only — scale debug box (e.g. shelf tuning); anchor {@link debugScaleOrigin}. */
-  debugScale?: { x: number; y: number };
-  debugScaleOrigin?: React.CSSProperties['transformOrigin'];
-  /** QA only — shortens debug box height (px) from mapped percent rect. */
-  debugHeightTrimPx?: number;
+  /** Production tap nudge + optional debug overlay (px / scale on the mapped rect). */
+  layoutOffsetX?: number;
+  layoutOffsetY?: number;
+  layoutScale?: { x: number; y: number };
+  layoutScaleOrigin?: React.CSSProperties['transformOrigin'];
+  /** Shorten hit height (px) from mapped percent rect after cover map. */
+  layoutHeightTrimPx?: number;
 };
 
 const hitBaseStyle: React.CSSProperties = {
@@ -59,18 +58,17 @@ export function SceneHitRegion({
   debugOverlay = false,
   debugLabel,
   debugOverlayStyle,
-  debugOffsetX = 0,
-  debugOffsetY = 0,
-  debugScale,
-  debugScaleOrigin = 'center top',
-  debugHeightTrimPx = 0,
+  layoutOffsetX = 0,
+  layoutOffsetY = 0,
+  layoutScale,
+  layoutScaleOrigin = 'center top',
+  layoutHeightTrimPx = 0,
 }: SceneHitRegionProps) {
-  const debugTransform = (() => {
-    if (!debugOverlay) return undefined;
+  const layoutTransform = (() => {
     const parts: string[] = [];
-    if (debugOffsetX) parts.push(`translateX(${debugOffsetX}px)`);
-    if (debugOffsetY) parts.push(`translateY(${debugOffsetY}px)`);
-    if (debugScale) parts.push(`scale(${debugScale.x}, ${debugScale.y})`);
+    if (layoutOffsetX) parts.push(`translateX(${layoutOffsetX}px)`);
+    if (layoutOffsetY) parts.push(`translateY(${layoutOffsetY}px)`);
+    if (layoutScale) parts.push(`scale(${layoutScale.x}, ${layoutScale.y})`);
     return parts.length ? parts.join(' ') : undefined;
   })();
 
@@ -97,15 +95,18 @@ export function SceneHitRegion({
       style={{
         ...hitBaseStyle,
         ...rectToPercentStyle(rect),
-        ...(debugOverlay && debugHeightTrimPx > 0
-          ? { height: `calc(${rect.height * 100}% - ${debugHeightTrimPx}px)`, boxSizing: 'border-box' }
+        ...(layoutHeightTrimPx > 0
+          ? { height: `calc(${rect.height * 100}% - ${layoutHeightTrimPx}px)`, boxSizing: 'border-box' }
           : null),
         zIndex,
         pointerEvents: disabled ? 'none' : 'auto',
         cursor: disabled ? 'default' : 'pointer',
         ...(debugOverlay ? { ...SCENE_HIT_DEBUG_OVERLAY_STYLE, ...debugOverlayStyle } : null),
-        ...(debugTransform
-          ? { transform: debugTransform, transformOrigin: debugScale ? debugScaleOrigin : undefined }
+        ...(layoutTransform
+          ? {
+              transform: layoutTransform,
+              transformOrigin: layoutScale ? layoutScaleOrigin : undefined,
+            }
           : null),
       }}
     >

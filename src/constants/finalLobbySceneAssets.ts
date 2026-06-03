@@ -49,24 +49,22 @@ export const FINAL_LOUNGE_HIT_REGIONS = {
 export const LOUNGE_CHANDELIER_HIT_DEBUG_OVERLAY = false;
 
 /**
- * Mannequin shelf hit boxes (HD lace / bundles / custom units).
- * **On** while tuning `FINAL_LOBBY_HIT_REGIONS` — set `false` before production ship.
- * Also toggled via `/lobby?sceneHitDebug=1` (see `sceneHitDebug.ts`).
+ * Colored shelf QA overlays only — production tap layout uses `LOBBY_SHELF_HIT_LAYOUT_*`.
+ * Toggle via `/lobby?sceneHitDebug=1` (see `sceneHitDebug.ts`).
  */
 export const LOBBY_SHELF_HIT_DEBUG_OVERLAY = false;
 
-/** QA shelf overlay size — width ×70%, height ×40% (reduced 30% / 60% from mapped hit rect). */
-export const LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7;
-export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE = 0.4;
+/** Production shelf tap targets — tuned with colored QA overlays (see `SceneHitRegion` layout props). */
+export const LOBBY_SHELF_HIT_LAYOUT_WIDTH_SCALE = 0.7;
+export const LOBBY_SHELF_HIT_LAYOUT_HEIGHT_SCALE = 0.4;
 
-/** Subtract from each shelf debug box height (px), after percent rect. */
-export const LOBBY_SHELF_HIT_DEBUG_HEIGHT_TRIM_PX = 20;
+/** Subtract from each shelf hit height (px), after cover map. */
+export const LOBBY_SHELF_HIT_LAYOUT_HEIGHT_TRIM_PX = 20;
 
-/** QA nudge for colored shelf debug boxes (not production hit rects). */
-export const LOBBY_SHELF_HIT_DEBUG_OFFSET_X_PX = 5;
-export const LOBBY_SHELF_HIT_DEBUG_HD_LACE_OFFSET_Y_PX = 12;
-export const LOBBY_SHELF_HIT_DEBUG_BUNDLES_OFFSET_Y_PX = 41;
-export const LOBBY_SHELF_HIT_DEBUG_CUSTOM_UNITS_OFFSET_Y_PX = 70;
+export const LOBBY_SHELF_HIT_LAYOUT_OFFSET_X_PX = 5;
+export const LOBBY_SHELF_HIT_LAYOUT_HD_LACE_OFFSET_Y_PX = 12;
+export const LOBBY_SHELF_HIT_LAYOUT_BUNDLES_OFFSET_Y_PX = 41;
+export const LOBBY_SHELF_HIT_LAYOUT_CUSTOM_UNITS_OFFSET_Y_PX = 70;
 
 /** Wall-mounted TV on lounge composite — measured on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
