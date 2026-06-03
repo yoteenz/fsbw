@@ -98,6 +98,44 @@ async function getPsaAuthToken(): Promise<string | null> {
   return token;
 }
 
+function psaNonJsonErrorMessage(res: Response, bodyPreview: string): string {
+  const status = res.status;
+  const looksLikeHtml = bodyPreview.trimStart().startsWith('<');
+  if (status === 504 || status === 502 || (status >= 500 && looksLikeHtml)) {
+    return 'PSA took too long to respond. Try a shorter question or ask again in a moment.';
+  }
+  if (status === 503) {
+    return 'PSA is temporarily unavailable. Try again in a moment.';
+  }
+  if (!bodyPreview.trim()) {
+    return 'PSA returned an empty response. Try again in a moment.';
+  }
+  return 'PSA returned an unexpected response. Try again in a moment.';
+}
+
+async function parsePsaJsonBody<T>(res: Response): Promise<
+  | { ok: true; data: T }
+  | { ok: false; message: string }
+> {
+  let text = '';
+  try {
+    text = await res.text();
+  } catch {
+    return { ok: false, message: 'Could not read PSA response. Check your connection and try again.' };
+  }
+
+  const trimmed = text.trim();
+  if (!trimmed) {
+    return { ok: false, message: psaNonJsonErrorMessage(res, trimmed) };
+  }
+
+  try {
+    return { ok: true, data: JSON.parse(trimmed) as T };
+  } catch {
+    return { ok: false, message: psaNonJsonErrorMessage(res, trimmed.slice(0, 80)) };
+  }
+}
+
 async function psaAuthedFetch(path: string, init: RequestInit = {}): Promise<Response | null> {
   const token = await getPsaAuthToken();
   if (!token) return null;
@@ -179,7 +217,7 @@ export async function postPsaChat(
     };
   }
 
-  let data: {
+  const parsed = await parsePsaJsonBody<{
     error?: string;
     code?: string;
     reply?: string;
@@ -189,12 +227,11 @@ export async function postPsaChat(
     clientActions?: PsaClientAction[];
     usage?: PsaUsagePayload;
     retryAfterSec?: number;
-  };
-  try {
-    data = (await res.json()) as typeof data;
-  } catch {
-    return { ok: false, code: 'SERVER', message: 'PSA returned an invalid response.' };
+  }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
   }
+  const data = parsed.data;
 
   if (res.status === 401) {
     return {
@@ -228,7 +265,15 @@ export async function postPsaChat(
     return { ok: false, code: 'SERVER', message: data.error || 'PSA is temporarily unavailable.' };
   }
 
-  const reply = typeof data.reply === 'string' ? data.reply : '';
+  const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
+  if (!reply) {
+    return {
+      ok: false,
+      code: 'SERVER',
+      message:
+        'PSA had trouble forming a reply. Ask again in a second, or open Build-a-Wig for live pricing on your unit.',
+    };
+  }
   const clientActions = Array.isArray(data.clientActions) ? data.clientActions : undefined;
   return {
     ok: true,
@@ -252,7 +297,7 @@ export async function fetchPsaActiveThread(threadId?: string | null): Promise<Ps
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
   }
 
-  let data: {
+  const parsed = await parsePsaJsonBody<{
     error?: string;
     code?: string;
     threadId?: string | null;
@@ -260,12 +305,11 @@ export async function fetchPsaActiveThread(threadId?: string | null): Promise<Ps
     title?: string | null;
     messages?: PsaStoredMessage[];
     historyAvailable?: boolean;
-  };
-  try {
-    data = (await res.json()) as typeof data;
-  } catch {
-    return { ok: false, code: 'SERVER', message: 'PSA returned an invalid response.' };
+  }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
   }
+  const data = parsed.data;
 
   if (res.status === 401) {
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
@@ -298,12 +342,11 @@ export async function fetchPsaThreadList(): Promise<PsaThreadsListResult> {
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
   }
 
-  let data: { error?: string; code?: string; threads?: PsaThreadSummary[] };
-  try {
-    data = (await res.json()) as typeof data;
-  } catch {
-    return { ok: false, code: 'SERVER', message: 'PSA returned an invalid response.' };
+  const parsed = await parsePsaJsonBody<{ error?: string; code?: string; threads?: PsaThreadSummary[] }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
   }
+  const data = parsed.data;
 
   if (res.status === 401) {
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
@@ -333,12 +376,11 @@ export async function createPsaThread(): Promise<PsaNewThreadResult> {
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
   }
 
-  let data: { error?: string; code?: string; threadId?: string };
-  try {
-    data = (await res.json()) as typeof data;
-  } catch {
-    return { ok: false, code: 'SERVER', message: 'PSA returned an invalid response.' };
+  const parsed = await parsePsaJsonBody<{ error?: string; code?: string; threadId?: string }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
   }
+  const data = parsed.data;
 
   if (res.status === 401) {
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
@@ -378,18 +420,17 @@ export async function fetchPsaUsage(): Promise<PsaUsageResult> {
     };
   }
 
-  let data: {
+  const parsed = await parsePsaJsonBody<{
     error?: string;
     code?: string;
     usage?: PsaUsagePayload;
     monthRemaining?: number;
     dayRemaining?: number;
-  };
-  try {
-    data = (await res.json()) as typeof data;
-  } catch {
-    return { ok: false, code: 'SERVER', message: 'PSA returned an invalid response.' };
+  }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
   }
+  const data = parsed.data;
 
   if (res.status === 401) {
     return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };

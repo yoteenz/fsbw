@@ -16,6 +16,7 @@ import {
   searchPsaFaq,
   searchPsaNavigation,
   searchPsaProducts,
+  mapPsaProductForTool,
 } from '../_lib/psaKnowledge.js';
 import { buildPsaInstructions } from '../_lib/psaInstructions.js';
 import { formatPsaVoiceText } from '../_lib/psaVoiceFormat.js';
@@ -88,7 +89,8 @@ const PSA_TOOLS = [
   {
     type: 'function',
     name: 'search_products',
-    description: 'Search wig unit catalog and texture families (NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL). Use for length/texture/density questions — pair with FAQ for Build-a-Wig guidance.',
+    description:
+      'Search wig unit catalog (NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL) with starting base USD prices. Use for price comparisons and texture/length questions — pair with FAQ for Build-a-Wig customization.',
     parameters: {
       type: 'object',
       properties: {
@@ -140,15 +142,7 @@ function executePsaSearchTool(name: string, args: Record<string, unknown>): stri
     }
     case 'search_products': {
       const hits = searchPsaProducts(query, 6);
-      return JSON.stringify(
-        hits.map((p) => ({
-          name: p.name,
-          texture: p.texture,
-          productPage: p.path,
-          buildAWig: p.buildAWigPath,
-          summary: p.summary,
-        }))
-      );
+      return JSON.stringify(hits.map(mapPsaProductForTool));
     }
     case 'suggest_navigation': {
       const hits = searchPsaNavigation(query, 5);
@@ -188,6 +182,97 @@ function extractOutputText(data: OpenAiResponse): string {
     }
   }
   return parts.join('\n').trim();
+}
+
+const PSA_EMPTY_REPLY_FALLBACK =
+  'Love, I hit a brief glitch pulling that together. Ask me again in a second, or open Build-a-Wig to see live pricing on your unit.';
+
+type PsaChatAiContext = {
+  model: string;
+  instructions: string;
+  tools: ReturnType<typeof toolsForMember>;
+};
+
+async function runPsaToolLoop(
+  initialResponse: OpenAiResponse,
+  ctx: PsaChatAiContext,
+  toolCtx: PsaToolContext,
+  clientActions: PsaClientAction[]
+): Promise<OpenAiResponse> {
+  let response = initialResponse;
+  let safety = 0;
+
+  while (safety < 6) {
+    const calls = extractFunctionCalls(response.output);
+    if (calls.length === 0) break;
+
+    const toolOutputs = await Promise.all(
+      calls.map(async (call) => {
+        const args = parseToolArgs(call.arguments);
+        const toolName = call.name || '';
+        if (isPsaActionTool(toolName)) {
+          const result = await executePsaActionTool(toolName, args, toolCtx);
+          if (result.clientActions?.length) {
+            for (const action of result.clientActions) {
+              const dup =
+                action.type === 'navigate'
+                  ? clientActions.some((a) => a.type === 'navigate' && a.path === action.path)
+                  : clientActions.some((a) => a.type === action.type);
+              if (!dup) clientActions.push(action);
+            }
+          }
+          return {
+            type: 'function_call_output',
+            call_id: call.call_id,
+            output: result.output,
+          };
+        }
+        return {
+          type: 'function_call_output',
+          call_id: call.call_id,
+          output: executePsaSearchTool(toolName, args),
+        };
+      })
+    );
+
+    response = await callOpenAiResponses({
+      model: ctx.model,
+      instructions: ctx.instructions,
+      tools: ctx.tools,
+      previous_response_id: response.id,
+      input: toolOutputs,
+      store: true,
+    });
+    safety += 1;
+  }
+
+  return response;
+}
+
+async function resolveAssistantReply(
+  response: OpenAiResponse,
+  ctx: PsaChatAiContext
+): Promise<{ reply: string; response: OpenAiResponse }> {
+  let text = extractOutputText(response);
+  if (text) return { reply: text, response };
+
+  console.warn('[psa/chat] empty model output after tools, nudging for text');
+
+  const nudge = await callOpenAiResponses({
+    model: ctx.model,
+    instructions: ctx.instructions,
+    tools: ctx.tools,
+    previous_response_id: response.id,
+    input:
+      'Reply to the member now in plain founder voice. Answer their last question directly. Do not call tools unless you still lack catalog or policy facts.',
+    store: true,
+  });
+
+  text = extractOutputText(nudge);
+  if (text) return { reply: text, response: nudge };
+
+  console.warn('[psa/chat] empty output after nudge, using fallback copy');
+  return { reply: PSA_EMPTY_REPLY_FALLBACK, response: nudge };
 }
 
 async function callOpenAiResponses(body: Record<string, unknown>): Promise<OpenAiResponse> {
@@ -307,66 +392,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    let response = await callOpenAiResponses({
+    const aiCtx: PsaChatAiContext = {
       model,
       instructions: buildPsaInstructions(premium),
+      tools: toolsForMember(premium),
+    };
+
+    let response = await callOpenAiResponses({
+      model: aiCtx.model,
+      instructions: aiCtx.instructions,
       input: message,
       previous_response_id: chainPreviousResponseId,
       reasoning: { effort: 'none' },
-      tools: toolsForMember(premium),
+      tools: aiCtx.tools,
       store: true,
     });
 
-    let safety = 0;
-    while (safety < 6) {
-      const calls = extractFunctionCalls(response.output);
-      if (calls.length === 0) break;
+    response = await runPsaToolLoop(response, aiCtx, toolCtx, clientActions);
 
-      const toolOutputs = await Promise.all(
-        calls.map(async (call) => {
-          const args = parseToolArgs(call.arguments);
-          const toolName = call.name || '';
-          if (isPsaActionTool(toolName)) {
-            const result = await executePsaActionTool(toolName, args, toolCtx);
-            if (result.clientActions?.length) {
-              for (const action of result.clientActions) {
-                const dup =
-                  action.type === 'navigate'
-                    ? clientActions.some((a) => a.type === 'navigate' && a.path === action.path)
-                    : clientActions.some((a) => a.type === action.type);
-                if (!dup) clientActions.push(action);
-              }
-            }
-            return {
-              type: 'function_call_output',
-              call_id: call.call_id,
-              output: result.output,
-            };
-          }
-          return {
-            type: 'function_call_output',
-            call_id: call.call_id,
-            output: executePsaSearchTool(toolName, args),
-          };
-        })
-      );
-
-      response = await callOpenAiResponses({
-        model,
-        previous_response_id: response.id,
-        input: toolOutputs,
-        store: true,
-      });
-      safety += 1;
-    }
-
-    const reply = extractOutputText(response);
-    if (!reply) {
-      return res.status(502).json({ error: 'PSA returned an empty response. Please try again.' });
-    }
+    const { reply, response: finalResponse } = await resolveAssistantReply(response, aiCtx);
 
     const formattedReply = formatPsaVoiceText(reply);
-    const responseIdOut = response.id ?? null;
+    const responseIdOut = finalResponse.id ?? response.id ?? null;
 
     if (activeThreadId && isPsaThreadStoreConfigured()) {
       try {
