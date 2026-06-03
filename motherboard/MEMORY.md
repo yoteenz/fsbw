@@ -23884,3 +23884,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked transition clip at **100%** in clip container, then **+2%** inside it; frame shell must not move (no **`FRAME_OFFSET_Y`**).
 
 **Fix:** **`LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE`** **0.98→1.02** on **`<video>`** only; **`lobbyLoungeTransitionFrameStyle`** still **`topBandPx`** only (no frame Y offset).
+
+---
+
+## 2026-06-02 — Lounge TV close X on glass top-right
+
+**Context:** User wanted close icon at **top-right of TV screen/contents** on background frame, not old full-frame bezel anchor.
+
+**Fix:** **`LoungeTvFullscreenShell`** — close inside mapped **screen** box (`LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_*_PX` 8px); moves with screen scale/offset. Deprecated bezel **`LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR`** for fullscreen shell.
