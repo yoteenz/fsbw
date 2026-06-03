@@ -1,10 +1,11 @@
 import type React from 'react';
 import {
   LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR,
-  LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX,
   LOUNGE_TV_CONTENT_FRAME_PX,
   LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
   LOUNGE_TV_CONTENT_FRAME_SRC,
+  LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX,
+  LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
 } from './loungeTvAssets';
 import { LoungeTvCloseButton } from './loungeTvFrame';
 import { useCoverMappedLayout } from '../../hooks/useCoverMappedLayout';
@@ -39,7 +40,8 @@ export function LoungeTvFullscreenShell({
     closePoint,
   );
 
-  const layerOffsetY = LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX;
+  const frameStillOffsetY = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX;
+  const screenOffsetY = LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX;
 
   return (
     <div
@@ -55,36 +57,39 @@ export function LoungeTvFullscreenShell({
       }}
     >
       <div
+        aria-hidden
         style={{
           position: 'absolute',
           inset: 0,
-          transform: layerOffsetY ? `translateY(${layerOffsetY}px)` : undefined,
+          backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+          backgroundRepeat: 'no-repeat',
+          transform: frameStillOffsetY ? `translateY(${frameStillOffsetY}px)` : undefined,
+        }}
+      />
+      <div
+        style={{
+          ...rectToPercentStyle(mappedScreen),
+          position: 'absolute',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+          zIndex: 1,
+          ...screenStyle,
+          transform: screenOffsetY ? `translateY(${screenOffsetY}px)` : undefined,
         }}
       >
+        {children}
+      </div>
+      {onClose && mappedClose ? (
         <div
-          aria-hidden
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat',
-          }}
-        />
-        <div
-          style={{
-            ...rectToPercentStyle(mappedScreen),
-            position: 'absolute',
-            boxSizing: 'border-box',
-            overflow: 'hidden',
-            zIndex: 1,
-            ...screenStyle,
+            pointerEvents: 'none',
+            transform: frameStillOffsetY ? `translateY(${frameStillOffsetY}px)` : undefined,
           }}
         >
-          {children}
-        </div>
-        {onClose && mappedClose ? (
           <LoungeTvCloseButton
             visible={closeVisible}
             position={{
@@ -97,8 +102,8 @@ export function LoungeTvFullscreenShell({
               onClose(e);
             }}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }

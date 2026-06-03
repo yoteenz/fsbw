@@ -33,10 +33,19 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
 } as const;
 
 /**
- * Nudge end-still frame + black glass + menu down together on {@link LoungeTvFullscreenShell}
- * (align TV glass with baked bezel on `lounge-tv-content-frame.png`).
+ * End-still PNG (`lounge-tv-content-frame.png`) after Seedance open — {@link LoungeTvFullscreenShell} only.
+ * Positive = down. Tune independently from {@link LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX}.
  */
-export const LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = 100;
+export const LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX = 60;
+
+/**
+ * TV glass content (menu / static / video) — {@link LoungeTvFullscreenShell} screen inset only.
+ * Positive = down. Was bundled with frame at 100px; frame up 40 → 60, screen down 20 → 120.
+ */
+export const LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX = 120;
+
+/** @deprecated Use {@link LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX} + {@link LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX}. */
+export const LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX;
 
 /** Bump when replacing `public/assets/lounge-tv-design.png` (`npm run lounge:bake-tv-design`). */
 export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'kv6DR-v2';
