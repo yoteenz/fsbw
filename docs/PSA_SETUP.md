@@ -7,7 +7,7 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 
 | Capability | ChatGPT prompt intent | PSA today |
 |------------|----------------------|-----------|
-| Personality / brand voice | Warm luxury concierge; Beautiful / Slayer / Love | **Yes** — `buildPsaInstructions()` in `api/psa/chat.ts` |
+| Personality / brand voice | Warm luxury concierge; personal but bounded (pet names rare) | **Yes** — `buildPsaInstructions()` in `api/_lib/psaInstructions.ts` |
 | Session context (page, cart, orders, tier) | Know where member is | **Yes** — client `buildPsaClientSessionContext()` → `POST /api/psa/chat` `context` → injected in instructions |
 | Persistent chat history | Cross-device threads | **Yes** — Supabase threads; auto-title from first question; **ARCHIVE** / **DELETE** in HISTORY; **CONTINUE CHAT** on FAB |
 | Rich cards + quick replies | Premium chat UI | **Yes** — product/nav/order cards from tool trace; `>>QUICK:` suffix chips |
