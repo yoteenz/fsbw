@@ -1,8 +1,8 @@
 import { getEffectiveSubscriptionTier, getEffectiveTierName } from './adminAuth';
 
 /**
- * Same gate as `/lobby`: signed-in users need an active premium **subscription** and/or **BLACK** spend tier
- * to access subscriber-only areas (lobby, premium-only PDP options, etc.).
+ * Same gate as `/lobby` and PSA: signed-in users need an active premium **subscription** and/or **BLACK** spend tier
+ * to access subscriber-only areas (lobby, lounge, PSA, premium-only PDP options, etc.).
  */
 export function isPremiumMemberForGatedFeatures(): boolean {
   try {

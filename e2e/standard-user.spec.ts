@@ -29,6 +29,12 @@ test.describe('Standard user — signed-in mobile journeys', () => {
     await expect(page.getByText(/NOIR/i).first()).toBeVisible();
   });
 
+  test('standard user: PSA widget is hidden (premium only)', async ({ page }) => {
+    await page.goto('/home/shop');
+    const psaFab = page.getByRole('button', { name: 'Open Personal Slay Assistant' });
+    await expect(psaFab).toHaveCount(0);
+  });
+
   test('standard user: Build-a-Wig hub reachable when signed in', async ({ page }) => {
     await page.goto('/build-a-wig');
     await expect(page.getByText('ERROR: COMPONENT FAILED TO LOAD')).toHaveCount(0);

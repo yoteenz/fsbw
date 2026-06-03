@@ -9,7 +9,7 @@ import {
   PSA_WELCOME_MESSAGE,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
-import { isSignedIn } from '../../utils/adminAuth';
+import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
 import { fetchPsaUsage } from '../../utils/psaApi';
 import {
   isPremiumMemberForGatedFeatures,
@@ -92,11 +92,17 @@ export default function PsaAssistantWidget() {
     sync();
     window.addEventListener('signInStateChanged', sync);
     window.addEventListener('focus', sync);
+    window.addEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, sync);
     return () => {
       window.removeEventListener('signInStateChanged', sync);
       window.removeEventListener('focus', sync);
+      window.removeEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, sync);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isPremium) setIsOpen(false);
+  }, [isPremium]);
 
   useEffect(() => {
     return () => {
@@ -114,16 +120,11 @@ export default function PsaAssistantWidget() {
   }, []);
 
   const handleToggle = useCallback(() => {
-    if (!signedIn) return;
-    if (!isPremium) {
-      setShowUpgradeModal(true);
-      return;
-    }
     setIsOpen((open) => {
       if (!open) startWelcomeWave();
       return !open;
     });
-  }, [signedIn, isPremium, startWelcomeWave]);
+  }, [startWelcomeWave]);
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -173,14 +174,15 @@ export default function PsaAssistantWidget() {
     [isOpen, isSending, isInputFocused, inputHasText, showWelcomeWave, lastReplyAt, messages, expressionTick]
   );
 
-  if (!signedIn || isPsaHiddenPath(location.pathname)) {
+  // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
+  if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname)) {
     return null;
   }
 
   const widget = (
     <>
       <div className="psa-widget-root" data-attribute="psa-assistant-widget">
-        {isOpen && isPremium ? (
+        {isOpen ? (
           <PsaChatPanel
             messages={messages}
             isSending={isSending}
