@@ -29,9 +29,27 @@ import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
 import { usePsaProactiveNudges } from './usePsaProactiveNudges';
 import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
-import { applyPsaBawPrefill } from '../../utils/psaBawPrefill';
+import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/psaBawPrefill';
+import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import type { PsaClientAction } from '../../utils/psaApi';
 import './psaAssistant.css';
+
+function draftSelectionsFromPrefill(
+  selections?: PsaBawPrefillSelections
+): Record<string, string> | undefined {
+  if (!selections) return undefined;
+  const out: Record<string, string> = {};
+  if (selections.capSize) out.capsize = selections.capSize;
+  if (selections.length) out.length = selections.length;
+  if (selections.density) out.density = selections.density;
+  if (selections.color) out.color = selections.color;
+  if (selections.texture) out.texture = selections.texture;
+  if (selections.lace) out.lace = selections.lace;
+  if (selections.hairline) out.hairline = selections.hairline;
+  if (selections.styling) out.styling = selections.styling;
+  if (selections.partSelection) out.partselection = selections.partSelection;
+  return Object.keys(out).length ? out : undefined;
+}
 
 export default function PsaAssistantWidget() {
   const location = useLocation();
@@ -74,7 +92,9 @@ export default function PsaAssistantWidget() {
     closeHistory,
     archiveThread,
     removeThread,
-  } = usePsaChat(PSA_WELCOME_MESSAGE, () => buildPsaClientSessionContext(location.pathname));
+  } = usePsaChat(PSA_WELCOME_MESSAGE, (pendingMessage) =>
+    buildPsaClientSessionContext(location.pathname, pendingMessage)
+  );
 
   const proactiveNudge = usePsaProactiveNudges(!isOpen);
 
@@ -264,6 +284,23 @@ export default function PsaAssistantWidget() {
             selections: action.selections,
           });
           navigate(path);
+          continue;
+        }
+        if (action.type === 'save_baw_draft') {
+          const selections = draftSelectionsFromPrefill(action.selections);
+          savePsaBawDraft({
+            unitId: action.unitId,
+            buildPath: action.path,
+            selections,
+            label: action.label,
+          });
+          if (action.selections && Object.keys(action.selections).length > 0) {
+            applyPsaBawPrefill({
+              unitId: action.unitId,
+              path: action.path,
+              selections: action.selections,
+            });
+          }
           continue;
         }
         if (action.type === 'navigate' && action.path) {

@@ -11,6 +11,12 @@ import {
   canAccessLiveOrderTracking,
   psaFeatureGateDenial,
 } from './psaFeatureGates.js';
+import {
+  addMemberMemory,
+  PSA_HAIR_SLAYER_PROFILES,
+  persistMemberContextExtras,
+  setHairSlayerProfile,
+} from './psaMemberMemories.js';
 
 export type PsaToolContext = {
   userId: string;
@@ -41,6 +47,13 @@ export type PsaClientAction =
       unitId: string;
       path?: string;
       selections?: PsaBawPrefillSelections;
+    }
+  | {
+      type: 'save_baw_draft';
+      unitId: string;
+      path?: string;
+      selections?: PsaBawPrefillSelections;
+      label?: string;
     };
 
 export type PsaToolExecutionResult = {
@@ -163,6 +176,63 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
       additionalProperties: false,
     },
     strict: false,
+  },
+  {
+    type: 'function',
+    name: 'save_build_a_wig_draft',
+    description:
+      'Save the member ideal Build-a-Wig configuration to finish later. Use after helping them choose unit, length, density, lace, etc.',
+    parameters: {
+      type: 'object',
+      properties: {
+        unitId: { type: 'string' },
+        capSize: { type: 'string' },
+        length: { type: 'string' },
+        density: { type: 'string' },
+        color: { type: 'string' },
+        texture: { type: 'string' },
+        lace: { type: 'string' },
+        hairline: { type: 'string' },
+        styling: { type: 'string' },
+        partSelection: { type: 'string' },
+        label: { type: 'string', description: 'Short draft name e.g. "Birthday BEACH WAVE 26"' },
+      },
+      required: ['unitId'],
+      additionalProperties: false,
+    },
+    strict: false,
+  },
+  {
+    type: 'function',
+    name: 'remember_member_preference',
+    description:
+      'Save a tiny preference note when the member confirms something (maintenance, length, parting, density, install style). Max 12 notes.',
+    parameters: {
+      type: 'object',
+      properties: {
+        note: { type: 'string', description: 'Short preference e.g. "prefers low maintenance"' },
+      },
+      required: ['note'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
+  {
+    type: 'function',
+    name: 'set_hair_slayer_profile',
+    description: 'Assign a Hair Slayer style profile when you have enough context on their vibe.',
+    parameters: {
+      type: 'object',
+      properties: {
+        profile: {
+          type: 'string',
+          enum: [...PSA_HAIR_SLAYER_PROFILES],
+        },
+      },
+      required: ['profile'],
+      additionalProperties: false,
+    },
+    strict: true,
   },
   {
     type: 'function',
@@ -510,6 +580,81 @@ export async function executePsaActionTool(
         }),
         clientActions,
       };
+    }
+
+    case 'save_build_a_wig_draft': {
+      const unitId = String(args.unitId ?? '').trim().toLowerCase();
+      const product = PSA_PRODUCTS.find((p) => p.id === unitId);
+      if (!product) {
+        return {
+          output: JSON.stringify({ error: 'Unknown unitId', validIds: PSA_PRODUCTS.map((p) => p.id) }),
+        };
+      }
+      const selections: PsaBawPrefillSelections = {};
+      if (typeof args.capSize === 'string' && args.capSize.trim()) selections.capSize = args.capSize.trim();
+      if (typeof args.length === 'string' && args.length.trim()) selections.length = args.length.trim();
+      if (typeof args.density === 'string' && args.density.trim()) selections.density = args.density.trim();
+      if (typeof args.color === 'string' && args.color.trim()) selections.color = args.color.trim();
+      if (typeof args.texture === 'string' && args.texture.trim()) selections.texture = args.texture.trim();
+      if (typeof args.lace === 'string' && args.lace.trim()) selections.lace = args.lace.trim();
+      if (typeof args.hairline === 'string' && args.hairline.trim()) selections.hairline = args.hairline.trim();
+      if (typeof args.styling === 'string' && args.styling.trim()) selections.styling = args.styling.trim();
+      if (typeof args.partSelection === 'string' && args.partSelection.trim()) {
+        selections.partSelection = args.partSelection.trim();
+      }
+      const label = typeof args.label === 'string' ? args.label.trim() : '';
+      const path = product.buildAWigPath;
+      const draftSnapshot = {
+        unitId,
+        unitLabel: product.name,
+        buildPath: path,
+        label: label || undefined,
+        savedAt: new Date().toISOString(),
+      };
+      await persistMemberContextExtras(ctx.userId, { bawDraft: draftSnapshot });
+      const clientActions: PsaClientAction[] = [
+        {
+          type: 'save_baw_draft',
+          unitId,
+          path,
+          selections: Object.keys(selections).length ? selections : undefined,
+          label: label || undefined,
+        },
+      ];
+      return {
+        output: JSON.stringify({
+          ok: true,
+          saved: true,
+          unit: product.name,
+          path,
+          label: label || null,
+          note: 'Draft saved. Member can resume from PSA or Build-a-Wig later.',
+        }),
+        clientActions,
+      };
+    }
+
+    case 'remember_member_preference': {
+      const note = typeof args.note === 'string' ? args.note.trim() : '';
+      if (!note) return { output: JSON.stringify({ error: 'note required' }) };
+      const memories = await addMemberMemory(ctx.userId, note);
+      return {
+        output: JSON.stringify({ ok: true, saved: note, memoryCount: memories.length }),
+      };
+    }
+
+    case 'set_hair_slayer_profile': {
+      const profile = typeof args.profile === 'string' ? args.profile : '';
+      const saved = await setHairSlayerProfile(ctx.userId, profile);
+      if (!saved) {
+        return {
+          output: JSON.stringify({
+            error: 'Invalid profile',
+            validProfiles: PSA_HAIR_SLAYER_PROFILES,
+          }),
+        };
+      }
+      return { output: JSON.stringify({ ok: true, hairProfile: saved }) };
     }
 
     case 'send_priority_message': {

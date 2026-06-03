@@ -13,6 +13,20 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 | Rich cards + quick replies | Premium chat UI | **Yes** — product/nav/order cards from tool trace; `>>QUICK:` suffix chips |
 | Proactive FAB nudges | Unsigned forms, expiring consults, stock | **Yes** — `computePsaProactiveNudge()` + badge/chip on FAB |
 | Build-a-Wig deep links / pre-fill | Advice → action | **Yes** — `open_build_a_wig` tool + `prefill_baw` client action |
+| Build-a-Wig draft saving | Resume later | **Yes** — `save_build_a_wig_draft` tool + local `psaBawDraft_*` + server `bawDraft` in member context |
+| Founder notes | Founder opinions, not AI recs | **Yes** — `api/_lib/psaFounderNotes.ts` injected in knowledge |
+| Concierge memory cards | Tiny preference snippets | **Yes** — `remember_member_preference` → `psa_member_context` JSON |
+| Hair Slayer profiles | Style archetypes | **Yes** — `set_hair_slayer_profile` (EFFORTLESS, CEO, SOFT GLAM, etc.) |
+| Talk Me Out Of It / honesty | Trust over sales | **Yes** — session `mode: talk_me_out_of_it` + instructions |
+| Event Ready roadmap | Transformation plan | **Yes** — session `mode: event_ready` + instructions |
+| What Would You Pick | Founder conviction | **Yes** — session `mode: what_would_you_pick` + founder notes |
+| Smart order celebrations | Placed / shipped / delivered | **Yes** — `computePsaProactiveNudge()` order_celebration + one-time localStorage |
+| Lounge content matching | Deep-link lessons | **Yes** — `api/_lib/psaLoungeLessons.ts` in knowledge |
+| Slay Readiness Score | Finish checkout funnel | **Yes** — `computePsaSlayReadiness()` in session context |
+| Proactive BAW nudge | Abandoned customization | **Yes** — draft + incomplete session detection |
+| Starter quick-reply chips | Mobile UX | **Yes** — `PSA_STARTER_QUICK_REPLIES` in welcome thread |
+| Tier voice differentiation | 3mo / 6mo / 12mo feel | **Yes** — `buildPsaTierVoiceBlock()` in instructions |
+| Typing delay (300–700ms) | Human pause | **Yes** — client `usePsaChat` before clearing `isSending` |
 | Product catalog | Raw hair / units | **Yes** — `search_products` + 6 units in `psaKnowledge.ts`; **starting base USD prices** via `api/_lib/psaCatalogPricing.ts` (synced with `resolveQuote.ts`) |
 | Length, texture, density advice | Recommend | **Yes** — FAQ + Build-a-Wig context; directs to `/build-a-wig`; PSA can quote **starting base prices** and compare units (e.g. NOIR vs BLANCO) |
 | FAQs, shipping, policies | Answer | **Yes** — `search_faq` (synced from `brandFaqCopy.ts` themes) |

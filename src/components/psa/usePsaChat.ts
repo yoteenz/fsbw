@@ -31,7 +31,7 @@ function welcomeOnly(welcomeMessage: string): PsaChatMessage[] {
 
 export function usePsaChat(
   welcomeMessage: string,
-  getSessionContext?: () => PsaClientSessionContext
+  getSessionContext?: (pendingMessage?: string) => PsaClientSessionContext
 ) {
   const [messages, setMessages] = useState<PsaChatMessage[]>(() => welcomeOnly(welcomeMessage));
   const [isSending, setIsSending] = useState(false);
@@ -163,12 +163,14 @@ export function usePsaChat(
       setMessages((prev) => [...prev, { id: nextId(), role: 'user', content: trimmed }]);
       setIsSending(true);
 
-      const context = getSessionContextRef.current?.();
+      const context = getSessionContextRef.current?.(trimmed);
       const result = await postPsaChat(trimmed, {
         previousResponseId: responseId,
         threadId,
         context,
       });
+      const typingDelayMs = 300 + Math.floor(Math.random() * 401);
+      await new Promise((resolve) => setTimeout(resolve, typingDelayMs));
       setIsSending(false);
 
       if (!result.ok) {

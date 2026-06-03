@@ -24335,3 +24335,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Archived threads hidden from default HISTORY list; hard DELETE removes messages (cascade).
 
+---
+
+## 2026-06-03 — PSA elevation v2 (founder voice, memory, drafts, celebrations)
+
+**Context:** User shared a ChatGPT PSA elevation roadmap and asked to implement what fits current site logic and is not already done (voice/3D avatar explicitly deferred).
+
+**Topics covered:** Founder notes, concierge memory cards, Hair Slayer profiles, Talk Me Out Of It / Event Ready / What Would You Pick modes, BAW draft saving, Slay Readiness score, smart order celebrations, Lounge lesson matching, tier voice differentiation, starter quick-reply chips, 300–700ms typing delay, proactive BAW nudge.
+
+**Changes:**
+- **Server** — `psaFounderNotes.ts`, `psaLoungeLessons.ts`, `psaMemberMemories.ts`; extended `psaInstructions.ts` (signature modes, banned phrases, memory/profile/draft rules); `psaFeatureGates.ts` tier voice block; tools `save_build_a_wig_draft`, `remember_member_preference`, `set_hair_slayer_profile`; session context formatter for slay readiness / BAW draft / mode flags.
+- **Client** — `psaBawDraft.ts`, `psaSlayReadiness.ts`, `psaOrderCelebrations.ts`; extended session context + proactive nudges (BAW draft priority 4, order celebrations priority 5); `save_baw_draft` client action; `PSA_STARTER_QUICK_REPLIES`; typing delay in `usePsaChat`; pathname-aware proactive nudges.
+- **`docs/PSA_SETUP.md`** — capability table expanded.
+
+**Skipped (per user):** Voice / Founder Voice Mode, 3D avatar, auto-pop PSA every visit, constant avatar motion beyond existing expressions.
+
+**Conventions:** Memories and `bawDraft` live in `psa_member_context.context` JSON (no new migration). Order celebrations mark seen in `psaOrderCelebrated_{email}` when FAB nudge shows.
+
