@@ -23964,3 +23964,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to increase Watch + Learn **video height only** by **12px** (keep **54%** cap, cover + center top, title/duration + scrollable description unchanged).
 
 **Fix:** **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX = 12`**; shell **`maxHeight: calc(54% + 12px)`** in **`LoungeTvWatchLearnPlayer.tsx`**.
+
+---
+
+## 2026-06-02 — Contain restore + black letterbox (no bottom white strip)
+
+**Context:** User wanted **`contain`** back (Watch + Learn + slides/transition/TV clip). Light **white strip at bottom** from **`#e8e4e0`** letterbox / transparent TV host during **`contain`**.
+
+**Fix:** Watch + Learn **`object-fit: contain`**. Slides + lobby transition + **`LoungeTvAnimationVideo`**: **`contain`** + **`center top`**; hit-map **`Math.min`**. Letterbox **`#000000`** — **`SCENE_CAROUSEL_LETTERBOX_BG`**, **`LOUNGE_TV_ANIMATION_LETTERBOX_BG`** on animation shell + host. TV close behavior unchanged (black scrim, menu shell unmount on **`closing`**, instant reverse frame).
