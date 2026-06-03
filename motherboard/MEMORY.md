@@ -24352,3 +24352,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Memories and `bawDraft` live in `psa_member_context.context` JSON (no new migration). Order celebrations mark seen in `psaOrderCelebrated_{email}` when FAB nudge shows.
 
+---
+
+## 2026-06-03 — PSA tone: fewer pet names, balanced sales honesty
+
+**Context:** User asked PSA to tone down pet names (Beautiful, Love, etc.) so it stays personal without crossing boundaries, and to not be too quick to down-sell — still need to generate income.
+
+**Changes:**
+- **`api/_lib/psaInstructions.ts`** — Goal reframed as trust **and** revenue; pet names at most once per thread, default to "you"; Talk Me Out Of It is honest verdict not automatic "no"; recommend with conviction + next step when fit is right.
+- **`api/_lib/psaFeatureGates.ts`** — Tier voice examples without "Beautiful" / "Love" openers.
+- **`src/constants/psaConfig.ts`** — Welcome message drops "Hey Beautiful".
+- **`src/utils/psaOrderCelebrations.ts`** — Prefilled celebration message without pet name.
+- **`docs/PSA_SETUP.md`** — Personality row updated.
+
+**Conventions:** PSA warmth = professional concierge, not overly familiar. Honesty when wrong fit; confident guidance + checkout path when match is solid.
+
