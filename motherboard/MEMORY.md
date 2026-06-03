@@ -23598,3 +23598,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to update lobby phone pop-up hours to **11AM - 6PM CST** (popover only, not brand contact page).
 
 **Fix:** **`lobbyPropPopoverCopy.ts`** — **`LOBBY_PHONE_POPOVER_HOURS`** (`11AM - 6PM CST`) replaces shared **`BRAND_CONTACT_INTRO_HOURS`** (`10AM - 6PM CST`) on the **hours** section first line.
+
+---
+
+## 2026-06-02 — Phone popover: “US HOLIDAYS” gray Futura Medium
+
+**Context:** User asked for **US HOLIDAYS** only (within **MAJOR US HOLIDAYS EXCLUDED**) on the phone pop-up to use gray **Futura PT Medium**; rest of line stays black Futura Book.
+
+**Fix:** **`lobbyPropPopoverCopy.ts`** — holidays line split into **`parts`**: **`MAJOR `** + **`US HOLIDAYS`** (`futura-medium-gray`) + **` EXCLUDED`**.
