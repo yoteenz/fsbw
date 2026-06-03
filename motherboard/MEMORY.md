@@ -23508,3 +23508,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Register open +20%; phone tandem up 4px
 
 **Fix:** **`LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE`** **0.7938** (+20% from **0.6615**). **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -32 }` (phone open PNG + popover wrapper up 4px; register unchanged).
+
+---
+
+## 2026-06-02 — Lobby page lounge nav red shadow only
+
+**Fix:** Split carousel nav shadows in **`lobby/page.tsx`**: **`LOBBY_PAGE_LOUNGE_NAV_*`** brand red on lobby slide (**lounge** label + arrow); **`LOUNGE_PAGE_LOBBY_NAV_*`** golden on lounge slide (**lobby** back nav).

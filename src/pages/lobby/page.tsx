@@ -31,10 +31,16 @@ import {
 } from '../../constants/lobbyLoungeTransitionVideo';
 import { LoungeSceneHotspots } from '../../components/lounge/LoungeSceneHotspots';
 
-/** Carousel nav arrows/labels — golden shadow on white curtain (lobby ↔ lounge). */
-const LOUNGE_LOBBY_NAV_SHADOW_FILTER =
+/** Lobby page → lounge nav (arrow + label) — brand red shadow (#EB1C24). */
+const LOBBY_PAGE_LOUNGE_NAV_SHADOW_FILTER =
+  'drop-shadow(0 1px 2px rgba(235, 28, 36, 0.5)) drop-shadow(0 2px 8px rgba(235, 28, 36, 0.32))';
+const LOBBY_PAGE_LOUNGE_NAV_LABEL_TEXT_SHADOW =
+  '0 1px 2px rgba(235, 28, 36, 0.55), 0 2px 6px rgba(235, 28, 36, 0.35)';
+
+/** Lounge page → lobby back nav — golden shadow on white curtain. */
+const LOUNGE_PAGE_LOBBY_NAV_SHADOW_FILTER =
   'drop-shadow(0 1px 2px rgba(201, 162, 39, 0.55)) drop-shadow(0 2px 8px rgba(212, 175, 55, 0.38))';
-const LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
+const LOUNGE_PAGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
   '0 1px 2px rgba(201, 162, 39, 0.6), 0 2px 6px rgba(212, 175, 55, 0.42)';
 
 // Lobby Component
@@ -134,7 +140,7 @@ const LobbyPage: React.FC<{
         alignItems: 'center',
         gap: '1px',
         pointerEvents: 'auto',
-        filter: LOUNGE_LOBBY_NAV_SHADOW_FILTER,
+        filter: LOBBY_PAGE_LOUNGE_NAV_SHADOW_FILTER,
       }}>
         <button
           onClick={(e) => {
@@ -202,7 +208,7 @@ const LobbyPage: React.FC<{
           width: '100%',
           transform: 'translateX(-2px)',
           textTransform: 'uppercase',
-          textShadow: LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW,
+          textShadow: LOBBY_PAGE_LOUNGE_NAV_LABEL_TEXT_SHADOW,
         }}>
           lounge
         </div>
@@ -246,7 +252,7 @@ const LoungePage: React.FC<{
           alignItems: 'center',
           gap: '1px',
           pointerEvents: 'auto',
-          filter: LOUNGE_LOBBY_NAV_SHADOW_FILTER,
+          filter: LOUNGE_PAGE_LOBBY_NAV_SHADOW_FILTER,
         }}
       >
         <button
@@ -316,7 +322,7 @@ const LoungePage: React.FC<{
             width: '100%',
             transform: 'translateX(3px)',
             textTransform: 'uppercase',
-            textShadow: LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW,
+            textShadow: LOUNGE_PAGE_LOBBY_NAV_LABEL_TEXT_SHADOW,
           }}
         >
           lobby
