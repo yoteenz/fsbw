@@ -24226,3 +24226,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`psaConfig.ts`** — `PSA_EXPRESSION_CROSSFADE_MS = 1200`, `PSA_WAVING_MS = 3200`; deprecated `PSA_IDLE_EXPRESSION_MS`.
 
 **Conventions:** Tune idle pacing in **`psaIdleExpressionCycle.ts`** holds; crossfade duration in **`PSA_EXPRESSION_CROSSFADE_MS`**. Chat-open expressions still resolved via **`resolvePsaAvatarExpression`** (defaults to neutral-smiling when open).
+
+---
+
+## 2026-06-03 — Account Rewards: “MORE POINTS TO EARN” line — color label only
+
+**Context:** User reported the full progress hint line (e.g. `200 MORE POINTS TO EARN A VOUCHER!`) was red when only the reward type word should be color-coded (voucher/free gift red; discount/digital cash gray), matching the “NEXT REWARD:” row above.
+
+**Changes (commit `e347d662` on `master`, synced to `preview/mobile`):**
+- **`src/pages/account/membership/page.tsx`** — both loyalty progress blocks (main + duplicate layout): `<p>` base color `#000000`; wrap `nextReward.label` in `<span style={{ color: nextLabelColor }}>` only (digital cash label unwrapped; “A {label}” keeps “A” black for voucher/free gift/discount).
+
+**Conventions:** Loyalty reward type color applies only to the reward name span, not the surrounding Futura progress copy.
