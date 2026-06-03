@@ -23325,3 +23325,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Causes:** Cold **`canplay`** wait; overlay on slide unmount showed **lobby poster** when **`frameVisible`** reset before carousel moved; **`completeRoomTransitionOverlay`** cleared overlay before **`visualIndex`** change.
 
 **Fix:** **`LobbyLoungeTransitionHost`** — fixed viewport, **`phase: null`** warm preload (single `<video>`). Complete: **`setVisualIndex`** + route first, **`requestAnimationFrame`** then clear overlay. **`finish()`** does not restore poster. Playback: **`loadeddata`** / skip **`load()`** when metadata exists; shorter retry delay.
+
+---
+
+## 2026-06-02 — Lounge TV animation letterbox (remote source + stronger crop)
+
+**Context:** User still saw top/bottom black bars after **`final-lp-video-crop-v1`** bake.
+
+**Cause:** **`LoungeTvAnimationVideo`** second `<source>` was uncropped Supabase **`video.mov`** — browsers often played that instead of bundled crop. Fixed **128px** crop was too mild for dynamic letterbox.
+
+**Fix:** Removed remote `<source>`; play only bundled **`lounge-tv-animation.mp4`** + **`.mov`**. Re-bake **`crop=720:880:0:200`** (`npm run lounge:bake-tv-animation-crop`); **`LOUNGE_TV_ANIMATION_VIDEO_VERSION`** = **`final-lp-video-crop-v2`**; **`LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE`** = **1.08** safety zoom. Do not re-add **`LOUNGE_TV_ANIMATION_VIDEO_REMOTE`** as a video source.
