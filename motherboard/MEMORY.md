@@ -23752,3 +23752,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted visible debug colors on **poster** and **video** to track movement; diagnostic URLs for **offset=0**, **hide poster**, **video only after playing**.
 
 **Fix:** **`?lobbyTransitionDebug=1`** on `/lobby` — **magenta** POSTER, **lime** VIDEO outlines (dashed when layer opacity 0), **orange** shared frame, **blue** letterbox bands; banner shows **offsetY** + mode. **`lobbyLoungeTransitionDebug.ts`**: **`?lobbyTransitionOffset=0`** overrides **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX`**; **`?lobbyTransitionPoster=hidden`**; **`?lobbyTransitionPoster=afterPlaying`** → **`revealOnFirstDecodedFrame: false`** (video on `playing` only). **`?lobbyTransitionDebug=0`** clears session.
+
+---
+
+## 2026-06-02 — Scene transition: no slide PNG poster (carousel until video)
+
+**Context:** User asked to remove or match pre-transition poster so the scene stays visually the same before Seedance plays (slide PNG in overlay cropped differently than carousel).
+
+**Fix:** **`resolveTransitionPoster()`** returns **`null`** in production — transparent overlay + letterbox frame; **lobby/lounge carousel slide** visible until video crossfade. QA only: **`?lobbyTransitionPoster=slide`** restores slide PNG for comparison debug.
