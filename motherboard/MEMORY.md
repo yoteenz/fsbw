@@ -23299,3 +23299,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for slight shadow on lounge **lobby** label + back arrows (white curtain in composite).
 
 **Fix:** **`LOUNGE_LOBBY_NAV_SHADOW_FILTER`** + **`LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW`** on **`LoungePage`** nav cluster in `lobby/page.tsx` only.
+
+---
+
+## 2026-06-02 — Lounge TV label +2px right, +6px down
+
+**Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 12`** (was 10), **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 31`** (was 25). Label-only **PRESS TO PLAY**.
