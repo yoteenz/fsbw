@@ -9,12 +9,12 @@ import {
 export const SCENE_CAROUSEL_BG_WIDTH = FINAL_SCENE_ART_WIDTH;
 export const SCENE_CAROUSEL_BG_HEIGHT = FINAL_SCENE_ART_HEIGHT;
 
-/** Contain anchor for lobby, lounge, and Seedance transition — top-aligned with slide art. */
+/** Cover anchor for lobby, lounge, and Seedance transition — top-aligned with slide art. */
 export function sceneCarouselCoverBackgroundPosition(): string {
   return 'center top';
 }
 
-/** `contain` + `center top` metrics for a viewport box (matches slide + transition overlay). */
+/** `cover` + `center top` metrics for a viewport box (matches slide + transition overlay). */
 export function sceneCarouselCoverMetrics(
   containerWidth: number,
   containerHeight: number,
@@ -22,7 +22,7 @@ export function sceneCarouselCoverMetrics(
   if (containerWidth <= 0 || containerHeight <= 0) {
     return { scale: 1, renderedWidth: containerWidth, renderedHeight: containerHeight };
   }
-  const scale = Math.min(
+  const scale = Math.max(
     containerWidth / SCENE_CAROUSEL_BG_WIDTH,
     containerHeight / SCENE_CAROUSEL_BG_HEIGHT,
   );
@@ -70,7 +70,7 @@ export type SceneCarouselBackgroundLayerOptions = {
   backgroundPosition?: string;
 };
 
-/** Scene box — fills the slide shell (`100dvh`); contain math uses this size. */
+/** Scene box — fills the slide shell (`100dvh`); cover math uses this size. */
 export function sceneCarouselViewportStageStyle(): React.CSSProperties {
   return {
     position: 'absolute',
@@ -89,14 +89,14 @@ export function sceneCarouselViewportBackgroundStyle(
     position: 'absolute',
     inset: 0,
     backgroundImage: `url(${backgroundSrc})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: options?.backgroundPosition ?? sceneCarouselCoverBackgroundPosition(),
     backgroundRepeat: 'no-repeat',
     backgroundColor: '#e8e4e0',
   };
 }
 
-/** Contain hit-map fallback — viewport size only (not full art-height slide). */
+/** Cover hit-map fallback — viewport size only (not full art-height slide). */
 export function defaultSceneSlideMetricsFromViewport(): { width: number; height: number } {
   if (typeof window === 'undefined') {
     return { width: SCENE_CAROUSEL_BG_WIDTH, height: SCENE_CAROUSEL_BG_HEIGHT };
@@ -123,7 +123,7 @@ export function sceneCarouselBackgroundLayerStyle(
     minHeight: '100dvh',
     height: sceneCarouselSlideMinHeightCss(),
     backgroundImage: `url(${backgroundSrc})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: options?.backgroundPosition ?? sceneCarouselCoverBackgroundPosition(),
     backgroundRepeat: 'no-repeat',
     backgroundColor: '#e8e4e0',

@@ -9,7 +9,7 @@ export type LobbyLoungeTransitionLetterboxLayout = {
 };
 
 /**
- * Portrait frame = Final LP slide `contain` math (928×1680). Transparent bands above/below
+ * Portrait frame = Final LP slide `cover` math (928×1680). Transparent bands above/below
  * let the carousel show through; poster + video share the same clipped box inside the frame.
  */
 export function useLobbyLoungeTransitionLetterboxLayout(): LobbyLoungeTransitionLetterboxLayout {
