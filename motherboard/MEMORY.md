@@ -24119,3 +24119,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Positive:** Admin API routes return **403** without admin JWT; user profile/orders/cart require Bearer; autopay cron requires **`BOOKING_AUTOPAY_CRON_SECRET`**; delete-account blocks founder email; live Fal regen requires auth when cache miss.
 
 **Recommended fix order:** (1) auth + rate limit on `build-a-wig-unit-image`, (2) wire product checkout to Stripe PI or disable CONFIRM ORDER in prod, (3) strip privileged profile fields server-side + RLS/trigger, (4) validate orders server-side or service-role-only writes, (5) lock down psa/health, (6) finish priority_messages + concierge server path.
+
+---
+
+## 2026-06-03 — Playwright mobile E2E suite added
+
+**Context:** User asked how to add full mobile browser click-through QA (not just API/architecture review). Also clarified `20260603180000_priority_messages.sql` exists on `master` (commit `6674f60d`) — pull or paste SQL in Supabase if missing locally.
+
+**Changes:** **`@playwright/test`** + **`playwright.config.ts`** (iPhone 13, default `E2E_BASE_URL=https://fsbw.vercel.app`); **`e2e/`** — `guest.spec.ts` (11 smoke routes), `standard-user.spec.ts`, `premium-user.spec.ts`, auth setup projects; **`docs/E2E_PLAYWRIGHT.md`**, **`.env.e2e.example`**; npm scripts `test:e2e`, `test:e2e:guest`, `test:e2e:ui`, `test:e2e:headed`, `test:e2e:install`.
+
+**Run:** `npm run test:e2e:install` then `npm run test:e2e:guest` (no credentials). Signed-in projects need **`E2E_STANDARD_*`** / **`E2E_PREMIUM_*`** in **`.env.e2e.local`**. Linux may need `sudo npx playwright install-deps webkit`.
