@@ -93,7 +93,8 @@ export function LoungeTvFullscreenShell({
           overflow: 'hidden',
           zIndex: 1,
           ...screenStyle,
-          transform: screenOffsetY ? `translateY(${screenOffsetY}px)` : undefined,
+          transform: screenTransform,
+          transformOrigin: screenScale !== 1 ? 'center top' : undefined,
         }}
       >
         {children}
