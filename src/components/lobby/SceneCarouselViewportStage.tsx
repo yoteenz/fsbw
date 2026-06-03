@@ -6,7 +6,7 @@ import {
 
 type Props = {
   backgroundSrc: string;
-  /** Must match {@link lobbyLoungeTransitionCoverPosition} on Final LP lobby/lounge slides. */
+  /** Final LP composites use `center top` (default). */
   backgroundPosition?: string;
   measureRef?: Ref<HTMLDivElement>;
   children?: ReactNode;

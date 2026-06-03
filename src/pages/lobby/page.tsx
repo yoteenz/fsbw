@@ -25,7 +25,6 @@ import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTv
 import { FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
 import {
   isLobbyTransitionVideoEnabledFromSearch,
-  lobbyLoungeTransitionCoverPosition,
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
@@ -103,7 +102,6 @@ const LobbyPage: React.FC<{
     <div className="relative" style={sceneSlideShellStyle()}>
       <SceneCarouselViewportStage
         backgroundSrc={FINAL_LOBBY_BACKGROUND_SRC}
-        backgroundPosition={lobbyLoungeTransitionCoverPosition()}
         measureRef={lobbyViewportRef}
       >
         <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
@@ -213,7 +211,6 @@ const LoungePage: React.FC<{
     <div className="bg-white relative lounge-page" style={sceneSlideShellStyle()}>
       <SceneCarouselViewportStage
         backgroundSrc={FINAL_LOUNGE_BACKGROUND_SRC}
-        backgroundPosition={lobbyLoungeTransitionCoverPosition()}
         measureRef={measureRef}
       >
         <LoungeCompositeTvPlay measureRef={measureRef} />

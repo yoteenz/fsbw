@@ -1,8 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
+  lobbyLoungeTransitionFrameStyle,
+  lobbyLoungeTransitionFullBleedPosterStyle,
+  lobbyLoungeTransitionLetterboxShellStyle,
+  lobbyLoungeTransitionLetterboxSpacerStyle,
   lobbyLoungeTransitionMediaLayerStyle,
   lobbyLoungeTransitionPosterLayerStyle,
   lobbyLoungeTransitionVideoSrc,
@@ -21,6 +25,59 @@ type OverlayProps = {
 
 const posterForDirection = (direction: LobbyLoungeTransitionDirection) =>
   direction === 'forward' ? FINAL_LOBBY_BACKGROUND_SRC : FINAL_LOUNGE_BACKGROUND_SRC;
+
+type TransitionMediaProps = {
+  active: boolean;
+  frameVisible: boolean;
+  poster: string | null;
+  videoRef: RefObject<HTMLVideoElement>;
+  src: string;
+  onError: () => void;
+};
+
+/**
+ * Original cover clip in a portrait frame; transparent flex spacers mask baked-in letterbox.
+ */
+function LobbyLoungeTransitionMedia({
+  active,
+  frameVisible,
+  poster,
+  videoRef,
+  src,
+  onError,
+}: TransitionMediaProps) {
+  const showPoster = active && !frameVisible && poster;
+
+  return (
+    <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
+      {showPoster ? (
+        <div aria-hidden style={lobbyLoungeTransitionFullBleedPosterStyle(poster)} />
+      ) : null}
+      <div aria-hidden style={lobbyLoungeTransitionLetterboxSpacerStyle()} />
+      <div style={lobbyLoungeTransitionFrameStyle()}>
+        {showPoster ? (
+          <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
+        ) : null}
+        <video
+          ref={videoRef}
+          playsInline
+          muted
+          preload="auto"
+          onError={onError}
+          style={{
+            ...lobbyLoungeTransitionMediaLayerStyle(),
+            opacity: active && frameVisible ? 1 : 0,
+            transition: frameVisible ? 'opacity 60ms linear' : 'none',
+          }}
+        >
+          <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+          <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+        </video>
+      </div>
+      <div aria-hidden style={lobbyLoungeTransitionLetterboxSpacerStyle()} />
+    </div>
+  );
+}
 
 /**
  * Seedance clip — fixed viewport (`inset: 0`, `100dvh`) aligned with carousel cover math.
@@ -75,24 +132,14 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
         backgroundColor: 'transparent',
       }}
     >
-      {!frameVisible && active ? (
-        <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
-      ) : null}
-      <video
-        ref={videoRef}
-        playsInline
-        muted
-        preload="auto"
+      <LobbyLoungeTransitionMedia
+        active={active}
+        frameVisible={frameVisible}
+        poster={poster}
+        videoRef={videoRef}
+        src={src}
         onError={finish}
-        style={{
-          ...lobbyLoungeTransitionMediaLayerStyle(),
-          opacity: frameVisible ? 1 : 0,
-          transition: frameVisible ? 'opacity 60ms linear' : 'none',
-        }}
-      >
-        <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-        <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-      </video>
+      />
     </div>
   );
 }
@@ -151,27 +198,17 @@ export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
         overflow: 'hidden',
         pointerEvents: 'none',
         visibility: active ? 'visible' : 'hidden',
-        backgroundColor: '#000000',
+        backgroundColor: 'transparent',
       }}
     >
-      {!frameVisible && active && poster ? (
-        <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
-      ) : null}
-      <video
-        ref={videoRef}
-        playsInline
-        muted
-        preload="auto"
+      <LobbyLoungeTransitionMedia
+        active={active}
+        frameVisible={frameVisible}
+        poster={poster}
+        videoRef={videoRef}
+        src={src}
         onError={finish}
-        style={{
-          ...lobbyLoungeTransitionMediaLayerStyle(),
-          opacity: active && frameVisible ? 1 : 0,
-          transition: frameVisible ? 'opacity 60ms linear' : 'none',
-        }}
-      >
-        <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-        <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-      </video>
+      />
     </div>
   );
 }

@@ -14,20 +14,22 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'seedance98495';
 /** Reverse playback when using forward MP4 backwards (`playbackRate` or RAF fallback). */
 export const LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE = 2;
 
-/**
- * Nudge lobby/lounge composite + Seedance overlay down to match (sub-pixel).
- * Use {@link lobbyLoungeTransitionCoverPosition} everywhere — never `translateY` on the layer
- * (transform leaves a gap at the top and causes pre/post transition bounce).
- */
-export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0.7;
+/** Bundled Seedance clip (portrait). */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH = 1080;
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
 
-/** `background-position` / `object-position` for Final LP lobby + lounge + transition overlay. */
+/**
+ * @deprecated Sub-pixel nudge removed — transition uses original `center top` cover in a
+ * portrait frame; letterbox bands are transparent spacers (see letterbox layout helpers).
+ */
+export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0;
+
+/** Final LP lobby/lounge slides — same as first transition ship (`center top`). */
 export function lobbyLoungeTransitionCoverPosition(): string {
-  const y = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
-  return y ? `center ${y}px` : 'center top';
+  return 'center top';
 }
 
-/** Shared video + poster layer — single source of truth for transition alignment. */
+/** Original transition video/poster layer (full bleed inside the portrait frame). */
 export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
   return {
     position: 'absolute',
@@ -35,18 +37,69 @@ export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    objectPosition: lobbyLoungeTransitionCoverPosition(),
+    objectPosition: 'center top',
   };
 }
 
 export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.CSSProperties {
-  const coverPosition = lobbyLoungeTransitionCoverPosition();
   return {
     ...lobbyLoungeTransitionMediaLayerStyle(),
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: coverPosition,
+    backgroundPosition: 'center top',
     backgroundRepeat: 'no-repeat',
+  };
+}
+
+/** Flex column shell: transparent spacers + centered portrait frame. */
+export function lobbyLoungeTransitionLetterboxShellStyle(): React.CSSProperties {
+  return {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  };
+}
+
+/** Responsive bands above/below the clip — show carousel through (no black matte). */
+export function lobbyLoungeTransitionLetterboxSpacerStyle(): React.CSSProperties {
+  return {
+    flex: '1 1 0',
+    minHeight: 0,
+    width: '100%',
+    backgroundColor: 'transparent',
+    pointerEvents: 'none',
+  };
+}
+
+/** Portrait frame sized to clip aspect; video uses original cover inside. */
+export function lobbyLoungeTransitionFrameStyle(): React.CSSProperties {
+  return {
+    flex: '0 1 auto',
+    position: 'relative',
+    width: '100%',
+    maxWidth: '100vw',
+    maxHeight: '100dvh',
+    aspectRatio: `${LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH} / ${LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT}`,
+    alignSelf: 'center',
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
+  };
+}
+
+/** Full-viewport poster while loading — matches slide cover in letterbox bands. */
+export function lobbyLoungeTransitionFullBleedPosterStyle(posterSrc: string): React.CSSProperties {
+  return {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: `url(${posterSrc})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center top',
+    backgroundRepeat: 'no-repeat',
+    pointerEvents: 'none',
   };
 }
 
