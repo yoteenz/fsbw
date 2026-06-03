@@ -23412,3 +23412,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Phone offset + register/phone open asset −20%
 
 **Fix (`b5187632`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -10 }`. **`LOBBY_CASE_PROP_OPEN_OVERLAY_SCALE`** **0.6** (was **0.75**, −20%) — both register + phone open PNGs; glass popovers unchanged. Register tandem offset still `{ x: 8, y: -8 }`.
+
+---
+
+## 2026-06-02 — Register/phone popover tandem offset bump
+
+**Fix (`43926df3`):** Phone **`{ x: -1, y: -20 }`** (+10px up from −10). Register **`{ x: 10, y: -12 }`** (up 12px, right 10px). Open overlay scale **0.6** unchanged.
