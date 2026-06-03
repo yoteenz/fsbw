@@ -23916,3 +23916,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted checkout order-summary strip to show **only the first two** thumbnails in view (no peek of a third); with **one item**, thumbnail + labels **centered**.
 
 **Fix:** **`checkoutOrderStripDisplay.ts`** — **`ORDER_STRIP_CHECKOUT_VISIBLE_THUMBS` (2)**, **`orderStripCheckoutViewportWidthPx`**, **`orderStripExpandedEntriesContentWidthPx`**, **`orderStripCheckoutScrollLimitsPx`**. **`checkout/page.tsx`** + **`checkout/confirm/page.tsx`**: scroll container **`width`** = viewport px, **`margin: 0 auto`**, **`maxWidth: 100%`**; drag only when **>2** tiles; scroll limits from helpers (not full page width).
+
+---
+
+## 2026-06-02 — Lobby/lounge slides + transition: cover → contain
+
+**Context:** User asked slide backgrounds and QA transition posters to use **`contain`** instead of **`cover`** (fit in clip box, top-aligned, same **`center top`** anchor).
+
+**Fix:** **`sceneCarouselBackground.ts`** — **`background-size: contain`** on viewport + layer styles; **`sceneCarouselCoverMetrics`** uses **`Math.min`** (contain scale). **`sceneCoverHitMap.ts`** — hit/point mapping uses contain scale. **`lobbyLoungeTransitionVideo.ts`** — video **`object-fit: contain`**, in-frame + full-bleed posters **`background-size: contain`**. Letterbox frame sizing follows updated metrics via **`useLobbyLoungeTransitionLetterboxLayout`**.
