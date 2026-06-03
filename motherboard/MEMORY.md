@@ -23892,3 +23892,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted close icon at **top-right of TV screen/contents** on background frame, not old full-frame bezel anchor.
 
 **Fix:** **`LoungeTvFullscreenShell`** — close inside mapped **screen** box (`LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_*_PX` 8px); moves with screen scale/offset. Deprecated bezel **`LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR`** for fullscreen shell.
+
+---
+
+## 2026-06-02 — Lounge TV screen −2%, up 10px
+
+**Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.99→0.97**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **150→140** (up 10px).
