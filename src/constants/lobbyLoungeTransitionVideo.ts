@@ -38,6 +38,7 @@ export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
     height: '100%',
     objectFit: 'cover',
     objectPosition: 'center top',
+    pointerEvents: 'none',
   };
 }
 
@@ -51,42 +52,58 @@ export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.
   };
 }
 
-/** Flex column shell: transparent spacers + centered portrait frame. */
+/** Letterbox root — top-anchored frame; bands use fixed px heights (see letterbox layout hook). */
 export function lobbyLoungeTransitionLetterboxShellStyle(): React.CSSProperties {
   return {
     position: 'absolute',
     inset: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  };
-}
-
-/** Responsive bands above/below the clip — show carousel through (no black matte). */
-export function lobbyLoungeTransitionLetterboxSpacerStyle(): React.CSSProperties {
-  return {
-    flex: '1 1 0',
-    minHeight: 0,
-    width: '100%',
+    overflow: 'hidden',
     backgroundColor: 'transparent',
     pointerEvents: 'none',
   };
 }
 
-/** Portrait frame sized to clip aspect; video uses original cover inside. */
-export function lobbyLoungeTransitionFrameStyle(): React.CSSProperties {
+/** Transparent band above the clip (carousel shows through the fixed host). */
+export function lobbyLoungeTransitionLetterboxTopBandStyle(heightPx: number): React.CSSProperties {
   return {
-    flex: '0 1 auto',
-    position: 'relative',
-    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: `${heightPx}px`,
+    backgroundColor: 'transparent',
+    pointerEvents: 'none',
+  };
+}
+
+/** Transparent band below the clip — sized for portrait letterbox + bounce pad. */
+export function lobbyLoungeTransitionLetterboxBottomBandStyle(heightPx: number): React.CSSProperties {
+  return {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: `${heightPx}px`,
+    backgroundColor: 'transparent',
+    pointerEvents: 'none',
+  };
+}
+
+/** Portrait frame — fixed top offset; original cover video inside. */
+export function lobbyLoungeTransitionFrameStyle(
+  layout: { frameWidth: number; frameHeight: number; topBandPx: number },
+): React.CSSProperties {
+  return {
+    position: 'absolute',
+    top: `${layout.topBandPx}px`,
+    left: '50%',
+    width: `${layout.frameWidth}px`,
+    height: `${layout.frameHeight}px`,
     maxWidth: '100vw',
-    maxHeight: '100dvh',
-    aspectRatio: `${LOBBY_LOUNGE_TRANSITION_VIDEO_WIDTH} / ${LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT}`,
-    alignSelf: 'center',
+    transform: 'translateX(-50%)',
     overflow: 'hidden',
     backgroundColor: 'transparent',
+    pointerEvents: 'none',
   };
 }
 

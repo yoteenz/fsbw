@@ -39,6 +39,7 @@ export function loungeTvAnimationMediaLayerStyle(): React.CSSProperties {
     objectPosition: 'center center',
     transform: scale > 1 ? `scale(${scale})` : undefined,
     transformOrigin: 'center center',
+    pointerEvents: 'none',
   };
 }
 

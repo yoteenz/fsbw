@@ -5,8 +5,9 @@ import {
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
   lobbyLoungeTransitionFrameStyle,
   lobbyLoungeTransitionFullBleedPosterStyle,
+  lobbyLoungeTransitionLetterboxBottomBandStyle,
   lobbyLoungeTransitionLetterboxShellStyle,
-  lobbyLoungeTransitionLetterboxSpacerStyle,
+  lobbyLoungeTransitionLetterboxTopBandStyle,
   lobbyLoungeTransitionMediaLayerStyle,
   lobbyLoungeTransitionPosterLayerStyle,
   lobbyLoungeTransitionVideoSrc,
@@ -15,6 +16,7 @@ import {
   FINAL_LOBBY_BACKGROUND_SRC,
   FINAL_LOUNGE_BACKGROUND_SRC,
 } from '../../constants/finalLobbySceneAssets';
+import { useLobbyLoungeTransitionLetterboxLayout } from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
 
 type OverlayProps = {
@@ -47,14 +49,15 @@ function LobbyLoungeTransitionMedia({
   onError,
 }: TransitionMediaProps) {
   const showPoster = active && !frameVisible && poster;
+  const letterbox = useLobbyLoungeTransitionLetterboxLayout();
 
   return (
     <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
       {showPoster ? (
         <div aria-hidden style={lobbyLoungeTransitionFullBleedPosterStyle(poster)} />
       ) : null}
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxSpacerStyle()} />
-      <div style={lobbyLoungeTransitionFrameStyle()}>
+      <div aria-hidden style={lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx)} />
+      <div style={lobbyLoungeTransitionFrameStyle(letterbox)}>
         {showPoster ? (
           <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
         ) : null}
@@ -74,7 +77,7 @@ function LobbyLoungeTransitionMedia({
           <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
         </video>
       </div>
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxSpacerStyle()} />
+      <div aria-hidden style={lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx)} />
     </div>
   );
 }

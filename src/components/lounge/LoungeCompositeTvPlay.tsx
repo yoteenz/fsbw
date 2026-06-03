@@ -21,7 +21,6 @@ const PRESS_PLAY_LABEL_STYLE: CSSProperties = {
   color: '#808080',
   lineHeight: 1.2,
   textAlign: 'center',
-  pointerEvents: 'none',
   whiteSpace: 'nowrap',
   animation: 'lounge-tv-press-play-pulse 1.6s ease-in-out infinite',
 };
@@ -61,7 +60,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
         ),
         position: 'absolute',
-        zIndex: 11,
+        zIndex: 20,
         boxSizing: 'border-box',
         pointerEvents: 'auto',
       }
