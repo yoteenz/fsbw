@@ -24,6 +24,12 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
  */
 export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 2;
 
+/**
+ * Seedance `<video>` only — scale inside portrait frame (not slide backgrounds).
+ * 0.98 ≈ 2% smaller; `center top` origin keeps top edge aligned with carousel.
+ */
+export const LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98;
+
 /** Transition video + poster `object-position` / `background-position`. */
 export function lobbyLoungeTransitionCoverPosition(
   offsetY: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
@@ -32,11 +38,13 @@ export function lobbyLoungeTransitionCoverPosition(
   return `center calc(0% + ${offsetY}px)`;
 }
 
-/** Video layer inside the shared portrait frame (same box as poster). */
+/** Video layer inside the shared portrait frame (scaled vs poster when QA uses slide PNG). */
 export function lobbyLoungeTransitionMediaLayerStyle(
   _direction: LobbyLoungeTransitionDirection = 'forward',
   mediaOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
+  videoScale: number = LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE,
 ): React.CSSProperties {
+  const scale = Number.isFinite(videoScale) && videoScale > 0 ? videoScale : 1;
   return {
     position: 'absolute',
     inset: 0,
@@ -45,6 +53,9 @@ export function lobbyLoungeTransitionMediaLayerStyle(
     objectFit: 'cover',
     objectPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     pointerEvents: 'none',
+    ...(scale !== 1
+      ? { transform: `scale(${scale})`, transformOrigin: 'center top' }
+      : null),
   };
 }
 
