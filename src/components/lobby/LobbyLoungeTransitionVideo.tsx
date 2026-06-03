@@ -3,23 +3,14 @@ import {
   type LobbyLoungeTransitionDirection,
   LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE,
   LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE,
-  lobbyLoungeTransitionFrameStyle,
-  lobbyLoungeTransitionFullBleedPosterStyle,
-  lobbyLoungeTransitionLetterboxBottomBandStyle,
   lobbyLoungeTransitionLetterboxShellStyle,
-  lobbyLoungeTransitionLetterboxTopBandStyle,
   lobbyLoungeTransitionMediaLayerStyle,
-  lobbyLoungeTransitionPosterLayerStyle,
   lobbyLoungeTransitionVideoSrc,
 } from '../../constants/lobbyLoungeTransitionVideo';
 import {
   FINAL_LOBBY_BACKGROUND_SRC,
   FINAL_LOUNGE_BACKGROUND_SRC,
 } from '../../constants/finalLobbySceneAssets';
-import {
-  LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX,
-  useLobbyLoungeTransitionLetterboxLayout,
-} from '../../hooks/useLobbyLoungeTransitionLetterboxLayout';
 import { useSceneCoverVideoPlayback } from '../../hooks/useSceneCoverVideoPlayback';
 
 type OverlayProps = {
@@ -40,9 +31,7 @@ type TransitionMediaProps = {
   onError: () => void;
 };
 
-/**
- * Original cover clip in a portrait frame; transparent flex spacers mask baked-in letterbox.
- */
+/** Full-viewport `cover` + `center top` — same box as {@link SceneCarouselViewportStage} (no letterbox bands). */
 function LobbyLoungeTransitionMedia({
   active,
   frameVisible,
@@ -52,40 +41,38 @@ function LobbyLoungeTransitionMedia({
   onError,
 }: TransitionMediaProps) {
   const showPoster = active && !frameVisible && poster;
-  const letterbox = useLobbyLoungeTransitionLetterboxLayout();
 
   return (
     <div style={lobbyLoungeTransitionLetterboxShellStyle()}>
       {showPoster ? (
-        <div aria-hidden style={lobbyLoungeTransitionFullBleedPosterStyle(poster)} />
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${poster})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+            pointerEvents: 'none',
+          }}
+        />
       ) : null}
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxTopBandStyle(letterbox.topBandPx)} />
-      <div
+      <video
+        ref={videoRef}
+        playsInline
+        muted
+        preload="auto"
+        onError={onError}
         style={{
-          ...lobbyLoungeTransitionFrameStyle(letterbox),
-          top: `${letterbox.topBandPx + LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX}px`,
+          ...lobbyLoungeTransitionMediaLayerStyle(),
+          opacity: active && frameVisible ? 1 : 0,
+          transition: frameVisible ? 'opacity 60ms linear' : 'none',
         }}
       >
-        {showPoster ? (
-          <div aria-hidden style={lobbyLoungeTransitionPosterLayerStyle(poster)} />
-        ) : null}
-        <video
-          ref={videoRef}
-          playsInline
-          muted
-          preload="auto"
-          onError={onError}
-          style={{
-            ...lobbyLoungeTransitionMediaLayerStyle(),
-            opacity: active && frameVisible ? 1 : 0,
-            transition: frameVisible ? 'opacity 60ms linear' : 'none',
-          }}
-        >
-          <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
-          <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
-        </video>
-      </div>
-      <div aria-hidden style={lobbyLoungeTransitionLetterboxBottomBandStyle(letterbox.bottomBandPx)} />
+        <source src={src} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+        <source src={LOBBY_LOUNGE_TRANSITION_VIDEO_REMOTE} type="video/quicktime" />
+      </video>
     </div>
   );
 }

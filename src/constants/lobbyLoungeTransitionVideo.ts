@@ -1,7 +1,5 @@
 import type React from 'react';
 
-import { sceneCarouselCoverBackgroundPosition } from '../utils/sceneCarouselBackground';
-
 const FINAL_LP_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP';
 
@@ -26,9 +24,9 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_HEIGHT = 1920;
  */
 export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0;
 
-/** Final LP lobby/lounge slides — shared cover anchor (see `SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX`). */
+/** Final LP lobby/lounge slides — `center top` cover (matches {@link SceneCarouselViewportStage}). */
 export function lobbyLoungeTransitionCoverPosition(): string {
-  return sceneCarouselCoverBackgroundPosition();
+  return 'center top';
 }
 
 /** Original transition video/poster layer (full bleed inside the portrait frame). */

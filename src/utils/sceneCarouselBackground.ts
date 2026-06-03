@@ -9,18 +9,9 @@ import {
 export const SCENE_CAROUSEL_BG_WIDTH = FINAL_SCENE_ART_WIDTH;
 export const SCENE_CAROUSEL_BG_HEIGHT = FINAL_SCENE_ART_HEIGHT;
 
-/**
- * Nudge `background-size: cover` + `center top` down so the marble floor covers the slide
- * bottom (avoids white `sceneSlideShellStyle` gap). Keep in sync with transition `object-position`.
- */
-export const SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX = 40;
-
-/** Cover anchor for lobby, lounge, and Seedance transition (same math as {@link sceneCarouselCoverMetrics}). */
-export function sceneCarouselCoverBackgroundPosition(
-  offsetYPx: number = SCENE_CAROUSEL_BG_COVER_OFFSET_Y_PX,
-): string {
-  if (!offsetYPx) return 'center top';
-  return `center calc(0% + ${offsetYPx}px)`;
+/** Cover anchor for lobby, lounge, and Seedance transition — top-aligned with slide art. */
+export function sceneCarouselCoverBackgroundPosition(): string {
+  return 'center top';
 }
 
 /** `cover` + `center top` metrics for a viewport box (matches slide + transition overlay). */
@@ -70,7 +61,7 @@ export function sceneSlideShellStyle(): React.CSSProperties {
     minHeight: sceneCarouselSlideMinHeightCss(),
     height: sceneCarouselSlideMinHeightCss(),
     overflow: 'hidden',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#e8e4e0',
   };
 }
 
@@ -101,7 +92,7 @@ export function sceneCarouselViewportBackgroundStyle(
     backgroundSize: 'cover',
     backgroundPosition: options?.backgroundPosition ?? sceneCarouselCoverBackgroundPosition(),
     backgroundRepeat: 'no-repeat',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#e8e4e0',
   };
 }
 
@@ -135,6 +126,6 @@ export function sceneCarouselBackgroundLayerStyle(
     backgroundSize: 'cover',
     backgroundPosition: options?.backgroundPosition ?? sceneCarouselCoverBackgroundPosition(),
     backgroundRepeat: 'no-repeat',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#e8e4e0',
   };
 }
