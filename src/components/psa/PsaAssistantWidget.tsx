@@ -7,6 +7,7 @@ import {
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_WELCOME_MESSAGE,
+  PSA_IDLE_EXPRESSION_MS,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
@@ -33,6 +34,7 @@ export default function PsaAssistantWidget() {
   const [inputHasText, setInputHasText] = useState(false);
   const [lastReplyAt, setLastReplyAt] = useState<number | null>(null);
   const [expressionTick, setExpressionTick] = useState(0);
+  const [idleExpressionFlip, setIdleExpressionFlip] = useState(0);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { messages, isSending, sendMessage, usage, setUsage } = usePsaChat(PSA_WELCOME_MESSAGE);
@@ -58,6 +60,15 @@ export default function PsaAssistantWidget() {
       usage.dayLimit
     );
   }, [usage]);
+
+  useEffect(() => {
+    if (isOpen) return;
+    const id = window.setInterval(
+      () => setIdleExpressionFlip((n) => n + 1),
+      PSA_IDLE_EXPRESSION_MS
+    );
+    return () => window.clearInterval(id);
+  }, [isOpen]);
 
   const prevMessageCountRef = useRef(messages.length);
   useEffect(() => {
@@ -159,20 +170,32 @@ export default function PsaAssistantWidget() {
     navigate('/account/rewards');
   }, [navigate]);
 
-  const avatarExpression = useMemo(
-    () =>
-      resolvePsaAvatarExpression({
-        isChatOpen: isOpen,
-        isSending,
-        isInputFocused,
-        inputHasText,
-        showWelcomeWave,
-        lastReplyAt,
-        messages,
-        now: Date.now() + expressionTick * 0,
-      }),
-    [isOpen, isSending, isInputFocused, inputHasText, showWelcomeWave, lastReplyAt, messages, expressionTick]
-  );
+  const avatarExpression = useMemo(() => {
+    const resolved = resolvePsaAvatarExpression({
+      isChatOpen: isOpen,
+      isSending,
+      isInputFocused,
+      inputHasText,
+      showWelcomeWave,
+      lastReplyAt,
+      messages,
+      now: Date.now() + expressionTick * 0,
+    });
+    if (!isOpen && resolved === 'neutral') {
+      return idleExpressionFlip % 2 === 0 ? 'neutral' : 'neutral-smiling';
+    }
+    return resolved;
+  }, [
+    isOpen,
+    isSending,
+    isInputFocused,
+    inputHasText,
+    showWelcomeWave,
+    lastReplyAt,
+    messages,
+    expressionTick,
+    idleExpressionFlip,
+  ]);
 
   // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
   if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname)) {
@@ -196,6 +219,7 @@ export default function PsaAssistantWidget() {
         <PsaAvatarTrigger
           onClick={handleToggle}
           isOpen={isOpen}
+          idle={!isOpen}
           expression={avatarExpression}
         />
       </div>

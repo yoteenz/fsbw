@@ -3,14 +3,14 @@ import {
   getPsaAvatarSrc,
   PSA_AVATAR_DEFAULT_EXPRESSION,
   PSA_AVATAR_FALLBACK_SRC,
-  PSA_WIDGET_LABEL,
-  PSA_WIDGET_SUBLABEL,
+  PSA_WIDGET_CTA,
   type PsaAvatarExpression,
 } from '../../constants/psaConfig';
 
 type PsaAvatarTriggerProps = {
   onClick: () => void;
   isOpen: boolean;
+  idle?: boolean;
   expression?: PsaAvatarExpression;
   'aria-label'?: string;
 };
@@ -18,6 +18,7 @@ type PsaAvatarTriggerProps = {
 export default function PsaAvatarTrigger({
   onClick,
   isOpen,
+  idle = false,
   expression = PSA_AVATAR_DEFAULT_EXPRESSION,
   'aria-label': ariaLabel = 'Open Personal Slay Assistant',
 }: PsaAvatarTriggerProps) {
@@ -42,7 +43,7 @@ export default function PsaAvatarTrigger({
       aria-label={ariaLabel}
       aria-expanded={isOpen}
     >
-      <div className="psa-avatar-frame">
+      <div className={`psa-avatar-frame${idle ? ' psa-avatar-idle' : ''}`}>
         <img
           key={expression}
           className="psa-avatar-img"
@@ -52,10 +53,7 @@ export default function PsaAvatarTrigger({
         />
         <div className="psa-avatar-scanlines" aria-hidden />
       </div>
-      <span className="psa-avatar-label">
-        {PSA_WIDGET_LABEL}
-        <span className="psa-avatar-sublabel">{PSA_WIDGET_SUBLABEL}</span>
-      </span>
+      <span className="psa-avatar-cta">{PSA_WIDGET_CTA}</span>
     </button>
   );
 }

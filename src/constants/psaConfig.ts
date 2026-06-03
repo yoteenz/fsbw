@@ -47,6 +47,12 @@ export const PSA_AVATAR_THINKING_SRC = PSA_AVATAR_SRC.thinking;
 export const PSA_WIDGET_LABEL = 'PSA';
 export const PSA_WIDGET_SUBLABEL = 'PERSONAL SLAY ASSISTANT';
 
+/** FAB caption under avatar — action-oriented so members know it is tappable. */
+export const PSA_WIDGET_CTA = 'TAP TO CHAT';
+
+/** Idle FAB alternates neutral ↔ neutral-smiling (ms). */
+export const PSA_IDLE_EXPRESSION_MS = 3500;
+
 export const PSA_CHAT_TITLE = 'PSA';
 export const PSA_CHAT_SUBTITLE = 'PERSONAL SLAY ASSISTANT';
 
