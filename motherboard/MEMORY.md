@@ -23876,3 +23876,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked TV screen + content **4% larger** and **down 20px** in tandem.
 
 **Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.95→0.99**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **130→150** (`LoungeTvFullscreenShell`).
+
+---
+
+## 2026-06-02 — Lobby/lounge transition clip 100% + 2% in shell
+
+**Context:** User asked transition clip at **100%** in clip container, then **+2%** inside it; frame shell must not move (no **`FRAME_OFFSET_Y`**).
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE`** **0.98→1.02** on **`<video>`** only; **`lobbyLoungeTransitionFrameStyle`** still **`topBandPx`** only (no frame Y offset).
