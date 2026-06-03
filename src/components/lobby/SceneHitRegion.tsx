@@ -6,6 +6,8 @@ type SceneHitRegionProps = {
   ariaLabel: string;
   onActivate: () => void;
   zIndex?: number;
+  /** When true, no navigation (e.g. register/phone popover open on lobby). */
+  disabled?: boolean;
   /** QA: colored overlay so hit rect can be tuned against baked art. */
   debugOverlay?: boolean;
   debugLabel?: string;
@@ -43,29 +45,36 @@ export function SceneHitRegion({
   ariaLabel,
   onActivate,
   zIndex = 20,
+  disabled = false,
   debugOverlay = false,
   debugLabel,
 }: SceneHitRegionProps) {
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (disabled) return;
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         onActivate();
       }
     },
-    [onActivate],
+    [disabled, onActivate],
   );
 
   return (
     <button
       type="button"
       aria-label={ariaLabel}
-      onClick={onActivate}
+      aria-disabled={disabled}
+      disabled={disabled}
+      onClick={disabled ? undefined : onActivate}
       onKeyDown={onKeyDown}
+      tabIndex={disabled ? -1 : 0}
       style={{
         ...hitBaseStyle,
         ...rectToPercentStyle(rect),
         zIndex,
+        pointerEvents: disabled ? 'none' : 'auto',
+        cursor: disabled ? 'default' : 'pointer',
         ...(debugOverlay ? SCENE_HIT_DEBUG_OVERLAY_STYLE : null),
       }}
     >

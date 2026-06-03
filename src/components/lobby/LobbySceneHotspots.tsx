@@ -75,37 +75,61 @@ export function LobbySceneHotspots({
     LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
   );
 
+  const lobbyLinksLocked = lobbyCasePopover !== null;
+
   return (
     <>
-      <SceneHitRegion rect={FINAL_LOBBY_HIT_REGIONS.logo} ariaLabel="Go to shop" onActivate={goToHomeShop} zIndex={25} />
-      <SceneHitRegion rect={FINAL_LOBBY_HIT_REGIONS.navShop} ariaLabel="Shop" onActivate={goToHomeShop} zIndex={30} />
-      <SceneHitRegion rect={FINAL_LOBBY_HIT_REGIONS.navTools} ariaLabel="Tools" onActivate={goToHomeTools} zIndex={30} />
+      <SceneHitRegion
+        rect={FINAL_LOBBY_HIT_REGIONS.logo}
+        ariaLabel="Go to shop"
+        onActivate={goToHomeShop}
+        zIndex={25}
+        disabled={lobbyLinksLocked}
+      />
+      <SceneHitRegion
+        rect={FINAL_LOBBY_HIT_REGIONS.navShop}
+        ariaLabel="Shop"
+        onActivate={goToHomeShop}
+        zIndex={30}
+        disabled={lobbyLinksLocked}
+      />
+      <SceneHitRegion
+        rect={FINAL_LOBBY_HIT_REGIONS.navTools}
+        ariaLabel="Tools"
+        onActivate={goToHomeTools}
+        zIndex={30}
+        disabled={lobbyLinksLocked}
+      />
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.navBooking}
         ariaLabel="Premium booking"
         onActivate={goToBooking}
         zIndex={30}
+        disabled={lobbyLinksLocked}
       />
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.shelfHdLace}
         ariaLabel="Shop HD lace frontals"
         onActivate={goToShopFrontals}
         zIndex={22}
+        disabled={lobbyLinksLocked}
       />
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.shelfBundles}
         ariaLabel="Shop bundles"
         onActivate={goToShopBundles}
         zIndex={22}
+        disabled={lobbyLinksLocked}
       />
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.shelfCustomUnits}
         ariaLabel="Shop custom units"
         onActivate={goToShopUnits}
         zIndex={22}
+        disabled={lobbyLinksLocked}
       />
 
-      {lobbyCasePopover !== null ? (
+      {lobbyLinksLocked ? (
         <div
           role="presentation"
           aria-hidden
@@ -117,6 +141,7 @@ export function LobbySceneHotspots({
             backdropFilter: LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR,
             WebkitBackdropFilter: LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR,
             zIndex: LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
+            pointerEvents: 'auto',
           }}
         />
       ) : null}
