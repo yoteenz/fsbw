@@ -23110,6 +23110,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lounge TV play button retune (10px / 40px)
+
+**Context:** User retuned play tap — **10px right**, **40px down** (was 16 / 60).
+
+**Fix:** **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 10`**, **`FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 40`** — `LoungeCompositeTvPlay` `translate()` unchanged pattern.
+
+---
+
 ## 2026-06-02 — Lobby/lounge transition up 2px
 
 **Context:** Transition still slightly low vs composite; user asked **2px up** with no overrides.
