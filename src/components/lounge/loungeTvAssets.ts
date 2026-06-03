@@ -18,13 +18,35 @@ export const LOUNGE_TV_CONTENT_FRAME_PX = { width: 940, height: 1672 } as const;
 export const LOUNGE_TV_CONTENT_FRAME_ASPECT =
   LOUNGE_TV_CONTENT_FRAME_PX.width / LOUNGE_TV_CONTENT_FRAME_PX.height;
 
-/** Wall-mounted TV glass on {@link LOUNGE_TV_CONTENT_FRAME_SRC} (normalized 0–1). */
-export const LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT = {
-  left: 75 / LOUNGE_TV_CONTENT_FRAME_PX.width,
-  top: 133 / LOUNGE_TV_CONTENT_FRAME_PX.height,
-  width: (863 - 75) / LOUNGE_TV_CONTENT_FRAME_PX.width,
-  height: (918 - 133) / LOUNGE_TV_CONTENT_FRAME_PX.height,
+/** TV glass inset on end-still PNG (px). */
+export const LOUNGE_TV_CONTENT_FRAME_SCREEN_INSET_PX = {
+  left: 75,
+  top: 133,
+  right: 863,
+  bottom: 918,
 } as const;
+
+/**
+ * Menu / static / video inset height vs measured glass (1 − 0.35 = 65% after new TV bezel).
+ * Centered in the original glass box on {@link LOUNGE_TV_CONTENT_FRAME_SRC}.
+ */
+export const LOUNGE_TV_CONTENT_SCREEN_HEIGHT_SCALE = 0.65;
+
+/** Wall-mounted TV glass on {@link LOUNGE_TV_CONTENT_FRAME_SRC} (normalized 0–1). */
+export const LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT = (() => {
+  const { width: W, height: H } = LOUNGE_TV_CONTENT_FRAME_PX;
+  const { left, top, right, bottom } = LOUNGE_TV_CONTENT_FRAME_SCREEN_INSET_PX;
+  const fullH = bottom - top;
+  const h = fullH * LOUNGE_TV_CONTENT_SCREEN_HEIGHT_SCALE;
+  const centerY = top + fullH / 2;
+  const newTop = centerY - h / 2;
+  return {
+    left: left / W,
+    top: newTop / H,
+    width: (right - left) / W,
+    height: h / H,
+  };
+})();
 
 /** Close chip on TV bezel (fraction of full frame). */
 export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {

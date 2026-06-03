@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import { FINAL_LOUNGE_BACKGROUND_SRC } from './finalLobbySceneAssets';
 
 export type LoungeTvAnimationDirection = 'forward' | 'reverse';
@@ -8,10 +10,32 @@ const FINAL_LP_BASE =
 /** Seedance lounge TV open clip (curtains, TV grow, hand, static). */
 export const LOUNGE_TV_ANIMATION_VIDEO_REMOTE = `${FINAL_LP_BASE}/video.mov`;
 
-export const LOUNGE_TV_ANIMATION_VIDEO_VERSION = 'final-lp-video-mov-1';
+export const LOUNGE_TV_ANIMATION_VIDEO_VERSION = 'final-lp-video-crop-v1';
 
 /** Bundled fallback when present (`public/assets/lounge-tv-animation.mov`). */
 export const LOUNGE_TV_ANIMATION_VIDEO_SRC = `/assets/lounge-tv-animation.mov?v=${LOUNGE_TV_ANIMATION_VIDEO_VERSION}`;
+
+/**
+ * Extra vertical zoom on the open/close clip if letterbox remains (1 = none).
+ * Prefer `npm run lounge:bake-tv-animation-crop` — do not combine large scale with baked crop.
+ */
+export const LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE = 1;
+
+/** Full-bleed layer for {@link LoungeTvAnimationVideo} — tune crop via bake script + scale above. */
+export function loungeTvAnimationMediaLayerStyle(): React.CSSProperties {
+  const scale = LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE;
+  return {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'center center',
+    transform: scale > 1 ? `scale(${scale})` : undefined,
+    transformOrigin: 'center center',
+  };
+}
 
 /** Reverse close uses forward clip + negative playback (same as lobby/lounge room transition). */
 export const LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE = 2;

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   LOUNGE_TV_ANIMATION_VIDEO_REMOTE,
   LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE,
+  loungeTvAnimationMediaLayerStyle,
   loungeTvAnimationPosterSrc,
   loungeTvAnimationVideoSrc,
 } from '../../constants/loungeTvAnimationVideo';
@@ -11,16 +12,6 @@ type Props = {
   active: boolean;
   direction: SceneCoverVideoDirection;
   onComplete: () => void;
-};
-
-const mediaStyle = {
-  position: 'absolute' as const,
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover' as const,
-  objectPosition: 'center top',
 };
 
 /** Full-screen TV open/close Seedance clip (`Final LP/video.mov`). */
@@ -70,10 +61,10 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         <div
           aria-hidden
           style={{
-            ...mediaStyle,
+            ...loungeTvAnimationMediaLayerStyle(),
             backgroundImage: `url(${poster})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center top',
+            backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat',
           }}
         />
@@ -86,7 +77,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
         poster={poster ?? undefined}
         onError={finish}
         style={{
-          ...mediaStyle,
+          ...loungeTvAnimationMediaLayerStyle(),
           opacity: frameVisible ? 1 : 0,
           transition: 'opacity 60ms linear',
         }}
