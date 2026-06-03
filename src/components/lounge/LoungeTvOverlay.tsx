@@ -24,6 +24,7 @@ import {
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
   resolveLoungeTvTiles,
 } from '../../utils/loungeTvAdminConfig';
+import { setLoungeTvTheaterMode } from '../../utils/loungeTvTheaterMode';
 import { getLoungeTvAdminConfig } from '../../utils/api';
 import {
   LOUNGE_TV_VIEWED_UPDATED_EVENT,
@@ -592,6 +593,12 @@ export function LoungeTvOverlay({
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
   const [seedancePhase, setSeedancePhase] = useState<SeedanceTvPhase>('idle');
+
+  useEffect(() => {
+    setLoungeTvTheaterMode(isOpen || visible);
+  }, [isOpen, visible]);
+
+  useEffect(() => () => setLoungeTvTheaterMode(false), []);
 
   const useSeedanceClip = LOUNGE_TV_ANIMATION_VIDEO_ENABLED;
 
