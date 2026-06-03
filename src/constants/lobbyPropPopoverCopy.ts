@@ -1,7 +1,7 @@
 import { BRAND_CONTACT_EMAIL } from './brandContactCopy';
 
 /** Lobby phone popover hours line (popover only — brand contact page may differ). */
-export const LOBBY_PHONE_POPOVER_HOURS = '11 AM - 6 PM CST';
+export const LOBBY_PHONE_POPOVER_HOURS = '11AM - 6PM CST';
 
 /** Lobby display-case phone popover — business contact (aligned with brand contact). */
 export const LOBBY_PHONE_POPOVER_TITLE = 'CONTACT US';
