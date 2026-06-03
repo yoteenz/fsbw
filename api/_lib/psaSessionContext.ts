@@ -29,6 +29,7 @@ export type PsaClientSessionContextPayload = {
     source: 'draft' | 'session';
   };
   mode?: 'talk_me_out_of_it' | 'event_ready' | 'what_would_you_pick';
+  welcomeKind?: 'first' | 'returning' | 'default';
 };
 
 export function formatPsaSessionContextBlock(raw: unknown): string {
@@ -41,7 +42,20 @@ export function formatPsaSessionContextBlock(raw: unknown): string {
   }
   if (typeof ctx.firstName === 'string' && ctx.firstName.trim()) {
     lines.push(
-      `- Member first name (Settings): **${ctx.firstName.trim()}** — use in greetings when natural (e.g. "Welcome back, ${ctx.firstName.trim()}!").`
+      `- Member first name (Settings): **${ctx.firstName.trim()}** — use in greetings when natural.`
+    );
+  }
+  if (ctx.welcomeKind === 'first') {
+    lines.push(
+      '- **Welcome kind: first unlock** — member just gained PSA access. Greet with "Welcome, {firstName}!" (not "Welcome back").'
+    );
+  } else if (ctx.welcomeKind === 'returning') {
+    lines.push(
+      '- **Welcome kind: returning session** — member came back after leaving the site. "Welcome back, {firstName}!" is appropriate.'
+    );
+  } else if (ctx.welcomeKind === 'default') {
+    lines.push(
+      '- **Welcome kind: same session** — skip "Welcome" / "Welcome back" prefixes unless they ask; continue the conversation naturally.'
     );
   }
   if (ctx.tierLabel || ctx.subscriptionTier) {

@@ -1,6 +1,10 @@
 /** PSA (Personal Slay Assistant) frontend config — avatar assets and copy. */
 
 import { getCurrentUserFirstNameFromStorage } from '../utils/perUserStorage';
+import {
+  resolvePsaWelcomeKind,
+  type PsaWelcomeKind,
+} from '../utils/psaWelcomeState';
 
 /** All PSA avatar expression PNGs live in `public/assets/` (transparent background). */
 export type PsaAvatarExpression =
@@ -78,15 +82,31 @@ export function formatPsaMemberFirstName(raw: string): string {
 }
 
 /** Welcome bubble when chat opens with no prior thread. */
-export function buildPsaWelcomeMessage(firstName?: string | null): string {
-  const formatted = firstName?.trim() ? formatPsaMemberFirstName(firstName) : '';
-  const greeting = formatted ? `Welcome back, ${formatted}!` : 'Welcome back!';
-  return `${greeting} I'm your PSA. What are you looking for today: new hair, maintenance, customization or a little bit of everything?`;
+export function buildPsaWelcomeMessage(options?: {
+  firstName?: string | null;
+  kind?: PsaWelcomeKind;
+}): string {
+  const rawName = options?.firstName ?? getCurrentUserFirstNameFromStorage();
+  const formatted = rawName?.trim() ? formatPsaMemberFirstName(rawName) : '';
+  const kind = options?.kind ?? 'default';
+
+  let greeting = '';
+  if (kind === 'first') {
+    greeting = formatted ? `Welcome, ${formatted}!` : 'Welcome!';
+  } else if (kind === 'returning') {
+    greeting = formatted ? `Welcome back, ${formatted}!` : 'Welcome back!';
+  }
+
+  const intro = greeting ? `${greeting} I'm your PSA.` : `I'm your PSA.`;
+  return `${intro} What are you looking for today: new hair, maintenance, customization or a little bit of everything?`;
 }
 
-/** Welcome message using first name from signed-in user settings. */
+/** Welcome message using Settings first name + first-unlock / return-session rules. */
 export function readPsaWelcomeMessageFromStorage(): string {
-  return buildPsaWelcomeMessage(getCurrentUserFirstNameFromStorage());
+  return buildPsaWelcomeMessage({
+    firstName: getCurrentUserFirstNameFromStorage(),
+    kind: resolvePsaWelcomeKind(),
+  });
 }
 
 /** @deprecated Prefer readPsaWelcomeMessageFromStorage() or buildPsaWelcomeMessage(). */

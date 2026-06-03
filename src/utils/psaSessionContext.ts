@@ -7,6 +7,7 @@ import {
 } from './adminAuth';
 import { getCurrentUserEmailFromStorage, getCurrentUserFirstNameFromStorage } from './perUserStorage';
 import { formatPsaMemberFirstName } from '../constants/psaConfig';
+import { resolvePsaWelcomeKind, type PsaWelcomeKind } from './psaWelcomeState';
 import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { detectPsaBawResumeTarget } from './psaBawDraft';
@@ -44,6 +45,7 @@ export type PsaClientSessionContext = {
     source: 'draft' | 'session';
   };
   mode?: PsaSessionMode;
+  welcomeKind?: PsaWelcomeKind;
 };
 
 function readJsonArray(key: string): Record<string, unknown>[] {
@@ -193,6 +195,8 @@ export function buildPsaClientSessionContext(
     const mode = inferModeFromMessage(pendingMessage);
     if (mode) ctx.mode = mode;
   }
+
+  ctx.welcomeKind = resolvePsaWelcomeKind();
 
   return ctx;
 }
