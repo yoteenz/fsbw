@@ -48,11 +48,15 @@ export const LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT = (() => {
   };
 })();
 
-/** Close chip on TV bezel (fraction of full frame). */
+/** @deprecated Full-frame bezel chip — close uses {@link LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_*_PX} on glass rect. */
 export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
   top: 118 / LOUNGE_TV_CONTENT_FRAME_PX.height,
   right: 62 / LOUNGE_TV_CONTENT_FRAME_PX.width,
 } as const;
+
+/** Close X inset from top-right of mapped TV glass / content ({@link LoungeTvFullscreenShell}). */
+export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX = 8;
+export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX = 8;
 
 /**
  * End-still PNG (`lounge-tv-content-frame.png`) after Seedance open — {@link LoungeTvFullscreenShell} only.

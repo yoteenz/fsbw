@@ -1,11 +1,12 @@
 import type React from 'react';
 import {
-  LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR,
   LOUNGE_TV_CONTENT_FRAME_PX,
   LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
   LOUNGE_TV_CONTENT_FRAME_SRC,
   LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX,
   LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX,
+  LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX,
+  LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX,
   LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
   LOUNGE_TV_CONTENT_SCREEN_SCALE,
 } from './loungeTvAssets';
@@ -33,16 +34,10 @@ export function LoungeTvFullscreenShell({
   onClose,
   zIndex = 110,
 }: Props) {
-  const closePoint = {
-    x: 1 - LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR.right,
-    y: LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR.top,
-  };
-
-  const { mappedScreen, mappedClose } = useCoverMappedLayout(
+  const { mappedScreen } = useCoverMappedLayout(
     LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
     LOUNGE_TV_CONTENT_FRAME_PX.width,
     LOUNGE_TV_CONTENT_FRAME_PX.height,
-    closePoint,
   );
 
   const frameStillOffsetX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX;
@@ -83,7 +78,7 @@ export function LoungeTvFullscreenShell({
           ...rectToPercentStyle(mappedScreen),
           position: 'absolute',
           boxSizing: 'border-box',
-          overflow: 'hidden',
+          overflow: 'visible',
           zIndex: 1,
           ...screenStyle,
           transform: screenTransform,
@@ -91,30 +86,20 @@ export function LoungeTvFullscreenShell({
         }}
       >
         {children}
-      </div>
-      {onClose && mappedClose ? (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            pointerEvents: 'none',
-            transform: frameStillTransform,
-          }}
-        >
+        {onClose ? (
           <LoungeTvCloseButton
             visible={closeVisible}
             position={{
-              left: `${mappedClose.left * 100}%`,
-              top: `${mappedClose.top * 100}%`,
-              right: 'auto',
+              top: LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX,
+              right: LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX,
             }}
             onClick={(e) => {
               e.stopPropagation();
               onClose(e);
             }}
           />
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }
