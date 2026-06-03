@@ -15,32 +15,37 @@ export const LOBBY_LOUNGE_TRANSITION_VIDEO_VERSION = 'seedance98495';
 export const LOBBY_LOUNGE_TRANSITION_REVERSE_PLAYBACK_RATE = 2;
 
 /**
- * Nudge lobby/lounge Seedance overlay down to match composite `cover` backgrounds.
- * Applied only via {@link lobbyLoungeTransitionMediaLayerStyle} — do not set `top` / `objectPosition` elsewhere.
+ * Nudge lobby/lounge composite + Seedance overlay down to match (sub-pixel).
+ * Use {@link lobbyLoungeTransitionCoverPosition} everywhere — never `translateY` on the layer
+ * (transform leaves a gap at the top and causes pre/post transition bounce).
  */
 export const LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0.7;
 
+/** `background-position` / `object-position` for Final LP lobby + lounge + transition overlay. */
+export function lobbyLoungeTransitionCoverPosition(): string {
+  const y = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
+  return y ? `center ${y}px` : 'center top';
+}
+
 /** Shared video + poster layer — single source of truth for transition alignment. */
 export function lobbyLoungeTransitionMediaLayerStyle(): React.CSSProperties {
-  const offsetY = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX;
   return {
     position: 'absolute',
     inset: 0,
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    objectPosition: 'center top',
-    // translateY only — avoid top/height calc reflow when <video> mounts (pre-play bounce).
-    transform: offsetY ? `translateY(${offsetY}px)` : undefined,
+    objectPosition: lobbyLoungeTransitionCoverPosition(),
   };
 }
 
 export function lobbyLoungeTransitionPosterLayerStyle(posterSrc: string): React.CSSProperties {
+  const coverPosition = lobbyLoungeTransitionCoverPosition();
   return {
     ...lobbyLoungeTransitionMediaLayerStyle(),
     backgroundImage: `url(${posterSrc})`,
     backgroundSize: 'cover',
-    backgroundPosition: 'center top',
+    backgroundPosition: coverPosition,
     backgroundRepeat: 'no-repeat',
   };
 }

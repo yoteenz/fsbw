@@ -6,15 +6,26 @@ import {
 
 type Props = {
   backgroundSrc: string;
+  /** Must match {@link lobbyLoungeTransitionCoverPosition} on Final LP lobby/lounge slides. */
+  backgroundPosition?: string;
   measureRef?: Ref<HTMLDivElement>;
   children?: ReactNode;
 };
 
 /** Visible lobby/lounge scene — fixed `100dvh` so cover, hits, and transition video share one box. */
-export function SceneCarouselViewportStage({ backgroundSrc, measureRef, children }: Props) {
+export function SceneCarouselViewportStage({
+  backgroundSrc,
+  backgroundPosition,
+  measureRef,
+  children,
+}: Props) {
   return (
     <div ref={measureRef} style={sceneCarouselViewportStageStyle()}>
-      <div style={sceneCarouselViewportBackgroundStyle(backgroundSrc)} />
+      <div
+        style={sceneCarouselViewportBackgroundStyle(backgroundSrc, {
+          backgroundPosition,
+        })}
+      />
       {children}
     </div>
   );

@@ -63,7 +63,19 @@ export function useSceneCoverVideoPlayback(
       safetyTimer = window.setTimeout(finish, ms);
     };
 
-    const onPlayingEvent = () => onPlayingRef.current?.();
+    const notifyPlaying = () => {
+      const fire = () => onPlayingRef.current?.();
+      if (typeof el.requestVideoFrameCallback === 'function') {
+        el.requestVideoFrameCallback(fire);
+        return;
+      }
+      requestAnimationFrame(() => requestAnimationFrame(fire));
+    };
+
+    const onPlayingEvent = () => {
+      if (direction === 'reverse') return;
+      notifyPlaying();
+    };
 
     const playForward = async () => {
       el.playbackRate = 1;
@@ -140,7 +152,7 @@ export function useSceneCoverVideoPlayback(
         if (!revealed) {
           revealed = true;
           // Reveal after first step-back — not on seeked end frame (avoids poster vs last-frame bounce).
-          onPlayingRef.current?.();
+          notifyPlaying();
         }
         if (next <= 0.04) {
           finish();

@@ -45,7 +45,10 @@ export function LobbyLoungeTransitionOverlay({ active, direction, onComplete }: 
     const el = videoRef.current;
     if (!el) return;
     el.preload = 'auto';
-    el.load();
+    if (el.dataset.sceneCoverSrc !== src) {
+      el.dataset.sceneCoverSrc = src;
+      el.load();
+    }
   }, [active, src]);
 
   useSceneCoverVideoPlayback(videoRef, {
