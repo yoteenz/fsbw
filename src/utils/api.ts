@@ -131,7 +131,9 @@ export async function getAccessToken(): Promise<string | null> {
     /* ignore */
   }
 
-  return readAccessTokenFromSupabaseStorage();
+  const stored = readAccessTokenFromSupabaseStorage();
+  if (stored && !isAccessTokenLikelyExpired(stored)) return stored;
+  return null;
 }
 
 /** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */

@@ -13,6 +13,19 @@ export type PsaPremiumProfile = {
   isPremium: boolean;
 };
 
+function isPremiumFromProfileRow(row: {
+  membership_type?: string | null;
+  subscription_tier?: string | null;
+  current_tier_name?: string | null;
+}): boolean {
+  const membershipType = (row.membership_type ?? '').trim().toUpperCase();
+  const subscriptionTier = (row.subscription_tier ?? '').trim().toLowerCase();
+  const tierName = (row.current_tier_name ?? '').trim().toUpperCase();
+  if (tierName === 'BLACK') return true;
+  if (membershipType === 'PREMIUM') return true;
+  return subscriptionTier !== '' && PREMIUM_TIERS.has(subscriptionTier);
+}
+
 export async function getPsaPremiumProfile(
   userId: string,
   accessToken: string
@@ -20,7 +33,7 @@ export async function getPsaPremiumProfile(
   const supabase = getSupabaseUser(accessToken);
   const { data, error } = await supabase
     .from('profiles')
-    .select('membership_type, subscription_tier, tier_name')
+    .select('membership_type, subscription_tier, current_tier_name')
     .eq('id', userId)
     .maybeSingle();
 
@@ -29,21 +42,17 @@ export async function getPsaPremiumProfile(
   const row = data as {
     membership_type?: string | null;
     subscription_tier?: string | null;
-    tier_name?: string | null;
+    current_tier_name?: string | null;
   };
 
   const membershipType = row.membership_type?.trim() || null;
   const subscriptionTier = row.subscription_tier?.trim().toLowerCase() || null;
-  const tierName = row.tier_name?.trim() || null;
-  const isBlackTier = (tierName || '').toUpperCase() === 'BLACK';
-  const hasSubscriptionTier = subscriptionTier != null && PREMIUM_TIERS.has(subscriptionTier);
-  const isPremiumMembership =
-    (membershipType || '').toUpperCase() === 'PREMIUM' && hasSubscriptionTier;
+  const tierName = row.current_tier_name?.trim() || null;
 
   return {
     membershipType,
     subscriptionTier,
     tierName,
-    isPremium: Boolean(isPremiumMembership || isBlackTier),
+    isPremium: isPremiumFromProfileRow(row),
   };
 }

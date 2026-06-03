@@ -1,14 +1,18 @@
 /**
- * Replace Fal's fake transparent (light gray/white) background on PSA avatar assets
- * with solid black so the FAB does not show a gray box on site pages.
+ * Replace fake-transparent / green-screen backgrounds on PSA avatar assets with solid black.
  *
- * Usage: node scripts/psa-flatten-avatar-backgrounds.mjs
+ * Usage:
+ *   node scripts/psa-flatten-avatar-backgrounds.mjs
+ *   node scripts/psa-flatten-avatar-backgrounds.mjs --greenscreen
+ *
+ * For new Fal exports: use a flat **#00B140** green screen behind the character, then run with `--greenscreen`.
  */
 import { Jimp } from 'jimp';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const ASSETS_DIR = path.join(process.cwd(), 'public/assets');
+const useGreenScreen = process.argv.includes('--greenscreen');
 const FILL = { r: 0, g: 0, b: 0, a: 255 };
 const FILL_INT = (FILL.r << 24) | (FILL.g << 16) | (FILL.b << 8) | FILL.a;
 
@@ -20,13 +24,21 @@ function colorDist(a, b) {
   return Math.sqrt((a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2);
 }
 
+function isGreenScreenPixel(p) {
+  return p.g >= 120 && p.g > p.r + 35 && p.g > p.b + 35;
+}
+
 function isBackgroundPixel(p, bgRefs) {
   if (p.a < 16) return true;
+  if (useGreenScreen && isGreenScreenPixel(p)) return true;
   const minDist = Math.min(...bgRefs.map((bg) => colorDist(p, bg)));
-  if (minDist <= 42) return true;
+  if (minDist <= 48) return true;
   const max = Math.max(p.r, p.g, p.b);
   const min = Math.min(p.r, p.g, p.b);
-  if (max >= 228 && max - min <= 18) return true;
+  /** Light gray / white (Fal fake transparency or checkerboard light squares). */
+  if (max >= 220 && max - min <= 24) return true;
+  /** Checkerboard dark squares (often ~204–230 gray). */
+  if (max >= 190 && max <= 235 && max - min <= 12) return true;
   return false;
 }
 
@@ -53,15 +65,12 @@ async function flattenFile(filename) {
     }
   }
 
-  if (filename.endsWith('.jpg') || filename.endsWith('.jpeg')) {
-    await img.write(filePath);
-  } else {
-    await img.write(filePath);
-  }
+  await img.write(filePath);
   return { filename, replaced, total: w * h };
 }
 
 const files = fs.readdirSync(ASSETS_DIR).filter((f) => f.startsWith('psa-avatar-'));
+console.log(`Mode: ${useGreenScreen ? 'green-screen + auto' : 'auto (gray/checkerboard)'}`);
 const results = [];
 for (const f of files) {
   results.push(await flattenFile(f));

@@ -93,6 +93,15 @@ OUTPUT: One character on transparent PNG, high resolution (1024×1024 or 768×76
 1. Download PNG(s).
 2. Optional: run through [remove.bg](https://www.remove.bg) or Photoshop if edges aren’t clean.
 3. Save to `public/assets/` using the filenames in the table above (e.g. `psa-avatar-neutral.png`).
+4. Remove fake-transparent / checkerboard backgrounds:
+   ```bash
+   node scripts/psa-flatten-avatar-backgrounds.mjs
+   ```
+   For **new Fal exports on green screen** (`#00B140`), run:
+   ```bash
+   node scripts/psa-flatten-avatar-backgrounds.mjs --greenscreen
+   ```
+   Then bump `PSA_AVATAR_ASSET_VERSION` in `src/constants/psaConfig.ts` so phones drop cached images.
 4. Redeploy or refresh dev — no code change needed unless you use different filenames (then edit `src/constants/psaConfig.ts`).
 
 ---

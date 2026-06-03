@@ -14,6 +14,9 @@ export type PsaAvatarExpression =
   | 'talking'
   | 'presenting';
 
+/** Bump when avatar PNGs change so browsers/CDN drop cached checkerboard versions. */
+export const PSA_AVATAR_ASSET_VERSION = '3';
+
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
   neutral: '/assets/psa-avatar-neutral.png',
@@ -66,5 +69,6 @@ export function isPsaHiddenPath(pathname: string): boolean {
 }
 
 export function getPsaAvatarSrc(expression: PsaAvatarExpression): string {
-  return PSA_AVATAR_SRC[expression] ?? PSA_AVATAR_FALLBACK_SRC;
+  const base = PSA_AVATAR_SRC[expression] ?? PSA_AVATAR_FALLBACK_SRC;
+  return `${base}?v=${PSA_AVATAR_ASSET_VERSION}`;
 }

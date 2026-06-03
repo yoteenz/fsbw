@@ -1,35 +1,72 @@
 import { getAccessToken } from './api';
-
-const API_BASE =
-  (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
+import { isSignedIn } from './adminAuth';
 
 export type PsaChatResult =
   | { ok: true; reply: string; responseId: string | null; model: string }
   | { ok: false; code: 'SIGN_IN_REQUIRED' | 'PREMIUM_REQUIRED' | 'NETWORK' | 'SERVER'; message: string };
 
+const API_BASE =
+  (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
+
+async function refreshSupabaseSessionOnce(): Promise<void> {
+  try {
+    const supabase = (await import('./supabase')).getSupabase();
+    if (!supabase) return;
+    await supabase.auth.refreshSession();
+  } catch {
+    /* ignore */
+  }
+}
+
+function sessionExpiredMessage(): string {
+  if (isSignedIn()) {
+    return 'Your session expired. Sign out and sign back in, or open Account → Settings and tap Sync my account, then try PSA again.';
+  }
+  return 'Sign in to chat with PSA.';
+}
+
+async function postPsaChatOnce(
+  message: string,
+  previousResponseId: string | null | undefined,
+  token: string
+): Promise<Response> {
+  const url = `${API_BASE.replace(/\/$/, '')}/api/psa/chat`;
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      message,
+      previousResponseId: previousResponseId ?? undefined,
+    }),
+  });
+}
+
 export async function postPsaChat(
   message: string,
   previousResponseId?: string | null
 ): Promise<PsaChatResult> {
-  const token = await getAccessToken();
+  let token = await getAccessToken();
   if (!token) {
-    return { ok: false, code: 'SIGN_IN_REQUIRED', message: 'Sign in to chat with PSA.' };
+    await refreshSupabaseSessionOnce();
+    token = await getAccessToken();
+  }
+  if (!token) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
   }
 
-  const url = `${API_BASE.replace(/\/$/, '')}/api/psa/chat`;
   let res: Response;
   try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        message,
-        previousResponseId: previousResponseId ?? undefined,
-      }),
-    });
+    res = await postPsaChatOnce(message, previousResponseId, token);
+    if (res.status === 401) {
+      await refreshSupabaseSessionOnce();
+      const retryToken = await getAccessToken();
+      if (retryToken) {
+        res = await postPsaChatOnce(message, previousResponseId, retryToken);
+      }
+    }
   } catch {
     return {
       ok: false,
@@ -46,13 +83,19 @@ export async function postPsaChat(
   }
 
   if (res.status === 401) {
-    return { ok: false, code: 'SIGN_IN_REQUIRED', message: data.error || 'Sign in to chat with PSA.' };
+    return {
+      ok: false,
+      code: 'SIGN_IN_REQUIRED',
+      message: sessionExpiredMessage(),
+    };
   }
   if (res.status === 403 || data.code === 'PREMIUM_REQUIRED') {
     return {
       ok: false,
       code: 'PREMIUM_REQUIRED',
-      message: data.error || 'Premium membership required for PSA.',
+      message:
+        data.error ||
+        'Premium membership required for PSA. Open Account → Rewards to confirm your subscription, then tap Sync my account in Settings.',
     };
   }
   if (!res.ok) {

@@ -26,8 +26,9 @@ export default function PsaAvatarTrigger({
   const handleImgError = (e: SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
     if (img.src.includes('profile-thumb.png')) return;
-    if (!img.src.includes('psa-avatar-neutral.png')) {
-      img.src = PSA_AVATAR_FALLBACK_SRC;
+    const neutralBase = PSA_AVATAR_FALLBACK_SRC;
+    if (!img.src.includes(neutralBase.replace(/^\//, ''))) {
+      img.src = getPsaAvatarSrc('neutral');
       return;
     }
     img.src = '/assets/profile-thumb.png';
