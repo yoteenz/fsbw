@@ -23569,6 +23569,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — TV Seedance close: hand-press start only (no zap/static)
+
+**Context:** User reported close still showed CSS zap, then static, then hand — should start at **hand pressing the button** only.
+
+**Root cause:** (1) **`seedanceClosePowerOff`** ran **`LoungeTvPowerOffEffect`** + hid reverse video (**`deferVisual`**) for 480ms. (2) Reverse seek started at **clip end** (static/menu). (3) Reverse **poster** was **`LOUNGE_TV_CONTENT_FRAME_SRC`** (menu still).
+
+**Fix:** **`LoungeTvOverlay`** — removed **`seedanceClosePowerOff`**; on X go straight to **`closing`** + reverse video. **`LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION`** (0.72) + **`reverseStartFraction`** in **`useSceneCoverVideoPlayback`** — reverse steps from hand-press point to t=0. **`loungeTvAnimationPosterSrc`** returns **null** on reverse. Removed **`deferVisual`** from **`LoungeTvAnimationVideo`**. Tune fraction in **`loungeTvAnimationVideo.ts`** if hand frame is early/late.
+
+---
+
 ## 2026-06-02 — Register/phone popover close X +4px up/right (second nudge)
 
 **Context:** User asked to move the close **X** on both register and phone glass popovers **up 4px** and **right 4px** again (after prior **`lobbyPopoverPx(5) - 4`** inset).
