@@ -24367,3 +24367,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** PSA warmth = professional concierge, not overly familiar. Honesty when wrong fit; confident guidance + checkout path when match is solid.
 
+---
+
+## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
+
+**Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
+
+**Changes:** `src/constants/psaConfig.ts` welcome message; `api/_lib/psaInstructions.ts` identity section + greeting example aligned.
+
