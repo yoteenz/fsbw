@@ -1,5 +1,6 @@
 import type React from 'react';
 
+import { LOUNGE_TV_CONTENT_FRAME_SRC } from '../components/lounge/loungeTvAssets';
 import { FINAL_LOUNGE_BACKGROUND_SRC } from './finalLobbySceneAssets';
 
 export type LoungeTvAnimationDirection = 'forward' | 'reverse';
@@ -133,9 +134,9 @@ export function loungeTvAnimationVideoSrc(): string {
 }
 
 /**
- * Pre-play placeholder for the Seedance clip — not the end-still (that frame includes the hand).
- * Forward: lounge composite; reverse: none (black until frames play).
+ * Pre-play placeholder for the Seedance clip.
+ * Forward: lounge composite; reverse: theater end-still (matches {@link LoungeTvFullscreenShell}).
  */
 export function loungeTvAnimationPosterSrc(direction: LoungeTvAnimationDirection): string | null {
-  return direction === 'forward' ? FINAL_LOUNGE_BACKGROUND_SRC : null;
+  return direction === 'forward' ? FINAL_LOUNGE_BACKGROUND_SRC : LOUNGE_TV_CONTENT_FRAME_SRC;
 }
