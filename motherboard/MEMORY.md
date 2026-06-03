@@ -23152,6 +23152,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Lobby/lounge transition up 1px (offset 0)
+
+**Context:** User asked another **1px up**; no overrides elsewhere.
+
+**Fix:** **`LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX = 0`** (was 1). **`lobbyLoungeTransitionMediaLayerStyle()`** only.
+
+---
+
 ## 2026-06-02 — Lounge TV: no hand before Seedance open
 
 **Context:** Hand image visible before `video.mov` plays.
