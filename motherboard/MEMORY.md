@@ -23858,3 +23858,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked TV screen + content **5% smaller** and **down 10px** in tandem.
 
 **Fix:** **`LOUNGE_TV_CONTENT_SCREEN_SCALE`** **0.98→0.95**; **`LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX`** **128→130** (`LoungeTvFullscreenShell`).
+
+---
+
+## 2026-06-02 — Lounge TV close: hand-press starts immediately (no black lead-in)
+
+**Context:** Close reverse still showed **black screen** before **hand on remote**; user wants close to **start at hand press** with no seconds of black before animation.
+
+**Why:** During **`ready`**, **`LoungeTvAnimationVideo`** unmounted → close remounted + seek delay; **`LoungeTvFullscreenShell`** black bg stayed visible until first reverse frame; reverse reveal waited for first RAF step.
+
+**Fix:** Keep clip mounted **`seedancePhase !== 'idle'`** (park at **`LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION`** 0.68 while menu open). Hide fullscreen shell + transparent scrim during **`closing`**. **`useSceneCoverVideoPlayback`**: **`notifyPlaying()`** right after reverse seek. Fraction **0.72→0.68** to skip trailing static after hand.
