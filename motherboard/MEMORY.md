@@ -23265,3 +23265,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Lounge TV label +4px down
 
 **Fix:** **`FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 22`** (was 18). Label-only `translate()` on **PRESS TO PLAY**.
+
+---
+
+## 2026-06-02 — Lobby/lounge transition pre-play bounce fix
+
+**Context:** User reported Seedance overlay **shifts down then up before** the clip plays.
+
+**Causes:** (1) **`top` + `calc(100% + offset)`** reflows when `<video>` mounts. (2) Reverse **`onPlaying`** fired right after seek-to-end, flashing last frame vs poster before step-back.
+
+**Fix (`0107a8ce`):** **`lobbyLoungeTransitionMediaLayerStyle()`** — `inset: 0` + **`translateY(offset)`** only. Reverse reveal on **first RAF step-back**. Reset **`frameVisible`** when overlay inactive.
