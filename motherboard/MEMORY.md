@@ -23718,3 +23718,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked to move the **red custom units** debug square down **20px** only (cyan/green unchanged).
 
 **Fix:** **`SceneHitRegion`** **`debugOffsetY`** — applies **`translateY`** when **`debugOverlay`** is on. **`LobbySceneHotspots`** — **`debugOffsetY={20}`** on custom units shelf only.
+
+---
+
+## 2026-06-02 — Lobby shelf debug: shrink overlay boxes (width −30%, height −60%)
+
+**Context:** User asked to reduce mannequin shelf **debug squares** height by **60%** and width by **30%** (all three shelves).
+
+**Fix:** **`LOBBY_SHELF_HIT_DEBUG_WIDTH_SCALE = 0.7`**, **`LOBBY_SHELF_HIT_DEBUG_HEIGHT_SCALE = 0.4`** — **`SceneHitRegion`** **`debugScale`** + **`transformOrigin: center top`** when debug on. Applied to HD lace, bundles, custom units (custom units keeps **`debugOffsetY={20}`**).
