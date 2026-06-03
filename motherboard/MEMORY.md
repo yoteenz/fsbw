@@ -23529,6 +23529,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Register/phone open art locked to lobby cover map
+
+**Context:** Open PNGs should stay glued to **`final-lobby.png`** on resize (not viewport % + fixed `translate`).
+
+**Fix:** **`useSceneCoverHitRect`** optional offset via **`applyScreenOffsetToCoverRect`** (ResizeObserver on **`SceneCarouselViewportStage`**). **`LobbyCasePropOpenArt`** + popover anchor wrappers in **`LobbySceneHotspots`** use cover-mapped rects; removed **`lobbyCasePropLayoutTransform`** on props.
+
+---
+
 ## 2026-06-02 — TV X close: instant power-off zap, then reverse clip
 
 **Context:** On X, close should start immediately — TV black (zap), then shrink/curtains via reverse Seedance — not a static/menu hold or end-frame flash before reverse.
