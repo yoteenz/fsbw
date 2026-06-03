@@ -290,12 +290,15 @@ function LobbyPaymentIconSection({
   icons,
   maxHeightPx,
   clusterOuterIconsToCenter,
+  iconRowMarginBottomPx,
 }: {
   label: string;
   icons: readonly LobbyPaymentIcon[];
   maxHeightPx: number;
   /** Pull first/third icons toward the middle (pay in four row). */
   clusterOuterIconsToCenter?: boolean;
+  /** Extra space below the icon row (register: accepted cards + express). */
+  iconRowMarginBottomPx?: number;
 }) {
   if (icons.length === 0) return null;
 
@@ -308,6 +311,7 @@ function LobbyPaymentIconSection({
           gridTemplateColumns: `repeat(${icons.length}, minmax(0, 1fr))`,
           gap: `${lobbyPopoverPx(4)}px`,
           alignItems: 'center',
+          marginBottom: iconRowMarginBottomPx ? `${iconRowMarginBottomPx}px` : undefined,
         }}
       >
         {icons.map((icon, index) => (
@@ -332,11 +336,13 @@ function LobbyPopoverPaymentLayout({ layout }: { layout: LobbyPaymentPopoverLayo
         label={LOBBY_PAYMENT_ACCEPTED_CARDS_LABEL}
         icons={layout.cards}
         maxHeightPx={lobbyPopoverPx(26)}
+        iconRowMarginBottomPx={4}
       />
       <LobbyPaymentIconSection
         label={LOBBY_PAYMENT_EXPRESS_LABEL}
         icons={layout.express}
         maxHeightPx={lobbyPopoverPx(24)}
+        iconRowMarginBottomPx={4}
       />
       <LobbyPaymentIconSection
         label={LOBBY_PAYMENT_PAY_OVER_TIME_LABEL}
