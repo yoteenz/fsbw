@@ -6,7 +6,7 @@ export type PsaAvatarExpression =
   | 'neutral-smiling'
   | 'waving'
   | 'listening'
-  | 'listening-smiling'
+  | 'thinking-smiling'
   | 'thinking'
   | 'delighted'
   | 'sorry'
@@ -20,7 +20,7 @@ export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
   'neutral-smiling': '/assets/psa-avatar-neutral-smiling.png',
   waving: '/assets/psa-avatar-waving.png',
   listening: '/assets/psa-avatar-listening.png',
-  'listening-smiling': '/assets/psa-avatar-listening-smiling.png',
+  'thinking-smiling': '/assets/psa-avatar-thinking-smiling.png',
   thinking: '/assets/psa-avatar-thinking.png',
   delighted: '/assets/psa-avatar-delighted.png',
   sorry: '/assets/psa-avatar-sorry.png',
