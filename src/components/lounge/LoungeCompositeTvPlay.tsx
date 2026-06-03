@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useCallback, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
@@ -6,7 +6,7 @@ import {
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
 } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
-import { applyScreenOffsetToCoverRect } from '../../utils/sceneCoverHitMap';
+import { coverMappedRectScreenOffsetStyle } from '../../utils/sceneCoverHitMap';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 
@@ -41,30 +41,6 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
 
   const tvRegion = useSceneCoverHitRect(FINAL_LOUNGE_TV_HIT_REGION, measureRef);
   const playTapMapped = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_TAP_RECT, measureRef);
-  const [playTap, setPlayTap] = useState(playTapMapped);
-
-  useLayoutEffect(() => {
-    if (!playTapMapped) {
-      setPlayTap(null);
-      return;
-    }
-    const el = measureRef.current;
-    const width = el?.offsetWidth ?? 0;
-    const height = el?.offsetHeight ?? 0;
-    if (width <= 0 || height <= 0) {
-      setPlayTap(playTapMapped);
-      return;
-    }
-    setPlayTap(
-      applyScreenOffsetToCoverRect(
-        playTapMapped,
-        width,
-        height,
-        FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
-        FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
-      ),
-    );
-  }, [measureRef, playTapMapped]);
 
   const openLoungeTv = useCallback(() => {
     setTvOriginRect(tvAnchorRef.current?.getBoundingClientRect() ?? null);
@@ -74,6 +50,20 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
   const closeLoungeTv = useCallback(() => {
     setTvOpen(false);
   }, []);
+
+  const playContainerStyle: CSSProperties | null = playTapMapped
+    ? {
+        ...coverMappedRectScreenOffsetStyle(
+          playTapMapped,
+          FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
+          FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
+        ),
+        position: 'absolute',
+        zIndex: 11,
+        boxSizing: 'border-box',
+        pointerEvents: 'auto',
+      }
+    : null;
 
   return (
     <>
@@ -90,32 +80,34 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
         />
       ) : null}
 
-      {!tvOpen && playTap ? (
-        <button
-          type="button"
-          data-lounge-tv-play
-          onClick={openLoungeTv}
-          aria-label="Press play for lounge media"
-          style={{
-            ...rectToPercentStyle(playTap),
-            position: 'absolute',
-            zIndex: 11,
-            margin: 0,
-            padding: 8,
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-            touchAction: 'manipulation',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <span aria-hidden style={PRESS_PLAY_LABEL_STYLE}>
-            PRESS PLAY
-          </span>
-        </button>
+      {!tvOpen && playContainerStyle ? (
+        <div data-lounge-tv-play-container style={playContainerStyle}>
+          <button
+            type="button"
+            data-lounge-tv-play
+            onClick={openLoungeTv}
+            aria-label="Press play for lounge media"
+            style={{
+              width: '100%',
+              height: '100%',
+              margin: 0,
+              padding: 8,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'manipulation',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxSizing: 'border-box',
+            }}
+          >
+            <span aria-hidden style={PRESS_PLAY_LABEL_STYLE}>
+              PRESS PLAY
+            </span>
+          </button>
+        </div>
       ) : null}
 
       <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
