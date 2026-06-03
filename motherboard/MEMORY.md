@@ -23818,3 +23818,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Why mismatch:** **`SceneHitRegion`** only applied **`debugOffset*` / `debugScale` / `debugHeightTrimPx` when `debugOverlay` was on** — tuning moved the visible box + tap target together in QA, but production used full **`FINAL_LOBBY_HIT_REGIONS`** rects with no layout nudge.
 
 **Fix:** Renamed tuned values to **`LOBBY_SHELF_HIT_LAYOUT_*`**; **`layoutOffset*` / `layoutScale` / `layoutHeightTrimPx`** apply in production always (colors still **`?sceneHitDebug=1`** only). **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX`** **10→12**.
+
+---
+
+## 2026-06-02 — TV still +1px R/D; transition video scale 98%
+
+**Context:** TV content **background still** **down 1px, right 1px**; Seedance transition clip **2% smaller** inside portrait frame — **frame container position unchanged**.
+
+**Fix:** **`LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX = 1`**, **`…_Y_PX`** **12→13** on **`LoungeTvFullscreenShell`** frame + close wrapper. **`LOBBY_LOUNGE_TRANSITION_VIDEO_SCALE = 0.98`** (`transformOrigin: center top`; **`LOBBY_LOUNGE_TRANSITION_FRAME_OFFSET_Y_PX`** still **-2**).

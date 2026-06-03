@@ -4,6 +4,7 @@ import {
   LOUNGE_TV_CONTENT_FRAME_PX,
   LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
   LOUNGE_TV_CONTENT_FRAME_SRC,
+  LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX,
   LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX,
   LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
 } from './loungeTvAssets';
@@ -43,8 +44,13 @@ export function LoungeTvFullscreenShell({
     closePoint,
   );
 
+  const frameStillOffsetX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX;
   const frameStillOffsetY = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX;
   const screenOffsetY = LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX;
+  const frameStillTransform =
+    frameStillOffsetX || frameStillOffsetY
+      ? `translate(${frameStillOffsetX}px, ${frameStillOffsetY}px)`
+      : undefined;
 
   return (
     <div
@@ -68,7 +74,7 @@ export function LoungeTvFullscreenShell({
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
           backgroundRepeat: 'no-repeat',
-          transform: frameStillOffsetY ? `translateY(${frameStillOffsetY}px)` : undefined,
+          transform: frameStillTransform,
         }}
       />
       <div
@@ -90,7 +96,7 @@ export function LoungeTvFullscreenShell({
             position: 'absolute',
             inset: 0,
             pointerEvents: 'none',
-            transform: frameStillOffsetY ? `translateY(${frameStillOffsetY}px)` : undefined,
+            transform: frameStillTransform,
           }}
         >
           <LoungeTvCloseButton
