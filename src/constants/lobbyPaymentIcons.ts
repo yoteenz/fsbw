@@ -51,11 +51,11 @@ export const LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX = 15;
 /** Frosted scrim behind register/phone popovers (matches modal-style blur). */
 export const LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR = 'blur(10px)';
 
-/** Register panel nudge above prop (px). */
-export const LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX = 8;
+/** Register glass panel above prop (px); lower = closer to asset (−12px tune). */
+export const LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX = -4;
 
-/** Phone panel nudge above prop (px). */
-export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = 6;
+/** Phone glass panel above prop (px); lower = closer to asset (−12px tune). */
+export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = -6;
 
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
