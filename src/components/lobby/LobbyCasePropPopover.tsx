@@ -26,8 +26,8 @@ const LOBBY_POPOVER_CLOSE_RIGHT_PX = lobbyPopoverPx(5);
 const LOBBY_POPOVER_CLOSE_BTN_PX = lobbyPopoverPx(18);
 
 type ContactPopoverLine =
-  | { text: string; emphasis?: 'futura-demi-gray' }
-  | { parts: readonly { text: string; emphasis?: 'futura-demi-gray' }[] };
+  | { text: string; emphasis?: 'futura-medium-gray' }
+  | { parts: readonly { text: string; emphasis?: 'futura-medium-gray' }[] };
 
 export type LobbyCasePropPopoverSection = {
   heading: string;
@@ -142,15 +142,15 @@ const lineStyle: React.CSSProperties = {
   letterSpacing: '0.02em',
 };
 
-const contactLineDemiGrayStyle: React.CSSProperties = {
+const contactLineMediumGrayStyle: React.CSSProperties = {
   ...lineStyle,
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
-  fontWeight: 600,
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontWeight: 500,
   color: '#808080',
 };
 
-function contactLineStyle(line: { emphasis?: 'futura-demi-gray' }): React.CSSProperties {
-  return line.emphasis === 'futura-demi-gray' ? contactLineDemiGrayStyle : lineStyle;
+function contactLineStyle(line: { emphasis?: 'futura-medium-gray' }): React.CSSProperties {
+  return line.emphasis === 'futura-medium-gray' ? contactLineMediumGrayStyle : lineStyle;
 }
 
 function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
@@ -165,7 +165,7 @@ function ContactPopoverLine({ line }: { line: ContactPopoverLine }) {
         {line.parts.map((part, index) => (
           <span
             key={`${index}-${part.text}`}
-            style={part.emphasis === 'futura-demi-gray' ? contactLineDemiGrayStyle : undefined}
+            style={part.emphasis === 'futura-medium-gray' ? contactLineMediumGrayStyle : undefined}
           >
             {part.text}
           </span>

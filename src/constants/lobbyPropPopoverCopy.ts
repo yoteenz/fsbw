@@ -5,13 +5,13 @@ export const LOBBY_PHONE_POPOVER_TITLE = 'CONTACT US';
 
 export type LobbyPhonePopoverLinePart = {
   text: string;
-  /** Gray Futura PT Demi. */
-  emphasis?: 'futura-demi-gray';
+  /** Gray Futura PT Medium. */
+  emphasis?: 'futura-medium-gray';
 };
 
-/** Single-style line, or mixed spans (e.g. gray Demi “72 HOURS” mid-sentence). */
+/** Single-style line, or mixed spans (e.g. gray Medium “72 HOURS” mid-sentence). */
 export type LobbyPhonePopoverLine =
-  | { text: string; emphasis?: 'futura-demi-gray' }
+  | { text: string; emphasis?: 'futura-medium-gray' }
   | { parts: readonly LobbyPhonePopoverLinePart[] };
 
 export type LobbyPhonePopoverSection = {
@@ -22,14 +22,14 @@ export type LobbyPhonePopoverSection = {
 export const LOBBY_PHONE_POPOVER_SECTIONS: readonly LobbyPhonePopoverSection[] = [
   {
     heading: 'email',
-    lines: [{ text: BRAND_CONTACT_EMAIL, emphasis: 'futura-demi-gray' }],
+    lines: [{ text: BRAND_CONTACT_EMAIL, emphasis: 'futura-medium-gray' }],
   },
   {
     heading: 'hours',
     lines: [
       { text: BRAND_CONTACT_INTRO_HOURS },
       { text: 'WEEKDAYS ONLY' },
-      { text: 'MAJOR US HOLIDAYS EXCLUDED', emphasis: 'futura-demi-gray' },
+      { text: 'MAJOR US HOLIDAYS EXCLUDED', emphasis: 'futura-medium-gray' },
     ],
   },
   {
@@ -38,7 +38,7 @@ export const LOBBY_PHONE_POPOVER_SECTIONS: readonly LobbyPhonePopoverSection[] =
       {
         parts: [
           { text: 'PLEASE ALLOW ' },
-          { text: '72 HOURS', emphasis: 'futura-demi-gray' },
+          { text: '72 HOURS', emphasis: 'futura-medium-gray' },
           { text: ' FOR A RESPONSE' },
         ],
       },
