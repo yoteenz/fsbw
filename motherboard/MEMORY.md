@@ -23441,6 +23441,12 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-02 — Phone down 2px; register open asset +5%
+
+**Fix (`0830b108`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -28 }` (down 2px). **`LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE`** **0.6615** (+5% from **0.63**); phone scale **0.6** unchanged; register popover wrapper offset unchanged.
+
+---
+
 ## 2026-06-02 — Phone popover down 6px
 
 **Fix (`4eaf2a32`):** **`LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET`** `{ x: -1, y: -30 }` (down 6px from −36).
