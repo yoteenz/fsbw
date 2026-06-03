@@ -23924,3 +23924,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked slide backgrounds and QA transition posters to use **`contain`** instead of **`cover`** (fit in clip box, top-aligned, same **`center top`** anchor).
 
 **Fix:** **`sceneCarouselBackground.ts`** — **`background-size: contain`** on viewport + layer styles; **`sceneCarouselCoverMetrics`** uses **`Math.min`** (contain scale). **`sceneCoverHitMap.ts`** — hit/point mapping uses contain scale. **`lobbyLoungeTransitionVideo.ts`** — video **`object-fit: contain`**, in-frame + full-bleed posters **`background-size: contain`**. Letterbox frame sizing follows updated metrics via **`useLobbyLoungeTransitionLetterboxLayout`**.
+
+---
+
+## 2026-06-02 — TV close nudge; slides back to cover
+
+**Context:** Move lounge TV fullscreen **close X** **down 6px** and **left 6px** on mapped glass. Revert lobby/lounge slides + Seedance transition/QA posters to **`cover`** + **`center top`** (fill clip, crop overflow, top-aligned) — user described cover behavior after brief contain experiment.
+
+**Fix:** **`LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP/RIGHT_PX`** **−14 → −8** (`loungeTvAssets.ts`). Restored **`cover`** / **`Math.max`** scale in **`sceneCarouselBackground.ts`**, **`sceneCoverHitMap.ts`**, **`lobbyLoungeTransitionVideo.ts`** (video + posters).
