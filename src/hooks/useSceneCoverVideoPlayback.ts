@@ -169,7 +169,9 @@ export function useSceneCoverVideoPlayback(
 
       await seekToStart();
 
-      let revealed = false;
+      // Show the hand-press frame immediately (close must not lead with black UI / static).
+      notifyPlaying();
+
       let last = performance.now();
       const tick = (now: number) => {
         if (completedRef.current) return;
@@ -177,11 +179,6 @@ export function useSceneCoverVideoPlayback(
         last = now;
         const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
         el.currentTime = next;
-        if (!revealed) {
-          revealed = true;
-          // Reveal after first step-back — not on seeked end frame (avoids poster vs last-frame bounce).
-          notifyPlaying();
-        }
         if (next <= 0.04) {
           finish();
           return;

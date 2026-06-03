@@ -150,10 +150,10 @@ export const LOUNGE_TV_ANIMATION_LETTERBOX_CROP_SCALE = 1;
 export const LOUNGE_TV_ANIMATION_REVERSE_PLAYBACK_RATE = 1.5;
 
 /**
- * Reverse close begins here (forward timeline), not at clip end — skips end static + power-off zap.
- * Open clip order: curtains → TV grow → hand power press → static. ~0.72 ≈ hand on red button.
+ * Reverse close begins here (forward timeline), not at clip end — skips trailing static/black after hand.
+ * Open clip order: curtains → TV grow → hand power press → static. Tune if hand is early/late.
  */
-export const LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION = 0.72;
+export const LOUNGE_TV_ANIMATION_REVERSE_START_FRACTION = 0.68;
 
 /** When true, open/close use `video.mov` instead of CSS curtains/hand/grow. */
 export const LOUNGE_TV_ANIMATION_VIDEO_ENABLED = true;
