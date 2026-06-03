@@ -23,7 +23,11 @@ PSA is the **premium members-only** holographic chat assistant (lower-right FAB 
 
 ### Step 1 — Generate the avatar with Fal (reference photo)
 
-Use **`fal-ai/nano-banana-pro/edit`** (same family as your NOIR live previews) or **`fal-ai/flux-pro`** for a crisp transparent character.
+**Likeness / character:** **`fal-ai/nano-banana-pro/edit`** (NBP) — prompt in **`motherboard/golden-prompts/psa-avatar-likeness-nbp.md`**.
+
+**Background removal (after generation):** **Ideogram on Fal** — best results in this stack; see **`motherboard/golden-models/ideogram.md`** and **`motherboard/golden-prompts/psa-avatar-background-removal-ideogram.md`**. Do **not** use NBP alone for final transparent cutouts.
+
+Golden model index: **`motherboard/golden-models/README.md`**.
 
 **You need 11 PNG/WebP files** (transparent background) — see **Avatar expression filenames** below.
 

@@ -24023,3 +24023,23 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix:** Full-viewport media shell (same box as **`sceneCarouselViewportStageStyle`**): video/poster **`contain`** + **`center top`** on **`inset: 0`**, no top/bottom transparent bands or nested frame. Black letterbox (**`SCENE_CAROUSEL_LETTERBOX_BG`**) on the media shell only after **`frameVisible`** (carousel still shows through before first decoded frame). Offset default **0**; **`lobbyLoungeTransitionCoverPosition()`** defers to **`sceneCarouselCoverBackgroundPosition()`** when offset is 0.
 
 **Files:** `lobbyLoungeTransitionVideo.ts`, `LobbyLoungeTransitionVideo.tsx`, `useLobbyLoungeTransitionLetterboxLayout.ts` (deprecated note only). Pushed **`master`** + **`preview/mobile`** (`7e2a7a4f`).
+
+---
+
+## 2026-06-03 — PSA full chat + golden-models / golden-prompts motherboard folders
+
+**Context (entire chat arc):** User planned **PSA (Personal Slay Assistant)** — premium holographic chat FAB; compared ChatGPT (GPT-5.5 Responses API, Three.js) vs stack-native approach; scaffolded PSA v1 (OpenAI chat API, 11 avatar expressions, premium gate); fixed sign-in JWT/premium server checks; merged avatar assets preview/mobile → master; clarified **Ideogram on Fal** already removed backgrounds (no green screen, no flatten script).
+
+**Golden model notes (product owner):**
+- **NBP** (`nano-banana-pro`) — best for mannequins, people, **text accuracy**
+- **GPT Image 2** (`gpt-image-2`) — best for **detailed scenes**
+- **Ideogram** (on Fal) — best for **background removal** (PSA avatars confirmed best so far)
+
+**Changes:**
+- **`motherboard/golden-models/`** — README + `nbp-nano-banana-pro.md`, `gpt-image-2.md`, `ideogram.md`
+- **`motherboard/golden-prompts/`** — README + PSA likeness (NBP), bg removal (Ideogram), expressions (NBP)
+- **`motherboard/README.md`**, **`motherboard/CORE.md`** — index golden folders; Fal defaults
+- **`docs/PSA_SETUP.md`** — point to golden prompts/models; skip flatten for Ideogram PNGs
+- PSA code/docs from earlier in chat: `api/psa/chat.ts`, `src/components/psa/*`, transparent avatar restore (`PSA_AVATAR_ASSET_VERSION` v5), `psaApi.ts` session refresh
+
+**Conventions:** Add new winning models/prompts to **`golden-models/`** / **`golden-prompts/`** when confirmed; do not run **`psa-flatten-avatar-backgrounds.mjs`** on true-alpha Ideogram exports.
