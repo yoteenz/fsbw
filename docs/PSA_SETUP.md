@@ -250,6 +250,8 @@ Mobile browser
             ├─ getPsaPremiumProfile (server gate)
             ├─ OpenAI Responses API (gpt-5.4-mini)
             └─ Tools: search_faq, search_products, suggest_navigation
+            └─ Action tools: get_member_orders, get_order_status, get_member_cart, add_to_cart, prepare_booking_handoff, send_priority_message
+            └─ clientActions: sync_cart, navigate (see docs/PSA_TOOLS.md)
 ```
 
 **Never** call OpenAI from the browser with your secret key.
