@@ -23548,3 +23548,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-02 — Popover panels down 12px; chandelier hit +36px down
 
 **Fix:** **`LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX`** **−4**, **`LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX`** **−6** (glass card + title + close only; open PNG offsets unchanged). Chandelier **`top`** **0.1288** (+36px on 1680).
+
+---
+
+## 2026-06-02 — Register/phone popover text centering
+
+**Context:** User asked to center red Bohemy section headers on the register payment pop-up and center all text on the phone contact pop-up.
+
+**Fix:** **`LobbyCasePropPopover.tsx`** — **`lobbyPaymentBohemyLabelStyle`** **`textAlign: 'center'`** (accepted cards, express payment, payment plans). Phone: **`contactSectionHeadingStyle`** and **`lineStyle`** (incl. medium-gray emphasis) **`textAlign: 'center'`**; main title **`CONTACT US`** centered when **`sections`** present. Commit **`6a95f5e2`** on **`master`** / **`preview/mobile`**.
