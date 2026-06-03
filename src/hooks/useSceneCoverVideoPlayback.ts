@@ -77,23 +77,30 @@ export function useSceneCoverVideoPlayback(
       notifyPlaying();
     };
 
+    const waitUntilCanStart = () =>
+      new Promise<void>((resolve) => {
+        if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+          resolve();
+          return;
+        }
+        const done = () => {
+          el.removeEventListener('loadeddata', done);
+          el.removeEventListener('canplay', done);
+          resolve();
+        };
+        el.addEventListener('loadeddata', done);
+        el.addEventListener('canplay', done);
+      });
+
     const playForward = async () => {
       el.playbackRate = 1;
       el.currentTime = 0;
       try {
-        if (el.readyState < 2) {
-          await new Promise<void>((resolve) => {
-            const done = () => {
-              el.removeEventListener('canplay', done);
-              resolve();
-            };
-            el.addEventListener('canplay', done);
-          });
-        }
+        await waitUntilCanStart();
         await el.play();
       } catch {
         try {
-          await new Promise((r) => setTimeout(r, 80));
+          await new Promise((r) => setTimeout(r, 40));
           await el.play();
         } catch {
           finish();
@@ -115,7 +122,7 @@ export function useSceneCoverVideoPlayback(
             resolve();
           };
           el.addEventListener('loadedmetadata', onMeta);
-          el.load();
+          if (el.readyState === HTMLMediaElement.HAVE_NOTHING) el.load();
         });
 
       await waitForDuration();

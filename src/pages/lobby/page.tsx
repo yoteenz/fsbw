@@ -18,7 +18,7 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { sceneCarouselSlideMinHeightCss, sceneSlideShellStyle } from '../../utils/sceneCarouselBackground';
-import { LobbyLoungeTransitionOverlay } from '../../components/lobby/LobbyLoungeTransitionVideo';
+import { LobbyLoungeTransitionHost } from '../../components/lobby/LobbyLoungeTransitionVideo';
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { SceneCarouselViewportStage } from '../../components/lobby/SceneCarouselViewportStage';
 import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTvPlay';
@@ -30,12 +30,6 @@ import {
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
 
-type SceneTransitionOverlayProps = {
-  active: boolean;
-  direction: LobbyLoungeTransitionDirection;
-  onComplete: () => void;
-};
-
 /** Lounge “lobby” back nav — readable on white curtain in composite art. */
 const LOUNGE_LOBBY_NAV_SHADOW_FILTER =
   'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.32))';
@@ -44,9 +38,8 @@ const LOUNGE_LOBBY_NAV_LABEL_TEXT_SHADOW =
 
 // Lobby Component
 const LobbyPage: React.FC<{
-  roomTransitionOverlay?: SceneTransitionOverlayProps | null;
   hideCarouselNav?: boolean;
-}> = ({ roomTransitionOverlay = null, hideCarouselNav = false }) => {
+}> = ({ hideCarouselNav = false }) => {
   const navigate = useNavigate();
   const lobbyViewportRef = useRef<HTMLDivElement>(null);
 
@@ -113,14 +106,6 @@ const LobbyPage: React.FC<{
         backgroundPosition={lobbyLoungeTransitionCoverPosition()}
         measureRef={lobbyViewportRef}
       >
-        {roomTransitionOverlay ? (
-          <LobbyLoungeTransitionOverlay
-            active={roomTransitionOverlay.active}
-            direction={roomTransitionOverlay.direction}
-            onComplete={roomTransitionOverlay.onComplete}
-          />
-        ) : null}
-
         <div className="relative" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
           <LobbySceneHotspots viewportMeasureRef={lobbyViewportRef} />
         </div>
@@ -218,9 +203,8 @@ const LobbyPage: React.FC<{
 // Lounge Component
 const LoungePage: React.FC<{
   measureRef: RefObject<HTMLDivElement>;
-  roomTransitionOverlay?: SceneTransitionOverlayProps | null;
   hideCarouselNav?: boolean;
-}> = ({ measureRef, roomTransitionOverlay = null, hideCarouselNav = false }) => {
+}> = ({ measureRef, hideCarouselNav = false }) => {
   const handlePrevious = useCallback(() => {
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
   }, []);
@@ -232,14 +216,6 @@ const LoungePage: React.FC<{
         backgroundPosition={lobbyLoungeTransitionCoverPosition()}
         measureRef={measureRef}
       >
-        {roomTransitionOverlay ? (
-          <LobbyLoungeTransitionOverlay
-            active={roomTransitionOverlay.active}
-            direction={roomTransitionOverlay.direction}
-            onComplete={roomTransitionOverlay.onComplete}
-          />
-        ) : null}
-
         <LoungeCompositeTvPlay measureRef={measureRef} />
       </SceneCarouselViewportStage>
 
@@ -444,7 +420,6 @@ const LobbyApp: React.FC = () => {
   const completeRoomTransitionOverlay = useCallback(
     (direction: LobbyLoungeTransitionDirection) => {
       const targetPage = direction === 'forward' ? 1 : 0;
-      setRoomTransitionOverlay(null);
       setVisualIndex(targetPage);
       const path = lobbyCarouselPathFromIndex(targetPage);
       if (location.pathname !== path) {
@@ -452,7 +427,10 @@ const LobbyApp: React.FC = () => {
       }
       const shell = lobbyScrollRef.current;
       if (shell) shell.scrollTop = 0;
-      roomTransitionInProgressRef.current = false;
+      requestAnimationFrame(() => {
+        setRoomTransitionOverlay(null);
+        roomTransitionInProgressRef.current = false;
+      });
     },
     [location.pathname, location.search, navigate],
   );
@@ -536,6 +514,12 @@ const LobbyApp: React.FC = () => {
   return (
     <>
       {showLoading && <LoadingScreen />}
+      {transitionVideoEnabled ? (
+        <LobbyLoungeTransitionHost
+          phase={roomTransitionOverlay}
+          onComplete={completeRoomTransitionOverlay}
+        />
+      ) : null}
       <div
         ref={lobbyScrollRef}
         style={{
@@ -565,33 +549,10 @@ const LobbyApp: React.FC = () => {
           }}
         >
           <div style={{ flexShrink: 0 }}>
-            <LobbyPage
-              hideCarouselNav={roomTransitionOverlay !== null}
-              roomTransitionOverlay={
-                transitionVideoEnabled && roomTransitionOverlay === 'forward'
-                  ? {
-                      active: true,
-                      direction: 'forward',
-                      onComplete: () => completeRoomTransitionOverlay('forward'),
-                    }
-                  : null
-              }
-            />
+            <LobbyPage hideCarouselNav={roomTransitionOverlay !== null} />
           </div>
           <div style={{ flexShrink: 0 }}>
-            <LoungePage
-              measureRef={loungeSlideMeasureRef}
-              hideCarouselNav={roomTransitionOverlay !== null}
-              roomTransitionOverlay={
-                transitionVideoEnabled && roomTransitionOverlay === 'reverse'
-                  ? {
-                      active: true,
-                      direction: 'reverse',
-                      onComplete: () => completeRoomTransitionOverlay('reverse'),
-                    }
-                  : null
-              }
-            />
+            <LoungePage measureRef={loungeSlideMeasureRef} hideCarouselNav={roomTransitionOverlay !== null} />
           </div>
         </div>
       </div>
