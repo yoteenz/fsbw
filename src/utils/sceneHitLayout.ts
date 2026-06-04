@@ -9,6 +9,7 @@ export type SceneHitLayoutOptions = {
   layoutScaleOrigin?: 'center top' | 'center center' | (string & {});
   layoutHeightTrimPx?: number;
   layoutHeightExtraPx?: number;
+  layoutWidthExtraPx?: number;
 };
 
 function scaledPercentBox(
@@ -66,6 +67,11 @@ export function sceneHitLayoutBoxStyle(
   const totalOffsetX = screenOffsetX + (layout.layoutOffsetX ?? 0);
   const totalOffsetY = screenOffsetY + (layout.layoutOffsetY ?? 0);
 
+  const width =
+    layout.layoutWidthExtraPx != null && layout.layoutWidthExtraPx !== 0
+      ? `calc(${widthPct}% + ${layout.layoutWidthExtraPx}px)`
+      : `${widthPct}%`;
+
   let height: string;
   if (layout.layoutHeightTrimPx && layout.layoutHeightTrimPx > 0) {
     height = `calc(${heightPct}% - ${layout.layoutHeightTrimPx}px)`;
@@ -79,7 +85,7 @@ export function sceneHitLayoutBoxStyle(
     position: 'absolute',
     left: `calc(${leftPct}% + ${totalOffsetX}px)`,
     top: `calc(${topPct}% + ${totalOffsetY}px)`,
-    width: `${widthPct}%`,
+    width,
     height,
     boxSizing: 'border-box',
   };

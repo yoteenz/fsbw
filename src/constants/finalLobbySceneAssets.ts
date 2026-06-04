@@ -83,8 +83,8 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
 };
 
 /** Production + QA — blue baked TV box: +20px right, +80px down, height −40%. */
-export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_X_PX = 20;
-export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_Y_PX = 80;
+export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_X_PX = 10;
+export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_Y_PX = 100;
 export const LOUNGE_TV_BAKED_HIT_LAYOUT_HEIGHT_SCALE = 0.6;
 
 export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
@@ -93,11 +93,15 @@ export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
   layoutScale: { x: 1, y: LOUNGE_TV_BAKED_HIT_LAYOUT_HEIGHT_SCALE },
 } as const;
 
-/** Production + QA — green play tap: +50% width and height from center. */
-export const LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE = 1.5;
+/** Production + QA — green play tap: +30% width, −60% height (center). */
+export const LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_SCALE = 1.3;
+export const LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_SCALE = 0.4;
 
 export const LOUNGE_TV_PLAY_TAP_LAYOUT = {
-  layoutScale: { x: LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE, y: LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE },
+  layoutScale: {
+    x: LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_SCALE,
+    y: LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_SCALE,
+  },
   layoutScaleOrigin: 'center center' as const,
 } as const;
 

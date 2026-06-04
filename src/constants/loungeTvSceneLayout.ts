@@ -46,6 +46,7 @@ export const LOUNGE_TV_MENU_SCREEN_LAYOUT_HEIGHT_EXTRA_PX = 20;
 
 export const LOUNGE_TV_MENU_SCREEN_LAYOUT = {
   layoutHeightExtraPx: LOUNGE_TV_MENU_SCREEN_LAYOUT_HEIGHT_EXTRA_PX,
+  layoutOffsetY: -10,
 } as const;
 
 /** Close chip inset as a fraction of the glass box (negative = overlap bezel). */
