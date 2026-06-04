@@ -613,6 +613,7 @@
 .psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline {
   position: relative;
   top: 4px;
+  font-size: 15px;
 }
 
 @keyframes psa-thought-float-show-chat {
