@@ -166,8 +166,8 @@
   position: relative;
   z-index: 1;
   width: min(340px, calc(100vw - 24px));
-  height: min(250px, calc((100dvh - 160px) / 2));
-  max-height: min(250px, calc((100dvh - 160px) / 2));
+  height: min(300px, calc((100dvh - 160px) * 0.6));
+  max-height: min(300px, calc((100dvh - 160px) * 0.6));
   transform: translate(-20px, -12px);
   display: flex;
   flex-direction: column;
@@ -605,7 +605,7 @@
 
 /* Must follow .psa-nudge-chip — SHOW CHAT button keeps both classes. */
 .psa-nudge-chip.psa-nudge-chip-show-chat {
-  bottom: -40px;
+  bottom: -24px;
   margin-bottom: 0;
   animation: psa-thought-float-show-chat 5s ease-in-out infinite;
 }
