@@ -550,7 +550,7 @@
   left: 50%;
   right: auto;
   bottom: 100%;
-  margin-bottom: 5px;
+  margin-bottom: 1px;
   width: min(120px, 37vw);
   padding: 0;
   border: none;
