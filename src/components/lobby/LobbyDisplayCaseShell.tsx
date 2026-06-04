@@ -7,8 +7,8 @@ import {
   LOBBY_DISPLAY_CASE_REGISTER_SLOT,
 } from '../../constants/lobbyDisplayCaseLayout';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
-import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { useLobbyDisplayCaseHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { LOBBY_CASE_CONTAINER_STYLE } from './lobbyCaseResponsive';
 import { SceneHitDebugOverlay } from './SceneHitDebugOverlay';
 import { rectToPercentStyle } from './SceneHitRegion';
@@ -75,6 +75,10 @@ type Props = {
   phoneOpenArt?: ReactNode;
 };
 
+/**
+ * Transparent scene-locked box for the lobby acrylic display case on `final-lobby.png`.
+ * Register and phone slots are positioned in % inside the case so they stay on the art.
+ */
 export function LobbyDisplayCaseShell({
   viewportMeasureRef,
   registerZIndex,
@@ -110,8 +114,7 @@ export function LobbyDisplayCaseShell({
       <div
         data-lobby-display-case
         style={{
-          position: 'absolute',
-          ...sceneHitLayoutBoxStyle(mappedCase, LOBBY_DISPLAY_CASE_HIT_LAYOUT),
+          ...sceneHitLayoutBoxStyle(mappedCase, 0, 0, LOBBY_DISPLAY_CASE_HIT_LAYOUT),
           zIndex: Math.max(registerZIndex, phoneZIndex),
           ...LOBBY_CASE_CONTAINER_STYLE,
           pointerEvents: 'none',

@@ -12,7 +12,6 @@ import {
   LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO,
   LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO,
   LOUNGE_TV_MENU_SCREEN_IMAGE,
-  LOUNGE_TV_MENU_SCREEN_LAYOUT,
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
@@ -21,7 +20,7 @@ import {
   useSceneCoverHitRect,
 } from '../../hooks/useSceneCoverHitRect';
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
-import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
+import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
 
 type Props = {
@@ -95,7 +94,7 @@ export function LoungeTvFullscreenShell({
         <div
           data-lounge-tv-glass
           style={{
-            ...sceneHitLayoutBoxStyle(mappedGlass, LOUNGE_TV_MENU_SCREEN_LAYOUT),
+            ...rectToPercentStyle(mappedGlass),
             position: 'absolute',
             boxSizing: 'border-box',
             zIndex: 1,
@@ -136,11 +135,20 @@ export function LoungeTvFullscreenShell({
               width: '100%',
               height: '100%',
               boxSizing: 'border-box',
-              overflow: 'hidden',
+              overflow: 'visible',
               ...screenStyle,
             }}
           >
-            {children}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                boxSizing: 'border-box',
+                overflow: 'hidden',
+              }}
+            >
+              {children}
+            </div>
             {onClose ? (
               <LoungeTvCloseButton
                 visible={closeVisible}

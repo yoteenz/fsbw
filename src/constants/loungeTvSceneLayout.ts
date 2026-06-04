@@ -1,4 +1,3 @@
-import type { SceneHitLayoutOptions } from '../utils/sceneHitLayout';
 import type { FinalSceneHitRect } from './finalLobbySceneAssets';
 import {
   LOUNGE_TV_CONTENT_FRAME_PX,
@@ -42,6 +41,13 @@ export const LOUNGE_TV_MENU_SCREEN_OFFSET = {
   y: LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
 } as const;
 
+/** Production + QA — magenta TV content glass. */
+export const LOUNGE_TV_MENU_SCREEN_LAYOUT = {
+  layoutWidthExtraPx: -4,
+  layoutHeightExtraPx: 20,
+  layoutOffsetY: -15,
+} as const;
+
 /** Close chip inset as a fraction of the glass box (negative = overlap bezel). */
 export const LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO = -0.04;
 export const LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO = -0.04;
@@ -51,8 +57,3 @@ export const LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO = {
   x: LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX / LOUNGE_TV_CONTENT_FRAME_PX.width,
   y: LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX / LOUNGE_TV_CONTENT_FRAME_PX.height,
 } as const;
-
-/** Magenta QA + production TV content pop-up glass. */
-export const LOUNGE_TV_MENU_SCREEN_LAYOUT: SceneHitLayoutOptions = {
-  layoutWidthExtraPx: 10,
-};
