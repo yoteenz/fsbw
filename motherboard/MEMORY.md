@@ -25092,3 +25092,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Priority (unchanged urgent first):** unsigned form → expiring consult → cart OOS → order celebration → notification stock → order update → profile alert.
 
 **Pushed:** `master` + `preview/mobile`.
+
+---
+
+## 2026-06-03 — SHOW CHAT headline +4px
+
+**Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`font-size: 15px`** (was inherited **11px** from base headline). Proactive nudge and other chip copy unchanged.
