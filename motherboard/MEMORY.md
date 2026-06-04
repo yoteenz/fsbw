@@ -24835,3 +24835,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** TV close should hand off from parked hand-press frame without remounting the animation component; treat open and close letterbox policy the same (lounge shows through until decoded frame).
 
+---
+
+## 2026-06-04 — PSA chat panel: glassmorphism main card
+
+**Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
+
+**Changes:** `.psa-chat-panel` → `rgba(255,255,255,0.6)` + `backdrop-filter: blur(4px)` + `1.3px` black border (matches site `bg-white/60 backdrop-blur-sm` main cards). Removed marble background and purple holo box-shadow. Header, messages, history, and input row backgrounds set transparent so one frosted shell reads through.
+
