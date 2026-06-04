@@ -6,6 +6,7 @@ import {
   PSA_STARTER_QUICK_REPLIES,
 } from '../../constants/psaConfig';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
+import { formatPsaMessageRouteDisplay } from '../../utils/psaRouteDisplay';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaChatCard } from '../../utils/psaApi';
 import type { PsaChatMessage } from './usePsaChat';
@@ -33,15 +34,19 @@ type PsaChatPanelProps = {
   initialInput?: string;
 };
 
-function bubbleContent(msg: PsaChatMessage): string {
+function bubbleDisplay(msg: PsaChatMessage): ReturnType<typeof formatPsaMessageRouteDisplay> {
   const stripGreeting = msg.role === 'assistant' && msg.id !== 'welcome';
-  return formatPsaVoiceText(msg.content, { stripGreeting });
-}
-
-function extractPaths(text: string): string[] {
-  const matches = text.match(/\/(?:[a-z0-9-]+\/)*[a-z0-9-]+/gi) ?? [];
-  const unique = [...new Set(matches.map((m) => m.split(/[\s),."'<>]/)[0]))];
-  return unique.filter((p) => p.startsWith('/') && p.length > 1).slice(0, 4);
+  const formatted = formatPsaVoiceText(msg.content, { stripGreeting });
+  const routeDisplay = formatPsaMessageRouteDisplay(formatted);
+  const cardPaths = new Set(
+    (msg.cards ?? [])
+      .map((c) => c.path?.trim().toLowerCase())
+      .filter((p): p is string => Boolean(p))
+  );
+  return {
+    ...routeDisplay,
+    routeLinks: routeDisplay.routeLinks.filter((link) => !cardPaths.has(link.path.toLowerCase())),
+  };
 }
 
 function PsaChatCards({
@@ -266,22 +271,47 @@ export default function PsaChatPanel({
           <div className="psa-chat-bubble psa-chat-bubble-system">LOADING YOUR CHAT…</div>
         ) : null}
         {messages.map((msg) => {
-          const paths = msg.role === 'assistant' ? extractPaths(msg.content) : [];
+          const { displayText, routeLinks, inlineTailCue } =
+            msg.role === 'assistant' ? bubbleDisplay(msg) : { displayText: msg.content, routeLinks: [], inlineTailCue: null };
           const cards = msg.cards ?? [];
           return (
             <div key={msg.id} className={`psa-chat-bubble psa-chat-bubble-${msg.role}`}>
-              {bubbleContent(msg)}
+              {msg.role === 'assistant' ? (
+                <span className="psa-chat-bubble-body">
+                  {displayText}
+                  {inlineTailCue && routeLinks.length > 0 ? (
+                    <>
+                      {displayText ? ' ' : null}
+                      <span className="psa-chat-route-tail">
+                        {inlineTailCue}{' '}
+                        {routeLinks.map((link) => (
+                          <button
+                            key={link.path}
+                            type="button"
+                            className="psa-chat-nav-link psa-chat-nav-link-inline"
+                            onClick={() => goTo(link.path)}
+                          >
+                            {link.label}
+                          </button>
+                        ))}
+                      </span>
+                    </>
+                  ) : null}
+                </span>
+              ) : (
+                displayText
+              )}
               {cards.length > 0 ? <PsaChatCards cards={cards} onNavigate={goTo} /> : null}
-              {paths.length > 0 ? (
+              {!inlineTailCue && routeLinks.length > 0 ? (
                 <div className="psa-chat-nav-links">
-                  {paths.map((path) => (
+                  {routeLinks.map((link) => (
                     <button
-                      key={path}
+                      key={link.path}
                       type="button"
                       className="psa-chat-nav-link"
-                      onClick={() => goTo(path)}
+                      onClick={() => goTo(link.path)}
                     >
-                      GO TO {path.toUpperCase()}
+                      {link.label}
                     </button>
                   ))}
                 </div>
