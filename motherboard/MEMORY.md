@@ -25007,3 +25007,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** `scale(0.5)` + `psa-chat-panel-wrap` with `overflow: hidden` clipped/hid the open chat entirely.
 
 **Changes:** Reverted wrap + scale — restored direct `PsaChatPanel` at **`min(340px, calc(100vw - 24px))`** width, **`min(520px, calc(100dvh - 140px))`** max-height, no transform. FAB position unchanged (viewport bottom-right).
+
+---
+
+## 2026-06-04 — PSA chat panel offset (10px left, 12px up)
+
+**Changes:** `.psa-chat-panel` **`transform: translate(-10px, -12px)`** — moves open chat only; avatar/HIDE CHAT FAB unchanged.
