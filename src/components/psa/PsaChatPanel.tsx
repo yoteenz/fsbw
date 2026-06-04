@@ -54,6 +54,37 @@ function formatCardField(text: string | undefined): string | undefined {
   return formatPsaVoiceText(text, { stripGreeting: false });
 }
 
+function PsaChatHistoryIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M5.636 18.364A9 9 0 1 0 4.5 12H3m2 2-2-2 2-2"
+        stroke="#EB1C24"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M12 7v5l3 2" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PsaChatBackIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M15 6l-6 6 6 6" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PsaChatNewIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M12 5v14M5 12h14" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function PsaChatCards({
   cards,
   onNavigate,
@@ -201,24 +232,31 @@ export default function PsaChatPanel({
   return (
     <div className="psa-chat-panel" role="dialog" aria-label="Personal Slay Assistant chat">
       <header className="psa-chat-header">
+        <div className="psa-chat-header-side psa-chat-header-side--left">
+          {historyAvailable && onOpenHistory ? (
+            <button
+              type="button"
+              className="psa-chat-header-icon-btn"
+              onClick={historyOpen ? onCloseHistory : onOpenHistory}
+              aria-label={historyOpen ? 'Close chat history' : 'Open chat history'}
+            >
+              {historyOpen ? <PsaChatBackIcon /> : <PsaChatHistoryIcon />}
+            </button>
+          ) : null}
+        </div>
         <div className="psa-chat-header-text">
           <h2 className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</h2>
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
-        <div className="psa-chat-header-actions">
-          {historyAvailable && onOpenHistory ? (
+        <div className="psa-chat-header-side psa-chat-header-side--right">
+          {onNewChat ? (
             <button
               type="button"
-              className="psa-chat-header-btn"
-              onClick={historyOpen ? onCloseHistory : onOpenHistory}
-              aria-label={historyOpen ? 'Close chat history' : 'Open chat history'}
+              className="psa-chat-header-icon-btn"
+              onClick={onNewChat}
+              aria-label="Start new PSA chat"
             >
-              {historyOpen ? 'BACK' : 'HISTORY'}
-            </button>
-          ) : null}
-          {onNewChat ? (
-            <button type="button" className="psa-chat-header-btn" onClick={onNewChat} aria-label="Start new PSA chat">
-              NEW
+              <PsaChatNewIcon />
             </button>
           ) : null}
         </div>
