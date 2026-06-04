@@ -8,6 +8,7 @@
   align-items: flex-end;
   gap: 10px;
   pointer-events: none;
+  overflow: visible;
 }
 
 .psa-widget-root > * {
@@ -541,12 +542,13 @@
   right: auto;
   bottom: calc(100% + 4px);
   max-width: min(240px, 72vw);
-  padding: 0 0 18px;
+  padding: 8px 8px 20px;
   border: none;
   background: transparent;
   cursor: pointer;
   text-align: center;
   z-index: 2;
+  overflow: visible;
   transform: translateX(-50%);
   animation: psa-thought-float 5s ease-in-out infinite;
 }
@@ -556,15 +558,17 @@
   display: block;
   isolation: isolate;
   border-radius: 22px;
-  overflow: hidden;
-  box-shadow:
-    0 6px 22px rgba(0, 0, 0, 0.14),
-    0 0 28px rgba(160, 90, 255, 0.28);
+  overflow: visible;
+  filter:
+    drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 0 32px rgba(160, 90, 255, 0.32))
+    drop-shadow(0 0 18px rgba(235, 28, 36, 0.12));
 }
 
 .psa-nudge-chip-holo-ring {
   position: absolute;
-  inset: -40%;
+  inset: -2px;
+  border-radius: 24px;
   background: conic-gradient(
     from 210deg,
     rgba(235, 28, 36, 0.85),
@@ -574,6 +578,15 @@
   );
   animation: psa-holo-spin 6s linear infinite;
   z-index: 0;
+  pointer-events: none;
+}
+
+.psa-nudge-chip-face {
+  position: relative;
+  z-index: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .psa-nudge-chip-holo-shine {
