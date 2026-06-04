@@ -1,4 +1,5 @@
 import { getNotificationsStorageKeyForUserEmail, type StoredNotification } from './orderAccountAlerts';
+import { resolveAccountAlertCopy } from './copyDebugResolve';
 import {
   getBcfStockStatus,
   getWigProductStockStatus,
@@ -125,17 +126,14 @@ function appendWishlistStockAlert(
   trackKey: string
 ): void {
   const id = `wishlist_${kind}_${trackKey.replace(/\s+/g, '_')}`;
-  const title = kind === 'low_stock' ? 'LOW STOCK: ACT FAST!' : 'BACK IN STOCK: SHOP NOW!';
-  const message =
-    kind === 'low_stock'
-      ? 'YOUR WISHLIST ITEM IS LOW IN STOCK.'
-      : 'YOUR WISHLIST ITEM IS BACK IN STOCK.';
+  const variantId = kind === 'low_stock' ? 'stock_wishlist.low_stock' : 'stock_wishlist.back_in_stock';
+  const copy = resolveAccountAlertCopy(variantId);
 
   const item: StoredNotification = {
     id,
-    title,
-    message,
-    actionText: 'VIEW PRODUCT',
+    title: copy.title,
+    message: copy.message,
+    actionText: copy.actionText || 'VIEW PRODUCT',
     actionRoute: actionRouteForTrackKey(trackKey),
     date: todayMdy(),
     sortAt: Date.now(),

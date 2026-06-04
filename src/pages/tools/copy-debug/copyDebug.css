@@ -230,7 +230,46 @@
   padding: 6px 8px;
   border: 1px solid #ddd;
   resize: vertical;
-  background: #fafafa;
+  background: #fff;
+}
+
+.copy-debug__field textarea:focus {
+  outline: none;
+  border-color: #eb1c24;
+}
+
+.copy-debug__field-hint {
+  font-size: 8px;
+  color: #888;
+  margin: 0 0 4px;
+  line-height: 1.35;
+}
+
+.copy-debug__card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.copy-debug__card-actions .copy-debug__btn {
+  flex: 1;
+}
+
+.copy-debug__card--custom {
+  border-color: #eb1c24;
+  box-shadow: 0 0 0 1px rgba(235, 28, 36, 0.15);
+}
+
+.copy-debug__badge--live {
+  border-color: #eb1c24;
+  color: #eb1c24;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.copy-debug__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .copy-debug__copy {

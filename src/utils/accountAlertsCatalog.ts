@@ -677,6 +677,11 @@ export function getAccountAlertsCatalog(): AccountAlertCatalogCategory[] {
   return catalog.sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
+/** Flat list in display order (category sort, then entry order). */
+export function flattenAccountAlertsCatalog(categories = getAccountAlertsCatalog()): AccountAlertCatalogEntry[] {
+  return categories.flatMap((c) => c.entries);
+}
+
 export function formatAccountAlertEntryForCopy(entry: AccountAlertCatalogEntry): string {
   const lines = [
     `VARIANT: ${entry.variantId}`,

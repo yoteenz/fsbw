@@ -14,6 +14,7 @@ export const ORDER_TRACKING_PULSATE_ANIMATION = 'orderTrackingPulsate 1s ease-in
 
 import { getAccountNotifications, mergeAccountNotifications } from '../pages/account/notifications/page';
 import { getNotificationsStorageKeyForUserEmail } from './orderAccountAlerts';
+import { resolveAccountAlertCopy } from './copyDebugResolve';
 import { orderRequiresOrderAuthorizationForm } from './orderAuthorizationForm';
 
 /** Client submitted auth form; admin has not approved yet (Pending → FORMS). */
@@ -139,18 +140,23 @@ export function appendOrderTrackingClientNotification(
       const d = new Date();
       return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
     })();
-    const title = 'ORDER TRACKING UPDATE';
-    const message = `${opts.stageLabel}: ${(opts.note || '').trim()}`.trim().toUpperCase();
+    const note = (opts.note || '').trim().toUpperCase();
     const ts = Date.now();
+    const copy = resolveAccountAlertCopy('order_tracking.with_note', {
+      stageLabel: opts.stageLabel,
+      trackingNote: note,
+      note,
+    });
+    const message = `${opts.stageLabel}: ${note}`.trim().toUpperCase();
     const n = {
       id: `order_track_${opts.orderId}_${ts}`,
-      title,
-      message: message || 'VIEW YOUR ORDER FOR DETAILS.',
+      title: copy.title,
+      message: message || copy.message,
       date: today,
       sortAt: ts,
       isRead: false,
       icon: 'f',
-      actionText: 'VIEW TRACKING',
+      actionText: copy.actionText,
       actionRoute: `/account/concierge?orderId=${encodeURIComponent(opts.orderId)}`,
     };
     const account = getAccountNotifications(user?.email ? user : { email: clientEmail });

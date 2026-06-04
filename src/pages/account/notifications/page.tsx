@@ -18,6 +18,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { WISHLIST_STOCK_ALERTS_UPDATED_EVENT } from '../../../utils/wishlistStockAlerts';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { resolveAccountAlertCopy } from '../../../utils/copyDebugResolve';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 
 interface Notification {
@@ -80,19 +81,23 @@ export function migrateConsultYourOrderReadyNotification(n: Notification): Notif
   if (!route.includes('consultOffer=1')) {
     actionRoute = buildConsultViewOfferOrdersHref(orderRef || n.message, undefined);
   }
+  const migratedCopy = resolveAccountAlertCopy('consult_offer.admin_migrated', {
+    orderNumber: digits || '332',
+    orderRef: orderRef || `ORDER #${digits}`,
+  });
   const messageU = String(n.message || '').toUpperCase();
   let message = n.message;
   if (digits && (!messageU.includes('IS COMPLETE') || messageU.includes('VIEW YOUR') || messageU.includes('CUSTOMIZED'))) {
-    message = `ORDER #${digits} IS COMPLETE.`;
+    message = migratedCopy.message;
   } else if (digits && !messageU.includes(`ORDER #${digits}`)) {
-    message = `ORDER #${digits} IS COMPLETE.`;
+    message = migratedCopy.message;
   }
 
   return {
     ...n,
-    title: 'YOUR ORDER IS READY!',
+    title: migratedCopy.title,
     message,
-    actionText: 'VIEW OFFER',
+    actionText: migratedCopy.actionText,
     actionRoute,
     variant: 'consult_offer_ready',
     consultOfferReady: n.id.startsWith(ADMIN_SENT_PREFIX) || n.id.startsWith('consult_offer_sent_'),
@@ -207,13 +212,15 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   const storedTier = typeof window !== 'undefined' ? localStorage.getItem(`lastKnownTier_${email}`) : null;
   const tier = (user.currentTierName || user.tier || storedTier || '').toUpperCase() || 'PENDING';
   const tierDisplay = tier === 'PENDING' ? 'NO TIER YET' : tier;
+  const tierCopy = resolveAccountAlertCopy(
+    tier === 'PENDING' ? 'onboarding_tier.pending' : 'onboarding_tier.unlocked',
+    { tierDisplay, tier }
+  );
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
-    title: tier === 'PENDING' ? 'NO SPEND TIER YET' : `YOU'RE NOW ${tierDisplay} TIER STATUS`,
-    message: tier === 'PENDING'
-      ? 'EARN 1,000 POINTS TO UNLOCK SILVER TIER.'
-      : 'VIEW YOUR TIER BENEFITS ON REWARDS PAGE.',
-    actionText: 'VIEW TIER',
+    title: tierCopy.title,
+    message: tierCopy.message,
+    actionText: tierCopy.actionText,
     actionRoute: '/account/rewards',
     date: today,
     isRead: false,
@@ -222,13 +229,14 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
 
   const membership = (user.membershipType || 'STANDARD').toUpperCase();
   const isPremium = membership === 'PREMIUM' || user.subscriptionTier;
+  const membershipCopy = resolveAccountAlertCopy(
+    isPremium ? 'onboarding_membership.premium' : 'onboarding_membership.standard'
+  );
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
-    title: isPremium ? 'PREMIUM MEMBERSHIP IS ACTIVE' : "YOU'RE STANDARD MEMBER",
-    message: isPremium
-      ? 'MANAGE YOUR PREMIUM PERKS ON REWARDS PAGE.'
-      : 'UPGRADE TO PREMIUM FOR 2X POINTS + PERKS.',
-    actionText: 'VIEW MEMBERSHIP',
+    title: membershipCopy.title,
+    message: membershipCopy.message,
+    actionText: membershipCopy.actionText,
     actionRoute: '/account/rewards',
     date: today,
     isRead: false,
@@ -237,28 +245,31 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
 
   const hasAddress = Array.isArray(user.savedAddresses) && user.savedAddresses.length > 0;
   const hasPayment = !!user.defaultPaymentMethod || (Array.isArray(user.savedPaymentMethods) && user.savedPaymentMethods.length > 0);
+  const shippingVariant = hasAddress && hasPayment
+    ? 'onboarding_shipping.both'
+    : hasAddress
+      ? 'onboarding_shipping.address_only'
+      : hasPayment
+        ? 'onboarding_shipping.payment_only'
+        : 'onboarding_shipping.neither';
+  const shippingCopy = resolveAccountAlertCopy(shippingVariant);
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
-    title: hasAddress && hasPayment ? 'SHIPPING + PAYMENT SAVED' : hasAddress ? 'SHIPPING SAVED, ADD PAYMENT' : hasPayment ? 'PAYMENT SAVED, ADD SHIPPING' : 'ADD SHIPPING + PAYMENT',
-    message: hasAddress && hasPayment
-      ? 'UPDATE YOUR SAVED ADDRESS + PAYMENT IN SETTINGS.'
-      : hasAddress
-        ? 'ADD A PAYMENT METHOD IN SETTINGS.'
-        : hasPayment
-          ? 'ADD A SHIPPING ADDRESS IN SETTINGS.'
-          : 'ADD SHIPPING + PAYMENT IN SETTINGS.',
-    actionText: 'MANAGE',
+    title: shippingCopy.title,
+    message: shippingCopy.message,
+    actionText: shippingCopy.actionText,
     actionRoute: '/account/shipping',
     date: today,
     isRead: false,
     icon: 'f'
   });
 
+  const profileCopy = resolveAccountAlertCopy('onboarding_profile.settings');
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
-    title: 'UPDATE PROFILE + PREFERENCES',
-    message: 'KEEP YOUR PROFILE + PREFERENCES UP TO DATE.',
-    actionText: 'OPEN SETTINGS',
+    title: profileCopy.title,
+    message: profileCopy.message,
+    actionText: profileCopy.actionText,
     actionRoute: '/account/settings',
     date: today,
     isRead: false,
@@ -272,13 +283,14 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   // Below: only for accounts that have had activity (hasMadeFirstPurchase or equivalent)
 
   const voucherCount = Array.isArray(user.voucherList) ? user.voucherList.length : (user.voucherCount ?? 0);
+  const voucherCopy = resolveAccountAlertCopy(voucherCount === 0 ? 'vouchers.none' : 'vouchers.available', {
+    voucherCount: String(voucherCount),
+  });
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}voucher`,
-    title: voucherCount === 0 ? 'NO VOUCHERS AVAILABLE YET' : `${voucherCount} VOUCHER${voucherCount === 1 ? '' : 'S'} AVAILABLE`,
-    message: voucherCount === 0
-      ? 'REDEEM POINTS FOR VOUCHERS ON REWARDS PAGE.'
-      : 'YOU HAVE VOUCHERS READY TO APPLY AT CHECKOUT.',
-    actionText: 'VIEW VOUCHERS',
+    title: voucherCopy.title,
+    message: voucherCopy.message,
+    actionText: voucherCopy.actionText,
     actionRoute: '/account',
     date: today,
     isRead: false,
@@ -305,11 +317,19 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     } else {
       continue;
     }
+    let expiringVariant = 'vouchers.expiring_1m';
+    if (msLeft <= oneDayMs) expiringVariant = 'vouchers.expiring_24h';
+    else if (msLeft <= oneWeekMs) expiringVariant = 'vouchers.expiring_1w';
+    const expiringCopy = resolveAccountAlertCopy(expiringVariant, {
+      typeLabel: typeLabel.replace(/\s+/g, ' '),
+      voucherType: typeLabel.replace(/\s+/g, ' '),
+      timeLabel,
+    });
     notifs.push({
       id: `${ACCOUNT_NOTIFICATION_PREFIX}voucher_expiring_${typeLabel}_${expMs}`,
-      title: 'FREE VOUCHER EXPIRING SOON',
-      message: `YOUR ${typeLabel.replace(/\s+/g, ' ')} VOUCHER EXPIRES IN ${timeLabel}.`,
-      actionText: 'VIEW VOUCHERS',
+      title: expiringCopy.title,
+      message: expiringCopy.message,
+      actionText: expiringCopy.actionText,
       actionRoute: '/account',
       date: today,
       isRead: false,
@@ -326,11 +346,16 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     ];
     for (const voucherType of mockVoucherTypes) {
       for (const { label: timeLabel, key: timeKey } of mockTimeStates) {
+        const mockCopy = resolveAccountAlertCopy('admin_mock_voucher.expiring', {
+          voucherType,
+          typeLabel: voucherType,
+          timeLabel,
+        });
         notifs.push({
           id: `${ACCOUNT_NOTIFICATION_PREFIX}voucher_expiring_mock_${voucherType.replace(/\s+/g, '_')}_${timeKey}`,
-          title: 'FREE VOUCHER EXPIRING SOON',
-          message: `YOUR ${voucherType} VOUCHER EXPIRES IN ${timeLabel}.`,
-          actionText: 'VIEW VOUCHERS',
+          title: mockCopy.title,
+          message: mockCopy.message,
+          actionText: mockCopy.actionText,
           actionRoute: '/account',
           date: today,
           isRead: false,
@@ -341,13 +366,15 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   }
 
   const balance = typeof user.giftCardBalance === 'number' ? user.giftCardBalance : 0;
+  const balanceCopy = resolveAccountAlertCopy(
+    balance <= 0 ? 'rewards_balance.digital_cash_zero' : 'rewards_balance.digital_cash_positive',
+    { balance: balance.toFixed(2) }
+  );
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}digital_cash`,
-    title: 'DIGITAL CASH BALANCE',
-    message: balance <= 0
-      ? 'EARN CREDIT VIA TIER DISCOUNTS OR REWARDS.'
-      : `$${balance.toFixed(2)} USD APPLIES AT CHECKOUT + NEVER EXPIRES.`,
-    actionText: 'VIEW BALANCE',
+    title: balanceCopy.title,
+    message: balanceCopy.message,
+    actionText: balanceCopy.actionText,
     actionRoute: '/account',
     date: today,
     isRead: false,
@@ -356,11 +383,14 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
 
   const points = typeof user.loyaltyPoints === 'number' ? user.loyaltyPoints : 0;
   if (points > 0) {
+    const pointsCopy = resolveAccountAlertCopy('rewards_balance.loyalty_points', {
+      loyaltyPoints: points.toLocaleString(),
+    });
     notifs.push({
       id: `${ACCOUNT_NOTIFICATION_PREFIX}loyalty_points`,
-      title: `YOU HAVE ${points.toLocaleString()} LOYALTY PTS`,
-      message: 'EARN + REDEEM POINTS FOR VOUCHERS + CASH.',
-      actionText: 'VIEW REWARDS',
+      title: pointsCopy.title,
+      message: pointsCopy.message,
+      actionText: pointsCopy.actionText,
       actionRoute: '/account/rewards',
       date: today,
       isRead: false,
@@ -374,24 +404,27 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     const active = orders.activeOrders || [];
     const past = orders.pastOrders || [];
     const total = active.length + past.length;
+    const ordersCopy = resolveAccountAlertCopy(
+      total === 0 ? 'orders_summary.none' : 'orders_summary.has_orders',
+      { activeOrders: String(active.length), pastOrders: String(past.length) }
+    );
     notifs.push({
       id: `${ACCOUNT_NOTIFICATION_PREFIX}order`,
-      title: total === 0 ? 'NO ORDERS AVAILABLE YET' : `${active.length} ACTIVE, ${past.length} PAST ORDERS`,
-      message: total === 0
-        ? 'TRACK + VIEW YOUR ORDERS ON ORDERS PAGE.'
-        : 'VIEW ORDER STATUS + TRACK SHIPPING HERE.',
-      actionText: 'VIEW ORDERS',
+      title: ordersCopy.title,
+      message: ordersCopy.message,
+      actionText: ordersCopy.actionText,
       actionRoute: '/account/orders',
       date: today,
       isRead: false,
       icon: 'f'
     });
   } catch (_) {
+    const fallbackOrdersCopy = resolveAccountAlertCopy('orders_summary.fallback');
     notifs.push({
       id: `${ACCOUNT_NOTIFICATION_PREFIX}order`,
-      title: 'ORDER HISTORY IS AVAILABLE',
-      message: 'TRACK + VIEW YOUR ORDERS ON ORDERS PAGE.',
-      actionText: 'VIEW ORDERS',
+      title: fallbackOrdersCopy.title,
+      message: fallbackOrdersCopy.message,
+      actionText: fallbackOrdersCopy.actionText,
       actionRoute: '/account/orders',
       date: today,
       isRead: false,
@@ -399,22 +432,24 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     });
   }
 
+  const rewardsCopy = resolveAccountAlertCopy('rewards_program.overview');
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}rewards`,
-    title: 'REWARDS PROGRAM OVERVIEW PAGE',
-    message: 'EARN + REDEEM POINTS ON REWARDS PAGE.',
-    actionText: 'VIEW REWARDS',
+    title: rewardsCopy.title,
+    message: rewardsCopy.message,
+    actionText: rewardsCopy.actionText,
     actionRoute: '/account/rewards',
     date: today,
     isRead: false,
     icon: 'f'
   });
 
+  const salesCopy = resolveAccountAlertCopy('rewards_program.sales');
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}sales`,
-    title: 'MEMBER SALES + TIER DISCOUNTS',
-    message: 'SHOP MEMBER SALES + TIER DISCOUNTS NOW.',
-    actionText: 'SHOP',
+    title: salesCopy.title,
+    message: salesCopy.message,
+    actionText: salesCopy.actionText,
     actionRoute: '/build-a-wig',
     date: today,
     isRead: false,
@@ -422,13 +457,14 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   });
 
   const referralCode = (user.referralCode || '').toUpperCase();
+  const referralsCopy = resolveAccountAlertCopy(referralCode ? 'referrals.with_code' : 'referrals.no_code', {
+    referralCode,
+  });
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}referrals`,
-    title: referralCode ? `YOUR REFERRAL CODE ${referralCode}` : 'GET REFERRAL CODE + EARN',
-    message: referralCode
-      ? 'SHARE YOUR CODE + EARN WHEN FRIENDS JOIN.'
-      : 'GET YOUR REFERRAL CODE ON REFERRALS PAGE.',
-    actionText: 'VIEW REFERRALS',
+    title: referralsCopy.title,
+    message: referralsCopy.message,
+    actionText: referralsCopy.actionText,
     actionRoute: '/account/referrals',
     date: today,
     isRead: false,
@@ -436,13 +472,15 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   });
 
   const affiliatePoints = typeof user.affiliatePoints === 'number' ? user.affiliatePoints : 0;
+  const affiliateCopy = resolveAccountAlertCopy(
+    affiliatePoints > 0 ? 'affiliate.has_points' : 'affiliate.no_points',
+    { affiliatePoints: String(affiliatePoints) }
+  );
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}affiliate`,
-    title: affiliatePoints > 0 ? `YOU HAVE ${affiliatePoints} AFFILIATE PTS` : 'EARN AFFILIATE POINTS NOW',
-    message: affiliatePoints > 0
-      ? 'REDEEM ON AFFILIATE PAGE.'
-      : 'SUBMIT CONTENT TO EARN AFFILIATE POINTS.',
-    actionText: 'VIEW AFFILIATE',
+    title: affiliateCopy.title,
+    message: affiliateCopy.message,
+    actionText: affiliateCopy.actionText,
     actionRoute: '/account/affiliate',
     date: today,
     isRead: false,

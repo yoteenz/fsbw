@@ -1,3 +1,5 @@
+import { resolveAccountAlertCopy } from './copyDebugResolve';
+
 type AlertUser = {
   email?: string;
   membershipType?: string;
@@ -153,11 +155,12 @@ export function buildOrderReceivedAccountAlert(
 
   const orderNum = displayOrderNumber(order);
   const sortAt = orderTimestampMs(order);
+  const copy = resolveAccountAlertCopy('order_received.standard', { orderNumber: orderNum });
   return {
     id: `order_received_${orderId}`,
-    title: "WE'VE RECEIVED YOUR ORDER!",
-    message: `ORDER #${orderNum} IS BEING PROCESSED.`,
-    actionText: 'VIEW DETAILS',
+    title: copy.title,
+    message: copy.message,
+    actionText: copy.actionText,
     actionRoute: alertRouteForOrder(user, order),
     date: todayMdy(),
     ...(sortAt != null ? { sortAt } : {}),
@@ -179,11 +182,12 @@ export function appendConsultOfferCompleteAccountAlert(
   const id = qid ? `consult_offer_sent_${qid}` : `consult_offer_sent_${Date.now()}`;
   const orderNum = orderNumberDisplay.replace(/^ORDER\s*#?\s*/i, '').replace(/^#/, '').trim() || '—';
   const now = Date.now();
+  const copy = resolveAccountAlertCopy('consult_offer.sent_local', { orderNumber: orderNum });
   const item: StoredNotification = {
     id,
-    title: 'YOUR ORDER IS READY!',
-    message: `ORDER #${orderNum} IS COMPLETE.`,
-    actionText: 'VIEW OFFER',
+    title: copy.title,
+    message: copy.message,
+    actionText: copy.actionText,
     actionRoute: buildConsultViewOfferOrdersHref(orderNumberDisplay, options?.matchedOrderId),
     date: todayMdy(),
     sortAt: now,

@@ -18,6 +18,7 @@ import {
   markOrderCelebrated,
   type PsaOrderCelebrationKind,
 } from './psaOrderCelebrations';
+import { resolveNudgeCopy } from './copyDebugResolve';
 
 export type PsaProactiveNudgeKind =
   | 'unsigned_form'
@@ -184,15 +185,21 @@ export function pickContextualPsaProactiveNudge(
 function nudgeFromStockNotification(n: StoredNotification): PsaProactiveNudge {
   const low = (n.title || '').toUpperCase().includes('LOW STOCK');
   const recencyMs = notificationSortAt(n) || Date.now();
+  const variantId = low ? 'stock_alert.notif.low_stock' : 'stock_alert.notif.back_in_stock';
+  const hasBody = Boolean(n.message?.trim());
+  const resolvedVariant = !low && !hasBody ? 'stock_alert.notif.back_in_stock.fallback_body' : variantId;
+  const copy = resolveNudgeCopy(resolvedVariant, {
+    message: n.message?.trim() ?? '',
+  });
   return {
     id: `notif-stock-${n.id}`,
     kind: 'stock_alert',
     priority: 6,
-    headline: low ? 'LOW STOCK ALERT' : 'BACK IN STOCK',
-    body: n.message?.trim() ? n.message.trim().slice(0, 48) : 'ON YOUR WISHLIST',
+    headline: copy.headline,
+    body: hasBody && !low ? n.message!.trim().slice(0, 48) : copy.body,
     actionPath: n.actionRoute || '/wishlist',
-    actionLabel: n.actionText?.trim() || 'SHOP NOW',
-    prefilledMessage: 'Something on my wishlist changed stock. What should I do?',
+    actionLabel: n.actionText?.trim() || copy.actionLabel || 'SHOP NOW',
+    prefilledMessage: copy.prefilledMessage,
     recencyMs,
     pageContexts: ['wishlist'],
   };
@@ -200,41 +207,66 @@ function nudgeFromStockNotification(n: StoredNotification): PsaProactiveNudge {
 
 function nudgeFromOrderNotification(n: StoredNotification): PsaProactiveNudge {
   const title = (n.title || '').trim().toUpperCase();
-  let headline = 'ORDER UPDATE';
-  if (title.includes('TRACKING')) headline = 'ORDER TRACKING UPDATE';
-  else if (title.includes('READY')) headline = 'YOUR ORDER IS READY';
-  else if (title.includes('RECEIVED')) headline = 'ORDER CONFIRMED';
-  else if (title) headline = title.length > 28 ? `${title.slice(0, 28)}…` : title;
+  let variantId = 'order_update.notif.generic';
+  if (title.includes('TRACKING')) variantId = 'order_update.notif.tracking';
+  else if (title.includes('READY')) variantId = 'order_update.notif.ready';
+  else if (title.includes('RECEIVED')) variantId = 'order_update.notif.received';
+
+  const msg = n.message?.trim() ?? '';
+  const copy = resolveNudgeCopy(variantId, {
+    notificationMessage: msg,
+    stageLabel: msg.includes(':') ? msg.split(':')[0]?.trim() ?? '' : '',
+    trackingNote: msg.includes(':') ? msg.split(':').slice(1).join(':').trim() : msg,
+  });
+
+  let headline = copy.headline;
+  if (variantId === 'order_update.notif.generic' && title && !title.includes('TRACKING') && !title.includes('READY') && !title.includes('RECEIVED')) {
+    headline = title.length > 28 ? `${title.slice(0, 28)}…` : title;
+  }
 
   return {
     id: `notif-order-${n.id}`,
     kind: 'order_update',
     priority: 7,
     headline,
-    body: n.message?.trim() ? n.message.trim().slice(0, 48) : undefined,
+    body: msg ? msg.slice(0, 48) : copy.body,
     actionPath: n.actionRoute || '/account/orders',
-    actionLabel: n.actionText?.trim() || 'VIEW ORDER',
-    prefilledMessage: n.message?.trim()
-      ? `Tell me about this order update: ${n.message.trim()}`
-      : 'I have a new order update. What should I know?',
+    actionLabel: n.actionText?.trim() || copy.actionLabel || 'VIEW ORDER',
+    prefilledMessage: msg
+      ? interpolatePrefilledFromTemplate(copy.prefilledMessage, msg, variantId)
+      : copy.prefilledMessage,
     recencyMs: notificationSortAt(n) || Date.now(),
     pageContexts: ['orders'],
   };
 }
 
+function interpolatePrefilledFromTemplate(template: string | undefined, message: string, variantId: string): string {
+  if (!template) {
+    return message ? `Tell me about this order update: ${message}` : 'I have a new order update. What should I know?';
+  }
+  if (variantId === 'order_update.notif.tracking' || variantId === 'order_update.notif.ready' || variantId === 'order_update.notif.received') {
+    return template.replace(/\{notificationMessage\}/g, message).replace(/\{message\}/g, message);
+  }
+  return template;
+}
+
 function nudgeFromProfileNotification(n: StoredNotification): PsaProactiveNudge {
   const title = (n.title || '').trim();
+  const variantId = title ? 'profile_alert.with_title' : 'profile_alert.fallback';
+  const displayTitle = title ? (title.length > 36 ? `${title.slice(0, 36)}…` : title) : '';
+  const copy = resolveNudgeCopy(variantId, { title: displayTitle, adminAlertTitle: displayTitle });
   return {
     id: `notif-profile-${n.id}`,
     kind: 'profile_alert',
     priority: 8,
-    headline: 'NEW PROFILE ALERT',
-    body: title ? (title.length > 36 ? `${title.slice(0, 36)}…` : title) : 'VIEW YOUR ALERTS',
+    headline: copy.headline,
+    body: title ? displayTitle : copy.body,
     actionPath: n.actionRoute || '/account/alerts',
-    actionLabel: n.actionText?.trim() || 'VIEW ALERTS',
+    actionLabel: n.actionText?.trim() || copy.actionLabel || 'VIEW ALERTS',
     prefilledMessage: title
-      ? `I have a new alert: ${title}. What should I do?`
-      : 'I have a new profile alert. What should I do?',
+      ? (copy.prefilledMessage?.replace(/\{title\}/g, title).replace(/\{adminAlertTitle\}/g, title) ??
+          `I have a new alert: ${title}. What should I do?`)
+      : copy.prefilledMessage,
     recencyMs: notificationSortAt(n) || Date.now(),
     pageContexts: ['alerts'],
   };
@@ -264,17 +296,30 @@ function collectOrderStatusNudges(orders: Record<string, unknown>[], nudges: Psa
     if (localStorage.getItem(seenKey)) continue;
 
     const num = orderNum(order);
+    const statusVariant =
+      status === 'SHIPPED'
+        ? 'order_update.status.shipped'
+        : status === 'PREPARING'
+          ? 'order_update.status.preparing'
+          : status === 'CONFIRMED'
+            ? 'order_update.status.confirmed'
+            : 'order_update.status.no_order';
+    const variantId = num ? statusVariant : 'order_update.status.no_order';
+    const copy = resolveNudgeCopy(variantId, {
+      orderRef: num,
+      orderNumber: num.replace(/^ORDER\s*#?\s*/i, '').trim() || num,
+      num,
+      status: status.replace(/_/g, ' '),
+    });
     nudges.push({
       id: `order-status-${id}-${status}`,
       kind: 'order_update',
       priority: 7,
-      headline: status === 'SHIPPED' ? "SHE'S ON THE WAY" : 'ORDER UPDATE',
-      body: num || status.replace(/_/g, ' '),
+      headline: copy.headline,
+      body: num || copy.body || status.replace(/_/g, ' '),
       actionPath: `/account/orders?orderId=${encodeURIComponent(id)}`,
-      actionLabel: 'VIEW ORDER',
-      prefilledMessage: num
-        ? `My order ${num} status changed to ${status}. What's next?`
-        : `My order status changed to ${status}. What's next?`,
+      actionLabel: copy.actionLabel || 'VIEW ORDER',
+      prefilledMessage: copy.prefilledMessage,
       recencyMs: orderRecencyMs(order),
       pageContexts: ['orders'],
     });
@@ -294,15 +339,17 @@ function collectBawDraftNudge(pathname: string, nudges: PsaProactiveNudge[]): vo
     if (!Number.isNaN(t)) recencyMs = t;
   }
 
+  const variantId = baw.source === 'draft' ? 'baw_draft.saved' : 'baw_draft.session';
+  const copy = resolveNudgeCopy(variantId, { unitLabel: baw.unitLabel, productName: baw.unitLabel });
   nudges.push({
     id: `baw-${baw.unitId}`,
     kind: 'baw_draft',
     priority: 4,
-    headline: baw.source === 'draft' ? 'YOUR BAW DRAFT IS SAVED' : 'FINISH YOUR CUSTOMIZATION',
+    headline: copy.headline,
     body: baw.unitLabel,
     actionPath: baw.buildPath,
-    actionLabel: 'CONTINUE BAW',
-    prefilledMessage: `Help me finish my ${baw.unitLabel} Build-a-Wig configuration where I left off.`,
+    actionLabel: copy.actionLabel || 'CONTINUE BAW',
+    prefilledMessage: copy.prefilledMessage,
     recencyMs,
     pageContexts: ['baw'],
   });
@@ -323,17 +370,17 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
     const placedAt = typeof order.placedAt === 'number' ? order.placedAt : Date.now();
     const hoursLeft = hoursUntil(placedAt + 24 * 60 * 60 * 1000);
     const num = orderNum(order);
+    const variantId = num ? 'unsigned_form.with_order' : 'unsigned_form.no_order';
+    const copy = resolveNudgeCopy(variantId, { orderRef: num, orderNumber: num, hoursLeft: String(hoursLeft) });
     nudges.push({
       id: `unsigned-${order.id ?? num}`,
       kind: 'unsigned_form',
       priority: 1,
-      headline: 'SIGN YOUR ORDER FORM',
+      headline: copy.headline,
       body: num ? `${num} — ${hoursLeft}H LEFT` : `${hoursLeft}H LEFT`,
       actionPath: '/tools/order-form',
-      actionLabel: 'SIGN FORM',
-      prefilledMessage: num
-        ? `Help me sign the order authorization form for ${num} before it expires.`
-        : 'Help me sign my order authorization form before it expires.',
+      actionLabel: copy.actionLabel || 'SIGN FORM',
+      prefilledMessage: copy.prefilledMessage,
       recencyMs: placedAt,
       pageContexts: ['orders', 'general'],
     });
@@ -348,17 +395,17 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
     const hoursLeft = hoursUntil(expires);
     if (hoursLeft > 48) continue;
     const num = orderNum(order);
+    const variantId = num ? 'expiring_consult.with_order' : 'expiring_consult.no_order';
+    const copy = resolveNudgeCopy(variantId, { orderRef: num, orderNumber: num, hoursLeft: String(hoursLeft) });
     nudges.push({
       id: `consult-${order.id ?? num}`,
       kind: 'expiring_consult',
       priority: 2,
-      headline: 'CONSULT OFFER EXPIRING',
+      headline: copy.headline,
       body: num ? `${num} — ${hoursLeft}H LEFT` : `${hoursLeft}H LEFT`,
       actionPath: buildConsultViewOfferOrdersHref(num, String(order.id ?? '')),
-      actionLabel: 'VIEW OFFER',
-      prefilledMessage: num
-        ? `Walk me through my consult offer on ${num} before it expires.`
-        : 'Walk me through my consult offer before it expires.',
+      actionLabel: copy.actionLabel || 'VIEW OFFER',
+      prefilledMessage: copy.prefilledMessage,
       recencyMs: expires - 48 * 60 * 60 * 1000,
       pageContexts: ['orders', 'general'],
     });
@@ -371,17 +418,17 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
       name: String(oos.name ?? ''),
       productName: String(oos.name ?? ''),
     });
+    const variantId = name ? 'stock_alert.cart.with_product' : 'stock_alert.cart.fallback';
+    const copy = resolveNudgeCopy(variantId, { productName: name });
     nudges.push({
       id: `stock-cart-${name}`,
       kind: 'stock_alert',
       priority: 3,
-      headline: 'ITEM OUT OF STOCK',
-      body: name ? `${name} IN YOUR BAG` : 'IN YOUR BAG',
+      headline: copy.headline,
+      body: name ? `${name} IN YOUR BAG` : copy.body || 'IN YOUR BAG',
       actionPath: getWigUnitProductRoute(name) ?? '/home/shop',
-      actionLabel: 'NOTIFY ME',
-      prefilledMessage: name
-        ? `${name} in my bag is out of stock. What are my options?`
-        : 'Something in my bag is out of stock. What are my options?',
+      actionLabel: copy.actionLabel || 'NOTIFY ME',
+      prefilledMessage: copy.prefilledMessage,
       recencyMs: Date.now(),
       pageContexts: ['general'],
     });
@@ -401,7 +448,7 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
       headline: celebration.headline,
       body: celebration.body,
       actionPath: '/orders',
-      actionLabel: 'VIEW ORDER',
+      actionLabel: celebration.actionLabel || 'VIEW ORDER',
       prefilledMessage: celebration.prefilledMessage,
       recencyMs: match ? orderRecencyMs(match) : Date.now(),
       pageContexts: ['orders'],
