@@ -437,9 +437,11 @@
 
 .psa-chat-send {
   flex-shrink: 0;
-  border: 1.3px solid black;
-  background: #eb1c24;
-  color: #fff;
+  border: 1.3px solid rgba(235, 28, 36, 0.75);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #eb1c24;
   padding: 8px 12px;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 10px;
