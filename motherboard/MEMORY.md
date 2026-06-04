@@ -24785,3 +24785,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-avatar-cta` font → Futura PT Demi, gray `#808080` unchanged. Nudge `margin-bottom` `5px` → `1px` (4px closer to avatar).
 
+---
+
+## 2026-06-04 — PSA nudge: down 6px more
+
+**Changes:** `.psa-nudge-chip` `margin-bottom` `1px` → `-5px` (6px closer to avatar).
+
