@@ -484,11 +484,20 @@ export default function PsaAssistantWidget() {
           {isFabCollapsed ? (
             <button
               type="button"
-              className="psa-fab-collapsed-trigger"
+              className="psa-nudge-chip psa-nudge-chip-show-chat"
               onClick={handleFabClick}
               aria-label="Show chat"
             >
-              <span className="psa-avatar-cta">{fabCtaLabel}</span>
+              <img
+                className="psa-nudge-chip-art"
+                src={PSA_NUDGE_BUBBLE_SRC}
+                alt=""
+                aria-hidden
+                draggable={false}
+              />
+              <span className="psa-nudge-chip-content">
+                <span className="psa-nudge-chip-headline">{PSA_SHOW_CHAT_CTA}</span>
+              </span>
             </button>
           ) : (
             <PsaAvatarTrigger
