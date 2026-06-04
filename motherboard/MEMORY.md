@@ -25118,3 +25118,27 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
 
 **Pushed:** `master` + `preview/mobile`.
+
+---
+
+## 2026-06-04 — Lounge/lobby scene hit debug square tuning (TV + display case)
+
+**Context:** User requested colored QA overlay / production hit-box adjustments on lounge TV regions and lobby display case while using `?sceneHitDebug=1`.
+
+**Topics covered:**
+- **Magenta** TV content pop-up: height +20px only; recover X close icon (was clipped by `overflow: hidden` on inner screen).
+- **Blue** baked lounge TV: down 80px, right 20px; height −40%.
+- **Green** play tap: width and height +50%.
+- **Orange** lobby display case: down 80px; width −20%.
+
+**Decisions / outcomes:** Shared **`sceneHitLayoutBoxStyle`** (`src/utils/sceneHitLayout.ts`) applies layout to both **`SceneHitDebugOverlay`** and production boxes (same pattern as shelf **`LOBBY_SHELF_HIT_LAYOUT_*`**). Close button moved to direct child of **`data-lounge-tv-glass`** (sibling of overflow-hidden content) so negative inset is not clipped.
+
+**Changes:**
+- **`finalLobbySceneAssets.ts`** — `LOUNGE_TV_BAKED_HIT_LAYOUT_*`, `LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE` (1.5).
+- **`loungeTvSceneLayout.ts`** — `LOUNGE_TV_MENU_SCREEN_LAYOUT_HEIGHT_EXTRA_PX` (20).
+- **`lobbyDisplayCaseLayout.ts`** — `LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.y` **−31 → 49** (+80px down); `LOBBY_DISPLAY_CASE_HIT_LAYOUT` width scale **0.8**.
+- **`LoungeCompositeTvPlay.tsx`**, **`LoungeTvFullscreenShell.tsx`**, **`LobbyDisplayCaseShell.tsx`**, **`SceneHitDebugOverlay.tsx`**.
+
+**Pushed:** `master` + `preview/mobile` (`8fa8cae6`).
+
+**Conventions:** Tune lounge TV / display case via `LOUNGE_TV_*_HIT_LAYOUT` and `LOBBY_DISPLAY_CASE_HIT_LAYOUT` constants; debug colors still only with `?sceneHitDebug=1`.
