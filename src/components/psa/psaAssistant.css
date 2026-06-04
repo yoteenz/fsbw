@@ -654,9 +654,10 @@
   text-align: center;
 }
 
-/* Proactive alert nudge only — headline + body down 2px (not SHOW CHAT). */
-.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content {
-  top: calc(36% + 10px);
+/* Proactive nudge only — Bohemy headline (row 1) down 2px; body unchanged. */
+.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-headline {
+  position: relative;
+  top: 2px;
 }
 
 .psa-nudge-chip-headline {
