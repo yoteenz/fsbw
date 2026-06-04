@@ -168,18 +168,23 @@ export function loungeTvScreenStyle(overrides?: React.CSSProperties): React.CSSP
 type LoungeTvCloseButtonProps = {
   visible: boolean;
   onClick: (e: React.MouseEvent) => void;
-  /** Default `-8px` corner; fullscreen shell maps bezel point on the PNG. */
+  /** Default `-8px` corner; scene shell uses % insets on the glass box. */
   position?: {
     top: number | string;
     right?: number | string;
     left?: number | string;
   };
+  /** Fluid chip size (e.g. `clamp(18px, 5.5cqw, 26px)`). */
+  size?: number | string;
+  iconSize?: number | string;
 };
 
 export function LoungeTvCloseButton({
   visible,
   onClick,
   position = { top: -8, right: -8 },
+  size = 22,
+  iconSize = 12,
 }: LoungeTvCloseButtonProps) {
   return (
     <button
@@ -193,8 +198,8 @@ export function LoungeTvCloseButton({
         left: position.left ?? 'auto',
         transform: position.left != null ? 'translate(-50%, -50%)' : undefined,
         zIndex: LOUNGE_TV_CLOSE_BUTTON_Z_INDEX,
-        width: 22,
-        height: 22,
+        width: size,
+        height: size,
         margin: 0,
         padding: 0,
         border: '0.97px solid #0a0a0a',
@@ -216,11 +221,13 @@ export function LoungeTvCloseButton({
       <img
         src="/assets/close-icon.svg"
         alt=""
-        width={12}
-        height={12}
+        width={typeof iconSize === 'number' ? iconSize : undefined}
+        height={typeof iconSize === 'number' ? iconSize : undefined}
         draggable={false}
         style={{
           display: 'block',
+          width: iconSize,
+          height: iconSize,
           objectFit: 'contain',
           filter: LOUNGE_TV_CLOSE_ICON_FILTER,
         }}

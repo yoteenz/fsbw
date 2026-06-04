@@ -65,3 +65,8 @@ export function isLobbyShelfHitDebugEnabled(): boolean {
   if (LOBBY_SHELF_HIT_DEBUG_OVERLAY) return true;
   return isSceneHitDebugQueryEnabled();
 }
+
+/** Open TV menu glass rect — same `?sceneHitDebug=1` flag as lobby/lounge hits. */
+export function useLoungeTvGlassHitDebugEnabled(): boolean {
+  return useSceneHitDebugEnabled();
+}

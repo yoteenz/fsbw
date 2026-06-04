@@ -34,6 +34,15 @@ import {
 import { LOUNGE_TV_ANIMATION_VIDEO_ENABLED } from '../../constants/loungeTvAnimationVideo';
 import { useSceneCarouselMeasureBox } from '../../hooks/useSceneCarouselMeasureBox';
 import { LoungeTvAnimationVideo } from './LoungeTvAnimationVideo';
+import {
+  LOUNGE_TV_GLASS_NAV_FONT,
+  LOUNGE_TV_GLASS_PADDING_X,
+  LOUNGE_TV_GLASS_PADDING_Y,
+  LOUNGE_TV_GLASS_SIDEBAR_FONT,
+  LOUNGE_TV_GLASS_SIDEBAR_WIDTH,
+  LOUNGE_TV_GLASS_THUMB_FONT,
+  loungeTvGlassCqw,
+} from './loungeTvResponsive';
 
 type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'closing';
 
@@ -126,12 +135,9 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
 }
 
 /** Equal horizontal + vertical gutters between Watch + Learn / grid thumbnails. */
-const LOUNGE_TV_THUMB_GRID_GAP_PX = 6;
-const LOUNGE_TV_BODY_SIDEBAR_GAP_PX = 8;
-const LOUNGE_TV_SIDEBAR_ITEM_GAP_PX = 10;
-
-/** Default media insets until nav tabs are measured (sidebar + gap reserved). */
-const LOUNGE_TV_MEDIA_INSET_DEFAULT = { left: 80, right: 0 };
+const LOUNGE_TV_THUMB_GRID_GAP = loungeTvGlassCqw(1.9, 4, 8);
+const LOUNGE_TV_BODY_SIDEBAR_GAP = loungeTvGlassCqw(2.5, 6, 10);
+const LOUNGE_TV_SIDEBAR_ITEM_GAP = loungeTvGlassCqw(3.1, 8, 12);
 
 const LOUNGE_TV_THUMB_LABEL_GRAY = '#9a9a9a';
 
@@ -143,10 +149,10 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   justifyContent: 'center',
   alignItems: 'center',
   gap: 0,
-  padding: '4px',
+  padding: loungeTvGlassCqw(1.3, 3, 6),
   textAlign: 'center',
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '8px',
+  fontSize: LOUNGE_TV_GLASS_THUMB_FONT,
   lineHeight: 1,
   textTransform: 'uppercase',
   background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.65))',
@@ -158,7 +164,7 @@ const loungeTvThumbTitleBlockStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  marginTop: '8px',
+  marginTop: loungeTvGlassCqw(2.5, 6, 10),
 };
 
 const loungeTvNewBadgeOverlayStyle: React.CSSProperties = {
@@ -169,7 +175,7 @@ const loungeTvNewBadgeOverlayStyle: React.CSSProperties = {
   marginBottom: '1px',
   textAlign: 'center',
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '8px',
+  fontSize: LOUNGE_TV_GLASS_THUMB_FONT,
   lineHeight: 1,
   textTransform: 'uppercase',
   pointerEvents: 'none',
@@ -237,7 +243,7 @@ function LoungeTvScreen({
   const bodyRowRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const firstSidebarRef = useRef<HTMLButtonElement>(null);
-  const [mediaInsets, setMediaInsets] = useState(LOUNGE_TV_MEDIA_INSET_DEFAULT);
+  const [mediaInsets, setMediaInsets] = useState({ left: 0, right: 0 });
   const [mediaTopPx, setMediaTopPx] = useState(0);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const tiles = useMemo(
@@ -369,27 +375,27 @@ function LoungeTvScreen({
 
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
-    fontSize: '9px',
+    fontSize: LOUNGE_TV_GLASS_SIDEBAR_FONT,
     letterSpacing: '0.04em',
     lineHeight: 1.35,
     textTransform: 'uppercase',
     color: active || accent ? BRAND_RED : '#ffffff',
     background: 'none',
     border: 'none',
-    padding: '2px 0',
+    padding: `${loungeTvGlassCqw(0.65, 1, 3)} 0`,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
   });
 
   const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
-    fontSize: '9px',
+    fontSize: LOUNGE_TV_GLASS_NAV_FONT,
     letterSpacing: '0.04em',
     textTransform: 'uppercase',
     color: active ? '#ffffff' : '#9a9a9a',
     background: 'none',
     border: 'none',
-    padding: '2px 0',
+    padding: `${loungeTvGlassCqw(0.65, 1, 3)} 0`,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
   });
@@ -401,7 +407,7 @@ function LoungeTvScreen({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '10px 10px 12px 18px',
+        padding: `${LOUNGE_TV_GLASS_PADDING_Y} ${LOUNGE_TV_GLASS_PADDING_X} ${loungeTvGlassCqw(3.8, 10, 14)} ${LOUNGE_TV_GLASS_PADDING_X}`,
         boxSizing: 'border-box',
         overflow: 'hidden',
         textTransform: 'uppercase',
@@ -414,7 +420,7 @@ function LoungeTvScreen({
           alignItems: 'center',
           justifyContent: 'space-between',
           width: '100%',
-          marginBottom: '10px',
+          marginBottom: LOUNGE_TV_BODY_SIDEBAR_GAP,
           flexShrink: 0,
         }}
         aria-label="Lounge TV categories"
@@ -439,7 +445,7 @@ function LoungeTvScreen({
           display: 'flex',
           flex: 1,
           minHeight: 0,
-          gap: `${LOUNGE_TV_BODY_SIDEBAR_GAP_PX}px`,
+          gap: LOUNGE_TV_BODY_SIDEBAR_GAP,
         }}
       >
         <aside
@@ -447,10 +453,10 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            gap: `${LOUNGE_TV_SIDEBAR_ITEM_GAP_PX}px`,
+            gap: LOUNGE_TV_SIDEBAR_ITEM_GAP,
             flexShrink: 0,
-            width: '72px',
-            paddingTop: '4px',
+            width: LOUNGE_TV_GLASS_SIDEBAR_WIDTH,
+            paddingTop: loungeTvGlassCqw(1.3, 3, 5),
           }}
           aria-label="Subcategories"
         >
@@ -474,9 +480,9 @@ function LoungeTvScreen({
         <div
           style={{
             position: 'absolute',
-            left: `${mediaInsets.left}px`,
-            right: `${mediaInsets.right}px`,
-            top: `${mediaTopPx}px`,
+            left: mediaInsets.left > 0 ? `${mediaInsets.left}px` : 0,
+            right: mediaInsets.right > 0 ? `${mediaInsets.right}px` : 0,
+            top: mediaTopPx > 0 ? `${mediaTopPx}px` : 0,
             bottom: 0,
             minWidth: 0,
             display: 'flex',
@@ -484,7 +490,7 @@ function LoungeTvScreen({
             justifyContent: 'flex-start',
             overflowY: watchLearnTile ? 'hidden' : 'auto',
             WebkitOverflowScrolling: 'touch',
-            paddingBottom: '8px',
+            paddingBottom: loungeTvGlassCqw(2.5, 6, 10),
             boxSizing: 'border-box',
           }}
         >
@@ -500,8 +506,8 @@ function LoungeTvScreen({
                 style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                  columnGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
-                  rowGap: `${LOUNGE_TV_THUMB_GRID_GAP_PX}px`,
+                  columnGap: LOUNGE_TV_THUMB_GRID_GAP,
+                  rowGap: LOUNGE_TV_THUMB_GRID_GAP,
                   width: '100%',
                 }}
               >
