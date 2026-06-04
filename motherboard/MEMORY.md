@@ -24415,6 +24415,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — PSA chat FUNCTION_INVOCATION_FAILED (broken import)
+
+**Context:** User got "PSA RETURNED AN UNEXPECTED RESPONSE" on all starter quick-reply chips (HELP ME CHOOSE, etc.).
+
+**Cause:** Production `/api/psa/chat` crashed on load with Vercel `FUNCTION_INVOCATION_FAILED` (plain text, not JSON). `api/_lib/psaTools.ts` imported non-existent `resolveQuote` from `resolveQuote.ts` — actual export is `resolveCheckoutQuoteLines`.
+
+**Fix:** Correct import/call in `psaTools.ts`; clearer client error when Vercel crash text returned; disable quick-reply chips while chat history loads.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
