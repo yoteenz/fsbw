@@ -602,7 +602,7 @@
 
 /* Must follow .psa-nudge-chip — SHOW CHAT button keeps both classes. */
 .psa-nudge-chip.psa-nudge-chip-show-chat {
-  bottom: -60px;
+  bottom: -110px;
   margin-bottom: 0;
   animation: psa-thought-float-show-chat 5s ease-in-out infinite;
 }
