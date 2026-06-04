@@ -24715,3 +24715,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-avatar-holo-glow-rotator` width `144%` → `151%`.
 
+---
+
+## 2026-06-04 — PSA nudge: +5px gap below thought bubble
+
+**Context:** User requested more space between proactive nudge bubble and avatar below.
+
+**Changes:** `.psa-nudge-chip` `bottom: calc(100% - 18px)` → `calc(100% - 23px)` (nudge sits 5px higher).
+
