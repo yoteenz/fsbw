@@ -25202,3 +25202,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Edit copy on `/tools/copy-debug`; use `{orderRef}`, `{hoursLeft}`, `{unitName}`, etc. in templates for dynamic fields. Reset removes override only (defaults from catalog).
 
+---
+
+## 2026-06-04 — Copy debug: copy, create, duplicate custom variants
+
+**Context:** User wanted to copy entire nudge/alert blocks, create new ones, and duplicate existing variants on `/tools/copy-debug` (not just edit/save catalog entries).
+
+**Decisions / outcomes:**
+- **Copy block** on each card (preview + templates); **Copy entire tab** in toolbar.
+- **Duplicate** on catalog cards → custom draft in **Custom drafts** section (linked to source variant for live apply).
+- **+ Create nudge / + Create alert** → blank custom draft.
+- Custom drafts: rename label, link to catalog variant via dropdown, Save pushes to live when linked, Delete removes draft, Duplicate forks again.
+
+**Changes:** `copyDebugResolve.ts` (custom variant storage, format/copy helpers), `copy-debug/page.tsx`, `copyDebug.css`.
+
+**Conventions:** Custom drafts stored in localStorage (`copy_debug_custom_nudges`, `copy_debug_custom_alerts`); `linkedVariantId` controls which catalog slot gets live override on Save.
+
