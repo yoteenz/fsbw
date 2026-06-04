@@ -24866,6 +24866,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — Register popover: Klarna + payment plans spacing
+
+**Context:** User asked to move **Klarna only** 2px left on the register pop-up and reduce spacing below **payment plans** by 2px.
+
+**Changes:** **`LobbyCasePropPopover.tsx`** — `LOBBY_REGISTER_KLARNA_NUDGE_LEFT_PX = 2` added to Klarna `marginLeft` in `paymentPlansIconCellMarginAdjust`; `LOBBY_REGISTER_PAYMENT_PLANS_LABEL_TO_ICONS_GAP_PX` → `lobbyPopoverPx(6) - 4` (was `- 2`).
+
+---
+
 ## 2026-06-04 — PSA chat panel: glassmorphism main card
 
 **Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
