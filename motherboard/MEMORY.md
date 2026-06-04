@@ -24425,6 +24425,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — PSA typing indicator copy
+
+**Context:** User wanted waiting state to say "YOUR PSA IS TYPING…" not "PSA IS TYPING…".
+
+**Changes:** `PsaChatPanel.tsx` system bubble while `isSending`.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
