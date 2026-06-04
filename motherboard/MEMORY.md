@@ -25031,3 +25031,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — PSA nudge Bohemy headline +2px
 
 **Changes:** `.psa-nudge-chip-headline` **`9px → 11px`** — proactive nudge + SHOW CHAT bubble (shared class).
+
+---
+
+## 2026-06-04 — PSA SHOW CHAT −60px; chat 20px left
+
+**Changes:** `.psa-nudge-chip-show-chat` **`bottom: -60px`** (was −40px). `.psa-chat-panel` **`translate(-20px, -12px)`** (was −12px horizontal).
