@@ -24635,3 +24635,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Compare mode (`?psaHoloCompare=1`) still available until user confirms removal; bump `PSA_NUDGE_HOLO_GLOW_ASSET_VERSION` when replacing glow PNG.
 
+---
+
+## 2026-06-04 — PSA avatar: option 3 PNG replaces CSS holo ring
+
+**Context:** User reported live PSA still showed the old CSS conic-gradient holo ring on the avatar instead of option 3 PNG alone. Wanted option 3 centered on the avatar, pulsating and shifting colors like the prior ring.
+
+**Changes:** Removed `.psa-avatar-frame::before` conic ring, `::after` highlight, scanlines, and avatar `drop-shadow`. Holo glow PNG now lives in `.psa-avatar-glow-wrap` centered on the 88px frame via `.psa-avatar-holo-glow-rotator` (slow spin) + `.psa-avatar-holo-glow` (`psa-holo-glow-live` pulse: opacity, brightness, saturate, hue-rotate). Removed misplaced stack-level `.psa-widget-holo-glow`. Compare panel uses same avatar-centered glow per column.
+
+**Files:** `PsaAvatarTrigger.tsx`, `PsaAssistantWidget.tsx`, `PsaHoloComparePanel.tsx`, `psaAssistant.css`.
+
