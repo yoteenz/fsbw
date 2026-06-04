@@ -24722,3 +24722,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User asked for +2px above **accepted cards** label, −2px below **payment plans** label (before logo row), −2px Affirm left/right gutters (Afterpay/Klarna closer).
 
 **Changes:** **`LobbyCasePropPopover.tsx`** — `LOBBY_REGISTER_ACCEPTED_CARDS_LABEL_MARGIN_TOP_PX`, `LOBBY_REGISTER_PAYMENT_PLANS_LABEL_TO_ICONS_GAP_PX`, `LOBBY_REGISTER_PAYMENT_PLANS_AFFIRM_GUTTER_NUDGE_PX` (6px nudge, was 4px).
+
+---
+
+## 2026-06-04 — Lobby/lounge backgrounds: restore cover (remove side black letterbox)
+
+**Context:** User reported black bars left/right on lobby and lounge slides — incorrect proportions.
+
+**Cause:** Slides used **`background-size: contain`** + **`#000`** letterbox; on many viewports height-constrained contain leaves horizontal gutters.
+
+**Fix:** Restore **`cover`** + **`center top`** on **`sceneCarouselViewportBackgroundStyle`** / layer styles; **`sceneCarouselCoverMetrics`** + **`sceneCoverHitMap`** use **`Math.max`** scale again. Shell fallback **`#e8e4e0`** (marble). Transition + TV Seedance clips aligned to **`cover`**. Hit-map / open prop overlays unchanged coordinate system.
