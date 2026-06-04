@@ -82,15 +82,17 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
-/** Production + QA — blue baked TV: left 10px, up 200px (screen-offset sign corrected). */
+/** Production + QA — blue baked TV (QA + anchor). */
 export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
-  layoutOffsetX: 10,
-  layoutOffsetY: 200,
+  layoutOffsetX: 20,
+  layoutOffsetY: 220,
+  layoutHeightExtraPx: -100,
 } as const;
 
-/** Production + QA — green play tap: −30px height (center nudge). */
+/** Production + QA — green play tap. */
 export const LOUNGE_TV_PLAY_TAP_LAYOUT = {
-  layoutHeightExtraPx: -30,
+  layoutWidthExtraPx: 10,
+  layoutHeightExtraPx: -36,
   layoutOffsetY: 15,
 } as const;
 
