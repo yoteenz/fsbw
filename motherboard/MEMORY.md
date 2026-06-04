@@ -24600,9 +24600,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `bottom: calc(100% - 18px)` (was `-8px`). New `motherboard/golden-prompts/psa-nudge-holo-glow-background.md` — glow plate only (no bubble shape), match thought bubble iridescence + PSA conic ring colors, transparent core, feathered alpha, slow pulse not spin.
 
-<<<<<<< HEAD
->>>>>>> master
-=======
 ---
 
 ## 2026-06-04 — PSA nudge subline: gray → brand red
@@ -24611,4 +24608,3 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip-body` color `#808080` → `#eb1c24`.
 
->>>>>>> master
