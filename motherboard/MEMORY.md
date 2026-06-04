@@ -24809,3 +24809,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `margin-bottom` `-5px` → `-11px`. `PSA_HIDE_CHAT_CTA` / `PSA_SHOW_CHAT_CTA` → `HIDE CHAT` / `SHOW CHAT`; matching aria-labels on FAB triggers.
 
+---
+
+## 2026-06-04 — PSA chat panel: glassmorphism main card
+
+**Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
+
+**Changes:** `.psa-chat-panel` → `rgba(255,255,255,0.6)` + `backdrop-filter: blur(4px)` + `1.3px` black border (matches site `bg-white/60 backdrop-blur-sm` main cards). Removed marble background and purple holo box-shadow. Header, messages, history, and input row backgrounds set transparent so one frosted shell reads through.
+
