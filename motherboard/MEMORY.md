@@ -24537,3 +24537,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaAvatarTrigger.tsx` — always render `.psa-nudge-badge`; `.psa-nudge-badge-active` when `isOpen`. Green `#22c55e` glow when chat open, red `#eb1c24` when closed. Removed `showNudgeBadge` prop tied to proactive nudge only.
 
+---
+
+## 2026-06-03 — PSA chat send button: glass + red text/border
+
+**Context:** User wanted SEND button to match chat bubble transparent glass style — not solid red; red text and red border instead of white on red with black border.
+
+**Changes:** `psaAssistant.css` `.psa-chat-send` — `rgba(255,255,255,0.6)` + `backdrop-filter: blur(4px)`; border `rgba(235,28,36,0.75)`; text `#eb1c24`.
+
