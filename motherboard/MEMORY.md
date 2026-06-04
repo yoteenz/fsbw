@@ -24874,6 +24874,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — Lobby crash: React #185 infinite render
+
+**Context:** User saw red **ERROR: COMPONENT FAILED TO LOAD** / minified React **#185** (maximum update depth) on landing/lobby.
+
+**Cause:** `LobbyCasePropOpenArt` with `fillParent` still called `useSceneCoverHitRect` using `viewportMeasureRef ?? { current: null }` — new ref object every render → `useLayoutEffect` → `setState` loop.
+
+**Fix:** Split fill-parent path (no hook); `SCENE_COVER_FALLBACK_MEASURE_REF`; guard `setContainerRect` when rect unchanged; `LoungeTvFullscreenShell` uses stable fallback.
+
+---
+
 ## 2026-06-04 — PSA chat panel: glassmorphism main card
 
 **Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
@@ -24928,173 +24938,3 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `margin-bottom` `-11px` → `-9px` (nudge headline + body sit 2px higher above avatar).
 
----
-
-## 2026-06-04 — PSA chat cards: uppercase summaries
-
-**Context:** User reported PSA responses still showing lowercase (product card summaries like "Straight unit — lighter / soft straight aesthetic." while UI is all-caps).
-
-**Cause:** Rich cards rendered `card.summary` / `description` / `note` raw from catalog; `<button>` cards did not reliably inherit panel `text-transform`.
-
-**Changes:** `formatPsaVoiceText` on all card string fields in `api/_lib/psaResponseUi.ts` + `PsaChatPanel.tsx` render path. Explicit `text-transform: uppercase` on `.psa-chat-card` and card text classes.
-
----
-
-## 2026-06-03 — Scene hit debug: lounge TV + lobby display case overlays
-
-**Context:** User asked for colored debug squares over both lounge TV regions (baked TV + content pop-up) and the lobby display case to confirm placement.
-
-**Changes:** New `SceneHitDebugOverlay.tsx` (non-interactive colored rects with labels). Toggle via existing `/lobby?sceneHitDebug=1` (sessionStorage). **Lounge slide:** blue baked TV (`FINAL_LOUNGE_TV_HIT_REGION`), green play tap (with px offsets), magenta content pop-up (`LOUNGE_TV_MENU_SCREEN_RECT`) — visible even when TV closed; open menu shows matching magenta solid overlay on glass in `LoungeTvFullscreenShell`. **Lobby slide:** orange outer display case, cyan register slot, yellow phone slot in `LobbyDisplayCaseShell`. Debug banners updated in `LoungeCompositeTvPlay` and `LobbySceneHotspots`.
-
-**Conventions:** Reuse `?sceneHitDebug=1` for all scene QA overlays (shelves, chandelier, TV, display case); do not add separate debug flags.
-
----
-
-## 2026-06-03 — PSA chat: brand red bullets instead of hyphen lists
-
-**Context:** User wanted PSA response outline dashes (`- ITEM`) replaced with tiny red bullet points matching `/brand/terms` (`BrandTermsBody`).
-
-**Changes:** New `renderPsaAssistantBubbleText` in `src/utils/psaBubbleText.tsx` — parses lines starting with `- ` into `<p class="psa-chat-bullet">` rows with red `•` (`#EB1C24`, 12px left padding). Price highlighting still via `renderPsaPriceHighlightedText`. Wired in `PsaChatPanel.tsx`; CSS in `psaAssistant.css`. API still emits `- ` markers in `psaInstructions.ts`; only display layer changed.
-
----
-
-## 2026-06-03 — PSA SHOW CHAT in nudge bubble
-
-**Context:** User wanted collapsed PSA state (after HIDE CHAT) to show SHOW CHAT inside the thought nudge bubble with black Bohemy headline styling (same as proactive nudge first line), not plain Futura text under empty space.
-
-**Changes:** `PsaAssistantWidget.tsx` — collapsed state renders `psa-nudge-chip-show-chat` with bubble PNG + `.psa-nudge-chip-headline` ("show chat" via lowercase transform). Click restores avatar + normal stack (proactive nudge above avatar when applicable). Removed unused `psa-fab-collapsed-trigger`.
-
----
-
-## 2026-06-03 — PSA chat constrained to main card width
-
-**Context:** User reported open PSA chat panel extended past the frosted main card borders (e.g. Build-a-Wig texture step); chat must stay inside the card column.
-
-**Changes:** `psaMainCardBounds.ts` + `usePsaMainCardBounds` — finds largest visible `border border-black flex flex-col bg-white/60 backdrop-blur-sm` card (excludes nav header row); fallback `16px` horizontal inset. When chat open, `psa-widget-root--chat-open` sets `left`/`width` to card rect; `.psa-chat-panel` is `width: 100%` with max-height from card. FAB stays right-aligned within column. Closed FAB unchanged (viewport-fixed).
-
----
-
-## 2026-06-03 — PSA SHOW CHAT nudge aligned to avatar column
-
-**Context:** After HIDE CHAT, SHOW CHAT thought bubble sat too far right vs the avatar it replaces.
-
-**Changes:** `psa-widget-fab-stack--collapsed` fixes stack to **88px** (avatar width). `.psa-nudge-chip-show-chat` uses absolute `left: 50%` + `translateX(-50%)` + `bottom: 0` on that column — same horizontal center as avatar/proactive nudge.
-
----
-
-## 2026-06-03 — PSA avatar + nudge 10px left
-
-**Changes:** `.psa-widget-fab-stack` horizontal nudge **`translateX(-10px)` → `translateX(-20px)`** — moves avatar, proactive nudge, and SHOW CHAT bubble 10px left together. Open chat panel (main-card width) unchanged.
-
----
-
-## 2026-06-03 — PSA FAB position fix + chat panel 340px
-
-**Context:** Open chat repositioned widget to full main-card width, shifting avatar/HIDE CHAT vs TAP TO CHAT. Chat panel too wide.
-
-**Changes:** Removed `usePsaMainCardBounds` / `psa-widget-root--chat-open` — widget always viewport bottom-right so FAB stack identical open vs closed. Chat panel restored to fixed width **`min(340px, calc(100vw - 24px))`** (was 360px full-card stretch). Deleted `psaMainCardBounds.ts` + hook.
-
----
-
-## 2026-06-03 — PSA chat 50% scale + 20px up
-
-**Changes:** `psa-chat-panel-wrap` — `translateY(-20px)` moves chat up only (avatar unchanged). Inner `.psa-chat-panel` uses `scale(0.5)` + `transform-origin: top right` inside half-size clip wrap (170×260 max). Proportional shrink of all chat UI.
-
----
-
-## 2026-06-03 — PSA chat restored after scale regression
-
-**Context:** `scale(0.5)` + `psa-chat-panel-wrap` with `overflow: hidden` clipped/hid the open chat entirely.
-
-**Changes:** Reverted wrap + scale — restored direct `PsaChatPanel` at **`min(340px, calc(100vw - 24px))`** width, **`min(520px, calc(100dvh - 140px))`** max-height, no transform. FAB position unchanged (viewport bottom-right).
-
----
-
-## 2026-06-04 — PSA chat panel offset (10px left, 12px up)
-
-**Changes:** `.psa-chat-panel` **`transform: translate(-10px, -12px)`** — moves open chat only; avatar/HIDE CHAT FAB unchanged.
-
----
-
-## 2026-06-04 — PSA chat: 12px left, height −20px
-
-**Changes:** `.psa-chat-panel` **`translate(-12px, -12px)`**; **`max-height`** **`520px → 500px`**, viewport term **`140px → 160px`**. Width and avatar unchanged.
-
----
-
-## 2026-06-04 — PSA SHOW CHAT nudge down 40px
-
-**Changes:** `.psa-nudge-chip-show-chat` **`bottom: 0` → `bottom: -40px`** — collapsed thought bubble only; avatar/TAP TO CHAT/open chat unchanged.
-
----
-
-## 2026-06-04 — PSA nudge Bohemy headline +2px
-
-**Changes:** `.psa-nudge-chip-headline` **`9px → 11px`** — proactive nudge + SHOW CHAT bubble (shared class).
-
----
-
-## 2026-06-04 — PSA SHOW CHAT −60px; chat 20px left
-
-**Changes:** `.psa-nudge-chip-show-chat` **`bottom: -60px`** (was −40px). `.psa-chat-panel` **`translate(-20px, -12px)`** (was −12px horizontal).
-
----
-
-## 2026-06-04 — PSA SHOW CHAT nudge not moving (CSS specificity fix)
-
-**Cause:** SHOW CHAT button has **both** `psa-nudge-chip` and `psa-nudge-chip-show-chat`. `.psa-nudge-chip { bottom: 100% }` came **later** in CSS and overrode `.psa-nudge-chip-show-chat { bottom: -60px }` — position tweaks had no effect.
-
-**Fix:** `.psa-nudge-chip.psa-nudge-chip-show-chat` block **after** base `.psa-nudge-chip` so collapsed `bottom: -60px` wins.
-
----
-
-## 2026-06-04 — PSA SHOW CHAT nudge bottom −110px
-
-**Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat` **`bottom: -110px`** (−50px from prior −60px). Pushed **`master`** + **`preview/mobile`**.
-
----
-
-## 2026-06-04 — PSA chat fixed height; SHOW CHAT nudge up 30px
-
-**Cause:** Panel had **`max-height` only** — new chat shrank to content; HISTORY (`flex: 1` only, no input row) expanded to full max height.
-
-**Changes:** `.psa-chat-panel` explicit **`height`** matching max (**500px** / **`100dvh - 160px`**). **`min-height: 0`** on `.psa-chat-messages` + `.psa-chat-history` for scroll. SHOW CHAT **`bottom: -80px`** (+30px up from −110px).
-
----
-
-## 2026-06-04 — PSA chat height −50%; SHOW CHAT up 40px
-
-**Changes:** Chat panel height **`500px → 250px`**, viewport term halved (`(100dvh - 160px) / 2`). Width unchanged. SHOW CHAT **`bottom: -40px`** (+40px up from −80px).
-
----
-
-## 2026-06-04 — PSA chat height +20%; SHOW CHAT up 16px
-
-**Changes:** Panel height **`250px → 300px`** (+20%), viewport **`× 0.6`** (was `/ 2`). SHOW CHAT **`bottom: -24px`** (+16px up from −40px).
-
----
-
-## 2026-06-04 — SHOW CHAT Bohemy text down 4px
-
-**Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`top: 4px`** — black “show chat” copy only; bubble position unchanged.
-
----
-
-## 2026-06-03 — PSA proactive nudge: alert-driven only (profile / orders / stock)
-
-**Context:** User wanted the PSA FAB proactive nudge bubble to surface **new profile alerts, order updates, back-in-stock**, etc., and to **hide entirely when there is nothing new** — not stay visible at all times (e.g. on every BAW page with a saved draft).
-
-**Changes:**
-- **`src/utils/psaProactiveNudges.ts`:** Removed always-on **`baw_draft`** nudge. Added **`order_update`** (unread order notifications + unseen `SHIPPED`/`PREPARING`/`CONFIRMED` status via `orderStatusSeen_*`) and **`profile_alert`** (unread non-static notifications — skips `acc_*` onboarding rows). Stock alerts from notifications now compete in priority (not fallback-only). Classifies `BACK IN STOCK` / `LOW STOCK`, order-received/tracking/consult/admin alerts.
-- **`src/components/psa/usePsaProactiveNudges.ts`:** Refresh on `ordersUpdated`, `accountCardAlertsViewed`, `storage`.
-- **`orderAccountAlerts.ts`**, **`orderTracking.ts`**, **`wishlistStockAlerts.ts`:** Dispatch **`notificationsUpdated`** when alerts are appended so FAB recomputes.
-
-**Priority (unchanged urgent first):** unsigned form → expiring consult → cart OOS → order celebration → notification stock → order update → profile alert.
-
-**Pushed:** `master` + `preview/mobile`.
-
----
-
-## 2026-06-03 — SHOW CHAT headline +4px
-
-**Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`font-size: 15px`** (was inherited **11px** from base headline). Proactive nudge and other chip copy unchanged.
