@@ -25292,6 +25292,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — PSA chat history: delete icon, rename/archive footer
+
+**Context:** User wanted PSA chat history UX changes: remove DELETE text; red **X** delete icon on the right of each row with confirmation modal; **ARCHIVE** moved to footer right below panel; **RENAME CHAT** footer left below panel.
+
+**Decisions / outcomes:**
+- Per-row red **X** opens `ConfirmationModal` before delete.
+- Footer bar below history list: **RENAME CHAT** (left), **ARCHIVE** (right) on selected thread; row click selects, double-click opens chat.
+- **Rename API:** `renamePsaThread` in store + `PATCH /api/psa/thread` with `{ title }`; wired through `psaApi`, `usePsaChat`, `PsaChatPanel`.
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`, `PsaAssistantWidget.tsx`, `usePsaChat.ts`, `psaApi.ts`, `api/psa/thread.ts`, `api/_lib/psaThreadStore.ts`.
+
+---
+
 ## 2026-06-03 — PSA chat panel 30px up
 
 **Context:** User asked to move the open PSA chat box upward only (avatar/nudge stack unchanged).
@@ -25313,4 +25326,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - Inline red SVG icons in `PsaChatPanel.tsx`; removed `.psa-chat-header-btn` text boxes.
 
 **Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
+
+---
+
+## 2026-06-04 — PSA chat history: delete icon, rename/archive footer
+
+**Context:** User wanted PSA chat history UX changes: remove DELETE text; red **X** delete icon on the right of each row with confirmation modal; **ARCHIVE** moved to footer right below panel; **RENAME CHAT** footer left below panel.
+
+**Decisions / outcomes:**
+- Per-row red **X** opens `ConfirmationModal` before delete.
+- Footer bar below history list: **RENAME CHAT** (left), **ARCHIVE** (right) on selected thread; row click selects, double-click opens chat.
+- **Rename API:** `renamePsaThread` in store + `PATCH /api/psa/thread` with `{ title }`; wired through `psaApi`, `usePsaChat`, `PsaChatPanel`.
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`, `PsaAssistantWidget.tsx`, `usePsaChat.ts`, `psaApi.ts`, `api/psa/thread.ts`, `api/_lib/psaThreadStore.ts`.
 
