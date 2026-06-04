@@ -12,8 +12,8 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import BrandAboutUsBody from '../../components/brand/BrandAboutUsBody';
 import BrandContactSection from '../../components/brand/BrandContactSection';
-import { MarblePageShell } from '../../layouts/MarblePageShell';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
+import { MarblePageShell } from '../../layouts/MarblePageShell';
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
 import BrandReviewsEmptyState from '../../components/brand/BrandReviewsEmptyState';
 import BrandFaqPageContent from '../../components/brand/BrandFaqPageContent';
@@ -112,6 +112,9 @@ function BrandPage() {
 
   const brandMainCardMatchMemberHeight = BRAND_SLUGS_MATCH_MEMBER_CARD_HEIGHT.has(slug);
 
+  /** Lock shell to one viewport when the main card scrolls internally (terms, contact, etc.). */
+  const brandPageViewportLocked = brandMainCardScrollable || showMobileMenu;
+
   const memberMainCardMeasureRef = useRef<HTMLDivElement>(null);
   const [memberMainCardMinHeightPx, setMemberMainCardMinHeightPx] = useState<number | null>(null);
 
@@ -185,10 +188,24 @@ function BrandPage() {
   }
 
   return (
-    <MarblePageShell>
+    <MarblePageShell viewportLocked={brandPageViewportLocked}>
         <div
           className="flex flex-col py-5 px-4"
-          style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', position: 'relative' }}
+          style={{
+            minWidth: '100%',
+            maxWidth: 'none',
+            position: 'relative',
+            ...(brandPageViewportLocked
+              ? {
+                  flex: 1,
+                  minHeight: 0,
+                  height: '100%',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }
+              : { overflow: 'visible' }),
+          }}
         >
           <div
             ref={memberMainCardMeasureRef}
@@ -277,7 +294,15 @@ function BrandPage() {
           {showMobileMenu ? (
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: BRAND_PAGE_MAIN_CARD_HEIGHT, height: BRAND_PAGE_MAIN_CARD_HEIGHT }}
+              style={{
+                borderWidth: '1.3px',
+                minWidth: '100%',
+                maxWidth: 'none',
+                overflow: 'hidden',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                flex: 1,
+                minHeight: 0,
+              }}
             >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
@@ -340,16 +365,29 @@ function BrandPage() {
             </div>
           ) : (
             <>
-            <div className="flex flex-col gap-4">
+            <div
+              className="flex flex-col gap-4"
+              style={
+                brandPageViewportLocked && !showMobileMenu
+                  ? { flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }
+                  : undefined
+              }
+            >
               <div
                 className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
                 style={{
                   borderWidth: '1.3px',
                   ...(brandMainCardScrollable
-                    ? {
-                        maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
-                        overflow: 'hidden',
-                      }
+                    ? brandPageViewportLocked
+                      ? {
+                          flex: 1,
+                          minHeight: 0,
+                          overflow: 'hidden',
+                        }
+                      : {
+                          maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
+                          overflow: 'hidden',
+                        }
                     : brandMainCardMatchMemberHeight && memberMainCardMinHeightPx != null
                       ? {
                           height: memberMainCardMinHeightPx,
