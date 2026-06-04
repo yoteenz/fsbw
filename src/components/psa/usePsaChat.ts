@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   archivePsaThread,
-  createPsaThread,
   deletePsaThread,
   fetchPsaActiveThread,
   fetchPsaThreadList,
@@ -145,12 +144,7 @@ export function usePsaChat(
   const startNewThread = useCallback(async () => {
     setHistoryOpen(false);
     setError(null);
-    const result = await createPsaThread();
-    if (!result.ok) {
-      setError(result.message);
-      return false;
-    }
-    setThreadId(result.threadId);
+    setThreadId(null);
     setResponseId(null);
     setPanelQuickReplies([]);
     setContinueHint(null);

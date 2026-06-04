@@ -125,10 +125,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const rows = await getPsaThreadMessages(thread.id);
+    const hasUserMessages = rows.some((m) => m.role === 'user');
+    if (!hasUserMessages) {
+      await deletePsaThread(user.id, thread.id);
+      return res.status(200).json({
+        threadId: null,
+        lastResponseId: null,
+        messages: [],
+        historyAvailable: true,
+        memberContext,
+      });
+    }
+
     const updatedAtMs = new Date(thread.updated_at).getTime();
-    const hasMessages = rows.length > 0;
     const continueHint =
-      hasMessages && Date.now() - updatedAtMs <= CONTINUE_HINT_MAX_AGE_MS
+      Date.now() - updatedAtMs <= CONTINUE_HINT_MAX_AGE_MS
         ? {
             threadId: thread.id,
             title: thread.title?.trim() || rows.find((m) => m.role === 'user')?.content?.slice(0, 72) || 'PSA CHAT',

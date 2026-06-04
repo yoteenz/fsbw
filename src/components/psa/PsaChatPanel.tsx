@@ -624,7 +624,7 @@ export default function PsaChatPanel({
           autoComplete="off"
           enterKeyHint="send"
         />
-        <button className="psa-chat-send" type="submit" disabled={isSending || isLoadingHistory || !input.trim()}>
+        <button className="psa-chat-send" type="submit" disabled={isSending || isLoadingHistory}>
           SEND
         </button>
       </form>

@@ -92,16 +92,33 @@ export async function getLatestPsaThread(userId: string, activeOnly = true): Pro
     .select('*')
     .eq('user_id', userId)
     .order('updated_at', { ascending: false })
-    .limit(1);
+    .limit(30);
 
   if (activeOnly) {
     query = query.is('archived_at', null);
   }
 
-  const { data, error } = await query.maybeSingle();
-
+  const { data: threads, error } = await query;
   if (error) throw new Error(error.message);
-  return (data as PsaThreadRow | null) ?? null;
+
+  for (const row of (threads ?? []) as PsaThreadRow[]) {
+    const hasUser = await threadHasUserMessage(row.id);
+    if (hasUser) return row;
+    await deletePsaThread(userId, row.id);
+  }
+
+  return null;
+}
+
+export async function threadHasUserMessage(threadId: string): Promise<boolean> {
+  const supabase = getSupabaseAdminServiceRole();
+  const { count, error } = await supabase
+    .from('psa_messages')
+    .select('id', { count: 'exact', head: true })
+    .eq('thread_id', threadId)
+    .eq('role', 'user');
+  if (error) throw new Error(error.message);
+  return (count ?? 0) > 0;
 }
 
 export async function listPsaThreads(
@@ -147,12 +164,18 @@ export async function listPsaThreads(
       .maybeSingle();
 
     const rawPreview = (previewMsg as { content?: string } | null)?.content ?? null;
+    const preview = psaFirstUserMessagePreview(rawPreview);
+
+    if (!preview) {
+      await deletePsaThread(userId, row.id);
+      continue;
+    }
 
     summaries.push({
       id: row.id,
       title: row.title,
       updatedAt: row.updated_at,
-      preview: psaFirstUserMessagePreview(rawPreview),
+      preview,
       threadSummary: row.thread_summary,
       archived: Boolean(row.archived_at),
     });
