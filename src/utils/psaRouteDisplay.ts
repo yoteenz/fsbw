@@ -72,7 +72,7 @@ function cleanupRoutelessNavigationCopy(text: string): string {
     .map((line) =>
       line
         .replace(/\b(?:GO\s+TO|VISIT|HEAD\s+TO|NAVIGATE\s+TO|OPEN\s+AT)\s*:\s*/gi, '')
-        .replace(/\s*:\s*(?=[.!?]|$)/g, '')
+        .replace(/\s*:\s*(?=[.!?])/g, '')
         .replace(/[^\S\n]+/g, ' ')
         .replace(/\s+([,.!?])/g, '$1')
         .replace(/\(\s*\)/g, '')
