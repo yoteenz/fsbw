@@ -25071,3 +25071,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — PSA chat height +20%; SHOW CHAT up 16px
 
 **Changes:** Panel height **`250px → 300px`** (+20%), viewport **`× 0.6`** (was `/ 2`). SHOW CHAT **`bottom: -24px`** (+16px up from −40px).
+
+---
+
+## 2026-06-04 — SHOW CHAT Bohemy text down 4px
+
+**Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`top: 4px`** — black “show chat” copy only; bubble position unchanged.
