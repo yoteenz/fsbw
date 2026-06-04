@@ -25218,3 +25218,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Custom drafts stored in localStorage (`copy_debug_custom_nudges`, `copy_debug_custom_alerts`); `linkedVariantId` controls which catalog slot gets live override on Save.
 
+---
+
+## 2026-06-03 — Admin Brand ALERTS: copy editors (remove tools debug pages)
+
+**Context:** User asked to stop using tabbed public debug pages and instead link PSA nudge / account alert copy editors from **Admin → Brand → ALERTS** via two buttons below the main card, matching admin page design; remove all duplicate `/tools` debug routes.
+
+**Topics covered:** Prior work built unified `/tools/copy-debug` with tabs, editable save-to-live copy (`copyDebugResolve.ts`), copy/duplicate/create custom variants. User redirected editors into admin Brand ALERTS flow.
+
+**Decisions / outcomes:**
+- Copy editor UI lives in **`BrandCopyEditorPanel`** (`src/pages/admin/components/`) with admin-styled CSS (`brandCopyEditor.css` — single column, 1.3px black borders, red Futura headings).
+- Admin shell at **`/admin/brand/edit/nudges`** and **`/admin/brand/edit/alerts`** (`copy-editor/page.tsx`) — marble bg, `AdminHeader`, back to `/admin/brand?tab=ALERTS`.
+- **Brand ALERTS tab** footer: **SEND NOTIFICATION**, then **EDIT PSA NUDGES** and **EDIT ACCOUNT ALERTS** via `PageActionsBelowCard`.
+- Removed **`/tools/copy-debug`**, **`/tools/psa-nudges`**, **`/tools/account-alerts`** routes and deleted tools copy-debug folder.
+
+**Changes:** `BrandCopyEditorPanel.tsx`, `brandCopyEditor.css`, `admin/brand/copy-editor/page.tsx`, `admin/brand/page.tsx`, `App.tsx`, `copyDebugResolve.ts` (comment).
+
+**Conventions:** Edit live nudge/alert copy only from Admin → Brand → ALERTS → edit buttons; URLs `/admin/brand/edit/nudges` and `/admin/brand/edit/alerts`. Overrides remain per-browser localStorage via `copyDebugResolve.ts`.
+
