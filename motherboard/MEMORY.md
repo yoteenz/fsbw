@@ -25156,3 +25156,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Pushed:** `master` + `preview/mobile`.
 
 **Conventions:** Short-content marble pages should use `MarblePageShell`; pass `fillViewport` only when a page truly needs full-viewport marble (e.g. tall menu panels). Other pages still on legacy `min-h-screen` + fixed marble until migrated.
+
+---
+
+## 2026-06-04 — Lounge/lobby scene hit layout retune (second pass)
+
+**Context:** User retuned colored QA / production hit boxes after first layout pass.
+
+**Changes:** Magenta `LOUNGE_TV_MENU_SCREEN_LAYOUT` `layoutOffsetY: -10` (up 10px). Blue `LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_*` → **10px** right, **100px** down. Green play tap scales **1.3 × 0.4** (width +30%, height −60%, center). Orange display case `LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.y` **49 → 69** (+20px down); `LOBBY_DISPLAY_CASE_HIT_LAYOUT` uses **`layoutWidthExtraPx` / `layoutHeightExtraPx` +40** each (replaced width 0.8 scale). `sceneHitLayout.ts` gained `layoutWidthExtraPx`.
+
+**Pushed:** `master` + `preview/mobile` (`de356e1f`).
