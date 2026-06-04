@@ -12,8 +12,11 @@ const SAMPLE_HEADLINE = 'finish your customization';
 const SAMPLE_BODY = 'beach wave';
 
 function CompareColumn({ optionId, glowSrc }: { optionId: number; glowSrc: string }) {
+  const pngOnly = optionId === 3;
   return (
-    <div className="psa-holo-compare-column">
+    <div
+      className={`psa-holo-compare-column${pngOnly ? ' psa-holo-compare-column--png-only' : ''}`}
+    >
       <span className="psa-holo-compare-label">OPTION {optionId}</span>
       <div className="psa-holo-compare-stack">
         <img className="psa-holo-compare-glow" src={glowSrc} alt="" aria-hidden draggable={false} />
