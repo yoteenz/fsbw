@@ -25236,3 +25236,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Edit live nudge/alert copy only from Admin → Brand → ALERTS → edit buttons; URLs `/admin/brand/edit/nudges` and `/admin/brand/edit/alerts`. Overrides remain per-browser localStorage via `copyDebugResolve.ts`.
 
+---
+
+## 2026-06-03 — Brand ALERTS copy editor button labels
+
+**Context:** Continuation of admin-hosted nudge/alert copy editors (moved from `/tools/copy-debug`). User asked to shorten footer button labels.
+
+**Decisions / outcomes:** Brand ALERTS tab buttons renamed from **EDIT PSA NUDGES** / **EDIT ACCOUNT ALERTS** to **EDIT NUDGES** / **EDIT ALERTS** (routes unchanged).
+
+**Changes:** `src/pages/admin/brand/page.tsx`.
+
