@@ -564,64 +564,50 @@
 .psa-nudge-chip-shell {
   position: relative;
   display: block;
-  isolation: isolate;
   border-radius: 22px;
   overflow: visible;
-  filter:
-    drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 0 32px rgba(160, 90, 255, 0.32))
-    drop-shadow(0 0 18px rgba(235, 28, 36, 0.12));
 }
 
-.psa-nudge-chip-holo-ring {
+.psa-nudge-chip-shell::after {
+  content: '';
   position: absolute;
-  inset: -2px;
-  border-radius: 24px;
-  background: conic-gradient(
-    from 210deg,
-    rgba(235, 28, 36, 0.85),
-    rgba(160, 90, 255, 0.55),
-    rgba(120, 220, 255, 0.45),
-    rgba(235, 28, 36, 0.85)
-  );
-  animation: psa-holo-spin 6s linear infinite;
-  z-index: 0;
+  inset: -10px;
+  border-radius: 32px;
+  background: radial-gradient(ellipse at center, rgba(160, 90, 255, 0.28) 0%, transparent 72%);
   pointer-events: none;
+  z-index: -1;
+  animation: psa-nudge-glow-pulse 4.5s ease-in-out infinite;
 }
 
 .psa-nudge-chip-face {
   position: relative;
   z-index: 1;
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
-  isolation: isolate;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.72)) padding-box,
+    linear-gradient(
+      135deg,
+      rgba(235, 28, 36, 0.5),
+      rgba(160, 90, 255, 0.38),
+      rgba(120, 220, 255, 0.3),
+      rgba(235, 28, 36, 0.5)
+    )
+      border-box;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: psa-nudge-holo-pulse 4.5s ease-in-out infinite;
 }
 
 .psa-nudge-chip-holo-shine {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.42), transparent 58%);
+  background: radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.38), transparent 58%);
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 2;
-}
-
-.psa-nudge-chip-scanlines {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.05) 0px,
-    rgba(255, 255, 255, 0.05) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 2;
-  animation: psa-scan 3s linear infinite;
 }
 
 .psa-nudge-chip-content {
@@ -632,11 +618,6 @@
   align-items: center;
   gap: 3px;
   padding: 10px 14px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  margin: 2px;
   text-align: center;
 }
 
@@ -719,6 +700,33 @@
   }
   50% {
     transform: translateX(-50%) translateY(-3px);
+  }
+}
+
+@keyframes psa-nudge-holo-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.08),
+      0 0 14px rgba(160, 90, 255, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 6px 18px rgba(0, 0, 0, 0.1),
+      0 0 24px rgba(160, 90, 255, 0.32),
+      0 0 10px rgba(235, 28, 36, 0.1);
+  }
+}
+
+@keyframes psa-nudge-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
   }
 }
 
