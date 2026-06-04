@@ -167,7 +167,7 @@
   z-index: 1;
   width: min(340px, calc(100vw - 24px));
   max-height: min(500px, calc(100dvh - 160px));
-  transform: translate(-12px, -12px);
+  transform: translate(-20px, -12px);
   display: flex;
   flex-direction: column;
   border: 1.3px solid #000;
@@ -584,7 +584,7 @@
 .psa-nudge-chip-show-chat {
   position: absolute;
   left: 50%;
-  bottom: -40px;
+  bottom: -60px;
   margin-bottom: 0;
   width: min(120px, 37vw);
   transform: translateX(-50%);
