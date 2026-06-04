@@ -39,6 +39,14 @@ export const FINAL_LOBBY_HIT_REGIONS = {
   casePhone: { left: 0.6, top: 0.71, width: 0.16, height: 0.09 },
 } as const satisfies Record<string, FinalSceneHitRect>;
 
+/** Acrylic display case on `final-lobby.png` (register + phone); slots in `lobbyDisplayCaseLayout.ts`. */
+export const FINAL_LOBBY_DISPLAY_CASE_RECT: FinalSceneHitRect = {
+  left: 0.22,
+  top: 0.68,
+  width: 0.56,
+  height: 0.14,
+};
+
 /** Lounge slide hotspots on `final-lounge.png` (928×1680). */
 export const FINAL_LOUNGE_HIT_REGIONS = {
   /** Ceiling chandelier → account concierge (928×1680; +36px down from prior tune). */

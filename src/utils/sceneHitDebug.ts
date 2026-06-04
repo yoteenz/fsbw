@@ -70,3 +70,8 @@ export function isLobbyShelfHitDebugEnabled(): boolean {
 export function useLoungeTvGlassHitDebugEnabled(): boolean {
   return useSceneHitDebugEnabled();
 }
+
+/** Lobby display case + register/phone slots — `?sceneHitDebug=1`. */
+export function useLobbyDisplayCaseHitDebugEnabled(): boolean {
+  return useSceneHitDebugEnabled();
+}
