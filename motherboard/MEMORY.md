@@ -25124,3 +25124,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-03 — PSA nudge text down 2px; SHOW CHAT −1px
 
 **Changes:** Proactive nudge headline + body only — `.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content` **`top: calc(36% + 10px)`** (+2px down). SHOW CHAT Bohemy **`font-size: 14px`** (was 15px).
+
+---
+
+## 2026-06-03 — PSA proactive nudge copy debug page
+
+**Context:** User wanted a visual debug page listing all proactive nudge variants by category for copy rewording.
+
+**Changes:** **`/tools/psa-nudges`** — grid of bubble previews + copy fields (headline, body, prefilled, full block). **`psaProactiveNudgeCatalog.ts`** static catalog mirroring all variants in priority order. Route in **`App.tsx`**.
+
+**Pushed:** `master` + `preview/mobile`.
