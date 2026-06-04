@@ -378,7 +378,11 @@ export default function PsaChatPanel({
             ) : (
               threadList.map((thread) => {
                 const isRenaming = renamingThreadId === thread.id;
-                const displayTitle = thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT';
+                const hasCustomTitle = Boolean(thread.title?.trim());
+                const displayTitle = hasCustomTitle
+                  ? thread.title!.trim()
+                  : thread.preview?.trim() || 'PSA CHAT';
+                const previewText = hasCustomTitle ? thread.preview?.trim() ?? '' : '';
                 return (
                 <div key={thread.id} className="psa-chat-history-entry">
                   <div className="psa-chat-history-card-wrap">
@@ -402,9 +406,13 @@ export default function PsaChatPanel({
                             }
                           }}
                         />
-                        {thread.preview && thread.title ? (
-                          <span className="psa-chat-history-item-preview">{thread.preview}</span>
-                        ) : null}
+                        {previewText ? (
+                          <span className="psa-chat-history-item-preview">{previewText}</span>
+                        ) : (
+                          <span className="psa-chat-history-item-preview" aria-hidden="true">
+                            {'\u00A0'}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <button
@@ -413,9 +421,13 @@ export default function PsaChatPanel({
                         onClick={() => onSelectThread?.(thread.id)}
                       >
                         <span className="psa-chat-history-item-title">{displayTitle}</span>
-                        {thread.preview && thread.title ? (
-                          <span className="psa-chat-history-item-preview">{thread.preview}</span>
-                        ) : null}
+                        {previewText ? (
+                          <span className="psa-chat-history-item-preview">{previewText}</span>
+                        ) : (
+                          <span className="psa-chat-history-item-preview" aria-hidden="true">
+                            {'\u00A0'}
+                          </span>
+                        )}
                       </button>
                     )}
                     {!isRenaming && historyArchivedView && onDeleteThread ? (
@@ -445,7 +457,19 @@ export default function PsaChatPanel({
                     ) : null}
                   </div>
                   <div className="psa-chat-history-item-actions">
-                    {onRenameThread && !isRenaming ? (
+                    {!isRenaming && historyArchivedView && onUnarchiveThread ? (
+                      <button
+                        type="button"
+                        className="psa-chat-history-item-action psa-chat-history-item-action--left"
+                        disabled={renamingThreadId !== null}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onUnarchiveThread(thread.id);
+                        }}
+                      >
+                        UNARCHIVE
+                      </button>
+                    ) : onRenameThread && !isRenaming ? (
                       <button
                         type="button"
                         className="psa-chat-history-item-action psa-chat-history-item-action--left"
@@ -484,17 +508,6 @@ export default function PsaChatPanel({
                           <PsaChatRenameCancelIcon />
                         </button>
                       </div>
-                    ) : historyArchivedView && onUnarchiveThread ? (
-                      <button
-                        type="button"
-                        className="psa-chat-history-item-action psa-chat-history-item-action--right"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onUnarchiveThread(thread.id);
-                        }}
-                      >
-                        UNARCHIVE
-                      </button>
                     ) : null}
                   </div>
                 </div>

@@ -398,13 +398,16 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: 4px;
   width: 100%;
+  min-height: 46px;
   padding: 8px 28px 8px 10px;
   border: 1px solid #000;
   background: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   text-align: left;
+  box-sizing: border-box;
 }
 
 .psa-chat-history-item.is-active {
@@ -419,7 +422,9 @@
 }
 
 .psa-chat-history-item-preview {
-  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  display: block;
+  min-height: 12px;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 9px;
   color: #808080;
   line-height: 1.35;
@@ -454,6 +459,7 @@
   align-self: flex-end;
   border: 1.3px solid #000;
   color: #eb1c24;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
 }
 
 .psa-chat-bubble-assistant {
@@ -644,7 +650,7 @@
 }
 
 .psa-chat-quick-reply {
-  border: 1.3px solid #eb1c24;
+  border: 1.3px solid #000;
   background: transparent;
   color: #eb1c24;
   padding: 4px 3px;

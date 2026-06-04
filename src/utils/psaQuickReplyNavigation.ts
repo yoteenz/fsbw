@@ -15,9 +15,9 @@ const UNIT_PATHS: Record<string, string> = {
 };
 
 const EXACT_ROUTES: Record<string, string> = {
-  'TRACK MY ORDER': '/orders',
-  'VIEW MY ORDERS': '/orders',
-  'GO TO ORDERS': '/orders',
+  'TRACK MY ORDER': '/account/orders',
+  'VIEW MY ORDERS': '/account/orders',
+  'GO TO ORDERS': '/account/orders',
 };
 
 function unitPathFromFragment(fragment: string): string | null {
@@ -43,7 +43,7 @@ export function resolvePsaQuickReplyNavigation(text: string): string | null {
 
   if (!/^OPEN\b/i.test(trimmed)) return null;
 
-  if (/^OPEN\s+ORDERS\b/i.test(trimmed)) return '/orders';
+  if (/^OPEN\s+ORDERS\b/i.test(trimmed)) return '/account/orders';
   if (/^OPEN\s+LOUNGE\b/i.test(trimmed)) return '/lobby/lounge';
   if (/^OPEN\s+(?:BUILD-A-WIG|BAW)\s*$/i.test(trimmed)) return '/build-a-wig';
 
