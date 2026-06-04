@@ -21,7 +21,7 @@ export type PsaAvatarExpression =
   | 'presenting';
 
 /** Bump when avatar PNGs change so browsers/CDN drop cached checkerboard versions. */
-export const PSA_AVATAR_ASSET_VERSION = '8';
+export const PSA_AVATAR_ASSET_VERSION = '9';
 
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {

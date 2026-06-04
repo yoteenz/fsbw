@@ -24868,3 +24868,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Do not use loose background heuristics on PSA avatars — only neutral checker detection; re-run `check-psa-avatar-alpha.mjs` and character-loss check after processing.
 
+---
+
+## 2026-06-04 — PSA avatars v9: restore + alpha solidify only (no holes)
+
+**Context:** User reported v7/v8 still broken with holes in transparent image. Root cause: color-based checker removal (flood-fill and global) deleted 10–46% of opaque skin/metal pixels that matched neutral gray heuristics. Original Ideogram exports also had semi-transparent fringe (a≈89) showing holo through as holes.
+
+**Fix:** Restored all 11 PNGs from pre-v7 originals. New `scripts/psa-solidify-avatar-alpha.mjs` — **only** boosts soft alpha (0<a<255 → 255); **never** removes opaque pixels. Deprecated `psa-flatten-avatar-backgrounds.mjs` for Ideogram assets. `PSA_AVATAR_ASSET_VERSION` → `9`. Updated `docs/PSA_SETUP.md`.
+
+**Note:** `psa-avatar-thinking-smiling.png` still has ~48% baked opaque checker (no soft alpha to fix) — needs Ideogram re-export; automated checker removal always punches holes in this stack.
+
