@@ -25118,5 +25118,3 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
 
 **Pushed:** `master` + `preview/mobile`.
-=======
->>>>>>> 927af9986419d12f621f7dd59d88d4df5354e205
