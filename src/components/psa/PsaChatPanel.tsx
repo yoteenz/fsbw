@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ConfirmationModal from '../ConfirmationModal';
 import {
   PSA_CHAT_SUBTITLE,
   PSA_STARTER_QUICK_REPLIES,
@@ -106,7 +105,37 @@ function PsaChatArchivedIcon({ active = false }: { active?: boolean }) {
   );
 }
 
-function PsaChatDeleteIcon() {
+function PsaChatCardArchiveIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M4 8h16" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M12 11v6" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M9 14l3 3 3-3" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6 8V6.5A1.5 1.5 0 0 1 7.5 5h9A1.5 1.5 0 0 1 18 6.5V8" stroke="#EB1C24" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function PsaChatCardUnarchiveIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M4 16h16" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M12 7v6" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M9 10l3-3 3 3" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6 16v1.5A1.5 1.5 0 0 0 7.5 19h9a1.5 1.5 0 0 0 1.5-1.5V16" stroke="#EB1C24" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function PsaChatRenameSaveIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PsaChatRenameCancelIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M18 6L6 18M6 6l12 12" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
@@ -202,7 +231,6 @@ export default function PsaChatPanel({
   onSelectThread,
   onArchiveThread,
   onUnarchiveThread,
-  onDeleteThread,
   onRenameThread,
   onInputFocusChange,
   onInputTextChange,
@@ -210,8 +238,40 @@ export default function PsaChatPanel({
 }: PsaChatPanelProps) {
   const navigate = useNavigate();
   const [input, setInput] = useState(initialInput);
-  const [deleteConfirmThreadId, setDeleteConfirmThreadId] = useState<string | null>(null);
+  const [renamingThreadId, setRenamingThreadId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState('');
+  const renameInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (renamingThreadId) {
+      renameInputRef.current?.focus();
+    }
+  }, [renamingThreadId]);
+
+  useEffect(() => {
+    if (!historyOpen) {
+      setRenamingThreadId(null);
+      setRenameDraft('');
+    }
+  }, [historyOpen]);
+
+  const cancelRename = () => {
+    setRenamingThreadId(null);
+    setRenameDraft('');
+  };
+
+  const startRename = (threadId: string) => {
+    setRenamingThreadId(threadId);
+    setRenameDraft('');
+  };
+
+  const saveRename = (threadId: string) => {
+    const trimmed = renameDraft.trim();
+    if (!trimmed || !onRenameThread) return;
+    onRenameThread(threadId, trimmed);
+    cancelRename();
+  };
 
   useEffect(() => {
     if (initialInput) setInput(initialInput);
@@ -314,56 +374,115 @@ export default function PsaChatPanel({
                 {historyArchivedView ? 'NO ARCHIVED CHATS YET' : 'NO PAST CHATS YET'}
               </p>
             ) : (
-              threadList.map((thread) => (
+              threadList.map((thread) => {
+                const isRenaming = renamingThreadId === thread.id;
+                const displayTitle = thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT';
+                return (
                 <div key={thread.id} className="psa-chat-history-entry">
                   <div className="psa-chat-history-card-wrap">
-                    <button
-                      type="button"
-                      className={`psa-chat-history-item${thread.id === activeThreadId ? ' is-active' : ''}`}
-                      onClick={() => onSelectThread?.(thread.id)}
-                    >
-                      <span className="psa-chat-history-item-title">
-                        {thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT'}
-                      </span>
-                      {thread.preview && thread.title ? (
-                        <span className="psa-chat-history-item-preview">{thread.preview}</span>
-                      ) : null}
-                    </button>
-                    {onDeleteThread ? (
+                    {isRenaming ? (
+                      <div className="psa-chat-history-item psa-chat-history-item--renaming">
+                        <input
+                          ref={renameInputRef}
+                          type="text"
+                          className="psa-chat-history-rename-input"
+                          value={renameDraft}
+                          onChange={(e) => setRenameDraft(e.target.value)}
+                          placeholder="TYPE CHAT NAME…"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              saveRename(thread.id);
+                            }
+                            if (e.key === 'Escape') {
+                              e.preventDefault();
+                              cancelRename();
+                            }
+                          }}
+                        />
+                        {thread.preview && thread.title ? (
+                          <span className="psa-chat-history-item-preview">{thread.preview}</span>
+                        ) : null}
+                      </div>
+                    ) : (
                       <button
                         type="button"
-                        className="psa-chat-history-delete-btn"
-                        aria-label="Delete chat"
+                        className={`psa-chat-history-item${thread.id === activeThreadId ? ' is-active' : ''}`}
+                        onClick={() => onSelectThread?.(thread.id)}
+                      >
+                        <span className="psa-chat-history-item-title">{displayTitle}</span>
+                        {thread.preview && thread.title ? (
+                          <span className="psa-chat-history-item-preview">{thread.preview}</span>
+                        ) : null}
+                      </button>
+                    )}
+                    {!isRenaming && historyArchivedView && onUnarchiveThread ? (
+                      <button
+                        type="button"
+                        className="psa-chat-history-card-archive-btn"
+                        aria-label="Unarchive chat"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setDeleteConfirmThreadId(thread.id);
+                          onUnarchiveThread(thread.id);
                         }}
                       >
-                        <PsaChatDeleteIcon />
+                        <PsaChatCardUnarchiveIcon />
+                      </button>
+                    ) : !isRenaming && onArchiveThread ? (
+                      <button
+                        type="button"
+                        className="psa-chat-history-card-archive-btn"
+                        aria-label="Archive chat"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onArchiveThread(thread.id);
+                        }}
+                      >
+                        <PsaChatCardArchiveIcon />
                       </button>
                     ) : null}
                   </div>
                   <div className="psa-chat-history-item-actions">
-                    {onRenameThread ? (
+                    {onRenameThread && !isRenaming ? (
                       <button
                         type="button"
                         className="psa-chat-history-item-action psa-chat-history-item-action--left"
+                        disabled={renamingThreadId !== null && renamingThreadId !== thread.id}
                         onClick={(e) => {
                           e.stopPropagation();
-                          const nextTitle = window.prompt(
-                            'Rename chat',
-                            thread.title?.trim() || thread.preview?.trim() || 'PSA CHAT'
-                          );
-                          if (nextTitle === null) return;
-                          const trimmed = nextTitle.trim();
-                          if (!trimmed) return;
-                          onRenameThread(thread.id, trimmed);
+                          startRename(thread.id);
                         }}
                       >
                         RENAME CHAT
                       </button>
                     ) : null}
-                    {historyArchivedView && onUnarchiveThread ? (
+                    {isRenaming ? (
+                      <div className="psa-chat-history-rename-actions">
+                        <button
+                          type="button"
+                          className="psa-chat-history-rename-icon-btn"
+                          aria-label="Save renamed chat"
+                          disabled={!renameDraft.trim()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            saveRename(thread.id);
+                          }}
+                        >
+                          <PsaChatRenameSaveIcon />
+                        </button>
+                        <button
+                          type="button"
+                          className="psa-chat-history-rename-icon-btn"
+                          aria-label="Cancel rename"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cancelRename();
+                          }}
+                        >
+                          <PsaChatRenameCancelIcon />
+                        </button>
+                      </div>
+                    ) : historyArchivedView && onUnarchiveThread ? (
                       <button
                         type="button"
                         className="psa-chat-history-item-action psa-chat-history-item-action--right"
@@ -388,24 +507,10 @@ export default function PsaChatPanel({
                     ) : null}
                   </div>
                 </div>
-              ))
+              );
+              })
             )}
           </div>
-          <ConfirmationModal
-            isOpen={deleteConfirmThreadId !== null}
-            onClose={() => setDeleteConfirmThreadId(null)}
-            onConfirm={() => {
-              if (deleteConfirmThreadId) {
-                onDeleteThread?.(deleteConfirmThreadId);
-              }
-              setDeleteConfirmThreadId(null);
-            }}
-            title="DELETE PSA CHAT"
-            message="DELETE THIS CHAT PERMANENTLY? THIS CANNOT BE UNDONE."
-            confirmText="DELETE"
-            cancelText="CANCEL"
-            dataAttribute="psa-delete-chat-modal"
-          />
         </>
       ) : (
       <>

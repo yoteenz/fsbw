@@ -25326,3 +25326,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx`, `PsaAssistantWidget.tsx`, `usePsaChat.ts`, `psaApi.ts`, `api/psa/threads.ts`, `api/_lib/psaThreadStore.ts`.
 
+---
+
+## 2026-06-04 — PSA history: card archive icon + inline rename
+
+**Context:** User wanted history card red **X** replaced with **archive** (not delete); rename without popup — cleared inline title input; during rename, **ARCHIVE** row becomes **checkmark** (save) + **X** (cancel).
+
+**Decisions / outcomes:**
+- Card overlay: **archive-down** icon (active list) or **unarchive-up** icon (archived list); delete modal removed from history cards.
+- **RENAME CHAT** → empty inline input on card; footer right shows save ✓ + cancel ✗ instead of ARCHIVE/UNARCHIVE until saved or cancelled.
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
+
