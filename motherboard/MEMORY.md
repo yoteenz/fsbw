@@ -24485,3 +24485,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `psaAssistant.css` — `.psa-chat-nav-link` color `#eb1c24` → `#808080` (font already Futura PT Medium).
 
+---
+
+## 2026-06-03 — PSA proactive nudge: holographic thought bubble
+
+**Context:** User wanted the proactive FAB nudge over PSA (e.g. **FINISH YOUR CUSTOMIZATION** / **BEACH WAVE**) redesigned from a plain square chip to a holographic thought bubble matching PSA avatar holo energy.
+
+**Changes:** `PsaAssistantWidget.tsx` — nudge markup with `psa-nudge-chip-shell`, holo ring/shine/scanline layers, and three-dot `psa-nudge-thought-tail`. `psaAssistant.css` — rounded glass bubble, spinning conic holo border (same palette as avatar), scanlines, soft glow, gentle float animation, thought tail pointing down toward avatar.
+
+**Conventions:** Proactive nudge chip should read as a thought bubble (not rectangular border box); holo styling aligns with `.psa-avatar-frame` ring.
+
