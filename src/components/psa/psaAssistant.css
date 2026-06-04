@@ -282,24 +282,31 @@
   padding: 24px 8px;
 }
 
-.psa-chat-history-row {
+.psa-chat-history-entry {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 6px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.psa-chat-history-card-wrap {
+  position: relative;
+  width: 100%;
 }
 
 .psa-chat-history-delete-btn {
-  flex-shrink: 0;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
+  width: 22px;
+  height: 22px;
   padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  align-self: center;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -307,17 +314,15 @@
   opacity: 0.75;
 }
 
-.psa-chat-history-footer {
+.psa-chat-history-item-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 12px 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-  background: transparent;
+  padding: 0 4px 2px;
 }
 
-.psa-chat-history-footer-btn {
+.psa-chat-history-item-action {
   border: none;
   background: transparent;
   padding: 0;
@@ -329,16 +334,11 @@
   text-transform: uppercase;
 }
 
-.psa-chat-history-footer-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.psa-chat-history-footer-btn--left {
+.psa-chat-history-item-action--left {
   margin-right: auto;
 }
 
-.psa-chat-history-footer-btn--right {
+.psa-chat-history-item-action--right {
   margin-left: auto;
 }
 
@@ -347,9 +347,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-  flex: 1;
-  min-width: 0;
-  padding: 8px 10px;
+  width: 100%;
+  padding: 8px 28px 8px 10px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: rgba(255, 255, 255, 0.75);
   cursor: pointer;
