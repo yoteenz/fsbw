@@ -956,20 +956,20 @@ export default function AdminBrand() {
                   <PageActionsBelowCard.Spacer />
                   <button
                     type="button"
-                    onClick={() => navigate('/admin/brand/edit/nudges')}
-                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                    style={pageActionButtonStyle}
-                  >
-                    EDIT NUDGES
-                  </button>
-                  <PageActionsBelowCard.Spacer />
-                  <button
-                    type="button"
                     onClick={() => navigate('/admin/brand/edit/alerts')}
                     className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
                     style={pageActionButtonStyle}
                   >
                     EDIT ALERTS
+                  </button>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/brand/edit/nudges')}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    EDIT NUDGES
                   </button>
                 </PageActionsBelowCard>
               ) : (
