@@ -6,7 +6,6 @@ import {
   isPsaHiddenPath,
   isPsaHoloCompareMode,
   PSA_NUDGE_BUBBLE_SRC,
-  PSA_NUDGE_HOLO_GLOW_SRC,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   readPsaWelcomeMessageFromStorage,
@@ -449,13 +448,6 @@ export default function PsaAssistantWidget() {
           </>
         ) : null}
         <div className="psa-widget-fab-stack">
-          <img
-            className="psa-widget-holo-glow"
-            src={PSA_NUDGE_HOLO_GLOW_SRC}
-            alt=""
-            aria-hidden
-            draggable={false}
-          />
           {!isOpen && proactiveNudge ? (
             <button
               type="button"

@@ -19,7 +19,6 @@ function CompareColumn({ optionId, glowSrc }: { optionId: number; glowSrc: strin
     >
       <span className="psa-holo-compare-label">OPTION {optionId}</span>
       <div className="psa-holo-compare-stack">
-        <img className="psa-holo-compare-glow" src={glowSrc} alt="" aria-hidden draggable={false} />
         <div className="psa-holo-compare-nudge" aria-hidden>
           <img className="psa-nudge-chip-art" src={PSA_NUDGE_BUBBLE_SRC} alt="" draggable={false} />
           <span className="psa-nudge-chip-content">
@@ -28,10 +27,14 @@ function CompareColumn({ optionId, glowSrc }: { optionId: number; glowSrc: strin
           </span>
         </div>
         <div className="psa-holo-compare-avatar" aria-hidden>
-          <div className="psa-avatar-frame psa-avatar-idle">
-            <PsaAvatarImageCrossfade expression="neutral" />
-            <div className="psa-avatar-scanlines" aria-hidden />
-            <span className="psa-nudge-badge" aria-hidden />
+          <div className="psa-avatar-glow-wrap psa-avatar-idle">
+            <div className="psa-avatar-holo-glow-rotator" aria-hidden>
+              <img className="psa-avatar-holo-glow" src={glowSrc} alt="" draggable={false} />
+            </div>
+            <div className="psa-avatar-frame">
+              <PsaAvatarImageCrossfade expression="neutral" />
+              <span className="psa-nudge-badge" aria-hidden />
+            </div>
           </div>
           <span className="psa-avatar-cta">{PSA_WIDGET_CTA}</span>
         </div>
