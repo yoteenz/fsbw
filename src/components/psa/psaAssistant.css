@@ -694,10 +694,11 @@
 }
 
 .psa-nudge-chip-headline {
-  font-family: 'Covered By Your Grace', cursive;
+  font-family: 'Bohemy', sans-serif;
   font-size: 11px;
   color: #000;
-  text-transform: uppercase;
+  text-transform: lowercase;
+  font-weight: 400;
   line-height: 1.15;
   text-align: center;
 }
