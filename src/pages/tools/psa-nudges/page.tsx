@@ -128,6 +128,9 @@ export default function PsaNudgesDebugPage() {
             <button type="button" className="psa-nudge-debug__btn psa-nudge-debug__btn--primary" onClick={copyAll}>
               Copy entire catalog
             </button>
+            <Link to="/tools/account-alerts" className="psa-nudge-debug__btn">
+              Account alerts debug
+            </Link>
             <Link to="/home/tools" className="psa-nudge-debug__btn" style={{ textDecoration: 'none' }}>
               ← Tools
             </Link>
