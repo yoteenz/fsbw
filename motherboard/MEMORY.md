@@ -25258,7 +25258,7 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-## 2026-06-03 — PSA avatar + nudge 10px up
+## 2026-06-03 — PSA avatar + nudge 20px up
 
 **Context:** User asked to move the PSA avatar and proactive nudge bubble upward only (not the open chat panel).
 
