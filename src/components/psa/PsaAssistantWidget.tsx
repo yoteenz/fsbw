@@ -97,6 +97,7 @@ export default function PsaAssistantWidget() {
     openHistory,
     closeHistory,
     archiveThread,
+    renameThread,
     removeThread,
   } = usePsaChat(welcomeMessage, (pendingMessage) =>
     buildPsaClientSessionContext(location.pathname, pendingMessage)
@@ -452,6 +453,7 @@ export default function PsaAssistantWidget() {
               onSelectThread={(id) => void switchThread(id)}
               onArchiveThread={(id) => void archiveThread(id)}
               onDeleteThread={(id) => void removeThread(id)}
+              onRenameThread={(id, title) => void renameThread(id, title)}
               onInputFocusChange={setIsInputFocused}
               onInputTextChange={setInputHasText}
               initialInput={prefillInput}

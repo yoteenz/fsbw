@@ -6,6 +6,7 @@ import {
   fetchPsaActiveThread,
   fetchPsaThreadList,
   postPsaChat,
+  renamePsaThread,
   type PsaContinueHint,
   type PsaChatCard,
   type PsaThreadSummary,
@@ -265,6 +266,19 @@ export function usePsaChat(
     [threadId, refreshThreadList, welcomeMessage]
   );
 
+  const renameThread = useCallback(
+    async (id: string, title: string) => {
+      const result = await renamePsaThread(id, title);
+      if (!result.ok) {
+        setError(result.message);
+        return false;
+      }
+      await refreshThreadList();
+      return true;
+    },
+    [refreshThreadList]
+  );
+
   const removeThread = useCallback(
     async (id: string) => {
       const result = await deletePsaThread(id);
@@ -311,6 +325,7 @@ export function usePsaChat(
     sendMessage,
     resetChat,
     archiveThread,
+    renameThread,
     removeThread,
     loadActiveThread,
     ensureHistoryLoaded,

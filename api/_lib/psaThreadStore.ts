@@ -213,6 +213,20 @@ export async function updatePsaThreadSummary(threadId: string, summary: string):
   if (error) throw new Error(error.message);
 }
 
+export async function renamePsaThread(userId: string, threadId: string, title: string): Promise<boolean> {
+  const existing = await getPsaThreadForUser(userId, threadId);
+  if (!existing) return false;
+  const trimmed = threadTitleFromMessage(title);
+  const supabase = getSupabaseAdminServiceRole();
+  const { error } = await supabase
+    .from('psa_threads')
+    .update({ title: trimmed })
+    .eq('id', threadId)
+    .eq('user_id', userId);
+  if (error) throw new Error(error.message);
+  return true;
+}
+
 export async function archivePsaThread(userId: string, threadId: string): Promise<boolean> {
   const existing = await getPsaThreadForUser(userId, threadId);
   if (!existing) return false;

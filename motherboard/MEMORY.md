@@ -25292,25 +25292,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-## 2026-06-03 — PSA chat panel 30px up
+## 2026-06-04 — PSA chat history: delete icon, rename/archive footer
 
-**Context:** User asked to move the open PSA chat box upward only (avatar/nudge stack unchanged).
-
-**Decisions / outcomes:** `.psa-chat-panel` transform **`translate(-20px, -42px)`** (was `-12px` vertical — 30px higher).
-
-**Changes:** `src/components/psa/psaAssistant.css`.
-
----
-
-## 2026-06-03 — PSA chat panel UI restyle
-
-**Context:** User requested PSA chat box updates: input styled like SEND (red outline, matching 10px text), quick replies 3 per row (smaller chips/text), centered **PERSONAL SLAY ASSISTANT** header, history on left and new on right as red icons (not text buttons).
+**Context:** User wanted PSA chat history UX changes: remove DELETE text; red **X** delete icon on the right of each row with confirmation modal; **ARCHIVE** moved to footer right below panel; **RENAME CHAT** footer left below panel.
 
 **Decisions / outcomes:**
-- Input: red border + glass background matching `.psa-chat-send`; **10px** Futura Medium (placeholder too).
-- Quick replies: **3-column grid**, **7px** centered text, tighter padding.
-- Header: centered title/usage; **history/back** icon absolute left, **new (+)** icon absolute right.
-- Inline red SVG icons in `PsaChatPanel.tsx`; removed `.psa-chat-header-btn` text boxes.
+- Per-row red **X** opens `ConfirmationModal` before delete.
+- Footer bar below history list: **RENAME CHAT** (left), **ARCHIVE** (right) on selected thread; row click selects, double-click opens chat.
+- **Rename API:** `renamePsaThread` in store + `PATCH /api/psa/thread` with `{ title }`; wired through `psaApi`, `usePsaChat`, `PsaChatPanel`.
 
-**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`, `PsaAssistantWidget.tsx`, `usePsaChat.ts`, `psaApi.ts`, `api/psa/thread.ts`, `api/_lib/psaThreadStore.ts`.
 
