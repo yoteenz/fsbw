@@ -24779,3 +24779,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-widget-fab-stack { transform: translateX(-10px); }` — moves nudge + avatar trigger + glow together.
 
+---
+
+## 2026-06-04 — PSA FAB: TAP TO CHAT Futura Demi; nudge down 4px
+
+**Changes:** `.psa-avatar-cta` font → Futura PT Demi, gray `#808080` unchanged. Nudge `margin-bottom` `5px` → `1px` (4px closer to avatar).
+
