@@ -55,27 +55,10 @@ export const PSA_NUDGE_BUBBLE_ASSET_VERSION = '1';
 
 export const PSA_NUDGE_BUBBLE_SRC = `/assets/psa-nudge-thought-bubble.png?v=${PSA_NUDGE_BUBBLE_ASSET_VERSION}`;
 
-/** Holo glow plate behind PSA FAB + nudge (option 3). Bump when PNG changes. */
+/** Holo glow plate behind PSA avatar (chosen option 3). Bump when PNG changes. */
 export const PSA_NUDGE_HOLO_GLOW_ASSET_VERSION = '1';
 
 export const PSA_NUDGE_HOLO_GLOW_SRC = `/assets/psa-nudge-holo-glow.png?v=${PSA_NUDGE_HOLO_GLOW_ASSET_VERSION}`;
-
-/** Temporary A/B — holo glow plates; `?psaHoloCompare=1` on any page. Bump when PNGs change. */
-export const PSA_HOLO_GLOW_COMPARE_VERSION = '2';
-
-/** Option 1 = live production glow; option 2 = new draft from Supabase image (21). */
-export const PSA_HOLO_GLOW_COMPARE_OPTIONS = [
-  { id: 1, label: 'CURRENT', src: PSA_NUDGE_HOLO_GLOW_SRC },
-  {
-    id: 2,
-    label: 'NEW',
-    src: `/assets/psa-holo-glow-option-2-draft.png?v=${PSA_HOLO_GLOW_COMPARE_VERSION}`,
-  },
-] as const;
-
-export function isPsaHoloCompareMode(search: string): boolean {
-  return new URLSearchParams(search).get('psaHoloCompare') === '1';
-}
 
 export const PSA_WIDGET_LABEL = 'PSA';
 export const PSA_WIDGET_SUBLABEL = 'PERSONAL SLAY ASSISTANT';

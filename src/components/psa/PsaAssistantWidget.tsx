@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
   isPsaHiddenPath,
-  isPsaHoloCompareMode,
   PSA_NUDGE_BUBBLE_SRC,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
@@ -25,7 +24,6 @@ import {
   LOUNGE_TV_THEATER_MODE_CHANGED_EVENT,
 } from '../../utils/loungeTvTheaterMode';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
-import PsaHoloComparePanel from './PsaHoloComparePanel';
 import PsaChatPanel from './PsaChatPanel';
 import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
 import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
@@ -403,11 +401,6 @@ export default function PsaAssistantWidget() {
   ]);
 
   // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
-  const holoCompare = isPsaHoloCompareMode(location.search);
-  if (holoCompare && !isPsaHiddenPath(location.pathname) && !loungeTvTheater) {
-    return <PsaHoloComparePanel />;
-  }
-
   if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname) || loungeTvTheater) {
     return null;
   }
