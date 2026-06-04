@@ -352,6 +352,7 @@
   line-height: 1.45;
   white-space: pre-wrap;
   word-break: break-word;
+  text-transform: uppercase;
 }
 
 .psa-chat-bubble-user {
@@ -502,6 +503,7 @@
   cursor: pointer;
   max-width: 100%;
   text-align: left;
+  text-transform: uppercase;
 }
 
 .psa-nudge-badge {

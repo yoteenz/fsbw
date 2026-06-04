@@ -2,6 +2,7 @@ import { getAccessToken } from './api';
 import { isSignedIn } from './adminAuth';
 import type { PsaBawPrefillSelections } from './psaBawPrefill';
 import type { PsaClientSessionContext } from './psaSessionContext';
+import { formatPsaVoiceText } from './psaVoiceFormat';
 
 export type PsaClientAction =
   | { type: 'sync_cart' }
@@ -323,7 +324,8 @@ export async function postPsaChat(
     return { ok: false, code: 'SERVER', message: data.error || 'PSA is temporarily unavailable.' };
   }
 
-  const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
+  const reply =
+    typeof data.reply === 'string' ? formatPsaVoiceText(data.reply.trim()) : '';
   if (!reply) {
     return {
       ok: false,
@@ -334,7 +336,10 @@ export async function postPsaChat(
   }
   const clientActions = Array.isArray(data.clientActions) ? data.clientActions : undefined;
   const quickReplies = Array.isArray(data.quickReplies)
-    ? data.quickReplies.filter((q): q is string => typeof q === 'string' && q.trim().length > 0).slice(0, 4)
+    ? data.quickReplies
+        .filter((q): q is string => typeof q === 'string' && q.trim().length > 0)
+        .slice(0, 4)
+        .map((q) => formatPsaVoiceText(q, { stripGreeting: false }))
     : undefined;
   const cards = Array.isArray(data.cards) ? data.cards : undefined;
   return {

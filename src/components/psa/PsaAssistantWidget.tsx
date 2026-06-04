@@ -31,6 +31,7 @@ import { usePsaProactiveNudges } from './usePsaProactiveNudges';
 import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
 import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/psaBawPrefill';
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
+import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaClientAction } from '../../utils/psaApi';
 import './psaAssistant.css';
 
@@ -318,17 +319,37 @@ export default function PsaAssistantWidget() {
   const handleSend = useCallback(
     async (text: string) => {
       setPrefillInput('');
+      const navPath = resolvePsaQuickReplyNavigation(text);
+
+      if (navPath) {
+        const result = await sendMessage(text, { immediateNavigate: true });
+        if (result?.premiumRequired) {
+          setIsOpen(false);
+          setShowUpgradeModal(true);
+          return;
+        }
+        if (navPath.startsWith('/build-a-wig')) {
+          const unitMatch = navPath.match(/\/build-a-wig\/([a-z-]+)/i);
+          if (unitMatch?.[1]) {
+            applyPsaBawPrefill({ unitId: unitMatch[1], path: navPath });
+          }
+        }
+        setIsOpen(false);
+        navigate(navPath);
+        return;
+      }
+
       const result = await sendMessage(text);
       if (result?.premiumRequired) {
         setIsOpen(false);
         setShowUpgradeModal(true);
         return;
       }
-      if (result?.clientActions?.length) {
+      if ('clientActions' in result && result.clientActions?.length) {
         await runClientActions(result.clientActions);
       }
     },
-    [sendMessage, runClientActions]
+    [sendMessage, runClientActions, navigate]
   );
 
   const handleUpgrade = useCallback(() => {
