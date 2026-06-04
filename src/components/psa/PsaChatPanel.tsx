@@ -6,6 +6,7 @@ import {
   PSA_STARTER_QUICK_REPLIES,
 } from '../../constants/psaConfig';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
+import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaChatCard } from '../../utils/psaApi';
 import type { PsaChatMessage } from './usePsaChat';
 
@@ -33,8 +34,8 @@ type PsaChatPanelProps = {
 };
 
 function bubbleContent(msg: PsaChatMessage): string {
-  if (msg.role === 'user') return msg.content;
-  return formatPsaVoiceText(msg.content);
+  const stripGreeting = msg.role === 'assistant' && msg.id !== 'welcome';
+  return formatPsaVoiceText(msg.content, { stripGreeting });
 }
 
 function extractPaths(text: string): string[] {
@@ -151,6 +152,10 @@ export default function PsaChatPanel({
     const value = (text ?? input).trim();
     if (!value || isSending) return;
     setInput('');
+    if (resolvePsaQuickReplyNavigation(value)) {
+      void onSend(value);
+      return;
+    }
     await onSend(value);
   };
 
@@ -171,10 +176,13 @@ export default function PsaChatPanel({
 
   const quickReplies =
     panelQuickReplies.length > 0
-      ? panelQuickReplies
+      ? panelQuickReplies.map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
       : isWelcomeOnly
-        ? [...PSA_STARTER_QUICK_REPLIES]
-        : [...messages].reverse().find((m) => m.role === 'assistant' && m.quickReplies?.length)?.quickReplies ?? [];
+        ? PSA_STARTER_QUICK_REPLIES.map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
+        : (
+            [...messages].reverse().find((m) => m.role === 'assistant' && m.quickReplies?.length)
+              ?.quickReplies ?? []
+          ).map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }));
 
   return (
     <div className="psa-chat-panel" role="dialog" aria-label="Personal Slay Assistant chat">

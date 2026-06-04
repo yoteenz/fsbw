@@ -163,64 +163,85 @@ export function usePsaChat(
   }, []);
 
   const sendMessage = useCallback(
-    async (text: string) => {
+    async (
+      text: string,
+      options?: { immediateNavigate?: boolean }
+    ) => {
       const trimmed = text.trim();
       if (!trimmed || isSending) return { premiumRequired: false as const };
 
       setError(null);
       setPanelQuickReplies([]);
       setMessages((prev) => [...prev, { id: nextId(), role: 'user', content: trimmed }]);
-      setIsSending(true);
 
       const context = getSessionContextRef.current?.(trimmed);
-      const result = await postPsaChat(trimmed, {
+      const chatOpts = {
         previousResponseId: responseId,
         threadId,
         context,
-      });
+      };
+
+      const applyChatResult = (result: Awaited<ReturnType<typeof postPsaChat>>) => {
+        if (!result.ok) {
+          if (result.code === 'PREMIUM_REQUIRED') {
+            return { premiumRequired: true as const, message: result.message };
+          }
+          if (result.code === 'PSA_LIMIT_REACHED' && result.usage) {
+            setUsage(result.usage);
+          }
+          setError(result.message);
+          setMessages((prev) => [
+            ...prev,
+            { id: nextId(), role: 'system', content: result.message },
+          ]);
+          return {
+            premiumRequired: false as const,
+            limitReached: result.code === 'PSA_LIMIT_REACHED',
+          };
+        }
+
+        if (result.threadId) setThreadId(result.threadId);
+        setResponseId(result.responseId);
+        setUsage((prev) => {
+          if (!prev || prev.unlimited) return prev;
+          return {
+            ...prev,
+            monthCount: prev.monthCount + 1,
+            dayCount: prev.dayCount + 1,
+          };
+        });
+        setPanelQuickReplies(result.quickReplies ?? []);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: nextId(),
+            role: 'assistant',
+            content: result.reply,
+            cards: result.cards,
+            quickReplies: result.quickReplies,
+          },
+        ]);
+        void refreshThreadList();
+        void refreshContinueHint();
+        return { premiumRequired: false as const, clientActions: result.clientActions };
+      };
+
+      if (options?.immediateNavigate) {
+        void (async () => {
+          const result = await postPsaChat(trimmed, chatOpts);
+          applyChatResult(result);
+        })();
+        return { premiumRequired: false as const, immediateNavigate: true as const };
+      }
+
+      setIsSending(true);
+
+      const result = await postPsaChat(trimmed, chatOpts);
       const typingDelayMs = 300 + Math.floor(Math.random() * 401);
       await new Promise((resolve) => setTimeout(resolve, typingDelayMs));
       setIsSending(false);
 
-      if (!result.ok) {
-        if (result.code === 'PREMIUM_REQUIRED') {
-          return { premiumRequired: true as const, message: result.message };
-        }
-        if (result.code === 'PSA_LIMIT_REACHED' && result.usage) {
-          setUsage(result.usage);
-        }
-        setError(result.message);
-        setMessages((prev) => [
-          ...prev,
-          { id: nextId(), role: 'system', content: result.message },
-        ]);
-        return { premiumRequired: false as const, limitReached: result.code === 'PSA_LIMIT_REACHED' };
-      }
-
-      if (result.threadId) setThreadId(result.threadId);
-      setResponseId(result.responseId);
-      setUsage((prev) => {
-        if (!prev || prev.unlimited) return prev;
-        return {
-          ...prev,
-          monthCount: prev.monthCount + 1,
-          dayCount: prev.dayCount + 1,
-        };
-      });
-      setPanelQuickReplies(result.quickReplies ?? []);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: nextId(),
-          role: 'assistant',
-          content: result.reply,
-          cards: result.cards,
-          quickReplies: result.quickReplies,
-        },
-      ]);
-      void refreshThreadList();
-      void refreshContinueHint();
-      return { premiumRequired: false as const, clientActions: result.clientActions };
+      return applyChatResult(result);
     },
     [isSending, responseId, threadId, refreshThreadList, refreshContinueHint]
   );

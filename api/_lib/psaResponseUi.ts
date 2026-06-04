@@ -1,6 +1,7 @@
 /**
  * PSA rich UI: quick-reply suffix parsing + cards from tool trace.
  */
+import { formatPsaVoiceText } from './psaVoiceFormat.js';
 
 export type PsaChatCard =
   | {
@@ -28,7 +29,7 @@ export function parseQuickRepliesFromReply(text: string): { reply: string; quick
   const reply = text.replace(QUICK_SUFFIX_RE, '').trim();
   const quickReplies = match[1]
     .split('|')
-    .map((s) => s.trim())
+    .map((s) => formatPsaVoiceText(s.trim(), { stripGreeting: false }))
     .filter(Boolean)
     .slice(0, 4);
   return { reply, quickReplies };
