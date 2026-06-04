@@ -424,10 +424,22 @@ export default function PsaAssistantWidget() {
             onClick={handleNudgeAction}
             aria-label={proactiveNudge.headline}
           >
-            <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
-            {proactiveNudge.body ? (
-              <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
-            ) : null}
+            <span className="psa-nudge-chip-shell">
+              <span className="psa-nudge-chip-holo-ring" aria-hidden />
+              <span className="psa-nudge-chip-holo-shine" aria-hidden />
+              <span className="psa-nudge-chip-scanlines" aria-hidden />
+              <span className="psa-nudge-chip-content">
+                <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
+                {proactiveNudge.body ? (
+                  <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
+                ) : null}
+              </span>
+            </span>
+            <span className="psa-nudge-thought-tail" aria-hidden>
+              <i />
+              <i />
+              <i />
+            </span>
           </button>
         ) : null}
         <PsaAvatarTrigger
