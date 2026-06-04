@@ -212,9 +212,6 @@ export default function PsaChatPanel({
               NEW
             </button>
           ) : null}
-          <button type="button" className="psa-chat-close" onClick={onClose} aria-label="Close PSA">
-            ×
-          </button>
         </div>
       </header>
 
