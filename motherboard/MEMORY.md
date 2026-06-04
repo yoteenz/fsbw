@@ -24985,3 +24985,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-03 — PSA avatar + nudge 10px left
 
 **Changes:** `.psa-widget-fab-stack` horizontal nudge **`translateX(-10px)` → `translateX(-20px)`** — moves avatar, proactive nudge, and SHOW CHAT bubble 10px left together. Open chat panel (main-card width) unchanged.
+
+---
+
+## 2026-06-03 — PSA FAB position fix + chat panel 340px
+
+**Context:** Open chat repositioned widget to full main-card width, shifting avatar/HIDE CHAT vs TAP TO CHAT. Chat panel too wide.
+
+**Changes:** Removed `usePsaMainCardBounds` / `psa-widget-root--chat-open` — widget always viewport bottom-right so FAB stack identical open vs closed. Chat panel restored to fixed width **`min(340px, calc(100vw - 24px))`** (was 360px full-card stretch). Deleted `psaMainCardBounds.ts` + hook.
