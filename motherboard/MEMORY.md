@@ -25246,3 +25246,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `src/pages/admin/brand/page.tsx`.
 
+
+---
+
+## 2026-06-04 — Brand menu labels: Terms + Members Only
+
+**Context:** User requested BRAND tab menu copy: Terms of Service → Terms (menu only); Become a Member → Members Only (menu + `/brand/member` red card header).
+
+**Changes:** `src/constants/brandMenu.ts` — `label: 'TERMS'` with `cardTitle: 'TERMS OF SERVICE'` for terms page header; member `label` + `cardTitle: 'MEMBERS ONLY'` (breadcrumb still `BRAND > MEMBERSHIP` via `navTitle`).
+
+**Pushed:** `master` + `preview/mobile`.
