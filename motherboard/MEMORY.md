@@ -25098,3 +25098,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-03 — SHOW CHAT headline +4px
 
 **Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`font-size: 15px`** (was inherited **11px** from base headline). Proactive nudge and other chip copy unchanged.
+
+---
+
+## 2026-06-03 — PSA nudge page-context priority (BAW / wishlist / alerts / orders)
+
+**Context:** Restore **BAW draft resume** nudge on Build-a-Wig pages only (not globally always-on). On wishlist, alerts, and orders routes, page-relevant nudges win; elsewhere show the **most recent** alert.
+
+**Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
+
+**Pushed:** `master` + `preview/mobile`.
