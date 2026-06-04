@@ -24589,4 +24589,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** Saved `public/assets/psa-nudge-thought-bubble.png` (1360×1360 RGBA); `PSA_NUDGE_BUBBLE_SRC` + `PSA_NUDGE_BUBBLE_ASSET_VERSION=1` in `psaConfig.ts`. `PsaAssistantWidget` renders `<img>` + overlaid text; removed CSS shell/face/holo-ring/tail. Slow pulse on art + float animation retained.
 
+<<<<<<< HEAD
+>>>>>>> master
+=======
+---
+
+## 2026-06-04 — PSA nudge: 10px closer + holo glow background prompt
+
+**Context:** User liked 3D thought bubble; wanted it ~10px closer to PSA FAB. Asked for generation prompt using attachment to create floating holographic glow background matching PSA avatar holo behind the bubble.
+
+**Changes:** `.psa-nudge-chip` `bottom: calc(100% - 18px)` (was `-8px`). New `motherboard/golden-prompts/psa-nudge-holo-glow-background.md` — glow plate only (no bubble shape), match thought bubble iridescence + PSA conic ring colors, transparent core, feathered alpha, slow pulse not spin.
+
 >>>>>>> master
