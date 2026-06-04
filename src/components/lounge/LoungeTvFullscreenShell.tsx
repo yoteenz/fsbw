@@ -15,7 +15,10 @@ import {
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
-import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
+import {
+  SCENE_COVER_FALLBACK_MEASURE_REF,
+  useSceneCoverHitRect,
+} from '../../hooks/useSceneCoverHitRect';
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
@@ -48,7 +51,7 @@ export function LoungeTvFullscreenShell({
 }: Props) {
   const mappedGlass = useSceneCoverHitRect(
     LOUNGE_TV_MENU_SCREEN_RECT,
-    viewportMeasureRef ?? { current: null },
+    viewportMeasureRef ?? SCENE_COVER_FALLBACK_MEASURE_REF,
     LOUNGE_TV_MENU_SCREEN_OFFSET,
     LOUNGE_TV_MENU_SCREEN_IMAGE,
   );
