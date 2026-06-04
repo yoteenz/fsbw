@@ -293,7 +293,7 @@
   width: 100%;
 }
 
-.psa-chat-history-delete-btn {
+.psa-chat-history-card-archive-btn {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -310,7 +310,59 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.psa-chat-history-delete-btn:hover {
+.psa-chat-history-card-archive-btn:hover {
+  opacity: 0.75;
+}
+
+.psa-chat-history-rename-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 10px;
+  color: #000;
+  line-height: 1.3;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.psa-chat-history-rename-input::placeholder {
+  color: #808080;
+  font-size: 9px;
+}
+
+.psa-chat-history-item--renaming {
+  cursor: default;
+}
+
+.psa-chat-history-rename-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.psa-chat-history-rename-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.psa-chat-history-rename-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.psa-chat-history-rename-icon-btn:hover:not(:disabled) {
   opacity: 0.75;
 }
 
