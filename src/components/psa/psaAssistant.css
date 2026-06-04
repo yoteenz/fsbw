@@ -386,12 +386,14 @@
 }
 
 .psa-chat-bubble-body {
-  display: inline;
+  display: block;
+  white-space: pre-wrap;
 }
 
 .psa-chat-route-tail {
-  display: inline;
-  white-space: normal;
+  display: block;
+  margin-top: 8px;
+  white-space: pre-wrap;
 }
 
 .psa-chat-nav-link-inline {

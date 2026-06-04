@@ -26,6 +26,17 @@ export function stripRedundantPsaGreeting(text: string): string {
   return out.trim();
 }
 
+/** Collapse inline spaces but keep paragraph and list line breaks. */
+function normalizePsaChatWhitespace(text: string): string {
+  let out = text.replace(/,\s*,+/g, ',');
+  out = out
+    .split('\n')
+    .map((line) => line.replace(/[^\S\n]+/g, ' ').trim())
+    .join('\n');
+  out = out.replace(/\n{3,}/g, '\n\n');
+  return out.trim();
+}
+
 export function formatPsaVoiceText(text: string, options?: FormatPsaVoiceOptions): string {
   if (!text) return text;
 
@@ -40,7 +51,7 @@ export function formatPsaVoiceText(text: string, options?: FormatPsaVoiceOptions
     out = stripRedundantPsaGreeting(out);
   }
 
-  out = out.replace(/,\s*,+/g, ',').replace(/\s{2,}/g, ' ').trim();
+  out = normalizePsaChatWhitespace(out);
 
   return uppercase ? out.toUpperCase() : out;
 }
