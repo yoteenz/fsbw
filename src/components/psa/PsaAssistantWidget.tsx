@@ -471,7 +471,6 @@ export default function PsaAssistantWidget() {
           isOpen={isOpen}
           idle={!isOpen}
           expression={avatarExpression}
-          showNudgeBadge={Boolean(proactiveNudge) && !isOpen}
           ctaLabel={fabCtaLabel}
           ctaSubline={fabCtaSubline}
         />

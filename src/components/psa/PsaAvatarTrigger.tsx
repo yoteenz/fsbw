@@ -10,7 +10,6 @@ type PsaAvatarTriggerProps = {
   isOpen: boolean;
   idle?: boolean;
   expression?: PsaAvatarExpression;
-  showNudgeBadge?: boolean;
   ctaLabel?: string;
   ctaSubline?: string | null;
   'aria-label'?: string;
@@ -21,7 +20,6 @@ export default function PsaAvatarTrigger({
   isOpen,
   idle = false,
   expression = PSA_AVATAR_DEFAULT_EXPRESSION,
-  showNudgeBadge = false,
   ctaLabel = PSA_WIDGET_CTA,
   ctaSubline = null,
   'aria-label': ariaLabel = 'Open Personal Slay Assistant',
@@ -37,7 +35,10 @@ export default function PsaAvatarTrigger({
       <div className={`psa-avatar-frame${idle ? ' psa-avatar-idle' : ''}`}>
         <PsaAvatarImageCrossfade expression={expression} />
         <div className="psa-avatar-scanlines" aria-hidden />
-        {showNudgeBadge ? <span className="psa-nudge-badge" aria-hidden /> : null}
+        <span
+          className={`psa-nudge-badge${isOpen ? ' psa-nudge-badge-active' : ''}`}
+          aria-hidden
+        />
       </div>
       <span className="psa-avatar-cta">{ctaLabel}</span>
       {ctaSubline ? <span className="psa-avatar-cta-subline">{ctaSubline}</span> : null}
