@@ -24743,6 +24743,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — Lounge TV press-to-play animation not starting
+
+**Context:** User reported PRESS TO PLAY Seedance open clip did not start after scene-lock / cover changes.
+
+**Cause:** **`LoungeTvOverlay`** was behind **`SceneViewportPortal`**, which could return **`null`** until the portal target attached — overlay and **`LoungeTvAnimationVideo`** never mounted on first tap (same class of bug as lobby transition arrow).
+
+**Fix:** **`LoungeCompositeTvPlay`** uses inline **`SceneViewportOverlay`** (always in the lounge viewport tree). **`LoungeTvOverlay`** layout effect sets **`opening`** via functional updater (no **`seedancePhase`** in deps). Pushed **`master`** + **`preview/mobile`** (`e5c1cd75`).
+
+---
+
 ## 2026-06-04 — PSA nudge bubble: holo color-shift sync with avatar
 
 **Context:** User wanted the nudge thought bubble PNG gradients to use the same color-changing effect as the avatar holo glow background.
