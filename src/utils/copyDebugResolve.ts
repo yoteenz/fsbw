@@ -1,6 +1,6 @@
 /**
  * Copy debug — template defaults from catalogs + localStorage overrides applied at runtime.
- * Edit on /tools/copy-debug; saves persist in this browser and update live nudges/alerts.
+ * Edit on Admin → Brand → ALERTS → edit nudges/alerts; saves persist in this browser and update live nudges/alerts.
  */
 import {
   flattenAccountAlertsCatalog,
