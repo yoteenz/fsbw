@@ -24749,3 +24749,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip-art` now uses shared `psa-holo-glow-live` animation (4.5s — opacity, brightness, saturate, hue-rotate). Nudge text overlay unchanged.
 
+---
+
+## 2026-06-04 — PSA chat: sectioned replies (line breaks preserved)
+
+**Context:** User wanted PSA answers spread out/sectioned, not run-on walls of text — wishlist stock example with bullets, numbered steps, blank lines, and `GO HERE NEXT: WISHLIST PAGE` on its own line.
+
+**Cause:** `formatPsaVoiceText` collapsed all whitespace (`\s{2,}` → space), destroying `\n` from model output.
+
+**Changes:** `normalizePsaChatWhitespace` preserves paragraph breaks (client + API). `psaInstructions.ts` — mandatory Reply layout section with wishlist stock template. `psaRouteDisplay.ts` — preserve newlines; destination link labels (`WISHLIST PAGE`); infer `/wishlist` from tail text. Chat CSS — `pre-wrap` body, GO HERE block with top margin.
+
+**Conventions:** PSA replies use blank lines between sections; bullets `- ` and numbered steps one per line; navigation tail names destination in plain language.
+
