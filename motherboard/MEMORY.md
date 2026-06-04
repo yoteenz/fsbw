@@ -25142,3 +25142,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Pushed:** `master` + `preview/mobile` (`8fa8cae6`).
 
 **Conventions:** Tune lounge TV / display case via `LOUNGE_TV_*_HIT_LAYOUT` and `LOBBY_DISPLAY_CASE_HIT_LAYOUT` constants; debug colors still only with `?sceneHitDebug=1`.
+
+---
+
+## 2026-06-04 — Excess marble below brand main cards (not PSA flow)
+
+**Context:** User saw large empty marble area below brand main card (e.g. Terms) with PSA FAB at bottom; suspected PSA caused it.
+
+**Cause:** `min-h-screen` on brand page wrapper + `fixed inset-0` marble forced full viewport height. PSA widget is `position: fixed` and does not affect document flow.
+
+**Fix:** New **`MarblePageShell`** (`src/layouts/MarblePageShell.tsx`) — marble `position: absolute` on content-sized shell (default, no `100dvh` min); **`PSA_WIDGET_PAGE_PADDING_BOTTOM`** reserves ~128px + safe-area so FAB does not cover actions. **`src/pages/brand/page.tsx`** migrated off `min-h-screen` / fixed marble.
+
+**Pushed:** `master` + `preview/mobile`.
+
+**Conventions:** Short-content marble pages should use `MarblePageShell`; pass `fillViewport` only when a page truly needs full-viewport marble (e.g. tall menu panels). Other pages still on legacy `min-h-screen` + fixed marble until migrated.
