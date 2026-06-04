@@ -24611,3 +24611,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` width `200px/62vw` → `120px/37vw` (60% scale); headline `11px→7px`, body `7px→5px`; content max-width `140→84px`.
 
+---
+
+## 2026-06-04 — PSA holo glow A/B compare (3 options)
+
+**Context:** User had 3 draft holo glow backgrounds (Supabase images 17–19) and wanted 3 PSAs side-by-side to compare before picking one.
+
+**Changes:** Saved `psa-holo-glow-option-{1,2,3}.png`. `PsaHoloComparePanel.tsx` — 3 columns (same nudge + avatar, different glow). Enable with **`?psaHoloCompare=1`** on any page (EXIT removes param). `isPsaHoloCompareMode` in `psaConfig.ts`. Compare tray fixed bottom; bypasses normal single FAB while active.
+
+**Conventions:** After user picks option 1/2/3, wire winner as `psa-nudge-holo-glow.png` and remove compare mode + unused PNGs.
+
