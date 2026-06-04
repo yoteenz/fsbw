@@ -48,12 +48,12 @@ export function scaleLobbyCasePropOpenOverlayRect(
 }
 
 /**
- * Cover-map nudge (screen px → container %) for register open PNG + popover anchor.
- * Applied via {@link useSceneCoverHitRect} on {@link SceneCarouselViewportStage}.
+ * @deprecated Per-prop offsets — use {@link LOBBY_DISPLAY_CASE_LAYOUT_OFFSET} on
+ * {@link LobbyDisplayCaseShell} (`lobbyDisplayCaseLayout.ts`).
  */
 export const LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET = { x: 24, y: -30 } as const;
 
-/** Cover-map nudge for phone open PNG + popover anchor. */
+/** @deprecated See {@link LOBBY_DISPLAY_CASE_LAYOUT_OFFSET}. */
 export const LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET = { x: -1, y: -32 } as const;
 
 /** @deprecated Use {@link useSceneCoverHitRect} + {@link applyScreenOffsetToCoverRect} instead of CSS translate. */

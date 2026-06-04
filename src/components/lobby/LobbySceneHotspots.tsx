@@ -3,13 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import type { LobbyCasePopoverId } from '../../constants/lobbyCasePopover';
 import {
   FINAL_LOBBY_CASE_PROP_OPEN_OVERLAY_SRCS,
-  FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT,
   FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC,
-  FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT,
   FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC,
-  LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
   LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
-  LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
   LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE,
 } from '../../constants/finalLobbyCasePropOverlays';
 import {
@@ -25,8 +21,6 @@ import {
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import {
   LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
-  LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX,
-  LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX,
   LOBBY_CASE_POPOVER_SCRIM_ALPHA,
   LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR,
   LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
@@ -39,10 +33,15 @@ import {
 import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons';
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
 import { useLobbyShelfHitDebugEnabled } from '../../utils/sceneHitDebug';
+import {
+  LOBBY_CASE_POPOVER_PHONE_OFFSET_UP,
+  LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP,
+} from './lobbyCaseResponsive';
 import { LobbyCasePropOpenArt } from './LobbyCasePropOpenArt';
 import { LobbyCasePropPopover } from './LobbyCasePropPopover';
+import { LobbyDisplayCaseShell } from './LobbyDisplayCaseShell';
 import { SceneHitDebugBanner } from './SceneHitDebugBanner';
-import { rectToPercentStyle, SceneHitRegion } from './SceneHitRegion';
+import { SceneHitRegion } from './SceneHitRegion';
 
 type Props = {
   onNavigateNext?: () => void;
@@ -75,16 +74,6 @@ export function LobbySceneHotspots({
   const goToShopUnits = useCallback(() => navigate('/shop/units'), [navigate]);
   const goToBooking = useCallback(() => navigate(BOOKING_PATHS.PREMIUM_APPOINTMENT), [navigate]);
 
-  const registerAnchorRect = useSceneCoverHitRect(
-    FINAL_LOBBY_HIT_REGIONS.caseRegister,
-    viewportMeasureRef,
-    LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
-  );
-  const phoneAnchorRect = useSceneCoverHitRect(
-    FINAL_LOBBY_HIT_REGIONS.casePhone,
-    viewportMeasureRef,
-    LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
-  );
   const shelfHdLaceRect = useSceneCoverHitRect(
     FINAL_LOBBY_HIT_REGIONS.shelfHdLace,
     viewportMeasureRef,
@@ -213,74 +202,71 @@ export function LobbySceneHotspots({
         />
       ) : null}
 
-      <LobbyCasePropOpenArt
-        visible={lobbyCasePopover === 'register'}
-        src={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC}
-        imageRect={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_RECT}
+      <LobbyDisplayCaseShell
         viewportMeasureRef={viewportMeasureRef}
-        layoutOffset={LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET}
-        overlayScale={LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE}
+        registerZIndex={
+          lobbyCasePopover === 'register' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24
+        }
+        phoneZIndex={lobbyCasePopover === 'phone' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24}
+        registerOpenArt={
+          <LobbyCasePropOpenArt
+            visible={lobbyCasePopover === 'register'}
+            src={FINAL_LOBBY_REGISTER_OPEN_OVERLAY_SRC}
+            fillParent
+            overlayScale={LOBBY_CASE_PROP_REGISTER_OPEN_OVERLAY_SCALE}
+          />
+        }
+        phoneOpenArt={
+          <LobbyCasePropOpenArt
+            visible={lobbyCasePopover === 'phone'}
+            src={FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC}
+            fillParent
+            overlayScale={LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}
+          />
+        }
+        register={
+          <LobbyCasePropPopover
+            popoverId="register"
+            activeId={lobbyCasePopover}
+            onActivate={(id) => {
+              if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
+            }}
+            onClose={closeLobbyCasePopover}
+            ariaLabel="View accepted payment methods"
+            title={LOBBY_REGISTER_POPOVER_TITLE}
+            paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
+            align="left"
+            responsive
+            panelOffsetUp={LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP}
+          >
+            <span
+              style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }}
+              aria-hidden
+            />
+          </LobbyCasePropPopover>
+        }
+        phone={
+          <LobbyCasePropPopover
+            popoverId="phone"
+            activeId={lobbyCasePopover}
+            onActivate={(id) => {
+              if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
+            }}
+            onClose={closeLobbyCasePopover}
+            ariaLabel="View business contact information"
+            title={LOBBY_PHONE_POPOVER_TITLE}
+            sections={LOBBY_PHONE_POPOVER_SECTIONS}
+            align="right"
+            responsive
+            panelOffsetUp={LOBBY_CASE_POPOVER_PHONE_OFFSET_UP}
+          >
+            <span
+              style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }}
+              aria-hidden
+            />
+          </LobbyCasePropPopover>
+        }
       />
-      <LobbyCasePropOpenArt
-        visible={lobbyCasePopover === 'phone'}
-        src={FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC}
-        imageRect={FINAL_LOBBY_PHONE_OPEN_OVERLAY_RECT}
-        viewportMeasureRef={viewportMeasureRef}
-        layoutOffset={LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET}
-        overlayScale={LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}
-      />
-
-      {registerAnchorRect ? (
-      <div
-        style={{
-          ...rectToPercentStyle(registerAnchorRect),
-          position: 'absolute',
-          zIndex: lobbyCasePopover === 'register' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
-        }}
-      >
-        <LobbyCasePropPopover
-          popoverId="register"
-          activeId={lobbyCasePopover}
-          onActivate={(id) => {
-            if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
-          }}
-          onClose={closeLobbyCasePopover}
-          ariaLabel="View accepted payment methods"
-          title={LOBBY_REGISTER_POPOVER_TITLE}
-          paymentLayout={LOBBY_PAYMENT_POPOVER_LAYOUT}
-          align="left"
-          panelOffsetUpPx={LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX}
-        >
-          <span style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }} aria-hidden />
-        </LobbyCasePropPopover>
-      </div>
-      ) : null}
-
-      {phoneAnchorRect ? (
-      <div
-        style={{
-          ...rectToPercentStyle(phoneAnchorRect),
-          position: 'absolute',
-          zIndex: lobbyCasePopover === 'phone' ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
-        }}
-      >
-        <LobbyCasePropPopover
-          popoverId="phone"
-          activeId={lobbyCasePopover}
-          onActivate={(id) => {
-            if (id === 'register' || id === 'phone') setLobbyCasePopover(id);
-          }}
-          onClose={closeLobbyCasePopover}
-          ariaLabel="View business contact information"
-          title={LOBBY_PHONE_POPOVER_TITLE}
-          sections={LOBBY_PHONE_POPOVER_SECTIONS}
-          align="right"
-          panelOffsetUpPx={LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX}
-        >
-          <span style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }} aria-hidden />
-        </LobbyCasePropPopover>
-      </div>
-      ) : null}
 
     </>
   );

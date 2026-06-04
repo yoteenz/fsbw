@@ -10,6 +10,13 @@ import {
   LOBBY_PAYMENT_EXPRESS_LABEL,
   LOBBY_PAYMENT_PAY_OVER_TIME_LABEL,
 } from '../../constants/lobbyPaymentIcons';
+import {
+  LOBBY_CASE_POPOVER_GAP_ABOVE_PROP,
+  LOBBY_CASE_POPOVER_MIN_HEIGHT,
+  LOBBY_CASE_POPOVER_PADDING,
+  LOBBY_CASE_POPOVER_WIDTH,
+  lobbyCaseCqw,
+} from './lobbyCaseResponsive';
 
 /** Scale base popover px values (35% reduction = 0.65 scale). */
 function lobbyPopoverPx(px: number): number {
@@ -58,8 +65,12 @@ type LobbyCasePropPopoverProps = {
   paymentLayout?: LobbyPaymentPopoverLayout;
   /** Nudge panel when anchored near viewport edge (register = left, phone = right). */
   align?: 'center' | 'left' | 'right';
-  /** Extra px above the prop (moves popover up). */
+  /** Extra px above the prop (legacy). Prefer `panelOffsetUp` when `responsive`. */
   panelOffsetUpPx?: number;
+  /** Lift above prop (`calc` value, e.g. `-14px` or `-3.6cqw`). */
+  panelOffsetUp?: string;
+  /** Scale panel with {@link LobbyDisplayCaseShell} (`container-type: size`). */
+  responsive?: boolean;
   children: React.ReactNode;
 };
 
@@ -412,12 +423,22 @@ export function LobbyCasePropPopover({
   paymentLayout,
   align = 'center',
   panelOffsetUpPx = 0,
+  panelOffsetUp,
+  responsive = false,
   children,
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const open = activeId === popoverId;
-  const panelGapPx = lobbyPopoverPx(10);
-  const panelBottomPx = panelGapPx + panelOffsetUpPx;
+  const panelGap = responsive ? LOBBY_CASE_POPOVER_GAP_ABOVE_PROP : `${lobbyPopoverPx(10)}px`;
+  const panelUp = panelOffsetUp ?? (responsive ? '0px' : `${panelOffsetUpPx}px`);
+  const panelBottom = `calc(100% + ${panelGap} + ${panelUp})`;
+  const panelWidth = responsive ? LOBBY_CASE_POPOVER_WIDTH : `${LOBBY_CASE_POPOVER_WIDTH_PX}px`;
+  const panelMinHeight = responsive
+    ? LOBBY_CASE_POPOVER_MIN_HEIGHT
+    : `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`;
+  const panelPadding = responsive
+    ? `${LOBBY_CASE_POPOVER_PADDING} ${lobbyCaseCqw(3.8, 10, 12)}`
+    : `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`;
 
   const panelBody = paymentLayout ? (
     <LobbyPopoverPaymentLayout layout={paymentLayout} />
@@ -472,18 +493,20 @@ export function LobbyCasePropPopover({
           data-lobby-prop-popover
           style={{
             position: 'absolute',
-            bottom: `calc(100% + ${panelBottomPx}px)`,
+            bottom: panelBottom,
             ...panelPositionStyle(align),
             ...popoverPanelGlassStyle,
             zIndex: LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
-            width: `${LOBBY_CASE_POPOVER_WIDTH_PX}px`,
-            minHeight: `${LOBBY_CASE_POPOVER_MIN_HEIGHT_PX}px`,
-            maxWidth: `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
-            borderWidth: `${lobbyPopoverPx(1.3)}px`,
+            width: panelWidth,
+            minHeight: panelMinHeight,
+            maxWidth: responsive
+              ? `min(${LOBBY_CASE_POPOVER_WIDTH}, calc(100vw - 40px))`
+              : `min(${LOBBY_CASE_POPOVER_WIDTH_PX}px, calc(100vw - 40px))`,
+            borderWidth: responsive ? lobbyCaseCqw(0.45, 1, 1.3) : `${lobbyPopoverPx(1.3)}px`,
             borderStyle: 'solid',
             borderColor: '#000',
             boxSizing: 'border-box',
-            padding: `${lobbyPopoverPx(10)}px ${lobbyPopoverPx(12)}px`,
+            padding: panelPadding,
             pointerEvents: 'auto',
             display: 'flex',
             flexDirection: 'column',
