@@ -15,7 +15,7 @@ import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { domRectRelativeToContainer } from '../../utils/sceneCoverContainerRect';
 import { coverMappedRectScreenOffsetStyle } from '../../utils/sceneCoverHitMap';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
-import { SceneViewportPortal } from '../lobby/SceneViewportPortal';
+import { SceneViewportOverlay } from '../lobby/SceneViewportOverlay';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 
 const PRESS_PLAY_LABEL_STYLE: CSSProperties = {
@@ -163,14 +163,14 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
         </div>
       ) : null}
 
-      <SceneViewportPortal measureRef={measureRef}>
+      <SceneViewportOverlay zIndex={220}>
         <LoungeTvOverlay
           isOpen={tvOpen}
           originRect={tvOriginRect}
           onClose={closeLoungeTv}
           viewportMeasureRef={measureRef}
         />
-      </SceneViewportPortal>
+      </SceneViewportOverlay>
     </>
   );
 }

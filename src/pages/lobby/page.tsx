@@ -31,6 +31,7 @@ import {
   LOBBY_LOUNGE_TRANSITION_VIDEO_SRC,
 } from '../../constants/lobbyLoungeTransitionVideo';
 import { LoungeSceneHotspots } from '../../components/lounge/LoungeSceneHotspots';
+import { useLoungeTvTheaterMode } from '../../utils/loungeTvTheaterMode';
 
 /** Lobby page → lounge nav (arrow + label) — brand red shadow (#EB1C24). */
 const LOBBY_PAGE_LOUNGE_NAV_SHADOW_FILTER =
@@ -388,6 +389,7 @@ const LobbyApp: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
+  const loungeTvTheater = useLoungeTvTheaterMode();
 
   useEffect(() => {
     if (!transitionVideoEnabled) return;
@@ -599,7 +601,9 @@ const LobbyApp: React.FC = () => {
         >
           <div style={{ flexShrink: 0 }}>
             <LobbyPage
-              hideCarouselNav={roomTransitionOverlay !== null || lobbyCasePopoverOpen}
+              hideCarouselNav={
+                roomTransitionOverlay !== null || lobbyCasePopoverOpen || loungeTvTheater
+              }
               lobbyViewportRef={lobbyViewportRef}
               lobbyCasePopover={lobbyCasePopover}
               onLobbyCasePopoverChange={setLobbyCasePopover}
@@ -611,7 +615,7 @@ const LobbyApp: React.FC = () => {
           <div style={{ flexShrink: 0 }}>
             <LoungePage
               measureRef={loungeSlideMeasureRef}
-              hideCarouselNav={roomTransitionOverlay !== null}
+              hideCarouselNav={roomTransitionOverlay !== null || loungeTvTheater}
               transitionVideoEnabled={transitionVideoEnabled}
               roomTransitionOverlay={roomTransitionOverlay}
               onRoomTransitionComplete={completeRoomTransitionOverlay}

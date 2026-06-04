@@ -660,10 +660,10 @@ export function LoungeTvOverlay({
   useLayoutEffect(() => {
     if (!isOpen) return;
     setVisible(true);
-    if (useSeedanceClip && seedancePhase === 'idle') {
-      setSeedancePhase('opening');
+    if (useSeedanceClip) {
+      setSeedancePhase((phase) => (phase === 'idle' ? 'opening' : phase));
     }
-  }, [isOpen, useSeedanceClip, seedancePhase]);
+  }, [isOpen, useSeedanceClip]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -820,8 +820,10 @@ export function LoungeTvOverlay({
   const showLegacyChoreography = !useSeedanceClip;
   const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
   const showSeedanceMenuShell = useSeedanceClip && seedancePhase === 'ready';
-  /** Only while clip plays — unmount at `ready` so black full-screen host does not cover menu shell. */
-  const showSeedanceVideo = useSeedanceClip && (seedanceOpening || seedanceClosing);
+  /** Stay mounted through `ready` (parked, hidden) so close does not remount and flash black. */
+  const showSeedanceVideo =
+    useSeedanceClip &&
+    (seedanceOpening || seedanceClosing || seedancePhase === 'ready');
   const useFullscreenShell = useSeedanceClip && showTvChrome;
 
   const handMounted =
@@ -894,7 +896,7 @@ export function LoungeTvOverlay({
           margin: 0,
           background:
             useFullscreenShell
-              ? seedanceOpening
+              ? seedanceOpening || seedanceClosing
                 ? 'transparent'
                 : '#000000'
               : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'

@@ -73,10 +73,6 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
       setFrameVisible(false);
       return;
     }
-    if (direction === 'reverse') {
-      setFrameVisible(true);
-      return;
-    }
     const el = videoRef.current;
     if (el && el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
       setFrameVisible(true);
@@ -119,9 +115,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
     safetyTimeoutMs: 15000,
   });
 
-  /** Forward open: transparent until frame 0 (lounge shows through). Reverse: black immediately. */
-  const showLetterboxFill =
-    active && (direction === 'reverse' || frameVisible);
+  /** Transparent until a decoded frame (lounge / parked hand frame shows through). */
+  const showLetterboxFill = active && frameVisible;
 
   return (
     <div
@@ -164,9 +159,8 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
           onError={finish}
           style={{
             ...loungeTvAnimationMediaLayerStyle(direction),
-            opacity: (active && direction === 'reverse') || frameVisible ? 1 : 0,
-            transition:
-              direction === 'forward' && frameVisible ? 'opacity 60ms linear' : 'none',
+            opacity: frameVisible ? 1 : 0,
+            transition: frameVisible ? 'opacity 60ms linear' : 'none',
           }}
         >
           <source src={LOUNGE_TV_ANIMATION_VIDEO_SRC} type="video/mp4" />
