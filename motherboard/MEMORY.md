@@ -24467,3 +24467,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** PSA must not show `/path` strings in chat; client strips any that slip through and maps them to **GO HERE** navigation.
 
+---
+
+## 2026-06-03 — PSA chat: red USD prices in assistant bubbles
+
+**Context:** User wanted dollar prices in PSA assistant reply text (e.g. `FROM $740`, `FROM $820` in unit comparisons) styled in brand red instead of black body copy.
+
+**Changes:** `src/utils/psaPriceHighlight.tsx` wraps `$###` tokens in `<span class="psa-chat-price">`; `PsaChatPanel.tsx` uses it for assistant bubble body text; `psaAssistant.css` sets `.psa-chat-bubble-assistant .psa-chat-price` to `#eb1c24` with Futura PT Medium.
+
+**Conventions:** Only the `$` amount is red in assistant bubbles — surrounding copy stays black.
+
