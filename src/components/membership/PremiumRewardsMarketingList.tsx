@@ -42,7 +42,7 @@ export default function PremiumRewardsMarketingList({
                 bohemyPerkTitles
                   ? {
                       fontFamily: '"Bohemy", cursive',
-                      fontSize: '22px',
+                      fontSize: '20px',
                       color: '#000000',
                       margin: '0 0 4px 0',
                       textTransform: 'lowercase',
