@@ -24447,3 +24447,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `src/constants/psaConfig.ts` welcome message; `api/_lib/psaInstructions.ts` identity section + greeting example aligned.
 
+---
+
+## 2026-06-03 — PSA chat bubble styling: client glass + smaller text
+
+**Context:** User reported client (user) message bubbles looked fully transparent while PSA assistant bubbles had glassmorphism similar to main site cards. Wanted client bubbles matched to PSA glass treatment and conversation text between PSA and client reduced by 2px.
+
+**Changes:** `src/components/psa/psaAssistant.css` — shared `.psa-chat-bubble` base now uses main-card glass (`rgba(255, 255, 255, 0.6)` + `backdrop-filter: blur(4px)`); removed transparent background from `.psa-chat-bubble-user` (keeps red border/text); assistant bubble aligned to same glass + `1.3px` borders; bubble font-size **11px → 9px**; system bubbles reset `backdrop-filter: none` so they stay transparent.
+
+**Conventions:** PSA chat bubbles should match site `bg-white/60 backdrop-blur-sm` glassmorphism; user bubbles distinguished by red border/color only, not transparency.
+
