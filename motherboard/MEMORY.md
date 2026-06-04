@@ -25163,3 +25163,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** Replaced whole-content offset with `.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-headline { top: 2px }` — row 1 (black Bohemy) only; red body + SHOW CHAT unchanged.
 
+---
+
+## 2026-06-03 — Account alerts copy debug page
+
+**Context:** User wanted a visual debug page for all `/account/alerts` row variants (like `/tools/psa-nudges`) for copy rewording.
+
+**Changes:** **`/tools/account-alerts`** — 16 categories, 40+ variants with live-style row preview + copy fields. **`accountAlertsCatalog.ts`**. Cross-link from PSA nudge debug. Route in **`App.tsx`**.
+
