@@ -24888,3 +24888,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Canonical PSA avatar source is the Ideogram-cut PNGs at first upload; never batch-process with flatten/solidify in repo — replace assets + bump version only.
 
+---
+
+## 2026-06-04 — PSA nudge text 2px higher above avatar
+
+**Changes:** `.psa-nudge-chip` `margin-bottom` `-11px` → `-9px` (nudge headline + body sit 2px higher above avatar).
+
