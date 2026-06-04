@@ -25354,3 +25354,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx` — conditional `.psa-chat-subtitle` text when `historyOpen`.
 
+---
+
+## 2026-06-04 — PSA chat borders, history labels, archived delete
+
+**Context:** User requested PSA chat polish: user + assistant submitted bubble borders **black** (not gray); history card borders **black**; remove redundant red **ARCHIVE** text below cards on active chat history (card archive icon remains); on **archived** view restore red **X** delete icon on cards with **ConfirmationModal** permanent delete (replacing unarchive icon on card; **UNARCHIVE** text below card kept).
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
+
