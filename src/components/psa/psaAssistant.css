@@ -566,6 +566,7 @@
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+  animation: psa-holo-glow-live 4.5s ease-in-out infinite;
 }
 
 .psa-nudge-chip-content {
