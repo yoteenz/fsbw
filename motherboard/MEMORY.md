@@ -25362,3 +25362,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
 
+---
+
+## 2026-06-04 — PSA quick replies, history card parity, orders route
+
+**Context:** User requested PSA chat updates: quick-reply borders **black**; client bubble, SEND, and quick-reply text **Futura Medium**; archived history — replace **RENAME CHAT** with **UNARCHIVE** (left only), remove redundant right **UNARCHIVE**; history cards **equal height** with preview row always reserved (gray preview text **Futura Medium**); **TRACK MY ORDER** quick reply should route to **`/account/orders`**.
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`, `psaQuickReplyNavigation.ts`.
+
