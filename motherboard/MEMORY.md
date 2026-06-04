@@ -24457,3 +24457,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** PSA chat bubbles should match site `bg-white/60 backdrop-blur-sm` glassmorphism; user bubbles distinguished by red border/color only, not transparency.
 
+---
+
+## 2026-06-03 — PSA chat: hide raw routes, GO HERE links
+
+**Context:** User wanted PSA replies to stop revealing raw page routes (e.g. `/BUILD-A-WIG/BEACH-WAVE`) to members. Instead, destinations should be summarized in plain language with a clickable **GO HERE** link — e.g. "OPENED BUILD-A-WIG FOR BEACH WAVE. GO HERE NEXT:" → inline **GO HERE** button, not the path string.
+
+**Changes:** New `src/utils/psaRouteDisplay.ts` strips app paths from assistant bubble copy and returns `{ displayText, routeLinks, inlineTailCue }`. `PsaChatPanel.tsx` renders **GO HERE** buttons (inline after `GO HERE NEXT:` when detected, otherwise below the bubble); dedupes links already covered by nav cards. `psaAssistant.css` inline link styles. `api/_lib/psaInstructions.ts` — never paste raw URL paths in member replies; use `GO HERE NEXT:` + action tools.
+
+**Conventions:** PSA must not show `/path` strings in chat; client strips any that slip through and maps them to **GO HERE** navigation.
+
