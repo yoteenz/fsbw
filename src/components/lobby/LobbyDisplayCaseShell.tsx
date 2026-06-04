@@ -1,4 +1,4 @@
-import type { ReactNode, RefObject } from 'react';
+import type { CSSProperties, ReactNode, RefObject } from 'react';
 import {
   FINAL_LOBBY_DISPLAY_CASE_RECT,
   LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
@@ -8,6 +8,7 @@ import {
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { useLobbyDisplayCaseHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { LOBBY_CASE_CONTAINER_STYLE } from './lobbyCaseResponsive';
+import { SceneHitDebugOverlay } from './SceneHitDebugOverlay';
 import { rectToPercentStyle } from './SceneHitRegion';
 
 type SlotProps = {
@@ -16,7 +17,20 @@ type SlotProps = {
   children: ReactNode;
 };
 
-function LobbyDisplayCaseSlot({ slotRect, zIndex, children }: SlotProps) {
+type SlotDebugProps = SlotProps & {
+  showDebug: boolean;
+  debugLabel: string;
+  debugOverlayStyle: CSSProperties;
+};
+
+function LobbyDisplayCaseSlot({
+  slotRect,
+  zIndex,
+  children,
+  showDebug,
+  debugLabel,
+  debugOverlayStyle,
+}: SlotDebugProps) {
   return (
     <div
       style={{
@@ -27,6 +41,14 @@ function LobbyDisplayCaseSlot({ slotRect, zIndex, children }: SlotProps) {
         pointerEvents: 'none',
       }}
     >
+      {showDebug ? (
+        <SceneHitDebugOverlay
+          rect={{ left: 0, top: 0, width: 1, height: 1 }}
+          label={debugLabel}
+          zIndex={0}
+          overlayStyle={debugOverlayStyle}
+        />
+      ) : null}
       <div
         style={{
           position: 'relative',
@@ -74,26 +96,55 @@ export function LobbyDisplayCaseShell({
   if (!mappedCase) return null;
 
   return (
-    <div
-      data-lobby-display-case
-      style={{
-        position: 'absolute',
-        ...rectToPercentStyle(mappedCase),
-        zIndex: Math.max(registerZIndex, phoneZIndex),
-        ...LOBBY_CASE_CONTAINER_STYLE,
-        pointerEvents: 'none',
-        background: showDebug ? 'rgba(235, 28, 36, 0.08)' : 'transparent',
-        outline: showDebug ? '1px dashed rgba(235, 28, 36, 0.55)' : 'none',
-      }}
-    >
-      <LobbyDisplayCaseSlot slotRect={LOBBY_DISPLAY_CASE_REGISTER_SLOT} zIndex={registerZIndex}>
-        {registerOpenArt}
-        {register}
-      </LobbyDisplayCaseSlot>
-      <LobbyDisplayCaseSlot slotRect={LOBBY_DISPLAY_CASE_PHONE_SLOT} zIndex={phoneZIndex}>
-        {phoneOpenArt}
-        {phone}
-      </LobbyDisplayCaseSlot>
-    </div>
+    <>
+      {showDebug ? (
+        <SceneHitDebugOverlay
+          rect={mappedCase}
+          label="lobby display case"
+          zIndex={Math.max(registerZIndex, phoneZIndex) + 1}
+          overlayStyle={{
+            backgroundColor: 'rgba(255, 152, 0, 0.42)',
+            border: '2px solid rgba(230, 81, 0, 0.95)',
+          }}
+        />
+      ) : null}
+      <div
+        data-lobby-display-case
+        style={{
+          position: 'absolute',
+          ...rectToPercentStyle(mappedCase),
+          zIndex: Math.max(registerZIndex, phoneZIndex),
+          ...LOBBY_CASE_CONTAINER_STYLE,
+          pointerEvents: 'none',
+        }}
+      >
+        <LobbyDisplayCaseSlot
+          slotRect={LOBBY_DISPLAY_CASE_REGISTER_SLOT}
+          zIndex={registerZIndex}
+          showDebug={showDebug}
+          debugLabel="display case register"
+          debugOverlayStyle={{
+            backgroundColor: 'rgba(0, 174, 239, 0.48)',
+            border: '2px solid rgba(0, 120, 200, 0.95)',
+          }}
+        >
+          {registerOpenArt}
+          {register}
+        </LobbyDisplayCaseSlot>
+        <LobbyDisplayCaseSlot
+          slotRect={LOBBY_DISPLAY_CASE_PHONE_SLOT}
+          zIndex={phoneZIndex}
+          showDebug={showDebug}
+          debugLabel="display case phone"
+          debugOverlayStyle={{
+            backgroundColor: 'rgba(255, 235, 59, 0.48)',
+            border: '2px solid rgba(245, 127, 23, 0.95)',
+          }}
+        >
+          {phoneOpenArt}
+          {phone}
+        </LobbyDisplayCaseSlot>
+      </div>
+    </>
   );
 }

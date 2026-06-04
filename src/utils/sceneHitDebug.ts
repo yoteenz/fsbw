@@ -8,7 +8,7 @@ import {
 export const SCENE_HIT_DEBUG_SESSION_KEY = 'baw_scene_hit_debug';
 
 /**
- * QA overlays for lobby shelf + lounge chandelier hit boxes.
+ * QA overlays for lobby shelf, display case, and lounge TV / chandelier hit boxes.
  * Enable: `/lobby?sceneHitDebug=1` (persists for the tab via sessionStorage).
  * Disable: `/lobby?sceneHitDebug=0`
  */

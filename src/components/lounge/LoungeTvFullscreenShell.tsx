@@ -97,10 +97,35 @@ export function LoungeTvFullscreenShell({
             zIndex: 1,
             ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
             pointerEvents: 'auto',
-            background: showGlassDebug ? 'rgba(235, 28, 36, 0.12)' : 'transparent',
-            outline: showGlassDebug ? '1px dashed rgba(235, 28, 36, 0.65)' : 'none',
+            ...(showGlassDebug
+              ? {
+                  backgroundColor: 'rgba(233, 30, 99, 0.42)',
+                  border: '2px solid rgba(194, 24, 91, 0.95)',
+                }
+              : { background: 'transparent' }),
           }}
         >
+          {showGlassDebug ? (
+            <span
+              aria-hidden
+              style={{
+                position: 'absolute',
+                left: 2,
+                top: 2,
+                zIndex: 2,
+                fontFamily: 'monospace',
+                fontSize: 11,
+                lineHeight: 1.2,
+                color: '#000',
+                background: 'rgba(255, 255, 255, 0.75)',
+                padding: '1px 3px',
+                pointerEvents: 'none',
+                textTransform: 'lowercase',
+              }}
+            >
+              lounge tv content pop-up (open)
+            </span>
+          ) : null}
           <div
             style={{
               position: 'relative',
