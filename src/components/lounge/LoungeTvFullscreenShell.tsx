@@ -1,19 +1,24 @@
 import type React from 'react';
 import type { RefObject } from 'react';
-import {
-  LOUNGE_TV_CONTENT_FRAME_PX,
-  LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
-  LOUNGE_TV_CONTENT_FRAME_SRC,
-  LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX,
-  LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX,
-  LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX,
-  LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX,
-  LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
-  LOUNGE_TV_CONTENT_SCREEN_SCALE,
-} from './loungeTvAssets';
+import { LOUNGE_TV_CONTENT_FRAME_SRC } from './loungeTvAssets';
 import { LoungeTvCloseButton } from './loungeTvFrame';
-import { useCoverMappedLayout } from '../../hooks/useCoverMappedLayout';
+import {
+  LOUNGE_TV_GLASS_CLOSE_ICON_SIZE,
+  LOUNGE_TV_GLASS_CLOSE_SIZE,
+  LOUNGE_TV_GLASS_CONTAINER_STYLE,
+} from './loungeTvResponsive';
+import {
+  LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO,
+  LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO,
+  LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO,
+  LOUNGE_TV_MENU_SCREEN_IMAGE,
+  LOUNGE_TV_MENU_SCREEN_OFFSET,
+  LOUNGE_TV_MENU_SCREEN_RECT,
+} from '../../constants/loungeTvSceneLayout';
+import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
+import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
 import { rectToPercentStyle } from '../lobby/SceneHitRegion';
+import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
 
 type Props = {
   children?: React.ReactNode;
@@ -24,13 +29,13 @@ type Props = {
   backdropTransparent?: boolean;
   /** Override stack order (e.g. power-off kickoff above reverse clip). */
   zIndex?: number;
-  /** {@link SceneCarouselViewportStage} — maps screen glass to the lounge scene box. */
+  /** {@link SceneCarouselViewportStage} — maps TV glass to the lounge scene box. */
   viewportMeasureRef?: RefObject<HTMLElement | null>;
 };
 
 /**
- * Full-viewport TV menu shell — `cover` + `center top` on the end-still PNG,
- * matching {@link LoungeTvAnimationVideo} geometry for a seamless handoff.
+ * Full-viewport TV menu — transparent glass box scene-locked to the theater TV on the
+ * lounge composite (`cover` + `center top`), with optional end-still PNG behind it.
  */
 export function LoungeTvFullscreenShell({
   children,
@@ -41,21 +46,17 @@ export function LoungeTvFullscreenShell({
   zIndex = 110,
   viewportMeasureRef,
 }: Props) {
-  const { mappedScreen } = useCoverMappedLayout(
-    LOUNGE_TV_CONTENT_FRAME_SCREEN_RECT,
-    LOUNGE_TV_CONTENT_FRAME_PX.width,
-    LOUNGE_TV_CONTENT_FRAME_PX.height,
-    undefined,
-    viewportMeasureRef,
+  const mappedGlass = useSceneCoverHitRect(
+    LOUNGE_TV_MENU_SCREEN_RECT,
+    viewportMeasureRef ?? { current: null },
+    LOUNGE_TV_MENU_SCREEN_OFFSET,
+    LOUNGE_TV_MENU_SCREEN_IMAGE,
   );
 
-  const frameStillOffsetX = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_X_PX;
-  const frameStillOffsetY = LOUNGE_TV_CONTENT_FRAME_STILL_OFFSET_Y_PX;
-  const screenTransform = `translateY(${LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX}px) scale(${LOUNGE_TV_CONTENT_SCREEN_SCALE})`;
-  const frameStillTransform =
-    frameStillOffsetX || frameStillOffsetY
-      ? `translate(${frameStillOffsetX}px, ${frameStillOffsetY}px)`
-      : undefined;
+  const showGlassDebug = useLoungeTvGlassHitDebugEnabled();
+
+  const stillNudgeX = LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO.x * 100;
+  const stillNudgeY = LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO.y * 100;
 
   return (
     <div
@@ -67,7 +68,7 @@ export function LoungeTvFullscreenShell({
         inset: 0,
         zIndex,
         overflow: 'hidden',
-        backgroundColor: '#000000',
+        backgroundColor: backdropTransparent ? 'transparent' : '#000000',
         pointerEvents: backdropTransparent ? 'none' : 'auto',
       }}
     >
@@ -79,39 +80,56 @@ export function LoungeTvFullscreenShell({
             inset: 0,
             backgroundImage: `url(${LOUNGE_TV_CONTENT_FRAME_SRC})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center top',
+            backgroundPosition: sceneCarouselCoverBackgroundPosition(),
             backgroundRepeat: 'no-repeat',
-            transform: frameStillTransform,
+            transform: `translate(${stillNudgeX}%, ${stillNudgeY}%)`,
+            pointerEvents: 'none',
           }}
         />
       ) : null}
-      <div
-        style={{
-          ...rectToPercentStyle(mappedScreen),
-          position: 'absolute',
-          boxSizing: 'border-box',
-          overflow: 'visible',
-          zIndex: 1,
-          ...screenStyle,
-          transform: screenTransform,
-          transformOrigin: 'center top',
-        }}
-      >
-        {children}
-        {onClose ? (
-          <LoungeTvCloseButton
-            visible={closeVisible}
-            position={{
-              top: LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX,
-              right: LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX,
+      {mappedGlass ? (
+        <div
+          data-lounge-tv-glass
+          style={{
+            ...rectToPercentStyle(mappedGlass),
+            position: 'absolute',
+            boxSizing: 'border-box',
+            zIndex: 1,
+            ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
+            pointerEvents: 'auto',
+            background: showGlassDebug ? 'rgba(235, 28, 36, 0.12)' : 'transparent',
+            outline: showGlassDebug ? '1px dashed rgba(235, 28, 36, 0.65)' : 'none',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+              ...screenStyle,
             }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose(e);
-            }}
-          />
-        ) : null}
-      </div>
+          >
+            {children}
+            {onClose ? (
+              <LoungeTvCloseButton
+                visible={closeVisible}
+                size={LOUNGE_TV_GLASS_CLOSE_SIZE}
+                iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
+                position={{
+                  top: `${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}%`,
+                  right: `${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}%`,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose(e);
+                }}
+              />
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
