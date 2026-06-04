@@ -370,6 +370,11 @@
   color: #000;
 }
 
+.psa-chat-bubble-assistant .psa-chat-price {
+  color: #eb1c24;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+}
+
 .psa-chat-bubble-system {
   align-self: center;
   background: transparent;
