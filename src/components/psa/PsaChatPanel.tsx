@@ -7,6 +7,7 @@ import {
 } from '../../constants/psaConfig';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
 import { formatPsaMessageRouteDisplay } from '../../utils/psaRouteDisplay';
+import { renderPsaPriceHighlightedText } from '../../utils/psaPriceHighlight';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaChatCard } from '../../utils/psaApi';
 import type { PsaChatMessage } from './usePsaChat';
@@ -278,7 +279,7 @@ export default function PsaChatPanel({
             <div key={msg.id} className={`psa-chat-bubble psa-chat-bubble-${msg.role}`}>
               {msg.role === 'assistant' ? (
                 <span className="psa-chat-bubble-body">
-                  {displayText}
+                  {renderPsaPriceHighlightedText(displayText)}
                   {inlineTailCue && routeLinks.length > 0 ? (
                     <>
                       {displayText ? ' ' : null}
