@@ -589,12 +589,19 @@
   transform: translateX(-10px);
 }
 
+/* Collapsed — same 88px column as the avatar so the thought bubble centers on it. */
+.psa-widget-fab-stack--collapsed {
+  width: 88px;
+  min-height: 88px;
+}
+
 /* Collapsed FAB — thought bubble CTA instead of plain under-avatar text. */
 .psa-nudge-chip-show-chat {
-  position: relative;
+  position: absolute;
   left: 50%;
-  bottom: auto;
+  bottom: 0;
   margin-bottom: 0;
+  width: min(120px, 37vw);
   transform: translateX(-50%);
   animation: psa-thought-float-show-chat 5s ease-in-out infinite;
 }

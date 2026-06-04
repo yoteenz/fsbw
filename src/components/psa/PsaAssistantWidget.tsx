@@ -481,7 +481,9 @@ export default function PsaAssistantWidget() {
             />
           </>
         ) : null}
-        <div className="psa-widget-fab-stack">
+        <div
+          className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}`}
+        >
           {!isFabCollapsed && !isOpen && proactiveNudge ? (
             <button
               type="button"
