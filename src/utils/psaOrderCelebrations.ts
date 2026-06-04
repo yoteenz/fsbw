@@ -2,6 +2,7 @@
  * Smart order celebrations — one-time PSA nudges for placed / shipped / delivered.
  */
 import { getPerUserKey, getCurrentUserEmailFromStorage } from './perUserStorage';
+import { resolveNudgeCopy } from './copyDebugResolve';
 
 export type PsaOrderCelebrationKind = 'placed' | 'shipped' | 'delivered';
 
@@ -11,6 +12,7 @@ export type PsaOrderCelebration = {
   headline: string;
   body: string;
   prefilledMessage: string;
+  actionLabel?: string;
 };
 
 const STORAGE_PREFIX = 'psaOrderCelebrated';
@@ -56,6 +58,25 @@ function orderId(order: Record<string, unknown>): string {
   return String(order.id ?? order.orderNumber ?? '').trim();
 }
 
+function celebrationCopy(
+  kind: PsaOrderCelebrationKind,
+  num: string
+): Pick<PsaOrderCelebration, 'headline' | 'body' | 'prefilledMessage' | 'actionLabel'> {
+  const withOrder = Boolean(num);
+  const variantId = `order_celebration.${kind}.${withOrder ? 'with_order' : 'fallback'}`;
+  const copy = resolveNudgeCopy(variantId, {
+    orderRef: num,
+    orderNumber: num.replace(/^ORDER\s*#?\s*/i, '').trim() || num,
+    num,
+  });
+  return {
+    headline: copy.headline,
+    body: num || copy.body || (kind === 'placed' ? 'ORDER CONFIRMED' : kind === 'shipped' ? 'PACKAGE SHIPPED' : 'DELIVERED'),
+    prefilledMessage: copy.prefilledMessage ?? '',
+    actionLabel: copy.actionLabel,
+  };
+}
+
 export function detectPsaOrderCelebration(
   orders: Record<string, unknown>[]
 ): PsaOrderCelebration | null {
@@ -79,11 +100,7 @@ export function detectPsaOrderCelebration(
       return {
         kind: 'placed',
         orderNumber: num,
-        headline: 'YOUR ORDER IS IN MOTION',
-        body: num || 'ORDER CONFIRMED',
-        prefilledMessage: num
-          ? `My order ${num} just went through. What happens next?`
-          : 'My order just went through. What happens next?',
+        ...celebrationCopy('placed', num),
       };
     }
 
@@ -91,11 +108,7 @@ export function detectPsaOrderCelebration(
       return {
         kind: 'shipped',
         orderNumber: num,
-        headline: "SHE'S ON THE WAY",
-        body: num || 'PACKAGE SHIPPED',
-        prefilledMessage: num
-          ? `Track my order ${num} for me.`
-          : 'Something shipped. Help me track it.',
+        ...celebrationCopy('shipped', num),
       };
     }
 
@@ -103,11 +116,7 @@ export function detectPsaOrderCelebration(
       return {
         kind: 'delivered',
         orderNumber: num,
-        headline: 'YOUR PACKAGE ARRIVED',
-        body: num || 'DELIVERED',
-        prefilledMessage: num
-          ? `My order ${num} was delivered. Any first-wear tips?`
-          : 'My package arrived. Any first-wear tips?',
+        ...celebrationCopy('delivered', num),
       };
     }
   }

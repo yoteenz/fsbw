@@ -1,18 +1,33 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { PSA_NUDGE_BUBBLE_SRC } from '../../../constants/psaConfig';
 import {
-  formatAccountAlertEntryForCopy,
-  formatFullAccountAlertsCatalogForCopy,
-  getAccountAlertsCatalog,
   type AccountAlertCatalogEntry,
 } from '../../../utils/accountAlertsCatalog';
 import {
-  formatFullPsaNudgeCatalogForCopy,
-  formatPsaNudgeCatalogEntryForCopy,
-  getPsaProactiveNudgeCatalog,
   type PsaNudgeCatalogEntry,
 } from '../../../utils/psaProactiveNudgeCatalog';
+import {
+  COPY_DEBUG_UPDATED_EVENT,
+  COPY_DEBUG_SAMPLE_VARS,
+  clearAllAlertCopyOverrides,
+  clearAllNudgeCopyOverrides,
+  countAlertCopyOverrides,
+  countNudgeCopyOverrides,
+  deleteAlertCopyOverride,
+  deleteNudgeCopyOverride,
+  getAccountAlertsCatalog,
+  getAlertCopyTemplates,
+  getNudgeCopyTemplates,
+  getPsaProactiveNudgeCatalog,
+  hasAlertCopyOverride,
+  hasNudgeCopyOverride,
+  interpolateCopy,
+  saveAlertCopyOverride,
+  saveNudgeCopyOverride,
+  type AlertCopyTemplates,
+  type NudgeCopyTemplates,
+} from '../../../utils/copyDebugResolve';
 import './copyDebug.css';
 
 type CopyDebugTab = 'nudges' | 'alerts';
@@ -21,26 +36,29 @@ function slugify(label: string): string {
   return label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function CopyField({
+function EditableField({
   id,
   label,
   value,
-  onCopy,
+  onChange,
+  hint,
 }: {
   id: string;
   label: string;
   value: string;
-  onCopy: (text: string, label: string) => void;
+  onChange: (value: string) => void;
+  hint?: string;
 }) {
   return (
     <div className="copy-debug__field">
       <label htmlFor={id}>{label}</label>
-      <div className="copy-debug__field-row">
-        <textarea id={id} readOnly value={value} rows={value.includes('\n') ? 3 : value.length > 60 ? 3 : 2} />
-        <button type="button" className="copy-debug__copy" onClick={() => onCopy(value, label)}>
-          Copy
-        </button>
-      </div>
+      {hint ? <p className="copy-debug__field-hint">{hint}</p> : null}
+      <textarea
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={value.includes('\n') ? 3 : value.length > 60 ? 3 : 2}
+      />
     </div>
   );
 }
@@ -59,42 +77,101 @@ function NudgePreview({ headline, body }: { headline: string; body?: string }) {
 
 function NudgeCard({
   entry,
-  onCopy,
+  onSaved,
+  onToast,
 }: {
   entry: PsaNudgeCatalogEntry;
-  onCopy: (text: string, label: string) => void;
+  onSaved: () => void;
+  onToast: (msg: string) => void;
 }) {
   const prefix = `nudge-${entry.variantId}`;
+  const isCustom = hasNudgeCopyOverride(entry.variantId);
+  const [draft, setDraft] = useState<NudgeCopyTemplates>(() => getNudgeCopyTemplates(entry.variantId));
+  const preview = useMemo(
+    () => ({
+      headline: interpolateCopy(draft.headline, COPY_DEBUG_SAMPLE_VARS),
+      body: interpolateCopy(draft.body, COPY_DEBUG_SAMPLE_VARS),
+      prefilledMessage: interpolateCopy(draft.prefilledMessage, COPY_DEBUG_SAMPLE_VARS),
+      actionLabel: interpolateCopy(draft.actionLabel, COPY_DEBUG_SAMPLE_VARS),
+    }),
+    [draft]
+  );
+
+  useEffect(() => {
+    setDraft(getNudgeCopyTemplates(entry.variantId));
+  }, [entry.variantId, isCustom]);
+
+  const save = () => {
+    saveNudgeCopyOverride(entry.variantId, draft);
+    onSaved();
+    onToast(`Saved ${entry.variantLabel}`);
+  };
+
+  const reset = () => {
+    deleteNudgeCopyOverride(entry.variantId);
+    setDraft(getNudgeCopyTemplates(entry.variantId));
+    onSaved();
+    onToast(`Reset ${entry.variantLabel} to default`);
+  };
+
   return (
-    <article className="copy-debug__card">
+    <article className={`copy-debug__card${isCustom ? ' copy-debug__card--custom' : ''}`}>
       <div className="copy-debug__card-top">
-        <span className="copy-debug__variant-label">{entry.variantLabel}</span>
+        <span className="copy-debug__variant-label">
+          {entry.variantLabel}
+          {isCustom ? <span className="copy-debug__badge copy-debug__badge--live">saved</span> : null}
+        </span>
         <span className="copy-debug__variant-id">{entry.variantId}</span>
       </div>
       <div className="copy-debug__preview-wrap">
-        <NudgePreview headline={entry.headline} body={entry.body} />
+        <NudgePreview headline={preview.headline} body={preview.body} />
       </div>
       <div className="copy-debug__fields">
-        <CopyField id={`${prefix}-headline`} label="Headline (Bohemy · lowercase in UI)" value={entry.headline} onCopy={onCopy} />
-        <CopyField id={`${prefix}-body`} label="Body (Futura · red · uppercase in UI)" value={entry.body ?? ''} onCopy={onCopy} />
-        <CopyField id={`${prefix}-prefilled`} label="Prefilled chat message (on tap)" value={entry.prefilledMessage ?? ''} onCopy={onCopy} />
-        <div className="copy-debug__field-row">
-          <button type="button" className="copy-debug__btn" style={{ width: '100%' }} onClick={() => onCopy(formatPsaNudgeCatalogEntryForCopy(entry), 'full block')}>
-            Copy full block
+        <EditableField
+          id={`${prefix}-headline`}
+          label="Headline"
+          value={draft.headline}
+          onChange={(v) => setDraft((d) => ({ ...d, headline: v }))}
+        />
+        <EditableField
+          id={`${prefix}-body`}
+          label="Body"
+          hint="Use {orderRef}, {hoursLeft}, {productName}, {unitLabel}, {status}, etc."
+          value={draft.body}
+          onChange={(v) => setDraft((d) => ({ ...d, body: v }))}
+        />
+        <EditableField
+          id={`${prefix}-prefilled`}
+          label="Prefilled chat message"
+          value={draft.prefilledMessage}
+          onChange={(v) => setDraft((d) => ({ ...d, prefilledMessage: v }))}
+        />
+        <EditableField
+          id={`${prefix}-action`}
+          label="Action label"
+          value={draft.actionLabel}
+          onChange={(v) => setDraft((d) => ({ ...d, actionLabel: v }))}
+        />
+        <div className="copy-debug__card-actions">
+          <button type="button" className="copy-debug__btn copy-debug__btn--primary" onClick={save}>
+            Save
+          </button>
+          <button type="button" className="copy-debug__btn" onClick={reset} disabled={!isCustom}>
+            Reset
           </button>
         </div>
       </div>
       <p className="copy-debug__meta">
-        Priority {entry.priority} · Pages: {entry.pageContexts.join(', ')} · Action: {entry.actionLabel} → {entry.actionPath}
+        Priority {entry.priority} · Pages: {entry.pageContexts.join(', ')} · Action path: {entry.actionPath}
         {entry.notes ? ` · ${entry.notes}` : ''}
       </p>
     </article>
   );
 }
 
-function AlertPreview({ entry }: { entry: AccountAlertCatalogEntry }) {
+function AlertPreview({ title, message, actionText, rowVariant }: { title: string; message: string; actionText: string; rowVariant: AccountAlertCatalogEntry['rowVariant'] }) {
   const titleClass =
-    entry.rowVariant === 'consult_offer_ready'
+    rowVariant === 'consult_offer_ready'
       ? 'copy-debug__alert-preview-title copy-debug__alert-preview-title--consult'
       : 'copy-debug__alert-preview-title';
 
@@ -102,9 +179,9 @@ function AlertPreview({ entry }: { entry: AccountAlertCatalogEntry }) {
     <div className="copy-debug__alert-preview-row" aria-hidden>
       <img className="copy-debug__alert-preview-avatar" src="/assets/profile-thumb.png" alt="" draggable={false} />
       <div className="copy-debug__alert-preview-body-col">
-        <p className={titleClass}>{entry.title}</p>
-        <p className="copy-debug__alert-preview-message">{entry.message}</p>
-        {entry.actionText ? <span className="copy-debug__alert-preview-action">{entry.actionText}</span> : null}
+        <p className={titleClass}>{title}</p>
+        <p className="copy-debug__alert-preview-message">{message}</p>
+        {actionText ? <span className="copy-debug__alert-preview-action">{actionText}</span> : null}
       </div>
     </div>
   );
@@ -112,29 +189,81 @@ function AlertPreview({ entry }: { entry: AccountAlertCatalogEntry }) {
 
 function AlertCard({
   entry,
-  onCopy,
+  onSaved,
+  onToast,
 }: {
   entry: AccountAlertCatalogEntry;
-  onCopy: (text: string, label: string) => void;
+  onSaved: () => void;
+  onToast: (msg: string) => void;
 }) {
   const prefix = `alert-${entry.variantId}`;
+  const isCustom = hasAlertCopyOverride(entry.variantId);
+  const [draft, setDraft] = useState<AlertCopyTemplates>(() => getAlertCopyTemplates(entry.variantId));
+  const preview = useMemo(
+    () => ({
+      title: interpolateCopy(draft.title, COPY_DEBUG_SAMPLE_VARS),
+      message: interpolateCopy(draft.message, COPY_DEBUG_SAMPLE_VARS),
+      actionText: interpolateCopy(draft.actionText, COPY_DEBUG_SAMPLE_VARS),
+    }),
+    [draft]
+  );
+
+  useEffect(() => {
+    setDraft(getAlertCopyTemplates(entry.variantId));
+  }, [entry.variantId, isCustom]);
+
+  const save = () => {
+    saveAlertCopyOverride(entry.variantId, draft);
+    onSaved();
+    onToast(`Saved ${entry.variantLabel}`);
+  };
+
+  const reset = () => {
+    deleteAlertCopyOverride(entry.variantId);
+    setDraft(getAlertCopyTemplates(entry.variantId));
+    onSaved();
+    onToast(`Reset ${entry.variantLabel} to default`);
+  };
+
   return (
-    <article className="copy-debug__card">
+    <article className={`copy-debug__card${isCustom ? ' copy-debug__card--custom' : ''}`}>
       <div className="copy-debug__card-top">
-        <span className="copy-debug__variant-label">{entry.variantLabel}</span>
+        <span className="copy-debug__variant-label">
+          {entry.variantLabel}
+          {isCustom ? <span className="copy-debug__badge copy-debug__badge--live">saved</span> : null}
+        </span>
         <span className="copy-debug__variant-id">{entry.variantId}</span>
       </div>
       <div className="copy-debug__preview-wrap copy-debug__preview-wrap--alert">
-        <AlertPreview entry={entry} />
+        <AlertPreview title={preview.title} message={preview.message} actionText={preview.actionText} rowVariant={entry.rowVariant} />
       </div>
       <div className="copy-debug__fields">
-        <CopyField id={`${prefix}-title`} label="Title (row 1 · Grace / Futura consult)" value={entry.title} onCopy={onCopy} />
-        <CopyField id={`${prefix}-message`} label="Message (row 2 · Futura gray)" value={entry.message} onCopy={onCopy} />
-        <CopyField id={`${prefix}-action`} label="Action link (row 3 · red)" value={entry.actionText} onCopy={onCopy} />
-        <CopyField id={`${prefix}-route`} label="Action route" value={entry.actionRoute} onCopy={onCopy} />
-        <div className="copy-debug__field-row">
-          <button type="button" className="copy-debug__btn" style={{ width: '100%' }} onClick={() => onCopy(formatAccountAlertEntryForCopy(entry), 'full block')}>
-            Copy full block
+        <EditableField
+          id={`${prefix}-title`}
+          label="Title"
+          value={draft.title}
+          onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
+        />
+        <EditableField
+          id={`${prefix}-message`}
+          label="Message"
+          hint="Use {orderNumber}, {unitName}, {voucherType}, {timeLabel}, {balance}, etc."
+          value={draft.message}
+          onChange={(v) => setDraft((d) => ({ ...d, message: v }))}
+        />
+        <EditableField
+          id={`${prefix}-action`}
+          label="Action link"
+          value={draft.actionText}
+          onChange={(v) => setDraft((d) => ({ ...d, actionText: v }))}
+        />
+        <p className="copy-debug__field-hint">Route (read-only): {entry.actionRoute}</p>
+        <div className="copy-debug__card-actions">
+          <button type="button" className="copy-debug__btn copy-debug__btn--primary" onClick={save}>
+            Save
+          </button>
+          <button type="button" className="copy-debug__btn" onClick={reset} disabled={!isCustom}>
+            Reset
           </button>
         </div>
       </div>
@@ -150,24 +279,32 @@ function AlertCard({
   );
 }
 
-function NudgesPanel({ onCopy }: { onCopy: (text: string, label: string) => void }) {
-  const categories = useMemo(() => getPsaProactiveNudgeCatalog(), []);
+function NudgesPanel({ revision, onSaved, onToast }: { revision: number; onSaved: () => void; onToast: (msg: string) => void }) {
+  const categories = useMemo(() => getPsaProactiveNudgeCatalog(), [revision]);
+  const overrideCount = countNudgeCopyOverrides();
 
   return (
     <>
       <p className="copy-debug__intro">
-        Every proactive FAB nudge variant, grouped by kind (priority order). Headline + body match the live thought
-        bubble; prefilled text opens in chat when the nudge is tapped. Wire changes in{' '}
-        <code style={{ fontSize: '10px' }}>psaProactiveNudges.ts</code> /{' '}
-        <code style={{ fontSize: '10px' }}>psaOrderCelebrations.ts</code>.
+        Edit copy below and click <strong>Save</strong> — changes apply immediately to proactive FAB nudges in this
+        browser. Use <code>{'{placeholders}'}</code> for dynamic bits (preview uses sample values).{' '}
+        <strong>Reset</strong> removes your saved override.
+        {overrideCount > 0 ? ` ${overrideCount} custom variant${overrideCount === 1 ? '' : 's'}.` : ''}
       </p>
       <div className="copy-debug__toolbar">
         <button
           type="button"
-          className="copy-debug__btn copy-debug__btn--primary"
-          onClick={() => onCopy(formatFullPsaNudgeCatalogForCopy(categories), 'PSA nudge catalog')}
+          className="copy-debug__btn"
+          onClick={() => {
+            if (window.confirm('Clear all saved nudge overrides on this device?')) {
+              clearAllNudgeCopyOverrides();
+              onSaved();
+              onToast('Cleared all nudge overrides');
+            }
+          }}
+          disabled={overrideCount === 0}
         >
-          Copy entire tab
+          Reset all nudges
         </button>
         <Link to="/account/alerts" className="copy-debug__btn">
           Live alerts page
@@ -190,7 +327,7 @@ function NudgesPanel({ onCopy }: { onCopy: (text: string, label: string) => void
           </div>
           <div className="copy-debug__grid">
             {cat.entries.map((entry) => (
-              <NudgeCard key={entry.variantId} entry={entry} onCopy={onCopy} />
+              <NudgeCard key={entry.variantId} entry={entry} onSaved={onSaved} onToast={onToast} />
             ))}
           </div>
         </section>
@@ -199,25 +336,32 @@ function NudgesPanel({ onCopy }: { onCopy: (text: string, label: string) => void
   );
 }
 
-function AlertsPanel({ onCopy }: { onCopy: (text: string, label: string) => void }) {
-  const categories = useMemo(() => getAccountAlertsCatalog(), []);
+function AlertsPanel({ revision, onSaved, onToast }: { revision: number; onSaved: () => void; onToast: (msg: string) => void }) {
+  const categories = useMemo(() => getAccountAlertsCatalog(), [revision]);
   const totalVariants = useMemo(() => categories.reduce((sum, c) => sum + c.entries.length, 0), [categories]);
+  const overrideCount = countAlertCopyOverrides();
 
   return (
     <>
       <p className="copy-debug__intro">
-        Every alert row on <strong>/account/alerts</strong> ({categories.length} categories, {totalVariants} variants).
-        Preview matches the live list: title, gray message, red action link. Wire changes in{' '}
-        <code style={{ fontSize: '10px' }}>notifications/page.tsx</code>,{' '}
-        <code style={{ fontSize: '10px' }}>orderAccountAlerts.ts</code>, and related helpers.
+        Edit account alert rows and save — updates <strong>/account/alerts</strong> and related notification copy in this
+        browser ({categories.length} categories, {totalVariants} variants).
+        {overrideCount > 0 ? ` ${overrideCount} custom variant${overrideCount === 1 ? '' : 's'}.` : ''}
       </p>
       <div className="copy-debug__toolbar">
         <button
           type="button"
-          className="copy-debug__btn copy-debug__btn--primary"
-          onClick={() => onCopy(formatFullAccountAlertsCatalogForCopy(categories), 'account alerts catalog')}
+          className="copy-debug__btn"
+          onClick={() => {
+            if (window.confirm('Clear all saved alert overrides on this device?')) {
+              clearAllAlertCopyOverrides();
+              onSaved();
+              onToast('Cleared all alert overrides');
+            }
+          }}
+          disabled={overrideCount === 0}
         >
-          Copy entire tab
+          Reset all alerts
         </button>
         <Link to="/account/alerts" className="copy-debug__btn">
           Live alerts page
@@ -240,7 +384,7 @@ function AlertsPanel({ onCopy }: { onCopy: (text: string, label: string) => void
           </div>
           <div className="copy-debug__grid">
             {cat.entries.map((entry) => (
-              <AlertCard key={entry.variantId} entry={entry} onCopy={onCopy} />
+              <AlertCard key={entry.variantId} entry={entry} onSaved={onSaved} onToast={onToast} />
             ))}
           </div>
         </section>
@@ -253,6 +397,15 @@ export default function CopyDebugPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tab: CopyDebugTab = searchParams.get('tab') === 'alerts' ? 'alerts' : 'nudges';
   const [toast, setToast] = useState<string | null>(null);
+  const [revision, setRevision] = useState(0);
+
+  const bumpRevision = useCallback(() => setRevision((r) => r + 1), []);
+
+  useEffect(() => {
+    const handler = () => bumpRevision();
+    window.addEventListener(COPY_DEBUG_UPDATED_EVENT, handler);
+    return () => window.removeEventListener(COPY_DEBUG_UPDATED_EVENT, handler);
+  }, [bumpRevision]);
 
   const setTab = useCallback(
     (next: CopyDebugTab) => {
@@ -264,26 +417,14 @@ export default function CopyDebugPage() {
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
-    window.setTimeout(() => setToast(null), 1800);
+    window.setTimeout(() => setToast(null), 2200);
   }, []);
-
-  const copyText = useCallback(
-    async (text: string, label: string) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast(`Copied ${label}`);
-      } catch {
-        showToast('Copy failed — select text manually');
-      }
-    },
-    [showToast]
-  );
 
   return (
     <div className="copy-debug">
       <div className="copy-debug__inner">
         <header className="copy-debug__header">
-          <h1>Copy debug — PSA nudges &amp; account alerts</h1>
+          <h1>Copy editor — PSA nudges &amp; account alerts</h1>
           <div className="copy-debug__tabs" role="tablist" aria-label="Copy debug sections">
             <button
               type="button"
@@ -312,10 +453,10 @@ export default function CopyDebugPage() {
         </header>
 
         <div role="tabpanel" hidden={tab !== 'nudges'}>
-          {tab === 'nudges' ? <NudgesPanel onCopy={copyText} /> : null}
+          {tab === 'nudges' ? <NudgesPanel revision={revision} onSaved={bumpRevision} onToast={showToast} /> : null}
         </div>
         <div role="tabpanel" hidden={tab !== 'alerts'}>
-          {tab === 'alerts' ? <AlertsPanel onCopy={copyText} /> : null}
+          {tab === 'alerts' ? <AlertsPanel revision={revision} onSaved={bumpRevision} onToast={showToast} /> : null}
         </div>
       </div>
       {toast ? <div className="copy-debug__toast">{toast}</div> : null}

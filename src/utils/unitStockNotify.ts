@@ -1,4 +1,5 @@
 import { getNotificationsStorageKeyForUserEmail, type StoredNotification } from './orderAccountAlerts';
+import { resolveAccountAlertCopy } from './copyDebugResolve';
 import {
   isBcfSoldOut,
   isWigUnitSoldOut,
@@ -126,11 +127,12 @@ function accountExistsForEmail(email: string): boolean {
 function appendStockNotifySignupAlert(email: string, unitName: string): void {
   const key = getNotificationsStorageKeyForUserEmail(email);
   const id = `stock_notify_signup_${unitName.replace(/\s+/g, '_')}`;
+  const copy = resolveAccountAlertCopy('stock_unit.notify_signup', { unitName, productName: unitName });
   const item: StoredNotification = {
     id,
-    title: `${unitName} — BACK IN STOCK`,
-    message: `WE'LL NOTIFY YOU WHEN ${unitName} IS AVAILABLE AGAIN.`,
-    actionText: 'VIEW SHOP',
+    title: copy.title,
+    message: copy.message,
+    actionText: copy.actionText,
     actionRoute: stockNotifyProductActionRoute(unitName),
     date: todayMdy(),
     sortAt: Date.now(),
@@ -151,11 +153,12 @@ function appendStockNotifySignupAlert(email: string, unitName: string): void {
 function appendBackInStockAlert(email: string, unitName: string): void {
   const key = getNotificationsStorageKeyForUserEmail(email);
   const id = `stock_back_in_stock_${unitName.replace(/\s+/g, '_')}_${Date.now()}`;
+  const copy = resolveAccountAlertCopy('stock_unit.back_in_stock', { unitName, productName: unitName });
   const item: StoredNotification = {
     id,
-    title: `${unitName} IS BACK IN STOCK`,
-    message: `${unitName} IS AVAILABLE NOW — SHOP BEFORE IT SELLS OUT.`,
-    actionText: 'SHOP NOW',
+    title: copy.title,
+    message: copy.message,
+    actionText: copy.actionText,
     actionRoute: stockNotifyProductActionRoute(unitName),
     date: todayMdy(),
     sortAt: Date.now(),

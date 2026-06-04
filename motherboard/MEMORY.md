@@ -25183,3 +25183,22 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Use `/tools/copy-debug` as the canonical copy-review URL for both PSA FAB nudges and account alert rows.
 
+---
+
+## 2026-06-03 — Editable copy debug (save/reset → live nudges & alerts)
+
+**Context:** User wanted `/tools/copy-debug` to be an editor, not copy-paste — edit each variant, save, and have it update the live PSA nudge or account alert without sending text back to an agent.
+
+**Decisions / outcomes:**
+- **`copyDebugResolve.ts`** — catalog defaults → `{placeholder}` templates, localStorage overrides (`copy_debug_nudge_overrides`, `copy_debug_alert_overrides`), `resolveNudgeCopy` / `resolveAccountAlertCopy` at runtime.
+- Debug page: editable fields, live preview (sample interpolation), **Save** / **Reset** per card, **Reset all** per tab; saved cards show red **saved** badge.
+- Overrides are **per browser** (localStorage); dispatch `copyDebugOverridesUpdated` + `notificationsUpdated` on save so FAB/alerts refresh immediately.
+
+**Changes:**
+- `src/utils/copyDebugResolve.ts` (new)
+- Runtime wired: `psaProactiveNudges.ts`, `psaOrderCelebrations.ts`, `orderAccountAlerts.ts`, `wishlistStockAlerts.ts`, `orderTracking.ts`, `unitStockNotify.ts`, `notifications/page.tsx` (`getAccountNotifications`)
+- `src/pages/tools/copy-debug/page.tsx` + CSS — editor UI
+- `accountAlertsCatalog.ts` — `flattenAccountAlertsCatalog()`
+
+**Conventions:** Edit copy on `/tools/copy-debug`; use `{orderRef}`, `{hoursLeft}`, `{unitName}`, etc. in templates for dynamic fields. Reset removes override only (defaults from catalog).
+
