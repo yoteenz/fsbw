@@ -24837,6 +24837,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — Lounge TV menu: scene-locked glass + responsive UI
+
+**Context:** User reported TV menu **text and close icon** do not scale on smaller/larger devices; requested a **transparent container** mimicking the TV glass, locked to the lounge background (`cover` + `center top`) like register/phone popovers.
+
+**Changes (commit `4dc2934a`, `master` + `preview/mobile`):**
+- **`loungeTvSceneLayout.ts`**: `LOUNGE_TV_MENU_SCREEN_RECT` + offsets on theater end-still image space (940×1672); baked former `LOUNGE_TV_CONTENT_SCREEN_SCALE` / Y nudge; close insets as **% of glass**.
+- **`LoungeTvFullscreenShell`**: transparent `data-lounge-tv-glass` box via **`useSceneCoverHitRect`** (optional 4th arg image size); removed fixed `transform` on screen; end-still nudge as **%**; QA outline with **`?sceneHitDebug=1`**.
+- **`loungeTvResponsive.ts`**: `container-type: size` + `cqw` fonts/gaps/close chip for **`LoungeTvScreen`**.
+- **`useSceneCoverHitRect`**: optional custom source image dimensions for non–928×1680 art.
+
+**Conventions:** Open TV UI positions from scene cover math on the viewport stage, not viewport-fixed px; tune glass via `LOUNGE_TV_MENU_*` in `loungeTvSceneLayout.ts`.
+
+---
+
 ## 2026-06-04 — PSA chat panel: glassmorphism main card
 
 **Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
