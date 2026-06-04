@@ -24495,3 +24495,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Proactive nudge chip should read as a thought bubble (not rectangular border box); holo styling aligns with `.psa-avatar-frame` ring.
 
+---
+
+## 2026-06-03 — PSA chat header: remove script PSA title
+
+**Context:** User wanted the Covered By Your Grace **PSA** line removed above the gray **PERSONAL SLAY ASSISTANT** header in the chat panel.
+
+**Changes:** `PsaChatPanel.tsx` — removed `PSA_CHAT_TITLE` h2; subtitle is sole header (`h2.psa-chat-subtitle`). `psaAssistant.css` — removed `.psa-chat-title` styles; subtitle margin reset to top of header block.
+
