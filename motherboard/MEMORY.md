@@ -24667,3 +24667,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Preview:** Append **`?psaHoloCompare=1`** to any non-hidden page (e.g. `/home/shop?psaHoloCompare=1`). No premium sign-in required while compare tray is open. EXIT removes param.
 
+---
+
+## 2026-06-04 — PSA avatar holo glow: 30% size reduction
+
+**Context:** User reported holo glow PNG still not aligned with avatar circle; asked to decrease size 30% (option 3 glow in `.psa-avatar-glow-wrap`, centered on 88px frame).
+
+**Changes:** `.psa-avatar-holo-glow-rotator` width `178%` → `125%` (~30% smaller). Applies to live FAB and holo compare columns (shared class).
+
