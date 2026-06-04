@@ -7,7 +7,7 @@ type PremiumRewardsMarketingListProps = {
   heading?: string;
   /** Extra margin above the block. */
   marginTop?: string;
-  /** Brand membership page: perk titles in lowercase Bohemy instead of Covered By Your Grace. */
+  /** Brand `/brand/member`: perk titles in lowercase Bohemy instead of Covered By Your Grace. */
   bohemyPerkTitles?: boolean;
 };
 
@@ -15,6 +15,7 @@ type PremiumRewardsMarketingListProps = {
 export default function PremiumRewardsMarketingList({
   heading,
   marginTop = '0',
+  bohemyPerkTitles = false,
 }: PremiumRewardsMarketingListProps) {
   return (
     <div style={{ marginTop }}>
@@ -37,13 +38,24 @@ export default function PremiumRewardsMarketingList({
         {BRAND_UNLOCK_PREMIUM_REWARD_ITEMS.map((item) => (
           <div key={item.id}>
             <p
-              style={{
-                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                fontSize: '14px',
-                color: '#000000',
-                margin: '0 0 4px 0',
-                textTransform: 'uppercase',
-              }}
+              style={
+                bohemyPerkTitles
+                  ? {
+                      fontFamily: '"Bohemy", cursive',
+                      fontSize: '17px',
+                      color: '#000000',
+                      margin: '0 0 4px 0',
+                      textTransform: 'lowercase',
+                      fontWeight: 400,
+                    }
+                  : {
+                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                      fontSize: '14px',
+                      color: '#000000',
+                      margin: '0 0 4px 0',
+                      textTransform: 'uppercase',
+                    }
+              }
             >
               {item.title}
             </p>
