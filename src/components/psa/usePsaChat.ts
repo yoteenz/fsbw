@@ -7,6 +7,7 @@ import {
   fetchPsaThreadList,
   postPsaChat,
   renamePsaThread,
+  unarchivePsaThread,
   type PsaContinueHint,
   type PsaChatCard,
   type PsaThreadSummary,
@@ -40,6 +41,7 @@ export function usePsaChat(
   const [threadId, setThreadId] = useState<string | null>(null);
   const [threadList, setThreadList] = useState<PsaThreadSummary[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyArchivedView, setHistoryArchivedView] = useState(false);
   const [historyAvailable, setHistoryAvailable] = useState(true);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -108,21 +110,37 @@ export function usePsaChat(
     [applyThreadPayload]
   );
 
-  const refreshThreadList = useCallback(async () => {
-    const result = await fetchPsaThreadList();
+  const refreshThreadList = useCallback(async (archivedOnly?: boolean) => {
+    const result = await fetchPsaThreadList({
+      archivedOnly: archivedOnly ?? historyArchivedView,
+    });
+    if (result.ok) {
+      setThreadList(result.threads);
+    }
+  }, [historyArchivedView]);
+
+  const openHistory = useCallback(async () => {
+    setHistoryOpen(true);
+    setHistoryArchivedView(false);
+    const result = await fetchPsaThreadList({ archivedOnly: false });
     if (result.ok) {
       setThreadList(result.threads);
     }
   }, []);
 
-  const openHistory = useCallback(async () => {
-    setHistoryOpen(true);
-    await refreshThreadList();
-  }, [refreshThreadList]);
-
   const closeHistory = useCallback(() => {
     setHistoryOpen(false);
+    setHistoryArchivedView(false);
   }, []);
+
+  const toggleHistoryArchivedView = useCallback(async () => {
+    const next = !historyArchivedView;
+    setHistoryArchivedView(next);
+    const result = await fetchPsaThreadList({ archivedOnly: next });
+    if (result.ok) {
+      setThreadList(result.threads);
+    }
+  }, [historyArchivedView]);
 
   const startNewThread = useCallback(async () => {
     setHistoryOpen(false);
@@ -260,10 +278,10 @@ export function usePsaChat(
         setMessages(welcomeOnly(welcomeMessage));
         setContinueHint(null);
       }
-      await refreshThreadList();
+      await refreshThreadList(historyArchivedView);
       return true;
     },
-    [threadId, refreshThreadList, welcomeMessage]
+    [threadId, refreshThreadList, welcomeMessage, historyArchivedView]
   );
 
   const renameThread = useCallback(
@@ -274,6 +292,19 @@ export function usePsaChat(
         return false;
       }
       await refreshThreadList();
+      return true;
+    },
+    [refreshThreadList]
+  );
+
+  const unarchiveThread = useCallback(
+    async (id: string) => {
+      const result = await unarchivePsaThread(id);
+      if (!result.ok) {
+        setError(result.message);
+        return false;
+      }
+      await refreshThreadList(true);
       return true;
     },
     [refreshThreadList]
@@ -292,10 +323,10 @@ export function usePsaChat(
         setMessages(welcomeOnly(welcomeMessage));
         setContinueHint(null);
       }
-      await refreshThreadList();
+      await refreshThreadList(historyArchivedView);
       return true;
     },
-    [threadId, refreshThreadList, welcomeMessage]
+    [threadId, refreshThreadList, welcomeMessage, historyArchivedView]
   );
 
   const resetChat = useCallback(() => {
@@ -306,6 +337,7 @@ export function usePsaChat(
     setPanelQuickReplies([]);
     setContinueHint(null);
     setHistoryOpen(false);
+    setHistoryArchivedView(false);
     historyLoadedRef.current = false;
   }, [welcomeMessage]);
 
@@ -316,6 +348,7 @@ export function usePsaChat(
     threadId,
     threadList,
     historyOpen,
+    historyArchivedView,
     historyAvailable,
     error,
     usage,
@@ -326,6 +359,7 @@ export function usePsaChat(
     resetChat,
     archiveThread,
     renameThread,
+    unarchiveThread,
     removeThread,
     loadActiveThread,
     ensureHistoryLoaded,
@@ -334,6 +368,7 @@ export function usePsaChat(
     switchThread,
     openHistory,
     closeHistory,
+    toggleHistoryArchivedView,
     refreshThreadList,
   };
 }

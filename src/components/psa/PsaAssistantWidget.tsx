@@ -84,6 +84,7 @@ export default function PsaAssistantWidget() {
     threadId,
     threadList,
     historyOpen,
+    historyArchivedView,
     historyAvailable,
     sendMessage,
     usage,
@@ -96,8 +97,10 @@ export default function PsaAssistantWidget() {
     switchThread,
     openHistory,
     closeHistory,
+    toggleHistoryArchivedView,
     archiveThread,
     renameThread,
+    unarchiveThread,
     removeThread,
   } = usePsaChat(welcomeMessage, (pendingMessage) =>
     buildPsaClientSessionContext(location.pathname, pendingMessage)
@@ -442,6 +445,7 @@ export default function PsaAssistantWidget() {
               usageLabel={usageLabel}
               panelQuickReplies={panelQuickReplies}
               historyOpen={historyOpen}
+              historyArchivedView={historyArchivedView}
               historyAvailable={historyAvailable}
               threadList={threadList}
               activeThreadId={threadId}
@@ -450,8 +454,10 @@ export default function PsaAssistantWidget() {
               onNewChat={() => void startNewThread()}
               onOpenHistory={() => void openHistory()}
               onCloseHistory={closeHistory}
+              onToggleHistoryArchived={() => void toggleHistoryArchivedView()}
               onSelectThread={(id) => void switchThread(id)}
               onArchiveThread={(id) => void archiveThread(id)}
+              onUnarchiveThread={(id) => void unarchiveThread(id)}
               onDeleteThread={(id) => void removeThread(id)}
               onRenameThread={(id, title) => void renameThread(id, title)}
               onInputFocusChange={setIsInputFocused}
