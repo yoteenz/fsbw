@@ -24405,6 +24405,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — PSA sorry avatar cache bust
+
+**Context:** User reported PSA still showing wrong sorry asset after replacing `psa-avatar-sorry.png`.
+
+**Cause:** PNG updated in commit `67eaa620` but `PSA_AVATAR_ASSET_VERSION` stayed `5` — browsers/CDN served cached old file via `?v=5` query param on all avatar URLs.
+
+**Fix:** Bump `PSA_AVATAR_ASSET_VERSION` to `6` in `psaConfig.ts`. Always bump when replacing any avatar PNG.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
