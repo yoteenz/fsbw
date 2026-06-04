@@ -660,10 +660,10 @@ export function LoungeTvOverlay({
   useLayoutEffect(() => {
     if (!isOpen) return;
     setVisible(true);
-    if (useSeedanceClip && seedancePhase === 'idle') {
-      setSeedancePhase('opening');
+    if (useSeedanceClip) {
+      setSeedancePhase((phase) => (phase === 'idle' ? 'opening' : phase));
     }
-  }, [isOpen, useSeedanceClip, seedancePhase]);
+  }, [isOpen, useSeedanceClip]);
 
   useEffect(() => {
     if (!isOpen) return;
