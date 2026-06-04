@@ -395,6 +395,20 @@
   padding: 0;
 }
 
+.psa-chat-bubble-body {
+  display: inline;
+}
+
+.psa-chat-route-tail {
+  display: inline;
+  white-space: normal;
+}
+
+.psa-chat-nav-link-inline {
+  margin-top: 0;
+  margin-left: 2px;
+}
+
 .psa-chat-input-row {
   display: flex;
   gap: 8px;
