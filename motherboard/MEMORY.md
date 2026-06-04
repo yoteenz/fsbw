@@ -25013,3 +25013,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — PSA chat panel offset (10px left, 12px up)
 
 **Changes:** `.psa-chat-panel` **`transform: translate(-10px, -12px)`** — moves open chat only; avatar/HIDE CHAT FAB unchanged.
+
+---
+
+## 2026-06-04 — PSA chat: 12px left, height −20px
+
+**Changes:** `.psa-chat-panel` **`translate(-12px, -12px)`**; **`max-height`** **`520px → 500px`**, viewport term **`140px → 160px`**. Width and avatar unchanged.
