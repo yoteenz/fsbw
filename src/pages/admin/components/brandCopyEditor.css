@@ -1,21 +1,18 @@
-.copy-debug {
-  min-height: 100vh;
-  background: #f5f5f5;
+.brand-copy-editor {
   color: #111;
-  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
-  padding: 24px 16px 80px;
+  font-family: 'Futura PT Book', Futura, sans-serif;
+  text-transform: uppercase;
 }
 
-.copy-debug__inner {
-  max-width: 1100px;
-  margin: 0 auto;
+.brand-copy-editor__inner {
+  max-width: 100%;
 }
 
-.copy-debug__header {
+.brand-copy-editor__header {
   margin-bottom: 20px;
 }
 
-.copy-debug__header h1 {
+.brand-copy-editor__header h1 {
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 14px;
   letter-spacing: 0.08em;
@@ -23,7 +20,7 @@
   margin: 0 0 12px;
 }
 
-.copy-debug__tabs {
+.brand-copy-editor__tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 0;
@@ -31,7 +28,7 @@
   border-bottom: 2px solid #111;
 }
 
-.copy-debug__tab {
+.brand-copy-editor__tab {
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 11px;
   letter-spacing: 0.06em;
@@ -45,16 +42,16 @@
   color: #888;
 }
 
-.copy-debug__tab:hover {
+.brand-copy-editor__tab:hover {
   color: #111;
 }
 
-.copy-debug__tab--active {
+.brand-copy-editor__tab--active {
   color: #111;
   border-bottom-color: #eb1c24;
 }
 
-.copy-debug__intro {
+.brand-copy-editor__intro {
   font-size: 12px;
   line-height: 1.5;
   color: #555;
@@ -62,7 +59,7 @@
   max-width: 760px;
 }
 
-.copy-debug__toolbar {
+.brand-copy-editor__toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -70,34 +67,36 @@
   margin-bottom: 20px;
 }
 
-.copy-debug__btn {
+.brand-copy-editor__btn {
   font-family: inherit;
   font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 8px 12px;
-  border: 1px solid #111;
+  border: 1.3px solid #000;
   background: #fff;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
 }
 
-.copy-debug__btn:hover {
+.brand-copy-editor__btn:hover {
   background: #111;
   color: #fff;
 }
 
-.copy-debug__btn--primary {
+.brand-copy-editor__btn--primary {
+  background: #fff;
+  color: #eb1c24;
+  border-color: #000;
+}
+
+.brand-copy-editor__btn--primary:hover {
   background: #111;
   color: #fff;
 }
 
-.copy-debug__btn--primary:hover {
-  background: #333;
-}
-
-.copy-debug__nav {
+.brand-copy-editor__nav {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -105,65 +104,67 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: rgba(245, 245, 245, 0.95);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
   padding: 10px 0;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1.3px solid #000;
 }
 
-.copy-debug__nav a {
+.brand-copy-editor__nav a {
   font-size: 9px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #111;
   text-decoration: none;
   padding: 6px 10px;
-  border: 1px solid #ccc;
+  border: 1.3px solid #000;
   background: #fff;
 }
 
-.copy-debug__nav a:hover {
+.brand-copy-editor__nav a:hover {
   border-color: #111;
 }
 
-.copy-debug__category {
+.brand-copy-editor__category {
   margin-bottom: 40px;
   scroll-margin-top: 88px;
 }
 
-.copy-debug__category-head {
+.brand-copy-editor__category-head {
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #111;
+  border-bottom: 1.3px solid #000;
 }
 
-.copy-debug__category-head h2 {
-  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
-  font-size: 12px;
+.brand-copy-editor__category-head h2 {
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin: 0 0 4px;
+  color: #eb1c24;
 }
 
-.copy-debug__category-head p {
+.brand-copy-editor__category-head p {
   font-size: 11px;
   color: #666;
   margin: 0;
 }
 
-.copy-debug__grid {
+.brand-copy-editor__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.copy-debug__card {
-  background: #fff;
-  border: 1px solid #ddd;
+.brand-copy-editor__card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.3px solid #000;
   display: flex;
   flex-direction: column;
 }
 
-.copy-debug__card-top {
+.brand-copy-editor__card-top {
   padding: 12px 12px 0;
   display: flex;
   justify-content: space-between;
@@ -171,21 +172,21 @@
   align-items: flex-start;
 }
 
-.copy-debug__variant-label {
+.brand-copy-editor__variant-label {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.copy-debug__variant-id {
+.brand-copy-editor__variant-id {
   font-size: 9px;
   color: #888;
   word-break: break-all;
   text-align: right;
 }
 
-.copy-debug__preview-wrap {
+.brand-copy-editor__preview-wrap {
   display: flex;
   justify-content: center;
   padding: 16px 12px 8px;
@@ -193,12 +194,12 @@
   border-bottom: 1px solid #eee;
 }
 
-.copy-debug__preview-wrap--alert {
+.brand-copy-editor__preview-wrap--alert {
   padding: 16px 12px;
   justify-content: flex-start;
 }
 
-.copy-debug__fields {
+.brand-copy-editor__fields {
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -206,7 +207,7 @@
   flex: 1;
 }
 
-.copy-debug__field label {
+.brand-copy-editor__field label {
   display: block;
   font-size: 8px;
   letter-spacing: 0.08em;
@@ -215,84 +216,84 @@
   margin-bottom: 4px;
 }
 
-.copy-debug__field-row {
+.brand-copy-editor__field-row {
   display: flex;
   gap: 6px;
   align-items: stretch;
 }
 
-.copy-debug__field textarea {
+.brand-copy-editor__field textarea {
   flex: 1;
   min-height: 36px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 11px;
   line-height: 1.35;
   padding: 6px 8px;
-  border: 1px solid #ddd;
+  border: 1.3px solid #000;
   resize: vertical;
   background: #fff;
 }
 
-.copy-debug__field textarea:focus {
+.brand-copy-editor__field textarea:focus {
   outline: none;
   border-color: #eb1c24;
 }
 
-.copy-debug__field-hint {
+.brand-copy-editor__field-hint {
   font-size: 8px;
   color: #888;
   margin: 0 0 4px;
   line-height: 1.35;
 }
 
-.copy-debug__card-actions {
+.brand-copy-editor__card-actions {
   display: flex;
   gap: 8px;
   margin-top: 4px;
 }
 
-.copy-debug__card-actions .copy-debug__btn {
+.brand-copy-editor__card-actions .brand-copy-editor__btn {
   flex: 1;
 }
 
-.copy-debug__card--custom {
+.brand-copy-editor__card--custom {
   border-color: #eb1c24;
   box-shadow: 0 0 0 1px rgba(235, 28, 36, 0.15);
 }
 
-.copy-debug__badge--live {
+.brand-copy-editor__badge--live {
   border-color: #eb1c24;
   color: #eb1c24;
   margin-left: 6px;
   vertical-align: middle;
 }
 
-.copy-debug__card-actions--secondary {
+.brand-copy-editor__card-actions--secondary {
   margin-top: 0;
 }
 
-.copy-debug__card-actions--secondary .copy-debug__btn {
+.brand-copy-editor__card-actions--secondary .brand-copy-editor__btn {
   flex: 1;
   font-size: 8px;
 }
 
-.copy-debug__card--draft {
+.brand-copy-editor__card--draft {
   border-style: dashed;
 }
 
-.copy-debug__category--custom {
+.brand-copy-editor__category--custom {
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 2px solid #111;
+  border-top: 1.3px solid #000;
 }
 
-.copy-debug__empty {
+.brand-copy-editor__empty {
   font-size: 11px;
   color: #666;
   padding: 12px 0 24px;
 }
 
-.copy-debug__label-input {
+.brand-copy-editor__label-input {
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 11px;
   border: none;
@@ -303,36 +304,36 @@
   max-width: 100%;
 }
 
-.copy-debug__label-input:focus {
+.brand-copy-editor__label-input:focus {
   outline: none;
   border-bottom-color: #eb1c24;
 }
 
-.copy-debug__select {
+.brand-copy-editor__select {
   width: 100%;
   font-size: 10px;
   padding: 6px 8px;
-  border: 1px solid #ddd;
+  border: 1.3px solid #000;
   background: #fff;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-.copy-debug__btn--danger {
+.brand-copy-editor__btn--danger {
   border-color: #eb1c24;
   color: #eb1c24;
 }
 
-.copy-debug__btn--danger:hover {
+.brand-copy-editor__btn--danger:hover {
   background: #eb1c24;
   color: #fff;
 }
 
-.copy-debug__btn:disabled {
+.brand-copy-editor__btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.copy-debug__copy {
+.brand-copy-editor__copy {
   flex-shrink: 0;
   font-size: 8px;
   letter-spacing: 0.05em;
@@ -343,18 +344,18 @@
   cursor: pointer;
 }
 
-.copy-debug__copy:hover {
+.brand-copy-editor__copy:hover {
   border-color: #111;
 }
 
-.copy-debug__meta {
+.brand-copy-editor__meta {
   font-size: 9px;
   color: #777;
   line-height: 1.4;
   padding: 0 12px 12px;
 }
 
-.copy-debug__badge {
+.brand-copy-editor__badge {
   display: inline-block;
   font-size: 8px;
   letter-spacing: 0.05em;
@@ -365,7 +366,7 @@
   margin-top: 4px;
 }
 
-.copy-debug__toast {
+.brand-copy-editor__toast {
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -381,18 +382,18 @@
 }
 
 /* PSA nudge bubble preview */
-.copy-debug__nudge-preview {
+.brand-copy-editor__nudge-preview {
   position: relative;
   width: 140px;
 }
 
-.copy-debug__nudge-preview-art {
+.brand-copy-editor__nudge-preview-art {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.copy-debug__nudge-preview-content {
+.brand-copy-editor__nudge-preview-content {
   position: absolute;
   left: 50%;
   top: calc(36% + 10px);
@@ -407,7 +408,7 @@
   pointer-events: none;
 }
 
-.copy-debug__nudge-preview-headline {
+.brand-copy-editor__nudge-preview-headline {
   font-family: 'Bohemy', sans-serif;
   font-size: 11px;
   color: #000;
@@ -415,7 +416,7 @@
   line-height: 1.15;
 }
 
-.copy-debug__nudge-preview-body {
+.brand-copy-editor__nudge-preview-body {
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 5px;
   color: #eb1c24;
@@ -424,14 +425,14 @@
 }
 
 /* Account alert row preview */
-.copy-debug__alert-preview-row {
+.brand-copy-editor__alert-preview-row {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   width: 100%;
 }
 
-.copy-debug__alert-preview-avatar {
+.brand-copy-editor__alert-preview-avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -440,13 +441,13 @@
   flex-shrink: 0;
 }
 
-.copy-debug__alert-preview-body-col {
+.brand-copy-editor__alert-preview-body-col {
   flex: 1;
   min-width: 0;
   padding-top: 4px;
 }
 
-.copy-debug__alert-preview-title {
+.brand-copy-editor__alert-preview-title {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif;
   font-size: 13px;
   font-weight: normal;
@@ -456,12 +457,12 @@
   text-transform: uppercase;
 }
 
-.copy-debug__alert-preview-title--consult {
+.brand-copy-editor__alert-preview-title--consult {
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 11px;
 }
 
-.copy-debug__alert-preview-message {
+.brand-copy-editor__alert-preview-message {
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 9px;
   color: #808080;
@@ -473,7 +474,7 @@
   text-overflow: ellipsis;
 }
 
-.copy-debug__alert-preview-action {
+.brand-copy-editor__alert-preview-action {
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 9px;
   color: #eb1c24;

@@ -943,7 +943,7 @@ export default function AdminBrand() {
 
             {activeTab !== 'CODES' &&
               (activeTab === 'ALERTS' ? (
-                <div style={{ marginTop: '10px' }}>
+                <PageActionsBelowCard adminHub>
                   <button
                     type="button"
                     onClick={() => void brandAlertsPanelRef.current?.sendNotification()}
@@ -953,7 +953,25 @@ export default function AdminBrand() {
                   >
                     {alertsSendFooter.label}
                   </button>
-                </div>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/brand/edit/nudges')}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    EDIT PSA NUDGES
+                  </button>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/brand/edit/alerts')}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    EDIT ACCOUNT ALERTS
+                  </button>
+                </PageActionsBelowCard>
               ) : (
                 <PageActionsBelowCard adminHub>
                   <button

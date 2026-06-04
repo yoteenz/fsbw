@@ -133,7 +133,7 @@ const ProductsPage = lazyWithRetry(() => import('./pages/products/page'), 'Produ
 const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
-const CopyDebugPage = lazyWithRetry(() => import('./pages/tools/copy-debug/page'), 'CopyDebugPage');
+const AdminBrandCopyEditor = lazyWithRetry(() => import('./pages/admin/brand/copy-editor/page'), 'AdminBrandCopyEditor');
 const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 const ShopTextureCategoryProductPage = lazyWithRetry(
   () => import('./pages/shop/texture-category-product/page'),
@@ -417,6 +417,11 @@ function App() {
           <Route path="brand" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminBrand />
+            </Suspense>
+          } />
+          <Route path="brand/edit/:copyKind" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminBrandCopyEditor />
             </Suspense>
           } />
           <Route path="clients/account" element={<ClientsAccountRedirect />} />
@@ -826,13 +831,6 @@ function App() {
             <GiftCardPage />
           </Suspense>
         } />
-        <Route path="/tools/copy-debug" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <CopyDebugPage />
-          </Suspense>
-        } />
-        <Route path="/tools/psa-nudges" element={<Navigate to="/tools/copy-debug?tab=nudges" replace />} />
-        <Route path="/tools/account-alerts" element={<Navigate to="/tools/copy-debug?tab=alerts" replace />} />
         {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
         <Route path="/brand/jobs" element={<Navigate to="/brand/careers" replace />} />
         <Route path="/brand/care" element={<Navigate to="/brand/about" replace />} />
