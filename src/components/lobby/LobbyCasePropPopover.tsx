@@ -30,9 +30,11 @@ const LOBBY_POPOVER_PAY_OVER_TIME_ICON_MAX_PX = lobbyPopoverPx(22) + 2;
 /** Register popover — space above `accepted cards` label. */
 const LOBBY_REGISTER_ACCEPTED_CARDS_LABEL_MARGIN_TOP_PX = 2;
 /** Register popover — gap below `payment plans` label (default section label→icons is `lobbyPopoverPx(6)`). */
-const LOBBY_REGISTER_PAYMENT_PLANS_LABEL_TO_ICONS_GAP_PX = lobbyPopoverPx(6) - 2;
+const LOBBY_REGISTER_PAYMENT_PLANS_LABEL_TO_ICONS_GAP_PX = lobbyPopoverPx(6) - 4;
 /** Register popover — pull Afterpay/Klarna toward Affirm (−2px per side vs prior −4). */
 const LOBBY_REGISTER_PAYMENT_PLANS_AFFIRM_GUTTER_NUDGE_PX = 6;
+/** Register popover — Klarna only, additional shift left. */
+const LOBBY_REGISTER_KLARNA_NUDGE_LEFT_PX = 2;
 /** Close X — top/right inset; nudge may be negative (see LOBBY_POPOVER_CLOSE_NUDGE_UP_RIGHT_PX). */
 const LOBBY_POPOVER_CLOSE_INSET_BASE_PX = lobbyPopoverPx(5);
 /** +8px up/right from base (do not clamp — scaled base is only ~3px). */
@@ -289,7 +291,11 @@ function paymentPlansIconCellMarginAdjust(
 ): Pick<React.CSSProperties, 'marginLeft' | 'marginRight'> | undefined {
   /** Outer logos already `justifySelf` toward center — nudge into Affirm gutters. */
   if (icon.id === 'afterpay') return { marginRight: -LOBBY_REGISTER_PAYMENT_PLANS_AFFIRM_GUTTER_NUDGE_PX };
-  if (icon.id === 'klarna') return { marginLeft: -LOBBY_REGISTER_PAYMENT_PLANS_AFFIRM_GUTTER_NUDGE_PX };
+  if (icon.id === 'klarna') {
+    return {
+      marginLeft: -(LOBBY_REGISTER_PAYMENT_PLANS_AFFIRM_GUTTER_NUDGE_PX + LOBBY_REGISTER_KLARNA_NUDGE_LEFT_PX),
+    };
+  }
   return undefined;
 }
 
