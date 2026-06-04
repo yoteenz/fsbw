@@ -133,11 +133,7 @@ const ProductsPage = lazyWithRetry(() => import('./pages/products/page'), 'Produ
 const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
-const PsaNudgesDebugPage = lazyWithRetry(() => import('./pages/tools/psa-nudges/page'), 'PsaNudgesDebugPage');
-const AccountAlertsDebugPage = lazyWithRetry(
-  () => import('./pages/tools/account-alerts/page'),
-  'AccountAlertsDebugPage'
-);
+const CopyDebugPage = lazyWithRetry(() => import('./pages/tools/copy-debug/page'), 'CopyDebugPage');
 const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 const ShopTextureCategoryProductPage = lazyWithRetry(
   () => import('./pages/shop/texture-category-product/page'),
@@ -830,16 +826,13 @@ function App() {
             <GiftCardPage />
           </Suspense>
         } />
-        <Route path="/tools/psa-nudges" element={
+        <Route path="/tools/copy-debug" element={
           <Suspense fallback={<LoadingScreen />}>
-            <PsaNudgesDebugPage />
+            <CopyDebugPage />
           </Suspense>
         } />
-        <Route path="/tools/account-alerts" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <AccountAlertsDebugPage />
-          </Suspense>
-        } />
+        <Route path="/tools/psa-nudges" element={<Navigate to="/tools/copy-debug?tab=nudges" replace />} />
+        <Route path="/tools/account-alerts" element={<Navigate to="/tools/copy-debug?tab=alerts" replace />} />
         {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
         <Route path="/brand/jobs" element={<Navigate to="/brand/careers" replace />} />
         <Route path="/brand/care" element={<Navigate to="/brand/about" replace />} />
