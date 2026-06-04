@@ -25266,3 +25266,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `src/components/psa/psaAssistant.css`.
 
+---
+
+## 2026-06-03 — PSA chat panel 30px up
+
+**Context:** User asked to move the open PSA chat box upward only (avatar/nudge stack unchanged).
+
+**Decisions / outcomes:** `.psa-chat-panel` transform **`translate(-20px, -42px)`** (was `-12px` vertical — 30px higher).
+
+**Changes:** `src/components/psa/psaAssistant.css`.
+
