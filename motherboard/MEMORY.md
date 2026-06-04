@@ -24947,3 +24947,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** New `SceneHitDebugOverlay.tsx` (non-interactive colored rects with labels). Toggle via existing `/lobby?sceneHitDebug=1` (sessionStorage). **Lounge slide:** blue baked TV (`FINAL_LOUNGE_TV_HIT_REGION`), green play tap (with px offsets), magenta content pop-up (`LOUNGE_TV_MENU_SCREEN_RECT`) — visible even when TV closed; open menu shows matching magenta solid overlay on glass in `LoungeTvFullscreenShell`. **Lobby slide:** orange outer display case, cyan register slot, yellow phone slot in `LobbyDisplayCaseShell`. Debug banners updated in `LoungeCompositeTvPlay` and `LobbySceneHotspots`.
 
 **Conventions:** Reuse `?sceneHitDebug=1` for all scene QA overlays (shelves, chandelier, TV, display case); do not add separate debug flags.
+
+---
+
+## 2026-06-03 — PSA chat: brand red bullets instead of hyphen lists
+
+**Context:** User wanted PSA response outline dashes (`- ITEM`) replaced with tiny red bullet points matching `/brand/terms` (`BrandTermsBody`).
+
+**Changes:** New `renderPsaAssistantBubbleText` in `src/utils/psaBubbleText.tsx` — parses lines starting with `- ` into `<p class="psa-chat-bullet">` rows with red `•` (`#EB1C24`, 12px left padding). Price highlighting still via `renderPsaPriceHighlightedText`. Wired in `PsaChatPanel.tsx`; CSS in `psaAssistant.css`. API still emits `- ` markers in `psaInstructions.ts`; only display layer changed.
