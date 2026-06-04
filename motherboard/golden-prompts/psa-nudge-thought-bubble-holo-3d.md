@@ -78,8 +78,7 @@ AVOID: rounded rectangle chat bubble, pill shape, square container, sharp 90° c
 
 - Overlay **Bohemy lowercase** headline + Futura gray subline in CSS/HTML — do not rely on baked text in the PNG unless generating marketing stills.
 - Prefer **slow pulse** animation (4–5s ease-in-out opacity/scale on glow) over rotating conic gradients (causes square clipping in CSS).
-- Asset path suggestion: `public/assets/psa-nudge-thought-bubble-holo.png` (or WebP + `@2x`).
-- Bump `PSA_NUDGE_ASSET_VERSION` (or similar) if adding a cache-bust constant when wired in.
+- Asset path: `public/assets/psa-nudge-thought-bubble.png` — bump `PSA_NUDGE_BUBBLE_ASSET_VERSION` in `psaConfig.ts` when replacing (v1 wired).
 
 ---
 

@@ -24571,6 +24571,7 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+<<<<<<< HEAD
 ## 2026-06-03 — Lobby lounge arrow: restore forward navigation after scene-lock
 
 **Context:** After scene-locking transition to viewport portal, lobby → lounge arrow stopped completing navigation (overlay stuck, carousel never advanced).
@@ -24578,3 +24579,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** **`SceneViewportPortal`** could mount **`LobbyLoungeTransitionHost`** after `active` flipped true; **`useSceneCoverVideoPlayback`** bailed when `videoRef.current` was null and never retried, so **`onComplete`** never ran and **`roomTransitionOverlay`** stayed set.
 
 **Fix:** **`SceneViewportOverlay`** — inline `absolute` layer inside **`SceneCarouselViewportStage`** (transition stays scene-locked, always in React tree). Playback hook waits for `<video>` via `requestAnimationFrame` before starting. Lobby host always on lobby slide (forward + warm); lounge host only for reverse.
+=======
+## 2026-06-04 — PSA nudge: 3D thought bubble PNG integrated
+
+**Context:** User supplied Supabase 3D holo thought bubble (`image (15).png`) to replace disliked CSS nudge.
+
+**Changes:** Saved `public/assets/psa-nudge-thought-bubble.png` (1360×1360 RGBA); `PSA_NUDGE_BUBBLE_SRC` + `PSA_NUDGE_BUBBLE_ASSET_VERSION=1` in `psaConfig.ts`. `PsaAssistantWidget` renders `<img>` + overlaid text; removed CSS shell/face/holo-ring/tail. Slow pulse on art + float animation retained.
+
+>>>>>>> a4edd907 (Docs: PSA 3D nudge bubble asset integrated)
