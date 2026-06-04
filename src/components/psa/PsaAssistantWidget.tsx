@@ -434,28 +434,30 @@ export default function PsaAssistantWidget() {
               aria-label="Close PSA chat"
               onClick={handleCloseChat}
             />
-            <PsaChatPanel
-              messages={messages}
-              isSending={isSending}
-              isLoadingHistory={isLoadingHistory}
-              usageLabel={usageLabel}
-              panelQuickReplies={panelQuickReplies}
-              historyOpen={historyOpen}
-              historyAvailable={historyAvailable}
-              threadList={threadList}
-              activeThreadId={threadId}
-              onClose={handleCloseChat}
-              onSend={handleSend}
-              onNewChat={() => void startNewThread()}
-              onOpenHistory={() => void openHistory()}
-              onCloseHistory={closeHistory}
-              onSelectThread={(id) => void switchThread(id)}
-              onArchiveThread={(id) => void archiveThread(id)}
-              onDeleteThread={(id) => void removeThread(id)}
-              onInputFocusChange={setIsInputFocused}
-              onInputTextChange={setInputHasText}
-              initialInput={prefillInput}
-            />
+            <div className="psa-chat-panel-wrap">
+              <PsaChatPanel
+                messages={messages}
+                isSending={isSending}
+                isLoadingHistory={isLoadingHistory}
+                usageLabel={usageLabel}
+                panelQuickReplies={panelQuickReplies}
+                historyOpen={historyOpen}
+                historyAvailable={historyAvailable}
+                threadList={threadList}
+                activeThreadId={threadId}
+                onClose={handleCloseChat}
+                onSend={handleSend}
+                onNewChat={() => void startNewThread()}
+                onOpenHistory={() => void openHistory()}
+                onCloseHistory={closeHistory}
+                onSelectThread={(id) => void switchThread(id)}
+                onArchiveThread={(id) => void archiveThread(id)}
+                onDeleteThread={(id) => void removeThread(id)}
+                onInputFocusChange={setIsInputFocused}
+                onInputTextChange={setInputHasText}
+                initialInput={prefillInput}
+              />
+            </div>
           </>
         ) : null}
         <div
