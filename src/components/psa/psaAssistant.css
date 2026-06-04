@@ -542,6 +542,7 @@
   flex-direction: column;
   align-items: center;
   overflow: visible;
+  transform: translateX(-10px);
 }
 
 .psa-nudge-chip {
