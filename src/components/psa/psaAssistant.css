@@ -469,18 +469,21 @@
   background: rgba(255, 255, 255, 0.75);
   padding: 8px 10px;
   cursor: pointer;
+  text-transform: uppercase;
 }
 
 .psa-chat-card-title {
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 10px;
   color: #000;
+  text-transform: uppercase;
 }
 
 .psa-chat-card-meta {
   font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
   font-size: 9px;
   color: #808080;
+  text-transform: uppercase;
 }
 
 .psa-chat-card-body {
@@ -488,6 +491,7 @@
   font-size: 9px;
   color: #444;
   line-height: 1.35;
+  text-transform: uppercase;
 }
 
 .psa-chat-card-cta {
