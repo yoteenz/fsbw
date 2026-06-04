@@ -48,7 +48,7 @@ type TransitionMediaProps = {
 };
 
 /**
- * Full-viewport `contain` + `center top` — same geometry as lobby/lounge carousel slides.
+ * Full-viewport `cover` + `center top` — same geometry as lobby/lounge carousel slides.
  * Black letterbox (no transparent bands) so the slide does not peek through at play start.
  */
 function LobbyLoungeTransitionMedia({

@@ -34,7 +34,7 @@ export const LOUNGE_TV_ANIMATION_LETTERBOX_BOUNCE_PAD_PX = 0;
  */
 export const LOUNGE_TV_ANIMATION_MEDIA_OFFSET_Y_PX = -2;
 
-/** Open + reverse — `contain` + top anchor; letterbox bands use black (see shell styles). */
+/** Open + reverse — `cover` + top anchor (matches lounge slide). */
 export function loungeTvAnimationCoverPosition(
   _direction: LoungeTvAnimationDirection = 'forward',
 ): string {
@@ -47,7 +47,7 @@ export function loungeTvAnimationCoverPosition(
 export const LOUNGE_TV_ANIMATION_LETTERBOX_BG = '#000000';
 
 /**
- * Full-viewport clip — `contain` + {@link loungeTvAnimationCoverPosition}; black letterbox avoids side/bottom strips.
+ * Full-viewport clip — `cover` + {@link loungeTvAnimationCoverPosition}; matches final-lounge composite.
  */
 export function loungeTvAnimationMediaLayerStyle(
   direction: LoungeTvAnimationDirection = 'forward',
@@ -57,7 +57,7 @@ export function loungeTvAnimationMediaLayerStyle(
     inset: 0,
     width: '100%',
     height: '100%',
-    objectFit: 'contain',
+    objectFit: 'cover',
     objectPosition: loungeTvAnimationCoverPosition(direction),
     pointerEvents: 'none',
   };
@@ -122,7 +122,7 @@ export function loungeTvAnimationFullBleedPosterStyle(posterSrc: string): React.
     position: 'absolute',
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: loungeTvAnimationCoverPosition('forward'),
     backgroundRepeat: 'no-repeat',
     pointerEvents: 'none',
@@ -136,7 +136,7 @@ export function loungeTvAnimationPosterInFrameStyle(
   return {
     ...loungeTvAnimationMediaLayerStyle(direction),
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: loungeTvAnimationCoverPosition(direction),
     backgroundRepeat: 'no-repeat',
   };

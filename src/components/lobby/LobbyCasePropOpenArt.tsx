@@ -44,7 +44,7 @@ export function LobbyCasePropOpenArt({
       style={{
         position: 'absolute',
         ...rectToPercentStyle(displayRect),
-        objectFit: 'contain',
+        objectFit: 'cover',
         objectPosition: 'center bottom',
         zIndex: LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX,
         pointerEvents: 'none',

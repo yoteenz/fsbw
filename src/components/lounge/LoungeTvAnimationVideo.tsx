@@ -149,7 +149,7 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
               position: 'absolute',
               inset: 0,
               backgroundImage: `url(${poster})`,
-              backgroundSize: 'contain',
+              backgroundSize: 'cover',
               backgroundPosition: loungeTvAnimationCoverPosition(direction),
               backgroundRepeat: 'no-repeat',
               pointerEvents: 'none',
