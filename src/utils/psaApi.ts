@@ -59,6 +59,7 @@ export type PsaThreadSummary = {
   updatedAt: string;
   preview: string | null;
   archived?: boolean;
+  threadSummary?: string | null;
 };
 
 export type PsaStoredMessage = {

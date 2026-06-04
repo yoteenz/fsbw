@@ -8,6 +8,11 @@ import {
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
 import { formatPsaMessageRouteDisplay } from '../../utils/psaRouteDisplay';
 import { renderPsaAssistantBubbleText } from '../../utils/psaBubbleText';
+import {
+  psaActiveHistoryTitle,
+  psaArchivedHistoryTitle,
+  psaHistoryPreviewLine,
+} from '../../utils/psaThreadHistoryDisplay';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaChatCard } from '../../utils/psaApi';
 import type { PsaChatMessage } from './usePsaChat';
@@ -21,7 +26,13 @@ type PsaChatPanelProps = {
   historyOpen?: boolean;
   historyArchivedView?: boolean;
   historyAvailable?: boolean;
-  threadList?: { id: string; title: string | null; updatedAt: string; preview: string | null }[];
+  threadList?: {
+    id: string;
+    title: string | null;
+    updatedAt: string;
+    preview: string | null;
+    threadSummary?: string | null;
+  }[];
   activeThreadId?: string | null;
   onClose: () => void;
   onSend: (text: string) => Promise<{ premiumRequired?: boolean } | void>;
@@ -378,11 +389,17 @@ export default function PsaChatPanel({
             ) : (
               threadList.map((thread) => {
                 const isRenaming = renamingThreadId === thread.id;
-                const hasCustomTitle = Boolean(thread.title?.trim());
-                const displayTitle = hasCustomTitle
-                  ? thread.title!.trim()
-                  : thread.preview?.trim() || 'PSA CHAT';
-                const previewText = hasCustomTitle ? thread.preview?.trim() ?? '' : '';
+                const previewLine = psaHistoryPreviewLine(thread.preview);
+                const displayTitle = historyArchivedView
+                  ? psaArchivedHistoryTitle({
+                      title: thread.title,
+                      firstUserMessage: thread.preview,
+                      threadSummary: thread.threadSummary ?? null,
+                    })
+                  : psaActiveHistoryTitle({
+                      title: thread.title,
+                      firstUserMessage: thread.preview,
+                    });
                 return (
                 <div key={thread.id} className="psa-chat-history-entry">
                   <div className="psa-chat-history-card-wrap">
@@ -406,8 +423,8 @@ export default function PsaChatPanel({
                             }
                           }}
                         />
-                        {previewText ? (
-                          <span className="psa-chat-history-item-preview">{previewText}</span>
+                        {previewLine ? (
+                          <span className="psa-chat-history-item-preview">{previewLine}</span>
                         ) : (
                           <span className="psa-chat-history-item-preview" aria-hidden="true">
                             {'\u00A0'}
@@ -421,8 +438,8 @@ export default function PsaChatPanel({
                         onClick={() => onSelectThread?.(thread.id)}
                       >
                         <span className="psa-chat-history-item-title">{displayTitle}</span>
-                        {previewText ? (
-                          <span className="psa-chat-history-item-preview">{previewText}</span>
+                        {previewLine ? (
+                          <span className="psa-chat-history-item-preview">{previewLine}</span>
                         ) : (
                           <span className="psa-chat-history-item-preview" aria-hidden="true">
                             {'\u00A0'}
