@@ -157,6 +157,7 @@ export function appendOrderTrackingClientNotification(
     const merged = mergeAccountNotifications([...stored, n], account);
     localStorage.setItem(key, JSON.stringify(merged));
     window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    window.dispatchEvent(new Event('notificationsUpdated'));
   } catch {
     /* ignore */
   }

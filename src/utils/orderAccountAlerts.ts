@@ -198,6 +198,7 @@ export function appendConsultOfferCompleteAccountAlert(
     const merged = [item, ...existing.filter((n) => n.id !== id)];
     localStorage.setItem(key, JSON.stringify(merged));
     window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    window.dispatchEvent(new Event('notificationsUpdated'));
     window.dispatchEvent(new Event('storage'));
   } catch {
     /* ignore */
@@ -220,6 +221,7 @@ export function appendOrderReceivedAccountAlert(
     const merged = [next, ...existing.filter((n) => n.id !== next.id)];
     localStorage.setItem(key, JSON.stringify(merged));
     window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    window.dispatchEvent(new Event('notificationsUpdated'));
     window.dispatchEvent(new Event('storage'));
   } catch {
     /* ignore */

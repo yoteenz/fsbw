@@ -1,13 +1,17 @@
 /**
- * Proactive PSA FAB nudges — unsigned forms, consults, stock, BAW drafts, order celebrations.
+ * Proactive PSA FAB nudges — unsigned forms, consults, stock, order updates, profile alerts.
+ * Only surfaces actionable *new* alerts; no always-on session nudges (e.g. BAW drafts).
  */
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
-import { buildConsultViewOfferOrdersHref } from './orderAccountAlerts';
+import {
+  buildConsultViewOfferOrdersHref,
+  getNotificationsStorageKeyForUserEmail,
+  type StoredNotification,
+} from './orderAccountAlerts';
 import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { getWigUnitProductRoute } from './wigUnitProductRoutes';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
-import { detectPsaBawResumeTarget } from './psaBawDraft';
 import {
   detectPsaOrderCelebration,
   markOrderCelebrated,
@@ -18,8 +22,9 @@ export type PsaProactiveNudgeKind =
   | 'unsigned_form'
   | 'expiring_consult'
   | 'stock_alert'
-  | 'baw_draft'
-  | 'order_celebration';
+  | 'order_celebration'
+  | 'order_update'
+  | 'profile_alert';
 
 export type PsaProactiveNudge = {
   id: string;
@@ -33,6 +38,10 @@ export type PsaProactiveNudge = {
   /** For order celebrations — mark seen when nudge shown. */
   celebrationMeta?: { orderId: string; kind: PsaOrderCelebrationKind };
 };
+
+const STATIC_ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
+
+const ORDER_STATUS_NUDGE_STATUSES = ['SHIPPED', 'PREPARING', 'CONFIRMED'] as const;
 
 function readUserOrders(email: string): Record<string, unknown>[] {
   try {
@@ -57,6 +66,19 @@ function readCartItems(): Record<string, unknown>[] {
   }
 }
 
+function readStoredNotifications(email: string): StoredNotification[] {
+  try {
+    const key = getNotificationsStorageKeyForUserEmail(email);
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const items = JSON.parse(raw) as StoredNotification[];
+    if (!Array.isArray(items)) return [];
+    return items.filter((n) => n && typeof n === 'object' && typeof n.id === 'string');
+  } catch {
+    return [];
+  }
+}
+
 function orderNum(order: Record<string, unknown>): string {
   return String(order.orderNumber ?? order.id ?? '').trim();
 }
@@ -69,8 +91,148 @@ function hoursUntil(ms: number): number {
   return Math.max(0, Math.ceil((ms - Date.now()) / (60 * 60 * 1000)));
 }
 
+function isStaticAccountNotification(n: StoredNotification): boolean {
+  return n.id.startsWith(STATIC_ACCOUNT_NOTIFICATION_PREFIX);
+}
+
+function isStockNotification(n: StoredNotification): boolean {
+  const title = (n.title || '').toUpperCase();
+  return title.includes('BACK IN STOCK') || title.includes('LOW STOCK');
+}
+
+function isOrderNotification(n: StoredNotification): boolean {
+  const title = (n.title || '').toUpperCase();
+  if (n.id.startsWith('order_received_')) return true;
+  if (n.id.startsWith('order_track_')) return true;
+  if (n.id.startsWith('consult_offer_sent_')) return true;
+  if (title.includes('ORDER TRACKING')) return true;
+  if (title.includes('RECEIVED YOUR ORDER')) return true;
+  if (title.includes('YOUR ORDER IS READY')) return true;
+  if (title.includes("WE'VE RECEIVED YOUR ORDER")) return true;
+  return false;
+}
+
+function isProfileMessageNotification(n: StoredNotification): boolean {
+  if (n.id.startsWith('admin_')) return true;
+  if (isStockNotification(n) || isOrderNotification(n)) return false;
+  return true;
+}
+
+function notificationSortAt(n: StoredNotification): number {
+  if (typeof n.sortAt === 'number' && Number.isFinite(n.sortAt)) return n.sortAt;
+  return 0;
+}
+
+function nudgeFromStockNotification(n: StoredNotification): PsaProactiveNudge {
+  const low = (n.title || '').toUpperCase().includes('LOW STOCK');
+  return {
+    id: `notif-stock-${n.id}`,
+    kind: 'stock_alert',
+    priority: 6,
+    headline: low ? 'LOW STOCK ALERT' : 'BACK IN STOCK',
+    body: n.message?.trim() ? n.message.trim().slice(0, 48) : 'ON YOUR WISHLIST',
+    actionPath: n.actionRoute || '/wishlist',
+    actionLabel: n.actionText?.trim() || 'SHOP NOW',
+    prefilledMessage: 'Something on my wishlist changed stock. What should I do?',
+  };
+}
+
+function nudgeFromOrderNotification(n: StoredNotification): PsaProactiveNudge {
+  const title = (n.title || '').trim().toUpperCase();
+  let headline = 'ORDER UPDATE';
+  if (title.includes('TRACKING')) headline = 'ORDER TRACKING UPDATE';
+  else if (title.includes('READY')) headline = 'YOUR ORDER IS READY';
+  else if (title.includes('RECEIVED')) headline = 'ORDER CONFIRMED';
+  else if (title) headline = title.length > 28 ? `${title.slice(0, 28)}…` : title;
+
+  return {
+    id: `notif-order-${n.id}`,
+    kind: 'order_update',
+    priority: 7,
+    headline,
+    body: n.message?.trim() ? n.message.trim().slice(0, 48) : undefined,
+    actionPath: n.actionRoute || '/account/orders',
+    actionLabel: n.actionText?.trim() || 'VIEW ORDER',
+    prefilledMessage: n.message?.trim()
+      ? `Tell me about this order update: ${n.message.trim()}`
+      : 'I have a new order update. What should I know?',
+  };
+}
+
+function nudgeFromProfileNotification(n: StoredNotification): PsaProactiveNudge {
+  const title = (n.title || '').trim();
+  return {
+    id: `notif-profile-${n.id}`,
+    kind: 'profile_alert',
+    priority: 8,
+    headline: 'NEW PROFILE ALERT',
+    body: title ? (title.length > 36 ? `${title.slice(0, 36)}…` : title) : 'VIEW YOUR ALERTS',
+    actionPath: n.actionRoute || '/account/alerts',
+    actionLabel: n.actionText?.trim() || 'VIEW ALERTS',
+    prefilledMessage: title
+      ? `I have a new alert: ${title}. What should I do?`
+      : 'I have a new profile alert. What should I do?',
+  };
+}
+
+function collectNotificationNudges(email: string, nudges: PsaProactiveNudge[]): void {
+  const unread = readStoredNotifications(email)
+    .filter((n) => !n.isRead && !isStaticAccountNotification(n))
+    .sort((a, b) => notificationSortAt(b) - notificationSortAt(a));
+
+  for (const n of unread) {
+    if (isStockNotification(n)) {
+      nudges.push(nudgeFromStockNotification(n));
+      break;
+    }
+  }
+
+  for (const n of unread) {
+    if (isOrderNotification(n)) {
+      nudges.push(nudgeFromOrderNotification(n));
+      break;
+    }
+  }
+
+  for (const n of unread) {
+    if (isProfileMessageNotification(n)) {
+      nudges.push(nudgeFromProfileNotification(n));
+      break;
+    }
+  }
+}
+
+function collectOrderStatusNudges(orders: Record<string, unknown>[], nudges: PsaProactiveNudge[]): void {
+  for (const order of orders) {
+    const status = String(order.status || '').toUpperCase();
+    if (!ORDER_STATUS_NUDGE_STATUSES.includes(status as (typeof ORDER_STATUS_NUDGE_STATUSES)[number])) {
+      continue;
+    }
+    const id = orderId(order);
+    if (!id) continue;
+    const seenKey = `orderStatusSeen_${id}_${status}`;
+    if (localStorage.getItem(seenKey)) continue;
+
+    const num = orderNum(order);
+    const nudgeId = `order-status-${id}-${status}`;
+    nudges.push({
+      id: nudgeId,
+      kind: 'order_update',
+      priority: 7,
+      headline: status === 'SHIPPED' ? "SHE'S ON THE WAY" : 'ORDER UPDATE',
+      body: num || status.replace(/_/g, ' '),
+      actionPath: `/account/orders?orderId=${encodeURIComponent(id)}`,
+      actionLabel: 'VIEW ORDER',
+      prefilledMessage: num
+        ? `My order ${num} status changed to ${status}. What's next?`
+        : `My order status changed to ${status}. What's next?`,
+    });
+    break;
+  }
+}
+
 /** Highest-priority nudge for the PSA FAB (null when none). */
-export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | null {
+export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | null {
   const email = getCurrentUserEmailFromStorage();
   if (!email) return null;
 
@@ -142,26 +304,13 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
     });
   }
 
-  const baw = detectPsaBawResumeTarget(pathname);
-  if (baw) {
-    nudges.push({
-      id: `baw-${baw.unitId}`,
-      kind: 'baw_draft',
-      priority: 4,
-      headline: baw.source === 'draft' ? 'YOUR BAW DRAFT IS SAVED' : 'FINISH YOUR CUSTOMIZATION',
-      body: baw.unitLabel,
-      actionPath: baw.buildPath,
-      actionLabel: 'CONTINUE BAW',
-      prefilledMessage: `Help me finish my ${baw.unitLabel} Build-a-Wig configuration where I left off.`,
-    });
-  }
-
   const celebration = detectPsaOrderCelebration(orders);
   if (celebration) {
     const match = orders.find((o) => orderNum(o) === celebration.orderNumber || orderId(o));
     const id = match ? orderId(match) : celebration.orderNumber;
+    const celebrationId = `celebrate-${celebration.kind}-${id}`;
     nudges.push({
-      id: `celebrate-${celebration.kind}-${id}`,
+      id: celebrationId,
       kind: 'order_celebration',
       priority: 5,
       headline: celebration.headline,
@@ -173,35 +322,8 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
     });
   }
 
-  if (nudges.length === 0) {
-    try {
-      const raw = localStorage.getItem(`notifications_${email.trim().toLowerCase()}`);
-      const items = raw ? (JSON.parse(raw) as { isRead?: boolean; title?: string; actionRoute?: string }[]) : [];
-      const stockNote = Array.isArray(items)
-        ? items.find(
-            (n) =>
-              n &&
-              !n.isRead &&
-              typeof n.title === 'string' &&
-              (n.title.includes('BACK IN STOCK') || n.title.includes('LOW STOCK'))
-          )
-        : null;
-      if (stockNote?.title) {
-        nudges.push({
-          id: `stock-alert-${stockNote.title}`,
-          kind: 'stock_alert',
-          priority: 6,
-          headline: stockNote.title.includes('LOW STOCK') ? 'LOW STOCK ALERT' : 'BACK IN STOCK',
-          body: 'ON YOUR WISHLIST',
-          actionPath: stockNote.actionRoute || '/wishlist',
-          actionLabel: 'SHOP NOW',
-          prefilledMessage: 'Something on my wishlist changed stock. What should I do?',
-        });
-      }
-    } catch {
-      /* ignore */
-    }
-  }
+  collectNotificationNudges(email, nudges);
+  collectOrderStatusNudges(orders, nudges);
 
   nudges.sort((a, b) => a.priority - b.priority);
   const top = nudges[0] ?? null;

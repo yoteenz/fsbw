@@ -7,9 +7,12 @@ const REFRESH_EVENTS = [
   'signInStateChanged',
   'cartUpdated',
   'orderUpdated',
+  'ordersUpdated',
   'notificationsUpdated',
+  'accountCardAlertsViewed',
   PRODUCT_INVENTORY_UPDATED_EVENT,
   'wishlistStockAlertsUpdated',
+  'storage',
 ] as const;
 
 /** Recompute proactive FAB nudge when cart, orders, or alerts change. */

@@ -151,6 +151,7 @@ function appendWishlistStockAlert(
     localStorage.setItem(key, JSON.stringify(merged));
     window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
     window.dispatchEvent(new CustomEvent(WISHLIST_STOCK_ALERTS_UPDATED_EVENT));
+    window.dispatchEvent(new Event('notificationsUpdated'));
     window.dispatchEvent(new Event('storage'));
   } catch {
     /* ignore */

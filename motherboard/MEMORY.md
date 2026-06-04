@@ -25077,3 +25077,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — SHOW CHAT Bohemy text down 4px
 
 **Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`top: 4px`** — black “show chat” copy only; bubble position unchanged.
+
+---
+
+## 2026-06-03 — PSA proactive nudge: alert-driven only (profile / orders / stock)
+
+**Context:** User wanted the PSA FAB proactive nudge bubble to surface **new profile alerts, order updates, back-in-stock**, etc., and to **hide entirely when there is nothing new** — not stay visible at all times (e.g. on every BAW page with a saved draft).
+
+**Changes:**
+- **`src/utils/psaProactiveNudges.ts`:** Removed always-on **`baw_draft`** nudge. Added **`order_update`** (unread order notifications + unseen `SHIPPED`/`PREPARING`/`CONFIRMED` status via `orderStatusSeen_*`) and **`profile_alert`** (unread non-static notifications — skips `acc_*` onboarding rows). Stock alerts from notifications now compete in priority (not fallback-only). Classifies `BACK IN STOCK` / `LOW STOCK`, order-received/tracking/consult/admin alerts.
+- **`src/components/psa/usePsaProactiveNudges.ts`:** Refresh on `ordersUpdated`, `accountCardAlertsViewed`, `storage`.
+- **`orderAccountAlerts.ts`**, **`orderTracking.ts`**, **`wishlistStockAlerts.ts`:** Dispatch **`notificationsUpdated`** when alerts are appended so FAB recomputes.
+
+**Priority (unchanged urgent first):** unsigned form → expiring consult → cart OOS → order celebration → notification stock → order update → profile alert.
+
+**Pushed:** `master` + `preview/mobile`.
