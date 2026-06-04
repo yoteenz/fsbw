@@ -133,6 +133,7 @@ const ProductsPage = lazyWithRetry(() => import('./pages/products/page'), 'Produ
 const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
+const PsaNudgesDebugPage = lazyWithRetry(() => import('./pages/tools/psa-nudges/page'), 'PsaNudgesDebugPage');
 const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 const ShopTextureCategoryProductPage = lazyWithRetry(
   () => import('./pages/shop/texture-category-product/page'),
@@ -823,6 +824,11 @@ function App() {
         <Route path="/tools/gift-card" element={
           <Suspense fallback={<LoadingScreen />}>
             <GiftCardPage />
+          </Suspense>
+        } />
+        <Route path="/tools/psa-nudges" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <PsaNudgesDebugPage />
           </Suspense>
         } />
         {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
