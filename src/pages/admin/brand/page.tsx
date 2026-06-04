@@ -960,7 +960,7 @@ export default function AdminBrand() {
                     className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
                     style={pageActionButtonStyle}
                   >
-                    EDIT PSA NUDGES
+                    EDIT NUDGES
                   </button>
                   <PageActionsBelowCard.Spacer />
                   <button
@@ -969,7 +969,7 @@ export default function AdminBrand() {
                     className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
                     style={pageActionButtonStyle}
                   >
-                    EDIT ACCOUNT ALERTS
+                    EDIT ALERTS
                   </button>
                 </PageActionsBelowCard>
               ) : (
