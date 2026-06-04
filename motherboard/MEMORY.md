@@ -25065,3 +25065,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — PSA chat height −50%; SHOW CHAT up 40px
 
 **Changes:** Chat panel height **`500px → 250px`**, viewport term halved (`(100dvh - 160px) / 2`). Width unchanged. SHOW CHAT **`bottom: -40px`** (+40px up from −80px).
+
+---
+
+## 2026-06-04 — PSA chat height +20%; SHOW CHAT up 16px
+
+**Changes:** Panel height **`250px → 300px`** (+20%), viewport **`× 0.6`** (was `/ 2`). SHOW CHAT **`bottom: -24px`** (+16px up from −40px).
