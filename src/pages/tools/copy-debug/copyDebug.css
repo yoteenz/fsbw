@@ -267,6 +267,66 @@
   vertical-align: middle;
 }
 
+.copy-debug__card-actions--secondary {
+  margin-top: 0;
+}
+
+.copy-debug__card-actions--secondary .copy-debug__btn {
+  flex: 1;
+  font-size: 8px;
+}
+
+.copy-debug__card--draft {
+  border-style: dashed;
+}
+
+.copy-debug__category--custom {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #111;
+}
+
+.copy-debug__empty {
+  font-size: 11px;
+  color: #666;
+  padding: 12px 0 24px;
+}
+
+.copy-debug__label-input {
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 11px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  padding: 0 0 2px;
+  min-width: 120px;
+  max-width: 100%;
+}
+
+.copy-debug__label-input:focus {
+  outline: none;
+  border-bottom-color: #eb1c24;
+}
+
+.copy-debug__select {
+  width: 100%;
+  font-size: 10px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.copy-debug__btn--danger {
+  border-color: #eb1c24;
+  color: #eb1c24;
+}
+
+.copy-debug__btn--danger:hover {
+  background: #eb1c24;
+  color: #fff;
+}
+
 .copy-debug__btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
