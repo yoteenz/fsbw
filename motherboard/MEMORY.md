@@ -24513,3 +24513,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** PSA chat dismisses via outside tap, Escape, or avatar toggle — no header close icon.
 
+---
+
+## 2026-06-03 — PSA proactive nudge: centered + smaller text
+
+**Context:** User wanted the proactive nudge thought bubble centered over the PSA avatar and all nudge text reduced by 2px.
+
+**Changes:** `psaAssistant.css` — nudge chip `left: 50%` + `translateX(-50%)` (float animation updated); content/text center-aligned; thought tail centered below bubble; headline **13px → 11px**, body **9px → 7px**.
+
