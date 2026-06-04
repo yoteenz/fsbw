@@ -353,6 +353,7 @@
   align-self: flex-start;
   border: 1.3px solid rgba(0, 0, 0, 0.15);
   color: #000;
+  white-space: normal;
 }
 
 .psa-chat-bubble-assistant .psa-chat-price {
@@ -387,7 +388,31 @@
 
 .psa-chat-bubble-body {
   display: block;
-  white-space: pre-wrap;
+  white-space: normal;
+}
+
+.psa-chat-paragraph {
+  display: block;
+}
+
+.psa-chat-paragraph + .psa-chat-paragraph,
+.psa-chat-paragraph + .psa-chat-bullet,
+.psa-chat-bullet + .psa-chat-paragraph,
+.psa-chat-bullet + .psa-chat-bullet {
+  margin-top: 4px;
+}
+
+/* Match `/brand/terms` tiny red bullets (`BrandTermsBody`). */
+.psa-chat-bullet {
+  margin: 0;
+  padding: 0 0 0 12px;
+  font: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+}
+
+.psa-chat-bullet-mark {
+  color: #eb1c24;
 }
 
 .psa-chat-route-tail {
