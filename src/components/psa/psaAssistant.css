@@ -181,36 +181,52 @@
 }
 
 .psa-chat-header {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 12px 12px 8px;
+  padding: 12px 40px 8px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   background: transparent;
 }
 
-.psa-chat-header-actions {
+.psa-chat-header-side {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
 }
 
-.psa-chat-header-btn {
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  background: rgba(255, 255, 255, 0.75);
-  color: #000;
-  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  padding: 4px 6px;
+.psa-chat-header-side--left {
+  left: 10px;
+}
+
+.psa-chat-header-side--right {
+  right: 10px;
+}
+
+.psa-chat-header-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  line-height: 1.2;
+  line-height: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.psa-chat-header-icon-btn:hover {
+  opacity: 0.75;
 }
 
 .psa-chat-header-text {
   min-width: 0;
+  flex: 1;
+  text-align: center;
 }
 
 .psa-chat-subtitle {
@@ -222,6 +238,7 @@
   text-transform: uppercase;
   font-weight: inherit;
   line-height: 1.2;
+  text-align: center;
 }
 
 .psa-chat-usage {
@@ -231,6 +248,7 @@
   font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
   letter-spacing: 0.04em;
   color: #808080;
+  text-align: center;
 }
 
 .psa-chat-backdrop {
@@ -441,17 +459,20 @@
 .psa-chat-input {
   flex: 1;
   min-width: 0;
-  border: 1.3px solid #9ca3af;
-  background: rgba(255, 255, 255, 0.85);
+  border: 1.3px solid rgba(235, 28, 36, 0.75);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   padding: 8px 10px;
-  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
-  font-size: 11px;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 10px;
+  color: #000;
   outline: none;
 }
 
 .psa-chat-input::placeholder {
   color: #808080;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.04em;
 }
 
@@ -531,9 +552,9 @@
 }
 
 .psa-chat-quick-replies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
   padding: 0 12px 8px;
 }
 
@@ -541,13 +562,16 @@
   border: 1.3px solid #eb1c24;
   background: transparent;
   color: #eb1c24;
-  padding: 6px 10px;
+  padding: 4px 3px;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
-  font-size: 9px;
+  font-size: 7px;
+  line-height: 1.25;
   cursor: pointer;
   max-width: 100%;
-  text-align: left;
+  min-width: 0;
+  text-align: center;
   text-transform: uppercase;
+  word-break: break-word;
 }
 
 .psa-nudge-badge {
