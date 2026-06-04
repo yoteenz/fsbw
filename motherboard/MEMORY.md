@@ -25246,13 +25246,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `src/pages/admin/brand/page.tsx`.
 
-
 ---
 
-## 2026-06-04 — Brand menu labels: Terms + Members Only
+## 2026-06-03 — Brand ALERTS: alerts button above nudges
 
-**Context:** User requested BRAND tab menu copy: Terms of Service → Terms (menu only); Become a Member → Members Only (menu + `/brand/member` red card header).
+**Context:** Same admin Brand ALERTS copy-editor footer; user wanted button order changed.
 
-**Changes:** `src/constants/brandMenu.ts` — `label: 'TERMS'` with `cardTitle: 'TERMS OF SERVICE'` for terms page header; member `label` + `cardTitle: 'MEMBERS ONLY'` (breadcrumb still `BRAND > MEMBERSHIP` via `navTitle`).
+**Decisions / outcomes:** Below **SEND NOTIFICATION**, order is now **EDIT ALERTS** then **EDIT NUDGES** (was nudges then alerts).
 
-**Pushed:** `master` + `preview/mobile`.
+**Changes:** `src/pages/admin/brand/page.tsx`.
+
