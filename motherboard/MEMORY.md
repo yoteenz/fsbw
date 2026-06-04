@@ -25278,6 +25278,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-03 — PSA chat panel UI restyle
+
+**Context:** User requested PSA chat box updates: input styled like SEND (red outline, matching 10px text), quick replies 3 per row (smaller chips/text), centered **PERSONAL SLAY ASSISTANT** header, history on left and new on right as red icons (not text buttons).
+
+**Decisions / outcomes:**
+- Input: red border + glass background matching `.psa-chat-send`; **10px** Futura Medium (placeholder too).
+- Quick replies: **3-column grid**, **7px** centered text, tighter padding.
+- Header: centered title/usage; **history/back** icon absolute left, **new (+)** icon absolute right.
+- Inline red SVG icons in `PsaChatPanel.tsx`; removed `.psa-chat-header-btn` text boxes.
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
+
+---
+
 ## 2026-06-03 — PSA chat panel 30px up
 
 **Context:** User asked to move the open PSA chat box upward only (avatar/nudge stack unchanged).
@@ -25285,4 +25299,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** `.psa-chat-panel` transform **`translate(-20px, -42px)`** (was `-12px` vertical — 30px higher).
 
 **Changes:** `src/components/psa/psaAssistant.css`.
+
+---
+
+## 2026-06-03 — PSA chat panel UI restyle
+
+**Context:** User requested PSA chat box updates: input styled like SEND (red outline, matching 10px text), quick replies 3 per row (smaller chips/text), centered **PERSONAL SLAY ASSISTANT** header, history on left and new on right as red icons (not text buttons).
+
+**Decisions / outcomes:**
+- Input: red border + glass background matching `.psa-chat-send`; **10px** Futura Medium (placeholder too).
+- Quick replies: **3-column grid**, **7px** centered text, tighter padding.
+- Header: centered title/usage; **history/back** icon absolute left, **new (+)** icon absolute right.
+- Inline red SVG icons in `PsaChatPanel.tsx`; removed `.psa-chat-header-btn` text boxes.
+
+**Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
 
