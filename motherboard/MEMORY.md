@@ -24529,3 +24529,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Fix:** Removed `overflow: hidden` from `.psa-nudge-chip-shell` (was clipping spinning conic ring). Added `.psa-nudge-chip-face` inner wrapper with overflow hidden for glass/scanlines only. Holo ring inset `-2px` (avatar-matched, not `-40%`). Replaced rectangular `box-shadow` with feathered `filter: drop-shadow`; outer chip padding + `overflow: visible` on widget/nudge. `PsaAssistantWidget.tsx` markup updated for face layer.
 
+---
+
+## 2026-06-03 — PSA avatar status dot: green open / red closed
+
+**Context:** User wanted the FAB indicator dot visible when chat is open (green = active) and red when closed/inactive — previously hidden when panel open.
+
+**Changes:** `PsaAvatarTrigger.tsx` — always render `.psa-nudge-badge`; `.psa-nudge-badge-active` when `isOpen`. Green `#22c55e` glow when chat open, red `#eb1c24` when closed. Removed `showNudgeBadge` prop tied to proactive nudge only.
+
