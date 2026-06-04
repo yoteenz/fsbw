@@ -11,7 +11,12 @@ export type BrandMenuItem = {
 export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
   { label: 'ABOUT US', route: '/brand/about', cardTitle: 'MISSION STATEMENT' },
   { label: 'CONTACT US', route: '/brand/contact', cardTitle: 'SUBMISSION FORM', navTitle: 'CONTACT' },
-  { label: 'BECOME A MEMBER', route: '/brand/member', navTitle: 'MEMBERSHIP' },
+  {
+    label: 'MEMBERS ONLY',
+    route: '/brand/member',
+    cardTitle: 'MEMBERS ONLY',
+    navTitle: 'MEMBERSHIP',
+  },
   { label: 'REVIEWS', route: '/brand/reviews' },
   { label: 'CAREERS', route: '/brand/careers' },
   {
