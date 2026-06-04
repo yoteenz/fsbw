@@ -24553,3 +24553,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip-headline` — `font-family: 'Bohemy', sans-serif`; `text-transform: lowercase`; `font-weight: 400`.
 
+---
+
+## 2026-06-03 — PSA nudge: pulse glow, no spinning ring
+
+**Context:** User reported proactive nudge still had visible squared corners from holo container; spinning holo ring was too distracting/overwhelming — wanted slow pulsate instead.
+
+**Changes:** Removed `.psa-nudge-chip-holo-ring` (spinning conic) and scanlines from widget/CSS. Static holo gradient border on `.psa-nudge-chip-face` (padding-box/border-box glass); soft radial `::after` glow on shell; `psa-nudge-holo-pulse` + `psa-nudge-glow-pulse` (4.5s ease) replace spin. No `filter: drop-shadow` on shell (was boxing the glow).
+
