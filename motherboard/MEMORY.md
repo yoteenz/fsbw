@@ -24503,3 +24503,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx` — removed `PSA_CHAT_TITLE` h2; subtitle is sole header (`h2.psa-chat-subtitle`). `psaAssistant.css` — removed `.psa-chat-title` styles; subtitle margin reset to top of header block.
 
+---
+
+## 2026-06-03 — PSA chat: tap outside to close (no X button)
+
+**Context:** User wanted the X close icon removed from the chat header; tapping outside the chat box should collapse it instead.
+
+**Changes:** Removed `.psa-chat-close` button from `PsaChatPanel.tsx`. `PsaAssistantWidget.tsx` — transparent full-viewport `psa-chat-backdrop` on open closes chat (+ resets history view); Escape key also closes. Avatar stays above backdrop so FAB toggle still works.
+
+**Conventions:** PSA chat dismisses via outside tap, Escape, or avatar toggle — no header close icon.
+
