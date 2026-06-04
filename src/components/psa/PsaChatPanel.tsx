@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 
 import { useNavigate } from 'react-router-dom';
 import {
   PSA_CHAT_SUBTITLE,
-  PSA_CHAT_TITLE,
   PSA_STARTER_QUICK_REPLIES,
 } from '../../constants/psaConfig';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
