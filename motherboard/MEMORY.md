@@ -24801,3 +24801,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** FAB has three visible states — expanded closed (TAP TO CHAT / CONTINUE CHAT), expanded open (HIDE PSA CHAT), collapsed (SHOW PSA CHAT only).
 
+---
+
+## 2026-06-04 — PSA nudge + hide/show label tweak
+
+**Context:** User asked to move nudge down 6px and shorten collapsed/open FAB labels from HIDE/SHOW PSA CHAT to HIDE/SHOW CHAT.
+
+**Changes:** `.psa-nudge-chip` `margin-bottom` `-5px` → `-11px`. `PSA_HIDE_CHAT_CTA` / `PSA_SHOW_CHAT_CTA` → `HIDE CHAT` / `SHOW CHAT`; matching aria-labels on FAB triggers.
+
