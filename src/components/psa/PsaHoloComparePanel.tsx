@@ -11,13 +11,20 @@ import './psaAssistant.css';
 const SAMPLE_HEADLINE = 'finish your customization';
 const SAMPLE_BODY = 'beach wave';
 
-function CompareColumn({ optionId, glowSrc }: { optionId: number; glowSrc: string }) {
-  const pngOnly = optionId === 3;
+function CompareColumn({
+  optionId,
+  label,
+  glowSrc,
+}: {
+  optionId: number;
+  label: string;
+  glowSrc: string;
+}) {
   return (
-    <div
-      className={`psa-holo-compare-column${pngOnly ? ' psa-holo-compare-column--png-only' : ''}`}
-    >
-      <span className="psa-holo-compare-label">OPTION {optionId}</span>
+    <div className="psa-holo-compare-column">
+      <span className="psa-holo-compare-label">
+        OPTION {optionId} · {label}
+      </span>
       <div className="psa-holo-compare-stack">
         <div className="psa-holo-compare-nudge" aria-hidden>
           <img className="psa-nudge-chip-art" src={PSA_NUDGE_BUBBLE_SRC} alt="" draggable={false} />
@@ -62,10 +69,12 @@ export default function PsaHoloComparePanel() {
           EXIT
         </button>
       </div>
-      <p className="psa-holo-compare-hint">Same PSA + nudge on each — only the glow background differs.</p>
+      <p className="psa-holo-compare-hint">
+        Same PSA + nudge on each — option 1 is the current live glow, option 2 is the new draft.
+      </p>
       <div className="psa-holo-compare-row">
         {PSA_HOLO_GLOW_COMPARE_OPTIONS.map((opt) => (
-          <CompareColumn key={opt.id} optionId={opt.id} glowSrc={opt.src} />
+          <CompareColumn key={opt.id} optionId={opt.id} label={opt.label} glowSrc={opt.src} />
         ))}
       </div>
     </div>
