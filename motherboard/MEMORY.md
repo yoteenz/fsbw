@@ -24707,3 +24707,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** All inline code/path examples inside `buildPsaInstructions` template must use `\`` escapes (same rule as `>>QUICK:` line).
 
+---
+
+## 2026-06-04 — PSA holo glow: +5% size bump
+
+**Context:** User requested 5% increase after 144% setting.
+
+**Changes:** `.psa-avatar-holo-glow-rotator` width `144%` → `151%`.
+
