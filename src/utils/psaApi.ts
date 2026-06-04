@@ -142,14 +142,21 @@ async function getPsaAuthToken(): Promise<string | null> {
 
 function psaNonJsonErrorMessage(res: Response, bodyPreview: string): string {
   const status = res.status;
-  const looksLikeHtml = bodyPreview.trimStart().startsWith('<');
+  const preview = bodyPreview.trim();
+  const looksLikeHtml = preview.startsWith('<');
+  if (
+    preview.includes('FUNCTION_INVOCATION_FAILED') ||
+    preview.includes('A server error has occurred')
+  ) {
+    return 'PSA could not start on the server. Try again in a moment — if this keeps happening, the site may need a redeploy.';
+  }
   if (status === 504 || status === 502 || (status >= 500 && looksLikeHtml)) {
     return 'PSA took too long to respond. Try a shorter question or ask again in a moment.';
   }
   if (status === 503) {
     return 'PSA is temporarily unavailable. Try again in a moment.';
   }
-  if (!bodyPreview.trim()) {
+  if (!preview) {
     return 'PSA returned an empty response. Try again in a moment.';
   }
   return 'PSA returned an unexpected response. Try again in a moment.';

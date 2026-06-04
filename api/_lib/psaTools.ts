@@ -5,7 +5,7 @@
 import { getSupabaseUser } from './supabase.js';
 import { summarizeOrderForPsa, summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
 import { PSA_PRODUCTS } from './psaKnowledge.js';
-import { resolveQuote, type QuoteLineInput } from './pricing/resolveQuote.js';
+import { resolveCheckoutQuoteLines, type QuoteLineInput } from './pricing/resolveQuote.js';
 import type { PsaPremiumProfile } from './psaPremiumCheck.js';
 import {
   canAccessLiveOrderTracking,
@@ -484,7 +484,7 @@ export async function executePsaActionTool(
           bookingStyle: typeof args.bookingStyle === 'string' ? args.bookingStyle : undefined,
           bookingAddonIds: Array.isArray(args.bookingAddonIds) ? (args.bookingAddonIds as string[]) : [],
         };
-        const quote = resolveQuote([quoteLine]);
+        const quote = resolveCheckoutQuoteLines([quoteLine]);
         const priceUsd = quote.totalCents / 100;
         const line = {
           id: `appt-${Date.now()}`,

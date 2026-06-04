@@ -286,7 +286,7 @@ export default function PsaChatPanel({
         ) : null}
       </div>
 
-      {quickReplies.length > 0 && !isSending ? (
+      {quickReplies.length > 0 && !isSending && !isLoadingHistory ? (
         <div className="psa-chat-quick-replies" aria-label="Suggested replies">
           {quickReplies.map((chip) => (
             <button
