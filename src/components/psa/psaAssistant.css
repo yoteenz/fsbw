@@ -162,21 +162,11 @@
   }
 }
 
-.psa-chat-panel-wrap {
-  transform: translateY(-20px);
-  width: min(170px, calc((100vw - 24px) / 2));
-  max-height: min(260px, calc((100dvh - 140px) / 2));
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
 .psa-chat-panel {
   position: relative;
   z-index: 1;
   width: min(340px, calc(100vw - 24px));
   max-height: min(520px, calc(100dvh - 140px));
-  transform: scale(0.5);
-  transform-origin: top right;
   display: flex;
   flex-direction: column;
   border: 1.3px solid #000;

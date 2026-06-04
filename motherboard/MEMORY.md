@@ -24999,3 +24999,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-03 — PSA chat 50% scale + 20px up
 
 **Changes:** `psa-chat-panel-wrap` — `translateY(-20px)` moves chat up only (avatar unchanged). Inner `.psa-chat-panel` uses `scale(0.5)` + `transform-origin: top right` inside half-size clip wrap (170×260 max). Proportional shrink of all chat UI.
+
+---
+
+## 2026-06-03 — PSA chat restored after scale regression
+
+**Context:** `scale(0.5)` + `psa-chat-panel-wrap` with `overflow: hidden` clipped/hid the open chat entirely.
+
+**Changes:** Reverted wrap + scale — restored direct `PsaChatPanel` at **`min(340px, calc(100vw - 24px))`** width, **`min(520px, calc(100dvh - 140px))`** max-height, no transform. FAB position unchanged (viewport bottom-right).
