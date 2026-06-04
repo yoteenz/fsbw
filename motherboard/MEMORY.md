@@ -24561,3 +24561,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** Removed `.psa-nudge-chip-holo-ring` (spinning conic) and scanlines from widget/CSS. Static holo gradient border on `.psa-nudge-chip-face` (padding-box/border-box glass); soft radial `::after` glow on shell; `psa-nudge-holo-pulse` + `psa-nudge-glow-pulse` (4.5s ease) replace spin. No `filter: drop-shadow` on shell (was boxing the glow).
 
+---
+
+## 2026-06-03 — Golden prompt: PSA 3D holographic thought bubble
+
+**Context:** User disliked CSS nudge bubble; wanted a generation prompt using attached comic cloud silhouette reference to create a 3D holo thought bubble matching PSA avatar design.
+
+**Outcome:** Added `motherboard/golden-prompts/psa-nudge-thought-bubble-holo-3d.md` — primary + negative + short prompts, PSA color table (#EB1C24 / violet / cyan glass), export specs (transparent PNG, tail down, no square glow), tool notes (NBP, GPT Image 2, Ideogram cutout).
+
