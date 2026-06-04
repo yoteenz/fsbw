@@ -25256,3 +25256,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `src/pages/admin/brand/page.tsx`.
 
+---
+
+## 2026-06-03 — PSA avatar + nudge 10px up
+
+**Context:** User asked to move the PSA avatar and proactive nudge bubble upward only (not the open chat panel).
+
+**Decisions / outcomes:** `.psa-widget-fab-stack` transform **`translateX(-20px) translateY(-10px)`** — avatar, holo glow, proactive nudge, and SHOW CHAT bubble move together; chat panel position unchanged.
+
+**Changes:** `src/components/psa/psaAssistant.css`.
+
