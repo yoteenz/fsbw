@@ -11,22 +11,6 @@
   overflow: visible;
 }
 
-/* Open chat — width and horizontal edges match the frosted main card behind it. */
-.psa-widget-root--chat-open {
-  align-items: stretch;
-  box-sizing: border-box;
-}
-
-.psa-widget-root--chat-open .psa-chat-panel {
-  width: 100%;
-  max-width: 100%;
-  max-height: var(--psa-chat-max-height, min(520px, calc(100dvh - 140px)));
-}
-
-.psa-widget-root--chat-open .psa-widget-fab-stack {
-  align-self: flex-end;
-}
-
 .psa-widget-root > * {
   pointer-events: auto;
 }
@@ -181,7 +165,7 @@
 .psa-chat-panel {
   position: relative;
   z-index: 1;
-  width: min(360px, calc(100vw - 24px));
+  width: min(340px, calc(100vw - 24px));
   max-height: min(520px, calc(100dvh - 140px));
   display: flex;
   flex-direction: column;
