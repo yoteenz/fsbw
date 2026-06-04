@@ -24858,3 +24858,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** After replacing avatar PNGs, bump asset version; run flatten script only when exports still have fake transparency (not on clean Ideogram alpha).
 
+---
+
+## 2026-06-04 — PSA avatars v7 revert: conservative checker removal (v8)
+
+**Context:** User reported v7 avatar processing was broken — aggressive flood-fill ate 16–59% of character pixels (skin/clothing).
+
+**Fix:** Restored originals from pre-v7; rewrote flatten script to **conservative** removal only: neutral checker squares (light ~228+ gray, dark ~180–227) + alpha fringe (`a` 1–19). No broad color-distance flood. Verified 0% character pixel loss on neutral/thinking-smiling/listening. `PSA_AVATAR_ASSET_VERSION` → `8`.
+
+**Conventions:** Do not use loose background heuristics on PSA avatars — only neutral checker detection; re-run `check-psa-avatar-alpha.mjs` and character-loss check after processing.
+
