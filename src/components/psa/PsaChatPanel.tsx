@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ConfirmationModal from '../ConfirmationModal';
 import {
   PSA_CHAT_SUBTITLE,
   PSA_STARTER_QUICK_REPLIES,
@@ -116,13 +117,10 @@ function PsaChatCardArchiveIcon() {
   );
 }
 
-function PsaChatCardUnarchiveIcon() {
+function PsaChatCardDeleteIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M4 16h16" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M12 7v6" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M9 10l3-3 3 3" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M6 16v1.5A1.5 1.5 0 0 0 7.5 19h9a1.5 1.5 0 0 0 1.5-1.5V16" stroke="#EB1C24" strokeWidth="1.5" />
+      <path d="M18 6L6 18M6 6l12 12" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -231,6 +229,7 @@ export default function PsaChatPanel({
   onSelectThread,
   onArchiveThread,
   onUnarchiveThread,
+  onDeleteThread,
   onRenameThread,
   onInputFocusChange,
   onInputTextChange,
@@ -240,6 +239,7 @@ export default function PsaChatPanel({
   const [input, setInput] = useState(initialInput);
   const [renamingThreadId, setRenamingThreadId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
+  const [deleteConfirmThreadId, setDeleteConfirmThreadId] = useState<string | null>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -418,17 +418,17 @@ export default function PsaChatPanel({
                         ) : null}
                       </button>
                     )}
-                    {!isRenaming && historyArchivedView && onUnarchiveThread ? (
+                    {!isRenaming && historyArchivedView && onDeleteThread ? (
                       <button
                         type="button"
                         className="psa-chat-history-card-archive-btn"
-                        aria-label="Unarchive chat"
+                        aria-label="Delete chat"
                         onClick={(e) => {
                           e.stopPropagation();
-                          onUnarchiveThread(thread.id);
+                          setDeleteConfirmThreadId(thread.id);
                         }}
                       >
-                        <PsaChatCardUnarchiveIcon />
+                        <PsaChatCardDeleteIcon />
                       </button>
                     ) : !isRenaming && onArchiveThread ? (
                       <button
@@ -494,17 +494,6 @@ export default function PsaChatPanel({
                         }}
                       >
                         UNARCHIVE
-                      </button>
-                    ) : onArchiveThread ? (
-                      <button
-                        type="button"
-                        className="psa-chat-history-item-action psa-chat-history-item-action--right"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onArchiveThread(thread.id);
-                        }}
-                      >
-                        ARCHIVE
                       </button>
                     ) : null}
                   </div>
@@ -611,6 +600,22 @@ export default function PsaChatPanel({
       </form>
       </>
       )}
+
+      <ConfirmationModal
+        isOpen={deleteConfirmThreadId !== null}
+        onClose={() => setDeleteConfirmThreadId(null)}
+        onConfirm={() => {
+          if (deleteConfirmThreadId && onDeleteThread) {
+            onDeleteThread(deleteConfirmThreadId);
+          }
+          setDeleteConfirmThreadId(null);
+        }}
+        title="DELETE CHAT?"
+        message="THIS PERMANENTLY DELETES THIS CHAT. THIS CANNOT BE UNDONE."
+        confirmText="DELETE"
+        cancelText="CANCEL"
+        dataAttribute="psa-delete-chat-confirm"
+      />
     </div>
   );
 }
