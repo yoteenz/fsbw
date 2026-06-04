@@ -24846,3 +24846,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-chat-panel` → `rgba(255,255,255,0.6)` + `backdrop-filter: blur(4px)` + `1.3px` black border (matches site `bg-white/60 backdrop-blur-sm` main cards). Removed marble background and purple holo box-shadow. Header, messages, history, and input row backgrounds set transparent so one frosted shell reads through.
 
+---
+
+## 2026-06-04 — PSA avatar expressions: checkerboard → true alpha
+
+**Context:** User reported some PSA expression PNGs still showed transparent checkerboard instead of clean cutouts.
+
+**Cause:** Fal/Ideogram exports had baked checkerboard (~15–57% of pixels); worst was `psa-avatar-thinking-smiling.png` (fully opaque checker corners). Flatten script previously wrote opaque black, not alpha.
+
+**Changes:** Reprocessed all 11 `public/assets/psa-avatar-*.png` — edge flood-fill + orphan checker cleanup → true transparent alpha. Updated `scripts/psa-flatten-avatar-backgrounds.mjs` (transparent default, improved checker detection, orphan pass). Added `scripts/check-psa-avatar-alpha.mjs` for QA. Bumped `PSA_AVATAR_ASSET_VERSION` to `7`.
+
+**Conventions:** After replacing avatar PNGs, bump asset version; run flatten script only when exports still have fake transparency (not on clean Ideogram alpha).
+
