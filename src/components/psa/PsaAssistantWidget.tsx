@@ -447,10 +447,8 @@ export default function PsaAssistantWidget() {
             aria-label={proactiveNudge.headline}
           >
             <span className="psa-nudge-chip-shell">
-              <span className="psa-nudge-chip-holo-ring" aria-hidden />
               <span className="psa-nudge-chip-face">
                 <span className="psa-nudge-chip-holo-shine" aria-hidden />
-                <span className="psa-nudge-chip-scanlines" aria-hidden />
                 <span className="psa-nudge-chip-content">
                   <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
                   {proactiveNudge.body ? (
