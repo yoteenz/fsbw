@@ -25346,3 +25346,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `psaAssistant.css` — `.psa-chat-input` + `.psa-chat-send` → `#000`; `.psa-chat-bubble-user` → `rgba(0,0,0,0.15)`.
 
+---
+
+## 2026-06-04 — PSA history header titles
+
+**Context:** User wanted gray header subtitle to read **CHAT HISTORY** on active history view and **ARCHIVED CHATS** on archived view only (not PERSONAL SLAY ASSISTANT).
+
+**Changes:** `PsaChatPanel.tsx` — conditional `.psa-chat-subtitle` text when `historyOpen`.
+
