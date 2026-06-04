@@ -1,5 +1,16 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { FinalSceneHitRect } from '../constants/finalLobbySceneAssets';
+
+/** Stable fallback when no measure node is passed (do not inline `{ current: null }` per render). */
+export const SCENE_COVER_FALLBACK_MEASURE_REF: RefObject<HTMLElement | null> = { current: null };
+
+function coverRectsEqual(a: FinalSceneHitRect | null, b: FinalSceneHitRect): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return (
+    a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height
+  );
+}
 import {
   defaultSceneSlideMetricsFromViewport,
   SCENE_CAROUSEL_BG_HEIGHT,
@@ -64,7 +75,8 @@ export function useSceneCoverHitRect(
 
     const update = () => {
       const { width, height } = measureSlideBox(el);
-      setContainerRect(mapCoverHitRect(imageRect, width, height, offset, image));
+      const next = mapCoverHitRect(imageRect, width, height, offset, image);
+      setContainerRect((prev) => (coverRectsEqual(prev, next) ? prev : next));
     };
 
     update();
@@ -75,8 +87,8 @@ export function useSceneCoverHitRect(
       observer.disconnect();
       window.removeEventListener('resize', update);
     };
+    // Omit measureRef — use ResizeObserver when the node mounts; avoid loops from inline `{ current: null }`.
   }, [
-    measureRef,
     imageRect.left,
     imageRect.top,
     imageRect.width,
