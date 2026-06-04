@@ -25059,3 +25059,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Panel had **`max-height` only** — new chat shrank to content; HISTORY (`flex: 1` only, no input row) expanded to full max height.
 
 **Changes:** `.psa-chat-panel` explicit **`height`** matching max (**500px** / **`100dvh - 160px`**). **`min-height: 0`** on `.psa-chat-messages` + `.psa-chat-history` for scroll. SHOW CHAT **`bottom: -80px`** (+30px up from −110px).
+
+---
+
+## 2026-06-04 — PSA chat height −50%; SHOW CHAT up 40px
+
+**Changes:** Chat panel height **`500px → 250px`**, viewport term halved (`(100dvh - 160px) / 2`). Width unchanged. SHOW CHAT **`bottom: -40px`** (+40px up from −80px).
