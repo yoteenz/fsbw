@@ -25118,3 +25118,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
 
 **Pushed:** `master` + `preview/mobile`.
+
+---
+
+## 2026-06-03 — PSA nudge text down 2px; SHOW CHAT −1px
+
+**Changes:** Proactive nudge headline + body only — `.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content` **`top: calc(36% + 10px)`** (+2px down). SHOW CHAT Bohemy **`font-size: 14px`** (was 15px).

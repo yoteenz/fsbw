@@ -10,19 +10,21 @@ import {
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
+  LOUNGE_TV_BAKED_HIT_LAYOUT,
+  LOUNGE_TV_PLAY_TAP_LAYOUT,
 } from '../../constants/finalLobbySceneAssets';
 import {
   LOUNGE_TV_MENU_SCREEN_IMAGE,
+  LOUNGE_TV_MENU_SCREEN_LAYOUT,
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { domRectRelativeToContainer } from '../../utils/sceneCoverContainerRect';
-import { coverMappedRectScreenOffsetStyle } from '../../utils/sceneCoverHitMap';
 import { useSceneHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { SceneHitDebugBanner } from '../lobby/SceneHitDebugBanner';
 import { SceneHitDebugOverlay } from '../lobby/SceneHitDebugOverlay';
-import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 import { SceneViewportOverlay } from '../lobby/SceneViewportOverlay';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 
@@ -115,14 +117,13 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
 
   const playContainerStyle: CSSProperties | null = playTapMapped
     ? {
-        ...coverMappedRectScreenOffsetStyle(
+        ...sceneHitLayoutBoxStyle(
           playTapMapped,
           FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
           FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
+          LOUNGE_TV_PLAY_TAP_LAYOUT,
         ),
-        position: 'absolute',
         zIndex: 20,
-        boxSizing: 'border-box',
         pointerEvents: 'auto',
       }
     : null;
@@ -139,6 +140,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           rect={tvRegion}
           label="lounge tv (baked)"
           zIndex={26}
+          layout={LOUNGE_TV_BAKED_HIT_LAYOUT}
           overlayStyle={{
             backgroundColor: 'rgba(33, 150, 243, 0.42)',
             border: '2px solid rgba(21, 101, 192, 0.95)',
@@ -151,6 +153,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           rect={contentPopupMapped}
           label="lounge tv content pop-up"
           zIndex={27}
+          layout={LOUNGE_TV_MENU_SCREEN_LAYOUT}
           overlayStyle={{
             backgroundColor: 'rgba(233, 30, 99, 0.42)',
             border: '2px solid rgba(194, 24, 91, 0.95)',
@@ -165,6 +168,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           zIndex={28}
           screenOffsetX={FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX}
           screenOffsetY={FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX}
+          layout={LOUNGE_TV_PLAY_TAP_LAYOUT}
           overlayStyle={{
             backgroundColor: 'rgba(76, 175, 80, 0.48)',
             border: '2px solid rgba(46, 125, 50, 0.95)',
@@ -177,8 +181,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           ref={tvAnchorRef}
           aria-hidden
           style={{
-            ...rectToPercentStyle(tvRegion),
-            position: 'absolute',
+            ...sceneHitLayoutBoxStyle(tvRegion, 0, 0, LOUNGE_TV_BAKED_HIT_LAYOUT),
             zIndex: tvOpen ? 8 : 9,
             pointerEvents: 'none',
           }}
