@@ -30,7 +30,14 @@ export type PsaThreadSummary = {
   updatedAt: string;
   preview: string | null;
   archived?: boolean;
+  threadSummary?: string | null;
 };
+
+function psaFirstUserMessagePreview(content: string | null | undefined): string | null {
+  if (!content?.trim()) return null;
+  const firstLine = content.split(/\r?\n/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
+  return firstLine || null;
+}
 
 const THREAD_LIST_LIMIT = 30;
 const MESSAGE_LOAD_LIMIT = 150;
@@ -106,7 +113,7 @@ export async function listPsaThreads(
   const supabase = getSupabaseAdminServiceRole();
   let query = supabase
     .from('psa_threads')
-    .select('id, title, updated_at, archived_at')
+    .select('id, title, updated_at, archived_at, thread_summary')
     .eq('user_id', userId)
     .order('updated_at', { ascending: false })
     .limit(limit);
@@ -125,6 +132,7 @@ export async function listPsaThreads(
     title: string | null;
     updated_at: string;
     archived_at: string | null;
+    thread_summary: string | null;
   }[];
 
   const summaries: PsaThreadSummary[] = [];
@@ -134,15 +142,18 @@ export async function listPsaThreads(
       .select('content')
       .eq('thread_id', row.id)
       .eq('role', 'user')
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: true })
       .limit(1)
       .maybeSingle();
+
+    const rawPreview = (previewMsg as { content?: string } | null)?.content ?? null;
 
     summaries.push({
       id: row.id,
       title: row.title,
       updatedAt: row.updated_at,
-      preview: (previewMsg as { content?: string } | null)?.content?.slice(0, 120) ?? null,
+      preview: psaFirstUserMessagePreview(rawPreview),
+      threadSummary: row.thread_summary,
       archived: Boolean(row.archived_at),
     });
   }

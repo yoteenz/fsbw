@@ -25370,3 +25370,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`, `psaQuickReplyNavigation.ts`.
 
+---
+
+## 2026-06-04 — PSA history two-line cards + archived titles
+
+**Context:** User wanted quick-reply chip boxes **+2px** height; history cards always show **two rows** — gray = **first user message** (first line, ellipsis); archived view black title = **QUICK REPLY** when first message is a starter/immediate-nav chip, else **`thread_summary`** summation fallback; active history black title = renamed/auto title.
+
+**Changes:** `psaAssistant.css`, `PsaChatPanel.tsx`, `psaThreadHistoryDisplay.ts`, `psaThreadStore.ts` (first user message preview + `threadSummary` in list), `psaApi.ts`.
+
