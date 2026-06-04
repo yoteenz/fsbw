@@ -148,13 +148,9 @@ OUTPUT: One character on transparent PNG, high resolution (1024×1024 or 768×76
 1. Download PNG(s).
 2. Optional: run through [remove.bg](https://www.remove.bg) or Photoshop if edges aren’t clean.
 3. Save to `public/assets/` using the filenames in the table above (e.g. `psa-avatar-neutral.png`).
-4. **If your PNGs already have a real transparent background** (you removed it in Fal/Photoshop/etc.), run **alpha solidify only** so soft fringe does not show holo through as holes:
-   ```bash
-   node scripts/psa-solidify-avatar-alpha.mjs
-   ```
-   Then bump `PSA_AVATAR_ASSET_VERSION` in `src/constants/psaConfig.ts`.
-5. **Do not** run `psa-flatten-avatar-backgrounds.mjs` on Ideogram-cut PNGs — color-based checker removal punches holes in skin and metal tones. Re-export any expression that still shows baked checker (e.g. `thinking-smiling`).
-6. Redeploy or refresh dev — no code change needed unless you use different filenames (then edit `src/constants/psaConfig.ts`).
+4. **If your PNGs already have a real transparent background** (Ideogram / Fal / Photoshop), **stop here** — do **not** run `psa-solidify-avatar-alpha.mjs` or `psa-flatten-avatar-backgrounds.mjs`. Those scripts degrade quality and punch holes in the cutout.
+5. Bump `PSA_AVATAR_ASSET_VERSION` in `src/constants/psaConfig.ts` whenever you replace PNGs so browsers/CDN fetch fresh files.
+6. Redeploy or hard-refresh — no code change needed unless you use different filenames (then edit `src/constants/psaConfig.ts`).
 
 ---
 

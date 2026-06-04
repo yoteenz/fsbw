@@ -24878,3 +24878,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Note:** `psa-avatar-thinking-smiling.png` still has ~48% baked opaque checker (no soft alpha to fix) — needs Ideogram re-export; automated checker removal always punches holes in this stack.
 
+---
+
+## 2026-06-04 — PSA avatars: full restore to first Ideogram upload (v10)
+
+**Context:** User reported nothing changed after v9; wanted quality restored to when assets were first uploaded.
+
+**Fix:** Checked out all 11 `public/assets/psa-avatar-*.png` byte-for-byte from commit **`89258497`** (“Restore transparent PSA avatars; skip flatten for pre-cut PNGs”) — before v7/v8/v9 script processing. No flatten/solidify scripts run. `PSA_AVATAR_ASSET_VERSION` → **`10`**. Docs: do not run processing scripts on Ideogram PNGs.
+
+**Conventions:** Canonical PSA avatar source is the Ideogram-cut PNGs at first upload; never batch-process with flatten/solidify in repo — replace assets + bump version only.
+
