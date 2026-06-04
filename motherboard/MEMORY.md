@@ -24874,6 +24874,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — Lobby crash: React #185 infinite render
+
+**Context:** User saw red **ERROR: COMPONENT FAILED TO LOAD** / minified React **#185** (maximum update depth) on landing/lobby.
+
+**Cause:** `LobbyCasePropOpenArt` with `fillParent` still called `useSceneCoverHitRect` using `viewportMeasureRef ?? { current: null }` — new ref object every render → `useLayoutEffect` → `setState` loop.
+
+**Fix:** Split fill-parent path (no hook); `SCENE_COVER_FALLBACK_MEASURE_REF`; guard `setContainerRect` when rect unchanged; `LoungeTvFullscreenShell` uses stable fallback.
+
+---
+
 ## 2026-06-04 — PSA chat panel: glassmorphism main card
 
 **Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
@@ -25098,3 +25108,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-03 — SHOW CHAT headline +4px
 
 **Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline` **`font-size: 15px`** (was inherited **11px** from base headline). Proactive nudge and other chip copy unchanged.
+
+---
+
+## 2026-06-03 — PSA nudge page-context priority (BAW / wishlist / alerts / orders)
+
+**Context:** Restore **BAW draft resume** nudge on Build-a-Wig pages only (not globally always-on). On wishlist, alerts, and orders routes, page-relevant nudges win; elsewhere show the **most recent** alert.
+
+**Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
+
+**Pushed:** `master` + `preview/mobile`.
