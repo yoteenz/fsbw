@@ -24819,3 +24819,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `margin-bottom` `-5px` → `-11px`. `PSA_HIDE_CHAT_CTA` / `PSA_SHOW_CHAT_CTA` → `HIDE CHAT` / `SHOW CHAT`; matching aria-labels on FAB triggers.
 
+---
+
+## 2026-06-04 — TV close: no black flash before reverse Seedance
+
+**Context:** Cloud-agent handoff continued lobby/lounge scene-lock and TV work. User reported a full-screen **black flash before the TV close (reverse Seedance) animation** starts when tapping X.
+
+**Topics covered (chat arc):** Lobby↔lounge transition alignment; scene-lock overlays; lobby arrow fix; register popover spacing; restoring `cover` backgrounds; PRESS TO PLAY / TV open; theater mode hiding carousel nav; TV close black flash (this fix).
+
+**Root cause:** `LoungeTvAnimationVideo` unmounted at `seedancePhase === 'ready'`, so close **remounted** the clip (reload + seek) while reverse path forced **black letterbox immediately** (`direction === 'reverse'` in `showLetterboxFill` and `useLayoutEffect`).
+
+**Changes (commit `67ac447b`, `master` + `preview/mobile`):**
+- `LoungeTvOverlay.tsx`: keep Seedance video mounted through `ready` (parked, `visibility: hidden` when `active` false); fullscreen scrim `transparent` during `seedanceClosing` as well as `seedanceOpening`.
+- `LoungeTvAnimationVideo.tsx`: reverse matches forward — transparent host until `frameVisible`; video opacity tied to `frameVisible` only; removed reverse-only immediate black / `frameVisible` hack.
+
+**Conventions:** TV close should hand off from parked hand-press frame without remounting the animation component; treat open and close letterbox policy the same (lounge shows through until decoded frame).
+
