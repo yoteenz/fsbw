@@ -1,6 +1,10 @@
 import type { CSSProperties } from 'react';
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
-import { sceneHitLayoutBoxStyle, type SceneHitLayoutOptions } from '../../utils/sceneHitLayout';
+import {
+  sceneHitLayoutBoxStyle,
+  type SceneHitLayoutOptions,
+} from '../../utils/sceneHitLayout';
+import { rectToPercentStyle } from './SceneHitRegion';
 
 const DEBUG_LABEL_STYLE: CSSProperties = {
   position: 'absolute',
@@ -36,12 +40,19 @@ export function SceneHitDebugOverlay({
   screenOffsetY = 0,
   layout,
 }: Props) {
+  const positionStyle =
+    layout || screenOffsetX || screenOffsetY
+      ? sceneHitLayoutBoxStyle(rect, layout, screenOffsetX, screenOffsetY)
+      : rectToPercentStyle(rect);
+
   return (
     <div
       aria-hidden
       style={{
-        ...sceneHitLayoutBoxStyle(rect, screenOffsetX, screenOffsetY, layout),
+        position: 'absolute',
+        ...positionStyle,
         zIndex,
+        boxSizing: 'border-box',
         pointerEvents: 'none',
         backgroundColor: 'rgba(255, 193, 7, 0.42)',
         border: '2px solid rgba(255, 152, 0, 0.95)',

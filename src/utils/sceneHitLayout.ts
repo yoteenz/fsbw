@@ -4,89 +4,40 @@ import type { FinalSceneHitRect } from '../constants/finalLobbySceneAssets';
 export type SceneHitLayoutOptions = {
   layoutOffsetX?: number;
   layoutOffsetY?: number;
-  layoutScale?: { x: number; y: number };
-  /** Default `center top` (shelves / baked TV); play tap uses `center center`. */
-  layoutScaleOrigin?: 'center top' | 'center center' | (string & {});
-  layoutHeightTrimPx?: number;
-  layoutHeightExtraPx?: number;
+  /** Added to mapped width (negative shrinks). Center-anchored via left nudge. */
   layoutWidthExtraPx?: number;
+  /** Added to mapped height (negative shrinks). Center-anchored via top nudge. */
+  layoutHeightExtraPx?: number;
+  layoutWidthScale?: number;
+  layoutHeightScale?: number;
 };
 
-function scaledPercentBox(
-  rect: FinalSceneHitRect,
-  scaleX: number,
-  scaleY: number,
-  origin: SceneHitLayoutOptions['layoutScaleOrigin'],
-): { leftPct: number; topPct: number; widthPct: number; heightPct: number } {
-  let leftPct = rect.left * 100;
-  let topPct = rect.top * 100;
-  let widthPct = rect.width * 100;
-  let heightPct = rect.height * 100;
-
-  if (scaleX === 1 && scaleY === 1) {
-    return { leftPct, topPct, widthPct, heightPct };
-  }
-
-  const originStr = origin ?? 'center top';
-  const fromCenterX = originStr === 'center center' || originStr.includes('center');
-  const fromTop = originStr === 'center top' || originStr.includes('top');
-
-  widthPct *= scaleX;
-  heightPct *= scaleY;
-
-  if (fromCenterX) {
-    leftPct += (rect.width * 100 * (1 - scaleX)) / 2;
-  }
-  if (fromCenterX && !fromTop) {
-    topPct += (rect.height * 100 * (1 - scaleY)) / 2;
-  }
-
-  return { leftPct, topPct, widthPct, heightPct };
-}
-
 /**
- * Position + size tune for cover-mapped scene hit boxes (production + QA).
- * Uses calc(%) + px (like shelf {@link SceneHitRegion}) — not transform: scale(),
- * which often leaves debug squares visually unchanged on scene overlays.
+ * Position + size for cover-mapped hit boxes (QA overlays and production taps).
+ * Uses calc(% + px) so tuning is visible on device (transform scale often is not).
  */
 export function sceneHitLayoutBoxStyle(
   rect: FinalSceneHitRect,
+  layout?: SceneHitLayoutOptions,
   screenOffsetX = 0,
   screenOffsetY = 0,
-  layout: SceneHitLayoutOptions = {},
 ): CSSProperties {
-  const scaleX = layout.layoutScale?.x ?? 1;
-  const scaleY = layout.layoutScale?.y ?? 1;
-  const { leftPct, topPct, widthPct, heightPct } = scaledPercentBox(
-    rect,
-    scaleX,
-    scaleY,
-    layout.layoutScaleOrigin,
-  );
+  const offsetX = (layout?.layoutOffsetX ?? 0) + screenOffsetX;
+  const offsetY = (layout?.layoutOffsetY ?? 0) + screenOffsetY;
+  const widthExtra = layout?.layoutWidthExtraPx ?? 0;
+  const heightExtra = layout?.layoutHeightExtraPx ?? 0;
+  const widthScale = layout?.layoutWidthScale ?? 1;
+  const heightScale = layout?.layoutHeightScale ?? 1;
 
-  const totalOffsetX = screenOffsetX + (layout.layoutOffsetX ?? 0);
-  const totalOffsetY = screenOffsetY + (layout.layoutOffsetY ?? 0);
-
-  const width =
-    layout.layoutWidthExtraPx != null && layout.layoutWidthExtraPx !== 0
-      ? `calc(${widthPct}% + ${layout.layoutWidthExtraPx}px)`
-      : `${widthPct}%`;
-
-  let height: string;
-  if (layout.layoutHeightTrimPx && layout.layoutHeightTrimPx > 0) {
-    height = `calc(${heightPct}% - ${layout.layoutHeightTrimPx}px)`;
-  } else if (layout.layoutHeightExtraPx) {
-    height = `calc(${heightPct}% + ${layout.layoutHeightExtraPx}px)`;
-  } else {
-    height = `${heightPct}%`;
-  }
+  const widthPct = rect.width * 100 * widthScale;
+  const heightPct = rect.height * 100 * heightScale;
+  const scaleLeftPct = widthScale !== 1 ? rect.width * (1 - widthScale) * 50 : 0;
+  const scaleTopPct = heightScale !== 1 ? rect.height * (1 - heightScale) * 50 : 0;
 
   return {
-    position: 'absolute',
-    left: `calc(${leftPct}% + ${totalOffsetX}px)`,
-    top: `calc(${topPct}% + ${totalOffsetY}px)`,
-    width,
-    height,
-    boxSizing: 'border-box',
+    left: `calc(${rect.left * 100 + scaleLeftPct}% + ${offsetX - widthExtra / 2}px)`,
+    top: `calc(${rect.top * 100 + scaleTopPct}% + ${offsetY - heightExtra / 2}px)`,
+    width: `calc(${widthPct}% + ${widthExtra}px)`,
+    height: `calc(${heightPct}% + ${heightExtra}px)`,
   };
 }

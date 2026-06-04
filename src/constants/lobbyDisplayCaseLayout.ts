@@ -1,3 +1,4 @@
+import type { SceneHitLayoutOptions } from '../utils/sceneHitLayout';
 import {
   FINAL_LOBBY_DISPLAY_CASE_RECT,
   FINAL_LOBBY_HIT_REGIONS,
@@ -27,15 +28,11 @@ export const LOBBY_DISPLAY_CASE_PHONE_SLOT = lobbyDisplayCaseSlotRect(
 
 /**
  * Cover-map nudge for the whole display case (register + phone move together).
- * Midpoint of legacy per-prop offsets in `finalLobbyCasePropOverlays.ts`.
  */
-export const LOBBY_DISPLAY_CASE_LAYOUT_OFFSET = { x: 12, y: 69 } as const;
+export const LOBBY_DISPLAY_CASE_LAYOUT_OFFSET = { x: 12, y: -71 } as const;
 
-/** Production + QA — orange display case: +40px width and height after cover map. */
-export const LOBBY_DISPLAY_CASE_HIT_LAYOUT_WIDTH_EXTRA_PX = 40;
-export const LOBBY_DISPLAY_CASE_HIT_LAYOUT_HEIGHT_EXTRA_PX = 40;
-
-export const LOBBY_DISPLAY_CASE_HIT_LAYOUT = {
-  layoutWidthExtraPx: LOBBY_DISPLAY_CASE_HIT_LAYOUT_WIDTH_EXTRA_PX,
-  layoutHeightExtraPx: LOBBY_DISPLAY_CASE_HIT_LAYOUT_HEIGHT_EXTRA_PX,
-} as const;
+/** Orange QA + production display case shell (after cover-map offset). */
+export const LOBBY_DISPLAY_CASE_HIT_LAYOUT: SceneHitLayoutOptions = {
+  layoutWidthExtraPx: -40,
+  layoutHeightExtraPx: -20,
+};

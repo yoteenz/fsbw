@@ -21,8 +21,8 @@ import {
   useSceneCoverHitRect,
 } from '../../hooks/useSceneCoverHitRect';
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
-import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
+import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
 
 type Props = {
   children?: React.ReactNode;
@@ -95,8 +95,9 @@ export function LoungeTvFullscreenShell({
         <div
           data-lounge-tv-glass
           style={{
-            ...sceneHitLayoutBoxStyle(mappedGlass, 0, 0, LOUNGE_TV_MENU_SCREEN_LAYOUT),
-            position: 'relative',
+            ...sceneHitLayoutBoxStyle(mappedGlass, LOUNGE_TV_MENU_SCREEN_LAYOUT),
+            position: 'absolute',
+            boxSizing: 'border-box',
             zIndex: 1,
             ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
             pointerEvents: 'auto',
@@ -140,22 +141,22 @@ export function LoungeTvFullscreenShell({
             }}
           >
             {children}
+            {onClose ? (
+              <LoungeTvCloseButton
+                visible={closeVisible}
+                size={LOUNGE_TV_GLASS_CLOSE_SIZE}
+                iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
+                position={{
+                  top: `${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}%`,
+                  right: `${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}%`,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose(e);
+                }}
+              />
+            ) : null}
           </div>
-          {onClose ? (
-            <LoungeTvCloseButton
-              visible={closeVisible}
-              size={LOUNGE_TV_GLASS_CLOSE_SIZE}
-              iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
-              position={{
-                top: `${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}%`,
-                right: `${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}%`,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose(e);
-              }}
-            />
-          ) : null}
         </div>
       ) : null}
     </div>

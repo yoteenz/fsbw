@@ -21,8 +21,8 @@ import {
 } from '../../constants/loungeTvSceneLayout';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { domRectRelativeToContainer } from '../../utils/sceneCoverContainerRect';
-import { useSceneHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
+import { useSceneHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { SceneHitDebugBanner } from '../lobby/SceneHitDebugBanner';
 import { SceneHitDebugOverlay } from '../lobby/SceneHitDebugOverlay';
 import { SceneViewportOverlay } from '../lobby/SceneViewportOverlay';
@@ -119,11 +119,13 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     ? {
         ...sceneHitLayoutBoxStyle(
           playTapMapped,
+          LOUNGE_TV_PLAY_TAP_LAYOUT,
           FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
           FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
-          LOUNGE_TV_PLAY_TAP_LAYOUT,
         ),
+        position: 'absolute',
         zIndex: 20,
+        boxSizing: 'border-box',
         pointerEvents: 'auto',
       }
     : null;
@@ -166,9 +168,9 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           rect={playTapMapped}
           label="lounge tv play tap"
           zIndex={28}
+          layout={LOUNGE_TV_PLAY_TAP_LAYOUT}
           screenOffsetX={FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX}
           screenOffsetY={FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX}
-          layout={LOUNGE_TV_PLAY_TAP_LAYOUT}
           overlayStyle={{
             backgroundColor: 'rgba(76, 175, 80, 0.48)',
             border: '2px solid rgba(46, 125, 50, 0.95)',
@@ -181,7 +183,8 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           ref={tvAnchorRef}
           aria-hidden
           style={{
-            ...sceneHitLayoutBoxStyle(tvRegion, 0, 0, LOUNGE_TV_BAKED_HIT_LAYOUT),
+            ...sceneHitLayoutBoxStyle(tvRegion, LOUNGE_TV_BAKED_HIT_LAYOUT),
+            position: 'absolute',
             zIndex: tvOpen ? 8 : 9,
             pointerEvents: 'none',
           }}

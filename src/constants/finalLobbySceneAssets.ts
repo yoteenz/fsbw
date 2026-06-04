@@ -3,6 +3,8 @@
  * Sources: Supabase `live-preview/Final LP/`.
  */
 
+import type { SceneHitLayoutOptions } from '../utils/sceneHitLayout';
+
 export const FINAL_SCENE_ART_WIDTH = 928;
 export const FINAL_SCENE_ART_HEIGHT = 1680;
 
@@ -82,29 +84,6 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
-/** Production + QA — blue baked TV box: +20px right, +80px down, height −40%. */
-export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_X_PX = 10;
-export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_Y_PX = 100;
-export const LOUNGE_TV_BAKED_HIT_LAYOUT_HEIGHT_SCALE = 0.6;
-
-export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
-  layoutOffsetX: LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_X_PX,
-  layoutOffsetY: LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_Y_PX,
-  layoutScale: { x: 1, y: LOUNGE_TV_BAKED_HIT_LAYOUT_HEIGHT_SCALE },
-} as const;
-
-/** Production + QA — green play tap: +30% width, −60% height (center). */
-export const LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_SCALE = 1.3;
-export const LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_SCALE = 0.4;
-
-export const LOUNGE_TV_PLAY_TAP_LAYOUT = {
-  layoutScale: {
-    x: LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_SCALE,
-    y: LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_SCALE,
-  },
-  layoutScaleOrigin: 'center center' as const,
-} as const;
-
 /** In-screen play icon — center of gray triangle on TV glass (`final-lounge.png`, 928×1680). */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER = { x: 0.528, y: 0.31 } as const;
 
@@ -122,6 +101,19 @@ export const FINAL_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {
  */
 export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 10;
 export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 120;
+
+/** Blue QA + baked TV on `final-lounge.png`. */
+export const LOUNGE_TV_BAKED_HIT_LAYOUT: SceneHitLayoutOptions = {
+  layoutOffsetX: 30,
+  layoutOffsetY: 300,
+};
+
+/** Green QA + play tap (after {@link FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_*_PX}). */
+export const LOUNGE_TV_PLAY_TAP_LAYOUT: SceneHitLayoutOptions = {
+  layoutWidthExtraPx: 60,
+  layoutOffsetY: 60,
+};
+
 
 /** Screen-space nudge for lounge TV **label** only (container / hit box unchanged). */
 export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 12;
