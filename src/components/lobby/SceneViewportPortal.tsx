@@ -12,7 +12,7 @@ type SceneViewportPortalProps = {
 
 /**
  * Renders children inside the scene viewport stage so overlays track lobby/lounge
- * `contain` backgrounds (same coordinate system as register/phone case props).
+ * `cover` backgrounds (same coordinate system as register/phone case props).
  */
 export function SceneViewportPortal({
   measureRef,

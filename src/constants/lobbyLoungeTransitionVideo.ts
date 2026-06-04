@@ -59,7 +59,7 @@ export function lobbyLoungeTransitionVideoClipStyle(): React.CSSProperties {
   };
 }
 
-/** `<video>` inside clip shell — contain + optional scale (frame position unchanged). */
+/** `<video>` inside clip shell — cover + optional scale (frame position unchanged). */
 export function lobbyLoungeTransitionVideoElementStyle(
   _direction: LobbyLoungeTransitionDirection = 'forward',
   mediaOffsetYPx: number = LOBBY_LOUNGE_TRANSITION_MEDIA_OFFSET_Y_PX,
@@ -77,7 +77,7 @@ export function lobbyLoungeTransitionVideoElementStyle(
     inset: 0,
     width: '100%',
     height: '100%',
-    objectFit: 'contain',
+    objectFit: 'cover',
     objectPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     pointerEvents: 'none',
     ...(transformParts.length
@@ -111,7 +111,7 @@ export function lobbyLoungeTransitionPosterInFrameStyle(
     position: 'absolute',
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: lobbyLoungeTransitionCoverPosition(mediaOffsetYPx),
     backgroundRepeat: 'no-repeat',
     backgroundColor: SCENE_CAROUSEL_LETTERBOX_BG,
@@ -140,13 +140,13 @@ export function lobbyLoungeTransitionMediaShellStyle(): React.CSSProperties {
 /** @deprecated Use {@link lobbyLoungeTransitionMediaShellStyle}. */
 export const lobbyLoungeTransitionLetterboxShellStyle = lobbyLoungeTransitionMediaShellStyle;
 
-/** Full-viewport poster while loading — matches slide contain in letterbox bands. */
+/** Full-viewport poster while loading — matches slide `cover` in viewport. */
 export function lobbyLoungeTransitionFullBleedPosterStyle(posterSrc: string): React.CSSProperties {
   return {
     position: 'absolute',
     inset: 0,
     backgroundImage: `url(${posterSrc})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundPosition: lobbyLoungeTransitionCoverPosition(),
     backgroundRepeat: 'no-repeat',
     pointerEvents: 'none',

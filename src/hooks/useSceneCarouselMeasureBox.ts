@@ -16,7 +16,7 @@ export function measureSceneCarouselBox(el: HTMLElement | null): SceneCarouselMe
 }
 
 /**
- * Live width/height of {@link SceneCarouselViewportStage} — same box as `contain` slide backgrounds.
+ * Live width/height of {@link SceneCarouselViewportStage} — same box as `cover` slide backgrounds.
  */
 export function useSceneCarouselMeasureBox(
   measureRef: RefObject<HTMLElement | null>,

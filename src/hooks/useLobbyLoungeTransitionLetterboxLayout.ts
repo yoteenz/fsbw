@@ -9,7 +9,7 @@ export type LobbyLoungeTransitionLetterboxLayout = {
 };
 
 /**
- * Portrait frame metrics from slide `contain` math (928×1680).
+ * Portrait frame metrics from slide `cover` math (928×1680).
  * @deprecated Transition media uses full viewport ({@link lobbyLoungeTransitionMediaShellStyle});
  * kept for debug / future frame tooling.
  */

@@ -15,7 +15,7 @@ function viewportBox(): SceneCarouselMeasureBox {
 }
 
 /**
- * Map image-normalized rects/points using `contain` + `center top`.
+ * Map image-normalized rects/points using `cover` + `center top`.
  * Pass {@link SceneCarouselViewportStage} `measureRef` so layout tracks the scene box (not raw viewport).
  */
 export function useCoverMappedLayout(
