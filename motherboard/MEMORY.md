@@ -25378,3 +25378,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `psaAssistant.css`, `PsaChatPanel.tsx`, `psaThreadHistoryDisplay.ts`, `psaThreadStore.ts` (first user message preview + `threadSummary` in list), `psaApi.ts`.
 
+---
+
+## 2026-06-04 — PSA send button, archived 3-word titles, no blank threads
+
+**Context:** User wanted SEND never disabled (blank submit no-op); archived black header max **3 words** with **QUICK REPLY** for chip-started chats (not chip text); history header + gray detail **uppercase**; blank PSA chats (no user message) excluded from history/archives.
+
+**Changes:** `PsaChatPanel.tsx`, `usePsaChat.ts` (new chat no longer POST-creates thread), `psaThreadHistoryDisplay.ts`, `psaThreadStore.ts`, `api/psa/thread.ts`, `psaAssistant.css`.
+
