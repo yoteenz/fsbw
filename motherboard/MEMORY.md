@@ -24791,3 +24791,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `margin-bottom` `1px` → `-5px` (6px closer to avatar).
 
+---
+
+## 2026-06-04 — PSA FAB three-state tap flow (open / hide / show)
+
+**Context:** User specified correct PSA FAB interaction: tap to open chat, label becomes HIDE PSA CHAT; tap hide collapses entire PSA (avatar + chat); label becomes SHOW PSA CHAT; tap show restores avatar with chat closed (TAP TO CHAT again). Backdrop/Escape closes chat only — does not full-collapse.
+
+**Changes:** `isFabCollapsed` state in `PsaAssistantWidget.tsx`; `handleFabClick` replaces toggle (collapsed→expand, open→collapse+close, closed→open+welcome wave). CTA constants `PSA_HIDE_CHAT_CTA`, `PSA_SHOW_CHAT_CTA` in `psaConfig.ts`. Collapsed UI: text-only `.psa-fab-collapsed-trigger`. Nudge + idle wave suppressed when collapsed or chat open.
+
+**Conventions:** FAB has three visible states — expanded closed (TAP TO CHAT / CONTINUE CHAT), expanded open (HIDE PSA CHAT), collapsed (SHOW PSA CHAT only).
+
