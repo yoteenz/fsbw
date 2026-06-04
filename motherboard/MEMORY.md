@@ -24717,14 +24717,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-<<<<<<< HEAD
 ## 2026-06-04 — PSA nudge: +5px gap below thought bubble
 
 **Context:** User requested more space between proactive nudge bubble and avatar below.
 
 **Changes:** `.psa-nudge-chip` `bottom: calc(100% - 18px)` → `calc(100% - 23px)` (nudge sits 5px higher).
 
-=======
+---
+
 ## 2026-06-04 — Register popover payment spacing tweaks
 
 **Context:** User asked for +2px above **accepted cards** label, −2px below **payment plans** label (before logo row), −2px Affirm left/right gutters (Afterpay/Klarna closer).
@@ -24740,4 +24740,4 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Slides used **`background-size: contain`** + **`#000`** letterbox; on many viewports height-constrained contain leaves horizontal gutters.
 
 **Fix:** Restore **`cover`** + **`center top`** on **`sceneCarouselViewportBackgroundStyle`** / layer styles; **`sceneCarouselCoverMetrics`** + **`sceneCoverHitMap`** use **`Math.max`** scale again. Shell fallback **`#e8e4e0`** (marble). Transition + TV Seedance clips aligned to **`cover`**. Hit-map / open prop overlays unchanged coordinate system.
->>>>>>> 0e8bdc94c5b5dc20c7c0a555b274e8fa9ffa06a9
+
