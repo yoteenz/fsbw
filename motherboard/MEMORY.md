@@ -25019,3 +25019,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — PSA chat: 12px left, height −20px
 
 **Changes:** `.psa-chat-panel` **`translate(-12px, -12px)`**; **`max-height`** **`520px → 500px`**, viewport term **`140px → 160px`**. Width and avatar unchanged.
+
+---
+
+## 2026-06-04 — PSA SHOW CHAT nudge down 40px
+
+**Changes:** `.psa-nudge-chip-show-chat` **`bottom: 0` → `bottom: -40px`** — collapsed thought bubble only; avatar/TAP TO CHAT/open chat unchanged.
