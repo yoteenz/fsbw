@@ -452,7 +452,7 @@
 
 .psa-chat-bubble-user {
   align-self: flex-end;
-  border: 1.3px solid rgba(235, 28, 36, 0.75);
+  border: 1.3px solid rgba(0, 0, 0, 0.15);
   color: #eb1c24;
 }
 
@@ -544,7 +544,7 @@
 .psa-chat-input {
   flex: 1;
   min-width: 0;
-  border: 1.3px solid rgba(235, 28, 36, 0.75);
+  border: 1.3px solid #000;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -563,7 +563,7 @@
 
 .psa-chat-send {
   flex-shrink: 0;
-  border: 1.3px solid rgba(235, 28, 36, 0.75);
+  border: 1.3px solid #000;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
