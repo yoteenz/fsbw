@@ -24545,3 +24545,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `psaAssistant.css` `.psa-chat-send` — `rgba(255,255,255,0.6)` + `backdrop-filter: blur(4px)`; border `rgba(235,28,36,0.75)`; text `#eb1c24`.
 
+---
+
+## 2026-06-03 — PSA nudge headline: lowercase Bohemy
+
+**Context:** User wanted proactive nudge black header text in lowercase **Bohemy** instead of Covered By Your Grace (CBYG).
+
+**Changes:** `.psa-nudge-chip-headline` — `font-family: 'Bohemy', sans-serif`; `text-transform: lowercase`; `font-weight: 400`.
+
