@@ -25338,3 +25338,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
 
+---
+
+## 2026-06-04 — PSA chat border colors
+
+**Context:** User asked for input + SEND borders **black** (not red); client/user submitted bubble border **gray** like PSA assistant bubbles.
+
+**Changes:** `psaAssistant.css` — `.psa-chat-input` + `.psa-chat-send` → `#000`; `.psa-chat-bubble-user` → `rgba(0,0,0,0.15)`.
+
