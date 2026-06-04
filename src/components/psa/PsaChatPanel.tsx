@@ -339,7 +339,9 @@ export default function PsaChatPanel({
           ) : null}
         </div>
         <div className="psa-chat-header-text">
-          <h2 className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</h2>
+          <h2 className="psa-chat-subtitle">
+            {historyOpen ? (historyArchivedView ? 'ARCHIVED CHATS' : 'CHAT HISTORY') : PSA_CHAT_SUBTITLE}
+          </h2>
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
         <div className="psa-chat-header-side psa-chat-header-side--right">
