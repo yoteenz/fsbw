@@ -24657,3 +24657,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Any `>>QUICK:` examples inside `buildPsaInstructions` template must use `\`` escapes (same as line 117).
 
+---
+
+## 2026-06-04 — PSA holo compare: 2 options (current vs new draft 21)
+
+**Context:** User requested new design A/B — 2 PSAs side-by-side: option 1 = current live holo background, option 2 = new Supabase PNG `image (21).png`.
+
+**Changes:** Saved `public/assets/psa-holo-glow-option-2-draft.png`. `PSA_HOLO_GLOW_COMPARE_OPTIONS` now 2 entries (option 1 → `PSA_NUDGE_HOLO_GLOW_SRC`, option 2 → draft); compare version bumped to `2`. Labels `OPTION 1 · CURRENT` / `OPTION 2 · NEW`. Wider compare row/columns in CSS.
+
+**Preview:** Append **`?psaHoloCompare=1`** to any non-hidden page (e.g. `/home/shop?psaHoloCompare=1`). No premium sign-in required while compare tray is open. EXIT removes param.
+
