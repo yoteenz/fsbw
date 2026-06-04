@@ -25126,7 +25126,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** Proactive nudge headline + body only — `.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content` **`top: calc(36% + 10px)`** (+2px down). SHOW CHAT Bohemy **`font-size: 14px`** (was 15px).
 
 ---
-<<<<<<< HEAD
 
 ## 2026-06-03 — PSA proactive nudge copy debug page
 
@@ -25135,7 +25134,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`/tools/psa-nudges`** — grid of bubble previews + copy fields (headline, body, prefilled, full block). **`psaProactiveNudgeCatalog.ts`** static catalog mirroring all variants in priority order. Route in **`App.tsx`**.
 
 **Pushed:** `master` + `preview/mobile`.
-=======
+
+---
+
 ## 2026-06-04 — Brand terms scroll: PSA not the cause; viewport-locked MarblePageShell
 
 **Context:** User could still scroll far below the gray marble on brand pages (e.g. Terms with PSA nudge). Suspected PSA chat caused “boundless” vertical scroll. Prior session had attempted MarblePageShell but it was not on disk.
@@ -25155,4 +25156,4 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:**
 - For inner-scroll marble pages, lock shell to `100dvh` and distribute header + card + below-card actions in a flex column; do not use `maxHeight: calc(100dvh - N)` on the card without subtracting header height unless shell is locked.
->>>>>>> c9dbe6ef6f186ccfdeef79149b1d6a2b575bb0c6
+
