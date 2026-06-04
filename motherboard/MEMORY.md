@@ -24433,6 +24433,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — PSA chat UX: uppercase, no markdown, open quick-nav
+
+**Context:** User wanted OPEN quick replies to send message then route immediately (no typing wait); all PSA text and chips uppercase; no repeated Welcome greeting in replies; strip `**` markdown from responses.
+
+**Changes:** Enhanced `formatPsaVoiceText` (strip markdown + greeting, uppercase); `psaQuickReplyNavigation.ts` for immediate OPEN/GO TO routes; `usePsaChat` fire-and-forget on navigate chips; instructions ban markdown/repeated greeting; CSS uppercase on bubbles/chips.
+
+---
+
 ## 2026-06-03 — PSA identity: "your PSA" not "I'm PSA"
 
 **Context:** User noted PSA is an acronym (Personal Slay Assistant), not a name — "I'm PSA" is incorrect; should be "I'm your PSA."
