@@ -24581,7 +24581,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-<<<<<<< HEAD
 ## 2026-06-04 — PSA nudge: 3D thought bubble PNG integrated
 
 **Context:** User supplied Supabase 3D holo thought bubble (`image (15).png`) to replace disliked CSS nudge.
@@ -24716,10 +24715,10 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-avatar-holo-glow-rotator` width `144%` → `151%`.
 
-=======
+---
+
 ## 2026-06-04 — Register popover payment spacing tweaks
 
 **Context:** User asked for +2px above **accepted cards** label, −2px below **payment plans** label (before logo row), −2px Affirm left/right gutters (Afterpay/Klarna closer).
 
 **Changes:** **`LobbyCasePropPopover.tsx`** — `LOBBY_REGISTER_ACCEPTED_CARDS_LABEL_MARGIN_TOP_PX`, `LOBBY_REGISTER_PAYMENT_PLANS_LABEL_TO_ICONS_GAP_PX`, `LOBBY_REGISTER_PAYMENT_PLANS_AFFIRM_GUTTER_NUDGE_PX` (6px nudge, was 4px).
->>>>>>> 32d1e170 (Register popover: tune accepted cards, payment plans, Affirm spacing)
