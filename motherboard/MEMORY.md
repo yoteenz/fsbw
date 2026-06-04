@@ -24695,3 +24695,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-avatar-holo-glow-rotator` width `125%` → `144%` of 88px avatar wrap.
 
+---
+
+## 2026-06-04 — PSA "BUILD IS NOT DEFINED" chat error
+
+**Context:** User still saw server error in chat (same class as prior QUICK error) when sending wishlist nudge message after deploy.
+
+**Cause:** `api/_lib/psaInstructions.ts` line 69 — unescaped backticks around \`/build-a-wig/beach-wave\` and \`/bag\` inside `buildPsaInstructions` template literal → runtime `ReferenceError: build is not defined`.
+
+**Fix:** Escape path examples: `\`/build-a-wig/beach-wave\`, \`/bag\``. Verified `buildPsaInstructions()` runs without throw.
+
+**Conventions:** All inline code/path examples inside `buildPsaInstructions` template must use `\`` escapes (same rule as `>>QUICK:` line).
+
