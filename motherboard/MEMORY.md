@@ -25045,3 +25045,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** SHOW CHAT button has **both** `psa-nudge-chip` and `psa-nudge-chip-show-chat`. `.psa-nudge-chip { bottom: 100% }` came **later** in CSS and overrode `.psa-nudge-chip-show-chat { bottom: -60px }` — position tweaks had no effect.
 
 **Fix:** `.psa-nudge-chip.psa-nudge-chip-show-chat` block **after** base `.psa-nudge-chip` so collapsed `bottom: -60px` wins.
+
+---
+
+## 2026-06-04 — PSA SHOW CHAT nudge bottom −110px
+
+**Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat` **`bottom: -110px`** (−50px from prior −60px). Pushed **`master`** + **`preview/mobile`**.
