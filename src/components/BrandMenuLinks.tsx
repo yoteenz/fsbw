@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BRAND_MENU_ITEMS } from '../constants/brandMenu';
+import { BRAND_MENU_ITEMS, getBrandMenuLabel } from '../constants/brandMenu';
 
 interface BrandMenuLinksProps {
   onClose?: () => void;
@@ -23,10 +23,10 @@ export default function BrandMenuLinks({ onClose }: BrandMenuLinksProps) {
               color: 'black',
               fontWeight: '500',
               textTransform: 'uppercase',
-              transform: 'translateX(13px)'
+              transform: 'translateX(13px)',
             }}
           >
-            {item.label}
+            {getBrandMenuLabel(item)}
           </span>
         </Link>
       ))}
