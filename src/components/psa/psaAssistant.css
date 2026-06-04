@@ -584,7 +584,7 @@
 .psa-nudge-chip-show-chat {
   position: absolute;
   left: 50%;
-  bottom: 0;
+  bottom: -40px;
   margin-bottom: 0;
   width: min(120px, 37vw);
   transform: translateX(-50%);
