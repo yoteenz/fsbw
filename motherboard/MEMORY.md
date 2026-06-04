@@ -24955,3 +24955,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted PSA response outline dashes (`- ITEM`) replaced with tiny red bullet points matching `/brand/terms` (`BrandTermsBody`).
 
 **Changes:** New `renderPsaAssistantBubbleText` in `src/utils/psaBubbleText.tsx` — parses lines starting with `- ` into `<p class="psa-chat-bullet">` rows with red `•` (`#EB1C24`, 12px left padding). Price highlighting still via `renderPsaPriceHighlightedText`. Wired in `PsaChatPanel.tsx`; CSS in `psaAssistant.css`. API still emits `- ` markers in `psaInstructions.ts`; only display layer changed.
+
+---
+
+## 2026-06-03 — PSA SHOW CHAT in nudge bubble
+
+**Context:** User wanted collapsed PSA state (after HIDE CHAT) to show SHOW CHAT inside the thought nudge bubble with black Bohemy headline styling (same as proactive nudge first line), not plain Futura text under empty space.
+
+**Changes:** `PsaAssistantWidget.tsx` — collapsed state renders `psa-nudge-chip-show-chat` with bubble PNG + `.psa-nudge-chip-headline` ("show chat" via lowercase transform). Click restores avatar + normal stack (proactive nudge above avatar when applicable). Removed unused `psa-fab-collapsed-trigger`.
