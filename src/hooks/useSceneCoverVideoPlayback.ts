@@ -53,8 +53,7 @@ export function useSceneCoverVideoPlayback(
     }
 
     completedRef.current = false;
-    const el = videoRef.current;
-    if (!el) return;
+    let cancelled = false;
 
     const finish = () => {
       if (completedRef.current) return;
@@ -63,15 +62,18 @@ export function useSceneCoverVideoPlayback(
         cancelAnimationFrame(reverseRafRef.current);
         reverseRafRef.current = null;
       }
-      el.pause();
-      el.playbackRate = 1;
-      if (direction === 'reverse') el.currentTime = 0;
+      const video = videoRef.current;
+      if (video) {
+        video.pause();
+        video.playbackRate = 1;
+        if (direction === 'reverse') video.currentTime = 0;
+      }
       onCompleteRef.current();
     };
 
-    let safetyTimer = window.setTimeout(finish, safetyTimeoutMs);
+    let safetyTimer = 0;
     const clearSafety = () => window.clearTimeout(safetyTimer);
-    const armSafetyFromDuration = () => {
+    const armSafetyFromDuration = (el: HTMLVideoElement) => {
       clearSafety();
       const baseMs =
         Number.isFinite(el.duration) && el.duration > 0 ? el.duration * 1000 + 500 : 6500;
@@ -79,159 +81,187 @@ export function useSceneCoverVideoPlayback(
       safetyTimer = window.setTimeout(finish, ms);
     };
 
-    const notifyPlaying = () => {
-      const fire = () => onPlayingRef.current?.();
-      if (instantReveal) {
-        fire();
-        return;
-      }
-      if (typeof el.requestVideoFrameCallback === 'function') {
-        el.requestVideoFrameCallback(fire);
-        return;
-      }
-      requestAnimationFrame(() => requestAnimationFrame(fire));
-    };
+    const startPlayback = (el: HTMLVideoElement) => {
+      if (cancelled || completedRef.current) return;
 
-    const onPlayingEvent = () => {
-      if (direction === 'reverse') return;
-      notifyPlaying();
-    };
+      safetyTimer = window.setTimeout(finish, safetyTimeoutMs);
 
-    const waitUntilCanStart = () =>
-      new Promise<void>((resolve) => {
-        if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-          resolve();
+      const notifyPlaying = () => {
+        const fire = () => onPlayingRef.current?.();
+        if (instantReveal) {
+          fire();
           return;
         }
-        const done = () => {
-          el.removeEventListener('loadeddata', done);
-          el.removeEventListener('canplay', done);
-          resolve();
-        };
-        el.addEventListener('loadeddata', done);
-        el.addEventListener('canplay', done);
-      });
-
-    const playForward = async () => {
-      el.playbackRate = 1;
-      el.currentTime = 0;
-
-      const revealIfDecoded = () => {
-        if (
-          revealOnFirstDecodedFrame &&
-          el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
-        ) {
-          notifyPlaying();
+        if (typeof el.requestVideoFrameCallback === 'function') {
+          el.requestVideoFrameCallback(fire);
+          return;
         }
+        requestAnimationFrame(() => requestAnimationFrame(fire));
       };
 
-      revealIfDecoded();
+      const onPlayingEvent = () => {
+        if (direction === 'reverse') return;
+        notifyPlaying();
+      };
 
-      try {
-        await el.play();
-      } catch {
-        try {
-          if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-            await waitUntilCanStart();
-            revealIfDecoded();
-          }
-          await el.play();
-        } catch {
-          finish();
-        }
-      }
-
-      if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-        await waitUntilCanStart();
-        revealIfDecoded();
-      }
-    };
-
-    const playReverse = async () => {
-      const rate = reversePlaybackRate;
-
-      const waitForDuration = () =>
+      const waitUntilCanStart = () =>
         new Promise<void>((resolve) => {
-          if (el.readyState >= 1 && Number.isFinite(el.duration) && el.duration > 0) {
+          if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
             resolve();
             return;
           }
-          const onMeta = () => {
-            el.removeEventListener('loadedmetadata', onMeta);
-            resolve();
-          };
-          el.addEventListener('loadedmetadata', onMeta);
-          if (el.readyState === HTMLMediaElement.HAVE_NOTHING) el.load();
-        });
-
-      await waitForDuration();
-
-      const duration = el.duration;
-      if (!Number.isFinite(duration) || duration <= 0) {
-        finish();
-        return;
-      }
-
-      el.pause();
-      el.playbackRate = 1;
-
-      const frac = Math.min(1, Math.max(0, reverseStartFraction));
-      const reverseStartTime =
-        frac >= 1 ? Math.max(0, duration - 0.02) : Math.max(0, duration * frac);
-
-      const seekToStart = () =>
-        new Promise<void>((resolve) => {
           const done = () => {
-            el.removeEventListener('seeked', done);
+            el.removeEventListener('loadeddata', done);
+            el.removeEventListener('canplay', done);
             resolve();
           };
-          el.addEventListener('seeked', done);
-          el.currentTime = reverseStartTime;
+          el.addEventListener('loadeddata', done);
+          el.addEventListener('canplay', done);
         });
 
-      await seekToStart();
+      const playForward = async () => {
+        el.playbackRate = 1;
+        el.currentTime = 0;
 
-      // Show the hand-press frame immediately (close must not lead with black UI / static).
-      notifyPlaying();
+        const revealIfDecoded = () => {
+          if (
+            revealOnFirstDecodedFrame &&
+            el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+          ) {
+            notifyPlaying();
+          }
+        };
 
-      let last = performance.now();
-      const tick = (now: number) => {
-        if (completedRef.current) return;
-        const dt = Math.min(now - last, 50);
-        last = now;
-        const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
-        el.currentTime = next;
-        if (next <= 0.04) {
+        revealIfDecoded();
+
+        try {
+          await el.play();
+        } catch {
+          try {
+            if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+              await waitUntilCanStart();
+              revealIfDecoded();
+            }
+            await el.play();
+          } catch {
+            finish();
+          }
+        }
+
+        if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+          await waitUntilCanStart();
+          revealIfDecoded();
+        }
+      };
+
+      const playReverse = async () => {
+        const rate = reversePlaybackRate;
+
+        const waitForDuration = () =>
+          new Promise<void>((resolve) => {
+            if (el.readyState >= 1 && Number.isFinite(el.duration) && el.duration > 0) {
+              resolve();
+              return;
+            }
+            const onMeta = () => {
+              el.removeEventListener('loadedmetadata', onMeta);
+              resolve();
+            };
+            el.addEventListener('loadedmetadata', onMeta);
+            if (el.readyState === HTMLMediaElement.HAVE_NOTHING) el.load();
+          });
+
+        await waitForDuration();
+
+        const duration = el.duration;
+        if (!Number.isFinite(duration) || duration <= 0) {
           finish();
           return;
         }
+
+        el.pause();
+        el.playbackRate = 1;
+
+        const frac = Math.min(1, Math.max(0, reverseStartFraction));
+        const reverseStartTime =
+          frac >= 1 ? Math.max(0, duration - 0.02) : Math.max(0, duration * frac);
+
+        const seekToStart = () =>
+          new Promise<void>((resolve) => {
+            const done = () => {
+              el.removeEventListener('seeked', done);
+              resolve();
+            };
+            el.addEventListener('seeked', done);
+            el.currentTime = reverseStartTime;
+          });
+
+        await seekToStart();
+
+        notifyPlaying();
+
+        let last = performance.now();
+        const tick = (now: number) => {
+          if (completedRef.current) return;
+          const dt = Math.min(now - last, 50);
+          last = now;
+          const next = Math.max(0, el.currentTime - (dt / 1000) * rate);
+          el.currentTime = next;
+          if (next <= 0.04) {
+            finish();
+            return;
+          }
+          reverseRafRef.current = requestAnimationFrame(tick);
+        };
         reverseRafRef.current = requestAnimationFrame(tick);
       };
-      reverseRafRef.current = requestAnimationFrame(tick);
+
+      const onEnded = () => {
+        if (direction === 'forward') finish();
+      };
+      const onTimeUpdate = () => {
+        if (direction !== 'reverse') return;
+        if (el.playbackRate < 0 && el.currentTime <= 0.05) finish();
+      };
+
+      el.addEventListener('playing', onPlayingEvent);
+      el.addEventListener('ended', onEnded);
+      el.addEventListener('timeupdate', onTimeUpdate);
+      el.addEventListener('loadedmetadata', () => armSafetyFromDuration(el));
+      if (el.readyState >= 1) armSafetyFromDuration(el);
+
+      void (direction === 'reverse' ? playReverse() : playForward());
+
+      return () => {
+        clearSafety();
+        el.removeEventListener('playing', onPlayingEvent);
+        el.removeEventListener('ended', onEnded);
+        el.removeEventListener('timeupdate', onTimeUpdate);
+        el.removeEventListener('loadedmetadata', () => armSafetyFromDuration(el));
+        if (reverseRafRef.current !== null) {
+          cancelAnimationFrame(reverseRafRef.current);
+          reverseRafRef.current = null;
+        }
+      };
     };
 
-    const onEnded = () => {
-      if (direction === 'forward') finish();
-    };
-    const onTimeUpdate = () => {
-      if (direction !== 'reverse') return;
-      if (el.playbackRate < 0 && el.currentTime <= 0.05) finish();
+    let cleanupPlayback: (() => void) | undefined;
+    const waitForVideo = () => {
+      if (cancelled) return;
+      const el = videoRef.current;
+      if (!el) {
+        requestAnimationFrame(waitForVideo);
+        return;
+      }
+      cleanupPlayback = startPlayback(el);
     };
 
-    el.addEventListener('playing', onPlayingEvent);
-    el.addEventListener('ended', onEnded);
-    el.addEventListener('timeupdate', onTimeUpdate);
-    el.addEventListener('loadedmetadata', armSafetyFromDuration);
-    if (el.readyState >= 1) armSafetyFromDuration();
-
-    void (direction === 'reverse' ? playReverse() : playForward());
+    waitForVideo();
 
     return () => {
+      cancelled = true;
       clearSafety();
-      el.removeEventListener('playing', onPlayingEvent);
-      el.removeEventListener('ended', onEnded);
-      el.removeEventListener('timeupdate', onTimeUpdate);
-      el.removeEventListener('loadedmetadata', armSafetyFromDuration);
+      cleanupPlayback?.();
       if (reverseRafRef.current !== null) {
         cancelAnimationFrame(reverseRafRef.current);
         reverseRafRef.current = null;

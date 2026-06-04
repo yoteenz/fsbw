@@ -198,7 +198,7 @@ type HostProps = {
 };
 
 /**
- * Scene-locked overlay for lobby ↔ lounge — render inside {@link SceneViewportPortal}
+ * Scene-locked overlay for lobby ↔ lounge — render inside {@link SceneViewportOverlay}
  * on the active slide viewport (keeps `<video>` warm when `phase` is null on lobby).
  */
 export function LobbyLoungeTransitionHost({ phase, onComplete }: HostProps) {
