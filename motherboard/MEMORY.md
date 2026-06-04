@@ -24771,3 +24771,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** Nudge → `bottom: 100%` + `margin-bottom: 5px` (clear gap above avatar). `.psa-avatar-cta` → `margin-top: 6px`.
 
+---
+
+## 2026-06-04 — PSA FAB: 10px left nudge
+
+**Context:** User wanted TAP TO CHAT, avatar, and holo background shifted 10px left (chat panel unchanged).
+
+**Changes:** `.psa-widget-fab-stack { transform: translateX(-10px); }` — moves nudge + avatar trigger + glow together.
+
