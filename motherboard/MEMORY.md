@@ -24578,8 +24578,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** **`SceneViewportPortal`** could mount **`LobbyLoungeTransitionHost`** after `active` flipped true; **`useSceneCoverVideoPlayback`** bailed when `videoRef.current` was null and never retried, so **`onComplete`** never ran and **`roomTransitionOverlay`** stayed set.
 
 **Fix:** **`SceneViewportOverlay`** — inline `absolute` layer inside **`SceneCarouselViewportStage`** (transition stays scene-locked, always in React tree). Playback hook waits for `<video>` via `requestAnimationFrame` before starting. Lobby host always on lobby slide (forward + warm); lounge host only for reverse.
-<<<<<<< HEAD
-=======
 
 ---
 
@@ -24589,9 +24587,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** Saved `public/assets/psa-nudge-thought-bubble.png` (1360×1360 RGBA); `PSA_NUDGE_BUBBLE_SRC` + `PSA_NUDGE_BUBBLE_ASSET_VERSION=1` in `psaConfig.ts`. `PsaAssistantWidget` renders `<img>` + overlaid text; removed CSS shell/face/holo-ring/tail. Slow pulse on art + float animation retained.
 
-<<<<<<< HEAD
->>>>>>> master
-=======
 ---
 
 ## 2026-06-04 — PSA nudge: 10px closer + holo glow background prompt
@@ -24625,4 +24620,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** Saved `psa-holo-glow-option-{1,2,3}.png`. `PsaHoloComparePanel.tsx` — 3 columns (same nudge + avatar, different glow). Enable with **`?psaHoloCompare=1`** on any page (EXIT removes param). `isPsaHoloCompareMode` in `psaConfig.ts`. Compare tray fixed bottom; bypasses normal single FAB while active.
 
 **Conventions:** After user picks option 1/2/3, wire winner as `psa-nudge-holo-glow.png` and remove compare mode + unused PNGs.
+
+---
+
+## 2026-06-04 — PSA holo glow option 3 live; TAP TO CHAT Futura Medium
+
+**Context:** User chose option 3 holo glow for production — PNG images only, no CSS pulse/brightness overlay on the glow or thought bubble. Also wanted gray **TAP TO CHAT** text below the PSA avatar in Futura Medium.
+
+**Topics covered:** Continuation of holo glow A/B compare; wiring winner to live FAB; font weight on FAB CTA.
+
+**Decisions / outcomes:** Option 3 (`psa-holo-glow-option-3.png`) copied to production asset `psa-nudge-holo-glow.png`. Live widget uses `.psa-widget-fab-stack` with `.psa-widget-holo-glow` behind nudge + avatar — static PNG, no `psa-nudge-art-pulse`. Compare column 3 gets `psa-holo-compare-column--png-only` (no glow/art pulse); options 1/2 keep pulse for side-by-side contrast.
+
+**Changes:** `psaConfig.ts` — `PSA_NUDGE_HOLO_GLOW_SRC`; `PsaAssistantWidget.tsx` — fab stack + holo glow img; `psaAssistant.css` — fab stack/glow styles, removed art pulse on production nudge, `.psa-avatar-cta` `font-weight: 500`; `PsaHoloComparePanel.tsx` — png-only modifier for option 3; new `public/assets/psa-nudge-holo-glow.png`.
+
+**Conventions:** Compare mode (`?psaHoloCompare=1`) still available until user confirms removal; bump `PSA_NUDGE_HOLO_GLOW_ASSET_VERSION` when replacing glow PNG.
 
