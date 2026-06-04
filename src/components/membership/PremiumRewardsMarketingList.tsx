@@ -7,6 +7,8 @@ type PremiumRewardsMarketingListProps = {
   heading?: string;
   /** Extra margin above the block. */
   marginTop?: string;
+  /** Brand membership page: perk titles in lowercase Bohemy instead of Covered By Your Grace. */
+  bohemyPerkTitles?: boolean;
 };
 
 /** Shared premium perk titles + subtitles (Account → Rewards, Brand → Become a Member). */
