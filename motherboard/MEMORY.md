@@ -25118,3 +25118,51 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
 
 **Pushed:** `master` + `preview/mobile`.
+
+---
+
+## 2026-06-04 — Lounge/lobby scene hit debug square tuning (TV + display case)
+
+**Context:** User requested colored QA overlay / production hit-box adjustments on lounge TV regions and lobby display case while using `?sceneHitDebug=1`.
+
+**Topics covered:**
+- **Magenta** TV content pop-up: height +20px only; recover X close icon (was clipped by `overflow: hidden` on inner screen).
+- **Blue** baked lounge TV: down 80px, right 20px; height −40%.
+- **Green** play tap: width and height +50%.
+- **Orange** lobby display case: down 80px; width −20%.
+
+**Decisions / outcomes:** Shared **`sceneHitLayoutBoxStyle`** (`src/utils/sceneHitLayout.ts`) applies layout to both **`SceneHitDebugOverlay`** and production boxes (same pattern as shelf **`LOBBY_SHELF_HIT_LAYOUT_*`**). Close button moved to direct child of **`data-lounge-tv-glass`** (sibling of overflow-hidden content) so negative inset is not clipped.
+
+**Changes:**
+- **`finalLobbySceneAssets.ts`** — `LOUNGE_TV_BAKED_HIT_LAYOUT_*`, `LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE` (1.5).
+- **`loungeTvSceneLayout.ts`** — `LOUNGE_TV_MENU_SCREEN_LAYOUT_HEIGHT_EXTRA_PX` (20).
+- **`lobbyDisplayCaseLayout.ts`** — `LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.y` **−31 → 49** (+80px down); `LOBBY_DISPLAY_CASE_HIT_LAYOUT` width scale **0.8**.
+- **`LoungeCompositeTvPlay.tsx`**, **`LoungeTvFullscreenShell.tsx`**, **`LobbyDisplayCaseShell.tsx`**, **`SceneHitDebugOverlay.tsx`**.
+
+**Pushed:** `master` + `preview/mobile` (`8fa8cae6`).
+
+**Conventions:** Tune lounge TV / display case via `LOUNGE_TV_*_HIT_LAYOUT` and `LOBBY_DISPLAY_CASE_HIT_LAYOUT` constants; debug colors still only with `?sceneHitDebug=1`.
+
+---
+
+## 2026-06-04 — Excess marble below brand main cards (not PSA flow)
+
+**Context:** User saw large empty marble area below brand main card (e.g. Terms) with PSA FAB at bottom; suspected PSA caused it.
+
+**Cause:** `min-h-screen` on brand page wrapper + `fixed inset-0` marble forced full viewport height. PSA widget is `position: fixed` and does not affect document flow.
+
+**Fix:** New **`MarblePageShell`** (`src/layouts/MarblePageShell.tsx`) — marble `position: absolute` on content-sized shell (default, no `100dvh` min); **`PSA_WIDGET_PAGE_PADDING_BOTTOM`** reserves ~128px + safe-area so FAB does not cover actions. **`src/pages/brand/page.tsx`** migrated off `min-h-screen` / fixed marble.
+
+**Pushed:** `master` + `preview/mobile`.
+
+**Conventions:** Short-content marble pages should use `MarblePageShell`; pass `fillViewport` only when a page truly needs full-viewport marble (e.g. tall menu panels). Other pages still on legacy `min-h-screen` + fixed marble until migrated.
+
+---
+
+## 2026-06-04 — Lounge/lobby scene hit layout retune (second pass)
+
+**Context:** User retuned colored QA / production hit boxes after first layout pass.
+
+**Changes:** Magenta `LOUNGE_TV_MENU_SCREEN_LAYOUT` `layoutOffsetY: -10` (up 10px). Blue `LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_*` → **10px** right, **100px** down. Green play tap scales **1.3 × 0.4** (width +30%, height −60%, center). Orange display case `LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.y` **49 → 69** (+20px down); `LOBBY_DISPLAY_CASE_HIT_LAYOUT` uses **`layoutWidthExtraPx` / `layoutHeightExtraPx` +40** each (replaced width 0.8 scale). `sceneHitLayout.ts` gained `layoutWidthExtraPx`.
+
+**Pushed:** `master` + `preview/mobile` (`de356e1f`).

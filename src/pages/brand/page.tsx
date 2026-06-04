@@ -12,6 +12,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import BrandAboutUsBody from '../../components/brand/BrandAboutUsBody';
 import BrandContactSection from '../../components/brand/BrandContactSection';
+import { MarblePageShell } from '../../layouts/MarblePageShell';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
 import BrandReviewsEmptyState from '../../components/brand/BrandReviewsEmptyState';
@@ -184,18 +185,7 @@ function BrandPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
-      <div
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundImage: `url('/assets/marble-half.png')`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'repeat',
-          backgroundAttachment: 'fixed'
-        }}
-      />
-      <div className="relative z-10">
+    <MarblePageShell>
         <div
           className="flex flex-col py-5 px-4"
           style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', position: 'relative' }}
@@ -527,8 +517,7 @@ function BrandPage() {
             </>
           )}
         </div>
-      </div>
-    </div>
+    </MarblePageShell>
   );
 }
 

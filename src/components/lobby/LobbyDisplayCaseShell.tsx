@@ -1,12 +1,14 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react';
 import {
   FINAL_LOBBY_DISPLAY_CASE_RECT,
+  LOBBY_DISPLAY_CASE_HIT_LAYOUT,
   LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
   LOBBY_DISPLAY_CASE_PHONE_SLOT,
   LOBBY_DISPLAY_CASE_REGISTER_SLOT,
 } from '../../constants/lobbyDisplayCaseLayout';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { useLobbyDisplayCaseHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { LOBBY_CASE_CONTAINER_STYLE } from './lobbyCaseResponsive';
 import { SceneHitDebugOverlay } from './SceneHitDebugOverlay';
 import { rectToPercentStyle } from './SceneHitRegion';
@@ -102,6 +104,7 @@ export function LobbyDisplayCaseShell({
           rect={mappedCase}
           label="lobby display case"
           zIndex={Math.max(registerZIndex, phoneZIndex) + 1}
+          layout={LOBBY_DISPLAY_CASE_HIT_LAYOUT}
           overlayStyle={{
             backgroundColor: 'rgba(255, 152, 0, 0.42)',
             border: '2px solid rgba(230, 81, 0, 0.95)',
@@ -111,8 +114,7 @@ export function LobbyDisplayCaseShell({
       <div
         data-lobby-display-case
         style={{
-          position: 'absolute',
-          ...rectToPercentStyle(mappedCase),
+          ...sceneHitLayoutBoxStyle(mappedCase, 0, 0, LOBBY_DISPLAY_CASE_HIT_LAYOUT),
           zIndex: Math.max(registerZIndex, phoneZIndex),
           ...LOBBY_CASE_CONTAINER_STYLE,
           pointerEvents: 'none',
