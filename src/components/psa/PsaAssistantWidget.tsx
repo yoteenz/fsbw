@@ -11,6 +11,8 @@ import {
   PSA_IDLE_WAVE_INTERVAL_MS,
   PSA_WIDGET_CTA,
   PSA_CONTINUE_CTA,
+  PSA_HIDE_CHAT_CTA,
+  PSA_SHOW_CHAT_CTA,
 } from '../../constants/psaConfig';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
@@ -59,6 +61,7 @@ export default function PsaAssistantWidget() {
   const [signedIn, setSignedIn] = useState(() => isSignedIn());
   const [isPremium, setIsPremium] = useState(() => isPremiumMemberForGatedFeatures());
   const [isOpen, setIsOpen] = useState(false);
+  const [isFabCollapsed, setIsFabCollapsed] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showWelcomeWave, setShowWelcomeWave] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -69,7 +72,7 @@ export default function PsaAssistantWidget() {
   const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
   const [prefillInput, setPrefillInput] = useState('');
   const [welcomeMessage, setWelcomeMessage] = useState(() => readPsaWelcomeMessageFromStorage());
-  const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave);
+  const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -99,10 +102,17 @@ export default function PsaAssistantWidget() {
     buildPsaClientSessionContext(location.pathname, pendingMessage)
   );
 
-  const proactiveNudge = usePsaProactiveNudges(!isOpen);
+  const proactiveNudge = usePsaProactiveNudges(!isOpen && !isFabCollapsed);
 
-  const showContinueHint = !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
-  const fabCtaLabel = showContinueHint ? PSA_CONTINUE_CTA : PSA_WIDGET_CTA;
+  const showContinueHint =
+    !isFabCollapsed && !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
+  const fabCtaLabel = isFabCollapsed
+    ? PSA_SHOW_CHAT_CTA
+    : isOpen
+      ? PSA_HIDE_CHAT_CTA
+      : showContinueHint
+        ? PSA_CONTINUE_CTA
+        : PSA_WIDGET_CTA;
   const fabCtaSubline = showContinueHint ? continueHint!.title : null;
 
   useEffect(() => {
@@ -160,7 +170,7 @@ export default function PsaAssistantWidget() {
 
   /** Closed FAB: brief wave every ~30s so the avatar feels alive, not static. */
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen || isFabCollapsed) {
       setShowIdleWave(false);
       if (idleWaveIntervalRef.current) {
         clearInterval(idleWaveIntervalRef.current);
@@ -187,7 +197,7 @@ export default function PsaAssistantWidget() {
         idleWaveTimerRef.current = null;
       }
     };
-  }, [isOpen, triggerIdleWave]);
+  }, [isOpen, isFabCollapsed, triggerIdleWave]);
 
   const prevMessageCountRef = useRef(messages.length);
   useEffect(() => {
@@ -254,12 +264,20 @@ export default function PsaAssistantWidget() {
     }, PSA_WAVING_MS);
   }, []);
 
-  const handleToggle = useCallback(() => {
-    setIsOpen((open) => {
-      if (!open) startWelcomeWave();
-      return !open;
-    });
-  }, [startWelcomeWave]);
+  const handleFabClick = useCallback(() => {
+    if (isFabCollapsed) {
+      setIsFabCollapsed(false);
+      return;
+    }
+    if (isOpen) {
+      setIsFabCollapsed(true);
+      setIsOpen(false);
+      closeHistory();
+      return;
+    }
+    setIsOpen(true);
+    startWelcomeWave();
+  }, [isFabCollapsed, isOpen, startWelcomeWave, closeHistory]);
 
   const handleCloseChat = useCallback(() => {
     setIsOpen(false);
@@ -441,7 +459,7 @@ export default function PsaAssistantWidget() {
           </>
         ) : null}
         <div className="psa-widget-fab-stack">
-          {!isOpen && proactiveNudge ? (
+          {!isFabCollapsed && !isOpen && proactiveNudge ? (
             <button
               type="button"
               className="psa-nudge-chip"
@@ -463,14 +481,26 @@ export default function PsaAssistantWidget() {
               </span>
             </button>
           ) : null}
-          <PsaAvatarTrigger
-            onClick={handleToggle}
-            isOpen={isOpen}
-            idle={!isOpen}
-            expression={avatarExpression}
-            ctaLabel={fabCtaLabel}
-            ctaSubline={fabCtaSubline}
-          />
+          {isFabCollapsed ? (
+            <button
+              type="button"
+              className="psa-fab-collapsed-trigger"
+              onClick={handleFabClick}
+              aria-label="Show PSA chat"
+            >
+              <span className="psa-avatar-cta">{fabCtaLabel}</span>
+            </button>
+          ) : (
+            <PsaAvatarTrigger
+              onClick={handleFabClick}
+              isOpen={isOpen}
+              idle={!isOpen}
+              expression={avatarExpression}
+              ctaLabel={fabCtaLabel}
+              ctaSubline={fabCtaSubline}
+              aria-label={isOpen ? 'Hide PSA chat' : 'Open Personal Slay Assistant'}
+            />
+          )}
         </div>
       </div>
 
