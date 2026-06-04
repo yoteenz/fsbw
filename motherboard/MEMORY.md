@@ -24687,3 +24687,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Holo compare preview is retired; bump `PSA_NUDGE_HOLO_GLOW_ASSET_VERSION` only when replacing the production PNG.
 
+---
+
+## 2026-06-04 — PSA holo glow: +15% size bump
+
+**Context:** User said option 3 glow was too small after 125% shrink; requested 15% increase.
+
+**Changes:** `.psa-avatar-holo-glow-rotator` width `125%` → `144%` of 88px avatar wrap.
+
