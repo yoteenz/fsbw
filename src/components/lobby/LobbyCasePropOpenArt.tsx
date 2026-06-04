@@ -5,7 +5,10 @@ import {
   scaleLobbyCasePropOpenOverlayRect,
 } from '../../constants/finalLobbyCasePropOverlays';
 import { LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX } from '../../constants/lobbyPaymentIcons';
-import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
+import {
+  SCENE_COVER_FALLBACK_MEASURE_REF,
+  useSceneCoverHitRect,
+} from '../../hooks/useSceneCoverHitRect';
 import { rectToPercentStyle } from './SceneHitRegion';
 
 type Props = {
@@ -30,35 +33,13 @@ const openArtImgStyle = {
   opacity: 1,
 };
 
-/**
- * Open-state register/phone art above the slide scrim, aligned to the composite
- * via the display-case shell or legacy per-prop cover map.
- */
-export function LobbyCasePropOpenArt({
-  visible,
+function OpenArtImage({
   src,
-  imageRect,
-  viewportMeasureRef,
-  layoutOffset,
-  overlayScale = LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
-  fillParent = false,
-}: Props) {
-  const mapped = useSceneCoverHitRect(
-    imageRect ?? { left: 0, top: 0, width: 1, height: 1 },
-    viewportMeasureRef ?? { current: null },
-    fillParent ? undefined : layoutOffset,
-  );
-
-  if (!visible) return null;
-
-  const displayRect = fillParent
-    ? scaleLobbyCasePropOpenOverlayRect({ left: 0, top: 0, width: 1, height: 1 }, overlayScale)
-    : mapped
-      ? scaleLobbyCasePropOpenOverlayRect(mapped, overlayScale)
-      : null;
-
-  if (!displayRect) return null;
-
+  displayRect,
+}: {
+  src: string;
+  displayRect: FinalSceneHitRect;
+}) {
   return (
     <img
       src={src}
@@ -72,6 +53,72 @@ export function LobbyCasePropOpenArt({
         ...rectToPercentStyle(displayRect),
         ...openArtImgStyle,
       }}
+    />
+  );
+}
+
+/** Slot-local open PNG — no cover-map hook (parent display-case shell is already mapped). */
+function LobbyCasePropOpenArtFillParent({
+  visible,
+  src,
+  overlayScale = LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
+}: Pick<Props, 'visible' | 'src' | 'overlayScale'>) {
+  if (!visible) return null;
+  const displayRect = scaleLobbyCasePropOpenOverlayRect(
+    { left: 0, top: 0, width: 1, height: 1 },
+    overlayScale,
+  );
+  return <OpenArtImage src={src} displayRect={displayRect} />;
+}
+
+function LoungeCasePropOpenArtMapped({
+  visible,
+  src,
+  imageRect,
+  viewportMeasureRef,
+  layoutOffset,
+  overlayScale = LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
+}: Required<Pick<Props, 'visible' | 'src' | 'imageRect'>> &
+  Pick<Props, 'viewportMeasureRef' | 'layoutOffset' | 'overlayScale'>) {
+  const mapped = useSceneCoverHitRect(
+    imageRect,
+    viewportMeasureRef ?? SCENE_COVER_FALLBACK_MEASURE_REF,
+    layoutOffset,
+  );
+
+  if (!visible || !mapped) return null;
+
+  const displayRect = scaleLobbyCasePropOpenOverlayRect(mapped, overlayScale);
+  return <OpenArtImage src={src} displayRect={displayRect} />;
+}
+
+/**
+ * Open-state register/phone art above the slide scrim, aligned to the composite
+ * via the display-case shell or legacy per-prop cover map.
+ */
+export function LobbyCasePropOpenArt({
+  visible,
+  src,
+  imageRect,
+  viewportMeasureRef,
+  layoutOffset,
+  overlayScale,
+  fillParent = false,
+}: Props) {
+  if (fillParent) {
+    return (
+      <LobbyCasePropOpenArtFillParent visible={visible} src={src} overlayScale={overlayScale} />
+    );
+  }
+
+  return (
+    <LoungeCasePropOpenArtMapped
+      visible={visible}
+      src={src}
+      imageRect={imageRect ?? { left: 0, top: 0, width: 1, height: 1 }}
+      viewportMeasureRef={viewportMeasureRef}
+      layoutOffset={layoutOffset}
+      overlayScale={overlayScale}
     />
   );
 }
