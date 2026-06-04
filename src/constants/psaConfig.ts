@@ -70,10 +70,10 @@ export const PSA_WIDGET_CTA = 'TAP TO CHAT';
 export const PSA_CONTINUE_CTA = 'CONTINUE CHAT';
 
 /** FAB caption while chat panel is open — tap collapses avatar + chat. */
-export const PSA_HIDE_CHAT_CTA = 'HIDE PSA CHAT';
+export const PSA_HIDE_CHAT_CTA = 'HIDE CHAT';
 
 /** FAB caption when avatar is collapsed — tap restores avatar (chat stays closed). */
-export const PSA_SHOW_CHAT_CTA = 'SHOW PSA CHAT';
+export const PSA_SHOW_CHAT_CTA = 'SHOW CHAT';
 
 /** Crossfade duration when switching avatar PNG expressions (ms). */
 export const PSA_EXPRESSION_CROSSFADE_MS = 1200;

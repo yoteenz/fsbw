@@ -486,7 +486,7 @@ export default function PsaAssistantWidget() {
               type="button"
               className="psa-fab-collapsed-trigger"
               onClick={handleFabClick}
-              aria-label="Show PSA chat"
+              aria-label="Show chat"
             >
               <span className="psa-avatar-cta">{fabCtaLabel}</span>
             </button>
@@ -498,7 +498,7 @@ export default function PsaAssistantWidget() {
               expression={avatarExpression}
               ctaLabel={fabCtaLabel}
               ctaSubline={fabCtaSubline}
-              aria-label={isOpen ? 'Hide PSA chat' : 'Open Personal Slay Assistant'}
+              aria-label={isOpen ? 'Hide chat' : 'Open Personal Slay Assistant'}
             />
           )}
         </div>
