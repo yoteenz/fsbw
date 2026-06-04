@@ -25266,3 +25266,28 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `src/components/psa/psaAssistant.css`.
 
+
+---
+
+## 2026-06-04 — Brand membership Bohemy perk titles; TERMS above REVIEWS in menu
+
+**Context:** User asked to replace black Covered By Your Grace typography on the brand membership page with lowercase Bohemy, and to show TERMS above REVIEWS in the brand hamburger menu.
+
+**Topics covered (entire conversation so far):**
+- Handoff from prior chat (marble scroll, lounge debug squares, brand menu MEMBERS ONLY / TERMS labels).
+- Located perk titles in `PremiumRewardsMarketingList` (shared with Account → Rewards).
+- Added `bohemyPerkTitles` prop; enabled only from `BrandMemberSection` on `/brand/member`.
+- Reordered `BRAND_MENU_ITEMS`: TERMS (menu `TERMS`) now before REVIEWS; kept `menuLabel` / `getBrandMenuLabel` for MEMBERS ONLY and TERMS card headers.
+
+**Decisions / outcomes:**
+- Brand `/brand/member` premium perk titles: Bohemy 17px, black, `textTransform: lowercase`.
+- Account rewards list unchanged (still Covered By Your Grace uppercase).
+- Brand menu order: ABOUT → CONTACT → MEMBERS ONLY → TERMS → REVIEWS → CAREERS → FAQ.
+
+**Changes:**
+- `src/components/membership/PremiumRewardsMarketingList.tsx` — `bohemyPerkTitles` optional prop.
+- `src/components/brand/BrandMemberSection.tsx` — passes `bohemyPerkTitles`.
+- `src/constants/brandMenu.ts` — menu order + `menuLabel` / `getBrandMenuLabel` / MEMBERS ONLY card title.
+
+**Conventions:**
+- Scope shared marketing components with props when brand and account pages need different typography.
