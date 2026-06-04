@@ -24675,3 +24675,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-avatar-holo-glow-rotator` width `178%` → `125%` (~30% smaller). Applies to live FAB and holo compare columns (shared class).
 
+---
+
+## 2026-06-04 — PSA holo glow: option 3 locked in; compare mode removed
+
+**Context:** User confirmed **option 3** as the final holo glow (already live as `psa-nudge-holo-glow.png`). Asked to finalize production and drop A/B compare.
+
+**Decisions / outcomes:** Production unchanged — `PSA_NUDGE_HOLO_GLOW_SRC` → `public/assets/psa-nudge-holo-glow.png` (option 3) on `.psa-avatar-glow-wrap` at 125% rotator width with pulse + spin.
+
+**Changes:** Removed `PsaHoloComparePanel.tsx`, `?psaHoloCompare=1` / `isPsaHoloCompareMode` / compare CSS and config. Deleted draft assets `psa-holo-glow-option-{1,2,3}.png` and `psa-holo-glow-option-2-draft.png`. Kept only production `psa-nudge-holo-glow.png`.
+
+**Conventions:** Holo compare preview is retired; bump `PSA_NUDGE_HOLO_GLOW_ASSET_VERSION` only when replacing the production PNG.
+
