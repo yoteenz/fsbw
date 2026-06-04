@@ -25051,3 +25051,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-06-04 — PSA SHOW CHAT nudge bottom −110px
 
 **Changes:** `.psa-nudge-chip.psa-nudge-chip-show-chat` **`bottom: -110px`** (−50px from prior −60px). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-04 — PSA chat fixed height; SHOW CHAT nudge up 30px
+
+**Cause:** Panel had **`max-height` only** — new chat shrank to content; HISTORY (`flex: 1` only, no input row) expanded to full max height.
+
+**Changes:** `.psa-chat-panel` explicit **`height`** matching max (**500px** / **`100dvh - 160px`**). **`min-height: 0`** on `.psa-chat-messages` + `.psa-chat-history` for scroll. SHOW CHAT **`bottom: -80px`** (+30px up from −110px).
