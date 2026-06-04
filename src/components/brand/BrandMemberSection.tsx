@@ -93,7 +93,7 @@ export default function BrandMemberSection() {
           marginTop: '4px',
         }}
       >
-        <PremiumRewardsMarketingList heading="PREMIUM MEMBER PERKS" />
+        <PremiumRewardsMarketingList heading="PREMIUM MEMBER PERKS" bohemyPerkTitles />
       </div>
     </div>
   );
