@@ -12,7 +12,11 @@ function rgba(c) {
 function isCheckerLike(p) {
   const max = Math.max(p.r, p.g, p.b);
   const min = Math.min(p.r, p.g, p.b);
-  return p.a > 200 && max - min <= 24 && max >= 190;
+  const spread = max - min;
+  if (p.a < 20) return false;
+  if (p.a > 200 && max >= 228 && spread <= 8) return true;
+  if (p.a > 200 && max >= 180 && max <= 227 && spread <= 10) return true;
+  return false;
 }
 
 for (const f of files) {

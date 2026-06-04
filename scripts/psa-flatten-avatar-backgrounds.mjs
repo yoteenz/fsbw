@@ -1,61 +1,40 @@
 /**
- * Remove fake-transparent / checkerboard backgrounds on PSA avatar PNGs.
+ * Remove baked checkerboard from PSA avatar PNGs (conservative — character-safe).
  *
  * Usage:
  *   node scripts/psa-flatten-avatar-backgrounds.mjs
- *   node scripts/psa-flatten-avatar-backgrounds.mjs --greenscreen
- *   node scripts/psa-flatten-avatar-backgrounds.mjs --opaque-black   # legacy fill
  *
- * Default output is **true alpha** (transparent). Use `--opaque-black` only for old black-matte exports.
- * For new Fal exports on green screen: `--greenscreen`.
+ * Default output is true alpha. Only removes neutral checker squares and tinted
+ * fringe pixels — does NOT flood through skin, clothing, or warm tones.
  */
 import { Jimp } from 'jimp';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const ASSETS_DIR = path.join(process.cwd(), 'public/assets');
-const useGreenScreen = process.argv.includes('--greenscreen');
-const useOpaqueBlack = process.argv.includes('--opaque-black');
 const TRANSPARENT_INT = 0;
-const OPAQUE_BLACK_INT = (0 << 24) | (0 << 16) | (0 << 8) | 255;
-const FILL_INT = useOpaqueBlack ? OPAQUE_BLACK_INT : TRANSPARENT_INT;
 
 function rgbaFromInt(c) {
   return { r: c >>> 24, g: (c >>> 16) & 255, b: (c >>> 8) & 255, a: c & 255 };
 }
 
-function colorDist(a, b) {
-  return Math.sqrt((a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2);
-}
+/** Neutral light/dark checker squares (Fal fake transparency). */
+function isCheckerPixel(p) {
+  if (p.a === 0) return false;
 
-function isGreenScreenPixel(p) {
-  return p.g >= 120 && p.g > p.r + 35 && p.g > p.b + 35;
-}
+  /** Residual export fringe — force fully transparent. */
+  if (p.a < 20) return true;
 
-function isCheckerboardPixel(p) {
+  if (p.a < 200) return false;
+
   const max = Math.max(p.r, p.g, p.b);
   const min = Math.min(p.r, p.g, p.b);
   const spread = max - min;
 
-  /** Light checker / white matte. */
-  if (max >= 220 && spread <= 28) return true;
-  /** Mid-gray checker squares (~190–235). */
-  if (max >= 180 && max <= 240 && spread <= 16) return true;
-  /** Dark gray checker (~120–140 neutral or tinted). */
-  if (max >= 110 && max <= 150 && min <= 12) return true;
-  /** Tinted dark squares (e.g. 126,1,1 or 0,1,255). */
-  if (max >= 90 && max <= 140 && min <= 8 && spread >= 80) return true;
-
-  return false;
-}
-
-function isBackgroundPixel(p, bgRefs) {
-  if (p.a < 16) return true;
-  if (useGreenScreen && isGreenScreenPixel(p)) return true;
-  if (isCheckerboardPixel(p)) return true;
-
-  const minDist = Math.min(...bgRefs.map((bg) => colorDist(p, bg)));
-  if (minDist <= 48) return true;
+  /** Light square (~255,255,255). */
+  if (max >= 228 && spread <= 8) return true;
+  /** Dark square (~192–227 neutral gray). */
+  if (max >= 180 && max <= 227 && spread <= 10) return true;
 
   return false;
 }
@@ -65,12 +44,6 @@ async function flattenFile(filename) {
   const img = await Jimp.read(filePath);
   const w = img.width;
   const h = img.height;
-  const bgRefs = [
-    rgbaFromInt(img.getPixelColor(0, 0)),
-    rgbaFromInt(img.getPixelColor(w - 1, 0)),
-    rgbaFromInt(img.getPixelColor(0, h - 1)),
-    rgbaFromInt(img.getPixelColor(w - 1, h - 1)),
-  ];
 
   const visited = new Uint8Array(w * h);
   const queue = [];
@@ -79,7 +52,7 @@ async function flattenFile(filename) {
     const idx = y * w + x;
     if (visited[idx]) return;
     const p = rgbaFromInt(img.getPixelColor(x, y));
-    if (!isBackgroundPixel(p, bgRefs)) return;
+    if (!isCheckerPixel(p)) return;
     visited[idx] = 1;
     queue.push([x, y]);
   };
@@ -96,33 +69,31 @@ async function flattenFile(filename) {
   let replaced = 0;
   while (queue.length) {
     const [x, y] = queue.pop();
-    img.setPixelColor(FILL_INT, x, y);
+    img.setPixelColor(TRANSPARENT_INT, x, y);
     replaced += 1;
 
-    const neighbors = [
+    for (const [nx, ny] of [
       [x - 1, y],
       [x + 1, y],
       [x, y - 1],
       [x, y + 1],
-    ];
-    for (const [nx, ny] of neighbors) {
+    ]) {
       if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
       const idx = ny * w + nx;
       if (visited[idx]) continue;
       const p = rgbaFromInt(img.getPixelColor(nx, ny));
-      if (!isBackgroundPixel(p, bgRefs)) continue;
+      if (!isCheckerPixel(p)) continue;
       visited[idx] = 1;
       queue.push([nx, ny]);
     }
   }
 
-  /** Orphan checker cells inside the silhouette (not edge-connected). */
+  /** Interior checker islands (surrounded by character but still neutral squares). */
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const p = rgbaFromInt(img.getPixelColor(x, y));
-      if (p.a < 16) continue;
-      if (!isCheckerboardPixel(p)) continue;
-      img.setPixelColor(FILL_INT, x, y);
+      if (!isCheckerPixel(p)) continue;
+      img.setPixelColor(TRANSPARENT_INT, x, y);
       replaced += 1;
     }
   }
@@ -131,12 +102,10 @@ async function flattenFile(filename) {
   return { filename, replaced, total: w * h };
 }
 
-const files = fs.readdirSync(ASSETS_DIR).filter((f) => f.startsWith('psa-avatar-'));
-console.log(
-  `Mode: ${useGreenScreen ? 'green-screen + auto' : 'auto (checkerboard)'}; fill: ${useOpaqueBlack ? 'opaque black' : 'transparent'}`
-);
+const files = fs.readdirSync(ASSETS_DIR).filter((f) => f.startsWith('psa-avatar-') && f.endsWith('.png'));
+console.log('Mode: conservative checkerboard removal → transparent');
 const results = [];
-for (const f of files) {
+for (const f of files.sort()) {
   results.push(await flattenFile(f));
 }
 for (const r of results) {
