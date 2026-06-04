@@ -547,7 +547,8 @@
   position: absolute;
   left: 50%;
   right: auto;
-  bottom: calc(100% - 23px);
+  bottom: 100%;
+  margin-bottom: 5px;
   width: min(120px, 37vw);
   padding: 0;
   border: none;
