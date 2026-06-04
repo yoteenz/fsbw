@@ -24979,3 +24979,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** After HIDE CHAT, SHOW CHAT thought bubble sat too far right vs the avatar it replaces.
 
 **Changes:** `psa-widget-fab-stack--collapsed` fixes stack to **88px** (avatar width). `.psa-nudge-chip-show-chat` uses absolute `left: 50%` + `translateX(-50%)` + `bottom: 0` on that column — same horizontal center as avatar/proactive nudge.
+
+---
+
+## 2026-06-03 — PSA avatar + nudge 10px left
+
+**Changes:** `.psa-widget-fab-stack` horizontal nudge **`translateX(-10px)` → `translateX(-20px)`** — moves avatar, proactive nudge, and SHOW CHAT bubble 10px left together. Open chat panel (main-card width) unchanged.
