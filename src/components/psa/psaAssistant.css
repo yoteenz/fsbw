@@ -613,7 +613,7 @@
 .psa-nudge-chip.psa-nudge-chip-show-chat .psa-nudge-chip-headline {
   position: relative;
   top: 4px;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 @keyframes psa-thought-float-show-chat {
@@ -652,6 +652,11 @@
   padding: 0 4px;
   pointer-events: none;
   text-align: center;
+}
+
+/* Proactive alert nudge only — headline + body down 2px (not SHOW CHAT). */
+.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content {
+  top: calc(36% + 10px);
 }
 
 .psa-nudge-chip-headline {
