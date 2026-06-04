@@ -282,7 +282,7 @@ export default function PsaChatPanel({
           );
         })}
         {isSending ? (
-          <div className="psa-chat-bubble psa-chat-bubble-system">PSA IS TYPING…</div>
+          <div className="psa-chat-bubble psa-chat-bubble-system">YOUR PSA IS TYPING…</div>
         ) : null}
       </div>
 
