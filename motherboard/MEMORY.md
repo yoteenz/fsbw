@@ -24477,3 +24477,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** Only the `$` amount is red in assistant bubbles — surrounding copy stays black.
 
+---
+
+## 2026-06-03 — PSA chat: GO HERE links gray Futura Medium
+
+**Context:** User wanted PSA **GO HERE** route links changed from brand red to gray Futura Medium.
+
+**Changes:** `psaAssistant.css` — `.psa-chat-nav-link` color `#eb1c24` → `#808080` (font already Futura PT Medium).
+
