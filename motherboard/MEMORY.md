@@ -24928,3 +24928,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `margin-bottom` `-11px` → `-9px` (nudge headline + body sit 2px higher above avatar).
 
+---
+
+## 2026-06-04 — PSA chat cards: uppercase summaries
+
+**Context:** User reported PSA responses still showing lowercase (product card summaries like "Straight unit — lighter / soft straight aesthetic." while UI is all-caps).
+
+**Cause:** Rich cards rendered `card.summary` / `description` / `note` raw from catalog; `<button>` cards did not reliably inherit panel `text-transform`.
+
+**Changes:** `formatPsaVoiceText` on all card string fields in `api/_lib/psaResponseUi.ts` + `PsaChatPanel.tsx` render path. Explicit `text-transform: uppercase` on `.psa-chat-card` and card text classes.
+
