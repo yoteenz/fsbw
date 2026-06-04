@@ -24821,8 +24821,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-<<<<<<< HEAD
-=======
 ## 2026-06-04 — TV close: no black flash before reverse Seedance
 
 **Context:** Cloud-agent handoff continued lobby/lounge scene-lock and TV work. User reported a full-screen **black flash before the TV close (reverse Seedance) animation** starts when tapping X.
@@ -24839,9 +24837,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-<<<<<<< HEAD
->>>>>>> master
-=======
 ## 2026-06-04 — Lounge TV menu: scene-locked glass + responsive UI
 
 **Context:** User reported TV menu **text and close icon** do not scale on smaller/larger devices; requested a **transparent container** mimicking the TV glass, locked to the lounge background (`cover` + `center top`) like register/phone popovers.
@@ -24856,7 +24851,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
->>>>>>> master
 ## 2026-06-04 — PSA chat panel: glassmorphism main card
 
 **Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
