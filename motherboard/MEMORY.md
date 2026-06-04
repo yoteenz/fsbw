@@ -24938,6 +24938,7 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip` `margin-bottom` `-11px` → `-9px` (nudge headline + body sit 2px higher above avatar).
 
+<<<<<<< HEAD
 ---
 
 ## 2026-06-04 — PSA chat cards: uppercase summaries
@@ -25118,3 +25119,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`psaProactiveNudges.ts`** — `resolvePsaNudgePageContext` + `pickContextualPsaProactiveNudge`. Re-added **`baw_draft`** (only when pathname is `/build-a-wig/*`). Each nudge carries **`pageContexts`** + **`recencyMs`**. Wishlist stock → `wishlist`; profile alerts → `alerts`; order updates/celebrations → `orders`; cart OOS → `general` fallback by recency.
 
 **Pushed:** `master` + `preview/mobile`.
+=======
+>>>>>>> d395a3a5c735479156e8c4798fb363d3588a0436
