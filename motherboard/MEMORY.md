@@ -24645,3 +24645,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Files:** `PsaAvatarTrigger.tsx`, `PsaAssistantWidget.tsx`, `PsaHoloComparePanel.tsx`, `psaAssistant.css`.
 
+---
+
+## 2026-06-04 — PSA "QUICK IS NOT DEFINED" chat error (wishlist nudge)
+
+**Context:** User clicked wishlist stock nudge ("back in stock / ON YOUR WISHLIST"), sent prefilled message "Something on my wishlist changed stock. What should I do?", and PSA showed gray system text **QUICK IS NOT DEFINED** instead of a real reply.
+
+**Cause:** Not PSA copy — leaked **JavaScript ReferenceError** from server. In `api/_lib/psaInstructions.ts` line 68, unescaped backticks around `>>QUICK:` inside the `buildPsaInstructions` template literal broke the string; Node evaluated `QUICK` as a variable on every `/api/psa/chat` request. Earlier thread messages (e.g. BEACH WAVE) were from before the bad line landed or from persisted history.
+
+**Fix:** Escape backticks on the quick-reply chips doc line (`\`>>QUICK:\``). Verified `esbuild` bundle of `api/psa/chat.ts` succeeds after fix.
+
+**Conventions:** Any `>>QUICK:` examples inside `buildPsaInstructions` template must use `\`` escapes (same as line 117).
+
