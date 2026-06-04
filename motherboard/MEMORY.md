@@ -25126,6 +25126,7 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** Proactive nudge headline + body only — `.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content` **`top: calc(36% + 10px)`** (+2px down). SHOW CHAT Bohemy **`font-size: 14px`** (was 15px).
 
 ---
+<<<<<<< HEAD
 
 ## 2026-06-03 — PSA proactive nudge copy debug page
 
@@ -25134,3 +25135,24 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`/tools/psa-nudges`** — grid of bubble previews + copy fields (headline, body, prefilled, full block). **`psaProactiveNudgeCatalog.ts`** static catalog mirroring all variants in priority order. Route in **`App.tsx`**.
 
 **Pushed:** `master` + `preview/mobile`.
+=======
+## 2026-06-04 — Brand terms scroll: PSA not the cause; viewport-locked MarblePageShell
+
+**Context:** User could still scroll far below the gray marble on brand pages (e.g. Terms with PSA nudge). Suspected PSA chat caused “boundless” vertical scroll. Prior session had attempted MarblePageShell but it was not on disk.
+
+**Topics covered (entire conversation so far):**
+- Lounge/lobby scene-hit debug tuning (magenta TV menu, blue baked TV, green play tap, orange display case) via `sceneHitLayout.ts` calc-based sizing.
+- Brand marble excess whitespace below cards; user still scrolling into white below marble with PSA visible.
+- Root cause analysis: PSA (`PsaAssistantWidget`) portals to `document.body` with `position: fixed` — does not expand document height. Excess scroll came from `min-h-screen` + main card `maxHeight: calc(100dvh - 80px)` while nav header sits **outside** the card, so total page height exceeded one viewport; fixed marble stays viewport-sized so scrolled area shows body white.
+
+**Decisions / outcomes:**
+- Added `src/layouts/MarblePageShell.tsx`: marble `position: absolute; inset: 0` on shell (not `fixed` + `min-h-screen`). Optional `viewportLocked` → `height: 100dvh`, `overflow: hidden`.
+- Brand page (`src/pages/brand/page.tsx`): `brandPageViewportLocked = brandMainCardScrollable || showMobileMenu`. Terms/contact/faq/member chart lock shell; scroll only inside main card via flex `flex: 1; minHeight: 0; overflowY: auto`. Short pages (about) use content-height shell without `min-h-screen`. Contact/faq action buttons remain siblings below flex card inside flex column.
+
+**Changes:**
+- `src/layouts/MarblePageShell.tsx` (new)
+- `src/pages/brand/page.tsx`
+
+**Conventions:**
+- For inner-scroll marble pages, lock shell to `100dvh` and distribute header + card + below-card actions in a flex column; do not use `maxHeight: calc(100dvh - N)` on the card without subtracting header height unless shell is locked.
+>>>>>>> c9dbe6ef6f186ccfdeef79149b1d6a2b575bb0c6
