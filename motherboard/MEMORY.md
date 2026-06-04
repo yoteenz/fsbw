@@ -24963,3 +24963,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted collapsed PSA state (after HIDE CHAT) to show SHOW CHAT inside the thought nudge bubble with black Bohemy headline styling (same as proactive nudge first line), not plain Futura text under empty space.
 
 **Changes:** `PsaAssistantWidget.tsx` — collapsed state renders `psa-nudge-chip-show-chat` with bubble PNG + `.psa-nudge-chip-headline` ("show chat" via lowercase transform). Click restores avatar + normal stack (proactive nudge above avatar when applicable). Removed unused `psa-fab-collapsed-trigger`.
+
+---
+
+## 2026-06-03 — PSA chat constrained to main card width
+
+**Context:** User reported open PSA chat panel extended past the frosted main card borders (e.g. Build-a-Wig texture step); chat must stay inside the card column.
+
+**Changes:** `psaMainCardBounds.ts` + `usePsaMainCardBounds` — finds largest visible `border border-black flex flex-col bg-white/60 backdrop-blur-sm` card (excludes nav header row); fallback `16px` horizontal inset. When chat open, `psa-widget-root--chat-open` sets `left`/`width` to card rect; `.psa-chat-panel` is `width: 100%` with max-height from card. FAB stays right-aligned within column. Closed FAB unchanged (viewport-fixed).
