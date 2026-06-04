@@ -1,6 +1,6 @@
 /**
- * Proactive PSA FAB nudges — unsigned forms, consults, stock, order updates, profile alerts.
- * Only surfaces actionable *new* alerts; no always-on session nudges (e.g. BAW drafts).
+ * Proactive PSA FAB nudges — page-context priority (BAW, wishlist, alerts, orders)
+ * plus global alerts. Off-topic pages show the most recent nudge.
  */
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
 import {
@@ -12,6 +12,7 @@ import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { getWigUnitProductRoute } from './wigUnitProductRoutes';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
+import { detectPsaBawResumeTarget, loadPsaBawDraft } from './psaBawDraft';
 import {
   detectPsaOrderCelebration,
   markOrderCelebrated,
@@ -22,9 +23,12 @@ export type PsaProactiveNudgeKind =
   | 'unsigned_form'
   | 'expiring_consult'
   | 'stock_alert'
+  | 'baw_draft'
   | 'order_celebration'
   | 'order_update'
   | 'profile_alert';
+
+export type PsaNudgePageContext = 'baw' | 'wishlist' | 'alerts' | 'orders' | 'general';
 
 export type PsaProactiveNudge = {
   id: string;
@@ -35,6 +39,9 @@ export type PsaProactiveNudge = {
   actionPath: string;
   actionLabel: string;
   prefilledMessage?: string;
+  /** Newest-first tie-break on general pages and within a page context. */
+  recencyMs: number;
+  pageContexts: PsaNudgePageContext[];
   /** For order celebrations — mark seen when nudge shown. */
   celebrationMeta?: { orderId: string; kind: PsaOrderCelebrationKind };
 };
@@ -42,6 +49,16 @@ export type PsaProactiveNudge = {
 const STATIC_ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
 
 const ORDER_STATUS_NUDGE_STATUSES = ['SHIPPED', 'PREPARING', 'CONFIRMED'] as const;
+
+/** Route → which nudge families get first pick on that page. */
+export function resolvePsaNudgePageContext(pathname: string): PsaNudgePageContext {
+  const path = pathname || '/';
+  if (/^\/build-a-wig(\/|$)/i.test(path)) return 'baw';
+  if (/^\/wishlist(\/|$)/i.test(path)) return 'wishlist';
+  if (/^\/account\/alerts(\/|$)/i.test(path)) return 'alerts';
+  if (/^\/(?:account\/)?orders(\/|$)/i.test(path)) return 'orders';
+  return 'general';
+}
 
 function readUserOrders(email: string): Record<string, unknown>[] {
   try {
@@ -87,6 +104,16 @@ function orderId(order: Record<string, unknown>): string {
   return String(order.id ?? order.orderNumber ?? '').trim();
 }
 
+function orderRecencyMs(order: Record<string, unknown>): number {
+  if (typeof order.placedAt === 'number' && Number.isFinite(order.placedAt)) return order.placedAt;
+  const u = order.updatedAt;
+  if (u != null && u !== '') {
+    const n = typeof u === 'number' ? u : Date.parse(String(u));
+    if (!Number.isNaN(n)) return n;
+  }
+  return Date.now();
+}
+
 function hoursUntil(ms: number): number {
   return Math.max(0, Math.ceil((ms - Date.now()) / (60 * 60 * 1000)));
 }
@@ -123,8 +150,40 @@ function notificationSortAt(n: StoredNotification): number {
   return 0;
 }
 
+function nudgeMatchesPage(nudge: PsaProactiveNudge, page: PsaNudgePageContext): boolean {
+  if (page === 'general') return false;
+  return nudge.pageContexts.includes(page);
+}
+
+function compareWithinContext(a: PsaProactiveNudge, b: PsaProactiveNudge): number {
+  if (a.priority !== b.priority) return a.priority - b.priority;
+  return b.recencyMs - a.recencyMs;
+}
+
+function compareMostRecent(a: PsaProactiveNudge, b: PsaProactiveNudge): number {
+  if (b.recencyMs !== a.recencyMs) return b.recencyMs - a.recencyMs;
+  return a.priority - b.priority;
+}
+
+/** Pick page-relevant nudge first; otherwise the latest alert globally. */
+export function pickContextualPsaProactiveNudge(
+  nudges: PsaProactiveNudge[],
+  pathname: string
+): PsaProactiveNudge | null {
+  if (nudges.length === 0) return null;
+  const page = resolvePsaNudgePageContext(pathname);
+  const pageNudges = nudges.filter((n) => nudgeMatchesPage(n, page));
+  if (pageNudges.length > 0) {
+    pageNudges.sort(compareWithinContext);
+    return pageNudges[0];
+  }
+  const sorted = [...nudges].sort(compareMostRecent);
+  return sorted[0] ?? null;
+}
+
 function nudgeFromStockNotification(n: StoredNotification): PsaProactiveNudge {
   const low = (n.title || '').toUpperCase().includes('LOW STOCK');
+  const recencyMs = notificationSortAt(n) || Date.now();
   return {
     id: `notif-stock-${n.id}`,
     kind: 'stock_alert',
@@ -134,6 +193,8 @@ function nudgeFromStockNotification(n: StoredNotification): PsaProactiveNudge {
     actionPath: n.actionRoute || '/wishlist',
     actionLabel: n.actionText?.trim() || 'SHOP NOW',
     prefilledMessage: 'Something on my wishlist changed stock. What should I do?',
+    recencyMs,
+    pageContexts: ['wishlist'],
   };
 }
 
@@ -156,6 +217,8 @@ function nudgeFromOrderNotification(n: StoredNotification): PsaProactiveNudge {
     prefilledMessage: n.message?.trim()
       ? `Tell me about this order update: ${n.message.trim()}`
       : 'I have a new order update. What should I know?',
+    recencyMs: notificationSortAt(n) || Date.now(),
+    pageContexts: ['orders'],
   };
 }
 
@@ -172,6 +235,8 @@ function nudgeFromProfileNotification(n: StoredNotification): PsaProactiveNudge 
     prefilledMessage: title
       ? `I have a new alert: ${title}. What should I do?`
       : 'I have a new profile alert. What should I do?',
+    recencyMs: notificationSortAt(n) || Date.now(),
+    pageContexts: ['alerts'],
   };
 }
 
@@ -181,24 +246,9 @@ function collectNotificationNudges(email: string, nudges: PsaProactiveNudge[]): 
     .sort((a, b) => notificationSortAt(b) - notificationSortAt(a));
 
   for (const n of unread) {
-    if (isStockNotification(n)) {
-      nudges.push(nudgeFromStockNotification(n));
-      break;
-    }
-  }
-
-  for (const n of unread) {
-    if (isOrderNotification(n)) {
-      nudges.push(nudgeFromOrderNotification(n));
-      break;
-    }
-  }
-
-  for (const n of unread) {
-    if (isProfileMessageNotification(n)) {
-      nudges.push(nudgeFromProfileNotification(n));
-      break;
-    }
+    if (isStockNotification(n)) nudges.push(nudgeFromStockNotification(n));
+    else if (isOrderNotification(n)) nudges.push(nudgeFromOrderNotification(n));
+    else if (isProfileMessageNotification(n)) nudges.push(nudgeFromProfileNotification(n));
   }
 }
 
@@ -214,9 +264,8 @@ function collectOrderStatusNudges(orders: Record<string, unknown>[], nudges: Psa
     if (localStorage.getItem(seenKey)) continue;
 
     const num = orderNum(order);
-    const nudgeId = `order-status-${id}-${status}`;
     nudges.push({
-      id: nudgeId,
+      id: `order-status-${id}-${status}`,
       kind: 'order_update',
       priority: 7,
       headline: status === 'SHIPPED' ? "SHE'S ON THE WAY" : 'ORDER UPDATE',
@@ -226,13 +275,41 @@ function collectOrderStatusNudges(orders: Record<string, unknown>[], nudges: Psa
       prefilledMessage: num
         ? `My order ${num} status changed to ${status}. What's next?`
         : `My order status changed to ${status}. What's next?`,
+      recencyMs: orderRecencyMs(order),
+      pageContexts: ['orders'],
     });
     break;
   }
 }
 
-/** Highest-priority nudge for the PSA FAB (null when none). */
-export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | null {
+function collectBawDraftNudge(pathname: string, nudges: PsaProactiveNudge[]): void {
+  if (resolvePsaNudgePageContext(pathname) !== 'baw') return;
+  const baw = detectPsaBawResumeTarget(pathname);
+  if (!baw) return;
+
+  let recencyMs = Date.now();
+  const draft = loadPsaBawDraft();
+  if (draft?.savedAt) {
+    const t = Date.parse(draft.savedAt);
+    if (!Number.isNaN(t)) recencyMs = t;
+  }
+
+  nudges.push({
+    id: `baw-${baw.unitId}`,
+    kind: 'baw_draft',
+    priority: 4,
+    headline: baw.source === 'draft' ? 'YOUR BAW DRAFT IS SAVED' : 'FINISH YOUR CUSTOMIZATION',
+    body: baw.unitLabel,
+    actionPath: baw.buildPath,
+    actionLabel: 'CONTINUE BAW',
+    prefilledMessage: `Help me finish my ${baw.unitLabel} Build-a-Wig configuration where I left off.`,
+    recencyMs,
+    pageContexts: ['baw'],
+  });
+}
+
+/** Highest-priority / page-context nudge for the PSA FAB (null when none). */
+export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | null {
   const email = getCurrentUserEmailFromStorage();
   if (!email) return null;
 
@@ -257,6 +334,8 @@ export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | n
       prefilledMessage: num
         ? `Help me sign the order authorization form for ${num} before it expires.`
         : 'Help me sign my order authorization form before it expires.',
+      recencyMs: placedAt,
+      pageContexts: ['orders', 'general'],
     });
     break;
   }
@@ -280,6 +359,8 @@ export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | n
       prefilledMessage: num
         ? `Walk me through my consult offer on ${num} before it expires.`
         : 'Walk me through my consult offer before it expires.',
+      recencyMs: expires - 48 * 60 * 60 * 1000,
+      pageContexts: ['orders', 'general'],
     });
     break;
   }
@@ -301,8 +382,12 @@ export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | n
       prefilledMessage: name
         ? `${name} in my bag is out of stock. What are my options?`
         : 'Something in my bag is out of stock. What are my options?',
+      recencyMs: Date.now(),
+      pageContexts: ['general'],
     });
   }
+
+  collectBawDraftNudge(pathname, nudges);
 
   const celebration = detectPsaOrderCelebration(orders);
   if (celebration) {
@@ -318,6 +403,8 @@ export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | n
       actionPath: '/orders',
       actionLabel: 'VIEW ORDER',
       prefilledMessage: celebration.prefilledMessage,
+      recencyMs: match ? orderRecencyMs(match) : Date.now(),
+      pageContexts: ['orders'],
       celebrationMeta: id ? { orderId: id, kind: celebration.kind } : undefined,
     });
   }
@@ -325,8 +412,7 @@ export function computePsaProactiveNudge(_pathname = '/'): PsaProactiveNudge | n
   collectNotificationNudges(email, nudges);
   collectOrderStatusNudges(orders, nudges);
 
-  nudges.sort((a, b) => a.priority - b.priority);
-  const top = nudges[0] ?? null;
+  const top = pickContextualPsaProactiveNudge(nudges, pathname);
   if (top?.celebrationMeta) {
     markOrderCelebrated(top.celebrationMeta.orderId, top.celebrationMeta.kind);
   }
