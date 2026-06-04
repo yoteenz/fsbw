@@ -25157,3 +25157,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Conventions:**
 - For inner-scroll marble pages, lock shell to `100dvh` and distribute header + card + below-card actions in a flex column; do not use `maxHeight: calc(100dvh - N)` on the card without subtracting header height unless shell is locked.
 
+---
+
+## 2026-06-03 — Proactive nudge Bohemy headline only +2px down
+
+**Changes:** Replaced whole-content offset with `.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-headline { top: 2px }` — row 1 (black Bohemy) only; red body + SHOW CHAT unchanged.
+
