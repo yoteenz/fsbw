@@ -24851,6 +24851,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-04 — Lobby display case: scene-locked register + phone
+
+**Context:** User asked for a **transparent container** on the lobby background for the **display case** so register and phone stay on the acrylic when `final-lobby.png` shifts on different screen sizes (same pattern as lounge TV glass).
+
+**Changes (commit `0f0d222d`, `master` + `preview/mobile`):**
+- **`FINAL_LOBBY_DISPLAY_CASE_RECT`** on `final-lobby.png`; **`lobbyDisplayCaseLayout.ts`** — register/phone **slots** as % inside the case.
+- **`LobbyDisplayCaseShell`** — one cover-mapped transparent box; **`LOBBY_DISPLAY_CASE_LAYOUT_OFFSET`** moves case + props together (replaces per-prop cover offsets).
+- **`LobbySceneHotspots`** — register/phone popovers + open PNGs inside shell slots; **`LobbyCasePropOpenArt`** `fillParent` for slot-local art.
+- **`lobbyCaseResponsive.ts`** — `container-type: size` + `cqw` popover width/gaps; **`LobbyCasePropPopover`** `responsive` prop.
+- QA: dashed outline on case with **`?sceneHitDebug=1`**.
+
+**Conventions:** Tune case bounds in **`FINAL_LOBBY_DISPLAY_CASE_RECT`**; slot positions follow **`FINAL_LOBBY_HIT_REGIONS.caseRegister` / `casePhone`** via `lobbyDisplayCaseSlotRect`.
+
+---
+
 ## 2026-06-04 — PSA chat panel: glassmorphism main card
 
 **Context:** User wanted PSA chat box to use transparent glassmorphism from the main card instead of marble (`popup-marble.png`).
