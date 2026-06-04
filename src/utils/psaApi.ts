@@ -432,6 +432,36 @@ export async function archivePsaThread(threadId: string): Promise<PsaThreadMutat
   return { ok: true };
 }
 
+export async function renamePsaThread(threadId: string, title: string): Promise<PsaThreadMutationResult> {
+  let res: Response | null;
+  try {
+    res = await psaAuthedFetch(`/api/psa/thread?threadId=${encodeURIComponent(threadId)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ threadId, title }),
+    });
+  } catch {
+    return { ok: false, code: 'NETWORK', message: 'Could not rename PSA chat.' };
+  }
+  if (!res) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+  const parsed = await parsePsaJsonBody<{ error?: string; code?: string }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
+  }
+  if (res.status === 401) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+  if (res.status === 403 || parsed.data.code === 'PREMIUM_REQUIRED') {
+    return { ok: false, code: 'PREMIUM_REQUIRED', message: parsed.data.error || 'Premium required.' };
+  }
+  if (!res.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.data.error || 'Could not rename PSA chat.' };
+  }
+  return { ok: true };
+}
+
 export async function deletePsaThread(threadId: string): Promise<PsaThreadMutationResult> {
   let res: Response | null;
   try {

@@ -1,6 +1,6 @@
 /**
  * GET /api/psa/thread — load active or specific PSA thread + messages.
- * PATCH /api/psa/thread — archive or unarchive a thread.
+ * PATCH /api/psa/thread — archive, unarchive, or rename a thread.
  * DELETE /api/psa/thread — permanently delete a thread (?threadId=).
  *
  * Query:
@@ -18,6 +18,7 @@ import {
   getPsaThreadForUser,
   getPsaThreadMessages,
   isPsaThreadStoreConfigured,
+  renamePsaThread,
   unarchivePsaThread,
 } from '../_lib/psaThreadStore.js';
 
@@ -78,7 +79,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!threadIdParam) {
         return res.status(400).json({ error: 'threadId required.' });
       }
-      const body = (req.body ?? {}) as { archive?: boolean; unarchive?: boolean };
+      const body = (req.body ?? {}) as { archive?: boolean; unarchive?: boolean; title?: string };
+      if (typeof body.title === 'string' && body.title.trim()) {
+        const ok = await renamePsaThread(user.id, threadIdParam, body.title);
+        if (!ok) return res.status(404).json({ error: 'Thread not found.' });
+        return res.status(200).json({ ok: true, threadId: threadIdParam, title: body.title.trim() });
+      }
       if (body.unarchive === true) {
         const ok = await unarchivePsaThread(user.id, threadIdParam);
         if (!ok) return res.status(404).json({ error: 'Thread not found.' });
