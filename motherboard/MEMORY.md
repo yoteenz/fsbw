@@ -24761,3 +24761,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:** PSA replies use blank lines between sections; bullets `- ` and numbered steps one per line; navigation tail names destination in plain language.
 
+---
+
+## 2026-06-04 — PSA FAB spacing: TAP TO CHAT + nudge gap fix
+
+**Context:** User asked for 6px above gray TAP TO CHAT; reported prior nudge +5px spacing change had no visible effect.
+
+**Cause:** Nudge used `bottom: calc(100% - 23px)` — increasing the subtracted value moves the bubble **down** into the avatar (more overlap), opposite of adding gap below the bubble.
+
+**Changes:** Nudge → `bottom: 100%` + `margin-bottom: 5px` (clear gap above avatar). `.psa-avatar-cta` → `margin-top: 6px`.
+
