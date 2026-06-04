@@ -29,4 +29,12 @@ export const LOBBY_DISPLAY_CASE_PHONE_SLOT = lobbyDisplayCaseSlotRect(
  * Cover-map nudge for the whole display case (register + phone move together).
  * Midpoint of legacy per-prop offsets in `finalLobbyCasePropOverlays.ts`.
  */
-export const LOBBY_DISPLAY_CASE_LAYOUT_OFFSET = { x: 12, y: -31 } as const;
+export const LOBBY_DISPLAY_CASE_LAYOUT_OFFSET = { x: 12, y: 49 } as const;
+
+/** Production + QA — orange display case: width −20% from top center. */
+export const LOBBY_DISPLAY_CASE_LAYOUT_WIDTH_SCALE = 0.8;
+
+export const LOBBY_DISPLAY_CASE_HIT_LAYOUT = {
+  layoutScale: { x: LOBBY_DISPLAY_CASE_LAYOUT_WIDTH_SCALE, y: 1 },
+  layoutScaleOrigin: 'center top' as const,
+} as const;

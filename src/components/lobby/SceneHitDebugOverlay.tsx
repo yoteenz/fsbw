@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
-import { coverMappedRectScreenOffsetStyle } from '../../utils/sceneCoverHitMap';
-import { rectToPercentStyle } from './SceneHitRegion';
+import { sceneHitLayoutBoxStyle, type SceneHitLayoutOptions } from '../../utils/sceneHitLayout';
 
 const DEBUG_LABEL_STYLE: CSSProperties = {
   position: 'absolute',
@@ -24,6 +23,7 @@ type Props = {
   overlayStyle?: CSSProperties;
   screenOffsetX?: number;
   screenOffsetY?: number;
+  layout?: SceneHitLayoutOptions;
 };
 
 /** Non-interactive colored box for QA placement tuning (`?sceneHitDebug=1`). */
@@ -34,20 +34,14 @@ export function SceneHitDebugOverlay({
   overlayStyle,
   screenOffsetX = 0,
   screenOffsetY = 0,
+  layout,
 }: Props) {
-  const positionStyle =
-    screenOffsetX || screenOffsetY
-      ? coverMappedRectScreenOffsetStyle(rect, screenOffsetX, screenOffsetY)
-      : rectToPercentStyle(rect);
-
   return (
     <div
       aria-hidden
       style={{
-        position: 'absolute',
-        ...positionStyle,
+        ...sceneHitLayoutBoxStyle(rect, screenOffsetX, screenOffsetY, layout),
         zIndex,
-        boxSizing: 'border-box',
         pointerEvents: 'none',
         backgroundColor: 'rgba(255, 193, 7, 0.42)',
         border: '2px solid rgba(255, 152, 0, 0.95)',
