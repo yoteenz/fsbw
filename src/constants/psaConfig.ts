@@ -55,6 +55,11 @@ export const PSA_NUDGE_BUBBLE_ASSET_VERSION = '1';
 
 export const PSA_NUDGE_BUBBLE_SRC = `/assets/psa-nudge-thought-bubble.png?v=${PSA_NUDGE_BUBBLE_ASSET_VERSION}`;
 
+/** Holo glow plate behind PSA FAB + nudge (option 3). Bump when PNG changes. */
+export const PSA_NUDGE_HOLO_GLOW_ASSET_VERSION = '1';
+
+export const PSA_NUDGE_HOLO_GLOW_SRC = `/assets/psa-nudge-holo-glow.png?v=${PSA_NUDGE_HOLO_GLOW_ASSET_VERSION}`;
+
 /** Temporary A/B — holo glow plates; `?psaHoloCompare=1` on any page. Bump when PNGs change. */
 export const PSA_HOLO_GLOW_COMPARE_VERSION = '1';
 

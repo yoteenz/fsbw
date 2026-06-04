@@ -6,6 +6,7 @@ import {
   isPsaHiddenPath,
   isPsaHoloCompareMode,
   PSA_NUDGE_BUBBLE_SRC,
+  PSA_NUDGE_HOLO_GLOW_SRC,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   readPsaWelcomeMessageFromStorage,
@@ -447,36 +448,45 @@ export default function PsaAssistantWidget() {
             />
           </>
         ) : null}
-        {!isOpen && proactiveNudge ? (
-          <button
-            type="button"
-            className="psa-nudge-chip"
-            onClick={handleNudgeAction}
-            aria-label={proactiveNudge.headline}
-          >
-            <img
-              className="psa-nudge-chip-art"
-              src={PSA_NUDGE_BUBBLE_SRC}
-              alt=""
-              aria-hidden
-              draggable={false}
-            />
-            <span className="psa-nudge-chip-content">
-              <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
-              {proactiveNudge.body ? (
-                <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
-              ) : null}
-            </span>
-          </button>
-        ) : null}
-        <PsaAvatarTrigger
-          onClick={handleToggle}
-          isOpen={isOpen}
-          idle={!isOpen}
-          expression={avatarExpression}
-          ctaLabel={fabCtaLabel}
-          ctaSubline={fabCtaSubline}
-        />
+        <div className="psa-widget-fab-stack">
+          <img
+            className="psa-widget-holo-glow"
+            src={PSA_NUDGE_HOLO_GLOW_SRC}
+            alt=""
+            aria-hidden
+            draggable={false}
+          />
+          {!isOpen && proactiveNudge ? (
+            <button
+              type="button"
+              className="psa-nudge-chip"
+              onClick={handleNudgeAction}
+              aria-label={proactiveNudge.headline}
+            >
+              <img
+                className="psa-nudge-chip-art"
+                src={PSA_NUDGE_BUBBLE_SRC}
+                alt=""
+                aria-hidden
+                draggable={false}
+              />
+              <span className="psa-nudge-chip-content">
+                <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
+                {proactiveNudge.body ? (
+                  <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
+                ) : null}
+              </span>
+            </button>
+          ) : null}
+          <PsaAvatarTrigger
+            onClick={handleToggle}
+            isOpen={isOpen}
+            idle={!isOpen}
+            expression={avatarExpression}
+            ctaLabel={fabCtaLabel}
+            ctaSubline={fabCtaSubline}
+          />
+        </div>
       </div>
 
       <ConfirmationModal
