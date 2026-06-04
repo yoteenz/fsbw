@@ -24213,7 +24213,6 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-<<<<<<< HEAD
 ## 2026-06-03 — PSA avatar expression transitions (fluid idle + crossfade)
 
 **Context:** User reported PSA FAB avatar looked robotic — smiling then instantly snapping back to neutral. Wanted slower, more human transitions through neutral-smiling / listening / thinking-smiling rather than hard neutral ↔ smile flips.
@@ -24570,7 +24569,8 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Outcome:** Added `motherboard/golden-prompts/psa-nudge-thought-bubble-holo-3d.md` — primary + negative + short prompts, PSA color table (#EB1C24 / violet / cyan glass), export specs (transparent PNG, tail down, no square glow), tool notes (NBP, GPT Image 2, Ideogram cutout).
 
-=======
+---
+
 ## 2026-06-03 — Lobby lounge arrow: restore forward navigation after scene-lock
 
 **Context:** After scene-locking transition to viewport portal, lobby → lounge arrow stopped completing navigation (overlay stuck, carousel never advanced).
@@ -24578,4 +24578,3 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** **`SceneViewportPortal`** could mount **`LobbyLoungeTransitionHost`** after `active` flipped true; **`useSceneCoverVideoPlayback`** bailed when `videoRef.current` was null and never retried, so **`onComplete`** never ran and **`roomTransitionOverlay`** stayed set.
 
 **Fix:** **`SceneViewportOverlay`** — inline `absolute` layer inside **`SceneCarouselViewportStage`** (transition stays scene-locked, always in React tree). Playback hook waits for `<video>` via `requestAnimationFrame` before starting. Lobby host always on lobby slide (forward + warm); lounge host only for reverse.
->>>>>>> 32b9ccb6 (Fix lobby lounge arrow: inline scene overlay + video mount retry)
