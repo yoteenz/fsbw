@@ -24,7 +24,7 @@ export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
     route: '/brand/faq',
     cardTitle: 'FREQUENTLY ASKED QUESTIONS',
   },
-  { label: 'TERMS OF SERVICE', route: '/brand/terms' },
+  { label: 'TERMS', route: '/brand/terms', cardTitle: 'TERMS OF SERVICE' },
 ];
 
 export const BRAND_SLUGS = ['about', 'contact', 'member', 'reviews', 'careers', 'faq', 'terms'] as const;
