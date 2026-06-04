@@ -49,6 +49,11 @@ function bubbleDisplay(msg: PsaChatMessage): ReturnType<typeof formatPsaMessageR
   };
 }
 
+function formatCardField(text: string | undefined): string | undefined {
+  if (!text) return undefined;
+  return formatPsaVoiceText(text, { stripGreeting: false });
+}
+
 function PsaChatCards({
   cards,
   onNavigate,
@@ -67,11 +72,13 @@ function PsaChatCards({
               className="psa-chat-card psa-chat-card-product"
               onClick={() => onNavigate(card.buildAWigPath || card.path)}
             >
-              <span className="psa-chat-card-title">{card.name}</span>
+              <span className="psa-chat-card-title">{formatCardField(card.name) ?? card.name}</span>
               {card.startingPriceUsd != null ? (
                 <span className="psa-chat-card-meta">FROM ${card.startingPriceUsd} BASE</span>
               ) : null}
-              {card.summary ? <span className="psa-chat-card-body">{card.summary}</span> : null}
+              {card.summary ? (
+                <span className="psa-chat-card-body">{formatCardField(card.summary)}</span>
+              ) : null}
               <span className="psa-chat-card-cta">BUILD-A-WIG</span>
             </button>
           );
@@ -84,9 +91,11 @@ function PsaChatCards({
               className="psa-chat-card psa-chat-card-order"
               onClick={() => onNavigate(card.path)}
             >
-              <span className="psa-chat-card-title">{card.orderNumber}</span>
-              {card.status ? <span className="psa-chat-card-meta">{card.status}</span> : null}
-              {card.note ? <span className="psa-chat-card-body">{card.note}</span> : null}
+              <span className="psa-chat-card-title">{formatCardField(card.orderNumber) ?? card.orderNumber}</span>
+              {card.status ? (
+                <span className="psa-chat-card-meta">{formatCardField(card.status)}</span>
+              ) : null}
+              {card.note ? <span className="psa-chat-card-body">{formatCardField(card.note)}</span> : null}
               <span className="psa-chat-card-cta">VIEW ORDER</span>
             </button>
           );
@@ -99,9 +108,9 @@ function PsaChatCards({
               className="psa-chat-card psa-chat-card-nav"
               onClick={() => onNavigate(card.path)}
             >
-              <span className="psa-chat-card-title">{card.type === 'nav' ? card.label : card.label}</span>
+              <span className="psa-chat-card-title">{formatCardField(card.label) ?? card.label}</span>
               {card.type === 'nav' && card.description ? (
-                <span className="psa-chat-card-body">{card.description}</span>
+                <span className="psa-chat-card-body">{formatCardField(card.description)}</span>
               ) : null}
               <span className="psa-chat-card-cta">GO</span>
             </button>

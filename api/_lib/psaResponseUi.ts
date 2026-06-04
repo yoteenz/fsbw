@@ -23,6 +23,11 @@ export type PsaToolTraceEntry = {
 
 const QUICK_SUFFIX_RE = /\n?>>QUICK:\s*(.+)$/i;
 
+function formatCardCopy(text: string | undefined): string | undefined {
+  if (!text) return undefined;
+  return formatPsaVoiceText(text, { stripGreeting: false });
+}
+
 export function parseQuickRepliesFromReply(text: string): { reply: string; quickReplies: string[] } {
   const match = text.match(QUICK_SUFFIX_RE);
   if (!match) return { reply: text.trim(), quickReplies: [] };
@@ -64,11 +69,11 @@ export function buildCardsFromToolTrace(trace: PsaToolTraceEntry[]): PsaChatCard
         seen.add(key);
         cards.push({
           type: 'product',
-          name,
+          name: formatCardCopy(name) ?? name,
           startingPriceUsd: typeof p.startingPriceUsd === 'number' ? p.startingPriceUsd : null,
           path,
           buildAWigPath: buildAWigPath || path,
-          summary: typeof p.summary === 'string' ? p.summary : undefined,
+          summary: formatCardCopy(typeof p.summary === 'string' ? p.summary : undefined),
         });
       }
     }
@@ -85,9 +90,9 @@ export function buildCardsFromToolTrace(trace: PsaToolTraceEntry[]): PsaChatCard
         seen.add(key);
         cards.push({
           type: 'nav',
-          label,
+          label: formatCardCopy(label) ?? label,
           path,
-          description: typeof n.description === 'string' ? n.description : undefined,
+          description: formatCardCopy(typeof n.description === 'string' ? n.description : undefined),
         });
       }
     }
@@ -102,13 +107,14 @@ export function buildCardsFromToolTrace(trace: PsaToolTraceEntry[]): PsaChatCard
             seen.add(key);
             cards.push({
               type: 'order',
-              orderNumber: num,
-              status: typeof order.status === 'string' ? order.status : undefined,
+              orderNumber: formatCardCopy(num) ?? num,
+              status: formatCardCopy(typeof order.status === 'string' ? order.status : undefined),
               path: '/orders',
-              note:
+              note: formatCardCopy(
                 order.requiresOrderForm && !order.orderFormSigned
                   ? 'Order form signature needed'
-                  : undefined,
+                  : undefined
+              ),
             });
           }
         }
