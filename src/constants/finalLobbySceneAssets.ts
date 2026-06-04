@@ -82,6 +82,25 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.299,
 };
 
+/** Production + QA — blue baked TV box: +20px right, +80px down, height −40%. */
+export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_X_PX = 20;
+export const LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_Y_PX = 80;
+export const LOUNGE_TV_BAKED_HIT_LAYOUT_HEIGHT_SCALE = 0.6;
+
+export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
+  layoutOffsetX: LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_X_PX,
+  layoutOffsetY: LOUNGE_TV_BAKED_HIT_LAYOUT_OFFSET_Y_PX,
+  layoutScale: { x: 1, y: LOUNGE_TV_BAKED_HIT_LAYOUT_HEIGHT_SCALE },
+} as const;
+
+/** Production + QA — green play tap: +50% width and height from center. */
+export const LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE = 1.5;
+
+export const LOUNGE_TV_PLAY_TAP_LAYOUT = {
+  layoutScale: { x: LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE, y: LOUNGE_TV_PLAY_TAP_LAYOUT_SCALE },
+  layoutScaleOrigin: 'center center' as const,
+} as const;
+
 /** In-screen play icon — center of gray triangle on TV glass (`final-lounge.png`, 928×1680). */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_CENTER = { x: 0.528, y: 0.31 } as const;
 

@@ -12,6 +12,7 @@ import {
   LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO,
   LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO,
   LOUNGE_TV_MENU_SCREEN_IMAGE,
+  LOUNGE_TV_MENU_SCREEN_LAYOUT,
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
@@ -20,8 +21,8 @@ import {
   useSceneCoverHitRect,
 } from '../../hooks/useSceneCoverHitRect';
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
-import { rectToPercentStyle } from '../lobby/SceneHitRegion';
 import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 
 type Props = {
   children?: React.ReactNode;
@@ -94,9 +95,8 @@ export function LoungeTvFullscreenShell({
         <div
           data-lounge-tv-glass
           style={{
-            ...rectToPercentStyle(mappedGlass),
-            position: 'absolute',
-            boxSizing: 'border-box',
+            ...sceneHitLayoutBoxStyle(mappedGlass, 0, 0, LOUNGE_TV_MENU_SCREEN_LAYOUT),
+            position: 'relative',
             zIndex: 1,
             ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
             pointerEvents: 'auto',
@@ -140,22 +140,22 @@ export function LoungeTvFullscreenShell({
             }}
           >
             {children}
-            {onClose ? (
-              <LoungeTvCloseButton
-                visible={closeVisible}
-                size={LOUNGE_TV_GLASS_CLOSE_SIZE}
-                iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
-                position={{
-                  top: `${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}%`,
-                  right: `${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}%`,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClose(e);
-                }}
-              />
-            ) : null}
           </div>
+          {onClose ? (
+            <LoungeTvCloseButton
+              visible={closeVisible}
+              size={LOUNGE_TV_GLASS_CLOSE_SIZE}
+              iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
+              position={{
+                top: `${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}%`,
+                right: `${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}%`,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose(e);
+              }}
+            />
+          ) : null}
         </div>
       ) : null}
     </div>

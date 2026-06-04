@@ -41,6 +41,13 @@ export const LOUNGE_TV_MENU_SCREEN_OFFSET = {
   y: LOUNGE_TV_CONTENT_SCREEN_OFFSET_Y_PX,
 } as const;
 
+/** Production + QA — magenta TV content glass: extend mapped height only (+20px). */
+export const LOUNGE_TV_MENU_SCREEN_LAYOUT_HEIGHT_EXTRA_PX = 20;
+
+export const LOUNGE_TV_MENU_SCREEN_LAYOUT = {
+  layoutHeightExtraPx: LOUNGE_TV_MENU_SCREEN_LAYOUT_HEIGHT_EXTRA_PX,
+} as const;
+
 /** Close chip inset as a fraction of the glass box (negative = overlap bezel). */
 export const LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO = -0.04;
 export const LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO = -0.04;
