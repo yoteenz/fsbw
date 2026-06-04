@@ -24741,3 +24741,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Fix:** Restore **`cover`** + **`center top`** on **`sceneCarouselViewportBackgroundStyle`** / layer styles; **`sceneCarouselCoverMetrics`** + **`sceneCoverHitMap`** use **`Math.max`** scale again. Shell fallback **`#e8e4e0`** (marble). Transition + TV Seedance clips aligned to **`cover`**. Hit-map / open prop overlays unchanged coordinate system.
 
+---
+
+## 2026-06-04 — PSA nudge bubble: holo color-shift sync with avatar
+
+**Context:** User wanted the nudge thought bubble PNG gradients to use the same color-changing effect as the avatar holo glow background.
+
+**Changes:** `.psa-nudge-chip-art` now uses shared `psa-holo-glow-live` animation (4.5s — opacity, brightness, saturate, hue-rotate). Nudge text overlay unchanged.
+
