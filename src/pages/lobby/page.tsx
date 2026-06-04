@@ -19,7 +19,7 @@ import {
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { sceneCarouselSlideMinHeightCss, sceneSlideShellStyle } from '../../utils/sceneCarouselBackground';
 import { LobbyLoungeTransitionHost } from '../../components/lobby/LobbyLoungeTransitionVideo';
-import { SceneViewportPortal } from '../../components/lobby/SceneViewportPortal';
+import { SceneViewportOverlay } from '../../components/lobby/SceneViewportOverlay';
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { SceneCarouselViewportStage } from '../../components/lobby/SceneCarouselViewportStage';
 import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTvPlay';
@@ -134,12 +134,12 @@ const LobbyPage: React.FC<{
           />
         </div>
         {transitionVideoEnabled && onRoomTransitionComplete ? (
-          <SceneViewportPortal measureRef={lobbyViewportRef}>
+          <SceneViewportOverlay>
             <LobbyLoungeTransitionHost
               phase={roomTransitionOverlay === 'reverse' ? null : roomTransitionOverlay}
               onComplete={onRoomTransitionComplete}
             />
-          </SceneViewportPortal>
+          </SceneViewportOverlay>
         ) : null}
       </SceneCarouselViewportStage>
 
@@ -264,12 +264,9 @@ const LoungePage: React.FC<{
         {transitionVideoEnabled &&
         roomTransitionOverlay === 'reverse' &&
         onRoomTransitionComplete ? (
-          <SceneViewportPortal measureRef={measureRef}>
-            <LobbyLoungeTransitionHost
-              phase="reverse"
-              onComplete={onRoomTransitionComplete}
-            />
-          </SceneViewportPortal>
+          <SceneViewportOverlay>
+            <LobbyLoungeTransitionHost phase="reverse" onComplete={onRoomTransitionComplete} />
+          </SceneViewportOverlay>
         ) : null}
       </SceneCarouselViewportStage>
 
