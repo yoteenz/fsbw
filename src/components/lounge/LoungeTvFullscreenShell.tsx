@@ -12,6 +12,7 @@ import {
   LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO,
   LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO,
   LOUNGE_TV_MENU_SCREEN_IMAGE,
+  LOUNGE_TV_MENU_SCREEN_LAYOUT,
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
@@ -20,7 +21,7 @@ import {
   useSceneCoverHitRect,
 } from '../../hooks/useSceneCoverHitRect';
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
-import { rectToPercentStyle } from '../lobby/SceneHitRegion';
+import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
 
 type Props = {
@@ -94,10 +95,9 @@ export function LoungeTvFullscreenShell({
         <div
           data-lounge-tv-glass
           style={{
-            ...rectToPercentStyle(mappedGlass),
-            position: 'absolute',
-            boxSizing: 'border-box',
+            ...sceneHitLayoutBoxStyle(mappedGlass, 0, 0, LOUNGE_TV_MENU_SCREEN_LAYOUT),
             zIndex: 1,
+            overflow: 'visible',
             ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
             pointerEvents: 'auto',
             ...(showGlassDebug

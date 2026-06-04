@@ -45,7 +45,7 @@ export const LOUNGE_TV_MENU_SCREEN_OFFSET = {
 export const LOUNGE_TV_MENU_SCREEN_LAYOUT = {
   layoutWidthExtraPx: -4,
   layoutHeightExtraPx: 20,
-  layoutOffsetY: -15,
+  layoutOffsetY: -10,
 } as const;
 
 /** Close chip inset as a fraction of the glass box (negative = overlap bezel). */
