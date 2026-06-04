@@ -24521,3 +24521,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `psaAssistant.css` — nudge chip `left: 50%` + `translateX(-50%)` (float animation updated); content/text center-aligned; thought tail centered below bubble; headline **13px → 11px**, body **9px → 7px**.
 
+---
+
+## 2026-06-03 — PSA nudge: unclip holo ring / feather floating glow
+
+**Context:** User reported proactive nudge holo ring looked clipped inside a square box — rounded halo edges cut off, not floating/holographic.
+
+**Fix:** Removed `overflow: hidden` from `.psa-nudge-chip-shell` (was clipping spinning conic ring). Added `.psa-nudge-chip-face` inner wrapper with overflow hidden for glass/scanlines only. Holo ring inset `-2px` (avatar-matched, not `-40%`). Replaced rectangular `box-shadow` with feathered `filter: drop-shadow`; outer chip padding + `overflow: visible` on widget/nudge. `PsaAssistantWidget.tsx` markup updated for face layer.
+
