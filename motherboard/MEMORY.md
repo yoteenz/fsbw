@@ -24603,3 +24603,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `.psa-nudge-chip-body` color `#808080` → `#eb1c24`.
 
+---
+
+## 2026-06-04 — PSA nudge: 40% size reduction
+
+**Context:** User wanted holographic nudge thought bubble 40% smaller.
+
+**Changes:** `.psa-nudge-chip` width `200px/62vw` → `120px/37vw` (60% scale); headline `11px→7px`, body `7px→5px`; content max-width `140→84px`.
+
