@@ -97,7 +97,8 @@ export function LobbySceneHotspots({
   return (
     <>
       <SceneHitDebugBanner active={shelfHitDebug}>
-        Shelf hit debug — cyan HD lace, green bundles, red custom units (tap to test routes).
+        Hit debug ON — cyan/green/red shelves; orange display case, cyan register, yellow phone. Lounge
+        TV: swipe to lounge slide.
       </SceneHitDebugBanner>
       <SceneHitRegion
         rect={FINAL_LOBBY_HIT_REGIONS.logo}
