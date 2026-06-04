@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
@@ -32,6 +32,8 @@ import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
 import { usePsaProactiveNudges } from './usePsaProactiveNudges';
 import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
+import { usePsaMainCardBounds } from '../../hooks/usePsaMainCardBounds';
+import { psaChatMaxHeightForCard } from '../../utils/psaMainCardBounds';
 import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/psaBawPrefill';
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
@@ -103,6 +105,7 @@ export default function PsaAssistantWidget() {
   );
 
   const proactiveNudge = usePsaProactiveNudges(!isOpen && !isFabCollapsed);
+  const mainCardBounds = usePsaMainCardBounds(isOpen);
 
   const showContinueHint =
     !isFabCollapsed && !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
@@ -423,9 +426,29 @@ export default function PsaAssistantWidget() {
     return null;
   }
 
+  const chatPanelMaxHeight =
+    mainCardBounds != null ? psaChatMaxHeightForCard(mainCardBounds) : undefined;
+
+  const widgetRootStyle =
+    isOpen && mainCardBounds
+      ? ({
+          left: mainCardBounds.left,
+          right: 'auto',
+          width: mainCardBounds.width,
+          maxWidth: mainCardBounds.width,
+          '--psa-chat-max-height': chatPanelMaxHeight
+            ? `${chatPanelMaxHeight}px`
+            : undefined,
+        } as CSSProperties)
+      : undefined;
+
   const widget = (
     <>
-      <div className="psa-widget-root" data-attribute="psa-assistant-widget">
+      <div
+        className={`psa-widget-root${isOpen && mainCardBounds ? ' psa-widget-root--chat-open' : ''}`}
+        data-attribute="psa-assistant-widget"
+        style={widgetRootStyle}
+      >
         {isOpen ? (
           <>
             <button
