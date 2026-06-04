@@ -25165,9 +25165,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-## 2026-06-03 — Account alerts copy debug page
+## 2026-06-03 — Unified copy debug page (PSA nudges + account alerts tabs)
 
-**Context:** User wanted a visual debug page for all `/account/alerts` row variants (like `/tools/psa-nudges`) for copy rewording.
+**Context:** User wanted PSA proactive nudge and account alert copy debug UIs on one simple page instead of two separate routes.
 
-**Changes:** **`/tools/account-alerts`** — 16 categories, 40+ variants with live-style row preview + copy fields. **`accountAlertsCatalog.ts`**. Cross-link from PSA nudge debug. Route in **`App.tsx`**.
+**Topics covered:** Prior chat built separate `/tools/psa-nudges` and `/tools/account-alerts` debug pages with catalogs (`psaProactiveNudgeCatalog.ts`, `accountAlertsCatalog.ts`). User asked to merge them with tabs.
+
+**Decisions / outcomes:**
+- Single page at **`/tools/copy-debug`** with tabs **PSA proactive nudges** (default) and **Account alerts** (`?tab=alerts`).
+- Old URLs redirect: `/tools/psa-nudges` → `?tab=nudges`, `/tools/account-alerts` → `?tab=alerts`.
+- Removed duplicate page components/CSS under `psa-nudges/` and `account-alerts/`.
+
+**Changes:**
+- `src/pages/tools/copy-debug/page.tsx`, `copyDebug.css` (unified tabbed UI + copy/toast)
+- `src/App.tsx` — one lazy route + Navigate redirects
+- Deleted `src/pages/tools/psa-nudges/*`, `src/pages/tools/account-alerts/*`
+
+**Conventions:** Use `/tools/copy-debug` as the canonical copy-review URL for both PSA FAB nudges and account alert rows.
 
