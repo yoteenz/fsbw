@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
   isPsaHiddenPath,
+  PSA_NUDGE_BUBBLE_SRC,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   readPsaWelcomeMessageFromStorage,
@@ -446,21 +447,18 @@ export default function PsaAssistantWidget() {
             onClick={handleNudgeAction}
             aria-label={proactiveNudge.headline}
           >
-            <span className="psa-nudge-chip-shell">
-              <span className="psa-nudge-chip-face">
-                <span className="psa-nudge-chip-holo-shine" aria-hidden />
-                <span className="psa-nudge-chip-content">
-                  <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
-                  {proactiveNudge.body ? (
-                    <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
-                  ) : null}
-                </span>
-              </span>
-            </span>
-            <span className="psa-nudge-thought-tail" aria-hidden>
-              <i />
-              <i />
-              <i />
+            <img
+              className="psa-nudge-chip-art"
+              src={PSA_NUDGE_BUBBLE_SRC}
+              alt=""
+              aria-hidden
+              draggable={false}
+            />
+            <span className="psa-nudge-chip-content">
+              <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
+              {proactiveNudge.body ? (
+                <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
+              ) : null}
             </span>
           </button>
         ) : null}

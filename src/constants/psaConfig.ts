@@ -50,6 +50,11 @@ export const PSA_AVATAR_IDLE_SRC = PSA_AVATAR_SRC.neutral;
 /** @deprecated Use PSA_AVATAR_SRC.thinking */
 export const PSA_AVATAR_THINKING_SRC = PSA_AVATAR_SRC.thinking;
 
+/** Bump when replacing `public/assets/psa-nudge-thought-bubble.png`. */
+export const PSA_NUDGE_BUBBLE_ASSET_VERSION = '1';
+
+export const PSA_NUDGE_BUBBLE_SRC = `/assets/psa-nudge-thought-bubble.png?v=${PSA_NUDGE_BUBBLE_ASSET_VERSION}`;
+
 export const PSA_WIDGET_LABEL = 'PSA';
 export const PSA_WIDGET_SUBLABEL = 'PERSONAL SLAY ASSISTANT';
 
