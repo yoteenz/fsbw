@@ -25305,11 +25305,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
-## 2026-06-04 — PSA chat history layout correction
-
-**Context:** User said prior history UI was wrong: delete should overlay **on top** of each chat card (full width restored), and **RENAME CHAT** / **ARCHIVE** belong **below each card**, not one global footer.
-
-**Decisions / outcomes:** Each history entry = full-width card with absolute top-right red **X** (confirmation modal) + action row underneath (**RENAME CHAT** left, **ARCHIVE** right) for that thread. Removed global history footer and side-by-side delete column.
-
 **Changes:** `PsaChatPanel.tsx`, `psaAssistant.css`.
+
+---
+
+## 2026-06-04 — PSA history: archived chats header icon
+
+**Context:** User asked to replace the **new chat (+)** icon with an **archived chats** icon on the history view only (active chat keeps +).
+
+**Decisions / outcomes:**
+- History header right: red **archive box** icon toggles **archived-only** thread list (`?archivedOnly=1`); icon fills when viewing archived. **New chat (+)** shows only when history is closed.
+- Archived rows show **UNARCHIVE** instead of **ARCHIVE**; `unarchivePsaThread` client API added.
+- Thread summaries include `archived` flag; `listPsaThreads` supports `archivedOnly` filter.
+
+**Changes:** `PsaChatPanel.tsx`, `PsaAssistantWidget.tsx`, `usePsaChat.ts`, `psaApi.ts`, `api/psa/threads.ts`, `api/_lib/psaThreadStore.ts`.
 

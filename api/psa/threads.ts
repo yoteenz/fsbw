@@ -39,9 +39,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'GET') {
+      const archivedOnly =
+        req.query.archivedOnly === '1' || req.query.archivedOnly === 'true';
       const includeArchived =
-        req.query.includeArchived === '1' || req.query.includeArchived === 'true';
-      const threads = await listPsaThreads(user.id, undefined, includeArchived);
+        archivedOnly ||
+        req.query.includeArchived === '1' ||
+        req.query.includeArchived === 'true';
+      const threads = await listPsaThreads(user.id, undefined, includeArchived, archivedOnly);
       return res.status(200).json({ threads });
     }
 

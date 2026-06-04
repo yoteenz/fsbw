@@ -29,6 +29,7 @@ export type PsaThreadSummary = {
   title: string | null;
   updatedAt: string;
   preview: string | null;
+  archived?: boolean;
 };
 
 const THREAD_LIST_LIMIT = 30;
@@ -99,7 +100,8 @@ export async function getLatestPsaThread(userId: string, activeOnly = true): Pro
 export async function listPsaThreads(
   userId: string,
   limit = THREAD_LIST_LIMIT,
-  includeArchived = false
+  includeArchived = false,
+  archivedOnly = false
 ): Promise<PsaThreadSummary[]> {
   const supabase = getSupabaseAdminServiceRole();
   let query = supabase
@@ -109,14 +111,21 @@ export async function listPsaThreads(
     .order('updated_at', { ascending: false })
     .limit(limit);
 
-  if (!includeArchived) {
+  if (archivedOnly) {
+    query = query.not('archived_at', 'is', null);
+  } else if (!includeArchived) {
     query = query.is('archived_at', null);
   }
 
   const { data: threads, error } = await query;
 
   if (error) throw new Error(error.message);
-  const rows = (threads ?? []) as { id: string; title: string | null; updated_at: string }[];
+  const rows = (threads ?? []) as {
+    id: string;
+    title: string | null;
+    updated_at: string;
+    archived_at: string | null;
+  }[];
 
   const summaries: PsaThreadSummary[] = [];
   for (const row of rows) {
@@ -134,6 +143,7 @@ export async function listPsaThreads(
       title: row.title,
       updatedAt: row.updated_at,
       preview: (previewMsg as { content?: string } | null)?.content?.slice(0, 120) ?? null,
+      archived: Boolean(row.archived_at),
     });
   }
 

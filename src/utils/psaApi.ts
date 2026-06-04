@@ -58,6 +58,7 @@ export type PsaThreadSummary = {
   title: string | null;
   updatedAt: string;
   preview: string | null;
+  archived?: boolean;
 };
 
 export type PsaStoredMessage = {
@@ -490,10 +491,41 @@ export async function deletePsaThread(threadId: string): Promise<PsaThreadMutati
   return { ok: true };
 }
 
-export async function fetchPsaThreadList(): Promise<PsaThreadsListResult> {
+export async function unarchivePsaThread(threadId: string): Promise<PsaThreadMutationResult> {
   let res: Response | null;
   try {
-    res = await psaAuthedFetch('/api/psa/threads', { method: 'GET' });
+    res = await psaAuthedFetch(`/api/psa/thread?threadId=${encodeURIComponent(threadId)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ threadId, unarchive: true }),
+    });
+  } catch {
+    return { ok: false, code: 'NETWORK', message: 'Could not restore PSA chat.' };
+  }
+  if (!res) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+  const parsed = await parsePsaJsonBody<{ error?: string; code?: string }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
+  }
+  if (res.status === 401) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+  if (res.status === 403 || parsed.data.code === 'PREMIUM_REQUIRED') {
+    return { ok: false, code: 'PREMIUM_REQUIRED', message: parsed.data.error || 'Premium required.' };
+  }
+  if (!res.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.data.error || 'Could not restore PSA chat.' };
+  }
+  return { ok: true };
+}
+
+export async function fetchPsaThreadList(options?: { archivedOnly?: boolean }): Promise<PsaThreadsListResult> {
+  let res: Response | null;
+  const query = options?.archivedOnly ? '?archivedOnly=1' : '';
+  try {
+    res = await psaAuthedFetch(`/api/psa/threads${query}`, { method: 'GET' });
   } catch {
     return { ok: false, code: 'NETWORK', message: 'Could not load past PSA chats.' };
   }

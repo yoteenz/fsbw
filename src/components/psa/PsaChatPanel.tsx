@@ -19,6 +19,7 @@ type PsaChatPanelProps = {
   usageLabel?: string | null;
   panelQuickReplies?: string[];
   historyOpen?: boolean;
+  historyArchivedView?: boolean;
   historyAvailable?: boolean;
   threadList?: { id: string; title: string | null; updatedAt: string; preview: string | null }[];
   activeThreadId?: string | null;
@@ -27,8 +28,10 @@ type PsaChatPanelProps = {
   onNewChat?: () => void;
   onOpenHistory?: () => void;
   onCloseHistory?: () => void;
+  onToggleHistoryArchived?: () => void;
   onSelectThread?: (threadId: string) => void;
   onArchiveThread?: (threadId: string) => void;
+  onUnarchiveThread?: (threadId: string) => void;
   onDeleteThread?: (threadId: string) => void;
   onRenameThread?: (threadId: string, title: string) => void;
   onInputFocusChange?: (focused: boolean) => void;
@@ -83,6 +86,22 @@ function PsaChatNewIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M12 5v14M5 12h14" stroke="#EB1C24" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PsaChatArchivedIcon({ active = false }: { active?: boolean }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M4 7h16v12H4V7z"
+        stroke="#EB1C24"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        fill={active ? 'rgba(235, 28, 36, 0.12)' : 'none'}
+      />
+      <path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7" stroke="#EB1C24" strokeWidth="1.5" />
+      <path d="M4 10h16" stroke="#EB1C24" strokeWidth="1.5" />
     </svg>
   );
 }
@@ -170,6 +189,7 @@ export default function PsaChatPanel({
   usageLabel,
   panelQuickReplies = [],
   historyOpen = false,
+  historyArchivedView = false,
   historyAvailable = true,
   threadList = [],
   activeThreadId = null,
@@ -178,8 +198,10 @@ export default function PsaChatPanel({
   onNewChat,
   onOpenHistory,
   onCloseHistory,
+  onToggleHistoryArchived,
   onSelectThread,
   onArchiveThread,
+  onUnarchiveThread,
   onDeleteThread,
   onRenameThread,
   onInputFocusChange,
@@ -261,7 +283,17 @@ export default function PsaChatPanel({
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
         <div className="psa-chat-header-side psa-chat-header-side--right">
-          {onNewChat ? (
+          {historyOpen && onToggleHistoryArchived ? (
+            <button
+              type="button"
+              className="psa-chat-header-icon-btn"
+              onClick={onToggleHistoryArchived}
+              aria-label={historyArchivedView ? 'View active chats' : 'View archived chats'}
+              aria-pressed={historyArchivedView}
+            >
+              <PsaChatArchivedIcon active={historyArchivedView} />
+            </button>
+          ) : onNewChat ? (
             <button
               type="button"
               className="psa-chat-header-icon-btn"
@@ -276,9 +308,11 @@ export default function PsaChatPanel({
 
       {historyOpen ? (
         <>
-          <div className="psa-chat-history" aria-label="Past PSA chats">
+          <div className="psa-chat-history" aria-label={historyArchivedView ? 'Archived PSA chats' : 'Past PSA chats'}>
             {threadList.length === 0 ? (
-              <p className="psa-chat-history-empty">NO PAST CHATS YET</p>
+              <p className="psa-chat-history-empty">
+                {historyArchivedView ? 'NO ARCHIVED CHATS YET' : 'NO PAST CHATS YET'}
+              </p>
             ) : (
               threadList.map((thread) => (
                 <div key={thread.id} className="psa-chat-history-entry">
@@ -329,7 +363,18 @@ export default function PsaChatPanel({
                         RENAME CHAT
                       </button>
                     ) : null}
-                    {onArchiveThread ? (
+                    {historyArchivedView && onUnarchiveThread ? (
+                      <button
+                        type="button"
+                        className="psa-chat-history-item-action psa-chat-history-item-action--right"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onUnarchiveThread(thread.id);
+                        }}
+                      >
+                        UNARCHIVE
+                      </button>
+                    ) : onArchiveThread ? (
                       <button
                         type="button"
                         className="psa-chat-history-item-action psa-chat-history-item-action--right"
