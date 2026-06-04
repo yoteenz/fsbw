@@ -193,8 +193,7 @@ export default function PsaChatPanel({
     <div className="psa-chat-panel" role="dialog" aria-label="Personal Slay Assistant chat">
       <header className="psa-chat-header">
         <div className="psa-chat-header-text">
-          <h2 className="psa-chat-title">{PSA_CHAT_TITLE}</h2>
-          <p className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</p>
+          <h2 className="psa-chat-subtitle">{PSA_CHAT_SUBTITLE}</h2>
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
         <div className="psa-chat-header-actions">
