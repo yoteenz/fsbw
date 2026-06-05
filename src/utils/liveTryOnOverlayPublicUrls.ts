@@ -1,3 +1,4 @@
+import { LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT } from '../constants/liveTryOnSpikeAssets';
 import { wigPreviewManifestHashLiveColorTier, type WigPreviewSelectionsForHash } from './wigPreviewLiveColorTierHash';
 
 function storageConfig(): { supabase: string; bucket: string; pv: string } | null {
@@ -15,7 +16,7 @@ function storageConfig(): { supabase: string; bucket: string; pv: string } | nul
 
 function overlayPath(pv: string, unitKey: string, hash: string, angle: 'left' | 'front' | 'right'): string {
   const u = String(unitKey || 'NOIR').toUpperCase();
-  return `try-on-overlay/${pv}/${u}/${hash}/${angle}.png`;
+  return `try-on-overlay/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${pv}/${u}/${hash}/${angle}.png`;
 }
 
 export function liveTryOnOverlayTriplePublicUrls(
