@@ -25575,3 +25575,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `package.json` (`@mediapipe/tasks-vision`), `src/App.tsx`, `src/components/liveTryOn/*`, `src/constants/liveTryOnSpikeAssets.ts`, `src/utils/liveTryOnYaw.ts`, `src/pages/tools/live-try-on/page.tsx`, BAW + consult offer UI files. Commit on **`master`**; sync **`preview/mobile`**.
 
 **Conventions:** Next phase = wire `selectionHash` / Storage triples (transparent assets), not Fal per frame. Test on real iPhone Safari over HTTPS; camera permission required.
+
+---
+
+## 2026-06-05 — Live try-on wired to Fal + selections (overlays from Storage color WebPs)
+
+**Context:** User asked why the spike was not integrated with Fal, mannequin assets, and selection hash despite repo access. Requested wiring consult/BAW `selectionHash` → Storage live triples and transparent hair layers for compositing.
+
+**Decisions / outcomes:**
+- **`POST /api/live-try-on-ensure-overlays`**: signed-in; reads color-tier **`wig-preview-live/{pv}/{UNIT}/{hash}/{angle}.webp`** from Supabase; if missing returns **409 `COLOR_PREVIEW_MISSING`**; else **NBP** (`fal-ai/nano-banana-pro/edit`) hair-isolation prompt → **`try-on-overlay/{pv}/{UNIT}/{hash}/{angle}.png`** in Storage (`api/_lib/liveTryOnOverlay.ts`).
+- **Client prep** (`liveTryOnPrepareAssets.ts`): build payload from BAW localStorage (`readBuildWigLivePreviewSelections` / color) or consult quote (`quoteId` query); ensure NOIR color via existing **`postWigPreviewLiveNoirColorOneAngle`**; ensure overlays per angle; cache probe via **`resolveLiveTryOnOverlayTripleIfStored`**; fallbacks: live color WebPs from Storage, localStorage committed triple, then static unit mannequin PNGs.
+- **`/tools/live-try-on`**: loads assets before camera; **`LiveTryOnViewport`** takes dynamic L/F/R URLs; consult buttons pass **`quoteId`**.
+
+**Changes:** `api/live-try-on-ensure-overlays.ts`, `api/_lib/liveTryOnOverlay.ts`, `src/utils/liveTryOn*.ts`, `src/utils/api.ts`, `LiveTryOnViewport.tsx`, `live-try-on/page.tsx`, `LiveTryOnLaunchButton.tsx`, consult modal/page. Pushed **`master`** + **`preview/mobile`**.
+
+**Conventions:** Live try-on needs sign-in + **`FAL_KEY`** + Supabase Storage (same as BAW live color). First open for a new swatch may take ~30–90s (3 color + 3 isolation calls). Non-NOIR units use static mannequin triple until unit live color API exists.
