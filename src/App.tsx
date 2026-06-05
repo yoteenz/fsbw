@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Route, useLocation, Navigate } from 'react-router-dom';
 import { Component, ErrorInfo, ReactNode, useEffect } from 'react';
 import LobbyPage from './pages/lobby/page';
 import BuildAWigPage from './pages/build-a-wig/page';
@@ -19,6 +19,7 @@ import CommerceRouteGuard from './components/CommerceRouteGuard';
 import MembershipRouteSync from './components/MembershipRouteSync';
 import ProductInventorySync from './components/ProductInventorySync';
 import PsaAssistantWidget from './components/psa/PsaAssistantWidget';
+import { DebugModeShell } from './components/debug-mode/DebugModeShell';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -400,7 +401,7 @@ function App() {
       <MembershipRouteSync />
       <ProductInventorySync />
       <PsaAssistantWidget />
-      <Routes>
+      <DebugModeShell>
         <Route index element={<Navigate to="/home/shop" replace />} />
         <Route path="/" element={<Navigate to="/home/shop" replace />} />
         <Route path="/lobby/lounge" element={<LobbyPage />} />
@@ -1009,7 +1010,7 @@ function App() {
             <CheckoutConfirmPage />
           </Suspense>
         } />
-      </Routes>
+      </DebugModeShell>
     </ErrorBoundary>
   );
 }
