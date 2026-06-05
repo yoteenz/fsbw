@@ -53,7 +53,7 @@ type Props = {
   children: ReactNode;
 };
 
-/** Draggable/resizable wrapper for open TV inner regions (media panel, video frame, glass). */
+/** Tap-to-select wrapper for open TV inner regions; drag/resize only when selected. */
 export function LoungeTvInnerLayoutEditor({
   regionId,
   label,
@@ -66,7 +66,9 @@ export function LoungeTvInnerLayoutEditor({
   const hitDebug = useSceneHitDebugEnabled();
   const hitEdit = useSceneHitEditEnabled();
   const editor = useOptionalSceneHitLayoutEditor();
-  const editable = Boolean(hitEdit && editor?.editEnabled);
+  const editSessionActive = Boolean(hitEdit && editor?.editEnabled);
+  const isSelected = editor?.selectedRegionId === regionId;
+  const canGesture = editSessionActive && isSelected;
   const dragRef = useRef<{
     mode: 'move' | 'resize';
     edge?: SceneHitResizeEdge;
@@ -77,7 +79,7 @@ export function LoungeTvInnerLayoutEditor({
 
   const beginGesture = useCallback(
     (mode: 'move' | 'resize', clientX: number, clientY: number, edge?: SceneHitResizeEdge) => {
-      if (!editable || !editor) return;
+      if (!canGesture || !editor) return;
       dragRef.current = {
         mode,
         edge,
@@ -115,43 +117,52 @@ export function LoungeTvInnerLayoutEditor({
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [editable, editor, layout, regionId],
+    [canGesture, editor, layout, regionId],
   );
 
-  const onMoveDown = useCallback(
+  const onWrapperPointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editable) return;
-      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
+      if (!editSessionActive || !editor) return;
       e.preventDefault();
       e.stopPropagation();
+
+      if (!isSelected) {
+        editor.selectRegion(regionId);
+        return;
+      }
+
+      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
       beginGesture('move', e.clientX, e.clientY);
     },
-    [beginGesture, editable],
+    [beginGesture, editSessionActive, editor, isSelected, regionId],
   );
 
   const onEdgeDown = useCallback(
     (edge: SceneHitResizeEdge) => (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editable) return;
+      if (!canGesture) return;
       e.preventDefault();
       e.stopPropagation();
       beginGesture('resize', e.clientX, e.clientY, edge);
     },
-    [beginGesture, editable],
+    [beginGesture, canGesture],
   );
 
   const showDebug = hitDebug && debugOutline;
 
   return (
     <div
+      data-scene-hit-region={regionId}
       className={className}
       style={{
         position: 'relative',
         boxSizing: 'border-box',
         ...style,
         ...(showDebug ? debugOutline : null),
-        ...(editable ? { cursor: 'move', touchAction: 'none' } : null),
+        ...(isSelected ? { outline: '2px dashed #EB1C24', outlineOffset: 2 } : null),
+        ...(editSessionActive && showDebug && !isSelected ? { opacity: 0.72 } : null),
+        ...(canGesture ? { cursor: 'move', touchAction: 'none' } : editSessionActive && showDebug ? { cursor: 'pointer' } : null),
       }}
-      onPointerDown={editable ? onMoveDown : undefined}
+      onPointerDown={editSessionActive && showDebug ? onWrapperPointerDown : undefined}
     >
       {showDebug ? (
         <span
@@ -175,7 +186,7 @@ export function LoungeTvInnerLayoutEditor({
         </span>
       ) : null}
       {children}
-      {editable
+      {canGesture
         ? EDGE_HANDLES.map(({ edge, cursor, style: handlePos }) => (
             <div
               key={edge}

@@ -173,8 +173,8 @@ export function DebugModeOverlay() {
     >
       {toolbar}
       <p style={{ margin: '8px 0 0 0' }}>
-        Tap any card, text, or image to select. Drag to nudge (4px grid). Drag tabs horizontally to swap order.
-        Save syncs to Supabase for cross-device founder preview.
+        Tap once to select an element (red outline). Drag the <strong>selected</strong> element to nudge (4px grid).
+        Drag tabs horizontally to swap order only after selected. Save syncs to Supabase for cross-device founder preview.
       </p>
       <p style={{ margin: '4px 0 0 0', opacity: 0.85 }}>Route: {debug.pageKey}</p>
 
@@ -188,8 +188,9 @@ export function DebugModeOverlay() {
         >
           <p style={{ margin: '0 0 6px 0', fontWeight: 700 }}>Global overlays</p>
           <p style={{ margin: '0 0 6px 0', opacity: 0.85 }}>
-            Cart dropdown + currency exchange persist on every route (`__global__/…` keys). Open the overlay, drag
-            corners to resize, drag body to nudge. Save syncs with page debug store.
+            Cart dropdown + currency exchange persist on every route (`__global__/…` keys). Tap Edit to open the
+            overlay, then <strong>tap the part</strong> you want (anchor vs shell), then drag to move or drag a border
+            edge to resize. Save syncs with page debug store.
           </p>
           {listGlobalOverlayLabels().map(({ id, label }) => {
             const isEditing = globalOverlay?.editingOverlayId === id;

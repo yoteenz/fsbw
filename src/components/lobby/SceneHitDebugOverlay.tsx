@@ -66,11 +66,11 @@ type Props = {
   screenOffsetY?: number;
   layout?: SceneHitLayoutOptions;
   showLabel?: boolean;
-  /** Enables drag/resize when `?sceneHitEdit=1` is active. */
+  /** Enables tap-to-select + drag/resize when `?sceneHitEdit=1` is active. */
   regionId?: SceneHitRegionId;
 };
 
-/** QA colored box — drag center to move; drag border edges to resize when scene hit edit mode is on. */
+/** QA colored box — tap to select, then drag center / border edges to adjust. */
 export function SceneHitDebugOverlay({
   rect,
   label,
@@ -83,7 +83,9 @@ export function SceneHitDebugOverlay({
   regionId,
 }: Props) {
   const editor = useOptionalSceneHitLayoutEditor();
-  const editable = Boolean(regionId && editor?.editEnabled);
+  const editSessionActive = Boolean(regionId && editor?.editEnabled);
+  const isSelected = Boolean(regionId && editor?.selectedRegionId === regionId);
+  const canGesture = editSessionActive && isSelected;
   const dragRef = useRef<{
     mode: 'move' | 'resize';
     edge?: SceneHitResizeEdge;
@@ -94,7 +96,7 @@ export function SceneHitDebugOverlay({
 
   const beginPointerGesture = useCallback(
     (mode: 'move' | 'resize', clientX: number, clientY: number, edge?: SceneHitResizeEdge) => {
-      if (!editable || !regionId || !editor || !layout) return;
+      if (!canGesture || !regionId || !editor || !layout) return;
       dragRef.current = {
         mode,
         edge,
@@ -129,46 +131,58 @@ export function SceneHitDebugOverlay({
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [editable, editor, layout, regionId],
+    [canGesture, editor, layout, regionId],
   );
 
-  const onMovePointerDown = useCallback(
+  const onOverlayPointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editable) return;
-      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
+      if (!editSessionActive || !regionId || !editor) return;
       e.preventDefault();
       e.stopPropagation();
+
+      if (!isSelected) {
+        editor.selectRegion(regionId);
+        return;
+      }
+
+      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
       beginPointerGesture('move', e.clientX, e.clientY);
     },
-    [beginPointerGesture, editable],
+    [beginPointerGesture, editSessionActive, editor, isSelected, regionId],
   );
 
   const onEdgePointerDown = useCallback(
     (edge: SceneHitResizeEdge) => (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editable) return;
+      if (!canGesture) return;
       e.preventDefault();
       e.stopPropagation();
       beginPointerGesture('resize', e.clientX, e.clientY, edge);
     },
-    [beginPointerGesture, editable],
+    [beginPointerGesture, canGesture],
   );
 
   return (
     <div
+      data-scene-hit-region={regionId}
       style={{
         ...sceneHitLayoutBoxStyle(rect, screenOffsetX, screenOffsetY, layout),
         zIndex,
-        pointerEvents: editable ? 'auto' : 'none',
-        cursor: editable ? 'move' : undefined,
-        touchAction: editable ? 'none' : undefined,
+        pointerEvents: editSessionActive ? 'auto' : 'none',
+        cursor: canGesture ? 'move' : editSessionActive ? 'pointer' : undefined,
+        touchAction: canGesture ? 'none' : undefined,
         backgroundColor: 'rgba(255, 193, 7, 0.42)',
         border: '2px solid rgba(255, 152, 0, 0.95)',
+        ...(isSelected
+          ? { outline: '2px dashed #EB1C24', outlineOffset: 2 }
+          : editSessionActive
+            ? { opacity: 0.72 }
+            : null),
         ...overlayStyle,
       }}
-      onPointerDown={onMovePointerDown}
+      onPointerDown={onOverlayPointerDown}
     >
       {showLabel ? <span style={DEBUG_LABEL_STYLE}>{label}</span> : null}
-      {editable
+      {canGesture
         ? EDGE_HANDLES.map(({ edge, cursor, style }) => (
             <div
               key={edge}

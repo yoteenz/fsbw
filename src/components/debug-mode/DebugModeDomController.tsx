@@ -34,9 +34,6 @@ export function DebugModeDomController() {
         outline: 2px dashed #EB1C24 !important;
         outline-offset: 2px;
       }
-      [data-baw-debug-mode] *:hover {
-        cursor: crosshair;
-      }
     `;
     document.documentElement.setAttribute('data-baw-debug-mode', '1');
     document.head.appendChild(style);
@@ -98,11 +95,17 @@ export function DebugModeDomController() {
       e.stopPropagation();
 
       const id = ensureDebugElementId(el);
+      const alreadySelected = debug.selectedId === id;
+
       debug.selectElement(id);
 
       const current = debug.getElementOverride(id) ?? readElementOverrideSnapshot(el);
       if (!debug.getElementOverride(id)) {
         debug.patchElement(id, current);
+      }
+
+      if (!alreadySelected) {
+        return;
       }
 
       const tabs = getHorizontalTabSiblings(el);
