@@ -11,6 +11,7 @@ import {
 import { consultDigitalOrderTrackingBarFillPct } from '../utils/digitalOrderFulfillment';
 import type { ConsultOrderLike } from '../utils/consultOrderLifecycle';
 import { expandStylingBreakdownLineForDisplay, type SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
+import LiveTryOnLaunchButton from './liveTryOn/LiveTryOnLaunchButton';
 
 type Props = {
   isOpen: boolean;
@@ -604,6 +605,11 @@ export default function ConsultOfferClaimModal({
               ? 'OFFER CLAIMED'
               : 'CLAIM OFFER'}
         </button>
+      ) : null}
+      {!loading && !error && quote ? (
+        <div className="w-full max-w-md" style={{ marginTop: '8px' }} onClick={(e) => e.stopPropagation()}>
+          <LiveTryOnLaunchButton returnTo={locationForSignIn} />
+        </div>
       ) : null}
     </div>
   );

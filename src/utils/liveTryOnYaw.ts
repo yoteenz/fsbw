@@ -1,0 +1,51 @@
+/** Normalized landmark point from MediaPipe (0–1, origin top-left). */
+export type NormPoint = { x: number; y: number };
+
+/** MediaPipe Face Mesh indices used for pose + placement. */
+export const FACE_LM = {
+  noseTip: 1,
+  forehead: 10,
+  chin: 152,
+  leftTemple: 234,
+  rightTemple: 454,
+} as const;
+
+/**
+ * Rough head yaw in [-1, 1]: negative = user turned to their left (camera sees more right cheek).
+ */
+export function estimateHeadYawNorm(landmarks: NormPoint[]): number {
+  const nose = landmarks[FACE_LM.noseTip];
+  const left = landmarks[FACE_LM.leftTemple];
+  const right = landmarks[FACE_LM.rightTemple];
+  if (!nose || !left || !right) return 0;
+  const midX = (left.x + right.x) / 2;
+  const halfW = Math.max(0.02, (right.x - left.x) / 2);
+  return Math.max(-1, Math.min(1, (nose.x - midX) / halfW));
+}
+
+export function pickWigViewFromYaw(yaw: number): 'left' | 'front' | 'right' {
+  if (yaw < -0.22) return 'left';
+  if (yaw > 0.22) return 'right';
+  return 'front';
+}
+
+export function wigPlacementFromLandmarks(
+  landmarks: NormPoint[],
+  canvasW: number,
+  canvasH: number
+): { cx: number; cy: number; width: number; rotationRad: number } | null {
+  const forehead = landmarks[FACE_LM.forehead];
+  const chin = landmarks[FACE_LM.chin];
+  const left = landmarks[FACE_LM.leftTemple];
+  const right = landmarks[FACE_LM.rightTemple];
+  if (!forehead || !chin || !left || !right) return null;
+
+  const faceH = Math.abs(chin.y - forehead.y) * canvasH;
+  const faceW = Math.abs(right.x - left.x) * canvasW;
+  const cx = ((left.x + right.x) / 2) * canvasW;
+  const cy = forehead.y * canvasH - faceH * 0.35;
+  const width = Math.max(faceW * 1.55, faceH * 0.95);
+  const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
+
+  return { cx, cy, width, rotationRad };
+}
