@@ -45,6 +45,7 @@ import {
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
+import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 
 /**
  * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
@@ -6069,6 +6070,11 @@ export default function BuildAWigPage() {
                   return 'ADD TO BAG';
                 })()}
               </button>
+            </div>
+            <div className="px-0 md:px-0" style={{ marginTop: '8px' }}>
+              <LiveTryOnLaunchButton
+                returnTo={{ pathname: location.pathname, search: location.search }}
+              />
             </div>
           </>
         )}

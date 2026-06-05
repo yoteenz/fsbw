@@ -25555,3 +25555,23 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** On **archived chats** history view, user wanted the **right header icon** to be the **new chat +** (same as main chat), not the archive toggle.
 
 **Changes:** `PsaChatPanel.tsx` — archive toggle only when `historyOpen && !historyArchivedView`; archived view shows **`PsaChatNewIcon`** / **`onNewChat`**.
+
+---
+
+## 2026-06-05 — Live try-on spike (MediaPipe) + BAW / consult entry buttons
+
+**Context:** User asked for architecture on consult/BAW “try on” (upload → video, then live camera without upload, then super-realistic beyond filter). They then requested implementation pushed to **`master`** and **`preview/mobile`**: Phase 1–2 spike (dev route, MediaPipe, hardcoded L/M/R URLs, framing oval) plus **LIVE TRY-ON** buttons on Build-a-Wig (below add to bag) and consult offer (below claim/add to bag).
+
+**Topics covered (full chat):**
+- Stack advice: offline Fal assets per `selectionHash`; live path = device tracking + compositor; hybrid still for lace; V2 = 3D or paid AR SDK (Perfect Corp, Banuba, DeepAR, 8th Wall).
+- Live try-on flow: camera + oval guide, yaw buckets switch L/M/R, no per-frame Fal.
+- Shipped spike only (not selection wiring yet).
+
+**Decisions / outcomes:**
+- Route **`/tools/live-try-on`**: **`LiveTryOnViewport`** uses **`@mediapipe/tasks-vision`** Face Landmarker (CDN WASM + model), front camera, mirrored canvas, red oval guide, overlay from hardcoded **`/assets/natural {left|front|right}.png`** via **`liveTryOnSpikeAssets.ts`** + **`liveTryOnYaw.ts`**.
+- **`LiveTryOnLaunchButton`** on **`build-a-wig/page.tsx`** (below ADD TO BAG / save changes row) and **`ConsultOfferClaimModal`** + **`account/consult-offer/page.tsx`** (below primary CTA); passes **`returnTo`** query for BACK.
+- Dev-only yaw/view debug overlay on viewport.
+
+**Changes:** `package.json` (`@mediapipe/tasks-vision`), `src/App.tsx`, `src/components/liveTryOn/*`, `src/constants/liveTryOnSpikeAssets.ts`, `src/utils/liveTryOnYaw.ts`, `src/pages/tools/live-try-on/page.tsx`, BAW + consult offer UI files. Commit on **`master`**; sync **`preview/mobile`**.
+
+**Conventions:** Next phase = wire `selectionHash` / Storage triples (transparent assets), not Fal per frame. Test on real iPhone Safari over HTTPS; camera permission required.

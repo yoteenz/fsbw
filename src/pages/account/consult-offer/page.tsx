@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { getConsultQuote } from '../../../utils/api';
+import LiveTryOnLaunchButton from '../../../components/liveTryOn/LiveTryOnLaunchButton';
 
 const UNIT_HREF: Record<string, string> = {
   NOIR: '/straight/noir',
@@ -13,6 +14,7 @@ const UNIT_HREF: Record<string, string> = {
 
 export default function ConsultOfferPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id') || '';
   const [loading, setLoading] = useState(true);
@@ -159,6 +161,9 @@ export default function ConsultOfferPage() {
           >
             ADD TO BAG (START BUILD)
           </button>
+          <LiveTryOnLaunchButton
+            returnTo={{ pathname: location.pathname, search: location.search }}
+          />
           <button type="button" className="w-full py-2 text-[10px] text-gray-500" onClick={() => navigate('/account/alerts')}>
             CLOSE
           </button>
