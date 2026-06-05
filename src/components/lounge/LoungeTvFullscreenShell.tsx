@@ -21,8 +21,9 @@ import {
 } from '../../hooks/useSceneCoverHitRect';
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
 import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
-import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { useLoungeTvGlassHitDebugEnabled, useSceneHitEditEnabled } from '../../utils/sceneHitDebug';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
+import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
 
 type Props = {
   children?: React.ReactNode;
@@ -59,6 +60,7 @@ export function LoungeTvFullscreenShell({
   );
 
   const showGlassDebug = useLoungeTvGlassHitDebugEnabled();
+  const hitEdit = useSceneHitEditEnabled();
 
   const stillNudgeX = LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO.x * 100;
   const stillNudgeY = LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO.y * 100;
@@ -109,7 +111,7 @@ export function LoungeTvFullscreenShell({
               : { background: 'transparent' }),
           }}
         >
-          {showGlassDebug ? (
+          {showGlassDebug && !hitEdit ? (
             <span
               aria-hidden
               style={{
@@ -148,7 +150,22 @@ export function LoungeTvFullscreenShell({
                 overflow: 'hidden',
               }}
             >
-              {children}
+              <LoungeTvInnerLayoutEditor
+                regionId="lounge-tv-content-popup"
+                label="tv content glass (open)"
+                layout={contentPopupRegion.layout}
+                style={{ width: '100%', height: '100%' }}
+                debugOutline={
+                  showGlassDebug
+                    ? {
+                        backgroundColor: 'rgba(233, 30, 99, 0.12)',
+                        border: '2px dashed rgba(194, 24, 91, 0.95)',
+                      }
+                    : undefined
+                }
+              >
+                {children}
+              </LoungeTvInnerLayoutEditor>
             </div>
             {onClose ? (
               <LoungeTvCloseButton

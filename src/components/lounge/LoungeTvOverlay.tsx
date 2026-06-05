@@ -19,6 +19,9 @@ import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerO
 import { LoungeTvBlogPostDetail, LoungeTvBlogPostList } from './LoungeTvBlogPostView';
 import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
 import { LoungeTvContentProtection } from './LoungeTvContentProtection';
+import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
+import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
+import { loungeTvInnerAbsolutePanelStyle } from '../../utils/loungeTvInnerLayout';
 import {
   hydrateLoungeTvAdminConfig,
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
@@ -246,6 +249,7 @@ function LoungeTvScreen({
   const [mediaInsets, setMediaInsets] = useState({ left: 0, right: 0 });
   const [mediaTopPx, setMediaTopPx] = useState(0);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
+  const mediaPanelRegion = useSceneHitRegionConfig('lounge-tv-media-panel');
   const tiles = useMemo(
     () => resolveLoungeTvTiles(mainTab, sidebarId),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when admin saves TV content
@@ -477,13 +481,20 @@ function LoungeTvScreen({
           ))}
         </aside>
 
-        <div
+        <LoungeTvInnerLayoutEditor
+          regionId="lounge-tv-media-panel"
+          label="tv media panel"
+          layout={mediaPanelRegion.layout}
           style={{
             position: 'absolute',
-            left: mediaInsets.left > 0 ? `${mediaInsets.left}px` : 0,
-            right: mediaInsets.right > 0 ? `${mediaInsets.right}px` : 0,
-            top: mediaTopPx > 0 ? `${mediaTopPx}px` : 0,
-            bottom: 0,
+            ...loungeTvInnerAbsolutePanelStyle(
+              {
+                left: mediaInsets.left > 0 ? mediaInsets.left : 0,
+                right: mediaInsets.right > 0 ? mediaInsets.right : 0,
+                top: mediaTopPx > 0 ? mediaTopPx : 0,
+              },
+              mediaPanelRegion.layout,
+            ),
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -492,6 +503,10 @@ function LoungeTvScreen({
             WebkitOverflowScrolling: 'touch',
             paddingBottom: loungeTvGlassCqw(2.5, 6, 10),
             boxSizing: 'border-box',
+          }}
+          debugOutline={{
+            backgroundColor: 'rgba(255, 235, 59, 0.18)',
+            border: '2px dashed rgba(245, 127, 23, 0.95)',
           }}
         >
           {watchLearnTile ? (
@@ -557,7 +572,7 @@ function LoungeTvScreen({
               </div>
             )
           ) : null}
-        </div>
+        </LoungeTvInnerLayoutEditor>
       </div>
     </div>
   );
