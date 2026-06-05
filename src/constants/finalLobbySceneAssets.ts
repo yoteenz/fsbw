@@ -89,11 +89,15 @@ export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
   layoutHeightExtraPx: -100,
 } as const;
 
-/** Production + QA — green play tap. */
+/** Production + QA — green play tap wraps PRESS TO PLAY (center-anchored width/height). */
+export const LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_EXTRA_PX = 80;
+export const LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_EXTRA_PX = -28;
+
 export const LOUNGE_TV_PLAY_TAP_LAYOUT = {
-  layoutWidthExtraPx: 10,
-  layoutHeightExtraPx: -36,
-  layoutOffsetY: 15,
+  layoutWidthExtraPx: LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_EXTRA_PX,
+  layoutOffsetX: -LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_EXTRA_PX / 2,
+  layoutHeightExtraPx: LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_EXTRA_PX,
+  layoutOffsetY: -LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_EXTRA_PX / 2,
 } as const;
 
 /** In-screen play icon — center of gray triangle on TV glass (`final-lounge.png`, 928×1680). */
@@ -115,8 +119,8 @@ export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 10;
 export const FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 120;
 
 /** Screen-space nudge for lounge TV **label** only (container / hit box unchanged). */
-export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 12;
-export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 31;
+export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX = 0;
+export const FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX = 0;
 
 /** @deprecated Use {@link FINAL_LOUNGE_TV_PLAY_TAP_RECT}. */
 export const FINAL_LOUNGE_TV_PLAY_IMAGE_RECT = FINAL_LOUNGE_TV_PLAY_TAP_RECT;

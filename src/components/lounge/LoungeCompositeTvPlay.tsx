@@ -5,9 +5,7 @@ import {
 } from '../../constants/loungeTvAnimationVideo';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
-  FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX,
-  FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX,
-  FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
+FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
   FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
   LOUNGE_TV_BAKED_HIT_LAYOUT,
@@ -200,7 +198,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
               width: '100%',
               height: '100%',
               margin: 0,
-              padding: 8,
+              padding: 4,
               border: 'none',
               background: 'transparent',
               cursor: 'pointer',
@@ -212,13 +210,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
               boxSizing: 'border-box',
             }}
           >
-            <span
-              aria-hidden
-              style={{
-                ...PRESS_PLAY_LABEL_STYLE,
-                transform: `translate(${FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_X_PX}px, ${FINAL_LOUNGE_TV_PLAY_LABEL_OFFSET_Y_PX}px)`,
-              }}
-            >
+            <span aria-hidden style={PRESS_PLAY_LABEL_STYLE}>
               PRESS TO PLAY
             </span>
           </button>
