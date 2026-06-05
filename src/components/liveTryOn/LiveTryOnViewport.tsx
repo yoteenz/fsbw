@@ -3,7 +3,6 @@ import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import {
   LIVE_TRY_ON_FACE_LANDMARKER_MODEL,
   LIVE_TRY_ON_MEDIAPIPE_WASM_BASE,
-  LIVE_TRY_ON_SPIKE_WIG_URLS,
   type LiveTryOnWigView,
 } from '../../constants/liveTryOnSpikeAssets';
 import {
@@ -15,34 +14,70 @@ import {
 
 type Status = 'loading' | 'permission' | 'live' | 'no-face' | 'error';
 
-const WIG_IMAGES: Record<LiveTryOnWigView, HTMLImageElement> = {
-  left: new Image(),
-  front: new Image(),
-  right: new Image(),
+type Props = {
+  /** [left, front, right] public URLs (transparent PNG preferred). */
+  wigUrls: [string, string, string] | null;
 };
 
-let wigImagesPrimed = false;
-function primeWigImages(): void {
-  if (wigImagesPrimed) return;
-  wigImagesPrimed = true;
-  (Object.keys(LIVE_TRY_ON_SPIKE_WIG_URLS) as LiveTryOnWigView[]).forEach((key) => {
-    WIG_IMAGES[key].crossOrigin = 'anonymous';
-    WIG_IMAGES[key].src = LIVE_TRY_ON_SPIKE_WIG_URLS[key];
+function loadWigImages(urls: [string, string, string]): Promise<Record<LiveTryOnWigView, HTMLImageElement>> {
+  const views: LiveTryOnWigView[] = ['left', 'front', 'right'];
+  const keys: LiveTryOnWigView[] = ['left', 'front', 'right'];
+  return Promise.all(
+    views.map(
+      (view, i) =>
+        new Promise<{ view: LiveTryOnWigView; img: HTMLImageElement }>((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve({ view: keys[i], img });
+          img.onerror = () => reject(new Error(`Failed to load ${view}`));
+          img.src = urls[i];
+        })
+    )
+  ).then((pairs) => {
+    const out = {} as Record<LiveTryOnWigView, HTMLImageElement>;
+    pairs.forEach(({ view, img }) => {
+      out[view] = img;
+    });
+    return out;
   });
 }
 
-export default function LiveTryOnViewport() {
+export default function LiveTryOnViewport({ wigUrls }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const landmarkerRef = useRef<FaceLandmarker | null>(null);
   const rafRef = useRef<number>(0);
   const lastVideoTimeRef = useRef(-1);
   const noFaceFramesRef = useRef(0);
+  const wigImagesRef = useRef<Record<LiveTryOnWigView, HTMLImageElement> | null>(null);
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
   const [debugYaw, setDebugYaw] = useState(0);
   const [activeView, setActiveView] = useState<LiveTryOnWigView>('front');
+  const [assetsReady, setAssetsReady] = useState(false);
+
+  useEffect(() => {
+    if (!wigUrls) {
+      setAssetsReady(false);
+      wigImagesRef.current = null;
+      return;
+    }
+    let cancelled = false;
+    setAssetsReady(false);
+    loadWigImages(wigUrls)
+      .then((imgs) => {
+        if (cancelled) return;
+        wigImagesRef.current = imgs;
+        setAssetsReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) setAssetsReady(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wigUrls?.[0], wigUrls?.[1], wigUrls?.[2]]);
 
   const drawFrame = useCallback(() => {
     const video = videoRef.current;
@@ -62,6 +97,9 @@ export default function LiveTryOnViewport() {
     ctx.drawImage(video, 0, 0, w, h);
     ctx.restore();
 
+    const wigImages = wigImagesRef.current;
+    if (!assetsReady || !wigImages) return;
+
     const now = performance.now();
     if (video.currentTime !== lastVideoTimeRef.current) {
       lastVideoTimeRef.current = video.currentTime;
@@ -78,8 +116,8 @@ export default function LiveTryOnViewport() {
           setStatusHint('LIVE PREVIEW — TURN SLOWLY TO SEE ANGLES');
 
           const placement = wigPlacementFromLandmarks(landmarks, w, h);
-          const wigImg = WIG_IMAGES[view];
-          if (placement && wigImg.complete && wigImg.naturalWidth > 0) {
+          const wigImg = wigImages[view];
+          if (placement && wigImg?.complete && wigImg.naturalWidth > 0) {
             const aspect = wigImg.naturalHeight / wigImg.naturalWidth;
             const drawW = placement.width;
             const drawH = drawW * aspect;
@@ -88,7 +126,7 @@ export default function LiveTryOnViewport() {
             ctx.save();
             ctx.translate(cx, placement.cy);
             ctx.rotate(rot);
-            ctx.globalAlpha = 0.92;
+            ctx.globalAlpha = 0.94;
             ctx.drawImage(wigImg, -drawW / 2, -drawH * 0.12, drawW, drawH);
             ctx.restore();
           }
@@ -103,7 +141,7 @@ export default function LiveTryOnViewport() {
         /* skip frame */
       }
     }
-  }, []);
+  }, [assetsReady]);
 
   const loop = useCallback(() => {
     drawFrame();
@@ -111,7 +149,6 @@ export default function LiveTryOnViewport() {
   }, [drawFrame]);
 
   useEffect(() => {
-    primeWigImages();
     let stream: MediaStream | null = null;
     let cancelled = false;
 
@@ -180,11 +217,7 @@ export default function LiveTryOnViewport() {
       <video ref={videoRef} playsInline muted className="absolute w-px h-px opacity-0 pointer-events-none" aria-hidden />
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
 
-      {/* Framing oval */}
-      <div
-        className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        aria-hidden
-      >
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
         <div
           style={{
             width: '72%',
@@ -202,6 +235,12 @@ export default function LiveTryOnViewport() {
       >
         {statusHint}
       </div>
+
+      {!assetsReady && wigUrls ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#FFFFFF' }}>LOADING YOUR WIG…</p>
+        </div>
+      ) : null}
 
       {import.meta.env.DEV ? (
         <div

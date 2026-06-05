@@ -4,10 +4,12 @@ import { LIVE_TRY_ON_ROUTE } from '../../constants/liveTryOnSpikeAssets';
 type Props = {
   className?: string;
   returnTo?: { pathname: string; search?: string };
+  /** When opening from consult offer, pass quote id for selection-driven assets. */
+  quoteId?: string;
 };
 
-/** Opens `/tools/live-try-on` (Phase 1–2 spike). */
-export default function LiveTryOnLaunchButton({ className = '', returnTo }: Props) {
+/** Opens `/tools/live-try-on` with BAW or consult selection context. */
+export default function LiveTryOnLaunchButton({ className = '', returnTo, quoteId }: Props) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -15,6 +17,8 @@ export default function LiveTryOnLaunchButton({ className = '', returnTo }: Prop
     if (returnTo?.pathname) {
       search.set('returnTo', returnTo.pathname + (returnTo.search || ''));
     }
+    const qid = String(quoteId || '').trim();
+    if (qid) search.set('quoteId', qid);
     const q = search.toString();
     navigate(q ? `${LIVE_TRY_ON_ROUTE}?${q}` : LIVE_TRY_ON_ROUTE);
   };

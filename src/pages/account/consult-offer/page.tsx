@@ -163,6 +163,7 @@ export default function ConsultOfferPage() {
           </button>
           <LiveTryOnLaunchButton
             returnTo={{ pathname: location.pathname, search: location.search }}
+            quoteId={id}
           />
           <button type="button" className="w-full py-2 text-[10px] text-gray-500" onClick={() => navigate('/account/alerts')}>
             CLOSE
