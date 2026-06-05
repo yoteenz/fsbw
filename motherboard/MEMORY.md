@@ -25547,3 +25547,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - Gray preview row unchanged (full first user line, uppercase).
 
 **Changes:** `psaThreadHistoryDisplay.ts`, `PsaChatPanel.tsx`.
+
+---
+
+## 2026-06-05 — PSA archived history header: new chat icon
+
+**Context:** On **archived chats** history view, user wanted the **right header icon** to be the **new chat +** (same as main chat), not the archive toggle.
+
+**Changes:** `PsaChatPanel.tsx` — archive toggle only when `historyOpen && !historyArchivedView`; archived view shows **`PsaChatNewIcon`** / **`onNewChat`**.
