@@ -49,3 +49,27 @@ export function wigPlacementFromLandmarks(
 
   return { cx, cy, width, rotationRad };
 }
+
+/** Face oval on canvas (camera space; x must be mirrored when drawing on mirrored preview). */
+export function faceOvalFromLandmarks(
+  landmarks: NormPoint[],
+  canvasW: number,
+  canvasH: number
+): { cx: number; cy: number; rx: number; ry: number } | null {
+  const forehead = landmarks[FACE_LM.forehead];
+  const chin = landmarks[FACE_LM.chin];
+  const left = landmarks[FACE_LM.leftTemple];
+  const right = landmarks[FACE_LM.rightTemple];
+  if (!forehead || !chin || !left || !right) return null;
+
+  const faceW = Math.abs(right.x - left.x) * canvasW;
+  const faceH = Math.abs(chin.y - forehead.y) * canvasH;
+  const cx = ((left.x + right.x) / 2) * canvasW;
+  const cy = ((forehead.y + chin.y) / 2) * canvasH;
+  return {
+    cx,
+    cy,
+    rx: Math.max(12, faceW * 0.46),
+    ry: Math.max(14, faceH * 0.52),
+  };
+}

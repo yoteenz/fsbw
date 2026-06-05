@@ -7,11 +7,10 @@ import { getAuthUser } from './_lib/auth.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
   LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
+  LIVE_TRY_ON_IDEOGRAM_MODEL,
   liveTryOnOverlayPublicUrls,
   liveTryOnOverlayStoragePath,
 } from './_lib/liveTryOnOverlay.js';
-
-const IDEOGRAM_REMOVE_BG = 'fal-ai/ideogram/remove-background';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
   wigPreviewLiveAnglePaths,
@@ -101,7 +100,7 @@ async function generateHairOnlyOverlayPng(
   const nbpUrl = extractFalImageUrl(nbpResult);
   if (!nbpUrl) throw new Error('fal: no NBP hair isolation URL');
 
-  const cutResult = await fal.subscribe(IDEOGRAM_REMOVE_BG, {
+  const cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
     input: { image_url: nbpUrl },
     logs: false,
   });

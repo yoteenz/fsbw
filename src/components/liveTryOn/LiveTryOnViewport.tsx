@@ -5,6 +5,7 @@ import {
   LIVE_TRY_ON_MEDIAPIPE_WASM_BASE,
   type LiveTryOnWigView,
 } from '../../constants/liveTryOnSpikeAssets';
+import { drawWigOverlayWithFaceHole } from '../../utils/liveTryOnComposite';
 import {
   estimateHeadYawNorm,
   pickWigViewFromYaw,
@@ -50,6 +51,7 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
   const lastVideoTimeRef = useRef(-1);
   const noFaceFramesRef = useRef(0);
   const wigImagesRef = useRef<Record<LiveTryOnWigView, HTMLImageElement> | null>(null);
+  const overlayScratchRef = useRef<HTMLCanvasElement | null>(null);
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
@@ -118,20 +120,18 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
           const placement = wigPlacementFromLandmarks(landmarks, w, h);
           const wigImg = wigImages[view];
           if (placement && wigImg?.complete && wigImg.naturalWidth > 0) {
-            /** Use top ~50% of asset (hair volume); hides bust if a full mannequin slipped through. */
-            const cropFrac = 0.5;
-            const sw = wigImg.naturalWidth;
-            const sh = Math.max(1, Math.floor(wigImg.naturalHeight * cropFrac));
-            const drawW = placement.width;
-            const drawH = drawW * (sh / sw);
-            const cx = w - placement.cx;
-            const rot = -placement.rotationRad;
-            ctx.save();
-            ctx.translate(cx, placement.cy);
-            ctx.rotate(rot);
-            ctx.globalAlpha = 0.94;
-            ctx.drawImage(wigImg, 0, 0, sw, sh, -drawW / 2, -drawH * 0.08, drawW, drawH);
-            ctx.restore();
+            if (!overlayScratchRef.current) {
+              overlayScratchRef.current = document.createElement('canvas');
+            }
+            drawWigOverlayWithFaceHole(
+              ctx,
+              w,
+              h,
+              wigImg,
+              placement,
+              landmarks,
+              overlayScratchRef.current
+            );
           }
         } else {
           noFaceFramesRef.current += 1;
