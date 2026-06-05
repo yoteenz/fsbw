@@ -166,7 +166,9 @@ function rethrowWithNetworkHint(err: unknown, shortLabel: string): never {
   const raw = err instanceof Error ? err.message : String(err);
   if (isLikelyBrowserFetchNetworkError(raw)) {
     throw new Error(
-      `${shortLabel}: connection dropped or timed out before the server answered (browsers often show this as "Load failed"). For styling, try regen L, then M, then R one at a time, or set WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K on Vercel so each request finishes sooner.`
+      shortLabel.includes('try-on')
+        ? `${shortLabel}: connection dropped or timed out before the server answered. Live try-on runs one angle and one model per server step — keep this screen open; partial results may already be saved. Set WIG_PREVIEW_TRYON_FAL_RESOLUTION=1K on Vercel if timeouts continue.`
+        : `${shortLabel}: connection dropped or timed out before the server answered (browsers often show this as "Load failed"). For styling, try regen L, then M, then R one at a time, or set WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K on Vercel so each request finishes sooner.`
     );
   }
   throw err instanceof Error ? err : new Error(String(err));
@@ -1508,6 +1510,8 @@ export async function postWigPreviewLiveNoirColorRegenerateAll(
  */
 export type LiveTryOnEnsureOverlaysPayload = WigPreviewLiveNoirColorPayload & {
   unitKey?: string;
+  photoModel?: 'nbp' | 'gpt2';
+  compareModels?: boolean;
 };
 
 export type LiveTryOnEnsureOverlaysResult = {
@@ -1555,6 +1559,11 @@ export async function postLiveTryOnEnsureOverlaysOneAngle(
     }
     if (res.status === 409 && code === 'COLOR_PREVIEW_MISSING') {
       throw new Error('COLOR_PREVIEW_MISSING');
+    }
+    if (/FUNCTION_INVOCATION_TIMEOUT/i.test(text) || /FUNCTION_INVOCATION_TIMEOUT/i.test(msg)) {
+      throw new Error(
+        'LIVE TRY-ON TIMED OUT ON THE SERVER (ONE ANGLE AT A TIME). WAIT A MOMENT AND OPEN AGAIN — PARTIAL LAYERS MAY ALREADY BE SAVED. SET WIG_PREVIEW_TRYON_FAL_RESOLUTION=1K ON VERCEL FOR FASTER RUNS.'
+      );
     }
     throw new Error(msg || 'Live try-on overlay failed');
   }
