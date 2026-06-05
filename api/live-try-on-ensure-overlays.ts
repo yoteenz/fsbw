@@ -6,10 +6,12 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from './_lib/auth.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
-  LIVE_TRY_ON_HAIR_ISOLATION_PROMPT,
+  LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
   liveTryOnOverlayPublicUrls,
   liveTryOnOverlayStoragePath,
 } from './_lib/liveTryOnOverlay.js';
+
+const IDEOGRAM_REMOVE_BG = 'fal-ai/ideogram/remove-background';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
   wigPreviewLiveAnglePaths,
@@ -71,6 +73,42 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`download failed ${response.status}`);
   return Buffer.from(await response.arrayBuffer());
+}
+
+function extractFalImageUrl(result: unknown): string | null {
+  const url = (result as { data?: { images?: { url?: string }[]; image?: { url?: string } } })?.data
+    ?.images?.[0]?.url;
+  if (url) return url;
+  return (result as { data?: { image?: { url?: string } } })?.data?.image?.url ?? null;
+}
+
+/** NBP hair-on-white, then Ideogram for true alpha (same stack as PSA avatars). */
+async function generateHairOnlyOverlayPng(
+  fal: { subscribe: (model: string, opts: { input: Record<string, unknown>; logs: boolean }) => Promise<unknown> },
+  sourceUrl: string
+): Promise<Buffer> {
+  const nbpResult = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
+    input: {
+      prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
+      image_urls: [sourceUrl],
+      aspect_ratio: 'auto',
+      resolution: process.env.WIG_PREVIEW_FAL_RESOLUTION?.trim() || '2K',
+      output_format: 'png',
+      num_images: 1,
+    },
+    logs: false,
+  });
+  const nbpUrl = extractFalImageUrl(nbpResult);
+  if (!nbpUrl) throw new Error('fal: no NBP hair isolation URL');
+
+  const cutResult = await fal.subscribe(IDEOGRAM_REMOVE_BG, {
+    input: { image_url: nbpUrl },
+    logs: false,
+  });
+  const cutUrl = extractFalImageUrl(cutResult);
+  if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
+
+  return downloadUrlToBuffer(cutUrl);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -170,21 +208,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         continue;
       }
 
-      const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
-        input: {
-          prompt: LIVE_TRY_ON_HAIR_ISOLATION_PROMPT,
-          image_urls: [sourceUrl],
-          aspect_ratio: 'auto',
-          resolution: process.env.WIG_PREVIEW_FAL_RESOLUTION?.trim() || '2K',
-          output_format: 'png',
-          num_images: 1,
-        },
-        logs: false,
-      });
-      const url = (result as { data?: { images?: { url?: string }[] } })?.data?.images?.[0]?.url;
-      if (!url) throw new Error(`fal: no overlay URL for ${angle}`);
-
-      const buf = await downloadUrlToBuffer(url);
+      const buf = await generateHairOnlyOverlayPng(fal, sourceUrl);
       const { error: upErr } = await supabase.storage.from(bucket).upload(overlayPath, buf, {
         contentType: 'image/png',
         upsert: true,

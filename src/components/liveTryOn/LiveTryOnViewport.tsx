@@ -118,16 +118,19 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
           const placement = wigPlacementFromLandmarks(landmarks, w, h);
           const wigImg = wigImages[view];
           if (placement && wigImg?.complete && wigImg.naturalWidth > 0) {
-            const aspect = wigImg.naturalHeight / wigImg.naturalWidth;
+            /** Use top ~50% of asset (hair volume); hides bust if a full mannequin slipped through. */
+            const cropFrac = 0.5;
+            const sw = wigImg.naturalWidth;
+            const sh = Math.max(1, Math.floor(wigImg.naturalHeight * cropFrac));
             const drawW = placement.width;
-            const drawH = drawW * aspect;
+            const drawH = drawW * (sh / sw);
             const cx = w - placement.cx;
             const rot = -placement.rotationRad;
             ctx.save();
             ctx.translate(cx, placement.cy);
             ctx.rotate(rot);
             ctx.globalAlpha = 0.94;
-            ctx.drawImage(wigImg, -drawW / 2, -drawH * 0.12, drawW, drawH);
+            ctx.drawImage(wigImg, 0, 0, sw, sh, -drawW / 2, -drawH * 0.08, drawW, drawH);
             ctx.restore();
           }
         } else {

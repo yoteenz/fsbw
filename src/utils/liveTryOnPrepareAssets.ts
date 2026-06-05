@@ -8,7 +8,6 @@ import {
   buildLiveTryOnPayloadFromBaw,
   buildLiveTryOnPayloadFromConsult,
   liveTryOnPayloadToColorApiBody,
-  readLiveTryOnTripleFromLocalStorage,
   staticMannequinTripleForUnit,
   type LiveTryOnSourcePayload,
 } from './liveTryOnSelections';
@@ -71,40 +70,25 @@ export async function prepareLiveTryOnAssets(
     return { overlayUrls: cachedOverlay, usedFallback: false };
   }
 
-  const localTriple = readLiveTryOnTripleFromLocalStorage();
   const storedColor = await resolveWigPreviewLiveColorTripleIfStored(hashPayload);
 
   if (payload.unitKey === 'NOIR') {
     onStatus?.('PREPARING COLOR PREVIEW…');
     if (!storedColor) {
       await ensureNoirColorPreview(payload);
-    } else if (localTriple) {
-      /* color exists in Storage; proceed to isolation */
     }
 
-    onStatus?.('CREATING TRY-ON LAYERS…');
-    try {
-      const overlayResult = await ensureOverlays(payload);
-      const fromApi = tripleFromOverlayResult(overlayResult);
-      if (fromApi) {
-        return {
-          overlayUrls: fromApi,
-          manifestHash: overlayResult.manifestHash,
-          usedFallback: false,
-        };
-      }
-    } catch {
-      /* fall through */
+    onStatus?.('CREATING HAIR-ONLY LAYERS…');
+    const overlayResult = await ensureOverlays(payload);
+    const fromApi = tripleFromOverlayResult(overlayResult);
+    if (fromApi) {
+      return {
+        overlayUrls: fromApi,
+        manifestHash: overlayResult.manifestHash,
+        usedFallback: false,
+      };
     }
-
-    const colorTriple = storedColor ?? (await resolveWigPreviewLiveColorTripleIfStored(hashPayload));
-    if (colorTriple) {
-      return { overlayUrls: colorTriple, usedFallback: true };
-    }
-    const local = readLiveTryOnTripleFromLocalStorage();
-    if (local) {
-      return { overlayUrls: local, usedFallback: true };
-    }
+    throw new Error('Hair-only try-on layers could not be prepared');
   }
 
   onStatus?.('USING STUDIO PREVIEW…');

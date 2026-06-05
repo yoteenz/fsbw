@@ -1,13 +1,20 @@
-import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
+/**
+ * Bump when isolation prompt/pipeline changes (invalidates bad cached full-mannequin PNGs).
+ * Must match `LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT` in `src/constants/liveTryOnSpikeAssets.ts`.
+ */
+export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v2';
 
-/** Transparent hair-only cutout for live try-on compositing (from live color WebP). */
-export const LIVE_TRY_ON_HAIR_ISOLATION_PROMPT = [
-  'Extract ONLY the wig and hair from this photo.',
-  'Output with a fully transparent background (true alpha channel).',
-  'Remove the mannequin face, skin, neck, body, studio backdrop, brick wall, and chest logo.',
-  'Preserve the exact hair color, length, texture, parting, and silhouette from the source image.',
-  bawFalEditPreserveReferenceBlock(),
-  'No text, no watermark, no checkerboard fake transparency.',
+/**
+ * NBP pass: hair-only on flat white (no mannequin). Do **not** use `bawFalEditPreserveReferenceBlock` —
+ * that block locks face, skin, and backdrop and causes the full mannequin to be kept.
+ */
+export const LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT = [
+  'TASK: Output ONLY the lace-front wig and hair from the input — nothing else.',
+  'DELETE from the image: mannequin face, eyes, brows, nose, lips, skin, ears, neck, shoulders, chest, FRONTAL SLAYER logo, studio backdrop, rose border, and bricks.',
+  'KEEP exactly: hair color, length, density, curl/straight texture, parting, hairline lace edge, and silhouette.',
+  'Place the isolated wig on a solid flat pure white #FFFFFF background (no gradient, no vignette).',
+  'The mannequin head must not appear — only the hair unit floating as it would sit above a real hairline.',
+  'Photoreal hair strands; no cartoon, no plastic CGI skin, no checkerboard pattern.',
 ].join(' ');
 
 export function liveTryOnOverlayStoragePath(
@@ -17,7 +24,7 @@ export function liveTryOnOverlayStoragePath(
   angle: 'left' | 'front' | 'right'
 ): string {
   const u = String(unitKey || 'NOIR').toUpperCase();
-  return `try-on-overlay/${promptVersion}/${u}/${manifestHash}/${angle}.png`;
+  return `try-on-overlay/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${promptVersion}/${u}/${manifestHash}/${angle}.png`;
 }
 
 export function liveTryOnOverlayPublicUrls(

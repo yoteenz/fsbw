@@ -1,5 +1,8 @@
+/** Must match `LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT` in `api/_lib/liveTryOnOverlay.ts`. */
+export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v2';
+
 /**
- * Phase 1–2 spike: hardcoded L/M/R refs until selection-hash assets exist.
+ * Studio mannequin fallbacks only when Fal/Storage prep fails (full figure — not ideal for try-on).
  * HQ naturals match the Fal mannequin reference set used in BAW / consult previews.
  */
 export type LiveTryOnWigView = 'left' | 'front' | 'right';
