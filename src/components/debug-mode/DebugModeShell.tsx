@@ -11,6 +11,8 @@ import {
 import { DebugModeProvider } from './DebugModeProvider';
 import { DebugModeDomController } from './DebugModeDomController';
 import { DebugModeOverlay } from './DebugModeOverlay';
+import { DebugModeApplier } from './DebugModeApplier';
+import { DebugModeFounderBootstrap } from './DebugModeFounderBootstrap';
 
 const DEBUG_MODE_HOME = '/home/shop';
 
@@ -101,15 +103,19 @@ export function DebugModeShell({ children }: Props) {
   }, [debugModeActive, navigate]);
 
   return (
-    <DebugModeProvider enabled={debugModeActive} pageKey={pageKey}>
-      <Routes location={routeLocation}>{children}</Routes>
-      {debugModeActive ? (
-        <>
-          <DebugModeDomController />
-          <DebugModeOverlay />
-        </>
-      ) : null}
-    </DebugModeProvider>
+    <>
+      <DebugModeFounderBootstrap />
+      {founderAccess && !debugModeActive ? <DebugModeApplier /> : null}
+      <DebugModeProvider enabled={debugModeActive} pageKey={pageKey}>
+        <Routes location={routeLocation}>{children}</Routes>
+        {debugModeActive ? (
+          <>
+            <DebugModeDomController />
+            <DebugModeOverlay />
+          </>
+        ) : null}
+      </DebugModeProvider>
+    </>
   );
 }
 

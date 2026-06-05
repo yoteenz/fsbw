@@ -3,8 +3,8 @@ import { useDebugMode } from './DebugModeProvider';
 import {
   DEBUG_MODE_SESSION_KEY,
   DEBUG_BRAND_COLORS,
-  DEBUG_FONT_PRESETS,
-  type DebugFontPresetId,
+  DEBUG_FONT_PRESET_OPTIONS,
+  debugFontPresetPatch,
 } from '../../utils/debugMode';
 import { findElementByDebugId, readElementOverrideSnapshot } from '../../utils/debugModeDomPath';
 
@@ -90,10 +90,10 @@ export function DebugModeOverlay() {
       <span style={{ padding: '2px 6px', borderRadius: 999, background: debug.hasUnsavedChanges ? '#ffe08a' : '#eee' }}>
         {status}
       </span>
-      <button type="button" style={btn} onClick={debug.savePage}>
+      <button type="button" style={btn} onClick={() => void debug.savePage()}>
         Save page
       </button>
-      <button type="button" style={btn} onClick={debug.resetPage}>
+      <button type="button" style={btn} onClick={() => void debug.resetPage()}>
         Reset page
       </button>
       <button type="button" style={btn} onClick={() => void debug.copyPageJson()}>
@@ -166,6 +166,7 @@ export function DebugModeOverlay() {
       {toolbar}
       <p style={{ margin: '8px 0 0 0' }}>
         Tap any card, text, or image to select. Drag to nudge (4px grid). Drag tabs horizontally to swap order.
+        Save syncs to Supabase for cross-device founder preview.
       </p>
       <p style={{ margin: '4px 0 0 0', opacity: 0.85 }}>Route: {debug.pageKey}</p>
 
@@ -211,24 +212,26 @@ export function DebugModeOverlay() {
                 />
               </label>
 
-              <label style={fieldLabel}>
-                Font preset
-                <select
-                  style={inputStyle}
-                  value=""
-                  onChange={(e) => {
-                    const id = e.target.value as DebugFontPresetId;
-                    if (id) patchSelected({ fontFamily: DEBUG_FONT_PRESETS[id] });
-                  }}
-                >
-                  <option value="">— pick font —</option>
-                  {(Object.keys(DEBUG_FONT_PRESETS) as DebugFontPresetId[]).map((id) => (
-                    <option key={id} value={id}>
-                      {id}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <p style={{ margin: '6px 0 4px 0', opacity: 0.75 }}>Fonts</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
+                {DEBUG_FONT_PRESET_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    style={btn}
+                    onClick={() => patchSelected(debugFontPresetPatch(option.id))}
+                    title={
+                      option.textTransform === 'lowercase'
+                        ? 'Lowercase only'
+                        : option.textTransform === 'uppercase'
+                          ? 'Uppercase only'
+                          : undefined
+                    }
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
                 <label style={fieldLabel}>

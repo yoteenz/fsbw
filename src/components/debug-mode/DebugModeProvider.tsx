@@ -15,6 +15,7 @@ import {
   type DebugElementOverride,
   type DebugPageConfig,
 } from '../../utils/debugMode';
+import { syncPageDebugStoreToCloud } from '../../utils/debugModeSync';
 
 type DebugModeContextValue = {
   enabled: boolean;
@@ -24,8 +25,8 @@ type DebugModeContextValue = {
   selectElement: (id: string | null) => void;
   patchElement: (id: string, patch: Partial<DebugElementOverride>) => void;
   getElementOverride: (id: string) => DebugElementOverride | undefined;
-  savePage: () => void;
-  resetPage: () => void;
+  savePage: () => Promise<void>;
+  resetPage: () => Promise<void>;
   copyPageJson: () => Promise<void>;
   hasUnsavedChanges: boolean;
   hasSavedConfig: boolean;
@@ -74,17 +75,27 @@ export function DebugModeProvider({
     [draft.elements],
   );
 
-  const savePage = useCallback(() => {
+  const savePage = useCallback(async () => {
     saveDebugPageConfig(pageKey, draft);
     setDraftElements({});
     setSavedVersion((v) => v + 1);
+    try {
+      await syncPageDebugStoreToCloud();
+    } catch {
+      /* local save still applied */
+    }
   }, [draft, pageKey]);
 
-  const resetPage = useCallback(() => {
+  const resetPage = useCallback(async () => {
     clearDebugPageConfig(pageKey);
     setDraftElements({});
     setSelectedId(null);
     setSavedVersion((v) => v + 1);
+    try {
+      await syncPageDebugStoreToCloud(loadDebugModeStore());
+    } catch {
+      /* local reset still applied */
+    }
   }, [pageKey]);
 
   const copyPageJson = useCallback(async () => {
