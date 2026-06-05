@@ -138,7 +138,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
         {hitEdit ? (
           <>
             {' '}
-            + <strong>sceneHitEdit=1</strong> — drag/corner-resize, then Save (open TV to tune inner content).
+            + <strong>sceneHitEdit=1</strong> — drag center to move, border edges to resize, then Save (open TV to tune inner content).
           </>
         ) : null}
         .

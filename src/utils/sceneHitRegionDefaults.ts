@@ -27,7 +27,9 @@ export type SceneHitRegionId =
   | 'lounge-tv-play-tap'
   | 'lounge-tv-media-panel'
   | 'lounge-tv-video-frame'
-  | 'lobby-display-case';
+  | 'lobby-display-case'
+  | 'lobby-display-case-register'
+  | 'lobby-display-case-phone';
 
 export type SceneHitCoverOffset = { x: number; y: number };
 
@@ -44,6 +46,8 @@ export const SCENE_HIT_REGION_IDS: SceneHitRegionId[] = [
   'lounge-tv-media-panel',
   'lounge-tv-video-frame',
   'lobby-display-case',
+  'lobby-display-case-register',
+  'lobby-display-case-phone',
 ];
 
 export const SCENE_HIT_REGION_LABELS: Record<SceneHitRegionId, string> = {
@@ -53,6 +57,8 @@ export const SCENE_HIT_REGION_LABELS: Record<SceneHitRegionId, string> = {
   'lounge-tv-media-panel': 'Yellow — TV media panel (open)',
   'lounge-tv-video-frame': 'Cyan — Watch+Learn video (open)',
   'lobby-display-case': 'Orange — display case',
+  'lobby-display-case-register': 'Cyan — register',
+  'lobby-display-case-phone': 'Yellow — phone',
 };
 
 function cloneLayout(layout: SceneHitLayoutOptions): SceneHitLayoutOptions {
@@ -88,6 +94,10 @@ export function getDefaultSceneHitRegionConfig(id: SceneHitRegionId): SceneHitRe
         coverOffset: { x: LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.x, y: LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.y },
         layout: cloneLayout(LOBBY_DISPLAY_CASE_HIT_LAYOUT),
       };
+    case 'lobby-display-case-register':
+      return { layout: {} };
+    case 'lobby-display-case-phone':
+      return { layout: {} };
     default:
       return { layout: {} };
   }

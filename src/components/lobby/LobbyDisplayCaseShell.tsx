@@ -1,55 +1,30 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react';
-import {
-  FINAL_LOBBY_DISPLAY_CASE_RECT,
-  LOBBY_DISPLAY_CASE_PHONE_SLOT,
-  LOBBY_DISPLAY_CASE_REGISTER_SLOT,
-} from '../../constants/lobbyDisplayCaseLayout';
+import { FINAL_LOBBY_DISPLAY_CASE_RECT, FINAL_LOBBY_HIT_REGIONS } from '../../constants/finalLobbySceneAssets';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { useLobbyDisplayCaseHitDebugEnabled } from '../../utils/sceneHitDebug';
-import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
+import { sceneHitLayoutBoxStyle, type SceneHitLayoutOptions } from '../../utils/sceneHitLayout';
 import { useSceneHitRegionConfig } from './SceneHitLayoutEditorContext';
 import { LOBBY_CASE_CONTAINER_STYLE } from './lobbyCaseResponsive';
 import { SceneHitDebugOverlay } from './SceneHitDebugOverlay';
-import { rectToPercentStyle } from './SceneHitRegion';
 
-type SlotProps = {
-  slotRect: typeof LOBBY_DISPLAY_CASE_REGISTER_SLOT;
+type PropSlotProps = {
+  mappedRect: { left: number; top: number; width: number; height: number };
+  layout: SceneHitLayoutOptions;
   zIndex: number;
   children: ReactNode;
 };
 
-type SlotDebugProps = SlotProps & {
-  showDebug: boolean;
-  debugLabel: string;
-  debugOverlayStyle: CSSProperties;
-};
-
-function LobbyDisplayCaseSlot({
-  slotRect,
-  zIndex,
-  children,
-  showDebug,
-  debugLabel,
-  debugOverlayStyle,
-}: SlotDebugProps) {
+function LobbyDisplayCasePropSlot({ mappedRect, layout, zIndex, children }: PropSlotProps) {
   return (
     <div
       style={{
-        position: 'absolute',
-        ...rectToPercentStyle(slotRect),
+        ...sceneHitLayoutBoxStyle(mappedRect, 0, 0, layout),
         zIndex,
-        boxSizing: 'border-box',
+        ...LOBBY_CASE_CONTAINER_STYLE,
         pointerEvents: 'none',
+        boxSizing: 'border-box',
       }}
     >
-      {showDebug ? (
-        <SceneHitDebugOverlay
-          rect={{ left: 0, top: 0, width: 1, height: 1 }}
-          label={debugLabel}
-          zIndex={0}
-          overlayStyle={debugOverlayStyle}
-        />
-      ) : null}
       <div
         style={{
           position: 'relative',
@@ -75,8 +50,8 @@ type Props = {
 };
 
 /**
- * Transparent scene-locked box for the lobby acrylic display case on `final-lobby.png`.
- * Register and phone slots are positioned in % inside the case so they stay on the art.
+ * Lobby acrylic display case on `final-lobby.png`.
+ * Register and phone are scene-mapped independently (not nested in the orange case box).
  */
 export function LobbyDisplayCaseShell({
   viewportMeasureRef,
@@ -88,16 +63,38 @@ export function LobbyDisplayCaseShell({
   phoneOpenArt,
 }: Props) {
   const displayCaseRegion = useSceneHitRegionConfig('lobby-display-case');
-  const coverOffset = displayCaseRegion.coverOffset ?? { x: 0, y: 0 };
+  const registerRegion = useSceneHitRegionConfig('lobby-display-case-register');
+  const phoneRegion = useSceneHitRegionConfig('lobby-display-case-phone');
 
   const mappedCase = useSceneCoverHitRect(
     FINAL_LOBBY_DISPLAY_CASE_RECT,
     viewportMeasureRef,
-    coverOffset,
+    displayCaseRegion.coverOffset,
   );
+  const mappedRegister = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.caseRegister,
+    viewportMeasureRef,
+    registerRegion.coverOffset,
+  );
+  const mappedPhone = useSceneCoverHitRect(
+    FINAL_LOBBY_HIT_REGIONS.casePhone,
+    viewportMeasureRef,
+    phoneRegion.coverOffset,
+  );
+
   const showDebug = useLobbyDisplayCaseHitDebugEnabled();
 
-  if (!mappedCase) return null;
+  if (!mappedCase || !mappedRegister || !mappedPhone) return null;
+
+  const topZ = Math.max(registerZIndex, phoneZIndex);
+  const registerDebugStyle: CSSProperties = {
+    backgroundColor: 'rgba(0, 174, 239, 0.48)',
+    border: '2px solid rgba(0, 120, 200, 0.95)',
+  };
+  const phoneDebugStyle: CSSProperties = {
+    backgroundColor: 'rgba(255, 235, 59, 0.48)',
+    border: '2px solid rgba(245, 127, 23, 0.95)',
+  };
 
   return (
     <>
@@ -106,7 +103,7 @@ export function LobbyDisplayCaseShell({
           regionId="lobby-display-case"
           rect={mappedCase}
           label="lobby display case"
-          zIndex={Math.max(registerZIndex, phoneZIndex) + 1}
+          zIndex={topZ + 1}
           layout={displayCaseRegion.layout}
           overlayStyle={{
             backgroundColor: 'rgba(255, 152, 0, 0.42)',
@@ -114,42 +111,41 @@ export function LobbyDisplayCaseShell({
           }}
         />
       ) : null}
-      <div
-        data-lobby-display-case
-        style={{
-          ...sceneHitLayoutBoxStyle(mappedCase, 0, 0, displayCaseRegion.layout),
-          zIndex: Math.max(registerZIndex, phoneZIndex),
-          ...LOBBY_CASE_CONTAINER_STYLE,
-          pointerEvents: 'none',
-        }}
+
+      {showDebug ? (
+        <>
+          <SceneHitDebugOverlay
+            regionId="lobby-display-case-register"
+            rect={mappedRegister}
+            label="display case register"
+            zIndex={topZ + 3}
+            layout={registerRegion.layout}
+            overlayStyle={registerDebugStyle}
+          />
+          <SceneHitDebugOverlay
+            regionId="lobby-display-case-phone"
+            rect={mappedPhone}
+            label="display case phone"
+            zIndex={topZ + 3}
+            layout={phoneRegion.layout}
+            overlayStyle={phoneDebugStyle}
+          />
+        </>
+      ) : null}
+
+      <LobbyDisplayCasePropSlot
+        mappedRect={mappedRegister}
+        layout={registerRegion.layout}
+        zIndex={registerZIndex}
       >
-        <LobbyDisplayCaseSlot
-          slotRect={LOBBY_DISPLAY_CASE_REGISTER_SLOT}
-          zIndex={registerZIndex}
-          showDebug={showDebug}
-          debugLabel="display case register"
-          debugOverlayStyle={{
-            backgroundColor: 'rgba(0, 174, 239, 0.48)',
-            border: '2px solid rgba(0, 120, 200, 0.95)',
-          }}
-        >
-          {registerOpenArt}
-          {register}
-        </LobbyDisplayCaseSlot>
-        <LobbyDisplayCaseSlot
-          slotRect={LOBBY_DISPLAY_CASE_PHONE_SLOT}
-          zIndex={phoneZIndex}
-          showDebug={showDebug}
-          debugLabel="display case phone"
-          debugOverlayStyle={{
-            backgroundColor: 'rgba(255, 235, 59, 0.48)',
-            border: '2px solid rgba(245, 127, 23, 0.95)',
-          }}
-        >
-          {phoneOpenArt}
-          {phone}
-        </LobbyDisplayCaseSlot>
-      </div>
+        {registerOpenArt}
+        {register}
+      </LobbyDisplayCasePropSlot>
+
+      <LobbyDisplayCasePropSlot mappedRect={mappedPhone} layout={phoneRegion.layout} zIndex={phoneZIndex}>
+        {phoneOpenArt}
+        {phone}
+      </LobbyDisplayCasePropSlot>
     </>
   );
 }
