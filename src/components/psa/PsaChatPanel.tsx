@@ -9,11 +9,7 @@ import {
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
 import { formatPsaMessageRouteDisplay } from '../../utils/psaRouteDisplay';
 import { renderPsaAssistantBubbleText } from '../../utils/psaBubbleText';
-import {
-  psaActiveHistoryTitle,
-  psaArchivedHistoryTitle,
-  psaHistoryPreviewLine,
-} from '../../utils/psaThreadHistoryDisplay';
+import { psaHistoryCardTitle, psaHistoryPreviewLine } from '../../utils/psaThreadHistoryDisplay';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaChatCard } from '../../utils/psaApi';
 import type { PsaChatMessage } from './usePsaChat';
@@ -405,16 +401,11 @@ export default function PsaChatPanel({
               threadList.map((thread) => {
                 const isRenaming = renamingThreadId === thread.id;
                 const previewLine = psaHistoryPreviewLine(thread.preview);
-                const displayTitle = historyArchivedView
-                  ? psaArchivedHistoryTitle({
-                      title: thread.title,
-                      firstUserMessage: thread.preview,
-                      threadSummary: thread.threadSummary ?? null,
-                    })
-                  : psaActiveHistoryTitle({
-                      title: thread.title,
-                      firstUserMessage: thread.preview,
-                    });
+                const displayTitle = psaHistoryCardTitle({
+                  title: thread.title,
+                  firstUserMessage: thread.preview,
+                  threadSummary: thread.threadSummary ?? null,
+                });
                 return (
                 <div key={thread.id} className="psa-chat-history-entry">
                   <div className="psa-chat-history-card-wrap">
