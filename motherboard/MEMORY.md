@@ -25442,3 +25442,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `src/utils/debugMode.ts`, `debugModeDomPath.ts`, `src/components/debug-mode/*`, `App.tsx` wraps routes in `DebugModeShell`.
 
 **Usage:** e.g. `/account/rewards/debug-mode`, `/home/shop/debug-mode`. Helper: `debugModeHref('/path')`.
+
+---
+
+## 2026-06-04 — Page debug-mode founder-only gate
+
+**Context:** User required `/debug-mode` restricted to admin founder `kateenaarmstrong@gmail.com`; all other accounts (including other admins) redirect to homepage.
+
+**Changes:** `canAccessPageDebugMode()` in `adminAuth.ts`; `DebugModeShell` checks founder on load + `signInStateChanged`, clears debug session and redirects to `/home/shop` when unauthorized; `debugModeHref` skips suffix unless founder.
