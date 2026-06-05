@@ -198,7 +198,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
               width: '100%',
               height: '100%',
               margin: 0,
-              padding: 4,
+              padding: 8,
               border: 'none',
               background: 'transparent',
               cursor: 'pointer',
