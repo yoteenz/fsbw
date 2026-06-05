@@ -34,7 +34,7 @@ export default function LiveTryOnLaunchButton({ className = '', returnTo, quoteI
         fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
       }}
     >
-      LIVE TRY-ON
+      LIVE TRY ON
     </button>
   );
 }
