@@ -25386,3 +25386,22 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Changes:** `PsaChatPanel.tsx`, `usePsaChat.ts` (new chat no longer POST-creates thread), `psaThreadHistoryDisplay.ts`, `psaThreadStore.ts`, `api/psa/thread.ts`, `psaAssistant.css`.
 
+
+---
+
+## 2026-06-04 — Draggable scene hit layout editor (lobby/lounge QA squares)
+
+**Context:** User asked to make lounge/lobby debug color squares manually adjustable (move/crop) with save, after many pixel-by-pixel constant tweaks.
+
+**Topics covered (entire conversation so far):**
+- Continued scene hit tuning: magenta size, blue position, green play tap alignment (move box to text not text to box), orange display case Y sign fix.
+- Implemented interactive editor: `?sceneHitDebug=1&sceneHitEdit=1` enables drag (move) and corner handle (resize/crop) on blue/magenta/green/orange squares.
+- Save writes full region configs to `localStorage` key `baw_scene_hit_layout_overrides`; Reset clears; Copy JSON exports values.
+- Saved overrides apply to production hit targets (not just debug overlays) via `useSceneHitRegionConfig` in `LoungeCompositeTvPlay`, `LobbyDisplayCaseShell`, `LoungeTvFullscreenShell`.
+- Region IDs: `lounge-tv-baked`, `lounge-tv-content-popup`, `lounge-tv-play-tap`, `lobby-display-case`.
+
+**Changes:**
+- `src/utils/sceneHitRegionDefaults.ts`, `sceneHitLayoutOverrides.ts`, `SceneHitLayoutEditorContext.tsx`, `SceneHitLayoutEditorPanel.tsx`, updated `SceneHitDebugOverlay.tsx`, `sceneHitDebug.ts` (`sceneHitEdit`), lobby page provider wrap.
+
+**Conventions:**
+- Debug visibility: `sceneHitDebug=1`; edit mode: add `sceneHitEdit=1`. Both persist in sessionStorage for the tab.
