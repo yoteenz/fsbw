@@ -1,5 +1,11 @@
 {
   "functions": {
+    "api/live-try-on-ensure-overlays.ts": {
+      "maxDuration": 120
+    },
+    "api/wig-preview/live-noir-color.ts": {
+      "maxDuration": 120
+    },
     "api/live-wig-after-color-styling.ts": {
       "maxDuration": 120
     },

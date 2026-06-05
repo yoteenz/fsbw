@@ -72,6 +72,14 @@ export default function LiveTryOnPage() {
             photoModel,
             (msg) => {
               if (!cancelled) setPrepHint(msg);
+            },
+            {
+              onActiveModelReady: (partial) => {
+                if (cancelled) return;
+                setCompare(partial.compare);
+                applyPhotoModel(partial.activePhotoModel, partial.compare);
+                setWigUrls(partial.overlayUrls);
+              },
             }
           );
           if (cancelled) return;
@@ -82,9 +90,21 @@ export default function LiveTryOnPage() {
           return;
         }
 
-        const prepared = await prepareLiveTryOnAssetsFromBaw(location.pathname, photoModel, (msg) => {
-          if (!cancelled) setPrepHint(msg);
-        });
+        const prepared = await prepareLiveTryOnAssetsFromBaw(
+          location.pathname,
+          photoModel,
+          (msg) => {
+            if (!cancelled) setPrepHint(msg);
+          },
+          {
+            onActiveModelReady: (partial) => {
+              if (cancelled) return;
+              setCompare(partial.compare);
+              applyPhotoModel(partial.activePhotoModel, partial.compare);
+              setWigUrls(partial.overlayUrls);
+            },
+          }
+        );
         if (cancelled) return;
         setCompare(prepared.compare);
         applyPhotoModel(prepared.activePhotoModel, prepared.compare);

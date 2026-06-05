@@ -85,30 +85,18 @@ function readOptionalAngle(body: Body): LiveTryOnAngle | null {
   return null;
 }
 
-function readBool(body: Body, key: keyof Body, fallback: boolean): boolean {
-  const v = body[key];
-  if (v === true) return true;
-  if (v === false) return false;
-  if (typeof v === 'string') {
-    const s = v.trim().toLowerCase();
-    if (s === '1' || s === 'true' || s === 'yes') return true;
-    if (s === '0' || s === 'false' || s === 'no') return false;
-  }
-  return fallback;
+/** Try-on defaults to 1K — faster per Vercel invocation (override with WIG_PREVIEW_TRYON_FAL_RESOLUTION). */
+function readTryOnFalResolution(): '1K' | '2K' | '4K' {
+  const tryOn = process.env.WIG_PREVIEW_TRYON_FAL_RESOLUTION?.trim().toUpperCase();
+  if (tryOn === '1K' || tryOn === '2K' || tryOn === '4K') return tryOn;
+  const global = process.env.WIG_PREVIEW_FAL_RESOLUTION?.trim().toUpperCase();
+  if (global === '1K' || global === '2K' || global === '4K') return global;
+  return '1K';
 }
 
-function readFalResolution(): '1K' | '2K' | '4K' {
-  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '2K').trim().toUpperCase();
-  if (r === '1K' || r === '2K' || r === '4K') return r;
-  return '2K';
-}
-
-function modelsToGenerate(body: Body): LiveTryOnPhotoModel[] {
-  const envCompareOff = (process.env.WIG_PREVIEW_TRYON_COMPARE_BOTH || 'true').trim().toLowerCase() === 'false';
-  const compare = readBool(body, 'compareModels', !envCompareOff);
-  if (compare) return [...LIVE_TRY_ON_PHOTO_MODELS];
-  const single = parseLiveTryOnPhotoModel(readString(body, 'photoModel', '')) || activeLiveTryOnPhotoModel();
-  return [single];
+/** Exactly one Fal stack per HTTP request (angle + photoModel). */
+function photoModelForRequest(body: Body): LiveTryOnPhotoModel {
+  return parseLiveTryOnPhotoModel(readString(body, 'photoModel', '')) || activeLiveTryOnPhotoModel();
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -163,7 +151,7 @@ async function generatePhotorealPortrait(
   prompt: string
 ): Promise<Buffer> {
   const falModel = falEditModelId(photoModel);
-  const resolution = readFalResolution();
+  const resolution = readTryOnFalResolution();
 
   if (photoModel === 'gpt2') {
     const result = await fal.subscribe(falModel, {
@@ -199,7 +187,7 @@ async function generatePhotorealPortrait(
 }
 
 async function generateHairOnlyOverlayFromPortrait(fal: FalClient, portraitUrl: string): Promise<Buffer> {
-  const resolution = readFalResolution();
+  const resolution = readTryOnFalResolution();
 
   const nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
     input: {
@@ -291,9 +279,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
   const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
   const singleAngle = readOptionalAngle(body);
+  if (!singleAngle) {
+    sendJson(res, 400, {
+      error: 'angle is required',
+      hint: 'Send one of left | front | right per request (and photoModel nbp | gpt2) so each serverless call stays within Vercel time limits.',
+    });
+    return;
+  }
   const forceRegenerate = body.forceRegenerate === true;
-  const angles: LiveTryOnAngle[] = singleAngle ? [singleAngle] : ['left', 'front', 'right'];
-  const photoModels = modelsToGenerate(body);
+  const angles: LiveTryOnAngle[] = [singleAngle];
+  const photoModels: LiveTryOnPhotoModel[] = [photoModelForRequest(body)];
   const activeModel = activeLiveTryOnPhotoModel();
 
   let supabase;
