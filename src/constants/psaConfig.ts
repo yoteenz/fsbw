@@ -143,8 +143,8 @@ export const PSA_WAVING_MS = 3200;
 /** How long to show talking after an assistant reply lands. */
 export const PSA_TALKING_AFTER_REPLY_MS = 2800;
 
-/** Routes where the floating PSA widget is hidden (admin chrome, full-screen checkout modals). */
-export const PSA_HIDDEN_PATH_PREFIXES = ['/admin'];
+/** Routes where the floating PSA widget is hidden (admin chrome, full-screen flows). */
+export const PSA_HIDDEN_PATH_PREFIXES = ['/admin', '/tools/live-try-on'];
 
 export function isPsaHiddenPath(pathname: string): boolean {
   return PSA_HIDDEN_PATH_PREFIXES.some(

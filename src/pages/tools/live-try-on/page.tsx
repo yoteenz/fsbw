@@ -98,7 +98,7 @@ export default function LiveTryOnPage() {
         >
           BACK
         </button>
-        <span className="text-[11px] text-black">LIVE TRY-ON</span>
+        <span className="text-[11px] text-black">LIVE TRY ON</span>
         <span className="w-[52px]" aria-hidden />
       </header>
 
