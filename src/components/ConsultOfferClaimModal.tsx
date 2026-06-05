@@ -608,7 +608,10 @@ export default function ConsultOfferClaimModal({
       ) : null}
       {!loading && !error && quote ? (
         <div className="w-full max-w-md" style={{ marginTop: '8px' }} onClick={(e) => e.stopPropagation()}>
-          <LiveTryOnLaunchButton returnTo={locationForSignIn} />
+          <LiveTryOnLaunchButton
+            returnTo={locationForSignIn}
+            quoteId={typeof quote?.id === 'string' ? quote.id : String(quote?.id ?? '')}
+          />
         </div>
       ) : null}
     </div>

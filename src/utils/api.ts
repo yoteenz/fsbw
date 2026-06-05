@@ -1506,6 +1506,52 @@ export async function postWigPreviewLiveNoirColorRegenerateAll(
  * Admin only: ensure NOIR color preview WebPs exist in Storage (3 angles).
  * Uses **three parallel** API calls (one angle each) so each Vercel function stays within short timeouts (e.g. Hobby ~10s).
  */
+export type LiveTryOnEnsureOverlaysPayload = WigPreviewLiveNoirColorPayload & {
+  unitKey?: string;
+};
+
+export type LiveTryOnEnsureOverlaysResult = {
+  ok: boolean;
+  manifestHash: string;
+  unitKey: string;
+  bucket: string;
+  generated: string[];
+  skipped: string[];
+  missingColor: string[];
+  publicUrls: { left: string | null; front: string | null; right: string | null };
+  selections: Record<string, unknown>;
+};
+
+export async function postLiveTryOnEnsureOverlaysOneAngle(
+  body: LiveTryOnEnsureOverlaysPayload & { angle: 'left' | 'front' | 'right' }
+): Promise<LiveTryOnEnsureOverlaysResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/live-try-on-ensure-overlays', { method: 'POST', body });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Live try-on overlay');
+  }
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    let code = '';
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') {
+        msg = j.error;
+        code = j.error;
+      }
+    } catch {
+      /* ignore */
+    }
+    if (res.status === 409 && code === 'COLOR_PREVIEW_MISSING') {
+      throw new Error('COLOR_PREVIEW_MISSING');
+    }
+    throw new Error(msg || 'Live try-on overlay failed');
+  }
+  return JSON.parse(text) as LiveTryOnEnsureOverlaysResult;
+}
+
 export async function postWigPreviewLiveNoirColor(
   body: WigPreviewLiveNoirColorPayload
 ): Promise<WigPreviewLiveNoirColorResult> {
