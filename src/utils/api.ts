@@ -446,6 +446,42 @@ export async function getLoungeTvAdminConfig(): Promise<Record<string, unknown> 
   }
 }
 
+/** Public read of admin-edited PSA chat copy JSON (no auth). */
+export async function getPsaChatAdminConfig(): Promise<Record<string, unknown> | null> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/psa-chat-config` : '/api/psa-chat-config';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin: read PSA chat copy JSON from Supabase. */
+export async function getAdminPsaChatConfig(): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await apiFetch('/api/admin/psa-chat-config');
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin: upsert PSA chat copy JSON to Supabase via API (requires admin session). */
+export async function putAdminPsaChatConfig(config: Record<string, unknown>): Promise<void> {
+  const res = await apiFetch('/api/admin/psa-chat-config', { method: 'PUT', body: config });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 /** Admin: upsert lounge TV content JSON to Supabase via API (requires admin session). */
 export async function putAdminLoungeTvConfig(config: Record<string, unknown>): Promise<void> {
   const res = await apiFetch('/api/admin/lounge-tv-config', { method: 'PUT', body: config });

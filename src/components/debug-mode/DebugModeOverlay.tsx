@@ -7,6 +7,12 @@ import {
   debugFontPresetPatch,
 } from '../../utils/debugMode';
 import { findElementByDebugId, readElementOverrideSnapshot } from '../../utils/debugModeDomPath';
+import {
+  formatGlobalOverlayConfigForCopy,
+  listGlobalOverlayLabels,
+  overlayHasSavedLayout,
+  useGlobalOverlayDebug,
+} from './GlobalOverlayDebugContext';
 
 const btn: CSSProperties = {
   fontFamily: 'monospace',
@@ -36,8 +42,10 @@ const inputStyle: CSSProperties = {
 
 export function DebugModeOverlay() {
   const debug = useDebugMode();
+  const globalOverlay = useGlobalOverlayDebug();
   const [expanded, setExpanded] = useState(true);
   const [inspectorOpen, setInspectorOpen] = useState(true);
+  const [globalSectionOpen, setGlobalSectionOpen] = useState(true);
 
   const selectedOverride = useMemo(() => {
     if (!debug?.selectedId) return null;
@@ -169,6 +177,75 @@ export function DebugModeOverlay() {
         Save syncs to Supabase for cross-device founder preview.
       </p>
       <p style={{ margin: '4px 0 0 0', opacity: 0.85 }}>Route: {debug.pageKey}</p>
+
+      {globalSectionOpen ? (
+        <div
+          style={{
+            marginTop: 8,
+            paddingTop: 8,
+            borderTop: '1px solid rgba(0,0,0,0.15)',
+          }}
+        >
+          <p style={{ margin: '0 0 6px 0', fontWeight: 700 }}>Global overlays</p>
+          <p style={{ margin: '0 0 6px 0', opacity: 0.85 }}>
+            Cart dropdown + currency exchange persist on every route (`__global__/…` keys). Open the overlay, drag
+            corners to resize, drag body to nudge. Save syncs with page debug store.
+          </p>
+          {listGlobalOverlayLabels().map(({ id, label }) => {
+            const isEditing = globalOverlay?.editingOverlayId === id;
+            const hasSaved = overlayHasSavedLayout(id);
+            return (
+              <div key={id} style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
+                <button
+                  type="button"
+                  style={{ ...btn, ...(isEditing ? { background: '#ffe08a' } : {}) }}
+                  onClick={() => {
+                    if (id === 'cart-dropdown') globalOverlay?.openCartForEdit();
+                    else globalOverlay?.openCurrencyForEdit();
+                  }}
+                >
+                  Edit {label}
+                </button>
+                <button
+                  type="button"
+                  style={btn}
+                  disabled={!hasSaved}
+                  onClick={() => void globalOverlay?.saveOverlay(id)}
+                >
+                  Save {label.split(' ')[0].toLowerCase()}
+                </button>
+                <button
+                  type="button"
+                  style={btn}
+                  disabled={!hasSaved}
+                  onClick={() => {
+                    if (window.confirm(`Reset saved layout for ${label}?`)) {
+                      void globalOverlay?.resetOverlay(id);
+                    }
+                  }}
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  style={btn}
+                  onClick={() => void navigator.clipboard.writeText(formatGlobalOverlayConfigForCopy(id))}
+                >
+                  Copy JSON
+                </button>
+                {hasSaved ? (
+                  <span style={{ alignSelf: 'center', opacity: 0.7 }}>saved</span>
+                ) : (
+                  <span style={{ alignSelf: 'center', opacity: 0.5 }}>defaults</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+      <button type="button" style={{ ...btn, marginTop: 6 }} onClick={() => setGlobalSectionOpen((v) => !v)}>
+        {globalSectionOpen ? 'Hide global overlays ▴' : 'Show global overlays ▾'}
+      </button>
 
       {inspectorOpen ? (
         <div style={{ marginTop: 8, overflowY: 'auto', flex: 1, minHeight: 0 }}>

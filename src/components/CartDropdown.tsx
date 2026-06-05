@@ -52,6 +52,10 @@ import {
   cartBillableSubtotal,
   cartLineExtendedPriceUsd,
 } from '../utils/cartBillableLines';
+import { GlobalOverlayDebugRegion } from './debug-mode/GlobalOverlayDebugRegion';
+import {
+  GLOBAL_OVERLAY_DEBUG_OPEN_CURRENCY_EVENT,
+} from './debug-mode/GlobalOverlayDebugContext';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -217,6 +221,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       // Close currency modal when cart closes
       setShowCurrencyModal(false);
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const openCurrency = () => {
+      if (isOpen) setShowCurrencyModal(true);
+    };
+    window.addEventListener(GLOBAL_OVERLAY_DEBUG_OPEN_CURRENCY_EVENT, openCurrency);
+    return () => window.removeEventListener(GLOBAL_OVERLAY_DEBUG_OPEN_CURRENCY_EVENT, openCurrency);
   }, [isOpen]);
 
   // Currency state - per user so it doesn't bleed between accounts
@@ -887,23 +899,30 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         }
       }}
     >
-      <div className="absolute left-4 right-4 pointer-events-auto" style={{ top: dropdownTop }}>
-        <div
-          data-dropdown-content
+      <GlobalOverlayDebugRegion
+        overlayId="cart-dropdown"
+        regionId="anchor"
+        baseOverride={{ top: dropdownTop }}
+        className="absolute left-4 right-4 pointer-events-auto"
+        style={{ top: dropdownTop }}
+      >
+        <GlobalOverlayDebugRegion
+          overlayId="cart-dropdown"
+          regionId="shell"
+          dataAttrs={{ 'data-dropdown-content': 'true' }}
           className="bg-white/60 backdrop-blur-md border border-black shadow-lg hover:shadow-xl transition-all duration-300 ease-out flex flex-col"
-        style={{
-          borderWidth: '1.3px',
+          style={{
+            borderWidth: '1.3px',
             zIndex: 999999999,
             position: 'relative',
             maxHeight: 'calc(100vh - 100px)',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
           }}
           onMouseDown={(e) => {
-            // Prevent backdrop from closing dropdown when clicking inside
             e.stopPropagation();
-        }}
-      >
+          }}
+        >
         {/* Header - reduced paddingBottom to cut excess space above loyalty line */}
           <div className="px-3 py-2 border-b border-gray-100" style={{ marginTop: '6px', paddingBottom: '5px' }}>
             <div className="flex items-center justify-between" style={{ flexWrap: 'wrap', gap: '8px' }}>
@@ -1992,8 +2011,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             </div>
           </div>
 
-          </div>
-        </div>
+        </GlobalOverlayDebugRegion>
+      </GlobalOverlayDebugRegion>
     </div>
   );
 
@@ -2015,8 +2034,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         setShowCurrencyModal(false);
       }}
     >
-      <div
+      <GlobalOverlayDebugRegion
+        overlayId="currency-modal"
+        regionId="shell"
         className="absolute bg-white border border-black shadow-lg baw-brand-modal-shell"
+        baseOverride={{
+          top: '50px',
+          bottom: '14px',
+          left: '12px',
+          right: '12px',
+        }}
         style={{
           borderWidth: '1.3px',
           display: 'flex',
@@ -2030,7 +2057,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           paddingTop: '8px',
           paddingLeft: '8px',
           paddingRight: '8px',
-          paddingBottom: '0px'
+          paddingBottom: '0px',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -2141,7 +2168,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             </button>
           ))}
         </div>
-      </div>
+      </GlobalOverlayDebugRegion>
     </div>
   );
 

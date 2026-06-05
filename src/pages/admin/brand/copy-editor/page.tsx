@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { BrandCopyEditorPanel, type BrandCopyEditorMode } from '../../components/BrandCopyEditorPanel';
+import PsaChatCopyEditorPanel from '../../components/PsaChatCopyEditorPanel';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 
-function parseCopyKind(raw: string | undefined): BrandCopyEditorMode | null {
-  if (raw === 'nudges' || raw === 'alerts') return raw;
+function parseCopyKind(raw: string | undefined): BrandCopyEditorMode | 'chat' | null {
+  if (raw === 'nudges' || raw === 'alerts' || raw === 'chat') return raw;
   return null;
 }
 
@@ -21,7 +22,8 @@ export default function AdminBrandCopyEditor() {
 
   if (!mode) return null;
 
-  const title = mode === 'nudges' ? 'EDIT PSA NUDGES' : 'EDIT ACCOUNT ALERTS';
+  const title =
+    mode === 'nudges' ? 'EDIT PSA NUDGES' : mode === 'alerts' ? 'EDIT ACCOUNT ALERTS' : 'EDIT PSA CHAT';
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -56,7 +58,7 @@ export default function AdminBrandCopyEditor() {
                 boxSizing: 'border-box',
               }}
             >
-              <BrandCopyEditorPanel mode={mode} />
+              {mode === 'chat' ? <PsaChatCopyEditorPanel /> : <BrandCopyEditorPanel mode={mode} />}
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import CartDropdown from './CartDropdown';
 import { trackActivity } from '../utils/activity';
+import { GLOBAL_OVERLAY_DEBUG_OPEN_CART_EVENT } from './debug-mode/GlobalOverlayDebugContext';
 
 interface DynamicCartIconProps {
   count: number;
@@ -21,6 +22,12 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
   useEffect(() => {
     setShowCartDropdown(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const openForDebug = () => setShowCartDropdown(true);
+    window.addEventListener(GLOBAL_OVERLAY_DEBUG_OPEN_CART_EVENT, openForDebug);
+    return () => window.removeEventListener(GLOBAL_OVERLAY_DEBUG_OPEN_CART_EVENT, openForDebug);
+  }, []);
   
   // Use separate width/height if provided, otherwise use size for both
   // For active cart (count > 0), use original size. For inactive cart (count = 0), use provided width/height
