@@ -18,18 +18,69 @@ const DEBUG_LABEL_STYLE: CSSProperties = {
   textTransform: 'lowercase',
 };
 
-const RESIZE_HANDLE_STYLE: CSSProperties = {
+type ResizeCorner = 'nw' | 'ne' | 'sw' | 'se';
+
+const CORNER_HANDLES: {
+  corner: ResizeCorner;
+  cursor: CSSProperties['cursor'];
+  style: CSSProperties;
+}[] = [
+  { corner: 'nw', cursor: 'nwse-resize', style: { left: -5, top: -5 } },
+  { corner: 'ne', cursor: 'nesw-resize', style: { right: -5, top: -5 } },
+  { corner: 'sw', cursor: 'nesw-resize', style: { left: -5, bottom: -5 } },
+  { corner: 'se', cursor: 'nwse-resize', style: { right: -5, bottom: -5 } },
+];
+
+const CORNER_HANDLE_STYLE: CSSProperties = {
   position: 'absolute',
-  right: -3,
-  bottom: -3,
   width: 14,
   height: 14,
-  cursor: 'nwse-resize',
-  background: 'rgba(255, 255, 255, 0.92)',
-  border: '1px solid rgba(0, 0, 0, 0.75)',
-  borderRadius: 2,
   touchAction: 'none',
+  zIndex: 2,
+  boxSizing: 'border-box',
+  background: 'rgba(255, 255, 255, 0.92)',
+  border: '2px solid rgba(0, 0, 0, 0.75)',
+  borderRadius: 2,
 };
+
+function layoutPatchForCornerResize(
+  corner: ResizeCorner,
+  dx: number,
+  dy: number,
+  base: SceneHitLayoutOptions,
+): Partial<SceneHitLayoutOptions> {
+  const offsetX = base.layoutOffsetX ?? 0;
+  const offsetY = base.layoutOffsetY ?? 0;
+  const widthExtra = base.layoutWidthExtraPx ?? 0;
+  const heightExtra = base.layoutHeightExtraPx ?? 0;
+
+  switch (corner) {
+    case 'se':
+      return {
+        layoutWidthExtraPx: widthExtra + dx,
+        layoutHeightExtraPx: heightExtra + dy,
+      };
+    case 'sw':
+      return {
+        layoutOffsetX: offsetX + dx,
+        layoutWidthExtraPx: widthExtra - dx,
+        layoutHeightExtraPx: heightExtra + dy,
+      };
+    case 'ne':
+      return {
+        layoutOffsetY: offsetY + dy,
+        layoutWidthExtraPx: widthExtra + dx,
+        layoutHeightExtraPx: heightExtra - dy,
+      };
+    case 'nw':
+      return {
+        layoutOffsetX: offsetX + dx,
+        layoutOffsetY: offsetY + dy,
+        layoutWidthExtraPx: widthExtra - dx,
+        layoutHeightExtraPx: heightExtra - dy,
+      };
+  }
+}
 
 type Props = {
   rect: FinalSceneHitRect;
@@ -58,15 +109,20 @@ export function SceneHitDebugOverlay({
 }: Props) {
   const editor = useOptionalSceneHitLayoutEditor();
   const editable = Boolean(regionId && editor?.editEnabled);
-  const dragRef = useRef<{ mode: 'move' | 'resize'; startX: number; startY: number; layout: SceneHitLayoutOptions } | null>(
-    null,
-  );
+  const dragRef = useRef<{
+    mode: 'move' | 'resize';
+    corner?: ResizeCorner;
+    startX: number;
+    startY: number;
+    layout: SceneHitLayoutOptions;
+  } | null>(null);
 
   const beginPointerGesture = useCallback(
-    (mode: 'move' | 'resize', clientX: number, clientY: number) => {
+    (mode: 'move' | 'resize', clientX: number, clientY: number, corner?: ResizeCorner) => {
       if (!editable || !regionId || !editor || !layout) return;
       dragRef.current = {
         mode,
+        corner,
         startX: clientX,
         startY: clientY,
         layout: { ...layout, ...(layout.layoutScale ? { layoutScale: { ...layout.layoutScale } } : {}) },
@@ -82,11 +138,8 @@ export function SceneHitDebugOverlay({
             layoutOffsetX: (drag.layout.layoutOffsetX ?? 0) + dx,
             layoutOffsetY: (drag.layout.layoutOffsetY ?? 0) + dy,
           });
-        } else {
-          editor.patchRegionLayout(regionId, {
-            layoutWidthExtraPx: (drag.layout.layoutWidthExtraPx ?? 0) + dx,
-            layoutHeightExtraPx: (drag.layout.layoutHeightExtraPx ?? 0) + dy,
-          });
+        } else if (drag.corner) {
+          editor.patchRegionLayout(regionId, layoutPatchForCornerResize(drag.corner, dx, dy, drag.layout));
         }
       };
 
@@ -114,12 +167,12 @@ export function SceneHitDebugOverlay({
     [beginPointerGesture, editable],
   );
 
-  const onResizePointerDown = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
+  const onCornerPointerDown = useCallback(
+    (corner: ResizeCorner) => (e: ReactPointerEvent<HTMLDivElement>) => {
       if (!editable) return;
       e.preventDefault();
       e.stopPropagation();
-      beginPointerGesture('resize', e.clientX, e.clientY);
+      beginPointerGesture('resize', e.clientX, e.clientY, corner);
     },
     [beginPointerGesture, editable],
   );
@@ -139,14 +192,17 @@ export function SceneHitDebugOverlay({
       onPointerDown={onMovePointerDown}
     >
       {showLabel ? <span style={DEBUG_LABEL_STYLE}>{label}</span> : null}
-      {editable ? (
-        <div
-          role="presentation"
-          aria-hidden
-          style={RESIZE_HANDLE_STYLE}
-          onPointerDown={onResizePointerDown}
-        />
-      ) : null}
+      {editable
+        ? CORNER_HANDLES.map(({ corner, cursor, style }) => (
+            <div
+              key={corner}
+              role="presentation"
+              aria-hidden
+              style={{ ...CORNER_HANDLE_STYLE, ...style, cursor }}
+              onPointerDown={onCornerPointerDown(corner)}
+            />
+          ))
+        : null}
     </div>
   );
 }

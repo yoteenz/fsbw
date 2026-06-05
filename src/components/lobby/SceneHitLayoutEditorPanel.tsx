@@ -125,7 +125,7 @@ export function SceneHitLayoutEditorPanel() {
         </button>
       </div>
       <p style={{ margin: '0 0 8px 0' }}>
-        Drag squares to move; white corner handle to resize. Save applies to production hits.
+        Drag squares to move; drag any corner to resize. Save applies to production hits.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
         {actionButtons}
