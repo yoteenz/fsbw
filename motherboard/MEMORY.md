@@ -25405,3 +25405,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Conventions:**
 - Debug visibility: `sceneHitDebug=1`; edit mode: add `sceneHitEdit=1`. Both persist in sessionStorage for the tab.
+
+---
+
+## 2026-06-04 — Scene hit editor panel minimize + top-right toolbar
+
+**Context:** After the draggable scene hit editor shipped, user reported the fixed bottom panel blocked half the screen and made it hard to adjust squares.
+
+**Decisions / outcomes:** Refactored `SceneHitLayoutEditorPanel` to default **collapsed** as a compact top-right toolbar (Save, Reset, Copy JSON, status chip, Details). **Details ▾** expands a capped panel (max ~280px height, scrollable region list); **Minimize ▴** collapses back. Action buttons stay available in both states; panel no longer sits at bottom covering hit targets.
+
+**Changes:** `src/components/lobby/SceneHitLayoutEditorPanel.tsx`.
