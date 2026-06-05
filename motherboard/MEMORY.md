@@ -25495,3 +25495,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `globalOverlayDebug.ts`, `GlobalOverlayDebugRegion.tsx`, `GlobalOverlayDebugContext.tsx`, `CartDropdown.tsx`, `DynamicCartIcon.tsx`, `DebugModeShell.tsx`, `DebugModeOverlay.tsx`, `debugMode.ts` (layout fields); `psaChatCopyCatalog.ts`, `psaChatCopyResolve.ts`, `psaChatCopySync.ts`, `PsaChatCopyEditorPanel.tsx`, `api/psa-chat-config.ts`, `api/admin/psa-chat-config.ts`, wired `PsaChatPanel`, `PsaAssistantWidget`, `usePsaChat`, admin brand page + copy-editor route.
 
 **Usage:** Founder: any `*/debug-mode` → Global overlays section → Edit cart/currency → drag/resize → Save. Admin: `/admin/brand/edit/chat` → edit copy + starter scripted replies → Save chat copy.
+
+---
+
+## 2026-06-04 — Display case register/phone independent hit squares + border-edge resize
+
+**Context:** User wanted cyan register and yellow phone QA squares **independent** of the orange display case (not nested inside it), rendered **on top** for editing. Also remove white corner resize handles — move by dragging center; resize by dragging **border edges** only.
+
+**Decisions / outcomes:**
+- New scene hit region IDs: **`lobby-display-case-register`**, **`lobby-display-case-phone`** — mapped from `FINAL_LOBBY_HIT_REGIONS.caseRegister/casePhone` in scene space (not % inside orange box).
+- Orange **`lobby-display-case`** is its own overlay; register/phone debug overlays sit **above** it (higher z-index). Production tap targets use the same independent mapping.
+- **Resize UX:** Removed corner white handle boxes everywhere scene hits resize — **`SceneHitDebugOverlay`**, **`LoungeTvInnerLayoutEditor`**, **`GlobalOverlayDebugRegion`**. Invisible **10px border strips** (N/S/E/W) for edge resize; center drag still moves. Shared helpers in **`sceneHitLayoutEditorGestures.ts`**.
+
+**Changes:** `LobbyDisplayCaseShell.tsx`, `sceneHitRegionDefaults.ts`, `SceneHitDebugOverlay.tsx`, `LoungeTvInnerLayoutEditor.tsx`, `GlobalOverlayDebugRegion.tsx`, `sceneHitLayoutEditorGestures.ts`, editor panel copy.
