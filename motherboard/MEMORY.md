@@ -25521,3 +25521,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - Scene hit panel shows **Editing: …** label, **Deselect** button, and post-save instructions.
 
 **Changes:** `SceneHitLayoutEditorContext.tsx`, `SceneHitDebugOverlay.tsx`, `LoungeTvInnerLayoutEditor.tsx`, `DebugModeDomController.tsx`, `GlobalOverlayDebugContext.tsx`, `GlobalOverlayDebugRegion.tsx`, `SceneHitLayoutEditorPanel.tsx`, `DebugModeOverlay.tsx`.
+
+---
+
+## 2026-06-05 — PSA chat history loading state (no premature empty)
+
+**Context:** User reported PSA **Chat history** and **Archived chats** briefly showed “NO PAST CHATS YET” / “NO ARCHIVED CHATS YET” before the real list loaded, then replaced with actual threads — felt like a false empty state.
+
+**Decisions / outcomes:**
+- Added **`isLoadingThreadList`** in **`usePsaChat.ts`**, set while **`fetchPsaThreadList`** runs on **open history** and **toggle archived**; cleared on close.
+- **`PsaChatPanel`**: while loading, show system bubble **“CHAT HISTORY LOADING…”** or **“ARCHIVED CHAT HISTORY LOADING…”** (same bubble style as **“YOUR PSA IS TYPING…”**); only after load completes show **“NO PAST CHAT HISTORY.”** / **“NO ARCHIVED CHAT HISTORY.”** (removed **“yet”**).
+- Background **`refreshThreadList`** (after send/archive) still updates silently without loading flash when history is closed.
+
+**Changes:** `src/components/psa/usePsaChat.ts`, `PsaChatPanel.tsx`, `PsaAssistantWidget.tsx`. Pushed **`master`** and **`preview/mobile`**.
