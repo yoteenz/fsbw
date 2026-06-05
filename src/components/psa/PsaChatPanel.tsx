@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
-  PSA_CHAT_SUBTITLE,
-  PSA_STARTER_QUICK_REPLIES,
-} from '../../constants/psaConfig';
+  getPsaChatUiCopy,
+  getPsaStarterQuickReplyLabels,
+  PSA_CHAT_COPY_UPDATED_EVENT,
+} from '../../utils/psaChatCopyResolve';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
 import { formatPsaMessageRouteDisplay } from '../../utils/psaRouteDisplay';
 import { renderPsaAssistantBubbleText } from '../../utils/psaBubbleText';
@@ -253,6 +254,14 @@ export default function PsaChatPanel({
   const [deleteConfirmThreadId, setDeleteConfirmThreadId] = useState<string | null>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
+
+  useEffect(() => {
+    const reload = () => setUiCopy(getPsaChatUiCopy());
+    reload();
+    window.addEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reload);
+    return () => window.removeEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reload);
+  }, []);
 
   useEffect(() => {
     if (renamingThreadId) {
@@ -328,7 +337,7 @@ export default function PsaChatPanel({
     panelQuickReplies.length > 0
       ? panelQuickReplies.map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
       : isWelcomeOnly
-        ? PSA_STARTER_QUICK_REPLIES.map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
+        ? getPsaStarterQuickReplyLabels().map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
         : (
             [...messages].reverse().find((m) => m.role === 'assistant' && m.quickReplies?.length)
               ?.quickReplies ?? []
@@ -351,7 +360,7 @@ export default function PsaChatPanel({
         </div>
         <div className="psa-chat-header-text">
           <h2 className="psa-chat-subtitle">
-            {historyOpen ? (historyArchivedView ? 'ARCHIVED CHATS' : 'CHAT HISTORY') : PSA_CHAT_SUBTITLE}
+            {historyOpen ? (historyArchivedView ? 'ARCHIVED CHATS' : 'CHAT HISTORY') : uiCopy.chatSubtitle}
           </h2>
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
@@ -537,7 +546,7 @@ export default function PsaChatPanel({
       <>
       <div className="psa-chat-messages" ref={scrollRef}>
         {isLoadingHistory ? (
-          <div className="psa-chat-bubble psa-chat-bubble-system">LOADING YOUR CHAT…</div>
+          <div className="psa-chat-bubble psa-chat-bubble-system">{uiCopy.loadingLabel}</div>
         ) : null}
         {messages.map((msg) => {
           const { displayText, routeLinks, inlineTailCue } =
@@ -589,7 +598,7 @@ export default function PsaChatPanel({
           );
         })}
         {isSending ? (
-          <div className="psa-chat-bubble psa-chat-bubble-system">YOUR PSA IS TYPING…</div>
+          <div className="psa-chat-bubble psa-chat-bubble-system">{uiCopy.typingLabel}</div>
         ) : null}
       </div>
 
@@ -619,7 +628,7 @@ export default function PsaChatPanel({
           onFocus={() => onInputFocusChange?.(true)}
           onBlur={() => onInputFocusChange?.(false)}
           onKeyDown={onInputKeyDown}
-          placeholder="ASK PSA ANYTHING…"
+          placeholder={uiCopy.inputPlaceholder}
           disabled={isSending || isLoadingHistory}
           autoComplete="off"
           enterKeyHint="send"

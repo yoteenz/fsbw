@@ -971,6 +971,15 @@ export default function AdminBrand() {
                   >
                     EDIT NUDGES
                   </button>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/brand/edit/chat')}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    EDIT CHAT
+                  </button>
                 </PageActionsBelowCard>
               ) : (
                 <PageActionsBelowCard adminHub>

@@ -39,6 +39,14 @@ export type DebugElementOverride = {
   flexOrder?: number;
   translateX?: number;
   translateY?: number;
+  top?: string | number;
+  left?: string | number;
+  right?: string | number;
+  bottom?: string | number;
+  layoutOffsetX?: number;
+  layoutOffsetY?: number;
+  layoutWidthExtraPx?: number;
+  layoutHeightExtraPx?: number;
 };
 
 /** Font picker options — Bohemy forces lowercase; CBYG forces uppercase. */

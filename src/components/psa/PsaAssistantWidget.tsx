@@ -7,13 +7,13 @@ import {
   PSA_NUDGE_BUBBLE_SRC,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
-  readPsaWelcomeMessageFromStorage,
   PSA_IDLE_WAVE_INTERVAL_MS,
-  PSA_WIDGET_CTA,
-  PSA_CONTINUE_CTA,
-  PSA_HIDE_CHAT_CTA,
-  PSA_SHOW_CHAT_CTA,
 } from '../../constants/psaConfig';
+import {
+  getPsaChatUiCopy,
+  PSA_CHAT_COPY_UPDATED_EVENT,
+  readPsaWelcomeMessageFromCopyStorage,
+} from '../../utils/psaChatCopyResolve';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
 import { fetchPsaUsage } from '../../utils/psaApi';
@@ -71,7 +71,8 @@ export default function PsaAssistantWidget() {
   const [showIdleWave, setShowIdleWave] = useState(false);
   const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
   const [prefillInput, setPrefillInput] = useState('');
-  const [welcomeMessage, setWelcomeMessage] = useState(() => readPsaWelcomeMessageFromStorage());
+  const [welcomeMessage, setWelcomeMessage] = useState(() => readPsaWelcomeMessageFromCopyStorage());
+  const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -111,12 +112,12 @@ export default function PsaAssistantWidget() {
   const showContinueHint =
     !isFabCollapsed && !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
   const fabCtaLabel = isFabCollapsed
-    ? PSA_SHOW_CHAT_CTA
+    ? uiCopy.showChatCta
     : isOpen
-      ? PSA_HIDE_CHAT_CTA
+      ? uiCopy.hideChatCta
       : showContinueHint
-        ? PSA_CONTINUE_CTA
-        : PSA_WIDGET_CTA;
+        ? uiCopy.continueCta
+        : uiCopy.widgetCta;
   const fabCtaSubline = showContinueHint ? continueHint!.title : null;
 
   useEffect(() => {
@@ -129,6 +130,16 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     if (loungeTvTheater) setIsOpen(false);
   }, [loungeTvTheater]);
+
+  useEffect(() => {
+    const reloadCopy = () => {
+      setUiCopy(getPsaChatUiCopy());
+      setWelcomeMessage(readPsaWelcomeMessageFromCopyStorage());
+    };
+    reloadCopy();
+    window.addEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reloadCopy);
+    return () => window.removeEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reloadCopy);
+  }, []);
 
   useEffect(() => {
     if (!isPremium) return;
@@ -232,7 +243,7 @@ export default function PsaAssistantWidget() {
     const sync = () => {
       setSignedIn(isSignedIn());
       setIsPremium(isPremiumMemberForGatedFeatures());
-      setWelcomeMessage(readPsaWelcomeMessageFromStorage());
+      setWelcomeMessage(readPsaWelcomeMessageFromCopyStorage());
     };
     sync();
     window.addEventListener('signInStateChanged', sync);
@@ -506,7 +517,7 @@ export default function PsaAssistantWidget() {
                 draggable={false}
               />
               <span className="psa-nudge-chip-content">
-                <span className="psa-nudge-chip-headline">{PSA_SHOW_CHAT_CTA}</span>
+                <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>
               </span>
             </button>
           ) : (

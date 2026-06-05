@@ -12,6 +12,7 @@ import {
   type PsaThreadSummary,
   type PsaUsagePayload,
 } from '../../utils/psaApi';
+import { resolvePsaScriptedQuickReply } from '../../utils/psaChatCopyResolve';
 import type { PsaClientSessionContext } from '../../utils/psaSessionContext';
 
 export type PsaChatMessage = {
@@ -186,6 +187,25 @@ export function usePsaChat(
       setError(null);
       setPanelQuickReplies([]);
       setMessages((prev) => [...prev, { id: nextId(), role: 'user', content: trimmed }]);
+
+      const scripted = resolvePsaScriptedQuickReply(trimmed);
+      if (scripted && !options?.immediateNavigate) {
+        setIsSending(true);
+        const typingDelayMs = 300 + Math.floor(Math.random() * 401);
+        await new Promise((resolve) => setTimeout(resolve, typingDelayMs));
+        setIsSending(false);
+        setPanelQuickReplies(scripted.followUpChips ?? []);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: nextId(),
+            role: 'assistant',
+            content: scripted.reply,
+            quickReplies: scripted.followUpChips,
+          },
+        ]);
+        return { premiumRequired: false as const };
+      }
 
       const context = getSessionContextRef.current?.(trimmed);
       const chatOpts = {

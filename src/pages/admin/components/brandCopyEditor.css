@@ -481,3 +481,16 @@
   font-weight: 500;
   text-transform: uppercase;
 }
+
+.brand-copy-editor__grid--single {
+  grid-template-columns: 1fr;
+}
+
+.brand-copy-editor__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 10px;
+  text-transform: none;
+}
