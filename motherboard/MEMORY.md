@@ -25614,3 +25614,22 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **Ops:** Upload three consistent on-model angles per unit when ready; set env URLs on Vercel. First load per color hash may take ~30–90s (3 Fal chains).
 
 **Changes:** `api/_lib/liveTryOnOverlay.ts`, `api/live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `liveTryOnSpikeAssets.ts` (`hair-v4-on-model`), `live-try-on/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: NBP vs GPT Image 2 photoreal woman (same prompt compare)
+
+**Context:** User asked to prompt Fal to put the **same mannequin hairstyle** on a **photorealistic woman** using **both NBP and GPT Image 2** with the **identical prompt** (L/M/R angles), compare outputs, then use that woman’s **hair-only** layers on live camera.
+
+**Pipeline `hair-v5-photo-woman`:**
+1. Mannequin **color-tier** WebP (`wig-preview-live/...`) as reference.
+2. **`buildLiveTryOnPhotorealWomanPrompt`** — one prompt string for both models (color, part direction, angle).
+3. **`fal-ai/nano-banana-pro/edit`** + **`openai/gpt-image-2/edit`** → portraits stored at `try-on-portrait/.../{nbp|gpt2}/{angle}.webp`.
+4. NBP hair isolation + Ideogram → overlays at `try-on-overlay/.../{nbp|gpt2}/{angle}.png`.
+5. **`POST /api/live-try-on-ensure-overlays`** with **`compareModels: true`** (default unless `WIG_PREVIEW_TRYON_COMPARE_BOTH=false`).
+
+**Client:** `/tools/live-try-on` — **`LiveTryOnModelCompareBar`** (3-up portrait thumbs per model); tap **NBP** or **GPT IMAGE 2** to switch live overlay; preference in **`localStorage`** `liveTryOnPhotoModel`; query **`?tryonModel=gpt2`**.
+
+**Env:** **`WIG_PREVIEW_TRYON_PHOTO_MODEL`** = `nbp` | `gpt2` (default live overlay from API `publicUrls`); **`WIG_PREVIEW_TRYON_COMPARE_BOTH=false`** after picking a winner to skip generating the other model (saves Fal cost).
+
+**Changes:** `api/_lib/liveTryOnOverlay.ts`, `api/live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `liveTryOnOverlayPublicUrls.ts`, `LiveTryOnModelCompareBar.tsx`, `live-try-on/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
