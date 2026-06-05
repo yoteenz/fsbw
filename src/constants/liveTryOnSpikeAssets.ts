@@ -1,9 +1,8 @@
 /** Must match `LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT` in `api/_lib/liveTryOnOverlay.ts`. */
-export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v3';
+export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v4-on-model';
 
 /**
- * Studio mannequin fallbacks only when Fal/Storage prep fails (full figure — not ideal for try-on).
- * HQ naturals match the Fal mannequin reference set used in BAW / consult previews.
+ * Legacy spike URLs (full mannequin — do not use for live camera try-on).
  */
 export type LiveTryOnWigView = 'left' | 'front' | 'right';
 

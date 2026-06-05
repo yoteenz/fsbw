@@ -3,17 +3,20 @@ export const config = {
 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { Jimp } from 'jimp';
 import { getAuthUser } from './_lib/auth.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
+  buildLiveTryOnOnModelRecolorPrompt,
   LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
   LIVE_TRY_ON_IDEOGRAM_MODEL,
+  liveTryOnOnModelReferenceUrl,
   liveTryOnOverlayPublicUrls,
   liveTryOnOverlayStoragePath,
+  type LiveTryOnAngle,
 } from './_lib/liveTryOnOverlay.js';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
-  wigPreviewLiveAnglePaths,
   wigPreviewManifestHashLiveColorTier,
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash.js';
@@ -62,10 +65,16 @@ function readStringArray(body: Body, key: keyof Body): string[] {
   return v.map((x) => String(x).trim().toUpperCase()).filter(Boolean);
 }
 
-function readOptionalAngle(body: Body): 'left' | 'front' | 'right' | null {
+function readOptionalAngle(body: Body): LiveTryOnAngle | null {
   const a = readString(body, 'angle', '').toLowerCase();
   if (a === 'left' || a === 'front' || a === 'right') return a;
   return null;
+}
+
+function readFalResolution(): '1K' | '2K' | '4K' {
+  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '2K').trim().toUpperCase();
+  if (r === '1K' || r === '2K' || r === '4K') return r;
+  return '2K';
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -81,17 +90,62 @@ function extractFalImageUrl(result: unknown): string | null {
   return (result as { data?: { image?: { url?: string } } })?.data?.image?.url ?? null;
 }
 
-/** NBP hair-on-white, then Ideogram for true alpha (same stack as PSA avatars). */
+/** Reject full-mannequin or opaque-face overlays before caching. */
+export async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
+  const img = await Jimp.read(buf);
+  const w = img.width;
+  const h = img.height;
+  if (w < 64 || h < 64) throw new Error('overlay too small');
+
+  const sample = (u: number, v: number): number => {
+    const x = Math.min(w - 1, Math.max(0, Math.floor(u * w)));
+    const y = Math.min(h - 1, Math.max(0, Math.floor(v * h)));
+    return img.getPixelColor(x, y) & 0xff;
+  };
+
+  const faceAlpha = sample(0.5, 0.42);
+  const hairAlpha = sample(0.5, 0.14);
+  const bustAlpha = sample(0.5, 0.72);
+
+  if (faceAlpha > 90 && hairAlpha > 90) {
+    throw new Error('overlay still contains an opaque face (mannequin or portrait)');
+  }
+  if (bustAlpha > 120 && hairAlpha > 120) {
+    throw new Error('overlay still contains shoulders or bust');
+  }
+  if (hairAlpha < 40) {
+    throw new Error('overlay missing visible hair at top');
+  }
+}
+
+/** On-model recolor → hair-on-white → Ideogram alpha. */
 async function generateHairOnlyOverlayPng(
   fal: { subscribe: (model: string, opts: { input: Record<string, unknown>; logs: boolean }) => Promise<unknown> },
-  sourceUrl: string
+  modelRefUrl: string,
+  recolorPrompt: string
 ): Promise<Buffer> {
+  const resolution = readFalResolution();
+
+  const recolorResult = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
+    input: {
+      prompt: recolorPrompt,
+      image_urls: [modelRefUrl],
+      aspect_ratio: 'auto',
+      resolution,
+      output_format: 'png',
+      num_images: 1,
+    },
+    logs: false,
+  });
+  const recolorUrl = extractFalImageUrl(recolorResult);
+  if (!recolorUrl) throw new Error('fal: no on-model recolor URL');
+
   const nbpResult = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
     input: {
       prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
-      image_urls: [sourceUrl],
+      image_urls: [recolorUrl],
       aspect_ratio: 'auto',
-      resolution: process.env.WIG_PREVIEW_FAL_RESOLUTION?.trim() || '2K',
+      resolution,
       output_format: 'png',
       num_images: 1,
     },
@@ -107,7 +161,9 @@ async function generateHairOnlyOverlayPng(
   const cutUrl = extractFalImageUrl(cutResult);
   if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
 
-  return downloadUrlToBuffer(cutUrl);
+  const buf = await downloadUrlToBuffer(cutUrl);
+  await validateHairOnlyOverlayPng(buf);
+  return buf;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -143,7 +199,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     sendJson(res, 400, { error: 'color is required' });
     return;
   }
-  if (!catalogColorForPrompt(color)) {
+  const catalog = catalogColorForPrompt(color);
+  if (!catalog) {
     sendJson(res, 400, { error: `Unknown color: ${color}` });
     return;
   }
@@ -162,10 +219,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   };
 
   const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
-  const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
   const singleAngle = readOptionalAngle(body);
   const forceRegenerate = body.forceRegenerate === true;
-  const angles: Array<'left' | 'front' | 'right'> = singleAngle ? [singleAngle] : ['left', 'front', 'right'];
+  const angles: LiveTryOnAngle[] = singleAngle ? [singleAngle] : ['left', 'front', 'right'];
 
   let supabase;
   try {
@@ -177,7 +233,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const generated: string[] = [];
   const skipped: string[] = [];
-  const missingColor: string[] = [];
+  const failed: Array<{ angle: LiveTryOnAngle; error: string }> = [];
 
   try {
     const { fal } = await import('@fal-ai/client');
@@ -193,35 +249,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
 
-      const colorPath = colorPaths[angle];
-      const { error: dlColor } = await supabase.storage.from(bucket).download(colorPath);
-      if (dlColor) {
-        missingColor.push(angle);
-        continue;
-      }
+      const modelRefUrl = liveTryOnOnModelReferenceUrl(angle);
+      const recolorPrompt = buildLiveTryOnOnModelRecolorPrompt(catalog.label, catalog.hex, angle);
 
-      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
-      const sourceUrl = pubColor?.publicUrl;
-      if (!sourceUrl) {
-        missingColor.push(angle);
-        continue;
+      try {
+        const buf = await generateHairOnlyOverlayPng(fal, modelRefUrl, recolorPrompt);
+        const { error: upErr } = await supabase.storage.from(bucket).upload(overlayPath, buf, {
+          contentType: 'image/png',
+          upsert: true,
+        });
+        if (upErr) throw new Error(`upload ${overlayPath}: ${upErr.message}`);
+        generated.push(angle);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'generation failed';
+        failed.push({ angle, error: msg });
       }
-
-      const buf = await generateHairOnlyOverlayPng(fal, sourceUrl);
-      const { error: upErr } = await supabase.storage.from(bucket).upload(overlayPath, buf, {
-        contentType: 'image/png',
-        upsert: true,
-      });
-      if (upErr) throw new Error(`upload ${overlayPath}: ${upErr.message}`);
-      generated.push(angle);
     }
 
-    if (missingColor.length > 0 && generated.length === 0 && skipped.length === 0) {
-      sendJson(res, 409, {
-        error: 'COLOR_PREVIEW_MISSING',
-        missingColor,
+    if (generated.length === 0 && skipped.length === 0 && failed.length > 0) {
+      sendJson(res, 500, {
+        error: 'TRYON_OVERLAY_FAILED',
+        failed,
         manifestHash,
-        colorPaths,
+        modelRefs: {
+          left: liveTryOnOnModelReferenceUrl('left'),
+          front: liveTryOnOnModelReferenceUrl('front'),
+          right: liveTryOnOnModelReferenceUrl('right'),
+        },
       });
       return;
     }
@@ -236,9 +290,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       manifestHash,
       unitKey,
       bucket,
+      pipeline: LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT,
       generated,
       skipped,
-      missingColor,
+      failed,
       publicUrls,
       selections,
     });
