@@ -363,15 +363,15 @@ export default function PsaChatPanel({
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>
         <div className="psa-chat-header-side psa-chat-header-side--right">
-          {historyOpen && onToggleHistoryArchived ? (
+          {historyOpen && !historyArchivedView && onToggleHistoryArchived ? (
             <button
               type="button"
               className="psa-chat-header-icon-btn"
               onClick={onToggleHistoryArchived}
-              aria-label={historyArchivedView ? 'View active chats' : 'View archived chats'}
-              aria-pressed={historyArchivedView}
+              aria-label="View archived chats"
+              aria-pressed={false}
             >
-              <PsaChatArchivedIcon active={historyArchivedView} />
+              <PsaChatArchivedIcon active={false} />
             </button>
           ) : onNewChat ? (
             <button
