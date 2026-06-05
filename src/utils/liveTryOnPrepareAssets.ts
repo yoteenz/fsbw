@@ -1,6 +1,5 @@
 import {
   postLiveTryOnEnsureOverlaysOneAngle,
-  postWigPreviewLiveNoirColorOneAngle,
   type LiveTryOnEnsureOverlaysResult,
 } from './api';
 import { resolveLiveTryOnOverlayTripleIfStored } from './liveTryOnOverlayPublicUrls';
@@ -8,10 +7,8 @@ import {
   buildLiveTryOnPayloadFromBaw,
   buildLiveTryOnPayloadFromConsult,
   liveTryOnPayloadToColorApiBody,
-  staticMannequinTripleForUnit,
   type LiveTryOnSourcePayload,
 } from './liveTryOnSelections';
-import { resolveWigPreviewLiveColorTripleIfStored } from './wigPreviewLiveStoragePublicUrls';
 import type { ConsultQuoteSelections } from './consultOfferFromQuote';
 
 export type LiveTryOnPreparedAssets = {
@@ -19,14 +16,6 @@ export type LiveTryOnPreparedAssets = {
   manifestHash?: string;
   usedFallback: boolean;
 };
-
-async function ensureNoirColorPreview(payload: LiveTryOnSourcePayload): Promise<void> {
-  const body = liveTryOnPayloadToColorApiBody(payload);
-  const angles = ['left', 'front', 'right'] as const;
-  for (const angle of angles) {
-    await postWigPreviewLiveNoirColorOneAngle({ ...body, angle });
-  }
-}
 
 async function ensureOverlays(payload: LiveTryOnSourcePayload): Promise<LiveTryOnEnsureOverlaysResult> {
   const body = {
@@ -37,10 +26,6 @@ async function ensureOverlays(payload: LiveTryOnSourcePayload): Promise<LiveTryO
   let last: LiveTryOnEnsureOverlaysResult | null = null;
   for (const angle of angles) {
     last = await postLiveTryOnEnsureOverlaysOneAngle({ ...body, angle });
-    if (last.missingColor?.includes(angle)) {
-      await postWigPreviewLiveNoirColorOneAngle({ ...body, angle });
-      last = await postLiveTryOnEnsureOverlaysOneAngle({ ...body, angle });
-    }
   }
   if (!last) throw new Error('Overlay preparation failed');
   return last;
@@ -56,7 +41,7 @@ function tripleFromOverlayResult(result: LiveTryOnEnsureOverlaysResult): [string
 }
 
 /**
- * Resolve transparent overlay L/F/R for live try-on: Storage cache → Fal color + NBP isolation.
+ * Transparent hair-only L/F/R from on-model references (not mannequin color WebPs).
  */
 export async function prepareLiveTryOnAssets(
   payload: LiveTryOnSourcePayload,
@@ -70,30 +55,20 @@ export async function prepareLiveTryOnAssets(
     return { overlayUrls: cachedOverlay, usedFallback: false };
   }
 
-  const storedColor = await resolveWigPreviewLiveColorTripleIfStored(hashPayload);
-
-  if (payload.unitKey === 'NOIR') {
-    onStatus?.('PREPARING COLOR PREVIEW…');
-    if (!storedColor) {
-      await ensureNoirColorPreview(payload);
-    }
-
-    onStatus?.('CREATING HAIR-ONLY LAYERS…');
-    const overlayResult = await ensureOverlays(payload);
-    const fromApi = tripleFromOverlayResult(overlayResult);
-    if (fromApi) {
-      return {
-        overlayUrls: fromApi,
-        manifestHash: overlayResult.manifestHash,
-        usedFallback: false,
-      };
-    }
-    throw new Error('Hair-only try-on layers could not be prepared');
+  onStatus?.('BUILDING HAIR-ONLY LAYERS FROM ON-MODEL PHOTOS…');
+  const overlayResult = await ensureOverlays(payload);
+  const fromApi = tripleFromOverlayResult(overlayResult);
+  if (fromApi) {
+    return {
+      overlayUrls: fromApi,
+      manifestHash: overlayResult.manifestHash,
+      usedFallback: false,
+    };
   }
 
-  onStatus?.('USING STUDIO PREVIEW…');
-  const fallback = staticMannequinTripleForUnit(payload.unitKey);
-  return { overlayUrls: fallback, usedFallback: true };
+  throw new Error(
+    'TRY-ON LAYERS COULD NOT BE PREPARED. CHECK YOUR CONNECTION AND TRY AGAIN IN A MOMENT.'
+  );
 }
 
 export function prepareLiveTryOnAssetsFromBaw(

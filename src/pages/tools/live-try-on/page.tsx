@@ -7,7 +7,6 @@ import {
   prepareLiveTryOnAssetsFromBaw,
   prepareLiveTryOnAssetsFromConsult,
 } from '../../../utils/liveTryOnPrepareAssets';
-import { staticMannequinTripleForUnit } from '../../../utils/liveTryOnSelections';
 
 export default function LiveTryOnPage() {
   const navigate = useNavigate();
@@ -37,7 +36,6 @@ export default function LiveTryOnPage() {
           const quote = res?.quote as Record<string, unknown> | undefined;
           if (!quote) {
             setPrepError('OFFER NOT FOUND');
-            setWigUrls(staticMannequinTripleForUnit('NOIR'));
             return;
           }
           const unitKey = String(quote.unit_key || 'NOIR');
@@ -47,11 +45,7 @@ export default function LiveTryOnPage() {
           });
           if (cancelled) return;
           setWigUrls(prepared.overlayUrls);
-          if (prepared.usedFallback) {
-            setPrepHint('SHOWING STUDIO PREVIEW — FULL TRY-ON LAYERS NEED A MOMENT ONLINE');
-          } else {
-            setPrepHint('');
-          }
+          setPrepHint('');
           return;
         }
 
@@ -60,15 +54,11 @@ export default function LiveTryOnPage() {
         });
         if (cancelled) return;
         setWigUrls(prepared.overlayUrls);
-        if (prepared.usedFallback) {
-          setPrepHint('SHOWING STUDIO PREVIEW UNTIL YOUR COLOR LAYER IS READY');
-        } else {
-          setPrepHint('');
-        }
+        setPrepHint('');
       } catch (e) {
         if (cancelled) return;
         setPrepError(e instanceof Error ? e.message.toUpperCase() : 'PREP FAILED');
-        setWigUrls(staticMannequinTripleForUnit('NOIR'));
+        setWigUrls(null);
         setPrepHint('');
       }
     })();
@@ -119,12 +109,29 @@ export default function LiveTryOnPage() {
           </p>
         ) : null}
         {prepError ? (
-          <p className="text-center uppercase" style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080' }}>
+          <p
+            className="text-center uppercase max-w-sm"
+            style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
+          >
             {prepError}
           </p>
         ) : null}
         <div className="w-full max-w-md">
-          <LiveTryOnViewport wigUrls={wigUrls} />
+          {wigUrls ? (
+            <LiveTryOnViewport wigUrls={wigUrls} />
+          ) : (
+            <div
+              className="aspect-[3/4] w-full border border-black/20 bg-black/5 flex items-center justify-center px-6"
+              aria-hidden={!prepError}
+            >
+              <p
+                className="text-center uppercase"
+                style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
+              >
+                {prepError ? 'CAMERA PREVIEW WILL OPEN WHEN YOUR HAIR LAYERS ARE READY' : 'PREPARING…'}
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </div>
