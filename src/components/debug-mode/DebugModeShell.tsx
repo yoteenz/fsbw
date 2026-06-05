@@ -1,5 +1,6 @@
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Routes, useLocation, useNavigate } from 'react-router-dom';
+import { canAccessPageDebugMode } from '../../utils/adminAuth';
 import {
   DEBUG_MODE_SESSION_KEY,
   DEBUG_MODE_SUFFIX,
@@ -11,47 +12,76 @@ import { DebugModeProvider } from './DebugModeProvider';
 import { DebugModeDomController } from './DebugModeDomController';
 import { DebugModeOverlay } from './DebugModeOverlay';
 
+const DEBUG_MODE_HOME = '/home/shop';
+
 type Props = {
   children: ReactNode;
 };
 
 /**
  * Enables `/debug-mode` suffix on any route: same page renders, with visual edit overlay.
- * Example: `/account/rewards/debug-mode`
+ * Founder admin only (`kateenaarmstrong@gmail.com`). All others → homepage.
  */
 export function DebugModeShell({ children }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [founderAccess, setFounderAccess] = useState(canAccessPageDebugMode);
 
   const isDebugMode = isDebugModePath(location.pathname);
   const pageKey = useMemo(() => stripDebugModeSuffix(location.pathname), [location.pathname]);
+  const debugModeActive = isDebugMode && founderAccess;
 
   const routeLocation = useMemo(() => {
-    if (!isDebugMode) return location;
+    if (!debugModeActive) return location;
     return { ...location, pathname: pageKey };
-  }, [isDebugMode, location, pageKey]);
+  }, [debugModeActive, location, pageKey]);
 
   useEffect(() => {
-    if (location.pathname === DEBUG_MODE_SUFFIX) {
+    const sync = () => setFounderAccess(canAccessPageDebugMode());
+    sync();
+    window.addEventListener('signInStateChanged', sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('signInStateChanged', sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isDebugMode) return;
+    if (founderAccess) return;
+    sessionStorage.removeItem(DEBUG_MODE_SESSION_KEY);
+    navigate(DEBUG_MODE_HOME + location.search + location.hash, { replace: true });
+  }, [founderAccess, isDebugMode, location.hash, location.search, navigate]);
+
+  useEffect(() => {
+    if (location.pathname !== DEBUG_MODE_SUFFIX) return;
+    if (founderAccess) {
       navigate('/home/shop/debug-mode' + location.search + location.hash, { replace: true });
+      return;
     }
-  }, [location.hash, location.pathname, location.search, navigate]);
+    navigate(DEBUG_MODE_HOME + location.search + location.hash, { replace: true });
+  }, [founderAccess, location.hash, location.pathname, location.search, navigate]);
 
   useEffect(() => {
-    if (isDebugMode) {
+    if (debugModeActive) {
       sessionStorage.setItem(DEBUG_MODE_SESSION_KEY, '1');
     }
-  }, [isDebugMode]);
+  }, [debugModeActive]);
 
   useEffect(() => {
+    if (!founderAccess) {
+      sessionStorage.removeItem(DEBUG_MODE_SESSION_KEY);
+      return;
+    }
     const sessionActive = sessionStorage.getItem(DEBUG_MODE_SESSION_KEY) === '1';
     if (!sessionActive) return;
     if (isDebugModePath(location.pathname)) return;
     navigate(withDebugModeSuffix(location.pathname) + location.search + location.hash, { replace: true });
-  }, [location.hash, location.pathname, location.search, navigate]);
+  }, [founderAccess, location.hash, location.pathname, location.search, navigate]);
 
   useEffect(() => {
-    if (!isDebugMode) return;
+    if (!debugModeActive) return;
     const onClick = (e: MouseEvent) => {
       const anchor = (e.target as Element | null)?.closest('a[href]');
       if (!anchor) return;
@@ -68,12 +98,12 @@ export function DebugModeShell({ children }: Props) {
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
-  }, [isDebugMode, navigate]);
+  }, [debugModeActive, navigate]);
 
   return (
-    <DebugModeProvider enabled={isDebugMode} pageKey={pageKey}>
+    <DebugModeProvider enabled={debugModeActive} pageKey={pageKey}>
       <Routes location={routeLocation}>{children}</Routes>
-      {isDebugMode ? (
+      {debugModeActive ? (
         <>
           <DebugModeDomController />
           <DebugModeOverlay />
@@ -83,7 +113,8 @@ export function DebugModeShell({ children }: Props) {
   );
 }
 
-/** Append `/debug-mode` to an internal path for shareable edit URLs. */
+/** Append `/debug-mode` to an internal path for shareable edit URLs (founder session only). */
 export function debugModeHref(path: string): string {
+  if (!canAccessPageDebugMode()) return path;
   return withDebugModeSuffix(path);
 }
