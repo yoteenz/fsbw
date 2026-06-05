@@ -25633,3 +25633,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Env:** **`WIG_PREVIEW_TRYON_PHOTO_MODEL`** = `nbp` | `gpt2` (default live overlay from API `publicUrls`); **`WIG_PREVIEW_TRYON_COMPARE_BOTH=false`** after picking a winner to skip generating the other model (saves Fal cost).
 
 **Changes:** `api/_lib/liveTryOnOverlay.ts`, `api/live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `liveTryOnOverlayPublicUrls.ts`, `LiveTryOnModelCompareBar.tsx`, `live-try-on/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on FUNCTION_INVOCATION_TIMEOUT fix
+
+**Context:** User saw **`FUNCTION_INVOCATION_TIMEOUT`** on `/tools/live-try-on` during photoreal dual-model prep.
+
+**Cause:** One API call ran **both** NBP + GPT2 × portrait + hair isolation per angle (too many Fal jobs for Vercel Hobby ~10s cap). `vercel.json` had no **`maxDuration`** entry for **`live-try-on-ensure-overlays`**.
+
+**Fix:** API **requires** `angle` + **`photoModel`** per request (max ~3 Fal calls). Client runs **6 sequential** steps (3 angles × 2 models) with progress text; **camera opens** after active model’s 3 overlays via **`onActiveModelReady`**. Try-on Fal default **1K** via **`WIG_PREVIEW_TRYON_FAL_RESOLUTION`**. **`vercel.json`**: `maxDuration: 120` for try-on + live-noir-color routes. Clearer timeout errors in **`api.ts`**.
+
+**Changes:** `api/live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `live-try-on/page.tsx`, `api.ts`, `vercel.json`, `.env.example`. Pushed **`master`** + **`preview/mobile`**.
