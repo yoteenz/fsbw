@@ -25463,3 +25463,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **Fonts:** Bohemy → `textTransform: lowercase`; CBYG → `uppercase`; Futura Book/Medium/Demi unchanged casing.
 
 **Changes:** `api/admin/page-debug-config.ts`, `debugModeSync.ts`, `DebugModeApplier.tsx`, `DebugModeFounderBootstrap.tsx`, font presets in `debugMode.ts` + overlay buttons, `api.ts` client helpers.
+
+---
+
+## 2026-06-04 — Lounge TV open content layout editor (after play)
+
+**Context:** User asked whether TV content after pressing play can be adjusted (proportions/placement). Previously only closed-state scene hit boxes (blue/green/magenta on slide) were editable; inner menu/video layout was not.
+
+**Decisions / outcomes:** Extended scene hit editor with **`lounge-tv-media-panel`** (yellow — thumb grid / blog / player area) and **`lounge-tv-video-frame`** (cyan — Watch+Learn video shell). When TV is open + `?sceneHitDebug=1&sceneHitEdit=1`: drag/corner-resize yellow media panel and cyan video frame; magenta glass editable via `LoungeTvInnerLayoutEditor` on open shell. Closed magenta overlay hidden while TV open. Saves to same `baw_scene_hit_layout_overrides` store.
+
+**Changes:** `LoungeTvInnerLayoutEditor.tsx`, `loungeTvInnerLayout.ts`, `sceneHitRegionDefaults.ts`, `LoungeTvOverlay.tsx`, `LoungeTvWatchLearnPlayer.tsx`, `LoungeTvFullscreenShell.tsx`, `LoungeCompositeTvPlay.tsx`.
+
+**Usage:** `/lobby/lounge?sceneHitDebug=1&sceneHitEdit=1` → press play → tune yellow/cyan/magenta regions → Save.
