@@ -25600,3 +25600,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Latest:** User asked to **hide PSA chat** on live try-on and rename button **LIVE TRY ON** (no hyphen).
 
 **Changes:** **`PSA_HIDDEN_PATH_PREFIXES`** includes **`/tools/live-try-on`** (`psaConfig.ts`). Button + page header: **LIVE TRY ON** (`LiveTryOnLaunchButton.tsx`, `live-try-on/page.tsx`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: on-model photos vs mannequin (product + pipeline)
+
+**Context (full thread):** Live try-on on BAW + consult; user still saw **full grey mannequin + stand** on camera even when signed in. User asked whether **real on-person photos** make more sense than **3D mannequin** assets for try-on.
+
+**Decisions / outcomes:**
+- **Yes — separate asset libraries:** Mannequin WebPs (`wig-preview-live`, BAW hero) are for **catalog accuracy**; live AR needs **hair-only transparent L/M/R** or **on-model references** → recolor hair → extract hair (no bust/stand/logo).
+- **Pipeline `hair-v4-on-model`:** `POST /api/live-try-on-ensure-overlays` no longer sources mannequin color WebPs. Uses **`WIG_PREVIEW_TRYON_MODEL_{LEFT|FRONT|RIGHT}_URL`** (fallback **`{SITE_URL}/assets/NOIR/client-photo.png`** for all angles until per-angle uploads). Steps: NBP recolor on model → NBP hair isolation → Ideogram alpha; **Jimp** validates center face/bust are transparent before Storage upload.
+- **No mannequin fallback on failure:** `live-try-on/page.tsx` and **`liveTryOnPrepareAssets.ts`** do not set **`staticMannequinTripleForUnit`**; user sees error + placeholder until overlays succeed.
+- **Ops:** Upload three consistent on-model angles per unit when ready; set env URLs on Vercel. First load per color hash may take ~30–90s (3 Fal chains).
+
+**Changes:** `api/_lib/liveTryOnOverlay.ts`, `api/live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `liveTryOnSpikeAssets.ts` (`hair-v4-on-model`), `live-try-on/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
