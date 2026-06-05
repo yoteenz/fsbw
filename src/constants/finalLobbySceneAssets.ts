@@ -84,9 +84,9 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
 
 /** Production + QA — blue baked TV (QA + anchor). */
 export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
-  layoutOffsetX: 20,
+  layoutOffsetX: 18,
   layoutOffsetY: 220,
-  layoutHeightExtraPx: -100,
+  layoutHeightExtraPx: -80,
 } as const;
 
 /** Production + QA — green play tap wraps PRESS TO PLAY (center-anchored width/height). */
