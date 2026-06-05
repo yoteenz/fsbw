@@ -25590,3 +25590,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `api/live-try-on-ensure-overlays.ts`, `api/_lib/liveTryOnOverlay.ts`, `src/utils/liveTryOn*.ts`, `src/utils/api.ts`, `LiveTryOnViewport.tsx`, `live-try-on/page.tsx`, `LiveTryOnLaunchButton.tsx`, consult modal/page. Pushed **`master`** + **`preview/mobile`**.
 
 **Conventions:** Live try-on needs sign-in + **`FAL_KEY`** + Supabase Storage (same as BAW live color). First open for a new swatch may take ~30–90s (3 color + 3 isolation calls). Non-NOIR units use static mannequin triple until unit live color API exists.
+
+---
+
+## 2026-06-05 — Live try-on: face-hole compositing, PSA hidden, button copy
+
+**Context (full live try-on thread):** User wanted live camera try-on on BAW + consult; reported full mannequin (not hair-only) after Fal wiring; crop-to-shoulders still showed mannequin face. Fixes: removed **`bawFalEditPreserveReferenceBlock`** from isolation; NBP + Ideogram pipeline; overlay cache **`hair-v2`/`hair-v3`**; stopped falling back to full color WebPs; **`drawWigOverlayWithFaceHole`** (`liveTryOnComposite.ts`) punches tracked face oval through wig layer so camera face shows through.
+
+**Latest:** User asked to **hide PSA chat** on live try-on and rename button **LIVE TRY ON** (no hyphen).
+
+**Changes:** **`PSA_HIDDEN_PATH_PREFIXES`** includes **`/tools/live-try-on`** (`psaConfig.ts`). Button + page header: **LIVE TRY ON** (`LiveTryOnLaunchButton.tsx`, `live-try-on/page.tsx`). Pushed **`master`** + **`preview/mobile`**.
