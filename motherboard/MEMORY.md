@@ -25415,3 +25415,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** Refactored `SceneHitLayoutEditorPanel` to default **collapsed** as a compact top-right toolbar (Save, Reset, Copy JSON, status chip, Details). **Details ▾** expands a capped panel (max ~280px height, scrollable region list); **Minimize ▴** collapses back. Action buttons stay available in both states; panel no longer sits at bottom covering hit targets.
 
 **Changes:** `src/components/lobby/SceneHitLayoutEditorPanel.tsx`.
+
+---
+
+## 2026-06-04 — Scene hit editor four-corner resize
+
+**Context:** User found the single white bottom-right crop handle unhelpful; wanted square corners draggable to enlarge/shrink the hit box.
+
+**Decisions / outcomes:** Replaced one resize widget with **four corner handles** on each QA square (nw/ne/sw/se). Dragging a corner resizes from the opposite anchor (updates `layoutWidthExtraPx`, `layoutHeightExtraPx`, and `layoutOffsetX/Y` as needed). Center drag still moves the box.
+
+**Changes:** `SceneHitDebugOverlay.tsx`, panel help text in `SceneHitLayoutEditorPanel.tsx`.
