@@ -25475,3 +25475,23 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** `LoungeTvInnerLayoutEditor.tsx`, `loungeTvInnerLayout.ts`, `sceneHitRegionDefaults.ts`, `LoungeTvOverlay.tsx`, `LoungeTvWatchLearnPlayer.tsx`, `LoungeTvFullscreenShell.tsx`, `LoungeCompositeTvPlay.tsx`.
 
 **Usage:** `/lobby/lounge?sceneHitDebug=1&sceneHitEdit=1` → press play → tune yellow/cyan/magenta regions → Save.
+
+---
+
+## 2026-06-04 — Global overlay debug (cart + currency) + admin PSA chat copy editor
+
+**Context:** User confirmed adding global overlay debug for cart dropdown + currency exchange (portaled UI not covered by per-route page debug), and admin-only editable PSA chat design/features + starter quick reply responses/answers with Supabase sync.
+
+**Topics covered (full chat arc):**
+- Prior work: site-wide `/debug-mode`, founder-only gate, lounge TV inner layout editor, scene hit UX — user said “yes do this” for cart/currency global overlays + PSA chat admin editing.
+- **Global overlay debug:** Uses same page debug store with keys `__global__/cart-dropdown` and `__global__/currency-modal`. Regions: cart `anchor` + `shell`; currency `shell`. Founder preview applies saved layout on all routes; edit only in `/debug-mode` via overlay panel (“Edit cart dropdown” / “Edit currency exchange” opens cart/currency, drag + four-corner resize). Saves sync via existing `page_debug_overrides` Supabase payload.
+- **PSA chat admin editor:** Admin → Brand → ALERTS tab → **EDIT CHAT** → `/admin/brand/edit/chat`. Editable: FAB/widget CTAs, chat chrome (subtitle, placeholder, loading/typing labels), welcome templates (`{firstName}`), starter quick reply chips with optional **scripted PSA replies** + follow-up chips (skips LLM when scripted reply set unless “Always use AI”). Public `GET /api/psa-chat-config`; admin `GET/PUT /api/admin/psa-chat-config`; `app_config` key `psa_chat_copy_admin`. Client merges cloud + localStorage on load (`PsaChatCopyBootstrap`).
+
+**Decisions / outcomes:**
+- Global overlays are **not** per-route — use `__global__/…` page keys in debug store.
+- Only founder sees applied cart/currency layout overrides on normal URLs (same gate as page debug preview).
+- PSA chat copy is **admin-only** to edit; members consume merged config. Scripted starter chips resolve client-side in `usePsaChat` before `postPsaChat`.
+
+**Changes:** `globalOverlayDebug.ts`, `GlobalOverlayDebugRegion.tsx`, `GlobalOverlayDebugContext.tsx`, `CartDropdown.tsx`, `DynamicCartIcon.tsx`, `DebugModeShell.tsx`, `DebugModeOverlay.tsx`, `debugMode.ts` (layout fields); `psaChatCopyCatalog.ts`, `psaChatCopyResolve.ts`, `psaChatCopySync.ts`, `PsaChatCopyEditorPanel.tsx`, `api/psa-chat-config.ts`, `api/admin/psa-chat-config.ts`, wired `PsaChatPanel`, `PsaAssistantWidget`, `usePsaChat`, admin brand page + copy-editor route.
+
+**Usage:** Founder: any `*/debug-mode` → Global overlays section → Edit cart/currency → drag/resize → Save. Admin: `/admin/brand/edit/chat` → edit copy + starter scripted replies → Save chat copy.
