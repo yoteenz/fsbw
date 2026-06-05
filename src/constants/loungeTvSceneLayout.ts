@@ -43,8 +43,8 @@ export const LOUNGE_TV_MENU_SCREEN_OFFSET = {
 
 /** Production + QA — magenta TV content glass. */
 export const LOUNGE_TV_MENU_SCREEN_LAYOUT = {
-  layoutWidthExtraPx: -4,
-  layoutHeightExtraPx: 20,
+  layoutWidthExtraPx: -2,
+  layoutHeightExtraPx: 16,
   layoutOffsetY: -10,
 } as const;
 
