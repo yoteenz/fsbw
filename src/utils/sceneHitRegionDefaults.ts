@@ -9,12 +9,24 @@ import {
   LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
 } from '../constants/lobbyDisplayCaseLayout';
 import { LOUNGE_TV_MENU_SCREEN_LAYOUT } from '../constants/loungeTvSceneLayout';
+import {
+  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+} from '../components/lounge/loungeTvAssets';
 import type { SceneHitLayoutOptions } from './sceneHitLayout';
+
+const LOUNGE_TV_MEDIA_PANEL_DEFAULT = {} as const satisfies SceneHitLayoutOptions;
+
+const LOUNGE_TV_VIDEO_FRAME_DEFAULT = {
+  layoutHeightExtraPx: LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+  layoutScale: { x: 1, y: 1 },
+} as const satisfies SceneHitLayoutOptions;
 
 export type SceneHitRegionId =
   | 'lounge-tv-baked'
   | 'lounge-tv-content-popup'
   | 'lounge-tv-play-tap'
+  | 'lounge-tv-media-panel'
+  | 'lounge-tv-video-frame'
   | 'lobby-display-case';
 
 export type SceneHitCoverOffset = { x: number; y: number };
@@ -29,13 +41,17 @@ export const SCENE_HIT_REGION_IDS: SceneHitRegionId[] = [
   'lounge-tv-baked',
   'lounge-tv-content-popup',
   'lounge-tv-play-tap',
+  'lounge-tv-media-panel',
+  'lounge-tv-video-frame',
   'lobby-display-case',
 ];
 
 export const SCENE_HIT_REGION_LABELS: Record<SceneHitRegionId, string> = {
   'lounge-tv-baked': 'Blue — baked TV',
-  'lounge-tv-content-popup': 'Magenta — content pop-up',
+  'lounge-tv-content-popup': 'Magenta — content pop-up (glass)',
   'lounge-tv-play-tap': 'Green — play tap',
+  'lounge-tv-media-panel': 'Yellow — TV media panel (open)',
+  'lounge-tv-video-frame': 'Cyan — Watch+Learn video (open)',
   'lobby-display-case': 'Orange — display case',
 };
 
@@ -63,6 +79,10 @@ export function getDefaultSceneHitRegionConfig(id: SceneHitRegionId): SceneHitRe
         },
         layout: cloneLayout(LOUNGE_TV_PLAY_TAP_LAYOUT),
       };
+    case 'lounge-tv-media-panel':
+      return { layout: cloneLayout(LOUNGE_TV_MEDIA_PANEL_DEFAULT) };
+    case 'lounge-tv-video-frame':
+      return { layout: cloneLayout(LOUNGE_TV_VIDEO_FRAME_DEFAULT) };
     case 'lobby-display-case':
       return {
         coverOffset: { x: LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.x, y: LOBBY_DISPLAY_CASE_LAYOUT_OFFSET.y },

@@ -133,12 +133,12 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
   return (
     <>
       <SceneHitDebugBanner active={hitDebug}>
-        Lounge TV debug — blue baked TV, green play tap, magenta content pop-up. Display case: lobby
-        slide with <strong>?sceneHitDebug=1</strong>
+        Lounge TV — blue baked, green play tap, magenta glass. After play: yellow media panel, cyan video.
+        Lobby display case on shop slide. <strong>?sceneHitDebug=1</strong>
         {hitEdit ? (
           <>
             {' '}
-            + <strong>sceneHitEdit=1</strong> to drag/resize and Save.
+            + <strong>sceneHitEdit=1</strong> — drag/corner-resize, then Save (open TV to tune inner content).
           </>
         ) : null}
         .
@@ -158,7 +158,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
         />
       ) : null}
 
-      {hitDebug && contentPopupMapped ? (
+      {hitDebug && !tvOpen && contentPopupMapped ? (
         <SceneHitDebugOverlay
           regionId="lounge-tv-content-popup"
           rect={contentPopupMapped}

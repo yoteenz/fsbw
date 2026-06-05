@@ -5,6 +5,9 @@ import {
 } from './loungeTvAssets';
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
+import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
+import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
+import { loungeTvVideoMaxHeightStyle, loungeTvVideoShellStyle } from '../../utils/loungeTvInnerLayout';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const TIME_FONT = '"Futura PT Book", Futura, sans-serif';
@@ -50,6 +53,7 @@ function isSameOriginMediaUrl(url: string): boolean {
 }
 
 export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps) {
+  const videoFrameRegion = useSceneHitRegionConfig('lounge-tv-video-frame');
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -239,19 +243,31 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           minWidth: 0,
         }}
       >
-        <div
-          ref={shellRef}
+        <LoungeTvInnerLayoutEditor
+          regionId="lounge-tv-video-frame"
+          label="watch+learn video"
+          layout={videoFrameRegion.layout}
           style={{
             position: 'relative',
+            ...loungeTvVideoShellStyle(videoFrameRegion.layout),
             width: '100%',
-            maxHeight: `calc(${LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT}% + ${LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX}px)`,
+            maxHeight: loungeTvVideoMaxHeightStyle(
+              LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT,
+              LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+              videoFrameRegion.layout,
+            ),
             aspectRatio: '16 / 9',
             background: '#0a0a0a',
             overflow: 'hidden',
             cursor: 'pointer',
             flexShrink: 0,
           }}
+          debugOutline={{
+            backgroundColor: 'rgba(0, 188, 212, 0.15)',
+            border: '2px dashed rgba(0, 151, 167, 0.95)',
+          }}
         >
+          <div ref={shellRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
           <video
             ref={videoRef}
             src={videoSrc}
@@ -373,7 +389,8 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             <FullscreenExpandIcon />
           </button>
         ) : null}
-        </div>
+          </div>
+        </LoungeTvInnerLayoutEditor>
 
         <div
           style={{
