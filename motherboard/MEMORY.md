@@ -25450,3 +25450,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User required `/debug-mode` restricted to admin founder `kateenaarmstrong@gmail.com`; all other accounts (including other admins) redirect to homepage.
 
 **Changes:** `canAccessPageDebugMode()` in `adminAuth.ts`; `DebugModeShell` checks founder on load + `signInStateChanged`, clears debug session and redirects to `/home/shop` when unauthorized; `debugModeHref` skips suffix unless founder.
+
+---
+
+## 2026-06-04 — Page debug: founder preview on normal routes, Supabase sync, font presets
+
+**Context:** User asked to apply saved overrides on normal routes (founder-only) + Supabase cross-device sync; add Bohemy (lowercase only), Futura fonts, CBYG uppercase-only to text options.
+
+**Decisions / outcomes:**
+- **Founder preview:** `DebugModeApplier` applies saved page overrides on normal URLs (not `/debug-mode`) when signed in as founder — other users never see overrides.
+- **Supabase:** `app_config` key `page_debug_overrides`; `GET/PUT /api/admin/page-debug-config` (founder only). Save/Reset syncs cloud; `DebugModeFounderBootstrap` merges remote + local on sign-in.
+- **Fonts:** Bohemy → `textTransform: lowercase`; CBYG → `uppercase`; Futura Book/Medium/Demi unchanged casing.
+
+**Changes:** `api/admin/page-debug-config.ts`, `debugModeSync.ts`, `DebugModeApplier.tsx`, `DebugModeFounderBootstrap.tsx`, font presets in `debugMode.ts` + overlay buttons, `api.ts` client helpers.
