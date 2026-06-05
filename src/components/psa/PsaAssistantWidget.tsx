@@ -86,6 +86,7 @@ export default function PsaAssistantWidget() {
     threadList,
     historyOpen,
     historyArchivedView,
+    isLoadingThreadList,
     historyAvailable,
     sendMessage,
     usage,
@@ -457,6 +458,7 @@ export default function PsaAssistantWidget() {
               panelQuickReplies={panelQuickReplies}
               historyOpen={historyOpen}
               historyArchivedView={historyArchivedView}
+              isLoadingThreadList={isLoadingThreadList}
               historyAvailable={historyAvailable}
               threadList={threadList}
               activeThreadId={threadId}
