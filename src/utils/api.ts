@@ -388,6 +388,26 @@ export async function uploadProfileImage(imageDataUrl: string): Promise<{ profil
   return { profileImage: data.profileImage };
 }
 
+/** Admin: read page debug overrides from Supabase (founder session). */
+export async function getAdminPageDebugConfig(): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await apiFetch('/api/admin/page-debug-config');
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin founder: upsert full page debug store to Supabase. */
+export async function putAdminPageDebugConfig(config: Record<string, unknown>): Promise<void> {
+  const res = await apiFetch('/api/admin/page-debug-config', { method: 'PUT', body: config });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 /** Public read of admin special-offer card JSON (no auth). Used by concierge; returns null if missing or API unreachable. */
 export async function getSpecialOfferAdminConfig(): Promise<Record<string, unknown> | null> {
   const base = API_BASE.replace(/\/$/, '');

@@ -15,7 +15,8 @@ export const DEBUG_FONT_PRESETS = {
   futuraBook: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
   futuraMedium: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
   futuraDemi: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif',
-  coveredGrace: '"Covered By Your Grace", cursive',
+  bohemy: '"Bohemy", cursive',
+  cbyg: '"Covered By Your Grace", cursive',
 } as const;
 
 export type DebugFontPresetId = keyof typeof DEBUG_FONT_PRESETS;
@@ -39,6 +40,27 @@ export type DebugElementOverride = {
   translateX?: number;
   translateY?: number;
 };
+
+/** Font picker options — Bohemy forces lowercase; CBYG forces uppercase. */
+export const DEBUG_FONT_PRESET_OPTIONS: {
+  id: DebugFontPresetId;
+  label: string;
+  textTransform?: 'lowercase' | 'uppercase';
+}[] = [
+  { id: 'futuraBook', label: 'Futura Book' },
+  { id: 'futuraMedium', label: 'Futura Medium' },
+  { id: 'futuraDemi', label: 'Futura Demi' },
+  { id: 'bohemy', label: 'Bohemy', textTransform: 'lowercase' },
+  { id: 'cbyg', label: 'CBYG', textTransform: 'uppercase' },
+];
+
+export function debugFontPresetPatch(id: DebugFontPresetId): Pick<DebugElementOverride, 'fontFamily' | 'textTransform'> {
+  const option = DEBUG_FONT_PRESET_OPTIONS.find((o) => o.id === id);
+  return {
+    fontFamily: DEBUG_FONT_PRESETS[id],
+    ...(option?.textTransform ? { textTransform: option.textTransform } : {}),
+  };
+}
 
 export type DebugPageConfig = {
   updatedAt: number;
