@@ -43,8 +43,10 @@ export function wigPlacementFromLandmarks(
   const faceH = Math.abs(chin.y - forehead.y) * canvasH;
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const cx = ((left.x + right.x) / 2) * canvasW;
-  const cy = forehead.y * canvasH - faceH * 0.35;
-  const width = Math.max(faceW * 1.55, faceH * 0.95);
+  /** Anchor lace hairline to tracked forehead (not above it). */
+  const cy = forehead.y * canvasH;
+  /** Must exceed face width so hair frames the face; small scale + face-hole = fragment patches. */
+  const width = Math.max(faceW * 3.05, faceH * 2.45, canvasW * 0.78);
   const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
 
   return { cx, cy, width, rotationRad };
@@ -69,7 +71,7 @@ export function faceOvalFromLandmarks(
   return {
     cx,
     cy,
-    rx: Math.max(12, faceW * 0.46),
-    ry: Math.max(14, faceH * 0.52),
+    rx: Math.max(12, faceW * 0.4),
+    ry: Math.max(14, faceH * 0.44),
   };
 }
