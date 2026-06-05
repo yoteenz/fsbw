@@ -25534,3 +25534,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - Background **`refreshThreadList`** (after send/archive) still updates silently without loading flash when history is closed.
 
 **Changes:** `src/components/psa/usePsaChat.ts`, `PsaChatPanel.tsx`, `PsaAssistantWidget.tsx`. Pushed **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — PSA history card titles: QUICK REPLY + 4-word topics
+
+**Context:** User wanted chat history **black header** text: **QUICK REPLY** when the thread started from a starter chip; otherwise a **≤4-word** topic summation (e.g. jet black vs off black for noir → **NOIR COLOR COMPARISON**), not the full first message.
+
+**Decisions / outcomes:**
+- **`psaHistoryCardTitle`** in **`psaThreadHistoryDisplay.ts`** — shared for active + archived lists; **`psaTopicTitleFromUserMessage`** heuristics (unit names, color/comparison, orders, booking, etc.).
+- Manual **rename** still respected via **`psaShortTopicSummary`** (4 words max); auto DB title from first message is not treated as a custom rename.
+- Gray preview row unchanged (full first user line, uppercase).
+
+**Changes:** `psaThreadHistoryDisplay.ts`, `PsaChatPanel.tsx`.
