@@ -84,8 +84,8 @@ export const FINAL_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
 
 /** Production + QA — blue baked TV (QA + anchor). */
 export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
-  layoutOffsetX: 18,
-  layoutOffsetY: 220,
+  layoutOffsetX: 8,
+  layoutOffsetY: 260,
   layoutHeightExtraPx: -80,
 } as const;
 
