@@ -25508,3 +25508,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **Resize UX:** Removed corner white handle boxes everywhere scene hits resize — **`SceneHitDebugOverlay`**, **`LoungeTvInnerLayoutEditor`**, **`GlobalOverlayDebugRegion`**. Invisible **10px border strips** (N/S/E/W) for edge resize; center drag still moves. Shared helpers in **`sceneHitLayoutEditorGestures.ts`**.
 
 **Changes:** `LobbyDisplayCaseShell.tsx`, `sceneHitRegionDefaults.ts`, `SceneHitDebugOverlay.tsx`, `LoungeTvInnerLayoutEditor.tsx`, `GlobalOverlayDebugRegion.tsx`, `sceneHitLayoutEditorGestures.ts`, editor panel copy.
+
+---
+
+## 2026-06-04 — Tap-to-select before edit (scene hits, page debug, global overlays)
+
+**Context:** User asked what happens after saving colored square edits, and reported debug/edit mode was too sensitive — accidental shifts when browsing. Requested: nothing editable until tapping a specific item to enter edit mode for that item only.
+
+**Decisions / outcomes:**
+- **After Save (scene hits):** Layout writes to `localStorage` (`baw_scene_hit_layout_overrides`) and applies **immediately** to real tap targets (shelves, display case register/phone, lounge TV). Colored QA squares can be hidden by removing `?sceneHitDebug=1`; saved layout persists. **Reset** restores code defaults.
+- **Tap-to-select:** Scene hit squares + lounge TV inner regions — first tap **selects** (red dashed outline); drag/edge resize only on **selected** square. Page `/debug-mode` — first tap selects element; **second** interaction on same element allows drag nudge. Global overlays (cart/currency) — tap Edit in panel to open overlay, then **tap anchor/shell region** to select before moving.
+- Scene hit panel shows **Editing: …** label, **Deselect** button, and post-save instructions.
+
+**Changes:** `SceneHitLayoutEditorContext.tsx`, `SceneHitDebugOverlay.tsx`, `LoungeTvInnerLayoutEditor.tsx`, `DebugModeDomController.tsx`, `GlobalOverlayDebugContext.tsx`, `GlobalOverlayDebugRegion.tsx`, `SceneHitLayoutEditorPanel.tsx`, `DebugModeOverlay.tsx`.
