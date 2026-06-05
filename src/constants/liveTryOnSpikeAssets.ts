@@ -1,8 +1,15 @@
 /** Must match `LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT` in `api/_lib/liveTryOnOverlay.ts`. */
-export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v4-on-model';
+export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v5-photo-woman';
+
+export type LiveTryOnPhotoModel = 'nbp' | 'gpt2';
+
+export const LIVE_TRY_ON_PHOTO_MODEL_LABELS: Record<LiveTryOnPhotoModel, string> = {
+  nbp: 'NBP',
+  gpt2: 'GPT IMAGE 2',
+};
 
 /**
- * Legacy spike URLs (full mannequin — do not use for live camera try-on).
+ * Legacy spike URLs (full mannequin — not used for live camera try-on).
  */
 export type LiveTryOnWigView = 'left' | 'front' | 'right';
 

@@ -1,46 +1,42 @@
 /**
- * Bump when isolation prompt/pipeline changes (invalidates bad cached full-mannequin PNGs).
+ * Bump when photoreal / isolation prompt or path layout changes.
  * Must match `LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT` in `src/constants/liveTryOnSpikeAssets.ts`.
  */
-export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v4-on-model';
+export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v5-photo-woman';
 
 export type LiveTryOnAngle = 'left' | 'front' | 'right';
 
-/** After NBP: true alpha PNG (PSA stack). */
+export type LiveTryOnPhotoModel = 'nbp' | 'gpt2';
+
+export const LIVE_TRY_ON_PHOTO_MODELS: LiveTryOnPhotoModel[] = ['nbp', 'gpt2'];
+
+export const LIVE_TRY_ON_FAL_NBP_EDIT = 'fal-ai/nano-banana-pro/edit';
+export const LIVE_TRY_ON_FAL_GPT2_EDIT = 'openai/gpt-image-2/edit';
+
+/** After NBP isolation pass: true alpha PNG (PSA stack). */
 export const LIVE_TRY_ON_IDEOGRAM_MODEL = 'fal-ai/ideogram/remove-background';
 
-function appOrigin(): string {
-  const explicit = (process.env.WIG_PREVIEW_PUBLIC_APP_ORIGIN || process.env.SITE_URL || '').trim().replace(
-    /\/$/,
-    ''
-  );
-  return explicit || 'https://www.frontalslayer.com';
+/** Active model for live camera overlay after you pick a winner (`nbp` | `gpt2`). */
+export function activeLiveTryOnPhotoModel(): LiveTryOnPhotoModel {
+  const raw = (process.env.WIG_PREVIEW_TRYON_PHOTO_MODEL || 'nbp').trim().toLowerCase();
+  return raw === 'gpt2' || raw === 'gpt' || raw === 'gpt-image-2' ? 'gpt2' : 'nbp';
 }
 
-/**
- * On-model try-on references (real person wearing the unit), **not** gray-brick mannequins.
- * Set `WIG_PREVIEW_TRYON_MODEL_{LEFT|FRONT|RIGHT}_URL` per angle; until then all angles use
- * `client-photo.png` (NOIR PDP on-model shot).
- */
-export function liveTryOnOnModelReferenceUrl(angle: LiveTryOnAngle): string {
-  const origin = appOrigin();
-  const defaultFront = `${origin}/assets/NOIR/client-photo.png`;
-  const byAngle: Record<LiveTryOnAngle, string | undefined> = {
-    front: process.env.WIG_PREVIEW_TRYON_MODEL_FRONT_URL?.trim(),
-    left: process.env.WIG_PREVIEW_TRYON_MODEL_LEFT_URL?.trim(),
-    right: process.env.WIG_PREVIEW_TRYON_MODEL_RIGHT_URL?.trim(),
-  };
-  return byAngle[angle] || defaultFront;
+export function parseLiveTryOnPhotoModel(value: string | undefined): LiveTryOnPhotoModel | null {
+  const v = String(value || '').trim().toLowerCase();
+  if (v === 'nbp' || v === 'nano-banana' || v === 'nano-banana-pro') return 'nbp';
+  if (v === 'gpt2' || v === 'gpt' || v === 'gpt-image-2') return 'gpt2';
+  return null;
 }
 
 function angleConstraint(angle: LiveTryOnAngle): string {
   if (angle === 'left') {
-    return 'Keep a **left 3/4** head turn: hair mass toward the viewer’s right; same framing as the reference.';
+    return 'Camera: **left 3/4** portrait. Hair mass toward the viewer’s right; **same part direction and shoulder bias** as the mannequin reference — do not mirror.';
   }
   if (angle === 'right') {
-    return 'Keep a **right 3/4** head turn: hair mass toward the viewer’s left; same framing as the reference.';
+    return 'Camera: **right 3/4** portrait. Hair mass toward the viewer’s left; **same part direction and shoulder bias** as the mannequin reference — do not mirror or rotate to front.';
   }
-  return 'Keep a **front** view: same head pose and framing as the reference.';
+  return 'Camera: **front** portrait. **Exact** center part line, length, volume, and one-sided shoulder sweep from the mannequin reference — do not symmetrically mirror hair.';
 }
 
 function isJetBlackOffBlack(label: string, hex: string): boolean {
@@ -50,60 +46,112 @@ function isJetBlackOffBlack(label: string, hex: string): boolean {
   return l.includes('jet black') || l.includes('off black');
 }
 
-/** Step 1: recolor hair on the on-model photo; preserve face, skin, outfit, background. */
-export function buildLiveTryOnOnModelRecolorPrompt(
+/**
+ * **Same prompt** for NBP and GPT Image 2 — mannequin color WebP in `image_urls[0]`.
+ * Output: photorealistic woman wearing the same wig (color, length, part, silhouette).
+ */
+export function buildLiveTryOnPhotorealWomanPrompt(
   label: string,
   hex: string,
   angle: LiveTryOnAngle
 ): string {
   const nearBlack = isJetBlackOffBlack(label, hex);
-  const recolorLead = nearBlack
-    ? `Match the model’s wig hair to **${label}** at hex **#${hex}** — lock silhouette, part, length, and volume; only normalize tone/sheen. Do **not** restyle or change which side hair falls.`
-    : `Change **only** the wig hair color to **${label}** (hex **#${hex}**) so it looks like authentically dyed salon hair — not a flat CGI tint.`;
+  const colorLine = nearBlack
+    ? `Wig hair color **${label}** (hex **#${hex}**) — match the reference silhouette; normalize tone/sheen only.`
+    : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
   return [
-    'You are editing a **real person** product photo for AR wig try-on.',
-    recolorLead,
+    'Use the attached **mannequin wig reference** as the **only** source for hairstyle geometry.',
+    'Create a **photorealistic** portrait of a beautiful woman wearing that **exact** lace-front wig:',
+    colorLine,
     angleConstraint(angle),
-    '**Preserve exactly:** face, skin, eyes, ears, neck, shoulders, clothing, jewelry, background, lighting, and camera perspective.',
-    'Do **not** add mannequins, busts, stands, logos, or gray studio bricks.',
-    'Do **not** blur, beautify, or replace the person’s identity.',
-    'Hair should remain the same cut, length, curl, and part as the reference.',
+    'Match **length, density, curl pattern, part, layers, and volume** from the mannequin — not a new cut.',
+    '**Delete from output:** mannequin bust, gray skin, stand, FRONTAL SLAYER logo, bricks, studio props.',
+    'Woman: natural skin, realistic eyes, soft beauty lighting, neutral blurred studio background, head and shoulders.',
+    'No text, no watermark, no extra jewelry unless subtle and realistic.',
+    'Ultra sharp, photographic — not illustration or 3D render.',
   ].join(' ');
 }
 
-/**
- * Step 2: extract hair + lace only from the recolored on-model shot (white backdrop for Ideogram).
- */
+/** Extract hair + lace from photoreal portrait (white backdrop → Ideogram). */
 export const LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT = [
   'Cut out **only** the lace-front wig for AR overlay — NOT a portrait.',
-  'DELETE COMPLETELY: face, skin, eyes, ears, neck, shoulders, chest, clothing, hands, background, studio props.',
-  'OUTPUT: ONLY the hair unit and visible lace band — floating alone on solid flat #FFFFFF.',
+  'DELETE COMPLETELY: face, skin, eyes, ears, neck, shoulders, chest, clothing, hands, background.',
+  'OUTPUT: ONLY the hair unit and visible lace band on solid flat #FFFFFF.',
   'KEEP: exact hair color, length, curl, part, volume, and silhouette from the reference.',
   'ZERO pixels of human skin or facial features may remain.',
 ].join(' ');
+
+export function liveTryOnPortraitStoragePath(
+  promptVersion: string,
+  unitKey: string,
+  manifestHash: string,
+  photoModel: LiveTryOnPhotoModel,
+  angle: LiveTryOnAngle
+): string {
+  const u = String(unitKey || 'NOIR').toUpperCase();
+  return `try-on-portrait/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${promptVersion}/${u}/${manifestHash}/${photoModel}/${angle}.webp`;
+}
 
 export function liveTryOnOverlayStoragePath(
   promptVersion: string,
   unitKey: string,
   manifestHash: string,
+  photoModel: LiveTryOnPhotoModel,
   angle: LiveTryOnAngle
 ): string {
   const u = String(unitKey || 'NOIR').toUpperCase();
-  return `try-on-overlay/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${promptVersion}/${u}/${manifestHash}/${angle}.png`;
+  return `try-on-overlay/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${promptVersion}/${u}/${manifestHash}/${photoModel}/${angle}.png`;
 }
 
+export type LiveTryOnAngleUrls = { left: string; front: string; right: string };
+
+export function liveTryOnOverlayPublicUrlsForModel(
+  supabaseUrl: string,
+  bucket: string,
+  promptVersion: string,
+  unitKey: string,
+  manifestHash: string,
+  photoModel: LiveTryOnPhotoModel
+): LiveTryOnAngleUrls {
+  const base = `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${bucket}`;
+  const mk = (angle: LiveTryOnAngle) =>
+    `${base}/${liveTryOnOverlayStoragePath(promptVersion, unitKey, manifestHash, photoModel, angle)}`;
+  return { left: mk('left'), front: mk('front'), right: mk('right') };
+}
+
+export function liveTryOnPortraitPublicUrlsForModel(
+  supabaseUrl: string,
+  bucket: string,
+  promptVersion: string,
+  unitKey: string,
+  manifestHash: string,
+  photoModel: LiveTryOnPhotoModel
+): LiveTryOnAngleUrls {
+  const base = `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${bucket}`;
+  const mk = (angle: LiveTryOnAngle) =>
+    `${base}/${liveTryOnPortraitStoragePath(promptVersion, unitKey, manifestHash, photoModel, angle)}`;
+  return { left: mk('left'), front: mk('front'), right: mk('right') };
+}
+
+/** Overlays for the model selected via `WIG_PREVIEW_TRYON_PHOTO_MODEL`. */
 export function liveTryOnOverlayPublicUrls(
   supabaseUrl: string,
   bucket: string,
   promptVersion: string,
   unitKey: string,
   manifestHash: string
-): { left: string; front: string; right: string } {
-  const base = `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${bucket}`;
-  return {
-    left: `${base}/${liveTryOnOverlayStoragePath(promptVersion, unitKey, manifestHash, 'left')}`,
-    front: `${base}/${liveTryOnOverlayStoragePath(promptVersion, unitKey, manifestHash, 'front')}`,
-    right: `${base}/${liveTryOnOverlayStoragePath(promptVersion, unitKey, manifestHash, 'right')}`,
-  };
+): LiveTryOnAngleUrls {
+  return liveTryOnOverlayPublicUrlsForModel(
+    supabaseUrl,
+    bucket,
+    promptVersion,
+    unitKey,
+    manifestHash,
+    activeLiveTryOnPhotoModel()
+  );
+}
+
+export function falEditModelId(photoModel: LiveTryOnPhotoModel): string {
+  return photoModel === 'gpt2' ? LIVE_TRY_ON_FAL_GPT2_EDIT : LIVE_TRY_ON_FAL_NBP_EDIT;
 }

@@ -1,8 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import LiveTryOnModelCompareBar from '../../../components/liveTryOn/LiveTryOnModelCompareBar';
 import LiveTryOnViewport from '../../../components/liveTryOn/LiveTryOnViewport';
+import type { LiveTryOnPhotoModel } from '../../../constants/liveTryOnSpikeAssets';
 import { getConsultQuote } from '../../../utils/api';
 import { consultSelectionsToSpecialOfferOptions } from '../../../utils/consultOfferFromQuote';
+import {
+  parseLiveTryOnPhotoModelParam,
+  readLiveTryOnPhotoModelPreference,
+  writeLiveTryOnPhotoModelPreference,
+} from '../../../utils/liveTryOnPhotoModel';
+import type { LiveTryOnCompareBundles } from '../../../utils/liveTryOnPrepareAssets';
 import {
   prepareLiveTryOnAssetsFromBaw,
   prepareLiveTryOnAssetsFromConsult,
@@ -15,8 +23,15 @@ export default function LiveTryOnPage() {
   const returnTo = searchParams.get('returnTo') || '';
   const quoteId = searchParams.get('quoteId') || '';
 
+  const initialPhotoModel = useMemo(() => {
+    const fromQuery = parseLiveTryOnPhotoModelParam(searchParams.get('tryonModel'));
+    return fromQuery ?? readLiveTryOnPhotoModelPreference();
+  }, [searchParams]);
+
+  const [photoModel, setPhotoModel] = useState<LiveTryOnPhotoModel>(initialPhotoModel);
   const [prepHint, setPrepHint] = useState('LOADING YOUR SELECTIONS…');
   const [wigUrls, setWigUrls] = useState<[string, string, string] | null>(null);
+  const [compare, setCompare] = useState<LiveTryOnCompareBundles | undefined>();
   const [prepError, setPrepError] = useState<string | null>(null);
 
   const backTarget = useMemo(() => {
@@ -24,11 +39,22 @@ export default function LiveTryOnPage() {
     return '/build-a-wig';
   }, [returnTo]);
 
+  const applyPhotoModel = useCallback(
+    (model: LiveTryOnPhotoModel, bundles?: LiveTryOnCompareBundles) => {
+      setPhotoModel(model);
+      writeLiveTryOnPhotoModelPreference(model);
+      const overlays = bundles?.overlays?.[model];
+      if (overlays) setWigUrls(overlays);
+    },
+    []
+  );
+
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       try {
+        setPrepError(null);
         if (quoteId) {
           setPrepHint('LOADING CONSULT OFFER…');
           const res = await getConsultQuote(quoteId);
@@ -40,19 +66,28 @@ export default function LiveTryOnPage() {
           }
           const unitKey = String(quote.unit_key || 'NOIR');
           const selections = consultSelectionsToSpecialOfferOptions(quote.selections);
-          const prepared = await prepareLiveTryOnAssetsFromConsult(unitKey, selections, (msg) => {
-            if (!cancelled) setPrepHint(msg);
-          });
+          const prepared = await prepareLiveTryOnAssetsFromConsult(
+            unitKey,
+            selections,
+            photoModel,
+            (msg) => {
+              if (!cancelled) setPrepHint(msg);
+            }
+          );
           if (cancelled) return;
+          setCompare(prepared.compare);
+          applyPhotoModel(prepared.activePhotoModel, prepared.compare);
           setWigUrls(prepared.overlayUrls);
           setPrepHint('');
           return;
         }
 
-        const prepared = await prepareLiveTryOnAssetsFromBaw(location.pathname, (msg) => {
+        const prepared = await prepareLiveTryOnAssetsFromBaw(location.pathname, photoModel, (msg) => {
           if (!cancelled) setPrepHint(msg);
         });
         if (cancelled) return;
+        setCompare(prepared.compare);
+        applyPhotoModel(prepared.activePhotoModel, prepared.compare);
         setWigUrls(prepared.overlayUrls);
         setPrepHint('');
       } catch (e) {
@@ -66,7 +101,12 @@ export default function LiveTryOnPage() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- prep runs once per mount / quote; model switch uses cached compare
   }, [quoteId, location.pathname]);
+
+  const handleSelectModel = (model: LiveTryOnPhotoModel) => {
+    applyPhotoModel(model, compare);
+  };
 
   return (
     <div
@@ -97,8 +137,8 @@ export default function LiveTryOnPage() {
           className="text-center uppercase max-w-sm"
           style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
         >
-          POSITION YOUR FACE IN THE OVAL. TURN YOUR HEAD SLOWLY — THE WIG FOLLOWS YOUR ANGLE. MATCHES YOUR BUILD OR
-          CONSULT SELECTIONS WHEN ONLINE.
+          POSITION YOUR FACE IN THE OVAL. TURN YOUR HEAD SLOWLY — THE WIG FOLLOWS YOUR ANGLE. HAIR IS BUILT FROM YOUR
+          COLOR ON A PHOTOREAL MODEL (NOT THE GREY MANNEQUIN).
         </p>
         {prepHint ? (
           <p
@@ -115,6 +155,9 @@ export default function LiveTryOnPage() {
           >
             {prepError}
           </p>
+        ) : null}
+        {compare ? (
+          <LiveTryOnModelCompareBar activeModel={photoModel} compare={compare} onSelectModel={handleSelectModel} />
         ) : null}
         <div className="w-full max-w-md">
           {wigUrls ? (

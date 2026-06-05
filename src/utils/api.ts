@@ -1518,6 +1518,15 @@ export type LiveTryOnEnsureOverlaysResult = {
   generated: string[];
   skipped: string[];
   missingColor: string[];
+  activeModel?: 'nbp' | 'gpt2';
+  comparePortraits?: {
+    nbp?: { left: string | null; front: string | null; right: string | null };
+    gpt2?: { left: string | null; front: string | null; right: string | null };
+  };
+  compareOverlays?: {
+    nbp?: { left: string | null; front: string | null; right: string | null };
+    gpt2?: { left: string | null; front: string | null; right: string | null };
+  };
   publicUrls: { left: string | null; front: string | null; right: string | null };
   selections: Record<string, unknown>;
 };

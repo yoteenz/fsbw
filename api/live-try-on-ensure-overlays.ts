@@ -7,16 +7,26 @@ import { Jimp } from 'jimp';
 import { getAuthUser } from './_lib/auth.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
-  buildLiveTryOnOnModelRecolorPrompt,
+  activeLiveTryOnPhotoModel,
+  buildLiveTryOnPhotorealWomanPrompt,
+  falEditModelId,
+  LIVE_TRY_ON_FAL_NBP_EDIT,
   LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
   LIVE_TRY_ON_IDEOGRAM_MODEL,
-  liveTryOnOnModelReferenceUrl,
+  LIVE_TRY_ON_PHOTO_MODELS,
   liveTryOnOverlayPublicUrls,
+  liveTryOnOverlayPublicUrlsForModel,
   liveTryOnOverlayStoragePath,
+  liveTryOnPortraitPublicUrlsForModel,
+  liveTryOnPortraitStoragePath,
+  parseLiveTryOnPhotoModel,
   type LiveTryOnAngle,
+  type LiveTryOnAngleUrls,
+  type LiveTryOnPhotoModel,
 } from './_lib/liveTryOnOverlay.js';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
+  wigPreviewLiveAnglePaths,
   wigPreviewManifestHashLiveColorTier,
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash.js';
@@ -33,6 +43,10 @@ type Body = {
   addOns?: string[];
   angle?: 'left' | 'front' | 'right';
   forceRegenerate?: boolean;
+  /** When true (default), run **both** NBP + GPT2 with the same prompt for side-by-side compare. */
+  compareModels?: boolean;
+  /** Generate only this model (`nbp` | `gpt2`). Ignored when `compareModels` is true. */
+  photoModel?: string;
 };
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
@@ -71,10 +85,30 @@ function readOptionalAngle(body: Body): LiveTryOnAngle | null {
   return null;
 }
 
+function readBool(body: Body, key: keyof Body, fallback: boolean): boolean {
+  const v = body[key];
+  if (v === true) return true;
+  if (v === false) return false;
+  if (typeof v === 'string') {
+    const s = v.trim().toLowerCase();
+    if (s === '1' || s === 'true' || s === 'yes') return true;
+    if (s === '0' || s === 'false' || s === 'no') return false;
+  }
+  return fallback;
+}
+
 function readFalResolution(): '1K' | '2K' | '4K' {
   const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '2K').trim().toUpperCase();
   if (r === '1K' || r === '2K' || r === '4K') return r;
   return '2K';
+}
+
+function modelsToGenerate(body: Body): LiveTryOnPhotoModel[] {
+  const envCompareOff = (process.env.WIG_PREVIEW_TRYON_COMPARE_BOTH || 'true').trim().toLowerCase() === 'false';
+  const compare = readBool(body, 'compareModels', !envCompareOff);
+  if (compare) return [...LIVE_TRY_ON_PHOTO_MODELS];
+  const single = parseLiveTryOnPhotoModel(readString(body, 'photoModel', '')) || activeLiveTryOnPhotoModel();
+  return [single];
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -90,7 +124,10 @@ function extractFalImageUrl(result: unknown): string | null {
   return (result as { data?: { image?: { url?: string } } })?.data?.image?.url ?? null;
 }
 
-/** Reject full-mannequin or opaque-face overlays before caching. */
+type FalClient = {
+  subscribe: (model: string, opts: { input: Record<string, unknown>; logs: boolean }) => Promise<unknown>;
+};
+
 export async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
   const img = await Jimp.read(buf);
   const w = img.width;
@@ -108,7 +145,7 @@ export async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
   const bustAlpha = sample(0.5, 0.72);
 
   if (faceAlpha > 90 && hairAlpha > 90) {
-    throw new Error('overlay still contains an opaque face (mannequin or portrait)');
+    throw new Error('overlay still contains an opaque face');
   }
   if (bustAlpha > 120 && hairAlpha > 120) {
     throw new Error('overlay still contains shoulders or bust');
@@ -118,32 +155,56 @@ export async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
   }
 }
 
-/** On-model recolor → hair-on-white → Ideogram alpha. */
-async function generateHairOnlyOverlayPng(
-  fal: { subscribe: (model: string, opts: { input: Record<string, unknown>; logs: boolean }) => Promise<unknown> },
-  modelRefUrl: string,
-  recolorPrompt: string
+/** Same prompt → NBP or GPT Image 2 edit from mannequin color WebP. */
+async function generatePhotorealPortrait(
+  fal: FalClient,
+  photoModel: LiveTryOnPhotoModel,
+  mannequinColorUrl: string,
+  prompt: string
 ): Promise<Buffer> {
+  const falModel = falEditModelId(photoModel);
   const resolution = readFalResolution();
 
-  const recolorResult = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
+  if (photoModel === 'gpt2') {
+    const result = await fal.subscribe(falModel, {
+      input: {
+        prompt,
+        image_urls: [mannequinColorUrl],
+        image_size: 'auto',
+        quality: 'medium',
+        output_format: 'webp',
+        num_images: 1,
+      },
+      logs: false,
+    });
+    const url = extractFalImageUrl(result);
+    if (!url) throw new Error('fal: no GPT Image 2 portrait URL');
+    return downloadUrlToBuffer(url);
+  }
+
+  const result = await fal.subscribe(falModel, {
     input: {
-      prompt: recolorPrompt,
-      image_urls: [modelRefUrl],
+      prompt,
+      image_urls: [mannequinColorUrl],
       aspect_ratio: 'auto',
       resolution,
-      output_format: 'png',
+      output_format: 'webp',
       num_images: 1,
     },
     logs: false,
   });
-  const recolorUrl = extractFalImageUrl(recolorResult);
-  if (!recolorUrl) throw new Error('fal: no on-model recolor URL');
+  const url = extractFalImageUrl(result);
+  if (!url) throw new Error('fal: no NBP portrait URL');
+  return downloadUrlToBuffer(url);
+}
 
-  const nbpResult = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
+async function generateHairOnlyOverlayFromPortrait(fal: FalClient, portraitUrl: string): Promise<Buffer> {
+  const resolution = readFalResolution();
+
+  const nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
     input: {
       prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
-      image_urls: [recolorUrl],
+      image_urls: [portraitUrl],
       aspect_ratio: 'auto',
       resolution,
       output_format: 'png',
@@ -152,7 +213,7 @@ async function generateHairOnlyOverlayPng(
     logs: false,
   });
   const nbpUrl = extractFalImageUrl(nbpResult);
-  if (!nbpUrl) throw new Error('fal: no NBP hair isolation URL');
+  if (!nbpUrl) throw new Error('fal: no hair isolation URL');
 
   const cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
     input: { image_url: nbpUrl },
@@ -164,6 +225,15 @@ async function generateHairOnlyOverlayPng(
   const buf = await downloadUrlToBuffer(cutUrl);
   await validateHairOnlyOverlayPng(buf);
   return buf;
+}
+
+async function storageObjectExists(
+  supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
+  bucket: string,
+  path: string
+): Promise<boolean> {
+  const { error } = await supabase.storage.from(bucket).download(path);
+  return !error;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -219,9 +289,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   };
 
   const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
+  const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
   const singleAngle = readOptionalAngle(body);
   const forceRegenerate = body.forceRegenerate === true;
   const angles: LiveTryOnAngle[] = singleAngle ? [singleAngle] : ['left', 'front', 'right'];
+  const photoModels = modelsToGenerate(body);
+  const activeModel = activeLiveTryOnPhotoModel();
 
   let supabase;
   try {
@@ -233,49 +306,124 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const generated: string[] = [];
   const skipped: string[] = [];
-  const failed: Array<{ angle: LiveTryOnAngle; error: string }> = [];
+  const missingColor: string[] = [];
+  const failed: Array<{ angle: LiveTryOnAngle; photoModel?: LiveTryOnPhotoModel; error: string }> = [];
+
+  const comparePortraits: Partial<Record<LiveTryOnPhotoModel, LiveTryOnAngleUrls>> = {};
+  const compareOverlays: Partial<Record<LiveTryOnPhotoModel, LiveTryOnAngleUrls>> = {};
+
+  if (supabaseUrl) {
+    for (const pm of LIVE_TRY_ON_PHOTO_MODELS) {
+      comparePortraits[pm] = liveTryOnPortraitPublicUrlsForModel(
+        supabaseUrl,
+        bucket,
+        promptVersion,
+        unitKey,
+        manifestHash,
+        pm
+      );
+      compareOverlays[pm] = liveTryOnOverlayPublicUrlsForModel(
+        supabaseUrl,
+        bucket,
+        promptVersion,
+        unitKey,
+        manifestHash,
+        pm
+      );
+    }
+  }
 
   try {
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
 
     for (const angle of angles) {
-      const overlayPath = liveTryOnOverlayStoragePath(promptVersion, unitKey, manifestHash, angle);
-      if (!forceRegenerate) {
-        const { error: dlOverlay } = await supabase.storage.from(bucket).download(overlayPath);
-        if (!dlOverlay) {
-          skipped.push(angle);
-          continue;
-        }
+      const colorPath = colorPaths[angle];
+      const { error: dlColor } = await supabase.storage.from(bucket).download(colorPath);
+      if (dlColor) {
+        missingColor.push(angle);
+        continue;
       }
 
-      const modelRefUrl = liveTryOnOnModelReferenceUrl(angle);
-      const recolorPrompt = buildLiveTryOnOnModelRecolorPrompt(catalog.label, catalog.hex, angle);
+      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+      const mannequinUrl = pubColor?.publicUrl;
+      if (!mannequinUrl) {
+        missingColor.push(angle);
+        continue;
+      }
 
-      try {
-        const buf = await generateHairOnlyOverlayPng(fal, modelRefUrl, recolorPrompt);
-        const { error: upErr } = await supabase.storage.from(bucket).upload(overlayPath, buf, {
-          contentType: 'image/png',
-          upsert: true,
-        });
-        if (upErr) throw new Error(`upload ${overlayPath}: ${upErr.message}`);
-        generated.push(angle);
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : 'generation failed';
-        failed.push({ angle, error: msg });
+      const womanPrompt = buildLiveTryOnPhotorealWomanPrompt(catalog.label, catalog.hex, angle);
+
+      for (const photoModel of photoModels) {
+        const portraitPath = liveTryOnPortraitStoragePath(
+          promptVersion,
+          unitKey,
+          manifestHash,
+          photoModel,
+          angle
+        );
+        const overlayPath = liveTryOnOverlayStoragePath(
+          promptVersion,
+          unitKey,
+          manifestHash,
+          photoModel,
+          angle
+        );
+
+        if (!forceRegenerate) {
+          const hasOverlay = await storageObjectExists(supabase, bucket, overlayPath);
+          if (hasOverlay) {
+            skipped.push(`${photoModel}:${angle}`);
+            continue;
+          }
+        }
+
+        try {
+          let portraitBuf: Buffer | null = null;
+          if (!forceRegenerate) {
+            const hasPortrait = await storageObjectExists(supabase, bucket, portraitPath);
+            if (hasPortrait) {
+              const { data, error } = await supabase.storage.from(bucket).download(portraitPath);
+              if (!error && data) portraitBuf = Buffer.from(await data.arrayBuffer());
+            }
+          }
+
+          if (!portraitBuf) {
+            portraitBuf = await generatePhotorealPortrait(fal, photoModel, mannequinUrl, womanPrompt);
+            const { error: upPortrait } = await supabase.storage.from(bucket).upload(portraitPath, portraitBuf, {
+              contentType: 'image/webp',
+              upsert: true,
+            });
+            if (upPortrait) throw new Error(`upload portrait: ${upPortrait.message}`);
+          }
+
+          const { data: pubPortrait } = supabase.storage.from(bucket).getPublicUrl(portraitPath);
+          const portraitUrlForFal = pubPortrait?.publicUrl
+            ? `${pubPortrait.publicUrl}?t=${Date.now()}`
+            : '';
+          if (!portraitUrlForFal) throw new Error('portrait public URL missing');
+
+          const overlayBuf = await generateHairOnlyOverlayFromPortrait(fal, portraitUrlForFal);
+          const { error: upOverlay } = await supabase.storage.from(bucket).upload(overlayPath, overlayBuf, {
+            contentType: 'image/png',
+            upsert: true,
+          });
+          if (upOverlay) throw new Error(`upload overlay: ${upOverlay.message}`);
+
+          generated.push(`${photoModel}:${angle}`);
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : 'generation failed';
+          failed.push({ angle, photoModel, error: msg });
+        }
       }
     }
 
-    if (generated.length === 0 && skipped.length === 0 && failed.length > 0) {
-      sendJson(res, 500, {
-        error: 'TRYON_OVERLAY_FAILED',
-        failed,
+    if (missingColor.length > 0 && generated.length === 0 && skipped.length === 0) {
+      sendJson(res, 409, {
+        error: 'COLOR_PREVIEW_MISSING',
+        missingColor,
         manifestHash,
-        modelRefs: {
-          left: liveTryOnOnModelReferenceUrl('left'),
-          front: liveTryOnOnModelReferenceUrl('front'),
-          right: liveTryOnOnModelReferenceUrl('right'),
-        },
+        colorPaths,
       });
       return;
     }
@@ -290,11 +438,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       manifestHash,
       unitKey,
       bucket,
-      pipeline: LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT,
+      pipeline: 'hair-v5-photo-woman',
+      activeModel,
+      photoModelsGenerated: photoModels,
+      womanPromptSample: buildLiveTryOnPhotorealWomanPrompt(catalog.label, catalog.hex, 'front'),
       generated,
       skipped,
+      missingColor,
       failed,
       publicUrls,
+      comparePortraits,
+      compareOverlays,
       selections,
     });
   } catch (e) {
