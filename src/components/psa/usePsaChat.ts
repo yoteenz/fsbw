@@ -42,6 +42,7 @@ export function usePsaChat(
   const [threadList, setThreadList] = useState<PsaThreadSummary[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyArchivedView, setHistoryArchivedView] = useState(false);
+  const [isLoadingThreadList, setIsLoadingThreadList] = useState(false);
   const [historyAvailable, setHistoryAvailable] = useState(true);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -122,23 +123,34 @@ export function usePsaChat(
   const openHistory = useCallback(async () => {
     setHistoryOpen(true);
     setHistoryArchivedView(false);
-    const result = await fetchPsaThreadList({ archivedOnly: false });
-    if (result.ok) {
-      setThreadList(result.threads);
+    setIsLoadingThreadList(true);
+    try {
+      const result = await fetchPsaThreadList({ archivedOnly: false });
+      if (result.ok) {
+        setThreadList(result.threads);
+      }
+    } finally {
+      setIsLoadingThreadList(false);
     }
   }, []);
 
   const closeHistory = useCallback(() => {
     setHistoryOpen(false);
     setHistoryArchivedView(false);
+    setIsLoadingThreadList(false);
   }, []);
 
   const toggleHistoryArchivedView = useCallback(async () => {
     const next = !historyArchivedView;
     setHistoryArchivedView(next);
-    const result = await fetchPsaThreadList({ archivedOnly: next });
-    if (result.ok) {
-      setThreadList(result.threads);
+    setIsLoadingThreadList(true);
+    try {
+      const result = await fetchPsaThreadList({ archivedOnly: next });
+      if (result.ok) {
+        setThreadList(result.threads);
+      }
+    } finally {
+      setIsLoadingThreadList(false);
     }
   }, [historyArchivedView]);
 
@@ -363,6 +375,7 @@ export function usePsaChat(
     threadList,
     historyOpen,
     historyArchivedView,
+    isLoadingThreadList,
     historyAvailable,
     error,
     usage,

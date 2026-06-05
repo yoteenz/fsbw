@@ -26,6 +26,7 @@ type PsaChatPanelProps = {
   panelQuickReplies?: string[];
   historyOpen?: boolean;
   historyArchivedView?: boolean;
+  isLoadingThreadList?: boolean;
   historyAvailable?: boolean;
   threadList?: {
     id: string;
@@ -229,6 +230,7 @@ export default function PsaChatPanel({
   panelQuickReplies = [],
   historyOpen = false,
   historyArchivedView = false,
+  isLoadingThreadList = false,
   historyAvailable = true,
   threadList = [],
   activeThreadId = null,
@@ -391,9 +393,13 @@ export default function PsaChatPanel({
       {historyOpen ? (
         <>
           <div className="psa-chat-history" aria-label={historyArchivedView ? 'Archived PSA chats' : 'Past PSA chats'}>
-            {threadList.length === 0 ? (
+            {isLoadingThreadList ? (
+              <div className="psa-chat-bubble psa-chat-bubble-system">
+                {historyArchivedView ? 'ARCHIVED CHAT HISTORY LOADING…' : 'CHAT HISTORY LOADING…'}
+              </div>
+            ) : threadList.length === 0 ? (
               <p className="psa-chat-history-empty">
-                {historyArchivedView ? 'NO ARCHIVED CHATS YET' : 'NO PAST CHATS YET'}
+                {historyArchivedView ? 'NO ARCHIVED CHAT HISTORY.' : 'NO PAST CHAT HISTORY.'}
               </p>
             ) : (
               threadList.map((thread) => {
