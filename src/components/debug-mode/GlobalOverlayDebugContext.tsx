@@ -28,6 +28,9 @@ type GlobalOverlayDebugContextValue = {
   editEnabled: boolean;
   editingOverlayId: GlobalOverlayId | null;
   setEditingOverlayId: (id: GlobalOverlayId | null) => void;
+  selectedRegion: { overlayId: GlobalOverlayId; regionId: string } | null;
+  selectRegion: (overlayId: GlobalOverlayId, regionId: string) => void;
+  clearSelectedRegion: () => void;
   revision: number;
   patchRegion: (overlayId: GlobalOverlayId, regionId: string, patch: Partial<DebugElementOverride>) => void;
   getRegionOverride: (overlayId: GlobalOverlayId, regionId: string) => DebugElementOverride | undefined;
@@ -47,14 +50,32 @@ export function GlobalOverlayDebugProvider({
   children: ReactNode;
 }) {
   const [editingOverlayId, setEditingOverlayId] = useState<GlobalOverlayId | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<{ overlayId: GlobalOverlayId; regionId: string } | null>(
+    null,
+  );
   const [draftByOverlay, setDraftByOverlay] = useState<
     Partial<Record<GlobalOverlayId, Record<string, DebugElementOverride>>>
   >({});
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
-    if (!editEnabled) setEditingOverlayId(null);
+    if (!editEnabled) {
+      setEditingOverlayId(null);
+      setSelectedRegion(null);
+    }
   }, [editEnabled]);
+
+  useEffect(() => {
+    setSelectedRegion(null);
+  }, [editingOverlayId]);
+
+  const selectRegion = useCallback((overlayId: GlobalOverlayId, regionId: string) => {
+    setSelectedRegion({ overlayId, regionId });
+  }, []);
+
+  const clearSelectedRegion = useCallback(() => {
+    setSelectedRegion(null);
+  }, []);
 
   useEffect(() => {
     const bump = () => setRevision((v) => v + 1);
@@ -142,6 +163,9 @@ export function GlobalOverlayDebugProvider({
       editEnabled,
       editingOverlayId,
       setEditingOverlayId,
+      selectedRegion,
+      selectRegion,
+      clearSelectedRegion,
       revision,
       patchRegion,
       getRegionOverride,
@@ -153,6 +177,7 @@ export function GlobalOverlayDebugProvider({
     [
       editEnabled,
       editingOverlayId,
+      clearSelectedRegion,
       getRegionOverride,
       openCartForEdit,
       openCurrencyForEdit,
@@ -160,6 +185,8 @@ export function GlobalOverlayDebugProvider({
       resetOverlay,
       revision,
       saveOverlay,
+      selectRegion,
+      selectedRegion,
     ],
   );
 

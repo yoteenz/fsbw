@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -20,6 +21,9 @@ import { useSceneHitEditEnabled } from '../../utils/sceneHitDebug';
 
 type SceneHitLayoutEditorContextValue = {
   editEnabled: boolean;
+  selectedRegionId: SceneHitRegionId | null;
+  selectRegion: (id: SceneHitRegionId) => void;
+  clearSelectedRegion: () => void;
   regions: Record<SceneHitRegionId, SceneHitRegionConfig>;
   getRegion: (id: SceneHitRegionId) => SceneHitRegionConfig;
   patchRegionLayout: (id: SceneHitRegionId, patch: Partial<SceneHitLayoutOptions>) => void;
@@ -35,8 +39,21 @@ const SceneHitLayoutEditorContext = createContext<SceneHitLayoutEditorContextVal
 
 export function SceneHitLayoutEditorProvider({ children }: { children: ReactNode }) {
   const editEnabled = useSceneHitEditEnabled();
+  const [selectedRegionId, setSelectedRegionId] = useState<SceneHitRegionId | null>(null);
   const [draft, setDraft] = useState<SceneHitLayoutOverridesFile>({});
   const [savedVersion, setSavedVersion] = useState(0);
+
+  const selectRegion = useCallback((id: SceneHitRegionId) => {
+    setSelectedRegionId(id);
+  }, []);
+
+  const clearSelectedRegion = useCallback(() => {
+    setSelectedRegionId(null);
+  }, []);
+
+  useEffect(() => {
+    if (!editEnabled) setSelectedRegionId(null);
+  }, [editEnabled]);
 
   const regions = useMemo(
     () => getEffectiveSceneHitRegionConfigs(draft),
@@ -118,6 +135,9 @@ export function SceneHitLayoutEditorProvider({ children }: { children: ReactNode
   const value = useMemo(
     () => ({
       editEnabled,
+      selectedRegionId,
+      selectRegion,
+      clearSelectedRegion,
       regions,
       getRegion,
       patchRegionLayout,
@@ -130,6 +150,9 @@ export function SceneHitLayoutEditorProvider({ children }: { children: ReactNode
     }),
     [
       editEnabled,
+      selectedRegionId,
+      selectRegion,
+      clearSelectedRegion,
       regions,
       getRegion,
       patchRegionLayout,

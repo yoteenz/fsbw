@@ -57,11 +57,6 @@ const EDGE_HANDLE_STYLE: CSSProperties = {
   background: 'transparent',
 };
 
-const EDIT_OUTLINE: CSSProperties = {
-  outline: '2px dashed rgba(235, 28, 36, 0.85)',
-  outlineOffset: 2,
-};
-
 type Props = {
   overlayId: GlobalOverlayId;
   regionId: string;
@@ -98,7 +93,13 @@ export function GlobalOverlayDebugRegion({
   } | null>(null);
 
   const founderPreview = canAccessPageDebugMode();
-  const editable = Boolean(editor?.editEnabled && editor.editingOverlayId === overlayId);
+  const overlaySessionActive = Boolean(editor?.editEnabled && editor.editingOverlayId === overlayId);
+  const isSelected = Boolean(
+    overlaySessionActive &&
+      editor?.selectedRegion?.overlayId === overlayId &&
+      editor.selectedRegion.regionId === regionId,
+  );
+  const canGesture = overlaySessionActive && isSelected;
 
   useEffect(() => {
     const bump = () => setLocalRevision((v) => v + 1);
@@ -117,7 +118,7 @@ export function GlobalOverlayDebugRegion({
 
   const beginPointerGesture = useCallback(
     (mode: 'move' | 'resize', clientX: number, clientY: number, edge?: SceneHitResizeEdge) => {
-      if (!editable || !editor) return;
+      if (!canGesture || !editor) return;
       dragRef.current = {
         mode,
         edge,
@@ -167,28 +168,34 @@ export function GlobalOverlayDebugRegion({
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [editable, editor, mergedOverride, overlayId, regionId],
+    [canGesture, editor, mergedOverride, overlayId, regionId],
   );
 
-  const onMovePointerDown = useCallback(
+  const onOverlayPointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editable) return;
-      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
+      if (!overlaySessionActive || !editor) return;
       e.preventDefault();
       e.stopPropagation();
+
+      if (!isSelected) {
+        editor.selectRegion(overlayId, regionId);
+        return;
+      }
+
+      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
       beginPointerGesture('move', e.clientX, e.clientY);
     },
-    [beginPointerGesture, editable],
+    [beginPointerGesture, editor, isSelected, overlayId, overlaySessionActive, regionId],
   );
 
   const onEdgePointerDown = useCallback(
     (edge: SceneHitResizeEdge) => (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editable) return;
+      if (!canGesture) return;
       e.preventDefault();
       e.stopPropagation();
       beginPointerGesture('resize', e.clientX, e.clientY, edge);
     },
-    [beginPointerGesture, editable],
+    [beginPointerGesture, canGesture],
   );
 
   return (
@@ -199,16 +206,21 @@ export function GlobalOverlayDebugRegion({
         ...style,
         ...layoutStyle,
         position: style?.position ?? layoutStyle.position ?? 'relative',
-        ...(editable ? EDIT_OUTLINE : undefined),
-        ...(editable ? { cursor: 'move', touchAction: 'none' } : undefined),
+        ...(overlaySessionActive ? { outline: '2px dashed rgba(235, 28, 36, 0.85)', outlineOffset: 2 } : undefined),
+        ...(isSelected ? { outline: '2px dashed rgba(235, 28, 36, 0.95)', outlineOffset: 2 } : undefined),
+        ...(overlaySessionActive && !isSelected ? { opacity: 0.88 } : undefined),
+        ...(canGesture ? { cursor: 'move', touchAction: 'none' } : overlaySessionActive ? { cursor: 'pointer' } : undefined),
       }}
       onPointerDown={(e) => {
-        onMovePointerDown(e);
+        if (overlaySessionActive) {
+          onOverlayPointerDown(e);
+          return;
+        }
         onMouseDown?.(e);
       }}
       onClick={onClick}
     >
-      {editable ? (
+      {overlaySessionActive ? (
         <span
           style={{
             position: 'absolute',
@@ -228,7 +240,7 @@ export function GlobalOverlayDebugRegion({
         </span>
       ) : null}
       {children}
-      {editable
+      {canGesture
         ? EDGE_HANDLES.map(({ edge, cursor, style: handlePos }) => (
             <div
               key={edge}

@@ -41,6 +41,8 @@ export function SceneHitLayoutEditorPanel() {
     hasUnsavedChanges,
     hasSavedOverrides,
     regions,
+    selectedRegionId,
+    clearSelectedRegion,
   } = useSceneHitLayoutEditor();
 
   if (!hitDebug || !editEnabled) return null;
@@ -90,6 +92,11 @@ export function SceneHitLayoutEditorPanel() {
           {statusLabel}
         </span>
         {actionButtons}
+        {selectedRegionId ? (
+          <button type="button" style={panelButtonStyle} onClick={clearSelectedRegion}>
+            Deselect
+          </button>
+        ) : null}
         <button
           type="button"
           style={panelButtonStyle}
@@ -125,13 +132,30 @@ export function SceneHitLayoutEditorPanel() {
         </button>
       </div>
       <p style={{ margin: '0 0 8px 0' }}>
-        Drag squares to move; drag a border edge to resize. Save applies to production hits.
+        <strong>Tap a colored square</strong> to select it (red dashed outline), then drag center to move or drag a
+        border edge to resize. Nothing moves until selected.
+      </p>
+      <p style={{ margin: '0 0 8px 0', opacity: 0.9 }}>
+        <strong>After Save:</strong> real tap targets use your layout immediately on this device (shelves, display
+        case props, lounge TV). Stored in this browser. Remove <code>?sceneHitDebug=1</code> to hide squares — hits
+        keep your saved layout. <strong>Reset</strong> restores code defaults.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
         {actionButtons}
+        {selectedRegionId ? (
+          <button type="button" style={panelButtonStyle} onClick={clearSelectedRegion}>
+            Deselect
+          </button>
+        ) : null}
       </div>
       <p style={{ margin: 0, opacity: 0.85 }}>
-        {hasUnsavedChanges ? 'Unsaved edits — tap Save.' : hasSavedOverrides ? 'Saved overrides loaded.' : 'Using code defaults.'}
+        {selectedRegionId
+          ? `Editing: ${SCENE_HIT_REGION_LABELS[selectedRegionId]}`
+          : hasUnsavedChanges
+            ? 'Unsaved edits — tap Save.'
+            : hasSavedOverrides
+              ? 'Saved overrides loaded.'
+              : 'Using code defaults.'}
       </p>
       <ul
         style={{
