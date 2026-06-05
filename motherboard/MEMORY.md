@@ -25425,3 +25425,20 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Decisions / outcomes:** Replaced one resize widget with **four corner handles** on each QA square (nw/ne/sw/se). Dragging a corner resizes from the opposite anchor (updates `layoutWidthExtraPx`, `layoutHeightExtraPx`, and `layoutOffsetX/Y` as needed). Center drag still moves the box.
 
 **Changes:** `SceneHitDebugOverlay.tsx`, panel help text in `SceneHitLayoutEditorPanel.tsx`.
+
+---
+
+## 2026-06-04 — Site-wide `/debug-mode` visual page editor
+
+**Context:** User requested a debug version of all pages (append `/debug-mode` to routes) to edit text, images, cards, colors, fonts, layout without repeated agent prompts — aligned with typical motherboard tweaks (brand red/gray/black, Futura/Covered By Your Grace, font sizes, card min-heights, tab order).
+
+**Decisions / outcomes:**
+- Any route + `/debug-mode` renders the same page with a top-left **Page debug** toolbar (Save page, Reset, Copy JSON, Exit debug).
+- Tap to select elements (cards, text, images); inspector edits text, brand color presets, font presets, size/weight, padding, min-height, image upload.
+- Drag selected element to nudge position (4px snap); drag tabs horizontally in flex rows to swap order.
+- Saves per-page overrides to `localStorage` key `baw_page_debug_overrides` (browser-only until exported via Copy JSON).
+- Session keeps `/debug-mode` on internal links while editing; **Exit debug** clears session.
+
+**Changes:** `src/utils/debugMode.ts`, `debugModeDomPath.ts`, `src/components/debug-mode/*`, `App.tsx` wraps routes in `DebugModeShell`.
+
+**Usage:** e.g. `/account/rewards/debug-mode`, `/home/shop/debug-mode`. Helper: `debugModeHref('/path')`.
