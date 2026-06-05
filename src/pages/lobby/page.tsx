@@ -32,6 +32,8 @@ import {
 } from '../../constants/lobbyLoungeTransitionVideo';
 import { LoungeSceneHotspots } from '../../components/lounge/LoungeSceneHotspots';
 import { useLoungeTvTheaterMode } from '../../utils/loungeTvTheaterMode';
+import { SceneHitLayoutEditorProvider } from '../../components/lobby/SceneHitLayoutEditorContext';
+import { SceneHitLayoutEditorPanel } from '../../components/lobby/SceneHitLayoutEditorPanel';
 
 /** Lobby page → lounge nav (arrow + label) — brand red shadow (#EB1C24). */
 const LOBBY_PAGE_LOUNGE_NAV_SHADOW_FILTER =
@@ -571,6 +573,7 @@ const LobbyApp: React.FC = () => {
   return (
     <>
       {showLoading && <LoadingScreen />}
+      <SceneHitLayoutEditorProvider>
       <div
         ref={lobbyScrollRef}
         style={{
@@ -623,6 +626,8 @@ const LobbyApp: React.FC = () => {
           </div>
         </div>
       </div>
+      <SceneHitLayoutEditorPanel />
+      </SceneHitLayoutEditorProvider>
       
       {/* Upgrade Subscription Modal */}
       <ConfirmationModal
