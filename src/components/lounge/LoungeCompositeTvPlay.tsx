@@ -5,24 +5,20 @@ import {
 } from '../../constants/loungeTvAnimationVideo';
 import {
   FINAL_LOUNGE_TV_HIT_REGION,
-FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
-  FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
   FINAL_LOUNGE_TV_PLAY_TAP_RECT,
-  LOUNGE_TV_BAKED_HIT_LAYOUT,
-  LOUNGE_TV_PLAY_TAP_LAYOUT,
 } from '../../constants/finalLobbySceneAssets';
 import {
   LOUNGE_TV_MENU_SCREEN_IMAGE,
-  LOUNGE_TV_MENU_SCREEN_LAYOUT,
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { domRectRelativeToContainer } from '../../utils/sceneCoverContainerRect';
-import { useSceneHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { useSceneHitDebugEnabled, useSceneHitEditEnabled } from '../../utils/sceneHitDebug';
 import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { SceneHitDebugBanner } from '../lobby/SceneHitDebugBanner';
 import { SceneHitDebugOverlay } from '../lobby/SceneHitDebugOverlay';
+import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { SceneViewportOverlay } from '../lobby/SceneViewportOverlay';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 
@@ -55,6 +51,11 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
 
   const hitDebug = useSceneHitDebugEnabled();
+  const hitEdit = useSceneHitEditEnabled();
+  const bakedRegion = useSceneHitRegionConfig('lounge-tv-baked');
+  const contentPopupRegion = useSceneHitRegionConfig('lounge-tv-content-popup');
+  const playTapRegion = useSceneHitRegionConfig('lounge-tv-play-tap');
+
   const tvRegion = useSceneCoverHitRect(FINAL_LOUNGE_TV_HIT_REGION, measureRef);
   const playTapMapped = useSceneCoverHitRect(FINAL_LOUNGE_TV_PLAY_TAP_RECT, measureRef);
   const contentPopupMapped = useSceneCoverHitRect(
@@ -63,6 +64,9 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     LOUNGE_TV_MENU_SCREEN_OFFSET,
     LOUNGE_TV_MENU_SCREEN_IMAGE,
   );
+
+  const playScreenOffsetX = playTapRegion.screenOffset?.x ?? 0;
+  const playScreenOffsetY = playTapRegion.screenOffset?.y ?? 0;
 
   const openLoungeTv = useCallback(() => {
     const anchor = tvAnchorRef.current;
@@ -117,9 +121,9 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     ? {
         ...sceneHitLayoutBoxStyle(
           playTapMapped,
-          FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX,
-          FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX,
-          LOUNGE_TV_PLAY_TAP_LAYOUT,
+          playScreenOffsetX,
+          playScreenOffsetY,
+          playTapRegion.layout,
         ),
         zIndex: 20,
         pointerEvents: 'auto',
@@ -130,15 +134,23 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     <>
       <SceneHitDebugBanner active={hitDebug}>
         Lounge TV debug — blue baked TV, green play tap, magenta content pop-up. Display case: lobby
-        slide with <strong>?sceneHitDebug=1</strong>.
+        slide with <strong>?sceneHitDebug=1</strong>
+        {hitEdit ? (
+          <>
+            {' '}
+            + <strong>sceneHitEdit=1</strong> to drag/resize and Save.
+          </>
+        ) : null}
+        .
       </SceneHitDebugBanner>
 
       {hitDebug && tvRegion ? (
         <SceneHitDebugOverlay
+          regionId="lounge-tv-baked"
           rect={tvRegion}
           label="lounge tv (baked)"
           zIndex={26}
-          layout={LOUNGE_TV_BAKED_HIT_LAYOUT}
+          layout={bakedRegion.layout}
           overlayStyle={{
             backgroundColor: 'rgba(33, 150, 243, 0.42)',
             border: '2px solid rgba(21, 101, 192, 0.95)',
@@ -148,10 +160,11 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
 
       {hitDebug && contentPopupMapped ? (
         <SceneHitDebugOverlay
+          regionId="lounge-tv-content-popup"
           rect={contentPopupMapped}
           label="lounge tv content pop-up"
           zIndex={27}
-          layout={LOUNGE_TV_MENU_SCREEN_LAYOUT}
+          layout={contentPopupRegion.layout}
           overlayStyle={{
             backgroundColor: 'rgba(233, 30, 99, 0.42)',
             border: '2px solid rgba(194, 24, 91, 0.95)',
@@ -161,13 +174,14 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
 
       {hitDebug && !tvOpen && playTapMapped ? (
         <SceneHitDebugOverlay
+          regionId="lounge-tv-play-tap"
           rect={playTapMapped}
           label="lounge tv play tap"
           showLabel={false}
           zIndex={28}
-          screenOffsetX={FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX}
-          screenOffsetY={FINAL_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX}
-          layout={LOUNGE_TV_PLAY_TAP_LAYOUT}
+          screenOffsetX={playScreenOffsetX}
+          screenOffsetY={playScreenOffsetY}
+          layout={playTapRegion.layout}
           overlayStyle={{
             backgroundColor: 'rgba(76, 175, 80, 0.48)',
             border: '2px solid rgba(46, 125, 50, 0.95)',
@@ -180,7 +194,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           ref={tvAnchorRef}
           aria-hidden
           style={{
-            ...sceneHitLayoutBoxStyle(tvRegion, 0, 0, LOUNGE_TV_BAKED_HIT_LAYOUT),
+            ...sceneHitLayoutBoxStyle(tvRegion, 0, 0, bakedRegion.layout),
             zIndex: tvOpen ? 8 : 9,
             pointerEvents: 'none',
           }}

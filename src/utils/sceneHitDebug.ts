@@ -6,6 +6,7 @@ import {
 } from '../constants/finalLobbySceneAssets';
 
 export const SCENE_HIT_DEBUG_SESSION_KEY = 'baw_scene_hit_debug';
+export const SCENE_HIT_EDIT_SESSION_KEY = 'baw_scene_hit_edit';
 
 /**
  * QA overlays for lobby shelf, display case, and lounge TV / chandelier hit boxes.
@@ -40,6 +41,31 @@ export function isSceneHitDebugQueryEnabled(): boolean {
 export function useSceneHitDebugEnabled(): boolean {
   const { search } = useLocation();
   return useMemo(() => isSceneHitDebugEnabledFromSearch(search), [search]);
+}
+
+/** Drag/resize QA squares — requires debug on: `?sceneHitDebug=1&sceneHitEdit=1`. */
+export function isSceneHitEditEnabledFromSearch(search: string): boolean {
+  if (!isSceneHitDebugEnabledFromSearch(search)) return false;
+  try {
+    const params = new URLSearchParams(search);
+    if (params.get('sceneHitEdit') === '0') {
+      sessionStorage.removeItem(SCENE_HIT_EDIT_SESSION_KEY);
+      return false;
+    }
+    const flag = params.get('sceneHitEdit');
+    if (flag === '1' || flag === 'true' || flag === 'yes') {
+      sessionStorage.setItem(SCENE_HIT_EDIT_SESSION_KEY, '1');
+      return true;
+    }
+    return sessionStorage.getItem(SCENE_HIT_EDIT_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function useSceneHitEditEnabled(): boolean {
+  const { search } = useLocation();
+  return useMemo(() => isSceneHitEditEnabledFromSearch(search), [search]);
 }
 
 /** Chandelier hit-box QA overlay — dev constant and/or {@link useSceneHitDebugEnabled}. */

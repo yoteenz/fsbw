@@ -1,14 +1,13 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react';
 import {
   FINAL_LOBBY_DISPLAY_CASE_RECT,
-  LOBBY_DISPLAY_CASE_HIT_LAYOUT,
-  LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
   LOBBY_DISPLAY_CASE_PHONE_SLOT,
   LOBBY_DISPLAY_CASE_REGISTER_SLOT,
 } from '../../constants/lobbyDisplayCaseLayout';
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import { useLobbyDisplayCaseHitDebugEnabled } from '../../utils/sceneHitDebug';
 import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
+import { useSceneHitRegionConfig } from './SceneHitLayoutEditorContext';
 import { LOBBY_CASE_CONTAINER_STYLE } from './lobbyCaseResponsive';
 import { SceneHitDebugOverlay } from './SceneHitDebugOverlay';
 import { rectToPercentStyle } from './SceneHitRegion';
@@ -88,10 +87,13 @@ export function LobbyDisplayCaseShell({
   registerOpenArt,
   phoneOpenArt,
 }: Props) {
+  const displayCaseRegion = useSceneHitRegionConfig('lobby-display-case');
+  const coverOffset = displayCaseRegion.coverOffset ?? { x: 0, y: 0 };
+
   const mappedCase = useSceneCoverHitRect(
     FINAL_LOBBY_DISPLAY_CASE_RECT,
     viewportMeasureRef,
-    LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
+    coverOffset,
   );
   const showDebug = useLobbyDisplayCaseHitDebugEnabled();
 
@@ -101,10 +103,11 @@ export function LobbyDisplayCaseShell({
     <>
       {showDebug ? (
         <SceneHitDebugOverlay
+          regionId="lobby-display-case"
           rect={mappedCase}
           label="lobby display case"
           zIndex={Math.max(registerZIndex, phoneZIndex) + 1}
-          layout={LOBBY_DISPLAY_CASE_HIT_LAYOUT}
+          layout={displayCaseRegion.layout}
           overlayStyle={{
             backgroundColor: 'rgba(255, 152, 0, 0.42)',
             border: '2px solid rgba(230, 81, 0, 0.95)',
@@ -114,7 +117,7 @@ export function LobbyDisplayCaseShell({
       <div
         data-lobby-display-case
         style={{
-          ...sceneHitLayoutBoxStyle(mappedCase, 0, 0, LOBBY_DISPLAY_CASE_HIT_LAYOUT),
+          ...sceneHitLayoutBoxStyle(mappedCase, 0, 0, displayCaseRegion.layout),
           zIndex: Math.max(registerZIndex, phoneZIndex),
           ...LOBBY_CASE_CONTAINER_STYLE,
           pointerEvents: 'none',

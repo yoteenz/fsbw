@@ -12,7 +12,6 @@ import {
   LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO,
   LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO,
   LOUNGE_TV_MENU_SCREEN_IMAGE,
-  LOUNGE_TV_MENU_SCREEN_LAYOUT,
   LOUNGE_TV_MENU_SCREEN_OFFSET,
   LOUNGE_TV_MENU_SCREEN_RECT,
 } from '../../constants/loungeTvSceneLayout';
@@ -23,6 +22,7 @@ import {
 import { sceneCarouselCoverBackgroundPosition } from '../../utils/sceneCarouselBackground';
 import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
 import { useLoungeTvGlassHitDebugEnabled } from '../../utils/sceneHitDebug';
+import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 
 type Props = {
   children?: React.ReactNode;
@@ -50,6 +50,7 @@ export function LoungeTvFullscreenShell({
   zIndex = 110,
   viewportMeasureRef,
 }: Props) {
+  const contentPopupRegion = useSceneHitRegionConfig('lounge-tv-content-popup');
   const mappedGlass = useSceneCoverHitRect(
     LOUNGE_TV_MENU_SCREEN_RECT,
     viewportMeasureRef ?? SCENE_COVER_FALLBACK_MEASURE_REF,
@@ -95,7 +96,7 @@ export function LoungeTvFullscreenShell({
         <div
           data-lounge-tv-glass
           style={{
-            ...sceneHitLayoutBoxStyle(mappedGlass, 0, 0, LOUNGE_TV_MENU_SCREEN_LAYOUT),
+            ...sceneHitLayoutBoxStyle(mappedGlass, 0, 0, contentPopupRegion.layout),
             zIndex: 1,
             overflow: 'visible',
             ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
