@@ -1,5 +1,5 @@
 /** Must match `LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT` in `api/_lib/liveTryOnOverlay.ts`. */
-export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v2';
+export const LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT = 'hair-v3';
 
 /**
  * Studio mannequin fallbacks only when Fal/Storage prep fails (full figure — not ideal for try-on).
