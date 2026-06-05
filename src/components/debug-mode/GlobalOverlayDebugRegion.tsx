@@ -11,6 +11,11 @@ import {
 import { canAccessPageDebugMode } from '../../utils/adminAuth';
 import { snapDebugPx, type DebugElementOverride } from '../../utils/debugMode';
 import {
+  layoutPatchForEdgeResize,
+  SCENE_HIT_EDGE_HIT_PX,
+  type SceneHitResizeEdge,
+} from '../../utils/sceneHitLayoutEditorGestures';
+import {
   cssFromDebugElementOverride,
   globalOverlayRegionStyle,
   notifyGlobalOverlayDebugUpdated,
@@ -18,74 +23,44 @@ import {
 } from '../../utils/globalOverlayDebug';
 import { useGlobalOverlayDebug } from './GlobalOverlayDebugContext';
 
-type ResizeCorner = 'nw' | 'ne' | 'sw' | 'se';
-
-const CORNER_HANDLES: {
-  corner: ResizeCorner;
+const EDGE_HANDLES: {
+  edge: SceneHitResizeEdge;
   cursor: CSSProperties['cursor'];
   style: CSSProperties;
 }[] = [
-  { corner: 'nw', cursor: 'nwse-resize', style: { left: -5, top: -5 } },
-  { corner: 'ne', cursor: 'nesw-resize', style: { right: -5, top: -5 } },
-  { corner: 'sw', cursor: 'nesw-resize', style: { left: -5, bottom: -5 } },
-  { corner: 'se', cursor: 'nwse-resize', style: { right: -5, bottom: -5 } },
+  {
+    edge: 'n',
+    cursor: 'ns-resize',
+    style: { left: 0, right: 0, top: 0, height: SCENE_HIT_EDGE_HIT_PX },
+  },
+  {
+    edge: 's',
+    cursor: 'ns-resize',
+    style: { left: 0, right: 0, bottom: 0, height: SCENE_HIT_EDGE_HIT_PX },
+  },
+  {
+    edge: 'w',
+    cursor: 'ew-resize',
+    style: { top: 0, bottom: 0, left: 0, width: SCENE_HIT_EDGE_HIT_PX },
+  },
+  {
+    edge: 'e',
+    cursor: 'ew-resize',
+    style: { top: 0, bottom: 0, right: 0, width: SCENE_HIT_EDGE_HIT_PX },
+  },
 ];
 
-const HANDLE_STYLE: CSSProperties = {
+const EDGE_HANDLE_STYLE: CSSProperties = {
   position: 'absolute',
-  width: 14,
-  height: 14,
   touchAction: 'none',
   zIndex: 3,
-  boxSizing: 'border-box',
-  background: 'rgba(255, 255, 255, 0.92)',
-  border: '2px solid rgba(0, 0, 0, 0.75)',
-  borderRadius: 2,
+  background: 'transparent',
 };
 
 const EDIT_OUTLINE: CSSProperties = {
   outline: '2px dashed rgba(235, 28, 36, 0.85)',
   outlineOffset: 2,
 };
-
-function layoutPatchForCornerResize(
-  corner: ResizeCorner,
-  dx: number,
-  dy: number,
-  base: DebugElementOverride,
-): Partial<DebugElementOverride> {
-  const offsetX = base.layoutOffsetX ?? 0;
-  const offsetY = base.layoutOffsetY ?? 0;
-  const widthExtra = base.layoutWidthExtraPx ?? 0;
-  const heightExtra = base.layoutHeightExtraPx ?? 0;
-
-  switch (corner) {
-    case 'se':
-      return {
-        layoutWidthExtraPx: widthExtra + dx,
-        layoutHeightExtraPx: heightExtra + dy,
-      };
-    case 'sw':
-      return {
-        layoutOffsetX: offsetX + dx,
-        layoutWidthExtraPx: widthExtra - dx,
-        layoutHeightExtraPx: heightExtra + dy,
-      };
-    case 'ne':
-      return {
-        layoutOffsetY: offsetY + dy,
-        layoutWidthExtraPx: widthExtra + dx,
-        layoutHeightExtraPx: heightExtra - dy,
-      };
-    case 'nw':
-      return {
-        layoutOffsetX: offsetX + dx,
-        layoutOffsetY: offsetY + dy,
-        layoutWidthExtraPx: widthExtra - dx,
-        layoutHeightExtraPx: heightExtra - dy,
-      };
-  }
-}
 
 type Props = {
   overlayId: GlobalOverlayId;
@@ -100,7 +75,7 @@ type Props = {
   dataAttrs?: Record<string, string>;
 };
 
-/** Applies founder-saved global overlay layout; drag/resize when global overlay debug edit is active. */
+/** Applies founder-saved global overlay layout; drag center to move, border edges to resize. */
 export function GlobalOverlayDebugRegion({
   overlayId,
   regionId,
@@ -116,7 +91,7 @@ export function GlobalOverlayDebugRegion({
   const [localRevision, setLocalRevision] = useState(0);
   const dragRef = useRef<{
     mode: 'move' | 'resize';
-    corner?: ResizeCorner;
+    edge?: SceneHitResizeEdge;
     startX: number;
     startY: number;
     layout: DebugElementOverride;
@@ -141,11 +116,11 @@ export function GlobalOverlayDebugRegion({
   const layoutStyle = founderPreview ? cssFromDebugElementOverride(mergedOverride) : {};
 
   const beginPointerGesture = useCallback(
-    (mode: 'move' | 'resize', clientX: number, clientY: number, corner?: ResizeCorner) => {
+    (mode: 'move' | 'resize', clientX: number, clientY: number, edge?: SceneHitResizeEdge) => {
       if (!editable || !editor) return;
       dragRef.current = {
         mode,
-        corner,
+        edge,
         startX: clientX,
         startY: clientY,
         layout: { ...mergedOverride },
@@ -171,8 +146,12 @@ export function GlobalOverlayDebugRegion({
               layoutOffsetY: (drag.layout.layoutOffsetY ?? 0) + dy,
             },
           };
-        } else if (drag.corner) {
-          editor.patchRegion(overlayId, regionId, layoutPatchForCornerResize(drag.corner, dx, dy, drag.layout));
+        } else if (drag.edge) {
+          editor.patchRegion(
+            overlayId,
+            regionId,
+            layoutPatchForEdgeResize(drag.edge, dx, dy, drag.layout) as Partial<DebugElementOverride>,
+          );
         }
       };
 
@@ -194,7 +173,7 @@ export function GlobalOverlayDebugRegion({
   const onMovePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
       if (!editable) return;
-      if ((e.target as HTMLElement).closest('[data-global-overlay-handle]')) return;
+      if ((e.target as HTMLElement).dataset.sceneHitEdge) return;
       e.preventDefault();
       e.stopPropagation();
       beginPointerGesture('move', e.clientX, e.clientY);
@@ -202,12 +181,12 @@ export function GlobalOverlayDebugRegion({
     [beginPointerGesture, editable],
   );
 
-  const onCornerPointerDown = useCallback(
-    (corner: ResizeCorner) => (e: ReactPointerEvent<HTMLDivElement>) => {
+  const onEdgePointerDown = useCallback(
+    (edge: SceneHitResizeEdge) => (e: ReactPointerEvent<HTMLDivElement>) => {
       if (!editable) return;
       e.preventDefault();
       e.stopPropagation();
-      beginPointerGesture('resize', e.clientX, e.clientY, corner);
+      beginPointerGesture('resize', e.clientX, e.clientY, edge);
     },
     [beginPointerGesture, editable],
   );
@@ -250,14 +229,14 @@ export function GlobalOverlayDebugRegion({
       ) : null}
       {children}
       {editable
-        ? CORNER_HANDLES.map(({ corner, cursor, style: handlePos }) => (
+        ? EDGE_HANDLES.map(({ edge, cursor, style: handlePos }) => (
             <div
-              key={corner}
+              key={edge}
               role="presentation"
               aria-hidden
-              data-global-overlay-handle
-              style={{ ...HANDLE_STYLE, ...handlePos, cursor }}
-              onPointerDown={onCornerPointerDown(corner)}
+              data-scene-hit-edge={edge}
+              style={{ ...EDGE_HANDLE_STYLE, ...handlePos, cursor }}
+              onPointerDown={onEdgePointerDown(edge)}
             />
           ))
         : null}
