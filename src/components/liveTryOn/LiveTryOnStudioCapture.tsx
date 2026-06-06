@@ -4,7 +4,7 @@ import {
   LIVE_TRY_ON_FACE_LANDMARKER_MODEL,
   LIVE_TRY_ON_MEDIAPIPE_WASM_BASE,
 } from '../../constants/liveTryOnSpikeAssets';
-import { getAccessToken, postLiveTryOnStudioRender } from '../../utils/api';
+import { getAccessToken, postLiveTryOnStudioRenderAndWait } from '../../utils/api';
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
 import { estimateHeadYawNorm, pickWigViewFromYaw } from '../../utils/liveTryOnYaw';
 
@@ -173,12 +173,15 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     setStatusHint('RENDERING YOUR LOOK… OUR STUDIO IS APPLYING YOUR WIG');
 
     try {
-      const res = await postLiveTryOnStudioRender({
-        imageDataUrl,
-        color,
-        unitKey,
-        angle: activeAngle,
-      });
+      const res = await postLiveTryOnStudioRenderAndWait(
+        {
+          imageDataUrl,
+          color,
+          unitKey,
+          angle: activeAngle,
+        },
+        (msg) => setStatusHint(msg)
+      );
       setResultUrl(res.imageUrl);
       setStatus('result');
       setStatusHint('STUDIO LOOK READY');
