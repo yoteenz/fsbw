@@ -25876,3 +25876,15 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix (`56734949`):** `STUDIO_GLAM_COMPOSITION` — preserve IMAGE 1 room; shallow DOF/bokeh on background only; forbid grey seamless or location swap.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio Try-On: one-shoulder drape (not both shoulders)
+
+**Context:** GPT studio capture draped hair **symmetrically on both shoulders**; portrait thumbs (NBP/GPT) show **one-sided** sweep.
+
+**Cause:** `STUDIO_CENTER_PART` said “symmetric panels” — GPT read as twin shoulder curtains.
+
+**Fix:** `STUDIO_DRAPE_SIDE` (viewer’s LEFT shoulder heavy drape only; forbid both-shoulder waterfall). Center part = midline groove only. When **GPT front portrait** exists in Storage, attach as **IMAGE 3** for exact drape/silhouette; mannequin stays color/length (IMAGE 2).
+
+Pushed **`master`** + **`preview/mobile`**.
