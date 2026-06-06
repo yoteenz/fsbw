@@ -32,9 +32,25 @@ export function estimateHeadYawNorm(landmarks: NormPoint[]): number {
 }
 
 export function pickWigViewFromYaw(yaw: number): 'left' | 'front' | 'right' {
-  if (yaw < -0.22) return 'left';
-  if (yaw > 0.22) return 'right';
+  if (yaw < -0.26) return 'left';
+  if (yaw > 0.26) return 'right';
   return 'front';
+}
+
+/** Reduces L/F/R flicker when head pose hovers near thresholds. */
+export function pickWigViewFromYawWithHysteresis(
+  yaw: number,
+  prev: 'left' | 'front' | 'right'
+): 'left' | 'front' | 'right' {
+  if (prev === 'left') {
+    if (yaw > -0.1) return yaw > 0.26 ? 'right' : 'front';
+    return 'left';
+  }
+  if (prev === 'right') {
+    if (yaw < 0.1) return yaw < -0.26 ? 'left' : 'front';
+    return 'right';
+  }
+  return pickWigViewFromYaw(yaw);
 }
 
 export function wigPlacementFromLandmarks(
@@ -51,9 +67,9 @@ export function wigPlacementFromLandmarks(
   const faceH = Math.abs(chin.y - forehead.y) * canvasH;
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const cx = ((left.x + right.x) / 2) * canvasW;
-  /** Anchor lace hairline slightly above tracked forehead. */
-  const cy = forehead.y * canvasH - faceH * 0.04;
-  const width = Math.max(faceW * 2.9, faceH * 2.35, canvasW * 0.72);
+  /** Lace hairline sits on tracked forehead (lower cy = wig sits lower on face). */
+  const cy = forehead.y * canvasH + faceH * 0.06;
+  const width = Math.max(faceW * 2.75, faceH * 2.2, canvasW * 0.68);
   const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
 
   return { cx, cy, width, rotationRad };

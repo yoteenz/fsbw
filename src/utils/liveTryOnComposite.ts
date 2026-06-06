@@ -4,7 +4,7 @@ import { faceContourPolygonFromLandmarks, type NormPoint } from './liveTryOnYaw'
 type Placement = { cx: number; cy: number; width: number; rotationRad: number };
 
 /** Lace hairline in prepped overlay assets sits near this fraction from the top. */
-const WIG_ASSET_HAIRLINE_Y = 0.31;
+const WIG_ASSET_HAIRLINE_Y = 0.27;
 
 function fillPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void {
   if (points.length < 3) return;
@@ -18,13 +18,18 @@ function fillPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void
 /** Clears wig pixels inside the tracked face so the live camera shows through. */
 export function punchFaceContourFromWigLayer(
   ctx: CanvasRenderingContext2D,
-  contour: CanvasPoint[]
+  contour: CanvasPoint[],
+  featherPx = 4
 ): void {
   if (contour.length < 3) return;
   ctx.save();
   ctx.globalCompositeOperation = 'destination-out';
   ctx.fillStyle = '#000';
+  if (featherPx > 0) {
+    ctx.filter = `blur(${featherPx}px)`;
+  }
   fillPolygon(ctx, contour);
+  ctx.filter = 'none';
   ctx.restore();
 }
 
@@ -58,7 +63,7 @@ export function drawWigOverlayTracked(
 ): CanvasPoint[] | null {
   const contour = faceContourPolygonFromLandmarks(landmarks, canvasW, canvasH, {
     mirror: true,
-    expand: 1.08,
+    expand: 1.14,
   });
   if (!contour) return null;
 
