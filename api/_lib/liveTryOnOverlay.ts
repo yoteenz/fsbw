@@ -62,6 +62,35 @@ function isJetBlackOffBlack(label: string, hex: string): boolean {
 }
 
 /**
+ * **Studio Try-On** — IMAGE 1 = shopper selfie, IMAGE 2 = mannequin color WebP.
+ * Keeps the customer's identity; applies wig geometry/color from the mannequin reference.
+ */
+export function buildLiveTryOnStudioTryOnPrompt(
+  label: string,
+  hex: string,
+  angle: LiveTryOnAngle
+): string {
+  const nearBlack = isJetBlackOffBlack(label, hex);
+  const colorLine = nearBlack
+    ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
+    : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
+
+  return [
+    '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
+    '**IMAGE 2** is the mannequin wig reference — use it as the **only** source for hairstyle geometry, lace, length, density, curl, part, and volume.',
+    'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2.',
+    colorLine,
+    angleConstraint(angle),
+    'Match **length, density, curl pattern, part, layers, and volume** from IMAGE 2 — not a new cut.',
+    'Photoreal editorial beauty portrait — same framing and lighting direction as IMAGE 1.',
+    'Soft natural makeup if needed; realistic hairline blend at the lace front.',
+    '**Delete:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo, props, cartoon edges.',
+    'Neutral softly blurred background; head and shoulders; no text or watermark.',
+    'Ultra sharp, photographic — not illustration, sticker, or cutout overlay.',
+  ].join(' ');
+}
+
+/**
  * **Same prompt** for NBP and GPT Image 2 — mannequin color WebP in `image_urls[0]`.
  * Output: photorealistic woman wearing the same wig (color, length, part, silhouette).
  */
