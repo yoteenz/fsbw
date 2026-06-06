@@ -1213,6 +1213,8 @@ export type LiveTryOnBatchJobPayload = {
   addOns?: string[];
   photoModel?: 'nbp' | 'gpt2';
   compareModels?: boolean;
+  /** When compareModels: only queue overlay isolate+cut for this winner. */
+  overlayWinner?: 'nbp' | 'gpt2';
 };
 
 export async function getAdminLiveTryOnBatchManifest(): Promise<{
@@ -1224,11 +1226,20 @@ export async function getAdminLiveTryOnBatchManifest(): Promise<{
   return res.json() as Promise<{ ok: boolean; rows: Array<{ id: string; label: string; color: string }> }>;
 }
 
+export type LiveTryOnPortraitPreviewUrls = {
+  left: string;
+  front: string;
+  right: string;
+  ready: boolean;
+};
+
 export async function postAdminLiveTryOnBatchStatus(body: LiveTryOnBatchJobPayload): Promise<{
   ok: boolean;
   manifestHash: string;
   missing: Array<{ step: string; angle: string; photoModel?: string }>;
   complete: boolean;
+  awaitingWinner?: boolean;
+  portraits?: Partial<Record<'nbp' | 'gpt2', LiveTryOnPortraitPreviewUrls>>;
 }> {
   const res = await apiFetch('/api/admin/live-try-on-batch-status', { method: 'POST', body });
   if (!res.ok) throw new Error(await res.text());
@@ -1237,6 +1248,8 @@ export async function postAdminLiveTryOnBatchStatus(body: LiveTryOnBatchJobPaylo
     manifestHash: string;
     missing: Array<{ step: string; angle: string; photoModel?: string }>;
     complete: boolean;
+    awaitingWinner?: boolean;
+    portraits?: Partial<Record<'nbp' | 'gpt2', LiveTryOnPortraitPreviewUrls>>;
   }>;
 }
 
@@ -1269,6 +1282,7 @@ export async function postAdminLiveTryOnBatchStep(
   body: LiveTryOnBatchJobPayload & {
     step: 'portrait' | 'overlay_isolate' | 'overlay_cut';
     angle: 'left' | 'front' | 'right';
+    forceRegenerate?: boolean;
   }
 ): Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }> {
   const res = await apiFetch('/api/admin/live-try-on-batch-step', { method: 'POST', body });

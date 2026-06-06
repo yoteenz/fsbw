@@ -31,12 +31,24 @@ export function parseLiveTryOnPhotoModel(value: string | undefined): LiveTryOnPh
 
 function angleConstraint(angle: LiveTryOnAngle): string {
   if (angle === 'left') {
-    return 'Camera: **left 3/4** portrait. Hair mass toward the viewer’s right; **same part direction and shoulder bias** as the mannequin reference — do not mirror.';
+    return [
+      'Camera: **left 3/4** portrait — **match the mannequin reference head yaw exactly** (not front-facing).',
+      'Hair mass toward the viewer’s right; **same part direction and shoulder bias** as the reference — do not mirror or rotate.',
+      'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
+    ].join(' ');
   }
   if (angle === 'right') {
-    return 'Camera: **right 3/4** portrait. Hair mass toward the viewer’s left; **same part direction and shoulder bias** as the mannequin reference — do not mirror or rotate to front.';
+    return [
+      'Camera: **right 3/4** portrait — **match the mannequin reference head yaw exactly** (not front-facing).',
+      'Hair mass toward the viewer’s left; **same part direction and shoulder bias** as the reference — do not mirror or rotate to front.',
+      'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
+    ].join(' ');
   }
-  return 'Camera: **front** portrait. **Exact** center part line, length, volume, and one-sided shoulder sweep from the mannequin reference — do not symmetrically mirror hair.';
+  return [
+    'Camera: **front** portrait — **match the mannequin reference head-on** (no 3/4 turn).',
+    '**Exact** center part line, length, volume, and one-sided shoulder sweep from the reference — do not symmetrically mirror hair.',
+    'Keep the same **camera distance and crop** as the mannequin frame.',
+  ].join(' ');
 }
 
 function isJetBlackOffBlack(label: string, hex: string): boolean {
@@ -67,7 +79,8 @@ export function buildLiveTryOnPhotorealWomanPrompt(
     angleConstraint(angle),
     'Match **length, density, curl pattern, part, layers, and volume** from the mannequin — not a new cut.',
     '**Delete from output:** mannequin bust, gray skin, stand, FRONTAL SLAYER logo, bricks, studio props.',
-    'Woman: natural skin, realistic eyes, soft beauty lighting, neutral blurred studio background, head and shoulders.',
+    'Woman: photoreal editorial beauty — **neutral, elegant, mid-20s**, soft natural makeup, realistic eyes; **head pose and neck angle locked to the mannequin reference** (only swap mannequin for skin).',
+    'Neutral blurred studio background, head and shoulders only — no jewelry, no dramatic styling.',
     'No text, no watermark, no extra jewelry unless subtle and realistic.',
     'Ultra sharp, photographic — not illustration or 3D render.',
   ].join(' ');

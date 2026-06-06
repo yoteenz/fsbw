@@ -4,9 +4,17 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdminFounder } from '../_lib/adminAuth.js';
 import {
   listMissingLiveTryOnBatchSteps,
+  storageObjectExists,
   type LiveTryOnBatchJob,
 } from '../_lib/liveTryOnBatchGenerate.js';
-import { LIVE_TRY_ON_PHOTO_MODELS, parseLiveTryOnPhotoModel } from '../_lib/liveTryOnOverlay.js';
+import {
+  LIVE_TRY_ON_PHOTO_MODELS,
+  liveTryOnPortraitPublicUrlsForModel,
+  liveTryOnPortraitStoragePath,
+  parseLiveTryOnPhotoModel,
+  type LiveTryOnAngleUrls,
+  type LiveTryOnPhotoModel,
+} from '../_lib/liveTryOnOverlay.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const body = req.body;
@@ -72,13 +80,59 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const compareBoth = body.compareModels === true;
   const single = parseLiveTryOnPhotoModel(readString(body, 'photoModel', 'nbp'));
   const photoModels = compareBoth ? [...LIVE_TRY_ON_PHOTO_MODELS] : [single || 'nbp'];
+  const overlayWinner = compareBoth
+    ? parseLiveTryOnPhotoModel(readString(body, 'overlayWinner', ''))
+    : null;
 
   try {
-    const status = await listMissingLiveTryOnBatchSteps(job, photoModels);
+    const status = await listMissingLiveTryOnBatchSteps(job, photoModels, { overlayWinner });
+    const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
+    const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
+    const supabaseUrl = process.env.SUPABASE_URL?.trim() || '';
+    const portraits: Partial<Record<LiveTryOnPhotoModel, LiveTryOnAngleUrls & { ready: boolean }>> =
+      {};
+    if (supabaseUrl) {
+      for (const model of photoModels) {
+        const urls = liveTryOnPortraitPublicUrlsForModel(
+          supabaseUrl,
+          bucket,
+          promptVersion,
+          job.unitKey,
+          status.manifestHash,
+          model
+        );
+        const angles = ['left', 'front', 'right'] as const;
+        const ready = (
+          await Promise.all(
+            angles.map((angle) =>
+              storageObjectExists(
+                bucket,
+                liveTryOnPortraitStoragePath(
+                  promptVersion,
+                  job.unitKey,
+                  status.manifestHash,
+                  model,
+                  angle
+                )
+              )
+            )
+          )
+        ).every(Boolean);
+        portraits[model] = { ...urls, ready };
+      }
+    }
+
+    const portraitsComplete = photoModels.every((m) => portraits[m]?.ready);
+    const awaitingWinner =
+      compareBoth && portraitsComplete && !overlayWinner && status.missing.every((s) => s.step !== 'portrait');
+
     res.status(200).json({
       ok: true,
       ...status,
       photoModels,
+      overlayWinner,
+      portraits,
+      awaitingWinner,
       complete: status.missing.length === 0,
       job,
     });

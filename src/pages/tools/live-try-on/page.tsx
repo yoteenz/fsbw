@@ -2,7 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import LiveTryOnModelCompareBar from '../../../components/liveTryOn/LiveTryOnModelCompareBar';
 import LiveTryOnViewport from '../../../components/liveTryOn/LiveTryOnViewport';
-import type { LiveTryOnPhotoModel } from '../../../constants/liveTryOnSpikeAssets';
+import {
+  LIVE_TRY_ON_PHOTO_MODEL_LABELS,
+  type LiveTryOnPhotoModel,
+} from '../../../constants/liveTryOnSpikeAssets';
 import { getConsultQuote } from '../../../utils/api';
 import { consultSelectionsToSpecialOfferOptions } from '../../../utils/consultOfferFromQuote';
 import {
@@ -33,6 +36,7 @@ export default function LiveTryOnPage() {
   const [wigUrls, setWigUrls] = useState<[string, string, string] | null>(null);
   const [compare, setCompare] = useState<LiveTryOnCompareBundles | undefined>();
   const [prepError, setPrepError] = useState<string | null>(null);
+  const [modelHint, setModelHint] = useState<string | null>(null);
 
   const backTarget = useMemo(() => {
     if (returnTo.startsWith('/')) return returnTo;
@@ -44,7 +48,18 @@ export default function LiveTryOnPage() {
       setPhotoModel(model);
       writeLiveTryOnPhotoModelPreference(model);
       const overlays = bundles?.overlays?.[model];
-      if (overlays) setWigUrls(overlays);
+      if (overlays) {
+        setWigUrls(overlays);
+        setModelHint(null);
+        return;
+      }
+      if (bundles?.portraits?.[model]) {
+        setModelHint(
+          `${LIVE_TRY_ON_PHOTO_MODEL_LABELS[model]} PORTRAITS ARE READY — PICK WINNER IN ADMIN AND RUN IDEOGRAM CUT TO USE ON CAMERA.`
+        );
+        return;
+      }
+      setModelHint(`${LIVE_TRY_ON_PHOTO_MODEL_LABELS[model]} NOT PREPPED YET — GENERATE IN ADMIN → LIVE TRY-ON.`);
     },
     []
   );
@@ -159,6 +174,14 @@ export default function LiveTryOnPage() {
         ) : null}
         {showCompareBar ? (
           <LiveTryOnModelCompareBar activeModel={photoModel} compare={compare} onSelectModel={handleSelectModel} />
+        ) : null}
+        {modelHint ? (
+          <p
+            className="text-center uppercase max-w-sm"
+            style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', lineHeight: 1.5 }}
+          >
+            {modelHint}
+          </p>
         ) : null}
         <div className="w-full max-w-md">
           {wigUrls ? (
