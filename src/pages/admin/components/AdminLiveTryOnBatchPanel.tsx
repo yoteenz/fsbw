@@ -20,6 +20,8 @@ type MissingStep = {
 
 type LogLine = { t: string; msg: string };
 
+type BusyAction = 'status' | 'color' | 'next' | 'row' | 'batch' | 'auto';
+
 type PipelineSummary = {
   colorDone: boolean;
   portraitsDone: number;
@@ -148,10 +150,11 @@ export default function AdminLiveTryOnBatchPanel() {
   const [compareBoth, setCompareBoth] = useState(false);
   const [missing, setMissing] = useState<MissingStep[] | null>(null);
   const [manifestHash, setManifestHash] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [busyAction, setBusyAction] = useState<BusyAction | null>(null);
   const [log, setLog] = useState<LogLine[]>([]);
-  const [batchAll, setBatchAll] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
+
+  const busy = busyAction !== null;
 
   const selectedJob = useMemo(() => {
     const row = manifest.find((r) => r.id === selectedId);
@@ -170,77 +173,91 @@ export default function AdminLiveTryOnBatchPanel() {
     setLog((prev) => [...prev.slice(-40), { t, msg }]);
   }, []);
 
+  const refreshStatusCore = useCallback(async () => {
+    await getAdminLiveTryOnBatchManifest();
+    const res = await postAdminLiveTryOnBatchStatus(jobBody(selectedJob, compareBoth, photoModel));
+    setMissing(res.missing as MissingStep[]);
+    setManifestHash(res.manifestHash);
+    const summary = summarizePipeline(res.missing as MissingStep[], compareBoth);
+    if (res.complete) setLastError(null);
+    pushLog(
+      res.complete
+        ? `READY · ${selectedJob.color} · hash ${res.manifestHash.slice(0, 8)}…`
+        : `${summary.headline} · ${selectedJob.color}`
+    );
+  }, [selectedJob, compareBoth, photoModel, pushLog]);
+
   const refreshStatus = useCallback(async () => {
-    setBusy(true);
+    setBusyAction('status');
     try {
-      await getAdminLiveTryOnBatchManifest();
-      const res = await postAdminLiveTryOnBatchStatus(jobBody(selectedJob, compareBoth, photoModel));
-      setMissing(res.missing as MissingStep[]);
-      setManifestHash(res.manifestHash);
-      const summary = summarizePipeline(res.missing as MissingStep[], compareBoth);
-      if (res.complete) setLastError(null);
-      pushLog(
-        res.complete
-          ? `READY · ${selectedJob.color} · hash ${res.manifestHash.slice(0, 8)}…`
-          : `${summary.headline} · ${selectedJob.color}`
-      );
+      await refreshStatusCore();
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Status failed';
       setLastError(msg);
       pushLog(msg);
       setMissing(null);
     } finally {
-      setBusy(false);
+      setBusyAction(null);
     }
-  }, [selectedJob, compareBoth, photoModel, pushLog]);
+  }, [refreshStatusCore, pushLog]);
 
   useEffect(() => {
-    void refreshStatus();
+    let cancelled = false;
+    setBusyAction('auto');
+    refreshStatusCore()
+      .catch((e) => {
+        if (cancelled) return;
+        const msg = e instanceof Error ? e.message : 'Status failed';
+        setLastError(msg);
+        pushLog(msg);
+        setMissing(null);
+      })
+      .finally(() => {
+        if (!cancelled) setBusyAction(null);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [selectedId, compareBoth, photoModel]); // eslint-disable-line react-hooks/exhaustive-deps -- refresh when row/model changes
 
-  const ensureColorWebps = useCallback(async () => {
-    setBusy(true);
-    const body = {
-      color: selectedJob.color,
-      length: selectedJob.length,
-      density: selectedJob.density,
-      lace: selectedJob.lace,
-      texture: selectedJob.texture,
-      hairline: selectedJob.hairline,
-      styling: 'NONE',
-      addOns: selectedJob.addOns,
-    };
-    try {
+  const ensureColorWebpsCore = useCallback(
+    async (job: LiveTryOnBatchJob, label: string) => {
+      const body = {
+        color: job.color,
+        length: job.length,
+        density: job.density,
+        lace: job.lace,
+        texture: job.texture,
+        hairline: job.hairline,
+        styling: 'NONE',
+        addOns: job.addOns,
+      };
       for (const angle of ANGLES) {
-        pushLog(`COLOR WEBP · ${angle.toUpperCase()}…`);
+        pushLog(`${label} · COLOR WEBP · ${angle.toUpperCase()}…`);
         await postWigPreviewLiveNoirColorOneAngle({ ...body, angle });
       }
-      pushLog('COLOR WEBPS DONE');
-      await refreshStatus();
-    } catch (e) {
-      pushLog(e instanceof Error ? e.message : 'Color webp failed');
-    } finally {
-      setBusy(false);
-    }
-  }, [selectedJob, pushLog, refreshStatus]);
+      pushLog(`${label} · COLOR WEBPS DONE`);
+    },
+    [pushLog]
+  );
 
   const runOneStep = useCallback(
-    async (step: MissingStep) => {
+    async (job: LiveTryOnBatchJob, label: string, step: MissingStep) => {
       if (step.step === 'color') {
-        await ensureColorWebps();
+        await ensureColorWebpsCore(job, label);
         return;
       }
       const model = step.photoModel || photoModel;
       await postAdminLiveTryOnBatchStep({
-        ...jobBody(selectedJob, compareBoth, model),
+        ...jobBody(job, compareBoth, model),
         step: step.step,
         angle: step.angle,
         photoModel: model,
       });
       setLastError(null);
-      pushLog(`${model.toUpperCase()} · ${step.step.toUpperCase()} · ${step.angle.toUpperCase()} OK`);
+      pushLog(`${label} · ${model.toUpperCase()} · ${step.step.toUpperCase()} · ${step.angle.toUpperCase()} OK`);
     },
-    [selectedJob, compareBoth, photoModel, ensureColorWebps, pushLog]
+    [compareBoth, photoModel, ensureColorWebpsCore, pushLog]
   );
 
   const runAllMissingForJob = useCallback(
@@ -248,11 +265,7 @@ export default function AdminLiveTryOnBatchPanel() {
       const status = await postAdminLiveTryOnBatchStatus(jobBody(job, compareBoth, photoModel));
       let steps = [...status.missing] as MissingStep[];
       if (steps.some((s) => s.step === 'color')) {
-        pushLog(`${label} · COLOR WEBPS…`);
-        const body = { ...job, styling: 'NONE' };
-        for (const angle of ANGLES) {
-          await postWigPreviewLiveNoirColorOneAngle({ ...body, angle });
-        }
+        await ensureColorWebpsCore(job, label);
         const again = await postAdminLiveTryOnBatchStatus(jobBody(job, compareBoth, photoModel));
         steps = again.missing as MissingStep[];
       }
@@ -266,50 +279,66 @@ export default function AdminLiveTryOnBatchPanel() {
       for (const step of ordered) {
         if (step.step === 'color') continue;
         pushLog(`${label} · ${step.photoModel || photoModel} · ${step.step} · ${step.angle}…`);
-        await runOneStep(step);
+        await runOneStep(job, label, step);
       }
     },
-    [compareBoth, photoModel, pushLog, runOneStep]
+    [compareBoth, photoModel, pushLog, runOneStep, ensureColorWebpsCore]
   );
+
+  const handleColorWebps = useCallback(async () => {
+    setBusyAction('color');
+    try {
+      await ensureColorWebpsCore(selectedJob, selectedJob.color);
+      await refreshStatusCore();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Color webp failed';
+      setLastError(msg);
+      pushLog(`ERROR · ${msg}`);
+    } finally {
+      setBusyAction(null);
+    }
+  }, [selectedJob, ensureColorWebpsCore, refreshStatusCore, pushLog]);
 
   const runNextMissing = useCallback(async () => {
     if (!missing?.length) {
       await refreshStatus();
       return;
     }
-    setBusy(true);
+    setBusyAction('next');
+    const step = missing[0];
     try {
-      await runOneStep(missing[0]);
-      await refreshStatus();
+      pushLog(`RUNNING · ${formatMissingLine(step)}…`);
+      await runOneStep(selectedJob, selectedJob.color, step);
+      await refreshStatusCore();
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Step failed';
       setLastError(msg);
       pushLog(`ERROR · ${msg}`);
     } finally {
-      setBusy(false);
+      setBusyAction(null);
     }
-  }, [missing, refreshStatus, runOneStep, pushLog]);
+  }, [missing, refreshStatus, selectedJob, runOneStep, refreshStatusCore, pushLog]);
 
   const runAllForRow = useCallback(async () => {
-    setBusy(true);
+    setBusyAction('row');
     try {
+      pushLog(`RUNNING ALL · ${selectedJob.color}…`);
       await runAllMissingForJob(selectedJob, selectedJob.color);
-      await refreshStatus();
+      await refreshStatusCore();
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Run all failed';
       setLastError(msg);
       pushLog(`ERROR · ${msg}`);
     } finally {
-      setBusy(false);
+      setBusyAction(null);
     }
-  }, [selectedJob, runAllMissingForJob, refreshStatus, pushLog]);
+  }, [selectedJob, runAllMissingForJob, refreshStatusCore, pushLog]);
 
   const runEntireManifest = useCallback(async () => {
     if (!confirm(`Pre-generate try-on for all ${manifest.length} NOIR colors? This uses many Fal calls.`)) {
       return;
     }
-    setBatchAll(true);
-    setBusy(true);
+    setBusyAction('batch');
     try {
       for (const row of manifest) {
         const { id: _id, label, ...job } = row;
@@ -317,14 +346,20 @@ export default function AdminLiveTryOnBatchPanel() {
         await runAllMissingForJob(job, label);
       }
       pushLog('BATCH MANIFEST COMPLETE');
-      await refreshStatus();
+      await refreshStatusCore();
     } catch (e) {
-      pushLog(e instanceof Error ? e.message : 'Batch manifest failed');
+      const msg = e instanceof Error ? e.message : 'Batch manifest failed';
+      setLastError(msg);
+      pushLog(`ERROR · ${msg}`);
     } finally {
-      setBatchAll(false);
-      setBusy(false);
+      setBusyAction(null);
     }
-  }, [manifest, runAllMissingForJob, pushLog, refreshStatus]);
+  }, [manifest, runAllMissingForJob, refreshStatusCore, pushLog]);
+
+  const nextStepLabel = missing?.[0] ? formatMissingLine(missing[0]) : '';
+
+  const buttonLabel = (action: BusyAction, idle: string, loading: string): string =>
+    busyAction === action ? loading : idle;
 
   return (
     <div className="flex flex-col gap-3 mt-2 text-left normal-case">
@@ -412,6 +447,10 @@ export default function AdminLiveTryOnBatchPanel() {
         </div>
       ) : null}
 
+      {busyAction === 'auto' ? (
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080' }}>UPDATING STATUS…</p>
+      ) : null}
+
       {pipeline ? (
         <div
           className="border p-2"
@@ -448,54 +487,75 @@ export default function AdminLiveTryOnBatchPanel() {
         <button
           type="button"
           disabled={busy}
+          aria-busy={busyAction === 'status'}
           onClick={() => void refreshStatus()}
-          className="text-[10px] border border-black px-3 py-1.5 bg-white/80"
-          style={{ fontFamily: '"Futura PT Medium"', color: '#000' }}
+          className="text-[10px] border border-black px-3 py-1.5 bg-white/80 min-w-[7.5rem] disabled:opacity-55"
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: busyAction === 'status' ? '#EB1C24' : '#000',
+          }}
           title="Re-scan Supabase — does not run Fal"
         >
-          CHECK STATUS
+          {buttonLabel('status', 'CHECK STATUS', 'CHECKING…')}
         </button>
         <button
           type="button"
           disabled={busy}
-          onClick={() => void ensureColorWebps()}
-          className="text-[10px] border border-black px-3 py-1.5 bg-white/80"
-          style={{ fontFamily: '"Futura PT Medium"', color: '#000' }}
+          aria-busy={busyAction === 'color'}
+          onClick={() => void handleColorWebps()}
+          className="text-[10px] border border-black px-3 py-1.5 bg-white/80 min-w-[7.5rem] disabled:opacity-55"
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: busyAction === 'color' ? '#EB1C24' : '#000',
+          }}
           title="Step 1 — mannequin color L/F/R"
         >
-          COLOR WEBPS
+          {buttonLabel('color', 'COLOR WEBPS', 'RUNNING WEBPS…')}
         </button>
         <button
           type="button"
           disabled={busy || !missing?.length}
+          aria-busy={busyAction === 'next'}
           onClick={() => void runNextMissing()}
-          className="text-[10px] border border-black px-3 py-1.5 bg-white/80"
+          className="text-[10px] border border-black px-3 py-1.5 bg-white/80 min-w-[7.5rem] disabled:opacity-55"
           style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}
           title="Run exactly one missing Fal job"
         >
-          RUN NEXT STEP
+          {busyAction === 'next'
+            ? nextStepLabel
+              ? `RUNNING ${nextStepLabel.split(' · ')[0].toUpperCase()}…`
+              : 'RUNNING STEP…'
+            : 'RUN NEXT STEP'}
         </button>
         <button
           type="button"
           disabled={busy}
+          aria-busy={busyAction === 'row'}
           onClick={() => void runAllForRow()}
-          className="text-[10px] border border-black px-3 py-1.5 bg-white/80"
-          style={{ fontFamily: '"Futura PT Medium"', color: '#000' }}
+          className="text-[10px] border border-black px-3 py-1.5 bg-white/80 min-w-[7.5rem] disabled:opacity-55"
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: busyAction === 'row' ? '#EB1C24' : '#000',
+          }}
           title="Finish every missing step for this color"
         >
-          RUN ALL FOR ROW
+          {buttonLabel('row', 'RUN ALL FOR ROW', 'RUNNING ALL…')}
         </button>
       </div>
 
       <button
         type="button"
-        disabled={busy || batchAll}
+        disabled={busy}
+        aria-busy={busyAction === 'batch'}
         onClick={() => void runEntireManifest()}
-        className="text-[10px] border border-black px-3 py-2 bg-white/80 w-full"
-        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}
+        className="text-[10px] border border-black px-3 py-2 bg-white/80 w-full disabled:opacity-55"
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          color: busyAction === 'batch' ? '#EB1C24' : '#EB1C24',
+        }}
         title="All 16 NOIR catalog colors — long job"
       >
-        BATCH ALL NOIR COLORS
+        {buttonLabel('batch', 'BATCH ALL NOIR COLORS', 'BATCHING ALL COLORS…')}
       </button>
 
       <div className="border border-black/20 p-2 bg-white/70" style={{ lineHeight: 1.55 }}>
