@@ -4,7 +4,6 @@ import {
   LIVE_TRY_ON_FACE_LANDMARKER_MODEL,
   LIVE_TRY_ON_MEDIAPIPE_WASM_BASE,
 } from '../../constants/liveTryOnSpikeAssets';
-import type { LiveTryOnPhotoModel } from '../../constants/liveTryOnSpikeAssets';
 import { getAccessToken, postLiveTryOnStudioRender } from '../../utils/api';
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
 import { estimateHeadYawNorm, pickWigViewFromYaw } from '../../utils/liveTryOnYaw';
@@ -14,16 +13,25 @@ type Status = 'loading' | 'permission' | 'ready' | 'no-face' | 'rendering' | 're
 type Props = {
   color: string;
   unitKey: string;
-  photoModel: LiveTryOnPhotoModel;
 };
 
-export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: Props) {
+function syncCanvasToVideo(video: HTMLVideoElement, canvas: HTMLCanvasElement): void {
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  if (vw > 0 && vh > 0 && (canvas.width !== vw || canvas.height !== vh)) {
+    canvas.width = vw;
+    canvas.height = vh;
+  }
+}
+
+export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const landmarkerRef = useRef<FaceLandmarker | null>(null);
   const rafRef = useRef<number>(0);
   const lastVideoTimeRef = useRef(-1);
   const noFaceFramesRef = useRef(0);
+  const showingResultRef = useRef(false);
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
@@ -37,17 +45,24 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
     const landmarker = landmarkerRef.current;
     if (!video || !canvas || !landmarker || video.readyState < 2) return;
 
+    syncCanvasToVideo(video, canvas);
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const w = canvas.width;
     const h = canvas.height;
+    if (w < 2 || h < 2) return;
+
     ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, w, h);
     ctx.translate(w, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, w, h);
     ctx.restore();
+
+    if (showingResultRef.current) return;
 
     const now = performance.now();
     if (video.currentTime !== lastVideoTimeRef.current) {
@@ -59,12 +74,12 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
           noFaceFramesRef.current = 0;
           const yaw = estimateHeadYawNorm(landmarks);
           setActiveAngle(pickWigViewFromYaw(yaw));
-          setStatus((s) => (s === 'rendering' || s === 'result' ? s : 'ready'));
+          setStatus((s) => (s === 'rendering' ? s : 'ready'));
           setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
         } else {
           noFaceFramesRef.current += 1;
           if (noFaceFramesRef.current > 8) {
-            setStatus((s) => (s === 'rendering' || s === 'result' ? s : 'no-face'));
+            setStatus((s) => (s === 'rendering' ? s : 'no-face'));
             setStatusHint('LOOK AT THE CAMERA TO CAPTURE');
           }
         }
@@ -115,10 +130,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
         await video.play();
 
         const canvas = canvasRef.current;
-        if (canvas) {
-          canvas.width = video.videoWidth || 720;
-          canvas.height = video.videoHeight || 1280;
-        }
+        if (canvas) syncCanvasToVideo(video, canvas);
 
         setStatus('no-face');
         setStatusHint('LOOK AT THE CAMERA TO CAPTURE');
@@ -156,36 +168,43 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
     }
 
     setErrorMsg(null);
+    showingResultRef.current = true;
     setStatus('rendering');
     setStatusHint('RENDERING YOUR LOOK… OUR STUDIO IS APPLYING YOUR WIG');
-    setResultUrl(null);
 
     try {
       const res = await postLiveTryOnStudioRender({
         imageDataUrl,
         color,
         unitKey,
-        photoModel,
         angle: activeAngle,
       });
       setResultUrl(res.imageUrl);
       setStatus('result');
       setStatusHint('STUDIO LOOK READY');
     } catch (e) {
+      showingResultRef.current = false;
       setStatus('ready');
       setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
       setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'RENDER FAILED');
     }
-  }, [activeAngle, color, photoModel, status, unitKey]);
+  }, [activeAngle, color, status, unitKey]);
 
   const handleRetake = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (video && canvas) {
+      syncCanvasToVideo(video, canvas);
+      lastVideoTimeRef.current = -1;
+    }
+    showingResultRef.current = false;
     setResultUrl(null);
     setErrorMsg(null);
     setStatus('ready');
     setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
   };
 
-  const showCamera = status !== 'result' || !resultUrl;
+  const showResult = status === 'result' && Boolean(resultUrl);
 
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -194,21 +213,24 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
         style={{ aspectRatio: '9 / 16', maxHeight: 'min(78dvh, 640px)' }}
       >
         <video ref={videoRef} playsInline muted className="absolute w-px h-px opacity-0 pointer-events-none" aria-hidden />
-        {showCamera ? (
-          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <img src={resultUrl!} alt="Studio try-on result" className="absolute inset-0 w-full h-full object-cover" />
-        )}
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
+        {showResult ? (
+          <img
+            src={resultUrl!}
+            alt="Studio try-on result"
+            className="absolute inset-0 w-full h-full object-cover z-10"
+          />
+        ) : null}
 
         <div
-          className="pointer-events-none absolute left-0 right-0 px-3 text-center"
+          className="pointer-events-none absolute left-0 right-0 px-3 text-center z-20"
           style={{ top: '10px', fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#FFFFFF', textTransform: 'uppercase' }}
         >
           {statusHint}
         </div>
 
         {status === 'rendering' ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/55 gap-2">
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/55 gap-2">
             <div
               className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"
               aria-hidden
@@ -219,8 +241,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
           </div>
         ) : null}
 
-        {(status === 'loading' || status === 'permission') && showCamera ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+        {(status === 'loading' || status === 'permission') && !showResult ? (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50">
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF' }}>{statusHint}</p>
           </div>
         ) : null}
@@ -236,7 +258,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
       ) : null}
 
       <div className="flex flex-col gap-2">
-        {status === 'result' && resultUrl ? (
+        {showResult ? (
           <>
             <button
               type="button"
@@ -247,7 +269,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
               CAPTURE AGAIN
             </button>
             <a
-              href={resultUrl}
+              href={resultUrl!}
               download="frontal-slayer-studio-tryon.webp"
               target="_blank"
               rel="noopener noreferrer"
@@ -274,7 +296,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey, photoModel }: P
         className="text-center uppercase"
         style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', lineHeight: 1.5 }}
       >
-        STUDIO TRY-ON USES AI TO APPLY YOUR WIG TO YOUR PHOTO — BEST FOR A REALISTIC RESULT. ANGLE: {activeAngle.toUpperCase()}.
+        STUDIO USES GPT IMAGE 2 WITH EDITORIAL BLUR & CENTER PART. ANGLE: {activeAngle.toUpperCase()}.
       </p>
     </div>
   );

@@ -232,11 +232,7 @@ export default function LiveTryOnPage() {
         <div className="w-full max-w-md">
           {mode === 'studio' ? (
             studioReady && sourcePayload ? (
-              <LiveTryOnStudioCapture
-                color={sourcePayload.color}
-                unitKey={sourcePayload.unitKey}
-                photoModel={photoModel}
-              />
+              <LiveTryOnStudioCapture color={sourcePayload.color} unitKey={sourcePayload.unitKey} />
             ) : (
               <div
                 className="aspect-[3/4] w-full border border-black/20 bg-black/5 flex items-center justify-center px-6"

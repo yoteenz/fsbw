@@ -3,11 +3,7 @@ export const config = { maxDuration: 120 };
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from './_lib/auth.js';
 import { runStudioTryOnRender } from './_lib/liveTryOnStudio.js';
-import {
-  activeLiveTryOnPhotoModel,
-  parseLiveTryOnPhotoModel,
-  type LiveTryOnAngle,
-} from './_lib/liveTryOnOverlay.js';
+import { activeLiveTryOnStudioPhotoModel, type LiveTryOnAngle } from './_lib/liveTryOnOverlay.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const body = req.body;
@@ -64,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const photoModel = parseLiveTryOnPhotoModel(readString(body, 'photoModel', '')) || activeLiveTryOnPhotoModel();
+  const photoModel = activeLiveTryOnStudioPhotoModel();
   const angle = parseAngle(readString(body, 'angle', 'front'));
   const unitKey = readString(body, 'unitKey', 'NOIR');
 
