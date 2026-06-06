@@ -25690,3 +25690,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Ops:** If message persists after deploy, run **Admin → Backend → LIVE TRY-ON** batch for that catalog color (COLOR WEBPS → portrait → overlay).
 
 **Changes:** `liveTryOnPrepareAssets.ts`, `liveTryOnStorageLookup.ts`, `live-try-on-resolve.ts`, `liveTryOnBatchManifest.ts`, `api.ts`, `vercel.json`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Admin LIVE TRY-ON: pipeline status + button guide
+
+**Context:** User on **Admin → Backend → LIVE TRY-ON** for **OFF BLACK** saw MISSING list (`portrait right`, `overlay left/front`) but did not understand buttons or why shoppers still blocked. Confirmed Storage: color WebPs + 2/3 portraits exist; **0/3 overlay PNGs** — Ideogram hair-only step never run.
+
+**Changes:** **`AdminLiveTryOnBatchPanel`** — pipeline legend (3 steps), red/green **status card** (e.g. `PORTRAITS 2/3 · OVERLAYS 0/3 — SHOPPERS BLOCKED`), **NEXT** action hint, human-readable MISSING lines, **WHAT THE BUTTONS DO** section, auto **CHECK STATUS** on row/model change, **RUN ALL FOR ROW** now sets busy + refreshes.
+
+**Ops for OFF BLACK:** Tap **RUN ALL FOR ROW** (finishes portrait RIGHT + 3 overlay Ideogram steps). Pushed **`master`** + **`preview/mobile`**.
