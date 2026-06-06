@@ -1251,6 +1251,46 @@ export async function postAdminLiveTryOnBatchStep(
   return res.json() as Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }>;
 }
 
+export type LiveTryOnResolvePayload = {
+  unitKey?: string;
+  color: string;
+  photoModel?: 'nbp' | 'gpt2';
+};
+
+export type LiveTryOnResolveResult = {
+  ok: boolean;
+  ready: boolean;
+  manifestHash?: string;
+  color?: string;
+  unitKey?: string;
+  photoModel?: 'nbp' | 'gpt2';
+  overlayUrls?: [string, string, string];
+  partial?: boolean;
+  lookupNote?: string;
+};
+
+/** Resolve pre-generated try-on overlays from Storage (no Fal). Uses studio default NOIR + color. */
+export async function postLiveTryOnResolve(body: LiveTryOnResolvePayload): Promise<LiveTryOnResolveResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/live-try-on-resolve', { method: 'POST', body });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Live try-on resolve');
+  }
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Live try-on resolve failed');
+  }
+  return JSON.parse(text) as LiveTryOnResolveResult;
+}
+
 /** Admin: export clients as CSV (returns blob URL for download). */
 export async function exportClientsCsv(): Promise<string> {
   const token = await getAccessToken();

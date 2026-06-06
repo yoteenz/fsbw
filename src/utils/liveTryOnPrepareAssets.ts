@@ -1,4 +1,5 @@
 import type { LiveTryOnPhotoModel } from '../constants/liveTryOnSpikeAssets';
+import { postLiveTryOnResolve } from './api';
 import {
   resolveLiveTryOnOverlayTripleBestEffort,
   resolveLiveTryOnOverlayTripleIfStored,
@@ -9,6 +10,7 @@ import {
   buildLiveTryOnPayloadFromConsult,
   type LiveTryOnSourcePayload,
 } from './liveTryOnSelections';
+import { liveTryOnStorageLookupPayload } from './liveTryOnStorageLookup';
 import type { ConsultQuoteSelections } from './consultOfferFromQuote';
 
 export type LiveTryOnCompareBundles = {
@@ -25,15 +27,19 @@ export type LiveTryOnPreparedAssets = {
   partial?: boolean;
 };
 
+function studioNotReadyMessage(color: string): string {
+  const label = String(color || 'THIS COLOR').toUpperCase().trim();
+  return `${label} IS NOT IN STUDIO YET. WE PREPARE THESE AHEAD OF TIME — TRY ANOTHER COLOR OR CHECK BACK SOON.`;
+}
+
 async function buildCompareFromStorage(
-  payload: LiveTryOnSourcePayload
+  lookupPayload: ReturnType<typeof liveTryOnStorageLookupPayload>
 ): Promise<LiveTryOnCompareBundles | undefined> {
-  const hashPayload = { ...payload, unitKey: payload.unitKey };
   const portraits: LiveTryOnCompareBundles['portraits'] = {};
   const overlays: LiveTryOnCompareBundles['overlays'] = {};
   for (const model of ['nbp', 'gpt2'] as LiveTryOnPhotoModel[]) {
-    const p = await resolveLiveTryOnPortraitTripleIfStored(hashPayload, model);
-    const o = await resolveLiveTryOnOverlayTripleIfStored(hashPayload, model);
+    const p = await resolveLiveTryOnPortraitTripleIfStored(lookupPayload, model);
+    const o = await resolveLiveTryOnOverlayTripleIfStored(lookupPayload, model);
     if (p) portraits[model] = p;
     if (o) overlays[model] = o;
   }
@@ -41,20 +47,44 @@ async function buildCompareFromStorage(
   return { portraits, overlays };
 }
 
+async function resolveViaApi(
+  payload: LiveTryOnSourcePayload,
+  photoModel: LiveTryOnPhotoModel
+): Promise<LiveTryOnPreparedAssets | null> {
+  try {
+    const res = await postLiveTryOnResolve({
+      unitKey: payload.unitKey,
+      color: payload.color,
+      photoModel,
+    });
+    if (!res.ready || !res.overlayUrls) return null;
+    return {
+      overlayUrls: res.overlayUrls,
+      manifestHash: res.manifestHash,
+      usedFallback: false,
+      activePhotoModel: photoModel,
+      partial: res.partial,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /**
  * **Storage only** — no Fal on the shopper device. Layers must exist from Admin → Backend → LIVE TRY-ON batch.
+ * Lookup uses studio default NOIR build + shopper color (same keys as admin batch).
  */
 export async function prepareLiveTryOnAssets(
   payload: LiveTryOnSourcePayload,
   photoModel: LiveTryOnPhotoModel,
   onStatus?: (msg: string) => void
 ): Promise<LiveTryOnPreparedAssets> {
-  const hashPayload = { ...payload, unitKey: payload.unitKey };
+  const lookupPayload = liveTryOnStorageLookupPayload(payload);
 
   onStatus?.('LOADING YOUR LOOK…');
-  const compare = await buildCompareFromStorage(hashPayload);
+  const compare = await buildCompareFromStorage(lookupPayload);
 
-  const full = await resolveLiveTryOnOverlayTripleIfStored(hashPayload, photoModel);
+  const full = await resolveLiveTryOnOverlayTripleIfStored(lookupPayload, photoModel);
   if (full) {
     return {
       overlayUrls: full,
@@ -64,7 +94,7 @@ export async function prepareLiveTryOnAssets(
     };
   }
 
-  const partial = await resolveLiveTryOnOverlayTripleBestEffort(hashPayload, photoModel);
+  const partial = await resolveLiveTryOnOverlayTripleBestEffort(lookupPayload, photoModel);
   if (partial) {
     return {
       overlayUrls: partial,
@@ -75,9 +105,13 @@ export async function prepareLiveTryOnAssets(
     };
   }
 
-  throw new Error(
-    'YOUR TRY-ON LOOK IS NOT IN STUDIO YET. WE PREPARE THESE AHEAD OF TIME — TRY ANOTHER COLOR OR CHECK BACK SOON.'
-  );
+  onStatus?.('CHECKING STUDIO…');
+  const fromApi = await resolveViaApi(payload, photoModel);
+  if (fromApi) {
+    return { ...fromApi, compare };
+  }
+
+  throw new Error(studioNotReadyMessage(payload.color));
 }
 
 export function prepareLiveTryOnAssetsFromBaw(
