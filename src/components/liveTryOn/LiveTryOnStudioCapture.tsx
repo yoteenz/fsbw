@@ -36,6 +36,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
   const [resultUrl, setResultUrl] = useState<string | null>(null);
+  const [makeupResultUrl, setMakeupResultUrl] = useState<string | null>(null);
+  const [showMakeup, setShowMakeup] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeAngle, setActiveAngle] = useState<'left' | 'front' | 'right'>('front');
 
@@ -183,8 +185,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         (msg) => setStatusHint(msg)
       );
       setResultUrl(res.imageUrl);
+      setMakeupResultUrl(res.makeupImageUrl ?? null);
+      setShowMakeup(false);
       setStatus('result');
-      setStatusHint('STUDIO LOOK READY');
+      setStatusHint(res.makeupImageUrl ? 'STUDIO LOOK READY — TAP MAKEUP TO PREVIEW' : 'STUDIO LOOK READY');
     } catch (e) {
       showingResultRef.current = false;
       setStatus('ready');
@@ -202,12 +206,17 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     }
     showingResultRef.current = false;
     setResultUrl(null);
+    setMakeupResultUrl(null);
+    setShowMakeup(false);
     setErrorMsg(null);
     setStatus('ready');
     setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
   };
 
   const showResult = status === 'result' && Boolean(resultUrl);
+  const displayedResultUrl =
+    showMakeup && makeupResultUrl ? makeupResultUrl : resultUrl;
+  const canToggleMakeup = Boolean(makeupResultUrl);
 
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -217,12 +226,30 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       >
         <video ref={videoRef} playsInline muted className="absolute w-px h-px opacity-0 pointer-events-none" aria-hidden />
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
-        {showResult ? (
+        {showResult && displayedResultUrl ? (
           <img
-            src={resultUrl!}
-            alt="Studio try-on result"
+            src={displayedResultUrl}
+            alt={showMakeup ? 'Studio try-on with makeup' : 'Studio try-on natural'}
             className="absolute inset-0 w-full h-full object-cover z-10"
           />
+        ) : null}
+
+        {showResult && canToggleMakeup ? (
+          <button
+            type="button"
+            onClick={() => setShowMakeup((v) => !v)}
+            className="absolute z-30 flex items-center justify-center rounded-full border border-white/70 bg-black/45 p-2.5"
+            style={{ right: '12px', bottom: '12px' }}
+            aria-label={showMakeup ? 'Show natural look' : 'Show makeup look'}
+            aria-pressed={showMakeup}
+          >
+            <img
+              src="/assets/makeup-artist-icon.svg"
+              alt=""
+              className="w-6 h-6"
+              style={{ opacity: showMakeup ? 1 : 0.72 }}
+            />
+          </button>
         ) : null}
 
         <div
@@ -272,8 +299,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
               CAPTURE AGAIN
             </button>
             <a
-              href={resultUrl!}
-              download="frontal-slayer-studio-tryon.webp"
+              href={displayedResultUrl!}
+              download={showMakeup ? 'frontal-slayer-studio-tryon-makeup.webp' : 'frontal-slayer-studio-tryon-natural.webp'}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-3 border border-black bg-white/80 uppercase text-center block"

@@ -8,6 +8,7 @@ import {
 } from './liveTryOnBatchGenerate.js';
 import {
   activeLiveTryOnStudioPhotoModel,
+  buildLiveTryOnStudioMakeupPassPrompt,
   buildLiveTryOnStudioTryOnPrompt,
   falEditModelId,
   liveTryOnPortraitStoragePath,
@@ -35,6 +36,8 @@ type FalClient = {
   };
 };
 
+export type StudioTryOnPhase = 'base' | 'makeup';
+
 export type StudioTryOnJobRecord = {
   jobId: string;
   userId: string;
@@ -46,6 +49,11 @@ export type StudioTryOnJobRecord = {
   color: string;
   poseAngle: LiveTryOnAngle;
   createdAt: number;
+  phase: StudioTryOnPhase;
+  /** Public URL after base wig render completes (before makeup pass). */
+  naturalImageUrl?: string;
+  /** Shared timestamp for natural/makeup storage filenames. */
+  outputTimestamp?: number;
 };
 
 function readTryOnFalResolution(): '1K' | '2K' | '4K' {
@@ -283,6 +291,7 @@ export async function startStudioTryOnRender(
     color: job.color,
     poseAngle,
     createdAt: Date.now(),
+    phase: 'base',
   });
 
   return {
@@ -297,16 +306,76 @@ export async function startStudioTryOnRender(
 }
 
 export type PollStudioTryOnRenderResult =
-  | { status: 'pending'; queueStatus: string }
+  | { status: 'pending'; queueStatus: string; phase: StudioTryOnPhase }
   | {
       status: 'complete';
       imageUrl: string;
+      makeupImageUrl?: string;
       manifestHash: string;
       color: string;
       unitKey: string;
       photoModel: LiveTryOnPhotoModel;
       angle: LiveTryOnAngle;
     };
+
+function studioOutputBasePath(
+  promptVersion: string,
+  job: Pick<StudioTryOnJobRecord, 'unitKey' | 'manifestHash' | 'photoModel' | 'poseAngle' | 'outputTimestamp'>
+): string {
+  const ts = job.outputTimestamp ?? Date.now();
+  return `try-on-studio/${promptVersion}/${job.unitKey}/${job.manifestHash}/${job.photoModel}/${job.poseAngle}/${ts}`;
+}
+
+async function uploadStudioWebp(
+  bucket: string,
+  path: string,
+  buf: Buffer
+): Promise<string> {
+  const supabase = getSupabaseAdminServiceRole();
+  const { error: upErr } = await supabase.storage.from(bucket).upload(path, buf, {
+    contentType: 'image/webp',
+    upsert: false,
+    cacheControl: '3600',
+  });
+  if (upErr) throw new Error(`upload studio result: ${upErr.message}`);
+
+  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+  const imageUrl = pub?.publicUrl ? `${pub.publicUrl}?t=${Date.now()}` : '';
+  if (!imageUrl) throw new Error('Could not build public URL for studio result');
+  return imageUrl;
+}
+
+async function queueMakeupPass(
+  fal: FalClient,
+  job: StudioTryOnJobRecord,
+  naturalBuf: Buffer
+): Promise<string> {
+  const naturalFalUrl = await uploadBufferToFal(fal, naturalBuf, 'studio-natural.webp', 'image/webp');
+  const makeupPrompt = buildLiveTryOnStudioMakeupPassPrompt();
+  const falInput = buildStudioFalInput(job.photoModel, [naturalFalUrl], makeupPrompt);
+  const { request_id: falRequestId } = await fal.queue.submit(job.falModel, {
+    input: falInput,
+    logs: false,
+  });
+  return falRequestId;
+}
+
+function completeStudioResult(
+  job: StudioTryOnJobRecord,
+  imageUrl: string,
+  makeupImageUrl?: string
+): Extract<PollStudioTryOnRenderResult, { status: 'complete' }> {
+  return {
+    status: 'complete',
+    imageUrl,
+    ...(makeupImageUrl ? { makeupImageUrl } : {}),
+    manifestHash: job.manifestHash,
+    color: job.color,
+    unitKey: job.unitKey,
+    photoModel: job.photoModel,
+    angle: job.poseAngle,
+  };
+}
 
 export async function pollStudioTryOnRender(
   userId: string,
@@ -324,11 +393,17 @@ export async function pollStudioTryOnRender(
   const queueStatus = await fal.queue.status(job.falModel, { requestId: job.falRequestId });
   const status = String((queueStatus as { status?: string }).status || 'IN_PROGRESS');
 
+  const phase: StudioTryOnPhase = job.phase === 'makeup' ? 'makeup' : 'base';
+
   if (status === 'IN_QUEUE' || status === 'IN_PROGRESS') {
-    return { status: 'pending', queueStatus: status };
+    return { status: 'pending', queueStatus: status, phase };
   }
 
   if (status !== 'COMPLETED') {
+    if (phase === 'makeup' && job.naturalImageUrl) {
+      await deleteStudioJob(bucket, promptVersion, userId, jobId);
+      return completeStudioResult(job, job.naturalImageUrl);
+    }
     await deleteStudioJob(bucket, promptVersion, userId, jobId);
     throw new Error(`Studio render failed (${status})`);
   }
@@ -336,33 +411,48 @@ export async function pollStudioTryOnRender(
   const result = await fal.queue.result(job.falModel, { requestId: job.falRequestId });
   const falUrl = extractFalImageUrl(result);
   if (!falUrl) {
+    if (phase === 'makeup' && job.naturalImageUrl) {
+      await deleteStudioJob(bucket, promptVersion, userId, jobId);
+      return completeStudioResult(job, job.naturalImageUrl);
+    }
     await deleteStudioJob(bucket, promptVersion, userId, jobId);
     throw new Error('fal: no studio result URL');
   }
 
   const outBuf = await downloadUrlToBuffer(falUrl);
-  const supabase = getSupabaseAdminServiceRole();
-  const outPath = `try-on-studio/${promptVersion}/${job.unitKey}/${job.manifestHash}/${job.photoModel}/${job.poseAngle}/${Date.now()}.webp`;
-  const { error: upErr } = await supabase.storage.from(bucket).upload(outPath, outBuf, {
-    contentType: 'image/webp',
-    upsert: false,
-    cacheControl: '3600',
-  });
-  if (upErr) throw new Error(`upload studio result: ${upErr.message}`);
 
-  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(outPath);
-  const imageUrl = pub?.publicUrl ? `${pub.publicUrl}?t=${Date.now()}` : '';
-  if (!imageUrl) throw new Error('Could not build public URL for studio result');
+  if (phase === 'base') {
+    const outputTimestamp = Date.now();
+    const naturalPath = `${studioOutputBasePath(promptVersion, { ...job, outputTimestamp })}-natural.webp`;
+    const naturalImageUrl = await uploadStudioWebp(bucket, naturalPath, outBuf);
+
+    let makeupRequestId: string;
+    try {
+      makeupRequestId = await queueMakeupPass(fal, job, outBuf);
+    } catch {
+      await deleteStudioJob(bucket, promptVersion, userId, jobId);
+      return completeStudioResult(job, naturalImageUrl);
+    }
+
+    await saveStudioJob(bucket, promptVersion, {
+      ...job,
+      phase: 'makeup',
+      falRequestId: makeupRequestId,
+      naturalImageUrl,
+      outputTimestamp,
+    });
+
+    return { status: 'pending', queueStatus: 'IN_QUEUE', phase: 'makeup' };
+  }
+
+  const makeupPath = `${studioOutputBasePath(promptVersion, job)}-makeup.webp`;
+  const makeupImageUrl = await uploadStudioWebp(bucket, makeupPath, outBuf);
+  const naturalImageUrl = job.naturalImageUrl;
+  if (!naturalImageUrl) {
+    await deleteStudioJob(bucket, promptVersion, userId, jobId);
+    throw new Error('Studio job missing natural image');
+  }
 
   await deleteStudioJob(bucket, promptVersion, userId, jobId);
-
-  return {
-    status: 'complete',
-    imageUrl,
-    manifestHash: job.manifestHash,
-    color: job.color,
-    unitKey: job.unitKey,
-    photoModel: job.photoModel,
-    angle: job.poseAngle,
-  };
+  return completeStudioResult(job, naturalImageUrl, makeupImageUrl);
 }

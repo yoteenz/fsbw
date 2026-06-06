@@ -134,10 +134,23 @@ export function buildLiveTryOnStudioTryOnPrompt(
       ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut.'
       : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut.',
     STUDIO_GLAM_COMPOSITION,
-    'Soft natural makeup if needed; realistic hairline blend at the lace front.',
+    '**No visible makeup** — bare natural skin as in the selfie; do not add lipstick, blush, or eye makeup.',
+    'Realistic hairline blend at the lace front.',
     '**Delete from output only:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo — never delete or swap the customer’s real room.',
     'No text or watermark.',
     'Ultra sharp, photographic — not illustration, sticker, or cutout overlay.',
+  ].join(' ');
+}
+
+/** Second pass — light editorial makeup on the finished studio render (hair/pose/room locked). */
+export function buildLiveTryOnStudioMakeupPassPrompt(): string {
+  return [
+    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, pose, expression, background, lighting, and skin tone.',
+    'Add **very light, natural, photography-ready makeup** only — subtle skin evening, soft under-eye brightness, faint lip tint, gentle brow definition, barely-there blush.',
+    'Style: soft editorial beauty / light social-photo filter aesthetic — **not** heavy glam, not obvious cosmetics, not changing face shape or features.',
+    '**Do not** change hair, lace, outfit, room, depth of field, or body pose.',
+    '**No makeup overload** — should look like the same person with a light touch-up for a photo shoot.',
+    'No text or watermark.',
   ].join(' ');
 }
 
