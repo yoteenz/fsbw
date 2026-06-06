@@ -7,6 +7,7 @@ import {
   LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
   LIVE_TRY_ON_IDEOGRAM_MODEL,
   liveTryOnOverlayStoragePath,
+  liveTryOnOverlayWorkStoragePath,
   liveTryOnPortraitStoragePath,
   type LiveTryOnAngle,
   type LiveTryOnPhotoModel,
@@ -18,7 +19,8 @@ import {
   type WigPreviewSelections,
 } from './wigPreviewSelectionHash.js';
 
-export type LiveTryOnBatchStep = 'portrait' | 'overlay';
+/** One Fal job per admin HTTP call — overlay split so Vercel does not timeout. */
+export type LiveTryOnBatchStep = 'portrait' | 'overlay_isolate' | 'overlay_cut';
 
 export type LiveTryOnBatchJob = {
   unitKey: string;
@@ -69,13 +71,15 @@ function formatFalSubscribeError(e: unknown, stepLabel: string): Error {
   const raw = e instanceof Error ? e.message : String(e);
   if (/unprocessable entity/i.test(raw) || /\b422\b/.test(raw)) {
     return new Error(
-      `${stepLabel}: Fal rejected the image (422 Unprocessable Entity). Fal could not fetch or read the input — we now re-upload to Fal storage before each step.`
+      `${stepLabel}: Fal rejected the image (422). Input was re-uploaded to Fal storage — retry this step.`
     );
+  }
+  if (/timeout|timed out/i.test(raw)) {
+    return new Error(`${stepLabel}: timed out — use RUN NEXT STEP (one Fal job per click).`);
   }
   return new Error(`${stepLabel}: ${raw}`);
 }
 
-/** Fal often 422s on raw Supabase public URLs — download via service role, upload to Fal storage. */
 async function uploadStorageObjectToFal(
   fal: FalClient,
   bucket: string,
@@ -91,18 +95,6 @@ async function uploadStorageObjectToFal(
   const mime = mimeForStoragePath(path);
   const file = new File([buf], fileName, { type: mime });
   return fal.storage.upload(file);
-}
-
-async function uploadRemoteUrlToFal(fal: FalClient, url: string, fileName: string): Promise<string> {
-  const buf = await downloadUrlToBuffer(url);
-  const mime = mimeForStoragePath(fileName);
-  const file = new File([buf], fileName, { type: mime });
-  return fal.storage.upload(file);
-}
-
-async function falHostedImageUrl(fal: FalClient, url: string, fileName: string): Promise<string> {
-  if (/fal\.(media|run)|fal-cdn|fal\.files/i.test(url)) return url;
-  return uploadRemoteUrlToFal(fal, url, fileName);
 }
 
 async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
@@ -190,14 +182,26 @@ export async function listMissingLiveTryOnBatchSteps(
         photoModel,
         angle
       );
+      const workPath = liveTryOnOverlayWorkStoragePath(
+        promptVersion,
+        unitKey,
+        manifestHash,
+        photoModel,
+        angle
+      );
       const hasPortrait = await storageObjectExists(bucket, portraitPath);
       if (!hasPortrait) {
         missing.push({ step: 'portrait', angle, photoModel });
         continue;
       }
       const hasOverlay = await storageObjectExists(bucket, overlayPath);
-      if (!hasOverlay) {
-        missing.push({ step: 'overlay', angle, photoModel });
+      if (hasOverlay) continue;
+
+      const hasWork = await storageObjectExists(bucket, workPath);
+      if (hasWork) {
+        missing.push({ step: 'overlay_cut', angle, photoModel });
+      } else {
+        missing.push({ step: 'overlay_isolate', angle, photoModel });
       }
     }
   }
@@ -247,76 +251,49 @@ async function generatePhotorealPortrait(
   return downloadUrlToBuffer(url);
 }
 
-/**
- * Photoreal portraits still contain a face — Ideogram bg-remove alone is not hair-only.
- * Always NBP hair isolation → Ideogram alpha (2 Fal jobs max per attempt).
- */
-async function generateHairOnlyOverlayFromPortrait(fal: FalClient, portraitUrl: string): Promise<Buffer> {
+async function runNbpHairIsolation(fal: FalClient, portraitFalUrl: string): Promise<Buffer> {
   const resolution = readTryOnFalResolution();
-  const skipValidate =
-    (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
-
-  const runPipeline = async (): Promise<Buffer> => {
-    const portraitFalUrl = await falHostedImageUrl(fal, portraitUrl, 'tryon-portrait-input.webp');
-
-    let nbpResult: unknown;
-    try {
-      nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
-        input: {
-          prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
-          image_urls: [portraitFalUrl],
-          aspect_ratio: 'auto',
-          resolution,
-          output_format: 'png',
-          num_images: 1,
-        },
-        logs: false,
-      });
-    } catch (e) {
-      throw formatFalSubscribeError(e, 'NBP hair isolation');
-    }
-    const nbpUrl = extractFalImageUrl(nbpResult);
-    if (!nbpUrl) throw new Error('fal: no hair isolation URL');
-
-    const nbpFalUrl = await falHostedImageUrl(fal, nbpUrl, 'tryon-nbp-isolate.png');
-
-    let cutResult: unknown;
-    try {
-      cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
-        input: { image_url: nbpFalUrl },
-        logs: false,
-      });
-    } catch (e) {
-      throw formatFalSubscribeError(e, 'Ideogram cutout');
-    }
-    const cutUrl = extractFalImageUrl(cutResult);
-    if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
-
-    return downloadUrlToBuffer(cutUrl);
-  };
-
-  let lastErr: Error | null = null;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const buf = await runPipeline();
-      try {
-        await validateHairOnlyOverlayPng(buf);
-      } catch (ve) {
-        if (skipValidate || attempt === 1) return buf;
-        throw ve;
-      }
-      return buf;
-    } catch (e) {
-      lastErr = e instanceof Error ? e : new Error(String(e));
-    }
+  let nbpResult: unknown;
+  try {
+    nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
+      input: {
+        prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
+        image_urls: [portraitFalUrl],
+        aspect_ratio: 'auto',
+        resolution,
+        output_format: 'png',
+        num_images: 1,
+      },
+      logs: false,
+    });
+  } catch (e) {
+    throw formatFalSubscribeError(e, 'NBP hair isolation');
   }
-  throw lastErr ?? new Error('overlay generation failed');
+  const nbpUrl = extractFalImageUrl(nbpResult);
+  if (!nbpUrl) throw new Error('fal: no hair isolation URL');
+  return downloadUrlToBuffer(nbpUrl);
+}
+
+async function runIdeogramCutout(fal: FalClient, isolateFalUrl: string): Promise<Buffer> {
+  let cutResult: unknown;
+  try {
+    cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
+      input: { image_url: isolateFalUrl },
+      logs: false,
+    });
+  } catch (e) {
+    throw formatFalSubscribeError(e, 'Ideogram cutout');
+  }
+  const cutUrl = extractFalImageUrl(cutResult);
+  if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
+  return downloadUrlToBuffer(cutUrl);
 }
 
 const BATCH_STEP_ORDER: Record<LiveTryOnBatchMissingStep['step'], number> = {
   color: 0,
   portrait: 1,
-  overlay: 2,
+  overlay_isolate: 2,
+  overlay_cut: 3,
 };
 
 const BATCH_ANGLE_ORDER: Record<LiveTryOnAngle, number> = {
@@ -372,6 +349,13 @@ export async function runLiveTryOnBatchStep(opts: {
     opts.photoModel,
     opts.angle
   );
+  const workPath = liveTryOnOverlayWorkStoragePath(
+    promptVersion,
+    unitKey,
+    manifestHash,
+    opts.photoModel,
+    opts.angle
+  );
   const overlayPath = liveTryOnOverlayStoragePath(
     promptVersion,
     unitKey,
@@ -395,7 +379,20 @@ export async function runLiveTryOnBatchStep(opts: {
     }
   }
 
-  if (opts.step === 'overlay' && !opts.forceRegenerate) {
+  if (opts.step === 'overlay_isolate' && !opts.forceRegenerate) {
+    if (await storageObjectExists(bucket, workPath)) {
+      return {
+        ok: true,
+        skipped: true,
+        step: opts.step,
+        angle: opts.angle,
+        photoModel: opts.photoModel,
+        manifestHash,
+      };
+    }
+  }
+
+  if (opts.step === 'overlay_cut' && !opts.forceRegenerate) {
     if (await storageObjectExists(bucket, overlayPath)) {
       return {
         ok: true,
@@ -446,14 +443,48 @@ export async function runLiveTryOnBatchStep(opts: {
     throw new Error('PORTRAIT_MISSING');
   }
 
-  const portraitFalUrl = await uploadStorageObjectToFal(
+  if (opts.step === 'overlay_isolate') {
+    const portraitFalUrl = await uploadStorageObjectToFal(
+      fal,
+      bucket,
+      portraitPath,
+      `tryon-portrait-${opts.photoModel}-${opts.angle}.webp`
+    );
+    const isolateBuf = await runNbpHairIsolation(fal, portraitFalUrl);
+    const { error: upWork } = await supabase.storage.from(bucket).upload(workPath, isolateBuf, {
+      contentType: 'image/png',
+      upsert: true,
+    });
+    if (upWork) throw new Error(`upload work isolate: ${upWork.message}`);
+    return {
+      ok: true,
+      step: opts.step,
+      angle: opts.angle,
+      photoModel: opts.photoModel,
+      manifestHash,
+    };
+  }
+
+  if (!(await storageObjectExists(bucket, workPath))) {
+    throw new Error('OVERLAY_ISOLATE_MISSING');
+  }
+
+  const isolateFalUrl = await uploadStorageObjectToFal(
     fal,
     bucket,
-    portraitPath,
-    `tryon-portrait-${opts.photoModel}-${opts.angle}.webp`
+    workPath,
+    `tryon-isolate-${opts.photoModel}-${opts.angle}.png`
   );
+  const overlayBuf = await runIdeogramCutout(fal, isolateFalUrl);
 
-  const overlayBuf = await generateHairOnlyOverlayFromPortrait(fal, portraitFalUrl);
+  const skipValidate =
+    (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
+  try {
+    await validateHairOnlyOverlayPng(overlayBuf);
+  } catch (ve) {
+    if (!skipValidate) throw ve;
+  }
+
   const { error: upOverlay } = await supabase.storage.from(bucket).upload(overlayPath, overlayBuf, {
     contentType: 'image/png',
     upsert: true,

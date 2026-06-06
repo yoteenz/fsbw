@@ -36,7 +36,7 @@ function readStringArray(obj: Record<string, unknown>, key: string): string[] {
 
 function readStep(obj: Record<string, unknown>): LiveTryOnBatchStep | null {
   const s = readString(obj, 'step', '').toLowerCase();
-  if (s === 'portrait' || s === 'overlay') return s;
+  if (s === 'portrait' || s === 'overlay_isolate' || s === 'overlay_cut') return s;
   return null;
 }
 
@@ -73,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   if (!step || !angle) {
     res.status(400).json({
-      error: 'step (portrait|overlay) and angle (left|front|right) are required',
+      error: 'step (portrait|overlay_isolate|overlay_cut) and angle (left|front|right) are required',
     });
     return;
   }
@@ -122,7 +122,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).json({ ok: true, ...result, job });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Batch step failed';
-    const code = msg === 'COLOR_PREVIEW_MISSING' || msg === 'PORTRAIT_MISSING' ? msg : undefined;
+    const code =
+      msg === 'COLOR_PREVIEW_MISSING' || msg === 'PORTRAIT_MISSING' || msg === 'OVERLAY_ISOLATE_MISSING'
+        ? msg
+        : undefined;
     res.status(code ? 409 : 500).json({ error: msg, step, angle, photoModel });
   }
 }
