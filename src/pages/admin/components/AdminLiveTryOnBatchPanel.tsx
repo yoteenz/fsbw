@@ -440,9 +440,11 @@ export default function AdminLiveTryOnBatchPanel() {
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: 6 }}>
             {/TIMEOUT/i.test(lastError)
               ? 'Server timed out — use RUN NEXT STEP once per angle (portrait RIGHT first, then each overlay).'
-              : /opaque face|shoulders|overlay/i.test(lastError)
-                ? 'Overlay step: NBP isolates hair, then Ideogram cuts alpha. Retry RUN NEXT STEP; set WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE=true on Vercel if it keeps failing validation.'
-                : 'Fix the issue above, then RUN NEXT STEP or RUN ALL FOR ROW again.'}
+              : /unprocessable entity|422/i.test(lastError)
+                ? 'Fal could not use the portrait URL (422). A fix re-uploads portraits to Fal storage first — redeploy, then RUN NEXT STEP again.'
+                : /opaque face|shoulders|overlay/i.test(lastError)
+                  ? 'Overlay step: NBP isolates hair, then Ideogram cuts alpha. Retry RUN NEXT STEP; set WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE=true on Vercel if it keeps failing validation.'
+                  : 'Fix the issue above, then RUN NEXT STEP or RUN ALL FOR ROW again.'}
           </p>
         </div>
       ) : null}

@@ -55,7 +55,55 @@ function extractFalImageUrl(result: unknown): string | null {
 
 type FalClient = {
   subscribe: (model: string, opts: { input: Record<string, unknown>; logs: boolean }) => Promise<unknown>;
+  storage: { upload: (file: File) => Promise<string> };
 };
+
+function mimeForStoragePath(path: string): string {
+  const lower = path.toLowerCase();
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
+  return 'image/webp';
+}
+
+function formatFalSubscribeError(e: unknown, stepLabel: string): Error {
+  const raw = e instanceof Error ? e.message : String(e);
+  if (/unprocessable entity/i.test(raw) || /\b422\b/.test(raw)) {
+    return new Error(
+      `${stepLabel}: Fal rejected the image (422 Unprocessable Entity). Fal could not fetch or read the input — we now re-upload to Fal storage before each step.`
+    );
+  }
+  return new Error(`${stepLabel}: ${raw}`);
+}
+
+/** Fal often 422s on raw Supabase public URLs — download via service role, upload to Fal storage. */
+async function uploadStorageObjectToFal(
+  fal: FalClient,
+  bucket: string,
+  path: string,
+  fileName: string
+): Promise<string> {
+  const supabase = getSupabaseAdminServiceRole();
+  const { data, error } = await supabase.storage.from(bucket).download(path);
+  if (error || !data) {
+    throw new Error(`storage download failed for ${path}: ${error?.message || 'missing'}`);
+  }
+  const buf = Buffer.from(await data.arrayBuffer());
+  const mime = mimeForStoragePath(path);
+  const file = new File([buf], fileName, { type: mime });
+  return fal.storage.upload(file);
+}
+
+async function uploadRemoteUrlToFal(fal: FalClient, url: string, fileName: string): Promise<string> {
+  const buf = await downloadUrlToBuffer(url);
+  const mime = mimeForStoragePath(fileName);
+  const file = new File([buf], fileName, { type: mime });
+  return fal.storage.upload(file);
+}
+
+async function falHostedImageUrl(fal: FalClient, url: string, fileName: string): Promise<string> {
+  if (/fal\.(media|run)|fal-cdn|fal\.files/i.test(url)) return url;
+  return uploadRemoteUrlToFal(fal, url, fileName);
+}
 
 async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
   const img = await Jimp.read(buf);
@@ -209,24 +257,38 @@ async function generateHairOnlyOverlayFromPortrait(fal: FalClient, portraitUrl: 
     (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
 
   const runPipeline = async (): Promise<Buffer> => {
-    const nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
-      input: {
-        prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
-        image_urls: [portraitUrl],
-        aspect_ratio: 'auto',
-        resolution,
-        output_format: 'png',
-        num_images: 1,
-      },
-      logs: false,
-    });
+    const portraitFalUrl = await falHostedImageUrl(fal, portraitUrl, 'tryon-portrait-input.webp');
+
+    let nbpResult: unknown;
+    try {
+      nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
+        input: {
+          prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
+          image_urls: [portraitFalUrl],
+          aspect_ratio: 'auto',
+          resolution,
+          output_format: 'png',
+          num_images: 1,
+        },
+        logs: false,
+      });
+    } catch (e) {
+      throw formatFalSubscribeError(e, 'NBP hair isolation');
+    }
     const nbpUrl = extractFalImageUrl(nbpResult);
     if (!nbpUrl) throw new Error('fal: no hair isolation URL');
 
-    const cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
-      input: { image_url: nbpUrl },
-      logs: false,
-    });
+    const nbpFalUrl = await falHostedImageUrl(fal, nbpUrl, 'tryon-nbp-isolate.png');
+
+    let cutResult: unknown;
+    try {
+      cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
+        input: { image_url: nbpFalUrl },
+        logs: false,
+      });
+    } catch (e) {
+      throw formatFalSubscribeError(e, 'Ideogram cutout');
+    }
     const cutUrl = extractFalImageUrl(cutResult);
     if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
 
@@ -384,11 +446,14 @@ export async function runLiveTryOnBatchStep(opts: {
     throw new Error('PORTRAIT_MISSING');
   }
 
-  const { data: pubPortrait } = supabase.storage.from(bucket).getPublicUrl(portraitPath);
-  const portraitUrl = pubPortrait?.publicUrl ? `${pubPortrait.publicUrl}?t=${Date.now()}` : '';
-  if (!portraitUrl) throw new Error('portrait public URL missing');
+  const portraitFalUrl = await uploadStorageObjectToFal(
+    fal,
+    bucket,
+    portraitPath,
+    `tryon-portrait-${opts.photoModel}-${opts.angle}.webp`
+  );
 
-  const overlayBuf = await generateHairOnlyOverlayFromPortrait(fal, portraitUrl);
+  const overlayBuf = await generateHairOnlyOverlayFromPortrait(fal, portraitFalUrl);
   const { error: upOverlay } = await supabase.storage.from(bucket).upload(overlayPath, overlayBuf, {
     contentType: 'image/png',
     upsert: true,
