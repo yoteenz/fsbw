@@ -25672,3 +25672,21 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Workflow:** COLOR WEBPS → portrait L/F/R → overlay L/F/R (NBP default; optional NBP+GPT2). Paths unchanged: `try-on-portrait/.../hair-v5-photo-woman/...`, `try-on-overlay/...`.
 
 **Changes:** `api/admin/live-try-on-batch-*.ts`, `AdminLiveTryOnBatchPanel.tsx`, `admin/backend/page.tsx`, `liveTryOnPrepareAssets.ts`, `live-try-on-ensure-overlays.ts`, `api.ts`, `vercel.json`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: fix Storage lookup hash mismatch (shopper vs batch)
+
+**Context (full thread):** User reported **“YOUR TRY-ON LOOK IS NOT IN STUDIO YET”** / **“THIS COLOR MAY NOT BE STUDIO-READY YET”** on `/tools/live-try-on` even after admin batch architecture shipped.
+
+**Cause:** Admin batch writes overlays keyed to **default NOIR build** (24", 200%, 13X6, SILKY, NATURAL, styling NONE) per catalog color, but shopper **`prepareLiveTryOnAssets`** hashed **full BAW selections** (length, lace, add-ons, etc.) → different `manifestHash` → Storage miss even when batch completed.
+
+**Fix:**
+- **`liveTryOnStorageLookupPayload`** (`src/utils/liveTryOnStorageLookup.ts`) + **`liveTryOnStorageLookupJob`** (`api/_lib/liveTryOnBatchManifest.ts`) normalize shopper color → studio default keys.
+- **`prepareLiveTryOnAssets`** uses lookup payload for all Storage probes; falls back to **`POST /api/live-try-on-resolve`** (service-role existence check, no Fal, no auth required) when client HEAD/GET fails.
+- Error copy includes color name (e.g. **“OFF BLACK IS NOT IN STUDIO YET…”**).
+- **`vercel.json`**: `maxDuration: 30` for **`live-try-on-resolve`**.
+
+**Ops:** If message persists after deploy, run **Admin → Backend → LIVE TRY-ON** batch for that catalog color (COLOR WEBPS → portrait → overlay).
+
+**Changes:** `liveTryOnPrepareAssets.ts`, `liveTryOnStorageLookup.ts`, `live-try-on-resolve.ts`, `liveTryOnBatchManifest.ts`, `api.ts`, `vercel.json`. Pushed **`master`** + **`preview/mobile`**.
