@@ -151,6 +151,7 @@ export default function AdminLiveTryOnBatchPanel() {
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState<LogLine[]>([]);
   const [batchAll, setBatchAll] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
 
   const selectedJob = useMemo(() => {
     const row = manifest.find((r) => r.id === selectedId);
@@ -177,13 +178,16 @@ export default function AdminLiveTryOnBatchPanel() {
       setMissing(res.missing as MissingStep[]);
       setManifestHash(res.manifestHash);
       const summary = summarizePipeline(res.missing as MissingStep[], compareBoth);
+      if (res.complete) setLastError(null);
       pushLog(
         res.complete
           ? `READY · ${selectedJob.color} · hash ${res.manifestHash.slice(0, 8)}…`
           : `${summary.headline} · ${selectedJob.color}`
       );
     } catch (e) {
-      pushLog(e instanceof Error ? e.message : 'Status failed');
+      const msg = e instanceof Error ? e.message : 'Status failed';
+      setLastError(msg);
+      pushLog(msg);
       setMissing(null);
     } finally {
       setBusy(false);
@@ -233,6 +237,7 @@ export default function AdminLiveTryOnBatchPanel() {
         angle: step.angle,
         photoModel: model,
       });
+      setLastError(null);
       pushLog(`${model.toUpperCase()} · ${step.step.toUpperCase()} · ${step.angle.toUpperCase()} OK`);
     },
     [selectedJob, compareBoth, photoModel, ensureColorWebps, pushLog]
@@ -251,7 +256,14 @@ export default function AdminLiveTryOnBatchPanel() {
         const again = await postAdminLiveTryOnBatchStatus(jobBody(job, compareBoth, photoModel));
         steps = again.missing as MissingStep[];
       }
-      for (const step of steps) {
+      const ordered = [...steps].sort((a, b) => {
+        const order = { color: 0, portrait: 1, overlay: 2 };
+        const angles = { left: 0, front: 1, right: 2 };
+        const sd = order[a.step] - order[b.step];
+        if (sd !== 0) return sd;
+        return angles[a.angle] - angles[b.angle];
+      });
+      for (const step of ordered) {
         if (step.step === 'color') continue;
         pushLog(`${label} · ${step.photoModel || photoModel} · ${step.step} · ${step.angle}…`);
         await runOneStep(step);
@@ -270,7 +282,9 @@ export default function AdminLiveTryOnBatchPanel() {
       await runOneStep(missing[0]);
       await refreshStatus();
     } catch (e) {
-      pushLog(e instanceof Error ? e.message : 'Step failed');
+      const msg = e instanceof Error ? e.message : 'Step failed';
+      setLastError(msg);
+      pushLog(`ERROR · ${msg}`);
     } finally {
       setBusy(false);
     }
@@ -282,7 +296,9 @@ export default function AdminLiveTryOnBatchPanel() {
       await runAllMissingForJob(selectedJob, selectedJob.color);
       await refreshStatus();
     } catch (e) {
-      pushLog(e instanceof Error ? e.message : 'Run all failed');
+      const msg = e instanceof Error ? e.message : 'Run all failed';
+      setLastError(msg);
+      pushLog(`ERROR · ${msg}`);
     } finally {
       setBusy(false);
     }
@@ -378,6 +394,22 @@ export default function AdminLiveTryOnBatchPanel() {
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
           HASH {manifestHash.slice(0, 16)}…
         </p>
+      ) : null}
+
+      {lastError ? (
+        <div className="border border-[#EB1C24] p-2 bg-[rgba(235,28,36,0.08)]">
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24' }}>LAST ERROR</p>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', marginTop: 4, lineHeight: 1.5 }}>
+            {lastError}
+          </p>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: 6 }}>
+            {/TIMEOUT/i.test(lastError)
+              ? 'Server timed out — use RUN NEXT STEP once per angle (portrait RIGHT first, then each overlay).'
+              : /opaque face|shoulders|overlay/i.test(lastError)
+                ? 'Overlay step: NBP isolates hair, then Ideogram cuts alpha. Retry RUN NEXT STEP; set WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE=true on Vercel if it keeps failing validation.'
+                : 'Fix the issue above, then RUN NEXT STEP or RUN ALL FOR ROW again.'}
+          </p>
+        </div>
       ) : null}
 
       {pipeline ? (

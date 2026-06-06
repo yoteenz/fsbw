@@ -1240,6 +1240,18 @@ export async function postAdminLiveTryOnBatchStatus(body: LiveTryOnBatchJobPaylo
   }>;
 }
 
+function parseApiErrorMessage(text: string, fallback: string): string {
+  try {
+    const j = JSON.parse(text) as { error?: string; message?: string };
+    if (typeof j?.error === 'string' && j.error.trim()) return j.error.trim();
+    if (typeof j?.message === 'string' && j.message.trim()) return j.message.trim();
+  } catch {
+    /* ignore */
+  }
+  const trimmed = text.trim();
+  return trimmed || fallback;
+}
+
 export async function postAdminLiveTryOnBatchStep(
   body: LiveTryOnBatchJobPayload & {
     step: 'portrait' | 'overlay';
@@ -1247,8 +1259,15 @@ export async function postAdminLiveTryOnBatchStep(
   }
 ): Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }> {
   const res = await apiFetch('/api/admin/live-try-on-batch-step', { method: 'POST', body });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }>;
+  const text = await res.text();
+  if (!res.ok) {
+    const msg = parseApiErrorMessage(text, 'Batch step failed');
+    if (/FUNCTION_INVOCATION_TIMEOUT/i.test(text) || /FUNCTION_INVOCATION_TIMEOUT/i.test(msg)) {
+      throw new Error('LIVE_TRYON_TIMEOUT — retry RUN NEXT STEP (one angle at a time)');
+    }
+    throw new Error(msg);
+  }
+  return JSON.parse(text) as { ok: boolean; skipped?: boolean; manifestHash: string };
 }
 
 export type LiveTryOnResolvePayload = {
