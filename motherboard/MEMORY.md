@@ -25712,3 +25712,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix:** `generateHairOnlyOverlayFromPortrait` always **NBP hair isolation → Ideogram** (2 Fal max); retry once; upload best-effort on 2nd validation fail. Missing steps sorted **portraits before overlays**. Admin **LAST ERROR** box + parsed API messages. Env: **`WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE=true`** last resort on Vercel.
 
 **Ops:** After deploy, **RUN NEXT STEP** per missing row (portrait RIGHT, then overlay L/F/R) or **RUN ALL FOR ROW**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Admin LIVE TRY-ON button loading states
+
+**Context:** User unsure if admin batch buttons registered clicks — status updates slow, no visual feedback.
+
+**Fix:** **`AdminLiveTryOnBatchPanel`** — per-action loading text on buttons (`CHECKING…`, `RUNNING WEBPS…`, `RUNNING STEP…`, `RUNNING ALL…`, `BATCHING ALL COLORS…`); active button turns red; `disabled:opacity-55`; `UPDATING STATUS…` on auto row refresh. Fixed nested `busy` bug where inner handlers cleared loading during **RUN ALL FOR ROW**. Pushed **`master`** + **`preview/mobile`**.
