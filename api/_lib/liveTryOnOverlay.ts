@@ -32,21 +32,23 @@ export function parseLiveTryOnPhotoModel(value: string | undefined): LiveTryOnPh
 function angleConstraint(angle: LiveTryOnAngle): string {
   if (angle === 'left') {
     return [
-      'This is the **LEFT 3/4 view** (mannequin’s left cheek toward camera): **match the reference head yaw and body angle exactly** — not front-facing.',
-      'Hair mass toward the **viewer’s right** (mannequin’s left); **same part direction and shoulder bias** as the reference — do not mirror or rotate.',
+      '**Head + shoulder yaw: +40° from front** (subject turned 40° toward **their right**; **left cheek** nearest camera).',
+      '**Match the mannequin reference yaw exactly** — not 0° front, not −40° (opposite side).',
+      'Hair mass toward the **viewer’s right**; **same part direction and shoulder bias** as the reference — do not mirror.',
       'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
     ].join(' ');
   }
   if (angle === 'right') {
     return [
-      'This is the **RIGHT 3/4 view** (mannequin’s right cheek toward camera): **match the reference head yaw and body angle exactly** — true right 3/4, **not** front-facing and **not** a mirrored left pose.',
-      'Hair mass toward the **viewer’s left** (mannequin’s right); **same part direction and shoulder bias** as the reference.',
-      '**Do not** rotate only the eyes or face toward center — **shoulders, neck, and torso** stay in the same right 3/4 pose as the mannequin reference (body angled like the left view, but from the opposite side).',
+      '**Head + shoulder yaw: −40° from front** (subject turned 40° toward **their left**; **right cheek** nearest camera).',
+      '**Match the mannequin reference yaw exactly at −40°** — **not** 0° (front), **not** +40° (mirrored left pose), **not** “eyes only” turned toward center while body stays front.',
+      'Nose, chin, neck, and **both shoulders** stay locked to **−40°** like the reference — same body angle as the left view but on the **opposite** side.',
+      'Hair mass toward the **viewer’s left**; **same part direction and shoulder bias** as the reference.',
       'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
     ].join(' ');
   }
   return [
-    'Camera: **front** portrait — **match the mannequin reference head-on** (no 3/4 turn).',
+    '**Head + shoulder yaw: 0°** — square to camera (true front; no turn).',
     '**Exact** center part line, length, volume, and one-sided shoulder sweep from the reference — do not symmetrically mirror hair.',
     'Keep the same **camera distance and crop** as the mannequin frame.',
   ].join(' ');
