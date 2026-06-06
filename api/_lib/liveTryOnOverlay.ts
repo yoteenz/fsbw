@@ -104,6 +104,18 @@ export function liveTryOnOverlayStoragePath(
   return `try-on-overlay/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${promptVersion}/${u}/${manifestHash}/${photoModel}/${angle}.png`;
 }
 
+/** NBP hair-isolation intermediate (white bg) before Ideogram alpha — one Fal job per HTTP call. */
+export function liveTryOnOverlayWorkStoragePath(
+  promptVersion: string,
+  unitKey: string,
+  manifestHash: string,
+  photoModel: LiveTryOnPhotoModel,
+  angle: LiveTryOnAngle
+): string {
+  const u = String(unitKey || 'NOIR').toUpperCase();
+  return `try-on-work/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${promptVersion}/${u}/${manifestHash}/${photoModel}/${angle}/nbp-isolate.png`;
+}
+
 export type LiveTryOnAngleUrls = { left: string; front: string; right: string };
 
 export function liveTryOnOverlayPublicUrlsForModel(

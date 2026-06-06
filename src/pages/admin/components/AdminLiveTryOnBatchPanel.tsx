@@ -13,7 +13,7 @@ import {
 } from '../../../utils/api';
 
 type MissingStep = {
-  step: 'color' | 'portrait' | 'overlay';
+  step: 'color' | 'portrait' | 'overlay_isolate' | 'overlay_cut';
   angle: 'left' | 'front' | 'right';
   photoModel?: LiveTryOnPhotoModel;
 };
@@ -39,7 +39,8 @@ const ANGLES = ['left', 'front', 'right'] as const;
 const STEP_LABELS: Record<MissingStep['step'], string> = {
   color: 'Mannequin color WebP',
   portrait: 'Photoreal portrait (NBP/GPT2)',
-  overlay: 'Hair-only overlay (Ideogram)',
+  overlay_isolate: 'NBP hair isolation (work PNG)',
+  overlay_cut: 'Ideogram cutout → final overlay',
 };
 
 function jobBody(job: LiveTryOnBatchJob, compareModels: boolean, photoModel: LiveTryOnPhotoModel) {
@@ -56,15 +57,34 @@ function expectedTotals(compareBoth: boolean): { portraitsTotal: number; overlay
   return { portraitsTotal: 3 * models, overlaysTotal: 3 * models };
 }
 
+function finalOverlayCounts(missing: MissingStep[], compareBoth: boolean) {
+  const { overlaysTotal } = expectedTotals(compareBoth);
+  const pendingFinal = new Set(
+    missing
+      .filter((m) => m.step === 'overlay_isolate' || m.step === 'overlay_cut')
+      .map((m) => `${m.photoModel || 'nbp'}:${m.angle}`)
+  );
+  const overlayStepsLeft = missing.filter(
+    (m) => m.step === 'overlay_isolate' || m.step === 'overlay_cut'
+  ).length;
+  return {
+    overlaysTotal,
+    overlaysDone: overlaysTotal - pendingFinal.size,
+    overlayStepsLeft,
+  };
+}
+
 function summarizePipeline(missing: MissingStep[], compareBoth: boolean): PipelineSummary {
-  const { portraitsTotal, overlaysTotal } = expectedTotals(compareBoth);
+  const { portraitsTotal } = expectedTotals(compareBoth);
+  const { overlaysTotal, overlaysDone, overlayStepsLeft } = finalOverlayCounts(missing, compareBoth);
   const missingColor = missing.filter((m) => m.step === 'color');
   const missingPortrait = missing.filter((m) => m.step === 'portrait');
-  const missingOverlay = missing.filter((m) => m.step === 'overlay');
+  const missingOverlaySteps = missing.filter(
+    (m) => m.step === 'overlay_isolate' || m.step === 'overlay_cut'
+  );
 
   const colorDone = missingColor.length === 0;
   const portraitsDone = portraitsTotal - missingPortrait.length;
-  const overlaysDone = overlaysTotal - missingOverlay.length;
   const shopperReady = missing.length === 0;
 
   if (shopperReady) {
@@ -95,7 +115,7 @@ function summarizePipeline(missing: MissingStep[], compareBoth: boolean): Pipeli
     };
   }
 
-  if (missingPortrait.length > 0 && missingOverlay.length > 0) {
+  if (missingPortrait.length > 0 && missingOverlaySteps.length > 0) {
     return {
       colorDone: true,
       portraitsDone,
@@ -133,8 +153,8 @@ function summarizePipeline(missing: MissingStep[], compareBoth: boolean): Pipeli
     shopperReady: false,
     headline: `STEP 3 · OVERLAYS ${overlaysDone}/${overlaysTotal} — SHOPPERS BLOCKED`,
     detail:
-      'Portraits are done, but hair-only overlay PNGs (Ideogram cutout) are missing. This is what Live Try On loads on the camera.',
-    nextAction: `Tap RUN ALL FOR ROW or RUN NEXT STEP — ${missingOverlay.length} overlay step(s) left.`,
+      'Portraits are done, but hair-only overlay PNGs are missing. Each angle needs two Fal jobs: NBP isolate, then Ideogram cut.',
+    nextAction: `Tap RUN NEXT STEP once per MISSING line (${overlayStepsLeft} Fal job(s) left).`,
   };
 }
 
@@ -270,7 +290,7 @@ export default function AdminLiveTryOnBatchPanel() {
         steps = again.missing as MissingStep[];
       }
       const ordered = [...steps].sort((a, b) => {
-        const order = { color: 0, portrait: 1, overlay: 2 };
+        const order = { color: 0, portrait: 1, overlay_isolate: 2, overlay_cut: 3 };
         const angles = { left: 0, front: 1, right: 2 };
         const sd = order[a.step] - order[b.step];
         if (sd !== 0) return sd;
@@ -378,8 +398,10 @@ export default function AdminLiveTryOnBatchPanel() {
           camera)
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          3 · <strong>Overlays</strong> — Ideogram removes face/background → hair-only PNG (this is what Live Try On
-          uses)
+          3a · <strong>Isolate</strong> — NBP extracts hair (work PNG, one Fal job)
+        </p>
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
+          3b · <strong>Cut</strong> — Ideogram alpha → final overlay PNG (one Fal job; Live Try On uses this)
         </p>
       </div>
 
@@ -439,7 +461,7 @@ export default function AdminLiveTryOnBatchPanel() {
           </p>
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: 6 }}>
             {/TIMEOUT/i.test(lastError)
-              ? 'Server timed out — use RUN NEXT STEP once per angle (portrait RIGHT first, then each overlay).'
+              ? 'Each click = one Fal job (~1–2 min). Run RUN NEXT STEP for each MISSING line (isolate LEFT, cut LEFT, isolate FRONT…).'
               : /unprocessable entity|422/i.test(lastError)
                 ? 'Fal could not use the portrait URL (422). A fix re-uploads portraits to Fal storage first — redeploy, then RUN NEXT STEP again.'
                 : /opaque face|shoulders|overlay/i.test(lastError)
@@ -569,7 +591,7 @@ export default function AdminLiveTryOnBatchPanel() {
           <strong>COLOR WEBPS</strong> — Step 1: generate/reuse grey mannequin left/front/right for this color.
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          <strong>RUN NEXT STEP</strong> — one Fal job (next item in the MISSING list).
+          <strong>RUN NEXT STEP</strong> — one Fal job (next line in MISSING: isolate or cut).
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
           <strong>RUN ALL FOR ROW</strong> — finish everything missing for the selected color (best for OFF BLACK now).

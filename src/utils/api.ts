@@ -1254,7 +1254,7 @@ function parseApiErrorMessage(text: string, fallback: string): string {
 
 export async function postAdminLiveTryOnBatchStep(
   body: LiveTryOnBatchJobPayload & {
-    step: 'portrait' | 'overlay';
+    step: 'portrait' | 'overlay_isolate' | 'overlay_cut';
     angle: 'left' | 'front' | 'right';
   }
 ): Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }> {
