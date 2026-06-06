@@ -25730,3 +25730,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User unsure if admin batch buttons registered clicks — status updates slow, no visual feedback.
 
 **Fix:** **`AdminLiveTryOnBatchPanel`** — per-action loading text on buttons (`CHECKING…`, `RUNNING WEBPS…`, `RUNNING STEP…`, `RUNNING ALL…`, `BATCHING ALL COLORS…`); active button turns red; `disabled:opacity-55`; `UPDATING STATUS…` on auto row refresh. Fixed nested `busy` bug where inner handlers cleared loading during **RUN ALL FOR ROW**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Overlay cut validation false failures (deploy gap)
+
+**Context:** User completing **OFF BLACK** LIVE TRY-ON batch on **fsbw.vercel.app** — portraits 3/3, work isolate PNGs exist, **overlay cut** steps fail in ~5s with **`overlay missing visible hair at top`** (STEP 3 · OVERLAYS 0/3). Prior chat had written a fix but user reported **"wasn't fixed."**
+
+**Root cause:** Fix existed **only as uncommitted local edits** — production still ran old `validateHairOnlyOverlayPng` that sampled **`getPixelColor & 0xff`** (blue channel, not alpha) on transparent PNGs, so every cut failed validation before upload.
+
+**Fix (shipped `012275d5`):** `api/_lib/liveTryOnBatchGenerate.ts` — `sampleOverlayAlpha` / `sampleOverlayLuma` via **`Jimp.intToRGBA`**; **strict validation opt-in** only when **`WIG_PREVIEW_TRYON_OVERLAY_STRICT_VALIDATE=true`** (off by default). Legacy **`WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE`** bypasses strict probe when strict is on. Admin LAST ERROR hint updated. `.env.example` documented.
+
+**Ops after Vercel deploy (~1–2 min):** Hard-refresh admin → **CHECK STATUS** → **RUN NEXT STEP** ×3 for LEFT/FRONT/RIGHT **White → transparent** cut lines (work PNGs already in Storage; each cut is local Jimp, seconds not minutes). Status → **ROW READY FOR LIVE TRY ON**; test **`/tools/live-try-on`** on mobile.
+
+**Env:** Default cut = local white→alpha (`workPngToHairOverlay`); **`WIG_PREVIEW_TRYON_OVERLAY_USE_IDEOGRAM=true`** optional. Pushed **`master`** + **`preview/mobile`**.
