@@ -1,13 +1,22 @@
 import type { CanvasPoint } from './liveTryOnYaw';
-import { faceContourPolygonFromLandmarks, type NormPoint } from './liveTryOnYaw';
+import {
+  belowChinPunchPolygon,
+  faceContourPolygonFromLandmarks,
+  type NormPoint,
+} from './liveTryOnYaw';
 
 type Placement = { cx: number; cy: number; width: number; rotationRad: number };
 
 /**
- * Lace band in pre-generated overlay PNGs — tune if hairline floats above the face.
- * Fraction from top of wig bitmap to lace front.
+ * Lace band in pre-generated overlay PNGs — fraction from top of full wig bitmap.
+ * When drawing the head band only, see HAIRLINE_IN_BAND.
  */
 const WIG_ASSET_HAIRLINE_Y = 0.17;
+
+/** Top fraction of overlay PNG to use (excludes chest-length portrait hair). */
+const WIG_HEAD_BAND_HEIGHT = 0.46;
+
+const HAIRLINE_IN_BAND = WIG_ASSET_HAIRLINE_Y / WIG_HEAD_BAND_HEIGHT;
 
 function clipToPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void {
   if (points.length < 3) return;
@@ -27,8 +36,8 @@ function fillPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void
   ctx.fill();
 }
 
-/** Remove wig pixels in the face zone (wide) so portrait background in bad cuts cannot show. */
-function punchFaceFromWigLayer(
+/** Remove wig pixels inside a polygon (face zone or below-chin strip). */
+function punchFromWigLayer(
   ctx: CanvasRenderingContext2D,
   contour: CanvasPoint[],
   featherPx: number
@@ -61,7 +70,8 @@ export function drawMirroredVideoClippedToFace(
 }
 
 /**
- * Realistic stack: full video → hair outside face mask → live face reinjected on top.
+ * Realistic stack: full video → head hair outside face mask → live face reinjected on top.
+ * Portrait overlays include bust/chest hair; we crop to the head band and punch below the jaw.
  */
 export function drawWigOverlayTracked(
   ctx: CanvasRenderingContext2D,
@@ -75,12 +85,13 @@ export function drawWigOverlayTracked(
 ): void {
   const punchContour = faceContourPolygonFromLandmarks(landmarks, canvasW, canvasH, {
     mirror: true,
-    expand: 1.22,
+    expand: 1.18,
   });
   const faceContour = faceContourPolygonFromLandmarks(landmarks, canvasW, canvasH, {
     mirror: true,
-    expand: 1.06,
+    expand: 1.05,
   });
+  const belowChin = belowChinPunchPolygon(landmarks, canvasW, canvasH, true);
   if (!punchContour || !faceContour) return;
 
   if (offscreen.width !== canvasW || offscreen.height !== canvasH) {
@@ -93,19 +104,31 @@ export function drawWigOverlayTracked(
   octx.clearRect(0, 0, canvasW, canvasH);
 
   const drawW = placement.width;
-  const aspect = wigImg.naturalHeight / Math.max(1, wigImg.naturalWidth);
+  const srcBandH = wigImg.naturalHeight * WIG_HEAD_BAND_HEIGHT;
+  const aspect = srcBandH / Math.max(1, wigImg.naturalWidth);
   const drawH = drawW * aspect;
   const cx = canvasW - placement.cx;
   const rot = -placement.rotationRad;
-  const topOffset = -drawH * WIG_ASSET_HAIRLINE_Y;
+  const topOffset = -drawH * HAIRLINE_IN_BAND;
 
   octx.save();
   octx.translate(cx, placement.cy);
   octx.rotate(rot);
-  octx.drawImage(wigImg, -drawW / 2, topOffset, drawW, drawH);
+  octx.drawImage(
+    wigImg,
+    0,
+    0,
+    wigImg.naturalWidth,
+    srcBandH,
+    -drawW / 2,
+    topOffset,
+    drawW,
+    drawH
+  );
   octx.restore();
 
-  punchFaceFromWigLayer(octx, punchContour, 6);
+  punchFromWigLayer(octx, punchContour, 5);
+  if (belowChin) punchFromWigLayer(octx, belowChin, 0);
 
   ctx.save();
   ctx.drawImage(offscreen, 0, 0);
