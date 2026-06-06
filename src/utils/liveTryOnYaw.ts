@@ -43,6 +43,14 @@ export function pickWigViewFromYaw(yaw: number): 'left' | 'front' | 'right' {
   return 'front';
 }
 
+/**
+ * Studio prompt head yaw in degrees: +40° ≈ left cheek to camera, −40° ≈ right cheek, 0° front.
+ * Maps MediaPipe normalized yaw ([-1, 1]) to the same sign convention as `angleConstraint` in liveTryOnOverlay.
+ */
+export function studioHeadYawDegreesFromNorm(yawNorm: number): number {
+  return Math.round(Math.max(-40, Math.min(40, -yawNorm * 40)));
+}
+
 /** Reduces L/F/R flicker when head pose hovers near thresholds. */
 export function pickWigViewFromYawWithHysteresis(
   yaw: number,
