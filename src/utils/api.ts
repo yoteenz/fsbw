@@ -1345,6 +1345,7 @@ export type LiveTryOnStudioStatusResult =
       imageUrl: string;
       makeupImageUrl?: string;
       makeupAvailable?: boolean;
+      makeupError?: string;
       manifestHash: string;
       color: string;
       unitKey: string;
@@ -1446,12 +1447,63 @@ export async function postLiveTryOnStudioMakeup(
   return JSON.parse(text) as { ok: boolean; jobId: string; status: 'queued' };
 }
 
+function assertStudioMakeupComplete(
+  result: Extract<LiveTryOnStudioStatusResult, { status: 'complete' }>
+): Extract<LiveTryOnStudioStatusResult, { status: 'complete' }> {
+  if (result.makeupError) {
+    throw new Error(result.makeupError.toUpperCase());
+  }
+  if (!result.makeupImageUrl) {
+    throw new Error('POLISHED GLAM COULD NOT BE APPLIED — TRY AGAIN');
+  }
+  return result;
+}
+
+/** Poll until makeup pass is queued (phase makeup), ignoring stale base_complete snapshots. */
 export async function postLiveTryOnStudioMakeupAndWait(
   jobId: string,
   onProgress?: (msg: string) => void
 ): Promise<Extract<LiveTryOnStudioStatusResult, { status: 'complete' }>> {
   await postLiveTryOnStudioMakeup(jobId);
-  return pollStudioJobUntilComplete(jobId, STUDIO_MAKEUP_POLL_MAX_MS, (status) => {
+
+  const deadline = Date.now() + STUDIO_MAKEUP_POLL_MAX_MS;
+  let enteredMakeup = false;
+
+  while (Date.now() < deadline) {
+    await sleep(STUDIO_POLL_MS);
+    const status = await getLiveTryOnStudioRenderStatus(jobId);
+
+    if (status.status === 'pending' && status.phase === 'makeup') {
+      enteredMakeup = true;
+      onProgress?.(
+        status.queueStatus === 'IN_QUEUE'
+          ? 'ADDING POLISHED GLAM… IN QUEUE'
+          : 'ADDING POLISHED GLAM…'
+      );
+      break;
+    }
+
+    if (status.status === 'complete' && status.makeupImageUrl) {
+      return assertStudioMakeupComplete(status);
+    }
+
+    // Job can still read as base_complete for a moment right after POST — keep waiting.
+    if (status.status === 'complete' && !enteredMakeup) {
+      continue;
+    }
+
+    if (status.status === 'complete') {
+      throw new Error(
+        (status.makeupError || 'POLISHED GLAM COULD NOT BE APPLIED — TRY AGAIN').toUpperCase()
+      );
+    }
+  }
+
+  if (!enteredMakeup) {
+    throw new Error('POLISHED GLAM DID NOT START — TRY AGAIN');
+  }
+
+  const result = await pollStudioJobUntilComplete(jobId, deadline - Date.now(), (status) => {
     if (status.status !== 'pending') return;
     onProgress?.(
       status.queueStatus === 'IN_QUEUE'
@@ -1459,6 +1511,7 @@ export async function postLiveTryOnStudioMakeupAndWait(
         : 'ADDING POLISHED GLAM…'
     );
   });
+  return assertStudioMakeupComplete(result);
 }
 
 /** Resolve pre-generated try-on overlays from Storage (no Fal). Uses studio default NOIR + color. */
