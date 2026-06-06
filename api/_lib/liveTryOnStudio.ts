@@ -36,7 +36,7 @@ type FalClient = {
   };
 };
 
-export type StudioTryOnPhase = 'base' | 'makeup';
+export type StudioTryOnPhase = 'base' | 'base_complete' | 'makeup';
 
 export type StudioTryOnJobRecord = {
   jobId: string;
@@ -50,8 +50,10 @@ export type StudioTryOnJobRecord = {
   poseAngle: LiveTryOnAngle;
   createdAt: number;
   phase: StudioTryOnPhase;
-  /** Public URL after base wig render completes (before makeup pass). */
+  /** Public URL after base wig render completes (before optional makeup pass). */
   naturalImageUrl?: string;
+  /** Storage path for re-uploading natural render to Fal for makeup. */
+  naturalStoragePath?: string;
   /** Shared timestamp for natural/makeup storage filenames. */
   outputTimestamp?: number;
 };
@@ -306,11 +308,13 @@ export async function startStudioTryOnRender(
 }
 
 export type PollStudioTryOnRenderResult =
-  | { status: 'pending'; queueStatus: string; phase: StudioTryOnPhase }
+  | { status: 'pending'; queueStatus: string; phase: 'base' | 'makeup' }
   | {
       status: 'complete';
+      jobId: string;
       imageUrl: string;
       makeupImageUrl?: string;
+      makeupAvailable?: boolean;
       manifestHash: string;
       color: string;
       unitKey: string;
@@ -363,12 +367,14 @@ async function queueMakeupPass(
 function completeStudioResult(
   job: StudioTryOnJobRecord,
   imageUrl: string,
-  makeupImageUrl?: string
+  opts?: { makeupImageUrl?: string; makeupAvailable?: boolean }
 ): Extract<PollStudioTryOnRenderResult, { status: 'complete' }> {
   return {
     status: 'complete',
+    jobId: job.jobId,
     imageUrl,
-    ...(makeupImageUrl ? { makeupImageUrl } : {}),
+    ...(opts?.makeupImageUrl ? { makeupImageUrl: opts.makeupImageUrl } : {}),
+    ...(opts?.makeupAvailable ? { makeupAvailable: true } : {}),
     manifestHash: job.manifestHash,
     color: job.color,
     unitKey: job.unitKey,
@@ -389,11 +395,15 @@ export async function pollStudioTryOnRender(
   const job = await loadStudioJob(bucket, promptVersion, userId, jobId);
   if (!job) throw new Error('Studio job not found or expired');
 
+  if (job.phase === 'base_complete' && job.naturalImageUrl) {
+    return completeStudioResult(job, job.naturalImageUrl, { makeupAvailable: true });
+  }
+
   const fal = await getFalClient(falKey);
   const queueStatus = await fal.queue.status(job.falModel, { requestId: job.falRequestId });
   const status = String((queueStatus as { status?: string }).status || 'IN_PROGRESS');
 
-  const phase: StudioTryOnPhase = job.phase === 'makeup' ? 'makeup' : 'base';
+  const phase: 'base' | 'makeup' = job.phase === 'makeup' ? 'makeup' : 'base';
 
   if (status === 'IN_QUEUE' || status === 'IN_PROGRESS') {
     return { status: 'pending', queueStatus: status, phase };
@@ -401,8 +411,8 @@ export async function pollStudioTryOnRender(
 
   if (status !== 'COMPLETED') {
     if (phase === 'makeup' && job.naturalImageUrl) {
-      await deleteStudioJob(bucket, promptVersion, userId, jobId);
-      return completeStudioResult(job, job.naturalImageUrl);
+      await saveStudioJob(bucket, promptVersion, { ...job, phase: 'base_complete' });
+      return completeStudioResult(job, job.naturalImageUrl, { makeupAvailable: true });
     }
     await deleteStudioJob(bucket, promptVersion, userId, jobId);
     throw new Error(`Studio render failed (${status})`);
@@ -412,8 +422,8 @@ export async function pollStudioTryOnRender(
   const falUrl = extractFalImageUrl(result);
   if (!falUrl) {
     if (phase === 'makeup' && job.naturalImageUrl) {
-      await deleteStudioJob(bucket, promptVersion, userId, jobId);
-      return completeStudioResult(job, job.naturalImageUrl);
+      await saveStudioJob(bucket, promptVersion, { ...job, phase: 'base_complete' });
+      return completeStudioResult(job, job.naturalImageUrl, { makeupAvailable: true });
     }
     await deleteStudioJob(bucket, promptVersion, userId, jobId);
     throw new Error('fal: no studio result URL');
@@ -426,23 +436,15 @@ export async function pollStudioTryOnRender(
     const naturalPath = `${studioOutputBasePath(promptVersion, { ...job, outputTimestamp })}-natural.webp`;
     const naturalImageUrl = await uploadStudioWebp(bucket, naturalPath, outBuf);
 
-    let makeupRequestId: string;
-    try {
-      makeupRequestId = await queueMakeupPass(fal, job, outBuf);
-    } catch {
-      await deleteStudioJob(bucket, promptVersion, userId, jobId);
-      return completeStudioResult(job, naturalImageUrl);
-    }
-
     await saveStudioJob(bucket, promptVersion, {
       ...job,
-      phase: 'makeup',
-      falRequestId: makeupRequestId,
+      phase: 'base_complete',
       naturalImageUrl,
+      naturalStoragePath: naturalPath,
       outputTimestamp,
     });
 
-    return { status: 'pending', queueStatus: 'IN_QUEUE', phase: 'makeup' };
+    return completeStudioResult(job, naturalImageUrl, { makeupAvailable: true });
   }
 
   const makeupPath = `${studioOutputBasePath(promptVersion, job)}-makeup.webp`;
@@ -454,5 +456,48 @@ export async function pollStudioTryOnRender(
   }
 
   await deleteStudioJob(bucket, promptVersion, userId, jobId);
-  return completeStudioResult(job, naturalImageUrl, makeupImageUrl);
+  return completeStudioResult(job, naturalImageUrl, { makeupImageUrl });
+}
+
+export type StartStudioMakeupRenderResult = {
+  jobId: string;
+  status: 'queued';
+};
+
+/** Queue optional makeup pass after user confirms (natural render must be complete). */
+export async function startStudioMakeupRender(
+  userId: string,
+  jobId: string
+): Promise<StartStudioMakeupRenderResult> {
+  const falKey = process.env.FAL_KEY?.trim();
+  if (!falKey) throw new Error('FAL_KEY is not configured');
+
+  const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
+  const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
+  const job = await loadStudioJob(bucket, promptVersion, userId, jobId);
+  if (!job) throw new Error('Studio job not found or expired');
+  if (job.phase !== 'base_complete') {
+    throw new Error('Studio natural render is not ready for makeup');
+  }
+  if (!job.naturalStoragePath) {
+    throw new Error('Studio job missing natural image');
+  }
+
+  const supabase = getSupabaseAdminServiceRole();
+  const { data, error } = await supabase.storage.from(bucket).download(job.naturalStoragePath);
+  if (error || !data) {
+    throw new Error(`storage download failed for natural render: ${error?.message || 'missing'}`);
+  }
+  const naturalBuf = Buffer.from(await data.arrayBuffer());
+
+  const fal = await getFalClient(falKey);
+  const makeupRequestId = await queueMakeupPass(fal, job, naturalBuf);
+
+  await saveStudioJob(bucket, promptVersion, {
+    ...job,
+    phase: 'makeup',
+    falRequestId: makeupRequestId,
+  });
+
+  return { jobId, status: 'queued' };
 }
