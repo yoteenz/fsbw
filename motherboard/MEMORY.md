@@ -26009,3 +26009,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `liveTryOnOverlay.ts` — **`STUDIO_SKULL_FIT`** block: mannequin refs supply color/length/curl/drape only — **not** vertical cap placement; lace + hairline flush at IMAGE 1 natural forehead; part at natural crown depth. Updated center-part constraint, ref blocks, compact studio prompt, and **`buildLiveTryOnPhotorealWomanPrompt`** (admin portrait gen) with same human skull-fit rules.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio right angle: restore positioned-right (not looking-right)
+
+**Context:** After skull-fit prompt update, **right** studio angle regressed to **“looking right”** (front body + glance) instead of **positioned right** (full −40° head/shoulder turn) with center part on rotated skull midline.
+
+**Fix:** `studioHeadBodyPoseLock` — explicit **POSITIONED RIGHT/LEFT** blocks: lock nose/chin/neck/**both shoulders** to IMAGE 1 yaw; **forbid** eyes-only glance and copying front mannequin angle. Placed **before** `STUDIO_SKULL_FIT` with note that skull-fit must not square face to 0°. Compact retry prompt includes same positioned-right/left line.
+
+Pushed **`master`** + **`preview/mobile`**.
