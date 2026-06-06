@@ -93,6 +93,20 @@ const STUDIO_HAIRLINE_LOCK = [
   'Do **not** copy wispy edges, baby hairs, or skin-adjacent frizz from the mannequin or portrait reference onto the customer’s skin.',
 ].join(' ');
 
+/**
+ * Mannequin refs mount wigs high on a bust — real lace installs sit flush on the skull.
+ * Without this, outputs mimic “helmet hair” floating above the forehead.
+ */
+const STUDIO_SKULL_FIT = [
+  '**SKULL FIT — REAL HUMAN HEAD (critical — override mannequin display styling):**',
+  'Display mannequins mount wigs **high and forward** on a rigid bust for retail — that reads as **helmet hair** on a real person. **Do NOT** copy mannequin **vertical placement**, cap elevation, or hairline height from IMAGE 2 (or IMAGE 3).',
+  'From IMAGE 2 / mannequin refs use **only**: color, length, density, curl pattern, layer shape, lace width, and shoulder drape — **never** how high the wig sits on the bust.',
+  '**Lace front + hairline:** sit **flush against IMAGE 1’s scalp** at a **natural human forehead hairline** (~one finger-width above brows, following IMAGE 1 skull curve) — lace band hugs skin, **not** floating above the forehead.',
+  '**Part:** groove sits **in** the hair at **natural crown depth** on this person’s skull midline — **not** on a lifted hair mass or display-mannequin crown.',
+  '**Cap + volume:** wig cap follows **IMAGE 1 head contour** — hair grows **from** the scalp and crown, close to the skull; **forbidden** hovering cap, inflated crown bubble, or wig sitting above the cranium.',
+  '**Self-check:** if the hairline or part reads higher than a salon lace install on this face → **failed** — lower until flush on the skull.',
+].join(' ');
+
 /** Makeup pass must not reframe or pan the finished render. */
 const STUDIO_MAKEUP_FRAMING_LOCK = [
   '**FRAMING LOCK (critical):** Output must be **pixel-aligned** with IMAGE 1 — **identical crop, scale, aspect ratio, head position, and horizontal center**.',
@@ -124,8 +138,9 @@ function studioCenterPartConstraint(poseAngle: LiveTryOnAngle, headYawDeg?: numb
   const anchor = [
     '**CENTER / MIDDLE PART (mandatory — cranial midline, not photo-frame center):**',
     `IMAGE 1 head yaw is **${yawLabel}** — the part must ride the **3D skull midline** (sagittal plane through nose bridge and crown), **rotated with the head**.`,
+    'Part groove sits **in the hair at natural crown depth** on the scalp — **not** on lifted display-mannequin hair or a floating crown mass.',
     '**Never** center the part in the horizontal middle of the visible hair silhouette when the face is turned — that is wrong.',
-    '**Ignore** any off-center part in the mannequin — force a true **middle part** on this person’s head at this yaw.',
+    '**Ignore** any off-center part or **elevated crown placement** in the mannequin — force a true **middle part** on this person’s head at this yaw, **flush on the skull**.',
     '**Part line only** at crown — **do not** interpret as symmetric hair on **both shoulders** (see drape rules).',
   ];
 
@@ -194,30 +209,31 @@ export function buildLiveTryOnStudioTryOnPrompt(
 
   const refBlock = hasPortraitRef
     ? [
-        '**IMAGE 2** is the **front mannequin** — wig **color**, length, density, curl, and lace.',
-        '**IMAGE 3** is the **GPT portrait render** — copy its **exact** shoulder sweep, length drape, and hair silhouette onto IMAGE 1 (same as admin portrait thumbs).',
-        'Replace **only** the hair on IMAGE 1; face stays from IMAGE 1; drape geometry from IMAGE 3 — **not** hairline baby hairs or skin wisps from IMAGE 3.',
+        '**IMAGE 2** is the **front mannequin** — wig **color**, length, density, curl, and lace shape only (**not** vertical placement on the bust).',
+        '**IMAGE 3** is the **GPT portrait render** — copy its **shoulder sweep, length drape, and silhouette** onto IMAGE 1 — **not** its hairline height, crown elevation, or mannequin-style cap position.',
+        'Replace **only** the hair on IMAGE 1; face stays from IMAGE 1; drape geometry from IMAGE 3 — **not** hairline baby hairs, skin wisps, or helmet-hair elevation from IMAGE 3.',
       ]
     : [
-        '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace, color, and shoulder sweep** (not head angle).',
-        'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2.',
+        '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace shape, color, and shoulder sweep** only (**not** head angle or how high the wig sits on the bust).',
+        'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2 — installed **flush on their skull**, not at mannequin display height.',
       ];
 
   return [
     '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
     ...refBlock,
     colorLine,
+    STUDIO_SKULL_FIT,
     studioCenterPartConstraint(poseAngle, headYawDeg),
     STUDIO_DRAPE_SIDE,
     poseLine,
     hasPortraitRef
-      ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut.'
-      : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut.',
+      ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut; **never** copy mannequin crown height.'
+      : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut; **never** copy mannequin crown height.',
     STUDIO_GLAM_COMPOSITION,
     STUDIO_BACKGROUND_LOCK,
     STUDIO_HAIRLINE_LOCK,
     '**No visible makeup** — bare natural skin as in the selfie; do not add lipstick, blush, or eye makeup.',
-    'Realistic hairline blend at the lace front.',
+    'Realistic lace-front blend: hairline **flush on scalp** at natural forehead position from IMAGE 1.',
     '**Delete from output only:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo — never delete or swap the customer’s real room.',
     'No text or watermark.',
     'Ultra sharp, photographic — not illustration, sticker, or cutout overlay.',
@@ -237,6 +253,7 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
     'IMAGE 1 = customer selfie. IMAGE 2 = front mannequin wig reference.',
     `Keep face, skin, pose, and room from IMAGE 1. Head yaw ${yawLabel}.`,
     `Replace only hair with lace-front wig color ${label} (#${hex}) from IMAGE 2.`,
+    'Wig flush on skull — natural hairline/part depth; not mannequin helmet height.',
     'Center part on skull midline at this yaw. One-sided drape over viewer left shoulder.',
     'Heavy background bokeh on existing room only — do not add objects. No baby hairs on skin.',
     'No makeup. Photoreal. No text.',
@@ -289,13 +306,14 @@ export function buildLiveTryOnPhotorealWomanPrompt(
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
   return [
-    'Use the attached **mannequin wig reference** as the **only** source for hairstyle geometry.',
-    'Create a **photorealistic** portrait of a beautiful woman wearing that **exact** lace-front wig:',
+    'Use the attached **mannequin wig reference** for **color, length, density, curl, lace shape, and drape** — **not** display-mannequin vertical placement.',
+    'Create a **photorealistic** portrait of a beautiful woman wearing that lace-front wig installed **flush on a real human skull**:',
     colorLine,
     angleConstraint(angle),
-    'Match **length, density, curl pattern, part, layers, and volume** from the mannequin — not a new cut.',
+    '**SKULL FIT (critical):** Mannequins mount wigs **high on the bust** for display — on a real woman the lace front sits at a **natural forehead hairline** (~finger-width above brows), cap hugs the scalp, part at **natural crown depth**. **Forbidden:** helmet hair, floating wig cap, or crown bubble above the cranium.',
+    'Match **length, density, curl pattern, part direction, layers, and volume** from the mannequin — **not** how high the wig sits on the mannequin bust.',
     '**Delete from output:** mannequin bust, gray skin, stand, FRONTAL SLAYER logo, bricks, studio props.',
-    'Woman: photoreal editorial beauty — **neutral, elegant, mid-20s**, soft natural makeup, realistic eyes; **head pose and neck angle locked to the mannequin reference** (only swap mannequin for skin).',
+    'Woman: photoreal editorial beauty — **neutral, elegant, mid-20s**, soft natural makeup, realistic eyes; **head pose and neck angle locked to the mannequin reference** (only swap mannequin skin for real skin — **lower wig to human install height**).',
     'Neutral blurred studio background, head and shoulders only — no jewelry, no dramatic styling.',
     'No text, no watermark, no extra jewelry unless subtle and realistic.',
     'Ultra sharp, photographic — not illustration or 3D render.',
