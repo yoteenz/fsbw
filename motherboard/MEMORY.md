@@ -25782,3 +25782,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Portrait regen 500 + live composite (`31b9fddc`):** NBP portrait regen 500 — mannequin Supabase URL sent direct to Fal; **upload mannequin to Fal storage first** (same as isolate), **delete portrait only after Fal succeeds**, NBP/GPT2 `formatFalSubscribeError`. User: placement high + cutout bleed + wrong L/F/R — **lower wig** (`cy` + hairline Y), **wider feathered face punch** (expand 1.14), **yaw hysteresis** for angle switch.
 
 **Face reinjection cutout (`5cc2bfdd`):** User: cutout still unrealistic (kitchen bleed, black band, red oval guide). Replaced hole-only punch with **face reinjection**: video → hair (wide mesh punch) → **live camera clipped back over face mesh** on top. Lower lace anchor (`WIG_ASSET_HAIRLINE_Y` 0.17). **Red tracking outline hidden in production** (DEV only).
+
+---
+
+## 2026-06-05 — Live try-on: fix “beard” (head-band crop + below-chin punch)
+
+**Context (full chat arc):** OFF BLACK live try-on pipeline (NBP vs GPT2 portrait compare, Ideogram cut, face mesh tracking, face reinjection). User reported live camera compositing still **way off** — small hair crescent on forehead, large dark hair mass **below chin** (“looks like a beard”), sharp side peaks, face pasted into overlay.
+
+**Root cause:** Portrait-style overlay PNGs include **chest-length hair** below the jaw. Face mesh punch + reinjection only cleared the face oval; lower portrait hair remained visible under the chin.
+
+**Fix (`605f3d16`):**
+- **`liveTryOnComposite.ts`:** Draw only **top 46%** of overlay PNG (`WIG_HEAD_BAND_HEIGHT`) — head hair band, exclude bust/chest hair. **`belowChinPunchPolygon`** strips any remaining hair below jaw. Face punch expand **1.18**; reinjection expand **1.05**.
+- **`liveTryOnYaw.ts`:** Added/fixed **`belowChinPunchPolygon`** (jaw landmarks → polygon to canvas bottom). Fixed **`faceH` used before defined** bug. Placement: lace **above** forehead (`cy - faceH * 0.04`), tighter width (`faceW * 2.05`, `faceH * 1.72`; removed `canvasW * 0.58` floor).
+
+**Remaining:** Asset pipeline could still produce overlays with bust in PNG (Ideogram/batch). RIGHT portrait angle quality separate. Further placement tuning after deploy test. Pushed **`master`** + **`preview/mobile`**.
