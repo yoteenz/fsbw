@@ -25856,3 +25856,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`LiveTryOnStudioCapture`:** canvas **stays mounted** under result overlay; `syncCanvasToVideo` + reset on retake — fixes blur/distort on CAPTURE AGAIN.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio Try-On: fix FUNCTION_INVOCATION_TIMEOUT
+
+**Context:** Capture failed with **`FUNCTION_INVOCATION_TIMEOUT`** — Vercel Hobby ~10s limit; blocking `fal.subscribe` for GPT Image 2 exceeded deployment timeout.
+
+**Fix (`2d4000d6`):** Async queue — **`POST /api/live-try-on-studio-render`** uses `fal.queue.submit`, returns **`jobId`** quickly. **`GET /api/live-try-on-studio-render-status`** polls Fal, uploads WebP when done. Client **`postLiveTryOnStudioRenderAndWait`** polls every 2.5s (3min max). **`vercel.json`** studio routes 60s/30s.
+
+Pushed **`master`** + **`preview/mobile`**.
