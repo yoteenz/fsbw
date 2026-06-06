@@ -1335,11 +1335,12 @@ export type LiveTryOnStudioStartResult = {
 };
 
 export type LiveTryOnStudioStatusResult =
-  | { ok: boolean; status: 'pending'; queueStatus?: string }
+  | { ok: boolean; status: 'pending'; queueStatus?: string; phase?: 'base' | 'makeup' }
   | {
       ok: boolean;
       status: 'complete';
       imageUrl: string;
+      makeupImageUrl?: string;
       manifestHash: string;
       color: string;
       unitKey: string;
@@ -1388,7 +1389,7 @@ export async function getLiveTryOnStudioRenderStatus(jobId: string): Promise<Liv
 }
 
 const STUDIO_POLL_MS = 2500;
-const STUDIO_POLL_MAX_MS = 180_000;
+const STUDIO_POLL_MAX_MS = 360_000;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -1407,7 +1408,13 @@ export async function postLiveTryOnStudioRenderAndWait(
     await sleep(STUDIO_POLL_MS);
     const status = await getLiveTryOnStudioRenderStatus(started.jobId);
     if (status.status === 'complete') return status;
-    if (status.queueStatus === 'IN_QUEUE') {
+    if (status.phase === 'makeup') {
+      onProgress?.(
+        status.queueStatus === 'IN_QUEUE'
+          ? 'ADDING PHOTO-READY MAKEUP… IN QUEUE'
+          : 'ADDING PHOTO-READY MAKEUP…'
+      );
+    } else if (status.queueStatus === 'IN_QUEUE') {
       onProgress?.('IN STUDIO QUEUE…');
     } else {
       onProgress?.('RENDERING YOUR LOOK…');
