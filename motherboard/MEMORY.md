@@ -25768,3 +25768,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User reported static red **oval** impractical for live try-on; **face cutout** left portrait/background remnants in overlay making result unrealistic. Wanted real **face tracking**.
 
 **Fix (`4490dafa`):** Removed fixed oval UI. **MediaPipe face mesh contour** (`FACE_MESH_OVAL_INDICES`) drives: (1) dashed red **tracking outline** on live preview, (2) **polygon face punch** through wig layer (`drawWigOverlayTracked`) instead of coarse ellipse — clears baked portrait background in bad cuts while live camera shows through. **Smoothed** wig placement (`lerpPlacement`). Tuned hairline anchor + scale in `wigPlacementFromLandmarks`. Copy: "FACE TRACKING ALIGNS THE WIG…" Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on portrait prompt: degree yaw + per-angle regen
+
+**Context:** User wanted photoreal woman **prompt text** to refine; **RIGHT** portrait cheated (eyes/body toward center vs true opposite 3/4 like LEFT). Asked **regen one angle only** and to use **degrees** not “3/4” on the cheating right angle.
+
+**Shipped:** Admin **REGEN ONE ANGLE** — `PORTRAIT · L/F/R` and `OVERLAY · L/F/R` with `forceRegenerate` (`6fca9c80`). Portrait angles in `buildLiveTryOnPhotorealWomanPrompt` (`liveTryOnOverlay.ts`): **LEFT +40°**, **FRONT 0°**, **RIGHT −40°** head+shoulder yaw; RIGHT forbids 0° / +40° / eyes-only toward center (`8b3c183a`). **Ops:** Admin → **PORTRAIT · RIGHT** then **OVERLAY · RIGHT** after deploy. Pushed **`master`** + **`preview/mobile`**.
