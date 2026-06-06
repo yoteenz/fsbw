@@ -198,14 +198,22 @@ export function buildLiveTryOnStudioTryOnPrompt(
   ].join(' ');
 }
 
-/** Second pass — light editorial makeup on the finished studio render (hair/pose/room locked). */
+/**
+ * Second pass — polished photo-ready glam on the finished studio render (hair/pose/room locked).
+ * Aesthetic target: soft IG-style beauty filter (slim sculpt, contour, almond eyes, glow) — same person, not a new face.
+ */
 export function buildLiveTryOnStudioMakeupPassPrompt(): string {
   return [
-    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, pose, expression, background, lighting, and skin tone.',
-    'Add **very light, natural, photography-ready makeup** only — subtle skin evening, soft under-eye brightness, faint lip tint, gentle brow definition, barely-there blush.',
-    'Style: soft editorial beauty / light social-photo filter aesthetic — **not** heavy glam, not obvious cosmetics, not changing face shape or features.',
-    '**Do not** change hair, lace, outfit, room, depth of field, or body pose.',
-    '**No makeup overload** — should look like the same person with a light touch-up for a photo shoot.',
+    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, lace, part, pose, expression, background, lighting, and outfit.',
+    'Apply a **polished photo-ready glam** pass on **face skin only** — same person, still recognizable; photoreal editorial, **not** cartoon or plastic.',
+    '**Face sculpt (subtle):** slightly **slimmer, more defined jawline** and cheek contour; forehead reads a touch **smaller** via soft shading — **do not** swap identity or bone structure drastically.',
+    '**Nose:** gentle **slim contour** on sides + soft **highlight** down the bridge and tip — refined, not surgical.',
+    '**Eyes:** shape reads more **almond**; **brighten undereyes** (concealer effect); add **natural wispy lashes** (longer, fuller, curled — lash-extension look, not spidery strips).',
+    '**Brows:** fill and define for **fuller, cleaner arches** — match natural brow color.',
+    '**Lips:** **fuller, plump** appearance with soft satin/nude-pink finish — not overlined clown lips.',
+    '**Skin:** smooth evening with **soft glow** on forehead and cheekbones; keep believable texture (light freckles/moles OK) — airbrushed but still human.',
+    '**Overall:** polished **social-photo / IG baddie** beauty aesthetic — contour + highlight balance, camera-ready glow.',
+    '**Locked — do not change:** hair, wig, lace front, room, depth of field, body pose, neck, or clothing.',
     'No text or watermark.',
   ].join(' ');
 }

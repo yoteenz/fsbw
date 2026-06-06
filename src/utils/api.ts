@@ -1455,8 +1455,8 @@ export async function postLiveTryOnStudioMakeupAndWait(
     if (status.status !== 'pending') return;
     onProgress?.(
       status.queueStatus === 'IN_QUEUE'
-        ? 'ADDING PHOTO-READY MAKEUP… IN QUEUE'
-        : 'ADDING PHOTO-READY MAKEUP…'
+        ? 'ADDING POLISHED GLAM… IN QUEUE'
+        : 'ADDING POLISHED GLAM…'
     );
   });
 }

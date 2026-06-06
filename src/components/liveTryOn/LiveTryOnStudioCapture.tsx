@@ -360,7 +360,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const showSnapshot = renderPhase === 'base' && Boolean(captureSnapshotUrl);
   const showLiveCanvas = !showResult && !showSnapshot;
   const overlayLabel =
-    renderPhase === 'makeup' ? 'ADDING PHOTO-READY MAKEUP…' : 'RENDERING YOUR LOOK…';
+    renderPhase === 'makeup' ? 'ADDING POLISHED GLAM…' : 'RENDERING YOUR LOOK…';
 
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -433,13 +433,13 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
                 className="text-center uppercase"
                 style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', lineHeight: 1.5 }}
               >
-                ADD PHOTO-READY MAKEUP TO YOUR FINAL IMAGE?
+                ADD POLISHED GLAM TO YOUR FINAL IMAGE?
               </p>
               <p
                 className="text-center uppercase"
                 style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', lineHeight: 1.5 }}
               >
-                VERY LIGHT NATURAL MAKEUP — OPTIONAL
+                SCULPTED CONTOUR, ALMOND EYES, GLOW & LASHES — OPTIONAL
               </p>
               <div className="flex flex-col gap-2">
                 <button
