@@ -83,7 +83,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).json({ ok: true, ...result });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Studio render failed';
-    const status = msg === 'COLOR_PREVIEW_MISSING' ? 400 : msg.includes('Sign in') ? 401 : 500;
+    const status =
+      msg === 'COLOR_PREVIEW_MISSING'
+        ? 400
+        : msg.includes('Sign in')
+          ? 401
+          : /rejected by Fal|422|unprocessable entity/i.test(msg)
+            ? 422
+            : 500;
     res.status(status).json({ error: msg });
   }
 }

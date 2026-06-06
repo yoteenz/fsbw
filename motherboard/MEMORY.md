@@ -25945,3 +25945,15 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `STUDIO_GLAM_COMPOSITION` — f/1.4–f/2.8 creamy bokeh (background barely readable), subject ~1–2 stops brighter key light, slightly darkened defocused backdrop, explicit forbid sharp background competing with face.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio capture Fal 422 (Unprocessable Entity) fix
+
+**Context:** User reported **every** studio capture fails with **“UNPROCESSABLE ENTITY”** (Fal HTTP 422).
+
+**Cause:** Studio was sending **3** `image_urls` to GPT Image 2 (selfie + mannequin + GPT portrait ref) when portrait existed in Storage — Fal queue often rejects with generic 422.
+
+**Fix:** Default **2 refs only** (selfie + mannequin); portrait IMAGE 3 only when **`WIG_PREVIEW_TRYON_STUDIO_PORTRAIT_REF=true`**. Auto-retry without portrait on 422. GPT2 **`quality: medium`** (matches batch portraits). **`formatStudioFalError`** surfaces Fal `detail` in API error text.
+
+Pushed **`master`** + **`preview/mobile`**.
