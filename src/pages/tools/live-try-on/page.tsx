@@ -153,7 +153,7 @@ export default function LiveTryOnPage() {
           className="text-center uppercase max-w-sm"
           style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
         >
-          POSITION YOUR FACE IN THE OVAL. TURN YOUR HEAD SLOWLY — THE WIG FOLLOWS YOUR ANGLE. YOUR COLOR IS LOADED
+          FACE TRACKING ALIGNS THE WIG TO YOUR HEAD — TURN SLOWLY TO SEE LEFT, FRONT, AND RIGHT. YOUR COLOR IS LOADED
           FROM STUDIO PREP (NO WAIT ON OPEN).
         </p>
         {prepHint ? (
