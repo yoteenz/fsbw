@@ -76,12 +76,70 @@ const STUDIO_GLAM_COMPOSITION = [
   'Polished editorial color grade on the subject — subtle; do not flatten the real space into a fake studio set.',
 ].join(' ');
 
-/** Center part on midline only — length drape is one-sided (see STUDIO_DRAPE_SIDE). */
-const STUDIO_CENTER_PART = [
-  '**CENTER PART (mandatory — facial midline):** The part groove runs through the **exact center** of the forehead, between the brows, and down the nose bridge.',
-  '**Part line only** is centered — **do not** interpret this as symmetric hair on **both shoulders**.',
-  '**Ignore** any off-center part in the mannequin — force a true **center part** on this person’s head.',
-].join(' ');
+function studioHeadYawDegrees(poseAngle: LiveTryOnAngle, headYawDeg?: number): number {
+  if (typeof headYawDeg === 'number' && Number.isFinite(headYawDeg)) {
+    return Math.round(Math.max(-40, Math.min(40, headYawDeg)));
+  }
+  if (poseAngle === 'left') return 40;
+  if (poseAngle === 'right') return -40;
+  return 0;
+}
+
+function studioHeadYawLabel(deg: number): string {
+  if (deg > 0) return `+${deg}°`;
+  if (deg < 0) return `${deg}°`;
+  return '0°';
+}
+
+/** Center part locked to skull midline at the measured head yaw — not the 2D image center. */
+function studioCenterPartConstraint(poseAngle: LiveTryOnAngle, headYawDeg?: number): string {
+  const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
+  const yawLabel = studioHeadYawLabel(yaw);
+  const absYaw = Math.abs(yaw);
+
+  const anchor = [
+    '**CENTER / MIDDLE PART (mandatory — cranial midline, not photo-frame center):**',
+    `IMAGE 1 head yaw is **${yawLabel}** — the part must ride the **3D skull midline** (sagittal plane through nose bridge and crown), **rotated with the head**.`,
+    '**Never** center the part in the horizontal middle of the visible hair silhouette when the face is turned — that is wrong.',
+    '**Ignore** any off-center part in the mannequin — force a true **middle part** on this person’s head at this yaw.',
+    '**Part line only** at crown — **do not** interpret as symmetric hair on **both shoulders** (see drape rules).',
+  ];
+
+  if (absYaw <= 8) {
+    return [
+      ...anchor,
+      '**~0° front:** Part groove visible vertically at **center of forehead** between brows, continuing over crown — facial midline square to camera.',
+    ].join(' ');
+  }
+
+  if (yaw > 0) {
+    return [
+      ...anchor,
+      `**${yawLabel} yaw (left cheek toward camera):** Midline part runs **fore–aft along the crown ridge** — groove appears **offset toward the viewer’s RIGHT** (far / away-from-camera scalp), **not** the horizontal center of the hair blob.`,
+      'Only a **short crown segment** of the part may show — **forbidden** to paint a full front-facing center line down the forehead while the face is turned.',
+      'Near-side (left) panel frames the visible cheek; far-side panel wraps behind the ear toward the back of the head.',
+      '**Self-check:** if the part sits in the horizontal center of the silhouette → **failed** — move it toward **image RIGHT** along the crown.',
+    ].join(' ');
+  }
+
+  return [
+    ...anchor,
+    `**${yawLabel} yaw (right cheek toward camera):** Midline part on the **crown ridge**, groove **offset toward the viewer’s LEFT** (far scalp), **not** the center of visible hair.`,
+    '**Forbidden:** a centered part in the frame with a profile pose; fake forehead center line while the face is turned.',
+    'Near-side (right) panel frames the visible cheek; far-side panel wraps behind the ear.',
+    '**Self-check:** part in horizontal center of silhouette → **failed** — move toward **image LEFT** along the crown.',
+  ].join(' ');
+}
+
+function studioHeadPoseLine(poseAngle: LiveTryOnAngle, headYawDeg?: number): string {
+  const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
+  const yawLabel = studioHeadYawLabel(yaw);
+  return [
+    `**Head yaw from IMAGE 1: ${yawLabel}** — preserve exact face rotation, chin, neck, and shoulders from the selfie.`,
+    'Do **not** rotate the customer to front-facing or to match the front mannequin.',
+    `Draw the lace front, crown split, and part **as they appear on a head turned ${yawLabel}**, not on a 0° face.`,
+  ].join(' ');
+}
 
 /** Match portrait / mannequin one-shoulder sweep (not a symmetrical curtain on both shoulders). */
 const STUDIO_DRAPE_SIDE = [
@@ -99,18 +157,16 @@ export function buildLiveTryOnStudioTryOnPrompt(
   label: string,
   hex: string,
   poseAngle: LiveTryOnAngle,
-  opts?: { hasPortraitRef?: boolean }
+  opts?: { hasPortraitRef?: boolean; headYawDeg?: number }
 ): string {
   const hasPortraitRef = opts?.hasPortraitRef === true;
+  const headYawDeg = opts?.headYawDeg;
   const nearBlack = isJetBlackOffBlack(label, hex);
   const colorLine = nearBlack
     ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
-  const poseLine =
-    poseAngle === 'front'
-      ? 'Keep the customer’s **front-facing** head pose from IMAGE 1.'
-      : `${angleConstraint(poseAngle)} Keep the customer’s **head pose** from IMAGE 1 — do not rotate them to match the mannequin.`;
+  const poseLine = studioHeadPoseLine(poseAngle, headYawDeg);
 
   const refBlock = hasPortraitRef
     ? [
@@ -127,7 +183,7 @@ export function buildLiveTryOnStudioTryOnPrompt(
     '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
     ...refBlock,
     colorLine,
-    STUDIO_CENTER_PART,
+    studioCenterPartConstraint(poseAngle, headYawDeg),
     STUDIO_DRAPE_SIDE,
     poseLine,
     hasPortraitRef

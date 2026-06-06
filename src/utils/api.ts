@@ -1321,6 +1321,8 @@ export type LiveTryOnStudioRenderPayload = {
   unitKey?: string;
   photoModel?: 'nbp' | 'gpt2';
   angle?: 'left' | 'front' | 'right';
+  /** Measured head yaw in degrees (+40 left cheek to camera, −40 right, 0 front). */
+  headYawDeg?: number;
 };
 
 export type LiveTryOnStudioStartResult = {

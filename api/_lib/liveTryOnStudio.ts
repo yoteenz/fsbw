@@ -198,6 +198,8 @@ export type StartStudioTryOnRenderInput = {
   unitKey?: string;
   photoModel?: LiveTryOnPhotoModel;
   angle?: LiveTryOnAngle;
+  /** Measured head yaw in degrees (+40 left cheek to camera, −40 right, 0 front). */
+  headYawDeg?: number;
   userId: string;
 };
 
@@ -270,8 +272,14 @@ export async function startStudioTryOnRender(
     imageUrls.push(portraitFalUrl);
   }
 
+  const headYawDeg =
+    typeof input.headYawDeg === 'number' && Number.isFinite(input.headYawDeg)
+      ? Math.round(Math.max(-40, Math.min(40, input.headYawDeg)))
+      : undefined;
+
   const prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle, {
     hasPortraitRef,
+    headYawDeg,
   });
   const falModel = falEditModelId(photoModel);
   const falInput = buildStudioFalInput(photoModel, imageUrls, prompt);

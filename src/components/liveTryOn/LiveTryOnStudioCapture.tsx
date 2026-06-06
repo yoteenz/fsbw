@@ -10,7 +10,11 @@ import {
   postLiveTryOnStudioRenderAndWait,
 } from '../../utils/api';
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
-import { estimateHeadYawNorm, pickWigViewFromYaw } from '../../utils/liveTryOnYaw';
+import {
+  estimateHeadYawNorm,
+  pickWigViewFromYaw,
+  studioHeadYawDegreesFromNorm,
+} from '../../utils/liveTryOnYaw';
 
 type Status = 'loading' | 'permission' | 'ready' | 'no-face' | 'rendering' | 'result' | 'error';
 type RenderPhase = 'base' | 'makeup' | null;
@@ -87,6 +91,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const [makeupOfferPending, setMakeupOfferPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeAngle, setActiveAngle] = useState<'left' | 'front' | 'right'>('front');
+  const [captureAngleLabel, setCaptureAngleLabel] = useState<'left' | 'front' | 'right' | null>(null);
+  const [captureHeadYawDeg, setCaptureHeadYawDeg] = useState<number | null>(null);
 
   useEffect(() => {
     if (!renderPhase) return;
@@ -253,7 +259,26 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       return;
     }
 
+    let captureAngle = activeAngle;
+    let headYawDeg = studioHeadYawDegreesFromNorm(0);
+    const landmarker = landmarkerRef.current;
+    if (landmarker && video.readyState >= 2) {
+      try {
+        const lmResult = landmarker.detectForVideo(video, performance.now());
+        const landmarks = lmResult.faceLandmarks?.[0];
+        if (landmarks?.length) {
+          const yawNorm = estimateHeadYawNorm(landmarks);
+          captureAngle = pickWigViewFromYaw(yawNorm);
+          headYawDeg = studioHeadYawDegreesFromNorm(yawNorm);
+        }
+      } catch {
+        /* use last tracked angle */
+      }
+    }
+
     setErrorMsg(null);
+    setCaptureAngleLabel(captureAngle);
+    setCaptureHeadYawDeg(headYawDeg);
     setCaptureSnapshotUrl(imageDataUrl);
     setRenderPhase('base');
     setRenderProgress(0);
@@ -271,7 +296,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           imageDataUrl,
           color,
           unitKey,
-          angle: activeAngle,
+          angle: captureAngle,
+          headYawDeg,
         },
         () => {
           /* progress label lives in overlay */
@@ -316,6 +342,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     setShowMakeup(false);
     setShowMakeupPrompt(false);
     setMakeupOfferPending(false);
+    setCaptureAngleLabel(null);
+    setCaptureHeadYawDeg(null);
     setErrorMsg(null);
     setStatus('ready');
     setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
@@ -501,7 +529,9 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         className="text-center uppercase"
         style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', lineHeight: 1.5 }}
       >
-        STUDIO USES GPT IMAGE 2 WITH EDITORIAL BLUR & CENTER PART. ANGLE: {activeAngle.toUpperCase()}.
+        STUDIO USES GPT IMAGE 2 WITH EDITORIAL BLUR & CENTER PART. ANGLE:{' '}
+        {(captureAngleLabel ?? activeAngle).toUpperCase()}
+        {captureHeadYawDeg !== null ? ` (${captureHeadYawDeg > 0 ? '+' : ''}${captureHeadYawDeg}°)` : ''}.
       </p>
     </div>
   );

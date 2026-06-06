@@ -29,6 +29,13 @@ function parseAngle(raw: string): LiveTryOnAngle {
   return 'front';
 }
 
+function parseHeadYawDeg(body: Record<string, unknown>): number | undefined {
+  const raw = body.headYawDeg;
+  const n = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() ? Number(raw) : NaN;
+  if (!Number.isFinite(n)) return undefined;
+  return Math.round(Math.max(-40, Math.min(40, n)));
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -62,6 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const angle = parseAngle(readString(body, 'angle', 'front'));
   const unitKey = readString(body, 'unitKey', 'NOIR');
+  const headYawDeg = parseHeadYawDeg(body);
 
   try {
     const result = await startStudioTryOnRender({
@@ -69,6 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       color,
       unitKey,
       angle,
+      headYawDeg,
       userId: user.id,
     });
     res.status(200).json({ ok: true, ...result });
