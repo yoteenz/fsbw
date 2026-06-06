@@ -4,16 +4,24 @@ import {
   LIVE_TRY_ON_FACE_LANDMARKER_MODEL,
   LIVE_TRY_ON_MEDIAPIPE_WASM_BASE,
 } from '../../constants/liveTryOnSpikeAssets';
-import { getAccessToken, postLiveTryOnStudioRenderAndWait } from '../../utils/api';
+import {
+  getAccessToken,
+  postLiveTryOnStudioMakeupAndWait,
+  postLiveTryOnStudioRenderAndWait,
+} from '../../utils/api';
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
 import { estimateHeadYawNorm, pickWigViewFromYaw } from '../../utils/liveTryOnYaw';
 
 type Status = 'loading' | 'permission' | 'ready' | 'no-face' | 'rendering' | 'result' | 'error';
+type RenderPhase = 'base' | 'makeup' | null;
 
 type Props = {
   color: string;
   unitKey: string;
 };
+
+const STUDIO_BASE_ESTIMATE_MS = 120_000;
+const STUDIO_MAKEUP_ESTIMATE_MS = 90_000;
 
 function syncCanvasToVideo(video: HTMLVideoElement, canvas: HTMLCanvasElement): void {
   const vw = video.videoWidth;
@@ -22,6 +30,39 @@ function syncCanvasToVideo(video: HTMLVideoElement, canvas: HTMLCanvasElement): 
     canvas.width = vw;
     canvas.height = vh;
   }
+}
+
+function StudioRenderOverlay({
+  label,
+  progress,
+}: {
+  label: string;
+  progress: number;
+}) {
+  const pct = Math.round(Math.min(1, Math.max(0, progress)) * 100);
+  return (
+    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/55 gap-3 px-10">
+      <div
+        className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"
+        aria-hidden
+      />
+      <p
+        style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#FFFFFF', textTransform: 'uppercase' }}
+      >
+        {label}
+      </p>
+      <div className="w-full max-w-[220px] h-1 rounded-full overflow-hidden bg-white/20">
+        <div
+          className="h-full bg-white transition-[width] duration-200 ease-linear"
+          style={{ width: `${pct}%` }}
+          role="progressbar"
+          aria-valuenow={pct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
@@ -35,11 +76,29 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
+  const [captureSnapshotUrl, setCaptureSnapshotUrl] = useState<string | null>(null);
+  const [renderPhase, setRenderPhase] = useState<RenderPhase>(null);
+  const [renderProgress, setRenderProgress] = useState(0);
+  const [studioJobId, setStudioJobId] = useState<string | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [makeupResultUrl, setMakeupResultUrl] = useState<string | null>(null);
   const [showMakeup, setShowMakeup] = useState(false);
+  const [showMakeupPrompt, setShowMakeupPrompt] = useState(false);
+  const [makeupOfferPending, setMakeupOfferPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeAngle, setActiveAngle] = useState<'left' | 'front' | 'right'>('front');
+
+  useEffect(() => {
+    if (!renderPhase) return;
+    const estimate = renderPhase === 'base' ? STUDIO_BASE_ESTIMATE_MS : STUDIO_MAKEUP_ESTIMATE_MS;
+    const startedAt = Date.now();
+    setRenderProgress(0);
+    const id = window.setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      setRenderProgress(Math.min(0.95, elapsed / estimate));
+    }, 100);
+    return () => clearInterval(id);
+  }, [renderPhase]);
 
   const drawPreview = useCallback(() => {
     const video = videoRef.current;
@@ -64,7 +123,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     ctx.drawImage(video, 0, 0, w, h);
     ctx.restore();
 
-    if (showingResultRef.current) return;
+    if (showingResultRef.current || renderPhase === 'base') return;
 
     const now = performance.now();
     if (video.currentTime !== lastVideoTimeRef.current) {
@@ -89,7 +148,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         /* skip frame */
       }
     }
-  }, []);
+  }, [renderPhase]);
 
   const loop = useCallback(() => {
     drawPreview();
@@ -153,9 +212,34 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     };
   }, [loop]);
 
+  const runMakeupPass = useCallback(async () => {
+    if (!studioJobId || renderPhase) return;
+
+    setErrorMsg(null);
+    setShowMakeupPrompt(false);
+    setMakeupOfferPending(false);
+    setRenderProgress(0);
+    setRenderPhase('makeup');
+
+    try {
+      const res = await postLiveTryOnStudioMakeupAndWait(studioJobId);
+      setRenderProgress(1);
+      setMakeupResultUrl(res.makeupImageUrl ?? null);
+      setShowMakeup(Boolean(res.makeupImageUrl));
+      setMakeupOfferPending(!res.makeupImageUrl);
+      setStudioJobId(null);
+    } catch (e) {
+      setMakeupOfferPending(true);
+      setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'MAKEUP RENDER FAILED');
+    } finally {
+      setRenderPhase(null);
+      setRenderProgress(0);
+    }
+  }, [renderPhase, studioJobId]);
+
   const handleCapture = useCallback(async () => {
     const video = videoRef.current;
-    if (!video || status === 'rendering') return;
+    if (!video || status === 'rendering' || renderPhase) return;
 
     const token = await getAccessToken();
     if (!token) {
@@ -170,9 +254,16 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     }
 
     setErrorMsg(null);
-    showingResultRef.current = true;
+    setCaptureSnapshotUrl(imageDataUrl);
+    setRenderPhase('base');
+    setRenderProgress(0);
     setStatus('rendering');
-    setStatusHint('RENDERING YOUR LOOK… OUR STUDIO IS APPLYING YOUR WIG');
+    setResultUrl(null);
+    setMakeupResultUrl(null);
+    setShowMakeup(false);
+    setShowMakeupPrompt(false);
+    setMakeupOfferPending(false);
+    setStudioJobId(null);
 
     try {
       const res = await postLiveTryOnStudioRenderAndWait(
@@ -182,20 +273,31 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           unitKey,
           angle: activeAngle,
         },
-        (msg) => setStatusHint(msg)
+        () => {
+          /* progress label lives in overlay */
+        }
       );
+      setRenderProgress(1);
+      showingResultRef.current = true;
       setResultUrl(res.imageUrl);
-      setMakeupResultUrl(res.makeupImageUrl ?? null);
-      setShowMakeup(false);
+      setStudioJobId(res.jobId);
       setStatus('result');
-      setStatusHint(res.makeupImageUrl ? 'STUDIO LOOK READY — TAP MAKEUP TO PREVIEW' : 'STUDIO LOOK READY');
+      setStatusHint('STUDIO LOOK READY');
+      setRenderPhase(null);
+      setRenderProgress(0);
+      if (res.makeupAvailable && !res.makeupImageUrl) {
+        setShowMakeupPrompt(true);
+      }
     } catch (e) {
       showingResultRef.current = false;
+      setCaptureSnapshotUrl(null);
+      setRenderPhase(null);
+      setRenderProgress(0);
       setStatus('ready');
       setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
       setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'RENDER FAILED');
     }
-  }, [activeAngle, color, status, unitKey]);
+  }, [activeAngle, color, renderPhase, status, unitKey]);
 
   const handleRetake = () => {
     const video = videoRef.current;
@@ -205,18 +307,32 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       lastVideoTimeRef.current = -1;
     }
     showingResultRef.current = false;
+    setCaptureSnapshotUrl(null);
+    setRenderPhase(null);
+    setRenderProgress(0);
+    setStudioJobId(null);
     setResultUrl(null);
     setMakeupResultUrl(null);
     setShowMakeup(false);
+    setShowMakeupPrompt(false);
+    setMakeupOfferPending(false);
     setErrorMsg(null);
     setStatus('ready');
     setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
   };
 
+  const handleMakeupCancel = () => {
+    setShowMakeupPrompt(false);
+    setMakeupOfferPending(true);
+  };
+
   const showResult = status === 'result' && Boolean(resultUrl);
-  const displayedResultUrl =
-    showMakeup && makeupResultUrl ? makeupResultUrl : resultUrl;
+  const displayedResultUrl = showMakeup && makeupResultUrl ? makeupResultUrl : resultUrl;
   const canToggleMakeup = Boolean(makeupResultUrl);
+  const showSnapshot = renderPhase === 'base' && Boolean(captureSnapshotUrl);
+  const showLiveCanvas = !showResult && !showSnapshot;
+  const overlayLabel =
+    renderPhase === 'makeup' ? 'ADDING PHOTO-READY MAKEUP…' : 'RENDERING YOUR LOOK…';
 
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -225,7 +341,19 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         style={{ aspectRatio: '9 / 16', maxHeight: 'min(78dvh, 640px)' }}
       >
         <video ref={videoRef} playsInline muted className="absolute w-px h-px opacity-0 pointer-events-none" aria-hidden />
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
+        <canvas
+          ref={canvasRef}
+          className={`absolute inset-0 w-full h-full object-cover ${showLiveCanvas ? '' : 'opacity-0 pointer-events-none'}`}
+        />
+
+        {showSnapshot ? (
+          <img
+            src={captureSnapshotUrl!}
+            alt="Captured selfie"
+            className="absolute inset-0 w-full h-full object-cover z-[5]"
+          />
+        ) : null}
+
         {showResult && displayedResultUrl ? (
           <img
             src={displayedResultUrl}
@@ -234,7 +362,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           />
         ) : null}
 
-        {showResult && canToggleMakeup ? (
+        {showResult && canToggleMakeup && !renderPhase ? (
           <button
             type="button"
             onClick={() => setShowMakeup((v) => !v)}
@@ -252,22 +380,58 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           </button>
         ) : null}
 
-        <div
-          className="pointer-events-none absolute left-0 right-0 px-3 text-center z-20"
-          style={{ top: '10px', fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#FFFFFF', textTransform: 'uppercase' }}
-        >
-          {statusHint}
-        </div>
+        {renderPhase ? (
+          <StudioRenderOverlay label={overlayLabel} progress={renderProgress} />
+        ) : null}
 
-        {status === 'rendering' ? (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/55 gap-2">
+        {!renderPhase && !showMakeupPrompt && status !== 'loading' && status !== 'permission' && !showResult ? (
+          <div
+            className="pointer-events-none absolute left-0 right-0 px-3 text-center z-20"
+            style={{ top: '10px', fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#FFFFFF', textTransform: 'uppercase' }}
+          >
+            {statusHint}
+          </div>
+        ) : null}
+
+        {showMakeupPrompt ? (
+          <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/65 px-5">
             <div
-              className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"
-              aria-hidden
-            />
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#FFFFFF', textTransform: 'uppercase' }}>
-              RENDERING YOUR LOOK…
-            </p>
+              className="w-full max-w-[300px] border border-black bg-white/95 p-5 flex flex-col gap-4"
+              role="dialog"
+              aria-labelledby="studio-makeup-prompt-title"
+            >
+              <p
+                id="studio-makeup-prompt-title"
+                className="text-center uppercase"
+                style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000', lineHeight: 1.5 }}
+              >
+                ADD PHOTO-READY MAKEUP TO YOUR FINAL IMAGE?
+              </p>
+              <p
+                className="text-center uppercase"
+                style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', lineHeight: 1.5 }}
+              >
+                VERY LIGHT NATURAL MAKEUP — OPTIONAL
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => void runMakeupPass()}
+                  className="w-full py-3 border border-black uppercase"
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
+                >
+                  PROCEED
+                </button>
+                <button
+                  type="button"
+                  onClick={handleMakeupCancel}
+                  className="w-full py-3 border border-black bg-white/80 uppercase"
+                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000' }}
+                >
+                  CANCEL
+                </button>
+              </div>
+            </div>
           </div>
         ) : null}
 
@@ -290,10 +454,21 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       <div className="flex flex-col gap-2">
         {showResult ? (
           <>
+            {makeupOfferPending && !makeupResultUrl && !renderPhase ? (
+              <button
+                type="button"
+                onClick={() => void runMakeupPass()}
+                className="w-full py-3 border border-black uppercase"
+                style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
+              >
+                ADD MAKEUP
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={handleRetake}
-              className="w-full py-3 border border-black bg-white/80 uppercase"
+              disabled={Boolean(renderPhase)}
+              className="w-full py-3 border border-black bg-white/80 uppercase disabled:opacity-40"
               style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#000000' }}
             >
               CAPTURE AGAIN
@@ -313,7 +488,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           <button
             type="button"
             onClick={handleCapture}
-            disabled={status === 'rendering' || status === 'loading' || status === 'permission'}
+            disabled={status === 'rendering' || status === 'loading' || status === 'permission' || Boolean(renderPhase)}
             className="w-full py-3 border border-black uppercase disabled:opacity-40"
             style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
           >

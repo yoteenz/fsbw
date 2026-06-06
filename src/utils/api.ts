@@ -1339,8 +1339,10 @@ export type LiveTryOnStudioStatusResult =
   | {
       ok: boolean;
       status: 'complete';
+      jobId: string;
       imageUrl: string;
       makeupImageUrl?: string;
+      makeupAvailable?: boolean;
       manifestHash: string;
       color: string;
       unitKey: string;
@@ -1389,39 +1391,72 @@ export async function getLiveTryOnStudioRenderStatus(jobId: string): Promise<Liv
 }
 
 const STUDIO_POLL_MS = 2500;
-const STUDIO_POLL_MAX_MS = 360_000;
+const STUDIO_BASE_POLL_MAX_MS = 180_000;
+const STUDIO_MAKEUP_POLL_MAX_MS = 180_000;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/** Queue studio render, then poll until complete (handles long Fal runs on Hobby). */
+async function pollStudioJobUntilComplete(
+  jobId: string,
+  deadlineMs: number,
+  onTick?: (status: LiveTryOnStudioStatusResult) => void
+): Promise<Extract<LiveTryOnStudioStatusResult, { status: 'complete' }>> {
+  const deadline = Date.now() + deadlineMs;
+  while (Date.now() < deadline) {
+    await sleep(STUDIO_POLL_MS);
+    const status = await getLiveTryOnStudioRenderStatus(jobId);
+    onTick?.(status);
+    if (status.status === 'complete') return status;
+  }
+  throw new Error('STUDIO RENDER TIMED OUT — TRY AGAIN');
+}
+
+/** Queue studio wig render, then poll until natural (no-makeup) image is ready. */
 export async function postLiveTryOnStudioRenderAndWait(
   body: LiveTryOnStudioRenderPayload,
   onProgress?: (msg: string) => void
 ): Promise<Extract<LiveTryOnStudioStatusResult, { status: 'complete' }>> {
   const started = await postLiveTryOnStudioRender(body);
-  const deadline = Date.now() + STUDIO_POLL_MAX_MS;
-  onProgress?.('RENDERING YOUR LOOK…');
-
-  while (Date.now() < deadline) {
-    await sleep(STUDIO_POLL_MS);
-    const status = await getLiveTryOnStudioRenderStatus(started.jobId);
-    if (status.status === 'complete') return status;
-    if (status.phase === 'makeup') {
-      onProgress?.(
-        status.queueStatus === 'IN_QUEUE'
-          ? 'ADDING PHOTO-READY MAKEUP… IN QUEUE'
-          : 'ADDING PHOTO-READY MAKEUP…'
-      );
-    } else if (status.queueStatus === 'IN_QUEUE') {
+  return pollStudioJobUntilComplete(started.jobId, STUDIO_BASE_POLL_MAX_MS, (status) => {
+    if (status.status !== 'pending') return;
+    if (status.queueStatus === 'IN_QUEUE') {
       onProgress?.('IN STUDIO QUEUE…');
     } else {
       onProgress?.('RENDERING YOUR LOOK…');
     }
-  }
+  });
+}
 
-  throw new Error('STUDIO RENDER TIMED OUT — TRY AGAIN');
+/** Queue optional makeup pass on an existing studio job, then poll until complete. */
+export async function postLiveTryOnStudioMakeup(
+  jobId: string
+): Promise<{ ok: boolean; jobId: string; status: 'queued' }> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/live-try-on-studio-makeup', { method: 'POST', body: { jobId } });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Studio makeup');
+  }
+  const text = await res.text();
+  if (!res.ok) throw new Error(parseApiErrorText(text, 'Studio makeup failed'));
+  return JSON.parse(text) as { ok: boolean; jobId: string; status: 'queued' };
+}
+
+export async function postLiveTryOnStudioMakeupAndWait(
+  jobId: string,
+  onProgress?: (msg: string) => void
+): Promise<Extract<LiveTryOnStudioStatusResult, { status: 'complete' }>> {
+  await postLiveTryOnStudioMakeup(jobId);
+  return pollStudioJobUntilComplete(jobId, STUDIO_MAKEUP_POLL_MAX_MS, (status) => {
+    if (status.status !== 'pending') return;
+    onProgress?.(
+      status.queueStatus === 'IN_QUEUE'
+        ? 'ADDING PHOTO-READY MAKEUP… IN QUEUE'
+        : 'ADDING PHOTO-READY MAKEUP…'
+    );
+  });
 }
 
 /** Resolve pre-generated try-on overlays from Storage (no Fal). Uses studio default NOIR + color. */
