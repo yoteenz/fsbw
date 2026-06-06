@@ -24,7 +24,7 @@ type MissingStep = {
 
 type LogLine = { t: string; msg: string };
 
-type BusyAction = 'status' | 'color' | 'next' | 'row' | 'batch' | 'auto' | 'portraits';
+type BusyAction = 'status' | 'color' | 'next' | 'row' | 'batch' | 'auto' | 'portraits' | 'regen';
 
 type PipelineSummary = {
   colorDone: boolean;
@@ -384,6 +384,67 @@ export default function AdminLiveTryOnBatchPanel() {
     [compareBoth, photoModel, overlayWinner, pushLog, runOneStep, ensureColorWebpsCore]
   );
 
+  const runRegenPortrait = useCallback(
+    async (angle: (typeof ANGLES)[number]) => {
+      setBusyAction('regen');
+      const models: LiveTryOnPhotoModel[] = compareBoth ? ['nbp', 'gpt2'] : [photoModel];
+      try {
+        for (const model of models) {
+          pushLog(`REGEN PORTRAIT · ${angle.toUpperCase()} · ${model.toUpperCase()}…`);
+          await postAdminLiveTryOnBatchStep({
+            ...jobBody(selectedJob, compareBoth, photoModel, overlayWinner),
+            step: 'portrait',
+            angle,
+            photoModel: model,
+            forceRegenerate: true,
+          });
+        }
+        setLastError(null);
+        await refreshStatusCore();
+        pushLog(`REGEN PORTRAIT · ${angle.toUpperCase()} DONE — re-run isolate+cut for that angle if overlays exist`);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Portrait regen failed';
+        setLastError(msg);
+        pushLog(`ERROR · ${msg}`);
+      } finally {
+        setBusyAction(null);
+      }
+    },
+    [compareBoth, photoModel, overlayWinner, selectedJob, pushLog, refreshStatusCore]
+  );
+
+  const runRegenOverlayAngle = useCallback(
+    async (angle: (typeof ANGLES)[number]) => {
+      const model = compareBoth ? overlayWinner : photoModel;
+      if (!model) {
+        pushLog('Pick WINNER FOR CUT before regen overlay in compare mode');
+        return;
+      }
+      setBusyAction('regen');
+      try {
+        for (const step of ['overlay_isolate', 'overlay_cut'] as const) {
+          pushLog(`REGEN ${step.toUpperCase()} · ${angle.toUpperCase()} · ${model.toUpperCase()}…`);
+          await postAdminLiveTryOnBatchStep({
+            ...jobBody(selectedJob, compareBoth, photoModel, overlayWinner),
+            step,
+            angle,
+            photoModel: model,
+            forceRegenerate: true,
+          });
+        }
+        setLastError(null);
+        await refreshStatusCore();
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Overlay regen failed';
+        setLastError(msg);
+        pushLog(`ERROR · ${msg}`);
+      } finally {
+        setBusyAction(null);
+      }
+    },
+    [compareBoth, overlayWinner, photoModel, selectedJob, pushLog, refreshStatusCore]
+  );
+
   const runPortraitsOnly = useCallback(async () => {
     if (!missing?.length) {
       await refreshStatus();
@@ -706,6 +767,48 @@ export default function AdminLiveTryOnBatchPanel() {
           ) : null}
         </div>
       ) : null}
+
+      <div className="border border-black/20 p-2 bg-white/70 flex flex-col gap-2">
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#000' }}>
+          REGEN ONE ANGLE (overwrites Storage)
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {ANGLES.map((angle) => (
+            <button
+              key={`regen-portrait-${angle}`}
+              type="button"
+              disabled={busy}
+              onClick={() => void runRegenPortrait(angle)}
+              className="text-[9px] border border-black px-2 py-1 bg-white/80 disabled:opacity-55"
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                color: busyAction === 'regen' ? '#EB1C24' : '#000',
+              }}
+              title={`Regen photoreal portrait for ${angle} only`}
+            >
+              PORTRAIT · {angle.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {ANGLES.map((angle) => (
+            <button
+              key={`regen-overlay-${angle}`}
+              type="button"
+              disabled={busy || (compareBoth && !overlayWinner)}
+              onClick={() => void runRegenOverlayAngle(angle)}
+              className="text-[9px] border border-black px-2 py-1 bg-white/80 disabled:opacity-55"
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                color: busyAction === 'regen' ? '#EB1C24' : '#808080',
+              }}
+              title="Regen isolate + Ideogram cut for one angle (winner model in compare mode)"
+            >
+              OVERLAY · {angle.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         <button
