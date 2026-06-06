@@ -44,11 +44,22 @@ export function pickWigViewFromYaw(yaw: number): 'left' | 'front' | 'right' {
 }
 
 /**
+ * Studio capture angle — matches `LiveTryOnAngle` / `angleConstraint` (+40° left cheek, −40° right).
+ * Unlike `pickWigViewFromYaw` (AR overlay asset index), this maps MediaPipe yaw to pose bucket correctly.
+ */
+export function pickStudioCaptureAngleFromYaw(yawNorm: number): 'left' | 'front' | 'right' {
+  if (yawNorm <= -0.26) return 'right';
+  if (yawNorm >= 0.26) return 'left';
+  return 'front';
+}
+
+/**
  * Studio prompt head yaw in degrees: +40° ≈ left cheek to camera, −40° ≈ right cheek, 0° front.
  * Maps MediaPipe normalized yaw ([-1, 1]) to the same sign convention as `angleConstraint` in liveTryOnOverlay.
+ * Negative yawNorm = user turned toward their left = camera sees **right cheek** = **−40°** (positioned right).
  */
 export function studioHeadYawDegreesFromNorm(yawNorm: number): number {
-  return Math.round(Math.max(-40, Math.min(40, -yawNorm * 40)));
+  return Math.round(Math.max(-40, Math.min(40, yawNorm * 40)));
 }
 
 /** Reduces L/F/R flicker when head pose hovers near thresholds. */

@@ -12,7 +12,7 @@ import {
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
 import {
   estimateHeadYawNorm,
-  pickWigViewFromYaw,
+  pickStudioCaptureAngleFromYaw,
   studioHeadYawDegreesFromNorm,
 } from '../../utils/liveTryOnYaw';
 
@@ -163,7 +163,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         if (landmarks?.length) {
           noFaceFramesRef.current = 0;
           const yaw = estimateHeadYawNorm(landmarks);
-          setActiveAngle(pickWigViewFromYaw(yaw));
+          setActiveAngle(pickStudioCaptureAngleFromYaw(yaw));
           setStatus((s) => (s === 'rendering' || s === 'result' ? s : 'ready'));
           setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
         } else {
@@ -308,7 +308,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         const landmarks = lmResult.faceLandmarks?.[0];
         if (landmarks?.length) {
           const yawNorm = estimateHeadYawNorm(landmarks);
-          captureAngle = pickWigViewFromYaw(yawNorm);
+          captureAngle = pickStudioCaptureAngleFromYaw(yawNorm);
           headYawDeg = studioHeadYawDegreesFromNorm(yawNorm);
         }
       } catch {

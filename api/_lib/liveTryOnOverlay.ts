@@ -214,8 +214,27 @@ const STUDIO_DRAPE_SIDE = [
 ].join(' ');
 
 /**
- * **Studio Try-On** — IMAGE 1 = shopper selfie; IMAGE 2 = front mannequin; optional IMAGE 3 = GPT portrait for drape.
+ * **Studio Try-On** — IMAGE 1 = shopper selfie; IMAGE 2 = angle-matched mannequin; optional IMAGE 3 = GPT portrait for drape.
  */
+function studioMannequinRefBlock(poseAngle: LiveTryOnAngle, hasPortraitRef: boolean): string[] {
+  const angleLabel =
+    poseAngle === 'left' ? 'left 3/4 (+40°)' : poseAngle === 'right' ? 'right 3/4 (−40°)' : 'front (0°)';
+
+  if (hasPortraitRef) {
+    return [
+      `**IMAGE 2** is the **${angleLabel}** mannequin — wig **color**, length, density, curl, and lace shape only (**not** vertical placement; **not** a reason to rotate IMAGE 1 to front).`,
+      `**IMAGE 3** is the **${angleLabel}** GPT portrait — copy **shoulder sweep, length drape, and silhouette** onto IMAGE 1 — **not** hairline height, crown elevation, front-facing head angle, or helmet-hair elevation.`,
+      'Replace **only** the hair on IMAGE 1; **face, neck, shoulders, and body pose stay from IMAGE 1**; drape geometry from IMAGE 3.',
+    ];
+  }
+
+  return [
+    `**IMAGE 2** is the **${angleLabel}** mannequin wig reference — use it for **length, density, curl, lace shape, color, and shoulder sweep** at this camera angle only.`,
+    '**Do NOT** rotate IMAGE 1 to match a front mannequin — IMAGE 2 shows the **same head yaw class** as the capture for **hair geometry only**.',
+    'Replace **only** the hair on IMAGE 1 — installed **flush on their turned skull**, not at mannequin bust display height.',
+  ];
+}
+
 export function buildLiveTryOnStudioTryOnPrompt(
   label: string,
   hex: string,
@@ -229,20 +248,9 @@ export function buildLiveTryOnStudioTryOnPrompt(
     ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
-  const refBlock = hasPortraitRef
-    ? [
-        '**IMAGE 2** is the **front mannequin** — wig **color**, length, density, curl, and lace shape only (**not** vertical placement on the bust).',
-        '**IMAGE 3** is the **GPT portrait render** — copy its **shoulder sweep, length drape, and silhouette** onto IMAGE 1 — **not** its hairline height, crown elevation, or mannequin-style cap position.',
-        'Replace **only** the hair on IMAGE 1; face stays from IMAGE 1; drape geometry from IMAGE 3 — **not** hairline baby hairs, skin wisps, or helmet-hair elevation from IMAGE 3.',
-      ]
-    : [
-        '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace shape, color, and shoulder sweep** only (**not** head angle or how high the wig sits on the bust).',
-        'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2 — installed **flush on their skull**, not at mannequin display height.',
-      ];
-
   return [
-    '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
-    ...refBlock,
+    '**IMAGE 1 (master pose — do not repose):** Customer selfie — keep **exact** face, skin tone, expression, **head yaw, neck, both shoulders, and torso rotation** from this image. **Never** square IMAGE 1 to front because IMAGE 2 exists.',
+    ...studioMannequinRefBlock(poseAngle, hasPortraitRef),
     colorLine,
     studioHeadBodyPoseLock(poseAngle, headYawDeg),
     STUDIO_SKULL_FIT,
@@ -271,8 +279,11 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
 ): string {
   const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
   const yawLabel = studioHeadYawLabel(yaw);
+  const angleLabel =
+    poseAngle === 'left' ? 'left 3/4' : poseAngle === 'right' ? 'right 3/4' : 'front';
   return [
-    'IMAGE 1 = customer selfie. IMAGE 2 = front mannequin wig reference.',
+    'IMAGE 1 = customer selfie (master pose — keep head+shoulder yaw).',
+    `IMAGE 2 = ${angleLabel} mannequin wig reference — hair only, never repose face.`,
     `Keep face, skin, pose, and room from IMAGE 1. Head yaw ${yawLabel}.`,
     yaw < -8
       ? 'Positioned RIGHT: full head+shoulder turn (−40° class), not eyes-only looking right. Do not copy mannequin front angle.'

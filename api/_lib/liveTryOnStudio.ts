@@ -442,10 +442,13 @@ export async function startStudioTryOnRender(
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
   const unitKey = job.unitKey;
   const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
-  const colorPath = colorPaths.front;
-
+  let colorPath = colorPaths[poseAngle];
   if (!(await storageObjectExists(bucket, colorPath))) {
-    throw new Error('COLOR_PREVIEW_MISSING');
+    if (poseAngle !== 'front' && (await storageObjectExists(bucket, colorPaths.front))) {
+      colorPath = colorPaths.front;
+    } else {
+      throw new Error('COLOR_PREVIEW_MISSING');
+    }
   }
 
   const { buf: rawBuf } = parseDataUrl(input.imageDataUrl);
@@ -457,7 +460,7 @@ export async function startStudioTryOnRender(
     fal,
     bucket,
     colorPath,
-    'studio-mannequin-front.webp'
+    `studio-mannequin-${poseAngle}.webp`
   );
 
   const portraitPath = liveTryOnPortraitStoragePath(
@@ -465,7 +468,7 @@ export async function startStudioTryOnRender(
     unitKey,
     manifestHash,
     photoModel,
-    'front'
+    poseAngle
   );
   const hasPortraitInStorage = await storageObjectExists(bucket, portraitPath);
   const attachPortraitRef =
