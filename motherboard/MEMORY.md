@@ -25700,3 +25700,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Changes:** **`AdminLiveTryOnBatchPanel`** — pipeline legend (3 steps), red/green **status card** (e.g. `PORTRAITS 2/3 · OVERLAYS 0/3 — SHOPPERS BLOCKED`), **NEXT** action hint, human-readable MISSING lines, **WHAT THE BUTTONS DO** section, auto **CHECK STATUS** on row/model change, **RUN ALL FOR ROW** now sets busy + refreshes.
 
 **Ops for OFF BLACK:** Tap **RUN ALL FOR ROW** (finishes portrait RIGHT + 3 overlay Ideogram steps). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on batch overlay errors (Ideogram-on-portrait fix)
+
+**Context:** User still blocked on OFF BLACK; admin **RUN ALL / RUN NEXT** threw errors. Storage: color WebPs + 2/3 portraits; **0 overlays**.
+
+**Cause:** `WIG_PREVIEW_TRYON_IDEOGRAM_ONLY=true` ran Ideogram **directly on photoreal portraits** (keeps face) → `validateHairOnlyOverlayPng` rejected → fallback NBP+Ideogram = **up to 3 Fal jobs** per overlay → timeouts / opaque-face errors.
+
+**Fix:** `generateHairOnlyOverlayFromPortrait` always **NBP hair isolation → Ideogram** (2 Fal max); retry once; upload best-effort on 2nd validation fail. Missing steps sorted **portraits before overlays**. Admin **LAST ERROR** box + parsed API messages. Env: **`WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE=true`** last resort on Vercel.
+
+**Ops:** After deploy, **RUN NEXT STEP** per missing row (portrait RIGHT, then overlay L/F/R) or **RUN ALL FOR ROW**. Pushed **`master`** + **`preview/mobile`**.
