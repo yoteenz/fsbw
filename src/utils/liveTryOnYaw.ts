@@ -73,9 +73,9 @@ export function wigPlacementFromLandmarks(
   const faceH = Math.abs(chin.y - forehead.y) * canvasH;
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const cx = ((left.x + right.x) / 2) * canvasW;
-  /** Lace front targets slightly above tracked forehead. */
-  const cy = forehead.y * canvasH - faceH * 0.04;
-  const width = Math.max(faceW * 2.05, faceH * 1.72);
+  /** Lace front sits on the tracked forehead / upper brow. */
+  const cy = forehead.y * canvasH + faceH * 0.08;
+  const width = Math.max(faceW * 2.35, faceH * 2.05, canvasW * 0.52);
   const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
 
   return { cx, cy, width, rotationRad };
@@ -112,8 +112,11 @@ export function faceContourPolygonFromLandmarks(
   }));
 }
 
-/** Strip chest-length hair from portrait overlays (prevents “beard” below chin). */
-export function belowChinPunchPolygon(
+/**
+ * Punch only the center strip below the chin — removes chest-length portrait hair
+ * without cutting the side panels that should wrap the jaw/cheeks.
+ */
+export function centerBeardPunchPolygon(
   landmarks: NormPoint[],
   canvasW: number,
   canvasH: number,
@@ -128,17 +131,28 @@ export function belowChinPunchPolygon(
 
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const faceH = Math.abs(chin.y - landmarks[FACE_LM.forehead]!.y) * canvasH;
-  const chinLineY = chin.y * canvasH + Math.max(6, faceH * 0.04);
+  const chinLineY = chin.y * canvasH + Math.max(8, faceH * 0.07);
   const lx = mirrorX(jawL.x * canvasW, canvasW, mirror);
   const rx = mirrorX(jawR.x * canvasW, canvasW, mirror);
-  const pad = faceW * 0.45;
+  const centerX = (lx + rx) / 2;
+  const halfW = faceW * 0.42;
 
   return [
-    { x: lx - pad, y: chinLineY },
-    { x: rx + pad, y: chinLineY },
-    { x: canvasW + 40, y: canvasH + 40 },
-    { x: -40, y: canvasH + 40 },
+    { x: centerX - halfW, y: chinLineY },
+    { x: centerX + halfW, y: chinLineY },
+    { x: centerX + halfW, y: canvasH + 40 },
+    { x: centerX - halfW, y: canvasH + 40 },
   ];
+}
+
+/** @deprecated Use centerBeardPunchPolygon — full-width punch breaks side hair wrap. */
+export function belowChinPunchPolygon(
+  landmarks: NormPoint[],
+  canvasW: number,
+  canvasH: number,
+  mirror: boolean
+): CanvasPoint[] | null {
+  return centerBeardPunchPolygon(landmarks, canvasW, canvasH, mirror);
 }
 
 export function lerpPlacement(
