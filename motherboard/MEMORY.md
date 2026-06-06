@@ -25915,3 +25915,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - Client: `captureSnapshotUrl`, `StudioRenderOverlay` with progress bar, makeup prompt modal, `postLiveTryOnStudioMakeupAndWait`.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio center part: head-yaw anchored (side angles)
+
+**Context:** Side-angle studio captures still showed center part **centered in the 2D hair blob** instead of on the **skull midline** rotated with head pose (disconnect between angle bucket and actual head position).
+
+**Fix (`8c970f94`):** `studioCenterPartConstraint(poseAngle, headYawDeg)` — part rides cranial midline at measured yaw (+40° left cheek, −40° right, 0° front); explicit forbid frame-center part on turned heads. Client sends **`headYawDeg`** from MediaPipe at capture via `studioHeadYawDegreesFromNorm`. Footer shows angle + degrees.
+
+Pushed **`master`** + **`preview/mobile`**.
