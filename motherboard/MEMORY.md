@@ -25805,7 +25805,7 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 **Root cause:** **46% head-band crop** removed side hair panels; **full-width below-chin punch** cut cheek-wrap hair at jaw, leaving triangular remnants; lace anchored **above** forehead (`cy - 4% faceH`) created visible gap.
 
-**Fix (`pending commit`):**
+**Fix (`970dd360`):**
 - **`liveTryOnComposite.ts`:** **Full overlay draw** restored (no head-band crop). **`centerBeardPunchPolygon`** — narrow center strip below chin only (chest hair, preserves side panels). Face punch **1.1** expand (tighter → more side hair visible). Lace **`WIG_ASSET_HAIRLINE_Y` 0.15**.
 - **`liveTryOnYaw.ts`:** Lace on forehead (`cy + 8% faceH`), wider placement (`faceW * 2.35`, `faceH * 2.05`). `centerBeardPunchPolygon` replaces full-width below-chin punch.
 
