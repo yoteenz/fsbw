@@ -25826,3 +25826,19 @@ Pushed **`master`** + **`preview/mobile`**.
 4. **Commercial AR SDK** (Banuba / Perfect Corp) — fastest prestige, license cost.
 
 **Stop:** Incremental punch/placement tweaks as primary strategy. **No code this turn** — direction only.
+
+---
+
+## 2026-06-05 — Try-on roadmap Option A shipped: Studio Try-On
+
+**Context (continued):** User chose **step-by-step** upgrade path — try cheapest option first, move on if it doesn’t nail brand vision. **Option A = Studio Try-On** (snapshot + Fal, not live overlay tuning).
+
+**Shipped (`a06cf9a2`):**
+- **`POST /api/live-try-on-studio-render`** — signed-in; selfie JPEG + mannequin color WebP → NBP/GPT2 edit; result uploaded to Storage `try-on-studio/...`.
+- **`buildLiveTryOnStudioTryOnPrompt`** — IMAGE 1 identity, IMAGE 2 wig geometry.
+- **`LiveTryOnStudioCapture`** — camera, face angle detect, **CAPTURE STUDIO LOOK**, loading, result + save.
+- **`/tools/live-try-on`** — tabs **STUDIO TRY-ON** (default) | **ANGLE PREVIEW** (legacy live overlay).
+
+**Roadmap remaining:** B rebrand preview only (partially done via tabs); C layered mannequin assets; D 3D head compositor (MediaPipe matrix + Three.js); E commercial AR SDK.
+
+**Ops:** Sign in required; color tier WebPs must exist in Storage (same as batch). Pushed **`master`** + **`preview/mobile`**.
