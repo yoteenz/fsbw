@@ -25810,3 +25810,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`liveTryOnYaw.ts`:** Lace on forehead (`cy + 8% faceH`), wider placement (`faceW * 2.35`, `faceH * 2.05`). `centerBeardPunchPolygon` replaces full-width below-chin punch.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: strategic pivot (stop 2D overlay tuning)
+
+**Context (full chat arc):** Live try-on for OFF BLACK / GPT2 — admin portrait compare, Ideogram cut, MediaPipe face mesh + face reinjection. Iterative composite tuning still looks like a **cheap 2D cutout**. User: **bit-by-bit refinement isn’t working**; needs **prestige** face mapping, not simple PNG overlay.
+
+**Diagnosis:** **2D stamp + face punch** on **portrait-derived PNGs** (photoreal woman → isolate hair). Wrong asset type for live AR — baked perspective, bust hair, no depth/lighting. More `liveTryOnComposite.ts` tuning won’t reach premium.
+
+**Recommended paths (user to choose):**
+1. **Studio Try-On (snapshot + Fal)** — capture user photo → inpaint wig via NBP/GPT2; highest fidelity; live demoted to preview.
+2. **Live v2 — head-locked 3D** — MediaPipe `outputFacialTransformationMatrixes` + Three.js; hair parented to head matrix, not canvas 2D.
+3. **Asset rebuild** — mannequin hair-only layered PNGs (back/sides/lace); skip portrait woman for camera assets.
+4. **Commercial AR SDK** (Banuba / Perfect Corp) — fastest prestige, license cost.
+
+**Stop:** Incremental punch/placement tweaks as primary strategy. **No code this turn** — direction only.
