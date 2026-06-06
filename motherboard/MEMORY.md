@@ -25744,3 +25744,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Ops after Vercel deploy (~1–2 min):** Hard-refresh admin → **CHECK STATUS** → **RUN NEXT STEP** ×3 for LEFT/FRONT/RIGHT **White → transparent** cut lines (work PNGs already in Storage; each cut is local Jimp, seconds not minutes). Status → **ROW READY FOR LIVE TRY ON**; test **`/tools/live-try-on`** on mobile.
 
 **Env:** Default cut = local white→alpha (`workPngToHairOverlay`); **`WIG_PREVIEW_TRYON_OVERLAY_USE_IDEOGRAM=true`** optional. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: portrait-first NBP vs GPT2 compare + Ideogram cut
+
+**Context (full chat arc):** User unblocked **OFF BLACK** live try-on (validation deploy gap fixed). Live camera worked but **NBP cutout/angles off**, disliked generated woman. Asked how to **test GPT Image 2** for comparison and wanted workflow: **compare NBP vs GPT portraits first → pick winner → Ideogram cut** (not cut before choosing model).
+
+**Shipped (`03c68430`):**
+- **Admin LIVE TRY-ON:** **NBP + GPT2 COMPARE** mode — overlay isolate+cut **gated** until **WINNER FOR CUT** selected (`overlayWinner` on status API). **PORTRAIT COMPARE** grid (L/F/R thumbs). **RUN PORTRAITS ONLY**, **GPT2 ONLY** radio, **Overwrite** checkbox for regen. Pipeline legend: portraits → pick winner → NBP isolate → **Ideogram cut**.
+- **Default cut = Ideogram** (`WIG_PREVIEW_TRYON_OVERLAY_USE_IDEOGRAM=false` to opt out to local white→alpha).
+- **Portrait prompt** (`buildLiveTryOnPhotorealWomanPrompt`): stronger **mannequin angle lock**, neutral editorial woman, head pose tied to reference.
+- **Shopper `/tools/live-try-on`:** compare bar shows portraits; red hint if portraits exist but overlays missing for tapped model.
+
+**Ops — compare OFF BLACK:** Admin → OFF BLACK → **NBP + GPT2 COMPARE** → check **Overwrite** → **RUN PORTRAITS ONLY** (6 Fal jobs) → compare in admin grid or Live Try On → **WINNER FOR CUT** → **RUN NEXT STEP** ×6 (3 isolate + 3 Ideogram cut for winner only) → set Vercel **`WIG_PREVIEW_TRYON_PHOTO_MODEL`** to `nbp` or `gpt2` for shopper default.
+
+**Note:** Camera alignment (wig placement vs face oval) is separate from batch cut — may need composite tuning in `liveTryOnComposite.ts` / `liveTryOnYaw.ts` after winner picked. Pushed **`master`** + **`preview/mobile`**.
