@@ -25842,3 +25842,17 @@ Pushed **`master`** + **`preview/mobile`**.
 **Roadmap remaining:** B rebrand preview only (partially done via tabs); C layered mannequin assets; D 3D head compositor (MediaPipe matrix + Three.js); E commercial AR SDK.
 
 **Ops:** Sign in required; color tier WebPs must exist in Storage (same as batch). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio Try-On refinements (GPT2, glam, center part, retake fix)
+
+**Context:** User approved Studio as hero vs live overlay; keep both tabs. Studio better but: use **GPT2 only**; apply **NBP glam** (centered subject, bokeh blur, sharp focus) to GPT output; **CAPTURE AGAIN** camera distorted/blurred; **part off-center** on all angles.
+
+**Shipped:**
+- **`activeLiveTryOnStudioPhotoModel()`** — studio defaults **`gpt2`** (`WIG_PREVIEW_TRYON_STUDIO_PHOTO_MODEL` to override). Angle preview still uses compare bar / `WIG_PREVIEW_TRYON_PHOTO_MODEL`.
+- **`buildLiveTryOnStudioTryOnPrompt`:** `STUDIO_GLAM_COMPOSITION` (editorial center crop, neutral bokeh, pro lighting); `STUDIO_CENTER_PART` (midline mandatory, symmetric panels); always **front mannequin** for wig geometry (side refs caused asymmetric part).
+- GPT **`quality: high`**.
+- **`LiveTryOnStudioCapture`:** canvas **stays mounted** under result overlay; `syncCanvasToVideo` + reset on retake — fixes blur/distort on CAPTURE AGAIN.
+
+Pushed **`master`** + **`preview/mobile`**.
