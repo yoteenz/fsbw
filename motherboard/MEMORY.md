@@ -25888,3 +25888,18 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `STUDIO_DRAPE_SIDE` (viewer’s LEFT shoulder heavy drape only; forbid both-shoulder waterfall). Center part = midline groove only. When **GPT front portrait** exists in Storage, attach as **IMAGE 3** for exact drape/silhouette; mannequin stays color/length (IMAGE 2).
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio Try-On: dual natural + makeup renders with toggle
+
+**Context:** User asked studio capture to produce **two images**: (1) **no makeup** (current natural rendering) and (2) **very light natural “photo-ready” makeup** (Instagram-filter-like subtlety). UI: **makeup icon** bottom-right on result — tap toggles makeup ↔ natural; SAVE downloads the visible version. User also asked whether a **specific IG filter** can be used — **no branded filter replication** (licensing); we match the *aesthetic* via prompt only.
+
+**Implementation (`ab93792c`):**
+- **Base pass** (`phase: base`): `buildLiveTryOnStudioTryOnPrompt` now says **no visible makeup** (bare skin from selfie).
+- **Makeup pass** (`phase: makeup`): after base completes, queue second Fal edit on the natural WebP with `buildLiveTryOnStudioMakeupPassPrompt` — light editorial makeup only; hair/pose/room locked.
+- **Storage:** `.../{ts}-natural.webp` and `.../{ts}-makeup.webp`. Job record extended with `phase`, `naturalImageUrl`, `outputTimestamp`. Makeup failure still returns natural-only.
+- **API poll:** pending includes `phase`; complete returns `imageUrl` + optional `makeupImageUrl`.
+- **Client:** `LiveTryOnStudioCapture` — `makeupResultUrl`, `showMakeup` toggle, `/assets/makeup-artist-icon.svg` button bottom-right; progress “ADDING PHOTO-READY MAKEUP…”; poll timeout 6min.
+
+Pushed **`master`** + **`preview/mobile`**.
