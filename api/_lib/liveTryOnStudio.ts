@@ -556,7 +556,7 @@ async function uploadStudioWebp(
   const supabase = getSupabaseAdminServiceRole();
   const { error: upErr } = await supabase.storage.from(bucket).upload(path, buf, {
     contentType: 'image/webp',
-    upsert: false,
+    upsert: true,
     cacheControl: '3600',
   });
   if (upErr) throw new Error(`upload studio result: ${upErr.message}`);
@@ -683,6 +683,23 @@ export type StartStudioMakeupRenderResult = {
   status: 'queued';
 };
 
+async function downloadNaturalRenderBuffer(
+  bucket: string,
+  job: StudioTryOnJobRecord
+): Promise<Buffer> {
+  if (job.naturalStoragePath) {
+    const supabase = getSupabaseAdminServiceRole();
+    const { data, error } = await supabase.storage.from(bucket).download(job.naturalStoragePath);
+    if (!error && data) {
+      return Buffer.from(await data.arrayBuffer());
+    }
+  }
+  if (job.naturalImageUrl) {
+    return downloadUrlToBuffer(job.naturalImageUrl);
+  }
+  throw new Error('Studio job missing natural image');
+}
+
 /** Queue optional makeup pass after user confirms (natural render must be complete). */
 export async function startStudioMakeupRender(
   userId: string,
@@ -693,23 +710,38 @@ export async function startStudioMakeupRender(
 
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
-  const job = await loadStudioJob(bucket, promptVersion, userId, jobId);
+  let job = await loadStudioJob(bucket, promptVersion, userId, jobId);
   if (!job) throw new Error('Studio job not found or expired');
-  if (job.phase !== 'base_complete') {
-    throw new Error('Studio natural render is not ready for makeup');
-  }
-  if (!job.naturalStoragePath) {
-    throw new Error('Studio job missing natural image');
-  }
-
-  const supabase = getSupabaseAdminServiceRole();
-  const { data, error } = await supabase.storage.from(bucket).download(job.naturalStoragePath);
-  if (error || !data) {
-    throw new Error(`storage download failed for natural render: ${error?.message || 'missing'}`);
-  }
-  const naturalBuf = Buffer.from(await data.arrayBuffer());
 
   const fal = await getFalClient(falKey);
+
+  if (job.phase === 'makeup') {
+    const queueStatus = await fal.queue.status(job.falModel, { requestId: job.falRequestId });
+    const status = String((queueStatus as { status?: string }).status || 'IN_PROGRESS');
+    if (status === 'IN_QUEUE' || status === 'IN_PROGRESS') {
+      return { jobId, status: 'queued' };
+    }
+    await pollStudioTryOnRender(userId, jobId);
+    job = await loadStudioJob(bucket, promptVersion, userId, jobId);
+    if (!job) {
+      throw new Error('Studio glam already finished — capture again to retry makeup');
+    }
+  }
+
+  if (job.phase === 'base') {
+    const poll = await pollStudioTryOnRender(userId, jobId);
+    if (poll.status === 'pending') {
+      throw new Error('Studio natural render is still processing');
+    }
+    job = await loadStudioJob(bucket, promptVersion, userId, jobId);
+    if (!job) throw new Error('Studio job not found or expired');
+  }
+
+  if (job.phase !== 'base_complete' || !job.naturalImageUrl) {
+    throw new Error('Studio natural render is not ready for makeup');
+  }
+
+  const naturalBuf = await downloadNaturalRenderBuffer(bucket, job);
   const makeupRequestId = await queueMakeupPass(fal, job, naturalBuf);
 
   await saveStudioJob(bucket, promptVersion, {
