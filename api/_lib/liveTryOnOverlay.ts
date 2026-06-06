@@ -76,23 +76,32 @@ const STUDIO_GLAM_COMPOSITION = [
   'Polished editorial color grade on the subject — subtle; do not flatten the real space into a fake studio set.',
 ].join(' ');
 
-/** Center part locked to facial midline — do not copy a side part from the mannequin reference. */
+/** Center part on midline only — length drape is one-sided (see STUDIO_DRAPE_SIDE). */
 const STUDIO_CENTER_PART = [
-  '**CENTER PART (mandatory — facial midline):** The part must run through the **exact center** of the forehead, between the brows, and down the nose bridge.',
-  'Left and right hair panels must be **symmetric** in volume — **no** drift left or right of face center.',
-  '**Ignore** any off-center or side part in IMAGE 2 — force a true **center part** on this person’s head.',
-  'Success check: the part groove sits on the facial midline, not on the left or right third of the forehead.',
+  '**CENTER PART (mandatory — facial midline):** The part groove runs through the **exact center** of the forehead, between the brows, and down the nose bridge.',
+  '**Part line only** is centered — **do not** interpret this as symmetric hair on **both shoulders**.',
+  '**Ignore** any off-center part in the mannequin — force a true **center part** on this person’s head.',
+].join(' ');
+
+/** Match portrait / mannequin one-shoulder sweep (not a symmetrical curtain on both shoulders). */
+const STUDIO_DRAPE_SIDE = [
+  '**LENGTH DRAPE (mandatory — match portrait renders):** Copy the **one-sided shoulder sweep** from the references — **not** equal hair mass on both shoulders.',
+  '**DRAPE SIDE:** Almost all long length falls **forward over the viewer’s LEFT shoulder only** (left edge of the image).',
+  '**Viewer’s RIGHT shoulder:** only a thin tuck, hair behind the shoulder, or nothing crossing the collarbone — **never** a second heavy cascade.',
+  '**FORBIDDEN:** symmetrical “curtain” on both shoulders, twin waterfalls, or matching thick panels on left and right.',
+  '**Self-check:** if both shoulders have matching thick hair in front → **failed**.',
 ].join(' ');
 
 /**
- * **Studio Try-On** — IMAGE 1 = shopper selfie, IMAGE 2 = **front** mannequin color WebP (center-part geometry).
- * GPT Image 2 render + NBP-style glam composition in prompt.
+ * **Studio Try-On** — IMAGE 1 = shopper selfie; IMAGE 2 = front mannequin; optional IMAGE 3 = GPT portrait for drape.
  */
 export function buildLiveTryOnStudioTryOnPrompt(
   label: string,
   hex: string,
-  poseAngle: LiveTryOnAngle
+  poseAngle: LiveTryOnAngle,
+  opts?: { hasPortraitRef?: boolean }
 ): string {
+  const hasPortraitRef = opts?.hasPortraitRef === true;
   const nearBlack = isJetBlackOffBlack(label, hex);
   const colorLine = nearBlack
     ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
@@ -103,14 +112,27 @@ export function buildLiveTryOnStudioTryOnPrompt(
       ? 'Keep the customer’s **front-facing** head pose from IMAGE 1.'
       : `${angleConstraint(poseAngle)} Keep the customer’s **head pose** from IMAGE 1 — do not rotate them to match the mannequin.`;
 
+  const refBlock = hasPortraitRef
+    ? [
+        '**IMAGE 2** is the **front mannequin** — wig **color**, length, density, curl, and lace.',
+        '**IMAGE 3** is the **GPT portrait render** — copy its **exact** shoulder sweep, length drape, and hair silhouette onto IMAGE 1 (same as admin portrait thumbs).',
+        'Replace **only** the hair on IMAGE 1; face stays from IMAGE 1; drape geometry from IMAGE 3.',
+      ]
+    : [
+        '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace, color, and shoulder sweep** (not head angle).',
+        'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2.',
+      ];
+
   return [
     '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
-    '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace, and color** only (not head angle).',
-    'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2.',
+    ...refBlock,
     colorLine,
     STUDIO_CENTER_PART,
+    STUDIO_DRAPE_SIDE,
     poseLine,
-    'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 — not a new cut.',
+    hasPortraitRef
+      ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut.'
+      : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut.',
     STUDIO_GLAM_COMPOSITION,
     'Soft natural makeup if needed; realistic hairline blend at the lace front.',
     '**Delete from output only:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo — never delete or swap the customer’s real room.',
