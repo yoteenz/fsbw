@@ -6,13 +6,14 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import AdminLiveTryOnBatchPanel from '../components/AdminLiveTryOnBatchPanel';
 import AdminLoungeTvContentPanel from '../components/AdminLoungeTvContentPanel';
 import {
   LOUNGE_TV_SIDEBAR,
   type LoungeTvMainTab,
 } from '../../../components/lounge/loungeTvContent';
 
-const BACKEND_TABS = ['AUDIT LOG', 'USERS', 'CONTENT'] as const;
+const BACKEND_TABS = ['AUDIT LOG', 'USERS', 'CONTENT', 'LIVE TRY-ON'] as const;
 
 type AuditEntry = { id: string; actorEmail?: string; action: string; resourceType: string; resourceId?: string; details?: unknown; createdAt: string };
 type AuthUser = { id: string; email: string; created_at?: string; last_sign_in_at?: string; banned_until?: string; email_confirmed_at?: string };
@@ -296,6 +297,8 @@ export default function AdminBackend() {
                     onCloseEditing={closeContentEditing}
                   />
                 )}
+
+                {activeTab === 'LIVE TRY-ON' && <AdminLiveTryOnBatchPanel />}
 
                 {activeTab === 'USERS' && (
                   <>

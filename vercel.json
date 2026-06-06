@@ -1,7 +1,13 @@
 {
   "functions": {
     "api/live-try-on-ensure-overlays.ts": {
+      "maxDuration": 10
+    },
+    "api/admin/live-try-on-batch-step.ts": {
       "maxDuration": 120
+    },
+    "api/admin/live-try-on-batch-status.ts": {
+      "maxDuration": 60
     },
     "api/wig-preview/live-noir-color.ts": {
       "maxDuration": 120
