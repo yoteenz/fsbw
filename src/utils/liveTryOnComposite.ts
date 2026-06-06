@@ -3,8 +3,20 @@ import { faceContourPolygonFromLandmarks, type NormPoint } from './liveTryOnYaw'
 
 type Placement = { cx: number; cy: number; width: number; rotationRad: number };
 
-/** Lace hairline in prepped overlay assets sits near this fraction from the top. */
-const WIG_ASSET_HAIRLINE_Y = 0.27;
+/**
+ * Lace band in pre-generated overlay PNGs — tune if hairline floats above the face.
+ * Fraction from top of wig bitmap to lace front.
+ */
+const WIG_ASSET_HAIRLINE_Y = 0.17;
+
+function clipToPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void {
+  if (points.length < 3) return;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+  ctx.closePath();
+  ctx.clip();
+}
 
 function fillPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void {
   if (points.length < 3) return;
@@ -15,42 +27,41 @@ function fillPolygon(ctx: CanvasRenderingContext2D, points: CanvasPoint[]): void
   ctx.fill();
 }
 
-/** Clears wig pixels inside the tracked face so the live camera shows through. */
-export function punchFaceContourFromWigLayer(
+/** Remove wig pixels in the face zone (wide) so portrait background in bad cuts cannot show. */
+function punchFaceFromWigLayer(
   ctx: CanvasRenderingContext2D,
   contour: CanvasPoint[],
-  featherPx = 4
+  featherPx: number
 ): void {
   if (contour.length < 3) return;
   ctx.save();
   ctx.globalCompositeOperation = 'destination-out';
   ctx.fillStyle = '#000';
-  if (featherPx > 0) {
-    ctx.filter = `blur(${featherPx}px)`;
-  }
+  if (featherPx > 0) ctx.filter = `blur(${featherPx}px)`;
   fillPolygon(ctx, contour);
   ctx.filter = 'none';
   ctx.restore();
 }
 
-/** Subtle tracked outline — replaces the old static positioning oval. */
-export function strokeFaceTrackingGuide(ctx: CanvasRenderingContext2D, contour: CanvasPoint[]): void {
-  if (contour.length < 3) return;
+/** Paint live camera back over the face mesh — eliminates hole-punch artifacts. */
+export function drawMirroredVideoClippedToFace(
+  ctx: CanvasRenderingContext2D,
+  video: HTMLVideoElement,
+  canvasW: number,
+  canvasH: number,
+  faceContour: CanvasPoint[]
+): void {
+  if (faceContour.length < 3) return;
   ctx.save();
-  ctx.strokeStyle = 'rgba(235, 28, 36, 0.8)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 4]);
-  ctx.beginPath();
-  ctx.moveTo(contour[0].x, contour[0].y);
-  for (let i = 1; i < contour.length; i++) ctx.lineTo(contour[i].x, contour[i].y);
-  ctx.closePath();
-  ctx.stroke();
+  clipToPolygon(ctx, faceContour);
+  ctx.translate(canvasW, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0, canvasW, canvasH);
   ctx.restore();
 }
 
 /**
- * Draw hair overlay aligned to tracked head pose; punch uses the face mesh (not a fixed oval)
- * so portrait background baked into bad cuts does not show through.
+ * Realistic stack: full video → hair outside face mask → live face reinjected on top.
  */
 export function drawWigOverlayTracked(
   ctx: CanvasRenderingContext2D,
@@ -59,20 +70,25 @@ export function drawWigOverlayTracked(
   wigImg: HTMLImageElement,
   placement: Placement,
   landmarks: NormPoint[],
-  offscreen: HTMLCanvasElement
-): CanvasPoint[] | null {
-  const contour = faceContourPolygonFromLandmarks(landmarks, canvasW, canvasH, {
+  offscreen: HTMLCanvasElement,
+  video: HTMLVideoElement
+): void {
+  const punchContour = faceContourPolygonFromLandmarks(landmarks, canvasW, canvasH, {
     mirror: true,
-    expand: 1.14,
+    expand: 1.22,
   });
-  if (!contour) return null;
+  const faceContour = faceContourPolygonFromLandmarks(landmarks, canvasW, canvasH, {
+    mirror: true,
+    expand: 1.06,
+  });
+  if (!punchContour || !faceContour) return;
 
   if (offscreen.width !== canvasW || offscreen.height !== canvasH) {
     offscreen.width = canvasW;
     offscreen.height = canvasH;
   }
   const octx = offscreen.getContext('2d');
-  if (!octx) return contour;
+  if (!octx) return;
 
   octx.clearRect(0, 0, canvasW, canvasH);
 
@@ -86,18 +102,31 @@ export function drawWigOverlayTracked(
   octx.save();
   octx.translate(cx, placement.cy);
   octx.rotate(rot);
-  octx.globalAlpha = 0.98;
   octx.drawImage(wigImg, -drawW / 2, topOffset, drawW, drawH);
   octx.restore();
 
-  punchFaceContourFromWigLayer(octx, contour);
+  punchFaceFromWigLayer(octx, punchContour, 6);
 
   ctx.save();
-  ctx.globalAlpha = 1;
   ctx.drawImage(offscreen, 0, 0);
   ctx.restore();
 
-  return contour;
+  drawMirroredVideoClippedToFace(ctx, video, canvasW, canvasH, faceContour);
+}
+
+/** Dev-only face outline. */
+export function strokeFaceTrackingGuide(ctx: CanvasRenderingContext2D, contour: CanvasPoint[]): void {
+  if (contour.length < 3) return;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(235, 28, 36, 0.45)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(contour[0].x, contour[0].y);
+  for (let i = 1; i < contour.length; i++) ctx.lineTo(contour[i].x, contour[i].y);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
 }
 
 /** @deprecated Use drawWigOverlayTracked */
@@ -110,5 +139,5 @@ export function drawWigOverlayWithFaceHole(
   landmarks: NormPoint[],
   offscreen: HTMLCanvasElement
 ): void {
-  drawWigOverlayTracked(ctx, canvasW, canvasH, wigImg, placement, landmarks, offscreen);
+  drawWigOverlayTracked(ctx, canvasW, canvasH, wigImg, placement, landmarks, offscreen, document.createElement('video'));
 }

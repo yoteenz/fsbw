@@ -67,9 +67,9 @@ export function wigPlacementFromLandmarks(
   const faceH = Math.abs(chin.y - forehead.y) * canvasH;
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const cx = ((left.x + right.x) / 2) * canvasW;
-  /** Lace hairline sits on tracked forehead (lower cy = wig sits lower on face). */
-  const cy = forehead.y * canvasH + faceH * 0.06;
-  const width = Math.max(faceW * 2.75, faceH * 2.2, canvasW * 0.68);
+  /** Lace hairline target — slightly below forehead landmark. */
+  const cy = forehead.y * canvasH + faceH * 0.1;
+  const width = Math.max(faceW * 2.65, faceH * 2.15, canvasW * 0.66);
   const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
 
   return { cx, cy, width, rotationRad };
