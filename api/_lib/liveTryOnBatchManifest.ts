@@ -1,0 +1,54 @@
+/** Default NOIR build used for live try-on batch rows (color varies per manifest entry). */
+export const LIVE_TRY_ON_BATCH_NOIR_DEFAULTS = {
+  unitKey: 'NOIR',
+  length: '24"',
+  density: '200%',
+  lace: '13X6',
+  texture: 'SILKY',
+  hairline: 'NATURAL',
+  styling: 'NONE',
+  addOns: [] as string[],
+};
+
+/** Catalog colors to pre-generate for studio try-on (NOIR defaults above). */
+export const LIVE_TRY_ON_BATCH_NOIR_COLORS: string[] = [
+  'OFF BLACK',
+  'JET BLACK',
+  'ESPRESSO',
+  'CHESTNUT',
+  'HONEY',
+  'AUBURN',
+  'COPPER',
+  'GINGER',
+  'SANGRIA',
+  'CHERRY',
+  'RASPBERRY',
+  'PLUM',
+  'COBALT',
+  'TEAL',
+  'SLIME',
+  'CITRINE',
+];
+
+export type LiveTryOnBatchManifestRow = {
+  id: string;
+  label: string;
+  color: string;
+  unitKey: string;
+  length: string;
+  density: string;
+  lace: string;
+  texture: string;
+  hairline: string;
+  styling: string;
+  addOns: string[];
+};
+
+export function liveTryOnNoirBatchManifest(): LiveTryOnBatchManifestRow[] {
+  return LIVE_TRY_ON_BATCH_NOIR_COLORS.map((color) => ({
+    id: `NOIR-${color.replace(/\s+/g, '_')}`,
+    label: `NOIR · ${color}`,
+    color,
+    ...LIVE_TRY_ON_BATCH_NOIR_DEFAULTS,
+  }));
+}

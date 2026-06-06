@@ -1201,6 +1201,56 @@ export async function getAdminAuditLog(limit = 50, offset = 0): Promise<Array<{ 
   return Array.isArray(data) ? data : [];
 }
 
+export type LiveTryOnBatchJobPayload = {
+  unitKey?: string;
+  color: string;
+  length?: string;
+  density?: string;
+  lace?: string;
+  texture?: string;
+  hairline?: string;
+  styling?: string;
+  addOns?: string[];
+  photoModel?: 'nbp' | 'gpt2';
+  compareModels?: boolean;
+};
+
+export async function getAdminLiveTryOnBatchManifest(): Promise<{
+  ok: boolean;
+  rows: Array<{ id: string; label: string; color: string }>;
+}> {
+  const res = await apiFetch('/api/admin/live-try-on-batch-manifest');
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{ ok: boolean; rows: Array<{ id: string; label: string; color: string }> }>;
+}
+
+export async function postAdminLiveTryOnBatchStatus(body: LiveTryOnBatchJobPayload): Promise<{
+  ok: boolean;
+  manifestHash: string;
+  missing: Array<{ step: string; angle: string; photoModel?: string }>;
+  complete: boolean;
+}> {
+  const res = await apiFetch('/api/admin/live-try-on-batch-status', { method: 'POST', body });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{
+    ok: boolean;
+    manifestHash: string;
+    missing: Array<{ step: string; angle: string; photoModel?: string }>;
+    complete: boolean;
+  }>;
+}
+
+export async function postAdminLiveTryOnBatchStep(
+  body: LiveTryOnBatchJobPayload & {
+    step: 'portrait' | 'overlay';
+    angle: 'left' | 'front' | 'right';
+  }
+): Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }> {
+  const res = await apiFetch('/api/admin/live-try-on-batch-step', { method: 'POST', body });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{ ok: boolean; skipped?: boolean; manifestHash: string }>;
+}
+
 /** Admin: export clients as CSV (returns blob URL for download). */
 export async function exportClientsCsv(): Promise<string> {
   const token = await getAccessToken();
