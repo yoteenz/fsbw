@@ -8,6 +8,8 @@ export const FACE_LM = {
   chin: 152,
   leftTemple: 234,
   rightTemple: 454,
+  jawLeft: 172,
+  jawRight: 400,
 } as const;
 
 /** Face skin outline (MediaPipe face mesh oval). */
@@ -17,6 +19,10 @@ export const FACE_MESH_OVAL_INDICES = [
 ] as const;
 
 export type CanvasPoint = { x: number; y: number };
+
+function mirrorX(x: number, canvasW: number, mirror: boolean): number {
+  return mirror ? canvasW - x : x;
+}
 
 /**
  * Rough head yaw in [-1, 1]: negative = user turned to their left (camera sees more right cheek).
@@ -67,9 +73,9 @@ export function wigPlacementFromLandmarks(
   const faceH = Math.abs(chin.y - forehead.y) * canvasH;
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const cx = ((left.x + right.x) / 2) * canvasW;
-  /** Lace hairline target — slightly below forehead landmark. */
-  const cy = forehead.y * canvasH + faceH * 0.1;
-  const width = Math.max(faceW * 2.65, faceH * 2.15, canvasW * 0.66);
+  /** Lace front targets slightly above tracked forehead. */
+  const cy = forehead.y * canvasH - faceH * 0.04;
+  const width = Math.max(faceW * 2.05, faceH * 1.72);
   const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
 
   return { cx, cy, width, rotationRad };
@@ -91,9 +97,10 @@ export function faceContourPolygonFromLandmarks(
   for (const idx of FACE_MESH_OVAL_INDICES) {
     const lm = landmarks[idx];
     if (!lm) continue;
-    let x = lm.x * canvasW;
-    if (mirror) x = canvasW - x;
-    raw.push({ x, y: lm.y * canvasH });
+    raw.push({
+      x: mirrorX(lm.x * canvasW, canvasW, mirror),
+      y: lm.y * canvasH,
+    });
   }
   if (raw.length < 12) return null;
 
@@ -103,6 +110,35 @@ export function faceContourPolygonFromLandmarks(
     x: cx + (p.x - cx) * expand,
     y: cy + (p.y - cy) * expand,
   }));
+}
+
+/** Strip chest-length hair from portrait overlays (prevents “beard” below chin). */
+export function belowChinPunchPolygon(
+  landmarks: NormPoint[],
+  canvasW: number,
+  canvasH: number,
+  mirror: boolean
+): CanvasPoint[] | null {
+  const chin = landmarks[FACE_LM.chin];
+  const jawL = landmarks[FACE_LM.jawLeft];
+  const jawR = landmarks[FACE_LM.jawRight];
+  const left = landmarks[FACE_LM.leftTemple];
+  const right = landmarks[FACE_LM.rightTemple];
+  if (!chin || !jawL || !jawR || !left || !right) return null;
+
+  const faceW = Math.abs(right.x - left.x) * canvasW;
+  const faceH = Math.abs(chin.y - landmarks[FACE_LM.forehead]!.y) * canvasH;
+  const chinLineY = chin.y * canvasH + Math.max(6, faceH * 0.04);
+  const lx = mirrorX(jawL.x * canvasW, canvasW, mirror);
+  const rx = mirrorX(jawR.x * canvasW, canvasW, mirror);
+  const pad = faceW * 0.45;
+
+  return [
+    { x: lx - pad, y: chinLineY },
+    { x: rx + pad, y: chinLineY },
+    { x: canvasW + 40, y: canvasH + 40 },
+    { x: -40, y: canvasH + 40 },
+  ];
 }
 
 export function lerpPlacement(
