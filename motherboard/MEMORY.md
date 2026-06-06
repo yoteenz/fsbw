@@ -25645,3 +25645,15 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix:** API **requires** `angle` + **`photoModel`** per request (max ~3 Fal calls). Client runs **6 sequential** steps (3 angles × 2 models) with progress text; **camera opens** after active model’s 3 overlays via **`onActiveModelReady`**. Try-on Fal default **1K** via **`WIG_PREVIEW_TRYON_FAL_RESOLUTION`**. **`vercel.json`**: `maxDuration: 120` for try-on + live-noir-color routes. Clearer timeout errors in **`api.ts`**.
 
 **Changes:** `api/live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `live-try-on/page.tsx`, `api.ts`, `vercel.json`, `.env.example`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on timeout v2: portrait/overlay steps, NBP-first
+
+**Context:** User still hit **`FUNCTION_INVOCATION_TIMEOUT`** after one-angle-per-request fix.
+
+**Cause:** Each request still ran **portrait + NBP isolate + Ideogram** (~3 Fal jobs). Dual-model compare doubled total work.
+
+**Fix:** API **`step`**: `portrait` | `overlay` — **one Fal job** per HTTP call (overlay defaults **`WIG_PREVIEW_TRYON_IDEOGRAM_ONLY=true`** = Ideogram only). Client: **6 steps** for NBP only (3 portrait + 3 overlay); **GPT2 compare on-demand** via button. Camera opens on **front overlay** (`resolveLiveTryOnOverlayTripleBestEffort`). **TRY AGAIN** resumes cached Storage steps. Retry once per step on timeout.
+
+**Changes:** `live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `liveTryOnOverlayPublicUrls.ts`, `live-try-on/page.tsx`, `api.ts`, `.env.example`. Pushed **`master`** + **`preview/mobile`**.
