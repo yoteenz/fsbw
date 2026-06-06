@@ -25925,3 +25925,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix (`8c970f94`):** `studioCenterPartConstraint(poseAngle, headYawDeg)` — part rides cranial midline at measured yaw (+40° left cheek, −40° right, 0° front); explicit forbid frame-center part on turned heads. Client sends **`headYawDeg`** from MediaPipe at capture via `studioHeadYawDegreesFromNorm`. Footer shows angle + degrees.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio makeup pass: IG baddie glam aesthetic (user filter ref)
+
+**Context:** User shared before/after refs + IG AR filter link (babygirl-style): slimmer defined jaw, contoured/highlighted nose, smaller forehead read, almond eyes, bright undereyes, natural lashes, fuller lips/brows, polished IG baddie glow. Cannot ship Meta’s proprietary filter — match aesthetic via **`buildLiveTryOnStudioMakeupPassPrompt`** only.
+
+**Change:** Makeup pass prompt retargeted from “very light natural” to **polished photo-ready glam** (subtle face sculpt, nose contour/highlight, almond eyes, lash extension look, fuller brows/lips, soft glow). UI copy: “ADD POLISHED GLAM”, “ADDING POLISHED GLAM…”.
+
+Pushed **`master`** + **`preview/mobile`**.
