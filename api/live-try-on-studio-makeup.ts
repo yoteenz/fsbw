@@ -48,6 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).json({ ok: true, ...result });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Studio makeup render failed';
-    res.status(500).json({ error: msg });
+    const status = /rejected by Fal|422|unprocessable entity/i.test(msg) ? 422 : 500;
+    res.status(status).json({ error: msg });
   }
 }
