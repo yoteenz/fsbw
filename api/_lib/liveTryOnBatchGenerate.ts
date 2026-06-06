@@ -67,12 +67,18 @@ function mimeForStoragePath(path: string): string {
   return 'image/webp';
 }
 
+const TRYON_OVERLAY_MAX_PX = 1536;
+const TRYON_IDEOGRAM_MAX_BYTES = 9_500_000;
+
 function formatFalSubscribeError(e: unknown, stepLabel: string): Error {
   const raw = e instanceof Error ? e.message : String(e);
   if (/unprocessable entity/i.test(raw) || /\b422\b/.test(raw)) {
-    return new Error(
-      `${stepLabel}: Fal rejected the image (422). Input was re-uploaded to Fal storage — retry this step.`
-    );
+    if (/too large|10\s*mb|file size/i.test(raw)) {
+      return new Error(
+        `${stepLabel}: image too large for Ideogram (max 10MB). Cut step now uses local white→alpha instead — redeploy and RUN NEXT STEP.`
+      );
+    }
+    return new Error(`${stepLabel}: Fal rejected the image (422). ${raw}`);
   }
   if (/timeout|timed out/i.test(raw)) {
     return new Error(`${stepLabel}: timed out — use RUN NEXT STEP (one Fal job per click).`);
@@ -274,6 +280,43 @@ async function runNbpHairIsolation(fal: FalClient, portraitFalUrl: string): Prom
   return downloadUrlToBuffer(nbpUrl);
 }
 
+async function downscalePngBuffer(buf: Buffer, maxPx = TRYON_OVERLAY_MAX_PX): Promise<Buffer> {
+  const img = await Jimp.read(buf);
+  if (img.width > maxPx || img.height > maxPx) {
+    img.scaleToFit({ w: maxPx, h: maxPx });
+  }
+  return img.getBuffer('image/png');
+}
+
+/** NBP isolate uses #FFFFFF — convert to alpha locally (no Fal 10MB limit). */
+async function workPngToHairOverlay(buf: Buffer): Promise<Buffer> {
+  const img = await Jimp.read(buf);
+  if (img.width > TRYON_OVERLAY_MAX_PX || img.height > TRYON_OVERLAY_MAX_PX) {
+    img.scaleToFit({ w: TRYON_OVERLAY_MAX_PX, h: TRYON_OVERLAY_MAX_PX });
+  }
+  const threshold = 235;
+  img.scan(0, 0, img.width, img.height, function (_x, _y, idx) {
+    const r = this.bitmap.data[idx];
+    const g = this.bitmap.data[idx + 1];
+    const b = this.bitmap.data[idx + 2];
+    if (r >= threshold && g >= threshold && b >= threshold) {
+      this.bitmap.data[idx + 3] = 0;
+      return;
+    }
+    const avg = (r + g + b) / 3;
+    if (avg >= threshold - 25) {
+      const alpha = Math.max(0, Math.min(255, Math.floor((threshold - avg) * 10)));
+      this.bitmap.data[idx + 3] = Math.min(this.bitmap.data[idx + 3], alpha);
+    }
+  });
+  return img.getBuffer('image/png');
+}
+
+function useIdeogramForOverlayCut(): boolean {
+  const v = (process.env.WIG_PREVIEW_TRYON_OVERLAY_USE_IDEOGRAM || '').trim().toLowerCase();
+  return v === 'true' || v === '1';
+}
+
 async function runIdeogramCutout(fal: FalClient, isolateFalUrl: string): Promise<Buffer> {
   let cutResult: unknown;
   try {
@@ -287,6 +330,26 @@ async function runIdeogramCutout(fal: FalClient, isolateFalUrl: string): Promise
   const cutUrl = extractFalImageUrl(cutResult);
   if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
   return downloadUrlToBuffer(cutUrl);
+}
+
+async function cutWorkPngToOverlay(buf: Buffer, fal: FalClient | null): Promise<Buffer> {
+  const normalized = await downscalePngBuffer(buf);
+  if (!fal || !useIdeogramForOverlayCut() || normalized.length > TRYON_IDEOGRAM_MAX_BYTES) {
+    return workPngToHairOverlay(normalized);
+  }
+  const file = new File([normalized], 'tryon-isolate-cut.png', { type: 'image/png' });
+  const falUrl = await fal.storage.upload(file);
+  try {
+    return await runIdeogramCutout(fal, falUrl);
+  } catch {
+    return workPngToHairOverlay(normalized);
+  }
+}
+
+async function getFalClient(falKey: string): Promise<FalClient> {
+  const { fal } = await import('@fal-ai/client');
+  fal.config({ credentials: falKey });
+  return fal;
 }
 
 const BATCH_STEP_ORDER: Record<LiveTryOnBatchMissingStep['step'], number> = {
@@ -331,7 +394,7 @@ export async function runLiveTryOnBatchStep(opts: {
   forceRegenerate?: boolean;
 }): Promise<RunLiveTryOnBatchStepResult> {
   const falKey = process.env.FAL_KEY?.trim();
-  if (!falKey) throw new Error('FAL_KEY is not configured');
+  if (!falKey && opts.step !== 'overlay_cut') throw new Error('FAL_KEY is not configured');
 
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
@@ -414,10 +477,8 @@ export async function runLiveTryOnBatchStep(opts: {
   const mannequinUrl = pubColor?.publicUrl;
   if (!mannequinUrl) throw new Error('mannequin color URL missing');
 
-  const { fal } = await import('@fal-ai/client');
-  fal.config({ credentials: falKey });
-
   if (opts.step === 'portrait') {
+    const fal = await getFalClient(falKey!);
     const womanPrompt = buildLiveTryOnPhotorealWomanPrompt(catalog.label, catalog.hex, opts.angle);
     const portraitBuf = await generatePhotorealPortrait(
       fal,
@@ -444,13 +505,14 @@ export async function runLiveTryOnBatchStep(opts: {
   }
 
   if (opts.step === 'overlay_isolate') {
+    const fal = await getFalClient(falKey!);
     const portraitFalUrl = await uploadStorageObjectToFal(
       fal,
       bucket,
       portraitPath,
       `tryon-portrait-${opts.photoModel}-${opts.angle}.webp`
     );
-    const isolateBuf = await runNbpHairIsolation(fal, portraitFalUrl);
+    const isolateBuf = await downscalePngBuffer(await runNbpHairIsolation(fal, portraitFalUrl));
     const { error: upWork } = await supabase.storage.from(bucket).upload(workPath, isolateBuf, {
       contentType: 'image/png',
       upsert: true,
@@ -469,13 +531,14 @@ export async function runLiveTryOnBatchStep(opts: {
     throw new Error('OVERLAY_ISOLATE_MISSING');
   }
 
-  const isolateFalUrl = await uploadStorageObjectToFal(
-    fal,
-    bucket,
-    workPath,
-    `tryon-isolate-${opts.photoModel}-${opts.angle}.png`
-  );
-  const overlayBuf = await runIdeogramCutout(fal, isolateFalUrl);
+  const { data: workData, error: workDlErr } = await supabase.storage.from(bucket).download(workPath);
+  if (workDlErr || !workData) {
+    throw new Error(`work isolate download failed: ${workDlErr?.message || workPath}`);
+  }
+  const workBuf = Buffer.from(await workData.arrayBuffer());
+  const fal =
+    falKey && useIdeogramForOverlayCut() ? await getFalClient(falKey) : null;
+  const overlayBuf = await cutWorkPngToOverlay(workBuf, fal);
 
   const skipValidate =
     (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
