@@ -103,7 +103,8 @@ const STUDIO_SKULL_FIT = [
   'From IMAGE 2 / mannequin refs use **only**: color, length, density, curl pattern, layer shape, lace width, and shoulder drape — **never** how high the wig sits on the bust.',
   '**Lace front + hairline:** sit **flush against IMAGE 1’s scalp** at a **natural human forehead hairline** (~one finger-width above brows, following IMAGE 1 skull curve) — lace band hugs skin, **not** floating above the forehead.',
   '**Part:** groove sits **in** the hair at **natural crown depth** on this person’s skull midline — **not** on a lifted hair mass or display-mannequin crown.',
-  '**Cap + volume:** wig cap follows **IMAGE 1 head contour** — hair grows **from** the scalp and crown, close to the skull; **forbidden** hovering cap, inflated crown bubble, or wig sitting above the cranium.',
+  '**Cap + volume:** wig cap follows **IMAGE 1 head contour at IMAGE 1 yaw** — hair grows **from** the turned scalp and crown, close to the skull; **forbidden** hovering cap, inflated crown bubble, or wig sitting above the cranium.',
+  '**Skull fit ≠ front-facing head:** lace sits flush on the **turned** scalp at IMAGE 1 yaw — **not** by squaring the face to 0° to “lower” the wig.',
   '**Self-check:** if the hairline or part reads higher than a salon lace install on this face → **failed** — lower until flush on the skull.',
 ].join(' ');
 
@@ -170,13 +171,36 @@ function studioCenterPartConstraint(poseAngle: LiveTryOnAngle, headYawDeg?: numb
   ].join(' ');
 }
 
-function studioHeadPoseLine(poseAngle: LiveTryOnAngle, headYawDeg?: number): string {
+function studioHeadBodyPoseLock(poseAngle: LiveTryOnAngle, headYawDeg?: number): string {
   const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
   const yawLabel = studioHeadYawLabel(yaw);
+  const absYaw = Math.abs(yaw);
+
+  if (absYaw <= 8) {
+    return [
+      '**HEAD + BODY POSE (mandatory):** Preserve **exact** head yaw, neck, chin, nose direction, and **both shoulders** from IMAGE 1 — **0°** square to camera.',
+      '**FORBIDDEN:** rotating the customer to match the **front** mannequin (IMAGE 2) head angle.',
+    ].join(' ');
+  }
+
+  if (yaw < 0) {
+    return [
+      '**HEAD + BODY POSE — POSITIONED RIGHT (mandatory — full rotation, not a glance):**',
+      `IMAGE 1 head yaw is **${yawLabel}** — **right cheek** nearest camera; entire head and upper body turned toward **their left**.`,
+      'Lock **nose tip, chin, neck, ears, and BOTH shoulders** to this **−40° class** rotation — **exactly as in IMAGE 1**, **not** the front mannequin.',
+      '**FORBIDDEN:** front-facing torso/shoulders with eyes or face **only** glancing toward image RIGHT — that is **“looking right”**, **not** **positioned right**.',
+      '**FORBIDDEN:** 0° front body, symmetric shoulders square to camera, or copying IMAGE 2’s **front-view** mannequin head angle.',
+      `Draw lace front, part, and hair mass on the **turned skull** at **${yawLabel}** — not on a 0° face.`,
+    ].join(' ');
+  }
+
   return [
-    `**Head yaw from IMAGE 1: ${yawLabel}** — preserve exact face rotation, chin, neck, and shoulders from the selfie.`,
-    'Do **not** rotate the customer to front-facing or to match the front mannequin.',
-    `Draw the lace front, crown split, and part **as they appear on a head turned ${yawLabel}**, not on a 0° face.`,
+    '**HEAD + BODY POSE — POSITIONED LEFT (mandatory — full rotation, not a glance):**',
+    `IMAGE 1 head yaw is **${yawLabel}** — **left cheek** nearest camera; entire head and upper body turned toward **their right**.`,
+    'Lock **nose tip, chin, neck, ears, and BOTH shoulders** to this **+40° class** rotation — **exactly as in IMAGE 1**, **not** the front mannequin.',
+    '**FORBIDDEN:** front-facing torso/shoulders with eyes or face **only** glancing toward image LEFT — that is a glance, **not** a positioned-left pose.',
+    '**FORBIDDEN:** 0° front body or copying IMAGE 2’s **front-view** mannequin head angle.',
+    `Draw lace front, part, and hair mass on the **turned skull** at **${yawLabel}** — not on a 0° face.`,
   ].join(' ');
 }
 
@@ -205,8 +229,6 @@ export function buildLiveTryOnStudioTryOnPrompt(
     ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
-  const poseLine = studioHeadPoseLine(poseAngle, headYawDeg);
-
   const refBlock = hasPortraitRef
     ? [
         '**IMAGE 2** is the **front mannequin** — wig **color**, length, density, curl, and lace shape only (**not** vertical placement on the bust).',
@@ -222,10 +244,10 @@ export function buildLiveTryOnStudioTryOnPrompt(
     '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
     ...refBlock,
     colorLine,
+    studioHeadBodyPoseLock(poseAngle, headYawDeg),
     STUDIO_SKULL_FIT,
     studioCenterPartConstraint(poseAngle, headYawDeg),
     STUDIO_DRAPE_SIDE,
-    poseLine,
     hasPortraitRef
       ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut; **never** copy mannequin crown height.'
       : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut; **never** copy mannequin crown height.',
@@ -252,6 +274,11 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
   return [
     'IMAGE 1 = customer selfie. IMAGE 2 = front mannequin wig reference.',
     `Keep face, skin, pose, and room from IMAGE 1. Head yaw ${yawLabel}.`,
+    yaw < -8
+      ? 'Positioned RIGHT: full head+shoulder turn (−40° class), not eyes-only looking right. Do not copy mannequin front angle.'
+      : yaw > 8
+        ? 'Positioned LEFT: full head+shoulder turn (+40° class), not eyes-only glance. Do not copy mannequin front angle.'
+        : 'Preserve 0° front pose from selfie; do not copy mannequin head angle.',
     `Replace only hair with lace-front wig color ${label} (#${hex}) from IMAGE 2.`,
     'Wig flush on skull — natural hairline/part depth; not mannequin helmet height.',
     'Center part on skull midline at this yaw. One-sided drape over viewer left shoulder.',
