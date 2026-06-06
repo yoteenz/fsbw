@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { Jimp } from 'jimp';
 import { catalogColorForPrompt } from './bawCatalogHairColors.js';
 import { liveTryOnStorageLookupJob } from './liveTryOnBatchManifest.js';
@@ -19,10 +20,31 @@ import {
 } from './wigPreviewSelectionHash.js';
 
 const STUDIO_CAPTURE_MAX_PX = 1280;
+const STUDIO_JOB_MAX_AGE_MS = 15 * 60 * 1000;
 
 type FalClient = {
-  subscribe: (model: string, opts: { input: Record<string, unknown>; logs: boolean }) => Promise<unknown>;
   storage: { upload: (file: File) => Promise<string> };
+  queue: {
+    submit: (
+      model: string,
+      opts: { input: Record<string, unknown>; logs?: boolean }
+    ) => Promise<{ request_id: string }>;
+    status: (model: string, opts: { requestId: string }) => Promise<{ status: string }>;
+    result: (model: string, opts: { requestId: string }) => Promise<unknown>;
+  };
+};
+
+export type StudioTryOnJobRecord = {
+  jobId: string;
+  userId: string;
+  falRequestId: string;
+  falModel: string;
+  photoModel: LiveTryOnPhotoModel;
+  manifestHash: string;
+  unitKey: string;
+  color: string;
+  poseAngle: LiveTryOnAngle;
+  createdAt: number;
 };
 
 function readTryOnFalResolution(): '1K' | '2K' | '4K' {
@@ -36,7 +58,7 @@ function readTryOnFalResolution(): '1K' | '2K' | '4K' {
 async function getFalClient(falKey: string): Promise<FalClient> {
   const { fal } = await import('@fal-ai/client');
   fal.config({ credentials: falKey });
-  return fal;
+  return fal as unknown as FalClient;
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -50,14 +72,6 @@ function extractFalImageUrl(result: unknown): string | null {
     ?.images?.[0]?.url;
   if (url) return url;
   return (result as { data?: { image?: { url?: string } } })?.data?.image?.url ?? null;
-}
-
-function formatFalSubscribeError(e: unknown, stepLabel: string): Error {
-  const raw = e instanceof Error ? e.message : String(e);
-  if (/timeout|timed out/i.test(raw)) {
-    return new Error(`${stepLabel}: timed out — try again in good lighting.`);
-  }
-  return new Error(`${stepLabel}: ${raw}`);
 }
 
 function parseDataUrl(dataUrl: string): { mime: string; buf: Buffer } {
@@ -100,71 +114,87 @@ async function uploadStorageObjectToFal(
   return uploadBufferToFal(fal, buf, fileName, mime);
 }
 
-async function runStudioFalEdit(
-  fal: FalClient,
+function studioJobPath(promptVersion: string, userId: string, jobId: string): string {
+  const safeUser = userId.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 80);
+  return `try-on-studio-jobs/${promptVersion}/${safeUser}/${jobId}.json`;
+}
+
+async function saveStudioJob(bucket: string, promptVersion: string, job: StudioTryOnJobRecord): Promise<void> {
+  const supabase = getSupabaseAdminServiceRole();
+  const path = studioJobPath(promptVersion, job.userId, job.jobId);
+  const { error } = await supabase.storage.from(bucket).upload(path, JSON.stringify(job), {
+    contentType: 'application/json',
+    upsert: true,
+    cacheControl: '60',
+  });
+  if (error) throw new Error(`save studio job: ${error.message}`);
+}
+
+async function loadStudioJob(
+  bucket: string,
+  promptVersion: string,
+  userId: string,
+  jobId: string
+): Promise<StudioTryOnJobRecord | null> {
+  const supabase = getSupabaseAdminServiceRole();
+  const path = studioJobPath(promptVersion, userId, jobId);
+  const { data, error } = await supabase.storage.from(bucket).download(path);
+  if (error || !data) return null;
+  try {
+    const job = JSON.parse(await data.text()) as StudioTryOnJobRecord;
+    if (job.userId !== userId) return null;
+    if (Date.now() - job.createdAt > STUDIO_JOB_MAX_AGE_MS) return null;
+    return job;
+  } catch {
+    return null;
+  }
+}
+
+async function deleteStudioJob(bucket: string, promptVersion: string, userId: string, jobId: string): Promise<void> {
+  const supabase = getSupabaseAdminServiceRole();
+  await supabase.storage.from(bucket).remove([studioJobPath(promptVersion, userId, jobId)]);
+}
+
+function buildStudioFalInput(
   photoModel: LiveTryOnPhotoModel,
   userFalUrl: string,
   mannequinFalUrl: string,
   prompt: string
-): Promise<Buffer> {
-  const falModel = falEditModelId(photoModel);
-  const resolution = readTryOnFalResolution();
-  const label = photoModel === 'gpt2' ? 'GPT Image 2 studio try-on' : 'NBP studio try-on';
+): Record<string, unknown> {
   const imageUrls = [userFalUrl, mannequinFalUrl];
-
   if (photoModel === 'gpt2') {
-    let result: unknown;
-    try {
-      result = await fal.subscribe(falModel, {
-        input: {
-          prompt,
-          image_urls: imageUrls,
-          image_size: 'auto',
-          quality: 'high',
-          output_format: 'webp',
-          num_images: 1,
-        },
-        logs: false,
-      });
-    } catch (e) {
-      throw formatFalSubscribeError(e, label);
-    }
-    const url = extractFalImageUrl(result);
-    if (!url) throw new Error('fal: no GPT Image 2 studio URL');
-    return downloadUrlToBuffer(url);
+    return {
+      prompt,
+      image_urls: imageUrls,
+      image_size: 'auto',
+      quality: 'high',
+      output_format: 'webp',
+      num_images: 1,
+    };
   }
-
-  let result: unknown;
-  try {
-    result = await fal.subscribe(falModel, {
-      input: {
-        prompt,
-        image_urls: imageUrls,
-        aspect_ratio: 'auto',
-        resolution,
-        output_format: 'webp',
-        num_images: 1,
-      },
-      logs: false,
-    });
-  } catch (e) {
-    throw formatFalSubscribeError(e, label);
-  }
-  const url = extractFalImageUrl(result);
-  if (!url) throw new Error('fal: no NBP studio URL');
-  return downloadUrlToBuffer(url);
+  const resolution = readTryOnFalResolution();
+  return {
+    prompt,
+    image_urls: imageUrls,
+    aspect_ratio: 'auto',
+    resolution,
+    output_format: 'webp',
+    num_images: 1,
+  };
 }
 
-export type RunStudioTryOnRenderInput = {
+export type StartStudioTryOnRenderInput = {
   imageDataUrl: string;
   color: string;
   unitKey?: string;
-  photoModel: LiveTryOnPhotoModel;
+  photoModel?: LiveTryOnPhotoModel;
   angle?: LiveTryOnAngle;
+  userId: string;
 };
 
-export type RunStudioTryOnRenderResult = {
-  imageUrl: string;
+export type StartStudioTryOnRenderResult = {
+  jobId: string;
+  status: 'queued';
   manifestHash: string;
   color: string;
   unitKey: string;
@@ -172,7 +202,10 @@ export type RunStudioTryOnRenderResult = {
   angle: LiveTryOnAngle;
 };
 
-export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Promise<RunStudioTryOnRenderResult> {
+/** Queue Fal job and return immediately (avoids Vercel FUNCTION_INVOCATION_TIMEOUT). */
+export async function startStudioTryOnRender(
+  input: StartStudioTryOnRenderInput
+): Promise<StartStudioTryOnRenderResult> {
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) throw new Error('FAL_KEY is not configured');
 
@@ -191,7 +224,6 @@ export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Pr
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
   const unitKey = job.unitKey;
   const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
-  /** Front mannequin only — side angles bake asymmetric hair that throws off center part. */
   const colorPath = colorPaths.front;
 
   if (!(await storageObjectExists(bucket, colorPath))) {
@@ -211,10 +243,86 @@ export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Pr
   );
 
   const prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle);
-  const outBuf = await runStudioFalEdit(fal, photoModel, userFalUrl, mannequinFalUrl, prompt);
+  const falModel = falEditModelId(photoModel);
+  const falInput = buildStudioFalInput(photoModel, userFalUrl, mannequinFalUrl, prompt);
 
+  const { request_id: falRequestId } = await fal.queue.submit(falModel, {
+    input: falInput,
+    logs: false,
+  });
+
+  const jobId = randomUUID();
+  await saveStudioJob(bucket, promptVersion, {
+    jobId,
+    userId: input.userId,
+    falRequestId,
+    falModel,
+    photoModel,
+    manifestHash,
+    unitKey,
+    color: job.color,
+    poseAngle,
+    createdAt: Date.now(),
+  });
+
+  return {
+    jobId,
+    status: 'queued',
+    manifestHash,
+    color: job.color,
+    unitKey,
+    photoModel,
+    angle: poseAngle,
+  };
+}
+
+export type PollStudioTryOnRenderResult =
+  | { status: 'pending'; queueStatus: string }
+  | {
+      status: 'complete';
+      imageUrl: string;
+      manifestHash: string;
+      color: string;
+      unitKey: string;
+      photoModel: LiveTryOnPhotoModel;
+      angle: LiveTryOnAngle;
+    };
+
+export async function pollStudioTryOnRender(
+  userId: string,
+  jobId: string
+): Promise<PollStudioTryOnRenderResult> {
+  const falKey = process.env.FAL_KEY?.trim();
+  if (!falKey) throw new Error('FAL_KEY is not configured');
+
+  const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
+  const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
+  const job = await loadStudioJob(bucket, promptVersion, userId, jobId);
+  if (!job) throw new Error('Studio job not found or expired');
+
+  const fal = await getFalClient(falKey);
+  const queueStatus = await fal.queue.status(job.falModel, { requestId: job.falRequestId });
+  const status = String((queueStatus as { status?: string }).status || 'IN_PROGRESS');
+
+  if (status === 'IN_QUEUE' || status === 'IN_PROGRESS') {
+    return { status: 'pending', queueStatus: status };
+  }
+
+  if (status !== 'COMPLETED') {
+    await deleteStudioJob(bucket, promptVersion, userId, jobId);
+    throw new Error(`Studio render failed (${status})`);
+  }
+
+  const result = await fal.queue.result(job.falModel, { requestId: job.falRequestId });
+  const falUrl = extractFalImageUrl(result);
+  if (!falUrl) {
+    await deleteStudioJob(bucket, promptVersion, userId, jobId);
+    throw new Error('fal: no studio result URL');
+  }
+
+  const outBuf = await downloadUrlToBuffer(falUrl);
   const supabase = getSupabaseAdminServiceRole();
-  const outPath = `try-on-studio/${promptVersion}/${unitKey}/${manifestHash}/${photoModel}/${poseAngle}/${Date.now()}.webp`;
+  const outPath = `try-on-studio/${promptVersion}/${job.unitKey}/${job.manifestHash}/${job.photoModel}/${job.poseAngle}/${Date.now()}.webp`;
   const { error: upErr } = await supabase.storage.from(bucket).upload(outPath, outBuf, {
     contentType: 'image/webp',
     upsert: false,
@@ -222,17 +330,19 @@ export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Pr
   });
   if (upErr) throw new Error(`upload studio result: ${upErr.message}`);
 
-  const supabaseUrl = process.env.SUPABASE_URL?.trim() || '';
   const { data: pub } = supabase.storage.from(bucket).getPublicUrl(outPath);
   const imageUrl = pub?.publicUrl ? `${pub.publicUrl}?t=${Date.now()}` : '';
   if (!imageUrl) throw new Error('Could not build public URL for studio result');
 
+  await deleteStudioJob(bucket, promptVersion, userId, jobId);
+
   return {
+    status: 'complete',
     imageUrl,
-    manifestHash,
+    manifestHash: job.manifestHash,
     color: job.color,
-    unitKey,
-    photoModel,
-    angle: poseAngle,
+    unitKey: job.unitKey,
+    photoModel: job.photoModel,
+    angle: job.poseAngle,
   };
 }

@@ -1,9 +1,9 @@
-export const config = { maxDuration: 120 };
+export const config = { maxDuration: 60 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from './_lib/auth.js';
-import { runStudioTryOnRender } from './_lib/liveTryOnStudio.js';
-import { activeLiveTryOnStudioPhotoModel, type LiveTryOnAngle } from './_lib/liveTryOnOverlay.js';
+import { startStudioTryOnRender } from './_lib/liveTryOnStudio.js';
+import { type LiveTryOnAngle } from './_lib/liveTryOnOverlay.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const body = req.body;
@@ -43,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   const user = await getAuthUser(req);
-  if (!user) {
+  if (!user?.id) {
     res.status(401).json({ error: 'Sign in required for Studio Try-On' });
     return;
   }
@@ -60,17 +60,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const photoModel = activeLiveTryOnStudioPhotoModel();
   const angle = parseAngle(readString(body, 'angle', 'front'));
   const unitKey = readString(body, 'unitKey', 'NOIR');
 
   try {
-    const result = await runStudioTryOnRender({
+    const result = await startStudioTryOnRender({
       imageDataUrl,
       color,
       unitKey,
-      photoModel,
       angle,
+      userId: user.id,
     });
     res.status(200).json({ ok: true, ...result });
   } catch (e) {

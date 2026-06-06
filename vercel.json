@@ -6,6 +6,12 @@
     "api/live-try-on-resolve.ts": {
       "maxDuration": 30
     },
+    "api/live-try-on-studio-render.ts": {
+      "maxDuration": 60
+    },
+    "api/live-try-on-studio-render-status.ts": {
+      "maxDuration": 30
+    },
     "api/admin/live-try-on-batch-step.ts": {
       "maxDuration": 120
     },

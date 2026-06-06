@@ -1323,9 +1323,10 @@ export type LiveTryOnStudioRenderPayload = {
   angle?: 'left' | 'front' | 'right';
 };
 
-export type LiveTryOnStudioRenderResult = {
+export type LiveTryOnStudioStartResult = {
   ok: boolean;
-  imageUrl: string;
+  jobId: string;
+  status: 'queued';
   manifestHash: string;
   color: string;
   unitKey: string;
@@ -1333,10 +1334,36 @@ export type LiveTryOnStudioRenderResult = {
   angle: 'left' | 'front' | 'right';
 };
 
-/** Studio Try-On — Fal inpaint wig onto shopper selfie (signed in). */
+export type LiveTryOnStudioStatusResult =
+  | { ok: boolean; status: 'pending'; queueStatus?: string }
+  | {
+      ok: boolean;
+      status: 'complete';
+      imageUrl: string;
+      manifestHash: string;
+      color: string;
+      unitKey: string;
+      photoModel: 'nbp' | 'gpt2';
+      angle: 'left' | 'front' | 'right';
+    };
+
+function parseApiErrorText(text: string, fallback: string): string {
+  try {
+    const j = JSON.parse(text) as { error?: string };
+    if (typeof j?.error === 'string') return j.error;
+  } catch {
+    /* ignore */
+  }
+  if (/FUNCTION_INVOCATION_TIMEOUT/i.test(text)) {
+    return 'STUDIO RENDER TIMED OUT — TRY AGAIN IN A MOMENT';
+  }
+  return text || fallback;
+}
+
+/** Studio Try-On — queue Fal job (returns immediately). */
 export async function postLiveTryOnStudioRender(
   body: LiveTryOnStudioRenderPayload
-): Promise<LiveTryOnStudioRenderResult> {
+): Promise<LiveTryOnStudioStartResult> {
   let res: Response;
   try {
     res = await apiFetch('/api/live-try-on-studio-render', { method: 'POST', body });
@@ -1344,17 +1371,50 @@ export async function postLiveTryOnStudioRender(
     rethrowWithNetworkHint(e, 'Studio try-on');
   }
   const text = await res.text();
-  if (!res.ok) {
-    let msg = text;
-    try {
-      const j = JSON.parse(text) as { error?: string };
-      if (typeof j?.error === 'string') msg = j.error;
-    } catch {
-      /* ignore */
-    }
-    throw new Error(msg || 'Studio try-on failed');
+  if (!res.ok) throw new Error(parseApiErrorText(text, 'Studio try-on failed'));
+  return JSON.parse(text) as LiveTryOnStudioStartResult;
+}
+
+export async function getLiveTryOnStudioRenderStatus(jobId: string): Promise<LiveTryOnStudioStatusResult> {
+  let res: Response;
+  try {
+    res = await apiFetch(`/api/live-try-on-studio-render-status?jobId=${encodeURIComponent(jobId)}`);
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Studio try-on status');
   }
-  return JSON.parse(text) as LiveTryOnStudioRenderResult;
+  const text = await res.text();
+  if (!res.ok) throw new Error(parseApiErrorText(text, 'Studio status check failed'));
+  return JSON.parse(text) as LiveTryOnStudioStatusResult;
+}
+
+const STUDIO_POLL_MS = 2500;
+const STUDIO_POLL_MAX_MS = 180_000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Queue studio render, then poll until complete (handles long Fal runs on Hobby). */
+export async function postLiveTryOnStudioRenderAndWait(
+  body: LiveTryOnStudioRenderPayload,
+  onProgress?: (msg: string) => void
+): Promise<Extract<LiveTryOnStudioStatusResult, { status: 'complete' }>> {
+  const started = await postLiveTryOnStudioRender(body);
+  const deadline = Date.now() + STUDIO_POLL_MAX_MS;
+  onProgress?.('RENDERING YOUR LOOK…');
+
+  while (Date.now() < deadline) {
+    await sleep(STUDIO_POLL_MS);
+    const status = await getLiveTryOnStudioRenderStatus(started.jobId);
+    if (status.status === 'complete') return status;
+    if (status.queueStatus === 'IN_QUEUE') {
+      onProgress?.('IN STUDIO QUEUE…');
+    } else {
+      onProgress?.('RENDERING YOUR LOOK…');
+    }
+  }
+
+  throw new Error('STUDIO RENDER TIMED OUT — TRY AGAIN');
 }
 
 /** Resolve pre-generated try-on overlays from Storage (no Fal). Uses studio default NOIR + color. */
