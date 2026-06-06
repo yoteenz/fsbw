@@ -208,7 +208,12 @@ function PortraitCompareGrid({
             rel="noreferrer"
             className="aspect-[3/4] bg-black/5 overflow-hidden block"
           >
-            <img src={urls[angle]} alt="" className="w-full h-full object-cover object-top" />
+            <img
+              src={urls[angle]}
+              alt=""
+              className="w-full h-full object-cover object-top"
+              key={urls[angle]}
+            />
           </a>
         ))}
       </div>
@@ -387,21 +392,35 @@ export default function AdminLiveTryOnBatchPanel() {
   const runRegenPortrait = useCallback(
     async (angle: (typeof ANGLES)[number]) => {
       setBusyAction('regen');
-      const models: LiveTryOnPhotoModel[] = compareBoth ? ['nbp', 'gpt2'] : [photoModel];
+      const models: LiveTryOnPhotoModel[] = !compareBoth
+        ? [photoModel]
+        : overlayWinner
+          ? [overlayWinner]
+          : ['nbp', 'gpt2'];
       try {
+        pushLog(
+          `REGEN PORTRAIT · ${angle.toUpperCase()} · ${models.map((m) => m.toUpperCase()).join(' + ')} (Fal ~1–2 min each)…`
+        );
         for (const model of models) {
-          pushLog(`REGEN PORTRAIT · ${angle.toUpperCase()} · ${model.toUpperCase()}…`);
-          await postAdminLiveTryOnBatchStep({
+          const result = await postAdminLiveTryOnBatchStep({
             ...jobBody(selectedJob, compareBoth, photoModel, overlayWinner),
             step: 'portrait',
             angle,
             photoModel: model,
             forceRegenerate: true,
           });
+          if (result.skipped) {
+            throw new Error(
+              `${model.toUpperCase()} ${angle.toUpperCase()} was skipped — old file still in Storage. Hard-refresh admin after deploy.`
+            );
+          }
+          pushLog(`REGEN OK · PORTRAIT · ${angle.toUpperCase()} · ${model.toUpperCase()}`);
         }
         setLastError(null);
         await refreshStatusCore();
-        pushLog(`REGEN PORTRAIT · ${angle.toUpperCase()} DONE — re-run isolate+cut for that angle if overlays exist`);
+        pushLog(
+          `THUMBS REFRESHED · ${angle.toUpperCase()} — tap OVERLAY · ${angle.toUpperCase()} if camera still shows old hair`
+        );
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'Portrait regen failed';
         setLastError(msg);
@@ -770,7 +789,10 @@ export default function AdminLiveTryOnBatchPanel() {
 
       <div className="border border-black/20 p-2 bg-white/70 flex flex-col gap-2">
         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#000' }}>
-          REGEN ONE ANGLE (overwrites Storage)
+          REGEN ONE ANGLE (deletes + re-runs Fal; thumbs refresh after)
+        </p>
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', lineHeight: 1.5 }}>
+          Compare mode: regens <strong>winner</strong> only if picked; otherwise NBP + GPT2. Watch LOG for REGEN OK.
         </p>
         <div className="flex flex-wrap gap-2">
           {ANGLES.map((angle) => (
