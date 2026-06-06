@@ -25796,3 +25796,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`liveTryOnYaw.ts`:** Added/fixed **`belowChinPunchPolygon`** (jaw landmarks → polygon to canvas bottom). Fixed **`faceH` used before defined** bug. Placement: lace **above** forehead (`cy - faceH * 0.04`), tighter width (`faceW * 2.05`, `faceH * 1.72`; removed `canvasW * 0.58` floor).
 
 **Remaining:** Asset pipeline could still produce overlays with bust in PNG (Ideogram/batch). RIGHT portrait angle quality separate. Further placement tuning after deploy test. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: soften compositing (gap + side wrap)
+
+**Context (continued):** After beard fix (`605f3d16`), user reported fix **too aggressive** — large gap between forehead and wig (floating cap), hair not wrapping face/head, triangular jaw artifacts.
+
+**Root cause:** **46% head-band crop** removed side hair panels; **full-width below-chin punch** cut cheek-wrap hair at jaw, leaving triangular remnants; lace anchored **above** forehead (`cy - 4% faceH`) created visible gap.
+
+**Fix (`pending commit`):**
+- **`liveTryOnComposite.ts`:** **Full overlay draw** restored (no head-band crop). **`centerBeardPunchPolygon`** — narrow center strip below chin only (chest hair, preserves side panels). Face punch **1.1** expand (tighter → more side hair visible). Lace **`WIG_ASSET_HAIRLINE_Y` 0.15**.
+- **`liveTryOnYaw.ts`:** Lace on forehead (`cy + 8% faceH`), wider placement (`faceW * 2.35`, `faceH * 2.05`). `centerBeardPunchPolygon` replaces full-width below-chin punch.
+
+Pushed **`master`** + **`preview/mobile`**.
