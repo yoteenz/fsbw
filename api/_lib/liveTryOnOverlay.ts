@@ -68,11 +68,12 @@ function isJetBlackOffBlack(label: string, hex: string): boolean {
   return l.includes('jet black') || l.includes('off black');
 }
 
-/** Studio glam composition (NBP-style editorial) applied on top of GPT Image 2 renders. */
+/** Studio glam — NBP-style DOF on the customer’s real environment (no backdrop swap). */
 const STUDIO_GLAM_COMPOSITION = [
-  '**Editorial studio finish (required):** Center the subject in frame — head and shoulders, glamorous beauty portrait crop.',
-  'Replace the selfie background with a **soft neutral studio backdrop** — heavy **bokeh blur**, subject **tack sharp** in focus, shallow depth of field.',
-  'Professional soft key light on the face; polished editorial color grade — not flat phone lighting.',
+  '**Background (required — preserve realism):** **Keep** the customer’s **actual room and environment** from IMAGE 1 — same walls, furniture, plants, doorways, and colors.',
+  'Do **not** replace the room with a grey studio seamless, white backdrop, or a different location.',
+  'Apply **shallow depth of field** only: background **softly out of focus** with natural **bokeh**, while **face, skin, and hair stay tack sharp**.',
+  'Polished editorial color grade on the subject — subtle; do not flatten the real space into a fake studio set.',
 ].join(' ');
 
 /** Center part locked to facial midline — do not copy a side part from the mannequin reference. */
@@ -112,7 +113,7 @@ export function buildLiveTryOnStudioTryOnPrompt(
     'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 — not a new cut.',
     STUDIO_GLAM_COMPOSITION,
     'Soft natural makeup if needed; realistic hairline blend at the lace front.',
-    '**Delete:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo, props, cartoon edges, busy room clutter.',
+    '**Delete from output only:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo — never delete or swap the customer’s real room.',
     'No text or watermark.',
     'Ultra sharp, photographic — not illustration, sticker, or cutout overlay.',
   ].join(' ');
