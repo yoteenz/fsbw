@@ -26019,3 +26019,15 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `studioHeadBodyPoseLock` — explicit **POSITIONED RIGHT/LEFT** blocks: lock nose/chin/neck/**both shoulders** to IMAGE 1 yaw; **forbid** eyes-only glance and copying front mannequin angle. Placed **before** `STUDIO_SKULL_FIT` with note that skull-fit must not square face to 0°. Compact retry prompt includes same positioned-right/left line.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio positioned-right root fix: yaw sign + angle mannequin ref
+
+**Context:** User still saw **looking right** (front body + glance) not **positioned right** after pose-lock prompt text.
+
+**Root cause:** (1) **`studioHeadYawDegreesFromNorm`** had **inverted sign** (`-yawNorm * 40`) so right-cheek captures sent **+°** and triggered **POSITIONED LEFT** prompt. (2) **`pickWigViewFromYaw`** (AR overlay index) was used for studio **`angle`** — right-cheek capture labeled **`left`**. (3) Studio always sent **front** mannequin WebP as IMAGE 2, pulling face back to 0°.
+
+**Fix:** `pickStudioCaptureAngleFromYaw` for studio capture; **`studioHeadYawDegreesFromNorm` → `yawNorm * 40`**; **`colorPaths[poseAngle]`** (+ portrait path) for side angles; prompt **IMAGE 1 master pose** + angle-matched mannequin ref block.
+
+Pushed **`master`** + **`preview/mobile`**.
