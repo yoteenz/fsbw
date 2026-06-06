@@ -9,7 +9,9 @@ import {
 import {
   activeLiveTryOnStudioPhotoModel,
   buildLiveTryOnStudioMakeupPassPrompt,
+  buildLiveTryOnStudioMakeupPassPromptCompact,
   buildLiveTryOnStudioTryOnPrompt,
+  buildLiveTryOnStudioTryOnPromptCompact,
   falEditModelId,
   liveTryOnPortraitStoragePath,
   type LiveTryOnAngle,
@@ -76,10 +78,17 @@ function isFalValidationError(e: unknown): boolean {
   return err?.status === 422 || /unprocessable entity/i.test(String(err?.message || e));
 }
 
+type StudioFalInputOverrides = {
+  quality?: 'low' | 'medium' | 'high' | 'auto';
+  output_format?: 'webp' | 'png' | 'jpeg';
+  omitImageSize?: boolean;
+};
+
 function formatStudioFalError(e: unknown, step: string): Error {
-  const err = e as FalValidationError;
+  const err = e as FalValidationError & { name?: string };
   const raw = err?.message || String(e);
   const detail = err?.body?.detail;
+  const bodyMsg = typeof err?.body?.message === 'string' ? err.body.message : '';
   let detailStr = '';
   if (typeof detail === 'string') detailStr = detail;
   else if (Array.isArray(detail)) {
@@ -90,9 +99,16 @@ function formatStudioFalError(e: unknown, step: string): Error {
       .filter(Boolean)
       .join('; ');
   } else if (detail != null) detailStr = JSON.stringify(detail);
+  else if (err?.body && typeof err.body === 'object') {
+    try {
+      detailStr = JSON.stringify(err.body);
+    } catch {
+      /* ignore */
+    }
+  }
 
-  if (isFalValidationError(e)) {
-    const hint = detailStr || raw;
+  if (isFalValidationError(e) || err?.name === 'ValidationError') {
+    const hint = [detailStr, bodyMsg, raw].filter(Boolean).join(' — ');
     return new Error(`${step} rejected by Fal: ${hint}`);
   }
   return new Error(`${step}: ${raw}${detailStr ? ` — ${detailStr}` : ''}`);
@@ -103,9 +119,10 @@ async function submitStudioFalJob(
   falModel: string,
   photoModel: LiveTryOnPhotoModel,
   imageUrls: string[],
-  prompt: string
+  prompt: string,
+  inputOverrides?: StudioFalInputOverrides
 ): Promise<string> {
-  const falInput = buildStudioFalInput(photoModel, imageUrls, prompt);
+  const falInput = buildStudioFalInput(photoModel, imageUrls, prompt, inputOverrides);
   try {
     const { request_id: falRequestId } = await fal.queue.submit(falModel, {
       input: falInput,
@@ -113,8 +130,121 @@ async function submitStudioFalJob(
     });
     return falRequestId;
   } catch (e) {
-    throw formatStudioFalError(e, `Studio render (${imageUrls.length} ref image${imageUrls.length === 1 ? '' : 's'})`);
+    throw formatStudioFalError(
+      e,
+      `Studio render (${photoModel}, ${imageUrls.length} ref image${imageUrls.length === 1 ? '' : 's'})`
+    );
   }
+}
+
+type StudioSubmitAttempt = {
+  photoModel: LiveTryOnPhotoModel;
+  imageUrls: string[];
+  prompt: string;
+  inputOverrides?: StudioFalInputOverrides;
+};
+
+async function submitStudioRenderWithFallbacks(
+  fal: FalClient,
+  preferredModel: LiveTryOnPhotoModel,
+  label: string,
+  hex: string,
+  poseAngle: LiveTryOnAngle,
+  headYawDeg: number | undefined,
+  selfieUrl: string,
+  mannequinUrl: string,
+  portraitUrl?: string
+): Promise<{ falRequestId: string; photoModel: LiveTryOnPhotoModel; falModel: string }> {
+  const twoUrls = [selfieUrl, mannequinUrl];
+  const threeUrls = portraitUrl ? [...twoUrls, portraitUrl] : twoUrls;
+
+  const attempts: StudioSubmitAttempt[] = [
+    {
+      photoModel: preferredModel,
+      imageUrls: threeUrls,
+      prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, {
+        hasPortraitRef: Boolean(portraitUrl),
+        headYawDeg,
+      }),
+    },
+    {
+      photoModel: preferredModel,
+      imageUrls: twoUrls,
+      prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, { hasPortraitRef: false, headYawDeg }),
+    },
+    {
+      photoModel: 'gpt2',
+      imageUrls: twoUrls,
+      prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, { hasPortraitRef: false, headYawDeg }),
+      inputOverrides: { output_format: 'png' },
+    },
+    {
+      photoModel: 'gpt2',
+      imageUrls: twoUrls,
+      prompt: buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg),
+      inputOverrides: { output_format: 'png', quality: 'low' },
+    },
+    {
+      photoModel: 'nbp',
+      imageUrls: twoUrls,
+      prompt: buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg),
+    },
+  ];
+
+  const seen = new Set<string>();
+  let lastErr: Error | undefined;
+
+  for (const attempt of attempts) {
+    const key = `${attempt.photoModel}|${attempt.imageUrls.length}|${attempt.prompt.length}|${JSON.stringify(attempt.inputOverrides || {})}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const falModel = falEditModelId(attempt.photoModel);
+    try {
+      const falRequestId = await submitStudioFalJob(
+        fal,
+        falModel,
+        attempt.photoModel,
+        attempt.imageUrls,
+        attempt.prompt,
+        attempt.inputOverrides
+      );
+      return { falRequestId, photoModel: attempt.photoModel, falModel };
+    } catch (e) {
+      if (!isFalValidationError(e)) throw e;
+      lastErr = e instanceof Error ? e : new Error(String(e));
+    }
+  }
+
+  throw lastErr ?? new Error('Studio render rejected by Fal');
+}
+
+async function submitStudioMakeupWithFallbacks(
+  fal: FalClient,
+  job: StudioTryOnJobRecord,
+  naturalFalUrl: string
+): Promise<string> {
+  const attempts = [
+    { prompt: buildLiveTryOnStudioMakeupPassPrompt(), overrides: undefined as StudioFalInputOverrides | undefined },
+    { prompt: buildLiveTryOnStudioMakeupPassPromptCompact(), overrides: { output_format: 'png' as const, quality: 'low' as const } },
+  ];
+  let lastErr: Error | undefined;
+  for (const attempt of attempts) {
+    try {
+      return await submitStudioFalJob(
+        fal,
+        job.falModel,
+        job.photoModel,
+        [naturalFalUrl],
+        attempt.prompt,
+        attempt.overrides
+      );
+    } catch (e) {
+      if (!isFalValidationError(e)) throw e;
+      lastErr = e instanceof Error ? e : new Error(String(e));
+    }
+  }
+  throw lastErr ?? new Error('Studio makeup rejected by Fal');
 }
 
 async function getFalClient(falKey: string): Promise<FalClient> {
@@ -225,17 +355,19 @@ async function deleteStudioJob(bucket: string, promptVersion: string, userId: st
 function buildStudioFalInput(
   photoModel: LiveTryOnPhotoModel,
   imageUrls: string[],
-  prompt: string
+  prompt: string,
+  overrides?: StudioFalInputOverrides
 ): Record<string, unknown> {
   if (photoModel === 'gpt2') {
-    return {
+    const input: Record<string, unknown> = {
       prompt,
       image_urls: imageUrls,
-      image_size: 'auto',
-      quality: 'medium',
-      output_format: 'webp',
+      quality: overrides?.quality ?? 'medium',
+      output_format: overrides?.output_format ?? 'webp',
       num_images: 1,
     };
+    if (!overrides?.omitImageSize) input.image_size = 'auto';
+    return input;
   }
   const resolution = readTryOnFalResolution();
   return {
@@ -317,19 +449,17 @@ export async function startStudioTryOnRender(
     'front'
   );
   const hasPortraitInStorage = await storageObjectExists(bucket, portraitPath);
-  /** GPT Image 2 queue often 422s with 3 refs — portrait as IMAGE 3 is opt-in only. */
   const attachPortraitRef =
     hasPortraitInStorage && process.env.WIG_PREVIEW_TRYON_STUDIO_PORTRAIT_REF?.trim().toLowerCase() === 'true';
 
-  const imageUrls = [userFalUrl, mannequinFalUrl];
+  let portraitFalUrl: string | undefined;
   if (attachPortraitRef) {
-    const portraitFalUrl = await uploadStorageObjectToFal(
+    portraitFalUrl = await uploadStorageObjectToFal(
       fal,
       bucket,
       portraitPath,
       `studio-portrait-${photoModel}-front.webp`
     );
-    imageUrls.push(portraitFalUrl);
   }
 
   const headYawDeg =
@@ -337,28 +467,17 @@ export async function startStudioTryOnRender(
       ? Math.round(Math.max(-40, Math.min(40, input.headYawDeg)))
       : undefined;
 
-  let usePortraitInPrompt = attachPortraitRef;
-  let prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle, {
-    hasPortraitRef: usePortraitInPrompt,
+  const { falRequestId, photoModel: usedPhotoModel, falModel } = await submitStudioRenderWithFallbacks(
+    fal,
+    photoModel,
+    catalog.label,
+    catalog.hex,
+    poseAngle,
     headYawDeg,
-  });
-  const falModel = falEditModelId(photoModel);
-
-  let falRequestId: string;
-  try {
-    falRequestId = await submitStudioFalJob(fal, falModel, photoModel, imageUrls, prompt);
-  } catch (firstErr) {
-    if (imageUrls.length > 2 && isFalValidationError(firstErr)) {
-      usePortraitInPrompt = false;
-      prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle, {
-        hasPortraitRef: false,
-        headYawDeg,
-      });
-      falRequestId = await submitStudioFalJob(fal, falModel, photoModel, imageUrls.slice(0, 2), prompt);
-    } else {
-      throw firstErr;
-    }
-  }
+    userFalUrl,
+    mannequinFalUrl,
+    portraitFalUrl
+  );
 
   const jobId = randomUUID();
   await saveStudioJob(bucket, promptVersion, {
@@ -366,7 +485,7 @@ export async function startStudioTryOnRender(
     userId: input.userId,
     falRequestId,
     falModel,
-    photoModel,
+    photoModel: usedPhotoModel,
     manifestHash,
     unitKey,
     color: job.color,
@@ -381,7 +500,7 @@ export async function startStudioTryOnRender(
     manifestHash,
     color: job.color,
     unitKey,
-    photoModel,
+    photoModel: usedPhotoModel,
     angle: poseAngle,
   };
 }
@@ -434,8 +553,7 @@ async function queueMakeupPass(
   naturalBuf: Buffer
 ): Promise<string> {
   const naturalFalUrl = await uploadBufferToFal(fal, naturalBuf, 'studio-natural.webp', 'image/webp');
-  const makeupPrompt = buildLiveTryOnStudioMakeupPassPrompt();
-  return submitStudioFalJob(fal, job.falModel, job.photoModel, [naturalFalUrl], makeupPrompt);
+  return submitStudioMakeupWithFallbacks(fal, job, naturalFalUrl);
 }
 
 function completeStudioResult(

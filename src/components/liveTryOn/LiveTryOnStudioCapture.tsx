@@ -77,6 +77,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const lastVideoTimeRef = useRef(-1);
   const noFaceFramesRef = useRef(0);
   const showingResultRef = useRef(false);
+  const naturalResultUrlRef = useRef<string | null>(null);
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
@@ -141,12 +142,12 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           noFaceFramesRef.current = 0;
           const yaw = estimateHeadYawNorm(landmarks);
           setActiveAngle(pickWigViewFromYaw(yaw));
-          setStatus((s) => (s === 'rendering' ? s : 'ready'));
+          setStatus((s) => (s === 'rendering' || s === 'result' ? s : 'ready'));
           setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
         } else {
           noFaceFramesRef.current += 1;
           if (noFaceFramesRef.current > 8) {
-            setStatus((s) => (s === 'rendering' ? s : 'no-face'));
+            setStatus((s) => (s === 'rendering' || s === 'result' ? s : 'no-face'));
             setStatusHint('LOOK AT THE CAMERA TO CAPTURE');
           }
         }
@@ -305,8 +306,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       );
       setRenderProgress(1);
       showingResultRef.current = true;
+      naturalResultUrlRef.current = res.imageUrl;
       setResultUrl(res.imageUrl);
       setStudioJobId(res.jobId);
+      setCaptureSnapshotUrl(null);
       setStatus('result');
       setStatusHint('STUDIO LOOK READY');
       setRenderPhase(null);
@@ -333,6 +336,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       lastVideoTimeRef.current = -1;
     }
     showingResultRef.current = false;
+    naturalResultUrlRef.current = null;
     setCaptureSnapshotUrl(null);
     setRenderPhase(null);
     setRenderProgress(0);
@@ -352,6 +356,14 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const handleMakeupCancel = () => {
     setShowMakeupPrompt(false);
     setMakeupOfferPending(true);
+    showingResultRef.current = true;
+    if (!resultUrl && naturalResultUrlRef.current) {
+      setResultUrl(naturalResultUrlRef.current);
+    }
+    setStatus('result');
+    setStatusHint('STUDIO LOOK READY — ADD MAKEUP ANYTIME');
+    setCaptureSnapshotUrl(null);
+    setErrorMsg(null);
   };
 
   const showResult = status === 'result' && Boolean(resultUrl);
@@ -422,7 +434,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         ) : null}
 
         {showMakeupPrompt ? (
-          <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/65 px-5">
+          <div
+            className="absolute inset-0 z-40 flex items-center justify-center bg-black/65 px-5"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div
               className="w-full max-w-[300px] border border-black bg-white/95 p-5 flex flex-col gap-4"
               role="dialog"

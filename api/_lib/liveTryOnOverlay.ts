@@ -200,6 +200,25 @@ export function buildLiveTryOnStudioTryOnPrompt(
   ].join(' ');
 }
 
+/** Shorter studio prompt for Fal retries when the full prompt is rejected (422). */
+export function buildLiveTryOnStudioTryOnPromptCompact(
+  label: string,
+  hex: string,
+  poseAngle: LiveTryOnAngle,
+  headYawDeg?: number
+): string {
+  const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
+  const yawLabel = studioHeadYawLabel(yaw);
+  return [
+    'IMAGE 1 = customer selfie. IMAGE 2 = front mannequin wig reference.',
+    `Keep face, skin, pose, and room from IMAGE 1. Head yaw ${yawLabel}.`,
+    `Replace only hair with lace-front wig color ${label} (#${hex}) from IMAGE 2.`,
+    'Center part on skull midline at this yaw. One-sided drape over viewer left shoulder.',
+    'Heavy background bokeh; brighten subject; keep real room.',
+    'No makeup. Photoreal. No text.',
+  ].join(' ');
+}
+
 /**
  * Second pass — polished photo-ready glam on the finished studio render (hair/pose/room locked).
  * Aesthetic target: soft IG-style beauty filter (slim sculpt, contour, almond eyes, glow) — same person, not a new face.
@@ -214,9 +233,18 @@ export function buildLiveTryOnStudioMakeupPassPrompt(): string {
     '**Brows:** fill and define for **fuller, cleaner arches** — match natural brow color.',
     '**Lips:** **fuller, plump** appearance with soft satin/nude-pink finish — not overlined clown lips.',
     '**Skin:** smooth evening with **soft glow** on forehead and cheekbones; keep believable texture (light freckles/moles OK) — airbrushed but still human.',
-    '**Overall:** polished **social-photo / IG baddie** beauty aesthetic — contour + highlight balance, camera-ready glow.',
+    '**Overall:** polished social-photo beauty aesthetic — contour + highlight balance, camera-ready glow.',
     '**Locked — do not change:** hair, wig, lace front, room, depth of field, body pose, neck, or clothing.',
     'No text or watermark.',
+  ].join(' ');
+}
+
+/** Shorter makeup pass for Fal retries. */
+export function buildLiveTryOnStudioMakeupPassPromptCompact(): string {
+  return [
+    'IMAGE 1 is a finished studio portrait with wig — keep hair, pose, room, and outfit identical.',
+    'Add light photo-ready glam on face only: subtle contour, bright undereyes, natural lashes, fuller brows and lips, soft skin glow.',
+    'Same person, photoreal, not plastic. No text.',
   ].join(' ');
 }
 

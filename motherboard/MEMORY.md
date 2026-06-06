@@ -25957,3 +25957,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** Default **2 refs only** (selfie + mannequin); portrait IMAGE 3 only when **`WIG_PREVIEW_TRYON_STUDIO_PORTRAIT_REF=true`**. Auto-retry without portrait on 422. GPT2 **`quality: medium`** (matches batch portraits). **`formatStudioFalError`** surfaces Fal `detail` in API error text.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio: cancel keeps natural result + Fal 422 retry ladder
+
+**Context:** User still saw **UNPROCESSABLE ENTITY** on most captures (got makeup prompt once). **Cancel** on makeup modal reset to camera/capture instead of keeping the natural render.
+
+**Fix (`a4d22516`):** UI — `drawPreview` preserves `result` status; `handleMakeupCancel` keeps natural image + ADD MAKEUP; `naturalResultUrlRef` backup. Backend — `submitStudioRenderWithFallbacks` (GPT2 2-img → PNG → compact → NBP); makeup compact retry; richer Fal errors.
+
+Pushed **`master`** + **`preview/mobile`**.
