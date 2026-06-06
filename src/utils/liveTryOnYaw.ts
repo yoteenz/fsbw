@@ -10,6 +10,14 @@ export const FACE_LM = {
   rightTemple: 454,
 } as const;
 
+/** Face skin outline (MediaPipe face mesh oval). */
+export const FACE_MESH_OVAL_INDICES = [
+  10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176,
+  149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109,
+] as const;
+
+export type CanvasPoint = { x: number; y: number };
+
 /**
  * Rough head yaw in [-1, 1]: negative = user turned to their left (camera sees more right cheek).
  */
@@ -43,35 +51,54 @@ export function wigPlacementFromLandmarks(
   const faceH = Math.abs(chin.y - forehead.y) * canvasH;
   const faceW = Math.abs(right.x - left.x) * canvasW;
   const cx = ((left.x + right.x) / 2) * canvasW;
-  /** Anchor lace hairline to tracked forehead (not above it). */
-  const cy = forehead.y * canvasH;
-  /** Must exceed face width so hair frames the face; small scale + face-hole = fragment patches. */
-  const width = Math.max(faceW * 3.05, faceH * 2.45, canvasW * 0.78);
+  /** Anchor lace hairline slightly above tracked forehead. */
+  const cy = forehead.y * canvasH - faceH * 0.04;
+  const width = Math.max(faceW * 2.9, faceH * 2.35, canvasW * 0.72);
   const rotationRad = Math.atan2((right.y - left.y) * canvasH, (right.x - left.x) * canvasW);
 
   return { cx, cy, width, rotationRad };
 }
 
-/** Face oval on canvas (camera space; x must be mirrored when drawing on mirrored preview). */
-export function faceOvalFromLandmarks(
+/**
+ * Tracked face contour in canvas pixels. Set mirror=true when the preview is horizontally flipped.
+ */
+export function faceContourPolygonFromLandmarks(
   landmarks: NormPoint[],
   canvasW: number,
-  canvasH: number
-): { cx: number; cy: number; rx: number; ry: number } | null {
-  const forehead = landmarks[FACE_LM.forehead];
-  const chin = landmarks[FACE_LM.chin];
-  const left = landmarks[FACE_LM.leftTemple];
-  const right = landmarks[FACE_LM.rightTemple];
-  if (!forehead || !chin || !left || !right) return null;
+  canvasH: number,
+  opts?: { mirror?: boolean; expand?: number }
+): CanvasPoint[] | null {
+  const expand = opts?.expand ?? 1.07;
+  const mirror = opts?.mirror ?? false;
+  const raw: CanvasPoint[] = [];
 
-  const faceW = Math.abs(right.x - left.x) * canvasW;
-  const faceH = Math.abs(chin.y - forehead.y) * canvasH;
-  const cx = ((left.x + right.x) / 2) * canvasW;
-  const cy = ((forehead.y + chin.y) / 2) * canvasH;
+  for (const idx of FACE_MESH_OVAL_INDICES) {
+    const lm = landmarks[idx];
+    if (!lm) continue;
+    let x = lm.x * canvasW;
+    if (mirror) x = canvasW - x;
+    raw.push({ x, y: lm.y * canvasH });
+  }
+  if (raw.length < 12) return null;
+
+  const cx = raw.reduce((s, p) => s + p.x, 0) / raw.length;
+  const cy = raw.reduce((s, p) => s + p.y, 0) / raw.length;
+  return raw.map((p) => ({
+    x: cx + (p.x - cx) * expand,
+    y: cy + (p.y - cy) * expand,
+  }));
+}
+
+export function lerpPlacement(
+  prev: { cx: number; cy: number; width: number; rotationRad: number },
+  next: { cx: number; cy: number; width: number; rotationRad: number },
+  t: number
+): { cx: number; cy: number; width: number; rotationRad: number } {
+  const a = Math.max(0, Math.min(1, t));
   return {
-    cx,
-    cy,
-    rx: Math.max(12, faceW * 0.4),
-    ry: Math.max(14, faceH * 0.44),
+    cx: prev.cx + (next.cx - prev.cx) * a,
+    cy: prev.cy + (next.cy - prev.cy) * a,
+    width: prev.width + (next.width - prev.width) * a,
+    rotationRad: prev.rotationRad + (next.rotationRad - prev.rotationRad) * a,
   };
 }

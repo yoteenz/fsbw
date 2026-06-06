@@ -5,9 +5,13 @@ import {
   LIVE_TRY_ON_MEDIAPIPE_WASM_BASE,
   type LiveTryOnWigView,
 } from '../../constants/liveTryOnSpikeAssets';
-import { drawWigOverlayWithFaceHole } from '../../utils/liveTryOnComposite';
+import {
+  drawWigOverlayTracked,
+  strokeFaceTrackingGuide,
+} from '../../utils/liveTryOnComposite';
 import {
   estimateHeadYawNorm,
+  lerpPlacement,
   pickWigViewFromYaw,
   wigPlacementFromLandmarks,
   type NormPoint,
@@ -52,6 +56,12 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
   const noFaceFramesRef = useRef(0);
   const wigImagesRef = useRef<Record<LiveTryOnWigView, HTMLImageElement> | null>(null);
   const overlayScratchRef = useRef<HTMLCanvasElement | null>(null);
+  const smoothPlacementRef = useRef<{
+    cx: number;
+    cy: number;
+    width: number;
+    rotationRad: number;
+  } | null>(null);
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
@@ -115,15 +125,19 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
           setActiveView(view);
           setDebugYaw(yaw);
           setStatus('live');
-          setStatusHint('LIVE PREVIEW — TURN SLOWLY TO SEE ANGLES');
+          setStatusHint('FACE TRACKED — TURN SLOWLY TO SEE ANGLES');
 
-          const placement = wigPlacementFromLandmarks(landmarks, w, h);
+          const rawPlacement = wigPlacementFromLandmarks(landmarks, w, h);
           const wigImg = wigImages[view];
-          if (placement && wigImg?.complete && wigImg.naturalWidth > 0) {
+          if (rawPlacement && wigImg?.complete && wigImg.naturalWidth > 0) {
+            const prev = smoothPlacementRef.current;
+            const placement = prev ? lerpPlacement(prev, rawPlacement, 0.38) : rawPlacement;
+            smoothPlacementRef.current = placement;
+
             if (!overlayScratchRef.current) {
               overlayScratchRef.current = document.createElement('canvas');
             }
-            drawWigOverlayWithFaceHole(
+            const contour = drawWigOverlayTracked(
               ctx,
               w,
               h,
@@ -132,12 +146,14 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
               landmarks,
               overlayScratchRef.current
             );
+            if (contour) strokeFaceTrackingGuide(ctx, contour);
           }
         } else {
+          smoothPlacementRef.current = null;
           noFaceFramesRef.current += 1;
           if (noFaceFramesRef.current > 8) {
             setStatus('no-face');
-            setStatusHint('CENTER YOUR FACE IN THE FRAME');
+            setStatusHint('LOOK AT THE CAMERA — TRACKING STARTS AUTOMATICALLY');
           }
         }
       } catch {
@@ -197,7 +213,7 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
         }
 
         setStatus('no-face');
-        setStatusHint('CENTER YOUR FACE IN THE FRAME');
+        setStatusHint('LOOK AT THE CAMERA — TRACKING STARTS AUTOMATICALLY');
         rafRef.current = requestAnimationFrame(loop);
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'CAMERA UNAVAILABLE';
@@ -219,18 +235,6 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
     <div className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: '9 / 16', maxHeight: 'min(78dvh, 640px)' }}>
       <video ref={videoRef} playsInline muted className="absolute w-px h-px opacity-0 pointer-events-none" aria-hidden />
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
-
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
-        <div
-          style={{
-            width: '72%',
-            height: '58%',
-            border: '2px solid rgba(235, 28, 36, 0.85)',
-            borderRadius: '50%',
-            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.35)',
-          }}
-        />
-      </div>
 
       <div
         className="pointer-events-none absolute left-0 right-0 px-3 text-center"
