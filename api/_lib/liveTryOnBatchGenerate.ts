@@ -103,27 +103,55 @@ async function uploadStorageObjectToFal(
   return fal.storage.upload(file);
 }
 
+function sampleOverlayAlpha(img: Jimp, u: number, v: number): number {
+  const w = img.width;
+  const h = img.height;
+  const x = Math.min(w - 1, Math.max(0, Math.floor(u * w)));
+  const y = Math.min(h - 1, Math.max(0, Math.floor(v * h)));
+  return Jimp.intToRGBA(img.getPixelColor(x, y)).a;
+}
+
+function sampleOverlayLuma(img: Jimp, u: number, v: number): number {
+  const w = img.width;
+  const h = img.height;
+  const x = Math.min(w - 1, Math.max(0, Math.floor(u * w)));
+  const y = Math.min(h - 1, Math.max(0, Math.floor(v * h)));
+  const { r, g, b, a } = Jimp.intToRGBA(img.getPixelColor(x, y));
+  if (a < 16) return 0;
+  return Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+}
+
 async function validateHairOnlyOverlayPng(buf: Buffer): Promise<void> {
   const img = await Jimp.read(buf);
   const w = img.width;
   const h = img.height;
   if (w < 64 || h < 64) throw new Error('overlay too small');
 
-  const sample = (u: number, v: number): number => {
-    const x = Math.min(w - 1, Math.max(0, Math.floor(u * w)));
-    const y = Math.min(h - 1, Math.max(0, Math.floor(v * h)));
-    return img.getPixelColor(x, y) & 0xff;
-  };
+  const topAlpha = sampleOverlayAlpha(img, 0.5, 0.14);
+  const faceLuma = sampleOverlayLuma(img, 0.5, 0.42);
+  const bustLuma = sampleOverlayLuma(img, 0.5, 0.72);
 
-  if (sample(0.5, 0.42) > 90 && sample(0.5, 0.14) > 90) {
+  if (faceLuma > 90 && topAlpha > 200) {
     throw new Error('overlay still contains an opaque face');
   }
-  if (sample(0.5, 0.72) > 120 && sample(0.5, 0.14) > 120) {
+  if (bustLuma > 120 && topAlpha > 200) {
     throw new Error('overlay still contains shoulders or bust');
   }
-  if (sample(0.5, 0.14) < 40) {
-    throw new Error('overlay missing visible hair at top');
+  if (topAlpha < 8) {
+    let maxAlpha = 0;
+    for (let v = 0; v <= 0.35; v += 0.05) {
+      for (let u = 0.2; u <= 0.8; u += 0.1) {
+        maxAlpha = Math.max(maxAlpha, sampleOverlayAlpha(img, u, v));
+      }
+    }
+    if (maxAlpha < 24) {
+      throw new Error('overlay missing visible hair at top');
+    }
   }
+}
+
+function strictOverlayValidateEnabled(): boolean {
+  return (process.env.WIG_PREVIEW_TRYON_OVERLAY_STRICT_VALIDATE || '').trim().toLowerCase() === 'true';
 }
 
 export async function storageObjectExists(bucket: string, path: string): Promise<boolean> {
@@ -540,12 +568,14 @@ export async function runLiveTryOnBatchStep(opts: {
     falKey && useIdeogramForOverlayCut() ? await getFalClient(falKey) : null;
   const overlayBuf = await cutWorkPngToOverlay(workBuf, fal);
 
-  const skipValidate =
-    (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
-  try {
-    await validateHairOnlyOverlayPng(overlayBuf);
-  } catch (ve) {
-    if (!skipValidate) throw ve;
+  if (strictOverlayValidateEnabled()) {
+    try {
+      await validateHairOnlyOverlayPng(overlayBuf);
+    } catch (ve) {
+      const legacySkip =
+        (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
+      if (!legacySkip) throw ve;
+    }
   }
 
   const { error: upOverlay } = await supabase.storage.from(bucket).upload(overlayPath, overlayBuf, {
