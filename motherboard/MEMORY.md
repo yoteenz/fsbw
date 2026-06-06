@@ -25999,3 +25999,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `startStudioMakeupRender` — if phase **`makeup`** and Fal still running → return **queued** (idempotent); if terminal → **`pollStudioTryOnRender`** to finalize/revert to **`base_complete`** then re-queue. If phase **`base`** → finalize natural render first. **`downloadNaturalRenderBuffer`** falls back to **`naturalImageUrl`** when storage path missing. Studio natural WebP upload uses **`upsert: true`**.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio / portrait skull-fit prompt (anti helmet hair)
+
+**Context:** Studio and portrait renders placed hair **too high on the skull** — mimicking **mannequin display** styling (helmet hair) instead of a real lace install flush on the scalp.
+
+**Fix:** `liveTryOnOverlay.ts` — **`STUDIO_SKULL_FIT`** block: mannequin refs supply color/length/curl/drape only — **not** vertical cap placement; lace + hairline flush at IMAGE 1 natural forehead; part at natural crown depth. Updated center-part constraint, ref blocks, compact studio prompt, and **`buildLiveTryOnPhotorealWomanPrompt`** (admin portrait gen) with same human skull-fit rules.
+
+Pushed **`master`** + **`preview/mobile`**.
