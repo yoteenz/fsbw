@@ -25715,6 +25715,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-06-05 — Live try-on overlay split (fix LIVE_TRYON_TIMEOUT)
+
+**Context:** User hit **LIVE_TRYON_TIMEOUT** (~2 min) and **422** on overlay LEFT for OFF BLACK (portraits 3/3, overlays 0/3).
+
+**Cause:** Single `overlay` batch step ran **NBP isolate + Ideogram + Fal re-uploads** in one Vercel function (>120s).
+
+**Fix:** Split into **`overlay_isolate`** (one NBP job → `try-on-work/.../nbp-isolate.png`) then **`overlay_cut`** (one Ideogram job → final overlay PNG). Admin MISSING lists 6 lines per color (3 isolate + 3 cut). **RUN NEXT STEP** = one Fal job (~1–2 min each). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-05 — Admin LIVE TRY-ON button loading states
 
 **Context:** User unsure if admin batch buttons registered clicks — status updates slow, no visual feedback.
