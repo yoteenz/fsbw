@@ -46,6 +46,13 @@ function readAngle(obj: Record<string, unknown>): LiveTryOnAngle | null {
   return null;
 }
 
+function readBool(obj: Record<string, unknown>, key: string): boolean {
+  const v = obj[key];
+  if (v === true || v === 1) return true;
+  if (typeof v === 'string') return v.trim().toLowerCase() === 'true';
+  return false;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -69,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const step = readStep(body);
   const angle = readAngle(body);
   const photoModel = parseLiveTryOnPhotoModel(readString(body, 'photoModel', 'nbp')) || 'nbp';
-  const forceRegenerate = body.forceRegenerate === true;
+  const forceRegenerate = readBool(body, 'forceRegenerate');
 
   if (!step || !angle) {
     res.status(400).json({

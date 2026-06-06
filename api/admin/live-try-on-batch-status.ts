@@ -118,7 +118,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             )
           )
         ).every(Boolean);
-        portraits[model] = { ...urls, ready };
+        const cacheV = Date.now();
+        const bust = (url: string) => `${url}?v=${cacheV}`;
+        portraits[model] = {
+          left: bust(urls.left),
+          front: bust(urls.front),
+          right: bust(urls.right),
+          ready,
+        };
       }
     }
 

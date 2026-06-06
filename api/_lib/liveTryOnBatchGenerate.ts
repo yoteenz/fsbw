@@ -160,6 +160,13 @@ export async function storageObjectExists(bucket: string, path: string): Promise
   return !error;
 }
 
+async function removeStorageObjectIfExists(bucket: string, path: string): Promise<void> {
+  if (!(await storageObjectExists(bucket, path))) return;
+  const supabase = getSupabaseAdminServiceRole();
+  const { error } = await supabase.storage.from(bucket).remove([path]);
+  if (error) throw new Error(`storage remove failed for ${path}: ${error.message}`);
+}
+
 export function jobToSelections(job: LiveTryOnBatchJob): WigPreviewSelections {
   return {
     unitKey: String(job.unitKey || 'NOIR').toUpperCase(),
@@ -531,6 +538,9 @@ export async function runLiveTryOnBatchStep(opts: {
   if (!mannequinUrl) throw new Error('mannequin color URL missing');
 
   if (opts.step === 'portrait') {
+    if (opts.forceRegenerate) {
+      await removeStorageObjectIfExists(bucket, portraitPath);
+    }
     const fal = await getFalClient(falKey!);
     const womanPrompt = buildLiveTryOnPhotorealWomanPrompt(catalog.label, catalog.hex, opts.angle);
     const portraitBuf = await generatePhotorealPortrait(
@@ -542,6 +552,7 @@ export async function runLiveTryOnBatchStep(opts: {
     const { error: upErr } = await supabase.storage.from(bucket).upload(portraitPath, portraitBuf, {
       contentType: 'image/webp',
       upsert: true,
+      cacheControl: opts.forceRegenerate ? '0' : '3600',
     });
     if (upErr) throw new Error(`upload portrait: ${upErr.message}`);
     return {
@@ -558,6 +569,9 @@ export async function runLiveTryOnBatchStep(opts: {
   }
 
   if (opts.step === 'overlay_isolate') {
+    if (opts.forceRegenerate) {
+      await removeStorageObjectIfExists(bucket, workPath);
+    }
     const fal = await getFalClient(falKey!);
     const portraitFalUrl = await uploadStorageObjectToFal(
       fal,
@@ -569,6 +583,7 @@ export async function runLiveTryOnBatchStep(opts: {
     const { error: upWork } = await supabase.storage.from(bucket).upload(workPath, isolateBuf, {
       contentType: 'image/png',
       upsert: true,
+      cacheControl: opts.forceRegenerate ? '0' : '3600',
     });
     if (upWork) throw new Error(`upload work isolate: ${upWork.message}`);
     return {
@@ -591,6 +606,10 @@ export async function runLiveTryOnBatchStep(opts: {
   const workBuf = Buffer.from(await workData.arrayBuffer());
   const fal =
     falKey && useIdeogramForOverlayCut() ? await getFalClient(falKey) : null;
+  if (opts.step === 'overlay_cut' && opts.forceRegenerate) {
+    await removeStorageObjectIfExists(bucket, overlayPath);
+  }
+
   const overlayBuf = await cutWorkPngToOverlay(workBuf, fal);
 
   if (strictOverlayValidateEnabled()) {
@@ -606,6 +625,7 @@ export async function runLiveTryOnBatchStep(opts: {
   const { error: upOverlay } = await supabase.storage.from(bucket).upload(overlayPath, overlayBuf, {
     contentType: 'image/png',
     upsert: true,
+    cacheControl: opts.forceRegenerate ? '0' : '3600',
   });
   if (upOverlay) throw new Error(`upload overlay: ${upOverlay.message}`);
 
