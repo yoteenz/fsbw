@@ -68,12 +68,14 @@ function isJetBlackOffBlack(label: string, hex: string): boolean {
   return l.includes('jet black') || l.includes('off black');
 }
 
-/** Studio glam — NBP-style DOF on the customer’s real environment (no backdrop swap). */
+/** Studio glam — NBP-style heavy DOF + subject pop on the customer’s real environment (no backdrop swap). */
 const STUDIO_GLAM_COMPOSITION = [
-  '**Background (required — preserve realism):** **Keep** the customer’s **actual room and environment** from IMAGE 1 — same walls, furniture, plants, doorways, and colors.',
-  'Do **not** replace the room with a grey studio seamless, white backdrop, or a different location.',
-  'Apply **shallow depth of field** only: background **softly out of focus** with natural **bokeh**, while **face, skin, and hair stay tack sharp**.',
-  'Polished editorial color grade on the subject — subtle; do not flatten the real space into a fake studio set.',
+  '**DEPTH OF FIELD — NBP portrait glam (critical):** Shot on a **fast portrait lens** (**f/1.4–f/2.8**). Keep the customer’s **real room** from IMAGE 1 (same general hues and shapes) — **do not** replace with grey seamless, white backdrop, or a different location.',
+  '**Background blur:** Defocus the room **heavily** — **creamy circular bokeh**; walls, furniture, bed, and doorways **barely readable**, melted into soft color patches. Background must be **much blurrier** than a phone snapshot — match **NBP admin portrait** thumb depth.',
+  '**Subject lighting:** **Brighten face, skin, hair, and lace** with soft flattering **key light** on the subject — subject reads **~1–2 stops brighter** with polished editorial grade and healthy sheen on skin and hair.',
+  '**Background separation:** **Slightly darken** the defocused background (gentle exposure falloff / vignette behind subject) so the person **pops as center focus** — luminous sharp subject, soft darker backdrop.',
+  '**Sharp zone:** **Face, eyes, skin, lace front, and hair** stay **tack sharp**; only the room falls off.',
+  '**Forbidden:** sharp readable background; flat even lighting where background competes with the face; background as bright as the subject.',
 ].join(' ');
 
 function studioHeadYawDegrees(poseAngle: LiveTryOnAngle, headYawDeg?: number): number {
