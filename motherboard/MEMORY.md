@@ -25866,3 +25866,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix (`2d4000d6`):** Async queue — **`POST /api/live-try-on-studio-render`** uses `fal.queue.submit`, returns **`jobId`** quickly. **`GET /api/live-try-on-studio-render-status`** polls Fal, uploads WebP when done. Client **`postLiveTryOnStudioRenderAndWait`** polls every 2.5s (3min max). **`vercel.json`** studio routes 60s/30s.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio Try-On: keep real room, blur only (not backdrop swap)
+
+**Context:** Studio output replaced user’s room with flat grey/studio backdrop. User wants **realism** — keep actual environment (subject sharp, room **softly out of focus** like NBP thumbs), not a new background.
+
+**Fix (`56734949`):** `STUDIO_GLAM_COMPOSITION` — preserve IMAGE 1 room; shallow DOF/bokeh on background only; forbid grey seamless or location swap.
+
+Pushed **`master`** + **`preview/mobile`**.
