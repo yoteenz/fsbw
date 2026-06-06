@@ -40,11 +40,6 @@ function readTryOnFalResolution(): '1K' | '2K' | '4K' {
   return '1K';
 }
 
-function tryOnIdeogramOnly(): boolean {
-  const v = (process.env.WIG_PREVIEW_TRYON_IDEOGRAM_ONLY || 'true').trim().toLowerCase();
-  return v !== 'false' && v !== '0';
-}
-
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`download failed ${response.status}`);
@@ -159,7 +154,7 @@ export async function listMissingLiveTryOnBatchSteps(
     }
   }
 
-  return { manifestHash, missing };
+  return { manifestHash, missing: sortLiveTryOnBatchMissingSteps(missing) };
 }
 
 async function generatePhotorealPortrait(
@@ -204,49 +199,80 @@ async function generatePhotorealPortrait(
   return downloadUrlToBuffer(url);
 }
 
+/**
+ * Photoreal portraits still contain a face — Ideogram bg-remove alone is not hair-only.
+ * Always NBP hair isolation → Ideogram alpha (2 Fal jobs max per attempt).
+ */
 async function generateHairOnlyOverlayFromPortrait(fal: FalClient, portraitUrl: string): Promise<Buffer> {
-  if (tryOnIdeogramOnly()) {
+  const resolution = readTryOnFalResolution();
+  const skipValidate =
+    (process.env.WIG_PREVIEW_TRYON_OVERLAY_SKIP_VALIDATE || '').trim().toLowerCase() === 'true';
+
+  const runPipeline = async (): Promise<Buffer> => {
+    const nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
+      input: {
+        prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
+        image_urls: [portraitUrl],
+        aspect_ratio: 'auto',
+        resolution,
+        output_format: 'png',
+        num_images: 1,
+      },
+      logs: false,
+    });
+    const nbpUrl = extractFalImageUrl(nbpResult);
+    if (!nbpUrl) throw new Error('fal: no hair isolation URL');
+
     const cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
-      input: { image_url: portraitUrl },
+      input: { image_url: nbpUrl },
       logs: false,
     });
     const cutUrl = extractFalImageUrl(cutResult);
-    if (cutUrl) {
-      const buf = await downloadUrlToBuffer(cutUrl);
+    if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
+
+    return downloadUrlToBuffer(cutUrl);
+  };
+
+  let lastErr: Error | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const buf = await runPipeline();
       try {
         await validateHairOnlyOverlayPng(buf);
-        return buf;
-      } catch {
-        /* fall through */
+      } catch (ve) {
+        if (skipValidate || attempt === 1) return buf;
+        throw ve;
       }
+      return buf;
+    } catch (e) {
+      lastErr = e instanceof Error ? e : new Error(String(e));
     }
   }
+  throw lastErr ?? new Error('overlay generation failed');
+}
 
-  const resolution = readTryOnFalResolution();
-  const nbpResult = await fal.subscribe(LIVE_TRY_ON_FAL_NBP_EDIT, {
-    input: {
-      prompt: LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT,
-      image_urls: [portraitUrl],
-      aspect_ratio: 'auto',
-      resolution,
-      output_format: 'png',
-      num_images: 1,
-    },
-    logs: false,
+const BATCH_STEP_ORDER: Record<LiveTryOnBatchMissingStep['step'], number> = {
+  color: 0,
+  portrait: 1,
+  overlay: 2,
+};
+
+const BATCH_ANGLE_ORDER: Record<LiveTryOnAngle, number> = {
+  left: 0,
+  front: 1,
+  right: 2,
+};
+
+export function sortLiveTryOnBatchMissingSteps(
+  missing: LiveTryOnBatchMissingStep[]
+): LiveTryOnBatchMissingStep[] {
+  return [...missing].sort((a, b) => {
+    const stepDelta = BATCH_STEP_ORDER[a.step] - BATCH_STEP_ORDER[b.step];
+    if (stepDelta !== 0) return stepDelta;
+    const angleDelta = BATCH_ANGLE_ORDER[a.angle] - BATCH_ANGLE_ORDER[b.angle];
+    if (angleDelta !== 0) return angleDelta;
+    return String(a.photoModel || '').localeCompare(String(b.photoModel || ''));
   });
-  const nbpUrl = extractFalImageUrl(nbpResult);
-  if (!nbpUrl) throw new Error('fal: no hair isolation URL');
-
-  const cutResult = await fal.subscribe(LIVE_TRY_ON_IDEOGRAM_MODEL, {
-    input: { image_url: nbpUrl },
-    logs: false,
-  });
-  const cutUrl = extractFalImageUrl(cutResult);
-  if (!cutUrl) throw new Error('fal: no Ideogram cutout URL');
-
-  const buf = await downloadUrlToBuffer(cutUrl);
-  await validateHairOnlyOverlayPng(buf);
-  return buf;
 }
 
 export type RunLiveTryOnBatchStepResult = {
