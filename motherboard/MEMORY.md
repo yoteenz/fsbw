@@ -25987,3 +25987,15 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `LiveTryOnStudioCapture` — camera `useEffect` no longer re-runs on `renderPhase` change (stable `drawPreview` + `renderPhaseRef`); overlay warning line; hide permission/status hints during render. `liveTryOnOverlay.ts` — `STUDIO_BACKGROUND_LOCK`, `STUDIO_HAIRLINE_LOCK`, stronger **IG baddie** makeup prompt with `STUDIO_MAKEUP_FRAMING_LOCK` (pixel-aligned, no pan). `liveTryOnStudio.ts` — 2-image attempts first (3-image portrait last), extra GPT2 low/compact/jpeg fallbacks; selfie downscale **1024px**; makeup pass low-quality + framing retries.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio ADD MAKEUP “not ready for makeup” fix
+
+**Context:** User saw **“STUDIO NATURAL RENDER IS NOT READY FOR MAKEUP”** when tapping **ADD MAKEUP** despite natural image on screen.
+
+**Cause:** Server job stuck in **`makeup`** phase after a prior glam attempt (retry/double-tap/interrupted poll) — `startStudioMakeupRender` only accepted **`base_complete`**.
+
+**Fix:** `startStudioMakeupRender` — if phase **`makeup`** and Fal still running → return **queued** (idempotent); if terminal → **`pollStudioTryOnRender`** to finalize/revert to **`base_complete`** then re-queue. If phase **`base`** → finalize natural render first. **`downloadNaturalRenderBuffer`** falls back to **`naturalImageUrl`** when storage path missing. Studio natural WebP upload uses **`upsert: true`**.
+
+Pushed **`master`** + **`preview/mobile`**.
