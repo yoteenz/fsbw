@@ -55,6 +55,11 @@ function StudioRenderOverlay({
       >
         {label}
       </p>
+      <p
+        style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#FFFFFF', textTransform: 'uppercase', opacity: 0.85 }}
+      >
+        DO NOT LEAVE THIS WINDOW.
+      </p>
       <div className="w-full max-w-[220px] h-1 rounded-full overflow-hidden bg-white/20">
         <div
           className="h-full bg-white transition-[width] duration-200 ease-linear"
@@ -79,6 +84,12 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const showingResultRef = useRef(false);
   const viewportFrozenRef = useRef(false);
   const naturalResultUrlRef = useRef<string | null>(null);
+  const renderPhaseRef = useRef<RenderPhase>(null);
+
+  const setRenderPhaseSafe = useCallback((phase: RenderPhase) => {
+    renderPhaseRef.current = phase;
+    setRenderPhase(phase);
+  }, []);
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
@@ -116,12 +127,12 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     const landmarker = landmarkerRef.current;
     if (!video || !canvas || !landmarker || video.readyState < 2) return;
 
+    const phase = renderPhaseRef.current;
     if (
       viewportFrozenRef.current ||
       showingResultRef.current ||
-      cameraFrozen ||
-      renderPhase === 'base' ||
-      renderPhase === 'makeup'
+      phase === 'base' ||
+      phase === 'makeup'
     ) {
       return;
     }
@@ -166,7 +177,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         /* skip frame */
       }
     }
-  }, [cameraFrozen, renderPhase]);
+  }, []);
 
   const loop = useCallback(() => {
     drawPreview();
@@ -231,7 +242,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   }, [loop]);
 
   const runMakeupPass = useCallback(async () => {
-    if (!studioJobId || renderPhase) return;
+    if (!studioJobId || renderPhaseRef.current) return;
 
     const naturalUrl = resultUrl ?? naturalResultUrlRef.current;
     if (!naturalUrl) {
@@ -248,7 +259,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     if (!resultUrl) setResultUrl(naturalUrl);
     setStatus('result');
     setRenderProgress(0);
-    setRenderPhase('makeup');
+    setRenderPhaseSafe('makeup');
 
     try {
       const res = await postLiveTryOnStudioMakeupAndWait(studioJobId);
@@ -267,10 +278,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       setStatusHint('STUDIO LOOK READY — TAP ADD MAKEUP TO RETRY');
       setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'POLISHED GLAM FAILED');
     } finally {
-      setRenderPhase(null);
+      setRenderPhaseSafe(null);
       setRenderProgress(0);
     }
-  }, [renderPhase, resultUrl, studioJobId]);
+  }, [resultUrl, setRenderPhaseSafe, studioJobId]);
 
   const handleCapture = useCallback(async () => {
     const video = videoRef.current;
@@ -313,9 +324,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     setCaptureAngleLabel(captureAngle);
     setCaptureHeadYawDeg(headYawDeg);
     setCaptureSnapshotUrl(imageDataUrl);
-    setRenderPhase('base');
+    setRenderPhaseSafe('base');
     setRenderProgress(0);
     setStatus('rendering');
+    setStatusHint('RENDERING YOUR LOOK…');
     setResultUrl(null);
     setMakeupResultUrl(null);
     setShowMakeup(false);
@@ -346,7 +358,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       setCaptureSnapshotUrl(null);
       setStatus('result');
       setStatusHint('STUDIO LOOK READY');
-      setRenderPhase(null);
+      setRenderPhaseSafe(null);
       setRenderProgress(0);
       if (res.makeupAvailable && !res.makeupImageUrl) {
         setShowMakeupPrompt(true);
@@ -358,13 +370,13 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       showingResultRef.current = false;
       setCameraFrozen(false);
       setCaptureSnapshotUrl(null);
-      setRenderPhase(null);
+      setRenderPhaseSafe(null);
       setRenderProgress(0);
       setStatus('ready');
       setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
       setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'RENDER FAILED');
     }
-  }, [activeAngle, color, renderPhase, status, unitKey]);
+  }, [activeAngle, color, renderPhase, setRenderPhaseSafe, status, unitKey]);
 
   const handleRetake = () => {
     const video = videoRef.current;
@@ -378,7 +390,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     naturalResultUrlRef.current = null;
     setCameraFrozen(false);
     setCaptureSnapshotUrl(null);
-    setRenderPhase(null);
+    setRenderPhaseSafe(null);
     setRenderProgress(0);
     setStudioJobId(null);
     setResultUrl(null);
@@ -474,7 +486,12 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           <StudioRenderOverlay label={overlayLabel} progress={renderProgress} />
         ) : null}
 
-        {!renderPhase && !showMakeupPrompt && status !== 'loading' && status !== 'permission' && !showStudioImage ? (
+        {!renderPhase &&
+        !showMakeupPrompt &&
+        status !== 'loading' &&
+        status !== 'permission' &&
+        status !== 'rendering' &&
+        !showStudioImage ? (
           <div
             className="pointer-events-none absolute left-0 right-0 px-3 text-center z-20"
             style={{ top: '10px', fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#FFFFFF', textTransform: 'uppercase' }}
@@ -528,7 +545,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           </div>
         ) : null}
 
-        {(status === 'loading' || status === 'permission') && !showStudioImage ? (
+        {(status === 'loading' || status === 'permission') && !showStudioImage && !renderPhase ? (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50">
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF' }}>{statusHint}</p>
           </div>
