@@ -1315,6 +1315,48 @@ export type LiveTryOnResolveResult = {
   lookupNote?: string;
 };
 
+export type LiveTryOnStudioRenderPayload = {
+  imageDataUrl: string;
+  color: string;
+  unitKey?: string;
+  photoModel?: 'nbp' | 'gpt2';
+  angle?: 'left' | 'front' | 'right';
+};
+
+export type LiveTryOnStudioRenderResult = {
+  ok: boolean;
+  imageUrl: string;
+  manifestHash: string;
+  color: string;
+  unitKey: string;
+  photoModel: 'nbp' | 'gpt2';
+  angle: 'left' | 'front' | 'right';
+};
+
+/** Studio Try-On — Fal inpaint wig onto shopper selfie (signed in). */
+export async function postLiveTryOnStudioRender(
+  body: LiveTryOnStudioRenderPayload
+): Promise<LiveTryOnStudioRenderResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/live-try-on-studio-render', { method: 'POST', body });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Studio try-on');
+  }
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Studio try-on failed');
+  }
+  return JSON.parse(text) as LiveTryOnStudioRenderResult;
+}
+
 /** Resolve pre-generated try-on overlays from Storage (no Fal). Uses studio default NOIR + color. */
 export async function postLiveTryOnResolve(body: LiveTryOnResolvePayload): Promise<LiveTryOnResolveResult> {
   let res: Response;
