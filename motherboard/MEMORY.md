@@ -25776,3 +25776,5 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted photoreal woman **prompt text** to refine; **RIGHT** portrait cheated (eyes/body toward center vs true opposite 3/4 like LEFT). Asked **regen one angle only** and to use **degrees** not “3/4” on the cheating right angle.
 
 **Shipped:** Admin **REGEN ONE ANGLE** — `PORTRAIT · L/F/R` and `OVERLAY · L/F/R` with `forceRegenerate` (`6fca9c80`). Portrait angles in `buildLiveTryOnPhotorealWomanPrompt` (`liveTryOnOverlay.ts`): **LEFT +40°**, **FRONT 0°**, **RIGHT −40°** head+shoulder yaw; RIGHT forbids 0° / +40° / eyes-only toward center (`8b3c183a`). **Ops:** Admin → **PORTRAIT · RIGHT** then **OVERLAY · RIGHT** after deploy. Pushed **`master`** + **`preview/mobile`**.
+
+**Regen not updating (`88829699`):** User regen RIGHT portrait but thumb unchanged — **browser/CDN cached** same Storage URL + upsert alone. Fix: **delete** object before force regen, `cacheControl: 0`, status API **`?v=timestamp`** on portrait URLs, admin LOG **REGEN OK** / error if **skipped**; compare mode regens **winner** only when set.
