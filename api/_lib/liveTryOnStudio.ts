@@ -10,6 +10,7 @@ import {
   activeLiveTryOnStudioPhotoModel,
   buildLiveTryOnStudioTryOnPrompt,
   falEditModelId,
+  liveTryOnPortraitStoragePath,
   type LiveTryOnAngle,
   type LiveTryOnPhotoModel,
 } from './liveTryOnOverlay.js';
@@ -157,11 +158,9 @@ async function deleteStudioJob(bucket: string, promptVersion: string, userId: st
 
 function buildStudioFalInput(
   photoModel: LiveTryOnPhotoModel,
-  userFalUrl: string,
-  mannequinFalUrl: string,
+  imageUrls: string[],
   prompt: string
 ): Record<string, unknown> {
-  const imageUrls = [userFalUrl, mannequinFalUrl];
   if (photoModel === 'gpt2') {
     return {
       prompt,
@@ -242,9 +241,30 @@ export async function startStudioTryOnRender(
     'studio-mannequin-front.webp'
   );
 
-  const prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle);
+  const portraitPath = liveTryOnPortraitStoragePath(
+    promptVersion,
+    unitKey,
+    manifestHash,
+    photoModel,
+    'front'
+  );
+  const hasPortraitRef = await storageObjectExists(bucket, portraitPath);
+  const imageUrls = [userFalUrl, mannequinFalUrl];
+  if (hasPortraitRef) {
+    const portraitFalUrl = await uploadStorageObjectToFal(
+      fal,
+      bucket,
+      portraitPath,
+      `studio-portrait-${photoModel}-front.webp`
+    );
+    imageUrls.push(portraitFalUrl);
+  }
+
+  const prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle, {
+    hasPortraitRef,
+  });
   const falModel = falEditModelId(photoModel);
-  const falInput = buildStudioFalInput(photoModel, userFalUrl, mannequinFalUrl, prompt);
+  const falInput = buildStudioFalInput(photoModel, imageUrls, prompt);
 
   const { request_id: falRequestId } = await fal.queue.submit(falModel, {
     input: falInput,
