@@ -25657,3 +25657,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Fix:** API **`step`**: `portrait` | `overlay` — **one Fal job** per HTTP call (overlay defaults **`WIG_PREVIEW_TRYON_IDEOGRAM_ONLY=true`** = Ideogram only). Client: **6 steps** for NBP only (3 portrait + 3 overlay); **GPT2 compare on-demand** via button. Camera opens on **front overlay** (`resolveLiveTryOnOverlayTripleBestEffort`). **TRY AGAIN** resumes cached Storage steps. Retry once per step on timeout.
 
 **Changes:** `live-try-on-ensure-overlays.ts`, `liveTryOnPrepareAssets.ts`, `liveTryOnOverlayPublicUrls.ts`, `live-try-on/page.tsx`, `api.ts`, `.env.example`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: admin batch pre-gen, Storage-only shopper load
+
+**Context:** User asked to **pre-generate try-on layers in admin/batch** so Live Try On **only loads from Supabase Storage** (no Fal on open; fixes Vercel timeouts).
+
+**Architecture:**
+- **Shopper:** `prepareLiveTryOnAssets` — Storage probe only; `POST /api/live-try-on-ensure-overlays` returns **410 `TRYON_PRE_GENERATED_ONLY`**.
+- **Admin:** **Backend → LIVE TRY-ON** tab (`AdminLiveTryOnBatchPanel`) — founder-only APIs: manifest, status, one step per request (`portrait` | `overlay`). Color mannequin WebPs via existing **`postWigPreviewLiveNoirColorOneAngle`**. **BATCH ALL NOIR COLORS** runs manifest (16 colors × steps).
+- **Shared:** `api/_lib/liveTryOnBatchGenerate.ts`, `liveTryOnBatchManifest.ts` (NOIR defaults + catalog colors).
+
+**Workflow:** COLOR WEBPS → portrait L/F/R → overlay L/F/R (NBP default; optional NBP+GPT2). Paths unchanged: `try-on-portrait/.../hair-v5-photo-woman/...`, `try-on-overlay/...`.
+
+**Changes:** `api/admin/live-try-on-batch-*.ts`, `AdminLiveTryOnBatchPanel.tsx`, `admin/backend/page.tsx`, `liveTryOnPrepareAssets.ts`, `live-try-on-ensure-overlays.ts`, `api.ts`, `vercel.json`. Pushed **`master`** + **`preview/mobile`**.
