@@ -40,7 +40,7 @@ const STEP_LABELS: Record<MissingStep['step'], string> = {
   color: 'Mannequin color WebP',
   portrait: 'Photoreal portrait (NBP/GPT2)',
   overlay_isolate: 'NBP hair isolation (work PNG)',
-  overlay_cut: 'Ideogram cutout → final overlay',
+  overlay_cut: 'White → transparent (final overlay PNG)',
 };
 
 function jobBody(job: LiveTryOnBatchJob, compareModels: boolean, photoModel: LiveTryOnPhotoModel) {
@@ -413,7 +413,7 @@ export default function AdminLiveTryOnBatchPanel() {
           3a · <strong>Isolate</strong> — NBP extracts hair (work PNG, one Fal job)
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          3b · <strong>Cut</strong> — Ideogram alpha → final overlay PNG (one Fal job; Live Try On uses this)
+          3b · <strong>Cut</strong> — white background → transparent PNG (local; fast; Live Try On uses this)
         </p>
       </div>
 
