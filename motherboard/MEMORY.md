@@ -25903,3 +25903,15 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Client:** `LiveTryOnStudioCapture` — `makeupResultUrl`, `showMakeup` toggle, `/assets/makeup-artist-icon.svg` button bottom-right; progress “ADDING PHOTO-READY MAKEUP…”; poll timeout 6min.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio capture UX: snapshot, progress bar, opt-in makeup
+
+**Context:** User refined studio flow: on capture → **freeze selfie snapshot** under dark overlay while rendering; **spinner + timed loading bar** (~2min base / ~1.5min makeup estimates, caps at 95% until done); show **natural result first** then **popup** (Proceed/Cancel) for optional makeup — **no auto makeup pass** (faster default). If Cancel → **ADD MAKEUP** button above Capture Again. Makeup overlay text **inside** render overlay (not separate top hint). Proceed → overlay on result with “ADDING PHOTO-READY MAKEUP…”.
+
+**Implementation (`e329f321`):**
+- Backend: base complete → `phase: base_complete`, keep job; **`POST /api/live-try-on-studio-makeup`** queues makeup on demand. Poll complete includes `jobId`, `makeupAvailable`.
+- Client: `captureSnapshotUrl`, `StudioRenderOverlay` with progress bar, makeup prompt modal, `postLiveTryOnStudioMakeupAndWait`.
+
+Pushed **`master`** + **`preview/mobile`**.
