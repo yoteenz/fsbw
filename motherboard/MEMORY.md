@@ -25935,3 +25935,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Change:** Makeup pass prompt retargeted from “very light natural” to **polished photo-ready glam** (subtle face sculpt, nose contour/highlight, almond eyes, lash extension look, fuller brows/lips, soft glow). UI copy: “ADD POLISHED GLAM”, “ADDING POLISHED GLAM…”.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio glam: heavier DOF blur + subject pop (NBP match)
+
+**Context:** User screenshot — studio GPT output background still too sharp vs NBP thumbs; wants **more blur**, **brighter subject**, **slightly darker background** for center focus.
+
+**Fix:** `STUDIO_GLAM_COMPOSITION` — f/1.4–f/2.8 creamy bokeh (background barely readable), subject ~1–2 stops brighter key light, slightly darkened defocused backdrop, explicit forbid sharp background competing with face.
+
+Pushed **`master`** + **`preview/mobile`**.
