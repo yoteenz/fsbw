@@ -32,15 +32,16 @@ export function parseLiveTryOnPhotoModel(value: string | undefined): LiveTryOnPh
 function angleConstraint(angle: LiveTryOnAngle): string {
   if (angle === 'left') {
     return [
-      'Camera: **left 3/4** portrait — **match the mannequin reference head yaw exactly** (not front-facing).',
-      'Hair mass toward the viewer’s right; **same part direction and shoulder bias** as the reference — do not mirror or rotate.',
+      'This is the **LEFT 3/4 view** (mannequin’s left cheek toward camera): **match the reference head yaw and body angle exactly** — not front-facing.',
+      'Hair mass toward the **viewer’s right** (mannequin’s left); **same part direction and shoulder bias** as the reference — do not mirror or rotate.',
       'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
     ].join(' ');
   }
   if (angle === 'right') {
     return [
-      'Camera: **right 3/4** portrait — **match the mannequin reference head yaw exactly** (not front-facing).',
-      'Hair mass toward the viewer’s left; **same part direction and shoulder bias** as the reference — do not mirror or rotate to front.',
+      'This is the **RIGHT 3/4 view** (mannequin’s right cheek toward camera): **match the reference head yaw and body angle exactly** — true right 3/4, **not** front-facing and **not** a mirrored left pose.',
+      'Hair mass toward the **viewer’s left** (mannequin’s right); **same part direction and shoulder bias** as the reference.',
+      '**Do not** rotate only the eyes or face toward center — **shoulders, neck, and torso** stay in the same right 3/4 pose as the mannequin reference (body angled like the left view, but from the opposite side).',
       'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
     ].join(' ');
   }
