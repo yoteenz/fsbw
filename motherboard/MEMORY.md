@@ -25977,3 +25977,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix (`edf7db25`):** `LiveTryOnStudioCapture` — `viewportFrozenRef` stops canvas video draws immediately; `showStudioImage` when `status === 'result'`, `showMakeupPrompt`, `renderPhase === 'makeup'`, or `makeupOfferPending` (not only `cameraFrozen`). Reset freeze refs on new capture/retake. `postLiveTryOnStudioMakeupAndWait` ignores stale `base_complete` poll snapshots until `phase: makeup` is seen; throws on `makeupError` / missing `makeupImageUrl`. Backend returns `makeupError` when glam Fal job fails instead of silent complete.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio: 422 fallbacks, background/hairline locks, glam sculpt, camera flash fix
+
+**Context:** User reported random **422 Unprocessable Entity**, **hallucinated background objects**, **baby hairs** when refs have none, weak **polished glam** (shadow-only contour, no slimmer nose / fuller upper lip / snatched jaw, image **shifted right**), **“ALLOW CAMERA”** flashing over render overlay on capture, and wanted **“DO NOT LEAVE THIS WINDOW.”** under rendering label.
+
+**Fix:** `LiveTryOnStudioCapture` — camera `useEffect` no longer re-runs on `renderPhase` change (stable `drawPreview` + `renderPhaseRef`); overlay warning line; hide permission/status hints during render. `liveTryOnOverlay.ts` — `STUDIO_BACKGROUND_LOCK`, `STUDIO_HAIRLINE_LOCK`, stronger **IG baddie** makeup prompt with `STUDIO_MAKEUP_FRAMING_LOCK` (pixel-aligned, no pan). `liveTryOnStudio.ts` — 2-image attempts first (3-image portrait last), extra GPT2 low/compact/jpeg fallbacks; selfie downscale **1024px**; makeup pass low-quality + framing retries.
+
+Pushed **`master`** + **`preview/mobile`**.
