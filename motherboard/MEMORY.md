@@ -25760,3 +25760,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Ops — compare OFF BLACK:** Admin → OFF BLACK → **NBP + GPT2 COMPARE** → check **Overwrite** → **RUN PORTRAITS ONLY** (6 Fal jobs) → compare in admin grid or Live Try On → **WINNER FOR CUT** → **RUN NEXT STEP** ×6 (3 isolate + 3 Ideogram cut for winner only) → set Vercel **`WIG_PREVIEW_TRYON_PHOTO_MODEL`** to `nbp` or `gpt2` for shopper default.
 
 **Note:** Camera alignment (wig placement vs face oval) is separate from batch cut — may need composite tuning in `liveTryOnComposite.ts` / `liveTryOnYaw.ts` after winner picked. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Live try-on: face mesh tracking (no static oval)
+
+**Context:** User reported static red **oval** impractical for live try-on; **face cutout** left portrait/background remnants in overlay making result unrealistic. Wanted real **face tracking**.
+
+**Fix (`4490dafa`):** Removed fixed oval UI. **MediaPipe face mesh contour** (`FACE_MESH_OVAL_INDICES`) drives: (1) dashed red **tracking outline** on live preview, (2) **polygon face punch** through wig layer (`drawWigOverlayTracked`) instead of coarse ellipse — clears baked portrait background in bad cuts while live camera shows through. **Smoothed** wig placement (`lerpPlacement`). Tuned hairline anchor + scale in `wigPlacementFromLandmarks`. Copy: "FACE TRACKING ALIGNS THE WIG…" Pushed **`master`** + **`preview/mobile`**.
