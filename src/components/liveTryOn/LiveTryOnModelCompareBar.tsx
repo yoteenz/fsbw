@@ -21,7 +21,7 @@ export default function LiveTryOnModelCompareBar({ activeModel, compare, onSelec
         className="text-center uppercase"
         style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
       >
-        SAME PROMPT — COMPARE MODELS. TAP TO USE THAT HAIR ON LIVE VIEW.
+        SAME PROMPT — COMPARE PORTRAITS. TAP A MODEL FOR LIVE VIEW (NEEDS OVERLAY CUT IN ADMIN).
       </p>
       <div className="flex gap-2">
         {MODELS.map((model) => {

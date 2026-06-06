@@ -182,9 +182,15 @@ export type LiveTryOnBatchMissingStep = {
 
 const ANGLES: LiveTryOnAngle[] = ['left', 'front', 'right'];
 
+export type ListMissingLiveTryOnBatchOpts = {
+  /** When comparing NBP + GPT2, only queue overlay steps for the picked winner. */
+  overlayWinner?: LiveTryOnPhotoModel | null;
+};
+
 export async function listMissingLiveTryOnBatchSteps(
   job: LiveTryOnBatchJob,
-  photoModels: LiveTryOnPhotoModel[]
+  photoModels: LiveTryOnPhotoModel[],
+  opts?: ListMissingLiveTryOnBatchOpts
 ): Promise<{ manifestHash: string; missing: LiveTryOnBatchMissingStep[] }> {
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
@@ -193,6 +199,12 @@ export async function listMissingLiveTryOnBatchSteps(
   const unitKey = selections.unitKey;
   const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
   const missing: LiveTryOnBatchMissingStep[] = [];
+  const overlayModels: LiveTryOnPhotoModel[] =
+    photoModels.length > 1
+      ? opts?.overlayWinner
+        ? [opts.overlayWinner]
+        : []
+      : photoModels;
 
   for (const angle of ANGLES) {
     const colorOk = await storageObjectExists(bucket, colorPaths[angle]);
@@ -202,6 +214,20 @@ export async function listMissingLiveTryOnBatchSteps(
     }
 
     for (const photoModel of photoModels) {
+      const portraitPath = liveTryOnPortraitStoragePath(
+        promptVersion,
+        unitKey,
+        manifestHash,
+        photoModel,
+        angle
+      );
+      const hasPortrait = await storageObjectExists(bucket, portraitPath);
+      if (!hasPortrait) {
+        missing.push({ step: 'portrait', angle, photoModel });
+      }
+    }
+
+    for (const photoModel of overlayModels) {
       const portraitPath = liveTryOnPortraitStoragePath(
         promptVersion,
         unitKey,
@@ -224,10 +250,8 @@ export async function listMissingLiveTryOnBatchSteps(
         angle
       );
       const hasPortrait = await storageObjectExists(bucket, portraitPath);
-      if (!hasPortrait) {
-        missing.push({ step: 'portrait', angle, photoModel });
-        continue;
-      }
+      if (!hasPortrait) continue;
+
       const hasOverlay = await storageObjectExists(bucket, overlayPath);
       if (hasOverlay) continue;
 
@@ -342,7 +366,8 @@ async function workPngToHairOverlay(buf: Buffer): Promise<Buffer> {
 
 function useIdeogramForOverlayCut(): boolean {
   const v = (process.env.WIG_PREVIEW_TRYON_OVERLAY_USE_IDEOGRAM || '').trim().toLowerCase();
-  return v === 'true' || v === '1';
+  if (v === 'false' || v === '0') return false;
+  return true;
 }
 
 async function runIdeogramCutout(fal: FalClient, isolateFalUrl: string): Promise<Buffer> {

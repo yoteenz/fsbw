@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { LiveTryOnPhotoModel } from '../../../constants/liveTryOnSpikeAssets';
+import {
+  LIVE_TRY_ON_PHOTO_MODEL_LABELS,
+  type LiveTryOnPhotoModel,
+} from '../../../constants/liveTryOnSpikeAssets';
 import {
   LIVE_TRY_ON_BATCH_NOIR_DEFAULTS,
   liveTryOnNoirBatchManifestRows,
@@ -10,6 +13,7 @@ import {
   postAdminLiveTryOnBatchStatus,
   postAdminLiveTryOnBatchStep,
   postWigPreviewLiveNoirColorOneAngle,
+  type LiveTryOnPortraitPreviewUrls,
 } from '../../../utils/api';
 
 type MissingStep = {
@@ -20,7 +24,7 @@ type MissingStep = {
 
 type LogLine = { t: string; msg: string };
 
-type BusyAction = 'status' | 'color' | 'next' | 'row' | 'batch' | 'auto';
+type BusyAction = 'status' | 'color' | 'next' | 'row' | 'batch' | 'auto' | 'portraits';
 
 type PipelineSummary = {
   colorDone: boolean;
@@ -40,25 +44,39 @@ const STEP_LABELS: Record<MissingStep['step'], string> = {
   color: 'Mannequin color WebP',
   portrait: 'Photoreal portrait (NBP/GPT2)',
   overlay_isolate: 'NBP hair isolation (work PNG)',
-  overlay_cut: 'White → transparent (final overlay PNG)',
+  overlay_cut: 'Ideogram cut → transparent overlay PNG',
 };
 
-function jobBody(job: LiveTryOnBatchJob, compareModels: boolean, photoModel: LiveTryOnPhotoModel) {
+function jobBody(
+  job: LiveTryOnBatchJob,
+  compareBoth: boolean,
+  photoModel: LiveTryOnPhotoModel,
+  overlayWinner: LiveTryOnPhotoModel | null
+) {
   return {
     ...job,
     styling: 'NONE',
-    compareModels,
-    photoModel,
+    compareModels: compareBoth,
+    photoModel: compareBoth ? undefined : photoModel,
+    overlayWinner: compareBoth && overlayWinner ? overlayWinner : undefined,
   };
 }
 
-function expectedTotals(compareBoth: boolean): { portraitsTotal: number; overlaysTotal: number } {
-  const models = compareBoth ? 2 : 1;
-  return { portraitsTotal: 3 * models, overlaysTotal: 3 * models };
+function expectedTotals(
+  compareBoth: boolean,
+  overlayWinner: LiveTryOnPhotoModel | null
+): { portraitsTotal: number; overlaysTotal: number } {
+  const portraitModels = compareBoth ? 2 : 1;
+  const overlayModels = compareBoth ? (overlayWinner ? 1 : 0) : 1;
+  return { portraitsTotal: 3 * portraitModels, overlaysTotal: 3 * overlayModels };
 }
 
-function finalOverlayCounts(missing: MissingStep[], compareBoth: boolean) {
-  const { overlaysTotal } = expectedTotals(compareBoth);
+function finalOverlayCounts(
+  missing: MissingStep[],
+  compareBoth: boolean,
+  overlayWinner: LiveTryOnPhotoModel | null
+) {
+  const { overlaysTotal } = expectedTotals(compareBoth, overlayWinner);
   const pendingFinal = new Set(
     missing
       .filter((m) => m.step === 'overlay_isolate' || m.step === 'overlay_cut')
@@ -74,14 +92,20 @@ function finalOverlayCounts(missing: MissingStep[], compareBoth: boolean) {
   };
 }
 
-function summarizePipeline(missing: MissingStep[], compareBoth: boolean): PipelineSummary {
-  const { portraitsTotal } = expectedTotals(compareBoth);
-  const { overlaysTotal, overlaysDone, overlayStepsLeft } = finalOverlayCounts(missing, compareBoth);
+function summarizePipeline(
+  missing: MissingStep[],
+  compareBoth: boolean,
+  overlayWinner: LiveTryOnPhotoModel | null,
+  awaitingWinner: boolean
+): PipelineSummary {
+  const { portraitsTotal } = expectedTotals(compareBoth, overlayWinner);
+  const { overlaysTotal, overlaysDone, overlayStepsLeft } = finalOverlayCounts(
+    missing,
+    compareBoth,
+    overlayWinner
+  );
   const missingColor = missing.filter((m) => m.step === 'color');
   const missingPortrait = missing.filter((m) => m.step === 'portrait');
-  const missingOverlaySteps = missing.filter(
-    (m) => m.step === 'overlay_isolate' || m.step === 'overlay_cut'
-  );
 
   const colorDone = missingColor.length === 0;
   const portraitsDone = portraitsTotal - missingPortrait.length;
@@ -115,21 +139,6 @@ function summarizePipeline(missing: MissingStep[], compareBoth: boolean): Pipeli
     };
   }
 
-  if (missingPortrait.length > 0 && missingOverlaySteps.length > 0) {
-    return {
-      colorDone: true,
-      portraitsDone,
-      portraitsTotal,
-      overlaysDone,
-      overlaysTotal,
-      shopperReady: false,
-      headline: `PORTRAITS ${portraitsDone}/${portraitsTotal} · OVERLAYS ${overlaysDone}/${overlaysTotal} — SHOPPERS BLOCKED`,
-      detail:
-        'Some photoreal portraits are still missing, and hair-only overlay PNGs have not been uploaded yet. Live Try On needs the overlay files — not the portraits.',
-      nextAction: 'Tap RUN ALL FOR ROW to finish portraits, then Ideogram overlay steps for this color.',
-    };
-  }
-
   if (missingPortrait.length > 0) {
     return {
       colorDone: true,
@@ -139,8 +148,25 @@ function summarizePipeline(missing: MissingStep[], compareBoth: boolean): Pipeli
       overlaysTotal,
       shopperReady: false,
       headline: `STEP 2 · PORTRAITS ${portraitsDone}/${portraitsTotal}`,
-      detail: `Photoreal woman portraits from the mannequin reference still need: ${missingPortrait.map((m) => `${m.angle}${m.photoModel ? ` (${m.photoModel})` : ''}`).join(', ')}.`,
-      nextAction: 'Tap RUN NEXT STEP or RUN ALL FOR ROW. Overlays come after all portraits exist.',
+      detail: compareBoth
+        ? `Generate NBP + GPT Image 2 portraits from the same mannequin prompt. Still need: ${missingPortrait.map((m) => `${m.angle} (${m.photoModel})`).join(', ')}.`
+        : `Photoreal portraits still need: ${missingPortrait.map((m) => `${m.angle}${m.photoModel ? ` (${m.photoModel})` : ''}`).join(', ')}.`,
+      nextAction: 'Tap RUN PORTRAITS ONLY or RUN NEXT STEP. Compare models before locking a winner for cut.',
+    };
+  }
+
+  if (awaitingWinner && compareBoth && !overlayWinner) {
+    return {
+      colorDone: true,
+      portraitsDone,
+      portraitsTotal,
+      overlaysDone: 0,
+      overlaysTotal: 3,
+      shopperReady: false,
+      headline: 'STEP 2B · PICK WINNER FOR CUT',
+      detail:
+        'Both portrait sets are ready. Compare NBP vs GPT Image 2 below (or on Live Try On). Lock a winner — only that model gets isolate + Ideogram cut.',
+      nextAction: 'Select WINNER FOR CUT, then RUN NEXT STEP for isolate + Ideogram (6 steps: 3 isolate + 3 cut).',
     };
   }
 
@@ -152,10 +178,42 @@ function summarizePipeline(missing: MissingStep[], compareBoth: boolean): Pipeli
     overlaysTotal,
     shopperReady: false,
     headline: `STEP 3 · OVERLAYS ${overlaysDone}/${overlaysTotal} — SHOPPERS BLOCKED`,
-    detail:
-      'Portraits are done, but hair-only overlay PNGs are missing. Each angle needs two Fal jobs: NBP isolate, then Ideogram cut.',
-    nextAction: `Tap RUN NEXT STEP once per MISSING line (${overlayStepsLeft} Fal job(s) left).`,
+    detail: overlayWinner
+      ? `Cutting overlays for ${overlayWinner.toUpperCase()} only. Each angle: NBP hair isolate, then Ideogram alpha.`
+      : 'Hair-only overlay PNGs are missing. Each angle needs NBP isolate, then Ideogram cut.',
+    nextAction: `Tap RUN NEXT STEP once per MISSING line (${overlayStepsLeft} step(s) left).`,
   };
+}
+
+function PortraitCompareGrid({
+  model,
+  urls,
+}: {
+  model: LiveTryOnPhotoModel;
+  urls?: LiveTryOnPortraitPreviewUrls;
+}) {
+  if (!urls?.ready) return null;
+  const angles = ['left', 'front', 'right'] as const;
+  return (
+    <div className="flex-1 flex flex-col gap-1">
+      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#000' }}>
+        {LIVE_TRY_ON_PHOTO_MODEL_LABELS[model]}
+      </p>
+      <div className="grid grid-cols-3 gap-0.5">
+        {angles.map((angle) => (
+          <a
+            key={angle}
+            href={urls[angle]}
+            target="_blank"
+            rel="noreferrer"
+            className="aspect-[3/4] bg-black/5 overflow-hidden block"
+          >
+            <img src={urls[angle]} alt="" className="w-full h-full object-cover object-top" />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function formatMissingLine(m: MissingStep): string {
@@ -168,6 +226,12 @@ export default function AdminLiveTryOnBatchPanel() {
   const [selectedId, setSelectedId] = useState(manifest[0]?.id ?? '');
   const [photoModel, setPhotoModel] = useState<LiveTryOnPhotoModel>('nbp');
   const [compareBoth, setCompareBoth] = useState(false);
+  const [overlayWinner, setOverlayWinner] = useState<LiveTryOnPhotoModel | null>(null);
+  const [portraitPreviews, setPortraitPreviews] = useState<
+    Partial<Record<LiveTryOnPhotoModel, LiveTryOnPortraitPreviewUrls>>
+  >({});
+  const [awaitingWinner, setAwaitingWinner] = useState(false);
+  const [forceOverwrite, setForceOverwrite] = useState(false);
   const [missing, setMissing] = useState<MissingStep[] | null>(null);
   const [manifestHash, setManifestHash] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<BusyAction | null>(null);
@@ -184,8 +248,9 @@ export default function AdminLiveTryOnBatchPanel() {
   }, [manifest, selectedId]);
 
   const pipeline = useMemo(
-    () => (missing ? summarizePipeline(missing, compareBoth) : null),
-    [missing, compareBoth]
+    () =>
+      missing ? summarizePipeline(missing, compareBoth, overlayWinner, awaitingWinner) : null,
+    [missing, compareBoth, overlayWinner, awaitingWinner]
   );
 
   const pushLog = useCallback((msg: string) => {
@@ -195,17 +260,26 @@ export default function AdminLiveTryOnBatchPanel() {
 
   const refreshStatusCore = useCallback(async () => {
     await getAdminLiveTryOnBatchManifest();
-    const res = await postAdminLiveTryOnBatchStatus(jobBody(selectedJob, compareBoth, photoModel));
+    const res = await postAdminLiveTryOnBatchStatus(
+      jobBody(selectedJob, compareBoth, photoModel, overlayWinner)
+    );
     setMissing(res.missing as MissingStep[]);
     setManifestHash(res.manifestHash);
-    const summary = summarizePipeline(res.missing as MissingStep[], compareBoth);
+    setPortraitPreviews(res.portraits ?? {});
+    setAwaitingWinner(Boolean(res.awaitingWinner));
+    const summary = summarizePipeline(
+      res.missing as MissingStep[],
+      compareBoth,
+      overlayWinner,
+      Boolean(res.awaitingWinner)
+    );
     if (res.complete) setLastError(null);
     pushLog(
       res.complete
         ? `READY · ${selectedJob.color} · hash ${res.manifestHash.slice(0, 8)}…`
         : `${summary.headline} · ${selectedJob.color}`
     );
-  }, [selectedJob, compareBoth, photoModel, pushLog]);
+  }, [selectedJob, compareBoth, photoModel, overlayWinner, pushLog]);
 
   const refreshStatus = useCallback(async () => {
     setBusyAction('status');
@@ -238,7 +312,7 @@ export default function AdminLiveTryOnBatchPanel() {
     return () => {
       cancelled = true;
     };
-  }, [selectedId, compareBoth, photoModel]); // eslint-disable-line react-hooks/exhaustive-deps -- refresh when row/model changes
+  }, [selectedId, compareBoth, photoModel, overlayWinner]); // eslint-disable-line react-hooks/exhaustive-deps -- refresh when row/model changes
 
   const ensureColorWebpsCore = useCallback(
     async (job: LiveTryOnBatchJob, label: string) => {
@@ -269,24 +343,29 @@ export default function AdminLiveTryOnBatchPanel() {
       }
       const model = step.photoModel || photoModel;
       await postAdminLiveTryOnBatchStep({
-        ...jobBody(job, compareBoth, model),
+        ...jobBody(job, compareBoth, photoModel, overlayWinner),
         step: step.step,
         angle: step.angle,
         photoModel: model,
+        forceRegenerate: forceOverwrite,
       });
       setLastError(null);
       pushLog(`${label} · ${model.toUpperCase()} · ${step.step.toUpperCase()} · ${step.angle.toUpperCase()} OK`);
     },
-    [compareBoth, photoModel, ensureColorWebpsCore, pushLog]
+    [compareBoth, photoModel, overlayWinner, forceOverwrite, ensureColorWebpsCore, pushLog]
   );
 
   const runAllMissingForJob = useCallback(
     async (job: LiveTryOnBatchJob, label: string) => {
-      const status = await postAdminLiveTryOnBatchStatus(jobBody(job, compareBoth, photoModel));
+      const status = await postAdminLiveTryOnBatchStatus(
+        jobBody(job, compareBoth, photoModel, overlayWinner)
+      );
       let steps = [...status.missing] as MissingStep[];
       if (steps.some((s) => s.step === 'color')) {
         await ensureColorWebpsCore(job, label);
-        const again = await postAdminLiveTryOnBatchStatus(jobBody(job, compareBoth, photoModel));
+        const again = await postAdminLiveTryOnBatchStatus(
+          jobBody(job, compareBoth, photoModel, overlayWinner)
+        );
         steps = again.missing as MissingStep[];
       }
       const ordered = [...steps].sort((a, b) => {
@@ -302,8 +381,39 @@ export default function AdminLiveTryOnBatchPanel() {
         await runOneStep(job, label, step);
       }
     },
-    [compareBoth, photoModel, pushLog, runOneStep, ensureColorWebpsCore]
+    [compareBoth, photoModel, overlayWinner, pushLog, runOneStep, ensureColorWebpsCore]
   );
+
+  const runPortraitsOnly = useCallback(async () => {
+    if (!missing?.length) {
+      await refreshStatus();
+      return;
+    }
+    const portraitSteps = missing.filter((s) => s.step === 'portrait');
+    if (!portraitSteps.length) {
+      pushLog('No portrait steps left — pick a winner or run overlay cut');
+      return;
+    }
+    setBusyAction('portraits');
+    try {
+      for (const step of portraitSteps) {
+        pushLog(`RUNNING · ${formatMissingLine(step)}…`);
+        await runOneStep(selectedJob, selectedJob.color, step);
+      }
+      await refreshStatusCore();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Portrait batch failed';
+      setLastError(msg);
+      pushLog(`ERROR · ${msg}`);
+      try {
+        await refreshStatusCore();
+      } catch {
+        /* ignore */
+      }
+    } finally {
+      setBusyAction(null);
+    }
+  }, [missing, refreshStatus, selectedJob, runOneStep, refreshStatusCore, pushLog]);
 
   const handleColorWebps = useCallback(async () => {
     setBusyAction('color');
@@ -406,14 +516,16 @@ export default function AdminLiveTryOnBatchPanel() {
           1 · <strong>Color WebPs</strong> — grey NOIR mannequin L/F/R (your BAW reference)
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          2 · <strong>Portraits</strong> — NBP puts that wig on a photoreal woman (stored for compare; not shown on
-          camera)
+          2 · <strong>Portraits</strong> — same prompt on NBP + GPT Image 2 (compare woman + angles before cut)
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          3a · <strong>Isolate</strong> — NBP extracts hair (work PNG, one Fal job)
+          2b · <strong>Pick winner</strong> — lock NBP or GPT Image 2 for overlay cut
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          3b · <strong>Cut</strong> — white background → transparent PNG (local; fast; Live Try On uses this)
+          3a · <strong>Isolate</strong> — NBP extracts hair from winner portrait (work PNG)
+        </p>
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
+          3b · <strong>Cut</strong> — Ideogram removes background → transparent PNG (Live Try On uses this)
         </p>
       </div>
 
@@ -442,6 +554,7 @@ export default function AdminLiveTryOnBatchPanel() {
             onChange={() => {
               setPhotoModel('nbp');
               setCompareBoth(false);
+              setOverlayWinner(null);
             }}
             disabled={busy}
           />{' '}
@@ -451,13 +564,88 @@ export default function AdminLiveTryOnBatchPanel() {
           <input
             type="radio"
             name="tryonModel"
-            checked={compareBoth}
-            onChange={() => setCompareBoth(true)}
+            checked={photoModel === 'gpt2' && !compareBoth}
+            onChange={() => {
+              setPhotoModel('gpt2');
+              setCompareBoth(false);
+              setOverlayWinner(null);
+            }}
             disabled={busy}
           />{' '}
-          NBP + GPT2
+          GPT2 ONLY
+        </label>
+        <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}>
+          <input
+            type="radio"
+            name="tryonModel"
+            checked={compareBoth}
+            onChange={() => {
+              setCompareBoth(true);
+              setOverlayWinner(null);
+            }}
+            disabled={busy}
+          />{' '}
+          NBP + GPT2 COMPARE
         </label>
       </div>
+
+      {compareBoth ? (
+        <div className="border border-black/20 p-2 bg-white/70 flex flex-col gap-2">
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#000' }}>
+            WINNER FOR CUT (after portraits)
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {(['nbp', 'gpt2'] as LiveTryOnPhotoModel[]).map((model) => (
+              <label key={model} style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}>
+                <input
+                  type="radio"
+                  name="overlayWinner"
+                  checked={overlayWinner === model}
+                  onChange={() => setOverlayWinner(model)}
+                  disabled={busy}
+                />{' '}
+                {LIVE_TRY_ON_PHOTO_MODEL_LABELS[model]}
+              </label>
+            ))}
+            <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}>
+              <input
+                type="radio"
+                name="overlayWinner"
+                checked={!overlayWinner}
+                onChange={() => setOverlayWinner(null)}
+                disabled={busy}
+              />{' '}
+              NOT PICKED YET
+            </label>
+          </div>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', lineHeight: 1.5 }}>
+            Set Vercel <code>WIG_PREVIEW_TRYON_PHOTO_MODEL</code> to the winner (<code>nbp</code> or <code>gpt2</code>)
+            so shoppers load that overlay by default.
+          </p>
+        </div>
+      ) : null}
+
+      {portraitPreviews.nbp?.ready || portraitPreviews.gpt2?.ready ? (
+        <div className="border border-black/20 p-2 bg-white/80 flex flex-col gap-2">
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#000' }}>
+            PORTRAIT COMPARE (tap to enlarge)
+          </p>
+          <div className="flex gap-2">
+            <PortraitCompareGrid model="nbp" urls={portraitPreviews.nbp} />
+            <PortraitCompareGrid model="gpt2" urls={portraitPreviews.gpt2} />
+          </div>
+        </div>
+      ) : null}
+
+      <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}>
+        <input
+          type="checkbox"
+          checked={forceOverwrite}
+          onChange={(e) => setForceOverwrite(e.target.checked)}
+          disabled={busy}
+        />{' '}
+        Overwrite existing Storage files on next run (regen portraits / overlays)
+      </label>
 
       {manifestHash ? (
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
@@ -550,6 +738,17 @@ export default function AdminLiveTryOnBatchPanel() {
         </button>
         <button
           type="button"
+          disabled={busy || !missing?.some((s) => s.step === 'portrait')}
+          aria-busy={busyAction === 'portraits'}
+          onClick={() => void runPortraitsOnly()}
+          className="text-[10px] border border-black px-3 py-1.5 bg-white/80 min-w-[7.5rem] disabled:opacity-55"
+          style={{ fontFamily: '"Futura PT Medium"', color: '#000' }}
+          title="Generate all missing portraits (NBP + GPT2 when comparing) — no cut yet"
+        >
+          {buttonLabel('portraits', 'RUN PORTRAITS ONLY', 'RUNNING PORTRAITS…')}
+        </button>
+        <button
+          type="button"
           disabled={busy || !missing?.length}
           aria-busy={busyAction === 'next'}
           onClick={() => void runNextMissing()}
@@ -603,7 +802,10 @@ export default function AdminLiveTryOnBatchPanel() {
           <strong>COLOR WEBPS</strong> — Step 1: generate/reuse grey mannequin left/front/right for this color.
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          <strong>RUN NEXT STEP</strong> — one Fal job (next line in MISSING: isolate or cut).
+          <strong>RUN PORTRAITS ONLY</strong> — Step 2: all missing NBP/GPT2 portraits; compare before cut.
+        </p>
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
+          <strong>RUN NEXT STEP</strong> — one step (portrait, isolate, or Ideogram cut).
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
           <strong>RUN ALL FOR ROW</strong> — finish everything missing for the selected color (best for OFF BLACK now).
