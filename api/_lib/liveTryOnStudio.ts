@@ -23,7 +23,7 @@ import {
   wigPreviewManifestHashLiveColorTier,
 } from './wigPreviewSelectionHash.js';
 
-const STUDIO_CAPTURE_MAX_PX = 1280;
+const STUDIO_CAPTURE_MAX_PX = 1024;
 const STUDIO_JOB_MAX_AGE_MS = 15 * 60 * 1000;
 
 type FalClient = {
@@ -157,39 +157,51 @@ async function submitStudioRenderWithFallbacks(
 ): Promise<{ falRequestId: string; photoModel: LiveTryOnPhotoModel; falModel: string }> {
   const twoUrls = [selfieUrl, mannequinUrl];
   const threeUrls = portraitUrl ? [...twoUrls, portraitUrl] : twoUrls;
+  const twoImgPrompt = buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, {
+    hasPortraitRef: false,
+    headYawDeg,
+  });
+  const compactPrompt = buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg);
 
   const attempts: StudioSubmitAttempt[] = [
+    { photoModel: preferredModel, imageUrls: twoUrls, prompt: twoImgPrompt },
     {
+      photoModel: preferredModel,
+      imageUrls: twoUrls,
+      prompt: twoImgPrompt,
+      inputOverrides: { omitImageSize: true },
+    },
+    {
+      photoModel: 'gpt2',
+      imageUrls: twoUrls,
+      prompt: twoImgPrompt,
+      inputOverrides: { quality: 'low' },
+    },
+    {
+      photoModel: 'gpt2',
+      imageUrls: twoUrls,
+      prompt: compactPrompt,
+      inputOverrides: { output_format: 'png', quality: 'low', omitImageSize: true },
+    },
+    {
+      photoModel: 'gpt2',
+      imageUrls: twoUrls,
+      prompt: compactPrompt,
+      inputOverrides: { output_format: 'jpeg', quality: 'low', omitImageSize: true },
+    },
+    { photoModel: 'nbp', imageUrls: twoUrls, prompt: compactPrompt },
+  ];
+
+  if (portraitUrl) {
+    attempts.push({
       photoModel: preferredModel,
       imageUrls: threeUrls,
       prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, {
-        hasPortraitRef: Boolean(portraitUrl),
+        hasPortraitRef: true,
         headYawDeg,
       }),
-    },
-    {
-      photoModel: preferredModel,
-      imageUrls: twoUrls,
-      prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, { hasPortraitRef: false, headYawDeg }),
-    },
-    {
-      photoModel: 'gpt2',
-      imageUrls: twoUrls,
-      prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, { hasPortraitRef: false, headYawDeg }),
-      inputOverrides: { output_format: 'png' },
-    },
-    {
-      photoModel: 'gpt2',
-      imageUrls: twoUrls,
-      prompt: buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg),
-      inputOverrides: { output_format: 'png', quality: 'low' },
-    },
-    {
-      photoModel: 'nbp',
-      imageUrls: twoUrls,
-      prompt: buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg),
-    },
-  ];
+    });
+  }
 
   const seen = new Set<string>();
   let lastErr: Error | undefined;
@@ -226,7 +238,14 @@ async function submitStudioMakeupWithFallbacks(
 ): Promise<string> {
   const attempts = [
     { prompt: buildLiveTryOnStudioMakeupPassPrompt(), overrides: undefined as StudioFalInputOverrides | undefined },
-    { prompt: buildLiveTryOnStudioMakeupPassPromptCompact(), overrides: { output_format: 'png' as const, quality: 'low' as const } },
+    {
+      prompt: buildLiveTryOnStudioMakeupPassPrompt(),
+      overrides: { quality: 'low' as const, omitImageSize: true },
+    },
+    {
+      prompt: buildLiveTryOnStudioMakeupPassPromptCompact(),
+      overrides: { output_format: 'png' as const, quality: 'low' as const, omitImageSize: true },
+    },
   ];
   let lastErr: Error | undefined;
   for (const attempt of attempts) {

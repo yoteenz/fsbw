@@ -78,6 +78,28 @@ const STUDIO_GLAM_COMPOSITION = [
   '**Forbidden:** sharp readable background; flat even lighting where background competes with the face; background as bright as the subject.',
 ].join(' ');
 
+/** Keep the selfie environment literal — blur only, never invent scenery. */
+const STUDIO_BACKGROUND_LOCK = [
+  '**BACKGROUND (mandatory):** Preserve **only** what exists in IMAGE 1 — same walls, furniture, doors, and clutter positions.',
+  'Apply **blur/defocus to existing pixels only** — do **not** repaint, replace, or “upgrade” the room.',
+  '**FORBIDDEN:** adding plants, lamps, mirrors, art, shelves, beds, chairs, decor, windows, people, or any object **not visible** in the selfie.',
+  '**FORBIDDEN:** swapping to a studio backdrop, grey seamless, or a “cleaner” invented room.',
+].join(' ');
+
+/** Prevent hallucinated edge frizz / baby hairs at the hairline. */
+const STUDIO_HAIRLINE_LOCK = [
+  '**HAIRLINE EDGE (mandatory):** Match the **natural hairline** at forehead and temples from IMAGE 1 — clean lace blend only where the wig meets skin.',
+  '**FORBIDDEN:** baby hairs, wispy edge frizz, flyaways, or micro-strands on the forehead/temples **unless they clearly exist** in IMAGE 1 natural hair.',
+  'Do **not** copy wispy edges, baby hairs, or skin-adjacent frizz from the mannequin or portrait reference onto the customer’s skin.',
+].join(' ');
+
+/** Makeup pass must not reframe or pan the finished render. */
+const STUDIO_MAKEUP_FRAMING_LOCK = [
+  '**FRAMING LOCK (critical):** Output must be **pixel-aligned** with IMAGE 1 — **identical crop, scale, aspect ratio, head position, and horizontal center**.',
+  '**FORBIDDEN:** pan right/left, zoom, reframe, subject drift, or any shift in composition.',
+  'Treat IMAGE 1 as a **photograph to preserve** — edit **face-skin makeup pixels only**; **zero** changes to hair, wig, lace, neck, clothing, or background pixels.',
+].join(' ');
+
 function studioHeadYawDegrees(poseAngle: LiveTryOnAngle, headYawDeg?: number): number {
   if (typeof headYawDeg === 'number' && Number.isFinite(headYawDeg)) {
     return Math.round(Math.max(-40, Math.min(40, headYawDeg)));
@@ -174,7 +196,7 @@ export function buildLiveTryOnStudioTryOnPrompt(
     ? [
         '**IMAGE 2** is the **front mannequin** — wig **color**, length, density, curl, and lace.',
         '**IMAGE 3** is the **GPT portrait render** — copy its **exact** shoulder sweep, length drape, and hair silhouette onto IMAGE 1 (same as admin portrait thumbs).',
-        'Replace **only** the hair on IMAGE 1; face stays from IMAGE 1; drape geometry from IMAGE 3.',
+        'Replace **only** the hair on IMAGE 1; face stays from IMAGE 1; drape geometry from IMAGE 3 — **not** hairline baby hairs or skin wisps from IMAGE 3.',
       ]
     : [
         '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace, color, and shoulder sweep** (not head angle).',
@@ -192,6 +214,8 @@ export function buildLiveTryOnStudioTryOnPrompt(
       ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut.'
       : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut.',
     STUDIO_GLAM_COMPOSITION,
+    STUDIO_BACKGROUND_LOCK,
+    STUDIO_HAIRLINE_LOCK,
     '**No visible makeup** — bare natural skin as in the selfie; do not add lipstick, blush, or eye makeup.',
     'Realistic hairline blend at the lace front.',
     '**Delete from output only:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo — never delete or swap the customer’s real room.',
@@ -214,7 +238,7 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
     `Keep face, skin, pose, and room from IMAGE 1. Head yaw ${yawLabel}.`,
     `Replace only hair with lace-front wig color ${label} (#${hex}) from IMAGE 2.`,
     'Center part on skull midline at this yaw. One-sided drape over viewer left shoulder.',
-    'Heavy background bokeh; brighten subject; keep real room.',
+    'Heavy background bokeh on existing room only — do not add objects. No baby hairs on skin.',
     'No makeup. Photoreal. No text.',
   ].join(' ');
 }
@@ -226,14 +250,16 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
 export function buildLiveTryOnStudioMakeupPassPrompt(): string {
   return [
     '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, lace, part, pose, expression, background, lighting, and outfit.',
-    'Apply a **polished photo-ready glam** pass on **face skin only** — same person, still recognizable; photoreal editorial, **not** cartoon or plastic.',
-    '**Face sculpt (subtle):** slightly **slimmer, more defined jawline** and cheek contour; forehead reads a touch **smaller** via soft shading — **do not** swap identity or bone structure drastically.',
-    '**Nose:** gentle **slim contour** on sides + soft **highlight** down the bridge and tip — refined, not surgical.',
-    '**Eyes:** shape reads more **almond**; **brighten undereyes** (concealer effect); add **natural wispy lashes** (longer, fuller, curled — lash-extension look, not spidery strips).',
+    STUDIO_MAKEUP_FRAMING_LOCK,
+    'Apply **polished IG baddie / babygirl glam** on **face skin only** — same person, still recognizable; photoreal editorial, **not** cartoon or plastic.',
+    '**Jaw + cheeks (snatched sculpt):** slim the **jawline** and lower face with **precise contour** under cheekbones and along the jaw — paired with **highlight** on chin and upper cheekbones so the face reads **snatched**, not muddy brown shadow.',
+    '**Nose (slimmer):** **narrow the nose visually** with soft **side contour** on the alae + **highlight** down the bridge and tip — refined and slimmer, not just darker sides.',
+    '**Forehead:** reads slightly **smaller** via soft hairline-adjacent shading — do not shrink the head.',
+    '**Eyes:** shape reads more **almond**; **brighten undereyes** (concealer effect); **natural wispy lashes** (longer, fuller, curled — lash-extension look, not spidery strips).',
     '**Brows:** fill and define for **fuller, cleaner arches** — match natural brow color.',
-    '**Lips:** **fuller, plump** appearance with soft satin/nude-pink finish — not overlined clown lips.',
+    '**Lips (critical):** make the **upper lip visibly fuller** — plump **cupid’s bow** and center upper lip; soft satin nude-pink finish — not overlined clown lips.',
     '**Skin:** smooth evening with **soft glow** on forehead and cheekbones; keep believable texture (light freckles/moles OK) — airbrushed but still human.',
-    '**Overall:** polished social-photo beauty aesthetic — contour + highlight balance, camera-ready glow.',
+    '**Overall:** contour + highlight balance like a pro MUA — camera-ready glow, not flat grey shadow.',
     '**Locked — do not change:** hair, wig, lace front, room, depth of field, body pose, neck, or clothing.',
     'No text or watermark.',
   ].join(' ');
@@ -242,9 +268,9 @@ export function buildLiveTryOnStudioMakeupPassPrompt(): string {
 /** Shorter makeup pass for Fal retries. */
 export function buildLiveTryOnStudioMakeupPassPromptCompact(): string {
   return [
-    'IMAGE 1 is a finished studio portrait with wig — keep hair, pose, room, and outfit identical.',
-    'Add light photo-ready glam on face only: subtle contour, bright undereyes, natural lashes, fuller brows and lips, soft skin glow.',
-    'Same person, photoreal, not plastic. No text.',
+    'IMAGE 1 is a finished studio portrait with wig — keep hair, pose, room, crop, and outfit pixel-identical.',
+    'Face-skin glam only: snatched jaw contour + highlight, slimmer nose (contour sides + highlight bridge), fuller upper lip, almond eyes, bright undereyes, natural lashes, soft glow.',
+    'No pan/reframe. Same person, photoreal. No text.',
   ].join(' ');
 }
 
