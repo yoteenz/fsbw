@@ -167,7 +167,7 @@ function rethrowWithNetworkHint(err: unknown, shortLabel: string): never {
   if (isLikelyBrowserFetchNetworkError(raw)) {
     throw new Error(
       shortLabel.includes('try-on')
-        ? `${shortLabel}: connection dropped or timed out before the server answered. Live try-on runs one angle and one model per server step — keep this screen open; partial results may already be saved. Set WIG_PREVIEW_TRYON_FAL_RESOLUTION=1K on Vercel if timeouts continue.`
+        ? 'LIVE_TRYON_TIMEOUT'
         : `${shortLabel}: connection dropped or timed out before the server answered (browsers often show this as "Load failed"). For styling, try regen L, then M, then R one at a time, or set WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K on Vercel so each request finishes sooner.`
     );
   }
@@ -1512,13 +1512,16 @@ export type LiveTryOnEnsureOverlaysPayload = WigPreviewLiveNoirColorPayload & {
   unitKey?: string;
   photoModel?: 'nbp' | 'gpt2';
   compareModels?: boolean;
+  step?: 'portrait' | 'overlay';
 };
 
 export type LiveTryOnEnsureOverlaysResult = {
   ok: boolean;
   manifestHash: string;
   unitKey: string;
-  bucket: string;
+  bucket?: string;
+  step?: 'portrait' | 'overlay';
+  error?: string;
   generated: string[];
   skipped: string[];
   missingColor: string[];
@@ -1535,7 +1538,7 @@ export type LiveTryOnEnsureOverlaysResult = {
   selections: Record<string, unknown>;
 };
 
-export async function postLiveTryOnEnsureOverlaysOneAngle(
+async function postLiveTryOnEnsureOverlaysRaw(
   body: LiveTryOnEnsureOverlaysPayload & { angle: 'left' | 'front' | 'right' }
 ): Promise<LiveTryOnEnsureOverlaysResult> {
   let res: Response;
@@ -1557,17 +1560,32 @@ export async function postLiveTryOnEnsureOverlaysOneAngle(
     } catch {
       /* ignore */
     }
-    if (res.status === 409 && code === 'COLOR_PREVIEW_MISSING') {
-      throw new Error('COLOR_PREVIEW_MISSING');
+    if (res.status === 409 && (code === 'COLOR_PREVIEW_MISSING' || code === 'PORTRAIT_MISSING')) {
+      throw new Error(code);
     }
     if (/FUNCTION_INVOCATION_TIMEOUT/i.test(text) || /FUNCTION_INVOCATION_TIMEOUT/i.test(msg)) {
-      throw new Error(
-        'LIVE TRY-ON TIMED OUT ON THE SERVER (ONE ANGLE AT A TIME). WAIT A MOMENT AND OPEN AGAIN — PARTIAL LAYERS MAY ALREADY BE SAVED. SET WIG_PREVIEW_TRYON_FAL_RESOLUTION=1K ON VERCEL FOR FASTER RUNS.'
-      );
+      throw new Error('LIVE_TRYON_TIMEOUT');
     }
     throw new Error(msg || 'Live try-on overlay failed');
   }
   return JSON.parse(text) as LiveTryOnEnsureOverlaysResult;
+}
+
+/** One angle + one step (portrait or overlay) — at most one Fal job per call when ideogram-only. */
+export function postLiveTryOnEnsureOverlaysStep(
+  body: LiveTryOnEnsureOverlaysPayload & {
+    angle: 'left' | 'front' | 'right';
+    step: 'portrait' | 'overlay';
+  }
+): Promise<LiveTryOnEnsureOverlaysResult> {
+  return postLiveTryOnEnsureOverlaysRaw(body);
+}
+
+/** @deprecated Use postLiveTryOnEnsureOverlaysStep with portrait then overlay. */
+export function postLiveTryOnEnsureOverlaysOneAngle(
+  body: LiveTryOnEnsureOverlaysPayload & { angle: 'left' | 'front' | 'right' }
+): Promise<LiveTryOnEnsureOverlaysResult> {
+  return postLiveTryOnEnsureOverlaysRaw({ ...body, step: 'overlay' });
 }
 
 export async function postWigPreviewLiveNoirColor(
