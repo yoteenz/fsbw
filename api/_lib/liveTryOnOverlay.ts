@@ -22,6 +22,13 @@ export function activeLiveTryOnPhotoModel(): LiveTryOnPhotoModel {
   return raw === 'gpt2' || raw === 'gpt' || raw === 'gpt-image-2' ? 'gpt2' : 'nbp';
 }
 
+/** Studio Try-On always uses GPT Image 2 (override via env for A/B only). */
+export function activeLiveTryOnStudioPhotoModel(): LiveTryOnPhotoModel {
+  const raw = (process.env.WIG_PREVIEW_TRYON_STUDIO_PHOTO_MODEL || 'gpt2').trim().toLowerCase();
+  if (raw === 'nbp' || raw === 'nano-banana' || raw === 'nano-banana-pro') return 'nbp';
+  return 'gpt2';
+}
+
 export function parseLiveTryOnPhotoModel(value: string | undefined): LiveTryOnPhotoModel | null {
   const v = String(value || '').trim().toLowerCase();
   if (v === 'nbp' || v === 'nano-banana' || v === 'nano-banana-pro') return 'nbp';
@@ -61,31 +68,52 @@ function isJetBlackOffBlack(label: string, hex: string): boolean {
   return l.includes('jet black') || l.includes('off black');
 }
 
+/** Studio glam composition (NBP-style editorial) applied on top of GPT Image 2 renders. */
+const STUDIO_GLAM_COMPOSITION = [
+  '**Editorial studio finish (required):** Center the subject in frame — head and shoulders, glamorous beauty portrait crop.',
+  'Replace the selfie background with a **soft neutral studio backdrop** — heavy **bokeh blur**, subject **tack sharp** in focus, shallow depth of field.',
+  'Professional soft key light on the face; polished editorial color grade — not flat phone lighting.',
+].join(' ');
+
+/** Center part locked to facial midline — do not copy a side part from the mannequin reference. */
+const STUDIO_CENTER_PART = [
+  '**CENTER PART (mandatory — facial midline):** The part must run through the **exact center** of the forehead, between the brows, and down the nose bridge.',
+  'Left and right hair panels must be **symmetric** in volume — **no** drift left or right of face center.',
+  '**Ignore** any off-center or side part in IMAGE 2 — force a true **center part** on this person’s head.',
+  'Success check: the part groove sits on the facial midline, not on the left or right third of the forehead.',
+].join(' ');
+
 /**
- * **Studio Try-On** — IMAGE 1 = shopper selfie, IMAGE 2 = mannequin color WebP.
- * Keeps the customer's identity; applies wig geometry/color from the mannequin reference.
+ * **Studio Try-On** — IMAGE 1 = shopper selfie, IMAGE 2 = **front** mannequin color WebP (center-part geometry).
+ * GPT Image 2 render + NBP-style glam composition in prompt.
  */
 export function buildLiveTryOnStudioTryOnPrompt(
   label: string,
   hex: string,
-  angle: LiveTryOnAngle
+  poseAngle: LiveTryOnAngle
 ): string {
   const nearBlack = isJetBlackOffBlack(label, hex);
   const colorLine = nearBlack
     ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
+  const poseLine =
+    poseAngle === 'front'
+      ? 'Keep the customer’s **front-facing** head pose from IMAGE 1.'
+      : `${angleConstraint(poseAngle)} Keep the customer’s **head pose** from IMAGE 1 — do not rotate them to match the mannequin.`;
+
   return [
     '**IMAGE 1** is the customer selfie — keep their **exact** face, skin tone, expression, eyes, and head pose.',
-    '**IMAGE 2** is the mannequin wig reference — use it as the **only** source for hairstyle geometry, lace, length, density, curl, part, and volume.',
+    '**IMAGE 2** is the **front-view** mannequin wig reference — use it for **length, density, curl, lace, and color** only (not head angle).',
     'Replace **only** the hair on the person in IMAGE 1 with the lace-front wig from IMAGE 2.',
     colorLine,
-    angleConstraint(angle),
-    'Match **length, density, curl pattern, part, layers, and volume** from IMAGE 2 — not a new cut.',
-    'Photoreal editorial beauty portrait — same framing and lighting direction as IMAGE 1.',
+    STUDIO_CENTER_PART,
+    poseLine,
+    'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 — not a new cut.',
+    STUDIO_GLAM_COMPOSITION,
     'Soft natural makeup if needed; realistic hairline blend at the lace front.',
-    '**Delete:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo, props, cartoon edges.',
-    'Neutral softly blurred background; head and shoulders; no text or watermark.',
+    '**Delete:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo, props, cartoon edges, busy room clutter.',
+    'No text or watermark.',
     'Ultra sharp, photographic — not illustration, sticker, or cutout overlay.',
   ].join(' ');
 }

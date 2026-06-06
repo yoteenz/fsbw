@@ -6,6 +6,7 @@ import {
   storageObjectExists,
 } from './liveTryOnBatchGenerate.js';
 import {
+  activeLiveTryOnStudioPhotoModel,
   buildLiveTryOnStudioTryOnPrompt,
   falEditModelId,
   type LiveTryOnAngle,
@@ -119,7 +120,7 @@ async function runStudioFalEdit(
           prompt,
           image_urls: imageUrls,
           image_size: 'auto',
-          quality: 'medium',
+          quality: 'high',
           output_format: 'webp',
           num_images: 1,
         },
@@ -184,12 +185,14 @@ export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Pr
   if (!catalog) throw new Error(`Unknown color: ${selections.color}`);
 
   const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
-  const angle: LiveTryOnAngle = input.angle || 'front';
+  const poseAngle: LiveTryOnAngle = input.angle || 'front';
+  const photoModel = activeLiveTryOnStudioPhotoModel();
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
   const unitKey = job.unitKey;
   const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
-  const colorPath = colorPaths[angle];
+  /** Front mannequin only — side angles bake asymmetric hair that throws off center part. */
+  const colorPath = colorPaths.front;
 
   if (!(await storageObjectExists(bucket, colorPath))) {
     throw new Error('COLOR_PREVIEW_MISSING');
@@ -204,14 +207,14 @@ export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Pr
     fal,
     bucket,
     colorPath,
-    `studio-mannequin-${angle}.webp`
+    'studio-mannequin-front.webp'
   );
 
-  const prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, angle);
-  const outBuf = await runStudioFalEdit(fal, input.photoModel, userFalUrl, mannequinFalUrl, prompt);
+  const prompt = buildLiveTryOnStudioTryOnPrompt(catalog.label, catalog.hex, poseAngle);
+  const outBuf = await runStudioFalEdit(fal, photoModel, userFalUrl, mannequinFalUrl, prompt);
 
   const supabase = getSupabaseAdminServiceRole();
-  const outPath = `try-on-studio/${promptVersion}/${unitKey}/${manifestHash}/${input.photoModel}/${angle}/${Date.now()}.webp`;
+  const outPath = `try-on-studio/${promptVersion}/${unitKey}/${manifestHash}/${photoModel}/${poseAngle}/${Date.now()}.webp`;
   const { error: upErr } = await supabase.storage.from(bucket).upload(outPath, outBuf, {
     contentType: 'image/webp',
     upsert: false,
@@ -229,7 +232,7 @@ export async function runStudioTryOnRender(input: RunStudioTryOnRenderInput): Pr
     manifestHash,
     color: job.color,
     unitKey,
-    photoModel: input.photoModel,
-    angle,
+    photoModel,
+    angle: poseAngle,
   };
 }
