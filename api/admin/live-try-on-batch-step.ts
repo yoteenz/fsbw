@@ -121,7 +121,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     res.status(200).json({ ok: true, ...result, job });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Batch step failed';
+    console.error('live-try-on-batch-step failed', { step, angle, photoModel, color: job.color, e });
+    const msg =
+      e instanceof Error
+        ? e.message
+        : typeof e === 'object' && e !== null && 'message' in e
+          ? String((e as { message: unknown }).message)
+          : 'Batch step failed';
     const code =
       msg === 'COLOR_PREVIEW_MISSING' || msg === 'PORTRAIT_MISSING' || msg === 'OVERLAY_ISOLATE_MISSING'
         ? msg

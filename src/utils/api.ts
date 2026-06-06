@@ -1242,11 +1242,24 @@ export async function postAdminLiveTryOnBatchStatus(body: LiveTryOnBatchJobPaylo
 
 function parseApiErrorMessage(text: string, fallback: string): string {
   try {
-    const j = JSON.parse(text) as { error?: string; message?: string };
+    const j = JSON.parse(text) as { error?: unknown; message?: string };
     if (typeof j?.error === 'string' && j.error.trim()) return j.error.trim();
+    if (j?.error && typeof j.error === 'object') {
+      const nested = j.error as { message?: string; code?: number; id?: string };
+      if (typeof nested.message === 'string' && nested.message.trim()) {
+        const code = nested.code ? ` (${nested.code})` : '';
+        return `${nested.message.trim()}${code}`;
+      }
+    }
     if (typeof j?.message === 'string' && j.message.trim()) return j.message.trim();
   } catch {
     /* ignore */
+  }
+  if (/FUNCTION_INVOCATION_TIMEOUT/i.test(text)) {
+    return 'LIVE_TRYON_TIMEOUT — tap CHECK STATUS; the step may have saved anyway.';
+  }
+  if (/Internal Server Error/i.test(text)) {
+    return 'SERVER ERROR — tap CHECK STATUS; isolate steps often save before the response fails.';
   }
   const trimmed = text.trim();
   return trimmed || fallback;

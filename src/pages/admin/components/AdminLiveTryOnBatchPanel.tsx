@@ -334,6 +334,12 @@ export default function AdminLiveTryOnBatchPanel() {
       const msg = e instanceof Error ? e.message : 'Step failed';
       setLastError(msg);
       pushLog(`ERROR · ${msg}`);
+      try {
+        await refreshStatusCore();
+        pushLog('CHECKED STATUS AFTER ERROR — MISSING list updated (step may have saved)');
+      } catch {
+        /* ignore */
+      }
     } finally {
       setBusyAction(null);
     }
@@ -349,6 +355,12 @@ export default function AdminLiveTryOnBatchPanel() {
       const msg = e instanceof Error ? e.message : 'Run all failed';
       setLastError(msg);
       pushLog(`ERROR · ${msg}`);
+      try {
+        await refreshStatusCore();
+        pushLog('CHECKED STATUS AFTER ERROR — MISSING list updated');
+      } catch {
+        /* ignore */
+      }
     } finally {
       setBusyAction(null);
     }
@@ -460,8 +472,8 @@ export default function AdminLiveTryOnBatchPanel() {
             {lastError}
           </p>
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: 6 }}>
-            {/TIMEOUT/i.test(lastError)
-              ? 'Each click = one Fal job (~1–2 min). Run RUN NEXT STEP for each MISSING line (isolate LEFT, cut LEFT, isolate FRONT…).'
+            {/TIMEOUT|Internal Server Error|SERVER ERROR/i.test(lastError)
+              ? 'Tap CHECK STATUS — isolate steps may have saved even if the server errored. Then RUN NEXT STEP for the first MISSING line.'
               : /unprocessable entity|422/i.test(lastError)
                 ? 'Fal could not use the portrait URL (422). A fix re-uploads portraits to Fal storage first — redeploy, then RUN NEXT STEP again.'
                 : /opaque face|shoulders|overlay/i.test(lastError)
