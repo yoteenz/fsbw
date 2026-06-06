@@ -3,6 +3,9 @@
     "api/live-try-on-ensure-overlays.ts": {
       "maxDuration": 10
     },
+    "api/live-try-on-resolve.ts": {
+      "maxDuration": 30
+    },
     "api/admin/live-try-on-batch-step.ts": {
       "maxDuration": 120
     },

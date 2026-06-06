@@ -1,3 +1,5 @@
+import type { LiveTryOnBatchJob } from './liveTryOnBatchGenerate.js';
+
 /** Default NOIR build used for live try-on batch rows (color varies per manifest entry). */
 export const LIVE_TRY_ON_BATCH_NOIR_DEFAULTS = {
   unitKey: 'NOIR',
@@ -51,4 +53,19 @@ export function liveTryOnNoirBatchManifest(): LiveTryOnBatchManifestRow[] {
     color,
     ...LIVE_TRY_ON_BATCH_NOIR_DEFAULTS,
   }));
+}
+
+/**
+ * Try-on Storage keys use **studio defaults** (same as admin batch rows), not the shopper's length/lace/etc.
+ * Live try-on is color-first; batch pre-gen is per catalog color at default NOIR build.
+ */
+export function liveTryOnStorageLookupJob(input: {
+  unitKey?: string;
+  color: string;
+}): LiveTryOnBatchJob {
+  return {
+    ...LIVE_TRY_ON_BATCH_NOIR_DEFAULTS,
+    unitKey: String(input.unitKey || 'NOIR').toUpperCase(),
+    color: String(input.color || 'OFF BLACK').trim(),
+  };
 }
