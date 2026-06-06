@@ -11,6 +11,7 @@ import {
 } from '../../utils/liveTryOnComposite';
 import {
   estimateHeadYawNorm,
+  faceContourPolygonFromLandmarks,
   lerpPlacement,
   pickWigViewFromYawWithHysteresis,
   wigPlacementFromLandmarks,
@@ -139,16 +140,23 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
             if (!overlayScratchRef.current) {
               overlayScratchRef.current = document.createElement('canvas');
             }
-            const contour = drawWigOverlayTracked(
+            drawWigOverlayTracked(
               ctx,
               w,
               h,
               wigImg,
               placement,
               landmarks,
-              overlayScratchRef.current
+              overlayScratchRef.current,
+              video
             );
-            if (contour) strokeFaceTrackingGuide(ctx, contour);
+            if (import.meta.env.DEV) {
+              const guide = faceContourPolygonFromLandmarks(landmarks, w, h, {
+                mirror: true,
+                expand: 1.06,
+              });
+              if (guide) strokeFaceTrackingGuide(ctx, guide);
+            }
           }
         } else {
           smoothPlacementRef.current = null;
