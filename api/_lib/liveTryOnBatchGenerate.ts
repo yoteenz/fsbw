@@ -282,35 +282,46 @@ async function generatePhotorealPortrait(
 ): Promise<Buffer> {
   const falModel = falEditModelId(photoModel);
   const resolution = readTryOnFalResolution();
+  const label = photoModel === 'gpt2' ? 'GPT Image 2 portrait' : 'NBP portrait';
 
   if (photoModel === 'gpt2') {
-    const result = await fal.subscribe(falModel, {
-      input: {
-        prompt,
-        image_urls: [mannequinColorUrl],
-        image_size: 'auto',
-        quality: 'medium',
-        output_format: 'webp',
-        num_images: 1,
-      },
-      logs: false,
-    });
+    let result: unknown;
+    try {
+      result = await fal.subscribe(falModel, {
+        input: {
+          prompt,
+          image_urls: [mannequinColorUrl],
+          image_size: 'auto',
+          quality: 'medium',
+          output_format: 'webp',
+          num_images: 1,
+        },
+        logs: false,
+      });
+    } catch (e) {
+      throw formatFalSubscribeError(e, label);
+    }
     const url = extractFalImageUrl(result);
     if (!url) throw new Error('fal: no GPT Image 2 portrait URL');
     return downloadUrlToBuffer(url);
   }
 
-  const result = await fal.subscribe(falModel, {
-    input: {
-      prompt,
-      image_urls: [mannequinColorUrl],
-      aspect_ratio: 'auto',
-      resolution,
-      output_format: 'webp',
-      num_images: 1,
-    },
-    logs: false,
-  });
+  let result: unknown;
+  try {
+    result = await fal.subscribe(falModel, {
+      input: {
+        prompt,
+        image_urls: [mannequinColorUrl],
+        aspect_ratio: 'auto',
+        resolution,
+        output_format: 'webp',
+        num_images: 1,
+      },
+      logs: false,
+    });
+  } catch (e) {
+    throw formatFalSubscribeError(e, label);
+  }
   const url = extractFalImageUrl(result);
   if (!url) throw new Error('fal: no NBP portrait URL');
   return downloadUrlToBuffer(url);
@@ -538,21 +549,27 @@ export async function runLiveTryOnBatchStep(opts: {
   if (!mannequinUrl) throw new Error('mannequin color URL missing');
 
   if (opts.step === 'portrait') {
-    if (opts.forceRegenerate) {
-      await removeStorageObjectIfExists(bucket, portraitPath);
-    }
     const fal = await getFalClient(falKey!);
     const womanPrompt = buildLiveTryOnPhotorealWomanPrompt(catalog.label, catalog.hex, opts.angle);
+    const mannequinFalUrl = await uploadStorageObjectToFal(
+      fal,
+      bucket,
+      colorPath,
+      `tryon-mannequin-${opts.photoModel}-${opts.angle}.webp`
+    );
     const portraitBuf = await generatePhotorealPortrait(
       fal,
       opts.photoModel,
-      mannequinUrl,
+      mannequinFalUrl,
       womanPrompt
     );
+    if (opts.forceRegenerate) {
+      await removeStorageObjectIfExists(bucket, portraitPath);
+    }
     const { error: upErr } = await supabase.storage.from(bucket).upload(portraitPath, portraitBuf, {
       contentType: 'image/webp',
       upsert: true,
-      cacheControl: opts.forceRegenerate ? '0' : '3600',
+      cacheControl: opts.forceRegenerate ? 'max-age=0' : '3600',
     });
     if (upErr) throw new Error(`upload portrait: ${upErr.message}`);
     return {
@@ -583,7 +600,7 @@ export async function runLiveTryOnBatchStep(opts: {
     const { error: upWork } = await supabase.storage.from(bucket).upload(workPath, isolateBuf, {
       contentType: 'image/png',
       upsert: true,
-      cacheControl: opts.forceRegenerate ? '0' : '3600',
+      cacheControl: opts.forceRegenerate ? 'max-age=0' : '3600',
     });
     if (upWork) throw new Error(`upload work isolate: ${upWork.message}`);
     return {
@@ -625,7 +642,7 @@ export async function runLiveTryOnBatchStep(opts: {
   const { error: upOverlay } = await supabase.storage.from(bucket).upload(overlayPath, overlayBuf, {
     contentType: 'image/png',
     upsert: true,
-    cacheControl: opts.forceRegenerate ? '0' : '3600',
+    cacheControl: opts.forceRegenerate ? 'max-age=0' : '3600',
   });
   if (upOverlay) throw new Error(`upload overlay: ${upOverlay.message}`);
 

@@ -741,8 +741,8 @@ export default function AdminLiveTryOnBatchPanel() {
           </p>
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: 6 }}>
             {/TIMEOUT|Internal Server Error|SERVER ERROR/i.test(lastError)
-              ? 'Tap CHECK STATUS — isolate steps may have saved even if the server errored. Then RUN NEXT STEP for the first MISSING line.'
-              : /unprocessable entity|422/i.test(lastError)
+              ? 'Server timed out or crashed — tap CHECK STATUS. Portrait regen now re-uploads mannequin to Fal first; retry PORTRAIT · angle once.'
+              : /unprocessable entity|422|portrait/i.test(lastError)
                 ? 'Fal could not use the portrait URL (422). A fix re-uploads portraits to Fal storage first — redeploy, then RUN NEXT STEP again.'
                 : /missing visible hair|opaque face|shoulders/i.test(lastError)
                   ? 'Validation was blocking upload — redeploy and RUN NEXT STEP again. Cut step now uploads without strict pixel checks.'

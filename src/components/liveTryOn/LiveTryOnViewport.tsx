@@ -12,7 +12,7 @@ import {
 import {
   estimateHeadYawNorm,
   lerpPlacement,
-  pickWigViewFromYaw,
+  pickWigViewFromYawWithHysteresis,
   wigPlacementFromLandmarks,
   type NormPoint,
 } from '../../utils/liveTryOnYaw';
@@ -62,6 +62,7 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
     width: number;
     rotationRad: number;
   } | null>(null);
+  const activeViewRef = useRef<LiveTryOnWigView>('front');
 
   const [status, setStatus] = useState<Status>('loading');
   const [statusHint, setStatusHint] = useState('LOADING CAMERA…');
@@ -121,7 +122,8 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
         if (landmarks?.length) {
           noFaceFramesRef.current = 0;
           const yaw = estimateHeadYawNorm(landmarks);
-          const view = pickWigViewFromYaw(yaw);
+          const view = pickWigViewFromYawWithHysteresis(yaw, activeViewRef.current);
+          activeViewRef.current = view;
           setActiveView(view);
           setDebugYaw(yaw);
           setStatus('live');
@@ -150,6 +152,7 @@ export default function LiveTryOnViewport({ wigUrls }: Props) {
           }
         } else {
           smoothPlacementRef.current = null;
+          activeViewRef.current = 'front';
           noFaceFramesRef.current += 1;
           if (noFaceFramesRef.current > 8) {
             setStatus('no-face');
