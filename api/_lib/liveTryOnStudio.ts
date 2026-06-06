@@ -513,6 +513,7 @@ export type PollStudioTryOnRenderResult =
       imageUrl: string;
       makeupImageUrl?: string;
       makeupAvailable?: boolean;
+      makeupError?: string;
       manifestHash: string;
       color: string;
       unitKey: string;
@@ -559,7 +560,7 @@ async function queueMakeupPass(
 function completeStudioResult(
   job: StudioTryOnJobRecord,
   imageUrl: string,
-  opts?: { makeupImageUrl?: string; makeupAvailable?: boolean }
+  opts?: { makeupImageUrl?: string; makeupAvailable?: boolean; makeupError?: string }
 ): Extract<PollStudioTryOnRenderResult, { status: 'complete' }> {
   return {
     status: 'complete',
@@ -567,6 +568,7 @@ function completeStudioResult(
     imageUrl,
     ...(opts?.makeupImageUrl ? { makeupImageUrl: opts.makeupImageUrl } : {}),
     ...(opts?.makeupAvailable ? { makeupAvailable: true } : {}),
+    ...(opts?.makeupError ? { makeupError: opts.makeupError } : {}),
     manifestHash: job.manifestHash,
     color: job.color,
     unitKey: job.unitKey,
@@ -604,7 +606,10 @@ export async function pollStudioTryOnRender(
   if (status !== 'COMPLETED') {
     if (phase === 'makeup' && job.naturalImageUrl) {
       await saveStudioJob(bucket, promptVersion, { ...job, phase: 'base_complete' });
-      return completeStudioResult(job, job.naturalImageUrl, { makeupAvailable: true });
+      return completeStudioResult(job, job.naturalImageUrl, {
+        makeupAvailable: true,
+        makeupError: `Polished glam failed (${status})`,
+      });
     }
     await deleteStudioJob(bucket, promptVersion, userId, jobId);
     throw new Error(`Studio render failed (${status})`);
@@ -615,7 +620,10 @@ export async function pollStudioTryOnRender(
   if (!falUrl) {
     if (phase === 'makeup' && job.naturalImageUrl) {
       await saveStudioJob(bucket, promptVersion, { ...job, phase: 'base_complete' });
-      return completeStudioResult(job, job.naturalImageUrl, { makeupAvailable: true });
+      return completeStudioResult(job, job.naturalImageUrl, {
+        makeupAvailable: true,
+        makeupError: 'Polished glam produced no image',
+      });
     }
     await deleteStudioJob(bucket, promptVersion, userId, jobId);
     throw new Error('fal: no studio result URL');

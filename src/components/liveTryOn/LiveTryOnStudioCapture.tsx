@@ -77,6 +77,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const lastVideoTimeRef = useRef(-1);
   const noFaceFramesRef = useRef(0);
   const showingResultRef = useRef(false);
+  const viewportFrozenRef = useRef(false);
   const naturalResultUrlRef = useRef<string | null>(null);
 
   const [status, setStatus] = useState<Status>('loading');
@@ -94,6 +95,8 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const [activeAngle, setActiveAngle] = useState<'left' | 'front' | 'right'>('front');
   const [captureAngleLabel, setCaptureAngleLabel] = useState<'left' | 'front' | 'right' | null>(null);
   const [captureHeadYawDeg, setCaptureHeadYawDeg] = useState<number | null>(null);
+  /** After first studio render, freeze live camera and keep showing the generated image. */
+  const [cameraFrozen, setCameraFrozen] = useState(false);
 
   useEffect(() => {
     if (!renderPhase) return;
@@ -113,6 +116,16 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     const landmarker = landmarkerRef.current;
     if (!video || !canvas || !landmarker || video.readyState < 2) return;
 
+    if (
+      viewportFrozenRef.current ||
+      showingResultRef.current ||
+      cameraFrozen ||
+      renderPhase === 'base' ||
+      renderPhase === 'makeup'
+    ) {
+      return;
+    }
+
     syncCanvasToVideo(video, canvas);
 
     const ctx = canvas.getContext('2d');
@@ -129,8 +142,6 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, w, h);
     ctx.restore();
-
-    if (showingResultRef.current || renderPhase === 'base') return;
 
     const now = performance.now();
     if (video.currentTime !== lastVideoTimeRef.current) {
@@ -155,7 +166,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         /* skip frame */
       }
     }
-  }, [renderPhase]);
+  }, [cameraFrozen, renderPhase]);
 
   const loop = useCallback(() => {
     drawPreview();
@@ -222,27 +233,44 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   const runMakeupPass = useCallback(async () => {
     if (!studioJobId || renderPhase) return;
 
+    const naturalUrl = resultUrl ?? naturalResultUrlRef.current;
+    if (!naturalUrl) {
+      setErrorMsg('NO STUDIO IMAGE TO ENHANCE — CAPTURE AGAIN');
+      return;
+    }
+
     setErrorMsg(null);
     setShowMakeupPrompt(false);
     setMakeupOfferPending(false);
+    viewportFrozenRef.current = true;
+    setCameraFrozen(true);
+    showingResultRef.current = true;
+    if (!resultUrl) setResultUrl(naturalUrl);
+    setStatus('result');
     setRenderProgress(0);
     setRenderPhase('makeup');
 
     try {
       const res = await postLiveTryOnStudioMakeupAndWait(studioJobId);
+      if (!res.makeupImageUrl) {
+        throw new Error('POLISHED GLAM COULD NOT BE APPLIED — TRY AGAIN');
+      }
       setRenderProgress(1);
-      setMakeupResultUrl(res.makeupImageUrl ?? null);
-      setShowMakeup(Boolean(res.makeupImageUrl));
-      setMakeupOfferPending(!res.makeupImageUrl);
+      setMakeupResultUrl(res.makeupImageUrl);
+      setShowMakeup(true);
+      setMakeupOfferPending(false);
       setStudioJobId(null);
+      setStatusHint('STUDIO LOOK READY — TAP MAKEUP TO PREVIEW');
     } catch (e) {
       setMakeupOfferPending(true);
-      setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'MAKEUP RENDER FAILED');
+      setShowMakeup(false);
+      setStatusHint('STUDIO LOOK READY — TAP ADD MAKEUP TO RETRY');
+      setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'POLISHED GLAM FAILED');
     } finally {
       setRenderPhase(null);
       setRenderProgress(0);
     }
-  }, [renderPhase, studioJobId]);
+  }, [renderPhase, resultUrl, studioJobId]);
 
   const handleCapture = useCallback(async () => {
     const video = videoRef.current;
@@ -278,6 +306,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
     }
 
     setErrorMsg(null);
+    viewportFrozenRef.current = false;
+    showingResultRef.current = false;
+    naturalResultUrlRef.current = null;
+    setCameraFrozen(false);
     setCaptureAngleLabel(captureAngle);
     setCaptureHeadYawDeg(headYawDeg);
     setCaptureSnapshotUrl(imageDataUrl);
@@ -305,8 +337,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
         }
       );
       setRenderProgress(1);
+      viewportFrozenRef.current = true;
       showingResultRef.current = true;
       naturalResultUrlRef.current = res.imageUrl;
+      setCameraFrozen(true);
       setResultUrl(res.imageUrl);
       setStudioJobId(res.jobId);
       setCaptureSnapshotUrl(null);
@@ -316,9 +350,13 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       setRenderProgress(0);
       if (res.makeupAvailable && !res.makeupImageUrl) {
         setShowMakeupPrompt(true);
+      } else {
+        setMakeupOfferPending(Boolean(res.makeupAvailable && !res.makeupImageUrl));
       }
     } catch (e) {
+      viewportFrozenRef.current = false;
       showingResultRef.current = false;
+      setCameraFrozen(false);
       setCaptureSnapshotUrl(null);
       setRenderPhase(null);
       setRenderProgress(0);
@@ -335,8 +373,10 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       syncCanvasToVideo(video, canvas);
       lastVideoTimeRef.current = -1;
     }
+    viewportFrozenRef.current = false;
     showingResultRef.current = false;
     naturalResultUrlRef.current = null;
+    setCameraFrozen(false);
     setCaptureSnapshotUrl(null);
     setRenderPhase(null);
     setRenderProgress(0);
@@ -354,23 +394,33 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
   };
 
   const handleMakeupCancel = () => {
+    const naturalUrl = resultUrl ?? naturalResultUrlRef.current;
     setShowMakeupPrompt(false);
     setMakeupOfferPending(true);
+    viewportFrozenRef.current = true;
     showingResultRef.current = true;
-    if (!resultUrl && naturalResultUrlRef.current) {
-      setResultUrl(naturalResultUrlRef.current);
-    }
+    setCameraFrozen(true);
+    if (naturalUrl) setResultUrl(naturalUrl);
     setStatus('result');
     setStatusHint('STUDIO LOOK READY — ADD MAKEUP ANYTIME');
     setCaptureSnapshotUrl(null);
     setErrorMsg(null);
   };
 
-  const showResult = status === 'result' && Boolean(resultUrl);
-  const displayedResultUrl = showMakeup && makeupResultUrl ? makeupResultUrl : resultUrl;
+  const studioImageUrl = resultUrl ?? naturalResultUrlRef.current;
+  const showStudioImage =
+    Boolean(studioImageUrl) &&
+    (cameraFrozen ||
+      status === 'result' ||
+      showMakeupPrompt ||
+      renderPhase === 'makeup' ||
+      makeupOfferPending);
+  const showResultActions = showStudioImage && renderPhase !== 'base';
+  const displayedResultUrl =
+    showMakeup && makeupResultUrl ? makeupResultUrl : studioImageUrl;
   const canToggleMakeup = Boolean(makeupResultUrl);
   const showSnapshot = renderPhase === 'base' && Boolean(captureSnapshotUrl);
-  const showLiveCanvas = !showResult && !showSnapshot;
+  const showLiveCanvas = !showStudioImage && !showSnapshot;
   const overlayLabel =
     renderPhase === 'makeup' ? 'ADDING POLISHED GLAM…' : 'RENDERING YOUR LOOK…';
 
@@ -394,7 +444,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           />
         ) : null}
 
-        {showResult && displayedResultUrl ? (
+        {showStudioImage && displayedResultUrl ? (
           <img
             src={displayedResultUrl}
             alt={showMakeup ? 'Studio try-on with makeup' : 'Studio try-on natural'}
@@ -402,7 +452,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           />
         ) : null}
 
-        {showResult && canToggleMakeup && !renderPhase ? (
+        {showStudioImage && canToggleMakeup && !renderPhase ? (
           <button
             type="button"
             onClick={() => setShowMakeup((v) => !v)}
@@ -424,7 +474,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           <StudioRenderOverlay label={overlayLabel} progress={renderProgress} />
         ) : null}
 
-        {!renderPhase && !showMakeupPrompt && status !== 'loading' && status !== 'permission' && !showResult ? (
+        {!renderPhase && !showMakeupPrompt && status !== 'loading' && status !== 'permission' && !showStudioImage ? (
           <div
             className="pointer-events-none absolute left-0 right-0 px-3 text-center z-20"
             style={{ top: '10px', fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#FFFFFF', textTransform: 'uppercase' }}
@@ -478,7 +528,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           </div>
         ) : null}
 
-        {(status === 'loading' || status === 'permission') && !showResult ? (
+        {(status === 'loading' || status === 'permission') && !showStudioImage ? (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50">
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF' }}>{statusHint}</p>
           </div>
@@ -495,7 +545,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       ) : null}
 
       <div className="flex flex-col gap-2">
-        {showResult ? (
+        {showResultActions ? (
           <>
             {makeupOfferPending && !makeupResultUrl && !renderPhase ? (
               <button
