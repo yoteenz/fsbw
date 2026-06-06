@@ -4,6 +4,9 @@ import {
 } from '../constants/liveTryOnSpikeAssets';
 import { wigPreviewManifestHashLiveColorTier, type WigPreviewSelectionsForHash } from './wigPreviewLiveColorTierHash';
 
+const ANGLES = ['left', 'front', 'right'] as const;
+type Angle = (typeof ANGLES)[number];
+
 function storageConfig(): { supabase: string; bucket: string; pv: string } | null {
   const supabase =
     (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL?.trim() || '';
@@ -22,7 +25,7 @@ function overlayPath(
   unitKey: string,
   hash: string,
   photoModel: LiveTryOnPhotoModel,
-  angle: 'left' | 'front' | 'right'
+  angle: Angle
 ): string {
   const u = String(unitKey || 'NOIR').toUpperCase();
   return `try-on-overlay/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${pv}/${u}/${hash}/${photoModel}/${angle}.png`;
@@ -33,7 +36,7 @@ function portraitPath(
   unitKey: string,
   hash: string,
   photoModel: LiveTryOnPhotoModel,
-  angle: 'left' | 'front' | 'right'
+  angle: Angle
 ): string {
   const u = String(unitKey || 'NOIR').toUpperCase();
   return `try-on-portrait/${LIVE_TRY_ON_OVERLAY_CACHE_SEGMENT}/${pv}/${u}/${hash}/${photoModel}/${angle}.webp`;
@@ -45,36 +48,17 @@ export type LiveTryOnCompareAngleUrls = {
   right: string;
 };
 
-export function liveTryOnOverlayTriplePublicUrls(
+export function liveTryOnOverlayPublicUrlForAngle(
   unitKey: string,
   manifestHash: string,
-  photoModel: LiveTryOnPhotoModel
-): [string, string, string] | null {
+  photoModel: LiveTryOnPhotoModel,
+  angle: Angle
+): string | null {
   const cfg = storageConfig();
   if (!cfg) return null;
   const base = `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}`;
   const u = String(unitKey || 'NOIR').toUpperCase();
-  return [
-    `${base}/${overlayPath(cfg.pv, u, manifestHash, photoModel, 'left')}`,
-    `${base}/${overlayPath(cfg.pv, u, manifestHash, photoModel, 'front')}`,
-    `${base}/${overlayPath(cfg.pv, u, manifestHash, photoModel, 'right')}`,
-  ];
-}
-
-export function liveTryOnPortraitTriplePublicUrls(
-  unitKey: string,
-  manifestHash: string,
-  photoModel: LiveTryOnPhotoModel
-): [string, string, string] | null {
-  const cfg = storageConfig();
-  if (!cfg) return null;
-  const base = `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}`;
-  const u = String(unitKey || 'NOIR').toUpperCase();
-  return [
-    `${base}/${portraitPath(cfg.pv, u, manifestHash, photoModel, 'left')}`,
-    `${base}/${portraitPath(cfg.pv, u, manifestHash, photoModel, 'front')}`,
-    `${base}/${portraitPath(cfg.pv, u, manifestHash, photoModel, 'right')}`,
-  ];
+  return `${base}/${overlayPath(cfg.pv, u, manifestHash, photoModel, angle)}`;
 }
 
 async function objectExistsAtPublicUrl(url: string): Promise<boolean> {
@@ -88,30 +72,63 @@ async function objectExistsAtPublicUrl(url: string): Promise<boolean> {
   }
 }
 
+/** Full L/F/R when all three overlays exist. */
 export async function resolveLiveTryOnOverlayTripleIfStored(
   sel: WigPreviewSelectionsForHash,
   photoModel: LiveTryOnPhotoModel
 ): Promise<[string, string, string] | null> {
   const unitKey = String(sel.unitKey || 'NOIR').toUpperCase();
   const hash = await wigPreviewManifestHashLiveColorTier(sel);
-  const triple = liveTryOnOverlayTriplePublicUrls(unitKey, hash, photoModel);
-  if (!triple) return null;
-  const ok = await objectExistsAtPublicUrl(triple[1]);
-  if (!ok) return null;
   const t = Date.now();
-  return [`${triple[0]}?t=${t}`, `${triple[1]}?t=${t}`, `${triple[2]}?t=${t}`];
+  const urls: string[] = [];
+  for (const angle of ANGLES) {
+    const raw = liveTryOnOverlayPublicUrlForAngle(unitKey, hash, photoModel, angle);
+    if (!raw) return null;
+    const ok = await objectExistsAtPublicUrl(raw);
+    if (!ok) return null;
+    urls.push(`${raw}?t=${t}`);
+  }
+  return urls as [string, string, string];
+}
+
+/**
+ * Opens live view as soon as **front** overlay exists; missing L/R reuse front until ready.
+ */
+export async function resolveLiveTryOnOverlayTripleBestEffort(
+  sel: WigPreviewSelectionsForHash,
+  photoModel: LiveTryOnPhotoModel
+): Promise<[string, string, string] | null> {
+  const unitKey = String(sel.unitKey || 'NOIR').toUpperCase();
+  const hash = await wigPreviewManifestHashLiveColorTier(sel);
+  const t = Date.now();
+  const byAngle: Partial<Record<Angle, string>> = {};
+  for (const angle of ANGLES) {
+    const raw = liveTryOnOverlayPublicUrlForAngle(unitKey, hash, photoModel, angle);
+    if (!raw) continue;
+    if (await objectExistsAtPublicUrl(raw)) {
+      byAngle[angle] = `${raw}?t=${t}`;
+    }
+  }
+  const front = byAngle.front;
+  if (!front) return null;
+  return [byAngle.left ?? front, front, byAngle.right ?? front];
 }
 
 export async function resolveLiveTryOnPortraitTripleIfStored(
   sel: WigPreviewSelectionsForHash,
   photoModel: LiveTryOnPhotoModel
 ): Promise<[string, string, string] | null> {
+  const cfg = storageConfig();
+  if (!cfg) return null;
   const unitKey = String(sel.unitKey || 'NOIR').toUpperCase();
   const hash = await wigPreviewManifestHashLiveColorTier(sel);
-  const triple = liveTryOnPortraitTriplePublicUrls(unitKey, hash, photoModel);
-  if (!triple) return null;
+  const base = `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}`;
+  const u = String(unitKey || 'NOIR').toUpperCase();
+  const triple = ANGLES.map(
+    (angle) => `${base}/${portraitPath(cfg.pv, u, hash, photoModel, angle)}`
+  );
   const ok = await objectExistsAtPublicUrl(triple[1]);
   if (!ok) return null;
-  const t = Date.now();
-  return [`${triple[0]}?t=${t}`, `${triple[1]}?t=${t}`, `${triple[2]}?t=${t}`];
+  const ts = Date.now();
+  return triple.map((url) => `${url}?t=${ts}`) as [string, string, string];
 }

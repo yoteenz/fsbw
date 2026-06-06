@@ -10,11 +10,17 @@ import {
   readLiveTryOnPhotoModelPreference,
   writeLiveTryOnPhotoModelPreference,
 } from '../../../utils/liveTryOnPhotoModel';
-import type { LiveTryOnCompareBundles } from '../../../utils/liveTryOnPrepareAssets';
+import type { LiveTryOnCompareBundles, LiveTryOnPreparedAssets } from '../../../utils/liveTryOnPrepareAssets';
 import {
   prepareLiveTryOnAssetsFromBaw,
   prepareLiveTryOnAssetsFromConsult,
+  prepareLiveTryOnCompareModel,
 } from '../../../utils/liveTryOnPrepareAssets';
+import {
+  buildLiveTryOnPayloadFromBaw,
+  buildLiveTryOnPayloadFromConsult,
+  type LiveTryOnSourcePayload,
+} from '../../../utils/liveTryOnSelections';
 
 export default function LiveTryOnPage() {
   const navigate = useNavigate();
@@ -33,11 +39,22 @@ export default function LiveTryOnPage() {
   const [wigUrls, setWigUrls] = useState<[string, string, string] | null>(null);
   const [compare, setCompare] = useState<LiveTryOnCompareBundles | undefined>();
   const [prepError, setPrepError] = useState<string | null>(null);
+  const [prepAttempt, setPrepAttempt] = useState(0);
+  const [compareLoading, setCompareLoading] = useState(false);
+  const [payloadRef, setPayloadRef] = useState<LiveTryOnSourcePayload | null>(null);
 
   const backTarget = useMemo(() => {
     if (returnTo.startsWith('/')) return returnTo;
     return '/build-a-wig';
   }, [returnTo]);
+
+  const applyPrepared = useCallback((prepared: LiveTryOnPreparedAssets) => {
+    setPhotoModel(prepared.activePhotoModel);
+    writeLiveTryOnPhotoModelPreference(prepared.activePhotoModel);
+    setCompare(prepared.compare);
+    setWigUrls(prepared.overlayUrls);
+    if (!prepared.partial) setPrepHint('');
+  }, []);
 
   const applyPhotoModel = useCallback(
     (model: LiveTryOnPhotoModel, bundles?: LiveTryOnCompareBundles) => {
@@ -55,6 +72,13 @@ export default function LiveTryOnPage() {
     (async () => {
       try {
         setPrepError(null);
+        setPrepHint('LOADING YOUR SELECTIONS…');
+
+        const progress = (partial: LiveTryOnPreparedAssets) => {
+          if (cancelled) return;
+          applyPrepared(partial);
+        };
+
         if (quoteId) {
           setPrepHint('LOADING CONSULT OFFER…');
           const res = await getConsultQuote(quoteId);
@@ -66,6 +90,8 @@ export default function LiveTryOnPage() {
           }
           const unitKey = String(quote.unit_key || 'NOIR');
           const selections = consultSelectionsToSpecialOfferOptions(quote.selections);
+          const payload = buildLiveTryOnPayloadFromConsult(unitKey, selections);
+          setPayloadRef(payload);
           const prepared = await prepareLiveTryOnAssetsFromConsult(
             unitKey,
             selections,
@@ -73,47 +99,33 @@ export default function LiveTryOnPage() {
             (msg) => {
               if (!cancelled) setPrepHint(msg);
             },
-            {
-              onActiveModelReady: (partial) => {
-                if (cancelled) return;
-                setCompare(partial.compare);
-                applyPhotoModel(partial.activePhotoModel, partial.compare);
-                setWigUrls(partial.overlayUrls);
-              },
-            }
+            { onProgress: progress }
           );
           if (cancelled) return;
-          setCompare(prepared.compare);
-          applyPhotoModel(prepared.activePhotoModel, prepared.compare);
-          setWigUrls(prepared.overlayUrls);
-          setPrepHint('');
+          applyPrepared(prepared);
           return;
         }
 
+        const payload = buildLiveTryOnPayloadFromBaw(location.pathname);
+        setPayloadRef(payload);
         const prepared = await prepareLiveTryOnAssetsFromBaw(
           location.pathname,
           photoModel,
           (msg) => {
             if (!cancelled) setPrepHint(msg);
           },
-          {
-            onActiveModelReady: (partial) => {
-              if (cancelled) return;
-              setCompare(partial.compare);
-              applyPhotoModel(partial.activePhotoModel, partial.compare);
-              setWigUrls(partial.overlayUrls);
-            },
-          }
+          { onProgress: progress }
         );
         if (cancelled) return;
-        setCompare(prepared.compare);
-        applyPhotoModel(prepared.activePhotoModel, prepared.compare);
-        setWigUrls(prepared.overlayUrls);
-        setPrepHint('');
+        applyPrepared(prepared);
       } catch (e) {
         if (cancelled) return;
-        setPrepError(e instanceof Error ? e.message.toUpperCase() : 'PREP FAILED');
-        setWigUrls(null);
+        const raw = e instanceof Error ? e.message : 'PREP FAILED';
+        const friendly =
+          raw === 'LIVE_TRYON_TIMEOUT'
+            ? 'ONE STEP TIMED OUT ON THE SERVER. PARTIAL LAYERS MAY BE SAVED — TAP TRY AGAIN TO RESUME.'
+            : raw.toUpperCase();
+        setPrepError(friendly);
         setPrepHint('');
       }
     })();
@@ -121,12 +133,29 @@ export default function LiveTryOnPage() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- prep runs once per mount / quote; model switch uses cached compare
-  }, [quoteId, location.pathname]);
+  }, [quoteId, location.pathname, prepAttempt, applyPrepared, photoModel]);
 
   const handleSelectModel = (model: LiveTryOnPhotoModel) => {
     applyPhotoModel(model, compare);
   };
+
+  const handleLoadCompare = async () => {
+    if (!payloadRef || compareLoading) return;
+    setCompareLoading(true);
+    setPrepError(null);
+    try {
+      const prepared = await prepareLiveTryOnCompareModel(payloadRef, photoModel, setPrepHint);
+      applyPrepared(prepared);
+    } catch (e) {
+      setPrepError(e instanceof Error ? e.message.toUpperCase() : 'COMPARE PREP FAILED');
+    } finally {
+      setCompareLoading(false);
+      setPrepHint('');
+    }
+  };
+
+  const showCompareBar = Boolean(compare?.portraits?.nbp || compare?.portraits?.gpt2);
+  const gpt2Missing = !compare?.portraits?.gpt2 && !compare?.overlays?.gpt2;
 
   return (
     <div
@@ -157,8 +186,8 @@ export default function LiveTryOnPage() {
           className="text-center uppercase max-w-sm"
           style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
         >
-          POSITION YOUR FACE IN THE OVAL. TURN YOUR HEAD SLOWLY — THE WIG FOLLOWS YOUR ANGLE. HAIR IS BUILT FROM YOUR
-          COLOR ON A PHOTOREAL MODEL (NOT THE GREY MANNEQUIN).
+          POSITION YOUR FACE IN THE OVAL. TURN YOUR HEAD SLOWLY — THE WIG FOLLOWS YOUR ANGLE. NBP RUNS FIRST (FASTEST);
+          GPT IMAGE 2 COMPARE IS OPTIONAL.
         </p>
         {prepHint ? (
           <p
@@ -169,14 +198,42 @@ export default function LiveTryOnPage() {
           </p>
         ) : null}
         {prepError ? (
+          <div className="flex flex-col items-center gap-2 max-w-sm">
+            <p
+              className="text-center uppercase"
+              style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
+            >
+              {prepError}
+            </p>
+            <button
+              type="button"
+              onClick={() => setPrepAttempt((n) => n + 1)}
+              className="text-[10px] border border-black px-3 py-1 bg-white/80 uppercase"
+              style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}
+            >
+              TRY AGAIN
+            </button>
+          </div>
+        ) : null}
+        {gpt2Missing && wigUrls && !compareLoading ? (
+          <button
+            type="button"
+            onClick={handleLoadCompare}
+            className="text-[10px] border border-black px-3 py-1 bg-white/80 uppercase"
+            style={{ fontFamily: '"Futura PT Medium"', color: '#000' }}
+          >
+            GENERATE GPT IMAGE 2 COMPARE
+          </button>
+        ) : null}
+        {compareLoading ? (
           <p
             className="text-center uppercase max-w-sm"
-            style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
+            style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24' }}
           >
-            {prepError}
+            BUILDING GPT IMAGE 2 COMPARE…
           </p>
         ) : null}
-        {compare ? (
+        {showCompareBar ? (
           <LiveTryOnModelCompareBar activeModel={photoModel} compare={compare} onSelectModel={handleSelectModel} />
         ) : null}
         <div className="w-full max-w-md">
@@ -191,7 +248,7 @@ export default function LiveTryOnPage() {
                 className="text-center uppercase"
                 style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
               >
-                {prepError ? 'CAMERA PREVIEW WILL OPEN WHEN YOUR HAIR LAYERS ARE READY' : 'PREPARING…'}
+                {prepError ? 'CAMERA OPENS WHEN THE FIRST HAIR LAYER IS READY — OR TAP TRY AGAIN' : 'PREPARING…'}
               </p>
             </div>
           )}
