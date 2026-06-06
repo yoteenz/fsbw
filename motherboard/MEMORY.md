@@ -25967,3 +25967,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix (`a4d22516`):** UI — `drawPreview` preserves `result` status; `handleMakeupCancel` keeps natural image + ADD MAKEUP; `naturalResultUrlRef` backup. Backend — `submitStudioRenderWithFallbacks` (GPT2 2-img → PNG → compact → NBP); makeup compact retry; richer Fal errors.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio viewport freeze + glam failure UX
+
+**Context:** After natural (no-makeup) studio render completes, the **polished glam popup** and **makeup loading** overlay showed **live camera** again instead of the generated natural image. Glam pass **loaded then stopped** with no visible error.
+
+**Fix (`edf7db25`):** `LiveTryOnStudioCapture` — `viewportFrozenRef` stops canvas video draws immediately; `showStudioImage` when `status === 'result'`, `showMakeupPrompt`, `renderPhase === 'makeup'`, or `makeupOfferPending` (not only `cameraFrozen`). Reset freeze refs on new capture/retake. `postLiveTryOnStudioMakeupAndWait` ignores stale `base_complete` poll snapshots until `phase: makeup` is seen; throws on `makeupError` / missing `makeupImageUrl`. Backend returns `makeupError` when glam Fal job fails instead of silent complete.
+
+Pushed **`master`** + **`preview/mobile`**.
