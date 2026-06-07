@@ -26031,3 +26031,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `pickStudioCaptureAngleFromYaw` for studio capture; **`studioHeadYawDegreesFromNorm` → `yawNorm * 40`**; **`colorPaths[poseAngle]`** (+ portrait path) for side angles; prompt **IMAGE 1 master pose** + angle-matched mannequin ref block.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-05 — Studio side-angle part realism + softer glam makeup pass
+
+**Context:** User — side **center part** still unrealistic at angle; remove **forehead shrink** from glam pass; **soften cheek contour**; **golden highlight** on cheek tops + **rosy blush** flush.
+
+**Fix:** `studioCenterPartConstraint` — side angles: 3D crown midline, short groove on far scalp, match IMAGE 2 hair split, forbid 2D center stripe. Makeup pass — removed forehead-reduction; soft diffused contour; golden cheek highlight; rosy apple blush; lock part unchanged.
+
+Pushed **`master`** + **`preview/mobile`**.
