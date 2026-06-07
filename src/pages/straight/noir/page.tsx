@@ -48,6 +48,7 @@ import { useProductInventorySnapshot } from '../../../hooks/useProductInventoryS
 import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTab';
+import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
@@ -3120,22 +3121,7 @@ function NoirSelection() {
                 <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: 0 }}>
                 {activeTab === 'DETAILS' && <NoirProductDetailsTab />}
                 
-                {activeTab === 'SHIPPING' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR RUSH PROCESSING.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
-                    </p>
-                  </>
-                )}
+                {activeTab === 'SHIPPING' && <NoirProductShippingTab />}
                 
                 {activeTab === 'POLICY' && (
                   <>
