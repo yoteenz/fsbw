@@ -26141,3 +26141,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Topics covered:** **`src/components/shop/NoirProductCareStorageTab.tsx`** — care steps → red `•` bullets (**`BrandTermsBody`** pattern); storage guidelines → **`/assets/premium-check.svg`** 10×10px; 10px Futura PT Book uppercase body with wrapping. **`noir/page.tsx`** CARE/STORAGE tab → **`<NoirProductCareStorageTab />`**. All five NOIR PDP tabs (DETAILS, SHIPPING, POLICY, CARE/STORAGE, REVIEWS) now use dedicated tab components except REVIEWS.
 
 **Changes:** `NoirProductCareStorageTab.tsx`, `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
+
+**Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
+
+**Change:** Added **`NOIR_DETAILS_INTRO`** in **`src/components/shop/NoirProductDetailsTab.tsx`** above **`NOIR_DETAILS_BULLETS`** (10px Futura PT Book uppercase, wraps naturally).
