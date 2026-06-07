@@ -14,6 +14,7 @@ import {
 import {
   addMemberMemory,
   addPurchaseContextNote,
+  setSlayArchetype,
   PSA_HAIR_SLAYER_PROFILES,
   persistMemberContextExtras,
   setHairSlayerProfile,
@@ -237,15 +238,41 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
   },
   {
     type: 'function',
-    name: 'remember_purchase_context',
+    name: 'set_slay_archetype',
     description:
-      'Save why they bought (wedding, birthday, trip) so PSA can follow up later. Use when they share occasion context.',
+      'Assign Slay Archetype from quiz or conversation (BOARDROOM, SOFT LIFE, IT GIRL, VACATION, BRIDAL). Refreshes Slay DNA.',
     parameters: {
       type: 'object',
       properties: {
-        occasion: { type: 'string', description: 'e.g. wedding, Miami trip, birthday behavior' },
+        archetype: {
+          type: 'string',
+          enum: [
+            'THE BOARDROOM SLAYER',
+            'THE SOFT LIFE SLAYER',
+            'THE IT GIRL SLAYER',
+            'THE VACATION SLAYER',
+            'THE BRIDAL SLAYER',
+          ],
+        },
+      },
+      required: ['archetype'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
+  {
+    type: 'function',
+    name: 'remember_purchase_context',
+    description:
+      'Save why they bought (wedding, birthday trip to Atlanta, etc.) with optional unit and order. Powers Don\'t Forget Why follow-ups.',
+    parameters: {
+      type: 'object',
+      properties: {
+        occasion: { type: 'string', description: 'e.g. birthday trip to Atlanta, wedding' },
         monthYear: { type: 'string', description: 'e.g. July 2026' },
         orderNumber: { type: 'string', description: 'Optional ORDER # reference' },
+        unitName: { type: 'string', description: 'e.g. NOIR' },
+        unitId: { type: 'string', description: 'e.g. noir' },
       },
       required: ['occasion'],
       additionalProperties: false,
@@ -675,6 +702,26 @@ export async function executePsaActionTool(
       return { output: JSON.stringify({ ok: true, hairProfile: saved }) };
     }
 
+    case 'set_slay_archetype': {
+      const archetype = typeof args.archetype === 'string' ? args.archetype : '';
+      const saved = await setSlayArchetype(ctx.userId, archetype);
+      if (!saved) {
+        return {
+          output: JSON.stringify({
+            error: 'Invalid archetype',
+            valid: [
+              'THE BOARDROOM SLAYER',
+              'THE SOFT LIFE SLAYER',
+              'THE IT GIRL SLAYER',
+              'THE VACATION SLAYER',
+              'THE BRIDAL SLAYER',
+            ],
+          }),
+        };
+      }
+      return { output: JSON.stringify({ ok: true, slayArchetype: saved }) };
+    }
+
     case 'remember_purchase_context': {
       const occasion = typeof args.occasion === 'string' ? args.occasion.trim() : '';
       if (!occasion) return { output: JSON.stringify({ error: 'occasion required' }) };
@@ -682,6 +729,8 @@ export async function executePsaActionTool(
         occasion,
         monthYear: typeof args.monthYear === 'string' ? args.monthYear : undefined,
         orderNumber: typeof args.orderNumber === 'string' ? args.orderNumber : undefined,
+        unitName: typeof args.unitName === 'string' ? args.unitName : undefined,
+        unitId: typeof args.unitId === 'string' ? args.unitId : undefined,
       });
       return {
         output: JSON.stringify({

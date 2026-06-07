@@ -11,6 +11,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from '../_lib/auth.js';
 import { getPsaPremiumProfile } from '../_lib/psaPremiumCheck.js';
 import { refreshPsaMemberContext } from '../_lib/psaMemberContext.js';
+import { sanitizePsaMemberContextForClient } from '../_lib/psaMemberContextClient.js';
 import {
   archivePsaThread,
   deletePsaThread,
@@ -101,11 +102,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let memberContext = null;
     try {
-      memberContext = await refreshPsaMemberContext({
+      const refreshed = await refreshPsaMemberContext({
         userId: user.id,
         accessToken: user.accessToken,
         premium,
       });
+      memberContext = sanitizePsaMemberContextForClient(refreshed);
     } catch (ctxErr) {
       console.warn('[psa/thread] member context refresh', ctxErr);
     }

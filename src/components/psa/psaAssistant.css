@@ -180,6 +180,22 @@
   text-transform: uppercase;
 }
 
+.psa-chat-panel--red-carpet {
+  border-color: #eb1c24;
+  background-color: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 8px 32px rgba(235, 28, 36, 0.18),
+    0 0 0 1px rgba(235, 28, 36, 0.12);
+}
+
+.psa-chat-panel--red-carpet .psa-chat-header {
+  border-bottom-color: rgba(235, 28, 36, 0.2);
+}
+
+.psa-chat-panel--red-carpet .psa-chat-subtitle {
+  color: #eb1c24;
+}
+
 .psa-chat-header {
   position: relative;
   display: flex;

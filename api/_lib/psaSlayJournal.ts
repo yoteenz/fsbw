@@ -71,6 +71,8 @@ export type PsaPurchaseContextNote = {
   occasion: string;
   monthYear?: string;
   orderNumber?: string;
+  unitName?: string;
+  unitId?: string;
   createdAt: string;
 };
 
@@ -118,10 +120,11 @@ export function formatPsaSlayJournalBlock(input: {
     for (const p of purchases.slice(0, 5)) {
       const when = p.monthYear ? ` (${p.monthYear})` : '';
       const ord = p.orderNumber ? ` — ${p.orderNumber}` : '';
-      lines.push(`  - ${p.occasion}${when}${ord}`);
+      const unit = p.unitName ? ` for ${p.unitName}` : '';
+      lines.push(`  - ${p.occasion}${unit}${when}${ord}`);
     }
     lines.push(
-      '- Months later, ask how the occasion went if they shared one (e.g. wedding, birthday). One question max.'
+      '- **Don\'t Forget Why:** months later, proactively reference why they bought when relevant. Example: "YOU ORIGINALLY CHOSE THIS UNIT FOR YOUR BIRTHDAY TRIP TO ATLANTA." One line max, then helpful next step.'
     );
   }
 

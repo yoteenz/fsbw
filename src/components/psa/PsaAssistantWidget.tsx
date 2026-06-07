@@ -16,7 +16,7 @@ import {
 } from '../../utils/psaChatCopyResolve';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
-import { fetchPsaUsage } from '../../utils/psaApi';
+import { fetchPsaActiveThread, fetchPsaUsage } from '../../utils/psaApi';
 import {
   isPremiumMemberForGatedFeatures,
   prepareMembershipUpgradeNavigation,
@@ -32,6 +32,12 @@ import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
 import { usePsaProactiveNudges } from './usePsaProactiveNudges';
 import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
+import { setCachedPsaMemberContext } from '../../utils/psaMemberContextCache';
+import {
+  activateRedCarpetMode,
+  isRedCarpetModeActive,
+  isRedCarpetTriggerMessage,
+} from '../../utils/psaRedCarpetMode';
 import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/psaBawPrefill';
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
@@ -71,6 +77,7 @@ export default function PsaAssistantWidget() {
   const [showIdleWave, setShowIdleWave] = useState(false);
   const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
   const [prefillInput, setPrefillInput] = useState('');
+  const [redCarpetMode, setRedCarpetMode] = useState(() => isRedCarpetModeActive());
   const [welcomeMessage, setWelcomeMessage] = useState(() => readPsaWelcomeMessageFromCopyStorage());
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
@@ -146,6 +153,26 @@ export default function PsaAssistantWidget() {
     if (!isPremium) return;
     void refreshContinueHint();
   }, [isPremium, refreshContinueHint]);
+
+  useEffect(() => {
+    if (!signedIn || !isPremium) return;
+    void fetchPsaActiveThread().then((result) => {
+      if (result.ok && result.memberContext) {
+        setCachedPsaMemberContext(result.memberContext);
+      }
+    });
+  }, [signedIn, isPremium]);
+
+  useEffect(() => {
+    const syncRedCarpet = () => setRedCarpetMode(isRedCarpetModeActive());
+    syncRedCarpet();
+    window.addEventListener('storage', syncRedCarpet);
+    window.addEventListener('focus', syncRedCarpet);
+    return () => {
+      window.removeEventListener('storage', syncRedCarpet);
+      window.removeEventListener('focus', syncRedCarpet);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isOpen || !isPremium) return;
@@ -368,6 +395,10 @@ export default function PsaAssistantWidget() {
   const handleSend = useCallback(
     async (text: string) => {
       setPrefillInput('');
+      if (isRedCarpetTriggerMessage(text)) {
+        activateRedCarpetMode();
+        setRedCarpetMode(true);
+      }
       const navPath = resolvePsaQuickReplyNavigation(text);
 
       if (navPath) {
@@ -414,6 +445,7 @@ export default function PsaAssistantWidget() {
       isInputFocused,
       inputHasText,
       showWelcomeWave,
+      redCarpetMode,
       lastReplyAt,
       messages,
       now: Date.now() + expressionTick * 0,
@@ -428,6 +460,7 @@ export default function PsaAssistantWidget() {
     inputHasText,
     showWelcomeWave,
     showIdleWave,
+    redCarpetMode,
     lastReplyAt,
     messages,
     expressionTick,
@@ -455,6 +488,7 @@ export default function PsaAssistantWidget() {
               isSending={isSending}
               isLoadingHistory={isLoadingHistory}
               usageLabel={usageLabel}
+              redCarpetMode={redCarpetMode}
               panelQuickReplies={panelQuickReplies}
               historyOpen={historyOpen}
               historyArchivedView={historyArchivedView}

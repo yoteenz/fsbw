@@ -26063,3 +26063,21 @@ Pushed **`master`** + **`preview/mobile`**.
 **Skipped (per user/CGPT):** voice, 3D avatar, unlimited messages, PSA reputation score (internal ML), full journal UI panel (context + nudges only).
 
 **Conventions:** Keep pet names sparse; BLACK = subtle curator not promo popup; Hall of Slay commemorates once per milestone via localStorage `psaHallCelebrated_*`.
+
+---
+
+## 2026-06-07 — PSA v4: SLAY DNA, Archetype Quiz, Don't Forget Why, Red Carpet Mode
+
+**Context:** User asked to implement ChatGPT roadmap items **1–4** only: **SLAY DNA**, **Don't Forget Why**, **Red Carpet Mode**, **Slay Archetype Quiz** — explicitly **not** The Confessional.
+
+**Topics covered:** Prior PSA v3 ship; user clarified quiz vs confessional; full server + client wiring for the four features.
+
+**Shipped:**
+- **SLAY DNA™** — **`api/_lib/psaSlayDna.ts`**: `buildPsaSlayDna`, `scoreUnitAgainstSlayDna`, `formatPsaSlayDnaBlock`; rebuilt on `refreshPsaMemberContext`; tools **`get_slay_dna`**, **`score_unit_slay_dna`**; DNA language in **`psaInstructions.ts`**. **Hidden from member UI** — `sanitizePsaMemberContextForClient` strips `slayDna` from thread/slay-identity API responses.
+- **Slay Archetype Quiz** — **`api/_lib/psaSlayArchetype.ts`** (5 archetypes + legacy hair-profile mapping); **`POST /api/psa/slay-identity`**; client **`psaArchetypeQuiz.ts`** (3 scripted questions, chip **DISCOVER MY ARCHETYPE**); wired in **`usePsaChat`** before LLM; saves via **`postPsaSlayIdentity`**; **`set_slay_archetype`** tool.
+- **Don't Forget Why** — **`remember_purchase_context`** extended with `unitName`/`unitId`; **`psaDontForgetWhy.ts`** proactive nudge after 30 days; **`psaMemberContextCache.ts`** populated from **`GET /api/psa/thread`** (prefetch on widget mount); nudge kind **`purchase_memory`** in **`psaProactiveNudges.ts`**.
+- **Red Carpet Mode** — **`psaRedCarpetMode.ts`** (`localStorage` 45min session); triggers **I HAVE AN EVENT** / **RED CARPET MODE**; session mode **`red_carpet`** in client + **`api/_lib/psaSessionContext.ts`**; panel modifier **`psa-chat-panel--red-carpet`**, header **RED CARPET MODE**, avatar presenting/delighted when active.
+
+**Starter chips added:** **DISCOVER MY ARCHETYPE**, **I HAVE AN EVENT** (`psaConfig.ts`).
+
+**Conventions:** Client must not import `api/_lib` — archetype constants mirrored in **`src/constants/psaSlayArchetype.ts`**. SLAY DNA never shown as scores/JSON to members.

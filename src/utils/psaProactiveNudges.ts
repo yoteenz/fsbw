@@ -24,6 +24,10 @@ import {
   type HallOfSlayMilestoneId,
 } from './psaSlayJournal';
 import { resolveNudgeCopy } from './copyDebugResolve';
+import {
+  detectPsaDontForgetWhyNudge,
+  markDontForgetWhyNudgeShown,
+} from './psaDontForgetWhy';
 
 export type PsaProactiveNudgeKind =
   | 'unsigned_form'
@@ -33,7 +37,8 @@ export type PsaProactiveNudgeKind =
   | 'order_celebration'
   | 'order_update'
   | 'profile_alert'
-  | 'member_milestone';
+  | 'member_milestone'
+  | 'purchase_memory';
 
 export type PsaNudgePageContext = 'baw' | 'wishlist' | 'alerts' | 'orders' | 'general';
 
@@ -51,6 +56,8 @@ export type PsaProactiveNudge = {
   pageContexts: PsaNudgePageContext[];
   /** For order celebrations — mark seen when nudge shown. */
   celebrationMeta?: { orderId: string; kind: PsaOrderCelebrationKind };
+  /** For Don't Forget Why — mark seen when nudge shown. */
+  dontForgetMeta?: { contextId: string };
 };
 
 const STATIC_ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
@@ -503,6 +510,23 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
     });
   }
 
+  const dontForget = detectPsaDontForgetWhyNudge();
+  if (dontForget) {
+    nudges.push({
+      id: dontForget.id,
+      kind: 'purchase_memory',
+      priority: 6,
+      headline: dontForget.headline,
+      body: dontForget.body,
+      actionPath: dontForget.actionPath,
+      actionLabel: dontForget.actionLabel,
+      prefilledMessage: dontForget.prefilledMessage,
+      recencyMs: Date.now(),
+      pageContexts: ['orders', 'general'],
+      dontForgetMeta: { contextId: dontForget.contextId },
+    });
+  }
+
   collectNotificationNudges(email, nudges);
   collectOrderStatusNudges(orders, nudges);
 
@@ -513,6 +537,9 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
   if (top?.kind === 'member_milestone') {
     const id = top.id.replace(/^milestone-/, '') as HallOfSlayMilestoneId;
     if (HALL_MILESTONE_HEADLINE[id]) markHallMilestoneCelebrated(id);
+  }
+  if (top?.dontForgetMeta?.contextId) {
+    markDontForgetWhyNudgeShown(top.dontForgetMeta.contextId);
   }
   return top;
 }

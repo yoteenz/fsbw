@@ -25,6 +25,7 @@ export type ResolvePsaAvatarExpressionInput = {
   isInputFocused: boolean;
   inputHasText: boolean;
   showWelcomeWave: boolean;
+  redCarpetMode?: boolean;
   lastReplyAt: number | null;
   now?: number;
   messages: PsaChatMessage[];
@@ -46,6 +47,11 @@ export function resolvePsaAvatarExpression(input: ResolvePsaAvatarExpressionInpu
 
   if (input.isChatOpen && input.isInputFocused) {
     return input.inputHasText ? 'thinking-smiling' : 'listening';
+  }
+
+  if (input.isChatOpen && input.redCarpetMode && !input.isInputFocused && !input.isSending) {
+    if (last?.role === 'assistant') return 'presenting';
+    return 'delighted';
   }
 
   if (input.isChatOpen && last?.role === 'assistant') {
