@@ -80,13 +80,13 @@ Run migration **`20260607120000_psa_threads_context.sql`** for thread archive/su
 
 Golden model index: **`motherboard/golden-models/README.md`**.
 
-**You need 11 PNG/WebP files** (transparent background) — see **Avatar expression filenames** below.
+**You need 20 PNG files** (transparent background) — 11 original + **9 PSA v5** expressions. See **Avatar expression filenames** below.
 
 | File | Expression | When the app shows it |
 |------|------------|------------------------|
 | `psa-avatar-neutral.png` | neutral | FAB default (chat closed) |
 | `psa-avatar-neutral-smiling.png` | neutral-smiling | Chat open, idle |
-| `psa-avatar-waving.png` | waving | ~2.2s when chat opens |
+| `psa-avatar-waving.png` | waving | ~3.2s when chat opens |
 | `psa-avatar-listening.png` | listening | Input focused, empty |
 | `psa-avatar-thinking-smiling.png` | thinking-smiling | Input focused, user typing |
 | `psa-avatar-thinking.png` | thinking | Waiting on PSA reply |
@@ -95,8 +95,21 @@ Golden model index: **`motherboard/golden-models/README.md`**.
 | `psa-avatar-pointing.png` | pointing | Reply includes `/path` links |
 | `psa-avatar-talking.png` | talking | ~2.8s after assistant reply |
 | `psa-avatar-presenting.png` | presenting | Reply mentions units / products |
+| `psa-avatar-remembering.png` | remembering | Welcome memory hint, purchase-memory nudge, recall replies |
+| `psa-avatar-curator.png` | curator | BLACK / Lounge / founder-pick curator energy |
+| `psa-avatar-honest-pushback.png` | honest-pushback | Talk Me Out Of It, regret-prevention, honesty modes |
+| `psa-avatar-archetype-reveal.png` | archetype-reveal | After Slay Archetype quiz reveal |
+| `psa-avatar-red-carpet.png` | red-carpet | Red Carpet Mode session |
+| `psa-avatar-blueprint.png` | blueprint | Build My Entire Look / event blueprint replies |
+| `psa-avatar-celebrating.png` | celebrating | Order celebration, milestones, proud/excited mood |
+| `psa-avatar-reassuring.png` | reassuring | Calm reassurance replies |
+| `psa-avatar-spotlight.png` | spotlight | What Would You Pick? / founder conviction |
 
 All paths are defined in `src/constants/psaConfig.ts` as `PSA_AVATAR_SRC`.
+
+**Generate v5 batch (NBP):** `npm run psa:avatar-expressions` — see `scripts/generate-psa-avatar-expressions.mjs`. Use `SKIP_IDEOGRAM=1` when you remove backgrounds manually; full prompts in `motherboard/golden-prompts/psa-avatar-expressions-nbp.md`.
+
+**Before PNGs land:** Resolver is pre-wired; missing files fall back to neutral via image `onError`. Bump `PSA_AVATAR_ASSET_VERSION` after you add files.
 
 **Legacy names (no longer used):** `psa-avatar-idle.png` → use **`psa-avatar-neutral.png`** instead.
 

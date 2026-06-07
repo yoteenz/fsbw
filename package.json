@@ -12,6 +12,7 @@
     "wig-preview:manifest:noir": "node scripts/generate-noir-wig-preview-manifest.mjs",
     "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
     "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs",
+    "psa:avatar-expressions": "node scripts/generate-psa-avatar-expressions.mjs",
     "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs",
     "lobby:bake-phone": "node scripts/lobby-bake-phone-asset.mjs",
     "lobby:bake-case": "node scripts/lobby-bake-case-asset.mjs",

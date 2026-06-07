@@ -120,6 +120,11 @@ function countUnreadStockAlerts(email: string): number {
   }
 }
 
+/** Infer PSA session mode from a member message (starter chip or free text). */
+export function inferPsaSessionModeFromUserText(message: string): PsaSessionMode | undefined {
+  return inferModeFromMessage(message);
+}
+
 function inferModeFromMessage(message: string): PsaSessionMode | undefined {
   const t = message.toUpperCase();
   if (t.includes('WHY THIS') || t.includes('WHY DID YOU PICK')) {
