@@ -49,6 +49,7 @@ import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTab';
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
+import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
@@ -3123,19 +3124,7 @@ function NoirSelection() {
                 
                 {activeTab === 'SHIPPING' && <NoirProductShippingTab />}
                 
-                {activeTab === 'POLICY' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
-                    </p>
-                  </>
-                )}
+                {activeTab === 'POLICY' && <NoirProductPolicyTab />}
                 
                 {activeTab === 'CARE/STORAGE' && (
                   <>

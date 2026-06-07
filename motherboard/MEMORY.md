@@ -26121,3 +26121,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Decisions / outcomes:** **`src/components/shop/NoirProductShippingTab.tsx`** (new); **`noir/page.tsx`** SHIPPING tab renders **`<NoirProductShippingTab />`**.
 
 **Changes:** `NoirProductShippingTab.tsx`, `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — NOIR product page POLICY tab copy refresh
+
+**Context:** User supplied full POLICY tab copy for the NOIR unit PDP: all-sales-final intro, **IF YOU RECEIVE** issue list, 48-hour contact instructions, verified-error resolution list, store-credit note, raw-hair variation disclaimer, terms acknowledgment, and assistance contact block. Same styling as DETAILS/SHIPPING tabs.
+
+**Topics covered:** **`src/components/shop/NoirProductPolicyTab.tsx`** — **IF YOU RECEIVE** `*` items → red `•` bullets; **verified issue resolutions** `*` items → **`/assets/premium-check.svg`** 10×10px; **`CONTACT@FRONTALSLAYER.COM`** in brand red Futura PT Medium; 10px Futura PT Book uppercase body with wrapping. **`noir/page.tsx`** POLICY tab → **`<NoirProductPolicyTab />`**.
+
+**Changes:** `NoirProductPolicyTab.tsx`, `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
