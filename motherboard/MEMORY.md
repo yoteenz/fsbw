@@ -26131,3 +26131,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Topics covered:** **`src/components/shop/NoirProductPolicyTab.tsx`** — **IF YOU RECEIVE** `*` items → red `•` bullets; **verified issue resolutions** `*` items → **`/assets/premium-check.svg`** 10×10px; **`CONTACT@FRONTALSLAYER.COM`** in brand red Futura PT Medium; 10px Futura PT Book uppercase body with wrapping. **`noir/page.tsx`** POLICY tab → **`<NoirProductPolicyTab />`**.
 
 **Changes:** `NoirProductPolicyTab.tsx`, `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — NOIR product page CARE/STORAGE tab copy refresh
+
+**Context:** User supplied full CARE/STORAGE tab copy for the NOIR unit PDP: care intro, six care `*` bullets, storage intro, four storage `*` bullets, and closing longevity line. Same styling as other NOIR PDP tabs.
+
+**Topics covered:** **`src/components/shop/NoirProductCareStorageTab.tsx`** — care steps → red `•` bullets (**`BrandTermsBody`** pattern); storage guidelines → **`/assets/premium-check.svg`** 10×10px; 10px Futura PT Book uppercase body with wrapping. **`noir/page.tsx`** CARE/STORAGE tab → **`<NoirProductCareStorageTab />`**. All five NOIR PDP tabs (DETAILS, SHIPPING, POLICY, CARE/STORAGE, REVIEWS) now use dedicated tab components except REVIEWS.
+
+**Changes:** `NoirProductCareStorageTab.tsx`, `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
