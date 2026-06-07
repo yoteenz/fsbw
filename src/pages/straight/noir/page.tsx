@@ -47,6 +47,7 @@ import {
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTab';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
@@ -3117,34 +3118,7 @@ function NoirSelection() {
 
                 {/* Tab Content */}
                 <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: 0 }}>
-                {activeTab === 'DETAILS' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      13X6 ULTRA THIN HD FILM LACE, RAW CAMBODIAN STRAIGHT 250% DENSITY.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      UNIT COMES UNCUSTOMIZED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
-                    </p>
-                  </>
-                )}
+                {activeTab === 'DETAILS' && <NoirProductDetailsTab />}
                 
                 {activeTab === 'SHIPPING' && (
                   <>
