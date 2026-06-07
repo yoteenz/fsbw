@@ -155,19 +155,23 @@ function studioCenterPartConstraint(poseAngle: LiveTryOnAngle, headYawDeg?: numb
   if (yaw > 0) {
     return [
       ...anchor,
-      `**${yawLabel} yaw (left cheek toward camera):** Midline part runs **fore–aft along the crown ridge** — groove appears **offset toward the viewer’s RIGHT** (far / away-from-camera scalp), **not** the horizontal center of the hair blob.`,
-      'Only a **short crown segment** of the part may show — **forbidden** to paint a full front-facing center line down the forehead while the face is turned.',
-      'Near-side (left) panel frames the visible cheek; far-side panel wraps behind the ear toward the back of the head.',
-      '**Self-check:** if the part sits in the horizontal center of the silhouette → **failed** — move it toward **image RIGHT** along the crown.',
+      `**${yawLabel} positioned-left — realistic center part (3D midline on turned head):**`,
+      'The part is a **fore–aft groove on the crown** along the skull midline — **rotated with the head**, **not** a vertical stripe down the **center of the 2D photo**.',
+      'From this camera (**left cheek nearest**): the part ridge sits on the **far scalp (viewer’s RIGHT)** — usually only a **short crown segment** (1–3 cm) is visible; **no** part line drawn down the forehead on the turned face.',
+      '**Near-side panel (viewer’s LEFT):** fuller hair mass frames the visible cheek; **far-side panel (viewer’s RIGHT):** thinner sweep tucks **behind the ear** — match **IMAGE 2** hair split at this **left 3/4** angle.',
+      '**FORBIDDEN:** a centered part in the hair silhouette; a front-facing center line on the forehead while the face is turned; splitting the face down the middle in 2D.',
+      '**Self-check:** if you see a vertical part in the horizontal center of the hair blob → **failed** — shift groove toward **image RIGHT** along the crown ridge only.',
     ].join(' ');
   }
 
   return [
     ...anchor,
-    `**${yawLabel} yaw (right cheek toward camera):** Midline part on the **crown ridge**, groove **offset toward the viewer’s LEFT** (far scalp), **not** the center of visible hair.`,
-    '**Forbidden:** a centered part in the frame with a profile pose; fake forehead center line while the face is turned.',
-    'Near-side (right) panel frames the visible cheek; far-side panel wraps behind the ear.',
-    '**Self-check:** part in horizontal center of silhouette → **failed** — move toward **image LEFT** along the crown.',
+    `**${yawLabel} positioned-right — realistic center part (3D midline on turned head):**`,
+    'The part is a **fore–aft groove on the crown** along the skull midline — **rotated with the head**, **not** a vertical stripe down the **center of the 2D photo**.',
+    'From this camera (**right cheek nearest**): the part ridge sits on the **far scalp (viewer’s LEFT)** — usually only a **short crown segment** (1–3 cm) is visible; **no** part line drawn down the forehead on the turned face.',
+    '**Near-side panel (viewer’s RIGHT):** fuller hair mass frames the visible cheek; **far-side panel (viewer’s LEFT):** thinner sweep tucks **behind the ear** — match **IMAGE 2** hair split at this **right 3/4** angle.',
+    '**FORBIDDEN:** a centered part in the hair silhouette; a front-facing center line on the forehead while the face is turned; a fake 2D center stripe on a profile-class pose.',
+    '**Self-check:** if you see a vertical part in the horizontal center of the hair blob → **failed** — shift groove toward **image LEFT** along the crown ridge only.',
   ].join(' ');
 }
 
@@ -279,6 +283,7 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
 ): string {
   const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
   const yawLabel = studioHeadYawLabel(yaw);
+  const absYaw = Math.abs(yaw);
   const angleLabel =
     poseAngle === 'left' ? 'left 3/4' : poseAngle === 'right' ? 'right 3/4' : 'front';
   return [
@@ -292,7 +297,9 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
         : 'Preserve 0° front pose from selfie; do not copy mannequin head angle.',
     `Replace only hair with lace-front wig color ${label} (#${hex}) from IMAGE 2.`,
     'Wig flush on skull — natural hairline/part depth; not mannequin helmet height.',
-    'Center part on skull midline at this yaw. One-sided drape over viewer left shoulder.',
+    absYaw > 8
+      ? 'Center part = 3D crown midline at this yaw; short crown groove only — match IMAGE 2 hair split, not 2D center stripe.'
+      : 'Center part on skull midline. One-sided drape over viewer left shoulder.',
     'Heavy background bokeh on existing room only — do not add objects. No baby hairs on skin.',
     'No makeup. Photoreal. No text.',
   ].join(' ');
@@ -304,18 +311,19 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
  */
 export function buildLiveTryOnStudioMakeupPassPrompt(): string {
   return [
-    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, lace, part, pose, expression, background, lighting, and outfit.',
+    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, lace, **part**, pose, expression, background, lighting, and outfit.',
     STUDIO_MAKEUP_FRAMING_LOCK,
     'Apply **polished IG baddie / babygirl glam** on **face skin only** — same person, still recognizable; photoreal editorial, **not** cartoon or plastic.',
-    '**Jaw + cheeks (snatched sculpt):** slim the **jawline** and lower face with **precise contour** under cheekbones and along the jaw — paired with **highlight** on chin and upper cheekbones so the face reads **snatched**, not muddy brown shadow.',
-    '**Nose (slimmer):** **narrow the nose visually** with soft **side contour** on the alae + **highlight** down the bridge and tip — refined and slimmer, not just darker sides.',
-    '**Forehead:** reads slightly **smaller** via soft hairline-adjacent shading — do not shrink the head.',
+    '**Jaw + cheeks (soft snatched sculpt):** **soft, diffused contour** under cheekbones and along the jaw — **heavily blended**, **no harsh stripe or muddy brown line** on the cheek.',
+    '**Highlight (golden):** **warm golden/champagne highlight** on the **top of the cheekbones**, bridge of nose, and cupid’s bow — luminous, not grey or ashy.',
+    '**Blush:** **flush of rosy pink blush** on the **apples of the cheeks** — healthy sun-kissed warmth, blended into skin (not clown circles).',
+    '**Nose (slimmer):** gentle **soft side contour** on the alae + **highlight** down the bridge and tip — refined and slimmer, not harsh stripes.',
     '**Eyes:** shape reads more **almond**; **brighten undereyes** (concealer effect); **natural wispy lashes** (longer, fuller, curled — lash-extension look, not spidery strips).',
     '**Brows:** fill and define for **fuller, cleaner arches** — match natural brow color.',
     '**Lips (critical):** make the **upper lip visibly fuller** — plump **cupid’s bow** and center upper lip; soft satin nude-pink finish — not overlined clown lips.',
-    '**Skin:** smooth evening with **soft glow** on forehead and cheekbones; keep believable texture (light freckles/moles OK) — airbrushed but still human.',
-    '**Overall:** contour + highlight balance like a pro MUA — camera-ready glow, not flat grey shadow.',
-    '**Locked — do not change:** hair, wig, lace front, room, depth of field, body pose, neck, or clothing.',
+    '**Skin:** smooth evening with **soft glow** on cheekbones; keep believable texture (light freckles/moles OK) — airbrushed but still human. **Do not change forehead size or hairline.**',
+    '**Overall:** soft contour + golden highlight + rosy blush balance — camera-ready glow, not heavy stage makeup.',
+    '**Locked — do not change:** hair, wig, lace front, **part line**, room, depth of field, body pose, neck, or clothing.',
     'No text or watermark.',
   ].join(' ');
 }
@@ -323,9 +331,9 @@ export function buildLiveTryOnStudioMakeupPassPrompt(): string {
 /** Shorter makeup pass for Fal retries. */
 export function buildLiveTryOnStudioMakeupPassPromptCompact(): string {
   return [
-    'IMAGE 1 is a finished studio portrait with wig — keep hair, pose, room, crop, and outfit pixel-identical.',
-    'Face-skin glam only: snatched jaw contour + highlight, slimmer nose (contour sides + highlight bridge), fuller upper lip, almond eyes, bright undereyes, natural lashes, soft glow.',
-    'No pan/reframe. Same person, photoreal. No text.',
+    'IMAGE 1 is a finished studio portrait with wig — keep hair, part, pose, room, crop, and outfit pixel-identical.',
+    'Face-skin glam only: soft blended cheek/jaw contour (no harsh stripe), golden highlight on cheek tops, rosy blush on apples, slimmer nose, fuller upper lip, almond eyes, bright undereyes, natural lashes.',
+    'No forehead shrink. No pan/reframe. Same person, photoreal. No text.',
   ].join(' ');
 }
 
