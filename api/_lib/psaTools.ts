@@ -14,6 +14,7 @@ import {
 import {
   addMemberMemory,
   addPurchaseContextNote,
+  getStoredMemberContextRow,
   setSlayArchetype,
   PSA_HAIR_SLAYER_PROFILES,
   persistMemberContextExtras,
@@ -222,7 +223,8 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
   {
     type: 'function',
     name: 'set_hair_slayer_profile',
-    description: 'Assign a Hair Slayer style profile when you have enough context on their vibe.',
+    description:
+      'Legacy alias for set_slay_archetype — maps Hair Slayer profile to Slay Archetype. Prefer set_slay_archetype for new assignments.',
     parameters: {
       type: 'object',
       properties: {
@@ -699,7 +701,15 @@ export async function executePsaActionTool(
           }),
         };
       }
-      return { output: JSON.stringify({ ok: true, hairProfile: saved }) };
+      const archetype = await getStoredMemberContextRow(ctx.userId);
+      return {
+        output: JSON.stringify({
+          ok: true,
+          hairProfile: saved,
+          slayArchetype: archetype?.slayArchetype ?? null,
+          note: 'Prefer set_slay_archetype going forward.',
+        }),
+      };
     }
 
     case 'set_slay_archetype': {

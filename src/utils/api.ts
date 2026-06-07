@@ -1192,6 +1192,52 @@ export async function postAdminNotification(userId: string, message: string): Pr
   if (!res.ok) throw new Error(await res.text());
 }
 
+/** Admin: PSA thread list for quality review. */
+export async function getAdminPsaReviewThreads(limit = 40): Promise<
+  Array<{
+    id: string;
+    userId: string;
+    title: string | null;
+    updatedAt: string;
+    messageCount: number;
+    preview: string | null;
+    toolsUsed: string[];
+  }>
+> {
+  const res = await apiFetch(`/api/admin/psa-review?limit=${limit}`);
+  if (res.status === 403) return [];
+  if (!res.ok) throw new Error(await res.text());
+  const data = (await res.json()) as {
+    threads?: Array<{
+      id: string;
+      userId: string;
+      title: string | null;
+      updatedAt: string;
+      messageCount: number;
+      preview: string | null;
+      toolsUsed: string[];
+    }>;
+  };
+  return Array.isArray(data.threads) ? data.threads : [];
+}
+
+/** Admin: PSA thread transcript + tool usage detail. */
+export async function getAdminPsaReviewDetail(threadId: string): Promise<{
+  thread: { id: string; userId: string; title: string | null; updatedAt: string };
+  messages: { id: string; role: string; content: string; createdAt: string }[];
+  toolEvents: { toolName: string; createdAt: string; userMessageSnippet: string | null }[];
+  toolSummary: { toolName: string; count: number }[];
+}> {
+  const res = await apiFetch(`/api/admin/psa-review?threadId=${encodeURIComponent(threadId)}`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{
+    thread: { id: string; userId: string; title: string | null; updatedAt: string };
+    messages: { id: string; role: string; content: string; createdAt: string }[];
+    toolEvents: { toolName: string; createdAt: string; userMessageSnippet: string | null }[];
+    toolSummary: { toolName: string; count: number }[];
+  }>;
+}
+
 /** Admin: audit log list. */
 export async function getAdminAuditLog(limit = 50, offset = 0): Promise<Array<{ id: string; actorEmail?: string; action: string; resourceType: string; resourceId?: string; details?: unknown; createdAt: string }>> {
   const res = await apiFetch(`/api/admin/audit-log?limit=${limit}&offset=${offset}`);

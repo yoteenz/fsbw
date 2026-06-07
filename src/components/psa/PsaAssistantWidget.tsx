@@ -14,6 +14,12 @@ import {
   PSA_CHAT_COPY_UPDATED_EVENT,
   readPsaWelcomeMessageFromCopyStorage,
 } from '../../utils/psaChatCopyResolve';
+import { appendWelcomeMemoryHint } from '../../utils/psaWelcomeMemory';
+import {
+  isSaveWhyChip,
+  stashOccasionCaptureMeta,
+  PSA_SAVE_WHY_CHIP,
+} from '../../utils/psaOccasionCapture';
 import { formatPsaUsageRemaining } from '../../constants/psaMembershipCopy';
 import { isSignedIn, MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT } from '../../utils/adminAuth';
 import { fetchPsaActiveThread, fetchPsaUsage } from '../../utils/psaApi';
@@ -78,7 +84,10 @@ export default function PsaAssistantWidget() {
   const [loungeTvTheater, setLoungeTvTheater] = useState(() => isLoungeTvTheaterModeActive());
   const [prefillInput, setPrefillInput] = useState('');
   const [redCarpetMode, setRedCarpetMode] = useState(() => isRedCarpetModeActive());
-  const [welcomeMessage, setWelcomeMessage] = useState(() => readPsaWelcomeMessageFromCopyStorage());
+  const [welcomeMessage, setWelcomeMessage] = useState(() =>
+    appendWelcomeMemoryHint(readPsaWelcomeMessageFromCopyStorage())
+  );
+  const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -142,7 +151,7 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     const reloadCopy = () => {
       setUiCopy(getPsaChatUiCopy());
-      setWelcomeMessage(readPsaWelcomeMessageFromCopyStorage());
+      setWelcomeMessage(appendWelcomeMemoryHint(readPsaWelcomeMessageFromCopyStorage()));
     };
     reloadCopy();
     window.addEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reloadCopy);
@@ -159,6 +168,7 @@ export default function PsaAssistantWidget() {
     void fetchPsaActiveThread().then((result) => {
       if (result.ok && result.memberContext) {
         setCachedPsaMemberContext(result.memberContext);
+        setWelcomeMessage(appendWelcomeMemoryHint(readPsaWelcomeMessageFromCopyStorage()));
       }
     });
   }, [signedIn, isPremium]);
@@ -271,7 +281,7 @@ export default function PsaAssistantWidget() {
     const sync = () => {
       setSignedIn(isSignedIn());
       setIsPremium(isPremiumMemberForGatedFeatures());
-      setWelcomeMessage(readPsaWelcomeMessageFromCopyStorage());
+      setWelcomeMessage(appendWelcomeMemoryHint(readPsaWelcomeMessageFromCopyStorage()));
     };
     sync();
     window.addEventListener('signInStateChanged', sync);
@@ -338,6 +348,16 @@ export default function PsaAssistantWidget() {
 
   const handleNudgeAction = useCallback(() => {
     if (!proactiveNudge) return;
+    if (proactiveNudge.occasionCaptureMeta) {
+      stashOccasionCaptureMeta(proactiveNudge.occasionCaptureMeta);
+    }
+    if (proactiveNudge.kind === 'order_celebration') {
+      setBonusStarterChips([PSA_SAVE_WHY_CHIP]);
+    } else if (proactiveNudge.kind === 'consult_occasion') {
+      setBonusStarterChips([PSA_SAVE_WHY_CHIP]);
+    } else {
+      setBonusStarterChips([]);
+    }
     if (proactiveNudge.prefilledMessage) {
       setPrefillInput(proactiveNudge.prefilledMessage);
       setIsOpen(true);
@@ -395,6 +415,10 @@ export default function PsaAssistantWidget() {
   const handleSend = useCallback(
     async (text: string) => {
       setPrefillInput('');
+      if (isSaveWhyChip(text) && proactiveNudge?.occasionCaptureMeta) {
+        stashOccasionCaptureMeta(proactiveNudge.occasionCaptureMeta);
+      }
+      setBonusStarterChips([]);
       if (isRedCarpetTriggerMessage(text)) {
         activateRedCarpetMode();
         setRedCarpetMode(true);
@@ -429,7 +453,7 @@ export default function PsaAssistantWidget() {
         await runClientActions(result.clientActions);
       }
     },
-    [sendMessage, runClientActions, navigate]
+    [sendMessage, runClientActions, navigate, proactiveNudge]
   );
 
   const handleUpgrade = useCallback(() => {
@@ -489,6 +513,7 @@ export default function PsaAssistantWidget() {
               isLoadingHistory={isLoadingHistory}
               usageLabel={usageLabel}
               redCarpetMode={redCarpetMode}
+              bonusStarterChips={bonusStarterChips}
               panelQuickReplies={panelQuickReplies}
               historyOpen={historyOpen}
               historyArchivedView={historyArchivedView}

@@ -3,10 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { BrandCopyEditorPanel, type BrandCopyEditorMode } from '../../components/BrandCopyEditorPanel';
 import PsaChatCopyEditorPanel from '../../components/PsaChatCopyEditorPanel';
+import AdminPsaReviewPanel from '../../components/AdminPsaReviewPanel';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 
-function parseCopyKind(raw: string | undefined): BrandCopyEditorMode | 'chat' | null {
-  if (raw === 'nudges' || raw === 'alerts' || raw === 'chat') return raw;
+function parseCopyKind(raw: string | undefined): BrandCopyEditorMode | 'chat' | 'psa-review' | null {
+  if (raw === 'nudges' || raw === 'alerts' || raw === 'chat' || raw === 'psa-review') return raw;
   return null;
 }
 
@@ -23,7 +24,13 @@ export default function AdminBrandCopyEditor() {
   if (!mode) return null;
 
   const title =
-    mode === 'nudges' ? 'EDIT PSA NUDGES' : mode === 'alerts' ? 'EDIT ACCOUNT ALERTS' : 'EDIT PSA CHAT';
+    mode === 'nudges'
+      ? 'EDIT PSA NUDGES'
+      : mode === 'alerts'
+        ? 'EDIT ACCOUNT ALERTS'
+        : mode === 'psa-review'
+          ? 'PSA REVIEW'
+          : 'EDIT PSA CHAT';
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -58,7 +65,13 @@ export default function AdminBrandCopyEditor() {
                 boxSizing: 'border-box',
               }}
             >
-              {mode === 'chat' ? <PsaChatCopyEditorPanel /> : <BrandCopyEditorPanel mode={mode} />}
+              {mode === 'chat' ? (
+                <PsaChatCopyEditorPanel />
+              ) : mode === 'psa-review' ? (
+                <AdminPsaReviewPanel />
+              ) : (
+                <BrandCopyEditorPanel mode={mode} />
+              )}
             </div>
           </div>
         </div>

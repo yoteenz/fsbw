@@ -5,7 +5,7 @@ import { getSupabaseAdminServiceRole } from './supabase.js';
 import type { PsaMemberContextSnapshot } from './psaMemberContext.js';
 import type { PsaPurchaseContextNote } from './psaSlayJournal.js';
 import { normalizePurchaseOccasion } from './psaSlayJournal.js';
-import { normalizeSlayArchetype } from './psaSlayArchetype.js';
+import { LEGACY_HAIR_PROFILE_TO_ARCHETYPE, normalizeSlayArchetype } from './psaSlayArchetype.js';
 
 export const PSA_HAIR_SLAYER_PROFILES = [
   'THE EFFORTLESS SLAYER',
@@ -105,6 +105,7 @@ export async function addMemberMemory(userId: string, note: string): Promise<Psa
   return next;
 }
 
+/** @deprecated Legacy alias — maps Hair Slayer profile to canonical Slay Archetype. */
 export async function setHairSlayerProfile(
   userId: string,
   profile: string
@@ -112,7 +113,11 @@ export async function setHairSlayerProfile(
   const upper = profile.trim().toUpperCase();
   const match = PSA_HAIR_SLAYER_PROFILES.find((p) => p === upper);
   if (!match) return null;
-  await persistMemberContextExtras(userId, { hairProfile: match });
+  const archetype = LEGACY_HAIR_PROFILE_TO_ARCHETYPE[match];
+  await persistMemberContextExtras(userId, {
+    hairProfile: match,
+    slayArchetype: archetype ?? null,
+  });
   return match;
 }
 
@@ -126,7 +131,7 @@ export async function setSlayArchetype(
 ): Promise<string | null> {
   const match = normalizeSlayArchetype(archetype);
   if (!match) return null;
-  await persistMemberContextExtras(userId, { slayArchetype: match, hairProfile: match });
+  await persistMemberContextExtras(userId, { slayArchetype: match });
   return match;
 }
 
@@ -161,8 +166,9 @@ export async function addPurchaseContextNote(
 export function formatPsaMemoriesBlock(ctx: PsaMemberContextSnapshot | null): string {
   if (!ctx) return '';
   const lines: string[] = [];
-  if (ctx.hairProfile) {
-    lines.push(`- Hair Slayer profile: **${ctx.hairProfile}** (reference in recommendations).`);
+  const archetype = normalizeSlayArchetype(ctx.slayArchetype ?? ctx.hairProfile ?? '');
+  if (archetype) {
+    lines.push(`- Slay Archetype: **${archetype}** (contextual lens — do not repeat every reply).`);
   }
   const memories = ctx.memories ?? [];
   if (memories.length) {

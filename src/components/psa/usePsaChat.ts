@@ -5,6 +5,7 @@ import {
   fetchPsaActiveThread,
   fetchPsaThreadList,
   postPsaChat,
+  postPsaPurchaseContext,
   postPsaSlayIdentity,
   renamePsaThread,
   unarchivePsaThread,
@@ -15,6 +16,7 @@ import {
 } from '../../utils/psaApi';
 import { resolvePsaScriptedQuickReply } from '../../utils/psaChatCopyResolve';
 import { resolveArchetypeQuizMessage } from '../../utils/psaArchetypeQuiz';
+import { resolveOccasionCaptureMessage } from '../../utils/psaOccasionCapture';
 import { setCachedPsaMemberContext } from '../../utils/psaMemberContextCache';
 import type { PsaClientSessionContext } from '../../utils/psaSessionContext';
 
@@ -205,6 +207,32 @@ export function usePsaChat(
       setError(null);
       setPanelQuickReplies([]);
       setMessages((prev) => [...prev, { id: nextId(), role: 'user', content: trimmed }]);
+
+      const occasionResult = resolveOccasionCaptureMessage(trimmed);
+      if (occasionResult && !options?.immediateNavigate) {
+        setIsSending(true);
+        const typingDelayMs = 300 + Math.floor(Math.random() * 401);
+        await new Promise((resolve) => setTimeout(resolve, typingDelayMs));
+        setIsSending(false);
+        setPanelQuickReplies(occasionResult.followUpChips ?? []);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: nextId(),
+            role: 'assistant',
+            content: occasionResult.reply,
+            quickReplies: occasionResult.followUpChips,
+          },
+        ]);
+        if (occasionResult.savePayload) {
+          void postPsaPurchaseContext(occasionResult.savePayload).then((saved) => {
+            if (saved.ok && saved.memberContext) {
+              setCachedPsaMemberContext(saved.memberContext);
+            }
+          });
+        }
+        return { premiumRequired: false as const };
+      }
 
       const quizResult = resolveArchetypeQuizMessage(trimmed);
       if (quizResult && !options?.immediateNavigate) {

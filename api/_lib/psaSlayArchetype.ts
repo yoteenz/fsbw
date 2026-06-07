@@ -51,7 +51,7 @@ export const ARCHETYPE_DNA_HINTS: Record<PsaSlayArchetype, ArchetypeDnaHints> = 
   },
 };
 
-const LEGACY_HAIR_PROFILE_TO_ARCHETYPE: Record<string, PsaSlayArchetype> = {
+export const LEGACY_HAIR_PROFILE_TO_ARCHETYPE: Record<string, PsaSlayArchetype> = {
   'THE EFFORTLESS SLAYER': 'THE SOFT LIFE SLAYER',
   'THE CEO SLAYER': 'THE BOARDROOM SLAYER',
   'THE SOFT GLAM SLAYER': 'THE IT GIRL SLAYER',

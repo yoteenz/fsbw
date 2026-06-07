@@ -28,6 +28,10 @@ import {
   detectPsaDontForgetWhyNudge,
   markDontForgetWhyNudgeShown,
 } from './psaDontForgetWhy';
+import {
+  clearPendingConsultOccasionPrompt,
+  detectConsultOccasionNudge,
+} from './psaOccasionCapture';
 
 export type PsaProactiveNudgeKind =
   | 'unsigned_form'
@@ -38,7 +42,8 @@ export type PsaProactiveNudgeKind =
   | 'order_update'
   | 'profile_alert'
   | 'member_milestone'
-  | 'purchase_memory';
+  | 'purchase_memory'
+  | 'consult_occasion';
 
 export type PsaNudgePageContext = 'baw' | 'wishlist' | 'alerts' | 'orders' | 'general';
 
@@ -58,6 +63,8 @@ export type PsaProactiveNudge = {
   celebrationMeta?: { orderId: string; kind: PsaOrderCelebrationKind };
   /** For Don't Forget Why — mark seen when nudge shown. */
   dontForgetMeta?: { contextId: string };
+  /** Order/consult context for SAVE WHY I BOUGHT THIS flow. */
+  occasionCaptureMeta?: { orderNumber?: string; unitName?: string; unitId?: string };
 };
 
 const STATIC_ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
@@ -495,6 +502,9 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
     const match = orders.find((o) => orderNum(o) === celebration.orderNumber || orderId(o));
     const id = match ? orderId(match) : celebration.orderNumber;
     const celebrationId = `celebrate-${celebration.kind}-${id}`;
+    const productName = match
+      ? String(match.productName ?? match.name ?? '').trim().toUpperCase()
+      : '';
     nudges.push({
       id: celebrationId,
       kind: 'order_celebration',
@@ -507,6 +517,27 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
       recencyMs: match ? orderRecencyMs(match) : Date.now(),
       pageContexts: ['orders'],
       celebrationMeta: id ? { orderId: id, kind: celebration.kind } : undefined,
+      occasionCaptureMeta: {
+        orderNumber: celebration.orderNumber || orderNum(match ?? {}),
+        unitName: productName || undefined,
+      },
+    });
+  }
+
+  const consultOccasion = detectConsultOccasionNudge();
+  if (consultOccasion) {
+    nudges.push({
+      id: consultOccasion.id,
+      kind: 'consult_occasion',
+      priority: 5,
+      headline: consultOccasion.headline,
+      body: consultOccasion.body,
+      actionPath: '/account/orders',
+      actionLabel: 'SAVE WHY',
+      prefilledMessage: consultOccasion.prefilledMessage,
+      recencyMs: Date.now(),
+      pageContexts: ['orders', 'general'],
+      occasionCaptureMeta: consultOccasion.meta,
     });
   }
 
@@ -540,6 +571,9 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
   }
   if (top?.dontForgetMeta?.contextId) {
     markDontForgetWhyNudgeShown(top.dontForgetMeta.contextId);
+  }
+  if (top?.kind === 'consult_occasion') {
+    clearPendingConsultOccasionPrompt();
   }
   return top;
 }
