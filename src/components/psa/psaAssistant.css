@@ -196,6 +196,11 @@
   color: #eb1c24;
 }
 
+.psa-chat-quick-reply--more {
+  border-style: dashed;
+  opacity: 0.92;
+}
+
 .psa-chat-header {
   position: relative;
   display: flex;

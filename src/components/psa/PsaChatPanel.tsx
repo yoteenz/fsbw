@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
   getPsaChatUiCopy,
-  getPsaStarterQuickReplyLabels,
+  getPsaMoreStarterQuickReplyLabels,
+  getPsaPrimaryStarterQuickReplyLabels,
   PSA_CHAT_COPY_UPDATED_EVENT,
 } from '../../utils/psaChatCopyResolve';
 import { formatPsaVoiceText } from '../../utils/psaVoiceFormat';
@@ -47,6 +48,7 @@ type PsaChatPanelProps = {
   onInputTextChange?: (hasText: boolean) => void;
   initialInput?: string;
   redCarpetMode?: boolean;
+  bonusStarterChips?: string[];
 };
 
 function bubbleDisplay(msg: PsaChatMessage): ReturnType<typeof formatPsaMessageRouteDisplay> {
@@ -246,9 +248,11 @@ export default function PsaChatPanel({
   onInputTextChange,
   initialInput = '',
   redCarpetMode = false,
+  bonusStarterChips = [],
 }: PsaChatPanelProps) {
   const navigate = useNavigate();
   const [input, setInput] = useState(initialInput);
+  const [showMoreStarters, setShowMoreStarters] = useState(false);
   const [renamingThreadId, setRenamingThreadId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
   const [deleteConfirmThreadId, setDeleteConfirmThreadId] = useState<string | null>(null);
@@ -333,11 +337,21 @@ export default function PsaChatPanel({
   const isWelcomeOnly =
     messages.length === 1 && messages[0]?.role === 'assistant' && messages[0]?.id === 'welcome';
 
+  const welcomeChips = (() => {
+    if (!isWelcomeOnly) return [];
+    const primary = getPsaPrimaryStarterQuickReplyLabels();
+    const more = showMoreStarters ? getPsaMoreStarterQuickReplyLabels() : [];
+    const bonus = bonusStarterChips.filter(
+      (chip) => ![...primary, ...more].some((p) => p.toUpperCase() === chip.toUpperCase())
+    );
+    return [...primary, ...more, ...bonus];
+  })();
+
   const quickReplies =
     panelQuickReplies.length > 0
       ? panelQuickReplies.map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
       : isWelcomeOnly
-        ? getPsaStarterQuickReplyLabels().map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
+        ? welcomeChips.map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }))
         : (
             [...messages].reverse().find((m) => m.role === 'assistant' && m.quickReplies?.length)
               ?.quickReplies ?? []
@@ -611,7 +625,10 @@ export default function PsaChatPanel({
         ) : null}
       </div>
 
-      {quickReplies.length > 0 && !isSending && !isLoadingHistory ? (
+      {(quickReplies.length > 0 ||
+        (isWelcomeOnly && !showMoreStarters && getPsaMoreStarterQuickReplyLabels().length > 0)) &&
+      !isSending &&
+      !isLoadingHistory ? (
         <div className="psa-chat-quick-replies" aria-label="Suggested replies">
           {quickReplies.map((chip) => (
             <button
@@ -623,6 +640,15 @@ export default function PsaChatPanel({
               {chip}
             </button>
           ))}
+          {isWelcomeOnly && !showMoreStarters && getPsaMoreStarterQuickReplyLabels().length > 0 ? (
+            <button
+              type="button"
+              className="psa-chat-quick-reply psa-chat-quick-reply--more"
+              onClick={() => setShowMoreStarters(true)}
+            >
+              MORE OPTIONS
+            </button>
+          ) : null}
         </div>
       ) : null}
 

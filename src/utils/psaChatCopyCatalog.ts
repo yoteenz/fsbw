@@ -7,6 +7,7 @@ import {
   PSA_CONTINUE_CTA,
   PSA_HIDE_CHAT_CTA,
   PSA_SHOW_CHAT_CTA,
+  PSA_MORE_STARTER_QUICK_REPLIES,
   PSA_STARTER_QUICK_REPLIES,
   PSA_WIDGET_CTA,
   PSA_WIDGET_LABEL,
@@ -74,12 +75,16 @@ function slugStarterId(label: string, index: number): string {
   return slug || `starter-${index + 1}`;
 }
 
-export const DEFAULT_PSA_STARTER_QUICK_REPLIES: PsaStarterQuickReplyDef[] = PSA_STARTER_QUICK_REPLIES.map(
-  (label, index) => ({
+export const DEFAULT_PSA_STARTER_QUICK_REPLIES: PsaStarterQuickReplyDef[] = [
+  ...PSA_STARTER_QUICK_REPLIES.map((label, index) => ({
     id: slugStarterId(label, index),
     label,
-  }),
-);
+  })),
+  ...PSA_MORE_STARTER_QUICK_REPLIES.map((label, index) => ({
+    id: slugStarterId(label, PSA_STARTER_QUICK_REPLIES.length + index),
+    label,
+  })),
+];
 
 export function buildDefaultPsaChatCopyConfig(): PsaChatCopyConfig {
   return {

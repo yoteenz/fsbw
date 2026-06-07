@@ -429,6 +429,59 @@ export async function fetchPsaActiveThread(threadId?: string | null): Promise<Ps
   };
 }
 
+export type PsaPurchaseContextResult =
+  | { ok: true; occasion: string; memberContext?: PsaMemberContextPayload | null }
+  | { ok: false; code: 'SIGN_IN_REQUIRED' | 'PREMIUM_REQUIRED' | 'NETWORK' | 'SERVER'; message: string };
+
+export async function postPsaPurchaseContext(input: {
+  occasion: string;
+  monthYear?: string;
+  orderNumber?: string;
+  unitName?: string;
+  unitId?: string;
+}): Promise<PsaPurchaseContextResult> {
+  let res: Response | null;
+  try {
+    res = await psaAuthedFetch('/api/psa/purchase-context', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+  } catch {
+    return { ok: false, code: 'NETWORK', message: 'Could not save your purchase context.' };
+  }
+  if (!res) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+
+  const parsed = await parsePsaJsonBody<{
+    error?: string;
+    code?: string;
+    occasion?: string;
+    memberContext?: PsaMemberContextPayload | null;
+  }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
+  }
+  const data = parsed.data;
+
+  if (res.status === 401) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+  if (res.status === 403 || data.code === 'PREMIUM_REQUIRED') {
+    return { ok: false, code: 'PREMIUM_REQUIRED', message: data.error || 'Premium required.' };
+  }
+  if (!res.ok || !data.occasion) {
+    return { ok: false, code: 'SERVER', message: data.error || 'Could not save your purchase context.' };
+  }
+
+  return {
+    ok: true,
+    occasion: data.occasion,
+    memberContext: data.memberContext ?? null,
+  };
+}
+
 export async function postPsaSlayIdentity(archetype: string): Promise<PsaSlayIdentityResult> {
   let res: Response | null;
   try {

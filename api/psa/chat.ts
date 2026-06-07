@@ -58,6 +58,9 @@ import {
   formatPsaThreadSummaryBlock,
   PSA_LONG_THREAD_MESSAGE_THRESHOLD,
 } from '../_lib/psaThreadSummary.js';
+import { buildPsaContextPrefetchBlock } from '../_lib/psaContextPrefetch.js';
+import { buildPsaMemoryMicroMomentBlock } from '../_lib/psaMemoryMicroMoment.js';
+import { logPsaToolEvents } from '../_lib/psaToolAnalytics.js';
 
 export const config = {
   maxDuration: 60,
@@ -526,6 +529,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let activeThreadId: string | null = null;
     let chainPreviousResponseId = previousResponseId;
     let activeThreadSummary: string | null = null;
+    let isEarlyThreadTurn = false;
 
     if (isPsaThreadStoreConfigured()) {
       try {
@@ -538,6 +542,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         activeThreadSummary = thread.thread_summary;
         if (!createNewThread && thread.last_openai_response_id) {
           chainPreviousResponseId = thread.last_openai_response_id;
+        }
+        if (createNewThread) {
+          isEarlyThreadTurn = true;
+        } else {
+          const priorRows = await getPsaThreadMessages(thread.id);
+          isEarlyThreadTurn = priorRows.filter((m) => m.role === 'user').length === 0;
         }
         await appendPsaMessage({
           threadId: thread.id,
@@ -583,6 +593,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
       instructionContext += formatPsaMemberContextBlock(memberCtx);
+      instructionContext += buildPsaContextPrefetchBlock({
+        message,
+        clientContext: body.context,
+        memberCtx,
+      });
+      instructionContext += buildPsaMemoryMicroMomentBlock(memberCtx, isEarlyThreadTurn);
     } catch (ctxErr) {
       console.warn('[psa/chat] member context', ctxErr);
     }
@@ -606,6 +622,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     response = await runPsaToolLoop(response, aiCtx, toolCtx, clientActions, toolTrace);
 
     const { reply, response: finalResponse } = await resolveAssistantReply(response, aiCtx);
+
+    void logPsaToolEvents({
+      threadId: activeThreadId,
+      userId: user.id,
+      toolNames: toolTrace.map((t) => t.name).filter(Boolean),
+      userMessageSnippet: message,
+    });
 
     const formattedReply = formatPsaVoiceText(reply);
     const { reply: displayReply, quickReplies } = parseQuickRepliesFromReply(formattedReply);

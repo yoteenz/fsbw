@@ -128,17 +128,21 @@ export function readPsaWelcomeMessageFromStorage(): string {
 /** @deprecated Prefer readPsaWelcomeMessageFromStorage() or buildPsaWelcomeMessage(). */
 export const PSA_WELCOME_MESSAGE = buildPsaWelcomeMessage();
 
-/** Starter quick-reply chips when the thread is welcome-only (empty chat). */
+/** Primary starter chips (welcome-only) — keep to 6 for mobile. */
 export const PSA_STARTER_QUICK_REPLIES = [
   'HELP ME CHOOSE',
   'WHAT WOULD YOU PICK?',
   'DISCOVER MY ARCHETYPE',
   'I HAVE AN EVENT',
   'WHAT MIGHT I REGRET?',
-  'BUILD MY ENTIRE LOOK',
   'TRACK MY ORDER',
+] as const;
+
+/** Secondary chips surfaced via MORE OPTIONS in the chat panel. */
+export const PSA_MORE_STARTER_QUICK_REPLIES = [
+  'BUILD MY ENTIRE LOOK',
   'SHOULD I REALLY BUY THIS?',
-  'GET ME EVENT READY',
+  'SAVE WHY I BOUGHT THIS',
 ] as const;
 
 /** How long to show waving when the chat panel opens or during idle wave. */

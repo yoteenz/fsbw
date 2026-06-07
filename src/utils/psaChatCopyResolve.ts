@@ -4,6 +4,7 @@
 import { formatPsaMemberFirstName } from '../constants/psaConfig';
 import { getCurrentUserFirstNameFromStorage } from './perUserStorage';
 import { resolvePsaWelcomeKind, type PsaWelcomeKind } from './psaWelcomeState';
+import { PSA_MORE_STARTER_QUICK_REPLIES, PSA_STARTER_QUICK_REPLIES } from '../constants/psaConfig';
 import {
   buildDefaultPsaChatCopyConfig,
   normalizePsaChatCopyConfig,
@@ -58,6 +59,22 @@ export function getPsaStarterQuickReplyDefs(): PsaStarterQuickReplyDef[] {
 
 export function getPsaStarterQuickReplyLabels(): string[] {
   return getPsaStarterQuickReplyDefs().map((row) => row.label);
+}
+
+/** Primary welcome chips only (mobile cap). */
+export function getPsaPrimaryStarterQuickReplyLabels(): string[] {
+  const primary = new Set(PSA_STARTER_QUICK_REPLIES.map((l) => l.toUpperCase()));
+  return getPsaStarterQuickReplyDefs()
+    .filter((row) => primary.has(row.label.trim().toUpperCase()))
+    .map((row) => row.label);
+}
+
+/** Secondary chips behind MORE OPTIONS. */
+export function getPsaMoreStarterQuickReplyLabels(): string[] {
+  const more = new Set(PSA_MORE_STARTER_QUICK_REPLIES.map((l) => l.toUpperCase()));
+  return getPsaStarterQuickReplyDefs()
+    .filter((row) => more.has(row.label.trim().toUpperCase()))
+    .map((row) => row.label);
 }
 
 export function buildPsaWelcomeMessageFromCopy(options?: {

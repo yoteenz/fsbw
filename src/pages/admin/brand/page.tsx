@@ -980,6 +980,15 @@ export default function AdminBrand() {
                   >
                     EDIT CHAT
                   </button>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin/brand/edit/psa-review')}
+                    className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    PSA REVIEW
+                  </button>
                 </PageActionsBelowCard>
               ) : (
                 <PageActionsBelowCard adminHub>

@@ -12,6 +12,7 @@ import { consultDigitalOrderTrackingBarFillPct } from '../utils/digitalOrderFulf
 import type { ConsultOrderLike } from '../utils/consultOrderLifecycle';
 import { expandStylingBreakdownLineForDisplay, type SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
 import LiveTryOnLaunchButton from './liveTryOn/LiveTryOnLaunchButton';
+import { setPendingConsultOccasionPrompt } from '../utils/psaOccasionCapture';
 
 type Props = {
   isOpen: boolean;
@@ -276,6 +277,17 @@ export default function ConsultOfferClaimModal({
 
       if (!expired && quoteIdForClaim) {
         appendConsultOfferClaimedQuoteId(quoteIdForClaim);
+        const selections =
+          quote?.selections && typeof quote.selections === 'object'
+            ? (quote.selections as Record<string, unknown>)
+            : null;
+        const unitLabel = String(
+          selections?.unit ?? cartItem.name ?? selections?.unitName ?? ''
+        ).trim();
+        setPendingConsultOccasionPrompt({
+          orderNumber: orderNumberDisplay?.trim() || undefined,
+          unitName: unitLabel ? unitLabel.toUpperCase() : undefined,
+        });
       }
 
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));

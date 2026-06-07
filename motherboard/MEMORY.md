@@ -26081,3 +26081,19 @@ Pushed **`master`** + **`preview/mobile`**.
 **Starter chips added:** **DISCOVER MY ARCHETYPE**, **I HAVE AN EVENT** (`psaConfig.ts`).
 
 **Conventions:** Client must not import `api/_lib` — archetype constants mirrored in **`src/constants/psaSlayArchetype.ts`**. SLAY DNA never shown as scores/JSON to members.
+
+---
+
+## 2026-06-07 — PSA v5: reliability layer (6 improvement recommendations)
+
+**Context:** After PSA v4, user asked to implement all six agent recommendations: tool prefetch, unify identity, occasion capture, trim chips, memory micro-moments, admin transcript/tool review.
+
+**Shipped:**
+1. **Tool prefetch** — **`api/_lib/psaContextPrefetch.ts`**: auto-injects founder pick, Slay DNA score, Lounge lesson on BAW/unit PDP/cart surfaces before LLM (`chat.ts`).
+2. **Unified identity** — Slay Archetype canonical; **`set_hair_slayer_profile`** legacy alias maps to archetype; memories block shows archetype only; instructions deprecate hair profile tool.
+3. **Occasion capture** — **`psaOccasionCapture.ts`** scripted **SAVE WHY I BOUGHT THIS**; **`POST /api/psa/purchase-context`**; order celebration + consult claim nudges stash unit/order meta; consult **`setPendingConsultOccasionPrompt`** on offer claim.
+4. **Trim chips** — 6 primary starters + **MORE OPTIONS** row (`PSA_MORE_STARTER_QUICK_REPLIES`: BUILD MY ENTIRE LOOK, SHOULD I REALLY BUY THIS, SAVE WHY I BOUGHT THIS).
+5. **Memory micro-moments** — server **`psaMemoryMicroMoment.ts`** on first thread turn; client **`psaWelcomeMemory.ts`** suffix on welcome when cache has archetype/purchase context.
+6. **Admin review** — **`psa_tool_events`** migration; **`logPsaToolEvents`** in chat; **`GET /api/admin/psa-review`**; **Admin → Brand → PSA REVIEW** panel (`/admin/brand/edit/psa-review`).
+
+**Migration:** run **`supabase/migrations/20260607140000_psa_tool_events.sql`** for tool analytics.
