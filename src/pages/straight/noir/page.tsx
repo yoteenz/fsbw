@@ -50,6 +50,7 @@ import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions'
 import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTab';
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
+import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
@@ -3126,19 +3127,7 @@ function NoirSelection() {
                 
                 {activeTab === 'POLICY' && <NoirProductPolicyTab />}
                 
-                {activeTab === 'CARE/STORAGE' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                      ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                      CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
-                    </p>
-                  </>
-                )}
+                {activeTab === 'CARE/STORAGE' && <NoirProductCareStorageTab />}
                 
                 {activeTab === 'REVIEWS' && (
                   <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>

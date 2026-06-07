@@ -1,0 +1,71 @@
+/** NOIR unit PDP — CARE/STORAGE tab copy and list styling. */
+
+const BODY_STYLE = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  fontWeight: 400,
+  margin: 0,
+  lineHeight: 1.45,
+  textTransform: 'uppercase' as const,
+};
+
+/** Match `/brand/terms` bullet rows (`BrandTermsBody`). */
+const BULLET_STYLE = {
+  ...BODY_STYLE,
+  paddingLeft: '12px',
+};
+
+const BULLET_MARK_STYLE = { color: '#EB1C24' };
+
+const CARE_BULLETS = [
+  'CLEANSE HAIR AS NEEDED USING A HIGH QUALITY, SULFATE-FREE OR MILD SHAMPOO.',
+  'WHEN CONDITIONING, AVOID APPLYING HEAVY CONDITIONER DIRECTLY ONTO THE LACE TO HELP PRESERVE KNOT INTEGRITY AND PREVENT PREMATURE SHEDDING.',
+  'GENTLY DETANGLE HAIR USING A PADDLE BRUSH OR WIDE TOOTH COMB, WORKING FROM THE ENDS UPWARD TO MINIMIZE BREAKAGE AND MATTING.',
+  'AVOID EXCESSIVE HEAT STYLING AND ALWAYS USE A HEAT PROTECTANT WHEN APPLYING HOT TOOLS.',
+  'FOR CURLY OR WAVY TEXTURES, USE A SPRAY BOTTLE MIXED WITH WATER, A LIGHT SERUM AND LEAVE IN CONDITIONER TO REFRESH, HYDRATE AND REDEFINE THE PATTERN BETWEEN WASHES.',
+  'DO NOT SLEEP, SWIM OR EXERCISE EXCESSIVELY IN YOUR UNIT WITHOUT PROPER PROTECTION AND MAINTENANCE.',
+] as const;
+
+const STORAGE_ITEMS = [
+  'STORE YOUR UNIT IN A COOL, DRY ENVIRONMENT AWAY FROM DIRECT SUNLIGHT AND EXCESS HUMIDITY.',
+  'CAREFULLY PLACE YOUR UNIT INSIDE THE PROVIDED SATIN LINED DUST BAG TO MINIMIZE FRICTION, FRIZZ, TANGLING AND DEBRIS BUILDUP.',
+  'FOR EXTENDED STORAGE, WE RECOMMEND PLACING YOUR UNIT ON A MANNEQUIN HEAD OR WIG STAND TO HELP MAINTAIN ITS SHAPE AND STYLING.',
+  'ENSURE THE UNIT IS COMPLETELY DRY BEFORE STORING TO PREVENT ODOR, MILDEW OR DAMAGE TO THE LACE AND HAIR FIBERS.',
+] as const;
+
+/** Red checkmarks match premium upgrade subscription chart (`PremiumSubscriptionUpgradeChart`). */
+const PREMIUM_CHECK_STYLE = { width: '10px', height: '10px', flexShrink: 0 } as const;
+
+export default function NoirProductCareStorageTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <p style={BODY_STYLE}>
+        PROPER CARE IS ESSENTIAL TO MAINTAINING THE LONGEVITY, SOFTNESS AND OVERALL QUALITY OF YOUR FRONTAL SLAYER UNIT.
+      </p>
+
+      {CARE_BULLETS.map((bullet) => (
+        <p key={bullet} style={BULLET_STYLE}>
+          <span style={BULLET_MARK_STYLE}>•</span> {bullet}
+        </p>
+      ))}
+
+      <p style={BODY_STYLE}>
+        WHEN NOT IN USE, PROPER STORAGE HELPS PRESERVE THE APPEARANCE AND LIFESPAN OF YOUR UNIT.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {STORAGE_ITEMS.map((label) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <img src="/assets/premium-check.svg" alt="Included" style={PREMIUM_CHECK_STYLE} />
+            <p style={BODY_STYLE}>{label}</p>
+          </div>
+        ))}
+      </div>
+
+      <p style={BODY_STYLE}>
+        WITH PROPER CARE AND MAINTENANCE, YOUR FRONTAL SLAYER UNIT CAN PROVIDE YEARS OF BEAUTIFUL WEAR, VERSATILITY AND EFFORTLESS SLAY.
+      </p>
+    </div>
+  );
+}
