@@ -5,6 +5,7 @@ import {
   fetchPsaActiveThread,
   fetchPsaThreadList,
   postPsaChat,
+  postPsaSlayIdentity,
   renamePsaThread,
   unarchivePsaThread,
   type PsaContinueHint,
@@ -13,6 +14,8 @@ import {
   type PsaUsagePayload,
 } from '../../utils/psaApi';
 import { resolvePsaScriptedQuickReply } from '../../utils/psaChatCopyResolve';
+import { resolveArchetypeQuizMessage } from '../../utils/psaArchetypeQuiz';
+import { setCachedPsaMemberContext } from '../../utils/psaMemberContextCache';
 import type { PsaClientSessionContext } from '../../utils/psaSessionContext';
 
 export type PsaChatMessage = {
@@ -101,6 +104,9 @@ export function usePsaChat(
 
       setHistoryAvailable(result.historyAvailable);
       setContinueHint(result.continueHint ?? null);
+      if (result.memberContext) {
+        setCachedPsaMemberContext(result.memberContext);
+      }
       applyThreadPayload({
         threadId: result.threadId,
         lastResponseId: result.lastResponseId,
@@ -199,6 +205,32 @@ export function usePsaChat(
       setError(null);
       setPanelQuickReplies([]);
       setMessages((prev) => [...prev, { id: nextId(), role: 'user', content: trimmed }]);
+
+      const quizResult = resolveArchetypeQuizMessage(trimmed);
+      if (quizResult && !options?.immediateNavigate) {
+        setIsSending(true);
+        const typingDelayMs = 300 + Math.floor(Math.random() * 401);
+        await new Promise((resolve) => setTimeout(resolve, typingDelayMs));
+        setIsSending(false);
+        setPanelQuickReplies(quizResult.followUpChips ?? []);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: nextId(),
+            role: 'assistant',
+            content: quizResult.reply,
+            quickReplies: quizResult.followUpChips,
+          },
+        ]);
+        if (quizResult.completed && quizResult.archetype) {
+          void postPsaSlayIdentity(quizResult.archetype).then((saved) => {
+            if (saved.ok && saved.memberContext) {
+              setCachedPsaMemberContext(saved.memberContext);
+            }
+          });
+        }
+        return { premiumRequired: false as const };
+      }
 
       const scripted = resolvePsaScriptedQuickReply(trimmed);
       if (scripted && !options?.immediateNavigate) {

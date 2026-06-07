@@ -15,7 +15,8 @@ export type PsaSessionMode =
   | 'what_might_i_regret'
   | 'slay_forecast'
   | 'build_my_look'
-  | 'why_this';
+  | 'why_this'
+  | 'red_carpet';
 
 export type PsaClientSessionContextPayload = {
   pathname?: string;
@@ -44,6 +45,7 @@ export type PsaClientSessionContextPayload = {
     source: 'draft' | 'session';
   };
   mode?: PsaSessionMode;
+  redCarpetMode?: boolean;
   welcomeKind?: 'first' | 'returning' | 'default';
   mood?: PsaMoodId;
   moodReason?: string;
@@ -149,6 +151,11 @@ export function formatPsaSessionContextBlock(raw: unknown): string {
   if (ctx.mode === 'why_this') {
     lines.push(
       '- **MODE: Why This** — explain the last recommendation using their stated preferences and memories. Transparent reasoning, no jargon.'
+    );
+  }
+  if (ctx.mode === 'red_carpet' || ctx.redCarpetMode) {
+    lines.push(
+      '- **MODE: Red Carpet** — premium event session. Elevated concierge energy: full look blueprint, install timing, maintenance plan, Lounge lesson, booking path. Ask event date and venue climate when missing. No fake urgency.'
     );
   }
 

@@ -14,6 +14,7 @@ import { detectPsaBawResumeTarget } from './psaBawDraft';
 import { computePsaSlayReadiness } from './psaSlayReadiness';
 import { buildPsaSlayJournalSnapshot } from './psaSlayJournal';
 import { resolvePsaMood, type PsaMoodId } from './psaMood';
+import { isRedCarpetModeActive, isRedCarpetTriggerMessage } from './psaRedCarpetMode';
 
 export type PsaSessionMode =
   | 'talk_me_out_of_it'
@@ -22,7 +23,8 @@ export type PsaSessionMode =
   | 'what_might_i_regret'
   | 'slay_forecast'
   | 'build_my_look'
-  | 'why_this';
+  | 'why_this'
+  | 'red_carpet';
 
 export type PsaClientSessionContext = {
   pathname: string;
@@ -51,6 +53,7 @@ export type PsaClientSessionContext = {
     source: 'draft' | 'session';
   };
   mode?: PsaSessionMode;
+  redCarpetMode?: boolean;
   welcomeKind?: PsaWelcomeKind;
   mood?: PsaMoodId;
   moodReason?: string;
@@ -135,6 +138,9 @@ function inferModeFromMessage(message: string): PsaSessionMode | undefined {
   }
   if (t.includes('BUILD MY ENTIRE LOOK') || t.includes('BUILD MY WHOLE LOOK')) {
     return 'build_my_look';
+  }
+  if (isRedCarpetTriggerMessage(message)) {
+    return 'red_carpet';
   }
   if (
     t.includes('SLAY FORECAST') ||
@@ -252,6 +258,11 @@ export function buildPsaClientSessionContext(
   if (pendingMessage) {
     const mode = inferModeFromMessage(pendingMessage);
     if (mode) ctx.mode = mode;
+  }
+
+  if (isRedCarpetModeActive()) {
+    ctx.redCarpetMode = true;
+    if (!ctx.mode) ctx.mode = 'red_carpet';
   }
 
   ctx.welcomeKind = resolvePsaWelcomeKind();

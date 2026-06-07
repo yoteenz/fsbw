@@ -22,6 +22,8 @@ import { buildPsaInstructions } from '../_lib/psaInstructions.js';
 import { searchFounderTaste } from '../_lib/psaFounderTaste.js';
 import { matchPsaLoungeLessons } from '../_lib/psaLoungeLessons.js';
 import { buildSlayForecastToolResult } from '../_lib/psaSlayForecast.js';
+import { getStoredMemberContextRow } from '../_lib/psaMemberMemories.js';
+import { buildPsaSlayDna, scoreUnitAgainstSlayDna, formatPsaSlayDnaBlock } from '../_lib/psaSlayDna.js';
 import { formatPsaVoiceText } from '../_lib/psaVoiceFormat.js';
 import { formatPsaSessionContextBlock } from '../_lib/psaSessionContext.js';
 import {
@@ -185,6 +187,28 @@ const PSA_TOOLS = [
     },
     strict: true,
   },
+  {
+    type: 'function',
+    name: 'get_slay_dna',
+    description:
+      'Hidden SLAY DNA fingerprint for this member. Use before strong recommendations or pushback. Never show raw JSON to the member.',
+    parameters: { type: 'object', properties: {}, additionalProperties: false },
+    strict: true,
+  },
+  {
+    type: 'function',
+    name: 'score_unit_slay_dna',
+    description: 'Score a catalog unit against member Slay DNA (strong, partial, mismatch).',
+    parameters: {
+      type: 'object',
+      properties: {
+        unitId: { type: 'string', description: 'noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl' },
+      },
+      required: ['unitId'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
 ] as const;
 
 function toolsForMember(premium: NonNullable<Awaited<ReturnType<typeof getPsaPremiumProfile>>>) {
@@ -200,7 +224,11 @@ function parseToolArgs(raw: string | undefined): Record<string, unknown> {
   }
 }
 
-function executePsaSearchTool(name: string, args: Record<string, unknown>): string {
+async function executePsaSearchToolAsync(
+  name: string,
+  args: Record<string, unknown>,
+  userId?: string
+): Promise<string> {
   const query = typeof args.query === 'string' ? args.query : '';
 
   switch (name) {
@@ -247,6 +275,30 @@ function executePsaSearchTool(name: string, args: Record<string, unknown>): stri
     case 'get_slay_forecast': {
       const destination = typeof args.destination === 'string' ? args.destination.trim() : query;
       return JSON.stringify(buildSlayForecastToolResult(destination));
+    }
+    case 'get_slay_dna': {
+      if (!userId) return JSON.stringify({ error: 'Not authenticated' });
+      const row = await getStoredMemberContextRow(userId);
+      const dna = row ? buildPsaSlayDna(row) : null;
+      if (!dna) return JSON.stringify({ error: 'No member context yet' });
+      return JSON.stringify({
+        narrative: dna.dnaNarrative,
+        archetype: dna.archetype,
+        textureAffinity: dna.textureAffinity,
+        maintenanceTolerance: dna.maintenanceTolerance,
+        primaryUnits: dna.primaryUnits,
+        behaviorTags: dna.behaviorTags,
+        instruction: formatPsaSlayDnaBlock(dna).slice(0, 400),
+      });
+    }
+    case 'score_unit_slay_dna': {
+      if (!userId) return JSON.stringify({ error: 'Not authenticated' });
+      const unitId = typeof args.unitId === 'string' ? args.unitId : '';
+      const row = await getStoredMemberContextRow(userId);
+      if (!row || !unitId) return JSON.stringify({ error: 'unitId required' });
+      const dna = buildPsaSlayDna(row);
+      const score = scoreUnitAgainstSlayDna(dna, unitId);
+      return JSON.stringify({ unitId, ...score });
     }
     default:
       return JSON.stringify({ error: 'Unknown search tool' });
@@ -327,7 +379,7 @@ async function runPsaToolLoop(
             output: result.output,
           };
         }
-        const searchOutput = executePsaSearchTool(toolName, args);
+        const searchOutput = await executePsaSearchToolAsync(toolName, args, toolCtx.userId);
         toolTrace.push({ name: toolName, output: searchOutput });
         return {
           type: 'function_call_output',

@@ -76,6 +76,20 @@ export type PsaContinueHint = {
   updatedAt: string;
 };
 
+export type PsaMemberContextPayload = {
+  slayArchetype?: string | null;
+  purchaseContexts?: {
+    id: string;
+    occasion: string;
+    monthYear?: string;
+    orderNumber?: string;
+    unitName?: string;
+    unitId?: string;
+    createdAt: string;
+  }[];
+  refreshedAt?: string;
+};
+
 export type PsaThreadLoadResult =
   | {
       ok: true;
@@ -85,6 +99,15 @@ export type PsaThreadLoadResult =
       messages: PsaStoredMessage[];
       historyAvailable: boolean;
       continueHint?: PsaContinueHint | null;
+      memberContext?: PsaMemberContextPayload | null;
+    }
+  | { ok: false; code: 'SIGN_IN_REQUIRED' | 'PREMIUM_REQUIRED' | 'NETWORK' | 'SERVER'; message: string };
+
+export type PsaSlayIdentityResult =
+  | {
+      ok: true;
+      slayArchetype: string;
+      memberContext?: PsaMemberContextPayload | null;
     }
   | { ok: false; code: 'SIGN_IN_REQUIRED' | 'PREMIUM_REQUIRED' | 'NETWORK' | 'SERVER'; message: string };
 
@@ -377,6 +400,7 @@ export async function fetchPsaActiveThread(threadId?: string | null): Promise<Ps
     messages?: PsaStoredMessage[];
     historyAvailable?: boolean;
     continueHint?: PsaContinueHint | null;
+    memberContext?: PsaMemberContextPayload | null;
   }>(res);
   if (!parsed.ok) {
     return { ok: false, code: 'SERVER', message: parsed.message };
@@ -401,6 +425,50 @@ export async function fetchPsaActiveThread(threadId?: string | null): Promise<Ps
     messages: Array.isArray(data.messages) ? data.messages : [],
     historyAvailable: data.historyAvailable !== false,
     continueHint: data.continueHint ?? null,
+    memberContext: data.memberContext ?? null,
+  };
+}
+
+export async function postPsaSlayIdentity(archetype: string): Promise<PsaSlayIdentityResult> {
+  let res: Response | null;
+  try {
+    res = await psaAuthedFetch('/api/psa/slay-identity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ archetype }),
+    });
+  } catch {
+    return { ok: false, code: 'NETWORK', message: 'Could not save your Slay Archetype.' };
+  }
+  if (!res) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+
+  const parsed = await parsePsaJsonBody<{
+    error?: string;
+    code?: string;
+    slayArchetype?: string;
+    memberContext?: PsaMemberContextPayload | null;
+  }>(res);
+  if (!parsed.ok) {
+    return { ok: false, code: 'SERVER', message: parsed.message };
+  }
+  const data = parsed.data;
+
+  if (res.status === 401) {
+    return { ok: false, code: 'SIGN_IN_REQUIRED', message: sessionExpiredMessage() };
+  }
+  if (res.status === 403 || data.code === 'PREMIUM_REQUIRED') {
+    return { ok: false, code: 'PREMIUM_REQUIRED', message: data.error || 'Premium required.' };
+  }
+  if (!res.ok || !data.slayArchetype) {
+    return { ok: false, code: 'SERVER', message: data.error || 'Could not save your Slay Archetype.' };
+  }
+
+  return {
+    ok: true,
+    slayArchetype: data.slayArchetype,
+    memberContext: data.memberContext ?? null,
   };
 }
 

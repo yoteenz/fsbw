@@ -5,6 +5,7 @@ import { getSupabaseAdminServiceRole } from './supabase.js';
 import type { PsaMemberContextSnapshot } from './psaMemberContext.js';
 import type { PsaPurchaseContextNote } from './psaSlayJournal.js';
 import { normalizePurchaseOccasion } from './psaSlayJournal.js';
+import { normalizeSlayArchetype } from './psaSlayArchetype.js';
 
 export const PSA_HAIR_SLAYER_PROFILES = [
   'THE EFFORTLESS SLAYER',
@@ -55,7 +56,10 @@ const MAX_PURCHASE_CONTEXTS = 8;
 export async function persistMemberContextExtras(
   userId: string,
   patch: Partial<
-    Pick<PsaMemberContextSnapshot, 'memories' | 'hairProfile' | 'bawDraft' | 'purchaseContexts'>
+    Pick<
+      PsaMemberContextSnapshot,
+      'memories' | 'hairProfile' | 'bawDraft' | 'purchaseContexts' | 'slayArchetype'
+    >
   >
 ): Promise<void> {
   const supabase = getSupabaseAdminServiceRole();
@@ -74,6 +78,8 @@ export async function persistMemberContextExtras(
     bawDraft: patch.bawDraft !== undefined ? patch.bawDraft : existing.bawDraft ?? null,
     purchaseContexts:
       patch.purchaseContexts !== undefined ? patch.purchaseContexts : existing.purchaseContexts ?? [],
+    slayArchetype:
+      patch.slayArchetype !== undefined ? patch.slayArchetype : existing.slayArchetype ?? null,
   };
   await supabase.from('psa_member_context').upsert({
     user_id: userId,
@@ -114,9 +120,25 @@ function purchaseContextId(): string {
   return `pc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+export async function setSlayArchetype(
+  userId: string,
+  archetype: string
+): Promise<string | null> {
+  const match = normalizeSlayArchetype(archetype);
+  if (!match) return null;
+  await persistMemberContextExtras(userId, { slayArchetype: match, hairProfile: match });
+  return match;
+}
+
 export async function addPurchaseContextNote(
   userId: string,
-  input: { occasion: string; monthYear?: string; orderNumber?: string }
+  input: {
+    occasion: string;
+    monthYear?: string;
+    orderNumber?: string;
+    unitName?: string;
+    unitId?: string;
+  }
 ): Promise<PsaPurchaseContextNote[]> {
   const occasion = normalizePurchaseOccasion(input.occasion);
   if (!occasion) return (await getStoredMemberContextRow(userId))?.purchaseContexts ?? [];
@@ -127,6 +149,8 @@ export async function addPurchaseContextNote(
     occasion,
     monthYear: input.monthYear?.trim() || undefined,
     orderNumber: input.orderNumber?.trim() || undefined,
+    unitName: input.unitName?.trim().toUpperCase() || undefined,
+    unitId: input.unitId?.trim().toLowerCase() || undefined,
     createdAt: new Date().toISOString(),
   };
   const next = [row, ...existing].slice(0, MAX_PURCHASE_CONTEXTS);

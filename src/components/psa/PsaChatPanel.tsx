@@ -46,6 +46,7 @@ type PsaChatPanelProps = {
   onInputFocusChange?: (focused: boolean) => void;
   onInputTextChange?: (hasText: boolean) => void;
   initialInput?: string;
+  redCarpetMode?: boolean;
 };
 
 function bubbleDisplay(msg: PsaChatMessage): ReturnType<typeof formatPsaMessageRouteDisplay> {
@@ -244,6 +245,7 @@ export default function PsaChatPanel({
   onInputFocusChange,
   onInputTextChange,
   initialInput = '',
+  redCarpetMode = false,
 }: PsaChatPanelProps) {
   const navigate = useNavigate();
   const [input, setInput] = useState(initialInput);
@@ -342,7 +344,11 @@ export default function PsaChatPanel({
           ).map((chip) => formatPsaVoiceText(chip, { stripGreeting: false }));
 
   return (
-    <div className="psa-chat-panel" role="dialog" aria-label="Personal Slay Assistant chat">
+    <div
+      className={`psa-chat-panel${redCarpetMode ? ' psa-chat-panel--red-carpet' : ''}`}
+      role="dialog"
+      aria-label="Personal Slay Assistant chat"
+    >
       <header className="psa-chat-header">
         <div className="psa-chat-header-side psa-chat-header-side--left">
           {historyAvailable && onOpenHistory ? (
@@ -358,7 +364,13 @@ export default function PsaChatPanel({
         </div>
         <div className="psa-chat-header-text">
           <h2 className="psa-chat-subtitle">
-            {historyOpen ? (historyArchivedView ? 'ARCHIVED CHATS' : 'CHAT HISTORY') : uiCopy.chatSubtitle}
+            {historyOpen
+              ? historyArchivedView
+                ? 'ARCHIVED CHATS'
+                : 'CHAT HISTORY'
+              : redCarpetMode
+                ? 'RED CARPET MODE'
+                : uiCopy.chatSubtitle}
           </h2>
           {usageLabel ? <p className="psa-chat-usage">{usageLabel}</p> : null}
         </div>

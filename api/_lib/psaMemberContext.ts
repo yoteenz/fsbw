@@ -35,11 +35,15 @@ export type PsaMemberContextSnapshot = {
   hairProfile?: string | null;
   bawDraft?: PsaBawDraftSnapshot | null;
   purchaseContexts?: PsaPurchaseContextNote[];
+  slayArchetype?: string | null;
+  slayDna?: import('./psaSlayDna.js').PsaSlayDna | null;
   refreshedAt: string;
 };
 
 import { formatPsaMemoriesBlock } from './psaMemberMemories.js';
 import { formatPsaSlayJournalBlock } from './psaSlayJournal.js';
+import { buildPsaSlayDna, formatPsaSlayDnaBlock } from './psaSlayDna.js';
+import { buildPsaArchetypeBlock } from './psaSlayArchetype.js';
 
 export function formatPsaMemberContextBlock(snapshot: PsaMemberContextSnapshot | null): string {
   if (!snapshot) return '';
@@ -68,7 +72,9 @@ export function formatPsaMemberContextBlock(snapshot: PsaMemberContextSnapshot |
   const purchaseBlock = formatPsaSlayJournalBlock({
     purchaseContexts: snapshot.purchaseContexts,
   });
-  return `\n${lines.join('\n')}\n${formatPsaMemoriesBlock(snapshot)}${purchaseBlock}`;
+  const archetypeBlock = buildPsaArchetypeBlock(snapshot.slayArchetype ?? snapshot.hairProfile);
+  const dnaBlock = formatPsaSlayDnaBlock(snapshot.slayDna ?? null);
+  return `\n${lines.join('\n')}\n${formatPsaMemoriesBlock(snapshot)}${purchaseBlock}${archetypeBlock}${dnaBlock}`;
 }
 
 async function fetchOrdersForContext(userId: string, accessToken: string): Promise<unknown[]> {
@@ -148,7 +154,9 @@ export async function refreshPsaMemberContext(input: {
     hairProfile: existing?.hairProfile ?? null,
     bawDraft: existing?.bawDraft ?? null,
     purchaseContexts: existing?.purchaseContexts ?? [],
+    slayArchetype: existing?.slayArchetype ?? null,
   };
+  merged.slayDna = buildPsaSlayDna(merged);
   try {
     const supabase = getSupabaseAdminServiceRole();
     await supabase.from('psa_member_context').upsert({
