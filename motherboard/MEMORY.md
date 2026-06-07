@@ -26041,3 +26041,25 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** `studioCenterPartConstraint` — side angles: 3D crown midline, short groove on far scalp, match IMAGE 2 hair split, forbid 2D center stripe. Makeup pass — removed forehead-reduction; soft diffused contour; golden cheek highlight; rosy apple blush; lock part unchanged.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA v3: Founder Taste, Slay Journal, Lounge curator (ChatGPT roadmap)
+
+**Context:** User shared ChatGPT PSA upgrade ideas (Founder Taste, Lounge integration, order storytelling, member recognition, Slay Journal, mood, regret prevention, Slay Forecast, BLACK private-client energy, Hall of Slay, purchase context, disagree sometimes, Build My Entire Look). Asked to implement what fits without clashing with existing founder voice (sparse pet names, trust over hard sales).
+
+**Topics covered:** Prior ChatGPT collaboration prompt for PSA state summary; filtered CGPT feature list; implementation on `master` + `preview/mobile`.
+
+**Shipped:**
+- **`api/_lib/psaFounderTaste.ts`** + **`get_founder_pick`** tool — structured conviction per unit (MY PERSONAL PICK energy).
+- **`suggest_lounge_lesson`**, **`get_slay_forecast`** search tools; Lounge curator rules in **`psaLoungeLessons.ts`** / instructions.
+- **Slay Journal + Hall of Slay** — **`psaSlayJournal.ts`** (api + client), milestone FAB nudges (`member_milestone`), session context timeline.
+- **PSA mood** — **`psaMood.ts`** (proud, celebratory, thoughtful, private_client) from tier/orders/mode.
+- **New session modes:** `what_might_i_regret`, `build_my_look`, `slay_forecast`, `why_this`; starter chips **WHAT MIGHT I REGRET?** + **BUILD MY ENTIRE LOOK**.
+- **`remember_purchase_context`** action tool for wedding/trip occasion follow-ups.
+- **Order storytelling** — emotional celebration/update copy in nudge catalog (SHE IS ON HER WAY, CHECK YOUR DOOR, etc.).
+- **Instructions** — disagree when needed, founder taste over generic recs, blueprint + forecast layouts.
+
+**Skipped (per user/CGPT):** voice, 3D avatar, unlimited messages, PSA reputation score (internal ML), full journal UI panel (context + nudges only).
+
+**Conventions:** Keep pet names sparse; BLACK = subtle curator not promo popup; Hall of Slay commemorates once per milestone via localStorage `psaHallCelebrated_*`.
