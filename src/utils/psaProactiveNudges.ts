@@ -18,6 +18,11 @@ import {
   markOrderCelebrated,
   type PsaOrderCelebrationKind,
 } from './psaOrderCelebrations';
+import {
+  buildPsaSlayJournalSnapshot,
+  markHallMilestoneCelebrated,
+  type HallOfSlayMilestoneId,
+} from './psaSlayJournal';
 import { resolveNudgeCopy } from './copyDebugResolve';
 
 export type PsaProactiveNudgeKind =
@@ -27,7 +32,8 @@ export type PsaProactiveNudgeKind =
   | 'baw_draft'
   | 'order_celebration'
   | 'order_update'
-  | 'profile_alert';
+  | 'profile_alert'
+  | 'member_milestone';
 
 export type PsaNudgePageContext = 'baw' | 'wishlist' | 'alerts' | 'orders' | 'general';
 
@@ -50,6 +56,24 @@ export type PsaProactiveNudge = {
 const STATIC_ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
 
 const ORDER_STATUS_NUDGE_STATUSES = ['SHIPPED', 'PREPARING', 'CONFIRMED'] as const;
+
+const HALL_MILESTONE_HEADLINE: Record<HallOfSlayMilestoneId, string> = {
+  first_order: 'YOUR SLAY JOURNEY STARTED',
+  first_custom_unit: 'FIRST CUSTOM UNIT',
+  first_consult: 'FIRST CONSULT LOCKED IN',
+  fifth_order: 'FIFTH ORDER MILESTONE',
+  one_year_premium: 'ONE YEAR PREMIUM',
+  black_status: 'BLACK STATUS UNLOCKED',
+};
+
+const HALL_MILESTONE_BODY: Record<HallOfSlayMilestoneId, string> = {
+  first_order: 'THIS IS A MOMENT WORTH REMEMBERING.',
+  first_custom_unit: 'YOUR FIRST FULLY CUSTOMIZED UNIT.',
+  first_consult: 'YOU TOOK THE CONSULT PATH.',
+  fifth_order: 'A TRUE ROTATION SLAYER.',
+  one_year_premium: 'ONE YEAR IN THE PREMIUM CIRCLE.',
+  black_status: 'TOP TIER ACCESS AND CURATOR ENERGY.',
+};
 
 /** Route → which nudge families get first pick on that page. */
 export function resolvePsaNudgePageContext(pathname: string): PsaNudgePageContext {
@@ -436,6 +460,29 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
 
   collectBawDraftNudge(pathname, nudges);
 
+  const journal = buildPsaSlayJournalSnapshot();
+  if (journal.pendingMilestone) {
+    const id = journal.pendingMilestone;
+    const variantId = `member_milestone.${id}`;
+    const copy = resolveNudgeCopy(variantId, {
+      milestoneTitle: HALL_MILESTONE_HEADLINE[id],
+    });
+    nudges.push({
+      id: `milestone-${id}`,
+      kind: 'member_milestone',
+      priority: 6,
+      headline: copy.headline || HALL_MILESTONE_HEADLINE[id],
+      body: copy.body || HALL_MILESTONE_BODY[id],
+      actionPath: '/account',
+      actionLabel: copy.actionLabel || 'VIEW JOURNAL',
+      prefilledMessage:
+        copy.prefilledMessage ||
+        `Celebrate my ${HALL_MILESTONE_HEADLINE[id].toLowerCase()} milestone with me and tell me what is smart to do next.`,
+      recencyMs: Date.now(),
+      pageContexts: ['general', 'orders'],
+    });
+  }
+
   const celebration = detectPsaOrderCelebration(orders);
   if (celebration) {
     const match = orders.find((o) => orderNum(o) === celebration.orderNumber || orderId(o));
@@ -462,6 +509,10 @@ export function computePsaProactiveNudge(pathname = '/'): PsaProactiveNudge | nu
   const top = pickContextualPsaProactiveNudge(nudges, pathname);
   if (top?.celebrationMeta) {
     markOrderCelebrated(top.celebrationMeta.orderId, top.celebrationMeta.kind);
+  }
+  if (top?.kind === 'member_milestone') {
+    const id = top.id.replace(/^milestone-/, '') as HallOfSlayMilestoneId;
+    if (HALL_MILESTONE_HEADLINE[id]) markHallMilestoneCelebrated(id);
   }
   return top;
 }

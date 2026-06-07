@@ -12,11 +12,17 @@ import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { detectPsaBawResumeTarget } from './psaBawDraft';
 import { computePsaSlayReadiness } from './psaSlayReadiness';
+import { buildPsaSlayJournalSnapshot } from './psaSlayJournal';
+import { resolvePsaMood, type PsaMoodId } from './psaMood';
 
 export type PsaSessionMode =
   | 'talk_me_out_of_it'
   | 'event_ready'
-  | 'what_would_you_pick';
+  | 'what_would_you_pick'
+  | 'what_might_i_regret'
+  | 'slay_forecast'
+  | 'build_my_look'
+  | 'why_this';
 
 export type PsaClientSessionContext = {
   pathname: string;
@@ -46,6 +52,9 @@ export type PsaClientSessionContext = {
   };
   mode?: PsaSessionMode;
   welcomeKind?: PsaWelcomeKind;
+  mood?: PsaMoodId;
+  moodReason?: string;
+  journal?: ReturnType<typeof buildPsaSlayJournalSnapshot>;
 };
 
 function readJsonArray(key: string): Record<string, unknown>[] {
@@ -110,6 +119,12 @@ function countUnreadStockAlerts(email: string): number {
 
 function inferModeFromMessage(message: string): PsaSessionMode | undefined {
   const t = message.toUpperCase();
+  if (t.includes('WHY THIS') || t.includes('WHY DID YOU PICK')) {
+    return 'why_this';
+  }
+  if (t.includes('WHAT MIGHT I REGRET') || t.includes('MIGHT I REGRET')) {
+    return 'what_might_i_regret';
+  }
   if (
     t.includes('SHOULD I REALLY BUY') ||
     t.includes('TALK ME OUT OF IT') ||
@@ -118,13 +133,53 @@ function inferModeFromMessage(message: string): PsaSessionMode | undefined {
   ) {
     return 'talk_me_out_of_it';
   }
-  if (t.includes('EVENT READY') || t.includes('WEDDING') || t.includes('GET ME READY FOR')) {
-    return 'event_ready';
+  if (t.includes('BUILD MY ENTIRE LOOK') || t.includes('BUILD MY WHOLE LOOK')) {
+    return 'build_my_look';
+  }
+  if (
+    t.includes('SLAY FORECAST') ||
+    t.includes('GOING TO MIAMI') ||
+    t.includes('GOING TO VEGAS') ||
+    t.includes('EVENT READY') ||
+    t.includes('WEDDING') ||
+    t.includes('GET ME READY FOR')
+  ) {
+    return t.includes('SLAY FORECAST') || /GOING TO|MIAMI|VEGAS|WEDDING/i.test(t)
+      ? 'slay_forecast'
+      : 'event_ready';
   }
   if (t.includes('WHAT WOULD YOU PICK') || t.includes('WHAT WOULD YOU CHOOSE')) {
     return 'what_would_you_pick';
   }
   return undefined;
+}
+
+function detectRecentOrderSignals(orders: Record<string, unknown>[]): {
+  hasRecentPlacedOrder: boolean;
+  hasDeliveredOrder: boolean;
+} {
+  const now = Date.now();
+  const placedWindow = 48 * 60 * 60 * 1000;
+  const deliveredWindow = 72 * 60 * 60 * 1000;
+  let hasRecentPlacedOrder = false;
+  let hasDeliveredOrder = false;
+
+  for (const order of orders) {
+    const status = String(order.status || '').toUpperCase();
+    const placedAt = typeof order.placedAt === 'number' ? order.placedAt : 0;
+    if (
+      (status === 'PLACED' || status === 'CONFIRMED' || status === 'PROCESSING') &&
+      placedAt > 0 &&
+      now - placedAt <= placedWindow
+    ) {
+      hasRecentPlacedOrder = true;
+    }
+    if (status === 'DELIVERED' && placedAt > 0 && now - placedAt <= deliveredWindow) {
+      hasDeliveredOrder = true;
+    }
+  }
+
+  return { hasRecentPlacedOrder, hasDeliveredOrder };
 }
 
 /** Build a compact session snapshot for PSA (no PII beyond order numbers already in app). */
@@ -139,10 +194,12 @@ export function buildPsaClientSessionContext(
     ctx.firstName = formatPsaMemberFirstName(storedFirstName);
   }
 
+  let tierLabel: string | null = null;
   try {
     const rawUser = localStorage.getItem('currentUser');
     const user = rawUser ? (JSON.parse(rawUser) as Record<string, unknown>) : null;
-    ctx.tierLabel = getEffectiveTierName(user as Parameters<typeof getEffectiveTierName>[0]);
+    tierLabel = getEffectiveTierName(user as Parameters<typeof getEffectiveTierName>[0]);
+    ctx.tierLabel = tierLabel;
     ctx.subscriptionTier = getEffectiveSubscriptionTier(
       user as Parameters<typeof getEffectiveSubscriptionTier>[0]
     );
@@ -164,10 +221,11 @@ export function buildPsaClientSessionContext(
   }
 
   const email = getCurrentUserEmailFromStorage();
+  let allOrders: Record<string, unknown>[] = [];
   if (email) {
-    const orders = readUserOrders(email);
-    const unsigned = orders.filter(isUnsignedFormOrder);
-    const expiringConsult = orders.filter((o) => isExpiringConsultOffer(o));
+    allOrders = readUserOrders(email);
+    const unsigned = allOrders.filter(isUnsignedFormOrder);
+    const expiringConsult = allOrders.filter((o) => isExpiringConsultOffer(o));
     if (unsigned.length || expiringConsult.length) {
       ctx.orders = {
         unsignedFormCount: unsigned.length,
@@ -197,6 +255,18 @@ export function buildPsaClientSessionContext(
   }
 
   ctx.welcomeKind = resolvePsaWelcomeKind();
+
+  ctx.journal = buildPsaSlayJournalSnapshot();
+
+  const orderSignals = detectRecentOrderSignals(allOrders);
+  const mood = resolvePsaMood({
+    mode: ctx.mode,
+    tierLabel,
+    pendingMilestone: ctx.journal.pendingMilestone,
+    ...orderSignals,
+  });
+  ctx.mood = mood.mood;
+  ctx.moodReason = mood.moodReason;
 
   return ctx;
 }

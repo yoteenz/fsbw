@@ -3,6 +3,8 @@
  */
 import { getSupabaseAdminServiceRole } from './supabase.js';
 import type { PsaMemberContextSnapshot } from './psaMemberContext.js';
+import type { PsaPurchaseContextNote } from './psaSlayJournal.js';
+import { normalizePurchaseOccasion } from './psaSlayJournal.js';
 
 export const PSA_HAIR_SLAYER_PROFILES = [
   'THE EFFORTLESS SLAYER',
@@ -48,9 +50,13 @@ export async function getStoredMemberContextRow(
   }
 }
 
+const MAX_PURCHASE_CONTEXTS = 8;
+
 export async function persistMemberContextExtras(
   userId: string,
-  patch: Partial<Pick<PsaMemberContextSnapshot, 'memories' | 'hairProfile' | 'bawDraft'>>
+  patch: Partial<
+    Pick<PsaMemberContextSnapshot, 'memories' | 'hairProfile' | 'bawDraft' | 'purchaseContexts'>
+  >
 ): Promise<void> {
   const supabase = getSupabaseAdminServiceRole();
   const existing = (await getStoredMemberContextRow(userId)) ?? {
@@ -66,6 +72,8 @@ export async function persistMemberContextExtras(
     memories: patch.memories ?? existing.memories ?? [],
     hairProfile: patch.hairProfile !== undefined ? patch.hairProfile : existing.hairProfile ?? null,
     bawDraft: patch.bawDraft !== undefined ? patch.bawDraft : existing.bawDraft ?? null,
+    purchaseContexts:
+      patch.purchaseContexts !== undefined ? patch.purchaseContexts : existing.purchaseContexts ?? [],
   };
   await supabase.from('psa_member_context').upsert({
     user_id: userId,
@@ -100,6 +108,30 @@ export async function setHairSlayerProfile(
   if (!match) return null;
   await persistMemberContextExtras(userId, { hairProfile: match });
   return match;
+}
+
+function purchaseContextId(): string {
+  return `pc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+export async function addPurchaseContextNote(
+  userId: string,
+  input: { occasion: string; monthYear?: string; orderNumber?: string }
+): Promise<PsaPurchaseContextNote[]> {
+  const occasion = normalizePurchaseOccasion(input.occasion);
+  if (!occasion) return (await getStoredMemberContextRow(userId))?.purchaseContexts ?? [];
+
+  const existing = (await getStoredMemberContextRow(userId))?.purchaseContexts ?? [];
+  const row: PsaPurchaseContextNote = {
+    id: purchaseContextId(),
+    occasion,
+    monthYear: input.monthYear?.trim() || undefined,
+    orderNumber: input.orderNumber?.trim() || undefined,
+    createdAt: new Date().toISOString(),
+  };
+  const next = [row, ...existing].slice(0, MAX_PURCHASE_CONTEXTS);
+  await persistMemberContextExtras(userId, { purchaseContexts: next });
+  return next;
 }
 
 export function formatPsaMemoriesBlock(ctx: PsaMemberContextSnapshot | null): string {

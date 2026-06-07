@@ -1,6 +1,21 @@
 /**
  * Format client session context for PSA system instructions.
  */
+import { resolvePsaMoodInstruction, type PsaMoodId } from './psaMood.js';
+import {
+  formatPsaSlayJournalBlock,
+  type HallOfSlayMilestoneId,
+  type SlayJournalEntry,
+} from './psaSlayJournal.js';
+
+export type PsaSessionMode =
+  | 'talk_me_out_of_it'
+  | 'event_ready'
+  | 'what_would_you_pick'
+  | 'what_might_i_regret'
+  | 'slay_forecast'
+  | 'build_my_look'
+  | 'why_this';
 
 export type PsaClientSessionContextPayload = {
   pathname?: string;
@@ -28,8 +43,15 @@ export type PsaClientSessionContextPayload = {
     buildPath: string;
     source: 'draft' | 'session';
   };
-  mode?: 'talk_me_out_of_it' | 'event_ready' | 'what_would_you_pick';
+  mode?: PsaSessionMode;
   welcomeKind?: 'first' | 'returning' | 'default';
+  mood?: PsaMoodId;
+  moodReason?: string;
+  journal?: {
+    recentEntries?: SlayJournalEntry[];
+    hallMilestones?: HallOfSlayMilestoneId[];
+    pendingMilestone?: HallOfSlayMilestoneId | null;
+  };
 };
 
 export function formatPsaSessionContextBlock(raw: unknown): string {
@@ -98,25 +120,56 @@ export function formatPsaSessionContextBlock(raw: unknown): string {
       `- Incomplete Build-a-Wig: **${ctx.bawDraft.unitLabel}** (${ctx.bawDraft.source === 'draft' ? 'saved draft' : 'in-progress session'}) → ${ctx.bawDraft.buildPath}`
     );
   }
+
   if (ctx.mode === 'talk_me_out_of_it') {
     lines.push(
-      '- **MODE: Talk Me Out Of It** — member wants honest "should I buy this?" feedback. Compare to cart, past orders, and rotation. Say no if it does not change their lineup enough.'
+      '- **MODE: Talk Me Out Of It** — honest verdict, not automatic no. Compare to cart and rotation.'
     );
   }
-  if (ctx.mode === 'event_ready') {
+  if (ctx.mode === 'what_might_i_regret') {
     lines.push(
-      '- **MODE: Get Me Event Ready** — build a transformation roadmap: texture, length, install timing, appointment path. Not just products.'
+      '- **MODE: What Might I Regret** — pre-purchase regret prevention. Name maintenance, texture mismatch, or redundant rotation risks clearly. Build trust.'
+    );
+  }
+  if (ctx.mode === 'event_ready' || ctx.mode === 'slay_forecast') {
+    lines.push(
+      '- **MODE: Slay Forecast / Event Ready** — call `get_slay_forecast` when they name a city or event. Output HEAT, HUMIDITY, MY PICK, WHY, MAINTENANCE, INSTALL TIMING.'
+    );
+  }
+  if (ctx.mode === 'build_my_look') {
+    lines.push(
+      '- **MODE: Build My Entire Look** — full event blueprint: texture, length, install date, maintenance, Lounge lesson, booking path. Not just a product list.'
     );
   }
   if (ctx.mode === 'what_would_you_pick') {
     lines.push(
-      '- **MODE: What Would You Pick** — answer with founder conviction: "If I were spending my own money today, I would choose…" and one clear reason.'
+      '- **MODE: What Would You Pick** — use `get_founder_pick`. Lead with MY PERSONAL PICK HERE WOULD BE {UNIT}.'
+    );
+  }
+  if (ctx.mode === 'why_this') {
+    lines.push(
+      '- **MODE: Why This** — explain the last recommendation using their stated preferences and memories. Transparent reasoning, no jargon.'
     );
   }
 
-  if (lines.length <= 1) return '';
+  const journalBlock = formatPsaSlayJournalBlock({
+    recentEntries: ctx.journal?.recentEntries,
+    hallMilestones: ctx.journal?.hallMilestones,
+    pendingMilestone: ctx.journal?.pendingMilestone ?? null,
+  });
+
+  const moodBlock = resolvePsaMoodInstruction({
+    mood: ctx.mood,
+    moodReason: ctx.moodReason,
+    isBlackTier: (ctx.tierLabel ?? '').trim().toUpperCase() === 'BLACK',
+    pendingMilestone: ctx.journal?.pendingMilestone ?? null,
+  });
+
+  if (lines.length <= 1 && !journalBlock && !moodBlock) return '';
+
   lines.push(
     '- Use this snapshot to personalize greetings and proactive help. Still call tools for authoritative cart/order data before acting.'
   );
-  return lines.join('\n');
+
+  return `${lines.join('\n')}${moodBlock}${journalBlock}`;
 }
