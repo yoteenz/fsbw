@@ -18,10 +18,32 @@ export type PsaAvatarExpression =
   | 'sorry'
   | 'pointing'
   | 'talking'
-  | 'presenting';
+  | 'presenting'
+  | 'remembering'
+  | 'curator'
+  | 'honest-pushback'
+  | 'archetype-reveal'
+  | 'red-carpet'
+  | 'blueprint'
+  | 'celebrating'
+  | 'reassuring'
+  | 'spotlight';
+
+/** PSA v5 expressions — register in code before PNGs land; crossfade falls back to neutral on 404. */
+export const PSA_V5_AVATAR_EXPRESSIONS = [
+  'remembering',
+  'curator',
+  'honest-pushback',
+  'archetype-reveal',
+  'red-carpet',
+  'blueprint',
+  'celebrating',
+  'reassuring',
+  'spotlight',
+] as const satisfies readonly PsaAvatarExpression[];
 
 /** Bump when avatar PNGs change so browsers/CDN drop cached copies. */
-export const PSA_AVATAR_ASSET_VERSION = '10';
+export const PSA_AVATAR_ASSET_VERSION = '11';
 
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
@@ -36,6 +58,15 @@ export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
   pointing: '/assets/psa-avatar-pointing.png',
   talking: '/assets/psa-avatar-talking.png',
   presenting: '/assets/psa-avatar-presenting.png',
+  remembering: '/assets/psa-avatar-remembering.png',
+  curator: '/assets/psa-avatar-curator.png',
+  'honest-pushback': '/assets/psa-avatar-honest-pushback.png',
+  'archetype-reveal': '/assets/psa-avatar-archetype-reveal.png',
+  'red-carpet': '/assets/psa-avatar-red-carpet.png',
+  blueprint: '/assets/psa-avatar-blueprint.png',
+  celebrating: '/assets/psa-avatar-celebrating.png',
+  reassuring: '/assets/psa-avatar-reassuring.png',
+  spotlight: '/assets/psa-avatar-spotlight.png',
 };
 
 /** Default FAB when chat is closed. */

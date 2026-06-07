@@ -1,6 +1,29 @@
 /**
  * PSA mood — founder-led emotional state for replies (not just avatar expressions).
+ * Avatar PNG hints mirror client `resolvePsaAvatarExpression.ts` (v5 slugs).
  */
+export type PsaAvatarExpressionSlug =
+  | 'neutral'
+  | 'neutral-smiling'
+  | 'waving'
+  | 'listening'
+  | 'thinking-smiling'
+  | 'thinking'
+  | 'delighted'
+  | 'sorry'
+  | 'pointing'
+  | 'talking'
+  | 'presenting'
+  | 'remembering'
+  | 'curator'
+  | 'honest-pushback'
+  | 'archetype-reveal'
+  | 'red-carpet'
+  | 'blueprint'
+  | 'celebrating'
+  | 'reassuring'
+  | 'spotlight';
+
 export type PsaMoodId =
   | 'default'
   | 'proud'
@@ -9,12 +32,67 @@ export type PsaMoodId =
   | 'thoughtful'
   | 'private_client';
 
+export type PsaSessionModeSlug =
+  | 'talk_me_out_of_it'
+  | 'event_ready'
+  | 'what_would_you_pick'
+  | 'what_might_i_regret'
+  | 'slay_forecast'
+  | 'build_my_look'
+  | 'why_this'
+  | 'red_carpet';
+
 export type PsaMoodPayload = {
   mood?: PsaMoodId;
   moodReason?: string;
   isBlackTier?: boolean;
   pendingMilestone?: string | null;
+  sessionMode?: PsaSessionModeSlug;
+  redCarpetMode?: boolean;
 };
+
+/** Suggested avatar slug for instructions / future server-driven avatar hints. */
+export function resolvePsaAvatarExpressionHint(payload: PsaMoodPayload): PsaAvatarExpressionSlug | null {
+  if (payload.redCarpetMode || payload.sessionMode === 'red_carpet') {
+    return 'red-carpet';
+  }
+
+  const mood = payload.mood ?? 'default';
+
+  if (
+    payload.sessionMode === 'talk_me_out_of_it' ||
+    payload.sessionMode === 'what_might_i_regret' ||
+    payload.sessionMode === 'why_this'
+  ) {
+    return 'honest-pushback';
+  }
+
+  if (payload.sessionMode === 'what_would_you_pick') {
+    return 'spotlight';
+  }
+
+  if (
+    payload.sessionMode === 'build_my_look' ||
+    payload.sessionMode === 'event_ready' ||
+    payload.sessionMode === 'slay_forecast'
+  ) {
+    return 'blueprint';
+  }
+
+  if (mood === 'celebratory' || mood === 'proud' || mood === 'excited') {
+    return 'celebrating';
+  }
+
+  if (mood === 'private_client' || payload.isBlackTier) {
+    return 'curator';
+  }
+
+  if (mood === 'thoughtful') {
+    return 'honest-pushback';
+  }
+
+  return null;
+}
 
 export function resolvePsaMoodInstruction(payload: PsaMoodPayload): string {
   const mood = payload.mood ?? 'default';

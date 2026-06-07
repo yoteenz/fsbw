@@ -26149,3 +26149,20 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
 
 **Change:** Added **`NOIR_DETAILS_INTRO`** in **`src/components/shop/NoirProductDetailsTab.tsx`** above **`NOIR_DETAILS_BULLETS`** (10px Futura PT Book uppercase, wraps naturally).
+
+---
+
+## 2026-06-07 — PSA v5 avatar expressions: pre-wire + Fal batch script
+
+**Context (full chat arc):** User asked what happened to adding new PSA avatar PNGs to **`public/assets/`** with **`psa-avatar-*.png`** names after an earlier expressions/moods advisory-only reply (prompts only, no files). User then requested full prep: register slugs, bump asset version, wire v5 triggers, document prompts, and add Fal batch script — they are generating NBP images and will Ideogram-cut backgrounds before dropping files.
+
+**Topics covered:**
+- **9 new v5 slugs:** `remembering`, `curator`, `honest-pushback`, `archetype-reveal`, `red-carpet`, `blueprint`, `celebrating`, `reassuring`, `spotlight` → **`psa-avatar-<slug>.png`**
+- **`src/constants/psaConfig.ts`** — `PsaAvatarExpression`, `PSA_AVATAR_SRC`, `PSA_V5_AVATAR_EXPRESSIONS`; **`PSA_AVATAR_ASSET_VERSION` → `11`**
+- **`src/components/psa/resolvePsaAvatarExpression.ts`** — v5 trigger mapping (Red Carpet, archetype reveal, honesty modes, blueprint, celebrating, curator, remembering, reassuring, spotlight); exports **`resolveActivePsaSessionMode`**
+- **`PsaAssistantWidget.tsx`** — passes session mode, mood, welcome memory hint, proactive nudge kind
+- **`api/_lib/psaMood.ts`** — **`resolvePsaAvatarExpressionHint()`** for server-side slug hints
+- **`scripts/psa-avatar-expression-manifest.mjs`** + **`scripts/generate-psa-avatar-expressions.mjs`** — NBP batch (default v5 only; `SKIP_IDEOGRAM=1` for manual bg removal); **`npm run psa:avatar-expressions`**
+- **Docs:** **`motherboard/golden-prompts/psa-avatar-expressions-nbp.md`** (full prompt table), **`docs/PSA_SETUP.md`**, **`psa-avatar-background-removal-ideogram.md`**
+
+**Conventions:** Missing v5 PNGs fall back to **neutral** via **`PsaAvatarImageCrossfade` `onError`** until user drops Ideogram-cut files; then bump **`PSA_AVATAR_ASSET_VERSION`**. Do not run flatten/solidify scripts on Ideogram exports.

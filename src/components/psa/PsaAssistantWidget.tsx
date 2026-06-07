@@ -33,7 +33,12 @@ import {
 } from '../../utils/loungeTvTheaterMode';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
-import { resolvePsaAvatarExpression } from './resolvePsaAvatarExpression';
+import {
+  resolveActivePsaSessionMode,
+  resolvePsaAvatarExpression,
+} from './resolvePsaAvatarExpression';
+import { buildPsaWelcomeMemorySuffix } from '../../utils/psaWelcomeMemory';
+import { resolvePsaMood } from '../../utils/psaMood';
 import { usePsaIdleExpressionCycle } from './usePsaIdleExpressionCycle';
 import { usePsaChat } from './usePsaChat';
 import { usePsaProactiveNudges } from './usePsaProactiveNudges';
@@ -462,6 +467,25 @@ export default function PsaAssistantWidget() {
     navigate('/account/rewards');
   }, [navigate]);
 
+  const avatarSessionSignals = useMemo(() => {
+    const sessionCtx = buildPsaClientSessionContext(location.pathname);
+    const sessionMode = resolveActivePsaSessionMode(messages, redCarpetMode) ?? sessionCtx.mode;
+    const mood =
+      sessionMode && sessionMode !== sessionCtx.mode
+        ? resolvePsaMood({
+            mode: sessionMode,
+            tierLabel: sessionCtx.tierLabel,
+            pendingMilestone: sessionCtx.journal?.pendingMilestone ?? null,
+          }).mood
+        : (sessionCtx.mood ?? 'default');
+    return {
+      sessionMode,
+      mood,
+      welcomeHasMemoryHint: Boolean(buildPsaWelcomeMemorySuffix().trim()),
+      proactiveNudgeKind: proactiveNudge?.kind ?? null,
+    };
+  }, [location.pathname, messages, redCarpetMode, proactiveNudge?.kind]);
+
   const avatarExpression = useMemo(() => {
     const resolved = resolvePsaAvatarExpression({
       isChatOpen: isOpen,
@@ -470,6 +494,10 @@ export default function PsaAssistantWidget() {
       inputHasText,
       showWelcomeWave,
       redCarpetMode,
+      sessionMode: avatarSessionSignals.sessionMode,
+      mood: avatarSessionSignals.mood,
+      welcomeHasMemoryHint: avatarSessionSignals.welcomeHasMemoryHint,
+      proactiveNudgeKind: avatarSessionSignals.proactiveNudgeKind,
       lastReplyAt,
       messages,
       now: Date.now() + expressionTick * 0,
@@ -485,6 +513,7 @@ export default function PsaAssistantWidget() {
     showWelcomeWave,
     showIdleWave,
     redCarpetMode,
+    avatarSessionSignals,
     lastReplyAt,
     messages,
     expressionTick,
