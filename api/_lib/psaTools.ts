@@ -13,6 +13,7 @@ import {
 } from './psaFeatureGates.js';
 import {
   addMemberMemory,
+  addPurchaseContextNote,
   PSA_HAIR_SLAYER_PROFILES,
   persistMemberContextExtras,
   setHairSlayerProfile,
@@ -233,6 +234,23 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
       additionalProperties: false,
     },
     strict: true,
+  },
+  {
+    type: 'function',
+    name: 'remember_purchase_context',
+    description:
+      'Save why they bought (wedding, birthday, trip) so PSA can follow up later. Use when they share occasion context.',
+    parameters: {
+      type: 'object',
+      properties: {
+        occasion: { type: 'string', description: 'e.g. wedding, Miami trip, birthday behavior' },
+        monthYear: { type: 'string', description: 'e.g. July 2026' },
+        orderNumber: { type: 'string', description: 'Optional ORDER # reference' },
+      },
+      required: ['occasion'],
+      additionalProperties: false,
+    },
+    strict: false,
   },
   {
     type: 'function',
@@ -655,6 +673,24 @@ export async function executePsaActionTool(
         };
       }
       return { output: JSON.stringify({ ok: true, hairProfile: saved }) };
+    }
+
+    case 'remember_purchase_context': {
+      const occasion = typeof args.occasion === 'string' ? args.occasion.trim() : '';
+      if (!occasion) return { output: JSON.stringify({ error: 'occasion required' }) };
+      const notes = await addPurchaseContextNote(ctx.userId, {
+        occasion,
+        monthYear: typeof args.monthYear === 'string' ? args.monthYear : undefined,
+        orderNumber: typeof args.orderNumber === 'string' ? args.orderNumber : undefined,
+      });
+      return {
+        output: JSON.stringify({
+          ok: true,
+          saved: occasion,
+          purchaseContextCount: notes.length,
+          note: 'PSA may follow up on this occasion later when timing fits.',
+        }),
+      };
     }
 
     case 'send_priority_message': {

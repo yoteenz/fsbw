@@ -8,6 +8,7 @@ import { canAccessLiveOrderTracking } from './psaFeatureGates.js';
 import { summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
 
 import type { PsaMemberMemory } from './psaMemberMemories.js';
+import type { PsaPurchaseContextNote } from './psaSlayJournal.js';
 
 export type PsaBawDraftSnapshot = {
   unitId: string;
@@ -33,10 +34,12 @@ export type PsaMemberContextSnapshot = {
   memories?: PsaMemberMemory[];
   hairProfile?: string | null;
   bawDraft?: PsaBawDraftSnapshot | null;
+  purchaseContexts?: PsaPurchaseContextNote[];
   refreshedAt: string;
 };
 
 import { formatPsaMemoriesBlock } from './psaMemberMemories.js';
+import { formatPsaSlayJournalBlock } from './psaSlayJournal.js';
 
 export function formatPsaMemberContextBlock(snapshot: PsaMemberContextSnapshot | null): string {
   if (!snapshot) return '';
@@ -62,7 +65,10 @@ export function formatPsaMemberContextBlock(snapshot: PsaMemberContextSnapshot |
     );
   }
   lines.push(`- Snapshot refreshed: ${snapshot.refreshedAt}`);
-  return `\n${lines.join('\n')}\n${formatPsaMemoriesBlock(snapshot)}`;
+  const purchaseBlock = formatPsaSlayJournalBlock({
+    purchaseContexts: snapshot.purchaseContexts,
+  });
+  return `\n${lines.join('\n')}\n${formatPsaMemoriesBlock(snapshot)}${purchaseBlock}`;
 }
 
 async function fetchOrdersForContext(userId: string, accessToken: string): Promise<unknown[]> {
@@ -141,6 +147,7 @@ export async function refreshPsaMemberContext(input: {
     memories: existing?.memories ?? [],
     hairProfile: existing?.hairProfile ?? null,
     bawDraft: existing?.bawDraft ?? null,
+    purchaseContexts: existing?.purchaseContexts ?? [],
   };
   try {
     const supabase = getSupabaseAdminServiceRole();

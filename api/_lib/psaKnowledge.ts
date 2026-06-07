@@ -7,8 +7,9 @@ import {
   psaCatalogPricingSummaryLines,
   psaStartingPriceUsdForUnitName,
 } from './psaCatalogPricing.js';
-import { buildPsaFounderNotesBlock } from './psaFounderNotes.js';
+import { buildPsaFounderTasteBlock } from './psaFounderTaste.js';
 import { buildPsaLoungeLessonsBlock } from './psaLoungeLessons.js';
+import { buildPsaSlayForecastBlock } from './psaSlayForecast.js';
 
 export type PsaNavLink = {
   label: string;
@@ -372,5 +373,5 @@ export function buildPsaKnowledgeContext(): string {
 - ${PSA_UNIT_PRICE_NOTE}
 - Length/density: longer lengths often pair with higher density for fullness; final total is set in Build-a-Wig.
 - Premium-only steps (live color preview, premium lounge options) require active premium membership.`;
-  return `## UNIT CATALOG\n${products}\n\n${customization}\n\n## SITE NAVIGATION\n${nav}\n\n${buildPsaFounderNotesBlock()}\n\n${buildPsaLoungeLessonsBlock()}`;
+  return `## UNIT CATALOG\n${products}\n\n${customization}\n\n## SITE NAVIGATION\n${nav}\n\n${buildPsaFounderTasteBlock()}\n\n${buildPsaLoungeLessonsBlock()}\n\n${buildPsaSlayForecastBlock()}`;
 }

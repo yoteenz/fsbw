@@ -19,6 +19,9 @@ import {
   mapPsaProductForTool,
 } from '../_lib/psaKnowledge.js';
 import { buildPsaInstructions } from '../_lib/psaInstructions.js';
+import { searchFounderTaste } from '../_lib/psaFounderTaste.js';
+import { matchPsaLoungeLessons } from '../_lib/psaLoungeLessons.js';
+import { buildSlayForecastToolResult } from '../_lib/psaSlayForecast.js';
 import { formatPsaVoiceText } from '../_lib/psaVoiceFormat.js';
 import { formatPsaSessionContextBlock } from '../_lib/psaSessionContext.js';
 import {
@@ -137,6 +140,51 @@ const PSA_TOOLS = [
     },
     strict: true,
   },
+  {
+    type: 'function',
+    name: 'get_founder_pick',
+    description:
+      'Founder Taste Engine — conviction picks per unit (MY PERSONAL PICK energy). Use before generic product blurbs.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Unit name, texture, or recommendation intent.' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
+  {
+    type: 'function',
+    name: 'suggest_lounge_lesson',
+    description:
+      'Match VIP Lounge lesson for lace, install, care, or styling education. Use proactively before purchases.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Topic: lace, install, maintenance, styling, etc.' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
+  {
+    type: 'function',
+    name: 'get_slay_forecast',
+    description:
+      'Hair-specific Slay Forecast for a destination or event (heat, humidity, unit pick). Use for trips and weddings.',
+    parameters: {
+      type: 'object',
+      properties: {
+        destination: { type: 'string', description: 'City, trip, or event e.g. Miami, wedding, Vegas.' },
+      },
+      required: ['destination'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
 ] as const;
 
 function toolsForMember(premium: NonNullable<Awaited<ReturnType<typeof getPsaPremiumProfile>>>) {
@@ -171,6 +219,34 @@ function executePsaSearchTool(name: string, args: Record<string, unknown>): stri
       return JSON.stringify(
         hits.map((l) => ({ label: l.label, path: l.path, description: l.description }))
       );
+    }
+    case 'get_founder_pick': {
+      const hits = searchFounderTaste(query, 3);
+      return JSON.stringify(
+        hits.map((h) => ({
+          unit: h.unitName,
+          unitId: h.unitId,
+          confidence: h.confidence,
+          personalPick: h.personalPick,
+          notes: h.notes,
+          whenToSteerAway: h.whenToSteerAway ?? null,
+        }))
+      );
+    }
+    case 'suggest_lounge_lesson': {
+      const hits = matchPsaLoungeLessons(query, 3);
+      return JSON.stringify(
+        hits.map((l) => ({
+          title: l.title,
+          path: l.path,
+          note: l.note,
+          curatorLine: `BEFORE YOU LOCK THIS IN, REVIEW ${l.title} IN THE LOUNGE.`,
+        }))
+      );
+    }
+    case 'get_slay_forecast': {
+      const destination = typeof args.destination === 'string' ? args.destination.trim() : query;
+      return JSON.stringify(buildSlayForecastToolResult(destination));
     }
     default:
       return JSON.stringify({ error: 'Unknown search tool' });
