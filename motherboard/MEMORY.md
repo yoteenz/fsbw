@@ -26100,7 +26100,6 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
-<<<<<<< HEAD
 ## 2026-06-07 — NOIR product page DETAILS tab copy refresh
 
 **Context:** User supplied full DETAILS tab copy for the NOIR unit PDP: eleven product-detail bullets plus a **WHY YOU'LL LOVE IT** section with eight benefit lines. Styling should match **brand terms** tiny red bullets and **premium upgrade subscription chart** red checkmarks.
