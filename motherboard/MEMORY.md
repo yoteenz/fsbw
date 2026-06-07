@@ -26109,3 +26109,15 @@ Pushed **`master`** + **`preview/mobile`**.
 **Decisions / outcomes:** Extracted **`src/components/shop/NoirProductDetailsTab.tsx`** with **`NOIR_DETAILS_BULLETS`** and **`NOIR_WHY_YOULL_LOVE_IT`** arrays; **`noir/page.tsx`** DETAILS tab renders **`<NoirProductDetailsTab />`**. Copy allows wrapping (removed **`whiteSpace: nowrap`**). Section header **WHY YOU'LL LOVE IT** in red Futura PT Medium 10px.
 
 **Changes:** `NoirProductDetailsTab.tsx` (new), `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — NOIR product page SHIPPING tab copy refresh
+
+**Context:** User supplied full SHIPPING tab copy for the NOIR unit PDP: intro, **STANDARD PROCESSING**, **EXPRESS PROCESSING**, **CUSTOMIZATION EXCLUSIONS** (bullet list), **IMPORTANT INFORMATION** (bullet list), and **HANDMADE, NOT MASS PRODUCED** closing. Same styling as DETAILS tab: brand-terms red bullets + premium-chart red checkmarks.
+
+**Topics covered:** Replace legacy 7.7px nowrap SHIPPING paragraphs on **`/straight/noir`** with structured sections; **CUSTOMIZATION EXCLUSIONS** `*` items → red `•` bullets (**`BrandTermsBody`** pattern); **IMPORTANT INFORMATION** `*` items → **`/assets/premium-check.svg`** at **10×10px**; section headers red Futura PT Medium 10px uppercase; body 10px Futura PT Book uppercase with wrapping.
+
+**Decisions / outcomes:** **`src/components/shop/NoirProductShippingTab.tsx`** (new); **`noir/page.tsx`** SHIPPING tab renders **`<NoirProductShippingTab />`**.
+
+**Changes:** `NoirProductShippingTab.tsx`, `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
