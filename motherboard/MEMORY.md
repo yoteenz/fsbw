@@ -26097,3 +26097,15 @@ Pushed **`master`** + **`preview/mobile`**.
 6. **Admin review** — **`psa_tool_events`** migration; **`logPsaToolEvents`** in chat; **`GET /api/admin/psa-review`**; **Admin → Brand → PSA REVIEW** panel (`/admin/brand/edit/psa-review`).
 
 **Migration:** run **`supabase/migrations/20260607140000_psa_tool_events.sql`** for tool analytics.
+
+---
+
+## 2026-06-07 — NOIR product page DETAILS tab copy refresh
+
+**Context:** User supplied full DETAILS tab copy for the NOIR unit PDP: eleven product-detail bullets plus a **WHY YOU'LL LOVE IT** section with eight benefit lines. Styling should match **brand terms** tiny red bullets and **premium upgrade subscription chart** red checkmarks.
+
+**Topics covered:** Replace legacy 7.7px nowrap DETAILS paragraphs on **`/straight/noir`** with new uppercase copy; bullets use **`BrandTermsBody`** pattern (10px Futura PT Book, `paddingLeft: 12px`, red `•`); benefit rows use **`/assets/premium-check.svg`** at **10×10px** like the chart.
+
+**Decisions / outcomes:** Extracted **`src/components/shop/NoirProductDetailsTab.tsx`** with **`NOIR_DETAILS_BULLETS`** and **`NOIR_WHY_YOULL_LOVE_IT`** arrays; **`noir/page.tsx`** DETAILS tab renders **`<NoirProductDetailsTab />`**. Copy allows wrapping (removed **`whiteSpace: nowrap`**). Section header **WHY YOU'LL LOVE IT** in red Futura PT Medium 10px.
+
+**Changes:** `NoirProductDetailsTab.tsx` (new), `src/pages/straight/noir/page.tsx`. Pushed **`master`** + **`preview/mobile`**.
