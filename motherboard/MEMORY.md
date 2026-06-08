@@ -26248,6 +26248,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR Details intro + bullet trim
+
+**Context:** User updated **DETAILS** tab intro (**DESIGNED**, **VERSATILITY, DURABILITY AND LONGEVITY**) and removed bullet **DESIGNED FOR VERSATILITY, DURABILITY AND LONG-TERM WEAR WITH PROPER MAINTENANCE AND CARE.**
+
+**Changes:** **`NoirProductDetailsTab.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
