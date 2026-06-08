@@ -26256,6 +26256,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR Details bullets + why-you'll-love-it line edits
+
+**Context:** User updated four **DETAILS** strings: lace bullet (**INTENDED**, **SCALP LIKE**, no FS); cap bullet (**STRETCHY** cap, no wig); variations bullet (**AUTHENTIC NATURE**); rose list **COMPATIBLE WITH BUILD-A-WIG CUSTOMIZATION** (dropped SERVICES).
+
+**Changes:** **`NoirProductDetailsTab.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
