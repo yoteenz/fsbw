@@ -26208,6 +26208,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — Gift card hide SIMILAR PRODUCTS; NOIR Details rose-alert badges
+
+**Context:** User asked to (1) hide **SIMILAR PRODUCTS** on **gift card page only** (keep mounted); (2) on NOIR **DETAILS** tab **why you'll love it** list, replace red **`premium-check.svg`** with **`rose-alert.svg`** (same as Account → Profile notification badge, **14×14px**).
+
+**Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false`** + **`withGiftCardSimilarProductsVisibility()`** on SIMILAR PRODUCTS outer wrapper. **`NoirProductDetailsTab.tsx`** — rose alert badges for **WHY YOU'LL LOVE IT** rows only (bullets unchanged). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
