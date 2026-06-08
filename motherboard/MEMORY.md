@@ -26144,6 +26144,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-07 — NOIR PDP tab red section headers → Bohemy
+
+**Context:** User asked to change red subsection header text below NOIR product page tabs (**STANDARD PROCESSING**, **EXPRESS PROCESSING**, **WHY YOU'LL LOVE IT**, etc.) from Futura to **Bohemy**.
+
+**Changes:** **`SECTION_TITLE_STYLE`** in **`NoirProductDetailsTab.tsx`** and **`NoirProductShippingTab.tsx`** — `fontFamily` **`"Bohemy", cursive`**, `fontWeight` **400** (was Futura PT Medium 500). Red **`#EB1C24`**, 10px uppercase unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
