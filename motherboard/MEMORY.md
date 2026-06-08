@@ -26176,6 +26176,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR PDP Bohemy section headers: 18px
+
+**Context:** User asked to change red Bohemy subsection headers from **14px** to **18px**.
+
+**Changes:** **`SECTION_TITLE_STYLE`** `fontSize` **`18px`** in **`NoirProductDetailsTab.tsx`** and **`NoirProductShippingTab.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
