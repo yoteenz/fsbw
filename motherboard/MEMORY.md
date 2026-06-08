@@ -26240,6 +26240,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR Shipping/Policy/Care tab copy (second batch)
+
+**Context:** User asked for more line edits across NOIR PDP tabs.
+
+**Changes:** **Shipping** closing — **YOUR RAW EXTENSIONS ARRIVE** (was your unit arrives). **Policy** — intro two sentences merged; 48h contact + verified-issue intro merged into one paragraph before resolution rose list. **Care/Storage** closing — **WITH PROPER CARE AND MAINTENANCE YOUR FRONTAL SLAYER UNIT…** (no comma after maintenance). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
