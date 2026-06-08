@@ -1,5 +1,10 @@
 /** NOIR unit PDP — SHIPPING tab copy and list styling. */
 
+import {
+  NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
+  NOIR_PRODUCT_TAB_ROSE_ALERT_SRC,
+} from './noirProductTabRoseBadge';
+
 const BODY_STYLE = {
   fontFamily: '"Futura PT Book"',
   fontSize: '10px',
@@ -45,9 +50,6 @@ const IMPORTANT_INFORMATION_ITEMS = [
   'SELECTING EXPEDITED SHIPPING DOES NOT REDUCE CUSTOMIZATION OR PRODUCTION TIMELINES UNLESS EXPRESS PROCESSING HAS ALSO BEEN PURCHASED.',
 ] as const;
 
-/** Red checkmarks match premium upgrade subscription chart (`PremiumSubscriptionUpgradeChart`). */
-const PREMIUM_CHECK_STYLE = { width: '10px', height: '10px', flexShrink: 0 } as const;
-
 export default function NoirProductShippingTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -92,7 +94,7 @@ export default function NoirProductShippingTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {IMPORTANT_INFORMATION_ITEMS.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <img src="/assets/premium-check.svg" alt="Included" style={PREMIUM_CHECK_STYLE} />
+            <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
             <p style={BODY_STYLE}>{label}</p>
           </div>
         ))}

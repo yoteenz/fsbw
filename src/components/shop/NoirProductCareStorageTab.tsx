@@ -1,5 +1,10 @@
 /** NOIR unit PDP — CARE/STORAGE tab copy and list styling. */
 
+import {
+  NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
+  NOIR_PRODUCT_TAB_ROSE_ALERT_SRC,
+} from './noirProductTabRoseBadge';
+
 const BODY_STYLE = {
   fontFamily: '"Futura PT Book"',
   fontSize: '10px',
@@ -34,9 +39,6 @@ const STORAGE_ITEMS = [
   'ENSURE THE UNIT IS COMPLETELY DRY BEFORE STORING TO PREVENT ODOR, MILDEW OR DAMAGE TO THE LACE AND HAIR FIBERS.',
 ] as const;
 
-/** Red checkmarks match premium upgrade subscription chart (`PremiumSubscriptionUpgradeChart`). */
-const PREMIUM_CHECK_STYLE = { width: '10px', height: '10px', flexShrink: 0 } as const;
-
 export default function NoirProductCareStorageTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -57,7 +59,7 @@ export default function NoirProductCareStorageTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {STORAGE_ITEMS.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <img src="/assets/premium-check.svg" alt="Included" style={PREMIUM_CHECK_STYLE} />
+            <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
             <p style={BODY_STYLE}>{label}</p>
           </div>
         ))}
