@@ -641,7 +641,7 @@ function ToolsPage() {
                                 }}
                               >
                                 <img
-                                  src="/assets/gift-card asset.png"
+                                  src={GIFT_CARD_CART_THUMBNAIL_SRC}
                                   alt="Gift Card"
                                   onClick={() => navigate('/tools/gift-card')}
                                   style={{
