@@ -16,6 +16,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
+import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
@@ -759,19 +760,7 @@ function GiftCardPage() {
 
               {/* Tab Content */}
               <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-65px', paddingBottom: '0px' }}>
-                {activeTab === 'DETAILS' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      GIFT CARD IS A DIGITAL COPY ONLY. YOU MAY LOAD FUNDS FROM YOUR ACCOUNT.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      DIGITAL GIFT CARD IS DELIVERED VIA EMAIL WITHIN 24 HOURS OF PURCHASE.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px' }}>
-                      GIFT CARD CAN BE USED TOWARDS ANY PRODUCT OR SERVICE ON OUR WEBSITE.
-                    </p>
-                  </>
-                )}
+                {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
                 {activeTab === 'POLICY' && (
                   <>
