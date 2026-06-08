@@ -26264,6 +26264,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR Details: signature features header
+
+**Context:** User asked to rename Bohemy section **why you'll love it** → **signature features** on NOIR **DETAILS** tab.
+
+**Changes:** **`NoirProductDetailsTab.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
