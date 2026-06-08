@@ -1,5 +1,10 @@
 /** NOIR unit PDP — DETAILS tab copy and list styling. */
 
+import {
+  NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
+  NOIR_PRODUCT_TAB_ROSE_ALERT_SRC,
+} from './noirProductTabRoseBadge';
+
 const BODY_STYLE = {
   fontFamily: '"Futura PT Book"',
   fontSize: '10px',
@@ -55,9 +60,6 @@ const NOIR_WHY_YOULL_LOVE_IT = [
   'COMPATIBLE WITH BUILD-A-WIG CUSTOMIZATION SERVICES',
 ] as const;
 
-/** Rose alert badge — same asset as Account → Profile (`/assets/rose-alert.svg`). */
-const ROSE_ALERT_BADGE_STYLE = { width: '14px', height: '14px', flexShrink: 0 } as const;
-
 export default function NoirProductDetailsTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -74,7 +76,7 @@ export default function NoirProductDetailsTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {NOIR_WHY_YOULL_LOVE_IT.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <img src="/assets/rose-alert.svg" alt="" style={ROSE_ALERT_BADGE_STYLE} />
+            <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
             <p style={BODY_STYLE}>{label}</p>
           </div>
         ))}

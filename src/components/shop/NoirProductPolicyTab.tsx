@@ -1,5 +1,10 @@
 /** NOIR unit PDP — POLICY tab copy and list styling. */
 
+import {
+  NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
+  NOIR_PRODUCT_TAB_ROSE_ALERT_SRC,
+} from './noirProductTabRoseBadge';
+
 const BODY_STYLE = {
   fontFamily: '"Futura PT Book"',
   fontSize: '10px',
@@ -38,9 +43,6 @@ const VERIFIED_ISSUE_RESOLUTIONS = [
   'OFFER A COMPARABLE REPLACEMENT PRODUCT',
 ] as const;
 
-/** Red checkmarks match premium upgrade subscription chart (`PremiumSubscriptionUpgradeChart`). */
-const PREMIUM_CHECK_STYLE = { width: '10px', height: '10px', flexShrink: 0 } as const;
-
 export default function NoirProductPolicyTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -68,7 +70,7 @@ export default function NoirProductPolicyTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {VERIFIED_ISSUE_RESOLUTIONS.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <img src="/assets/premium-check.svg" alt="Included" style={PREMIUM_CHECK_STYLE} />
+            <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
             <p style={BODY_STYLE}>{label}</p>
           </div>
         ))}
