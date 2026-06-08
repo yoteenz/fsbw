@@ -43,12 +43,15 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
+import BundleProductCareStorageTab from '../../../components/shop/BundleProductCareStorageTab';
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
 import BundleProductPolicyTab from '../../../components/shop/BundleProductPolicyTab';
 import BundleProductShippingTab from '../../../components/shop/BundleProductShippingTab';
+import ClosureProductCareStorageTab from '../../../components/shop/ClosureProductCareStorageTab';
 import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
 import ClosureProductPolicyTab from '../../../components/shop/ClosureProductPolicyTab';
 import ClosureProductShippingTab from '../../../components/shop/ClosureProductShippingTab';
+import FrontalProductCareStorageTab from '../../../components/shop/FrontalProductCareStorageTab';
 import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
 import FrontalProductPolicyTab from '../../../components/shop/FrontalProductPolicyTab';
 import FrontalProductShippingTab from '../../../components/shop/FrontalProductShippingTab';
@@ -819,12 +822,6 @@ export default function ShopTextureCategoryProductPage() {
       }
     }, 500);
   };
-
-  const careStorageCopy = [
-    'WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.',
-    'ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.',
-    'CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.'
-  ];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1780,22 +1777,9 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'POLICY' && category === 'bundles' && <BundleProductPolicyTab />}
                     {activeTab === 'POLICY' && category === 'closures' && <ClosureProductPolicyTab />}
                     {activeTab === 'POLICY' && category === 'frontals' && <FrontalProductPolicyTab />}
-                    {activeTab === 'CARE/STORAGE' &&
-                      careStorageCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === careStorageCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
+                    {activeTab === 'CARE/STORAGE' && category === 'bundles' && <BundleProductCareStorageTab />}
+                    {activeTab === 'CARE/STORAGE' && category === 'closures' && <ClosureProductCareStorageTab />}
+                    {activeTab === 'CARE/STORAGE' && category === 'frontals' && <FrontalProductCareStorageTab />}
                     {activeTab === 'REVIEWS' && (
                       <p
                         style={{
