@@ -18,10 +18,21 @@ import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
+import ThumbBox from '../../../components/ThumbBox';
 
-/** Gift card PDP hero (Supabase live-preview). */
-const GIFT_CARD_HERO_IMAGE_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/IMG_1780.jpeg';
+const GIFT_CARD_PREVIEW_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
+
+/** Gift card PDP hero + thumbnail gallery (Supabase live-preview). */
+const GIFT_CARD_PREVIEW_IMAGES = [
+  `${GIFT_CARD_PREVIEW_BASE}/IMG_1799.png`,
+  `${GIFT_CARD_PREVIEW_BASE}/IMG_1788.png`,
+] as const;
+
+const GIFT_CARD_THUMB_OUTER_W_PX = 100;
+const GIFT_CARD_THUMB_OUTER_H_PX = 72;
+const GIFT_CARD_THUMB_INNER_W_PX = 92;
+const GIFT_CARD_THUMB_INNER_H_PX = 64;
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
@@ -39,6 +50,7 @@ function GiftCardPage() {
   
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [selectedBalance, setSelectedBalance] = useState(10);
+  const [selectedGiftCardPreviewIndex, setSelectedGiftCardPreviewIndex] = useState(0);
   const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'POLICY' | 'REVIEWS'>({
     queryKey: 'tab',
     storageKey: 'giftCardActiveTab',
@@ -614,9 +626,9 @@ function GiftCardPage() {
             {/* GIFT CARD PREVIEW */}
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
               {/* Main Hero Image */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: 'translateY(-74px)' }}>
+              <div style={{ position: 'relative', width: '100%', marginBottom: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: 'translateY(-74px)' }}>
                 <img
-                  src={GIFT_CARD_HERO_IMAGE_SRC}
+                  src={GIFT_CARD_PREVIEW_IMAGES[selectedGiftCardPreviewIndex]}
                   alt="Gift Card"
                   style={{
                     width: '100%',
@@ -625,6 +637,33 @@ function GiftCardPage() {
                     margin: '0 auto'
                   }}
                 />
+              </div>
+
+              <div
+                className="flex flex-row flex-nowrap justify-center items-center"
+                style={{
+                  gap: '8px',
+                  marginBottom: '20px',
+                  transform: 'translateY(-74px)',
+                  width: '100%',
+                }}
+              >
+                {GIFT_CARD_PREVIEW_IMAGES.map((src, index) => (
+                  <ThumbBox
+                    key={src}
+                    image={src}
+                    imageAlt={`Gift card preview ${index + 1}`}
+                    title=""
+                    label=""
+                    isSelected={selectedGiftCardPreviewIndex === index}
+                    onClick={() => setSelectedGiftCardPreviewIndex(index)}
+                    containerWidth={GIFT_CARD_THUMB_OUTER_W_PX}
+                    containerHeight={GIFT_CARD_THUMB_OUTER_H_PX}
+                    imageWidth={GIFT_CARD_THUMB_INNER_W_PX}
+                    imageHeight={GIFT_CARD_THUMB_INNER_H_PX}
+                    topPosition="50%"
+                  />
+                ))}
               </div>
 
               {/* PRODUCT NAME */}
