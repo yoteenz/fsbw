@@ -43,6 +43,7 @@ import {
   UNIT_PDP_MAIN_CARD_STYLE,
   UNIT_PDP_TAB_CONTENT_STYLE,
   UNIT_PDP_TABS_SECTION_STYLE,
+  withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
@@ -2383,7 +2384,10 @@ function SoftWaveSelection() {
         </div>
 
         {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '3px', marginBottom: '20px' }}>
+        <div
+          className="px-0 md:px-0"
+          style={withUnitPdpRecentlyViewedVisibility({ marginTop: '3px', marginBottom: '20px' })}
+        >
           <div 
             className="backdrop-blur-sm"
             style={{ 

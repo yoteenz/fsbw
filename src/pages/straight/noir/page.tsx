@@ -51,6 +51,7 @@ import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTa
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
+import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
@@ -3870,7 +3871,18 @@ function NoirSelection() {
         </div>
 
         {/* RECENTLY VIEWED SECTION */}
-        <div className="px-0 md:px-0" style={{ marginTop: '3px', marginBottom: '20px', minWidth: '100%', maxWidth: 'none', marginLeft: '-16px', marginRight: '-16px', width: 'calc(100% + 32px)' }}>
+        <div
+          className="px-0 md:px-0"
+          style={withUnitPdpRecentlyViewedVisibility({
+            marginTop: '3px',
+            marginBottom: '20px',
+            minWidth: '100%',
+            maxWidth: 'none',
+            marginLeft: '-16px',
+            marginRight: '-16px',
+            width: 'calc(100% + 32px)',
+          })}
+        >
           <div 
             className="backdrop-blur-sm"
             style={{ 
