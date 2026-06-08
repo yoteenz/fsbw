@@ -70,7 +70,7 @@ export default function NoirProductDetailsTab() {
         </p>
       ))}
 
-      <p style={SECTION_TITLE_STYLE}>why you&apos;ll love it</p>
+      <p style={SECTION_TITLE_STYLE}>signature features</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {NOIR_WHY_YOULL_LOVE_IT.map((label) => (
