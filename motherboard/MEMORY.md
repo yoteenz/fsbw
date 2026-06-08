@@ -26398,3 +26398,11 @@ Pushed **`master`** + **`preview/mobile`**.
 Per-unit preserved: BLANCO **RUSSIAN / 250% / PLATINUM BLONDE**; SOFT WAVE **INDIAN WAVY 200%**; BEACH WAVE **INDONESIAN WAVY 200%**; SOFT CURL **FILIPINO CURLY 200%**; OCEAN CURL **VIETNAMESE CURLY 200%**.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP hero image
+
+**Context:** User supplied new Supabase hero URL for **`/tools/gift-card`**.
+
+**Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_HERO_IMAGE_SRC`** → **`live-preview/Stock Content/IMG_1780.jpeg`** (replaces **`/assets/giftcard-product.png`** on PDP hero only). Pushed **`master`** + **`preview/mobile`**.
