@@ -44,6 +44,7 @@ import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState'
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
+import BundleProductPolicyTab from '../../../components/shop/BundleProductPolicyTab';
 import BundleProductShippingTab from '../../../components/shop/BundleProductShippingTab';
 import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
 import ClosureProductShippingTab from '../../../components/shop/ClosureProductShippingTab';
@@ -1780,7 +1781,9 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'SHIPPING' && category === 'bundles' && <BundleProductShippingTab />}
                     {activeTab === 'SHIPPING' && category === 'closures' && <ClosureProductShippingTab />}
                     {activeTab === 'SHIPPING' && category === 'frontals' && <FrontalProductShippingTab />}
+                    {activeTab === 'POLICY' && category === 'bundles' && <BundleProductPolicyTab />}
                     {activeTab === 'POLICY' &&
+                      category !== 'bundles' &&
                       policyCopy.map((line, i) => (
                         <p
                           key={i}
