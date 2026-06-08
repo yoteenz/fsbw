@@ -44,6 +44,10 @@ import {
   UNIT_PDP_TABS_SECTION_STYLE,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
+import UnitProductDetailsTab from '../../../components/shop/UnitProductDetailsTab';
+import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
+import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
+import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 function SoftCurlSelection() {
@@ -1825,82 +1829,10 @@ function SoftCurlSelection() {
 
                 {/* Tab Content */}
                 <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
-                  {activeTab === 'DETAILS' && (
-                    <>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        13X6 ULTRA THIN HD FILM LACE, RAW FILIPINO CURLY 200% DENSITY.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        HANDMADE UNIT MEASURING 24 INCHES IN LENGTH, OFF BLACK HAIR COLOR.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        100% RAW HUMAN HAIR EXTENSIONS USING SINGLE DONOR BUNDLES.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        STRETCHY, BREATHABLE CAP WITH REMOVABLE COMBS + ELASTIC BAND FOR A SNUG FIT.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        SINGLE STRAND KNOTS ARE LIGHTLY BLEACHED FOR A SEAMLESS, READY TO WEAR APPLICATION.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        UNIT COMES UNCUSTOMIZED IN ITS NATURAL STATE. CAN BE BLEACHED, DYED OR COLORED.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        USE 3D WIG GENERATOR TO CUSTOMIZE UNIT AS PICTURED, FOR MEMBERS ONLY.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                        PROPER VERIFICATION IS REQUIRED TO FINALIZE THE PURCHASE OF ALL UNITS.
-                      </p>
-                    </>
-                  )}
-                  
-                  {activeTab === 'SHIPPING' && (
-                    <>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        STANDARD PROCESSING IS 6 TO 8 WEEKS AND UP TO 10 WEEKS FOR CUSTOMIZED UNITS.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        EXPRESS PROCESSING IS 4 TO 6 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        CUSTOM COLOR, STYLING & ADD-ONS ARE NOT APPLICABLE FOR EXPRESS PROCESSING.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                        PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.
-                      </p>
-                    </>
-                  )}
-                  
-                  {activeTab === 'POLICY' && (
-                    <>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        WE ARE UNABLE TO ACCEPT RETURNS OR REFUNDS AT THIS TIME. ALL SALES ARE FINAL.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        WHEN APPLICABLE, WE DO OFFER STORE CREDIT TO GO TOWARDS A FUTURE PURCHASE.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                        IF THERE IS AN ISSUE WITH YOUR ORDER, REACH OUT TO CONTACT@FRONTALSLAYER.COM
-                      </p>
-                    </>
-                  )}
-                  
-                  {activeTab === 'CARE/STORAGE' && (
-                    <>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        APPLY LIGHT OILS & SERUMS ONLY TO YOUR RAW HAIR EXTENSIONS WHEN STYLING.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
-                        ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px' }}>
-                        CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.
-                      </p>
-                    </>
-                  )}
+                                    {activeTab === 'DETAILS' && <UnitProductDetailsTab unitKey="soft-curl" />}
+                  {activeTab === 'SHIPPING' && <NoirProductShippingTab />}
+                  {activeTab === 'POLICY' && <NoirProductPolicyTab />}
+                  {activeTab === 'CARE/STORAGE' && <NoirProductCareStorageTab />}
                   
                   {activeTab === 'REVIEWS' && (
                     <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>
