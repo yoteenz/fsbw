@@ -26347,3 +26347,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`texture-category-product/page.tsx`** — wired both tabs; removed legacy **`shippingCopy`** (all three BCF categories now use dedicated SHIPPING components).
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Bundles PDP Policy tab (NOIR-style)
+
+**Context:** User supplied full **POLICY** copy for **bundles** BCF PDP (continuing NOIR-style tab rollout).
+
+**Changes:** **`BundleProductPolicyTab.tsx`** — Bohemy sections **purchase policy**, **order issues** (receive + provide red bullets), **if an issue is verified** (rose resolutions), **product variations**, **processing & communication**, **agreement to terms** (red **`CONTACT@FRONTALSLAYER.COM`**); **`texture-category-product/page.tsx`** when **`category === 'bundles'`**. Closures/frontals keep legacy **`policyCopy`**. Pushed **`master`** + **`preview/mobile`**.
