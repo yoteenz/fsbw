@@ -26414,3 +26414,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User updated gift card PDP media: hero **`IMG_1799.png`**, second image **`IMG_1788.png`**, with **2 thumbnails** below hero to switch views.
 
 **Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_PREVIEW_IMAGES`** array; **`selectedGiftCardPreviewIndex`** state; hero shows selected image; **`ThumbBox`** row below hero for both previews. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP preview layout overlap fix
+
+**Context:** Hero + thumb gallery overlapped **GIFT CARD** title (legacy **`translateY(-128px)`** on **`.gift-card-product-name`** + stacked negative transforms).
+
+**Changes:** **`gift-card/page.tsx`** — preview block uses normal vertical flow (hero → thumbs → title → price); removed per-section negative **`translateY`**. **`index.css`** — **`.gift-card-product-name`**: **`transform: none`**, **`z-index: 1`**. Pushed **`master`** + **`preview/mobile`**.

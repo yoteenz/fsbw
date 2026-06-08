@@ -1004,8 +1004,8 @@ p.gift-card-product-name,
   overflow: visible !important;
   white-space: nowrap !important;
   position: relative !important;
-  z-index: 999 !important;
-  transform: translateY(-128px) !important;
+  z-index: 1 !important;
+  transform: none !important;
   scale: 1 !important;
   zoom: 1 !important;
 }

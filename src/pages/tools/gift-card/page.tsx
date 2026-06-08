@@ -624,9 +624,29 @@ function GiftCardPage() {
             }}
           >
             {/* GIFT CARD PREVIEW */}
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+                marginBottom: '8px',
+                overflow: 'visible',
+                minWidth: '100%',
+                maxWidth: 'none',
+              }}
+            >
               {/* Main Hero Image */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: 'translateY(-74px)' }}>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
                 <img
                   src={GIFT_CARD_PREVIEW_IMAGES[selectedGiftCardPreviewIndex]}
                   alt="Gift Card"
@@ -634,7 +654,8 @@ function GiftCardPage() {
                     width: '100%',
                     maxWidth: '400px',
                     height: 'auto',
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    display: 'block',
                   }}
                 />
               </div>
@@ -643,8 +664,7 @@ function GiftCardPage() {
                 className="flex flex-row flex-nowrap justify-center items-center"
                 style={{
                   gap: '8px',
-                  marginBottom: '20px',
-                  transform: 'translateY(-74px)',
+                  marginBottom: '14px',
                   width: '100%',
                 }}
               >
@@ -669,27 +689,15 @@ function GiftCardPage() {
               {/* PRODUCT NAME */}
               <p
                 className="text-center text-black mb-2 gift-card-product-name"
-                style={{ 
-                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
-                  fontSize: '38px !important',
-                  fontWeight: '400 !important',
-                  lineHeight: '1.2 !important',
-                  margin: '0 !important',
-                  padding: '0 !important',
-                  display: 'block !important',
-                  textAlign: 'center' as const,
-                  height: 'auto !important',
-                  maxHeight: 'none !important',
-                  width: '100% !important',
-                  minWidth: 'auto !important',
-                  maxWidth: 'none !important',
-                  overflow: 'visible !important',
-                  whiteSpace: 'nowrap !important',
-                  position: 'relative' as const,
-                  zIndex: '999 !important',
-                  transform: 'translateY(-128px) !important',
-                  scale: '1 !important',
-                  zoom: '1 !important'
+                style={{
+                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                  fontSize: '38px',
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  margin: '0 0 6px 0',
+                  padding: 0,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 GIFT CARD
@@ -698,11 +706,11 @@ function GiftCardPage() {
               {/* DIGITAL ONLY */}
               <p
                 className="text-center text-red-500 uppercase mb-2"
-                style={{ 
+                style={{
                   fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
-                  transform: 'translateY(-128px)',
-                  fontSize: '12px'
+                  fontSize: '12px',
+                  margin: '0 0 6px 0',
                 }}
               >
                 DIGITAL ONLY
@@ -711,18 +719,18 @@ function GiftCardPage() {
               {/* PRICE */}
               <p
                 className="text-center text-black mb-1"
-                style={{ 
+                style={{
                   fontFamily: '"Futura PT Medium"',
                   fontSize: '16px',
                   fontWeight: '500',
-                  transform: 'translateY(-136px)',
-                  width: '100%'
+                  width: '100%',
+                  margin: '0 0 6px 0',
                 }}
                 dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
               />
 
               {/* STAR RATINGS */}
-              <div className="flex justify-center mb-4 gap-1" style={{ transform: 'translateY(-137px)' }}>
+              <div className="flex justify-center mb-2 gap-1">
                 {[...Array(5)].map((_, index) => (
                   <img
                     key={index}
@@ -741,7 +749,7 @@ function GiftCardPage() {
             </div>
 
             {/* SELECT CARD BALANCE */}
-            <div style={{ transform: 'translateY(-130px)' }}>
+            <div>
               <p
                 className="text-center text-black uppercase mb-4"
                 style={{ 
@@ -776,7 +784,7 @@ function GiftCardPage() {
             </div>
 
             {/* Tabs Section */}
-            <div className="mt-6" style={{ transform: 'translateY(-155px)', marginBottom: '-65px' }}>
+            <div className="mt-6" style={{ marginBottom: '0' }}>
               {/* Tab Navigation */}
               <div className="flex justify-center">
                 <button
