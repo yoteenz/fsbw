@@ -46,7 +46,9 @@ import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/un
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
 import BundleProductShippingTab from '../../../components/shop/BundleProductShippingTab';
 import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
+import ClosureProductShippingTab from '../../../components/shop/ClosureProductShippingTab';
 import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
+import FrontalProductShippingTab from '../../../components/shop/FrontalProductShippingTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
@@ -819,14 +821,6 @@ export default function ShopTextureCategoryProductPage() {
     'ALL SALES FOLLOW SITE TERMS; CONTACT SUPPORT FOR PRODUCT QUESTIONS.',
     'FINAL PROCESSING TIMES MAY VARY — YOU WILL RECEIVE ORDER UPDATES BY EMAIL.',
     'FOR SUPPORT, REACH OUT TO CONTACT@FRONTALSLAYER.COM.'
-  ];
-
-  /** Bundles / closures / frontals — matches `checkoutBcfProcessing` (4–6 std, 3–4 express; custom color & extras extend / disable express). */
-  const shippingCopy = [
-    'STANDARD PROCESSING IS 4 TO 6 WEEKS.',
-    'EXPRESS PROCESSING IS 3 TO 4 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.',
-    'CUSTOM HAIR COLOR, STYLING, OR ADD-ONS ARE NOT AVAILABLE FOR EXPRESS PROCESSING AND MAY EXTEND STANDARD TIMELINES (TYPICALLY 6 TO 8 WEEKS OR LONGER).',
-    'PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.'
   ];
 
   const careStorageCopy = [
@@ -1784,23 +1778,8 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'DETAILS' && category === 'closures' && <ClosureProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'frontals' && <FrontalProductDetailsTab />}
                     {activeTab === 'SHIPPING' && category === 'bundles' && <BundleProductShippingTab />}
-                    {activeTab === 'SHIPPING' &&
-                      category !== 'bundles' &&
-                      shippingCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === shippingCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
+                    {activeTab === 'SHIPPING' && category === 'closures' && <ClosureProductShippingTab />}
+                    {activeTab === 'SHIPPING' && category === 'frontals' && <FrontalProductShippingTab />}
                     {activeTab === 'POLICY' &&
                       policyCopy.map((line, i) => (
                         <p
