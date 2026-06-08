@@ -19,10 +19,10 @@ const BULLET_STYLE = {
 const BULLET_MARK_STYLE = { color: '#EB1C24' };
 
 const SECTION_TITLE_STYLE = {
-  fontFamily: '"Futura PT Medium"',
+  fontFamily: '"Bohemy", cursive',
   fontSize: '10px',
   color: '#EB1C24',
-  fontWeight: 500,
+  fontWeight: 400,
   margin: '14px 0 10px 0',
   textTransform: 'uppercase' as const,
 };
