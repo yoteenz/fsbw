@@ -47,8 +47,10 @@ import BundleProductDetailsTab from '../../../components/shop/BundleProductDetai
 import BundleProductPolicyTab from '../../../components/shop/BundleProductPolicyTab';
 import BundleProductShippingTab from '../../../components/shop/BundleProductShippingTab';
 import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
+import ClosureProductPolicyTab from '../../../components/shop/ClosureProductPolicyTab';
 import ClosureProductShippingTab from '../../../components/shop/ClosureProductShippingTab';
 import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
+import FrontalProductPolicyTab from '../../../components/shop/FrontalProductPolicyTab';
 import FrontalProductShippingTab from '../../../components/shop/FrontalProductShippingTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
@@ -817,12 +819,6 @@ export default function ShopTextureCategoryProductPage() {
       }
     }, 500);
   };
-
-  const policyCopy = [
-    'ALL SALES FOLLOW SITE TERMS; CONTACT SUPPORT FOR PRODUCT QUESTIONS.',
-    'FINAL PROCESSING TIMES MAY VARY — YOU WILL RECEIVE ORDER UPDATES BY EMAIL.',
-    'FOR SUPPORT, REACH OUT TO CONTACT@FRONTALSLAYER.COM.'
-  ];
 
   const careStorageCopy = [
     'WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.',
@@ -1782,23 +1778,8 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'SHIPPING' && category === 'closures' && <ClosureProductShippingTab />}
                     {activeTab === 'SHIPPING' && category === 'frontals' && <FrontalProductShippingTab />}
                     {activeTab === 'POLICY' && category === 'bundles' && <BundleProductPolicyTab />}
-                    {activeTab === 'POLICY' &&
-                      category !== 'bundles' &&
-                      policyCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === policyCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
+                    {activeTab === 'POLICY' && category === 'closures' && <ClosureProductPolicyTab />}
+                    {activeTab === 'POLICY' && category === 'frontals' && <FrontalProductPolicyTab />}
                     {activeTab === 'CARE/STORAGE' &&
                       careStorageCopy.map((line, i) => (
                         <p
