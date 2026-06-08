@@ -50,3 +50,12 @@ export const UNIT_PDP_TAB_CONTENT_STYLE: CSSProperties = {
   width: '100%',
   marginBottom: 0,
 };
+
+/** Toggle to show RECENTLY VIEWED on unit PDPs again (strip stays mounted when false). */
+export const UNIT_PDP_RECENTLY_VIEWED_VISIBLE = false;
+
+/** Merge `display: none` onto the RECENTLY VIEWED outer wrapper when hidden. */
+export function withUnitPdpRecentlyViewedVisibility(style: CSSProperties): CSSProperties {
+  if (UNIT_PDP_RECENTLY_VIEWED_VISIBLE) return style;
+  return { ...style, display: 'none' };
+}

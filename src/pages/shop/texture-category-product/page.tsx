@@ -42,6 +42,7 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
@@ -2084,7 +2085,10 @@ export default function ShopTextureCategoryProductPage() {
               </div>
 
               {/* RECENTLY VIEWED — same strip as gift card */}
-              <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+              <div
+                className="px-0 md:px-0"
+                style={withUnitPdpRecentlyViewedVisibility({ marginTop: '20px', marginBottom: '20px' })}
+              >
                 <div
                   className="backdrop-blur-sm"
                   style={{
