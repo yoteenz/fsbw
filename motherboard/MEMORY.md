@@ -26430,3 +26430,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** After preview layout fix, tabs/checkout overlapped (**`marginBottom: -65px`** on tab content); gift card thumbs needed **portrait** frames with equal **4px** white mat (not landscape).
 
 **Changes:** **`gift-card/page.tsx`** — removed tab content negative margin; added card **`paddingBottom`** + checkout **`marginTop`**; portrait thumb dims (**48×84** inner, **56×92** outer, **4px** mat). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card thumb height + checkout spacing tune
+
+**Context:** Portrait thumbs fixed side mat but **top/bottom white** too tall; excess gap above **PROCEED TO CHECKOUT**.
+
+**Changes:** **`gift-card/page.tsx`** — thumb inner height **84 → 50** (outer **92 → 58**, width unchanged); tightened tabs/checkout spacing (**`marginTop` 8px**, removed extra card/tab padding). Pushed **`master`** + **`preview/mobile`**.
