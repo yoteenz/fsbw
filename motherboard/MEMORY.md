@@ -26302,3 +26302,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied full **DETAILS** copy for **bundles** (`/shop/bundles` BCF PDP) matching NOIR tab design: intro, red bullets, Bohemy **premium by design** header, rose-alert list markers.
 
 **Changes:** **`BundleProductDetailsTab.tsx`** (new); **`texture-category-product/page.tsx`** renders it when **`category === 'bundles'`** on **DETAILS** tab. Reuses **`noirProductTabRoseBadge`** (12px). Closures/frontals keep legacy **`detailsCopy`** lines. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — BCF closures/frontals PDP Details tabs (NOIR-style)
+
+**Context:** User supplied full **DETAILS** copy for **closures** and **frontals** BCF PDPs matching NOIR/bundles tab design (intro, red bullets, Bohemy section header, rose-alert list).
+
+**Changes:** **`ClosureProductDetailsTab.tsx`** (**engineered for excellence**); **`FrontalProductDetailsTab.tsx`** (**every detail matters**); **`texture-category-product/page.tsx`** wires all three BCF categories on **DETAILS**; removed legacy **`detailsCopy`**. Pushed **`master`** + **`preview/mobile`**.
