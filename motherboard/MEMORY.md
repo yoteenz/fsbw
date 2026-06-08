@@ -26406,3 +26406,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied new Supabase hero URL for **`/tools/gift-card`**.
 
 **Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_HERO_IMAGE_SRC`** → **`live-preview/Stock Content/IMG_1780.jpeg`** (replaces **`/assets/giftcard-product.png`** on PDP hero only). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP hero gallery (2 images + thumbs)
+
+**Context:** User updated gift card PDP media: hero **`IMG_1799.png`**, second image **`IMG_1788.png`**, with **2 thumbnails** below hero to switch views.
+
+**Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_PREVIEW_IMAGES`** array; **`selectedGiftCardPreviewIndex`** state; hero shows selected image; **`ThumbBox`** row below hero for both previews. Pushed **`master`** + **`preview/mobile`**.
