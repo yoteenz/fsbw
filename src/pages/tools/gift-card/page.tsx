@@ -19,6 +19,10 @@ import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCar
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
 
+/** Gift card PDP hero (Supabase live-preview). */
+const GIFT_CARD_HERO_IMAGE_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/IMG_1780.jpeg';
+
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
 
@@ -612,7 +616,7 @@ function GiftCardPage() {
               {/* Main Hero Image */}
               <div style={{ position: 'relative', width: '100%', marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: 'translateY(-74px)' }}>
                 <img
-                  src="/assets/giftcard-product.png"
+                  src={GIFT_CARD_HERO_IMAGE_SRC}
                   alt="Gift Card"
                   style={{
                     width: '100%',
