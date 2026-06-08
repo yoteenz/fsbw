@@ -26334,3 +26334,16 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied full **SHIPPING** copy for **bundles** BCF PDP.
 
 **Changes:** **`BundleProductShippingTab.tsx`** — intro, **standard/express processing**, **customization exclusions** bullets, **important to note** rose list, **premium hair takes time** closing; **`texture-category-product/page.tsx`** when **`category === 'bundles'`**. Closures/frontals keep legacy **`shippingCopy`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Closures & frontals PDP Shipping tabs (NOIR-style)
+
+**Context:** User supplied full **SHIPPING** copy for **closures** and **frontals** BCF PDPs (continuing NOIR-style tab rollout after bundles).
+
+**Changes:**
+- **`ClosureProductShippingTab.tsx`** — closure intro, **standard/express processing**, **customization exclusions** (incl. knot bleaching & toning, custom plucking), **important to note** rose list (customization timelines bullet), **quality over shortcuts** closing.
+- **`FrontalProductShippingTab.tsx`** — frontal intro, same structure; exclusions add **hairline customization**; closing **built for a flawless melt**.
+- **`texture-category-product/page.tsx`** — wired both tabs; removed legacy **`shippingCopy`** (all three BCF categories now use dedicated SHIPPING components).
+
+Pushed **`master`** + **`preview/mobile`**.
