@@ -591,10 +591,10 @@ export default function PsaAssistantWidget() {
         <div
           className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
         >
-          {!cartDropdownOpen && !isFabCollapsed && !isOpen && nudgeBubbleReady && proactiveNudge ? (
+          {!cartDropdownOpen && !isFabCollapsed && !isOpen && proactiveNudge ? (
             <button
               type="button"
-              className="psa-nudge-chip"
+              className={`psa-nudge-chip${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
               onClick={handleNudgeAction}
               aria-label={proactiveNudge.headline}
             >
@@ -604,8 +604,6 @@ export default function PsaAssistantWidget() {
                 alt=""
                 aria-hidden
                 draggable={false}
-                decoding="sync"
-                loading="eager"
               />
               <span className="psa-nudge-chip-content">
                 <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
@@ -616,10 +614,10 @@ export default function PsaAssistantWidget() {
             </button>
           ) : null}
           {isFabCollapsed ? (
-            !cartDropdownOpen && nudgeBubbleReady ? (
+            !cartDropdownOpen ? (
             <button
               type="button"
-              className="psa-nudge-chip psa-nudge-chip-show-chat"
+              className={`psa-nudge-chip psa-nudge-chip-show-chat${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
               onClick={handleFabClick}
               aria-label="Show chat"
             >
@@ -629,8 +627,6 @@ export default function PsaAssistantWidget() {
                 alt=""
                 aria-hidden
                 draggable={false}
-                decoding="sync"
-                loading="eager"
               />
               <span className="psa-nudge-chip-content">
                 <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>

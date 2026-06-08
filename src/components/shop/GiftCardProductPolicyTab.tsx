@@ -38,7 +38,7 @@ const GIFT_CARD_POLICY_BULLETS = [
 
 export default function GiftCardProductPolicyTab() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '16px' }}>
       <p style={BODY_STYLE}>
         THE FRONTAL SLAYER GIFT CARD IS DESIGNED TO PROVIDE MAXIMUM FLEXIBILITY WHILE MAKING GIFTING SIMPLE AND CONVENIENT.
       </p>

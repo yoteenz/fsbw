@@ -32,9 +32,9 @@ export default function GiftCardBalancePicker({ value, onChange }: GiftCardBalan
           user-select: none;
         }
         .gift-card-balance-option[data-selected='true'] {
-          border: 2px solid #eb1c24 !important;
+          border: 1.3px solid #eb1c24 !important;
           color: #eb1c24 !important;
-          font-weight: 600;
+          font-weight: 500;
         }
         .gift-card-balance-option[data-selected='false'] {
           border: 1.3px solid #000000 !important;

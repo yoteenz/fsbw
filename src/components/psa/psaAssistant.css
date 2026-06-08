@@ -724,8 +724,13 @@
   transform: translateX(-20px) translateY(-20px);
 }
 
-/* Cart dropdown has a transparent full-screen layer — hide FAB + nudge so checkout/bag UI stays clean. */
-.psa-widget-fab-stack--cart-open {
+/* Cart dropdown backdrop is transparent — hide only the thought bubble, keep avatar position/layout. */
+.psa-widget-fab-stack--cart-open .psa-nudge-chip {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.psa-nudge-chip--pending {
   visibility: hidden;
   pointer-events: none;
 }
