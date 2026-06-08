@@ -26517,3 +26517,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to revert recent fixes — tab spacing CSS lock (`c9606423`), gift card balance centering + **`PsaNudgeChip`** (`d040baf8`), screenshot retry with grid/inline FAB (`ebfa5c09`) — reported all made production worse.
 
 **Action:** Hard reset **`master`** + **`preview/mobile`** to **`6bb4a3e6`** (PSA avatar restore, 1.3px gift card border, inline tab padding 4px/12px). Removed **`giftCardPdpLayoutConstants.ts`**, **`PsaNudgeChip.tsx`**, balance grid CSS, widget inline positioning changes from those commits.
+
+---
+
+## 2026-06-08 — Home/tools gift card strip thumbnail
+
+**Context:** User asked to use **`GIFT_CARD_CART_THUMBNAIL_SRC`** (Supabase **`image (23).png`**) on **`/home/tools`** gift card strip, same as bag/cart/checkout.
+
+**Changes:** **`src/pages/tools/page.tsx`** — import **`GIFT_CARD_CART_THUMBNAIL_SRC`** from **`giftCardCheckout.ts`**; replace **`/assets/gift-card asset.png`** on strip product image. Pushed **`master`** + **`preview/mobile`** (`572b3a2e`).

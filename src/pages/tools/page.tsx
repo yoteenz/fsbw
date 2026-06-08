@@ -14,6 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { marbleStripViewportStyle } from '../../utils/marbleStripStyles';
+import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../utils/giftCardCheckout';
 
 function ToolsPage() {
   const navigate = useNavigate();
