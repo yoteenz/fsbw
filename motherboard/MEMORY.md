@@ -26368,3 +26368,17 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`texture-category-product/page.tsx`** — wired both; removed legacy **`policyCopy`** (all BCF categories now have dedicated POLICY components).
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — BCF CARE/STORAGE tabs (bundles, closures, frontals)
+
+**Context:** User supplied full **CARE/STORAGE** copy for all three BCF PDP categories.
+
+**Changes:**
+- **`BundleProductCareStorageTab.tsx`** — intro, **hair care** + **storage** red bullets, **built to last** closing.
+- **`ClosureProductCareStorageTab.tsx`** — **hair & lace care**, **storage**, **protect your investment**.
+- **`FrontalProductCareStorageTab.tsx`** — **hair & lace care**, **storage**, **preserve the melt**.
+- **`texture-category-product/page.tsx`** — wired all three; removed legacy **`careStorageCopy`**.
+
+Pushed **`master`** + **`preview/mobile`**.
