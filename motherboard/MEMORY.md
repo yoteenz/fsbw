@@ -26200,6 +26200,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — Unit PDPs: hide RECENTLY VIEWED (keep in DOM)
+
+**Context:** User asked to hide the **RECENTLY VIEWED** container on all product pages without removing the code.
+
+**Changes:** **`unitPdpLayoutConstants.ts`** — **`UNIT_PDP_RECENTLY_VIEWED_VISIBLE = false`** + **`withUnitPdpRecentlyViewedVisibility()`** merges **`display: 'none'`** on the outer wrapper. Applied on all six unit PDPs (**NOIR**, **BLANCO**, **SOFT WAVE**, **BEACH WAVE**, **SOFT CURL**, **OCEAN CURL**) and **`texture-category-product/page.tsx`**. Gift card page unchanged. Set **`UNIT_PDP_RECENTLY_VIEWED_VISIBLE`** to **`true`** to show again. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
