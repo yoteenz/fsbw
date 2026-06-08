@@ -26294,3 +26294,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Docs:** **`motherboard/golden-prompts/psa-avatar-expressions-nbp.md`** (full prompt table), **`docs/PSA_SETUP.md`**, **`psa-avatar-background-removal-ideogram.md`**
 
 **Conventions:** Missing v5 PNGs fall back to **neutral** via **`PsaAvatarImageCrossfade` `onError`** until user drops Ideogram-cut files; then bump **`PSA_AVATAR_ASSET_VERSION`**. Do not run flatten/solidify scripts on Ideogram exports.
+
+---
+
+## 2026-06-08 — Bundles PDP Details tab (NOIR-style layout)
+
+**Context:** User supplied full **DETAILS** copy for **bundles** (`/shop/bundles` BCF PDP) matching NOIR tab design: intro, red bullets, Bohemy **premium by design** header, rose-alert list markers.
+
+**Changes:** **`BundleProductDetailsTab.tsx`** (new); **`texture-category-product/page.tsx`** renders it when **`category === 'bundles'`** on **DETAILS** tab. Reuses **`noirProductTabRoseBadge`** (12px). Closures/frontals keep legacy **`detailsCopy`** lines. Pushed **`master`** + **`preview/mobile`**.
