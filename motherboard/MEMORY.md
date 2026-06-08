@@ -26355,3 +26355,16 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied full **POLICY** copy for **bundles** BCF PDP (continuing NOIR-style tab rollout).
 
 **Changes:** **`BundleProductPolicyTab.tsx`** — Bohemy sections **purchase policy**, **order issues** (receive + provide red bullets), **if an issue is verified** (rose resolutions), **product variations**, **processing & communication**, **agreement to terms** (red **`CONTACT@FRONTALSLAYER.COM`**); **`texture-category-product/page.tsx`** when **`category === 'bundles'`**. Closures/frontals keep legacy **`policyCopy`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Closures & frontals PDP Policy tabs (NOIR-style)
+
+**Context:** User supplied full **POLICY** copy for **closures** and **frontals** BCF PDPs.
+
+**Changes:**
+- **`ClosureProductPolicyTab.tsx`** — sales-final intro (lace options), **order issues**, **if an issue is verified** (rose list; comparable replacement without “product”), **product variations** (lace appearance), **processing & communication**, **agreement to terms**.
+- **`FrontalProductPolicyTab.tsx`** — same structure with frontal-specific intro and uniqueness copy.
+- **`texture-category-product/page.tsx`** — wired both; removed legacy **`policyCopy`** (all BCF categories now have dedicated POLICY components).
+
+Pushed **`master`** + **`preview/mobile`**.
