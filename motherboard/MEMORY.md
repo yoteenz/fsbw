@@ -26382,3 +26382,19 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`texture-category-product/page.tsx`** — wired all three; removed legacy **`careStorageCopy`**.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Non-NOIR unit PDP tabs aligned with NOIR
+
+**Context:** User asked to update the other **5** wig unit PDPs (BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL) so **DETAILS / SHIPPING / POLICY / CARE-STORAGE** match NOIR tab design while keeping per-unit specs (origin, pattern, density, color).
+
+**Changes:**
+- **`unitPdpDetailsConfig.ts`** — canonical specs per **`WigUnitKey`**; builds NOIR-style bullets + **signature features**.
+- **`UnitProductDetailsTab.tsx`** + **`unitPdpTabStyles.ts`** — shared DETAILS renderer.
+- **`NoirProductDetailsTab.tsx`** — thin wrapper over **`UnitProductDetailsTab`** (`noir`).
+- **Five unit pages** wired to **`UnitProductDetailsTab`** + shared **`NoirProductShippingTab`**, **`NoirProductPolicyTab`**, **`NoirProductCareStorageTab`**; legacy 7.7px inline tab copy removed.
+
+Per-unit preserved: BLANCO **RUSSIAN / 250% / PLATINUM BLONDE**; SOFT WAVE **INDIAN WAVY 200%**; BEACH WAVE **INDONESIAN WAVY 200%**; SOFT CURL **FILIPINO CURLY 200%**; OCEAN CURL **VIETNAMESE CURLY 200%**.
+
+Pushed **`master`** + **`preview/mobile`**.
