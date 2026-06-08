@@ -26224,6 +26224,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR PDP Shipping/Policy copy line edits
+
+**Context:** User asked to update individual strings on NOIR **SHIPPING** and **POLICY** tabs.
+
+**Changes:** **Shipping** — Bohemy header **important to note** (was important information); closing paragraph **EVERY FS UNIT** (was FRONTAL SLAYER). **Policy** — 48h contact line without inline email; resolution **OFFER A COMPARABLE REPLACEMENT**; terms line **REVIEWED AND AGREE**; assistance **FOR ASSISTANCE, PLEASE EMAIL** + red **`CONTACT@FRONTALSLAYER.COM`** (removed separate CONTACT: block). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
