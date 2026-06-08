@@ -26509,3 +26509,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Root causes:** Cart open state dispatched from per-page **`DynamicCartIcon`** (desync); cart backdrop is transparent so PSA visible beside panel; single-item bags needed **`fit-content`** on anchor/shell not just **`flex-shrink-0`**.
 
 **Changes:** **`cartDropdownOpenState.ts`**; **`CartDropdown`** sets open on **`isOpen`**; **`PsaAssistantWidget`** + **`.psa-widget-fab-stack--cart-open`**; compact single-line bag **`fit-content`** layout. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Revert gift card / PSA layout attempts (user: made worse)
+
+**Context:** User asked to revert recent fixes — tab spacing CSS lock (`c9606423`), gift card balance centering + **`PsaNudgeChip`** (`d040baf8`), screenshot retry with grid/inline FAB (`ebfa5c09`) — reported all made production worse.
+
+**Action:** Hard reset **`master`** + **`preview/mobile`** to **`6bb4a3e6`** (PSA avatar restore, 1.3px gift card border, inline tab padding 4px/12px). Removed **`giftCardPdpLayoutConstants.ts`**, **`PsaNudgeChip.tsx`**, balance grid CSS, widget inline positioning changes from those commits.
