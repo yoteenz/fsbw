@@ -26184,6 +26184,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR PDP Bohemy section headers: gray + tighter spacing
+
+**Context:** User asked to change red Bohemy subsection headers below NOIR PDP tabs to **gray** and reduce spacing above and below each header by **2px**.
+
+**Changes:** **`SECTION_TITLE_STYLE`** in **`NoirProductDetailsTab.tsx`** + **`NoirProductShippingTab.tsx`** — `color` **`#808080`** (was **`#EB1C24`**); `margin` **`12px 0 8px 0`** (was **`14px 0 10px 0`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
