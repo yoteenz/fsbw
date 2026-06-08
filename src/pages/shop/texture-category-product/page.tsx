@@ -44,6 +44,7 @@ import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState'
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
+import BundleProductShippingTab from '../../../components/shop/BundleProductShippingTab';
 import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
 import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
@@ -1782,7 +1783,9 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'DETAILS' && category === 'bundles' && <BundleProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'closures' && <ClosureProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'frontals' && <FrontalProductDetailsTab />}
+                    {activeTab === 'SHIPPING' && category === 'bundles' && <BundleProductShippingTab />}
                     {activeTab === 'SHIPPING' &&
+                      category !== 'bundles' &&
                       shippingCopy.map((line, i) => (
                         <p
                           key={i}
