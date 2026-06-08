@@ -24,7 +24,7 @@ const SECTION_TITLE_STYLE = {
   color: '#EB1C24',
   fontWeight: 400,
   margin: '14px 0 10px 0',
-  textTransform: 'uppercase' as const,
+  textTransform: 'lowercase' as const,
 };
 
 const CUSTOMIZATION_EXCLUSION_BULLETS = [
@@ -55,7 +55,7 @@ export default function NoirProductShippingTab() {
         EVERY FRONTAL SLAYER UNIT IS HANDCRAFTED, INSPECTED AND PREPARED WITH METICULOUS ATTENTION TO DETAIL BEFORE SHIPMENT. BECAUSE QUALITY TAKES TIME, WE ENCOURAGE CLIENTS TO REVIEW PROCESSING TIMELINES CAREFULLY BEFORE PLACING AN ORDER.
       </p>
 
-      <p style={SECTION_TITLE_STYLE}>STANDARD PROCESSING</p>
+      <p style={SECTION_TITLE_STYLE}>standard processing</p>
       <p style={BODY_STYLE}>
         STANDARD PROCESSING FOR READY-TO-WEAR UNITS IS APPROXIMATELY 6-8 WEEKS.
       </p>
@@ -63,7 +63,7 @@ export default function NoirProductShippingTab() {
         UNITS THAT INCLUDE CUSTOMIZATION SERVICES SUCH AS CUSTOM COLOR, KNOT BLEACHING, PLUCKING, STYLING, CUTTING, LAYERING OR ADDITIONAL MODIFICATIONS MAY REQUIRE UP TO 10 WEEKS FOR COMPLETION.
       </p>
 
-      <p style={SECTION_TITLE_STYLE}>EXPRESS PROCESSING</p>
+      <p style={SECTION_TITLE_STYLE}>express processing</p>
       <p style={BODY_STYLE}>NEED YOUR UNIT TO HIT YOUR DOORSTEP SOONER?</p>
       <p style={BODY_STYLE}>
         WE OFFER EXPRESS PROCESSING + RUSH SHIPPING FOR AN ADDITIONAL $120 USD.
@@ -75,7 +75,7 @@ export default function NoirProductShippingTab() {
         PLEASE NOTE THAT EXPRESS PROCESSING IS RESERVED FOR QUALIFYING UNITS ONLY.
       </p>
 
-      <p style={SECTION_TITLE_STYLE}>CUSTOMIZATION EXCLUSIONS</p>
+      <p style={SECTION_TITLE_STYLE}>customization exclusions</p>
       <p style={BODY_STYLE}>
         TO MAINTAIN THE QUALITY AND INTEGRITY OF OUR WORK, THE FOLLOWING SERVICES ARE NOT ELIGIBLE FOR EXPRESS PROCESSING:
       </p>
@@ -88,7 +88,7 @@ export default function NoirProductShippingTab() {
         ORDERS CONTAINING THESE SERVICES WILL FOLLOW STANDARD PRODUCTION TIMELINES REGARDLESS OF SHIPPING METHOD SELECTED.
       </p>
 
-      <p style={SECTION_TITLE_STYLE}>IMPORTANT INFORMATION</p>
+      <p style={SECTION_TITLE_STYLE}>important information</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {IMPORTANT_INFORMATION_ITEMS.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
@@ -98,7 +98,7 @@ export default function NoirProductShippingTab() {
         ))}
       </div>
 
-      <p style={SECTION_TITLE_STYLE}>HANDMADE, NOT MASS PRODUCED</p>
+      <p style={SECTION_TITLE_STYLE}>handmade, not mass produced</p>
       <p style={BODY_STYLE}>
         EVERY FRONTAL SLAYER UNIT IS INDIVIDUALLY CRAFTED, INSPECTED AND PREPARED TO MEET OUR QUALITY STANDARDS. WE PRIORITIZE EXCEPTIONAL CRAFTSMANSHIP OVER RUSHED PRODUCTION TO ENSURE YOUR UNIT ARRIVES READY TO MAKE A STATEMENT THE MOMENT IT TOUCHES YOUR HEAD.
       </p>
