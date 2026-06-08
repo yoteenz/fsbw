@@ -1,4 +1,4 @@
-import { isGiftCardCartLine } from './giftCardCheckout';
+import { GIFT_CARD_CART_THUMBNAIL_SRC, isGiftCardCartLine } from './giftCardCheckout';
 
 export type WriteGiftCardCheckoutOpts = {
   balanceUsd: number;
@@ -108,7 +108,7 @@ export function writeGiftCardSelectionForCheckoutSession(opts: WriteGiftCardChec
   backupCartBeforeGiftCardCheckoutSession();
 
   const balanceUsd = opts.balanceUsd;
-  const image = opts.image ?? '/assets/giftcard-product.png';
+  const image = opts.image ?? GIFT_CARD_CART_THUMBNAIL_SRC;
 
   const newItem = {
     id: `gift-card-${balanceUsd}-${Date.now()}`,

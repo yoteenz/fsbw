@@ -34,7 +34,11 @@ import {
   bookingEditLinkStyle
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
-import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
+import {
+  giftCardCartThumbnailSrc,
+  giftCardLineTotalUsd,
+  isGiftCardCartLine,
+} from '../utils/giftCardCheckout';
 import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../utils/giftCardCheckoutSession';
 import { CartLineProductTextStack, CartLineTextLayer } from './cart/CartLineProductTextStack';
 import {
@@ -1117,7 +1121,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         ) : (() => {
                           const thumbSrc = (() => {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                              return '/assets/gift-card asset.png';
+                              return giftCardCartThumbnailSrc();
                             }
                             if (item.type === 'shop-texture-category') {
                               const bcf = shopBcfCartLineThumbnailSrc(item as CartItem);

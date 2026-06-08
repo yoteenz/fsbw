@@ -14,7 +14,12 @@ import {
 } from './bookingBadges';
 import { bcfBundleDealResolvedListSubtotal, shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
 import { bookingCartRedSubtitle, CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
-import { giftCardLineTotalUsd, giftCardStripQuantitySteps, isGiftCardCartLine } from './giftCardCheckout';
+import {
+  giftCardCartThumbnailSrc,
+  giftCardLineTotalUsd,
+  giftCardStripQuantitySteps,
+  isGiftCardCartLine,
+} from './giftCardCheckout';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -110,7 +115,7 @@ function isMembershipTierStripItem(item: any, isSubscriptionUpgrade: boolean): b
  */
 export function orderStripThumbnailSrc(item: any, isSubscriptionUpgrade: boolean): string {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-    return '/assets/gift-card asset.png';
+    return giftCardCartThumbnailSrc();
   }
   const bookingThumb = bookingCartItemThumbnailSrc(item);
   if (bookingThumb) return bookingThumb;

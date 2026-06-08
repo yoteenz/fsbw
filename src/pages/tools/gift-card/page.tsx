@@ -23,7 +23,7 @@ import {
   UNIT_PDP_TABS_SECTION_STYLE,
 } from '../../../components/shop/unitPdpLayoutConstants';
 import ThumbBox from '../../../components/ThumbBox';
-import { isGiftCardCartLine } from '../../../utils/giftCardCheckout';
+import { GIFT_CARD_CART_THUMBNAIL_SRC, isGiftCardCartLine } from '../../../utils/giftCardCheckout';
 
 const GIFT_CARD_PREVIEW_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
@@ -353,7 +353,7 @@ function GiftCardPage() {
     try {
       const newCartCount = writeGiftCardSelectionForCheckoutSession({
         balanceUsd: selectedBalance,
-        image: '/assets/giftcard-product.png',
+        image: GIFT_CARD_CART_THUMBNAIL_SRC,
       });
       setCartCount(newCartCount);
       trackActivity('add_to_cart', { source: 'gift_card_pdp', productName: 'GIFT CARD' });
