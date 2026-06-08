@@ -63,7 +63,7 @@ const GIFT_CARD_THE_PERFECT_GIFT = [
 
 export default function GiftCardProductDetailsTab() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '16px' }}>
       <p style={{ ...BODY_STYLE, marginBottom: '4px' }}>{GIFT_CARD_DETAILS_LEAD}</p>
       <p style={BODY_STYLE}>{GIFT_CARD_DETAILS_INTRO}</p>
 

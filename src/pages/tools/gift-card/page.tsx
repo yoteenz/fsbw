@@ -18,6 +18,7 @@ import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
+import GiftCardBalancePicker from '../../../components/shop/GiftCardBalancePicker';
 import ThumbBox from '../../../components/ThumbBox';
 import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../../utils/giftCardCheckout';
 
@@ -39,8 +40,6 @@ const GIFT_CARD_THUMB_OUTER_H_PX = GIFT_CARD_THUMB_INNER_H_PX + GIFT_CARD_THUMB_
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
-
-const GIFT_CARD_BALANCE_OPTIONS = [10, 15, 25, 50, 75, 100, 250, 500] as const;
 
 function withGiftCardSimilarProductsVisibility(
   style: React.CSSProperties
@@ -311,10 +310,6 @@ function GiftCardPage() {
     setShowSignOutConfirm(false);
     // Close mobile menu
     setShowMobileMenu(false);
-  };
-
-  const handleBalanceSelect = (balance: number) => {
-    setSelectedBalance(Number(balance));
   };
 
   const handleTabClick = (tab: 'DETAILS' | 'POLICY' | 'REVIEWS') => {
@@ -623,7 +618,7 @@ function GiftCardPage() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              paddingBottom: '0px',
+              paddingBottom: '16px',
             }}
           >
             {/* GIFT CARD PREVIEW */}
@@ -765,40 +760,10 @@ function GiftCardPage() {
                 SELECT CARD BALANCE
               </p>
 
-              {/* Balance Options */}
-              <div
-                role="radiogroup"
-                aria-label="Select card balance"
-                className="flex justify-center gap-3 flex-wrap mb-6"
-                style={{ transform: 'translateY(-7px)' }}
-              >
-                {GIFT_CARD_BALANCE_OPTIONS.map((balance) => {
-                  const isSelected = selectedBalance === balance;
-                  return (
-                    <button
-                      key={balance}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => handleBalanceSelect(balance)}
-                      className="px-4 py-1 bg-white"
-                      style={{
-                        borderStyle: 'solid',
-                        borderColor: isSelected ? '#EB1C24' : '#000000',
-                        borderWidth: isSelected ? '2px' : '1.3px',
-                        fontFamily: '"Futura PT Medium"',
-                        fontWeight: isSelected ? 600 : 500,
-                        minWidth: '60px',
-                        fontSize: '11px',
-                        color: isSelected ? '#EB1C24' : '#000000',
-                        WebkitTapHighlightColor: 'transparent',
-                      }}
-                    >
-                      ${balance}
-                    </button>
-                  );
-                })}
-              </div>
+              <GiftCardBalancePicker
+                value={selectedBalance}
+                onChange={setSelectedBalance}
+              />
             </div>
 
             {/* Tabs — spacing matches BCF texture-category PDP */}
@@ -850,7 +815,13 @@ function GiftCardPage() {
 
               <div
                 className="mt-4 space-y-4"
-                style={{ maxWidth: 'none', width: '100%', marginBottom: 0, paddingTop: '4px' }}
+                style={{
+                  maxWidth: 'none',
+                  width: '100%',
+                  marginBottom: 0,
+                  paddingTop: '8px',
+                  paddingBottom: '12px',
+                }}
               >
                 {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
