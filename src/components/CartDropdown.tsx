@@ -880,13 +880,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   /** 2+ compact rows: maxHeight balances row-2 border vs row-3 peek (284→312→298→296→294). */
   const multiItemCompactList = !viewingDetailsFor && cartItems.length > 1;
+  const cartItemsAreaScrollable = multiItemCompactList || Boolean(viewingDetailsFor);
   const cartItemsScrollMaxHeight = multiItemCompactList
     ? 'min(294px, calc(100vh - 230px))'
     : viewingDetailsFor
       ? 'min(380px, calc(100vh - 230px))'
-      : 'none';
+      : undefined;
   const cartItemsScrollOverflowY: 'auto' | 'visible' =
-    multiItemCompactList || viewingDetailsFor ? 'auto' : 'visible';
+    cartItemsAreaScrollable ? 'auto' : 'visible';
 
   /** Same top offset on every route so the panel lines up with the shared nav bar (was 88px on e.g. `/sign-in`, read as lower than 86px routes). */
   const dropdownTop = '86px';
@@ -920,6 +921,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             zIndex: 999999999,
             position: 'relative',
             maxHeight: 'calc(100vh - 100px)',
+            height: 'auto',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -975,12 +977,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           </p>
         )}
 
-        {/* Cart Items */}
+        {/* Cart Items — flex-1 only when scrollable; single-row bags shrink-wrap (no viewport stretch) */}
           <div 
-            className="px-3 overflow-y-auto flex-1"
+            className={`px-3 overflow-y-auto${cartItemsAreaScrollable ? ' flex-1' : ' flex-shrink-0'}`}
             style={{
-              maxHeight: cartItemsScrollMaxHeight,
-              minHeight: '0',
+              ...(cartItemsScrollMaxHeight ? { maxHeight: cartItemsScrollMaxHeight } : {}),
+              flex: cartItemsAreaScrollable ? '1 1 auto' : '0 0 auto',
+              minHeight: cartItemsAreaScrollable ? '0' : undefined,
               overflowY: cartItemsScrollOverflowY,
               marginTop: '4.8px',
               marginBottom: cartItems.length > 0 ? '4.8px' : '0'

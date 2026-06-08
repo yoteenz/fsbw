@@ -94,6 +94,7 @@ export default function PsaAssistantWidget() {
   );
   const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
+  const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -129,7 +130,9 @@ export default function PsaAssistantWidget() {
     buildPsaClientSessionContext(location.pathname, pendingMessage)
   );
 
-  const proactiveNudge = usePsaProactiveNudges(!isOpen && !isFabCollapsed);
+  const proactiveNudge = usePsaProactiveNudges(
+    !isOpen && !isFabCollapsed && !cartDropdownOpen
+  );
 
   const showContinueHint =
     !isFabCollapsed && !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
@@ -147,6 +150,14 @@ export default function PsaAssistantWidget() {
     syncTheater();
     window.addEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
     return () => window.removeEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
+  }, []);
+
+  useEffect(() => {
+    const onCartDropdownOpenChanged = (event: Event) => {
+      setCartDropdownOpen(Boolean((event as CustomEvent<boolean>).detail));
+    };
+    window.addEventListener('cartDropdownOpenChanged', onCartDropdownOpenChanged);
+    return () => window.removeEventListener('cartDropdownOpenChanged', onCartDropdownOpenChanged);
   }, []);
 
   useEffect(() => {
