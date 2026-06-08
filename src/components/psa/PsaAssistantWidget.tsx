@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
   isPsaHiddenPath,
-  PSA_NUDGE_BUBBLE_SRC,
   PSA_WAVING_MS,
   PSA_TALKING_AFTER_REPLY_MS,
   PSA_IDLE_WAVE_INTERVAL_MS,
@@ -33,6 +32,7 @@ import {
 } from '../../utils/loungeTvTheaterMode';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
+import PsaNudgeChip from './PsaNudgeChip';
 import {
   resolveActivePsaSessionMode,
   resolvePsaAvatarExpression,
@@ -53,7 +53,6 @@ import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/ps
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaClientAction } from '../../utils/psaApi';
-import { preloadPsaNudgeAssets } from '../../utils/psaNudgeAssetPreload';
 import './psaAssistant.css';
 
 function draftSelectionsFromPrefill(
@@ -95,7 +94,6 @@ export default function PsaAssistantWidget() {
   );
   const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
-  const [nudgeAssetsReady, setNudgeAssetsReady] = useState(false);
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -154,16 +152,6 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     if (loungeTvTheater) setIsOpen(false);
   }, [loungeTvTheater]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void preloadPsaNudgeAssets().then(() => {
-      if (!cancelled) setNudgeAssetsReady(true);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     const reloadCopy = () => {
@@ -539,7 +527,22 @@ export default function PsaAssistantWidget() {
 
   const widget = (
     <>
-      <div className="psa-widget-root" data-attribute="psa-assistant-widget">
+      <div
+        className="psa-widget-root"
+        data-attribute="psa-assistant-widget"
+        style={{
+          position: 'fixed',
+          zIndex: 999998,
+          right: 'max(12px, env(safe-area-inset-right))',
+          bottom: 'max(16px, env(safe-area-inset-bottom))',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          width: 'auto',
+          maxWidth: 'none',
+          pointerEvents: 'none',
+        }}
+      >
         {isOpen ? (
           <>
             <button
@@ -581,55 +584,23 @@ export default function PsaAssistantWidget() {
         ) : null}
         <div
           className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}`}
+          style={{ position: 'relative', width: 88, maxWidth: 88 }}
         >
-          {!isFabCollapsed && !isOpen && nudgeAssetsReady && proactiveNudge ? (
-            <button
-              type="button"
-              className="psa-nudge-chip"
+          {!isFabCollapsed && !isOpen && proactiveNudge ? (
+            <PsaNudgeChip
+              headline={proactiveNudge.headline}
+              body={proactiveNudge.body}
               onClick={handleNudgeAction}
-              aria-label={proactiveNudge.headline}
-            >
-              <img
-                className="psa-nudge-chip-art"
-                src={PSA_NUDGE_BUBBLE_SRC}
-                alt=""
-                aria-hidden
-                draggable={false}
-                decoding="sync"
-                loading="eager"
-                fetchPriority="high"
-              />
-              <span className="psa-nudge-chip-content">
-                <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
-                {proactiveNudge.body ? (
-                  <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
-                ) : null}
-              </span>
-            </button>
+              ariaLabel={proactiveNudge.headline}
+            />
           ) : null}
           {isFabCollapsed ? (
-            nudgeAssetsReady ? (
-            <button
-              type="button"
-              className="psa-nudge-chip psa-nudge-chip-show-chat"
+            <PsaNudgeChip
+              headline={uiCopy.showChatCta}
               onClick={handleFabClick}
-              aria-label="Show chat"
-            >
-              <img
-                className="psa-nudge-chip-art"
-                src={PSA_NUDGE_BUBBLE_SRC}
-                alt=""
-                aria-hidden
-                draggable={false}
-                decoding="sync"
-                loading="eager"
-                fetchPriority="high"
-              />
-              <span className="psa-nudge-chip-content">
-                <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>
-              </span>
-            </button>
-            ) : null
+              ariaLabel="Show chat"
+              showChat
+            />
           ) : (
             <PsaAvatarTrigger
               onClick={handleFabClick}

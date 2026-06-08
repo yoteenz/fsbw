@@ -9,6 +9,7 @@ import { tryServerSessionRestore } from './utils/sessionRestore'
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './utils/syncFromApi'
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
+import './components/psa/psaAssistant.css'
 import { preloadPsaNudgeAssets } from './utils/psaNudgeAssetPreload'
 
 registerGlobalChunkLoadRecovery()

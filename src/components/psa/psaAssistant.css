@@ -717,6 +717,7 @@
 
 .psa-widget-fab-stack {
   position: relative;
+  width: 88px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -733,20 +734,23 @@
 /* Collapsed FAB — thought bubble CTA instead of plain under-avatar text. */
 .psa-nudge-chip {
   position: absolute;
-  left: 50%;
-  right: auto;
+  right: 0;
+  left: auto;
   bottom: 100%;
   margin-bottom: -9px;
   width: min(120px, 37vw);
   padding: 0;
   border: none;
-  background: transparent;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   cursor: pointer;
   text-align: center;
   z-index: 2;
-  overflow: visible;
-  transform: translateX(-50%);
-  animation: psa-thought-float 5s ease-in-out infinite;
+  overflow: hidden;
+  transform: none;
+  animation: psa-thought-float-right 5s ease-in-out infinite;
   display: block;
 }
 
@@ -766,10 +770,20 @@
 @keyframes psa-thought-float-show-chat {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes psa-thought-float-right {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
   }
 }
 
@@ -777,9 +791,6 @@
   display: block;
   width: 100%;
   height: auto;
-  min-height: 68px;
-  aspect-ratio: 6 / 5;
-  object-fit: contain;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
@@ -832,10 +843,10 @@
 @keyframes psa-thought-float {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateY(-2px);
   }
 }
 

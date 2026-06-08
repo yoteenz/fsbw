@@ -18,12 +18,8 @@ import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
-import {
-  UNIT_PDP_TAB_CONTENT_STYLE,
-  UNIT_PDP_TABS_SECTION_STYLE,
-} from '../../../components/shop/unitPdpLayoutConstants';
 import ThumbBox from '../../../components/ThumbBox';
-import { GIFT_CARD_CART_THUMBNAIL_SRC, isGiftCardCartLine } from '../../../utils/giftCardCheckout';
+import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../../utils/giftCardCheckout';
 
 const GIFT_CARD_PREVIEW_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
@@ -58,7 +54,7 @@ function GiftCardPage() {
   const location = useLocation();
   
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
-  const [selectedBalance, setSelectedBalance] = useState(10);
+  const [selectedBalance, setSelectedBalance] = useState<number>(() => 10);
   const [selectedGiftCardPreviewIndex, setSelectedGiftCardPreviewIndex] = useState(0);
   const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'POLICY' | 'REVIEWS'>({
     queryKey: 'tab',
@@ -318,26 +314,8 @@ function GiftCardPage() {
   };
 
   const handleBalanceSelect = (balance: number) => {
-    setSelectedBalance(balance);
+    setSelectedBalance(Number(balance));
   };
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('cartItems');
-      const parsed = stored ? JSON.parse(stored) : [];
-      if (!Array.isArray(parsed)) return;
-      const giftCardLine = parsed.find((item: { type?: string; name?: string }) =>
-        isGiftCardCartLine(item)
-      );
-      if (!giftCardLine) return;
-      const balance = Math.round(Number(giftCardLine.balance ?? giftCardLine.price) || 0);
-      if ((GIFT_CARD_BALANCE_OPTIONS as readonly number[]).includes(balance)) {
-        setSelectedBalance(balance);
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
 
   const handleTabClick = (tab: 'DETAILS' | 'POLICY' | 'REVIEWS') => {
     setActiveTab(tab);
@@ -788,23 +766,32 @@ function GiftCardPage() {
               </p>
 
               {/* Balance Options */}
-              <div className="flex justify-center gap-3 flex-wrap mb-6" style={{ transform: 'translateY(-7px)' }}>
+              <div
+                role="radiogroup"
+                aria-label="Select card balance"
+                className="flex justify-center gap-3 flex-wrap mb-6"
+                style={{ transform: 'translateY(-7px)' }}
+              >
                 {GIFT_CARD_BALANCE_OPTIONS.map((balance) => {
                   const isSelected = selectedBalance === balance;
                   return (
                     <button
                       key={balance}
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       onClick={() => handleBalanceSelect(balance)}
-                      aria-pressed={isSelected}
-                      className="border border-black px-4 py-1 bg-white hover:bg-gray-50"
+                      className="px-4 py-1 bg-white"
                       style={{
-                        borderWidth: '1.3px',
+                        borderStyle: 'solid',
+                        borderColor: isSelected ? '#EB1C24' : '#000000',
+                        borderWidth: isSelected ? '2px' : '1.3px',
                         fontFamily: '"Futura PT Medium"',
-                        fontWeight: '500',
+                        fontWeight: isSelected ? 600 : 500,
                         minWidth: '60px',
                         fontSize: '11px',
                         color: isSelected ? '#EB1C24' : '#000000',
+                        WebkitTapHighlightColor: 'transparent',
                       }}
                     >
                       ${balance}
@@ -814,20 +801,19 @@ function GiftCardPage() {
               </div>
             </div>
 
-            {/* Tabs Section — spacing aligned with BCF / unit PDP tabs */}
-            <div style={UNIT_PDP_TABS_SECTION_STYLE}>
-              <div className="flex justify-center" style={{ gap: '16px' }}>
+            {/* Tabs — spacing matches BCF texture-category PDP */}
+            <div className="mt-1.5 w-full" style={{ paddingTop: '4px' }}>
+              <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                 <button
                   type="button"
                   onClick={() => handleTabClick('DETAILS')}
                   className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
                   style={{
-                    fontFamily: '"Futura PT Medium"',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '10px',
                     borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none',
                     paddingLeft: 0,
                     paddingRight: 0,
-                    paddingBottom: activeTab === 'DETAILS' ? '4px' : undefined,
                   }}
                 >
                   DETAILS
@@ -837,12 +823,11 @@ function GiftCardPage() {
                   onClick={() => handleTabClick('POLICY')}
                   className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
                   style={{
-                    fontFamily: '"Futura PT Medium"',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '10px',
                     borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none',
                     paddingLeft: 0,
                     paddingRight: 0,
-                    paddingBottom: activeTab === 'POLICY' ? '4px' : undefined,
                   }}
                 >
                   POLICY
@@ -852,19 +837,21 @@ function GiftCardPage() {
                   onClick={() => handleTabClick('REVIEWS')}
                   className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
                   style={{
-                    fontFamily: '"Futura PT Medium"',
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '10px',
                     borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none',
                     paddingLeft: 0,
                     paddingRight: 0,
-                    paddingBottom: activeTab === 'REVIEWS' ? '4px' : undefined,
                   }}
                 >
                   REVIEWS
                 </button>
               </div>
 
-              <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
+              <div
+                className="mt-4 space-y-4"
+                style={{ maxWidth: 'none', width: '100%', marginBottom: 0, paddingTop: '4px' }}
+              >
                 {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
                 {activeTab === 'POLICY' && <GiftCardProductPolicyTab />}
