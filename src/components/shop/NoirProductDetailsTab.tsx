@@ -24,7 +24,7 @@ const SECTION_TITLE_STYLE = {
   color: '#EB1C24',
   fontWeight: 400,
   margin: '14px 0 10px 0',
-  textTransform: 'uppercase' as const,
+  textTransform: 'lowercase' as const,
 };
 
 const NOIR_DETAILS_INTRO =
@@ -69,7 +69,7 @@ export default function NoirProductDetailsTab() {
         </p>
       ))}
 
-      <p style={SECTION_TITLE_STYLE}>WHY YOU&apos;LL LOVE IT</p>
+      <p style={SECTION_TITLE_STYLE}>why you&apos;ll love it</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {NOIR_WHY_YOULL_LOVE_IT.map((label) => (
