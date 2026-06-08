@@ -26152,6 +26152,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR PDP Bohemy section headers: lowercase only
+
+**Context:** User asked that red Bohemy subsection headers below NOIR PDP tabs (**standard processing**, **why you'll love it**, etc.) be **lowercase only**, not uppercase.
+
+**Changes:** **`SECTION_TITLE_STYLE`** `textTransform` **`lowercase`** (was **`uppercase`**) in **`NoirProductDetailsTab.tsx`** + **`NoirProductShippingTab.tsx`**; header strings in source set lowercase. Body/bullet copy remains uppercase Futura PT Book. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
