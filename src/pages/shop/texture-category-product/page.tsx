@@ -44,6 +44,8 @@ import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState'
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
+import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
+import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
@@ -811,22 +813,6 @@ export default function ShopTextureCategoryProductPage() {
       }
     }, 500);
   };
-
-  const detailsCopy = !category
-    ? []
-    : category === 'bundles'
-      ? []
-      : category === 'closures'
-        ? [
-            'LACE CLOSURES CRAFTED TO BLEND WITH YOUR TEXTURE SELECTION.',
-            'VERSATILE PARTING AND NATURAL HAIRLINE APPEARANCE.',
-            'PAIR WITH BUNDLES OR YOUR STYLIST’S RECOMMENDATION.'
-          ]
-        : [
-            'EAR-TO-EAR FRONTALS FOR MAXIMUM STYLING FLEXIBILITY.',
-            'DESIGNED TO COMPLEMENT STRAIGHT, WAVY, OR CURLY BUNDLES.',
-            'CONSULT YOUR STYLIST FOR CUSTOMIZATION AND INSTALL.'
-          ];
 
   const policyCopy = [
     'ALL SALES FOLLOW SITE TERMS; CONTACT SUPPORT FOR PRODUCT QUESTIONS.',
@@ -1794,23 +1780,8 @@ export default function ShopTextureCategoryProductPage() {
 
                   <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
                     {activeTab === 'DETAILS' && category === 'bundles' && <BundleProductDetailsTab />}
-                    {activeTab === 'DETAILS' &&
-                      category !== 'bundles' &&
-                      detailsCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === detailsCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
+                    {activeTab === 'DETAILS' && category === 'closures' && <ClosureProductDetailsTab />}
+                    {activeTab === 'DETAILS' && category === 'frontals' && <FrontalProductDetailsTab />}
                     {activeTab === 'SHIPPING' &&
                       shippingCopy.map((line, i) => (
                         <p
