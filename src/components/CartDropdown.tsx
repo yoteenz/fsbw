@@ -60,6 +60,7 @@ import { GlobalOverlayDebugRegion } from './debug-mode/GlobalOverlayDebugRegion'
 import {
   GLOBAL_OVERLAY_DEBUG_OPEN_CURRENCY_EVENT,
 } from './debug-mode/GlobalOverlayDebugContext';
+import { setCartDropdownOpenState } from '../utils/cartDropdownOpenState';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -225,6 +226,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       // Close currency modal when cart closes
       setShowCurrencyModal(false);
     }
+  }, [isOpen]);
+
+  // Single source of truth — PSA + overlays read this (not per-page DynamicCartIcon state).
+  useEffect(() => {
+    setCartDropdownOpenState(isOpen);
+    return () => {
+      if (isOpen) setCartDropdownOpenState(false);
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -880,6 +889,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   /** 2+ compact rows: maxHeight balances row-2 border vs row-3 peek (284→312→298→296→294). */
   const multiItemCompactList = !viewingDetailsFor && cartItems.length > 1;
+  const isCompactSingleLineBag = cartItems.length === 1 && !viewingDetailsFor;
   const cartItemsAreaScrollable = multiItemCompactList || Boolean(viewingDetailsFor);
   const cartItemsScrollMaxHeight = multiItemCompactList
     ? 'min(294px, calc(100vh - 230px))'
@@ -909,7 +919,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         regionId="anchor"
         baseOverride={{ top: dropdownTop }}
         className="absolute left-4 right-4 pointer-events-auto"
-        style={{ top: dropdownTop }}
+        style={{
+          top: dropdownTop,
+          width: 'calc(100% - 2rem)',
+          height: isCompactSingleLineBag ? 'fit-content' : undefined,
+          maxHeight: isCompactSingleLineBag ? 'fit-content' : 'calc(100vh - 100px)',
+        }}
       >
         <GlobalOverlayDebugRegion
           overlayId="cart-dropdown"
@@ -920,8 +935,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             borderWidth: '1.3px',
             zIndex: 999999999,
             position: 'relative',
-            maxHeight: 'calc(100vh - 100px)',
-            height: 'auto',
+            width: '100%',
+            flex: '0 0 auto',
+            alignSelf: 'flex-start',
+            ...(isCompactSingleLineBag
+              ? { height: 'fit-content', maxHeight: 'fit-content' }
+              : { maxHeight: 'calc(100vh - 100px)' }),
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -979,14 +998,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
         {/* Cart Items — flex-1 only when scrollable; single-row bags shrink-wrap (no viewport stretch) */}
           <div 
-            className={`px-3 overflow-y-auto${cartItemsAreaScrollable ? ' flex-1' : ' flex-shrink-0'}`}
+            className={`px-3${cartItemsAreaScrollable ? ' overflow-y-auto flex-1' : ' flex-shrink-0'}`}
             style={{
               ...(cartItemsScrollMaxHeight ? { maxHeight: cartItemsScrollMaxHeight } : {}),
               flex: cartItemsAreaScrollable ? '1 1 auto' : '0 0 auto',
+              flexGrow: cartItemsAreaScrollable ? 1 : 0,
               minHeight: cartItemsAreaScrollable ? '0' : undefined,
               overflowY: cartItemsScrollOverflowY,
+              overflow: isCompactSingleLineBag ? 'visible' : undefined,
               marginTop: '4.8px',
-              marginBottom: cartItems.length > 0 ? '4.8px' : '0'
+              marginBottom: cartItems.length > 0 ? '4.8px' : '0',
             }}
           >
           {cartItems.length === 0 ? (

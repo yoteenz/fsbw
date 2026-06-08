@@ -724,6 +724,12 @@
   transform: translateX(-20px) translateY(-20px);
 }
 
+/* Cart dropdown has a transparent full-screen layer — hide FAB + nudge so checkout/bag UI stays clean. */
+.psa-widget-fab-stack--cart-open {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Collapsed — same 88px column as the avatar so the thought bubble centers on it. */
 .psa-widget-fab-stack--collapsed {
   width: 88px;

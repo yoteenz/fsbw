@@ -61,7 +61,10 @@ export default function GiftCardBalancePicker({ value, onChange }: GiftCardBalan
               tabIndex={0}
               data-selected={isSelected ? 'true' : 'false'}
               className="gift-card-balance-option"
-              onClick={() => onChange(balance)}
+              onPointerDown={(event) => {
+                event.preventDefault();
+                onChange(balance);
+              }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();

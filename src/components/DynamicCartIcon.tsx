@@ -24,12 +24,6 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
   }, [location.pathname]);
 
   useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent('cartDropdownOpenChanged', { detail: showCartDropdown })
-    );
-  }, [showCartDropdown]);
-
-  useEffect(() => {
     const openForDebug = () => setShowCartDropdown(true);
     window.addEventListener(GLOBAL_OVERLAY_DEBUG_OPEN_CART_EVENT, openForDebug);
     return () => window.removeEventListener(GLOBAL_OVERLAY_DEBUG_OPEN_CART_EVENT, openForDebug);

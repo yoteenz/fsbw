@@ -819,8 +819,8 @@ function GiftCardPage() {
                   maxWidth: 'none',
                   width: '100%',
                   marginBottom: 0,
-                  paddingTop: '8px',
-                  paddingBottom: '12px',
+                  paddingTop: '12px',
+                  paddingBottom: '20px',
                 }}
               >
                 {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}

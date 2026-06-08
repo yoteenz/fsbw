@@ -35,6 +35,10 @@ import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
 import { preloadPsaNudgeAssets } from '../../utils/psaNudgeAssetPreload';
 import {
+  isCartDropdownOpen,
+  subscribeCartDropdownOpenState,
+} from '../../utils/cartDropdownOpenState';
+import {
   resolveActivePsaSessionMode,
   resolvePsaAvatarExpression,
 } from './resolvePsaAvatarExpression';
@@ -95,7 +99,7 @@ export default function PsaAssistantWidget() {
   );
   const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
-  const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
+  const [cartDropdownOpen, setCartDropdownOpen] = useState(() => isCartDropdownOpen());
   const [nudgeBubbleReady, setNudgeBubbleReady] = useState(false);
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -154,13 +158,7 @@ export default function PsaAssistantWidget() {
     return () => window.removeEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
   }, []);
 
-  useEffect(() => {
-    const onCartDropdownOpenChanged = (event: Event) => {
-      setCartDropdownOpen(Boolean((event as CustomEvent<boolean>).detail));
-    };
-    window.addEventListener('cartDropdownOpenChanged', onCartDropdownOpenChanged);
-    return () => window.removeEventListener('cartDropdownOpenChanged', onCartDropdownOpenChanged);
-  }, []);
+  useEffect(() => subscribeCartDropdownOpenState(setCartDropdownOpen), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -591,9 +589,9 @@ export default function PsaAssistantWidget() {
           </>
         ) : null}
         <div
-          className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}`}
+          className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
         >
-          {!isFabCollapsed && !isOpen && nudgeBubbleReady && proactiveNudge ? (
+          {!cartDropdownOpen && !isFabCollapsed && !isOpen && nudgeBubbleReady && proactiveNudge ? (
             <button
               type="button"
               className="psa-nudge-chip"
@@ -618,7 +616,7 @@ export default function PsaAssistantWidget() {
             </button>
           ) : null}
           {isFabCollapsed ? (
-            nudgeBubbleReady ? (
+            !cartDropdownOpen && nudgeBubbleReady ? (
             <button
               type="button"
               className="psa-nudge-chip psa-nudge-chip-show-chat"
