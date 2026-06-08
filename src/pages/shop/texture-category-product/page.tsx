@@ -43,6 +43,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
+import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
@@ -814,11 +815,7 @@ export default function ShopTextureCategoryProductPage() {
   const detailsCopy = !category
     ? []
     : category === 'bundles'
-      ? [
-          'PREMIUM RAW HUMAN HAIR BUNDLES MATCHING YOUR SELECTED TEXTURE.',
-          'AVAILABLE LENGTHS AND ORIGINS VARY — SEE CHECKOUT OPTIONS.',
-          'PROFESSIONAL INSTALLATION RECOMMENDED FOR BEST RESULTS.'
-        ]
+      ? []
       : category === 'closures'
         ? [
             'LACE CLOSURES CRAFTED TO BLEND WITH YOUR TEXTURE SELECTION.',
@@ -1796,7 +1793,9 @@ export default function ShopTextureCategoryProductPage() {
                   </div>
 
                   <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                    {activeTab === 'DETAILS' && category === 'bundles' && <BundleProductDetailsTab />}
                     {activeTab === 'DETAILS' &&
+                      category !== 'bundles' &&
                       detailsCopy.map((line, i) => (
                         <p
                           key={i}
