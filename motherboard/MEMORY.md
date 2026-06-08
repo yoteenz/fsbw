@@ -26476,3 +26476,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`gift-card/page.tsx`** — balance **`radiogroup`** + red **border** selection; tabs match BCF **`mt-1.5`** + **`paddingTop: 4px`** on content wrapper.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Cart dropdown stretch (single-item bag)
+
+**Context:** User asked why cart dropdown looked vertically stretched on gift-card checkout (empty gap, checkout/PSA nudge bleeding through).
+
+**Root cause:** Single-item bags used **`flex-1`** on the items scroller with **`maxHeight: none`**, so the list grew to ~full viewport inside the shell.
+
+**Changes:** **`CartDropdown.tsx`** — **`flex-1`** only when multi-item or view-details scroll needed; single row **`flex-shrink-0`** + shrink-wrap shell. **`DynamicCartIcon`** + **`PsaAssistantWidget`** — hide proactive nudge while cart dropdown open (`cartDropdownOpenChanged` event). Pushed **`master`** + **`preview/mobile`**.
