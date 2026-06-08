@@ -26438,3 +26438,16 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** Portrait thumbs fixed side mat but **top/bottom white** too tall; excess gap above **PROCEED TO CHECKOUT**.
 
 **Changes:** **`gift-card/page.tsx`** — thumb inner height **84 → 50** (outer **92 → 58**, width unchanged); tightened tabs/checkout spacing (**`marginTop` 8px**, removed extra card/tab padding). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA nudge flash, gift card $ selection, tab spacing
+
+**Context:** User reported three gift-card / PSA issues: (1) proactive PSA nudge text renders broken (no thought-bubble asset, wrong font) on SPA navigation until full refresh; (2) gift card balance buttons get stuck — e.g. **$10** stays red when **$15** is selected; (3) tab content sits too close below DETAILS/POLICY/REVIEWS vs BCF PDP spacing.
+
+**Changes:**
+- **`src/utils/psaNudgeAssetPreload.ts`** — preload/decode **`psa-nudge-thought-bubble.png`** + Bohemy / Futura PT Demi before nudge shows.
+- **`main.tsx`**, **`index.html`**, **`PsaAssistantWidget.tsx`**, **`psaAssistant.css`** — early preload; gate nudge chip until assets ready; **`min-height`/`aspect-ratio`** on bubble art; HTML preloads for bubble + Bohemy.
+- **`gift-card/page.tsx`** — balance buttons use inline **`#EB1C24`** selection (not Tailwind toggle); **`type="button"`**, **`aria-pressed`**; sync **`selectedBalance`** from gift-card cart line on mount; tabs use **`UNIT_PDP_TABS_SECTION_STYLE`** + BCF-style tab row (**16px** gap, **4px** active underline padding, **`mt-4`** content).
+
+Pushed **`master`** + **`preview/mobile`**.
