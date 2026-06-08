@@ -26451,3 +26451,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`gift-card/page.tsx`** — balance buttons use inline **`#EB1C24`** selection (not Tailwind toggle); **`type="button"`**, **`aria-pressed`**; sync **`selectedBalance`** from gift-card cart line on mount; tabs use **`UNIT_PDP_TABS_SECTION_STYLE`** + BCF-style tab row (**16px** gap, **4px** active underline padding, **`mt-4`** content).
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Gift card cart thumbnail (bag / checkout / summary)
+
+**Context:** User asked to replace the gift card thumbnail in bag, cart, checkout, and order summary with Supabase **`live-preview/Stock Content/image (23).png`**.
+
+**Changes:** **`giftCardCheckout.ts`** — **`GIFT_CARD_CART_THUMBNAIL_SRC`** + **`giftCardCartThumbnailSrc()`**; wired in **`checkoutOrderStripDisplay.ts`** (checkout + confirm summary), **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`**, **`giftCardCheckoutSession.ts`**, **`gift-card/page.tsx`** (new cart lines). Pushed **`master`** + **`preview/mobile`**.
