@@ -29,10 +29,12 @@ const GIFT_CARD_PREVIEW_IMAGES = [
   `${GIFT_CARD_PREVIEW_BASE}/IMG_1788.png`,
 ] as const;
 
-const GIFT_CARD_THUMB_OUTER_W_PX = 100;
-const GIFT_CARD_THUMB_OUTER_H_PX = 72;
-const GIFT_CARD_THUMB_INNER_W_PX = 92;
-const GIFT_CARD_THUMB_INNER_H_PX = 64;
+/** Portrait thumb frames — 4px white mat on each side (matches BCF bundle ThumbBox). */
+const GIFT_CARD_THUMB_MAT_PX = 4;
+const GIFT_CARD_THUMB_INNER_W_PX = 48;
+const GIFT_CARD_THUMB_INNER_H_PX = 84;
+const GIFT_CARD_THUMB_OUTER_W_PX = GIFT_CARD_THUMB_INNER_W_PX + GIFT_CARD_THUMB_MAT_PX * 2;
+const GIFT_CARD_THUMB_OUTER_H_PX = GIFT_CARD_THUMB_INNER_H_PX + GIFT_CARD_THUMB_MAT_PX * 2;
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
@@ -620,7 +622,7 @@ function GiftCardPage() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              paddingBottom: '0px'
+              paddingBottom: '16px',
             }}
           >
             {/* GIFT CARD PREVIEW */}
@@ -784,7 +786,7 @@ function GiftCardPage() {
             </div>
 
             {/* Tabs Section */}
-            <div className="mt-6" style={{ marginBottom: '0' }}>
+            <div className="mt-6" style={{ marginBottom: '8px' }}>
               {/* Tab Navigation */}
               <div className="flex justify-center">
                 <button
@@ -811,7 +813,7 @@ function GiftCardPage() {
               </div>
 
               {/* Tab Content */}
-              <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-65px', paddingBottom: '0px' }}>
+              <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '0', paddingBottom: '8px' }}>
                 {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
                 {activeTab === 'POLICY' && <GiftCardProductPolicyTab />}
@@ -828,7 +830,7 @@ function GiftCardPage() {
           </div>
 
           {/* PROCEED TO CHECKOUT — gift card PDP goes straight to isolated /checkout/gift-card (filtered view) */}
-          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+          <div className="px-0 md:px-0" style={{ marginTop: '16px' }}>
             <button
               type="button"
               onClick={handleProceedToCheckout}

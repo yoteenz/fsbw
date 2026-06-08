@@ -26422,3 +26422,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** Hero + thumb gallery overlapped **GIFT CARD** title (legacy **`translateY(-128px)`** on **`.gift-card-product-name`** + stacked negative transforms).
 
 **Changes:** **`gift-card/page.tsx`** — preview block uses normal vertical flow (hero → thumbs → title → price); removed per-section negative **`translateY`**. **`index.css`** — **`.gift-card-product-name`**: **`transform: none`**, **`z-index: 1`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP tab overlap + portrait thumbs
+
+**Context:** After preview layout fix, tabs/checkout overlapped (**`marginBottom: -65px`** on tab content); gift card thumbs needed **portrait** frames with equal **4px** white mat (not landscape).
+
+**Changes:** **`gift-card/page.tsx`** — removed tab content negative margin; added card **`paddingBottom`** + checkout **`marginTop`**; portrait thumb dims (**48×84** inner, **56×92** outer, **4px** mat). Pushed **`master`** + **`preview/mobile`**.
