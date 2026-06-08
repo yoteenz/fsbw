@@ -60,11 +60,7 @@ export default function NoirProductPolicyTab() {
         </p>
       ))}
       <p style={BODY_STYLE}>
-        PLEASE CONTACT US WITHIN 48 HOURS OF DELIVERY WITH YOUR ORDER NUMBER AND CLEAR PHOTOS/VIDEOS OF THE ISSUE FOR REVIEW.
-      </p>
-
-      <p style={BODY_STYLE}>
-        IF AN ISSUE IS VERIFIED AS A RESULT OF OUR ERROR, WE RESERVE THE RIGHT TO:
+        PLEASE CONTACT US WITHIN 48 HOURS OF DELIVERY WITH YOUR ORDER NUMBER AND CLEAR PHOTOS/VIDEOS OF THE ISSUE FOR REVIEW. IF AN ISSUE IS VERIFIED AS A RESULT OF OUR ERROR, WE RESERVE THE RIGHT TO:
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {VERIFIED_ISSUE_RESOLUTIONS.map((label) => (
