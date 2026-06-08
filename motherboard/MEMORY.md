@@ -26459,3 +26459,20 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to replace the gift card thumbnail in bag, cart, checkout, and order summary with Supabase **`live-preview/Stock Content/image (23).png`**.
 
 **Changes:** **`giftCardCheckout.ts`** — **`GIFT_CARD_CART_THUMBNAIL_SRC`** + **`giftCardCartThumbnailSrc()`**; wired in **`checkoutOrderStripDisplay.ts`** (checkout + confirm summary), **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`**, **`giftCardCheckoutSession.ts`**, **`gift-card/page.tsx`** (new cart lines). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA nudge + gift card PDP fixes (retry)
+
+**Context:** User reported prior PSA nudge / balance / tab fixes did not work — nudge showed unstyled duplicate text and bubble centered on page (not above FAB); $ balance still stuck multi-red; tab spacing still tight vs BCF.
+
+**Root cause (nudge):** With stale/missing **`psaAssistant.css`** on SPA nav, **`.psa-nudge-chip { left: 50% }`** positioned against full-width **`.psa-widget-root`**, centering bubble on page; text rendered unstyled at document bottom.
+
+**Changes:**
+- **`PsaNudgeChip.tsx`** — bubble as **`background-image`**; inline critical layout/typography; render only after bubble decode; anchor **`right: 0`** (not page-center **`left: 50%`**).
+- **`PsaAssistantWidget.tsx`** — inline **`position: fixed`** on root; **`fab-stack` width 88px**; use **`PsaNudgeChip`**.
+- **`psaAssistant.css`** — revert bad **`min-height`/`aspect-ratio`**; **`right: 0`** anchor; **`fab-stack` width 88px**.
+- **`main.tsx`** — import **`psaAssistant.css`** at boot + preload nudge assets.
+- **`gift-card/page.tsx`** — balance **`radiogroup`** + red **border** selection; tabs match BCF **`mt-1.5`** + **`paddingTop: 4px`** on content wrapper.
+
+Pushed **`master`** + **`preview/mobile`**.
