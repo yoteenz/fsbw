@@ -26326,3 +26326,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied full gift card **POLICY** copy: intro, 8 bullets, assistance email block.
 
 **Changes:** **`GiftCardProductPolicyTab.tsx`**; **`gift-card/page.tsx`** **POLICY** tab wired (red bullets, red **`CONTACT@FRONTALSLAYER.COM`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Bundles PDP Shipping tab (NOIR-style)
+
+**Context:** User supplied full **SHIPPING** copy for **bundles** BCF PDP.
+
+**Changes:** **`BundleProductShippingTab.tsx`** — intro, **standard/express processing**, **customization exclusions** bullets, **important to note** rose list, **premium hair takes time** closing; **`texture-category-product/page.tsx`** when **`category === 'bundles'`**. Closures/frontals keep legacy **`shippingCopy`**. Pushed **`master`** + **`preview/mobile`**.
