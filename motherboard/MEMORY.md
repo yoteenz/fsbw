@@ -26168,6 +26168,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR DETAILS intro paragraph copy update
+
+**Context:** User asked to update the NOIR Details tab intro text to a shorter two-sentence version (crafted/versatility copy); removed the prior opening luxury paragraph.
+
+**Changes:** **`NOIR_DETAILS_INTRO`** in **`NoirProductDetailsTab.tsx`** — **CRAFTED** (not created), **VERSATILITY AND LONGEVITY**; dropped **DESIGNED FOR THE CLIENT WHO REFUSES…** lead-in. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
