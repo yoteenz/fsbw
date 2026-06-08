@@ -90,7 +90,7 @@ export default function NoirProductShippingTab() {
         ORDERS CONTAINING THESE SERVICES WILL FOLLOW STANDARD PRODUCTION TIMELINES REGARDLESS OF SHIPPING METHOD SELECTED.
       </p>
 
-      <p style={SECTION_TITLE_STYLE}>important information</p>
+      <p style={SECTION_TITLE_STYLE}>important to note</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {IMPORTANT_INFORMATION_ITEMS.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
@@ -102,7 +102,7 @@ export default function NoirProductShippingTab() {
 
       <p style={SECTION_TITLE_STYLE}>handmade, not mass produced</p>
       <p style={BODY_STYLE}>
-        EVERY FRONTAL SLAYER UNIT IS INDIVIDUALLY CRAFTED, INSPECTED AND PREPARED TO MEET OUR QUALITY STANDARDS. WE PRIORITIZE EXCEPTIONAL CRAFTSMANSHIP OVER RUSHED PRODUCTION TO ENSURE YOUR UNIT ARRIVES READY TO MAKE A STATEMENT THE MOMENT IT TOUCHES YOUR HEAD.
+        EVERY FS UNIT IS INDIVIDUALLY CRAFTED, INSPECTED AND PREPARED TO MEET OUR QUALITY STANDARDS. WE PRIORITIZE EXCEPTIONAL CRAFTSMANSHIP OVER RUSHED PRODUCTION TO ENSURE YOUR UNIT ARRIVES READY TO MAKE A STATEMENT THE MOMENT IT TOUCHES YOUR HEAD.
       </p>
     </div>
   );
