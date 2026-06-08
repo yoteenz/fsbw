@@ -18,7 +18,12 @@ import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
+import {
+  UNIT_PDP_TAB_CONTENT_STYLE,
+  UNIT_PDP_TABS_SECTION_STYLE,
+} from '../../../components/shop/unitPdpLayoutConstants';
 import ThumbBox from '../../../components/ThumbBox';
+import { isGiftCardCartLine } from '../../../utils/giftCardCheckout';
 
 const GIFT_CARD_PREVIEW_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
@@ -38,6 +43,8 @@ const GIFT_CARD_THUMB_OUTER_H_PX = GIFT_CARD_THUMB_INNER_H_PX + GIFT_CARD_THUMB_
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
+
+const GIFT_CARD_BALANCE_OPTIONS = [10, 15, 25, 50, 75, 100, 250, 500] as const;
 
 function withGiftCardSimilarProductsVisibility(
   style: React.CSSProperties
@@ -314,6 +321,24 @@ function GiftCardPage() {
     setSelectedBalance(balance);
   };
 
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('cartItems');
+      const parsed = stored ? JSON.parse(stored) : [];
+      if (!Array.isArray(parsed)) return;
+      const giftCardLine = parsed.find((item: { type?: string; name?: string }) =>
+        isGiftCardCartLine(item)
+      );
+      if (!giftCardLine) return;
+      const balance = Math.round(Number(giftCardLine.balance ?? giftCardLine.price) || 0);
+      if ((GIFT_CARD_BALANCE_OPTIONS as readonly number[]).includes(balance)) {
+        setSelectedBalance(balance);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const handleTabClick = (tab: 'DETAILS' | 'POLICY' | 'REVIEWS') => {
     setActiveTab(tab);
   };
@@ -359,8 +384,6 @@ function GiftCardPage() {
   const handleRecentlyViewedRightArrow = () => {
     setRecentlyViewedScroll(-recentSnapPx);
   };
-
-  const balanceOptions = [10, 15, 25, 50, 75, 100, 250, 500];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -766,54 +789,82 @@ function GiftCardPage() {
 
               {/* Balance Options */}
               <div className="flex justify-center gap-3 flex-wrap mb-6" style={{ transform: 'translateY(-7px)' }}>
-                {balanceOptions.map((balance) => (
-                  <button 
-                    key={balance}
-                    onClick={() => handleBalanceSelect(balance)}
-                    className={`border border-black px-4 py-1 ${selectedBalance === balance ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
-                    style={{ 
-                      borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium"',
-                      fontWeight: '500',
-                      minWidth: '60px',
-                      fontSize: '11px'
-                    }}
-                  >
-                    ${balance}
-                  </button>
-                ))}
+                {GIFT_CARD_BALANCE_OPTIONS.map((balance) => {
+                  const isSelected = selectedBalance === balance;
+                  return (
+                    <button
+                      key={balance}
+                      type="button"
+                      onClick={() => handleBalanceSelect(balance)}
+                      aria-pressed={isSelected}
+                      className="border border-black px-4 py-1 bg-white hover:bg-gray-50"
+                      style={{
+                        borderWidth: '1.3px',
+                        fontFamily: '"Futura PT Medium"',
+                        fontWeight: '500',
+                        minWidth: '60px',
+                        fontSize: '11px',
+                        color: isSelected ? '#EB1C24' : '#000000',
+                      }}
+                    >
+                      ${balance}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Tabs Section */}
-            <div className="mt-4" style={{ marginBottom: '0' }}>
-              {/* Tab Navigation */}
-              <div className="flex justify-center">
+            {/* Tabs Section — spacing aligned with BCF / unit PDP tabs */}
+            <div style={UNIT_PDP_TABS_SECTION_STYLE}>
+              <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button
+                  type="button"
                   onClick={() => handleTabClick('DETAILS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    paddingBottom: activeTab === 'DETAILS' ? '4px' : undefined,
+                  }}
                 >
                   DETAILS
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleTabClick('POLICY')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    paddingBottom: activeTab === 'POLICY' ? '4px' : undefined,
+                  }}
                 >
                   POLICY
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleTabClick('REVIEWS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    paddingBottom: activeTab === 'REVIEWS' ? '4px' : undefined,
+                  }}
                 >
                   REVIEWS
                 </button>
               </div>
 
-              {/* Tab Content */}
-              <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '0', paddingBottom: '0' }}>
+              <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
                 {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
                 {activeTab === 'POLICY' && <GiftCardProductPolicyTab />}

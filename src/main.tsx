@@ -9,8 +9,10 @@ import { tryServerSessionRestore } from './utils/sessionRestore'
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './utils/syncFromApi'
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
+import { preloadPsaNudgeAssets } from './utils/psaNudgeAssetPreload'
 
 registerGlobalChunkLoadRecovery()
+void preloadPsaNudgeAssets()
 
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
 ensureAuthRestoredFromBackup()

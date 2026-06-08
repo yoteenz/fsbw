@@ -777,6 +777,9 @@
   display: block;
   width: 100%;
   height: auto;
+  min-height: 68px;
+  aspect-ratio: 6 / 5;
+  object-fit: contain;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;

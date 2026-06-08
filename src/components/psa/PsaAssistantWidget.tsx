@@ -53,6 +53,7 @@ import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/ps
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
 import type { PsaClientAction } from '../../utils/psaApi';
+import { preloadPsaNudgeAssets } from '../../utils/psaNudgeAssetPreload';
 import './psaAssistant.css';
 
 function draftSelectionsFromPrefill(
@@ -94,6 +95,7 @@ export default function PsaAssistantWidget() {
   );
   const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
+  const [nudgeAssetsReady, setNudgeAssetsReady] = useState(false);
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -152,6 +154,16 @@ export default function PsaAssistantWidget() {
   useEffect(() => {
     if (loungeTvTheater) setIsOpen(false);
   }, [loungeTvTheater]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void preloadPsaNudgeAssets().then(() => {
+      if (!cancelled) setNudgeAssetsReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const reloadCopy = () => {
@@ -570,7 +582,7 @@ export default function PsaAssistantWidget() {
         <div
           className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}`}
         >
-          {!isFabCollapsed && !isOpen && proactiveNudge ? (
+          {!isFabCollapsed && !isOpen && nudgeAssetsReady && proactiveNudge ? (
             <button
               type="button"
               className="psa-nudge-chip"
@@ -583,6 +595,9 @@ export default function PsaAssistantWidget() {
                 alt=""
                 aria-hidden
                 draggable={false}
+                decoding="sync"
+                loading="eager"
+                fetchPriority="high"
               />
               <span className="psa-nudge-chip-content">
                 <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
@@ -593,6 +608,7 @@ export default function PsaAssistantWidget() {
             </button>
           ) : null}
           {isFabCollapsed ? (
+            nudgeAssetsReady ? (
             <button
               type="button"
               className="psa-nudge-chip psa-nudge-chip-show-chat"
@@ -605,11 +621,15 @@ export default function PsaAssistantWidget() {
                 alt=""
                 aria-hidden
                 draggable={false}
+                decoding="sync"
+                loading="eager"
+                fetchPriority="high"
               />
               <span className="psa-nudge-chip-content">
                 <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>
               </span>
             </button>
+            ) : null
           ) : (
             <PsaAvatarTrigger
               onClick={handleFabClick}
