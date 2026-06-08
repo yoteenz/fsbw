@@ -26232,6 +26232,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR Shipping tab: processing + closing copy merge
+
+**Context:** User asked for more **SHIPPING** tab copy updates.
+
+**Changes:** **`NoirProductShippingTab.tsx`** — **standard processing** merged into one paragraph (**READY TO WEAR** spacing); **express processing** merged into one paragraph (**AND** not **+**, removed qualifying-units note); **handmade** closing → **UNITS AND EXTENSIONS ARE INDIVIDUALLY CRAFTED…**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
