@@ -20,7 +20,7 @@ const BULLET_MARK_STYLE = { color: '#EB1C24' };
 
 const SECTION_TITLE_STYLE = {
   fontFamily: '"Bohemy", cursive',
-  fontSize: '18px',
+  fontSize: '20px',
   color: '#808080',
   fontWeight: 400,
   margin: '12px 0 8px 0',
