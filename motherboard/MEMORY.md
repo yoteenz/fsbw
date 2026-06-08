@@ -26310,3 +26310,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied full **DETAILS** copy for **closures** and **frontals** BCF PDPs matching NOIR/bundles tab design (intro, red bullets, Bohemy section header, rose-alert list).
 
 **Changes:** **`ClosureProductDetailsTab.tsx`** (**engineered for excellence**); **`FrontalProductDetailsTab.tsx`** (**every detail matters**); **`texture-category-product/page.tsx`** wires all three BCF categories on **DETAILS**; removed legacy **`detailsCopy`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP Details tab (NOIR-style)
+
+**Context:** User supplied full gift card **DETAILS** copy matching NOIR/BCF tab design.
+
+**Changes:** **`GiftCardProductDetailsTab.tsx`** — lead **LET THEM DECIDE**, intro, 9 red bullets, Bohemy **the perfect gift**, 8 rose-alert lines; **`gift-card/page.tsx`** **DETAILS** tab wired. Pushed **`master`** + **`preview/mobile`**.
