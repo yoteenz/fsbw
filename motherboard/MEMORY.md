@@ -26499,3 +26499,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Gift card tabs** — **`paddingBottom: 16px`** on details/policy tab bodies + card shell + tab content wrapper; **`paddingTop: 8px`** below tab row.
 
 Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Cart dropdown + PSA hide (authoritative state)
+
+**Context:** User reported prior cart stretch / PSA-over-cart fixes did not work in production.
+
+**Root causes:** Cart open state dispatched from per-page **`DynamicCartIcon`** (desync); cart backdrop is transparent so PSA visible beside panel; single-item bags needed **`fit-content`** on anchor/shell not just **`flex-shrink-0`**.
+
+**Changes:** **`cartDropdownOpenState.ts`**; **`CartDropdown`** sets open on **`isOpen`**; **`PsaAssistantWidget`** + **`.psa-widget-fab-stack--cart-open`**; compact single-line bag **`fit-content`** layout. Pushed **`master`** + **`preview/mobile`**.
