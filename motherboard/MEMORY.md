@@ -26486,3 +26486,16 @@ Pushed **`master`** + **`preview/mobile`**.
 **Root cause:** Single-item bags used **`flex-1`** on the items scroller with **`maxHeight: none`**, so the list grew to ~full viewport inside the shell.
 
 **Changes:** **`CartDropdown.tsx`** — **`flex-1`** only when multi-item or view-details scroll needed; single row **`flex-shrink-0`** + shrink-wrap shell. **`DynamicCartIcon`** + **`PsaAssistantWidget`** — hide proactive nudge while cart dropdown open (`cartDropdownOpenChanged` event). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA restore + gift card balance/tabs (retry 2)
+
+**Context:** User reported PSA nudge/avatar broken by prior shrink/center fixes; gift card $10 still stuck selected + gray chip backgrounds; tab content still tight at bottom.
+
+**Changes:**
+- **PSA** — restored original **`psaAssistant.css`** nudge positioning (**`left: 50%` / `translateX(-50%)`**, full bubble **`img`**); removed **`PsaNudgeChip`** + fab-stack width override + widget inline layout; gate nudge on bubble preload only.
+- **Gift card balance** — new **`GiftCardBalancePicker.tsx`** (div radiogroup + scoped **`!important`** white bg / single red selection).
+- **Gift card tabs** — **`paddingBottom: 16px`** on details/policy tab bodies + card shell + tab content wrapper; **`paddingTop: 8px`** below tab row.
+
+Pushed **`master`** + **`preview/mobile`**.
