@@ -26318,3 +26318,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User supplied full gift card **DETAILS** copy matching NOIR/BCF tab design.
 
 **Changes:** **`GiftCardProductDetailsTab.tsx`** — lead **LET THEM DECIDE**, intro, 9 red bullets, Bohemy **the perfect gift**, 8 rose-alert lines; **`gift-card/page.tsx`** **DETAILS** tab wired. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP Policy tab (NOIR-style)
+
+**Context:** User supplied full gift card **POLICY** copy: intro, 8 bullets, assistance email block.
+
+**Changes:** **`GiftCardProductPolicyTab.tsx`**; **`gift-card/page.tsx`** **POLICY** tab wired (red bullets, red **`CONTACT@FRONTALSLAYER.COM`**). Pushed **`master`** + **`preview/mobile`**.

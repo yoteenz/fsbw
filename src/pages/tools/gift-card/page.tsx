@@ -17,6 +17,7 @@ import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState'
 import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
+import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
@@ -762,19 +763,7 @@ function GiftCardPage() {
               <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-65px', paddingBottom: '0px' }}>
                 {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
-                {activeTab === 'POLICY' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      GIFT CARDS DO NOT EXPIRE AND CAN BE COMBINED WITH OTHER PROMOTIONAL OFFERS.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      GIFT CARDS ARE NON-REFUNDABLE AND CANNOT BE EXCHANGED FOR CASH.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px' }}>
-                      IF THERE IS AN ISSUE WITH YOUR GIFT CARD, REACH OUT TO CONTACT@FRONTALSLAYER.COM
-                    </p>
-                  </>
-                )}
+                {activeTab === 'POLICY' && <GiftCardProductPolicyTab />}
                 
                 {activeTab === 'REVIEWS' && (
                   <>
