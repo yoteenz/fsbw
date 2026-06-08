@@ -55,8 +55,8 @@ const NOIR_WHY_YOULL_LOVE_IT = [
   'COMPATIBLE WITH BUILD-A-WIG CUSTOMIZATION SERVICES',
 ] as const;
 
-/** Red checkmarks match premium upgrade subscription chart (`PremiumSubscriptionUpgradeChart`). */
-const PREMIUM_CHECK_STYLE = { width: '10px', height: '10px', flexShrink: 0 } as const;
+/** Rose alert badge — same asset as Account → Profile (`/assets/rose-alert.svg`). */
+const ROSE_ALERT_BADGE_STYLE = { width: '14px', height: '14px', flexShrink: 0 } as const;
 
 export default function NoirProductDetailsTab() {
   return (
@@ -74,7 +74,7 @@ export default function NoirProductDetailsTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {NOIR_WHY_YOULL_LOVE_IT.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <img src="/assets/premium-check.svg" alt="Included" style={PREMIUM_CHECK_STYLE} />
+            <img src="/assets/rose-alert.svg" alt="" style={ROSE_ALERT_BADGE_STYLE} />
             <p style={BODY_STYLE}>{label}</p>
           </div>
         ))}

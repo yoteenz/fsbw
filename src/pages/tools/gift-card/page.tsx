@@ -17,6 +17,16 @@ import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState'
 import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 
+/** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
+const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
+
+function withGiftCardSimilarProductsVisibility(
+  style: React.CSSProperties
+): React.CSSProperties {
+  if (GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE) return style;
+  return { ...style, display: 'none' };
+}
+
 function GiftCardPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -809,7 +819,10 @@ function GiftCardPage() {
           </div>
 
           {/* SIMILAR PRODUCTS SECTION */}
-          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+          <div
+            className="px-0 md:px-0"
+            style={withGiftCardSimilarProductsVisibility({ marginTop: '20px', marginBottom: '20px' })}
+          >
             <div 
               className="backdrop-blur-sm"
               style={{ 
