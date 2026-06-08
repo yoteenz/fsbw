@@ -26216,6 +26216,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR PDP all tabs: rose-alert list markers at 12px
+
+**Context:** User asked to replace remaining tab checkmarks with rose alert badges and reduce badge size by **2px** (14 → **12px**).
+
+**Changes:** **`noirProductTabRoseBadge.ts`** — shared **`/assets/rose-alert.svg`** at **12×12px**. **`NoirProductShippingTab`** (important information), **`NoirProductPolicyTab`** (verified resolutions), **`NoirProductCareStorageTab`** (storage list), **`NoirProductDetailsTab`** (why you'll love it) all use shared rose badge instead of **`premium-check.svg`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
