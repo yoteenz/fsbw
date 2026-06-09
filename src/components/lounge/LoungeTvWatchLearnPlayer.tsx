@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { LoungeTvVideoTile } from './loungeTvContent';
+import { resolveWatchLearnDescription, type LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
@@ -133,13 +133,13 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     video.currentTime = 0;
     setCurrentTime(0);
     setDuration(0);
+    const syncPaused = () => setPaused(video.paused);
     const playPromise = video.play();
     if (playPromise) {
-      playPromise.catch(() => {
-        /* autoplay may be blocked until interaction */
-      });
+      void playPromise.then(syncPaused).catch(syncPaused);
+    } else {
+      syncPaused();
     }
-    setPaused(false);
   }, [tile.id]);
 
   useEffect(() => {
@@ -278,29 +278,20 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
   const progressLabel =
     duration > 0 ? `${elapsedLabel}/${totalLabel}` : elapsedLabel !== '—' ? `${elapsedLabel}/—` : '—';
+  const detailText = resolveWatchLearnDescription(tile);
 
   return (
     <div
       style={{
         width: '100%',
-        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         gap: '6px',
-        minHeight: 0,
+        minWidth: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
-      <div
-        style={{
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '6px',
-          minWidth: 0,
-        }}
-      >
         <LoungeTvInnerLayoutEditor
           regionId="lounge-tv-video-frame"
           label="watch+learn video"
@@ -509,18 +500,10 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             {progressLabel}
           </span>
         </div>
-      </div>
 
-      <div
-        style={{
-          flex: '1 1 auto',
-          minHeight: 0,
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          paddingTop: '2px',
-        }}
-      >
+      {detailText ? (
         <p
+          data-lounge-tv-description
           style={{
             margin: 0,
             fontFamily: BODY_FONT,
@@ -530,9 +513,9 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             textAlign: 'left',
           }}
         >
-          {tile.description}
+          {detailText}
         </p>
-      </div>
+      ) : null}
     </div>
   );
 }

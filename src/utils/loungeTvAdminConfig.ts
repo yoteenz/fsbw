@@ -378,8 +378,8 @@ function fillEmptyAdminBodiesFromDefaults(config: LoungeTvAdminConfig): LoungeTv
 /** Admin config when present, otherwise built-in lounge TV tiles. */
 export function resolveLoungeTvTiles(mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvVideoTile[] | null {
   const fromAdmin = getLoungeTvTilesFromAdminConfig(mainTab, sidebarId);
-  const tiles =
-    fromAdmin !== null ? fromAdmin : getLoungeTvTilesStatic(mainTab, sidebarId);
+  const staticTiles = getLoungeTvTilesStatic(mainTab, sidebarId);
+  const tiles = fromAdmin !== null && fromAdmin.length > 0 ? fromAdmin : staticTiles;
   return enrichWatchLearnTiles(
     mainTab,
     sidebarId,
