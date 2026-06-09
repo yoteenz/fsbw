@@ -96,11 +96,15 @@ Golden model index: **`motherboard/golden-models/README.md`**.
 | `psa-avatar-talking.png` | talking | ~2.8s after assistant reply |
 | `psa-avatar-presenting.png` | presenting | Reply mentions units / products |
 | `psa-avatar-remembering.png` | remembering | Welcome memory hint, purchase-memory nudge, recall replies |
+| `psa-avatar-remembering-ask.png` | remembering-ask | Occasion capture ask (“what was this unit for?”) |
+| `psa-avatar-memory-locked.png` | memory-locked | Occasion saved (“LOCKED IN. I WILL REMEMBER…”) |
 | `psa-avatar-curator.png` | curator | BLACK / Lounge / founder-pick curator energy |
 | `psa-avatar-honest-pushback.png` | honest-pushback | Talk Me Out Of It, regret-prevention, honesty modes |
+| `psa-avatar-archetype-quiz.png` | archetype-quiz | During Slay Archetype quiz questions |
 | `psa-avatar-archetype-reveal.png` | archetype-reveal | After Slay Archetype quiz reveal |
 | `psa-avatar-red-carpet.png` | red-carpet | Red Carpet Mode session |
-| `psa-avatar-blueprint.png` | blueprint | Build My Entire Look / event blueprint replies |
+| `psa-avatar-blueprint.png` | blueprint | Build My Entire Look / Event Ready blueprint replies |
+| `psa-avatar-slay-forecast.png` | slay-forecast | Slay Forecast / climate maintenance (Miami, Vegas, humidity) |
 | `psa-avatar-celebrating.png` | celebrating | Order celebration, milestones, proud/excited mood |
 | `psa-avatar-reassuring.png` | reassuring | Calm reassurance replies |
 | `psa-avatar-spotlight.png` | spotlight | What Would You Pick? / founder conviction |

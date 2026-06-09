@@ -49,11 +49,15 @@ Do not change anything else beyond the stated expression/pose edit.
 | Slug | File | When the app shows it | NBP expression line |
 |------|------|----------------------|---------------------|
 | `remembering` | `psa-avatar-remembering.png` | Welcome memory hint, purchase-memory nudge, “I remember you chose…” replies | Soft warm smile, gentle knowing eyes as if recalling something personal — one hand lightly at chest, "I remember you" energy. |
+| `remembering-ask` | `psa-avatar-remembering-ask.png` | Occasion capture ask (`SAVE WHY I BOUGHT THIS` → “in a few words, what was this for?”) | Gentle inviting expression, open hand toward member — occasion ask energy. |
+| `memory-locked` | `psa-avatar-memory-locked.png` | Occasion saved (“LOCKED IN. I WILL REMEMBER…”) | Small satisfied close — lips together smile, subtle nod, locked-in confirmation. |
 | `curator` | `psa-avatar-curator.png` | BLACK / private-client mood, Lounge or founder-pick replies | Composed half-smile, one eyebrow slightly raised — boutique curator energy, subtle hand gesture as if offering a private selection. |
 | `honest-pushback` | `psa-avatar-honest-pushback.png` | Talk Me Out Of It, Should I Really Buy, What Might I Regret, Why This | Thoughtful serious expression, slight head tilt, one palm up in respectful "let me be real with you" gesture — honest pushback, not angry. |
+| `archetype-quiz` | `psa-avatar-archetype-quiz.png` | During Slay Archetype quiz (3 lifestyle questions) | Attentive diagnostic lean-in, pen-or-tablet gesture, interviewer energy. |
 | `archetype-reveal` | `psa-avatar-archetype-reveal.png` | ~2.8s after archetype quiz reveal (“YOUR SLAY ARCHETYPE IS…”) | Bright confident smile, both hands slightly raised in a small reveal — proud unveiling energy. |
 | `red-carpet` | `psa-avatar-red-carpet.png` | Red Carpet Mode session (I HAVE AN EVENT) | Glamorous confident smile, shoulders back, elegant poised gesture — red carpet event concierge. |
-| `blueprint` | `psa-avatar-blueprint.png` | Build My Entire Look, Event Ready, Slay Forecast replies | Focused expert smile, one hand tracing an invisible plan — architect of a full event look blueprint. |
+| `blueprint` | `psa-avatar-blueprint.png` | Build My Entire Look, Event Ready replies | Focused expert smile, one hand tracing an invisible plan — architect of a full event look blueprint. |
+| `slay-forecast` | `psa-avatar-slay-forecast.png` | Slay Forecast / Miami–Vegas climate maintenance replies | Concerned expert, slight furrow, finger raised — honest climate advice, not fear. |
 | `celebrating` | `psa-avatar-celebrating.png` | Order celebration, Hall of Slay, proud/excited/celebratory mood | Joyful restrained celebration — open smile, subtle clap or small fist pump kept luxury-toned. |
 | `reassuring` | `psa-avatar-reassuring.png` | Replies with calm reassurance (“don’t worry”, “you’re covered”) | Calm warm smile, soft eyes, both palms slightly forward in gentle reassurance. |
 | `spotlight` | `psa-avatar-spotlight.png` | What Would You Pick? / founder conviction mode | Confident direct gaze, knowing smile, decisive chin-up — “this is what I would pick” energy. |
