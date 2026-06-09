@@ -203,10 +203,11 @@ export function isPsaHiddenPath(pathname: string): boolean {
   );
 }
 
-/** Lobby, lounge, account profile: hide floating avatar and nudge only (chat panel may still open elsewhere). */
+/** Lobby, lounge, account, Build-a-Wig: hide floating avatar and nudge (chat panel unchanged if already open). */
 export function isPsaFabHiddenPath(pathname: string): boolean {
   if (pathname === '/lobby' || pathname === '/account') return true;
-  return pathname === '/lobby/lounge' || pathname.startsWith('/lobby/lounge/');
+  if (pathname === '/lobby/lounge' || pathname.startsWith('/lobby/lounge/')) return true;
+  return pathname === '/build-a-wig' || pathname.startsWith('/build-a-wig/');
 }
 
 export function getPsaAvatarSrc(expression: PsaAvatarExpression): string {
