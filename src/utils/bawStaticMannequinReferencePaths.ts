@@ -7,8 +7,8 @@
 export const NOIR_NATURAL_FRONT_MANNEQUIN_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
 
-/** UI scale for NOIR natural front (M) mannequin overlay — 30% smaller than L/R framing. */
-export const NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.7;
+/** UI scale for NOIR natural front (M) mannequin overlay — tuned vs L/R framing (was 0.7, +15% → 0.805). */
+export const NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.805;
 
 function normalizedMannequinSrcPath(src: string): string {
   const raw = (src || '').split(/[?#]/)[0].trim();

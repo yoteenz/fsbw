@@ -3515,7 +3515,7 @@ img.natural-front-mobile {
   bottom: 3px !important;
 }
 
-/* NOIR natural front (M) mannequin overlay — 30% smaller than L/R */
+/* NOIR natural front (M) mannequin overlay — scaled vs L/R (see NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE) */
 .baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.thumbnail-mannequin-img {
   width: auto !important;
   height: auto !important;
