@@ -15,6 +15,7 @@
     "psa:avatar-expressions": "node scripts/generate-psa-avatar-expressions.mjs",
     "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs",
     "wig-preview:verify-noir-mannequins": "node scripts/wig-preview/verify-noir-mannequin-refs.mjs",
+    "wig-preview:build-noir-fal-gray-brick-refs": "node scripts/wig-preview/build-noir-fal-gray-brick-refs.mjs",
     "lobby:bake-phone": "node scripts/lobby-bake-phone-asset.mjs",
     "lobby:bake-case": "node scripts/lobby-bake-case-asset.mjs",
     "lobby:fal-add-display-case": "node scripts/lobby-fal-add-display-case-to-scene.mjs",

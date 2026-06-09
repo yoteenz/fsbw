@@ -1,6 +1,7 @@
 /**
- * Public NOIR natural mannequin URLs for Fal GPT2 live color/styling.
+ * Public NOIR **UI overlay** mannequin URLs (transparent figure on brick in the app).
  * Keep in sync with `src/utils/bawStaticMannequinReferencePaths.ts`.
+ * **Fal GPT2** uses gray-brick baked refs from `bawNoirFalMannequinUrls.ts`.
  */
 
 export const NOIR_NATURAL_LEFT_MANNEQUIN_PUBLIC_URL =

@@ -1,27 +1,37 @@
 #!/usr/bin/env node
 /**
- * Verify NOIR Fal GPT2 mannequin reference URLs (color + FLAT IRON geometry second ref).
+ * Verify NOIR mannequin URLs: UI overlays vs Fal gray-brick scene refs.
  * Keep in sync with:
+ *   - api/_lib/bawNoirFalMannequinUrls.ts
  *   - api/_lib/bawNoirNaturalMannequinUrls.ts
  *   - src/utils/bawStaticMannequinReferencePaths.ts
- *   - api/wig-preview/live-noir-color.ts (inlined defaults)
  *
- * Usage:
- *   node scripts/wig-preview/verify-noir-mannequin-refs.mjs
- *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL=... node scripts/wig-preview/verify-noir-mannequin-refs.mjs
+ * Usage: npm run wig-preview:verify-noir-mannequins
  */
 
-const CANONICAL = {
+const UI_OVERLAY = {
   front: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png',
   left: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(27).png',
   right: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(28).png',
 };
 
-const LEGACY_APP_ASSET_PATTERN = /\/assets\/natural%20(left|front|right)\.png/i;
+const FAL_GRAY_BRICK = {
+  front: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-front.png',
+  left: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-left.png',
+  right: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-right.png',
+};
 
-function envUrl(key, fallback) {
-  const v = process.env[key]?.trim();
-  return v || fallback;
+const LEGACY_APP_ASSET_PATTERN = /\/assets\/natural%20(left|front|right)\.png/i;
+const TRANSPARENT_OVERLAY_PATTERN = /\/noir\/image%20\(\d+\)\.png/i;
+
+function envTrim(key) {
+  return process.env[key]?.trim() || '';
+}
+
+function resolveFalUrl(angle) {
+  const falKey = `WIG_PREVIEW_NOIR_FAL_MANNEQUIN_${angle.toUpperCase()}_URL`;
+  const legacyKey = `WIG_PREVIEW_NOIR_MANNEQUIN_${angle.toUpperCase()}_URL`;
+  return envTrim(falKey) || envTrim(legacyKey) || FAL_GRAY_BRICK[angle];
 }
 
 async function headOk(url) {
@@ -33,63 +43,78 @@ async function headOk(url) {
   }
 }
 
+async function pngHasAlpha(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    const colorType = buf[25];
+    return colorType === 4 || colorType === 6;
+  } catch {
+    return null;
+  }
+}
+
 function isLegacyAppAssetUrl(url) {
   return LEGACY_APP_ASSET_PATTERN.test(url) || /\/assets\/natural (left|front|right)\.png/i.test(url);
 }
 
-async function main() {
-  const resolved = {
-    front: envUrl('WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL', CANONICAL.front),
-    left: envUrl('WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL', CANONICAL.left),
-    right: envUrl('WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL', CANONICAL.right),
-  };
-
-  console.log('NOIR Fal mannequin refs — resolved URLs (env overrides code defaults):\n');
+async function checkGroup(label, resolveUrl, { expectOpaqueForFal }) {
+  console.log(`${label}\n`);
   let exitCode = 0;
-
   for (const angle of ['left', 'front', 'right']) {
-    const url = resolved[angle];
-    const fromEnv = Boolean(process.env[`WIG_PREVIEW_NOIR_MANNEQUIN_${angle.toUpperCase()}_URL`]?.trim());
-    const canonical = CANONICAL[angle];
-    const matchesCanonical = url === canonical;
-    const legacy = isLegacyAppAssetUrl(url);
+    const url = resolveUrl(angle);
     const { ok, status, error } = await headOk(url);
+    const alpha = ok ? await pngHasAlpha(url) : null;
 
     console.log(`[${angle.toUpperCase()}] ${url}`);
-    console.log(
-      `  source: ${fromEnv ? 'WIG_PREVIEW_NOIR_MANNEQUIN_*_URL env' : 'code default (Supabase)'}`
-    );
-    if (fromEnv && !matchesCanonical) {
-      console.log(`  note: differs from current code default`);
-      if (legacy) {
-        console.log('  WARN: legacy /assets/natural *.png — update Vercel env to Supabase URLs below');
-        exitCode = 1;
-      }
-    }
     if (!ok) {
       console.log(`  FAIL: HTTP ${status}${error ? ` (${error})` : ''}`);
       exitCode = 1;
     } else {
       console.log(`  OK: HTTP ${status}`);
+      if (expectOpaqueForFal && url.includes('fal-gray-brick')) {
+        console.log('  OK: gray-brick Fal scene ref');
+      } else if (expectOpaqueForFal && alpha === true) {
+        console.log('  WARN: transparent PNG used for Fal — use fal-gray-brick-* refs');
+        exitCode = 1;
+      } else if (expectOpaqueForFal && alpha === false) {
+        console.log('  OK: opaque scene (good for Fal)');
+      }
+      if (!expectOpaqueForFal && alpha === true) {
+        console.log('  OK: transparent overlay (expected for UI)');
+      }
+    }
+    if (isLegacyAppAssetUrl(url)) {
+      console.log('  WARN: legacy /assets/natural URL — not for Fal');
+      exitCode = 1;
+    }
+    if (expectOpaqueForFal && TRANSPARENT_OVERLAY_PATTERN.test(url.toLowerCase())) {
+      console.log('  WARN: transparent UI overlay URL — use fal-gray-brick-* for Fal');
+      exitCode = 1;
     }
     console.log('');
   }
+  return exitCode;
+}
 
-  console.log('Canonical Supabase URLs (set in Vercel or leave env unset to use code defaults):');
+async function main() {
+  let exitCode = 0;
+
+  exitCode |= await checkGroup('UI overlays (hero/thumbs — transparent figure)', (a) => UI_OVERLAY[a], {
+    expectOpaqueForFal: false,
+  });
+
+  exitCode |= await checkGroup('Fal GPT2 gray-brick refs (color + FLAT IRON geometry)', resolveFalUrl, {
+    expectOpaqueForFal: true,
+  });
+
+  console.log('Fal defaults (leave WIG_PREVIEW_NOIR_FAL_MANNEQUIN_* unset after build script):');
   for (const angle of ['left', 'front', 'right']) {
-    console.log(`  WIG_PREVIEW_NOIR_MANNEQUIN_${angle.toUpperCase()}_URL=${CANONICAL[angle]}`);
+    console.log(`  WIG_PREVIEW_NOIR_FAL_MANNEQUIN_${angle.toUpperCase()}_URL=${FAL_GRAY_BRICK[angle]}`);
   }
-  console.log('');
-  console.log(
-    'Production check: Vercel → Project → Settings → Environment Variables. Remove or update any'
-  );
-  console.log(
-    'WIG_PREVIEW_NOIR_MANNEQUIN_* pointing at https://fsbw.vercel.app/assets/natural *.png'
-  );
-  console.log(
-    'FLAT IRON (MIDDLE, no bangs) uses the same Supabase URLs via api/_lib/bawNoirNaturalMannequinUrls.ts'
-  );
-  console.log('(WIG_PREVIEW_PUBLIC_APP_ORIGIN is unused — removed from styling path).');
+  console.log('\nBuild Fal refs: npm run wig-preview:build-noir-fal-gray-brick-refs');
+  console.log('After deploy: regen color L/M/R — cached wig-preview-live WebPs do not auto-update.');
 
   process.exit(exitCode);
 }

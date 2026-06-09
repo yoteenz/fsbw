@@ -14,8 +14,9 @@ export const config = {
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  *   WIG_PREVIEW_STORAGE_BUCKET (default: live-preview or wig-preview)
  *   WIG_PREVIEW_PROMPT_VERSION (default: v1)
- *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — optional overrides; default Supabase
- *     live-preview/Noir/image (26)=front, (27)=left, (28)=right (one gray-brick PNG per angle; logo in prompt text only)
+ *   WIG_PREVIEW_NOIR_FAL_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — optional Fal gray-brick scene overrides
+ *     (defaults: live-preview/Noir/fal-gray-brick-{front|left|right}.png). Legacy WIG_PREVIEW_NOIR_MANNEQUIN_* also accepted.
+ *     UI overlays (image 26|27|28) are **not** Fal inputs — see `api/_lib/bawNoirFalMannequinUrls.ts`.
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
@@ -30,13 +31,29 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
 
-/** Keep in sync with `api/_lib/bawNoirNaturalMannequinUrls.ts` + `bawStaticMannequinReferencePaths.ts`. */
-const NOIR_NATURAL_LEFT_MANNEQUIN_PUBLIC_URL =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(27).png';
-const NOIR_NATURAL_FRONT_MANNEQUIN_PUBLIC_URL =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
-const NOIR_NATURAL_RIGHT_MANNEQUIN_PUBLIC_URL =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(28).png';
+/** Keep in sync with `api/_lib/bawNoirFalMannequinUrls.ts`. */
+const NOIR_FAL_GRAY_BRICK_LEFT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-left.png';
+const NOIR_FAL_GRAY_BRICK_FRONT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-front.png';
+const NOIR_FAL_GRAY_BRICK_RIGHT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-right.png';
+
+function envTrim(key: string): string {
+  return process.env[key]?.trim() || '';
+}
+
+function noirFalGrayBrickMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'right'): string {
+  const envByAngle = {
+    front:
+      envTrim('WIG_PREVIEW_NOIR_FAL_MANNEQUIN_FRONT_URL') || envTrim('WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL'),
+    left: envTrim('WIG_PREVIEW_NOIR_FAL_MANNEQUIN_LEFT_URL') || envTrim('WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL'),
+    right: envTrim('WIG_PREVIEW_NOIR_FAL_MANNEQUIN_RIGHT_URL') || envTrim('WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL'),
+  };
+  if (angle === 'left') return envByAngle.left || NOIR_FAL_GRAY_BRICK_LEFT_MANNEQUIN_PUBLIC_URL;
+  if (angle === 'right') return envByAngle.right || NOIR_FAL_GRAY_BRICK_RIGHT_MANNEQUIN_PUBLIC_URL;
+  return envByAngle.front || NOIR_FAL_GRAY_BRICK_FRONT_MANNEQUIN_PUBLIC_URL;
+}
 
 // --- Inlined from api/_lib/auth.ts (keep in sync) ---
 async function getAuthUser(
@@ -311,23 +328,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const frontUrl =
-    process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim() || NOIR_NATURAL_FRONT_MANNEQUIN_PUBLIC_URL;
-  const leftUrl =
-    process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim() || NOIR_NATURAL_LEFT_MANNEQUIN_PUBLIC_URL;
-  const rightUrl =
-    process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim() || NOIR_NATURAL_RIGHT_MANNEQUIN_PUBLIC_URL;
-  if (!frontUrl || !leftUrl || !rightUrl) {
-    sendJson(res, 503, {
-      error: 'Missing public mannequin image URLs for live generation',
-      missing: {
-        WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL: !frontUrl,
-        WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL: !leftUrl,
-        WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL: !rightUrl,
-      },
-    });
-    return;
-  }
+  const frontUrl = noirFalGrayBrickMannequinPublicUrlForAngle('front');
+  const leftUrl = noirFalGrayBrickMannequinPublicUrlForAngle('left');
+  const rightUrl = noirFalGrayBrickMannequinPublicUrlForAngle('right');
 
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';

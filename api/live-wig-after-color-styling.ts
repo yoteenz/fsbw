@@ -53,7 +53,7 @@ import {
   BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL,
   bawGptImage2EditFalInput,
 } from './_lib/bawGptImage2FalInput.js';
-import { noirNaturalMannequinPublicUrlForAngle } from './_lib/bawNoirNaturalMannequinUrls.js';
+import { noirFalGrayBrickMannequinPublicUrlForAngle } from './_lib/bawNoirFalMannequinUrls.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -117,9 +117,9 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
-/** Same NOIR base angles as BAW hub static mannequins (Supabase `live-preview/Noir/` refs). */
-function noirBaseNaturalMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'right'): string {
-  return noirNaturalMannequinPublicUrlForAngle(angle);
+/** Fal gray-brick scene refs (not UI transparent overlays). */
+function noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle: 'front' | 'left' | 'right'): string {
+  return noirFalGrayBrickMannequinPublicUrlForAngle(angle);
 }
 
 function stylingModePayload(
@@ -416,7 +416,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                 })
               : buildBangsOnlyStylePrompt(angle);
         imageUrls = flatIronMiddleUsesBaseNoirGeometry
-          ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
+          ? [colorPublicUrl, noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle)]
           : [colorPublicUrl];
       }
 
