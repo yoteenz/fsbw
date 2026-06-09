@@ -1,6 +1,10 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
+import {
+  isNoirNaturalFrontMannequinSrc,
+  scaleNoirFrontMannequinDisplayPx,
+} from '../../utils/bawStaticMannequinReferencePaths';
 
 const BAW_PRODUCT_HUB_UNITS = [
   'noir',
@@ -78,6 +82,15 @@ export function BawNoirWigPreviewHeroThumbs({
   /** Sub-page + static: white/black selection ring on `.baw-noir-thumb-frame` (was on `.leaf-bg`). */
   const subPageStaticSelectionOnFrame = !hideBrick && !hubThumbsOnlyOuter;
 
+  const heroSrc = triple[selectedView] ?? '';
+  const heroFrontScaled = isNoirNaturalFrontMannequinSrc(heroSrc);
+  const heroW = heroFrontScaled
+    ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_HERO_FRAME_W)
+    : BAW_NOIR_HERO_FRAME_W;
+  const heroH = heroFrontScaled
+    ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_HERO_FRAME_H)
+    : BAW_NOIR_HERO_FRAME_H;
+
   return (
     <>
       <div className="leaf-stack hero-thumb">
@@ -116,8 +129,8 @@ export function BawNoirWigPreviewHeroThumbs({
                     left: '50%',
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
-                    '--hero-width': `${BAW_NOIR_HERO_FRAME_W}px`,
-                    '--hero-height': `${BAW_NOIR_HERO_FRAME_H}px`,
+                    '--hero-width': `${heroW}px`,
+                    '--hero-height': `${heroH}px`,
                   } as CSSProperties
                 }
               />
@@ -132,8 +145,8 @@ export function BawNoirWigPreviewHeroThumbs({
               style={
                 {
                   top: 'calc(50% - 10.601px + 18px)',
-                  '--hero-width': `${BAW_NOIR_HERO_FRAME_W}px`,
-                  '--hero-height': `${BAW_NOIR_HERO_FRAME_H}px`,
+                  '--hero-width': `${heroW}px`,
+                  '--hero-height': `${heroH}px`,
                 } as CSSProperties
               }
             />
@@ -153,7 +166,16 @@ export function BawNoirWigPreviewHeroThumbs({
           ...(hideBrick || hubStaticThumbSpacingLikeSubLive ? { columnGap: '12px', rowGap: '12px' } : {}),
         }}
       >
-        {triple.map((view, index) => (
+        {triple.map((view, index) => {
+          const thumbFrontScaled = isNoirNaturalFrontMannequinSrc(view);
+          const thumbW = thumbFrontScaled
+            ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_THUMB_MANNEQUIN_W)
+            : BAW_NOIR_THUMB_MANNEQUIN_W;
+          const thumbH = thumbFrontScaled
+            ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_THUMB_MANNEQUIN_H)
+            : BAW_NOIR_THUMB_MANNEQUIN_H;
+
+          return (
           <div className="leaf-stack thumb" key={index}>
             {thumbOuterLeafBg && (
               <div
@@ -221,15 +243,15 @@ export function BawNoirWigPreviewHeroThumbs({
               >
                 <img
                   alt={`Thumbnail ${index + 1}`}
-                  width={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_W : BAW_NOIR_THUMB_MANNEQUIN_W}
-                  height={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_H : BAW_NOIR_THUMB_MANNEQUIN_H}
+                  width={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_W : thumbW}
+                  height={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_H : thumbH}
                   src={view}
                   className={
                     hideBrick
                       ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
                       : `absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img${
                           hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
-                        }`
+                        }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}`
                   }
                   style={
                     hideBrick
@@ -246,7 +268,8 @@ export function BawNoirWigPreviewHeroThumbs({
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

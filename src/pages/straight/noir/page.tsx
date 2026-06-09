@@ -53,7 +53,11 @@ import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab'
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
-import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
+import {
+  isNoirNaturalFrontMannequinSrc,
+  NOIR_NATURAL_MANNEQUIN_TRIPLE,
+  NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
+} from '../../../utils/bawStaticMannequinReferencePaths';
 
 interface DensityOption {
   id: string;
@@ -72,6 +76,13 @@ const NOIR_2D_COMPOSITE_DOWNLOAD_SPECS: { mannequinSrc: string; label: string; d
   { mannequinSrc: NOIR_NATURAL_MANNEQUIN_TRIPLE[1], label: 'FRONT (M)', download: 'noir-2d-front-leaf-brick.png' },
   { mannequinSrc: NOIR_NATURAL_MANNEQUIN_TRIPLE[2], label: 'RIGHT (R)', download: 'noir-2d-right-leaf-brick.png' },
 ];
+
+function noir2dMannequinTransform(src: string): string {
+  const base = 'translateX(-50%) translateY(-50%)';
+  return isNoirNaturalFrontMannequinSrc(src)
+    ? `${base} scale(${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE})`
+    : base;
+}
 
 const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map((s) => ({
   label: s.label,
@@ -2385,7 +2396,7 @@ function NoirSelection() {
                         position: 'absolute',
                         left: '50%',
                         top: 'calc(50% - 10.601px + 12px)',
-                        transform: 'translateX(-50%) translateY(-50%)',
+                        transform: noir2dMannequinTransform(currentImages.hero),
                         zIndex: '10',
                         width: 'clamp(230px, 57.5vw, 368px)',
                         height: 'auto',
@@ -2426,7 +2437,21 @@ function NoirSelection() {
                       style={{ backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.top : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleTopThumbnailClick}
                     >
-                      <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: '100%', maxHeight: '100%', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      <img
+                        src={currentImages.top}
+                        alt=""
+                        className="absolute left-1/2 z-10"
+                        style={{
+                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)',
+                          transform: noir2dMannequinTransform(currentImages.top),
+                          width: 'clamp(112px, 29vw, 196px)',
+                          height: 'auto',
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          minWidth: 'clamp(112px, 29vw, 196px)',
+                          display: is3DView ? 'none' : 'block',
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="relative" style={{ flex: '1 1 0', minHeight: 0 }}>
@@ -2435,7 +2460,21 @@ function NoirSelection() {
                       style={{ backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleBottomThumbnailClick}
                     >
-                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: '100%', maxHeight: '100%', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      <img
+                        src={currentImages.bottom}
+                        alt=""
+                        className="absolute left-1/2 z-10"
+                        style={{
+                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)',
+                          transform: noir2dMannequinTransform(currentImages.bottom),
+                          width: 'clamp(112px, 29vw, 196px)',
+                          height: 'auto',
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          minWidth: 'clamp(112px, 29vw, 196px)',
+                          display: is3DView ? 'none' : 'block',
+                        }}
+                      />
                     </div>
                   </div>
                 </div>

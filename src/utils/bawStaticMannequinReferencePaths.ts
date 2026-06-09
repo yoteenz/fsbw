@@ -7,6 +7,33 @@
 export const NOIR_NATURAL_FRONT_MANNEQUIN_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
 
+/** UI scale for NOIR natural front (M) mannequin overlay — 30% smaller than L/R framing. */
+export const NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.7;
+
+function normalizedMannequinSrcPath(src: string): string {
+  const raw = (src || '').split(/[?#]/)[0].trim();
+  try {
+    if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('//')) {
+      const u = new URL(raw.startsWith('//') ? `https:${raw}` : raw);
+      return decodeURIComponent(u.pathname).toLowerCase();
+    }
+  } catch {
+    /* ignore */
+  }
+  return decodeURIComponent(raw).toLowerCase();
+}
+
+/** True for NOIR natural **middle/front** mannequin overlay (Supabase or legacy `/assets/natural front.png`). */
+export function isNoirNaturalFrontMannequinSrc(src: string): boolean {
+  const norm = normalizedMannequinSrcPath(src);
+  if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_FRONT_MANNEQUIN_SRC)) return true;
+  return norm.endsWith('/natural front.png');
+}
+
+export function scaleNoirFrontMannequinDisplayPx(basePx: number): number {
+  return basePx * NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE;
+}
+
 /** NOIR natural L / M / R — order matches BAW `wigViews` (left, front, right). */
 export const NOIR_NATURAL_MANNEQUIN_TRIPLE = [
   '/assets/natural left.png',
