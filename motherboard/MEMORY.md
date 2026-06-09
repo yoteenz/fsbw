@@ -26615,3 +26615,195 @@ Pushed **`master`** + **`preview/mobile`**.
 **Cause:** **`LOBBY_CASE_POPOVER_PHONE_OFFSET_UP`** was negative (`-4.1cqw` / **-20px**), so **`bottom: calc(100% + gap + offset)`** placed the glass panel **into** the phone hit box (popover z **30** over open PNG z **28**).
 
 **Fix:** **`lobbyCaseResponsive.ts`** — phone offset **`lobbyCaseCqw(1.5, 8, 12)`** (positive clearance). **`LobbyDisplayCaseShell`** prop slots **`overflow: visible`**. Pushed **`master`** + **`preview/mobile`**.
+
+**Follow-up (user: still clipped):** Offset-only was not enough — popover **wrapper z-30** still stacked over open phone PNG **z-28**; glass panel covered handset. **Structural fix:** phone open art **z-32**, render **after** popover in DOM, phone popover root **z-24** (panel stays **z-30**), fixed **`12px` gap + `20px` offset** (no cqw in calc), phone open art **`object-fit: contain`**. Commit **`5434cb68`**.
+
+---
+
+## 2026-06-09 — Restore lobby register/phone sizes and positions (motherboard)
+
+**Context:** User resized and repositioned lobby register and phone assets previously; those values were reset when independent scene hit regions shipped without per-prop offsets, and the phone clipping fix moved the CONTACT US panel to **`+20px`**.
+
+**Topics covered (entire conversation so far):** PSA v5 avatar prep, Red Carpet Mode session scope, PSA layout nudges, lobby phone popover clipping fix, then this restore request.
+
+**Decisions / outcomes:** Restored Jun 2026 motherboard-documented tuning into **code defaults** (not localStorage-only):
+- **Open overlay scales** (unchanged, already correct): register **`0.7938`**, phone **`0.57`** in **`finalLobbyCasePropOverlays.ts`**.
+- **Per-prop cover offsets** (were lost when **`lobby-display-case-register` / `phone`** defaulted to empty layout): register **`{ x: 24, y: -30 }`**, phone **`{ x: -1, y: -32 }`** via **`sceneHitRegionDefaults.ts`** → **`LobbyDisplayCaseShell`** **`coverOffset`**.
+- **Phone popover lift** restored to **`lobbyCaseCqw(-4.1, -20, -14)`** (~**−16px**); removed clipping-fix **`12px` gap + `20px` offset** override.
+- **Kept** Jun 9 structural clipping fix: phone open art **z-32**, popover root **z-24**, DOM order phone → open art, **`paintAbovePopover`** / **`object-fit: contain`**.
+
+**Changes:** **`sceneHitRegionDefaults.ts`**, **`lobbyCaseResponsive.ts`**, **`lobbyPaymentIcons.ts`**, **`LobbySceneHotspots.tsx`**. Commit **`b9b7a1f0`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Lounge TV close X nudge after play
+
+**Context:** User asked to move the **X close icon only** on the TV **after pressing play** down **4px** and left **4px**.
+
+**Change:** **`loungeTvSceneLayout.ts`** — **`LOUNGE_TV_MENU_CLOSE_INSET_TOP_PX`** / **`RIGHT_PX`** = **4**. **`LoungeTvFullscreenShell.tsx`** — close chip uses **`calc(% + px)`** on top/right. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn TV video: landscape cover + width +16px
+
+**Context:** User reported Watch + Learn video on the open TV looked **portrait** (tall strip with side letterboxing) and asked to restore **landscape** display plus **+16px width only** (no height change).
+
+**Change:** **`LoungeTvWatchLearnPlayer`** — **`object-fit: cover`** + **`center top`** (was **`contain`**). **`LOUNGE_TV_WATCH_LEARN_VIDEO_WIDTH_EXTRA_PX = 16`** on **`lounge-tv-video-frame`** default layout; removed inline **`width: '100%'`** override so **`loungeTvVideoShellStyle`** applies **`calc(100% + 16px)`**. Height cap unchanged (**54% + 12px**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn TV seek slider scrubbing fix
+
+**Context:** User could pause/play Watch + Learn video on the open TV but could not rewind/forward with the seek slider.
+
+**Cause:** Same-origin **`/assets/tv-content-video.mp4`** was re-fetched into a **blob URL** after open, reloading the element and resetting **`currentTime`** mid-session. Tap-to-play **`pointerup`** and **`timeupdate`** also fought range input during drag; seek thumb hit target was ~5px wide.
+
+**Fix:** **`LoungeTvWatchLearnPlayer`** — skip blob swap for same-origin sources; preserve time when cross-origin blob loads; **`isScrubbing`** ref blocks **`timeupdate`** + tap toggle during drag; pause while scrubbing, resume if was playing; larger seek strip/thumb in **`index.css`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: contain fit, height +16px (revert width)
+
+**Context:** User reported video too zoomed/cropped after **`object-fit: cover`** + **+16px width**; meant **+16px height** not width.
+
+**Change:** **`object-fit: contain`**, **`object-position: center center`**. Removed **`LOUNGE_TV_WATCH_LEARN_VIDEO_WIDTH_EXTRA_PX`** / **`layoutWidthExtraPx`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX`** **12 → 28** (+16px). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: restore original cover + 16:9 shell
+
+**Context:** User asked to restore first-ship video fit — full frame **`cover`** with no side letterboxing (not **`contain`** / **`center top`** / **54% max-height**).
+
+**Change:** **`LoungeTvWatchLearnPlayer`** — **`object-fit: cover`** (no **`object-position`**); removed **54%** **`maxHeight`** cap; **16:9** **`aspect-ratio`** at full width like **`e71e1929`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX = 16`** via **`layoutHeightExtraPx`** + **`paddingBottom`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: description scroll below pinned video
+
+**Context:** User could not scroll to read video details; scroll must start at the video top and not overlap the category tab row (BRAND / SLAY TIPS / sidebar).
+
+**Fix:** **`LoungeTvOverlay`** — media panel **`overflowY: auto`** (was **`hidden`** when player open), **`bottom: 0`**, **`overscrollBehavior: contain`**. **`LoungeTvWatchLearnPlayer`** — **`position: sticky; top: 0`** on video + title block; description in normal flow below (panel scrolls, video stays pinned). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Plucking lace detail text restore + PSA hidden on lobby/lounge
+
+**Context:** User reported **Plucking Your Lace** Watch + Learn **detail/description text** they had added was **gone**; also asked to **hide PSA avatar & nudge** on **lobby & lounge only** (not site-wide).
+
+**Plucking lace detail — cause:** Admin TV config path could serve tiles with **empty `body`** (remote/local merge), while the player only rendered **`tile.description`** and sticky scroll let description slide **under** the pinned video/title block.
+
+**Fix:**
+- **`loungeTvContent.ts`** — export **`getWatchLearnVideoCopy`** / **`WATCH_LEARN_VIDEO_COPY`**.
+- **`loungeTvAdminConfig.ts`** — **`watchLearnDescriptionForItem`**, **`enrichWatchLearnTiles`**, **`fillEmptyAdminBodiesFromDefaults`** on hydrate; admin **`body`** wins, static copy fills gaps.
+- **`LoungeTvWatchLearnPlayer.tsx`** — render **`body ?? description ?? static`**; video + title pinned; **description-only** inner scroll region.
+- **`LoungeTvOverlay.tsx`** — media panel **`overflowY: hidden`** when Watch + Learn player open (nested description scroll).
+
+**PSA:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** for **`/lobby`**, **`/lobby/lounge`**, and **`/account`** (profile). **`PsaAssistantWidget`** — hide **`psa-widget-fab-stack`** (avatar + nudge) on those routes; chat panel unchanged if already open.
+
+**Commit:** **`291bc559`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: fix description scroll + remove gray video band
+
+**Context:** User still could not scroll Plucking Your Lace details; wanted the **gray strip** below the video **gone** (drop **`paddingBottom` + `content-box`** shell approach).
+
+**Fix:**
+- **`LoungeTvOverlay`** — media panel **`overflowY: auto`** again (single scroll container; nested flex scroll never got a height constraint).
+- **`LoungeTvWatchLearnPlayer`** — **sticky** video + title in panel scroll; description in normal flow below. Video shell uses **`paddingTop: calc(100% * 9/16 + Npx)`** + **`position: absolute; inset: 0`** video fill (keeps **+16px** via **`layoutHeightExtraPx`** without empty **`#0a0a0a`** band). Shell bg **`#000`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: description visible + scroll together
+
+**Context:** User said scroll worked but **Plucking Your Lace detail text still missing** — prior approaches traded scroll vs visible copy (sticky panel scroll hid gray text under black pinned header; nested flex scroll had no height).
+
+**Fix:** **Flex split** — media panel **`overflow: hidden`** when player open; player wrapper **`flex: 1; minHeight: 0`**. Video + title **`flexShrink: 0`**; description in dedicated **`overflowY: auto`** region below (never slides under video). **`resolveWatchLearnDescription()`** in **`loungeTvContent.ts`**; description **always rendered**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: restore red seek scrubber
+
+**Context:** User reported the **red seek scrubber** to drag video backward/forward was **gone** after layout fixes (description scroll / aspect-ratio shell).
+
+**Cause:** Seek bar was **`position: absolute; bottom: 0`** inside the aspect-ratio shell with **`overflow: hidden`** — clipped after **`height: 0` + `paddingTop`** shell refactor.
+
+**Fix:** **`LoungeTvWatchLearnPlayer`** — seek strip moved **below** the video frame (in-flow, between video and title) when **`paused || isScrubbing`**; tap-to-pause on full video shell. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA FAB hidden on account profile
+
+**Context:** User asked to hide PSA **avatar + nudge** on **account profile** as well (same as lobby/lounge).
+
+**Change:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** also true for **`/account`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: restore overlay seek + fix description layout
+
+**Context:** User wanted **red scrubber overlaid on video** (original design, not in-flow below frame) and **Plucking Your Lace detail text** visible below title/duration — flex-split layout had collapsed description to 0 height.
+
+**Fix:**
+- **`LoungeTvWatchLearnPlayer`** — restore **`position: absolute; bottom: 0`** seek on video when paused/scrubbing; **`paddingTop` aspect shell** with inner **`overflow: hidden`** + outer **`overflow: visible`** (no gray band, no clip). Sticky **video + title**; description **`<p>` in document flow** below sticky (not flex scroll child).
+
+---
+
+## 2026-06-09 — Watch + Learn: revert player layout; admin body → description only
+
+**Context:** User said layout tweaks for detail text kept **breaking scroll + red scrubber**; text was originally added via **Admin → Backend → CONTENT** **`body`** field (`loungeTvAdminConfig` → **`tile.description`**), not player layout hacks.
+
+**Fix (data only, no sticky):** Reverted **`LoungeTvWatchLearnPlayer`** to **`41160bf0`** structure — **`height: 100%`** flex column; overlay seek on video; **`tile.description`** in inner **`overflowY: auto`** region; **`aspectRatio` 16/9** + **`paddingBottom`** extra height with **`shellRef` `absolute inset 0`** (video fills +16px, no gray band). **`LoungeTvOverlay`** — **`overflowY: hidden`** when player open (inner description scroll). **`adminItemToVideoTile`** — admin **`body`** wins, static copy fallback. Removed sticky / **`resolveWatchLearnDescription`** in player. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Watch + Learn: deploy scrubber + scroll + description fix
+
+**Context:** User reported **“nothing changed”** after multiple Watch + Learn layout iterations (Plucking Your Lace detail text, red scrubber on pause, scroll to read description, gray band). Prior fixes had **built locally but were never committed/pushed** — production still had the broken **`41160bf0`** revert.
+
+**Topics covered:** PSA hide on lobby/lounge/account (done earlier); admin CONTENT **`body`** → **`tile.description`**; scrubber overlay vs in-flow; nested flex scroll collapsing description; autoplay blocked leaving UI “playing” so scrubber never appeared.
+
+**Fix (commit `2e5258b5`, pushed `master` + `preview/mobile`):**
+- **`LoungeTvWatchLearnPlayer`** — after autoplay, **`setPaused(video.paused)`** (not forced playing); removed **`height: 100%`** + inner description scroll; gray detail via **`resolveWatchLearnDescription(tile)`** in natural flow below title; overlay red seek when **`paused || isScrubbing`** unchanged.
+- **`LoungeTvOverlay`** — media panel **`overflowY: auto`** always (scroll whole player including description).
+- **`loungeTvAdminConfig.resolveLoungeTvTiles`** — if admin placement is **empty array**, fall back to static tiles.
+
+**Conventions:** Custom Plucking Your Lace copy lives in **Admin → Backend → CONTENT** **`body`** field; player only displays resolved text, does not own layout hacks for copy.
+
+---
+
+## 2026-06-07 — Watch + Learn: restore scrubber + drag seek (keep scroll/description)
+
+**Context:** After **`2e5258b5`**, user confirmed **scroll + gray detail text** work but **red scrubber** and **drag fast-forward/rewind** were still missing.
+
+**Cause:** **`aspectRatio` + `paddingBottom` + `overflow: hidden`** clipped the overlay seek bar; media-panel vertical scroll stole touch events from tap-to-pause on the video.
+
+**Fix (`97077210`, `LoungeTvWatchLearnPlayer` only):** **`paddingTop`** aspect shell (outer **`overflow: visible`**, inner **`absolute inset 0; overflow: hidden`**) so seek sits on the frame bottom; **`touchAction: none`** + **`pointerdown` preventDefault** on video shell; **`setPointerCapture`** + window **`pointerup`** during scrub; tap/double-tap on shell wrapper (video **`pointerEvents: none`**). Description in natural flow + **`LoungeTvOverlay`** panel scroll unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Cart dropdown: BCF view-details stays vertically centered
+
+**Context:** User asked that **BCF** (bundles/closures/frontals) **VIEW DETAILS** text in the **cart dropdown** should **not** use the upward shift applied to **unit** wigs (many detail rows). BCF has fewer lines and should stay **vertically centered** in the 120px row like before the unit shift.
+
+**Fix (`CartDropdown.tsx`):** **`unitDetailsShiftLayout = isViewingDetails && !isBcfShopItem`** gates **`translateY`**, **`items-start`**, **`justify-start`**, right-column **`marginTop`**, and extra card padding — **units only**. BCF with details open keeps **`items-center`**, **`justify-center`**, no product-block transform. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — NOIR live color/styling: GPT Image 2 + unhidden Fal regen UI
+
+**Context (full chat):** User asked for OpenArt vs Fal pricing for BAW color/styling (answered: Fal+NBP ~$151 warm-cache; GPT2 medium cheaper on Fal but timeouts; OpenArt has no API). User then asked to **switch back to GPT Image 2** for generating color/styling previews, **unhide** founder Fal regen controls on color + styling pages, strengthen logo prompt (**FRONTAL SLAYER** on chest, hair-only edit), and use GPT2 settings **`image_size: auto`**, **`quality: auto`**, **`output_format: webp`**.
+
+**Decisions / outcomes:**
+- **`api/wig-preview/live-noir-color.ts`** — **`openai/gpt-image-2/edit`** (was NBP); **`maxDuration: 300`**; logo/hair-only lock in prompt.
+- **`api/live-wig-after-color-styling.ts`** — same model via **`api/_lib/bawGptImage2FalInput.ts`**; **`maxDuration: 300`**.
+- **`api/_lib/bawFalEditFidelityPrompt.ts`** — **`BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK`**; preserve block logo line updated.
+- **`api/_lib/bawLiveStylingPrompts.ts`** — styling/bangs tails use shared logo lock.
+- **`src/pages/build-a-wig/color/page.tsx`** — removed **`display: none`** / **`aria-hidden`** on founder regen strip; status text says GPT Image 2.
+- **`src/pages/build-a-wig/styling/page.tsx`** — regen copy says GPT Image 2 (founder controls already visible on styling sub-routes).
+- **`vercel.json`** — both live routes **`maxDuration: 300`**.
+- **`motherboard/golden-models/gpt-image-2.md`**, **`motherboard/CORE.md`** — GPT2 = production for NOIR live previews.
+
+**Conventions:** Use **`bawGptImage2EditFalInput`** for any new BAW live GPT2 Fal calls; keep inlined prompt sync in **`live-noir-color.ts`** (no `_lib` import on nested Vercel route). Founder regen UI requires **`isFounderNoirFalRegenUiVisible()`** (founder Gmail + signed in).
+
+**Follow-up (same chat):** User asked **`image_size` 3:4** + **`quality` 2K**. GPT2 has no `2K` quality enum — set **`image_size: { width: 1536, height: 2048 }`** (3:4 portrait, 2048px long edge) and **`quality: 'medium'`** (~2K tier) in **`bawGptImage2FalInput.ts`** + mirrored inline in **`live-noir-color.ts`**.

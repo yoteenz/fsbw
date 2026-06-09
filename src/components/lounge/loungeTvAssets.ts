@@ -58,10 +58,12 @@ export const LOUNGE_TV_CONTENT_FRAME_CLOSE_ANCHOR = {
 export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_TOP_PX = -10;
 export const LOUNGE_TV_CONTENT_SCREEN_CLOSE_INSET_RIGHT_PX = -10;
 
-/** Watch + Learn player — video shell max height (% of TV glass content area); tuned with `object-fit: contain`. */
+/** @deprecated Shell uses 16:9 aspect + {@link LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX} via scene-hit layout. */
 export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT = 54;
-/** Added to {@link LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT} cap (height only). */
-export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX = 12;
+/** @deprecated See {@link LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX}. */
+export const LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX = 28;
+/** Extra shell height (px) — applied via `lounge-tv-video-frame` layout in scene-hit defaults. */
+export const LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX = 16;
 
 /**
  * End-still PNG (`lounge-tv-content-frame.png`) after Seedance open — {@link LoungeTvFullscreenShell} only.

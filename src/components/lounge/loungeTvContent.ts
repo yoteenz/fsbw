@@ -83,7 +83,7 @@ const BRAND_NEW_DROPS: LoungeTvVideoTile[] = [
   { id: 'plucking-lace', title: 'PLUCKING YOUR LACE', thumbSrc: '/assets/NOIR/blanco-thumb.png' },
 ];
 
-const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; description: string }> = {
+export const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; description: string }> = {
   'cutting-lace': {
     durationLabel: '5:12',
     description: 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
@@ -113,6 +113,25 @@ const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; descriptio
     description: 'REMOVE BUILDUP AND RESET LACE WITHOUT DAMAGING FIBERS OR TINT.',
   },
 };
+
+/** Static Watch + Learn copy for a tile (description + optional duration label). */
+export function getWatchLearnVideoCopy(
+  tileId: string
+): { durationLabel: string; description: string } | undefined {
+  return WATCH_LEARN_VIDEO_COPY[tileId];
+}
+
+/** Resolved detail copy for the Watch + Learn player (admin body wins, then static). */
+export function resolveWatchLearnDescription(
+  tile: Pick<LoungeTvVideoTile, 'id' | 'body' | 'description'>
+): string {
+  return (
+    tile.body?.trim() ||
+    tile.description?.trim() ||
+    getWatchLearnVideoCopy(tile.id)?.description ||
+    ''
+  ).toUpperCase();
+}
 
 const SLAY_TIPS_BLOG_BODY: Record<string, string> = {
   'cutting-lace': 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',

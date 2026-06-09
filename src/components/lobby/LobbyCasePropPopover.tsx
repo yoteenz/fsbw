@@ -73,6 +73,10 @@ type LobbyCasePropPopoverProps = {
   panelOffsetUp?: string;
   /** Scale panel with {@link LobbyDisplayCaseShell} (`container-type: size`). */
   responsive?: boolean;
+  /** Override gap in `bottom: calc(100% + gap + offset)` (phone uses fixed px). */
+  panelGapAboveProp?: string;
+  /** Tap wrapper z-index when open — phone keeps root below open PNG. */
+  openRootZIndex?: number;
   children: React.ReactNode;
 };
 
@@ -431,11 +435,15 @@ export function LobbyCasePropPopover({
   panelOffsetUpPx = 0,
   panelOffsetUp,
   responsive = false,
+  panelGapAboveProp,
+  openRootZIndex = LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
   children,
 }: LobbyCasePropPopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const open = activeId === popoverId;
-  const panelGap = responsive ? LOBBY_CASE_POPOVER_GAP_ABOVE_PROP : `${lobbyPopoverPx(10)}px`;
+  const panelGap =
+    panelGapAboveProp ??
+    (responsive ? LOBBY_CASE_POPOVER_GAP_ABOVE_PROP : `${lobbyPopoverPx(10)}px`);
   const panelUp = panelOffsetUp ?? (responsive ? '0px' : `${panelOffsetUpPx}px`);
   const panelBottom = `calc(100% + ${panelGap} + ${panelUp})`;
   const panelWidth = responsive ? LOBBY_CASE_POPOVER_WIDTH : `${LOBBY_CASE_POPOVER_WIDTH_PX}px`;
@@ -460,7 +468,7 @@ export function LobbyCasePropPopover({
         display: 'block',
         width: '100%',
         height: '100%',
-        zIndex: open ? LOBBY_CASE_POPOVER_OPEN_Z_INDEX : 24,
+        zIndex: open ? openRootZIndex : 24,
       }}
     >
       <button

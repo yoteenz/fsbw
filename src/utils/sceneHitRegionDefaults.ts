@@ -5,19 +5,23 @@ import {
   LOUNGE_TV_PLAY_TAP_LAYOUT,
 } from '../constants/finalLobbySceneAssets';
 import {
+  LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
+  LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
+} from '../constants/finalLobbyCasePropOverlays';
+import {
   LOBBY_DISPLAY_CASE_HIT_LAYOUT,
   LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
 } from '../constants/lobbyDisplayCaseLayout';
 import { LOUNGE_TV_MENU_SCREEN_LAYOUT } from '../constants/loungeTvSceneLayout';
 import {
-  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+  LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX,
 } from '../components/lounge/loungeTvAssets';
 import type { SceneHitLayoutOptions } from './sceneHitLayout';
 
 const LOUNGE_TV_MEDIA_PANEL_DEFAULT = {} as const satisfies SceneHitLayoutOptions;
 
 const LOUNGE_TV_VIDEO_FRAME_DEFAULT = {
-  layoutHeightExtraPx: LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+  layoutHeightExtraPx: LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX,
   layoutScale: { x: 1, y: 1 },
 } as const satisfies SceneHitLayoutOptions;
 
@@ -95,9 +99,21 @@ export function getDefaultSceneHitRegionConfig(id: SceneHitRegionId): SceneHitRe
         layout: cloneLayout(LOBBY_DISPLAY_CASE_HIT_LAYOUT),
       };
     case 'lobby-display-case-register':
-      return { layout: {} };
+      return {
+        coverOffset: {
+          x: LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET.x,
+          y: LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET.y,
+        },
+        layout: {},
+      };
     case 'lobby-display-case-phone':
-      return { layout: {} };
+      return {
+        coverOffset: {
+          x: LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET.x,
+          y: LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET.y,
+        },
+        layout: {},
+      };
     default:
       return { layout: {} };
   }

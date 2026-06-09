@@ -3,6 +3,7 @@ import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
   getLoungeTvTilesStatic,
+  getWatchLearnVideoCopy,
 } from '../components/lounge/loungeTvContent';
 import {
   LOUNGE_TV_CONTENT_VIDEO_SRC,
@@ -239,6 +240,12 @@ export function upsertLoungeTvAdminPlacement(
   return { version: 1, placements: [...rest, placement] };
 }
 
+function watchLearnDescriptionForItem(item: LoungeTvAdminItem): string {
+  const fromAdmin = item.body.trim().toUpperCase();
+  if (fromAdmin) return fromAdmin;
+  return getWatchLearnVideoCopy(item.id)?.description ?? '';
+}
+
 export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvMainTab): LoungeTvVideoTile {
   const thumbSrc =
     item.thumbSrc ||
@@ -250,7 +257,8 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
     isNew: item.isNew,
     thumbSrc,
   };
-  const bodyUpper = item.body.trim().toUpperCase();
+  const bodyUpper =
+    mainTab === 'watch-learn' ? watchLearnDescriptionForItem(item) : item.body.trim().toUpperCase();
   if (bodyUpper) {
     tile.description = bodyUpper;
     tile.body = bodyUpper;
@@ -271,19 +279,49 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
       const customSrc = item.mediaType === 'video' && item.mediaUrl.trim() ? item.mediaUrl.trim() : '';
       tile.videoSrc = customSrc || LOUNGE_TV_CONTENT_VIDEO_SRC;
       if (!tile.description) {
-        tile.description =
-          item.body.trim().toUpperCase() || 'PLUCK DENSITY ALONG THE HAIRLINE FOR A NATURAL, LESS WIGGY FINISH.';
+        tile.description = watchLearnDescriptionForItem(item);
       }
     } else if (item.mediaType === 'video' && item.mediaUrl.trim()) {
       tile.videoSrc = item.mediaUrl.trim();
       if (!tile.description) {
-        tile.description =
-          item.body.trim().toUpperCase() || 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE.';
+        tile.description = watchLearnDescriptionForItem(item);
       }
       if (item.durationLabel) tile.durationLabel = item.durationLabel;
     }
+    const resolvedDescription = watchLearnDescriptionForItem(item);
+    if (resolvedDescription) {
+      tile.description = tile.description || resolvedDescription;
+      tile.body = item.body.trim() ? item.body.trim().toUpperCase() : tile.description;
+    }
   }
   return tile;
+}
+
+function enrichWatchLearnTiles(
+  mainTab: LoungeTvMainTab,
+  sidebarId: string,
+  tiles: LoungeTvVideoTile[] | null
+): LoungeTvVideoTile[] | null {
+  if (!tiles || mainTab !== 'watch-learn') return tiles;
+  const staticTiles = getLoungeTvTilesStatic(mainTab, sidebarId);
+  const staticById = new Map((staticTiles ?? []).map((tile) => [tile.id, tile]));
+  return tiles.map((tile) => {
+    const staticTile = staticById.get(tile.id);
+    const staticCopy = getWatchLearnVideoCopy(tile.id);
+    const description = (
+      tile.description?.trim() ||
+      tile.body?.trim() ||
+      staticTile?.description?.trim() ||
+      staticCopy?.description ||
+      ''
+    ).toUpperCase();
+    if (!description) return tile;
+    return {
+      ...tile,
+      description,
+      body: tile.body?.trim() ? tile.body.trim().toUpperCase() : description,
+    };
+  });
 }
 
 function applyWatchLearnTileOverrides(
@@ -313,11 +351,40 @@ export function getLoungeTvTilesFromAdminConfig(
   return placement.items.map((item) => adminItemToVideoTile(item, mainTab));
 }
 
+function fillEmptyAdminBodiesFromDefaults(config: LoungeTvAdminConfig): LoungeTvAdminConfig {
+  const defaults = buildDefaultLoungeTvAdminConfig();
+  const defaultByKey = new Map(
+    defaults.placements.map((placement) => [placementKey(placement.mainTab, placement.sidebarId), placement])
+  );
+  return {
+    ...config,
+    placements: config.placements.map((placement) => {
+      const defaultPlacement = defaultByKey.get(placementKey(placement.mainTab, placement.sidebarId));
+      if (!defaultPlacement) return placement;
+      const defaultById = new Map(defaultPlacement.items.map((item) => [item.id, item]));
+      return {
+        ...placement,
+        items: placement.items.map((item) => {
+          if (item.body.trim()) return item;
+          const defaultItem = defaultById.get(item.id);
+          if (!defaultItem?.body.trim()) return item;
+          return { ...item, body: defaultItem.body };
+        }),
+      };
+    }),
+  };
+}
+
 /** Admin config when present, otherwise built-in lounge TV tiles. */
 export function resolveLoungeTvTiles(mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvVideoTile[] | null {
   const fromAdmin = getLoungeTvTilesFromAdminConfig(mainTab, sidebarId);
-  if (fromAdmin !== null) return applyWatchLearnTileOverrides(mainTab, fromAdmin);
-  return applyWatchLearnTileOverrides(mainTab, getLoungeTvTilesStatic(mainTab, sidebarId));
+  const staticTiles = getLoungeTvTilesStatic(mainTab, sidebarId);
+  const tiles = fromAdmin !== null && fromAdmin.length > 0 ? fromAdmin : staticTiles;
+  return enrichWatchLearnTiles(
+    mainTab,
+    sidebarId,
+    applyWatchLearnTileOverrides(mainTab, tiles)
+  );
 }
 
 export async function hydrateLoungeTvAdminConfig(
@@ -343,6 +410,7 @@ export async function hydrateLoungeTvAdminConfig(
     merged = buildDefaultLoungeTvAdminConfig();
   }
 
+  merged = fillEmptyAdminBodiesFromDefaults(merged);
   saveLoungeTvAdminConfigToStorage(merged);
   return merged;
 }

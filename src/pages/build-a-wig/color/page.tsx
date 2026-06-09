@@ -1523,12 +1523,10 @@ function ColorSelection() {
               {founderNoirFalRegenUi && location.pathname.includes('/build-a-wig/noir/') && (
                 <div
                   className="w-full flex flex-col items-center"
-                  aria-hidden
                   style={{
                     position: 'relative',
                     zIndex: 30,
                     transform: 'translateY(-20px)',
-                    display: 'none',
                   }}
                 >
                   <p
@@ -1541,10 +1539,10 @@ function ColorSelection() {
                     }}
                   >
                     {livePreviewLoading
-                      ? 'LIVE PREVIEW: generating (fal)…'
+                      ? 'LIVE PREVIEW: generating (GPT Image 2)…'
                       : livePreviewError
                         ? `LIVE PREVIEW: ${livePreviewError}`
-                        : 'LIVE PREVIEW: NOIR color (admin) — cached angles skip fal.'}
+                        : 'LIVE PREVIEW: NOIR color (GPT Image 2) — cached angles skip fal.'}
                   </p>
                   {!livePreviewLoading && (
                     <div
@@ -1649,7 +1647,6 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
-                      ...(founderNoirFalRegenUi ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

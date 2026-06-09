@@ -4,7 +4,10 @@ import {
   LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
   scaleLobbyCasePropOpenOverlayRect,
 } from '../../constants/finalLobbyCasePropOverlays';
-import { LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX } from '../../constants/lobbyPaymentIcons';
+import {
+  LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX,
+  LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_Z_INDEX,
+} from '../../constants/lobbyPaymentIcons';
 import {
   SCENE_COVER_FALLBACK_MEASURE_REF,
   useSceneCoverHitRect,
@@ -22,23 +25,31 @@ type Props = {
   overlayScale?: number;
   /** Fills the display-case slot from {@link LobbyDisplayCaseShell}. */
   fillParent?: boolean;
+  /** When true, paint above the glass popover (phone open state). */
+  paintAbovePopover?: boolean;
 };
 
-const openArtImgStyle = {
-  objectFit: 'cover' as const,
-  objectPosition: 'center bottom',
-  zIndex: LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX,
-  pointerEvents: 'none' as const,
-  userSelect: 'none' as const,
-  opacity: 1,
-};
+function openArtImgStyle(paintAbovePopover?: boolean) {
+  return {
+    objectFit: (paintAbovePopover ? 'contain' : 'cover') as 'contain' | 'cover',
+    objectPosition: 'center bottom',
+    zIndex: paintAbovePopover
+      ? LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_Z_INDEX
+      : LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX,
+    pointerEvents: 'none' as const,
+    userSelect: 'none' as const,
+    opacity: 1,
+  };
+}
 
 function OpenArtImage({
   src,
   displayRect,
+  paintAbovePopover,
 }: {
   src: string;
   displayRect: FinalSceneHitRect;
+  paintAbovePopover?: boolean;
 }) {
   return (
     <img
@@ -51,7 +62,7 @@ function OpenArtImage({
       style={{
         position: 'absolute',
         ...rectToPercentStyle(displayRect),
-        ...openArtImgStyle,
+        ...openArtImgStyle(paintAbovePopover),
       }}
     />
   );
@@ -62,13 +73,16 @@ function LobbyCasePropOpenArtFillParent({
   visible,
   src,
   overlayScale = LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE,
-}: Pick<Props, 'visible' | 'src' | 'overlayScale'>) {
+  paintAbovePopover,
+}: Pick<Props, 'visible' | 'src' | 'overlayScale' | 'paintAbovePopover'>) {
   if (!visible) return null;
   const displayRect = scaleLobbyCasePropOpenOverlayRect(
     { left: 0, top: 0, width: 1, height: 1 },
     overlayScale,
   );
-  return <OpenArtImage src={src} displayRect={displayRect} />;
+  return (
+    <OpenArtImage src={src} displayRect={displayRect} paintAbovePopover={paintAbovePopover} />
+  );
 }
 
 function LoungeCasePropOpenArtMapped({
@@ -104,10 +118,16 @@ export function LobbyCasePropOpenArt({
   layoutOffset,
   overlayScale,
   fillParent = false,
+  paintAbovePopover = false,
 }: Props) {
   if (fillParent) {
     return (
-      <LobbyCasePropOpenArtFillParent visible={visible} src={src} overlayScale={overlayScale} />
+      <LobbyCasePropOpenArtFillParent
+        visible={visible}
+        src={src}
+        overlayScale={overlayScale}
+        paintAbovePopover={paintAbovePopover}
+      />
     );
   }
 

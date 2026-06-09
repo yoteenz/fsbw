@@ -1,4 +1,7 @@
-import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
+import {
+  bawFalEditPreserveReferenceBlock,
+  BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+} from './bawFalEditFidelityPrompt.js';
 
 export type NoirLayersPartSelection = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -132,7 +135,7 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     angleBlock,
     bangsAddon.trim(),
     bawFalEditPreserveReferenceBlock(),
-    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
   ]
     .filter((s) => s.length > 0)
@@ -196,8 +199,7 @@ export function buildUiRightSalonFromMiddlePartOutputPrompt(
     ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
     : '';
   const fidelity = bawFalEditPreserveReferenceBlock();
-  const tail =
-    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.';
+  const tail = ` ${BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK} Output must be extremely high-quality, crisp, and pixel-perfect.`;
   return (
     '**INPUT:** This image is the **MIDDLE part** (**center part**) version of this hairstyle for this **same** camera angle — **same** mannequin, scene, lighting, and **hair color**. ' +
       '**TASK:** **Recreate this photograph** with the **part on the LEFT side of her scalp** (**UI R / RIGHT part**): **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair. ' +
@@ -346,7 +348,7 @@ function buildLayersStylePromptShared(
     lengthNote,
     ...(bangsLine ? [bangsLine] : []),
     bawFalEditPreserveReferenceBlock(),
-    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
     'Change **only** the **hair** shape/style to ' +
       styleNoun +
@@ -410,8 +412,7 @@ export function buildBangsOnlyStylePrompt(angle: 'front' | 'left' | 'right'): st
     'Recreate this exact mannequin image, but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair.',
     angleConstraint,
     bawFalEditPreserveReferenceBlock(),
-    'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
-    'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo except the bangs as specified.',
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'The photo should be extremely high-quality, crisp and pixel-perfect.',
   ].join(' ');
 }
