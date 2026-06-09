@@ -26565,3 +26565,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move nudge, avatar, and chat down 16px in tandem.
 
 **Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `bottom` reduced 16px (`max(16px, safe-area)` → `max(0px, calc(max(16px, safe-area) - 16px))`) so FAB stack and chat panel move together. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Proactive nudge text rows down 2px
+
+**Context:** User asked to move the two text rows on the nudge down 2px without moving the bubble art.
+
+**Change:** **`psaAssistant.css`** — proactive nudge **`.psa-nudge-chip-content`** `top` **`+8px` → `+10px`** (scoped `:not(.psa-nudge-chip-show-chat)`); removed headline-only `top: 2px` so headline + body shift together. Pushed **`master`** + **`preview/mobile`**.
