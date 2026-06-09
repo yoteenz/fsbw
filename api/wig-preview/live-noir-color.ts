@@ -1,12 +1,12 @@
 export const config = {
-  maxDuration: 120,
+  maxDuration: 300,
 };
 
 /**
  * POST /api/wig-preview/live-noir-color
  *
  * **Signed-in** Supabase session: ensure NOIR forward mannequin exists in Supabase for **3 angles** at current
- * build selections + chosen color; call fal only for missing angles (saves cost). **`forceRegenerate: true`** re-runs fal even when WebPs exist (any **signed-in** user).
+ * build selections + chosen color; call fal **GPT Image 2** (`openai/gpt-image-2/edit`) only for missing angles (saves cost). **`forceRegenerate: true`** re-runs fal even when WebPs exist (any **signed-in** user).
  * Paths use **color-tier** hash (`styling` forced to `NONE` in hash) so salon styling changes do not move color files — see `wigPreviewManifestHashLiveColorTier` in `api/_lib/wigPreviewSelectionHash.ts`.
  *
  * Env (Vercel + local):
@@ -19,7 +19,7 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
- * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `4K` (default), `2K`, or `1K` — use **`1K`** / **`2K`** if Vercel timeouts (e.g. Hobby) or fal cost is an issue.
+ * Model: **`openai/gpt-image-2/edit`** — `image_size: auto`, `quality: auto`, `output_format: webp`.
  *
  * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
  * Vercel’s output for nested `api/wig-preview/*` can fail to resolve `../_lib/*` at runtime (`ERR_MODULE_NOT_FOUND`).
@@ -221,12 +221,6 @@ function readBool(obj: Record<string, unknown>, key: string): boolean {
   return false;
 }
 
-function readFalResolution(): '1K' | '2K' | '4K' {
-  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '4K').trim().toUpperCase();
-  if (r === '1K' || r === '2K' || r === '4K') return r;
-  return '4K';
-}
-
 function isJetBlackOffBlackCatalogColor(label: string, hex: string): boolean {
   const h = hex.replace(/^#/, '').toUpperCase();
   if (h === '000000' || h === '00000') return true;
@@ -239,8 +233,11 @@ const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
   'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain, and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth, or add a plastic / waxy / painterly CGI look.',
   'Lock **mannequin bust material**, **skin tone**, **facial features**, and **neck seam** to the reference — **no** melting, warping, retexturing, or “beauty filter” on the figure.',
   'Lock **background bricks**, **lighting**, **shadows**, and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
-  'Keep the **FRONTAL SLAYER** chest logo **sharp**, same **size** and **placement**, clean edges — **no** smeared, redrawn, or re-typed lettering.',
+  'The words on the logo on the chest must read **FRONTAL SLAYER** — keep the logo **consistent** (same size, placement, sharp lettering) for accuracy — **no** smeared, redrawn, or re-typed lettering.',
 ].join(' ');
+
+const BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK =
+  'Keep **everything else exactly the same** — same mannequin, brick background, lighting, and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
 
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
@@ -272,9 +269,8 @@ function buildStep2PromptNoLogoAttachment(
     recolorLead,
     angleConstraint,
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
-    'The logo on the center of the mannequin’s chest should be clear & legible — FRONTAL SLAYER fully readable — for accuracy & consistency.',
-    'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo except **hair color** as specified.',
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'The photo should be extremely high-quality, crisp and pixel-perfect.',
   ].join(' ');
 }
 
@@ -356,7 +352,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
   const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
   const mannequinByAngle = { front: frontUrl, left: leftUrl, right: rightUrl } as const;
-  const falResolution = readFalResolution();
 
   let supabase;
   try {
@@ -385,12 +380,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
       const prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex, angle);
       const mannequinUrl = mannequinByAngle[angle];
-      const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
+      const result = await fal.subscribe('openai/gpt-image-2/edit', {
         input: {
           prompt,
           image_urls: [mannequinUrl],
-          aspect_ratio: 'auto',
-          resolution: falResolution,
+          image_size: 'auto',
+          quality: 'auto',
           output_format: 'webp',
           num_images: 1,
         },

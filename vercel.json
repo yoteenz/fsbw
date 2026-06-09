@@ -22,10 +22,10 @@
       "maxDuration": 60
     },
     "api/wig-preview/live-noir-color.ts": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "api/live-wig-after-color-styling.ts": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "api/admin/consult-quotes.ts": {
       "maxDuration": 60

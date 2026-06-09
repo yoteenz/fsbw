@@ -1682,7 +1682,7 @@ export default function StylingSelectionPage() {
                 }}
                 aria-hidden={!showNoirStylingFalRegenText}
               >
-                Fal regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
+                GPT Image 2 regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
               </p>
             )}
             {showNoirLiveStylingRegenControls && (
@@ -1799,7 +1799,7 @@ export default function StylingSelectionPage() {
                     cursor: liveStylingAnyLoading || regenStylingAngle ? 'wait' : 'pointer',
                   }}
                 >
-                  {liveStylingAnyLoading ? 'regenerating all angles…' : 'regenerate all angles (fal)'}
+                  {liveStylingAnyLoading ? 'regenerating all angles…' : 'regenerate all angles (GPT Image 2)'}
                 </button>
                 <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                 {(['left', 'front', 'right'] as const).map((ang) => {

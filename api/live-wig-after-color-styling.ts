@@ -1,9 +1,9 @@
-export const config = { maxDuration: 120 };
+export const config = { maxDuration: 300 };
 
 /**
  * POST /api/live-wig-after-color-styling
  *
- * **Signed-in** Supabase session (Bearer JWT). Runs fal once per angle when outputs are missing (or all angles when **`forceRegenerate: true`**).
+ * **Signed-in** Supabase session (Bearer JWT). Runs **GPT Image 2** (`openai/gpt-image-2/edit`) once per angle when outputs are missing (or all angles when **`forceRegenerate: true`**).
  *
  * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP** from Storage (same paths
  * as live color — hair already matches selected swatch). Prompt: `buildLayersStylePromptFromColorTierWebp` — long layered curls
@@ -49,6 +49,10 @@ import {
   buildLayersStylePromptFromColorTierWebp,
   buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
+import {
+  BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL,
+  bawGptImage2EditFalInput,
+} from './_lib/bawGptImage2FalInput.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -104,14 +108,6 @@ function readBool(obj: Record<string, unknown>, key: string): boolean {
     return s === '1' || s === 'true' || s === 'yes';
   }
   return false;
-}
-
-function readFalResolutionForAfterColorStyling(): '1K' | '2K' | '4K' {
-  const primary = process.env.WIG_PREVIEW_FAL_STYLING_RESOLUTION?.trim();
-  const fallback = process.env.WIG_PREVIEW_FAL_RESOLUTION?.trim();
-  const r = (primary || fallback || '2K').toUpperCase();
-  if (r === '1K' || r === '2K' || r === '4K') return r;
-  return '2K';
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -348,7 +344,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    const falResolution = readFalResolutionForAfterColorStyling();
     const generated: string[] = [];
     const skipped: string[] = [];
 
@@ -435,15 +430,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : [colorPublicUrl];
       }
 
-      const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
-        input: {
-          prompt,
-          image_urls: imageUrls,
-          aspect_ratio: 'auto',
-          resolution: falResolution,
-          output_format: 'webp',
-          num_images: 1,
-        },
+      const result = await fal.subscribe(BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL, {
+        input: bawGptImage2EditFalInput(prompt, imageUrls),
         logs: false,
       });
       const falUrl = (result as { data?: { images?: { url?: string }[] } })?.data?.images?.[0]?.url;
