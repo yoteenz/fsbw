@@ -26525,3 +26525,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to use **`GIFT_CARD_CART_THUMBNAIL_SRC`** (Supabase **`image (23).png`**) on **`/home/tools`** gift card strip, same as bag/cart/checkout.
 
 **Changes:** **`src/pages/tools/page.tsx`** — import **`GIFT_CARD_CART_THUMBNAIL_SRC`** from **`giftCardCheckout.ts`**; replace **`/assets/gift-card asset.png`** on strip product image. Pushed **`master`** + **`preview/mobile`** (`572b3a2e`).
+
+---
+
+## 2026-06-08 — Bundles Details tab: 150g bundle bullet
+
+**Context:** User asked to add a second bullet on bundles **DETAILS** tab (after first bullet) about **150g** vs traditional **100 gram** bundles.
+
+**Changes:** **`BundleProductDetailsTab.tsx`** — new **`BUNDLE_DETAILS_BULLETS`** entry after single-donor raw hair bullet. Pushed **`master`** + **`preview/mobile`**.
