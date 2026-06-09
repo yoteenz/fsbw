@@ -199,11 +199,8 @@ export function BawNoirWigPreviewHeroThumbs({
                         boxSizing: 'border-box',
                       }
                     : {
-                        border: subPageStaticSelectionOnFrame && selectedView === index ? '3px solid #fff' : undefined,
-                        boxShadow:
-                          subPageStaticSelectionOnFrame && selectedView === index
-                            ? '0 0 0 1.1px #000'
-                            : undefined,
+                        border: selectedView === index ? '3px solid #fff' : '3px solid #F8F8F8',
+                        boxShadow: selectedView === index ? '0 0 0 1.1px #000' : '0 0 0 1.3px transparent',
                         boxSizing: 'border-box',
                       }),
                   ...(!hideBrick &&

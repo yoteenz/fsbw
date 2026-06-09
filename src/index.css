@@ -3653,8 +3653,16 @@ img.natural-front-mobile {
 /* NOIR natural front (M) mannequin overlay — scale in place (keep L/R thumb layout + bottom align) */
 .baw-noir-thumb-mannequin-slot
   .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
-  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
+  transform: translateX(-50%) translateY(4px)
+    scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
   transform-origin: bottom center !important;
+}
+
+.baw-noir-thumb-mannequin-slot
+  .baw-noir-thumb-static-img--hub.baw-noir-front-mannequin--scaled.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
+  bottom: 3px !important;
+  transform: translateX(-50%) translateY(4px)
+    scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
 }
 
 /* L/R thumbs — nudge overlay down inside brick frame */
@@ -3668,18 +3676,20 @@ img.natural-front-mobile {
   transform: translateX(-50%) translateY(4px) !important;
 }
 
-/* Hub thumbs: inner brick in clip frame; outer `.leaf-bg` = selection ring only (no duplicate brick) */
+/* Hub thumbs: inner brick in clip frame; outer `.leaf-bg` = legacy stack spacer (selection ring on brick frame) */
 .baw-noir-thumb-row .leaf-stack.thumb .leaf-bg {
   background-image: none !important;
   background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-/* BAW thumb row: contain stacks + click wrap so L/R overlays cannot paint outside brick cell */
-.baw-noir-thumb-row .leaf-stack.thumb {
-  overflow: hidden !important;
-}
-
+/* Clip mannequin only — not the leaf-stack (so white/black selection borders are not clipped) */
 .baw-noir-thumb-row .baw-noir-thumb-click-wrap {
+  overflow: visible !important;
+}
+
+.baw-noir-thumb-row .baw-noir-thumb-brick-frame {
   overflow: hidden !important;
 }
 
