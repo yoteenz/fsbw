@@ -26806,6 +26806,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-07 — PSA FAB hidden on Build-a-Wig routes
+
+**Context:** User asked to hide PSA on **BAW** pages like lobby/lounge/account.
+
+**Change:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** also true for **`/build-a-wig`** and **`/build-a-wig/*`** (hub + all customize/edit sub-routes). Avatar + nudge hidden; chat panel unchanged if already open. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-09 — NOIR live color/styling: GPT Image 2 + unhidden Fal regen UI
 
 **Context (full chat):** User asked for OpenArt vs Fal pricing for BAW color/styling (answered: Fal+NBP ~$151 warm-cache; GPT2 medium cheaper on Fal but timeouts; OpenArt has no API). User then asked to **switch back to GPT Image 2** for generating color/styling previews, **unhide** founder Fal regen controls on color + styling pages, strengthen logo prompt (**FRONTAL SLAYER** on chest, hair-only edit), and use GPT2 settings **`image_size: auto`**, **`quality: auto`**, **`output_format: webp`**.
