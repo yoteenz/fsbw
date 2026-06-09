@@ -26698,7 +26698,7 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`LoungeTvWatchLearnPlayer.tsx`** — render **`body ?? description ?? static`**; video + title pinned; **description-only** inner scroll region.
 - **`LoungeTvOverlay.tsx`** — media panel **`overflowY: hidden`** when Watch + Learn player open (nested description scroll).
 
-**PSA:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** for **`/lobby`** and **`/lobby/lounge`**. **`PsaAssistantWidget`** — hide **`psa-widget-fab-stack`** (avatar + nudge) on those routes; chat panel unchanged if already open.
+**PSA:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** for **`/lobby`**, **`/lobby/lounge`**, and **`/account`** (profile). **`PsaAssistantWidget`** — hide **`psa-widget-fab-stack`** (avatar + nudge) on those routes; chat panel unchanged if already open.
 
 **Commit:** **`291bc559`** on **`master`** + **`preview/mobile`**.
 
@@ -26729,3 +26729,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Cause:** Seek bar was **`position: absolute; bottom: 0`** inside the aspect-ratio shell with **`overflow: hidden`** — clipped after **`height: 0` + `paddingTop`** shell refactor.
 
 **Fix:** **`LoungeTvWatchLearnPlayer`** — seek strip moved **below** the video frame (in-flow, between video and title) when **`paused || isScrubbing`**; tap-to-pause on full video shell. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA FAB hidden on account profile
+
+**Context:** User asked to hide PSA **avatar + nudge** on **account profile** as well (same as lobby/lounge).
+
+**Change:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** also true for **`/account`**. Pushed **`master`** + **`preview/mobile`**.
