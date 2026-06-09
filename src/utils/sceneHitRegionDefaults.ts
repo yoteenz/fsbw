@@ -5,6 +5,10 @@ import {
   LOUNGE_TV_PLAY_TAP_LAYOUT,
 } from '../constants/finalLobbySceneAssets';
 import {
+  LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET,
+  LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET,
+} from '../constants/finalLobbyCasePropOverlays';
+import {
   LOBBY_DISPLAY_CASE_HIT_LAYOUT,
   LOBBY_DISPLAY_CASE_LAYOUT_OFFSET,
 } from '../constants/lobbyDisplayCaseLayout';
@@ -95,9 +99,21 @@ export function getDefaultSceneHitRegionConfig(id: SceneHitRegionId): SceneHitRe
         layout: cloneLayout(LOBBY_DISPLAY_CASE_HIT_LAYOUT),
       };
     case 'lobby-display-case-register':
-      return { layout: {} };
+      return {
+        coverOffset: {
+          x: LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET.x,
+          y: LOBBY_CASE_PROP_REGISTER_LAYOUT_OFFSET.y,
+        },
+        layout: {},
+      };
     case 'lobby-display-case-phone':
-      return { layout: {} };
+      return {
+        coverOffset: {
+          x: LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET.x,
+          y: LOBBY_CASE_PROP_PHONE_LAYOUT_OFFSET.y,
+        },
+        layout: {},
+      };
     default:
       return { layout: {} };
   }

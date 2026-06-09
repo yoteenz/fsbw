@@ -35,7 +35,6 @@ import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons'
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
 import { useLobbyShelfHitDebugEnabled } from '../../utils/sceneHitDebug';
 import {
-  LOBBY_CASE_POPOVER_PHONE_GAP_ABOVE_PROP,
   LOBBY_CASE_POPOVER_PHONE_OFFSET_UP,
   LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP,
 } from './lobbyCaseResponsive';
@@ -262,7 +261,6 @@ export function LobbySceneHotspots({
             sections={LOBBY_PHONE_POPOVER_SECTIONS}
             align="right"
             responsive
-            panelGapAboveProp={LOBBY_CASE_POPOVER_PHONE_GAP_ABOVE_PROP}
             panelOffsetUp={LOBBY_CASE_POPOVER_PHONE_OFFSET_UP}
             openRootZIndex={LOBBY_CASE_POPOVER_PHONE_ROOT_Z_INDEX}
           >

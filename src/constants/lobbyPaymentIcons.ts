@@ -54,8 +54,8 @@ export const LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR = 'blur(10px)';
 /** Register glass panel above prop (px); lower = closer to asset. */
 export const LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX = -14;
 
-/** Phone glass panel above prop (px); negative values intrude on the open phone PNG. */
-export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = 20;
+/** Phone glass panel above prop (px); open PNG paints above panel at z-32. */
+export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = -16;
 
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
