@@ -26633,3 +26633,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Kept** Jun 9 structural clipping fix: phone open art **z-32**, popover root **z-24**, DOM order phone → open art, **`paintAbovePopover`** / **`object-fit: contain`**.
 
 **Changes:** **`sceneHitRegionDefaults.ts`**, **`lobbyCaseResponsive.ts`**, **`lobbyPaymentIcons.ts`**, **`LobbySceneHotspots.tsx`**. Commit **`b9b7a1f0`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Lounge TV close X nudge after play
+
+**Context:** User asked to move the **X close icon only** on the TV **after pressing play** down **4px** and left **4px**.
+
+**Change:** **`loungeTvSceneLayout.ts`** — **`LOUNGE_TV_MENU_CLOSE_INSET_TOP_PX`** / **`RIGHT_PX`** = **4**. **`LoungeTvFullscreenShell.tsx`** — close chip uses **`calc(% + px)`** on top/right. Pushed **`master`** + **`preview/mobile`**.
