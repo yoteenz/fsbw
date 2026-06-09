@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
+  isPsaFabHiddenPath,
   isPsaHiddenPath,
   PSA_NUDGE_BUBBLE_SRC,
   PSA_WAVING_MS,
@@ -614,6 +615,7 @@ export default function PsaAssistantWidget() {
             />
           </>
         ) : null}
+        {!isPsaFabHiddenPath(location.pathname) ? (
         <div
           className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
         >
@@ -671,6 +673,7 @@ export default function PsaAssistantWidget() {
             />
           )}
         </div>
+        ) : null}
       </div>
 
       <ConfirmationModal

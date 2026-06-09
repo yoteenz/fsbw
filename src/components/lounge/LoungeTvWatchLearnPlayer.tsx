@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { LoungeTvVideoTile } from './loungeTvContent';
+import { getWatchLearnVideoCopy, type LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
@@ -278,20 +278,28 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
   const progressLabel =
     duration > 0 ? `${elapsedLabel}/${totalLabel}` : elapsedLabel !== '—' ? `${elapsedLabel}/—` : '—';
+  const descriptionText = (
+    tile.body?.trim() ||
+    tile.description?.trim() ||
+    getWatchLearnVideoCopy(tile.id)?.description ||
+    ''
+  ).toUpperCase();
 
   return (
     <div
       style={{
         width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 2,
+          flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
@@ -510,19 +518,31 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </div>
       </div>
 
-      <p
-        style={{
-          margin: 0,
-          paddingTop: '2px',
-          fontFamily: BODY_FONT,
-          fontSize: '7px',
-          lineHeight: 1.35,
-          color: BODY_GRAY,
-          textAlign: 'left',
-        }}
-      >
-        {tile.description}
-      </p>
+      {descriptionText ? (
+        <div
+          style={{
+            flex: '1 1 auto',
+            minHeight: 0,
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            paddingTop: '2px',
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontFamily: BODY_FONT,
+              fontSize: '7px',
+              lineHeight: 1.35,
+              color: BODY_GRAY,
+              textAlign: 'left',
+            }}
+          >
+            {descriptionText}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }

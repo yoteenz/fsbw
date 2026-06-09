@@ -500,7 +500,7 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            overflowY: 'auto',
+            overflowY: watchLearnTile ? 'hidden' : 'auto',
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             paddingBottom: loungeTvGlassCqw(2.5, 6, 10),

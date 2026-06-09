@@ -191,6 +191,12 @@ export function isPsaHiddenPath(pathname: string): boolean {
   );
 }
 
+/** Lobby + lounge: hide floating avatar and nudge only (chat panel may still open elsewhere). */
+export function isPsaFabHiddenPath(pathname: string): boolean {
+  if (pathname === '/lobby') return true;
+  return pathname === '/lobby/lounge' || pathname.startsWith('/lobby/lounge/');
+}
+
 export function getPsaAvatarSrc(expression: PsaAvatarExpression): string {
   const base = PSA_AVATAR_SRC[expression] ?? PSA_AVATAR_FALLBACK_SRC;
   return `${base}?v=${PSA_AVATAR_ASSET_VERSION}`;
