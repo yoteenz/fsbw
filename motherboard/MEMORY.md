@@ -26869,3 +26869,12 @@ Pushed **`master`** + **`preview/mobile`**.
 **Follow-up (same chat):** Only **M** thumb clipped — **L/R** Supabase PNGs overflowed (M had **scale**). **Fix:** **`baw-noir-thumb-lr-overlay`** + **`height: 100%` / `object-fit: contain`** for L/R; **`overflow: hidden`** on **`leaf-stack.thumb`** + click wrap; **inner `baw-noir-thumb-brick-bg` on hub too** (outer **`.leaf-bg`** = selection ring only, transparent brick); drop fixed **`width`/`height`** attrs on static thumb **`<img>`**.
 
 **Follow-up (same chat):** Thumb **white/black selection borders** lost (**`overflow: hidden`** on **`leaf-stack`** clipped **`.leaf-bg`** / **`box-shadow`**). **Fix:** selection on **`baw-noir-thumb-brick-frame`** for hub + sub-pages; clip only brick frame; **M thumb `translateY(4px)`** on front-scaled transform.
+
+---
+
+## 2026-06-09 — NOIR sub-page hero/thumb layout matches main hub (exclude hairline)
+
+- **Context:** User asked to update hero + three thumbnail images on all **eight** NOIR customize/edit sub-pages (**addons, cap, color, density, lace, length, styling, texture**) to match the **main hub** thumbnail and hero container/image position. **Hairline** excluded.
+- **Topics covered:** Prior session work on NOIR mannequin assets, brick clipping, M/L/R nudges, hub vs sub-page thumb differences (`hubThumbsOnlyOuter`, 12px vs 2px gap, `p-0` vs `p-1`, `translateX` nudges, `baw-noir-thumb-static-img--hub`).
+- **Decisions / outcomes:** Centralize hub-like layout in **`BawNoirWigPreviewFrames.tsx`** via **`isBawNoirHubLikeThumbPathname`** — true for **`/build-a-wig/noir`**, **`.../customize`**, **`.../edit`**, and the eight sub-steps (both customize + edit, incl. nested **`/styling/...`**). **`hubThumbsOnlyOuter`** now **`isBawNoirHubLikeThumbPathname || isBawProductHubThumbPathname`** so NOIR sub-steps get outer **`.leaf-bg`**, hub brick frame, **12px** gap, no per-thumb **`translateX`** nudges, **`baw-noir-thumb-static-img--hub`**. Default **`thumbRowClassName="items-center"`** on NOIR hub-like paths. **Hairline** unchanged (still inner-brick sub-page layout). Other units (blanco, waves, curls) deeper sub-pages unchanged.
+- **Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`** only; committed **`master`** + **`preview/mobile`**.
