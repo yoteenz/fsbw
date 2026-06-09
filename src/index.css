@@ -3532,6 +3532,62 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
+/* BAW NOIR thumbs: brick + mannequin in one clip frame (mirrors hero) */
+.baw-noir-thumb-brick-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.baw-noir-thumb-brick-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/assets/leaf-brick-resize.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.baw-noir-thumb-mannequin-slot {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.baw-noir-thumb-brick-frame--hub {
+  background-color: transparent;
+}
+
+.baw-noir-thumb-brick-frame--live {
+  background-color: transparent;
+}
+
+/* Static overlay thumbs: bottom-align inside clip (Supabase L/M/R PNGs) */
+.baw-noir-thumb-mannequin-slot .baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
+  top: auto !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
+  object-position: bottom center !important;
+}
+
+.baw-noir-thumb-mannequin-slot .baw-noir-thumb-mannequin--live-centered.thumbnail-mannequin-img--live-noir {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
 /* BAW NOIR thumbs: clip to frame — no duplicate leaf-brick underlay */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
@@ -3589,31 +3645,26 @@ img.natural-front-mobile {
   display: block !important;
 }
 
-/* BAW NOIR static thumbs (inner brick + mannequin): align **bottom** of mannequin with bottom of brick frame — not vertically centered */
-.baw-noir-thumb-frame .baw-noir-thumb-static-img.thumbnail-mannequin-img {
-  top: auto !important;
-  bottom: 0 !important;
-  transform: translateX(-50%) !important;
-  object-position: bottom center !important;
-}
-
 /* BAW product hub only: nudge mannequin vs outer `.leaf-bg` brick art */
-.baw-noir-thumb-frame .baw-noir-thumb-static-img--hub.thumbnail-mannequin-img {
+.baw-noir-thumb-mannequin-slot .baw-noir-thumb-static-img--hub.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
   bottom: 3px !important;
 }
 
 /* NOIR natural front (M) mannequin overlay — scale in place (keep L/R thumb layout + bottom align) */
-.baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.thumbnail-mannequin-img {
+.baw-noir-thumb-mannequin-slot
+  .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
   transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
   transform-origin: bottom center !important;
 }
 
 /* L/R thumbs — nudge overlay down inside brick frame */
-.baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-thumb-lr-nudge.thumbnail-mannequin-img {
+.baw-noir-thumb-mannequin-slot
+  .baw-noir-thumb-static-img.baw-noir-thumb-lr-nudge.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
   transform: translateX(-50%) translateY(4px) !important;
 }
 
-.baw-noir-thumb-frame .baw-noir-thumb-static-img--hub.baw-noir-thumb-lr-nudge.thumbnail-mannequin-img {
+.baw-noir-thumb-mannequin-slot
+  .baw-noir-thumb-static-img--hub.baw-noir-thumb-lr-nudge.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
   transform: translateX(-50%) translateY(4px) !important;
 }
 

@@ -183,49 +183,29 @@ export function BawNoirWigPreviewHeroThumbs({
               onClick={() => onSelectView(index)}
             >
               <div
-                className={`relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame${
+                className={`baw-noir-thumb-brick-frame baw-noir-thumb-frame${
                   subPageStaticSelectionOnFrame && !hideBrick ? ' baw-noir-thumb-frame--static-sub' : ''
-                }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}`}
+                }${hideBrick ? ' baw-noir-thumb-brick-frame--live baw-noir-thumb-frame--live-noir' : ''}${
+                  hubThumbsOnlyOuter && !hideBrick ? ' baw-noir-thumb-brick-frame--hub' : ''
+                }`}
                 data-baw-thumb-index={index}
                 style={{
                   width: `${BAW_NOIR_THUMB_MANNEQUIN_W}px`,
                   height: `${BAW_NOIR_THUMB_MANNEQUIN_H}px`,
-                  position: 'relative',
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  ...(hubThumbsOnlyOuter && !hideBrick
+                  ...(hideBrick
                     ? {
-                        overflow: 'hidden',
-                        backgroundImage: 'none',
-                        /* Transparent so the outer `.leaf-bg` (hub thumb art) is visible — opaque gray hid it */
-                        backgroundColor: 'transparent',
+                        border: selectedView === index ? '3px solid #fff' : undefined,
+                        boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                         boxSizing: 'border-box',
                       }
-                    : hideBrick
-                      ? {
-                          overflow: 'hidden',
-                          /* Live WebPs already include brick — no second CSS brick; transparent frame avoids white side gutters with `contain` */
-                          backgroundImage: 'none',
-                          backgroundColor: 'transparent',
-                          border: selectedView === index ? '3px solid #fff' : undefined,
-                          boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
-                          boxSizing: 'border-box',
-                        }
-                      : {
-                          overflow: 'visible',
-                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
-                          boxSizing: 'border-box',
-                          border: subPageStaticSelectionOnFrame && selectedView === index ? '3px solid #fff' : undefined,
-                          boxShadow:
-                            subPageStaticSelectionOnFrame && selectedView === index
-                              ? '0 0 0 1.1px #000'
-                              : undefined,
-                        }),
+                    : {
+                        border: subPageStaticSelectionOnFrame && selectedView === index ? '3px solid #fff' : undefined,
+                        boxShadow:
+                          subPageStaticSelectionOnFrame && selectedView === index
+                            ? '0 0 0 1.1px #000'
+                            : undefined,
+                        boxSizing: 'border-box',
+                      }),
                   ...(!hideBrick &&
                     !hubStaticThumbSpacingLikeSubLive &&
                     index === 1 && { transform: 'translateX(-2px)' }),
@@ -234,37 +214,37 @@ export function BawNoirWigPreviewHeroThumbs({
                     index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
-                <img
-                  alt={`Thumbnail ${index + 1}`}
-                  width={BAW_NOIR_THUMB_MANNEQUIN_W}
-                  height={BAW_NOIR_THUMB_MANNEQUIN_H}
-                  src={view}
-                  className={
-                    hideBrick
-                      ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
-                      : `absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img${
-                          hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
-                        }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}${
-                          thumbLrNudge ? ' baw-noir-thumb-lr-nudge' : ''
-                        }`
-                  }
-                  style={
-                    hideBrick
-                      ? ({
-                          left: '50%',
-                          top: '50%',
-                          transform: 'translate(-50%, -50%)',
-                        } as CSSProperties)
-                      : ({
-                          ...(thumbFrontScaled
-                            ? {
-                                '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
-                              }
-                            : {}),
-                          /* Bottom alignment: see `.baw-noir-thumb-static-img` in index.css */
-                        } as CSSProperties)
-                  }
-                />
+                {!hideBrick && !hubThumbsOnlyOuter && (
+                  <div className="baw-noir-thumb-brick-bg" aria-hidden="true" />
+                )}
+                <div className="baw-noir-thumb-mannequin-slot">
+                  <img
+                    alt={`Thumbnail ${index + 1}`}
+                    width={BAW_NOIR_THUMB_MANNEQUIN_W}
+                    height={BAW_NOIR_THUMB_MANNEQUIN_H}
+                    src={view}
+                    className={
+                      hideBrick
+                        ? 'thumbnail-mannequin-img thumbnail-mannequin-img--live-noir baw-noir-thumb-mannequin--live-centered'
+                        : `thumbnail-mannequin-img baw-noir-thumb-static-img baw-noir-thumb-mannequin--brick-aligned${
+                            hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
+                          }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}${
+                            thumbLrNudge ? ' baw-noir-thumb-lr-nudge' : ''
+                          }`
+                    }
+                    style={
+                      hideBrick
+                        ? undefined
+                        : ({
+                            ...(thumbFrontScaled
+                              ? {
+                                  '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
+                                }
+                              : {}),
+                          } as CSSProperties)
+                    }
+                  />
+                </div>
               </div>
             </div>
           </div>
