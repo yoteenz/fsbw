@@ -272,6 +272,11 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   if (!tile.videoSrc) return null;
 
   const shellHeightExtraPx = videoFrameRegion.layout.layoutHeightExtraPx ?? 0;
+  const shellScaleY = videoFrameRegion.layout.layoutScale?.y ?? 1;
+  const shellAspectPaddingTop =
+    shellHeightExtraPx > 0
+      ? `calc(100% * ${9 * shellScaleY} / 16 + ${shellHeightExtraPx}px)`
+      : `calc(100% * ${9 * shellScaleY} / 16)`;
 
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
   const elapsedLabel = formatLoungeTvVideoDuration(currentTime);
@@ -289,17 +294,15 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     <div
       style={{
         width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          flexShrink: 0,
+          position: 'sticky',
+          top: 0,
+          zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
@@ -316,10 +319,9 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             position: 'relative',
             ...loungeTvVideoShellStyle(videoFrameRegion.layout),
             width: '100%',
-            aspectRatio: '16 / 9',
-            boxSizing: shellHeightExtraPx > 0 ? 'content-box' : 'border-box',
-            paddingBottom: shellHeightExtraPx > 0 ? `${shellHeightExtraPx}px` : undefined,
-            background: '#0a0a0a',
+            height: 0,
+            paddingTop: shellAspectPaddingTop,
+            background: '#000000',
             overflow: 'hidden',
             cursor: 'pointer',
             flexShrink: 0,
@@ -329,7 +331,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             border: '2px dashed rgba(0, 151, 167, 0.95)',
           }}
         >
-          <div ref={shellRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div ref={shellRef} style={{ position: 'absolute', inset: 0 }}>
           <video
             key={tile.id}
             ref={videoRef}
@@ -519,29 +521,19 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       </div>
 
       {descriptionText ? (
-        <div
+        <p
           style={{
-            flex: '1 1 auto',
-            minHeight: 0,
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
+            margin: 0,
             paddingTop: '2px',
+            fontFamily: BODY_FONT,
+            fontSize: '7px',
+            lineHeight: 1.35,
+            color: BODY_GRAY,
+            textAlign: 'left',
           }}
         >
-          <p
-            style={{
-              margin: 0,
-              fontFamily: BODY_FONT,
-              fontSize: '7px',
-              lineHeight: 1.35,
-              color: BODY_GRAY,
-              textAlign: 'left',
-            }}
-          >
-            {descriptionText}
-          </p>
-        </div>
+          {descriptionText}
+        </p>
       ) : null}
     </div>
   );
