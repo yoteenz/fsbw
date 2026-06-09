@@ -117,15 +117,6 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
-/** Origin fal can fetch for static `/assets/natural *.png` (MIDDLE + FLAT IRON second ref). */
-function wigPreviewPublicAppOrigin(): string {
-  const explicit = (process.env.WIG_PREVIEW_PUBLIC_APP_ORIGIN || process.env.SITE_URL || '').trim().replace(/\/$/, '');
-  if (explicit) return explicit;
-  const v = (process.env.VERCEL_URL || '').trim();
-  if (v) return v.startsWith('http') ? v : `https://${v}`;
-  return 'https://fsbw.vercel.app';
-}
-
 /** Same NOIR base angles as BAW hub static mannequins (Supabase `live-preview/Noir/` refs). */
 function noirBaseNaturalMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'right'): string {
   return noirNaturalMannequinPublicUrlForAngle(angle);

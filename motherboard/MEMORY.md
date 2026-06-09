@@ -26855,3 +26855,5 @@ Pushed **`master`** + **`preview/mobile`**.
 **Follow-up (same chat):** User asked **+5%** on **hero** M mannequin — **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE`** **`0.84525` → `0.8875125`** (shared constant updates BAW hero, thumbs, product page).
 
 **Follow-up (same chat):** Still too small — **+5%** more: scale **`0.8875125` → `0.931888125`**.
+
+**Follow-up (same chat):** User replaced NOIR **L** and **R** natural mannequins with Supabase **`live-preview/Noir/image (27).png`** (L) and **`image (28).png`** (R). **`NOIR_NATURAL_LEFT_MANNEQUIN_SRC`**, **`NOIR_NATURAL_RIGHT_MANNEQUIN_SRC`** + updated **`NOIR_NATURAL_MANNEQUIN_TRIPLE`** in **`bawStaticMannequinReferencePaths.ts`**; **`api/_lib/bawNoirNaturalMannequinUrls.ts`**; **`live-noir-color.ts`** defaults for **`WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL`** / **`_RIGHT_URL`** when env unset; **`.env.example`**. M scale unchanged; brick overlay logic unchanged (`live-preview/Noir/` = mannequin overlay).
