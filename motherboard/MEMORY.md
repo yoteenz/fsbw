@@ -26659,3 +26659,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Cause:** Same-origin **`/assets/tv-content-video.mp4`** was re-fetched into a **blob URL** after open, reloading the element and resetting **`currentTime`** mid-session. Tap-to-play **`pointerup`** and **`timeupdate`** also fought range input during drag; seek thumb hit target was ~5px wide.
 
 **Fix:** **`LoungeTvWatchLearnPlayer`** — skip blob swap for same-origin sources; preserve time when cross-origin blob loads; **`isScrubbing`** ref blocks **`timeupdate`** + tap toggle during drag; pause while scrubbing, resume if was playing; larger seek strip/thumb in **`index.css`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: contain fit, height +16px (revert width)
+
+**Context:** User reported video too zoomed/cropped after **`object-fit: cover`** + **+16px width**; meant **+16px height** not width.
+
+**Change:** **`object-fit: contain`**, **`object-position: center center`**. Removed **`LOUNGE_TV_WATCH_LEARN_VIDEO_WIDTH_EXTRA_PX`** / **`layoutWidthExtraPx`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX`** **12 → 28** (+16px). Pushed **`master`** + **`preview/mobile`**.
