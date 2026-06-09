@@ -26790,6 +26790,22 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-07 — PSA: four new avatar expressions wired (quiz, occasion, forecast)
+
+**Context:** User already has **`remembering`** + **`blueprint`** PNGs; wanted names/purposes + code wiring for four more assets: tablet lifestyle interviewer, open-hand occasion ask, satisfied “locked in” nod, Miami maintenance finger — without wasting generations.
+
+**New slugs → filenames → when shown:**
+| Slug | File | Trigger |
+|------|------|---------|
+| `archetype-quiz` | `psa-avatar-archetype-quiz.png` | **`isArchetypeQuizActive()`** (3 Slay Archetype questions) |
+| `remembering-ask` | `psa-avatar-remembering-ask.png` | **`isOccasionCaptureActive()`** (“in a few words, what was this for?”) |
+| `memory-locked` | `psa-avatar-memory-locked.png` | Assistant reply **“LOCKED IN. I WILL REMEMBER…”** after occasion save |
+| `slay-forecast` | `psa-avatar-slay-forecast.png` | **`slay_forecast`** session mode / climate keywords (split from **`blueprint`**) |
+
+**Code:** **`psaConfig.ts`** (types + paths, **`PSA_AVATAR_ASSET_VERSION` → `12`**), **`resolvePsaAvatarExpression.ts`**, **`api/_lib/psaMood.ts`**, **`psa-avatar-expression-manifest.mjs`**, golden-prompts + **`PSA_SETUP.md`**. Missing PNGs still fall back to neutral. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-09 — NOIR live color/styling: GPT Image 2 + unhidden Fal regen UI
 
 **Context (full chat):** User asked for OpenArt vs Fal pricing for BAW color/styling (answered: Fal+NBP ~$151 warm-cache; GPT2 medium cheaper on Fal but timeouts; OpenArt has no API). User then asked to **switch back to GPT Image 2** for generating color/styling previews, **unhide** founder Fal regen controls on color + styling pages, strengthen logo prompt (**FRONTAL SLAYER** on chest, hair-only edit), and use GPT2 settings **`image_size: auto`**, **`quality: auto`**, **`output_format: webp`**.
