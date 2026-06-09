@@ -191,9 +191,9 @@ export function isPsaHiddenPath(pathname: string): boolean {
   );
 }
 
-/** Lobby + lounge: hide floating avatar and nudge only (chat panel may still open elsewhere). */
+/** Lobby, lounge, account profile: hide floating avatar and nudge only (chat panel may still open elsewhere). */
 export function isPsaFabHiddenPath(pathname: string): boolean {
-  if (pathname === '/lobby') return true;
+  if (pathname === '/lobby' || pathname === '/account') return true;
   return pathname === '/lobby/lounge' || pathname.startsWith('/lobby/lounge/');
 }
 
