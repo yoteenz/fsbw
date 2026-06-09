@@ -26549,3 +26549,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to remove gray **purchase policy** Bohemy section header on bundles **POLICY** tab.
 
 **Changes:** **`BundleProductPolicyTab.tsx`** — removed **`<p style={SECTION_TITLE_STYLE}>purchase policy</p>`**; opening body copy unchanged. Pushed **`master`** + **`preview/mobile`** (`3b5f3656`).
+
+---
+
+## 2026-06-09 — PSA chat panel nudge 2px right
+
+**Context:** User asked to move PSA chat box only 2px right; avatar and nudge unchanged.
+
+**Change:** **`psaAssistant.css`** — **`.psa-chat-panel`** `transform` X **`-20px` → `-18px`** (FAB stack / nudge offsets untouched). Pushed **`master`** + **`preview/mobile`**.
