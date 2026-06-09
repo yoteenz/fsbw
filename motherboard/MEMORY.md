@@ -26769,3 +26769,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`loungeTvAdminConfig.resolveLoungeTvTiles`** — if admin placement is **empty array**, fall back to static tiles.
 
 **Conventions:** Custom Plucking Your Lace copy lives in **Admin → Backend → CONTENT** **`body`** field; player only displays resolved text, does not own layout hacks for copy.
+
+---
+
+## 2026-06-07 — Watch + Learn: restore scrubber + drag seek (keep scroll/description)
+
+**Context:** After **`2e5258b5`**, user confirmed **scroll + gray detail text** work but **red scrubber** and **drag fast-forward/rewind** were still missing.
+
+**Cause:** **`aspectRatio` + `paddingBottom` + `overflow: hidden`** clipped the overlay seek bar; media-panel vertical scroll stole touch events from tap-to-pause on the video.
+
+**Fix (`97077210`, `LoungeTvWatchLearnPlayer` only):** **`paddingTop`** aspect shell (outer **`overflow: visible`**, inner **`absolute inset 0; overflow: hidden`**) so seek sits on the frame bottom; **`touchAction: none`** + **`pointerdown` preventDefault** on video shell; **`setPointerCapture`** + window **`pointerup`** during scrub; tap/double-tap on shell wrapper (video **`pointerEvents: none`**). Description in natural flow + **`LoungeTvOverlay`** panel scroll unchanged. Pushed **`master`** + **`preview/mobile`**.
