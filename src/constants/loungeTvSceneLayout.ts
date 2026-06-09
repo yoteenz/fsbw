@@ -51,6 +51,9 @@ export const LOUNGE_TV_MENU_SCREEN_LAYOUT = {
 /** Close chip inset as a fraction of the glass box (negative = overlap bezel). */
 export const LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO = -0.04;
 export const LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO = -0.04;
+/** Extra px nudge after play — down / left from ratio anchor. */
+export const LOUNGE_TV_MENU_CLOSE_INSET_TOP_PX = 4;
+export const LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_PX = 4;
 
 /** End-still PNG nudge on the scene box (fraction of mapped viewport). */
 export const LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO = {

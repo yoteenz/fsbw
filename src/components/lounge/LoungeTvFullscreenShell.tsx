@@ -8,7 +8,9 @@ import {
   LOUNGE_TV_GLASS_CONTAINER_STYLE,
 } from './loungeTvResponsive';
 import {
+  LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_PX,
   LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO,
+  LOUNGE_TV_MENU_CLOSE_INSET_TOP_PX,
   LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO,
   LOUNGE_TV_MENU_FRAME_STILL_OFFSET_RATIO,
   LOUNGE_TV_MENU_SCREEN_IMAGE,
@@ -173,8 +175,8 @@ export function LoungeTvFullscreenShell({
                 size={LOUNGE_TV_GLASS_CLOSE_SIZE}
                 iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
                 position={{
-                  top: `${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}%`,
-                  right: `${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}%`,
+                  top: `calc(${LOUNGE_TV_MENU_CLOSE_INSET_TOP_RATIO * 100}% + ${LOUNGE_TV_MENU_CLOSE_INSET_TOP_PX}px)`,
+                  right: `calc(${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_RATIO * 100}% + ${LOUNGE_TV_MENU_CLOSE_INSET_RIGHT_PX}px)`,
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
