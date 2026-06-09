@@ -283,22 +283,21 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     <div
       style={{
         width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-        minHeight: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          flexShrink: 0,
+          position: 'sticky',
+          top: 0,
+          zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
           minWidth: 0,
+          background: '#000000',
+          paddingBottom: '6px',
         }}
       >
         <LoungeTvInnerLayoutEditor
@@ -511,28 +510,19 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </div>
       </div>
 
-      <div
+      <p
         style={{
-          flex: '1 1 auto',
-          minHeight: 0,
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
+          margin: 0,
           paddingTop: '2px',
+          fontFamily: BODY_FONT,
+          fontSize: '7px',
+          lineHeight: 1.35,
+          color: BODY_GRAY,
+          textAlign: 'left',
         }}
       >
-        <p
-          style={{
-            margin: 0,
-            fontFamily: BODY_FONT,
-            fontSize: '7px',
-            lineHeight: 1.35,
-            color: BODY_GRAY,
-            textAlign: 'left',
-          }}
-        >
-          {tile.description}
-        </p>
-      </div>
+        {tile.description}
+      </p>
     </div>
   );
 }
