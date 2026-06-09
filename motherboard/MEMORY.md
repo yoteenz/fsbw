@@ -26737,3 +26737,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to hide PSA **avatar + nudge** on **account profile** as well (same as lobby/lounge).
 
 **Change:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** also true for **`/account`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: restore overlay seek + fix description layout
+
+**Context:** User wanted **red scrubber overlaid on video** (original design, not in-flow below frame) and **Plucking Your Lace detail text** visible below title/duration — flex-split layout had collapsed description to 0 height.
+
+**Fix:**
+- **`LoungeTvWatchLearnPlayer`** — restore **`position: absolute; bottom: 0`** seek on video when paused/scrubbing; **`paddingTop` aspect shell** with inner **`overflow: hidden`** + outer **`overflow: visible`** (no gray band, no clip). Sticky **video + title**; description **`<p>` in document flow** below sticky (not flex scroll child).
+- **`LoungeTvOverlay`** — media panel **`overflowY: auto`**; remove player flex wrapper; **`resolveWatchLearnDescription`** on selected tile before pass-through.
