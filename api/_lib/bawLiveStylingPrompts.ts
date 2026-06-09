@@ -49,7 +49,7 @@ export function buildCrimpsStylePromptFromColorTierWebp(
 }
 
 /**
- * Second image = **static** NOIR base mannequin (`/assets/natural *.png`) for **MIDDLE + FLAT IRON** only —
+ * Second image = **Supabase** NOIR base mannequin (`live-preview/Noir/image (26|27|28).png`) for **MIDDLE + FLAT IRON** only —
  * locks **geometry / framing** to the same **base** angles as the BAW hub; **Image 1** still supplies **swatch color**.
  */
 function flatIronMiddlePartBaseNoirGeometryTwoImageBlock(
@@ -144,7 +144,7 @@ export function buildFlatIronStylePromptFromColorTierWebp(
 
 /**
  * @deprecated Prefer `buildLayersStylePromptFromColorTierWebp` — HQ black refs kept hair black.
- * Kept for script parity / manual tests with gray-brick refs only.
+ * Kept for script parity / manual fal playground tests with Supabase gray-brick mannequin refs only.
  */
 export function buildLayersStylePromptFromHqMannequinRef(
   angle: 'front' | 'left' | 'right',

@@ -69,9 +69,11 @@ Recreate this exact mannequin image. The logo on the center of the mannequin’s
 ================================================================================
 BAW — MIDDLE PART / LAYERS STYLE (all 6 units)
 ================================================================================
-**Live / server (LAYERS on `POST /api/live-wig-after-color-styling`):** **One** attachment per angle — same **HQ** gray-brick refs as color: **`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`**, **`_LEFT_URL`**, **`_RIGHT_URL`**. Prompt: **`buildLayersStylePromptFromHqMannequinRef(angle, partSelection)`** — preserve photograph like color; **only** change hairstyle to **layered curls** with **MIDDLE** | **LEFT** | **RIGHT** part (`partSelection` in API body). fal: **Auto + 2K** (or `WIG_PREVIEW_FAL_STYLING_RESOLUTION`).
+**Live / server (LAYERS on `POST /api/live-wig-after-color-styling`):** **One** attachment = **color-tier WebP** from Storage (hair already tinted). Prompt: **`buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog)`** — **only** reshape to **layered S-waves**; **keep swatch color**; **MIDDLE** | **LEFT** | **RIGHT** part via API **`partSelection`**. fal: **GPT Image 2** + **2K** (or `WIG_PREVIEW_FAL_STYLING_RESOLUTION`). Prerequisite: run NOIR → Color first.
 
-**Deprecated (two-image geometry refs):** `buildMiddlePartLayersStylePromptTwoImages` — kept for scripts / copy-paste; live API no longer uses `WIG_PREVIEW_NOIR_LAYERS_*_STYLE_*` envs.
+**Manual fal playground (deprecated server path):** **`buildLayersStylePromptFromHqMannequinRef`** — attach Supabase mannequin refs (`live-preview/Noir/image (27|26|28).png` = L/M/R), not `/assets/natural *.png`.
+
+**Deprecated (two-image geometry refs):** `buildMiddlePartLayersStylePromptTwoImages` — scripts only; live API no longer uses `WIG_PREVIEW_NOIR_LAYERS_*_STYLE_*` envs.
 
 **Manual (one image only):** attach just the inspo shot — `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE` in `promptTemplate.mjs`.
 

@@ -14,7 +14,8 @@ export const config = {
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  *   WIG_PREVIEW_STORAGE_BUCKET (default: live-preview or wig-preview)
  *   WIG_PREVIEW_PROMPT_VERSION (default: v1)
- *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
+ *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — optional overrides; default Supabase
+ *     live-preview/Noir/image (26)=front, (27)=left, (28)=right (one gray-brick PNG per angle; logo in prompt text only)
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
