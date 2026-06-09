@@ -26641,3 +26641,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move the **X close icon only** on the TV **after pressing play** down **4px** and left **4px**.
 
 **Change:** **`loungeTvSceneLayout.ts`** — **`LOUNGE_TV_MENU_CLOSE_INSET_TOP_PX`** / **`RIGHT_PX`** = **4**. **`LoungeTvFullscreenShell.tsx`** — close chip uses **`calc(% + px)`** on top/right. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn TV video: landscape cover + width +16px
+
+**Context:** User reported Watch + Learn video on the open TV looked **portrait** (tall strip with side letterboxing) and asked to restore **landscape** display plus **+16px width only** (no height change).
+
+**Change:** **`LoungeTvWatchLearnPlayer`** — **`object-fit: cover`** + **`center top`** (was **`contain`**). **`LOUNGE_TV_WATCH_LEARN_VIDEO_WIDTH_EXTRA_PX = 16`** on **`lounge-tv-video-frame`** default layout; removed inline **`width: '100%'`** override so **`loungeTvVideoShellStyle`** applies **`calc(100% + 16px)`**. Height cap unchanged (**54% + 12px**). Pushed **`master`** + **`preview/mobile`**.
