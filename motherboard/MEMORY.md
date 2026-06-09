@@ -26589,3 +26589,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move only the red text row on the nudge up 1px; bubble and Bohemy headline unchanged.
 
 **Change:** **`psaAssistant.css`** — **`.psa-nudge-chip-body`** `top: -1px` scoped to proactive nudge (`:not(.psa-nudge-chip-show-chat)`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA widget stack up 8px (nudge + avatar + chat)
+
+**Context:** User asked to move nudge, avatar, and chat up 8px in tandem.
+
+**Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `bottom` offset **`-16px` → `-8px`** (8px higher than prior position). Pushed **`master`** + **`preview/mobile`**.
