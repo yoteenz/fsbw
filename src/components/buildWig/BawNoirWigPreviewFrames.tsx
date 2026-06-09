@@ -99,6 +99,7 @@ export function BawNoirWigPreviewHeroThumbs({
     <>
       <div className="leaf-stack hero-thumb">
         {!hideBrick && <div className="leaf-bg" aria-hidden="true" />}
+        {heroChildren ? <div className="baw-noir-hero-header-overlay">{heroChildren}</div> : null}
         <div
           className={`baw-noir-hero-brick-frame${hideBrick ? ' baw-noir-hero-brick-frame--live' : ''}`}
           style={{
@@ -108,7 +109,6 @@ export function BawNoirWigPreviewHeroThumbs({
         >
           {!hideBrick && <div className="baw-noir-hero-brick-bg" aria-hidden="true" />}
           <div className="baw-noir-hero-mannequin-slot">
-            {heroChildren}
             {hideBrick ? (
               <img
                 src={triple[selectedView]}
@@ -238,7 +238,9 @@ export function BawNoirWigPreviewHeroThumbs({
                       ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
                       : `absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img${
                           hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
-                        }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}`
+                        }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}${
+                          thumbFrontScaled && index === 1 ? ' baw-noir-front-mannequin--middle-thumb' : ''
+                        }`
                   }
                   style={
                     hideBrick

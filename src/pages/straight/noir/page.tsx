@@ -2407,7 +2407,9 @@ function NoirSelection() {
                         left: '50%',
                         bottom: 0,
                         top: 'auto',
-                        transform: noir2dMannequinTransform(currentImages.hero),
+                        transform: isNoirNaturalFrontMannequinSrc(currentImages.hero)
+                          ? `translateX(-50%) translateY(-4px) scale(${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE})`
+                          : noir2dMannequinTransform(currentImages.hero),
                         transformOrigin: isNoirNaturalFrontMannequinSrc(currentImages.hero)
                           ? 'bottom center'
                           : undefined,

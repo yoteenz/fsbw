@@ -3394,6 +3394,18 @@ img.natural-front-mobile {
   position: absolute !important;
 }
 
+/* BAW NOIR hero title (e.g. red NOIR) — above clip frame, not clipped by brick overflow */
+.baw-noir-hero-header-overlay {
+  position: relative;
+  z-index: 20;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.baw-noir-hero-header-overlay > * {
+  pointer-events: auto;
+}
+
 /* BAW NOIR hero: brick + mannequin in one clip frame — mannequin never extends below brick */
 .baw-noir-hero-brick-frame {
   position: relative;
@@ -3442,7 +3454,8 @@ img.natural-front-mobile {
 
 .baw-noir-hero-brick-frame:not(.baw-noir-hero-brick-frame--live)
   .baw-noir-hero-mannequin--brick-aligned.baw-noir-hero-mannequin--front-scaled.hero-mannequin-img {
-  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
+  transform: translateX(-50%) translateY(-4px)
+    scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
   transform-origin: bottom center !important;
 }
 
@@ -3589,6 +3602,12 @@ img.natural-front-mobile {
 .baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.thumbnail-mannequin-img {
   transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
   transform-origin: bottom center !important;
+}
+
+/* Middle (M) thumb only — nudge overlay up inside brick frame */
+.baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--middle-thumb.thumbnail-mannequin-img {
+  transform: translateX(-50%) translateY(-4px)
+    scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */
