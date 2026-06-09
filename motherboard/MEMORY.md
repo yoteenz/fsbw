@@ -26833,3 +26833,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Follow-up (same chat):** User asked **`image_size` 3:4** + **`quality` 2K**. GPT2 has no `2K` quality enum — set **`image_size: { width: 1536, height: 2048 }`** (3:4 portrait, 2048px long edge) and **`quality: 'medium'`** (~2K tier) in **`bawGptImage2FalInput.ts`** + mirrored inline in **`live-noir-color.ts`**.
 
 **Follow-up (same chat):** User replaced NOIR **natural front (M)** 2D mannequin with Supabase **`live-preview/Noir/image (26).png`** for product page, all BAW natural triples, and Fal GPT2 **`front`** input. **`NOIR_NATURAL_FRONT_MANNEQUIN_SRC`** + **`NOIR_NATURAL_MANNEQUIN_TRIPLE`** in **`bawStaticMannequinReferencePaths.ts`**; **`api/_lib/bawNoirNaturalMannequinUrls.ts`** for server; **`live-noir-color.ts`** defaults **`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`** to that URL when env unset. L/R still **`/assets/natural left|right.png`**.
+
+---
+
+## 2026-06-09 — NOIR mannequin swap: restore leaf-brick on all angles
+
+**Context:** User corrected prior work: only the **middle/front** mannequin PNG should have changed to the Supabase asset — **not** removal of **`leaf-brick-resize`** / **`.leaf-bg`** from L/M/R. The Supabase front mannequin is a **transparent overlay** (like **`/assets/natural front.png`**), not a Fal live WebP with brick baked in.
+
+**Root cause:** **`hideDuplicateBrickForNoirWigViews`** treated **any** non-**`/assets/`** URL as “live”, so the Supabase mannequin URL flipped **`hideBrick`** for the whole triple in **`BawNoirWigPreviewHeroThumbs`**.
+
+**Fix (`bawNoirLiveWigViewDisplay.ts`):** Added **`isBawNoirMannequinOverlaySrc`** — **`/assets/`** paths + Supabase **`live-preview/Noir/…`** reference PNGs (incl. **`NOIR_NATURAL_FRONT_MANNEQUIN_SRC`**). **`isBawNoirLiveWigViewSrc`** now only true for **`data:`** / **`blob:`**, **`wig-preview-live/`**, or **`/after-color/`** URLs (actual Fal live WebPs). Static natural triple with remote front mannequin keeps brick on all three angles; live color/styling WebPs still skip duplicate brick.
