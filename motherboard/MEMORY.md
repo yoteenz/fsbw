@@ -26711,3 +26711,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:**
 - **`LoungeTvOverlay`** — media panel **`overflowY: auto`** again (single scroll container; nested flex scroll never got a height constraint).
 - **`LoungeTvWatchLearnPlayer`** — **sticky** video + title in panel scroll; description in normal flow below. Video shell uses **`paddingTop: calc(100% * 9/16 + Npx)`** + **`position: absolute; inset: 0`** video fill (keeps **+16px** via **`layoutHeightExtraPx`** without empty **`#0a0a0a`** band). Shell bg **`#000`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: description visible + scroll together
+
+**Context:** User said scroll worked but **Plucking Your Lace detail text still missing** — prior approaches traded scroll vs visible copy (sticky panel scroll hid gray text under black pinned header; nested flex scroll had no height).
+
+**Fix:** **Flex split** — media panel **`overflow: hidden`** when player open; player wrapper **`flex: 1; minHeight: 0`**. Video + title **`flexShrink: 0`**; description in dedicated **`overflowY: auto`** region below (never slides under video). **`resolveWatchLearnDescription()`** in **`loungeTvContent.ts`**; description **always rendered**. Pushed **`master`** + **`preview/mobile`**.
