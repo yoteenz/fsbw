@@ -26683,3 +26683,21 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User could not scroll to read video details; scroll must start at the video top and not overlap the category tab row (BRAND / SLAY TIPS / sidebar).
 
 **Fix:** **`LoungeTvOverlay`** — media panel **`overflowY: auto`** (was **`hidden`** when player open), **`bottom: 0`**, **`overscrollBehavior: contain`**. **`LoungeTvWatchLearnPlayer`** — **`position: sticky; top: 0`** on video + title block; description in normal flow below (panel scrolls, video stays pinned). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Plucking lace detail text restore + PSA hidden on lobby/lounge
+
+**Context:** User reported **Plucking Your Lace** Watch + Learn **detail/description text** they had added was **gone**; also asked to **hide PSA avatar & nudge** on **lobby & lounge only** (not site-wide).
+
+**Plucking lace detail — cause:** Admin TV config path could serve tiles with **empty `body`** (remote/local merge), while the player only rendered **`tile.description`** and sticky scroll let description slide **under** the pinned video/title block.
+
+**Fix:**
+- **`loungeTvContent.ts`** — export **`getWatchLearnVideoCopy`** / **`WATCH_LEARN_VIDEO_COPY`**.
+- **`loungeTvAdminConfig.ts`** — **`watchLearnDescriptionForItem`**, **`enrichWatchLearnTiles`**, **`fillEmptyAdminBodiesFromDefaults`** on hydrate; admin **`body`** wins, static copy fills gaps.
+- **`LoungeTvWatchLearnPlayer.tsx`** — render **`body ?? description ?? static`**; video + title pinned; **description-only** inner scroll region.
+- **`LoungeTvOverlay.tsx`** — media panel **`overflowY: hidden`** when Watch + Learn player open (nested description scroll).
+
+**PSA:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** for **`/lobby`** and **`/lobby/lounge`**. **`PsaAssistantWidget`** — hide **`psa-widget-fab-stack`** (avatar + nudge) on those routes; chat panel unchanged if already open.
+
+**Commit:** **`291bc559`** on **`master`** + **`preview/mobile`**.
