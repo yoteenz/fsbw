@@ -26649,3 +26649,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User reported Watch + Learn video on the open TV looked **portrait** (tall strip with side letterboxing) and asked to restore **landscape** display plus **+16px width only** (no height change).
 
 **Change:** **`LoungeTvWatchLearnPlayer`** — **`object-fit: cover`** + **`center top`** (was **`contain`**). **`LOUNGE_TV_WATCH_LEARN_VIDEO_WIDTH_EXTRA_PX = 16`** on **`lounge-tv-video-frame`** default layout; removed inline **`width: '100%'`** override so **`loungeTvVideoShellStyle`** applies **`calc(100% + 16px)`**. Height cap unchanged (**54% + 12px**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn TV seek slider scrubbing fix
+
+**Context:** User could pause/play Watch + Learn video on the open TV but could not rewind/forward with the seek slider.
+
+**Cause:** Same-origin **`/assets/tv-content-video.mp4`** was re-fetched into a **blob URL** after open, reloading the element and resetting **`currentTime`** mid-session. Tap-to-play **`pointerup`** and **`timeupdate`** also fought range input during drag; seek thumb hit target was ~5px wide.
+
+**Fix:** **`LoungeTvWatchLearnPlayer`** — skip blob swap for same-origin sources; preserve time when cross-origin blob loads; **`isScrubbing`** ref blocks **`timeupdate`** + tap toggle during drag; pause while scrubbing, resume if was playing; larger seek strip/thumb in **`index.css`**. Pushed **`master`** + **`preview/mobile`**.
