@@ -12,6 +12,7 @@ import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalToo
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
@@ -217,11 +218,7 @@ function HairlineSelection() {
       ];
     } else {
       // Natural hairline images (default) - using local PNG files for consistent aspect ratio
-      return [
-        '/assets/natural left.png',
-        '/assets/natural front.png',
-        '/assets/natural right.png'
-      ];
+      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
     }
   };
 

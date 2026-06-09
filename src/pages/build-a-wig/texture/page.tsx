@@ -9,6 +9,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
@@ -158,11 +159,7 @@ function TextureSelection() {
       ];
     } else {
       // Default to natural images
-      return [
-        '/assets/natural left.png',
-        '/assets/natural front.png',
-        '/assets/natural right.png'
-      ];
+      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
     }
   };
 

@@ -46,16 +46,13 @@ import {
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
+import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
 /**
- * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
+ * Default NOIR mannequin (OFF BLACK / natural) on **hub landing** routes — no committed fal color on these pages.
  * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) use live composite from storage when available; exact **`/build-a-wig/noir`** stays static mannequins.
  */
-const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
-  '/assets/natural left.png',
-  '/assets/natural front.png',
-  '/assets/natural right.png',
-];
+const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
 
 function isNoirBawHubLandingPathname(pathname: string): boolean {
   return pathname === '/build-a-wig';
@@ -3229,12 +3226,7 @@ export default function BuildAWigPage() {
         '/assets/lagos right.png'
       ];
     } else {
-      // Default to natural images
-      return [
-        '/assets/natural left.png',
-        '/assets/natural front.png',
-        '/assets/natural right.png'
-      ];
+      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
     }
   }, [customization.hairline, location.pathname]);
 

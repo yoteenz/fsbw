@@ -29,6 +29,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
 
+/** Keep in sync with `api/_lib/bawNoirNaturalMannequinUrls.ts` + `bawStaticMannequinReferencePaths.ts`. */
+const NOIR_NATURAL_FRONT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
+
 // --- Inlined from api/_lib/auth.ts (keep in sync) ---
 async function getAuthUser(
   req: VercelRequest
@@ -302,7 +306,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const frontUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim();
+  const frontUrl =
+    process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim() || NOIR_NATURAL_FRONT_MANNEQUIN_PUBLIC_URL;
   const leftUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim();
   const rightUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim();
   if (!frontUrl || !leftUrl || !rightUrl) {

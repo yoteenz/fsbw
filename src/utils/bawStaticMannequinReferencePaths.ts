@@ -3,6 +3,17 @@
  * and admin flows that must match the same references (e.g. Send offer → Generate unit).
  */
 
+/** NOIR natural hairline — front / middle (M) hero; also Fal GPT2 color + styling input for `front`. */
+export const NOIR_NATURAL_FRONT_MANNEQUIN_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
+
+/** NOIR natural L / M / R — order matches BAW `wigViews` (left, front, right). */
+export const NOIR_NATURAL_MANNEQUIN_TRIPLE = [
+  '/assets/natural left.png',
+  NOIR_NATURAL_FRONT_MANNEQUIN_SRC,
+  '/assets/natural right.png',
+] as const;
+
 export function bawStaticMannequinTriplePathsFromUnitAndHairline(
   unitKey: string,
   hairlineRaw: string
@@ -28,7 +39,7 @@ export function bawStaticMannequinTriplePathsFromUnitAndHairline(
   if (hasLagos) {
     return ['/assets/lagos left.png', '/assets/lagos front.png', '/assets/lagos right.png'] as const;
   }
-  return ['/assets/natural left.png', '/assets/natural front.png', '/assets/natural right.png'] as const;
+  return NOIR_NATURAL_MANNEQUIN_TRIPLE;
 }
 
 /** Front view path — same as BAW hero middle when using static (non-live) mannequins. */
@@ -55,6 +66,8 @@ export function bawStaticFrontReferenceMatchesHairlineSelection(
   const p = String(frontReferencePath || '').toLowerCase();
   if (p.includes('peak')) return h.includes('PEAK');
   if (p.includes('lagos')) return h.includes('LAGOS') && !h.includes('PEAK');
-  if (p.includes('natural')) return !h.includes('PEAK') && !h.includes('LAGOS');
+  if (p.includes('natural') || frontReferencePath === NOIR_NATURAL_FRONT_MANNEQUIN_SRC) {
+    return !h.includes('PEAK') && !h.includes('LAGOS');
+  }
   return false;
 }

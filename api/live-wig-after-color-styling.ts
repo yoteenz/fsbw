@@ -53,6 +53,7 @@ import {
   BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL,
   bawGptImage2EditFalInput,
 } from './_lib/bawGptImage2FalInput.js';
+import { noirNaturalMannequinPublicUrlForAngle } from './_lib/bawNoirNaturalMannequinUrls.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -125,11 +126,9 @@ function wigPreviewPublicAppOrigin(): string {
   return 'https://fsbw.vercel.app';
 }
 
-/** Same NOIR base angles as BAW hub static mannequins (`bawStaticMannequinTriplePaths` naturals). */
+/** Same NOIR base angles as BAW hub static mannequins (front = Supabase gray-brick ref). */
 function noirBaseNaturalMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'right'): string {
-  const file =
-    angle === 'left' ? 'natural%20left.png' : angle === 'right' ? 'natural%20right.png' : 'natural%20front.png';
-  return `${wigPreviewPublicAppOrigin()}/assets/${file}`;
+  return noirNaturalMannequinPublicUrlForAngle(angle, wigPreviewPublicAppOrigin());
 }
 
 function stylingModePayload(

@@ -53,6 +53,7 @@ import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab'
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
+import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 
 interface DensityOption {
   id: string;
@@ -67,9 +68,9 @@ interface DensityOption {
  * 2D downloads: composite **natural** mannequin + leaf brick (same stack as hero 2D), not `/assets/NOIR/noir *.png` (3D product shots).
  */
 const NOIR_2D_COMPOSITE_DOWNLOAD_SPECS: { mannequinSrc: string; label: string; download: string }[] = [
-  { mannequinSrc: '/assets/natural left.png', label: 'LEFT (L)', download: 'noir-2d-left-leaf-brick.png' },
-  { mannequinSrc: '/assets/natural front.png', label: 'FRONT (M)', download: 'noir-2d-front-leaf-brick.png' },
-  { mannequinSrc: '/assets/natural right.png', label: 'RIGHT (R)', download: 'noir-2d-right-leaf-brick.png' },
+  { mannequinSrc: NOIR_NATURAL_MANNEQUIN_TRIPLE[0], label: 'LEFT (L)', download: 'noir-2d-left-leaf-brick.png' },
+  { mannequinSrc: NOIR_NATURAL_MANNEQUIN_TRIPLE[1], label: 'FRONT (M)', download: 'noir-2d-front-leaf-brick.png' },
+  { mannequinSrc: NOIR_NATURAL_MANNEQUIN_TRIPLE[2], label: 'RIGHT (R)', download: 'noir-2d-right-leaf-brick.png' },
 ];
 
 const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map((s) => ({
@@ -911,11 +912,11 @@ function NoirSelection() {
     };
   }, [currencyRates, selectedCurrency]);
 
-  // Mannequin images for noir product
+  // Mannequin images for noir product (2D: L / M / R — front M uses Supabase gray-brick ref)
   const mannequinImages = [
-    '/assets/natural front.png',  // View 1 (default)
-    '/assets/natural left.png',  // View 2 (top thumbnail)
-    '/assets/natural right.png'  // View 3 (bottom thumbnail)
+    NOIR_NATURAL_MANNEQUIN_TRIPLE[1],
+    NOIR_NATURAL_MANNEQUIN_TRIPLE[0],
+    NOIR_NATURAL_MANNEQUIN_TRIPLE[2],
   ];
 
   // Get current mannequin images based on selected view
