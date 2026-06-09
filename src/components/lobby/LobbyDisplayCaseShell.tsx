@@ -145,8 +145,8 @@ export function LobbyDisplayCaseShell({
       </LobbyDisplayCasePropSlot>
 
       <LobbyDisplayCasePropSlot mappedRect={mappedPhone} layout={phoneRegion.layout} zIndex={phoneZIndex}>
-        {phoneOpenArt}
         {phone}
+        {phoneOpenArt}
       </LobbyDisplayCasePropSlot>
     </>
   );

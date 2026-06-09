@@ -17,5 +17,6 @@ export const LOBBY_CASE_POPOVER_PADDING = lobbyCaseCqw(3.1, 8, 12);
 export const LOBBY_CASE_POPOVER_GAP_ABOVE_PROP = lobbyCaseCqw(2.6, 6, 10);
 /** Lift popover bottom above prop top — must stay ≥ 0 or the glass panel intrudes and clips open art. */
 export const LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP = lobbyCaseCqw(-3.6, -18, -12);
-/** Phone contact card — extra clearance so CONTACT US panel does not cover the open phone PNG. */
-export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP = lobbyCaseCqw(1.5, 8, 12);
+/** Phone contact card — fixed px (cqw in calc() is unreliable on some mobile browsers). */
+export const LOBBY_CASE_POPOVER_PHONE_GAP_ABOVE_PROP = '12px';
+export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP = '20px';

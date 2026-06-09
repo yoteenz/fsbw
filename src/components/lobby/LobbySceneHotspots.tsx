@@ -21,6 +21,7 @@ import {
 import { useSceneCoverHitRect } from '../../hooks/useSceneCoverHitRect';
 import {
   LOBBY_CASE_POPOVER_OPEN_Z_INDEX,
+  LOBBY_CASE_POPOVER_PHONE_ROOT_Z_INDEX,
   LOBBY_CASE_POPOVER_SCRIM_ALPHA,
   LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR,
   LOBBY_CASE_POPOVER_SCRIM_SLIDE_Z_INDEX,
@@ -34,6 +35,7 @@ import { LOBBY_PAYMENT_POPOVER_LAYOUT } from '../../constants/lobbyPaymentIcons'
 import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
 import { useLobbyShelfHitDebugEnabled } from '../../utils/sceneHitDebug';
 import {
+  LOBBY_CASE_POPOVER_PHONE_GAP_ABOVE_PROP,
   LOBBY_CASE_POPOVER_PHONE_OFFSET_UP,
   LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP,
 } from './lobbyCaseResponsive';
@@ -223,6 +225,7 @@ export function LobbySceneHotspots({
             src={FINAL_LOBBY_PHONE_OPEN_OVERLAY_SRC}
             fillParent
             overlayScale={LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_SCALE}
+            paintAbovePopover
           />
         }
         register={
@@ -259,7 +262,9 @@ export function LobbySceneHotspots({
             sections={LOBBY_PHONE_POPOVER_SECTIONS}
             align="right"
             responsive
+            panelGapAboveProp={LOBBY_CASE_POPOVER_PHONE_GAP_ABOVE_PROP}
             panelOffsetUp={LOBBY_CASE_POPOVER_PHONE_OFFSET_UP}
+            openRootZIndex={LOBBY_CASE_POPOVER_PHONE_ROOT_Z_INDEX}
           >
             <span
               style={{ display: 'block', width: '100%', height: '100%', minHeight: 44 }}

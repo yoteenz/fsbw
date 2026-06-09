@@ -55,7 +55,7 @@ export const LOBBY_CASE_POPOVER_SCRIM_BACKDROP_BLUR = 'blur(10px)';
 export const LOBBY_CASE_POPOVER_REGISTER_OFFSET_UP_PX = -14;
 
 /** Phone glass panel above prop (px); negative values intrude on the open phone PNG. */
-export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = 8;
+export const LOBBY_CASE_POPOVER_PHONE_OFFSET_UP_PX = 20;
 
 /** 25% lighter than cap-chart modal scrim (`0.7` → `0.525`) — register/phone popovers only. */
 export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
@@ -63,11 +63,17 @@ export const LOBBY_CASE_POPOVER_SCRIM_ALPHA = 0.525;
 /** @deprecated Stack wrapper removed — use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX`. */
 export const LOBBY_CASE_POPOVER_STACK_Z_INDEX = 10002;
 
-/** Open-state prop PNG above scrim, below popover card. */
+/** Open-state register PNG above scrim, below popover card. */
 export const LOBBY_CASE_PROP_OPEN_OVERLAY_Z_INDEX = 28;
+
+/** Open-state phone PNG — above glass popover so CONTACT US cannot cover the handset art. */
+export const LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_Z_INDEX = 32;
 
 /** Popover card above register/phone asset and slide scrim (within case prop wrapper). */
 export const LOBBY_CASE_POPOVER_OPEN_Z_INDEX = 30;
+
+/** Popover tap wrapper when open — keep below phone open art ({@link LOBBY_CASE_PROP_PHONE_OPEN_OVERLAY_Z_INDEX}). */
+export const LOBBY_CASE_POPOVER_PHONE_ROOT_Z_INDEX = 24;
 
 /** @deprecated Use `LOBBY_CASE_POPOVER_OPEN_Z_INDEX` — asset and panel share one portal layer. */
 export const LOBBY_CASE_POPOVER_ASSET_Z_INDEX = LOBBY_CASE_POPOVER_OPEN_Z_INDEX;
