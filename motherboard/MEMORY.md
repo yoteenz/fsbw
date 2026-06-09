@@ -26719,3 +26719,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User said scroll worked but **Plucking Your Lace detail text still missing** — prior approaches traded scroll vs visible copy (sticky panel scroll hid gray text under black pinned header; nested flex scroll had no height).
 
 **Fix:** **Flex split** — media panel **`overflow: hidden`** when player open; player wrapper **`flex: 1; minHeight: 0`**. Video + title **`flexShrink: 0`**; description in dedicated **`overflowY: auto`** region below (never slides under video). **`resolveWatchLearnDescription()`** in **`loungeTvContent.ts`**; description **always rendered**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: restore red seek scrubber
+
+**Context:** User reported the **red seek scrubber** to drag video backward/forward was **gone** after layout fixes (description scroll / aspect-ratio shell).
+
+**Cause:** Seek bar was **`position: absolute; bottom: 0`** inside the aspect-ratio shell with **`overflow: hidden`** — clipped after **`height: 0` + `paddingTop`** shell refactor.
+
+**Fix:** **`LoungeTvWatchLearnPlayer`** — seek strip moved **below** the video frame (in-flow, between video and title) when **`paused || isScrubbing`**; tap-to-pause on full video shell. Pushed **`master`** + **`preview/mobile`**.

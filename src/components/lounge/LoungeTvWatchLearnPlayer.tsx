@@ -328,60 +328,98 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             border: '2px dashed rgba(0, 151, 167, 0.95)',
           }}
         >
-          <div ref={shellRef} style={{ position: 'absolute', inset: 0 }}>
-          <video
-            key={tile.id}
-            ref={videoRef}
-            src={videoSrc}
-            playsInline
-            loop
-            preload="auto"
-            controls={false}
-            controlsList="nodownload noplaybackrate noremoteplayback"
-            disablePictureInPicture
-            disableRemotePlayback
-            aria-label={tile.title}
-            onPlay={() => setPaused(false)}
-            onPause={() => {
-              setPaused(true);
-              syncTimeFromVideo();
-            }}
-            onTimeUpdate={syncTimeFromVideo}
-            onLoadedMetadata={syncTimeFromVideo}
-            onLoadedData={syncTimeFromVideo}
-            onDurationChange={syncTimeFromVideo}
+          <div
+            ref={shellRef}
+            style={{ position: 'absolute', inset: 0 }}
             onPointerUp={handleVideoPointerUp}
-            onDoubleClick={handleVideoDoubleClick}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-          />
-
-        {paused ? (
-          <span
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: BODY_FONT,
-              fontSize: '9px',
-              letterSpacing: '0.12em',
-              color: 'rgba(255,255,255,0.85)',
-              textTransform: 'uppercase',
-              pointerEvents: 'none',
-              background: 'rgba(0,0,0,0.2)',
-              paddingBottom: '22px',
-            }}
           >
-            PAUSED
-          </span>
-        ) : null}
+            <video
+              key={tile.id}
+              ref={videoRef}
+              src={videoSrc}
+              playsInline
+              loop
+              preload="auto"
+              controls={false}
+              controlsList="nodownload noplaybackrate noremoteplayback"
+              disablePictureInPicture
+              disableRemotePlayback
+              aria-label={tile.title}
+              onPlay={() => setPaused(false)}
+              onPause={() => {
+                setPaused(true);
+                syncTimeFromVideo();
+              }}
+              onTimeUpdate={syncTimeFromVideo}
+              onLoadedMetadata={syncTimeFromVideo}
+              onLoadedData={syncTimeFromVideo}
+              onDurationChange={syncTimeFromVideo}
+              onPointerUp={handleVideoPointerUp}
+              onDoubleClick={handleVideoDoubleClick}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+
+            {paused ? (
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: BODY_FONT,
+                  fontSize: '9px',
+                  letterSpacing: '0.12em',
+                  color: 'rgba(255,255,255,0.85)',
+                  textTransform: 'uppercase',
+                  pointerEvents: 'none',
+                  background: 'rgba(0,0,0,0.2)',
+                }}
+              >
+                PAUSED
+              </span>
+            ) : null}
+
+            {!paused ? (
+              <button
+                type="button"
+                aria-label="Full screen"
+                onPointerDown={handleFullscreenPress}
+                onPointerUp={(e) => e.stopPropagation()}
+                onClick={handleFullscreenPress}
+                style={{
+                  position: 'absolute',
+                  right: '5px',
+                  bottom: '5px',
+                  zIndex: 10,
+                  width: '22px',
+                  height: '22px',
+                  margin: 0,
+                  padding: 0,
+                  border: 'none',
+                  borderRadius: '2px',
+                  background: 'rgba(0,0,0,0.5)',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation',
+                  pointerEvents: 'auto',
+                }}
+              >
+                <FullscreenExpandIcon />
+              </button>
+            ) : null}
+          </div>
+        </LoungeTvInnerLayoutEditor>
 
         {paused || isScrubbing ? (
           <div
@@ -398,13 +436,9 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             }}
             onClick={(e) => e.stopPropagation()}
             style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 10,
-              padding: '10px 6px 8px',
-              background: 'linear-gradient(transparent, rgba(0,0,0,0.72))',
+              width: '100%',
+              flexShrink: 0,
+              padding: '2px 6px 0',
               boxSizing: 'border-box',
               touchAction: 'pan-x',
               pointerEvents: 'auto',
@@ -435,41 +469,6 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             />
           </div>
         ) : null}
-
-        {!paused ? (
-          <button
-            type="button"
-            aria-label="Full screen"
-            onPointerDown={handleFullscreenPress}
-            onPointerUp={(e) => e.stopPropagation()}
-            onClick={handleFullscreenPress}
-            style={{
-              position: 'absolute',
-              right: '5px',
-              bottom: '5px',
-              zIndex: 10,
-              width: '22px',
-              height: '22px',
-              margin: 0,
-              padding: 0,
-              border: 'none',
-              borderRadius: '2px',
-              background: 'rgba(0,0,0,0.5)',
-              color: '#ffffff',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              WebkitTapHighlightColor: 'transparent',
-              touchAction: 'manipulation',
-              pointerEvents: 'auto',
-            }}
-          >
-            <FullscreenExpandIcon />
-          </button>
-        ) : null}
-          </div>
-        </LoungeTvInnerLayoutEditor>
 
         <div
           style={{
