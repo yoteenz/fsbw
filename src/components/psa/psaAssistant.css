@@ -836,6 +836,12 @@
   text-align: center;
 }
 
+/* Proactive nudge only — red body row up 1px; bubble + Bohemy headline unchanged. */
+.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-body {
+  position: relative;
+  top: -1px;
+}
+
 @keyframes psa-thought-float {
   0%,
   100% {
