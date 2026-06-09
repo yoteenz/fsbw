@@ -26667,3 +26667,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User reported video too zoomed/cropped after **`object-fit: cover`** + **+16px width**; meant **+16px height** not width.
 
 **Change:** **`object-fit: contain`**, **`object-position: center center`**. Removed **`LOUNGE_TV_WATCH_LEARN_VIDEO_WIDTH_EXTRA_PX`** / **`layoutWidthExtraPx`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX`** **12 → 28** (+16px). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: restore original cover + 16:9 shell
+
+**Context:** User asked to restore first-ship video fit — full frame **`cover`** with no side letterboxing (not **`contain`** / **`center top`** / **54% max-height**).
+
+**Change:** **`LoungeTvWatchLearnPlayer`** — **`object-fit: cover`** (no **`object-position`**); removed **54%** **`maxHeight`** cap; **16:9** **`aspect-ratio`** at full width like **`e71e1929`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX = 16`** via **`layoutHeightExtraPx`** + **`paddingBottom`**. Pushed **`master`** + **`preview/mobile`**.
