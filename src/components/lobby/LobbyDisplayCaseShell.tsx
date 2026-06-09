@@ -23,6 +23,7 @@ function LobbyDisplayCasePropSlot({ mappedRect, layout, zIndex, children }: Prop
         ...LOBBY_CASE_CONTAINER_STYLE,
         pointerEvents: 'none',
         boxSizing: 'border-box',
+        overflow: 'visible',
       }}
     >
       <div
@@ -31,6 +32,7 @@ function LobbyDisplayCasePropSlot({ mappedRect, layout, zIndex, children }: Prop
           width: '100%',
           height: '100%',
           pointerEvents: 'auto',
+          overflow: 'visible',
         }}
       >
         {children}

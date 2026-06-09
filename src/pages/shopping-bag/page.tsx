@@ -50,6 +50,7 @@ import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { checkoutPathForCartItems } from '../../utils/checkoutNavigatePath';
 import {
   applyGiftCardBagQuantityDelta,
+  giftCardCartThumbnailSrc,
   isGiftCardCartLine,
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
@@ -1499,7 +1500,7 @@ function ShoppingBagPage() {
                       const getItemImage = () => {
                         // Gift card uses specific thumbnail
                         if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                          return '/assets/gift-card asset.png';
+                          return giftCardCartThumbnailSrc();
                         }
                         const bookingThumb = bookingCartItemThumbnailSrc(item);
                         if (bookingThumb) return bookingThumb;
@@ -2076,7 +2077,7 @@ function ShoppingBagPage() {
                   // Get the correct image based on product name and hairline (same logic as cart dropdown)
                   const getItemImage = () => {
                     if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                      return '/assets/gift-card asset.png';
+                      return giftCardCartThumbnailSrc();
                     }
                     const bookingThumb = bookingCartItemThumbnailSrc(item);
                     if (bookingThumb) return bookingThumb;

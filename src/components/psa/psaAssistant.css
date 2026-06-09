@@ -1,8 +1,8 @@
 .psa-widget-root {
   position: fixed;
   z-index: 999998;
-  right: max(12px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
+  right: calc(max(12px, env(safe-area-inset-right)) + 6px);
+  bottom: max(0px, calc(max(16px, env(safe-area-inset-bottom)) - 8px));
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -168,7 +168,7 @@
   width: min(340px, calc(100vw - 24px));
   height: min(300px, calc((100dvh - 160px) * 0.6));
   max-height: min(300px, calc((100dvh - 160px) * 0.6));
-  transform: translate(-20px, -42px);
+  transform: translate(-14px, -42px);
   display: flex;
   flex-direction: column;
   border: 1.3px solid #000;
@@ -724,6 +724,17 @@
   transform: translateX(-20px) translateY(-20px);
 }
 
+/* Cart dropdown backdrop is transparent — hide only the thought bubble, keep avatar position/layout. */
+.psa-widget-fab-stack--cart-open .psa-nudge-chip {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.psa-nudge-chip--pending {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Collapsed — same 88px column as the avatar so the thought bubble centers on it. */
 .psa-widget-fab-stack--collapsed {
   width: 88px;
@@ -801,10 +812,9 @@
   text-align: center;
 }
 
-/* Proactive nudge only — Bohemy headline (row 1) down 2px; body unchanged. */
-.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-headline {
-  position: relative;
-  top: 2px;
+/* Proactive nudge only — both text rows down 2px; bubble art unchanged. */
+.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content {
+  top: calc(36% + 10px);
 }
 
 .psa-nudge-chip-headline {
@@ -824,6 +834,12 @@
   text-transform: uppercase;
   line-height: 1.3;
   text-align: center;
+}
+
+/* Proactive nudge only — red body row up 1px; bubble + Bohemy headline unchanged. */
+.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-body {
+  position: relative;
+  top: -1px;
 }
 
 @keyframes psa-thought-float {

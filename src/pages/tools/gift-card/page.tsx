@@ -16,6 +16,27 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
+import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
+import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
+import GiftCardBalancePicker from '../../../components/shop/GiftCardBalancePicker';
+import ThumbBox from '../../../components/ThumbBox';
+import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../../utils/giftCardCheckout';
+
+const GIFT_CARD_PREVIEW_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
+
+/** Gift card PDP hero + thumbnail gallery (Supabase live-preview). */
+const GIFT_CARD_PREVIEW_IMAGES = [
+  `${GIFT_CARD_PREVIEW_BASE}/IMG_1799.png`,
+  `${GIFT_CARD_PREVIEW_BASE}/IMG_1788.png`,
+] as const;
+
+/** Portrait thumb frames — 4px white mat; width fixed, shorter height for landscape gift-card art. */
+const GIFT_CARD_THUMB_MAT_PX = 4;
+const GIFT_CARD_THUMB_INNER_W_PX = 48;
+const GIFT_CARD_THUMB_INNER_H_PX = 50;
+const GIFT_CARD_THUMB_OUTER_W_PX = GIFT_CARD_THUMB_INNER_W_PX + GIFT_CARD_THUMB_MAT_PX * 2;
+const GIFT_CARD_THUMB_OUTER_H_PX = GIFT_CARD_THUMB_INNER_H_PX + GIFT_CARD_THUMB_MAT_PX * 2;
 
 /** Set true to show SIMILAR PRODUCTS on gift card page again (strip stays mounted when false). */
 const GIFT_CARD_SIMILAR_PRODUCTS_VISIBLE = false;
@@ -32,7 +53,8 @@ function GiftCardPage() {
   const location = useLocation();
   
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
-  const [selectedBalance, setSelectedBalance] = useState(10);
+  const [selectedBalance, setSelectedBalance] = useState<number>(() => 10);
+  const [selectedGiftCardPreviewIndex, setSelectedGiftCardPreviewIndex] = useState(0);
   const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'POLICY' | 'REVIEWS'>({
     queryKey: 'tab',
     storageKey: 'giftCardActiveTab',
@@ -290,10 +312,6 @@ function GiftCardPage() {
     setShowMobileMenu(false);
   };
 
-  const handleBalanceSelect = (balance: number) => {
-    setSelectedBalance(balance);
-  };
-
   const handleTabClick = (tab: 'DETAILS' | 'POLICY' | 'REVIEWS') => {
     setActiveTab(tab);
   };
@@ -308,7 +326,7 @@ function GiftCardPage() {
     try {
       const newCartCount = writeGiftCardSelectionForCheckoutSession({
         balanceUsd: selectedBalance,
-        image: '/assets/giftcard-product.png',
+        image: GIFT_CARD_CART_THUMBNAIL_SRC,
       });
       setCartCount(newCartCount);
       trackActivity('add_to_cart', { source: 'gift_card_pdp', productName: 'GIFT CARD' });
@@ -339,8 +357,6 @@ function GiftCardPage() {
   const handleRecentlyViewedRightArrow = () => {
     setRecentlyViewedScroll(-recentSnapPx);
   };
-
-  const balanceOptions = [10, 15, 25, 50, 75, 100, 250, 500];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -602,49 +618,84 @@ function GiftCardPage() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              paddingBottom: '0px'
+              paddingBottom: '16px',
             }}
           >
             {/* GIFT CARD PREVIEW */}
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column', marginBottom: '24px', transform: 'translateY(20px)', overflow: 'visible', minWidth: '100%', maxWidth: 'none' }}>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+                marginBottom: '8px',
+                overflow: 'visible',
+                minWidth: '100%',
+                maxWidth: 'none',
+              }}
+            >
               {/* Main Hero Image */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', transform: 'translateY(-74px)' }}>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
                 <img
-                  src="/assets/giftcard-product.png"
+                  src={GIFT_CARD_PREVIEW_IMAGES[selectedGiftCardPreviewIndex]}
                   alt="Gift Card"
                   style={{
                     width: '100%',
                     maxWidth: '400px',
                     height: 'auto',
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    display: 'block',
                   }}
                 />
+              </div>
+
+              <div
+                className="flex flex-row flex-nowrap justify-center items-center"
+                style={{
+                  gap: '8px',
+                  marginBottom: '14px',
+                  width: '100%',
+                }}
+              >
+                {GIFT_CARD_PREVIEW_IMAGES.map((src, index) => (
+                  <ThumbBox
+                    key={src}
+                    image={src}
+                    imageAlt={`Gift card preview ${index + 1}`}
+                    title=""
+                    label=""
+                    isSelected={selectedGiftCardPreviewIndex === index}
+                    onClick={() => setSelectedGiftCardPreviewIndex(index)}
+                    containerWidth={GIFT_CARD_THUMB_OUTER_W_PX}
+                    containerHeight={GIFT_CARD_THUMB_OUTER_H_PX}
+                    imageWidth={GIFT_CARD_THUMB_INNER_W_PX}
+                    imageHeight={GIFT_CARD_THUMB_INNER_H_PX}
+                    topPosition="50%"
+                  />
+                ))}
               </div>
 
               {/* PRODUCT NAME */}
               <p
                 className="text-center text-black mb-2 gift-card-product-name"
-                style={{ 
-                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
-                  fontSize: '38px !important',
-                  fontWeight: '400 !important',
-                  lineHeight: '1.2 !important',
-                  margin: '0 !important',
-                  padding: '0 !important',
-                  display: 'block !important',
-                  textAlign: 'center' as const,
-                  height: 'auto !important',
-                  maxHeight: 'none !important',
-                  width: '100% !important',
-                  minWidth: 'auto !important',
-                  maxWidth: 'none !important',
-                  overflow: 'visible !important',
-                  whiteSpace: 'nowrap !important',
-                  position: 'relative' as const,
-                  zIndex: '999 !important',
-                  transform: 'translateY(-128px) !important',
-                  scale: '1 !important',
-                  zoom: '1 !important'
+                style={{
+                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                  fontSize: '38px',
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  margin: '0 0 6px 0',
+                  padding: 0,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 GIFT CARD
@@ -653,11 +704,11 @@ function GiftCardPage() {
               {/* DIGITAL ONLY */}
               <p
                 className="text-center text-red-500 uppercase mb-2"
-                style={{ 
+                style={{
                   fontFamily: '"Futura PT Medium"',
                   fontWeight: '500',
-                  transform: 'translateY(-128px)',
-                  fontSize: '12px'
+                  fontSize: '12px',
+                  margin: '0 0 6px 0',
                 }}
               >
                 DIGITAL ONLY
@@ -666,18 +717,18 @@ function GiftCardPage() {
               {/* PRICE */}
               <p
                 className="text-center text-black mb-1"
-                style={{ 
+                style={{
                   fontFamily: '"Futura PT Medium"',
                   fontSize: '16px',
                   fontWeight: '500',
-                  transform: 'translateY(-136px)',
-                  width: '100%'
+                  width: '100%',
+                  margin: '0 0 6px 0',
                 }}
                 dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
               />
 
               {/* STAR RATINGS */}
-              <div className="flex justify-center mb-4 gap-1" style={{ transform: 'translateY(-137px)' }}>
+              <div className="flex justify-center mb-2 gap-1">
                 {[...Array(5)].map((_, index) => (
                   <img
                     key={index}
@@ -696,7 +747,7 @@ function GiftCardPage() {
             </div>
 
             {/* SELECT CARD BALANCE */}
-            <div style={{ transform: 'translateY(-130px)' }}>
+            <div>
               <p
                 className="text-center text-black uppercase mb-4"
                 style={{ 
@@ -709,83 +760,72 @@ function GiftCardPage() {
                 SELECT CARD BALANCE
               </p>
 
-              {/* Balance Options */}
-              <div className="flex justify-center gap-3 flex-wrap mb-6" style={{ transform: 'translateY(-7px)' }}>
-                {balanceOptions.map((balance) => (
-                  <button 
-                    key={balance}
-                    onClick={() => handleBalanceSelect(balance)}
-                    className={`border border-black px-4 py-1 ${selectedBalance === balance ? 'text-red-500 bg-white' : 'text-black bg-white hover:bg-gray-50'}`}
-                    style={{ 
-                      borderWidth: '1.3px',
-                      fontFamily: '"Futura PT Medium"',
-                      fontWeight: '500',
-                      minWidth: '60px',
-                      fontSize: '11px'
-                    }}
-                  >
-                    ${balance}
-                  </button>
-                ))}
-              </div>
+              <GiftCardBalancePicker
+                value={selectedBalance}
+                onChange={setSelectedBalance}
+              />
             </div>
 
-            {/* Tabs Section */}
-            <div className="mt-6" style={{ transform: 'translateY(-155px)', marginBottom: '-65px' }}>
-              {/* Tab Navigation */}
-              <div className="flex justify-center">
+            {/* Tabs — spacing matches BCF texture-category PDP */}
+            <div className="mt-1.5 w-full" style={{ paddingTop: '4px' }}>
+              <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                 <button
+                  type="button"
                   onClick={() => handleTabClick('DETAILS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
                 >
                   DETAILS
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleTabClick('POLICY')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
                 >
                   POLICY
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleTabClick('REVIEWS')}
-                  className={`px-2 py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'border-b border-red-500 text-red-500' : 'text-black hover:text-red-500'}`}
-                  style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}
+                  className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
                 >
                   REVIEWS
                 </button>
               </div>
 
-              {/* Tab Content */}
-              <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-65px', paddingBottom: '0px' }}>
-                {activeTab === 'DETAILS' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      GIFT CARD IS A DIGITAL COPY ONLY. YOU MAY LOAD FUNDS FROM YOUR ACCOUNT.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      DIGITAL GIFT CARD IS DELIVERED VIA EMAIL WITHIN 24 HOURS OF PURCHASE.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px' }}>
-                      GIFT CARD CAN BE USED TOWARDS ANY PRODUCT OR SERVICE ON OUR WEBSITE.
-                    </p>
-                  </>
-                )}
+              <div
+                className="mt-4 space-y-4"
+                style={{
+                  maxWidth: 'none',
+                  width: '100%',
+                  marginBottom: 0,
+                  paddingTop: '4px',
+                  paddingBottom: '12px',
+                }}
+              >
+                {activeTab === 'DETAILS' && <GiftCardProductDetailsTab />}
                 
-                {activeTab === 'POLICY' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      GIFT CARDS DO NOT EXPIRE AND CAN BE COMBINED WITH OTHER PROMOTIONAL OFFERS.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '0px', paddingBottom: '0px' }}>
-                      GIFT CARDS ARE NON-REFUNDABLE AND CANNOT BE EXCHANGED FOR CASH.
-                    </p>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px' }}>
-                      IF THERE IS AN ISSUE WITH YOUR GIFT CARD, REACH OUT TO CONTACT@FRONTALSLAYER.COM
-                    </p>
-                  </>
-                )}
+                {activeTab === 'POLICY' && <GiftCardProductPolicyTab />}
                 
                 {activeTab === 'REVIEWS' && (
                   <>
@@ -799,7 +839,7 @@ function GiftCardPage() {
           </div>
 
           {/* PROCEED TO CHECKOUT — gift card PDP goes straight to isolated /checkout/gift-card (filtered view) */}
-          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+          <div className="px-0 md:px-0" style={{ marginTop: '8px' }}>
             <button
               type="button"
               onClick={handleProceedToCheckout}

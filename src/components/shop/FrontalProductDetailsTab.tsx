@@ -1,0 +1,84 @@
+/** BCF frontals PDP — DETAILS tab (matches NOIR tab typography + markers). */
+
+import {
+  NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
+  NOIR_PRODUCT_TAB_ROSE_ALERT_SRC,
+} from './noirProductTabRoseBadge';
+
+const BODY_STYLE = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  fontWeight: 400,
+  margin: 0,
+  lineHeight: 1.45,
+  textTransform: 'uppercase' as const,
+};
+
+/** Match `/brand/terms` bullet rows (`BrandTermsBody`). */
+const BULLET_STYLE = {
+  ...BODY_STYLE,
+  paddingLeft: '12px',
+};
+
+const BULLET_MARK_STYLE = { color: '#EB1C24' };
+
+const SECTION_TITLE_STYLE = {
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '20px',
+  color: '#808080',
+  fontWeight: 400,
+  margin: '12px 0 8px 0',
+  textTransform: 'lowercase' as const,
+};
+
+const FRONTAL_DETAILS_INTRO =
+  'CREATED FOR CLIENTS WHO WANT THE ULTIMATE FREEDOM WHEN IT COMES TO STYLING, OUR LACE FRONTALS PROVIDE MAXIMUM VERSATILITY WHILE MAINTAINING A NATURAL, UNDETECTABLE FINISH. DESIGNED TO MIMIC A REALISTIC HAIRLINE FROM EAR TO EAR, FRONTALS ALLOW FOR A WIDE RANGE OF STYLING OPTIONS WHILE DELIVERING THE MOST SEAMLESS BLEND POSSIBLE WITH YOUR SELECTED BUNDLES.';
+
+const FRONTAL_DETAILS_BULLETS = [
+  'CRAFTED USING PREMIUM RAW HUMAN HAIR TO COMPLEMENT YOUR SELECTED TEXTURE AND CREATE A FLAWLESS FINISH.',
+  'FEATURES AN EAR-TO-EAR LACE DESIGN FOR MAXIMUM STYLING FLEXIBILITY AND HAIRLINE COVERAGE.',
+  'DESIGNED TO PAIR SEAMLESSLY WITH STRAIGHT, WAVY OR CURLY BUNDLE COLLECTIONS.',
+  'PROVIDES THE FREEDOM TO WEAR MIDDLE PARTS, SIDE PARTS, PULLED BACK STYLES AND OTHER VERSATILE LOOKS.',
+  'DELIVERED IN ITS NATURAL STATE, ALLOWING COMPLETE FREEDOM TO PLUCK, BLEACH, COLOR, TONE, CUT OR CUSTOMIZE TO YOUR PREFERENCE.',
+  'RAW HAIR CAN BE PROFESSIONALLY LIFTED, DYED, TONED OR BLEACHED WHILE MAINTAINING ITS QUALITY WHEN PROPERLY CARED FOR.',
+  'DESIGNED TO CREATE THE MOST REALISTIC HAIRLINE POSSIBLE WHEN PROPERLY CUSTOMIZED AND INSTALLED.',
+  'DUE TO THE AUTHENTIC NATURE OF RAW HUMAN HAIR, SLIGHT VARIATIONS IN TEXTURE, COLOR TONE, DENSITY AND PATTERN MAY OCCUR, MAKING EACH PIECE UNIQUE.',
+  'PROFESSIONAL CUSTOMIZATION AND INSTALLATION ARE STRONGLY RECOMMENDED TO ACHIEVE THE MOST NATURAL LOOKING RESULTS.',
+] as const;
+
+const FRONTAL_EVERY_DETAIL_MATTERS = [
+  'EAR-TO-EAR COVERAGE',
+  'MAXIMUM STYLING FLEXIBILITY',
+  'NATURAL LOOKING HAIRLINE',
+  'PREMIUM RAW HUMAN HAIR',
+  'SEAMLESS BUNDLE MATCHING',
+  'CAN BE COLORED, BLEACHED & CUSTOMIZED',
+  'IDEAL FOR ADVANCED STYLING',
+  'PROFESSIONAL-GRADE RESULTS',
+] as const;
+
+export default function FrontalProductDetailsTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <p style={{ ...BODY_STYLE, marginBottom: '4px' }}>{FRONTAL_DETAILS_INTRO}</p>
+
+      {FRONTAL_DETAILS_BULLETS.map((bullet) => (
+        <p key={bullet} style={BULLET_STYLE}>
+          <span style={BULLET_MARK_STYLE}>•</span> {bullet}
+        </p>
+      ))}
+
+      <p style={SECTION_TITLE_STYLE}>every detail matters</p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {FRONTAL_EVERY_DETAIL_MATTERS.map((label) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
+            <p style={BODY_STYLE}>{label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -33,6 +33,11 @@ import {
 } from '../../utils/loungeTvTheaterMode';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaChatPanel from './PsaChatPanel';
+import { preloadPsaNudgeAssets } from '../../utils/psaNudgeAssetPreload';
+import {
+  isCartDropdownOpen,
+  subscribeCartDropdownOpenState,
+} from '../../utils/cartDropdownOpenState';
 import {
   resolveActivePsaSessionMode,
   resolvePsaAvatarExpression,
@@ -46,6 +51,7 @@ import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
 import { setCachedPsaMemberContext } from '../../utils/psaMemberContextCache';
 import {
   activateRedCarpetMode,
+  deactivateRedCarpetMode,
   isRedCarpetModeActive,
   isRedCarpetTriggerMessage,
 } from '../../utils/psaRedCarpetMode';
@@ -94,6 +100,8 @@ export default function PsaAssistantWidget() {
   );
   const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
+  const [cartDropdownOpen, setCartDropdownOpen] = useState(() => isCartDropdownOpen());
+  const [nudgeBubbleReady, setNudgeBubbleReady] = useState(false);
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -129,7 +137,9 @@ export default function PsaAssistantWidget() {
     buildPsaClientSessionContext(location.pathname, pendingMessage)
   );
 
-  const proactiveNudge = usePsaProactiveNudges(!isOpen && !isFabCollapsed);
+  const proactiveNudge = usePsaProactiveNudges(
+    !isOpen && !isFabCollapsed && !cartDropdownOpen
+  );
 
   const showContinueHint =
     !isFabCollapsed && !isOpen && !proactiveNudge && continueHint && continueHint.messageCount > 0;
@@ -147,6 +157,18 @@ export default function PsaAssistantWidget() {
     syncTheater();
     window.addEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
     return () => window.removeEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
+  }, []);
+
+  useEffect(() => subscribeCartDropdownOpenState(setCartDropdownOpen), []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void preloadPsaNudgeAssets().then(() => {
+      if (!cancelled) setNudgeBubbleReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -322,12 +344,23 @@ export default function PsaAssistantWidget() {
     }, PSA_WAVING_MS);
   }, []);
 
+  /** Red Carpet is scoped to the open chat session — not a 45min site-wide flag. */
+  const endRedCarpetMode = useCallback(() => {
+    deactivateRedCarpetMode();
+    setRedCarpetMode(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) endRedCarpetMode();
+  }, [isOpen, endRedCarpetMode]);
+
   const handleFabClick = useCallback(() => {
     if (isFabCollapsed) {
       setIsFabCollapsed(false);
       return;
     }
     if (isOpen) {
+      endRedCarpetMode();
       setIsFabCollapsed(true);
       setIsOpen(false);
       closeHistory();
@@ -335,12 +368,26 @@ export default function PsaAssistantWidget() {
     }
     setIsOpen(true);
     startWelcomeWave();
-  }, [isFabCollapsed, isOpen, startWelcomeWave, closeHistory]);
+  }, [isFabCollapsed, isOpen, startWelcomeWave, closeHistory, endRedCarpetMode]);
 
   const handleCloseChat = useCallback(() => {
+    endRedCarpetMode();
     setIsOpen(false);
     closeHistory();
-  }, [closeHistory]);
+  }, [closeHistory, endRedCarpetMode]);
+
+  const handleNewChat = useCallback(() => {
+    endRedCarpetMode();
+    void startNewThread();
+  }, [endRedCarpetMode, startNewThread]);
+
+  const handleSelectThread = useCallback(
+    (id: string) => {
+      endRedCarpetMode();
+      void switchThread(id);
+    },
+    [endRedCarpetMode, switchThread]
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -552,11 +599,11 @@ export default function PsaAssistantWidget() {
               activeThreadId={threadId}
               onClose={handleCloseChat}
               onSend={handleSend}
-              onNewChat={() => void startNewThread()}
+              onNewChat={handleNewChat}
               onOpenHistory={() => void openHistory()}
               onCloseHistory={closeHistory}
               onToggleHistoryArchived={() => void toggleHistoryArchivedView()}
-              onSelectThread={(id) => void switchThread(id)}
+              onSelectThread={handleSelectThread}
               onArchiveThread={(id) => void archiveThread(id)}
               onUnarchiveThread={(id) => void unarchiveThread(id)}
               onDeleteThread={(id) => void removeThread(id)}
@@ -568,12 +615,12 @@ export default function PsaAssistantWidget() {
           </>
         ) : null}
         <div
-          className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}`}
+          className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
         >
-          {!isFabCollapsed && !isOpen && proactiveNudge ? (
+          {!cartDropdownOpen && !isFabCollapsed && !isOpen && proactiveNudge ? (
             <button
               type="button"
-              className="psa-nudge-chip"
+              className={`psa-nudge-chip${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
               onClick={handleNudgeAction}
               aria-label={proactiveNudge.headline}
             >
@@ -593,9 +640,10 @@ export default function PsaAssistantWidget() {
             </button>
           ) : null}
           {isFabCollapsed ? (
+            !cartDropdownOpen ? (
             <button
               type="button"
-              className="psa-nudge-chip psa-nudge-chip-show-chat"
+              className={`psa-nudge-chip psa-nudge-chip-show-chat${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
               onClick={handleFabClick}
               aria-label="Show chat"
             >
@@ -610,6 +658,7 @@ export default function PsaAssistantWidget() {
                 <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>
               </span>
             </button>
+            ) : null
           ) : (
             <PsaAvatarTrigger
               onClick={handleFabClick}

@@ -26256,6 +26256,22 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-08 — NOIR Details bullets + why-you'll-love-it line edits
+
+**Context:** User updated four **DETAILS** strings: lace bullet (**INTENDED**, **SCALP LIKE**, no FS); cap bullet (**STRETCHY** cap, no wig); variations bullet (**AUTHENTIC NATURE**); rose list **COMPATIBLE WITH BUILD-A-WIG CUSTOMIZATION** (dropped SERVICES).
+
+**Changes:** **`NoirProductDetailsTab.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — NOIR Details: signature features header
+
+**Context:** User asked to rename Bohemy section **why you'll love it** → **signature features** on NOIR **DETAILS** tab.
+
+**Changes:** **`NoirProductDetailsTab.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-07 — NOIR PDP Details tab luxury intro paragraph
 
 **Context:** User requested a luxury intro paragraph above the spec bullets on the **DETAILS** tab of the NOIR product page (`/straight/noir`).
@@ -26278,3 +26294,324 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Docs:** **`motherboard/golden-prompts/psa-avatar-expressions-nbp.md`** (full prompt table), **`docs/PSA_SETUP.md`**, **`psa-avatar-background-removal-ideogram.md`**
 
 **Conventions:** Missing v5 PNGs fall back to **neutral** via **`PsaAvatarImageCrossfade` `onError`** until user drops Ideogram-cut files; then bump **`PSA_AVATAR_ASSET_VERSION`**. Do not run flatten/solidify scripts on Ideogram exports.
+
+---
+
+## 2026-06-07 — Red Carpet Mode: end on chat exit
+
+**Context:** User reported Red Carpet Mode persisted after closing PSA chat or starting a new thread (45min `localStorage` TTL kept it active site-wide).
+
+**Fix:** **`PsaAssistantWidget.tsx`** — **`endRedCarpetMode()`** calls **`deactivateRedCarpetMode()`** on chat close (backdrop, Escape, FAB hide), new chat, history thread switch; **`useEffect`** clears when **`isOpen`** is false (stale TTL on reload). **`psaRedCarpetMode.ts`** comment — TTL is safety net only; mode is chat-session scoped.
+
+---
+
+## 2026-06-08 — Bundles PDP Details tab (NOIR-style layout)
+
+**Context:** User supplied full **DETAILS** copy for **bundles** (`/shop/bundles` BCF PDP) matching NOIR tab design: intro, red bullets, Bohemy **premium by design** header, rose-alert list markers.
+
+**Changes:** **`BundleProductDetailsTab.tsx`** (new); **`texture-category-product/page.tsx`** renders it when **`category === 'bundles'`** on **DETAILS** tab. Reuses **`noirProductTabRoseBadge`** (12px). Closures/frontals keep legacy **`detailsCopy`** lines. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — BCF closures/frontals PDP Details tabs (NOIR-style)
+
+**Context:** User supplied full **DETAILS** copy for **closures** and **frontals** BCF PDPs matching NOIR/bundles tab design (intro, red bullets, Bohemy section header, rose-alert list).
+
+**Changes:** **`ClosureProductDetailsTab.tsx`** (**engineered for excellence**); **`FrontalProductDetailsTab.tsx`** (**every detail matters**); **`texture-category-product/page.tsx`** wires all three BCF categories on **DETAILS**; removed legacy **`detailsCopy`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP Details tab (NOIR-style)
+
+**Context:** User supplied full gift card **DETAILS** copy matching NOIR/BCF tab design.
+
+**Changes:** **`GiftCardProductDetailsTab.tsx`** — lead **LET THEM DECIDE**, intro, 9 red bullets, Bohemy **the perfect gift**, 8 rose-alert lines; **`gift-card/page.tsx`** **DETAILS** tab wired. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP Policy tab (NOIR-style)
+
+**Context:** User supplied full gift card **POLICY** copy: intro, 8 bullets, assistance email block.
+
+**Changes:** **`GiftCardProductPolicyTab.tsx`**; **`gift-card/page.tsx`** **POLICY** tab wired (red bullets, red **`CONTACT@FRONTALSLAYER.COM`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Bundles PDP Shipping tab (NOIR-style)
+
+**Context:** User supplied full **SHIPPING** copy for **bundles** BCF PDP.
+
+**Changes:** **`BundleProductShippingTab.tsx`** — intro, **standard/express processing**, **customization exclusions** bullets, **important to note** rose list, **premium hair takes time** closing; **`texture-category-product/page.tsx`** when **`category === 'bundles'`**. Closures/frontals keep legacy **`shippingCopy`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Closures & frontals PDP Shipping tabs (NOIR-style)
+
+**Context:** User supplied full **SHIPPING** copy for **closures** and **frontals** BCF PDPs (continuing NOIR-style tab rollout after bundles).
+
+**Changes:**
+- **`ClosureProductShippingTab.tsx`** — closure intro, **standard/express processing**, **customization exclusions** (incl. knot bleaching & toning, custom plucking), **important to note** rose list (customization timelines bullet), **quality over shortcuts** closing.
+- **`FrontalProductShippingTab.tsx`** — frontal intro, same structure; exclusions add **hairline customization**; closing **built for a flawless melt**.
+- **`texture-category-product/page.tsx`** — wired both tabs; removed legacy **`shippingCopy`** (all three BCF categories now use dedicated SHIPPING components).
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Bundles PDP Policy tab (NOIR-style)
+
+**Context:** User supplied full **POLICY** copy for **bundles** BCF PDP (continuing NOIR-style tab rollout).
+
+**Changes:** **`BundleProductPolicyTab.tsx`** — Bohemy sections **purchase policy**, **order issues** (receive + provide red bullets), **if an issue is verified** (rose resolutions), **product variations**, **processing & communication**, **agreement to terms** (red **`CONTACT@FRONTALSLAYER.COM`**); **`texture-category-product/page.tsx`** when **`category === 'bundles'`**. Closures/frontals keep legacy **`policyCopy`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Closures & frontals PDP Policy tabs (NOIR-style)
+
+**Context:** User supplied full **POLICY** copy for **closures** and **frontals** BCF PDPs.
+
+**Changes:**
+- **`ClosureProductPolicyTab.tsx`** — sales-final intro (lace options), **order issues**, **if an issue is verified** (rose list; comparable replacement without “product”), **product variations** (lace appearance), **processing & communication**, **agreement to terms**.
+- **`FrontalProductPolicyTab.tsx`** — same structure with frontal-specific intro and uniqueness copy.
+- **`texture-category-product/page.tsx`** — wired both; removed legacy **`policyCopy`** (all BCF categories now have dedicated POLICY components).
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — BCF CARE/STORAGE tabs (bundles, closures, frontals)
+
+**Context:** User supplied full **CARE/STORAGE** copy for all three BCF PDP categories.
+
+**Changes:**
+- **`BundleProductCareStorageTab.tsx`** — intro, **hair care** + **storage** red bullets, **built to last** closing.
+- **`ClosureProductCareStorageTab.tsx`** — **hair & lace care**, **storage**, **protect your investment**.
+- **`FrontalProductCareStorageTab.tsx`** — **hair & lace care**, **storage**, **preserve the melt**.
+- **`texture-category-product/page.tsx`** — wired all three; removed legacy **`careStorageCopy`**.
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Non-NOIR unit PDP tabs aligned with NOIR
+
+**Context:** User asked to update the other **5** wig unit PDPs (BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL) so **DETAILS / SHIPPING / POLICY / CARE-STORAGE** match NOIR tab design while keeping per-unit specs (origin, pattern, density, color).
+
+**Changes:**
+- **`unitPdpDetailsConfig.ts`** — canonical specs per **`WigUnitKey`**; builds NOIR-style bullets + **signature features**.
+- **`UnitProductDetailsTab.tsx`** + **`unitPdpTabStyles.ts`** — shared DETAILS renderer.
+- **`NoirProductDetailsTab.tsx`** — thin wrapper over **`UnitProductDetailsTab`** (`noir`).
+- **Five unit pages** wired to **`UnitProductDetailsTab`** + shared **`NoirProductShippingTab`**, **`NoirProductPolicyTab`**, **`NoirProductCareStorageTab`**; legacy 7.7px inline tab copy removed.
+
+Per-unit preserved: BLANCO **RUSSIAN / 250% / PLATINUM BLONDE**; SOFT WAVE **INDIAN WAVY 200%**; BEACH WAVE **INDONESIAN WAVY 200%**; SOFT CURL **FILIPINO CURLY 200%**; OCEAN CURL **VIETNAMESE CURLY 200%**.
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP hero image
+
+**Context:** User supplied new Supabase hero URL for **`/tools/gift-card`**.
+
+**Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_HERO_IMAGE_SRC`** → **`live-preview/Stock Content/IMG_1780.jpeg`** (replaces **`/assets/giftcard-product.png`** on PDP hero only). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP hero gallery (2 images + thumbs)
+
+**Context:** User updated gift card PDP media: hero **`IMG_1799.png`**, second image **`IMG_1788.png`**, with **2 thumbnails** below hero to switch views.
+
+**Changes:** **`gift-card/page.tsx`** — **`GIFT_CARD_PREVIEW_IMAGES`** array; **`selectedGiftCardPreviewIndex`** state; hero shows selected image; **`ThumbBox`** row below hero for both previews. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP preview layout overlap fix
+
+**Context:** Hero + thumb gallery overlapped **GIFT CARD** title (legacy **`translateY(-128px)`** on **`.gift-card-product-name`** + stacked negative transforms).
+
+**Changes:** **`gift-card/page.tsx`** — preview block uses normal vertical flow (hero → thumbs → title → price); removed per-section negative **`translateY`**. **`index.css`** — **`.gift-card-product-name`**: **`transform: none`**, **`z-index: 1`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card PDP tab overlap + portrait thumbs
+
+**Context:** After preview layout fix, tabs/checkout overlapped (**`marginBottom: -65px`** on tab content); gift card thumbs needed **portrait** frames with equal **4px** white mat (not landscape).
+
+**Changes:** **`gift-card/page.tsx`** — removed tab content negative margin; added card **`paddingBottom`** + checkout **`marginTop`**; portrait thumb dims (**48×84** inner, **56×92** outer, **4px** mat). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Gift card thumb height + checkout spacing tune
+
+**Context:** Portrait thumbs fixed side mat but **top/bottom white** too tall; excess gap above **PROCEED TO CHECKOUT**.
+
+**Changes:** **`gift-card/page.tsx`** — thumb inner height **84 → 50** (outer **92 → 58**, width unchanged); tightened tabs/checkout spacing (**`marginTop` 8px**, removed extra card/tab padding). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA nudge flash, gift card $ selection, tab spacing
+
+**Context:** User reported three gift-card / PSA issues: (1) proactive PSA nudge text renders broken (no thought-bubble asset, wrong font) on SPA navigation until full refresh; (2) gift card balance buttons get stuck — e.g. **$10** stays red when **$15** is selected; (3) tab content sits too close below DETAILS/POLICY/REVIEWS vs BCF PDP spacing.
+
+**Changes:**
+- **`src/utils/psaNudgeAssetPreload.ts`** — preload/decode **`psa-nudge-thought-bubble.png`** + Bohemy / Futura PT Demi before nudge shows.
+- **`main.tsx`**, **`index.html`**, **`PsaAssistantWidget.tsx`**, **`psaAssistant.css`** — early preload; gate nudge chip until assets ready; **`min-height`/`aspect-ratio`** on bubble art; HTML preloads for bubble + Bohemy.
+- **`gift-card/page.tsx`** — balance buttons use inline **`#EB1C24`** selection (not Tailwind toggle); **`type="button"`**, **`aria-pressed`**; sync **`selectedBalance`** from gift-card cart line on mount; tabs use **`UNIT_PDP_TABS_SECTION_STYLE`** + BCF-style tab row (**16px** gap, **4px** active underline padding, **`mt-4`** content).
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Gift card cart thumbnail (bag / checkout / summary)
+
+**Context:** User asked to replace the gift card thumbnail in bag, cart, checkout, and order summary with Supabase **`live-preview/Stock Content/image (23).png`**.
+
+**Changes:** **`giftCardCheckout.ts`** — **`GIFT_CARD_CART_THUMBNAIL_SRC`** + **`giftCardCartThumbnailSrc()`**; wired in **`checkoutOrderStripDisplay.ts`** (checkout + confirm summary), **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`**, **`giftCardCheckoutSession.ts`**, **`gift-card/page.tsx`** (new cart lines). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA nudge + gift card PDP fixes (retry)
+
+**Context:** User reported prior PSA nudge / balance / tab fixes did not work — nudge showed unstyled duplicate text and bubble centered on page (not above FAB); $ balance still stuck multi-red; tab spacing still tight vs BCF.
+
+**Root cause (nudge):** With stale/missing **`psaAssistant.css`** on SPA nav, **`.psa-nudge-chip { left: 50% }`** positioned against full-width **`.psa-widget-root`**, centering bubble on page; text rendered unstyled at document bottom.
+
+**Changes:**
+- **`PsaNudgeChip.tsx`** — bubble as **`background-image`**; inline critical layout/typography; render only after bubble decode; anchor **`right: 0`** (not page-center **`left: 50%`**).
+- **`PsaAssistantWidget.tsx`** — inline **`position: fixed`** on root; **`fab-stack` width 88px**; use **`PsaNudgeChip`**.
+- **`psaAssistant.css`** — revert bad **`min-height`/`aspect-ratio`**; **`right: 0`** anchor; **`fab-stack` width 88px**.
+- **`main.tsx`** — import **`psaAssistant.css`** at boot + preload nudge assets.
+- **`gift-card/page.tsx`** — balance **`radiogroup`** + red **border** selection; tabs match BCF **`mt-1.5`** + **`paddingTop: 4px`** on content wrapper.
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Cart dropdown stretch (single-item bag)
+
+**Context:** User asked why cart dropdown looked vertically stretched on gift-card checkout (empty gap, checkout/PSA nudge bleeding through).
+
+**Root cause:** Single-item bags used **`flex-1`** on the items scroller with **`maxHeight: none`**, so the list grew to ~full viewport inside the shell.
+
+**Changes:** **`CartDropdown.tsx`** — **`flex-1`** only when multi-item or view-details scroll needed; single row **`flex-shrink-0`** + shrink-wrap shell. **`DynamicCartIcon`** + **`PsaAssistantWidget`** — hide proactive nudge while cart dropdown open (`cartDropdownOpenChanged` event). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA restore + gift card balance/tabs (retry 2)
+
+**Context:** User reported PSA nudge/avatar broken by prior shrink/center fixes; gift card $10 still stuck selected + gray chip backgrounds; tab content still tight at bottom.
+
+**Changes:**
+- **PSA** — restored original **`psaAssistant.css`** nudge positioning (**`left: 50%` / `translateX(-50%)`**, full bubble **`img`**); removed **`PsaNudgeChip`** + fab-stack width override + widget inline layout; gate nudge on bubble preload only.
+- **Gift card balance** — new **`GiftCardBalancePicker.tsx`** (div radiogroup + scoped **`!important`** white bg / single red selection).
+- **Gift card tabs** — **`paddingBottom: 16px`** on details/policy tab bodies + card shell + tab content wrapper; **`paddingTop: 8px`** below tab row.
+
+Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Cart dropdown + PSA hide (authoritative state)
+
+**Context:** User reported prior cart stretch / PSA-over-cart fixes did not work in production.
+
+**Root causes:** Cart open state dispatched from per-page **`DynamicCartIcon`** (desync); cart backdrop is transparent so PSA visible beside panel; single-item bags needed **`fit-content`** on anchor/shell not just **`flex-shrink-0`**.
+
+**Changes:** **`cartDropdownOpenState.ts`**; **`CartDropdown`** sets open on **`isOpen`**; **`PsaAssistantWidget`** + **`.psa-widget-fab-stack--cart-open`**; compact single-line bag **`fit-content`** layout. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Revert gift card / PSA layout attempts (user: made worse)
+
+**Context:** User asked to revert recent fixes — tab spacing CSS lock (`c9606423`), gift card balance centering + **`PsaNudgeChip`** (`d040baf8`), screenshot retry with grid/inline FAB (`ebfa5c09`) — reported all made production worse.
+
+**Action:** Hard reset **`master`** + **`preview/mobile`** to **`6bb4a3e6`** (PSA avatar restore, 1.3px gift card border, inline tab padding 4px/12px). Removed **`giftCardPdpLayoutConstants.ts`**, **`PsaNudgeChip.tsx`**, balance grid CSS, widget inline positioning changes from those commits.
+
+---
+
+## 2026-06-08 — Home/tools gift card strip thumbnail
+
+**Context:** User asked to use **`GIFT_CARD_CART_THUMBNAIL_SRC`** (Supabase **`image (23).png`**) on **`/home/tools`** gift card strip, same as bag/cart/checkout.
+
+**Changes:** **`src/pages/tools/page.tsx`** — import **`GIFT_CARD_CART_THUMBNAIL_SRC`** from **`giftCardCheckout.ts`**; replace **`/assets/gift-card asset.png`** on strip product image. Pushed **`master`** + **`preview/mobile`** (`572b3a2e`).
+
+---
+
+## 2026-06-08 — Bundles Details tab: 150g bundle bullet
+
+**Context:** User asked to add a second bullet on bundles **DETAILS** tab (after first bullet) about **150g** vs traditional **100 gram** bundles.
+
+**Changes:** **`BundleProductDetailsTab.tsx`** — new **`BUNDLE_DETAILS_BULLETS`** entry after single-donor raw hair bullet. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Bundles Policy tab: remove purchase policy header
+
+**Context:** User asked to remove gray **purchase policy** Bohemy section header on bundles **POLICY** tab.
+
+**Changes:** **`BundleProductPolicyTab.tsx`** — removed **`<p style={SECTION_TITLE_STYLE}>purchase policy</p>`**; opening body copy unchanged. Pushed **`master`** + **`preview/mobile`** (`3b5f3656`).
+
+---
+
+## 2026-06-09 — PSA chat panel nudge 2px right
+
+**Context:** User asked to move PSA chat box only 2px right; avatar and nudge unchanged.
+
+**Change:** **`psaAssistant.css`** — **`.psa-chat-panel`** `transform` X **`-20px` → `-18px`** (FAB stack / nudge offsets untouched). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA widget stack down 16px (nudge + avatar + chat)
+
+**Context:** User asked to move nudge, avatar, and chat down 16px in tandem.
+
+**Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `bottom` reduced 16px (`max(16px, safe-area)` → `max(0px, calc(max(16px, safe-area) - 16px))`) so FAB stack and chat panel move together. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Proactive nudge text rows down 2px
+
+**Context:** User asked to move the two text rows on the nudge down 2px without moving the bubble art.
+
+**Change:** **`psaAssistant.css`** — proactive nudge **`.psa-nudge-chip-content`** `top` **`+8px` → `+10px`** (scoped `:not(.psa-nudge-chip-show-chat)`); removed headline-only `top: 2px` so headline + body shift together. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA widget stack left 6px (nudge + avatar + chat)
+
+**Context:** User asked to move nudge, avatar, and chat left 6px in tandem.
+
+**Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `right` **`+6px`** (`calc(max(12px, safe-area-right) + 6px)`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Proactive nudge red body row up 1px
+
+**Context:** User asked to move only the red text row on the nudge up 1px; bubble and Bohemy headline unchanged.
+
+**Change:** **`psaAssistant.css`** — **`.psa-nudge-chip-body`** `top: -1px` scoped to proactive nudge (`:not(.psa-nudge-chip-show-chat)`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA widget stack up 8px (nudge + avatar + chat)
+
+**Context:** User asked to move nudge, avatar, and chat up 8px in tandem.
+
+**Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `bottom` offset **`-16px` → `-8px`** (8px higher than prior position). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA chat panel 1px left
+
+**Context:** User asked to move PSA chat box only 1px left; nudge and avatar unchanged.
+
+**Change:** **`psaAssistant.css`** — **`.psa-chat-panel`** `transform` X **`-18px` → `-19px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Lobby phone popover clipping open asset
+
+**Context:** User reported lobby **phone** asset clipped by **CONTACT US** popover when open.
+
+**Cause:** **`LOBBY_CASE_POPOVER_PHONE_OFFSET_UP`** was negative (`-4.1cqw` / **-20px**), so **`bottom: calc(100% + gap + offset)`** placed the glass panel **into** the phone hit box (popover z **30** over open PNG z **28**).
+
+**Fix:** **`lobbyCaseResponsive.ts`** — phone offset **`lobbyCaseCqw(1.5, 8, 12)`** (positive clearance). **`LobbyDisplayCaseShell`** prop slots **`overflow: visible`**. Pushed **`master`** + **`preview/mobile`**.

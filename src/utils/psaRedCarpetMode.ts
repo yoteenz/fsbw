@@ -1,8 +1,10 @@
 /**
  * Red Carpet Mode — premium event session (UI + tone, not a separate product surface).
+ * Scoped to the open PSA chat: cleared when the panel closes, a new thread starts, or history switches threads.
  */
 const STORAGE_KEY = 'psa_red_carpet_active_until';
 
+/** TTL is a safety net only — the widget calls `deactivateRedCarpetMode` on chat exit. */
 export function activateRedCarpetMode(durationMs = 45 * 60 * 1000): void {
   localStorage.setItem(STORAGE_KEY, String(Date.now() + durationMs));
 }

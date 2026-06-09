@@ -43,6 +43,18 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
+import BundleProductCareStorageTab from '../../../components/shop/BundleProductCareStorageTab';
+import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
+import BundleProductPolicyTab from '../../../components/shop/BundleProductPolicyTab';
+import BundleProductShippingTab from '../../../components/shop/BundleProductShippingTab';
+import ClosureProductCareStorageTab from '../../../components/shop/ClosureProductCareStorageTab';
+import ClosureProductDetailsTab from '../../../components/shop/ClosureProductDetailsTab';
+import ClosureProductPolicyTab from '../../../components/shop/ClosureProductPolicyTab';
+import ClosureProductShippingTab from '../../../components/shop/ClosureProductShippingTab';
+import FrontalProductCareStorageTab from '../../../components/shop/FrontalProductCareStorageTab';
+import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
+import FrontalProductPolicyTab from '../../../components/shop/FrontalProductPolicyTab';
+import FrontalProductShippingTab from '../../../components/shop/FrontalProductShippingTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
@@ -810,46 +822,6 @@ export default function ShopTextureCategoryProductPage() {
       }
     }, 500);
   };
-
-  const detailsCopy = !category
-    ? []
-    : category === 'bundles'
-      ? [
-          'PREMIUM RAW HUMAN HAIR BUNDLES MATCHING YOUR SELECTED TEXTURE.',
-          'AVAILABLE LENGTHS AND ORIGINS VARY — SEE CHECKOUT OPTIONS.',
-          'PROFESSIONAL INSTALLATION RECOMMENDED FOR BEST RESULTS.'
-        ]
-      : category === 'closures'
-        ? [
-            'LACE CLOSURES CRAFTED TO BLEND WITH YOUR TEXTURE SELECTION.',
-            'VERSATILE PARTING AND NATURAL HAIRLINE APPEARANCE.',
-            'PAIR WITH BUNDLES OR YOUR STYLIST’S RECOMMENDATION.'
-          ]
-        : [
-            'EAR-TO-EAR FRONTALS FOR MAXIMUM STYLING FLEXIBILITY.',
-            'DESIGNED TO COMPLEMENT STRAIGHT, WAVY, OR CURLY BUNDLES.',
-            'CONSULT YOUR STYLIST FOR CUSTOMIZATION AND INSTALL.'
-          ];
-
-  const policyCopy = [
-    'ALL SALES FOLLOW SITE TERMS; CONTACT SUPPORT FOR PRODUCT QUESTIONS.',
-    'FINAL PROCESSING TIMES MAY VARY — YOU WILL RECEIVE ORDER UPDATES BY EMAIL.',
-    'FOR SUPPORT, REACH OUT TO CONTACT@FRONTALSLAYER.COM.'
-  ];
-
-  /** Bundles / closures / frontals — matches `checkoutBcfProcessing` (4–6 std, 3–4 express; custom color & extras extend / disable express). */
-  const shippingCopy = [
-    'STANDARD PROCESSING IS 4 TO 6 WEEKS.',
-    'EXPRESS PROCESSING IS 3 TO 4 WEEKS WITH RUSH SHIPPING FOR AN ADDITIONAL $120 USD.',
-    'CUSTOM HAIR COLOR, STYLING, OR ADD-ONS ARE NOT AVAILABLE FOR EXPRESS PROCESSING AND MAY EXTEND STANDARD TIMELINES (TYPICALLY 6 TO 8 WEEKS OR LONGER).',
-    'PROCESSING TIME DOES NOT INCLUDE WEEKENDS AND MAJOR US HOLIDAYS.'
-  ];
-
-  const careStorageCopy = [
-    'WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.',
-    'ROUTINELY BRUSH HAIR WITH A PADDLE BRUSH TO AVOID MATTING & SHEDDING.',
-    'CAREFULLY STORE UNIT INSIDE SATIN LINED DUST BAG TO MINIMIZE DAMAGE, FRIZZ + DEBRIS.'
-  ];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1796,70 +1768,18 @@ export default function ShopTextureCategoryProductPage() {
                   </div>
 
                   <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
-                    {activeTab === 'DETAILS' &&
-                      detailsCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === detailsCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
-                    {activeTab === 'SHIPPING' &&
-                      shippingCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === shippingCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
-                    {activeTab === 'POLICY' &&
-                      policyCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === policyCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
-                    {activeTab === 'CARE/STORAGE' &&
-                      careStorageCopy.map((line, i) => (
-                        <p
-                          key={i}
-                          style={{
-                            fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                            fontSize: '7.7px',
-                            color: 'black',
-                            marginBottom: i === careStorageCopy.length - 1 ? '-8px' : '0px',
-                            padding: '0 4px',
-                            textAlign: 'left'
-                          }}
-                        >
-                          {line}
-                        </p>
-                      ))}
+                    {activeTab === 'DETAILS' && category === 'bundles' && <BundleProductDetailsTab />}
+                    {activeTab === 'DETAILS' && category === 'closures' && <ClosureProductDetailsTab />}
+                    {activeTab === 'DETAILS' && category === 'frontals' && <FrontalProductDetailsTab />}
+                    {activeTab === 'SHIPPING' && category === 'bundles' && <BundleProductShippingTab />}
+                    {activeTab === 'SHIPPING' && category === 'closures' && <ClosureProductShippingTab />}
+                    {activeTab === 'SHIPPING' && category === 'frontals' && <FrontalProductShippingTab />}
+                    {activeTab === 'POLICY' && category === 'bundles' && <BundleProductPolicyTab />}
+                    {activeTab === 'POLICY' && category === 'closures' && <ClosureProductPolicyTab />}
+                    {activeTab === 'POLICY' && category === 'frontals' && <FrontalProductPolicyTab />}
+                    {activeTab === 'CARE/STORAGE' && category === 'bundles' && <BundleProductCareStorageTab />}
+                    {activeTab === 'CARE/STORAGE' && category === 'closures' && <ClosureProductCareStorageTab />}
+                    {activeTab === 'CARE/STORAGE' && category === 'frontals' && <FrontalProductCareStorageTab />}
                     {activeTab === 'REVIEWS' && (
                       <p
                         style={{
