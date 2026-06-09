@@ -243,6 +243,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   const beginScrub = useCallback(
     (e: React.PointerEvent) => {
       e.stopPropagation();
+      e.preventDefault();
       cancelPendingTap();
       const video = videoRef.current;
       wasPlayingBeforeScrubRef.current = video ? !video.paused : false;
@@ -252,6 +253,13 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       }
       isScrubbingRef.current = true;
       setIsScrubbing(true);
+      if (e.currentTarget instanceof Element && e.currentTarget.setPointerCapture) {
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+          /* ignore */
+        }
+      }
     },
     [cancelPendingTap],
   );
@@ -269,9 +277,33 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     }
   }, []);
 
+  useEffect(() => {
+    if (!isScrubbing) return;
+    const finish = () => endScrub();
+    window.addEventListener('pointerup', finish);
+    window.addEventListener('pointercancel', finish);
+    return () => {
+      window.removeEventListener('pointerup', finish);
+      window.removeEventListener('pointercancel', finish);
+    };
+  }, [isScrubbing, endScrub]);
+
+  const handleShellPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (isScrubbingRef.current) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-lounge-tv-seek]')) return;
+    // Keep vertical scroll on the media panel from stealing tap-to-pause on the video.
+    if (e.pointerType === 'touch') e.preventDefault();
+  }, []);
+
   if (!tile.videoSrc) return null;
 
   const shellHeightExtraPx = videoFrameRegion.layout.layoutHeightExtraPx ?? 0;
+  const shellScaleY = videoFrameRegion.layout.layoutScale?.y ?? 1;
+  const shellAspectPaddingTop =
+    shellHeightExtraPx > 0
+      ? `calc(100% * ${9 * shellScaleY} / 16 + ${shellHeightExtraPx}px)`
+      : `calc(100% * ${9 * shellScaleY} / 16)`;
 
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
   const elapsedLabel = formatLoungeTvVideoDuration(currentTime);
@@ -300,20 +332,26 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             position: 'relative',
             ...loungeTvVideoShellStyle(videoFrameRegion.layout),
             width: '100%',
-            aspectRatio: '16 / 9',
-            boxSizing: shellHeightExtraPx > 0 ? 'content-box' : 'border-box',
-            paddingBottom: shellHeightExtraPx > 0 ? `${shellHeightExtraPx}px` : undefined,
-            background: '#0a0a0a',
-            overflow: 'hidden',
+            height: 0,
+            paddingTop: shellAspectPaddingTop,
+            background: '#000000',
+            overflow: 'visible',
             cursor: 'pointer',
             flexShrink: 0,
+            touchAction: 'none',
           }}
           debugOutline={{
             backgroundColor: 'rgba(0, 188, 212, 0.15)',
             border: '2px dashed rgba(0, 151, 167, 0.95)',
           }}
         >
-          <div ref={shellRef} style={{ position: 'absolute', inset: 0 }}>
+          <div
+            ref={shellRef}
+            style={{ position: 'absolute', inset: 0, overflow: 'hidden', touchAction: 'none' }}
+            onPointerDown={handleShellPointerDown}
+            onPointerUp={handleVideoPointerUp}
+            onDoubleClick={handleVideoDoubleClick}
+          >
             <video
               key={tile.id}
               ref={videoRef}
@@ -335,13 +373,12 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               onLoadedMetadata={syncTimeFromVideo}
               onLoadedData={syncTimeFromVideo}
               onDurationChange={syncTimeFromVideo}
-              onPointerUp={handleVideoPointerUp}
-              onDoubleClick={handleVideoDoubleClick}
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
                 display: 'block',
+                pointerEvents: 'none',
               }}
             />
 
@@ -370,6 +407,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
 
             {paused || isScrubbing ? (
               <div
+                data-lounge-tv-seek
                 role="group"
                 aria-label="Video seek"
                 onPointerDown={beginScrub}
