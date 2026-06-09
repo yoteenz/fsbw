@@ -26805,3 +26805,5 @@ Pushed **`master`** + **`preview/mobile`**.
 - **`motherboard/golden-models/gpt-image-2.md`**, **`motherboard/CORE.md`** — GPT2 = production for NOIR live previews.
 
 **Conventions:** Use **`bawGptImage2EditFalInput`** for any new BAW live GPT2 Fal calls; keep inlined prompt sync in **`live-noir-color.ts`** (no `_lib` import on nested Vercel route). Founder regen UI requires **`isFounderNoirFalRegenUiVisible()`** (founder Gmail + signed in).
+
+**Follow-up (same chat):** User asked **`image_size` 3:4** + **`quality` 2K**. GPT2 has no `2K` quality enum — set **`image_size: { width: 1536, height: 2048 }`** (3:4 portrait, 2048px long edge) and **`quality: 'medium'`** (~2K tier) in **`bawGptImage2FalInput.ts`** + mirrored inline in **`live-noir-color.ts`**.
