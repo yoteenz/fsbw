@@ -26573,3 +26573,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move the two text rows on the nudge down 2px without moving the bubble art.
 
 **Change:** **`psaAssistant.css`** — proactive nudge **`.psa-nudge-chip-content`** `top` **`+8px` → `+10px`** (scoped `:not(.psa-nudge-chip-show-chat)`); removed headline-only `top: 2px` so headline + body shift together. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA widget stack left 6px (nudge + avatar + chat)
+
+**Context:** User asked to move nudge, avatar, and chat left 6px in tandem.
+
+**Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `right` **`+6px`** (`calc(max(12px, safe-area-right) + 6px)`). Pushed **`master`** + **`preview/mobile`**.
