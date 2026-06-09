@@ -26675,3 +26675,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to restore first-ship video fit — full frame **`cover`** with no side letterboxing (not **`contain`** / **`center top`** / **54% max-height**).
 
 **Change:** **`LoungeTvWatchLearnPlayer`** — **`object-fit: cover`** (no **`object-position`**); removed **54%** **`maxHeight`** cap; **16:9** **`aspect-ratio`** at full width like **`e71e1929`**. **`LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX = 16`** via **`layoutHeightExtraPx`** + **`paddingBottom`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: description scroll below pinned video
+
+**Context:** User could not scroll to read video details; scroll must start at the video top and not overlap the category tab row (BRAND / SLAY TIPS / sidebar).
+
+**Fix:** **`LoungeTvOverlay`** — media panel **`overflowY: auto`** (was **`hidden`** when player open), **`bottom: 0`**, **`overscrollBehavior: contain`**. **`LoungeTvWatchLearnPlayer`** — **`position: sticky; top: 0`** on video + title block; description in normal flow below (panel scrolls, video stays pinned). Pushed **`master`** + **`preview/mobile`**.
