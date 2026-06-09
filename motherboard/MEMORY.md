@@ -26754,3 +26754,18 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User said layout tweaks for detail text kept **breaking scroll + red scrubber**; text was originally added via **Admin → Backend → CONTENT** **`body`** field (`loungeTvAdminConfig` → **`tile.description`**), not player layout hacks.
 
 **Fix (data only, no sticky):** Reverted **`LoungeTvWatchLearnPlayer`** to **`41160bf0`** structure — **`height: 100%`** flex column; overlay seek on video; **`tile.description`** in inner **`overflowY: auto`** region; **`aspectRatio` 16/9** + **`paddingBottom`** extra height with **`shellRef` `absolute inset 0`** (video fills +16px, no gray band). **`LoungeTvOverlay`** — **`overflowY: hidden`** when player open (inner description scroll). **`adminItemToVideoTile`** — admin **`body`** wins, static copy fallback. Removed sticky / **`resolveWatchLearnDescription`** in player. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Watch + Learn: deploy scrubber + scroll + description fix
+
+**Context:** User reported **“nothing changed”** after multiple Watch + Learn layout iterations (Plucking Your Lace detail text, red scrubber on pause, scroll to read description, gray band). Prior fixes had **built locally but were never committed/pushed** — production still had the broken **`41160bf0`** revert.
+
+**Topics covered:** PSA hide on lobby/lounge/account (done earlier); admin CONTENT **`body`** → **`tile.description`**; scrubber overlay vs in-flow; nested flex scroll collapsing description; autoplay blocked leaving UI “playing” so scrubber never appeared.
+
+**Fix (commit `2e5258b5`, pushed `master` + `preview/mobile`):**
+- **`LoungeTvWatchLearnPlayer`** — after autoplay, **`setPaused(video.paused)`** (not forced playing); removed **`height: 100%`** + inner description scroll; gray detail via **`resolveWatchLearnDescription(tile)`** in natural flow below title; overlay red seek when **`paused || isScrubbing`** unchanged.
+- **`LoungeTvOverlay`** — media panel **`overflowY: auto`** always (scroll whole player including description).
+- **`loungeTvAdminConfig.resolveLoungeTvTiles`** — if admin placement is **empty array**, fall back to static tiles.
+
+**Conventions:** Custom Plucking Your Lace copy lives in **Admin → Backend → CONTENT** **`body`** field; player only displays resolved text, does not own layout hacks for copy.
