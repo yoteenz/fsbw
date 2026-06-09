@@ -11,8 +11,8 @@
 - `api/live-wig-after-color-styling.ts` — after-color salon / bangs styling
 - Shared input helper: `api/_lib/bawGptImage2FalInput.ts`
 
-**Fal input pattern:**
-- `prompt`, `image_urls`, `image_size: 'auto'`, `quality: 'auto'`, `output_format: 'webp'`
+**Fal input pattern (NOIR live):**
+- `prompt`, `image_urls`, `image_size: { width: 1536, height: 2048 }` (3:4 portrait, ~2K), `quality: 'medium'`, `output_format: 'webp'`
 
 **Env:** `FAL_KEY`
 

@@ -19,7 +19,7 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
- * Model: **`openai/gpt-image-2/edit`** — `image_size: auto`, `quality: auto`, `output_format: webp`.
+ * Model: **`openai/gpt-image-2/edit`** — `image_size` **3:4** (`1536×2048`), `quality: medium` (~2K tier), `output_format: webp`.
  *
  * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
  * Vercel’s output for nested `api/wig-preview/*` can fail to resolve `../_lib/*` at runtime (`ERR_MODULE_NOT_FOUND`).
@@ -384,8 +384,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         input: {
           prompt,
           image_urls: [mannequinUrl],
-          image_size: 'auto',
-          quality: 'auto',
+          image_size: { width: 1536, height: 2048 },
+          quality: 'medium',
           output_format: 'webp',
           num_images: 1,
         },
