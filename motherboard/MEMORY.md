@@ -26617,3 +26617,19 @@ Pushed **`master`** + **`preview/mobile`**.
 **Fix:** **`lobbyCaseResponsive.ts`** — phone offset **`lobbyCaseCqw(1.5, 8, 12)`** (positive clearance). **`LobbyDisplayCaseShell`** prop slots **`overflow: visible`**. Pushed **`master`** + **`preview/mobile`**.
 
 **Follow-up (user: still clipped):** Offset-only was not enough — popover **wrapper z-30** still stacked over open phone PNG **z-28**; glass panel covered handset. **Structural fix:** phone open art **z-32**, render **after** popover in DOM, phone popover root **z-24** (panel stays **z-30**), fixed **`12px` gap + `20px` offset** (no cqw in calc), phone open art **`object-fit: contain`**. Commit **`5434cb68`**.
+
+---
+
+## 2026-06-09 — Restore lobby register/phone sizes and positions (motherboard)
+
+**Context:** User resized and repositioned lobby register and phone assets previously; those values were reset when independent scene hit regions shipped without per-prop offsets, and the phone clipping fix moved the CONTACT US panel to **`+20px`**.
+
+**Topics covered (entire conversation so far):** PSA v5 avatar prep, Red Carpet Mode session scope, PSA layout nudges, lobby phone popover clipping fix, then this restore request.
+
+**Decisions / outcomes:** Restored Jun 2026 motherboard-documented tuning into **code defaults** (not localStorage-only):
+- **Open overlay scales** (unchanged, already correct): register **`0.7938`**, phone **`0.57`** in **`finalLobbyCasePropOverlays.ts`**.
+- **Per-prop cover offsets** (were lost when **`lobby-display-case-register` / `phone`** defaulted to empty layout): register **`{ x: 24, y: -30 }`**, phone **`{ x: -1, y: -32 }`** via **`sceneHitRegionDefaults.ts`** → **`LobbyDisplayCaseShell`** **`coverOffset`**.
+- **Phone popover lift** restored to **`lobbyCaseCqw(-4.1, -20, -14)`** (~**−16px**); removed clipping-fix **`12px` gap + `20px` offset** override.
+- **Kept** Jun 9 structural clipping fix: phone open art **z-32**, popover root **z-24**, DOM order phone → open art, **`paintAbovePopover`** / **`object-fit: contain`**.
+
+**Changes:** **`sceneHitRegionDefaults.ts`**, **`lobbyCaseResponsive.ts`**, **`lobbyPaymentIcons.ts`**, **`LobbySceneHotspots.tsx`**. Commit **`b9b7a1f0`** on **`master`** + **`preview/mobile`**.
