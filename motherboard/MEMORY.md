@@ -26779,3 +26779,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Cause:** **`aspectRatio` + `paddingBottom` + `overflow: hidden`** clipped the overlay seek bar; media-panel vertical scroll stole touch events from tap-to-pause on the video.
 
 **Fix (`97077210`, `LoungeTvWatchLearnPlayer` only):** **`paddingTop`** aspect shell (outer **`overflow: visible`**, inner **`absolute inset 0; overflow: hidden`**) so seek sits on the frame bottom; **`touchAction: none`** + **`pointerdown` preventDefault** on video shell; **`setPointerCapture`** + window **`pointerup`** during scrub; tap/double-tap on shell wrapper (video **`pointerEvents: none`**). Description in natural flow + **`LoungeTvOverlay`** panel scroll unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — Cart dropdown: BCF view-details stays vertically centered
+
+**Context:** User asked that **BCF** (bundles/closures/frontals) **VIEW DETAILS** text in the **cart dropdown** should **not** use the upward shift applied to **unit** wigs (many detail rows). BCF has fewer lines and should stay **vertically centered** in the 120px row like before the unit shift.
+
+**Fix (`CartDropdown.tsx`):** **`unitDetailsShiftLayout = isViewingDetails && !isBcfShopItem`** gates **`translateY`**, **`items-start`**, **`justify-start`**, right-column **`marginTop`**, and extra card padding — **units only**. BCF with details open keeps **`items-center`**, **`justify-center`**, no product-block transform. Pushed **`master`** + **`preview/mobile`**.
