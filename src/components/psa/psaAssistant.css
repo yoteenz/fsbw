@@ -812,10 +812,9 @@
   text-align: center;
 }
 
-/* Proactive nudge only — Bohemy headline (row 1) down 2px; body unchanged. */
-.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-headline {
-  position: relative;
-  top: 2px;
+/* Proactive nudge only — both text rows down 2px; bubble art unchanged. */
+.psa-nudge-chip:not(.psa-nudge-chip-show-chat) .psa-nudge-chip-content {
+  top: calc(36% + 10px);
 }
 
 .psa-nudge-chip-headline {
