@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
+  resolveWatchLearnDescription,
   type LoungeTvMainTab,
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
@@ -280,10 +281,14 @@ function LoungeTvScreen({
 
   const isWatchLearn = mainTab === 'watch-learn';
   const isSlayTips = mainTab === 'slay-tips';
-  const watchLearnTile =
-    isWatchLearn && selectedVideoId && tiles
-      ? tiles.find((t) => t.id === selectedVideoId && t.videoSrc) ?? null
-      : null;
+  const watchLearnTile = useMemo(() => {
+    if (!isWatchLearn || !selectedVideoId || !tiles) return null;
+    const tile = tiles.find((t) => t.id === selectedVideoId && t.videoSrc);
+    if (!tile) return null;
+    const description = resolveWatchLearnDescription(tile);
+    if (!description) return tile;
+    return { ...tile, description, body: tile.body?.trim() || description };
+  }, [isWatchLearn, selectedVideoId, tiles]);
   const slayTipsPost =
     isSlayTips && selectedPostId && tiles ? tiles.find((t) => t.id === selectedPostId) ?? null : null;
 
@@ -500,7 +505,7 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            overflowY: watchLearnTile ? 'hidden' : 'auto',
+            overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             paddingBottom: loungeTvGlassCqw(2.5, 6, 10),
@@ -512,17 +517,7 @@ function LoungeTvScreen({
           }}
         >
           {watchLearnTile ? (
-            <div
-              style={{
-                flex: '1 1 0',
-                minHeight: 0,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <LoungeTvWatchLearnPlayer tile={watchLearnTile} />
-            </div>
+            <LoungeTvWatchLearnPlayer tile={watchLearnTile} />
           ) : slayTipsPost ? (
             <LoungeTvBlogPostDetail tile={slayTipsPost} onBack={() => setSelectedPostId(null)} />
           ) : tiles && tiles.length > 0 ? (

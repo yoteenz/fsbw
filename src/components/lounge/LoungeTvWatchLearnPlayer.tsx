@@ -289,23 +289,21 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     <div
       style={{
         width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          flexShrink: 0,
+          position: 'sticky',
+          top: 0,
+          zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
           minWidth: 0,
           background: '#000000',
-          paddingBottom: '4px',
+          paddingBottom: '6px',
         }}
       >
         <LoungeTvInnerLayoutEditor
@@ -319,7 +317,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             height: 0,
             paddingTop: shellAspectPaddingTop,
             background: '#000000',
-            overflow: 'hidden',
+            overflow: 'visible',
             cursor: 'pointer',
             flexShrink: 0,
           }}
@@ -330,7 +328,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         >
           <div
             ref={shellRef}
-            style={{ position: 'absolute', inset: 0 }}
+            style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
             onPointerUp={handleVideoPointerUp}
           >
             <video
@@ -380,10 +378,64 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
                   textTransform: 'uppercase',
                   pointerEvents: 'none',
                   background: 'rgba(0,0,0,0.2)',
+                  paddingBottom: '22px',
                 }}
               >
                 PAUSED
               </span>
+            ) : null}
+
+            {paused || isScrubbing ? (
+              <div
+                role="group"
+                aria-label="Video seek"
+                onPointerDown={beginScrub}
+                onPointerUp={(e) => {
+                  e.stopPropagation();
+                  endScrub();
+                }}
+                onPointerCancel={(e) => {
+                  e.stopPropagation();
+                  endScrub();
+                }}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 10,
+                  padding: '10px 6px 8px',
+                  background: 'linear-gradient(transparent, rgba(0,0,0,0.72))',
+                  boxSizing: 'border-box',
+                  touchAction: 'pan-x',
+                  pointerEvents: 'auto',
+                }}
+              >
+                <input
+                  type="range"
+                  className="lounge-tv-seek-range"
+                  min={0}
+                  max={seekMax}
+                  step={0.05}
+                  value={Math.min(currentTime, seekMax)}
+                  onChange={handleSeekInput}
+                  onInput={handleSeekInput}
+                  onPointerDown={beginScrub}
+                  onPointerUp={(e) => {
+                    e.stopPropagation();
+                    endScrub();
+                  }}
+                  onPointerCancel={(e) => {
+                    e.stopPropagation();
+                    endScrub();
+                  }}
+                  aria-label="Seek video"
+                  aria-valuemin={0}
+                  aria-valuemax={seekMax}
+                  aria-valuenow={currentTime}
+                />
+              </div>
             ) : null}
 
             {!paused ? (
@@ -420,55 +472,6 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             ) : null}
           </div>
         </LoungeTvInnerLayoutEditor>
-
-        {paused || isScrubbing ? (
-          <div
-            role="group"
-            aria-label="Video seek"
-            onPointerDown={beginScrub}
-            onPointerUp={(e) => {
-              e.stopPropagation();
-              endScrub();
-            }}
-            onPointerCancel={(e) => {
-              e.stopPropagation();
-              endScrub();
-            }}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '100%',
-              flexShrink: 0,
-              padding: '2px 6px 0',
-              boxSizing: 'border-box',
-              touchAction: 'pan-x',
-              pointerEvents: 'auto',
-            }}
-          >
-            <input
-              type="range"
-              className="lounge-tv-seek-range"
-              min={0}
-              max={seekMax}
-              step={0.05}
-              value={Math.min(currentTime, seekMax)}
-              onChange={handleSeekInput}
-              onInput={handleSeekInput}
-              onPointerDown={beginScrub}
-              onPointerUp={(e) => {
-                e.stopPropagation();
-                endScrub();
-              }}
-              onPointerCancel={(e) => {
-                e.stopPropagation();
-                endScrub();
-              }}
-              aria-label="Seek video"
-              aria-valuemin={0}
-              aria-valuemax={seekMax}
-              aria-valuenow={currentTime}
-            />
-          </div>
-        ) : null}
 
         <div
           style={{
@@ -516,31 +519,21 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </div>
       </div>
 
-      <div
-        data-lounge-tv-description-scroll
+      <p
+        data-lounge-tv-description
         style={{
-          flex: '1 1 auto',
-          minHeight: 0,
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          overscrollBehavior: 'contain',
+          margin: 0,
           paddingTop: '2px',
-          paddingBottom: '4px',
+          paddingBottom: '6px',
+          fontFamily: BODY_FONT,
+          fontSize: '7px',
+          lineHeight: 1.35,
+          color: BODY_GRAY,
+          textAlign: 'left',
         }}
       >
-        <p
-          style={{
-            margin: 0,
-            fontFamily: BODY_FONT,
-            fontSize: '7px',
-            lineHeight: 1.35,
-            color: BODY_GRAY,
-            textAlign: 'left',
-          }}
-        >
-          {descriptionText}
-        </p>
-      </div>
+        {descriptionText}
+      </p>
     </div>
   );
 }
