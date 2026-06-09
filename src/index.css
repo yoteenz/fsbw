@@ -3668,6 +3668,46 @@ img.natural-front-mobile {
   transform: translateX(-50%) translateY(4px) !important;
 }
 
+/* Hub thumbs: inner brick in clip frame; outer `.leaf-bg` = selection ring only (no duplicate brick) */
+.baw-noir-thumb-row .leaf-stack.thumb .leaf-bg {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* BAW thumb row: contain stacks + click wrap so L/R overlays cannot paint outside brick cell */
+.baw-noir-thumb-row .leaf-stack.thumb {
+  overflow: hidden !important;
+}
+
+.baw-noir-thumb-row .baw-noir-thumb-click-wrap {
+  overflow: hidden !important;
+}
+
+/* L/R Supabase overlays — force fit inside 72×95 clip (M uses scale; L/R need explicit height fit) */
+.baw-noir-thumb-row
+  .baw-noir-thumb-mannequin-slot
+  img.baw-noir-thumb-lr-overlay.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
+  top: auto !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  height: 100% !important;
+  width: auto !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  object-fit: contain !important;
+  object-position: bottom center !important;
+  transform: translateX(-50%) translateY(4px) !important;
+}
+
+.baw-noir-thumb-row
+  .baw-noir-thumb-mannequin-slot
+  img.baw-noir-thumb-static-img--hub.baw-noir-thumb-lr-overlay.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
+  bottom: 3px !important;
+  transform: translateX(-50%) translateY(4px) !important;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;

@@ -177,8 +177,8 @@ export function BawNoirWigPreviewHeroThumbs({
               />
             )}
             <div
-              className={`border-transparent cursor-pointer ${
-                hideBrick ? 'p-0' : hubThumbsOnlyOuter ? 'p-0' : 'p-1'
+              className={`border-transparent cursor-pointer baw-noir-thumb-click-wrap${
+                hideBrick ? ' p-0' : hubThumbsOnlyOuter ? ' p-0' : ' p-1'
               }`}
               onClick={() => onSelectView(index)}
             >
@@ -214,14 +214,13 @@ export function BawNoirWigPreviewHeroThumbs({
                     index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
-                {!hideBrick && !hubThumbsOnlyOuter && (
-                  <div className="baw-noir-thumb-brick-bg" aria-hidden="true" />
-                )}
+                {!hideBrick && <div className="baw-noir-thumb-brick-bg" aria-hidden="true" />}
                 <div className="baw-noir-thumb-mannequin-slot">
                   <img
                     alt={`Thumbnail ${index + 1}`}
-                    width={BAW_NOIR_THUMB_MANNEQUIN_W}
-                    height={BAW_NOIR_THUMB_MANNEQUIN_H}
+                    {...(hideBrick
+                      ? { width: BAW_NOIR_THUMB_MANNEQUIN_W, height: BAW_NOIR_THUMB_MANNEQUIN_H }
+                      : {})}
                     src={view}
                     className={
                       hideBrick
@@ -229,7 +228,7 @@ export function BawNoirWigPreviewHeroThumbs({
                         : `thumbnail-mannequin-img baw-noir-thumb-static-img baw-noir-thumb-mannequin--brick-aligned${
                             hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
                           }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}${
-                            thumbLrNudge ? ' baw-noir-thumb-lr-nudge' : ''
+                            thumbLrNudge ? ' baw-noir-thumb-lr-nudge baw-noir-thumb-lr-overlay' : ''
                           }`
                     }
                     style={
