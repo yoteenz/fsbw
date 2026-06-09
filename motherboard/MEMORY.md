@@ -26863,3 +26863,5 @@ Pushed **`master`** + **`preview/mobile`**.
 **Follow-up (same chat):** Red **NOIR** header clipped by hero overflow — moved **`heroChildren`** to **`baw-noir-hero-header-overlay`** **outside** mannequin clip slot (`z-index: 20`, `overflow: visible`). **M mannequin only:** **`translateY(-4px)`** on hero front-scaled + middle thumb (`baw-noir-front-mannequin--middle-thumb`).
 
 **Follow-up (same chat):** User asked **M down 4px** (removed prior **`translateY(-4px)`** → neutral) and **L/R down 4px** — **`translateY(4px)`** via **`baw-noir-hero-mannequin--lr-nudge`** / **`baw-noir-thumb-lr-nudge`**; helpers **`isNoirNaturalLeftMannequinSrc`**, **`isNoirNaturalRightMannequinSrc`** in **`bawStaticMannequinReferencePaths.ts`**.
+
+**Follow-up (same chat):** BAW **thumbnails** below hero extended past brick (static sub-pages had **`overflow: visible`**). **Fix:** mirror hero — **`baw-noir-thumb-brick-frame`** + **`baw-noir-thumb-brick-bg`** (sub-pages) + **`baw-noir-thumb-mannequin-slot`** (`overflow: hidden`); static imgs **`baw-noir-thumb-mannequin--brick-aligned`** with **`max-height: 100%`**. Hub keeps outer **`.leaf-bg`** + transparent inner clip frame.
