@@ -353,8 +353,8 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center top',
+              objectFit: 'contain',
+              objectPosition: 'center center',
               display: 'block',
             }}
           />
