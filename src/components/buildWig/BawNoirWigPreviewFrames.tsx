@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 import {
   isNoirNaturalFrontMannequinSrc,
+  isNoirNaturalLeftMannequinSrc,
+  isNoirNaturalRightMannequinSrc,
   NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
   scaleNoirFrontMannequinDisplayPx,
 } from '../../utils/bawStaticMannequinReferencePaths';
@@ -88,6 +90,8 @@ export function BawNoirWigPreviewHeroThumbs({
 
   const heroSrc = triple[selectedView] ?? '';
   const heroFrontScaled = isNoirNaturalFrontMannequinSrc(heroSrc);
+  const heroLrNudge =
+    isNoirNaturalLeftMannequinSrc(heroSrc) || isNoirNaturalRightMannequinSrc(heroSrc);
   const heroW = heroFrontScaled
     ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_HERO_FRAME_W)
     : BAW_NOIR_HERO_FRAME_W;
@@ -131,7 +135,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 height={BAW_NOIR_STATIC_HERO_BRICK_H}
                 className={`hero-mannequin-img baw-noir-hero-mannequin--brick-aligned${
                   heroFrontScaled ? ' baw-noir-hero-mannequin--front-scaled' : ''
-                }`}
+                }${heroLrNudge ? ' baw-noir-hero-mannequin--lr-nudge' : ''}`}
                 style={
                   {
                     ...(heroFrontScaled
@@ -161,6 +165,8 @@ export function BawNoirWigPreviewHeroThumbs({
       >
         {triple.map((view, index) => {
           const thumbFrontScaled = isNoirNaturalFrontMannequinSrc(view);
+          const thumbLrNudge =
+            isNoirNaturalLeftMannequinSrc(view) || isNoirNaturalRightMannequinSrc(view);
 
           return (
           <div className="leaf-stack thumb" key={index}>
@@ -239,7 +245,7 @@ export function BawNoirWigPreviewHeroThumbs({
                       : `absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img${
                           hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
                         }${thumbFrontScaled ? ' baw-noir-front-mannequin--scaled' : ''}${
-                          thumbFrontScaled && index === 1 ? ' baw-noir-front-mannequin--middle-thumb' : ''
+                          thumbLrNudge ? ' baw-noir-thumb-lr-nudge' : ''
                         }`
                   }
                   style={

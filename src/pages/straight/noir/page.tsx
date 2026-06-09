@@ -55,6 +55,8 @@ import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/un
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 import {
   isNoirNaturalFrontMannequinSrc,
+  isNoirNaturalLeftMannequinSrc,
+  isNoirNaturalRightMannequinSrc,
   NOIR_NATURAL_MANNEQUIN_TRIPLE,
   NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
 } from '../../../utils/bawStaticMannequinReferencePaths';
@@ -79,9 +81,13 @@ const NOIR_2D_COMPOSITE_DOWNLOAD_SPECS: { mannequinSrc: string; label: string; d
 
 function noir2dMannequinTransform(src: string): string {
   const base = 'translateX(-50%)';
-  return isNoirNaturalFrontMannequinSrc(src)
-    ? `${base} scale(${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE})`
-    : base;
+  if (isNoirNaturalFrontMannequinSrc(src)) {
+    return `${base} scale(${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE})`;
+  }
+  if (isNoirNaturalLeftMannequinSrc(src) || isNoirNaturalRightMannequinSrc(src)) {
+    return `${base} translateY(4px)`;
+  }
+  return base;
 }
 
 const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map((s) => ({
@@ -2400,6 +2406,11 @@ function NoirSelection() {
                               isNoirNaturalFrontMannequinSrc(currentImages.hero)
                                 ? ' baw-noir-hero-mannequin--front-scaled'
                                 : ''
+                            }${
+                              isNoirNaturalLeftMannequinSrc(currentImages.hero) ||
+                              isNoirNaturalRightMannequinSrc(currentImages.hero)
+                                ? ' baw-noir-hero-mannequin--lr-nudge'
+                                : ''
                             }`
                       }
                       style={{
@@ -2407,9 +2418,7 @@ function NoirSelection() {
                         left: '50%',
                         bottom: 0,
                         top: 'auto',
-                        transform: isNoirNaturalFrontMannequinSrc(currentImages.hero)
-                          ? `translateX(-50%) translateY(-4px) scale(${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE})`
-                          : noir2dMannequinTransform(currentImages.hero),
+                        transform: noir2dMannequinTransform(currentImages.hero),
                         transformOrigin: isNoirNaturalFrontMannequinSrc(currentImages.hero)
                           ? 'bottom center'
                           : undefined,

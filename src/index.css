@@ -3454,9 +3454,13 @@ img.natural-front-mobile {
 
 .baw-noir-hero-brick-frame:not(.baw-noir-hero-brick-frame--live)
   .baw-noir-hero-mannequin--brick-aligned.baw-noir-hero-mannequin--front-scaled.hero-mannequin-img {
-  transform: translateX(-50%) translateY(-4px)
-    scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
+  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
   transform-origin: bottom center !important;
+}
+
+.baw-noir-hero-brick-frame:not(.baw-noir-hero-brick-frame--live)
+  .baw-noir-hero-mannequin--brick-aligned.baw-noir-hero-mannequin--lr-nudge.hero-mannequin-img {
+  transform: translateX(-50%) translateY(4px) !important;
 }
 
 /* Live fal WebP hero: centered inside same clip frame */
@@ -3604,10 +3608,13 @@ img.natural-front-mobile {
   transform-origin: bottom center !important;
 }
 
-/* Middle (M) thumb only — nudge overlay up inside brick frame */
-.baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--middle-thumb.thumbnail-mannequin-img {
-  transform: translateX(-50%) translateY(-4px)
-    scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
+/* L/R thumbs — nudge overlay down inside brick frame */
+.baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-thumb-lr-nudge.thumbnail-mannequin-img {
+  transform: translateX(-50%) translateY(4px) !important;
+}
+
+.baw-noir-thumb-frame .baw-noir-thumb-static-img--hub.baw-noir-thumb-lr-nudge.thumbnail-mannequin-img {
+  transform: translateX(-50%) translateY(4px) !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */

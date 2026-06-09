@@ -31,11 +31,25 @@ function normalizedMannequinSrcPath(src: string): string {
   return decodeURIComponent(raw).toLowerCase();
 }
 
+/** True for NOIR natural **left** mannequin overlay (Supabase or legacy `/assets/natural left.png`). */
+export function isNoirNaturalLeftMannequinSrc(src: string): boolean {
+  const norm = normalizedMannequinSrcPath(src);
+  if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_LEFT_MANNEQUIN_SRC)) return true;
+  return norm.endsWith('/natural left.png');
+}
+
 /** True for NOIR natural **middle/front** mannequin overlay (Supabase or legacy `/assets/natural front.png`). */
 export function isNoirNaturalFrontMannequinSrc(src: string): boolean {
   const norm = normalizedMannequinSrcPath(src);
   if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_FRONT_MANNEQUIN_SRC)) return true;
   return norm.endsWith('/natural front.png');
+}
+
+/** True for NOIR natural **right** mannequin overlay (Supabase or legacy `/assets/natural right.png`). */
+export function isNoirNaturalRightMannequinSrc(src: string): boolean {
+  const norm = normalizedMannequinSrcPath(src);
+  if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_RIGHT_MANNEQUIN_SRC)) return true;
+  return norm.endsWith('/natural right.png');
 }
 
 export function scaleNoirFrontMannequinDisplayPx(basePx: number): number {
