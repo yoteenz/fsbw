@@ -3515,10 +3515,10 @@ img.natural-front-mobile {
   bottom: 3px !important;
 }
 
-/* NOIR natural front (M) mannequin overlay — scaled vs L/R (see NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE) */
+/* NOIR natural front (M) mannequin overlay — scale in place (keep L/R thumb layout + bottom align) */
 .baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.thumbnail-mannequin-img {
-  width: auto !important;
-  height: auto !important;
+  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.84525)) !important;
+  transform-origin: bottom center !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */

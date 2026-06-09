@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 import {
   isNoirNaturalFrontMannequinSrc,
+  NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
   scaleNoirFrontMannequinDisplayPx,
 } from '../../utils/bawStaticMannequinReferencePaths';
 
@@ -168,12 +169,6 @@ export function BawNoirWigPreviewHeroThumbs({
       >
         {triple.map((view, index) => {
           const thumbFrontScaled = isNoirNaturalFrontMannequinSrc(view);
-          const thumbW = thumbFrontScaled
-            ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_THUMB_MANNEQUIN_W)
-            : BAW_NOIR_THUMB_MANNEQUIN_W;
-          const thumbH = thumbFrontScaled
-            ? scaleNoirFrontMannequinDisplayPx(BAW_NOIR_THUMB_MANNEQUIN_H)
-            : BAW_NOIR_THUMB_MANNEQUIN_H;
 
           return (
           <div className="leaf-stack thumb" key={index}>
@@ -243,8 +238,8 @@ export function BawNoirWigPreviewHeroThumbs({
               >
                 <img
                   alt={`Thumbnail ${index + 1}`}
-                  width={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_W : thumbW}
-                  height={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_H : thumbH}
+                  width={BAW_NOIR_THUMB_MANNEQUIN_W}
+                  height={BAW_NOIR_THUMB_MANNEQUIN_H}
                   src={view}
                   className={
                     hideBrick
@@ -261,6 +256,11 @@ export function BawNoirWigPreviewHeroThumbs({
                           transform: 'translate(-50%, -50%)',
                         } as CSSProperties)
                       : ({
+                          ...(thumbFrontScaled
+                            ? {
+                                '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
+                              }
+                            : {}),
                           /* Bottom alignment: see `.baw-noir-thumb-static-img` in index.css */
                         } as CSSProperties)
                   }
