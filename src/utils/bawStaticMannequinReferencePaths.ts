@@ -3,9 +3,17 @@
  * and admin flows that must match the same references (e.g. Send offer → Generate unit).
  */
 
+/** NOIR natural hairline — left (L); also Fal GPT2 color + styling input for `left`. */
+export const NOIR_NATURAL_LEFT_MANNEQUIN_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(27).png';
+
 /** NOIR natural hairline — front / middle (M) hero; also Fal GPT2 color + styling input for `front`. */
 export const NOIR_NATURAL_FRONT_MANNEQUIN_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
+
+/** NOIR natural hairline — right (R); also Fal GPT2 color + styling input for `right`. */
+export const NOIR_NATURAL_RIGHT_MANNEQUIN_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(28).png';
 
 /** UI scale for NOIR natural front (M) mannequin overlay — tuned vs L/R framing (0.7 → 0.805 → 0.84525 → 0.8875125 → 0.931888125). */
 export const NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.931888125;
@@ -36,9 +44,9 @@ export function scaleNoirFrontMannequinDisplayPx(basePx: number): number {
 
 /** NOIR natural L / M / R — order matches BAW `wigViews` (left, front, right). */
 export const NOIR_NATURAL_MANNEQUIN_TRIPLE = [
-  '/assets/natural left.png',
+  NOIR_NATURAL_LEFT_MANNEQUIN_SRC,
   NOIR_NATURAL_FRONT_MANNEQUIN_SRC,
-  '/assets/natural right.png',
+  NOIR_NATURAL_RIGHT_MANNEQUIN_SRC,
 ] as const;
 
 export function bawStaticMannequinTriplePathsFromUnitAndHairline(

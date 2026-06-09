@@ -126,9 +126,9 @@ function wigPreviewPublicAppOrigin(): string {
   return 'https://fsbw.vercel.app';
 }
 
-/** Same NOIR base angles as BAW hub static mannequins (front = Supabase gray-brick ref). */
+/** Same NOIR base angles as BAW hub static mannequins (Supabase `live-preview/Noir/` refs). */
 function noirBaseNaturalMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'right'): string {
-  return noirNaturalMannequinPublicUrlForAngle(angle, wigPreviewPublicAppOrigin());
+  return noirNaturalMannequinPublicUrlForAngle(angle);
 }
 
 function stylingModePayload(

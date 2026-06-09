@@ -30,8 +30,12 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
 
 /** Keep in sync with `api/_lib/bawNoirNaturalMannequinUrls.ts` + `bawStaticMannequinReferencePaths.ts`. */
+const NOIR_NATURAL_LEFT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(27).png';
 const NOIR_NATURAL_FRONT_MANNEQUIN_PUBLIC_URL =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
+const NOIR_NATURAL_RIGHT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(28).png';
 
 // --- Inlined from api/_lib/auth.ts (keep in sync) ---
 async function getAuthUser(
@@ -308,8 +312,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const frontUrl =
     process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim() || NOIR_NATURAL_FRONT_MANNEQUIN_PUBLIC_URL;
-  const leftUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim();
-  const rightUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim();
+  const leftUrl =
+    process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim() || NOIR_NATURAL_LEFT_MANNEQUIN_PUBLIC_URL;
+  const rightUrl =
+    process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim() || NOIR_NATURAL_RIGHT_MANNEQUIN_PUBLIC_URL;
   if (!frontUrl || !leftUrl || !rightUrl) {
     sendJson(res, 503, {
       error: 'Missing public mannequin image URLs for live generation',
