@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
-  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT,
-} from './loungeTvAssets';
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
-import { loungeTvVideoMaxHeightStyle, loungeTvVideoShellStyle } from '../../utils/loungeTvInnerLayout';
+import { loungeTvVideoShellStyle } from '../../utils/loungeTvInnerLayout';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const TIME_FONT = '"Futura PT Book", Futura, sans-serif';
@@ -275,6 +271,8 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
 
   if (!tile.videoSrc) return null;
 
+  const shellHeightExtraPx = videoFrameRegion.layout.layoutHeightExtraPx ?? 0;
+
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
   const elapsedLabel = formatLoungeTvVideoDuration(currentTime);
   const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
@@ -310,12 +308,10 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           style={{
             position: 'relative',
             ...loungeTvVideoShellStyle(videoFrameRegion.layout),
-            maxHeight: loungeTvVideoMaxHeightStyle(
-              LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT,
-              LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
-              videoFrameRegion.layout,
-            ),
+            width: '100%',
             aspectRatio: '16 / 9',
+            boxSizing: shellHeightExtraPx > 0 ? 'content-box' : 'border-box',
+            paddingBottom: shellHeightExtraPx > 0 ? `${shellHeightExtraPx}px` : undefined,
             background: '#0a0a0a',
             overflow: 'hidden',
             cursor: 'pointer',
@@ -353,8 +349,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
-              objectPosition: 'center center',
+              objectFit: 'cover',
               display: 'block',
             }}
           />

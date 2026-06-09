@@ -14,14 +14,14 @@ import {
 } from '../constants/lobbyDisplayCaseLayout';
 import { LOUNGE_TV_MENU_SCREEN_LAYOUT } from '../constants/loungeTvSceneLayout';
 import {
-  LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+  LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX,
 } from '../components/lounge/loungeTvAssets';
 import type { SceneHitLayoutOptions } from './sceneHitLayout';
 
 const LOUNGE_TV_MEDIA_PANEL_DEFAULT = {} as const satisfies SceneHitLayoutOptions;
 
 const LOUNGE_TV_VIDEO_FRAME_DEFAULT = {
-  layoutHeightExtraPx: LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
+  layoutHeightExtraPx: LOUNGE_TV_WATCH_LEARN_VIDEO_SHELL_HEIGHT_EXTRA_PX,
   layoutScale: { x: 1, y: 1 },
 } as const satisfies SceneHitLayoutOptions;
 
