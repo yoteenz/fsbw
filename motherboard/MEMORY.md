@@ -26533,3 +26533,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to add a second bullet on bundles **DETAILS** tab (after first bullet) about **150g** vs traditional **100 gram** bundles.
 
 **Changes:** **`BundleProductDetailsTab.tsx`** — new **`BUNDLE_DETAILS_BULLETS`** entry after single-donor raw hair bullet. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-08 — Bundles Policy tab: remove purchase policy header
+
+**Context:** User asked to remove gray **purchase policy** Bohemy section header on bundles **POLICY** tab.
+
+**Changes:** **`BundleProductPolicyTab.tsx`** — removed **`<p style={SECTION_TITLE_STYLE}>purchase policy</p>`**; opening body copy unchanged. Pushed **`master`** + **`preview/mobile`** (`3b5f3656`).
