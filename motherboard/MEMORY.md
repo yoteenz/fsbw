@@ -26615,3 +26615,5 @@ Pushed **`master`** + **`preview/mobile`**.
 **Cause:** **`LOBBY_CASE_POPOVER_PHONE_OFFSET_UP`** was negative (`-4.1cqw` / **-20px**), so **`bottom: calc(100% + gap + offset)`** placed the glass panel **into** the phone hit box (popover z **30** over open PNG z **28**).
 
 **Fix:** **`lobbyCaseResponsive.ts`** — phone offset **`lobbyCaseCqw(1.5, 8, 12)`** (positive clearance). **`LobbyDisplayCaseShell`** prop slots **`overflow: visible`**. Pushed **`master`** + **`preview/mobile`**.
+
+**Follow-up (user: still clipped):** Offset-only was not enough — popover **wrapper z-30** still stacked over open phone PNG **z-28**; glass panel covered handset. **Structural fix:** phone open art **z-32**, render **after** popover in DOM, phone popover root **z-24** (panel stays **z-30**), fixed **`12px` gap + `20px` offset** (no cqw in calc), phone open art **`object-fit: contain`**. Commit **`5434cb68`**.
