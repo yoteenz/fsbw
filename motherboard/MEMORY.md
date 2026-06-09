@@ -26847,3 +26847,5 @@ Pushed **`master`** + **`preview/mobile`**.
 **Follow-up (same chat):** User asked to **reduce M (front) mannequin PNG display size by 30%** (70% scale). **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.7`**, **`isNoirNaturalFrontMannequinSrc`**, **`scaleNoirFrontMannequinDisplayPx`** in **`bawStaticMannequinReferencePaths.ts`**. Applied in **`BawNoirWigPreviewHeroThumbs`** (hero `--hero-width/height` + middle thumb dimensions) and **`straight/noir/page.tsx`** (hero + side thumbs via **`scale(0.7)`** transform when src is front mannequin). L/R unchanged; Fal live WebPs not scaled.
 
 **Follow-up (same chat):** 0.7 was too small — user asked **+15%** on M mannequin display. **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE`** → **`0.805`** (0.7 × 1.15). All consumers use the shared constant (BAW hero/thumbs + product page transform).
+
+**Follow-up (same chat):** User asked **+5%** more on M mannequin — scale **`0.805` → `0.84525`** (0.805 × 1.05).
