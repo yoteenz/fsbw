@@ -26605,3 +26605,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move PSA chat box only 1px left; nudge and avatar unchanged.
 
 **Change:** **`psaAssistant.css`** — **`.psa-chat-panel`** `transform` X **`-18px` → `-19px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Lobby phone popover clipping open asset
+
+**Context:** User reported lobby **phone** asset clipped by **CONTACT US** popover when open.
+
+**Cause:** **`LOBBY_CASE_POPOVER_PHONE_OFFSET_UP`** was negative (`-4.1cqw` / **-20px**), so **`bottom: calc(100% + gap + offset)`** placed the glass panel **into** the phone hit box (popover z **30** over open PNG z **28**).
+
+**Fix:** **`lobbyCaseResponsive.ts`** — phone offset **`lobbyCaseCqw(1.5, 8, 12)`** (positive clearance). **`LobbyDisplayCaseShell`** prop slots **`overflow: visible`**. Pushed **`master`** + **`preview/mobile`**.
