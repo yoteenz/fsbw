@@ -34,6 +34,34 @@ function isBawProductHubThumbPathname(pathname: string): boolean {
   return false;
 }
 
+/** NOIR customize/edit sub-steps that share hub hero + thumb framing (excludes hairline). */
+const BAW_NOIR_HUB_LIKE_CUSTOMIZE_EDIT_STEPS = new Set([
+  'addons',
+  'cap',
+  'color',
+  'density',
+  'lace',
+  'length',
+  'styling',
+  'texture',
+]);
+
+/**
+ * NOIR routes that use the **main hub** thumb/hero container layout (outer `.leaf-bg`, hub brick frame, 12px gap, no nudges).
+ * Includes product hub landings plus the eight customize/edit steps — **not** hairline.
+ */
+function isBawNoirHubLikeThumbPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (p === '/build-a-wig/noir' || p === '/build-a-wig/noir/customize' || p === '/build-a-wig/noir/edit') {
+    return true;
+  }
+  const match = p.match(/^\/build-a-wig\/noir\/(customize|edit)\/([^/]+)/);
+  if (!match) return false;
+  const step = match[2];
+  if (step === 'hairline') return false;
+  return BAW_NOIR_HUB_LIKE_CUSTOMIZE_EDIT_STEPS.has(step);
+}
+
 /** Live NOIR hero + thumb mannequins align with **static** hub framing (same CSS brick cell). */
 const BAW_NOIR_HERO_FRAME_W = 282;
 const BAW_NOIR_HERO_FRAME_H = 387;
@@ -65,7 +93,8 @@ type Props = {
  * - Shipped **`/assets/`** naturals: one brick layer (`leaf-brick-resize` + optional `.leaf-bg`).
  * - **Live** previews (anything not shipped `/assets/`): **no** extra brick — raster already has brick.
  * Live NOIR sub-pages: **12px** thumb gap, **72×95** thumb frames (same height as hub static thumbs), **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
- * BAW **product hub** static thumbs use the **same 12px** gap (and no per-frame translate nudge) so spacing matches customize sub-pages with live previews; deeper sub-pages with **static** `/assets/` naturals keep **2px** gap + **p-1** + nudges.
+ * BAW **product hub** + **NOIR hub-like sub-steps** static thumbs use **12px** gap (no per-frame translate nudge).
+ * Other units' deeper sub-pages with **static** `/assets/` naturals keep **2px** gap + **p-1** + nudges; NOIR hairline unchanged.
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
@@ -79,7 +108,11 @@ export function BawNoirWigPreviewHeroThumbs({
   const { pathname } = useLocation();
   const triple = wigViews as string[];
   const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
-  const hubThumbsOnlyOuter = isBawProductHubThumbPathname(pathname);
+  const noirHubLikeThumbs =
+    isBawNoirHubLikeThumbPathname(pathname) || isBawProductHubThumbPathname(pathname);
+  const hubThumbsOnlyOuter = noirHubLikeThumbs;
+  const resolvedThumbRowClassName =
+    thumbRowClassName ?? (isBawNoirHubLikeThumbPathname(pathname) ? 'items-center' : undefined);
   /** Hub static row: match **12px** gap used on NOIR customize sub-pages with live WebPs (not 2px + nudges used for static-only sub-pages). */
   const hubStaticThumbSpacingLikeSubLive =
     Boolean(thumbSpacingLikeSubLiveProp) || (hubThumbsOnlyOuter && !hideBrick);
@@ -155,7 +188,7 @@ export function BawNoirWigPreviewHeroThumbs({
 
       <div
         className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
-          thumbRowClassName ? ` ${thumbRowClassName}` : ''
+          resolvedThumbRowClassName ? ` ${resolvedThumbRowClassName}` : ''
         }`}
         style={{
           transform: 'translateY(10px)',
