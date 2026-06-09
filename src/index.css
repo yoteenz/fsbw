@@ -4367,13 +4367,14 @@ html[data-loading-screen='true'] #root {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 10px;
+  height: 28px;
   margin: 0;
   padding: 0;
   border: none;
   outline: none;
   background: transparent;
   cursor: pointer;
+  touch-action: pan-x;
 }
 
 .lounge-tv-seek-range::-webkit-slider-runnable-track {
@@ -4386,9 +4387,9 @@ html[data-loading-screen='true'] #root {
 
 .lounge-tv-seek-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 5px;
-  height: 9px;
-  margin-top: -4px;
+  width: 10px;
+  height: 14px;
+  margin-top: -6px;
   background: #ffffff;
   border: none;
   border-radius: 0;
@@ -4403,8 +4404,8 @@ html[data-loading-screen='true'] #root {
 }
 
 .lounge-tv-seek-range::-moz-range-thumb {
-  width: 5px;
-  height: 9px;
+  width: 10px;
+  height: 14px;
   background: #ffffff;
   border: none;
   border-radius: 0;

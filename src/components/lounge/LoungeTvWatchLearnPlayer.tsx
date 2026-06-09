@@ -58,12 +58,16 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   const videoRef = useRef<HTMLVideoElement>(null);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const blobUrlRef = useRef<string | null>(null);
+  const isScrubbingRef = useRef(false);
+  const wasPlayingBeforeScrubRef = useRef(false);
   const [videoSrc, setVideoSrc] = useState(tile.videoSrc ?? '');
   const [paused, setPaused] = useState(false);
+  const [isScrubbing, setIsScrubbing] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
   const syncTimeFromVideo = useCallback(() => {
+    if (isScrubbingRef.current) return;
     const video = videoRef.current;
     if (!video) return;
     setCurrentTime(video.currentTime);
@@ -81,22 +85,41 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       blobUrlRef.current = null;
     }
 
-    if (isSameOriginMediaUrl(src)) {
-      void fetch(src)
-        .then((res) => {
-          if (!res.ok) throw new Error('fetch failed');
-          return res.blob();
-        })
-        .then((blob) => {
-          if (cancelled) return;
-          const blobUrl = URL.createObjectURL(blob);
-          blobUrlRef.current = blobUrl;
-          setVideoSrc(blobUrl);
-        })
-        .catch(() => {
-          if (!cancelled) setVideoSrc(src);
-        });
-    }
+    // Same-origin MP4 is seekable directly — blob swap reloads mid-session and breaks scrub.
+    if (isSameOriginMediaUrl(src)) return;
+
+    void fetch(src)
+      .then((res) => {
+        if (!res.ok) throw new Error('fetch failed');
+        return res.blob();
+      })
+      .then((blob) => {
+        if (cancelled) return;
+        const video = videoRef.current;
+        const resumeTime = video?.currentTime ?? 0;
+        const resumePaused = video?.paused ?? false;
+        const blobUrl = URL.createObjectURL(blob);
+        blobUrlRef.current = blobUrl;
+        setVideoSrc(blobUrl);
+        if (!video) return;
+        const restore = () => {
+          if (resumeTime > 0) video.currentTime = resumeTime;
+          if (resumePaused) {
+            video.pause();
+            setPaused(true);
+          } else {
+            void video.play();
+            setPaused(false);
+          }
+          setCurrentTime(video.currentTime);
+          if (Number.isFinite(video.duration) && video.duration > 0) setDuration(video.duration);
+        };
+        if (video.readyState >= 1) restore();
+        else video.addEventListener('loadedmetadata', restore, { once: true });
+      })
+      .catch(() => {
+        if (!cancelled) setVideoSrc(src);
+      });
 
     return () => {
       cancelled = true;
@@ -108,8 +131,9 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   }, [tile.id, tile.videoSrc]);
 
   useEffect(() => {
+    if (!tile.videoSrc) return;
     const video = videoRef.current;
-    if (!video || !videoSrc) return;
+    if (!video) return;
     video.currentTime = 0;
     setCurrentTime(0);
     setDuration(0);
@@ -120,7 +144,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       });
     }
     setPaused(false);
-  }, [tile.id, videoSrc]);
+  }, [tile.id]);
 
   useEffect(() => {
     return () => {
@@ -174,6 +198,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   }, []);
 
   const handleVideoPointerUp = useCallback(() => {
+    if (isScrubbingRef.current) return;
     cancelPendingTap();
     tapTimerRef.current = setTimeout(() => {
       tapTimerRef.current = null;
@@ -200,18 +225,53 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     [cancelPendingTap, enterFullscreen]
   );
 
-  const handleSeekChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const next = Number(e.target.value);
+  const applySeekTime = useCallback((next: number) => {
     const video = videoRef.current;
     if (!video || !Number.isFinite(next)) return;
-    video.currentTime = next;
-    setCurrentTime(next);
+    const clamped = Math.max(0, next);
+    try {
+      video.currentTime = clamped;
+    } catch {
+      /* ignore seek errors before metadata */
+    }
+    setCurrentTime(clamped);
   }, []);
 
-  const handleControlsPointerDown = useCallback((e: React.PointerEvent) => {
-    e.stopPropagation();
-    cancelPendingTap();
-  }, [cancelPendingTap]);
+  const handleSeekInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      applySeekTime(Number(e.target.value));
+    },
+    [applySeekTime],
+  );
+
+  const beginScrub = useCallback(
+    (e: React.PointerEvent) => {
+      e.stopPropagation();
+      cancelPendingTap();
+      const video = videoRef.current;
+      wasPlayingBeforeScrubRef.current = video ? !video.paused : false;
+      if (video && !video.paused) {
+        video.pause();
+        setPaused(true);
+      }
+      isScrubbingRef.current = true;
+      setIsScrubbing(true);
+    },
+    [cancelPendingTap],
+  );
+
+  const endScrub = useCallback(() => {
+    if (!isScrubbingRef.current) return;
+    isScrubbingRef.current = false;
+    setIsScrubbing(false);
+    const video = videoRef.current;
+    if (!video) return;
+    setCurrentTime(video.currentTime);
+    if (wasPlayingBeforeScrubRef.current) {
+      void video.play();
+      setPaused(false);
+    }
+  }, []);
 
   if (!tile.videoSrc) return null;
 
@@ -268,6 +328,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         >
           <div ref={shellRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
           <video
+            key={tile.id}
             ref={videoRef}
             src={videoSrc}
             playsInline
@@ -321,22 +382,31 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           </span>
         ) : null}
 
-        {paused ? (
+        {paused || isScrubbing ? (
           <div
             role="group"
             aria-label="Video seek"
-            onPointerDown={handleControlsPointerDown}
-            onPointerUp={(e) => e.stopPropagation()}
+            onPointerDown={beginScrub}
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              endScrub();
+            }}
+            onPointerCancel={(e) => {
+              e.stopPropagation();
+              endScrub();
+            }}
             onClick={(e) => e.stopPropagation()}
             style={{
               position: 'absolute',
               left: 0,
               right: 0,
               bottom: 0,
-              zIndex: 2,
-              padding: '4px 6px 6px',
+              zIndex: 10,
+              padding: '10px 6px 8px',
               background: 'linear-gradient(transparent, rgba(0,0,0,0.72))',
               boxSizing: 'border-box',
+              touchAction: 'pan-x',
+              pointerEvents: 'auto',
             }}
           >
             <input
@@ -344,10 +414,19 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               className="lounge-tv-seek-range"
               min={0}
               max={seekMax}
-              step={0.1}
+              step={0.05}
               value={Math.min(currentTime, seekMax)}
-              onChange={handleSeekChange}
-              onInput={handleSeekChange}
+              onChange={handleSeekInput}
+              onInput={handleSeekInput}
+              onPointerDown={beginScrub}
+              onPointerUp={(e) => {
+                e.stopPropagation();
+                endScrub();
+              }}
+              onPointerCancel={(e) => {
+                e.stopPropagation();
+                endScrub();
+              }}
               aria-label="Seek video"
               aria-valuemin={0}
               aria-valuemax={seekMax}
