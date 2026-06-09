@@ -1,7 +1,7 @@
 .psa-widget-root {
   position: fixed;
   z-index: 999998;
-  right: max(12px, env(safe-area-inset-right));
+  right: calc(max(12px, env(safe-area-inset-right)) + 6px);
   bottom: max(0px, calc(max(16px, env(safe-area-inset-bottom)) - 16px));
   display: flex;
   flex-direction: column;
