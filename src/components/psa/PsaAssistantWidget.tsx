@@ -51,6 +51,7 @@ import { buildPsaClientSessionContext } from '../../utils/psaSessionContext';
 import { setCachedPsaMemberContext } from '../../utils/psaMemberContextCache';
 import {
   activateRedCarpetMode,
+  deactivateRedCarpetMode,
   isRedCarpetModeActive,
   isRedCarpetTriggerMessage,
 } from '../../utils/psaRedCarpetMode';
@@ -343,12 +344,23 @@ export default function PsaAssistantWidget() {
     }, PSA_WAVING_MS);
   }, []);
 
+  /** Red Carpet is scoped to the open chat session — not a 45min site-wide flag. */
+  const endRedCarpetMode = useCallback(() => {
+    deactivateRedCarpetMode();
+    setRedCarpetMode(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) endRedCarpetMode();
+  }, [isOpen, endRedCarpetMode]);
+
   const handleFabClick = useCallback(() => {
     if (isFabCollapsed) {
       setIsFabCollapsed(false);
       return;
     }
     if (isOpen) {
+      endRedCarpetMode();
       setIsFabCollapsed(true);
       setIsOpen(false);
       closeHistory();
@@ -356,12 +368,26 @@ export default function PsaAssistantWidget() {
     }
     setIsOpen(true);
     startWelcomeWave();
-  }, [isFabCollapsed, isOpen, startWelcomeWave, closeHistory]);
+  }, [isFabCollapsed, isOpen, startWelcomeWave, closeHistory, endRedCarpetMode]);
 
   const handleCloseChat = useCallback(() => {
+    endRedCarpetMode();
     setIsOpen(false);
     closeHistory();
-  }, [closeHistory]);
+  }, [closeHistory, endRedCarpetMode]);
+
+  const handleNewChat = useCallback(() => {
+    endRedCarpetMode();
+    void startNewThread();
+  }, [endRedCarpetMode, startNewThread]);
+
+  const handleSelectThread = useCallback(
+    (id: string) => {
+      endRedCarpetMode();
+      void switchThread(id);
+    },
+    [endRedCarpetMode, switchThread]
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -573,11 +599,11 @@ export default function PsaAssistantWidget() {
               activeThreadId={threadId}
               onClose={handleCloseChat}
               onSend={handleSend}
-              onNewChat={() => void startNewThread()}
+              onNewChat={handleNewChat}
               onOpenHistory={() => void openHistory()}
               onCloseHistory={closeHistory}
               onToggleHistoryArchived={() => void toggleHistoryArchivedView()}
-              onSelectThread={(id) => void switchThread(id)}
+              onSelectThread={handleSelectThread}
               onArchiveThread={(id) => void archiveThread(id)}
               onUnarchiveThread={(id) => void unarchiveThread(id)}
               onDeleteThread={(id) => void removeThread(id)}

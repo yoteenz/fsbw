@@ -26297,6 +26297,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-07 — Red Carpet Mode: end on chat exit
+
+**Context:** User reported Red Carpet Mode persisted after closing PSA chat or starting a new thread (45min `localStorage` TTL kept it active site-wide).
+
+**Fix:** **`PsaAssistantWidget.tsx`** — **`endRedCarpetMode()`** calls **`deactivateRedCarpetMode()`** on chat close (backdrop, Escape, FAB hide), new chat, history thread switch; **`useEffect`** clears when **`isOpen`** is false (stale TTL on reload). **`psaRedCarpetMode.ts`** comment — TTL is safety net only; mode is chat-session scoped.
+
+---
+
 ## 2026-06-08 — Bundles PDP Details tab (NOIR-style layout)
 
 **Context:** User supplied full **DETAILS** copy for **bundles** (`/shop/bundles` BCF PDP) matching NOIR tab design: intro, red bullets, Bohemy **premium by design** header, rose-alert list markers.
