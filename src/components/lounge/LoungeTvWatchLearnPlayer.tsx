@@ -250,7 +250,6 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           style={{
             position: 'relative',
             ...loungeTvVideoShellStyle(videoFrameRegion.layout),
-            width: '100%',
             maxHeight: loungeTvVideoMaxHeightStyle(
               LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_PERCENT,
               LOUNGE_TV_WATCH_LEARN_VIDEO_MAX_HEIGHT_EXTRA_PX,
@@ -293,7 +292,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
+              objectFit: 'cover',
               objectPosition: 'center top',
               display: 'block',
             }}
