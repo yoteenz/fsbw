@@ -26597,3 +26597,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move nudge, avatar, and chat up 8px in tandem.
 
 **Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `bottom` offset **`-16px` → `-8px`** (8px higher than prior position). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA chat panel 1px left
+
+**Context:** User asked to move PSA chat box only 1px left; nudge and avatar unchanged.
+
+**Change:** **`psaAssistant.css`** — **`.psa-chat-panel`** `transform` X **`-18px` → `-19px`**. Pushed **`master`** + **`preview/mobile`**.
