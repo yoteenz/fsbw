@@ -26557,3 +26557,11 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked to move PSA chat box only 2px right; avatar and nudge unchanged.
 
 **Change:** **`psaAssistant.css`** — **`.psa-chat-panel`** `transform` X **`-20px` → `-18px`** (FAB stack / nudge offsets untouched). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA widget stack down 16px (nudge + avatar + chat)
+
+**Context:** User asked to move nudge, avatar, and chat down 16px in tandem.
+
+**Change:** **`psaAssistant.css`** — **`.psa-widget-root`** `bottom` reduced 16px (`max(16px, safe-area)` → `max(0px, calc(max(16px, safe-area) - 16px))`) so FAB stack and chat panel move together. Pushed **`master`** + **`preview/mobile`**.
