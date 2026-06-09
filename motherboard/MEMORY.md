@@ -26787,3 +26787,21 @@ Pushed **`master`** + **`preview/mobile`**.
 **Context:** User asked that **BCF** (bundles/closures/frontals) **VIEW DETAILS** text in the **cart dropdown** should **not** use the upward shift applied to **unit** wigs (many detail rows). BCF has fewer lines and should stay **vertically centered** in the 120px row like before the unit shift.
 
 **Fix (`CartDropdown.tsx`):** **`unitDetailsShiftLayout = isViewingDetails && !isBcfShopItem`** gates **`translateY`**, **`items-start`**, **`justify-start`**, right-column **`marginTop`**, and extra card padding — **units only**. BCF with details open keeps **`items-center`**, **`justify-center`**, no product-block transform. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — NOIR live color/styling: GPT Image 2 + unhidden Fal regen UI
+
+**Context (full chat):** User asked for OpenArt vs Fal pricing for BAW color/styling (answered: Fal+NBP ~$151 warm-cache; GPT2 medium cheaper on Fal but timeouts; OpenArt has no API). User then asked to **switch back to GPT Image 2** for generating color/styling previews, **unhide** founder Fal regen controls on color + styling pages, strengthen logo prompt (**FRONTAL SLAYER** on chest, hair-only edit), and use GPT2 settings **`image_size: auto`**, **`quality: auto`**, **`output_format: webp`**.
+
+**Decisions / outcomes:**
+- **`api/wig-preview/live-noir-color.ts`** — **`openai/gpt-image-2/edit`** (was NBP); **`maxDuration: 300`**; logo/hair-only lock in prompt.
+- **`api/live-wig-after-color-styling.ts`** — same model via **`api/_lib/bawGptImage2FalInput.ts`**; **`maxDuration: 300`**.
+- **`api/_lib/bawFalEditFidelityPrompt.ts`** — **`BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK`**; preserve block logo line updated.
+- **`api/_lib/bawLiveStylingPrompts.ts`** — styling/bangs tails use shared logo lock.
+- **`src/pages/build-a-wig/color/page.tsx`** — removed **`display: none`** / **`aria-hidden`** on founder regen strip; status text says GPT Image 2.
+- **`src/pages/build-a-wig/styling/page.tsx`** — regen copy says GPT Image 2 (founder controls already visible on styling sub-routes).
+- **`vercel.json`** — both live routes **`maxDuration: 300`**.
+- **`motherboard/golden-models/gpt-image-2.md`**, **`motherboard/CORE.md`** — GPT2 = production for NOIR live previews.
+
+**Conventions:** Use **`bawGptImage2EditFalInput`** for any new BAW live GPT2 Fal calls; keep inlined prompt sync in **`live-noir-color.ts`** (no `_lib` import on nested Vercel route). Founder regen UI requires **`isFounderNoirFalRegenUiVisible()`** (founder Gmail + signed in).
