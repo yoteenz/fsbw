@@ -78,7 +78,7 @@ const NOIR_2D_COMPOSITE_DOWNLOAD_SPECS: { mannequinSrc: string; label: string; d
 ];
 
 function noir2dMannequinTransform(src: string): string {
-  const base = 'translateX(-50%) translateY(-50%)';
+  const base = 'translateX(-50%)';
   return isNoirNaturalFrontMannequinSrc(src)
     ? `${base} scale(${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE})`
     : base;
@@ -2362,14 +2362,15 @@ function NoirSelection() {
                   minHeight: 'clamp(290px, 72.5vw, 464px)',
                 }}
               >
-                <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0', display: 'flex', alignSelf: 'stretch' }}>
+                <div style={{ position: 'relative', overflow: 'hidden', flexShrink: '0', display: 'flex', alignSelf: 'stretch' }}>
                   <div
+                    className={is3DView ? undefined : 'baw-noir-hero-brick-frame'}
                     style={{
                       position: 'relative',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       display: 'flex',
-                      alignItems: 'center',
+                      alignItems: 'stretch',
                       justifyContent: 'center',
                       width: 'clamp(200px, 50vw, 320px)',
                       height: '100%',
@@ -2392,21 +2393,40 @@ function NoirSelection() {
                     <img
                       src={currentImages.hero}
                       alt=""
+                      className={
+                        is3DView
+                          ? undefined
+                          : `baw-noir-hero-mannequin--brick-aligned${
+                              isNoirNaturalFrontMannequinSrc(currentImages.hero)
+                                ? ' baw-noir-hero-mannequin--front-scaled'
+                                : ''
+                            }`
+                      }
                       style={{
                         position: 'absolute',
                         left: '50%',
-                        top: 'calc(50% - 10.601px + 12px)',
+                        bottom: 0,
+                        top: 'auto',
                         transform: noir2dMannequinTransform(currentImages.hero),
+                        transformOrigin: isNoirNaturalFrontMannequinSrc(currentImages.hero)
+                          ? 'bottom center'
+                          : undefined,
                         zIndex: '10',
-                        width: 'clamp(230px, 57.5vw, 368px)',
+                        width: 'auto',
                         height: 'auto',
+                        maxWidth: '100%',
                         maxHeight: '100%',
-                        minWidth: 'clamp(230px, 57.5vw, 368px)',
-                        minHeight: 'auto',
+                        objectFit: 'contain',
+                        objectPosition: 'bottom center',
                         display: is3DView ? 'none' : 'block',
                         cursor: 'pointer',
                         pointerEvents: is3DView ? 'none' : 'auto',
-                      }}
+                        ...(isNoirNaturalFrontMannequinSrc(currentImages.hero)
+                          ? {
+                              '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
+                            }
+                          : {}),
+                      } as React.CSSProperties}
                       onClick={(e) => {
                         e.stopPropagation();
                         const allImages = is3DView 

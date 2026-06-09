@@ -35,6 +35,9 @@ function isBawProductHubThumbPathname(pathname: string): boolean {
 /** Live NOIR hero + thumb mannequins align with **static** hub framing (same CSS brick cell). */
 const BAW_NOIR_HERO_FRAME_W = 282;
 const BAW_NOIR_HERO_FRAME_H = 387;
+/** Static leaf-brick hero cell (mannequin clip must match — see `.baw-noir-hero-brick-frame`). */
+const BAW_NOIR_STATIC_HERO_BRICK_W = 262;
+const BAW_NOIR_STATIC_HERO_BRICK_H = 367;
 const BAW_NOIR_THUMB_MANNEQUIN_W = 72;
 const BAW_NOIR_THUMB_MANNEQUIN_H = 95;
 
@@ -97,61 +100,50 @@ export function BawNoirWigPreviewHeroThumbs({
       <div className="leaf-stack hero-thumb">
         {!hideBrick && <div className="leaf-bg" aria-hidden="true" />}
         <div
-          className="relative bg-cover bg-center flex items-center justify-center"
+          className={`baw-noir-hero-brick-frame${hideBrick ? ' baw-noir-hero-brick-frame--live' : ''}`}
           style={{
-            width: hideBrick ? `${BAW_NOIR_HERO_FRAME_W}px` : '262px',
-            height: hideBrick ? `${BAW_NOIR_HERO_FRAME_H}px` : '367px',
-            overflow: 'visible',
-            ...(hideBrick
-              ? {
-                  backgroundImage: 'none',
-                  /* Transparent so `contain` on live hero does not show gray letterbox bands */
-                  backgroundColor: 'transparent',
-                }
-              : {
-                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'repeat',
-                }),
+            width: hideBrick ? `${BAW_NOIR_HERO_FRAME_W}px` : `${BAW_NOIR_STATIC_HERO_BRICK_W}px`,
+            height: hideBrick ? `${BAW_NOIR_HERO_FRAME_H}px` : `${BAW_NOIR_STATIC_HERO_BRICK_H}px`,
           }}
         >
-          {heroChildren}
-          {hideBrick ? (
-            <div className="absolute left-0 top-0 z-[5] size-full overflow-hidden">
+          {!hideBrick && <div className="baw-noir-hero-brick-bg" aria-hidden="true" />}
+          <div className="baw-noir-hero-mannequin-slot">
+            {heroChildren}
+            {hideBrick ? (
               <img
                 src={triple[selectedView]}
                 alt="Selected Wig"
                 width={BAW_NOIR_HERO_FRAME_W}
                 height={BAW_NOIR_HERO_FRAME_H}
-                className="absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir"
+                className="hero-mannequin-img hero-mannequin-img--live-noir baw-noir-hero-mannequin--live-centered"
                 style={
                   {
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
                     '--hero-width': `${heroW}px`,
                     '--hero-height': `${heroH}px`,
                   } as CSSProperties
                 }
               />
-            </div>
-          ) : (
-            <img
-              src={triple[selectedView]}
-              alt="Selected Wig"
-              width={BAW_NOIR_HERO_FRAME_W}
-              height={BAW_NOIR_HERO_FRAME_H}
-              className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-              style={
-                {
-                  top: 'calc(50% - 10.601px + 18px)',
-                  '--hero-width': `${heroW}px`,
-                  '--hero-height': `${heroH}px`,
-                } as CSSProperties
-              }
-            />
-          )}
+            ) : (
+              <img
+                src={triple[selectedView]}
+                alt="Selected Wig"
+                width={BAW_NOIR_STATIC_HERO_BRICK_W}
+                height={BAW_NOIR_STATIC_HERO_BRICK_H}
+                className={`hero-mannequin-img baw-noir-hero-mannequin--brick-aligned${
+                  heroFrontScaled ? ' baw-noir-hero-mannequin--front-scaled' : ''
+                }`}
+                style={
+                  {
+                    ...(heroFrontScaled
+                      ? {
+                          '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
+                        }
+                      : {}),
+                  } as CSSProperties
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
 

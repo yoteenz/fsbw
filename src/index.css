@@ -3394,6 +3394,66 @@ img.natural-front-mobile {
   position: absolute !important;
 }
 
+/* BAW NOIR hero: brick + mannequin in one clip frame — mannequin never extends below brick */
+.baw-noir-hero-brick-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  flex-shrink: 0;
+}
+
+.baw-noir-hero-brick-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/assets/leaf-brick-resize.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+}
+
+.baw-noir-hero-mannequin-slot {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.baw-noir-hero-brick-frame--live {
+  background-color: transparent;
+}
+
+/* Static brick hero: bottom-align overlay mannequin inside clip (Supabase L/M/R PNGs) */
+.baw-noir-hero-brick-frame:not(.baw-noir-hero-brick-frame--live) .baw-noir-hero-mannequin--brick-aligned.hero-mannequin-img {
+  position: absolute !important;
+  top: auto !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
+  object-position: bottom center !important;
+}
+
+.baw-noir-hero-brick-frame:not(.baw-noir-hero-brick-frame--live)
+  .baw-noir-hero-mannequin--brick-aligned.baw-noir-hero-mannequin--front-scaled.hero-mannequin-img {
+  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
+  transform-origin: bottom center !important;
+}
+
+/* Live fal WebP hero: centered inside same clip frame */
+.baw-noir-hero-mannequin--live-centered.hero-mannequin-img {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
 /* Hero mannequin image size override - Must override Tailwind base styles */
 .hero-mannequin-img {
   width: var(--hero-width, 282px) !important;
@@ -3404,6 +3464,16 @@ img.natural-front-mobile {
   min-height: var(--hero-height, 387px) !important;
   object-fit: contain !important;
   display: block !important;
+}
+
+/* Brick-aligned static hero overrides generic fixed min-height (was taller than brick cell) */
+.baw-noir-hero-mannequin--brick-aligned.hero-mannequin-img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
 }
 
 /* Remote NOIR fal WebPs: show **full** raster in hero box (same idea as static `contain`) — no crop */
