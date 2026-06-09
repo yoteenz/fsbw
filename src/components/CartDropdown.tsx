@@ -135,22 +135,9 @@ function cartDropdownUnitViewDetailsLineCount(item: CartItem): number {
 
 function cartDropdownProductTextTranslateY(
   detailLineCount: number,
-  isViewingDetails: boolean,
-  isBcfShopItem: boolean,
+  applyUnitDetailsShift: boolean,
 ): string | undefined {
-  if (!isViewingDetails) return undefined;
-  // BCF: pre-down-nudge lift only (units use net down-nudge below).
-  if (isBcfShopItem) {
-    if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
-      const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
-      const liftPx =
-        4 +
-        CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX +
-        extraRows * CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX;
-      return `translateY(-${liftPx}px)`;
-    }
-    return 'translateY(-4px)';
-  }
+  if (!applyUnitDetailsShift) return undefined;
   let liftPx = 4;
   if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
     const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
@@ -1041,11 +1028,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
                     const isBcfShopItem = item.type === 'shop-texture-category';
                     const isViewingDetails = viewingDetailsFor === item.id;
-                    const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
+                    /** Units only: lift detail text for long multi-row specs. BCF stays vertically centered. */
+                    const unitDetailsShiftLayout = isViewingDetails && !isBcfShopItem;
                     const productTextTransform = cartDropdownProductTextTranslateY(
-                      detailTextRowCount,
-                      isViewingDetails,
-                      isBcfShopItem,
+                      unitDetailsShiftLayout ? cartDropdownDetailTextRowCount(item) : 0,
+                      unitDetailsShiftLayout,
                     );
                     /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
                     const hideMetaForDetails =
@@ -1067,10 +1054,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             ? bcfCartThumbPx
                             : unitThumbPx;
                     return (
-                    <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(isViewingDetails ? { paddingBottom: '16px' } : {}) }}>
+                    <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(unitDetailsShiftLayout ? { paddingBottom: '16px' } : {}) }}>
                     <div
-                      className={`flex justify-start space-x-3 ${isViewingDetails ? 'items-start' : 'items-center'}`}
-                      style={{ minHeight: '120px', height: isViewingDetails ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}
+                      className={`flex justify-start space-x-3 ${unitDetailsShiftLayout ? 'items-start' : 'items-center'}`}
+                      style={{ minHeight: '120px', height: unitDetailsShiftLayout ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}
                     >
                     {/* Thumbnail Container */}
                     <div
@@ -1351,25 +1338,25 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   
                     {/* Item Details */}
                    <div
-                     className={`flex-1 min-w-0 flex flex-col relative ${isViewingDetails ? 'justify-start' : 'justify-center'}`}
-                     style={{ marginLeft: '18px', height: isViewingDetails ? 'auto' : '100%', minHeight: isViewingDetails ? '0' : '100%' }}
+                     className={`flex-1 min-w-0 flex flex-col relative ${unitDetailsShiftLayout ? 'justify-start' : 'justify-center'}`}
+                     style={{ marginLeft: '18px', height: unitDetailsShiftLayout ? 'auto' : '100%', minHeight: unitDetailsShiftLayout ? '0' : '100%' }}
                    >
                       <div
                         style={{
                           display: 'flex',
                           flexDirection: 'column',
-                          justifyContent: isViewingDetails ? 'flex-start' : 'center',
+                          justifyContent: unitDetailsShiftLayout ? 'flex-start' : 'center',
                           alignItems: 'flex-start',
                           margin: 0,
                           padding: 0,
                           transform: productTextTransform,
-                          height: isViewingDetails ? 'auto' : '100%',
-                          position: isViewingDetails ? 'relative' : 'static',
+                          height: unitDetailsShiftLayout ? 'auto' : '100%',
+                          position: unitDetailsShiftLayout ? 'relative' : 'static',
                           /* Do not set positive `top` here — it fought translateY lift when 6+ detail lines. */
                         }}
                       >
                         <CartLineProductTextStack
-                          style={isViewingDetails ? { justifyContent: 'flex-start' } : undefined}
+                          style={unitDetailsShiftLayout ? { justifyContent: 'flex-start' } : undefined}
                         >
                         <CartLineTextLayer slot="name">
                         <p 
@@ -1805,7 +1792,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             ? '60px'
                             : '80px',
                         alignItems: 'center',
-                        ...(isViewingDetails
+                        ...(unitDetailsShiftLayout
                           ? { alignSelf: 'flex-start', marginTop: `${CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX}px` }
                           : {}),
                       }}
