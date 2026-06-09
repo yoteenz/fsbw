@@ -26746,4 +26746,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 **Fix:**
 - **`LoungeTvWatchLearnPlayer`** — restore **`position: absolute; bottom: 0`** seek on video when paused/scrubbing; **`paddingTop` aspect shell** with inner **`overflow: hidden`** + outer **`overflow: visible`** (no gray band, no clip). Sticky **video + title**; description **`<p>` in document flow** below sticky (not flex scroll child).
-- **`LoungeTvOverlay`** — media panel **`overflowY: auto`**; remove player flex wrapper; **`resolveWatchLearnDescription`** on selected tile before pass-through.
+
+---
+
+## 2026-06-09 — Watch + Learn: revert player layout; admin body → description only
+
+**Context:** User said layout tweaks for detail text kept **breaking scroll + red scrubber**; text was originally added via **Admin → Backend → CONTENT** **`body`** field (`loungeTvAdminConfig` → **`tile.description`**), not player layout hacks.
+
+**Fix (data only, no sticky):** Reverted **`LoungeTvWatchLearnPlayer`** to **`41160bf0`** structure — **`height: 100%`** flex column; overlay seek on video; **`tile.description`** in inner **`overflowY: auto`** region; **`aspectRatio` 16/9** + **`paddingBottom`** extra height with **`shellRef` `absolute inset 0`** (video fills +16px, no gray band). **`LoungeTvOverlay`** — **`overflowY: hidden`** when player open (inner description scroll). **`adminItemToVideoTile`** — admin **`body`** wins, static copy fallback. Removed sticky / **`resolveWatchLearnDescription`** in player. Pushed **`master`** + **`preview/mobile`**.
