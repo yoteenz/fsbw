@@ -26851,3 +26851,5 @@ Pushed **`master`** + **`preview/mobile`**.
 **Follow-up (same chat):** User asked **+5%** more on M mannequin — scale **`0.805` → `0.84525`** (0.805 × 1.05).
 
 **Follow-up (same chat):** M **thumbnail** looked broken (empty/busted) below hero. **Cause:** **`baw-noir-front-mannequin--scaled`** CSS set **`width/height: auto !important`**, overriding thumb **`width`/`height`** attrs — Supabase PNG intrinsic size + bottom-align clipped figure out of **72×95** frame. **Fix:** keep **72×95** thumb attrs like L/R; scale M with **`transform: scale(var(--baw-noir-front-mannequin-scale))`** + **`transform-origin: bottom center`** in **`index.css`**; pass CSS var from **`BawNoirWigPreviewHeroThumbs`**.
+
+**Follow-up (same chat):** User asked **+5%** on **hero** M mannequin — **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE`** **`0.84525` → `0.8875125`** (shared constant updates BAW hero, thumbs, product page).
