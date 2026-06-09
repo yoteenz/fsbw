@@ -3517,7 +3517,7 @@ img.natural-front-mobile {
 
 /* NOIR natural front (M) mannequin overlay — scale in place (keep L/R thumb layout + bottom align) */
 .baw-noir-thumb-frame .baw-noir-thumb-static-img.baw-noir-front-mannequin--scaled.thumbnail-mannequin-img {
-  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.8875125)) !important;
+  transform: translateX(-50%) scale(var(--baw-noir-front-mannequin-scale, 0.931888125)) !important;
   transform-origin: bottom center !important;
 }
 
