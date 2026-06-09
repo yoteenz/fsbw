@@ -500,7 +500,7 @@ function LoungeTvScreen({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            overflowY: 'auto',
+            overflowY: watchLearnTile ? 'hidden' : 'auto',
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             paddingBottom: loungeTvGlassCqw(2.5, 6, 10),
@@ -512,7 +512,17 @@ function LoungeTvScreen({
           }}
         >
           {watchLearnTile ? (
-            <LoungeTvWatchLearnPlayer tile={watchLearnTile} />
+            <div
+              style={{
+                flex: '1 1 0',
+                minHeight: 0,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <LoungeTvWatchLearnPlayer tile={watchLearnTile} />
+            </div>
           ) : slayTipsPost ? (
             <LoungeTvBlogPostDetail tile={slayTipsPost} onBack={() => setSelectedPostId(null)} />
           ) : tiles && tiles.length > 0 ? (

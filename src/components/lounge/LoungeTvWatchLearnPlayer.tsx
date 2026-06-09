@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getWatchLearnVideoCopy, type LoungeTvVideoTile } from './loungeTvContent';
+import { resolveWatchLearnDescription, type LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
@@ -283,32 +283,29 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
   const progressLabel =
     duration > 0 ? `${elapsedLabel}/${totalLabel}` : elapsedLabel !== '—' ? `${elapsedLabel}/—` : '—';
-  const descriptionText = (
-    tile.body?.trim() ||
-    tile.description?.trim() ||
-    getWatchLearnVideoCopy(tile.id)?.description ||
-    ''
-  ).toUpperCase();
+  const descriptionText = resolveWatchLearnDescription(tile);
 
   return (
     <div
       style={{
         width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 2,
+          flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
           minWidth: 0,
           background: '#000000',
-          paddingBottom: '6px',
+          paddingBottom: '4px',
         }}
       >
         <LoungeTvInnerLayoutEditor
@@ -520,11 +517,21 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </div>
       </div>
 
-      {descriptionText ? (
+      <div
+        data-lounge-tv-description-scroll
+        style={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          paddingTop: '2px',
+          paddingBottom: '4px',
+        }}
+      >
         <p
           style={{
             margin: 0,
-            paddingTop: '2px',
             fontFamily: BODY_FONT,
             fontSize: '7px',
             lineHeight: 1.35,
@@ -534,7 +541,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         >
           {descriptionText}
         </p>
-      ) : null}
+      </div>
     </div>
   );
 }

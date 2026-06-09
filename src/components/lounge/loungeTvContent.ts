@@ -121,6 +121,18 @@ export function getWatchLearnVideoCopy(
   return WATCH_LEARN_VIDEO_COPY[tileId];
 }
 
+/** Resolved detail copy for the Watch + Learn player (admin body wins, then static). */
+export function resolveWatchLearnDescription(
+  tile: Pick<LoungeTvVideoTile, 'id' | 'body' | 'description'>
+): string {
+  return (
+    tile.body?.trim() ||
+    tile.description?.trim() ||
+    getWatchLearnVideoCopy(tile.id)?.description ||
+    ''
+  ).toUpperCase();
+}
+
 const SLAY_TIPS_BLOG_BODY: Record<string, string> = {
   'cutting-lace': 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
   'tinting-lace': 'CUSTOM TINT LACE TO MATCH YOUR SKIN TONE FOR AN UNDETECTABLE BLEND.',
