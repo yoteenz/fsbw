@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { resolveWatchLearnDescription, type LoungeTvVideoTile } from './loungeTvContent';
+import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
@@ -272,38 +272,33 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   if (!tile.videoSrc) return null;
 
   const shellHeightExtraPx = videoFrameRegion.layout.layoutHeightExtraPx ?? 0;
-  const shellScaleY = videoFrameRegion.layout.layoutScale?.y ?? 1;
-  const shellAspectPaddingTop =
-    shellHeightExtraPx > 0
-      ? `calc(100% * ${9 * shellScaleY} / 16 + ${shellHeightExtraPx}px)`
-      : `calc(100% * ${9 * shellScaleY} / 16)`;
 
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
   const elapsedLabel = formatLoungeTvVideoDuration(currentTime);
   const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
   const progressLabel =
     duration > 0 ? `${elapsedLabel}/${totalLabel}` : elapsedLabel !== '—' ? `${elapsedLabel}/—` : '—';
-  const descriptionText = resolveWatchLearnDescription(tile);
 
   return (
     <div
       style={{
         width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+        minHeight: 0,
         textTransform: 'uppercase',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 2,
+          flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
           minWidth: 0,
-          background: '#000000',
-          paddingBottom: '6px',
         }}
       >
         <LoungeTvInnerLayoutEditor
@@ -314,10 +309,11 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             position: 'relative',
             ...loungeTvVideoShellStyle(videoFrameRegion.layout),
             width: '100%',
-            height: 0,
-            paddingTop: shellAspectPaddingTop,
-            background: '#000000',
-            overflow: 'visible',
+            aspectRatio: '16 / 9',
+            boxSizing: shellHeightExtraPx > 0 ? 'content-box' : 'border-box',
+            paddingBottom: shellHeightExtraPx > 0 ? `${shellHeightExtraPx}px` : undefined,
+            background: '#0a0a0a',
+            overflow: 'hidden',
             cursor: 'pointer',
             flexShrink: 0,
           }}
@@ -326,11 +322,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             border: '2px dashed rgba(0, 151, 167, 0.95)',
           }}
         >
-          <div
-            ref={shellRef}
-            style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
-            onPointerUp={handleVideoPointerUp}
-          >
+          <div ref={shellRef} style={{ position: 'absolute', inset: 0 }}>
             <video
               key={tile.id}
               ref={videoRef}
@@ -519,21 +511,28 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </div>
       </div>
 
-      <p
-        data-lounge-tv-description
+      <div
         style={{
-          margin: 0,
+          flex: '1 1 auto',
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
           paddingTop: '2px',
-          paddingBottom: '6px',
-          fontFamily: BODY_FONT,
-          fontSize: '7px',
-          lineHeight: 1.35,
-          color: BODY_GRAY,
-          textAlign: 'left',
         }}
       >
-        {descriptionText}
-      </p>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: BODY_FONT,
+            fontSize: '7px',
+            lineHeight: 1.35,
+            color: BODY_GRAY,
+            textAlign: 'left',
+          }}
+        >
+          {tile.description}
+        </p>
+      </div>
     </div>
   );
 }

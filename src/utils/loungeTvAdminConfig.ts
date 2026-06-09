@@ -288,12 +288,10 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
       }
       if (item.durationLabel) tile.durationLabel = item.durationLabel;
     }
-    if (!tile.description) {
-      const copy = getWatchLearnVideoCopy(item.id);
-      if (copy?.description) {
-        tile.description = copy.description;
-        tile.body = copy.description;
-      }
+    const resolvedDescription = watchLearnDescriptionForItem(item);
+    if (resolvedDescription) {
+      tile.description = tile.description || resolvedDescription;
+      tile.body = item.body.trim() ? item.body.trim().toUpperCase() : tile.description;
     }
   }
   return tile;
