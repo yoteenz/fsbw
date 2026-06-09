@@ -26701,3 +26701,13 @@ Pushed **`master`** + **`preview/mobile`**.
 **PSA:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** for **`/lobby`** and **`/lobby/lounge`**. **`PsaAssistantWidget`** — hide **`psa-widget-fab-stack`** (avatar + nudge) on those routes; chat panel unchanged if already open.
 
 **Commit:** **`291bc559`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Watch + Learn: fix description scroll + remove gray video band
+
+**Context:** User still could not scroll Plucking Your Lace details; wanted the **gray strip** below the video **gone** (drop **`paddingBottom` + `content-box`** shell approach).
+
+**Fix:**
+- **`LoungeTvOverlay`** — media panel **`overflowY: auto`** again (single scroll container; nested flex scroll never got a height constraint).
+- **`LoungeTvWatchLearnPlayer`** — **sticky** video + title in panel scroll; description in normal flow below. Video shell uses **`paddingTop: calc(100% * 9/16 + Npx)`** + **`position: absolute; inset: 0`** video fill (keeps **+16px** via **`layoutHeightExtraPx`** without empty **`#0a0a0a`** band). Shell bg **`#000`**.
