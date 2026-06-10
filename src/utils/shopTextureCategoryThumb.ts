@@ -121,13 +121,17 @@ export const bcfThumbContainImgStyle: CSSProperties = {
 /** Home/shop BCF grid only — +44% vs base marble thumb width (similar/cart unchanged). */
 export const BCF_THUMB_GRID_WIDTH_SCALE = 1.44;
 
+/** Home/shop BCF grid only — nudge thumb art toward product copy below. */
+export const BCF_THUMB_GRID_TRANSLATE_Y_PX = 6;
+
 /** Home/shop BCF grid — width % band for contain slot (`49.5 × texture scale × grid scale`). */
 export function bcfThumbGridContainSlotStyle(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
 ): CSSProperties {
   const w = `${49.5 * shopTextureCategoryThumbDisplayScale(texture) * BCF_THUMB_GRID_WIDTH_SCALE}%`;
-  const translateY = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+  const curlyNudgePx = shopTextureCategoryCurlyThumbTranslateYPx(texture, category) ?? 0;
+  const translateY = BCF_THUMB_GRID_TRANSLATE_Y_PX + curlyNudgePx;
   return {
     width: w,
     maxWidth: '100%',
@@ -136,7 +140,7 @@ export function bcfThumbGridContainSlotStyle(
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    ...(translateY != null ? { transform: `translateY(${translateY}px)` } : {})
+    transform: `translateY(${translateY}px)`
   };
 }
 
