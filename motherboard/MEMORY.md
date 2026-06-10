@@ -26905,3 +26905,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to reduce **frontals** starting price by **$200** and **closures** by **$100** (bundles unchanged).
 - **Change:** **`src/utils/bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD`: closures **245 → 145**, frontals **365 → 165**. Texture deltas (+$20 wavy / +$40 curly) and length/color/lace add-ons unchanged. Shop grid ranges via `bcfPdpPriceRangeUsd` update automatically. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF bundles base price reduction
+
+- **Context:** User asked to reduce **bundles** starting price by **$300** only (closures/frontals unchanged).
+- **Change:** **`src/utils/bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **330 → 30**. Pushed **`master`** + **`preview/mobile`**.
