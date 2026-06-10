@@ -1917,11 +1917,11 @@ export default function ShopTextureCategoryProductPage() {
                         }}
                       />
                       <div ref={setSimilarStripViewportRef} style={marbleStripViewportStyle}>
-                        <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
+                        <div style={marbleStripScrollRowStyle(similarProductsScroll, otherTextures.length)}>
                           {otherTextures.map((ot) => {
                             const om = TEXTURE_META[ot];
                             const simTitle = `${om.label} ${categoryTitle}`;
-                            const simThumbSrc = bcfHeroThumbSrcForTexture(ot);
+                            const simThumbSrc = shopTextureCategoryThumbSrc(ot, category);
                             return (
                               <div
                                 key={ot}
