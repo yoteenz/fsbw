@@ -26957,3 +26957,12 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User replaced all BCF marble thumbs (home/shop grid, similar standard slots, cart, bag, checkout via shared src) with Supabase **`live-preview/BCF/image (43–51).png`**; platinum similar scroll slots **52–57**; asked **contain containers** so new art keeps prior footprint; BCF **SIMILAR** spacing above strip + button/card above should match **Noir** unit PDP.
 - **Changes:** **`shopTextureCategoryThumb.ts`** — Supabase URL map + legacy `/assets` fallback; **`bcfThumbGridContainSlotStyle`** / **`bcfThumbMarbleStripContainSlotStyle`** + **`BcfShopThumb`** component (`object-fit: contain`, 4:5 slot). **`products/page.tsx`** grid + **`texture-category-product`** similar use **`BcfShopThumb`**. **`BCF_PLATINUM_SIMILAR_THUMB_SRC`** → image 52–57. Cart/bag/checkout unchanged layout (already fixed px + `object-contain`; pick up new URLs via **`shopBcfCartLineThumbnailSrc`**). **`BCF_SIMILAR_STRIP_MARGIN_TOP_PX` 70 → 20** (matches Noir similar `marginTop: 20px`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF cart/bag/checkout thumb containers (complete surface swap)
+
+- **Context:** User requested replacing BCF thumbnail images on home/shop, similar products, cart dropdown, shopping bag, and checkout/summary with Supabase **`live-preview/BCF/image (43–51).png`** (standard) and **(52–57)** (platinum similar after scroll), with fixed-size **contain** containers so swapped art keeps prior footprint.
+- **Topics covered:** Nine standard BCF thumbs (bundles/closures/frontals × straight/wavy/curly) + six platinum similar thumbs; container constraints before asset swap; all five shopper surfaces listed.
+- **Decisions / outcomes:** Grid + similar strip already used **`BcfShopThumb`** + **`bcfThumbGridContainSlotStyle`** / **`bcfThumbMarbleStripContainSlotStyle`** (4:5 aspect, legacy `/assets` onError fallback). This chat added explicit **cart/bag/checkout** square contain slots via **`BcfThumbImage`** + **`bcfThumbCartContainSlotStyle`**, shared **`OrderStripItemThumb`** for **`/checkout`** + **`/checkout/summary`**, and exported **`bcfCartLineTextureAndCategory`** for cart-line texture/category resolution.
+- **Changes:** **`shopTextureCategoryThumb.ts`** — **`bcfThumbCartContainSlotStyle`**. **`BcfThumbImage.tsx`** (cart-only), **`OrderStripItemThumb.tsx`**. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`**, **`checkout/page.tsx`**, **`checkout/confirm/page.tsx`**, **`bcfProductOptions.ts`**. Pushed **`master`** + **`preview/mobile`**.
