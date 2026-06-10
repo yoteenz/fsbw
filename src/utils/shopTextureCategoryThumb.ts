@@ -145,7 +145,7 @@ export function bcfThumbGridContainSlotStyle(
 }
 
 const BCF_PLATINUM_SIMILAR_STORAGE_BASE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF';
 
 /** BCF similar strip — platinum cross-category thumbs (closures / frontals only). */
 export const BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC: Record<
@@ -153,12 +153,12 @@ export const BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC: Record<
   Record<'wavy' | 'curly', string>
 > = {
   closures: {
-    wavy: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/IMG_2112.png`,
-    curly: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/IMG_2118.png`
+    wavy: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(58).png`,
+    curly: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(60).png`
   },
   frontals: {
-    wavy: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/IMG_2114.png`,
-    curly: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/IMG_2121.png`
+    wavy: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(59).png`,
+    curly: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(61).png`
   }
 };
 
