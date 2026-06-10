@@ -112,39 +112,42 @@ type NoirPdpSideThumbProps = {
   onClick: () => void;
 };
 
-/** 2D side thumb — brick clip + bottom-aligned mannequin (matches BAW hub / hero). */
+/** Side thumb — 3D product shot only in 3D view; 2D uses brick clip + bottom-aligned mannequin. */
 function NoirPdpSideThumb({ src, bg3d, is3DView, onClick }: NoirPdpSideThumbProps) {
+  if (is3DView) {
+    return (
+      <div className="relative" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+        <div
+          className="relative bg-cover bg-center flex items-center justify-center cursor-pointer h-full w-full"
+          style={{
+            backgroundImage: `url('/assets/NOIR/${bg3d}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center calc(50% + 5px)',
+            backgroundRepeat: 'no-repeat',
+          }}
+          onClick={onClick}
+        />
+      </div>
+    );
+  }
+
   const frontScaled = isNoirNaturalFrontMannequinSrc(src);
   return (
     <div className="relative" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
-      <div
-        className="baw-noir-thumb-brick-frame relative h-full w-full cursor-pointer"
-        style={
-          is3DView
-            ? {
-                backgroundImage: `url('/assets/NOIR/${bg3d}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center calc(50% + 5px)',
-                backgroundRepeat: 'no-repeat',
-              }
-            : undefined
-        }
-        onClick={onClick}
-      >
-        {!is3DView && <div className="baw-noir-thumb-brick-bg" aria-hidden="true" />}
+      <div className="baw-noir-thumb-brick-frame relative h-full w-full cursor-pointer" onClick={onClick}>
+        <div className="baw-noir-thumb-brick-bg" aria-hidden="true" />
         <div className="baw-noir-thumb-mannequin-slot">
           <img
             src={src}
             alt=""
             className={noirPdpSideThumbImgClassName(src)}
-            style={{
-              display: is3DView ? 'none' : 'block',
-              ...(frontScaled
-                ? {
+            style={
+              frontScaled
+                ? ({
                     '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
-                  }
-                : {}),
-            } as React.CSSProperties}
+                  } as React.CSSProperties)
+                : undefined
+            }
           />
         </div>
       </div>
