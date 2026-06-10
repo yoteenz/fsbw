@@ -27010,3 +27010,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (full chat):** BCF thumb/containers; four cross-sell similar strip; platinum thumbs **BCF image 54–57**. User: platinum cells should read **WAVY CLOSURES** / **CURLY FRONTALS** (not **PLATINUM …** in title); subline **PLATINUM BLONDE** + **`?origin=russian&color=PLATINUM`** on tap unchanged.
 - **Change:** **`bcfProductOptions.ts`** — **`bcfSimilarStripItemFromSlot`** uses same **`{TEXTURE} {CATEGORY}`** title for platinum and standard rows. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar strip width matches main card; smaller thumbs
+
+- **Context (full chat):** BCF thumb swap + contain containers; four cross-sell similar strip with deep links; platinum thumbs **BCF image 54–57**; standard titles for platinum rows. User: **similar products container width should match main card** — reduce BCF thumbnail sizes so bordered card aligns.
+- **Changes:** **`texture-category-product/page.tsx`** — removed Noir-style bleed (`marginLeft/Right: -16px`, `width: calc(100% + 32px)`); similar outer wrapper uses **`width/maxWidth: 100%`** like recently viewed. **`shopTextureCategoryThumb.ts`** — **`bcfThumbSimilarStripContainSlotStyle()`** at **62%** width (vs **79.2%** marble strip). **`BcfShopThumb`** — new **`similarStrip`** variant; BCF PDP similar cells use it. Pushed **`master`** + **`preview/mobile`**.

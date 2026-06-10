@@ -182,6 +182,19 @@ export function bcfThumbMarbleStripContainSlotStyle(): CSSProperties {
   };
 }
 
+/** BCF PDP similar strip — smaller thumbs so the bordered card matches main card width (no bleed). */
+export function bcfThumbSimilarStripContainSlotStyle(): CSSProperties {
+  return {
+    width: '62%',
+    maxWidth: '100%',
+    aspectRatio: '4 / 5',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  };
+}
+
 /** Cart / bag / checkout — square slot; image scales with `object-fit: contain`. */
 export function bcfThumbCartContainSlotStyle(boxPx: number): CSSProperties {
   return {

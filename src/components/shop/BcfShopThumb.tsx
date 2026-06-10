@@ -3,6 +3,7 @@ import {
   bcfThumbContainImgStyle,
   bcfThumbGridContainSlotStyle,
   bcfThumbMarbleStripContainSlotStyle,
+  bcfThumbSimilarStripContainSlotStyle,
   shopTextureCategoryThumbFallbackSrc,
   shopTextureCategoryThumbLegacySrc,
   shopTextureCategoryThumbSrc,
@@ -10,7 +11,7 @@ import {
   type ShopTextureCategoryThumbTexture
 } from '../../utils/shopTextureCategoryThumb';
 
-export type BcfShopThumbVariant = 'grid' | 'marbleStrip';
+export type BcfShopThumbVariant = 'grid' | 'marbleStrip' | 'similarStrip';
 
 type BcfShopThumbProps = {
   texture: ShopTextureCategoryThumbTexture;
@@ -38,7 +39,9 @@ export function BcfShopThumb({
   const slotStyle =
     variant === 'grid'
       ? bcfThumbGridContainSlotStyle(texture, category)
-      : bcfThumbMarbleStripContainSlotStyle();
+      : variant === 'similarStrip'
+        ? bcfThumbSimilarStripContainSlotStyle()
+        : bcfThumbMarbleStripContainSlotStyle();
 
   return (
     <div style={slotStyle}>
