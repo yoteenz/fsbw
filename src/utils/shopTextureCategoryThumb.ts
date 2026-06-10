@@ -118,12 +118,15 @@ export const bcfThumbContainImgStyle: CSSProperties = {
   margin: 0
 };
 
-/** Home/shop BCF grid — same width % as pre-container `<img width={49.5*scale}% height=auto>`. */
+/** Home/shop BCF grid only — +20% vs base marble thumb width (similar/cart unchanged). */
+export const BCF_THUMB_GRID_WIDTH_SCALE = 1.2;
+
+/** Home/shop BCF grid — width % band for contain slot (`49.5 × texture scale × grid scale`). */
 export function bcfThumbGridContainSlotStyle(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
 ): CSSProperties {
-  const w = `${49.5 * shopTextureCategoryThumbDisplayScale(texture)}%`;
+  const w = `${49.5 * shopTextureCategoryThumbDisplayScale(texture) * BCF_THUMB_GRID_WIDTH_SCALE}%`;
   const translateY = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
   return {
     width: w,

@@ -26960,6 +26960,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-09 — BCF home/shop grid thumbs +20%
+
+- **Context:** User asked to increase BCF thumbnail size on **home/shop page only** by **20%** (similar/cart/bag/checkout unchanged).
+- **Change:** **`BCF_THUMB_GRID_WIDTH_SCALE = 1.2`** in **`bcfThumbGridContainSlotStyle`** (`shopTextureCategoryThumb.ts`) — grid variant used only on **`products/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-10 — BCF cart/bag/checkout thumb containers (complete surface swap)
 
 - **Context:** User requested replacing BCF thumbnail images on home/shop, similar products, cart dropdown, shopping bag, and checkout/summary with Supabase **`live-preview/BCF/image (43–51).png`** (standard) and **(52–57)** (platinum similar after scroll), with fixed-size **contain** containers so swapped art keeps prior footprint.
