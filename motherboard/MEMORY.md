@@ -27048,3 +27048,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (full chat):** BCF similar strip (four cross-sell, width aligned, subline **RAW HUMAN HAIR** / **PLATINUM BLONDE**); interim fallback used **Platinum Blonde** IMG paths when **BCF 54–57** failed to load. User confirmed correct platinum assets: **`live-preview/BCF/image (54–57).png`** — wavy/curly **closure** **54/55**, wavy/curly **frontal** **56/57**.
 - **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** restored to those four BCF Supabase URLs. **`BcfShopThumb`** still skips legacy fallback when explicit **`src`** is set. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF platinum 54–57 uploaded; Noir 3D side thumbs fixed
+
+- **Context (full chat):** BCF similar platinum thumbs at **BCF/image (54–57).png** showed broken placeholders; Noir **3D VIEW** still showed **2D** grey mannequins in side thumbs while hero was 3D.
+- **BCF root cause:** Files **54–57** were **never in Supabase** (bucket had **43–53** only) → public URLs **404** despite correct code paths.
+- **BCF fix:** Uploaded platinum cross-sell PNGs to **`live-preview/BCF/image (54–57).png`** (closures wavy/curly, frontals wavy/curly). URLs now **200**.
+- **Noir root cause:** **`NoirPdpSideThumb`** hid 2D **`img`** with inline **`display:none`**, but **`.thumbnail-mannequin-img { display:block !important }`** overrode it in 3D mode.
+- **Noir fix:** **`noir/page.tsx`** — 3D mode renders **background-only** side cells (no 2D mannequin mount); 2D path unchanged. Pushed **`master`** + **`preview/mobile`**.
