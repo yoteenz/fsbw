@@ -83,6 +83,20 @@ export const PSA_AVATAR_EXPRESSION_MANIFEST = [
       'Soft warm smile, gentle knowing eyes as if recalling something personal — one hand lightly at chest, "I remember you" energy.',
   },
   {
+    slug: 'remembering-ask',
+    filename: 'psa-avatar-remembering-ask.png',
+    v5: true,
+    promptLine:
+      'Gentle inviting expression, open hand toward member — "in a few words, what was this for?" occasion-capture ask energy.',
+  },
+  {
+    slug: 'memory-locked',
+    filename: 'psa-avatar-memory-locked.png',
+    v5: true,
+    promptLine:
+      'Small satisfied close — lips together smile, subtle nod, "locked in, I\'ll remember" confirmation energy.',
+  },
+  {
     slug: 'curator',
     filename: 'psa-avatar-curator.png',
     v5: true,
@@ -95,6 +109,13 @@ export const PSA_AVATAR_EXPRESSION_MANIFEST = [
     v5: true,
     promptLine:
       'Thoughtful serious expression, slight head tilt, one palm up in respectful "let me be real with you" gesture — honest pushback, not angry.',
+  },
+  {
+    slug: 'archetype-quiz',
+    filename: 'psa-avatar-archetype-quiz.png',
+    v5: true,
+    promptLine:
+      'Attentive diagnostic lean-in, pen-or-tablet gesture, "tell me your lifestyle" interviewer energy during Slay Archetype quiz.',
   },
   {
     slug: 'archetype-reveal',
@@ -116,6 +137,13 @@ export const PSA_AVATAR_EXPRESSION_MANIFEST = [
     v5: true,
     promptLine:
       'Focused expert smile, one hand tracing an invisible plan or both hands framing a concept — architect of a full event look blueprint.',
+  },
+  {
+    slug: 'slay-forecast',
+    filename: 'psa-avatar-slay-forecast.png',
+    v5: true,
+    promptLine:
+      'Concerned expert, slight furrow, finger raised ("watch maintenance in Miami") — honest climate advice, not fear.',
   },
   {
     slug: 'celebrating',

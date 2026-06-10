@@ -272,11 +272,11 @@ export function bcfPriceAdjustments(
   return (len?.price ?? 0) + (col?.price ?? 0) + (lace?.price ?? 0) + (weight?.price ?? 0);
 }
 
-/** Straight-texture base (USD) before length / color / lace. Bundles −$200; closures & frontals −$120 vs prior list. */
+/** Straight-texture base (USD) before length / color / lace. */
 export const BCF_STRAIGHT_BASE_PRICE_USD: Record<ShopTextureCategoryThumbCategory, number> = {
-  bundles: 330,
-  closures: 245,
-  frontals: 365
+  bundles: 380,
+  closures: 145,
+  frontals: 165
 };
 
 const BCF_TEXTURE_PRICE_DELTA_USD: Record<ShopTextureCategoryThumbTexture, number> = {

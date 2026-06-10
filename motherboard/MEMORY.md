@@ -26790,6 +26790,30 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-07 — PSA: four new avatar expressions wired (quiz, occasion, forecast)
+
+**Context:** User already has **`remembering`** + **`blueprint`** PNGs; wanted names/purposes + code wiring for four more assets: tablet lifestyle interviewer, open-hand occasion ask, satisfied “locked in” nod, Miami maintenance finger — without wasting generations.
+
+**New slugs → filenames → when shown:**
+| Slug | File | Trigger |
+|------|------|---------|
+| `archetype-quiz` | `psa-avatar-archetype-quiz.png` | **`isArchetypeQuizActive()`** (3 Slay Archetype questions) |
+| `remembering-ask` | `psa-avatar-remembering-ask.png` | **`isOccasionCaptureActive()`** (“in a few words, what was this for?”) |
+| `memory-locked` | `psa-avatar-memory-locked.png` | Assistant reply **“LOCKED IN. I WILL REMEMBER…”** after occasion save |
+| `slay-forecast` | `psa-avatar-slay-forecast.png` | **`slay_forecast`** session mode / climate keywords (split from **`blueprint`**) |
+
+**Code:** **`psaConfig.ts`** (types + paths, **`PSA_AVATAR_ASSET_VERSION` → `12`**), **`resolvePsaAvatarExpression.ts`**, **`api/_lib/psaMood.ts`**, **`psa-avatar-expression-manifest.mjs`**, golden-prompts + **`PSA_SETUP.md`**. Missing PNGs still fall back to neutral. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-07 — PSA FAB hidden on Build-a-Wig routes
+
+**Context:** User asked to hide PSA on **BAW** pages like lobby/lounge/account.
+
+**Change:** **`psaConfig.ts`** — **`isPsaFabHiddenPath`** also true for **`/build-a-wig`** and **`/build-a-wig/*`** (hub + all customize/edit sub-routes). Avatar + nudge hidden; chat panel unchanged if already open. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-09 — NOIR live color/styling: GPT Image 2 + unhidden Fal regen UI
 
 **Context (full chat):** User asked for OpenArt vs Fal pricing for BAW color/styling (answered: Fal+NBP ~$151 warm-cache; GPT2 medium cheaper on Fal but timeouts; OpenArt has no API). User then asked to **switch back to GPT Image 2** for generating color/styling previews, **unhide** founder Fal regen controls on color + styling pages, strengthen logo prompt (**FRONTAL SLAYER** on chest, hair-only edit), and use GPT2 settings **`image_size: auto`**, **`quality: auto`**, **`output_format: webp`**.
@@ -26807,3 +26831,86 @@ Pushed **`master`** + **`preview/mobile`**.
 **Conventions:** Use **`bawGptImage2EditFalInput`** for any new BAW live GPT2 Fal calls; keep inlined prompt sync in **`live-noir-color.ts`** (no `_lib` import on nested Vercel route). Founder regen UI requires **`isFounderNoirFalRegenUiVisible()`** (founder Gmail + signed in).
 
 **Follow-up (same chat):** User asked **`image_size` 3:4** + **`quality` 2K**. GPT2 has no `2K` quality enum — set **`image_size: { width: 1536, height: 2048 }`** (3:4 portrait, 2048px long edge) and **`quality: 'medium'`** (~2K tier) in **`bawGptImage2FalInput.ts`** + mirrored inline in **`live-noir-color.ts`**.
+
+**Follow-up (same chat):** User replaced NOIR **natural front (M)** 2D mannequin with Supabase **`live-preview/Noir/image (26).png`** for product page, all BAW natural triples, and Fal GPT2 **`front`** input. **`NOIR_NATURAL_FRONT_MANNEQUIN_SRC`** + **`NOIR_NATURAL_MANNEQUIN_TRIPLE`** in **`bawStaticMannequinReferencePaths.ts`**; **`api/_lib/bawNoirNaturalMannequinUrls.ts`** for server; **`live-noir-color.ts`** defaults **`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`** to that URL when env unset. L/R still **`/assets/natural left|right.png`**.
+
+---
+
+## 2026-06-09 — NOIR mannequin swap: restore leaf-brick on all angles
+
+**Context:** User corrected prior work: only the **middle/front** mannequin PNG should have changed to the Supabase asset — **not** removal of **`leaf-brick-resize`** / **`.leaf-bg`** from L/M/R. The Supabase front mannequin is a **transparent overlay** (like **`/assets/natural front.png`**), not a Fal live WebP with brick baked in.
+
+**Root cause:** **`hideDuplicateBrickForNoirWigViews`** treated **any** non-**`/assets/`** URL as “live”, so the Supabase mannequin URL flipped **`hideBrick`** for the whole triple in **`BawNoirWigPreviewHeroThumbs`**.
+
+**Fix (`bawNoirLiveWigViewDisplay.ts`):** Added **`isBawNoirMannequinOverlaySrc`** — **`/assets/`** paths + Supabase **`live-preview/Noir/…`** reference PNGs (incl. **`NOIR_NATURAL_FRONT_MANNEQUIN_SRC`**). **`isBawNoirLiveWigViewSrc`** now only true for **`data:`** / **`blob:`**, **`wig-preview-live/`**, or **`/after-color/`** URLs (actual Fal live WebPs). Static natural triple with remote front mannequin keeps brick on all three angles; live color/styling WebPs still skip duplicate brick.
+
+**Follow-up (same chat):** User asked to **reduce M (front) mannequin PNG display size by 30%** (70% scale). **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.7`**, **`isNoirNaturalFrontMannequinSrc`**, **`scaleNoirFrontMannequinDisplayPx`** in **`bawStaticMannequinReferencePaths.ts`**. Applied in **`BawNoirWigPreviewHeroThumbs`** (hero `--hero-width/height` + middle thumb dimensions) and **`straight/noir/page.tsx`** (hero + side thumbs via **`scale(0.7)`** transform when src is front mannequin). L/R unchanged; Fal live WebPs not scaled.
+
+**Follow-up (same chat):** 0.7 was too small — user asked **+15%** on M mannequin display. **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE`** → **`0.805`** (0.7 × 1.15). All consumers use the shared constant (BAW hero/thumbs + product page transform).
+
+**Follow-up (same chat):** User asked **+5%** more on M mannequin — scale **`0.805` → `0.84525`** (0.805 × 1.05).
+
+**Follow-up (same chat):** M **thumbnail** looked broken (empty/busted) below hero. **Cause:** **`baw-noir-front-mannequin--scaled`** CSS set **`width/height: auto !important`**, overriding thumb **`width`/`height`** attrs — Supabase PNG intrinsic size + bottom-align clipped figure out of **72×95** frame. **Fix:** keep **72×95** thumb attrs like L/R; scale M with **`transform: scale(var(--baw-noir-front-mannequin-scale))`** + **`transform-origin: bottom center`** in **`index.css`**; pass CSS var from **`BawNoirWigPreviewHeroThumbs`**.
+
+**Follow-up (same chat):** User asked **+5%** on **hero** M mannequin — **`NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE`** **`0.84525` → `0.8875125`** (shared constant updates BAW hero, thumbs, product page).
+
+**Follow-up (same chat):** Still too small — **+5%** more: scale **`0.8875125` → `0.931888125`**.
+
+**Follow-up (same chat):** User replaced NOIR **L** and **R** natural mannequins with Supabase **`live-preview/Noir/image (27).png`** (L) and **`image (28).png`** (R). **`NOIR_NATURAL_LEFT_MANNEQUIN_SRC`**, **`NOIR_NATURAL_RIGHT_MANNEQUIN_SRC`** + updated **`NOIR_NATURAL_MANNEQUIN_TRIPLE`** in **`bawStaticMannequinReferencePaths.ts`**; **`api/_lib/bawNoirNaturalMannequinUrls.ts`**; **`live-noir-color.ts`** defaults for **`WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL`** / **`_RIGHT_URL`** when env unset; **`.env.example`**. M scale unchanged; brick overlay logic unchanged (`live-preview/Noir/` = mannequin overlay).
+
+**Follow-up (same chat):** Supabase L/M/R hero mannequins extended **below** leaf brick. **Fix:** **`baw-noir-hero-brick-frame`** + **`baw-noir-hero-brick-bg`** + **`baw-noir-hero-mannequin-slot`** (`overflow: hidden`) in **`BawNoirWigPreviewHeroThumbs`**; static overlay mannequins **bottom-aligned** (`baw-noir-hero-mannequin--brick-aligned`, `max-height: 100%`) — removed taller **`min-height: 387px`** on brick cell. Same pattern on **`straight/noir/page.tsx`** hero (bottom + clip). Live WebPs stay centered in clip frame.
+
+**Follow-up (same chat):** Red **NOIR** header clipped by hero overflow — moved **`heroChildren`** to **`baw-noir-hero-header-overlay`** **outside** mannequin clip slot (`z-index: 20`, `overflow: visible`). **M mannequin only:** **`translateY(-4px)`** on hero front-scaled + middle thumb (`baw-noir-front-mannequin--middle-thumb`).
+
+**Follow-up (same chat):** User asked **M down 4px** (removed prior **`translateY(-4px)`** → neutral) and **L/R down 4px** — **`translateY(4px)`** via **`baw-noir-hero-mannequin--lr-nudge`** / **`baw-noir-thumb-lr-nudge`**; helpers **`isNoirNaturalLeftMannequinSrc`**, **`isNoirNaturalRightMannequinSrc`** in **`bawStaticMannequinReferencePaths.ts`**.
+
+**Follow-up (same chat):** BAW **thumbnails** below hero extended past brick (static sub-pages had **`overflow: visible`**). **Fix:** mirror hero — **`baw-noir-thumb-brick-frame`** + **`baw-noir-thumb-brick-bg`** (sub-pages) + **`baw-noir-thumb-mannequin-slot`** (`overflow: hidden`); static imgs **`baw-noir-thumb-mannequin--brick-aligned`** with **`max-height: 100%`**. Hub keeps outer **`.leaf-bg`** + transparent inner clip frame.
+
+**Follow-up (same chat):** Only **M** thumb clipped — **L/R** Supabase PNGs overflowed (M had **scale**). **Fix:** **`baw-noir-thumb-lr-overlay`** + **`height: 100%` / `object-fit: contain`** for L/R; **`overflow: hidden`** on **`leaf-stack.thumb`** + click wrap; **inner `baw-noir-thumb-brick-bg` on hub too** (outer **`.leaf-bg`** = selection ring only, transparent brick); drop fixed **`width`/`height`** attrs on static thumb **`<img>`**.
+
+**Follow-up (same chat):** Thumb **white/black selection borders** lost (**`overflow: hidden`** on **`leaf-stack`** clipped **`.leaf-bg`** / **`box-shadow`**). **Fix:** selection on **`baw-noir-thumb-brick-frame`** for hub + sub-pages; clip only brick frame; **M thumb `translateY(4px)`** on front-scaled transform.
+
+---
+
+## 2026-06-09 — NOIR sub-page hero/thumb layout matches main hub (exclude hairline)
+
+- **Context:** User asked to update hero + three thumbnail images on all **eight** NOIR customize/edit sub-pages (**addons, cap, color, density, lace, length, styling, texture**) to match the **main hub** thumbnail and hero container/image position. **Hairline** excluded.
+- **Topics covered:** Prior session work on NOIR mannequin assets, brick clipping, M/L/R nudges, hub vs sub-page thumb differences (`hubThumbsOnlyOuter`, 12px vs 2px gap, `p-0` vs `p-1`, `translateX` nudges, `baw-noir-thumb-static-img--hub`).
+- **Decisions / outcomes:** Centralize hub-like layout in **`BawNoirWigPreviewFrames.tsx`** via **`isBawNoirHubLikeThumbPathname`** — true for **`/build-a-wig/noir`**, **`.../customize`**, **`.../edit`**, and the eight sub-steps (both customize + edit, incl. nested **`/styling/...`**). **`hubThumbsOnlyOuter`** now **`isBawNoirHubLikeThumbPathname || isBawProductHubThumbPathname`** so NOIR sub-steps get outer **`.leaf-bg`**, hub brick frame, **12px** gap, no per-thumb **`translateX`** nudges, **`baw-noir-thumb-static-img--hub`**. Default **`thumbRowClassName="items-center"`** on NOIR hub-like paths. **Hairline** unchanged (still inner-brick sub-page layout). Other units (blanco, waves, curls) deeper sub-pages unchanged.
+- **Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`** only; committed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Fal GPT2 mannequin docs cleanup + production env verify
+
+- **Context:** User asked whether color/styling Fal GPT2 prompts were updated for new Supabase mannequins; then asked to **clean stale docs** and **confirm production env**.
+- **Answer:** **Color** (`live-noir-color.ts`) and **FLAT IRON + MIDDLE** second ref (`bawNoirNaturalMannequinUrls.ts`) already use Supabase **`image (27|26|28).png`** (L/M/R). **LAYERS/CRIMPS/BANGS** edit color-tier WebPs only (inherit mannequins from prior color run). Stale **comments/docs** still said `/assets/natural *.png` and **`WIG_PREVIEW_PUBLIC_APP_ORIGIN`** (unused in code).
+- **Decisions / outcomes:** Updated **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`COPY-PASTE-PROMPTS.txt`**, **`bawLiveStylingPrompts.ts`** JSDoc, **`live-noir-color.ts`** header. Added **`scripts/wig-preview/verify-noir-mannequin-refs.mjs`** + **`npm run wig-preview:verify-noir-mannequins`** (HEAD 200 on all three Supabase URLs; warns if env points at legacy `/assets/natural`). **`motherboard/CORE.md`** NOIR Fal mannequin bullet.
+- **Production:** Vercel CLI unavailable here — **cannot read live env**. If **`WIG_PREVIEW_NOIR_MANNEQUIN_*_URL`** unset → deploy uses Supabase defaults (verified reachable). If set to **`fsbw.vercel.app/assets/natural *.png`** → override still serves **old** mannequins (those URLs still HTTP 200). Founder should check Vercel env or run verify script locally with production env exported.
+
+---
+
+## 2026-06-09 — NOIR Fal gray-brick refs split from UI overlays (solution A)
+
+- **Context:** User saw **transparent/checkerboard** live color WebPs (not leaf brick). Asked if Ideogram was missing; chose **solution A** (separate gray-brick Fal refs, not Ideogram, not prompt-only fix).
+- **Root cause:** Fal used same **transparent** Supabase overlays (`image 26|27|28`) as UI; GPT2 output WebPs lacked baked brick; UI **`hideBrick`** skips CSS brick for `wig-preview-live/` URLs.
+- **Decisions / outcomes:** Split assets — **UI** = transparent `image (27|26|28).png`; **Fal** = baked `fal-gray-brick-{left|front|right}.png` on Supabase. **`api/_lib/bawNoirFalMannequinUrls.ts`**; **`live-noir-color.ts`** + **`live-wig-after-color-styling.ts`** use Fal refs. Env: **`WIG_PREVIEW_NOIR_FAL_MANNEQUIN_*`** (legacy **`WIG_PREVIEW_NOIR_MANNEQUIN_*`** still accepted but must **not** point at transparent overlays). **`npm run wig-preview:build-noir-fal-gray-brick-refs`** composites overlay + `leaf-brick-resize` via Jimp and uploads to Storage (ran successfully). Verify script checks UI vs Fal separately.
+- **User action:** **Redeploy** after code push; **update or remove** Vercel env if still set to `image (26|27|28)` for Fal; **regen color L/M/R** (or regen all) — **yes, must regenerate** cached `wig-preview-live` WebPs; styling inherits from color tier.
+
+**Follow-up (same chat):** User reported Fal color output mannequin **smaller/misaligned** vs leaf-brick. **Causes:** Fal composite used gray brick only + 82% height + center display CSS; UI uses Readdy **`.leaf-bg`** + bottom-aligned overlays. **Fix:** Rebuilt **`fal-gray-brick-*`** with Readdy jfif background, **96%** cell height, front scale + L/R nudge; **`BAW_GPT2_NOIR_COLOR_FRAMING_LOCK`** in prompt; live hero/thumb CSS **`object-position: bottom center`** + bottom anchor (not vertical center). Re-uploaded composites; regen required again.
+
+---
+
+## 2026-06-09 — BCF closures/frontals base price reduction
+
+- **Context:** User asked to reduce **frontals** starting price by **$200** and **closures** by **$100** (bundles unchanged).
+- **Change:** **`src/utils/bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD`: closures **245 → 145**, frontals **365 → 165**. Texture deltas (+$20 wavy / +$40 curly) and length/color/lace add-ons unchanged. Shop grid ranges via `bcfPdpPriceRangeUsd` update automatically. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF bundles base price reduction
+
+- **Context:** User asked to reduce **bundles** starting price by **$300** only (closures/frontals unchanged).
+- **Change:** **`src/utils/bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **330 → 30**. Pushed **`master`** + **`preview/mobile`**.
+
+**Follow-up (same chat):** User reported 16″ bundle still **$630** after −$300. **Cause:** PDP **`texture-category-product/page.tsx`** used hardcoded **`PRICE_BY_CATEGORY`** (bundles **680**) for hero/cart price, not **`bcfBasePriceUsd`** from `bcfProductOptions.ts` (updated to 30). **16″** = 680 − 50 length = **630**. **Fix:** Removed **`PRICE_BY_CATEGORY`**; PDP + similar strip use **`bcfBasePriceUsd(category, texture)`**. Bundles straight base **380** so default **16″** straight OFF BLACK = **$330** (−$300 vs $630). Closures/frontals PDP now also follow shared base (145 / 165). Pushed **`master`** + **`preview/mobile`**.

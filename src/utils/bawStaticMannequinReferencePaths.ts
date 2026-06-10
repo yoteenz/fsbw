@@ -3,6 +3,66 @@
  * and admin flows that must match the same references (e.g. Send offer → Generate unit).
  */
 
+/** NOIR natural hairline — left (L); also Fal GPT2 color + styling input for `left`. */
+export const NOIR_NATURAL_LEFT_MANNEQUIN_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(27).png';
+
+/** NOIR natural hairline — front / middle (M) hero; also Fal GPT2 color + styling input for `front`. */
+export const NOIR_NATURAL_FRONT_MANNEQUIN_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(26).png';
+
+/** NOIR natural hairline — right (R); also Fal GPT2 color + styling input for `right`. */
+export const NOIR_NATURAL_RIGHT_MANNEQUIN_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(28).png';
+
+/** UI scale for NOIR natural front (M) mannequin overlay — tuned vs L/R framing (0.7 → 0.805 → 0.84525 → 0.8875125 → 0.931888125). */
+export const NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE = 0.931888125;
+
+function normalizedMannequinSrcPath(src: string): string {
+  const raw = (src || '').split(/[?#]/)[0].trim();
+  try {
+    if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('//')) {
+      const u = new URL(raw.startsWith('//') ? `https:${raw}` : raw);
+      return decodeURIComponent(u.pathname).toLowerCase();
+    }
+  } catch {
+    /* ignore */
+  }
+  return decodeURIComponent(raw).toLowerCase();
+}
+
+/** True for NOIR natural **left** mannequin overlay (Supabase or legacy `/assets/natural left.png`). */
+export function isNoirNaturalLeftMannequinSrc(src: string): boolean {
+  const norm = normalizedMannequinSrcPath(src);
+  if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_LEFT_MANNEQUIN_SRC)) return true;
+  return norm.endsWith('/natural left.png');
+}
+
+/** True for NOIR natural **middle/front** mannequin overlay (Supabase or legacy `/assets/natural front.png`). */
+export function isNoirNaturalFrontMannequinSrc(src: string): boolean {
+  const norm = normalizedMannequinSrcPath(src);
+  if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_FRONT_MANNEQUIN_SRC)) return true;
+  return norm.endsWith('/natural front.png');
+}
+
+/** True for NOIR natural **right** mannequin overlay (Supabase or legacy `/assets/natural right.png`). */
+export function isNoirNaturalRightMannequinSrc(src: string): boolean {
+  const norm = normalizedMannequinSrcPath(src);
+  if (norm === normalizedMannequinSrcPath(NOIR_NATURAL_RIGHT_MANNEQUIN_SRC)) return true;
+  return norm.endsWith('/natural right.png');
+}
+
+export function scaleNoirFrontMannequinDisplayPx(basePx: number): number {
+  return basePx * NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE;
+}
+
+/** NOIR natural L / M / R — order matches BAW `wigViews` (left, front, right). */
+export const NOIR_NATURAL_MANNEQUIN_TRIPLE = [
+  NOIR_NATURAL_LEFT_MANNEQUIN_SRC,
+  NOIR_NATURAL_FRONT_MANNEQUIN_SRC,
+  NOIR_NATURAL_RIGHT_MANNEQUIN_SRC,
+] as const;
+
 export function bawStaticMannequinTriplePathsFromUnitAndHairline(
   unitKey: string,
   hairlineRaw: string
@@ -28,7 +88,7 @@ export function bawStaticMannequinTriplePathsFromUnitAndHairline(
   if (hasLagos) {
     return ['/assets/lagos left.png', '/assets/lagos front.png', '/assets/lagos right.png'] as const;
   }
-  return ['/assets/natural left.png', '/assets/natural front.png', '/assets/natural right.png'] as const;
+  return NOIR_NATURAL_MANNEQUIN_TRIPLE;
 }
 
 /** Front view path — same as BAW hero middle when using static (non-live) mannequins. */
@@ -55,6 +115,8 @@ export function bawStaticFrontReferenceMatchesHairlineSelection(
   const p = String(frontReferencePath || '').toLowerCase();
   if (p.includes('peak')) return h.includes('PEAK');
   if (p.includes('lagos')) return h.includes('LAGOS') && !h.includes('PEAK');
-  if (p.includes('natural')) return !h.includes('PEAK') && !h.includes('LAGOS');
+  if (p.includes('natural') || frontReferencePath === NOIR_NATURAL_FRONT_MANNEQUIN_SRC) {
+    return !h.includes('PEAK') && !h.includes('LAGOS');
+  }
   return false;
 }

@@ -14,7 +14,9 @@ export const config = {
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  *   WIG_PREVIEW_STORAGE_BUCKET (default: live-preview or wig-preview)
  *   WIG_PREVIEW_PROMPT_VERSION (default: v1)
- *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
+ *   WIG_PREVIEW_NOIR_FAL_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — optional Fal gray-brick scene overrides
+ *     (defaults: live-preview/Noir/fal-gray-brick-{front|left|right}.png). Legacy WIG_PREVIEW_NOIR_MANNEQUIN_* also accepted.
+ *     UI overlays (image 26|27|28) are **not** Fal inputs — see `api/_lib/bawNoirFalMannequinUrls.ts`.
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
@@ -28,6 +30,30 @@ export const config = {
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
+
+/** Keep in sync with `api/_lib/bawNoirFalMannequinUrls.ts`. */
+const NOIR_FAL_GRAY_BRICK_LEFT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-left.png';
+const NOIR_FAL_GRAY_BRICK_FRONT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-front.png';
+const NOIR_FAL_GRAY_BRICK_RIGHT_MANNEQUIN_PUBLIC_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/fal-gray-brick-right.png';
+
+function envTrim(key: string): string {
+  return process.env[key]?.trim() || '';
+}
+
+function noirFalGrayBrickMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'right'): string {
+  const envByAngle = {
+    front:
+      envTrim('WIG_PREVIEW_NOIR_FAL_MANNEQUIN_FRONT_URL') || envTrim('WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL'),
+    left: envTrim('WIG_PREVIEW_NOIR_FAL_MANNEQUIN_LEFT_URL') || envTrim('WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL'),
+    right: envTrim('WIG_PREVIEW_NOIR_FAL_MANNEQUIN_RIGHT_URL') || envTrim('WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL'),
+  };
+  if (angle === 'left') return envByAngle.left || NOIR_FAL_GRAY_BRICK_LEFT_MANNEQUIN_PUBLIC_URL;
+  if (angle === 'right') return envByAngle.right || NOIR_FAL_GRAY_BRICK_RIGHT_MANNEQUIN_PUBLIC_URL;
+  return envByAngle.front || NOIR_FAL_GRAY_BRICK_FRONT_MANNEQUIN_PUBLIC_URL;
+}
 
 // --- Inlined from api/_lib/auth.ts (keep in sync) ---
 async function getAuthUser(
@@ -239,6 +265,9 @@ const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
 const BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK =
   'Keep **everything else exactly the same** — same mannequin, brick background, lighting, and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
 
+const BAW_GPT2_NOIR_COLOR_FRAMING_LOCK =
+  '**Framing lock:** Do **not** resize, reposition, re-crop, or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **only** hair pigment changes.';
+
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
   label: string,
@@ -270,6 +299,7 @@ function buildStep2PromptNoLogoAttachment(
     angleConstraint,
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
     'The photo should be extremely high-quality, crisp and pixel-perfect.',
   ].join(' ');
 }
@@ -302,20 +332,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const frontUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim();
-  const leftUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim();
-  const rightUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim();
-  if (!frontUrl || !leftUrl || !rightUrl) {
-    sendJson(res, 503, {
-      error: 'Missing public mannequin image URLs for live generation',
-      missing: {
-        WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL: !frontUrl,
-        WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL: !leftUrl,
-        WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL: !rightUrl,
-      },
-    });
-    return;
-  }
+  const frontUrl = noirFalGrayBrickMannequinPublicUrlForAngle('front');
+  const leftUrl = noirFalGrayBrickMannequinPublicUrlForAngle('left');
+  const rightUrl = noirFalGrayBrickMannequinPublicUrlForAngle('right');
 
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';

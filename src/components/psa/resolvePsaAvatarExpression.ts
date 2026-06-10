@@ -3,6 +3,8 @@ import {
   type PsaAvatarExpression,
 } from '../../constants/psaConfig';
 import type { PsaMoodId } from '../../utils/psaMood';
+import { isArchetypeQuizActive } from '../../utils/psaArchetypeQuiz';
+import { isOccasionCaptureActive } from '../../utils/psaOccasionCapture';
 import {
   inferPsaSessionModeFromUserText,
   type PsaSessionMode,
@@ -22,7 +24,12 @@ const CURATOR_KEYWORDS =
   /\b(lounge|founder pick|curator|lesson|hall of slay|private selection)\b/i;
 
 const BLUEPRINT_KEYWORDS =
-  /\b(blueprint|install date|maintenance plan|full look|entire look|event ready|slay forecast)\b/i;
+  /\b(blueprint|install date|maintenance plan|full look|entire look|event ready)\b/i;
+
+const SLAY_FORECAST_KEYWORDS =
+  /\b(slay forecast|going to miami|going to vegas|humidity|watch maintenance|climate where you|weather where you)\b/i;
+
+const MEMORY_LOCKED_PATTERN = /\bLOCKED IN\. I WILL REMEMBER\b/i;
 
 const CELEBRATION_KEYWORDS =
   /\b(congratulations|celebrate|milestone|hall of slay|order placed|shipped|delivered)\b/i;
@@ -90,6 +97,14 @@ export function resolvePsaAvatarExpression(input: ResolvePsaAvatarExpressionInpu
 
   if (input.showWelcomeWave && input.isChatOpen) return 'waving';
 
+  if (input.isChatOpen && isOccasionCaptureActive()) {
+    return 'remembering-ask';
+  }
+
+  if (input.isChatOpen && isArchetypeQuizActive()) {
+    return 'archetype-quiz';
+  }
+
   if (input.isChatOpen && input.isInputFocused) {
     return input.inputHasText ? 'thinking-smiling' : 'listening';
   }
@@ -124,9 +139,16 @@ export function resolvePsaAvatarExpression(input: ResolvePsaAvatarExpressionInpu
   if (
     input.isChatOpen &&
     last?.role === 'assistant' &&
+    (sessionMode === 'slay_forecast' || SLAY_FORECAST_KEYWORDS.test(lastAssistantText))
+  ) {
+    return 'slay-forecast';
+  }
+
+  if (
+    input.isChatOpen &&
+    last?.role === 'assistant' &&
     (sessionMode === 'build_my_look' ||
       sessionMode === 'event_ready' ||
-      sessionMode === 'slay_forecast' ||
       BLUEPRINT_KEYWORDS.test(lastAssistantText))
   ) {
     return 'blueprint';
@@ -151,6 +173,14 @@ export function resolvePsaAvatarExpression(input: ResolvePsaAvatarExpressionInpu
     (input.mood === 'private_client' || CURATOR_KEYWORDS.test(lastAssistantText))
   ) {
     return 'curator';
+  }
+
+  if (
+    input.isChatOpen &&
+    last?.role === 'assistant' &&
+    MEMORY_LOCKED_PATTERN.test(lastAssistantText)
+  ) {
+    return 'memory-locked';
   }
 
   if (

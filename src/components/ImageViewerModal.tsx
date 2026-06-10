@@ -142,6 +142,7 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate, f
   const is2DViewImage = (src: string) =>
     src.includes('2D') ||
     src.includes('2d') ||
+    src.includes('live-preview/Noir') ||
     src.includes('natural front') ||
     src.includes('natural left') ||
     src.includes('natural right') ||

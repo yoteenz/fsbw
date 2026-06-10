@@ -15,11 +15,15 @@ export type PsaAvatarExpressionSlug =
   | 'talking'
   | 'presenting'
   | 'remembering'
+  | 'remembering-ask'
+  | 'memory-locked'
   | 'curator'
   | 'honest-pushback'
+  | 'archetype-quiz'
   | 'archetype-reveal'
   | 'red-carpet'
   | 'blueprint'
+  | 'slay-forecast'
   | 'celebrating'
   | 'reassuring'
   | 'spotlight';
@@ -71,11 +75,11 @@ export function resolvePsaAvatarExpressionHint(payload: PsaMoodPayload): PsaAvat
     return 'spotlight';
   }
 
-  if (
-    payload.sessionMode === 'build_my_look' ||
-    payload.sessionMode === 'event_ready' ||
-    payload.sessionMode === 'slay_forecast'
-  ) {
+  if (payload.sessionMode === 'slay_forecast') {
+    return 'slay-forecast';
+  }
+
+  if (payload.sessionMode === 'build_my_look' || payload.sessionMode === 'event_ready') {
     return 'blueprint';
   }
 

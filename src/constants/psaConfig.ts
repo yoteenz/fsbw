@@ -20,30 +20,38 @@ export type PsaAvatarExpression =
   | 'talking'
   | 'presenting'
   | 'remembering'
+  | 'remembering-ask'
+  | 'memory-locked'
   | 'curator'
   | 'honest-pushback'
+  | 'archetype-quiz'
   | 'archetype-reveal'
   | 'red-carpet'
   | 'blueprint'
+  | 'slay-forecast'
   | 'celebrating'
   | 'reassuring'
   | 'spotlight';
 
-/** PSA v5 expressions — register in code before PNGs land; crossfade falls back to neutral on 404. */
+/** PSA v5+ expressions — register in code before PNGs land; crossfade falls back to neutral on 404. */
 export const PSA_V5_AVATAR_EXPRESSIONS = [
   'remembering',
+  'remembering-ask',
+  'memory-locked',
   'curator',
   'honest-pushback',
+  'archetype-quiz',
   'archetype-reveal',
   'red-carpet',
   'blueprint',
+  'slay-forecast',
   'celebrating',
   'reassuring',
   'spotlight',
 ] as const satisfies readonly PsaAvatarExpression[];
 
 /** Bump when avatar PNGs change so browsers/CDN drop cached copies. */
-export const PSA_AVATAR_ASSET_VERSION = '11';
+export const PSA_AVATAR_ASSET_VERSION = '12';
 
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
@@ -59,11 +67,15 @@ export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
   talking: '/assets/psa-avatar-talking.png',
   presenting: '/assets/psa-avatar-presenting.png',
   remembering: '/assets/psa-avatar-remembering.png',
+  'remembering-ask': '/assets/psa-avatar-remembering-ask.png',
+  'memory-locked': '/assets/psa-avatar-memory-locked.png',
   curator: '/assets/psa-avatar-curator.png',
   'honest-pushback': '/assets/psa-avatar-honest-pushback.png',
+  'archetype-quiz': '/assets/psa-avatar-archetype-quiz.png',
   'archetype-reveal': '/assets/psa-avatar-archetype-reveal.png',
   'red-carpet': '/assets/psa-avatar-red-carpet.png',
   blueprint: '/assets/psa-avatar-blueprint.png',
+  'slay-forecast': '/assets/psa-avatar-slay-forecast.png',
   celebrating: '/assets/psa-avatar-celebrating.png',
   reassuring: '/assets/psa-avatar-reassuring.png',
   spotlight: '/assets/psa-avatar-spotlight.png',
@@ -191,10 +203,11 @@ export function isPsaHiddenPath(pathname: string): boolean {
   );
 }
 
-/** Lobby, lounge, account profile: hide floating avatar and nudge only (chat panel may still open elsewhere). */
+/** Lobby, lounge, account, Build-a-Wig: hide floating avatar and nudge (chat panel unchanged if already open). */
 export function isPsaFabHiddenPath(pathname: string): boolean {
   if (pathname === '/lobby' || pathname === '/account') return true;
-  return pathname === '/lobby/lounge' || pathname.startsWith('/lobby/lounge/');
+  if (pathname === '/lobby/lounge' || pathname.startsWith('/lobby/lounge/')) return true;
+  return pathname === '/build-a-wig' || pathname.startsWith('/build-a-wig/');
 }
 
 export function getPsaAvatarSrc(expression: PsaAvatarExpression): string {

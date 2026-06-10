@@ -14,7 +14,7 @@
 3. Export **PNG with transparency**.
 4. Rename to match `PSA_AVATAR_SRC` in `src/constants/psaConfig.ts`:
    - **v1 (11):** `psa-avatar-neutral.png` … `psa-avatar-presenting.png`
-   - **v5 (9):** `psa-avatar-remembering.png`, `psa-avatar-curator.png`, `psa-avatar-honest-pushback.png`, `psa-avatar-archetype-reveal.png`, `psa-avatar-red-carpet.png`, `psa-avatar-blueprint.png`, `psa-avatar-celebrating.png`, `psa-avatar-reassuring.png`, `psa-avatar-spotlight.png`
+   - **v5+ (13):** includes `psa-avatar-remembering-ask.png`, `psa-avatar-memory-locked.png`, `psa-avatar-archetype-quiz.png`, `psa-avatar-slay-forecast.png` plus the original nine v5 slugs — see `psa-avatar-expressions-nbp.md`
    - Full table: `psa-avatar-expressions-nbp.md` and `docs/PSA_SETUP.md`
 5. **Do not** run `scripts/psa-flatten-avatar-backgrounds.mjs` (that script is only for fake-transparent Fal gray/checkerboard exports).
 6. Bump `PSA_AVATAR_ASSET_VERSION` in `psaConfig.ts` after upload.
