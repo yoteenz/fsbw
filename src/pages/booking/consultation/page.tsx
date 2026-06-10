@@ -32,8 +32,13 @@ import {
   bookingConsultHairInspoThumbImgStyle,
   BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX,
 } from '../../../utils/bookingConsultHairInspoThumb';
-
-const CONSULT_DEPOSIT_USD = 40;
+import ConsultStyleAnalysisAddonPicker from '../../../components/booking/ConsultStyleAnalysisAddonPicker';
+import {
+  CONSULT_DEPOSIT_USD,
+  consultCheckoutTotalUsd,
+  consultStyleAnalysisBagSubtitle,
+} from '../../../utils/consultStyleAnalysisAddon';
+import type { StyleAnalysisComparisonTier } from '../../../types/styleAnalysis';
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
@@ -198,6 +203,7 @@ export default function BookingConsultationPage() {
   const [consultMeasurementsHydrateKey, setConsultMeasurementsHydrateKey] = useState(0);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
+  const [styleAnalysisTier, setStyleAnalysisTier] = useState<StyleAnalysisComparisonTier | null>(null);
   const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
 
@@ -424,10 +430,12 @@ export default function BookingConsultationPage() {
           earToEar: finalizeConsultHeadMeasurementValue(headMeasurements.earToEar),
           napeOfNeck: finalizeConsultHeadMeasurementValue(headMeasurements.napeOfNeck),
         };
+        const styleAnalysisSubtitle = consultStyleAnalysisBagSubtitle(styleAnalysisTier);
+        const checkoutTotalUsd = consultCheckoutTotalUsd(styleAnalysisTier);
         const newItem = {
           id: `booking-consult-${Date.now()}`,
           name: 'WIG CONSULT',
-          price: CONSULT_DEPOSIT_USD,
+          price: checkoutTotalUsd,
           quantity: 1,
           image: badgeImage,
           type: 'booking-consult',
@@ -438,7 +446,10 @@ export default function BookingConsultationPage() {
           bookingInspoPhotoUrls: inspoItems.map((it) => it.dataUrl).slice(0, MAX_HAIR_INSPO_PHOTOS),
           bookingInspoFileNames: inspoItems.map((it) => it.name),
           bookingInspoFileName: inspoItems.map((it) => it.name).join(' · '),
-          bookingBagSubtitle: hairOption,
+          bookingBagSubtitle: [hairOption, styleAnalysisSubtitle].filter(Boolean).join(' · '),
+          consultDepositUsd: CONSULT_DEPOSIT_USD,
+          consultStyleAnalysisComparisonCount: styleAnalysisTier ?? undefined,
+          consultStyleAnalysisNonRefundable: styleAnalysisTier != null ? true : undefined,
           ...(hairOption === 'WIG + INSTALL' && consultPreferredDateIso.trim()
             ? { bookingPreferredDate: consultPreferredDateIso.trim() }
             : {}),
@@ -892,6 +903,21 @@ export default function BookingConsultationPage() {
             </div>
           </div>
 
+          <div
+            style={{
+              width: '100%',
+              minWidth: 0,
+              borderTop: '1px solid #e5e7eb',
+              paddingTop: '20px',
+            }}
+          >
+            <ConsultStyleAnalysisAddonPicker
+              value={styleAnalysisTier}
+              onChange={setStyleAnalysisTier}
+              disabled={addToBagState === 'adding'}
+            />
+          </div>
+
           <div style={{ width: '100%', minWidth: 0 }}>
             <label htmlFor="consult-notes" style={{ ...labelStyle, marginBottom: '7px' }}>
               ADDITIONAL NOTES:
@@ -1067,8 +1093,22 @@ export default function BookingConsultationPage() {
               className="text-black font-medium text-base md:text-xl lg:text-2xl"
               style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
             >
-              {formatUsd(CONSULT_DEPOSIT_USD)}
+              {formatUsd(consultCheckoutTotalUsd(styleAnalysisTier))}
             </p>
+            {styleAnalysisTier != null ? (
+              <p
+                style={{
+                  fontFamily: bookingFontBook,
+                  fontSize: '9px',
+                  color: '#808080',
+                  textTransform: 'uppercase',
+                  margin: '6px 0 0',
+                  lineHeight: 1.4,
+                }}
+              >
+                INCLUDES ${CONSULT_DEPOSIT_USD} DEPOSIT + STYLE ANALYSIS ADD-ON (NON-REFUNDABLE)
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

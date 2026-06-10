@@ -12,6 +12,8 @@ export type QuoteLineInput = {
   /** Matches booking appointment page `bookingStyle` (e.g. LAYERED CURLS → +$40). */
   bookingStyle?: string;
   bookingAddonIds?: string[];
+  /** Wig consult — optional style analysis add-on comparison count (1 / 3 / 6). */
+  consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;
   capSize?: string;
@@ -53,6 +55,17 @@ const ADDON_USD: Record<string, number> = {
 };
 
 const CONSULT_DEPOSIT_USD = 40;
+
+const CONSULT_STYLE_ANALYSIS_USD: Record<1 | 3 | 6, number> = {
+  1: 20,
+  3: 40,
+  6: 60,
+};
+
+function consultStyleAnalysisAddonUsd(count: unknown): number {
+  if (count === 1 || count === 3 || count === 6) return CONSULT_STYLE_ANALYSIS_USD[count];
+  return 0;
+}
 
 /** Matches `src/pages/booking/appointment/page.tsx` — LAYERED CURLS style upcharge. */
 const LAYERED_CURLS_STYLE_UPCHARGE_USD = 40;
@@ -124,10 +137,15 @@ function resolveBookingAppointment(line: QuoteLineInput, idx: number): ResolvedQ
 
 function resolveBookingConsult(line: QuoteLineInput, idx: number): ResolvedQuoteLine {
   const q = Math.max(1, Math.floor(line.quantity || 1));
-  const totalUsd = CONSULT_DEPOSIT_USD * q;
+  const addonUsd = consultStyleAnalysisAddonUsd(line.consultStyleAnalysisComparisonCount);
+  const totalUsd = (CONSULT_DEPOSIT_USD + addonUsd) * q;
+  const addonNote =
+    addonUsd > 0
+      ? ` incl. $${addonUsd} style analysis add-on (${line.consultStyleAnalysisComparisonCount} comparisons, non-refundable)`
+      : '';
   return {
     key: `line-${idx}`,
-    description: line.name || 'WIG CONSULT',
+    description: `${line.name || 'WIG CONSULT'}${addonNote}`,
     quantity: q,
     amountCents: Math.round(totalUsd * 100),
     resolved: true

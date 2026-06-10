@@ -27006,6 +27006,7 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+<<<<<<< HEAD
 ## 2026-06-10 — BCF similar platinum: standard titles, PLATINUM only in route
 
 - **Context (full chat):** BCF thumb/containers; four cross-sell similar strip; platinum thumbs **BCF image 54–57**. User: platinum cells should read **WAVY CLOSURES** / **CURLY FRONTALS** (not **PLATINUM …** in title); subline **PLATINUM BLONDE** + **`?origin=russian&color=PLATINUM`** on tap unchanged.
@@ -27025,3 +27026,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full chat):** BCF similar strip (four cross-sell, deep links, width aligned to main card, smaller thumbs). User: platinum assets missing after title change; red subline should be **RAW HUMAN HAIR** only (no **CLOSURES** / **FRONTALS** prefix); platinum rows keep standard titles (**WAVY CLOSURES**, etc.).
 - **Root cause:** **`BCF/image (54–57).png`** return **400** from Supabase; **`BcfShopThumb` `onError`** replaced failed platinum **`src`** with standard BCF thumbs.
 - **Changes:** **`shopTextureCategoryThumb.ts`** — platinum similar thumbs back to working **`Platinum Blonde/IMG_2033|2036|2024|2027`**. **`bcfProductOptions.ts`** — subline **`RAW HUMAN HAIR`** / **`PLATINUM BLONDE`** (no category prefix). **`BcfShopThumb`** — skip legacy fallback when explicit **`src`** is set. Pushed **`master`** + **`preview/mobile`**.
+=======
+## 2026-06-09 — Style analysis: consult add-on + PSA selfie picks (live try-on unchanged)
+
+- **Context (full chat):** User chose product split: **wig consult** optional **non-refundable** style-analysis add-on (**1/3/6** comparisons → **$20/$40/$60**) delivered with consult quote (inspo-matched selfie + color/length variants); **PSA** premium selfie ranked unit upsells (**3mo → 4**, **6mo → 6**, **12mo → 10** picks across six units); **live try-on in BAW stays as-is**.
+- **Consult:** **`ConsultStyleAnalysisAddonPicker`** on **`booking/consultation`**; cart fields **`consultStyleAnalysisComparisonCount`**, **`consultDepositUsd`**; server quote **`resolveQuote.ts`** adds add-on to **`booking-consult`** total. **`consultStyleAnalysisAddon.ts`**.
+- **PSA:** Starter **FIND MY BEST LOOKS** (MORE OPTIONS); **`PsaSelfieStyleAnalysisPanel`** + **`POST /api/psa/selfie-style-analysis`** (premium + OpenAI vision JSON). **`docs/STYLE_ANALYSIS.md`**, **`CORE.md`** updated. Chart image generation / admin attach = phase 2.
+>>>>>>> f0151f67 (Add style analysis: consult add-on tiers and PSA selfie picks)

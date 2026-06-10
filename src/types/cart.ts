@@ -49,6 +49,14 @@ export interface CartItem {
   bookingAttachedOrderSummary?: string;
   /** Consult: multiple inspo filenames (max 3 on PDP). */
   bookingInspoFileNames?: string[];
+  /** Consult: hair inspo data URLs (checkout / admin fulfillment). */
+  bookingInspoPhotoUrls?: string[];
+  /** Consult: $40 deposit portion when style analysis add-on is bundled in `price`. */
+  consultDepositUsd?: number;
+  /** Consult style analysis add-on — 1 / 3 / 6 comparison options ($20 / $40 / $60, non-refundable). */
+  consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
+  consultStyleAnalysisNonRefundable?: boolean;
+  bookingBagSubtitle?: string;
 }
 
 
