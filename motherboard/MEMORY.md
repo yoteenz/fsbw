@@ -26935,3 +26935,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked **13×6** to be **$40 more** than **13×4** (was $20). **13×6** stays default at **$0** delta.
 - **Change:** **13×4** lace price **−20 → −40** in `build-a-wig/lace/page.tsx`, `bcfProductOptions.ts` (`BCF_LACE_OPTIONS`), `build-a-wig/page.tsx`, `straight/noir/page.tsx`, `CartDropdown.tsx`, `specialOfferPrice.ts`. **BCF frontals** straight base **350 → 370** so default **16″ straight 13×4** stays **$280** (13×6 default frontal **$320**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF similar strip thumb size matches unit PDPs
+
+- **Context:** User reported BCF **SIMILAR PRODUCTS** 2D thumbs **way bigger** than unit PDP similar strip (screenshot: one bundle filled full width).
+- **Cause:** Shared `marbleStripScrollRowStyle` used fixed **`width: 200%`** (designed for **4** unit cells = 50% viewport each). BCF similar has only **2** other textures → two flex cells split 200% → **100% viewport each**. BCF also used hero portrait JPGs/Supabase URLs instead of marble shop thumbs.
+- **Fix:** `marbleStripScrollRowStyle(scrollPx, itemCount)` — width **`itemCount × 50%`** (BCF similar passes **2** → **100%**). BCF similar imgs use **`shopTextureCategoryThumbSrc`** (marble PNGs, same as cart/grid). Pushed **`master`** + **`preview/mobile`**.
