@@ -26988,3 +26988,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (full chat):** BCF thumb swap + cart containers; similar strip four cross-sell cells per category with deep-link color/origin; user swapped platinum similar thumbs from **Platinum Blonde** previews to **`live-preview/BCF/image (54–57).png`**.
 - **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`**: wavy/curly **closure** → **54/55**, wavy/curly **frontal** → **56/57**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — PSA v5 avatar expressions pushed to master
+
+- **Context:** User added **14** new PSA avatar expression PNGs under **`public/assets/`** and asked to push them to **`master`**. Prior chat also covered BCF pricing fixes, similar-strip sizing/cross-sell, Supabase BCF thumb swap + contain slots, and grid thumb scale (**1.44**).
+- **Assets (14 new on master):** `psa-avatar-remembering`, `remembering-ask`, `memory-locked`, `curator`, `honest-pushback`, `archetype-quiz`, `archetype-reveal`, `red-carpet`, `blueprint`, `slay-forecast`, `celebrating`, `reassuring`, `spotlight`, plus **`dna-nod`**. Already referenced in **`psaConfig.ts`** / **`psa-avatar-expression-manifest.mjs`**; were on **`preview/mobile`** but missing from **`master`** until this commit.
+- **Changes:** Commit **`c129c1b0`** — checked out 14 PNGs from **`preview/mobile`**, committed on **`master`**, pushed **`master`**; merged/synced **`preview/mobile`**. Original 11 expressions unchanged on both branches.
