@@ -117,6 +117,36 @@ const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
   curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/opLZf4GQ8_KuizHCa_5gZ_QGYh1ZNb.jpeg'
 };
 
+const BUNDLE_STRAIGHT_COLOR_PHOTO_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Bundles%20Color/Straight';
+
+/** Straight bundles only — hero swaps when shopper picks a hair color. */
+const BUNDLE_STRAIGHT_COLOR_PHOTO: Partial<Record<string, string>> = {
+  'JET BLACK': `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2147.png`,
+  ESPRESSO: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2150.png`,
+  CHESTNUT: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2151.png`,
+  HONEY: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2148.png`,
+  AUBURN: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2153.png`,
+  COPPER: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2154.png`,
+  GINGER: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2155.png`,
+  SANGRIA: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2156.png`,
+  CHERRY: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2157.png`,
+  RASPBERRY: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2158.png`,
+  PLUM: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2159.png`,
+  COBALT: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2160.png`,
+  TEAL: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2161.png`,
+  SLIME: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2162.png`,
+  CITRINE: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2163.png`
+};
+
+function bundlePhotoSrc(texture: Texture, colorId: string): string {
+  if (texture === 'straight') {
+    const tinted = BUNDLE_STRAIGHT_COLOR_PHOTO[String(colorId || '').toUpperCase()];
+    if (tinted) return tinted;
+  }
+  return BUNDLE_PHOTO_BY_TEXTURE[texture];
+}
+
 /** Primary straight bundle hero video (upload to this public path when ready). */
 const BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov';
@@ -729,9 +759,14 @@ export default function ShopTextureCategoryProductPage() {
   );
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
+  const bundleHeroPhotoSrc = React.useMemo(
+    () => (category === 'bundles' ? bundlePhotoSrc(texture, bcfColor) : null),
+    [category, texture, bcfColor]
+  );
+
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
     if (!category) return shopTextureCategoryThumbSrc(tid, 'bundles');
-    if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[tid];
+    if (category === 'bundles') return bundlePhotoSrc(tid, tid === 'straight' ? bcfColor : 'OFF BLACK');
     if (category === 'closures' || category === 'frontals') {
       return BCF_CF_PHOTO[category][tid];
     }
@@ -1236,7 +1271,7 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  src={bundleHeroPhotoSrc ?? BUNDLE_PHOTO_BY_TEXTURE[texture]}
                                   alt=""
                                   aria-hidden
                                   draggable={false}
@@ -1246,7 +1281,7 @@ export default function ShopTextureCategoryProductPage() {
                                   key={`${texture}-video-${texture === 'straight' ? bundleStraightVideoSrc : 'default'}`}
                                   ref={bundleVideoRef}
                                   src={bundleHeroVideoSrc(texture, bundleStraightVideoSrc)}
-                                  poster={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  poster={bundleHeroPhotoSrc ?? BUNDLE_PHOTO_BY_TEXTURE[texture]}
                                   preload="auto"
                                   playsInline
                                   muted
@@ -1283,7 +1318,7 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  src={bundleHeroPhotoSrc ?? BUNDLE_PHOTO_BY_TEXTURE[texture]}
                                   alt={displayProductName}
                                   onError={(e) => {
                                     const img = e.currentTarget;
