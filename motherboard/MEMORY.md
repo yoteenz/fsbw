@@ -26914,3 +26914,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Change:** **`src/utils/bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **330 → 30**. Pushed **`master`** + **`preview/mobile`**.
 
 **Follow-up (same chat):** User reported 16″ bundle still **$630** after −$300. **Cause:** PDP **`texture-category-product/page.tsx`** used hardcoded **`PRICE_BY_CATEGORY`** (bundles **680**) for hero/cart price, not **`bcfBasePriceUsd`** from `bcfProductOptions.ts` (updated to 30). **16″** = 680 − 50 length = **630**. **Fix:** Removed **`PRICE_BY_CATEGORY`**; PDP + similar strip use **`bcfBasePriceUsd(category, texture)`**. Bundles straight base **380** so default **16″** straight OFF BLACK = **$330** (−$300 vs $630). Closures/frontals PDP now also follow shared base (145 / 165). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF default PDP price targets (bundles / closures / frontals)
+
+- **Context:** User set explicit default PDP prices: **bundles $230** (16″ straight OFF BLACK); **closures $220** (16″ straight 2×6); **frontals $280** (16″ straight 13×4).
+- **Change:** **`bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD` straight bases back-solved from length/lace deltas: bundles **280**, closures **310**, frontals **350**. PDP already uses **`bcfBasePriceUsd`**. Pushed **`master`** + **`preview/mobile`**.
