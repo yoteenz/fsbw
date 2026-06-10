@@ -109,6 +109,61 @@ function shopBcfUrl(category: Category, texture: Texture): string {
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
+/** BCF SIMILAR strip — always 4 cells: wavy, curly, platinum wavy, platinum curly (2-up scroll). */
+const BCF_PLATINUM_SIMILAR_THUMB: Record<
+  Category,
+  Record<'wavy' | 'curly', string>
+> = {
+  bundles: {
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2045.png',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2048.png'
+  },
+  closures: {
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2033.png',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2036.png'
+  },
+  frontals: {
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2024.png',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2027.png'
+  }
+};
+
+type BcfSimilarStripItem = {
+  key: string;
+  texture: Texture;
+  platinum: boolean;
+  thumbSrc: string;
+  href: string;
+  title: string;
+  subline: string;
+  priceUsd: number;
+};
+
+function buildBcfSimilarStripItems(category: Category): BcfSimilarStripItem[] {
+  const categoryTitle = CATEGORY_TITLE[category];
+  const slots: { texture: 'wavy' | 'curly'; platinum: boolean }[] = [
+    { texture: 'wavy', platinum: false },
+    { texture: 'curly', platinum: false },
+    { texture: 'wavy', platinum: true },
+    { texture: 'curly', platinum: true }
+  ];
+  return slots.map(({ texture: tid, platinum }) => {
+    const textureLabel = TEXTURE_META[tid].label;
+    return {
+      key: `${platinum ? 'platinum' : 'std'}-${tid}`,
+      texture: tid,
+      platinum,
+      thumbSrc: platinum
+        ? BCF_PLATINUM_SIMILAR_THUMB[category][tid]
+        : shopTextureCategoryThumbSrc(tid, category),
+      href: shopBcfUrl(category, tid),
+      title: platinum ? `PLATINUM ${textureLabel} ${categoryTitle}` : `${textureLabel} ${categoryTitle}`,
+      subline: platinum ? `${categoryTitle} · PLATINUM BLONDE` : `${categoryTitle} · RAW HUMAN HAIR`,
+      priceUsd: bcfBasePriceUsd(category, tid)
+    };
+  });
+}
+
 /** Bundles PDP photo URLs (video files remain local). */
 const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
   straight: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/bJSeVXN5LlWhbDAM5Vc6A_WV70Nuqw.jpeg',
@@ -710,7 +765,7 @@ export default function ShopTextureCategoryProductPage() {
   }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfLaceTreatment]);
   /** Premium gate for member-only options (lace treatment chips, etc.). */
   const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
-  const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
+  const bcfSimilarProducts = React.useMemo(() => buildBcfSimilarStripItems(category), [category]);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
@@ -1917,21 +1972,17 @@ export default function ShopTextureCategoryProductPage() {
                         }}
                       />
                       <div ref={setSimilarStripViewportRef} style={marbleStripViewportStyle}>
-                        <div style={marbleStripScrollRowStyle(similarProductsScroll, otherTextures.length)}>
-                          {otherTextures.map((ot) => {
-                            const om = TEXTURE_META[ot];
-                            const simTitle = `${om.label} ${categoryTitle}`;
-                            const simThumbSrc = shopTextureCategoryThumbSrc(ot, category);
-                            return (
+                        <div style={marbleStripScrollRowStyle(similarProductsScroll, bcfSimilarProducts.length)}>
+                          {bcfSimilarProducts.map((sim) => (
                               <div
-                                key={ot}
+                                key={sim.key}
                                 role="button"
                                 tabIndex={0}
-                                onClick={() => navigate(shopBcfUrl(category, ot))}
+                                onClick={() => navigate(sim.href)}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter' || e.key === ' ') {
                                     e.preventDefault();
-                                    navigate(shopBcfUrl(category, ot));
+                                    navigate(sim.href);
                                   }
                                 }}
                                 style={marbleStripCellOuter}
@@ -1939,13 +1990,13 @@ export default function ShopTextureCategoryProductPage() {
                                 <div style={marbleStripCellBand(false)}>
                                   <div style={marbleStripThumbWrap(false)}>
                                     <img
-                                      src={simThumbSrc}
-                                      alt={simTitle}
+                                      src={sim.thumbSrc}
+                                      alt={sim.title}
                                       onError={(e) => {
                                         const img = e.currentTarget;
                                         if (img.getAttribute('data-fallback-tried') === '1') return;
                                         img.setAttribute('data-fallback-tried', '1');
-                                        img.src = shopTextureCategoryThumbFallbackSrc[ot];
+                                        img.src = shopTextureCategoryThumbFallbackSrc[sim.texture];
                                       }}
                                       style={{
                                         ...marbleStripThumbImg(false),
@@ -1955,14 +2006,12 @@ export default function ShopTextureCategoryProductPage() {
                                     />
                                   </div>
                                   <div style={marbleStripTextColStrip(false)}>
-                                    <p style={marbleStripProductNameStyle()}>{simTitle}</p>
-                                    <p style={marbleStripProductRedLineStyle()}>
-                                      {categoryTitle} · RAW HUMAN HAIR
-                                    </p>
+                                    <p style={marbleStripProductNameStyle()}>{sim.title}</p>
+                                    <p style={marbleStripProductRedLineStyle()}>{sim.subline}</p>
                                     <p
                                       className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
                                       style={marbleStripProductPriceStyle()}
-                                      dangerouslySetInnerHTML={formatPrice(bcfBasePriceUsd(category, ot))}
+                                      dangerouslySetInnerHTML={formatPrice(sim.priceUsd)}
                                     />
                                     <div style={marbleStripStarsRowStyle(false)}>
                                       {[...Array(5)].map((_, si) => (
@@ -1982,8 +2031,7 @@ export default function ShopTextureCategoryProductPage() {
                                   </div>
                                 </div>
                               </div>
-                            );
-                          })}
+                          ))}
                         </div>
                       </div>
                     </div>
