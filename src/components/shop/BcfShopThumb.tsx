@@ -51,6 +51,7 @@ export function BcfShopThumb({
         onClick={onClick}
         className={className}
         onError={(e) => {
+          if (src) return;
           const img = e.currentTarget;
           const step = img.getAttribute('data-fallback-step') ?? '0';
           if (step === '0') {
