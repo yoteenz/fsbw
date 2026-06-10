@@ -26928,3 +26928,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked bundles to start at **$320** for straight **16″** (default OFF BLACK).
 - **Change:** **`bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **280 → 370** (370 − 50 length = **$320**). Closures/frontals unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — 13×6 lace $40 above 13×4 (was $20)
+
+- **Context:** User asked **13×6** to be **$40 more** than **13×4** (was $20). **13×6** stays default at **$0** delta.
+- **Change:** **13×4** lace price **−20 → −40** in `build-a-wig/lace/page.tsx`, `bcfProductOptions.ts` (`BCF_LACE_OPTIONS`), `build-a-wig/page.tsx`, `straight/noir/page.tsx`, `CartDropdown.tsx`, `specialOfferPrice.ts`. **BCF frontals** straight base **350 → 370** so default **16″ straight 13×4** stays **$280** (13×6 default frontal **$320**). Pushed **`master`** + **`preview/mobile`**.
