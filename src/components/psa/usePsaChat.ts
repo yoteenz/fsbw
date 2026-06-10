@@ -427,6 +427,28 @@ export function usePsaChat(
     historyLoadedRef.current = false;
   }, [welcomeMessage]);
 
+  /** Local-only exchange (e.g. PSA selfie style analysis) without LLM round-trip. */
+  const appendLocalExchange = useCallback(
+    (userText: string, assistant: { content: string; cards?: PsaChatCard[]; quickReplies?: string[] }) => {
+      setPanelQuickReplies(assistant.quickReplies ?? []);
+      setMessages((prev) => {
+        const base = prev.length === 1 && prev[0]?.id === 'welcome' ? [] : prev;
+        return [
+          ...base,
+          { id: nextId(), role: 'user', content: userText },
+          {
+            id: nextId(),
+            role: 'assistant',
+            content: assistant.content,
+            cards: assistant.cards,
+            quickReplies: assistant.quickReplies,
+          },
+        ];
+      });
+    },
+    []
+  );
+
   return {
     messages,
     isSending,
@@ -443,6 +465,7 @@ export function usePsaChat(
     continueHint,
     setUsage,
     sendMessage,
+    appendLocalExchange,
     resetChat,
     archiveThread,
     renameThread,

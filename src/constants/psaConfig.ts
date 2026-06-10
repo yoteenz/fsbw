@@ -183,6 +183,7 @@ export const PSA_STARTER_QUICK_REPLIES = [
 
 /** Secondary chips surfaced via MORE OPTIONS in the chat panel. */
 export const PSA_MORE_STARTER_QUICK_REPLIES = [
+  'FIND MY BEST LOOKS',
   'BUILD MY ENTIRE LOOK',
   'SHOULD I REALLY BUY THIS?',
   'SAVE WHY I BOUGHT THIS',

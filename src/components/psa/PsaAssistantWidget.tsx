@@ -59,7 +59,13 @@ import {
 import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/psaBawPrefill';
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
-import type { PsaClientAction } from '../../utils/psaApi';
+import type { PsaChatCard, PsaClientAction } from '../../utils/psaApi';
+import {
+  isPsaSelfieStyleChip,
+  PSA_SELFIE_STYLE_CHIP,
+} from '../../utils/psaSelfieStyleAnalysis';
+import type { PsaSelfieStylePick } from '../../types/styleAnalysis';
+import PsaSelfieStyleAnalysisPanel from './PsaSelfieStyleAnalysisPanel';
 import './psaAssistant.css';
 
 function draftSelectionsFromPrefill(
@@ -100,6 +106,7 @@ export default function PsaAssistantWidget() {
     appendWelcomeMemoryHint(readPsaWelcomeMessageFromCopyStorage())
   );
   const [bonusStarterChips, setBonusStarterChips] = useState<string[]>([]);
+  const [showSelfieStyleAnalysis, setShowSelfieStyleAnalysis] = useState(false);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
   const [cartDropdownOpen, setCartDropdownOpen] = useState(() => isCartDropdownOpen());
   const [nudgeBubbleReady, setNudgeBubbleReady] = useState(false);
@@ -119,6 +126,7 @@ export default function PsaAssistantWidget() {
     isLoadingThreadList,
     historyAvailable,
     sendMessage,
+    appendLocalExchange,
     usage,
     panelQuickReplies,
     continueHint,
@@ -465,9 +473,35 @@ export default function PsaAssistantWidget() {
     [navigate]
   );
 
+  const picksToCards = useCallback((picks: PsaSelfieStylePick[]): PsaChatCard[] => {
+    return picks.map((pick) => ({
+      type: 'product' as const,
+      name: pick.unitLabel,
+      path: `/shop/units`,
+      buildAWigPath: pick.buildAWigPath,
+      summary: `${pick.length} · ${pick.color} · ${pick.styling} — ${pick.why}`,
+    }));
+  }, []);
+
+  const handleSelfieStyleResults = useCallback(
+    (summary: string, picks: PsaSelfieStylePick[]) => {
+      appendLocalExchange(PSA_SELFIE_STYLE_CHIP, {
+        content: summary,
+        cards: picksToCards(picks),
+        quickReplies: picks.slice(0, 3).map((p) => `OPEN ${p.unitLabel} IN BAW`),
+      });
+      setLastReplyAt(Date.now());
+    },
+    [appendLocalExchange, picksToCards]
+  );
+
   const handleSend = useCallback(
     async (text: string) => {
       setPrefillInput('');
+      if (isPsaSelfieStyleChip(text)) {
+        setShowSelfieStyleAnalysis(true);
+        return;
+      }
       if (isSaveWhyChip(text) && proactiveNudge?.occasionCaptureMeta) {
         stashOccasionCaptureMeta(proactiveNudge.occasionCaptureMeta);
       }
@@ -619,6 +653,17 @@ export default function PsaAssistantWidget() {
         <div
           className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
         >
+          {isOpen && showSelfieStyleAnalysis ? (
+            <PsaSelfieStyleAnalysisPanel
+              onClose={() => setShowSelfieStyleAnalysis(false)}
+              onPremiumRequired={() => {
+                setShowSelfieStyleAnalysis(false);
+                setIsOpen(false);
+                setShowUpgradeModal(true);
+              }}
+              onResults={handleSelfieStyleResults}
+            />
+          ) : null}
           {!cartDropdownOpen && !isFabCollapsed && !isOpen && proactiveNudge ? (
             <button
               type="button"

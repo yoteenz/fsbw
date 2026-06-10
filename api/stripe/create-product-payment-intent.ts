@@ -85,7 +85,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       bcfBundleDeal: o.bcfBundleDeal === true,
       bcfBundleDealListSubtotal:
         typeof o.bcfBundleDealListSubtotal === 'number' ? o.bcfBundleDealListSubtotal : undefined,
-      capSize: typeof o.capSize === 'string' ? o.capSize : undefined
+      capSize: typeof o.capSize === 'string' ? o.capSize : undefined,
+      consultStyleAnalysisComparisonCount:
+        o.consultStyleAnalysisComparisonCount === 1 ||
+        o.consultStyleAnalysisComparisonCount === 3 ||
+        o.consultStyleAnalysisComparisonCount === 6
+          ? o.consultStyleAnalysisComparisonCount
+          : undefined
     };
   });
 
