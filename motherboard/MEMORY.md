@@ -26960,12 +26960,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
-<<<<<<< HEAD
 ## 2026-06-09 — BCF home/shop grid thumbs +20%
 
 - **Context:** User asked to increase BCF thumbnail size on **home/shop page only** by **20%** (similar/cart/bag/checkout unchanged).
 - **Change:** **`BCF_THUMB_GRID_WIDTH_SCALE = 1.2`** in **`bcfThumbGridContainSlotStyle`** (`shopTextureCategoryThumb.ts`) — grid variant used only on **`products/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
-=======
+
+---
+
 ## 2026-06-10 — BCF cart/bag/checkout thumb containers (complete surface swap)
 
 - **Context:** User requested replacing BCF thumbnail images on home/shop, similar products, cart dropdown, shopping bag, and checkout/summary with Supabase **`live-preview/BCF/image (43–51).png`** (standard) and **(52–57)** (platinum similar after scroll), with fixed-size **contain** containers so swapped art keeps prior footprint.
@@ -26987,4 +26988,3 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full chat):** (1) Replaced BCF thumb assets + cart contain containers. (2) Similar titles/deep links with texture+color. (3) User refined similar strip to **4 products only** per PDP, cross-category, with platinum **Platinum Blonde** thumbs after scroll.
 - **Per-view slots (`buildBcfSimilarStripItems(viewCategory)`):** **Bundles** → wavy closure, wavy frontal, platinum curly closure, platinum curly frontal. **Closures** → wavy frontal, curly frontal, platinum wavy frontal, platinum curly frontal. **Frontals** → wavy closure, curly closure, platinum wavy closure, platinum curly closure.
 - **Platinum thumbs:** **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** in **`shopTextureCategoryThumb.ts`** — closures wavy/curly **`IMG_2033` / `IMG_2036`**, frontals wavy/curly **`IMG_2024` / `IMG_2027`** (`Platinum%20Blonde/`). Platinum titles **`PLATINUM {TEXTURE} {CATEGORY}`**; href **`origin=russian&color=PLATINUM`**. Pushed **`master`** + **`preview/mobile`**.
->>>>>>> 047e77c75dcc38cb36671b3dfd355fcd16f02eaa
