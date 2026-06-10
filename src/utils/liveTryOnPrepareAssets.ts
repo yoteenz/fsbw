@@ -5,9 +5,11 @@ import {
   resolveLiveTryOnOverlayTripleIfStored,
   resolveLiveTryOnPortraitTripleIfStored,
 } from './liveTryOnOverlayPublicUrls';
+import { ensureLiveTryOnWigAssets } from './liveTryOnEnsureWigAssets';
 import {
   buildLiveTryOnPayloadFromBaw,
   buildLiveTryOnPayloadFromConsult,
+  readLiveTryOnTripleFromLocalStorage,
   type LiveTryOnSourcePayload,
 } from './liveTryOnSelections';
 import { liveTryOnStorageLookupPayload } from './liveTryOnStorageLookup';
@@ -79,10 +81,32 @@ export async function prepareLiveTryOnAssets(
   photoModel: LiveTryOnPhotoModel,
   onStatus?: (msg: string) => void
 ): Promise<LiveTryOnPreparedAssets> {
+  let dynamicMannequinUrls: [string, string, string] | null = null;
+  if (String(payload.unitKey || 'NOIR').toUpperCase() === 'NOIR') {
+    try {
+      const ensured = await ensureLiveTryOnWigAssets(payload, payload.partSelection, onStatus);
+      dynamicMannequinUrls = ensured.mannequinUrls;
+    } catch (e) {
+      const fromLs = readLiveTryOnTripleFromLocalStorage();
+      if (fromLs) dynamicMannequinUrls = fromLs;
+      else throw e;
+    }
+  }
+
   const lookupPayload = liveTryOnStorageLookupPayload(payload);
 
   onStatus?.('LOADING YOUR LOOK…');
   const compare = await buildCompareFromStorage(lookupPayload);
+
+  if (dynamicMannequinUrls) {
+    return {
+      overlayUrls: dynamicMannequinUrls,
+      usedFallback: false,
+      compare,
+      activePhotoModel: photoModel,
+      partial: false,
+    };
+  }
 
   const full = await resolveLiveTryOnOverlayTripleIfStored(lookupPayload, photoModel);
   if (full) {

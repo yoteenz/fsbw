@@ -6,6 +6,11 @@ import {
 } from './bawNoirLivePreviewStorage';
 import { readBuildWigLivePreviewColor, readBuildWigLivePreviewSelections } from './buildWigLivePreviewSelections';
 import {
+  readBuildWigPartSelection,
+  unitKeyFromBuildAWigPathname,
+  type LiveTryOnPartSelection,
+} from './liveTryOnWigReference';
+import {
   consultSelectionsToSpecialOfferOptions,
   type ConsultQuoteSelections,
 } from './consultOfferFromQuote';
@@ -14,6 +19,7 @@ import { LIVE_TRY_ON_SPIKE_WIG_URLS } from '../constants/liveTryOnSpikeAssets';
 
 export type LiveTryOnSourcePayload = WigPreviewSelectionsForHash & {
   unitKey: string;
+  partSelection: LiveTryOnPartSelection;
 };
 
 /** Static mannequin L/F/R when Storage/Fal not ready (per unit family). */
@@ -82,15 +88,24 @@ export function readLiveTryOnTripleFromLocalStorage(): [string, string, string] 
 }
 
 export function buildLiveTryOnPayloadFromBaw(pathname: string): LiveTryOnSourcePayload {
-  const unitKey =
-    (typeof window !== 'undefined' && localStorage.getItem('selectedUnit')?.trim().toUpperCase()) || 'NOIR';
+  const unitKey = unitKeyFromBuildAWigPathname(pathname);
   const base = readBuildWigLivePreviewSelections(pathname);
   const color = readBuildWigLivePreviewColor(pathname);
+  const partSelection = readBuildWigPartSelection(pathname);
   return {
     unitKey,
+    partSelection,
     ...base,
     color,
   };
+}
+
+/** Parse `returnTo` query from `/tools/live-try-on` back to a BAW pathname. */
+export function bawPathnameFromReturnTo(returnTo: string): string {
+  const raw = String(returnTo || '').trim();
+  if (!raw.startsWith('/build-a-wig')) return '/build-a-wig/noir';
+  const pathOnly = raw.split('?')[0] || '/build-a-wig/noir';
+  return pathOnly.replace(/\/$/, '') || '/build-a-wig/noir';
 }
 
 export function buildLiveTryOnPayloadFromConsult(
@@ -100,6 +115,7 @@ export function buildLiveTryOnPayloadFromConsult(
   const opts = consultSelectionsToSpecialOfferOptions(selections);
   return {
     unitKey: String(unitKey || 'NOIR').toUpperCase(),
+    partSelection: 'MIDDLE',
     length: opts.length || '24"',
     density: opts.density || '200%',
     lace: opts.lace || '13X6',
