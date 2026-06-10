@@ -27092,3 +27092,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User provided Supabase **`Bundles Color/Straight`** PNGs for straight-bundle **hair color** hero swaps (15 noir palette colors).
 - **Mapping:** JET BLACK **2147**, ESPRESSO **2150**, CHESTNUT **2151**, HONEY **2148**, AUBURN **2153**, COPPER **2154**, GINGER **2155**, SANGRIA **2156**, CHERRY **2157**, RASPBERRY **2158**, PLUM **2159**, COBALT **2160**, TEAL **2161**, SLIME **2162**, CITRINE **2163** (all **200**).
 - **Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_STRAIGHT_COLOR_PHOTO`** + **`bundlePhotoSrc`**; straight bundles hero + straight texture thumb update on color select; OFF BLACK / GOLDEN / PLATINUM / ASH fall back to default straight hero; wavy/curly unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF platinum similar thumbs → BCF image 58–61
+
+- **Context:** User corrected platinum BCF similar-product assets (replacing **Platinum Blonde IMG_2112–2121**).
+- **URLs:** wavy closure **58**, wavy frontal **59**, curly closure **60**, curly frontal **61** under **`live-preview/BCF/`** (all **200**).
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`**. Pushed **`master`** + **`preview/mobile`**.
