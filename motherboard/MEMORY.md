@@ -27058,3 +27058,21 @@ Pushed **`master`** + **`preview/mobile`**.
 - **BCF fix:** Uploaded platinum cross-sell PNGs to **`live-preview/BCF/image (54–57).png`** (closures wavy/curly, frontals wavy/curly). URLs now **200**.
 - **Noir root cause:** **`NoirPdpSideThumb`** hid 2D **`img`** with inline **`display:none`**, but **`.thumbnail-mannequin-img { display:block !important }`** overrode it in 3D mode.
 - **Noir fix:** **`noir/page.tsx`** — 3D mode renders **background-only** side cells (no 2D mannequin mount); 2D path unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Live try-on dynamic BAW selections (color + styling + part)
+
+- **Context (full chat):** User wanted **live try-on** wired to **current BAW selections** — e.g. **CHERRY + LAYERS** on Noir should drive both the **mannequin reference** and **Fal prompt**, not plain off-black middle-part batch defaults. Prompt/asset combinations should be **stored and reused** (Supabase hash paths).
+- **Problem:** Try-on prep and studio render used **`liveTryOnStorageLookupJob`** (batch NOIR defaults + color only); styling/part ignored; try-on page read **`location.pathname`** instead of **`returnTo`** BAW path; studio capture sent only **`{ color, unitKey }`**.
+- **Fix:**
+  - **`api/_lib/liveTryOnWigReference.ts`** — **`resolveLiveTryOnStyling`**, **`liveTryOnMannequinStoragePaths`**, **`wigPreviewSelectionsFromTryOnBody`**, **`liveTryOnStudioStylingPromptLine`** (layers/crimps/flat-iron/bangs text for studio Fal).
+  - **`src/utils/liveTryOnWigReference.ts`** — **`unitKeyFromBuildAWigPathname`**, **`readBuildWigPartSelection`**, **`resolveLiveTryOnStylingMode`**, **`liveTryOnApiBodyFromPayload`**.
+  - **`src/utils/liveTryOnEnsureWigAssets.ts`** — **`postWigPreviewLiveNoirColor`** then **`postLiveWigAfterColorStyling`** when needed; returns public mannequin triple (reuses Storage when exists).
+  - **`liveTryOnPrepareAssets.ts`** — calls ensure for NOIR before overlay lookup; uses dynamic mannequin URLs for angle preview.
+  - **`liveTryOnSelections.ts`** — payload includes **`partSelection`**; **`bawPathnameFromReturnTo`**; BAW build from pathname + localStorage.
+  - **`api/_lib/liveTryOnStudio.ts`** + **`live-try-on-studio-render.ts`** — full selection body → styled Storage path for mannequin ref + styling hint in prompt.
+  - **`LiveTryOnStudioCapture.tsx`** — passes full **`sourcePayload`** to studio render API.
+  - **`live-try-on/page.tsx`** — **`bawPathnameFromReturnTo(returnTo)`** for prep and payload.
+- **Reuse:** Same **`wig-preview-live/{v}/{UNIT}/{colorTierHash}/after-color/{folder}/`** paths as BAW live styling; APIs skip regeneration when files exist.
+- Pushed **`master`** + **`preview/mobile`**.
