@@ -723,7 +723,10 @@ export default function ShopTextureCategoryProductPage() {
   }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfLaceTreatment]);
   /** Premium gate for member-only options (lace treatment chips, etc.). */
   const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
-  const bcfSimilarProducts = React.useMemo(() => buildBcfSimilarStripItems(), []);
+  const bcfSimilarProducts = React.useMemo(
+    () => (category ? buildBcfSimilarStripItems(category) : []),
+    [category]
+  );
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
