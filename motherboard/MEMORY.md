@@ -26898,3 +26898,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **User action:** **Redeploy** after code push; **update or remove** Vercel env if still set to `image (26|27|28)` for Fal; **regen color L/M/R** (or regen all) — **yes, must regenerate** cached `wig-preview-live` WebPs; styling inherits from color tier.
 
 **Follow-up (same chat):** User reported Fal color output mannequin **smaller/misaligned** vs leaf-brick. **Causes:** Fal composite used gray brick only + 82% height + center display CSS; UI uses Readdy **`.leaf-bg`** + bottom-aligned overlays. **Fix:** Rebuilt **`fal-gray-brick-*`** with Readdy jfif background, **96%** cell height, front scale + L/R nudge; **`BAW_GPT2_NOIR_COLOR_FRAMING_LOCK`** in prompt; live hero/thumb CSS **`object-position: bottom center`** + bottom anchor (not vertical center). Re-uploaded composites; regen required again.
+
+---
+
+## 2026-06-09 — BCF closures/frontals base price reduction
+
+- **Context:** User asked to reduce **frontals** starting price by **$200** and **closures** by **$100** (bundles unchanged).
+- **Change:** **`src/utils/bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD`: closures **245 → 145**, frontals **365 → 165**. Texture deltas (+$20 wavy / +$40 curly) and length/color/lace add-ons unchanged. Shop grid ranges via `bcfPdpPriceRangeUsd` update automatically. Pushed **`master`** + **`preview/mobile`**.
