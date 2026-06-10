@@ -26973,3 +26973,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (this chat):** Prior turn swapped BCF thumb assets + cart contain containers. User follow-up: similar-products text should read **STRAIGHT BUNDLES**, **WAVY CLOSURES**, **CURLY FRONTALS**, etc.; taps must open the correct PDP with **texture** and **color** (and matching **origin**) pre-selected.
 - **Changes:** **`bcfProductOptions.ts`** — **`buildBcfSimilarStripItems()`** lists all **9** BCF SKUs + **6** platinum wavy/curly rows; titles **`{TEXTURE} {CATEGORY}`** (platinum rows same title, subline **PLATINUM BLONDE**); **`shopBcfPdpHref(cat, texture, { origin, color })`** adds **`?origin=`** / **`?color=`**; **`parseBcfOriginFromSearch`**, **`parseBcfColorFromSearch`**, **`bcfInitialColorFromSearch`**. **`texture-category-product/page.tsx`** — PDP reads URL params on navigation; similar **`BcfShopThumb`** uses **`sim.category`**; hero texture pills pass origin+color in href. Cart reopen links preserve saved color/origin. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar strip: four cross-sell cells per PDP category
+
+- **Context (full chat):** (1) Replaced BCF thumb assets + cart contain containers. (2) Similar titles/deep links with texture+color. (3) User refined similar strip to **4 products only** per PDP, cross-category, with platinum **Platinum Blonde** thumbs after scroll.
+- **Per-view slots (`buildBcfSimilarStripItems(viewCategory)`):** **Bundles** → wavy closure, wavy frontal, platinum curly closure, platinum curly frontal. **Closures** → wavy frontal, curly frontal, platinum wavy frontal, platinum curly frontal. **Frontals** → wavy closure, curly closure, platinum wavy closure, platinum curly closure.
+- **Platinum thumbs:** **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** in **`shopTextureCategoryThumb.ts`** — closures wavy/curly **`IMG_2033` / `IMG_2036`**, frontals wavy/curly **`IMG_2024` / `IMG_2027`** (`Platinum%20Blonde/`). Platinum titles **`PLATINUM {TEXTURE} {CATEGORY}`**; href **`origin=russian&color=PLATINUM`**. Pushed **`master`** + **`preview/mobile`**.
