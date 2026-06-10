@@ -27003,3 +27003,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (full chat):** PSA v5 avatar PNGs pushed to **`master`**; user then asked to move **home/shop BCF grid** thumb assets (the **1.44×** scaled contain slots) **down 6px** so they sit closer to product text below—**assets only**, not similar strip or cart.
 - **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_THUMB_GRID_TRANSLATE_Y_PX = 6`** applied in **`bcfThumbGridContainSlotStyle`** (stacks with existing curly-frontals **−2px** nudge → **+4px** net). Similar/cart/checkout unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar platinum: standard titles, PLATINUM only in route
+
+- **Context (full chat):** BCF thumb/containers; four cross-sell similar strip; platinum thumbs **BCF image 54–57**. User: platinum cells should read **WAVY CLOSURES** / **CURLY FRONTALS** (not **PLATINUM …** in title); subline **PLATINUM BLONDE** + **`?origin=russian&color=PLATINUM`** on tap unchanged.
+- **Change:** **`bcfProductOptions.ts`** — **`bcfSimilarStripItemFromSlot`** uses same **`{TEXTURE} {CATEGORY}`** title for platinum and standard rows. Pushed **`master`** + **`preview/mobile`**.
