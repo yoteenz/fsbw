@@ -27076,3 +27076,11 @@ Pushed **`master`** + **`preview/mobile`**.
   - **`live-try-on/page.tsx`** — **`bawPathnameFromReturnTo(returnTo)`** for prep and payload.
 - **Reuse:** Same **`wig-preview-live/{v}/{UNIT}/{colorTierHash}/after-color/{folder}/`** paths as BAW live styling; APIs skip regeneration when files exist.
 - Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF platinum similar thumbs → Platinum Blonde IMG_2112–2121
+
+- **Context:** User corrected platinum BCF similar-product assets (not **BCF/image 54–57**).
+- **URLs:** wavy closure **IMG_2112**, curly closure **IMG_2118**, wavy frontal **IMG_2114**, curly frontal **IMG_2121** under **`live-preview/Platinum Blonde/`** (all **200**).
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`**. Pushed **`master`** + **`preview/mobile`**.
