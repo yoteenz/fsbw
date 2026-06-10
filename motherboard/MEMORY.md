@@ -26921,3 +26921,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User set explicit default PDP prices: **bundles $230** (16″ straight OFF BLACK); **closures $220** (16″ straight 2×6); **frontals $280** (16″ straight 13×4).
 - **Change:** **`bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD` straight bases back-solved from length/lace deltas: bundles **280**, closures **310**, frontals **350**. PDP already uses **`bcfBasePriceUsd`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF bundles 16″ straight → $320
+
+- **Context:** User asked bundles to start at **$320** for straight **16″** (default OFF BLACK).
+- **Change:** **`bcfProductOptions.ts`** — `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **280 → 370** (370 − 50 length = **$320**). Closures/frontals unchanged. Pushed **`master`** + **`preview/mobile`**.
