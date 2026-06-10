@@ -1,41 +1,72 @@
-/** Home/shop marbles, cart/bag/checkout, wishlist BCF lines — `public/assets` PNGs (with marble background). */
+import type { CSSProperties } from 'react';
+
+/** Home/shop marbles, cart/bag/checkout, wishlist BCF lines — Supabase BCF PNGs (marble background). */
 export type ShopTextureCategoryThumbTexture = 'straight' | 'wavy' | 'curly';
 export type ShopTextureCategoryThumbCategory = 'bundles' | 'closures' | 'frontals';
+
+/** Primary BCF marble thumbs (home/shop grid, cart, similar standard slots). */
+const BCF_THUMB_SUPABASE_SRC: Record<
+  ShopTextureCategoryThumbCategory,
+  Record<ShopTextureCategoryThumbTexture, string>
+> = {
+  bundles: {
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(43).png',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(44).png',
+    curly:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(45).png'
+  },
+  closures: {
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(46).png',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(47).png',
+    curly:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(48).png'
+  },
+  frontals: {
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(49).png',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(50).png',
+    curly:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(51).png'
+  }
+};
+
+/** Legacy `public/assets` marble PNGs — `onError` fallback only. */
+const BCF_THUMB_LEGACY_ASSET_SRC: Record<
+  ShopTextureCategoryThumbCategory,
+  Record<ShopTextureCategoryThumbTexture, string>
+> = {
+  bundles: {
+    straight: '/assets/bundle-straight.png',
+    wavy: '/assets/bundle-wavy.png',
+    curly: '/assets/bundle-curly.png'
+  },
+  closures: {
+    straight: '/assets/closure-straight.png',
+    wavy: '/assets/closure-wavy.png',
+    curly: '/assets/closure-curly.png'
+  },
+  frontals: {
+    straight: '/assets/frontal-straight.png',
+    wavy: '/assets/frontal-wavy.png',
+    curly: '/assets/frontal-curly.png'
+  }
+};
 
 export function shopTextureCategoryThumbSrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
 ): string {
-  if (texture === 'straight' && category === 'bundles') {
-    return '/assets/bundle-straight.png';
-  }
-  if (texture === 'wavy' && category === 'bundles') {
-    return '/assets/bundle-wavy.png';
-  }
-  if (texture === 'curly' && category === 'bundles') {
-    return '/assets/bundle-curly.png';
-  }
-  if (texture === 'straight' && category === 'closures') {
-    return '/assets/closure-straight.png';
-  }
-  if (texture === 'wavy' && category === 'closures') {
-    return '/assets/closure-wavy.png';
-  }
-  if (texture === 'curly' && category === 'closures') {
-    return '/assets/closure-curly.png';
-  }
-  if (texture === 'straight' && category === 'frontals') {
-    return '/assets/frontal-straight.png';
-  }
-  if (texture === 'wavy' && category === 'frontals') {
-    return '/assets/frontal-wavy.png';
-  }
-  if (texture === 'curly' && category === 'frontals') {
-    return '/assets/frontal-curly.png';
-  }
-  const suffix =
-    category === 'bundles' ? 'bundle' : category === 'closures' ? 'closure' : 'frontal';
-  return `/assets/${texture}-${suffix}.png`;
+  return BCF_THUMB_SUPABASE_SRC[category][texture];
+}
+
+/** Legacy marble PNG for a BCF thumb (`onError` step before unit-style noir fallbacks). */
+export function shopTextureCategoryThumbLegacySrc(
+  texture: ShopTextureCategoryThumbTexture,
+  category: ShopTextureCategoryThumbCategory
+): string {
+  return BCF_THUMB_LEGACY_ASSET_SRC[category][texture];
 }
 
 /** Same PNG marbles as `/products` grid — not BCF PDP hero JPG/Supabase URLs. */
@@ -76,4 +107,64 @@ export function shopTextureCategoryCurlyThumbTranslateYPx(
   category: ShopTextureCategoryThumbCategory
 ): number | null {
   return isShopTextureCurlyFrontals(texture, category) ? -2 : null;
+}
+
+/** `object-fit: contain` inside fixed slots so new BCF art keeps prior thumb footprint. */
+export const bcfThumbContainImgStyle: CSSProperties = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+  display: 'block',
+  margin: 0
+};
+
+/** Home/shop BCF grid — same width % as pre-container `<img width={49.5*scale}% height=auto>`. */
+export function bcfThumbGridContainSlotStyle(
+  texture: ShopTextureCategoryThumbTexture,
+  category: ShopTextureCategoryThumbCategory
+): CSSProperties {
+  const w = `${49.5 * shopTextureCategoryThumbDisplayScale(texture)}%`;
+  const translateY = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+  return {
+    width: w,
+    maxWidth: '100%',
+    aspectRatio: '4 / 5',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    ...(translateY != null ? { transform: `translateY(${translateY}px)` } : {})
+  };
+}
+
+/** BCF similar strip — platinum blonde wavy/curly (scroll page 2). */
+export const BCF_PLATINUM_SIMILAR_THUMB_SRC: Record<
+  ShopTextureCategoryThumbCategory,
+  Record<'wavy' | 'curly', string>
+> = {
+  bundles: {
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(52).png',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(53).png'
+  },
+  closures: {
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(54).png',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(55).png'
+  },
+  frontals: {
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(56).png',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(57).png'
+  }
+};
+
+/** BCF similar strip (2D marble) — same 79.2% width band as `marbleStripThumbImg(false)`. */
+export function bcfThumbMarbleStripContainSlotStyle(): CSSProperties {
+  return {
+    width: '79.2%',
+    maxWidth: '100%',
+    aspectRatio: '4 / 5',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  };
 }

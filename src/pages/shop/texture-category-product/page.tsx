@@ -11,11 +11,13 @@ import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
+  BCF_PLATINUM_SIMILAR_THUMB_SRC,
   shopTextureCategoryProductPageDisplayScale,
   shopTextureCategoryCurlyThumbTranslateYPx,
   shopTextureCategoryThumbFallbackSrc,
   shopTextureCategoryThumbSrc
 } from '../../../utils/shopTextureCategoryThumb';
+import { BcfShopThumb } from '../../../components/shop/BcfShopThumb';
 import {
   BCF_DEFAULT_LENGTH_ID,
   BCF_LENGTH_OPTIONS,
@@ -66,7 +68,6 @@ import {
   marbleStripScrollRowStyle,
   marbleStripStarsRowStyle,
   marbleStripTextColStrip,
-  marbleStripThumbImg,
   marbleStripThumbWrap,
   marbleStripViewportStyle,
   MARBLE_STRIP_PRODUCT_PRICE_CLASS,
@@ -109,25 +110,6 @@ function shopBcfUrl(category: Category, texture: Texture): string {
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
-/** BCF SIMILAR strip — always 4 cells: wavy, curly, platinum wavy, platinum curly (2-up scroll). */
-const BCF_PLATINUM_SIMILAR_THUMB: Record<
-  Category,
-  Record<'wavy' | 'curly', string>
-> = {
-  bundles: {
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2045.png',
-    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2048.png'
-  },
-  closures: {
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2033.png',
-    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2036.png'
-  },
-  frontals: {
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2024.png',
-    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde/IMG_2027.png'
-  }
-};
-
 type BcfSimilarStripItem = {
   key: string;
   texture: Texture;
@@ -154,7 +136,7 @@ function buildBcfSimilarStripItems(category: Category): BcfSimilarStripItem[] {
       texture: tid,
       platinum,
       thumbSrc: platinum
-        ? BCF_PLATINUM_SIMILAR_THUMB[category][tid]
+        ? BCF_PLATINUM_SIMILAR_THUMB_SRC[category][tid]
         : shopTextureCategoryThumbSrc(tid, category),
       href: shopBcfUrl(category, tid),
       title: platinum ? `PLATINUM ${textureLabel} ${categoryTitle}` : `${textureLabel} ${categoryTitle}`,
@@ -239,12 +221,8 @@ const BUNDLE_THUMB_OUTER_H_PX = BUNDLE_THUMB_INNER_H_PX + 8;
 /** Space between hero/thumbs and product title stack (BCF bundle-style PDP). */
 const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 80;
 
-/**
- * Space above SIMILAR strip vs ADD TO BAG: matches Noir stack — CUSTOMIZE `marginTop` 10px +
- * button row (~`py-2` + 11px label) + SIMILAR `marginTop` 20px (BCF has no customize button).
- */
-/** Unit PDP: customize row + ADD TO BAG + SIMILAR; BCF: NOTIFY row when sold out + ADD TO BAG + SIMILAR. */
-const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 10 + 40 + 20;
+/** Space above SIMILAR strip — matches Noir unit PDP (`marginTop: 20px` on similar container). */
+const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 20;
 
 function bundlePdpHeroMaxWidthPx(tex: Texture): number {
   return Math.round(
@@ -1893,7 +1871,7 @@ export default function ShopTextureCategoryProductPage() {
               <div
                 className="px-0 md:px-0"
                 style={{
-                  marginTop: `${BCF_SIMILAR_STRIP_MARGIN_TOP_PX + (bcfSoldOut ? 50 : 0)}px`,
+                  marginTop: `${BCF_SIMILAR_STRIP_MARGIN_TOP_PX}px`,
                   marginBottom: '20px',
                   minWidth: '100%',
                   maxWidth: 'none',
@@ -1989,20 +1967,13 @@ export default function ShopTextureCategoryProductPage() {
                               >
                                 <div style={marbleStripCellBand(false)}>
                                   <div style={marbleStripThumbWrap(false)}>
-                                    <img
+                                    <BcfShopThumb
+                                      texture={sim.texture}
+                                      category={category}
+                                      variant="marbleStrip"
                                       src={sim.thumbSrc}
                                       alt={sim.title}
-                                      onError={(e) => {
-                                        const img = e.currentTarget;
-                                        if (img.getAttribute('data-fallback-tried') === '1') return;
-                                        img.setAttribute('data-fallback-tried', '1');
-                                        img.src = shopTextureCategoryThumbFallbackSrc[sim.texture];
-                                      }}
-                                      style={{
-                                        ...marbleStripThumbImg(false),
-                                        cursor: 'pointer',
-                                        pointerEvents: 'none'
-                                      }}
+                                      imgStyle={{ cursor: 'pointer', pointerEvents: 'none' }}
                                     />
                                   </div>
                                   <div style={marbleStripTextColStrip(false)}>

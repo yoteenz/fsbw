@@ -8,12 +8,7 @@ import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { signOutAppAndSupabaseSession } from '../../utils/adminAuth';
 import { formatPriceRangeUsd, formatPriceUsd, type CurrencyRatesRecord } from '../../utils/currencyFormat';
-import {
-  shopTextureCategoryThumbDisplayScale,
-  shopTextureCategoryThumbFallbackSrc,
-  shopTextureCategoryThumbSrc,
-  isShopTextureCurlyFrontals
-} from '../../utils/shopTextureCategoryThumb';
+import { BcfShopThumb } from '../../components/shop/BcfShopThumb';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
@@ -1412,26 +1407,12 @@ function ProductsPage() {
                             >
                               <div style={{ ...shopProductGridCellBandStyle, ...dbgProductBand }}>
                                 <div style={shopProductGridThumbWrapStyle}>
-                                  <img
-                                    src={shopTextureCategoryThumbSrc(t.slug, categorySlug)}
+                                  <BcfShopThumb
+                                    texture={t.slug}
+                                    category={categorySlug}
+                                    variant="grid"
                                     alt={t.label}
-                                    onError={(e) => {
-                                      const img = e.currentTarget;
-                                      if (img.getAttribute('data-fallback-tried') === '1') return;
-                                      img.setAttribute('data-fallback-tried', '1');
-                                      img.src = shopTextureCategoryThumbFallbackSrc[t.slug];
-                                    }}
-                                    style={{
-                                      width: `${49.5 * shopTextureCategoryThumbDisplayScale(t.slug)}%`,
-                                      height: 'auto',
-                                      maxWidth: '100%',
-                                      display: 'block',
-                                      margin: 0,
-                                      pointerEvents: 'none',
-                                      ...(isShopTextureCurlyFrontals(t.slug, categorySlug)
-                                        ? { transform: 'translateY(-2px)' }
-                                        : {})
-                                    }}
+                                    imgStyle={{ pointerEvents: 'none' }}
                                   />
                                 </div>
                                 <div style={shopProductGridTextColStyle}>
