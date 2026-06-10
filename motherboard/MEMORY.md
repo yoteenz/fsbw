@@ -26960,7 +26960,31 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+<<<<<<< HEAD
 ## 2026-06-09 — BCF home/shop grid thumbs +20%
 
 - **Context:** User asked to increase BCF thumbnail size on **home/shop page only** by **20%** (similar/cart/bag/checkout unchanged).
 - **Change:** **`BCF_THUMB_GRID_WIDTH_SCALE = 1.2`** in **`bcfThumbGridContainSlotStyle`** (`shopTextureCategoryThumb.ts`) — grid variant used only on **`products/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+=======
+## 2026-06-10 — BCF cart/bag/checkout thumb containers (complete surface swap)
+
+- **Context:** User requested replacing BCF thumbnail images on home/shop, similar products, cart dropdown, shopping bag, and checkout/summary with Supabase **`live-preview/BCF/image (43–51).png`** (standard) and **(52–57)** (platinum similar after scroll), with fixed-size **contain** containers so swapped art keeps prior footprint.
+- **Topics covered:** Nine standard BCF thumbs (bundles/closures/frontals × straight/wavy/curly) + six platinum similar thumbs; container constraints before asset swap; all five shopper surfaces listed.
+- **Decisions / outcomes:** Grid + similar strip already used **`BcfShopThumb`** + **`bcfThumbGridContainSlotStyle`** / **`bcfThumbMarbleStripContainSlotStyle`** (4:5 aspect, legacy `/assets` onError fallback). This chat added explicit **cart/bag/checkout** square contain slots via **`BcfThumbImage`** + **`bcfThumbCartContainSlotStyle`**, shared **`OrderStripItemThumb`** for **`/checkout`** + **`/checkout/summary`**, and exported **`bcfCartLineTextureAndCategory`** for cart-line texture/category resolution.
+- **Changes:** **`shopTextureCategoryThumb.ts`** — **`bcfThumbCartContainSlotStyle`**. **`BcfThumbImage.tsx`** (cart-only), **`OrderStripItemThumb.tsx`**. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`**, **`checkout/page.tsx`**, **`checkout/confirm/page.tsx`**, **`bcfProductOptions.ts`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar strip: texture+category titles + deep-link color/origin
+
+- **Context (this chat):** Prior turn swapped BCF thumb assets + cart contain containers. User follow-up: similar-products text should read **STRAIGHT BUNDLES**, **WAVY CLOSURES**, **CURLY FRONTALS**, etc.; taps must open the correct PDP with **texture** and **color** (and matching **origin**) pre-selected.
+- **Changes:** **`bcfProductOptions.ts`** — **`buildBcfSimilarStripItems()`** lists all **9** BCF SKUs + **6** platinum wavy/curly rows; titles **`{TEXTURE} {CATEGORY}`** (platinum rows same title, subline **PLATINUM BLONDE**); **`shopBcfPdpHref(cat, texture, { origin, color })`** adds **`?origin=`** / **`?color=`**; **`parseBcfOriginFromSearch`**, **`parseBcfColorFromSearch`**, **`bcfInitialColorFromSearch`**. **`texture-category-product/page.tsx`** — PDP reads URL params on navigation; similar **`BcfShopThumb`** uses **`sim.category`**; hero texture pills pass origin+color in href. Cart reopen links preserve saved color/origin. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar strip: four cross-sell cells per PDP category
+
+- **Context (full chat):** (1) Replaced BCF thumb assets + cart contain containers. (2) Similar titles/deep links with texture+color. (3) User refined similar strip to **4 products only** per PDP, cross-category, with platinum **Platinum Blonde** thumbs after scroll.
+- **Per-view slots (`buildBcfSimilarStripItems(viewCategory)`):** **Bundles** → wavy closure, wavy frontal, platinum curly closure, platinum curly frontal. **Closures** → wavy frontal, curly frontal, platinum wavy frontal, platinum curly frontal. **Frontals** → wavy closure, curly closure, platinum wavy closure, platinum curly closure.
+- **Platinum thumbs:** **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** in **`shopTextureCategoryThumb.ts`** — closures wavy/curly **`IMG_2033` / `IMG_2036`**, frontals wavy/curly **`IMG_2024` / `IMG_2027`** (`Platinum%20Blonde/`). Platinum titles **`PLATINUM {TEXTURE} {CATEGORY}`**; href **`origin=russian&color=PLATINUM`**. Pushed **`master`** + **`preview/mobile`**.
+>>>>>>> 047e77c75dcc38cb36671b3dfd355fcd16f02eaa

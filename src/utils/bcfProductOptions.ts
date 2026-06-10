@@ -4,6 +4,7 @@
 
 import type { CSSProperties } from 'react';
 import {
+  bcfPlatinumCrossSimilarThumbSrc,
   shopTextureCategoryThumbSrc,
   type ShopTextureCategoryThumbCategory,
   type ShopTextureCategoryThumbTexture
@@ -77,23 +78,162 @@ export function bcfLaceOptionsForCategory(category: 'closures' | 'frontals'): Bc
   return BCF_LACE_OPTIONS.filter((l) => !BCF_CLOSURE_EXCLUDED_LACE_IDS.has(l.id));
 }
 
+export const BCF_TEXTURE_LABELS: Record<ShopTextureCategoryThumbTexture, string> = {
+  straight: 'STRAIGHT',
+  wavy: 'WAVY',
+  curly: 'CURLY'
+};
+
+export const BCF_CATEGORY_LABELS: Record<ShopTextureCategoryThumbCategory, string> = {
+  bundles: 'BUNDLES',
+  closures: 'CLOSURES',
+  frontals: 'FRONTALS'
+};
+
+const BCF_ORIGIN_FROM_PARAM: Record<string, BcfOriginId> = {
+  cambodian: 'CAMBODIAN',
+  russian: 'RUSSIAN',
+  indian: 'INDIAN',
+  indonesian: 'INDONESIAN',
+  filipino: 'FILIPINO',
+  vietnamese: 'VIETNAMESE'
+};
+
+function parseBcfSearchParams(search: string): URLSearchParams {
+  const q = search.startsWith('?') ? search.slice(1) : search;
+  return new URLSearchParams(q);
+}
+
+export function parseBcfOriginFromSearch(search: string): BcfOriginId | null {
+  const raw = parseBcfSearchParams(search).get('origin');
+  if (!raw) return null;
+  return BCF_ORIGIN_FROM_PARAM[raw.trim().toLowerCase()] ?? null;
+}
+
+export function parseBcfColorFromSearch(search: string): string | null {
+  const raw = parseBcfSearchParams(search).get('color');
+  if (!raw) return null;
+  const normalized = raw.trim().toUpperCase();
+  const match = BCF_COLOR_OPTIONS.find((c) => c.id === normalized);
+  return match?.id ?? null;
+}
+
 /** Match PDP URL so first paint uses an origin that allows the selected texture (avoids redirect flash). */
 export function bcfInitialOriginFromPathname(pathname: string, search: string = ''): BcfOriginId {
+  const fromQuery = parseBcfOriginFromSearch(search);
+  if (fromQuery) return fromQuery;
   const shop = pathname.match(/^\/shop\/(bundles|closures|frontals)$/);
   if (!shop) return 'CAMBODIAN';
-  const q = search.startsWith('?') ? search.slice(1) : search;
-  const t = new URLSearchParams(q).get('texture');
+  const t = parseBcfSearchParams(search).get('texture');
   if (t === 'straight' || t === 'wavy' || t === 'curly') {
     return bcfDefaultOriginForRouteTexture(t as ShopTextureCategoryThumbTexture);
   }
   return 'CAMBODIAN';
 }
 
-export const BCF_TEXTURE_LABELS: Record<ShopTextureCategoryThumbTexture, string> = {
-  straight: 'STRAIGHT',
-  wavy: 'WAVY',
-  curly: 'CURLY'
+export function bcfInitialColorFromSearch(search: string, origin: BcfOriginId): string {
+  const fromQuery = parseBcfColorFromSearch(search);
+  if (fromQuery) return fromQuery;
+  return bcfDefaultColorIdForOrigin(origin);
+}
+
+export type BcfPdpHrefOptions = {
+  origin?: BcfOriginId;
+  color?: string;
 };
+
+/** PDP URL — `?texture=` plus optional `origin` / `color` for similar-strip deep links. */
+export function shopBcfPdpHref(
+  category: ShopTextureCategoryThumbCategory | string,
+  texture: ShopTextureCategoryThumbTexture | string,
+  options?: BcfPdpHrefOptions
+): string {
+  const params = new URLSearchParams({ texture });
+  const color = options?.color?.trim().toUpperCase();
+  let origin = options?.origin;
+  if (!origin && color && BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) {
+    origin = 'RUSSIAN';
+  }
+  if (origin) params.set('origin', origin.toLowerCase());
+  if (color) params.set('color', color);
+  return `/shop/${category}?${params.toString()}`;
+}
+
+export type BcfSimilarStripItem = {
+  key: string;
+  category: ShopTextureCategoryThumbCategory;
+  texture: ShopTextureCategoryThumbTexture;
+  platinum: boolean;
+  thumbSrc: string;
+  href: string;
+  title: string;
+  subline: string;
+  priceUsd: number;
+};
+
+type BcfSimilarSlot = {
+  category: ShopTextureCategoryThumbCategory;
+  texture: ShopTextureCategoryThumbTexture;
+  platinum: boolean;
+};
+
+/** Four cross-sell cells per BCF PDP (2-up scroll; platinum pair after scroll). */
+const BCF_SIMILAR_SLOTS_BY_VIEW: Record<ShopTextureCategoryThumbCategory, BcfSimilarSlot[]> = {
+  bundles: [
+    { category: 'closures', texture: 'wavy', platinum: false },
+    { category: 'frontals', texture: 'wavy', platinum: false },
+    { category: 'closures', texture: 'curly', platinum: true },
+    { category: 'frontals', texture: 'curly', platinum: true }
+  ],
+  closures: [
+    { category: 'frontals', texture: 'wavy', platinum: false },
+    { category: 'frontals', texture: 'curly', platinum: false },
+    { category: 'frontals', texture: 'wavy', platinum: true },
+    { category: 'frontals', texture: 'curly', platinum: true }
+  ],
+  frontals: [
+    { category: 'closures', texture: 'wavy', platinum: false },
+    { category: 'closures', texture: 'curly', platinum: false },
+    { category: 'closures', texture: 'wavy', platinum: true },
+    { category: 'closures', texture: 'curly', platinum: true }
+  ]
+};
+
+function bcfSimilarStripThumbSrc(slot: BcfSimilarSlot): string {
+  if (slot.platinum && (slot.category === 'closures' || slot.category === 'frontals')) {
+    return bcfPlatinumCrossSimilarThumbSrc(slot.category, slot.texture as 'wavy' | 'curly');
+  }
+  return shopTextureCategoryThumbSrc(slot.texture, slot.category);
+}
+
+function bcfSimilarStripItemFromSlot(slot: BcfSimilarSlot): BcfSimilarStripItem {
+  const { category: cat, texture: tid, platinum } = slot;
+  const origin = platinum ? 'RUSSIAN' : bcfDefaultOriginForRouteTexture(tid);
+  const color = platinum ? 'PLATINUM' : bcfDefaultColorIdForOrigin(origin);
+  const title = platinum
+    ? `PLATINUM ${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`
+    : `${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`;
+  return {
+    key: `${platinum ? 'platinum' : 'std'}-${cat}-${tid}`,
+    category: cat,
+    texture: tid,
+    platinum,
+    thumbSrc: bcfSimilarStripThumbSrc(slot),
+    href: shopBcfPdpHref(cat, tid, { origin, color }),
+    title,
+    subline: platinum
+      ? `${BCF_CATEGORY_LABELS[cat]} · PLATINUM BLONDE`
+      : `${BCF_CATEGORY_LABELS[cat]} · RAW HUMAN HAIR`,
+    priceUsd: bcfBasePriceUsd(cat, tid)
+  };
+}
+
+/** Four related BCF SKUs for the PDP similar strip (varies by bundles / closures / frontals). */
+export function buildBcfSimilarStripItems(
+  viewCategory: ShopTextureCategoryThumbCategory
+): BcfSimilarStripItem[] {
+  return BCF_SIMILAR_SLOTS_BY_VIEW[viewCategory].map(bcfSimilarStripItemFromSlot);
+}
 
 export interface BcfLengthOption {
   id: string;
@@ -320,23 +460,51 @@ export function bcfPdpPriceRangeUsd(
   };
 }
 
-/** PDP URL for `/shop/bundles|closures|frontals?texture=…`. */
-export function shopBcfPdpHref(category: string, texture: string): string {
-  return `/shop/${category}?texture=${texture}`;
-}
-
 /** Cart line from BCF PDP (`type: 'shop-texture-category'`) → reopen that PDP with saved texture. */
 export function shopBcfPdpHrefFromCartItem(item: {
   type?: string;
   category?: string;
   texture?: string;
+  color?: string;
+  hairOrigin?: string;
 }): string | null {
   if (item.type !== 'shop-texture-category') return null;
   const c = item.category;
   const t = item.texture;
   if (c !== 'bundles' && c !== 'closures' && c !== 'frontals') return null;
   if (t !== 'straight' && t !== 'wavy' && t !== 'curly') return null;
-  return shopBcfPdpHref(c, t);
+  const color = typeof item.color === 'string' ? item.color : undefined;
+  const originRaw = item.hairOrigin;
+  const origin =
+    typeof originRaw === 'string'
+      ? (BCF_ORIGIN_FROM_PARAM[originRaw.trim().toLowerCase()] ?? undefined)
+      : undefined;
+  return shopBcfPdpHref(c, t, { color, origin });
+}
+
+export function bcfCartLineTextureAndCategory(item: {
+  type?: string;
+  id?: string;
+  category?: string;
+  texture?: string;
+  name?: string;
+}): {
+  texture: ShopTextureCategoryThumbTexture;
+  category: ShopTextureCategoryThumbCategory;
+} | null {
+  if (item.type !== 'shop-texture-category') return null;
+  const texture =
+    normalizeBcfCartTexture(item.texture) ??
+    bcfCartTextureFromShopId(item.id) ??
+    bcfCartTextureFromName(item.name);
+  if (!texture) return null;
+  const cRaw = item.category;
+  const category: ShopTextureCategoryThumbCategory | null =
+    cRaw === 'bundles' || cRaw === 'closures' || cRaw === 'frontals'
+      ? cRaw
+      : bcfCartCategoryFromShopId(item.id);
+  if (!category) return null;
+  return { texture, category };
 }
 
 function normalizeBcfCartTexture(raw?: string): ShopTextureCategoryThumbTexture | null {
@@ -373,7 +541,7 @@ function bcfCartCategoryFromShopId(id?: string): ShopTextureCategoryThumbCategor
 
 /**
  * BCF shop cart thumbnail: **bundles**, **closures**, and **frontals** all use the same marble PNGs as the home/shop
- * grid (`shopTextureCategoryThumbSrc` → Supabase BCF marble PNGs) —
+ * grid (`shopTextureCategoryThumbSrc` → Supabase `live-preview/BCF/image (43–51).png`) —
  * not PDP hero JPG/Supabase photos stored on `item.image`.
  */
 export function shopBcfCartLineThumbnailSrc(item: {

@@ -140,24 +140,30 @@ export function bcfThumbGridContainSlotStyle(
   };
 }
 
-/** BCF similar strip — platinum blonde wavy/curly (scroll page 2). */
-export const BCF_PLATINUM_SIMILAR_THUMB_SRC: Record<
-  ShopTextureCategoryThumbCategory,
+const PLATINUM_BLONDE_PREVIEW_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Platinum%20Blonde';
+
+/** BCF similar strip — platinum blonde cross-category thumbs (closures / frontals only). */
+export const BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC: Record<
+  'closures' | 'frontals',
   Record<'wavy' | 'curly', string>
 > = {
-  bundles: {
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(52).png',
-    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(53).png'
-  },
   closures: {
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(54).png',
-    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(55).png'
+    wavy: `${PLATINUM_BLONDE_PREVIEW_BASE}/IMG_2033.png`,
+    curly: `${PLATINUM_BLONDE_PREVIEW_BASE}/IMG_2036.png`
   },
   frontals: {
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(56).png',
-    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(57).png'
+    wavy: `${PLATINUM_BLONDE_PREVIEW_BASE}/IMG_2024.png`,
+    curly: `${PLATINUM_BLONDE_PREVIEW_BASE}/IMG_2027.png`
   }
 };
+
+export function bcfPlatinumCrossSimilarThumbSrc(
+  category: 'closures' | 'frontals',
+  texture: 'wavy' | 'curly'
+): string {
+  return BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC[category][texture];
+}
 
 /** BCF similar strip (2D marble) — same 79.2% width band as `marbleStripThumbImg(false)`. */
 export function bcfThumbMarbleStripContainSlotStyle(): CSSProperties {
@@ -169,5 +175,18 @@ export function bcfThumbMarbleStripContainSlotStyle(): CSSProperties {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0
+  };
+}
+
+/** Cart / bag / checkout — square slot; image scales with `object-fit: contain`. */
+export function bcfThumbCartContainSlotStyle(boxPx: number): CSSProperties {
+  return {
+    width: `${boxPx}px`,
+    height: `${boxPx}px`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    overflow: 'hidden',
   };
 }

@@ -11,7 +11,6 @@ import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
-  BCF_PLATINUM_SIMILAR_THUMB_SRC,
   shopTextureCategoryProductPageDisplayScale,
   shopTextureCategoryCurlyThumbTranslateYPx,
   shopTextureCategoryThumbFallbackSrc,
@@ -28,12 +27,17 @@ import {
   bcfColorOptionsForOrigin,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
+  bcfInitialColorFromSearch,
   bcfInitialOriginFromPathname,
   bcfBasePriceUsd,
   bcfLaceOptionsForCategory,
   bcfOptionSelectedChrome,
   bcfPriceAdjustments,
   bcfTexturesForOrigin,
+  buildBcfSimilarStripItems,
+  parseBcfColorFromSearch,
+  parseBcfOriginFromSearch,
+  shopBcfPdpHref,
   BCF_BUNDLE_DEAL_DISCOUNT_USD,
   BCF_OPTION_RED,
   type BcfOriginId
@@ -104,47 +108,7 @@ function parseTextureSearch(search: string): Texture | null {
   return null;
 }
 
-function shopBcfUrl(category: Category, texture: Texture): string {
-  return `/shop/${category}?texture=${texture}`;
-}
-
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
-
-type BcfSimilarStripItem = {
-  key: string;
-  texture: Texture;
-  platinum: boolean;
-  thumbSrc: string;
-  href: string;
-  title: string;
-  subline: string;
-  priceUsd: number;
-};
-
-function buildBcfSimilarStripItems(category: Category): BcfSimilarStripItem[] {
-  const categoryTitle = CATEGORY_TITLE[category];
-  const slots: { texture: 'wavy' | 'curly'; platinum: boolean }[] = [
-    { texture: 'wavy', platinum: false },
-    { texture: 'curly', platinum: false },
-    { texture: 'wavy', platinum: true },
-    { texture: 'curly', platinum: true }
-  ];
-  return slots.map(({ texture: tid, platinum }) => {
-    const textureLabel = TEXTURE_META[tid].label;
-    return {
-      key: `${platinum ? 'platinum' : 'std'}-${tid}`,
-      texture: tid,
-      platinum,
-      thumbSrc: platinum
-        ? BCF_PLATINUM_SIMILAR_THUMB_SRC[category][tid]
-        : shopTextureCategoryThumbSrc(tid, category),
-      href: shopBcfUrl(category, tid),
-      title: platinum ? `PLATINUM ${textureLabel} ${categoryTitle}` : `${textureLabel} ${categoryTitle}`,
-      subline: platinum ? `${categoryTitle} · PLATINUM BLONDE` : `${categoryTitle} · RAW HUMAN HAIR`,
-      priceUsd: bcfBasePriceUsd(category, tid)
-    };
-  });
-}
 
 /** Bundles PDP photo URLs (video files remain local). */
 const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
@@ -432,7 +396,11 @@ export default function ShopTextureCategoryProductPage() {
       : 'CAMBODIAN'
   );
   const [bcfLength, setBcfLength] = useState(BCF_DEFAULT_LENGTH_ID);
-  const [bcfColor, setBcfColor] = useState('OFF BLACK');
+  const [bcfColor, setBcfColor] = useState(() => {
+    if (typeof window === 'undefined') return 'OFF BLACK';
+    const origin = bcfInitialOriginFromPathname(window.location.pathname, window.location.search);
+    return bcfInitialColorFromSearch(window.location.search, origin);
+  });
   /** Closures/frontals only — premium-only lace treatments (PLUCK / BLEACH), multi-select. */
   const [bcfLaceTreatment, setBcfLaceTreatment] = useState<string[]>([]);
   const [bcfLace, setBcfLace] = useState(() => {
@@ -610,12 +578,24 @@ export default function ShopTextureCategoryProductPage() {
 
   useEffect(() => {
     if (!category) return;
-    if (skipBcfOriginDefaultOnNextPathRef.current) {
+    const originFromUrl = parseBcfOriginFromSearch(location.search);
+    const colorFromUrl = parseBcfColorFromSearch(location.search);
+    if (originFromUrl) {
+      skipBcfOriginDefaultOnNextPathRef.current = true;
+      setBcfOrigin(originFromUrl);
+    } else if (skipBcfOriginDefaultOnNextPathRef.current) {
       skipBcfOriginDefaultOnNextPathRef.current = false;
-      return;
+    } else {
+      const t = parseTextureSearch(location.search) ?? 'straight';
+      setBcfOrigin(bcfDefaultOriginForRouteTexture(t));
     }
-    const t = parseTextureSearch(location.search) ?? 'straight';
-    setBcfOrigin(bcfDefaultOriginForRouteTexture(t));
+    if (colorFromUrl) {
+      setBcfColor(colorFromUrl);
+    } else {
+      const t = parseTextureSearch(location.search) ?? 'straight';
+      const resolvedOrigin = originFromUrl ?? bcfDefaultOriginForRouteTexture(t);
+      setBcfColor(bcfDefaultColorIdForOrigin(resolvedOrigin));
+    }
   }, [location.pathname, location.search, category]);
 
   useEffect(() => {
@@ -624,7 +604,7 @@ export default function ShopTextureCategoryProductPage() {
     const allowed = bcfTexturesForOrigin(bcfOrigin);
     if (!allowed.includes(t)) {
       skipBcfOriginDefaultOnNextPathRef.current = true;
-      navigate(shopBcfUrl(category, allowed[0] as Texture), { replace: true });
+      navigate(shopBcfPdpHref(category, allowed[0] as Texture), { replace: true });
     }
   }, [bcfOrigin, navigate, category, location.search]);
 
@@ -743,7 +723,10 @@ export default function ShopTextureCategoryProductPage() {
   }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfLaceTreatment]);
   /** Premium gate for member-only options (lace treatment chips, etc.). */
   const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
-  const bcfSimilarProducts = React.useMemo(() => buildBcfSimilarStripItems(category), [category]);
+  const bcfSimilarProducts = React.useMemo(
+    () => (category ? buildBcfSimilarStripItems(category) : []),
+    [category]
+  );
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
@@ -1422,7 +1405,15 @@ export default function ShopTextureCategoryProductPage() {
                               }`}
                               isSelected={texture === tid}
                               isDisabled={false}
-                              onClick={() => navigate(shopBcfUrl(category, tid), { replace: true })}
+                              onClick={() =>
+                                navigate(
+                                  shopBcfPdpHref(category, tid, {
+                                    origin: bcfDefaultOriginForRouteTexture(tid),
+                                    color: bcfDefaultColorIdForOrigin(bcfDefaultOriginForRouteTexture(tid))
+                                  }),
+                                  { replace: true }
+                                )
+                              }
                               containerSize={BUNDLE_THUMB_OUTER_W_PX}
                               imgSize={BUNDLE_THUMB_INNER_H_PX}
                               containerWidth={BUNDLE_THUMB_OUTER_W_PX}
@@ -1602,7 +1593,14 @@ export default function ShopTextureCategoryProductPage() {
                               disabled={!allowed}
                               onClick={() => {
                                 if (!allowed) return;
-                                if (tid !== texture) navigate(shopBcfUrl(category, tid));
+                                if (tid !== texture) {
+                                  navigate(
+                                    shopBcfPdpHref(category, tid, {
+                                      origin: bcfDefaultOriginForRouteTexture(tid),
+                                      color: bcfDefaultColorIdForOrigin(bcfDefaultOriginForRouteTexture(tid))
+                                    })
+                                  );
+                                }
                               }}
                               style={{
                                 ...bcfOptionBtnTypography,
@@ -1969,7 +1967,7 @@ export default function ShopTextureCategoryProductPage() {
                                   <div style={marbleStripThumbWrap(false)}>
                                     <BcfShopThumb
                                       texture={sim.texture}
-                                      category={category}
+                                      category={sim.category}
                                       variant="marbleStrip"
                                       src={sim.thumbSrc}
                                       alt={sim.title}
