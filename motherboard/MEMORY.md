@@ -26943,3 +26943,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported BCF **SIMILAR PRODUCTS** 2D thumbs **way bigger** than unit PDP similar strip (screenshot: one bundle filled full width).
 - **Cause:** Shared `marbleStripScrollRowStyle` used fixed **`width: 200%`** (designed for **4** unit cells = 50% viewport each). BCF similar has only **2** other textures → two flex cells split 200% → **100% viewport each**. BCF also used hero portrait JPGs/Supabase URLs instead of marble shop thumbs.
 - **Fix:** `marbleStripScrollRowStyle(scrollPx, itemCount)` — width **`itemCount × 50%`** (BCF similar passes **2** → **100%**). BCF similar imgs use **`shopTextureCategoryThumbSrc`** (marble PNGs, same as cart/grid). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF similar strip: fixed 4 products (wavy/curly + platinum)
+
+- **Context:** User wanted all BCF **SIMILAR PRODUCTS** strips to show **4** items (2-up scroll): **wavy**, **curly**, then **platinum wavy**, **platinum curly** per category (bundles / closures / frontals), with Supabase platinum blonde thumb URLs.
+- **Change:** **`texture-category-product/page.tsx`** — `BCF_PLATINUM_SIMILAR_THUMB` + `buildBcfSimilarStripItems()`; always 4 cells; standard thumbs = marble `shopTextureCategoryThumbSrc`; platinum = provided URLs; titles/subline **PLATINUM BLONDE** on platinum rows; tap → same category **wavy/curly** PDP. Pushed **`master`** + **`preview/mobile`**.
