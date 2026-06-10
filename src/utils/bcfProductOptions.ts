@@ -274,10 +274,10 @@ export function bcfPriceAdjustments(
 
 /**
  * Straight-texture base (USD) before length / color / lace.
- * Default PDP totals (16″ straight OFF BLACK): bundles $230; closures $220 (2×6); frontals $280 (13×4).
+ * Default PDP totals (16″ straight OFF BLACK): bundles $320; closures $220 (2×6); frontals $280 (13×4).
  */
 export const BCF_STRAIGHT_BASE_PRICE_USD: Record<ShopTextureCategoryThumbCategory, number> = {
-  bundles: 280,
+  bundles: 370,
   closures: 310,
   frontals: 350
 };
