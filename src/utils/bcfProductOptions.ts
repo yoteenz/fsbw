@@ -170,7 +170,7 @@ export const BCF_LACE_OPTIONS: BcfLaceOption[] = [
   { id: '6X6', label: '6X6', price: 60 },
   { id: '9X6', label: '9X6', price: 80 },
   { id: '7X7', label: '7X7', price: 100 },
-  { id: '13X4', label: '13X4', price: -20 },
+  { id: '13X4', label: '13X4', price: -40 },
   { id: '13X6', label: '13X6', price: 0 },
   { id: '360', label: '360', price: 160 },
   { id: 'FULL', label: 'FULL', price: 240 }
@@ -279,7 +279,7 @@ export function bcfPriceAdjustments(
 export const BCF_STRAIGHT_BASE_PRICE_USD: Record<ShopTextureCategoryThumbCategory, number> = {
   bundles: 370,
   closures: 310,
-  frontals: 350
+  frontals: 370
 };
 
 const BCF_TEXTURE_PRICE_DELTA_USD: Record<ShopTextureCategoryThumbTexture, number> = {

@@ -221,7 +221,7 @@ function LaceSelection() {
       id: '13X4',
       name: '13X4',
       description: 'Standard frontal',
-      price: -20, // Less than default
+      price: -40, // Less than default ($40 below 13X6)
       image: laceImage,
     },
     {
