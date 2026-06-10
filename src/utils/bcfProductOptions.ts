@@ -4,7 +4,7 @@
 
 import type { CSSProperties } from 'react';
 import {
-  BCF_PLATINUM_SIMILAR_THUMB_SRC,
+  bcfPlatinumCrossSimilarThumbSrc,
   shopTextureCategoryThumbSrc,
   type ShopTextureCategoryThumbCategory,
   type ShopTextureCategoryThumbTexture
@@ -171,44 +171,68 @@ export type BcfSimilarStripItem = {
   priceUsd: number;
 };
 
-const BCF_SIMILAR_TEXTURES: ShopTextureCategoryThumbTexture[] = ['straight', 'wavy', 'curly'];
-const BCF_SIMILAR_CATEGORIES: ShopTextureCategoryThumbCategory[] = ['bundles', 'closures', 'frontals'];
+type BcfSimilarSlot = {
+  category: ShopTextureCategoryThumbCategory;
+  texture: ShopTextureCategoryThumbTexture;
+  platinum: boolean;
+};
 
-/** All nine BCF SKUs + platinum wavy/curly per category for the PDP similar strip. */
-export function buildBcfSimilarStripItems(): BcfSimilarStripItem[] {
-  const standard: BcfSimilarStripItem[] = BCF_SIMILAR_CATEGORIES.flatMap((cat) =>
-    BCF_SIMILAR_TEXTURES.map((tid) => {
-      const origin = bcfDefaultOriginForRouteTexture(tid);
-      const color = bcfDefaultColorIdForOrigin(origin);
-      return {
-        key: `${cat}-${tid}`,
-        category: cat,
-        texture: tid,
-        platinum: false,
-        thumbSrc: shopTextureCategoryThumbSrc(tid, cat),
-        href: shopBcfPdpHref(cat, tid, { origin, color }),
-        title: `${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`,
-        subline: `${BCF_CATEGORY_LABELS[cat]} · RAW HUMAN HAIR`,
-        priceUsd: bcfBasePriceUsd(cat, tid)
-      };
-    })
-  );
+/** Four cross-sell cells per BCF PDP (2-up scroll; platinum pair after scroll). */
+const BCF_SIMILAR_SLOTS_BY_VIEW: Record<ShopTextureCategoryThumbCategory, BcfSimilarSlot[]> = {
+  bundles: [
+    { category: 'closures', texture: 'wavy', platinum: false },
+    { category: 'frontals', texture: 'wavy', platinum: false },
+    { category: 'closures', texture: 'curly', platinum: true },
+    { category: 'frontals', texture: 'curly', platinum: true }
+  ],
+  closures: [
+    { category: 'frontals', texture: 'wavy', platinum: false },
+    { category: 'frontals', texture: 'curly', platinum: false },
+    { category: 'frontals', texture: 'wavy', platinum: true },
+    { category: 'frontals', texture: 'curly', platinum: true }
+  ],
+  frontals: [
+    { category: 'closures', texture: 'wavy', platinum: false },
+    { category: 'closures', texture: 'curly', platinum: false },
+    { category: 'closures', texture: 'wavy', platinum: true },
+    { category: 'closures', texture: 'curly', platinum: true }
+  ]
+};
 
-  const platinum: BcfSimilarStripItem[] = BCF_SIMILAR_CATEGORIES.flatMap((cat) =>
-    (['wavy', 'curly'] as const).map((tid) => ({
-      key: `platinum-${cat}-${tid}`,
-      category: cat,
-      texture: tid,
-      platinum: true,
-      thumbSrc: BCF_PLATINUM_SIMILAR_THUMB_SRC[cat][tid],
-      href: shopBcfPdpHref(cat, tid, { origin: 'RUSSIAN', color: 'PLATINUM' }),
-      title: `${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`,
-      subline: `${BCF_CATEGORY_LABELS[cat]} · PLATINUM BLONDE`,
-      priceUsd: bcfBasePriceUsd(cat, tid)
-    }))
-  );
+function bcfSimilarStripThumbSrc(slot: BcfSimilarSlot): string {
+  if (slot.platinum && (slot.category === 'closures' || slot.category === 'frontals')) {
+    return bcfPlatinumCrossSimilarThumbSrc(slot.category, slot.texture as 'wavy' | 'curly');
+  }
+  return shopTextureCategoryThumbSrc(slot.texture, slot.category);
+}
 
-  return [...standard, ...platinum];
+function bcfSimilarStripItemFromSlot(slot: BcfSimilarSlot): BcfSimilarStripItem {
+  const { category: cat, texture: tid, platinum } = slot;
+  const origin = platinum ? 'RUSSIAN' : bcfDefaultOriginForRouteTexture(tid);
+  const color = platinum ? 'PLATINUM' : bcfDefaultColorIdForOrigin(origin);
+  const title = platinum
+    ? `PLATINUM ${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`
+    : `${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`;
+  return {
+    key: `${platinum ? 'platinum' : 'std'}-${cat}-${tid}`,
+    category: cat,
+    texture: tid,
+    platinum,
+    thumbSrc: bcfSimilarStripThumbSrc(slot),
+    href: shopBcfPdpHref(cat, tid, { origin, color }),
+    title,
+    subline: platinum
+      ? `${BCF_CATEGORY_LABELS[cat]} · PLATINUM BLONDE`
+      : `${BCF_CATEGORY_LABELS[cat]} · RAW HUMAN HAIR`,
+    priceUsd: bcfBasePriceUsd(cat, tid)
+  };
+}
+
+/** Four related BCF SKUs for the PDP similar strip (varies by bundles / closures / frontals). */
+export function buildBcfSimilarStripItems(
+  viewCategory: ShopTextureCategoryThumbCategory
+): BcfSimilarStripItem[] {
+  return BCF_SIMILAR_SLOTS_BY_VIEW[viewCategory].map(bcfSimilarStripItemFromSlot);
 }
 
 export interface BcfLengthOption {
