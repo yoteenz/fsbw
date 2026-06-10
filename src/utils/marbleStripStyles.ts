@@ -6,15 +6,20 @@ import {
   shopProductGridTextColStyle,
 } from './shopProductGridCopyStyles';
 
-/** Inner horizontal row for similar / recently viewed (4 cells in 200% width). */
-export function marbleStripScrollRowStyle(scrollPx: number): CSSProperties {
+/**
+ * Inner horizontal row for similar / recently viewed.
+ * Width = `itemCount × 50%` of viewport so each flex cell stays half-viewport (2-up layout).
+ * Unit PDPs pass 4 → 200%; BCF similar passes 2 → 100% (was 200% with only 2 cells → each thumb full width).
+ */
+export function marbleStripScrollRowStyle(scrollPx: number, itemCount = 4): CSSProperties {
+  const n = Math.max(1, itemCount);
   return {
     display: 'flex',
     gap: 0,
     alignItems: 'stretch',
     transform: `translateX(${scrollPx}px)`,
     transition: 'none',
-    width: '200%',
+    width: `${n * 50}%`,
     overflow: 'visible',
   };
 }
