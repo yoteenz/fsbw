@@ -29,7 +29,7 @@ const DENSITY_PRICES_BLANCO: Record<string, number> = {
 };
 
 const LACE_PRICES: Record<string, number> = {
-  '13X6': 0, '13X4': -20, '13X5': 0, '2X6': -40, '4X4': -40, '5X5': -20,
+  '13X6': 0, '13X4': -40, '13X5': 0, '2X6': -40, '4X4': -40, '5X5': -20,
   '6X6': 60, '7X7': 100, '9X6': 80, '360': 160, 'FULL': 240, 'FULL LACE': 240, 'HD LACE': 0
 };
 

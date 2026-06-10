@@ -652,7 +652,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const _getLacePrice = (lace: string) => {
     const lacePrices: { [key: string]: number } = {
       '13X6': 0,      // Default - included in base price
-      '13X4': -20,    // Less than default, discount
+      '13X4': -40,    // Less than default, discount ($40 below 13X6)
       '13X5': 0,
       '2X6': -40,     // Less than default, discount
       '4X4': -40,     // Less than default, discount
