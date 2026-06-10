@@ -1865,17 +1865,14 @@ export default function ShopTextureCategoryProductPage() {
                 ) : null}
               </UnitPdpCartActions>
 
-              {/* SIMILAR — other textures; spacing + thumb sizing aligned with Noir 2D similar strip */}
+              {/* SIMILAR — same outer width as main card; smaller BCF thumbs fit 2-up inside bordered card */}
               <div
                 className="px-0 md:px-0"
                 style={{
                   marginTop: `${BCF_SIMILAR_STRIP_MARGIN_TOP_PX}px`,
                   marginBottom: '20px',
-                  minWidth: '100%',
-                  maxWidth: 'none',
-                  marginLeft: '-16px',
-                  marginRight: '-16px',
-                  width: 'calc(100% + 32px)'
+                  width: '100%',
+                  maxWidth: '100%'
                 }}
               >
                 <div
@@ -1884,8 +1881,7 @@ export default function ShopTextureCategoryProductPage() {
                     border: '1.3px solid black',
                     backgroundColor: 'rgba(255, 255, 255, 0.6)',
                     padding: '0px',
-                    minWidth: '100%',
-                    maxWidth: 'none',
+                    maxWidth: '100%',
                     margin: '0 auto'
                   }}
                 >
@@ -1968,7 +1964,7 @@ export default function ShopTextureCategoryProductPage() {
                                     <BcfShopThumb
                                       texture={sim.texture}
                                       category={sim.category}
-                                      variant="marbleStrip"
+                                      variant="similarStrip"
                                       src={sim.thumbSrc}
                                       alt={sim.title}
                                       imgStyle={{ cursor: 'pointer', pointerEvents: 'none' }}
