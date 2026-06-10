@@ -168,3 +168,16 @@ export function bcfThumbMarbleStripContainSlotStyle(): CSSProperties {
     flexShrink: 0
   };
 }
+
+/** Cart / bag / checkout — square slot; image scales with `object-fit: contain`. */
+export function bcfThumbCartContainSlotStyle(boxPx: number): CSSProperties {
+  return {
+    width: `${boxPx}px`,
+    height: `${boxPx}px`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    overflow: 'hidden',
+  };
+}

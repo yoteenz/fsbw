@@ -23,9 +23,11 @@ import {
 import {
   shopBcfPdpHrefFromCartItem,
   shopBcfCartLineThumbnailSrc,
+  bcfCartLineTextureAndCategory,
   bcfBundleDealResolvedListSubtotal,
   bcfResolveCartLineUnitPriceUsd,
 } from '../../utils/bcfProductOptions';
+import { BcfThumbImage } from '../../components/shop/BcfThumbImage';
 import {
   CART_RED_LINE_BCF_BOOKING,
   bookingCartRedSubtitle,
@@ -240,18 +242,36 @@ function ShoppingBagLineThumb({
                 style={{ width: `${bookingBadgeImgPx}px`, height: `${bookingBadgeImgPx}px` }}
               />
             </div>
-          ) : (
+          ) : isBcf ? (
             (() => {
-              const imgEl = (
-                <img
+              const bcfMeta = bcfCartLineTextureAndCategory(item);
+              if (!bcfMeta) {
+                return (
+                  <img
+                    src={itemImage}
+                    alt={itemName}
+                    className="object-contain rounded"
+                    style={{ width: `${cartThumbBoxPx}px`, height: `${cartThumbBoxPx}px` }}
+                  />
+                );
+              }
+              return (
+                <BcfThumbImage
+                  texture={bcfMeta.texture}
+                  category={bcfMeta.category}
                   src={itemImage}
                   alt={itemName}
-                  className={isBcf ? 'object-contain rounded' : 'object-cover rounded'}
-                  style={{ width: `${cartThumbBoxPx}px`, height: `${cartThumbBoxPx}px` }}
+                  boxPx={cartThumbBoxPx}
                 />
               );
-              return isBcf ? <div style={{ transform: 'translateX(4px)' }}>{imgEl}</div> : imgEl;
             })()
+          ) : (
+            <img
+              src={itemImage}
+              alt={itemName}
+              className="object-cover rounded"
+              style={{ width: `${cartThumbBoxPx}px`, height: `${cartThumbBoxPx}px` }}
+            />
           )}
         </div>
         {item.type === 'booking-appointment' && onEditAppointment ? (

@@ -17,8 +17,10 @@ import { bookingAppointmentHrefForCartItem, bookingConsultationHrefForCartItem }
 import {
   shopBcfPdpHrefFromCartItem,
   shopBcfCartLineThumbnailSrc,
-  bcfBundleDealResolvedListSubtotal
+  bcfBundleDealResolvedListSubtotal,
+  bcfCartLineTextureAndCategory,
 } from '../utils/bcfProductOptions';
+import { BcfThumbImage } from './shop/BcfThumbImage';
 import {
   CART_RED_LINE_BCF_BOOKING,
   bookingCartRedSubtitle,
@@ -1177,24 +1179,31 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             return item.image || '/assets/NOIR/noir-thumb.png';
                           })();
 
-                          const imgEl = (
+                          if (isBcfShopItem) {
+                            const bcfMeta = bcfCartLineTextureAndCategory(item as CartItem);
+                            if (bcfMeta) {
+                              return (
+                                <BcfThumbImage
+                                  texture={bcfMeta.texture}
+                                  category={bcfMeta.category}
+                                  src={thumbSrc}
+                                  alt={item.name}
+                                  boxPx={cartThumbBoxPx}
+                                />
+                              );
+                            }
+                          }
+
+                          return (
                             <img
                               src={thumbSrc}
                               alt={item.name}
-                              className={
-                                isBcfShopItem ? 'object-contain rounded' : 'object-cover rounded'
-                              }
+                              className="object-cover rounded"
                               style={{
                                 width: `${cartThumbBoxPx}px`,
                                 height: `${cartThumbBoxPx}px`
                               }}
                             />
-                          );
-
-                          return isBcfShopItem ? (
-                            <div style={{ transform: 'translateX(4px)' }}>{imgEl}</div>
-                          ) : (
-                            imgEl
                           );
                         })()}
                       </div>

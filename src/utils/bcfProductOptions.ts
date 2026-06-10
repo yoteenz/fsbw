@@ -339,6 +339,31 @@ export function shopBcfPdpHrefFromCartItem(item: {
   return shopBcfPdpHref(c, t);
 }
 
+export function bcfCartLineTextureAndCategory(item: {
+  type?: string;
+  id?: string;
+  category?: string;
+  texture?: string;
+  name?: string;
+}): {
+  texture: ShopTextureCategoryThumbTexture;
+  category: ShopTextureCategoryThumbCategory;
+} | null {
+  if (item.type !== 'shop-texture-category') return null;
+  const texture =
+    normalizeBcfCartTexture(item.texture) ??
+    bcfCartTextureFromShopId(item.id) ??
+    bcfCartTextureFromName(item.name);
+  if (!texture) return null;
+  const cRaw = item.category;
+  const category: ShopTextureCategoryThumbCategory | null =
+    cRaw === 'bundles' || cRaw === 'closures' || cRaw === 'frontals'
+      ? cRaw
+      : bcfCartCategoryFromShopId(item.id);
+  if (!category) return null;
+  return { texture, category };
+}
+
 function normalizeBcfCartTexture(raw?: string): ShopTextureCategoryThumbTexture | null {
   if (raw == null) return null;
   const t = String(raw).toLowerCase().trim();
@@ -373,7 +398,7 @@ function bcfCartCategoryFromShopId(id?: string): ShopTextureCategoryThumbCategor
 
 /**
  * BCF shop cart thumbnail: **bundles**, **closures**, and **frontals** all use the same marble PNGs as the home/shop
- * grid (`shopTextureCategoryThumbSrc` → Supabase BCF marble PNGs) —
+ * grid (`shopTextureCategoryThumbSrc` → Supabase `live-preview/BCF/image (43–51).png`) —
  * not PDP hero JPG/Supabase photos stored on `item.image`.
  */
 export function shopBcfCartLineThumbnailSrc(item: {
