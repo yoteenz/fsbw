@@ -27041,3 +27041,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported Noir unit PDP **2D side thumbnails** misaligned — bottom thumb appeared as a third image shifted right, overlapping **NOIR** title.
 - **Root cause:** Hero migrated to **`baw-noir-hero-brick-frame`** (bottom-align + **`overflow: hidden`**) for Supabase mannequin PNGs; **side thumbs kept legacy layout**: center **`top`** positioning, **`minWidth: clamp(112px, 29vw, 196px)`** wider than column **`clamp(100px, 26vw, 175px)`**, no clip — mannequin bled outside cell.
 - **Fix:** **`noir/page.tsx`** — **`NoirPdpSideThumb`** uses **`baw-noir-thumb-brick-frame`** + **`baw-noir-thumb-mannequin-slot`** + brick-aligned classes (front scale / L-R nudge). **`index.css`** — **`baw-noir-pdp-thumb-col`** shares hub L/R overlay clip rules. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar platinum thumbs → BCF image 54–57 (user URLs)
+
+- **Context (full chat):** BCF similar strip (four cross-sell, width aligned, subline **RAW HUMAN HAIR** / **PLATINUM BLONDE**); interim fallback used **Platinum Blonde** IMG paths when **BCF 54–57** failed to load. User confirmed correct platinum assets: **`live-preview/BCF/image (54–57).png`** — wavy/curly **closure** **54/55**, wavy/curly **frontal** **56/57**.
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** restored to those four BCF Supabase URLs. **`BcfShopThumb`** still skips legacy fallback when explicit **`src`** is set. Pushed **`master`** + **`preview/mobile`**.
