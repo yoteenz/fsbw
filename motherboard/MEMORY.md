@@ -26957,3 +26957,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User replaced all BCF marble thumbs (home/shop grid, similar standard slots, cart, bag, checkout via shared src) with Supabase **`live-preview/BCF/image (43–51).png`**; platinum similar scroll slots **52–57**; asked **contain containers** so new art keeps prior footprint; BCF **SIMILAR** spacing above strip + button/card above should match **Noir** unit PDP.
 - **Changes:** **`shopTextureCategoryThumb.ts`** — Supabase URL map + legacy `/assets` fallback; **`bcfThumbGridContainSlotStyle`** / **`bcfThumbMarbleStripContainSlotStyle`** + **`BcfShopThumb`** component (`object-fit: contain`, 4:5 slot). **`products/page.tsx`** grid + **`texture-category-product`** similar use **`BcfShopThumb`**. **`BCF_PLATINUM_SIMILAR_THUMB_SRC`** → image 52–57. Cart/bag/checkout unchanged layout (already fixed px + `object-contain`; pick up new URLs via **`shopBcfCartLineThumbnailSrc`**). **`BCF_SIMILAR_STRIP_MARGIN_TOP_PX` 70 → 20** (matches Noir similar `marginTop: 20px`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — BCF home/shop grid thumbs +20%
+
+- **Context:** User asked to increase BCF thumbnail size on **home/shop page only** by **20%** (similar/cart/bag/checkout unchanged).
+- **Change:** **`BCF_THUMB_GRID_WIDTH_SCALE = 1.2`** in **`bcfThumbGridContainSlotStyle`** (`shopTextureCategoryThumb.ts`) — grid variant used only on **`products/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
