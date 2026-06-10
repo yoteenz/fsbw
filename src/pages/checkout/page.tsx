@@ -76,6 +76,7 @@ import {
   expandCartLinesForOrderStrip,
   orderStripCheckoutScrollLimitsPx,
 } from '../../utils/checkoutOrderStripDisplay';
+import { OrderStripItemThumb } from '../../components/checkout/OrderStripItemThumb';
 import {
   cartHasAnyLoyaltyEarningLine,
   computePointsEligibleNetUsd,
@@ -3482,30 +3483,20 @@ function CheckoutPage() {
                                       transform: thumbM.imgWrapperTransform
                                     }}
                                   >
-                                    <img
-                                      src={itemImage}
-                                      alt={displayTitle}
-                                      className="object-contain rounded"
-                                      style={{
-                                        width: `${thumbM.imgPx}px`,
-                                        height: `${thumbM.imgPx}px`,
-                                        objectFit: 'contain'
-                                      }}
-                                      draggable={false}
+                                    <OrderStripItemThumb
+                                      item={item}
+                                      itemImage={itemImage}
+                                      displayTitle={displayTitle}
+                                      thumbM={thumbM}
                                     />
                                   </div>
                                 </div>
                               ) : (
-                                <img
-                                  src={itemImage}
-                                  alt={displayTitle}
-                                  className="object-contain rounded"
-                                  style={{
-                                    width: `${thumbM.imgPx}px`,
-                                    height: `${thumbM.imgPx}px`,
-                                    objectFit: 'contain'
-                                  }}
-                                  draggable={false}
+                                <OrderStripItemThumb
+                                  item={item}
+                                  itemImage={itemImage}
+                                  displayTitle={displayTitle}
+                                  thumbM={thumbM}
                                 />
                               )}
                               <div
