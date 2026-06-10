@@ -26996,3 +26996,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User added **14** new PSA avatar expression PNGs under **`public/assets/`** and asked to push them to **`master`**. Prior chat also covered BCF pricing fixes, similar-strip sizing/cross-sell, Supabase BCF thumb swap + contain slots, and grid thumb scale (**1.44**).
 - **Assets (14 new on master):** `psa-avatar-remembering`, `remembering-ask`, `memory-locked`, `curator`, `honest-pushback`, `archetype-quiz`, `archetype-reveal`, `red-carpet`, `blueprint`, `slay-forecast`, `celebrating`, `reassuring`, `spotlight`, plus **`dna-nod`**. Already referenced in **`psaConfig.ts`** / **`psa-avatar-expression-manifest.mjs`**; were on **`preview/mobile`** but missing from **`master`** until this commit.
 - **Changes:** Commit **`c129c1b0`** — checked out 14 PNGs from **`preview/mobile`**, committed on **`master`**, pushed **`master`**; merged/synced **`preview/mobile`**. Original 11 expressions unchanged on both branches.
+
+---
+
+## 2026-06-09 — BCF home/shop grid thumbs nudge down 6px
+
+- **Context (full chat):** PSA v5 avatar PNGs pushed to **`master`**; user then asked to move **home/shop BCF grid** thumb assets (the **1.44×** scaled contain slots) **down 6px** so they sit closer to product text below—**assets only**, not similar strip or cart.
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_THUMB_GRID_TRANSLATE_Y_PX = 6`** applied in **`bcfThumbGridContainSlotStyle`** (stacks with existing curly-frontals **−2px** nudge → **+4px** net). Similar/cart/checkout unchanged. Pushed **`master`** + **`preview/mobile`**.
