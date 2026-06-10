@@ -210,9 +210,7 @@ function bcfSimilarStripItemFromSlot(slot: BcfSimilarSlot): BcfSimilarStripItem 
   const { category: cat, texture: tid, platinum } = slot;
   const origin = platinum ? 'RUSSIAN' : bcfDefaultOriginForRouteTexture(tid);
   const color = platinum ? 'PLATINUM' : bcfDefaultColorIdForOrigin(origin);
-  const title = platinum
-    ? `PLATINUM ${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`
-    : `${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`;
+  const title = `${BCF_TEXTURE_LABELS[tid]} ${BCF_CATEGORY_LABELS[cat]}`;
   return {
     key: `${platinum ? 'platinum' : 'std'}-${cat}-${tid}`,
     category: cat,
