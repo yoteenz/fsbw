@@ -1365,6 +1365,14 @@ export type LiveTryOnStudioRenderPayload = {
   imageDataUrl: string;
   color: string;
   unitKey?: string;
+  length?: string;
+  density?: string;
+  lace?: string;
+  texture?: string;
+  hairline?: string;
+  styling?: string;
+  addOns?: string[];
+  partSelection?: 'MIDDLE' | 'LEFT' | 'RIGHT';
   photoModel?: 'nbp' | 'gpt2';
   angle?: 'left' | 'front' | 'right';
   /** Measured head yaw in degrees (+40 left cheek to camera, −40 right, 0 front). */
