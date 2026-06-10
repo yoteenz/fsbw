@@ -26988,3 +26988,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full chat):** (1) Replaced BCF thumb assets + cart contain containers. (2) Similar titles/deep links with texture+color. (3) User refined similar strip to **4 products only** per PDP, cross-category, with platinum **Platinum Blonde** thumbs after scroll.
 - **Per-view slots (`buildBcfSimilarStripItems(viewCategory)`):** **Bundles** → wavy closure, wavy frontal, platinum curly closure, platinum curly frontal. **Closures** → wavy frontal, curly frontal, platinum wavy frontal, platinum curly frontal. **Frontals** → wavy closure, curly closure, platinum wavy closure, platinum curly closure.
 - **Platinum thumbs:** **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** in **`shopTextureCategoryThumb.ts`** — closures wavy/curly **`IMG_2033` / `IMG_2036`**, frontals wavy/curly **`IMG_2024` / `IMG_2027`** (`Platinum%20Blonde/`). Platinum titles **`PLATINUM {TEXTURE} {CATEGORY}`**; href **`origin=russian&color=PLATINUM`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF home/shop grid thumbs +20% again
+
+- **Context:** User asked to increase home/shop BCF grid thumbs by **another 20%** (on top of prior **1.2×**).
+- **Change:** **`BCF_THUMB_GRID_WIDTH_SCALE` 1.2 → 1.44** (`shopTextureCategoryThumb.ts`). Similar/cart/bag/checkout unchanged. Pushed **`master`** + **`preview/mobile`**.
