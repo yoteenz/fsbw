@@ -274,7 +274,7 @@ export function bcfPriceAdjustments(
 
 /** Straight-texture base (USD) before length / color / lace. */
 export const BCF_STRAIGHT_BASE_PRICE_USD: Record<ShopTextureCategoryThumbCategory, number> = {
-  bundles: 330,
+  bundles: 30,
   closures: 145,
   frontals: 165
 };
