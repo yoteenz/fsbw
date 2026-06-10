@@ -3463,12 +3463,13 @@ img.natural-front-mobile {
   transform: translateX(-50%) translateY(4px) !important;
 }
 
-/* Live fal WebP hero: centered inside same clip frame */
+/* Live fal WebP hero: bottom-align like static brick overlays (not vertical center) */
 .baw-noir-hero-mannequin--live-centered.hero-mannequin-img {
   position: absolute !important;
-  top: 50% !important;
+  top: auto !important;
+  bottom: 0 !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) !important;
+  transform: translateX(-50%) !important;
 }
 
 /* Hero mannequin image size override - Must override Tailwind base styles */
@@ -3493,10 +3494,10 @@ img.natural-front-mobile {
   min-height: 0 !important;
 }
 
-/* Remote NOIR fal WebPs: show **full** raster in hero box (same idea as static `contain`) — no crop */
+/* Remote NOIR fal WebPs: full raster, bottom-anchored like static mannequin on brick */
 img.hero-mannequin-img--live-noir {
   object-fit: contain !important;
-  object-position: center center !important;
+  object-position: bottom center !important;
 }
 
 img.thumbnail-mannequin-img--live-noir {
@@ -3506,23 +3507,24 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  object-fit: cover !important;
-  object-position: center center !important;
+  object-fit: contain !important;
+  object-position: bottom center !important;
 }
 
-/* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
+/* `.thumbnail-mannequin-img` below sets top/transform with !important — bottom-align live NOIR thumbs like static. */
 img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
-  top: 50% !important;
+  top: auto !important;
+  bottom: 0 !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  object-fit: cover !important;
-  object-position: center center !important;
+  transform: translateX(-50%) !important;
+  object-fit: contain !important;
+  object-position: bottom center !important;
 }
 
-/* Live NOIR thumbs (sub-pages): **72×95** frame; static sub-page thumbs use the same cell + **~15%** larger mannequin vs old 63×84 — `cover` fills cell */
+/* Live NOIR thumbs: **72×95** frame — `contain` + bottom anchor matches static brick overlays */
 .leaf-stack.thumb .baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir {
-  object-fit: cover !important;
-  object-position: center center !important;
+  object-fit: contain !important;
+  object-position: bottom center !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
@@ -3583,9 +3585,10 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
 }
 
 .baw-noir-thumb-mannequin-slot .baw-noir-thumb-mannequin--live-centered.thumbnail-mannequin-img--live-noir {
-  top: 50% !important;
+  top: auto !important;
+  bottom: 0 !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) !important;
+  transform: translateX(-50%) !important;
 }
 
 /* BAW NOIR thumbs: clip to frame — no duplicate leaf-brick underlay */

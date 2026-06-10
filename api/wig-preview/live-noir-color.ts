@@ -265,6 +265,9 @@ const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
 const BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK =
   'Keep **everything else exactly the same** — same mannequin, brick background, lighting, and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
 
+const BAW_GPT2_NOIR_COLOR_FRAMING_LOCK =
+  '**Framing lock:** Do **not** resize, reposition, re-crop, or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **only** hair pigment changes.';
+
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
   label: string,
@@ -296,6 +299,7 @@ function buildStep2PromptNoLogoAttachment(
     angleConstraint,
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
     'The photo should be extremely high-quality, crisp and pixel-perfect.',
   ].join(' ');
 }
