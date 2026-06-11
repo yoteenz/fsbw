@@ -331,6 +331,39 @@ async function uploadStorageObjectToFal(
   return uploadBufferToFal(fal, buf, fileName, mime);
 }
 
+async function uploadPublicUrlToFal(fal: FalClient, url: string, fileName: string): Promise<string> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`mannequin ref fetch failed (${res.status})`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  if (!buf.length) throw new Error('mannequin ref empty');
+  const lower = url.toLowerCase();
+  const mime = lower.includes('.png')
+    ? 'image/png'
+    : lower.includes('.jpg') || lower.includes('.jpeg')
+      ? 'image/jpeg'
+      : 'image/webp';
+  return uploadBufferToFal(fal, buf, fileName, mime);
+}
+
+async function resolveMannequinFalUrl(
+  fal: FalClient,
+  bucket: string,
+  colorPath: string,
+  poseAngle: LiveTryOnAngle,
+  mannequinPublicUrl?: string
+): Promise<string> {
+  const fileName = `studio-mannequin-${poseAngle}.webp`;
+  if (await storageObjectExists(bucket, colorPath)) {
+    return uploadStorageObjectToFal(fal, bucket, colorPath, fileName);
+  }
+  if (mannequinPublicUrl?.trim()) {
+    return uploadPublicUrlToFal(fal, mannequinPublicUrl.trim(), fileName);
+  }
+  throw new Error('COLOR_PREVIEW_MISSING');
+}
+
 function studioJobPath(promptVersion: string, userId: string, jobId: string): string {
   const safeUser = userId.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 80);
   return `try-on-studio-jobs/${promptVersion}/${safeUser}/${jobId}.json`;
@@ -416,6 +449,8 @@ export type StartStudioTryOnRenderInput = {
   angle?: LiveTryOnAngle;
   /** Measured head yaw in degrees (+40 left cheek to camera, −40 right, 0 front). */
   headYawDeg?: number;
+  /** Prep step public URL for the mannequin angle (fallback when Storage path probe races). */
+  mannequinPublicUrl?: string;
   userId: string;
 };
 
@@ -463,8 +498,6 @@ export async function startStudioTryOnRender(
   if (!(await storageObjectExists(bucket, colorPath))) {
     if (poseAngle !== 'front' && (await storageObjectExists(bucket, mannequinPaths.front))) {
       colorPath = mannequinPaths.front;
-    } else {
-      throw new Error('COLOR_PREVIEW_MISSING');
     }
   }
   const stylingHint = liveTryOnStudioStylingPromptLine(selections.styling, stylingResolution.partSelection);
@@ -474,11 +507,12 @@ export async function startStudioTryOnRender(
 
   const fal = await getFalClient(falKey);
   const userFalUrl = await uploadBufferToFal(fal, captureBuf, 'studio-selfie.jpg', 'image/jpeg');
-  const mannequinFalUrl = await uploadStorageObjectToFal(
+  const mannequinFalUrl = await resolveMannequinFalUrl(
     fal,
     bucket,
     colorPath,
-    `studio-mannequin-${poseAngle}.webp`
+    poseAngle,
+    input.mannequinPublicUrl
   );
 
   const portraitPath = liveTryOnPortraitStoragePath(

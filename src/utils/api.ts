@@ -1377,6 +1377,8 @@ export type LiveTryOnStudioRenderPayload = {
   angle?: 'left' | 'front' | 'right';
   /** Measured head yaw in degrees (+40 left cheek to camera, −40 right, 0 front). */
   headYawDeg?: number;
+  /** Public mannequin WebP from prep (fallback when Storage path not indexed yet). */
+  mannequinPublicUrl?: string;
 };
 
 export type LiveTryOnStudioStartResult = {
