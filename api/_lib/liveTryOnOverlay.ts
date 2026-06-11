@@ -243,10 +243,11 @@ export function buildLiveTryOnStudioTryOnPrompt(
   label: string,
   hex: string,
   poseAngle: LiveTryOnAngle,
-  opts?: { hasPortraitRef?: boolean; headYawDeg?: number }
+  opts?: { hasPortraitRef?: boolean; headYawDeg?: number; stylingHint?: string | null }
 ): string {
   const hasPortraitRef = opts?.hasPortraitRef === true;
   const headYawDeg = opts?.headYawDeg;
+  const stylingHint = opts?.stylingHint?.trim();
   const nearBlack = isJetBlackOffBlack(label, hex);
   const colorLine = nearBlack
     ? `Wig hair color **${label}** (hex **#${hex}**) — match the mannequin reference silhouette; normalize tone/sheen only.`
@@ -256,6 +257,7 @@ export function buildLiveTryOnStudioTryOnPrompt(
     '**IMAGE 1 (master pose — do not repose):** Customer selfie — keep **exact** face, skin tone, expression, **head yaw, neck, both shoulders, and torso rotation** from this image. **Never** square IMAGE 1 to front because IMAGE 2 exists.',
     ...studioMannequinRefBlock(poseAngle, hasPortraitRef),
     colorLine,
+    ...(stylingHint ? [stylingHint] : []),
     studioHeadBodyPoseLock(poseAngle, headYawDeg),
     STUDIO_SKULL_FIT,
     studioCenterPartConstraint(poseAngle, headYawDeg),
@@ -279,7 +281,8 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
   label: string,
   hex: string,
   poseAngle: LiveTryOnAngle,
-  headYawDeg?: number
+  headYawDeg?: number,
+  stylingHint?: string | null
 ): string {
   const yaw = studioHeadYawDegrees(poseAngle, headYawDeg);
   const yawLabel = studioHeadYawLabel(yaw);
@@ -296,6 +299,7 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
         ? 'Positioned LEFT: full head+shoulder turn (+40° class), not eyes-only glance. Do not copy mannequin front angle.'
         : 'Preserve 0° front pose from selfie; do not copy mannequin head angle.',
     `Replace only hair with lace-front wig color ${label} (#${hex}) from IMAGE 2.`,
+    ...(stylingHint?.trim() ? [stylingHint.replace(/\*\*/g, '')] : []),
     'Wig flush on skull — natural hairline/part depth; not mannequin helmet height.',
     absYaw > 8
       ? 'Center part = 3D crown midline at this yaw; short crown groove only — match IMAGE 2 hair split, not 2D center stripe.'

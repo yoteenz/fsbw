@@ -20,6 +20,7 @@ import {
   prepareLiveTryOnAssetsFromConsult,
 } from '../../../utils/liveTryOnPrepareAssets';
 import {
+  bawPathnameFromReturnTo,
   buildLiveTryOnPayloadFromBaw,
   buildLiveTryOnPayloadFromConsult,
   type LiveTryOnSourcePayload,
@@ -47,6 +48,12 @@ export default function LiveTryOnPage() {
   const [sourcePayload, setSourcePayload] = useState<LiveTryOnSourcePayload | null>(null);
   const [prepError, setPrepError] = useState<string | null>(null);
   const [modelHint, setModelHint] = useState<string | null>(null);
+
+  const bawPathname = useMemo(() => {
+    if (returnTo.startsWith('/build-a-wig')) return bawPathnameFromReturnTo(returnTo);
+    if (location.pathname.startsWith('/build-a-wig')) return location.pathname;
+    return bawPathnameFromReturnTo(returnTo);
+  }, [returnTo, location.pathname]);
 
   const backTarget = useMemo(() => {
     if (returnTo.startsWith('/')) return returnTo;
@@ -109,9 +116,9 @@ export default function LiveTryOnPage() {
           return;
         }
 
-        const payload = buildLiveTryOnPayloadFromBaw(location.pathname);
+        const payload = buildLiveTryOnPayloadFromBaw(bawPathname);
         setSourcePayload(payload);
-        const prepared = await prepareLiveTryOnAssetsFromBaw(location.pathname, photoModel, (msg) => {
+        const prepared = await prepareLiveTryOnAssetsFromBaw(bawPathname, photoModel, (msg) => {
           if (!cancelled) setPrepHint(msg);
         });
         if (cancelled) return;
@@ -130,7 +137,7 @@ export default function LiveTryOnPage() {
     return () => {
       cancelled = true;
     };
-  }, [quoteId, location.pathname, applyPhotoModel, photoModel]);
+  }, [quoteId, bawPathname, applyPhotoModel, photoModel]);
 
   const handleSelectModel = (model: LiveTryOnPhotoModel) => {
     applyPhotoModel(model, compare);
@@ -232,7 +239,7 @@ export default function LiveTryOnPage() {
         <div className="w-full max-w-md">
           {mode === 'studio' ? (
             studioReady && sourcePayload ? (
-              <LiveTryOnStudioCapture color={sourcePayload.color} unitKey={sourcePayload.unitKey} />
+              <LiveTryOnStudioCapture sourcePayload={sourcePayload} />
             ) : (
               <div
                 className="aspect-[3/4] w-full border border-black/20 bg-black/5 flex items-center justify-center px-6"

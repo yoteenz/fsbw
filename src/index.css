@@ -3692,12 +3692,16 @@ img.natural-front-mobile {
   overflow: visible !important;
 }
 
-.baw-noir-thumb-row .baw-noir-thumb-brick-frame {
+.baw-noir-thumb-row .baw-noir-thumb-brick-frame,
+.baw-noir-pdp-thumb-col .baw-noir-thumb-brick-frame {
   overflow: hidden !important;
 }
 
-/* L/R Supabase overlays — force fit inside 72×95 clip (M uses scale; L/R need explicit height fit) */
+/* L/R Supabase overlays — force fit inside clip (M uses scale; L/R need explicit height fit) */
 .baw-noir-thumb-row
+  .baw-noir-thumb-mannequin-slot
+  img.baw-noir-thumb-lr-overlay.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img,
+.baw-noir-pdp-thumb-col
   .baw-noir-thumb-mannequin-slot
   img.baw-noir-thumb-lr-overlay.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
   top: auto !important;
@@ -3715,6 +3719,9 @@ img.natural-front-mobile {
 }
 
 .baw-noir-thumb-row
+  .baw-noir-thumb-mannequin-slot
+  img.baw-noir-thumb-static-img--hub.baw-noir-thumb-lr-overlay.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img,
+.baw-noir-pdp-thumb-col
   .baw-noir-thumb-mannequin-slot
   img.baw-noir-thumb-static-img--hub.baw-noir-thumb-lr-overlay.baw-noir-thumb-mannequin--brick-aligned.thumbnail-mannequin-img {
   bottom: 3px !important;

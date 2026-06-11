@@ -90,6 +90,71 @@ function noir2dMannequinTransform(src: string): string {
   return base;
 }
 
+function noirPdpSideThumbImgClassName(src: string): string {
+  const frontScaled = isNoirNaturalFrontMannequinSrc(src);
+  const lrNudge =
+    isNoirNaturalLeftMannequinSrc(src) || isNoirNaturalRightMannequinSrc(src);
+  return [
+    'thumbnail-mannequin-img',
+    'baw-noir-thumb-static-img',
+    'baw-noir-thumb-mannequin--brick-aligned',
+    frontScaled ? 'baw-noir-front-mannequin--scaled' : '',
+    lrNudge ? 'baw-noir-thumb-lr-nudge baw-noir-thumb-lr-overlay' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+type NoirPdpSideThumbProps = {
+  src: string;
+  bg3d: string;
+  is3DView: boolean;
+  onClick: () => void;
+};
+
+/** Side thumb — 3D product shot only in 3D view; 2D uses brick clip + bottom-aligned mannequin. */
+function NoirPdpSideThumb({ src, bg3d, is3DView, onClick }: NoirPdpSideThumbProps) {
+  if (is3DView) {
+    return (
+      <div className="relative" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+        <div
+          className="relative bg-cover bg-center flex items-center justify-center cursor-pointer h-full w-full"
+          style={{
+            backgroundImage: `url('/assets/NOIR/${bg3d}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center calc(50% + 5px)',
+            backgroundRepeat: 'no-repeat',
+          }}
+          onClick={onClick}
+        />
+      </div>
+    );
+  }
+
+  const frontScaled = isNoirNaturalFrontMannequinSrc(src);
+  return (
+    <div className="relative" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+      <div className="baw-noir-thumb-brick-frame relative h-full w-full cursor-pointer" onClick={onClick}>
+        <div className="baw-noir-thumb-brick-bg" aria-hidden="true" />
+        <div className="baw-noir-thumb-mannequin-slot">
+          <img
+            src={src}
+            alt=""
+            className={noirPdpSideThumbImgClassName(src)}
+            style={
+              frontScaled
+                ? ({
+                    '--baw-noir-front-mannequin-scale': `${NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE}`,
+                  } as React.CSSProperties)
+                : undefined
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map((s) => ({
   label: s.label,
   download: s.download,
@@ -2454,7 +2519,7 @@ function NoirSelection() {
                 
                 {/* Top and Bottom Mannequins - Right Side (equal flex halves + gap; tops/bottoms align with hero) */}
                 <div
-                  className="flex flex-col flex-shrink-0"
+                  className="flex flex-col flex-shrink-0 baw-noir-thumb-row baw-noir-pdp-thumb-col"
                   style={{
                     width: 'clamp(100px, 26vw, 175px)',
                     alignSelf: 'stretch',
@@ -2462,52 +2527,18 @@ function NoirSelection() {
                     minHeight: 'clamp(290px, 72.5vw, 464px)',
                   }}
                 >
-                  <div className="relative" style={{ flex: '1 1 0', minHeight: 0 }}>
-                    <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer h-full w-full"
-                      style={{ backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.top : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
-                      onClick={handleTopThumbnailClick}
-                    >
-                      <img
-                        src={currentImages.top}
-                        alt=""
-                        className="absolute left-1/2 z-10"
-                        style={{
-                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)',
-                          transform: noir2dMannequinTransform(currentImages.top),
-                          width: 'clamp(112px, 29vw, 196px)',
-                          height: 'auto',
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          minWidth: 'clamp(112px, 29vw, 196px)',
-                          display: is3DView ? 'none' : 'block',
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="relative" style={{ flex: '1 1 0', minHeight: 0 }}>
-                    <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer h-full w-full"
-                      style={{ backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
-                      onClick={handleBottomThumbnailClick}
-                    >
-                      <img
-                        src={currentImages.bottom}
-                        alt=""
-                        className="absolute left-1/2 z-10"
-                        style={{
-                          top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)',
-                          transform: noir2dMannequinTransform(currentImages.bottom),
-                          width: 'clamp(112px, 29vw, 196px)',
-                          height: 'auto',
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          minWidth: 'clamp(112px, 29vw, 196px)',
-                          display: is3DView ? 'none' : 'block',
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <NoirPdpSideThumb
+                    src={currentImages.top}
+                    bg3d={current3DImages.top}
+                    is3DView={is3DView}
+                    onClick={handleTopThumbnailClick}
+                  />
+                  <NoirPdpSideThumb
+                    src={currentImages.bottom}
+                    bg3d={current3DImages.bottom}
+                    is3DView={is3DView}
+                    onClick={handleBottomThumbnailClick}
+                  />
                 </div>
               </div>
             </div>

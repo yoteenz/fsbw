@@ -1,11 +1,7 @@
 import { randomUUID } from 'crypto';
 import { Jimp } from 'jimp';
 import { catalogColorForPrompt } from './bawCatalogHairColors.js';
-import { liveTryOnStorageLookupJob } from './liveTryOnBatchManifest.js';
-import {
-  jobToSelections,
-  storageObjectExists,
-} from './liveTryOnBatchGenerate.js';
+import { storageObjectExists } from './liveTryOnBatchGenerate.js';
 import {
   activeLiveTryOnStudioPhotoModel,
   buildLiveTryOnStudioMakeupPassPrompt,
@@ -19,9 +15,11 @@ import {
 } from './liveTryOnOverlay.js';
 import { getSupabaseAdminServiceRole } from './supabase.js';
 import {
-  wigPreviewLiveAnglePaths,
-  wigPreviewManifestHashLiveColorTier,
-} from './wigPreviewSelectionHash.js';
+  liveTryOnMannequinStoragePaths,
+  liveTryOnStudioStylingPromptLine,
+  resolveLiveTryOnStyling,
+  wigPreviewSelectionsFromTryOnBody,
+} from './liveTryOnWigReference.js';
 
 const STUDIO_CAPTURE_MAX_PX = 1024;
 const STUDIO_JOB_MAX_AGE_MS = 15 * 60 * 1000;
@@ -153,15 +151,17 @@ async function submitStudioRenderWithFallbacks(
   headYawDeg: number | undefined,
   selfieUrl: string,
   mannequinUrl: string,
-  portraitUrl?: string
+  portraitUrl?: string,
+  stylingHint?: string | null
 ): Promise<{ falRequestId: string; photoModel: LiveTryOnPhotoModel; falModel: string }> {
   const twoUrls = [selfieUrl, mannequinUrl];
   const threeUrls = portraitUrl ? [...twoUrls, portraitUrl] : twoUrls;
   const twoImgPrompt = buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, {
     hasPortraitRef: false,
     headYawDeg,
+    stylingHint,
   });
-  const compactPrompt = buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg);
+  const compactPrompt = buildLiveTryOnStudioTryOnPromptCompact(label, hex, poseAngle, headYawDeg, stylingHint);
 
   const attempts: StudioSubmitAttempt[] = [
     { photoModel: preferredModel, imageUrls: twoUrls, prompt: twoImgPrompt },
@@ -199,6 +199,7 @@ async function submitStudioRenderWithFallbacks(
       prompt: buildLiveTryOnStudioTryOnPrompt(label, hex, poseAngle, {
         hasPortraitRef: true,
         headYawDeg,
+        stylingHint,
       }),
     });
   }
@@ -403,6 +404,14 @@ export type StartStudioTryOnRenderInput = {
   imageDataUrl: string;
   color: string;
   unitKey?: string;
+  length?: string;
+  density?: string;
+  lace?: string;
+  texture?: string;
+  hairline?: string;
+  styling?: string;
+  addOns?: string[];
+  partSelection?: string;
   photoModel?: LiveTryOnPhotoModel;
   angle?: LiveTryOnAngle;
   /** Measured head yaw in degrees (+40 left cheek to camera, −40 right, 0 front). */
@@ -427,29 +436,38 @@ export async function startStudioTryOnRender(
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) throw new Error('FAL_KEY is not configured');
 
-  const job = liveTryOnStorageLookupJob({
-    unitKey: String(input.unitKey || 'NOIR').toUpperCase(),
+  const selections = wigPreviewSelectionsFromTryOnBody({
+    unitKey: input.unitKey,
     color: input.color,
+    length: input.length,
+    density: input.density,
+    lace: input.lace,
+    texture: input.texture,
+    hairline: input.hairline,
+    styling: input.styling,
+    addOns: input.addOns,
   });
-  const selections = jobToSelections(job);
+  const partSelection = String(input.partSelection || 'MIDDLE').toUpperCase();
+  const stylingResolution = resolveLiveTryOnStyling(selections, partSelection);
   const catalog = catalogColorForPrompt(selections.color);
   if (!catalog) throw new Error(`Unknown color: ${selections.color}`);
 
-  const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
+  const manifestHash = stylingResolution.colorTierHash;
   const poseAngle: LiveTryOnAngle = input.angle || 'front';
   const photoModel = activeLiveTryOnStudioPhotoModel();
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
-  const unitKey = job.unitKey;
-  const colorPaths = wigPreviewLiveAnglePaths(promptVersion, unitKey, manifestHash);
-  let colorPath = colorPaths[poseAngle];
+  const unitKey = selections.unitKey;
+  const mannequinPaths = liveTryOnMannequinStoragePaths(promptVersion, unitKey, stylingResolution);
+  let colorPath = mannequinPaths[poseAngle];
   if (!(await storageObjectExists(bucket, colorPath))) {
-    if (poseAngle !== 'front' && (await storageObjectExists(bucket, colorPaths.front))) {
-      colorPath = colorPaths.front;
+    if (poseAngle !== 'front' && (await storageObjectExists(bucket, mannequinPaths.front))) {
+      colorPath = mannequinPaths.front;
     } else {
       throw new Error('COLOR_PREVIEW_MISSING');
     }
   }
+  const stylingHint = liveTryOnStudioStylingPromptLine(selections.styling, stylingResolution.partSelection);
 
   const { buf: rawBuf } = parseDataUrl(input.imageDataUrl);
   const captureBuf = await downscaleCaptureBuffer(rawBuf);
@@ -498,7 +516,8 @@ export async function startStudioTryOnRender(
     headYawDeg,
     userFalUrl,
     mannequinFalUrl,
-    portraitFalUrl
+    portraitFalUrl,
+    stylingHint
   );
 
   const jobId = randomUUID();
@@ -510,7 +529,7 @@ export async function startStudioTryOnRender(
     photoModel: usedPhotoModel,
     manifestHash,
     unitKey,
-    color: job.color,
+    color: selections.color,
     poseAngle,
     createdAt: Date.now(),
     phase: 'base',
@@ -520,7 +539,7 @@ export async function startStudioTryOnRender(
     jobId,
     status: 'queued',
     manifestHash,
-    color: job.color,
+    color: selections.color,
     unitKey,
     photoModel: usedPhotoModel,
     angle: poseAngle,

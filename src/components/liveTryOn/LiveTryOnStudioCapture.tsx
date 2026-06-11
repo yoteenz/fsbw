@@ -9,6 +9,7 @@ import {
   postLiveTryOnStudioMakeupAndWait,
   postLiveTryOnStudioRenderAndWait,
 } from '../../utils/api';
+import type { LiveTryOnSourcePayload } from '../../utils/liveTryOnSelections';
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
 import {
   estimateHeadYawNorm,
@@ -20,8 +21,7 @@ type Status = 'loading' | 'permission' | 'ready' | 'no-face' | 'rendering' | 're
 type RenderPhase = 'base' | 'makeup' | null;
 
 type Props = {
-  color: string;
-  unitKey: string;
+  sourcePayload: LiveTryOnSourcePayload;
 };
 
 const STUDIO_BASE_ESTIMATE_MS = 120_000;
@@ -74,7 +74,8 @@ function StudioRenderOverlay({
   );
 }
 
-export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
+export default function LiveTryOnStudioCapture({ sourcePayload }: Props) {
+  const { color, unitKey } = sourcePayload;
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const landmarkerRef = useRef<FaceLandmarker | null>(null);
@@ -341,6 +342,14 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
           imageDataUrl,
           color,
           unitKey,
+          length: sourcePayload.length,
+          density: sourcePayload.density,
+          lace: sourcePayload.lace,
+          texture: sourcePayload.texture,
+          hairline: sourcePayload.hairline,
+          styling: sourcePayload.styling,
+          addOns: sourcePayload.addOns,
+          partSelection: sourcePayload.partSelection,
           angle: captureAngle,
           headYawDeg,
         },
@@ -376,7 +385,7 @@ export default function LiveTryOnStudioCapture({ color, unitKey }: Props) {
       setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
       setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'RENDER FAILED');
     }
-  }, [activeAngle, color, renderPhase, setRenderPhaseSafe, status, unitKey]);
+  }, [activeAngle, color, renderPhase, setRenderPhaseSafe, sourcePayload, status, unitKey]);
 
   const handleRetake = () => {
     const video = videoRef.current;

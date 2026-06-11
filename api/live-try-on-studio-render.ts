@@ -70,12 +70,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const angle = parseAngle(readString(body, 'angle', 'front'));
   const unitKey = readString(body, 'unitKey', 'NOIR');
   const headYawDeg = parseHeadYawDeg(body);
+  const length = readString(body, 'length', '24"');
+  const density = readString(body, 'density', '200%');
+  const lace = readString(body, 'lace', '13X6');
+  const texture = readString(body, 'texture', 'SILKY');
+  const hairline = readString(body, 'hairline', 'NATURAL');
+  const styling = readString(body, 'styling', 'NONE');
+  const partSelection = readString(body, 'partSelection', 'MIDDLE');
+  const addOnsRaw = body.addOns;
+  const addOns = Array.isArray(addOnsRaw)
+    ? addOnsRaw.map((x) => String(x).toUpperCase()).filter(Boolean)
+    : [];
 
   try {
     const result = await startStudioTryOnRender({
       imageDataUrl,
       color,
       unitKey,
+      length,
+      density,
+      lace,
+      texture,
+      hairline,
+      styling,
+      addOns,
+      partSelection,
       angle,
       headYawDeg,
       userId: user.id,
