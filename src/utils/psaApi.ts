@@ -150,14 +150,19 @@ async function refreshSupabaseSessionOnce(): Promise<void> {
   }
 }
 
-function sessionExpiredMessage(): string {
+export function psaSessionExpiredMessage(): string {
   if (isSignedIn()) {
     return 'Your session expired. Sign out and sign back in, or open Account → Settings and tap Sync my account, then try PSA again.';
   }
   return 'Sign in to chat with PSA.';
 }
 
-async function getPsaAuthToken(): Promise<string | null> {
+/** @deprecated Use psaSessionExpiredMessage */
+function sessionExpiredMessage(): string {
+  return psaSessionExpiredMessage();
+}
+
+export async function getPsaAuthToken(): Promise<string | null> {
   let token = await getAccessToken();
   if (!token) {
     await refreshSupabaseSessionOnce();
@@ -211,7 +216,7 @@ async function parsePsaJsonBody<T>(res: Response): Promise<
   }
 }
 
-async function psaAuthedFetch(path: string, init: RequestInit = {}): Promise<Response | null> {
+export async function psaAuthedFetch(path: string, init: RequestInit = {}): Promise<Response | null> {
   const token = await getPsaAuthToken();
   if (!token) return null;
   const url = `${API_BASE.replace(/\/$/, '')}${path}`;
