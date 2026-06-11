@@ -6,6 +6,9 @@ type DownloadAnalysisButtonProps = {
   filename: string;
   className?: string;
   label?: string;
+  /** Run immediately before capture (e.g. hide debug chrome). */
+  beforeCapture?: () => void | Promise<void>;
+  afterCapture?: () => void | Promise<void>;
 };
 
 export async function downloadCardPng(node: HTMLElement, filename: string): Promise<void> {
@@ -26,6 +29,8 @@ export default function DownloadAnalysisButton({
   filename,
   className = '',
   label = 'DOWNLOAD PNG',
+  beforeCapture,
+  afterCapture,
 }: DownloadAnalysisButtonProps) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +41,10 @@ export default function DownloadAnalysisButton({
     setBusy(true);
     setError(null);
     try {
+      await beforeCapture?.();
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
       await downloadCardPng(node, filename);
+      await afterCapture?.();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'DOWNLOAD FAILED');
     } finally {

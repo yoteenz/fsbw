@@ -21,15 +21,29 @@ export const ADDITIONAL_LOOKS_BY_TIER: Record<AnalysisTier, number> = {
   black: 9,
 };
 
+const TOP_MATCH_LINE_SLOTS = [
+  { left: '68%', top: '27.8%', width: '28%', height: '3.2%' },
+  { left: '68%', top: '31.8%', width: '28%', height: '3.2%' },
+  { left: '68%', top: '35.8%', width: '28%', height: '3.2%' },
+  { left: '68%', top: '39.8%', width: '28%', height: '3.2%' },
+];
+
+const WHY_LINE_SLOTS_FREE = [
+  { left: '68%', top: '74.5%', width: '28%', height: '2.8%' },
+  { left: '68%', top: '77.8%', width: '28%', height: '2.8%' },
+  { left: '68%', top: '81.1%', width: '28%', height: '2.8%' },
+  { left: '68%', top: '84.4%', width: '28%', height: '2.8%' },
+  { left: '68%', top: '87.7%', width: '28%', height: '2.8%' },
+];
+
 const SHARED_TOP_SLOTS: Pick<
   TemplateSlotConfig,
-  'clientImage' | 'topScore' | 'rating' | 'topMatchRows' | 'specsTable'
+  'clientImage' | 'topScore' | 'rating' | 'topMatchLines'
 > = {
   clientImage: { left: '5.4%', top: '14.2%', width: '47.5%', height: '68.5%' },
-  topScore: { left: '60.5%', top: '18.8%', width: '18%', height: '4%' },
-  rating: { left: '77.5%', top: '18.8%', width: '18%', height: '4%' },
-  topMatchRows: { left: '60.5%', top: '27.3%' },
-  specsTable: { left: '59.5%', top: '51%' },
+  topScore: { left: '72%', top: '19.2%', width: '10%', height: '3.5%' },
+  rating: { left: '84%', top: '19.2%', width: '10%', height: '3.5%' },
+  topMatchLines: TOP_MATCH_LINE_SLOTS,
 };
 
 function additionalRowSlots(
@@ -83,27 +97,27 @@ function additionalGridSlots(
 export const TEMPLATE_SLOTS: Record<AnalysisTier, TemplateSlotConfig> = {
   free: {
     ...SHARED_TOP_SLOTS,
-    whyRows: { left: '59.5%', top: '73%' },
+    whyLines: WHY_LINE_SLOTS_FREE,
   },
   three_month: {
     ...SHARED_TOP_SLOTS,
-    additionalLooks: additionalRowSlots(42.2, 3),
-    whyRows: { left: '59.5%', top: '75%' },
+    additionalLooks: additionalRowSlots(44.5, 3),
+    whyLines: WHY_LINE_SLOTS_FREE.map((slot) => ({ ...slot, top: `${parseFloat(slot.top) + 1.5}%` })),
   },
   six_month: {
     ...SHARED_TOP_SLOTS,
-    additionalLooks: additionalRowSlots(38.5, 6, 8.2),
-    whyRows: { left: '59.5%', top: '88%' },
+    additionalLooks: additionalRowSlots(40.5, 6, 7.2),
+    whyLines: WHY_LINE_SLOTS_FREE.map((slot) => ({ ...slot, top: `${parseFloat(slot.top) + 8}%` })),
   },
   twelve_month: {
     ...SHARED_TOP_SLOTS,
-    additionalLooks: additionalGridSlots(3, 3, 36.5, 8.5, [5.8, 34.5, 63.2], [15.5, 44.2, 72.9]),
-    whyRows: { left: '59.5%', top: '88%' },
+    additionalLooks: additionalGridSlots(3, 3, 38.5, 7.8, [5.8, 34.5, 63.2], [15.5, 44.2, 72.9]),
+    whyLines: WHY_LINE_SLOTS_FREE.map((slot) => ({ ...slot, top: `${parseFloat(slot.top) + 8}%` })),
   },
   black: {
     ...SHARED_TOP_SLOTS,
-    additionalLooks: additionalGridSlots(3, 3, 36.5, 8.5, [5.8, 34.5, 63.2], [15.5, 44.2, 72.9]),
-    whyRows: { left: '59.5%', top: '88%' },
+    additionalLooks: additionalGridSlots(3, 3, 38.5, 7.8, [5.8, 34.5, 63.2], [15.5, 44.2, 72.9]),
+    whyLines: WHY_LINE_SLOTS_FREE.map((slot) => ({ ...slot, top: `${parseFloat(slot.top) + 8}%` })),
   },
 };
 
