@@ -139,9 +139,36 @@ const BUNDLE_STRAIGHT_COLOR_PHOTO: Partial<Record<string, string>> = {
   CITRINE: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2163.png`
 };
 
+const BUNDLE_WAVY_COLOR_PHOTO_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Bundles%20Color/Wavy';
+
+/** Wavy bundles only — hero swaps when shopper picks a hair color. */
+const BUNDLE_WAVY_COLOR_PHOTO: Partial<Record<string, string>> = {
+  'JET BLACK': `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2171.png`,
+  ESPRESSO: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2181.png`,
+  CHESTNUT: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2182.png`,
+  HONEY: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2183.png`,
+  AUBURN: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2184.png`,
+  COPPER: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2185.png`,
+  GINGER: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2186.png`,
+  SANGRIA: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2187.png`,
+  CHERRY: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2188.png`,
+  RASPBERRY: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2189.png`,
+  PLUM: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2190.png`,
+  COBALT: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2191.png`,
+  TEAL: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2193.png`,
+  SLIME: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2194.png`,
+  CITRINE: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2195.png`
+};
+
 function bundlePhotoSrc(texture: Texture, colorId: string): string {
+  const colorKey = String(colorId || '').toUpperCase();
   if (texture === 'straight') {
-    const tinted = BUNDLE_STRAIGHT_COLOR_PHOTO[String(colorId || '').toUpperCase()];
+    const tinted = BUNDLE_STRAIGHT_COLOR_PHOTO[colorKey];
+    if (tinted) return tinted;
+  }
+  if (texture === 'wavy') {
+    const tinted = BUNDLE_WAVY_COLOR_PHOTO[colorKey];
     if (tinted) return tinted;
   }
   return BUNDLE_PHOTO_BY_TEXTURE[texture];
@@ -766,7 +793,9 @@ export default function ShopTextureCategoryProductPage() {
 
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
     if (!category) return shopTextureCategoryThumbSrc(tid, 'bundles');
-    if (category === 'bundles') return bundlePhotoSrc(tid, tid === 'straight' ? bcfColor : 'OFF BLACK');
+    if (category === 'bundles') {
+      return bundlePhotoSrc(tid, tid === 'curly' ? 'OFF BLACK' : bcfColor);
+    }
     if (category === 'closures' || category === 'frontals') {
       return BCF_CF_PHOTO[category][tid];
     }
