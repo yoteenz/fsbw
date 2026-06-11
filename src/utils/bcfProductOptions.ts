@@ -52,9 +52,12 @@ export function bcfOriginForTextureAndColor(
   explicitOrigin?: BcfOriginId
 ): BcfOriginId {
   const color = colorId.trim().toUpperCase();
+  const t = texture as ShopTextureCategoryThumbTexture;
   if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) return 'RUSSIAN';
-  if (explicitOrigin) return explicitOrigin;
-  return bcfDefaultOriginForRouteTexture(texture as ShopTextureCategoryThumbTexture);
+  if (explicitOrigin && bcfTexturesForOrigin(explicitOrigin).includes(t)) {
+    return explicitOrigin;
+  }
+  return bcfDefaultOriginForRouteTexture(t);
 }
 
 export function bcfDefaultOriginForRouteTexture(t: ShopTextureCategoryThumbTexture): BcfOriginId {
