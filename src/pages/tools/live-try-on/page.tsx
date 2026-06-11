@@ -47,6 +47,7 @@ export default function LiveTryOnPage() {
   const [compare, setCompare] = useState<LiveTryOnCompareBundles | undefined>();
   const [sourcePayload, setSourcePayload] = useState<LiveTryOnSourcePayload | null>(null);
   const [prepError, setPrepError] = useState<string | null>(null);
+  const [prepComplete, setPrepComplete] = useState(false);
   const [modelHint, setModelHint] = useState<string | null>(null);
 
   const bawPathname = useMemo(() => {
@@ -87,6 +88,7 @@ export default function LiveTryOnPage() {
     (async () => {
       try {
         setPrepError(null);
+        setPrepComplete(false);
         if (quoteId) {
           setPrepHint('LOADING CONSULT OFFER…');
           const res = await getConsultQuote(quoteId);
@@ -113,6 +115,7 @@ export default function LiveTryOnPage() {
           applyPhotoModel(prepared.activePhotoModel, prepared.compare);
           setWigUrls(prepared.overlayUrls);
           setPrepHint('');
+          setPrepComplete(true);
           return;
         }
 
@@ -126,11 +129,13 @@ export default function LiveTryOnPage() {
         applyPhotoModel(prepared.activePhotoModel, prepared.compare);
         setWigUrls(prepared.overlayUrls);
         setPrepHint('');
+        setPrepComplete(true);
       } catch (e) {
         if (cancelled) return;
         setPrepError(e instanceof Error ? e.message.toUpperCase() : 'PREP FAILED');
         setWigUrls(null);
         setPrepHint('');
+        setPrepComplete(false);
       }
     })();
 
@@ -144,7 +149,7 @@ export default function LiveTryOnPage() {
   };
 
   const showCompareBar = Boolean(compare?.portraits?.nbp || compare?.portraits?.gpt2);
-  const studioReady = Boolean(sourcePayload?.color);
+  const studioReady = prepComplete && Boolean(sourcePayload?.color) && Boolean(wigUrls);
 
   return (
     <div
@@ -238,8 +243,8 @@ export default function LiveTryOnPage() {
 
         <div className="w-full max-w-md">
           {mode === 'studio' ? (
-            studioReady && sourcePayload ? (
-              <LiveTryOnStudioCapture sourcePayload={sourcePayload} />
+            studioReady && sourcePayload && wigUrls ? (
+              <LiveTryOnStudioCapture sourcePayload={sourcePayload} mannequinUrls={wigUrls} />
             ) : (
               <div
                 className="aspect-[3/4] w-full border border-black/20 bg-black/5 flex items-center justify-center px-6"
@@ -249,7 +254,7 @@ export default function LiveTryOnPage() {
                   className="text-center uppercase"
                   style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', lineHeight: 1.5 }}
                 >
-                  {prepError ? 'THIS COLOR MAY NOT BE STUDIO-READY YET' : 'LOADING…'}
+                  {prepError ? prepError : prepHint || 'LOADING YOUR LOOK…'}
                 </p>
               </div>
             )

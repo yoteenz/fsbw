@@ -81,6 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const addOns = Array.isArray(addOnsRaw)
     ? addOnsRaw.map((x) => String(x).toUpperCase()).filter(Boolean)
     : [];
+  const mannequinPublicUrl = readString(body, 'mannequinPublicUrl');
 
   try {
     const result = await startStudioTryOnRender({
@@ -97,6 +98,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       partSelection,
       angle,
       headYawDeg,
+      mannequinPublicUrl: mannequinPublicUrl || undefined,
       userId: user.id,
     });
     res.status(200).json({ ok: true, ...result });

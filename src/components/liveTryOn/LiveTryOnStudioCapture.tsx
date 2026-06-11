@@ -12,6 +12,10 @@ import {
 import type { LiveTryOnSourcePayload } from '../../utils/liveTryOnSelections';
 import { captureMirroredVideoJpeg } from '../../utils/liveTryOnCapture';
 import {
+  formatStudioTryOnError,
+  mannequinPublicUrlForAngle,
+} from '../../utils/liveTryOnStudioMannequin';
+import {
   estimateHeadYawNorm,
   pickStudioCaptureAngleFromYaw,
   studioHeadYawDegreesFromNorm,
@@ -22,6 +26,7 @@ type RenderPhase = 'base' | 'makeup' | null;
 
 type Props = {
   sourcePayload: LiveTryOnSourcePayload;
+  mannequinUrls?: [string, string, string] | null;
 };
 
 const STUDIO_BASE_ESTIMATE_MS = 120_000;
@@ -74,7 +79,7 @@ function StudioRenderOverlay({
   );
 }
 
-export default function LiveTryOnStudioCapture({ sourcePayload }: Props) {
+export default function LiveTryOnStudioCapture({ sourcePayload, mannequinUrls }: Props) {
   const { color, unitKey } = sourcePayload;
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -286,7 +291,7 @@ export default function LiveTryOnStudioCapture({ sourcePayload }: Props) {
 
   const handleCapture = useCallback(async () => {
     const video = videoRef.current;
-    if (!video || status === 'rendering' || renderPhase) return;
+    if (!video || status === 'rendering' || renderPhase || !mannequinUrls) return;
 
     const token = await getAccessToken();
     if (!token) {
@@ -352,6 +357,7 @@ export default function LiveTryOnStudioCapture({ sourcePayload }: Props) {
           partSelection: sourcePayload.partSelection,
           angle: captureAngle,
           headYawDeg,
+          mannequinPublicUrl: mannequinPublicUrlForAngle(mannequinUrls, captureAngle),
         },
         () => {
           /* progress label lives in overlay */
@@ -383,9 +389,11 @@ export default function LiveTryOnStudioCapture({ sourcePayload }: Props) {
       setRenderProgress(0);
       setStatus('ready');
       setStatusHint('CENTER YOUR FACE — TAP CAPTURE WHEN READY');
-      setErrorMsg(e instanceof Error ? e.message.toUpperCase() : 'RENDER FAILED');
+      setErrorMsg(
+        formatStudioTryOnError(e instanceof Error ? e.message : 'RENDER FAILED')
+      );
     }
-  }, [activeAngle, color, renderPhase, setRenderPhaseSafe, sourcePayload, status, unitKey]);
+  }, [activeAngle, color, mannequinUrls, renderPhase, setRenderPhaseSafe, sourcePayload, status, unitKey]);
 
   const handleRetake = () => {
     const video = videoRef.current;
@@ -607,7 +615,13 @@ export default function LiveTryOnStudioCapture({ sourcePayload }: Props) {
           <button
             type="button"
             onClick={handleCapture}
-            disabled={status === 'rendering' || status === 'loading' || status === 'permission' || Boolean(renderPhase)}
+            disabled={
+              !mannequinUrls ||
+              status === 'rendering' ||
+              status === 'loading' ||
+              status === 'permission' ||
+              Boolean(renderPhase)
+            }
             className="w-full py-3 border border-black uppercase disabled:opacity-40"
             style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
           >
