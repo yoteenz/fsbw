@@ -55,8 +55,30 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 ---
 
+## Template hairstyle analysis cards (demo / composition layer)
+
+**Where:** `/tools/hairstyle-analysis` — tier picker, Kateena sample data, PNG download.
+
+**Model:** Fixed static templates (Supabase `live-preview/Analysis/IMG_2438|2447|2450|2451.png`) with **percentage-positioned overlays** — no AI-generated layout. AI upstream may only supply the **client hairstyle preview** image; React composes text + thumbs into the template.
+
+**Tier pick counts (card system):**
+
+| Tier | Output |
+|------|--------|
+| Free | 1 (top match only) |
+| 3 month | Top + 3 additional |
+| 6 month | Top + 6 additional |
+| 12 month / black | Top + 9 additional |
+
+**Code:** `src/types/hairstyleAnalysis.ts`, `src/data/hairstyleCatalog.ts`, `src/utils/hairstyleAnalysisRules.ts`, `src/components/hairstyle-analysis/*`, `src/pages/HairstyleAnalysisDemo.tsx`.
+
+**PSA API note:** Live PSA selfie endpoint still uses chat pick caps (3mo→4, 6mo→6, 12mo→10) until wired to this card composer via `buildHairstyleAnalysisFromPsaPicks()`.
+
+---
+
 ## Phase 2 (not in v1 UI)
 
+- Wire PSA selfie results → `HairstyleAnalysisCard` + template PNG export.
 - Fal/GPT compositing pipeline for consult chart cells (`StyleAnalysisChart` in `src/types/styleAnalysis.ts`).
 - Admin **Send offer** attaches generated chart to `consultOfferSnapshot`.
 - Persist PSA analysis runs in Supabase for rate limits / history.

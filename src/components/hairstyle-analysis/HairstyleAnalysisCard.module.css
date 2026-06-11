@@ -1,0 +1,123 @@
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.templateBg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.slot {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.slotDebug {
+  outline: 1px dashed rgba(235, 28, 36, 0.65);
+  background: rgba(235, 28, 36, 0.06);
+}
+
+.clientImage {
+  object-fit: cover;
+}
+
+.overlayText {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, 'Avenir Next', Montserrat, sans-serif;
+  font-size: clamp(6px, 1.55vw, 9px);
+  line-height: 1.35;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #000;
+}
+
+.overlayTextMuted {
+  color: #4d4d4d;
+}
+
+.scoreText {
+  font-size: clamp(8px, 2vw, 11px);
+  font-weight: 600;
+  color: #eb1c24;
+}
+
+.ratingText {
+  font-size: clamp(8px, 2vw, 11px);
+  font-weight: 600;
+}
+
+.bulletRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 3px;
+}
+
+.bulletRows {
+  position: absolute;
+  right: 4%;
+  width: 36%;
+}
+
+.specTable {
+  position: absolute;
+  right: 4%;
+  width: 36%;
+  display: grid;
+  gap: 2px;
+}
+
+.specLine {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, 'Avenir Next', Montserrat, sans-serif;
+  font-size: clamp(5px, 1.35vw, 8px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  line-height: 1.35;
+}
+
+.additionalThumb {
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  background: #f4f4f4;
+}
+
+.additionalTextOnly {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  height: 100%;
+  padding: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.additionalRank {
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, sans-serif;
+  font-size: clamp(5px, 1.2vw, 7px);
+  color: #eb1c24;
+  letter-spacing: 0.12em;
+}
+
+.additionalUnit {
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, sans-serif;
+  font-size: clamp(5px, 1.25vw, 7px);
+  letter-spacing: 0.1em;
+  line-height: 1.25;
+}
+
+.whySection {
+  position: absolute;
+  right: 4%;
+  width: 38%;
+}
