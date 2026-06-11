@@ -38,6 +38,7 @@ import {
   parseBcfColorFromSearch,
   parseBcfOriginFromSearch,
   shopBcfPdpHref,
+  shopBcfTexturePdpHref,
   BCF_BUNDLE_DEAL_DISCOUNT_USD,
   BCF_OPTION_RED,
   type BcfOriginId
@@ -198,13 +199,6 @@ function bundlePhotoSrc(texture: Texture, colorId: string): string {
     if (tinted) return tinted;
   }
   return BUNDLE_PHOTO_BY_TEXTURE[texture];
-}
-
-function bcfTexturePdpHref(category: Category, tid: Texture, colorId: string): string {
-  return shopBcfPdpHref(category, tid, {
-    origin: bcfDefaultOriginForRouteTexture(tid),
-    color: colorId
-  });
 }
 
 /** Primary straight bundle hero video (upload to this public path when ready). */
@@ -690,9 +684,11 @@ export default function ShopTextureCategoryProductPage() {
     const allowed = bcfTexturesForOrigin(bcfOrigin);
     if (!allowed.includes(t)) {
       skipBcfOriginDefaultOnNextPathRef.current = true;
-      navigate(shopBcfPdpHref(category, allowed[0] as Texture), { replace: true });
+      navigate(shopBcfTexturePdpHref(category, allowed[0] as Texture, bcfColor, bcfOrigin), {
+        replace: true
+      });
     }
-  }, [bcfOrigin, navigate, category, location.search]);
+  }, [bcfOrigin, bcfColor, navigate, category, location.search]);
 
   useEffect(() => {
     const allowedIds = new Set(bcfColorsAvailable.map((o) => o.id));
@@ -753,18 +749,33 @@ export default function ShopTextureCategoryProductPage() {
     setShowMobileMenu(false);
   };
 
-  const handleBcfColorSelect = React.useCallback((colorId: string) => {
-    const defaultId = bcfDefaultColorIdForOrigin(bcfOrigin);
-    if (colorId === defaultId) {
+  const syncBcfColorToUrl = React.useCallback(
+    (colorId: string) => {
+      if (!category) return;
+      navigate(shopBcfPdpHref(category, texture, { origin: bcfOrigin, color: colorId }), {
+        replace: true
+      });
+    },
+    [bcfOrigin, category, navigate, texture]
+  );
+
+  const handleBcfColorSelect = React.useCallback(
+    (colorId: string) => {
+      const defaultId = bcfDefaultColorIdForOrigin(bcfOrigin);
+      if (colorId === defaultId) {
+        setBcfColor(colorId);
+        syncBcfColorToUrl(colorId);
+        return;
+      }
+      if (!isPremiumMemberForGatedFeatures()) {
+        setShowBcfColorUpgradeModal(true);
+        return;
+      }
       setBcfColor(colorId);
-      return;
-    }
-    if (!isPremiumMemberForGatedFeatures()) {
-      setShowBcfColorUpgradeModal(true);
-      return;
-    }
-    setBcfColor(colorId);
-  }, [bcfOrigin]);
+      syncBcfColorToUrl(colorId);
+    },
+    [bcfOrigin, syncBcfColorToUrl]
+  );
 
   const handleBcfColorUpgradeConfirm = () => {
     setShowBcfColorUpgradeModal(false);
@@ -1497,7 +1508,7 @@ export default function ShopTextureCategoryProductPage() {
                               isSelected={texture === tid}
                               isDisabled={false}
                               onClick={() =>
-                                navigate(bcfTexturePdpHref(category, tid, bcfColor), { replace: true })
+                                navigate(shopBcfTexturePdpHref(category, tid, bcfColor), { replace: true })
                               }
                               containerSize={BUNDLE_THUMB_OUTER_W_PX}
                               imgSize={BUNDLE_THUMB_INNER_H_PX}
@@ -1655,7 +1666,18 @@ export default function ShopTextureCategoryProductPage() {
                             <button
                               key={o.id}
                               type="button"
-                              onClick={() => setBcfOrigin(o.id)}
+                              onClick={() => {
+                                if (!category) return;
+                                const nextOrigin = o.id;
+                                const allowed = bcfTexturesForOrigin(nextOrigin);
+                                const nextTexture = allowed.includes(texture)
+                                  ? texture
+                                  : (allowed[0] as Texture);
+                                navigate(
+                                  shopBcfTexturePdpHref(category, nextTexture, bcfColor, nextOrigin),
+                                  { replace: true }
+                                );
+                              }}
                               style={{
                                 ...bcfOptionBtnTypography,
                                 ...bcfOptionSelectedChrome(sel)
@@ -1679,7 +1701,7 @@ export default function ShopTextureCategoryProductPage() {
                               onClick={() => {
                                 if (!allowed) return;
                                 if (tid !== texture) {
-                                  navigate(bcfTexturePdpHref(category, tid, bcfColor));
+                                  navigate(shopBcfTexturePdpHref(category, tid, bcfColor));
                                 }
                               }}
                               style={{
