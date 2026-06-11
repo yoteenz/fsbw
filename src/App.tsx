@@ -17,6 +17,7 @@ import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import CommerceRouteGuard from './components/CommerceRouteGuard';
 import MembershipRouteSync from './components/MembershipRouteSync';
+import HomeLandingRedirect from './components/HomeLandingRedirect';
 import ProductInventorySync from './components/ProductInventorySync';
 import PsaAssistantWidget from './components/psa/PsaAssistantWidget';
 import { PsaChatCopyBootstrap } from './components/psa/PsaChatCopyBootstrap';
@@ -405,8 +406,8 @@ function App() {
       <PsaChatCopyBootstrap />
       <PsaAssistantWidget />
       <DebugModeShell>
-        <Route index element={<Navigate to="/home/shop" replace />} />
-        <Route path="/" element={<Navigate to="/home/shop" replace />} />
+        <Route index element={<HomeLandingRedirect />} />
+        <Route path="/" element={<HomeLandingRedirect />} />
         <Route path="/lobby/lounge" element={<LobbyPage />} />
         <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />
