@@ -27139,6 +27139,7 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User shared ChatGPT spec for **separate Frontal Slayer hairstyle analysis** — static Supabase templates + React overlays (no AI-generated layout); tier picks **free=1**, **3mo=top+3**, **6mo=top+6**, **12mo/black=top+9**; AI only for client hairstyle preview upstream.
 - **Review vs codebase:** Aligned **`HAIR_COLORS`** / unit rules with **`productOptions.ts`** (BLANCO → GOLDEN/PLATINUM/ASH). Did **not** change live PSA API pick caps (3→4, 6→6, 12→10) — added **`buildHairstyleAnalysisFromPsaPicks()`** adapter for phase 2. Templates: **`live-preview/Analysis/IMG_2438|2447|2450|2451.png`**.
 - **Shipped:** **`src/types/hairstyleAnalysis.ts`**, **`hairstyleCatalog.ts`**, **`hairstyleAnalysisRules.ts`**, **`components/hairstyle-analysis/*`** (card, preview, rose bullet, **`html-to-image`** PNG download), demo **`/tools/hairstyle-analysis`**, **`docs/STYLE_ANALYSIS.md`**. Debug slot frames for coordinate tuning. Commit **`aeadfb9b`**.
+- **Follow-up:** User reported overlays duplicated template icons/panels. **Text-only overlays** (no rose bullets, spec tables, bordered thumb panels); **upload client preview**; debug = **draggable slot handles** + **contentEditable text** + layout JSON export; debug hidden on PNG capture. **`857d74db`**.
 
 ---
 
