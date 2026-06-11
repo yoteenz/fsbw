@@ -27217,4 +27217,12 @@ Pushed **`master`** + **`preview/mobile`**.
 ## 2026-06-10 — Homepage routing: premium → lobby, standard → home/shop
 
 - **Context:** User asked that **premium members** visiting the site **homepage** (`/`) land on the **lobby**, not **`/home/shop`** (standard members only).
-- **Change:** **`HomeLandingRedirect.tsx`** — guests + standard → **`/home/shop`**; premium (**`isPremiumMemberForGatedFeatures`**) → **`/lobby`**; signed-in users **`syncAllFromApi`** before final path. **`App.tsx`** index + **`/`** routes use it (replaces static **`Navigate`**). **`CORE.md`** default-route note updated. Direct **`/home/shop`** / **`/lobby`** links unchanged.
+- **Change:** **`HomeLandingRedirect.tsx`** — guests + standard → **`/home/shop`**; premium (**`isPremiumMemberForGatedFeatures`**) → **`/lobby`**; signed-in users **`syncAllFromApi`** before final path. **`App.tsx`** index + **`/lobby`** routes use it (replaces static **`Navigate`**). **`CORE.md`** default-route note updated. Direct **`/home/shop`** / **`/lobby`** links unchanged.
+
+---
+
+## 2026-06-09 — Studio Try-On COLOR_PREVIEW_MISSING fix
+
+- **Context:** User reported **`COLOR_PREVIEW_MISSING`** on Studio Try-On (`/tools/live-try-on`) while prep still showed **PREPARING YOUR COLOR…** — capture could run before mannequin WebPs existed in Supabase Storage.
+- **Cause:** Race — UI opened studio when **`sourcePayload.color`** existed but **`ensureLiveTryOnWigAssets`** / **`postWigPreviewLiveNoirColor`** still running; server **`startStudioTryOnRender`** only probed Storage paths via **`liveTryOnMannequinStoragePaths()`** and threw **`COLOR_PREVIEW_MISSING`** without using client prep URLs.
+- **Fix:** **`api/_lib/liveTryOnStudio.ts`** — **`resolveMannequinFalUrl()`** falls back to **`mannequinPublicUrl`** (fetch + Fal upload). **`api/live-try-on-studio-render.ts`** + **`src/utils/api.ts`** accept/pass **`mannequinPublicUrl`**. **`LiveTryOnStudioCapture`** sends angle-matched prep URL via **`mannequinPublicUrlForAngle()`**, disables capture without URLs, **`formatStudioTryOnError()`** for friendlier copy. **`live-try-on/page.tsx`** — **`prepComplete`** gate; studio only when **`prepComplete && sourcePayload && wigUrls`**. Commit **`b8271f67`** on **`master`** + **`preview/mobile`**.
