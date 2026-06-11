@@ -27193,3 +27193,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to reduce spacing above the black price text **only** in the **similar products** container (not recently viewed) by **2px**.
 - **Change:** **`BCF_SIMILAR_STRIP_PRODUCT_PRICE_CLASS`** on BCF similar strip price rows; **`index.css`** sets **`margin-top: 0`** (vs default **`2px`** on **`marble-strip-product-price`**). Recently viewed strip unchanged.
+
+---
+
+## 2026-06-10 — Homepage routing: premium → lobby, standard → home/shop
+
+- **Context:** User asked that **premium members** visiting the site **homepage** (`/`) land on the **lobby**, not **`/home/shop`** (standard members only).
+- **Change:** **`HomeLandingRedirect.tsx`** — guests + standard → **`/home/shop`**; premium (**`isPremiumMemberForGatedFeatures`**) → **`/lobby`**; signed-in users **`syncAllFromApi`** before final path. **`App.tsx`** index + **`/`** routes use it (replaces static **`Navigate`**). **`CORE.md`** default-route note updated. Direct **`/home/shop`** / **`/lobby`** links unchanged.
