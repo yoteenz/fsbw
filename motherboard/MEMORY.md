@@ -27186,3 +27186,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported red subline on platinum blonde **similar products** cards (e.g. WAVY/CURLY FRONTALS cross-sells) showed **PLATINUM BLONDE** but should match standard cards: **RAW HUMAN HAIR**.
 - **Change:** **`bcfProductOptions.ts`** — **`bcfSimilarStripItemFromSlot`** **`subline`** always **`RAW HUMAN HAIR`** (platinum thumb/deep-link unchanged). Commit **`75e6895f`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar products price spacing −2px
+
+- **Context:** User asked to reduce spacing above the black price text **only** in the **similar products** container (not recently viewed) by **2px**.
+- **Change:** **`BCF_SIMILAR_STRIP_PRODUCT_PRICE_CLASS`** on BCF similar strip price rows; **`index.css`** sets **`margin-top: 0`** (vs default **`2px`** on **`marble-strip-product-price`**). Recently viewed strip unchanged.
