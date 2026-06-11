@@ -165,7 +165,7 @@ OUTPUT: One character on transparent PNG, high resolution (1024×1024 or 768×76
 1. Download PNG(s).
 2. Optional: run through [remove.bg](https://www.remove.bg) or Photoshop if edges aren’t clean.
 3. Save to `public/assets/` using the filenames in the table above (e.g. `psa-avatar-neutral.png`).
-4. **If your PNGs already have a real transparent background** (Ideogram / Fal / Photoshop), **stop here** — do **not** run `psa-solidify-avatar-alpha.mjs` or `psa-flatten-avatar-backgrounds.mjs`. Those scripts degrade quality and punch holes in the cutout.
+4. **If corners still show a gray/white checkerboard** in the app (baked fake transparency), run `node scripts/psa-remove-checkerboard-alpha.mjs` then `node scripts/psa-solidify-avatar-alpha.mjs`, then `node scripts/check-psa-avatar-alpha.mjs` (checker should be ~0%). Do **not** use deprecated `psa-flatten-avatar-backgrounds.mjs` (punches holes in skin).
 5. Bump `PSA_AVATAR_ASSET_VERSION` in `src/constants/psaConfig.ts` whenever you replace PNGs so browsers/CDN fetch fresh files.
 6. Redeploy or hard-refresh — no code change needed unless you use different filenames (then edit `src/constants/psaConfig.ts`).
 
