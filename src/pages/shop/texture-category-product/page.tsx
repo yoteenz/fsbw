@@ -37,7 +37,7 @@ import {
   buildBcfSimilarStripItems,
   parseBcfColorFromSearch,
   parseBcfOriginFromSearch,
-  shopBcfPdpHref,
+  shopBcfColorSelectionHref,
   shopBcfTexturePdpHref,
   BCF_BUNDLE_DEAL_DISCOUNT_USD,
   BCF_OPTION_RED,
@@ -726,38 +726,58 @@ export default function ShopTextureCategoryProductPage() {
     const colorFromUrl = parseBcfColorFromSearch(location.search);
     if (originFromUrl) {
       skipBcfOriginDefaultOnNextPathRef.current = true;
-      setBcfOrigin(originFromUrl);
+      setBcfOrigin((prev) => (prev === originFromUrl ? prev : originFromUrl));
     } else if (skipBcfOriginDefaultOnNextPathRef.current) {
       skipBcfOriginDefaultOnNextPathRef.current = false;
     } else {
       const t = parseTextureSearch(location.search) ?? 'straight';
-      setBcfOrigin(bcfDefaultOriginForRouteTexture(t));
+      const nextOrigin = bcfDefaultOriginForRouteTexture(t);
+      setBcfOrigin((prev) => (prev === nextOrigin ? prev : nextOrigin));
     }
     if (colorFromUrl) {
-      setBcfColor(colorFromUrl);
+      setBcfColor((prev) => (prev === colorFromUrl ? prev : colorFromUrl));
     }
   }, [location.pathname, location.search, category]);
 
   useEffect(() => {
     if (!category) return;
     const t = parseTextureSearch(location.search) ?? 'straight';
-    const allowed = bcfTexturesForOrigin(bcfOrigin);
-    if (!allowed.includes(t)) {
-      skipBcfOriginDefaultOnNextPathRef.current = true;
-      navigate(shopBcfTexturePdpHref(category, allowed[0] as Texture, bcfColor, bcfOrigin), {
-        replace: true
-      });
-    }
-  }, [bcfOrigin, bcfColor, navigate, category, location.search]);
+    const originFromUrl = parseBcfOriginFromSearch(location.search) ?? bcfOrigin;
+    const colorFromUrl = parseBcfColorFromSearch(location.search) ?? bcfColor;
+    const allowed = bcfTexturesForOrigin(originFromUrl);
+    if (allowed.includes(t)) return;
+
+    const targetHref = shopBcfTexturePdpHref(category, allowed[0] as Texture, colorFromUrl, originFromUrl);
+    const currentHref = `${location.pathname}${location.search}`;
+    if (currentHref === targetHref) return;
+
+    skipBcfOriginDefaultOnNextPathRef.current = true;
+    navigate(targetHref, { replace: true });
+  }, [bcfOrigin, bcfColor, navigate, category, location.pathname, location.search]);
 
   useEffect(() => {
+    if (!category) return;
     const allowedIds = new Set(bcfColorsAvailable.map((o) => o.id));
-    if (!allowedIds.has(bcfColor)) {
-      const fallback = bcfDefaultColorIdForOrigin(bcfOrigin);
-      const next = allowedIds.has(fallback) ? fallback : (bcfColorsAvailable[0]?.id ?? 'OFF BLACK');
-      setBcfColor(next);
+    if (allowedIds.has(bcfColor)) return;
+
+    const fallback = bcfDefaultColorIdForOrigin(bcfOrigin);
+    const next = allowedIds.has(fallback) ? fallback : (bcfColorsAvailable[0]?.id ?? 'OFF BLACK');
+    if (next === bcfColor) return;
+
+    const colorFromUrl = parseBcfColorFromSearch(location.search);
+    if (colorFromUrl && !allowedIds.has(colorFromUrl)) {
+      const t = parseTextureSearch(location.search) ?? texture;
+      const targetHref = shopBcfColorSelectionHref(category, t, next, bcfOrigin);
+      const currentHref = `${location.pathname}${location.search}`;
+      if (currentHref !== targetHref) {
+        skipBcfOriginDefaultOnNextPathRef.current = true;
+        navigate(targetHref, { replace: true });
+      }
+      return;
     }
-  }, [bcfOrigin, bcfColorsAvailable, bcfColor]);
+
+    setBcfColor(next);
+  }, [bcfOrigin, bcfColorsAvailable, bcfColor, category, location.pathname, location.search, navigate, texture]);
 
   const bcfLaceOptions = React.useMemo(() => {
     if (!category || category === 'bundles') return [];
@@ -809,32 +829,18 @@ export default function ShopTextureCategoryProductPage() {
     setShowMobileMenu(false);
   };
 
-  const syncBcfColorToUrl = React.useCallback(
-    (colorId: string) => {
-      if (!category) return;
-      navigate(shopBcfPdpHref(category, texture, { origin: bcfOrigin, color: colorId }), {
-        replace: true
-      });
-    },
-    [bcfOrigin, category, navigate, texture]
-  );
-
   const handleBcfColorSelect = React.useCallback(
     (colorId: string) => {
       const defaultId = bcfDefaultColorIdForOrigin(bcfOrigin);
-      if (colorId === defaultId) {
-        setBcfColor(colorId);
-        syncBcfColorToUrl(colorId);
-        return;
-      }
-      if (!isPremiumMemberForGatedFeatures()) {
+      if (colorId !== defaultId && !isPremiumMemberForGatedFeatures()) {
         setShowBcfColorUpgradeModal(true);
         return;
       }
-      setBcfColor(colorId);
-      syncBcfColorToUrl(colorId);
+      if (!category) return;
+      skipBcfOriginDefaultOnNextPathRef.current = true;
+      navigate(shopBcfColorSelectionHref(category, texture, colorId, bcfOrigin), { replace: true });
     },
-    [bcfOrigin, syncBcfColorToUrl]
+    [bcfOrigin, category, navigate, texture]
   );
 
   const handleBcfColorUpgradeConfirm = () => {
