@@ -27139,4 +27139,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Bundles:** **`Bundles Color/Platinum/`** IMG **2041–2049** (per texture); added to existing straight/wavy/curly noir maps.
 - **Closures:** **`Closures Color/Platinum/`** IMG **2029–2037**; **frontals:** **`Frontals Color/Platinum/`** IMG **2014–2028**.
 - **Change:** **`texture-category-product/page.tsx`** — **`bcfPdpHeroPhotoSrc`**, **`CLOSURES_COLOR_PHOTO`**, **`FRONTALS_COLOR_PHOTO`**; hero + texture thumbs + video posters use color-specific src for all BCF PDPs. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF blonde color crash fix (React #185)
+
+- **Context:** User got **COMPONENT FAILED TO LOAD** / React **#185** (max update depth) when selecting **PLATINUM / GOLDEN / ASH**.
+- **Root cause:** Color URL sync passed **non-Russian origin** with Russian-only colors → effects fought (**`setBcfColor`** vs URL vs texture redirect) in a loop.
+- **Fix:** **`shopBcfColorSelectionHref`** + **`shopBcfTexturePdpHref`** force **straight + Russian** for blonde trio; color swatch navigates URL only (no duplicate **`setState`**); URL sync effects guard **`prev === next`** and compare href before **`navigate`**. Pushed **`master`** + **`preview/mobile`**.
 >>>>>>> Stashed changes
