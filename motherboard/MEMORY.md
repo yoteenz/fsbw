@@ -27172,3 +27172,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported blonde/Russian fix did not apply to **noir** bundles: hero thumbs stuck when **Russian** not selected; **straight → wavy** should switch **hair profile** (e.g. Cambodian → Indian), not only when Russian.
 - **Root cause:** Texture thumb + hair-texture pill **`navigate`** passed current **`bcfOrigin`** into **`shopBcfTexturePdpHref`**. **`bcfOriginForTextureAndColor`** honored explicit origin even when that origin cannot wear the target texture (e.g. Cambodian + wavy) → redirect effect snapped back to straight.
 - **Fix:** Thumbs/pills call **`shopBcfTexturePdpHref(category, tid, bcfColor)`** without pinning origin; **`bcfOriginForTextureAndColor`** uses explicit origin only when it allows the texture, else **`bcfDefaultOriginForRouteTexture`** (straight=Cambodian, wavy=Indian, curly=Filipino); blonde still → Russian. Hair-profile buttons still pass explicit **`nextOrigin`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Bundles DETAILS: premium by design 150G bullet
+
+- **Context:** User asked to add a bullet above **SINGLE DONOR SOURCING** in the **premium by design** section on the bundles PDP DETAILS tab.
+- **Change:** **`BundleProductDetailsTab.tsx`** — **`BUNDLE_PREMIUM_BY_DESIGN`**: **`150G BUNDLES, 1.5X THE INDUSTRY STANDARD WEIGHT`** inserted after **100% RAW HUMAN HAIR**, before **SINGLE DONOR SOURCING**. Commit **`e06eaf32`** on **`master`** + **`preview/mobile`**.
