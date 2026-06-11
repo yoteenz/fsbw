@@ -27100,3 +27100,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User corrected platinum BCF similar-product assets (replacing **Platinum Blonde IMG_2112–2121**).
 - **URLs:** wavy closure **58**, wavy frontal **59**, curly closure **60**, curly frontal **61** under **`live-preview/BCF/`** (all **200**).
 - **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Wavy bundles PDP: color-specific hero photos
+
+- **Context:** User provided Supabase **`Bundles Color/Wavy`** PNGs for wavy-bundle hair color hero swaps (15 noir palette colors).
+- **Mapping:** JET BLACK **2171**, ESPRESSO **2181**, CHESTNUT **2182**, HONEY **2183**, AUBURN **2184**, COPPER **2185**, GINGER **2186**, SANGRIA **2187**, CHERRY **2188**, RASPBERRY **2189**, PLUM **2190**, COBALT **2191**, TEAL **2193**, SLIME **2194**, CITRINE **2195** (all **200**).
+- **Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_WAVY_COLOR_PHOTO`** + **`bundlePhotoSrc`** wavy branch; wavy hero + wavy texture thumb update on color select. Pushed **`master`** + **`preview/mobile`**.
