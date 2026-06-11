@@ -137,6 +137,10 @@ const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/pag
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const LiveTryOnPage = lazyWithRetry(() => import('./pages/tools/live-try-on/page'), 'LiveTryOnPage');
+const HairstyleAnalysisDemoPage = lazyWithRetry(
+  () => import('./pages/HairstyleAnalysisDemo'),
+  'HairstyleAnalysisDemoPage'
+);
 const AdminBrandCopyEditor = lazyWithRetry(() => import('./pages/admin/brand/copy-editor/page'), 'AdminBrandCopyEditor');
 const OrderFormPage = lazyWithRetry(() => import('./pages/shop/order-form/page'), 'OrderFormPage');
 const ShopTextureCategoryProductPage = lazyWithRetry(
@@ -839,6 +843,11 @@ function App() {
         <Route path="/tools/live-try-on" element={
           <Suspense fallback={<LoadingScreen />}>
             <LiveTryOnPage />
+          </Suspense>
+        } />
+        <Route path="/tools/hairstyle-analysis" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <HairstyleAnalysisDemoPage />
           </Suspense>
         } />
         {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
