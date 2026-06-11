@@ -77,6 +77,7 @@ import {
   marbleStripThumbWrap,
   marbleStripViewportStyle,
   MARBLE_STRIP_PRODUCT_PRICE_CLASS,
+  BCF_SIMILAR_STRIP_PRODUCT_PRICE_CLASS,
   marbleStripProductNameStyle,
   marbleStripProductPriceStyle,
   marbleStripProductRedLineStyle,
@@ -2162,7 +2163,7 @@ export default function ShopTextureCategoryProductPage() {
                                     <p style={marbleStripProductNameStyle()}>{sim.title}</p>
                                     <p style={marbleStripProductRedLineStyle()}>{sim.subline}</p>
                                     <p
-                                      className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
+                                      className={`${MARBLE_STRIP_PRODUCT_PRICE_CLASS} ${BCF_SIMILAR_STRIP_PRODUCT_PRICE_CLASS}`}
                                       style={marbleStripProductPriceStyle()}
                                       dangerouslySetInnerHTML={formatPrice(sim.priceUsd)}
                                     />
