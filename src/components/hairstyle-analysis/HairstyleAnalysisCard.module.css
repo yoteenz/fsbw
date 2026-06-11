@@ -87,6 +87,12 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
+.clientNameText {
+  font-size: clamp(6px, 1.5vw, 9px);
+  letter-spacing: 0.2em;
+  color: #eb1c24;
+}
+
 .scoreText {
   font-size: clamp(7px, 1.8vw, 10px);
   font-weight: 600;

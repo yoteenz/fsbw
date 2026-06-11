@@ -51,22 +51,33 @@ export type TextSlot = {
   height?: string;
 };
 
-export type AdditionalLookSlot = {
-  image: PercentRect;
-  text: TextSlot;
-};
+export type TemplateFieldKind = 'text' | 'image';
 
-export type TemplateSlotConfig = {
-  clientImage: PercentRect;
-  topScore: PercentRect;
-  rating: PercentRect;
-  /** Value-only lines beside template rose bullets (no icons rendered). */
-  topMatchLines: TextSlot[];
-  additionalLooks?: AdditionalLookSlot[];
-  /** Value-only why lines beside template bullets. */
-  whyLines: TextSlot[];
+/** One populate target on a static template (value-only overlay). */
+export type TemplateFieldDef = {
+  id: string;
+  label: string;
+  kind: TemplateFieldKind;
+  slot: TextSlot | PercentRect;
+  multiline?: boolean;
 };
 
 export type SlotLayoutOverrides = Record<string, Partial<PercentRect>>;
 
 export type TextContentOverrides = Record<string, string>;
+
+/** @deprecated Use getTemplateFields() — kept for layout JSON export compatibility. */
+export type AdditionalLookSlot = {
+  image: PercentRect;
+  text: TextSlot;
+};
+
+/** @deprecated Use getTemplateFields() */
+export type TemplateSlotConfig = {
+  clientImage: PercentRect;
+  topScore: PercentRect;
+  rating: PercentRect;
+  topMatchLines: TextSlot[];
+  additionalLooks?: AdditionalLookSlot[];
+  whyLines: TextSlot[];
+};

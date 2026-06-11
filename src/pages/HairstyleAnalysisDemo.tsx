@@ -48,8 +48,8 @@ export default function HairstyleAnalysisDemo() {
             <li>12 month / black — top + 9 additional</li>
           </ul>
           <p className="mt-3">
-            Upload your generated hairstyle preview or paste a URL. Debug mode lets you drag slot handles
-            and edit overlay text — only values render; icons and panels come from the static template.
+            Each tier uses a different field map (free specs + why, 3mo alts, 6mo portfolio, 12mo full grid).
+            Upload a client preview, then debug-drag slots to align with the Supabase template placeholders.
           </p>
         </section>
       </div>
