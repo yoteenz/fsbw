@@ -27164,3 +27164,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **FIND MY BEST LOOKS** quick reply prompts **Sign in required** after uploading a selfie despite already being signed in (and seeing PSA).
 - **Root cause:** PSA widget gates on **`localStorage` `isSignedIn`** + premium tier; **`POST /api/psa/selfie-style-analysis`** requires a **Supabase Bearer JWT** via **`getAuthUser`**. **`postPsaSelfieStyleAnalysis`** called **`getAccessToken()`** once with no session refresh or **401** retry — unlike **`postPsaChat`** / **`psaAuthedFetch`**. Stale or missing JWT while app still shows signed-in → generic **SIGN IN REQUIRED**.
 - **Fix:** **`psaSelfieStyleAnalysisApi.ts`** — reuse **`getPsaAuthToken`** + **`psaAuthedFetch`** + **`psaSessionExpiredMessage`** (exported from **`psaApi.ts`**). **`PsaSelfieStyleAnalysisPanel`** shows session-expired guidance in normal case (not all-caps). Commit **`a8bc7a59`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF noir texture thumbs switch hair profile (bundles/closures/frontals)
+
+- **Context:** User reported blonde/Russian fix did not apply to **noir** bundles: hero thumbs stuck when **Russian** not selected; **straight → wavy** should switch **hair profile** (e.g. Cambodian → Indian), not only when Russian.
+- **Root cause:** Texture thumb + hair-texture pill **`navigate`** passed current **`bcfOrigin`** into **`shopBcfTexturePdpHref`**. **`bcfOriginForTextureAndColor`** honored explicit origin even when that origin cannot wear the target texture (e.g. Cambodian + wavy) → redirect effect snapped back to straight.
+- **Fix:** Thumbs/pills call **`shopBcfTexturePdpHref(category, tid, bcfColor)`** without pinning origin; **`bcfOriginForTextureAndColor`** uses explicit origin only when it allows the texture, else **`bcfDefaultOriginForRouteTexture`** (straight=Cambodian, wavy=Indian, curly=Filipino); blonde still → Russian. Hair-profile buttons still pass explicit **`nextOrigin`**. Pushed **`master`** + **`preview/mobile`**.
