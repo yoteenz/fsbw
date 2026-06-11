@@ -27140,6 +27140,7 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Review vs codebase:** Aligned **`HAIR_COLORS`** / unit rules with **`productOptions.ts`** (BLANCO → GOLDEN/PLATINUM/ASH). Did **not** change live PSA API pick caps (3→4, 6→6, 12→10) — added **`buildHairstyleAnalysisFromPsaPicks()`** adapter for phase 2. Templates: **`live-preview/Analysis/IMG_2438|2447|2450|2451.png`**.
 - **Shipped:** **`src/types/hairstyleAnalysis.ts`**, **`hairstyleCatalog.ts`**, **`hairstyleAnalysisRules.ts`**, **`components/hairstyle-analysis/*`** (card, preview, rose bullet, **`html-to-image`** PNG download), demo **`/tools/hairstyle-analysis`**, **`docs/STYLE_ANALYSIS.md`**. Debug slot frames for coordinate tuning. Commit **`aeadfb9b`**.
 - **Follow-up:** User reported overlays duplicated template icons/panels. **Text-only overlays** (no rose bullets, spec tables, bordered thumb panels); **upload client preview**; debug = **draggable slot handles** + **contentEditable text** + layout JSON export; debug hidden on PNG capture. **`857d74db`**.
+- **ChatGPT tier prompts wired:** Per-tier field maps (`hairstyleAnalysisTemplateLayouts.ts`) + value builders (`hairstyleAnalysisOverlayContent.ts`) — free=bullets+specs+5 why; 3mo=top+3 alts; 6mo=portfolio 01–07; 12mo=9 alt blocks+specs+10 why. Kateena demo matches prompt copy. `buildClientHairstylePreviewPrompt()` for upstream hair-only edit. **`docs/HAIRSTYLE_ANALYSIS_TEMPLATES.md`**. **`5eef3532`**.
 
 ---
 
