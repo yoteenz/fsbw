@@ -34,6 +34,7 @@ import {
   bcfOptionSelectedChrome,
   bcfPriceAdjustments,
   bcfTexturesForOrigin,
+  BCF_RUSSIAN_ONLY_COLOR_IDS,
   buildBcfSimilarStripItems,
   parseBcfColorFromSearch,
   parseBcfOriginFromSearch,
@@ -731,7 +732,10 @@ export default function ShopTextureCategoryProductPage() {
       skipBcfOriginDefaultOnNextPathRef.current = false;
     } else {
       const t = parseTextureSearch(location.search) ?? 'straight';
-      const nextOrigin = bcfDefaultOriginForRouteTexture(t);
+      const nextOrigin =
+        colorFromUrl && BCF_RUSSIAN_ONLY_COLOR_IDS.has(colorFromUrl)
+          ? 'RUSSIAN'
+          : bcfDefaultOriginForRouteTexture(t);
       setBcfOrigin((prev) => (prev === nextOrigin ? prev : nextOrigin));
     }
     if (colorFromUrl) {
@@ -1579,7 +1583,10 @@ export default function ShopTextureCategoryProductPage() {
                               isSelected={texture === tid}
                               isDisabled={false}
                               onClick={() =>
-                                navigate(shopBcfTexturePdpHref(category, tid, bcfColor), { replace: true })
+                                navigate(
+                                  shopBcfTexturePdpHref(category, tid, bcfColor, bcfOrigin),
+                                  { replace: true }
+                                )
                               }
                               containerSize={BUNDLE_THUMB_OUTER_W_PX}
                               imgSize={BUNDLE_THUMB_INNER_H_PX}
@@ -1744,8 +1751,13 @@ export default function ShopTextureCategoryProductPage() {
                                 const nextTexture = allowed.includes(texture)
                                   ? texture
                                   : (allowed[0] as Texture);
+                                const nextColor =
+                                  nextOrigin !== 'RUSSIAN' &&
+                                  BCF_RUSSIAN_ONLY_COLOR_IDS.has(bcfColor)
+                                    ? bcfDefaultColorIdForOrigin(nextOrigin)
+                                    : bcfColor;
                                 navigate(
-                                  shopBcfTexturePdpHref(category, nextTexture, bcfColor, nextOrigin),
+                                  shopBcfTexturePdpHref(category, nextTexture, nextColor, nextOrigin),
                                   { replace: true }
                                 );
                               }}
@@ -1772,7 +1784,10 @@ export default function ShopTextureCategoryProductPage() {
                               onClick={() => {
                                 if (!allowed) return;
                                 if (tid !== texture) {
-                                  navigate(shopBcfTexturePdpHref(category, tid, bcfColor));
+                                  navigate(
+                                    shopBcfTexturePdpHref(category, tid, bcfColor, bcfOrigin),
+                                    { replace: true }
+                                  );
                                 }
                               }}
                               style={{

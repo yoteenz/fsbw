@@ -37,11 +37,24 @@ export const BCF_ORIGIN_OPTIONS: { id: BcfOriginId; label: string }[] = [
   { id: 'VIETNAMESE', label: 'VIETNAMESE' }
 ];
 
-/** Textures allowed for each origin (straight-only / wavy-only / curly-only). */
+/** Textures allowed for each origin. Russian (Blanco) supports all three; others are texture-locked. */
 export function bcfTexturesForOrigin(origin: BcfOriginId): ShopTextureCategoryThumbTexture[] {
-  if (origin === 'CAMBODIAN' || origin === 'RUSSIAN') return ['straight'];
+  if (origin === 'RUSSIAN') return ['straight', 'wavy', 'curly'];
+  if (origin === 'CAMBODIAN') return ['straight'];
   if (origin === 'INDIAN' || origin === 'INDONESIAN') return ['wavy'];
   return ['curly'];
+}
+
+/** Origin for PDP URL from texture + optional shopper color (Blanco → Russian). */
+export function bcfOriginForTextureAndColor(
+  texture: ShopTextureCategoryThumbTexture | string,
+  colorId: string,
+  explicitOrigin?: BcfOriginId
+): BcfOriginId {
+  const color = colorId.trim().toUpperCase();
+  if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) return 'RUSSIAN';
+  if (explicitOrigin) return explicitOrigin;
+  return bcfDefaultOriginForRouteTexture(texture as ShopTextureCategoryThumbTexture);
 }
 
 export function bcfDefaultOriginForRouteTexture(t: ShopTextureCategoryThumbTexture): BcfOriginId {
@@ -122,6 +135,8 @@ export function parseBcfColorFromSearch(search: string): string | null {
 export function bcfInitialOriginFromPathname(pathname: string, search: string = ''): BcfOriginId {
   const fromQuery = parseBcfOriginFromSearch(search);
   if (fromQuery) return fromQuery;
+  const colorFromQuery = parseBcfColorFromSearch(search);
+  if (colorFromQuery && BCF_RUSSIAN_ONLY_COLOR_IDS.has(colorFromQuery)) return 'RUSSIAN';
   const shop = pathname.match(/^\/shop\/(bundles|closures|frontals)$/);
   if (!shop) return 'CAMBODIAN';
   const t = parseBcfSearchParams(search).get('texture');
@@ -169,17 +184,13 @@ export function shopBcfTexturePdpHref(
   colorId: string,
   origin?: BcfOriginId
 ): string {
-  const color = colorId.trim().toUpperCase();
-  if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) {
-    return shopBcfPdpHref(category, 'straight', { color });
-  }
   return shopBcfPdpHref(category, texture, {
-    origin: origin ?? bcfDefaultOriginForRouteTexture(texture as ShopTextureCategoryThumbTexture),
+    origin: bcfOriginForTextureAndColor(texture, colorId, origin),
     color: colorId,
   });
 }
 
-/** Color swatch tap — Russian trio forces straight + Russian origin via `shopBcfPdpHref`. */
+/** Color swatch tap — keeps current texture; Blanco colors switch origin to Russian. */
 export function shopBcfColorSelectionHref(
   category: ShopTextureCategoryThumbCategory | string,
   texture: ShopTextureCategoryThumbTexture | string,
@@ -188,7 +199,7 @@ export function shopBcfColorSelectionHref(
 ): string {
   const color = colorId.trim().toUpperCase();
   if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) {
-    return shopBcfPdpHref(category, 'straight', { color });
+    return shopBcfPdpHref(category, texture, { origin: 'RUSSIAN', color });
   }
   const allowed = bcfTexturesForOrigin(origin);
   const t = allowed.includes(texture as ShopTextureCategoryThumbTexture) ? texture : allowed[0];
