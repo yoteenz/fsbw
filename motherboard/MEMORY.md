@@ -27108,3 +27108,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User provided Supabase **`Bundles Color/Wavy`** PNGs for wavy-bundle hair color hero swaps (15 noir palette colors).
 - **Mapping:** JET BLACK **2171**, ESPRESSO **2181**, CHESTNUT **2182**, HONEY **2183**, AUBURN **2184**, COPPER **2185**, GINGER **2186**, SANGRIA **2187**, CHERRY **2188**, RASPBERRY **2189**, PLUM **2190**, COBALT **2191**, TEAL **2193**, SLIME **2194**, CITRINE **2195** (all **200**).
 - **Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_WAVY_COLOR_PHOTO`** + **`bundlePhotoSrc`** wavy branch; wavy hero + wavy texture thumb update on color select. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Curly bundles color heroes + preserve color across texture switch
+
+- **Context:** User provided **`Bundles Color/Curly`** PNGs (15 colors; COPPER = **`gpt-image-2-edit-1 (2).png`**, TEAL = **IMG_2176**). Also: hair **color must stay selected** when switching straight ↔ wavy ↔ curly (e.g. COPPER on straight remains COPPER on wavy).
+- **Curly mapping:** **2196–2210** (+ COPPER special filename, TEAL **2176**); all **200**.
+- **Color persistence:** Texture hero thumbs + **hair texture** pills navigate with **`bcfTexturePdpHref`** (passes current **`bcfColor`** in URL); removed URL-sync effect branch that reset color to origin default when **`color`** query absent. Pushed **`master`** + **`preview/mobile`**.
