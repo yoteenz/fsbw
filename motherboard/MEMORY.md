@@ -27134,6 +27134,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-09 — Template hairstyle analysis card composer (ChatGPT spec review)
+
+- **Context:** User shared ChatGPT spec for **separate Frontal Slayer hairstyle analysis** — static Supabase templates + React overlays (no AI-generated layout); tier picks **free=1**, **3mo=top+3**, **6mo=top+6**, **12mo/black=top+9**; AI only for client hairstyle preview upstream.
+- **Review vs codebase:** Aligned **`HAIR_COLORS`** / unit rules with **`productOptions.ts`** (BLANCO → GOLDEN/PLATINUM/ASH). Did **not** change live PSA API pick caps (3→4, 6→6, 12→10) — added **`buildHairstyleAnalysisFromPsaPicks()`** adapter for phase 2. Templates: **`live-preview/Analysis/IMG_2438|2447|2450|2451.png`**.
+- **Shipped:** **`src/types/hairstyleAnalysis.ts`**, **`hairstyleCatalog.ts`**, **`hairstyleAnalysisRules.ts`**, **`components/hairstyle-analysis/*`** (card, preview, rose bullet, **`html-to-image`** PNG download), demo **`/tools/hairstyle-analysis`**, **`docs/STYLE_ANALYSIS.md`**. Debug slot frames for coordinate tuning. Commit **`aeadfb9b`**.
+
+---
+
 ## 2026-06-10 — BCF PLATINUM / GOLDEN / ASH color hero photos (all categories)
 
 - **Context:** User provided Supabase color heroes for Russian trio **PLATINUM**, **GOLDEN**, **ASH** across bundles / closures / frontals × straight / wavy / curly.
