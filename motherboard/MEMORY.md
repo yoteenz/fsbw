@@ -27196,6 +27196,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-10 — PSA expressions: checkerboard backgrounds (why + fix)
+
+- **Context:** User asked why some PSA avatar expressions (and nudge thought bubble) still showed gray/white **checkerboard** instead of clean transparency.
+- **Cause:** Ideogram/Fal exports bake checker squares as **opaque pixels** (fake transparency), not true alpha. Original 11 expressions + **v5+** batch (**remembering**, **curator**, **red-carpet**, etc.) were never reprocessed after upload; **`psa-avatar-thinking-smiling.png`** was worst (~**48%** checker). UI is correct (transparent CSS frame) — assets were wrong. Policy since v10 was “don’t batch-process,” but source PNGs still had checker.
+- **Fix:** Restored conservative **`scripts/psa-remove-checkerboard-alpha.mjs`** (edge flood + neutral-square cleanup) + **`psa-solidify-avatar-alpha.mjs`** on all **`psa-avatar-*.png`** + **`psa-nudge-thought-bubble.png`**. QA: checker ~**0%** on all expressions. **`PSA_AVATAR_ASSET_VERSION` → `13`**, **`PSA_NUDGE_BUBBLE_ASSET_VERSION` → `2`**. **`npm run psa:remove-checkerboard`**. Commit **`5cbfbf70`** on **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-10 — Homepage routing: premium → lobby, standard → home/shop
 
 - **Context:** User asked that **premium members** visiting the site **homepage** (`/`) land on the **lobby**, not **`/home/shop`** (standard members only).
