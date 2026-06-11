@@ -27126,13 +27126,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
-<<<<<<< Updated upstream
 ## 2026-06-09 — FIND MY BEST LOOKS quick reply fix (PSA selfie analysis)
 
 - **Context (full chat):** Prior work added **style analysis** split (consult add-on tiers, PSA selfie ranked picks, live try-on unchanged) with **FIND MY BEST LOOKS** under PSA **MORE OPTIONS**. User reported the chip “isn’t working” — tied to hairstyle/selfie analysis, not the external ChatGPT chart prompt.
 - **Root cause:** **`PsaSelfieStyleAnalysisPanel`** mounted on **`psa-widget-fab-stack`** above the FAB (`bottom: 100%`) while chat open — panel sat **behind/under** **`PsaChatPanel`** overlay; chip handler also returned without a user bubble (felt like nothing happened).
 - **Fix:** Render selfie panel **inside** **`PsaChatPanel`** as full **`inset: 0`** overlay (`selfieStyleAnalysisOverlay` prop); styles moved to **`psaAssistant.css`**. On chip tap: **`appendUserMessage`**, open overlay; **`usePsaChat.sendMessage`** guards **`isPsaSelfieStyleChip`**; close chat clears overlay. Commit **`ed98e11b`** on **`master`** + **`preview/mobile`**.
-=======
+
+---
+
 ## 2026-06-10 — BCF PLATINUM / GOLDEN / ASH color hero photos (all categories)
 
 - **Context:** User provided Supabase color heroes for Russian trio **PLATINUM**, **GOLDEN**, **ASH** across bundles / closures / frontals × straight / wavy / curly.
@@ -27146,5 +27147,12 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User got **COMPONENT FAILED TO LOAD** / React **#185** (max update depth) when selecting **PLATINUM / GOLDEN / ASH**.
 - **Root cause:** Color URL sync passed **non-Russian origin** with Russian-only colors → effects fought (**`setBcfColor`** vs URL vs texture redirect) in a loop.
-- **Fix:** **`shopBcfColorSelectionHref`** + **`shopBcfTexturePdpHref`** force **straight + Russian** for blonde trio; color swatch navigates URL only (no duplicate **`setState`**); URL sync effects guard **`prev === next`** and compare href before **`navigate`**. Pushed **`master`** + **`preview/mobile`**.
->>>>>>> Stashed changes
+- **Fix (initial):** **`shopBcfColorSelectionHref`** + **`shopBcfTexturePdpHref`** force **straight + Russian** for blonde trio; color swatch navigates URL only (no duplicate **`setState`**); URL sync effects guard **`prev === next`** and compare href before **`navigate`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF blonde texture thumbs + Russian all-textures fix
+
+- **Context (full chat):** After the React **#185** fix, user reported selecting **GOLDEN / PLATINUM / ASH** broke BCF PDP UX: could not choose **hair profile** or **hair texture**; all blonde straight/wavy/curly thumbs appeared under **straight**; texture thumbs stuck on straight; **Russian** should still offer **straight, wavy, curly** (not straight-only).
+- **Root cause:** Crash fix over-corrected — **`bcfTexturesForOrigin(RUSSIAN)`** returned only **`['straight']`** (same as Cambodian), and **`shopBcfTexturePdpHref`** / **`shopBcfColorSelectionHref`** forced **`texture=straight`** for blonde colors, so URL + hero never switched texture even though per-texture blonde assets (IMG **2041–2049** bundles, etc.) were already mapped correctly in **`bcfPdpHeroPhotoSrc`**.
+- **Fix:** **`bcfProductOptions.ts`** — Russian allows **`['straight','wavy','curly']`**; added **`bcfOriginForTextureAndColor`** (blonde → **RUSSIAN**; noir respects explicit origin); removed force-straight from texture/color href helpers; **`bcfInitialOriginFromPathname`** defaults Russian when blonde **`color`** in URL. **`texture-category-product/page.tsx`** — URL sync defaults Russian for blonde color without **`origin`**; texture hero thumbs + hair-texture pills pass **`bcfOrigin`**; leaving Russian with a Blanco swatch resets to noir default color. Effect guards retained to avoid **#185** loops. Commit **`03c7d24f`** on **`master`** + **`preview/mobile`**.
