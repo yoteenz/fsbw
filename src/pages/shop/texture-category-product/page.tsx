@@ -161,6 +161,28 @@ const BUNDLE_WAVY_COLOR_PHOTO: Partial<Record<string, string>> = {
   CITRINE: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2195.png`
 };
 
+const BUNDLE_CURLY_COLOR_PHOTO_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Bundles%20Color/Curly';
+
+/** Curly bundles only — hero swaps when shopper picks a hair color. */
+const BUNDLE_CURLY_COLOR_PHOTO: Partial<Record<string, string>> = {
+  'JET BLACK': `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2196.png`,
+  ESPRESSO: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2197.png`,
+  CHESTNUT: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2198.png`,
+  HONEY: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2199.png`,
+  AUBURN: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2200.png`,
+  COPPER: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/gpt-image-2-edit-1%20(2).png`,
+  GINGER: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2202.png`,
+  SANGRIA: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2203.png`,
+  CHERRY: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2204.png`,
+  RASPBERRY: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2205.png`,
+  PLUM: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2206.png`,
+  COBALT: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2207.png`,
+  TEAL: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2176.png`,
+  SLIME: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2209.png`,
+  CITRINE: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2210.png`
+};
+
 function bundlePhotoSrc(texture: Texture, colorId: string): string {
   const colorKey = String(colorId || '').toUpperCase();
   if (texture === 'straight') {
@@ -171,7 +193,18 @@ function bundlePhotoSrc(texture: Texture, colorId: string): string {
     const tinted = BUNDLE_WAVY_COLOR_PHOTO[colorKey];
     if (tinted) return tinted;
   }
+  if (texture === 'curly') {
+    const tinted = BUNDLE_CURLY_COLOR_PHOTO[colorKey];
+    if (tinted) return tinted;
+  }
   return BUNDLE_PHOTO_BY_TEXTURE[texture];
+}
+
+function bcfTexturePdpHref(category: Category, tid: Texture, colorId: string): string {
+  return shopBcfPdpHref(category, tid, {
+    origin: bcfDefaultOriginForRouteTexture(tid),
+    color: colorId
+  });
 }
 
 /** Primary straight bundle hero video (upload to this public path when ready). */
@@ -648,10 +681,6 @@ export default function ShopTextureCategoryProductPage() {
     }
     if (colorFromUrl) {
       setBcfColor(colorFromUrl);
-    } else {
-      const t = parseTextureSearch(location.search) ?? 'straight';
-      const resolvedOrigin = originFromUrl ?? bcfDefaultOriginForRouteTexture(t);
-      setBcfColor(bcfDefaultColorIdForOrigin(resolvedOrigin));
     }
   }, [location.pathname, location.search, category]);
 
@@ -793,9 +822,7 @@ export default function ShopTextureCategoryProductPage() {
 
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
     if (!category) return shopTextureCategoryThumbSrc(tid, 'bundles');
-    if (category === 'bundles') {
-      return bundlePhotoSrc(tid, tid === 'curly' ? 'OFF BLACK' : bcfColor);
-    }
+    if (category === 'bundles') return bundlePhotoSrc(tid, bcfColor);
     if (category === 'closures' || category === 'frontals') {
       return BCF_CF_PHOTO[category][tid];
     }
@@ -1470,13 +1497,7 @@ export default function ShopTextureCategoryProductPage() {
                               isSelected={texture === tid}
                               isDisabled={false}
                               onClick={() =>
-                                navigate(
-                                  shopBcfPdpHref(category, tid, {
-                                    origin: bcfDefaultOriginForRouteTexture(tid),
-                                    color: bcfDefaultColorIdForOrigin(bcfDefaultOriginForRouteTexture(tid))
-                                  }),
-                                  { replace: true }
-                                )
+                                navigate(bcfTexturePdpHref(category, tid, bcfColor), { replace: true })
                               }
                               containerSize={BUNDLE_THUMB_OUTER_W_PX}
                               imgSize={BUNDLE_THUMB_INNER_H_PX}
@@ -1658,12 +1679,7 @@ export default function ShopTextureCategoryProductPage() {
                               onClick={() => {
                                 if (!allowed) return;
                                 if (tid !== texture) {
-                                  navigate(
-                                    shopBcfPdpHref(category, tid, {
-                                      origin: bcfDefaultOriginForRouteTexture(tid),
-                                      color: bcfDefaultColorIdForOrigin(bcfDefaultOriginForRouteTexture(tid))
-                                    })
-                                  );
+                                  navigate(bcfTexturePdpHref(category, tid, bcfColor));
                                 }
                               }}
                               style={{
