@@ -1,4 +1,4 @@
-import { getAccessToken } from './api';
+import { getPsaAuthToken, psaAuthedFetch, psaSessionExpiredMessage } from './psaApi';
 import type { PsaSelfieStyleAnalysisResult } from '../types/styleAnalysis';
 
 export type PsaSelfieStyleAnalysisResponse =
@@ -12,25 +12,39 @@ export type PsaSelfieStyleAnalysisResponse =
 export async function postPsaSelfieStyleAnalysis(
   selfieDataUrl: string
 ): Promise<PsaSelfieStyleAnalysisResponse> {
-  const token = await getAccessToken();
+  const token = await getPsaAuthToken();
   if (!token) {
-    return { ok: false, code: 'SIGN_IN_REQUIRED', message: 'Sign in to use PSA style analysis.' };
+    return {
+      ok: false,
+      code: 'SIGN_IN_REQUIRED',
+      message: psaSessionExpiredMessage(),
+    };
   }
 
-  const env = (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env;
-  const base = (env?.VITE_API_BASE || '').replace(/\/$/, '');
-  const url = base ? `${base}/api/psa/selfie-style-analysis` : '/api/psa/selfie-style-analysis';
-
   try {
-    const res = await fetch(url, {
+    const res = await psaAuthedFetch('/api/psa/selfie-style-analysis', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ selfieDataUrl }),
     });
+    if (!res) {
+      return {
+        ok: false,
+        code: 'SIGN_IN_REQUIRED',
+        message: psaSessionExpiredMessage(),
+      };
+    }
+
     const data = (await res.json()) as PsaSelfieStyleAnalysisResponse & { code?: string };
+    if (res.status === 401) {
+      return {
+        ok: false,
+        code: 'SIGN_IN_REQUIRED',
+        message: psaSessionExpiredMessage(),
+      };
+    }
     if (!res.ok) {
       const code = (data as { code?: string }).code;
       return {
