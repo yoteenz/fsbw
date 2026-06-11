@@ -1582,12 +1582,12 @@ export default function ShopTextureCategoryProductPage() {
                               }`}
                               isSelected={texture === tid}
                               isDisabled={false}
-                              onClick={() =>
-                                navigate(
-                                  shopBcfTexturePdpHref(category, tid, bcfColor, bcfOrigin),
-                                  { replace: true }
-                                )
-                              }
+                              onClick={() => {
+                                skipBcfOriginDefaultOnNextPathRef.current = true;
+                                navigate(shopBcfTexturePdpHref(category, tid, bcfColor), {
+                                  replace: true,
+                                });
+                              }}
                               containerSize={BUNDLE_THUMB_OUTER_W_PX}
                               imgSize={BUNDLE_THUMB_INNER_H_PX}
                               containerWidth={BUNDLE_THUMB_OUTER_W_PX}
@@ -1784,10 +1784,10 @@ export default function ShopTextureCategoryProductPage() {
                               onClick={() => {
                                 if (!allowed) return;
                                 if (tid !== texture) {
-                                  navigate(
-                                    shopBcfTexturePdpHref(category, tid, bcfColor, bcfOrigin),
-                                    { replace: true }
-                                  );
+                                  skipBcfOriginDefaultOnNextPathRef.current = true;
+                                  navigate(shopBcfTexturePdpHref(category, tid, bcfColor), {
+                                    replace: true,
+                                  });
                                 }
                               }}
                               style={{
