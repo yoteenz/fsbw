@@ -13,6 +13,7 @@
     "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
     "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs",
     "psa:avatar-expressions": "node scripts/generate-psa-avatar-expressions.mjs",
+    "psa:remove-checkerboard": "node scripts/psa-remove-checkerboard-alpha.mjs && node scripts/psa-solidify-avatar-alpha.mjs && node scripts/check-psa-avatar-alpha.mjs",
     "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs",
     "wig-preview:verify-noir-mannequins": "node scripts/wig-preview/verify-noir-mannequin-refs.mjs",
     "wig-preview:build-noir-fal-gray-brick-refs": "node scripts/wig-preview/build-noir-fal-gray-brick-refs.mjs",
