@@ -169,10 +169,30 @@ export function shopBcfTexturePdpHref(
   colorId: string,
   origin?: BcfOriginId
 ): string {
+  const color = colorId.trim().toUpperCase();
+  if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) {
+    return shopBcfPdpHref(category, 'straight', { color });
+  }
   return shopBcfPdpHref(category, texture, {
     origin: origin ?? bcfDefaultOriginForRouteTexture(texture as ShopTextureCategoryThumbTexture),
     color: colorId,
   });
+}
+
+/** Color swatch tap — Russian trio forces straight + Russian origin via `shopBcfPdpHref`. */
+export function shopBcfColorSelectionHref(
+  category: ShopTextureCategoryThumbCategory | string,
+  texture: ShopTextureCategoryThumbTexture | string,
+  colorId: string,
+  origin: BcfOriginId
+): string {
+  const color = colorId.trim().toUpperCase();
+  if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(color)) {
+    return shopBcfPdpHref(category, 'straight', { color });
+  }
+  const allowed = bcfTexturesForOrigin(origin);
+  const t = allowed.includes(texture as ShopTextureCategoryThumbTexture) ? texture : allowed[0];
+  return shopBcfPdpHref(category, t, { origin, color });
 }
 
 export type BcfSimilarStripItem = {
