@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
@@ -49,6 +56,7 @@ type PsaChatPanelProps = {
   initialInput?: string;
   redCarpetMode?: boolean;
   bonusStarterChips?: string[];
+  selfieStyleAnalysisOverlay?: ReactNode;
 };
 
 function bubbleDisplay(msg: PsaChatMessage): ReturnType<typeof formatPsaMessageRouteDisplay> {
@@ -249,6 +257,7 @@ export default function PsaChatPanel({
   initialInput = '',
   redCarpetMode = false,
   bonusStarterChips = [],
+  selfieStyleAnalysisOverlay = null,
 }: PsaChatPanelProps) {
   const navigate = useNavigate();
   const [input, setInput] = useState(initialInput);
@@ -690,6 +699,7 @@ export default function PsaChatPanel({
         cancelText="CANCEL"
         dataAttribute="psa-delete-chat-confirm"
       />
+      {selfieStyleAnalysisOverlay}
     </div>
   );
 }
