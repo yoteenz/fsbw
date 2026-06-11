@@ -27123,3 +27123,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked same **color persistence** as bundles for **closures** and **frontals** (ahead of color-specific hero assets).
 - **Change:** **`shopBcfTexturePdpHref`** in **`bcfProductOptions.ts`** (shared bundles/closures/frontals). Texture thumbs + hair-texture pills already used it; extended to **origin** buttons, **color swatch** selection (**`syncBcfColorToUrl`**), and origin/texture auto-redirect (keeps **`bcfColor`** in URL). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — FIND MY BEST LOOKS quick reply fix (PSA selfie analysis)
+
+- **Context (full chat):** Prior work added **style analysis** split (consult add-on tiers, PSA selfie ranked picks, live try-on unchanged) with **FIND MY BEST LOOKS** under PSA **MORE OPTIONS**. User reported the chip “isn’t working” — tied to hairstyle/selfie analysis, not the external ChatGPT chart prompt.
+- **Root cause:** **`PsaSelfieStyleAnalysisPanel`** mounted on **`psa-widget-fab-stack`** above the FAB (`bottom: 100%`) while chat open — panel sat **behind/under** **`PsaChatPanel`** overlay; chip handler also returned without a user bubble (felt like nothing happened).
+- **Fix:** Render selfie panel **inside** **`PsaChatPanel`** as full **`inset: 0`** overlay (`selfieStyleAnalysisOverlay` prop); styles moved to **`psaAssistant.css`**. On chip tap: **`appendUserMessage`**, open overlay; **`usePsaChat.sendMessage`** guards **`isPsaSelfieStyleChip`**; close chat clears overlay. Commit **`ed98e11b`** on **`master`** + **`preview/mobile`**.
