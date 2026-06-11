@@ -27179,3 +27179,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to add a bullet above **SINGLE DONOR SOURCING** in the **premium by design** section on the bundles PDP DETAILS tab.
 - **Change:** **`BundleProductDetailsTab.tsx`** — **`BUNDLE_PREMIUM_BY_DESIGN`**: **`150G BUNDLES, 1.5X THE INDUSTRY STANDARD WEIGHT`** inserted after **100% RAW HUMAN HAIR**, before **SINGLE DONOR SOURCING**. Commit **`e06eaf32`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar products platinum subline copy
+
+- **Context:** User reported red subline on platinum blonde **similar products** cards (e.g. WAVY/CURLY FRONTALS cross-sells) showed **PLATINUM BLONDE** but should match standard cards: **RAW HUMAN HAIR**.
+- **Change:** **`bcfProductOptions.ts`** — **`bcfSimilarStripItemFromSlot`** **`subline`** always **`RAW HUMAN HAIR`** (platinum thumb/deep-link unchanged). Commit **`75e6895f`** on **`master`** + **`preview/mobile`**.
