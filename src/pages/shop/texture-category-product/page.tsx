@@ -121,6 +121,9 @@ const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
 const BUNDLE_STRAIGHT_COLOR_PHOTO_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Bundles%20Color/Straight';
 
+const BUNDLE_PLATINUM_COLOR_PHOTO_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Bundles%20Color/Platinum';
+
 /** Straight bundles only — hero swaps when shopper picks a hair color. */
 const BUNDLE_STRAIGHT_COLOR_PHOTO: Partial<Record<string, string>> = {
   'JET BLACK': `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2147.png`,
@@ -137,7 +140,10 @@ const BUNDLE_STRAIGHT_COLOR_PHOTO: Partial<Record<string, string>> = {
   COBALT: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2160.png`,
   TEAL: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2161.png`,
   SLIME: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2162.png`,
-  CITRINE: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2163.png`
+  CITRINE: `${BUNDLE_STRAIGHT_COLOR_PHOTO_BASE}/IMG_2163.png`,
+  GOLDEN: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2041.png`,
+  PLATINUM: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2042.png`,
+  ASH: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2043.png`
 };
 
 const BUNDLE_WAVY_COLOR_PHOTO_BASE =
@@ -159,7 +165,10 @@ const BUNDLE_WAVY_COLOR_PHOTO: Partial<Record<string, string>> = {
   COBALT: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2191.png`,
   TEAL: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2193.png`,
   SLIME: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2194.png`,
-  CITRINE: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2195.png`
+  CITRINE: `${BUNDLE_WAVY_COLOR_PHOTO_BASE}/IMG_2195.png`,
+  GOLDEN: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2044.png`,
+  PLATINUM: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2045.png`,
+  ASH: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2046.png`
 };
 
 const BUNDLE_CURLY_COLOR_PHOTO_BASE =
@@ -181,24 +190,75 @@ const BUNDLE_CURLY_COLOR_PHOTO: Partial<Record<string, string>> = {
   COBALT: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2207.png`,
   TEAL: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2176.png`,
   SLIME: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2209.png`,
-  CITRINE: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2210.png`
+  CITRINE: `${BUNDLE_CURLY_COLOR_PHOTO_BASE}/IMG_2210.png`,
+  GOLDEN: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2047.png`,
+  PLATINUM: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2048.png`,
+  ASH: `${BUNDLE_PLATINUM_COLOR_PHOTO_BASE}/IMG_2049.png`
 };
 
-function bundlePhotoSrc(texture: Texture, colorId: string): string {
+const CLOSURES_COLOR_PHOTO_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Closures%20Color/Platinum';
+
+const CLOSURES_COLOR_PHOTO: Record<Texture, Partial<Record<string, string>>> = {
+  straight: {
+    GOLDEN: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2029.png`,
+    PLATINUM: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2030.png`,
+    ASH: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2031.png`
+  },
+  wavy: {
+    GOLDEN: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2032.png`,
+    PLATINUM: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2033.png`,
+    ASH: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2034.png`
+  },
+  curly: {
+    GOLDEN: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2035.png`,
+    PLATINUM: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2036.png`,
+    ASH: `${CLOSURES_COLOR_PHOTO_BASE}/IMG_2037.png`
+  }
+};
+
+const FRONTALS_COLOR_PHOTO_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Frontals%20Color/Platinum';
+
+const FRONTALS_COLOR_PHOTO: Record<Texture, Partial<Record<string, string>>> = {
+  straight: {
+    GOLDEN: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2014.png`,
+    PLATINUM: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2016.png`,
+    ASH: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2017.png`
+  },
+  wavy: {
+    GOLDEN: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2023.png`,
+    PLATINUM: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2024.png`,
+    ASH: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2025.png`
+  },
+  curly: {
+    GOLDEN: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2026.png`,
+    PLATINUM: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2027.png`,
+    ASH: `${FRONTALS_COLOR_PHOTO_BASE}/IMG_2028.png`
+  }
+};
+
+const BUNDLE_COLOR_PHOTO_BY_TEXTURE: Record<Texture, Partial<Record<string, string>>> = {
+  straight: BUNDLE_STRAIGHT_COLOR_PHOTO,
+  wavy: BUNDLE_WAVY_COLOR_PHOTO,
+  curly: BUNDLE_CURLY_COLOR_PHOTO
+};
+
+function bcfPdpHeroPhotoSrc(category: Category, texture: Texture, colorId: string): string {
   const colorKey = String(colorId || '').toUpperCase();
-  if (texture === 'straight') {
-    const tinted = BUNDLE_STRAIGHT_COLOR_PHOTO[colorKey];
+  if (category === 'bundles') {
+    const tinted = BUNDLE_COLOR_PHOTO_BY_TEXTURE[texture][colorKey];
     if (tinted) return tinted;
+    return BUNDLE_PHOTO_BY_TEXTURE[texture];
   }
-  if (texture === 'wavy') {
-    const tinted = BUNDLE_WAVY_COLOR_PHOTO[colorKey];
+  if (category === 'closures') {
+    const tinted = CLOSURES_COLOR_PHOTO[texture][colorKey];
     if (tinted) return tinted;
+    return BCF_CF_PHOTO.closures[texture];
   }
-  if (texture === 'curly') {
-    const tinted = BUNDLE_CURLY_COLOR_PHOTO[colorKey];
-    if (tinted) return tinted;
-  }
-  return BUNDLE_PHOTO_BY_TEXTURE[texture];
+  const tinted = FRONTALS_COLOR_PHOTO[texture][colorKey];
+  if (tinted) return tinted;
+  return BCF_CF_PHOTO.frontals[texture];
 }
 
 /** Primary straight bundle hero video (upload to this public path when ready). */
@@ -826,19 +886,24 @@ export default function ShopTextureCategoryProductPage() {
   );
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
-  const bundleHeroPhotoSrc = React.useMemo(
-    () => (category === 'bundles' ? bundlePhotoSrc(texture, bcfColor) : null),
+  const bcfHeroPhotoSrc = React.useMemo(
+    () => (category ? bcfPdpHeroPhotoSrc(category, texture, bcfColor) : null),
     [category, texture, bcfColor]
   );
 
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
     if (!category) return shopTextureCategoryThumbSrc(tid, 'bundles');
-    if (category === 'bundles') return bundlePhotoSrc(tid, bcfColor);
-    if (category === 'closures' || category === 'frontals') {
-      return BCF_CF_PHOTO[category][tid];
+    if (category === 'bundles' || category === 'closures' || category === 'frontals') {
+      return bcfPdpHeroPhotoSrc(category, tid, bcfColor);
     }
     return shopTextureCategoryThumbSrc(tid, category);
   };
+
+  const bcfHeroPhotoFallback = React.useMemo(() => {
+    if (!category) return shopTextureCategoryThumbSrc(texture, 'bundles');
+    if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[texture];
+    return BCF_CF_PHOTO[category][texture];
+  }, [category, texture]);
   const allowedBcfTextures = bcfTexturesForOrigin(bcfOrigin);
   const cartLineMarbleThumbSrc = category
     ? shopTextureCategoryThumbSrc(texture, category)
@@ -1338,7 +1403,7 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={bundleHeroPhotoSrc ?? BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  src={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   alt=""
                                   aria-hidden
                                   draggable={false}
@@ -1348,7 +1413,7 @@ export default function ShopTextureCategoryProductPage() {
                                   key={`${texture}-video-${texture === 'straight' ? bundleStraightVideoSrc : 'default'}`}
                                   ref={bundleVideoRef}
                                   src={bundleHeroVideoSrc(texture, bundleStraightVideoSrc)}
-                                  poster={bundleHeroPhotoSrc ?? BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  poster={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   preload="auto"
                                   playsInline
                                   muted
@@ -1385,7 +1450,7 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={bundleHeroPhotoSrc ?? BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  src={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   alt={displayProductName}
                                   onError={(e) => {
                                     const img = e.currentTarget;
@@ -1411,7 +1476,7 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={BCF_CF_PHOTO[category][texture]}
+                                  src={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   alt=""
                                   aria-hidden
                                   draggable={false}
@@ -1421,7 +1486,7 @@ export default function ShopTextureCategoryProductPage() {
                                   key={`${category}-${texture}-video`}
                                   ref={bcfCfVideoRef}
                                   src={BCF_CF_VIDEO[category][texture]}
-                                  poster={BCF_CF_PHOTO[category][texture]}
+                                  poster={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   preload="auto"
                                   playsInline
                                   muted
@@ -1449,7 +1514,7 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               >
                                 <img
-                                  src={BCF_CF_PHOTO[category][texture]}
+                                  src={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   alt={displayProductName}
                                   onError={(e) => {
                                     const img = e.currentTarget;
