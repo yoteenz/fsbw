@@ -269,7 +269,7 @@ function bcfSimilarStripItemFromSlot(slot: BcfSimilarSlot): BcfSimilarStripItem 
     thumbSrc: bcfSimilarStripThumbSrc(slot),
     href: shopBcfPdpHref(cat, tid, { origin, color }),
     title,
-    subline: platinum ? 'PLATINUM BLONDE' : 'RAW HUMAN HAIR',
+    subline: 'RAW HUMAN HAIR',
     priceUsd: bcfBasePriceUsd(cat, tid)
   };
 }
