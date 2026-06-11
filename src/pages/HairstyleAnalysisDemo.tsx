@@ -48,8 +48,8 @@ export default function HairstyleAnalysisDemo() {
             <li>12 month / black — top + 9 additional</li>
           </ul>
           <p className="mt-3">
-            Swap the client preview URL with your generated hairstyle render. Toggle debug frames to tune
-            slot coordinates against the Supabase templates.
+            Upload your generated hairstyle preview or paste a URL. Debug mode lets you drag slot handles
+            and edit overlay text — only values render; icons and panels come from the static template.
           </p>
         </section>
       </div>

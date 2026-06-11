@@ -44,17 +44,29 @@ export type PercentRect = {
   height: string;
 };
 
+export type TextSlot = {
+  left: string;
+  top: string;
+  width?: string;
+  height?: string;
+};
+
 export type AdditionalLookSlot = {
   image: PercentRect;
-  text: PercentRect;
+  text: TextSlot;
 };
 
 export type TemplateSlotConfig = {
   clientImage: PercentRect;
   topScore: PercentRect;
   rating: PercentRect;
-  topMatchRows: { left: string; top: string };
-  specsTable: { left: string; top: string };
+  /** Value-only lines beside template rose bullets (no icons rendered). */
+  topMatchLines: TextSlot[];
   additionalLooks?: AdditionalLookSlot[];
-  whyRows: { left: string; top: string };
+  /** Value-only why lines beside template bullets. */
+  whyLines: TextSlot[];
 };
+
+export type SlotLayoutOverrides = Record<string, Partial<PercentRect>>;
+
+export type TextContentOverrides = Record<string, string>;

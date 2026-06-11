@@ -1,5 +1,11 @@
-import { useMemo, useRef, useState } from 'react';
-import type { AnalysisTier, HairstyleAnalysis } from '../../types/hairstyleAnalysis';
+import { useCallback, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import type {
+  AnalysisTier,
+  HairstyleAnalysis,
+  PercentRect,
+  SlotLayoutOverrides,
+  TextContentOverrides,
+} from '../../types/hairstyleAnalysis';
 import { validateHairstyleAnalysis } from '../../utils/hairstyleAnalysisRules';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
@@ -20,6 +26,18 @@ const DEFAULT_TIER_OPTIONS: AnalysisTier[] = [
   'black',
 ];
 
+function readFileAsDataUrl(file: File): Promise<string | null> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const r = reader.result;
+      resolve(typeof r === 'string' && r.startsWith('data:') ? r : null);
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function HairstyleAnalysisPreview({
   analysis,
   tierOptions = DEFAULT_TIER_OPTIONS,
@@ -28,7 +46,12 @@ export default function HairstyleAnalysisPreview({
   onClientPreviewUrlChange,
 }: HairstyleAnalysisPreviewProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showDebugFrames, setShowDebugFrames] = useState(false);
+  const [hideDebugForCapture, setHideDebugForCapture] = useState(false);
+  const [slotOverrides, setSlotOverrides] = useState<SlotLayoutOverrides>({});
+  const [textOverrides, setTextOverrides] = useState<TextContentOverrides>({});
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const resolvedAnalysis = useMemo(() => {
     if (!clientPreviewUrl) return analysis;
@@ -49,6 +72,43 @@ export default function HairstyleAnalysisPreview({
 
   const filename = `${resolvedAnalysis.clientName.toLowerCase()}-hairstyle-analysis-${resolvedAnalysis.tier}.png`;
 
+  const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
+    setSlotOverrides((prev) => ({
+      ...prev,
+      [slotId]: {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      },
+    }));
+  }, []);
+
+  const onTextChange = useCallback((slotId: string, value: string) => {
+    setTextOverrides((prev) => ({ ...prev, [slotId]: value }));
+  }, []);
+
+  const onTierSelect = (tier: AnalysisTier) => {
+    setSlotOverrides({});
+    setTextOverrides({});
+    onTierChange?.(tier);
+  };
+
+  const onPhotoSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file || !onClientPreviewUrlChange) return;
+    setUploadError(null);
+    const dataUrl = await readFileAsDataUrl(file);
+    if (!dataUrl) {
+      setUploadError('COULD NOT READ THAT PHOTO');
+      return;
+    }
+    onClientPreviewUrlChange(dataUrl);
+  };
+
+  const layoutJson = JSON.stringify({ slotOverrides, textOverrides }, null, 2);
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       <div className="flex flex-col gap-3">
@@ -57,7 +117,7 @@ export default function HairstyleAnalysisPreview({
             Tier
             <select
               value={analysis.tier}
-              onChange={(e) => onTierChange(e.target.value as AnalysisTier)}
+              onChange={(e) => onTierSelect(e.target.value as AnalysisTier)}
               className="border border-black bg-white px-2 py-2 text-black text-[11px] uppercase tracking-[0.12em]"
             >
               {tierOptions.map((tier) => (
@@ -70,16 +130,35 @@ export default function HairstyleAnalysisPreview({
         ) : null}
 
         {onClientPreviewUrlChange ? (
-          <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
-            Client preview URL
+          <div className="flex flex-col gap-2">
             <input
-              type="url"
-              value={clientPreviewUrl ?? analysis.clientPreviewUrl}
-              onChange={(e) => onClientPreviewUrlChange(e.target.value)}
-              className="border border-black bg-white px-2 py-2 text-black text-[11px]"
-              placeholder="https://…"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => void onPhotoSelected(e)}
             />
-          </label>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black"
+            >
+              Upload client preview photo
+            </button>
+            <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
+              Or paste image URL
+              <input
+                type="text"
+                value={clientPreviewUrl ?? analysis.clientPreviewUrl}
+                onChange={(e) => onClientPreviewUrlChange(e.target.value)}
+                className="border border-black bg-white px-2 py-2 text-black text-[11px]"
+                placeholder="/assets/… or https://…"
+              />
+            </label>
+            {uploadError ? (
+              <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{uploadError}</p>
+            ) : null}
+          </div>
         ) : null}
 
         <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
@@ -88,7 +167,7 @@ export default function HairstyleAnalysisPreview({
             checked={showDebugFrames}
             onChange={(e) => setShowDebugFrames(e.target.checked)}
           />
-          Show slot debug frames
+          Debug — drag slot handles · click text to edit
         </label>
       </div>
 
@@ -108,10 +187,33 @@ export default function HairstyleAnalysisPreview({
       )}
 
       <div ref={cardRef} className="w-full shadow-lg border border-black/10">
-        <HairstyleAnalysisCard analysis={resolvedAnalysis} showDebugFrames={showDebugFrames} />
+        <HairstyleAnalysisCard
+          analysis={resolvedAnalysis}
+          showDebugFrames={showDebugFrames && !hideDebugForCapture}
+          slotOverrides={slotOverrides}
+          textOverrides={textOverrides}
+          onSlotRectChange={onSlotRectChange}
+          onTextChange={onTextChange}
+        />
       </div>
 
-      <DownloadAnalysisButton targetRef={cardRef} filename={filename} />
+      {showDebugFrames ? (
+        <details className="border border-black/20 p-2">
+          <summary className="text-[9px] uppercase tracking-[0.12em] text-[#808080] cursor-pointer">
+            Slot layout JSON (copy into hairstyleAnalysisRules)
+          </summary>
+          <pre className="mt-2 text-[8px] leading-relaxed overflow-x-auto whitespace-pre-wrap break-all text-[#333]">
+            {layoutJson}
+          </pre>
+        </details>
+      ) : null}
+
+      <DownloadAnalysisButton
+        targetRef={cardRef}
+        filename={filename}
+        beforeCapture={() => setHideDebugForCapture(true)}
+        afterCapture={() => setHideDebugForCapture(false)}
+      />
     </div>
   );
 }
