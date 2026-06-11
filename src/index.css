@@ -4320,6 +4320,12 @@ p.marble-strip-product-price,
   margin-top: 2px !important;
 }
 
+/* BCF bundles/closures/frontals — similar products only (not recently viewed) */
+p.bcf-similar-strip-product-price.marble-strip-product-price,
+.bcf-similar-strip-product-price.marble-strip-product-price {
+  margin-top: 0 !important;
+}
+
 /* Main /wishlist page (account wishlist) — +2px above black price row */
 .cart-line-text-layer--price.wishlist-account-page-price-layer {
   margin-top: 2px !important;

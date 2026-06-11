@@ -27131,3 +27131,80 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full chat):** Prior work added **style analysis** split (consult add-on tiers, PSA selfie ranked picks, live try-on unchanged) with **FIND MY BEST LOOKS** under PSA **MORE OPTIONS**. User reported the chip “isn’t working” — tied to hairstyle/selfie analysis, not the external ChatGPT chart prompt.
 - **Root cause:** **`PsaSelfieStyleAnalysisPanel`** mounted on **`psa-widget-fab-stack`** above the FAB (`bottom: 100%`) while chat open — panel sat **behind/under** **`PsaChatPanel`** overlay; chip handler also returned without a user bubble (felt like nothing happened).
 - **Fix:** Render selfie panel **inside** **`PsaChatPanel`** as full **`inset: 0`** overlay (`selfieStyleAnalysisOverlay` prop); styles moved to **`psaAssistant.css`**. On chip tap: **`appendUserMessage`**, open overlay; **`usePsaChat.sendMessage`** guards **`isPsaSelfieStyleChip`**; close chat clears overlay. Commit **`ed98e11b`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF PLATINUM / GOLDEN / ASH color hero photos (all categories)
+
+- **Context:** User provided Supabase color heroes for Russian trio **PLATINUM**, **GOLDEN**, **ASH** across bundles / closures / frontals × straight / wavy / curly.
+- **Bundles:** **`Bundles Color/Platinum/`** IMG **2041–2049** (per texture); added to existing straight/wavy/curly noir maps.
+- **Closures:** **`Closures Color/Platinum/`** IMG **2029–2037**; **frontals:** **`Frontals Color/Platinum/`** IMG **2014–2028**.
+- **Change:** **`texture-category-product/page.tsx`** — **`bcfPdpHeroPhotoSrc`**, **`CLOSURES_COLOR_PHOTO`**, **`FRONTALS_COLOR_PHOTO`**; hero + texture thumbs + video posters use color-specific src for all BCF PDPs. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF blonde color crash fix (React #185)
+
+- **Context:** User got **COMPONENT FAILED TO LOAD** / React **#185** (max update depth) when selecting **PLATINUM / GOLDEN / ASH**.
+- **Root cause:** Color URL sync passed **non-Russian origin** with Russian-only colors → effects fought (**`setBcfColor`** vs URL vs texture redirect) in a loop.
+- **Fix (initial):** **`shopBcfColorSelectionHref`** + **`shopBcfTexturePdpHref`** force **straight + Russian** for blonde trio; color swatch navigates URL only (no duplicate **`setState`**); URL sync effects guard **`prev === next`** and compare href before **`navigate`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF blonde texture thumbs + Russian all-textures fix
+
+- **Context (full chat):** After the React **#185** fix, user reported selecting **GOLDEN / PLATINUM / ASH** broke BCF PDP UX: could not choose **hair profile** or **hair texture**; all blonde straight/wavy/curly thumbs appeared under **straight**; texture thumbs stuck on straight; **Russian** should still offer **straight, wavy, curly** (not straight-only).
+- **Root cause:** Crash fix over-corrected — **`bcfTexturesForOrigin(RUSSIAN)`** returned only **`['straight']`** (same as Cambodian), and **`shopBcfTexturePdpHref`** / **`shopBcfColorSelectionHref`** forced **`texture=straight`** for blonde colors, so URL + hero never switched texture even though per-texture blonde assets (IMG **2041–2049** bundles, etc.) were already mapped correctly in **`bcfPdpHeroPhotoSrc`**.
+- **Fix:** **`bcfProductOptions.ts`** — Russian allows **`['straight','wavy','curly']`**; added **`bcfOriginForTextureAndColor`** (blonde → **RUSSIAN**; noir respects explicit origin); removed force-straight from texture/color href helpers; **`bcfInitialOriginFromPathname`** defaults Russian when blonde **`color`** in URL. **`texture-category-product/page.tsx`** — URL sync defaults Russian for blonde color without **`origin`**; texture hero thumbs + hair-texture pills pass **`bcfOrigin`**; leaving Russian with a Blanco swatch resets to noir default color. Effect guards retained to avoid **#185** loops. Commit **`03c7d24f`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — FIND MY BEST LOOKS sign-in false positive (PSA selfie analysis)
+
+- **Context:** User reported **FIND MY BEST LOOKS** quick reply prompts **Sign in required** after uploading a selfie despite already being signed in (and seeing PSA).
+- **Root cause:** PSA widget gates on **`localStorage` `isSignedIn`** + premium tier; **`POST /api/psa/selfie-style-analysis`** requires a **Supabase Bearer JWT** via **`getAuthUser`**. **`postPsaSelfieStyleAnalysis`** called **`getAccessToken()`** once with no session refresh or **401** retry — unlike **`postPsaChat`** / **`psaAuthedFetch`**. Stale or missing JWT while app still shows signed-in → generic **SIGN IN REQUIRED**.
+- **Fix:** **`psaSelfieStyleAnalysisApi.ts`** — reuse **`getPsaAuthToken`** + **`psaAuthedFetch`** + **`psaSessionExpiredMessage`** (exported from **`psaApi.ts`**). **`PsaSelfieStyleAnalysisPanel`** shows session-expired guidance in normal case (not all-caps). Commit **`a8bc7a59`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF noir texture thumbs switch hair profile (bundles/closures/frontals)
+
+- **Context:** User reported blonde/Russian fix did not apply to **noir** bundles: hero thumbs stuck when **Russian** not selected; **straight → wavy** should switch **hair profile** (e.g. Cambodian → Indian), not only when Russian.
+- **Root cause:** Texture thumb + hair-texture pill **`navigate`** passed current **`bcfOrigin`** into **`shopBcfTexturePdpHref`**. **`bcfOriginForTextureAndColor`** honored explicit origin even when that origin cannot wear the target texture (e.g. Cambodian + wavy) → redirect effect snapped back to straight.
+- **Fix:** Thumbs/pills call **`shopBcfTexturePdpHref(category, tid, bcfColor)`** without pinning origin; **`bcfOriginForTextureAndColor`** uses explicit origin only when it allows the texture, else **`bcfDefaultOriginForRouteTexture`** (straight=Cambodian, wavy=Indian, curly=Filipino); blonde still → Russian. Hair-profile buttons still pass explicit **`nextOrigin`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Bundles DETAILS: premium by design 150G bullet
+
+- **Context:** User asked to add a bullet above **SINGLE DONOR SOURCING** in the **premium by design** section on the bundles PDP DETAILS tab.
+- **Change:** **`BundleProductDetailsTab.tsx`** — **`BUNDLE_PREMIUM_BY_DESIGN`**: **`150G BUNDLES, 1.5X THE INDUSTRY STANDARD WEIGHT`** inserted after **100% RAW HUMAN HAIR**, before **SINGLE DONOR SOURCING**. Commit **`e06eaf32`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar products platinum subline copy
+
+- **Context:** User reported red subline on platinum blonde **similar products** cards (e.g. WAVY/CURLY FRONTALS cross-sells) showed **PLATINUM BLONDE** but should match standard cards: **RAW HUMAN HAIR**.
+- **Change:** **`bcfProductOptions.ts`** — **`bcfSimilarStripItemFromSlot`** **`subline`** always **`RAW HUMAN HAIR`** (platinum thumb/deep-link unchanged). Commit **`75e6895f`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar products price spacing −2px
+
+- **Context:** User asked to reduce spacing above the black price text **only** in the **similar products** container (not recently viewed) by **2px**.
+- **Change:** **`BCF_SIMILAR_STRIP_PRODUCT_PRICE_CLASS`** on BCF similar strip price rows; **`index.css`** sets **`margin-top: 0`** (vs default **`2px`** on **`marble-strip-product-price`**). Recently viewed strip unchanged.
+
+---
+
+## 2026-06-10 — PSA expressions: checkerboard backgrounds (why + fix)
+
+- **Context:** User asked why some PSA avatar expressions (and nudge thought bubble) still showed gray/white **checkerboard** instead of clean transparency.
+- **Cause:** Ideogram/Fal exports bake checker squares as **opaque pixels** (fake transparency), not true alpha. Original 11 expressions + **v5+** batch (**remembering**, **curator**, **red-carpet**, etc.) were never reprocessed after upload; **`psa-avatar-thinking-smiling.png`** was worst (~**48%** checker). UI is correct (transparent CSS frame) — assets were wrong. Policy since v10 was “don’t batch-process,” but source PNGs still had checker.
+- **Fix:** Restored conservative **`scripts/psa-remove-checkerboard-alpha.mjs`** (edge flood + neutral-square cleanup) + **`psa-solidify-avatar-alpha.mjs`** on all **`psa-avatar-*.png`** + **`psa-nudge-thought-bubble.png`**. QA: checker ~**0%** on all expressions. **`PSA_AVATAR_ASSET_VERSION` → `13`**, **`PSA_NUDGE_BUBBLE_ASSET_VERSION` → `2`**. **`npm run psa:remove-checkerboard`**. Commit **`5cbfbf70`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Homepage routing: premium → lobby, standard → home/shop
+
+- **Context:** User asked that **premium members** visiting the site **homepage** (`/`) land on the **lobby**, not **`/home/shop`** (standard members only).
+- **Change:** **`HomeLandingRedirect.tsx`** — guests + standard → **`/home/shop`**; premium (**`isPremiumMemberForGatedFeatures`**) → **`/lobby`**; signed-in users **`syncAllFromApi`** before final path. **`App.tsx`** index + **`/`** routes use it (replaces static **`Navigate`**). **`CORE.md`** default-route note updated. Direct **`/home/shop`** / **`/lobby`** links unchanged.

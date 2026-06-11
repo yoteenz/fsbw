@@ -58,7 +58,10 @@ export default function PsaSelfieStyleAnalysisPanel({
         onPremiumRequired();
         return;
       }
-      setError(result.message.toUpperCase());
+      const msg = result.message || 'Something went wrong. Try again.';
+      setError(
+        result.code === 'SIGN_IN_REQUIRED' ? msg : msg.toUpperCase()
+      );
       return;
     }
     const summary = [

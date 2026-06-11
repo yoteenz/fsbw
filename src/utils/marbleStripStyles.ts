@@ -135,6 +135,9 @@ export const marbleStripTextCol: CSSProperties = {
 /** Class for similar / recently viewed black price — +2px top in index.css (beats inline margin shorthand). */
 export const MARBLE_STRIP_PRODUCT_PRICE_CLASS = 'marble-strip-product-price';
 
+/** BCF PDP similar-products strip only — 2px tighter above black price vs default marble strip. */
+export const BCF_SIMILAR_STRIP_PRODUCT_PRICE_CLASS = 'bcf-similar-strip-product-price';
+
 /** Default black price line styles for marble strips (margin top applied via class). */
 export function marbleStripProductPriceStyle(extra?: CSSProperties): CSSProperties {
   return shopProductGridPriceStyle({

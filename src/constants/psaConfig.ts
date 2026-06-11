@@ -51,7 +51,7 @@ export const PSA_V5_AVATAR_EXPRESSIONS = [
 ] as const satisfies readonly PsaAvatarExpression[];
 
 /** Bump when avatar PNGs change so browsers/CDN drop cached copies. */
-export const PSA_AVATAR_ASSET_VERSION = '12';
+export const PSA_AVATAR_ASSET_VERSION = '13';
 
 /** Expression → asset path (filename must match exactly in `public/assets/`). */
 export const PSA_AVATAR_SRC: Record<PsaAvatarExpression, string> = {
@@ -94,7 +94,7 @@ export const PSA_AVATAR_IDLE_SRC = PSA_AVATAR_SRC.neutral;
 export const PSA_AVATAR_THINKING_SRC = PSA_AVATAR_SRC.thinking;
 
 /** Bump when replacing `public/assets/psa-nudge-thought-bubble.png`. */
-export const PSA_NUDGE_BUBBLE_ASSET_VERSION = '1';
+export const PSA_NUDGE_BUBBLE_ASSET_VERSION = '2';
 
 export const PSA_NUDGE_BUBBLE_SRC = `/assets/psa-nudge-thought-bubble.png?v=${PSA_NUDGE_BUBBLE_ASSET_VERSION}`;
 
