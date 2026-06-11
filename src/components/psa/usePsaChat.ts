@@ -15,6 +15,7 @@ import {
   type PsaUsagePayload,
 } from '../../utils/psaApi';
 import { resolvePsaScriptedQuickReply } from '../../utils/psaChatCopyResolve';
+import { isPsaSelfieStyleChip } from '../../utils/psaSelfieStyleAnalysis';
 import { resolveArchetypeQuizMessage } from '../../utils/psaArchetypeQuiz';
 import { resolveOccasionCaptureMessage } from '../../utils/psaOccasionCapture';
 import { setCachedPsaMemberContext } from '../../utils/psaMemberContextCache';
@@ -203,6 +204,7 @@ export function usePsaChat(
     ) => {
       const trimmed = text.trim();
       if (!trimmed || isSending) return { premiumRequired: false as const };
+      if (isPsaSelfieStyleChip(trimmed)) return { premiumRequired: false as const };
 
       setError(null);
       setPanelQuickReplies([]);
@@ -427,6 +429,16 @@ export function usePsaChat(
     historyLoadedRef.current = false;
   }, [welcomeMessage]);
 
+  const appendUserMessage = useCallback((userText: string) => {
+    const trimmed = userText.trim();
+    if (!trimmed) return;
+    setPanelQuickReplies([]);
+    setMessages((prev) => {
+      const base = prev.length === 1 && prev[0]?.id === 'welcome' ? [] : prev;
+      return [...base, { id: nextId(), role: 'user', content: trimmed }];
+    });
+  }, []);
+
   /** Local-only exchange (e.g. PSA selfie style analysis) without LLM round-trip. */
   const appendLocalExchange = useCallback(
     (userText: string, assistant: { content: string; cards?: PsaChatCard[]; quickReplies?: string[] }) => {
@@ -465,6 +477,7 @@ export function usePsaChat(
     continueHint,
     setUsage,
     sendMessage,
+    appendUserMessage,
     appendLocalExchange,
     resetChat,
     archiveThread,

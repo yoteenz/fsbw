@@ -159,6 +159,22 @@ export function shopBcfPdpHref(
   return `/shop/${category}?${params.toString()}`;
 }
 
+/**
+ * BCF PDP texture navigation (bundles / closures / frontals) — keep shopper hair color in the URL
+ * when switching straight / wavy / curly via hero thumbs or hair-texture pills.
+ */
+export function shopBcfTexturePdpHref(
+  category: ShopTextureCategoryThumbCategory | string,
+  texture: ShopTextureCategoryThumbTexture | string,
+  colorId: string,
+  origin?: BcfOriginId
+): string {
+  return shopBcfPdpHref(category, texture, {
+    origin: origin ?? bcfDefaultOriginForRouteTexture(texture as ShopTextureCategoryThumbTexture),
+    color: colorId,
+  });
+}
+
 export type BcfSimilarStripItem = {
   key: string;
   category: ShopTextureCategoryThumbCategory;

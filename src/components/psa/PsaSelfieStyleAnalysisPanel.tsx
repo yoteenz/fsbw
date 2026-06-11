@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { postPsaSelfieStyleAnalysis } from '../../utils/psaSelfieStyleAnalysisApi';
 import { psaSelfieMaxPicksFromStorage, PSA_SELFIE_STYLE_CHIP } from '../../utils/psaSelfieStyleAnalysis';
 import type { PsaSelfieStylePick } from '../../types/styleAnalysis';
-import { bookingFontBook, bookingFontMedium } from '../booking/BookingPageChrome';
 
 type PsaSelfieStyleAnalysisPanelProps = {
   onClose: () => void;
@@ -118,102 +117,9 @@ export default function PsaSelfieStyleAnalysisPanel({
         type="button"
         className="psa-selfie-analysis-link"
         onClick={() => navigate('/account/rewards')}
-        style={{ fontFamily: bookingFontBook, fontSize: '9px' }}
       >
         3 MO · 4 PICKS · 6 MO · 6 PICKS · 12 MO · 10 PICKS
       </button>
-      <style>{`
-        .psa-selfie-analysis-panel {
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 100%;
-          margin-bottom: 8px;
-          padding: 12px;
-          border: 1.3px solid #000;
-          background: rgba(255,255,255,0.92);
-          backdrop-filter: blur(6px);
-          z-index: 5;
-          text-transform: uppercase;
-        }
-        .psa-selfie-analysis-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 8px;
-        }
-        .psa-selfie-analysis-title {
-          margin: 0;
-          font-family: ${bookingFontMedium};
-          font-size: 11px;
-          color: #eb1c24;
-        }
-        .psa-selfie-analysis-close {
-          border: none;
-          background: none;
-          font-size: 18px;
-          line-height: 1;
-          cursor: pointer;
-          padding: 0 4px;
-        }
-        .psa-selfie-analysis-copy {
-          margin: 0 0 10px;
-          font-family: ${bookingFontBook};
-          font-size: 9px;
-          color: #808080;
-          line-height: 1.45;
-        }
-        .psa-selfie-analysis-file-input {
-          display: none;
-        }
-        .psa-selfie-analysis-choose,
-        .psa-selfie-analysis-submit {
-          width: 100%;
-          border: 1.3px solid #000;
-          background: #fff;
-          font-family: ${bookingFontMedium};
-          font-size: 10px;
-          padding: 10px;
-          cursor: pointer;
-          margin-bottom: 8px;
-          text-transform: uppercase;
-        }
-        .psa-selfie-analysis-submit {
-          background: #eb1c24;
-          color: #fff;
-          border-color: #eb1c24;
-        }
-        .psa-selfie-analysis-submit:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        .psa-selfie-analysis-preview-wrap {
-          margin-bottom: 8px;
-          display: flex;
-          justify-content: center;
-        }
-        .psa-selfie-analysis-preview {
-          width: 72px;
-          height: 96px;
-          object-fit: cover;
-          border: 1.3px solid #000;
-        }
-        .psa-selfie-analysis-error {
-          color: #eb1c24;
-          font-family: ${bookingFontMedium};
-          font-size: 9px;
-          margin: 0 0 8px;
-        }
-        .psa-selfie-analysis-link {
-          width: 100%;
-          border: none;
-          background: none;
-          color: #808080;
-          text-transform: uppercase;
-          cursor: pointer;
-          padding: 0;
-        }
-      `}</style>
     </div>
   );
 }

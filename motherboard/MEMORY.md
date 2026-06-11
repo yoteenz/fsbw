@@ -27006,7 +27006,6 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
-<<<<<<< HEAD
 ## 2026-06-10 — BCF similar platinum: standard titles, PLATINUM only in route
 
 - **Context (full chat):** BCF thumb/containers; four cross-sell similar strip; platinum thumbs **BCF image 54–57**. User: platinum cells should read **WAVY CLOSURES** / **CURLY FRONTALS** (not **PLATINUM …** in title); subline **PLATINUM BLONDE** + **`?origin=russian&color=PLATINUM`** on tap unchanged.
@@ -27026,10 +27025,101 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full chat):** BCF similar strip (four cross-sell, deep links, width aligned to main card, smaller thumbs). User: platinum assets missing after title change; red subline should be **RAW HUMAN HAIR** only (no **CLOSURES** / **FRONTALS** prefix); platinum rows keep standard titles (**WAVY CLOSURES**, etc.).
 - **Root cause:** **`BCF/image (54–57).png`** return **400** from Supabase; **`BcfShopThumb` `onError`** replaced failed platinum **`src`** with standard BCF thumbs.
 - **Changes:** **`shopTextureCategoryThumb.ts`** — platinum similar thumbs back to working **`Platinum Blonde/IMG_2033|2036|2024|2027`**. **`bcfProductOptions.ts`** — subline **`RAW HUMAN HAIR`** / **`PLATINUM BLONDE`** (no category prefix). **`BcfShopThumb`** — skip legacy fallback when explicit **`src`** is set. Pushed **`master`** + **`preview/mobile`**.
-=======
+
+---
+
 ## 2026-06-09 — Style analysis: consult add-on + PSA selfie picks (live try-on unchanged)
 
 - **Context (full chat):** User chose product split: **wig consult** optional **non-refundable** style-analysis add-on (**1/3/6** comparisons → **$20/$40/$60**) delivered with consult quote (inspo-matched selfie + color/length variants); **PSA** premium selfie ranked unit upsells (**3mo → 4**, **6mo → 6**, **12mo → 10** picks across six units); **live try-on in BAW stays as-is**.
 - **Consult:** **`ConsultStyleAnalysisAddonPicker`** on **`booking/consultation`**; cart fields **`consultStyleAnalysisComparisonCount`**, **`consultDepositUsd`**; server quote **`resolveQuote.ts`** adds add-on to **`booking-consult`** total. **`consultStyleAnalysisAddon.ts`**.
 - **PSA:** Starter **FIND MY BEST LOOKS** (MORE OPTIONS); **`PsaSelfieStyleAnalysisPanel`** + **`POST /api/psa/selfie-style-analysis`** (premium + OpenAI vision JSON). **`docs/STYLE_ANALYSIS.md`**, **`CORE.md`** updated. Chart image generation / admin attach = phase 2.
->>>>>>> f0151f67 (Add style analysis: consult add-on tiers and PSA selfie picks)
+
+---
+
+## 2026-06-10 — Noir PDP 2D side thumbs misaligned (overflow)
+
+- **Context:** User reported Noir unit PDP **2D side thumbnails** misaligned — bottom thumb appeared as a third image shifted right, overlapping **NOIR** title.
+- **Root cause:** Hero migrated to **`baw-noir-hero-brick-frame`** (bottom-align + **`overflow: hidden`**) for Supabase mannequin PNGs; **side thumbs kept legacy layout**: center **`top`** positioning, **`minWidth: clamp(112px, 29vw, 196px)`** wider than column **`clamp(100px, 26vw, 175px)`**, no clip — mannequin bled outside cell.
+- **Fix:** **`noir/page.tsx`** — **`NoirPdpSideThumb`** uses **`baw-noir-thumb-brick-frame`** + **`baw-noir-thumb-mannequin-slot`** + brick-aligned classes (front scale / L-R nudge). **`index.css`** — **`baw-noir-pdp-thumb-col`** shares hub L/R overlay clip rules. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF similar platinum thumbs → BCF image 54–57 (user URLs)
+
+- **Context (full chat):** BCF similar strip (four cross-sell, width aligned, subline **RAW HUMAN HAIR** / **PLATINUM BLONDE**); interim fallback used **Platinum Blonde** IMG paths when **BCF 54–57** failed to load. User confirmed correct platinum assets: **`live-preview/BCF/image (54–57).png`** — wavy/curly **closure** **54/55**, wavy/curly **frontal** **56/57**.
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`** restored to those four BCF Supabase URLs. **`BcfShopThumb`** still skips legacy fallback when explicit **`src`** is set. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF platinum 54–57 uploaded; Noir 3D side thumbs fixed
+
+- **Context (full chat):** BCF similar platinum thumbs at **BCF/image (54–57).png** showed broken placeholders; Noir **3D VIEW** still showed **2D** grey mannequins in side thumbs while hero was 3D.
+- **BCF root cause:** Files **54–57** were **never in Supabase** (bucket had **43–53** only) → public URLs **404** despite correct code paths.
+- **BCF fix:** Uploaded platinum cross-sell PNGs to **`live-preview/BCF/image (54–57).png`** (closures wavy/curly, frontals wavy/curly). URLs now **200**.
+- **Noir root cause:** **`NoirPdpSideThumb`** hid 2D **`img`** with inline **`display:none`**, but **`.thumbnail-mannequin-img { display:block !important }`** overrode it in 3D mode.
+- **Noir fix:** **`noir/page.tsx`** — 3D mode renders **background-only** side cells (no 2D mannequin mount); 2D path unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Live try-on dynamic BAW selections (color + styling + part)
+
+- **Context (full chat):** User wanted **live try-on** wired to **current BAW selections** — e.g. **CHERRY + LAYERS** on Noir should drive both the **mannequin reference** and **Fal prompt**, not plain off-black middle-part batch defaults. Prompt/asset combinations should be **stored and reused** (Supabase hash paths).
+- **Problem:** Try-on prep and studio render used **`liveTryOnStorageLookupJob`** (batch NOIR defaults + color only); styling/part ignored; try-on page read **`location.pathname`** instead of **`returnTo`** BAW path; studio capture sent only **`{ color, unitKey }`**.
+- **Fix:**
+  - **`api/_lib/liveTryOnWigReference.ts`** — **`resolveLiveTryOnStyling`**, **`liveTryOnMannequinStoragePaths`**, **`wigPreviewSelectionsFromTryOnBody`**, **`liveTryOnStudioStylingPromptLine`** (layers/crimps/flat-iron/bangs text for studio Fal).
+  - **`src/utils/liveTryOnWigReference.ts`** — **`unitKeyFromBuildAWigPathname`**, **`readBuildWigPartSelection`**, **`resolveLiveTryOnStylingMode`**, **`liveTryOnApiBodyFromPayload`**.
+  - **`src/utils/liveTryOnEnsureWigAssets.ts`** — **`postWigPreviewLiveNoirColor`** then **`postLiveWigAfterColorStyling`** when needed; returns public mannequin triple (reuses Storage when exists).
+  - **`liveTryOnPrepareAssets.ts`** — calls ensure for NOIR before overlay lookup; uses dynamic mannequin URLs for angle preview.
+  - **`liveTryOnSelections.ts`** — payload includes **`partSelection`**; **`bawPathnameFromReturnTo`**; BAW build from pathname + localStorage.
+  - **`api/_lib/liveTryOnStudio.ts`** + **`live-try-on-studio-render.ts`** — full selection body → styled Storage path for mannequin ref + styling hint in prompt.
+  - **`LiveTryOnStudioCapture.tsx`** — passes full **`sourcePayload`** to studio render API.
+  - **`live-try-on/page.tsx`** — **`bawPathnameFromReturnTo(returnTo)`** for prep and payload.
+- **Reuse:** Same **`wig-preview-live/{v}/{UNIT}/{colorTierHash}/after-color/{folder}/`** paths as BAW live styling; APIs skip regeneration when files exist.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF platinum similar thumbs → Platinum Blonde IMG_2112–2121
+
+- **Context:** User corrected platinum BCF similar-product assets (not **BCF/image 54–57**).
+- **URLs:** wavy closure **IMG_2112**, curly closure **IMG_2118**, wavy frontal **IMG_2114**, curly frontal **IMG_2121** under **`live-preview/Platinum Blonde/`** (all **200**).
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Straight bundles PDP: color-specific hero photos
+
+- **Context:** User provided Supabase **`Bundles Color/Straight`** PNGs for straight-bundle **hair color** hero swaps (15 noir palette colors).
+- **Mapping:** JET BLACK **2147**, ESPRESSO **2150**, CHESTNUT **2151**, HONEY **2148**, AUBURN **2153**, COPPER **2154**, GINGER **2155**, SANGRIA **2156**, CHERRY **2157**, RASPBERRY **2158**, PLUM **2159**, COBALT **2160**, TEAL **2161**, SLIME **2162**, CITRINE **2163** (all **200**).
+- **Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_STRAIGHT_COLOR_PHOTO`** + **`bundlePhotoSrc`**; straight bundles hero + straight texture thumb update on color select; OFF BLACK / GOLDEN / PLATINUM / ASH fall back to default straight hero; wavy/curly unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF platinum similar thumbs → BCF image 58–61
+
+- **Context:** User corrected platinum BCF similar-product assets (replacing **Platinum Blonde IMG_2112–2121**).
+- **URLs:** wavy closure **58**, wavy frontal **59**, curly closure **60**, curly frontal **61** under **`live-preview/BCF/`** (all **200**).
+- **Change:** **`shopTextureCategoryThumb.ts`** — **`BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Wavy bundles PDP: color-specific hero photos
+
+- **Context:** User provided Supabase **`Bundles Color/Wavy`** PNGs for wavy-bundle hair color hero swaps (15 noir palette colors).
+- **Mapping:** JET BLACK **2171**, ESPRESSO **2181**, CHESTNUT **2182**, HONEY **2183**, AUBURN **2184**, COPPER **2185**, GINGER **2186**, SANGRIA **2187**, CHERRY **2188**, RASPBERRY **2189**, PLUM **2190**, COBALT **2191**, TEAL **2193**, SLIME **2194**, CITRINE **2195** (all **200**).
+- **Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_WAVY_COLOR_PHOTO`** + **`bundlePhotoSrc`** wavy branch; wavy hero + wavy texture thumb update on color select. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — Curly bundles color heroes + preserve color across texture switch
+
+- **Context:** User provided **`Bundles Color/Curly`** PNGs (15 colors; COPPER = **`gpt-image-2-edit-1 (2).png`**, TEAL = **IMG_2176**). Also: hair **color must stay selected** when switching straight ↔ wavy ↔ curly (e.g. COPPER on straight remains COPPER on wavy).
+- **Curly mapping:** **2196–2210** (+ COPPER special filename, TEAL **2176**); all **200**.
+- **Color persistence:** Texture hero thumbs + **hair texture** pills navigate with **`bcfTexturePdpHref`** (passes current **`bcfColor`** in URL); removed URL-sync effect branch that reset color to origin default when **`color`** query absent. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-10 — BCF closures/frontals: color persists across texture switch
+
+- **Context:** User asked same **color persistence** as bundles for **closures** and **frontals** (ahead of color-specific hero assets).
+- **Change:** **`shopBcfTexturePdpHref`** in **`bcfProductOptions.ts`** (shared bundles/closures/frontals). Texture thumbs + hair-texture pills already used it; extended to **origin** buttons, **color swatch** selection (**`syncBcfColorToUrl`**), and origin/texture auto-redirect (keeps **`bcfColor`** in URL). Pushed **`master`** + **`preview/mobile`**.

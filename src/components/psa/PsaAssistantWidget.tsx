@@ -126,6 +126,7 @@ export default function PsaAssistantWidget() {
     isLoadingThreadList,
     historyAvailable,
     sendMessage,
+    appendUserMessage,
     appendLocalExchange,
     usage,
     panelQuickReplies,
@@ -381,6 +382,7 @@ export default function PsaAssistantWidget() {
 
   const handleCloseChat = useCallback(() => {
     endRedCarpetMode();
+    setShowSelfieStyleAnalysis(false);
     setIsOpen(false);
     closeHistory();
   }, [closeHistory, endRedCarpetMode]);
@@ -499,6 +501,8 @@ export default function PsaAssistantWidget() {
     async (text: string) => {
       setPrefillInput('');
       if (isPsaSelfieStyleChip(text)) {
+        setBonusStarterChips([]);
+        appendUserMessage(text);
         setShowSelfieStyleAnalysis(true);
         return;
       }
@@ -540,7 +544,7 @@ export default function PsaAssistantWidget() {
         await runClientActions(result.clientActions);
       }
     },
-    [sendMessage, runClientActions, navigate, proactiveNudge]
+    [sendMessage, appendUserMessage, runClientActions, navigate, proactiveNudge]
   );
 
   const handleUpgrade = useCallback(() => {
@@ -646,6 +650,19 @@ export default function PsaAssistantWidget() {
               onInputFocusChange={setIsInputFocused}
               onInputTextChange={setInputHasText}
               initialInput={prefillInput}
+              selfieStyleAnalysisOverlay={
+                showSelfieStyleAnalysis ? (
+                  <PsaSelfieStyleAnalysisPanel
+                    onClose={() => setShowSelfieStyleAnalysis(false)}
+                    onPremiumRequired={() => {
+                      setShowSelfieStyleAnalysis(false);
+                      setIsOpen(false);
+                      setShowUpgradeModal(true);
+                    }}
+                    onResults={handleSelfieStyleResults}
+                  />
+                ) : null
+              }
             />
           </>
         ) : null}
@@ -653,17 +670,6 @@ export default function PsaAssistantWidget() {
         <div
           className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
         >
-          {isOpen && showSelfieStyleAnalysis ? (
-            <PsaSelfieStyleAnalysisPanel
-              onClose={() => setShowSelfieStyleAnalysis(false)}
-              onPremiumRequired={() => {
-                setShowSelfieStyleAnalysis(false);
-                setIsOpen(false);
-                setShowUpgradeModal(true);
-              }}
-              onResults={handleSelfieStyleResults}
-            />
-          ) : null}
           {!cartDropdownOpen && !isFabCollapsed && !isOpen && proactiveNudge ? (
             <button
               type="button"
