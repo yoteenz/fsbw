@@ -1,7 +1,5 @@
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
 import {
-  alternativeBlock,
-  compactPortfolioLine,
   displayDensity,
   displayHairline,
   displayLength,
@@ -10,28 +8,13 @@ import {
   displayStyle,
   formatScorePercent,
   formatStarRating,
-  threeMonthAltBlock,
 } from './hairstyleAnalysisFormat';
 import { normalizeAnalysisTier } from './hairstyleAnalysisRules';
-
-function topMatchBulletLines(look: AnalysisLook): string[] {
-  return [
-    look.unit,
-    look.color,
-    displayLength(look),
-    displayLace(look),
-    displayDensity(look),
-    displayHairline(look),
-    displayPart(look).replace(/\s+PART$/i, ''),
-    displayStyle(look) === 'LAYERS' ? 'SOFT FACE FRAMING LAYERS' : displayStyle(look),
-  ];
-}
 
 function specValues(look: AnalysisLook): Record<string, string> {
   return {
     specTexture: look.unit,
     specColor: look.color,
-    specHex: look.hex,
     specLength: displayLength(look),
     specLace: displayLace(look),
     specDensity: displayDensity(look),
@@ -41,18 +24,37 @@ function specValues(look: AnalysisLook): Record<string, string> {
   };
 }
 
-function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
-  const bullets = topMatchBulletLines(analysis.topMatch);
-  const specs = specValues(analysis.topMatch);
-  const out: Record<string, string> = {
-    clientName: analysis.clientName.toUpperCase(),
-    topScore: formatScorePercent(analysis.topMatch.score),
-    rating: formatStarRating(analysis.topMatch.rating),
-    ...specs,
+function topMatchHeader(look: AnalysisLook): Record<string, string> {
+  return {
+    clientName: '',
+    topScore: formatScorePercent(look.score),
+    rating: formatStarRating(look.rating),
+    ...specValues(look),
   };
-  bullets.forEach((line, i) => {
-    out[`topBullet-${i}`] = line;
-  });
+}
+
+function matchRowValues(look: AnalysisLook): Record<string, string> {
+  return {
+    texture: look.unit,
+    color: look.color,
+    length: displayLength(look),
+    score: formatScorePercent(look.score),
+  };
+}
+
+function applyMatchRow(out: Record<string, string>, prefix: string, look: AnalysisLook): void {
+  const row = matchRowValues(look);
+  out[`${prefix}-texture`] = row.texture;
+  out[`${prefix}-color`] = row.color;
+  out[`${prefix}-length`] = row.length;
+  out[`${prefix}-score`] = row.score;
+}
+
+function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
+  const out: Record<string, string> = {
+    ...topMatchHeader(analysis.topMatch),
+    clientName: analysis.clientName.toUpperCase(),
+  };
   analysis.whyItWorks.forEach((line, i) => {
     out[`whyLine-${i}`] = line;
   });
@@ -61,11 +63,11 @@ function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> 
 
 function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
   const out: Record<string, string> = {
+    ...topMatchHeader(analysis.topMatch),
     clientName: analysis.clientName.toUpperCase(),
-    topMatchBlock: threeMonthAltBlock(analysis.topMatch),
   };
-  analysis.additionalLooks.forEach((look, i) => {
-    out[`altBlock-${i}`] = threeMonthAltBlock(look);
+  analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
+    applyMatchRow(out, `match${i + 2}`, look);
   });
   return out;
 }
@@ -73,42 +75,24 @@ function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, st
 function sixMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
   const portfolio: AnalysisLook[] = [analysis.topMatch, ...analysis.additionalLooks];
   const out: Record<string, string> = {
+    ...topMatchHeader(analysis.topMatch),
     clientName: analysis.clientName.toUpperCase(),
-    topMatchBlock: [
-      analysis.topMatch.unit,
-      analysis.topMatch.color,
-      displayLength(analysis.topMatch),
-      formatScorePercent(analysis.topMatch.score),
-    ].join('\n'),
   };
-  portfolio.forEach((look, i) => {
-    out[`portfolioLine-${i}`] = compactPortfolioLine(i + 1, look);
+  portfolio.slice(0, 5).forEach((look, i) => {
+    applyMatchRow(out, `portfolio-${i}`, look);
   });
   return out;
 }
 
 function twelveMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
-  const look = analysis.topMatch;
-  const specs = specValues(look);
   const out: Record<string, string> = {
+    ...topMatchHeader(analysis.topMatch),
     clientName: analysis.clientName.toUpperCase(),
-    topScore: formatScorePercent(look.score),
-    rating: formatStarRating(look.rating),
-    topMatchBlock: [
-      `TEXTURE = ${look.unit}`,
-      `COLOR = ${look.color}`,
-      `HEX = ${look.hex}`,
-      `LENGTH = ${displayLength(look)}`,
-      `LACE = ${displayLace(look)}`,
-      `DENSITY = ${displayDensity(look)}`,
-      `PART = ${displayPart(look)}`,
-      `HAIRLINE = ${displayHairline(look)}`,
-      `STYLE = ${displayStyle(look) === 'LAYERS' ? 'SOFT FACE FRAMING LAYERS' : displayStyle(look)}`,
-    ].join('\n'),
-    ...specs,
   };
-  analysis.additionalLooks.forEach((alt, i) => {
-    out[`altBlock-${i}`] = alternativeBlock(i + 1, alt);
+  analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
+    out[`alt-${i}-color`] = alt.color;
+    out[`alt-${i}-length`] = displayLength(alt);
+    out[`alt-${i}-score`] = formatScorePercent(alt.score);
   });
   analysis.whyItWorks.forEach((line, i) => {
     out[`whyLine-${i}`] = line;
@@ -136,5 +120,26 @@ export function resolveOverlayImageUrl(
   analysis: HairstyleAnalysis
 ): string | null {
   if (fieldId === 'clientImage') return analysis.clientPreviewUrl;
+
+  const portfolioThumb = /^portfolio-(\d+)-thumb$/.exec(fieldId);
+  if (portfolioThumb) {
+    const idx = Number(portfolioThumb[1]);
+    const portfolio = [analysis.topMatch, ...analysis.additionalLooks];
+    return portfolio[idx]?.imageUrl ?? null;
+  }
+
+  const matchThumb = /^match(\d+)-thumb$/.exec(fieldId);
+  if (matchThumb) {
+    const rank = Number(matchThumb[1]);
+    const look = analysis.additionalLooks.find((l) => l.rank === rank) ?? analysis.additionalLooks[rank - 2];
+    return look?.imageUrl ?? null;
+  }
+
+  const altThumb = /^alt-(\d+)-thumb$/.exec(fieldId);
+  if (altThumb) {
+    const idx = Number(altThumb[1]);
+    return analysis.additionalLooks[idx]?.imageUrl ?? null;
+  }
+
   return null;
 }

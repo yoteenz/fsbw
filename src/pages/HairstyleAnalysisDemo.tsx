@@ -48,8 +48,8 @@ export default function HairstyleAnalysisDemo() {
             <li>12 month / black — top + 9 additional</li>
           </ul>
           <p className="mt-3">
-            Each tier uses a different field map (free specs + why, 3mo alts, 6mo portfolio, 12mo full grid).
-            Upload a client preview, then debug-drag slots to align with the Supabase template placeholders.
+            Templates are 2048×2560 (4:5). Slot positions are calibrated to the Supabase PNGs — turn on
+            Debug to nudge any field that still needs a pixel tweak after a template update.
           </p>
         </section>
       </div>
