@@ -19,7 +19,7 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
   };
 }
 
-/** Value boxes below OVERALL SCORE / MATCH RATING labels (calibrated on IMG_2447 @ 2048×2560). */
+/** Value boxes below OVERALL SCORE / MATCH RATING labels (calibrated on IMG_2549 @ 2048×2560). */
 export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
 export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 

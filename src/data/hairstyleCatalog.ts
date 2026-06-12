@@ -3,14 +3,18 @@ import type { AnalysisTier, UnitName } from '../types/hairstyleAnalysis';
 const ANALYSIS_TEMPLATE_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Analysis';
 
+/** Free = top match only; 3/6/12 month share one premium template (top + 3 additional matches). */
+export const HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL = `${ANALYSIS_TEMPLATE_BASE}/IMG_2554.png`;
+export const HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL = `${ANALYSIS_TEMPLATE_BASE}/IMG_2549.png`;
+
 export const HAIRSTYLE_ANALYSIS_TEMPLATE_URLS: Record<
   Exclude<AnalysisTier, 'black'>,
   string
 > = {
-  free: `${ANALYSIS_TEMPLATE_BASE}/IMG_2438.png`,
-  three_month: `${ANALYSIS_TEMPLATE_BASE}/IMG_2447.png`,
-  six_month: `${ANALYSIS_TEMPLATE_BASE}/IMG_2450.png`,
-  twelve_month: `${ANALYSIS_TEMPLATE_BASE}/IMG_2451.png`,
+  free: HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL,
+  three_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
+  six_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
+  twelve_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
 };
 
 export const HAIR_COLORS = {

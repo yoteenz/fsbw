@@ -64,34 +64,11 @@ function defaultScoreSlotPercents(tier: FalHairstyleAnalysis['tier']): Record<st
     rating: RATING_PERCENT,
   };
 
-  if (key === 'three_month') {
-    [48.0, 60.5, 73.0].forEach((blockTop, i) => {
-      out[`match${i + 2}-score`] = matchRowScorePercent(blockTop);
-    });
-    return out;
-  }
+  if (key === 'free') return out;
 
-  if (key === 'six_month') {
-    [48.5, 57.0, 65.5, 74.0, 82.5].forEach((blockTop, i) => {
-      out[`portfolio-${i}-score`] = matchRowScorePercent(blockTop);
-    });
-    return out;
-  }
-
-  const colLefts = [52.0, 64.5, 77.0];
-  const rowTops = [34.5, 46.0, 57.5];
-  let altIndex = 0;
-  for (const blockTop of rowTops) {
-    for (const left of colLefts) {
-      out[`alt-${altIndex}-score`] = {
-        left: `${left}%`,
-        top: `${blockTop + 8.9}%`,
-        width: '11%',
-        height: '1.5%',
-      };
-      altIndex += 1;
-    }
-  }
+  [48.0, 60.5, 73.0].forEach((blockTop, i) => {
+    out[`match${i + 2}-score`] = matchRowScorePercent(blockTop);
+  });
   return out;
 }
 

@@ -63,7 +63,7 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **After the monthly free is used:** members purchase another through checkout at the **same prices as the wig consult style analysis add-on** (not the $40 consult deposit): **1 comparison $20**, **3 comparisons $40**, **6 comparisons $60**. Cart line type `hairstyle-analysis`; Stripe webhook grants paid credits. PSA tools: `get_hairstyle_analysis_status`, `purchase_hairstyle_analysis`.
 
-**Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2438|2447|2450|2451.png`) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
+**Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2554.png` free · `IMG_2549.png` premium) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
 
 **Post-process overlay (server):** Fal fills TOP MATCH spec values, match rows, and match-score % (medium gray `#808080` in template slot — never black). Only **overall score %** (Covered By Your Grace red via bundled `api/_lib/fonts/CoveredByYourGrace.ttf` + opentype SVG paths) and **match-rating stars** are composited in `api/_lib/hairstyleAnalysisFalComposite.ts` (sharp). **Fal image refs:** default **minimal** — template + client photo only (`HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true`; set `false` to re-attach mannequin/styling refs). Part values are **MIDDLE / LEFT / RIGHT** only; style values use Build-a-Wig ids (**LAYERS**, **FLAT IRON**, **CRIMPS**, etc.). **COLOR** value fields show the catalog color name only (no hex or parentheses). Hair edits use **strand-level recolor** instructions (no flat overlay). **Every detail matters:** Fixed rose-icon rows — print **EVERY DETAIL MATTERS LINE** sentences verbatim (one facial feature + one spec per row; not motivational “why it works” copy). Fal prompt prioritizes preserving acrylic frost, **brand-red panel glow**, and marble texture from the static template.
 
@@ -71,12 +71,12 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **Tier pick counts (card system):**
 
-| Tier | Output |
-|------|--------|
-| Free | 1 (top match only) |
-| 3 month | Top + 3 additional |
-| 6 month | Top + 6 additional |
-| 12 month / black | Top + 9 additional |
+| Tier | Template | Output |
+|------|----------|--------|
+| Free | `IMG_2554.png` | 1 (top match only) |
+| 3 / 6 / 12 month / black | `IMG_2549.png` | Top + 3 additional |
+
+Paid tiers share one premium template (fewer rows, higher quality). Monthly free allowance still applies per subscription tier.
 
 **Code:** `src/types/hairstyleAnalysis.ts`, `src/data/hairstyleCatalog.ts`, `src/utils/hairstyleAnalysisRules.ts`, `src/utils/hairstyleAnalysisTemplateLayouts.ts`, `src/utils/hairstyleAnalysisOverlayContent.ts`, `src/utils/hairstyleAnalysisPrompts.ts`, `src/components/hairstyle-analysis/*`, `src/pages/HairstyleAnalysisDemo.tsx`. Field map: `docs/HAIRSTYLE_ANALYSIS_TEMPLATES.md`.
 

@@ -2,13 +2,17 @@
 const ANALYSIS_TEMPLATE_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Analysis';
 
+export const HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL = `${ANALYSIS_TEMPLATE_BASE}/IMG_2554.png`;
+export const HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL = `${ANALYSIS_TEMPLATE_BASE}/IMG_2549.png`;
+
 export type HairstyleAnalysisCardTier = 'free' | 'three_month' | 'six_month' | 'twelve_month';
 
+/** Two physical templates: free (top match only) + premium (top + 3 additional matches for all paid tiers). */
 export const HAIRSTYLE_ANALYSIS_TEMPLATE_URLS: Record<HairstyleAnalysisCardTier, string> = {
-  free: `${ANALYSIS_TEMPLATE_BASE}/IMG_2438.png`,
-  three_month: `${ANALYSIS_TEMPLATE_BASE}/IMG_2447.png`,
-  six_month: `${ANALYSIS_TEMPLATE_BASE}/IMG_2450.png`,
-  twelve_month: `${ANALYSIS_TEMPLATE_BASE}/IMG_2451.png`,
+  free: HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL,
+  three_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
+  six_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
+  twelve_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
 };
 
 export function normalizeHairstyleAnalysisCardTier(

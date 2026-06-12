@@ -288,20 +288,9 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
     'Print each value in the MATCH SCORE value slot beside the label — gray only, never on thumbnails.',
   ];
 
-  if (tier === 'three_month') {
-    analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
-      lines.push(`MATCH ${String(i + 2).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(look.score)}`);
-    });
-  } else if (tier === 'six_month') {
-    const portfolio = [analysis.topMatch, ...analysis.additionalLooks];
-    portfolio.slice(0, 7).forEach((look, i) => {
-      lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(look.score)}`);
-    });
-  } else {
-    analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
-      lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(alt.score)}`);
-    });
-  }
+  analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
+    lines.push(`MATCH ${String(i + 2).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(look.score)}`);
+  });
 
   return lines.join('\n');
 }
@@ -443,12 +432,6 @@ function altRowBlock(label: string, look: FalAnalysisLook): string {
   ].join('\n');
 }
 
-function portfolioLine(rank: number, look: FalAnalysisLook): string {
-  const style = displayStyle(look.styling);
-  const styleSuffix = style !== 'NONE' ? ` + ${style}` : '';
-  return `${String(rank).padStart(2, '0')} ${look.unit}${styleSuffix}`;
-}
-
 function promptFooter(tier: FalHairstyleAnalysis['tier']): string {
   const tierKey = normalizeTier(tier);
   const lines = [
@@ -531,81 +514,13 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
   return lines.join('\n');
 }
 
-function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
-  const top = analysis.topMatch;
-  const portfolio = [top, ...analysis.additionalLooks];
-  const firstName = clientFirstName(analysis.clientName);
-  const lines = [
-    buildTemplateRules(refs, 'six_month'),
-    '',
-    clientPreviewTabLine(firstName),
-    clientPreviewHairLine(top, refs),
-    '',
-    ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
-    '',
-    'STYLE PORTFOLIO — FILL EACH ALTERNATIVE ROW (THUMBNAIL + TEXTURE + COLOR + LENGTH + STYLE + MATCH SCORE):',
-  ];
-  portfolio.slice(0, 7).forEach((look, i) => {
-    const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
-    lines.push(`${label}: ${portfolioLine(i + 1, look)}`);
-    lines.push(`  TEXTURE: ${look.unit}`);
-    lines.push(`  ${colorValueLine(look)}`);
-    lines.push(`  LENGTH: ${displayLength(look.length)}`);
-    lines.push(`  STYLE: ${displayStyle(look.styling)}`);
-    lines.push(`  ${matchScoreFalLine(look)}`);
-    lines.push(matchThumbnailBlock(`  ${label}`, look, refs));
-  });
-  lines.push('');
-  lines.push(matchScoreManifestBlock(analysis));
-  lines.push(promptFooter('six_month'));
-  return lines.join('\n');
-}
-
-function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
-  const top = analysis.topMatch;
-  const firstName = clientFirstName(analysis.clientName);
-  const lines = [
-    buildTemplateRules(refs, 'twelve_month'),
-    '',
-    clientPreviewTabLine(firstName),
-    clientPreviewHairLine(top, refs),
-    '',
-    ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
-    '',
-    'STYLE PORTFOLIO GRID — FILL ALL 9 ALTERNATIVES (THUMBNAIL + TEXTURE + COLOR + LENGTH + STYLE + MATCH SCORE):',
-  ];
-  analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
-    const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
-    lines.push(`${label}:`);
-    lines.push(`  TEXTURE: ${alt.unit}`);
-    lines.push(`  ${colorValueLine(alt)}`);
-    lines.push(`  LENGTH: ${displayLength(alt.length)}`);
-    lines.push(`  STYLE: ${displayStyle(alt.styling)}`);
-    lines.push(`  ${matchScoreFalLine(alt)}`);
-    lines.push(matchThumbnailBlock(`  ${label}`, alt, refs));
-  });
-  lines.push('');
-  lines.push(matchScoreManifestBlock(analysis));
-  if (analysis.whyItWorks.length > 0) {
-    lines.push('');
-    lines.push(everyDetailMattersRulesBlock(analysis.whyItWorks.length));
-    analysis.whyItWorks.forEach((line, i) => {
-      lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
-    });
-  }
-  lines.push(promptFooter('twelve_month'));
-  return lines.join('\n');
-}
-
 export function buildHairstyleAnalysisFalPrompt(
   analysis: FalHairstyleAnalysis,
   refs: FalPromptImageRefs
 ): string {
   const tier = normalizeTier(analysis.tier);
   if (tier === 'free') return freePrompt(analysis, refs);
-  if (tier === 'three_month') return threeMonthPrompt(analysis, refs);
-  if (tier === 'six_month') return sixMonthPrompt(analysis, refs);
-  return twelveMonthPrompt(analysis, refs);
+  return threeMonthPrompt(analysis, refs);
 }
 
 export const HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
