@@ -27520,3 +27520,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported additional matches **deviated from BAW styling reference images** — everything classified/rendered as **LAYERS** while STYLE fields or thumbnails showed a different salon finish (styled incorrectly).
 - **Shipped:** **`normalizeAnalysisStylingId()`** — curly units (SOFT CURL, OCEAN CURL) map LAYERS→DEFINE, CRIMPS→WAND CURLS; strip `STYLING:` prefix; applied in **`hairstyleAnalysisNormalize.ts`**, **`psaPickToAnalysisLook`**, shared **`hairstyleAnalysisFormat.ts`**. **`hairstyleAnalysisFalPrompt.ts`** — **`salonStylingPriorityBlock`**, **`matchStylingManifestBlock`**, per-match STYLE binding; styling ref IMAGE **overrides** mannequin default finish; explicit STYLE on thumbnails. **`hairstyleAnalysisBawStylingRefs.ts`** — ref list labels use BAW style ids. PSA selfie instructions note curly-unit styling ids.
 - **Conventions:** Each match must use its assigned STYLE + matching BAW styling reference IMAGE; mannequin = texture + drape only when styling ref is attached.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: mannequin refs opt-in (neck preservation)
+
+- **Context:** User reported always-attached unit mannequin front images were **too aggressive** — neck rendering looked weird (mannequin anatomy bleeding into client selfie).
+- **Shipped:** **`hairstyleAnalysisFalMannequinImageRefs()`** — mannequin fronts **off by default**; opt-in with **`HAIRSTYLE_ANALYSIS_FAL_MANNEQUIN_REFS=true`**. Default Fal input = template + client + BAW styling refs. **`neckAndBodyPreservationBlock()`** in prompt — IMAGE 2 owns neck/collarbone/shoulders; mannequin = hair strands + hair-end drape only when attached. One-shoulder drape stays **prompt-led** when mannequins off. **`.env.example`**, **`docs/STYLE_ANALYSIS.md`** updated.
+- **Conventions:** Do not attach mannequin IMAGEs unless explicitly needed; never copy mannequin neck/shoulder geometry onto the client.
