@@ -4,8 +4,17 @@ import {
   resolveTopScoreSlot,
 } from './hairstyleAnalysisCompositeLayout.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
-import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
-import { buildTextPathsSvg, overallScorePathItems } from './hairstyleAnalysisTextPaths.js';
+import {
+  premiumMatchRowValueSlots,
+  type PixelRect,
+} from './hairstyleAnalysisLayoutSlots.js';
+import {
+  buildTextPathsSvg,
+  matchRowValueFontSize,
+  overallScorePathItems,
+  textPathData,
+} from './hairstyleAnalysisTextPaths.js';
+import { displayLength, formatScorePercent } from './hairstyleAnalysisDisplay.js';
 
 const BRAND_RED = '#EB1C24';
 const STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
@@ -60,7 +69,45 @@ async function buildStarComposites(
   return overlays;
 }
 
-/** Overlay overall score % and match-rating stars — Fal fills specs and gray match-row scores. */
+function normalizeTier(tier: FalHairstyleAnalysis['tier']): Exclude<FalHairstyleAnalysis['tier'], 'black'> {
+  return tier === 'black' ? 'twelve_month' : tier;
+}
+
+function buildMatchRowOverlaySvg(analysis: FalHairstyleAnalysis): Buffer | null {
+  if (normalizeTier(analysis.tier) === 'free') return null;
+
+  const slotById = new Map(premiumMatchRowValueSlots().map((slot) => [slot.id, slot]));
+  const pathItems: Array<{ pathData: string; fill: string }> = [];
+
+  analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
+    const prefix = `match${i + 2}`;
+    const values: Record<string, string> = {
+      texture: look.unit.trim().toUpperCase(),
+      color: look.color.trim().toUpperCase(),
+      length: displayLength(look.length),
+      score: formatScorePercent(look.score),
+    };
+
+    for (const key of ['texture', 'color', 'length', 'score'] as const) {
+      const slot = slotById.get(`${prefix}-${key}`);
+      if (!slot) continue;
+      pathItems.push({
+        pathData: textPathData(values[key], slot.rect, {
+          fontFile: 'FuturaPTMedium.ttf',
+          fontSize: matchRowValueFontSize(slot.rect),
+          fill: slot.fill,
+          align: 'left',
+        }),
+        fill: slot.fill,
+      });
+    }
+  });
+
+  if (pathItems.length === 0) return null;
+  return buildTextPathsSvg(pathItems);
+}
+
+/** Overlay overall score %, match-rating stars, and match-row values (Fal leaves those slots blank). */
 export async function compositeHairstyleAnalysisFalImage(
   falImageUrl: string,
   analysis: FalHairstyleAnalysis,
@@ -71,15 +118,20 @@ export async function compositeHairstyleAnalysisFalImage(
   const baseBuf = await fetchBuffer(falImageUrl);
   const topScoreSlot = resolveTopScoreSlot(layoutOverrides);
   const ratingSlot = resolveRatingSlot(layoutOverrides);
-  const [scoreOverlay, starOverlays] = await Promise.all([
+  const [scoreOverlay, starOverlays, matchRowOverlay] = await Promise.all([
     Promise.resolve(buildScoreOverlaySvg(analysis.topMatch.score, topScoreSlot)),
     buildStarComposites(analysis.topMatch.rating, ratingSlot, siteOrigin),
+    Promise.resolve(buildMatchRowOverlaySvg(analysis)),
   ]);
 
   const overlays: Array<{ input: Buffer; left: number; top: number }> = [
     { input: await sharp(scoreOverlay).png().toBuffer(), left: 0, top: 0 },
     ...starOverlays,
   ];
+
+  if (matchRowOverlay) {
+    overlays.push({ input: await sharp(matchRowOverlay).png().toBuffer(), left: 0, top: 0 });
+  }
 
   return sharp(baseBuf).composite(overlays).png().toBuffer();
 }

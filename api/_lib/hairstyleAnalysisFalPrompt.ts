@@ -267,14 +267,19 @@ function blankScoreAndRatingRules(): string {
   ].join('\n');
 }
 
-function matchScoreFalLine(look: FalAnalysisLook): string {
-  const pct = formatScorePercent(look.score);
+function matchRowValuesBlankRules(): string {
+  return [
+    '=== MATCH 02–04 VALUE SLOTS — LEAVE BLANK (SERVER OVERLAY ONLY) ===',
+    'For MATCH 02, MATCH 03, and MATCH 04 rows: do NOT print texture, color, length, or match score % in the value areas.',
+    'Labels (TEXTURE:, COLOR:, LENGTH:, MATCH SCORE:) are already on the template — leave every value slot beside them empty.',
+    'Still fill match thumbnails and TOP MATCH spec column. Server composites match-row values at the correct size.',
+  ].join('\n');
+}
+
+function matchScoreFalLine(_look: FalAnalysisLook): string {
   return [
     `MATCH SCORE value slot: the "MATCH SCORE:" label is already on the template in black.`,
-    `Print ONLY "${pct}" in the value area beside that label — medium gray ${MATCH_SCORE_GRAY} (RGB 128,128,128).`,
-    `CRITICAL: match score % must be GRAY ${MATCH_SCORE_GRAY} — NEVER black, NEVER red, NEVER white.`,
-    'Place the % in the same position as other row values (texture, color, length) — aligned with the MATCH SCORE label row.',
-    `Do not repeat "MATCH SCORE". Do not apply the black spec-text rule to match score percentages.`,
+    'Leave the match score value area completely BLANK — server overlays the gray % after generation.',
   ].join(' ');
 }
 
@@ -283,13 +288,14 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   if (tier === 'free') return '';
 
   const lines: string[] = [
-    '=== MATCH SCORE VALUES — UNIQUE GRAY % PER ROW (YOU MUST PRINT THESE) ===',
-    'Each row gets its own score — never repeat the same percentage on multiple rows.',
-    'Print each value in the MATCH SCORE value slot beside the label — gray only, never on thumbnails.',
+    '=== MATCH 02–04 ROW VALUES — LEAVE ALL VALUE SLOTS BLANK ===',
+    'Do not print texture, color, length, or match score % for additional matches — server overlays every value.',
   ];
 
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
-    lines.push(`MATCH ${String(i + 2).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(look.score)}`);
+    lines.push(
+      `MATCH ${String(i + 2).padStart(2, '0')} (for server reference only — do not print on card): ${look.unit}, ${look.color}, ${displayLength(look.length)}, ${formatScorePercent(look.score)}`
+    );
   });
 
   return lines.join('\n');
@@ -319,8 +325,8 @@ function additionalMatchTemplateRules(): string[] {
     'Use the matching 3D mannequin image (listed above) as the hair texture reference for that unit.',
     'NEVER use back-of-head stock photos, different people, hair-only swatches, or repainted lower-body clothing.',
     '',
-    'TOP MATCH spec values, match row texture/color/length/style, portfolio lines, and every-detail-matters lines: black uppercase Futura PT Medium.',
-    'MATCH SCORE percentage VALUES ONLY: medium gray ' + MATCH_SCORE_GRAY + ' in each row\'s value slot — separate color rule; never black.',
+    'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
+    'MATCH 02–04 texture/color/length/score value slots: leave blank — server overlay only.',
   ];
 }
 
@@ -381,6 +387,7 @@ function buildTemplateRules(
     '',
     blankScoreAndRatingRules(),
     '',
+    ...(tierKey === 'free' ? [] : [matchRowValuesBlankRules(), '']),
     mannequinList,
     '',
     bawStylingRefListBlock(refs.stylingRefs),
@@ -453,7 +460,7 @@ function promptFooter(tier: FalHairstyleAnalysis['tier']): string {
     );
   } else {
     lines.push(
-      `MATCH SCORE value slots: gray ${MATCH_SCORE_GRAY} percentage only beside each label — never on thumbnails.`,
+      'MATCH 02–04 value slots: left blank for server overlay — thumbnails only.',
       'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.'
     );
   }

@@ -50,6 +50,36 @@ export function threeMonthMatchScoreSlots(): PixelRect[] {
   return [48.0, 60.5, 73.0].map(matchRowScoreSlot);
 }
 
+export type MatchRowValueSlot = {
+  id: string;
+  rect: PixelRect;
+  fill: string;
+};
+
+/** MATCH 02–04 value slots (texture, color, length, score) — server composite overlay. */
+export function premiumMatchRowValueSlots(): MatchRowValueSlot[] {
+  const matchTops = [48.0, 60.5, 73.0];
+  const slots: MatchRowValueSlot[] = [];
+  for (let i = 0; i < matchTops.length; i++) {
+    const blockTop = matchTops[i];
+    const prefix = `match${i + 2}`;
+    const fields = [
+      { key: 'texture', offset: 1.0, fill: '#1a1a1a' },
+      { key: 'color', offset: 2.8, fill: '#1a1a1a' },
+      { key: 'length', offset: 4.6, fill: '#1a1a1a' },
+      { key: 'score', offset: 6.4, fill: '#808080' },
+    ] as const;
+    for (const field of fields) {
+      slots.push({
+        id: `${prefix}-${field.key}`,
+        rect: pctRect('60.5%', `${blockTop + field.offset}%`, '30%', '1.7%'),
+        fill: field.fill,
+      });
+    }
+  }
+  return slots;
+}
+
 export function sixMonthPortfolioScoreSlots(): PixelRect[] {
   return [48.5, 57.0, 65.5, 74.0, 82.5].map(matchRowScoreSlot);
 }
