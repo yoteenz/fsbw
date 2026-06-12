@@ -110,6 +110,7 @@ export default function HairstyleAnalysisCard({
               debug={showDebugFrames}
               cardRef={cardRef}
               onRectChange={onSlotRectChange}
+              resizeAxes="horizontal"
               className={styles.fadeDebugSlot}
             >
               <div className={styles.fadeDebugFill} aria-hidden />

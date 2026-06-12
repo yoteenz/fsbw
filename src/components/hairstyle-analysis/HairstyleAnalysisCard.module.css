@@ -54,6 +54,45 @@
   cursor: grabbing;
 }
 
+.slotResizeHandle {
+  position: absolute;
+  z-index: 4;
+  touch-action: none;
+  user-select: none;
+}
+
+.slotResizeHandleLeft,
+.slotResizeHandleRight {
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.slotResizeHandleLeft {
+  left: -5px;
+}
+
+.slotResizeHandleRight {
+  right: -5px;
+}
+
+.slotResizeHandleTop,
+.slotResizeHandleBottom {
+  left: 0;
+  right: 0;
+  height: 10px;
+  cursor: ns-resize;
+}
+
+.slotResizeHandleTop {
+  top: -5px;
+}
+
+.slotResizeHandleBottom {
+  bottom: -5px;
+}
+
 .valueOnlySlot {
   display: flex;
   align-items: center;
@@ -141,6 +180,13 @@
 .fadeDebugSlot {
   z-index: 3;
   pointer-events: auto;
+}
+
+.fadeDebugSlot .slotResizeHandleLeft,
+.fadeDebugSlot .slotResizeHandleRight {
+  background: rgba(0, 188, 212, 0.45);
+  border: 1px solid rgba(0, 188, 212, 0.95);
+  border-radius: 2px;
 }
 
 .fadeDebugFill {
