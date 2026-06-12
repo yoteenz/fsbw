@@ -27569,3 +27569,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Premium-tier Fal population **prompt** was ~**35,007** chars — over Fal GPT Image 2's **32,000** `prompt` limit (not the image URL itself; server already uploads data URLs to Fal storage).
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — deduplicated premium prompt: compact match-thumb lines, shared client-photo rules once, removed repeated footer/face/drape blocks; **`HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS`** + guard in **`buildHairstyleAnalysisFalPrompt`** (~15k chars now). **`hairstyleAnalysisFal.ts`** — compress large client preview data URLs before Fal upload. Preview placeholder notes Upload for large photos.
 - **Conventions:** Keep premium Fal prompt under 32k; prefer Upload over pasting huge base64 strings.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: revert server score/stars; fix fade + helmet hair
+
+- **Context:** User reported server-composited **overall score %** and **match-rating stars** were back on the template, **incorrectly removing** other Fal-generated text (match rows garbled/overlapping). **Helmet hair** / high density returned after neck-position prompt slimming. **Bottom fade** misaligned with panel, painted flat gray instead of cutting out photo to show marble.
+- **Shipped:** Removed score + star overlays from **`hairstyleAnalysisFalComposite.ts`** — server post-process = **MATCH 02–04 row values** + **client photo bottom fade** only. **`hairstyleAnalysisFalPrompt.ts`** — Fal generates score % (CBYG script) and stars in-image again; restored **`realisticHairDensityBlock`** on client preview + thumbs + anti-helmet line in shared photo rules. **`CLIENT_PHOTO_FADE_SLOT`** (inner inset from panel border/pill) + marble strip underlay in **`hairstyleAnalysisClientPhotoFade.ts`** (alpha mask, not gray fill). Docs/preview/CORE updated.
+- **Conventions:** Score + stars = Fal in-image; server overlays match-row values + photo fade mask only.

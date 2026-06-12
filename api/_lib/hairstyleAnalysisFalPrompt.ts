@@ -1,7 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Client photo bottom fade, overall score %, match-rating stars, and MATCH 02–04 row values are server-composited after Fal.
- * TOP MATCH specs, photos, and every-detail-matters rows are generated in-image by Fal.
+ * Client photo bottom fade and MATCH 02–04 row values are server-composited after Fal.
+ * Overall score %, match-rating stars, TOP MATCH specs, and photos are generated in-image by Fal.
  */
 
 import {
@@ -226,7 +226,8 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
   return [
     '=== CLIENT PREVIEW (IMAGE 2) — TOP MATCH HAIR ===',
     clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
-    `Hair only: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}, density ${displayDensity(look.density)}.`,
+    `Hair only: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}.`,
+    realisticHairDensityBlock(displayDensity(look.density), false),
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs, look.styling),
@@ -242,6 +243,7 @@ function sharedClientPhotoRulesBlock(): string {
     faceIdentityLockBlock(),
     'Tight face-centered crop from IMAGE 2 — zoom in; crop out torso and lower body. Never repaint clothing or paint clouds/mist/fades at the bottom (server masks the edge).',
     realisticHairRecolorBlock(),
+    'HAIR VOLUME: reduce crown/temple bulk — natural strand separation; FORBIDDEN helmet hair, bouffant crown, plastic uniform volume, or shrinking the face to hide extra hair.',
     hairlineRulesBlock(),
     neckAndBodyPreservationBlock(),
   ].join('\n\n');
@@ -282,6 +284,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
   return [
     `${label} THUMB: same client face as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style} (${refNote}); one-shoulder drape like hero; hair-only edits.`,
+    realisticHairDensityBlock(displayDensity(look.density), true),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
     .filter(Boolean)
@@ -343,25 +346,37 @@ function panelChromePreservationBlock(): string {
 }
 
 
-function overallScoreFalLine(_look: FalAnalysisLook): string {
+function filledStarCount(rating: number): number {
+  return Math.min(5, Math.max(0, Math.round(rating)));
+}
+
+function overallScoreFalLine(look: FalAnalysisLook): string {
   const targetPx = overallScoreFontSize(TOP_SCORE_SLOT);
   return [
-    'OVERALL SCORE value area: leave completely BLANK — server overlays the red percentage after generation.',
-    `(Server reference only — do not print: ${formatScorePercent(_look.score)} at ~${targetPx}px CBYG-style script, brand red ${BRAND_RED}.)`,
+    `OVERALL SCORE: print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
+    `Use Covered By Your Grace–style red script (~${targetPx}px) for digits + Futura % suffix, brand red ${BRAND_RED}.`,
   ].join(' ');
 }
 
-function matchRatingStarsFalLine(_look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
+function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
+  const filled = filledStarCount(look.rating);
   const tierKey = normalizeTier(tier);
   const premiumNote =
     tierKey === 'free'
-      ? 'FREE TEMPLATE: leave the MATCH RATING value area blank — server overlays all five Noir stars at premium-template positions.'
-      : 'PREMIUM TEMPLATE: five star outline glyphs are pre-rendered — do NOT redraw, move, resize, fill, or erase them. Server overlays filled stars on the outlines.';
+      ? [
+          'FREE TEMPLATE: draw exactly 5 star outlines matching premium template shape, then fill earned stars.',
+          'Do not use a different star icon set.',
+        ].join(' ')
+      : [
+          'PREMIUM TEMPLATE: five star outline glyphs are pre-rendered — use those exact shapes only.',
+          'Do NOT redraw, move, resize, or replace the template star outlines.',
+        ].join(' ');
 
   return [
-    'MATCH RATING stars: leave completely untouched — server overlays filled Noir stars aligned to template outline positions after generation.',
+    `MATCH RATING: fill exactly ${filled} of 5 stars with solid brand red ${BRAND_RED} (same red as panel border glow).`,
+    `Leave the remaining ${5 - filled} star(s) as empty outlines — do not fill them.`,
     premiumNote,
-    'FORBIDDEN: drawing stars in-image, yellow/gold stars, emoji stars, or new star shapes.',
+    'FORBIDDEN: yellow/gold stars, emoji stars, or new star shapes outside the MATCH RATING panel.',
   ].join(' ');
 }
 
@@ -414,8 +429,8 @@ function freeTierOnlyBlock(): string {
     'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
-    'ONLY fill: client preview photo, TOP MATCH spec column, and EVERY DETAIL MATTERS text rows beside rose icons.',
-    'Leave OVERALL SCORE %, MATCH RATING stars, and all match-row value slots blank for server overlay.',
+    'ONLY fill: client preview photo, TOP MATCH spec column, OVERALL SCORE %, MATCH RATING stars, and EVERY DETAIL MATTERS text rows beside rose icons.',
+    'Leave MATCH 02–04 texture/color/length/score value slots blank for server overlay.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -518,8 +533,8 @@ function buildTemplateRules(
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score %, stars, and match rows blank for server overlay.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score %, match rows, and stars blank for server overlay; TOP MATCH specs + thumbnails in-image.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + stars in-image; match rows blank for server overlay.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score % + stars in-image; MATCH 02–04 row values blank for server overlay; TOP MATCH specs + thumbnails in-image.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -551,7 +566,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     '',
     '=== FINAL CHECK ===',
     'PILL: first name replaces "CLIENT PREVIEW" inside the tab only.',
-    'TOP MATCH specs + every detail matters filled; server overlays score and stars.',
+    'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
     overallScoreFalLine(analysis.topMatch),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
   ].join('\n');
@@ -604,7 +619,7 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    'FINAL CHECK: pill first name only; TOP MATCH specs filled; thumbs = same client + assigned STYLE; match-row values/score/stars blank for server overlay.'
+    'FINAL CHECK: pill first name only; TOP MATCH specs + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 row values blank for server overlay.'
   );
   return lines.join('\n');
 }

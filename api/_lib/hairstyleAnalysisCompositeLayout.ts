@@ -1,5 +1,7 @@
 import {
   CLIENT_IMAGE_SLOT,
+  CLIENT_PHOTO_FADE_SLOT,
+  clientPhotoFadeRect,
   HAIRSTYLE_ANALYSIS_CANVAS,
   RATING_SLOT,
   TOP_SCORE_SLOT,
@@ -103,6 +105,17 @@ export function resolveClientImageSlotOrDefault(overrides?: CompositeLayoutOverr
     return resolveClientImageSlot(overrides);
   }
   return CLIENT_IMAGE_SLOT;
+}
+
+export function resolveClientPhotoFadeSlot(overrides?: CompositeLayoutOverrides): PixelRect {
+  return clientPhotoFadeRect(resolveClientImageSlotOrDefault(overrides));
+}
+
+export function resolveClientPhotoFadeSlotOrDefault(overrides?: CompositeLayoutOverrides): PixelRect {
+  if (overrides?.clientImage && Object.keys(overrides.clientImage).length > 0) {
+    return resolveClientPhotoFadeSlot(overrides);
+  }
+  return CLIENT_PHOTO_FADE_SLOT;
 }
 
 export function matchScoreSlotIds(tier: FalHairstyleAnalysis['tier']): string[] {
