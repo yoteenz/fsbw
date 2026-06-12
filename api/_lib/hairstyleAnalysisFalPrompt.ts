@@ -100,15 +100,54 @@ function portfolioLine(rank: number, look: FalAnalysisLook): string {
   return `${String(rank).padStart(2, '0')} ${look.unit}${style} — ${formatScore(look.score)}`;
 }
 
+const BRAND_RED = '#EB1C24';
+const BRAND_GRAY = '#808080';
+
 const TEMPLATE_RULES = [
+  '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',
   'USE THE FIRST UPLOADED IMAGE AS THE EXACT STATIC TEMPLATE BACKGROUND.',
-  'DO NOT REDESIGN THE CARD, MOVE PANELS, CHANGE FONTS, OR ALTER THE MARBLE BACKGROUND.',
-  'ONLY POPULATE THE EXISTING EMPTY PLACEHOLDERS — ALL SECTION LABELS AND ROSE ICONS ARE ALREADY ON THE TEMPLATE.',
-  'USE THE SECOND UPLOADED IMAGE ONLY INSIDE THE CLIENT PREVIEW FRAME.',
-  'KEEP THE CLIENT FACE, SKIN TONE, AGE, EXPRESSION, AND CAMERA ANGLE FROM THE SECOND IMAGE.',
-  'ONLY CHANGE THE CLIENT HAIR TO MATCH THE TOP MATCH SPEC.',
-  'MATCH THE TEMPLATE TYPOGRAPHY: UPPERCASE FUTURA-STYLE SANS, RED ACCENTS WHERE SHOWN ON TEMPLATE.',
-  'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — EVERY FIELD FILLED, NO BLANK PLACEHOLDERS.',
+  'DO NOT REDESIGN THE CARD, MOVE PANELS, CROP, OR ALTER THE MARBLE BACKGROUND.',
+  'ALL SECTION TITLES, BORDERS, FOOTER ICONS, AND LABELS (TEXTURE:, COLOR:, etc.) ARE ALREADY ON THE TEMPLATE — LEAVE THEM UNTOUCHED.',
+  'ONLY FILL EMPTY VALUE AREAS NEXT TO EXISTING LABELS. DO NOT DUPLICATE LABELS OR ICONS.',
+  '',
+  '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
+  'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
+  'DO NOT ADD NEW ROSE ICONS. DO NOT CHANGE ROSE SHAPE, SIZE, POSITION, OR COLOR.',
+  'THE PRECISE MATCHING ROSE AND ALL PORTFOLIO/MATCH ROSES MUST LOOK IDENTICAL TO IMAGE 1 — ONLY ADD TEXT VALUES BESIDE THEM.',
+  '',
+  '=== BRAND TYPOGRAPHY & COLORS ===',
+  `OVERALL SCORE VALUE ONLY: brand red ${BRAND_RED}, font "COVERED BY YOUR GRACE", uppercase, large accent number (e.g. 98%).`,
+  `MATCH RATING STARS ONLY: brand gray ${BRAND_GRAY} — NOT RED. Use filled/outline star glyphs in gray only.`,
+  'ALL OTHER POPULATED VALUES (specs, portfolio text, why lines, client name): black uppercase Futura PT Medium style.',
+  'CLIENT NAME above preview: brand red ' + BRAND_RED + ', uppercase.',
+  '',
+  '=== CLIENT PREVIEW (IMAGE 2) — ONE PERSON ONLY ===',
+  'USE THE SECOND UPLOADED IMAGE ONLY INSIDE THE LARGE CLIENT PREVIEW FRAME.',
+  'KEEP THE EXACT FACE, SKIN TONE, AGE, EXPRESSION, BODY, AND CAMERA ANGLE FROM IMAGE 2.',
+  'ONLY CHANGE THE HAIR ON THIS PERSON TO MATCH THE TOP MATCH SPEC. NO WIG CAP, NO LACE VISIBLE.',
+  '',
+  '=== ALTERNATIVE / MATCH THUMBNAILS — HAIR ONLY, NEVER A NEW PERSON ===',
+  'FOR MATCH 02–04, STYLE PORTFOLIO ALTERNATIVES, AND GRID THUMBNAIL SQUARES: DO NOT GENERATE A DIFFERENT PERSON.',
+  'NEVER PUT A NEW FACE IN THUMBNAIL BOXES. NEVER CHANGE IDENTITY FOR EXTRA MATCHES.',
+  'THUMBNAIL OPTIONS (pick one per slot): (A) hair-only close-up / wig swatch with NO face, (B) mannequin back-of-head hair silhouette, (C) abstract texture+color hair bundle.',
+  'IF A PERSON APPEARS IN A THUMBNAIL IT MUST BE THE SAME CLIENT FROM IMAGE 2 WITH ONLY HAIR COLOR/TEXTURE/LENGTH CHANGED — SAME FACE.',
+  'PORTFOLIO ROWS = HAIRSTYLE REFERENCE ONLY — NOT PORTRAITS OF OTHER WOMEN.',
+  '',
+  'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — EVERY VALUE FILLED, NO BLANK PLACEHOLDERS.',
+].join('\n');
+
+function scoreAndRatingLines(top: FalAnalysisLook): string[] {
+  return [
+    `OVERALL SCORE (COVERED BY YOUR GRACE, ${BRAND_RED}): ${formatScore(top.score)}`,
+    `MATCH RATING (STARS IN ${BRAND_GRAY} ONLY — NOT RED): ${formatStars(top.rating)}`,
+  ];
+}
+
+const PROMPT_FOOTER = [
+  '',
+  '=== FINAL CHECK ===',
+  'ROSES: UNCHANGED FROM TEMPLATE. STARS: GRAY #808080. SCORE: RED #EB1C24 IN COVERED BY YOUR GRACE.',
+  'ONE CLIENT FACE ONLY (CLIENT PREVIEW). NO OTHER PEOPLE ANYWHERE ON THE CARD.',
 ].join('\n');
 
 function freePrompt(analysis: FalHairstyleAnalysis): string {
@@ -117,14 +156,14 @@ function freePrompt(analysis: FalHairstyleAnalysis): string {
     TEMPLATE_RULES,
     '',
     `TIER: FREE HAIRSTYLE ANALYSIS`,
-    `CLIENT NAME (ABOVE CLIENT PREVIEW): ${analysis.clientName.toUpperCase()}`,
-    `OVERALL SCORE: ${formatScore(top.score)}`,
-    `MATCH RATING: ${formatStars(top.rating)}`,
+    `CLIENT NAME (ABOVE CLIENT PREVIEW, ${BRAND_RED}): ${analysis.clientName.toUpperCase()}`,
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   analysis.whyItWorks.forEach((line, i) => {
     lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
   });
+  lines.push(PROMPT_FOOTER);
   return lines.join('\n');
 }
 
@@ -134,16 +173,18 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis): string {
     TEMPLATE_RULES,
     '',
     `TIER: 3 MONTH HAIRSTYLE ANALYSIS`,
-    `CLIENT NAME: ${analysis.clientName.toUpperCase()}`,
-    `OVERALL SCORE: ${formatScore(top.score)}`,
-    `MATCH RATING: ${formatStars(top.rating)}`,
+    `CLIENT NAME (${BRAND_RED}): ${analysis.clientName.toUpperCase()}`,
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     lines.push('');
     lines.push(altRowBlock(`MATCH ${String(i + 2).padStart(2, '0')}`, look));
-    lines.push('(PLACE A SMALL HAIRSTYLE THUMBNAIL IN THE MATCH SQUARE — SAME SILHOUETTE AS SPECS)');
+    lines.push(
+      `MATCH ${String(i + 2).padStart(2, '0')} THUMBNAIL: HAIR-ONLY SWATCH OR BACK-OF-HEAD WIG SILHOUETTE — NO FACE, OR SAME CLIENT FROM IMAGE 2 WITH ONLY THIS HAIR SPEC. NEVER A DIFFERENT WOMAN.`
+    );
   });
+  lines.push(PROMPT_FOOTER);
   return lines.join('\n');
 }
 
@@ -154,12 +195,11 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis): string {
     TEMPLATE_RULES,
     '',
     `TIER: 6 MONTH HAIRSTYLE ANALYSIS — STYLE PORTFOLIO`,
-    `CLIENT NAME: ${analysis.clientName.toUpperCase()}`,
-    `OVERALL SCORE: ${formatScore(top.score)}`,
-    `MATCH RATING: ${formatStars(top.rating)}`,
+    `CLIENT NAME (${BRAND_RED}): ${analysis.clientName.toUpperCase()}`,
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
-    'STYLE PORTFOLIO — FILL EACH ALTERNATIVE ROW (THUMBNAIL + TEXTURE + COLOR + LENGTH + MATCH SCORE):',
+    'STYLE PORTFOLIO — FILL EACH ALTERNATIVE ROW (THUMBNAIL + TEXTURE + COLOR + LENGTH + MATCH SCORE). THUMBNAILS = HAIR ONLY:',
   ];
   portfolio.slice(0, 7).forEach((look, i) => {
     lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')}: ${portfolioLine(i + 1, look)}`);
@@ -167,7 +207,11 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis): string {
     lines.push(`  COLOR: ${look.color}`);
     lines.push(`  LENGTH: ${displayLength(look.length)}`);
     lines.push(`  MATCH SCORE: ${formatScore(look.score)}`);
+    lines.push(
+      `  THUMBNAIL: HAIR TEXTURE/COLOR SWATCH OR WIG BACK VIEW — NO NEW FACE. NOT A DIFFERENT PERSON.`
+    );
   });
+  lines.push(PROMPT_FOOTER);
   return lines.join('\n');
 }
 
@@ -177,22 +221,25 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis): string {
     TEMPLATE_RULES,
     '',
     `TIER: 12 MONTH HAIRSTYLE ANALYSIS`,
-    `CLIENT NAME: ${analysis.clientName.toUpperCase()}`,
-    `OVERALL SCORE: ${formatScore(top.score)}`,
-    `MATCH RATING: ${formatStars(top.rating)}`,
+    `CLIENT NAME (${BRAND_RED}): ${analysis.clientName.toUpperCase()}`,
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
-    'STYLE PORTFOLIO GRID — FILL ALL 9 ALTERNATIVES (THUMBNAIL + COLOR + LENGTH + MATCH SCORE):',
+    'STYLE PORTFOLIO GRID — FILL ALL 9 ALTERNATIVES (THUMBNAIL + COLOR + LENGTH + MATCH SCORE). THUMBNAILS = HAIR ONLY:',
   ];
   analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
     lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')}:`);
     lines.push(`  COLOR: ${alt.color}`);
     lines.push(`  LENGTH: ${displayLength(alt.length)}`);
     lines.push(`  MATCH SCORE: ${formatScore(alt.score)}`);
+    lines.push(
+      `  THUMBNAIL: HAIR SWATCH OR WIG SILHOUETTE ONLY — NO FACE, NO DIFFERENT PERSON.`
+    );
   });
   analysis.whyItWorks.forEach((line, i) => {
     lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
   });
+  lines.push(PROMPT_FOOTER);
   return lines.join('\n');
 }
 
