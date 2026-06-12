@@ -23,6 +23,18 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
 export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
 export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
+/**
+ * Per-star overlay rects aligned to pre-rendered outline glyphs on IMG_2549 (pixel-probed @ 2048×2560).
+ * Free tier uses the same positions (no outlines on IMG_2554 — server draws all five).
+ */
+export const MATCH_RATING_STAR_RECTS: PixelRect[] = [
+  { left: 1574, top: 428, width: 51, height: 118 },
+  { left: 1629, top: 428, width: 51, height: 118 },
+  { left: 1686, top: 428, width: 51, height: 117 },
+  { left: 1742, top: 428, width: 51, height: 118 },
+  { left: 1798, top: 428, width: 51, height: 118 },
+];
+
 const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [
   'specTexture',

@@ -1,7 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Overall score % and MATCH 02–04 row values are server-composited after Fal (score 4px smaller).
- * Match-rating stars and TOP MATCH specs are generated in-image by Fal.
+ * Overall score %, match-rating stars, and MATCH 02–04 row values are server-composited after Fal.
+ * TOP MATCH specs, photos, and every-detail-matters rows are generated in-image by Fal.
  */
 
 import {
@@ -346,9 +346,6 @@ function panelChromePreservationBlock(): string {
   ].join('\n');
 }
 
-function filledStarCount(rating: number): number {
-  return Math.min(5, Math.max(0, Math.round(rating)));
-}
 
 function overallScoreFalLine(_look: FalAnalysisLook): string {
   const targetPx = overallScoreFontSize(TOP_SCORE_SLOT);
@@ -358,25 +355,17 @@ function overallScoreFalLine(_look: FalAnalysisLook): string {
   ].join(' ');
 }
 
-function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
-  const filled = filledStarCount(look.rating);
+function matchRatingStarsFalLine(_look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
   const tierKey = normalizeTier(tier);
   const premiumNote =
     tierKey === 'free'
-      ? [
-          'FREE TEMPLATE: the MATCH RATING row may have no star glyphs yet — draw a horizontal row of exactly 5 star outlines matching the premium template star shape (same outline style, size, and spacing as IMG_2549).',
-          'Do not use a different star icon set.',
-        ].join(' ')
-      : [
-          'PREMIUM TEMPLATE: five star outline glyphs are already pre-rendered in the MATCH RATING row — use those exact shapes only.',
-          'Do NOT redraw, move, resize, or replace the template star outlines.',
-        ].join(' ');
+      ? 'FREE TEMPLATE: leave the MATCH RATING value area blank — server overlays all five Noir stars at premium-template positions.'
+      : 'PREMIUM TEMPLATE: five star outline glyphs are pre-rendered — do NOT redraw, move, resize, fill, or erase them. Server overlays filled stars on the outlines.';
 
   return [
-    `MATCH RATING: fill exactly ${filled} of 5 stars with solid brand red ${BRAND_RED} (same red as panel border glow).`,
-    `Leave the remaining ${5 - filled} star(s) as empty outlines — do not fill them.`,
+    'MATCH RATING stars: leave completely untouched — server overlays filled Noir stars aligned to template outline positions after generation.',
     premiumNote,
-    'FORBIDDEN: yellow/gold stars, emoji stars, new star shapes, or stars outside the MATCH RATING value panel.',
+    'FORBIDDEN: drawing stars in-image, yellow/gold stars, emoji stars, or new star shapes.',
   ].join(' ');
 }
 
@@ -429,7 +418,8 @@ function freeTierOnlyBlock(): string {
     'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
-    'ONLY fill: client preview photo, TOP MATCH spec column, OVERALL SCORE %, MATCH RATING stars, and EVERY DETAIL MATTERS text rows beside rose icons.',
+    'ONLY fill: client preview photo, TOP MATCH spec column, and EVERY DETAIL MATTERS text rows beside rose icons.',
+    'Leave OVERALL SCORE %, MATCH RATING stars, and all match-row value slots blank for server overlay.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -542,8 +532,8 @@ function buildTemplateRules(
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % blank for server overlay + match rating stars in-image.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score % + match rows blank for server overlay; stars + TOP MATCH specs + thumbnails in-image.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score %, stars, and match rows blank for server overlay.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score %, match rows, and stars blank for server overlay; TOP MATCH specs + thumbnails in-image.',
   ]
     .filter(Boolean)
     .join('\n');

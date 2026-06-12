@@ -289,6 +289,7 @@ export async function generateHairstyleAnalysisWithFal(
   const composited = await compositeHairstyleAnalysisMatchRows(
     imageUrl,
     analysis,
+    input.siteOrigin,
     input.layoutOverrides
   );
   const finalUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-match-rows.png', 'image/png');
