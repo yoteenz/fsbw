@@ -130,9 +130,7 @@ export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
     hairline: pick.hairline.includes('HAIRLINE')
       ? pick.hairline.toUpperCase()
       : `${pick.hairline.toUpperCase()} HAIRLINE`,
-    part: pick.partSelection.includes('PART')
-      ? pick.partSelection.toUpperCase()
-      : `${pick.partSelection.toUpperCase()} PART`,
+    part: pick.partSelection.replace(/\s*PART\s*$/i, '').trim().toUpperCase(),
     styling,
     score: Math.max(70, 100 - (pick.rank - 1) * 3),
     rating: pick.stars ?? Math.max(3, 5 - Math.floor((pick.rank - 1) / 2)),

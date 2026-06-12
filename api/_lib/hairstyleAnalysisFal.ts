@@ -1,9 +1,5 @@
-import {
-  buildHairstyleAnalysisFalPrompt,
-  HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH,
-  HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH,
-  type FalHairstyleAnalysis,
-} from './hairstyleAnalysisFalPrompt.js';
+import { compositeHairstyleAnalysisFalImage } from './hairstyleAnalysisFalComposite.js';
+import { buildHairstyleAnalysisFalPrompt, type FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
 
 export const HAIRSTYLE_ANALYSIS_GPT2_MODEL = 'openai/gpt-image-2/edit';
@@ -121,16 +117,12 @@ export async function generateHairstyleAnalysisWithFal(
     'client-preview'
   );
 
-  const origin = input.siteOrigin.replace(/\/$/, '');
-  const emptyStarUrl = `${origin}${HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH}`;
-  const filledStarUrl = `${origin}${HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH}`;
-
-  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(input.analysis), 5);
+  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(input.analysis), 3);
   const mannequinUrls = await Promise.all(
     mannequinRefs.map((ref) => resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`))
   );
 
-  const imageUrls = [templateUrl, clientUrl, emptyStarUrl, filledStarUrl, ...mannequinUrls];
+  const imageUrls = [templateUrl, clientUrl, ...mannequinUrls];
   const prompt = buildHairstyleAnalysisFalPrompt(input.analysis, { mannequinRefs });
 
   const result = await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
@@ -145,8 +137,15 @@ export async function generateHairstyleAnalysisWithFal(
     logs: false,
   });
 
-  const imageUrl = extractFalImageUrl(result);
-  if (!imageUrl) throw new Error('Fal returned no image URL');
+  const falImageUrl = extractFalImageUrl(result);
+  if (!falImageUrl) throw new Error('Fal returned no image URL');
+
+  const composited = await compositeHairstyleAnalysisFalImage(
+    falImageUrl,
+    input.analysis,
+    input.siteOrigin
+  );
+  const imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-composite.png', 'image/png');
 
   return {
     imageUrl,
