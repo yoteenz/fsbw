@@ -149,6 +149,12 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
   const sorted = [...options.picks].sort((a, b) => a.rank - b.rank);
   const [top, ...rest] = sorted.map(psaPickToAnalysisLook);
 
+  const tierNorm = normalizeAnalysisTier(options.tier);
+  const naturalTextureAlts = tierNorm === 'three_month' || tierNorm === 'six_month';
+  const additionalLooks = rest.slice(0, limit).map((look) =>
+    naturalTextureAlts ? { ...look, styling: 'NONE' } : look
+  );
+
   return {
     id: options.id,
     clientName: options.clientName,
@@ -156,7 +162,7 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
     templateUrl: resolveTemplateUrl(options.tier),
     clientPreviewUrl: options.clientPreviewUrl,
     topMatch: top,
-    additionalLooks: rest.slice(0, limit),
+    additionalLooks,
     whyItWorks: options.whyItWorks ?? [],
     createdAt: new Date().toISOString(),
   };

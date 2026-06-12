@@ -67,6 +67,8 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **Post-process overlay (server):** Fal leaves TOP MATCH spec values, overall score %, match-rating stars, and match-score % areas blank. `api/_lib/hairstyleAnalysisFalComposite.ts` (sharp) composites Futura spec text, Covered By Your Grace score %, site star PNGs, and red match-score percentages. Part values are **MIDDLE / LEFT / RIGHT** only; style values use Build-a-Wig ids (**LAYERS**, **FLAT IRON**, **CRIMPS**, etc.).
 
+**Match styling & color:** Only the **left client panel (top match)** is salon-styled. **3 / 6 month** additional matches use **natural unit texture** (`STYLE: NONE`) and catalog **hex** colors with at least one neutral, blonde, and vibrant option per set. **12 month** grid alternatives can remain styled variants. **Why it works** lines (free + 12 month) should be short, specific, and human — not generic filler.
+
 **Dev fallback:** React overlay composer (collapsed under Advanced) for coordinate experiments only — not the client-facing path.
 
 **Tier pick counts (card system):**
