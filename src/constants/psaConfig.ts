@@ -1,5 +1,6 @@
 /** PSA (Personal Slay Assistant) frontend config — avatar assets and copy. */
 
+import { isDebugModePath } from '../utils/debugMode';
 import { getCurrentUserFirstNameFromStorage } from '../utils/perUserStorage';
 import {
   resolvePsaWelcomeKind,
@@ -195,10 +196,17 @@ export const PSA_WAVING_MS = 3200;
 /** How long to show talking after an assistant reply lands. */
 export const PSA_TALKING_AFTER_REPLY_MS = 2800;
 
-/** Routes where the floating PSA widget is hidden (admin chrome, full-screen flows). */
-export const PSA_HIDDEN_PATH_PREFIXES = ['/admin', '/tools/live-try-on'];
+/** Internal test / demo tool routes (not shopper-facing). */
+export const PSA_TEST_TOOL_PATH_PREFIXES = [
+  '/tools/live-try-on',
+  '/tools/hairstyle-analysis',
+] as const;
+
+/** Routes where the floating PSA widget is hidden (admin chrome, full-screen flows, debug/test). */
+export const PSA_HIDDEN_PATH_PREFIXES = ['/admin', ...PSA_TEST_TOOL_PATH_PREFIXES];
 
 export function isPsaHiddenPath(pathname: string): boolean {
+  if (isDebugModePath(pathname)) return true;
   return PSA_HIDDEN_PATH_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
   );
