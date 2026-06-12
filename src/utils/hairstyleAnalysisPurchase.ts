@@ -1,7 +1,7 @@
 import type { CartItem } from '../types/cart';
 import { CONSULT_STYLE_ANALYSIS_TIERS } from './consultStyleAnalysisAddon';
 
-export function hairstyleAnalysisCartLine(comparisonCount: 1 | 3 | 6): CartItem {
+export function hairstyleAnalysisCartLine(comparisonCount: 1 | 4): CartItem {
   const tier = CONSULT_STYLE_ANALYSIS_TIERS.find((t) => t.comparisonCount === comparisonCount);
   if (!tier) {
     throw new Error('Invalid hairstyle analysis comparison count');
@@ -19,7 +19,7 @@ export function hairstyleAnalysisCartLine(comparisonCount: 1 | 3 | 6): CartItem 
   };
 }
 
-export function appendHairstyleAnalysisToLocalCart(comparisonCount: 1 | 3 | 6): CartItem[] {
+export function appendHairstyleAnalysisToLocalCart(comparisonCount: 1 | 4): CartItem[] {
   const line = hairstyleAnalysisCartLine(comparisonCount);
   const raw = localStorage.getItem('cartItems');
   const items: CartItem[] = raw ? (JSON.parse(raw) as CartItem[]) : [];

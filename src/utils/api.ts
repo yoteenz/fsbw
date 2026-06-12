@@ -2110,7 +2110,7 @@ export async function postBuildWigUnitImage(
 }
 
 export type HairstyleAnalysisPurchaseOption = {
-  comparisonCount: 1 | 3 | 6;
+  comparisonCount: 1 | 4;
   priceUsd: number;
   label: string;
 };
@@ -2147,7 +2147,7 @@ export type HairstyleAnalysisGenerateResult = {
   quality: string;
   analysisTier?: string;
   consumeSource?: 'monthly' | 'paid' | null;
-  comparisonCount?: 1 | 3 | 6 | null;
+  comparisonCount?: 1 | 4 | null;
   usage?: HairstyleAnalysisUsageSnapshot | null;
 };
 

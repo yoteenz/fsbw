@@ -2,7 +2,7 @@
 
 import type { UnitId } from '../utils/productOptions';
 
-export type StyleAnalysisComparisonTier = 1 | 3 | 6;
+export type StyleAnalysisComparisonTier = 1 | 4;
 
 /** One cell in a consult or PSA comparison chart. */
 export type StyleAnalysisChartCell = {

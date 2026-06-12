@@ -183,7 +183,7 @@ export default function HairstyleAnalysisPreview({
   }, [isAdmin, usageLoading, usageState]);
 
   const handlePurchaseTier = useCallback(
-    (comparisonCount: 1 | 3 | 6) => {
+    (comparisonCount: 1 | 4) => {
       appendHairstyleAnalysisToLocalCart(comparisonCount);
       navigate('/checkout');
     },

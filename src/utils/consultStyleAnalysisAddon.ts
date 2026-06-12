@@ -1,6 +1,6 @@
 /**
  * Wig consult — optional Style Analysis add-on (non-refundable).
- * Priced by comparison-option count: 1 / 3 / 6 → $20 / $40 / $60.
+ * Priced by comparison-option count: 1 / 4 → $20 / $60.
  */
 import type { StyleAnalysisComparisonTier } from '../types/styleAnalysis';
 
@@ -22,18 +22,11 @@ export const CONSULT_STYLE_ANALYSIS_TIERS: ConsultStyleAnalysisTierDef[] = [
       'YOUR INSPO LOOK ON YOU + 1 ALTERNATE COLOR OR LENGTH TO COMPARE. DELIVERED WITH YOUR CONSULT QUOTE.',
   },
   {
-    comparisonCount: 3,
-    priceUsd: 40,
-    label: '3 COMPARISONS',
-    description:
-      'YOUR INSPO LOOK ON YOU + 3 ALTERNATE COLORS & LENGTHS TO COMPARE. DELIVERED WITH YOUR CONSULT QUOTE.',
-  },
-  {
-    comparisonCount: 6,
+    comparisonCount: 4,
     priceUsd: 60,
-    label: '6 COMPARISONS',
+    label: '4 COMPARISONS',
     description:
-      'YOUR INSPO LOOK ON YOU + 6 ALTERNATE COLORS & LENGTHS TO COMPARE. DELIVERED WITH YOUR CONSULT QUOTE.',
+      'YOUR INSPO LOOK ON YOU + 4 ALTERNATE COLORS & LENGTHS TO COMPARE. DELIVERED WITH YOUR CONSULT QUOTE.',
   },
 ];
 
@@ -43,7 +36,7 @@ export const CONSULT_STYLE_ANALYSIS_NON_REFUNDABLE_NOTE =
 export function consultStyleAnalysisTierByCount(
   count: StyleAnalysisComparisonTier | null | undefined
 ): ConsultStyleAnalysisTierDef | null {
-  if (count !== 1 && count !== 3 && count !== 6) return null;
+  if (count !== 1 && count !== 4) return null;
   return CONSULT_STYLE_ANALYSIS_TIERS.find((t) => t.comparisonCount === count) ?? null;
 }
 

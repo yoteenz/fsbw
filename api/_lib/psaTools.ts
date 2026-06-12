@@ -316,11 +316,11 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
     type: 'function',
     name: 'purchase_hairstyle_analysis',
     description:
-      'Add a paid hairstyle analysis to cart after the monthly free is used. Same prices as wig consult style analysis add-on: 1 comparison $20, 3 comparisons $40, 6 comparisons $60. Member completes payment at checkout.',
+      'Add a paid hairstyle analysis to cart after the monthly free is used. Same prices as wig consult style analysis add-on: 1 comparison $20, 4 comparisons $60. Member completes payment at checkout.',
     parameters: {
       type: 'object',
       properties: {
-        comparisonCount: { type: 'number', enum: [1, 3, 6] },
+        comparisonCount: { type: 'number', enum: [1, 4] },
       },
       required: ['comparisonCount'],
       additionalProperties: false,
@@ -596,7 +596,7 @@ export async function executePsaActionTool(
     case 'purchase_hairstyle_analysis': {
       const comparisonCount = parseHairstyleAnalysisComparisonTier(args.comparisonCount);
       if (!comparisonCount) {
-        return { output: JSON.stringify({ error: 'comparisonCount must be 1, 3, or 6' }) };
+        return { output: JSON.stringify({ error: 'comparisonCount must be 1 or 4' }) };
       }
       const status = await buildHairstyleAnalysisMemberStatus(ctx.userId, ctx.premium, ctx.email);
       if (!status.eligible) {
@@ -609,8 +609,7 @@ export async function executePsaActionTool(
         };
       }
       const priceUsd = hairstyleAnalysisComparisonUsd(comparisonCount);
-      const label =
-        comparisonCount === 1 ? '1 COMPARISON' : comparisonCount === 3 ? '3 COMPARISONS' : '6 COMPARISONS';
+      const label = comparisonCount === 1 ? '1 COMPARISON' : '4 COMPARISONS';
       const cart = await fetchCart(ctx);
       const line = {
         id: `hairstyle-analysis-${Date.now()}`,

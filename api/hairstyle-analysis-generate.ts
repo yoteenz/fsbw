@@ -183,7 +183,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   let consumed = false;
   let consumedSource: 'monthly' | 'paid' | null = null;
-  let consumedComparisonCount: 1 | 3 | 6 | undefined;
+  let consumedComparisonCount: 1 | 4 | undefined;
   if (!entitlement.unlimited) {
     const consumeResult = await consumeHairstyleAnalysisGeneration(user.id);
     if (!consumeResult.ok) {

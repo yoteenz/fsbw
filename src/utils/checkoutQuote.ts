@@ -14,8 +14,8 @@ export type CheckoutQuoteLinePayload = {
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;
   capSize?: string;
-  consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
-  hairstyleAnalysisComparisonCount?: 1 | 3 | 6;
+  consultStyleAnalysisComparisonCount?: 1 | 4;
+  hairstyleAnalysisComparisonCount?: 1 | 4;
 };
 
 export type ServerCheckoutQuote = {
