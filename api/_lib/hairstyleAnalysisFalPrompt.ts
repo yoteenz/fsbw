@@ -32,6 +32,7 @@ export type FalAnalysisLook = {
   styling: string;
   score: number;
   rating: number;
+  imageUrl?: string;
 };
 
 export type FalHairstyleAnalysis = {

@@ -345,12 +345,12 @@ export default function HairstyleAnalysisPreview({
           className="w-full py-3 border border-black uppercase disabled:opacity-40"
           style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
         >
-          {generating ? 'GENERATING WITH GPT IMAGE 2…' : 'GENERATE TEMPLATE PREVIEW (GPT IMAGE 2 · 4:5 · 2K)'}
+          {generating ? 'BUILDING YOUR ANALYSIS CARD…' : 'GENERATE TEMPLATE PREVIEW (4:5 · 2K)'}
         </button>
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
-          Sends the static Supabase template + client photo to Fal with the tier population prompt. This is the
-          client-facing card — not the React text overlay composer.
+          Composites the static Supabase template with your photo, spec text, match scores, overall %, and stars on
+          the server — panel chrome stays pixel-perfect. Not the React overlay composer.
         </p>
       </div>
 
@@ -380,7 +380,7 @@ export default function HairstyleAnalysisPreview({
         >
           <div className="w-8 h-8 border-2 border-black/20 border-t-[#eb1c24] rounded-full animate-spin" />
           <p className="text-center uppercase text-[9px] tracking-[0.12em] text-[#808080] leading-relaxed">
-            GPT IMAGE 2 IS POPULATING THE {analysis.tier.replace(/_/g, ' ')} TEMPLATE — DO NOT LEAVE THIS PAGE.
+            BUILDING THE {analysis.tier.replace(/_/g, ' ')} ANALYSIS CARD — DO NOT LEAVE THIS PAGE.
           </p>
         </div>
       ) : generatedUrl ? (
