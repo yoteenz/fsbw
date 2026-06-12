@@ -204,9 +204,16 @@ function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
 
-/** Template + client + unit mannequins always; styling refs optional. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true to skip styling refs only. */
+/** Template + client by default. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true to skip BAW styling refs. */
 export function hairstyleAnalysisFalMinimalImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS?.trim().toLowerCase();
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return false;
+}
+
+/** Opt-in unit mannequin fronts for hair texture/drape hints. Default off — avoids neck/shoulder bleed from mannequin geometry. */
+export function hairstyleAnalysisFalMannequinImageRefs(): boolean {
+  const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MANNEQUIN_REFS?.trim().toLowerCase();
   if (raw === 'true' || raw === '1' || raw === 'yes') return true;
   return false;
 }
@@ -248,12 +255,17 @@ export async function generateHairstyleAnalysisWithFal(
 
   const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
   const minimalRefs = hairstyleAnalysisFalMinimalImageRefs();
-  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3);
-  const mannequinUrls = await Promise.all(
-    mannequinRefs.map((ref) =>
-      resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`)
-    )
-  );
+  const includeMannequins = hairstyleAnalysisFalMannequinImageRefs();
+  const mannequinRefs = includeMannequins
+    ? collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3)
+    : [];
+  const mannequinUrls = includeMannequins
+    ? await Promise.all(
+        mannequinRefs.map((ref) =>
+          resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`)
+        )
+      )
+    : [];
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
   const stylingRefs = minimalRefs
