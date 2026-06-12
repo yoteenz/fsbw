@@ -65,9 +65,7 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2438|2447|2450|2451.png`) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
 
-**Post-process overlay (server):** Fal leaves TOP MATCH spec values, overall score %, match-rating stars, and match-score % areas blank. `api/_lib/hairstyleAnalysisFalComposite.ts` (sharp) composites Futura spec text, Covered By Your Grace score %, site star PNGs, and red match-score percentages. Part values are **MIDDLE / LEFT / RIGHT** only; style values use Build-a-Wig ids (**LAYERS**, **FLAT IRON**, **CRIMPS**, etc.).
-
-**Match styling & color:** Only the **left client panel (top match)** is salon-styled. **3 / 6 month** additional matches use **natural unit texture** (`STYLE: NONE`) and catalog **hex** colors with at least one neutral, blonde, and vibrant option per set. **12 month** grid alternatives can remain styled variants. **Why it works** lines (free + 12 month) should be short, specific, and human — not generic filler.
+**Post-process overlay (server):** Fal fills TOP MATCH spec values, match rows, and match-score % (red percentage in template slot). Only **overall score %** and **match-rating stars** are left blank for `api/_lib/hairstyleAnalysisFalComposite.ts` (sharp). Part values are **MIDDLE / LEFT / RIGHT** only; style values use Build-a-Wig ids (**LAYERS**, **FLAT IRON**, **CRIMPS**, etc.). Additional matches use varied styling and catalog **hex** colors (neutral, blonde, vibrant). **Why it works** lines reference why each match fits the client — not generic empowerment copy.
 
 **Dev fallback:** React overlay composer (collapsed under Advanced) for coordinate experiments only — not the client-facing path.
 
