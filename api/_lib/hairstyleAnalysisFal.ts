@@ -108,6 +108,17 @@ async function uploadPublicUrlToFal(fal: FalClient, url: string, fileName: strin
   return uploadBufferToFal(fal, buf, fileName, mimeFromUrl(url));
 }
 
+async function normalizeClientPreviewBuffer(buf: Buffer, mime: string): Promise<{ buf: Buffer; mime: string }> {
+  if (buf.length <= 1_500_000) return { buf, mime };
+  const sharp = (await import('sharp')).default;
+  const out = await sharp(buf)
+    .rotate()
+    .resize({ width: 1536, height: 2048, fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: 85, mozjpeg: true })
+    .toBuffer();
+  return { buf: out, mime: 'image/jpeg' };
+}
+
 async function resolvePublicImageUrl(
   fal: FalClient,
   raw: string,
@@ -119,8 +130,10 @@ async function resolvePublicImageUrl(
 
   if (trimmed.startsWith('data:')) {
     const { mime, buf } = parseDataUrl(trimmed);
-    const ext = mime.includes('png') ? 'png' : mime.includes('webp') ? 'webp' : 'jpg';
-    return uploadBufferToFal(fal, buf, `${fileLabel}.${ext}`, mime);
+    const normalized =
+      fileLabel === 'client-preview' ? await normalizeClientPreviewBuffer(buf, mime) : { buf, mime };
+    const ext = normalized.mime.includes('png') ? 'png' : normalized.mime.includes('webp') ? 'webp' : 'jpg';
+    return uploadBufferToFal(fal, normalized.buf, `${fileLabel}.${ext}`, normalized.mime);
   }
 
   const publicUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://')

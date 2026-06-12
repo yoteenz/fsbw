@@ -53,6 +53,9 @@ export type FalPromptImageRefs = {
 const BRAND_RED = '#EB1C24';
 const MATCH_SCORE_GRAY = '#808080';
 
+/** Fal GPT Image 2 `prompt` field hard limit (422 if exceeded). */
+export const HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS = 32_000;
+
 function normalizeTier(tier: FalHairstyleAnalysis['tier']): Exclude<FalHairstyleAnalysis['tier'], 'black'> {
   return tier === 'black' ? 'twelve_month' : tier;
 }
@@ -221,22 +224,27 @@ function matchThumbnailFramingBlock(): string {
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
-    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — TIGHT FACE PORTRAIT + STYLED TOP MATCH ===',
+    '=== CLIENT PREVIEW (IMAGE 2) — TOP MATCH HAIR ===',
     clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
-    faceIdentityLockBlock(),
-    `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}.`,
-    realisticHairRecolorBlock(),
-    realisticHairDensityBlock(displayDensity(look.density), false),
+    `Hair only: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}, density ${displayDensity(look.density)}.`,
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs, look.styling),
-    asymmetricOneShoulderDrapeBlock('all_photos', refs.mannequinRefs.length > 0),
-    neckAndBodyPreservationBlock(),
     'NO wig cap, NO lace visible, NO different person.',
-    hairlineRulesBlock(),
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+function sharedClientPhotoRulesBlock(): string {
+  return [
+    '=== CLIENT PHOTOS — FACE LOCK + CROP (ALL PREVIEW + THUMBNAILS) ===',
+    faceIdentityLockBlock(),
+    'Tight face-centered crop from IMAGE 2 — zoom in; crop out torso and lower body. Never repaint clothing or paint clouds/mist/fades at the bottom (server masks the edge).',
+    realisticHairRecolorBlock(),
+    hairlineRulesBlock(),
+    neckAndBodyPreservationBlock(),
+  ].join('\n\n');
 }
 
 function hairlineRulesBlock(): string {
@@ -269,25 +277,12 @@ function realisticHairDensityBlock(densityLabel: string, isThumbnail = false): s
 }
 
 function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
+  const style = displayStyle(look.styling, look.unit);
+  const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
+  const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
   return [
-    `${label} THUMBNAIL (small square on template):`,
-    '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
-    matchThumbnailFramingBlock(),
-    faceIdentityLockBlock(),
-    `- TEXTURE: ${look.unit}`,
-    realisticHairRecolorBlock(),
-    colorHairGuidanceLine(look),
-    `- LENGTH: ${displayLength(look.length)}`,
-    `- DENSITY: ${displayDensity(look.density)} — hair strands only; face unchanged from IMAGE 2.`,
-    `- STYLE: ${displayStyle(look.styling, look.unit)} — thumbnail salon finish MUST match this value and its styling reference IMAGE.`,
-    styledHairLine(look, refs),
+    `${label} THUMB: same client face as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style} (${refNote}); one-shoulder drape like hero; hair-only edits.`,
     mannequinRefLine(look.unit, refs, look.styling),
-    realisticHairDensityBlock(displayDensity(look.density), true),
-    asymmetricOneShoulderDrapeBlock('thumbnails_only', refs.mannequinRefs.length > 0),
-    neckAndBodyPreservationBlock(),
-    '- Composite client selfie + unit mannequin silhouette for maximum accuracy — strand-level recolor on hair only, not a color overlay on skin.',
-    '- FORBIDDEN: repainting the face, back-of-head shots, stock photos, wig-only swatches, silhouettes, helmet hair, symmetric both-shoulder drape, or any different person.',
-    '- NO baby hairs or wispy hairline flyaways on thumbnails.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -470,15 +465,7 @@ function buildTemplateRules(
           'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
           'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
         ]
-      : [
-          '=== CLIENT PHOTOS — TIGHT FACE CROP + EXACT FACE FROM IMAGE 2 (CRITICAL) ===',
-          faceIdentityLockBlock(),
-          'Main client preview + every match thumbnail: tight face-centered portrait crop from IMAGE 2.',
-          'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
-          'Do NOT paint clouds, mist, fog, or bottom fades — server masks the photo edge after generation.',
-          'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
-          'Same framing standard on 3-month, 6-month, and 12-month templates — every generation must match this rule.',
-        ];
+      : [sharedClientPhotoRulesBlock()];
 
   return [
     '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',
@@ -513,8 +500,6 @@ function buildTemplateRules(
     mannequinList,
     '',
     bawStylingRefListBlock(refs.stylingRefs),
-    '',
-    salonStylingPriorityBlock(),
     '',
     '=== SALON STYLING — BAW REFERENCES ONLY (NO INVENTED STYLES) ===',
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
@@ -561,42 +546,15 @@ function altRowBlock(label: string, look: FalAnalysisLook): string {
   ].join('\n');
 }
 
-function promptFooter(analysis: FalHairstyleAnalysis): string {
-  const tierKey = normalizeTier(analysis.tier);
-  const lines = [
+function freePromptFooter(analysis: FalHairstyleAnalysis): string {
+  return [
     '',
     '=== FINAL CHECK ===',
-    'PILL: first name replaces "CLIENT PREVIEW" inside the tab — not below it.',
-    'CLIENT PANEL: tight face-centered portrait crop — head/neck/upper chest only; never repaint clothing on the bottom half.',
-    'FACE LOCK: exact face from IMAGE 2 — hair edits only; never repaint facial skin or features.',
-    'NECK/SHOULDERS: keep IMAGE 2 neck and collarbone anatomy — no mannequin neck bleed.',
-    'PHOTO FRAMING: zoom on face, crop out lower body; no Fal bottom fade/cloud/mist — server symmetrical mask only.',
-    'TIER SUBTITLE: erased — no month/tier analysis label visible.',
-    'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
-    'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',
+    'PILL: first name replaces "CLIENT PREVIEW" inside the tab only.',
+    'TOP MATCH specs + every detail matters filled; server overlays score and stars.',
     overallScoreFalLine(analysis.topMatch),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
-  ];
-
-  if (tierKey === 'free') {
-    lines.push(
-      'FREE TIER: TOP MATCH ONLY — no MATCH 02+, no portfolio thumbnails, no horizontal match strip, no extra match scores.'
-    );
-  } else {
-    lines.push(
-      'MATCH 02–04 value slots: left blank for server overlay — thumbnails + varied styling only.',
-      'THUMBNAILS: same client face from IMAGE 2 — one-shoulder drape like hero + mannequin; BAW styling refs for salon shapes only.',
-      'DRAPE CHECK: no thick forward hair on both shoulders on any match thumbnail.'
-    );
-  }
-
-  lines.push(
-    'EVERY DETAIL MATTERS: fixed rose-icon rows, one verbatim sentence per line — no label:value format.',
-    'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',
-    'COLOR values: color name only — no hex codes or parentheses on the template.'
-  );
-
-  return lines.join('\n');
+  ].join('\n');
 }
 
 function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
@@ -619,7 +577,7 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
       lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
     });
   }
-  lines.push(promptFooter(analysis));
+  lines.push(freePromptFooter(analysis));
   return lines.join('\n');
 }
 
@@ -644,7 +602,10 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
   lines.push(matchStylingManifestBlock(analysis, refs));
   lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
-  lines.push(promptFooter(analysis));
+  lines.push('');
+  lines.push(
+    'FINAL CHECK: pill first name only; TOP MATCH specs filled; thumbs = same client + assigned STYLE; match-row values/score/stars blank for server overlay.'
+  );
   return lines.join('\n');
 }
 
@@ -653,7 +614,12 @@ export function buildHairstyleAnalysisFalPrompt(
   refs: FalPromptImageRefs
 ): string {
   const tier = normalizeTier(analysis.tier);
-  if (tier === 'free') return freePrompt(analysis, refs);
-  return threeMonthPrompt(analysis, refs);
+  const prompt = tier === 'free' ? freePrompt(analysis, refs) : threeMonthPrompt(analysis, refs);
+  if (prompt.length > HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS) {
+    throw new Error(
+      `Hairstyle analysis prompt too long (${prompt.length} characters; Fal limit is ${HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS}).`
+    );
+  }
+  return prompt;
 }
 
