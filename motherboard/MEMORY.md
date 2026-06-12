@@ -27617,3 +27617,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User needed to adjust the **width** of the cyan photo-fade debug square, not just drag position.
 - **Shipped:** **`resizeRectByPixels()`** in **`hairstyleAnalysisSlotCoords.ts`**. **`AnalysisOverlaySlot`** — optional **`resizeAxes`** with left/right (and top/bottom) edge drag handles. Photo fade debug square uses **`resizeAxes="horizontal"`** with visible cyan edge handles.
 - **Conventions:** Drag fade square label to move; drag left/right cyan edge bars to change width → Save layout → Generate.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: fix photo fade gray underlay (template cutout)
+
+- **Context:** User reported bottom fade still painted a **gray mask/background** instead of a true cutout where template **marble** shows through behind the subject.
+- **Cause:** **`marbleUnderlay()`** sampled a left strip of the template, resized it, and composited under the photo — wrong pixels (panel gray/frost), muddy semi-transparent blend.
+- **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — extract **exact template window** at fade rect, composite alpha-faded photo over it (`over`), replace region on Fal output; removed **`marbleUnderlay`**. Steeper fade stops (72%→82%→0). Debug square no longer shows white fog gradient (dashed fade-start line only). Docs updated.
+- **Conventions:** Photo fade = alpha cutout on client photo only; ground truth for transparent areas = template pixels at same rect, not invented underlay.
