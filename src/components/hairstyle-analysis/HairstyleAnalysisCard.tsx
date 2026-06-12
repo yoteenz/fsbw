@@ -130,6 +130,8 @@ export default function HairstyleAnalysisCard({
                   ? styles.matchScoreText
                   : undefined;
 
+        const topScoreEditable = field.id === 'topScore' && showDebugFrames && onTextChange;
+
         return (
           <AnalysisOverlaySlot
             key={field.id}
@@ -141,15 +143,25 @@ export default function HairstyleAnalysisCard({
             onRectChange={onSlotRectChange}
             className={styles.valueOnlySlot}
           >
-            <EditableOverlayText
-              slotId={field.id}
-              value={value}
-              debug={showDebugFrames}
-              onChange={onTextChange}
-              multiline={field.multiline}
-              className={textClassName}
-              style={fontStyleFor(field.id)}
-            />
+            {field.id === 'topScore' && !topScoreEditable ? (
+              <p
+                className={`${styles.overlayText} ${styles.scoreText}`.trim()}
+                style={fontStyleFor(field.id)}
+              >
+                {value.replace(/%$/, '')}
+                <span className={styles.scorePercentSuffix}>%</span>
+              </p>
+            ) : (
+              <EditableOverlayText
+                slotId={field.id}
+                value={value}
+                debug={showDebugFrames}
+                onChange={onTextChange}
+                multiline={field.multiline}
+                className={textClassName}
+                style={fontStyleFor(field.id)}
+              />
+            )}
           </AnalysisOverlaySlot>
         );
       })}

@@ -50,6 +50,12 @@ export function textPathData(
   return path.toPathData(2);
 }
 
+/** Admin BRAND card (StatsCard): CBYG number at text-lg (18px) + Futura PT Medium % at 14px. */
+const ADMIN_BRAND_SCORE_NUMBER_PX = 18;
+const ADMIN_BRAND_SCORE_PERCENT_PX = 14;
+const ADMIN_BRAND_PERCENT_SIZE_RATIO =
+  ADMIN_BRAND_SCORE_PERCENT_PX / ADMIN_BRAND_SCORE_NUMBER_PX;
+
 /** CBYG has no "%" glyph — render digits in Covered By Your Grace, suffix in Futura. */
 export function overallScorePathItems(
   score: number,
@@ -60,29 +66,32 @@ export function overallScorePathItems(
   const scoreFont = loadFont('CoveredByYourGrace.ttf');
   const percentFont = loadFont('FuturaPTMedium.ttf');
   const fontSize = Math.min(64, Math.round(rect.height * 0.78));
-  const percentFontSize = Math.max(16, Math.round(fontSize * 0.48));
+  const percentFontSize = Math.max(
+    12,
+    Math.round(fontSize * ADMIN_BRAND_PERCENT_SIZE_RATIO)
+  );
 
   const numMeasure = scoreFont.getPath(numText, 0, 0, fontSize);
   const numBb = numMeasure.getBoundingBox();
   const numW = numBb.x2 - numBb.x1;
-  const numH = numBb.y2 - numBb.y1;
 
   const pctMeasure = percentFont.getPath('%', 0, 0, percentFontSize);
   const pctBb = pctMeasure.getBoundingBox();
   const pctW = pctBb.x2 - pctBb.x1;
-  const pctH = pctBb.y2 - pctBb.y1;
 
   const gap = Math.max(2, Math.round(fontSize * 0.04));
   const totalW = numW + gap + pctW;
   const startX = rect.left + (rect.width - totalW) / 2;
 
+  const ascender = (scoreFont.ascender / scoreFont.unitsPerEm) * fontSize;
+  const descender = (Math.abs(scoreFont.descender) / scoreFont.unitsPerEm) * fontSize;
+  const baselineY = rect.top + (rect.height + ascender - descender) / 2;
+
   const numX = startX - numBb.x1;
-  const numY = rect.top + (rect.height - numH) / 2 - numBb.y1;
-  const numPath = scoreFont.getPath(numText, numX, numY, fontSize);
+  const numPath = scoreFont.getPath(numText, numX, baselineY, fontSize);
 
   const pctX = startX + numW + gap - pctBb.x1;
-  const pctY = rect.top + (rect.height - pctH) / 2 - pctBb.y1 + Math.round(numH * 0.08);
-  const pctPath = percentFont.getPath('%', pctX, pctY, percentFontSize);
+  const pctPath = percentFont.getPath('%', pctX, baselineY, percentFontSize);
 
   return [
     { pathData: numPath.toPathData(2), fill },
