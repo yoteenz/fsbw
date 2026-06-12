@@ -27317,3 +27317,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (continued):** User said **every detail matters** bullets still read like empowerment fluff — want final curated stylist notes tying **selected unit specs** to **client features** (e.g. NOIR straight texture + heart-shaped face, jet black + almond eyes), intentional and specific, not girl-power jargon.
 - **Shipped (7fc227e0):** Rewrote **`WHY_FREE`** / **`WHY_TWELVE`** in **`hairstyleAnalysisDemo.ts`** — each line pairs catalog spec with client feature (face shape, eyes, jaw, undertone). **`whyItWorksRulesBlock()`** updated with example tone + forbid empowerment. **`docs/STYLE_ANALYSIS.md`** aligned.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: BAW styling refs + every-detail-matters structure lock
+
+- **Context (continued):** User reported Fal inventing empowerment bullets or **FACE SHAPE:/FOREHEAD:** label rows in **every detail matters** instead of provided copy. Wants **BAW styling reference attachments** (layers, crimps, flat iron, define) — same as **`live-wig-after-color-styling`**, copy shape only, **retint via hex**. Section must stay **consistent**: fixed rose-icon rows, **one coherent sentence per row** tying client features + selected specs.
+- **Shipped (a0e7b8ed):** **`hairstyleAnalysisBawStylingRefs.ts`** — collects unique salon refs from JET BLACK NOIR `wig-preview-live/.../after-color/*` paths (+ gray-brick fallback). **`hairstyleAnalysisFal.ts`** attaches refs to **`image_urls`**. **`everyDetailMattersStructureBlock()`** forbids label:value and invented lines. Demo **`WHY_FREE`** / **`WHY_TWELVE`** = one full sentence per row (features + specs). DEFINE→layers, WAND CURLS→crimps mapping.
