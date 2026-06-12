@@ -27560,3 +27560,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full chat arc):** Hairstyle analysis Fal cards — user liked the cloudy fade below the main client photo but reported it was **uneven/asymmetric** across generations (Fal-painted white mist). Wanted it **symmetrical horizontally** like a good reference card, **transparent to marble/panel** (not opaque white overlay), and **hide the bottom of the image** without recreating body/clothing.
 - **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — fixed symmetrical bottom alpha gradient (starts ~68%, soft stops to 0%); masks Fal client photo and composites **template background** from same rect so marble/panel shows through. **`CLIENT_IMAGE_SLOT`** in **`hairstyleAnalysisLayoutSlots.ts`**; **`resolveClientImageSlotOrDefault`** in **`hairstyleAnalysisCompositeLayout.ts`**. **`compositeHairstyleAnalysisMatchRows`** runs fade first (needs **`templateImageUrl`**). **`hairstyleAnalysisFalPrompt.ts`** — removed Fal soft-fade/cloud instructions; forbids mist/fog/gradient painting at photo bottom. **`docs/STYLE_ANALYSIS.md`**, **`HairstyleAnalysisPreview.tsx`** updated.
 - **Conventions:** Client preview bottom fade = server-only symmetrical mask; Fal hard-crops photo, never paints fade or extends body.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: Fal 32k prompt limit fix
+
+- **Context:** User hit **HAIRSTYLE ANALYSIS REJECTED BY FAL: STRING SHOULD HAVE AT MOST 32000 CHARACTERS** when generating a THREE MONTH card (had pasted a base64 client preview URL in the URL field).
+- **Cause:** Premium-tier Fal population **prompt** was ~**35,007** chars — over Fal GPT Image 2's **32,000** `prompt` limit (not the image URL itself; server already uploads data URLs to Fal storage).
+- **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — deduplicated premium prompt: compact match-thumb lines, shared client-photo rules once, removed repeated footer/face/drape blocks; **`HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS`** + guard in **`buildHairstyleAnalysisFalPrompt`** (~15k chars now). **`hairstyleAnalysisFal.ts`** — compress large client preview data URLs before Fal upload. Preview placeholder notes Upload for large photos.
+- **Conventions:** Keep premium Fal prompt under 32k; prefer Upload over pasting huge base64 strings.
