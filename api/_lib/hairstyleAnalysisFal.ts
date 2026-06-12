@@ -1,8 +1,14 @@
+import { noirFalGrayBrickMannequinPublicUrlForAngle } from './bawNoirFalMannequinUrls.js';
+import {
+  bawStylingReferenceStoragePath,
+  collectStylingRefsForAnalysis,
+  type HairstyleAnalysisStylingRef,
+} from './hairstyleAnalysisBawStylingRefs.js';
 import { compositeHairstyleAnalysisFalImage } from './hairstyleAnalysisFalComposite.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
 import { buildHairstyleAnalysisFalPrompt, type FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
-import { collectStylingRefsForAnalysis } from './hairstyleAnalysisBawStylingRefs.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
+import { storageObjectExists } from './liveTryOnBatchGenerate.js';
 
 export const HAIRSTYLE_ANALYSIS_GPT2_MODEL = 'openai/gpt-image-2/edit';
 
@@ -17,6 +23,11 @@ type FalClient = {
     model: string,
     opts: { input: Record<string, unknown>; logs?: boolean }
   ) => Promise<unknown>;
+};
+
+type FalValidationError = Error & {
+  status?: number;
+  body?: { detail?: unknown; message?: string };
 };
 
 async function getFalClient(falKey: string): Promise<FalClient> {
@@ -35,14 +46,65 @@ function parseDataUrl(dataUrl: string): { mime: string; buf: Buffer } {
   return { mime, buf };
 }
 
+function mimeFromUrl(url: string): string {
+  const lower = url.toLowerCase();
+  if (lower.includes('.png')) return 'image/png';
+  if (lower.includes('.jpg') || lower.includes('.jpeg')) return 'image/jpeg';
+  if (lower.includes('.webp')) return 'image/webp';
+  return 'image/jpeg';
+}
+
+function isFalValidationError(e: unknown): boolean {
+  const err = e as FalValidationError;
+  return err?.status === 422 || /unprocessable entity/i.test(String(err?.message || e));
+}
+
+function formatFalError(e: unknown, step: string): Error {
+  const err = e as FalValidationError;
+  const raw = err?.message || String(e);
+  const detail = err?.body?.detail;
+  const bodyMsg = typeof err?.body?.message === 'string' ? err.body.message : '';
+  let detailStr = '';
+  if (typeof detail === 'string') detailStr = detail;
+  else if (Array.isArray(detail)) {
+    detailStr = detail
+      .map((d) =>
+        typeof d === 'object' && d && 'msg' in d ? String((d as { msg: string }).msg) : JSON.stringify(d)
+      )
+      .filter(Boolean)
+      .join('; ');
+  } else if (detail != null) detailStr = JSON.stringify(detail);
+
+  const hint = [detailStr, bodyMsg, raw].filter(Boolean).join(' — ');
+  if (isFalValidationError(e) || err?.name === 'ValidationError') {
+    return new Error(`${step} rejected by Fal: ${hint}`);
+  }
+  return new Error(`${step}: ${hint}`);
+}
+
 async function uploadBufferToFal(
   fal: FalClient,
   buf: Buffer,
   fileName: string,
   mime: string
 ): Promise<string> {
+  if (!buf.length) throw new Error(`Fal upload empty file: ${fileName}`);
   const file = new File([buf], fileName, { type: mime });
-  return fal.storage.upload(file);
+  try {
+    return await fal.storage.upload(file);
+  } catch (e) {
+    throw formatFalError(e, `Fal storage upload (${fileName})`);
+  }
+}
+
+async function uploadPublicUrlToFal(fal: FalClient, url: string, fileName: string): Promise<string> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`image fetch failed (${res.status}) for ${fileName}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  if (!buf.length) throw new Error(`image empty for ${fileName}`);
+  return uploadBufferToFal(fal, buf, fileName, mimeFromUrl(url));
 }
 
 async function resolvePublicImageUrl(
@@ -60,16 +122,43 @@ async function resolvePublicImageUrl(
     return uploadBufferToFal(fal, buf, `${fileLabel}.${ext}`, mime);
   }
 
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return trimmed;
+  const publicUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://')
+    ? trimmed
+    : trimmed.startsWith('/')
+      ? `${siteOrigin.replace(/\/$/, '')}${trimmed}`
+      : null;
+
+  if (!publicUrl) throw new Error(`Unsupported ${fileLabel} URL`);
+
+  const ext = publicUrl.toLowerCase().includes('.png')
+    ? 'png'
+    : publicUrl.toLowerCase().includes('.webp')
+      ? 'webp'
+      : 'jpg';
+  return uploadPublicUrlToFal(fal, publicUrl, `${fileLabel}.${ext}`);
+}
+
+async function resolveStylingRefSourceUrl(ref: HairstyleAnalysisStylingRef): Promise<string> {
+  const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
+  const storagePath = bawStylingReferenceStoragePath(ref.salonMode, ref.part);
+
+  if (storagePath && (await storageObjectExists(bucket, storagePath))) {
+    return ref.publicPath;
   }
 
-  if (trimmed.startsWith('/')) {
-    const origin = siteOrigin.replace(/\/$/, '');
-    return `${origin}${trimmed}`;
-  }
+  const head = await fetch(ref.publicPath, { method: 'HEAD' });
+  if (head.ok) return ref.publicPath;
 
-  throw new Error(`Unsupported ${fileLabel} URL`);
+  return noirFalGrayBrickMannequinPublicUrlForAngle('front');
+}
+
+async function resolveStylingRefForFal(
+  fal: FalClient,
+  ref: HairstyleAnalysisStylingRef
+): Promise<string> {
+  const sourceUrl = await resolveStylingRefSourceUrl(ref);
+  const ext = sourceUrl.toLowerCase().includes('.png') ? 'png' : 'webp';
+  return uploadPublicUrlToFal(fal, sourceUrl, `styling-${ref.key}.${ext}`);
 }
 
 function extractFalImageUrl(result: unknown): string | null {
@@ -78,6 +167,38 @@ function extractFalImageUrl(result: unknown): string | null {
     (result as { data?: { image?: { url?: string } } })?.data?.image?.url ??
     null
   );
+}
+
+async function subscribeHairstyleAnalysisFal(
+  fal: FalClient,
+  imageUrls: string[],
+  prompt: string
+): Promise<unknown> {
+  const attempts: Array<{ image_size: typeof HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE | 'auto' }> = [
+    { image_size: HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE },
+    { image_size: 'auto' },
+  ];
+
+  let lastErr: Error | undefined;
+  for (const attempt of attempts) {
+    try {
+      return await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
+        input: {
+          prompt,
+          image_urls: imageUrls,
+          image_size: attempt.image_size,
+          quality: HAIRSTYLE_ANALYSIS_GPT2_QUALITY,
+          output_format: 'png',
+          num_images: 1,
+        },
+        logs: false,
+      });
+    } catch (e) {
+      if (!isFalValidationError(e)) throw formatFalError(e, 'Hairstyle analysis');
+      lastErr = formatFalError(e, 'Hairstyle analysis');
+    }
+  }
+  throw lastErr ?? new Error('Hairstyle analysis rejected by Fal');
 }
 
 function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
@@ -127,26 +248,12 @@ export async function generateHairstyleAnalysisWithFal(
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
   const stylingRefs = collectStylingRefsForAnalysis(allLooks, 3 + mannequinRefs.length);
-  const stylingUrls = await Promise.all(
-    stylingRefs.map((ref) =>
-      resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `styling-${ref.key}`)
-    )
-  );
+  const stylingUrls = await Promise.all(stylingRefs.map((ref) => resolveStylingRefForFal(fal, ref)));
 
   const imageUrls = [templateUrl, clientUrl, ...mannequinUrls, ...stylingUrls];
   const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs, stylingRefs });
 
-  const result = await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
-    input: {
-      prompt,
-      image_urls: imageUrls,
-      image_size: HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE,
-      quality: HAIRSTYLE_ANALYSIS_GPT2_QUALITY,
-      output_format: 'png',
-      num_images: 1,
-    },
-    logs: false,
-  });
+  const result = await subscribeHairstyleAnalysisFal(fal, imageUrls, prompt);
 
   const falImageUrl = extractFalImageUrl(result);
   if (!falImageUrl) throw new Error('Fal returned no image URL');
