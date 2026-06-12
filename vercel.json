@@ -27,6 +27,9 @@
     "api/live-wig-after-color-styling.ts": {
       "maxDuration": 300
     },
+    "api/hairstyle-analysis-generate.ts": {
+      "maxDuration": 300
+    },
     "api/admin/consult-quotes.ts": {
       "maxDuration": 60
     },

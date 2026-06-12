@@ -2152,6 +2152,30 @@ export async function postBuildWigUnitImage(
   return JSON.parse(text) as BuildWigUnitImageResult;
 }
 
+export type HairstyleAnalysisGenerateResult = {
+  ok: boolean;
+  imageUrl: string;
+  prompt: string;
+  model: string;
+  imageSize: { width: number; height: number };
+  quality: string;
+};
+
+/** Fal GPT Image 2 — populate hairstyle analysis template (4:5 · ~2K). */
+export async function postHairstyleAnalysisGenerate(
+  analysis: Record<string, unknown>
+): Promise<HairstyleAnalysisGenerateResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/hairstyle-analysis-generate', { method: 'POST', body: { analysis } });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Hairstyle analysis generate');
+  }
+  const text = await res.text();
+  if (!res.ok) throw new Error(parseApiErrorText(text, 'Hairstyle analysis generation failed'));
+  return JSON.parse(text) as HairstyleAnalysisGenerateResult;
+}
+
 /** Admin: notify client about reschedule/cancel request for an appointment. */
 export async function postAdminMeetingClientAlert(body: {
   meetingId: string;

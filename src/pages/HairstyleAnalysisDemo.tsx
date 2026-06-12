@@ -27,8 +27,8 @@ export default function HairstyleAnalysisDemo() {
             Hairstyle Analysis
           </h1>
           <p className="text-[10px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-            Static template + dynamic overlays. AI generates only the client hairstyle preview upstream —
-            this page composes the finished card for download.
+            Test each membership tier by generating a populated card with Fal GPT Image 2 (4:5 · ~2K). Sign in
+            required. The React overlay composer is available under Advanced for dev comparison only.
           </p>
         </header>
 
@@ -48,8 +48,8 @@ export default function HairstyleAnalysisDemo() {
             <li>12 month / black — top + 9 additional</li>
           </ul>
           <p className="mt-3">
-            Templates are 2048×2560 (4:5). Slot positions are calibrated to the Supabase PNGs — turn on
-            Debug to nudge any field that still needs a pixel tweak after a template update.
+            Production path: Fal fills the static Supabase template from the tier prompt. Pick a tier, upload a
+            client photo, then generate to preview what the client receives.
           </p>
         </section>
       </div>

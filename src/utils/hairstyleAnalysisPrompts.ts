@@ -1,6 +1,7 @@
 /**
  * ChatGPT template-population prompts (reference) + client preview generation prompt.
- * The React app uses static templates + buildTemplateOverlayValues() — not these prompts for layout.
+ * Production card fill: Fal GPT Image 2 via POST /api/hairstyle-analysis-generate
+ * (see api/_lib/hairstyleAnalysisFalPrompt.ts). React overlays are dev-only.
  */
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
 import { buildTemplateOverlayValues } from './hairstyleAnalysisOverlayContent';
