@@ -27536,3 +27536,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported MATCH 02–04 row values (texture, color, length, gray %) were **too large** after Fal in-image generation — production should leave those slots blank and server-composite at **slot height × 0.88 − 2px** Futura.
 - **Shipped:** **`compositeHairstyleAnalysisMatchRows()`** in **`hairstyleAnalysisFalComposite.ts`** — match-row values only (no score/stars overlay). **`hairstyleAnalysisFal.ts`** composites after Fal, re-uploads PNG. **`hairstyleAnalysisFalPrompt.ts`** — **`matchRowValuesBlankRules()`** restored; Fal fills thumbnails + TOP MATCH specs only. **`docs/STYLE_ANALYSIS.md`**, debug copy updated.
 - **Conventions:** MATCH 02–04 text values = server overlay; overall score %, stars, TOP MATCH specs = Fal in-image.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: overall score % 4px smaller
+
+- **Context:** User asked to reduce red **OVERALL SCORE** percentage text by **4px**.
+- **Shipped:** **`overallScoreFontSize()`** — `slot height × 0.78 − 4px` in **`hairstyleAnalysisTextPaths.ts`**. Overall score back on **server overlay** (Fal leaves slot blank); **`compositeHairstyleAnalysisMatchRows`** composites score + match rows. Debug overlay **`.scoreText`** `calc(2.8cqw - 4px)` max 7px. Stars remain Fal in-image.
+- **Conventions:** Overall score % = server CBYG + Futura overlay at calibrated size − 4px.
