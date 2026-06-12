@@ -206,11 +206,11 @@ function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
 
-/** Template + client only (matches OpenArt minimal attachments). Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false to attach mannequin/styling refs. */
+/** Template + client + unit mannequins always; styling refs optional. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true to skip styling refs only. */
 export function hairstyleAnalysisFalMinimalImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS?.trim().toLowerCase();
-  if (raw === 'false' || raw === '0' || raw === 'no') return false;
-  return true;
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return false;
 }
 
 export type GenerateHairstyleAnalysisFalInput = {
@@ -251,14 +251,12 @@ export async function generateHairstyleAnalysisWithFal(
 
   const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
   const minimalRefs = hairstyleAnalysisFalMinimalImageRefs();
-  const mannequinRefs = minimalRefs ? [] : collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3);
-  const mannequinUrls = minimalRefs
-    ? []
-    : await Promise.all(
-        mannequinRefs.map((ref) =>
-          resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`)
-        )
-      );
+  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3);
+  const mannequinUrls = await Promise.all(
+    mannequinRefs.map((ref) =>
+      resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`)
+    )
+  );
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
   const stylingRefs = minimalRefs
