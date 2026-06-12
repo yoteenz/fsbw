@@ -27339,3 +27339,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (continued):** User on Fal GPT2 (medium, 4:5, 2K, minimal attachments) — panel **red glow/acrylic** degrading vs OpenArt; hair color looks like **overlay** not realistic repaint; **every detail matters** rows still empowerment fluff (suspected **why it works** label overriding structure); **match score %** turned **black** instead of gray **#808080**.
 - **Shipped (d0a038f4):** **`panelChromePreservationBlock()`** — highest-priority red glow + acrylic frost + marble preservation. **`realisticHairRecolorBlock()`** — strand-level recolor, forbid flat wash/overlay. Renamed prompt lines **`EVERY DETAIL MATTERS LINE`** (not WHY IT WORKS); **`everyDetailMattersRulesBlock()`** with forbidden empowerment phrases; demo **`WHY_FREE`** / **`WHY_TWELVE`** tightened (cheekbones, forehead, jaw per row). Fixed prompt conflict: spec text black **except** match score **#808080** (explicit CRITICAL color rule). **`hairstyleAnalysisFalMinimalImageRefs()`** default **true** — template + client only (`HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false` for extra refs). Dev overlay **`matchScoreText`** gray. Docs + **`.env.example`** updated.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: match rating stars inside value box
+
+- **Context (continued):** User screenshot — server-composited **star row** sat on the **top border** between OVERALL SCORE and MATCH RATING panels instead of inside the **MATCH RATING** value box.
+- **Cause:** **`TOP_SCORE_SLOT`** / **`RATING_SLOT`** used **15.8% top, 3.5% height** (label row); template value boxes are **~16% top, 5.8% height** (pixel-probed on IMG_2447).
+- **Shipped:** Recalibrated slots in **`hairstyleAnalysisLayoutSlots.ts`** + **`hairstyleAnalysisTemplateLayouts.ts`**. **`hairstyleAnalysisFalComposite.ts`** — center stars H+V inside rating panel; center overall score % in score panel.
