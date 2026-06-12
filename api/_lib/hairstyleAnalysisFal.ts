@@ -4,8 +4,6 @@ import {
   collectStylingRefsForAnalysis,
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
-import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
-import { compositeHairstyleAnalysisFalImage } from './hairstyleAnalysisFalComposite.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
 import { buildHairstyleAnalysisFalPrompt, type FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
@@ -218,7 +216,6 @@ export type GenerateHairstyleAnalysisFalInput = {
   templateUrl: string;
   clientPreviewUrl: string;
   siteOrigin: string;
-  layoutOverrides?: CompositeLayoutOverrides;
 };
 
 export type GenerateHairstyleAnalysisFalResult = {
@@ -271,16 +268,8 @@ export async function generateHairstyleAnalysisWithFal(
 
   const result = await subscribeHairstyleAnalysisFal(fal, imageUrls, prompt);
 
-  const falImageUrl = extractFalImageUrl(result);
-  if (!falImageUrl) throw new Error('Fal returned no image URL');
-
-  const composited = await compositeHairstyleAnalysisFalImage(
-    falImageUrl,
-    analysis,
-    input.siteOrigin,
-    input.layoutOverrides
-  );
-  const imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-composite.png', 'image/png');
+  const imageUrl = extractFalImageUrl(result);
+  if (!imageUrl) throw new Error('Fal returned no image URL');
 
   return {
     imageUrl,

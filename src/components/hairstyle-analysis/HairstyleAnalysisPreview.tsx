@@ -201,12 +201,8 @@ export default function HairstyleAnalysisPreview({
     setGenerating(true);
     setGenerateError(null);
     try {
-      const compositeSlotOverrides = Object.fromEntries(
-        Object.entries(slotOverrides).filter(([id]) => id === 'topScore' || id === 'rating')
-      );
       const result = await postHairstyleAnalysisGenerate(
-        resolvedAnalysis as unknown as Record<string, unknown>,
-        { slotOverrides: compositeSlotOverrides }
+        resolvedAnalysis as unknown as Record<string, unknown>
       );
       setGeneratedUrl(result.imageUrl);
       setLastPrompt(result.prompt);
@@ -232,7 +228,7 @@ export default function HairstyleAnalysisPreview({
     } finally {
       setGenerating(false);
     }
-  }, [isAdmin, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
+  }, [isAdmin, resolvedAnalysis, usageState?.unlimited]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({
@@ -537,7 +533,7 @@ export default function HairstyleAnalysisPreview({
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
                     Drag slot handles to reposition overlays. Tap Save layout to persist per tier.
-                    Generate applies topScore + rating + match-row values on the server composite; Fal fills thumbnails and TOP MATCH specs only.
+                    Generate uses GPT Image 2 to fill the full template in-image (score %, stars, specs, match rows).
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button

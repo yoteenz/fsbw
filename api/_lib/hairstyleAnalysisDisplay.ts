@@ -1,4 +1,4 @@
-/** Display helpers for hairstyle analysis prompts + server composite (keep aligned with src/utils/hairstyleAnalysisFormat.ts). */
+/** Display helpers for hairstyle analysis prompts (keep aligned with src/utils/hairstyleAnalysisFormat.ts). */
 
 export function formatScorePercent(score: number): string {
   return `${Math.round(score)}%`;
