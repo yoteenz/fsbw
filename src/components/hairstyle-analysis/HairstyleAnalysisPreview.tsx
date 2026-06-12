@@ -537,7 +537,7 @@ export default function HairstyleAnalysisPreview({
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
                     Drag slot handles to reposition overlays. Tap Save layout to persist per tier.
-                    Generate applies topScore + rating positions on the server composite; match scores are placed by Fal beside each MATCH SCORE label.
+                    Generate applies topScore + rating + match-row values on the server composite; Fal fills thumbnails and TOP MATCH specs only.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button

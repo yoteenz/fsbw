@@ -111,3 +111,8 @@ export function buildTextPathsSvg(
 </svg>`;
   return Buffer.from(svg);
 }
+
+/** Match-row value text — 2px smaller than slot height for label alignment. */
+export function matchRowValueFontSize(rect: PixelRect): number {
+  return Math.max(14, Math.round(rect.height * 0.88) - 2);
+}

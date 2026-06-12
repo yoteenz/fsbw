@@ -38,6 +38,11 @@ function asPercentRect(field: TextSlot | PercentRect): PercentRect {
   };
 }
 
+function matchRowValueClassName(fieldId: string): string | undefined {
+  if (!/^match\d+-(texture|color|length|score)$/.test(fieldId)) return undefined;
+  return fieldId.endsWith('-score') ? styles.matchRowScoreText : styles.matchRowValueText;
+}
+
 export default function HairstyleAnalysisCard({
   analysis,
   showDebugFrames = false,
@@ -119,6 +124,7 @@ export default function HairstyleAnalysisCard({
         }
 
         const value = text(field.id, overlayValues[field.id] ?? '');
+        const matchRowClass = matchRowValueClassName(field.id);
         const textClassName =
           field.id === 'topScore'
             ? styles.scoreText
@@ -126,9 +132,11 @@ export default function HairstyleAnalysisCard({
               ? styles.ratingText
               : field.id === 'clientName'
                 ? styles.clientNameText
-                : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
-                  ? styles.matchScoreText
-                  : undefined;
+                : matchRowClass
+                  ? matchRowClass
+                  : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
+                    ? styles.matchScoreText
+                    : undefined;
 
         const topScoreEditable = field.id === 'topScore' && showDebugFrames && onTextChange;
 
