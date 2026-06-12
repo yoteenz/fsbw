@@ -27609,3 +27609,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User wanted a font dropdown on the hairstyle analysis debug panel listing all site fonts, with live overlay preview, to pick overall score % font instead of being locked to one style.
 - **Shipped:** **`src/utils/siteFonts.ts`** — Futura Book/Medium/Demi, Bohemy, Covered By Your Grace. **`SiteFontPicker.tsx`** — dropdown + large live preview + clickable **98%** specimens. **`HairstyleAnalysisPreview`** — applies to **`topScore`** live, saved with layout, sent on Generate. **`api/_lib/hairstyleAnalysisFontOverrides.ts`** — parse overrides + Fal prompt label; **`buildHairstyleAnalysisFalPrompt`** accepts **`overallScoreFontLabel`**.
 - **Conventions:** Debug **Overall score font** picker → Save layout → Generate sends **`fontOverrides.topScore`** to Fal.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: resize photo fade debug square width
+
+- **Context:** User needed to adjust the **width** of the cyan photo-fade debug square, not just drag position.
+- **Shipped:** **`resizeRectByPixels()`** in **`hairstyleAnalysisSlotCoords.ts`**. **`AnalysisOverlaySlot`** — optional **`resizeAxes`** with left/right (and top/bottom) edge drag handles. Photo fade debug square uses **`resizeAxes="horizontal"`** with visible cyan edge handles.
+- **Conventions:** Drag fade square label to move; drag left/right cyan edge bars to change width → Save layout → Generate.
