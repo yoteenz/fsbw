@@ -27472,3 +27472,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Reference:** **`StatsCard.tsx`** BRAND row — digits in **Covered By Your Grace** (`text-lg` / 18px); **`%`** in **Futura PT Medium** at **14px** (inline suffix span).
 - **Shipped:** **`overallScorePathItems()`** — percent size ratio **14/18** (was 0.48); shared baseline alignment for digits + `%`. Dev overlay **`HairstyleAnalysisCard`** — split **topScore** into CBYG digits + **`.scorePercentSuffix`** (Futura, 77.78% em) unless debug contentEditable.
 - **Conventions:** Overall score typography mirrors admin BRAND card: CBYG number + Futura PT Medium `%` at 14/18 ratio.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: two templates (free + premium shared)
+
+- **Context:** User wanted to reduce cramped/low-quality match rows by consolidating from four separate template PNGs to **two**: free (`IMG_2554.png`) and premium (`IMG_2549.png`) for **3 / 6 / 12 month** subscribers. Premium tiers still get **1 free analysis per UTC month** (entitlement unchanged).
+- **Shipped:** **`HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL`** (`IMG_2554`) + **`HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL`** (`IMG_2549`) in **`hairstyleAnalysisTemplates.ts`** / **`hairstyleCatalog.ts`**. All paid tiers use premium template + **top + 3 additional matches** (`ADDITIONAL_LOOKS_BY_TIER`: 6/12 month → 3). Shared layout/overlay/Fal prompt path for paid tiers; removed six-month portfolio and twelve-month 3×3 grid field maps. Demo data simplified. Docs **`STYLE_ANALYSIS.md`**, **`HAIRSTYLE_ANALYSIS_TEMPLATES.md`** updated.
+- **Conventions:** Two physical hairstyle analysis templates only — free = top match only; 3/6/12 month = same premium card (4 looks total). PSA selfie pick caps (4/6/10) unchanged until phase-2 card wiring.
