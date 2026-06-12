@@ -26,17 +26,20 @@ export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 /** Main client preview photo cutout (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
 export const CLIENT_IMAGE_SLOT = pctRect('4%', '14%', '44.5%', '68.5%');
 
-/**
- * Per-star overlay rects aligned to pre-rendered outline glyphs on IMG_2549 (pixel-probed @ 2048×2560).
- * Free tier uses the same positions (no outlines on IMG_2554 — server draws all five).
- */
-export const MATCH_RATING_STAR_RECTS: PixelRect[] = [
-  { left: 1574, top: 428, width: 51, height: 118 },
-  { left: 1629, top: 428, width: 51, height: 118 },
-  { left: 1686, top: 428, width: 51, height: 117 },
-  { left: 1742, top: 428, width: 51, height: 118 },
-  { left: 1798, top: 428, width: 51, height: 118 },
-];
+/** Inner photo window inside the client panel (inset for red border + name pill) — bottom fade target. */
+export function clientPhotoFadeRect(outer: PixelRect = CLIENT_IMAGE_SLOT): PixelRect {
+  const insetX = Math.round(outer.width * 0.04);
+  const insetTop = Math.round(outer.height * 0.065);
+  const insetBottom = Math.round(outer.height * 0.02);
+  return {
+    left: outer.left + insetX,
+    top: outer.top + insetTop,
+    width: outer.width - insetX * 2,
+    height: outer.height - insetTop - insetBottom,
+  };
+}
+
+export const CLIENT_PHOTO_FADE_SLOT = clientPhotoFadeRect();
 
 const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [
