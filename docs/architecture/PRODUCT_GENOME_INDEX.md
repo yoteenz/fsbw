@@ -176,6 +176,7 @@ flowchart TB
 
 | File | Contents |
 |------|----------|
+| [PRODUCT_WIRING_MAP.md](./PRODUCT_WIRING_MAP.md) | **Full wiring map** — per-capability read/write/trigger/test tables (7 sections) |
 | [INTERCONNECTION_MATRIX.md](./INTERCONNECTION_MATRIX.md) | **Cross-domain tables** — how routes, APIs, data, pricing, and integrations connect |
 | [MOTHERBOARD_RECONCILIATION.md](./MOTHERBOARD_RECONCILIATION.md) | Motherboard vs code truth table |
 | [APP_TOPOLOGY_MAP.md](./APP_TOPOLOGY_MAP.md) | System topology |
