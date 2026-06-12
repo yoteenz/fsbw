@@ -201,7 +201,10 @@ export default function HairstyleAnalysisPreview({
     setGenerating(true);
     setGenerateError(null);
     try {
-      const result = await postHairstyleAnalysisGenerate(resolvedAnalysis as unknown as Record<string, unknown>);
+      const result = await postHairstyleAnalysisGenerate(
+        resolvedAnalysis as unknown as Record<string, unknown>,
+        { slotOverrides }
+      );
       setGeneratedUrl(result.imageUrl);
       setLastPrompt(result.prompt);
       if (result.usage) {
@@ -226,7 +229,7 @@ export default function HairstyleAnalysisPreview({
     } finally {
       setGenerating(false);
     }
-  }, [isAdmin, resolvedAnalysis, usageState?.unlimited]);
+  }, [isAdmin, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({
@@ -530,8 +533,8 @@ export default function HairstyleAnalysisPreview({
               {showDebugFrames ? (
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Drag slot handles to reposition. Edit text inline. Adjust font settings per slot, then save —
-                    positions persist in this browser per tier.
+                    Drag slot handles to reposition score, stars, and text. Tap Save layout to persist per tier.
+                    Generate uses your current slot positions (topScore, rating, match scores) on the server composite.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
