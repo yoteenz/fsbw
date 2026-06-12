@@ -14,10 +14,10 @@ export type QuoteLineInput = {
   /** Matches booking appointment page `bookingStyle` (e.g. LAYERED CURLS → +$40). */
   bookingStyle?: string;
   bookingAddonIds?: string[];
-  /** Wig consult — optional style analysis add-on comparison count (1 / 3 / 6). */
-  consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
-  /** Standalone hairstyle analysis purchase (1 / 3 / 6 comparisons — same USD as consult add-on). */
-  hairstyleAnalysisComparisonCount?: 1 | 3 | 6;
+  /** Wig consult — optional style analysis add-on comparison count (1 / 4). */
+  consultStyleAnalysisComparisonCount?: 1 | 4;
+  /** Standalone hairstyle analysis purchase (1 / 4 comparisons — same USD as consult add-on). */
+  hairstyleAnalysisComparisonCount?: 1 | 4;
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;
   capSize?: string;
@@ -60,14 +60,13 @@ const ADDON_USD: Record<string, number> = {
 
 const CONSULT_DEPOSIT_USD = 40;
 
-const CONSULT_STYLE_ANALYSIS_USD: Record<1 | 3 | 6, number> = {
+const CONSULT_STYLE_ANALYSIS_USD: Record<1 | 4, number> = {
   1: 20,
-  3: 40,
-  6: 60,
+  4: 60,
 };
 
 function consultStyleAnalysisAddonUsd(count: unknown): number {
-  if (count === 1 || count === 3 || count === 6) return CONSULT_STYLE_ANALYSIS_USD[count];
+  if (count === 1 || count === 4) return CONSULT_STYLE_ANALYSIS_USD[count];
   return 0;
 }
 
@@ -149,7 +148,7 @@ function resolveHairstyleAnalysis(line: QuoteLineInput, idx: number): ResolvedQu
       quantity: q,
       amountCents: 0,
       resolved: false,
-      note: 'hairstyleAnalysisComparisonCount must be 1, 3, or 6',
+      note: 'hairstyleAnalysisComparisonCount must be 1 or 4',
     };
   }
   const totalUsd = perUnitUsd * q;

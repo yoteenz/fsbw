@@ -203,7 +203,7 @@ export default function BookingConsultationPage() {
   const [consultMeasurementsHydrateKey, setConsultMeasurementsHydrateKey] = useState(0);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
-  const [styleAnalysisTier, setStyleAnalysisTier] = useState<StyleAnalysisComparisonTier | null>(null);
+  const [styleAnalysisTier, setStyleAnalysisTier] = useState<StyleAnalysisComparisonTier>(1);
   const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
 
@@ -448,8 +448,8 @@ export default function BookingConsultationPage() {
           bookingInspoFileName: inspoItems.map((it) => it.name).join(' · '),
           bookingBagSubtitle: [hairOption, styleAnalysisSubtitle].filter(Boolean).join(' · '),
           consultDepositUsd: CONSULT_DEPOSIT_USD,
-          consultStyleAnalysisComparisonCount: styleAnalysisTier ?? undefined,
-          consultStyleAnalysisNonRefundable: styleAnalysisTier != null ? true : undefined,
+          consultStyleAnalysisComparisonCount: styleAnalysisTier,
+          consultStyleAnalysisNonRefundable: true,
           ...(hairOption === 'WIG + INSTALL' && consultPreferredDateIso.trim()
             ? { bookingPreferredDate: consultPreferredDateIso.trim() }
             : {}),
@@ -1095,20 +1095,18 @@ export default function BookingConsultationPage() {
             >
               {formatUsd(consultCheckoutTotalUsd(styleAnalysisTier))}
             </p>
-            {styleAnalysisTier != null ? (
-              <p
-                style={{
-                  fontFamily: bookingFontBook,
-                  fontSize: '9px',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                  margin: '6px 0 0',
-                  lineHeight: 1.4,
-                }}
-              >
-                INCLUDES ${CONSULT_DEPOSIT_USD} DEPOSIT + STYLE ANALYSIS ADD-ON (NON-REFUNDABLE)
-              </p>
-            ) : null}
+            <p
+              style={{
+                fontFamily: bookingFontBook,
+                fontSize: '9px',
+                color: '#808080',
+                textTransform: 'uppercase',
+                margin: '6px 0 0',
+                lineHeight: 1.4,
+              }}
+            >
+              INCLUDES ${CONSULT_DEPOSIT_USD} DEPOSIT + STYLE ANALYSIS ADD-ON (NON-REFUNDABLE)
+            </p>
           </div>
         </div>
       </div>

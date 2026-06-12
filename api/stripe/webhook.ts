@@ -271,7 +271,7 @@ async function handlePaymentIntentSucceeded(pi: Stripe.PaymentIntent): Promise<v
     try {
       const parsed = JSON.parse(grantsRaw) as unknown;
       const counts = Array.isArray(parsed)
-        ? parsed.filter((n): n is 1 | 3 | 6 => n === 1 || n === 3 || n === 6)
+        ? parsed.filter((n): n is 1 | 4 => n === 1 || n === 4)
         : [];
       if (counts.length > 0) {
         const grant = await grantHairstyleAnalysisPurchaseCredits(userId, pi.id, counts);

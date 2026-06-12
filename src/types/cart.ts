@@ -53,11 +53,11 @@ export interface CartItem {
   bookingInspoPhotoUrls?: string[];
   /** Consult: $40 deposit portion when style analysis add-on is bundled in `price`. */
   consultDepositUsd?: number;
-  /** Consult style analysis add-on — 1 / 3 / 6 comparison options ($20 / $40 / $60, non-refundable). */
-  consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
+  /** Consult style analysis add-on — 1 / 4 comparison options ($20 / $60, non-refundable). */
+  consultStyleAnalysisComparisonCount?: 1 | 4;
   consultStyleAnalysisNonRefundable?: boolean;
-  /** Standalone hairstyle analysis purchase — 1 / 3 / 6 comparisons ($20 / $40 / $60, non-refundable). */
-  hairstyleAnalysisComparisonCount?: 1 | 3 | 6;
+  /** Standalone hairstyle analysis purchase — 1 / 4 comparisons ($20 / $60, non-refundable). */
+  hairstyleAnalysisComparisonCount?: 1 | 4;
   hairstyleAnalysisNonRefundable?: boolean;
   bookingBagSubtitle?: string;
 }

@@ -27480,3 +27480,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User wanted to reduce cramped/low-quality match rows by consolidating from four separate template PNGs to **two**: free (`IMG_2554.png`) and premium (`IMG_2549.png`) for **3 / 6 / 12 month** subscribers. Premium tiers still get **1 free analysis per UTC month** (entitlement unchanged).
 - **Shipped:** **`HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL`** (`IMG_2554`) + **`HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL`** (`IMG_2549`) in **`hairstyleAnalysisTemplates.ts`** / **`hairstyleCatalog.ts`**. All paid tiers use premium template + **top + 3 additional matches** (`ADDITIONAL_LOOKS_BY_TIER`: 6/12 month → 3). Shared layout/overlay/Fal prompt path for paid tiers; removed six-month portfolio and twelve-month 3×3 grid field maps. Demo data simplified. Docs **`STYLE_ANALYSIS.md`**, **`HAIRSTYLE_ANALYSIS_TEMPLATES.md`** updated.
 - **Conventions:** Two physical hairstyle analysis templates only — free = top match only; 3/6/12 month = same premium card (4 looks total). PSA selfie pick caps (4/6/10) unchanged until phase-2 card wiring.
+
+---
+
+## 2026-06-12 — Consult style analysis: 1 or 4 comparisons (\$20 / \$60)
+
+- **Context:** User asked to update the **Style analysis** section on **`/booking/consultation`** — only **1 comparison (\$20)** and **4 comparisons (\$60)**; remove **no style** option and old 3/6 tiers.
+- **Shipped:** **`ConsultStyleAnalysisAddonPicker`** — two required options only; defaults to **1 comparison** on consult page. **`consultStyleAnalysisAddon.ts`** tiers 1/\$20 and 4/\$60. **`StyleAnalysisComparisonTier`** → `1 | 4`. Server **`resolveQuote`**, checkout quote, Stripe intent/webhook, PSA **`purchase_hairstyle_analysis`**, and standalone hairstyle purchase pricing aligned to 1/4. **`CORE.md`**, **`STYLE_ANALYSIS.md`**, PSA instructions/status copy updated.
+- **Conventions:** Wig consult style analysis add-on is always selected (1 or 4 comparisons); consult checkout total = **\$40 deposit + add-on**.

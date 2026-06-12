@@ -59,7 +59,7 @@ export async function buildHairstyleAnalysisMemberStatus(
     purchaseRequired,
     purchaseOptions: hairstyleAnalysisPurchaseOptions(),
     guidance: purchaseRequired
-      ? 'Monthly free analysis used. Offer purchase at consult style analysis add-on prices: 1 comparison $20, 3 comparisons $40, 6 comparisons $60. Use purchase_hairstyle_analysis then send them to checkout.'
+      ? 'Monthly free analysis used. Offer purchase at consult style analysis add-on prices: 1 comparison $20, 4 comparisons $60. Use purchase_hairstyle_analysis then send them to checkout.'
       : usage.monthRemaining > 0
         ? `${usage.monthRemaining} free hairstyle analysis remaining this UTC month.`
         : `${usage.paidCreditsRemaining} paid hairstyle analysis credit(s) available.`,

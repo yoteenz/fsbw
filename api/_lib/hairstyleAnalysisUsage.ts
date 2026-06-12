@@ -53,7 +53,7 @@ function snapshot(
 }
 
 function parseComparisonCount(raw: unknown): HairstyleAnalysisComparisonTier | undefined {
-  if (raw === 1 || raw === 3 || raw === 6) return raw;
+  if (raw === 1 || raw === 4) return raw;
   return undefined;
 }
 

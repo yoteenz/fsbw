@@ -11,8 +11,7 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 | Comparison options | Price |
 |-------------------|-------|
 | 1 | $20 |
-| 3 | $40 |
-| 6 | $60 |
+| 4 | $60 |
 
 The **$40 consult deposit** remains separate and creditable per existing consult policy. Checkout total = **$40 + add-on** when selected.
 
@@ -61,7 +60,7 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **Allowance:** **3 / 6 / 12 month** premium subscribers get **1 free hairstyle analysis per UTC calendar month** (card tier matches subscription). API: `GET /api/hairstyle-analysis-usage`, enforced on `POST /api/hairstyle-analysis-generate` (refunds slot if Fal fails). Admins bypass the cap for testing.
 
-**After the monthly free is used:** members purchase another through checkout at the **same prices as the wig consult style analysis add-on** (not the $40 consult deposit): **1 comparison $20**, **3 comparisons $40**, **6 comparisons $60**. Cart line type `hairstyle-analysis`; Stripe webhook grants paid credits. PSA tools: `get_hairstyle_analysis_status`, `purchase_hairstyle_analysis`.
+**After the monthly free is used:** members purchase another through checkout at the **same prices as the wig consult style analysis add-on** (not the $40 consult deposit): **1 comparison $20**, **4 comparisons $60**. Cart line type `hairstyle-analysis`; Stripe webhook grants paid credits. PSA tools: `get_hairstyle_analysis_status`, `purchase_hairstyle_analysis`.
 
 **Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2554.png` free · `IMG_2549.png` premium) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
 
