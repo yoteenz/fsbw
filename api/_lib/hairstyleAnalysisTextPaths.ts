@@ -56,6 +56,11 @@ const ADMIN_BRAND_SCORE_PERCENT_PX = 14;
 const ADMIN_BRAND_PERCENT_SIZE_RATIO =
   ADMIN_BRAND_SCORE_PERCENT_PX / ADMIN_BRAND_SCORE_NUMBER_PX;
 
+/** Overall score % — CBYG digits + Futura % suffix; 4px smaller than slot-fit default. */
+export function overallScoreFontSize(rect: PixelRect): number {
+  return Math.max(12, Math.min(64, Math.round(rect.height * 0.78)) - 4);
+}
+
 /** CBYG has no "%" glyph — render digits in Covered By Your Grace, suffix in Futura. */
 export function overallScorePathItems(
   score: number,
@@ -65,7 +70,7 @@ export function overallScorePathItems(
   const numText = String(Math.round(score));
   const scoreFont = loadFont('CoveredByYourGrace.ttf');
   const percentFont = loadFont('FuturaPTMedium.ttf');
-  const fontSize = Math.min(64, Math.round(rect.height * 0.78));
+  const fontSize = overallScoreFontSize(rect);
   const percentFontSize = Math.max(
     12,
     Math.round(fontSize * ADMIN_BRAND_PERCENT_SIZE_RATIO)

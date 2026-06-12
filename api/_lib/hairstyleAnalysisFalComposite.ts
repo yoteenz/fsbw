@@ -1,15 +1,18 @@
 import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
+import { resolveTopScoreSlot } from './hairstyleAnalysisCompositeLayout.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import {
   premiumMatchRowValueSlots,
-  type PixelRect,
 } from './hairstyleAnalysisLayoutSlots.js';
 import {
   buildTextPathsSvg,
   matchRowValueFontSize,
+  overallScorePathItems,
   textPathData,
 } from './hairstyleAnalysisTextPaths.js';
 import { displayLength, formatScorePercent } from './hairstyleAnalysisDisplay.js';
+
+const BRAND_RED = '#EB1C24';
 
 async function fetchBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
@@ -19,6 +22,11 @@ async function fetchBuffer(url: string): Promise<Buffer> {
 
 function normalizeTier(tier: FalHairstyleAnalysis['tier']): Exclude<FalHairstyleAnalysis['tier'], 'black'> {
   return tier === 'black' ? 'twelve_month' : tier;
+}
+
+function buildOverallScoreOverlaySvg(score: number, layoutOverrides?: CompositeLayoutOverrides): Buffer {
+  const slot = resolveTopScoreSlot(layoutOverrides);
+  return buildTextPathsSvg(overallScorePathItems(score, slot, BRAND_RED));
 }
 
 function buildMatchRowOverlaySvg(analysis: FalHairstyleAnalysis): Buffer | null {
@@ -55,20 +63,26 @@ function buildMatchRowOverlaySvg(analysis: FalHairstyleAnalysis): Buffer | null 
   return buildTextPathsSvg(pathItems);
 }
 
-/** Overlay MATCH 02–04 texture/color/length/score values (Fal leaves those slots blank). */
+/** Overlay overall score % + MATCH 02–04 row values (Fal leaves those slots blank). */
 export async function compositeHairstyleAnalysisMatchRows(
   falImageUrl: string,
   analysis: FalHairstyleAnalysis,
-  _layoutOverrides?: CompositeLayoutOverrides
+  layoutOverrides?: CompositeLayoutOverrides
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   const baseBuf = await fetchBuffer(falImageUrl);
+  const overlays: Buffer[] = [
+    buildOverallScoreOverlaySvg(analysis.topMatch.score, layoutOverrides),
+  ];
   const matchRowOverlay = buildMatchRowOverlaySvg(analysis);
-  if (!matchRowOverlay) return baseBuf;
+  if (matchRowOverlay) overlays.push(matchRowOverlay);
 
-  const overlayBuf = await sharp(matchRowOverlay).png().toBuffer();
+  const compositeInputs = await Promise.all(
+    overlays.map((overlay) => sharp(overlay).png().toBuffer())
+  );
+
   return sharp(baseBuf)
-    .composite([{ input: overlayBuf, left: 0, top: 0 }])
+    .composite(compositeInputs.map((input) => ({ input, left: 0, top: 0 })))
     .png()
     .toBuffer();
 }

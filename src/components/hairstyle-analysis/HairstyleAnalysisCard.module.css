@@ -99,7 +99,7 @@
 
 .scoreText {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif;
-  font-size: clamp(5px, 2.8cqw, 11px);
+  font-size: clamp(4px, calc(2.8cqw - 4px), 7px);
   font-weight: 600;
   color: #eb1c24;
   text-align: center;

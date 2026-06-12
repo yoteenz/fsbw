@@ -1,7 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Overall score %, stars, and TOP MATCH specs are generated in-image by Fal.
- * MATCH 02–04 row values are server-composited after Fal (smaller Futura).
+ * Overall score % and MATCH 02–04 row values are server-composited after Fal (score 4px smaller).
+ * Match-rating stars and TOP MATCH specs are generated in-image by Fal.
  */
 
 import {
@@ -9,6 +9,8 @@ import {
   stylingRefForLook,
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
+import { TOP_SCORE_SLOT } from './hairstyleAnalysisLayoutSlots.js';
+import { overallScoreFontSize } from './hairstyleAnalysisTextPaths.js';
 import { clientFirstName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
   displayDensity,
@@ -348,13 +350,11 @@ function filledStarCount(rating: number): number {
   return Math.min(5, Math.max(0, Math.round(rating)));
 }
 
-function overallScoreFalLine(look: FalAnalysisLook): string {
-  const scoreText = formatScorePercent(look.score);
+function overallScoreFalLine(_look: FalAnalysisLook): string {
+  const targetPx = overallScoreFontSize(TOP_SCORE_SLOT);
   return [
-    `OVERALL SCORE value: print "${scoreText}" in the OVERALL SCORE value area.`,
-    `Typography: elegant casual brush script / handwritten style visually similar to Covered By Your Grace — flowing curves, not a plain sans-serif or Futura.`,
-    `Color: brand red ${BRAND_RED} only. Do NOT print the words "COVERED BY YOUR GRACE" or any font name.`,
-    'Center the percentage inside the frosted value panel beside the OVERALL SCORE label.',
+    'OVERALL SCORE value area: leave completely BLANK — server overlays the red percentage after generation.',
+    `(Server reference only — do not print: ${formatScorePercent(_look.score)} at ~${targetPx}px CBYG-style script, brand red ${BRAND_RED}.)`,
   ].join(' ');
 }
 
@@ -382,7 +382,7 @@ function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalys
 
 function overallScoreAndRatingRules(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
   return [
-    '=== OVERALL SCORE + MATCH RATING — FILL IN TEMPLATE (IN-IMAGE) ===',
+    '=== OVERALL SCORE + MATCH RATING ===',
     overallScoreFalLine(look),
     matchRatingStarsFalLine(look, tier),
   ].join('\n');
@@ -542,8 +542,8 @@ function buildTemplateRules(
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters + overall score % + match rating stars.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill every value field including overall score %, match rating stars, and match rows.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % blank for server overlay + match rating stars in-image.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score % + match rows blank for server overlay; stars + TOP MATCH specs + thumbnails in-image.',
   ]
     .filter(Boolean)
     .join('\n');
