@@ -138,6 +138,31 @@
   text-align: center;
 }
 
+.fadeDebugSlot {
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.fadeDebugFill {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 188, 212, 0.32);
+  border: 2px solid rgba(0, 188, 212, 0.95);
+}
+
+.fadeDebugFill::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28%;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.55), transparent);
+  pointer-events: none;
+}
+
 .additionalThumb {
   object-fit: cover;
   background: transparent;

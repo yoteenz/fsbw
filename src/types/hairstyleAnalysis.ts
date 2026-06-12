@@ -51,7 +51,7 @@ export type TextSlot = {
   height?: string;
 };
 
-export type TemplateFieldKind = 'text' | 'image';
+export type TemplateFieldKind = 'text' | 'image' | 'fadeDebug';
 
 /** One populate target on a static template (value-only overlay). */
 export type TemplateFieldDef = {

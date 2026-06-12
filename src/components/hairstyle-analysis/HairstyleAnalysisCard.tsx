@@ -89,7 +89,7 @@ export default function HairstyleAnalysisCard({
       {fields.map((field) => {
         const baseRect = asPercentRect(field.slot);
         const rect =
-          field.kind === 'image'
+          field.kind === 'image' || field.kind === 'fadeDebug'
             ? mergeSlotRect(baseRect, slotOverrides[field.id])
             : mergeSlotRect(
                 {
@@ -98,6 +98,24 @@ export default function HairstyleAnalysisCard({
                 },
                 slotOverrides[field.id]
               );
+
+        if (field.kind === 'fadeDebug') {
+          if (!showDebugFrames) return null;
+          return (
+            <AnalysisOverlaySlot
+              key={field.id}
+              slotId={field.id}
+              label={field.label}
+              rect={rect}
+              debug={showDebugFrames}
+              cardRef={cardRef}
+              onRectChange={onSlotRectChange}
+              className={styles.fadeDebugSlot}
+            >
+              <div className={styles.fadeDebugFill} aria-hidden />
+            </AnalysisOverlaySlot>
+          );
+        }
 
         if (field.kind === 'image') {
           const src = resolveOverlayImageUrl(field.id, analysis);
