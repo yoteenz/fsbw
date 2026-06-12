@@ -2166,11 +2166,15 @@ export async function getHairstyleAnalysisUsage(): Promise<HairstyleAnalysisUsag
 
 /** Fal GPT Image 2 — populate hairstyle analysis template (4:5 · ~2K). */
 export async function postHairstyleAnalysisGenerate(
-  analysis: Record<string, unknown>
+  analysis: Record<string, unknown>,
+  options?: { slotOverrides?: Record<string, unknown> }
 ): Promise<HairstyleAnalysisGenerateResult> {
   let res: Response;
   try {
-    res = await apiFetch('/api/hairstyle-analysis-generate', { method: 'POST', body: { analysis } });
+    res = await apiFetch('/api/hairstyle-analysis-generate', {
+      method: 'POST',
+      body: { analysis, slotOverrides: options?.slotOverrides },
+    });
   } catch (e) {
     rethrowWithNetworkHint(e, 'Hairstyle analysis generate');
   }

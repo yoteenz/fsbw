@@ -138,9 +138,10 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
   return [
     '=== CLIENT PREVIEW PHOTO (IMAGE 2) — TIGHT FACE PORTRAIT + STYLED TOP MATCH ===',
     clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
+    faceIdentityLockBlock(),
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
     realisticHairRecolorBlock(),
-    realisticHairDensityBlock(displayDensity(look.density)),
+    realisticHairDensityBlock(displayDensity(look.density), false),
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
@@ -158,13 +159,25 @@ function hairlineRulesBlock(): string {
   ].join('\n');
 }
 
-function realisticHairDensityBlock(densityLabel: string): string {
+function faceIdentityLockBlock(): string {
   return [
-    '=== HAIR DENSITY — REALISTIC, NOT WIG-CAP / HELMET HAIR ===',
-    `Target catalog density: ${densityLabel} — interpret as natural installed fullness, NOT oversized wig volume.`,
-    'Reduce bulk at crown and temples — visible strand separation, natural scalp depth at the part, believable weight at the ends.',
-    'FORBIDDEN: helmet hair, uniform plastic volume, bouffant crown, solid hair helmet, wig-cap puff, or one solid mass with no strand detail.',
-    'Additional match thumbnails must look lighter and more natural than the main client preview — avoid stacking extra volume on every alternate look.',
+    '=== FACE IDENTITY LOCK (CRITICAL — ALL CLIENT PHOTOS) ===',
+    'COPY the client\'s EXACT face from IMAGE 2 — same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
+    'Facial skin pixels must match IMAGE 2 — do NOT regenerate, repaint, beautify, smooth, slim, or alter the face in any way.',
+    'Hair edits apply ONLY inside the hair region (strands above the forehead/temples and below the crown) — never on facial skin.',
+    'FORBIDDEN: face swap, different person, AI beauty filter, plastic skin, changed ethnicity, new makeup, or shrinking the face to reduce hair volume.',
+  ].join('\n');
+}
+
+function realisticHairDensityBlock(densityLabel: string, isThumbnail = false): string {
+  const thumbNote = isThumbnail
+    ? 'Thumbnail: hair strand bulk may be slightly lighter than the main preview — adjust HAIR STRANDS ONLY, never the face.'
+    : 'Main preview: natural installed fullness from catalog density — not wig-cap helmet volume.';
+  return [
+    '=== HAIR DENSITY — HAIR STRANDS ONLY (FACE UNTOUCHED) ===',
+    `Target catalog density: ${densityLabel}. ${thumbNote}`,
+    'Visible strand separation and believable weight at the ends — in the hair region only.',
+    'FORBIDDEN: helmet hair, uniform plastic volume, bouffant crown, or repainting the face/cheeks/jaw to fake lower hair volume.',
   ].join('\n');
 }
 
@@ -173,17 +186,17 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     `${label} THUMBNAIL (small square on template):`,
     '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
     matchThumbnailFramingBlock(),
+    faceIdentityLockBlock(),
     `- TEXTURE: ${look.unit}`,
     realisticHairRecolorBlock(),
     colorHairGuidanceLine(look),
     `- LENGTH: ${displayLength(look.length)}`,
-    `- DENSITY: ${displayDensity(look.density)} — natural installed fullness; reduce crown/temple bulk vs main preview.`,
+    `- DENSITY: ${displayDensity(look.density)} — hair strands only; face unchanged from IMAGE 2.`,
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
-    realisticHairDensityBlock(displayDensity(look.density)),
-    '- Composite client selfie + unit texture for maximum accuracy — strand-level recolor, not a color overlay.',
-    '- Thumbnail hair must be SLIMMER and less voluminous than the main client preview — realistic density, not helmet wig hair.',
-    '- FORBIDDEN: back-of-head shots, stock photos, wig-only swatches, silhouettes, helmet hair, or any different person.',
+    realisticHairDensityBlock(displayDensity(look.density), true),
+    '- Composite client selfie + unit texture for maximum accuracy — strand-level recolor on hair only, not a color overlay on skin.',
+    '- FORBIDDEN: repainting the face, back-of-head shots, stock photos, wig-only swatches, silhouettes, helmet hair, or any different person.',
     '- NO baby hairs or wispy hairline flyaways on thumbnails.',
   ]
     .filter(Boolean)
@@ -335,10 +348,12 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
     'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
-    '=== CLIENT PHOTOS — TIGHT FACE CROP ON EVERY TIER (CRITICAL) ===',
+    '=== CLIENT PHOTOS — TIGHT FACE CROP + EXACT FACE FROM IMAGE 2 (CRITICAL) ===',
+    faceIdentityLockBlock(),
     'Main client preview + every match thumbnail: tight face-centered portrait crop from IMAGE 2.',
     'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
     'If the crop leaves empty space at the bottom, use a soft fade into the panel — NOT generated outfit/fabric.',
+    'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
     'Same framing standard on free, 3-month, 6-month, and 12-month templates — every generation must match this rule.',
     '',
     '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
@@ -391,6 +406,7 @@ const PROMPT_FOOTER = [
   '=== FINAL CHECK ===',
   'PILL: first name replaces "CLIENT PREVIEW" inside the tab — not below it.',
   'CLIENT PANEL: tight face-centered portrait crop — head/neck/upper chest only; never repaint clothing on the bottom half.',
+  'FACE LOCK: exact face from IMAGE 2 — hair edits only; never repaint facial skin or features.',
   'PHOTO FRAMING: zoom on face, crop out lower body; soft bottom fade OK — invented outfits/clothing FORBIDDEN.',
   'TIER SUBTITLE: erased — no month/tier analysis label visible.',
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
