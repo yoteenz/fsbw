@@ -66,6 +66,18 @@ export type SlotLayoutOverrides = Record<string, Partial<PercentRect>>;
 
 export type TextContentOverrides = Record<string, string>;
 
+export type TextFontStyle = {
+  fontFamily?: string;
+  fontSize?: string;
+  color?: string;
+  fontWeight?: string | number;
+  letterSpacing?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textTransform?: string;
+};
+
+export type TextFontStyleOverrides = Record<string, Partial<TextFontStyle>>;
+
 /** @deprecated Use getTemplateFields() — kept for layout JSON export compatibility. */
 export type AdditionalLookSlot = {
   image: PercentRect;

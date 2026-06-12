@@ -1,17 +1,20 @@
 import { hexForHairColorName } from './hairstyleHairColors.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
+import { applyRealisticMatchScores } from './hairstyleAnalysisRealisticScores.js';
 
-/** Ensure catalog hex codes are set before Fal generation. */
+/** Ensure catalog hex codes and varied match scores before Fal generation. */
 export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis): FalHairstyleAnalysis {
+  const withScores = applyRealisticMatchScores(analysis);
+
   const top = {
-    ...analysis.topMatch,
-    hex: analysis.topMatch.hex || hexForHairColorName(analysis.topMatch.color),
+    ...withScores.topMatch,
+    hex: withScores.topMatch.hex || hexForHairColorName(withScores.topMatch.color),
   };
 
-  const additionalLooks = analysis.additionalLooks.map((look) => ({
+  const additionalLooks = withScores.additionalLooks.map((look) => ({
     ...look,
     hex: look.hex || hexForHairColorName(look.color),
   }));
 
-  return { ...analysis, topMatch: top, additionalLooks };
+  return { ...withScores, topMatch: top, additionalLooks };
 }

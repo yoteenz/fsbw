@@ -1,9 +1,11 @@
 import { useMemo, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import type {
   HairstyleAnalysis,
   PercentRect,
   SlotLayoutOverrides,
   TextContentOverrides,
+  TextFontStyleOverrides,
   TextSlot,
 } from '../../types/hairstyleAnalysis';
 import {
@@ -22,6 +24,7 @@ type HairstyleAnalysisCardProps = {
   showDebugFrames?: boolean;
   slotOverrides?: SlotLayoutOverrides;
   textOverrides?: TextContentOverrides;
+  fontOverrides?: TextFontStyleOverrides;
   onSlotRectChange?: (slotId: string, rect: PercentRect) => void;
   onTextChange?: (slotId: string, value: string) => void;
 };
@@ -40,6 +43,7 @@ export default function HairstyleAnalysisCard({
   showDebugFrames = false,
   slotOverrides = {},
   textOverrides = {},
+  fontOverrides = {},
   onSlotRectChange,
   onTextChange,
 }: HairstyleAnalysisCardProps) {
@@ -53,6 +57,14 @@ export default function HairstyleAnalysisCard({
   );
 
   const text = (slotId: string, fallback: string) => textOverrides[slotId] ?? fallback;
+
+  const fontStyleFor = (slotId: string): CSSProperties | undefined => {
+    const override = fontOverrides[slotId];
+    if (!override) return undefined;
+    const style: CSSProperties = { ...override };
+    if (override.textAlign) style.textAlign = override.textAlign;
+    return style;
+  };
 
   return (
     <div
@@ -107,6 +119,16 @@ export default function HairstyleAnalysisCard({
         }
 
         const value = text(field.id, overlayValues[field.id] ?? '');
+        const textClassName =
+          field.id === 'topScore'
+            ? styles.scoreText
+            : field.id === 'rating'
+              ? styles.ratingText
+              : field.id === 'clientName'
+                ? styles.clientNameText
+                : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
+                  ? styles.matchScoreText
+                  : undefined;
 
         return (
           <AnalysisOverlaySlot
@@ -125,17 +147,8 @@ export default function HairstyleAnalysisCard({
               debug={showDebugFrames}
               onChange={onTextChange}
               multiline={field.multiline}
-              className={
-                field.id === 'topScore'
-                  ? styles.scoreText
-                  : field.id === 'rating'
-                    ? styles.ratingText
-                    : field.id === 'clientName'
-                      ? styles.clientNameText
-                      : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
-                        ? styles.matchScoreText
-                        : undefined
-              }
+              className={textClassName}
+              style={fontStyleFor(field.id)}
             />
           </AnalysisOverlaySlot>
         );

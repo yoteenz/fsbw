@@ -4,9 +4,17 @@ import { fileURLToPath } from 'node:url';
 import opentype from 'opentype.js';
 import { formatScorePercent } from './hairstyleAnalysisDisplay.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
-import { RATING_SLOT, TOP_SCORE_SLOT } from './hairstyleAnalysisLayoutSlots.js';
+import {
+  RATING_SLOT,
+  TOP_SCORE_SLOT,
+  threeMonthMatchScoreSlots,
+  sixMonthPortfolioScoreSlots,
+  twelveMonthAltScoreSlots,
+  type PixelRect,
+} from './hairstyleAnalysisLayoutSlots.js';
 
 const BRAND_RED = '#EB1C24';
+const MATCH_SCORE_GRAY = '#808080';
 const STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
 const STAR_FILLED_PATH = '/assets/NOIR/filled-star.png';
 const COVERED_FONT_PATH = join(
@@ -102,7 +110,62 @@ async function buildStarComposites(
   return overlays;
 }
 
-/** Overlay only overall score % and match-rating stars — Fal fills specs and match scores. */
+function normalizeTier(tier: FalHairstyleAnalysis['tier']): Exclude<FalHairstyleAnalysis['tier'], 'black'> {
+  return tier === 'black' ? 'twelve_month' : tier;
+}
+
+function matchScoreEntries(
+  analysis: FalHairstyleAnalysis
+): Array<{ score: number; rect: PixelRect }> {
+  const tier = normalizeTier(analysis.tier);
+  if (tier === 'free') return [];
+
+  if (tier === 'three_month') {
+    const rects = threeMonthMatchScoreSlots();
+    return analysis.additionalLooks.slice(0, rects.length).map((look, i) => ({
+      score: look.score,
+      rect: rects[i]!,
+    }));
+  }
+
+  if (tier === 'six_month') {
+    const rects = sixMonthPortfolioScoreSlots();
+    const portfolio = [analysis.topMatch, ...analysis.additionalLooks];
+    return portfolio.slice(0, rects.length).map((look, i) => ({
+      score: look.score,
+      rect: rects[i]!,
+    }));
+  }
+
+  const rects = twelveMonthAltScoreSlots();
+  return analysis.additionalLooks.slice(0, rects.length).map((look, i) => ({
+    score: look.score,
+    rect: rects[i]!,
+  }));
+}
+
+function buildMatchScoresOverlaySvg(entries: Array<{ score: number; rect: PixelRect }>): Buffer | null {
+  if (entries.length === 0) return null;
+
+  const textNodes = entries
+    .map(({ score, rect }) => {
+      const text = formatScorePercent(score);
+      const fontSize = Math.max(18, Math.round(Math.min(rect.height * 0.82, rect.width * 0.22)));
+      const x = rect.left + Math.round(rect.width * 0.02);
+      const y = rect.top + Math.round(rect.height * 0.78);
+      return `<text x="${x}" y="${y}" fill="${MATCH_SCORE_GRAY}" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="${fontSize}" font-weight="500">${escapeXml(text)}</text>`;
+    })
+    .join('\n  ');
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2560">
+  ${textNodes}
+</svg>`;
+
+  return Buffer.from(svg);
+}
+
+/** Overlay overall score %, match-rating stars, and per-row match scores — Fal fills specs only. */
 export async function compositeHairstyleAnalysisFalImage(
   falImageUrl: string,
   analysis: FalHairstyleAnalysis,
@@ -110,15 +173,24 @@ export async function compositeHairstyleAnalysisFalImage(
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   const baseBuf = await fetchBuffer(falImageUrl);
+  const matchScoreOverlay = buildMatchScoresOverlaySvg(matchScoreEntries(analysis));
   const [scoreOverlay, starOverlays] = await Promise.all([
     Promise.resolve(buildScoreOverlaySvg(analysis.topMatch.score)),
     buildStarComposites(analysis.topMatch.rating, siteOrigin),
   ]);
 
-  const scorePng = await sharp(scoreOverlay).png().toBuffer();
+  const overlays: Array<{ input: Buffer; left: number; top: number }> = [
+    { input: await sharp(scoreOverlay).png().toBuffer(), left: 0, top: 0 },
+    ...starOverlays,
+  ];
 
-  return sharp(baseBuf)
-    .composite([{ input: scorePng, left: 0, top: 0 }, ...starOverlays])
-    .png()
-    .toBuffer();
+  if (matchScoreOverlay) {
+    overlays.push({
+      input: await sharp(matchScoreOverlay).png().toBuffer(),
+      left: 0,
+      top: 0,
+    });
+  }
+
+  return sharp(baseBuf).composite(overlays).png().toBuffer();
 }
