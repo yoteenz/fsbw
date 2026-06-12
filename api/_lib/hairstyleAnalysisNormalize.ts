@@ -2,8 +2,13 @@ import { hexForHairColorName } from './hairstyleHairColors.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { applyRealisticMatchScores } from './hairstyleAnalysisRealisticScores.js';
 
+function normalizeTier(tier: FalHairstyleAnalysis['tier']): FalHairstyleAnalysis['tier'] | 'twelve_month' {
+  return tier === 'black' ? 'twelve_month' : tier;
+}
+
 /** Ensure catalog hex codes and varied match scores before Fal generation. */
 export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis): FalHairstyleAnalysis {
+  const tierKey = normalizeTier(analysis.tier);
   const withScores = applyRealisticMatchScores(analysis);
 
   const top = {
@@ -11,10 +16,13 @@ export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis)
     hex: withScores.topMatch.hex || hexForHairColorName(withScores.topMatch.color),
   };
 
-  const additionalLooks = withScores.additionalLooks.map((look) => ({
-    ...look,
-    hex: look.hex || hexForHairColorName(look.color),
-  }));
+  const additionalLooks =
+    tierKey === 'free'
+      ? []
+      : withScores.additionalLooks.map((look) => ({
+          ...look,
+          hex: look.hex || hexForHairColorName(look.color),
+        }));
 
   return { ...withScores, topMatch: top, additionalLooks };
 }

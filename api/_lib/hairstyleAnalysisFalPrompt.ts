@@ -306,13 +306,65 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   return lines.join('\n');
 }
 
-function buildTemplateRules(refs: FalPromptImageRefs): string {
+function freeTierOnlyBlock(): string {
+  return [
+    '=== FREE TIER — TOP MATCH ONLY (CRITICAL) ===',
+    'This card is the FREE hairstyle analysis template — exactly ONE look (TOP MATCH).',
+    'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
+    'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
+    'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
+    'ONLY fill: client preview photo, TOP MATCH spec column, and EVERY DETAIL MATTERS text rows beside rose icons.',
+    'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
+  ].join('\n');
+}
+
+function additionalMatchTemplateRules(): string[] {
+  return [
+    '=== ADDITIONAL MATCHES — VARIED STYLING ===',
+    'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
+    'Apply the assigned BAW styling reference on every additional-match thumbnail.',
+    '',
+    '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
+    'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
+    'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
+    'Use the matching 3D mannequin image (listed above) as the hair texture reference for that unit.',
+    'NEVER use back-of-head stock photos, different people, hair-only swatches, or repainted lower-body clothing.',
+    '',
+    'TOP MATCH spec values, match row texture/color/length/style, portfolio lines, and every-detail-matters lines: black uppercase Futura PT Medium.',
+    'MATCH SCORE percentage VALUES ONLY: medium gray ' + MATCH_SCORE_GRAY + ' in each row\'s value slot — separate color rule; never black.',
+  ];
+}
+
+function buildTemplateRules(
+  refs: FalPromptImageRefs,
+  tier: FalHairstyleAnalysis['tier']
+): string {
+  const tierKey = normalizeTier(tier);
   const mannequinList =
     refs.mannequinRefs.length > 0
       ? refs.mannequinRefs
           .map((r) => `IMAGE ${r.imageIndex} = 3D ${r.unit} mannequin front (texture reference only)`)
           .join('\n')
       : '';
+
+  const photoRules =
+    tierKey === 'free'
+      ? [
+          '=== CLIENT PHOTO — TIGHT FACE CROP + EXACT FACE FROM IMAGE 2 (CRITICAL) ===',
+          faceIdentityLockBlock(),
+          'Main client preview only — tight face-centered portrait crop from IMAGE 2.',
+          'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
+          'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
+        ]
+      : [
+          '=== CLIENT PHOTOS — TIGHT FACE CROP + EXACT FACE FROM IMAGE 2 (CRITICAL) ===',
+          faceIdentityLockBlock(),
+          'Main client preview + every match thumbnail: tight face-centered portrait crop from IMAGE 2.',
+          'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
+          'If the crop leaves empty space at the bottom, use a soft fade into the panel — NOT generated outfit/fabric.',
+          'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
+          'Same framing standard on 3-month, 6-month, and 12-month templates — every generation must match this rule.',
+        ];
 
   return [
     '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',
@@ -348,29 +400,20 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
-    '=== ADDITIONAL MATCHES — VARIED STYLING ===',
-    'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
-    'Apply the assigned BAW styling reference on every additional-match thumbnail.',
+    ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : additionalMatchTemplateRules()),
+    ...photoRules,
     '',
-    '=== CLIENT PHOTOS — TIGHT FACE CROP + EXACT FACE FROM IMAGE 2 (CRITICAL) ===',
-    faceIdentityLockBlock(),
-    'Main client preview + every match thumbnail: tight face-centered portrait crop from IMAGE 2.',
-    'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
-    'If the crop leaves empty space at the bottom, use a soft fade into the panel — NOT generated outfit/fabric.',
-    'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
-    'Same framing standard on free, 3-month, 6-month, and 12-month templates — every generation must match this rule.',
-    '',
-    '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
-    'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
-    'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
-    'Use the matching 3D mannequin image (listed above) as the hair texture reference for that unit.',
-    'NEVER use back-of-head stock photos, different people, hair-only swatches, or repainted lower-body clothing.',
-    '',
-    'TOP MATCH spec values, match row texture/color/length/style, portfolio lines, and every-detail-matters lines: black uppercase Futura PT Medium.',
-    'MATCH SCORE percentage VALUES ONLY: medium gray ' + MATCH_SCORE_GRAY + ' in each row\'s value slot — separate color rule; never black.',
+    ...(tierKey === 'free'
+      ? [
+          'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
+          'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
+        ]
+      : []),
     'OVERALL SCORE % and MATCH RATING stars: leave blank for server overlay.',
     '',
-    'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill every value field except overall score % and match rating stars.',
+    tierKey === 'free'
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters only; leave overall score % and stars blank.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill every value field except overall score % and match rating stars.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -406,29 +449,48 @@ function portfolioLine(rank: number, look: FalAnalysisLook): string {
   return `${String(rank).padStart(2, '0')} ${look.unit}${styleSuffix}`;
 }
 
-const PROMPT_FOOTER = [
-  '',
-  '=== FINAL CHECK ===',
-  'PILL: first name replaces "CLIENT PREVIEW" inside the tab — not below it.',
-  'CLIENT PANEL: tight face-centered portrait crop — head/neck/upper chest only; never repaint clothing on the bottom half.',
-  'FACE LOCK: exact face from IMAGE 2 — hair edits only; never repaint facial skin or features.',
-  'PHOTO FRAMING: zoom on face, crop out lower body; soft bottom fade OK — invented outfits/clothing FORBIDDEN.',
-  'TIER SUBTITLE: erased — no month/tier analysis label visible.',
-  'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
-  'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',
-  'OVERALL SCORE % and MATCH RATING stars: left blank for server overlay.',
-  `MATCH SCORE value slots: gray ${MATCH_SCORE_GRAY} percentage only beside each label — never on thumbnails.`,
-  'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.',
-  'EVERY DETAIL MATTERS: fixed rose-icon rows, one verbatim sentence per line — no label:value format.',
-  'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',
-  'COLOR values: color name only — no hex codes or parentheses on the template.',
-].join('\n');
+function promptFooter(tier: FalHairstyleAnalysis['tier']): string {
+  const tierKey = normalizeTier(tier);
+  const lines = [
+    '',
+    '=== FINAL CHECK ===',
+    'PILL: first name replaces "CLIENT PREVIEW" inside the tab — not below it.',
+    'CLIENT PANEL: tight face-centered portrait crop — head/neck/upper chest only; never repaint clothing on the bottom half.',
+    'FACE LOCK: exact face from IMAGE 2 — hair edits only; never repaint facial skin or features.',
+    'PHOTO FRAMING: zoom on face, crop out lower body; soft bottom fade OK — invented outfits/clothing FORBIDDEN.',
+    'TIER SUBTITLE: erased — no month/tier analysis label visible.',
+    'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
+    'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',
+    'OVERALL SCORE % and MATCH RATING stars: left blank for server overlay.',
+  ];
+
+  if (tierKey === 'free') {
+    lines.push(
+      'FREE TIER: TOP MATCH ONLY — no MATCH 02+, no portfolio thumbnails, no horizontal match strip, no extra match scores.'
+    );
+  } else {
+    lines.push(
+      `MATCH SCORE value slots: gray ${MATCH_SCORE_GRAY} percentage only beside each label — never on thumbnails.`,
+      'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.'
+    );
+  }
+
+  lines.push(
+    'EVERY DETAIL MATTERS: fixed rose-icon rows, one verbatim sentence per line — no label:value format.',
+    'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',
+    'COLOR values: color name only — no hex codes or parentheses on the template.'
+  );
+
+  return lines.join('\n');
+}
 
 function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
-    buildTemplateRules(refs),
+    buildTemplateRules(refs, 'free'),
+    '',
+    freeTierOnlyBlock(),
     '',
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
@@ -442,7 +504,7 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
       lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
     });
   }
-  lines.push(PROMPT_FOOTER);
+  lines.push(promptFooter('free'));
   return lines.join('\n');
 }
 
@@ -450,7 +512,7 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
-    buildTemplateRules(refs),
+    buildTemplateRules(refs, 'three_month'),
     '',
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
@@ -465,7 +527,7 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
   });
   lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
-  lines.push(PROMPT_FOOTER);
+  lines.push(promptFooter('three_month'));
   return lines.join('\n');
 }
 
@@ -474,7 +536,7 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs
   const portfolio = [top, ...analysis.additionalLooks];
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
-    buildTemplateRules(refs),
+    buildTemplateRules(refs, 'six_month'),
     '',
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
@@ -495,7 +557,7 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs
   });
   lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
-  lines.push(PROMPT_FOOTER);
+  lines.push(promptFooter('six_month'));
   return lines.join('\n');
 }
 
@@ -503,7 +565,7 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageR
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
-    buildTemplateRules(refs),
+    buildTemplateRules(refs, 'twelve_month'),
     '',
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
@@ -531,7 +593,7 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageR
       lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
     });
   }
-  lines.push(PROMPT_FOOTER);
+  lines.push(promptFooter('twelve_month'));
   return lines.join('\n');
 }
 

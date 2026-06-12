@@ -21,6 +21,19 @@ export function applyRealisticMatchScores(analysis: FalHairstyleAnalysis): FalHa
   const topScore = randomInt(94, 99);
   const topRating = ratingForScore(topScore);
 
+  if (analysis.tier === 'free') {
+    return {
+      ...analysis,
+      additionalLooks: [],
+      topMatch: {
+        ...analysis.topMatch,
+        score: topScore,
+        rating: topRating,
+        rank: analysis.topMatch.rank > 0 ? analysis.topMatch.rank : 1,
+      },
+    };
+  }
+
   let floor = topScore - 2;
   const additionalLooks = analysis.additionalLooks.map((look, index) => {
     const gap = randomInt(2, 5);
