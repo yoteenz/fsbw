@@ -27634,3 +27634,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported Fal adding **dark roots** on fashion colors (e.g. CHERRY) when BAW colored units are **uniform root to tip**; **BLANCO** rendered **kinky** instead of **silky straight**.
 - **Shipped:** **`hairstyleAnalysisUnitCatalog.ts`** — per-unit pattern/origin/texture (NOIR/BLANCO silky straight, waves, curls) + **`bawColorApplicationRulesBlock()`** (no dark roots on vivid/custom colors). **`hairstyleAnalysisFalPrompt.ts`** — catalog blocks in template rules; **`lookHairAccuracyLines()`** on client preview + match thumbs; removed “root-to-tip variation” that encouraged ombré roots.
 - **Conventions:** Custom/vivid BAW colors = one tone lace to ends; BLANCO = silky straight Russian hair never kinky; TEXTURE field = unit native pattern.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: full acceptable font list + auto-save
+
+- **Context:** User reported the debug **Overall score font** picker only showed five brand website fonts, not all acceptable fonts; they also could not reliably **save** font changes.
+- **Topics covered:** Prior work on Fal in-image score/stars, photo fade debug, unit catalog; font picker shipped with only Futura Book/Medium/Demi, Bohemy, CBYG.
+- **Shipped:** **`src/utils/siteFonts.ts`** — expanded to 18 options in three groups (**brand**, **site stacks**, **system fallbacks**): booking stacks, analysis card stacks, Inter, Futura, futuristic-pt, Avenir Next, Montserrat, sans/serif/cursive. **`resolveSiteFontId()`** prefers persisted **`siteFontId`** on **`TextFontStyle`**. **`SiteFontPicker`** — grouped `<optgroup>` dropdown; quick-pick chips remain for brand fonts only. **`HairstyleAnalysisPreview`** — **auto-saves** overall score font to localStorage on pick (green “Saved overall score font” feedback); no longer requires Save layout for font id. **`api/_lib/hairstyleAnalysisFontOverrides.ts`** — parses **`siteFontId`**; expanded Fal label map; **`hairstyleAnalysisFal.ts`** passes **`siteFontId`** to prompt builder.
+- **Conventions:** Pick overall score font → saves immediately per tier; Save layout still needed for slot positions and manual font-field edits on other slots; Generate sends saved **`fontOverrides.topScore`** (family + siteFontId) to Fal.
