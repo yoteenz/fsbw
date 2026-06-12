@@ -27496,3 +27496,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **MORE MATCHES FOR YOU** row values (texture, color, length, gray match score %) were too large vs pre-printed labels — not on the same horizontal row.
 - **Shipped:** React overlay **`.matchRowValueText`** / **`.matchRowScoreText`** — **2px smaller** than default overlay (`calc(2.65cqw - 2px)` max 8px). Production: Fal leaves MATCH 02–04 value slots blank; **`hairstyleAnalysisFalComposite.ts`** server-composites those fields with **`matchRowValueFontSize()`** (slot height × 0.88 − 2px). Fal prompt updated accordingly.
 - **Conventions:** MATCH 02–04 values = server overlay only; Fal fills thumbnails + TOP MATCH specs.
+
+---
+
+## 2026-06-12 — Hairstyle analysis one-shoulder drape on all matches
+
+- **Context:** User reported MATCH 02–04 thumbnails kept placing hair on **both shoulders** instead of the **one-shoulder drape** like the hero portrait and 2D/3D mannequins (hair behind one shoulder, forward over the other).
+- **Shipped:** **`asymmetricOneShoulderDrapeBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — explicit model LEFT forward / model RIGHT behind rules; forbidden twin-shoulder curtain; applied to client preview + every match thumbnail + final check. **`mannequinRefLine`** now copies silhouette + drape from mannequin IMAGE. **`hairstyleAnalysisFal.ts`** — **always attach unit mannequin front refs**; `HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true` skips **styling** refs only (default now includes mannequins + styling).
+- **Conventions:** All hairstyle analysis photos (hero + MATCH thumbnails) = asymmetric one-shoulder drape matching catalog mannequin fronts.
