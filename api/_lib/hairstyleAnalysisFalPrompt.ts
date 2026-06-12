@@ -168,9 +168,12 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'The label "OVERALL SCORE" is already on the template — do NOT repeat it.',
     'Do NOT render the words "COVERED BY YOUR GRACE" as visible text anywhere on the card.',
     '',
-    '=== MATCH RATING STARS — LEAVE BLANK (POST-PROCESSED) ===',
-    'Leave the MATCH RATING star row area empty or unchanged — stars are composited separately.',
-    'Do NOT draw stars, emoji ★, yellow stars, or solid-red star rows.',
+    '=== MATCH RATING STARS — WEBSITE STYLE (IMAGES 3 & 4) ===',
+    'IMAGE 3 = EMPTY STAR REFERENCE: white fill inside the star, thin black border/outline (Frontal Slayer site style).',
+    `IMAGE 4 = FILLED STAR REFERENCE: solid brand red ${BRAND_RED} fill, thin black border (Frontal Slayer site style).`,
+    'In the MATCH RATING box: draw exactly 5 small five-point stars in a row — copy the shape from images 3 & 4.',
+    'FILLED RATING STARS = red background like image 4. EMPTY RATING STARS = white background + black border like image 3.',
+    'NO yellow stars, NO gray stars, NO emoji ★ characters — only the website star icons described above.',
     '',
     'ALL OTHER POPULATED VALUES (specs, portfolio text, why lines): black uppercase Futura PT Medium style.',
     '',
@@ -220,8 +223,29 @@ function portfolioLine(rank: number, look: FalAnalysisLook): string {
   return `${String(rank).padStart(2, '0')} ${look.unit}${style} — ${formatScore(look.score)}`;
 }
 
+function describeMatchRatingStars(rating: number): string {
+  const filled = Math.min(5, Math.max(0, Math.round(rating)));
+  const empty = 5 - filled;
+  return [
+    `MATCH RATING — ${filled} filled + ${empty} empty stars (left to right):`,
+    filled > 0
+      ? `  FILLED (×${filled}): brand red ${BRAND_RED} star with black border — match IMAGE 4.`
+      : '',
+    empty > 0
+      ? `  EMPTY (×${empty}): white star with black border — match IMAGE 3.`
+      : '',
+    'Render as 5 separate small star icons in the MATCH RATING box, not text glyphs.',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 function scoreLine(top: FalAnalysisLook): string {
   return `OVERALL SCORE VALUE ONLY (${BRAND_RED}, Covered By Your Grace font): ${formatScore(top.score)} — number only, no extra label text.`;
+}
+
+function scoreAndRatingLines(top: FalAnalysisLook): string[] {
+  return [scoreLine(top), describeMatchRatingStars(top.rating)];
 }
 
 const PROMPT_FOOTER = [
@@ -233,7 +257,7 @@ const PROMPT_FOOTER = [
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
   `SCORE: only "${formatScore(98)}" style number in red Covered By Your Grace — never print "COVERED BY YOUR GRACE" as text.`,
   'THUMBNAILS: same client face from IMAGE 2 + mannequin texture per unit — never different people or back-of-head stock.',
-  'STARS: leave MATCH RATING area blank.',
+  `STARS: red ${BRAND_RED} filled + white/black-border empty (website style from images 3 & 4).`,
 ].join('\n');
 
 function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
@@ -245,7 +269,7 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    scoreLine(top),
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   analysis.whyItWorks.forEach((line, i) => {
@@ -264,7 +288,7 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    scoreLine(top),
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
@@ -287,7 +311,7 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    scoreLine(top),
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
     'STYLE PORTFOLIO — FILL EACH ALTERNATIVE ROW (THUMBNAIL + TEXTURE + COLOR + LENGTH + MATCH SCORE):',
@@ -314,7 +338,7 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageR
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    scoreLine(top),
+    ...scoreAndRatingLines(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
     'STYLE PORTFOLIO GRID — FILL ALL 9 ALTERNATIVES (THUMBNAIL + COLOR + LENGTH + MATCH SCORE):',
