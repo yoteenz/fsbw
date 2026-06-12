@@ -69,7 +69,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         o.consultStyleAnalysisComparisonCount === 3 ||
         o.consultStyleAnalysisComparisonCount === 6
           ? o.consultStyleAnalysisComparisonCount
-          : undefined
+          : undefined,
+      hairstyleAnalysisComparisonCount:
+        o.hairstyleAnalysisComparisonCount === 1 ||
+        o.hairstyleAnalysisComparisonCount === 3 ||
+        o.hairstyleAnalysisComparisonCount === 6
+          ? o.hairstyleAnalysisComparisonCount
+          : undefined,
     };
   });
 

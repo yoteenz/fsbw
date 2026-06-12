@@ -16,6 +16,7 @@ import { hairstyleAnalysisTemplateUrlForTier } from './_lib/hairstyleAnalysisTem
 import {
   consumeHairstyleAnalysisGeneration,
   getHairstyleAnalysisUsage,
+  hairstyleAnalysisPurchaseOptions,
   refundHairstyleAnalysisGeneration,
 } from './_lib/hairstyleAnalysisUsage.js';
 import { getPsaPremiumProfile } from './_lib/psaPremiumCheck.js';
@@ -176,19 +177,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   parsed.templateUrl = hairstyleAnalysisTemplateUrlForTier(effectiveTier);
 
   let consumed = false;
+  let consumedSource: 'monthly' | 'paid' | null = null;
+  let consumedComparisonCount: 1 | 3 | 6 | undefined;
   if (!entitlement.unlimited) {
     const consumeResult = await consumeHairstyleAnalysisGeneration(user.id);
     if (!consumeResult.ok) {
-      res.status(429).json({
+      res.status(402).json({
         error:
-          'You have already used your free hairstyle analysis this month. Your next free analysis is available when the calendar month resets.',
-        code: 'MONTHLY_LIMIT',
+          'You have used your free hairstyle analysis this month. Purchase another through checkout or ask your PSA for the same tiers as the wig consult style analysis add-on.',
+        code: 'PURCHASE_REQUIRED',
         usage: consumeResult.usage,
         retryAfterSec: consumeResult.retryAfterSec,
+        purchaseOptions: hairstyleAnalysisPurchaseOptions(),
       });
       return;
     }
     consumed = true;
+    consumedSource = consumeResult.source;
+    consumedComparisonCount = consumeResult.comparisonCount;
   }
 
   parsed.siteOrigin = siteOriginFromRequest(req);
@@ -199,11 +205,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       ok: true,
       ...result,
       analysisTier: effectiveTier,
+      consumeSource: consumedSource,
+      comparisonCount: consumedComparisonCount ?? null,
       usage: entitlement.unlimited ? null : await getHairstyleAnalysisUsage(user.id),
     });
   } catch (e) {
-    if (consumed) {
-      await refundHairstyleAnalysisGeneration(user.id);
+    if (consumed && consumedSource) {
+      await refundHairstyleAnalysisGeneration(user.id, consumedSource, consumedComparisonCount);
     }
     const msg = e instanceof Error ? e.message : 'Hairstyle analysis generation failed';
     console.error('[hairstyle-analysis-generate]', msg);

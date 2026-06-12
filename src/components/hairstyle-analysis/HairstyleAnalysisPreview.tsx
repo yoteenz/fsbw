@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type {
   AnalysisTier,
   HairstyleAnalysis,
@@ -14,6 +14,8 @@ import {
 } from '../../utils/api';
 import { getCurrentUser, isAdminEmail } from '../../utils/adminAuth';
 import { validateHairstyleAnalysis } from '../../utils/hairstyleAnalysisRules';
+import { appendHairstyleAnalysisToLocalCart } from '../../utils/hairstyleAnalysisPurchase';
+import { requestOpenPsaChat } from '../../utils/psaOpenChatRequest';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
 
@@ -52,6 +54,7 @@ export default function HairstyleAnalysisPreview({
   clientPreviewUrl,
   onClientPreviewUrlChange,
 }: HairstyleAnalysisPreviewProps) {
+  const navigate = useNavigate();
   const generatedRef = useRef<HTMLDivElement>(null);
   const overlayCardRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -142,8 +145,29 @@ export default function HairstyleAnalysisPreview({
     if (validationIssues.length > 0 || generating || usageLoading) return false;
     if (isAdmin || usageState?.unlimited) return true;
     if (!usageState?.eligible) return false;
-    return (usageState.monthRemaining ?? 0) > 0;
+    if (usageState.canGenerate === true) return true;
+    return (usageState.monthRemaining ?? 0) > 0 || (usageState.paidCreditsRemaining ?? 0) > 0;
   }, [generating, isAdmin, usageLoading, usageState, validationIssues.length]);
+
+  const purchaseRequired = useMemo(() => {
+    if (isAdmin || usageState?.unlimited || !usageState?.eligible || usageLoading) return false;
+    return usageState.purchaseRequired === true;
+  }, [isAdmin, usageLoading, usageState]);
+
+  const handlePurchaseTier = useCallback(
+    (comparisonCount: 1 | 3 | 6) => {
+      appendHairstyleAnalysisToLocalCart(comparisonCount);
+      navigate('/checkout');
+    },
+    [navigate]
+  );
+
+  const handleAskPsaToPurchase = useCallback(() => {
+    requestOpenPsaChat({
+      prefillMessage:
+        'I used my free hairstyle analysis for this month. Help me purchase another at the consult style analysis prices.',
+    });
+  }, []);
 
   const handleGenerate = useCallback(async () => {
     setGenerating(true);
@@ -159,6 +183,9 @@ export default function HairstyleAnalysisPreview({
                 ...prev,
                 usage: result.usage!,
                 monthRemaining: result.usage!.monthRemaining,
+                paidCreditsRemaining: result.usage!.paidCreditsRemaining ?? prev.paidCreditsRemaining,
+                canGenerate: result.usage!.canGenerate ?? prev.canGenerate,
+                purchaseRequired: (result.usage!.canGenerate ?? prev.canGenerate) === false,
               }
             : prev
         );
@@ -201,15 +228,47 @@ export default function HairstyleAnalysisPreview({
             Admin test mode — unlimited generations
           </p>
         ) : usageState?.eligible ? (
-          <p
-            className={`text-[9px] uppercase tracking-[0.1em] leading-relaxed ${
-              (usageState.monthRemaining ?? 0) > 0 ? 'text-[#808080]' : 'text-[#eb1c24]'
-            }`}
-          >
-            {(usageState.monthRemaining ?? 0) > 0
-              ? `${usageState.monthRemaining} free hairstyle analysis remaining this month (3 / 6 / 12 month members)`
-              : 'You have used your free hairstyle analysis for this month. It resets when the calendar month changes.'}
-          </p>
+          <div className="flex flex-col gap-2">
+            <p
+              className={`text-[9px] uppercase tracking-[0.1em] leading-relaxed ${
+                canGenerate ? 'text-[#808080]' : 'text-[#eb1c24]'
+              }`}
+            >
+              {(usageState.monthRemaining ?? 0) > 0
+                ? `${usageState.monthRemaining} free hairstyle analysis remaining this month (3 / 6 / 12 month members)`
+                : 'You have used your free hairstyle analysis for this month.'}
+              {(usageState.paidCreditsRemaining ?? 0) > 0
+                ? ` ${usageState.paidCreditsRemaining} paid credit(s) available.`
+                : ''}
+              {!canGenerate ? ' Purchase another through checkout or ask your PSA.' : ''}
+            </p>
+            {purchaseRequired && usageState.purchaseOptions?.length ? (
+              <div className="flex flex-col gap-2 border border-black/15 p-3">
+                <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
+                  Same prices as the wig consult style analysis add-on (non-refundable)
+                </p>
+                <div className="flex flex-col gap-2">
+                  {usageState.purchaseOptions.map((tier) => (
+                    <button
+                      key={tier.comparisonCount}
+                      type="button"
+                      onClick={() => handlePurchaseTier(tier.comparisonCount)}
+                      className="border border-black bg-white px-3 py-2 text-left text-[10px] uppercase tracking-[0.12em] text-black"
+                    >
+                      {tier.label} · ${tier.priceUsd}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAskPsaToPurchase}
+                  className="border border-black bg-black px-3 py-2 text-[10px] uppercase tracking-[0.12em] text-white"
+                >
+                  Ask your PSA
+                </button>
+              </div>
+            ) : null}
+          </div>
         ) : (
           <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24] leading-relaxed">
             A 3, 6, or 12 month premium subscription is required.{' '}

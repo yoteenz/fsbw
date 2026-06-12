@@ -114,7 +114,9 @@ function bagProductTitleLine(item: { name?: string; type?: string; category?: st
 
 /** Red subtitle — same rules as cart dropdown. */
 function bagProductRedSubtitle(item: any, itemLength: string, hairOriginForName: (productName: string) => string): string {
-  if (item.name === 'GIFT CARD' || item.type === 'gift-card') return 'DIGITAL ONLY';
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card' || item.type === 'hairstyle-analysis') {
+    return 'DIGITAL ONLY';
+  }
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
     return bookingCartRedSubtitle(item);
   }
