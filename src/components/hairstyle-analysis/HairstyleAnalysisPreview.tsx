@@ -31,7 +31,7 @@ import SiteFontPicker from './SiteFontPicker';
 import { formatScorePercent } from '../../utils/hairstyleAnalysisFormat';
 import {
   DEFAULT_OVERALL_SCORE_FONT_ID,
-  siteFontIdFromFamily,
+  resolveSiteFontId,
   siteFontStylePatch,
 } from '../../utils/siteFonts';
 
@@ -274,22 +274,35 @@ export default function HairstyleAnalysisPreview({
     [selectedFontSlot]
   );
 
-  const overallScoreFontId = siteFontIdFromFamily(fontOverrides.topScore?.fontFamily);
+  const overallScoreFontId = resolveSiteFontId(fontOverrides.topScore);
   const overallScorePreviewText =
     textOverrides.topScore ?? formatScorePercent(resolvedAnalysis.topMatch.score);
 
-  const onOverallScoreFontChange = useCallback((fontId: string) => {
-    const patch = siteFontStylePatch(fontId);
-    setFontOverrides((prev) => ({
-      ...prev,
-      topScore: {
-        ...prev.topScore,
-        ...patch,
-        color: prev.topScore?.color ?? '#EB1C24',
-      },
-    }));
-    setSelectedFontSlot('topScore');
-  }, []);
+  const onOverallScoreFontChange = useCallback(
+    (fontId: string) => {
+      const patch = siteFontStylePatch(fontId);
+      setFontOverrides((prev) => {
+        const next: TextFontStyleOverrides = {
+          ...prev,
+          topScore: {
+            ...prev.topScore,
+            ...patch,
+            color: prev.topScore?.color ?? '#EB1C24',
+          },
+        };
+        saveHairstyleAnalysisTierDebug(analysis.tier, {
+          slotOverrides,
+          textOverrides,
+          fontOverrides: next,
+        });
+        return next;
+      });
+      setSelectedFontSlot('topScore');
+      setDebugSaveMessage('Saved overall score font');
+      window.setTimeout(() => setDebugSaveMessage(null), 2500);
+    },
+    [analysis.tier, slotOverrides, textOverrides]
+  );
 
   const handleSaveDebugLayout = useCallback(() => {
     saveHairstyleAnalysisTierDebug(analysis.tier, {
@@ -594,7 +607,8 @@ export default function HairstyleAnalysisPreview({
                     onChange={onOverallScoreFontChange}
                   />
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Overall score font updates the overlay live and is sent to Fal on Generate when you Save layout.
+                    Overall score font saves automatically when you pick one. It updates the overlay live and is sent
+                    to Fal on Generate. Use Save layout for slot positions and other font fields.
                   </p>
                   <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
                     Font slot
