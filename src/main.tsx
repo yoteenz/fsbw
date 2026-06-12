@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth'
+import { sanitizeStoredAuthPasswords } from './utils/authPasswordSanitize'
 import { restoreSupabaseSessionFromCookie, getSupabase, signOutIfSessionEmailUnconfirmed } from './utils/supabase'
 import { tryServerSessionRestore } from './utils/sessionRestore'
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
@@ -13,6 +14,9 @@ import { preloadPsaNudgeAssets } from './utils/psaNudgeAssetPreload'
 
 registerGlobalChunkLoadRecovery()
 void preloadPsaNudgeAssets()
+
+// Strip any legacy plaintext passwords from browser storage (one-time migration).
+sanitizeStoredAuthPasswords()
 
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
 ensureAuthRestoredFromBackup()

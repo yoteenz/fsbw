@@ -210,49 +210,6 @@ export async function syncProfileWithToken(): Promise<SyncProfilePayload | null>
   return text ? JSON.parse(text) : {};
 }
 
-/** Admin sync without session: POST email + password to /api/admin/sync-profile, returns profile + orders + cart + wishlist. */
-export async function syncProfileWithPassword(
-  email: string,
-  password: string
-): Promise<SyncProfilePayload> {
-  const base = API_BASE.replace(/\/$/, '');
-  const url = base ? `${base}/api/admin/sync-profile` : '/api/admin/sync-profile';
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: (email || '').trim().toLowerCase(), password }),
-    });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (/failed to fetch|load failed|network|request failed/i.test(msg)) {
-      throw new Error('Sync request failed. Check your connection and try again.');
-    }
-    throw err;
-  }
-  const text = await res.text();
-  if (!res.ok) {
-    try {
-      const json = JSON.parse(text) as { error?: string };
-      if (typeof json?.error === 'string' && json.error.trim()) {
-        if (res.status === 401) throw new Error('Invalid Supabase password. Use the same password you use to sign in with Supabase.');
-        throw new Error(json.error);
-      }
-    } catch (parseErr) {
-      if (parseErr instanceof Error && parseErr.message.includes('Supabase password')) throw parseErr;
-    }
-    if (res.status === 401) throw new Error('Invalid Supabase password. Use the same password you use to sign in with Supabase.');
-    if (res.status === 403) throw new Error('Sync not allowed for this account.');
-    if (res.status >= 500) {
-      const fallback = text && text.length < 200 ? text : 'Server error during sync. Try again later. Check Vercel function logs for details.';
-      throw new Error(fallback);
-    }
-    throw new Error(text || 'Sync failed.');
-  }
-  return text ? JSON.parse(text) : {};
-}
-
 export async function patchProfile(profile: Record<string, unknown>): Promise<Record<string, unknown>> {
   const res = await apiFetch('/api/profile', { method: 'PATCH', body: profile });
   if (!res.ok) throw new Error(await res.text());

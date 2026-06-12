@@ -15,6 +15,7 @@ import {
   ADMIN_TIER_OVERRIDE_KEY,
   ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
 } from './adminAuth';
+import { stripPasswordFromUserRecord } from './authPasswordSanitize';
 
 let lastProfileSyncErrored = false;
 
@@ -129,6 +130,7 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
       }
     }
 
+    stripPasswordFromUserRecord(merged);
     localStorage.setItem('currentUser', JSON.stringify(merged));
     const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
     const existingImg = sameEmail && existing && ((existing.profileImage && String(existing.profileImage).trim()) || (existing.profile_image && String(existing.profile_image).trim()));
@@ -138,14 +140,15 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     const idx = registeredUsers.findIndex(
       (u: unknown) => ((u as { email?: string }).email || '').toLowerCase() === email.toLowerCase()
     );
+    const mergedNoPassword = stripPasswordFromUserRecord(merged);
     if (idx !== -1) {
-      registeredUsers[idx] = merged;
+      registeredUsers[idx] = mergedNoPassword;
     } else {
-      registeredUsers.push(merged);
+      registeredUsers.push(mergedNoPassword);
     }
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
     localStorage.setItem('isSignedIn', 'true');
-    persistServerProfileQueuesToLocal(email, merged);
+    persistServerProfileQueuesToLocal(email, mergedNoPassword);
     persistAuthBackup();
     return merged;
   } catch {
@@ -215,7 +218,7 @@ export async function syncAllFromApi(): Promise<Record<string, unknown> | null> 
   return profile;
 }
 
-/** Apply payload from POST /api/admin/sync-profile to localStorage (profile, orders, cart, wishlist). Preserves password in registeredUsers if provided. */
+/** Apply payload from POST /api/admin/sync-profile to localStorage (profile, orders, cart, wishlist). */
 export function applyAdminSyncPayload(
   email: string,
   payload: {
@@ -224,8 +227,7 @@ export function applyAdminSyncPayload(
     pastOrders: unknown[];
     cart: { items: unknown[] };
     wishlist: { items: unknown[] };
-  },
-  options?: { preservePassword?: string }
+  }
 ): void {
   const e = (email || '').trim().toLowerCase();
   if (!e) return;
@@ -258,7 +260,7 @@ export function applyAdminSyncPayload(
           ? 'admin'
           : (payload.profile.role as string),
     } as Record<string, unknown>;
-    if (options?.preservePassword) merged.password = options.preservePassword;
+    stripPasswordFromUserRecord(merged);
 
     const profileKeysToPreserve = [
       'firstName', 'lastName', 'first_name', 'last_name', 'birthday',
@@ -289,6 +291,7 @@ export function applyAdminSyncPayload(
       }
     }
 
+    stripPasswordFromUserRecord(merged);
     localStorage.setItem('currentUser', JSON.stringify(merged));
     const img = merged.profileImage && typeof merged.profileImage === 'string' && String(merged.profileImage).trim();
     const existingImgVal = sameEmail && existing && ((existing.profileImage && String(existing.profileImage).trim()) || (existing.profile_image && String(existing.profile_image).trim()));
@@ -468,6 +471,7 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
       }
     }
 
+    stripPasswordFromUserRecord(restored);
     localStorage.setItem('currentUser', JSON.stringify(restored));
     localStorage.setItem('isSignedIn', 'true');
     const registeredUsersEarly: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
@@ -524,6 +528,7 @@ export function applyMinimalUserToStorage(merged: Record<string, unknown>): void
     }
   }
 
+  stripPasswordFromUserRecord(preserved);
   localStorage.setItem('currentUser', JSON.stringify(preserved));
   const img =
     (typeof preserved.profileImage === 'string' && preserved.profileImage.trim())

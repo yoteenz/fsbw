@@ -4,6 +4,8 @@
  * Preview-only admins (e.g. Kristin Watson) get access only on preview/local, not on Vercel production.
  */
 
+import { stripPasswordFromUserRecord } from './authPasswordSanitize';
+
 const STORAGE_IS_SIGNED_IN = 'isSignedIn';
 const STORAGE_CURRENT_USER = 'currentUser';
 
@@ -146,7 +148,6 @@ function slimCurrentUserForCookie(currentUserJson: string, maxBytes: number): st
     let out = JSON.stringify(slim);
     if (out.length <= maxBytes) return out;
     const minimal: Record<string, unknown> = { id: u.id, email: u.email, role: u.role };
-    if (u.password && typeof u.password === 'string') minimal.password = u.password;
     return JSON.stringify(minimal);
   } catch {
     return currentUserJson;
@@ -158,8 +159,9 @@ export function persistAuthBackup(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
     const signedIn = localStorage.getItem(STORAGE_IS_SIGNED_IN) === 'true';
-    const currentUser = localStorage.getItem(STORAGE_CURRENT_USER);
-    if (signedIn && currentUser) {
+    const currentUserRaw = localStorage.getItem(STORAGE_CURRENT_USER);
+    if (signedIn && currentUserRaw) {
+      const currentUser = JSON.stringify(stripPasswordFromUserRecord(JSON.parse(currentUserRaw) as Record<string, unknown>));
       const payload = JSON.stringify({ isSignedIn: true, currentUser });
       localStorage.setItem(AUTH_BACKUP_KEY, payload);
       let cookiePayload = payload;
