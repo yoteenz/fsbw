@@ -175,19 +175,19 @@ async function submitStudioRenderWithFallbacks(
       photoModel: 'gpt2',
       imageUrls: twoUrls,
       prompt: twoImgPrompt,
-      inputOverrides: { quality: 'low' },
+      inputOverrides: { quality: 'medium' },
     },
     {
       photoModel: 'gpt2',
       imageUrls: twoUrls,
       prompt: compactPrompt,
-      inputOverrides: { output_format: 'png', quality: 'low', omitImageSize: true },
+      inputOverrides: { output_format: 'png', quality: 'medium', omitImageSize: true },
     },
     {
       photoModel: 'gpt2',
       imageUrls: twoUrls,
       prompt: compactPrompt,
-      inputOverrides: { output_format: 'jpeg', quality: 'low', omitImageSize: true },
+      inputOverrides: { output_format: 'jpeg', quality: 'medium', omitImageSize: true },
     },
     { photoModel: 'nbp', imageUrls: twoUrls, prompt: compactPrompt },
   ];
@@ -241,11 +241,11 @@ async function submitStudioMakeupWithFallbacks(
     { prompt: buildLiveTryOnStudioMakeupPassPrompt(), overrides: undefined as StudioFalInputOverrides | undefined },
     {
       prompt: buildLiveTryOnStudioMakeupPassPrompt(),
-      overrides: { quality: 'low' as const, omitImageSize: true },
+      overrides: { quality: 'medium' as const, omitImageSize: true },
     },
     {
       prompt: buildLiveTryOnStudioMakeupPassPromptCompact(),
-      overrides: { output_format: 'png' as const, quality: 'low' as const, omitImageSize: true },
+      overrides: { output_format: 'png' as const, quality: 'medium' as const, omitImageSize: true },
     },
   ];
   let lastErr: Error | undefined;
