@@ -28,7 +28,8 @@
       "maxDuration": 300
     },
     "api/hairstyle-analysis-generate.ts": {
-      "maxDuration": 300
+      "maxDuration": 300,
+      "includeFiles": "api/_lib/fonts/CoveredByYourGrace.ttf"
     },
     "api/admin/consult-quotes.ts": {
       "maxDuration": 60
