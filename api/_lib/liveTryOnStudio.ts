@@ -241,11 +241,11 @@ async function submitStudioMakeupWithFallbacks(
     { prompt: buildLiveTryOnStudioMakeupPassPrompt(), overrides: undefined as StudioFalInputOverrides | undefined },
     {
       prompt: buildLiveTryOnStudioMakeupPassPrompt(),
-      overrides: { quality: 'low' as const, omitImageSize: true },
+      overrides: { quality: 'medium' as const, omitImageSize: true },
     },
     {
       prompt: buildLiveTryOnStudioMakeupPassPromptCompact(),
-      overrides: { output_format: 'png' as const, quality: 'low' as const, omitImageSize: true },
+      overrides: { output_format: 'png' as const, quality: 'medium' as const, omitImageSize: true },
     },
   ];
   let lastErr: Error | undefined;
