@@ -157,6 +157,7 @@ export default function HairstyleAnalysisCard({
                     : undefined;
 
         const topScoreEditable = field.id === 'topScore' && showDebugFrames && onTextChange;
+        const topScoreStyle = field.id === 'topScore' ? fontStyleFor(field.id) : undefined;
 
         return (
           <AnalysisOverlaySlot
@@ -172,10 +173,12 @@ export default function HairstyleAnalysisCard({
             {field.id === 'topScore' && !topScoreEditable ? (
               <p
                 className={`${styles.overlayText} ${styles.scoreText}`.trim()}
-                style={fontStyleFor(field.id)}
+                style={topScoreStyle}
               >
                 {value.replace(/%$/, '')}
-                <span className={styles.scorePercentSuffix}>%</span>
+                <span className={styles.scorePercentSuffix} style={topScoreStyle}>
+                  %
+                </span>
               </p>
             ) : (
               <EditableOverlayText

@@ -27,6 +27,13 @@ import { appendHairstyleAnalysisToLocalCart } from '../../utils/hairstyleAnalysi
 import { requestOpenPsaChat } from '../../utils/psaOpenChatRequest';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
+import SiteFontPicker from './SiteFontPicker';
+import { formatScorePercent } from '../../utils/hairstyleAnalysisFormat';
+import {
+  DEFAULT_OVERALL_SCORE_FONT_ID,
+  siteFontIdFromFamily,
+  siteFontStylePatch,
+} from '../../utils/siteFonts';
 
 type HairstyleAnalysisPreviewProps = {
   analysis: HairstyleAnalysis;
@@ -201,9 +208,16 @@ export default function HairstyleAnalysisPreview({
     setGenerating(true);
     setGenerateError(null);
     try {
+      const hasLayoutOverrides = Object.keys(slotOverrides).length > 0;
+      const hasFontOverrides = Object.keys(fontOverrides).length > 0;
       const result = await postHairstyleAnalysisGenerate(
         resolvedAnalysis as unknown as Record<string, unknown>,
-        Object.keys(slotOverrides).length > 0 ? { slotOverrides } : undefined
+        hasLayoutOverrides || hasFontOverrides
+          ? {
+              slotOverrides: hasLayoutOverrides ? slotOverrides : undefined,
+              fontOverrides: hasFontOverrides ? fontOverrides : undefined,
+            }
+          : undefined
       );
       setGeneratedUrl(result.imageUrl);
       setLastPrompt(result.prompt);
@@ -229,7 +243,7 @@ export default function HairstyleAnalysisPreview({
     } finally {
       setGenerating(false);
     }
-  }, [isAdmin, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
+  }, [fontOverrides, isAdmin, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({
@@ -259,6 +273,23 @@ export default function HairstyleAnalysisPreview({
     },
     [selectedFontSlot]
   );
+
+  const overallScoreFontId = siteFontIdFromFamily(fontOverrides.topScore?.fontFamily);
+  const overallScorePreviewText =
+    textOverrides.topScore ?? formatScorePercent(resolvedAnalysis.topMatch.score);
+
+  const onOverallScoreFontChange = useCallback((fontId: string) => {
+    const patch = siteFontStylePatch(fontId);
+    setFontOverrides((prev) => ({
+      ...prev,
+      topScore: {
+        ...prev.topScore,
+        ...patch,
+        color: prev.topScore?.color ?? '#EB1C24',
+      },
+    }));
+    setSelectedFontSlot('topScore');
+  }, []);
 
   const handleSaveDebugLayout = useCallback(() => {
     saveHairstyleAnalysisTierDebug(analysis.tier, {
@@ -556,6 +587,15 @@ export default function HairstyleAnalysisPreview({
                   {debugSaveMessage ? (
                     <p className="text-[9px] uppercase tracking-[0.1em] text-[#22c55e]">{debugSaveMessage}</p>
                   ) : null}
+                  <SiteFontPicker
+                    valueId={overallScoreFontId || DEFAULT_OVERALL_SCORE_FONT_ID}
+                    previewText={overallScorePreviewText}
+                    previewColor={fontOverrides.topScore?.color ?? '#EB1C24'}
+                    onChange={onOverallScoreFontChange}
+                  />
+                  <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
+                    Overall score font updates the overlay live and is sent to Fal on Generate when you Save layout.
+                  </p>
                   <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
                     Font slot
                     <select
