@@ -27371,3 +27371,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (continued):** User reported composite mode **was not generating hair** — only placing raw selfie / mannequin thumbs on the static template. Needed **GPT Image 2 hair edits** on client preview + match thumbnails **on top of** the manually composited template (pixel-perfect chrome + AI hair).
 - **Shipped:** **`hairstyleAnalysisHairGenerate.ts`** — per-slot Fal hair-only edits (`buildClientPreviewHairOnlyPrompt`, `buildMatchThumbHairOnlyPrompt` in **`hairstyleAnalysisFalPrompt.ts`**); client selfie + unit mannequin + BAW styling refs per look; **`hairstyleAnalysisFalShared.ts`** for shared Fal upload/subscribe. **`hairstyleAnalysisCompositeCard.ts`** calls **`generateHairstyleHairImages`** before sharp composite. Thumbs run with concurrency **`HAIRSTYLE_ANALYSIS_HAIR_CONCURRENCY`** (default 3); failed thumbs fall back to mannequin front. UI/docs/`.env.example` updated — loading copy mentions GPT Image 2 hair + composite.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: code-built templates (alignment fix)
+
+- **Context (continued):** User clarified composite was still wrong because it composited onto **legacy Supabase `IMG_*` PNGs** — labels baked into those assets did not match overlay slot math, so values/photos misaligned. Goal: **manually created template in code** where chrome labels and dynamic values share **one blueprint**.
+- **Shipped (04a2da8e):** **`hairstyleAnalysisCardBlueprint.ts`** — per-tier panels, static labels, roses, dynamic field rects (2048×2560). **`hairstyleAnalysisBuiltTemplate.ts`** renders marble + frosted/red-glow chrome. Composite uses **`renderBuiltCardChrome()`** — **not** `templateUrl` PNG. Client dev overlay: **`src/data/hairstyleAnalysisCardBlueprint.json`** + **`npm run hairstyle-analysis:sync-blueprint`**. **`HairstyleAnalysisCard`** dev bg = marble only.
+- **Conventions:** Production path = built chrome + Fal hair + sharp values. Supabase Analysis PNGs = legacy Fal full-edit reference only.
