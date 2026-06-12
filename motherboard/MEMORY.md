@@ -27488,3 +27488,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to update the **Style analysis** section on **`/booking/consultation`** — only **1 comparison (\$20)** and **4 comparisons (\$60)**; remove **no style** option and old 3/6 tiers.
 - **Shipped:** **`ConsultStyleAnalysisAddonPicker`** — two required options only; defaults to **1 comparison** on consult page. **`consultStyleAnalysisAddon.ts`** tiers 1/\$20 and 4/\$60. **`StyleAnalysisComparisonTier`** → `1 | 4`. Server **`resolveQuote`**, checkout quote, Stripe intent/webhook, PSA **`purchase_hairstyle_analysis`**, and standalone hairstyle purchase pricing aligned to 1/4. **`CORE.md`**, **`STYLE_ANALYSIS.md`**, PSA instructions/status copy updated.
 - **Conventions:** Wig consult style analysis add-on is always selected (1 or 4 comparisons); consult checkout total = **\$40 deposit + add-on**.
+
+---
+
+## 2026-06-12 — Hairstyle analysis MORE MATCHES row text alignment
+
+- **Context:** User reported **MORE MATCHES FOR YOU** row values (texture, color, length, gray match score %) were too large vs pre-printed labels — not on the same horizontal row.
+- **Shipped:** React overlay **`.matchRowValueText`** / **`.matchRowScoreText`** — **2px smaller** than default overlay (`calc(2.65cqw - 2px)` max 8px). Production: Fal leaves MATCH 02–04 value slots blank; **`hairstyleAnalysisFalComposite.ts`** server-composites those fields with **`matchRowValueFontSize()`** (slot height × 0.88 − 2px). Fal prompt updated accordingly.
+- **Conventions:** MATCH 02–04 values = server overlay only; Fal fills thumbnails + TOP MATCH specs.
