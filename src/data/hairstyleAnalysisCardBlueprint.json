@@ -1,0 +1,1414 @@
+{
+  "canvas": {
+    "width": 2048,
+    "height": 2560
+  },
+  "tiers": {
+    "free": {
+      "fields": [
+        {
+          "id": "clientName",
+          "kind": "text",
+          "rect": {
+            "left": "6.98%",
+            "top": "11.02%",
+            "width": "32.03%",
+            "height": "2.50%"
+          }
+        },
+        {
+          "id": "clientImage",
+          "kind": "image",
+          "rect": {
+            "left": "4.00%",
+            "top": "13.98%",
+            "width": "44.48%",
+            "height": "68.52%"
+          }
+        },
+        {
+          "id": "topScore",
+          "kind": "text",
+          "rect": {
+            "left": "54.69%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "rating",
+          "kind": "text",
+          "rect": {
+            "left": "69.34%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "specTexture",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "24.02%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specColor",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "26.64%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLength",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "29.26%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLace",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "31.87%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specDensity",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "34.49%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specParting",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "37.11%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specHairline",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "39.73%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specStyle",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "42.34%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-0",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "74.49%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-1",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "76.99%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-2",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "79.49%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-3",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "81.99%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-4",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "84.49%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        }
+      ]
+    },
+    "three_month": {
+      "fields": [
+        {
+          "id": "clientName",
+          "kind": "text",
+          "rect": {
+            "left": "6.98%",
+            "top": "11.02%",
+            "width": "32.03%",
+            "height": "2.50%"
+          }
+        },
+        {
+          "id": "clientImage",
+          "kind": "image",
+          "rect": {
+            "left": "4.00%",
+            "top": "13.98%",
+            "width": "44.48%",
+            "height": "68.52%"
+          }
+        },
+        {
+          "id": "topScore",
+          "kind": "text",
+          "rect": {
+            "left": "54.69%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "rating",
+          "kind": "text",
+          "rect": {
+            "left": "69.34%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "specTexture",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "24.02%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specColor",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "26.64%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLength",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "29.26%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLace",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "31.87%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specDensity",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "34.49%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specParting",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "37.11%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specHairline",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "39.73%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specStyle",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "42.34%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "match2-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "48.52%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "match2-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "49.02%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match2-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "50.78%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match2-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "52.54%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match2-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "54.30%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match3-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "61.02%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "match3-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "61.52%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match3-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "63.28%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match3-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "65.04%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match3-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "66.80%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match4-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "73.52%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "match4-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "74.02%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match4-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "75.78%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match4-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "77.54%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "match4-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "79.30%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        }
+      ]
+    },
+    "six_month": {
+      "fields": [
+        {
+          "id": "clientName",
+          "kind": "text",
+          "rect": {
+            "left": "6.98%",
+            "top": "11.02%",
+            "width": "32.03%",
+            "height": "2.50%"
+          }
+        },
+        {
+          "id": "clientImage",
+          "kind": "image",
+          "rect": {
+            "left": "4.00%",
+            "top": "13.98%",
+            "width": "44.48%",
+            "height": "68.52%"
+          }
+        },
+        {
+          "id": "topScore",
+          "kind": "text",
+          "rect": {
+            "left": "54.69%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "rating",
+          "kind": "text",
+          "rect": {
+            "left": "69.34%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "specTexture",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "24.02%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specColor",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "26.64%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLength",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "29.26%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLace",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "31.87%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specDensity",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "34.49%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specParting",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "37.11%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specHairline",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "39.73%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specStyle",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "42.34%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "portfolio-0-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "49.14%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "portfolio-0-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "49.65%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-0-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "51.41%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-0-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "53.16%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-0-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "54.92%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-1-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "57.50%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "portfolio-1-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "58.01%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-1-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "59.77%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-1-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "61.52%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-1-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "63.28%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-2-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "65.86%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "portfolio-2-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "66.37%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-2-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "68.13%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-2-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "69.88%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-2-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "71.64%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-3-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "74.22%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "portfolio-3-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "74.73%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-3-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "76.48%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-3-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "78.24%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-3-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "80.00%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-4-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "82.58%",
+            "width": "6.98%",
+            "height": "5.51%"
+          }
+        },
+        {
+          "id": "portfolio-4-texture",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "83.09%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-4-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "84.84%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-4-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "86.60%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        },
+        {
+          "id": "portfolio-4-score",
+          "kind": "text",
+          "rect": {
+            "left": "70.75%",
+            "top": "88.36%",
+            "width": "19.73%",
+            "height": "1.72%"
+          }
+        }
+      ]
+    },
+    "twelve_month": {
+      "fields": [
+        {
+          "id": "clientName",
+          "kind": "text",
+          "rect": {
+            "left": "6.98%",
+            "top": "11.02%",
+            "width": "32.03%",
+            "height": "2.50%"
+          }
+        },
+        {
+          "id": "clientImage",
+          "kind": "image",
+          "rect": {
+            "left": "4.00%",
+            "top": "13.98%",
+            "width": "44.48%",
+            "height": "68.52%"
+          }
+        },
+        {
+          "id": "topScore",
+          "kind": "text",
+          "rect": {
+            "left": "54.69%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "rating",
+          "kind": "text",
+          "rect": {
+            "left": "69.34%",
+            "top": "16.02%",
+            "width": "9.72%",
+            "height": "5.82%"
+          }
+        },
+        {
+          "id": "specTexture",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "24.02%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specColor",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "26.64%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLength",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "29.26%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specLace",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "31.87%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specDensity",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "34.49%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specParting",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "37.11%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specHairline",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "39.73%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "specStyle",
+          "kind": "text",
+          "rect": {
+            "left": "72.02%",
+            "top": "42.34%",
+            "width": "21.00%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "alt-0-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "35.04%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-0-color",
+          "kind": "text",
+          "rect": {
+            "left": "58.11%",
+            "top": "40.04%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-0-length",
+          "kind": "text",
+          "rect": {
+            "left": "58.11%",
+            "top": "41.72%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-0-score",
+          "kind": "text",
+          "rect": {
+            "left": "60.06%",
+            "top": "43.40%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-1-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "64.50%",
+            "top": "35.04%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-1-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.61%",
+            "top": "40.04%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-1-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.61%",
+            "top": "41.72%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-1-score",
+          "kind": "text",
+          "rect": {
+            "left": "72.56%",
+            "top": "43.40%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-2-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "77.00%",
+            "top": "35.04%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-2-color",
+          "kind": "text",
+          "rect": {
+            "left": "83.11%",
+            "top": "40.04%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-2-length",
+          "kind": "text",
+          "rect": {
+            "left": "83.11%",
+            "top": "41.72%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-2-score",
+          "kind": "text",
+          "rect": {
+            "left": "85.06%",
+            "top": "43.40%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-3-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "46.52%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-3-color",
+          "kind": "text",
+          "rect": {
+            "left": "58.11%",
+            "top": "51.52%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-3-length",
+          "kind": "text",
+          "rect": {
+            "left": "58.11%",
+            "top": "53.20%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-3-score",
+          "kind": "text",
+          "rect": {
+            "left": "60.06%",
+            "top": "54.88%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-4-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "64.50%",
+            "top": "46.52%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-4-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.61%",
+            "top": "51.52%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-4-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.61%",
+            "top": "53.20%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-4-score",
+          "kind": "text",
+          "rect": {
+            "left": "72.56%",
+            "top": "54.88%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-5-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "77.00%",
+            "top": "46.52%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-5-color",
+          "kind": "text",
+          "rect": {
+            "left": "83.11%",
+            "top": "51.52%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-5-length",
+          "kind": "text",
+          "rect": {
+            "left": "83.11%",
+            "top": "53.20%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-5-score",
+          "kind": "text",
+          "rect": {
+            "left": "85.06%",
+            "top": "54.88%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-6-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "52.00%",
+            "top": "58.01%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-6-color",
+          "kind": "text",
+          "rect": {
+            "left": "58.11%",
+            "top": "63.01%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-6-length",
+          "kind": "text",
+          "rect": {
+            "left": "58.11%",
+            "top": "64.69%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-6-score",
+          "kind": "text",
+          "rect": {
+            "left": "60.06%",
+            "top": "66.37%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-7-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "64.50%",
+            "top": "58.01%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-7-color",
+          "kind": "text",
+          "rect": {
+            "left": "70.61%",
+            "top": "63.01%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-7-length",
+          "kind": "text",
+          "rect": {
+            "left": "70.61%",
+            "top": "64.69%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-7-score",
+          "kind": "text",
+          "rect": {
+            "left": "72.56%",
+            "top": "66.37%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-8-thumb",
+          "kind": "image",
+          "rect": {
+            "left": "77.00%",
+            "top": "58.01%",
+            "width": "6.98%",
+            "height": "4.49%"
+          }
+        },
+        {
+          "id": "alt-8-color",
+          "kind": "text",
+          "rect": {
+            "left": "83.11%",
+            "top": "63.01%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-8-length",
+          "kind": "text",
+          "rect": {
+            "left": "83.11%",
+            "top": "64.69%",
+            "width": "9.77%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "alt-8-score",
+          "kind": "text",
+          "rect": {
+            "left": "85.06%",
+            "top": "66.37%",
+            "width": "5.86%",
+            "height": "1.48%"
+          }
+        },
+        {
+          "id": "whyLine-0",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "66.99%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-1",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "69.92%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-2",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "72.85%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-3",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "75.78%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-4",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "78.71%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-5",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "81.64%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-6",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "84.57%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-7",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "87.50%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-8",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "90.43%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        },
+        {
+          "id": "whyLine-9",
+          "kind": "text",
+          "rect": {
+            "left": "54.10%",
+            "top": "93.36%",
+            "width": "41.99%",
+            "height": "2.30%"
+          }
+        }
+      ]
+    }
+  }
+}

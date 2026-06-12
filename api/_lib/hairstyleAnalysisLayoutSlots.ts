@@ -1,8 +1,10 @@
-/** Pixel slots for 2048×2560 hairstyle analysis templates (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
+/** Pixel slots for 2048×2560 code-built hairstyle analysis cards. */
+
+import { CARD_CANVAS, topScoreAndRatingSlots } from './hairstyleAnalysisCardBlueprint.js';
 
 export type PixelRect = { left: number; top: number; width: number; height: number };
 
-export const HAIRSTYLE_ANALYSIS_CANVAS = { width: 2048, height: 2560 } as const;
+export const HAIRSTYLE_ANALYSIS_CANVAS = CARD_CANVAS;
 
 export function pixelRectFromPercent(
   left: string,
@@ -24,11 +26,11 @@ export function pixelRectFromPercent(
   };
 }
 
-/** Value boxes below OVERALL SCORE / MATCH RATING labels (calibrated on IMG_2447 @ 2048×2560). */
 const pctRect = pixelRectFromPercent;
 
-export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
-export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
+const scoreSlots = topScoreAndRatingSlots();
+export const TOP_SCORE_SLOT = scoreSlots.topScore;
+export const RATING_SLOT = scoreSlots.rating;
 
 const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [
