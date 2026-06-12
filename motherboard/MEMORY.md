@@ -27257,3 +27257,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (continued):** After pill/score/stars/match-thumb fixes, user requested three more Fal output rules: (1) generated hair must **not** add **baby hairs** at the hairline; (2) client selfie must **fill the entire client panel** edge-to-edge (not cropped/inset inside the frame); (3) remove **“3 MONTH HAIRSTYLE ANALYSIS”** (and equivalent tier subtitles) at the top — clients should not know which analysis tier they received.
 - **Fix:** **`api/_lib/hairstyleAnalysisFalPrompt.ts`** — `hairlineRulesBlock()` (no baby hairs/flyaways); client preview = **full-bleed cover** scaling; **`REMOVE TIER / SUBSCRIPTION LABEL`** block instructs Fal to erase baked-in FREE/3/6/12 MONTH subtitles from template marble; removed internal `TIER: …` lines from tier prompts that could reinforce visible tier text. **`hairstyleAnalysisPrompts.ts`** reference prompts aligned. **`buildClientHairstylePreviewPrompt()`** — no baby hairs on upstream selfie edit.
+
+---
+
+## 2026-06-10 — Hairstyle analysis: 1 free per month (3 / 6 / 12 month subscribers)
+
+- **Context (continued hairstyle analysis thread):** User requested **3, 6, and 12 month subscription** members get only **one free hairstyle analysis per month** (not unlimited).
+- **Shipped:** Migration **`20260610120000_hairstyle_analysis_usage.sql`** — `hairstyle_analysis_usage` table + `hairstyle_analysis_try_consume` / `refund_consume` RPCs (UTC month key, limit **1**). **`api/_lib/hairstyleAnalysisEntitlement.ts`** — maps `3months`/`6months`/`12months` → card tier; requires active subscription tier (not BLACK-only). **`hairstyleAnalysisUsage.ts`** — consume/refund/get (memory fallback if DB missing). **`GET /api/hairstyle-analysis-usage`** + enforce on **`POST /api/hairstyle-analysis-generate`** (server sets tier + template URL; refunds slot on Fal failure). Admins/founder bypass cap for demo testing. UI: **`HairstyleAnalysisPreview`** shows monthly allowance, locks tier for members, tier picker admin-only. **`docs/STYLE_ANALYSIS.md`** updated.
