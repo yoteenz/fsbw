@@ -11,6 +11,7 @@ import {
   generateHairstyleAnalysisWithFal,
   type GenerateHairstyleAnalysisFalInput,
 } from './_lib/hairstyleAnalysisFal.js';
+import { parseCompositeLayoutOverrides } from './_lib/hairstyleAnalysisCompositeLayout.js';
 import type { FalHairstyleAnalysis } from './_lib/hairstyleAnalysisFalPrompt.js';
 import { hairstyleAnalysisTemplateUrlForTier } from './_lib/hairstyleAnalysisTemplates.js';
 import {
@@ -92,6 +93,10 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
       ? (nested as Record<string, unknown>)
       : body;
 
+  const layoutOverrides = parseCompositeLayoutOverrides(
+    body.slotOverrides ?? body.layoutOverrides
+  );
+
   const tierRaw = readString(src, 'tier');
   const tier = tierRaw ? parseTier(tierRaw) : 'three_month';
   const topMatch = readLook(src.topMatch);
@@ -125,6 +130,7 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
     templateUrl: templateUrl || hairstyleAnalysisTemplateUrlForTier(tier),
     clientPreviewUrl,
     siteOrigin: '',
+    layoutOverrides,
   };
 }
 

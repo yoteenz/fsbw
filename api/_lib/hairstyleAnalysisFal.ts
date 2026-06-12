@@ -5,6 +5,8 @@ import {
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
+import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
+import { compositeHairstyleAnalysisMatchRows } from './hairstyleAnalysisFalComposite.js';
 import { buildHairstyleAnalysisFalPrompt, type FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
 import { storageObjectExists } from './liveTryOnBatchGenerate.js';
@@ -223,6 +225,7 @@ export type GenerateHairstyleAnalysisFalInput = {
   templateUrl: string;
   clientPreviewUrl: string;
   siteOrigin: string;
+  layoutOverrides?: CompositeLayoutOverrides;
 };
 
 export type GenerateHairstyleAnalysisFalResult = {
@@ -283,8 +286,15 @@ export async function generateHairstyleAnalysisWithFal(
   const imageUrl = extractFalImageUrl(result);
   if (!imageUrl) throw new Error('Fal returned no image URL');
 
-  return {
+  const composited = await compositeHairstyleAnalysisMatchRows(
     imageUrl,
+    analysis,
+    input.layoutOverrides
+  );
+  const finalUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-match-rows.png', 'image/png');
+
+  return {
+    imageUrl: finalUrl,
     prompt,
     model: HAIRSTYLE_ANALYSIS_GPT2_MODEL,
     imageSize: HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE,

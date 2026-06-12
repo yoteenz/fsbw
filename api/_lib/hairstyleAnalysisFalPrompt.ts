@@ -1,6 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * All text and stars (overall score %, match rating, match rows) are generated in-image by Fal.
+ * Overall score %, stars, and TOP MATCH specs are generated in-image by Fal.
+ * MATCH 02–04 row values are server-composited after Fal (smaller Futura).
  */
 
 import {
@@ -387,11 +388,20 @@ function overallScoreAndRatingRules(look: FalAnalysisLook, tier: FalHairstyleAna
   ].join('\n');
 }
 
-function matchScoreFalLine(look: FalAnalysisLook): string {
+function matchScoreFalLine(_look: FalAnalysisLook): string {
   return [
-    `MATCH SCORE value: print "${formatScorePercent(look.score)}" in medium gray ${MATCH_SCORE_GRAY} beside the "MATCH SCORE:" label.`,
-    'Use black uppercase Futura PT Medium for texture, color, and length values on the same row.',
+    'MATCH SCORE value slot: leave BLANK — server overlays the gray % after generation.',
+    'TEXTURE, COLOR, and LENGTH value slots on this row: also leave BLANK — server overlay only.',
   ].join(' ');
+}
+
+function matchRowValuesBlankRules(): string {
+  return [
+    '=== MATCH 02–04 VALUE SLOTS — LEAVE BLANK (SERVER OVERLAY ONLY) ===',
+    'For MATCH 02, MATCH 03, and MATCH 04: do NOT print texture, color, length, or match score % in the value areas.',
+    'Labels (TEXTURE:, COLOR:, LENGTH:, MATCH SCORE:) are pre-printed on the template — leave every value slot empty.',
+    'Still fill match thumbnails and TOP MATCH spec column. Server composites match-row values at calibrated size.',
+  ].join('\n');
 }
 
 function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
@@ -399,14 +409,13 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   if (tier === 'free') return '';
 
   const lines: string[] = [
-    '=== MATCH 02–04 ROW VALUES — PRINT IN TEMPLATE SLOTS ===',
-    'Fill texture, color, length, and match score % for each additional match in the value areas beside their labels.',
-    'Texture/color/length: black uppercase Futura PT Medium. Match score %: medium gray only.',
+    '=== MATCH 02–04 ROW VALUES — LEAVE ALL VALUE SLOTS BLANK ===',
+    'Do not print texture, color, length, or match score % — server overlays every value.',
   ];
 
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     lines.push(
-      `MATCH ${String(i + 2).padStart(2, '0')}: TEXTURE ${look.unit}, COLOR ${look.color}, LENGTH ${displayLength(look.length)}, MATCH SCORE ${formatScorePercent(look.score)}`
+      `MATCH ${String(i + 2).padStart(2, '0')} (server reference only — do not print): ${look.unit}, ${look.color}, ${displayLength(look.length)}, ${formatScorePercent(look.score)}`
     );
   });
 
@@ -442,8 +451,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
     'NEVER use back-of-head stock photos, different people, hair-only swatches, repainted lower-body clothing, or symmetric both-shoulder hair.',
     '',
     'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
-    'MATCH 02–04 texture/color/length: black uppercase Futura PT Medium in each value slot.',
-    'MATCH 02–04 match score %: medium gray in each MATCH SCORE value slot.',
+    'MATCH 02–04 texture/color/length/score value slots: leave blank — server overlay only.',
   ];
 }
 
@@ -521,7 +529,7 @@ function buildTemplateRules(
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
-    ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : additionalMatchTemplateRules(hasMannequinRefs)),
+    ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : [matchRowValuesBlankRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
     ...photoRules,
     '',
     ...(tierKey === 'free'
@@ -588,8 +596,7 @@ function promptFooter(analysis: FalHairstyleAnalysis): string {
     );
   } else {
     lines.push(
-      'MATCH 02–04: texture, color, length, STYLE, and gray match score % filled in template value slots.',
-      'STYLING: each match thumbnail uses its assigned STYLE + BAW styling reference IMAGE — not the same finish on every row.',
+      'MATCH 02–04 value slots: left blank for server overlay — thumbnails + varied styling only.',
       'THUMBNAILS: same client face from IMAGE 2 — one-shoulder drape like hero + mannequin; BAW styling refs for salon shapes only.',
       'DRAPE CHECK: no thick forward hair on both shoulders on any match thumbnail.'
     );
