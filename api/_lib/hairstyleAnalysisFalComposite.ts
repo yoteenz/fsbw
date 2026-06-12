@@ -5,7 +5,7 @@ import {
 } from './hairstyleAnalysisCompositeLayout.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
-import { buildTextPathsSvg, textPathData } from './hairstyleAnalysisTextPaths.js';
+import { buildTextPathsSvg, overallScorePathItems } from './hairstyleAnalysisTextPaths.js';
 
 const BRAND_RED = '#EB1C24';
 const STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
@@ -18,15 +18,7 @@ async function fetchBuffer(url: string): Promise<Buffer> {
 }
 
 function buildScoreOverlaySvg(score: number, rect: PixelRect): Buffer {
-  const text = `${Math.round(score)}%`;
-  const fontSize = Math.min(64, Math.round(rect.height * 0.78));
-  const pathData = textPathData(text, rect, {
-    fontFile: 'CoveredByYourGrace.ttf',
-    fontSize,
-    fill: BRAND_RED,
-    align: 'center',
-  });
-  return buildTextPathsSvg([{ pathData, fill: BRAND_RED }]);
+  return buildTextPathsSvg(overallScorePathItems(score, rect, BRAND_RED));
 }
 
 async function buildStarComposites(

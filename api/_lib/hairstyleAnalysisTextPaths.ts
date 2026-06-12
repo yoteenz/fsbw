@@ -50,6 +50,46 @@ export function textPathData(
   return path.toPathData(2);
 }
 
+/** CBYG has no "%" glyph — render digits in Covered By Your Grace, suffix in Futura. */
+export function overallScorePathItems(
+  score: number,
+  rect: PixelRect,
+  fill: string
+): Array<{ pathData: string; fill: string }> {
+  const numText = String(Math.round(score));
+  const scoreFont = loadFont('CoveredByYourGrace.ttf');
+  const percentFont = loadFont('FuturaPTMedium.ttf');
+  const fontSize = Math.min(64, Math.round(rect.height * 0.78));
+  const percentFontSize = Math.max(16, Math.round(fontSize * 0.48));
+
+  const numMeasure = scoreFont.getPath(numText, 0, 0, fontSize);
+  const numBb = numMeasure.getBoundingBox();
+  const numW = numBb.x2 - numBb.x1;
+  const numH = numBb.y2 - numBb.y1;
+
+  const pctMeasure = percentFont.getPath('%', 0, 0, percentFontSize);
+  const pctBb = pctMeasure.getBoundingBox();
+  const pctW = pctBb.x2 - pctBb.x1;
+  const pctH = pctBb.y2 - pctBb.y1;
+
+  const gap = Math.max(2, Math.round(fontSize * 0.04));
+  const totalW = numW + gap + pctW;
+  const startX = rect.left + (rect.width - totalW) / 2;
+
+  const numX = startX - numBb.x1;
+  const numY = rect.top + (rect.height - numH) / 2 - numBb.y1;
+  const numPath = scoreFont.getPath(numText, numX, numY, fontSize);
+
+  const pctX = startX + numW + gap - pctBb.x1;
+  const pctY = rect.top + (rect.height - pctH) / 2 - pctBb.y1 + Math.round(numH * 0.08);
+  const pctPath = percentFont.getPath('%', pctX, pctY, percentFontSize);
+
+  return [
+    { pathData: numPath.toPathData(2), fill },
+    { pathData: pctPath.toPathData(2), fill },
+  ];
+}
+
 export function buildTextPathsSvg(
   items: Array<{ pathData: string; fill: string }>
 ): Buffer {
