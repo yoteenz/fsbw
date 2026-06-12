@@ -27454,3 +27454,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (continued):** User reported server-composited overall score showed **96** without **%** (expected **96%** red CBYG).
 - **Cause:** **`CoveredByYourGrace.ttf`** has **no percent glyph** — opentype path for `96%` silently omitted `%`.
 - **Shipped:** **`overallScorePathItems()`** in **`hairstyleAnalysisTextPaths.ts`** — digits in CBYG + **`%`** suffix in **Futura PT Medium** (red), centered as one unit in **`hairstyleAnalysisFalComposite.ts`**.
+
+---
+
+## 2026-06-09 — Hairstyle analysis: free tier must not generate additional matches
+
+- **Context (continued):** User reported **free card** incorrectly showing **5 additional match thumbnails** with gray % — free tier should be **TOP MATCH only** (1 look).
+- **Cause:** Shared **`buildTemplateRules()`** included **ADDITIONAL MATCHES** / **MATCH THUMBNAILS** / portfolio instructions for all tiers; Fal invented comparison rows on **`IMG_2438`** free template.
+- **Shipped:** Tier-aware **`buildTemplateRules(refs, tier)`** + **`freeTierOnlyBlock()`** — free prompt forbids MATCH 02+, portfolio strips, extra scores. **`promptFooter(tier)`** omits thumbnail/match-score lines on free. **`normalizeHairstyleAnalysisForFal`** + **`applyRealisticMatchScores`** force **`additionalLooks: []`** for free.
+- **Conventions:** Free = client preview + TOP MATCH specs + every detail matters only — never populate additional-match UI on free template.
