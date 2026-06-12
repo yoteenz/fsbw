@@ -51,6 +51,10 @@ export type FalPromptImageRefs = {
   stylingRefs: HairstyleAnalysisStylingRef[];
 };
 
+export type FalPromptBuildOptions = {
+  overallScoreFontLabel?: string;
+};
+
 const BRAND_RED = '#EB1C24';
 const MATCH_SCORE_GRAY = '#808080';
 
@@ -351,13 +355,19 @@ function filledStarCount(rating: number): number {
   return Math.min(5, Math.max(0, Math.round(rating)));
 }
 
-function overallScoreFalLine(look: FalAnalysisLook): string {
+function overallScoreFalLine(look: FalAnalysisLook, fontLabel = 'Futura PT Demi'): string {
   const targetPx = overallScoreFalFontSize(TOP_SCORE_SLOT);
+  const isScript =
+    fontLabel.includes('Grace') || fontLabel === 'Bohemy' || fontLabel.toLowerCase().includes('script');
+  const styleNote = isScript
+    ? `${fontLabel} handwriting/script style`
+    : `${fontLabel} geometric sans-serif`;
+
   return [
     `OVERALL SCORE: print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
-    `Font: Futura PT Demi (bold geometric sans-serif) — NOT script, NOT cursive, NOT Covered By Your Grace.`,
+    `Font: ${styleNote} — use exactly this site font, not a substitute.`,
     `Brand red ${BRAND_RED}, ~${targetPx}px max total height, centered with generous padding inside the panel.`,
-    'Digits and % suffix use the same Futura Demi — keep compact; must not touch panel edges or fill the whole box.',
+    'Digits and % suffix use the same font family — keep compact; must not touch panel edges or fill the whole box.',
   ].join(' ');
 }
 
@@ -401,12 +411,16 @@ function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalys
   ].join(' ');
 }
 
-function overallScoreAndRatingRules(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
+function overallScoreAndRatingRules(
+  look: FalAnalysisLook,
+  tier: FalHairstyleAnalysis['tier'],
+  overallScoreFontLabel?: string
+): string {
   return [
     overallScoreAndStarsSizeRules(tier),
     '',
     '=== OVERALL SCORE + MATCH RATING — CONTENT ===',
-    overallScoreFalLine(look),
+    overallScoreFalLine(look, overallScoreFontLabel),
     matchRatingStarsFalLine(look, tier),
   ].join('\n');
 }
@@ -484,7 +498,8 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
 
 function buildTemplateRules(
   refs: FalPromptImageRefs,
-  analysis: FalHairstyleAnalysis
+  analysis: FalHairstyleAnalysis,
+  promptOptions?: FalPromptBuildOptions
 ): string {
   const tierKey = normalizeTier(analysis.tier);
   const hasMannequinRefs = refs.mannequinRefs.length > 0;
@@ -536,7 +551,7 @@ function buildTemplateRules(
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
     'DO NOT ADD NEW ROSE ICONS. DO NOT CHANGE ROSE SHAPE, SIZE, POSITION, OR COLOR.',
     '',
-    overallScoreAndRatingRules(analysis.topMatch, analysis.tier),
+    overallScoreAndRatingRules(analysis.topMatch, analysis.tier, promptOptions?.overallScoreFontLabel),
     '',
     mannequinList,
     '',
@@ -553,7 +568,7 @@ function buildTemplateRules(
       ? [
           'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
-          overallScoreFalLine(analysis.topMatch),
+          overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
           matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
         ]
       : []),
@@ -599,22 +614,29 @@ function appendEveryDetailMattersLines(
   });
 }
 
-function freePromptFooter(analysis: FalHairstyleAnalysis): string {
+function freePromptFooter(
+  analysis: FalHairstyleAnalysis,
+  promptOptions?: FalPromptBuildOptions
+): string {
   return [
     '',
     '=== FINAL CHECK ===',
     'PILL: first name replaces "CLIENT PREVIEW" inside the tab only.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
-    overallScoreFalLine(analysis.topMatch),
+    overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
   ].join('\n');
 }
 
-function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
+function freePrompt(
+  analysis: FalHairstyleAnalysis,
+  refs: FalPromptImageRefs,
+  promptOptions?: FalPromptBuildOptions
+): string {
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
-    buildTemplateRules(refs, analysis),
+    buildTemplateRules(refs, analysis, promptOptions),
     '',
     freeTierOnlyBlock(),
     '',
@@ -624,15 +646,19 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   appendEveryDetailMattersLines(lines, analysis);
-  lines.push(freePromptFooter(analysis));
+  lines.push(freePromptFooter(analysis, promptOptions));
   return lines.join('\n');
 }
 
-function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
+function threeMonthPrompt(
+  analysis: FalHairstyleAnalysis,
+  refs: FalPromptImageRefs,
+  promptOptions?: FalPromptBuildOptions
+): string {
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
-    buildTemplateRules(refs, analysis),
+    buildTemplateRules(refs, analysis, promptOptions),
     '',
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
@@ -659,10 +685,14 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
 
 export function buildHairstyleAnalysisFalPrompt(
   analysis: FalHairstyleAnalysis,
-  refs: FalPromptImageRefs
+  refs: FalPromptImageRefs,
+  promptOptions?: FalPromptBuildOptions
 ): string {
   const tier = normalizeTier(analysis.tier);
-  const prompt = tier === 'free' ? freePrompt(analysis, refs) : threeMonthPrompt(analysis, refs);
+  const prompt =
+    tier === 'free'
+      ? freePrompt(analysis, refs, promptOptions)
+      : threeMonthPrompt(analysis, refs, promptOptions);
   if (prompt.length > HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS) {
     throw new Error(
       `Hairstyle analysis prompt too long (${prompt.length} characters; Fal limit is ${HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS}).`
