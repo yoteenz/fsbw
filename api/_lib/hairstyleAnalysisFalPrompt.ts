@@ -64,7 +64,29 @@ function mannequinIndexForUnit(refs: { mannequinRefs: MannequinRefIndex[] }, uni
 function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex[] }): string {
   const idx = mannequinIndexForUnit(refs, unit);
   if (!idx) return '';
-  return `Use IMAGE ${idx} as the authoritative 3D ${unit} mannequin texture reference (curl pattern, strand definition, volume, silhouette).`;
+  return [
+    `Use IMAGE ${idx} as the authoritative ${unit} mannequin front reference.`,
+    'Copy curl pattern, strand definition, volume, silhouette, AND **one-shoulder drape geometry** from that mannequin — not symmetric hair on both shoulders.',
+  ].join(' ');
+}
+
+/** Front portrait drape — match 2D/3D mannequin + TOP MATCH hero (not twin-shoulder curtain). */
+function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'): string {
+  const scopeLine =
+    scope === 'all_photos'
+      ? 'Applies to the **main client preview** AND **every MATCH 02–04 thumbnail** — identical shoulder geometry on all photos.'
+      : '**MATCH 02–04 thumbnails only:** use the **same** one-shoulder drape as the main client preview — never revert to both-shoulder hair on small squares.';
+
+  return [
+    '=== HAIR DRAPE — ONE SHOULDER ONLY (MATCH MANNEQUIN + TOP MATCH HERO — CRITICAL) ===',
+    scopeLine,
+    'Long hair uses **asymmetric one-shoulder drape** exactly like catalog mannequin front assets and the TOP MATCH hero portrait.',
+    '**FORWARD DRAPE (only heavy cascade):** length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the **only** shoulder with thick hair down the chest.',
+    '**BEHIND / CLEAR SHOULDER:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — sweep hair **behind** the shoulder or tuck it back so the shoulder cap, neck line, and jewelry stay **visible**. No thick forward hair on this shoulder.',
+    '**FORBIDDEN:** symmetrical curtain on **both** shoulders, twin waterfalls, equal hair mass left and right, mirrored twin drape, or “balanced” split over both collarbones.',
+    '**Self-check:** if MATCH thumbnails show thick hair forward on **both** shoulders while the hero shows one-shoulder drape → **failed**. Regenerate thumbnails to match hero + mannequin geometry.',
+    'When a unit mannequin IMAGE is attached: copy its **silhouette and shoulder sweep** — not only curl texture. Salon style (LAYERS, CRIMPS, FLAT IRON) changes texture but **keeps** this same asymmetric shoulder placement.',
+  ].join('\n');
 }
 
 function clientPreviewTabLine(firstName: string): string {
@@ -146,6 +168,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
+    asymmetricOneShoulderDrapeBlock('all_photos'),
     'NO wig cap, NO lace visible, NO different person.',
     hairlineRulesBlock(),
   ]
@@ -196,8 +219,9 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
     realisticHairDensityBlock(displayDensity(look.density), true),
-    '- Composite client selfie + unit texture for maximum accuracy — strand-level recolor on hair only, not a color overlay on skin.',
-    '- FORBIDDEN: repainting the face, back-of-head shots, stock photos, wig-only swatches, silhouettes, helmet hair, or any different person.',
+    asymmetricOneShoulderDrapeBlock('thumbnails_only'),
+    '- Composite client selfie + unit mannequin silhouette for maximum accuracy — strand-level recolor on hair only, not a color overlay on skin.',
+    '- FORBIDDEN: repainting the face, back-of-head shots, stock photos, wig-only swatches, silhouettes, helmet hair, symmetric both-shoulder drape, or any different person.',
     '- NO baby hairs or wispy hairline flyaways on thumbnails.',
   ]
     .filter(Boolean)
@@ -319,11 +343,11 @@ function additionalMatchTemplateRules(): string[] {
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
     'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
-    '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
+    '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN SILHOUETTE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
     'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
-    'Use the matching 3D mannequin image (listed above) as the hair texture reference for that unit.',
-    'NEVER use back-of-head stock photos, different people, hair-only swatches, or repainted lower-body clothing.',
+    'Use the matching mannequin front IMAGE as texture **and** one-shoulder drape reference for that unit.',
+    'NEVER use back-of-head stock photos, different people, hair-only swatches, repainted lower-body clothing, or symmetric both-shoulder hair.',
     '',
     'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
     'MATCH 02–04 texture/color/length/score value slots: leave blank — server overlay only.',
@@ -338,7 +362,7 @@ function buildTemplateRules(
   const mannequinList =
     refs.mannequinRefs.length > 0
       ? refs.mannequinRefs
-          .map((r) => `IMAGE ${r.imageIndex} = 3D ${r.unit} mannequin front (texture reference only)`)
+          .map((r) => `IMAGE ${r.imageIndex} = ${r.unit} mannequin front (texture + one-shoulder drape silhouette — NOT both shoulders)`)
           .join('\n')
       : '';
 
@@ -380,6 +404,8 @@ function buildTemplateRules(
     '=== HAIRLINE — NO BABY HAIRS (ALL HAIR EDITS) ===',
     'Never add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead, temples, or hairline.',
     'Hairline stays clean and defined — lace-front edge only. Do not add extra strands at the hairline.',
+    '',
+    asymmetricOneShoulderDrapeBlock('all_photos'),
     '',
     '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
@@ -461,7 +487,8 @@ function promptFooter(tier: FalHairstyleAnalysis['tier']): string {
   } else {
     lines.push(
       'MATCH 02–04 value slots: left blank for server overlay — thumbnails only.',
-      'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.'
+      'THUMBNAILS: same client face from IMAGE 2 — one-shoulder drape like hero + mannequin; BAW styling refs for salon shapes only.',
+      'DRAPE CHECK: no thick forward hair on both shoulders on any match thumbnail.'
     );
   }
 
