@@ -56,7 +56,7 @@ export type MatchRowValueSlot = {
   fill: string;
 };
 
-/** MATCH 02–04 value slots (texture, color, length, score) — server composite overlay. */
+/** MATCH 02–04 value slots (texture, color, length, score) — Fal in-image; used by React overlay debug only. */
 export function premiumMatchRowValueSlots(): MatchRowValueSlot[] {
   const matchTops = [48.0, 60.5, 73.0];
   const slots: MatchRowValueSlot[] = [];

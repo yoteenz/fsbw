@@ -7,7 +7,6 @@ import {
   effectiveHairstyleAnalysisTierForRequest,
   resolveHairstyleAnalysisEntitlement,
 } from './_lib/hairstyleAnalysisEntitlement.js';
-import { parseCompositeLayoutOverrides } from './_lib/hairstyleAnalysisCompositeLayout.js';
 import {
   generateHairstyleAnalysisWithFal,
   type GenerateHairstyleAnalysisFalInput,
@@ -92,9 +91,6 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
     nested && typeof nested === 'object' && !Array.isArray(nested)
       ? (nested as Record<string, unknown>)
       : body;
-  const layoutOverrides = parseCompositeLayoutOverrides(
-    body.slotOverrides ?? body.layoutOverrides
-  );
 
   const tierRaw = readString(src, 'tier');
   const tier = tierRaw ? parseTier(tierRaw) : 'three_month';
@@ -129,7 +125,6 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
     templateUrl: templateUrl || hairstyleAnalysisTemplateUrlForTier(tier),
     clientPreviewUrl,
     siteOrigin: '',
-    layoutOverrides,
   };
 }
 
