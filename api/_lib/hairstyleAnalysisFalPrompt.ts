@@ -67,14 +67,27 @@ function clientPreviewTabLine(firstName: string): string {
   ].join('\n');
 }
 
+function colorWithHexLine(look: FalAnalysisLook): string {
+  const hex = (look.hex || '#000000').toUpperCase();
+  return `COLOR: ${look.color} (exact site hex ${hex} — match this tone precisely)`;
+}
+
+function styledTopMatchHairLine(look: FalAnalysisLook): string {
+  const style = displayStyle(look.styling);
+  if (style === 'NONE') return 'Finish hair in a polished salon-ready look for the top match.';
+  return `Apply configured salon styling on the top match: ${style} (finished, customized look — not raw mannequin texture).`;
+}
+
 function clientPreviewHairLine(look: FalAnalysisLook, refs: { mannequinRefs: MannequinRefIndex[] }): string {
   return [
-    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — FULL BLEED, ONE PERSON ONLY ===',
+    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — FULL BLEED, STYLED TOP MATCH ONLY ===',
     'Scale IMAGE 2 to COMPLETELY FILL the large client preview panel edge-to-edge (top, bottom, left, right).',
     'NO inner padding, NO inset crop, NO letterboxing, NO margins — photo must touch all four inner edges of the panel border.',
     'Use cover-style scaling: center the client face; crop overflow at edges if needed, but the panel must look full, not a smaller photo floating inside.',
     'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 2.',
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
+    colorWithHexLine(look),
+    styledTopMatchHairLine(look),
     mannequinRefLine(look.unit, refs),
     'NO wig cap, NO lace visible, NO different person.',
     hairlineRulesBlock(),
@@ -90,18 +103,38 @@ function hairlineRulesBlock(): string {
   ].join('\n');
 }
 
-function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: { mannequinRefs: MannequinRefIndex[] }): string {
-  return [
+function matchThumbnailBlock(
+  label: string,
+  look: FalAnalysisLook,
+  refs: { mannequinRefs: MannequinRefIndex[] },
+  options: { naturalTexture: boolean }
+): string {
+  const lines = [
     `${label} THUMBNAIL (small square on template):`,
     '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
-    `- Apply this match hair onto that client: TEXTURE ${look.unit}, COLOR ${look.color}, LENGTH ${displayLength(look.length)}.`,
+    `- TEXTURE: ${look.unit}`,
+    colorWithHexLine(look),
+    `- LENGTH: ${displayLength(look.length)}`,
     mannequinRefLine(look.unit, refs),
     '- Composite client selfie + mannequin hair texture for maximum accuracy.',
     '- FORBIDDEN: back-of-head shots, stock photos, wig-only swatches, silhouettes, or any different person.',
     '- NO baby hairs or wispy hairline flyaways on thumbnails.',
-  ]
-    .filter(Boolean)
-    .join('\n');
+  ];
+
+  if (options.naturalTexture) {
+    lines.push(
+      '- NATURAL UNIT TEXTURE ONLY — raw mannequin curl/wave/straight pattern, no salon styling.',
+      '- NO layers, crimps, flat iron, wand curls, or finished styling — showcase the unit texture as sold.',
+      '- STYLE: NONE on this thumbnail.'
+    );
+  } else {
+    const style = displayStyle(look.styling);
+    if (style !== 'NONE') {
+      lines.push(`- Apply salon styling: ${style} (styled top-match finish).`);
+    }
+  }
+
+  return lines.filter(Boolean).join('\n');
 }
 
 function blankTopMatchAndRatingRules(): string {
@@ -167,13 +200,17 @@ function altRowBlock(label: string, look: FalAnalysisLook): string {
   return [
     label,
     `TEXTURE: ${look.unit}`,
-    `COLOR: ${look.color}`,
+    colorWithHexLine(look),
     `LENGTH: ${displayLength(look.length)}`,
+    'STYLE: NONE (natural unit texture — not salon styled)',
     'MATCH SCORE VALUE: leave blank (server adds red percentage after generation).',
   ].join('\n');
 }
 
-function portfolioLine(rank: number, look: FalAnalysisLook): string {
+function portfolioLine(rank: number, look: FalAnalysisLook, styled: boolean): string {
+  if (!styled) {
+    return `${String(rank).padStart(2, '0')} ${look.unit} — natural texture`;
+  }
   const style = displayStyle(look.styling);
   const styleSuffix = style !== 'NONE' ? ` + ${style}` : '';
   return `${String(rank).padStart(2, '0')} ${look.unit}${styleSuffix}`;
@@ -187,7 +224,9 @@ const PROMPT_FOOTER = [
   'TIER SUBTITLE: erased — no month/tier analysis label visible.',
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
   'TOP MATCH VALUES, OVERALL SCORE %, MATCH RATING STARS, and MATCH SCORE % values: left blank.',
+  'LEFT PANEL: only styled customized top match. Other match thumbnails: natural unstyled unit texture unless 12-month grid rules say otherwise.',
   'THUMBNAILS: same client face from IMAGE 2 + mannequin texture per unit — never different people or back-of-head stock.',
+  'COLORS: use the exact hex codes given for each match.',
 ].join('\n');
 
 function freePrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: MannequinRefIndex[] }): string {
@@ -219,7 +258,7 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs:
     const label = `MATCH ${String(i + 2).padStart(2, '0')}`;
     lines.push('');
     lines.push(altRowBlock(label, look));
-    lines.push(matchThumbnailBlock(`${label}`, look, refs));
+    lines.push(matchThumbnailBlock(`${label}`, look, refs, { naturalTexture: true }));
   });
   lines.push(PROMPT_FOOTER);
   return lines.join('\n');
@@ -239,12 +278,16 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: M
   ];
   portfolio.slice(0, 7).forEach((look, i) => {
     const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
-    lines.push(`${label}: ${portfolioLine(i + 1, look)}`);
+    const isTopRow = i === 0;
+    lines.push(`${label}: ${portfolioLine(i + 1, look, isTopRow)}`);
     lines.push(`  TEXTURE: ${look.unit}`);
-    lines.push(`  COLOR: ${look.color}`);
+    lines.push(`  ${colorWithHexLine(look)}`);
     lines.push(`  LENGTH: ${displayLength(look.length)}`);
+    if (!isTopRow) {
+      lines.push('  STYLE: NONE (natural unit texture — not salon styled)');
+    }
     lines.push('  MATCH SCORE VALUE: leave blank (server adds red percentage).');
-    lines.push(matchThumbnailBlock(`  ${label}`, look, refs));
+    lines.push(matchThumbnailBlock(`  ${label}`, look, refs, { naturalTexture: !isTopRow }));
   });
   lines.push(PROMPT_FOOTER);
   return lines.join('\n');
@@ -264,10 +307,10 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs
   analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
     const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
     lines.push(`${label}:`);
-    lines.push(`  COLOR: ${alt.color}`);
+    lines.push(`  ${colorWithHexLine(alt)}`);
     lines.push(`  LENGTH: ${displayLength(alt.length)}`);
     lines.push('  MATCH SCORE VALUE: leave blank (server adds red percentage).');
-    lines.push(matchThumbnailBlock(`  ${label}`, alt, refs));
+    lines.push(matchThumbnailBlock(`  ${label}`, alt, refs, { naturalTexture: false }));
   });
   analysis.whyItWorks.forEach((line, i) => {
     lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);

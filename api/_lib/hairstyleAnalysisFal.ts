@@ -1,4 +1,5 @@
 import { compositeHairstyleAnalysisFalImage } from './hairstyleAnalysisFalComposite.js';
+import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
 import { buildHairstyleAnalysisFalPrompt, type FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
 
@@ -117,13 +118,14 @@ export async function generateHairstyleAnalysisWithFal(
     'client-preview'
   );
 
-  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(input.analysis), 3);
+  const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
+  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3);
   const mannequinUrls = await Promise.all(
     mannequinRefs.map((ref) => resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`))
   );
 
   const imageUrls = [templateUrl, clientUrl, ...mannequinUrls];
-  const prompt = buildHairstyleAnalysisFalPrompt(input.analysis, { mannequinRefs });
+  const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs });
 
   const result = await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
     input: {
@@ -140,11 +142,7 @@ export async function generateHairstyleAnalysisWithFal(
   const falImageUrl = extractFalImageUrl(result);
   if (!falImageUrl) throw new Error('Fal returned no image URL');
 
-  const composited = await compositeHairstyleAnalysisFalImage(
-    falImageUrl,
-    input.analysis,
-    input.siteOrigin
-  );
+  const composited = await compositeHairstyleAnalysisFalImage(falImageUrl, analysis, input.siteOrigin);
   const imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-composite.png', 'image/png');
 
   return {
