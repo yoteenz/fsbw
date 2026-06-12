@@ -345,12 +345,12 @@ export default function HairstyleAnalysisPreview({
           className="w-full py-3 border border-black uppercase disabled:opacity-40"
           style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
         >
-          {generating ? 'BUILDING YOUR ANALYSIS CARD…' : 'GENERATE TEMPLATE PREVIEW (4:5 · 2K)'}
+          {generating ? 'GENERATING HAIR + BUILDING CARD…' : 'GENERATE TEMPLATE PREVIEW (4:5 · 2K)'}
         </button>
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
-          Composites the static Supabase template with your photo, spec text, match scores, overall %, and stars on
-          the server — panel chrome stays pixel-perfect. Not the React overlay composer.
+          GPT Image 2 styles your hair on the client photo and match thumbnails, then the server composites the
+          static Supabase template with text, scores, and stars — panel chrome stays pixel-perfect.
         </p>
       </div>
 
@@ -380,7 +380,8 @@ export default function HairstyleAnalysisPreview({
         >
           <div className="w-8 h-8 border-2 border-black/20 border-t-[#eb1c24] rounded-full animate-spin" />
           <p className="text-center uppercase text-[9px] tracking-[0.12em] text-[#808080] leading-relaxed">
-            BUILDING THE {analysis.tier.replace(/_/g, ' ')} ANALYSIS CARD — DO NOT LEAVE THIS PAGE.
+            GPT IMAGE 2 IS STYLING HAIR AND BUILDING THE {analysis.tier.replace(/_/g, ' ')} CARD — DO NOT LEAVE
+            THIS PAGE.
           </p>
         </div>
       ) : generatedUrl ? (

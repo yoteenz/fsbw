@@ -119,7 +119,10 @@ export function buildServerOverlayValues(analysis: FalHairstyleAnalysis): Record
   return BUILDERS[key](analysis);
 }
 
-function lookForFieldId(fieldId: string, analysis: FalHairstyleAnalysis): FalAnalysisLook | null {
+export function lookForImageFieldId(
+  fieldId: string,
+  analysis: FalHairstyleAnalysis
+): FalAnalysisLook | null {
   const portfolioThumb = /^portfolio-(\d+)-thumb$/.exec(fieldId);
   if (portfolioThumb) {
     const idx = Number(portfolioThumb[1]);
@@ -154,7 +157,7 @@ export function resolveServerOverlayImageUrl(
 ): string | null {
   if (fieldId === 'clientImage') return clientPreviewUrl;
 
-  const look = lookForFieldId(fieldId, analysis);
+  const look = lookForImageFieldId(fieldId, analysis);
   if (!look) return null;
 
   if (look.imageUrl?.trim()) return look.imageUrl.trim();

@@ -441,6 +441,53 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageR
   return lines.join('\n');
 }
 
+/** GPT Image 2 hair-only edit on client selfie (composite pipeline — no template). */
+export function buildClientPreviewHairOnlyPrompt(
+  look: FalAnalysisLook,
+  refs: FalPromptImageRefs
+): string {
+  return [
+    'Edit IMAGE 1 (client selfie). Output ONE photo-realistic portrait at similar framing.',
+    'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 1.',
+    realisticHairRecolorBlock(),
+    `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
+    colorHairGuidanceLine(look),
+    styledHairLine(look, refs),
+    mannequinRefLine(look.unit, refs),
+    hairlineRulesBlock(),
+    'NO wig cap, NO lace visible, NO different person.',
+    'Portrait suitable for full-bleed vertical panel crop (edge-to-edge hair and shoulders).',
+    refs.stylingRefs.length > 0 ? bawStylingRefListBlock(refs.stylingRefs) : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+/** GPT Image 2 hair-only edit for a match/portfolio/alt thumbnail square. */
+export function buildMatchThumbHairOnlyPrompt(
+  look: FalAnalysisLook,
+  refs: FalPromptImageRefs,
+  label = 'MATCH'
+): string {
+  return [
+    `Edit IMAGE 1 (client selfie) for ${label} thumbnail. Output ONE front-facing portrait.`,
+    'KEEP the exact face, skin tone, and expression from IMAGE 1 — same client identity only.',
+    `UNIT / TEXTURE: ${look.unit}`,
+    realisticHairRecolorBlock(),
+    colorHairGuidanceLine(look),
+    `LENGTH: ${displayLength(look.length)}`,
+    styledHairLine(look, refs),
+    mannequinRefLine(look.unit, refs),
+    'Blend client face with unit mannequin hair texture — strand-level recolor, not a flat color overlay.',
+    hairlineRulesBlock(),
+    'FORBIDDEN: back-of-head shots, stock photos, different people, or hair-only swatches.',
+    'Square-friendly crop — head and shoulders centered.',
+    refs.stylingRefs.length > 0 ? bawStylingRefListBlock(refs.stylingRefs) : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 export function buildHairstyleAnalysisFalPrompt(
   analysis: FalHairstyleAnalysis,
   refs: FalPromptImageRefs
