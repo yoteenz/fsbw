@@ -26,7 +26,22 @@ export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 /** Main client preview photo cutout (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
 export const CLIENT_IMAGE_SLOT = pctRect('4%', '14%', '44.5%', '68.5%');
 
-/** Inner photo window inside the client panel (inset for red border + name pill) — bottom fade target. */
+/** Inner client photo window — bottom fade mask target (debug square default). */
+export const CLIENT_PHOTO_FADE_PERCENT = {
+  left: '5.76%',
+  top: '18.44%',
+  width: '40.97%',
+  height: '62.70%',
+} as const;
+
+export const CLIENT_PHOTO_FADE_SLOT = pctRect(
+  CLIENT_PHOTO_FADE_PERCENT.left,
+  CLIENT_PHOTO_FADE_PERCENT.top,
+  CLIENT_PHOTO_FADE_PERCENT.width,
+  CLIENT_PHOTO_FADE_PERCENT.height
+);
+
+/** Derive fade rect from outer client panel when only clientImage is overridden. */
 export function clientPhotoFadeRect(outer: PixelRect = CLIENT_IMAGE_SLOT): PixelRect {
   const insetX = Math.round(outer.width * 0.04);
   const insetTop = Math.round(outer.height * 0.065);
@@ -38,8 +53,6 @@ export function clientPhotoFadeRect(outer: PixelRect = CLIENT_IMAGE_SLOT): Pixel
     height: outer.height - insetTop - insetBottom,
   };
 }
-
-export const CLIENT_PHOTO_FADE_SLOT = clientPhotoFadeRect();
 
 const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [

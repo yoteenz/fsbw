@@ -1,5 +1,7 @@
+import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import {
   CLIENT_IMAGE_SLOT,
+  CLIENT_PHOTO_FADE_PERCENT,
   CLIENT_PHOTO_FADE_SLOT,
   clientPhotoFadeRect,
   HAIRSTYLE_ANALYSIS_CANVAS,
@@ -7,7 +9,6 @@ import {
   TOP_SCORE_SLOT,
   type PixelRect,
 } from './hairstyleAnalysisLayoutSlots.js';
-import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 
 export type PercentSlotOverride = {
   left?: string;
@@ -108,12 +109,19 @@ export function resolveClientImageSlotOrDefault(overrides?: CompositeLayoutOverr
 }
 
 export function resolveClientPhotoFadeSlot(overrides?: CompositeLayoutOverrides): PixelRect {
+  if (overrides?.clientPhotoFade && Object.keys(overrides.clientPhotoFade).length > 0) {
+    const merged = mergePercentRect(CLIENT_PHOTO_FADE_PERCENT, overrides.clientPhotoFade);
+    return pctRect(merged.left, merged.top, merged.width, merged.height);
+  }
   return clientPhotoFadeRect(resolveClientImageSlotOrDefault(overrides));
 }
 
 export function resolveClientPhotoFadeSlotOrDefault(overrides?: CompositeLayoutOverrides): PixelRect {
-  if (overrides?.clientImage && Object.keys(overrides.clientImage).length > 0) {
+  if (overrides?.clientPhotoFade && Object.keys(overrides.clientPhotoFade).length > 0) {
     return resolveClientPhotoFadeSlot(overrides);
+  }
+  if (overrides?.clientImage && Object.keys(overrides.clientImage).length > 0) {
+    return clientPhotoFadeRect(resolveClientImageSlotOrDefault(overrides));
   }
   return CLIENT_PHOTO_FADE_SLOT;
 }
