@@ -1,9 +1,11 @@
+import { compositeMatchRatingStars } from './hairstyleAnalysisFalComposite.js';
 import {
   buildHairstyleAnalysisFalPrompt,
   HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH,
   HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH,
   type FalHairstyleAnalysis,
 } from './hairstyleAnalysisFalPrompt.js';
+import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
 
 export const HAIRSTYLE_ANALYSIS_GPT2_MODEL = 'openai/gpt-image-2/edit';
 
@@ -81,6 +83,16 @@ function extractFalImageUrl(result: unknown): string | null {
   );
 }
 
+async function downloadImageBuffer(url: string): Promise<Buffer> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to download Fal image (${res.status})`);
+  return Buffer.from(await res.arrayBuffer());
+}
+
+function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
+  return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
+}
+
 export type GenerateHairstyleAnalysisFalInput = {
   analysis: FalHairstyleAnalysis;
   templateUrl: string;
@@ -120,12 +132,18 @@ export async function generateHairstyleAnalysisWithFal(
   const emptyStarUrl = `${origin}${HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH}`;
   const filledStarUrl = `${origin}${HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH}`;
 
-  const prompt = buildHairstyleAnalysisFalPrompt(input.analysis);
+  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(input.analysis), 5);
+  const mannequinUrls = await Promise.all(
+    mannequinRefs.map((ref) => resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`))
+  );
+
+  const imageUrls = [templateUrl, clientUrl, emptyStarUrl, filledStarUrl, ...mannequinUrls];
+  const prompt = buildHairstyleAnalysisFalPrompt(input.analysis, { mannequinRefs });
 
   const result = await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
     input: {
       prompt,
-      image_urls: [templateUrl, clientUrl, emptyStarUrl, filledStarUrl],
+      image_urls: imageUrls,
       image_size: HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE,
       quality: HAIRSTYLE_ANALYSIS_GPT2_QUALITY,
       output_format: 'png',
@@ -134,8 +152,17 @@ export async function generateHairstyleAnalysisWithFal(
     logs: false,
   });
 
-  const imageUrl = extractFalImageUrl(result);
-  if (!imageUrl) throw new Error('Fal returned no image URL');
+  const rawImageUrl = extractFalImageUrl(result);
+  if (!rawImageUrl) throw new Error('Fal returned no image URL');
+
+  const rawBuf = await downloadImageBuffer(rawImageUrl);
+  const compositedBuf = await compositeMatchRatingStars(rawBuf, input.analysis.topMatch.rating);
+  const imageUrl = await uploadBufferToFal(
+    fal,
+    compositedBuf,
+    'hairstyle-analysis-composited.png',
+    'image/png'
+  );
 
   return {
     imageUrl,
