@@ -15,7 +15,9 @@ import {
   type WigPreviewSelections,
 } from './wigPreviewSelectionHash.js';
 
-const SUPABASE_PUBLIC_BASE = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public';
+/** Public object URLs include the `live-preview` bucket segment (same as templates / Noir refs). */
+const SUPABASE_PUBLIC_BASE =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview';
 
 /** Canonical NOIR selections for BAW styling reference WebPs (JET BLACK color tier). */
 const BAW_STYLING_REF_COLOR_TIER: WigPreviewSelections = {
@@ -80,8 +82,8 @@ function publicUrlForStoragePath(storagePath: string): string {
   return `${SUPABASE_PUBLIC_BASE}/${storagePath}`;
 }
 
-/** Front-angle BAW styling reference for a salon mode + part (JET BLACK NOIR tier). */
-export function bawStylingReferencePublicUrl(
+/** Storage path (inside `live-preview` bucket) for front-angle BAW styling reference WebP. */
+export function bawStylingReferenceStoragePath(
   salonMode: BawSalonMode,
   part: 'MIDDLE' | 'LEFT' | 'RIGHT'
 ): string | null {
@@ -89,8 +91,16 @@ export function bawStylingReferencePublicUrl(
   const folder = afterColorFolderKey(salonMode, part);
   if (!folder) return null;
   const colorTierHash = wigPreviewManifestHashLiveColorTier(BAW_STYLING_REF_COLOR_TIER);
-  const paths = wigPreviewLiveAfterColorStylingPaths(promptVersion(), 'NOIR', colorTierHash, folder);
-  return publicUrlForStoragePath(paths.front);
+  return wigPreviewLiveAfterColorStylingPaths(promptVersion(), 'NOIR', colorTierHash, folder).front;
+}
+
+/** Front-angle BAW styling reference for a salon mode + part (JET BLACK NOIR tier). */
+export function bawStylingReferencePublicUrl(
+  salonMode: BawSalonMode,
+  part: 'MIDDLE' | 'LEFT' | 'RIGHT'
+): string | null {
+  const storagePath = bawStylingReferenceStoragePath(salonMode, part);
+  return storagePath ? publicUrlForStoragePath(storagePath) : null;
 }
 
 function stylingKey(salonMode: BawSalonMode, part: 'MIDDLE' | 'LEFT' | 'RIGHT'): string {
