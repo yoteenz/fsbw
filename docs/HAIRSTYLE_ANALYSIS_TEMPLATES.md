@@ -2,10 +2,10 @@
 
 ## Architecture
 
-1. **Static template PNG** (Supabase `live-preview/Analysis/`) — layout, icons, panels, typography, footer.
-2. **Client preview image** — selfie with top-match hair (`buildClientHairstylePreviewPrompt()` upstream).
-3. **Fal GPT Image 2** — `POST /api/hairstyle-analysis-generate` sends **template + client photo** with tier population prompt; returns finished **4:5 · 2K** card (`api/_lib/hairstyleAnalysisFal.ts`).
-4. **React composer** (`HairstyleAnalysisCard`) — dev-only overlay preview under Advanced on the demo page.
+1. **Code-built card chrome** (`api/_lib/hairstyleAnalysisCardBlueprint.ts`) — marble, panels, static labels, rose markers; rendered by `hairstyleAnalysisBuiltTemplate.ts`. **Do not** use Supabase `IMG_*` PNGs as the composite base.
+2. **Fal GPT Image 2 hair** — client selfie + match thumbnails (`hairstyleAnalysisHairGenerate.ts`).
+3. **Sharp composite** — hair photos + Futura/CBYG values + stars on the built template (`hairstyleAnalysisCompositeCard.ts`).
+4. **React composer** (`HairstyleAnalysisCard`) — dev overlay uses `src/data/hairstyleAnalysisCardBlueprint.json` (same slot map as server).
 
 Demo: `/tools/hairstyle-analysis` (sign in → **Generate template preview**)
 

@@ -10,6 +10,8 @@ import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
 import { buildServerOverlayValues } from './hairstyleAnalysisOverlayValues.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
+import { renderBuiltCardChrome } from './hairstyleAnalysisBuiltTemplate.js';
+import { normalizeHairstyleAnalysisCardTier } from './hairstyleAnalysisTemplates.js';
 import { createHairstyleAnalysisFalClient, uploadBufferToFalStorage } from './hairstyleAnalysisFalShared.js';
 import { generateHairstyleHairImages } from './hairstyleAnalysisHairGenerate.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
@@ -59,12 +61,13 @@ export async function generateHairstyleAnalysisComposite(
 
   const sharp = (await import('sharp')).default;
   const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
-  const { templateUrl, clientPreviewUrl, siteOrigin } = input;
+  const { clientPreviewUrl, siteOrigin } = input;
+  const tier = normalizeHairstyleAnalysisCardTier(analysis.tier);
 
   const fal = await createHairstyleAnalysisFalClient(falKey);
 
   const [templateBuf, fields, overlayValues, hairImages] = await Promise.all([
-    fetchImageBuffer(templateUrl, siteOrigin),
+    renderBuiltCardChrome(tier, siteOrigin),
     Promise.resolve(getLayoutFieldsForAnalysis(analysis)),
     Promise.resolve(buildServerOverlayValues(analysis)),
     generateHairstyleHairImages(fal, analysis, clientPreviewUrl, siteOrigin),
@@ -136,8 +139,8 @@ export async function generateHairstyleAnalysisComposite(
   const tierLabel = analysis.tier.replace(/_/g, ' ');
   return {
     imageUrl,
-    prompt: `Fal GPT Image 2 hair on ${hairCount} photo slot(s), then sharp composite on static ${tierLabel} template — Futura spec text, gray match scores, CBYG overall %, stars.`,
-    model: 'composite+fal-hair',
+    prompt: `Fal GPT Image 2 hair on ${hairCount} photo slot(s), then sharp composite on code-built ${tierLabel} card chrome — Futura labels + values, gray match scores, CBYG overall %, stars.`,
+    model: 'built-template+fal-hair',
     imageSize: HAIRSTYLE_ANALYSIS_CANVAS,
     quality: 'medium',
     renderMode: 'composite',
