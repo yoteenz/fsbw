@@ -536,8 +536,8 @@ export default function HairstyleAnalysisPreview({
               {showDebugFrames ? (
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Drag slot handles to reposition score, stars, and text. Tap Save layout to persist per tier.
-                    Generate uses your current slot positions (topScore, rating, match scores) on the server composite.
+                    Drag slot handles to reposition overlays. Tap Save layout to persist per tier.
+                    Generate applies topScore + rating positions on the server composite; match scores are placed by Fal beside each MATCH SCORE label.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
