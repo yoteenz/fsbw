@@ -6,6 +6,7 @@
  */
 
 import { noirFalGrayBrickMannequinPublicUrlForAngle } from './bawNoirFalMannequinUrls.js';
+import { normalizeAnalysisStylingId, salonModeToBawStyleId } from './hairstyleAnalysisDisplay.js';
 import {
   wigPreviewLiveAfterColorStylingPaths,
   wigPreviewLiveCrimpsPartFolder,
@@ -120,7 +121,7 @@ export function collectStylingRefsForAnalysis(
   let next = startImageIndex;
 
   for (const look of looks) {
-    const salonMode = resolveBawSalonMode(look.styling);
+    const salonMode = resolveBawSalonMode(normalizeAnalysisStylingId(look.unit, look.styling));
     if (salonMode === 'none') continue;
     const part = normalizePart(look.part);
     const key = stylingKey(salonMode, part);
@@ -149,9 +150,10 @@ export function collectStylingRefsForAnalysis(
 export function stylingRefForLook(
   refs: HairstyleAnalysisStylingRef[],
   stylingRaw: string,
-  partRaw: string
+  partRaw: string,
+  unit = ''
 ): HairstyleAnalysisStylingRef | null {
-  const salonMode = resolveBawSalonMode(stylingRaw);
+  const salonMode = resolveBawSalonMode(normalizeAnalysisStylingId(unit, stylingRaw));
   if (salonMode === 'none') return null;
   const part = normalizePart(partRaw);
   return refs.find((r) => r.key === stylingKey(salonMode, part)) ?? null;
@@ -159,9 +161,17 @@ export function stylingRefForLook(
 
 export function bawStylingRefListBlock(refs: HairstyleAnalysisStylingRef[]): string {
   if (refs.length === 0) return '';
-  const lines = refs.map(
-    (r) =>
-      `IMAGE ${r.imageIndex} = BAW salon styling reference (${r.salonMode.toUpperCase()}, ${r.part} part) — copy hairstyle shape/texture exactly; retint hair color only.`
-  );
-  return ['=== BAW STYLING REFERENCE IMAGES (HAIRSTYLE SHAPE ONLY) ===', ...lines].join('\n');
+  const lines = refs.map((r) => {
+    const styleId = salonModeToBawStyleId(r.salonMode);
+    return (
+      `IMAGE ${r.imageIndex} = BAW **${styleId}** styling reference (${r.part} part) — ` +
+      'authoritative salon finish for any look assigned STYLE ' +
+      `${styleId} with ${r.part} part; copy curl/crimp/straight/layer shape exactly; retint hair color only.`
+    );
+  });
+  return [
+    '=== BAW STYLING REFERENCE IMAGES (AUTHORITATIVE SALON FINISH — NOT MANNEQUIN DEFAULT) ===',
+    'Each styling IMAGE below is tied to a specific STYLE id + part. Use the matching IMAGE for that look only.',
+    ...lines,
+  ].join('\n');
 }
