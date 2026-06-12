@@ -4,7 +4,12 @@ export type PixelRect = { left: number; top: number; width: number; height: numb
 
 export const HAIRSTYLE_ANALYSIS_CANVAS = { width: 2048, height: 2560 } as const;
 
-function pctRect(left: string, top: string, width: string, height: string): PixelRect {
+export function pixelRectFromPercent(
+  left: string,
+  top: string,
+  width: string,
+  height: string
+): PixelRect {
   const W = HAIRSTYLE_ANALYSIS_CANVAS.width;
   const H = HAIRSTYLE_ANALYSIS_CANVAS.height;
   const lp = Number(left.replace('%', ''));
@@ -20,6 +25,8 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
 }
 
 /** Value boxes below OVERALL SCORE / MATCH RATING labels (calibrated on IMG_2447 @ 2048×2560). */
+const pctRect = pixelRectFromPercent;
+
 export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
 export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
