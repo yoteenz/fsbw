@@ -18,9 +18,9 @@ function specValues(look: AnalysisLook): Record<string, string> {
     specLength: displayLength(look),
     specLace: displayLace(look),
     specDensity: displayDensity(look),
-    specParting: displayPart(look).replace(/\s+PART$/i, ''),
+    specParting: displayPart(look),
     specHairline: displayHairline(look),
-    specStyle: displayStyle(look) === 'LAYERS' ? 'SOFT FACE FRAMING LAYERS' : displayStyle(look),
+    specStyle: displayStyle(look),
   };
 }
 

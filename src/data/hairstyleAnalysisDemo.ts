@@ -15,7 +15,7 @@ const KATEENA_TOP: AnalysisLook = {
   density: '250%',
   hairline: 'NATURAL',
   part: 'MIDDLE',
-  styling: 'SOFT FACE FRAMING LAYERS',
+  styling: 'LAYERS',
   score: 98,
   rating: 5,
 };

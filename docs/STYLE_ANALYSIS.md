@@ -65,6 +65,8 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2438|2447|2450|2451.png`) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
 
+**Post-process overlay (server):** Fal leaves TOP MATCH spec values, overall score %, match-rating stars, and match-score % areas blank. `api/_lib/hairstyleAnalysisFalComposite.ts` (sharp) composites Futura spec text, Covered By Your Grace score %, site star PNGs, and red match-score percentages. Part values are **MIDDLE / LEFT / RIGHT** only; style values use Build-a-Wig ids (**LAYERS**, **FLAT IRON**, **CRIMPS**, etc.).
+
 **Dev fallback:** React overlay composer (collapsed under Advanced) for coordinate experiments only — not the client-facing path.
 
 **Tier pick counts (card system):**

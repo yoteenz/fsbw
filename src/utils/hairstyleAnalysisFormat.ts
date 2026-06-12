@@ -26,15 +26,20 @@ export function displayHairline(look: AnalysisLook): string {
 }
 
 export function displayPart(look: AnalysisLook): string {
-  const p = look.part.replace(/\s*PART\s*$/i, '').trim().toUpperCase();
-  return p.includes('PART') ? p : `${p} PART`;
+  return look.part
+    .replace(/\s*PART\s*$/i, '')
+    .replace(/^PART\s+/i, '')
+    .trim()
+    .toUpperCase();
 }
 
 export function displayStyle(look: AnalysisLook): string {
-  return look.styling
+  const s = look.styling
     .replace(/^STYLING:\s*/i, '')
     .replace(/^NONE$/i, 'NONE')
     .toUpperCase();
+  if (s === 'SOFT FACE FRAMING LAYERS') return 'LAYERS';
+  return s;
 }
 
 export function displayLength(look: AnalysisLook): string {
@@ -42,12 +47,8 @@ export function displayLength(look: AnalysisLook): string {
 }
 
 export function compactPortfolioLine(rank: number, look: AnalysisLook): string {
-  const styleSuffix =
-    displayStyle(look) !== 'NONE' && displayStyle(look) !== 'LAYERS'
-      ? ` + ${displayStyle(look)}`
-      : displayStyle(look) === 'LAYERS'
-        ? ' + LAYERS'
-        : '';
+  const style = displayStyle(look);
+  const styleSuffix = style !== 'NONE' ? ` + ${style}` : '';
   return `${String(rank).padStart(2, '0')} ${look.unit}${styleSuffix} — ${formatScorePercent(look.score)}`;
 }
 
