@@ -1,6 +1,7 @@
 /**
- * Code-built hairstyle analysis card — single source of truth for chrome + dynamic slots.
- * 2048×2560. Do NOT composite onto Supabase IMG_* PNGs; render chrome from this blueprint.
+ * Overlay slot map for hairstyle analysis cards (2048×2560).
+ * Chrome (marble, acrylic, glow, footer, BUILD THIS LOOK) = Supabase reference PNG per tier.
+ * This file defines **value + photo slots only** — labels/icons are baked into the reference template.
  */
 
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
@@ -21,62 +22,24 @@ export type LayoutFieldDef = {
   rect: PixelRect;
 };
 
-export type PanelDef = {
-  id: string;
-  rect: PixelRect;
-  variant: 'frosted' | 'photo-frame' | 'thumb-frame';
-};
-
-export type StaticLabelDef = {
-  text: string;
-  rect: PixelRect;
-  style: 'futura-black' | 'futura-red' | 'covered-red';
-  align?: 'left' | 'center';
-};
-
-export type RoseMarkerDef = {
-  id: string;
-  rect: PixelRect;
-};
-
-export type CardBlueprint = {
-  tier: HairstyleAnalysisCardTier;
-  panels: PanelDef[];
-  staticLabels: StaticLabelDef[];
-  roses: RoseMarkerDef[];
-  fields: LayoutFieldDef[];
-};
-
-function r(left: number, top: number, width: number, height: number): PixelRect {
-  return { left, top, width, height };
+function px(leftPct: number, topPct: number, wPct: number, hPct: number): PixelRect {
+  const W = CARD_CANVAS.width;
+  const H = CARD_CANVAS.height;
+  return {
+    left: Math.round((W * leftPct) / 100),
+    top: Math.round((H * topPct) / 100),
+    width: Math.round((W * wPct) / 100),
+    height: Math.round((H * hPct) / 100),
+  };
 }
 
-/** Shared chrome + top-match block (all tiers). */
-const CLIENT_PHOTO = r(82, 358, 911, 1754);
-const CLIENT_NAME = r(143, 282, 656, 64);
-const TOP_SCORE = r(1120, 410, 199, 149);
-const RATING = r(1420, 410, 199, 149);
+/** Calibrated to empty Supabase templates — values only (labels on PNG). */
+const CLIENT_IMAGE = px(4, 14, 44.5, 68.5);
+const CLIENT_NAME = px(7, 11, 32, 2.5);
+const TOP_SCORE = px(54.7, 16, 9.7, 5.8);
+const RATING = px(69.3, 16, 9.7, 5.8);
 
-const SPEC_VALUE_LEFT = 1475;
-const SPEC_VALUE_WIDTH = 430;
-const SPEC_VALUE_HEIGHT = 59;
-const SPEC_LABEL_LEFT = 1060;
-const SPEC_LABEL_WIDTH = 400;
-const SPEC_ROW_HEIGHT = 59;
-const SPEC_FIRST_TOP = 615;
-const SPEC_ROW_STEP = 67;
-
-const SPEC_LABELS = [
-  'TEXTURE:',
-  'COLOR:',
-  'LENGTH:',
-  'LACE:',
-  'DENSITY:',
-  'PARTING:',
-  'HAIRLINE:',
-  'STYLE:',
-] as const;
-
+const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [
   'specTexture',
   'specColor',
@@ -88,174 +51,95 @@ const SPEC_IDS = [
   'specStyle',
 ] as const;
 
-function specRows(): { labels: StaticLabelDef[]; fields: LayoutFieldDef[] } {
-  const labels: StaticLabelDef[] = [];
-  const fields: LayoutFieldDef[] = [];
-  SPEC_IDS.forEach((id, i) => {
-    const top = SPEC_FIRST_TOP + i * SPEC_ROW_STEP;
-    labels.push({
-      text: SPEC_LABELS[i]!,
-      rect: r(SPEC_LABEL_LEFT, top, SPEC_LABEL_WIDTH, SPEC_ROW_HEIGHT),
-      style: 'futura-black',
-    });
-    fields.push({ id, kind: 'text', rect: r(SPEC_VALUE_LEFT, top, SPEC_VALUE_WIDTH, SPEC_VALUE_HEIGHT) });
-  });
-  return { labels, fields };
+function specFields(): LayoutFieldDef[] {
+  return SPEC_IDS.map((id, i) => ({
+    id,
+    kind: 'text' as const,
+    rect: px(72, SPEC_TOPS[i]!, 21, 2.3),
+  }));
 }
 
-function baseChrome(): Pick<CardBlueprint, 'panels' | 'staticLabels' | 'roses' | 'fields'> {
-  const spec = specRows();
-  return {
-    panels: [
-      { id: 'client-photo', rect: r(64, 330, 947, 1800), variant: 'photo-frame' },
-      { id: 'score-panel', rect: r(1024, 300, 960, 280), variant: 'frosted' },
-      { id: 'spec-panel', rect: r(1024, 590, 960, 560), variant: 'frosted' },
-    ],
-    staticLabels: [
-      { text: 'FRONTAL SLAYER', rect: r(0, 48, CARD_CANVAS.width, 72), style: 'covered-red', align: 'center' },
-      { text: 'HAIRSTYLE ANALYSIS', rect: r(0, 128, CARD_CANVAS.width, 56), style: 'futura-black', align: 'center' },
-      { text: 'TOP MATCH', rect: r(1060, 548, 420, 52), style: 'futura-red' },
-      { text: 'OVERALL SCORE', rect: r(1088, 348, 260, 48), style: 'futura-black' },
-      { text: 'MATCH RATING', rect: r(1388, 348, 260, 48), style: 'futura-black' },
-      ...spec.labels,
-    ],
-    roses: [{ id: 'client-pill-rose', rect: r(108, 292, 40, 40) }],
-    fields: [
-      { id: 'clientName', kind: 'text', rect: CLIENT_NAME },
-      { id: 'clientImage', kind: 'image', rect: CLIENT_PHOTO },
-      { id: 'topScore', kind: 'text', rect: TOP_SCORE },
-      { id: 'rating', kind: 'text', rect: RATING },
-      ...spec.fields,
-    ],
-  };
+function whyLine(index: number, topPct: number): LayoutFieldDef {
+  return { id: `whyLine-${index}`, kind: 'text', rect: px(56, topPct, 38, 2.3) };
 }
 
-function freeBlueprint(): CardBlueprint {
-  const base = baseChrome();
-  const whyTops = [1907, 1971, 2035, 2099, 2163];
-  const whyRoses: RoseMarkerDef[] = [];
-  const whyFields: LayoutFieldDef[] = [];
-
-  whyTops.forEach((top, i) => {
-    whyRoses.push({ id: `why-rose-${i}`, rect: r(1060, top + 8, 36, 36) });
-    whyFields.push({ id: `whyLine-${i}`, kind: 'text', rect: r(1108, top, 860, SPEC_ROW_HEIGHT) });
-  });
-
-  return {
-    tier: 'free',
-    panels: [{ id: 'why-panel', rect: r(1024, 1820, 960, 420), variant: 'frosted' }, ...base.panels],
-    staticLabels: [
-      ...base.staticLabels,
-      { text: 'EVERY DETAIL MATTERS', rect: r(1060, 1863, 520, 40), style: 'futura-red' },
-    ],
-    roses: [...base.roses, ...whyRoses],
-    fields: [...base.fields, ...whyFields],
-  };
-}
-
-function matchRowBlock(
-  prefix: string,
-  matchLabel: string,
-  blockTop: number
-): { panels: PanelDef[]; labels: StaticLabelDef[]; fields: LayoutFieldDef[] } {
-  const thumb = r(1065, blockTop + 13, 143, 141);
-  const valueLeft = 1239;
-  const valueWidth = 614;
-  const valueHeight = 44;
-  const rowLabels: Array<[string, number]> = [
-    ['TEXTURE:', 26],
-    ['COLOR:', 71],
-    ['LENGTH:', 116],
-    ['MATCH SCORE:', 161],
+function baseFields(): LayoutFieldDef[] {
+  return [
+    { id: 'clientName', kind: 'text', rect: CLIENT_NAME },
+    { id: 'clientImage', kind: 'image', rect: CLIENT_IMAGE },
+    { id: 'topScore', kind: 'text', rect: TOP_SCORE },
+    { id: 'rating', kind: 'text', rect: RATING },
+    ...specFields(),
   ];
-  const rowKeys = ['texture', 'color', 'length', 'score'] as const;
+}
 
-  const labels: StaticLabelDef[] = [
-    { text: matchLabel, rect: r(1060, blockTop, 400, 48), style: 'futura-red' },
+function freeFields(): LayoutFieldDef[] {
+  return [
+    ...baseFields(),
+    ...[0, 1, 2, 3, 4].map((i) => whyLine(i, 74.5 + i * 2.5)),
   ];
-  const fields: LayoutFieldDef[] = [{ id: `${prefix}-thumb`, kind: 'image', rect: thumb }];
+}
 
-  rowLabels.forEach(([label, offset], i) => {
-    labels.push({
-      text: label,
-      rect: r(valueLeft, blockTop + offset, 200, valueHeight),
-      style: 'futura-black',
-    });
+function matchRowFields(prefix: string, blockTop: number): LayoutFieldDef[] {
+  const fields: LayoutFieldDef[] = [
+    {
+      id: `${prefix}-thumb`,
+      kind: 'image',
+      rect: px(52, blockTop + 0.5, 7, 5.5),
+    },
+  ];
+  (
+    [
+      ['texture', 1.0],
+      ['color', 2.8],
+      ['length', 4.6],
+      ['score', 6.4],
+    ] as const
+  ).forEach(([key, offset]) => {
     fields.push({
-      id: `${prefix}-${rowKeys[i]}`,
+      id: `${prefix}-${key}`,
       kind: 'text',
-      rect: r(valueLeft + 210, blockTop + offset, valueWidth - 210, valueHeight),
+      rect: px(60.5, blockTop + offset, 30, 1.7),
     });
   });
-
-  return {
-    panels: [{ id: `${prefix}-panel`, rect: r(1024, blockTop - 8, 960, 280), variant: 'frosted' }],
-    labels,
-    fields,
-  };
+  return fields;
 }
 
-function threeMonthBlueprint(): CardBlueprint {
-  const base = baseChrome();
-  const blocks = [
-    matchRowBlock('match2', 'MATCH 02', 1229),
-    matchRowBlock('match3', 'MATCH 03', 1549),
-    matchRowBlock('match4', 'MATCH 04', 1869),
-  ];
-
-  return {
-    tier: 'three_month',
-    panels: [...base.panels, ...blocks.flatMap((b) => b.panels)],
-    staticLabels: [...base.staticLabels, ...blocks.flatMap((b) => b.labels)],
-    roses: base.roses,
-    fields: [...base.fields, ...blocks.flatMap((b) => b.fields)],
-  };
+function threeMonthFields(): LayoutFieldDef[] {
+  return [...baseFields(), ...matchRowFields('match2', 48.0), ...matchRowFields('match3', 60.5), ...matchRowFields('match4', 73.0)];
 }
 
-function portfolioRowBlock(
-  prefix: string,
-  portfolioLabel: string,
-  blockTop: number
-): { panels: PanelDef[]; labels: StaticLabelDef[]; fields: LayoutFieldDef[] } {
-  const block = matchRowBlock(prefix, portfolioLabel, blockTop);
-  return block;
+function sixMonthFields(): LayoutFieldDef[] {
+  const tops = [48.5, 57.0, 65.5, 74.0, 82.5];
+  const fields = [...baseFields()];
+  tops.forEach((top, i) => {
+    fields.push({
+      id: `portfolio-${i}-thumb`,
+      kind: 'image',
+      rect: px(52.2, top + 0.5, 7, 5.5),
+    });
+    (
+      [
+        ['texture', 1.0],
+        ['color', 2.8],
+        ['length', 4.6],
+        ['score', 6.4],
+      ] as const
+    ).forEach(([key, offset]) => {
+      fields.push({
+        id: `portfolio-${i}-${key}`,
+        kind: 'text',
+        rect: px(60.5, top + offset, 30, 1.6),
+      });
+    });
+  });
+  return fields;
 }
 
-function sixMonthBlueprint(): CardBlueprint {
-  const base = baseChrome();
-  const tops = [1245, 1459, 1673, 1887, 2101];
-  const blocks = tops.map((top, i) =>
-    portfolioRowBlock(`portfolio-${i}`, `STYLE PORTFOLIO ${String(i + 1).padStart(2, '0')}`, top)
-  );
-
-  return {
-    tier: 'six_month',
-    panels: [...base.panels, ...blocks.flatMap((b) => b.panels)],
-    staticLabels: [
-      ...base.staticLabels,
-      { text: 'STYLE PORTFOLIO', rect: r(1060, 1188, 480, 48), style: 'futura-red' },
-      ...blocks.flatMap((b) => b.labels),
-    ],
-    roses: base.roses,
-    fields: [...base.fields, ...blocks.flatMap((b) => b.fields)],
-  };
-}
-
-function twelveMonthBlueprint(): CardBlueprint {
-  const base = baseChrome();
-  const colLefts = [1065, 1321, 1577];
-  const rowTops = [884, 1178, 1472];
-  const panels: PanelDef[] = [
-    { id: 'alt-grid-panel', rect: r(1024, 850, 960, 720), variant: 'frosted' },
-    { id: 'why-panel', rect: r(1024, 1600, 960, 900), variant: 'frosted' },
-  ];
-  const labels: StaticLabelDef[] = [
-    { text: 'ALTERNATIVE MATCHES', rect: r(1060, 818, 520, 48), style: 'futura-red' },
-    { text: 'EVERY DETAIL MATTERS', rect: r(1060, 1643, 520, 40), style: 'futura-red' },
-  ];
-  const roses: RoseMarkerDef[] = [];
-  const fields: LayoutFieldDef[] = [];
-
+function twelveMonthFields(): LayoutFieldDef[] {
+  const fields = [...baseFields()];
+  const colLefts = [52.0, 64.5, 77.0];
+  const rowTops = [34.5, 46.0, 57.5];
   let altIndex = 0;
   for (const blockTop of rowTops) {
     for (const left of colLefts) {
@@ -263,61 +147,49 @@ function twelveMonthBlueprint(): CardBlueprint {
       fields.push({
         id: `${prefix}-thumb`,
         kind: 'image',
-        rect: r(left, blockTop + 13, 143, 115),
+        rect: px(left, blockTop + 0.5, 7, 4.5),
       });
-      labels.push(
-        { text: 'COLOR:', rect: r(left, blockTop + 141, 120, 38), style: 'futura-black' },
-        { text: 'LENGTH:', rect: r(left, blockTop + 184, 120, 38), style: 'futura-black' },
-        { text: 'MATCH SCORE:', rect: r(left, blockTop + 227, 160, 38), style: 'futura-black' }
-      );
-      fields.push(
-        { id: `${prefix}-color`, kind: 'text', rect: r(left + 125, blockTop + 141, 200, 38) },
-        { id: `${prefix}-length`, kind: 'text', rect: r(left + 125, blockTop + 184, 200, 38) },
-        { id: `${prefix}-score`, kind: 'text', rect: r(left + 165, blockTop + 227, 120, 38) }
-      );
+      (
+        [
+          ['color', 5.5],
+          ['length', 7.2],
+          ['score', 8.9],
+        ] as const
+      ).forEach(([key, offset]) => {
+        fields.push({
+          id: `${prefix}-${key}`,
+          kind: 'text',
+          rect: px(left, blockTop + offset, 11, 1.5),
+        });
+      });
       altIndex += 1;
     }
   }
-
-  const whyTops = [1715, 1790, 1865, 1940, 2015, 2090, 2165, 2240, 2315, 2390];
-  whyTops.forEach((top, i) => {
-    roses.push({ id: `why-rose-${i}`, rect: r(1060, top + 6, 36, 36) });
-    fields.push({ id: `whyLine-${i}`, kind: 'text', rect: r(1108, top, 860, SPEC_ROW_HEIGHT) });
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((i) => {
+    fields.push(whyLine(i, 70.5 + i * 1.9));
   });
-
-  return {
-    tier: 'twelve_month',
-    panels: [...base.panels, ...panels],
-    staticLabels: [...base.staticLabels, ...labels],
-    roses: [...base.roses, ...roses],
-    fields: [...base.fields, ...fields],
-  };
+  return fields;
 }
 
-const BLUEPRINTS: Record<HairstyleAnalysisCardTier, () => CardBlueprint> = {
-  free: freeBlueprint,
-  three_month: threeMonthBlueprint,
-  six_month: sixMonthBlueprint,
-  twelve_month: twelveMonthBlueprint,
+const FIELD_BUILDERS: Record<HairstyleAnalysisCardTier, () => LayoutFieldDef[]> = {
+  free: freeFields,
+  three_month: threeMonthFields,
+  six_month: sixMonthFields,
+  twelve_month: twelveMonthFields,
 };
 
-export function getCardBlueprint(tier: HairstyleAnalysisCardTier): CardBlueprint {
-  return BLUEPRINTS[tier]();
-}
-
-export function getCardBlueprintForAnalysis(analysis: FalHairstyleAnalysis): CardBlueprint {
-  return getCardBlueprint(normalizeHairstyleAnalysisCardTier(analysis.tier));
+export function getCardBlueprint(tier: HairstyleAnalysisCardTier): { fields: LayoutFieldDef[] } {
+  return { fields: FIELD_BUILDERS[tier]() };
 }
 
 export function getLayoutFieldsFromBlueprint(analysis: FalHairstyleAnalysis): LayoutFieldDef[] {
-  return getCardBlueprintForAnalysis(analysis).fields;
+  return getCardBlueprint(normalizeHairstyleAnalysisCardTier(analysis.tier)).fields;
 }
 
 export function topScoreAndRatingSlots(): { topScore: PixelRect; rating: PixelRect } {
   return { topScore: TOP_SCORE, rating: RATING };
 }
 
-/** Percent slots for React dev overlay — keep aligned with this blueprint. */
 export function pixelRectToPercent(rect: PixelRect): {
   left: string;
   top: string;
@@ -331,4 +203,11 @@ export function pixelRectToPercent(rect: PixelRect): {
     width: `${((rect.width / W) * 100).toFixed(2)}%`,
     height: `${((rect.height / H) * 100).toFixed(2)}%`,
   };
+}
+
+/** Text/value slots to lightly clear before compositing (covers dotted placeholders on reference PNG). */
+export function clearableValueRects(analysis: FalHairstyleAnalysis): PixelRect[] {
+  return getLayoutFieldsFromBlueprint(analysis)
+    .filter((f) => f.kind === 'text' && f.id !== 'rating')
+    .map((f) => f.rect);
 }

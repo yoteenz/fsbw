@@ -1,3 +1,5 @@
+/** @deprecated Production uses Supabase reference PNG + value overlays (`hairstyleAnalysisReferenceChrome.ts`). */
+
 import type { AnalysisFontStyle } from './hairstyleAnalysisFonts.js';
 import { BRAND_RED, buildTextOverlaySvg, textPathInRect } from './hairstyleAnalysisFonts.js';
 import type { CardBlueprint, PanelDef, PixelRect, StaticLabelDef } from './hairstyleAnalysisCardBlueprint.js';

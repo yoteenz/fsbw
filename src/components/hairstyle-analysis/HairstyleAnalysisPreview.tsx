@@ -349,8 +349,9 @@ export default function HairstyleAnalysisPreview({
         </button>
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
-          GPT Image 2 styles hair on the client photo and match thumbnails, then the server composites onto a
-          code-built card (marble, panels, labels, and values share one layout map — not the old Supabase PNGs).
+          GPT Image 2 (medium, 3:4 hair edits) styles the client photo and match thumbnails, then the server
+          composites values onto the reference Supabase template PNG (2048×2560 · 4:5) — marble, acrylic, glow,
+          footer, and BUILD THIS LOOK button stay pixel-perfect from the reference asset.
         </p>
       </div>
 
@@ -393,9 +394,14 @@ export default function HairstyleAnalysisPreview({
           />
         </div>
       ) : (
-        <div className="w-full shadow-lg border border-black/10 opacity-60 aspect-[4/5] flex flex-col items-center justify-center gap-2 bg-[url('/assets/marble-half.png')] bg-cover px-6">
-          <p className="text-center text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-            Code-built card template — tap generate above for the finished analysis
+        <div className="w-full shadow-lg border border-black/10 opacity-60">
+          <img
+            src={resolvedAnalysis.templateUrl}
+            alt="Reference template"
+            className="w-full h-auto block"
+          />
+          <p className="text-center py-2 text-[8px] uppercase tracking-[0.1em] text-[#808080]">
+            Reference template — tap generate to populate photos and values
           </p>
         </div>
       )}

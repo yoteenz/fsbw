@@ -67,7 +67,7 @@ export function textPathInRect(
   if (!trimmed) return '';
   const font = fontForStyle(style);
   const align = opts?.align ?? 'left';
-  const maxFontSize = opts?.maxFontSize ?? Math.round(rect.height * 0.85);
+  const maxFontSize = opts?.maxFontSize ?? Math.round(rect.height * 0.92);
   const fontSize = fontSizeToFit(font, trimmed, rect.width, rect.height, maxFontSize);
   const measure = font.getPath(trimmed, 0, 0, fontSize);
   const bb = measure.getBoundingBox();

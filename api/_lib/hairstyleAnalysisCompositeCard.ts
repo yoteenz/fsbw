@@ -10,8 +10,7 @@ import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
 import { buildServerOverlayValues } from './hairstyleAnalysisOverlayValues.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
-import { renderBuiltCardChrome } from './hairstyleAnalysisBuiltTemplate.js';
-import { normalizeHairstyleAnalysisCardTier } from './hairstyleAnalysisTemplates.js';
+import { renderReferenceTemplateBase } from './hairstyleAnalysisReferenceChrome.js';
 import { createHairstyleAnalysisFalClient, uploadBufferToFalStorage } from './hairstyleAnalysisFalShared.js';
 import { generateHairstyleHairImages } from './hairstyleAnalysisHairGenerate.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
@@ -61,13 +60,12 @@ export async function generateHairstyleAnalysisComposite(
 
   const sharp = (await import('sharp')).default;
   const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
-  const { clientPreviewUrl, siteOrigin } = input;
-  const tier = normalizeHairstyleAnalysisCardTier(analysis.tier);
+  const { templateUrl, clientPreviewUrl, siteOrigin } = input;
 
   const fal = await createHairstyleAnalysisFalClient(falKey);
 
   const [templateBuf, fields, overlayValues, hairImages] = await Promise.all([
-    renderBuiltCardChrome(tier, siteOrigin),
+    renderReferenceTemplateBase(templateUrl, siteOrigin, analysis),
     Promise.resolve(getLayoutFieldsForAnalysis(analysis)),
     Promise.resolve(buildServerOverlayValues(analysis)),
     generateHairstyleHairImages(fal, analysis, clientPreviewUrl, siteOrigin),
@@ -139,8 +137,8 @@ export async function generateHairstyleAnalysisComposite(
   const tierLabel = analysis.tier.replace(/_/g, ' ');
   return {
     imageUrl,
-    prompt: `Fal GPT Image 2 hair on ${hairCount} photo slot(s), then sharp composite on code-built ${tierLabel} card chrome — Futura labels + values, gray match scores, CBYG overall %, stars.`,
-    model: 'built-template+fal-hair',
+    prompt: `Fal GPT Image 2 hair (${hairCount} slot(s), medium, 3:4 portrait edits) + sharp composite on reference ${tierLabel} template PNG (2048×2560) — values, gray match scores, CBYG overall %, stars only.`,
+    model: 'reference-template+fal-hair',
     imageSize: HAIRSTYLE_ANALYSIS_CANVAS,
     quality: 'medium',
     renderMode: 'composite',
