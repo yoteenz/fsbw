@@ -132,7 +132,9 @@ export default function HairstyleAnalysisCard({
                     ? styles.ratingText
                     : field.id === 'clientName'
                       ? styles.clientNameText
-                      : undefined
+                      : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
+                        ? styles.matchScoreText
+                        : undefined
               }
             />
           </AnalysisOverlaySlot>

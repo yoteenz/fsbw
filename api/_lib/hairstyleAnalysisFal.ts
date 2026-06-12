@@ -205,6 +205,13 @@ function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
 
+/** Template + client only (matches OpenArt minimal attachments). Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false to attach mannequin/styling refs. */
+export function hairstyleAnalysisFalMinimalImageRefs(): boolean {
+  const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS?.trim().toLowerCase();
+  if (raw === 'false' || raw === '0' || raw === 'no') return false;
+  return true;
+}
+
 export type GenerateHairstyleAnalysisFalInput = {
   analysis: FalHairstyleAnalysis;
   templateUrl: string;
@@ -241,14 +248,23 @@ export async function generateHairstyleAnalysisWithFal(
   );
 
   const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
-  const mannequinRefs = collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3);
-  const mannequinUrls = await Promise.all(
-    mannequinRefs.map((ref) => resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`))
-  );
+  const minimalRefs = hairstyleAnalysisFalMinimalImageRefs();
+  const mannequinRefs = minimalRefs ? [] : collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3);
+  const mannequinUrls = minimalRefs
+    ? []
+    : await Promise.all(
+        mannequinRefs.map((ref) =>
+          resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`)
+        )
+      );
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
-  const stylingRefs = collectStylingRefsForAnalysis(allLooks, 3 + mannequinRefs.length);
-  const stylingUrls = await Promise.all(stylingRefs.map((ref) => resolveStylingRefForFal(fal, ref)));
+  const stylingRefs = minimalRefs
+    ? []
+    : collectStylingRefsForAnalysis(allLooks, 3 + mannequinRefs.length);
+  const stylingUrls = minimalRefs
+    ? []
+    : await Promise.all(stylingRefs.map((ref) => resolveStylingRefForFal(fal, ref)));
 
   const imageUrls = [templateUrl, clientUrl, ...mannequinUrls, ...stylingUrls];
   const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs, stylingRefs });

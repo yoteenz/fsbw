@@ -104,6 +104,12 @@
   text-align: center;
 }
 
+.matchScoreText {
+  font-size: clamp(5px, 2.4cqw, 10px);
+  font-weight: 500;
+  color: #808080;
+}
+
 .ratingText {
   font-size: clamp(5px, 2.8cqw, 11px);
   font-weight: 600;
