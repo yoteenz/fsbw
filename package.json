@@ -28,7 +28,6 @@
     "lobby:bake-shelves": "node scripts/lobby-bake-shelf-assets.mjs",
     "lounge:bake-salon-chairs": "node scripts/lounge-bake-salon-chairs-asset.mjs",
     "lounge:bake-tv-design": "node scripts/lounge-bake-tv-design-asset.mjs",
-    "hairstyle-analysis:sync-blueprint": "npx tsx -e \"import { writeFileSync } from 'fs'; import { getCardBlueprint, pixelRectToPercent, CARD_CANVAS } from './api/_lib/hairstyleAnalysisCardBlueprint.ts'; const tiers=['free','three_month','six_month','twelve_month']; const out={canvas:CARD_CANVAS,tiers:{}}; for (const t of tiers) { const bp=getCardBlueprint(t); out.tiers[t]={fields:bp.fields.map(f=>({...f,rect:pixelRectToPercent(f.rect)}))}; } writeFileSync('src/data/hairstyleAnalysisCardBlueprint.json', JSON.stringify(out,null,2));\"",
     "lounge:bake-tv-animation-crop": "node scripts/lounge-bake-tv-animation-crop.mjs",
     "lobby:bake-payment-icons": "node scripts/lobby-bake-payment-icons.mjs",
     "lobby:bake-case-prop-overlays": "node scripts/lobby-bake-case-prop-overlays.mjs",

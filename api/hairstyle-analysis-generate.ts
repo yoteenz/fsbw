@@ -7,8 +7,10 @@ import {
   effectiveHairstyleAnalysisTierForRequest,
   resolveHairstyleAnalysisEntitlement,
 } from './_lib/hairstyleAnalysisEntitlement.js';
-import type { GenerateHairstyleAnalysisFalInput } from './_lib/hairstyleAnalysisFal.js';
-import { generateHairstyleAnalysis } from './_lib/hairstyleAnalysisGenerate.js';
+import {
+  generateHairstyleAnalysisWithFal,
+  type GenerateHairstyleAnalysisFalInput,
+} from './_lib/hairstyleAnalysisFal.js';
 import type { FalHairstyleAnalysis } from './_lib/hairstyleAnalysisFalPrompt.js';
 import { hairstyleAnalysisTemplateUrlForTier } from './_lib/hairstyleAnalysisTemplates.js';
 import {
@@ -44,7 +46,6 @@ function readLook(raw: unknown): FalHairstyleAnalysis['topMatch'] | null {
   const rating = typeof o.rating === 'number' ? o.rating : Number(o.rating);
   const rank = typeof o.rank === 'number' ? o.rank : Number(o.rank);
   if (!Number.isFinite(score) || !Number.isFinite(rating) || !Number.isFinite(rank)) return null;
-  const imageUrl = readString(o, 'imageUrl');
   return {
     rank,
     unit: readString(o, 'unit') || 'NOIR',
@@ -58,7 +59,6 @@ function readLook(raw: unknown): FalHairstyleAnalysis['topMatch'] | null {
     styling: readString(o, 'styling') || 'NONE',
     score,
     rating,
-    ...(imageUrl ? { imageUrl } : {}),
   };
 }
 
@@ -200,7 +200,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   parsed.siteOrigin = siteOriginFromRequest(req);
 
   try {
-    const result = await generateHairstyleAnalysis(parsed);
+    const result = await generateHairstyleAnalysisWithFal(parsed);
     res.status(200).json({
       ok: true,
       ...result,
