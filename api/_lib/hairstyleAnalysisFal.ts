@@ -1,5 +1,7 @@
 import {
   buildHairstyleAnalysisFalPrompt,
+  HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH,
+  HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH,
   type FalHairstyleAnalysis,
 } from './hairstyleAnalysisFalPrompt.js';
 
@@ -114,12 +116,16 @@ export async function generateHairstyleAnalysisWithFal(
     'client-preview'
   );
 
+  const origin = input.siteOrigin.replace(/\/$/, '');
+  const emptyStarUrl = `${origin}${HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH}`;
+  const filledStarUrl = `${origin}${HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH}`;
+
   const prompt = buildHairstyleAnalysisFalPrompt(input.analysis);
 
   const result = await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
     input: {
       prompt,
-      image_urls: [templateUrl, clientUrl],
+      image_urls: [templateUrl, clientUrl, emptyStarUrl, filledStarUrl],
       image_size: HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE,
       quality: HAIRSTYLE_ANALYSIS_GPT2_QUALITY,
       output_format: 'png',

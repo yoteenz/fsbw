@@ -62,11 +62,6 @@ function formatScore(score: number): string {
   return `${Math.round(score)}%`;
 }
 
-function formatStars(rating: number): string {
-  const n = Math.min(5, Math.max(0, Math.round(rating)));
-  return '★'.repeat(n) + (n < 5 ? '☆'.repeat(5 - n) : '');
-}
-
 function topMatchBlock(look: FalAnalysisLook): string[] {
   return [
     `TEXTURE: ${look.unit}`,
@@ -101,7 +96,10 @@ function portfolioLine(rank: number, look: FalAnalysisLook): string {
 }
 
 const BRAND_RED = '#EB1C24';
-const BRAND_GRAY = '#808080';
+
+/** Public site paths — resolved to absolute URLs in hairstyleAnalysisFal.ts (images 3 & 4). */
+export const HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
+export const HAIRSTYLE_ANALYSIS_STAR_FILLED_PATH = '/assets/NOIR/filled-star.png';
 
 const TEMPLATE_RULES = [
   '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',
@@ -117,7 +115,12 @@ const TEMPLATE_RULES = [
   '',
   '=== BRAND TYPOGRAPHY & COLORS ===',
   `OVERALL SCORE VALUE ONLY: brand red ${BRAND_RED}, font "COVERED BY YOUR GRACE", uppercase, large accent number (e.g. 98%).`,
-  `MATCH RATING STARS ONLY: brand gray ${BRAND_GRAY} — NOT RED. Use filled/outline star glyphs in gray only.`,
+  '=== MATCH RATING STARS — WEBSITE STYLE (IMAGES 3 & 4) ===',
+  'IMAGE 3 = EMPTY STAR REFERENCE: white fill inside the star, thin black border/outline (Frontal Slayer site style).',
+  `IMAGE 4 = FILLED STAR REFERENCE: solid brand red ${BRAND_RED} fill, thin black border (Frontal Slayer site style).`,
+  'IN THE MATCH RATING BOX: draw exactly 5 small five-point stars in a row — copy the shape from images 3 & 4.',
+  'FILLED RATING STARS = red background like image 4. EMPTY RATING STARS = white background + black border like image 3.',
+  'NO yellow stars, NO gray stars, NO emoji ★ characters — only the website star icons described above.',
   'ALL OTHER POPULATED VALUES (specs, portfolio text, why lines, client name): black uppercase Futura PT Medium style.',
   'CLIENT NAME above preview: brand red ' + BRAND_RED + ', uppercase.',
   '',
@@ -136,18 +139,35 @@ const TEMPLATE_RULES = [
   'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — EVERY VALUE FILLED, NO BLANK PLACEHOLDERS.',
 ].join('\n');
 
+function describeMatchRatingStars(rating: number): string {
+  const filled = Math.min(5, Math.max(0, Math.round(rating)));
+  const empty = 5 - filled;
+  return [
+    `MATCH RATING — ${filled} filled + ${empty} empty stars (left to right):`,
+    filled > 0
+      ? `  FILLED (×${filled}): brand red ${BRAND_RED} star with black border — match IMAGE 4.`
+      : '',
+    empty > 0
+      ? `  EMPTY (×${empty}): white star with black border — match IMAGE 3.`
+      : '',
+    'Render as 5 separate small star icons in the MATCH RATING box, not text glyphs.',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 function scoreAndRatingLines(top: FalAnalysisLook): string[] {
   return [
     `OVERALL SCORE (COVERED BY YOUR GRACE, ${BRAND_RED}): ${formatScore(top.score)}`,
-    `MATCH RATING (STARS IN ${BRAND_GRAY} ONLY — NOT RED): ${formatStars(top.rating)}`,
+    describeMatchRatingStars(top.rating),
   ];
 }
 
 const PROMPT_FOOTER = [
   '',
   '=== FINAL CHECK ===',
-  'ROSES: UNCHANGED FROM TEMPLATE. STARS: GRAY #808080. SCORE: RED #EB1C24 IN COVERED BY YOUR GRACE.',
-  'ONE CLIENT FACE ONLY (CLIENT PREVIEW). NO OTHER PEOPLE ANYWHERE ON THE CARD.',
+  `ROSES: UNCHANGED FROM TEMPLATE. STARS: RED ${BRAND_RED} FILLED + WHITE/BLACK-BORDER EMPTY (WEBSITE STYLE).`,
+  'SCORE: RED #EB1C24 IN COVERED BY YOUR GRACE. ONE CLIENT FACE ONLY (CLIENT PREVIEW).',
 ].join('\n');
 
 function freePrompt(analysis: FalHairstyleAnalysis): string {
