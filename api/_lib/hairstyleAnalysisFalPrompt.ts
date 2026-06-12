@@ -125,6 +125,16 @@ function matchThumbnailBlock(
     .join('\n');
 }
 
+function whyItWorksRulesBlock(): string {
+  return [
+    '=== WHY IT WORKS LINES (PRINT VERBATIM — NO REWRITES) ===',
+    'Each WHY IT WORKS LINE is a short fit note for this client — print it exactly as given.',
+    'Tone: factual stylist notes (inspo match, face shape, undertone, length, texture compare).',
+    'FORBIDDEN: empowerment slogans, "every detail matters" fluff, generic compliments, or AI filler.',
+    'Do not invent extra why lines or merge lines together.',
+  ].join('\n');
+}
+
 function blankScoreAndRatingRules(): string {
   return [
     '=== OVERALL SCORE + MATCH RATING — LEAVE BLANK (SERVER OVERLAY ONLY) ===',
@@ -175,6 +185,10 @@ function buildTemplateRules(refs: { mannequinRefs: MannequinRefIndex[] }): strin
     blankScoreAndRatingRules(),
     '',
     mannequinList,
+    '',
+    '=== ADDITIONAL MATCHES — VARIED STYLING ===',
+    'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
+    'Apply the assigned styling on every additional-match thumbnail (not raw mannequin texture).',
     '',
     '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
@@ -245,9 +259,13 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: Manne
     '',
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
-  analysis.whyItWorks.forEach((line, i) => {
-    lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
-  });
+  if (analysis.whyItWorks.length > 0) {
+    lines.push('');
+    lines.push(whyItWorksRulesBlock());
+    analysis.whyItWorks.forEach((line, i) => {
+      lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
+    });
+  }
   lines.push(PROMPT_FOOTER);
   return lines.join('\n');
 }
@@ -312,19 +330,25 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs
     '',
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
-    'STYLE PORTFOLIO GRID — FILL ALL 9 ALTERNATIVES (THUMBNAIL + COLOR + LENGTH + MATCH SCORE):',
+    'STYLE PORTFOLIO GRID — FILL ALL 9 ALTERNATIVES (THUMBNAIL + TEXTURE + COLOR + LENGTH + STYLE + MATCH SCORE):',
   ];
   analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
     const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
     lines.push(`${label}:`);
+    lines.push(`  TEXTURE: ${alt.unit}`);
     lines.push(`  ${colorWithHexLine(alt)}`);
     lines.push(`  LENGTH: ${displayLength(alt.length)}`);
+    lines.push(`  STYLE: ${displayStyle(alt.styling)}`);
     lines.push(`  ${matchScoreFalLine(alt)}`);
     lines.push(matchThumbnailBlock(`  ${label}`, alt, refs));
   });
-  analysis.whyItWorks.forEach((line, i) => {
-    lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
-  });
+  if (analysis.whyItWorks.length > 0) {
+    lines.push('');
+    lines.push(whyItWorksRulesBlock());
+    analysis.whyItWorks.forEach((line, i) => {
+      lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
+    });
+  }
   lines.push(PROMPT_FOOTER);
   return lines.join('\n');
 }
