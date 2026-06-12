@@ -163,7 +163,7 @@ function salonStylingPriorityBlock(): string {
     '=== SALON STYLING — EACH MATCH HAS ITS OWN STYLE (CRITICAL) ===',
     'Every look has a distinct STYLE value (LAYERS, FLAT IRON, CRIMPS, WAND CURLS, DEFINE, or NONE).',
     'When STYLE is not NONE: the matching BAW styling reference IMAGE is the **authoritative** salon finish for that look.',
-    'Unit mannequin IMAGE = strand texture + one-shoulder drape only — **not** the salon finish when a styling IMAGE is assigned.',
+    'Unit mannequin IMAGE (when attached) = hair-strand texture + hair-end drape only — **not** neck/shoulders and **not** the salon finish when a styling IMAGE is assigned.',
     'FORBIDDEN: rendering every match with the same layered/wavy finish; printing LAYERS in STYLE when the assigned style is FLAT IRON, CRIMPS, WAND CURLS, or DEFINE;',
     'using the TOP MATCH hairstyle on MATCH 02–04 thumbnails.',
     'Curly units (SOFT CURL, OCEAN CURL): STYLE **DEFINE** replaces LAYERS; **WAND CURLS** replaces CRIMPS — print and render those ids exactly.',
