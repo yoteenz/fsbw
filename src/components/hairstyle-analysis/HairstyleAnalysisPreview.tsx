@@ -533,7 +533,7 @@ export default function HairstyleAnalysisPreview({
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
                     Drag slot handles to reposition overlays. Tap Save layout to persist per tier.
-                    Generate uses GPT Image 2 for photos, TOP MATCH specs, overall score %, and stars; server overlays symmetrical client-photo bottom fade and MATCH 02–04 row values.
+                    Generate uses GPT Image 2 for photos, TOP MATCH specs, overall score %, stars, every detail matters, and MATCH 02–04 row values; server applies only the symmetrical client-photo bottom fade.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
