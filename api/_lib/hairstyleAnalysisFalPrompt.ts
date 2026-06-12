@@ -1,6 +1,6 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Overall score %, match-rating stars, and MATCH 02–04 row values are server-composited after Fal.
+ * Client photo bottom fade, overall score %, match-rating stars, and MATCH 02–04 row values are server-composited after Fal.
  * TOP MATCH specs, photos, and every-detail-matters rows are generated in-image by Fal.
  */
 
@@ -202,7 +202,8 @@ function clientPhotoFramingBlock(panelLabel: string): string {
     'FRAMING: tight beauty portrait — head, hair, neck, and upper chest ONLY. Face is the hero; center the face horizontally and vertically in the photo cutout.',
     'CROP IN by zooming on the face — show from just above the hairline down to upper chest / collarbone. Cut off at shoulders or higher.',
     'Use cover-style placement inside the panel cutout: scale IMAGE 2 so the face fills the frame; crop away sides and bottom — do NOT stretch or extend the image downward.',
-    'BOTTOM EDGE: if the crop does not reach the panel bottom, let the lower area fade softly into the panel (white/acrylic) — NEVER paint, invent, or extend new body, torso, dress, top, straps, sequins, or jewelry to fill empty space.',
+    'BOTTOM EDGE: hard crop only — let the lower body fall outside the frame. Do NOT paint white clouds, mist, fog, gradients, fades, or acrylic fill at the bottom.',
+    'Server applies a fixed symmetrical bottom fade after generation — never invent a soft edge, cloudy overlay, or panel fill.',
     'FORBIDDEN: repainting the bottom half of the photo, hallucinated clothing, invented outfits, extended torso, new neckline, new accessories, or outpainting below what exists in IMAGE 2.',
     'PRESERVE only clothing/jewelry already visible in IMAGE 2 at the crop boundary — do not redesign, recolor, or extend garments. Change HAIR ONLY.',
     'KEEP the exact face, skin tone, age, expression, and camera angle from IMAGE 2 — same person, same likeness.',
@@ -474,7 +475,7 @@ function buildTemplateRules(
           faceIdentityLockBlock(),
           'Main client preview + every match thumbnail: tight face-centered portrait crop from IMAGE 2.',
           'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
-          'If the crop leaves empty space at the bottom, use a soft fade into the panel — NOT generated outfit/fabric.',
+          'Do NOT paint clouds, mist, fog, or bottom fades — server masks the photo edge after generation.',
           'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
           'Same framing standard on 3-month, 6-month, and 12-month templates — every generation must match this rule.',
         ];
@@ -569,7 +570,7 @@ function promptFooter(analysis: FalHairstyleAnalysis): string {
     'CLIENT PANEL: tight face-centered portrait crop — head/neck/upper chest only; never repaint clothing on the bottom half.',
     'FACE LOCK: exact face from IMAGE 2 — hair edits only; never repaint facial skin or features.',
     'NECK/SHOULDERS: keep IMAGE 2 neck and collarbone anatomy — no mannequin neck bleed.',
-    'PHOTO FRAMING: zoom on face, crop out lower body; soft bottom fade OK — invented outfits/clothing FORBIDDEN.',
+    'PHOTO FRAMING: zoom on face, crop out lower body; no Fal bottom fade/cloud/mist — server symmetrical mask only.',
     'TIER SUBTITLE: erased — no month/tier analysis label visible.',
     'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
     'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',

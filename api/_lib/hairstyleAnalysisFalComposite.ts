@@ -1,5 +1,6 @@
 import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
-import { resolveTopScoreSlot } from './hairstyleAnalysisCompositeLayout.js';
+import { resolveClientImageSlotOrDefault, resolveTopScoreSlot } from './hairstyleAnalysisCompositeLayout.js';
+import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import {
   MATCH_RATING_STAR_RECTS,
@@ -121,15 +122,23 @@ function buildMatchRowOverlaySvg(analysis: FalHairstyleAnalysis): Buffer | null 
   return buildTextPathsSvg(pathItems);
 }
 
-/** Overlay overall score %, match-rating stars, and MATCH 02–04 row values (Fal leaves those blank). */
+/** Overlay client photo fade, overall score %, match-rating stars, and MATCH 02–04 row values. */
 export async function compositeHairstyleAnalysisMatchRows(
   falImageUrl: string,
+  templateImageUrl: string,
   analysis: FalHairstyleAnalysis,
   siteOrigin: string,
   layoutOverrides?: CompositeLayoutOverrides
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
-  const baseBuf = await fetchBuffer(falImageUrl);
+  const [falBuf, templateBuf] = await Promise.all([
+    fetchBuffer(falImageUrl),
+    fetchBuffer(templateImageUrl),
+  ]);
+
+  const clientRect = resolveClientImageSlotOrDefault(layoutOverrides);
+  const fadedBase = await applyClientPhotoBottomFade(falBuf, templateBuf, clientRect);
+
   const svgOverlays: Buffer[] = [
     buildOverallScoreOverlaySvg(analysis.topMatch.score, layoutOverrides),
   ];
@@ -146,5 +155,5 @@ export async function compositeHairstyleAnalysisMatchRows(
     ...starOverlays,
   ];
 
-  return sharp(baseBuf).composite(compositeLayers).png().toBuffer();
+  return sharp(fadedBase).composite(compositeLayers).png().toBuffer();
 }

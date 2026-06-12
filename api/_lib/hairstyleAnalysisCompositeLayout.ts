@@ -1,4 +1,5 @@
 import {
+  CLIENT_IMAGE_SLOT,
   HAIRSTYLE_ANALYSIS_CANVAS,
   RATING_SLOT,
   TOP_SCORE_SLOT,
@@ -52,6 +53,7 @@ function mergePercentRect(base: PercentRect, override?: PercentSlotOverride): Pe
 
 const TOP_SCORE_PERCENT: PercentRect = { left: '54.7%', top: '16%', width: '9.7%', height: '5.8%' };
 const RATING_PERCENT: PercentRect = { left: '69.3%', top: '16%', width: '9.7%', height: '5.8%' };
+const CLIENT_IMAGE_PERCENT: PercentRect = { left: '4%', top: '14%', width: '44.5%', height: '68.5%' };
 
 function matchRowScorePercent(blockTop: number): PercentRect {
   return { left: '60.5%', top: `${blockTop + 6.4}%`, width: '30%', height: '1.7%' };
@@ -89,6 +91,18 @@ export function resolveTopScoreSlot(overrides?: CompositeLayoutOverrides): Pixel
 
 export function resolveRatingSlot(overrides?: CompositeLayoutOverrides): PixelRect {
   return resolveCompositeSlotRect('rating', 'free', overrides) ?? RATING_SLOT;
+}
+
+export function resolveClientImageSlot(overrides?: CompositeLayoutOverrides): PixelRect {
+  const merged = mergePercentRect(CLIENT_IMAGE_PERCENT, overrides?.clientImage);
+  return pctRect(merged.left, merged.top, merged.width, merged.height);
+}
+
+export function resolveClientImageSlotOrDefault(overrides?: CompositeLayoutOverrides): PixelRect {
+  if (overrides?.clientImage && Object.keys(overrides.clientImage).length > 0) {
+    return resolveClientImageSlot(overrides);
+  }
+  return CLIENT_IMAGE_SLOT;
 }
 
 export function matchScoreSlotIds(tier: FalHairstyleAnalysis['tier']): string[] {
