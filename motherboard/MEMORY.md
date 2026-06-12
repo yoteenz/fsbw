@@ -27585,3 +27585,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said generation should again produce **every detail matters** text, **MATCH 02–04 row values** (texture, color, length), and **gray match score %** (`#808080`) in-image like before. Server overlay for match rows was putting text on the wrong row / overlapping thumbnails.
 - **Shipped:** Removed MATCH 02–04 server text overlay from **`hairstyleAnalysisFalComposite.ts`** — renamed post-process to **`compositeHairstyleAnalysisPostProcess`** (client-photo bottom fade only). **`hairstyleAnalysisFalPrompt.ts`** — **`matchRowValuesFalRules()`**, **`matchScoreFalLine()`** prints texture/color/length black + gray score %; **`matchScoreManifestBlock`** mandates in-image row values; **`appendEveryDetailMattersLines`** added to premium **`threeMonthPrompt`**. **`hairstyleAnalysisDemo.ts`** — **`WHY_DETAIL_LINES`** for all tiers (not free-only). **`docs/STYLE_ANALYSIS.md`**, **`HairstyleAnalysisPreview.tsx`**, **`CORE.md`** updated.
 - **Conventions:** Fal in-image = TOP MATCH specs, overall score %, stars, every detail matters, MATCH 02–04 values (gray score %), photos. Server = symmetrical client-photo bottom fade only.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: photo fade debug square
+
+- **Context:** User reported client-photo bottom fade still misaligned with the panel (shifted too far left). Wanted a colored debug square on the overlay debug panel — like text slots — to mark exactly where the fade mask should apply.
+- **Shipped:** New **`fadeDebug`** field **`clientPhotoFade`** (cyan semi-transparent square + bottom gradient hint) in **`hairstyleAnalysisTemplateLayouts.ts`** / **`HairstyleAnalysisCard`** — visible when Debug slot frames is on; draggable like other slots. **`CLIENT_PHOTO_FADE_PERCENT`** explicit default in **`hairstyleAnalysisLayoutSlots.ts`**. **`resolveClientPhotoFadeSlotOrDefault`** prefers **`clientPhotoFade`** slotOverrides. Generate sends saved **`slotOverrides`** from debug panel to server composite. Debug copy updated in **`HairstyleAnalysisPreview.tsx`**.
+- **Conventions:** Calibrate fade via cyan **photo fade** debug square → Save layout → Generate; **`clientPhotoFade`** in saved JSON is the fade mask rect.
