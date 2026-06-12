@@ -112,13 +112,32 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
   return `Apply BAW salon styling ${style} only — do not invent a new curl, crimp, or straight pattern.`;
 }
 
+function clientPhotoFramingBlock(panelLabel: string): string {
+  return [
+    `=== ${panelLabel} — TIGHT FACE PORTRAIT CROP (CRITICAL — SAME ON EVERY TIER) ===`,
+    'FRAMING: tight beauty portrait — head, hair, neck, and upper chest ONLY. Face is the hero; center the face horizontally and vertically in the photo cutout.',
+    'CROP IN by zooming on the face — show from just above the hairline down to upper chest / collarbone. Cut off at shoulders or higher.',
+    'Use cover-style placement inside the panel cutout: scale IMAGE 2 so the face fills the frame; crop away sides and bottom — do NOT stretch or extend the image downward.',
+    'BOTTOM EDGE: if the crop does not reach the panel bottom, let the lower area fade softly into the panel (white/acrylic) — NEVER paint, invent, or extend new body, torso, dress, top, straps, sequins, or jewelry to fill empty space.',
+    'FORBIDDEN: repainting the bottom half of the photo, hallucinated clothing, invented outfits, extended torso, new neckline, new accessories, or outpainting below what exists in IMAGE 2.',
+    'PRESERVE only clothing/jewelry already visible in IMAGE 2 at the crop boundary — do not redesign, recolor, or extend garments. Change HAIR ONLY.',
+    'KEEP the exact face, skin tone, age, expression, and camera angle from IMAGE 2 — same person, same likeness.',
+    'This tight face-focused crop is mandatory for free, 3-month, 6-month, and 12-month cards — identical framing standard every generation.',
+  ].join('\n');
+}
+
+function matchThumbnailFramingBlock(): string {
+  return [
+    'THUMBNAIL FRAMING: even tighter than main preview — face + neck + hair only; crop at shoulders or above.',
+    'Square crop centered on the face. Do NOT invent clothing, neckline, or body below the chin/jaw.',
+    'Use only pixels from IMAGE 2 — zoom/crop inward; never outpainting or repainting the lower half.',
+  ].join('\n');
+}
+
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
-    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — FULL BLEED, STYLED TOP MATCH ===',
-    'Scale IMAGE 2 to COMPLETELY FILL the large client preview panel edge-to-edge (top, bottom, left, right).',
-    'NO inner padding, NO inset crop, NO letterboxing, NO margins — photo must touch all four inner edges of the panel border.',
-    'Use cover-style scaling: center the client face; crop overflow at edges if needed, but the panel must look full, not a smaller photo floating inside.',
-    'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 2.',
+    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — TIGHT FACE PORTRAIT + STYLED TOP MATCH ===',
+    clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
     realisticHairRecolorBlock(),
     realisticHairDensityBlock(displayDensity(look.density)),
@@ -153,6 +172,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   return [
     `${label} THUMBNAIL (small square on template):`,
     '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
+    matchThumbnailFramingBlock(),
     `- TEXTURE: ${look.unit}`,
     realisticHairRecolorBlock(),
     colorHairGuidanceLine(look),
@@ -315,10 +335,17 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
     'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
+    '=== CLIENT PHOTOS — TIGHT FACE CROP ON EVERY TIER (CRITICAL) ===',
+    'Main client preview + every match thumbnail: tight face-centered portrait crop from IMAGE 2.',
+    'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
+    'If the crop leaves empty space at the bottom, use a soft fade into the panel — NOT generated outfit/fabric.',
+    'Same framing standard on free, 3-month, 6-month, and 12-month templates — every generation must match this rule.',
+    '',
     '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
+    'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
     'Use the matching 3D mannequin image (listed above) as the hair texture reference for that unit.',
-    'NEVER use back-of-head stock photos, different people, or hair-only swatches without the client face.',
+    'NEVER use back-of-head stock photos, different people, hair-only swatches, or repainted lower-body clothing.',
     '',
     'TOP MATCH spec values, match row texture/color/length/style, portfolio lines, and every-detail-matters lines: black uppercase Futura PT Medium.',
     'ALL score percentages (overall + every match row): LEAVE BLANK — server overlay only.',
@@ -363,7 +390,8 @@ const PROMPT_FOOTER = [
   '',
   '=== FINAL CHECK ===',
   'PILL: first name replaces "CLIENT PREVIEW" inside the tab — not below it.',
-  'CLIENT PANEL: selfie fills entire panel edge-to-edge — no inset crop or floating photo.',
+  'CLIENT PANEL: tight face-centered portrait crop — head/neck/upper chest only; never repaint clothing on the bottom half.',
+  'PHOTO FRAMING: zoom on face, crop out lower body; soft bottom fade OK — invented outfits/clothing FORBIDDEN.',
   'TIER SUBTITLE: erased — no month/tier analysis label visible.',
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
   'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',
