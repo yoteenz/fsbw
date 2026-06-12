@@ -397,7 +397,7 @@ export default function HairstyleAnalysisPreview({
                 }}
                 disabled={generating}
                 className="border border-black bg-white px-2 py-2 text-black text-[11px]"
-                placeholder="/assets/… or https://…"
+                placeholder="/assets/… or https://… (use Upload for large photos)"
               />
             </label>
             {uploadError ? (
