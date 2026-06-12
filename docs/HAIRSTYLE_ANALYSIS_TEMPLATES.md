@@ -21,10 +21,12 @@ Demo: `/tools/hairstyle-analysis`
 
 | Tier | Overlay fields |
 |------|----------------|
-| **free** | `clientName`, `clientImage`, `topScore`, `rating`, `topBullet-0…7`, `specTexture…specStyle`, `whyLine-0…4` |
-| **three_month** | `clientName`, `clientImage`, `topMatchBlock`, `altBlock-0…2` |
-| **six_month** | `clientName`, `clientImage`, `topMatchBlock`, `portfolioLine-0…6` |
-| **twelve_month** | `clientName`, `clientImage`, `topScore`, `rating`, `topMatchBlock`, `spec*`, `altBlock-0…8`, `whyLine-0…9` |
+| **free** | `clientName`, `clientImage`, `topScore`, `rating`, `specTexture…specStyle`, `whyLine-0…4` |
+| **three_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `match2…4-{texture,color,length,score}`, thumbs |
+| **six_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `portfolio-0…4-{texture,color,length,score}`, thumbs |
+| **twelve_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `alt-0…8-{color,length,score}`, thumbs, `whyLine-0…9` |
+
+Templates are **2048×2560 (4:5)**. Slot `%` positions in `hairstyleAnalysisTemplateLayouts.ts` are calibrated to those assets — enable **Debug** on the demo page to fine-tune.
 
 Slot coordinates: `src/utils/hairstyleAnalysisTemplateLayouts.ts`  
 Value builders: `src/utils/hairstyleAnalysisOverlayContent.ts`

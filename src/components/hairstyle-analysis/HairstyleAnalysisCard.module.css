@@ -4,6 +4,7 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background-color: #fff;
+  container-type: inline-size;
 }
 
 .templateBg {
@@ -11,7 +12,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
   pointer-events: none;
   user-select: none;
 }
@@ -66,14 +67,17 @@
   margin: 0;
   width: 100%;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, 'Avenir Next', Montserrat, sans-serif;
-  font-size: clamp(5px, 1.35vw, 8px);
-  line-height: 1.25;
-  letter-spacing: 0.12em;
+  font-size: clamp(4px, 2.65cqw, 10px);
+  line-height: 1.15;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #1a1a1a;
   background: transparent;
   border: none;
   outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .overlayEditable {
@@ -88,20 +92,20 @@
 }
 
 .clientNameText {
-  font-size: clamp(6px, 1.5vw, 9px);
-  letter-spacing: 0.2em;
+  font-size: clamp(5px, 3cqw, 11px);
+  letter-spacing: 0.16em;
   color: #eb1c24;
 }
 
 .scoreText {
-  font-size: clamp(7px, 1.8vw, 10px);
+  font-size: clamp(5px, 2.8cqw, 11px);
   font-weight: 600;
   color: #eb1c24;
   text-align: center;
 }
 
 .ratingText {
-  font-size: clamp(7px, 1.8vw, 10px);
+  font-size: clamp(5px, 2.8cqw, 11px);
   font-weight: 600;
   text-align: center;
 }
