@@ -62,7 +62,7 @@ export default function HairstyleAnalysisCard({
       data-tier={analysis.tier}
     >
       <img
-        src="/assets/marble-half.png"
+        src={analysis.templateUrl}
         alt=""
         className={styles.templateBg}
         crossOrigin="anonymous"
