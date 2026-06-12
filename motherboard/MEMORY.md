@@ -27399,3 +27399,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Genome lives under **`docs/architecture/`** (9 files) + **`docs/testing/`** (2 files). Master index **`PRODUCT_GENOME_INDEX.md`**; motherboard reconciliation, topology, route catalog, product/pricing genome, integration + API registries, state ownership, AI pipeline map, full test matrix, release gates. Evidence classes: motherboard-backed, code-backed, db-backed, runtime-verified, verify-first, legacy, planned. Key P0 remaining: rotate keys + history scrub; server-priced checkout incomplete (BAW/BCF/gift). Key P1: `AccountRouteGuard` localStorage trust, `session-restore` CORS/token, API typecheck, in-memory rate limits, BEACH WAVE price mismatch ($780 vs $760). Genome replaces stale **`motherboard/CODEBASE.md`** for architecture truth until snapshot refresh.
 - **Changes:** `docs/architecture/*.md` (9), `docs/testing/FULL_GENOME_TEST_MATRIX.md`, `docs/testing/RELEASE_GATE_PRODUCT_GENOME.md`. Committed **`59f56e37`**, pushed **`master`** + **`preview/mobile`**. No application code changes in genome pass.
 - **Conventions:** Use genome docs + evidence classes for testing/release planning; reconcile motherboard claims against code before trusting; three remediation phases — (1) security/launch blockers, (2) catalog/source-of-truth, (3) test automation/release gates per **`RELEASE_GATE_PRODUCT_GENOME.md`**.
+
+---
+
+## 2026-06-12 — Product Genome interconnection tables
+
+- **Context (continued):** After full Product Genome Map (`59f56e37`), user asked for **tables showing how everything is interconnected**.
+- **Shipped:** **`docs/architecture/INTERCONNECTION_MATRIX.md`** — 19 sections: master node catalog, layer stack, domain cross-walk matrix, commerce chain, product↔pricing wiring, auth/session, BAW subgraph, AI pipeline, PSA, admin, Supabase table links, API clusters, sync triggers, route dependencies, test gaps, docs/env wiring, risk blast radius, planned canonical hubs. Linked from **`PRODUCT_GENOME_INDEX.md`**. No code changes.
