@@ -7,8 +7,8 @@ function normalizeTier(tier: AnalysisTier): Exclude<AnalysisTier, 'black'> {
 /** Calibrated against Supabase templates (2048×2560, 4:5). Values only — labels are baked into PNG. */
 const CLIENT_IMAGE = { left: '4%', top: '14%', width: '44.5%', height: '68.5%' };
 const CLIENT_NAME: TextSlot = { left: '7%', top: '11%', width: '32%', height: '2.5%' };
-const TOP_SCORE: TextSlot = { left: '56%', top: '15.8%', width: '10%', height: '3.5%' };
-const RATING: TextSlot = { left: '71%', top: '15.8%', width: '12%', height: '3.5%' };
+const TOP_SCORE: TextSlot = { left: '54.7%', top: '16%', width: '9.7%', height: '5.8%' };
+const RATING: TextSlot = { left: '69.3%', top: '16%', width: '9.7%', height: '5.8%' };
 
 const SPEC_LEFT = '72%';
 const SPEC_WIDTH = '21%';

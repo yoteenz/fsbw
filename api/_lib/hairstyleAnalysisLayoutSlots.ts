@@ -19,8 +19,9 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
   };
 }
 
-export const TOP_SCORE_SLOT = pctRect('56%', '15.8%', '10%', '3.5%');
-export const RATING_SLOT = pctRect('71%', '15.8%', '12%', '3.5%');
+/** Value boxes below OVERALL SCORE / MATCH RATING labels (calibrated on IMG_2447 @ 2048×2560). */
+export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
+export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
 const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [
