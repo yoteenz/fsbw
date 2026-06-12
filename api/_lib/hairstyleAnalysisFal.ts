@@ -1,4 +1,3 @@
-import { compositeMatchRatingStars } from './hairstyleAnalysisFalComposite.js';
 import {
   buildHairstyleAnalysisFalPrompt,
   HAIRSTYLE_ANALYSIS_STAR_EMPTY_PATH,
@@ -83,12 +82,6 @@ function extractFalImageUrl(result: unknown): string | null {
   );
 }
 
-async function downloadImageBuffer(url: string): Promise<Buffer> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to download Fal image (${res.status})`);
-  return Buffer.from(await res.arrayBuffer());
-}
-
 function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
@@ -152,17 +145,8 @@ export async function generateHairstyleAnalysisWithFal(
     logs: false,
   });
 
-  const rawImageUrl = extractFalImageUrl(result);
-  if (!rawImageUrl) throw new Error('Fal returned no image URL');
-
-  const rawBuf = await downloadImageBuffer(rawImageUrl);
-  const compositedBuf = await compositeMatchRatingStars(rawBuf, input.analysis.topMatch.rating);
-  const imageUrl = await uploadBufferToFal(
-    fal,
-    compositedBuf,
-    'hairstyle-analysis-composited.png',
-    'image/png'
-  );
+  const imageUrl = extractFalImageUrl(result);
+  if (!imageUrl) throw new Error('Fal returned no image URL');
 
   return {
     imageUrl,
