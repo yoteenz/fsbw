@@ -342,12 +342,19 @@ function SettingsPage() {
     } catch (_) {}
   };
 
-  const handleResetPasswordSubmit = () => {
+  const handleResetPasswordSubmit = async () => {
     setResetPasswordError('');
-    if (resetOldPassword.trim() !== accountPassword) {
-      setResetPasswordError('Current password is incorrect.');
+    if (!isSupabaseConfigured()) {
+      setResetPasswordError('Password changes require Supabase sign-in.');
       return;
     }
+    const supabase = getSupabase();
+    if (!supabase) {
+      setResetPasswordError('Sign in again to change your password.');
+      return;
+    }
+    const email = (userData?.email || '').trim().toLowerCase();
+    if (!email) return;
     if (resetNewPassword.trim().length === 0) {
       setResetPasswordError('Enter a new password.');
       return;
@@ -357,26 +364,24 @@ function SettingsPage() {
       return;
     }
     try {
-      const email = (userData?.email || '').trim().toLowerCase();
-      if (!email) return;
-      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const idx = registered.findIndex((u: any) => (u.email || '').trim().toLowerCase() === email);
-      if (idx === -1) return;
-      const newPassword = resetNewPassword.trim();
-      registered[idx] = { ...registered[idx], password: newPassword };
-      localStorage.setItem('registeredUsers', JSON.stringify(registered));
-      const current = localStorage.getItem('currentUser');
-      if (current) {
-        const parsed = JSON.parse(current);
-        if ((parsed.email || '').trim().toLowerCase() === email) {
-          localStorage.setItem('currentUser', JSON.stringify({ ...parsed, password: newPassword }));
-        }
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email,
+        password: resetOldPassword.trim(),
+      });
+      if (verifyError) {
+        setResetPasswordError('Current password is incorrect.');
+        return;
+      }
+      const { error: updateError } = await supabase.auth.updateUser({ password: resetNewPassword.trim() });
+      if (updateError) {
+        setResetPasswordError(updateError.message || 'Failed to update password.');
+        return;
       }
       setResetOldPassword('');
       setResetNewPassword('');
       setResetConfirmPassword('');
       setShowResetPasswordForm(false);
-    } catch (e) {
+    } catch {
       setResetPasswordError('Failed to update password.');
     }
   };
@@ -477,24 +482,6 @@ function SettingsPage() {
       setDeleteAccountError(displayMsg);
     }
   };
-
-  // Actual account password (from current user or registeredUsers) for reset-password validation
-  const accountPassword = (() => {
-    if (userData?.password) return String(userData.password);
-    try {
-      const email = userData?.email || (typeof window !== 'undefined' && (() => {
-        const u = localStorage.getItem('currentUser');
-        return u ? JSON.parse(u)?.email : null;
-      })());
-      if (email) {
-        const raw = localStorage.getItem('registeredUsers');
-        const list = raw ? JSON.parse(raw) : [];
-        const user = list.find((u: any) => (u.email || '').toLowerCase() === String(email).toLowerCase());
-        return user?.password != null ? String(user.password) : '';
-      }
-    } catch (_) {}
-    return '';
-  })();
 
   const SETTINGS_SOCIAL_KEY_TO_PLATFORM: Record<string, SocialPlatform> = {
     facebook: 'facebook',

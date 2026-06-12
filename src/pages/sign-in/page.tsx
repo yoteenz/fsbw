@@ -4,9 +4,9 @@ import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isAdminEmail, ensureAuthRestoredFromBackup, onSignInSuccess } from '../../utils/adminAuth';
-import { saveCartAndWishlistToUserKeys, swapCartAndWishlistToUser } from '../../utils/cartWishlistStorage';
-import { normalizeEmail, normalizePassword } from '../../utils/credentialNormalize';
+import { ensureAuthRestoredFromBackup, onSignInSuccess } from '../../utils/adminAuth';
+import { saveCartAndWishlistToUserKeys } from '../../utils/cartWishlistStorage';
+import { normalizeEmail } from '../../utils/credentialNormalize';
 import {
   getSupabase,
   isSupabaseConfigured,
@@ -25,27 +25,9 @@ import { tryServerSessionRestore } from '../../utils/sessionRestore';
 import { trackActivity } from '../../utils/activity';
 import { profileSocialStorageValue } from '../../utils/socialLinks';
 import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
-import {
-  getReviewsLastSeenShopCountKey,
-  getReviewsLastSeenToolCountKey,
-  MOCK_SHOP_REVIEWS_COUNT,
-  MOCK_TOOL_REVIEWS_COUNT
-} from '../../constants/reviews';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { resolveReturnToAfterSignIn } from '../../utils/signInReturnTo';
-
-/** Fetch motherboard (canonical admin profile) from public/admin-profile.json so Chrome (and any browser) gets same name, photo, birthday etc. as Safari. Update motherboard via Account → Add to motherboard, then save the downloaded file as public/admin-profile.json. */
-async function fetchCanonicalAdminProfile(): Promise<Record<string, unknown>> {
-  try {
-    const r = await fetch('/admin-profile.json');
-    if (!r.ok) return {};
-    const j = await r.json();
-    return j && typeof j === 'object' ? j as Record<string, unknown> : {};
-  } catch {
-    return {};
-  }
-}
 
 function SignInPage() {
   const navigate = useNavigate();
@@ -331,29 +313,6 @@ function SignInPage() {
     setTimeout(() => { window.location.href = url; }, 350);
   };
 
-  /** After admin local sign-in: if a Supabase session exists for the same email, sync profile/orders/cart/wishlist from API so stored info loads. Preserves local password in registeredUsers. */
-  const trySyncAdminStoredInfoIfSession = async (emailNorm: string, localPassword: string) => {
-    if (!isAdminEmail(emailNorm) || !isSupabaseConfigured()) return;
-    const supabase = getSupabase();
-    if (!supabase) return;
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session?.user || normalizeEmail((data.session.user as { email?: string }).email || '') !== emailNorm) return;
-      const profile = await syncAllFromApi();
-      if (profile) {
-        saveCartAndWishlistToUserKeys(emailNorm);
-        const registeredUsers: unknown[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-        const idx = registeredUsers.findIndex((u: unknown) => normalizeEmail((u as { email?: string }).email || '') === emailNorm);
-        if (idx !== -1 && localPassword) {
-          (registeredUsers[idx] as { password?: string }).password = localPassword;
-          localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-        }
-      }
-    } catch (_) {
-      // ignore
-    }
-  };
-
   const handleSignInSubmit = async () => {
     const form = document.getElementById('signin-form') as HTMLFormElement | null;
     const emailInput = form?.querySelector<HTMLInputElement>('[name="email"]') ?? signInEmailRef.current;
@@ -397,8 +356,6 @@ function SignInPage() {
               setShowValidationModal(true);
               return;
             }
-            const passwordToStore = passwordTrimmed;
-            const emailNorm = normalizeEmail(emailToSend);
             try {
               const raw = localStorage.getItem('currentUser');
               if (raw) {
@@ -408,24 +365,6 @@ function SignInPage() {
             } catch (_) {}
             const profile = await syncAllFromApi();
             if (profile) {
-              // Store password so "Sync my account" later uses the same Supabase password
-              try {
-                const cur = localStorage.getItem('currentUser');
-                if (cur) {
-                  const parsed = JSON.parse(cur) as Record<string, unknown>;
-                  parsed.password = passwordToStore;
-                  localStorage.setItem('currentUser', JSON.stringify(parsed));
-                  const ru = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as { email?: string; password?: string }[];
-                  const idx = ru.findIndex((u) => normalizeEmail(u.email || '') === emailNorm);
-                  if (idx !== -1) {
-                    ru[idx] = { ...ru[idx], password: passwordToStore };
-                    localStorage.setItem('registeredUsers', JSON.stringify(ru));
-                  } else {
-                    ru.push({ ...(parsed as Record<string, unknown>), email: String(parsed?.email ?? ''), password: passwordToStore });
-                    localStorage.setItem('registeredUsers', JSON.stringify(ru));
-                  }
-                }
-              } catch (_) {}
               localStorage.setItem('isSignedIn', 'true');
               setIsSignedIn(true);
               onSignInSuccess('password'); // user tapped Sign in — track and persist (Safari retries)
@@ -443,16 +382,7 @@ function SignInPage() {
             }
             // Session valid but getProfile failed (e.g. no API or profile not ready): still sign in from session; create profile so user appears in admin clients
             const minimal = buildMinimalUserFromSupabaseSession(data.session.user) as Record<string, unknown>;
-            minimal.password = passwordToStore;
             applyMinimalUserToStorage(minimal);
-            try {
-              const ru = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as { email?: string; password?: string }[];
-              const idx = ru.findIndex((u) => normalizeEmail(u.email || '') === emailNorm);
-              if (idx !== -1) {
-                ru[idx] = { ...ru[idx], password: passwordToStore };
-                localStorage.setItem('registeredUsers', JSON.stringify(ru));
-              }
-            } catch (_) {}
             onSignInSuccess('password');
             await registerServerSessionCookie(data.session.access_token, data.session.refresh_token);
             if (!didLastProfileSyncError()) {
@@ -471,176 +401,30 @@ function SignInPage() {
             return;
           }
           if (error) {
-            if (isAdminEmail(email)) {
-              // Fall through to local sign-in below
-            } else {
-              const raw = (error.message || '').toLowerCase();
-              const isInvalidCreds =
-                error.message === 'Invalid login credentials' ||
-                raw.includes('email not confirmed') ||
-                raw.includes('not confirmed');
-              const msg = isInvalidCreds ? 'INVALID EMAIL OR PASSWORD.' : error.message;
-              setValidationMessage(import.meta.env.DEV && error.message ? `${msg} (${error.message})` : msg);
-              setShowValidationModal(true);
-              return;
-            }
-          }
-        } catch (e) {
-          if (isAdminEmail(email)) {
-            // Fall through to local sign-in for admin
-          } else {
-            setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
+            const raw = (error.message || '').toLowerCase();
+            const isInvalidCreds =
+              error.message === 'Invalid login credentials' ||
+              raw.includes('email not confirmed') ||
+              raw.includes('not confirmed');
+            const msg = isInvalidCreds ? 'INVALID EMAIL OR PASSWORD.' : error.message;
+            setValidationMessage(import.meta.env.DEV && error.message ? `${msg} (${error.message})` : msg);
             setShowValidationModal(true);
             return;
           }
-        }
-      }
-    }
-    try {
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const emailNorm = normalizeEmail(email);
-      const passwordNorm = normalizePassword(password);
-      const userByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
-      const user = userByEmail && normalizePassword(userByEmail.password || '') === passwordNorm ? userByEmail : null;
-      if (user) {
-        const userToSet = { ...user };
-        if (isAdminEmail(user.email || '')) userToSet.role = 'admin';
-        const existingCurrentRaw = localStorage.getItem('currentUser');
-        let previousEmail: string | null = null;
-        if (existingCurrentRaw) {
-          try {
-            const existingUser = JSON.parse(existingCurrentRaw);
-            if (existingUser?.email) previousEmail = (existingUser.email as string).trim().toLowerCase();
-            if (existingUser && typeof existingUser === 'object' && user.email?.toLowerCase() === (existingUser.email || '').toLowerCase()) {
-              const profileFields = ['firstName', 'lastName', 'phoneNumber', 'birthday', 'profileImage', 'facebook', 'instagram', 'youtube', 'tiktok', 'twitter', 'membershipType', 'subscriptionTier', 'referralCode', 'giftCardBalance', 'hasMadeFirstPurchase', 'loyaltyPoints', 'unlockedDiscounts', 'voucherList', 'voucherHistory', 'digitalCashHistory', 'welcomeDiscountTiersCreditedByPeriod', 'defaultAddress', 'shippingAddress', 'savedAddresses', 'createdAt', 'id'] as const;
-              for (const key of profileFields) {
-                const existingVal = existingUser[key];
-                if (existingVal !== undefined && existingVal !== null) {
-                  if (key === 'profileImage' && typeof existingVal === 'string' && existingVal.trim() === '') continue;
-                  (userToSet as any)[key] = existingVal;
-                }
-              }
-              if (typeof existingUser.giftCardBalance === 'number') userToSet.giftCardBalance = existingUser.giftCardBalance;
-              if (typeof existingUser.loyaltyPoints === 'number') userToSet.loyaltyPoints = existingUser.loyaltyPoints;
-              if (existingUser.hasMadeFirstPurchase !== undefined) userToSet.hasMadeFirstPurchase = Boolean(existingUser.hasMadeFirstPurchase);
-              const userIndex = registeredUsers.findIndex((u: any) => u.email?.toLowerCase() === user.email?.toLowerCase());
-              if (userIndex !== -1) {
-                registeredUsers[userIndex] = { ...userToSet };
-                delete (registeredUsers[userIndex] as any).role;
-                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-              }
-            }
-          } catch (_) {}
-        }
-        localStorage.setItem('currentUser', JSON.stringify(userToSet));
-        swapCartAndWishlistToUser(previousEmail, emailNorm);
-        if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
-        else localStorage.removeItem('profileImage');
-        localStorage.setItem('isSignedIn', 'true');
-        onSignInSuccess('password');
-        setIsSignedIn(true);
-        trackActivity('sign_in', { method: 'password' });
-        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-        if (signInEmailRef.current) signInEmailRef.current.value = '';
-        if (signInPasswordRef.current) signInPasswordRef.current.value = '';
-        setSignInEmail('');
-        setSignInPassword('');
-        await trySyncAdminStoredInfoIfSession(emailNorm, passwordNorm);
-        doRedirectAfterSignIn();
-        return;
-      }
-      if (isAdminEmail(email)) {
-        // If this browser already has a local account for this email, require that password (no duplicate accounts).
-        const existingByEmail = registeredUsers.find((u: any) => normalizeEmail(u.email || '') === emailNorm);
-        if (existingByEmail) {
-          setValidationMessage('INVALID EMAIL OR PASSWORD.');
+        } catch {
+          setValidationMessage('SIGN-IN FAILED. TRY AGAIN.');
           setShowValidationModal(true);
           return;
         }
-        // No existing local account: allow one bootstrap sign-in so admin can get in on this browser (e.g. Safari where Supabase may fail). Prevents duplicates by only creating when no entry exists.
-        let existingCurrent: Record<string, any> = {};
-        try {
-          const raw = localStorage.getItem('currentUser');
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (parsed && typeof parsed === 'object' && normalizeEmail(parsed.email || '') === emailNorm) existingCurrent = parsed;
-          }
-        } catch (_) {}
-        const canonical = await fetchCanonicalAdminProfile();
-        const firstInitial = (email[0] || 'A').toUpperCase();
-        const lastInitial = (email.split('@')[0]?.slice(1, 2) || 'A').toUpperCase();
-        let referralCode = (existingCurrent.referralCode as string) || (canonical.referralCode as string) || firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
-        while (registeredUsers.some((u: any) => u.referralCode === referralCode)) referralCode = firstInitial + lastInitial + '01' + Math.floor(10 + Math.random() * 90);
-        const str = (a: unknown, b: unknown): string => (a != null && String(a).trim() !== '') ? String(a).trim() : (b != null && String(b).trim() !== '') ? String(b).trim() : '';
-        const profileImageVal = str(existingCurrent.profileImage, canonical.profileImage) || (existingCurrent.profileImage as string) || (canonical.profileImage as string) || '';
-        const bootstrapUser = {
-          id: (existingCurrent.id as string) || (canonical.id as string) || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          firstName: str(existingCurrent.firstName, canonical.firstName) || ((existingCurrent.firstName as string) ?? (canonical.firstName as string) ?? ''),
-          lastName: str(existingCurrent.lastName, canonical.lastName) || ((existingCurrent.lastName as string) ?? (canonical.lastName as string) ?? ''),
-          email: emailNorm,
-          phoneNumber: str(existingCurrent.phoneNumber, canonical.phoneNumber) || ((existingCurrent.phoneNumber as string) ?? (canonical.phoneNumber as string) ?? ''),
-          birthday: str(existingCurrent.birthday, canonical.birthday) || ((existingCurrent.birthday as string) ?? (canonical.birthday as string) ?? ''),
-          password: passwordNorm,
-          facebook: str(existingCurrent.facebook, canonical.facebook) || ((existingCurrent.facebook as string) ?? (canonical.facebook as string) ?? ''),
-          instagram: str(existingCurrent.instagram, canonical.instagram) || ((existingCurrent.instagram as string) ?? (canonical.instagram as string) ?? ''),
-          youtube: str(existingCurrent.youtube, canonical.youtube) || ((existingCurrent.youtube as string) ?? (canonical.youtube as string) ?? ''),
-          tiktok: str(existingCurrent.tiktok, canonical.tiktok) || ((existingCurrent.tiktok as string) ?? (canonical.tiktok as string) ?? ''),
-          twitter: str(existingCurrent.twitter, canonical.twitter) || ((existingCurrent.twitter as string) ?? (canonical.twitter as string) ?? ''),
-          profileImage: profileImageVal,
-          membershipType: (existingCurrent.membershipType as string) ?? (canonical.membershipType as string) ?? 'STANDARD',
-          subscriptionTier: (existingCurrent.subscriptionTier as string) ?? (canonical.subscriptionTier as string) ?? undefined,
-          defaultAddress: existingCurrent.defaultAddress ?? canonical.defaultAddress ?? undefined,
-          shippingAddress: existingCurrent.shippingAddress ?? canonical.shippingAddress ?? undefined,
-          savedAddresses: Array.isArray(existingCurrent.savedAddresses) ? existingCurrent.savedAddresses : (Array.isArray(canonical.savedAddresses) ? canonical.savedAddresses : undefined),
-          referralCode,
-          giftCardBalance: typeof existingCurrent.giftCardBalance === 'number' ? existingCurrent.giftCardBalance : (typeof canonical.giftCardBalance === 'number' ? canonical.giftCardBalance : 10),
-          hasMadeFirstPurchase: Boolean(existingCurrent.hasMadeFirstPurchase ?? canonical.hasMadeFirstPurchase),
-          loyaltyPoints: typeof existingCurrent.loyaltyPoints === 'number' ? existingCurrent.loyaltyPoints : (typeof canonical.loyaltyPoints === 'number' ? canonical.loyaltyPoints : 0),
-          unlockedDiscounts: Array.isArray(existingCurrent.unlockedDiscounts) ? existingCurrent.unlockedDiscounts : (Array.isArray(canonical.unlockedDiscounts) ? canonical.unlockedDiscounts : ['signup']),
-          voucherList: Array.isArray(existingCurrent.voucherList) ? existingCurrent.voucherList : (Array.isArray(canonical.voucherList) ? canonical.voucherList : undefined),
-          voucherHistory: Array.isArray(existingCurrent.voucherHistory) ? existingCurrent.voucherHistory : (Array.isArray(canonical.voucherHistory) ? canonical.voucherHistory : undefined),
-          digitalCashHistory: Array.isArray(existingCurrent.digitalCashHistory) ? existingCurrent.digitalCashHistory : (Array.isArray(canonical.digitalCashHistory) ? canonical.digitalCashHistory : undefined),
-          welcomeDiscountTiersCreditedByPeriod: existingCurrent.welcomeDiscountTiersCreditedByPeriod && typeof existingCurrent.welcomeDiscountTiersCreditedByPeriod === 'object' ? existingCurrent.welcomeDiscountTiersCreditedByPeriod : (canonical.welcomeDiscountTiersCreditedByPeriod && typeof canonical.welcomeDiscountTiersCreditedByPeriod === 'object' ? canonical.welcomeDiscountTiersCreditedByPeriod : undefined),
-          createdAt: (existingCurrent.createdAt as string) || (canonical.createdAt as string) || new Date().toISOString()
-        };
-        registeredUsers.push(bootstrapUser);
-        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-        let previousEmail: string | null = null;
-        try {
-          const raw = localStorage.getItem('currentUser');
-          if (raw) {
-            const prev = JSON.parse(raw);
-            if (prev?.email) previousEmail = (prev.email as string).trim().toLowerCase();
-          }
-        } catch (_) {}
-        const userToSet = { ...bootstrapUser, role: 'admin' };
-        localStorage.setItem('currentUser', JSON.stringify(userToSet));
-        swapCartAndWishlistToUser(previousEmail, emailNorm);
-        if (userToSet.profileImage && String(userToSet.profileImage).trim()) localStorage.setItem('profileImage', String(userToSet.profileImage));
-        else localStorage.removeItem('profileImage');
-        localStorage.setItem('isSignedIn', 'true');
-        onSignInSuccess('password');
-        setIsSignedIn(true);
-        trackActivity('sign_in', { method: 'password' });
-        window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-        if (signInEmailRef.current) signInEmailRef.current.value = '';
-        if (signInPasswordRef.current) signInPasswordRef.current.value = '';
-        setSignInEmail('');
-        setSignInPassword('');
-        await trySyncAdminStoredInfoIfSession(emailNorm, passwordNorm);
-        doRedirectAfterSignIn();
-        return;
       }
-      const hasAnyUsers = registeredUsers.length > 0;
-      const hasMatchingEmail = registeredUsers.some((u: any) => normalizeEmail(u.email || '') === emailNorm);
-      const message = !hasAnyUsers ? 'NO ACCOUNT IN THIS BROWSER. CREATE AN ACCOUNT ON THIS DEVICE FIRST.' : !hasMatchingEmail ? 'NO ACCOUNT FOR THIS EMAIL IN THIS BROWSER. CREATE AN ACCOUNT HERE WITH THE SAME EMAIL TO USE THIS DEVICE.' : 'INVALID EMAIL OR PASSWORD.';
-      setValidationMessage(message);
-      setShowValidationModal(true);
-    } catch (error) {
-      console.error('Error signing in:', error);
-      setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
-      setShowValidationModal(true);
     }
+    if (isSupabaseConfigured()) {
+      setValidationMessage('INVALID EMAIL OR PASSWORD.');
+      setShowValidationModal(true);
+      return;
+    }
+    setValidationMessage('SIGN-IN REQUIRES SUPABASE. SET VITE_SUPABASE_URL AND VITE_SUPABASE_ANON_KEY IN .env.local.');
+    setShowValidationModal(true);
   };
 
   return (
@@ -1929,145 +1713,13 @@ function SignInPage() {
                           }
                         }
                       }
-                      
-                      // Generate referral code with conflict checking
-                      const generateReferralCode = (firstName: string, lastName: string, birthday: string, phoneNumber: string): string => {
-                        // Get first initial of first name
-                        const firstInitial = firstName && firstName.length > 0 
-                          ? firstName.charAt(0).toUpperCase() 
-                          : 'K';
 
-                        // Get first initial of last name
-                        const lastInitial = lastName && lastName.length > 0 
-                          ? lastName.charAt(0).toUpperCase() 
-                          : 'A';
-
-                        // Extract day from birthday (format: MM/DD/YYYY)
-                        let day = '30'; // Default
-                        if (birthday) {
-                          const birthdayParts = birthday.split('/');
-                          if (birthdayParts.length >= 2) {
-                            day = birthdayParts[1].padStart(2, '0'); // Ensure 2 digits
-                          }
-                        }
-
-                        // Extract phone number digits
-                        let phoneDigits = '2647'; // Default
-                        if (phoneNumber) {
-                          // Remove all non-digit characters
-                          phoneDigits = phoneNumber.replace(/\D/g, '');
-                        }
-
-                        // Try primary code (last 2 digits)
-                        let lastTwoDigits = phoneDigits.length >= 2 ? phoneDigits.slice(-2) : '47';
-                        let primaryCode = `${firstInitial}${lastInitial}${day}${lastTwoDigits}`;
-
-                        // Check if code already exists in registeredUsers
-                        const codeExists = existingUsers.some((user: any) => 
-                          user.referralCode === primaryCode
-                        );
-
-                        // If code is taken, use alternative (2 digits before last 2)
-                        if (codeExists && phoneDigits.length >= 4) {
-                          const alternativeDigits = phoneDigits.slice(-4, -2); // 2 digits before last 2
-                          return `${firstInitial}${lastInitial}${day}${alternativeDigits}`;
-                        }
-
-                        return primaryCode;
-                      };
-
-                      const referralCode = generateReferralCode(
-                        firstName.trim(),
-                        lastName.trim(),
-                        birthday.trim(),
-                        phoneNumber.trim()
+                      setValidationMessage(
+                        isSupabaseConfigured()
+                          ? 'SIGN-UP COULD NOT COMPLETE. CHECK YOUR EMAIL OR TRY AGAIN.'
+                          : 'SIGN-UP REQUIRES SUPABASE. SET VITE_SUPABASE_URL AND VITE_SUPABASE_ANON_KEY IN .env.local.'
                       );
-                      
-                      // Create user account (store normalized email/password so sign-in matches across browsers/autofill)
-                      const newUser = {
-                        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        firstName: firstName.trim(),
-                        lastName: lastName.trim(),
-                        email: normalizeEmail(email),
-                        phoneNumber: phoneNumber.trim(),
-                        birthday: birthday.trim(),
-                        password: normalizePassword(password), // In production, this should be hashed
-                        facebook: facebook.trim(),
-                        instagram: instagram.trim(),
-                        youtube: youtube.trim(),
-                        tiktok: tiktok.trim(),
-                        twitter: twitter.trim(),
-                        profileImage: '/assets/profile-thumb.png',
-                        membershipType: 'STANDARD',
-                        referralCode: referralCode,
-                        giftCardBalance: 10, // Standard member welcome discount $10 USD (per premium chart)
-                        hasMadeFirstPurchase: false, // Referral code becomes active after first purchase
-                        loyaltyPoints: 0,
-                        unlockedDiscounts: ['signup'], // Track which discounts have been unlocked
-                        createdAt: new Date().toISOString()
-                      };
-                      
-                      // Save user to registered users list
-                      const updatedUsers = [...existingUsers, newUser];
-                      localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
-                      
-                      // Swap cart/wishlist/lists to new user (saves previous user's data, loads new user's empty state)
-                      let previousEmail: string | null = null;
-                      try {
-                        const raw = localStorage.getItem('currentUser');
-                        if (raw) {
-                          const prev = JSON.parse(raw);
-                          if (prev?.email) previousEmail = (prev.email as string).trim().toLowerCase();
-                        }
-                      } catch (_) {}
-                      localStorage.setItem('currentUser', JSON.stringify(newUser));
-                      localStorage.setItem('profileImage', (newUser.profileImage && String(newUser.profileImage).trim()) ? String(newUser.profileImage) : '/assets/profile-thumb.png');
-                      swapCartAndWishlistToUser(previousEmail, newUser.email.trim().toLowerCase());
-                      
-                      localStorage.removeItem('addToBagButtonState');
-                      localStorage.removeItem('lastAddedItemId');
-                      localStorage.removeItem('editingCartItem');
-                      localStorage.removeItem('editingCartItemId');
-                      try {
-                        localStorage.setItem(`userOrders_${newUser.email.trim().toLowerCase()}`, JSON.stringify({ activeOrders: [], pastOrders: [] }));
-                      } catch (_) {}
-                      try {
-                        const newEmail = newUser.email.trim().toLowerCase();
-                        localStorage.setItem(`notifications_${newEmail}`, '[]');
-                        localStorage.setItem(getReviewsLastSeenShopCountKey(newEmail), String(MOCK_SHOP_REVIEWS_COUNT));
-                        localStorage.setItem(getReviewsLastSeenToolCountKey(newEmail), String(MOCK_TOOL_REVIEWS_COUNT));
-                      } catch (_) {}
-                      
-                      localStorage.setItem('isSignedIn', 'true');
-                      onSignInSuccess('password'); // new account = same persist + Safari retries
-                      // Sign user in
-                      setIsSignedIn(true);
-                      trackActivity('sign_up', { source: 'local' });
-                      trackActivity('sign_in', { method: 'password', afterSignUp: true });
-                      
-                      // Clear form
-                      setFirstName('');
-                      setLastName('');
-                      setEmail('');
-                      setPhoneNumber('');
-                      setBirthday('');
-                      setPassword('');
-                      setConfirmPassword('');
-                      setFacebook('');
-                      setInstagram('');
-                      setYoutube('');
-                      setTiktok('');
-                      setTwitter('');
-                      setSignUpAttempted(false);
-                      setEmailError('');
-                      
-                      navigate(
-                        resolveReturnToAfterSignIn(
-                          new URLSearchParams(location.search).get('returnTo'),
-                          location.state as { from?: string } | null,
-                        ),
-                        { replace: true },
-                      );
+                      setShowValidationModal(true);
                     } catch (error) {
                       console.error('Error creating account:', error);
                       setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
