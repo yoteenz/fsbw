@@ -8,7 +8,7 @@ async function fetchBuffer(url: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
-/** Post-process: symmetrical client-photo bottom fade only (marble shows through mask). */
+/** Post-process: client photo bottom cutout — template marble shows through faded alpha. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,

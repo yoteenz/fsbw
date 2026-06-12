@@ -1,12 +1,11 @@
 import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
 
-/** Symmetrical bottom fade — same on every generation (not Fal-painted). */
+/** Symmetrical bottom fade on the client photo alpha only — template marble shows through. */
 const FADE_START_PCT = 72;
 const FADE_STOPS: Array<{ offset: number; opacity: number }> = [
   { offset: 0, opacity: 1 },
   { offset: FADE_START_PCT, opacity: 1 },
-  { offset: 86, opacity: 0.5 },
-  { offset: 94, opacity: 0.12 },
+  { offset: 82, opacity: 0 },
   { offset: 100, opacity: 0 },
 ];
 
@@ -27,24 +26,9 @@ function buildSymmetricalBottomFadeMaskSvg(width: number, height: number): Buffe
   return Buffer.from(svg);
 }
 
-async function marbleUnderlay(
-  sharp: Awaited<ReturnType<typeof import('sharp')['default']>>,
-  templateBuf: Buffer,
-  rect: PixelRect
-): Promise<Buffer> {
-  const meta = await sharp(templateBuf).metadata();
-  const canvasW = meta.width ?? 2048;
-  const stripW = Math.max(80, Math.min(rect.left + 24, canvasW));
-  return sharp(templateBuf)
-    .extract({ left: 0, top: rect.top, width: stripW, height: rect.height })
-    .resize(rect.width, rect.height, { fit: 'cover', position: 'left' })
-    .png()
-    .toBuffer();
-}
-
 /**
- * Symmetrical alpha mask on the client photo — bottom fades to transparent over card marble
- * (not flat gray panel fill). Does not repaint or extend the photo.
+ * Cut out the client-photo bottom: fade photo alpha to transparent, composite over the
+ * exact template window so marble/panel shows through — no gray fill or resized underlay.
  */
 export async function applyClientPhotoBottomFade(
   falBuf: Buffer,
@@ -55,6 +39,7 @@ export async function applyClientPhotoBottomFade(
   const { left, top, width, height } = rect;
 
   const maskPng = await sharp(buildSymmetricalBottomFadeMaskSvg(width, height)).png().toBuffer();
+
   const falRegion = await sharp(falBuf)
     .extract({ left, top, width, height })
     .ensureAlpha()
@@ -66,8 +51,15 @@ export async function applyClientPhotoBottomFade(
     .png()
     .toBuffer();
 
-  const underlay = await marbleUnderlay(sharp, templateBuf, rect);
-  const patch = await sharp(underlay).composite([{ input: maskedPhoto }]).png().toBuffer();
+  const templateWindow = await sharp(templateBuf)
+    .extract({ left, top, width, height })
+    .png()
+    .toBuffer();
+
+  const patch = await sharp(templateWindow)
+    .composite([{ input: maskedPhoto, blend: 'over' }])
+    .png()
+    .toBuffer();
 
   return sharp(falBuf).composite([{ input: patch, left, top }]).png().toBuffer();
 }
