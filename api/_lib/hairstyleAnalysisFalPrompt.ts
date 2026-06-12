@@ -6,6 +6,12 @@
  */
 
 import {
+  bawColorApplicationRulesBlock,
+  bawUnitCatalogBlock,
+  lookHairAccuracyLines,
+  unitTexturePromptLine,
+} from './hairstyleAnalysisUnitCatalog.js';
+import {
   bawStylingRefListBlock,
   stylingRefForLook,
   type HairstyleAnalysisStylingRef,
@@ -134,16 +140,15 @@ function colorValueLine(look: FalAnalysisLook): string {
 
 /** Hair-edit guidance only — hex guides retint; never print hex on template value fields. */
 function colorHairGuidanceLine(look: FalAnalysisLook): string {
-  const hex = (look.hex || '#000000').toUpperCase();
-  return `Repaint hair strands to catalog color ${look.color} (pigment target ${hex}) — full strand-level recolor with natural depth; do not print hex on the template.`;
+  return lookHairAccuracyLines(look).split('\n')[1] ?? '';
 }
 
 function realisticHairRecolorBlock(): string {
   return [
     '=== HAIR COLOR — REALISTIC STRAND REPAINT (NOT AN OVERLAY) ===',
-    'Recolor hair at the strand level with natural depth, shine, root-to-tip variation, and soft specular highlights.',
-    'Match scene lighting from the selfie — believable shadows inside curls, depth at the part, and dimension at the hairline.',
-    'FORBIDDEN: flat color wash, semi-transparent tint, color filter overlay on unchanged hair, posterized hair, sticker-like hair, or wig-cap color block.',
+    'Recolor at strand level with believable shine and lighting — **pigment stays one BAW catalog tone root to tip** (see color rules).',
+    'Match scene lighting from the selfie — believable shadows inside curls and dimension at the part.',
+    'FORBIDDEN: flat color wash, semi-transparent tint, dark roots on fashion colors, ombré, color filter overlay, posterized hair, sticker-like hair, or wig-cap color block.',
     'Hair must look fully installed and photographed — not a colored layer pasted on top of the original hair.',
   ].join('\n');
 }
@@ -152,8 +157,8 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
   const style = displayStyle(look.styling, look.unit);
   if (style === 'NONE') {
     return refs.mannequinRefs.length > 0
-      ? 'Finish hair in a polished salon-ready look matching the unit mannequin hair texture (hair region only).'
-      : 'Finish hair in a polished salon-ready look matching the catalog unit texture.';
+      ? `Finish hair matching ${unitTexturePromptLine(look.unit)} Use mannequin for strand direction only.`
+      : unitTexturePromptLine(look.unit);
   }
   const stylingRef = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   if (stylingRef) {
@@ -161,7 +166,7 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
     return [
       `STYLE **${style}** — print exactly "${style}" in the STYLE value field (never substitute LAYERS unless STYLE is LAYERS or DEFINE).`,
       `Hairstyle shape: copy **only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part).`,
-      `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to ${look.color} (${hex}) only.`,
+      `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots.`,
       'The styling reference IMAGE overrides the unit mannequin default finish — do NOT apply layered waves when STYLE is FLAT IRON or CRIMPS/WAND CURLS.',
       'Do not invent a different salon finish.',
     ].join(' ');
@@ -197,7 +202,8 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
     const refNote = ref ? `use IMAGE ${ref.imageIndex} for salon finish` : 'no styling IMAGE — use mannequin texture only';
     lines.push(
-      `${label}: STYLE ${style}, PART ${displayPart(look.part)}, ${refNote} — do NOT use a different style or IMAGE.`
+      `${label}: STYLE ${style}, PART ${displayPart(look.part)}, ${refNote} — do NOT use a different style or IMAGE.`,
+      lookHairAccuracyLines(look)
     );
   });
 
@@ -232,6 +238,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     '=== CLIENT PREVIEW (IMAGE 2) — TOP MATCH HAIR ===',
     clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
     `Hair only: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}.`,
+    lookHairAccuracyLines(look),
     realisticHairDensityBlock(displayDensity(look.density), false),
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
@@ -289,6 +296,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
   return [
     `${label} THUMB: same client face as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style} (${refNote}); one-shoulder drape like hero; hair-only edits.`,
+    lookHairAccuracyLines(look),
     realisticHairDensityBlock(displayDensity(look.density), true),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
@@ -542,6 +550,10 @@ function buildTemplateRules(
     '=== HAIRLINE — NO BABY HAIRS (ALL HAIR EDITS) ===',
     'Never add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead, temples, or hairline.',
     'Hairline stays clean and defined — lace-front edge only. Do not add extra strands at the hairline.',
+    '',
+    bawUnitCatalogBlock(),
+    '',
+    bawColorApplicationRulesBlock(),
     '',
     neckAndBodyPreservationBlock(),
     '',

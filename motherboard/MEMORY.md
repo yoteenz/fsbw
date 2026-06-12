@@ -27626,3 +27626,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** **`marbleUnderlay()`** sampled a left strip of the template, resized it, and composited under the photo — wrong pixels (panel gray/frost), muddy semi-transparent blend.
 - **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — extract **exact template window** at fade rect, composite alpha-faded photo over it (`over`), replace region on Fal output; removed **`marbleUnderlay`**. Steeper fade stops (72%→82%→0). Debug square no longer shows white fog gradient (dashed fade-start line only). Docs updated.
 - **Conventions:** Photo fade = alpha cutout on client photo only; ground truth for transparent areas = template pixels at same rect, not invented underlay.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: BAW unit texture + uniform color prompt
+
+- **Context:** User reported Fal adding **dark roots** on fashion colors (e.g. CHERRY) when BAW colored units are **uniform root to tip**; **BLANCO** rendered **kinky** instead of **silky straight**.
+- **Shipped:** **`hairstyleAnalysisUnitCatalog.ts`** — per-unit pattern/origin/texture (NOIR/BLANCO silky straight, waves, curls) + **`bawColorApplicationRulesBlock()`** (no dark roots on vivid/custom colors). **`hairstyleAnalysisFalPrompt.ts`** — catalog blocks in template rules; **`lookHairAccuracyLines()`** on client preview + match thumbs; removed “root-to-tip variation” that encouraged ombré roots.
+- **Conventions:** Custom/vivid BAW colors = one tone lace to ends; BLANCO = silky straight Russian hair never kinky; TEXTURE field = unit native pattern.
