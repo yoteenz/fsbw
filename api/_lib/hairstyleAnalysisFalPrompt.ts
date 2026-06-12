@@ -82,7 +82,17 @@ function colorValueLine(look: FalAnalysisLook): string {
 /** Hair-edit guidance only — hex guides retint; never print hex on template value fields. */
 function colorHairGuidanceLine(look: FalAnalysisLook): string {
   const hex = (look.hex || '#000000').toUpperCase();
-  return `Retint hair to catalog color ${look.color} (target ${hex}) on the client — do not print hex codes or parentheses on the template.`;
+  return `Repaint hair strands to catalog color ${look.color} (pigment target ${hex}) — full strand-level recolor with natural depth; do not print hex on the template.`;
+}
+
+function realisticHairRecolorBlock(): string {
+  return [
+    '=== HAIR COLOR — REALISTIC STRAND REPAINT (NOT AN OVERLAY) ===',
+    'Recolor hair at the strand level with natural depth, shine, root-to-tip variation, and soft specular highlights.',
+    'Match scene lighting from the selfie — believable shadows inside curls, depth at the part, and dimension at the hairline.',
+    'FORBIDDEN: flat color wash, semi-transparent tint, color filter overlay on unchanged hair, posterized hair, sticker-like hair, or wig-cap color block.',
+    'Hair must look fully installed and photographed — not a colored layer pasted on top of the original hair.',
+  ].join('\n');
 }
 
 function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
@@ -110,6 +120,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     'Use cover-style scaling: center the client face; crop overflow at edges if needed, but the panel must look full, not a smaller photo floating inside.',
     'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 2.',
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
+    realisticHairRecolorBlock(),
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
@@ -132,11 +143,12 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     `${label} THUMBNAIL (small square on template):`,
     '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
     `- TEXTURE: ${look.unit}`,
+    realisticHairRecolorBlock(),
     colorHairGuidanceLine(look),
     `- LENGTH: ${displayLength(look.length)}`,
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
-    '- Composite client selfie + mannequin hair texture for maximum accuracy.',
+    '- Composite client selfie + unit texture for maximum accuracy — strand-level recolor, not a color overlay.',
     '- FORBIDDEN: back-of-head shots, stock photos, wig-only swatches, silhouettes, or any different person.',
     '- NO baby hairs or wispy hairline flyaways on thumbnails.',
   ]
@@ -149,33 +161,52 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
     '=== EVERY DETAIL MATTERS PANEL — FIXED STRUCTURE (DO NOT CHANGE) ===',
     'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
     `Fill exactly ${lineCount} text rows below that header — one complete sentence per row.`,
-    'Print each WHY IT WORKS LINE verbatim as a single flowing sentence (client features + selected unit specs in the same sentence).',
-    'FORBIDDEN: label:value rows (e.g. "FACE SHAPE: OVAL"), keyword lists, empowerment slogans, or a different number of lines.',
-    'Same layout every generation: rose-icon rows with black uppercase Futura PT Medium sentence text only.',
+    'Each row is a stylist fit note: ONE client facial feature (cheekbones, forehead, jawline, chin, eyes, face shape, or undertone) + ONE catalog spec (unit, color, length, styling, part, or density) in the same sentence.',
+    'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium text beside its rose icon.',
+    'FORBIDDEN: label:value rows (e.g. "FACE SHAPE: OVAL"), keyword lists, invented slogans, or a different number of lines.',
+    'This is NOT a motivational "why it works" essay — do not rewrite into empowerment copy.',
   ].join('\n');
 }
 
-function whyItWorksRulesBlock(lineCount: number): string {
+const EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES = [
+  'every detail matters',
+  'you deserve',
+  'embrace your',
+  'own your',
+  'slay',
+  'queen',
+  'goddess',
+  'confidence',
+  'unique beauty',
+  'powerful',
+  'unstoppable',
+  'shine',
+  'flawless',
+].join(', ');
+
+function everyDetailMattersRulesBlock(lineCount: number): string {
   return [
     everyDetailMattersStructureBlock(lineCount),
     '',
-    '=== WHY IT WORKS SENTENCES (PRINT VERBATIM — NO REWRITES) ===',
-    'Each sentence ties catalog specs (unit, color, length, styling) to this client\'s features — face shape, eyes, jawline, undertone.',
-    'Example: "NOIR\'S STRAIGHT TEXTURE ACCENTUATES YOUR HEART-SHAPED FEATURES WHILE JET BLACK ENHANCES YOUR ALMOND-SHAPED EYES."',
-    'FORBIDDEN: empowerment fluff, girl-power jargon, or vague praise with no spec tie-in.',
-    'Do not invent, merge, or reformat lines.',
+    '=== EVERY DETAIL MATTERS LINES (PRINT VERBATIM — ZERO REWRITES) ===',
+    'Copy each line below exactly. Do not paraphrase, merge rows, or add new sentences.',
+    'Each line must name a specific facial feature AND a specific unit spec — e.g. cheekbones + layers, forehead + middle part, jawline + length.',
+    `FORBIDDEN PHRASES / TONE: ${EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES}.`,
+    'Do not invent marketing copy. Do not treat this section as inspirational "why it works" fluff.',
   ].join('\n');
 }
 
 function panelChromePreservationBlock(): string {
   return [
-    '=== PANEL CHROME — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
-    'IMAGE 1 includes pre-rendered frosted acrylic / glass panels, red outer glow on panel edges, borders, drop shadows, and marble backdrop.',
-    'DO NOT flatten, blur, repaint, remove, or weaken the acrylic panel effect or the red glow around panels.',
+    '=== PANEL CHROME — PIXEL-PERFECT PRESERVATION (HIGHEST PRIORITY) ===',
+    `IMAGE 1 includes frosted acrylic / glass panels with brand-red outer glow (${BRAND_RED}) on panel edges, inner glass highlights, borders, drop shadows, and marble backdrop.`,
+    'PRESERVE the red glow halo around every panel — same intensity, softness, spread, and position as IMAGE 1. Never remove, dim, or repaint the glow.',
+    'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
+    'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
     'Photo windows are cutouts INSIDE the acrylic panels — place client selfie and thumbnails in the cutout only, behind the glass layer.',
     'ONLY edit inside: (a) photo cutout areas, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
-    'All panel frames, glows, translucency, section chrome, and marble texture must remain identical to IMAGE 1.',
+    'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
   ].join('\n');
 }
 
@@ -190,11 +221,12 @@ function blankScoreAndRatingRules(): string {
 
 function matchScoreFalLine(look: FalAnalysisLook): string {
   const pct = formatScorePercent(look.score);
-  return (
-    `MATCH SCORE value slot: the "MATCH SCORE:" label is already on the template in black. ` +
-    `Print ONLY "${pct}" in the value area in medium gray ${MATCH_SCORE_GRAY}. ` +
-    `Do not repeat "MATCH SCORE", do not print the percentage in black or red.`
-  );
+  return [
+    `MATCH SCORE value slot: the "MATCH SCORE:" label is already on the template in black.`,
+    `Print ONLY "${pct}" in the value area — medium gray ${MATCH_SCORE_GRAY} (RGB 128,128,128).`,
+    `CRITICAL: match score % must be GRAY ${MATCH_SCORE_GRAY} — NEVER black, NEVER red, NEVER white.`,
+    `Do not repeat "MATCH SCORE". Do not apply the black spec-text rule to match score percentages.`,
+  ].join(' ');
 }
 
 function buildTemplateRules(refs: FalPromptImageRefs): string {
@@ -248,8 +280,8 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'Use the matching 3D mannequin image (listed above) as the hair texture reference for that unit.',
     'NEVER use back-of-head stock photos, different people, or hair-only swatches without the client face.',
     '',
-    'TOP MATCH spec values, match rows, portfolio lines, and why lines: black uppercase Futura PT Medium style.',
-    'MATCH SCORE percentages only: medium gray ' + MATCH_SCORE_GRAY + ' in the value slot.',
+    'TOP MATCH spec values, match row texture/color/length/style, portfolio lines, and every-detail-matters lines: black uppercase Futura PT Medium.',
+    'MATCH SCORE percentage VALUES ONLY: medium gray ' + MATCH_SCORE_GRAY + ' — separate color rule; never black.',
     '',
     'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill every value field except overall score % and match rating stars.',
   ]
@@ -294,9 +326,9 @@ const PROMPT_FOOTER = [
   'CLIENT PANEL: selfie fills entire panel edge-to-edge — no inset crop or floating photo.',
   'TIER SUBTITLE: erased — no month/tier analysis label visible.',
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
-  'TOP MATCH spec column: all values filled in black.',
+  'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',
   'OVERALL SCORE % and MATCH RATING stars: left blank for server overlay.',
-  'MATCH SCORE value slots: gray percentage only in the correct template position.',
+  `MATCH SCORE value slots: gray ${MATCH_SCORE_GRAY} percentage only — never black.`,
   'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.',
   'EVERY DETAIL MATTERS: fixed rose-icon rows, one verbatim sentence per line — no label:value format.',
   'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',
@@ -316,9 +348,9 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
   ];
   if (analysis.whyItWorks.length > 0) {
     lines.push('');
-    lines.push(whyItWorksRulesBlock(analysis.whyItWorks.length));
+    lines.push(everyDetailMattersRulesBlock(analysis.whyItWorks.length));
     analysis.whyItWorks.forEach((line, i) => {
-      lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
+      lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
     });
   }
   lines.push(PROMPT_FOOTER);
@@ -399,9 +431,9 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageR
   });
   if (analysis.whyItWorks.length > 0) {
     lines.push('');
-    lines.push(whyItWorksRulesBlock(analysis.whyItWorks.length));
+    lines.push(everyDetailMattersRulesBlock(analysis.whyItWorks.length));
     analysis.whyItWorks.forEach((line, i) => {
-      lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
+      lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
     });
   }
   lines.push(PROMPT_FOOTER);
