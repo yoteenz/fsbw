@@ -27310,3 +27310,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (continued):** User asked for **professional but friendly** why-it-works tone (not trendy), **no hex/parentheses** beside COLOR on the card, **match score in gray** (not red), and asked why generations **degrade acrylic panel frost / red glow** from the reference template.
 - **Shipped (64a486b3):** Match score % → medium gray **`#808080`**. COLOR value fields = catalog name only; hex kept server-side for pigment guidance in hair-edit blocks only. **`WHY_FREE`** / **`WHY_TWELVE`** rewritten in complete professional sentences. **`panelChromePreservationBlock()`** in Fal prompt — preserve frosted acrylic, red glow, borders; photos only in cutouts behind glass. **`docs/STYLE_ANALYSIS.md`** updated.
 - **Why panels degrade:** GPT Image 2 **edit** repaints the full canvas when filling photo slots and text — it tends to flatten UI chrome unless the prompt explicitly locks panel art. Not a server composite issue; mitigation is prompt preservation rules (and regenerating if a pass still softens glow).
+
+---
+
+## 2026-06-12 — Hairstyle analysis: spec-to-feature why-it-works notes
+
+- **Context (continued):** User said **every detail matters** bullets still read like empowerment fluff — want final curated stylist notes tying **selected unit specs** to **client features** (e.g. NOIR straight texture + heart-shaped face, jet black + almond eyes), intentional and specific, not girl-power jargon.
+- **Shipped (7fc227e0):** Rewrote **`WHY_FREE`** / **`WHY_TWELVE`** in **`hairstyleAnalysisDemo.ts`** — each line pairs catalog spec with client feature (face shape, eyes, jaw, undertone). **`whyItWorksRulesBlock()`** updated with example tone + forbid empowerment. **`docs/STYLE_ANALYSIS.md`** aligned.
