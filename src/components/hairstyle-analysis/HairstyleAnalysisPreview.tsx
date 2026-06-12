@@ -345,13 +345,12 @@ export default function HairstyleAnalysisPreview({
           className="w-full py-3 border border-black uppercase disabled:opacity-40"
           style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
         >
-          {generating ? 'GENERATING HAIR + BUILDING CARD…' : 'GENERATE TEMPLATE PREVIEW (4:5 · 2K)'}
+          {generating ? 'GENERATING WITH GPT IMAGE 2…' : 'GENERATE TEMPLATE PREVIEW (GPT IMAGE 2 · 4:5 · 2K)'}
         </button>
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
-          GPT Image 2 (medium, 3:4 hair edits) styles the client photo and match thumbnails, then the server
-          composites values onto the reference Supabase template PNG (2048×2560 · 4:5) — marble, acrylic, glow,
-          footer, and BUILD THIS LOOK button stay pixel-perfect from the reference asset.
+          Sends the static Supabase template + client photo to Fal with the tier population prompt. This is the
+          client-facing card — not the React text overlay composer.
         </p>
       </div>
 
@@ -381,8 +380,7 @@ export default function HairstyleAnalysisPreview({
         >
           <div className="w-8 h-8 border-2 border-black/20 border-t-[#eb1c24] rounded-full animate-spin" />
           <p className="text-center uppercase text-[9px] tracking-[0.12em] text-[#808080] leading-relaxed">
-            GPT IMAGE 2 IS STYLING HAIR AND BUILDING THE {analysis.tier.replace(/_/g, ' ')} CARD — DO NOT LEAVE
-            THIS PAGE.
+            GPT IMAGE 2 IS POPULATING THE {analysis.tier.replace(/_/g, ' ')} TEMPLATE — DO NOT LEAVE THIS PAGE.
           </p>
         </div>
       ) : generatedUrl ? (
@@ -397,11 +395,11 @@ export default function HairstyleAnalysisPreview({
         <div className="w-full shadow-lg border border-black/10 opacity-60">
           <img
             src={resolvedAnalysis.templateUrl}
-            alt="Reference template"
+            alt="Empty template reference"
             className="w-full h-auto block"
           />
           <p className="text-center py-2 text-[8px] uppercase tracking-[0.1em] text-[#808080]">
-            Reference template — tap generate to populate photos and values
+            Empty template reference — tap generate above
           </p>
         </div>
       )}

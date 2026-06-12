@@ -1,17 +1,10 @@
-/** Pixel slots for 2048×2560 code-built hairstyle analysis cards. */
-
-import { CARD_CANVAS, topScoreAndRatingSlots } from './hairstyleAnalysisCardBlueprint.js';
+/** Pixel slots for 2048×2560 hairstyle analysis templates (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
 
 export type PixelRect = { left: number; top: number; width: number; height: number };
 
-export const HAIRSTYLE_ANALYSIS_CANVAS = CARD_CANVAS;
+export const HAIRSTYLE_ANALYSIS_CANVAS = { width: 2048, height: 2560 } as const;
 
-export function pixelRectFromPercent(
-  left: string,
-  top: string,
-  width: string,
-  height: string
-): PixelRect {
+function pctRect(left: string, top: string, width: string, height: string): PixelRect {
   const W = HAIRSTYLE_ANALYSIS_CANVAS.width;
   const H = HAIRSTYLE_ANALYSIS_CANVAS.height;
   const lp = Number(left.replace('%', ''));
@@ -26,11 +19,9 @@ export function pixelRectFromPercent(
   };
 }
 
-const pctRect = pixelRectFromPercent;
-
-const scoreSlots = topScoreAndRatingSlots();
-export const TOP_SCORE_SLOT = scoreSlots.topScore;
-export const RATING_SLOT = scoreSlots.rating;
+/** Value boxes below OVERALL SCORE / MATCH RATING labels (calibrated on IMG_2447 @ 2048×2560). */
+export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
+export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
 const SPEC_TOPS = [24.0, 26.6, 29.2, 31.8, 34.4, 37.0, 39.6, 42.2];
 const SPEC_IDS = [
