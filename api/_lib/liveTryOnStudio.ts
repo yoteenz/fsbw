@@ -175,19 +175,19 @@ async function submitStudioRenderWithFallbacks(
       photoModel: 'gpt2',
       imageUrls: twoUrls,
       prompt: twoImgPrompt,
-      inputOverrides: { quality: 'low' },
+      inputOverrides: { quality: 'medium' },
     },
     {
       photoModel: 'gpt2',
       imageUrls: twoUrls,
       prompt: compactPrompt,
-      inputOverrides: { output_format: 'png', quality: 'low', omitImageSize: true },
+      inputOverrides: { output_format: 'png', quality: 'medium', omitImageSize: true },
     },
     {
       photoModel: 'gpt2',
       imageUrls: twoUrls,
       prompt: compactPrompt,
-      inputOverrides: { output_format: 'jpeg', quality: 'low', omitImageSize: true },
+      inputOverrides: { output_format: 'jpeg', quality: 'medium', omitImageSize: true },
     },
     { photoModel: 'nbp', imageUrls: twoUrls, prompt: compactPrompt },
   ];
