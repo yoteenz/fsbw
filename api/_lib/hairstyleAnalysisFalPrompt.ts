@@ -42,6 +42,7 @@ export type FalPromptImageRefs = {
 };
 
 const BRAND_RED = '#EB1C24';
+const MATCH_SCORE_GRAY = '#808080';
 
 function normalizeTier(tier: FalHairstyleAnalysis['tier']): Exclude<FalHairstyleAnalysis['tier'], 'black'> {
   return tier === 'black' ? 'twelve_month' : tier;
@@ -68,9 +69,13 @@ function clientPreviewTabLine(firstName: string): string {
   ].join('\n');
 }
 
-function colorWithHexLine(look: FalAnalysisLook): string {
-  const hex = (look.hex || '#000000').toUpperCase();
-  return `COLOR: ${look.color} (exact site hex ${hex} — match this tone precisely)`;
+function colorValueLine(look: FalAnalysisLook): string {
+  return `COLOR: ${look.color}`;
+}
+
+/** Hair-edit guidance only — never print hex or parentheses in template value fields. */
+function colorHairGuidanceLine(look: FalAnalysisLook): string {
+  return `Match hair pigment to catalog color ${look.color}. Do not print hex codes, # symbols, or parenthetical notes on the template.`;
 }
 
 function styledHairLine(look: FalAnalysisLook): string {
@@ -87,7 +92,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: { mannequinRefs: Man
     'Use cover-style scaling: center the client face; crop overflow at edges if needed, but the panel must look full, not a smaller photo floating inside.',
     'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 2.',
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
-    colorWithHexLine(look),
+    colorHairGuidanceLine(look),
     styledHairLine(look),
     mannequinRefLine(look.unit, refs),
     'NO wig cap, NO lace visible, NO different person.',
@@ -113,7 +118,7 @@ function matchThumbnailBlock(
     `${label} THUMBNAIL (small square on template):`,
     '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
     `- TEXTURE: ${look.unit}`,
-    colorWithHexLine(look),
+    colorHairGuidanceLine(look),
     `- LENGTH: ${displayLength(look.length)}`,
     styledHairLine(look),
     mannequinRefLine(look.unit, refs),
@@ -129,9 +134,21 @@ function whyItWorksRulesBlock(): string {
   return [
     '=== WHY IT WORKS LINES (PRINT VERBATIM — NO REWRITES) ===',
     'Each WHY IT WORKS LINE is a short fit note for this client — print it exactly as given.',
-    'Tone: factual stylist notes (inspo match, face shape, undertone, length, texture compare).',
-    'FORBIDDEN: empowerment slogans, "every detail matters" fluff, generic compliments, or AI filler.',
+    'Tone: professional but friendly stylist notes (inspo match, face shape, undertone, length, texture compare).',
+    'FORBIDDEN: trendy slang, empowerment slogans, generic compliments, or AI filler.',
     'Do not invent extra why lines or merge lines together.',
+  ].join('\n');
+}
+
+function panelChromePreservationBlock(): string {
+  return [
+    '=== PANEL CHROME — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
+    'IMAGE 1 includes pre-rendered frosted acrylic / glass panels, red outer glow on panel edges, borders, drop shadows, and marble backdrop.',
+    'DO NOT flatten, blur, repaint, remove, or weaken the acrylic panel effect or the red glow around panels.',
+    'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
+    'Photo windows are cutouts INSIDE the acrylic panels — place client selfie and thumbnails in the cutout only, behind the glass layer.',
+    'ONLY edit inside: (a) photo cutout areas, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
+    'All panel frames, glows, translucency, section chrome, and marble texture must remain identical to IMAGE 1.',
   ].join('\n');
 }
 
@@ -148,8 +165,8 @@ function matchScoreFalLine(look: FalAnalysisLook): string {
   const pct = formatScorePercent(look.score);
   return (
     `MATCH SCORE value slot: the "MATCH SCORE:" label is already on the template in black. ` +
-    `Print ONLY "${pct}" in the value area in brand red ${BRAND_RED}. ` +
-    `Do not repeat "MATCH SCORE", do not print the percentage in black.`
+    `Print ONLY "${pct}" in the value area in medium gray ${MATCH_SCORE_GRAY}. ` +
+    `Do not repeat "MATCH SCORE", do not print the percentage in black or red.`
   );
 }
 
@@ -167,6 +184,9 @@ function buildTemplateRules(refs: { mannequinRefs: MannequinRefIndex[] }): strin
     'DO NOT REDESIGN THE CARD, MOVE PANELS, CROP, OR ALTER THE MARBLE BACKGROUND.',
     'ALL SECTION TITLES, BORDERS, FOOTER ICONS, AND LABELS (TEXTURE:, COLOR:, etc.) ARE ALREADY ON THE TEMPLATE — LEAVE THEM UNTOUCHED.',
     'ONLY FILL EMPTY VALUE AREAS NEXT TO EXISTING LABELS. DO NOT DUPLICATE LABELS OR ICONS.',
+    'COLOR value fields: color name only (e.g. JET BLACK) — never print hex codes, # symbols, or parenthetical color notes.',
+    '',
+    panelChromePreservationBlock(),
     '',
     '=== REMOVE TIER / SUBSCRIPTION LABEL (CRITICAL) ===',
     'The template may include a subtitle such as "FREE HAIRSTYLE ANALYSIS", "3 MONTH HAIRSTYLE ANALYSIS",',
@@ -196,7 +216,7 @@ function buildTemplateRules(refs: { mannequinRefs: MannequinRefIndex[] }): strin
     'NEVER use back-of-head stock photos, different people, or hair-only swatches without the client face.',
     '',
     'TOP MATCH spec values, match rows, portfolio lines, and why lines: black uppercase Futura PT Medium style.',
-    'MATCH SCORE percentages only: brand red ' + BRAND_RED + ' in the value slot.',
+    'MATCH SCORE percentages only: medium gray ' + MATCH_SCORE_GRAY + ' in the value slot.',
     '',
     'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill every value field except overall score % and match rating stars.',
   ]
@@ -207,7 +227,7 @@ function buildTemplateRules(refs: { mannequinRefs: MannequinRefIndex[] }): strin
 function topMatchBlock(look: FalAnalysisLook): string[] {
   return [
     `TEXTURE: ${look.unit}`,
-    colorWithHexLine(look),
+    colorValueLine(look),
     `LENGTH: ${displayLength(look.length)}`,
     `LACE: ${displayLace(look.lace)}`,
     `DENSITY: ${displayDensity(look.density)}`,
@@ -221,7 +241,7 @@ function altRowBlock(label: string, look: FalAnalysisLook): string {
   return [
     label,
     `TEXTURE: ${look.unit}`,
-    colorWithHexLine(look),
+    colorValueLine(look),
     `LENGTH: ${displayLength(look.length)}`,
     `STYLE: ${displayStyle(look.styling)}`,
     matchScoreFalLine(look),
@@ -243,9 +263,10 @@ const PROMPT_FOOTER = [
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
   'TOP MATCH spec column: all values filled in black.',
   'OVERALL SCORE % and MATCH RATING stars: left blank for server overlay.',
-  'MATCH SCORE value slots: red percentage only in the correct template position.',
+  'MATCH SCORE value slots: gray percentage only in the correct template position.',
   'THUMBNAILS: same client face from IMAGE 2 — each match uses its own styling.',
-  'COLORS: use the exact hex codes given for each match.',
+  'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',
+  'COLOR values: color name only — no hex codes or parentheses on the template.',
 ].join('\n');
 
 function freePrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: MannequinRefIndex[] }): string {
@@ -309,7 +330,7 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: M
     const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
     lines.push(`${label}: ${portfolioLine(i + 1, look)}`);
     lines.push(`  TEXTURE: ${look.unit}`);
-    lines.push(`  ${colorWithHexLine(look)}`);
+    lines.push(`  ${colorValueLine(look)}`);
     lines.push(`  LENGTH: ${displayLength(look.length)}`);
     lines.push(`  STYLE: ${displayStyle(look.styling)}`);
     lines.push(`  ${matchScoreFalLine(look)}`);
@@ -336,7 +357,7 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs
     const label = `ALTERNATIVE ${String(i + 1).padStart(2, '0')}`;
     lines.push(`${label}:`);
     lines.push(`  TEXTURE: ${alt.unit}`);
-    lines.push(`  ${colorWithHexLine(alt)}`);
+    lines.push(`  ${colorValueLine(alt)}`);
     lines.push(`  LENGTH: ${displayLength(alt.length)}`);
     lines.push(`  STYLE: ${displayStyle(alt.styling)}`);
     lines.push(`  ${matchScoreFalLine(alt)}`);

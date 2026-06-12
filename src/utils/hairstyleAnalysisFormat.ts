@@ -57,7 +57,6 @@ export function alternativeBlock(rank: number, look: AnalysisLook): string {
     `ALTERNATIVE ${String(rank).padStart(2, '0')}`,
     `TEXTURE = ${look.unit}`,
     `COLOR = ${look.color}`,
-    `HEX = ${look.hex}`,
     `LENGTH = ${displayLength(look)}`,
     `MATCH SCORE = ${formatScorePercent(look.score)}`,
   ].join('\n');
