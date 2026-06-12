@@ -1,7 +1,8 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Client photo bottom fade and MATCH 02–04 row values are server-composited after Fal.
- * Overall score %, match-rating stars, TOP MATCH specs, and photos are generated in-image by Fal.
+ * Client photo bottom fade is server-composited after Fal.
+ * Overall score %, match-rating stars, TOP MATCH specs, MATCH 02–04 row values,
+ * every-detail-matters lines, and photos are generated in-image by Fal.
  */
 
 import {
@@ -388,19 +389,24 @@ function overallScoreAndRatingRules(look: FalAnalysisLook, tier: FalHairstyleAna
   ].join('\n');
 }
 
-function matchScoreFalLine(_look: FalAnalysisLook): string {
+function matchScoreFalLine(look: FalAnalysisLook): string {
   return [
-    'MATCH SCORE value slot: leave BLANK — server overlays the gray % after generation.',
-    'TEXTURE, COLOR, and LENGTH value slots on this row: also leave BLANK — server overlay only.',
+    `TEXTURE: ${look.unit.trim().toUpperCase()}`,
+    `COLOR: ${look.color.trim().toUpperCase()}`,
+    `LENGTH: ${displayLength(look.length)}`,
+    `MATCH SCORE: print ${formatScorePercent(look.score)} in gray ${MATCH_SCORE_GRAY} (Futura PT Medium, uppercase %).`,
+    'Print all four values in their template value slots on this MATCH row — same horizontal band as the thumbnail.',
+    'TEXTURE, COLOR, LENGTH = black uppercase Futura PT Medium beside pre-printed labels.',
   ].join(' ');
 }
 
-function matchRowValuesBlankRules(): string {
+function matchRowValuesFalRules(): string {
   return [
-    '=== MATCH 02–04 VALUE SLOTS — LEAVE BLANK (SERVER OVERLAY ONLY) ===',
-    'For MATCH 02, MATCH 03, and MATCH 04: do NOT print texture, color, length, or match score % in the value areas.',
-    'Labels (TEXTURE:, COLOR:, LENGTH:, MATCH SCORE:) are pre-printed on the template — leave every value slot empty.',
-    'Still fill match thumbnails and TOP MATCH spec column. Server composites match-row values at calibrated size.',
+    '=== MATCH 02–04 VALUE SLOTS — PRINT IN TEMPLATE (FAL IN-IMAGE) ===',
+    'For MATCH 02, MATCH 03, and MATCH 04: print TEXTURE, COLOR, and LENGTH in black uppercase Futura PT Medium in each value area beside the pre-printed labels.',
+    `MATCH SCORE value area: print the gray percentage only (${MATCH_SCORE_GRAY}) — digits + % suffix, Futura PT Medium on the same row as texture/color/length.`,
+    'Labels (TEXTURE:, COLOR:, LENGTH:, MATCH SCORE:) are pre-printed on the template — do not duplicate labels; fill only the empty value slots.',
+    'Each row\'s texture, color, length, and score % must sit on the same MATCH row as its thumbnail — never float onto another row.',
   ].join('\n');
 }
 
@@ -409,13 +415,13 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   if (tier === 'free') return '';
 
   const lines: string[] = [
-    '=== MATCH 02–04 ROW VALUES — LEAVE ALL VALUE SLOTS BLANK ===',
-    'Do not print texture, color, length, or match score % — server overlays every value.',
+    '=== MATCH 02–04 ROW VALUES — PRINT EXACTLY IN VALUE SLOTS ===',
+    `TEXTURE, COLOR, LENGTH = black Futura PT Medium. MATCH SCORE % = gray ${MATCH_SCORE_GRAY} only.`,
   ];
 
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     lines.push(
-      `MATCH ${String(i + 2).padStart(2, '0')} (server reference only — do not print): ${look.unit}, ${look.color}, ${displayLength(look.length)}, ${formatScorePercent(look.score)}`
+      `MATCH ${String(i + 2).padStart(2, '0')}: TEXTURE ${look.unit.trim().toUpperCase()}, COLOR ${look.color.trim().toUpperCase()}, LENGTH ${displayLength(look.length)}, MATCH SCORE ${formatScorePercent(look.score)} (${MATCH_SCORE_GRAY})`
     );
   });
 
@@ -430,7 +436,6 @@ function freeTierOnlyBlock(): string {
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
     'ONLY fill: client preview photo, TOP MATCH spec column, OVERALL SCORE %, MATCH RATING stars, and EVERY DETAIL MATTERS text rows beside rose icons.',
-    'Leave MATCH 02–04 texture/color/length/score value slots blank for server overlay.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -451,8 +456,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
     mannequinLine,
     'NEVER use back-of-head stock photos, different people, hair-only swatches, repainted lower-body clothing, or symmetric both-shoulder hair.',
     '',
-    'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
-    'MATCH 02–04 texture/color/length/score value slots: leave blank — server overlay only.',
+    'TOP MATCH spec values, every-detail-matters lines, and MATCH 02–04 row values: black uppercase Futura PT Medium except MATCH SCORE % (gray #808080).',
   ];
 }
 
@@ -520,7 +524,7 @@ function buildTemplateRules(
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
-    ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : [matchRowValuesBlankRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
+    ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
     ...photoRules,
     '',
     ...(tierKey === 'free'
@@ -533,8 +537,8 @@ function buildTemplateRules(
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + stars in-image; match rows blank for server overlay.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score % + stars in-image; MATCH 02–04 row values blank for server overlay; TOP MATCH specs + thumbnails in-image.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + stars in-image.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — overall score % + stars + MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -561,6 +565,18 @@ function altRowBlock(label: string, look: FalAnalysisLook): string {
   ].join('\n');
 }
 
+function appendEveryDetailMattersLines(
+  lines: string[],
+  analysis: FalHairstyleAnalysis
+): void {
+  if (analysis.whyItWorks.length === 0) return;
+  lines.push('');
+  lines.push(everyDetailMattersRulesBlock(analysis.whyItWorks.length));
+  analysis.whyItWorks.forEach((line, i) => {
+    lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
+  });
+}
+
 function freePromptFooter(analysis: FalHairstyleAnalysis): string {
   return [
     '',
@@ -585,13 +601,7 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
     '',
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
-  if (analysis.whyItWorks.length > 0) {
-    lines.push('');
-    lines.push(everyDetailMattersRulesBlock(analysis.whyItWorks.length));
-    analysis.whyItWorks.forEach((line, i) => {
-      lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
-    });
-  }
+  appendEveryDetailMattersLines(lines, analysis);
   lines.push(freePromptFooter(analysis));
   return lines.join('\n');
 }
@@ -613,13 +623,14 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
     lines.push(altRowBlock(label, look));
     lines.push(matchThumbnailBlock(label, look, refs));
   });
+  appendEveryDetailMattersLines(lines, analysis);
   lines.push('');
   lines.push(matchStylingManifestBlock(analysis, refs));
   lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    'FINAL CHECK: pill first name only; TOP MATCH specs + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 row values blank for server overlay.'
+    'FINAL CHECK: pill first name only; TOP MATCH specs + every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
   );
   return lines.join('\n');
 }

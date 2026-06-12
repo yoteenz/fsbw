@@ -69,7 +69,7 @@ const THREE_MONTH_ALTS: AnalysisLook[] = [
 ];
 
 /** Every-detail-matters rows: one facial feature + one catalog spec per sentence (verbatim in Fal prompt). */
-const WHY_FREE = [
+const WHY_DETAIL_LINES = [
   "NOIR'S STRAIGHT TEXTURE FRAMES YOUR HEART-SHAPED FACE WHILE JET BLACK BRINGS OUT YOUR ALMOND-SHAPED EYES.",
   'LAYERS AT YOUR CHEEKBONES KEEP YOUR JAWLINE SHARP WITHOUT ADDING WIDTH AT YOUR NARROWER CHIN.',
   '24 INCH LENGTH HITS MID-CHEST TO BALANCE YOUR LONGER FACE AND HIGH FOREHEAD.',
@@ -90,7 +90,7 @@ export function buildKateenaDemoAnalysis(
   clientPreviewUrl = DEMO_CLIENT_PREVIEW_URL
 ): HairstyleAnalysis {
   const clientName = tier === 'free' ? 'KATEENA' : 'KATEENA ARMSTRONG';
-  const whyItWorks = tier === 'free' ? WHY_FREE : [];
+  const whyItWorks = WHY_DETAIL_LINES;
 
   return {
     id: `kateena-demo-${tier}`,
