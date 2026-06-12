@@ -27593,3 +27593,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported client-photo bottom fade still misaligned with the panel (shifted too far left). Wanted a colored debug square on the overlay debug panel — like text slots — to mark exactly where the fade mask should apply.
 - **Shipped:** New **`fadeDebug`** field **`clientPhotoFade`** (cyan semi-transparent square + bottom gradient hint) in **`hairstyleAnalysisTemplateLayouts.ts`** / **`HairstyleAnalysisCard`** — visible when Debug slot frames is on; draggable like other slots. **`CLIENT_PHOTO_FADE_PERCENT`** explicit default in **`hairstyleAnalysisLayoutSlots.ts`**. **`resolveClientPhotoFadeSlotOrDefault`** prefers **`clientPhotoFade`** slotOverrides. Generate sends saved **`slotOverrides`** from debug panel to server composite. Debug copy updated in **`HairstyleAnalysisPreview.tsx`**.
 - **Conventions:** Calibrate fade via cyan **photo fade** debug square → Save layout → Generate; **`clientPhotoFade`** in saved JSON is the fade mask rect.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: smaller score % + stars; Futura Demi score font
+
+- **Context:** User reported **overall score %** and **match-rating stars** generating too large in their panels. Disliked **Covered By Your Grace** script for overall score — wanted a different font.
+- **Shipped:** **`overallScoreFalFontSize()`** (~34% slot height, max 52px) in **`hairstyleAnalysisTextPaths.ts`**. **`hairstyleAnalysisFalPrompt.ts`** — overall score = **Futura PT Demi** (not CBYG/script); **`overallScoreAndStarsSizeRules()`** for compact padding; stars must fill inside template outlines only, not oversized. Dev overlay **`.scoreText`** → Futura Demi. Reference prompts in **`hairstyleAnalysisPrompts.ts`** aligned.
+- **Conventions:** Fal overall score = compact Futura PT Demi red % in panel; stars = template-outline size only.
