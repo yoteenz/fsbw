@@ -7,8 +7,14 @@ import {
   type RefObject,
 } from 'react';
 import type { PercentRect } from '../../types/hairstyleAnalysis';
-import { nudgeRectByPixels } from '../../utils/hairstyleAnalysisSlotCoords';
+import {
+  nudgeRectByPixels,
+  resizeRectByPixels,
+  type RectResizeEdge,
+} from '../../utils/hairstyleAnalysisSlotCoords';
 import styles from './HairstyleAnalysisCard.module.css';
+
+type ResizeAxes = 'horizontal' | 'vertical' | 'both';
 
 type AnalysisOverlaySlotProps = {
   slotId: string;
@@ -17,9 +23,17 @@ type AnalysisOverlaySlotProps = {
   label?: string;
   cardRef: RefObject<HTMLElement | null>;
   onRectChange?: (slotId: string, rect: PercentRect) => void;
+  resizeAxes?: ResizeAxes;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
+};
+
+type DragOrigin = {
+  x: number;
+  y: number;
+  rect: PercentRect;
+  mode: 'move' | RectResizeEdge;
 };
 
 export default function AnalysisOverlaySlot({
@@ -29,18 +43,19 @@ export default function AnalysisOverlaySlot({
   label,
   cardRef,
   onRectChange,
+  resizeAxes,
   className = '',
   style,
   children,
 }: AnalysisOverlaySlotProps) {
-  const dragOrigin = useRef<{ x: number; y: number; rect: PercentRect } | null>(null);
+  const dragOrigin = useRef<DragOrigin | null>(null);
 
-  const onPointerDown = useCallback(
-    (event: ReactPointerEvent<HTMLDivElement>) => {
+  const startInteraction = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>, mode: DragOrigin['mode']) => {
       if (!debug || !onRectChange) return;
       event.preventDefault();
       event.stopPropagation();
-      dragOrigin.current = { x: event.clientX, y: event.clientY, rect: { ...rect } };
+      dragOrigin.current = { x: event.clientX, y: event.clientY, rect: { ...rect }, mode };
       event.currentTarget.setPointerCapture(event.pointerId);
     },
     [debug, onRectChange, rect]
@@ -52,7 +67,23 @@ export default function AnalysisOverlaySlot({
       const cardBox = cardRef.current.getBoundingClientRect();
       const dx = event.clientX - dragOrigin.current.x;
       const dy = event.clientY - dragOrigin.current.y;
-      const next = nudgeRectByPixels(dragOrigin.current.rect, cardBox.width, cardBox.height, dx, dy);
+      const next =
+        dragOrigin.current.mode === 'move'
+          ? nudgeRectByPixels(
+              dragOrigin.current.rect,
+              cardBox.width,
+              cardBox.height,
+              dx,
+              dy
+            )
+          : resizeRectByPixels(
+              dragOrigin.current.rect,
+              cardBox.width,
+              cardBox.height,
+              dragOrigin.current.mode,
+              dx,
+              dy
+            );
       onRectChange(slotId, next);
     },
     [cardRef, debug, onRectChange, slotId]
@@ -67,6 +98,9 @@ export default function AnalysisOverlaySlot({
     }
   }, []);
 
+  const showHorizontal = resizeAxes === 'horizontal' || resizeAxes === 'both';
+  const showVertical = resizeAxes === 'vertical' || resizeAxes === 'both';
+
   return (
     <div
       className={`${styles.slot} ${debug ? styles.slotDebug : ''} ${className}`.trim()}
@@ -80,15 +114,57 @@ export default function AnalysisOverlaySlot({
       data-slot-id={slotId}
     >
       {debug ? (
-        <div
-          className={styles.slotDragHandle}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          title={`Drag ${label ?? slotId}`}
-        >
-          {label ?? slotId}
-        </div>
+        <>
+          <div
+            className={styles.slotDragHandle}
+            onPointerDown={(event) => startInteraction(event, 'move')}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            title={`Drag ${label ?? slotId}`}
+          >
+            {label ?? slotId}
+          </div>
+          {showHorizontal ? (
+            <>
+              <div
+                className={`${styles.slotResizeHandle} ${styles.slotResizeHandleLeft}`}
+                onPointerDown={(event) => startInteraction(event, 'left')}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                title={`Resize ${label ?? slotId} from left`}
+                aria-label={`Resize ${label ?? slotId} from left`}
+              />
+              <div
+                className={`${styles.slotResizeHandle} ${styles.slotResizeHandleRight}`}
+                onPointerDown={(event) => startInteraction(event, 'right')}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                title={`Resize ${label ?? slotId} from right`}
+                aria-label={`Resize ${label ?? slotId} from right`}
+              />
+            </>
+          ) : null}
+          {showVertical ? (
+            <>
+              <div
+                className={`${styles.slotResizeHandle} ${styles.slotResizeHandleTop}`}
+                onPointerDown={(event) => startInteraction(event, 'top')}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                title={`Resize ${label ?? slotId} from top`}
+                aria-label={`Resize ${label ?? slotId} from top`}
+              />
+              <div
+                className={`${styles.slotResizeHandle} ${styles.slotResizeHandleBottom}`}
+                onPointerDown={(event) => startInteraction(event, 'bottom')}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                title={`Resize ${label ?? slotId} from bottom`}
+                aria-label={`Resize ${label ?? slotId} from bottom`}
+              />
+            </>
+          ) : null}
+        </>
       ) : null}
       {children}
     </div>
