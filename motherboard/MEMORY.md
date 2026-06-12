@@ -27463,3 +27463,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Shared **`buildTemplateRules()`** included **ADDITIONAL MATCHES** / **MATCH THUMBNAILS** / portfolio instructions for all tiers; Fal invented comparison rows on **`IMG_2438`** free template.
 - **Shipped:** Tier-aware **`buildTemplateRules(refs, tier)`** + **`freeTierOnlyBlock()`** — free prompt forbids MATCH 02+, portfolio strips, extra scores. **`promptFooter(tier)`** omits thumbnail/match-score lines on free. **`normalizeHairstyleAnalysisForFal`** + **`applyRealisticMatchScores`** force **`additionalLooks: []`** for free.
 - **Conventions:** Free = client preview + TOP MATCH specs + every detail matters only — never populate additional-match UI on free template.
+
+---
+
+## 2026-06-09 — Hairstyle analysis: overall score % matches admin BRAND card
+
+- **Context (continued):** User asked what font the admin dashboard **BRAND** card uses for **%** and wanted the hairstyle analysis **overall score** composite to match.
+- **Reference:** **`StatsCard.tsx`** BRAND row — digits in **Covered By Your Grace** (`text-lg` / 18px); **`%`** in **Futura PT Medium** at **14px** (inline suffix span).
+- **Shipped:** **`overallScorePathItems()`** — percent size ratio **14/18** (was 0.48); shared baseline alignment for digits + `%`. Dev overlay **`HairstyleAnalysisCard`** — split **topScore** into CBYG digits + **`.scorePercentSuffix`** (Futura, 77.78% em) unless debug contentEditable.
+- **Conventions:** Overall score typography mirrors admin BRAND card: CBYG number + Futura PT Medium `%` at 14/18 ratio.
