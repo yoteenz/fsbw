@@ -10,8 +10,8 @@ import {
   stylingRefForLook,
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
-import { TOP_SCORE_SLOT } from './hairstyleAnalysisLayoutSlots.js';
-import { overallScoreFontSize } from './hairstyleAnalysisTextPaths.js';
+import { TOP_SCORE_SLOT, RATING_SLOT } from './hairstyleAnalysisLayoutSlots.js';
+import { overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
 import { clientFirstName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
   displayDensity,
@@ -352,11 +352,30 @@ function filledStarCount(rating: number): number {
 }
 
 function overallScoreFalLine(look: FalAnalysisLook): string {
-  const targetPx = overallScoreFontSize(TOP_SCORE_SLOT);
+  const targetPx = overallScoreFalFontSize(TOP_SCORE_SLOT);
   return [
     `OVERALL SCORE: print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
-    `Use Covered By Your Grace–style red script (~${targetPx}px) for digits + Futura % suffix, brand red ${BRAND_RED}.`,
+    `Font: Futura PT Demi (bold geometric sans-serif) — NOT script, NOT cursive, NOT Covered By Your Grace.`,
+    `Brand red ${BRAND_RED}, ~${targetPx}px max total height, centered with generous padding inside the panel.`,
+    'Digits and % suffix use the same Futura Demi — keep compact; must not touch panel edges or fill the whole box.',
   ].join(' ');
+}
+
+function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): string {
+  const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
+  const starPx = Math.max(22, Math.min(36, Math.round(RATING_SLOT.height * 0.24)));
+  const tierKey = normalizeTier(tier);
+  const freeStarNote =
+    tierKey === 'free'
+      ? `FREE: draw five star outlines ~${starPx}px each in one centered row with padding — not oversized.`
+      : 'PREMIUM: fill only inside the pre-rendered star outline glyphs at their original template size — never enlarge.';
+
+  return [
+    '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL) ===',
+    'Both panels have a small inner value area below the label. Score and stars must be **compact** — never dominate or touch borders.',
+    `OVERALL SCORE %: max ~${scorePx}px tall, centered with padding on all sides.`,
+    `MATCH RATING stars: ${freeStarNote} Red fill stays inside each outline only — no chunky oversized stars.`,
+  ].join('\n');
 }
 
 function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
@@ -376,14 +395,17 @@ function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalys
   return [
     `MATCH RATING: fill exactly ${filled} of 5 stars with solid brand red ${BRAND_RED} (same red as panel border glow).`,
     `Leave the remaining ${5 - filled} star(s) as empty outlines — do not fill them.`,
+    'Star fill must stay inside each outline at template size — do not enlarge, overflow the panel, or paint oversized fills.',
     premiumNote,
-    'FORBIDDEN: yellow/gold stars, emoji stars, or new star shapes outside the MATCH RATING panel.',
+    'FORBIDDEN: yellow/gold stars, emoji stars, oversized stars, or new star shapes outside the MATCH RATING panel.',
   ].join(' ');
 }
 
 function overallScoreAndRatingRules(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
   return [
-    '=== OVERALL SCORE + MATCH RATING ===',
+    overallScoreAndStarsSizeRules(tier),
+    '',
+    '=== OVERALL SCORE + MATCH RATING — CONTENT ===',
     overallScoreFalLine(look),
     matchRatingStarsFalLine(look, tier),
   ].join('\n');
