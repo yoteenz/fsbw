@@ -72,42 +72,14 @@ function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, st
   return out;
 }
 
-function sixMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
-  const portfolio: AnalysisLook[] = [analysis.topMatch, ...analysis.additionalLooks];
-  const out: Record<string, string> = {
-    ...topMatchHeader(analysis.topMatch),
-    clientName: analysis.clientName.toUpperCase(),
-  };
-  portfolio.slice(0, 5).forEach((look, i) => {
-    applyMatchRow(out, `portfolio-${i}`, look);
-  });
-  return out;
-}
-
-function twelveMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
-  const out: Record<string, string> = {
-    ...topMatchHeader(analysis.topMatch),
-    clientName: analysis.clientName.toUpperCase(),
-  };
-  analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
-    out[`alt-${i}-color`] = alt.color;
-    out[`alt-${i}-length`] = displayLength(alt);
-    out[`alt-${i}-score`] = formatScorePercent(alt.score);
-  });
-  analysis.whyItWorks.forEach((line, i) => {
-    out[`whyLine-${i}`] = line;
-  });
-  return out;
-}
-
 const BUILDERS: Record<
   Exclude<AnalysisTier, 'black'>,
   (analysis: HairstyleAnalysis) => Record<string, string>
 > = {
   free: freeOverlayValues,
   three_month: threeMonthOverlayValues,
-  six_month: sixMonthOverlayValues,
-  twelve_month: twelveMonthOverlayValues,
+  six_month: threeMonthOverlayValues,
+  twelve_month: threeMonthOverlayValues,
 };
 
 export function buildTemplateOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {

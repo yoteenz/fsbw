@@ -9,23 +9,21 @@
 
 Demo: `/tools/hairstyle-analysis` (sign in → **Generate template preview**)
 
-## Templates
+## Templates (two physical assets)
 
-| Tier | Asset |
-|------|--------|
-| Free | `IMG_2438.png` |
-| 3 month | `IMG_2447.png` |
-| 6 month | `IMG_2450.png` |
-| 12 month / black | `IMG_2451.png` |
+| Tier | Asset | Matches |
+|------|--------|---------|
+| Free | `IMG_2554.png` | Top match only |
+| 3 / 6 / 12 month (premium) | `IMG_2549.png` | Top + 3 additional |
+
+Premium subscribers (3, 6, or 12 month) share one template so match rows are not overcrowded. Each paid tier still gets **1 free analysis per UTC calendar month** (entitlement tier follows subscription for API/usage).
 
 ## Tier field maps (code)
 
 | Tier | Overlay fields |
 |------|----------------|
 | **free** | `clientName`, `clientImage`, `topScore`, `rating`, `specTexture…specStyle`, `whyLine-0…4` |
-| **three_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `match2…4-{texture,color,length,score}`, thumbs |
-| **six_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `portfolio-0…4-{texture,color,length,score}`, thumbs |
-| **twelve_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `alt-0…8-{color,length,score}`, thumbs, `whyLine-0…9` |
+| **three_month / six_month / twelve_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `match2…4-{texture,color,length,score}`, thumbs |
 
 Templates are **2048×2560 (4:5)**. Slot `%` positions in `hairstyleAnalysisTemplateLayouts.ts` are calibrated to those assets — enable **Debug** on the demo page to fine-tune.
 

@@ -10,9 +10,9 @@ import type { AnalysisLook, AnalysisTier, HairstyleAnalysis, UnitName } from '..
 export const ADDITIONAL_LOOKS_BY_TIER: Record<AnalysisTier, number> = {
   free: 0,
   three_month: 3,
-  six_month: 6,
-  twelve_month: 9,
-  black: 9,
+  six_month: 3,
+  twelve_month: 3,
+  black: 3,
 };
 
 export function normalizeAnalysisTier(tier: AnalysisTier): Exclude<AnalysisTier, 'black'> {
@@ -91,8 +91,7 @@ export function validateHairstyleAnalysis(
   });
 
   const tierNorm = normalizeAnalysisTier(analysis.tier);
-  const expectedWhy =
-    tierNorm === 'free' ? 5 : tierNorm === 'twelve_month' ? 10 : 0;
+  const expectedWhy = tierNorm === 'free' ? 5 : 0;
   if (expectedWhy > 0 && analysis.whyItWorks.length !== expectedWhy) {
     issues.push({
       field: 'whyItWorks',
