@@ -27324,3 +27324,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (continued):** User reported Fal inventing empowerment bullets or **FACE SHAPE:/FOREHEAD:** label rows in **every detail matters** instead of provided copy. Wants **BAW styling reference attachments** (layers, crimps, flat iron, define) — same as **`live-wig-after-color-styling`**, copy shape only, **retint via hex**. Section must stay **consistent**: fixed rose-icon rows, **one coherent sentence per row** tying client features + selected specs.
 - **Shipped (a0e7b8ed):** **`hairstyleAnalysisBawStylingRefs.ts`** — collects unique salon refs from JET BLACK NOIR `wig-preview-live/.../after-color/*` paths (+ gray-brick fallback). **`hairstyleAnalysisFal.ts`** attaches refs to **`image_urls`**. **`everyDetailMattersStructureBlock()`** forbids label:value and invented lines. Demo **`WHY_FREE`** / **`WHY_TWELVE`** = one full sentence per row (features + specs). DEFINE→layers, WAND CURLS→crimps mapping.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: fix Fal 422 (UNPROCESSABLE ENTITY) on generate
+
+- **Context (continued):** **`/tools/hairstyle-analysis`** admin generate kept returning **UNPROCESSABLE ENTITY** (Fal 422) after catalog validation passed — user pasted base64 client photo on **THREE MONTH** tier.
+- **Root cause:** BAW styling ref public URLs in **`hairstyleAnalysisBawStylingRefs.ts`** omitted the **`live-preview`** bucket segment (`.../public/wig-preview-live/...` instead of `.../public/live-preview/wig-preview-live/...`). Fal received **HTTP 400** URLs in **`image_urls`**. After-color WebPs for JET BLACK NOIR may also be absent in Storage — code always returned a URL string without verifying existence, so gray-brick fallback never ran.
+- **Shipped (2372eefc):** Fixed Supabase public URL base. Added **`bawStylingReferenceStoragePath()`** + runtime verify via **`storageObjectExists`** / HEAD — fall back to **`noirFalGrayBrickMannequinPublicUrlForAngle('front')`** when missing. **`hairstyleAnalysisFal.ts`** re-uploads template, client, mannequin, and styling refs to **Fal storage** before subscribe (same pattern as live try-on studio). Retry with **`image_size: 'auto'`** on 422; **`formatFalError`** surfaces Fal detail in API message. Pushed **`master`** + **`preview/mobile`**.
