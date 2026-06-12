@@ -3,6 +3,11 @@
  * Only overall score % and match-rating stars are composited server-side after Fal.
  */
 
+import {
+  bawStylingRefListBlock,
+  stylingRefForLook,
+  type HairstyleAnalysisStylingRef,
+} from './hairstyleAnalysisBawStylingRefs.js';
 import { clientFirstName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
   displayDensity,
@@ -39,6 +44,7 @@ export type FalHairstyleAnalysis = {
 
 export type FalPromptImageRefs = {
   mannequinRefs: MannequinRefIndex[];
+  stylingRefs: HairstyleAnalysisStylingRef[];
 };
 
 const BRAND_RED = '#EB1C24';
@@ -73,18 +79,30 @@ function colorValueLine(look: FalAnalysisLook): string {
   return `COLOR: ${look.color}`;
 }
 
-/** Hair-edit guidance only — never print hex or parentheses in template value fields. */
+/** Hair-edit guidance only — hex guides retint; never print hex on template value fields. */
 function colorHairGuidanceLine(look: FalAnalysisLook): string {
-  return `Match hair pigment to catalog color ${look.color}. Do not print hex codes, # symbols, or parenthetical notes on the template.`;
+  const hex = (look.hex || '#000000').toUpperCase();
+  return `Retint hair to catalog color ${look.color} (target ${hex}) on the client — do not print hex codes or parentheses on the template.`;
 }
 
-function styledHairLine(look: FalAnalysisLook): string {
+function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling);
-  if (style === 'NONE') return 'Finish hair in a polished salon-ready look.';
-  return `Apply salon styling: ${style}.`;
+  if (style === 'NONE') {
+    return 'Finish hair in a polished salon-ready look matching the unit texture reference.';
+  }
+  const stylingRef = stylingRefForLook(refs.stylingRefs, look.styling, look.part);
+  if (stylingRef) {
+    const hex = (look.hex || '#000000').toUpperCase();
+    return (
+      `Copy hairstyle shape from IMAGE ${stylingRef.imageIndex} (BAW ${stylingRef.salonMode.toUpperCase()} reference, ${stylingRef.part} part) — ` +
+      `match the curl, crimp, or straight pattern exactly; change ONLY hair pigment to ${look.color} (${hex}). ` +
+      `Do not invent a different salon finish.`
+    );
+  }
+  return `Apply BAW salon styling ${style} only — do not invent a new curl, crimp, or straight pattern.`;
 }
 
-function clientPreviewHairLine(look: FalAnalysisLook, refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
     '=== CLIENT PREVIEW PHOTO (IMAGE 2) — FULL BLEED, STYLED TOP MATCH ===',
     'Scale IMAGE 2 to COMPLETELY FILL the large client preview panel edge-to-edge (top, bottom, left, right).',
@@ -93,7 +111,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: { mannequinRefs: Man
     'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 2.',
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
     colorHairGuidanceLine(look),
-    styledHairLine(look),
+    styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
     'NO wig cap, NO lace visible, NO different person.',
     hairlineRulesBlock(),
@@ -109,18 +127,14 @@ function hairlineRulesBlock(): string {
   ].join('\n');
 }
 
-function matchThumbnailBlock(
-  label: string,
-  look: FalAnalysisLook,
-  refs: { mannequinRefs: MannequinRefIndex[] }
-): string {
+function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
     `${label} THUMBNAIL (small square on template):`,
     '- REQUIRED: front-facing portrait of the SAME CLIENT from IMAGE 2 — identical face, skin tone, and expression.',
     `- TEXTURE: ${look.unit}`,
     colorHairGuidanceLine(look),
     `- LENGTH: ${displayLength(look.length)}`,
-    styledHairLine(look),
+    styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs),
     '- Composite client selfie + mannequin hair texture for maximum accuracy.',
     '- FORBIDDEN: back-of-head shots, stock photos, wig-only swatches, silhouettes, or any different person.',
@@ -130,15 +144,26 @@ function matchThumbnailBlock(
     .join('\n');
 }
 
-function whyItWorksRulesBlock(): string {
+function everyDetailMattersStructureBlock(lineCount: number): string {
   return [
-    '=== WHY IT WORKS LINES (PRINT VERBATIM — NO REWRITES) ===',
-    'Each WHY IT WORKS LINE is a final curated stylist note for this client — print it exactly as given.',
-    'Each line must tie a catalog spec (unit texture, color, length, styling, part) to this client\'s features — face shape, eyes, jawline, undertone, proportions.',
-    'Example tone: "NOIR\'S STRAIGHT TEXTURE ACCENTUATES YOUR HEART-SHAPED FEATURES" or "JET BLACK ENHANCES YOUR ALMOND-SHAPED EYES".',
-    'These are intentional pairing notes — show you selected specs for them specifically, not generic praise.',
-    'FORBIDDEN: empowerment fluff, girl-power jargon, confidence slogans, trendy slang, or vague compliments with no spec tie-in.',
-    'Do not invent extra why lines or merge lines together.',
+    '=== EVERY DETAIL MATTERS PANEL — FIXED STRUCTURE (DO NOT CHANGE) ===',
+    'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
+    `Fill exactly ${lineCount} text rows below that header — one complete sentence per row.`,
+    'Print each WHY IT WORKS LINE verbatim as a single flowing sentence (client features + selected unit specs in the same sentence).',
+    'FORBIDDEN: label:value rows (e.g. "FACE SHAPE: OVAL"), keyword lists, empowerment slogans, or a different number of lines.',
+    'Same layout every generation: rose-icon rows with black uppercase Futura PT Medium sentence text only.',
+  ].join('\n');
+}
+
+function whyItWorksRulesBlock(lineCount: number): string {
+  return [
+    everyDetailMattersStructureBlock(lineCount),
+    '',
+    '=== WHY IT WORKS SENTENCES (PRINT VERBATIM — NO REWRITES) ===',
+    'Each sentence ties catalog specs (unit, color, length, styling) to this client\'s features — face shape, eyes, jawline, undertone.',
+    'Example: "NOIR\'S STRAIGHT TEXTURE ACCENTUATES YOUR HEART-SHAPED FEATURES WHILE JET BLACK ENHANCES YOUR ALMOND-SHAPED EYES."',
+    'FORBIDDEN: empowerment fluff, girl-power jargon, or vague praise with no spec tie-in.',
+    'Do not invent, merge, or reformat lines.',
   ].join('\n');
 }
 
@@ -172,7 +197,7 @@ function matchScoreFalLine(look: FalAnalysisLook): string {
   );
 }
 
-function buildTemplateRules(refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function buildTemplateRules(refs: FalPromptImageRefs): string {
   const mannequinList =
     refs.mannequinRefs.length > 0
       ? refs.mannequinRefs
@@ -208,9 +233,15 @@ function buildTemplateRules(refs: { mannequinRefs: MannequinRefIndex[] }): strin
     '',
     mannequinList,
     '',
+    bawStylingRefListBlock(refs.stylingRefs),
+    '',
+    '=== SALON STYLING — BAW REFERENCES ONLY (NO INVENTED STYLES) ===',
+    'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
+    'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
+    '',
     '=== ADDITIONAL MATCHES — VARIED STYLING ===',
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
-    'Apply the assigned styling on every additional-match thumbnail (not raw mannequin texture).',
+    'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
     '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN TEXTURE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
@@ -266,12 +297,13 @@ const PROMPT_FOOTER = [
   'TOP MATCH spec column: all values filled in black.',
   'OVERALL SCORE % and MATCH RATING stars: left blank for server overlay.',
   'MATCH SCORE value slots: gray percentage only in the correct template position.',
-  'THUMBNAILS: same client face from IMAGE 2 — each match uses its own styling.',
+  'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.',
+  'EVERY DETAIL MATTERS: fixed rose-icon rows, one verbatim sentence per line — no label:value format.',
   'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',
   'COLOR values: color name only — no hex codes or parentheses on the template.',
 ].join('\n');
 
-function freePrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
@@ -284,7 +316,7 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: Manne
   ];
   if (analysis.whyItWorks.length > 0) {
     lines.push('');
-    lines.push(whyItWorksRulesBlock());
+    lines.push(whyItWorksRulesBlock(analysis.whyItWorks.length));
     analysis.whyItWorks.forEach((line, i) => {
       lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
     });
@@ -293,7 +325,7 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: Manne
   return lines.join('\n');
 }
 
-function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
@@ -314,7 +346,7 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs:
   return lines.join('\n');
 }
 
-function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
   const top = analysis.topMatch;
   const portfolio = [top, ...analysis.additionalLooks];
   const firstName = clientFirstName(analysis.clientName);
@@ -342,7 +374,7 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: M
   return lines.join('\n');
 }
 
-function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
   const top = analysis.topMatch;
   const firstName = clientFirstName(analysis.clientName);
   const lines = [
@@ -367,7 +399,7 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs
   });
   if (analysis.whyItWorks.length > 0) {
     lines.push('');
-    lines.push(whyItWorksRulesBlock());
+    lines.push(whyItWorksRulesBlock(analysis.whyItWorks.length));
     analysis.whyItWorks.forEach((line, i) => {
       lines.push(`WHY IT WORKS LINE ${i + 1}: ${line}`);
     });
@@ -378,7 +410,7 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: { mannequinRefs
 
 export function buildHairstyleAnalysisFalPrompt(
   analysis: FalHairstyleAnalysis,
-  refs: { mannequinRefs: MannequinRefIndex[] }
+  refs: FalPromptImageRefs
 ): string {
   const tier = normalizeTier(analysis.tier);
   if (tier === 'free') return freePrompt(analysis, refs);

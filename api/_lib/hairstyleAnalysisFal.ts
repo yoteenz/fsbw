@@ -1,6 +1,7 @@
 import { compositeHairstyleAnalysisFalImage } from './hairstyleAnalysisFalComposite.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
 import { buildHairstyleAnalysisFalPrompt, type FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
+import { collectStylingRefsForAnalysis } from './hairstyleAnalysisBawStylingRefs.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
 
 export const HAIRSTYLE_ANALYSIS_GPT2_MODEL = 'openai/gpt-image-2/edit';
@@ -124,8 +125,16 @@ export async function generateHairstyleAnalysisWithFal(
     mannequinRefs.map((ref) => resolvePublicImageUrl(fal, ref.path, input.siteOrigin, `mannequin-${ref.unit}`))
   );
 
-  const imageUrls = [templateUrl, clientUrl, ...mannequinUrls];
-  const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs });
+  const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
+  const stylingRefs = collectStylingRefsForAnalysis(allLooks, 3 + mannequinRefs.length);
+  const stylingUrls = await Promise.all(
+    stylingRefs.map((ref) =>
+      resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `styling-${ref.key}`)
+    )
+  );
+
+  const imageUrls = [templateUrl, clientUrl, ...mannequinUrls, ...stylingUrls];
+  const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs, stylingRefs });
 
   const result = await fal.subscribe(HAIRSTYLE_ANALYSIS_GPT2_MODEL, {
     input: {
