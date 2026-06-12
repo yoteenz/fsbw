@@ -27446,3 +27446,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decision:** Server-composited match-row % misaligns vs template; **Fal** places them correctly in the baked label slots. Reverted match-row overlay; keep server composite for **overall CBYG % + stars only**. **`applyRealisticMatchScores`** + manifest still drive unique gray % per row in Fal prompt.
 - **Shipped:** **`hairstyleAnalysisFalComposite.ts`** — removed match-score path overlay. **`hairstyleAnalysisFalPrompt.ts`** — restored **`matchScoreFalLine`** (gray % in value slot); blank rules scoped to overall + stars. Generate sends **`slotOverrides`** for **`topScore`** / **`rating`** only.
 - **Conventions:** Match-row scores = Fal in template slot (gray). Overall % + stars = server paths. Debug layout for match-*-score slots = overlay dev only until pixel-calibrated server slots exist.
+
+---
+
+## 2026-06-09 — Hairstyle analysis: overall score missing % sign
+
+- **Context (continued):** User reported server-composited overall score showed **96** without **%** (expected **96%** red CBYG).
+- **Cause:** **`CoveredByYourGrace.ttf`** has **no percent glyph** — opentype path for `96%` silently omitted `%`.
+- **Shipped:** **`overallScorePathItems()`** in **`hairstyleAnalysisTextPaths.ts`** — digits in CBYG + **`%`** suffix in **Futura PT Medium** (red), centered as one unit in **`hairstyleAnalysisFalComposite.ts`**.
