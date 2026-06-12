@@ -27577,3 +27577,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported server-composited **overall score %** and **match-rating stars** were back on the template, **incorrectly removing** other Fal-generated text (match rows garbled/overlapping). **Helmet hair** / high density returned after neck-position prompt slimming. **Bottom fade** misaligned with panel, painted flat gray instead of cutting out photo to show marble.
 - **Shipped:** Removed score + star overlays from **`hairstyleAnalysisFalComposite.ts`** — server post-process = **MATCH 02–04 row values** + **client photo bottom fade** only. **`hairstyleAnalysisFalPrompt.ts`** — Fal generates score % (CBYG script) and stars in-image again; restored **`realisticHairDensityBlock`** on client preview + thumbs + anti-helmet line in shared photo rules. **`CLIENT_PHOTO_FADE_SLOT`** (inner inset from panel border/pill) + marble strip underlay in **`hairstyleAnalysisClientPhotoFade.ts`** (alpha mask, not gray fill). Docs/preview/CORE updated.
 - **Conventions:** Score + stars = Fal in-image; server overlays match-row values + photo fade mask only.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: Fal in-image match rows + every detail matters
+
+- **Context:** User said generation should again produce **every detail matters** text, **MATCH 02–04 row values** (texture, color, length), and **gray match score %** (`#808080`) in-image like before. Server overlay for match rows was putting text on the wrong row / overlapping thumbnails.
+- **Shipped:** Removed MATCH 02–04 server text overlay from **`hairstyleAnalysisFalComposite.ts`** — renamed post-process to **`compositeHairstyleAnalysisPostProcess`** (client-photo bottom fade only). **`hairstyleAnalysisFalPrompt.ts`** — **`matchRowValuesFalRules()`**, **`matchScoreFalLine()`** prints texture/color/length black + gray score %; **`matchScoreManifestBlock`** mandates in-image row values; **`appendEveryDetailMattersLines`** added to premium **`threeMonthPrompt`**. **`hairstyleAnalysisDemo.ts`** — **`WHY_DETAIL_LINES`** for all tiers (not free-only). **`docs/STYLE_ANALYSIS.md`**, **`HairstyleAnalysisPreview.tsx`**, **`CORE.md`** updated.
+- **Conventions:** Fal in-image = TOP MATCH specs, overall score %, stars, every detail matters, MATCH 02–04 values (gray score %), photos. Server = symmetrical client-photo bottom fade only.
