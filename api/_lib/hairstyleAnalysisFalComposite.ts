@@ -58,13 +58,14 @@ async function buildScoreOverlaySvg(score: number): Promise<Buffer> {
 
   const rect = TOP_SCORE_SLOT;
   const text = formatScorePercent(score);
-  const fontSize = 56;
+  const fontSize = Math.min(56, Math.round(rect.height * 0.72));
+  const x = rect.left + Math.round(rect.width / 2);
   const y = textY(rect.top, rect.height, fontSize);
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2560">
   <defs><style>${fontFace}</style></defs>
-  <text x="${rect.left}" y="${y}" font-family="${family}" font-size="${fontSize}" fill="${BRAND_RED}">${escapeXml(text)}</text>
+  <text x="${x}" y="${y}" text-anchor="middle" font-family="${family}" font-size="${fontSize}" fill="${BRAND_RED}">${escapeXml(text)}</text>
 </svg>`;
 
   return Buffer.from(svg);
@@ -81,8 +82,13 @@ async function buildStarComposites(
   ]);
 
   const filled = Math.min(5, Math.max(0, Math.round(rating)));
-  const starW = Math.max(28, Math.round(RATING_SLOT.width / 5.8));
-  const gap = Math.max(2, Math.round(starW * 0.08));
+  const gap = Math.max(2, Math.round(RATING_SLOT.width * 0.02));
+  const starW = Math.max(
+    24,
+    Math.min(Math.round(RATING_SLOT.height * 0.62), Math.floor((RATING_SLOT.width - gap * 4) / 5))
+  );
+  const rowWidth = 5 * starW + 4 * gap;
+  const leftStart = RATING_SLOT.left + Math.round((RATING_SLOT.width - rowWidth) / 2);
   const top = RATING_SLOT.top + Math.round((RATING_SLOT.height - starW) / 2);
 
   const sharp = (await import('sharp')).default;
@@ -95,7 +101,7 @@ async function buildStarComposites(
       .toBuffer();
     overlays.push({
       input,
-      left: RATING_SLOT.left + i * (starW + gap),
+      left: leftStart + i * (starW + gap),
       top,
     });
   }
