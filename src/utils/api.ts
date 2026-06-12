@@ -2152,6 +2152,23 @@ export async function postBuildWigUnitImage(
   return JSON.parse(text) as BuildWigUnitImageResult;
 }
 
+export type HairstyleAnalysisUsageSnapshot = {
+  monthKey: string;
+  monthCount: number;
+  monthLimit: number;
+  monthRemaining: number;
+};
+
+export type HairstyleAnalysisUsageResult = {
+  eligible: boolean;
+  analysisTier: string | null;
+  templateUrl: string | null;
+  subscriptionTier: string | null;
+  unlimited: boolean;
+  usage: HairstyleAnalysisUsageSnapshot;
+  monthRemaining: number;
+};
+
 export type HairstyleAnalysisGenerateResult = {
   ok: boolean;
   imageUrl: string;
@@ -2159,7 +2176,22 @@ export type HairstyleAnalysisGenerateResult = {
   model: string;
   imageSize: { width: number; height: number };
   quality: string;
+  analysisTier?: string;
+  usage?: HairstyleAnalysisUsageSnapshot | null;
 };
+
+/** Monthly allowance for 3 / 6 / 12 month subscribers (1 free analysis per UTC month). */
+export async function getHairstyleAnalysisUsage(): Promise<HairstyleAnalysisUsageResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/hairstyle-analysis-usage', { method: 'GET' });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Hairstyle analysis usage');
+  }
+  const text = await res.text();
+  if (!res.ok) throw new Error(parseApiErrorText(text, 'Could not load hairstyle analysis allowance'));
+  return JSON.parse(text) as HairstyleAnalysisUsageResult;
+}
 
 /** Fal GPT Image 2 — populate hairstyle analysis template (4:5 · ~2K). */
 export async function postHairstyleAnalysisGenerate(

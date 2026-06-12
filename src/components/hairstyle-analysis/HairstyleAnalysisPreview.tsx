@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
 import type {
   AnalysisTier,
   HairstyleAnalysis,
@@ -6,7 +7,12 @@ import type {
   SlotLayoutOverrides,
   TextContentOverrides,
 } from '../../types/hairstyleAnalysis';
-import { postHairstyleAnalysisGenerate } from '../../utils/api';
+import {
+  getHairstyleAnalysisUsage,
+  postHairstyleAnalysisGenerate,
+  type HairstyleAnalysisUsageResult,
+} from '../../utils/api';
+import { getCurrentUser, isAdminEmail } from '../../utils/adminAuth';
 import { validateHairstyleAnalysis } from '../../utils/hairstyleAnalysisRules';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
@@ -60,6 +66,34 @@ export default function HairstyleAnalysisPreview({
   const [slotOverrides, setSlotOverrides] = useState<SlotLayoutOverrides>({});
   const [textOverrides, setTextOverrides] = useState<TextContentOverrides>({});
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [usageState, setUsageState] = useState<HairstyleAnalysisUsageResult | null>(null);
+  const [usageLoading, setUsageLoading] = useState(true);
+
+  const isAdmin = useMemo(() => {
+    const user = getCurrentUser();
+    return user ? isAdminEmail(user.email || '') : false;
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const usage = await getHairstyleAnalysisUsage();
+        if (cancelled) return;
+        setUsageState(usage);
+        if (!isAdmin && usage.eligible && usage.analysisTier && onTierChange) {
+          onTierChange(usage.analysisTier as AnalysisTier);
+        }
+      } catch {
+        if (!cancelled) setUsageState(null);
+      } finally {
+        if (!cancelled) setUsageLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isAdmin, onTierChange]);
 
   const resolvedAnalysis = useMemo(() => {
     if (!clientPreviewUrl) return analysis;
@@ -104,6 +138,13 @@ export default function HairstyleAnalysisPreview({
     setLastPrompt(null);
   };
 
+  const canGenerate = useMemo(() => {
+    if (validationIssues.length > 0 || generating || usageLoading) return false;
+    if (isAdmin || usageState?.unlimited) return true;
+    if (!usageState?.eligible) return false;
+    return (usageState.monthRemaining ?? 0) > 0;
+  }, [generating, isAdmin, usageLoading, usageState, validationIssues.length]);
+
   const handleGenerate = useCallback(async () => {
     setGenerating(true);
     setGenerateError(null);
@@ -111,12 +152,26 @@ export default function HairstyleAnalysisPreview({
       const result = await postHairstyleAnalysisGenerate(resolvedAnalysis as unknown as Record<string, unknown>);
       setGeneratedUrl(result.imageUrl);
       setLastPrompt(result.prompt);
+      if (result.usage) {
+        setUsageState((prev) =>
+          prev
+            ? {
+                ...prev,
+                usage: result.usage!,
+                monthRemaining: result.usage!.monthRemaining,
+              }
+            : prev
+        );
+      } else if (!usageState?.unlimited && !isAdmin) {
+        const refreshed = await getHairstyleAnalysisUsage();
+        setUsageState(refreshed);
+      }
     } catch (e) {
       setGenerateError(e instanceof Error ? e.message.toUpperCase() : 'GENERATION FAILED');
     } finally {
       setGenerating(false);
     }
-  }, [resolvedAnalysis]);
+  }, [isAdmin, resolvedAnalysis, usageState?.unlimited]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({
@@ -139,9 +194,34 @@ export default function HairstyleAnalysisPreview({
   return (
     <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       <div className="flex flex-col gap-3">
-        {onTierChange ? (
+        {usageLoading ? (
+          <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080]">Checking monthly allowance…</p>
+        ) : usageState?.unlimited ? (
+          <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080]">
+            Admin test mode — unlimited generations
+          </p>
+        ) : usageState?.eligible ? (
+          <p
+            className={`text-[9px] uppercase tracking-[0.1em] leading-relaxed ${
+              (usageState.monthRemaining ?? 0) > 0 ? 'text-[#808080]' : 'text-[#eb1c24]'
+            }`}
+          >
+            {(usageState.monthRemaining ?? 0) > 0
+              ? `${usageState.monthRemaining} free hairstyle analysis remaining this month (3 / 6 / 12 month members)`
+              : 'You have used your free hairstyle analysis for this month. It resets when the calendar month changes.'}
+          </p>
+        ) : (
+          <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24] leading-relaxed">
+            A 3, 6, or 12 month premium subscription is required.{' '}
+            <Link to="/account/rewards" className="underline text-black">
+              View membership
+            </Link>
+          </p>
+        )}
+
+        {onTierChange && isAdmin ? (
           <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
-            Membership tier
+            Membership tier (admin test)
             <select
               value={analysis.tier}
               onChange={(e) => onTierSelect(e.target.value as AnalysisTier)}
@@ -155,6 +235,10 @@ export default function HairstyleAnalysisPreview({
               ))}
             </select>
           </label>
+        ) : usageState?.analysisTier ? (
+          <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080]">
+            Your card tier: {usageState.analysisTier.replace(/_/g, ' ')}
+          </p>
         ) : null}
 
         {onClientPreviewUrlChange ? (
@@ -198,7 +282,7 @@ export default function HairstyleAnalysisPreview({
         <button
           type="button"
           onClick={() => void handleGenerate()}
-          disabled={generating || validationIssues.length > 0}
+          disabled={!canGenerate}
           className="w-full py-3 border border-black uppercase disabled:opacity-40"
           style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
         >

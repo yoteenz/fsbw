@@ -1,12 +1,24 @@
 export const config = { maxDuration: 300 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { isAdminEmail } from './_lib/adminAuth.js';
 import { getAuthUser } from './_lib/auth.js';
+import {
+  effectiveHairstyleAnalysisTierForRequest,
+  resolveHairstyleAnalysisEntitlement,
+} from './_lib/hairstyleAnalysisEntitlement.js';
 import {
   generateHairstyleAnalysisWithFal,
   type GenerateHairstyleAnalysisFalInput,
 } from './_lib/hairstyleAnalysisFal.js';
 import type { FalHairstyleAnalysis } from './_lib/hairstyleAnalysisFalPrompt.js';
+import { hairstyleAnalysisTemplateUrlForTier } from './_lib/hairstyleAnalysisTemplates.js';
+import {
+  consumeHairstyleAnalysisGeneration,
+  getHairstyleAnalysisUsage,
+  refundHairstyleAnalysisGeneration,
+} from './_lib/hairstyleAnalysisUsage.js';
+import { getPsaPremiumProfile } from './_lib/psaPremiumCheck.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const body = req.body;
@@ -79,11 +91,12 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
       ? (nested as Record<string, unknown>)
       : body;
 
-  const tier = parseTier(readString(src, 'tier'));
+  const tierRaw = readString(src, 'tier');
+  const tier = tierRaw ? parseTier(tierRaw) : 'three_month';
   const topMatch = readLook(src.topMatch);
   const templateUrl = readString(src, 'templateUrl');
   const clientPreviewUrl = readString(src, 'clientPreviewUrl');
-  if (!tier || !topMatch || !templateUrl || !clientPreviewUrl) return null;
+  if (!tier || !topMatch || !clientPreviewUrl) return null;
 
   const additionalLooks: FalHairstyleAnalysis['additionalLooks'] = [];
   if (Array.isArray(src.additionalLooks)) {
@@ -108,7 +121,7 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
       additionalLooks,
       whyItWorks,
     },
-    templateUrl,
+    templateUrl: templateUrl || hairstyleAnalysisTemplateUrlForTier(tier),
     clientPreviewUrl,
     siteOrigin: '',
   };
@@ -136,16 +149,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const body = parseBody(req);
   const parsed = parseAnalysis(body);
   if (!parsed) {
-    res.status(400).json({ error: 'Invalid analysis payload — tier, templateUrl, clientPreviewUrl, topMatch required' });
+    res.status(400).json({
+      error: 'Invalid analysis payload — clientPreviewUrl and topMatch required',
+    });
     return;
+  }
+
+  const isAdmin = isAdminEmail(user.email);
+  const premium = await getPsaPremiumProfile(user.id, user.accessToken, user.email);
+  const entitlement = resolveHairstyleAnalysisEntitlement(premium, user.email);
+
+  if (!entitlement.eligible && !isAdmin) {
+    res.status(403).json({
+      error: 'A 3, 6, or 12 month premium subscription is required for hairstyle analysis.',
+      code: 'PREMIUM_REQUIRED',
+    });
+    return;
+  }
+
+  const effectiveTier = effectiveHairstyleAnalysisTierForRequest({
+    entitlement,
+    requestedTier: parsed.analysis.tier,
+    isAdmin,
+  });
+  parsed.analysis.tier = effectiveTier;
+  parsed.templateUrl = hairstyleAnalysisTemplateUrlForTier(effectiveTier);
+
+  let consumed = false;
+  if (!entitlement.unlimited) {
+    const consumeResult = await consumeHairstyleAnalysisGeneration(user.id);
+    if (!consumeResult.ok) {
+      res.status(429).json({
+        error:
+          'You have already used your free hairstyle analysis this month. Your next free analysis is available when the calendar month resets.',
+        code: 'MONTHLY_LIMIT',
+        usage: consumeResult.usage,
+        retryAfterSec: consumeResult.retryAfterSec,
+      });
+      return;
+    }
+    consumed = true;
   }
 
   parsed.siteOrigin = siteOriginFromRequest(req);
 
   try {
     const result = await generateHairstyleAnalysisWithFal(parsed);
-    res.status(200).json({ ok: true, ...result });
+    res.status(200).json({
+      ok: true,
+      ...result,
+      analysisTier: effectiveTier,
+      usage: entitlement.unlimited ? null : await getHairstyleAnalysisUsage(user.id),
+    });
   } catch (e) {
+    if (consumed) {
+      await refundHairstyleAnalysisGeneration(user.id);
+    }
     const msg = e instanceof Error ? e.message : 'Hairstyle analysis generation failed';
     console.error('[hairstyle-analysis-generate]', msg);
     res.status(500).json({ error: msg });
