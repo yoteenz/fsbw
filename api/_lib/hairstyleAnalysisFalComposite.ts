@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import opentype from 'opentype.js';
 import { formatScorePercent } from './hairstyleAnalysisDisplay.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { RATING_SLOT, TOP_SCORE_SLOT } from './hairstyleAnalysisLayoutSlots.js';
@@ -5,14 +9,13 @@ import { RATING_SLOT, TOP_SCORE_SLOT } from './hairstyleAnalysisLayoutSlots.js';
 const BRAND_RED = '#EB1C24';
 const STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
 const STAR_FILLED_PATH = '/assets/NOIR/filled-star.png';
-const COVERED_FONT_CSS =
-  'https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&display=swap';
+const COVERED_FONT_PATH = join(
+  dirname(fileURLToPath(import.meta.url)),
+  'fonts',
+  'CoveredByYourGrace.ttf'
+);
 
-type FontCache = {
-  coveredB64?: string;
-};
-
-const fontCache: FontCache = {};
+let coveredFont: opentype.Font | null = null;
 
 function escapeXml(value: string): string {
   return value
@@ -28,44 +31,34 @@ async function fetchBuffer(url: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
-async function coveredFontBase64(): Promise<string | null> {
-  if (fontCache.coveredB64) return fontCache.coveredB64;
-  try {
-    const cssRes = await fetch(COVERED_FONT_CSS, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    });
-    const css = await cssRes.text();
-    const match = /url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/.exec(css);
-    if (!match?.[1]) return null;
-    const buf = await fetchBuffer(match[1]);
-    fontCache.coveredB64 = buf.toString('base64');
-    return fontCache.coveredB64;
-  } catch {
-    return null;
-  }
+function loadCoveredFont(): opentype.Font {
+  if (coveredFont) return coveredFont;
+  const buf = readFileSync(COVERED_FONT_PATH);
+  coveredFont = opentype.parse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+  return coveredFont;
 }
 
-function textY(top: number, height: number, fontSize: number): number {
-  return top + Math.round(height * 0.78);
+function coveredScorePathSvg(text: string, rect: typeof TOP_SCORE_SLOT, fontSize: number): string {
+  const font = loadCoveredFont();
+  const measure = font.getPath(text, 0, 0, fontSize);
+  const bb = measure.getBoundingBox();
+  const pathW = bb.x2 - bb.x1;
+  const pathH = bb.y2 - bb.y1;
+  const x = rect.left + (rect.width - pathW) / 2 - bb.x1;
+  const y = rect.top + (rect.height - pathH) / 2 - bb.y1;
+  const path = font.getPath(text, x, y, fontSize);
+  return path.toPathData(2);
 }
 
-async function buildScoreOverlaySvg(score: number): Promise<Buffer> {
-  const coveredB64 = await coveredFontBase64();
-  const family = coveredB64 ? 'CoveredSlot' : 'sans-serif';
-  const fontFace = coveredB64
-    ? `@font-face { font-family: 'CoveredSlot'; src: url(data:font/truetype;charset=utf-8;base64,${coveredB64}) format('truetype'); }`
-    : '';
-
+function buildScoreOverlaySvg(score: number): Buffer {
   const rect = TOP_SCORE_SLOT;
   const text = formatScorePercent(score);
-  const fontSize = Math.min(56, Math.round(rect.height * 0.72));
-  const x = rect.left + Math.round(rect.width / 2);
-  const y = textY(rect.top, rect.height, fontSize);
+  const fontSize = Math.min(64, Math.round(rect.height * 0.78));
+  const pathData = coveredScorePathSvg(text, rect, fontSize);
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2560">
-  <defs><style>${fontFace}</style></defs>
-  <text x="${x}" y="${y}" text-anchor="middle" font-family="${family}" font-size="${fontSize}" fill="${BRAND_RED}">${escapeXml(text)}</text>
+  <path d="${escapeXml(pathData)}" fill="${BRAND_RED}"/>
 </svg>`;
 
   return Buffer.from(svg);
@@ -118,7 +111,7 @@ export async function compositeHairstyleAnalysisFalImage(
   const sharp = (await import('sharp')).default;
   const baseBuf = await fetchBuffer(falImageUrl);
   const [scoreOverlay, starOverlays] = await Promise.all([
-    buildScoreOverlaySvg(analysis.topMatch.score),
+    Promise.resolve(buildScoreOverlaySvg(analysis.topMatch.score)),
     buildStarComposites(analysis.topMatch.rating, siteOrigin),
   ]);
 
