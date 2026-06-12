@@ -27347,3 +27347,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (continued):** User screenshot — server-composited **star row** sat on the **top border** between OVERALL SCORE and MATCH RATING panels instead of inside the **MATCH RATING** value box.
 - **Cause:** **`TOP_SCORE_SLOT`** / **`RATING_SLOT`** used **15.8% top, 3.5% height** (label row); template value boxes are **~16% top, 5.8% height** (pixel-probed on IMG_2447).
 - **Shipped:** Recalibrated slots in **`hairstyleAnalysisLayoutSlots.ts`** + **`hairstyleAnalysisTemplateLayouts.ts`**. **`hairstyleAnalysisFalComposite.ts`** — center stars H+V inside rating panel; center overall score % in score panel.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: fix Covered By Your Grace overall score composite
+
+- **Context (continued):** User reported **overall score %** missing or **broken characters** on generated cards. Expected **Covered By Your Grace** red % server-side.
+- **Cause:** **`hairstyleAnalysisFalComposite.ts`** embedded Google Fonts via SVG **`@font-face`** + **sharp/librsvg** — librsvg **does not render embedded webfonts**; runtime fetch to Google also unreliable on Vercel. Fallback `sans-serif` → tofu/missing glyphs.
+- **Shipped (ce2de517):** Bundled **`api/_lib/fonts/CoveredByYourGrace.ttf`**; **`opentype.js`** converts **`98%`** to SVG **`<path>`** outlines (no font embedding); sharp composites paths. **`vercel.json`** **`includeFiles`** for TTF on **`hairstyle-analysis-generate`**. Docs updated.
