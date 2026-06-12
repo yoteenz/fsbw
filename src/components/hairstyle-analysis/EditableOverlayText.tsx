@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import styles from './HairstyleAnalysisCard.module.css';
 
 type EditableOverlayTextProps = {
@@ -8,6 +8,7 @@ type EditableOverlayTextProps = {
   onChange?: (slotId: string, value: string) => void;
   className?: string;
   multiline?: boolean;
+  style?: CSSProperties;
 };
 
 export default function EditableOverlayText({
@@ -17,6 +18,7 @@ export default function EditableOverlayText({
   onChange,
   className = '',
   multiline = false,
+  style,
 }: EditableOverlayTextProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -37,7 +39,7 @@ export default function EditableOverlayText({
         role="textbox"
         aria-label={slotId}
         onInput={(e) => onChange(slotId, e.currentTarget.textContent ?? '')}
-        style={multiline ? { whiteSpace: 'pre-wrap' } : undefined}
+        style={{ ...(multiline ? { whiteSpace: 'pre-wrap' as const } : undefined), ...style }}
       />
     );
   }
@@ -45,7 +47,7 @@ export default function EditableOverlayText({
   return (
     <p
       className={`${styles.overlayText} ${className}`.trim()}
-      style={multiline ? { whiteSpace: 'pre-wrap' } : undefined}
+      style={{ ...(multiline ? { whiteSpace: 'pre-wrap' as const } : undefined), ...style }}
     >
       {value}
     </p>

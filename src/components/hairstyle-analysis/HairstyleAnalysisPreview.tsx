@@ -6,7 +6,16 @@ import type {
   PercentRect,
   SlotLayoutOverrides,
   TextContentOverrides,
+  TextFontStyle,
+  TextFontStyleOverrides,
 } from '../../types/hairstyleAnalysis';
+import {
+  clearHairstyleAnalysisTierDebug,
+  formatHairstyleAnalysisDebugForCopy,
+  loadHairstyleAnalysisTierDebug,
+  saveHairstyleAnalysisTierDebug,
+} from '../../utils/hairstyleAnalysisLayoutDebug';
+import { getTemplateFields } from '../../utils/hairstyleAnalysisTemplateLayouts';
 import {
   getHairstyleAnalysisUsage,
   postHairstyleAnalysisGenerate,
@@ -68,6 +77,9 @@ export default function HairstyleAnalysisPreview({
   const [hideDebugForCapture, setHideDebugForCapture] = useState(false);
   const [slotOverrides, setSlotOverrides] = useState<SlotLayoutOverrides>({});
   const [textOverrides, setTextOverrides] = useState<TextContentOverrides>({});
+  const [fontOverrides, setFontOverrides] = useState<TextFontStyleOverrides>({});
+  const [selectedFontSlot, setSelectedFontSlot] = useState('topScore');
+  const [debugSaveMessage, setDebugSaveMessage] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [usageState, setUsageState] = useState<HairstyleAnalysisUsageResult | null>(null);
   const [usageLoading, setUsageLoading] = useState(true);
@@ -117,9 +129,25 @@ export default function HairstyleAnalysisPreview({
 
   const filename = `${resolvedAnalysis.clientName.toLowerCase()}-hairstyle-analysis-${resolvedAnalysis.tier}.png`;
 
+  const textFieldIds = useMemo(
+    () =>
+      getTemplateFields(analysis.tier)
+        .filter((field) => field.kind === 'text')
+        .map((field) => field.id),
+    [analysis.tier]
+  );
+
+  useEffect(() => {
+    const saved = loadHairstyleAnalysisTierDebug(analysis.tier);
+    setSlotOverrides(saved.slotOverrides);
+    setTextOverrides(saved.textOverrides);
+    setFontOverrides(saved.fontOverrides);
+    setSelectedFontSlot((prev) =>
+      textFieldIds.includes(prev) ? prev : textFieldIds[0] ?? 'topScore'
+    );
+  }, [analysis.tier, textFieldIds]);
+
   const onTierSelect = (tier: AnalysisTier) => {
-    setSlotOverrides({});
-    setTextOverrides({});
     setGeneratedUrl(null);
     setLastPrompt(null);
     setGenerateError(null);
@@ -216,7 +244,45 @@ export default function HairstyleAnalysisPreview({
     setTextOverrides((prev) => ({ ...prev, [slotId]: value }));
   }, []);
 
-  const layoutJson = JSON.stringify({ slotOverrides, textOverrides }, null, 2);
+  const onFontFieldChange = useCallback(
+    (key: keyof TextFontStyle, value: string) => {
+      setFontOverrides((prev) => ({
+        ...prev,
+        [selectedFontSlot]: {
+          ...prev[selectedFontSlot],
+          [key]: value || undefined,
+        },
+      }));
+    },
+    [selectedFontSlot]
+  );
+
+  const handleSaveDebugLayout = useCallback(() => {
+    saveHairstyleAnalysisTierDebug(analysis.tier, {
+      slotOverrides,
+      textOverrides,
+      fontOverrides,
+    });
+    setDebugSaveMessage(`Saved layout for ${analysis.tier.replace(/_/g, ' ')}`);
+    window.setTimeout(() => setDebugSaveMessage(null), 2500);
+  }, [analysis.tier, fontOverrides, slotOverrides, textOverrides]);
+
+  const handleResetDebugLayout = useCallback(() => {
+    clearHairstyleAnalysisTierDebug(analysis.tier);
+    setSlotOverrides({});
+    setTextOverrides({});
+    setFontOverrides({});
+    setDebugSaveMessage(`Reset ${analysis.tier.replace(/_/g, ' ')} to defaults`);
+    window.setTimeout(() => setDebugSaveMessage(null), 2500);
+  }, [analysis.tier]);
+
+  const selectedFontStyle = fontOverrides[selectedFontSlot] ?? {};
+
+  const layoutJson = formatHairstyleAnalysisDebugForCopy({
+    slotOverrides,
+    textOverrides,
+    fontOverrides,
+  });
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
@@ -456,14 +522,133 @@ export default function HairstyleAnalysisPreview({
                   showDebugFrames={showDebugFrames && !hideDebugForCapture}
                   slotOverrides={slotOverrides}
                   textOverrides={textOverrides}
+                  fontOverrides={fontOverrides}
                   onSlotRectChange={onSlotRectChange}
                   onTextChange={onTextChange}
                 />
               </div>
               {showDebugFrames ? (
-                <pre className="text-[8px] leading-relaxed overflow-x-auto whitespace-pre-wrap break-all text-[#333]">
-                  {layoutJson}
-                </pre>
+                <div className="flex flex-col gap-3 border border-black/15 p-3">
+                  <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
+                    Drag slot handles to reposition. Edit text inline. Adjust font settings per slot, then save —
+                    positions persist in this browser per tier.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveDebugLayout}
+                      className="border border-black bg-[#eb1c24] px-3 py-2 text-[10px] uppercase tracking-[0.12em] text-white"
+                    >
+                      Save layout
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetDebugLayout}
+                      className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.12em] text-black"
+                    >
+                      Reset tier
+                    </button>
+                  </div>
+                  {debugSaveMessage ? (
+                    <p className="text-[9px] uppercase tracking-[0.1em] text-[#22c55e]">{debugSaveMessage}</p>
+                  ) : null}
+                  <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
+                    Font slot
+                    <select
+                      value={selectedFontSlot}
+                      onChange={(e) => setSelectedFontSlot(e.target.value)}
+                      className="border border-black bg-white px-2 py-2 text-black text-[11px]"
+                    >
+                      {textFieldIds.map((id) => (
+                        <option key={id} value={id}>
+                          {id}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080]">
+                      Font family
+                      <input
+                        type="text"
+                        value={selectedFontStyle.fontFamily ?? ''}
+                        onChange={(e) => onFontFieldChange('fontFamily', e.target.value)}
+                        placeholder='Futura PT Medium'
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080]">
+                      Font size
+                      <input
+                        type="text"
+                        value={selectedFontStyle.fontSize ?? ''}
+                        onChange={(e) => onFontFieldChange('fontSize', e.target.value)}
+                        placeholder="2.65cqw or 10px"
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080]">
+                      Color
+                      <input
+                        type="text"
+                        value={selectedFontStyle.color ?? ''}
+                        onChange={(e) => onFontFieldChange('color', e.target.value)}
+                        placeholder="#808080"
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080]">
+                      Weight
+                      <input
+                        type="text"
+                        value={selectedFontStyle.fontWeight ?? ''}
+                        onChange={(e) => onFontFieldChange('fontWeight', e.target.value)}
+                        placeholder="500 or 600"
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080]">
+                      Letter spacing
+                      <input
+                        type="text"
+                        value={selectedFontStyle.letterSpacing ?? ''}
+                        onChange={(e) => onFontFieldChange('letterSpacing', e.target.value)}
+                        placeholder="0.08em"
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080]">
+                      Text align
+                      <select
+                        value={selectedFontStyle.textAlign ?? ''}
+                        onChange={(e) => onFontFieldChange('textAlign', e.target.value)}
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      >
+                        <option value="">Default</option>
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </label>
+                    <label className="flex flex-col gap-1 text-[9px] uppercase tracking-[0.12em] text-[#808080] col-span-2">
+                      Text transform
+                      <select
+                        value={selectedFontStyle.textTransform ?? ''}
+                        onChange={(e) => onFontFieldChange('textTransform', e.target.value)}
+                        className="border border-black bg-white px-2 py-1.5 text-black text-[11px] normal-case"
+                      >
+                        <option value="">Default (uppercase)</option>
+                        <option value="uppercase">Uppercase</option>
+                        <option value="none">None</option>
+                        <option value="lowercase">Lowercase</option>
+                        <option value="capitalize">Capitalize</option>
+                      </select>
+                    </label>
+                  </div>
+                  <pre className="text-[8px] leading-relaxed overflow-x-auto whitespace-pre-wrap break-all text-[#333]">
+                    {layoutJson}
+                  </pre>
+                </div>
               ) : null}
               <DownloadAnalysisButton
                 targetRef={overlayCardRef}
