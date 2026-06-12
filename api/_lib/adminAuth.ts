@@ -21,6 +21,12 @@ function getAdminEmails(): string[] {
   return DEFAULT_ADMIN_EMAILS;
 }
 
+export function isAdminEmail(email: string | null | undefined): boolean {
+  const emailLower = (email ?? '').trim().toLowerCase();
+  if (!emailLower) return false;
+  return getAdminEmails().includes(emailLower);
+}
+
 /** Returns the authenticated user if they are an admin, otherwise null. */
 export async function requireAdmin(
   req: VercelRequest

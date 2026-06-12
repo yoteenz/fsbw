@@ -57,7 +57,9 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 ## Template hairstyle analysis cards (demo / Fal preview)
 
-**Where:** `/tools/hairstyle-analysis` — tier picker, Kateena sample data, **Generate template preview** (signed in).
+**Where:** `/tools/hairstyle-analysis` — Kateena sample data, **Generate template preview** (signed in).
+
+**Allowance:** **3 / 6 / 12 month** premium subscribers get **1 free hairstyle analysis per UTC calendar month** (card tier matches subscription). API: `GET /api/hairstyle-analysis-usage`, enforced on `POST /api/hairstyle-analysis-generate` (refunds slot if Fal fails). Admins bypass the cap for testing.
 
 **Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2438|2447|2450|2451.png`) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
 

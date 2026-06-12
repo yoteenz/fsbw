@@ -27,8 +27,9 @@ export default function HairstyleAnalysisDemo() {
             Hairstyle Analysis
           </h1>
           <p className="text-[10px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-            Test each membership tier by generating a populated card with Fal GPT Image 2 (4:5 · ~2K). Sign in
-            required. The React overlay composer is available under Advanced for dev comparison only.
+            Premium members (3, 6, or 12 month) receive one free hairstyle analysis per calendar month. Sign in
+            required. Admins can test all tiers; members use the card matching their subscription. The React overlay
+            composer is under Advanced for dev comparison only.
           </p>
         </header>
 
