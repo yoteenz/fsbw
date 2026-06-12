@@ -27528,3 +27528,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported always-attached unit mannequin front images were **too aggressive** — neck rendering looked weird (mannequin anatomy bleeding into client selfie).
 - **Shipped:** **`hairstyleAnalysisFalMannequinImageRefs()`** — mannequin fronts **off by default**; opt-in with **`HAIRSTYLE_ANALYSIS_FAL_MANNEQUIN_REFS=true`**. Default Fal input = template + client + BAW styling refs. **`neckAndBodyPreservationBlock()`** in prompt — IMAGE 2 owns neck/collarbone/shoulders; mannequin = hair strands + hair-end drape only when attached. One-shoulder drape stays **prompt-led** when mannequins off. **`.env.example`**, **`docs/STYLE_ANALYSIS.md`** updated.
 - **Conventions:** Do not attach mannequin IMAGEs unless explicitly needed; never copy mannequin neck/shoulder geometry onto the client.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: restore server overlay for MATCH row values
+
+- **Context:** User reported MATCH 02–04 row values (texture, color, length, gray %) were **too large** after Fal in-image generation — production should leave those slots blank and server-composite at **slot height × 0.88 − 2px** Futura.
+- **Shipped:** **`compositeHairstyleAnalysisMatchRows()`** in **`hairstyleAnalysisFalComposite.ts`** — match-row values only (no score/stars overlay). **`hairstyleAnalysisFal.ts`** composites after Fal, re-uploads PNG. **`hairstyleAnalysisFalPrompt.ts`** — **`matchRowValuesBlankRules()`** restored; Fal fills thumbnails + TOP MATCH specs only. **`docs/STYLE_ANALYSIS.md`**, debug copy updated.
+- **Conventions:** MATCH 02–04 text values = server overlay; overall score %, stars, TOP MATCH specs = Fal in-image.
