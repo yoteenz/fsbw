@@ -7,16 +7,12 @@ import {
 } from './hairstyleAnalysisCompositeElements.js';
 import { getLayoutFieldsForAnalysis } from './hairstyleAnalysisLayoutFields.js';
 import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
-import {
-  buildServerOverlayValues,
-  resolveServerOverlayImageUrl,
-} from './hairstyleAnalysisOverlayValues.js';
+import { buildServerOverlayValues } from './hairstyleAnalysisOverlayValues.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
-
-type FalStorageClient = {
-  storage: { upload: (file: File) => Promise<string> };
-};
+import { createHairstyleAnalysisFalClient, uploadBufferToFalStorage } from './hairstyleAnalysisFalShared.js';
+import { generateHairstyleHairImages } from './hairstyleAnalysisHairGenerate.js';
+import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
 
 function textStyleForField(
   fieldId: string
@@ -38,17 +34,6 @@ async function resizeCover(buf: Buffer, rect: PixelRect): Promise<Buffer> {
     .toBuffer();
 }
 
-async function getFalStorageClient(falKey: string): Promise<FalStorageClient> {
-  const { fal } = await import('@fal-ai/client');
-  fal.config({ credentials: falKey });
-  return fal as unknown as FalStorageClient;
-}
-
-async function uploadPngToFal(fal: FalStorageClient, buf: Buffer): Promise<string> {
-  if (!buf.length) throw new Error('Composite PNG is empty');
-  const file = new File([buf], 'hairstyle-analysis-composite.png', { type: 'image/png' });
-  return fal.storage.upload(file);
-}
 
 export type GenerateHairstyleAnalysisCompositeInput = {
   analysis: FalHairstyleAnalysis;
@@ -70,24 +55,27 @@ export async function generateHairstyleAnalysisComposite(
   input: GenerateHairstyleAnalysisCompositeInput
 ): Promise<GenerateHairstyleAnalysisCompositeResult> {
   const falKey = process.env.FAL_KEY?.trim();
-  if (!falKey) throw new Error('FAL_KEY is not configured (required to upload composite PNG)');
+  if (!falKey) throw new Error('FAL_KEY is not configured (required for hair generation and upload)');
 
   const sharp = (await import('sharp')).default;
-  const { analysis, templateUrl, clientPreviewUrl, siteOrigin } = input;
+  const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
+  const { templateUrl, clientPreviewUrl, siteOrigin } = input;
 
-  const [templateBuf, fields, overlayValues] = await Promise.all([
+  const fal = await createHairstyleAnalysisFalClient(falKey);
+
+  const [templateBuf, fields, overlayValues, hairImages] = await Promise.all([
     fetchImageBuffer(templateUrl, siteOrigin),
     Promise.resolve(getLayoutFieldsForAnalysis(analysis)),
     Promise.resolve(buildServerOverlayValues(analysis)),
+    generateHairstyleHairImages(fal, analysis, clientPreviewUrl, siteOrigin),
   ]);
 
   const imageOverlays: Array<{ input: Buffer; left: number; top: number }> = [];
   for (const field of fields) {
     if (field.kind !== 'image') continue;
-    const rawUrl = resolveServerOverlayImageUrl(field.id, analysis, clientPreviewUrl, siteOrigin);
-    if (!rawUrl) continue;
+    const imgBuf = hairImages.get(field.id);
+    if (!imgBuf) continue;
     try {
-      const imgBuf = await fetchImageBuffer(rawUrl, siteOrigin);
       const resized = await resizeCover(imgBuf, field.rect);
       imageOverlays.push({ input: resized, left: field.rect.left, top: field.rect.top });
     } catch (e) {
@@ -137,14 +125,19 @@ export async function generateHairstyleAnalysisComposite(
     .png()
     .toBuffer();
 
-  const fal = await getFalStorageClient(falKey);
-  const imageUrl = await uploadPngToFal(fal, composited);
+  const imageUrl = await uploadBufferToFalStorage(
+    fal,
+    composited,
+    'hairstyle-analysis-composite.png',
+    'image/png'
+  );
 
+  const hairCount = hairImages.size;
   const tierLabel = analysis.tier.replace(/_/g, ' ');
   return {
     imageUrl,
-    prompt: `Server composite on static ${tierLabel} template (2048×2560) — photos, Futura spec text, gray match scores, CBYG overall %, stars.`,
-    model: 'sharp-composite',
+    prompt: `Fal GPT Image 2 hair on ${hairCount} photo slot(s), then sharp composite on static ${tierLabel} template — Futura spec text, gray match scores, CBYG overall %, stars.`,
+    model: 'composite+fal-hair',
     imageSize: HAIRSTYLE_ANALYSIS_CANVAS,
     quality: 'medium',
     renderMode: 'composite',
