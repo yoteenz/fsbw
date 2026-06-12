@@ -1,20 +1,17 @@
 import { hexForHairColorName } from './hairstyleHairColors.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 
-const NATURAL_TEXTURE_TIERS = new Set<FalHairstyleAnalysis['tier']>(['three_month', 'six_month']);
-
-/** Ensure hex codes and unstyled natural texture on 3 / 6 month additional matches. */
+/** Ensure catalog hex codes are set before Fal generation. */
 export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis): FalHairstyleAnalysis {
   const top = {
     ...analysis.topMatch,
     hex: analysis.topMatch.hex || hexForHairColorName(analysis.topMatch.color),
   };
 
-  const additionalLooks = analysis.additionalLooks.map((look) => {
-    const hex = look.hex || hexForHairColorName(look.color);
-    const styling = NATURAL_TEXTURE_TIERS.has(analysis.tier) ? 'NONE' : look.styling;
-    return { ...look, hex, styling };
-  });
+  const additionalLooks = analysis.additionalLooks.map((look) => ({
+    ...look,
+    hex: look.hex || hexForHairColorName(look.color),
+  }));
 
   return { ...analysis, topMatch: top, additionalLooks };
 }
