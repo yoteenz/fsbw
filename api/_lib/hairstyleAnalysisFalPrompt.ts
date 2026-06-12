@@ -1,6 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
  * Only overall score % and match-rating stars are composited server-side after Fal.
+ * Match-row score % values are printed by Fal in gray beside each MATCH SCORE label.
  */
 
 import {
@@ -259,19 +260,21 @@ function panelChromePreservationBlock(): string {
 
 function blankScoreAndRatingRules(): string {
   return [
-    '=== SCORES + STARS — LEAVE BLANK (SERVER OVERLAY ONLY) ===',
+    '=== OVERALL SCORE + MATCH RATING — LEAVE BLANK (SERVER OVERLAY ONLY) ===',
     'Do NOT print the overall score percentage in the OVERALL SCORE value area.',
     'Do NOT draw stars or rating glyphs in the MATCH RATING row.',
-    'Do NOT print ANY match score percentage in additional-match / portfolio / alternative rows — leave every MATCH SCORE value slot empty.',
-    'Leave all score and star areas blank — you fill texture, color, length, style, specs, and photos only.',
+    'Leave only those two areas blank — you fill match-row MATCH SCORE % values in gray (see rules below).',
   ].join('\n');
 }
 
 function matchScoreFalLine(look: FalAnalysisLook): string {
   const pct = formatScorePercent(look.score);
   return [
-    `MATCH SCORE value slot for this row: LEAVE BLANK — server overlays "${pct}" in gray ${MATCH_SCORE_GRAY} after generation.`,
-    'Do NOT print any percentage in the match score value area.',
+    `MATCH SCORE value slot: the "MATCH SCORE:" label is already on the template in black.`,
+    `Print ONLY "${pct}" in the value area beside that label — medium gray ${MATCH_SCORE_GRAY} (RGB 128,128,128).`,
+    `CRITICAL: match score % must be GRAY ${MATCH_SCORE_GRAY} — NEVER black, NEVER red, NEVER white.`,
+    'Place the % in the same position as other row values (texture, color, length) — aligned with the MATCH SCORE label row.',
+    `Do not repeat "MATCH SCORE". Do not apply the black spec-text rule to match score percentages.`,
   ].join(' ');
 }
 
@@ -280,22 +283,23 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   if (tier === 'free') return '';
 
   const lines: string[] = [
-    '=== MATCH SCORE VALUES (SERVER OVERLAY — DO NOT PRINT ON TEMPLATE) ===',
-    'Each row has a unique score assigned server-side. Leave every MATCH SCORE value slot empty.',
+    '=== MATCH SCORE VALUES — UNIQUE GRAY % PER ROW (YOU MUST PRINT THESE) ===',
+    'Each row gets its own score — never repeat the same percentage on multiple rows.',
+    'Print each value in the MATCH SCORE value slot beside the label — gray only, never on thumbnails.',
   ];
 
   if (tier === 'three_month') {
     analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
-      lines.push(`MATCH ${String(i + 2).padStart(2, '0')} score = ${formatScorePercent(look.score)} (blank on template)`);
+      lines.push(`MATCH ${String(i + 2).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(look.score)}`);
     });
   } else if (tier === 'six_month') {
     const portfolio = [analysis.topMatch, ...analysis.additionalLooks];
     portfolio.slice(0, 7).forEach((look, i) => {
-      lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')} score = ${formatScorePercent(look.score)} (blank on template)`);
+      lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(look.score)}`);
     });
   } else {
     analysis.additionalLooks.slice(0, 9).forEach((alt, i) => {
-      lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')} score = ${formatScorePercent(alt.score)} (blank on template)`);
+      lines.push(`ALTERNATIVE ${String(i + 1).padStart(2, '0')} MATCH SCORE value = ${formatScorePercent(alt.score)}`);
     });
   }
 
@@ -363,9 +367,10 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'NEVER use back-of-head stock photos, different people, hair-only swatches, or repainted lower-body clothing.',
     '',
     'TOP MATCH spec values, match row texture/color/length/style, portfolio lines, and every-detail-matters lines: black uppercase Futura PT Medium.',
-    'ALL score percentages (overall + every match row): LEAVE BLANK — server overlay only.',
+    'MATCH SCORE percentage VALUES ONLY: medium gray ' + MATCH_SCORE_GRAY + ' in each row\'s value slot — separate color rule; never black.',
+    'OVERALL SCORE % and MATCH RATING stars: leave blank for server overlay.',
     '',
-    'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill texture/color/length/style/specs/photos; leave all score % and stars blank.',
+    'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — fill every value field except overall score % and match rating stars.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -411,7 +416,8 @@ const PROMPT_FOOTER = [
   'TIER SUBTITLE: erased — no month/tier analysis label visible.',
   'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
   'TOP MATCH spec column: all values filled in black (texture, color, length, lace, density, part, hairline, style).',
-  'OVERALL SCORE %, MATCH RATING stars, and ALL match-row score % slots: left blank for server overlay.',
+  'OVERALL SCORE % and MATCH RATING stars: left blank for server overlay.',
+  `MATCH SCORE value slots: gray ${MATCH_SCORE_GRAY} percentage only beside each label — never on thumbnails.`,
   'THUMBNAILS: same client face from IMAGE 2 — BAW styling refs for salon shapes only.',
   'EVERY DETAIL MATTERS: fixed rose-icon rows, one verbatim sentence per line — no label:value format.',
   'PANEL CHROME: acrylic frost + red glow preserved exactly from IMAGE 1.',

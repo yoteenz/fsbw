@@ -27437,3 +27437,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (continued):** User reported **match scores disappeared** (SVG `<text>` failed on Vercel/librsvg like prior CBYG issue), **faces repainted** when density prompts reduced hair volume, and **saved debug score/star positions** did not apply to generated output (server used hardcoded slots only).
 - **Shipped:** **`hairstyleAnalysisTextPaths.ts`** + restored **`FuturaPTMedium.ttf`** — match-row scores composited as **opentype paths** (gray). **`hairstyleAnalysisCompositeLayout.ts`** — resolve **`topScore`**, **`rating`**, **`*-score`** slots with optional **`slotOverrides`** from API. Generate sends **`slotOverrides`** from debug panel state; server applies on composite. **`faceIdentityLockBlock`** + softened density prompts (hair strands only, face untouched). **`vercel.json`** includes **`api/_lib/fonts/*.ttf`**.
 - **Conventions:** All score overlays = path-based fonts (CBYG overall, Futura match %). Debug slot positions apply to server composite on generate when **`slotOverrides`** sent. Face edits = hair region only.
+
+---
+
+## 2026-06-09 — Hairstyle analysis: restore Fal match score placement
+
+- **Context (continued):** User reported gray **match scores** returned but **misplaced** (on thumbnails / footer) after server opentype composite — wanted **previous position** beside each MATCH SCORE label.
+- **Decision:** Server-composited match-row % misaligns vs template; **Fal** places them correctly in the baked label slots. Reverted match-row overlay; keep server composite for **overall CBYG % + stars only**. **`applyRealisticMatchScores`** + manifest still drive unique gray % per row in Fal prompt.
+- **Shipped:** **`hairstyleAnalysisFalComposite.ts`** — removed match-score path overlay. **`hairstyleAnalysisFalPrompt.ts`** — restored **`matchScoreFalLine`** (gray % in value slot); blank rules scoped to overall + stars. Generate sends **`slotOverrides`** for **`topScore`** / **`rating`** only.
+- **Conventions:** Match-row scores = Fal in template slot (gray). Overall % + stars = server paths. Debug layout for match-*-score slots = overlay dev only until pixel-calibrated server slots exist.
