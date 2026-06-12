@@ -27544,3 +27544,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to reduce red **OVERALL SCORE** percentage text by **4px**.
 - **Shipped:** **`overallScoreFontSize()`** — `slot height × 0.78 − 4px` in **`hairstyleAnalysisTextPaths.ts`**. Overall score back on **server overlay** (Fal leaves slot blank); **`compositeHairstyleAnalysisMatchRows`** composites score + match rows. Debug overlay **`.scoreText`** `calc(2.8cqw - 4px)` max 7px. Stars remain Fal in-image.
 - **Conventions:** Overall score % = server CBYG + Futura overlay at calibrated size − 4px.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: match-rating stars aligned to template outlines
+
+- **Context (full chat arc):** Hairstyle analysis pipeline uses Fal GPT Image 2 on free (`IMG_2554`) / premium (`IMG_2549`) templates with server post-process for misaligned fields. Prior turns moved overall score % and MATCH 02–04 row values to server overlay; match-rating stars stayed Fal in-image but **filled red stars did not match** pre-rendered red outline glyphs on the premium template (wrong size/position).
+- **Shipped:** **`MATCH_RATING_STAR_RECTS`** in **`hairstyleAnalysisLayoutSlots.ts`** — five per-star pixel rects pixel-probed on IMG_2549 @ 2048×2560 (~51×118 each). **`buildStarComposites()`** in **`hairstyleAnalysisFalComposite.ts`** — overlays Noir **`filled-star.png`** on earned slots (premium: filled only, outlines stay from template; free: all five via **`star-symbol`** + **`filled-star`** at same positions). **`matchRatingStarsFalLine`** — Fal leaves MATCH RATING blank. **`compositeHairstyleAnalysisMatchRows`** now composites score + stars + match rows; passes **`siteOrigin`** for asset fetch. **`docs/STYLE_ANALYSIS.md`**, **`HairstyleAnalysisPreview.tsx`**, **`CORE.md`** updated.
+- **Conventions:** Match-rating stars = server overlay at template outline positions; Fal must not draw or fill stars in-image.
