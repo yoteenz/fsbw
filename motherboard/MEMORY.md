@@ -27406,3 +27406,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context (continued):** After full Product Genome Map (`59f56e37`), user asked for **tables showing how everything is interconnected**.
 - **Shipped:** **`docs/architecture/INTERCONNECTION_MATRIX.md`** — 19 sections: master node catalog, layer stack, domain cross-walk matrix, commerce chain, product↔pricing wiring, auth/session, BAW subgraph, AI pipeline, PSA, admin, Supabase table links, API clusters, sync triggers, route dependencies, test gaps, docs/env wiring, risk blast radius, planned canonical hubs. Linked from **`PRODUCT_GENOME_INDEX.md`**. No code changes.
+
+---
+
+## 2026-06-12 — Product Wiring Map (7-table evidence map)
+
+- **Context (continued):** User requested a **genuine Product Wiring Map** — not a summary — with 7 mandated tables: master wiring, product-to-system, integration, function dependency, data ownership, duplicate/drift register, test contract. Mandatory motherboard + genome read; evidence-backed rows with status/confidence.
+- **Shipped:** **`docs/architecture/PRODUCT_WIRING_MAP.md`** — 34 master capability rows (auth through motherboard), 16 sellable product rows, 12 integration rows, 22 function/service rows, 15 data ownership rows, 13 duplicate/drift rows, 20 test contract rows, plus button→wiring appendix. Key finding documented: BAW cart lines hit `resolveUnitLike` (base+cap only) while client stores full `totalPrice` → **silent undercharge risk** if PI proceeds (`page.tsx:4794`, `resolveQuote.ts:182-204`). Linked from **`PRODUCT_GENOME_INDEX.md`**. No code changes.
