@@ -27302,3 +27302,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (continued hairstyle analysis thread):** User reiterated corrections after prior over-removal: restore **TOP MATCH spec text** and **match-score %** in template slots (red only); server overlay **only** overall score % + match-rating stars. **Additional matches** need **varied salon styling** on thumbnails. **Why it works / every detail matters** bullets still read cheesy/AI — must be client-specific fit notes, not empowerment copy.
 - **Already shipped (f090a18a):** Fal fills specs + red match scores; composite = score + stars only; demo alts with FLAT IRON / CRIMPS / DEFINE / LAYERS variety.
 - **This pass (f02e010b):** **`whyItWorksRulesBlock()`** in Fal prompt — print lines verbatim, forbid empowerment fluff. **12-month** alt rows now include **TEXTURE** + **STYLE** in population prompt. **`WHY_FREE`** / **`WHY_TWELVE`** demo copy tightened to short inspo/spec compare notes (one fact per line). Explicit **varied styling** rule for additional matches in template rules.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: gray scores, color names, panel chrome preservation
+
+- **Context (continued):** User asked for **professional but friendly** why-it-works tone (not trendy), **no hex/parentheses** beside COLOR on the card, **match score in gray** (not red), and asked why generations **degrade acrylic panel frost / red glow** from the reference template.
+- **Shipped (64a486b3):** Match score % → medium gray **`#808080`**. COLOR value fields = catalog name only; hex kept server-side for pigment guidance in hair-edit blocks only. **`WHY_FREE`** / **`WHY_TWELVE`** rewritten in complete professional sentences. **`panelChromePreservationBlock()`** in Fal prompt — preserve frosted acrylic, red glow, borders; photos only in cutouts behind glass. **`docs/STYLE_ANALYSIS.md`** updated.
+- **Why panels degrade:** GPT Image 2 **edit** repaints the full canvas when filling photo slots and text — it tends to flatten UI chrome unless the prompt explicitly locks panel art. Not a server composite issue; mitigation is prompt preservation rules (and regenerating if a pass still softens glow).
