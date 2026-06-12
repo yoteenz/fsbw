@@ -5,6 +5,11 @@
 import { getSupabaseUser } from './supabase.js';
 import { summarizeOrderForPsa, summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
 import { PSA_PRODUCTS } from './psaKnowledge.js';
+import { buildHairstyleAnalysisMemberStatus } from './hairstyleAnalysisStatus.js';
+import {
+  hairstyleAnalysisComparisonUsd,
+  parseHairstyleAnalysisComparisonTier,
+} from './hairstyleAnalysisPricing.js';
 import { resolveCheckoutQuoteLines, type QuoteLineInput } from './pricing/resolveQuote.js';
 import type { PsaPremiumProfile } from './psaPremiumCheck.js';
 import {
@@ -299,6 +304,29 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
     },
     strict: false,
   },
+  {
+    type: 'function',
+    name: 'get_hairstyle_analysis_status',
+    description:
+      'Check the member hairstyle analysis allowance: 1 free per UTC month on 3/6/12 month plans, plus any paid credits. Use before generate or when they hit the monthly limit.',
+    parameters: { type: 'object', properties: {}, additionalProperties: false },
+    strict: true,
+  },
+  {
+    type: 'function',
+    name: 'purchase_hairstyle_analysis',
+    description:
+      'Add a paid hairstyle analysis to cart after the monthly free is used. Same prices as wig consult style analysis add-on: 1 comparison $20, 3 comparisons $40, 6 comparisons $60. Member completes payment at checkout.',
+    parameters: {
+      type: 'object',
+      properties: {
+        comparisonCount: { type: 'number', enum: [1, 3, 6] },
+      },
+      required: ['comparisonCount'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
 ] as const;
 
 async function fetchOrders(ctx: PsaToolContext): Promise<{ active: unknown[]; past: unknown[] }> {
@@ -558,6 +586,66 @@ export async function executePsaActionTool(
       }
 
       return { output: JSON.stringify({ error: 'Invalid lineType' }) };
+    }
+
+    case 'get_hairstyle_analysis_status': {
+      const status = await buildHairstyleAnalysisMemberStatus(ctx.userId, ctx.premium, ctx.email);
+      return { output: JSON.stringify(status) };
+    }
+
+    case 'purchase_hairstyle_analysis': {
+      const comparisonCount = parseHairstyleAnalysisComparisonTier(args.comparisonCount);
+      if (!comparisonCount) {
+        return { output: JSON.stringify({ error: 'comparisonCount must be 1, 3, or 6' }) };
+      }
+      const status = await buildHairstyleAnalysisMemberStatus(ctx.userId, ctx.premium, ctx.email);
+      if (!status.eligible) {
+        return {
+          output: JSON.stringify({
+            ok: false,
+            error: 'premium_required',
+            guidance: status.guidance,
+          }),
+        };
+      }
+      const priceUsd = hairstyleAnalysisComparisonUsd(comparisonCount);
+      const label =
+        comparisonCount === 1 ? '1 COMPARISON' : comparisonCount === 3 ? '3 COMPARISONS' : '6 COMPARISONS';
+      const cart = await fetchCart(ctx);
+      const line = {
+        id: `hairstyle-analysis-${Date.now()}`,
+        name: 'HAIRSTYLE ANALYSIS',
+        price: priceUsd,
+        quantity: 1,
+        type: 'hairstyle-analysis',
+        hairstyleAnalysisComparisonCount: comparisonCount,
+        hairstyleAnalysisNonRefundable: true,
+        bookingBagSubtitle: `STYLE ANALYSIS · ${label}`,
+        image: '/assets/natural front.png',
+      };
+      const updated = await putCart(ctx, [...cart.items, line], cart.version);
+      const clientActions: PsaClientAction[] = [
+        { type: 'sync_cart' },
+        { type: 'navigate', path: '/checkout' },
+      ];
+      return {
+        output: JSON.stringify({
+          ok: true,
+          added: line.name,
+          comparisonCount,
+          priceUsd,
+          nonRefundable: true,
+          cartItemCount: updated.items.length,
+          checkoutPath: '/checkout',
+          note: 'Paid hairstyle analysis is non-refundable. Credit applies after checkout payment succeeds.',
+          allowance: {
+            monthRemaining: status.monthRemaining,
+            paidCreditsRemaining: status.paidCreditsRemaining,
+            purchaseRequired: status.purchaseRequired,
+          },
+        }),
+        clientActions,
+      };
     }
 
     case 'prepare_booking_handoff': {

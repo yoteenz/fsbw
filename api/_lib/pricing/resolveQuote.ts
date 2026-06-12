@@ -1,3 +1,5 @@
+import { hairstyleAnalysisComparisonUsd } from '../hairstyleAnalysisPricing.js';
+
 /**
  * Server-side USD pricing for checkout quotes (do not trust client `price` fields).
  * Keep in sync with booking appointment page + unit PDP base prices where possible.
@@ -14,6 +16,8 @@ export type QuoteLineInput = {
   bookingAddonIds?: string[];
   /** Wig consult — optional style analysis add-on comparison count (1 / 3 / 6). */
   consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
+  /** Standalone hairstyle analysis purchase (1 / 3 / 6 comparisons — same USD as consult add-on). */
+  hairstyleAnalysisComparisonCount?: 1 | 3 | 6;
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;
   capSize?: string;
@@ -135,6 +139,29 @@ function resolveBookingAppointment(line: QuoteLineInput, idx: number): ResolvedQ
   };
 }
 
+function resolveHairstyleAnalysis(line: QuoteLineInput, idx: number): ResolvedQuoteLine {
+  const q = Math.max(1, Math.floor(line.quantity || 1));
+  const perUnitUsd = hairstyleAnalysisComparisonUsd(line.hairstyleAnalysisComparisonCount);
+  if (perUnitUsd <= 0) {
+    return {
+      key: `line-${idx}`,
+      description: line.name || 'HAIRSTYLE ANALYSIS',
+      quantity: q,
+      amountCents: 0,
+      resolved: false,
+      note: 'hairstyleAnalysisComparisonCount must be 1, 3, or 6',
+    };
+  }
+  const totalUsd = perUnitUsd * q;
+  return {
+    key: `line-${idx}`,
+    description: `${line.name || 'HAIRSTYLE ANALYSIS'} (${line.hairstyleAnalysisComparisonCount} comparisons, non-refundable)`,
+    quantity: q,
+    amountCents: Math.round(totalUsd * 100),
+    resolved: true,
+  };
+}
+
 function resolveBookingConsult(line: QuoteLineInput, idx: number): ResolvedQuoteLine {
   const q = Math.max(1, Math.floor(line.quantity || 1));
   const addonUsd = consultStyleAnalysisAddonUsd(line.consultStyleAnalysisComparisonCount);
@@ -218,6 +245,11 @@ export function resolveCheckoutQuoteLines(lines: QuoteLineInput[]): QuoteResult 
 
     if (t === 'booking-consult') {
       resolvedLines.push(resolveBookingConsult(line, idx));
+      return;
+    }
+
+    if (t === 'hairstyle-analysis') {
+      resolvedLines.push(resolveHairstyleAnalysis(line, idx));
       return;
     }
 

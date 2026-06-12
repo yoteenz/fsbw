@@ -66,6 +66,10 @@ import {
 } from '../../utils/psaSelfieStyleAnalysis';
 import type { PsaSelfieStylePick } from '../../types/styleAnalysis';
 import PsaSelfieStyleAnalysisPanel from './PsaSelfieStyleAnalysisPanel';
+import {
+  PSA_OPEN_CHAT_REQUEST_EVENT,
+  type PsaOpenChatRequestDetail,
+} from '../../utils/psaOpenChatRequest';
 import './psaAssistant.css';
 
 function draftSelectionsFromPrefill(
@@ -193,6 +197,19 @@ export default function PsaAssistantWidget() {
     reloadCopy();
     window.addEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reloadCopy);
     return () => window.removeEventListener(PSA_CHAT_COPY_UPDATED_EVENT, reloadCopy);
+  }, []);
+
+  useEffect(() => {
+    const onOpenRequest = (event: Event) => {
+      const detail = (event as CustomEvent<PsaOpenChatRequestDetail>).detail;
+      if (detail?.prefillMessage?.trim()) {
+        setPrefillInput(detail.prefillMessage.trim());
+      }
+      setIsOpen(true);
+      setIsFabCollapsed(false);
+    };
+    window.addEventListener(PSA_OPEN_CHAT_REQUEST_EVENT, onOpenRequest);
+    return () => window.removeEventListener(PSA_OPEN_CHAT_REQUEST_EVENT, onOpenRequest);
   }, []);
 
   useEffect(() => {

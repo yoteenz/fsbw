@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
 import { getAuthUser } from '../_lib/auth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { hairstyleAnalysisGrantsFromQuoteLines } from '../_lib/hairstyleAnalysisCheckoutGrants.js';
 import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
@@ -91,11 +92,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         o.consultStyleAnalysisComparisonCount === 3 ||
         o.consultStyleAnalysisComparisonCount === 6
           ? o.consultStyleAnalysisComparisonCount
-          : undefined
+          : undefined,
+      hairstyleAnalysisComparisonCount:
+        o.hairstyleAnalysisComparisonCount === 1 ||
+        o.hairstyleAnalysisComparisonCount === 3 ||
+        o.hairstyleAnalysisComparisonCount === 6
+          ? o.hairstyleAnalysisComparisonCount
+          : undefined,
     };
   });
 
   const quote = resolveCheckoutQuoteLines(lines);
+  const hairstyleAnalysisGrants = hairstyleAnalysisGrantsFromQuoteLines(lines);
   if (!quote.fullyResolved) {
     sendJson(res, 400, {
       error: 'Cart contains lines that cannot be priced server-side yet.',
@@ -164,6 +172,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         computed_total_cents: String(quote.totalCents),
         line_count: String(lines.length),
         booking_autopay_enroll: savePaymentMethodForFuture ? 'true' : 'false',
+        ...(hairstyleAnalysisGrants.length > 0
+          ? { hairstyle_analysis_grants: JSON.stringify(hairstyleAnalysisGrants) }
+          : {}),
       }
     });
 

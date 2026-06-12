@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { grantHairstyleAnalysisPurchaseCredits } from '../_lib/hairstyleAnalysisUsage.js';
 import { appendOrderFromProductPaymentIntent } from '../_lib/recordProductOrderFromPaymentIntent.js';
 import { membershipTierForStripePriceId } from '../_lib/stripeMembership.js';
 
@@ -263,6 +264,24 @@ async function handlePaymentIntentSucceeded(pi: Stripe.PaymentIntent): Promise<v
   });
   if (!result.ok) {
     console.error('[stripe webhook] payment_intent.succeeded order append', result.error);
+  }
+
+  const grantsRaw = pi.metadata?.hairstyle_analysis_grants;
+  if (typeof grantsRaw === 'string' && grantsRaw.trim()) {
+    try {
+      const parsed = JSON.parse(grantsRaw) as unknown;
+      const counts = Array.isArray(parsed)
+        ? parsed.filter((n): n is 1 | 3 | 6 => n === 1 || n === 3 || n === 6)
+        : [];
+      if (counts.length > 0) {
+        const grant = await grantHairstyleAnalysisPurchaseCredits(userId, pi.id, counts);
+        if (!grant.ok && !grant.duplicate) {
+          console.error('[stripe webhook] hairstyle analysis credit grant failed', pi.id);
+        }
+      }
+    } catch (e) {
+      console.error('[stripe webhook] hairstyle_analysis_grants parse', e);
+    }
   }
 }
 

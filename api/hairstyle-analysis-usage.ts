@@ -6,7 +6,10 @@ import { isAdminEmail } from './_lib/adminAuth.js';
 import { getAuthUser } from './_lib/auth.js';
 import { resolveHairstyleAnalysisEntitlement } from './_lib/hairstyleAnalysisEntitlement.js';
 import { getPsaPremiumProfile } from './_lib/psaPremiumCheck.js';
-import { getHairstyleAnalysisUsage } from './_lib/hairstyleAnalysisUsage.js';
+import {
+  getHairstyleAnalysisUsage,
+  hairstyleAnalysisPurchaseOptions,
+} from './_lib/hairstyleAnalysisUsage.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,7 +46,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         monthCount: 0,
         monthLimit: entitlement.monthlyLimit,
         monthRemaining: 0,
+        paidCreditsRemaining: 0,
+        canGenerate: false,
       },
+      purchaseOptions: hairstyleAnalysisPurchaseOptions(),
     });
     return;
   }
@@ -54,6 +60,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         monthCount: 0,
         monthLimit: entitlement.monthlyLimit,
         monthRemaining: entitlement.monthlyLimit,
+        paidCreditsRemaining: entitlement.monthlyLimit,
+        canGenerate: true,
       }
     : await getHairstyleAnalysisUsage(user.id);
 
@@ -65,5 +73,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     unlimited: entitlement.unlimited,
     usage,
     monthRemaining: entitlement.unlimited ? entitlement.monthlyLimit : usage.monthRemaining,
+    paidCreditsRemaining: entitlement.unlimited ? 0 : usage.paidCreditsRemaining,
+    canGenerate: entitlement.unlimited ? true : usage.canGenerate,
+    purchaseRequired: !entitlement.unlimited && !usage.canGenerate,
+    purchaseOptions: hairstyleAnalysisPurchaseOptions(),
   });
 }

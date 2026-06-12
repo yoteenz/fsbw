@@ -15,6 +15,7 @@ export type CheckoutQuoteLinePayload = {
   bcfBundleDealListSubtotal?: number;
   capSize?: string;
   consultStyleAnalysisComparisonCount?: 1 | 3 | 6;
+  hairstyleAnalysisComparisonCount?: 1 | 3 | 6;
 };
 
 export type ServerCheckoutQuote = {
@@ -45,6 +46,7 @@ export function cartItemsToQuoteLines(items: CartItem[]): CheckoutQuoteLinePaylo
     bcfBundleDealListSubtotal: item.bcfBundleDealListSubtotal,
     capSize: item.capSize,
     consultStyleAnalysisComparisonCount: item.consultStyleAnalysisComparisonCount,
+    hairstyleAnalysisComparisonCount: item.hairstyleAnalysisComparisonCount,
   }));
 }
 

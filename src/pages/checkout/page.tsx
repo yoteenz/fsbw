@@ -701,7 +701,12 @@ function CheckoutPage() {
 
   // Voucher applicability: service vouchers only (COLOR/HAIRLINE/STYLING); add-on price > 0. Excludes special-offer lines (no service voucher discount there). Free gifts are separate loyalty redemptions and remain combinable.
   const cartVoucherApplicability = useMemo(() => {
-    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital' && !item.isSpecialOffer;
+    const isPhysical = (item: any) =>
+      item.name !== 'GIFT CARD' &&
+      item.type !== 'gift-card' &&
+      item.type !== 'digital' &&
+      item.type !== 'hairstyle-analysis' &&
+      !item.isSpecialOffer;
     const out: Record<string, boolean> = {};
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
       out[type] = cartItems.some((item) => {
@@ -1889,7 +1894,7 @@ function CheckoutPage() {
   // Check if cart only contains digital products (gift cards or digital items)
   const isOnlyDigitalProducts = cartItems.length > 0 && cartItems.every((item) => {
     const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-    const isDigital = item.type === 'digital';
+    const isDigital = item.type === 'digital' || item.type === 'hairstyle-analysis';
     return isGiftCard || isDigital;
   });
 
@@ -2411,7 +2416,12 @@ function CheckoutPage() {
     const normalized: Record<string, number> = {};
     const firstWithQty = Object.keys(VOUCHER_TYPE_CONFIG).find((type) => (appliedVoucherQuantities[type] || 0) > 0);
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => { normalized[type] = type === firstWithQty ? Math.min(1, appliedVoucherQuantities[type] || 0) : 0; });
-    const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital' && !item.isSpecialOffer;
+    const isPhysical = (item: any) =>
+      item.name !== 'GIFT CARD' &&
+      item.type !== 'gift-card' &&
+      item.type !== 'digital' &&
+      item.type !== 'hairstyle-analysis' &&
+      !item.isSpecialOffer;
     let total = 0;
     Object.keys(VOUCHER_TYPE_CONFIG).forEach((type) => {
       const vouchersToUse = normalized[type] || 0;
@@ -2598,7 +2608,10 @@ function CheckoutPage() {
             cartItems.length > 0 &&
             cartItems.every(
               (i: any) =>
-                i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
+                i?.name === 'GIFT CARD' ||
+                i?.type === 'gift-card' ||
+                i?.type === 'digital' ||
+                i?.type === 'hairstyle-analysis'
             );
           if (onlyGiftOrDigital && cartItems.every((i: any) => isGiftCardCartLine(i))) {
             clearGiftCardCheckoutCartBackup();

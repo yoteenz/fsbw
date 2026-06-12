@@ -2152,11 +2152,19 @@ export async function postBuildWigUnitImage(
   return JSON.parse(text) as BuildWigUnitImageResult;
 }
 
+export type HairstyleAnalysisPurchaseOption = {
+  comparisonCount: 1 | 3 | 6;
+  priceUsd: number;
+  label: string;
+};
+
 export type HairstyleAnalysisUsageSnapshot = {
   monthKey: string;
   monthCount: number;
   monthLimit: number;
   monthRemaining: number;
+  paidCreditsRemaining?: number;
+  canGenerate?: boolean;
 };
 
 export type HairstyleAnalysisUsageResult = {
@@ -2167,6 +2175,10 @@ export type HairstyleAnalysisUsageResult = {
   unlimited: boolean;
   usage: HairstyleAnalysisUsageSnapshot;
   monthRemaining: number;
+  paidCreditsRemaining?: number;
+  canGenerate?: boolean;
+  purchaseRequired?: boolean;
+  purchaseOptions?: HairstyleAnalysisPurchaseOption[];
 };
 
 export type HairstyleAnalysisGenerateResult = {
@@ -2177,6 +2189,8 @@ export type HairstyleAnalysisGenerateResult = {
   imageSize: { width: number; height: number };
   quality: string;
   analysisTier?: string;
+  consumeSource?: 'monthly' | 'paid' | null;
+  comparisonCount?: 1 | 3 | 6 | null;
   usage?: HairstyleAnalysisUsageSnapshot | null;
 };
 
