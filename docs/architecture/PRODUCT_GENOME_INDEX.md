@@ -176,6 +176,7 @@ flowchart TB
 
 | File | Contents |
 |------|----------|
+| [INTERCONNECTION_MATRIX.md](./INTERCONNECTION_MATRIX.md) | **Cross-domain tables** — how routes, APIs, data, pricing, and integrations connect |
 | [MOTHERBOARD_RECONCILIATION.md](./MOTHERBOARD_RECONCILIATION.md) | Motherboard vs code truth table |
 | [APP_TOPOLOGY_MAP.md](./APP_TOPOLOGY_MAP.md) | System topology |
 | [ROUTE_SURFACE_CATALOG.md](./ROUTE_SURFACE_CATALOG.md) | All routes, guards, tests |
