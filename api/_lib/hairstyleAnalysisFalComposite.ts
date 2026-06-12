@@ -1,8 +1,5 @@
-import { formatScorePercent } from './hairstyleAnalysisDisplay.js';
 import {
   type CompositeLayoutOverrides,
-  matchScoreSlotIds,
-  resolveCompositeSlotRect,
   resolveRatingSlot,
   resolveTopScoreSlot,
 } from './hairstyleAnalysisCompositeLayout.js';
@@ -11,7 +8,6 @@ import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
 import { buildTextPathsSvg, textPathData } from './hairstyleAnalysisTextPaths.js';
 
 const BRAND_RED = '#EB1C24';
-const MATCH_SCORE_GRAY = '#808080';
 const STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
 const STAR_FILLED_PATH = '/assets/NOIR/filled-star.png';
 
@@ -22,7 +18,7 @@ async function fetchBuffer(url: string): Promise<Buffer> {
 }
 
 function buildScoreOverlaySvg(score: number, rect: PixelRect): Buffer {
-  const text = formatScorePercent(score);
+  const text = `${Math.round(score)}%`;
   const fontSize = Math.min(64, Math.round(rect.height * 0.78));
   const pathData = textPathData(text, rect, {
     fontFile: 'CoveredByYourGrace.ttf',
@@ -31,28 +27,6 @@ function buildScoreOverlaySvg(score: number, rect: PixelRect): Buffer {
     align: 'center',
   });
   return buildTextPathsSvg([{ pathData, fill: BRAND_RED }]);
-}
-
-function buildMatchScoresOverlaySvg(
-  entries: Array<{ score: number; rect: PixelRect }>
-): Buffer | null {
-  if (entries.length === 0) return null;
-
-  const paths = entries.map(({ score, rect }) => {
-    const text = formatScorePercent(score);
-    const fontSize = Math.max(18, Math.round(Math.min(rect.height * 0.82, rect.width * 0.22)));
-    return {
-      pathData: textPathData(text, rect, {
-        fontFile: 'FuturaPTMedium.ttf',
-        fontSize,
-        fill: MATCH_SCORE_GRAY,
-        align: 'left',
-      }),
-      fill: MATCH_SCORE_GRAY,
-    };
-  });
-
-  return buildTextPathsSvg(paths);
 }
 
 async function buildStarComposites(
@@ -94,35 +68,7 @@ async function buildStarComposites(
   return overlays;
 }
 
-function matchScoreEntries(
-  analysis: FalHairstyleAnalysis,
-  layoutOverrides?: CompositeLayoutOverrides
-): Array<{ score: number; rect: PixelRect }> {
-  const tier = analysis.tier;
-  const slotIds = matchScoreSlotIds(tier);
-  if (slotIds.length === 0) return [];
-
-  let scores: number[] = [];
-  if (tier === 'three_month') {
-    scores = analysis.additionalLooks.slice(0, slotIds.length).map((look) => look.score);
-  } else if (tier === 'six_month') {
-    scores = [analysis.topMatch, ...analysis.additionalLooks]
-      .slice(0, slotIds.length)
-      .map((look) => look.score);
-  } else if (tier === 'twelve_month' || tier === 'black') {
-    scores = analysis.additionalLooks.slice(0, slotIds.length).map((look) => look.score);
-  }
-
-  const entries: Array<{ score: number; rect: PixelRect }> = [];
-  slotIds.forEach((slotId, i) => {
-    const rect = resolveCompositeSlotRect(slotId, tier, layoutOverrides);
-    const score = scores[i];
-    if (rect != null && score != null) entries.push({ score, rect });
-  });
-  return entries;
-}
-
-/** Overlay overall score %, match-rating stars, and per-row match scores — Fal fills specs only. */
+/** Overlay overall score % and match-rating stars — Fal fills specs and gray match-row scores. */
 export async function compositeHairstyleAnalysisFalImage(
   falImageUrl: string,
   analysis: FalHairstyleAnalysis,
@@ -133,9 +79,6 @@ export async function compositeHairstyleAnalysisFalImage(
   const baseBuf = await fetchBuffer(falImageUrl);
   const topScoreSlot = resolveTopScoreSlot(layoutOverrides);
   const ratingSlot = resolveRatingSlot(layoutOverrides);
-  const matchScoreOverlay = buildMatchScoresOverlaySvg(
-    matchScoreEntries(analysis, layoutOverrides)
-  );
   const [scoreOverlay, starOverlays] = await Promise.all([
     Promise.resolve(buildScoreOverlaySvg(analysis.topMatch.score, topScoreSlot)),
     buildStarComposites(analysis.topMatch.rating, ratingSlot, siteOrigin),
@@ -146,13 +89,6 @@ export async function compositeHairstyleAnalysisFalImage(
     ...starOverlays,
   ];
 
-  if (matchScoreOverlay) {
-    overlays.push({
-      input: await sharp(matchScoreOverlay).png().toBuffer(),
-      left: 0,
-      top: 0,
-    });
-  }
-
   return sharp(baseBuf).composite(overlays).png().toBuffer();
 }
+

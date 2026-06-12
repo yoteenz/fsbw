@@ -201,9 +201,12 @@ export default function HairstyleAnalysisPreview({
     setGenerating(true);
     setGenerateError(null);
     try {
+      const compositeSlotOverrides = Object.fromEntries(
+        Object.entries(slotOverrides).filter(([id]) => id === 'topScore' || id === 'rating')
+      );
       const result = await postHairstyleAnalysisGenerate(
         resolvedAnalysis as unknown as Record<string, unknown>,
-        { slotOverrides }
+        { slotOverrides: compositeSlotOverrides }
       );
       setGeneratedUrl(result.imageUrl);
       setLastPrompt(result.prompt);
