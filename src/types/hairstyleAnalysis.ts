@@ -67,6 +67,8 @@ export type SlotLayoutOverrides = Record<string, Partial<PercentRect>>;
 export type TextContentOverrides = Record<string, string>;
 
 export type TextFontStyle = {
+  /** Persisted picker id (hairstyle analysis debug) */
+  siteFontId?: string;
   fontFamily?: string;
   fontSize?: string;
   color?: string;

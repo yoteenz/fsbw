@@ -1,4 +1,10 @@
-import { SITE_FONT_OPTIONS, siteFontById } from '../../utils/siteFonts';
+import {
+  BRAND_SITE_FONT_OPTIONS,
+  SITE_FONT_GROUP_LABELS,
+  SITE_FONT_OPTIONS,
+  type SiteFontGroup,
+  siteFontById,
+} from '../../utils/siteFonts';
 
 type SiteFontPickerProps = {
   valueId: string;
@@ -7,6 +13,8 @@ type SiteFontPickerProps = {
   previewColor?: string;
   label?: string;
 };
+
+const FONT_GROUPS: SiteFontGroup[] = ['brand', 'stacks', 'fallbacks'];
 
 export default function SiteFontPicker({
   valueId,
@@ -26,10 +34,14 @@ export default function SiteFontPicker({
           onChange={(e) => onChange(e.target.value)}
           className="border border-black bg-white px-2 py-2 text-black text-[11px] normal-case"
         >
-          {SITE_FONT_OPTIONS.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
+          {FONT_GROUPS.map((group) => (
+            <optgroup key={group} label={SITE_FONT_GROUP_LABELS[group]}>
+              {SITE_FONT_OPTIONS.filter((option) => option.group === group).map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </label>
@@ -55,7 +67,7 @@ export default function SiteFontPicker({
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {SITE_FONT_OPTIONS.map((option) => {
+        {BRAND_SITE_FONT_OPTIONS.map((option) => {
           const active = option.id === valueId;
           return (
             <button

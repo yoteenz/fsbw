@@ -302,7 +302,10 @@ export async function generateHairstyleAnalysisWithFal(
 
   const imageUrls = [templateUrl, clientUrl, ...mannequinUrls, ...stylingUrls];
   const promptOptions: FalPromptBuildOptions = {
-    overallScoreFontLabel: overallScoreFontPromptLabel(input.fontOverrides?.topScore?.fontFamily),
+    overallScoreFontLabel: overallScoreFontPromptLabel(
+      input.fontOverrides?.topScore?.fontFamily,
+      input.fontOverrides?.topScore?.siteFontId
+    ),
   };
   const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs, stylingRefs }, promptOptions);
 
