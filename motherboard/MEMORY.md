@@ -27429,3 +27429,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (continued):** User screenshots — some generations **repaint/invent clothing** on the bottom half of the client preview instead of **cropping tight on the face** like the reference (head, neck, upper chest). Wanted consistent framing across all tiers.
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — replaced **FULL BLEED** client-panel instructions with **`clientPhotoFramingBlock`** (tight face-centered portrait, crop at shoulders/collarbone, soft bottom fade OK, **forbidden** outpainting/repainting torso/outfits/jewelry). **`matchThumbnailFramingBlock`** for tighter square face crops. Global template rules + **FINAL CHECK** updated — same framing standard on every tier/generation.
 - **Conventions:** Client photos = zoom/crop IMAGE 2 on face only; change hair only; never hallucinate clothing to fill panel bottom.
+
+---
+
+## 2026-06-09 — Hairstyle analysis: fix match scores, face lock, debug slots on generate
+
+- **Context (continued):** User reported **match scores disappeared** (SVG `<text>` failed on Vercel/librsvg like prior CBYG issue), **faces repainted** when density prompts reduced hair volume, and **saved debug score/star positions** did not apply to generated output (server used hardcoded slots only).
+- **Shipped:** **`hairstyleAnalysisTextPaths.ts`** + restored **`FuturaPTMedium.ttf`** — match-row scores composited as **opentype paths** (gray). **`hairstyleAnalysisCompositeLayout.ts`** — resolve **`topScore`**, **`rating`**, **`*-score`** slots with optional **`slotOverrides`** from API. Generate sends **`slotOverrides`** from debug panel state; server applies on composite. **`faceIdentityLockBlock`** + softened density prompts (hair strands only, face untouched). **`vercel.json`** includes **`api/_lib/fonts/*.ttf`**.
+- **Conventions:** All score overlays = path-based fonts (CBYG overall, Futura match %). Debug slot positions apply to server composite on generate when **`slotOverrides`** sent. Face edits = hair region only.
