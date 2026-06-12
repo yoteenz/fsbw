@@ -55,11 +55,13 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 ---
 
-## Template hairstyle analysis cards (demo / composition layer)
+## Template hairstyle analysis cards (demo / Fal preview)
 
-**Where:** `/tools/hairstyle-analysis` — tier picker, Kateena sample data, PNG download.
+**Where:** `/tools/hairstyle-analysis` — tier picker, Kateena sample data, **Generate template preview** (signed in).
 
-**Model:** Fixed static templates (Supabase `live-preview/Analysis/IMG_2438|2447|2450|2451.png`) with **percentage-positioned overlays** — no AI-generated layout. AI upstream may only supply the **client hairstyle preview** image; React composes text + thumbs into the template.
+**Model:** Fal **GPT Image 2** (`openai/gpt-image-2/edit`) populates the static Supabase template (`live-preview/Analysis/IMG_2438|2447|2450|2451.png`) using the tier population prompt + client preview photo. Output **4:5** at **2048×2560**, `quality: medium` (~2K). API: `POST /api/hairstyle-analysis-generate`.
+
+**Dev fallback:** React overlay composer (collapsed under Advanced) for coordinate experiments only — not the client-facing path.
 
 **Tier pick counts (card system):**
 
