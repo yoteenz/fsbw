@@ -27601,3 +27601,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **overall score %** and **match-rating stars** generating too large in their panels. Disliked **Covered By Your Grace** script for overall score — wanted a different font.
 - **Shipped:** **`overallScoreFalFontSize()`** (~34% slot height, max 52px) in **`hairstyleAnalysisTextPaths.ts`**. **`hairstyleAnalysisFalPrompt.ts`** — overall score = **Futura PT Demi** (not CBYG/script); **`overallScoreAndStarsSizeRules()`** for compact padding; stars must fill inside template outlines only, not oversized. Dev overlay **`.scoreText`** → Futura Demi. Reference prompts in **`hairstyleAnalysisPrompts.ts`** aligned.
 - **Conventions:** Fal overall score = compact Futura PT Demi red % in panel; stars = template-outline size only.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: site font picker on debug panel
+
+- **Context:** User wanted a font dropdown on the hairstyle analysis debug panel listing all site fonts, with live overlay preview, to pick overall score % font instead of being locked to one style.
+- **Shipped:** **`src/utils/siteFonts.ts`** — Futura Book/Medium/Demi, Bohemy, Covered By Your Grace. **`SiteFontPicker.tsx`** — dropdown + large live preview + clickable **98%** specimens. **`HairstyleAnalysisPreview`** — applies to **`topScore`** live, saved with layout, sent on Generate. **`api/_lib/hairstyleAnalysisFontOverrides.ts`** — parse overrides + Fal prompt label; **`buildHairstyleAnalysisFalPrompt`** accepts **`overallScoreFontLabel`**.
+- **Conventions:** Debug **Overall score font** picker → Save layout → Generate sends **`fontOverrides.topScore`** to Fal.
