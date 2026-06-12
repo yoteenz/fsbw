@@ -27234,3 +27234,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported hairstyle analysis text/images not aligning with Supabase template underneath on **`/tools/hairstyle-analysis`** (six-month screenshot).
 - **Answer:** Yes — templates **`IMG_2438|2447|2450|2451.png`** are **2048×2560 (4:5)** and card CSS uses **`aspect-ratio: 4/5`**. Misalignment was **not** a wrong export ratio; slot **`%`** coordinates were **uncalibrated placeholders** and six-month used single **`topMatchBlock`/`portfolioLine-*`** blobs instead of per-row value fields matching the baked-in labels.
 - **Fix:** **`hairstyleAnalysisTemplateLayouts.ts`** remeasured client, score/rating, 8 spec rows, 3mo match rows, 6mo portfolio rows, 12mo 3×3 alt grid. **`hairstyleAnalysisOverlayContent.ts`** per-field values + thumb **`resolveOverlayImageUrl`**. CSS: **`container-type: inline-size`**, **`cqw`** font sizing, **`object-fit: fill`**. Commit **`2b950b24`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Hairstyle analysis: Fal GPT Image 2 template generation (not overlay debug)
+
+- **Context:** User clarified **`/tools/hairstyle-analysis`** should **test templates via Fal GPT Image 2** (2K, 4:5) with tier population **prompts** — not React text/image overlays on static PNG. Overlay debug did not show what the client receives and alignment still wrong.
+- **Shipped:** **`POST /api/hairstyle-analysis-generate`** — signed-in; **`api/_lib/hairstyleAnalysisFal.ts`** + **`hairstyleAnalysisFalPrompt.ts`**; template + client photo → **`openai/gpt-image-2/edit`**, **`image_size` 2048×2560**, **`quality: medium`**, PNG out. Demo: **Generate template preview** per tier; overlay composer under **Advanced (dev only)**. **`postHairstyleAnalysisGenerate`** in **`api.ts`**. **`vercel.json`** **`maxDuration: 300`**. Docs updated.
