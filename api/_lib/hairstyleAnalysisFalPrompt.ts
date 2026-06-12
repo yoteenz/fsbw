@@ -133,9 +133,11 @@ function matchThumbnailBlock(
 function whyItWorksRulesBlock(): string {
   return [
     '=== WHY IT WORKS LINES (PRINT VERBATIM — NO REWRITES) ===',
-    'Each WHY IT WORKS LINE is a short fit note for this client — print it exactly as given.',
-    'Tone: professional but friendly stylist notes (inspo match, face shape, undertone, length, texture compare).',
-    'FORBIDDEN: trendy slang, empowerment slogans, generic compliments, or AI filler.',
+    'Each WHY IT WORKS LINE is a final curated stylist note for this client — print it exactly as given.',
+    'Each line must tie a catalog spec (unit texture, color, length, styling, part) to this client\'s features — face shape, eyes, jawline, undertone, proportions.',
+    'Example tone: "NOIR\'S STRAIGHT TEXTURE ACCENTUATES YOUR HEART-SHAPED FEATURES" or "JET BLACK ENHANCES YOUR ALMOND-SHAPED EYES".',
+    'These are intentional pairing notes — show you selected specs for them specifically, not generic praise.',
+    'FORBIDDEN: empowerment fluff, girl-power jargon, confidence slogans, trendy slang, or vague compliments with no spec tie-in.',
     'Do not invent extra why lines or merge lines together.',
   ].join('\n');
 }
