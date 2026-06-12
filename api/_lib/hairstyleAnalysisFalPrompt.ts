@@ -97,15 +97,25 @@ function clientPreviewTabLine(firstName: string): string {
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
-    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — ONE PERSON ONLY ===',
-    'Place IMAGE 2 inside the large vertical client preview frame only.',
+    '=== CLIENT PREVIEW PHOTO (IMAGE 2) — FULL BLEED, ONE PERSON ONLY ===',
+    'Scale IMAGE 2 to COMPLETELY FILL the large client preview panel edge-to-edge (top, bottom, left, right).',
+    'NO inner padding, NO inset crop, NO letterboxing, NO margins — photo must touch all four inner edges of the panel border.',
+    'Use cover-style scaling: center the client face; crop overflow at edges if needed, but the panel must look full, not a smaller photo floating inside.',
     'KEEP the exact face, skin tone, age, expression, body, and camera angle from IMAGE 2.',
     `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
     mannequinRefLine(look.unit, refs),
     'NO wig cap, NO lace visible, NO different person.',
+    hairlineRulesBlock(),
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+function hairlineRulesBlock(): string {
+  return [
+    'HAIRLINE: clean lace-front edge only — do NOT add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead/temples.',
+    'Do NOT blur or add extra strands at the hairline beyond what is natural in IMAGE 2.',
+  ].join('\n');
 }
 
 function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
@@ -116,6 +126,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     mannequinRefLine(look.unit, refs),
     '- Composite client selfie + mannequin hair texture for maximum accuracy.',
     '- FORBIDDEN: back-of-head shots, stock photos, wig-only swatches, silhouettes, or any different person.',
+    '- NO baby hairs or wispy hairline flyaways on thumbnails.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -135,6 +146,16 @@ function buildTemplateRules(refs: FalPromptImageRefs): string {
     'DO NOT REDESIGN THE CARD, MOVE PANELS, CROP, OR ALTER THE MARBLE BACKGROUND.',
     'ALL SECTION TITLES, BORDERS, FOOTER ICONS, AND LABELS (TEXTURE:, COLOR:, etc.) ARE ALREADY ON THE TEMPLATE — LEAVE THEM UNTOUCHED.',
     'ONLY FILL EMPTY VALUE AREAS NEXT TO EXISTING LABELS. DO NOT DUPLICATE LABELS OR ICONS.',
+    '',
+    '=== REMOVE TIER / SUBSCRIPTION LABEL (CRITICAL) ===',
+    'The template may include a subtitle such as "FREE HAIRSTYLE ANALYSIS", "3 MONTH HAIRSTYLE ANALYSIS",',
+    '"6 MONTH HAIRSTYLE ANALYSIS", or "12 MONTH HAIRSTYLE ANALYSIS" below the main header.',
+    'ERASE that tier/subscription subtitle completely — paint over with clean marble background matching the template.',
+    'The client must NOT see any tier name, month count, or analysis type. Keep "FRONTAL SLAYER" and "hairstyle analysis" header art only.',
+    '',
+    '=== HAIRLINE — NO BABY HAIRS (ALL HAIR EDITS) ===',
+    'Never add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead, temples, or hairline.',
+    'Hairline stays clean and defined — lace-front edge only. Do not add extra strands at the hairline.',
     '',
     '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
@@ -207,6 +228,9 @@ const PROMPT_FOOTER = [
   '',
   '=== FINAL CHECK ===',
   'PILL: first name replaces "CLIENT PREVIEW" inside the tab — not below it.',
+  'CLIENT PANEL: selfie fills entire panel edge-to-edge — no inset crop or floating photo.',
+  'TIER SUBTITLE: erased — no "3 MONTH", "6 MONTH", "12 MONTH", or "FREE" analysis label visible.',
+  'HAIRLINE: no baby hairs or wispy flyaways anywhere.',
   `SCORE: only "${formatScore(98)}" style number in red Covered By Your Grace — never print "COVERED BY YOUR GRACE" as text.`,
   'THUMBNAILS: same client face from IMAGE 2 + mannequin texture per unit — never different people or back-of-head stock.',
   'STARS: leave MATCH RATING area blank.',
@@ -221,7 +245,6 @@ function freePrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): s
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    `TIER: FREE HAIRSTYLE ANALYSIS`,
     scoreLine(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
@@ -241,7 +264,6 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    `TIER: 3 MONTH HAIRSTYLE ANALYSIS`,
     scoreLine(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
@@ -265,7 +287,6 @@ function sixMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    `TIER: 6 MONTH HAIRSTYLE ANALYSIS — STYLE PORTFOLIO`,
     scoreLine(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
@@ -293,7 +314,6 @@ function twelveMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageR
     clientPreviewTabLine(firstName),
     clientPreviewHairLine(top, refs),
     '',
-    `TIER: 12 MONTH HAIRSTYLE ANALYSIS`,
     scoreLine(top),
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
     '',
