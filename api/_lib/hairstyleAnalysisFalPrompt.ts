@@ -565,11 +565,8 @@ function topMatchBlock(look: FalAnalysisLook): string[] {
 function altRowBlock(label: string, look: FalAnalysisLook): string {
   return [
     label,
-    `TEXTURE: ${look.unit}`,
-    colorValueLine(look),
-    `LENGTH: ${displayLength(look.length)}`,
-    `STYLE: ${displayStyle(look.styling, look.unit)}`,
     matchScoreFalLine(look),
+    `Thumbnail only — apply STYLE ${displayStyle(look.styling, look.unit)} on the square photo; do not print STYLE in the match row.`,
   ].join('\n');
 }
 
