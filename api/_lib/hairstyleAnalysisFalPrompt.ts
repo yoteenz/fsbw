@@ -60,12 +60,17 @@ function mannequinIndexForUnit(refs: { mannequinRefs: MannequinRefIndex[] }, uni
   return hit?.imageIndex ?? null;
 }
 
-function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex[] }): string {
+function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex[] }, stylingRaw: string): string {
   const idx = mannequinIndexForUnit(refs, unit);
   if (!idx) return '';
+  const style = displayStyle(stylingRaw, unit);
+  const shapeNote =
+    style !== 'NONE'
+      ? 'Mannequin = **unit strand texture + one-shoulder drape only**. Salon finish (curl/crimp/straight/layers) must come from the assigned BAW styling reference IMAGE — not the mannequin default shape.'
+      : 'Copy curl pattern, strand definition, volume, silhouette, AND **one-shoulder drape geometry** from that mannequin — not symmetric hair on both shoulders.';
   return [
-    `Use IMAGE ${idx} as the authoritative ${unit} mannequin front reference.`,
-    'Copy curl pattern, strand definition, volume, silhouette, AND **one-shoulder drape geometry** from that mannequin — not symmetric hair on both shoulders.',
+    `Use IMAGE ${idx} as the ${unit} mannequin front reference.`,
+    shapeNote,
   ].join(' ');
 }
 
@@ -118,20 +123,57 @@ function realisticHairRecolorBlock(): string {
 }
 
 function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
-  const style = displayStyle(look.styling);
+  const style = displayStyle(look.styling, look.unit);
   if (style === 'NONE') {
-    return 'Finish hair in a polished salon-ready look matching the unit texture reference.';
+    return 'Finish hair in a polished salon-ready look matching the unit mannequin texture reference.';
   }
-  const stylingRef = stylingRefForLook(refs.stylingRefs, look.styling, look.part);
+  const stylingRef = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   if (stylingRef) {
     const hex = (look.hex || '#000000').toUpperCase();
-    return (
-      `Copy hairstyle shape from IMAGE ${stylingRef.imageIndex} (BAW ${stylingRef.salonMode.toUpperCase()} reference, ${stylingRef.part} part) — ` +
-      `match the curl, crimp, or straight pattern exactly; change ONLY hair pigment to ${look.color} (${hex}). ` +
-      `Do not invent a different salon finish.`
-    );
+    return [
+      `STYLE **${style}** — print exactly "${style}" in the STYLE value field (never substitute LAYERS unless STYLE is LAYERS or DEFINE).`,
+      `Hairstyle shape: copy **only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part).`,
+      `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to ${look.color} (${hex}) only.`,
+      'The styling reference IMAGE overrides the unit mannequin default finish — do NOT apply layered waves when STYLE is FLAT IRON or CRIMPS/WAND CURLS.',
+      'Do not invent a different salon finish.',
+    ].join(' ');
   }
-  return `Apply BAW salon styling ${style} only — do not invent a new curl, crimp, or straight pattern.`;
+  return `Apply BAW salon styling **${style}** only — print STYLE as "${style}"; do not default to LAYERS or invent a new curl/crimp/straight pattern.`;
+}
+
+function salonStylingPriorityBlock(): string {
+  return [
+    '=== SALON STYLING — EACH MATCH HAS ITS OWN STYLE (CRITICAL) ===',
+    'Every look has a distinct STYLE value (LAYERS, FLAT IRON, CRIMPS, WAND CURLS, DEFINE, or NONE).',
+    'When STYLE is not NONE: the matching BAW styling reference IMAGE is the **authoritative** salon finish for that look.',
+    'Unit mannequin IMAGE = strand texture + one-shoulder drape only — **not** the salon finish when a styling IMAGE is assigned.',
+    'FORBIDDEN: rendering every match with the same layered/wavy finish; printing LAYERS in STYLE when the assigned style is FLAT IRON, CRIMPS, WAND CURLS, or DEFINE;',
+    'using the TOP MATCH hairstyle on MATCH 02–04 thumbnails.',
+    'Curly units (SOFT CURL, OCEAN CURL): STYLE **DEFINE** replaces LAYERS; **WAND CURLS** replaces CRIMPS — print and render those ids exactly.',
+  ].join('\n');
+}
+
+function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
+  const tier = normalizeTier(analysis.tier);
+  if (tier === 'free') return '';
+
+  const lines: string[] = [
+    '=== MATCH 02–04 — STYLE + STYLING IMAGE BINDING (MANDATORY) ===',
+    'Each row below: print STYLE exactly as given; thumbnail hair must match that style via the listed IMAGE (if any).',
+  ];
+
+  const allLooks = [analysis.topMatch, ...analysis.additionalLooks.slice(0, 3)];
+  allLooks.forEach((look, i) => {
+    const label = i === 0 ? 'TOP MATCH / CLIENT PREVIEW' : `MATCH ${String(i + 1).padStart(2, '0')}`;
+    const style = displayStyle(look.styling, look.unit);
+    const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
+    const refNote = ref ? `use IMAGE ${ref.imageIndex} for salon finish` : 'no styling IMAGE — use mannequin texture only';
+    lines.push(
+      `${label}: STYLE ${style}, PART ${displayPart(look.part)}, ${refNote} — do NOT use a different style or IMAGE.`
+    );
+  });
+
+  return lines.join('\n');
 }
 
 function clientPhotoFramingBlock(panelLabel: string): string {
@@ -161,12 +203,12 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     '=== CLIENT PREVIEW PHOTO (IMAGE 2) — TIGHT FACE PORTRAIT + STYLED TOP MATCH ===',
     clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
     faceIdentityLockBlock(),
-    `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}.`,
+    `Change ONLY the hair to match TOP MATCH: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}.`,
     realisticHairRecolorBlock(),
     realisticHairDensityBlock(displayDensity(look.density), false),
     colorHairGuidanceLine(look),
     styledHairLine(look, refs),
-    mannequinRefLine(look.unit, refs),
+    mannequinRefLine(look.unit, refs, look.styling),
     asymmetricOneShoulderDrapeBlock('all_photos'),
     'NO wig cap, NO lace visible, NO different person.',
     hairlineRulesBlock(),
@@ -215,8 +257,9 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     colorHairGuidanceLine(look),
     `- LENGTH: ${displayLength(look.length)}`,
     `- DENSITY: ${displayDensity(look.density)} — hair strands only; face unchanged from IMAGE 2.`,
+    `- STYLE: ${displayStyle(look.styling, look.unit)} — thumbnail salon finish MUST match this value and its styling reference IMAGE.`,
     styledHairLine(look, refs),
-    mannequinRefLine(look.unit, refs),
+    mannequinRefLine(look.unit, refs, look.styling),
     realisticHairDensityBlock(displayDensity(look.density), true),
     asymmetricOneShoulderDrapeBlock('thumbnails_only'),
     '- Composite client selfie + unit mannequin silhouette for maximum accuracy — strand-level recolor on hair only, not a color overlay on skin.',
@@ -372,7 +415,7 @@ function additionalMatchTemplateRules(): string[] {
     '=== MATCH THUMBNAILS — SAME CLIENT FACE + MANNEQUIN SILHOUETTE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
     'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
-    'Use the matching mannequin front IMAGE as texture **and** one-shoulder drape reference for that unit.',
+    'Use the matching mannequin front IMAGE for unit strand texture + one-shoulder drape — salon finish still comes from the BAW styling reference IMAGE when STYLE is not NONE.',
     'NEVER use back-of-head stock photos, different people, hair-only swatches, repainted lower-body clothing, or symmetric both-shoulder hair.',
     '',
     'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
@@ -444,6 +487,8 @@ function buildTemplateRules(
     '',
     bawStylingRefListBlock(refs.stylingRefs),
     '',
+    salonStylingPriorityBlock(),
+    '',
     '=== SALON STYLING — BAW REFERENCES ONLY (NO INVENTED STYLES) ===',
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
@@ -477,7 +522,7 @@ function topMatchBlock(look: FalAnalysisLook): string[] {
     `DENSITY: ${displayDensity(look.density)}`,
     `PART: ${displayPart(look.part)}`,
     `HAIRLINE: ${displayHairline(look.hairline)}`,
-    `STYLE: ${displayStyle(look.styling)}`,
+    `STYLE: ${displayStyle(look.styling, look.unit)}`,
   ];
 }
 
@@ -487,7 +532,7 @@ function altRowBlock(label: string, look: FalAnalysisLook): string {
     `TEXTURE: ${look.unit}`,
     colorValueLine(look),
     `LENGTH: ${displayLength(look.length)}`,
-    `STYLE: ${displayStyle(look.styling)}`,
+    `STYLE: ${displayStyle(look.styling, look.unit)}`,
     matchScoreFalLine(look),
   ].join('\n');
 }
@@ -514,7 +559,8 @@ function promptFooter(analysis: FalHairstyleAnalysis): string {
     );
   } else {
     lines.push(
-      'MATCH 02–04: texture, color, length, and gray match score % filled in template value slots.',
+      'MATCH 02–04: texture, color, length, STYLE, and gray match score % filled in template value slots.',
+      'STYLING: each match thumbnail uses its assigned STYLE + BAW styling reference IMAGE — not the same finish on every row.',
       'THUMBNAILS: same client face from IMAGE 2 — one-shoulder drape like hero + mannequin; BAW styling refs for salon shapes only.',
       'DRAPE CHECK: no thick forward hair on both shoulders on any match thumbnail.'
     );
@@ -570,6 +616,8 @@ function threeMonthPrompt(analysis: FalHairstyleAnalysis, refs: FalPromptImageRe
     lines.push(altRowBlock(label, look));
     lines.push(matchThumbnailBlock(label, look, refs));
   });
+  lines.push('');
+  lines.push(matchStylingManifestBlock(analysis, refs));
   lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
   lines.push(promptFooter(analysis));

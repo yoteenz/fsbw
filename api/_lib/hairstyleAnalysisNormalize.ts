@@ -1,6 +1,11 @@
+import { normalizeAnalysisStylingId } from './hairstyleAnalysisDisplay.js';
 import { hexForHairColorName } from './hairstyleHairColors.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { applyRealisticMatchScores } from './hairstyleAnalysisRealisticScores.js';
+
+function normalizeLookStyling<T extends { unit: string; styling: string }>(look: T): T {
+  return { ...look, styling: normalizeAnalysisStylingId(look.unit, look.styling) };
+}
 
 function normalizeTier(tier: FalHairstyleAnalysis['tier']): FalHairstyleAnalysis['tier'] | 'twelve_month' {
   return tier === 'black' ? 'twelve_month' : tier;
@@ -11,18 +16,20 @@ export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis)
   const tierKey = normalizeTier(analysis.tier);
   const withScores = applyRealisticMatchScores(analysis);
 
-  const top = {
+  const top = normalizeLookStyling({
     ...withScores.topMatch,
     hex: withScores.topMatch.hex || hexForHairColorName(withScores.topMatch.color),
-  };
+  });
 
   const additionalLooks =
     tierKey === 'free'
       ? []
-      : withScores.additionalLooks.map((look) => ({
-          ...look,
-          hex: look.hex || hexForHairColorName(look.color),
-        }));
+      : withScores.additionalLooks.map((look) =>
+          normalizeLookStyling({
+            ...look,
+            hex: look.hex || hexForHairColorName(look.color),
+          })
+        );
 
   return { ...withScores, topMatch: top, additionalLooks };
 }

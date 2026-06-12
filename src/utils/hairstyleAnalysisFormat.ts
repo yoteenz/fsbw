@@ -33,13 +33,23 @@ export function displayPart(look: AnalysisLook): string {
     .toUpperCase();
 }
 
-export function displayStyle(look: AnalysisLook): string {
-  const s = look.styling
+export function normalizeAnalysisStylingId(unit: string, stylingRaw: string): string {
+  let s = String(stylingRaw || '')
     .replace(/^STYLING:\s*/i, '')
-    .replace(/^NONE$/i, 'NONE')
+    .trim()
     .toUpperCase();
+  if (!s || s === 'NONE') return 'NONE';
+  const u = unit.trim().toUpperCase();
+  if (u === 'SOFT CURL' || u === 'OCEAN CURL') {
+    if (s === 'CRIMPS') return 'WAND CURLS';
+    if (s === 'LAYERS') return 'DEFINE';
+  }
   if (s === 'SOFT FACE FRAMING LAYERS') return 'LAYERS';
   return s;
+}
+
+export function displayStyle(look: AnalysisLook): string {
+  return normalizeAnalysisStylingId(look.unit, look.styling);
 }
 
 export function displayLength(look: AnalysisLook): string {

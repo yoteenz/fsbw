@@ -31,6 +31,7 @@ Return exactly ${maxPicks} ranked picks customized to upsell — face shape, und
 Each pick must use real BAW options:
 - length (16"–40"), density, texture (SILKY/KINKY/YAKI), color (BLANCO: GOLDEN/PLATINUM/ASH only; others: catalog colors),
 - hairline (NATURAL/PEAK/LAGOS/LAGOS + PEAK), styling, parting (MIDDLE/LEFT/RIGHT).
+- styling ids: straight/wavy units use LAYERS, CRIMPS, FLAT IRON; SOFT CURL and OCEAN CURL use DEFINE and WAND CURLS (not LAYERS/CRIMPS).
 
 Catalog:
 ${UNIT_CATALOG_BLOCK}
