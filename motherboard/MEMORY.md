@@ -27226,3 +27226,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **`COLOR_PREVIEW_MISSING`** on Studio Try-On (`/tools/live-try-on`) while prep still showed **PREPARING YOUR COLOR…** — capture could run before mannequin WebPs existed in Supabase Storage.
 - **Cause:** Race — UI opened studio when **`sourcePayload.color`** existed but **`ensureLiveTryOnWigAssets`** / **`postWigPreviewLiveNoirColor`** still running; server **`startStudioTryOnRender`** only probed Storage paths via **`liveTryOnMannequinStoragePaths()`** and threw **`COLOR_PREVIEW_MISSING`** without using client prep URLs.
 - **Fix:** **`api/_lib/liveTryOnStudio.ts`** — **`resolveMannequinFalUrl()`** falls back to **`mannequinPublicUrl`** (fetch + Fal upload). **`api/live-try-on-studio-render.ts`** + **`src/utils/api.ts`** accept/pass **`mannequinPublicUrl`**. **`LiveTryOnStudioCapture`** sends angle-matched prep URL via **`mannequinPublicUrlForAngle()`**, disables capture without URLs, **`formatStudioTryOnError()`** for friendlier copy. **`live-try-on/page.tsx`** — **`prepComplete`** gate; studio only when **`prepComplete && sourcePayload && wigUrls`**. Commit **`b8271f67`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-09 — Hairstyle analysis overlay alignment (4:5 calibration)
+
+- **Context:** User reported hairstyle analysis text/images not aligning with Supabase template underneath on **`/tools/hairstyle-analysis`** (six-month screenshot).
+- **Answer:** Yes — templates **`IMG_2438|2447|2450|2451.png`** are **2048×2560 (4:5)** and card CSS uses **`aspect-ratio: 4/5`**. Misalignment was **not** a wrong export ratio; slot **`%`** coordinates were **uncalibrated placeholders** and six-month used single **`topMatchBlock`/`portfolioLine-*`** blobs instead of per-row value fields matching the baked-in labels.
+- **Fix:** **`hairstyleAnalysisTemplateLayouts.ts`** remeasured client, score/rating, 8 spec rows, 3mo match rows, 6mo portfolio rows, 12mo 3×3 alt grid. **`hairstyleAnalysisOverlayContent.ts`** per-field values + thumb **`resolveOverlayImageUrl`**. CSS: **`container-type: inline-size`**, **`cqw`** font sizing, **`object-fit: fill`**. Commit **`2b950b24`** on **`master`** + **`preview/mobile`**.
