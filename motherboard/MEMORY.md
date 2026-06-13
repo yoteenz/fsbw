@@ -27924,6 +27924,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Copy: virgin hair → 100% RAW HUMAN HAIR
+
+- **Context:** User flagged incorrect **virgin hair** bullet/copy — brand sells **100% RAW HUMAN HAIR**, not virgin.
+- **Shipped:** **`brandFaqCopy.ts`** (WHAT TYPE OF HAIR), **`psaKnowledge.ts`** (PSA FAQ hair-type), **`ClosureProductDetailsTab`** + **`FrontalProductDetailsTab`** rose bullets **`PREMIUM RAW HUMAN HAIR` → `100% RAW HUMAN HAIR`** (bundles already correct).
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
