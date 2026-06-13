@@ -28151,6 +28151,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-13 — Free tier MATCH RATING decimal: gray Futura, red stars
+
+- **Context:** User wanted **5.0** score text on free/1-pick match rating template in **Futura PT Medium gray** (#808080), not red — **stars stay red**.
+- **Shipped:** **`overallScoreAndRatingRules()`** in **`hairstyleAnalysisFalPrompt.ts`** — free-tier decimal uses **Futura PT Medium gray** (separate from red Covered By Your Grace OVERALL SCORE %); stars unchanged red embossed gradient. **`matchRatingDecimalFalFontSize()`** in **`hairstyleAnalysisTextPaths.ts`**. Dev CSS **`.ratingText`** gray Futura for consistency.
+- **Conventions:** Free tier MATCH RATING = gray decimal above + red stars below; OVERALL SCORE % stays red script.
+
+---
+
 ## 2026-06-13 — EDM brand copy (hairline, pairs well, natural state)
 
 - **Context:** User flagged weak EDM lines from screenshot — **EDGE** terminology (use **hairline** only), **PAIRED WITH YOUR SKIN TONE** (meaningless), **HAIR THAT FALLS CLEANLY** (irrelevant), **LEFT IN RAW TEXTURE** (prefer details-tab phrasing).
