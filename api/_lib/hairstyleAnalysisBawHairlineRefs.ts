@@ -101,7 +101,8 @@ export function bawHairlineRefListBlock(refs: HairstyleAnalysisHairlineRef[]): s
   return [
     '=== BAW HAIRLINE REFERENCE IMAGES (MANDATORY FOR PEAK / LAGOS) ===',
     'When manifest HAIRLINE is PEAK, LAGOS, or LAGOS + PEAK: copy **forehead edge shape** from the matching IMAGE below.',
-    'Hairline IMAGE = lace-edge silhouette only — never copy face, neck, baby hairs, or wispy frizz onto the client.',
+    'Hairline IMAGE = lace-edge silhouette only — **never** copy face, skin, neck, baby hairs, or wispy frizz from that IMAGE.',
+    'IMAGE 2 client face/pose always wins over hairline ref faces.',
     ...lines,
   ].join('\n');
 }

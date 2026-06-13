@@ -28258,3 +28258,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** **`hairstyleAnalysisFalPrompt.ts`** — removing **`realisticHairDensityBlock`** accidentally replaced **`matchThumbnailBlock`** with a second **`faceIdentityLockBlock`** containing thumb body + undefined vars (`look`, `refs`, `label`) — **syntax/duplicate declaration** at API module load.
 - **Shipped:** Restored **`matchThumbnailBlock`**; removed duplicate **`faceIdentityLockBlock`**. API module imports cleanly again.
 - **Conventions:** After prompt refactors, verify **`npx tsx`** can import **`api/hairstyle-analysis-generate.ts`** — load-time errors surface as Vercel **FUNCTION_INVOCATION_FAILED**, not JSON 500.
+
+---
+
+## 2026-06-13 — Hairstyle Fal: face lock, baby hairs, EDM rose icons
+
+- **Context:** User reported three regressions after prompt compression: **model no longer them** (face swap), **baby hairs back** at hairline, **every detail matters** using wrong icons (AI-powered-analysis style bullets instead of template **red rose** icons).
+- **Cause:** Face/pose/baby-hair/drape rules buried late in prompt (after catalog + styling refs); styling/hairline ref IMAGEs include mannequin faces Fal could copy; compressed EDM rules lacked explicit **forbid AI/sparkle/checkmark bullets** beside rose rows.
+- **Shipped:** **`criticalClientPhotoLocksBlock()`** early in **`buildTemplateRules`** (face identity, pose, no baby hairs, one-shoulder drape). Strengthened **`faceIdentityLockBlock`** — IMAGE 2 wins over all ref faces; styling/hairline refs = hair geometry only. **`roseIconAndEdmPreservationBlock()`** in EDM rules — text only to right of existing roses; forbid AI/sparkle/checkmark icons. **`bawStylingRefListBlock`** + **`bawHairlineRefListBlock`** — never copy ref faces. Enhanced FINAL CHECK + thumb lines. Prompt ~25.5k chars (under 32k).
+- **Conventions:** Client face from **IMAGE 2 only** on all photos; EDM = **pre-rendered rose icons + black text** — never redraw bullets or swap icon type.
