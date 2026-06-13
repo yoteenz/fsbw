@@ -39,27 +39,34 @@ function buildSymmetricalBottomFadeMaskSvg(width: number, height: number): Buffe
 }
 
 /**
- * Cut out the client-photo bottom: fade photo alpha to transparent, composite over the
- * exact template window so marble/panel shows through — no gray fill or resized underlay.
+ * Server post-process: wipe the full client panel to template (removes Fal ghost layers),
+ * Ideogram-cut the hair-edited panel, bottom-anchor + fade in the inner window, composite back.
  */
 export async function applyClientPhotoBottomFade(
   falBuf: Buffer,
   templateBuf: Buffer,
-  rect: PixelRect,
+  fadeRect: PixelRect,
+  panelRect: PixelRect,
   fal?: FalClient | null
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
-  const { left, top, width, height } = rect;
+  const { left, top, width, height } = fadeRect;
+  const {
+    left: panelLeft,
+    top: panelTop,
+    width: panelWidth,
+    height: panelHeight,
+  } = panelRect;
 
   const maskPng = await sharp(buildSymmetricalBottomFadeMaskSvg(width, height)).png().toBuffer();
 
-  const falRegionRaw = await sharp(falBuf)
-    .extract({ left, top, width, height })
+  const falPanelRaw = await sharp(falBuf)
+    .extract({ left: panelLeft, top: panelTop, width: panelWidth, height: panelHeight })
     .ensureAlpha()
     .png()
     .toBuffer();
 
-  const cutout = await removeBackgroundFromClientRegion(fal ?? null, falRegionRaw);
+  const cutout = await removeBackgroundFromClientRegion(fal ?? null, falPanelRaw);
   const falRegion = await bottomAnchorCutoutInCanvas(cutout, width, height);
 
   const maskedPhoto = await sharp(falRegion)
@@ -67,15 +74,31 @@ export async function applyClientPhotoBottomFade(
     .png()
     .toBuffer();
 
-  const templateWindow = await sharp(templateBuf)
+  const templatePanel = await sharp(templateBuf)
+    .extract({ left: panelLeft, top: panelTop, width: panelWidth, height: panelHeight })
+    .png()
+    .toBuffer();
+
+  const templateFadeWindow = await sharp(templateBuf)
     .extract({ left, top, width, height })
     .png()
     .toBuffer();
 
-  const patch = await sharp(templateWindow)
+  const fadePatch = await sharp(templateFadeWindow)
     .composite([{ input: maskedPhoto, blend: 'over' }])
     .png()
     .toBuffer();
 
-  return sharp(falBuf).composite([{ input: patch, left, top }]).png().toBuffer();
+  const fadeLeftInPanel = left - panelLeft;
+  const fadeTopInPanel = top - panelTop;
+
+  const panelWithPhoto = await sharp(templatePanel)
+    .composite([{ input: fadePatch, left: fadeLeftInPanel, top: fadeTopInPanel }])
+    .png()
+    .toBuffer();
+
+  return sharp(falBuf)
+    .composite([{ input: panelWithPhoto, left: panelLeft, top: panelTop }])
+    .png()
+    .toBuffer();
 }

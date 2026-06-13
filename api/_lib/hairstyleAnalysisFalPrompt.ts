@@ -218,9 +218,10 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
 
 function clientPhotoPanelRulesBlock(): string {
   return [
-    '=== CLIENT PREVIEW PHOTO ===',
-    'Edit hair in the left-panel cutout from IMAGE 2 — face/skin lock, same person. Change HAIR ONLY; tight head/hair/neck/upper-chest portrait.',
-    'Server post-process after generation: background cutout, bottom-anchor, symmetrical marble fade — do not paint backdrop or gray mist in-window.',
+    '=== CLIENT PREVIEW PHOTO — HAIR EDITS ONLY (NO CUTOUT IN FAL) ===',
+    'Edit HAIR ONLY in the left-panel photo window from IMAGE 2 — same person, face/skin lock, tight head/hair/neck/upper-chest portrait.',
+    'Do NOT remove the background, do NOT paste a second portrait layer, do NOT add white/gray fill, and do NOT create a floating cutout card.',
+    'Leave the photo window framing as IMAGE 1 — one in-place client photo with original backdrop; cutout/fade/placement is applied after generation.',
     'Thumbnails: tighter square face/neck crop; one-shoulder drape; no clothing invented below jaw.',
   ].join('\n');
 }
@@ -343,8 +344,8 @@ function panelChromePreservationBlock(): string {
     'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
     'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
-    'Photo windows are cutouts INSIDE the acrylic panels — place **background-removed** client cutouts in the cutout only (marble visible around/behind subject), bottom-anchored in the window.',
-    'ONLY edit inside: (a) photo cutout areas, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
+    'Photo windows: edit the client portrait **in place** — hair/strand changes only. Do NOT background-remove, do NOT paste a second portrait on top, do NOT add white/gray backdrop fill.',
+    'ONLY edit inside: (a) client hair in the photo window, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
     'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
   ].join('\n');
 }
