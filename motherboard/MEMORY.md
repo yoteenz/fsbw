@@ -27946,6 +27946,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: restore server petite overall score + stars
+
+- **Context:** User reported **overall score %** and **MATCH RATING stars** broken after size-reduction attempt — reverted to Fal-generated (large template star outlines / oversized score) instead of petite server overlay.
+- **Cause:** **`restoreTemplateSlots`** pasted template patches that still contained **~118px star outline placeholders**; Fal blank-slot prompt alone was not enough. Star PNG fetch from **`siteOrigin`** could also fail on serverless.
+- **Shipped:** **`prepareScoreRatingSlots()`** — blank frosted value boxes (corner-sampled fill) before overlay; **`compositeOverallScoreAndStars`** runs **last** after mirror/fade; bundled **`public/assets/NOIR/star-symbol.png`** + **`filled-star.png`** with HTTP fallback; **`vercel.json`** includes star PNGs. Fal prompt: explicitly **erase large template star glyphs**, never redraw.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
