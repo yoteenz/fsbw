@@ -16,6 +16,11 @@ import {
   stylingRefForLook,
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
+import {
+  bawHairlineRefListBlock,
+  hairlineRefPromptLine,
+  type HairstyleAnalysisHairlineRef,
+} from './hairstyleAnalysisBawHairlineRefs.js';
 import { TOP_SCORE_SLOT, RATING_SLOT } from './hairstyleAnalysisLayoutSlots.js';
 import { matchRatingFalStarSize, overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
 import { clientFullName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
@@ -64,6 +69,7 @@ export type FalHairstyleAnalysis = {
 export type FalPromptImageRefs = {
   mannequinRefs: MannequinRefIndex[];
   stylingRefs: HairstyleAnalysisStylingRef[];
+  hairlineRefs: HairstyleAnalysisHairlineRef[];
 };
 
 export type FalPromptBuildOptions = {
@@ -296,27 +302,32 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
     styledHairLine(look, refs),
+    hairlineRefPromptLine(look.hairline, look.color, refs.hairlineRefs),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
     .filter(Boolean)
     .join('\n');
 }
 
-function sharedClientPhotoRulesBlock(): string {
+function sharedClientPhotoRulesBlock(refs: FalPromptImageRefs): string {
   return [
     faceIdentityLockBlock(),
     clientPoseLockBlock(),
     clientPhotoPanelRulesBlock(),
     'Recolor hair to catalog color/texture at strand level — face and skin untouched.',
-    hairlineRulesBlock(),
+    hairlineRulesBlock(refs),
   ].join('\n\n');
 }
 
-function hairlineRulesBlock(): string {
+function hairlineRulesBlock(refs: FalPromptImageRefs): string {
+  const hasHairlineRefs = refs.hairlineRefs.length > 0;
   return [
-    'HAIRLINE: clean lace-front edge — do NOT copy black baby hairs or wispy edge fuzz from mannequin or styling reference IMAGEs.',
-    'Any baby hairs, temple flyaways, or edge wisps already in IMAGE 2 or at the lace line must be **recolored to the assigned catalog hair color** (same pigment as the main install) — never left jet black when hair is CHERRY, PLATINUM, etc.',
-    'Do not invent heavy new baby-hair clutter; do not leave original dark edge strands unpainted on fashion-color looks.',
+    hasHairlineRefs
+      ? 'HAIRLINE: when manifest HAIRLINE is PEAK, LAGOS, or LAGOS + PEAK — copy **forehead lace-edge shape only** from the matching BAW hairline reference IMAGE; retint edge/baby hairs to the assigned catalog color.'
+      : 'HAIRLINE: clean lace-front edge — natural hairline finish.',
+    'Any baby hairs, temple flyaways, or edge wisps must match the assigned catalog hair color — never left jet black when hair is CHERRY, PLATINUM, etc.',
+    'Do not copy black baby hairs or wispy edge fuzz from **unit mannequin** or **styling** IMAGEs — BAW hairline IMAGEs are the only source for PEAK/LAGOS edge geometry.',
+    'Do not invent heavy new baby-hair clutter.',
   ].join('\n');
 }
 
@@ -364,6 +375,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     `PART ${part} **only** on this thumb — one scalp line; erase any other part from IMAGE 2 or other refs.`,
     uniformRootColorBlock(look, 'thumbnail'),
     realisticHairDensityBlock(displayDensity(look.density), true),
+    hairlineRefPromptLine(look.hairline, look.color, refs.hairlineRefs),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
     .filter(Boolean)
@@ -638,7 +650,7 @@ function buildTemplateRules(
         .join('\n')
     : '';
 
-  const photoRules = [sharedClientPhotoRulesBlock()];
+  const photoRules = [sharedClientPhotoRulesBlock(refs)];
 
   return [
     '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',
@@ -683,6 +695,8 @@ function buildTemplateRules(
     mannequinList,
     '',
     bawStylingRefListBlock(refs.stylingRefs),
+    '',
+    bawHairlineRefListBlock(refs.hairlineRefs),
     '',
     '=== SALON STYLING — BAW REFERENCES ONLY (NO INVENTED STYLES) ===',
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
