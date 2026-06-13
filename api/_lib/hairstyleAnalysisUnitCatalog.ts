@@ -152,6 +152,13 @@ export function requiresUniformRootToTipColor(color: string): boolean {
   return UNIFORM_ROOT_TO_TIP_COLORS.has(c);
 }
 
+/** Blonde/vivid/custom installs — one pigment root to tip incl. baby hairs (not IMAGE 2 dark roots). */
+export function needsUniformRootRepaint(color: string, unit?: string): boolean {
+  if (requiresUniformRootToTipColor(color)) return true;
+  const key = unit ? normalizeCatalogUnit(unit) : null;
+  return key === 'BLANCO';
+}
+
 export function unitTexturePromptLine(unit: string): string {
   const key = normalizeCatalogUnit(unit);
   if (!key) return `Render catalog unit ${unit.trim().toUpperCase()} with accurate BAW strand pattern.`;
@@ -227,9 +234,9 @@ export function bawColorApplicationRulesBlock(): string {
   return [
     '=== BAW COLOR — ROOT TO TIP (CRITICAL) ===',
     'Build-a-Wig custom/lifted colors are **one uniform tone from root to tip** on the installed unit.',
-    'FORBIDDEN on vivid + custom colors (CHERRY, RASPBERRY, PLUM, COBALT, TEAL, SLIME, CITRINE, HONEY, AUBURN, COPPER, GINGER, SANGRIA, GOLDEN, PLATINUM, ASH):',
-    'dark roots, black roots, shadow roots, ombré, balayage root melt, dip-dye, or two-tone regrowth.',
-    'Hairline baby hairs, wispy edge strands, and temple flyaways must be the **same catalog color** as the main hair — never left black when the unit is a fashion/vivid tone.',
+    'FORBIDDEN on vivid + blonde colors: dark/black roots, shadow roots, ombré, dip-dye, or two-tone regrowth.',
+    'Repaint IMAGE 2 natural black roots fully — mannequin/styling IMAGEs are black stock; copy texture only, never black pigment.',
+    'Baby hairs, temple wisps, and lace-edge strands = **same catalog color** as the main hair — never black on PLATINUM/CHERRY/COPPER/etc.',
     'CHERRY example: vivid red (#FF1400) **same saturation from lace to ends** — zero dark root band.',
     'BLANCO (GOLDEN / PLATINUM / ASH only): silky straight blonde/light uniform root to tip.',
     'MATCH 02–04 thumbnails: PLATINUM/GOLDEN/ASH/vivid colors must show **zero dark root band** — repaint scalp zone fully.',

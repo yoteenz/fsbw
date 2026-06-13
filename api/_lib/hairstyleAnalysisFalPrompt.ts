@@ -8,7 +8,7 @@ import {
   bawColorApplicationRulesBlock,
   bawUnitCatalogBlock,
   lookHairAccuracyLines,
-  requiresUniformRootToTipColor,
+  needsUniformRootRepaint,
   unitTexturePromptLine,
   unitTextureAppearanceLock,
 } from './hairstyleAnalysisUnitCatalog.js';
@@ -98,12 +98,17 @@ function mannequinIndexForUnit(refs: { mannequinRefs: MannequinRefIndex[] }, uni
   return hit?.imageIndex ?? null;
 }
 
-function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex[] }, stylingRaw: string): string {
-  const idx = mannequinIndexForUnit(refs, unit);
+function mannequinRefLine(
+  look: Pick<FalAnalysisLook, 'unit' | 'styling' | 'color' | 'hex'>,
+  refs: { mannequinRefs: MannequinRefIndex[] }
+): string {
+  const idx = mannequinIndexForUnit(refs, look.unit);
   if (!idx) return '';
-  const style = displayStyle(stylingRaw, unit);
-  const unitKey = unit.trim().toUpperCase();
-  const textureLock = unitTextureAppearanceLock(unit);
+  const style = displayStyle(look.styling, look.unit);
+  const unitKey = look.unit.trim().toUpperCase();
+  const color = look.color.trim().toUpperCase();
+  const hex = (look.hex || '#000000').toUpperCase();
+  const textureLock = unitTextureAppearanceLock(look.unit);
   const noneStyleNote =
     unitKey === 'SOFT CURL'
       ? 'Copy **tight wave** strand pattern from that mannequin — elongated S-waves only, volume, and one-shoulder drape — **NOT** spiral curls or OCEAN CURL ringlets.'
@@ -114,12 +119,15 @@ function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex
     style !== 'NONE'
       ? 'Mannequin = **hair-strand texture + hair-end drape direction only** (above the collarbone). Salon finish comes from the BAW styling reference IMAGE — not the mannequin default shape.'
       : noneStyleNote;
+  const pigmentLock = needsUniformRootRepaint(color, look.unit)
+    ? `PIGMENT LOCK: mannequin stock hair is black — use texture/drape only; repaint **all** strands ${color} (${hex}) root to tip; baby hairs/wisps ${color}, never black.`
+    : 'HAIRLINE LOCK: do NOT copy mannequin baby hairs or black edge wisps — retint edge strands to catalog color.';
   return [
-    `Optional hair guide — IMAGE ${idx} (${unit} mannequin front):`,
+    `Optional hair guide — IMAGE ${idx} (${look.unit} mannequin front):`,
     shapeNote,
     textureLock ?? '',
     'NECK/BODY LOCK: do NOT copy mannequin neck, throat, collarbones, shoulders, chest, or skin — keep IMAGE 2 client anatomy exactly.',
-    'HAIRLINE LOCK: do NOT copy mannequin baby hairs or black edge wisps — retint any edge strands to the look catalog color.',
+    pigmentLock,
   ]
     .filter(Boolean)
     .join(' ');
@@ -201,26 +209,30 @@ function colorHairGuidanceLine(look: FalAnalysisLook): string {
 
 function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
+  const hex = (look.hex || '#000000').toUpperCase();
+  const color = look.color.trim().toUpperCase();
+  const uniformRetint = needsUniformRootRepaint(color, look.unit)
+    ? `Repaint **all** hair ${color} (${hex}) root to tip — fully erase IMAGE 2 dark/black roots; baby hairs and edge wisps same ${color}, never black. `
+    : '';
   if (style === 'NONE') {
     return refs.mannequinRefs.length > 0
-      ? `Finish hair matching ${unitTexturePromptLine(look.unit)} Use mannequin for strand direction only.`
-      : unitTexturePromptLine(look.unit);
+      ? `${uniformRetint}Finish matching ${unitTexturePromptLine(look.unit)} Mannequin = strand direction/texture only — never copy black pigment or roots from mannequin.`
+      : `${uniformRetint}${unitTexturePromptLine(look.unit)}`;
   }
   const stylingRef = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const textureLock = unitTextureAppearanceLock(look.unit);
   if (stylingRef) {
-    const hex = (look.hex || '#000000').toUpperCase();
     return [
       `STYLE **${style}** — print exactly "${style}" in the STYLE value field (never substitute LAYERS unless STYLE is LAYERS or DEFINE).`,
       textureLock ?? unitTexturePromptLine(look.unit),
       `Hairstyle shape: copy **hair strands only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part) — **never** copy head pose, profile angle, or neck rotation from that IMAGE.`,
       `Salon ref adjusts finish within the unit texture tier — never upgrade SOFT CURL to OCEAN CURL spirals or add waves to NOIR/BLANCO.`,
-      `Match the salon finish pattern from IMAGE ${stylingRef.imageIndex}; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots; hairline edge wisps same ${look.color}, not black.`,
+      `${uniformRetint || `Retint strands to uniform ${color} (${hex}) root to tip — no dark roots; `}hairline edge wisps same ${color}, not black.`,
       'The styling reference IMAGE overrides the unit mannequin default finish — do NOT apply layered waves when STYLE is FLAT IRON or CRIMPS/WAND CURLS.',
       'Do not invent a different salon finish.',
     ].join(' ');
   }
-  return `Apply BAW salon styling **${style}** only — print STYLE as "${style}"; do not default to LAYERS or invent a new curl/crimp/straight pattern.`;
+  return `${uniformRetint}Apply BAW salon styling **${style}** only — print STYLE as "${style}"; do not default to LAYERS or invent a new curl/crimp/straight pattern.`;
 }
 
 function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
@@ -241,8 +253,13 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const hl = displayHairline(look.hairline);
     const hlKey = hairlineShapeKeyFromManifest(look.hairline);
     const hlNote = `HAIRLINE ${hl} (${hlKey} edge per text guide)`;
+    const color = look.color.trim().toUpperCase();
+    const hex = (look.hex || '#000000').toUpperCase();
+    const colorNote = needsUniformRootRepaint(color, look.unit)
+      ? `COLOR ${color} (${hex}) uniform root-to-tip + baby hairs — zero dark roots`
+      : `COLOR ${color}`;
     lines.push(
-      `${label}: STYLE ${style}, PART ${displayPart(look.part)} (one part only on thumb), ${hlNote}, COLOR ${look.color.trim().toUpperCase()} uniform root to tip if vivid/blonde, ${refNote}`
+      `${label}: STYLE ${style}, PART ${displayPart(look.part)} (one part only on thumb), ${hlNote}, ${colorNote}, ${refNote}`
     );
   });
 
@@ -264,17 +281,40 @@ function hairPartLockBlock(): string {
 function uniformRootColorBlock(look: FalAnalysisLook, scope: 'preview' | 'thumbnail'): string {
   const color = look.color.trim().toUpperCase();
   const hex = (look.hex || '#000000').toUpperCase();
-  if (!requiresUniformRootToTipColor(color) && color !== 'JET BLACK' && color !== 'OFF BLACK') {
+  if (!needsUniformRootRepaint(color, look.unit)) {
+    if (color === 'JET BLACK' || color === 'OFF BLACK' || color === 'ESPRESSO') {
+      return `COLOR ${color}: natural brunette/black depth on ${scope} — no fashion-color root band under a different body tone.`;
+    }
     return `COLOR ${color}: strand-level recolor on ${scope} — natural depth within ${color} only.`;
   }
-  if (color === 'JET BLACK' || color === 'OFF BLACK' || color === 'ESPRESSO') {
-    return `COLOR ${color}: natural brunette/black depth on ${scope} — no fashion-color root band under a different body tone.`;
-  }
   return [
-    `COLOR ${color} on ${scope}: **uniform ${color} pigment root to tip** (${hex}) — full install one tone.`,
-    `Repaint scalp, lace line, regrowth zone, and ends — **IMAGE 2 dark/black roots must not show through** on ${color}.`,
-    `FORBIDDEN on ${scope}: dark roots, black roots, shadow root band, ombré, or two-tone regrowth under ${color}.`,
+    `ROOT-TO-TIP LOCK (${scope}): ${color} (${hex}) — **one uniform pigment** crown, part line, lace zone, lengths, ends.`,
+    `Fully repaint IMAGE 2 dark/black natural roots — they must **not** show through under ${color}.`,
+    `Baby hairs, temple wisps, and hairline edge = **same ${color}** — never black/dark on blonde or vivid installs.`,
+    `FORBIDDEN: dark roots, black roots, shadow root, ombré, dip-dye, or two-tone regrowth.`,
   ].join(' ');
+}
+
+function matchColorRootManifestBlock(analysis: FalHairstyleAnalysis): string {
+  const tier = normalizeTier(analysis.tier);
+  if (tier === 'free') return '';
+
+  const lines = ['=== COLOR ROOT REPAINT — PER LOOK (MANDATORY) ==='];
+  const allLooks = [analysis.topMatch, ...analysis.additionalLooks.slice(0, 3)];
+  allLooks.forEach((look, i) => {
+    const label = i === 0 ? 'TOP MATCH' : `MATCH ${String(i + 1).padStart(2, '0')}`;
+    const color = look.color.trim().toUpperCase();
+    const hex = (look.hex || '#000000').toUpperCase();
+    if (!needsUniformRootRepaint(color, look.unit)) {
+      lines.push(`${label}: ${color} — natural depth within shade only.`);
+      return;
+    }
+    lines.push(
+      `${label}: ${color} (${hex}) — **full install one tone**; erase IMAGE 2 black roots; baby hairs/wisps = ${color} only.`
+    );
+  });
+  lines.push('Self-check: vivid/blonde thumbs with dark scalp band or black baby hairs → failed.');
+  return lines.join('\n');
 }
 
 function clientPhotoPanelRulesBlock(): string {
@@ -303,7 +343,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     lookHairAccuracyLines(look),
     styledHairLine(look, refs),
     hairlineShapePromptLine(look.hairline, look.color),
-    mannequinRefLine(look.unit, refs, look.styling),
+    mannequinRefLine(look, refs),
   ]
     .filter(Boolean)
     .join('\n');
@@ -372,7 +412,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     uniformRootColorBlock(look, 'thumbnail'),
     realisticHairDensityBlock(displayDensity(look.density), true),
     hairlineShapePromptLine(look.hairline, look.color),
-    mannequinRefLine(look.unit, refs, look.styling),
+    mannequinRefLine(look, refs),
   ]
     .filter(Boolean)
     .join('\n');
@@ -628,6 +668,11 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
   const part = displayPart(look.part);
   const hairline = displayHairline(look.hairline);
   const hlKey = hairlineShapeKeyFromManifest(look.hairline);
+  const color = look.color.trim().toUpperCase();
+  const hex = (look.hex || '#000000').toUpperCase();
+  const colorLock = needsUniformRootRepaint(color, look.unit)
+    ? `COLOR ${color} (${hex}) uniform root-to-tip incl. baby hairs — erase IMAGE 2 dark roots;`
+    : '';
   return [
     '=== TOP MATCH SPEC COLUMN — PRINT EXACTLY IN VALUE SLOTS (RIGHT PANEL) ===',
     'The template may show placeholder catalog text (e.g. NOIR, JET BLACK, LAYERS) — ERASE every placeholder and REPLACE with the manifest below.',
@@ -640,7 +685,7 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — PART: ${part}`,
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
-    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — PART ${part} visible in hair; HAIRLINE ${hairline} = ${hlKey} forehead edge per text guide; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; HAIRLINE ${hairline} = ${hlKey} forehead edge per text guide; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
     `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/NATURAL edges looking identical; STYLE LAYERS when manifest is NONE.`,
     `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
@@ -666,10 +711,13 @@ function appendEveryDetailMattersLines(
   });
 }
 
-function freePromptFooter(
-  analysis: FalHairstyleAnalysis,
-  promptOptions?: FalPromptBuildOptions
-): string {
+function freePromptFooter(analysis: FalHairstyleAnalysis): string {
+  const top = analysis.topMatch;
+  const color = top.color.trim().toUpperCase();
+  const hex = (top.hex || '#000000').toUpperCase();
+  const rootCheck = needsUniformRootRepaint(color, top.unit)
+    ? `${color} (${hex}) uniform root-to-tip incl. baby hairs — fully erase IMAGE 2 dark/black roots.`
+    : '';
   return [
     '',
     '=== FINAL CHECK ===',
@@ -679,7 +727,10 @@ function freePromptFooter(
     'TOP MATCH specs + every detail matters filled; OVERALL SCORE % + MATCH RATING decimal above stars (e.g. 5.0 / 4.7) + stars below — **free tier only**; erase large template placeholders first.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
-  ].join('\n');
+    rootCheck,
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 function freePrompt(
@@ -699,7 +750,7 @@ function freePrompt(
     clientPreviewHairLine(top, refs),
   ];
   appendEveryDetailMattersLines(lines, analysis);
-  lines.push(freePromptFooter(analysis, promptOptions));
+  lines.push(freePromptFooter(analysis));
   return lines.join('\n');
 }
 
@@ -727,10 +778,12 @@ function threeMonthPrompt(
   lines.push('');
   lines.push(matchStylingManifestBlock(analysis, refs));
   lines.push('');
+  lines.push(matchColorRootManifestBlock(analysis));
+  lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; petite overall score + MATCH RATING stars only (no 5.0/4.7 decimal); each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; petite overall score + MATCH RATING stars only (no 5.0/4.7 decimal); each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; vivid/blonde installs = one ${analysis.topMatch.color.trim().toUpperCase()} tone root to tip incl. baby hairs — zero dark roots; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }
