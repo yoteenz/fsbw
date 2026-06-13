@@ -27967,3 +27967,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context (full hairstyle-analysis thread):** Loading bar on Fal generate; virgin hair → **100% RAW HUMAN HAIR**; MORE MATCHES pose lock; TOP MATCH mirror reflection; restore server petite overall score + stars. User then asked to fix awkward wording **LACE MELTED, HAIRLINE NATURAL** → **MELTED LACE, NATURAL HAIRLINE** — professional adjective-before-noun order, not trendy inverted phrasing.
 - **Shipped (a09d7820):** **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — lace rose row = **`MELTED LACE, {HAIRLINE} HAIRLINE`** (dynamic from TOP MATCH hairline spec). **`hairstyleAnalysisFalPrompt.ts`** — GOOD example + lace-row format rule; forbidden **lace melted** / **hairline natural**. **`unitPdpDetailsConfig.ts`** — signature feature **`ULTRA THIN HD FILM LACE FOR AN INVISIBLE MELT`** → **`MELTED LACE, NATURAL HAIRLINE`**. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Lace/hairline marketing copy uses **MELTED LACE, NATURAL HAIRLINE** (or **PEAK** / **LAGOS** when dynamic) — never noun-before-adjective **LACE MELTED** or **HAIRLINE NATURAL**.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: Fal prompt 32k limit (THREE MONTH regression)
+
+- **Context:** User hit **HAIRSTYLE ANALYSIS PROMPT TOO LONG (32438 CHARACTERS; FAL LIMIT IS 32000)** on THREE MONTH generate after recent prompt additions (pose lock, mirror reflection, lace copy rules).
+- **Cause:** Duplicate **matchRowScoreColorBlock** in manifest + row rules; **matchScoreFalLine** repeated per MATCH in **altRowBlock** and again in **matchScoreManifestBlock**; **lookHairAccuracyLines** on each thumb + spec manifest + preview hair line; verbose **bawStylingRefListBlock** per IMAGE.
+- **Shipped:** Deduped/shortened premium prompt blocks in **`hairstyleAnalysisFalPrompt.ts`** + compact **`bawStylingRefListBlock`** — THREE MONTH demo prompt ~**26.7k** chars (was ~32.4k). Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Keep premium Fal prompt under 32k — avoid repeating match-row color rules, per-look catalog texture lines on every thumb, or full matchScoreFalLine in both alt rows and manifest.
