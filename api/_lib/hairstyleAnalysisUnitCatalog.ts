@@ -187,7 +187,7 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
     return [
       `COLOR ${colorKey} on BLANCO: uniform ${colorKey} blonde tone root to tip on silky straight Russian hair (pigment ${pigment}).`,
       'NO dark roots, NO ash band at roots, NO ombré — one light blonde family from lace to ends.',
-      'Clean lace-front edge — do NOT add baby hairs; if IMAGE 2 has edge strands in hair only, retint to same blonde tone.',
+      'Clean lace-front edge — do NOT add baby hairs; **erase** any forehead fuzz from IMAGE 2 on skin.',
     ].join(' ');
   }
 
@@ -196,7 +196,7 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
       `COLOR ${colorKey} on ${unitKey ?? unit}: BAW custom color — **one uniform ${colorKey} tone root to tip** (pigment ${pigment}).`,
       'FORBIDDEN: dark roots, black roots, shadow roots, ombré, dip-dye, two-tone regrowth, or natural root melt.',
       `Every strand from lace to ends reads as ${colorKey} — lighting shine only, not a second root color.`,
-      `Clean lace-front edge — do NOT add baby hairs; if IMAGE 2 has edge strands in hair only, retint to ${colorKey} (never black on vivid/blonde).`,
+      `Clean lace-front edge — do NOT add baby hairs; **erase** forehead fuzz on skin; lace-zone hair strands = ${colorKey} only.`,
     ].join(' ');
   }
 
@@ -236,8 +236,7 @@ export function bawColorApplicationRulesBlock(): string {
     'Build-a-Wig custom/lifted colors are **one uniform tone from root to tip** on the installed unit.',
     'FORBIDDEN on vivid + blonde colors: dark/black roots, shadow roots, ombré, dip-dye, or two-tone regrowth.',
     'Repaint IMAGE 2 natural black roots fully — mannequin/styling IMAGEs are black stock; copy texture only, never black pigment.',
-    'Clean lace-front edge on all looks — **do NOT add** baby hairs, flyaways, or edge fuzz on skin.',
-    'If IMAGE 2 already has tiny edge strands in the hair region, retint to catalog color — never leave black wisps on PLATINUM/CHERRY/COPPER installs.',
+    'Clean lace-front edge on all looks — **do NOT add** baby hairs; **erase** forehead/temple fuzz on skin.',
     'CHERRY example: vivid red (#FF1400) **same saturation from lace to ends** — zero dark root band.',
     'BLANCO (GOLDEN / PLATINUM / ASH only): silky straight blonde/light uniform root to tip.',
     'MATCH 02–04 thumbnails: PLATINUM/GOLDEN/ASH/vivid colors must show **zero dark root band** — repaint scalp zone fully.',

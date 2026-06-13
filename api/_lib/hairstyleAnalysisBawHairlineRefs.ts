@@ -1,6 +1,6 @@
 /**
- * BAW hairline forehead-edge shapes for Fal — described in prompt text (not reference IMAGEs).
- * Paths in BAW_HAIRLINE_FRONT_PATH kept for dev/mannequin UI parity only.
+ * BAW hairline forehead-edge shapes for Fal — PEAK/LAGOS use 2D ref IMAGEs;
+ * NATURAL uses text guide only. Paths match `bawStaticMannequinReferencePaths.ts`.
  */
 
 import { displayHairline } from './hairstyleAnalysisDisplay.js';
@@ -13,10 +13,11 @@ const BAW_HAIRLINE_FRONT_PATH: Record<'PEAK' | 'LAGOS', string> = {
 
 export type BawHairlineRefKey = 'PEAK' | 'LAGOS';
 
-/** @deprecated Fal no longer uploads hairline ref IMAGEs — kept for type compatibility. */
 export type HairstyleAnalysisHairlineRef = {
   key: BawHairlineRefKey;
+  /** 1-based index in Fal image_urls */
   imageIndex: number;
+  /** Site-relative or absolute public URL */
   publicPath: string;
 };
 
@@ -24,7 +25,7 @@ export type BawHairlineShapeKey = 'NATURAL' | 'PEAK' | 'LAGOS' | 'LAGOS_PEAK';
 
 const HAIRLINE_SHAPE_LINES: Record<BawHairlineShapeKey, string> = {
   NATURAL:
-    'NATURAL — smooth wide convex arc; soft rounded center at part (no V); gentle temple curves; **clean lace-front edge** (no wispy strands on forehead skin).',
+    'NATURAL — smooth wide convex arc; soft rounded center at part (no V); gentle temple curves; clean lace-front edge (no wisps on skin).',
   PEAK:
     'PEAK — widow\'s peak: sharp center V (lowest at part), rises to temples then curves down (heart/M). Not a smooth arc.',
   LAGOS:
@@ -59,69 +60,112 @@ export function bawHairlineFrontMannequinPath(key: BawHairlineRefKey): string {
   return BAW_HAIRLINE_FRONT_PATH[key];
 }
 
-/** @deprecated Fal uses text shape guide — returns empty (no hairline IMAGEs uploaded). */
+/** Unique BAW hairline refs needed across all looks (max two: PEAK + LAGOS). */
 export function collectHairlineRefsForAnalysis(
-  _looks: Array<{ hairline: string }>,
-  _startImageIndex: number
+  looks: Array<{ hairline: string }>,
+  startImageIndex: number
 ): HairstyleAnalysisHairlineRef[] {
-  return [];
+  const seen = new Set<BawHairlineRefKey>();
+  const refs: HairstyleAnalysisHairlineRef[] = [];
+  let next = startImageIndex;
+
+  for (const look of looks) {
+    const key = bawHairlineRefKeyFromManifest(look.hairline);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    refs.push({
+      key,
+      imageIndex: next++,
+      publicPath: bawHairlineFrontMannequinPath(key),
+    });
+  }
+
+  return refs;
 }
 
-/** Compact per-look binding — full shapes live in bawHairlineShapeGuideBlock(). */
-export function hairlineShapePromptLine(hairlineRaw: string, _color: string): string {
+export function hairlineRefForLook(
+  refs: HairstyleAnalysisHairlineRef[],
+  hairlineRaw: string
+): HairstyleAnalysisHairlineRef | null {
+  const key = bawHairlineRefKeyFromManifest(hairlineRaw);
+  if (!key) return null;
+  return refs.find((r) => r.key === key) ?? null;
+}
+
+export function bawHairlineRefListBlock(refs: HairstyleAnalysisHairlineRef[]): string {
+  if (refs.length === 0) return '';
+  const lines = refs.map((r) => {
+    const comboNote = r.key === 'PEAK' ? ' (PEAK or LAGOS + PEAK manifests)' : ' (LAGOS-only manifest)';
+    return `IMAGE ${r.imageIndex} = BAW 2D ${r.key} hairline${comboNote} — **forehead lace-edge geometry only**; IMAGE 2 keeps face, skin, neck, pose; **no baby hairs on skin**.`;
+  });
+  return [
+    '=== BAW HAIRLINE REFERENCE IMAGES (MANDATORY FOR PEAK / LAGOS) ===',
+    'When manifest HAIRLINE is PEAK, LAGOS, or LAGOS + PEAK: copy **forehead edge shape** from the matching IMAGE below.',
+    'Hairline IMAGE = lace-edge silhouette only — never copy face, neck, baby hairs, or wispy frizz onto the client.',
+    ...lines,
+  ].join('\n');
+}
+
+/** Text-only binding when no ref IMAGE (NATURAL) or as supplement for LAGOS+PEAK on PEAK ref. */
+export function hairlineShapePromptLine(hairlineRaw: string): string {
   const key = hairlineShapeKeyFromManifest(hairlineRaw);
   const label = displayHairline(hairlineRaw);
   if (key === 'NATURAL') {
-    return `HAIRLINE ${label}: NATURAL smooth arc per guide — clean edge, no baby hairs on skin.`;
+    return `HAIRLINE ${label}: NATURAL smooth arc per text guide — clean edge, no wisps on skin.`;
   }
-  return `HAIRLINE ${label}: ${key} forehead edge per guide — not NATURAL arc; no baby hairs on skin.`;
+  if (key === 'LAGOS_PEAK') {
+    return `HAIRLINE ${label}: LAGOS+PEAK — center V **plus** side scallops; use PEAK ref IMAGE for V + text guide for side valleys; not NATURAL arc.`;
+  }
+  return `HAIRLINE ${label}: ${key} forehead edge per text guide — **not** NATURAL arc; shape must be visibly different from smooth arc.`;
+}
+
+export function hairlineRefPromptLine(
+  hairlineRaw: string,
+  color: string,
+  refs: HairstyleAnalysisHairlineRef[]
+): string {
+  const ref = hairlineRefForLook(refs, hairlineRaw);
+  if (!ref) return hairlineShapePromptLine(hairlineRaw);
+  const label = displayHairline(hairlineRaw);
+  const colorKey = color.trim().toUpperCase();
+  const combo =
+    hairlineShapeKeyFromManifest(hairlineRaw) === 'LAGOS_PEAK'
+      ? ' — center V from ref + Lagos scallops on sides per text guide'
+      : '';
+  return `HAIRLINE ${label}: copy **forehead lace-edge geometry** from IMAGE ${ref.imageIndex} (${ref.key})${combo}; recolor lace-edge **hair strands** to ${colorKey}; **clean edge — erase baby hairs on skin**; IMAGE 2 face/pose unchanged.`;
+}
+
+/** Per-look hairline binding — prefers ref IMAGE when PEAK/LAGOS. */
+export function hairlineBindingPromptLine(
+  hairlineRaw: string,
+  color: string,
+  refs: HairstyleAnalysisHairlineRef[]
+): string {
+  return hairlineRefPromptLine(hairlineRaw, color, refs);
 }
 
 /** Authoritative block — Fal must not invent baby hairs at the lace-front edge. */
 export function noInventedBabyHairsBlock(): string {
   return [
     '=== HAIRLINE EDGE — NO BABY HAIRS (CRITICAL) ===',
-    '**FORBIDDEN:** baby hairs, wispy flyaways, edge fuzz, micro-strands, or temple frizz on forehead/temple **skin**.',
-    'Lace-front edge = **clean defined line** where installed hair meets skin — not a fuzzy halo or glued-down wisps.',
-    'Do NOT copy wispy edges or baby hairs from mannequin or styling IMAGEs onto the client.',
-    'If IMAGE 2 already has tiny strands in the **hair region only**, retint them to catalog color — do NOT add new strands on skin.',
+    '**FORBIDDEN:** baby hairs, wispy flyaways, edge fuzz, micro-strands, glued wisps, or temple frizz on forehead/temple **skin**.',
+    'Lace-front edge = **clean sharp line** where installed hair meets skin — not a fuzzy halo.',
+    'Do NOT copy wispy edges from mannequin, styling, or hairline reference IMAGEs onto skin.',
+    '**ERASE** any forehead edge fuzz from IMAGE 2 — do not preserve, retint, or add wisps on skin.',
   ].join('\n');
 }
 
-/** Static forehead-edge shape guide — all BAW hairline types in one block. */
+/** Static forehead-edge shape guide — supplements ref IMAGEs; NATURAL has no ref IMAGE. */
 export function bawHairlineShapeGuideBlock(): string {
   return [
-    '=== HAIRLINE EDGE — TEXT GUIDE (NO REF IMAGE) ===',
+    '=== HAIRLINE EDGE — TEXT SHAPE GUIDE ===',
     'Lace-front forehead edge only — face/pose from IMAGE 2.',
     HAIRLINE_SHAPE_LINES.NATURAL,
     HAIRLINE_SHAPE_LINES.PEAK,
     HAIRLINE_SHAPE_LINES.LAGOS,
     HAIRLINE_SHAPE_LINES.LAGOS_PEAK,
-    'PEAK = center V; LAGOS = scalloped M/W; NATURAL = smooth arc — never identical shapes.',
-    'FORBIDDEN: mannequin/styling IMAGE edge geometry; inventing baby hairs; black wisps on vivid/blonde hair.',
+    'PEAK = center V; LAGOS = scalloped M/W; NATURAL = smooth arc — **three distinct shapes**; never default all looks to NATURAL.',
+    'Self-check: PEAK manifest without visible center V → failed; LAGOS without scalloped edge → failed.',
+    'FORBIDDEN: inventing baby hairs; copying mannequin/styling IMAGE edge frizz; black wisps on vivid/blonde hair.',
   ].join('\n');
-}
-
-/** @deprecated Use bawHairlineShapeGuideBlock — Fal no longer attaches hairline IMAGEs. */
-export function bawHairlineRefListBlock(_refs: HairstyleAnalysisHairlineRef[]): string {
-  return '';
-}
-
-/** @deprecated Use hairlineShapePromptLine. */
-export function hairlineRefForLook(
-  _refs: HairstyleAnalysisHairlineRef[],
-  hairlineRaw: string
-): HairstyleAnalysisHairlineRef | null {
-  const key = bawHairlineRefKeyFromManifest(hairlineRaw);
-  if (!key) return null;
-  return { key, imageIndex: 0, publicPath: bawHairlineFrontMannequinPath(key) };
-}
-
-/** @deprecated Use hairlineShapePromptLine. */
-export function hairlineRefPromptLine(
-  hairlineRaw: string,
-  color: string,
-  _refs: HairstyleAnalysisHairlineRef[]
-): string {
-  return hairlineShapePromptLine(hairlineRaw, color);
 }

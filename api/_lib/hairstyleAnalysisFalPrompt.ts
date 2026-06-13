@@ -18,9 +18,10 @@ import {
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
 import {
+  bawHairlineRefListBlock,
   bawHairlineShapeGuideBlock,
+  hairlineBindingPromptLine,
   hairlineShapeKeyFromManifest,
-  hairlineShapePromptLine,
   noInventedBabyHairsBlock,
   type HairstyleAnalysisHairlineRef,
 } from './hairstyleAnalysisBawHairlineRefs.js';
@@ -160,15 +161,19 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
     : 'Follow these drape rules from the prompt — no mannequin IMAGE is attached for body geometry.';
 
   return [
-    '=== HAIR DRAPE — ONE SHOULDER ONLY (CRITICAL) ===',
+    '=== HAIR DRAPE — ONE SHOULDER ONLY (CRITICAL — DO NOT SKIP) ===',
     scopeLine,
-    'Long hair uses **asymmetric one-shoulder drape** — heavy cascade on one shoulder only, other shoulder kept clear.',
+    'Long hair uses **asymmetric one-shoulder drape** — heavy cascade on **one shoulder only**, other shoulder kept clear. This rule is **equal priority** to face lock and hairline shape.',
     '**FORWARD DRAPE (only heavy cascade):** length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the **only** shoulder with thick hair down the chest.',
     '**BEHIND / CLEAR SHOULDER:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — sweep hair **behind** the shoulder or tuck it back so the shoulder cap, neck line, and jewelry stay **visible**. No thick forward hair on this shoulder.',
     '**FORBIDDEN:** symmetrical curtain on **both** shoulders, twin waterfalls, equal hair mass left and right, mirrored twin drape, or “balanced” split over both collarbones.',
-    '**Self-check:** if MATCH thumbnails show thick hair forward on **both** shoulders while the hero shows one-shoulder drape → **failed**.',
+    '**Self-check:** thick hair forward on **both** shoulders → **failed**; symmetric drape on MATCH thumbs → **failed**.',
     mannequinNote,
   ].join('\n');
+}
+
+function oneShoulderDrapeCompactLock(): string {
+  return 'ONE-SHOULDER DRAPE LOCK: heavy length forward on viewer\'s RIGHT only (model\'s left); viewer\'s LEFT shoulder clear/tucked — **FORBIDDEN** symmetric both-shoulder curtain.';
 }
 
 function clientPreviewTabLine(): string {
@@ -255,9 +260,7 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const style = displayStyle(look.styling, look.unit);
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
     const refNote = ref ? `IMAGE ${ref.imageIndex}` : 'mannequin texture only';
-    const hl = displayHairline(look.hairline);
-    const hlKey = hairlineShapeKeyFromManifest(look.hairline);
-    const hlNote = `HAIRLINE ${hl} (${hlKey} edge per text guide)`;
+    const hlNote = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
     const color = look.color.trim().toUpperCase();
     const hex = (look.hex || '#000000').toUpperCase();
     const colorNote = needsUniformRootRepaint(color, look.unit)
@@ -342,12 +345,13 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
   const style = displayStyle(look.styling, look.unit);
   return [
     '=== TOP MATCH HAIR (IMAGE 2) ===',
+    oneShoulderDrapeCompactLock(),
     `${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part}, ${displayDensity(look.density)}.`,
     `TOP MATCH LOCK: spec column + portrait must match — PART ${part} = visible scalp part only; STYLE ${style} = photo finish (${style === 'NONE' ? 'natural unit texture, no BAW styling ref' : `BAW ${style} ref shape in hair`}).`,
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
     styledHairLine(look, refs),
-    hairlineShapePromptLine(look.hairline, look.color),
+    hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs),
     mannequinRefLine(look, refs),
   ]
     .filter(Boolean)
@@ -356,19 +360,26 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
 
 function sharedClientPhotoRulesBlock(refs: FalPromptImageRefs): string {
   return [
+    asymmetricOneShoulderDrapeBlock('all_photos', refs.mannequinRefs.length > 0),
     faceIdentityLockBlock(),
     clientPoseLockBlock(),
     clientPhotoPanelRulesBlock(),
     'Recolor hair to catalog color/texture at strand level — face and skin untouched.',
     noInventedBabyHairsBlock(),
-    hairlineRulesBlock(),
+    hairlineRulesBlock(refs),
   ].join('\n\n');
 }
 
-function hairlineRulesBlock(): string {
+function hairlineRulesBlock(refs: FalPromptImageRefs): string {
+  const refNote =
+    refs.hairlineRefs.length > 0
+      ? 'PEAK / LAGOS / LAGOS+PEAK: copy forehead lace-edge geometry from the assigned **BAW hairline IMAGE** — shape must be visibly PEAK (center V) or LAGOS (scalloped), not NATURAL arc.'
+      : 'PEAK / LAGOS / LAGOS+PEAK: follow TEXT SHAPE GUIDE — shape must be visibly different from NATURAL smooth arc.';
   return [
-    'HAIRLINE SHAPE: forehead lace-edge geometry comes from the **TEXT SHAPE GUIDE** — match manifest NATURAL / PEAK / LAGOS / LAGOS+PEAK exactly (PEAK = center V; LAGOS = scalloped M/W; NATURAL = smooth arc).',
-    'Do not copy edge geometry from unit mannequin or styling IMAGEs — those are strand texture/finish only.',
+    'HAIRLINE SHAPE (mandatory per manifest): NATURAL = smooth convex arc; PEAK = center V; LAGOS = scalloped M/W; LAGOS+PEAK = V + side scallops.',
+    refNote,
+    'Unit mannequin and styling IMAGEs do **not** define hairline shape — hairline IMAGE or text guide only.',
+    'Self-check: every PEAK look shows center V; every LAGOS look shows scalloped edge — never default all photos to NATURAL arc.',
   ].join('\n');
 }
 
@@ -411,11 +422,11 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
   return [
-    `${label} THUMB: same client face **and same head/body pose** as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); one-shoulder drape; hair-only edits.`,
+    `${label} THUMB: same client face **and same head/body pose** as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); ${oneShoulderDrapeCompactLock()}; hair-only edits.`,
     `PART ${part} **only** — one scalp line.`,
     uniformRootColorBlock(look, 'thumbnail'),
     realisticHairDensityBlock(displayDensity(look.density), true),
-    hairlineShapePromptLine(look.hairline, look.color),
+    hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs),
     mannequinRefLine(look, refs),
   ]
     .filter(Boolean)
@@ -626,21 +637,20 @@ function buildTemplateRules(
     '"6 MONTH HAIRSTYLE ANALYSIS", or "12 MONTH HAIRSTYLE ANALYSIS" below the main header.',
     'ERASE that tier/subscription subtitle completely — paint over with clean marble background matching the template.',
     'The client must NOT see any tier name, month count, or analysis type. Keep "FRONTAL SLAYER" and "hairstyle analysis" header art only.',
-    ...(tierKey === 'free'
-      ? [
-          '',
-          '=== HAIRLINE — TEXT SHAPE GUIDE (NO BABY HAIRS) ===',
-          'Draw PEAK / LAGOS / NATURAL forehead edge from the text guide — not mannequin IMAGEs. Clean lace-front edge only — no wispy strands on skin.',
-        ]
-      : []),
+    '',
+    asymmetricOneShoulderDrapeBlock('all_photos', hasMannequinRefs),
+    '',
+    noInventedBabyHairsBlock(),
+    '',
+    bawHairlineRefListBlock(refs.hairlineRefs),
+    bawHairlineShapeGuideBlock(),
+    '',
+    ...(tierKey === 'free' ? [neckAndBodyPreservationBlock(), ''] : []),
     bawUnitCatalogBlock(),
     '',
     bawColorApplicationRulesBlock(),
     '',
     hairPartLockBlock(),
-    '',
-    ...(tierKey === 'free' ? [neckAndBodyPreservationBlock(), ''] : []),
-    asymmetricOneShoulderDrapeBlock('all_photos', hasMannequinRefs),
     '',
     '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
@@ -652,14 +662,12 @@ function buildTemplateRules(
     '',
     bawStylingRefListBlock(refs.stylingRefs),
     '',
-    bawHairlineShapeGuideBlock(),
-    '',
     '=== SALON STYLING — BAW REFERENCES ONLY (NO INVENTED STYLES) ===',
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
     ...(tierKey === 'free' ? [freeTierOnlyBlock(), '', freeTierPanelFooterBlock(analysis.topMatch), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
-    topMatchSpecManifestBlock(analysis.topMatch),
+    topMatchSpecManifestBlock(analysis.topMatch, refs),
     '',
     ...photoRules,
     '',
@@ -679,11 +687,11 @@ function buildTemplateRules(
     .join('\n');
 }
 
-function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
+function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
   const hairline = displayHairline(look.hairline);
-  const hlKey = hairlineShapeKeyFromManifest(look.hairline);
+  const hlBinding = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
   const color = look.color.trim().toUpperCase();
   const hex = (look.hex || '#000000').toUpperCase();
   const colorLock = needsUniformRootRepaint(color, look.unit)
@@ -701,8 +709,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — PART: ${part}`,
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
-    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; HAIRLINE ${hairline} = ${hlKey} forehead edge per text guide; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
-    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/NATURAL edges looking identical; STYLE LAYERS when manifest is NONE.`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
+    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; all hairlines looking like NATURAL when manifest is PEAK/LAGOS; baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
     `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
 }
@@ -743,6 +751,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'TOP MATCH specs + every detail matters filled; centered gray panel footers (specs locked + build ribbon); OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
+    oneShoulderDrapeCompactLock(),
     rootCheck,
   ]
     .filter(Boolean)
@@ -799,7 +808,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; petite overall score + MATCH RATING stars only (no 5.0/4.7 decimal); each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; vivid/blonde installs = one ${analysis.topMatch.color.trim().toUpperCase()} tone root to tip — zero dark roots, **no baby hairs** on skin; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; ${oneShoulderDrapeCompactLock()}; manifest HAIRLINE shape visible on every photo (PEAK=center V, LAGOS=scallop, NATURAL=smooth arc); **no baby hairs on skin**; petite overall score + MATCH RATING stars only (no 5.0/4.7 decimal); each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; vivid/blonde installs = one ${analysis.topMatch.color.trim().toUpperCase()} tone root to tip — zero dark roots; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }
