@@ -178,15 +178,6 @@ export function buildEveryDetailMattersFromTopMatch(
   return compactEveryDetailMattersLines(lines);
 }
 
-export function formatEveryDetailMattersForFal(
-  look: AnalysisLook,
-  lines: string[]
-): string[] {
-  const keys = everyDetailMattersSpecKeys(lines.length);
-  return lines.map((line, i) => {
-    const key = keys[i] ?? keys[keys.length - 1];
-    const label = specManifestLabel(key);
-    const value = specValueFromLook(look, key);
-    return `EVERY DETAIL MATTERS LINE ${i + 1} (TOP MATCH ${label} = ${value}): ${line}`;
-  });
+export function formatEveryDetailMattersForFal(lines: string[]): string[] {
+  return lines.map((line, i) => `EDM ${i + 1}: ${line}`);
 }
