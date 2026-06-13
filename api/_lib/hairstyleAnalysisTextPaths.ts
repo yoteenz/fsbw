@@ -61,9 +61,14 @@ export function overallScoreFontSize(rect: PixelRect): number {
   return Math.max(12, Math.min(64, Math.round(rect.height * 0.78)) - 4);
 }
 
-/** Fal in-image overall score — compact Futura inside the value panel (not full slot height). */
+/** Fal in-image overall score — petite script inside the value panel (not full slot height). */
 export function overallScoreFalFontSize(rect: PixelRect): number {
-  return Math.max(22, Math.min(52, Math.round(rect.height * 0.34)));
+  return Math.max(16, Math.min(36, Math.round(rect.height * 0.22)));
+}
+
+/** Fal in-image MATCH RATING star glyph height — compact row inside value panel. */
+export function matchRatingFalStarSize(rect: PixelRect): number {
+  return Math.max(14, Math.min(26, Math.round(rect.height * 0.17)));
 }
 
 /** CBYG has no "%" glyph — render digits in Covered By Your Grace, suffix in Futura. */

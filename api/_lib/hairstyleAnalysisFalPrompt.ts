@@ -16,7 +16,7 @@ import {
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
 import { TOP_SCORE_SLOT, RATING_SLOT } from './hairstyleAnalysisLayoutSlots.js';
-import { overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
+import { matchRatingFalStarSize, overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
 import { clientFullName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
   displayDensity,
@@ -394,7 +394,8 @@ function matchRatingStarDesignBlock(): string {
     '• **Outline:** every star (filled or empty) has a **fine crisp dark-red stroke** (#C41018) defining the edge.',
     '• **Empty (unearned) stars:** same shape + dark-red outline only — **no gradient fill**, interior stays white/transparent.',
     '• **Layout:** exactly 5 stars in **one horizontal centered row**, evenly spaced — **star 1 = leftmost**, **star 5 = rightmost**. Fill **left to right** only.',
-    'FORBIDDEN: flat solid-red fills with no gradient, yellow/gold stars, emoji ★, chunky clip-art, glow blobs, filling from the right, or a different star icon set.',
+    '• **Size:** **small / petite** — each star is a compact icon; the full row sits inside the value box with **wide margin** above, below, and between stars (never chunky or panel-filling).',
+    'FORBIDDEN: flat solid-red fills with no gradient, yellow/gold stars, emoji ★, chunky clip-art, glow blobs, oversized stars, filling from the right, or a different star icon set.',
   ].join('\n');
 }
 
@@ -405,8 +406,8 @@ function overallScoreFontDesignBlock(): string {
     `• **Font:** **${OVERALL_SCORE_CANONICAL_FONT}** — elegant **handwritten script / calligraphy** (not geometric sans-serif).`,
     '• **Style:** fluid slanted strokes, fine-tip-marker weight, personalized "signed" look — **digits and % suffix in the same script family**.',
     `• **Color:** vibrant brand red ${BRAND_RED}.`,
-    '• **Layout:** centered inside the OVERALL SCORE value box with padding — compact, never oversized or touching borders.',
-    'FORBIDDEN on OVERALL SCORE: Futura PT Demi/Medium/Book, blocky sans-serif digits, black/gray text, or MATCH ROW gray score styling.',
+    '• **Layout:** **petite** — centered inside the OVERALL SCORE value box with **generous padding on all sides**; digits + % must occupy well under half the box height.',
+    'FORBIDDEN on OVERALL SCORE: oversized/billboard digits, filling the panel, touching borders, Futura PT Demi/Medium/Book, blocky sans-serif digits, black/gray text, or MATCH ROW gray score styling.',
   ].join('\n');
 }
 
@@ -416,34 +417,36 @@ function overallScoreFalLine(look: FalAnalysisLook): string {
   return [
     `OVERALL SCORE: print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
     `Use **${OVERALL_SCORE_CANONICAL_FONT}** handwriting script exactly — see OVERALL SCORE font design block above.`,
-    `Brand red ${BRAND_RED}, ~${targetPx}px max total height, centered with generous padding inside the panel.`,
-    'Entire value (digits + % suffix) in the same script — keep compact; must not touch panel edges or fill the whole box.',
+    `Brand red ${BRAND_RED}, **petite** script — **~${targetPx}px max total height** (digits + % together), centered with **wide padding** inside the panel.`,
+    'Entire value (digits + % suffix) in the same delicate script — must stay small, never touch panel edges, and must **not** fill or dominate the box.',
   ].join(' ');
 }
 
 function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): string {
   const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
-  const starPx = Math.max(22, Math.min(36, Math.round(RATING_SLOT.height * 0.24)));
+  const starPx = matchRatingFalStarSize(RATING_SLOT);
   const tierKey = normalizeTier(tier);
   const freeStarNote =
     tierKey === 'free'
-      ? `FREE: draw all 5 stars using the embossed gradient glyph spec (~${starPx}px each) — centered row with padding.`
-      : 'PREMIUM: fill only inside the pre-rendered star outline glyphs at template size — apply the embossed gradient glyph spec to earned stars; never enlarge or replace outlines.';
+      ? `FREE: draw all 5 **small** stars using the embossed gradient glyph spec (~${starPx}px tall each, max) — centered row with wide padding; row must not touch panel edges.`
+      : `PREMIUM: fill only inside the pre-rendered star outline glyphs — **never enlarge** outlines; keep gradient fills **petite** (~${starPx}px effective height per star, max) with margin inside each glyph.`;
 
   return [
-    '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL) ===',
+    '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL — KEEP SMALL) ===',
     overallScoreFontDesignBlock(),
     matchRatingStarDesignBlock(),
     'These size rules apply **only** to the OVERALL SCORE panel and MATCH RATING stars — **not** MATCH 02–04 gray score % rows.',
-    'Both panels have a small inner value area below the label. Score and stars must be **compact** — never dominate or touch borders.',
-    `OVERALL SCORE %: max ~${scorePx}px tall, centered with padding on all sides.`,
-    `MATCH RATING stars: ${freeStarNote} Gradient fill stays inside each outline only — no chunky oversized stars.`,
+    'Both panels have a small inner value area below the label. Score and stars must be **petite and understated** — leave at least ~25% empty padding inside each value box on every side.',
+    `OVERALL SCORE %: **max ~${scorePx}px tall** for the full value (digits + %) — smaller is better; never billboard-sized.`,
+    `MATCH RATING stars: ${freeStarNote} Gradient fill stays inside each outline only — **no chunky or oversized stars.**`,
+    'FORBIDDEN: score or stars that dominate the panel, touch borders, or look enlarged vs the reference template.',
   ].join('\n');
 }
 
 function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
   const scorePct = Math.round(look.score);
   const filled = filledStarCountFromOverallScore(look.score);
+  const starPx = matchRatingFalStarSize(RATING_SLOT);
   const tierKey = normalizeTier(tier);
   const fillRule =
     filled === 5
@@ -465,9 +468,9 @@ function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalys
     `MATCH RATING: ${fillRule}`,
     `Fill exactly ${filled} of 5 stars with the **embossed gradient red** glyph (pink-coral center → brand red ${BRAND_RED} at points, dark-red outline).`,
     `Leave the remaining ${5 - filled} star(s) as **empty outlines** — always the **rightmost** star(s) when fewer than 5 are earned.`,
-    'Star glyphs must stay inside the MATCH RATING value area at template size — do not enlarge, overflow the panel, or paint oversized fills.',
+    `Keep every star **small** (~${starPx}px tall max each) — centered row with wide padding inside the MATCH RATING value box; do not enlarge, overflow the panel, or paint chunky fills.`,
     premiumNote,
-    'FORBIDDEN: flat solid-red stars, yellow/gold stars, emoji stars, backwards/right-to-left fill, oversized stars, or new star shapes outside the MATCH RATING panel.',
+    'FORBIDDEN: flat solid-red stars, yellow/gold stars, emoji stars, backwards/right-to-left fill, oversized/chunky stars, or new star shapes outside the MATCH RATING panel.',
   ].join(' ');
 }
 
