@@ -28284,3 +28284,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** GPT Image 2 ignores prompt-only EDM/face rules when styling/hairline mannequin IMAGEs are attached; roses and face need **server enforcement** after Fal.
 - **Shipped (8e528caf):** **`hairstyleAnalysisTemplateRestore.ts`** + **`edmRoseIconSlots()`** — paste template rose patches over Fal output in EDM column (52% left, rows 74.5% + i×2.5%). **`hairstyleAnalysisClientFaceRestore.ts`** — retain submitted client buffer; soft elliptical mask overlays real face core onto Fal client panel (hair outside mask keeps Fal edits). **`hairstyleAnalysisFalComposite.ts`** — post-process order: restore roses → face restore → optional fade → mirror reflection. **`hairstyleAnalysisFal.ts`** — **`hairstyleAnalysisFalHairlineImageRefs()`** default **off**; **`hairstyleAnalysisFalMinimalImageRefs()`** default **on** (template + client only). Env: **`HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS`**, **`HAIRSTYLE_ANALYSIS_CLIENT_FACE_RESTORE=false`** to disable face paste. **`.env.example`** updated. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** EDM roses = **template paste**, not prompt hope; client identity = **server face restore from upload**; mannequin hairline/styling IMAGEs **opt-in only** — defaults minimize ref faces sent to Fal.
+
+---
+
+## 2026-06-13 — Revert client face post-process (keep EDM rose restore)
+
+- **Context:** User rejected server-side client face paste — output did not match; asked to **revert** and restore prior client upload processing.
+- **Shipped (0d8f7ba0):** Removed **`hairstyleAnalysisClientFaceRestore.ts`** and face-restore step from **`hairstyleAnalysisFalComposite.ts`**. Client photo flow back to **Fal in-image** + optional **`applyClientPhotoBottomFade`** + **mirror reflection**. Reverted **`hairstyleAnalysisFal.ts`** ref defaults (styling refs on by default, hairline IMAGEs always when manifest needs them). **Kept** EDM rose template paste via **`restoreTemplateSlots`** + **`edmRoseIconSlots()`**. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Do **not** server-paste client face over Fal output; fix identity via Fal prompt/refs only. EDM roses still server-restored from template.
