@@ -29,6 +29,9 @@ type HairstyleAnalysisCardProps = {
   onTextChange?: (slotId: string, value: string) => void;
 };
 
+/** Overall score % and match-rating stars are Fal in-image — never React text overlays. */
+const SERVER_BAKED_TEXT_SLOTS = new Set(['topScore', 'rating']);
+
 function asPercentRect(field: TextSlot | PercentRect): PercentRect {
   return {
     left: field.left,
@@ -142,25 +145,36 @@ export default function HairstyleAnalysisCard({
           );
         }
 
+        if (SERVER_BAKED_TEXT_SLOTS.has(field.id)) {
+          if (!showDebugFrames) return null;
+          return (
+            <AnalysisOverlaySlot
+              key={field.id}
+              slotId={field.id}
+              label={`${field.label} (Fal in-image — no overlay text)`}
+              rect={rect}
+              debug={showDebugFrames}
+              cardRef={cardRef}
+              onRectChange={onSlotRectChange}
+              className={styles.valueOnlySlot}
+            >
+              <span className="sr-only">Fal in-image only</span>
+            </AnalysisOverlaySlot>
+          );
+        }
+
         const value = text(field.id, overlayValues[field.id] ?? '');
         const matchRowClass = matchRowValueClassName(field.id);
         const textClassName =
-          field.id === 'topScore'
-            ? styles.scoreText
-            : field.id === 'rating'
-              ? styles.ratingText
-              : field.id === 'clientName'
-                ? styles.clientNameText
-                : field.id === 'clientHeaderName'
-                  ? styles.clientHeaderNameText
-                  : matchRowClass
-                  ? matchRowClass
-                  : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
-                    ? styles.matchScoreText
-                    : undefined;
-
-        const topScoreEditable = field.id === 'topScore' && showDebugFrames && onTextChange;
-        const topScoreStyle = field.id === 'topScore' ? fontStyleFor(field.id) : undefined;
+          field.id === 'clientName'
+            ? styles.clientNameText
+            : field.id === 'clientHeaderName'
+              ? styles.clientHeaderNameText
+              : matchRowClass
+                ? matchRowClass
+                : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
+                  ? styles.matchScoreText
+                  : undefined;
 
         const slotClassName =
           field.id === 'clientHeaderName'
@@ -178,27 +192,15 @@ export default function HairstyleAnalysisCard({
             onRectChange={onSlotRectChange}
             className={slotClassName}
           >
-            {field.id === 'topScore' && !topScoreEditable ? (
-              <p
-                className={`${styles.overlayText} ${styles.scoreText}`.trim()}
-                style={topScoreStyle}
-              >
-                {value.replace(/%$/, '')}
-                <span className={styles.scorePercentSuffix} style={topScoreStyle}>
-                  %
-                </span>
-              </p>
-            ) : (
-              <EditableOverlayText
-                slotId={field.id}
-                value={value}
-                debug={showDebugFrames}
-                onChange={onTextChange}
-                multiline={field.multiline}
-                className={textClassName}
-                style={fontStyleFor(field.id)}
-              />
-            )}
+            <EditableOverlayText
+              slotId={field.id}
+              value={value}
+              debug={showDebugFrames}
+              onChange={onTextChange}
+              multiline={field.multiline}
+              className={textClassName}
+              style={fontStyleFor(field.id)}
+            />
           </AnalysisOverlaySlot>
         );
       })}

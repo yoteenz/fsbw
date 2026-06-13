@@ -336,8 +336,6 @@ export async function generateHairstyleAnalysisWithFal(
   const composited = await compositeHairstyleAnalysisPostProcess(
     imageUrl,
     templateFetchUrl,
-    analysis,
-    input.siteOrigin,
     input.layoutOverrides,
     hairstyleAnalysisClientPhotoPostProcessEnabled()
   );

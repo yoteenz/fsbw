@@ -1,6 +1,6 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Overall score % and match-rating stars are server-composited at petite pixel sizes after Fal.
+ * Overall score % and match-rating stars are Fal in-image at petite pixel sizes (prompted).
  * TOP MATCH specs, MATCH 02–04 row values, every-detail-matters lines, client preview photo are Fal in-image.
  */
 
@@ -32,6 +32,7 @@ import {
   displayPart,
   displayStyle,
   formatScorePercent,
+  matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
 
@@ -459,20 +460,112 @@ function scoreRatingSlotRegionLine(label: string, slot: PixelRect): string {
   return `${label}: ${slot.width}×${slot.height}px frosted value box @ x=${slot.left} y=${slot.top} (2048×2560 canvas)`;
 }
 
-/** Exact blank regions — Fal must leave uniform frost only; server composites petite score + stars after. */
-function scoreRatingServerOverlayBlankBlock(): string {
-  const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
-  const starPx = matchRatingFalStarSize(RATING_SLOT);
+function filledStarCountFromOverallScore(score: number): number {
+  return matchRatingFilledStarsFromScore(score);
+}
+
+/** Canonical MATCH RATING star glyph — embossed radial-gradient red (premium template + free tier). */
+function matchRatingStarDesignBlock(): string {
+  return [
+    '=== MATCH RATING STARS — EXACT GLYPH DESIGN (ALL TIERS — PERMANENT) ===',
+    'Use **only** this star style in the MATCH RATING panel — same on every generation:',
+    '• **Shape:** classic symmetrical 5-point star, sharp tips, polished vector icon (not emoji, not hand-drawn).',
+    '• **Earned (filled) stars:** **radial gradient** emboss/bevel — **pale pink-coral highlight at the center** (#FFC4C4 / #FFB8B8) fading to **vibrant brand red** (#EB1C24) at the outer points; subtle 3D puffy/embossed look.',
+    '• **Outline:** every star (filled or empty) has a **fine crisp dark-red stroke** (#C41018) defining the edge.',
+    '• **Empty (unearned) stars:** same shape + dark-red outline only — **no gradient fill**, interior stays white/transparent.',
+    '• **Layout:** exactly 5 stars in **one horizontal centered row**, evenly spaced — **star 1 = leftmost**, **star 5 = rightmost**. Fill **left to right** only.',
+    '• **Size:** **small / petite** — each star is a compact icon; the full row sits inside the value box with **wide margin** above, below, and between stars (never chunky or panel-filling).',
+    'FORBIDDEN: flat solid-red fills with no gradient, yellow/gold stars, emoji ★, chunky clip-art, glow blobs, oversized stars, filling from the right, or a different star icon set.',
+  ].join('\n');
+}
+
+function overallScoreFontDesignBlock(): string {
+  return [
+    '=== OVERALL SCORE % — EXACT FONT DESIGN (ALL TIERS — PERMANENT) ===',
+    'Print the score value using **only** this typography in the red OVERALL SCORE panel:',
+    `• **Font:** **${OVERALL_SCORE_CANONICAL_FONT}** — elegant **handwritten script / calligraphy** (not geometric sans-serif).`,
+    '• **Style:** fluid slanted strokes, fine-tip-marker weight, personalized "signed" look — **digits and % suffix in the same script family**.',
+    `• **Color:** vibrant brand red ${BRAND_RED}.`,
+    '• **Layout:** **petite** — centered inside the OVERALL SCORE value box with **generous padding on all sides**; digits + % must occupy well under half the box height.',
+    'FORBIDDEN on OVERALL SCORE: oversized/billboard digits, filling the panel, touching borders, Futura PT Demi/Medium/Book, blocky sans-serif digits, black/gray text, or MATCH ROW gray score styling.',
+  ].join('\n');
+}
+
+function overallScoreFalLine(look: FalAnalysisLook): string {
+  const targetPx = overallScoreFalFontSize(TOP_SCORE_SLOT);
 
   return [
-    '=== OVERALL SCORE + MATCH RATING — BLANK FOR SERVER OVERLAY (CRITICAL) ===',
-    'Fal **never** prints these two panels — server composites petite typography after generation.',
+    `OVERALL SCORE: erase any large template placeholder %, then print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
+    `Use **${OVERALL_SCORE_CANONICAL_FONT}** handwriting script exactly — see OVERALL SCORE font design block above.`,
+    `Brand red ${BRAND_RED}, **petite** script — **~${targetPx}px max total height** (digits + % together), centered with **wide padding** inside the panel.`,
+    'Entire value (digits + % suffix) in the same delicate script — must stay small, never touch panel edges, and must **not** fill or dominate the box.',
+  ].join(' ');
+}
+
+function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): string {
+  const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
+  const starPx = matchRatingFalStarSize(RATING_SLOT);
+  const tierKey = normalizeTier(tier);
+  const freeStarNote =
+    tierKey === 'free'
+      ? `FREE: draw all 5 **small** stars using the embossed gradient glyph spec (~${starPx}px tall each, max) — centered row with wide padding; row must not touch panel edges.`
+      : `PREMIUM: **erase** oversized template star outline placeholders (~118px tall); draw five **new petite** stars (~${starPx}px each, max) centered in the value box — never fill, trace, or enlarge the baked template glyph outlines.`;
+
+  return [
+    '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL — KEEP SMALL) ===',
     scoreRatingSlotRegionLine('OVERALL SCORE value panel', TOP_SCORE_SLOT),
-    `→ Erase template placeholder % (often large red script). Leave **flat uniform frosted acrylic only** — server paints ~${scorePx}px-tall ${OVERALL_SCORE_CANONICAL_FONT} red (${BRAND_RED}) + Futura % centered inside with padding.`,
     scoreRatingSlotRegionLine('MATCH RATING value panel', RATING_SLOT),
-    `→ Erase **all** template star outline glyphs (~118px tall placeholders). Leave **flat uniform frosted acrylic only** — server paints five ~${starPx}px-tall Noir stars centered in a row; do **not** draw stars in Fal.`,
-    'Both panels: zero digits, zero %, zero star shapes, zero emoji — empty frosted boxes matching panel frost.',
-    'FORBIDDEN in these two boxes: overall score %, match-rating stars, repainting large template star size, gray MATCH ROW score styling, billboard digits.',
+    overallScoreFontDesignBlock(),
+    matchRatingStarDesignBlock(),
+    'These size rules apply **only** to the OVERALL SCORE panel and MATCH RATING stars — **not** MATCH 02–04 gray score % rows.',
+    'Both panels have a small inner value area below the label. Score and stars must be **petite and understated** — leave at least ~25% empty padding inside each value box on every side.',
+    `OVERALL SCORE %: **max ~${scorePx}px tall** for the full value (digits + %) — smaller is better; never billboard-sized.`,
+    `MATCH RATING stars: ${freeStarNote} Gradient fill stays inside each star only — **no chunky or oversized stars.**`,
+    'FORBIDDEN: score or stars that dominate the panel, touch borders, or look enlarged vs the reference template.',
+  ].join('\n');
+}
+
+function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
+  const scorePct = Math.round(look.score);
+  const filled = filledStarCountFromOverallScore(look.score);
+  const starPx = matchRatingFalStarSize(RATING_SLOT);
+  const tierKey = normalizeTier(tier);
+  const fillRule =
+    filled === 5
+      ? `OVERALL SCORE is ${scorePct}% (≥95%) — fill **all 5 stars left to right** (stars 1–5).`
+      : `OVERALL SCORE is ${scorePct}% (<95%) — fill **only the left four stars** (stars 1–4 left to right); **star 5 (rightmost) stays empty outline only**.`;
+  const premiumNote =
+    tierKey === 'free'
+      ? [
+          'FREE TEMPLATE: draw exactly 5 stars left to right using the embossed gradient glyph spec — fill earned stars with radial pink-coral center → brand red points.',
+          'Empty stars = outline only. Do not substitute a different star icon set.',
+        ].join(' ')
+      : [
+          'PREMIUM TEMPLATE: erase large baked star outline glyphs first, then draw five **new small** stars left to right.',
+          'Fill earned stars with the embossed radial gradient (pink-coral center → #EB1C24 points) + dark-red stroke; leave unearned stars as outline-only.',
+          'Do NOT mirror, oversize, or fill stars from the right.',
+        ].join(' ');
+
+  return [
+    `MATCH RATING: ${fillRule}`,
+    `Fill exactly ${filled} of 5 stars with the **embossed gradient red** glyph (pink-coral center → brand red ${BRAND_RED} at points, dark-red outline).`,
+    `Leave the remaining ${5 - filled} star(s) as **empty outlines** — always the **rightmost** star(s) when fewer than 5 are earned.`,
+    `Keep every star **small** (~${starPx}px tall max each) — centered row with wide padding inside the MATCH RATING value box; do not enlarge, overflow the panel, or paint chunky fills.`,
+    premiumNote,
+    'FORBIDDEN: flat solid-red stars, yellow/gold stars, emoji stars, backwards/right-to-left fill, oversized/chunky stars, or new star shapes outside the MATCH RATING panel.',
+  ].join(' ');
+}
+
+function overallScoreAndRatingRules(
+  look: FalAnalysisLook,
+  tier: FalHairstyleAnalysis['tier']
+): string {
+  return [
+    overallScoreAndStarsSizeRules(tier),
+    '',
+    '=== OVERALL SCORE + MATCH RATING — CONTENT (FAL IN-IMAGE) ===',
+    overallScoreFalLine(look),
+    matchRatingStarsFalLine(look, tier),
   ].join('\n');
 }
 
@@ -634,7 +727,7 @@ function buildTemplateRules(
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
     'DO NOT ADD NEW ROSE ICONS. DO NOT CHANGE ROSE SHAPE, SIZE, POSITION, OR COLOR.',
     '',
-    scoreRatingServerOverlayBlankBlock(),
+    overallScoreAndRatingRules(analysis.topMatch, analysis.tier),
     '',
     mannequinList,
     '',
@@ -659,8 +752,8 @@ function buildTemplateRules(
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + stars server-composited after Fal.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image; overall score % + stars server-composited after Fal.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + stars printed in-image at petite sizes.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image; overall score % + stars printed in-image at petite sizes.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -716,7 +809,7 @@ function freePromptFooter(
     '=== FINAL CHECK ===',
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel — **centered** in the header panel.',
-    'TOP MATCH specs + every detail matters filled; OVERALL SCORE + MATCH RATING value panels stay **blank frosted boxes** (server overlays petite score + stars).',
+    'TOP MATCH specs + every detail matters filled; OVERALL SCORE + MATCH RATING printed in-image at petite sizes (erase large template placeholders first).',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
   ].join('\n');
@@ -770,7 +863,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); OVERALL SCORE + MATCH RATING value panels = **empty frosted boxes only** (erase ~118px template stars + placeholder % — server overlays petite score ~${overallScoreFalFontSize(TOP_SCORE_SLOT)}px + stars ~${matchRatingFalStarSize(RATING_SLOT)}px); thumbs = same client + **same pose as IMAGE 2 on every row** + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
+    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); OVERALL SCORE + MATCH RATING = **petite in-image** score ~${overallScoreFalFontSize(TOP_SCORE_SLOT)}px + stars ~${matchRatingFalStarSize(RATING_SLOT)}px (erase ~118px template star placeholders + oversized % before drawing); thumbs = same client + **same pose as IMAGE 2 on every row** + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
   );
   return lines.join('\n');
 }
