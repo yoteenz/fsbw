@@ -28232,3 +28232,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User flagged manifest lace dropdown only had frontal HD options; length/density/styling ranges were truncated — should list **all BAW sub-page selections** (except cap, texture, add-ons).
 - **Shipped:** **`hairstyleAnalysisManifestOptions.ts`** now sources **`productOptions.ts`** — lace **closures** (2X6–7X7), **frontals** (9X6, 13X4, 13X6), **full cap** (360, FULL) with optgroups; lengths **16\"–40\"**; density **130%–400%**; hairline from BAW page; styling **NONE + bangs combos** (straight vs curly unit lists). **`resolveManifestLook`** preserves exact picks (no catalog strip of bangs combos). Default alts demo **4X4** closure + **BANGS, CRIMPS**.
 - **Conventions:** Manifest picker mirrors BAW sub-pages via **`productOptions.ts`** / **`bawUnitStylingOptions`** — not Fal diversity subset.
+
+---
+
+## 2026-06-13 — Fal prompt length fix (32k limit)
+
+- **Context:** User hit **`HAIRSTYLE ANALYSIS PROMPT TOO LONG (33991 CHARACTERS; FAL LIMIT IS 32000)`** on three_month generate after hairline refs + manifest picker expansion; worst-case repro ~38k.
+- **Cause:** Duplicate **`asymmetricOneShoulderDrapeBlock`** + **`noInventedBabyHairsBlock`** in template rules and shared client-photo rules; overlapping **`hairlineRulesBlock`** vs BAW hairline ref/shape blocks; verbose per-thumb blocks (density, root repaint, mannequin lines) plus separate styling/color manifest sections.
+- **Shipped (2fae80f9):** **`hairstyleAnalysisFalPrompt.ts`** — removed duplicate drape/baby-hair from **`buildTemplateRules`**; dropped **`hairlineRulesBlock`**; compact **`matchThumbnailBlock`** (one line per thumb); shorter EDM rules, part lock, client photo panel, additional-match rules; removed duplicate **`freeTierOnlyBlock`** in free prompt; shorter FINAL CHECK. **`hairstyleAnalysisBawHairlineRefs.ts`** — compact hairline binding + shape guide lines. Worst-case premium prompt ~24k chars (under 32k guard).
+- **Conventions:** Keep Fal prompt under **`HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS`** (32_000); prefer deduping shared rules once + compact per-look manifest lines over repeating full blocks per thumb.
