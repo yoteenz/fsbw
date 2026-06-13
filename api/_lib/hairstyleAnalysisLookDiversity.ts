@@ -29,10 +29,7 @@ const DENSITY_OPTIONS = ['200%', '250%', '300%'] as const;
 const LENGTH_OPTIONS = ['22 INCHES', '24 INCHES', '26 INCHES', '28 INCHES', '30 INCHES'];
 const PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
 const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS'] as const;
-
-const NEUTRAL_COLORS = ['JET BLACK', 'OFF BLACK', 'ESPRESSO', 'CHESTNUT'] as const;
-const LIGHT_NEUTRAL_COLORS = ['HONEY', 'CHESTNUT'] as const;
-const VIBRANT_COLORS = ['CHERRY', 'COPPER', 'GINGER', 'PLUM', 'COBALT', 'SANGRIA', 'RASPBERRY', 'TEAL', 'SLIME', 'CITRINE'] as const;
+const COLOR_BUCKETS = ['neutral', 'blonde', 'vivid', 'any'] as const;
 
 function shuffle<T>(items: readonly T[]): T[] {
   const out = [...items];
@@ -43,14 +40,22 @@ function shuffle<T>(items: readonly T[]): T[] {
   return out;
 }
 
+function generationVariationIndex(): number {
+  return Math.floor(Math.random() * 12);
+}
+
 function pickAllowedColor(
   unitKey: CatalogUnitName,
-  bucket: 'neutral' | 'blonde' | 'vibrant' | 'any'
+  bucket: 'neutral' | 'blonde' | 'vivid' | 'any'
 ): string {
   const allowed = allowedColorsForCatalogUnit(unitKey);
   const allowedSet = new Set(allowed.map((c) => c.toUpperCase()));
   const filter = (colors: readonly string[]) =>
     colors.filter((c) => allowedSet.has(c.toUpperCase()));
+
+  const NEUTRAL_COLORS = ['JET BLACK', 'OFF BLACK', 'ESPRESSO', 'CHESTNUT'] as const;
+  const LIGHT_NEUTRAL_COLORS = ['HONEY', 'CHESTNUT'] as const;
+  const VIBRANT_COLORS = ['CHERRY', 'COPPER', 'GINGER', 'PLUM', 'COBALT', 'SANGRIA', 'RASPBERRY', 'TEAL', 'SLIME', 'CITRINE'] as const;
 
   if (unitKey === 'BLANCO') {
     return shuffle(filter(['GOLDEN', 'PLATINUM', 'ASH']))[0] ?? 'PLATINUM';
@@ -62,11 +67,11 @@ function pickAllowedColor(
 
   if (bucket === 'neutral') return shuffle(neutral)[0] ?? allowed[0];
   if (bucket === 'blonde') return shuffle(light.length ? light : neutral)[0] ?? allowed[0];
-  if (bucket === 'vibrant') return shuffle(vibrant)[0] ?? allowed[0];
+  if (bucket === 'vivid') return shuffle(vibrant)[0] ?? allowed[0];
   return shuffle([...neutral, ...light, ...vibrant])[0] ?? allowed[0];
 }
 
-function colorForUnit(unitKey: CatalogUnitName, bucket: 'neutral' | 'blonde' | 'vibrant' | 'any'): string {
+function colorForUnit(unitKey: CatalogUnitName, bucket: 'neutral' | 'blonde' | 'vivid' | 'any'): string {
   return pickAllowedColor(unitKey, bucket);
 }
 
@@ -109,6 +114,21 @@ function isGenericNoirStack(look: DiversifiableLook): boolean {
   );
 }
 
+/** Demo / template placeholder stacks that should fully re-roll (unit + color + length). */
+function isStubbornDefaultStack(look: DiversifiableLook): boolean {
+  if (isGenericNoirStack(look)) return true;
+  const length = look.length.trim().toUpperCase();
+  const commonLength = !length || /^(22|24)\s*INCH/.test(length);
+  return (
+    commonLength &&
+    isDefaultLace(look.lace) &&
+    isDefaultDensity(look.density) &&
+    isDefaultPart(look.part) &&
+    isDefaultHairline(look.hairline) &&
+    isDefaultStyling(look.styling)
+  );
+}
+
 function uniqueUnitCount(looks: DiversifiableLook[]): number {
   return new Set(looks.map((l) => l.unit.trim().toUpperCase())).size;
 }
@@ -119,7 +139,7 @@ function uniqueStyleCount(looks: DiversifiableLook[]): number {
 
 function needsDiversification(looks: DiversifiableLook[]): boolean {
   if (looks.length === 0) return false;
-  if (isGenericNoirStack(looks[0])) return true;
+  if (isStubbornDefaultStack(looks[0])) return true;
   if (looks.length === 1) return false;
   if (uniqueUnitCount(looks) < Math.min(looks.length, 3)) return true;
   if (uniqueStyleCount(looks) < Math.min(looks.length, 2)) return true;
@@ -131,7 +151,7 @@ function needsDiversification(looks: DiversifiableLook[]): boolean {
 function assignUnitsForBuckets(
   count: number,
   keepFirstUnit: string | null,
-  buckets: Array<'neutral' | 'blonde' | 'vibrant' | 'any'>
+  buckets: Array<'neutral' | 'blonde' | 'vivid' | 'any'>
 ): CatalogUnitName[] {
   const out: CatalogUnitName[] = new Array(count);
   const used = new Set<string>();
@@ -189,12 +209,9 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
       ? (densityOrder[index % densityOrder.length] ?? DENSITY_OPTIONS[1])
       : look.density,
     part: isDefaultPart(look.part)
-      ? index === 0
-        ? 'MIDDLE'
-        : (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
+      ? (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
       : look.part,
-    hairline:
-      index === 0 && isDefaultHairline(look.hairline) ? 'NATURAL HAIRLINE' : hairline,
+    hairline: isDefaultHairline(look.hairline) ? hairline : look.hairline,
     styling: isDefaultStyling(look.styling) ? 'NONE' : look.styling,
   };
 }
@@ -203,11 +220,11 @@ function diversifyLook<L extends DiversifiableLook>(
   look: L,
   index: number,
   unitKey: CatalogUnitName,
-  colorBucket: 'neutral' | 'blonde' | 'vibrant' | 'any'
+  colorBucket: 'neutral' | 'blonde' | 'vivid' | 'any'
 ): L {
   const styling = isDefaultStyling(look.styling) ? 'NONE' : look.styling.trim().toUpperCase();
   const color = colorForUnit(unitKey, colorBucket);
-  const length = LENGTH_OPTIONS[index % LENGTH_OPTIONS.length] ?? '24 INCHES';
+  const length = shuffle(LENGTH_OPTIONS)[index % LENGTH_OPTIONS.length] ?? '24 INCHES';
 
   return varyInstallSpecs(
     {
@@ -222,30 +239,43 @@ function diversifyLook<L extends DiversifiableLook>(
   );
 }
 
+/** Per-generate TOP MATCH variety — keeps PSA unit on free tier, rotates length/color/install. */
+function varyTopMatchPerGeneration<L extends DiversifiableLook>(topMatch: L, genIdx: number): L {
+  const unitKey = normalizeCatalogUnit(topMatch.unit);
+  if (!unitKey) return varyInstallSpecs(topMatch, genIdx);
+  const bucket = shuffle(COLOR_BUCKETS)[genIdx % COLOR_BUCKETS.length] ?? 'any';
+  return diversifyLook(topMatch, genIdx, unitKey, bucket);
+}
+
 /** Rotate units, styles, lengths, and color families when picks are too repetitive. */
 export function diversifyHairstyleAnalysisLooks<L extends DiversifiableLook>(
   topMatch: L,
   additionalLooks: L[]
 ): { topMatch: L; additionalLooks: L[] } {
   const all = [topMatch, ...additionalLooks];
+  const genIdx = generationVariationIndex();
+
   if (!needsDiversification(all)) {
+    const diversifiedTop =
+      additionalLooks.length === 0 ? varyTopMatchPerGeneration(topMatch, genIdx) : varyInstallSpecs(topMatch, genIdx);
+
     return {
-      topMatch: varyInstallSpecs(topMatch, 0),
-      additionalLooks: additionalLooks.map((look, i) => varyInstallSpecs(look, i + 1)),
+      topMatch: diversifiedTop,
+      additionalLooks: additionalLooks.map((look, i) => varyInstallSpecs(look, genIdx + i + 1)),
     };
   }
 
   const keepTopUnit =
     !isGenericNoirStack(topMatch) && normalizeCatalogUnit(topMatch.unit) ? topMatch.unit : null;
-  const colorBuckets: Array<'neutral' | 'blonde' | 'vibrant' | 'any'> =
+  const colorBuckets: Array<'neutral' | 'blonde' | 'vivid' | 'any'> =
     all.length === 1
-      ? ['any']
-      : ['neutral', 'blonde', 'vibrant', ...Array.from({ length: all.length - 3 }, () => 'any' as const)];
+      ? [shuffle(COLOR_BUCKETS)[0] ?? 'any']
+      : ['neutral', 'blonde', 'vivid', ...Array.from({ length: all.length - 3 }, () => 'any' as const)];
   const units = assignUnitsForBuckets(all.length, keepTopUnit, colorBuckets);
 
-  const diversifiedTop = diversifyLook(topMatch, 0, units[0], colorBuckets[0] ?? 'any');
+  const diversifiedTop = diversifyLook(topMatch, genIdx, units[0], colorBuckets[0] ?? 'any');
   const diversifiedAlts = additionalLooks.map((look, i) =>
-    diversifyLook(look, i + 1, units[i + 1] ?? units[0], colorBuckets[i + 1] ?? 'any')
+    diversifyLook(look, genIdx + i + 1, units[i + 1] ?? units[0], colorBuckets[i + 1] ?? 'any')
   );
 
   return { topMatch: diversifiedTop, additionalLooks: diversifiedAlts };
