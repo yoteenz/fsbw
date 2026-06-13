@@ -28026,3 +28026,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to change **gray hairstyle analysis header text at top to red**; **every detail matters** rows still used the same fixed script each time (only catalog specs swapped — e.g. always “TO COMPLEMENT YOUR … EYES”, “TO FRAME YOUR … FACE”, “TO ENHANCE YOUR JAWLINE”).
 - **Shipped:** Client header **gray → brand red `#EB1C24`** in **`topMatchHeaderLine`**, Fal FINAL CHECK, **`HairstyleAnalysisCard.module.css`**. **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — **phrasing variant pools** per rose row (lace/color/texture/style/length) + **`everyDetailVariationSeed()`**; **`normalizeHairstyleAnalysisForFal`** and **`HairstyleAnalysisPreview` generate** pick fresh seed each run. Overlay uses stored **`whyItWorks`**. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Client name header = **red** Futura PT Medium; every-detail rows = **spec-themed but wording varies per generation** — print Fal EDM lines verbatim.
+
+---
+
+## 2026-06-13 — Hairstyle analysis free: full client name + match rating decimal
+
+- **Context:** User reported **free template** still shows **first name only** (not first + last) in header; **MATCH RATING** should show a **dynamic decimal** (5.0, 4.7, etc.) **above** the five stars in the **same Covered By Your Grace script** as overall score %.
+- **Shipped:** Demo **`clientName`** always **`KATEENA ARMSTRONG`** (was first-name-only on free). Fal **`topMatchHeaderLine`** — explicit **never truncate to first name**. **`formatMatchRatingDecimal`** + **`dynamicMatchRating`** in **`applyRealisticMatchScores`** (5.0 for ≥95% overall; 4.5–4.9 for 4-star rows). **`overallScoreAndRatingRules`** — print rating decimal in upper third of MATCH RATING box, stars below; removed stale free-tier “leave score/stars blank” copy. Overlay uses **`clientFullName`**. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Free + premium headers = **full first + last name**; MATCH RATING = **decimal label + stars**, same red script family as OVERALL SCORE %.
