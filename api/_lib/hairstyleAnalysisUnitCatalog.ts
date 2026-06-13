@@ -136,6 +136,7 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
     return [
       `COLOR ${colorKey} on BLANCO: uniform ${colorKey} blonde tone root to tip on silky straight Russian hair (pigment ${pigment}).`,
       'NO dark roots, NO ash band at roots, NO ombré — one light blonde family from lace to ends.',
+      `Hairline baby hairs and edge wisps = same ${colorKey} tone — never black.`,
     ].join(' ');
   }
 
@@ -144,6 +145,7 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
       `COLOR ${colorKey} on ${unitKey ?? unit}: BAW custom color — **one uniform ${colorKey} tone root to tip** (pigment ${pigment}).`,
       'FORBIDDEN: dark roots, black roots, shadow roots, ombré, dip-dye, two-tone regrowth, or natural root melt.',
       `Every strand from hairline to ends reads as ${colorKey} — lighting shine only, not a second root color.`,
+      'Baby hairs and lace-edge wisps at the forehead/temples = same ${colorKey} pigment — never black/dark when the install color is ${colorKey}.',
     ].join(' ');
   }
 
@@ -180,6 +182,7 @@ export function bawColorApplicationRulesBlock(): string {
     'Build-a-Wig custom/lifted colors are **one uniform tone from root to tip** on the installed unit.',
     'FORBIDDEN on vivid + custom colors (CHERRY, RASPBERRY, PLUM, COBALT, TEAL, SLIME, CITRINE, HONEY, AUBURN, COPPER, GINGER, SANGRIA, GOLDEN, PLATINUM, ASH):',
     'dark roots, black roots, shadow roots, ombré, balayage root melt, dip-dye, or two-tone regrowth.',
+    'Hairline baby hairs, wispy edge strands, and temple flyaways must be the **same catalog color** as the main hair — never left black when the unit is a fashion/vivid tone.',
     'CHERRY example: vivid red (#FF1400) **same saturation from lace to ends** — zero dark root band.',
     'BLANCO (GOLDEN / PLATINUM / ASH only): silky straight blonde/light uniform root to tip.',
     'JET BLACK / OFF BLACK / ESPRESSO: natural brunette depth within that shade only — never pair with fashion-color body.',

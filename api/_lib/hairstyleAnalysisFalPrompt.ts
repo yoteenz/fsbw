@@ -88,6 +88,7 @@ function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex
     `Optional hair guide — IMAGE ${idx} (${unit} mannequin front):`,
     shapeNote,
     'NECK/BODY LOCK: do NOT copy mannequin neck, throat, collarbones, shoulders, chest, or skin — keep IMAGE 2 client anatomy exactly.',
+    'HAIRLINE LOCK: do NOT copy mannequin baby hairs or black edge wisps — retint any edge strands to the look catalog color.',
   ].join(' ');
 }
 
@@ -156,8 +157,9 @@ function realisticHairRecolorBlock(): string {
   return [
     '=== HAIR COLOR — REALISTIC STRAND REPAINT (NOT AN OVERLAY) ===',
     'Recolor at strand level with believable shine and lighting — **pigment stays one BAW catalog tone root to tip** (see color rules).',
+    'Include **hairline baby hairs, edge wisps, and temple flyaways** in the recolor — they must match the assigned catalog color, not stay black from IMAGE 2 or mannequin refs.',
     'Match scene lighting from the selfie — believable shadows inside curls and dimension at the part.',
-    'FORBIDDEN: flat color wash, semi-transparent tint, dark roots on fashion colors, ombré, color filter overlay, posterized hair, sticker-like hair, or wig-cap color block.',
+    'FORBIDDEN: flat color wash, semi-transparent tint, dark roots on fashion colors, black baby hairs on colored installs, ombré, color filter overlay, posterized hair, sticker-like hair, or wig-cap color block.',
     'Hair must look fully installed and photographed — not a colored layer pasted on top of the original hair.',
   ].join('\n');
 }
@@ -175,7 +177,7 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
     return [
       `STYLE **${style}** — print exactly "${style}" in the STYLE value field (never substitute LAYERS unless STYLE is LAYERS or DEFINE).`,
       `Hairstyle shape: copy **only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part).`,
-      `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots.`,
+      `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots; hairline edge wisps same ${look.color}, not black.`,
       'The styling reference IMAGE overrides the unit mannequin default finish — do NOT apply layered waves when STYLE is FLAT IRON or CRIMPS/WAND CURLS.',
       'Do not invent a different salon finish.',
     ].join(' ');
@@ -255,8 +257,9 @@ function sharedClientPhotoRulesBlock(): string {
 
 function hairlineRulesBlock(): string {
   return [
-    'HAIRLINE: clean lace-front edge only — do NOT add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead/temples.',
-    'Do NOT blur or add extra strands at the hairline beyond what is natural in IMAGE 2.',
+    'HAIRLINE: clean lace-front edge — do NOT copy black baby hairs or wispy edge fuzz from mannequin or styling reference IMAGEs.',
+    'Any baby hairs, temple flyaways, or edge wisps already in IMAGE 2 or at the lace line must be **recolored to the assigned catalog hair color** (same pigment as the main install) — never left jet black when hair is CHERRY, PLATINUM, etc.',
+    'Do not invent heavy new baby-hair clutter; do not leave original dark edge strands unpainted on fashion-color looks.',
   ].join('\n');
 }
 
@@ -553,9 +556,9 @@ function buildTemplateRules(
     ...(tierKey === 'free'
       ? [
           '',
-          '=== HAIRLINE — NO BABY HAIRS (ALL HAIR EDITS) ===',
-          'Never add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead, temples, or hairline.',
-          'Hairline stays clean and defined — lace-front edge only. Do not add extra strands at the hairline.',
+          '=== HAIRLINE — EDGE STRANDS MATCH HAIR COLOR ===',
+          'Do not copy black baby hairs from mannequin/styling refs. Any hairline wisps or flyaways must match the assigned catalog color — never black on fashion/vivid installs.',
+          'Hairline stays clean lace-front edge — no heavy invented fuzz.',
         ]
       : []),
     bawUnitCatalogBlock(),
