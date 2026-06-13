@@ -27695,3 +27695,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal prompt still instructed **background-removed cutouts** while server post-process only patched the **inner fade rect** (`CLIENT_PHOTO_FADE_SLOT`), leaving Fal's full-panel photo visible in the border zone outside the fade window.
 - **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — wipe **full `CLIENT_IMAGE_SLOT`** to template before compositing; Ideogram source = full panel region; bottom-anchor + fade in inner window. **`hairstyleAnalysisFalPrompt.ts`** — Fal **hair edits only**; forbid cutout, white fill, second portrait layer. **`hairstyleAnalysisFalComposite.ts`** passes panel + fade rects. **`docs/STYLE_ANALYSIS.md`** updated.
 - **Conventions:** Fal = in-place hair edit only; server = full-panel template wipe + Ideogram cutout + bottom-anchor + marble fade.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: decouple MATCH row scores from overall score
+
+- **Context:** User reported gray **MATCH SCORE %** on MATCH 02–04 rows should be **Fal in-image only** (aligned on each labeled row) but kept **switching back to composite** after overall score % / font picker changes — the two fields should **not** be linked.
+- **Cause:** Fal prompt tied match-row scores to overall-score sizing/placement; misleading “same row as texture/color/length” wording; debug slot **`topScore`** mislabeled “Match score”; saved **`slotOverrides`** could include score slots (only photo post-process should use layout overrides).
+- **Shipped:** **`matchRowScoreIsolationBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — gray MATCH SCORE % separate from red OVERALL SCORE; per-label row alignment; server never composites match rows. **`overallScoreAndStarsSizeRules`** scoped to overall panel only. **`photoPostProcessLayoutOverrides()`** — post-process uses **`clientImage`** / **`clientPhotoFade`** only. Debug label → **Overall score**; preview copy clarifies font picker is overall-score only.
+- **Conventions:** MATCH 02–04 gray scores = Fal in-image in each row's MATCH SCORE slot; overall score font picker affects red OVERALL SCORE panel only; server post-process = client photo cutout/fade only.
