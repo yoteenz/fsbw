@@ -209,67 +209,25 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const label = i === 0 ? 'TOP MATCH / CLIENT PREVIEW' : `MATCH ${String(i + 1).padStart(2, '0')}`;
     const style = displayStyle(look.styling, look.unit);
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
-    const refNote = ref ? `use IMAGE ${ref.imageIndex} for salon finish` : 'no styling IMAGE — use mannequin texture only';
-    lines.push(
-      `${label}: STYLE ${style}, PART ${displayPart(look.part)}, ${refNote} — do NOT use a different style or IMAGE.`,
-      lookHairAccuracyLines(look)
-    );
+    const refNote = ref ? `IMAGE ${ref.imageIndex}` : 'mannequin texture only';
+    lines.push(`${label}: STYLE ${style}, PART ${displayPart(look.part)}, ${refNote}`);
   });
 
   return lines.join('\n');
 }
 
-function clientPhotoBackgroundCutoutBlock(): string {
+function clientPhotoPanelRulesBlock(): string {
   return [
-    '=== CLIENT PREVIEW — SUBJECT CUTOUT ON MARBLE (CRITICAL) ===',
-    'REMOVE the original backdrop from IMAGE 2 completely — erase studio wall, tan/beige/gray/white flat background, room, or any environment behind the client.',
-    'Keep ONLY the person: hair, face, neck, skin, and visible clothing/jewelry. Pixels outside the subject silhouette must be **transparent** so IMAGE 1 marble/panel shows through the cutout.',
-    'Do NOT paste IMAGE 2 as a full rectangle with its original background still visible behind shoulders — this must look like a **background-removed cutout attachment** on marble (like a PNG sticker), not a photo on a colored backdrop.',
-    'FORBIDDEN: beige/tan/gray studio backdrop behind the subject; solid color fill instead of marble; rectangular photo card floating centered on marble with original env visible.',
-  ].join('\n');
-}
-
-function clientPhotoBottomFadeBlock(): string {
-  return [
-    '=== CLIENT PREVIEW PHOTO — PANEL ATTACHMENT + SYMMETRICAL BOTTOM FADE (CRITICAL) ===',
-    clientPhotoBackgroundCutoutBlock(),
-    'Treat the cut-out subject as a **photo attachment** clipped inside the frosted acrylic cutout on IMAGE 1 — pasted into the panel window, not smeared over panel chrome.',
-    'VERTICAL PLACEMENT — BOTTOM-ANCHORED (NOT CENTERED): anchor the cut-out portrait to the **bottom** of the left-panel photo window (object-position: bottom center).',
-    'Shoulders/chest and the bottom fade must sit **near the bottom inner edge** of the red panel cutout — minimal empty gap below the subject. Do NOT vertically center the portrait with a large marble void under the chest.',
-    'Empty marble/space above the head at the top of the cutout is OK and preferred over floating centered with dead space at the bottom.',
-    'HORIZONTAL: center the subject in the cutout width; scale so hair/face fill the frame; crop sides if needed. Do not spill past cutout border, white pill tab, or red panel glow.',
-    'FRAMING: tight beauty portrait — head, hair, neck, upper chest; crop away lower torso. Face prominent but **anchored down** in the window.',
-    'BOTTOM EDGE FADE (on the cut-out subject only): apply a **perfectly symmetrical** vertical fade across the **full width** of the cutout.',
-    'Fade begins in the lower third of the photo window (~65–72% down from the cutout top) and dissolves the subject to **fully transparent** at the cutout bottom edge.',
-    'Left and right fade profiles must match — same opacity curve; no diagonal skew or heavier fade on one side.',
-    'Through faded + non-subject areas, show **template marble and panel pixels from IMAGE 1** — never the original selfie backdrop.',
-    'TOP + SIDE EDGES: hard clean crop at cutout frame; soft fade **only** along the bottom inside the window.',
-    'FORBIDDEN: gray/white mist instead of marble; asymmetric fog; extending/repainting body or clothing to fill the bottom; outpainting below IMAGE 2.',
-  ].join('\n');
-}
-
-function clientPhotoFramingBlock(panelLabel: string): string {
-  return [
-    `=== ${panelLabel} — TIGHT FACE PORTRAIT IN PANEL CUTOUT (CRITICAL — SAME ON EVERY TIER) ===`,
-    clientPhotoBottomFadeBlock(),
-    'PRESERVE only clothing/jewelry already visible in IMAGE 2 at the crop boundary — do not redesign, recolor, or extend garments. Change HAIR ONLY.',
-    'KEEP the exact face, skin tone, age, expression, and camera angle from IMAGE 2 — same person, same likeness.',
-    'This bottom-anchored marble cutout is mandatory for free, 3-month, 6-month, and 12-month cards — identical framing standard every generation.',
-  ].join('\n');
-}
-
-function matchThumbnailFramingBlock(): string {
-  return [
-    'THUMBNAIL FRAMING: even tighter than main preview — face + neck + hair only; crop at shoulders or above.',
-    'Square crop centered on the face. Do NOT invent clothing, neckline, or body below the chin/jaw.',
-    'Use only pixels from IMAGE 2 — zoom/crop inward; never outpainting or repainting the lower half.',
+    '=== CLIENT PREVIEW PHOTO ===',
+    'Edit hair in the left-panel cutout from IMAGE 2 — face/skin lock, same person. Change HAIR ONLY; tight head/hair/neck/upper-chest portrait.',
+    'Server post-process after generation: background cutout, bottom-anchor, symmetrical marble fade — do not paint backdrop or gray mist in-window.',
+    'Thumbnails: tighter square face/neck crop; one-shoulder drape; no clothing invented below jaw.',
   ].join('\n');
 }
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
     '=== CLIENT PREVIEW (IMAGE 2) — TOP MATCH HAIR ===',
-    clientPhotoFramingBlock('CLIENT PREVIEW PANEL'),
     `Hair only: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}.`,
     lookHairAccuracyLines(look),
     realisticHairDensityBlock(displayDensity(look.density), false),
@@ -284,12 +242,11 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
 
 function sharedClientPhotoRulesBlock(): string {
   return [
-    '=== CLIENT PHOTOS — FACE LOCK + PANEL ATTACHMENT (ALL PREVIEW + THUMBNAILS) ===',
+    '=== CLIENT PHOTOS — FACE LOCK + PANEL (ALL PREVIEW + THUMBNAILS) ===',
     faceIdentityLockBlock(),
-    clientPhotoBottomFadeBlock(),
-    'Match thumbnails: tighter square face/neck crop inside each thumb cutout — hard crop at sides/top; no bottom fade needed on tiny squares.',
+    clientPhotoPanelRulesBlock(),
     realisticHairRecolorBlock(),
-    'HAIR VOLUME: reduce crown/temple bulk — natural strand separation; FORBIDDEN helmet hair, bouffant crown, plastic uniform volume, or shrinking the face to hide extra hair.',
+    'HAIR VOLUME: natural strand separation; FORBIDDEN helmet hair, bouffant crown, or shrinking the face.',
     hairlineRulesBlock(),
     neckAndBodyPreservationBlock(),
   ].join('\n\n');
@@ -557,10 +514,10 @@ function buildTemplateRules(
   const photoRules =
     tierKey === 'free'
       ? [
-          '=== CLIENT PHOTO — TIGHT FACE ATTACHMENT IN PANEL CUTOUT (CRITICAL) ===',
+          '=== CLIENT PHOTO — HAIR IN PANEL CUTOUT ===',
           faceIdentityLockBlock(),
-          clientPhotoBottomFadeBlock(),
-          'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
+          clientPhotoPanelRulesBlock(),
+          'Hair density changes affect hair strands only — never repaint or shrink the face.',
         ]
       : [sharedClientPhotoRulesBlock()];
 
@@ -579,17 +536,19 @@ function buildTemplateRules(
     '"6 MONTH HAIRSTYLE ANALYSIS", or "12 MONTH HAIRSTYLE ANALYSIS" below the main header.',
     'ERASE that tier/subscription subtitle completely — paint over with clean marble background matching the template.',
     'The client must NOT see any tier name, month count, or analysis type. Keep "FRONTAL SLAYER" and "hairstyle analysis" header art only.',
-    '',
-    '=== HAIRLINE — NO BABY HAIRS (ALL HAIR EDITS) ===',
-    'Never add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead, temples, or hairline.',
-    'Hairline stays clean and defined — lace-front edge only. Do not add extra strands at the hairline.',
-    '',
+    ...(tierKey === 'free'
+      ? [
+          '',
+          '=== HAIRLINE — NO BABY HAIRS (ALL HAIR EDITS) ===',
+          'Never add baby hairs, wispy flyaways, edge fuzz, or soft feathering along the forehead, temples, or hairline.',
+          'Hairline stays clean and defined — lace-front edge only. Do not add extra strands at the hairline.',
+        ]
+      : []),
     bawUnitCatalogBlock(),
     '',
     bawColorApplicationRulesBlock(),
     '',
-    neckAndBodyPreservationBlock(),
-    '',
+    ...(tierKey === 'free' ? [neckAndBodyPreservationBlock(), ''] : []),
     asymmetricOneShoulderDrapeBlock('all_photos', hasMannequinRefs),
     '',
     '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
@@ -648,19 +607,6 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
   ].join('\n');
 }
 
-function topMatchBlock(look: FalAnalysisLook): string[] {
-  return [
-    `TEXTURE: ${look.unit}`,
-    colorValueLine(look),
-    `LENGTH: ${displayLength(look.length)}`,
-    `LACE: ${displayLace(look.lace)}`,
-    `DENSITY: ${displayDensity(look.density)}`,
-    `PART: ${displayPart(look.part)}`,
-    `HAIRLINE: ${displayHairline(look.hairline)}`,
-    `STYLE: ${displayStyle(look.styling, look.unit)}`,
-  ];
-}
-
 function altRowBlock(label: string, look: FalAnalysisLook): string {
   return [
     label,
@@ -712,8 +658,6 @@ function freePrompt(
     clientPreviewTabLine(),
     topMatchHeaderLine(fullName),
     clientPreviewHairLine(top, refs),
-    '',
-    ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   appendEveryDetailMattersLines(lines, analysis);
   lines.push(freePromptFooter(analysis, promptOptions));
@@ -733,8 +677,6 @@ function threeMonthPrompt(
     clientPreviewTabLine(),
     topMatchHeaderLine(fullName),
     clientPreviewHairLine(top, refs),
-    '',
-    ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
   ];
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     const label = `MATCH ${String(i + 2).padStart(2, '0')}`;
