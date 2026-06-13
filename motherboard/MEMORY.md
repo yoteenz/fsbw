@@ -28083,3 +28083,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported PEAK and LAGOS hairlines still not generating correctly on client photos despite 2D mannequin reference IMAGEs — asked to **describe** the shapes instead of relying on refs that Fal was not applying.
 - **Shipped:** **`hairstyleAnalysisBawHairlineRefs.ts`** — **`bawHairlineShapeGuideBlock()`** + **`hairlineShapePromptLine()`** with compact text for **NATURAL** (smooth convex arc), **PEAK** (widow's peak center V), **LAGOS** (scalloped M/W), **LAGOS+PEAK** (combo). **`collectHairlineRefsForAnalysis`** returns empty — no hairline IMAGEs uploaded to Fal. **`hairstyleAnalysisFal.ts`** — styling ref indices start after mannequins only. **`hairstyleAnalysisFalPrompt.ts`** — text guide replaces **`bawHairlineRefListBlock`**; per-look compact binding; manifest PHOTO↔SPEC includes hairline shape key.
 - **Conventions:** Hairline forehead edge = **text shape guide only** (not mannequin/styling IMAGEs); PEAK must show center V, LAGOS must show scalloped waves, NATURAL = smooth arc. Premium prompt ~31.4k chars.
+
+---
+
+## 2026-06-13 — Every-detail-matters phrasing variety (PDP pools)
+
+- **Context:** User said EDM rose rows still felt like the same sentences rearranged — wanted much more variety (e.g. **ESPRESSO TO ACCENTUATE YOUR FEATURES**) instead of repeating almond eyes every time; study Noir PDP **DETAILS** tab for dynamic spec phrasing.
+- **Shipped:** **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — large variant pools per theme: **lace** (14, PDP melt/knots/HD film), **color** (16 generic + 6 face optional — eyes only ~2 variants), **texture** (16+4 face), **style** (16 salon / 12 natural), **length** (7–8 per bucket). Generic benefit angles: features, complexion, cheekbones, depth, glow, strand flow, versatility — not eyes/jaw every row. Main builder files import pools; **`everyDetailVariationSeed()`** unchanged per generate.
+- **Conventions:** Face-aware lines are optional extras in pools — most color/texture variants never mention eyes; PDP signature phrases (melted lace, single strand knots, raw texture, natural state) inform lace/style pools.
