@@ -50,11 +50,12 @@ export function resolveCatalogLook(look: AnalysisLook, styleIndex = 0): Analysis
           ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
           : styling;
   const catalogDensity = UNIT_DEFAULT_DENSITY[unit];
-  const density =
-    catalogDensity &&
-    (!look.density?.trim() || (look.density === '250%' && catalogDensity !== '250%'))
-      ? catalogDensity
-      : look.density;
+  const densityRaw = look.density?.trim().replace(/\s*DENSITY\s*$/i, '') ?? '';
+  const density = !densityRaw
+    ? (catalogDensity ?? look.density)
+    : densityRaw.includes('%')
+      ? densityRaw
+      : `${densityRaw}%`;
 
   return {
     ...look,

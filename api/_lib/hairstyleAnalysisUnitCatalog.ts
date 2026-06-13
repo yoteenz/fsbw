@@ -270,10 +270,13 @@ export function resolveCatalogLookForFal<
   const styling = normalizeAnalysisStylingId(unit, look.styling);
   const catalog = unitKey ? UNIT_CATALOG[unitKey] : null;
   const resolvedStyling = unitKey ? coerceSalonStyleForUnit(unitKey, styling, styleIndex) : styling;
+  const densityRaw = look.density?.trim().replace(/\s*DENSITY\s*$/i, '') ?? '';
   const density =
-    catalog && (!look.density?.trim() || (look.density === '250%' && catalog.density !== '250%'))
-      ? catalog.density
-      : look.density;
+    !densityRaw
+      ? (catalog?.density ?? look.density)
+      : densityRaw.includes('%')
+        ? densityRaw
+        : `${densityRaw}%`;
 
   return {
     ...look,
