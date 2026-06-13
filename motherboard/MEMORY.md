@@ -27931,6 +27931,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: lock MORE MATCHES thumbnail pose
+
+- **Context:** User reported **MORE MATCHES** thumbnail poses deviating — MATCH 02 profile while MATCH 03–04 frontal (correct). All rows should share the same pose as IMAGE 2.
+- **Cause:** Fal copied head angle from BAW styling reference IMAGEs when applying different STYLE per row (e.g. CRIMPS ref profile vs frontal refs).
+- **Shipped:** **`clientPoseLockBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — IMAGE 2 master pose for TOP MATCH + every MATCH 02–04; styling/mannequin IMAGEs = hair finish only. Updated **`matchThumbnailBlock`**, **`additionalMatchTemplateRules`**, **`styledHairLine`**, **`salonStylingPriorityBlock`**, FINAL CHECK; **`hairstyleAnalysisBawStylingRefs.ts`** ref list forbids copying pose from styling IMAGEs.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.

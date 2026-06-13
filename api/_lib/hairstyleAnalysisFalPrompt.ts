@@ -201,7 +201,7 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
     const hex = (look.hex || '#000000').toUpperCase();
     return [
       `STYLE **${style}** — print exactly "${style}" in the STYLE value field (never substitute LAYERS unless STYLE is LAYERS or DEFINE).`,
-      `Hairstyle shape: copy **only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part).`,
+      `Hairstyle shape: copy **hair strands only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part) — **never** copy head pose, profile angle, or neck rotation from that IMAGE.`,
       `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots; hairline edge wisps same ${look.color}, not black.`,
       'The styling reference IMAGE overrides the unit mannequin default finish — do NOT apply layered waves when STYLE is FLAT IRON or CRIMPS/WAND CURLS.',
       'Do not invent a different salon finish.',
@@ -215,6 +215,7 @@ function salonStylingPriorityBlock(): string {
     '=== SALON STYLING — EACH MATCH HAS ITS OWN STYLE (CRITICAL) ===',
     'Every look has a distinct STYLE value (LAYERS, FLAT IRON, CRIMPS, WAND CURLS, DEFINE, or NONE).',
     'When STYLE is not NONE: the matching BAW styling reference IMAGE is the **authoritative** salon finish for that look.',
+    'Styling reference IMAGE = **hair curl/crimp/straight/layer pattern only** — IMAGE 2 keeps the master head + body pose on every photo.',
     'Unit mannequin IMAGE (when attached) = hair-strand texture + hair-end drape only — **not** neck/shoulders and **not** the salon finish when a styling IMAGE is assigned.',
     'FORBIDDEN: rendering every match with the same layered/wavy finish; printing LAYERS in STYLE when the assigned style is FLAT IRON, CRIMPS, WAND CURLS, or DEFINE;',
     'using the TOP MATCH hairstyle on MATCH 02–04 thumbnails.',
@@ -281,7 +282,7 @@ function clientPhotoPanelRulesBlock(): string {
     '4) **Symmetrical even bottom fade** — soft transparent gradient on the lower edge (same width left and right); hair/body dissolves into marble; no hard cut line.',
     'Edit **hair only** for TOP MATCH — face, skin, neck, and clothing stay identical to IMAGE 2.',
     'FORBIDDEN: visible studio backdrop, white polaroid mat, inset smaller photo, duplicate portrait layer, or opaque white bar at the bottom.',
-    'MATCH thumbnails: same face; tighter square crop; one-shoulder drape; bg removed.',
+    'MATCH thumbnails: same face and **same head/body pose** as IMAGE 2; tighter square crop; one-shoulder drape; bg removed.',
   ].join('\n');
 }
 
@@ -303,6 +304,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
 function sharedClientPhotoRulesBlock(): string {
   return [
     faceIdentityLockBlock(),
+    clientPoseLockBlock(),
     clientPhotoPanelRulesBlock(),
     'Recolor hair to catalog color/texture at strand level — face and skin untouched.',
     hairlineRulesBlock(),
@@ -327,6 +329,17 @@ function faceIdentityLockBlock(): string {
   ].join('\n');
 }
 
+function clientPoseLockBlock(): string {
+  return [
+    '=== HEAD + BODY POSE LOCK — IMAGE 2 IS MASTER (ALL PHOTOS) ===',
+    'IMAGE 2 (client selfie) is the **only** source for head angle, neck rotation, shoulder line, gaze direction, and facial orientation.',
+    'Applies to **TOP MATCH client preview** AND **every MATCH 02–04 thumbnail** — all must show the **same pose** as IMAGE 2.',
+    'BAW styling reference IMAGEs and unit mannequin IMAGEs are **hair strand finish only** — never copy their head yaw, profile angle, 3/4 turn, or body rotation onto the client.',
+    'FORBIDDEN: profile or side-view thumbnails when IMAGE 2 is frontal; turning the client to match a styling ref; different head angles across MATCH 02 vs MATCH 03 vs MATCH 04.',
+    'Self-check: every MORE MATCHES square must look like the **same client in the same pose** as IMAGE 2 — only hair color, texture, and style change.',
+  ].join('\n');
+}
+
 function realisticHairDensityBlock(densityLabel: string, isThumbnail = false): string {
   const thumbNote = isThumbnail
     ? 'Thumbnail: hair strand bulk may be slightly lighter than the main preview — adjust HAIR STRANDS ONLY, never the face.'
@@ -345,7 +358,8 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
   return [
-    `${label} THUMB: same client face as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); one-shoulder drape; hair-only edits.`,
+    `${label} THUMB: same client face **and same head/body pose** as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); one-shoulder drape; hair-only edits.`,
+    'Keep IMAGE 2 head angle, gaze, and shoulder line — **never** turn the client profile or 3/4 to match a styling/mannequin IMAGE.',
     `PART ${part} **only** on this thumb — one scalp line; erase any other part from IMAGE 2 or other refs.`,
     uniformRootColorBlock(look, 'thumbnail'),
     lookHairAccuracyLines(look),
@@ -593,8 +607,9 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
     'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
-    '=== MATCH THUMBNAILS — SAME CLIENT FACE ===',
+    '=== MATCH THUMBNAILS — SAME CLIENT FACE + SAME POSE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
+    '**All MATCH 02–04 thumbnails share one pose** — identical head angle, gaze, and shoulders as IMAGE 2 and as each other.',
     'Each thumb: **one PART only** + **uniform catalog color root to tip** on blonde/vivid installs — no dark roots from IMAGE 2.',
     'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
     mannequinLine,
@@ -802,7 +817,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); OVERALL SCORE + MATCH RATING value areas **blank** (server overlays petite score + stars); thumbs = same client + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
+    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); OVERALL SCORE + MATCH RATING value areas **blank** (server overlays petite score + stars); thumbs = same client + **same pose as IMAGE 2 on every row** + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
   );
   return lines.join('\n');
 }
