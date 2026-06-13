@@ -28216,3 +28216,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Hairline ref IMAGEs removed in favor of text guide (`collectHairlineRefsForAnalysis` returned empty); conflicting baby-hair/color lines; one-shoulder block buried mid-prompt after catalog/color/part blocks.
 - **Shipped (20a4cec6):** Restored **`collectHairlineRefsForAnalysis`** + Fal upload of **`/assets/peak front.png`** / **`/assets/lagos front.png`**; **`hairlineBindingPromptLine`** per look; **`bawHairlineRefListBlock`** in prompt. Moved **`asymmetricOneShoulderDrapeBlock`** + **`noInventedBabyHairsBlock`** early in template rules; **`oneShoulderDrapeCompactLock()`** repeated in TOP MATCH hair + thumbs + FINAL CHECK. Baby hair rule = **erase** fuzz on skin (no retint loophole). Diversity adds **LAGOS + PEAK** to hairline rotation.
 - **Conventions:** PEAK/LAGOS+PEAK → peak front ref; LAGOS-only → lagos front ref; NATURAL → text guide only; one-shoulder drape = **equal priority** to face/hairline locks.
+
+---
+
+## 2026-06-13 — Admin manifest spec picker (hairstyle analysis test)
+
+- **Context:** User asked for a **manifest dropdown** of all specs **categorized** to manually choose combinations and test how generated cards look.
+- **Shipped:** **`ManifestSpecPicker.tsx`** on Tools → Hairstyle Analysis (admin only) — categorized selects: Texture, Color, Length, Lace, Density, Part, Hairline, Style; TOP MATCH + MATCH 02–04 per tier; summary ribbon + EDM line preview; reset defaults. **`hairstyleAnalysisManifestOptions.ts`** + **`hairstyleAnalysisManifestBuild.ts`**. Checkbox **Use manifest test picker** builds analysis from picks; **`manifestTestMode`** on generate skips **`diversifyHairstyleAnalysisLooks`** (admin-only **`skipLookDiversification`** in **`normalizeHairstyleAnalysisForFal`**).
+- **Conventions:** Admin manifest test = exact specs to Fal; color options filter by unit; style options filter by unit catalog.
