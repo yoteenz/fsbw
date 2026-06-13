@@ -18,9 +18,9 @@ import {
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
 import {
-  bawHairlineRefListBlock,
-  hairlineRefForLook,
-  hairlineRefPromptLine,
+  bawHairlineShapeGuideBlock,
+  hairlineShapeKeyFromManifest,
+  hairlineShapePromptLine,
   type HairstyleAnalysisHairlineRef,
 } from './hairstyleAnalysisBawHairlineRefs.js';
 import { RATING_SLOT, TOP_SCORE_SLOT, type PixelRect } from './hairstyleAnalysisLayoutSlots.js';
@@ -239,8 +239,8 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
     const refNote = ref ? `IMAGE ${ref.imageIndex}` : 'mannequin texture only';
     const hl = displayHairline(look.hairline);
-    const hlRef = hairlineRefForLook(refs.hairlineRefs, look.hairline);
-    const hlNote = hlRef ? `HAIRLINE ${hl} via IMAGE ${hlRef.imageIndex}` : `HAIRLINE ${hl}`;
+    const hlKey = hairlineShapeKeyFromManifest(look.hairline);
+    const hlNote = `HAIRLINE ${hl} (${hlKey} edge per text guide)`;
     lines.push(
       `${label}: STYLE ${style}, PART ${displayPart(look.part)} (one part only on thumb), ${hlNote}, COLOR ${look.color.trim().toUpperCase()} uniform root to tip if vivid/blonde, ${refNote}`
     );
@@ -302,7 +302,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
     styledHairLine(look, refs),
-    hairlineRefPromptLine(look.hairline, look.color, refs.hairlineRefs),
+    hairlineShapePromptLine(look.hairline, look.color),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
     .filter(Boolean)
@@ -315,18 +315,15 @@ function sharedClientPhotoRulesBlock(refs: FalPromptImageRefs): string {
     clientPoseLockBlock(),
     clientPhotoPanelRulesBlock(),
     'Recolor hair to catalog color/texture at strand level — face and skin untouched.',
-    hairlineRulesBlock(refs),
+    hairlineRulesBlock(),
   ].join('\n\n');
 }
 
-function hairlineRulesBlock(refs: FalPromptImageRefs): string {
-  const hasHairlineRefs = refs.hairlineRefs.length > 0;
+function hairlineRulesBlock(): string {
   return [
-    hasHairlineRefs
-      ? 'HAIRLINE: when manifest HAIRLINE is PEAK, LAGOS, or LAGOS + PEAK — copy **forehead lace-edge shape only** from the matching BAW hairline reference IMAGE; retint edge/baby hairs to the assigned catalog color.'
-      : 'HAIRLINE: clean lace-front edge — natural hairline finish.',
+    'HAIRLINE: forehead lace-edge shape comes from the **TEXT SHAPE GUIDE** — match manifest NATURAL / PEAK / LAGOS / LAGOS+PEAK exactly (PEAK = center V; LAGOS = scalloped M/W; NATURAL = smooth arc).',
     'Any baby hairs, temple flyaways, or edge wisps must match the assigned catalog hair color — never left jet black when hair is CHERRY, PLATINUM, etc.',
-    'Do not copy black baby hairs or wispy edge fuzz from **unit mannequin** or **styling** IMAGEs — BAW hairline IMAGEs are the only source for PEAK/LAGOS edge geometry.',
+    'Do not copy edge geometry from unit mannequin or styling IMAGEs — those are strand texture/finish only.',
     'Do not invent heavy new baby-hair clutter.',
   ].join('\n');
 }
@@ -374,7 +371,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     `PART ${part} **only** — one scalp line.`,
     uniformRootColorBlock(look, 'thumbnail'),
     realisticHairDensityBlock(displayDensity(look.density), true),
-    hairlineRefPromptLine(look.hairline, look.color, refs.hairlineRefs),
+    hairlineShapePromptLine(look.hairline, look.color),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
     .filter(Boolean)
@@ -577,9 +574,8 @@ function buildTemplateRules(
     ...(tierKey === 'free'
       ? [
           '',
-          '=== HAIRLINE — EDGE STRANDS MATCH HAIR COLOR ===',
-          'Do not copy black baby hairs from mannequin/styling refs. Any hairline wisps or flyaways must match the assigned catalog color — never black on fashion/vivid installs.',
-          'Hairline stays clean lace-front edge — no heavy invented fuzz.',
+          '=== HAIRLINE — TEXT SHAPE GUIDE + EDGE COLOR ===',
+          'Draw PEAK / LAGOS / NATURAL forehead edge from the text guide — not mannequin IMAGEs. Edge wisps match catalog hair color — never black on vivid/blonde installs.',
         ]
       : []),
     bawUnitCatalogBlock(),
@@ -601,7 +597,7 @@ function buildTemplateRules(
     '',
     bawStylingRefListBlock(refs.stylingRefs),
     '',
-    bawHairlineRefListBlock(refs.hairlineRefs),
+    bawHairlineShapeGuideBlock(),
     '',
     '=== SALON STYLING — BAW REFERENCES ONLY (NO INVENTED STYLES) ===',
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
@@ -630,6 +626,8 @@ function buildTemplateRules(
 function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
+  const hairline = displayHairline(look.hairline);
+  const hlKey = hairlineShapeKeyFromManifest(look.hairline);
   return [
     '=== TOP MATCH SPEC COLUMN — PRINT EXACTLY IN VALUE SLOTS (RIGHT PANEL) ===',
     'The template may show placeholder catalog text (e.g. NOIR, JET BLACK, LAYERS) — ERASE every placeholder and REPLACE with the manifest below.',
@@ -640,10 +638,10 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — LACE: ${displayLace(look.lace)}`,
     `MANIFEST — DENSITY: ${displayDensity(look.density)}`,
     `MANIFEST — PART: ${part}`,
-    `MANIFEST — HAIRLINE: ${displayHairline(look.hairline)}`,
+    `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
-    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — PART ${part} visible in hair; STYLE ${style} only if photo shows that finish (${style === 'NONE' ? 'natural texture — never LAYERS/FLAT IRON without BAW ref' : `BAW ${style} reference shape`}).`,
-    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; STYLE LAYERS when manifest is NONE; copying MATCH 02 values into TOP MATCH column.`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — PART ${part} visible in hair; HAIRLINE ${hairline} = ${hlKey} forehead edge per text guide; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
+    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/NATURAL edges looking identical; STYLE LAYERS when manifest is NONE.`,
     `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
 }
