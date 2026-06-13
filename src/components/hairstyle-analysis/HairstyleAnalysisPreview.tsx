@@ -577,9 +577,8 @@ export default function HairstyleAnalysisPreview({
               {showDebugFrames ? (
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Drag slot handles to reposition overlays. The cyan photo fade square marks where the server
-                    bottom-fade mask is applied — drag the left/right edges to adjust width, then Save layout.
-                    Generate sends saved positions (including clientPhotoFade) to the server composite.
+                    Drag slot handles to reposition overlay previews. Save layout persists debug positions for the
+                    dev overlay only — Fal generates the client photo bottom fade in-image on Generate.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button

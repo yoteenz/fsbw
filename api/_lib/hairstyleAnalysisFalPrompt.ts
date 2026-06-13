@@ -1,8 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
- * Client photo bottom fade is server-composited after Fal.
  * Overall score %, match-rating stars, TOP MATCH specs, MATCH 02–04 row values,
- * every-detail-matters lines, and photos are generated in-image by Fal.
+ * every-detail-matters lines, client preview photo (with symmetrical bottom fade), and photos are generated in-image by Fal.
  */
 
 import {
@@ -210,18 +209,28 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
   return lines.join('\n');
 }
 
+function clientPhotoBottomFadeBlock(): string {
+  return [
+    '=== CLIENT PREVIEW PHOTO — PANEL ATTACHMENT + SYMMETRICAL BOTTOM FADE (CRITICAL) ===',
+    'Treat IMAGE 2 as a **photo attachment** clipped inside the frosted acrylic cutout on IMAGE 1 — like a picture pasted into the panel window, not paint smeared over the panel chrome.',
+    'PLACEMENT: scale and crop IMAGE 2 to fit **entirely inside** the existing rectangular photo window on the left panel. Do not spill past the cutout border, white pill tab, or red panel glow.',
+    'FRAMING: tight face-centered portrait — head, hair, neck, and upper chest only. Cover-style zoom: face is the hero; crop away torso and lower body.',
+    'BOTTOM EDGE FADE (paint in-image on the photo only): apply a **perfectly symmetrical** vertical fade across the **full width** of the cutout.',
+    'Fade begins in the lower third of the photo window (~65–72% down from the cutout top) and dissolves smoothly to **fully transparent** at the cutout bottom edge.',
+    'Left and right fade profiles must match — same opacity curve on both sides; no diagonal skew, no heavier fade on one side.',
+    'Through the faded region, reveal the **template marble and panel pixels from IMAGE 1** behind the cutout — true transparent cutout, not a gray or white overlay.',
+    'TOP + SIDE EDGES: hard clean crop aligned to the cutout frame — the soft fade applies **only** along the bottom inside the window.',
+    'FORBIDDEN: gray rectangle, white mist cloud, acrylic smear, opaque panel fill, asymmetric fog, extending/repainting body or clothing to fill the bottom, or outpainting below IMAGE 2.',
+  ].join('\n');
+}
+
 function clientPhotoFramingBlock(panelLabel: string): string {
   return [
-    `=== ${panelLabel} — TIGHT FACE PORTRAIT CROP (CRITICAL — SAME ON EVERY TIER) ===`,
-    'FRAMING: tight beauty portrait — head, hair, neck, and upper chest ONLY. Face is the hero; center the face horizontally and vertically in the photo cutout.',
-    'CROP IN by zooming on the face — show from just above the hairline down to upper chest / collarbone. Cut off at shoulders or higher.',
-    'Use cover-style placement inside the panel cutout: scale IMAGE 2 so the face fills the frame; crop away sides and bottom — do NOT stretch or extend the image downward.',
-    'BOTTOM EDGE: hard crop only — let the lower body fall outside the frame. Do NOT paint white clouds, mist, fog, gradients, fades, or acrylic fill at the bottom.',
-    'Server applies a fixed symmetrical bottom fade after generation — never invent a soft edge, cloudy overlay, or panel fill.',
-    'FORBIDDEN: repainting the bottom half of the photo, hallucinated clothing, invented outfits, extended torso, new neckline, new accessories, or outpainting below what exists in IMAGE 2.',
+    `=== ${panelLabel} — TIGHT FACE PORTRAIT IN PANEL CUTOUT (CRITICAL — SAME ON EVERY TIER) ===`,
+    clientPhotoBottomFadeBlock(),
     'PRESERVE only clothing/jewelry already visible in IMAGE 2 at the crop boundary — do not redesign, recolor, or extend garments. Change HAIR ONLY.',
     'KEEP the exact face, skin tone, age, expression, and camera angle from IMAGE 2 — same person, same likeness.',
-    'This tight face-focused crop is mandatory for free, 3-month, 6-month, and 12-month cards — identical framing standard every generation.',
+    'This tight face-focused attachment crop is mandatory for free, 3-month, 6-month, and 12-month cards — identical framing standard every generation.',
   ].join('\n');
 }
 
@@ -251,9 +260,10 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
 
 function sharedClientPhotoRulesBlock(): string {
   return [
-    '=== CLIENT PHOTOS — FACE LOCK + CROP (ALL PREVIEW + THUMBNAILS) ===',
+    '=== CLIENT PHOTOS — FACE LOCK + PANEL ATTACHMENT (ALL PREVIEW + THUMBNAILS) ===',
     faceIdentityLockBlock(),
-    'Tight face-centered crop from IMAGE 2 — zoom in; crop out torso and lower body. Never repaint clothing or paint clouds/mist/fades at the bottom (server masks the edge).',
+    clientPhotoBottomFadeBlock(),
+    'Match thumbnails: tighter square face/neck crop inside each thumb cutout — hard crop at sides/top; no bottom fade needed on tiny squares.',
     realisticHairRecolorBlock(),
     'HAIR VOLUME: reduce crown/temple bulk — natural strand separation; FORBIDDEN helmet hair, bouffant crown, plastic uniform volume, or shrinking the face to hide extra hair.',
     hairlineRulesBlock(),
@@ -523,10 +533,9 @@ function buildTemplateRules(
   const photoRules =
     tierKey === 'free'
       ? [
-          '=== CLIENT PHOTO — TIGHT FACE CROP + EXACT FACE FROM IMAGE 2 (CRITICAL) ===',
+          '=== CLIENT PHOTO — TIGHT FACE ATTACHMENT IN PANEL CUTOUT (CRITICAL) ===',
           faceIdentityLockBlock(),
-          'Main client preview only — tight face-centered portrait crop from IMAGE 2.',
-          'Zoom IN on the face — crop OUT torso, waist, and lower body. Never repaint or invent clothing to fill the panel bottom.',
+          clientPhotoBottomFadeBlock(),
           'Hair density/volume changes affect hair strands only — never repaint or shrink the face.',
         ]
       : [sharedClientPhotoRulesBlock()];
