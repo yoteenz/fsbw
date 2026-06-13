@@ -28108,3 +28108,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **dark roots** showing again on blonde/vivid color installs — hair should be **same catalog color root to tip** including **baby hairs**; IMAGE 2 black roots and mannequin black pigment bleeding through.
 - **Shipped:** **`needsUniformRootRepaint()`** in **`hairstyleAnalysisUnitCatalog.ts`**. Stronger **`uniformRootColorBlock`**, **`styledHairLine`** (NONE + salon), **`mannequinRefLine`** PIGMENT LOCK, **`matchColorRootManifestBlock`** per-look binding, manifest PHOTO↔SPEC color lock, FINAL CHECK root line. Compact **`bawColorApplicationRulesBlock`** — mannequin/styling refs texture only, never black pigment.
 - **Conventions:** Vivid/blonde/BLANCO installs = full repaint of IMAGE 2 dark roots; baby hairs/wisps = catalog color only.
+
+---
+
+## 2026-06-13 — EDM phrasing rewrite (coherent product copy)
+
+- **Context:** User said lines like **"FOR EVERYDAY COLLARBONE WEAR"** sound like made-up AI sentences — EDM rose rows should read as **coherent spec + fit notes**, not keyword stacks.
+- **Shipped:** Rewrote **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — natural patterns: "22 INCHES SITS AT THE COLLARBONE", "ESPRESSO TO ACCENTUATE YOUR FEATURES", "NOIR IN ITS NATURAL TEXTURE"; removed jargon (**install**, **versatile mid chest wear**, **single donor consistency**, **maximum styling flex**); no em dashes (compact strips them awkwardly).
+- **Conventions:** EDM lines = catalog spec value + plain English benefit; avoid noun-soup "FOR X WEAR/FLEX/IMPACT" phrasing.
