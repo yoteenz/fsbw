@@ -27677,3 +27677,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal GPT Image 2 does not reliably remove selfie backdrop or bottom-anchor placement from prompt text alone.
 - **Shipped:** Re-enabled **server post-process** after Fal (default on). New **`hairstyleAnalysisClientPhotoCutout.ts`** — **Ideogram** (`fal-ai/ideogram/remove-background`) on extracted client-window region from Fal output; **`bottomAnchorCutoutInCanvas()`** scales subject to panel width and pins flush to bottom of fade rect; chroma-key fallback on uniform tan/beige when Ideogram fails. **`hairstyleAnalysisClientPhotoFade.ts`** — cutout + bottom-anchor before symmetrical alpha fade + template marble composite. **`hairstyleAnalysisFal.ts`** — runs **`compositeHairstyleAnalysisPostProcess`** and re-uploads final PNG to Fal storage. Env: **`HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_POST_PROCESS`** (default true), **`HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_IDEOGRAM`** (default true). **`docs/STYLE_ANALYSIS.md`**, **`HairstyleAnalysisPreview.tsx`** debug copy updated.
 - **Conventions:** Client preview = Fal hair edits in panel + server Ideogram cutout + bottom-anchor + symmetrical fade to marble; calibrate fade rect via cyan **photo fade** debug square → Save layout → Generate sends **`slotOverrides.clientPhotoFade`**.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: Fal prompt 32k limit fix (regression)
+
+- **Context:** After Ideogram cutout post-process shipped, user hit **HAIRSTYLE ANALYSIS PROMPT TOO LONG (34058 CHARACTERS; FAL LIMIT IS 32000)** on THREE MONTH generate (with styling refs attached).
+- **Cause:** Verbose duplicate client-photo cutout/anchor/fade blocks (prompt + shared photo rules + client preview hair line), duplicate TOP MATCH spec lines, repeated `lookHairAccuracyLines` in styling manifest, duplicate neck/hairline sections.
+- **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — compact **`clientPhotoPanelRulesBlock()`** (notes server post-process handles cutout/anchor/fade); removed duplicate framing blocks and **`topMatchBlock`** echo; compact **`matchStylingManifestBlock`**; deduped premium neck/hairline. Three-month prompt ~**25k** chars with styling refs (was ~34k).
+- **Conventions:** Keep premium Fal prompt under 32k; cutout/fade/anchor = server post-process, not long Fal prompt blocks.
