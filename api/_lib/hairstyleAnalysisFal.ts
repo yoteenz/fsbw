@@ -9,6 +9,7 @@ import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.j
 import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
 import {
   buildHairstyleAnalysisFalPrompt,
+  buildClientPreviewHairOnlyPrompt,
   type FalHairstyleAnalysis,
   type FalPromptBuildOptions,
 } from './hairstyleAnalysisFalPrompt.js';
@@ -27,6 +28,9 @@ export const HAIRSTYLE_ANALYSIS_GPT2_MODEL = 'openai/gpt-image-2/edit';
 
 /** Native template size (2048×2560 = 4:5). quality medium ≈ 2K tier on GPT Image 2. */
 export const HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE = { width: 2048, height: 2560 } as const;
+
+/** 3:4 portrait for upstream client hair-only edit (identity preserved before template pass). */
+export const HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_IMAGE_SIZE = { width: 1536, height: 2048 } as const;
 
 export const HAIRSTYLE_ANALYSIS_GPT2_QUALITY = 'medium' as const;
 
@@ -198,12 +202,17 @@ function extractFalImageUrl(result: unknown): string | null {
 async function subscribeHairstyleAnalysisFal(
   fal: FalClient,
   imageUrls: string[],
-  prompt: string
+  prompt: string,
+  imageSize:
+    | typeof HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE
+    | typeof HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_IMAGE_SIZE = HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE
 ): Promise<unknown> {
-  const attempts: Array<{ image_size: typeof HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE | 'auto' }> = [
-    { image_size: HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE },
-    { image_size: 'auto' },
-  ];
+  const attempts: Array<{
+    image_size:
+      | typeof HAIRSTYLE_ANALYSIS_GPT2_IMAGE_SIZE
+      | typeof HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_IMAGE_SIZE
+      | 'auto';
+  }> = [{ image_size: imageSize }, { image_size: 'auto' }];
 
   let lastErr: Error | undefined;
   for (const attempt of attempts) {
@@ -231,11 +240,11 @@ function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
 
-/** Template + client by default. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true to skip BAW styling refs. */
+/** Template + client by default. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false to attach BAW styling ref IMAGEs on template pass. */
 export function hairstyleAnalysisFalMinimalImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS?.trim().toLowerCase();
-  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
-  return false;
+  if (raw === 'false' || raw === '0' || raw === 'no') return false;
+  return true;
 }
 
 /** Opt-in unit mannequin fronts for hair texture/drape hints. Default off — avoids neck/shoulder bleed from mannequin geometry. */
@@ -243,6 +252,20 @@ export function hairstyleAnalysisFalMannequinImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MANNEQUIN_REFS?.trim().toLowerCase();
   if (raw === 'true' || raw === '1' || raw === 'yes') return true;
   return false;
+}
+
+/** Opt-in PEAK/LAGOS hairline mannequin IMAGEs on template pass. Default off — mannequin faces bleed into client. */
+export function hairstyleAnalysisFalHairlineImageRefs(): boolean {
+  const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS?.trim().toLowerCase();
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return false;
+}
+
+/** Upstream hair-only edit on raw selfie before template population (documented architecture). */
+export function hairstyleAnalysisClientPreviewStepEnabled(): boolean {
+  const raw = process.env.HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_STEP?.trim().toLowerCase();
+  if (raw === 'false' || raw === '0' || raw === 'no') return false;
+  return true;
 }
 
 export type GenerateHairstyleAnalysisFalInput = {
@@ -271,24 +294,43 @@ export async function generateHairstyleAnalysisWithFal(
   if (!falKey) throw new Error('FAL_KEY is not configured');
 
   const fal = await getFalClient(falKey);
-  const templateUrl = await resolvePublicImageUrl(
-    fal,
-    input.templateUrl,
-    input.siteOrigin,
-    'template'
-  );
-  const clientUrl = await resolvePublicImageUrl(
+
+  const analysis = normalizeHairstyleAnalysisForFal(input.analysis, {
+    skipDiversification: input.skipLookDiversification === true,
+  });
+
+  const rawClientUrl = await resolvePublicImageUrl(
     fal,
     input.clientPreviewUrl,
     input.siteOrigin,
     'client-preview'
   );
 
-  const analysis = normalizeHairstyleAnalysisForFal(input.analysis, {
-    skipDiversification: input.skipLookDiversification === true,
-  });
+  let clientUrl = rawClientUrl;
+  const clientPreviewPreEdited = hairstyleAnalysisClientPreviewStepEnabled();
+  if (clientPreviewPreEdited) {
+    const hairOnlyPrompt = buildClientPreviewHairOnlyPrompt(analysis.topMatch, analysis.clientName);
+    const previewResult = await subscribeHairstyleAnalysisFal(
+      fal,
+      [rawClientUrl],
+      hairOnlyPrompt,
+      HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_IMAGE_SIZE
+    );
+    const previewUrl = extractFalImageUrl(previewResult);
+    if (!previewUrl) throw new Error('Client preview hair edit returned no image URL');
+    clientUrl = previewUrl;
+  }
+
+  const templateUrl = await resolvePublicImageUrl(
+    fal,
+    input.templateUrl,
+    input.siteOrigin,
+    'template'
+  );
+
   const minimalRefs = hairstyleAnalysisFalMinimalImageRefs();
   const includeMannequins = hairstyleAnalysisFalMannequinImageRefs();
+  const includeHairlineRefs = hairstyleAnalysisFalHairlineImageRefs();
   const mannequinRefs = includeMannequins
     ? collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3)
     : [];
@@ -301,15 +343,16 @@ export async function generateHairstyleAnalysisWithFal(
     : [];
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
-  const hairlineRefs = collectHairlineRefsForAnalysis(
-    allLooks,
-    3 + mannequinRefs.length
-  );
-  const hairlineUrls = await Promise.all(
-    hairlineRefs.map((ref) =>
-      resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `hairline-${ref.key}`)
-    )
-  );
+  const hairlineRefs = includeHairlineRefs
+    ? collectHairlineRefsForAnalysis(allLooks, 3 + mannequinRefs.length)
+    : [];
+  const hairlineUrls = includeHairlineRefs
+    ? await Promise.all(
+        hairlineRefs.map((ref) =>
+          resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `hairline-${ref.key}`)
+        )
+      )
+    : [];
 
   const stylingRefs = minimalRefs
     ? []
@@ -324,6 +367,7 @@ export async function generateHairstyleAnalysisWithFal(
       input.fontOverrides?.topScore?.fontFamily,
       input.fontOverrides?.topScore?.siteFontId
     ),
+    clientPreviewPreEdited,
   };
   const prompt = buildHairstyleAnalysisFalPrompt(
     analysis,
