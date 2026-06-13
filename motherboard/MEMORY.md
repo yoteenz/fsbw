@@ -27755,3 +27755,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Reference font:** **Covered By Your Grace** — elegant red script, digits + **%** in same family, centered compact in OVERALL SCORE panel (not Futura sans-serif).
 - **Shipped:** **`overallScoreFontDesignBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — permanent CBYG spec; **`overallScoreFalLine()`** locked to CBYG (font picker override ignored for Fal). **`DEFAULT_OVERALL_SCORE_FONT_ID`** → **`cbyg`**. **`HairstyleAnalysisPreview`** copy: picker = overlay preview only. **`hairstyleAnalysisPrompts.ts`** + **`STYLE_ANALYSIS.md`** aligned.
 - **Conventions:** OVERALL SCORE % = **Covered By Your Grace** red script only on Fal output; MATCH 02–04 gray scores stay Futura — never swap styles.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: fix composite dimension error on generate
+
+- **Context:** User hit red error **"IMAGE TO COMPOSITE MUST HAVE SAME DIMENSIONS OR SMALLER"** on admin generate (THREE MONTH, base64 client photo).
+- **Cause:** Server post-process (**Ideogram cutout + panel fade**) used **2048×2560** slot rects while Fal output could be **`auto`** size; debug **slotOverrides** could also place fade rect outside client panel — Sharp rejects oversized overlays.
+- **Shipped:** **`hairstyleAnalysisFalComposite.ts`** — resize Fal + template to **`HAIRSTYLE_ANALYSIS_CANVAS`** before post-process. **`hairstyleAnalysisClientPhotoFade.ts`** — clamp fade inside panel (**`intersectPixelRects`**), clamp extracts to image bounds, **`compositeOverlay()`** resizes overlays to fit. **`hairstyleAnalysisLayoutSlots.ts`** — **`intersectPixelRects`**, **`pixelRectRelativeTo`** helpers.
+- **Conventions:** Post-process assumes 2048×2560; normalize Fal output first; fade window must stay inside client panel.
