@@ -219,18 +219,32 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
   return lines.join('\n');
 }
 
+function clientPhotoBackgroundCutoutBlock(): string {
+  return [
+    '=== CLIENT PREVIEW — SUBJECT CUTOUT ON MARBLE (CRITICAL) ===',
+    'REMOVE the original backdrop from IMAGE 2 completely — erase studio wall, tan/beige/gray/white flat background, room, or any environment behind the client.',
+    'Keep ONLY the person: hair, face, neck, skin, and visible clothing/jewelry. Pixels outside the subject silhouette must be **transparent** so IMAGE 1 marble/panel shows through the cutout.',
+    'Do NOT paste IMAGE 2 as a full rectangle with its original background still visible behind shoulders — this must look like a **background-removed cutout attachment** on marble (like a PNG sticker), not a photo on a colored backdrop.',
+    'FORBIDDEN: beige/tan/gray studio backdrop behind the subject; solid color fill instead of marble; rectangular photo card floating centered on marble with original env visible.',
+  ].join('\n');
+}
+
 function clientPhotoBottomFadeBlock(): string {
   return [
     '=== CLIENT PREVIEW PHOTO — PANEL ATTACHMENT + SYMMETRICAL BOTTOM FADE (CRITICAL) ===',
-    'Treat IMAGE 2 as a **photo attachment** clipped inside the frosted acrylic cutout on IMAGE 1 — like a picture pasted into the panel window, not paint smeared over the panel chrome.',
-    'PLACEMENT: scale and crop IMAGE 2 to fit **entirely inside** the existing rectangular photo window on the left panel. Do not spill past the cutout border, white pill tab, or red panel glow.',
-    'FRAMING: tight face-centered portrait — head, hair, neck, and upper chest only. Cover-style zoom: face is the hero; crop away torso and lower body.',
-    'BOTTOM EDGE FADE (paint in-image on the photo only): apply a **perfectly symmetrical** vertical fade across the **full width** of the cutout.',
-    'Fade begins in the lower third of the photo window (~65–72% down from the cutout top) and dissolves smoothly to **fully transparent** at the cutout bottom edge.',
-    'Left and right fade profiles must match — same opacity curve on both sides; no diagonal skew, no heavier fade on one side.',
-    'Through the faded region, reveal the **template marble and panel pixels from IMAGE 1** behind the cutout — true transparent cutout, not a gray or white overlay.',
-    'TOP + SIDE EDGES: hard clean crop aligned to the cutout frame — the soft fade applies **only** along the bottom inside the window.',
-    'FORBIDDEN: gray rectangle, white mist cloud, acrylic smear, opaque panel fill, asymmetric fog, extending/repainting body or clothing to fill the bottom, or outpainting below IMAGE 2.',
+    clientPhotoBackgroundCutoutBlock(),
+    'Treat the cut-out subject as a **photo attachment** clipped inside the frosted acrylic cutout on IMAGE 1 — pasted into the panel window, not smeared over panel chrome.',
+    'VERTICAL PLACEMENT — BOTTOM-ANCHORED (NOT CENTERED): anchor the cut-out portrait to the **bottom** of the left-panel photo window (object-position: bottom center).',
+    'Shoulders/chest and the bottom fade must sit **near the bottom inner edge** of the red panel cutout — minimal empty gap below the subject. Do NOT vertically center the portrait with a large marble void under the chest.',
+    'Empty marble/space above the head at the top of the cutout is OK and preferred over floating centered with dead space at the bottom.',
+    'HORIZONTAL: center the subject in the cutout width; scale so hair/face fill the frame; crop sides if needed. Do not spill past cutout border, white pill tab, or red panel glow.',
+    'FRAMING: tight beauty portrait — head, hair, neck, upper chest; crop away lower torso. Face prominent but **anchored down** in the window.',
+    'BOTTOM EDGE FADE (on the cut-out subject only): apply a **perfectly symmetrical** vertical fade across the **full width** of the cutout.',
+    'Fade begins in the lower third of the photo window (~65–72% down from the cutout top) and dissolves the subject to **fully transparent** at the cutout bottom edge.',
+    'Left and right fade profiles must match — same opacity curve; no diagonal skew or heavier fade on one side.',
+    'Through faded + non-subject areas, show **template marble and panel pixels from IMAGE 1** — never the original selfie backdrop.',
+    'TOP + SIDE EDGES: hard clean crop at cutout frame; soft fade **only** along the bottom inside the window.',
+    'FORBIDDEN: gray/white mist instead of marble; asymmetric fog; extending/repainting body or clothing to fill the bottom; outpainting below IMAGE 2.',
   ].join('\n');
 }
 
@@ -240,7 +254,7 @@ function clientPhotoFramingBlock(panelLabel: string): string {
     clientPhotoBottomFadeBlock(),
     'PRESERVE only clothing/jewelry already visible in IMAGE 2 at the crop boundary — do not redesign, recolor, or extend garments. Change HAIR ONLY.',
     'KEEP the exact face, skin tone, age, expression, and camera angle from IMAGE 2 — same person, same likeness.',
-    'This tight face-focused attachment crop is mandatory for free, 3-month, 6-month, and 12-month cards — identical framing standard every generation.',
+    'This bottom-anchored marble cutout is mandatory for free, 3-month, 6-month, and 12-month cards — identical framing standard every generation.',
   ].join('\n');
 }
 
@@ -372,7 +386,7 @@ function panelChromePreservationBlock(): string {
     'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
     'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
-    'Photo windows are cutouts INSIDE the acrylic panels — place client selfie and thumbnails in the cutout only, behind the glass layer.',
+    'Photo windows are cutouts INSIDE the acrylic panels — place **background-removed** client cutouts in the cutout only (marble visible around/behind subject), bottom-anchored in the window.',
     'ONLY edit inside: (a) photo cutout areas, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
     'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
   ].join('\n');

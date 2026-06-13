@@ -2,23 +2,32 @@ import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayou
 import { resolveClientPhotoFadeSlotOrDefault } from './hairstyleAnalysisCompositeLayout.js';
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
 
+type FalClient = {
+  storage: { upload: (file: File) => Promise<string> };
+  subscribe: (
+    model: string,
+    opts: { input: Record<string, unknown>; logs?: boolean }
+  ) => Promise<unknown>;
+};
+
 async function fetchBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 }
 
-/** Post-process: client photo bottom cutout — template marble shows through faded alpha. */
+/** Post-process: Ideogram cutout, bottom-anchor, symmetrical fade — template marble shows through. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,
-  _layoutOverrides?: CompositeLayoutOverrides
+  layoutOverrides?: CompositeLayoutOverrides,
+  fal?: FalClient | null
 ): Promise<Buffer> {
   const [falBuf, templateBuf] = await Promise.all([
     fetchBuffer(falImageUrl),
     fetchBuffer(templateImageUrl),
   ]);
 
-  const fadeRect = resolveClientPhotoFadeSlotOrDefault(_layoutOverrides);
-  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect);
+  const fadeRect = resolveClientPhotoFadeSlotOrDefault(layoutOverrides);
+  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, fal);
 }
