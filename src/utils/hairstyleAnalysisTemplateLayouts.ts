@@ -54,7 +54,7 @@ function freeFields(): TemplateFieldDef[] {
     { id: 'clientName', label: 'Preview pill', kind: 'text', slot: CLIENT_NAME },
     { id: 'clientHeaderName', label: 'Client header', kind: 'text', slot: CLIENT_HEADER_NAME },
     { id: 'clientImage', label: 'Client preview', kind: 'image', slot: CLIENT_IMAGE },
-    { id: 'topScore', label: 'Match score', kind: 'text', slot: TOP_SCORE },
+    { id: 'topScore', label: 'Overall score', kind: 'text', slot: TOP_SCORE },
     { id: 'rating', label: 'Star rating', kind: 'text', slot: RATING },
     ...specFields(),
     ...[0, 1, 2, 3, 4].map((i) => ({
@@ -72,7 +72,7 @@ function threeMonthFields(): TemplateFieldDef[] {
     { id: 'clientName', label: 'Preview pill', kind: 'text', slot: CLIENT_NAME },
     { id: 'clientHeaderName', label: 'Client header', kind: 'text', slot: CLIENT_HEADER_NAME },
     { id: 'clientImage', label: 'Client preview', kind: 'image', slot: CLIENT_IMAGE },
-    { id: 'topScore', label: 'Match score', kind: 'text', slot: TOP_SCORE },
+    { id: 'topScore', label: 'Overall score', kind: 'text', slot: TOP_SCORE },
     { id: 'rating', label: 'Star rating', kind: 'text', slot: RATING },
     ...specFields(),
   ];

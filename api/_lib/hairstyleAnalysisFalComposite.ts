@@ -1,5 +1,6 @@
 import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
 import {
+  photoPostProcessLayoutOverrides,
   resolveClientImageSlotOrDefault,
   resolveClientPhotoFadeSlotOrDefault,
 } from './hairstyleAnalysisCompositeLayout.js';
@@ -19,7 +20,7 @@ async function fetchBuffer(url: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
-/** Post-process: Ideogram cutout, bottom-anchor, symmetrical fade — template marble shows through. */
+/** Post-process: client photo only (Ideogram cutout + fade). Match-row text is Fal in-image — never composited here. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,
@@ -31,7 +32,8 @@ export async function compositeHairstyleAnalysisPostProcess(
     fetchBuffer(templateImageUrl),
   ]);
 
-  const fadeRect = resolveClientPhotoFadeSlotOrDefault(layoutOverrides);
-  const panelRect = resolveClientImageSlotOrDefault(layoutOverrides);
+  const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
+  const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
+  const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
   return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, panelRect, fal);
 }
