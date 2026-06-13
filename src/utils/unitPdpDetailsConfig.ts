@@ -32,7 +32,7 @@ const SHARED_DETAILS_BULLETS_TAIL = [
 ] as const;
 
 const SHARED_SIGNATURE_FEATURES_TAIL = [
-  'ULTRA THIN HD FILM LACE FOR AN INVISIBLE MELT',
+  'MELTED LACE, NATURAL HAIRLINE',
   'LIGHTLY BLEACHED SINGLE STRAND KNOTS',
   'BEGINNER & STYLIST FRIENDLY',
   'CAN BE COLORED, BLEACHED & CUSTOMIZED',
@@ -90,7 +90,7 @@ function buildDetailsBullets(spec: UnitPdpDetailsSpec): readonly string[] {
 
 function buildSignatureFeatures(spec: UnitPdpDetailsSpec): readonly string[] {
   return [
-    'ULTRA THIN HD FILM LACE FOR AN INVISIBLE MELT',
+    'MELTED LACE, NATURAL HAIRLINE',
     `${spec.density} DENSITY FOR FULLNESS AND VOLUME`,
     `SINGLE DONOR RAW ${spec.origin} HUMAN HAIR`,
     ...SHARED_SIGNATURE_FEATURES_TAIL.slice(1),
