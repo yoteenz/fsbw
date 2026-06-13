@@ -2,6 +2,26 @@
 
 export type PixelRect = { left: number; top: number; width: number; height: number };
 
+/** Clip `inner` to fit inside `outer` (absolute canvas coordinates). */
+export function intersectPixelRects(outer: PixelRect, inner: PixelRect): PixelRect | null {
+  const left = Math.max(outer.left, inner.left);
+  const top = Math.max(outer.top, inner.top);
+  const right = Math.min(outer.left + outer.width, inner.left + inner.width);
+  const bottom = Math.min(outer.top + outer.height, inner.top + inner.height);
+  if (right <= left || bottom <= top) return null;
+  return { left, top, width: right - left, height: bottom - top };
+}
+
+/** `rect` position relative to `container` origin (for panel-local composite). */
+export function pixelRectRelativeTo(container: PixelRect, rect: PixelRect): PixelRect {
+  return {
+    left: rect.left - container.left,
+    top: rect.top - container.top,
+    width: rect.width,
+    height: rect.height,
+  };
+}
+
 export const HAIRSTYLE_ANALYSIS_CANVAS = { width: 2048, height: 2560 } as const;
 
 function pctRect(left: string, top: string, width: string, height: string): PixelRect {
