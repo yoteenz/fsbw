@@ -7,7 +7,9 @@ import {
   displayLace,
   displayPart,
   displayStyle,
+  formatEdmPanelBuildSummary,
   formatScorePercent,
+  FREE_TOP_MATCH_PANEL_FOOTER,
 } from './hairstyleAnalysisFormat';
 import { normalizeAnalysisTier } from './hairstyleAnalysisRules';
 import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters';
@@ -64,10 +66,13 @@ function everyDetailWhyLines(analysis: HairstyleAnalysis): string[] {
 }
 
 function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
+  const resolvedTop = resolveCatalogLook(analysis.topMatch);
   const out: Record<string, string> = {
     ...topMatchHeader(analysis.topMatch),
     clientName: 'TOP MATCH',
     clientHeaderName: clientFullName(analysis.clientName),
+    topMatchSummary: FREE_TOP_MATCH_PANEL_FOOTER,
+    edmBuildSummary: formatEdmPanelBuildSummary(resolvedTop),
   };
   everyDetailWhyLines(analysis).forEach((line, i) => {
     out[`whyLine-${i}`] = line;
