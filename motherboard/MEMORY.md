@@ -28275,3 +28275,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked manifest test picker to **store/save previous chosen selections** across reloads.
 - **Shipped:** **`hairstyleAnalysisManifestStorage.ts`** — localStorage key **`hairstyle_analysis_manifest_test`**; per-tier **`topMatch`** + **`additionalLooks`**; persists **manifest test mode** checkbox. **`HairstyleAnalysisPreview`** loads on mount, saves on change, loads saved tier on tier switch (defaults only when no save); **Reset manifest defaults** clears tier storage. Picker copy notes browser save.
 - **Conventions:** Admin manifest picks persist **per analysis tier** in localStorage — same pattern as overlay layout debug.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: server EDM rose + client face restore
+
+- **Context:** Full chat arc: prompt-too-long (32k), 9X6 closure category, **FUNCTION_INVOCATION_FAILED** (duplicate **`faceIdentityLockBlock`**), manifest picker persistence, then repeated Fal regressions — **EDM roses still colored in / wrong icons**, **client face still not the submitted selfie** (similar-looking person), despite prompt-only face/EDM strengthen.
+- **Cause:** GPT Image 2 ignores prompt-only EDM/face rules when styling/hairline mannequin IMAGEs are attached; roses and face need **server enforcement** after Fal.
+- **Shipped (8e528caf):** **`hairstyleAnalysisTemplateRestore.ts`** + **`edmRoseIconSlots()`** — paste template rose patches over Fal output in EDM column (52% left, rows 74.5% + i×2.5%). **`hairstyleAnalysisClientFaceRestore.ts`** — retain submitted client buffer; soft elliptical mask overlays real face core onto Fal client panel (hair outside mask keeps Fal edits). **`hairstyleAnalysisFalComposite.ts`** — post-process order: restore roses → face restore → optional fade → mirror reflection. **`hairstyleAnalysisFal.ts`** — **`hairstyleAnalysisFalHairlineImageRefs()`** default **off**; **`hairstyleAnalysisFalMinimalImageRefs()`** default **on** (template + client only). Env: **`HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS`**, **`HAIRSTYLE_ANALYSIS_CLIENT_FACE_RESTORE=false`** to disable face paste. **`.env.example`** updated. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** EDM roses = **template paste**, not prompt hope; client identity = **server face restore from upload**; mannequin hairline/styling IMAGEs **opt-in only** — defaults minimize ref faces sent to Fal.
