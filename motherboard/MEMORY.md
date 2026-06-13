@@ -28301,3 +28301,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Documented architecture (`HAIRSTYLE_ANALYSIS_TEMPLATES.md`) was never wired — should **hair-edit selfie first**, then populate template; one-pass sent raw selfie as IMAGE 2 alongside mannequin ref faces.
 - **Shipped (24448119):** **Step 1** — **`buildClientPreviewHairOnlyPrompt`** + Fal GPT2 on **selfie only** (3:4 `1536×2048`, identity lock, hair-only). **Step 2** — template pass uses hair-edited client as IMAGE 2; **`preEditedClientPanelBlock`** tells Fal to place main preview without repainting face/hair. Defaults: **`hairstyleAnalysisClientPreviewStepEnabled()`** on; **`hairstyleAnalysisFalMinimalImageRefs()`** on (template + client only); **`hairstyleAnalysisFalHairlineImageRefs()`** off (text guide only). Env: **`HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_STEP=false`**, **`HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false`**, **`HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS=true`**. EDM rose restore unchanged.
 - **Conventions:** Client identity = upstream **hair-only** Fal on raw selfie, then template fill — not one-pass full edit; no server face paste.
+
+---
+
+## 2026-06-13 — Specs-locked footer black (not gray)
+
+- **Context:** User asked to change gray **"YOUR BUILD SPECS ARE LOCKED IN PLACE."** to **black** on free-tier hairstyle analysis cards.
+- **Shipped (752901f4):** Fal **`freeTierPanelFooterBlock()`** — specs-locked line **black #1a1a1a**; EDM build ribbon stays gray **#808080**. Dev overlay **`topMatchPanelFooterText`** CSS; **`edmBuildSummary`** unchanged gray. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Free tier **topMatchSummary** = black Futura; **edmBuildSummary** ribbon = gray Futura.
