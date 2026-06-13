@@ -75,6 +75,12 @@ function threeMonthFields(): TemplateFieldDef[] {
     { id: 'topScore', label: 'Overall score', kind: 'text', slot: TOP_SCORE },
     { id: 'rating', label: 'Star rating', kind: 'text', slot: RATING },
     ...specFields(),
+    ...[0, 1, 2, 3, 4].map((i) => ({
+      id: `whyLine-${i}`,
+      label: `Why ${i + 1}`,
+      kind: 'text' as const,
+      slot: whyLine(74.5 + i * 2.5),
+    })),
   ];
 
   const matchTops = [48.0, 60.5, 73.0];
