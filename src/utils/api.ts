@@ -2170,6 +2170,9 @@ export async function postHairstyleAnalysisGenerate(
   options?: {
     slotOverrides?: Record<string, unknown>;
     fontOverrides?: Record<string, unknown>;
+    /** Admin manifest test — exact specs, no server diversity shuffle. */
+    skipLookDiversification?: boolean;
+    manifestTestMode?: boolean;
   }
 ): Promise<HairstyleAnalysisGenerateResult> {
   let res: Response;
@@ -2180,6 +2183,8 @@ export async function postHairstyleAnalysisGenerate(
         analysis,
         slotOverrides: options?.slotOverrides,
         fontOverrides: options?.fontOverrides,
+        skipLookDiversification: options?.skipLookDiversification,
+        manifestTestMode: options?.manifestTestMode,
       },
     });
   } catch (e) {

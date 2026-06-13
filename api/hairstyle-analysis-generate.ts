@@ -147,6 +147,11 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
     siteOrigin: '',
     layoutOverrides,
     fontOverrides,
+    skipLookDiversification:
+      body.skipLookDiversification === true ||
+      body.manifestTestMode === true ||
+      src.skipLookDiversification === true ||
+      src.manifestTestMode === true,
   };
 }
 
@@ -220,6 +225,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   parsed.siteOrigin = siteOriginFromRequest(req);
+  if (!isAdmin) {
+    parsed.skipLookDiversification = false;
+  }
 
   try {
     const result = await generateHairstyleAnalysisWithFal(parsed);

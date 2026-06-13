@@ -31,6 +31,16 @@ import {
 } from '../../utils/hairstyleAnalysisEveryDetailMatters';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
+import ManifestSpecPicker, {
+  defaultAdditionalManifests,
+  defaultTopMatchManifest,
+} from './ManifestSpecPicker';
+import {
+  buildAnalysisFromManifest,
+  lookToManifestDraft,
+} from '../../utils/hairstyleAnalysisManifestBuild';
+import type { ManifestLookDraft } from '../../utils/hairstyleAnalysisManifestOptions';
+import { additionalLooksLimit } from '../../utils/hairstyleAnalysisRules';
 
 type HairstyleAnalysisPreviewProps = {
   analysis: HairstyleAnalysis;
@@ -126,6 +136,15 @@ export default function HairstyleAnalysisPreview({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [usageState, setUsageState] = useState<HairstyleAnalysisUsageResult | null>(null);
   const [usageLoading, setUsageLoading] = useState(true);
+  const [manifestTestMode, setManifestTestMode] = useState(false);
+  const [topManifest, setTopManifest] = useState<ManifestLookDraft>(() =>
+    lookToManifestDraft(analysis.topMatch)
+  );
+  const [altManifests, setAltManifests] = useState<ManifestLookDraft[]>(() =>
+    analysis.additionalLooks.length > 0
+      ? analysis.additionalLooks.map(lookToManifestDraft)
+      : defaultAdditionalManifests()
+  );
 
   const isAdmin = useMemo(() => {
     const user = getCurrentUser();
@@ -154,16 +173,36 @@ export default function HairstyleAnalysisPreview({
   }, [isAdmin, onTierChange]);
 
   const resolvedAnalysis = useMemo(() => {
-    if (!clientPreviewUrl) return analysis;
+    const previewUrl = clientPreviewUrl ?? analysis.clientPreviewUrl;
+    const base =
+      manifestTestMode && isAdmin
+        ? buildAnalysisFromManifest({
+            tier: analysis.tier,
+            clientPreviewUrl: previewUrl,
+            clientName: analysis.clientName,
+            topMatch: topManifest,
+            additionalLooks: altManifests,
+            everyDetailFaceFeatures: analysis.everyDetailFaceFeatures,
+          })
+        : analysis;
+
+    if (!clientPreviewUrl) return base;
     return {
-      ...analysis,
+      ...base,
       clientPreviewUrl,
       topMatch: {
-        ...analysis.topMatch,
-        imageUrl: analysis.topMatch.imageUrl ?? clientPreviewUrl,
+        ...base.topMatch,
+        imageUrl: base.topMatch.imageUrl ?? clientPreviewUrl,
       },
     };
-  }, [analysis, clientPreviewUrl]);
+  }, [
+    altManifests,
+    analysis,
+    clientPreviewUrl,
+    isAdmin,
+    manifestTestMode,
+    topManifest,
+  ]);
 
   const validationIssues = useMemo(
     () => validateHairstyleAnalysis(resolvedAnalysis),
@@ -179,6 +218,26 @@ export default function HairstyleAnalysisPreview({
         .map((field) => field.id),
     [analysis.tier]
   );
+
+  useEffect(() => {
+    if (manifestTestMode && isAdmin) return;
+    setTopManifest(lookToManifestDraft(analysis.topMatch));
+    setAltManifests(
+      analysis.additionalLooks.length > 0
+        ? analysis.additionalLooks.map(lookToManifestDraft)
+        : defaultAdditionalManifests()
+    );
+  }, [analysis, isAdmin, manifestTestMode]);
+
+  useEffect(() => {
+    if (!manifestTestMode || !isAdmin) return;
+    setAltManifests((prev) => {
+      const limit = additionalLooksLimit(analysis.tier);
+      if (prev.length >= limit) return prev.slice(0, limit);
+      const defaults = defaultAdditionalManifests();
+      return [...prev, ...defaults.slice(prev.length, limit)];
+    });
+  }, [analysis.tier, isAdmin, manifestTestMode]);
 
   useEffect(() => {
     const saved = loadHairstyleAnalysisTierDebug(analysis.tier);
@@ -269,12 +328,11 @@ export default function HairstyleAnalysisPreview({
       };
       const result = await postHairstyleAnalysisGenerate(
         analysisForGenerate as unknown as Record<string, unknown>,
-        hasLayoutOverrides || hasFontOverrides
-          ? {
-              slotOverrides: hasLayoutOverrides ? slotOverrides : undefined,
-              fontOverrides: hasFontOverrides ? fontOverrides : undefined,
-            }
-          : undefined
+        {
+          slotOverrides: hasLayoutOverrides ? slotOverrides : undefined,
+          fontOverrides: hasFontOverrides ? fontOverrides : undefined,
+          manifestTestMode: manifestTestMode && isAdmin ? true : undefined,
+        }
       );
       setGenerateProgress(1);
       setGeneratedUrl(result.imageUrl);
@@ -302,7 +360,7 @@ export default function HairstyleAnalysisPreview({
     } finally {
       setGenerating(false);
     }
-  }, [fontOverrides, isAdmin, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
+  }, [fontOverrides, isAdmin, manifestTestMode, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({
@@ -440,6 +498,47 @@ export default function HairstyleAnalysisPreview({
           <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080]">
             Your card tier: {usageState.analysisTier.replace(/_/g, ' ')}
           </p>
+        ) : null}
+
+        {isAdmin ? (
+          <div className="flex flex-col gap-3 border border-black/15 p-3">
+            <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
+              <input
+                type="checkbox"
+                checked={manifestTestMode}
+                onChange={(e) => setManifestTestMode(e.target.checked)}
+                disabled={generating}
+              />
+              Use manifest test picker (exact specs — no shuffle)
+            </label>
+            {manifestTestMode ? (
+              <ManifestSpecPicker
+                tier={analysis.tier}
+                topMatch={topManifest}
+                additionalLooks={altManifests}
+                onTopMatchChange={(draft) => {
+                  setTopManifest(draft);
+                  setGeneratedUrl(null);
+                  setLastPrompt(null);
+                }}
+                onAdditionalLookChange={(index, draft) => {
+                  setAltManifests((prev) => {
+                    const next = [...prev];
+                    next[index] = draft;
+                    return next;
+                  });
+                  setGeneratedUrl(null);
+                  setLastPrompt(null);
+                }}
+                onResetDefaults={() => {
+                  setTopManifest(defaultTopMatchManifest());
+                  setAltManifests(defaultAdditionalManifests());
+                  setGeneratedUrl(null);
+                  setLastPrompt(null);
+                }}
+              />
+            ) : null}
+          </div>
         ) : null}
 
         {onClientPreviewUrlChange ? (

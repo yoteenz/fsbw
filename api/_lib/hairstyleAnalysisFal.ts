@@ -252,6 +252,8 @@ export type GenerateHairstyleAnalysisFalInput = {
   siteOrigin: string;
   layoutOverrides?: CompositeLayoutOverrides;
   fontOverrides?: HairstyleAnalysisFontOverrides;
+  /** Admin manifest test — do not shuffle units/colors/lengths on generate. */
+  skipLookDiversification?: boolean;
 };
 
 export type GenerateHairstyleAnalysisFalResult = {
@@ -282,7 +284,9 @@ export async function generateHairstyleAnalysisWithFal(
     'client-preview'
   );
 
-  const analysis = normalizeHairstyleAnalysisForFal(input.analysis);
+  const analysis = normalizeHairstyleAnalysisForFal(input.analysis, {
+    skipDiversification: input.skipLookDiversification === true,
+  });
   const minimalRefs = hairstyleAnalysisFalMinimalImageRefs();
   const includeMannequins = hairstyleAnalysisFalMannequinImageRefs();
   const mannequinRefs = includeMannequins

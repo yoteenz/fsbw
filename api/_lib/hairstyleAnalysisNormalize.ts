@@ -23,13 +23,21 @@ function normalizeTier(tier: FalHairstyleAnalysis['tier']): FalHairstyleAnalysis
 }
 
 /** Ensure catalog hex codes and varied match scores before Fal generation. */
-export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis): FalHairstyleAnalysis {
+export function normalizeHairstyleAnalysisForFal(
+  analysis: FalHairstyleAnalysis,
+  options?: { skipDiversification?: boolean }
+): FalHairstyleAnalysis {
   const tierKey = normalizeTier(analysis.tier);
   const withScores = applyRealisticMatchScores(analysis);
-  const diversified = diversifyHairstyleAnalysisLooks(
-    withScores.topMatch,
-    tierKey === 'free' ? [] : withScores.additionalLooks
-  );
+  const diversified = options?.skipDiversification
+    ? {
+        topMatch: withScores.topMatch,
+        additionalLooks: tierKey === 'free' ? [] : withScores.additionalLooks,
+      }
+    : diversifyHairstyleAnalysisLooks(
+        withScores.topMatch,
+        tierKey === 'free' ? [] : withScores.additionalLooks
+      );
 
   const top = normalizeLookStyling(
     {
