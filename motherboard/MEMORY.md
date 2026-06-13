@@ -28124,3 +28124,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said **"NOIR THAT MOVES LIKE REAL HAIR"** is not coherent — should read like **"EXTENSIONS THAT MOVE LIKE REAL HAIR"** while still naming the catalog texture.
 - **Shipped:** Texture/style pools use **`${unit} TEXTURE, EXTENSIONS THAT…`** comma pattern (like PDP signature features); **`unitTextureKind()`** for straight/loose wave/tight curl labels; removed unit-as-subject lines that imply NOIR itself "moves" or "wears".
 - **Conventions:** Texture row = unit + TEXTURE + human noun (extensions/raw hair); movement/wear benefits attach to **EXTENSIONS**, not the unit name alone.
+
+---
+
+## 2026-06-13 — EDM texture: straight / wavy / curly (no unit names)
+
+- **Context:** User said EDM rows still sounded automated when catalog unit names appeared (NOIR, BEACH WAVE, etc.) — wanted plain hair-pattern words instead, e.g. **STRAIGHT TEXTURE FOR A CLEAN FINISH**.
+- **Shipped:** **`hairPatternLabel()`** in **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) maps units → **STRAIGHT** (NOIR, BLANCO), **WAVY** (SOFT WAVE, BEACH WAVE), **CURLY** (SOFT CURL, OCEAN CURL). Texture rows use pattern + TEXTURE phrasing; generic extension lines kept (**EXTENSIONS THAT MOVE LIKE REAL HAIR**). STYLE **NONE** rows have no unit names.
+- **Conventions:** EDM rose copy never prints catalog unit names; describe texture as **straight / wavy / curly** only.
