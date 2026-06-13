@@ -1,5 +1,8 @@
 import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
-import { resolveClientPhotoFadeSlotOrDefault } from './hairstyleAnalysisCompositeLayout.js';
+import {
+  resolveClientImageSlotOrDefault,
+  resolveClientPhotoFadeSlotOrDefault,
+} from './hairstyleAnalysisCompositeLayout.js';
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
 
 type FalClient = {
@@ -29,5 +32,6 @@ export async function compositeHairstyleAnalysisPostProcess(
   ]);
 
   const fadeRect = resolveClientPhotoFadeSlotOrDefault(layoutOverrides);
-  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, fal);
+  const panelRect = resolveClientImageSlotOrDefault(layoutOverrides);
+  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, panelRect, fal);
 }
