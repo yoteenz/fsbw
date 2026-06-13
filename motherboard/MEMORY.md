@@ -27842,3 +27842,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Why it happened:** **No code/CSS regression** — gray **`#808080`** is still specified in **`HairstyleAnalysisCard.module.css`**, **`hairstyleAnalysisLayoutSlots.ts`** (`fill: '#808080'`), and Fal prompts. **Generated cards** paint MATCH 02–04 text **in-image via Fal** (server post-process = client-photo fade only). Fal prompt repeatedly says row values = **black Futura PT Medium**; the gray exception for MATCH SCORE % was buried and often ignored — model paints all four row fields black. Earlier pipeline **server-composited** match scores at exact slots with hardcoded gray; that was removed so Fal fills rows in-template (better alignment), losing deterministic color enforcement.
 - **Shipped (bf6c5219):** **`matchRowScoreColorBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — dedicated CRITICAL block (NEVER black/red/script on MATCH SCORE %); **`matchScoreFalLine`** labels black vs gray per field; manifest splits score onto its own line; FINAL CHECK repaints black scores gray.
 - **Conventions:** MATCH SCORE % on additional-match rows = **gray #808080 only**; TEXTURE/COLOR/LENGTH = black; OVERALL SCORE panel = red script — three distinct color systems.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: smaller overall score % and MATCH RATING stars
+
+- **Context:** User asked to **tighten the Fal prompt** so generated **MATCH RATING stars** and **overall score %** render **smaller** in their value panels.
+- **Shipped (fe20e581):** **`overallScoreFalFontSize()`** reduced (~22% slot height, max 36px, min 16px — was ~34%/52px). New **`matchRatingFalStarSize()`** (~17% slot height, max 26px, min 14px — was ~24%/36px). **`hairstyleAnalysisFalPrompt.ts`** — stronger **petite / wide padding / never billboard** language in score + star design blocks, size rules, and per-line Fal instructions. **`docs/STYLE_ANALYSIS.md`** updated.
+- **Conventions:** OVERALL SCORE + stars = small, understated, generous inner padding — must not dominate or touch panel borders.
