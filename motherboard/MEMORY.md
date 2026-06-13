@@ -28309,3 +28309,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to change gray **"YOUR BUILD SPECS ARE LOCKED IN PLACE."** to **black** on free-tier hairstyle analysis cards.
 - **Shipped (752901f4):** Fal **`freeTierPanelFooterBlock()`** — specs-locked line **black #1a1a1a**; EDM build ribbon stays gray **#808080**. Dev overlay **`topMatchPanelFooterText`** CSS; **`edmBuildSummary`** unchanged gray. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Free tier **topMatchSummary** = black Futura; **edmBuildSummary** ribbon = gray Futura.
+
+---
+
+## 2026-06-13 — Restore BUILD THIS LOOK button (EDM ribbon overlap fix)
+
+- **Context:** User reported panel footer work was implemented wrong — it **replaced** the **BUILD THIS LOOK** button; asked to restore button position and the button itself.
+- **Cause:** Free-tier **`edmBuildSummary`** overlay slot was at **88.5%** — same vertical band as the pre-rendered **BUILD THIS LOOK** CTA on Supabase **IMG_2554** (~88.8–90%). Fal was also instructed to print the gray build ribbon at "panel bottom," covering the template button.
+- **Shipped (79d87c60):** Moved **`EDM_PANEL_FOOTER`** to **85.5%** (below last EDM row, above CTA). Fal **`panelChromePreservationBlock()`** + **`freeTierPanelFooterBlock()`** + **`freePromptFooter`** now preserve **BUILD THIS LOOK** and place build ribbon only in the empty band above it. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** **BUILD THIS LOOK** = baked template chrome — never overlay or Fal-print on it; EDM build ribbon sits between last rose row and that CTA.
