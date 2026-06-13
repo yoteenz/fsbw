@@ -40,6 +40,14 @@ import {
   lookToManifestDraft,
 } from '../../utils/hairstyleAnalysisManifestBuild';
 import type { ManifestLookDraft } from '../../utils/hairstyleAnalysisManifestOptions';
+import {
+  clearManifestForTier,
+  initialManifestDrafts,
+  loadManifestForTier,
+  loadManifestTestModeEnabled,
+  saveManifestForTier,
+  saveManifestTestModeEnabled,
+} from '../../utils/hairstyleAnalysisManifestStorage';
 import { additionalLooksLimit } from '../../utils/hairstyleAnalysisRules';
 
 type HairstyleAnalysisPreviewProps = {
@@ -136,15 +144,29 @@ export default function HairstyleAnalysisPreview({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [usageState, setUsageState] = useState<HairstyleAnalysisUsageResult | null>(null);
   const [usageLoading, setUsageLoading] = useState(true);
-  const [manifestTestMode, setManifestTestMode] = useState(false);
-  const [topManifest, setTopManifest] = useState<ManifestLookDraft>(() =>
-    lookToManifestDraft(analysis.topMatch)
-  );
-  const [altManifests, setAltManifests] = useState<ManifestLookDraft[]>(() =>
-    analysis.additionalLooks.length > 0
-      ? analysis.additionalLooks.map(lookToManifestDraft)
-      : defaultAdditionalManifests()
-  );
+  const manifestTierRef = useRef(analysis.tier);
+
+  const [manifestTestMode, setManifestTestMode] = useState(() => loadManifestTestModeEnabled());
+  const [topManifest, setTopManifest] = useState<ManifestLookDraft>(() => {
+    const initial = initialManifestDrafts(
+      analysis.tier,
+      lookToManifestDraft(analysis.topMatch),
+      analysis.additionalLooks.length > 0
+        ? analysis.additionalLooks.map(lookToManifestDraft)
+        : defaultAdditionalManifests()
+    );
+    return initial.topMatch;
+  });
+  const [altManifests, setAltManifests] = useState<ManifestLookDraft[]>(() => {
+    const initial = initialManifestDrafts(
+      analysis.tier,
+      lookToManifestDraft(analysis.topMatch),
+      analysis.additionalLooks.length > 0
+        ? analysis.additionalLooks.map(lookToManifestDraft)
+        : defaultAdditionalManifests()
+    );
+    return initial.additionalLooks;
+  });
 
   const isAdmin = useMemo(() => {
     const user = getCurrentUser();
@@ -221,23 +243,39 @@ export default function HairstyleAnalysisPreview({
 
   useEffect(() => {
     if (manifestTestMode && isAdmin) return;
-    setTopManifest(lookToManifestDraft(analysis.topMatch));
-    setAltManifests(
+    const initial = initialManifestDrafts(
+      analysis.tier,
+      lookToManifestDraft(analysis.topMatch),
       analysis.additionalLooks.length > 0
         ? analysis.additionalLooks.map(lookToManifestDraft)
         : defaultAdditionalManifests()
     );
+    setTopManifest(initial.topMatch);
+    setAltManifests(initial.additionalLooks);
   }, [analysis, isAdmin, manifestTestMode]);
 
   useEffect(() => {
     if (!manifestTestMode || !isAdmin) return;
-    setAltManifests((prev) => {
-      const limit = additionalLooksLimit(analysis.tier);
-      if (prev.length >= limit) return prev.slice(0, limit);
-      const defaults = defaultAdditionalManifests();
-      return [...prev, ...defaults.slice(prev.length, limit)];
-    });
+    if (manifestTierRef.current === analysis.tier) return;
+    manifestTierRef.current = analysis.tier;
+    const saved = loadManifestForTier(analysis.tier);
+    if (saved) {
+      setTopManifest(saved.topMatch);
+      setAltManifests(saved.additionalLooks);
+      return;
+    }
+    const limit = additionalLooksLimit(analysis.tier);
+    setTopManifest(defaultTopMatchManifest());
+    setAltManifests(defaultAdditionalManifests().slice(0, limit));
   }, [analysis.tier, isAdmin, manifestTestMode]);
+
+  useEffect(() => {
+    if (!manifestTestMode || !isAdmin) return;
+    saveManifestForTier(analysis.tier, {
+      topMatch: topManifest,
+      additionalLooks: altManifests,
+    });
+  }, [altManifests, analysis.tier, isAdmin, manifestTestMode, topManifest]);
 
   useEffect(() => {
     const saved = loadHairstyleAnalysisTierDebug(analysis.tier);
@@ -506,7 +544,11 @@ export default function HairstyleAnalysisPreview({
               <input
                 type="checkbox"
                 checked={manifestTestMode}
-                onChange={(e) => setManifestTestMode(e.target.checked)}
+                onChange={(e) => {
+                  const enabled = e.target.checked;
+                  setManifestTestMode(enabled);
+                  saveManifestTestModeEnabled(enabled);
+                }}
                 disabled={generating}
               />
               Use manifest test picker (exact specs — no shuffle)
@@ -531,8 +573,10 @@ export default function HairstyleAnalysisPreview({
                   setLastPrompt(null);
                 }}
                 onResetDefaults={() => {
+                  clearManifestForTier(analysis.tier);
+                  const limit = additionalLooksLimit(analysis.tier);
                   setTopManifest(defaultTopMatchManifest());
-                  setAltManifests(defaultAdditionalManifests());
+                  setAltManifests(defaultAdditionalManifests().slice(0, limit));
                   setGeneratedUrl(null);
                   setLastPrompt(null);
                 }}

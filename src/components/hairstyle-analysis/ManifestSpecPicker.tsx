@@ -139,7 +139,7 @@ export default function ManifestSpecPicker({
         </h2>
         <p className="text-[8px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
           Choose exact TOP MATCH specs by category. Generate sends this manifest verbatim (no diversity
-          shuffle). Premium tiers can edit MATCH 02–04 below.
+          shuffle). Premium tiers can edit MATCH 02–04 below. Selections are saved per tier in this browser.
         </p>
       </div>
 
