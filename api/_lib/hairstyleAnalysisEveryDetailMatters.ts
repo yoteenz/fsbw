@@ -14,9 +14,6 @@ import {
 export type EveryDetailMattersFaceFeatures = {
   faceShape?: string;
   eyeDescriptor?: string;
-  jawline?: string;
-  faceLength?: string;
-  forehead?: string;
 };
 
 export type EveryDetailMattersLook = {
@@ -31,11 +28,8 @@ export type EveryDetailMattersLook = {
 };
 
 const DEFAULT_FACE: Required<EveryDetailMattersFaceFeatures> = {
-  faceShape: 'FACE SHAPE',
+  faceShape: 'FEATURES',
   eyeDescriptor: 'ALMOND',
-  jawline: 'JAWLINE',
-  faceLength: 'FACE LENGTH',
-  forehead: 'FOREHEAD',
 };
 
 type SpecKey = 'lace' | 'color' | 'texture' | 'style' | 'length' | 'density' | 'part' | 'hairline';
@@ -70,14 +64,14 @@ function lineForSpec(
       return `${unit} TO FRAME YOUR ${face.faceShape}`;
     case 'style':
       return style === 'NONE'
-        ? `${unit} TO SOFTEN YOUR ${face.jawline}`
-        : `${style} TO DEFINE YOUR ${face.jawline}`;
+        ? `${unit} TO COMPLEMENT YOUR ${face.faceShape}`
+        : `${style} TO ENHANCE YOUR JAWLINE`;
     case 'length':
-      return `${length} TO BALANCE YOUR ${face.faceLength}`;
+      return `${length} FOR A FLATTERING MID-CHEST FALL`;
     case 'density':
-      return `${density} DENSITY FOR YOUR ${face.faceShape} PROPORTIONS`;
+      return `${density} DENSITY FOR BALANCED FULLNESS`;
     case 'part':
-      return `${part} PART TO OPEN YOUR ${face.forehead}`;
+      return `${part} PART TO FRAME YOUR FEATURES`;
     case 'hairline':
       return `${hairline} HAIRLINE FOR A SEAMLESS LACE BLEND`;
     default:

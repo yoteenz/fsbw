@@ -27793,3 +27793,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Prior compaction changed demo to **feature — spec** dash lines (`HEART FACE — NOIR…`) instead of spec-led stylist notes tied to catalog values.
 - **Shipped:** **`buildEveryDetailMattersFromTopMatch()`** in **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — five rows map to **lace, color, texture (unit), style, length** + client face features. **`normalizeHairstyleAnalysisForFal`** always rebuilds **`whyItWorks`** from resolved top match. Demo uses **`KATEENA_DEMO_FACE_FEATURES`**. **`compactEveryDetailMattersLine`** strips trailing **`.`**. Fal prompt examples updated to spec-led phrasing.
 - **Conventions:** Every detail matters = one TOP MATCH spec per row, **FOR/TO** benefit copy, no period at end, ≤68 chars, verbatim in Fal.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: flattering every-detail-matters tone
+
+- **Context:** User said do not call the client's face **long** — insulting; keep bullets **flattering and respectful**.
+- **Shipped:** **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — length row → **`{LENGTH} FOR A FLATTERING MID-CHEST FALL`** (no long-face label); style → **ENHANCE YOUR JAWLINE**; part → **FRAME YOUR FEATURES**; removed **LONG FACE**, **HIGH FOREHEAD**, **SHARP JAWLINE** from demo face features. **`hairstyleAnalysisFalPrompt.ts`** — respectful tone rule + forbidden phrases (long face, wide face, narrow chin, high forehead).
+- **Conventions:** Every detail matters celebrates features — never criticize face length, width, forehead, or chin.

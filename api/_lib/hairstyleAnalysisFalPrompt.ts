@@ -325,6 +325,7 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
     'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium beside its rose icon.',
     'FORBIDDEN: multi-clause essays, label:value rows, keyword lists, line wraps, or a different number of lines.',
     'This is NOT motivational copy — do not rewrite into empowerment fluff.',
+    'Tone: flattering and respectful only — celebrate features; never call the face long, wide, narrow, or criticize forehead, chin, or proportions.',
   ].join('\n');
 }
 
@@ -342,6 +343,11 @@ const EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES = [
   'unstoppable',
   'shine',
   'flawless',
+  'long face',
+  'wide face',
+  'narrow chin',
+  'high forehead',
+  'big forehead',
 ].join(', ');
 
 function everyDetailMattersRulesBlock(lineCount: number): string {
