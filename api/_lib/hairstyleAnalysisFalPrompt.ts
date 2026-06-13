@@ -365,7 +365,7 @@ function clientPoseLockBlock(): string {
   ].join('\n');
 }
 
-function faceIdentityLockBlock(): string {
+function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
