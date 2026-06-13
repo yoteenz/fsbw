@@ -27728,3 +27728,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said the **client name** (black header above OVERALL SCORE / MATCH RATING) should be **centered within the panel**, not left-aligned.
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **`topMatchHeaderLine()`** + free/premium FINAL CHECK: center name horizontally in frosted header panel, equal left/right padding, forbid left-align. **`HairstyleAnalysisCard`** — **`clientHeaderNameText`** (`text-align: center`) + **`clientHeaderSlot`** (`justify-content: center`) on **`clientHeaderName`** debug overlay slot.
 - **Conventions:** Client header name = centered in panel above score boxes; red pill stays **TOP MATCH** only (name does not go in pill).
+
+---
+
+## 2026-06-13 — Hairstyle analysis: diversify TOP MATCH / spec picks
+
+- **Context:** User said **TOP MATCH specs** kept showing **NOIR 24" 250% FLAT IRON and/or LAYERS** on every generate — needs to be **more dynamic and diverse** (not the same two styles/units repeatedly).
+- **Cause:** Generic NOIR/JET BLACK/24"/250% defaults in API parse + PSA example; **`NONE` styling** coerced to pattern default (**FLAT IRON** straight, **LAYERS** wavy) for every look; no dedup across picks; Fal template placeholders (NOIR/LAYERS) when manifest looked generic.
+- **Shipped:** **`hairstyleAnalysisLookDiversity.ts`** (api + src) — **`diversifyHairstyleAnalysisLooks()`** rotates unique units, salon styles, lengths (22–30"), and neutral/blonde/vivid colors when picks are homogeneous or top is generic NOIR stack. **`normalizeHairstyleAnalysisForFal`** applies before catalog resolve. **`resolveCatalogLookForFal` / `resolveCatalogLook`** — **`styleIndex`** rotates valid salon STYLE ids instead of always first default. **`psaSelfieStyleAnalysis.ts`** — diversity rules + non-NOIR JSON example. **`hairstyleAnalysisFalPrompt.ts`** — manifest-only TOP MATCH; distinct unit+style per additional match. Demo + **`buildHairstyleAnalysisFromPsaPicks`** wire diversity.
+- **Conventions:** Each card = unique units across looks when possible; varied STYLE per match; generic NOIR 24" 250% FLAT IRON top triggers rotation; Fal prints manifest values not template placeholders.
