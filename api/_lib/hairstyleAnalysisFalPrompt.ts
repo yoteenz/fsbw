@@ -547,9 +547,9 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
 function freeTierPanelFooterBlock(top: FalAnalysisLook): string {
   const edmSummary = formatEdmPanelBuildSummary(top.unit, top.color, top.length);
   return [
-    '=== FREE TIER — PANEL FOOTERS (CENTERED RED) ===',
-    `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium red ${BRAND_RED}, uppercase, centered.`,
-    `EVERY DETAIL MATTERS panel bottom (centered below rose rows): print **${edmSummary}** — Futura PT Medium red ${BRAND_RED}, uppercase, centered. Middle-dot separators only (UNIT · XX" · COLOR).`,
+    '=== FREE TIER — PANEL FOOTERS (CENTERED GRAY) ===',
+    `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium gray ${MATCH_SCORE_GRAY}, uppercase, centered.`,
+    `EVERY DETAIL MATTERS panel bottom (centered below rose rows): print **${edmSummary}** — Futura PT Medium gray ${MATCH_SCORE_GRAY}, uppercase, centered. Middle-dot separators only (UNIT · XX" · COLOR).`,
     'Panel footers are separate from rose rows and spec values — do not merge into EDM bullets.',
   ].join('\n');
 }
@@ -664,7 +664,7 @@ function buildTemplateRules(
     ...(tierKey === 'free'
       ? [
           'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
-          'TOP MATCH + every-detail-matters panel footers: centered red Futura PT Medium.',
+          'TOP MATCH + every-detail-matters panel footers: centered gray Futura PT Medium.',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
         ]
       : []),
@@ -738,7 +738,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; centered red panel footers (specs locked + build ribbon); OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
+    'TOP MATCH specs + every detail matters filled; centered gray panel footers (specs locked + build ribbon); OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
     rootCheck,
