@@ -321,6 +321,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
   const style = displayStyle(look.styling, look.unit);
   return [
     '=== TOP MATCH HAIR (IMAGE 2) ===',
+    'FACE LOCK: exact IMAGE 2 face and skin — change hair strands only.',
     oneShoulderDrapeCompactLock(),
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
@@ -333,24 +334,39 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     .join('\n');
 }
 
-function sharedClientPhotoRulesBlock(refs: FalPromptImageRefs): string {
+function sharedClientPhotoRulesBlock(): string {
+  return clientPhotoPanelRulesBlock();
+}
+
+/** Face, pose, baby-hair, and drape locks — placed early in template rules so Fal obeys them before catalog refs. */
+function criticalClientPhotoLocksBlock(refs: FalPromptImageRefs): string {
   return [
-    asymmetricOneShoulderDrapeBlock('all_photos', refs.mannequinRefs.length > 0),
     faceIdentityLockBlock(),
     clientPoseLockBlock(),
-    clientPhotoPanelRulesBlock(),
-    'Recolor hair to catalog color/texture at strand level — face and skin untouched.',
     noInventedBabyHairsBlock(),
+    asymmetricOneShoulderDrapeBlock('all_photos', refs.mannequinRefs.length > 0),
   ].join('\n\n');
+}
+
+function roseIconAndEdmPreservationBlock(): string {
+  return [
+    '=== EVERY DETAIL MATTERS — ROSE ICONS (CRITICAL) ===',
+    'The "every detail matters" panel has **pre-rendered red rose outline icons** to the left of each text row — baked into IMAGE 1.',
+    'ONLY print black uppercase text in the empty slot **to the right** of each existing rose — **never** redraw, replace, move, or cover the roses.',
+    'FORBIDDEN beside EDM rows: sparkle icons, star icons, checkmarks, brain/AI icons, generic bullets, or "AI powered analysis" style icons.',
+    'FORBIDDEN: inventing new bullet icons or swapping roses for any other icon type.',
+    'The script "every detail matters" header is pre-rendered art — leave it untouched.',
+  ].join('\n');
 }
 
 function faceIdentityLockBlock(): string {
   return [
-    '=== FACE IDENTITY LOCK (CRITICAL — ALL CLIENT PHOTOS) ===',
-    'COPY the client\'s EXACT face from IMAGE 2 — same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
-    'Facial skin pixels must match IMAGE 2 — do NOT regenerate, repaint, beautify, smooth, slim, or alter the face in any way.',
-    'Hair edits apply ONLY inside the hair region (strands above the forehead/temples and below the crown) — never on facial skin.',
-    'FORBIDDEN: face swap, different person, AI beauty filter, plastic skin, changed ethnicity, new makeup, or shrinking the face to reduce hair volume.',
+    '=== FACE IDENTITY LOCK (HIGHEST PRIORITY — ALL CLIENT PHOTOS) ===',
+    'IMAGE 2 is the real client selfie — TOP MATCH portrait + every MATCH thumbnail must show **that exact same person**.',
+    'COPY IMAGE 2 face pixels exactly — same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
+    'Hair edits apply ONLY in the hair region — never regenerate, repaint, beautify, smooth, slim, or alter facial skin.',
+    'Mannequin, styling, and hairline reference IMAGEs = **hair geometry only** — their faces/necks/skin must **never** appear on the client.',
+    'FORBIDDEN: face swap, different person, AI beauty filter, plastic skin, new makeup, or shrinking the face for hair volume.',
   ].join('\n');
 }
 
@@ -375,17 +391,19 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const root = needsUniformRootRepaint(color, look.unit)
     ? `${color} uniform root-tip; no baby hairs`
     : color;
-  return `${label} THUMB: IMAGE 2 face+pose; ${look.unit} ${root} ${displayLength(look.length)}; STYLE ${style} PART ${part} (${refNote}); ${displayDensity(look.density)}; ${hl}; ${oneShoulderDrapeCompactLock()}`;
+  return `${label} THUMB: **same IMAGE 2 face** + pose; ${look.unit} ${root} ${displayLength(look.length)}; STYLE ${style} PART ${part} (${refNote}); ${displayDensity(look.density)}; ${hl}; ${oneShoulderDrapeCompactLock()}; no baby hairs on skin.`;
 }
 
 function everyDetailMattersRulesBlock(lineCount: number): string {
   const rowGuide = everyDetailMattersRowGuide(lineCount).join('; ');
   return [
+    roseIconAndEdmPreservationBlock(),
+    '',
     '=== EVERY DETAIL MATTERS — PRINT VERBATIM ===',
-    `Fill ${lineCount} rose rows — one short line each (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars, no period/dash).`,
+    `Fill ${lineCount} rose rows — one short black text line each to the **right** of the existing rose icon (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars, no period/dash).`,
     `Row map: ${rowGuide}.`,
-    'Each line = TOP MATCH spec value + one concrete fit note — print numbered EDM lines below verbatim.',
-    'FORBIDDEN: empowerment fluff, lace melted, hairline natural, you deserve, queen, confidence.',
+    'Print numbered EDM lines below verbatim — text only; roses stay from IMAGE 1.',
+    'FORBIDDEN: empowerment fluff, lace melted, hairline natural, you deserve, queen, confidence, new bullet icons.',
   ].join('\n');
 }
 
@@ -538,7 +556,7 @@ function buildTemplateRules(
         .join('\n')
     : '';
 
-  const photoRules = [sharedClientPhotoRulesBlock(refs)];
+  const photoRules = [sharedClientPhotoRulesBlock()];
 
   return [
     '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',
@@ -551,6 +569,8 @@ function buildTemplateRules(
     panelChromePreservationBlock(),
     '',
     templateTextIntegrityBlock(),
+    '',
+    criticalClientPhotoLocksBlock(refs),
     '',
     '=== REMOVE TIER / SUBSCRIPTION LABEL (CRITICAL) ===',
     'The template may include a subtitle such as "FREE HAIRSTYLE ANALYSIS", "3 MONTH HAIRSTYLE ANALYSIS",',
@@ -570,7 +590,7 @@ function buildTemplateRules(
     '',
     '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
-    'DO NOT ADD NEW ROSE ICONS. DO NOT CHANGE ROSE SHAPE, SIZE, POSITION, OR COLOR.',
+    'DO NOT ADD NEW ROSE ICONS OR SWAP ROSES FOR SPARKLE / AI / CHECKMARK BULLETS.',
     '',
     overallScoreAndRatingRules(analysis.topMatch, analysis.tier),
     '',
@@ -664,6 +684,8 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
     oneShoulderDrapeCompactLock(),
     rootCheck,
+    'FACE: same person as IMAGE 2 on main photo + every MATCH thumb — never mannequin/styling/hairline ref faces.',
+    'EDM: original red rose icons from IMAGE 1 — text only beside each rose; no AI/sparkle/checkmark bullets.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -716,7 +738,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: gray centered client name; specs + EDM verbatim; ${oneShoulderDrapeCompactLock()}; manifest HAIRLINE on every photo; no baby hairs on skin; MATCH RATING stars only; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    `FINAL CHECK: **same client face as IMAGE 2** on main photo + all MATCH thumbs; gray centered client name; specs + EDM verbatim; EDM rows keep **original red rose icons** (text only — no AI/sparkle/checkmark bullets); ${oneShoulderDrapeCompactLock()}; manifest HAIRLINE on every photo; **erase baby hairs on skin**; clean lace-front edge; MATCH RATING stars only; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }

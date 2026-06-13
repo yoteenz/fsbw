@@ -167,7 +167,8 @@ export function bawStylingRefListBlock(refs: HairstyleAnalysisStylingRef[]): str
   });
   return [
     '=== BAW STYLING REFERENCE IMAGES ===',
-    'Use the matching IMAGE per look STYLE + PART — hair finish only; IMAGE 2 keeps master pose.',
+    'Use the matching IMAGE per look STYLE + PART — **hair finish shape only**; IMAGE 2 keeps master face and pose.',
+    'Never copy face, neck, or skin from styling reference IMAGEs.',
     ...lines,
   ].join('\n');
 }
