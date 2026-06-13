@@ -492,7 +492,7 @@ function panelChromePreservationBlock(): string {
     'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
     'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
-    'PRESERVE the red **BUILD THIS LOOK** CTA button at the bottom of IMAGE 1 — same size, position, white label, and marble backdrop. Never cover, erase, replace, or print footer/ribbon text on that button.',
+    'PRESERVE the red **BUILD THIS LOOK** CTA button at the bottom of IMAGE 1 — same size, position, white label, and marble backdrop. Never cover, erase, replace, or print footer summary text on that button.',
     'Photo window: cutout subject on marble — **background removed**, **9:16**, **bottom-anchored**, **symmetrical bottom fade**, **subtle mirror reflection** in the empty lower panel — not a full studio backdrop photo.',
     'ONLY edit inside: (a) client hair in the photo window, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
     'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
@@ -582,13 +582,25 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   return lines.join('\n');
 }
 
+function panelFooterPlainTextRules(): string {
+  return [
+    '=== PANEL FOOTER TEXT — PLAIN ONLY (NO BORDERS) ===',
+    'TOP MATCH specs-locked line and every-detail-matters build summary are **plain centered text** on the existing frosted panel — **not** buttons, badges, pills, ribbons, or outlined boxes.',
+    '**FORBIDDEN:** red border, black border, white fill box, rectangle outline, stroke frame, or button chrome around either footer line.',
+    'Do **NOT** mimic the BUILD THIS LOOK CTA style for footer text — no border, no pill, no label background.',
+    'If the template shows an empty bordered placeholder in a footer slot: **erase the border/rectangle completely** and print text directly on the frosted panel.',
+  ].join('\n');
+}
+
 function freeTierPanelFooterBlock(top: FalAnalysisLook): string {
   const edmSummary = formatEdmPanelBuildSummary(top.unit, top.color, top.length);
   return [
-    '=== FREE TIER — PANEL FOOTERS (CENTERED) ===',
-    `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium **black** (#1a1a1a), uppercase, centered.`,
-    `EVERY DETAIL MATTERS build ribbon (centered in the empty band **below the last rose row** and **above** the pre-rendered BUILD THIS LOOK button): print **${edmSummary}** — Futura PT Medium gray ${MATCH_SCORE_GRAY}, uppercase, centered. Middle-dot separators only (UNIT · XX" · COLOR).`,
-    'The BUILD THIS LOOK button at the card bottom is template chrome — leave it untouched; never print the build ribbon on or over that button.',
+    panelFooterPlainTextRules(),
+    '',
+    '=== FREE TIER — PANEL FOOTERS (CENTERED PLAIN TEXT) ===',
+    `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium **black** (#1a1a1a), uppercase, centered, **no border or box**.`,
+    `EVERY DETAIL MATTERS build summary (centered in the empty band **below the last rose row** and **above** the pre-rendered BUILD THIS LOOK button): print **${edmSummary}** — Futura PT Medium gray ${MATCH_SCORE_GRAY}, uppercase, centered, **no border or box**. Middle-dot separators only (UNIT · XX" · COLOR).`,
+    'The BUILD THIS LOOK button at the card bottom is template chrome — leave it untouched; never print the build summary on or over that button.',
     'Panel footers are separate from rose rows and spec values — do not merge into EDM bullets.',
   ].join('\n');
 }
@@ -689,7 +701,7 @@ function buildTemplateRules(
     ...(tierKey === 'free'
       ? [
           'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
-          'TOP MATCH panel footer: centered black Futura PT Medium; every-detail-matters build ribbon: centered gray Futura PT Medium **above** the BUILD THIS LOOK button (never on it).',
+          'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: centered gray Futura PT Medium **above** the BUILD THIS LOOK button (never on it), plain text only (no border).',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
         ]
       : []),
@@ -758,7 +770,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; centered **black** specs-locked footer + centered **gray** build ribbon (above BUILD THIS LOOK button, not on it); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
+    'TOP MATCH specs + every detail matters filled; centered **black** specs-locked footer + centered **gray** build summary (plain text, **no borders** — above BUILD THIS LOOK button, not on it); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print each line verbatim (text only, no 1. 2. 3. prefixes), not empowerment fluff.',
     oneShoulderDrapeCompactLock(),

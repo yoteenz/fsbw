@@ -44,7 +44,7 @@ export function displayLength(length: string): string {
 /** Free-tier TOP MATCH panel footer (centered black). */
 export const FREE_TOP_MATCH_PANEL_FOOTER = 'YOUR BUILD SPECS ARE LOCKED IN PLACE.';
 
-/** Inch count with quote for EDM panel build ribbon (e.g. 22"). */
+/** Inch count with quote for EDM panel build summary (e.g. 22"). */
 export function formatLengthInchesShort(length: string): string {
   const match = displayLength(length).match(/(\d+)/);
   return match ? `${match[1]}"` : displayLength(length);
