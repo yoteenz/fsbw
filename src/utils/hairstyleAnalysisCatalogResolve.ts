@@ -42,13 +42,19 @@ export function resolveCatalogLook(look: AnalysisLook, styleIndex = 0): Analysis
   const styling = normalizeAnalysisStylingId(unit, look.styling);
   const allowed = VALID_SALON_STYLES[unit]?.filter((s) => s !== 'NONE') ?? [];
   const resolvedStyling =
-    styling === 'NONE' && pattern
-      ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
-      : allowed?.includes(styling)
-        ? styling
-        : pattern
-          ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
-          : styling;
+    styleIndex === 0
+      ? !styling || styling === 'NONE'
+        ? 'NONE'
+        : allowed?.includes(styling)
+          ? styling
+          : 'NONE'
+      : styling === 'NONE' && pattern
+        ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
+        : allowed?.includes(styling)
+          ? styling
+          : pattern
+            ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
+            : styling;
   const catalogDensity = UNIT_DEFAULT_DENSITY[unit];
   const densityRaw = look.density?.trim().replace(/\s*DENSITY\s*$/i, '') ?? '';
   const density = !densityRaw

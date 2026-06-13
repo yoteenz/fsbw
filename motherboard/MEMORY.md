@@ -28066,3 +28066,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User wanted **5.0 / 4.7 decimal above MATCH RATING stars** on **free template only** — **not** on premium 4-picks (`IMG_2549`) template.
 - **Shipped:** **`overallScoreAndRatingRules()`** branches by tier — free = decimal in upper third + stars below; premium = **stars only**, explicit forbid decimal text. Updated OUTPUT + FINAL CHECK copy. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** MATCH RATING decimal (5.0, 4.7) = **free tier only**; premium = petite stars in-image, no decimal above stars.
+
+---
+
+## 2026-06-13 — TOP MATCH spec ↔ photo sync (PART + STYLE NONE)
+
+- **Context:** User reported TOP MATCH disconnect — spec said **PART LEFT** while portrait showed **MIDDLE**; spec said **STYLE LAYERS** while hair was natural unit texture (should be **NONE**). All TOP MATCH specs must match the generated client preview image exactly; STYLE should only name LAYERS/FLAT IRON/etc. when following the BAW styling reference image, not default texture. Fix prompt without exceeding 32k Fal limit.
+- **Root cause:** **`varyInstallSpecs`** shuffled default MIDDLE part to LEFT/RIGHT on index 0; **`resolveCatalogLookForFal` / `resolveCatalogLook`** coerced NONE → LAYERS/FLAT IRON/DEFINE; **`diversifyLook`** assigned salon styles to top match.
+- **Shipped:** **`varyInstallSpecs`** (api + src) — top match (index 0) keeps default **MIDDLE** part, **NATURAL** hairline, **NONE** styling unless explicitly set. **`resolveStylingForCatalog`** — styleIndex 0 preserves **NONE**; additional looks still rotate salon styles. **`diversifyLook`** — index 0 uses **NONE** when styling default. **`hairstyleAnalysisFalPrompt.ts`** — compact **PHOTO↔SPEC LOCK** in manifest + **TOP MATCH LOCK** in client preview hair line; STYLE NONE = natural texture only. Premium prompt ~30.8k chars (under 32k).
+- **Conventions:** TOP MATCH defaults = **MIDDLE** part + **NONE** styling (natural unit texture); salon STYLE ids on top match only when explicitly picked or BAW styling ref applies in photo.

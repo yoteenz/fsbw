@@ -279,6 +279,20 @@ function coerceSalonStyleForUnit(
   );
 }
 
+function resolveStylingForCatalog(
+  unitKey: CatalogUnitName,
+  styling: string,
+  styleIndex: number
+): string {
+  const allowed = VALID_SALON_STYLES[unitKey];
+  if (styleIndex === 0) {
+    if (!styling || styling === 'NONE') return 'NONE';
+    if (allowed.includes(styling)) return styling;
+    return 'NONE';
+  }
+  return coerceSalonStyleForUnit(unitKey, styling, styleIndex);
+}
+
 /** Align TOP MATCH / look specs with BAW catalog unit (density, valid salon STYLE id). */
 export function resolveCatalogLookForFal<
   T extends {
@@ -293,7 +307,9 @@ export function resolveCatalogLookForFal<
   const unitKey = normalizeCatalogUnit(unit);
   const styling = normalizeAnalysisStylingId(unit, look.styling);
   const catalog = unitKey ? UNIT_CATALOG[unitKey] : null;
-  const resolvedStyling = unitKey ? coerceSalonStyleForUnit(unitKey, styling, styleIndex) : styling;
+  const resolvedStyling = unitKey
+    ? resolveStylingForCatalog(unitKey, styling, styleIndex)
+    : styling;
   const densityRaw = look.density?.trim().replace(/\s*DENSITY\s*$/i, '') ?? '';
   const density =
     !densityRaw
