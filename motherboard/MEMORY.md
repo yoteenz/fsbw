@@ -28241,3 +28241,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Duplicate **`asymmetricOneShoulderDrapeBlock`** + **`noInventedBabyHairsBlock`** in template rules and shared client-photo rules; overlapping **`hairlineRulesBlock`** vs BAW hairline ref/shape blocks; verbose per-thumb blocks (density, root repaint, mannequin lines) plus separate styling/color manifest sections.
 - **Shipped (2fae80f9):** **`hairstyleAnalysisFalPrompt.ts`** — removed duplicate drape/baby-hair from **`buildTemplateRules`**; dropped **`hairlineRulesBlock`**; compact **`matchThumbnailBlock`** (one line per thumb); shorter EDM rules, part lock, client photo panel, additional-match rules; removed duplicate **`freeTierOnlyBlock`** in free prompt; shorter FINAL CHECK. **`hairstyleAnalysisBawHairlineRefs.ts`** — compact hairline binding + shape guide lines. Worst-case premium prompt ~24k chars (under 32k guard).
 - **Conventions:** Keep Fal prompt under **`HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS`** (32_000); prefer deduping shared rules once + compact per-look manifest lines over repeating full blocks per thumb.
+
+---
+
+## 2026-06-13 — Manifest lace: 9X6 is closure not frontal
+
+- **Context:** User corrected manifest lace grouping — **9X6** is a **closure**, not a frontal.
+- **Shipped:** **`hairstyleAnalysisManifestOptions.ts`** — **`MANIFEST_LACE_OPTION_GROUPS`** now derives closure/frontal lists from **`bcfLaceOptionsForCategory`** (matches BCF shop: closures 2X6–9X6 + 7X7; frontals 13X4/13X6 only). **`build-a-wig/lace/page.tsx`** — 9X6 description **Wide closure** (was Wide frontal).
+- **Conventions:** Manifest lace optgroups follow **`bcfProductOptions`** closure vs frontal split — 9X6 under Closures.
