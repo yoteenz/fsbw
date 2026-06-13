@@ -28049,4 +28049,12 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User clarified prior red-header change was wrong — **client name** above overall score should stay **gray**; they wanted the script **"hairstyle analysis"** text **below FRONTAL SLAYER** at the card top repainted **brand red** (not the client header).
 - **Shipped:** Restored **gray `#808080`** client header in **`topMatchHeaderLine`**, FINAL CHECK, **`.clientHeaderNameText`**. Added **`cardHeaderHairstyleAnalysisSubtitleBlock()`** — Fal repaints script "hairstyle analysis" under FRONTAL SLAYER to **`#EB1C24`**; tier subscription line still erased. Pushed **`master`** + **`preview/mobile`**.
-- **Conventions:** Card top script **"hairstyle analysis"** = **red**; client name header above OVERALL SCORE = **gray only**.
+- **Conventions:** Card top script **"hairstyle analysis"** = **gray/untouched** from template; client name header above OVERALL SCORE = **gray only**.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: revert red "hairstyle analysis" subtitle to gray
+
+- **Context:** User asked to change the card-top **"hairstyle analysis"** script (below FRONTAL SLAYER) **back to gray** — undo red repaint Fal block.
+- **Shipped:** Removed **`cardHeaderHairstyleAnalysisSubtitleBlock()`**; restored **untouched** gray "hairstyle analysis" + FRONTAL SLAYER header art in **`templateTextIntegrityBlock`**, tier-removal, FINAL CHECK. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Card-top **"hairstyle analysis"** stays template gray — never recolor red; client name header stays gray.

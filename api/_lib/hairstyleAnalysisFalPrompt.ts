@@ -186,17 +186,7 @@ function templateTextIntegrityBlock(): string {
     '=== TEMPLATE TEXT — NO GHOST / DUPLICATE LAYERS ===',
     'When replacing template words (pill, header, value slots): paint over old text fully, then print **one** crisp layer.',
     'FORBIDDEN: offset duplicate text (red/black echo), shadow stacks, semi-transparent ghost copies, or printing the same label twice.',
-    'Keep "FRONTAL SLAYER" title art from IMAGE 1 untouched — do not re-render or duplicate it.',
-  ].join('\n');
-}
-
-/** Script subtitle directly under FRONTAL SLAYER — recolor to brand red (not the client name header). */
-function cardHeaderHairstyleAnalysisSubtitleBlock(): string {
-  return [
-    '=== CARD TOP — "hairstyle analysis" SUBTITLE (BELOW FRONTAL SLAYER) ===',
-    'Directly under the "FRONTAL SLAYER" title, IMAGE 1 shows script text **"hairstyle analysis"** (often gray or black).',
-    `REPAINT **only** that script phrase to **brand red ${BRAND_RED}** — keep the same script font, size, curve, and position; change color only.`,
-    'Do NOT alter the "FRONTAL SLAYER" title. Do NOT duplicate the subtitle. This is NOT the client name above the overall score panel.',
+    'Keep "FRONTAL SLAYER" and "hairstyle analysis" header art from IMAGE 1 untouched — do not re-render, recolor, or duplicate them.',
   ].join('\n');
 }
 
@@ -568,13 +558,11 @@ function buildTemplateRules(
     '',
     templateTextIntegrityBlock(),
     '',
-    cardHeaderHairstyleAnalysisSubtitleBlock(),
-    '',
     '=== REMOVE TIER / SUBSCRIPTION LABEL (CRITICAL) ===',
     'The template may include a subtitle such as "FREE HAIRSTYLE ANALYSIS", "3 MONTH HAIRSTYLE ANALYSIS",',
     '"6 MONTH HAIRSTYLE ANALYSIS", or "12 MONTH HAIRSTYLE ANALYSIS" below the main header.',
     'ERASE that tier/subscription subtitle completely — paint over with clean marble background matching the template.',
-    `The client must NOT see any tier name, month count, or analysis type. Keep "FRONTAL SLAYER" title + script "hairstyle analysis" (repainted red ${BRAND_RED}) only.`,
+    'The client must NOT see any tier name, month count, or analysis type. Keep "FRONTAL SLAYER" and "hairstyle analysis" header art only.',
     ...(tierKey === 'free'
       ? [
           '',
@@ -678,7 +666,7 @@ function freePromptFooter(
     '=== FINAL CHECK ===',
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
-    `CARD TOP: script "hairstyle analysis" below FRONTAL SLAYER repainted **brand red ${BRAND_RED}**.`,
+    'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
     'TOP MATCH specs + every detail matters filled; OVERALL SCORE % + MATCH RATING decimal (e.g. 5.0 / 4.7) + stars printed in-image at petite sizes (erase large template placeholders first).',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
@@ -733,7 +721,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: gray centered client name; "hairstyle analysis" script below FRONTAL SLAYER = red ${BRAND_RED}; specs + EDM lines verbatim; petite score/stars in-image; each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; petite score/stars in-image; each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }
