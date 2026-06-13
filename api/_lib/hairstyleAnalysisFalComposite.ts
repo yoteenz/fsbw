@@ -30,12 +30,12 @@ async function resizeToAnalysisCanvas(buf: Buffer): Promise<Buffer> {
   return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
 }
 
-/** Post-process: client photo only (Ideogram cutout + fade). Match-row text is Fal in-image — never composited here. */
+/** Post-process: in-place client photo bottom fade only. Match-row text is Fal in-image. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,
   layoutOverrides?: CompositeLayoutOverrides,
-  fal?: FalClient | null
+  _fal?: FalClient | null
 ): Promise<Buffer> {
   const [falRaw, templateRaw] = await Promise.all([
     fetchBuffer(falImageUrl),
@@ -50,5 +50,5 @@ export async function compositeHairstyleAnalysisPostProcess(
   const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
   const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
   const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
-  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, panelRect, fal);
+  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, panelRect);
 }

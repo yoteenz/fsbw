@@ -236,10 +236,12 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
 
 function clientPhotoPanelRulesBlock(): string {
   return [
-    '=== CLIENT PREVIEW PHOTO — HAIR EDITS ONLY (NO CUTOUT IN FAL) ===',
-    'Edit HAIR ONLY in the left-panel photo window from IMAGE 2 — same person, face/skin lock, tight head/hair/neck/upper-chest portrait.',
-    'Do NOT remove the background, do NOT paste a second portrait layer, do NOT add white/gray fill, and do NOT create a floating cutout card.',
-    'Leave the photo window framing as IMAGE 1 — one in-place client photo with original backdrop; cutout/fade/placement is applied after generation.',
+    '=== CLIENT PREVIEW PHOTO — ONE IN-PLACE PORTRAIT (CRITICAL) ===',
+    'Paint IMAGE 2 directly into the left-panel photo window on IMAGE 1 — **single full-bleed portrait**, same crop and position as the empty window.',
+    'Edit **hair only** on the same person — face, skin, neck, and clothing stay locked.',
+    'FORBIDDEN: background removal, sticker cutout, white polaroid mat, inset frame, smaller photo pasted over a larger photo, duplicate portrait layer, floating card, or tan/gray studio backdrop card.',
+    'The result must look like **one continuous in-camera photo** inside the glass panel — never a collage or cut-and-paste.',
+    'Do **not** paint bottom fade or marble transparency in Fal — server applies a symmetrical bottom fade after generation.',
     'Thumbnails: tighter square face/neck crop; one-shoulder drape; no clothing invented below jaw.',
   ].join('\n');
 }
@@ -370,7 +372,7 @@ function panelChromePreservationBlock(): string {
     'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
     'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
-    'Photo windows: edit the client portrait **in place** — hair/strand changes only. Do NOT background-remove, do NOT paste a second portrait on top, do NOT add white/gray backdrop fill.',
+    'Photo windows: edit the client portrait **in place** — hair/strand changes only, one layer edge-to-edge. Do NOT background-remove, do NOT paste a second portrait on top, do NOT add white/gray mat or inset frame.',
     'ONLY edit inside: (a) client hair in the photo window, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
     'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
   ].join('\n');
@@ -578,7 +580,7 @@ function buildTemplateRules(
   const photoRules =
     tierKey === 'free'
       ? [
-          '=== CLIENT PHOTO — HAIR IN PANEL CUTOUT ===',
+          '=== CLIENT PHOTO — HAIR IN PANEL (IN PLACE, SINGLE LAYER) ===',
           faceIdentityLockBlock(),
           clientPhotoPanelRulesBlock(),
           'Hair density changes affect hair strands only — never repaint or shrink the face.',
