@@ -28100,3 +28100,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Root cause:** **`resolveStylingForCatalog`** only preserved NONE for styleIndex 0; additional looks coerced NONE → FLAT IRON/LAYERS via **`coerceSalonStyleForUnit`**. **`diversifyLook`** rotated salon styles on index > 0.
 - **Shipped:** NONE preserved for **all** looks in **`resolveStylingForCatalog`** / **`resolveCatalogLook`**; **`diversifyLook`** + **`varyInstallSpecs`** default to NONE unless explicit salon pick; demo top/soft wave → NONE; Fal prompt updated for STYLE NONE on additional matches.
 - **Conventions:** STYLE **NONE** = natural unit texture on every look (top + MATCH 02–04); LAYERS/FLAT IRON/CRIMPS/DEFINE/WAND CURLS only when explicitly picked in PSA/manifest.
+
+---
+
+## 2026-06-13 — Dark roots fix (blonde/vivid uniform root-to-tip)
+
+- **Context:** User reported **dark roots** showing again on blonde/vivid color installs — hair should be **same catalog color root to tip** including **baby hairs**; IMAGE 2 black roots and mannequin black pigment bleeding through.
+- **Shipped:** **`needsUniformRootRepaint()`** in **`hairstyleAnalysisUnitCatalog.ts`**. Stronger **`uniformRootColorBlock`**, **`styledHairLine`** (NONE + salon), **`mannequinRefLine`** PIGMENT LOCK, **`matchColorRootManifestBlock`** per-look binding, manifest PHOTO↔SPEC color lock, FINAL CHECK root line. Compact **`bawColorApplicationRulesBlock`** — mannequin/styling refs texture only, never black pigment.
+- **Conventions:** Vivid/blonde/BLANCO installs = full repaint of IMAGE 2 dark roots; baby hairs/wisps = catalog color only.
