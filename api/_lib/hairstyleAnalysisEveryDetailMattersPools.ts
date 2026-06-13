@@ -1,5 +1,5 @@
 /**
- * Every-detail-matters phrasing pools — short spec-led lines that read like real product copy.
+ * Every-detail-matters phrasing pools — spec value + plain English (reads like product copy).
  * Keep in sync with src/utils/hairstyleAnalysisEveryDetailMattersPools.ts
  */
 
@@ -18,6 +18,17 @@ export type EveryDetailLineCtx = {
 };
 
 export type EveryDetailLineBuilder = (ctx: EveryDetailLineCtx) => string;
+
+/** Straight / wave / curl label for texture-row copy (not the catalog unit name alone). */
+function unitTextureKind(unit: string): string {
+  const u = unit.trim().toUpperCase();
+  if (u === 'NOIR' || u === 'BLANCO') return 'STRAIGHT';
+  if (u === 'SOFT WAVE') return 'LOOSE WAVE';
+  if (u === 'BEACH WAVE') return 'BEACH WAVE';
+  if (u === 'SOFT CURL') return 'TIGHT WAVE';
+  if (u === 'OCEAN CURL') return 'TIGHT CURL';
+  return 'RAW';
+}
 
 export function laceLinePool(): EveryDetailLineBuilder[] {
   return [
@@ -65,44 +76,44 @@ export function colorLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[]
 
 export function textureLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[] {
   const generic: EveryDetailLineBuilder[] = [
-    (c) => `${c.unit} FOR A SLEEK, CLEAN FINISH`,
-    (c) => `${c.unit} RAW HAIR WITH NATURAL MOVEMENT`,
-    (c) => `${c.unit} FOR EVERYDAY WEAR`,
-    (c) => `${c.unit} WITH BELIEVABLE BODY AND FULLNESS`,
-    (c) => `${c.unit} FOR A SOFT, NATURAL LOOK`,
-    (c) => `${c.unit} STRANDS THAT FALL CLEANLY`,
-    (c) => `${c.unit} FOR A POLISHED SILHOUETTE`,
-    (c) => `${c.unit} TEXTURE YOU CAN STYLE EASILY`,
-    (c) => `${c.unit} FOR LUXE RAW HAIR FINISH`,
-    (c) => `${c.unit} WITH SMOOTH, DEFINED STRANDS`,
-    (c) => `${c.unit} FOR A NATURAL STRAND PATTERN`,
-    (c) => `${c.unit} THAT MOVES LIKE REAL HAIR`,
+    (c) => `${c.unit} ${unitTextureKind(c.unit)} TEXTURE FOR A CLEAN FINISH`,
+    (c) => `${c.unit} TEXTURE, EXTENSIONS THAT MOVE LIKE REAL HAIR`,
+    (c) => `${c.unit} TEXTURE WITH NATURAL BODY AND FULLNESS`,
+    (c) => `${c.unit} TEXTURE, EXTENSIONS YOU CAN STYLE EASILY`,
+    (c) => `${c.unit} RAW HAIR WITH A SLEEK FINISH`,
+    (c) => `${c.unit} TEXTURE WITH SMOOTH, DEFINED STRANDS`,
+    (c) => `${c.unit} TEXTURE THAT FALLS CLEANLY`,
+    (c) => `${c.unit} TEXTURE, EASY TO WEAR EVERY DAY`,
+    (c) => `${c.unit} FOR A SOFT ${unitTextureKind(c.unit)} LOOK`,
+    (c) => `${c.unit} TEXTURE WITH BELIEVABLE MOVEMENT`,
+    (c) => `${c.unit} TEXTURE, EXTENSIONS WITH A NATURAL FEEL`,
+    (c) => `${c.unit} TEXTURE FOR EVERYDAY WEAR`,
   ];
   if (!ctx.withFace) return generic;
   return [
     ...generic,
-    (c) => `${c.unit} TO FRAME YOUR ${c.face.faceShape}`,
-    (c) => `${c.unit} THAT FLATTERS YOUR ${c.face.faceShape}`,
-    (c) => `${c.unit} TO BALANCE YOUR ${c.face.faceShape}`,
+    (c) => `${c.unit} TEXTURE TO FRAME YOUR ${c.face.faceShape}`,
+    (c) => `${c.unit} TEXTURE FLATTERS YOUR ${c.face.faceShape}`,
+    (c) => `${c.unit} TEXTURE TO BALANCE YOUR ${c.face.faceShape}`,
   ];
 }
 
 export function styleLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[] {
   if (ctx.style === 'NONE') {
     const natural: EveryDetailLineBuilder[] = [
-      (c) => `${c.unit} IN ITS NATURAL TEXTURE`,
-      (c) => `${c.unit} WITH NO ADDED SALON STYLING`,
-      (c) => `${c.unit} WORN AS SHIPPED FROM THE CATALOG`,
-      (c) => `${c.unit} FOR A SOFT, NATURAL FINISH`,
+      (c) => `${c.unit} TEXTURE, NO SALON STYLING ADDED`,
+      (c) => `${c.unit} WORN IN ITS NATURAL TEXTURE`,
+      (c) => `${c.unit} TEXTURE, READY TO CUT AND STYLE`,
+      (c) => `${c.unit} TEXTURE FOR A SOFT NATURAL FINISH`,
+      (c) => `NO ADDED STYLING ON ${c.unit} TEXTURE`,
+      (c) => `${c.unit} TEXTURE, EASY EVERYDAY FINISH`,
       (c) => `${c.unit} LEFT IN ITS RAW TEXTURE`,
-      (c) => `${c.unit} FOR AN EASY EVERYDAY LOOK`,
-      (c) => `${c.unit} YOU CAN CUT AND STYLE YOUR WAY`,
-      (c) => `${c.unit} FOR A CLEAN, NATURAL SILHOUETTE`,
+      (c) => `${c.unit} TEXTURE YOU CAN PERSONALIZE`,
     ];
     if (!ctx.withFace) return natural;
     return [
       ...natural,
-      (c) => `${c.unit} THAT SUITS YOUR ${c.face.faceShape}`,
+      (c) => `${c.unit} TEXTURE SUITS YOUR ${c.face.faceShape}`,
     ];
   }
   return [
@@ -133,7 +144,7 @@ export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[
       (c) => `${c.length} FOR A STATEMENT LENGTH`,
     ];
     if (!withFace) return long;
-    return [...long, (c) => `${c.length} THAT SUITS YOUR ${face.faceShape}`];
+    return [...long, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
   }
   if (inches !== null && inches <= 22) {
     return [
@@ -155,7 +166,7 @@ export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[
     (c) => `${c.length} FOR A FLATTERING MID LENGTH`,
   ];
   if (!withFace) return mid;
-  return [...mid, (c) => `${c.length} THAT SUITS YOUR ${face.faceShape}`];
+  return [...mid, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
 }
 
 export function densityLinePool(): EveryDetailLineBuilder[] {
