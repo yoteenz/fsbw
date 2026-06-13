@@ -27939,6 +27939,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: TOP MATCH mirror reflection below fade
+
+- **Context:** User reported large empty white space below TOP MATCH bottom fade and panel bottom — wanted a **mirror-like reflection** at **very low transparency** inside the left panel.
+- **Shipped:** **`hairstyleAnalysisClientPhotoReflection.ts`** — server-composites flipped lower hair/neck strip (~10% peak opacity, gradient to 0) in the zone below **`CLIENT_PHOTO_FADE_START_PCT`** (72%) through panel bottom; runs on **every** generate after score/stars (and optional fade post-process). Fal prompt step 5 + panel chrome updated; preview/docs copy.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
