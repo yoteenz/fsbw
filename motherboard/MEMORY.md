@@ -27712,3 +27712,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported on colored hair looks (e.g. CHERRY, PLATINUM), **baby hairs** at the hairline stayed **black** instead of matching the assigned catalog color.
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **`hairlineRulesBlock()`** recolors existing edge wisps to catalog pigment; forbids black baby hairs from mannequin/styling refs; **`realisticHairRecolorBlock()`** includes hairline strands. **`hairstyleAnalysisUnitCatalog.ts`** — uniform-color lines require baby hairs/edge wisps same tone; BLANCO + fashion colors explicit.
 - **Conventions:** Fashion/vivid BAW colors = uniform root to tip **including** hairline baby hairs and edge flyaways — never black wisps on colored installs.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: every detail matters one row per bullet
+
+- **Context:** User said **every detail matters** bullets were too wordy — each should be **summed up to fit on one text row** (no wrapping).
+- **Shipped:** **`hairstyleAnalysisDisplay.ts`** — **`EVERY_DETAIL_MATTERS_MAX_CHARS` (68)** + **`compactEveryDetailMattersLine(s)`** (uppercase, dash-head trim, word-fit). **`hairstyleAnalysisNormalize.ts`** compacts **`whyItWorks`** before Fal. **`hairstyleAnalysisFalPrompt.ts`** — structure/rules: one short line per row, max 68 chars, punchy **feature — spec** phrasing, forbid multi-clause essays/wraps. **`hairstyleAnalysisDemo.ts`** — **`WHY_DETAIL_LINES`** shortened (e.g. `HEART FACE — NOIR SILKY STRAIGHT TEXTURE.`).
+- **Conventions:** Every detail matters = one facial feature + one catalog spec per row, ≤68 chars, single line in-image; server does not composite this panel.
