@@ -28140,3 +28140,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said collarbone logic was wrong — only **16"** and shorter sit near the collarbone; **18"+** usually falls at the **waist**; **26"+** at the **hip**; use **below waist** / **below hip** when placement is less exact.
 - **Shipped:** **`lengthLinePool()`** in **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — **≤16"** collarbone, **17"** below-waist transition, **18–25"** waist (+ below waist variants), **≥26"** hip (+ below hip variants). Removed mid-chest and incorrect 22" collarbone phrasing.
 - **Conventions:** EDM length rows follow realistic inch-to-body placement, not generic mid-chest defaults.
+
+---
+
+## 2026-06-13 — EDM length transitions (17" above waist, 25" below waist)
+
+- **Context:** User corrected transition lengths — **17"** is **above the waist** (not below), since **18"** is waist length; **25"** is **below waist but above hip** (not full waist), since **26"+** is hip.
+- **Shipped:** **`lengthLinePool()`** buckets — **≤16"** collarbone, **17"** above waist, **18–24"** at waist, **25"** below waist / above hip, **≥26"** hip (+ below hip variants).
+- **Conventions:** One-inch transition lengths (17, 25) get their own placement copy between the main anchors.
