@@ -28075,3 +28075,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Root cause:** **`varyInstallSpecs`** shuffled default MIDDLE part to LEFT/RIGHT on index 0; **`resolveCatalogLookForFal` / `resolveCatalogLook`** coerced NONE → LAYERS/FLAT IRON/DEFINE; **`diversifyLook`** assigned salon styles to top match.
 - **Shipped:** **`varyInstallSpecs`** (api + src) — top match (index 0) keeps default **MIDDLE** part, **NATURAL** hairline, **NONE** styling unless explicitly set. **`resolveStylingForCatalog`** — styleIndex 0 preserves **NONE**; additional looks still rotate salon styles. **`diversifyLook`** — index 0 uses **NONE** when styling default. **`hairstyleAnalysisFalPrompt.ts`** — compact **PHOTO↔SPEC LOCK** in manifest + **TOP MATCH LOCK** in client preview hair line; STYLE NONE = natural texture only. Premium prompt ~30.8k chars (under 32k).
 - **Conventions:** TOP MATCH defaults = **MIDDLE** part + **NONE** styling (natural unit texture); salon STYLE ids on top match only when explicitly picked or BAW styling ref applies in photo.
+
+---
+
+## 2026-06-13 — PEAK/LAGOS hairline text guide (drop ref IMAGEs)
+
+- **Context:** User reported PEAK and LAGOS hairlines still not generating correctly on client photos despite 2D mannequin reference IMAGEs — asked to **describe** the shapes instead of relying on refs that Fal was not applying.
+- **Shipped:** **`hairstyleAnalysisBawHairlineRefs.ts`** — **`bawHairlineShapeGuideBlock()`** + **`hairlineShapePromptLine()`** with compact text for **NATURAL** (smooth convex arc), **PEAK** (widow's peak center V), **LAGOS** (scalloped M/W), **LAGOS+PEAK** (combo). **`collectHairlineRefsForAnalysis`** returns empty — no hairline IMAGEs uploaded to Fal. **`hairstyleAnalysisFal.ts`** — styling ref indices start after mannequins only. **`hairstyleAnalysisFalPrompt.ts`** — text guide replaces **`bawHairlineRefListBlock`**; per-look compact binding; manifest PHOTO↔SPEC includes hairline shape key.
+- **Conventions:** Hairline forehead edge = **text shape guide only** (not mannequin/styling IMAGEs); PEAK must show center V, LAGOS must show scalloped waves, NATURAL = smooth arc. Premium prompt ~31.4k chars.
