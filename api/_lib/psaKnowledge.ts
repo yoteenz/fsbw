@@ -161,7 +161,7 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'hair-type',
     question: 'WHAT TYPE OF HAIR DO YOU SELL?',
     answer:
-      'Premium raw and luxury virgin hair extensions and units sourced for longevity, softness, and minimal shedding when properly maintained.',
+      'Premium 100% raw human hair extensions and units sourced for longevity, softness, and minimal shedding when properly maintained.',
   },
   {
     id: 'hair-longevity',
