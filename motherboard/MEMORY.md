@@ -27833,3 +27833,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported stars **filling backwards** and inconsistently. **95%+** overall score should show **5 filled stars**; **&lt;95%** = **4 filled** (left four), **5th rightmost empty**.
 - **Shipped:** **`matchRatingFilledStarsFromScore()`** in display/format; **`matchRatingStarsFalLine()`** uses **overall score %** (not fractional rating), explicit **left-to-right** fill (star 1 left, star 5 right), forbids right-to-left fill. **`applyRealisticMatchScores`** rating → 5 or 4 only. Dev overlay **`formatStarRatingFromScore`**.
 - **Conventions:** MATCH RATING stars tied to TOP MATCH overall score % — ≥95 → 5 stars, else 4 + empty rightmost.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: why MATCH SCORE % turned black + prompt fix
+
+- **Context (full chat arc):** Validation box (PLATINUM/GOLDEN catalog rules), portrait double-layer glitch, every-detail-matters tied to TOP MATCH specs (no periods/dashes, flattering tone, HD LACE FOR AN ULTRA REALISTIC FINISH), MATCH RATING stars left-to-right by score, then user asked **why MATCH SCORE % incorrectly changed from gray to black** on MATCH 02–04 rows.
+- **Why it happened:** **No code/CSS regression** — gray **`#808080`** is still specified in **`HairstyleAnalysisCard.module.css`**, **`hairstyleAnalysisLayoutSlots.ts`** (`fill: '#808080'`), and Fal prompts. **Generated cards** paint MATCH 02–04 text **in-image via Fal** (server post-process = client-photo fade only). Fal prompt repeatedly says row values = **black Futura PT Medium**; the gray exception for MATCH SCORE % was buried and often ignored — model paints all four row fields black. Earlier pipeline **server-composited** match scores at exact slots with hardcoded gray; that was removed so Fal fills rows in-template (better alignment), losing deterministic color enforcement.
+- **Shipped (bf6c5219):** **`matchRowScoreColorBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — dedicated CRITICAL block (NEVER black/red/script on MATCH SCORE %); **`matchScoreFalLine`** labels black vs gray per field; manifest splits score onto its own line; FINAL CHECK repaints black scores gray.
+- **Conventions:** MATCH SCORE % on additional-match rows = **gray #808080 only**; TEXTURE/COLOR/LENGTH = black; OVERALL SCORE panel = red script — three distinct color systems.
