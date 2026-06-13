@@ -26,6 +26,7 @@ import {
   displayPart,
   displayStyle,
   formatScorePercent,
+  matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
 
@@ -379,8 +380,8 @@ function panelChromePreservationBlock(): string {
 }
 
 
-function filledStarCount(rating: number): number {
-  return Math.min(5, Math.max(0, Math.round(rating)));
+function filledStarCountFromOverallScore(score: number): number {
+  return matchRatingFilledStarsFromScore(score);
 }
 
 /** Canonical MATCH RATING star glyph — embossed radial-gradient red (premium template + free tier). */
@@ -392,8 +393,8 @@ function matchRatingStarDesignBlock(): string {
     '• **Earned (filled) stars:** **radial gradient** emboss/bevel — **pale pink-coral highlight at the center** (#FFC4C4 / #FFB8B8) fading to **vibrant brand red** (#EB1C24) at the outer points; subtle 3D puffy/embossed look.',
     '• **Outline:** every star (filled or empty) has a **fine crisp dark-red stroke** (#C41018) defining the edge.',
     '• **Empty (unearned) stars:** same shape + dark-red outline only — **no gradient fill**, interior stays white/transparent.',
-    '• **Layout:** exactly 5 stars in **one horizontal centered row**, evenly spaced with padding inside the MATCH RATING value box — compact, never oversized.',
-    'FORBIDDEN: flat solid-red fills with no gradient, yellow/gold stars, emoji ★, chunky clip-art, glow blobs, or a different star icon set.',
+    '• **Layout:** exactly 5 stars in **one horizontal centered row**, evenly spaced — **star 1 = leftmost**, **star 5 = rightmost**. Fill **left to right** only.',
+    'FORBIDDEN: flat solid-red fills with no gradient, yellow/gold stars, emoji ★, chunky clip-art, glow blobs, filling from the right, or a different star icon set.',
   ].join('\n');
 }
 
@@ -441,26 +442,32 @@ function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): stri
 }
 
 function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
-  const filled = filledStarCount(look.rating);
+  const scorePct = Math.round(look.score);
+  const filled = filledStarCountFromOverallScore(look.score);
   const tierKey = normalizeTier(tier);
+  const fillRule =
+    filled === 5
+      ? `OVERALL SCORE is ${scorePct}% (≥95%) — fill **all 5 stars left to right** (stars 1–5).`
+      : `OVERALL SCORE is ${scorePct}% (<95%) — fill **only the left four stars** (stars 1–4 left to right); **star 5 (rightmost) stays empty outline only**.`;
   const premiumNote =
     tierKey === 'free'
       ? [
-          'FREE TEMPLATE: draw exactly 5 stars using the embossed gradient glyph spec above — fill earned stars with radial pink-coral center → brand red points.',
+          'FREE TEMPLATE: draw exactly 5 stars left to right using the embossed gradient glyph spec — fill earned stars with radial pink-coral center → brand red points.',
           'Empty stars = outline only. Do not substitute a different star icon set.',
         ].join(' ')
       : [
-          'PREMIUM TEMPLATE: five star outline glyphs are pre-rendered — keep those exact shapes/positions.',
+          'PREMIUM TEMPLATE: five star outline glyphs are pre-rendered left to right — keep those exact shapes/positions.',
           'Fill earned stars with the embossed radial gradient (pink-coral center → #EB1C24 points) + dark-red stroke; leave unearned stars as outline-only.',
-          'Do NOT redraw, move, resize, or replace the template star outlines.',
+          'Do NOT redraw, move, resize, mirror, or fill stars from the right.',
         ].join(' ');
 
   return [
-    `MATCH RATING: fill exactly ${filled} of 5 stars with the **embossed gradient red** glyph (pink-coral center → brand red ${BRAND_RED} at points, dark-red outline).`,
-    `Leave the remaining ${5 - filled} star(s) as **empty outlines** (dark-red stroke, no gradient fill).`,
+    `MATCH RATING: ${fillRule}`,
+    `Fill exactly ${filled} of 5 stars with the **embossed gradient red** glyph (pink-coral center → brand red ${BRAND_RED} at points, dark-red outline).`,
+    `Leave the remaining ${5 - filled} star(s) as **empty outlines** — always the **rightmost** star(s) when fewer than 5 are earned.`,
     'Star glyphs must stay inside the MATCH RATING value area at template size — do not enlarge, overflow the panel, or paint oversized fills.',
     premiumNote,
-    'FORBIDDEN: flat solid-red stars, yellow/gold stars, emoji stars, oversized stars, or new star shapes outside the MATCH RATING panel.',
+    'FORBIDDEN: flat solid-red stars, yellow/gold stars, emoji stars, backwards/right-to-left fill, oversized stars, or new star shapes outside the MATCH RATING panel.',
   ].join(' ');
 }
 

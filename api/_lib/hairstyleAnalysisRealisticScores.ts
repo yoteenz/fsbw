@@ -9,11 +9,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function ratingForScore(score: number): number {
-  if (score >= 97) return 5;
-  if (score >= 94) return 4.5;
-  if (score >= 90) return 4;
-  if (score >= 86) return 3.5;
-  return 3;
+  return Math.round(score) >= 95 ? 5 : 4;
 }
 
 /** Assign varied, rank-aware scores on each generation so matches feel realistic. */
