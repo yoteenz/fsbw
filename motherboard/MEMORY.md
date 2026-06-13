@@ -27737,3 +27737,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Generic NOIR/JET BLACK/24"/250% defaults in API parse + PSA example; **`NONE` styling** coerced to pattern default (**FLAT IRON** straight, **LAYERS** wavy) for every look; no dedup across picks; Fal template placeholders (NOIR/LAYERS) when manifest looked generic.
 - **Shipped:** **`hairstyleAnalysisLookDiversity.ts`** (api + src) — **`diversifyHairstyleAnalysisLooks()`** rotates unique units, salon styles, lengths (22–30"), and neutral/blonde/vivid colors when picks are homogeneous or top is generic NOIR stack. **`normalizeHairstyleAnalysisForFal`** applies before catalog resolve. **`resolveCatalogLookForFal` / `resolveCatalogLook`** — **`styleIndex`** rotates valid salon STYLE ids instead of always first default. **`psaSelfieStyleAnalysis.ts`** — diversity rules + non-NOIR JSON example. **`hairstyleAnalysisFalPrompt.ts`** — manifest-only TOP MATCH; distinct unit+style per additional match. Demo + **`buildHairstyleAnalysisFromPsaPicks`** wire diversity.
 - **Conventions:** Each card = unique units across looks when possible; varied STYLE per match; generic NOIR 24" 250% FLAT IRON top triggers rotation; Fal prints manifest values not template placeholders.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: embossed gradient MATCH RATING stars
+
+- **Context:** User shared a generation reference and asked what **star design** was used — wants that style **permanently and consistently** on all generations.
+- **Reference star:** Classic **5-point vector** stars; **radial gradient** emboss (pale **pink-coral center** → **brand red** #EB1C24 at points); **fine dark-red outline** (#C41018); empty stars = outline only; 5 in a centered horizontal row.
+- **Shipped:** **`matchRatingStarDesignBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — canonical glyph spec for free + premium; **`matchRatingStarsFalLine()`** + size rules updated (embossed gradient fill, not flat solid red). **`docs/STYLE_ANALYSIS.md`** aligned.
+- **Conventions:** MATCH RATING stars = embossed gradient red glyph only — forbid flat red, gold/yellow, emoji, or alternate icon sets.
