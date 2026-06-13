@@ -8,7 +8,6 @@ import {
   displayPart,
   displayStyle,
   formatScorePercent,
-  formatStarRatingFromScore,
 } from './hairstyleAnalysisFormat';
 import { normalizeAnalysisTier } from './hairstyleAnalysisRules';
 import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters';
@@ -28,11 +27,7 @@ function specValues(look: AnalysisLook): Record<string, string> {
 }
 
 function topMatchHeader(look: AnalysisLook): Record<string, string> {
-  return {
-    topScore: formatScorePercent(look.score),
-    rating: formatStarRatingFromScore(look.score),
-    ...specValues(look),
-  };
+  return specValues(look);
 }
 
 function matchRowValues(look: AnalysisLook): Record<string, string> {

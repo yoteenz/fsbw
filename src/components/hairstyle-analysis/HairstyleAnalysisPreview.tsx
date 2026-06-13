@@ -27,13 +27,6 @@ import { appendHairstyleAnalysisToLocalCart } from '../../utils/hairstyleAnalysi
 import { requestOpenPsaChat } from '../../utils/psaOpenChatRequest';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
-import SiteFontPicker from './SiteFontPicker';
-import { formatScorePercent } from '../../utils/hairstyleAnalysisFormat';
-import {
-  DEFAULT_OVERALL_SCORE_FONT_ID,
-  resolveSiteFontId,
-  siteFontStylePatch,
-} from '../../utils/siteFonts';
 
 type HairstyleAnalysisPreviewProps = {
   analysis: HairstyleAnalysis;
@@ -124,7 +117,7 @@ export default function HairstyleAnalysisPreview({
   const [slotOverrides, setSlotOverrides] = useState<SlotLayoutOverrides>({});
   const [textOverrides, setTextOverrides] = useState<TextContentOverrides>({});
   const [fontOverrides, setFontOverrides] = useState<TextFontStyleOverrides>({});
-  const [selectedFontSlot, setSelectedFontSlot] = useState('topScore');
+  const [selectedFontSlot, setSelectedFontSlot] = useState('clientHeaderName');
   const [debugSaveMessage, setDebugSaveMessage] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [usageState, setUsageState] = useState<HairstyleAnalysisUsageResult | null>(null);
@@ -178,7 +171,7 @@ export default function HairstyleAnalysisPreview({
   const textFieldIds = useMemo(
     () =>
       getTemplateFields(analysis.tier)
-        .filter((field) => field.kind === 'text')
+        .filter((field) => field.kind === 'text' && field.id !== 'topScore' && field.id !== 'rating')
         .map((field) => field.id),
     [analysis.tier]
   );
@@ -189,7 +182,7 @@ export default function HairstyleAnalysisPreview({
     setTextOverrides(saved.textOverrides);
     setFontOverrides(saved.fontOverrides);
     setSelectedFontSlot((prev) =>
-      textFieldIds.includes(prev) ? prev : textFieldIds[0] ?? 'topScore'
+      textFieldIds.includes(prev) ? prev : textFieldIds[0] ?? 'clientHeaderName'
     );
   }, [analysis.tier, textFieldIds]);
 
@@ -324,36 +317,6 @@ export default function HairstyleAnalysisPreview({
       }));
     },
     [selectedFontSlot]
-  );
-
-  const overallScoreFontId = resolveSiteFontId(fontOverrides.topScore);
-  const overallScorePreviewText =
-    textOverrides.topScore ?? formatScorePercent(resolvedAnalysis.topMatch.score);
-
-  const onOverallScoreFontChange = useCallback(
-    (fontId: string) => {
-      const patch = siteFontStylePatch(fontId);
-      setFontOverrides((prev) => {
-        const next: TextFontStyleOverrides = {
-          ...prev,
-          topScore: {
-            ...prev.topScore,
-            ...patch,
-            color: prev.topScore?.color ?? '#EB1C24',
-          },
-        };
-        saveHairstyleAnalysisTierDebug(analysis.tier, {
-          slotOverrides,
-          textOverrides,
-          fontOverrides: next,
-        });
-        return next;
-      });
-      setSelectedFontSlot('topScore');
-      setDebugSaveMessage('Saved overall score font');
-      window.setTimeout(() => setDebugSaveMessage(null), 2500);
-    },
-    [analysis.tier, slotOverrides, textOverrides]
   );
 
   const handleSaveDebugLayout = useCallback(() => {
@@ -624,8 +587,11 @@ export default function HairstyleAnalysisPreview({
               {showDebugFrames ? (
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Drag slot handles to reposition overlay previews. Save layout persists debug positions for the
-                    Fal generates TOP MATCH photo: bg removed, 9:16 centered, bottom-anchored, symmetrical bottom fade into marble, plus a subtle low-opacity mirror reflection below the fade (server-composited).
+                    Drag slot handles to reposition overlay previews. OVERALL SCORE % and MATCH RATING stars
+                    are Fal in-image only — no React text overlay. Save layout persists debug positions for
+                    the tier. Fal generates TOP MATCH photo: bg removed, 9:16 centered, bottom-anchored,
+                    symmetrical bottom fade into marble, plus a subtle low-opacity mirror reflection below
+                    the fade (server-composited).
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -646,17 +612,6 @@ export default function HairstyleAnalysisPreview({
                   {debugSaveMessage ? (
                     <p className="text-[9px] uppercase tracking-[0.1em] text-[#22c55e]">{debugSaveMessage}</p>
                   ) : null}
-                  <SiteFontPicker
-                    valueId={overallScoreFontId || DEFAULT_OVERALL_SCORE_FONT_ID}
-                    previewText={overallScorePreviewText}
-                    previewColor={fontOverrides.topScore?.color ?? '#EB1C24'}
-                    onChange={onOverallScoreFontChange}
-                  />
-                  <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Overall score font updates the debug overlay preview. Server composites the red OVERALL
-                    SCORE in Covered By Your Grace after Fal — not MATCH 02–04 gray scores.
-                    Use Save layout for slot positions and other font fields.
-                  </p>
                   <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
                     Font slot
                     <select
