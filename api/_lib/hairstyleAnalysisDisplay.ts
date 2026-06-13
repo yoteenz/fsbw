@@ -69,9 +69,19 @@ export function salonModeToBawStyleId(salonMode: string): string {
 export const EVERY_DETAIL_MATTERS_MAX_CHARS = 68;
 
 export function compactEveryDetailMattersLine(line: string): string {
-  const normalized = line.trim().toUpperCase().replace(/\s+/g, ' ');
+  const normalized = line
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[.!?]+$/g, '');
   if (!normalized) return '';
   if (normalized.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return normalized;
+
+  const forHead = normalized.split(/\s+FOR\s+/)[0]?.trim();
+  if (forHead && forHead.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return forHead;
+
+  const toHead = normalized.split(/\s+TO\s+/)[0]?.trim();
+  if (toHead && toHead.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return toHead;
 
   const dashHead = normalized.split(/\s*[—–-]\s*/)[0]?.trim();
   if (dashHead && dashHead.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return dashHead;

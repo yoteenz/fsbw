@@ -2,6 +2,10 @@ import { hexForHairColor } from './hairstyleCatalog';
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
 import { resolveCatalogLook } from '../utils/hairstyleAnalysisCatalogResolve';
 import { diversifyHairstyleAnalysisLooks } from '../utils/hairstyleAnalysisLookDiversity';
+import {
+  buildEveryDetailMattersFromTopMatch,
+  KATEENA_DEMO_FACE_FEATURES,
+} from '../utils/hairstyleAnalysisEveryDetailMatters';
 import { additionalLooksLimit, resolveTemplateUrl } from '../utils/hairstyleAnalysisRules';
 
 export const DEMO_CLIENT_PREVIEW_URL = '/assets/natural front.png';
@@ -70,14 +74,7 @@ const THREE_MONTH_ALTS: AnalysisLook[] = [
   },
 ];
 
-/** Every-detail-matters rows: short one-line notes (feature + spec), verbatim in Fal prompt. */
-const WHY_DETAIL_LINES = [
-  'HEART FACE — NOIR SILKY STRAIGHT TEXTURE.',
-  'ALMOND EYES — JET BLACK COLOR.',
-  'SHARP JAW — FLAT IRON FINISH.',
-  'LONG FACE — 24 INCH LENGTH.',
-  'HIGH FOREHEAD — MIDDLE PART.',
-];
+/** Every-detail-matters rows are built from TOP MATCH specs in buildKateenaDemoAnalysis. */
 
 function altsForTier(tier: AnalysisTier): AnalysisLook[] {
   if (tier === 'free') return [];
@@ -92,11 +89,16 @@ export function buildKateenaDemoAnalysis(
   clientPreviewUrl = DEMO_CLIENT_PREVIEW_URL
 ): HairstyleAnalysis {
   const clientName = tier === 'free' ? 'KATEENA' : 'KATEENA ARMSTRONG';
-  const whyItWorks = WHY_DETAIL_LINES;
   const { topMatch, additionalLooks } = diversifyHairstyleAnalysisLooks(
     { ...KATEENA_TOP, imageUrl: clientPreviewUrl },
     altsForTier(tier)
   );
+  const resolvedTop = resolveCatalogLook(topMatch, 0);
+  const resolvedAlts = additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1));
+  const whyItWorks =
+    tier === 'free'
+      ? buildEveryDetailMattersFromTopMatch(resolvedTop, KATEENA_DEMO_FACE_FEATURES)
+      : [];
 
   return {
     id: `kateena-demo-${tier}`,
@@ -104,8 +106,8 @@ export function buildKateenaDemoAnalysis(
     tier,
     templateUrl: resolveTemplateUrl(tier),
     clientPreviewUrl,
-    topMatch: resolveCatalogLook(topMatch, 0),
-    additionalLooks: additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1)),
+    topMatch: resolvedTop,
+    additionalLooks: resolvedAlts,
     whyItWorks,
     createdAt: new Date().toISOString(),
   };
