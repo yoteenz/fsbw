@@ -163,7 +163,19 @@ export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[
     return [...hip, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
   }
 
-  // 18"–25" — waist length.
+  // 25" — below waist, above hip.
+  if (inches !== null && inches === 25) {
+    return [
+      (c) => `${c.length} FALLS BELOW THE WAIST`,
+      (c) => `${c.length} SITS ABOVE THE HIP`,
+      (c) => `${c.length} BELOW WAIST, ABOVE THE HIP`,
+      (c) => `${c.length} FOR LENGTH BELOW THE WAIST`,
+      (c) => `${c.length} FOR LENGTH ABOVE THE HIP`,
+      (c) => `${c.length} WITH CLEAN ENDS`,
+    ];
+  }
+
+  // 18"–24" — waist length.
   if (inches !== null && inches >= 18) {
     const waist: EveryDetailLineBuilder[] = [
       (c) => `${c.length} FALLS TO THE WAIST`,
@@ -172,22 +184,20 @@ export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[
       (c) => `${c.length} WITH CLEAN WAIST LENGTH ENDS`,
       (c) => `${c.length} THAT HITS THE WAIST`,
       (c) => `${c.length} FOR A BALANCED EVERYDAY LENGTH`,
-      (c) => `${c.length} FALLS BELOW THE WAIST`,
-      (c) => `${c.length} FOR LENGTH BELOW THE WAIST`,
     ];
     if (!withFace) return waist;
     return [...waist, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
   }
 
-  // 17" — between collarbone and waist; use below-waist phrasing when placement is less exact.
+  // 17" — above waist (shorter than 18" waist length).
   if (inches !== null && inches === 17) {
     return [
-      (c) => `${c.length} FALLS BELOW THE WAIST`,
-      (c) => `${c.length} FOR LENGTH BELOW THE WAIST`,
+      (c) => `${c.length} FALLS ABOVE THE WAIST`,
+      (c) => `${c.length} FOR LENGTH ABOVE THE WAIST`,
+      (c) => `${c.length} SITS ABOVE THE WAIST`,
       (c) => `${c.length} FOR A SHORT, EASY LENGTH`,
       (c) => `${c.length} WITH CLEAN ENDS`,
       (c) => `${c.length} THAT STAYS LIGHT AND BALANCED`,
-      (c) => `${c.length} FOR EVERYDAY WEAR`,
     ];
   }
 
