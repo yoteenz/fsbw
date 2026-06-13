@@ -28148,3 +28148,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User corrected transition lengths — **17"** is **above the waist** (not below), since **18"** is waist length; **25"** is **below waist but above hip** (not full waist), since **26"+** is hip.
 - **Shipped:** **`lengthLinePool()`** buckets — **≤16"** collarbone, **17"** above waist, **18–24"** at waist, **25"** below waist / above hip, **≥26"** hip (+ below hip variants).
 - **Conventions:** One-inch transition lengths (17, 25) get their own placement copy between the main anchors.
+
+---
+
+## 2026-06-13 — EDM brand copy (hairline, pairs well, natural state)
+
+- **Context:** User flagged weak EDM lines from screenshot — **EDGE** terminology (use **hairline** only), **PAIRED WITH YOUR SKIN TONE** (meaningless), **HAIR THAT FALLS CLEANLY** (irrelevant), **LEFT IN RAW TEXTURE** (prefer details-tab phrasing).
+- **Shipped:** **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — lace/hairline pools use **HAIRLINE ON** / **HAIRLINE THAT BLENDS** (no edge); color → **PAIRS WELL WITH YOUR SKIN TONE**; texture → **RAW HAIR THAT FALLS SOFTLY**; STYLE NONE → **LEFT IN ITS NATURAL STATE**.
+- **Conventions:** EDM lace/hairline rows match brand **hairline** vocabulary; natural-unit style rows align with PDP details **natural state** wording.
