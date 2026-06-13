@@ -28175,6 +28175,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-13 — Free tier score/rating vertical center + Book decimal
+
+- **Context:** User wanted **OVERALL SCORE %** and **MATCH RATING decimal + stars** vertically centered in their panels on free template only; MATCH RATING decimal → **Futura PT Book** gray (stars stay red).
+- **Shipped:** **`overallScoreAndRatingRules()`** free branch — vertical center for score % and decimal+star stack; **`MATCH_RATING_DECIMAL_FONT`** = Futura PT Book; removed upper-third / lower-half layout. Dev **`.ratingText`** → Futura PT Book.
+- **Conventions:** Free tier MATCH RATING decimal = gray Futura PT Book; star row red; both panels vertically centered clusters.
+
+---
+
 ## 2026-06-13 — EDM brand copy (hairline, pairs well, natural state)
 
 - **Context:** User flagged weak EDM lines from screenshot — **EDGE** terminology (use **hairline** only), **PAIRED WITH YOUR SKIN TONE** (meaningless), **HAIR THAT FALLS CLEANLY** (irrelevant), **LEFT IN RAW TEXTURE** (prefer details-tab phrasing).

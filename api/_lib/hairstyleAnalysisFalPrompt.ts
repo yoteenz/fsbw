@@ -84,6 +84,8 @@ export type FalPromptBuildOptions = {
 
 const BRAND_RED = '#EB1C24';
 const MATCH_SCORE_GRAY = '#808080';
+/** Free-tier MATCH RATING decimal above stars — gray Futura PT Book (stars stay red). */
+const MATCH_RATING_DECIMAL_FONT = 'Futura PT Book';
 /** Permanent OVERALL SCORE typography — red handwritten script (site brand accent). */
 const OVERALL_SCORE_CANONICAL_FONT = 'Covered By Your Grace';
 
@@ -485,11 +487,11 @@ function overallScoreAndRatingRules(
   if (tierKey === 'free') {
     const ratingLabel = formatMatchRatingDecimal(look.rating);
     return [
-      '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE — FREE TIER ONLY) ===',
-      overallScoreLine,
-      `MATCH RATING (FREE ONLY): erase placeholder; print **${ratingLabel}** in the **upper third** of the MATCH RATING value box — Futura PT Medium gray ${MATCH_SCORE_GRAY} (~${ratingPx}px max height, centered). **NOT** red, **NOT** Covered By Your Grace script — separate from red OVERALL SCORE %.`,
-      `MATCH RATING STARS (below ${ratingLabel}): ${fillRule} Draw 5 petite embossed-gradient red stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box. Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
-      `FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif OVERALL SCORE %, red or script styling on MATCH RATING decimal (${ratingLabel} must stay gray Futura PT Medium).`,
+      '=== OVERALL SCORE + MATCH RATING (FREE TIER — VERTICALLY CENTERED) ===',
+      `OVERALL SCORE (FREE): erase placeholder %; print ${scorePct} in ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script (~${scorePx}px max height). **Vertically and horizontally centered** in the OVERALL SCORE value box — equal frosted padding above and below; do NOT sit high in the upper half.`,
+      `MATCH RATING (FREE ONLY): erase placeholder; print **${ratingLabel}** above 5 stars as **one vertically centered stack** in the MATCH RATING value box — **${MATCH_RATING_DECIMAL_FONT}** gray ${MATCH_SCORE_GRAY} (~${ratingPx}px max height) for the decimal, centered horizontally; petite red embossed stars (~${starPx}px each) directly below with a small gap. **Equal space above the decimal and below the stars** — not upper-third / lower-half layout.`,
+      `MATCH RATING STARS: ${fillRule} Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only. **Stars stay red.**`,
+      `FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif OVERALL SCORE %, red or script styling on MATCH RATING decimal (${ratingLabel} = gray ${MATCH_RATING_DECIMAL_FONT} only), top-aligned score or rating clusters.`,
     ].join('\n');
   }
 
