@@ -29,7 +29,7 @@
     },
     "api/hairstyle-analysis-generate.ts": {
       "maxDuration": 300,
-      "includeFiles": "api/_lib/fonts/*.ttf"
+      "includeFiles": "api/_lib/fonts/*.ttf,public/assets/NOIR/filled-star.png,public/assets/NOIR/star-symbol.png"
     },
     "api/admin/consult-quotes.ts": {
       "maxDuration": 60

@@ -483,6 +483,7 @@ function overallScoreAndStarsSizeRules(_tier: FalHairstyleAnalysis['tier']): str
     overallScoreFontDesignBlock(),
     matchRatingStarDesignBlock(),
     'Fal must **erase** template placeholder score % and star outline art, then leave both value areas **empty** — server composites petite typography afterward.',
+    '**ERASE large template star outline glyphs** (~118px) completely — do not fill or redraw them in Fal; server replaces with petite Noir stars.',
     `Server target sizes (reference only — do not draw in Fal): overall score ~${scorePx}px max height; each star ~${starPx}px max height in a centered row with wide padding.`,
     'FORBIDDEN: Fal-printed overall score %, Fal-drawn stars, or copying large template star outline size into the output.',
   ].join('\n');
