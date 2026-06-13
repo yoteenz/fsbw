@@ -27809,3 +27809,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to remove unnecessary **dashes and hyphens** from every-detail-matters bullets.
 - **Shipped:** **`stripEveryDetailMattersDashes()`** in compact/display — strips em/en dashes and letter-hyphen-letter compounds. Templates: **HEART SHAPED FACE**, **MID CHEST FALL** (no hyphens). Fal prompt: no dash/hyphen in rose rows.
 - **Conventions:** Every detail matters lines = spaces only between words; no `-`, `—`, or `–`.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: lace line AN not THE
+
+- **Context:** User wanted lace rose row to read **HD LACE FOR AN ULTRA REALISTIC FINISH** (not **THE**).
+- **Shipped:** **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) + Fal prompt example updated.
