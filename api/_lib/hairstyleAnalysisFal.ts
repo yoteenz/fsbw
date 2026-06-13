@@ -4,6 +4,7 @@ import {
   collectStylingRefsForAnalysis,
   type HairstyleAnalysisStylingRef,
 } from './hairstyleAnalysisBawStylingRefs.js';
+import { collectHairlineRefsForAnalysis } from './hairstyleAnalysisBawHairlineRefs.js';
 import { normalizeHairstyleAnalysisForFal } from './hairstyleAnalysisNormalize.js';
 import type { CompositeLayoutOverrides } from './hairstyleAnalysisCompositeLayout.js';
 import {
@@ -296,21 +297,32 @@ export async function generateHairstyleAnalysisWithFal(
     : [];
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
+  const hairlineRefs = collectHairlineRefsForAnalysis(allLooks, 3 + mannequinRefs.length);
+  const hairlineUrls = await Promise.all(
+    hairlineRefs.map((ref) =>
+      resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `hairline-${ref.key.toLowerCase()}`)
+    )
+  );
+
   const stylingRefs = minimalRefs
     ? []
-    : collectStylingRefsForAnalysis(allLooks, 3 + mannequinRefs.length);
+    : collectStylingRefsForAnalysis(allLooks, 3 + mannequinRefs.length + hairlineRefs.length);
   const stylingUrls = minimalRefs
     ? []
     : await Promise.all(stylingRefs.map((ref) => resolveStylingRefForFal(fal, ref)));
 
-  const imageUrls = [templateUrl, clientUrl, ...mannequinUrls, ...stylingUrls];
+  const imageUrls = [templateUrl, clientUrl, ...mannequinUrls, ...hairlineUrls, ...stylingUrls];
   const promptOptions: FalPromptBuildOptions = {
     overallScoreFontLabel: overallScoreFontPromptLabel(
       input.fontOverrides?.topScore?.fontFamily,
       input.fontOverrides?.topScore?.siteFontId
     ),
   };
-  const prompt = buildHairstyleAnalysisFalPrompt(analysis, { mannequinRefs, stylingRefs }, promptOptions);
+  const prompt = buildHairstyleAnalysisFalPrompt(
+    analysis,
+    { mannequinRefs, stylingRefs, hairlineRefs },
+    promptOptions
+  );
 
   const result = await subscribeHairstyleAnalysisFal(fal, imageUrls, prompt);
 

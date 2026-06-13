@@ -3,6 +3,12 @@
  * and admin flows that must match the same references (e.g. Send offer → Generate unit).
  */
 
+/** NOIR peak hairline — front hero (also used for LAGOS + PEAK combo); Fal hairstyle-analysis hairline ref. */
+export const NOIR_PEAK_FRONT_MANNEQUIN_SRC = '/assets/peak front.png';
+
+/** NOIR lagos hairline — front hero; Fal hairstyle-analysis hairline ref. */
+export const NOIR_LAGOS_FRONT_MANNEQUIN_SRC = '/assets/lagos front.png';
+
 /** NOIR natural hairline — left (L); also Fal GPT2 color + styling input for `left`. */
 export const NOIR_NATURAL_LEFT_MANNEQUIN_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Noir/image%20(27).png';
@@ -83,10 +89,10 @@ export function bawStaticMannequinTriplePathsFromUnitAndHairline(
   const hasPeak = hairline.includes('PEAK');
   const hasLagos = hairline.includes('LAGOS');
   if (hasPeak) {
-    return ['/assets/peak left.png', '/assets/peak front.png', '/assets/peak right.png'] as const;
+    return ['/assets/peak left.png', NOIR_PEAK_FRONT_MANNEQUIN_SRC, '/assets/peak right.png'] as const;
   }
   if (hasLagos) {
-    return ['/assets/lagos left.png', '/assets/lagos front.png', '/assets/lagos right.png'] as const;
+    return ['/assets/lagos left.png', NOIR_LAGOS_FRONT_MANNEQUIN_SRC, '/assets/lagos right.png'] as const;
   }
   return NOIR_NATURAL_MANNEQUIN_TRIPLE;
 }

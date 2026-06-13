@@ -27976,3 +27976,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Duplicate **matchRowScoreColorBlock** in manifest + row rules; **matchScoreFalLine** repeated per MATCH in **altRowBlock** and again in **matchScoreManifestBlock**; **lookHairAccuracyLines** on each thumb + spec manifest + preview hair line; verbose **bawStylingRefListBlock** per IMAGE.
 - **Shipped:** Deduped/shortened premium prompt blocks in **`hairstyleAnalysisFalPrompt.ts`** + compact **`bawStylingRefListBlock`** — THREE MONTH demo prompt ~**26.7k** chars (was ~32.4k). Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Keep premium Fal prompt under 32k — avoid repeating match-row color rules, per-look catalog texture lines on every thumb, or full matchScoreFalLine in both alt rows and manifest.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: BAW 2D hairline refs for Fal
+
+- **Context:** User asked to use **2D mannequin images from the BAW hairline sub-page** as Fal reference IMAGEs for **realistic hairline only** on **PEAK**, **LAGOS**, and **LAGOS + PEAK** (not NATURAL).
+- **Shipped (7541afa9):** **`hairstyleAnalysisBawHairlineRefs.ts`** — `/assets/peak front.png` (PEAK + LAGOS+PEAK combo, same as BAW `hasPeak` branch) and `/assets/lagos front.png` (LAGOS-only); **`collectHairlineRefsForAnalysis`** + compact prompt block; wired in **`hairstyleAnalysisFal.ts`** (`image_urls` after template/client/mannequins, before styling refs). **`hairstyleAnalysisFalPrompt.ts`** — forehead lace-edge shape only, retint to catalog color; IMAGE 2 keeps face/pose. **`bawStaticMannequinReferencePaths.ts`** — `NOIR_PEAK_FRONT_MANNEQUIN_SRC` / `NOIR_LAGOS_FRONT_MANNEQUIN_SRC`. **`docs/STYLE_ANALYSIS.md`** updated.
+- **Conventions:** BAW hairline Fal refs = **forehead edge geometry only** for PEAK/LAGOS manifests; NATURAL = no extra ref; LAGOS+PEAK uses **peak front** mannequin.
