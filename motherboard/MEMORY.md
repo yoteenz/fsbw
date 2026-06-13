@@ -28188,3 +28188,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User flagged weak EDM lines from screenshot — **EDGE** terminology (use **hairline** only), **PAIRED WITH YOUR SKIN TONE** (meaningless), **HAIR THAT FALLS CLEANLY** (irrelevant), **LEFT IN RAW TEXTURE** (prefer details-tab phrasing).
 - **Shipped:** **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — lace/hairline pools use **HAIRLINE ON** / **HAIRLINE THAT BLENDS** (no edge); color → **PAIRS WELL WITH YOUR SKIN TONE**; texture → **RAW HAIR THAT FALLS SOFTLY**; STYLE NONE → **LEFT IN ITS NATURAL STATE**.
 - **Conventions:** EDM lace/hairline rows match brand **hairline** vocabulary; natural-unit style rows align with PDP details **natural state** wording.
+
+---
+
+## 2026-06-13 — TOP MATCH specs stuck on regenerate (both templates)
+
+- **Context:** User asked whether TOP MATCH selections are still **dynamic on both templates** (free + premium) — specs felt **stuck again** (same NOIR / length / install on regenerate).
+- **Cause:** **`diversifyHairstyleAnalysisLooks()`** when **`needsDiversification`** was false (single non-generic free-tier look) only ran **`varyInstallSpecs(topMatch, 0)`** — index 0 locked **MIDDLE** part + **NATURAL** hairline and did not rotate color/length. Client resends same **`topMatch`** each generate; server **`normalizeHairstyleAnalysisForFal`** must vary each call.
+- **Shipped (9023fa45):** **`hairstyleAnalysisLookDiversity.ts`** (api + src) — **`varyTopMatchPerGeneration()`** on free single-look path (keeps PSA unit, rotates color bucket/length/lace/density/part/hairline); **`isStubbornDefaultStack()`** broadens placeholder detection beyond generic NOIR; removed index-0 install locks in **`varyInstallSpecs`**; **`diversifyLook`** shuffles length picks. Premium: full diversify when top is stubborn/generic or alts homogeneous; otherwise install rotation with random **`genIdx`**.
+- **Pipeline:** Every Fal generate → **`normalizeHairstyleAnalysisForFal`** → **`diversifyHairstyleAnalysisLooks`** before manifest + EDM rebuild.
+- **Conventions:** Printed TOP MATCH specs must never be static template defaults — PSA picks or per-generate diversity only.
