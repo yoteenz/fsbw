@@ -265,6 +265,8 @@ function uniformRootColorBlock(look: FalAnalysisLook, scope: 'preview' | 'thumbn
     `FORBIDDEN on ${scope}: dark roots, black roots, shadow root band, ombré, or two-tone regrowth under ${color}.`,
   ].join(' ');
 }
+
+function clientPhotoPanelRulesBlock(): string {
   return [
     '=== TOP MATCH CLIENT PHOTO — LEFT PANEL ===',
     'Place IMAGE 2 in the left-panel photo window on IMAGE 1:',
