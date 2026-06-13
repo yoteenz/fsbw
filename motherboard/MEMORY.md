@@ -28034,3 +28034,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **free template** still shows **first name only** (not first + last) in header; **MATCH RATING** should show a **dynamic decimal** (5.0, 4.7, etc.) **above** the five stars in the **same Covered By Your Grace script** as overall score %.
 - **Shipped:** Demo **`clientName`** always **`KATEENA ARMSTRONG`** (was first-name-only on free). Fal **`topMatchHeaderLine`** — explicit **never truncate to first name**. **`formatMatchRatingDecimal`** + **`dynamicMatchRating`** in **`applyRealisticMatchScores`** (5.0 for ≥95% overall; 4.5–4.9 for 4-star rows). **`overallScoreAndRatingRules`** — print rating decimal in upper third of MATCH RATING box, stars below; removed stale free-tier “leave score/stars blank” copy. Overlay uses **`clientFullName`**. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Free + premium headers = **full first + last name**; MATCH RATING = **decimal label + stars**, same red script family as OVERALL SCORE %.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: BAW unit texture appearance ladder
+
+- **Context:** User reported **SOFT CURL** generating curl pattern too similar to **OCEAN CURL**; wanted fixed texture appearance per unit: NOIR+BLANCO **straight**, SOFT WAVE **loose wave**, BEACH WAVE **true wavy**, SOFT CURL **tight wave** (not spirals), OCEAN CURL **tight curl**.
+- **Shipped:** **`hairstyleAnalysisUnitCatalog.ts`** — rewritten unit render/fiber/forbidden copy + **`TIGHT_WAVE`** pattern for SOFT CURL; appearance ladder in **`bawUnitCatalogBlock()`**; **`unitTextureAppearanceLock()`**. **`hairstyleAnalysisFalPrompt.ts`** — mannequin + styling ref lines enforce SOFT CURL ≠ OCEAN CURL. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Unit TEXTURE tier is locked — salon STYLE ref adjusts finish within tier only; SOFT CURL never renders OCEAN CURL spirals.
