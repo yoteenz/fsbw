@@ -171,3 +171,16 @@ export function twelveMonthAltScoreSlots(): PixelRect[] {
   }
   return rects;
 }
+
+/** Every-detail-matters rose outline column — left of whyLine text slots (IMG_2554 / IMG_2549 @ 2048×2560). */
+export const EDM_ROSE_ROW_COUNT = 5;
+const EDM_ROSE_ROW_TOP_START = 74.5;
+const EDM_ROSE_ROW_TOP_STEP = 2.5;
+
+export function edmRoseIconSlot(rowIndex: number): PixelRect {
+  return pctRect('52%', `${EDM_ROSE_ROW_TOP_START + rowIndex * EDM_ROSE_ROW_TOP_STEP}%`, '4.2%', '2.3%');
+}
+
+export function edmRoseIconSlots(): PixelRect[] {
+  return Array.from({ length: EDM_ROSE_ROW_COUNT }, (_, i) => edmRoseIconSlot(i));
+}

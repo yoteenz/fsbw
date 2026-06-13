@@ -5,8 +5,14 @@ import {
   resolveClientPhotoFadeSlotOrDefault,
 } from './hairstyleAnalysisCompositeLayout.js';
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
+import {
+  applyClientFaceRestore,
+  hairstyleAnalysisClientFaceRestoreEnabled,
+} from './hairstyleAnalysisClientFaceRestore.js';
 import { applyClientPhotoMirrorReflection } from './hairstyleAnalysisClientPhotoReflection.js';
-import { HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
+import { hairstyleAnalysisClientPhotoPostProcessEnabled } from './hairstyleAnalysisClientPhotoCutout.js';
+import { edmRoseIconSlots, HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
+import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
 
 async function fetchBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
@@ -23,16 +29,28 @@ async function resizeToAnalysisCanvas(buf: Buffer): Promise<Buffer> {
   return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
 }
 
-/** Post-process: optional photo fade + mirror reflection. Score/stars are Fal in-image. */
+export type HairstyleAnalysisPostProcessInput = {
+  falImageUrl: string;
+  templateImageUrl: string;
+  clientPreviewBuf?: Buffer | null;
+  layoutOverrides?: CompositeLayoutOverrides;
+  applyPhotoFade?: boolean;
+};
+
+/**
+ * Post-process after Fal:
+ * 1. Restore template EDM rose icons (Fal often redraws/fills them)
+ * 2. Restore submitted client face core (Fal often swaps to a similar person)
+ * 3. Optional bottom fade refine + mirror reflection
+ */
 export async function compositeHairstyleAnalysisPostProcess(
-  falImageUrl: string,
-  templateImageUrl: string,
-  layoutOverrides?: CompositeLayoutOverrides,
-  applyPhotoFade = false
+  input: HairstyleAnalysisPostProcessInput
 ): Promise<Buffer> {
+  const applyPhotoFade = input.applyPhotoFade ?? hairstyleAnalysisClientPhotoPostProcessEnabled();
+
   const [falRaw, templateRaw] = await Promise.all([
-    fetchBuffer(falImageUrl),
-    fetchBuffer(templateImageUrl),
+    fetchBuffer(input.falImageUrl),
+    fetchBuffer(input.templateImageUrl),
   ]);
 
   const [falBuf, templateBuf] = await Promise.all([
@@ -40,11 +58,15 @@ export async function compositeHairstyleAnalysisPostProcess(
     resizeToAnalysisCanvas(templateRaw),
   ]);
 
-  let base = falBuf;
+  let base = await restoreTemplateSlots(falBuf, templateBuf, edmRoseIconSlots());
 
-  const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
+  const photoOverrides = photoPostProcessLayoutOverrides(input.layoutOverrides);
   const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
   const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
+
+  if (input.clientPreviewBuf?.length && hairstyleAnalysisClientFaceRestoreEnabled()) {
+    base = await applyClientFaceRestore(base, input.clientPreviewBuf, panelRect, fadeRect);
+  }
 
   if (applyPhotoFade) {
     base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
