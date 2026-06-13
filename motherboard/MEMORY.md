@@ -27907,6 +27907,15 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: confirm no hardcoded TOP MATCH / MATCH specs
+
+- **Context:** User asked to confirm **none** of TOP MATCH or MORE MATCHES specs should be hardcoded.
+- **Confirmed rule:** Printed specs must come from **PSA picks** or **`diversifyHairstyleAnalysisLooks` + `varyInstallSpecs`** on every **`normalizeHairstyleAnalysisForFal`** — never template placeholders (13X6 HD / 250% / MIDDLE / NOIR / JET BLACK). Fal **`topMatchSpecManifestBlock`** + **`matchScoreManifestBlock`** are the only source of truth for in-image text.
+- **Still OK (not printed specs):** API parse fallbacks when fields missing; demo seed data; BAW styling ref paths (NOIR/JET BLACK for IMAGE refs only); catalog unit facts in prompts.
+- **Small fix:** Removed hardcoded **`lace: '13X6 HD'`** in **`psaPickToAnalysisLook`**; **`varyInstallSpecs`** now rotates default **NATURAL** hairline too.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
