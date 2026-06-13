@@ -27993,3 +27993,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Verbose duplicate score/star blocks still leaked manifest score % into Fal prompt; Fal sometimes left ~118px template star art / placeholder % that clashed with petite server overlay.
 - **Shipped (5c934e73):** **`scoreRatingServerOverlayBlankBlock()`** — exact **199×148px** value box regions (OVERALL SCORE @ x=1120 y=410, MATCH RATING @ x=1419 y=410), erase template placeholders, forbid Fal digits/stars; removed score % from Fal prompt entirely. **`prepareScoreRatingSlots`** wipe expanded **+10px** before petite overlay. **`docs/STYLE_ANALYSIS.md`** updated.
 - **Conventions:** OVERALL SCORE + MATCH RATING = **empty frosted boxes in Fal**; server only source for petite score (~33px) + stars (~25px).
+
+---
+
+## 2026-06-13 — Hairstyle analysis: remove server score/star composite, restore Fal petite in-image
+
+- **Context:** User reported prior fix did not land — still needed to **remove server-composited overall score % + match-rating stars** and **restore Fal-generated petite score/stars** (prompted smaller, erase large template placeholders) on hairstyle analysis generate output; also stop React overlay composer from painting duplicate score/star text.
+- **Shipped (86949d4e):** Removed **`compositeOverallScoreAndStars`** / **`prepareScoreRatingSlots`** from **`hairstyleAnalysisFalComposite.ts`** — server post-process = client-photo mirror reflection (+ optional fade) only. **`hairstyleAnalysisFalPrompt.ts`** — restored **`overallScoreAndRatingRules()`** with petite **`overallScoreFalFontSize`** / **`matchRatingFalStarSize`** targets, embossed gradient star spec, premium **erase ~118px template star outlines** then draw new small stars; removed **`scoreRatingServerOverlayBlankBlock()`**. **`HairstyleAnalysisCard.tsx`** — **`topScore`** / **`rating`** no longer render React text overlays (debug slot frames only). **`hairstyleAnalysisOverlayContent.ts`** — dropped score/star from overlay values. **`HairstyleAnalysisPreview.tsx`** — removed overall-score font picker; updated dev copy. **`docs/STYLE_ANALYSIS.md`** updated. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Overall score % + match-rating stars = **Fal in-image at petite sizes** — no server sharp overlay, no React text overlay on client-facing card.
