@@ -1,5 +1,6 @@
 /**
  * Client mirror of api/_lib/hairstyleAnalysisLookDiversity.ts — keep in sync.
+ * No printed TOP MATCH / MATCH row spec is a static template default.
  */
 import { allowedColorsForUnit, hexForHairColor, UNIT_NAMES } from '../data/hairstyleCatalog';
 import type { UnitName } from '../types/hairstyleAnalysis';
@@ -91,6 +92,11 @@ function isDefaultPart(part: string): boolean {
   return !n || n === 'MIDDLE';
 }
 
+function isDefaultHairline(hairline: string | undefined): boolean {
+  const n = (hairline ?? '').trim().toUpperCase().replace(/\s*HAIRLINE\s*$/i, '');
+  return !n || n === 'NATURAL';
+}
+
 function isDefaultDensity(density: string): boolean {
   const n = density.trim().replace(/\s*DENSITY\s*$/i, '');
   return !n || n === '250%' || n === '200%';
@@ -168,10 +174,12 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
   const densityOrder = shuffle(DENSITY_OPTIONS);
   const partOrder = shuffle(PART_OPTIONS);
   const hairlineOrder = shuffle(HAIRLINE_OPTIONS);
-  const hairlineRaw = look.hairline?.trim()
-    ? look.hairline.trim().toUpperCase().replace(/\s*HAIRLINE\s*$/i, '')
-    : (hairlineOrder[index % hairlineOrder.length] ?? 'NATURAL');
-  const hairline = hairlineRaw.includes('HAIRLINE') ? hairlineRaw : `${hairlineRaw} HAIRLINE`;
+  const hairlinePick = hairlineOrder[index % hairlineOrder.length] ?? 'NATURAL';
+  const hairline = isDefaultHairline(look.hairline)
+    ? `${hairlinePick} HAIRLINE`
+    : look.hairline!.trim().toUpperCase().includes('HAIRLINE')
+      ? look.hairline!.trim().toUpperCase()
+      : `${look.hairline!.trim().toUpperCase()} HAIRLINE`;
 
   return {
     ...look,
@@ -184,7 +192,7 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
     part: isDefaultPart(look.part)
       ? (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
       : look.part,
-    hairline: look.hairline?.trim() ? look.hairline : hairline,
+    hairline,
   };
 }
 
