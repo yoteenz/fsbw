@@ -36,12 +36,12 @@ export function laceLinePool(): EveryDetailLineBuilder[] {
     (c) => `${c.laceLabel} WITH SINGLE STRAND KNOTS`,
     (c) => `SEAMLESS ${c.hairline} LACE FRONT`,
     (c) => `${c.laceLabel} FOR AN UNDETECTABLE MELT`,
-    (c) => `${c.hairline} EDGE ON ${c.laceLabel}`,
+    (c) => `${c.hairline} HAIRLINE ON ${c.laceLabel}`,
     (c) => `${c.laceLabel} FOR A READY TO WEAR MELT`,
     (c) => `${c.hairline} HAIRLINE WITH MELTED LACE`,
     () => `HD LACE WITH A NATURAL HAIRLINE MELT`,
     (c) => `${c.laceLabel} LACE FRONT THAT DISAPPEARS`,
-    (c) => `${c.hairline} HAIRLINE ON ${c.laceLabel}`,
+    (c) => `${c.laceLabel} WITH A ${c.hairline} HAIRLINE`,
   ];
 }
 
@@ -56,7 +56,7 @@ export function colorLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[]
     (c) => `${c.color} THAT HOLDS COLOR EVENLY`,
     (c) => `${c.color} FOR A POLISHED FINISH`,
     (c) => `${c.color} TO ADD DEPTH TO YOUR LOOK`,
-    (c) => `${c.color} PAIRED WITH YOUR SKIN TONE`,
+    (c) => `${c.color} PAIRS WELL WITH YOUR SKIN TONE`,
     (c) => `${c.color} FOR A CLEAN COLOR MATCH`,
     (c) => `${c.color} TO ENRICH YOUR NATURAL GLOW`,
     (c) => `${c.color} FOR BOLD COLOR PAYOFF`,
@@ -78,7 +78,7 @@ export function textureLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder
     () => `EXTENSIONS WITH A NATURAL FEEL`,
     () => `EXTENSIONS YOU CAN STYLE EASILY`,
     () => `RAW HAIR WITH A POLISHED FINISH`,
-    () => `HAIR THAT FALLS CLEANLY`,
+    () => `RAW HAIR THAT FALLS SOFTLY`,
     () => `TEXTURE WITH BELIEVABLE MOVEMENT`,
     () => `TEXTURE THAT IS EASY TO WEAR EVERY DAY`,
     (c) => `${hairPatternLabel(c.unit)} TEXTURE FOR A CLEAN FINISH`,
@@ -104,7 +104,7 @@ export function styleLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[]
       () => `READY TO CUT AND STYLE`,
       () => `SOFT NATURAL FINISH`,
       () => `EASY EVERYDAY FINISH`,
-      () => `LEFT IN RAW TEXTURE`,
+      () => `LEFT IN ITS NATURAL STATE`,
       () => `TEXTURE YOU CAN PERSONALIZE`,
       () => `NATURAL TEXTURE, EASY TO STYLE`,
     ];
@@ -236,7 +236,7 @@ export function hairlineLinePool(): EveryDetailLineBuilder[] {
     (c) => `${c.hairline} HAIRLINE ON ${c.laceLabel}`,
     (c) => `${c.hairline} HAIRLINE WITH MELTED LACE`,
     (c) => `${c.hairline} HAIRLINE FOR A SEAMLESS MELT`,
-    (c) => `${c.hairline} EDGE THAT BLENDS CLEANLY`,
+    (c) => `${c.hairline} HAIRLINE THAT BLENDS CLEANLY`,
     (c) => `${c.hairline} HAIRLINE FOR HD LACE`,
     (c) => `${c.hairline} HAIRLINE READY TO WEAR`,
   ];
