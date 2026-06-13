@@ -22,6 +22,7 @@ import {
   bawHairlineShapeGuideBlock,
   hairlineBindingPromptLine,
   hairlineShapeKeyFromManifest,
+  hairlineShapePromptLine,
   noInventedBabyHairsBlock,
   type HairstyleAnalysisHairlineRef,
 } from './hairstyleAnalysisBawHairlineRefs.js';
@@ -82,6 +83,8 @@ export type FalPromptImageRefs = {
 export type FalPromptBuildOptions = {
   /** @deprecated Fal always uses Covered By Your Grace for OVERALL SCORE — ignored. */
   overallScoreFontLabel?: string;
+  /** IMAGE 2 already has TOP MATCH hair from upstream hair-only Fal step — template pass places it only. */
+  clientPreviewPreEdited?: boolean;
 };
 
 const BRAND_RED = '#EB1C24';
@@ -332,6 +335,52 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+/** Upstream step — hair-only edit on raw selfie (IMAGE 1 only; no template or mannequin refs). */
+export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientName: string): string {
+  const name = clientName.trim().toUpperCase() || 'CLIENT';
+  const part = displayPart(look.part);
+  const style = displayStyle(look.styling, look.unit);
+  return [
+    `Edit IMAGE 1 — client selfie for ${name}. Output ONE photo-realistic portrait.`,
+    '',
+    '=== FACE IDENTITY LOCK (HIGHEST PRIORITY) ===',
+    'IMAGE 1 is the real client — copy face pixels exactly: same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
+    'Hair edits apply ONLY in the hair region — never regenerate, repaint, beautify, or alter facial skin.',
+    '',
+    '=== HAIR-ONLY EDIT (IMAGE 1) ===',
+    'CHANGE **ONLY** the hair. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
+    'NO wig cap. NO visible lace. NO different person. NO beauty filter. NO face slimming.',
+    noInventedBabyHairsBlock(),
+    oneShoulderDrapeCompactLock(),
+    uniformRootColorBlock(look, 'preview'),
+    lookHairAccuracyLines(look),
+    hairlineShapePromptLine(look.hairline),
+    `LOCK: PART ${part}; STYLE ${style}.`,
+    '',
+    'OUTPUT: the **same person** with TOP MATCH hair — portrait ready for template placement.',
+  ].join('\n');
+}
+
+/** Template pass when IMAGE 2 is already hair-edited — place only; do not repaint face or main hair. */
+function preEditedClientPanelBlock(): string {
+  return [
+    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR ALREADY APPLIED) ===',
+    'IMAGE 2 is the real client with TOP MATCH hair already rendered upstream.',
+    '**Do not change face, skin, expression, neck, or hair** on the main left-panel preview.',
+    'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
+    'MATCH 02–04 thumbnails: **same IMAGE 2 face and pose**; change **only hair** per each look manifest.',
+  ].join('\n');
+}
+
+function clientPreviewPanelLine(
+  look: FalAnalysisLook,
+  refs: FalPromptImageRefs,
+  promptOptions?: FalPromptBuildOptions
+): string {
+  if (promptOptions?.clientPreviewPreEdited) return preEditedClientPanelBlock();
+  return clientPreviewHairLine(look, refs);
 }
 
 function sharedClientPhotoRulesBlock(): string {
@@ -703,7 +752,7 @@ function freePrompt(
     '',
     clientPreviewTabLine(),
     topMatchHeaderLine(fullName),
-    clientPreviewHairLine(top, refs),
+    clientPreviewPanelLine(top, refs, promptOptions),
   ];
   appendEveryDetailMattersLines(lines, analysis);
   lines.push(freePromptFooter(analysis));
@@ -722,7 +771,7 @@ function threeMonthPrompt(
     '',
     clientPreviewTabLine(),
     topMatchHeaderLine(fullName),
-    clientPreviewHairLine(top, refs),
+    clientPreviewPanelLine(top, refs, promptOptions),
   ];
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     const label = `MATCH ${String(i + 2).padStart(2, '0')}`;
