@@ -451,8 +451,8 @@ function everyDetailMattersRulesBlock(lineCount: number): string {
     '=== EVERY DETAIL MATTERS — PRINT VERBATIM ===',
     `Fill ${lineCount} rose rows — one short black text line each to the **right** of the existing rose icon (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars, no period/dash).`,
     `Row map: ${rowGuide}.`,
-    'Print numbered EDM lines below verbatim — text only; roses stay from IMAGE 1.',
-    'FORBIDDEN: empowerment fluff, lace melted, hairline natural, you deserve, queen, confidence, new bullet icons.',
+    'Print each EDM line below verbatim in rose-row order (top → bottom) — **text only** beside each rose; **no row numbers** (no 1. 2. 3. or EDM 1: prefixes).',
+    'FORBIDDEN: empowerment fluff, lace melted, hairline natural, you deserve, queen, confidence, new bullet icons, numbered list prefixes.',
   ].join('\n');
 }
 
@@ -732,11 +732,11 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
     'TOP MATCH specs + every detail matters filled; centered **black** specs-locked footer + centered **gray** build ribbon (above BUILD THIS LOOK button, not on it); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
-    'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
+    'Every-detail-matters bullets must match the same manifest values as the spec column — print each line verbatim (text only, no 1. 2. 3. prefixes), not empowerment fluff.',
     oneShoulderDrapeCompactLock(),
     rootCheck,
     'FACE: same person as IMAGE 2 on main photo + every MATCH thumb — never mannequin/styling/hairline ref faces.',
-    'EDM: original red rose icons from IMAGE 1 — text only beside each rose; no AI/sparkle/checkmark bullets.',
+    'EDM: original red rose icons from IMAGE 1 — text only beside each rose; no row numbers; no AI/sparkle/checkmark bullets.',
   ]
     .filter(Boolean)
     .join('\n');
