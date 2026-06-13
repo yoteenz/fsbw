@@ -27720,3 +27720,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said **every detail matters** bullets were too wordy — each should be **summed up to fit on one text row** (no wrapping).
 - **Shipped:** **`hairstyleAnalysisDisplay.ts`** — **`EVERY_DETAIL_MATTERS_MAX_CHARS` (68)** + **`compactEveryDetailMattersLine(s)`** (uppercase, dash-head trim, word-fit). **`hairstyleAnalysisNormalize.ts`** compacts **`whyItWorks`** before Fal. **`hairstyleAnalysisFalPrompt.ts`** — structure/rules: one short line per row, max 68 chars, punchy **feature — spec** phrasing, forbid multi-clause essays/wraps. **`hairstyleAnalysisDemo.ts`** — **`WHY_DETAIL_LINES`** shortened (e.g. `HEART FACE — NOIR SILKY STRAIGHT TEXTURE.`).
 - **Conventions:** Every detail matters = one facial feature + one catalog spec per row, ≤68 chars, single line in-image; server does not composite this panel.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: center client name in header panel
+
+- **Context:** User said the **client name** (black header above OVERALL SCORE / MATCH RATING) should be **centered within the panel**, not left-aligned.
+- **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **`topMatchHeaderLine()`** + free/premium FINAL CHECK: center name horizontally in frosted header panel, equal left/right padding, forbid left-align. **`HairstyleAnalysisCard`** — **`clientHeaderNameText`** (`text-align: center`) + **`clientHeaderSlot`** (`justify-content: center`) on **`clientHeaderName`** debug overlay slot.
+- **Conventions:** Client header name = centered in panel above score boxes; red pill stays **TOP MATCH** only (name does not go in pill).
