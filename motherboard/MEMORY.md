@@ -28058,3 +28058,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to change the card-top **"hairstyle analysis"** script (below FRONTAL SLAYER) **back to gray** — undo red repaint Fal block.
 - **Shipped:** Removed **`cardHeaderHairstyleAnalysisSubtitleBlock()`**; restored **untouched** gray "hairstyle analysis" + FRONTAL SLAYER header art in **`templateTextIntegrityBlock`**, tier-removal, FINAL CHECK. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Card-top **"hairstyle analysis"** stays template gray — never recolor red; client name header stays gray.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: match-rating decimal free tier only
+
+- **Context:** User wanted **5.0 / 4.7 decimal above MATCH RATING stars** on **free template only** — **not** on premium 4-picks (`IMG_2549`) template.
+- **Shipped:** **`overallScoreAndRatingRules()`** branches by tier — free = decimal in upper third + stars below; premium = **stars only**, explicit forbid decimal text. Updated OUTPUT + FINAL CHECK copy. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** MATCH RATING decimal (5.0, 4.7) = **free tier only**; premium = petite stars in-image, no decimal above stars.
