@@ -12,6 +12,13 @@ import {
 import { normalizeAnalysisTier } from './hairstyleAnalysisRules';
 import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters';
 
+/** Full first + last name for header — never first name only. */
+export function clientFullName(clientName: string): string {
+  const trimmed = String(clientName || '').trim();
+  if (!trimmed) return 'CLIENT';
+  return trimmed.toUpperCase();
+}
+
 function specValues(look: AnalysisLook): Record<string, string> {
   const resolved = resolveCatalogLook(look);
   return {
@@ -60,7 +67,7 @@ function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> 
   const out: Record<string, string> = {
     ...topMatchHeader(analysis.topMatch),
     clientName: 'TOP MATCH',
-    clientHeaderName: analysis.clientName.toUpperCase(),
+    clientHeaderName: clientFullName(analysis.clientName),
   };
   everyDetailWhyLines(analysis).forEach((line, i) => {
     out[`whyLine-${i}`] = line;
@@ -72,7 +79,7 @@ function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, st
   const out: Record<string, string> = {
     ...topMatchHeader(analysis.topMatch),
     clientName: 'TOP MATCH',
-    clientHeaderName: analysis.clientName.toUpperCase(),
+    clientHeaderName: clientFullName(analysis.clientName),
   };
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     applyMatchRow(out, `match${i + 2}`, look);
