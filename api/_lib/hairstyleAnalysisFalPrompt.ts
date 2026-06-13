@@ -185,17 +185,6 @@ function colorHairGuidanceLine(look: FalAnalysisLook): string {
   return lookHairAccuracyLines(look).split('\n')[1] ?? '';
 }
 
-function realisticHairRecolorBlock(): string {
-  return [
-    '=== HAIR COLOR — REALISTIC STRAND REPAINT (NOT AN OVERLAY) ===',
-    'Recolor at strand level with believable shine and lighting — **pigment stays one BAW catalog tone root to tip** (see color rules).',
-    'Include **hairline baby hairs, edge wisps, and temple flyaways** in the recolor — they must match the assigned catalog color, not stay black from IMAGE 2 or mannequin refs.',
-    'Match scene lighting from the selfie — believable shadows inside curls and dimension at the part.',
-    'FORBIDDEN: flat color wash, semi-transparent tint, dark roots on fashion colors, black baby hairs on colored installs, ombré, color filter overlay, posterized hair, sticker-like hair, or wig-cap color block.',
-    'Hair must look fully installed and photographed — not a colored layer pasted on top of the original hair.',
-  ].join('\n');
-}
-
 function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   if (style === 'NONE') {
@@ -215,19 +204,6 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
     ].join(' ');
   }
   return `Apply BAW salon styling **${style}** only — print STYLE as "${style}"; do not default to LAYERS or invent a new curl/crimp/straight pattern.`;
-}
-
-function salonStylingPriorityBlock(): string {
-  return [
-    '=== SALON STYLING — EACH MATCH HAS ITS OWN STYLE (CRITICAL) ===',
-    'Every look has a distinct STYLE value (LAYERS, FLAT IRON, CRIMPS, WAND CURLS, DEFINE, or NONE).',
-    'When STYLE is not NONE: the matching BAW styling reference IMAGE is the **authoritative** salon finish for that look.',
-    'Styling reference IMAGE = **hair curl/crimp/straight/layer pattern only** — IMAGE 2 keeps the master head + body pose on every photo.',
-    'Unit mannequin IMAGE (when attached) = hair-strand texture + hair-end drape only — **not** neck/shoulders and **not** the salon finish when a styling IMAGE is assigned.',
-    'FORBIDDEN: rendering every match with the same layered/wavy finish; printing LAYERS in STYLE when the assigned style is FLAT IRON, CRIMPS, WAND CURLS, or DEFINE;',
-    'using the TOP MATCH hairstyle on MATCH 02–04 thumbnails.',
-    'Curly units (SOFT CURL, OCEAN CURL): STYLE **DEFINE** replaces LAYERS; **WAND CURLS** replaces CRIMPS — print and render those ids exactly.',
-  ].join('\n');
 }
 
 function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
@@ -373,20 +349,11 @@ function realisticHairDensityBlock(densityLabel: string, isThumbnail = false): s
 function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
-  const hairlineLabel = displayHairline(look.hairline);
-  const hairlineRef = hairlineRefForLook(refs.hairlineRefs, look.hairline);
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
-  const hairlineNote = hairlineRef
-    ? `**HAIRLINE ${hairlineLabel}** — forehead lace-edge shape from IMAGE ${hairlineRef.imageIndex} (mandatory; not NATURAL)`
-    : hairlineLabel === 'NATURAL'
-      ? 'HAIRLINE NATURAL — soft lace-front edge'
-      : `**HAIRLINE ${hairlineLabel}** — apply ${hairlineLabel} forehead edge (not NATURAL)`;
   return [
     `${label} THUMB: same client face **and same head/body pose** as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); one-shoulder drape; hair-only edits.`,
-    hairlineNote,
-    'Keep IMAGE 2 head angle, gaze, and shoulder line — **never** turn the client profile or 3/4 to match a styling/mannequin IMAGE.',
-    `PART ${part} **only** on this thumb — one scalp line; erase any other part from IMAGE 2 or other refs.`,
+    `PART ${part} **only** — one scalp line.`,
     uniformRootColorBlock(look, 'thumbnail'),
     realisticHairDensityBlock(displayDensity(look.density), true),
     hairlineRefPromptLine(look.hairline, look.color, refs.hairlineRefs),
@@ -413,45 +380,14 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
   ].join('\n');
 }
 
-const EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES = [
-  'every detail matters',
-  'you deserve',
-  'embrace your',
-  'own your',
-  'slay',
-  'queen',
-  'goddess',
-  'confidence',
-  'unique beauty',
-  'powerful',
-  'unstoppable',
-  'shine',
-  'flawless',
-  'beautiful',
-  'gorgeous',
-  'stunning',
-  'elevate',
-  'transform',
-  'empower',
-  'long face',
-  'wide face',
-  'narrow chin',
-  'high forehead',
-  'big forehead',
-  'lace melted',
-  'hairline natural',
-].join(', ');
-
 function everyDetailMattersRulesBlock(lineCount: number): string {
   return [
     everyDetailMattersStructureBlock(lineCount),
     '',
-    '=== EVERY DETAIL MATTERS LINES (PRINT VERBATIM — ZERO REWRITES) ===',
-    'Copy each numbered line below **character-for-character**. Do not paraphrase, wrap, or rewrite into empowerment / inspirational copy.',
-    'These lines are **spec fit notes** tied to TOP MATCH manifest values — not a separate "why it works" essay.',
-    `Each line must fit **one text row** (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars) — one TOP MATCH spec value + why it suits the client (no period, dash, or hyphen).`,
-    `FORBIDDEN PHRASES / TONE: ${EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES}.`,
-    'Do not invent marketing copy. Do not treat this section as inspirational "why it works" fluff.',
+    '=== EVERY DETAIL MATTERS — PRINT VERBATIM ===',
+    `Copy each EDM line below exactly — one row per rose icon (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars, no period/dash).`,
+    'Spec fit notes tied to TOP MATCH manifest — not empowerment fluff.',
+    `FORBIDDEN TONE: you deserve, embrace, queen, confidence, flawless, lace melted, hairline natural.`,
   ].join('\n');
 }
 
@@ -470,150 +406,40 @@ function panelChromePreservationBlock(): string {
 }
 
 
-function scoreRatingSlotRegionLine(label: string, slot: PixelRect): string {
-  return `${label}: ${slot.width}×${slot.height}px frosted value box @ x=${slot.left} y=${slot.top} (2048×2560 canvas)`;
-}
-
 function filledStarCountFromOverallScore(score: number): number {
   return matchRatingFilledStarsFromScore(score);
 }
 
-/** Canonical MATCH RATING star glyph — embossed radial-gradient red (premium template + free tier). */
-function matchRatingStarDesignBlock(): string {
-  return [
-    '=== MATCH RATING STARS — EXACT GLYPH DESIGN (ALL TIERS — PERMANENT) ===',
-    'Use **only** this star style in the MATCH RATING panel — same on every generation:',
-    '• **Shape:** classic symmetrical 5-point star, sharp tips, polished vector icon (not emoji, not hand-drawn).',
-    '• **Earned (filled) stars:** **radial gradient** emboss/bevel — **pale pink-coral highlight at the center** (#FFC4C4 / #FFB8B8) fading to **vibrant brand red** (#EB1C24) at the outer points; subtle 3D puffy/embossed look.',
-    '• **Outline:** every star (filled or empty) has a **fine crisp dark-red stroke** (#C41018) defining the edge.',
-    '• **Empty (unearned) stars:** same shape + dark-red outline only — **no gradient fill**, interior stays white/transparent.',
-    '• **Layout:** exactly 5 stars in **one horizontal centered row**, evenly spaced — **star 1 = leftmost**, **star 5 = rightmost**. Fill **left to right** only.',
-    '• **Size:** **small / petite** — each star is a compact icon; the full row sits inside the value box with **wide margin** above, below, and between stars (never chunky or panel-filling).',
-    'FORBIDDEN: flat solid-red fills with no gradient, yellow/gold stars, emoji ★, chunky clip-art, glow blobs, oversized stars, filling from the right, or a different star icon set.',
-  ].join('\n');
-}
-
-function overallScoreFontDesignBlock(): string {
-  return [
-    '=== OVERALL SCORE % — EXACT FONT DESIGN (ALL TIERS — PERMANENT) ===',
-    'Print the score value using **only** this typography in the red OVERALL SCORE panel:',
-    `• **Font:** **${OVERALL_SCORE_CANONICAL_FONT}** — elegant **handwritten script / calligraphy** (not geometric sans-serif).`,
-    '• **Style:** fluid slanted strokes, fine-tip-marker weight, personalized "signed" look — **digits and % suffix in the same script family**.',
-    `• **Color:** vibrant brand red ${BRAND_RED}.`,
-    '• **Layout:** **petite** — centered inside the OVERALL SCORE value box with **generous padding on all sides**; digits + % must occupy well under half the box height.',
-    'FORBIDDEN on OVERALL SCORE: oversized/billboard digits, filling the panel, touching borders, Futura PT Demi/Medium/Book, blocky sans-serif digits, black/gray text, or MATCH ROW gray score styling.',
-  ].join('\n');
-}
-
-function overallScoreFalLine(look: FalAnalysisLook): string {
-  const targetPx = overallScoreFalFontSize(TOP_SCORE_SLOT);
-
-  return [
-    `OVERALL SCORE: erase any large template placeholder %, then print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
-    `Use **${OVERALL_SCORE_CANONICAL_FONT}** handwriting script exactly — see OVERALL SCORE font design block above.`,
-    `Brand red ${BRAND_RED}, **petite** script — **~${targetPx}px max total height** (digits + % together), centered with **wide padding** inside the panel.`,
-    'Entire value (digits + % suffix) in the same delicate script — must stay small, never touch panel edges, and must **not** fill or dominate the box.',
-  ].join(' ');
-}
-
-function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): string {
-  const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
-  const starPx = matchRatingFalStarSize(RATING_SLOT);
-  const tierKey = normalizeTier(tier);
-  const freeStarNote =
-    tierKey === 'free'
-      ? `FREE: draw all 5 **small** stars using the embossed gradient glyph spec (~${starPx}px tall each, max) — centered row with wide padding; row must not touch panel edges.`
-      : `PREMIUM: **erase** oversized template star outline placeholders (~118px tall); draw five **new petite** stars (~${starPx}px each, max) centered in the value box — never fill, trace, or enlarge the baked template glyph outlines.`;
-
-  return [
-    '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL — KEEP SMALL) ===',
-    scoreRatingSlotRegionLine('OVERALL SCORE value panel', TOP_SCORE_SLOT),
-    scoreRatingSlotRegionLine('MATCH RATING value panel', RATING_SLOT),
-    overallScoreFontDesignBlock(),
-    matchRatingStarDesignBlock(),
-    'These size rules apply **only** to the OVERALL SCORE panel and MATCH RATING stars — **not** MATCH 02–04 gray score % rows.',
-    'Both panels have a small inner value area below the label. Score and stars must be **petite and understated** — leave at least ~25% empty padding inside each value box on every side.',
-    `OVERALL SCORE %: **max ~${scorePx}px tall** for the full value (digits + %) — smaller is better; never billboard-sized.`,
-    `MATCH RATING stars: ${freeStarNote} Gradient fill stays inside each star only — **no chunky or oversized stars.**`,
-    'FORBIDDEN: score or stars that dominate the panel, touch borders, or look enlarged vs the reference template.',
-  ].join('\n');
-}
-
-function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalysis['tier']): string {
-  const scorePct = Math.round(look.score);
-  const filled = filledStarCountFromOverallScore(look.score);
-  const starPx = matchRatingFalStarSize(RATING_SLOT);
-  const tierKey = normalizeTier(tier);
-  const fillRule =
-    filled === 5
-      ? `OVERALL SCORE is ${scorePct}% (≥95%) — fill **all 5 stars left to right** (stars 1–5).`
-      : `OVERALL SCORE is ${scorePct}% (<95%) — fill **only the left four stars** (stars 1–4 left to right); **star 5 (rightmost) stays empty outline only**.`;
-  const premiumNote =
-    tierKey === 'free'
-      ? [
-          'FREE TEMPLATE: draw exactly 5 stars left to right using the embossed gradient glyph spec — fill earned stars with radial pink-coral center → brand red points.',
-          'Empty stars = outline only. Do not substitute a different star icon set.',
-        ].join(' ')
-      : [
-          'PREMIUM TEMPLATE: erase large baked star outline glyphs first, then draw five **new small** stars left to right.',
-          'Fill earned stars with the embossed radial gradient (pink-coral center → #EB1C24 points) + dark-red stroke; leave unearned stars as outline-only.',
-          'Do NOT mirror, oversize, or fill stars from the right.',
-        ].join(' ');
-
-  return [
-    `MATCH RATING: ${fillRule}`,
-    `Fill exactly ${filled} of 5 stars with the **embossed gradient red** glyph (pink-coral center → brand red ${BRAND_RED} at points, dark-red outline).`,
-    `Leave the remaining ${5 - filled} star(s) as **empty outlines** — always the **rightmost** star(s) when fewer than 5 are earned.`,
-    `Keep every star **small** (~${starPx}px tall max each) — centered row with wide padding inside the MATCH RATING value box; do not enlarge, overflow the panel, or paint chunky fills.`,
-    premiumNote,
-    'FORBIDDEN: flat solid-red stars, yellow/gold stars, emoji stars, backwards/right-to-left fill, oversized/chunky stars, or new star shapes outside the MATCH RATING panel.',
-  ].join(' ');
-}
-
+/** Compact score + star rules — keep under Fal 32k prompt limit. */
 function overallScoreAndRatingRules(
   look: FalAnalysisLook,
   tier: FalHairstyleAnalysis['tier']
 ): string {
-  return [
-    overallScoreAndStarsSizeRules(tier),
-    '',
-    '=== OVERALL SCORE + MATCH RATING — CONTENT (FAL IN-IMAGE) ===',
-    overallScoreFalLine(look),
-    matchRatingStarsFalLine(look, tier),
-  ].join('\n');
-}
-
-function matchRowScoreColorBlock(): string {
-  return [
-    '=== MATCH SCORE % COLOR — GRAY #808080 ONLY (CRITICAL — NEVER BLACK) ===',
-    `MATCH 02, MATCH 03, and MATCH 04 each have a separate MATCH SCORE % value slot — paint **only** that percentage in medium gray **${MATCH_SCORE_GRAY}**.`,
-    'TEXTURE, COLOR, and LENGTH on the same row stay **black** Futura PT Medium — **only** the MATCH SCORE % digits + % suffix are gray.',
-    `FORBIDDEN on MATCH SCORE %: black (#000000 / #1a1a1a), red (${BRAND_RED}), Covered By Your Grace script, large digits, or copying OVERALL SCORE panel styling.`,
-    'Do not paint all four row values black — the MATCH SCORE line is the **one gray exception** on every additional-match row.',
-    'If placeholder or prior text in the MATCH SCORE slot is black, erase and repaint **gray ${MATCH_SCORE_GRAY}**.',
-  ].join('\n');
-}
-
-function matchScoreFalLine(look: FalAnalysisLook): string {
+  const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
+  const starPx = matchRatingFalStarSize(RATING_SLOT);
+  const filled = filledStarCountFromOverallScore(look.score);
   const scorePct = formatScorePercent(look.score);
+  const tierKey = normalizeTier(tier);
+  const starErase =
+    tierKey === 'free'
+      ? `Draw 5 petite embossed-gradient red stars (~${starPx}px max each).`
+      : `Erase large template star glyphs; draw 5 new petite stars (~${starPx}px max each).`;
+  const fillRule =
+    filled === 5 ? 'Fill all 5 stars left → right.' : 'Fill left 4 only; star 5 empty outline.';
+
   return [
-    `TEXTURE: ${look.unit.trim().toUpperCase()} (black Futura PT Medium)`,
-    `COLOR: ${look.color.trim().toUpperCase()} (black Futura PT Medium)`,
-    `LENGTH: ${displayLength(look.length)} (black Futura PT Medium)`,
-    `MATCH SCORE: ${scorePct} — **gray ${MATCH_SCORE_GRAY} only** in this row's MATCH SCORE value slot (small Futura PT Medium — never black, never red OVERALL SCORE styling).`,
-    'Print each value beside its pre-printed label on separate labeled lines — TEXTURE, COLOR, LENGTH, then MATCH SCORE.',
-  ].join(' ');
+    '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE) ===',
+    `OVERALL SCORE: erase placeholder %; print ${scorePct} in ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script (~${scorePx}px max height, centered, wide padding). Digits + % same script.`,
+    `MATCH RATING: ${fillRule} ${starErase} Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
+    'FORBIDDEN: billboard score, chunky/emoji stars, gray or sans-serif overall score.',
+  ].join('\n');
 }
 
 function matchRowScoreIsolationBlock(): string {
   return [
-    '=== MATCH 02–04 GRAY SCORE % — SEPARATE FROM OVERALL SCORE (CRITICAL) ===',
-    `OVERALL SCORE (top-right red panel) and MATCH SCORE % (each MORE MATCHES row) are **different fields** — never swap, duplicate, or link them.`,
-    `MATCH SCORE % only: gray ${MATCH_SCORE_GRAY}, small Futura PT Medium, in the MATCH SCORE value slot on that row (below LENGTH on the same MATCH block).`,
-    'FORBIDDEN: red/script/large overall-score styling on MATCH SCORE %; printing match scores in the OVERALL SCORE panel; floating % away from the MATCH SCORE label.',
-    'Server does **not** composite match-row text — print TEXTURE, COLOR, LENGTH, and gray MATCH SCORE % in-image in each row\'s value slots.',
-    '',
-    matchRowScoreColorBlock(),
+    '=== MATCH 02–04 GRAY SCORE % — SEPARATE FROM OVERALL SCORE ===',
+    `MATCH SCORE % only: gray ${MATCH_SCORE_GRAY}, small Futura PT Medium — never black or red overall-score styling.`,
+    'Print TEXTURE, COLOR, LENGTH black + gray MATCH SCORE % in each row value slot.',
   ].join('\n');
 }
 
@@ -627,40 +453,6 @@ function matchRowValuesFalRules(): string {
     'Labels (TEXTURE:, COLOR:, LENGTH:, MATCH SCORE:) are pre-printed on the template — do not duplicate labels; fill only the empty value slots.',
     'Keep each value aligned with its own label on the same horizontal line — do not stack all four values on one line or move scores to another panel.',
   ].join('\n');
-}
-
-function matchHairlineManifestBlock(
-  analysis: FalHairstyleAnalysis,
-  refs: FalPromptImageRefs
-): string {
-  const tier = normalizeTier(analysis.tier);
-  if (tier === 'free') return '';
-
-  const lines: string[] = [
-    '=== HAIRLINE — PER LOOK (TOP MATCH + MATCH 02–04 THUMBS — CRITICAL) ===',
-    'Each look has its own HAIRLINE (NATURAL, PEAK, LAGOS, or LAGOS + PEAK). Shape the **forehead lace-front edge** on **every** client photo to that manifest — never default all matches to NATURAL.',
-    'When HAIRLINE is PEAK or LAGOS: use the matching BAW hairline reference IMAGE for **forehead edge geometry only**; retint baby hairs to the look catalog color.',
-  ];
-
-  const allLooks = [analysis.topMatch, ...analysis.additionalLooks.slice(0, 3)];
-  allLooks.forEach((look, i) => {
-    const label = i === 0 ? 'TOP MATCH preview' : `MATCH ${String(i + 1).padStart(2, '0')} thumb`;
-    const hl = displayHairline(look.hairline);
-    const ref = hairlineRefForLook(refs.hairlineRefs, look.hairline);
-    const refNote = ref
-      ? `use IMAGE ${ref.imageIndex} (${ref.key}) for lace-edge shape`
-      : hl === 'NATURAL'
-        ? 'natural soft lace-front edge'
-        : `apply ${hl} edge — erase NATURAL placeholder`;
-    lines.push(`${label}: HAIRLINE **${hl}** — ${refNote}.`);
-  });
-
-  lines.push(
-    'TOP MATCH spec HAIRLINE value must print the manifest exactly — erase template placeholder NATURAL when manifest is PEAK or LAGOS.',
-    'FORBIDDEN: PEAK/LAGOS manifest with NATURAL-looking hairline on thumbs; ignoring BAW hairline IMAGE when attached; one NATURAL edge on every match.'
-  );
-
-  return lines.join('\n');
 }
 
 function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
@@ -843,7 +635,7 @@ function appendEveryDetailMattersLines(
   lines.push(
     'TOP MATCH spec column and every-detail-matters bullets must stay **in sync** — if manifest says SOFT WAVE + CHERRY, bullets must say SOFT WAVE + CHERRY, not NOIR + JET BLACK.'
   );
-  formatEveryDetailMattersForFal(analysis.topMatch, analysis.whyItWorks).forEach((line) => {
+  formatEveryDetailMattersForFal(analysis.whyItWorks).forEach((line) => {
     lines.push(line);
   });
 }
@@ -908,12 +700,10 @@ function threeMonthPrompt(
   lines.push('');
   lines.push(matchStylingManifestBlock(analysis, refs));
   lines.push('');
-  lines.push(matchHairlineManifestBlock(analysis, refs));
-  lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: red pill = "TOP MATCH" only; header above score panels = client first + last name **centered** in **gray ${MATCH_SCORE_GRAY}** Futura PT Medium (not black); TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE) — HAIRLINE must match manifest on preview + every thumb; OVERALL SCORE + MATCH RATING = **petite in-image** score ~${overallScoreFalFontSize(TOP_SCORE_SLOT)}px + stars ~${matchRatingFalStarSize(RATING_SLOT)}px (erase ~118px template star placeholders + oversized % before drawing); every-detail-matters rose rows filled verbatim; thumbs = same client + **same pose as IMAGE 2 on every row** + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
+    `FINAL CHECK: gray centered client name; specs + EDM lines verbatim; petite score/stars in-image; each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }

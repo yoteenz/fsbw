@@ -203,16 +203,7 @@ export function everyDetailMattersRowGuide(lineCount = 5): string[] {
   );
 }
 
-/** Fal prompt rows — tie each bullet to the live TOP MATCH manifest value. */
-export function formatEveryDetailMattersForFal(
-  look: EveryDetailMattersLook,
-  lines: string[]
-): string[] {
-  const keys = everyDetailMattersSpecKeys(lines.length);
-  return lines.map((line, i) => {
-    const key = keys[i] ?? keys[keys.length - 1];
-    const label = specManifestLabel(key);
-    const value = specValueFromLook(look, key);
-    return `EVERY DETAIL MATTERS LINE ${i + 1} (TOP MATCH ${label} = ${value}): ${line}`;
-  });
+/** Fal prompt rows — compact numbered EDM lines for the 32k prompt limit. */
+export function formatEveryDetailMattersForFal(lines: string[]): string[] {
+  return lines.map((line, i) => `EDM ${i + 1}: ${line}`);
 }
