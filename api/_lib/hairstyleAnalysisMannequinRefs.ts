@@ -17,11 +17,18 @@ export function hairstyleAnalysis3dMannequinFrontPath(unitKey: string): string {
   return UNIT_3D_FRONT[u] ?? UNIT_3D_FRONT.NOIR;
 }
 
-/** Client first name only — used inside the CLIENT PREVIEW pill. */
+/** Client first name only — legacy; pill now shows TOP MATCH. */
 export function clientFirstName(clientName: string): string {
   const trimmed = String(clientName || '').trim();
   if (!trimmed) return 'CLIENT';
   return trimmed.split(/\s+/)[0]!.toUpperCase();
+}
+
+/** Client first + last name — black header above overall score panel. */
+export function clientFullName(clientName: string): string {
+  const trimmed = String(clientName || '').trim();
+  if (!trimmed) return 'CLIENT';
+  return trimmed.toUpperCase();
 }
 
 export type MannequinRefIndex = {
