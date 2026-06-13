@@ -111,12 +111,12 @@ export function hairlineShapePromptLine(hairlineRaw: string): string {
   const key = hairlineShapeKeyFromManifest(hairlineRaw);
   const label = displayHairline(hairlineRaw);
   if (key === 'NATURAL') {
-    return `HAIRLINE ${label}: NATURAL smooth arc per text guide — clean edge, no wisps on skin.`;
+    return `HAIRLINE ${label}: smooth arc — clean edge, no wisps on skin.`;
   }
   if (key === 'LAGOS_PEAK') {
-    return `HAIRLINE ${label}: LAGOS+PEAK — center V **plus** side scallops; use PEAK ref IMAGE for V + text guide for side valleys; not NATURAL arc.`;
+    return `HAIRLINE ${label}: LAGOS+PEAK — center V + side scallops (PEAK ref + text guide); not NATURAL arc.`;
   }
-  return `HAIRLINE ${label}: ${key} forehead edge per text guide — **not** NATURAL arc; shape must be visibly different from smooth arc.`;
+  return `HAIRLINE ${label}: ${key} edge per text guide — visibly not NATURAL arc.`;
 }
 
 export function hairlineRefPromptLine(
@@ -132,7 +132,7 @@ export function hairlineRefPromptLine(
     hairlineShapeKeyFromManifest(hairlineRaw) === 'LAGOS_PEAK'
       ? ' — center V from ref + Lagos scallops on sides per text guide'
       : '';
-  return `HAIRLINE ${label}: copy **forehead lace-edge geometry** from IMAGE ${ref.imageIndex} (${ref.key})${combo}; recolor lace-edge **hair strands** to ${colorKey}; **clean edge — erase baby hairs on skin**; IMAGE 2 face/pose unchanged.`;
+  return `HAIRLINE ${label}: IMAGE ${ref.imageIndex} (${ref.key}) lace-edge shape${combo}; recolor ${colorKey}; clean edge, no baby hairs.`;
 }
 
 /** Per-look hairline binding — prefers ref IMAGE when PEAK/LAGOS. */
@@ -158,14 +158,11 @@ export function noInventedBabyHairsBlock(): string {
 /** Static forehead-edge shape guide — supplements ref IMAGEs; NATURAL has no ref IMAGE. */
 export function bawHairlineShapeGuideBlock(): string {
   return [
-    '=== HAIRLINE EDGE — TEXT SHAPE GUIDE ===',
-    'Lace-front forehead edge only — face/pose from IMAGE 2.',
+    '=== HAIRLINE TEXT GUIDE ===',
     HAIRLINE_SHAPE_LINES.NATURAL,
     HAIRLINE_SHAPE_LINES.PEAK,
     HAIRLINE_SHAPE_LINES.LAGOS,
     HAIRLINE_SHAPE_LINES.LAGOS_PEAK,
-    'PEAK = center V; LAGOS = scalloped M/W; NATURAL = smooth arc — **three distinct shapes**; never default all looks to NATURAL.',
-    'Self-check: PEAK manifest without visible center V → failed; LAGOS without scalloped edge → failed.',
-    'FORBIDDEN: inventing baby hairs; copying mannequin/styling IMAGE edge frizz; black wisps on vivid/blonde hair.',
+    'PEAK=center V; LAGOS=scallop; NATURAL=smooth arc — never default all to NATURAL; no baby hairs on skin.',
   ].join('\n');
 }
