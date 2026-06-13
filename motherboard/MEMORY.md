@@ -27764,3 +27764,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Server post-process (**Ideogram cutout + panel fade**) used **2048×2560** slot rects while Fal output could be **`auto`** size; debug **slotOverrides** could also place fade rect outside client panel — Sharp rejects oversized overlays.
 - **Shipped:** **`hairstyleAnalysisFalComposite.ts`** — resize Fal + template to **`HAIRSTYLE_ANALYSIS_CANVAS`** before post-process. **`hairstyleAnalysisClientPhotoFade.ts`** — clamp fade inside panel (**`intersectPixelRects`**), clamp extracts to image bounds, **`compositeOverlay()`** resizes overlays to fit. **`hairstyleAnalysisLayoutSlots.ts`** — **`intersectPixelRects`**, **`pixelRectRelativeTo`** helpers.
 - **Conventions:** Post-process assumes 2048×2560; normalize Fal output first; fade window must stay inside client panel.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: validation box + catalog color diversity fix
+
+- **Context:** User asked **"what's this"** about red **VALIDATION** box on admin Hairstyle Analysis page blocking Generate: **`ADDITIONALLOOKS[0].COLOR: PLATINUM IS NOT ALLOWED FOR NOIR`** and **`ADDITIONALLOOKS[2].COLOR: GOLDEN IS NOT ALLOWED FOR SOFT WAVE`**. Continuation of prior chat (every-detail compaction, client name center, look diversity, embossed stars, CBYG score font, composite dimension fix).
+- **What the box is:** Client-side **`validateHairstyleAnalysis()`** gate in **`HairstyleAnalysisPreview`** — lists catalog rule violations before Fal generate. **PLATINUM/GOLDEN/ASH** are **BLANCO-only**; other units use **`DEFAULT_UNIT_COLORS`** (no blonde-family on NOIR/SOFT WAVE etc.).
+- **Cause:** **`diversifyHairstyleAnalysisLooks()`** assigned blonde bucket colors (PLATINUM/GOLDEN) to non-BLANCO units for variety.
+- **Shipped:** **`pickAllowedColor()`** filters picks through **`allowedColorsForCatalogUnit`** / **`allowedColorsForUnit`**; blonde bucket on non-BLANCO uses **HONEY/CHESTNUT**; **`assignUnitsForBuckets()`** assigns **BLANCO** for blonde slots. Repaired broken API diversity module (missing **`shuffle`**, **`colorBuckets`** order). **`allowedColorsForCatalogUnit()`** in **`hairstyleAnalysisUnitCatalog.ts`**. Client mirror synced in **`src/utils/hairstyleAnalysisLookDiversity.ts`**.
+- **Conventions:** Diversity must never violate catalog color×unit rules; validation box = expected pre-flight check, not a Fal bug.
