@@ -1,4 +1,16 @@
 import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
+import {
+  bottomAnchorCutoutInCanvas,
+  removeBackgroundFromClientRegion,
+} from './hairstyleAnalysisClientPhotoCutout.js';
+
+type FalClient = {
+  storage: { upload: (file: File) => Promise<string> };
+  subscribe: (
+    model: string,
+    opts: { input: Record<string, unknown>; logs?: boolean }
+  ) => Promise<unknown>;
+};
 
 /** Symmetrical bottom fade on the client photo alpha only — template marble shows through. */
 const FADE_START_PCT = 72;
@@ -33,18 +45,22 @@ function buildSymmetricalBottomFadeMaskSvg(width: number, height: number): Buffe
 export async function applyClientPhotoBottomFade(
   falBuf: Buffer,
   templateBuf: Buffer,
-  rect: PixelRect
+  rect: PixelRect,
+  fal?: FalClient | null
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   const { left, top, width, height } = rect;
 
   const maskPng = await sharp(buildSymmetricalBottomFadeMaskSvg(width, height)).png().toBuffer();
 
-  const falRegion = await sharp(falBuf)
+  const falRegionRaw = await sharp(falBuf)
     .extract({ left, top, width, height })
     .ensureAlpha()
     .png()
     .toBuffer();
+
+  const cutout = await removeBackgroundFromClientRegion(fal ?? null, falRegionRaw);
+  const falRegion = await bottomAnchorCutoutInCanvas(cutout, width, height);
 
   const maskedPhoto = await sharp(falRegion)
     .composite([{ input: maskPng, blend: 'dest-in' }])

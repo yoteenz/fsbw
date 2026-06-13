@@ -17,6 +17,10 @@ import {
 } from './hairstyleAnalysisFontOverrides.js';
 import { collectMannequinRefsForAnalysis } from './hairstyleAnalysisMannequinRefs.js';
 import { storageObjectExists } from './liveTryOnBatchGenerate.js';
+import {
+  compositeHairstyleAnalysisPostProcess,
+} from './hairstyleAnalysisFalComposite.js';
+import { hairstyleAnalysisClientPhotoPostProcessEnabled } from './hairstyleAnalysisClientPhotoCutout.js';
 
 export const HAIRSTYLE_ANALYSIS_GPT2_MODEL = 'openai/gpt-image-2/edit';
 
@@ -310,8 +314,22 @@ export async function generateHairstyleAnalysisWithFal(
 
   const result = await subscribeHairstyleAnalysisFal(fal, imageUrls, prompt);
 
-  const imageUrl = extractFalImageUrl(result);
+  let imageUrl = extractFalImageUrl(result);
   if (!imageUrl) throw new Error('Fal returned no image URL');
+
+  if (hairstyleAnalysisClientPhotoPostProcessEnabled()) {
+    const templateFetchUrl =
+      input.templateUrl.startsWith('http://') || input.templateUrl.startsWith('https://')
+        ? input.templateUrl
+        : `${input.siteOrigin.replace(/\/$/, '')}${input.templateUrl.startsWith('/') ? '' : '/'}${input.templateUrl}`;
+    const composited = await compositeHairstyleAnalysisPostProcess(
+      imageUrl,
+      templateFetchUrl,
+      input.layoutOverrides,
+      fal
+    );
+    imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');
+  }
 
   return {
     imageUrl,
