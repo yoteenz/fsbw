@@ -7,6 +7,11 @@ import {
 import {
   defaultAdditionalManifests,
   defaultTopMatchManifest,
+  isGroupedManifestField,
+  manifestFieldDisplayValue,
+  manifestLaceOptionGroups,
+  manifestLengthSelectValue,
+  bawLengthLabel,
   MANIFEST_SPEC_CATEGORIES,
   normalizeManifestDraft,
   optionsForManifestField,
@@ -35,8 +40,54 @@ function ManifestLookFields({
   const normalized = normalizeManifestDraft(draft);
 
   const updateField = (field: keyof ManifestLookDraft, value: string) => {
-    const next = normalizeManifestDraft({ ...normalized, [field]: value });
+    const stored =
+      field === 'length' ? manifestLengthSelectValue(value) : value;
+    const next = normalizeManifestDraft({ ...normalized, [field]: stored });
     onChange(next);
+  };
+
+  const renderSelect = (category: (typeof MANIFEST_SPEC_CATEGORIES)[number]) => {
+    const field = category.id;
+    const selectValue =
+      field === 'length'
+        ? manifestFieldDisplayValue('length', normalized)
+        : normalized[field];
+
+    if (isGroupedManifestField(field)) {
+      const groups = manifestLaceOptionGroups();
+      return (
+        <select
+          value={selectValue}
+          onChange={(e) => updateField(field, e.target.value)}
+          className="border border-black bg-white px-2 py-2 text-black text-[11px] uppercase tracking-[0.08em]"
+        >
+          {groups.map((group) => (
+            <optgroup key={group.label} label={group.label}>
+              {group.options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      );
+    }
+
+    const options = optionsForManifestField(field, normalized);
+    return (
+      <select
+        value={field === 'length' ? selectValue : normalized[field]}
+        onChange={(e) => updateField(field, e.target.value)}
+        className="border border-black bg-white px-2 py-2 text-black text-[11px] uppercase tracking-[0.08em]"
+      >
+        {options.map((option) => (
+          <option key={option} value={field === 'length' ? bawLengthLabel(option) : option}>
+            {field === 'length' ? bawLengthLabel(option) : option}
+          </option>
+        ))}
+      </select>
+    );
   };
 
   return (
@@ -49,8 +100,6 @@ function ManifestLookFields({
       </p>
       <div className="grid grid-cols-1 gap-2">
         {MANIFEST_SPEC_CATEGORIES.map((category) => {
-          const options = optionsForManifestField(category.id, normalized);
-          const value = normalized[category.id];
           return (
             <label
               key={`${label}-${category.id}`}
@@ -62,17 +111,7 @@ function ManifestLookFields({
                   <span className="text-[#b0b0b0] normal-case tracking-normal"> — {category.description}</span>
                 ) : null}
               </span>
-              <select
-                value={value}
-                onChange={(e) => updateField(category.id, e.target.value)}
-                className="border border-black bg-white px-2 py-2 text-black text-[11px] uppercase tracking-[0.08em]"
-              >
-                {options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              {renderSelect(category)}
             </label>
           );
         })}

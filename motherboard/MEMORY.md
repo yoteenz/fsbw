@@ -28224,3 +28224,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked for a **manifest dropdown** of all specs **categorized** to manually choose combinations and test how generated cards look.
 - **Shipped:** **`ManifestSpecPicker.tsx`** on Tools → Hairstyle Analysis (admin only) — categorized selects: Texture, Color, Length, Lace, Density, Part, Hairline, Style; TOP MATCH + MATCH 02–04 per tier; summary ribbon + EDM line preview; reset defaults. **`hairstyleAnalysisManifestOptions.ts`** + **`hairstyleAnalysisManifestBuild.ts`**. Checkbox **Use manifest test picker** builds analysis from picks; **`manifestTestMode`** on generate skips **`diversifyHairstyleAnalysisLooks`** (admin-only **`skipLookDiversification`** in **`normalizeHairstyleAnalysisForFal`**).
 - **Conventions:** Admin manifest test = exact specs to Fal; color options filter by unit; style options filter by unit catalog.
+
+---
+
+## 2026-06-13 — Manifest picker: full BAW sub-page option lists
+
+- **Context:** User flagged manifest lace dropdown only had frontal HD options; length/density/styling ranges were truncated — should list **all BAW sub-page selections** (except cap, texture, add-ons).
+- **Shipped:** **`hairstyleAnalysisManifestOptions.ts`** now sources **`productOptions.ts`** — lace **closures** (2X6–7X7), **frontals** (9X6, 13X4, 13X6), **full cap** (360, FULL) with optgroups; lengths **16\"–40\"**; density **130%–400%**; hairline from BAW page; styling **NONE + bangs combos** (straight vs curly unit lists). **`resolveManifestLook`** preserves exact picks (no catalog strip of bangs combos). Default alts demo **4X4** closure + **BANGS, CRIMPS**.
+- **Conventions:** Manifest picker mirrors BAW sub-pages via **`productOptions.ts`** / **`bawUnitStylingOptions`** — not Fal diversity subset.

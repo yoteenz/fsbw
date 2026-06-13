@@ -1,6 +1,5 @@
 import { hexForHairColor } from '../data/hairstyleCatalog';
-import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
-import { resolveCatalogLook } from './hairstyleAnalysisCatalogResolve';
+import type { AnalysisLook, AnalysisTier, HairstyleAnalysis, UnitName } from '../types/hairstyleAnalysis';
 import {
   buildEveryDetailMattersFromTopMatch,
   everyDetailVariationSeed,
@@ -10,8 +9,32 @@ import {
   formatEdmPanelBuildSummary,
 } from './hairstyleAnalysisFormat';
 import type { ManifestLookDraft } from './hairstyleAnalysisManifestOptions';
-import { normalizeManifestDraft } from './hairstyleAnalysisManifestOptions';
+import {
+  normalizeDensityValue,
+  normalizeHairlineValue,
+  normalizeManifestDraft,
+  normalizePartValue,
+} from './hairstyleAnalysisManifestOptions';
 import { additionalLooksLimit, resolveTemplateUrl } from './hairstyleAnalysisRules';
+
+/** Preserve exact manifest picks — do not strip bangs combos or non-catalog salon ids. */
+function resolveManifestLook(look: AnalysisLook): AnalysisLook {
+  const unit = look.unit.trim().toUpperCase() as UnitName;
+  return {
+    ...look,
+    unit,
+    color: look.color.trim().toUpperCase(),
+    length: look.length.trim().toUpperCase().includes('INCH')
+      ? look.length.trim().toUpperCase()
+      : `${look.length.trim().toUpperCase()} INCHES`,
+    lace: look.lace.trim().toUpperCase().replace(/\s*HD\s*$/i, '').replace(/\s*LACE\s*$/i, '').trim(),
+    density: normalizeDensityValue(look.density),
+    hairline: normalizeHairlineValue(look.hairline),
+    part: normalizePartValue(look.part),
+    styling: look.styling.trim().toUpperCase(),
+    hex: look.hex || hexForHairColor(look.color),
+  };
+}
 
 function draftToLook(draft: ManifestLookDraft, rank: number, imageUrl?: string): AnalysisLook {
   const normalized = normalizeManifestDraft(draft);
@@ -51,7 +74,7 @@ export function previewEveryDetailLines(
   topMatch: ManifestLookDraft,
   faceFeatures = KATEENA_DEMO_FACE_FEATURES
 ): string[] {
-  const top = resolveCatalogLook(draftToLook(topMatch, 1), 0);
+  const top = resolveManifestLook(draftToLook(topMatch, 1));
   return buildEveryDetailMattersFromTopMatch(top, faceFeatures, 5, 0);
 }
 
@@ -72,12 +95,11 @@ export type BuildAnalysisFromManifestInput = {
 /** Build a validated analysis payload from manual manifest picks (no diversity shuffle). */
 export function buildAnalysisFromManifest(input: BuildAnalysisFromManifestInput): HairstyleAnalysis {
   const limit = additionalLooksLimit(input.tier);
-  const top = resolveCatalogLook(
-    draftToLook(input.topMatch, 1, input.clientPreviewUrl),
-    0
+  const top = resolveManifestLook(
+    draftToLook(input.topMatch, 1, input.clientPreviewUrl)
   );
   const additionalLooks = input.additionalLooks.slice(0, limit).map((draft, i) =>
-    resolveCatalogLook(draftToLook(draft, i + 2), i + 1)
+    resolveManifestLook(draftToLook(draft, i + 2))
   );
   const faceFeatures = input.everyDetailFaceFeatures ?? KATEENA_DEMO_FACE_FEATURES;
   const whyItWorks = buildEveryDetailMattersFromTopMatch(
