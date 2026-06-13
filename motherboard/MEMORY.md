@@ -27746,3 +27746,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Reference star:** Classic **5-point vector** stars; **radial gradient** emboss (pale **pink-coral center** → **brand red** #EB1C24 at points); **fine dark-red outline** (#C41018); empty stars = outline only; 5 in a centered horizontal row.
 - **Shipped:** **`matchRatingStarDesignBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — canonical glyph spec for free + premium; **`matchRatingStarsFalLine()`** + size rules updated (embossed gradient fill, not flat solid red). **`docs/STYLE_ANALYSIS.md`** aligned.
 - **Conventions:** MATCH RATING stars = embossed gradient red glyph only — forbid flat red, gold/yellow, emoji, or alternate icon sets.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: lock OVERALL SCORE to Covered By Your Grace script
+
+- **Context:** User shared generation reference — **OVERALL SCORE** (e.g. **98%**) uses **red handwritten script/calligraphy** (slanted, fluid, fine strokes). Wants that font **permanently and consistently** on all generations.
+- **Reference font:** **Covered By Your Grace** — elegant red script, digits + **%** in same family, centered compact in OVERALL SCORE panel (not Futura sans-serif).
+- **Shipped:** **`overallScoreFontDesignBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — permanent CBYG spec; **`overallScoreFalLine()`** locked to CBYG (font picker override ignored for Fal). **`DEFAULT_OVERALL_SCORE_FONT_ID`** → **`cbyg`**. **`HairstyleAnalysisPreview`** copy: picker = overlay preview only. **`hairstyleAnalysisPrompts.ts`** + **`STYLE_ANALYSIS.md`** aligned.
+- **Conventions:** OVERALL SCORE % = **Covered By Your Grace** red script only on Fal output; MATCH 02–04 gray scores stay Futura — never swap styles.
