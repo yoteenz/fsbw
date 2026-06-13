@@ -28018,3 +28018,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User hit generate error **“HAIRSTYLE ANALYSIS PROMPT TOO LONG (34735 CHARACTERS; FAL LIMIT IS 32000)”** after recent prompt additions (verbose score/star rules, every-detail lines, duplicate hairline blocks).
 - **Shipped (2e48e832):** **`hairstyleAnalysisFalPrompt.ts`** — compact **`overallScoreAndRatingRules()`**, shorter **`matchThumbnailBlock`** / **`matchRowScoreIsolationBlock`** / **`everyDetailMattersRulesBlock`** / FINAL CHECK; removed duplicate **`matchHairlineManifestBlock`** and dead helpers; **`formatEveryDetailMattersForFal()`** → **`EDM 1:`** … **`EDM 5:`** (api + src). Three-month Kateena demo prompt ~**28.4k** chars with full mannequin/styling/hairline refs. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Keep premium Fal prompts **under 32k** — prefer compact EDM/score/thumb lines over verbose duplicate rule blocks; hairline still bound via **`matchStylingManifestBlock`** + **`hairlineRefPromptLine`**.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: red client header + dynamic every-detail lines
+
+- **Context:** User asked to change **gray hairstyle analysis header text at top to red**; **every detail matters** rows still used the same fixed script each time (only catalog specs swapped — e.g. always “TO COMPLEMENT YOUR … EYES”, “TO FRAME YOUR … FACE”, “TO ENHANCE YOUR JAWLINE”).
+- **Shipped:** Client header **gray → brand red `#EB1C24`** in **`topMatchHeaderLine`**, Fal FINAL CHECK, **`HairstyleAnalysisCard.module.css`**. **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — **phrasing variant pools** per rose row (lace/color/texture/style/length) + **`everyDetailVariationSeed()`**; **`normalizeHairstyleAnalysisForFal`** and **`HairstyleAnalysisPreview` generate** pick fresh seed each run. Overlay uses stored **`whyItWorks`**. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Client name header = **red** Futura PT Medium; every-detail rows = **spec-themed but wording varies per generation** — print Fal EDM lines verbatim.
