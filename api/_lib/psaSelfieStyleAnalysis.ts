@@ -28,6 +28,8 @@ Analyze the member selfie. Recommend ONLY these six catalog units (no invented w
 NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL.
 
 Return exactly ${maxPicks} ranked picks customized to upsell — face shape, undertone, vibe, lifestyle.
+**DIVERSITY (CRITICAL):** Use at least 4 different catalog units across the pick set when maxPicks ≥ 4; never repeat the same unit twice in the top 4 ranks. Vary length (20"–30"), density (200% / 250% / 300%), and salon styling (FLAT IRON, LAYERS, CRIMPS, DEFINE, WAND CURLS) — do NOT default every pick to NOIR 24" 250% FLAT IRON.
+Include neutral tones (JET BLACK, OFF BLACK, ESPRESSO), at least one blonde/light (GOLDEN, PLATINUM, ASH, HONEY or BLANCO unit), and at least one vivid fashion color (CHERRY, COPPER, PLUM, COBALT, etc.) across the set.
 Each pick must use real BAW options:
 - length (16"–40"), density, texture (SILKY/KINKY/YAKI), color (BLANCO: GOLDEN/PLATINUM/ASH only; others: catalog colors),
 - hairline (NATURAL/PEAK/LAGOS/LAGOS + PEAK), styling, parting (MIDDLE/LEFT/RIGHT).
@@ -44,14 +46,14 @@ Respond with JSON only:
   "picks": [
     {
       "rank": 1,
-      "unitLabel": "NOIR",
-      "length": "24\\"",
+      "unitLabel": "SOFT WAVE",
+      "length": "26\\"",
       "density": "200%",
       "texture": "SILKY",
-      "color": "OFF BLACK",
+      "color": "HONEY",
       "hairline": "NATURAL",
-      "styling": "NONE",
-      "partSelection": "MIDDLE",
+      "styling": "CRIMPS",
+      "partSelection": "LEFT",
       "why": "one line",
       "stars": 5
     }

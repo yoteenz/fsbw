@@ -211,13 +211,23 @@ function defaultSalonStyleForPattern(pattern: UnitCatalogEntry['pattern']): stri
   return 'DEFINE';
 }
 
-function coerceSalonStyleForUnit(unitKey: CatalogUnitName, styling: string): string {
+function coerceSalonStyleForUnit(
+  unitKey: CatalogUnitName,
+  styling: string,
+  styleIndex = 0
+): string {
+  const allowed = VALID_SALON_STYLES[unitKey].filter((s) => s !== 'NONE');
   if (styling === 'NONE') {
-    return defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern);
+    return (
+      allowed[styleIndex % allowed.length] ??
+      defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern)
+    );
   }
-  const allowed = VALID_SALON_STYLES[unitKey];
   if (allowed.includes(styling)) return styling;
-  return defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern);
+  return (
+    allowed[styleIndex % allowed.length] ??
+    defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern)
+  );
 }
 
 /** Align TOP MATCH / look specs with BAW catalog unit (density, valid salon STYLE id). */
@@ -229,12 +239,12 @@ export function resolveCatalogLookForFal<
     color: string;
     hex: string;
   },
->(look: T): T {
+>(look: T, styleIndex = 0): T {
   const unit = look.unit.trim().toUpperCase();
   const unitKey = normalizeCatalogUnit(unit);
   const styling = normalizeAnalysisStylingId(unit, look.styling);
   const catalog = unitKey ? UNIT_CATALOG[unitKey] : null;
-  const resolvedStyling = unitKey ? coerceSalonStyleForUnit(unitKey, styling) : styling;
+  const resolvedStyling = unitKey ? coerceSalonStyleForUnit(unitKey, styling, styleIndex) : styling;
   const density =
     catalog && (!look.density?.trim() || (look.density === '250%' && catalog.density !== '250%'))
       ? catalog.density

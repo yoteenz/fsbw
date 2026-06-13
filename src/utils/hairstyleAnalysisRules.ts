@@ -6,6 +6,7 @@ import {
 } from '../data/hairstyleCatalog';
 import { normalizeAnalysisStylingId } from './hairstyleAnalysisFormat';
 import { resolveCatalogLook } from './hairstyleAnalysisCatalogResolve';
+import { diversifyHairstyleAnalysisLooks } from './hairstyleAnalysisLookDiversity';
 import type { PsaSelfieStylePick } from '../types/styleAnalysis';
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis, UnitName } from '../types/hairstyleAnalysis';
 
@@ -135,7 +136,7 @@ export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
     styling,
     score: Math.max(70, 100 - (pick.rank - 1) * 3),
     rating: pick.stars ?? Math.max(3, 5 - Math.floor((pick.rank - 1) / 2)),
-  });
+  }, pick.rank - 1);
 }
 
 export function buildHairstyleAnalysisFromPsaPicks(options: {
@@ -148,7 +149,12 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
 }): HairstyleAnalysis {
   const limit = additionalLooksLimit(options.tier);
   const sorted = [...options.picks].sort((a, b) => a.rank - b.rank);
-  const [top, ...rest] = sorted.map(psaPickToAnalysisLook);
+  const looks = sorted.map(psaPickToAnalysisLook);
+  const [rawTop, ...rawRest] = looks;
+  const { topMatch, additionalLooks } = diversifyHairstyleAnalysisLooks(
+    rawTop,
+    rawRest.slice(0, limit)
+  );
 
   return {
     id: options.id,
@@ -156,8 +162,8 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
     tier: options.tier,
     templateUrl: resolveTemplateUrl(options.tier),
     clientPreviewUrl: options.clientPreviewUrl,
-    topMatch: top,
-    additionalLooks: rest.slice(0, limit),
+    topMatch: resolveCatalogLook(topMatch, 0),
+    additionalLooks: additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1)),
     whyItWorks: options.whyItWorks ?? [],
     createdAt: new Date().toISOString(),
   };

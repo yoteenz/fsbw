@@ -1,5 +1,7 @@
 import { hexForHairColor } from './hairstyleCatalog';
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
+import { resolveCatalogLook } from '../utils/hairstyleAnalysisCatalogResolve';
+import { diversifyHairstyleAnalysisLooks } from '../utils/hairstyleAnalysisLookDiversity';
 import { additionalLooksLimit, resolveTemplateUrl } from '../utils/hairstyleAnalysisRules';
 
 export const DEMO_CLIENT_PREVIEW_URL = '/assets/natural front.png';
@@ -91,6 +93,10 @@ export function buildKateenaDemoAnalysis(
 ): HairstyleAnalysis {
   const clientName = tier === 'free' ? 'KATEENA' : 'KATEENA ARMSTRONG';
   const whyItWorks = WHY_DETAIL_LINES;
+  const { topMatch, additionalLooks } = diversifyHairstyleAnalysisLooks(
+    { ...KATEENA_TOP, imageUrl: clientPreviewUrl },
+    altsForTier(tier)
+  );
 
   return {
     id: `kateena-demo-${tier}`,
@@ -98,8 +104,8 @@ export function buildKateenaDemoAnalysis(
     tier,
     templateUrl: resolveTemplateUrl(tier),
     clientPreviewUrl,
-    topMatch: { ...KATEENA_TOP, imageUrl: clientPreviewUrl },
-    additionalLooks: altsForTier(tier),
+    topMatch: resolveCatalogLook(topMatch, 0),
+    additionalLooks: additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1)),
     whyItWorks,
     createdAt: new Date().toISOString(),
   };
