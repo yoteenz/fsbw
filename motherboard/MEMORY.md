@@ -27660,3 +27660,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User wanted the red **client preview pill** to say **"TOP MATCH"** (uppercase, same red font) instead of the client's first name. The black **"TOP MATCH"** header above the overall score panel should show the client's **first and last name** in the same black font.
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **`clientPreviewTabLine()`** → red pill **TOP MATCH**; **`topMatchHeaderLine(fullName)`** replaces black header with client full name. **`clientFullName()`** in **`hairstyleAnalysisMannequinRefs.ts`**. Dev overlay: **`clientName`** = TOP MATCH, new **`clientHeaderName`** slot above score panels; **`hairstyleAnalysisOverlayContent.ts`**, **`hairstyleAnalysisTemplateLayouts.ts`**, docs updated.
 - **Conventions:** Red pill = **TOP MATCH** only; black header above OVERALL SCORE / MATCH RATING = client first + last name uppercase.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: dynamic TOP MATCH spec column
+
+- **Context:** User reported TOP MATCH spec column (top right) always listed default **NOIR / LAYERS** placeholder specs instead of the actual generated top-match product (e.g. straight hair should show **FLAT IRON**, not LAYERS).
+- **Shipped:** **`resolveCatalogLookForFal()`** in **`hairstyleAnalysisUnitCatalog.ts`** — unit-aligned density + valid salon STYLE per catalog pattern (NONE → FLAT IRON on straight, DEFINE on curly, etc.). **`topMatchSpecManifestBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — explicit MANIFEST values + forbid template placeholder defaults. **`normalizeHairstyleAnalysisForFal`** applies resolver to all looks. Client **`hairstyleAnalysisCatalogResolve.ts`** for dev overlay + **`psaPickToAnalysisLook`**. Demo top match → **FLAT IRON** with updated detail lines.
+- **Conventions:** TOP MATCH spec column must match the resolved look manifest exactly — unit, color, length, lace, density, part, hairline, STYLE from the generated top match, never baked template defaults.
