@@ -151,7 +151,9 @@ export default function HairstyleAnalysisCard({
               ? styles.ratingText
               : field.id === 'clientName'
                 ? styles.clientNameText
-                : matchRowClass
+                : field.id === 'clientHeaderName'
+                  ? styles.clientHeaderNameText
+                  : matchRowClass
                   ? matchRowClass
                   : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
                     ? styles.matchScoreText
@@ -159,6 +161,11 @@ export default function HairstyleAnalysisCard({
 
         const topScoreEditable = field.id === 'topScore' && showDebugFrames && onTextChange;
         const topScoreStyle = field.id === 'topScore' ? fontStyleFor(field.id) : undefined;
+
+        const slotClassName =
+          field.id === 'clientHeaderName'
+            ? `${styles.valueOnlySlot} ${styles.clientHeaderSlot}`
+            : styles.valueOnlySlot;
 
         return (
           <AnalysisOverlaySlot
@@ -169,7 +176,7 @@ export default function HairstyleAnalysisCard({
             debug={showDebugFrames}
             cardRef={cardRef}
             onRectChange={onSlotRectChange}
-            className={styles.valueOnlySlot}
+            className={slotClassName}
           >
             {field.id === 'topScore' && !topScoreEditable ? (
               <p

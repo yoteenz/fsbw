@@ -140,7 +140,8 @@ function topMatchHeaderLine(fullName: string): string {
     '=== CLIENT NAME HEADER (ABOVE OVERALL SCORE PANEL) ===',
     'The template prints black uppercase "TOP MATCH" as a section header directly above the OVERALL SCORE / MATCH RATING panels on the right.',
     `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's first and last name, uppercase.`,
-    'Use the same black Futura PT Medium style, size, weight, letter-spacing, and position as the original "TOP MATCH" header — only swap the words.',
+    'Use the same black Futura PT Medium style, size, weight, and letter-spacing as the original header — only swap the words.',
+    '**Center the client name horizontally within the frosted header panel** above OVERALL SCORE and MATCH RATING — equal padding left and right; do NOT left-align.',
     'Do NOT leave "TOP MATCH" visible in that header slot. Do NOT duplicate the client name in the red pill (pill stays "TOP MATCH" only).',
   ].join('\n');
 }
@@ -654,7 +655,7 @@ function freePromptFooter(
     '',
     '=== FINAL CHECK ===',
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
-    'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel.',
+    'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel — **centered** in the header panel.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
@@ -710,7 +711,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    'FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
+    'FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
   );
   return lines.join('\n');
 }

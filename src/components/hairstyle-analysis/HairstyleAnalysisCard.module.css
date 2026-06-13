@@ -130,6 +130,14 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
+.clientHeaderNameText {
+  text-align: center;
+}
+
+.clientHeaderSlot {
+  justify-content: center;
+}
+
 .clientNameText {
   font-size: clamp(5px, 3cqw, 11px);
   letter-spacing: 0.16em;
