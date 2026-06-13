@@ -35,6 +35,8 @@ import {
   displayStyle,
   formatScorePercent,
   formatMatchRatingDecimal,
+  formatEdmPanelBuildSummary,
+  FREE_TOP_MATCH_PANEL_FOOTER,
   matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
@@ -542,6 +544,16 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   return lines.join('\n');
 }
 
+function freeTierPanelFooterBlock(top: FalAnalysisLook): string {
+  const edmSummary = formatEdmPanelBuildSummary(top.unit, top.color, top.length);
+  return [
+    '=== FREE TIER — PANEL FOOTERS (CENTERED RED) ===',
+    `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium red ${BRAND_RED}, uppercase, centered.`,
+    `EVERY DETAIL MATTERS panel bottom (centered below rose rows): print **${edmSummary}** — Futura PT Medium red ${BRAND_RED}, uppercase, centered. Middle-dot separators only (UNIT · XX" · COLOR).`,
+    'Panel footers are separate from rose rows and spec values — do not merge into EDM bullets.',
+  ].join('\n');
+}
+
 function freeTierOnlyBlock(): string {
   return [
     '=== FREE TIER — TOP MATCH ONLY (CRITICAL) ===',
@@ -549,7 +561,7 @@ function freeTierOnlyBlock(): string {
     'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
-    'ONLY fill: client preview photo, TOP MATCH spec column, EVERY DETAIL MATTERS text rows, OVERALL SCORE %, MATCH RATING decimal + stars.',
+    'ONLY fill: client preview photo, TOP MATCH spec column, TOP MATCH panel footer, EVERY DETAIL MATTERS text rows, EVERY DETAIL MATTERS panel footer, OVERALL SCORE %, MATCH RATING decimal + stars.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -644,7 +656,7 @@ function buildTemplateRules(
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
-    ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
+    ...(tierKey === 'free' ? [freeTierOnlyBlock(), '', freeTierPanelFooterBlock(analysis.topMatch), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
     topMatchSpecManifestBlock(analysis.topMatch),
     '',
     ...photoRules,
@@ -652,12 +664,13 @@ function buildTemplateRules(
     ...(tierKey === 'free'
       ? [
           'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
+          'TOP MATCH + every-detail-matters panel footers: centered red Futura PT Medium.',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
         ]
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes.'
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes.'
       : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
   ]
     .filter(Boolean)
@@ -725,7 +738,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars (e.g. 5.0 / 4.7) — **free tier only**; erase large template placeholders first.',
+    'TOP MATCH specs + every detail matters filled; centered red panel footers (specs locked + build ribbon); OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
     rootCheck,

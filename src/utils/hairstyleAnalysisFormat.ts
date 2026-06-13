@@ -72,6 +72,21 @@ export function displayLength(look: AnalysisLook): string {
   return look.length.toUpperCase().includes('INCH') ? look.length.toUpperCase() : `${look.length.toUpperCase()} INCHES`;
 }
 
+/** Free-tier TOP MATCH panel footer (centered red). */
+export const FREE_TOP_MATCH_PANEL_FOOTER = 'YOUR BUILD SPECS ARE LOCKED IN PLACE.';
+
+/** Inch count with quote for EDM panel build ribbon (e.g. 22"). */
+export function formatLengthInchesShort(length: string): string {
+  const u = length.toUpperCase();
+  const match = u.match(/(\d+)/);
+  return match ? `${match[1]}"` : u.includes('INCH') ? u : `${u} INCHES`;
+}
+
+/** Free-tier every-detail-matters panel footer: UNIT · 22" · COLOR */
+export function formatEdmPanelBuildSummary(look: AnalysisLook): string {
+  return `${look.unit.trim().toUpperCase()} · ${formatLengthInchesShort(look.length)} · ${look.color.trim().toUpperCase()}`;
+}
+
 export function compactPortfolioLine(rank: number, look: AnalysisLook): string {
   const style = displayStyle(look);
   const styleSuffix = style !== 'NONE' ? ` + ${style}` : '';

@@ -170,15 +170,17 @@ export default function HairstyleAnalysisCard({
             ? styles.clientNameText
             : field.id === 'clientHeaderName'
               ? styles.clientHeaderNameText
-              : matchRowClass
-                ? matchRowClass
-                : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
-                  ? styles.matchScoreText
-                  : undefined;
+              : field.id === 'topMatchSummary' || field.id === 'edmBuildSummary'
+                ? styles.panelFooterText
+                : matchRowClass
+                  ? matchRowClass
+                  : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
+                    ? styles.matchScoreText
+                    : undefined;
 
         const slotClassName =
-          field.id === 'clientHeaderName'
-            ? `${styles.valueOnlySlot} ${styles.clientHeaderSlot}`
+          field.id === 'clientHeaderName' || field.id === 'topMatchSummary' || field.id === 'edmBuildSummary'
+            ? `${styles.valueOnlySlot} ${field.id === 'clientHeaderName' ? styles.clientHeaderSlot : styles.panelFooterSlot}`
             : styles.valueOnlySlot;
 
         return (

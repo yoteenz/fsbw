@@ -49,6 +49,17 @@ function whyLine(top: number): TextSlot {
   return { left: '56%', top: `${top}%`, width: '38%', height: '2.3%' };
 }
 
+/** Centered red footer below TOP MATCH spec column — free tier only. */
+const TOP_MATCH_PANEL_FOOTER: TextSlot = {
+  left: '56%',
+  top: '46%',
+  width: '32%',
+  height: '2.8%',
+};
+
+/** Centered red build ribbon below every-detail-matters rows — free tier only. */
+const EDM_PANEL_FOOTER: TextSlot = { left: '56%', top: '88.5%', width: '38%', height: '2.5%' };
+
 function freeFields(): TemplateFieldDef[] {
   return [
     { id: 'clientName', label: 'Preview pill', kind: 'text', slot: CLIENT_NAME },
@@ -57,12 +68,24 @@ function freeFields(): TemplateFieldDef[] {
     { id: 'topScore', label: 'Overall score', kind: 'text', slot: TOP_SCORE },
     { id: 'rating', label: 'Star rating', kind: 'text', slot: RATING },
     ...specFields(),
+    {
+      id: 'topMatchSummary',
+      label: 'Top match panel footer',
+      kind: 'text',
+      slot: TOP_MATCH_PANEL_FOOTER,
+    },
     ...[0, 1, 2, 3, 4].map((i) => ({
       id: `whyLine-${i}`,
       label: `Why ${i + 1}`,
       kind: 'text' as const,
       slot: whyLine(74.5 + i * 2.5),
     })),
+    {
+      id: 'edmBuildSummary',
+      label: 'Every detail panel footer',
+      kind: 'text',
+      slot: EDM_PANEL_FOOTER,
+    },
   ];
 }
 

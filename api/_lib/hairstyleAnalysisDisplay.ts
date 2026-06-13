@@ -41,6 +41,20 @@ export function displayLength(length: string): string {
   return u.includes('INCH') ? u : `${u} INCHES`;
 }
 
+/** Free-tier TOP MATCH panel footer (centered red). */
+export const FREE_TOP_MATCH_PANEL_FOOTER = 'YOUR BUILD SPECS ARE LOCKED IN PLACE.';
+
+/** Inch count with quote for EDM panel build ribbon (e.g. 22"). */
+export function formatLengthInchesShort(length: string): string {
+  const match = displayLength(length).match(/(\d+)/);
+  return match ? `${match[1]}"` : displayLength(length);
+}
+
+/** Free-tier every-detail-matters panel footer: UNIT · 22" · COLOR */
+export function formatEdmPanelBuildSummary(unit: string, color: string, length: string): string {
+  return `${unit.trim().toUpperCase()} · ${formatLengthInchesShort(length)} · ${color.trim().toUpperCase()}`;
+}
+
 export function displayLace(lace: string): string {
   return lace.replace(/\s*LACE\s*$/i, '').replace(/\s*HD\s*$/i, ' HD').trim().toUpperCase();
 }
