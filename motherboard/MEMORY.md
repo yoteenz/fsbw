@@ -27916,6 +27916,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: Fal generate loading progress bar
+
+- **Context:** User asked for a **loading bar** on Fal hairstyle analysis generate, matching **Live Try On** (`StudioRenderOverlay` in `LiveTryOnStudioCapture.tsx`).
+- **Shipped:** **`AnalysisGenerateProgressOverlay`** in **`HairstyleAnalysisPreview.tsx`** — spinner, tier label, “DO NOT LEAVE THIS PAGE”, red progress bar on `bg-black/15`. **`generateProgress`** state + **`useEffect`** interval (100ms, **`HAIRSTYLE_ANALYSIS_GENERATE_ESTIMATE_MS` = 180s**, cap 0.95); sets **1** on success, **0** on error. Replaces spinner-only generating block on `/tools/hairstyle-analysis`.
+- **Conventions:** Hairstyle analysis Fal UX progress mirrors live try-on simulated progress — not tied to real Fal polling.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.

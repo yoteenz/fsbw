@@ -51,6 +51,44 @@ const DEFAULT_TIER_OPTIONS: AnalysisTier[] = [
   'black',
 ];
 
+/** Simulated progress cap before Fal returns (API maxDuration 300s). */
+const HAIRSTYLE_ANALYSIS_GENERATE_ESTIMATE_MS = 180_000;
+
+function AnalysisGenerateProgressOverlay({
+  label,
+  progress,
+}: {
+  label: string;
+  progress: number;
+}) {
+  const pct = Math.round(Math.min(1, Math.max(0, progress)) * 100);
+  return (
+    <div
+      className="aspect-[4/5] w-full border border-black/20 bg-black/5 flex flex-col items-center justify-center gap-3 px-10"
+      aria-busy
+    >
+      <div
+        className="w-8 h-8 border-2 border-black/20 border-t-[#eb1c24] rounded-full animate-spin"
+        aria-hidden
+      />
+      <p className="text-center uppercase text-[9px] tracking-[0.12em] text-[#404040] leading-relaxed">{label}</p>
+      <p className="text-center uppercase text-[8px] tracking-[0.12em] text-[#808080] leading-relaxed">
+        DO NOT LEAVE THIS PAGE.
+      </p>
+      <div className="w-full max-w-[220px] h-1 rounded-full overflow-hidden bg-black/15">
+        <div
+          className="h-full bg-[#eb1c24] transition-[width] duration-200 ease-linear"
+          style={{ width: `${pct}%` }}
+          role="progressbar"
+          aria-valuenow={pct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </div>
+    </div>
+  );
+}
+
 function readFileAsDataUrl(file: File): Promise<string | null> {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -76,6 +114,7 @@ export default function HairstyleAnalysisPreview({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [generating, setGenerating] = useState(false);
+  const [generateProgress, setGenerateProgress] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [lastPrompt, setLastPrompt] = useState<string | null>(null);
@@ -197,6 +236,17 @@ export default function HairstyleAnalysisPreview({
     [navigate]
   );
 
+  useEffect(() => {
+    if (!generating) return;
+    const startedAt = Date.now();
+    setGenerateProgress(0);
+    const id = window.setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      setGenerateProgress(Math.min(0.95, elapsed / HAIRSTYLE_ANALYSIS_GENERATE_ESTIMATE_MS));
+    }, 100);
+    return () => clearInterval(id);
+  }, [generating]);
+
   const handleAskPsaToPurchase = useCallback(() => {
     requestOpenPsaChat({
       prefillMessage:
@@ -219,6 +269,7 @@ export default function HairstyleAnalysisPreview({
             }
           : undefined
       );
+      setGenerateProgress(1);
       setGeneratedUrl(result.imageUrl);
       setLastPrompt(result.prompt);
       if (result.usage) {
@@ -240,6 +291,7 @@ export default function HairstyleAnalysisPreview({
       }
     } catch (e) {
       setGenerateError(e instanceof Error ? e.message.toUpperCase() : 'GENERATION FAILED');
+      setGenerateProgress(0);
     } finally {
       setGenerating(false);
     }
@@ -487,15 +539,10 @@ export default function HairstyleAnalysisPreview({
       ) : null}
 
       {generating ? (
-        <div
-          className="aspect-[4/5] w-full border border-black/20 bg-black/5 flex flex-col items-center justify-center gap-3 px-6"
-          aria-busy
-        >
-          <div className="w-8 h-8 border-2 border-black/20 border-t-[#eb1c24] rounded-full animate-spin" />
-          <p className="text-center uppercase text-[9px] tracking-[0.12em] text-[#808080] leading-relaxed">
-            GPT IMAGE 2 IS POPULATING THE {analysis.tier.replace(/_/g, ' ')} TEMPLATE — DO NOT LEAVE THIS PAGE.
-          </p>
-        </div>
+        <AnalysisGenerateProgressOverlay
+          label={`GPT IMAGE 2 IS POPULATING THE ${analysis.tier.replace(/_/g, ' ')} TEMPLATE`}
+          progress={generateProgress}
+        />
       ) : generatedUrl ? (
         <div ref={generatedRef} className="w-full shadow-lg border border-black/10">
           <img
