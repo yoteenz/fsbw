@@ -27686,3 +27686,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Verbose duplicate client-photo cutout/anchor/fade blocks (prompt + shared photo rules + client preview hair line), duplicate TOP MATCH spec lines, repeated `lookHairAccuracyLines` in styling manifest, duplicate neck/hairline sections.
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — compact **`clientPhotoPanelRulesBlock()`** (notes server post-process handles cutout/anchor/fade); removed duplicate framing blocks and **`topMatchBlock`** echo; compact **`matchStylingManifestBlock`**; deduped premium neck/hairline. Three-month prompt ~**25k** chars with styling refs (was ~34k).
 - **Conventions:** Keep premium Fal prompt under 32k; cutout/fade/anchor = server post-process, not long Fal prompt blocks.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: fix double-photo cutout glitch
+
+- **Context:** User reported cutout prompt caused a **glitch** — centered cut-out portrait with white/fade on top of a **larger uncut portrait** peeking behind (ghost/double layer in TOP MATCH panel).
+- **Cause:** Fal prompt still instructed **background-removed cutouts** while server post-process only patched the **inner fade rect** (`CLIENT_PHOTO_FADE_SLOT`), leaving Fal's full-panel photo visible in the border zone outside the fade window.
+- **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — wipe **full `CLIENT_IMAGE_SLOT`** to template before compositing; Ideogram source = full panel region; bottom-anchor + fade in inner window. **`hairstyleAnalysisFalPrompt.ts`** — Fal **hair edits only**; forbid cutout, white fill, second portrait layer. **`hairstyleAnalysisFalComposite.ts`** passes panel + fade rects. **`docs/STYLE_ANALYSIS.md`** updated.
+- **Conventions:** Fal = in-place hair edit only; server = full-panel template wipe + Ideogram cutout + bottom-anchor + marble fade.
