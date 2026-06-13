@@ -5,7 +5,8 @@ import {
 import { chromaKeyStudioBackgroundInPlace } from './hairstyleAnalysisClientPhotoCutout.js';
 
 /** Symmetrical bottom fade on the client photo alpha only — template marble shows through. */
-const FADE_START_PCT = 72;
+export const CLIENT_PHOTO_FADE_START_PCT = 72;
+const FADE_START_PCT = CLIENT_PHOTO_FADE_START_PCT;
 const FADE_STOPS: Array<{ offset: number; opacity: number }> = [
   { offset: 0, opacity: 1 },
   { offset: FADE_START_PCT, opacity: 1 },

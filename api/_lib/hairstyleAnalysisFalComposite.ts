@@ -7,6 +7,7 @@ import {
   resolveTopScoreSlot,
 } from './hairstyleAnalysisCompositeLayout.js';
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
+import { applyClientPhotoMirrorReflection } from './hairstyleAnalysisClientPhotoReflection.js';
 import { matchRatingFilledStarsFromScore } from './hairstyleAnalysisDisplay.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import {
@@ -153,7 +154,7 @@ export async function compositeOverallScoreAndStars(
     .toBuffer();
 }
 
-/** Post-process: petite score/stars always; optional client photo bottom fade. */
+/** Post-process: petite score/stars always; optional client photo bottom fade; mirror reflection always. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,
@@ -180,12 +181,15 @@ export async function compositeHairstyleAnalysisPostProcess(
     layoutOverrides
   );
 
+  const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
+  const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
+  const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
+
   if (applyPhotoFade) {
-    const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
-    const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
-    const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
     base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
   }
+
+  base = await applyClientPhotoMirrorReflection(base, panelRect, fadeRect);
 
   return base;
 }

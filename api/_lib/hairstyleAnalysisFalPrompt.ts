@@ -280,8 +280,9 @@ function clientPhotoPanelRulesBlock(): string {
     '2) **9:16 portrait** — center the subject horizontally in the window.',
     '3) **Position near the bottom** of the panel — anchor the subject low in the frame.',
     '4) **Symmetrical even bottom fade** — soft transparent gradient on the lower edge (same width left and right); hair/body dissolves into marble; no hard cut line.',
+    '5) **Mirror reflection below the fade** — fill the empty lower panel space (between the fade line and panel bottom) with a **vertical flip** of the lower hair/neck/choker area; **very low transparency** (~8–12% peak, fading to invisible at the panel bottom); soft glossy floor reflection — not a second portrait or duplicate face.',
     'Edit **hair only** for TOP MATCH — face, skin, neck, and clothing stay identical to IMAGE 2.',
-    'FORBIDDEN: visible studio backdrop, white polaroid mat, inset smaller photo, duplicate portrait layer, or opaque white bar at the bottom.',
+    'FORBIDDEN: visible studio backdrop, white polaroid mat, inset smaller photo, duplicate portrait layer, opaque white bar, or harsh empty white void below the fade.',
     'MATCH thumbnails: same face and **same head/body pose** as IMAGE 2; tighter square crop; one-shoulder drape; bg removed.',
   ].join('\n');
 }
@@ -434,7 +435,7 @@ function panelChromePreservationBlock(): string {
     'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
     'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
-    'Photo window: cutout subject on marble — **background removed**, **9:16**, **bottom-anchored**, **symmetrical bottom fade** — not a full studio backdrop photo.',
+    'Photo window: cutout subject on marble — **background removed**, **9:16**, **bottom-anchored**, **symmetrical bottom fade**, **subtle mirror reflection** in the empty lower panel — not a full studio backdrop photo.',
     'ONLY edit inside: (a) client hair in the photo window, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
     'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
   ].join('\n');
