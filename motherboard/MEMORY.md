@@ -28163,7 +28163,15 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted centered red footer lines to fill empty space on free/1-pick template only — **YOUR BUILD SPECS ARE LOCKED IN PLACE.** below TOP MATCH specs; **SOFT CURL · 22" · CHESTNUT** build ribbon below every-detail-matters rows.
 - **Shipped:** Free-tier slots **`topMatchSummary`** + **`edmBuildSummary`** in **`hairstyleAnalysisTemplateLayouts.ts`**; **`FREE_TOP_MATCH_PANEL_FOOTER`** + **`formatEdmPanelBuildSummary()`** (api + src); Fal **`freeTierPanelFooterBlock()`**; dev overlay red Futura centered styling.
-- **Conventions:** Free tier only — panel footers are centered red Futura PT Medium; EDM ribbon = UNIT · inches" · COLOR.
+- **Conventions:** Free tier only — panel footers are centered gray Futura PT Medium; EDM ribbon = UNIT · inches" · COLOR.
+
+---
+
+## 2026-06-13 — Free tier panel footers gray (not red)
+
+- **Context:** User asked to change panel footer lines (**YOUR BUILD SPECS ARE LOCKED IN PLACE.** + **UNIT · 22" · COLOR** ribbon) from red to **gray**.
+- **Shipped:** **`panelFooterText`** CSS → **#808080**; Fal **`freeTierPanelFooterBlock()`** → gray **${MATCH_SCORE_GRAY}** Futura PT Medium.
+- **Conventions:** Free tier panel footers = gray Futura; stars stay red; OVERALL SCORE % stays red script.
 
 ---
 
