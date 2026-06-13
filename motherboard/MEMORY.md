@@ -28116,3 +28116,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said lines like **"FOR EVERYDAY COLLARBONE WEAR"** sound like made-up AI sentences — EDM rose rows should read as **coherent spec + fit notes**, not keyword stacks.
 - **Shipped:** Rewrote **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — natural patterns: "22 INCHES SITS AT THE COLLARBONE", "ESPRESSO TO ACCENTUATE YOUR FEATURES", "NOIR IN ITS NATURAL TEXTURE"; removed jargon (**install**, **versatile mid chest wear**, **single donor consistency**, **maximum styling flex**); no em dashes (compact strips them awkwardly).
 - **Conventions:** EDM lines = catalog spec value + plain English benefit; avoid noun-soup "FOR X WEAR/FLEX/IMPACT" phrasing.
+
+---
+
+## 2026-06-13 — EDM texture row: EXTENSIONS phrasing
+
+- **Context:** User said **"NOIR THAT MOVES LIKE REAL HAIR"** is not coherent — should read like **"EXTENSIONS THAT MOVE LIKE REAL HAIR"** while still naming the catalog texture.
+- **Shipped:** Texture/style pools use **`${unit} TEXTURE, EXTENSIONS THAT…`** comma pattern (like PDP signature features); **`unitTextureKind()`** for straight/loose wave/tight curl labels; removed unit-as-subject lines that imply NOIR itself "moves" or "wears".
+- **Conventions:** Texture row = unit + TEXTURE + human noun (extensions/raw hair); movement/wear benefits attach to **EXTENSIONS**, not the unit name alone.
