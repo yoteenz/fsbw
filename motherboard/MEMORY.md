@@ -28292,3 +28292,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User rejected server-side client face paste — output did not match; asked to **revert** and restore prior client upload processing.
 - **Shipped (0d8f7ba0):** Removed **`hairstyleAnalysisClientFaceRestore.ts`** and face-restore step from **`hairstyleAnalysisFalComposite.ts`**. Client photo flow back to **Fal in-image** + optional **`applyClientPhotoBottomFade`** + **mirror reflection**. Reverted **`hairstyleAnalysisFal.ts`** ref defaults (styling refs on by default, hairline IMAGEs always when manifest needs them). **Kept** EDM rose template paste via **`restoreTemplateSlots`** + **`edmRoseIconSlots()`**. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Do **not** server-paste client face over Fal output; fix identity via Fal prompt/refs only. EDM roses still server-restored from template.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: two-step Fal for client identity
+
+- **Context:** User reported face still not them after face-post-process revert — single full-template Fal pass with raw selfie + styling/hairline mannequin IMAGEs was swapping identity.
+- **Cause:** Documented architecture (`HAIRSTYLE_ANALYSIS_TEMPLATES.md`) was never wired — should **hair-edit selfie first**, then populate template; one-pass sent raw selfie as IMAGE 2 alongside mannequin ref faces.
+- **Shipped (24448119):** **Step 1** — **`buildClientPreviewHairOnlyPrompt`** + Fal GPT2 on **selfie only** (3:4 `1536×2048`, identity lock, hair-only). **Step 2** — template pass uses hair-edited client as IMAGE 2; **`preEditedClientPanelBlock`** tells Fal to place main preview without repainting face/hair. Defaults: **`hairstyleAnalysisClientPreviewStepEnabled()`** on; **`hairstyleAnalysisFalMinimalImageRefs()`** on (template + client only); **`hairstyleAnalysisFalHairlineImageRefs()`** off (text guide only). Env: **`HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_STEP=false`**, **`HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false`**, **`HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS=true`**. EDM rose restore unchanged.
+- **Conventions:** Client identity = upstream **hair-only** Fal on raw selfie, then template fill — not one-pass full edit; no server face paste.
