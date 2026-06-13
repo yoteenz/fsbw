@@ -1,5 +1,5 @@
 /**
- * Every-detail-matters phrasing pools — spec value + plain English (reads like product copy).
+ * Every-detail-matters phrasing pools — human product copy without catalog unit names.
  * Keep in sync with src/utils/hairstyleAnalysisEveryDetailMattersPools.ts
  */
 
@@ -19,15 +19,13 @@ export type EveryDetailLineCtx = {
 
 export type EveryDetailLineBuilder = (ctx: EveryDetailLineCtx) => string;
 
-/** Straight / wave / curl label for texture-row copy (not the catalog unit name alone). */
-function unitTextureKind(unit: string): string {
+/** Straight / wavy / curly — never print catalog unit names (NOIR, BEACH WAVE, etc.). */
+function hairPatternLabel(unit: string): string {
   const u = unit.trim().toUpperCase();
   if (u === 'NOIR' || u === 'BLANCO') return 'STRAIGHT';
-  if (u === 'SOFT WAVE') return 'LOOSE WAVE';
-  if (u === 'BEACH WAVE') return 'BEACH WAVE';
-  if (u === 'SOFT CURL') return 'TIGHT WAVE';
-  if (u === 'OCEAN CURL') return 'TIGHT CURL';
-  return 'RAW';
+  if (u === 'SOFT WAVE' || u === 'BEACH WAVE') return 'WAVY';
+  if (u === 'SOFT CURL' || u === 'OCEAN CURL') return 'CURLY';
+  return 'STRAIGHT';
 }
 
 export function laceLinePool(): EveryDetailLineBuilder[] {
@@ -76,44 +74,44 @@ export function colorLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[]
 
 export function textureLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[] {
   const generic: EveryDetailLineBuilder[] = [
-    (c) => `${c.unit} ${unitTextureKind(c.unit)} TEXTURE FOR A CLEAN FINISH`,
-    (c) => `${c.unit} TEXTURE, EXTENSIONS THAT MOVE LIKE REAL HAIR`,
-    (c) => `${c.unit} TEXTURE WITH NATURAL BODY AND FULLNESS`,
-    (c) => `${c.unit} TEXTURE, EXTENSIONS YOU CAN STYLE EASILY`,
-    (c) => `${c.unit} RAW HAIR WITH A SLEEK FINISH`,
-    (c) => `${c.unit} TEXTURE WITH SMOOTH, DEFINED STRANDS`,
-    (c) => `${c.unit} TEXTURE THAT FALLS CLEANLY`,
-    (c) => `${c.unit} TEXTURE, EASY TO WEAR EVERY DAY`,
-    (c) => `${c.unit} FOR A SOFT ${unitTextureKind(c.unit)} LOOK`,
-    (c) => `${c.unit} TEXTURE WITH BELIEVABLE MOVEMENT`,
-    (c) => `${c.unit} TEXTURE, EXTENSIONS WITH A NATURAL FEEL`,
-    (c) => `${c.unit} TEXTURE FOR EVERYDAY WEAR`,
+    () => `EXTENSIONS THAT MOVE LIKE REAL HAIR`,
+    () => `EXTENSIONS WITH A NATURAL FEEL`,
+    () => `EXTENSIONS YOU CAN STYLE EASILY`,
+    () => `RAW HAIR WITH A POLISHED FINISH`,
+    () => `HAIR THAT FALLS CLEANLY`,
+    () => `TEXTURE WITH BELIEVABLE MOVEMENT`,
+    () => `TEXTURE THAT IS EASY TO WEAR EVERY DAY`,
+    (c) => `${hairPatternLabel(c.unit)} TEXTURE FOR A CLEAN FINISH`,
+    (c) => `${hairPatternLabel(c.unit)} TEXTURE WITH NATURAL BODY`,
+    (c) => `${hairPatternLabel(c.unit)} TEXTURE FOR A SOFT NATURAL LOOK`,
+    () => `EXTENSIONS WITH FULL, NATURAL BODY`,
+    () => `HAIR WITH SMOOTH, DEFINED STRANDS`,
   ];
   if (!ctx.withFace) return generic;
   return [
     ...generic,
-    (c) => `${c.unit} TEXTURE TO FRAME YOUR ${c.face.faceShape}`,
-    (c) => `${c.unit} TEXTURE FLATTERS YOUR ${c.face.faceShape}`,
-    (c) => `${c.unit} TEXTURE TO BALANCE YOUR ${c.face.faceShape}`,
+    (c) => `${hairPatternLabel(c.unit)} TEXTURE TO FRAME YOUR ${c.face.faceShape}`,
+    () => `EXTENSIONS THAT FLATTER YOUR ${ctx.face.faceShape}`,
+    (c) => `${hairPatternLabel(c.unit)} TEXTURE TO BALANCE YOUR ${c.face.faceShape}`,
   ];
 }
 
 export function styleLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[] {
   if (ctx.style === 'NONE') {
     const natural: EveryDetailLineBuilder[] = [
-      (c) => `${c.unit} TEXTURE, NO SALON STYLING ADDED`,
-      (c) => `${c.unit} WORN IN ITS NATURAL TEXTURE`,
-      (c) => `${c.unit} TEXTURE, READY TO CUT AND STYLE`,
-      (c) => `${c.unit} TEXTURE FOR A SOFT NATURAL FINISH`,
-      (c) => `NO ADDED STYLING ON ${c.unit} TEXTURE`,
-      (c) => `${c.unit} TEXTURE, EASY EVERYDAY FINISH`,
-      (c) => `${c.unit} LEFT IN ITS RAW TEXTURE`,
-      (c) => `${c.unit} TEXTURE YOU CAN PERSONALIZE`,
+      () => `NO SALON STYLING ADDED`,
+      () => `WORN IN NATURAL TEXTURE`,
+      () => `READY TO CUT AND STYLE`,
+      () => `SOFT NATURAL FINISH`,
+      () => `EASY EVERYDAY FINISH`,
+      () => `LEFT IN RAW TEXTURE`,
+      () => `TEXTURE YOU CAN PERSONALIZE`,
+      () => `NATURAL TEXTURE, EASY TO STYLE`,
     ];
     if (!ctx.withFace) return natural;
     return [
       ...natural,
-      (c) => `${c.unit} TEXTURE SUITS YOUR ${c.face.faceShape}`,
+      (c) => `NATURAL TEXTURE FOR YOUR ${c.face.faceShape}`,
     ];
   }
   return [
