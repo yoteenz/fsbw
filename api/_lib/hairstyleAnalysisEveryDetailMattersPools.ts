@@ -148,7 +148,7 @@ export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[
   const mid: EveryDetailLineBuilder[] = [
     (c) => `${c.length} HITS MID CHEST`,
     (c) => `${c.length} LANDS AT MID CHEST`,
-    (c) => `${c.length} — CLASSIC MID CHEST LENGTH`,
+    (c) => `${c.length} AT CLASSIC MID CHEST LENGTH`,
     (c) => `${c.length} FOR A BALANCED EVERYDAY LENGTH`,
     (c) => `${c.length} WITH CLEAN MID CHEST ENDS`,
     (c) => `${c.length} THAT FALLS TO MID CHEST`,
