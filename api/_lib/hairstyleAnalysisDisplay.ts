@@ -25,6 +25,11 @@ export function formatScorePercent(score: number): string {
   return `${Math.round(score)}%`;
 }
 
+/** MATCH RATING stars: 95%+ → 5 filled; below 95% → 4 filled (left four), rightmost empty. */
+export function matchRatingFilledStarsFromScore(score: number): number {
+  return Math.round(score) >= 95 ? 5 : 4;
+}
+
 export function displayLength(length: string): string {
   const u = length.toUpperCase();
   return u.includes('INCH') ? u : `${u} INCHES`;

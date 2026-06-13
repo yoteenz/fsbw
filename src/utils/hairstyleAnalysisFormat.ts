@@ -4,9 +4,19 @@ export function formatScorePercent(score: number): string {
   return `${Math.round(score)}%`;
 }
 
+/** MATCH RATING stars: 95%+ → 5 filled; below 95% → 4 filled (left four), rightmost empty. */
+export function matchRatingFilledStarsFromScore(score: number): number {
+  return Math.round(score) >= 95 ? 5 : 4;
+}
+
 export function formatStarRating(rating: number): string {
   const n = Math.min(5, Math.max(0, Math.round(rating)));
   return '★'.repeat(n) + (n < 5 ? '☆'.repeat(5 - n) : '');
+}
+
+export function formatStarRatingFromScore(score: number): string {
+  const n = matchRatingFilledStarsFromScore(score);
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
 }
 
 export function displayLace(look: AnalysisLook): string {
