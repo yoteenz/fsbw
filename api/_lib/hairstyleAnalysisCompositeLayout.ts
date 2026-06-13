@@ -88,12 +88,18 @@ export function resolveCompositeSlotRect(
   return pctRect(merged.left, merged.top, merged.width, merged.height);
 }
 
-export function resolveTopScoreSlot(overrides?: CompositeLayoutOverrides): PixelRect {
-  return resolveCompositeSlotRect('topScore', 'free', overrides) ?? TOP_SCORE_SLOT;
+export function resolveTopScoreSlot(
+  tier: FalHairstyleAnalysis['tier'] = 'free',
+  overrides?: CompositeLayoutOverrides
+): PixelRect {
+  return resolveCompositeSlotRect('topScore', tier, overrides) ?? TOP_SCORE_SLOT;
 }
 
-export function resolveRatingSlot(overrides?: CompositeLayoutOverrides): PixelRect {
-  return resolveCompositeSlotRect('rating', 'free', overrides) ?? RATING_SLOT;
+export function resolveRatingSlot(
+  tier: FalHairstyleAnalysis['tier'] = 'free',
+  overrides?: CompositeLayoutOverrides
+): PixelRect {
+  return resolveCompositeSlotRect('rating', tier, overrides) ?? RATING_SLOT;
 }
 
 export function resolveClientImageSlot(overrides?: CompositeLayoutOverrides): PixelRect {

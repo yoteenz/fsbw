@@ -606,8 +606,8 @@ export default function HairstyleAnalysisPreview({
                     onChange={onOverallScoreFontChange}
                   />
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
-                    Overall score font updates the debug overlay preview. Fal always generates the red OVERALL
-                    SCORE in Covered By Your Grace handwritten script — not MATCH 02–04 gray scores.
+                    Overall score font updates the debug overlay preview. Server composites the red OVERALL
+                    SCORE in Covered By Your Grace after Fal — not MATCH 02–04 gray scores.
                     Use Save layout for slot positions and other font fields.
                   </p>
                   <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">

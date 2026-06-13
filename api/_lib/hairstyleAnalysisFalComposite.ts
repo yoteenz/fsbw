@@ -3,17 +3,26 @@ import {
   photoPostProcessLayoutOverrides,
   resolveClientImageSlotOrDefault,
   resolveClientPhotoFadeSlotOrDefault,
+  resolveRatingSlot,
+  resolveTopScoreSlot,
 } from './hairstyleAnalysisCompositeLayout.js';
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
-import { HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
+import { matchRatingFilledStarsFromScore } from './hairstyleAnalysisDisplay.js';
+import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
+import {
+  HAIRSTYLE_ANALYSIS_CANVAS,
+  matchRatingStarRects,
+  type PixelRect,
+} from './hairstyleAnalysisLayoutSlots.js';
+import {
+  buildTextPathsSvg,
+  matchRatingFalStarSize,
+  overallScorePathItems,
+} from './hairstyleAnalysisTextPaths.js';
 
-type FalClient = {
-  storage: { upload: (file: File) => Promise<string> };
-  subscribe: (
-    model: string,
-    opts: { input: Record<string, unknown>; logs?: boolean }
-  ) => Promise<unknown>;
-};
+const BRAND_RED = '#EB1C24';
+const STAR_EMPTY_PATH = '/assets/NOIR/star-symbol.png';
+const STAR_FILLED_PATH = '/assets/NOIR/filled-star.png';
 
 async function fetchBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
@@ -30,12 +39,128 @@ async function resizeToAnalysisCanvas(buf: Buffer): Promise<Buffer> {
   return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
 }
 
-/** Post-process: in-place client photo bottom fade only. Match-row text is Fal in-image. */
+async function extractSlotPatch(templateBuf: Buffer, slot: PixelRect): Promise<Buffer> {
+  const sharp = (await import('sharp')).default;
+  return sharp(templateBuf)
+    .extract({
+      left: Math.max(0, slot.left),
+      top: Math.max(0, slot.top),
+      width: slot.width,
+      height: slot.height,
+    })
+    .png()
+    .toBuffer();
+}
+
+/** Restore blank value areas from template so Fal oversized score/stars do not bleed through. */
+async function restoreTemplateSlots(
+  baseBuf: Buffer,
+  templateBuf: Buffer,
+  slots: PixelRect[]
+): Promise<Buffer> {
+  const sharp = (await import('sharp')).default;
+  const layers = await Promise.all(
+    slots.map(async (slot) => ({
+      input: await extractSlotPatch(templateBuf, slot),
+      left: slot.left,
+      top: slot.top,
+    }))
+  );
+  return sharp(baseBuf).composite(layers).png().toBuffer();
+}
+
+async function resizeStarIntoRect(
+  sharp: Awaited<ReturnType<typeof import('sharp')['default']>>,
+  srcBuf: Buffer,
+  rect: PixelRect
+): Promise<{ input: Buffer; left: number; top: number }> {
+  const resized = await sharp(srcBuf)
+    .resize(rect.width, rect.height, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+  const meta = await sharp(resized).metadata();
+  const w = meta.width ?? rect.width;
+  const h = meta.height ?? rect.height;
+  return {
+    input: resized,
+    left: rect.left + Math.round((rect.width - w) / 2),
+    top: rect.top + Math.round((rect.height - h) / 2),
+  };
+}
+
+async function buildPetiteStarOverlays(
+  score: number,
+  ratingSlot: PixelRect,
+  siteOrigin: string
+): Promise<Array<{ input: Buffer; left: number; top: number }>> {
+  const origin = siteOrigin.replace(/\/$/, '');
+  const [emptyBuf, filledBuf] = await Promise.all([
+    fetchBuffer(`${origin}${STAR_EMPTY_PATH}`),
+    fetchBuffer(`${origin}${STAR_FILLED_PATH}`),
+  ]);
+
+  const starSize = matchRatingFalStarSize(ratingSlot);
+  const starRects = matchRatingStarRects(ratingSlot, starSize);
+  const filled = matchRatingFilledStarsFromScore(score);
+  const sharp = (await import('sharp')).default;
+  const overlays: Array<{ input: Buffer; left: number; top: number }> = [];
+
+  for (let i = 0; i < starRects.length; i++) {
+    const rect = starRects[i]!;
+    const isFilled = i < filled;
+    overlays.push(await resizeStarIntoRect(sharp, isFilled ? filledBuf : emptyBuf, rect));
+  }
+
+  return overlays;
+}
+
+function buildPetiteOverallScoreOverlay(score: number, scoreSlot: PixelRect): Buffer {
+  return buildTextPathsSvg(overallScorePathItems(score, scoreSlot, BRAND_RED));
+}
+
+/** Overlay petite overall score % + match-rating stars (Fal leaves those slots blank). */
+export async function compositeOverallScoreAndStars(
+  falBuf: Buffer,
+  templateBuf: Buffer,
+  analysis: FalHairstyleAnalysis,
+  siteOrigin: string,
+  layoutOverrides?: CompositeLayoutOverrides
+): Promise<Buffer> {
+  const scoreSlot = resolveTopScoreSlot(analysis.tier, layoutOverrides);
+  const ratingSlot = resolveRatingSlot(analysis.tier, layoutOverrides);
+  const sharp = (await import('sharp')).default;
+
+  let base = await restoreTemplateSlots(falBuf, templateBuf, [scoreSlot, ratingSlot]);
+
+  const scoreOverlay = await sharp(buildPetiteOverallScoreOverlay(analysis.topMatch.score, scoreSlot))
+    .png()
+    .toBuffer();
+  const starOverlays = await buildPetiteStarOverlays(
+    analysis.topMatch.score,
+    ratingSlot,
+    siteOrigin
+  );
+
+  return sharp(base)
+    .composite([
+      { input: scoreOverlay, left: 0, top: 0 },
+      ...starOverlays,
+    ])
+    .png()
+    .toBuffer();
+}
+
+/** Post-process: petite score/stars always; optional client photo bottom fade. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,
+  analysis: FalHairstyleAnalysis,
+  siteOrigin: string,
   layoutOverrides?: CompositeLayoutOverrides,
-  _fal?: FalClient | null
+  applyPhotoFade = false
 ): Promise<Buffer> {
   const [falRaw, templateRaw] = await Promise.all([
     fetchBuffer(falImageUrl),
@@ -47,8 +172,20 @@ export async function compositeHairstyleAnalysisPostProcess(
     resizeToAnalysisCanvas(templateRaw),
   ]);
 
-  const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
-  const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
-  const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
-  return applyClientPhotoBottomFade(falBuf, templateBuf, fadeRect, panelRect);
+  let base = await compositeOverallScoreAndStars(
+    falBuf,
+    templateBuf,
+    analysis,
+    siteOrigin,
+    layoutOverrides
+  );
+
+  if (applyPhotoFade) {
+    const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
+    const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
+    const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
+    base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
+  }
+
+  return base;
 }

@@ -27889,6 +27889,15 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: server petite overlay for overall score + stars
+
+- **Context (continued):** User reported **overall score %** and **MATCH RATING stars** did not shrink after Fal prompt size tightening — something else overwrote petite sizing.
+- **Cause:** Fal copies **large template placeholders** (premium star outline glyphs ~118px tall); prompt-only `overallScoreFalFontSize` / `matchRatingFalStarSize` targets are ignored. Prior server composite used **`overallScoreFontSize`** at **78% slot height** (billboard-sized). Premium prompt also said "fill inside pre-rendered outlines — never enlarge," locking stars to template size.
+- **Shipped (409d1750):** Restored **localized server composite** after every generate — **`compositeOverallScoreAndStars()`** restores blank template patches for score + rating slots, overlays **CBYG + Futura %** at **`overallScoreFalFontSize`** (~22%, max 36px) and five **Noir star PNGs** at **`matchRatingStarRects()`** / **`matchRatingFalStarSize`** (~17%, max 26px). Fal prompt: leave OVERALL SCORE + MATCH RATING **blank** (erase placeholders). **`overallScorePathItems`** now uses petite size. Always re-upload composited PNG; photo fade remains opt-in (`HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_POST_PROCESS=true`).
+- **Conventions:** Overall score + match-rating stars = **server-composited at petite pixel sizes** — Fal must not draw them; template slot restore prevents oversized bleed-through.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.

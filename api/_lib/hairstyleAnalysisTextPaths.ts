@@ -56,12 +56,12 @@ const ADMIN_BRAND_SCORE_PERCENT_PX = 14;
 const ADMIN_BRAND_PERCENT_SIZE_RATIO =
   ADMIN_BRAND_SCORE_PERCENT_PX / ADMIN_BRAND_SCORE_NUMBER_PX;
 
-/** Overall score % — CBYG digits + Futura % suffix (server composite path). */
+/** @deprecated Legacy large composite size — use overallScoreFalFontSize for server overlay. */
 export function overallScoreFontSize(rect: PixelRect): number {
   return Math.max(12, Math.min(64, Math.round(rect.height * 0.78)) - 4);
 }
 
-/** Fal in-image overall score — petite script inside the value panel (not full slot height). */
+/** Petite overall score % — server composite + Fal prompt size target. */
 export function overallScoreFalFontSize(rect: PixelRect): number {
   return Math.max(16, Math.min(36, Math.round(rect.height * 0.22)));
 }
@@ -80,7 +80,7 @@ export function overallScorePathItems(
   const numText = String(Math.round(score));
   const scoreFont = loadFont('CoveredByYourGrace.ttf');
   const percentFont = loadFont('FuturaPTMedium.ttf');
-  const fontSize = overallScoreFontSize(rect);
+  const fontSize = overallScoreFalFontSize(rect);
   const percentFontSize = Math.max(
     12,
     Math.round(fontSize * ADMIN_BRAND_PERCENT_SIZE_RATIO)

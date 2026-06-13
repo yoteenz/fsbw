@@ -43,6 +43,21 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
 export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
 export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
+/** Five petite star rects centered inside the MATCH RATING value box (server composite). */
+export function matchRatingStarRects(slot: PixelRect, starSizePx: number): PixelRect[] {
+  const count = 5;
+  const gap = Math.max(4, Math.round(starSizePx * 0.35));
+  const totalWidth = count * starSizePx + (count - 1) * gap;
+  const startLeft = slot.left + Math.round((slot.width - totalWidth) / 2);
+  const top = slot.top + Math.round((slot.height - starSizePx) / 2);
+  return Array.from({ length: count }, (_, i) => ({
+    left: startLeft + i * (starSizePx + gap),
+    top,
+    width: starSizePx,
+    height: starSizePx,
+  }));
+}
+
 /** Main client preview photo window (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
 export const CLIENT_IMAGE_SLOT = pctRect('4%', '14%', '44.5%', '68.5%');
 
