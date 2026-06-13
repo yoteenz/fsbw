@@ -24,7 +24,7 @@ export type BawHairlineShapeKey = 'NATURAL' | 'PEAK' | 'LAGOS' | 'LAGOS_PEAK';
 
 const HAIRLINE_SHAPE_LINES: Record<BawHairlineShapeKey, string> = {
   NATURAL:
-    'NATURAL — smooth wide convex arc; soft rounded center at part (no V); gentle temple curves; light baby-hair edge.',
+    'NATURAL — smooth wide convex arc; soft rounded center at part (no V); gentle temple curves; **clean lace-front edge** (no wispy strands on forehead skin).',
   PEAK:
     'PEAK — widow\'s peak: sharp center V (lowest at part), rises to temples then curves down (heart/M). Not a smooth arc.',
   LAGOS:
@@ -68,14 +68,24 @@ export function collectHairlineRefsForAnalysis(
 }
 
 /** Compact per-look binding — full shapes live in bawHairlineShapeGuideBlock(). */
-export function hairlineShapePromptLine(hairlineRaw: string, color: string): string {
+export function hairlineShapePromptLine(hairlineRaw: string, _color: string): string {
   const key = hairlineShapeKeyFromManifest(hairlineRaw);
   const label = displayHairline(hairlineRaw);
-  const colorKey = color.trim().toUpperCase();
   if (key === 'NATURAL') {
-    return `HAIRLINE ${label}: NATURAL smooth arc per guide; edge wisps ${colorKey}.`;
+    return `HAIRLINE ${label}: NATURAL smooth arc per guide — clean edge, no baby hairs on skin.`;
   }
-  return `HAIRLINE ${label}: ${key} edge per guide — not NATURAL arc; wisps ${colorKey} not black.`;
+  return `HAIRLINE ${label}: ${key} forehead edge per guide — not NATURAL arc; no baby hairs on skin.`;
+}
+
+/** Authoritative block — Fal must not invent baby hairs at the lace-front edge. */
+export function noInventedBabyHairsBlock(): string {
+  return [
+    '=== HAIRLINE EDGE — NO BABY HAIRS (CRITICAL) ===',
+    '**FORBIDDEN:** baby hairs, wispy flyaways, edge fuzz, micro-strands, or temple frizz on forehead/temple **skin**.',
+    'Lace-front edge = **clean defined line** where installed hair meets skin — not a fuzzy halo or glued-down wisps.',
+    'Do NOT copy wispy edges or baby hairs from mannequin or styling IMAGEs onto the client.',
+    'If IMAGE 2 already has tiny strands in the **hair region only**, retint them to catalog color — do NOT add new strands on skin.',
+  ].join('\n');
 }
 
 /** Static forehead-edge shape guide — all BAW hairline types in one block. */
@@ -88,7 +98,7 @@ export function bawHairlineShapeGuideBlock(): string {
     HAIRLINE_SHAPE_LINES.LAGOS,
     HAIRLINE_SHAPE_LINES.LAGOS_PEAK,
     'PEAK = center V; LAGOS = scalloped M/W; NATURAL = smooth arc — never identical shapes.',
-    'FORBIDDEN: mannequin/styling IMAGE edges; black baby hairs on vivid/blonde hair.',
+    'FORBIDDEN: mannequin/styling IMAGE edge geometry; inventing baby hairs; black wisps on vivid/blonde hair.',
   ].join('\n');
 }
 
