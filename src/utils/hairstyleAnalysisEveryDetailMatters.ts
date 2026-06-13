@@ -56,7 +56,7 @@ function lineForSpec(
 
   switch (key) {
     case 'lace':
-      return `${lacePhrase(look.lace)} FOR THE ULTRA REALISTIC FINISH`;
+      return `${lacePhrase(look.lace)} FOR AN ULTRA REALISTIC FINISH`;
     case 'color':
       return `${color} TO COMPLEMENT YOUR ${face.eyeDescriptor} EYES`;
     case 'texture':
