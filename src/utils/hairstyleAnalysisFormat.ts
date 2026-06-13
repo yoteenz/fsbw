@@ -72,7 +72,7 @@ export function displayLength(look: AnalysisLook): string {
   return look.length.toUpperCase().includes('INCH') ? look.length.toUpperCase() : `${look.length.toUpperCase()} INCHES`;
 }
 
-/** Free-tier TOP MATCH panel footer (centered gray). */
+/** Free-tier TOP MATCH panel footer (centered black). */
 export const FREE_TOP_MATCH_PANEL_FOOTER = 'YOUR BUILD SPECS ARE LOCKED IN PLACE.';
 
 /** Inch count with quote for EDM panel build ribbon (e.g. 22"). */
