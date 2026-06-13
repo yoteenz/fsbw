@@ -253,44 +253,15 @@ const VALID_SALON_STYLES: Record<CatalogUnitName, readonly string[]> = {
   'OCEAN CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
 };
 
-function defaultSalonStyleForPattern(pattern: UnitCatalogEntry['pattern']): string {
-  if (pattern === 'STRAIGHT') return 'FLAT IRON';
-  if (pattern === 'WAVY') return 'LAYERS';
-  if (pattern === 'TIGHT_WAVE' || pattern === 'CURLY') return 'DEFINE';
-  return 'LAYERS';
-}
-
-function coerceSalonStyleForUnit(
-  unitKey: CatalogUnitName,
-  styling: string,
-  styleIndex = 0
-): string {
-  const allowed = VALID_SALON_STYLES[unitKey].filter((s) => s !== 'NONE');
-  if (styling === 'NONE') {
-    return (
-      allowed[styleIndex % allowed.length] ??
-      defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern)
-    );
-  }
-  if (allowed.includes(styling)) return styling;
-  return (
-    allowed[styleIndex % allowed.length] ??
-    defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern)
-  );
-}
-
 function resolveStylingForCatalog(
   unitKey: CatalogUnitName,
   styling: string,
-  styleIndex: number
+  _styleIndex: number
 ): string {
   const allowed = VALID_SALON_STYLES[unitKey];
-  if (styleIndex === 0) {
-    if (!styling || styling === 'NONE') return 'NONE';
-    if (allowed.includes(styling)) return styling;
-    return 'NONE';
-  }
-  return coerceSalonStyleForUnit(unitKey, styling, styleIndex);
+  if (!styling || styling === 'NONE') return 'NONE';
+  if (allowed.includes(styling)) return styling;
+  return 'NONE';
 }
 
 /** Align TOP MATCH / look specs with BAW catalog unit (density, valid salon STYLE id). */

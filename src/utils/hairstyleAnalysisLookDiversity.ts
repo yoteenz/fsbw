@@ -20,15 +20,6 @@ type DiversifiableLook = {
 const LACE_OPTIONS = ['13X6 HD', '13X4 HD'] as const;
 const DENSITY_OPTIONS = ['200%', '250%', '300%'] as const;
 
-const VALID_SALON_STYLES: Record<UnitName, readonly string[]> = {
-  NOIR: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  BLANCO: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  'SOFT WAVE': ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  'BEACH WAVE': ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  'SOFT CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
-  'OCEAN CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
-};
-
 const LENGTH_OPTIONS = ['22 INCHES', '24 INCHES', '26 INCHES', '28 INCHES', '30 INCHES'];
 const PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
 const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS'] as const;
@@ -49,10 +40,6 @@ function shuffle<T>(items: readonly T[]): T[] {
 function normalizeUnit(unit: string): UnitName | null {
   const key = unit.trim().toUpperCase() as UnitName;
   return UNIT_NAMES.includes(key) ? key : null;
-}
-
-function salonStylesForUnit(unitKey: UnitName): string[] {
-  return VALID_SALON_STYLES[unitKey].filter((s) => s !== 'NONE');
 }
 
 function pickAllowedColor(
@@ -201,8 +188,7 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
       : look.part,
     hairline:
       index === 0 && isDefaultHairline(look.hairline) ? 'NATURAL HAIRLINE' : hairline,
-    styling:
-      index === 0 && isDefaultStyling(look.styling) ? 'NONE' : look.styling,
+    styling: isDefaultStyling(look.styling) ? 'NONE' : look.styling,
   };
 }
 
@@ -212,13 +198,7 @@ function diversifyLook<L extends DiversifiableLook>(
   unitKey: UnitName,
   colorBucket: 'neutral' | 'blonde' | 'vibrant' | 'any'
 ): L {
-  const styles = salonStylesForUnit(unitKey);
-  const styling =
-    index === 0
-      ? isDefaultStyling(look.styling)
-        ? 'NONE'
-        : look.styling.trim().toUpperCase()
-      : (styles[index % styles.length] ?? styles[0] ?? 'NONE');
+  const styling = isDefaultStyling(look.styling) ? 'NONE' : look.styling.trim().toUpperCase();
   const color = colorForUnit(unitKey, colorBucket);
   const length = LENGTH_OPTIONS[index % LENGTH_OPTIONS.length] ?? '24 INCHES';
 

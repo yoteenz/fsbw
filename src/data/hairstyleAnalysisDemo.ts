@@ -18,7 +18,7 @@ const KATEENA_TOP: AnalysisLook = {
   density: '250%',
   hairline: 'NATURAL',
   part: 'MIDDLE',
-  styling: 'FLAT IRON',
+  styling: 'NONE',
   score: 98,
   rating: 5,
 };
@@ -35,7 +35,7 @@ const THREE_MONTH_ALTS: AnalysisLook[] = [
     density: '250%',
     hairline: 'NATURAL',
     part: 'LEFT',
-    styling: 'FLAT IRON',
+    styling: 'NONE',
     score: 95,
     rating: 5,
   },
