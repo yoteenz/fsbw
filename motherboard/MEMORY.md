@@ -28249,3 +28249,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User corrected manifest lace grouping — **9X6** is a **closure**, not a frontal.
 - **Shipped:** **`hairstyleAnalysisManifestOptions.ts`** — **`MANIFEST_LACE_OPTION_GROUPS`** now derives closure/frontal lists from **`bcfLaceOptionsForCategory`** (matches BCF shop: closures 2X6–9X6 + 7X7; frontals 13X4/13X6 only). **`build-a-wig/lace/page.tsx`** — 9X6 description **Wide closure** (was Wide frontal).
 - **Conventions:** Manifest lace optgroups follow **`bcfProductOptions`** closure vs frontal split — 9X6 under Closures.
+
+---
+
+## 2026-06-13 — Hairstyle generate FUNCTION_INVOCATION_FAILED (duplicate faceIdentityLockBlock)
+
+- **Context:** User hit **FUNCTION_INVOCATION_FAILED** on Generate template preview after prompt compression deploy (catalog validation passed, then server crash).
+- **Cause:** **`hairstyleAnalysisFalPrompt.ts`** — removing **`realisticHairDensityBlock`** accidentally replaced **`matchThumbnailBlock`** with a second **`faceIdentityLockBlock`** containing thumb body + undefined vars (`look`, `refs`, `label`) — **syntax/duplicate declaration** at API module load.
+- **Shipped:** Restored **`matchThumbnailBlock`**; removed duplicate **`faceIdentityLockBlock`**. API module imports cleanly again.
+- **Conventions:** After prompt refactors, verify **`npx tsx`** can import **`api/hairstyle-analysis-generate.ts`** — load-time errors surface as Vercel **FUNCTION_INVOCATION_FAILED**, not JSON 500.
