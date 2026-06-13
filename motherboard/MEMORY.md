@@ -28327,3 +28327,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** **`formatEveryDetailMattersForFal()`** prefixed lines with **`EDM 1:`** … **`EDM 5:`**; Fal prompt said "print numbered EDM lines," so GPT Image 2 rendered list numbers on the card.
 - **Shipped (5f5a9ac6):** **`formatEveryDetailMattersForFal()`** returns plain lines (api + src). Fal **`everyDetailMattersRulesBlock()`** + **`freePromptFooter`** forbid row numbers / **`EDM N:`** prefixes. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** EDM = rose icon + plain uppercase text; no numbered list prefixes on card.
+
+---
+
+## 2026-06-13 — Client face restore (free + premium MATCH thumbs)
+
+- **Context:** Continuation of hairstyle analysis regressions (BUILD THIS LOOK, EDM numbering). User also asked to thin heart icon for **100% YOUR VIBE** footer trust row (baked in Supabase template — not yet fixed in repo). Latest report: two-step Fal briefly showed correct face on **free** template but **reverted to wrong person** on regenerate; **premium 4-pick** template still showed someone else on main photo and MATCH thumbnails.
+- **Cause:** Server face paste was shipped then **reverted** (0d8f7ba0 — user said paste did not match Fal). Two-step hair-only preview (24448119) helps but Fal still face-swaps on template pass, especially on premium thumbs with more MATCH rows.
+- **Shipped (c880967c):** Re-enabled **`hairstyleAnalysisClientFaceRestore.ts`** — soft elliptical mask pastes submitted client face over Fal skin on **main preview**; **`applyClientFaceRestoreToThumbnails`** + **`matchThumbnailSlots()`** for **MATCH 02–04** on premium template. Post-process order: EDM rose restore → face restore (main + thumbs) → optional fade → mirror. **`generateHairstyleAnalysisWithFal`** retains raw upload buffer; prefers **step-1 hair-edited** buffer for alignment when preview step runs. Env: **`HAIRSTYLE_ANALYSIS_CLIENT_FACE_RESTORE=false`** to disable. Pushed **`master`** + **`preview/mobile`**.
+- **Still open:** Footer heart icon stroke weight for **100% YOUR VIBE** — asset is on template PNG, not a repo SVG.
+- **Conventions:** Client identity = two-step Fal + **server face paste every generate** (main + premium thumbs); disable only via env.
