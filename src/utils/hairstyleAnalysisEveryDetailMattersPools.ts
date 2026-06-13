@@ -132,39 +132,73 @@ export function styleLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[]
 
 export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[] {
   const { inches, withFace, face } = ctx;
-  if (inches !== null && inches >= 28) {
-    const long: EveryDetailLineBuilder[] = [
-      (c) => `${c.length} FOR EXTRA LENGTH`,
-      (c) => `${c.length} THAT FALLS PAST MID CHEST`,
+
+  // 16" and under — short lengths sit near the collarbone.
+  if (inches !== null && inches <= 16) {
+    const collarbone: EveryDetailLineBuilder[] = [
+      (c) => `${c.length} SITS NEAR THE COLLARBONE`,
+      (c) => `${c.length} FALLS TO THE COLLARBONE`,
+      (c) => `${c.length} FOR A SHORT, CLEAN LENGTH`,
+      (c) => `${c.length} AT A COLLARBONE LENGTH`,
+      (c) => `${c.length} THAT STAYS LIGHT AND BALANCED`,
+      (c) => `${c.length} WITH A NEAT COLLARBONE HEM`,
+    ];
+    if (!withFace) return collarbone;
+    return [...collarbone, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+  }
+
+  // 26"+ — hip length and longer.
+  if (inches !== null && inches >= 26) {
+    const hip: EveryDetailLineBuilder[] = [
+      (c) => `${c.length} FALLS TO THE HIP`,
+      (c) => `${c.length} SITS AT THE HIP`,
       (c) => `${c.length} FOR A LONG, DRAMATIC LINE`,
       (c) => `${c.length} WITH CLEAN ENDS`,
       (c) => `${c.length} THAT DRAWS THE EYE DOWN`,
       (c) => `${c.length} FOR A STATEMENT LENGTH`,
+      (c) => `${c.length} FALLS BELOW THE HIP`,
+      (c) => `${c.length} FOR LENGTH BELOW THE HIP`,
     ];
-    if (!withFace) return long;
-    return [...long, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+    if (!withFace) return hip;
+    return [...hip, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
   }
-  if (inches !== null && inches <= 22) {
+
+  // 18"–25" — waist length.
+  if (inches !== null && inches >= 18) {
+    const waist: EveryDetailLineBuilder[] = [
+      (c) => `${c.length} FALLS TO THE WAIST`,
+      (c) => `${c.length} SITS AT THE WAIST`,
+      (c) => `${c.length} FOR A CLASSIC WAIST LENGTH`,
+      (c) => `${c.length} WITH CLEAN WAIST LENGTH ENDS`,
+      (c) => `${c.length} THAT HITS THE WAIST`,
+      (c) => `${c.length} FOR A BALANCED EVERYDAY LENGTH`,
+      (c) => `${c.length} FALLS BELOW THE WAIST`,
+      (c) => `${c.length} FOR LENGTH BELOW THE WAIST`,
+    ];
+    if (!withFace) return waist;
+    return [...waist, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+  }
+
+  // 17" — between collarbone and waist; use below-waist phrasing when placement is less exact.
+  if (inches !== null && inches === 17) {
     return [
-      (c) => `${c.length} SITS AT THE COLLARBONE`,
-      (c) => `${c.length} FALLS TO THE COLLARBONE`,
-      (c) => `${c.length} FOR EASY EVERYDAY LENGTH`,
-      (c) => `${c.length} AT A CLEAN COLLARBONE LENGTH`,
+      (c) => `${c.length} FALLS BELOW THE WAIST`,
+      (c) => `${c.length} FOR LENGTH BELOW THE WAIST`,
+      (c) => `${c.length} FOR A SHORT, EASY LENGTH`,
+      (c) => `${c.length} WITH CLEAN ENDS`,
       (c) => `${c.length} THAT STAYS LIGHT AND BALANCED`,
-      (c) => `${c.length} WITH A NEAT COLLARBONE HEM`,
+      (c) => `${c.length} FOR EVERYDAY WEAR`,
     ];
   }
-  const mid: EveryDetailLineBuilder[] = [
-    (c) => `${c.length} HITS MID CHEST`,
-    (c) => `${c.length} LANDS AT MID CHEST`,
-    (c) => `${c.length} AT CLASSIC MID CHEST LENGTH`,
+
+  const generic: EveryDetailLineBuilder[] = [
+    (c) => `${c.length} FOR EASY EVERYDAY WEAR`,
+    (c) => `${c.length} WITH CLEAN ENDS`,
     (c) => `${c.length} FOR A BALANCED EVERYDAY LENGTH`,
-    (c) => `${c.length} WITH CLEAN MID CHEST ENDS`,
-    (c) => `${c.length} THAT FALLS TO MID CHEST`,
-    (c) => `${c.length} FOR A FLATTERING MID LENGTH`,
+    (c) => `${c.length} THAT STAYS LIGHT AND BALANCED`,
   ];
-  if (!withFace) return mid;
-  return [...mid, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+  if (!withFace) return generic;
+  return [...generic, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
 }
 
 export function densityLinePool(): EveryDetailLineBuilder[] {
