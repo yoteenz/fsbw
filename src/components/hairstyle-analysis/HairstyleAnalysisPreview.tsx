@@ -578,7 +578,7 @@ export default function HairstyleAnalysisPreview({
                 <div className="flex flex-col gap-3 border border-black/15 p-3">
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
                     Drag slot handles to reposition overlay previews. Save layout persists debug positions for the
-                    dev overlay only — server post-process applies in-place bottom fade to marble (no cutout layer) on Generate.
+                    Fal generates TOP MATCH photo: bg removed, 9:16 centered, bottom-anchored, symmetrical bottom fade into marble.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button

@@ -1,7 +1,7 @@
 /**
  * Fal GPT Image 2 population prompts for hairstyle analysis templates.
  * Overall score %, match-rating stars, TOP MATCH specs, MATCH 02–04 row values,
- * every-detail-matters lines, client preview photo (with symmetrical bottom fade), and photos are generated in-image by Fal.
+ * every-detail-matters lines, client preview photo (bg removed, 9:16, bottom fade), and photos are generated in-image by Fal.
  */
 
 import {
@@ -239,26 +239,25 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
 
 function clientPhotoPanelRulesBlock(): string {
   return [
-    '=== CLIENT PREVIEW PHOTO — ONE IN-PLACE PORTRAIT (CRITICAL) ===',
-    'Paint IMAGE 2 directly into the left-panel photo window on IMAGE 1 — **single full-bleed portrait**, same crop and position as the empty window.',
-    'Edit **hair only** on the same person — face, skin, neck, and clothing stay locked.',
-    'FORBIDDEN: background removal, sticker cutout, white polaroid mat, inset frame, smaller photo pasted over a larger photo, duplicate portrait layer, floating card, or tan/gray studio backdrop card.',
-    'The result must look like **one continuous in-camera photo** inside the glass panel — never a collage or cut-and-paste.',
-    'Do **not** paint bottom fade or marble transparency in Fal — server applies a symmetrical bottom fade after generation.',
-    'Thumbnails: tighter square face/neck crop; one-shoulder drape; no clothing invented below jaw.',
+    '=== TOP MATCH CLIENT PHOTO — LEFT PANEL ===',
+    'Place IMAGE 2 in the left-panel photo window on IMAGE 1:',
+    '1) **Remove the background** — subject only; template marble shows through behind her.',
+    '2) **9:16 portrait** — center the subject horizontally in the window.',
+    '3) **Position near the bottom** of the panel — anchor the subject low in the frame.',
+    '4) **Symmetrical even bottom fade** — soft transparent gradient on the lower edge (same width left and right); hair/body dissolves into marble; no hard cut line.',
+    'Edit **hair only** for TOP MATCH — face, skin, neck, and clothing stay identical to IMAGE 2.',
+    'FORBIDDEN: visible studio backdrop, white polaroid mat, inset smaller photo, duplicate portrait layer, or opaque white bar at the bottom.',
+    'MATCH thumbnails: same face; tighter square crop; one-shoulder drape; bg removed.',
   ].join('\n');
 }
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   return [
-    '=== CLIENT PREVIEW (IMAGE 2) — TOP MATCH HAIR ===',
-    `Hair only: ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}.`,
+    '=== TOP MATCH HAIR (IMAGE 2) ===',
+    `${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}, ${displayDensity(look.density)}.`,
     lookHairAccuracyLines(look),
-    realisticHairDensityBlock(displayDensity(look.density), false),
-    colorHairGuidanceLine(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs, look.styling),
-    'NO wig cap, NO lace visible, NO different person.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -266,13 +265,10 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
 
 function sharedClientPhotoRulesBlock(): string {
   return [
-    '=== CLIENT PHOTOS — FACE LOCK + PANEL (ALL PREVIEW + THUMBNAILS) ===',
     faceIdentityLockBlock(),
     clientPhotoPanelRulesBlock(),
-    realisticHairRecolorBlock(),
-    'HAIR VOLUME: natural strand separation; FORBIDDEN helmet hair, bouffant crown, or shrinking the face.',
+    'Recolor hair to catalog color/texture at strand level — face and skin untouched.',
     hairlineRulesBlock(),
-    neckAndBodyPreservationBlock(),
   ].join('\n\n');
 }
 
@@ -378,7 +374,7 @@ function panelChromePreservationBlock(): string {
     'PRESERVE acrylic detailing: frosted translucency, glass edge highlight, inner frost blur, and panel depth — never flatten to matte white or gray boxes.',
     'PRESERVE marble texture behind and between panels — sharp, visible stone veining; do not blur, smear, or replace with flat color.',
     'DO NOT replace glossy translucent panels with flat white boxes, plain gray rectangles, or simplified UI.',
-    'Photo windows: edit the client portrait **in place** — hair/strand changes only, one layer edge-to-edge. Do NOT background-remove, do NOT paste a second portrait on top, do NOT add white/gray mat or inset frame.',
+    'Photo window: cutout subject on marble — **background removed**, **9:16**, **bottom-anchored**, **symmetrical bottom fade** — not a full studio backdrop photo.',
     'ONLY edit inside: (a) client hair in the photo window, (b) empty value text slots next to labels, (c) erasing the tier subtitle per rules below.',
     'If panel chrome or red glow degrades, the output is wrong — prioritize preserving IMAGE 1 panel art over aggressive photo edits.',
   ].join('\n');
@@ -608,15 +604,7 @@ function buildTemplateRules(
         .join('\n')
     : '';
 
-  const photoRules =
-    tierKey === 'free'
-      ? [
-          '=== CLIENT PHOTO — HAIR IN PANEL (IN PLACE, SINGLE LAYER) ===',
-          faceIdentityLockBlock(),
-          clientPhotoPanelRulesBlock(),
-          'Hair density changes affect hair strands only — never repaint or shrink the face.',
-        ]
-      : [sharedClientPhotoRulesBlock()];
+  const photoRules = [sharedClientPhotoRulesBlock()];
 
   return [
     '=== TEMPLATE (IMAGE 1) — DO NOT ALTER LAYOUT ===',

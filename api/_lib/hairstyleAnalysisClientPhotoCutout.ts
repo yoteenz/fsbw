@@ -26,8 +26,8 @@ export function hairstyleAnalysisClientPhotoIdeogramEnabled(): boolean {
 
 export function hairstyleAnalysisClientPhotoPostProcessEnabled(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_POST_PROCESS?.trim().toLowerCase();
-  if (raw === 'false' || raw === '0' || raw === 'no') return false;
-  return true;
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return false;
 }
 
 /** Sample corner pixels and key out a uniform studio backdrop (tan/beige/gray) in place — same crop/position. */
