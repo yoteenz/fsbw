@@ -66,6 +66,11 @@ export function overallScoreFalFontSize(rect: PixelRect): number {
   return Math.max(16, Math.min(36, Math.round(rect.height * 0.22)));
 }
 
+/** Petite MATCH RATING decimal (e.g. 5.0) — upper third of value panel, free tier only. */
+export function matchRatingDecimalFalFontSize(rect: PixelRect): number {
+  return Math.max(12, Math.min(20, Math.round(rect.height * 0.24)));
+}
+
 /** Fal in-image MATCH RATING star glyph height — compact row inside value panel. */
 export function matchRatingFalStarSize(rect: PixelRect): number {
   return Math.max(14, Math.min(26, Math.round(rect.height * 0.17)));
