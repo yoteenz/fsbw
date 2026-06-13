@@ -64,3 +64,30 @@ export function salonModeToBawStyleId(salonMode: string): string {
   if (m === 'layers') return 'LAYERS';
   return salonMode.toUpperCase();
 }
+
+/** Max chars per every-detail-matters row @ 2048×2560 (~38% slot width) — one line, no wrap. */
+export const EVERY_DETAIL_MATTERS_MAX_CHARS = 68;
+
+export function compactEveryDetailMattersLine(line: string): string {
+  const normalized = line.trim().toUpperCase().replace(/\s+/g, ' ');
+  if (!normalized) return '';
+  if (normalized.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return normalized;
+
+  const dashHead = normalized.split(/\s*[—–-]\s*/)[0]?.trim();
+  if (dashHead && dashHead.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return dashHead;
+
+  const words = normalized.split(' ');
+  let out = '';
+  for (const word of words) {
+    const next = out ? `${out} ${word}` : word;
+    if (next.length > EVERY_DETAIL_MATTERS_MAX_CHARS) break;
+    out = next;
+  }
+  if (out) return out;
+
+  return normalized.slice(0, EVERY_DETAIL_MATTERS_MAX_CHARS).trim();
+}
+
+export function compactEveryDetailMattersLines(lines: string[]): string[] {
+  return lines.map(compactEveryDetailMattersLine).filter(Boolean);
+}

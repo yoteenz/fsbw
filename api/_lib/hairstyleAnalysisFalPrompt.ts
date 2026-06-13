@@ -26,6 +26,7 @@ import {
   displayPart,
   displayStyle,
   formatScorePercent,
+  EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
 
 export type FalAnalysisLook = {
@@ -303,11 +304,12 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
   return [
     '=== EVERY DETAIL MATTERS PANEL — FIXED STRUCTURE (DO NOT CHANGE) ===',
     'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
-    `Fill exactly ${lineCount} text rows below that header — one complete sentence per row.`,
-    'Each row is a stylist fit note: ONE client facial feature (cheekbones, forehead, jawline, chin, eyes, face shape, or undertone) + ONE catalog spec (unit, color, length, styling, part, or density) in the same sentence.',
-    'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium text beside its rose icon.',
-    'FORBIDDEN: label:value rows (e.g. "FACE SHAPE: OVAL"), keyword lists, invented slogans, or a different number of lines.',
-    'This is NOT a motivational "why it works" essay — do not rewrite into empowerment copy.',
+    `Fill exactly ${lineCount} text rows below that header — **one short line per row** (single row only, no wrapping).`,
+    `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} characters — tight stylist note: ONE facial feature + ONE catalog spec.`,
+    'Use punchy phrasing (e.g. "HEART FACE — NOIR STRAIGHT" or "ALMOND EYES — JET BLACK") — no long compound sentences.',
+    'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium beside its rose icon.',
+    'FORBIDDEN: multi-clause essays, label:value rows, keyword lists, line wraps, or a different number of lines.',
+    'This is NOT motivational copy — do not rewrite into empowerment fluff.',
   ].join('\n');
 }
 
@@ -332,8 +334,8 @@ function everyDetailMattersRulesBlock(lineCount: number): string {
     everyDetailMattersStructureBlock(lineCount),
     '',
     '=== EVERY DETAIL MATTERS LINES (PRINT VERBATIM — ZERO REWRITES) ===',
-    'Copy each line below exactly. Do not paraphrase, merge rows, or add new sentences.',
-    'Each line must name a specific facial feature AND a specific unit spec — e.g. cheekbones + layers, forehead + middle part, jawline + length.',
+    'Copy each line below exactly. Do not paraphrase, merge rows, wrap to a second line, or add words.',
+    `Each line must fit **one text row** (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars) — one facial feature + one unit spec.`,
     `FORBIDDEN PHRASES / TONE: ${EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES}.`,
     'Do not invent marketing copy. Do not treat this section as inspirational "why it works" fluff.',
   ].join('\n');
