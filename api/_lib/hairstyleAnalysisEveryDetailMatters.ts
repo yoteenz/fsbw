@@ -11,6 +11,18 @@ import {
   displayPart,
   displayStyle,
 } from './hairstyleAnalysisDisplay.js';
+import {
+  colorLinePool,
+  densityLinePool,
+  hairlineLinePool,
+  laceLinePool,
+  lengthLinePool,
+  partLinePool,
+  styleLinePool,
+  textureLinePool,
+  type EveryDetailLineBuilder,
+  type EveryDetailLineCtx,
+} from './hairstyleAnalysisEveryDetailMattersPools.js';
 
 export type EveryDetailMattersFaceFeatures = {
   faceShape?: string;
@@ -74,22 +86,6 @@ const SPEC_MANIFEST_LABEL: Record<EveryDetailSpecKey, string> = {
   style: 'STYLE',
 };
 
-type LineCtx = {
-  unit: string;
-  color: string;
-  style: string;
-  length: string;
-  density: string;
-  part: string;
-  hairline: string;
-  inches: number | null;
-  laceLabel: string;
-  face: Required<EveryDetailMattersFaceFeatures>;
-  withFace: boolean;
-};
-
-type LineBuilder = (ctx: LineCtx) => string;
-
 export function everyDetailVariationSeed(): number {
   return ((Date.now() ^ Math.floor(Math.random() * 0x100000000)) >>> 0);
 }
@@ -102,137 +98,9 @@ function pickVariantIndex(seed: number, rowIndex: number, count: number): number
   return (h >>> 0) % count;
 }
 
-function pickLine(seed: number, rowIndex: number, builders: LineBuilder[], ctx: LineCtx): string {
+function pickLine(seed: number, rowIndex: number, builders: EveryDetailLineBuilder[], ctx: EveryDetailLineCtx): string {
   const idx = pickVariantIndex(seed, rowIndex, builders.length);
   return builders[idx](ctx);
-}
-
-const LACE_LINES: LineBuilder[] = [
-  (c) => `MELTED LACE, ${c.hairline} HAIRLINE`,
-  (c) => `${c.hairline} HAIRLINE WITH HD MELT`,
-  (c) => `SEAMLESS ${c.hairline} LACE FRONT`,
-  (c) => `${c.laceLabel} MELTS INTO ${c.hairline} EDGE`,
-  (c) => `INVISIBLE ${c.laceLabel} WITH ${c.hairline} HAIRLINE`,
-  (c) => `${c.hairline} EDGE ON ${c.laceLabel}`,
-];
-
-const COLOR_LINES: LineBuilder[] = [
-  (c) =>
-    c.withFace
-      ? `${c.color} TO COMPLEMENT YOUR ${c.face.eyeDescriptor} EYES`
-      : `${c.color} FOR RICH CONTRAST WITH YOUR LOOK`,
-  (c) =>
-    c.withFace
-      ? `${c.color} HIGHLIGHTS YOUR ${c.face.eyeDescriptor} EYE SHAPE`
-      : `${c.color} KEEPS YOUR TONE BALANCED`,
-  (c) =>
-    c.withFace
-      ? `${c.color} BALANCES YOUR ${c.face.eyeDescriptor} EYES`
-      : `${c.color} ADDS DEPTH TO YOUR LOOK`,
-  (c) =>
-    c.withFace
-      ? `${c.color} WARMS YOUR ${c.face.eyeDescriptor} EYE LINE`
-      : `${c.color} PAIRS CLEANLY WITH YOUR SKIN TONE`,
-  (c) =>
-    c.withFace
-      ? `${c.color} FRAMES YOUR ${c.face.eyeDescriptor} EYES`
-      : `${c.color} FOR A POLISHED FINISH`,
-  (c) =>
-    c.withFace
-      ? `${c.color} SOFTENS AGAINST YOUR ${c.face.eyeDescriptor} EYES`
-      : `${c.color} FOR INSTALL COLOR HARMONY`,
-];
-
-const TEXTURE_LINES: LineBuilder[] = [
-  (c) =>
-    c.withFace
-      ? `${c.unit} TO FRAME YOUR ${c.face.faceShape}`
-      : `${c.unit} TEXTURE FOR CLEAN LINES`,
-  (c) =>
-    c.withFace
-      ? `${c.unit} SOFTENS YOUR ${c.face.faceShape}`
-      : `${c.unit} STRANDS FOR A POLISHED FINISH`,
-  (c) =>
-    c.withFace
-      ? `${c.unit} BALANCES YOUR ${c.face.faceShape}`
-      : `${c.unit} BODY FOR INSTALL FULLNESS`,
-  (c) =>
-    c.withFace
-      ? `${c.unit} ADDS VERTICAL LINE ON YOUR ${c.face.faceShape}`
-      : `${c.unit} FOR A SLEEK SILHOUETTE`,
-  (c) =>
-    c.withFace
-      ? `${c.unit} LENGTHENS YOUR ${c.face.faceShape}`
-      : `${c.unit} TEXTURE FOR DEFINED STRANDS`,
-  (c) =>
-    c.withFace
-      ? `${c.unit} HUGS YOUR ${c.face.faceShape} NICELY`
-      : `${c.unit} FOR NATURAL STRAND FLOW`,
-];
-
-function styleLines(ctx: LineCtx): LineBuilder[] {
-  if (ctx.style === 'NONE') {
-    return [
-      (c) =>
-        c.withFace
-          ? `${c.unit} SILHOUETTE FOR YOUR ${c.face.faceShape}`
-          : `${c.unit} SILHOUETTE FOR CLEAN LINES`,
-      (c) =>
-        c.withFace
-          ? `${c.unit} SHAPE SUITS YOUR ${c.face.faceShape}`
-          : `${c.unit} FINISH FOR A NATURAL LOOK`,
-      (c) =>
-        c.withFace
-          ? `${c.unit} FLOW ON YOUR ${c.face.faceShape}`
-          : `${c.unit} FOR A SOFT NATURAL FINISH`,
-    ];
-  }
-  return [
-    (c) => `${c.style} TO ENHANCE YOUR JAWLINE`,
-    (c) => `${c.style} POLISHES YOUR JAWLINE`,
-    (c) => `${c.style} ADDS STRUCTURE AT YOUR JAWLINE`,
-    (c) => `${c.style} KEEPS YOUR JAWLINE SHARP`,
-    (c) => `${c.style} DEFINES YOUR JAWLINE CLEANLY`,
-    (c) => `${c.style} FOR A SCULPTED JAWLINE`,
-  ];
-}
-
-function lengthLines(ctx: LineCtx): LineBuilder[] {
-  const { inches, face, withFace } = ctx;
-  if (inches !== null && inches >= 28) {
-    return [
-      (c) =>
-        withFace
-          ? `${c.length} FOR LONG LENGTH ON YOUR ${face.faceShape}`
-          : `${c.length} FOR LONG INSTALL LENGTH`,
-      (c) =>
-        withFace
-          ? `${c.length} DRAWS THE EYE DOWN YOUR ${face.faceShape}`
-          : `${c.length} FOR EXTRA LONG DRAMA`,
-      (c) =>
-        withFace
-          ? `${c.length} ADDS LENGTH ON YOUR ${face.faceShape}`
-          : `${c.length} FOR A LONG SILHOUETTE`,
-    ];
-  }
-  if (inches !== null && inches <= 22) {
-    return [
-      (c) => `${c.length} AT COLLARBONE LENGTH`,
-      (c) => `${c.length} STOPS AT COLLARBONE FOR BALANCE`,
-      (c) => `${c.length} FOR A LIGHT COLLARBONE HIT`,
-      (c) => `${c.length} LANDS AT COLLARBONE CLEANLY`,
-    ];
-  }
-  return [
-    (c) => `${c.length} AT MID CHEST LENGTH`,
-    (c) => `${c.length} LANDS AT MID CHEST FOR BALANCE`,
-    (c) => `${c.length} HITS MID CHEST WITH CLEAN LINES`,
-    (c) => `${c.length} FOR MID CHEST INSTALL LENGTH`,
-    (c) =>
-      withFace
-        ? `${c.length} SITS MID CHEST ON YOUR ${face.faceShape}`
-        : `${c.length} FOR MID CHEST DRAMA`,
-  ];
 }
 
 export function everyDetailMattersSpecKeys(lineCount = 5): EveryDetailSpecKey[] {
@@ -288,7 +156,7 @@ function buildLineCtx(
   look: EveryDetailMattersLook,
   face: Required<EveryDetailMattersFaceFeatures>,
   withFace: boolean
-): LineCtx {
+): EveryDetailLineCtx {
   return {
     unit: specValueFromLook(look, 'texture'),
     color: specValueFromLook(look, 'color'),
@@ -306,27 +174,27 @@ function buildLineCtx(
 
 function lineForSpec(
   key: EveryDetailSpecKey,
-  ctx: LineCtx,
+  ctx: EveryDetailLineCtx,
   seed: number,
   rowIndex: number
 ): string {
   switch (key) {
     case 'lace':
-      return pickLine(seed, rowIndex, LACE_LINES, ctx);
+      return pickLine(seed, rowIndex, laceLinePool(), ctx);
     case 'color':
-      return pickLine(seed, rowIndex, COLOR_LINES, ctx);
+      return pickLine(seed, rowIndex, colorLinePool(ctx), ctx);
     case 'texture':
-      return pickLine(seed, rowIndex, TEXTURE_LINES, ctx);
+      return pickLine(seed, rowIndex, textureLinePool(ctx), ctx);
     case 'style':
-      return pickLine(seed, rowIndex, styleLines(ctx), ctx);
+      return pickLine(seed, rowIndex, styleLinePool(ctx), ctx);
     case 'length':
-      return pickLine(seed, rowIndex, lengthLines(ctx), ctx);
+      return pickLine(seed, rowIndex, lengthLinePool(ctx), ctx);
     case 'density':
-      return `${ctx.density} DENSITY FOR INSTALL FULLNESS`;
+      return pickLine(seed, rowIndex, densityLinePool(), ctx);
     case 'part':
-      return `${ctx.part} PART FOR BALANCED FRAMING`;
+      return pickLine(seed, rowIndex, partLinePool(), ctx);
     case 'hairline':
-      return `${ctx.hairline} HAIRLINE FOR A SEAMLESS ${ctx.laceLabel} BLEND`;
+      return pickLine(seed, rowIndex, hairlineLinePool(), ctx);
     default:
       return `${ctx.unit} FOR THIS TOP MATCH`;
   }
