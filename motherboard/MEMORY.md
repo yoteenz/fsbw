@@ -27859,3 +27859,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal prompt **structure block** hardcoded example bullets; **`buildEveryDetailMattersFromTopMatch`** used rigid templates (length always "MID CHEST FALL"); premium **`whyItWorks`** rebuilt even though premium template has no rose rows.
 - **Shipped (7ad304fa):** Rewrote **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — lines embed **live catalog values** (unit, color, length inches, lace, style, etc.); **`formatEveryDetailMattersForFal()`** labels each line with **TOP MATCH SPEC = value**; length phrasing varies by inches. **`normalizeHairstyleAnalysisForFal`** rebuilds **`whyItWorks` only on free tier** from diversified top match. Fal prompt removes static examples; forbids placeholder/demo bullet reuse; sync rule between spec column + bullets. Dev overlay rebuilds bullets from **`topMatch`** each render.
 - **Conventions:** Every-detail-matters = **generated fresh from TOP MATCH manifest** each generate; structure = lace/color/texture/style/length rose rows on free tier; bullets and spec column must stay in sync.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: simplify TOP MATCH photo prompt
+
+- **Context:** User screenshot showed white block over portrait bottom; said TOP MATCH image prompt was **over-complicated**. Want simple instructions: **remove background**, **center on 9:16**, **symmetrical even bottom fade**, **position near bottom of panel**.
+- **Cause:** Conflicting Fal rules (forbid bg removal + in-place full-bleed vs server post-process fade) caused collage/white-mat artifacts.
+- **Shipped (eebe0242):** **`clientPhotoPanelRulesBlock()`** rewritten as four clear steps. Removed in-place/no-cutout contradictions from **`panelChromePreservationBlock`**. Slimmed **`sharedClientPhotoRulesBlock`** + **`clientPreviewHairLine`**. **`HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_POST_PROCESS`** default **off** (opt-in `true`) so server does not double-process Fal fade. Docs + preview copy updated.
+- **Conventions:** TOP MATCH photo = bg removed, 9:16 centered, bottom-anchored, symmetrical fade into marble — hair edits only.
