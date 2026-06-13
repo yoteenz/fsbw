@@ -27880,6 +27880,15 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: every-detail-matters spec rows (not empowerment fluff)
+
+- **Context (continued hairstyle analysis thread):** User reported that when every-detail-matters was made dynamic again, rose rows **reverted to empowerment fluff** instead of the agreed structure — **one row per TOP MATCH spec** (e.g. HD LACE FOR AN ULTRA REALISTIC FINISH, JET BLACK TO COMPLEMENT YOUR BLACK ALMOND EYES).
+- **Cause:** Prior dynamic rebuild used generic inspirational templates (FLATTERING MID-CHEST FALL, FRAME YOUR FEATURES) and Fal prompt still tempted rewrites; client-sent stale **`whyItWorks`** could diverge from diversified top match when face features were missing.
+- **Shipped (e75df15f):** Rewrote **`buildEveryDetailMattersFromTopMatch()`** (api + src) — row map **lace → color → texture → style → length**; each line = **catalog spec value + one fit note** (eyes/face/jaw/install), with face-aware vs spec-only fallbacks via **`hasFaceContext()`**. Added **`everyDetailFaceFeatures`** on **`HairstyleAnalysis`** / **`FalHairstyleAnalysis`**; **`parseFaceFeatures()`** in generate API; demo **`KATEENA_DEMO_FACE_FEATURES`**; overlay + **`buildHairstyleAnalysisFromPsaPicks`** pass face features. **`normalizeHairstyleAnalysisForFal`** always rebuilds free-tier **`whyItWorks`** from resolved top match. Fal **`everyDetailMattersStructureBlock()`** — SPEC ROWS ONLY, GOOD/BAD examples, **`everyDetailMattersRowGuide()`**, forbidden empowerment phrases. Fixed missing **`EveryDetailFaceFeatures`** import in **`hairstyleAnalysisRules.ts`**.
+- **Conventions:** Every-detail-matters (free tier only) = **five spec-tied one-liners** rebuilt from TOP MATCH manifest each generate; print verbatim in Fal — not why-it-works essays or girl-power copy.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
