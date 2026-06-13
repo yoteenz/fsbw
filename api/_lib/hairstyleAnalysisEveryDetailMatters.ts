@@ -224,7 +224,7 @@ export function everyDetailMattersRowGuide(lineCount = 5): string[] {
   );
 }
 
-/** Fal prompt rows — compact numbered EDM lines for the 32k prompt limit. */
+/** Fal prompt rows — plain text only (no 1. 2. 3. prefixes on the card). */
 export function formatEveryDetailMattersForFal(lines: string[]): string[] {
-  return lines.map((line, i) => `EDM ${i + 1}: ${line}`);
+  return lines;
 }

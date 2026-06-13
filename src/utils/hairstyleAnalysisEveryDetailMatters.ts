@@ -201,5 +201,5 @@ export function buildEveryDetailMattersFromTopMatch(
 }
 
 export function formatEveryDetailMattersForFal(lines: string[]): string[] {
-  return lines.map((line, i) => `EDM ${i + 1}: ${line}`);
+  return lines;
 }
