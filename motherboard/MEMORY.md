@@ -27942,7 +27942,7 @@ Pushed **`master`** + **`preview/mobile`**.
 ## 2026-06-12 — Hairstyle analysis: TOP MATCH mirror reflection below fade
 
 - **Context:** User reported large empty white space below TOP MATCH bottom fade and panel bottom — wanted a **mirror-like reflection** at **very low transparency** inside the left panel.
-- **Shipped:** **`hairstyleAnalysisClientPhotoReflection.ts`** — server-composites flipped lower hair/neck strip (~10% peak opacity, gradient to 0) in the zone below **`CLIENT_PHOTO_FADE_START_PCT`** (72%) through panel bottom; runs on **every** generate after score/stars (and optional fade post-process). Fal prompt step 5 + panel chrome updated; preview/docs copy.
+- **Shipped:** **`hairstyleAnalysisClientPhotoReflection.ts`** — server-composites flipped lower hair/neck strip (~10% peak opacity, gradient to 0) in the zone below **`CLIENT_PHOTO_FADE_START_PCT`** (72%) through panel bottom; runs before petite score/stars overlay. Fal prompt step 5 + panel chrome updated; preview/docs copy.
 
 ---
 
@@ -27959,3 +27959,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
 - **Cause:** **`clientPhotoPanelRulesBlock()`** function declaration was accidentally dropped in **`hairstyleAnalysisFalPrompt.ts`** during hairPartLockBlock edit — orphaned `return [` caused **syntax error** at API module load.
 - **Shipped:** Restored **`function clientPhotoPanelRulesBlock(): string`** wrapper.
+
+---
+
+## 2026-06-13 — Copy: MELTED LACE, NATURAL HAIRLINE (word order)
+
+- **Context (full hairstyle-analysis thread):** Loading bar on Fal generate; virgin hair → **100% RAW HUMAN HAIR**; MORE MATCHES pose lock; TOP MATCH mirror reflection; restore server petite overall score + stars. User then asked to fix awkward wording **LACE MELTED, HAIRLINE NATURAL** → **MELTED LACE, NATURAL HAIRLINE** — professional adjective-before-noun order, not trendy inverted phrasing.
+- **Shipped (a09d7820):** **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — lace rose row = **`MELTED LACE, {HAIRLINE} HAIRLINE`** (dynamic from TOP MATCH hairline spec). **`hairstyleAnalysisFalPrompt.ts`** — GOOD example + lace-row format rule; forbidden **lace melted** / **hairline natural**. **`unitPdpDetailsConfig.ts`** — signature feature **`ULTRA THIN HD FILM LACE FOR AN INVISIBLE MELT`** → **`MELTED LACE, NATURAL HAIRLINE`**. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Lace/hairline marketing copy uses **MELTED LACE, NATURAL HAIRLINE** (or **PEAK** / **LAGOS** when dynamic) — never noun-before-adjective **LACE MELTED** or **HAIRLINE NATURAL**.
