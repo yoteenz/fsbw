@@ -435,21 +435,31 @@ function overallScoreAndRatingRules(
   const starPx = matchRatingFalStarSize(RATING_SLOT);
   const filled = filledStarCountFromOverallScore(look.score);
   const scorePct = formatScorePercent(look.score);
-  const ratingLabel = formatMatchRatingDecimal(look.rating);
   const tierKey = normalizeTier(tier);
-  const starErase =
-    tierKey === 'free'
-      ? `Draw 5 petite embossed-gradient red stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box, below the ${ratingLabel} number.`
-      : `Erase large template star glyphs; draw 5 new petite stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box, below the ${ratingLabel} number.`;
   const fillRule =
     filled === 5 ? 'Fill all 5 stars left → right.' : 'Fill left 4 only; star 5 empty outline.';
 
+  const overallScoreLine = `OVERALL SCORE: erase placeholder %; print ${scorePct} in ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script (~${scorePx}px max height, centered, wide padding). Digits + % same script.`;
+
+  if (tierKey === 'free') {
+    const ratingLabel = formatMatchRatingDecimal(look.rating);
+    return [
+      '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE — FREE TIER ONLY) ===',
+      overallScoreLine,
+      `MATCH RATING (FREE ONLY): erase placeholder; print **${ratingLabel}** in the **upper third** of the MATCH RATING value box — ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script, **same font family and visual weight as OVERALL SCORE %** (~${scorePx}px max height, centered).`,
+      `MATCH RATING STARS (below ${ratingLabel}): ${fillRule} Draw 5 petite embossed-gradient red stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box. Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
+      'FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif overall score or match-rating text.',
+    ].join('\n');
+  }
+
+  const starErase = `Erase large template star glyphs; draw 5 new petite stars (~${starPx}px max each) **centered** in the MATCH RATING value box.`;
   return [
-    '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE) ===',
-    `OVERALL SCORE: erase placeholder %; print ${scorePct} in ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script (~${scorePx}px max height, centered, wide padding). Digits + % same script.`,
-    `MATCH RATING: erase placeholder; print **${ratingLabel}** in the **upper third** of the MATCH RATING value box — ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script, **same font family and visual weight as OVERALL SCORE %** (~${scorePx}px max height, centered).`,
-    `MATCH RATING STARS (below ${ratingLabel}): ${fillRule} ${starErase} Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
-    'FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif overall score or match-rating text.',
+    '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE — PREMIUM) ===',
+    overallScoreLine,
+    'MATCH RATING (PREMIUM): **stars only** — do **NOT** print a decimal score (no 5.0, 4.7, etc.) above or beside the stars.',
+    `MATCH RATING STARS: ${fillRule} ${starErase} Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
+    'FORBIDDEN on premium MATCH RATING: decimal rating text, billboard stars, chunky/emoji stars.',
+    'FORBIDDEN on OVERALL SCORE: gray or sans-serif styling.',
   ].join('\n');
 }
 
@@ -609,8 +619,8 @@ function buildTemplateRules(
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + stars printed in-image at petite sizes.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image; overall score % + stars printed in-image at petite sizes.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -667,7 +677,7 @@ function freePromptFooter(
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; OVERALL SCORE % + MATCH RATING decimal (e.g. 5.0 / 4.7) + stars printed in-image at petite sizes (erase large template placeholders first).',
+    'TOP MATCH specs + every detail matters filled; OVERALL SCORE % + MATCH RATING decimal above stars (e.g. 5.0 / 4.7) + stars below — **free tier only**; erase large template placeholders first.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
   ].join('\n');
@@ -721,7 +731,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; petite score/stars in-image; each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    `FINAL CHECK: gray centered client name; keep "hairstyle analysis" script below FRONTAL SLAYER gray/untouched from template; specs + EDM lines verbatim; petite overall score + MATCH RATING stars only (no 5.0/4.7 decimal); each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }
