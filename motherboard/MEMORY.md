@@ -28132,3 +28132,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said EDM rows still sounded automated when catalog unit names appeared (NOIR, BEACH WAVE, etc.) — wanted plain hair-pattern words instead, e.g. **STRAIGHT TEXTURE FOR A CLEAN FINISH**.
 - **Shipped:** **`hairPatternLabel()`** in **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) maps units → **STRAIGHT** (NOIR, BLANCO), **WAVY** (SOFT WAVE, BEACH WAVE), **CURLY** (SOFT CURL, OCEAN CURL). Texture rows use pattern + TEXTURE phrasing; generic extension lines kept (**EXTENSIONS THAT MOVE LIKE REAL HAIR**). STYLE **NONE** rows have no unit names.
 - **Conventions:** EDM rose copy never prints catalog unit names; describe texture as **straight / wavy / curly** only.
+
+---
+
+## 2026-06-13 — EDM length placement (collarbone / waist / hip)
+
+- **Context:** User said collarbone logic was wrong — only **16"** and shorter sit near the collarbone; **18"+** usually falls at the **waist**; **26"+** at the **hip**; use **below waist** / **below hip** when placement is less exact.
+- **Shipped:** **`lengthLinePool()`** in **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — **≤16"** collarbone, **17"** below-waist transition, **18–25"** waist (+ below waist variants), **≥26"** hip (+ below hip variants). Removed mid-chest and incorrect 22" collarbone phrasing.
+- **Conventions:** EDM length rows follow realistic inch-to-body placement, not generic mid-chest defaults.
