@@ -148,7 +148,7 @@ export const SITE_FONT_OPTIONS: SiteFontOption[] = [
   },
 ];
 
-export const DEFAULT_OVERALL_SCORE_FONT_ID = 'futura-demi';
+export const DEFAULT_OVERALL_SCORE_FONT_ID = 'cbyg';
 
 export const BRAND_SITE_FONT_OPTIONS = SITE_FONT_OPTIONS.filter((option) => option.group === 'brand');
 
