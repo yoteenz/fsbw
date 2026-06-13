@@ -126,6 +126,20 @@ export function resolveClientPhotoFadeSlotOrDefault(overrides?: CompositeLayoutO
   return CLIENT_PHOTO_FADE_SLOT;
 }
 
+/** Server post-process uses only client-photo slots — never topScore, rating, or match-row text slots. */
+export function photoPostProcessLayoutOverrides(
+  overrides?: CompositeLayoutOverrides
+): CompositeLayoutOverrides | undefined {
+  if (!overrides) return undefined;
+  const out: CompositeLayoutOverrides = {};
+  for (const key of ['clientImage', 'clientPhotoFade'] as const) {
+    if (overrides[key] && Object.keys(overrides[key]!).length > 0) {
+      out[key] = overrides[key];
+    }
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 export function matchScoreSlotIds(tier: FalHairstyleAnalysis['tier']): string[] {
   const defaults = defaultScoreSlotPercents(tier);
   return Object.keys(defaults).filter((id) => id.endsWith('-score') && id !== 'topScore');

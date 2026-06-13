@@ -382,6 +382,7 @@ function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): stri
 
   return [
     '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL) ===',
+    'These size rules apply **only** to the OVERALL SCORE panel and MATCH RATING stars — **not** MATCH 02–04 gray score % rows.',
     'Both panels have a small inner value area below the label. Score and stars must be **compact** — never dominate or touch borders.',
     `OVERALL SCORE %: max ~${scorePx}px tall, centered with padding on all sides.`,
     `MATCH RATING stars: ${freeStarNote} Red fill stays inside each outline only — no chunky oversized stars.`,
@@ -430,19 +431,31 @@ function matchScoreFalLine(look: FalAnalysisLook): string {
     `TEXTURE: ${look.unit.trim().toUpperCase()}`,
     `COLOR: ${look.color.trim().toUpperCase()}`,
     `LENGTH: ${displayLength(look.length)}`,
-    `MATCH SCORE: print ${formatScorePercent(look.score)} in gray ${MATCH_SCORE_GRAY} (Futura PT Medium, uppercase %).`,
-    'Print all four values in their template value slots on this MATCH row — same horizontal band as the thumbnail.',
-    'TEXTURE, COLOR, LENGTH = black uppercase Futura PT Medium beside pre-printed labels.',
+    `MATCH SCORE: print ${formatScorePercent(look.score)} in gray ${MATCH_SCORE_GRAY} inside this row's MATCH SCORE value slot only (small Futura PT Medium — not the red OVERALL SCORE panel).`,
+    'Print each value beside its pre-printed label on this MATCH row — TEXTURE, COLOR, LENGTH, then MATCH SCORE on separate labeled lines.',
+    'TEXTURE, COLOR, LENGTH = black uppercase Futura PT Medium in their value slots.',
   ].join(' ');
+}
+
+function matchRowScoreIsolationBlock(): string {
+  return [
+    '=== MATCH 02–04 GRAY SCORE % — SEPARATE FROM OVERALL SCORE (CRITICAL) ===',
+    `OVERALL SCORE (top-right red panel) and MATCH SCORE % (each MORE MATCHES row) are **different fields** — never swap, duplicate, or link them.`,
+    `MATCH SCORE % only: gray ${MATCH_SCORE_GRAY}, small Futura PT Medium, in the MATCH SCORE value slot on that row (below LENGTH on the same MATCH block).`,
+    'FORBIDDEN: red/script/large overall-score styling on MATCH SCORE %; printing match scores in the OVERALL SCORE panel; floating % away from the MATCH SCORE label.',
+    'Server does **not** composite match-row text — print TEXTURE, COLOR, LENGTH, and gray MATCH SCORE % in-image in each row\'s value slots.',
+  ].join('\n');
 }
 
 function matchRowValuesFalRules(): string {
   return [
+    matchRowScoreIsolationBlock(),
+    '',
     '=== MATCH 02–04 VALUE SLOTS — PRINT IN TEMPLATE (FAL IN-IMAGE) ===',
     'For MATCH 02, MATCH 03, and MATCH 04: print TEXTURE, COLOR, and LENGTH in black uppercase Futura PT Medium in each value area beside the pre-printed labels.',
-    `MATCH SCORE value area: print the gray percentage only (${MATCH_SCORE_GRAY}) — digits + % suffix, Futura PT Medium on the same row as texture/color/length.`,
+    `MATCH SCORE value slot: gray percentage only (${MATCH_SCORE_GRAY}) — digits + % suffix, small Futura PT Medium on the MATCH SCORE labeled line for that row.`,
     'Labels (TEXTURE:, COLOR:, LENGTH:, MATCH SCORE:) are pre-printed on the template — do not duplicate labels; fill only the empty value slots.',
-    'Each row\'s texture, color, length, and score % must sit on the same MATCH row as its thumbnail — never float onto another row.',
+    'Keep each value aligned with its own label on the same horizontal line — do not stack all four values on one line or move scores to another panel.',
   ].join('\n');
 }
 
