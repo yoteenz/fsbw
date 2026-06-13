@@ -27801,3 +27801,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said do not call the client's face **long** — insulting; keep bullets **flattering and respectful**.
 - **Shipped:** **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — length row → **`{LENGTH} FOR A FLATTERING MID-CHEST FALL`** (no long-face label); style → **ENHANCE YOUR JAWLINE**; part → **FRAME YOUR FEATURES**; removed **LONG FACE**, **HIGH FOREHEAD**, **SHARP JAWLINE** from demo face features. **`hairstyleAnalysisFalPrompt.ts`** — respectful tone rule + forbidden phrases (long face, wide face, narrow chin, high forehead).
 - **Conventions:** Every detail matters celebrates features — never criticize face length, width, forehead, or chin.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: no dashes in every-detail-matters rows
+
+- **Context:** User asked to remove unnecessary **dashes and hyphens** from every-detail-matters bullets.
+- **Shipped:** **`stripEveryDetailMattersDashes()`** in compact/display — strips em/en dashes and letter-hyphen-letter compounds. Templates: **HEART SHAPED FACE**, **MID CHEST FALL** (no hyphens). Fal prompt: no dash/hyphen in rose rows.
+- **Conventions:** Every detail matters lines = spaces only between words; no `-`, `—`, or `–`.

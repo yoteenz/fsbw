@@ -67,7 +67,7 @@ function lineForSpec(
         ? `${unit} TO COMPLEMENT YOUR ${face.faceShape}`
         : `${style} TO ENHANCE YOUR JAWLINE`;
     case 'length':
-      return `${length} FOR A FLATTERING MID-CHEST FALL`;
+      return `${length} FOR A FLATTERING MID CHEST FALL`;
     case 'density':
       return `${density} DENSITY FOR BALANCED FULLNESS`;
     case 'part':

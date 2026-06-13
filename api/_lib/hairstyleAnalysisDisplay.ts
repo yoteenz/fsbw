@@ -68,12 +68,18 @@ export function salonModeToBawStyleId(salonMode: string): string {
 /** Max chars per every-detail-matters row @ 2048×2560 (~38% slot width) — one line, no wrap. */
 export const EVERY_DETAIL_MATTERS_MAX_CHARS = 68;
 
-export function compactEveryDetailMattersLine(line: string): string {
-  const normalized = line
-    .trim()
-    .toUpperCase()
+export function stripEveryDetailMattersDashes(line: string): string {
+  return line
+    .replace(/\s*[—–]\s*/g, ' ')
+    .replace(/(\p{L})-(\p{L})/gu, '$1 $2')
     .replace(/\s+/g, ' ')
-    .replace(/[.!?]+$/g, '');
+    .trim();
+}
+
+export function compactEveryDetailMattersLine(line: string): string {
+  const normalized = stripEveryDetailMattersDashes(
+    line.trim().toUpperCase().replace(/\s+/g, ' ').replace(/[.!?]+$/g, '')
+  );
   if (!normalized) return '';
   if (normalized.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return normalized;
 
@@ -82,9 +88,6 @@ export function compactEveryDetailMattersLine(line: string): string {
 
   const toHead = normalized.split(/\s+TO\s+/)[0]?.trim();
   if (toHead && toHead.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return toHead;
-
-  const dashHead = normalized.split(/\s*[—–-]\s*/)[0]?.trim();
-  if (dashHead && dashHead.length <= EVERY_DETAIL_MATTERS_MAX_CHARS) return dashHead;
 
   const words = normalized.split(' ');
   let out = '';
