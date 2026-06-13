@@ -27898,6 +27898,15 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-12 — Hairstyle analysis: dynamic TOP MATCH lace, density, part
+
+- **Context (continued):** User reported TOP MATCH **lace, density, part** specs static every generate — always **13X6 HD**, **200%/250%**, **MIDDLE** (template placeholder values).
+- **Cause:** **`diversifyHairstyleAnalysisLooks`** never rotated lace; density locked to **`UNIT_DENSITY`** per unit; part always **`PART_OPTIONS[0]`** (MIDDLE). **`psaPickToAnalysisLook`** mapped **`pick.texture`** (SILKY) into lace. **`resolveCatalogLookForFal`** could overwrite density when unit changed.
+- **Shipped:** **`varyInstallSpecs()`** (api + src) — shuffles **13X6 HD / 13X4 HD**, **200% / 250% / 300%**, **MIDDLE / LEFT / RIGHT** on each generate when values are still defaults; preserves explicit PSA picks. Runs on every **`diversifyHairstyleAnalysisLooks`** pass. Fixed PSA lace mapping + density normalization. Fal manifest forbids reusing template **13X6 HD / 250% / MIDDLE** when manifest differs.
+- **Conventions:** TOP MATCH install specs (lace, density, part) must come from server manifest — rotated per generate unless PSA supplied explicit values.
+
+---
+
 ## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
 
 - **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
