@@ -22,8 +22,8 @@ Premium subscribers (3, 6, or 12 month) share one template so match rows are not
 
 | Tier | Overlay fields |
 |------|----------------|
-| **free** | `clientName`, `clientImage`, `topScore`, `rating`, `specTexture…specStyle`, `whyLine-0…4` |
-| **three_month / six_month / twelve_month** | `clientName`, `clientImage`, `topScore`, `rating`, `spec*`, `match2…4-{texture,color,length,score}`, thumbs |
+| **free** | `clientName` (pill: TOP MATCH), `clientHeaderName`, `clientImage`, `topScore`, `rating`, `specTexture…specStyle`, `whyLine-0…4` |
+| **three_month / six_month / twelve_month** | `clientName` (pill: TOP MATCH), `clientHeaderName`, `clientImage`, `topScore`, `rating`, `spec*`, `match2…4-{texture,color,length,score}`, thumbs |
 
 Templates are **2048×2560 (4:5)**. Slot `%` positions in `hairstyleAnalysisTemplateLayouts.ts` are calibrated to those assets — enable **Debug** on the demo page to fine-tune.
 

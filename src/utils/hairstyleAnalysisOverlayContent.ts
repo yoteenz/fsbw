@@ -26,7 +26,6 @@ function specValues(look: AnalysisLook): Record<string, string> {
 
 function topMatchHeader(look: AnalysisLook): Record<string, string> {
   return {
-    clientName: '',
     topScore: formatScorePercent(look.score),
     rating: formatStarRating(look.rating),
     ...specValues(look),
@@ -53,7 +52,8 @@ function applyMatchRow(out: Record<string, string>, prefix: string, look: Analys
 function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
   const out: Record<string, string> = {
     ...topMatchHeader(analysis.topMatch),
-    clientName: analysis.clientName.toUpperCase(),
+    clientName: 'TOP MATCH',
+    clientHeaderName: analysis.clientName.toUpperCase(),
   };
   analysis.whyItWorks.forEach((line, i) => {
     out[`whyLine-${i}`] = line;
@@ -64,7 +64,8 @@ function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> 
 function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
   const out: Record<string, string> = {
     ...topMatchHeader(analysis.topMatch),
-    clientName: analysis.clientName.toUpperCase(),
+    clientName: 'TOP MATCH',
+    clientHeaderName: analysis.clientName.toUpperCase(),
   };
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     applyMatchRow(out, `match${i + 2}`, look);

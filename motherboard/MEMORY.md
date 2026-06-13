@@ -27652,3 +27652,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Topics covered:** Prior server-only symmetrical mask (`hairstyleAnalysisClientPhotoFade.ts`), fade debug square (`clientPhotoFade`), font picker expansion.
 - **Shipped:** **`hairstyleAnalysisFal.ts`** — removed **`compositeHairstyleAnalysisPostProcess`**; returns Fal image URL directly (no re-upload). **`hairstyleAnalysisFalPrompt.ts`** — **`clientPhotoBottomFadeBlock()`**: IMAGE 2 as panel attachment, symmetrical full-width bottom fade (~65–72% start), transparent to marble, forbidden gray/white mist/asymmetric fog; wired into **`clientPhotoFramingBlock`**, **`sharedClientPhotoRulesBlock`**, free-tier photo rules. Removed **`clientPhotoFade`** debug field from **`hairstyleAnalysisTemplateLayouts.ts`**. **`HairstyleAnalysisPreview`** debug copy updated. **`docs/STYLE_ANALYSIS.md`**, **`CORE.md`** updated.
 - **Conventions:** Client preview bottom fade = **Fal in-image only** (symmetrical attachment cutout in panel window); no server post-process; debug overlay slot positions are dev-preview only.
+
+---
+
+## 2026-06-12 — Hairstyle analysis: TOP MATCH pill + client name header
+
+- **Context:** User wanted the red **client preview pill** to say **"TOP MATCH"** (uppercase, same red font) instead of the client's first name. The black **"TOP MATCH"** header above the overall score panel should show the client's **first and last name** in the same black font.
+- **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **`clientPreviewTabLine()`** → red pill **TOP MATCH**; **`topMatchHeaderLine(fullName)`** replaces black header with client full name. **`clientFullName()`** in **`hairstyleAnalysisMannequinRefs.ts`**. Dev overlay: **`clientName`** = TOP MATCH, new **`clientHeaderName`** slot above score panels; **`hairstyleAnalysisOverlayContent.ts`**, **`hairstyleAnalysisTemplateLayouts.ts`**, docs updated.
+- **Conventions:** Red pill = **TOP MATCH** only; black header above OVERALL SCORE / MATCH RATING = client first + last name uppercase.

@@ -17,7 +17,7 @@ import {
 } from './hairstyleAnalysisBawStylingRefs.js';
 import { TOP_SCORE_SLOT, RATING_SLOT } from './hairstyleAnalysisLayoutSlots.js';
 import { overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
-import { clientFirstName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
+import { clientFullName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
   displayDensity,
   displayHairline,
@@ -124,12 +124,22 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
   ].join('\n');
 }
 
-function clientPreviewTabLine(firstName: string): string {
+function clientPreviewTabLine(): string {
   return [
-    `CLIENT PREVIEW TAB (white pill above main photo, rose icon on left):`,
-    `REPLACE the words "CLIENT PREVIEW" inside that pill with "${firstName}" — same pill shape, rose icon, border, and position.`,
-    `Do NOT add "${firstName}" as separate text below, above, or beside the pill.`,
-    `First-name text: brand red ${BRAND_RED}, uppercase, bold sans-serif inside the pill only.`,
+    'CLIENT PREVIEW TAB (white pill above main photo, rose icon on left):',
+    'REPLACE the words "CLIENT PREVIEW" inside that pill with "TOP MATCH" — same pill shape, rose icon, border, and position.',
+    'Do NOT add "TOP MATCH" as separate text below, above, or beside the pill.',
+    `Pill text: brand red ${BRAND_RED}, uppercase "TOP MATCH", bold sans-serif inside the pill only.`,
+  ].join('\n');
+}
+
+function topMatchHeaderLine(fullName: string): string {
+  return [
+    '=== CLIENT NAME HEADER (ABOVE OVERALL SCORE PANEL) ===',
+    'The template prints black uppercase "TOP MATCH" as a section header directly above the OVERALL SCORE / MATCH RATING panels on the right.',
+    `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's first and last name, uppercase.`,
+    'Use the same black Futura PT Medium style, size, weight, letter-spacing, and position as the original "TOP MATCH" header — only swap the words.',
+    'Do NOT leave "TOP MATCH" visible in that header slot. Do NOT duplicate the client name in the red pill (pill stays "TOP MATCH" only).',
   ].join('\n');
 }
 
@@ -642,7 +652,8 @@ function freePromptFooter(
   return [
     '',
     '=== FINAL CHECK ===',
-    'PILL: first name replaces "CLIENT PREVIEW" inside the tab only.',
+    'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
+    'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
     overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
@@ -655,13 +666,14 @@ function freePrompt(
   promptOptions?: FalPromptBuildOptions
 ): string {
   const top = analysis.topMatch;
-  const firstName = clientFirstName(analysis.clientName);
+  const fullName = clientFullName(analysis.clientName);
   const lines = [
     buildTemplateRules(refs, analysis, promptOptions),
     '',
     freeTierOnlyBlock(),
     '',
-    clientPreviewTabLine(firstName),
+    clientPreviewTabLine(),
+    topMatchHeaderLine(fullName),
     clientPreviewHairLine(top, refs),
     '',
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
@@ -677,11 +689,12 @@ function threeMonthPrompt(
   promptOptions?: FalPromptBuildOptions
 ): string {
   const top = analysis.topMatch;
-  const firstName = clientFirstName(analysis.clientName);
+  const fullName = clientFullName(analysis.clientName);
   const lines = [
     buildTemplateRules(refs, analysis, promptOptions),
     '',
-    clientPreviewTabLine(firstName),
+    clientPreviewTabLine(),
+    topMatchHeaderLine(fullName),
     clientPreviewHairLine(top, refs),
     '',
     ...topMatchBlock(top).map((line) => `TOP MATCH — ${line}`),
@@ -699,7 +712,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    'FINAL CHECK: pill first name only; TOP MATCH specs + every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
+    'FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name; TOP MATCH specs + every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
   );
   return lines.join('\n');
 }
