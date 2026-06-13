@@ -28337,3 +28337,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Shipped (c880967c):** Re-enabled **`hairstyleAnalysisClientFaceRestore.ts`** — soft elliptical mask pastes submitted client face over Fal skin on **main preview**; **`applyClientFaceRestoreToThumbnails`** + **`matchThumbnailSlots()`** for **MATCH 02–04** on premium template. Post-process order: EDM rose restore → face restore (main + thumbs) → optional fade → mirror. **`generateHairstyleAnalysisWithFal`** retains raw upload buffer; prefers **step-1 hair-edited** buffer for alignment when preview step runs. Env: **`HAIRSTYLE_ANALYSIS_CLIENT_FACE_RESTORE=false`** to disable. Pushed **`master`** + **`preview/mobile`**.
 - **Still open:** Footer heart icon stroke weight for **100% YOUR VIBE** — asset is on template PNG, not a repo SVG.
 - **Conventions:** Client identity = two-step Fal + **server face paste every generate** (main + premium thumbs); disable only via env.
+
+---
+
+## 2026-06-13 — Revert face restore; hairline/styling refs for PART accuracy
+
+- **Context:** User rejected server face paste — rectangular face crop on chest, still wrong person. Asked to revert to prior working state (two-step Fal identity, no server paste) and apply practical PART/HAIRLINE fixes (hairline IMAGE refs, styling refs, step-1 refs, relaxed preEdited lock).
+- **Cause of weird overlay:** **`applyClientFaceRestore`** pasted elliptical client layer misaligned on Fal output → visible rectangle on torso.
+- **Cause of wrong person:** Face paste does not fix Fal identity; two-step hair-only preview is the correct path — but **`HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true`** and **`HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS=false`** defaults stripped PEAK/LAGOS/part-specific styling IMAGEs; **`preEditedClientPanelBlock`** froze all main hair so step 2 could not fix part/hairline.
+- **Shipped (2dffc54e):** Deleted **`hairstyleAnalysisClientFaceRestore.ts`**; composite back to roses → optional fade → mirror only. Defaults: **hairline refs ON**, **styling refs ON** (`MINIMAL_REFS` opt-in). Step 1 attaches hairline + styling IMAGEs for TOP MATCH. **`buildClientPreviewHairOnlyPrompt`** accepts refs + **`hairPartLockBlock`**. **`preEditedClientPanelBlock`** allows PART/hairline/color micro-refine on main photo (face/neck locked). Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** **No server face paste.** Identity = Fal step-1 hair-only on raw selfie; PART/HAIRLINE = hairline + styling IMAGE refs both steps; mannequin refs still opt-in.
