@@ -184,3 +184,17 @@ export function edmRoseIconSlot(rowIndex: number): PixelRect {
 export function edmRoseIconSlots(): PixelRect[] {
   return Array.from({ length: EDM_ROSE_ROW_COUNT }, (_, i) => edmRoseIconSlot(i));
 }
+
+/** MATCH 02–04 thumbnail slots — premium template (IMG_2549 @ 2048×2560). */
+const MATCH_THUMB_BLOCK_TOPS = [48.0, 60.5, 73.0];
+
+export function matchThumbnailSlot(index: number): PixelRect {
+  const blockTop = MATCH_THUMB_BLOCK_TOPS[index] ?? MATCH_THUMB_BLOCK_TOPS[0];
+  return pctRect('52%', `${blockTop + 0.5}%`, '7%', '5.5%');
+}
+
+export function matchThumbnailSlots(count = 3): PixelRect[] {
+  return Array.from({ length: Math.min(count, MATCH_THUMB_BLOCK_TOPS.length) }, (_, i) =>
+    matchThumbnailSlot(i)
+  );
+}

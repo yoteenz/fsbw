@@ -135,6 +135,43 @@ async function normalizeClientPreviewBuffer(buf: Buffer, mime: string): Promise<
   return { buf: out, mime: 'image/jpeg' };
 }
 
+async function resolveClientPreviewBuffer(raw: string, siteOrigin: string): Promise<Buffer> {
+  const trimmed = raw.trim();
+  if (!trimmed) throw new Error('client-preview URL is required');
+
+  if (trimmed.startsWith('data:')) {
+    const { mime, buf } = parseDataUrl(trimmed);
+    const normalized = await normalizeClientPreviewBuffer(buf, mime);
+    return normalized.buf;
+  }
+
+  const publicUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://')
+    ? trimmed
+    : trimmed.startsWith('/')
+      ? `${siteOrigin.replace(/\/$/, '')}${trimmed}`
+      : null;
+
+  if (!publicUrl) throw new Error('Unsupported client-preview URL');
+  const res = await fetch(publicUrl);
+  if (!res.ok) throw new Error(`client preview fetch failed (${res.status})`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  if (!buf.length) throw new Error('client preview image empty');
+  const mime = mimeFromUrl(publicUrl);
+  const normalized = await normalizeClientPreviewBuffer(buf, mime);
+  return normalized.buf;
+}
+
+async function fetchImageBufferFromUrl(url: string): Promise<Buffer | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    return buf.length ? buf : null;
+  } catch {
+    return null;
+  }
+}
+
 async function resolvePublicImageUrl(
   fal: FalClient,
   raw: string,
@@ -299,14 +336,13 @@ export async function generateHairstyleAnalysisWithFal(
     skipDiversification: input.skipLookDiversification === true,
   });
 
-  const rawClientUrl = await resolvePublicImageUrl(
-    fal,
-    input.clientPreviewUrl,
-    input.siteOrigin,
-    'client-preview'
-  );
+  const [rawClientUrl, clientPreviewBuf] = await Promise.all([
+    resolvePublicImageUrl(fal, input.clientPreviewUrl, input.siteOrigin, 'client-preview'),
+    resolveClientPreviewBuffer(input.clientPreviewUrl, input.siteOrigin),
+  ]);
 
   let clientUrl = rawClientUrl;
+  let identityBuf = clientPreviewBuf;
   const clientPreviewPreEdited = hairstyleAnalysisClientPreviewStepEnabled();
   if (clientPreviewPreEdited) {
     const hairOnlyPrompt = buildClientPreviewHairOnlyPrompt(analysis.topMatch, analysis.clientName);
@@ -319,6 +355,8 @@ export async function generateHairstyleAnalysisWithFal(
     const previewUrl = extractFalImageUrl(previewResult);
     if (!previewUrl) throw new Error('Client preview hair edit returned no image URL');
     clientUrl = previewUrl;
+    const hairEditedBuf = await fetchImageBufferFromUrl(previewUrl);
+    if (hairEditedBuf) identityBuf = hairEditedBuf;
   }
 
   const templateUrl = await resolvePublicImageUrl(
@@ -384,12 +422,18 @@ export async function generateHairstyleAnalysisWithFal(
     input.templateUrl.startsWith('http://') || input.templateUrl.startsWith('https://')
       ? input.templateUrl
       : `${input.siteOrigin.replace(/\/$/, '')}${input.templateUrl.startsWith('/') ? '' : '/'}${input.templateUrl}`;
-  const composited = await compositeHairstyleAnalysisPostProcess(
-    imageUrl,
-    templateFetchUrl,
-    input.layoutOverrides,
-    hairstyleAnalysisClientPhotoPostProcessEnabled()
-  );
+
+  const matchThumbnailCount =
+    analysis.tier === 'free' ? 0 : Math.min(3, analysis.additionalLooks.length);
+
+  const composited = await compositeHairstyleAnalysisPostProcess({
+    falImageUrl: imageUrl,
+    templateImageUrl: templateFetchUrl,
+    clientPreviewBuf: identityBuf,
+    matchThumbnailCount,
+    layoutOverrides: input.layoutOverrides,
+    applyPhotoFade: hairstyleAnalysisClientPhotoPostProcessEnabled(),
+  });
   imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');
 
   return {
