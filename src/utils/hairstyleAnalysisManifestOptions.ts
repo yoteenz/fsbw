@@ -9,6 +9,7 @@ import {
   STYLING_OPTIONS_CURLY,
   type UnitId,
 } from './productOptions';
+import { bcfLaceOptionsForCategory } from './bcfProductOptions';
 
 /** Categorized manifest fields sent to Fal (TOP MATCH + MATCH 02–04). */
 export type ManifestLookDraft = {
@@ -95,8 +96,8 @@ export const MANIFEST_LENGTH_OPTIONS = LENGTH_OPTIONS.map(analysisLengthFromBaw)
 export const MANIFEST_LACE_OPTIONS = [...LACE_OPTIONS] as readonly string[];
 
 export const MANIFEST_LACE_OPTION_GROUPS: ManifestLaceOptionGroup[] = [
-  { label: 'Closures', options: ['2X6', '4X4', '5X5', '6X6', '7X7'] },
-  { label: 'Frontals', options: ['9X6', '13X4', '13X6'] },
+  { label: 'Closures', options: bcfLaceOptionsForCategory('closures').map((l) => l.id) },
+  { label: 'Frontals', options: bcfLaceOptionsForCategory('frontals').map((l) => l.id) },
   { label: 'Full cap', options: ['360', 'FULL'] },
 ];
 

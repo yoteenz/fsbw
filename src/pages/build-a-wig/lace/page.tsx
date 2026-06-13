@@ -206,7 +206,7 @@ function LaceSelection() {
     {
       id: '9X6',
       name: '9X6',
-      description: 'Wide frontal',
+      description: 'Wide closure',
       price: 80, // Additional cost for 9X6 lace
       image: laceImage,
     },
