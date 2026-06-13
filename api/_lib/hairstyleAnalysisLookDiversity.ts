@@ -103,6 +103,11 @@ function isDefaultDensity(density: string): boolean {
   return !n || n === '250%' || n === '200%';
 }
 
+function isDefaultStyling(styling: string): boolean {
+  const n = styling.trim().toUpperCase();
+  return !n || n === 'NONE';
+}
+
 function isGenericNoirStack(look: DiversifiableLook): boolean {
   const unit = look.unit.trim().toUpperCase();
   const styling = look.styling.trim().toUpperCase();
@@ -197,9 +202,14 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
       ? (densityOrder[index % densityOrder.length] ?? DENSITY_OPTIONS[1])
       : look.density,
     part: isDefaultPart(look.part)
-      ? (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
+      ? index === 0
+        ? 'MIDDLE'
+        : (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
       : look.part,
-    hairline,
+    hairline:
+      index === 0 && isDefaultHairline(look.hairline) ? 'NATURAL HAIRLINE' : hairline,
+    styling:
+      index === 0 && isDefaultStyling(look.styling) ? 'NONE' : look.styling,
   };
 }
 
@@ -210,7 +220,12 @@ function diversifyLook<L extends DiversifiableLook>(
   colorBucket: 'neutral' | 'blonde' | 'vibrant' | 'any'
 ): L {
   const styles = salonStylesForUnit(unitKey);
-  const styling = styles[index % styles.length] ?? styles[0] ?? 'NONE';
+  const styling =
+    index === 0
+      ? isDefaultStyling(look.styling)
+        ? 'NONE'
+        : look.styling.trim().toUpperCase()
+      : (styles[index % styles.length] ?? styles[0] ?? 'NONE');
   const color = colorForUnit(unitKey, colorBucket);
   const length = LENGTH_OPTIONS[index % LENGTH_OPTIONS.length] ?? '24 INCHES';
 

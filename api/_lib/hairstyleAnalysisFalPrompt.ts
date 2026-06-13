@@ -294,10 +294,11 @@ function clientPhotoPanelRulesBlock(): string {
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const part = displayPart(look.part);
+  const style = displayStyle(look.styling, look.unit);
   return [
     '=== TOP MATCH HAIR (IMAGE 2) ===',
-    `${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}, PART ${part}, ${displayDensity(look.density)}.`,
-    `PART ${part} only — one scalp part line; erase IMAGE 2 part if different.`,
+    `${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part}, ${displayDensity(look.density)}.`,
+    `TOP MATCH LOCK: spec column + portrait must match — PART ${part} = visible scalp part only; STYLE ${style} = photo finish (${style === 'NONE' ? 'natural unit texture, no BAW styling ref' : `BAW ${style} ref shape in hair`}).`,
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
     styledHairLine(look, refs),
@@ -628,6 +629,7 @@ function buildTemplateRules(
 
 function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
   const style = displayStyle(look.styling, look.unit);
+  const part = displayPart(look.part);
   return [
     '=== TOP MATCH SPEC COLUMN — PRINT EXACTLY IN VALUE SLOTS (RIGHT PANEL) ===',
     'The template may show placeholder catalog text (e.g. NOIR, JET BLACK, LAYERS) — ERASE every placeholder and REPLACE with the manifest below.',
@@ -637,13 +639,12 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — LENGTH: ${displayLength(look.length)}`,
     `MANIFEST — LACE: ${displayLace(look.lace)}`,
     `MANIFEST — DENSITY: ${displayDensity(look.density)}`,
-    `MANIFEST — PART: ${displayPart(look.part)}`,
+    `MANIFEST — PART: ${part}`,
     `MANIFEST — HAIRLINE: ${displayHairline(look.hairline)}`,
     `MANIFEST — STYLE: ${style}`,
-    `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS/24"/13X6 HD/250%/MIDDLE defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
-    'LACE, DENSITY, and PART value slots must print the manifest exactly — never reuse baked template placeholder 13X6 HD / 250% / MIDDLE when manifest differs.',
-    'The manifest below is the **only** source of truth for TOP MATCH specs — never reuse template placeholder text.',
-    `STYLE value must print exactly "${style}" — never default to LAYERS when manifest STYLE is FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — PART ${part} visible in hair; STYLE ${style} only if photo shows that finish (${style === 'NONE' ? 'natural texture — never LAYERS/FLAT IRON without BAW ref' : `BAW ${style} reference shape`}).`,
+    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; STYLE LAYERS when manifest is NONE; copying MATCH 02 values into TOP MATCH column.`,
+    `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
 }
 
