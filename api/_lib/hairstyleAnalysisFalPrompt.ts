@@ -321,7 +321,7 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
     'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
     `Fill exactly ${lineCount} text rows below that header — **one short line per row** (single row only, no wrapping).`,
     `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} characters — each row explains **one TOP MATCH spec** (texture, color, length, lace, density, part, hairline, or style).`,
-    'Use punchy phrasing (e.g. "HD LACE FOR THE ULTRA REALISTIC FINISH" or "JET BLACK TO COMPLEMENT YOUR BLACK ALMOND EYES") — **no trailing period**.',
+    'Use punchy phrasing (e.g. "HD LACE FOR THE ULTRA REALISTIC FINISH" or "JET BLACK TO COMPLEMENT YOUR BLACK ALMOND EYES") — **no trailing period**, **no dashes or hyphens**.',
     'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium beside its rose icon.',
     'FORBIDDEN: multi-clause essays, label:value rows, keyword lists, line wraps, or a different number of lines.',
     'This is NOT motivational copy — do not rewrite into empowerment fluff.',
@@ -356,7 +356,7 @@ function everyDetailMattersRulesBlock(lineCount: number): string {
     '',
     '=== EVERY DETAIL MATTERS LINES (PRINT VERBATIM — ZERO REWRITES) ===',
     'Copy each line below exactly. Do not paraphrase, merge rows, wrap to a second line, or add words.',
-    `Each line must fit **one text row** (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars) — one TOP MATCH spec value + why it suits the client (no period at end).`,
+    `Each line must fit **one text row** (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars) — one TOP MATCH spec value + why it suits the client (no period, dash, or hyphen).`,
     `FORBIDDEN PHRASES / TONE: ${EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES}.`,
     'Do not invent marketing copy. Do not treat this section as inspirational "why it works" fluff.',
   ].join('\n');

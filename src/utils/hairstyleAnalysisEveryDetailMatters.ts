@@ -14,14 +14,14 @@ import {
 import { compactEveryDetailMattersLines } from './hairstyleAnalysisEveryDetailMattersCompact';
 
 export type EveryDetailMattersFaceFeatures = {
-  /** Flattering only — e.g. HEART-SHAPED FACE */
+  /** Flattering only — e.g. HEART SHAPED FACE */
   faceShape?: string;
   /** e.g. BLACK ALMOND */
   eyeDescriptor?: string;
 };
 
 export const KATEENA_DEMO_FACE_FEATURES: EveryDetailMattersFaceFeatures = {
-  faceShape: 'HEART-SHAPED FACE',
+  faceShape: 'HEART SHAPED FACE',
   eyeDescriptor: 'BLACK ALMOND',
 };
 
@@ -66,7 +66,7 @@ function lineForSpec(
         ? `${unit} TO COMPLEMENT YOUR ${face.faceShape}`
         : `${style} TO ENHANCE YOUR JAWLINE`;
     case 'length':
-      return `${length} FOR A FLATTERING MID-CHEST FALL`;
+      return `${length} FOR A FLATTERING MID CHEST FALL`;
     case 'density':
       return `${density} DENSITY FOR BALANCED FULLNESS`;
     case 'part':
