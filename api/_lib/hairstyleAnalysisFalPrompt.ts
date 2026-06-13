@@ -379,7 +379,8 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
     `Fill exactly ${lineCount} text rows — **one short line per rose row** (single row, no wrap).`,
     `Row map: ${rowGuide}.`,
     '**FORMAT:** each line = **TOP MATCH catalog spec value** + **one concrete fit note** (eyes, jaw, face shape, or install benefit).',
-    '**GOOD:** HD LACE FOR AN ULTRA REALISTIC FINISH | PLATINUM TO COMPLEMENT YOUR BLACK ALMOND EYES | SOFT WAVE TO FRAME YOUR HEART SHAPED FACE | FLAT IRON TO ENHANCE YOUR JAWLINE | 24 INCHES AT MID CHEST LENGTH',
+    '**GOOD:** MELTED LACE, NATURAL HAIRLINE | PLATINUM TO COMPLEMENT YOUR BLACK ALMOND EYES | SOFT WAVE TO FRAME YOUR HEART SHAPED FACE | FLAT IRON TO ENHANCE YOUR JAWLINE | 24 INCHES AT MID CHEST LENGTH',
+    'Lace rose row = **MELTED LACE, {HAIRLINE} HAIRLINE** — adjective before noun; never "LACE MELTED" or "HAIRLINE NATURAL".',
     '**BAD (FORBIDDEN):** empowerment slogans, you deserve, embrace your beauty, confidence, queen energy, generic inspiration — NOT why-it-works essays.',
     `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars — **no trailing period**, **no dashes or hyphens**.`,
     'Print each EVERY DETAIL MATTERS LINE below **verbatim** — black uppercase Futura PT Medium beside its rose icon.',
@@ -412,6 +413,8 @@ const EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES = [
   'narrow chin',
   'high forehead',
   'big forehead',
+  'lace melted',
+  'hairline natural',
 ].join(', ');
 
 function everyDetailMattersRulesBlock(lineCount: number): string {
