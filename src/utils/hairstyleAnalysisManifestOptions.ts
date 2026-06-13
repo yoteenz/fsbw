@@ -1,5 +1,14 @@
 import { allowedColorsForUnit, UNIT_NAMES } from '../data/hairstyleCatalog';
 import type { UnitName } from '../types/hairstyleAnalysis';
+import {
+  DENSITY_OPTIONS,
+  HAIRLINE_OPTIONS,
+  LACE_OPTIONS,
+  LENGTH_OPTIONS,
+  STYLING_OPTIONS,
+  STYLING_OPTIONS_CURLY,
+  type UnitId,
+} from './productOptions';
 
 /** Categorized manifest fields sent to Fal (TOP MATCH + MATCH 02–04). */
 export type ManifestLookDraft = {
@@ -19,56 +28,134 @@ export type ManifestSpecCategory = {
   description?: string;
 };
 
-export const MANIFEST_SPEC_CATEGORIES: ManifestSpecCategory[] = [
-  { id: 'unit', label: 'Texture', description: 'Catalog unit' },
-  { id: 'color', label: 'Color', description: 'Allowed per unit' },
-  { id: 'length', label: 'Length', description: 'Install length' },
-  { id: 'lace', label: 'Lace', description: 'Frontal lace size' },
-  { id: 'density', label: 'Density', description: 'Install density' },
-  { id: 'part', label: 'Part', description: 'Scalp part line' },
-  { id: 'hairline', label: 'Hairline', description: 'Forehead lace-edge shape' },
-  { id: 'styling', label: 'Style', description: 'Salon finish' },
+export type ManifestLaceOptionGroup = {
+  label: string;
+  options: readonly string[];
+};
+
+const UNIT_NAME_TO_ID: Record<UnitName, UnitId> = {
+  NOIR: 'noir',
+  BLANCO: 'blanco',
+  'SOFT WAVE': 'soft-wave',
+  'BEACH WAVE': 'beach-wave',
+  'SOFT CURL': 'soft-curl',
+  'OCEAN CURL': 'ocean-curl',
+};
+
+/** BAW length labels (16"–40") → analysis storage (24 INCHES). */
+export function analysisLengthFromBaw(length: string): string {
+  const t = length.trim().toUpperCase();
+  if (/\d+\s*INCH/i.test(t)) {
+    const m = t.match(/(\d+)/);
+    return m ? `${m[1]} INCHES` : t;
+  }
+  const m = t.match(/(\d+)/);
+  return m ? `${m[1]} INCHES` : '24 INCHES';
+}
+
+/** Analysis / manifest length → BAW dropdown label (e.g. 24"). */
+export function bawLengthLabel(length: string): string {
+  const m = length.match(/(\d+)/);
+  return m ? `${m[1]}"` : length;
+}
+
+export function normalizeLaceValue(lace: string): string {
+  return lace
+    .trim()
+    .toUpperCase()
+    .replace(/\s*LACE\s*$/i, '')
+    .replace(/\s*HD\s*$/i, '')
+    .trim();
+}
+
+export function normalizeHairlineValue(hairline: string): string {
+  const h = hairline.trim().toUpperCase().replace(/\s*HAIRLINE\s*$/i, '');
+  if (!h || h === 'NATURAL') return 'NATURAL';
+  if (h.includes('LAGOS') && h.includes('PEAK')) return 'LAGOS + PEAK';
+  if (h.includes('LAGOS')) return 'LAGOS';
+  if (h.includes('PEAK')) return 'PEAK';
+  return h;
+}
+
+export function normalizePartValue(part: string): string {
+  const p = part.trim().toUpperCase().replace(/\s*PART\s*$/i, '').replace(/^PART\s+/i, '');
+  if (p === 'LEFT' || p === 'RIGHT' || p === 'MIDDLE') return p;
+  return 'MIDDLE';
+}
+
+export function normalizeDensityValue(density: string): string {
+  const d = density.trim().replace(/\s*DENSITY\s*$/i, '');
+  return d.includes('%') ? d : `${d}%`;
+}
+
+/** Full BAW length range from length sub-page. */
+export const MANIFEST_LENGTH_OPTIONS = LENGTH_OPTIONS.map(analysisLengthFromBaw);
+
+/** Full BAW lace list — closures, frontals, 360, full cap (lace sub-page). */
+export const MANIFEST_LACE_OPTIONS = [...LACE_OPTIONS] as readonly string[];
+
+export const MANIFEST_LACE_OPTION_GROUPS: ManifestLaceOptionGroup[] = [
+  { label: 'Closures', options: ['2X6', '4X4', '5X5', '6X6', '7X7'] },
+  { label: 'Frontals', options: ['9X6', '13X4', '13X6'] },
+  { label: 'Full cap', options: ['360', 'FULL'] },
 ];
 
-export const MANIFEST_LENGTH_OPTIONS = [
-  '22 INCHES',
-  '24 INCHES',
-  '26 INCHES',
-  '28 INCHES',
-  '30 INCHES',
-] as const;
-
-export const MANIFEST_LACE_OPTIONS = ['13X6 HD', '13X4 HD'] as const;
-
-export const MANIFEST_DENSITY_OPTIONS = ['200%', '250%', '300%'] as const;
+/** Full BAW density range from density sub-page. */
+export const MANIFEST_DENSITY_OPTIONS = [...DENSITY_OPTIONS] as readonly string[];
 
 export const MANIFEST_PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
 
-export const MANIFEST_HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS', 'LAGOS + PEAK'] as const;
+/** BAW hairline sub-page — LAGOS + PEAK shown as combo label. */
+export const MANIFEST_HAIRLINE_OPTIONS = HAIRLINE_OPTIONS.map((h) =>
+  h === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : h
+) as readonly string[];
 
-const SALON_STYLES_BY_UNIT: Record<UnitName, readonly string[]> = {
-  NOIR: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  BLANCO: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  'SOFT WAVE': ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  'BEACH WAVE': ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
-  'SOFT CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
-  'OCEAN CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
-};
+export const MANIFEST_SPEC_CATEGORIES: ManifestSpecCategory[] = [
+  { id: 'unit', label: 'Texture', description: 'Catalog unit' },
+  { id: 'color', label: 'Color', description: 'Allowed per unit' },
+  { id: 'length', label: 'Length', description: '16"–40" (length sub-page)' },
+  { id: 'lace', label: 'Lace', description: 'Closures, frontals & full cap' },
+  { id: 'density', label: 'Density', description: '130%–400%' },
+  { id: 'part', label: 'Part', description: 'Styling sub-page parting' },
+  { id: 'hairline', label: 'Hairline', description: 'Natural, peak, Lagos, combo' },
+  { id: 'styling', label: 'Style', description: 'Salon finish + bangs combos' },
+];
+
+function unitIdForName(unit: UnitName): UnitId {
+  return UNIT_NAME_TO_ID[unit] ?? 'noir';
+}
 
 export function stylingOptionsForUnit(unit: UnitName): readonly string[] {
-  return SALON_STYLES_BY_UNIT[unit] ?? ['NONE'];
+  const id = unitIdForName(unit);
+  return id === 'soft-curl' || id === 'ocean-curl' ? STYLING_OPTIONS_CURLY : STYLING_OPTIONS;
 }
 
 export function colorOptionsForUnit(unit: UnitName): readonly string[] {
   return allowedColorsForUnit(unit);
 }
 
+function lengthOptionSet(): Set<string> {
+  return new Set(MANIFEST_LENGTH_OPTIONS.map((l) => l.toUpperCase()));
+}
+
+function laceOptionSet(): Set<string> {
+  return new Set(MANIFEST_LACE_OPTIONS.map((l) => normalizeLaceValue(l)));
+}
+
+function densityOptionSet(): Set<string> {
+  return new Set(MANIFEST_DENSITY_OPTIONS.map((d) => normalizeDensityValue(d)));
+}
+
+function hairlineOptionSet(): Set<string> {
+  return new Set(MANIFEST_HAIRLINE_OPTIONS.map((h) => h.toUpperCase()));
+}
+
 export function defaultTopMatchManifest(): ManifestLookDraft {
   return {
     unit: 'NOIR',
     color: 'JET BLACK',
-    length: '24 INCHES',
-    lace: '13X6 HD',
+    length: analysisLengthFromBaw('24"'),
+    lace: '13X6',
     density: '250%',
     part: 'MIDDLE',
     hairline: 'PEAK',
@@ -81,8 +168,8 @@ export function defaultAdditionalManifests(): ManifestLookDraft[] {
     {
       unit: 'SOFT WAVE',
       color: 'OFF BLACK',
-      length: '26 INCHES',
-      lace: '13X6 HD',
+      length: analysisLengthFromBaw('26"'),
+      lace: '13X6',
       density: '250%',
       part: 'LEFT',
       hairline: 'LAGOS',
@@ -91,18 +178,18 @@ export function defaultAdditionalManifests(): ManifestLookDraft[] {
     {
       unit: 'BLANCO',
       color: 'PLATINUM',
-      length: '24 INCHES',
-      lace: '13X6 HD',
+      length: analysisLengthFromBaw('24"'),
+      lace: '4X4',
       density: '250%',
       part: 'MIDDLE',
       hairline: 'LAGOS + PEAK',
-      styling: 'CRIMPS',
+      styling: 'BANGS, CRIMPS',
     },
     {
       unit: 'OCEAN CURL',
       color: 'CHERRY',
-      length: '22 INCHES',
-      lace: '13X4 HD',
+      length: analysisLengthFromBaw('22"'),
+      lace: '13X4',
       density: '300%',
       part: 'MIDDLE',
       hairline: 'PEAK',
@@ -119,26 +206,23 @@ export function normalizeManifestDraft(draft: ManifestLookDraft): ManifestLookDr
   const color = colors.includes(draft.color.trim().toUpperCase() as (typeof colors)[number])
     ? draft.color.trim().toUpperCase()
     : colors[0];
-  const styling = styles.includes(draft.styling.trim().toUpperCase())
-    ? draft.styling.trim().toUpperCase()
+  const stylingRaw = draft.styling.trim().toUpperCase();
+  const styling = styles.some((s) => s.toUpperCase() === stylingRaw)
+    ? styles.find((s) => s.toUpperCase() === stylingRaw) ?? 'NONE'
     : 'NONE';
-  const length = MANIFEST_LENGTH_OPTIONS.includes(draft.length as (typeof MANIFEST_LENGTH_OPTIONS)[number])
-    ? draft.length
-    : '24 INCHES';
-  const lace = MANIFEST_LACE_OPTIONS.includes(draft.lace as (typeof MANIFEST_LACE_OPTIONS)[number])
-    ? draft.lace
-    : '13X6 HD';
-  const density = MANIFEST_DENSITY_OPTIONS.includes(draft.density as (typeof MANIFEST_DENSITY_OPTIONS)[number])
-    ? draft.density
-    : '250%';
-  const part = MANIFEST_PART_OPTIONS.includes(draft.part as (typeof MANIFEST_PART_OPTIONS)[number])
-    ? draft.part
-    : 'MIDDLE';
-  const hairline = MANIFEST_HAIRLINE_OPTIONS.includes(
-    draft.hairline.trim().toUpperCase() as (typeof MANIFEST_HAIRLINE_OPTIONS)[number]
-  )
-    ? draft.hairline.trim().toUpperCase()
-    : 'NATURAL';
+
+  const lengthNorm = analysisLengthFromBaw(draft.length);
+  const length = lengthOptionSet().has(lengthNorm.toUpperCase()) ? lengthNorm : analysisLengthFromBaw('24"');
+
+  const laceNorm = normalizeLaceValue(draft.lace);
+  const lace = laceOptionSet().has(laceNorm) ? laceNorm : '13X6';
+
+  const densityNorm = normalizeDensityValue(draft.density);
+  const density = densityOptionSet().has(densityNorm) ? densityNorm : '250%';
+
+  const part = normalizePartValue(draft.part);
+  const hairlineNorm = normalizeHairlineValue(draft.hairline);
+  const hairline = hairlineOptionSet().has(hairlineNorm.toUpperCase()) ? hairlineNorm : 'NATURAL';
 
   return { unit, color, length, lace, density, part, hairline, styling };
 }
@@ -168,4 +252,26 @@ export function optionsForManifestField(
     default:
       return [];
   }
+}
+
+/** Length dropdown labels mirror BAW sub-page (16", 24", …). */
+export function manifestFieldDisplayValue(
+  field: keyof ManifestLookDraft,
+  draft: ManifestLookDraft
+): string {
+  const normalized = normalizeManifestDraft(draft);
+  if (field === 'length') return bawLengthLabel(normalized.length);
+  return normalized[field];
+}
+
+export function manifestLengthSelectValue(length: string): string {
+  return analysisLengthFromBaw(length);
+}
+
+export function isGroupedManifestField(field: keyof ManifestLookDraft): boolean {
+  return field === 'lace';
+}
+
+export function manifestLaceOptionGroups(): ManifestLaceOptionGroup[] {
+  return MANIFEST_LACE_OPTION_GROUPS;
 }
