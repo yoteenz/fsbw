@@ -57,7 +57,7 @@ const TOP_MATCH_PANEL_FOOTER: TextSlot = {
   height: '2.8%',
 };
 
-/** Centered build ribbon below every-detail-matters rows — above BUILD THIS LOOK button (free tier only). */
+/** Centered build summary below every-detail-matters rows — above BUILD THIS LOOK button (free tier only). */
 const EDM_PANEL_FOOTER: TextSlot = { left: '56%', top: '85.5%', width: '38%', height: '2.3%' };
 
 function freeFields(): TemplateFieldDef[] {
