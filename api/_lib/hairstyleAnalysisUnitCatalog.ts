@@ -111,6 +111,30 @@ export function isBlancoColor(color: string): boolean {
   return BLANCO_COLORS.has(color.trim().toUpperCase());
 }
 
+/** Catalog colors valid for a BAW unit (BLANCO = blonde family only). */
+export function allowedColorsForCatalogUnit(unit: string): readonly string[] {
+  const key = normalizeCatalogUnit(unit);
+  if (key === 'BLANCO') return ['GOLDEN', 'PLATINUM', 'ASH'];
+  return [
+    'JET BLACK',
+    'OFF BLACK',
+    'ESPRESSO',
+    'CHESTNUT',
+    'HONEY',
+    'AUBURN',
+    'COPPER',
+    'GINGER',
+    'SANGRIA',
+    'CHERRY',
+    'RASPBERRY',
+    'PLUM',
+    'COBALT',
+    'TEAL',
+    'SLIME',
+    'CITRINE',
+  ];
+}
+
 export function requiresUniformRootToTipColor(color: string): boolean {
   const c = color.trim().toUpperCase();
   return UNIFORM_ROOT_TO_TIP_COLORS.has(c);
