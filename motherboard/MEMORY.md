@@ -27784,3 +27784,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause (TOP MATCH ghosts):** Fal double-printing pill/header text when replacing CLIENT PREVIEW / header TOP MATCH with client name; server wipe also overlapped portrait chrome.
 - **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — patch **fade window only** onto Fal output (Ideogram cutout + bottom-anchor + symmetrical fade); never replace full panel with template marble. **`compositeOverlay`** only shrinks overlays that exceed bounds. **`hairstyleAnalysisFalPrompt.ts`** — **`templateTextIntegrityBlock()`**, stronger pill/header single-layer rules (no ghost/duplicate text); preserve FRONTAL SLAYER header art.
 - **Conventions:** Post-process = fade-window patch only; full-panel template wipe forbidden; TOP MATCH once in pill, client name once in header panel.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: every-detail-matters from TOP MATCH specs
+
+- **Context:** User wants **every detail matters** bullets to pick **one of the 8 TOP MATCH spec rows** each and explain the selection like before (e.g. **HD LACE FOR THE ULTRA REALISTIC FINISH**, **JET BLACK TO COMPLEMENT YOUR BLACK ALMOND EYES**) — **no trailing period**.
+- **Cause:** Prior compaction changed demo to **feature — spec** dash lines (`HEART FACE — NOIR…`) instead of spec-led stylist notes tied to catalog values.
+- **Shipped:** **`buildEveryDetailMattersFromTopMatch()`** in **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — five rows map to **lace, color, texture (unit), style, length** + client face features. **`normalizeHairstyleAnalysisForFal`** always rebuilds **`whyItWorks`** from resolved top match. Demo uses **`KATEENA_DEMO_FACE_FEATURES`**. **`compactEveryDetailMattersLine`** strips trailing **`.`**. Fal prompt examples updated to spec-led phrasing.
+- **Conventions:** Every detail matters = one TOP MATCH spec per row, **FOR/TO** benefit copy, no period at end, ≤68 chars, verbatim in Fal.

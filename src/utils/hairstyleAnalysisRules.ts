@@ -7,6 +7,7 @@ import {
 import { normalizeAnalysisStylingId } from './hairstyleAnalysisFormat';
 import { resolveCatalogLook } from './hairstyleAnalysisCatalogResolve';
 import { diversifyHairstyleAnalysisLooks } from './hairstyleAnalysisLookDiversity';
+import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters';
 import type { PsaSelfieStylePick } from '../types/styleAnalysis';
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis, UnitName } from '../types/hairstyleAnalysis';
 
@@ -156,15 +157,20 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
     rawRest.slice(0, limit)
   );
 
+  const resolvedTop = resolveCatalogLook(topMatch, 0);
+  const resolvedAlts = additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1));
+
   return {
     id: options.id,
     clientName: options.clientName,
     tier: options.tier,
     templateUrl: resolveTemplateUrl(options.tier),
     clientPreviewUrl: options.clientPreviewUrl,
-    topMatch: resolveCatalogLook(topMatch, 0),
-    additionalLooks: additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1)),
-    whyItWorks: options.whyItWorks ?? [],
+    topMatch: resolvedTop,
+    additionalLooks: resolvedAlts,
+    whyItWorks:
+      options.whyItWorks ??
+      buildEveryDetailMattersFromTopMatch(resolvedTop),
     createdAt: new Date().toISOString(),
   };
 }
