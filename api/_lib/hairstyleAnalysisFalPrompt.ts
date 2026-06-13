@@ -31,7 +31,11 @@ import {
   EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
 
-import { formatEveryDetailMattersForFal } from './hairstyleAnalysisEveryDetailMatters.js';
+import {
+  everyDetailMattersRowGuide,
+  formatEveryDetailMattersForFal,
+  type EveryDetailMattersFaceFeatures,
+} from './hairstyleAnalysisEveryDetailMatters.js';
 
 export type FalAnalysisLook = {
   rank: number;
@@ -54,6 +58,7 @@ export type FalHairstyleAnalysis = {
   topMatch: FalAnalysisLook;
   additionalLooks: FalAnalysisLook[];
   whyItWorks: string[];
+  everyDetailFaceFeatures?: EveryDetailMattersFaceFeatures;
 };
 
 export type FalPromptImageRefs = {
@@ -352,18 +357,18 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
 }
 
 function everyDetailMattersStructureBlock(lineCount: number): string {
+  const rowGuide = everyDetailMattersRowGuide(lineCount).join('; ');
   return [
-    '=== EVERY DETAIL MATTERS PANEL — FIXED STRUCTURE (DO NOT CHANGE) ===',
+    '=== EVERY DETAIL MATTERS PANEL — SPEC ROWS ONLY (NOT WHY IT WORKS) ===',
     'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
-    `Fill exactly ${lineCount} text rows below that header — **one short line per row** (single row only, no wrapping).`,
-    `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} characters — each row explains **one TOP MATCH spec** from the manifest (lace, color, texture, style, length, density, part, or hairline).`,
-    'Each numbered EVERY DETAIL MATTERS LINE below is **generated fresh for this card** from the TOP MATCH manifest — print it verbatim.',
-    'The spec value in parentheses on each line (e.g. TOP MATCH COLOR = CHERRY) is the **source of truth** — bullets must change when manifest values change.',
-    'Use punchy phrasing — **no trailing period**, **no dashes or hyphens** — but always include the **actual catalog value** for that spec row.',
-    'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium beside its rose icon.',
-    'FORBIDDEN: reusing placeholder/demo bullets (NOIR/JET BLACK/HD LACE defaults), multi-clause essays, label:value rows, line wraps, or a different number of lines.',
-    'This is NOT motivational copy — do not rewrite into empowerment fluff.',
-    'Tone: flattering and respectful only — celebrate features; never call the face long, wide, narrow, or criticize forehead, chin, or proportions.',
+    `Fill exactly ${lineCount} text rows — **one short line per rose row** (single row, no wrap).`,
+    `Row map: ${rowGuide}.`,
+    '**FORMAT:** each line = **TOP MATCH catalog spec value** + **one concrete fit note** (eyes, jaw, face shape, or install benefit).',
+    '**GOOD:** HD LACE FOR AN ULTRA REALISTIC FINISH | PLATINUM TO COMPLEMENT YOUR BLACK ALMOND EYES | SOFT WAVE TO FRAME YOUR HEART SHAPED FACE | FLAT IRON TO ENHANCE YOUR JAWLINE | 24 INCHES AT MID CHEST LENGTH',
+    '**BAD (FORBIDDEN):** empowerment slogans, you deserve, embrace your beauty, confidence, queen energy, generic inspiration — NOT why-it-works essays.',
+    `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars — **no trailing period**, **no dashes or hyphens**.`,
+    'Print each EVERY DETAIL MATTERS LINE below **verbatim** — black uppercase Futura PT Medium beside its rose icon.',
+    'Do **not** invent new bullets — use **only** the numbered lines in this prompt.',
   ].join('\n');
 }
 
@@ -381,6 +386,12 @@ const EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES = [
   'unstoppable',
   'shine',
   'flawless',
+  'beautiful',
+  'gorgeous',
+  'stunning',
+  'elevate',
+  'transform',
+  'empower',
   'long face',
   'wide face',
   'narrow chin',
@@ -393,8 +404,8 @@ function everyDetailMattersRulesBlock(lineCount: number): string {
     everyDetailMattersStructureBlock(lineCount),
     '',
     '=== EVERY DETAIL MATTERS LINES (PRINT VERBATIM — ZERO REWRITES) ===',
-    'Copy each numbered line below exactly. Do not paraphrase, merge rows, wrap to a second line, or add words.',
-    'When TOP MATCH manifest values change (unit, color, length, lace, style), these lines change too — **never** keep bullets from a prior card or template placeholder text.',
+    'Copy each numbered line below **character-for-character**. Do not paraphrase, wrap, or rewrite into empowerment / inspirational copy.',
+    'These lines are **spec fit notes** tied to TOP MATCH manifest values — not a separate "why it works" essay.',
     `Each line must fit **one text row** (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars) — one TOP MATCH spec value + why it suits the client (no period, dash, or hyphen).`,
     `FORBIDDEN PHRASES / TONE: ${EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES}.`,
     'Do not invent marketing copy. Do not treat this section as inspirational "why it works" fluff.',
@@ -767,7 +778,7 @@ function freePromptFooter(
     'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel — **centered** in the header panel.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
-    'Every-detail-matters bullets must match the same manifest values as the spec column — regenerate when specs change.',
+    'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
     overallScoreFalLine(analysis.topMatch),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
   ].join('\n');

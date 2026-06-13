@@ -59,7 +59,10 @@ function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> 
     clientName: 'TOP MATCH',
     clientHeaderName: analysis.clientName.toUpperCase(),
   };
-  const whyLines = buildEveryDetailMattersFromTopMatch(analysis.topMatch);
+  const whyLines = buildEveryDetailMattersFromTopMatch(
+    analysis.topMatch,
+    analysis.everyDetailFaceFeatures
+  );
   whyLines.forEach((line, i) => {
     out[`whyLine-${i}`] = line;
   });

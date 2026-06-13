@@ -108,6 +108,7 @@ export function buildKateenaDemoAnalysis(
     clientPreviewUrl,
     topMatch: resolvedTop,
     additionalLooks: resolvedAlts,
+    everyDetailFaceFeatures: tier === 'free' ? KATEENA_DEMO_FACE_FEATURES : undefined,
     whyItWorks,
     createdAt: new Date().toISOString(),
   };

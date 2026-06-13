@@ -87,6 +87,18 @@ function siteOriginFromRequest(req: VercelRequest): string {
   return 'https://fsbw.vercel.app';
 }
 
+function parseFaceFeatures(raw: unknown): FalHairstyleAnalysis['everyDetailFaceFeatures'] {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const o = raw as Record<string, unknown>;
+  const faceShape = typeof o.faceShape === 'string' ? o.faceShape.trim() : '';
+  const eyeDescriptor = typeof o.eyeDescriptor === 'string' ? o.eyeDescriptor.trim() : '';
+  if (!faceShape && !eyeDescriptor) return undefined;
+  return {
+    ...(faceShape ? { faceShape } : {}),
+    ...(eyeDescriptor ? { eyeDescriptor } : {}),
+  };
+}
+
 function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysisFalInput | null {
   const nested = body.analysis;
   const src =
@@ -128,6 +140,7 @@ function parseAnalysis(body: Record<string, unknown>): GenerateHairstyleAnalysis
       topMatch,
       additionalLooks,
       whyItWorks,
+      everyDetailFaceFeatures: parseFaceFeatures(src.everyDetailFaceFeatures),
     },
     templateUrl: templateUrl || hairstyleAnalysisTemplateUrlForTier(tier),
     clientPreviewUrl,

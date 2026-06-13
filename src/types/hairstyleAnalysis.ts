@@ -25,6 +25,11 @@ export type AnalysisLook = {
   imageUrl?: string;
 };
 
+export type EveryDetailFaceFeatures = {
+  faceShape?: string;
+  eyeDescriptor?: string;
+};
+
 export type HairstyleAnalysis = {
   id: string;
   clientName: string;
@@ -34,6 +39,8 @@ export type HairstyleAnalysis = {
   topMatch: AnalysisLook;
   additionalLooks: AnalysisLook[];
   whyItWorks: string[];
+  /** Optional client features for every-detail-matters spec rows (free tier). */
+  everyDetailFaceFeatures?: EveryDetailFaceFeatures;
   createdAt: string;
 };
 
