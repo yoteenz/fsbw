@@ -1,10 +1,16 @@
 import { normalizeAnalysisStylingId } from './hairstyleAnalysisDisplay.js';
 import { hexForHairColorName } from './hairstyleHairColors.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
+import { resolveCatalogLookForFal } from './hairstyleAnalysisUnitCatalog.js';
 import { applyRealisticMatchScores } from './hairstyleAnalysisRealisticScores.js';
 
-function normalizeLookStyling<T extends { unit: string; styling: string }>(look: T): T {
-  return { ...look, styling: normalizeAnalysisStylingId(look.unit, look.styling) };
+function normalizeLookStyling<T extends { unit: string; styling: string; density: string; color: string; hex: string }>(
+  look: T
+): T {
+  return resolveCatalogLookForFal({
+    ...look,
+    styling: normalizeAnalysisStylingId(look.unit, look.styling),
+  });
 }
 
 function normalizeTier(tier: FalHairstyleAnalysis['tier']): FalHairstyleAnalysis['tier'] | 'twelve_month' {

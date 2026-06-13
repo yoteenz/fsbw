@@ -5,6 +5,7 @@ import {
   UNIT_NAMES,
 } from '../data/hairstyleCatalog';
 import { normalizeAnalysisStylingId } from './hairstyleAnalysisFormat';
+import { resolveCatalogLook } from './hairstyleAnalysisCatalogResolve';
 import type { PsaSelfieStylePick } from '../types/styleAnalysis';
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis, UnitName } from '../types/hairstyleAnalysis';
 
@@ -118,7 +119,7 @@ export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
   const unitName = isUnitName(unit) ? unit : 'NOIR';
   const styling = normalizeAnalysisStylingId(unitName, pick.styling || 'NONE');
 
-  return {
+  return resolveCatalogLook({
     id: `psa-pick-${pick.rank}`,
     rank: pick.rank,
     unit: unitName,
@@ -134,7 +135,7 @@ export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
     styling,
     score: Math.max(70, 100 - (pick.rank - 1) * 3),
     rating: pick.stars ?? Math.max(3, 5 - Math.floor((pick.rank - 1) / 2)),
-  };
+  });
 }
 
 export function buildHairstyleAnalysisFromPsaPicks(options: {

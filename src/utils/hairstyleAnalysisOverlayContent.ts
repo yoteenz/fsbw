@@ -1,4 +1,5 @@
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
+import { resolveCatalogLook } from './hairstyleAnalysisCatalogResolve';
 import {
   displayDensity,
   displayHairline,
@@ -12,15 +13,16 @@ import {
 import { normalizeAnalysisTier } from './hairstyleAnalysisRules';
 
 function specValues(look: AnalysisLook): Record<string, string> {
+  const resolved = resolveCatalogLook(look);
   return {
-    specTexture: look.unit,
-    specColor: look.color,
-    specLength: displayLength(look),
-    specLace: displayLace(look),
-    specDensity: displayDensity(look),
-    specParting: displayPart(look),
-    specHairline: displayHairline(look),
-    specStyle: displayStyle(look),
+    specTexture: resolved.unit,
+    specColor: resolved.color,
+    specLength: displayLength(resolved),
+    specLace: displayLace(resolved),
+    specDensity: displayDensity(resolved),
+    specParting: displayPart(resolved),
+    specHairline: displayHairline(resolved),
+    specStyle: displayStyle(resolved),
   };
 }
 
@@ -33,11 +35,12 @@ function topMatchHeader(look: AnalysisLook): Record<string, string> {
 }
 
 function matchRowValues(look: AnalysisLook): Record<string, string> {
+  const resolved = resolveCatalogLook(look);
   return {
-    texture: look.unit,
-    color: look.color,
-    length: displayLength(look),
-    score: formatScorePercent(look.score),
+    texture: resolved.unit,
+    color: resolved.color,
+    length: displayLength(resolved),
+    score: formatScorePercent(resolved.score),
   };
 }
 
