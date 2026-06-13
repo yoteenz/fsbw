@@ -66,7 +66,7 @@ export function overallScoreFalFontSize(rect: PixelRect): number {
   return Math.max(16, Math.min(36, Math.round(rect.height * 0.22)));
 }
 
-/** Petite MATCH RATING decimal (e.g. 5.0) — upper third of value panel, free tier only. */
+/** Petite MATCH RATING decimal (e.g. 5.0) — free tier only, stacks above stars. */
 export function matchRatingDecimalFalFontSize(rect: PixelRect): number {
   return Math.max(12, Math.min(20, Math.round(rect.height * 0.24)));
 }
