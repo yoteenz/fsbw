@@ -133,7 +133,7 @@ export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
     color,
     hex: hexForHairColor(color),
     length: pick.length.includes('INCH') ? pick.length.toUpperCase() : `${pick.length.toUpperCase()} INCHES`,
-    lace: '13X6 HD',
+    lace: '',
     density: pick.density.includes('%') ? pick.density.toUpperCase() : `${pick.density.toUpperCase()}%`,
     hairline: pick.hairline.includes('HAIRLINE')
       ? pick.hairline.toUpperCase()
