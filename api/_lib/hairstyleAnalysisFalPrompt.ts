@@ -58,11 +58,14 @@ export type FalPromptImageRefs = {
 };
 
 export type FalPromptBuildOptions = {
+  /** @deprecated Fal always uses Covered By Your Grace for OVERALL SCORE — ignored. */
   overallScoreFontLabel?: string;
 };
 
 const BRAND_RED = '#EB1C24';
 const MATCH_SCORE_GRAY = '#808080';
+/** Permanent OVERALL SCORE typography — red handwritten script (site brand accent). */
+const OVERALL_SCORE_CANONICAL_FONT = 'Covered By Your Grace';
 
 /** Fal GPT Image 2 `prompt` field hard limit (422 if exceeded). */
 export const HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS = 32_000;
@@ -375,19 +378,26 @@ function matchRatingStarDesignBlock(): string {
   ].join('\n');
 }
 
-function overallScoreFalLine(look: FalAnalysisLook, fontLabel = 'Futura PT Demi'): string {
+function overallScoreFontDesignBlock(): string {
+  return [
+    '=== OVERALL SCORE % — EXACT FONT DESIGN (ALL TIERS — PERMANENT) ===',
+    'Print the score value using **only** this typography in the red OVERALL SCORE panel:',
+    `• **Font:** **${OVERALL_SCORE_CANONICAL_FONT}** — elegant **handwritten script / calligraphy** (not geometric sans-serif).`,
+    '• **Style:** fluid slanted strokes, fine-tip-marker weight, personalized "signed" look — **digits and % suffix in the same script family**.',
+    `• **Color:** vibrant brand red ${BRAND_RED}.`,
+    '• **Layout:** centered inside the OVERALL SCORE value box with padding — compact, never oversized or touching borders.',
+    'FORBIDDEN on OVERALL SCORE: Futura PT Demi/Medium/Book, blocky sans-serif digits, black/gray text, or MATCH ROW gray score styling.',
+  ].join('\n');
+}
+
+function overallScoreFalLine(look: FalAnalysisLook): string {
   const targetPx = overallScoreFalFontSize(TOP_SCORE_SLOT);
-  const isScript =
-    fontLabel.includes('Grace') || fontLabel === 'Bohemy' || fontLabel.toLowerCase().includes('script');
-  const styleNote = isScript
-    ? `${fontLabel} handwriting/script style`
-    : `${fontLabel} geometric sans-serif`;
 
   return [
     `OVERALL SCORE: print ${formatScorePercent(look.score)} in the OVERALL SCORE value area.`,
-    `Font: ${styleNote} — use exactly this site font, not a substitute.`,
+    `Use **${OVERALL_SCORE_CANONICAL_FONT}** handwriting script exactly — see OVERALL SCORE font design block above.`,
     `Brand red ${BRAND_RED}, ~${targetPx}px max total height, centered with generous padding inside the panel.`,
-    'Digits and % suffix use the same font family — keep compact; must not touch panel edges or fill the whole box.',
+    'Entire value (digits + % suffix) in the same script — keep compact; must not touch panel edges or fill the whole box.',
   ].join(' ');
 }
 
@@ -402,6 +412,7 @@ function overallScoreAndStarsSizeRules(tier: FalHairstyleAnalysis['tier']): stri
 
   return [
     '=== OVERALL SCORE + MATCH RATING — SIZE (CRITICAL) ===',
+    overallScoreFontDesignBlock(),
     matchRatingStarDesignBlock(),
     'These size rules apply **only** to the OVERALL SCORE panel and MATCH RATING stars — **not** MATCH 02–04 gray score % rows.',
     'Both panels have a small inner value area below the label. Score and stars must be **compact** — never dominate or touch borders.',
@@ -436,14 +447,13 @@ function matchRatingStarsFalLine(look: FalAnalysisLook, tier: FalHairstyleAnalys
 
 function overallScoreAndRatingRules(
   look: FalAnalysisLook,
-  tier: FalHairstyleAnalysis['tier'],
-  overallScoreFontLabel?: string
+  tier: FalHairstyleAnalysis['tier']
 ): string {
   return [
     overallScoreAndStarsSizeRules(tier),
     '',
     '=== OVERALL SCORE + MATCH RATING — CONTENT ===',
-    overallScoreFalLine(look, overallScoreFontLabel),
+    overallScoreFalLine(look),
     matchRatingStarsFalLine(look, tier),
   ].join('\n');
 }
@@ -592,7 +602,7 @@ function buildTemplateRules(
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
     'DO NOT ADD NEW ROSE ICONS. DO NOT CHANGE ROSE SHAPE, SIZE, POSITION, OR COLOR.',
     '',
-    overallScoreAndRatingRules(analysis.topMatch, analysis.tier, promptOptions?.overallScoreFontLabel),
+    overallScoreAndRatingRules(analysis.topMatch, analysis.tier),
     '',
     mannequinList,
     '',
@@ -611,7 +621,7 @@ function buildTemplateRules(
       ? [
           'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
-          overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
+          overallScoreFalLine(analysis.topMatch),
           matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
         ]
       : []),
@@ -676,7 +686,7 @@ function freePromptFooter(
     'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel — **centered** in the header panel.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
-    overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
+    overallScoreFalLine(analysis.topMatch),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
   ].join('\n');
 }
