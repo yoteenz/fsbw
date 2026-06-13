@@ -27774,3 +27774,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** **`diversifyHairstyleAnalysisLooks()`** assigned blonde bucket colors (PLATINUM/GOLDEN) to non-BLANCO units for variety.
 - **Shipped:** **`pickAllowedColor()`** filters picks through **`allowedColorsForCatalogUnit`** / **`allowedColorsForUnit`**; blonde bucket on non-BLANCO uses **HONEY/CHESTNUT**; **`assignUnitsForBuckets()`** assigns **BLANCO** for blonde slots. Repaired broken API diversity module (missing **`shuffle`**, **`colorBuckets`** order). **`allowedColorsForCatalogUnit()`** in **`hairstyleAnalysisUnitCatalog.ts`**. Client mirror synced in **`src/utils/hairstyleAnalysisLookDiversity.ts`**.
 - **Conventions:** Diversity must never violate catalog color×unit rules; validation box = expected pre-flight check, not a Fal bug.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: fix marble overlay + TOP MATCH text ghosts
+
+- **Context:** User reported prior glitch **not resolved and worse** — white marble card floating over left portrait, **TOP MATCH** pill/header text corrupted (red/black offset ghost layers), empty spec slots on generated card.
+- **Cause (marble card):** **`applyClientPhotoBottomFade`** wiped the **entire** client panel to **`templatePanel`** then composited back — inset fade window left a marble frame over Fal's photo (looked like duplicate white card on portrait). Introduced with Ideogram cutout post-process; worsened after dimension-fix composite path.
+- **Cause (TOP MATCH ghosts):** Fal double-printing pill/header text when replacing CLIENT PREVIEW / header TOP MATCH with client name; server wipe also overlapped portrait chrome.
+- **Shipped:** **`hairstyleAnalysisClientPhotoFade.ts`** — patch **fade window only** onto Fal output (Ideogram cutout + bottom-anchor + symmetrical fade); never replace full panel with template marble. **`compositeOverlay`** only shrinks overlays that exceed bounds. **`hairstyleAnalysisFalPrompt.ts`** — **`templateTextIntegrityBlock()`**, stronger pill/header single-layer rules (no ghost/duplicate text); preserve FRONTAL SLAYER header art.
+- **Conventions:** Post-process = fade-window patch only; full-panel template wipe forbidden; TOP MATCH once in pill, client name once in header panel.
