@@ -163,17 +163,11 @@ export function bawStylingRefListBlock(refs: HairstyleAnalysisStylingRef[]): str
   if (refs.length === 0) return '';
   const lines = refs.map((r) => {
     const styleId = salonModeToBawStyleId(r.salonMode);
-    return (
-      `IMAGE ${r.imageIndex} = BAW **${styleId}** styling reference (${r.part} part) — ` +
-      'authoritative salon finish for any look assigned STYLE ' +
-      `${styleId} with ${r.part} part; copy curl/crimp/straight/layer shape exactly; retint hair color only; **never copy head pose, profile angle, or neck rotation from this IMAGE.**`
-    );
+    return `IMAGE ${r.imageIndex} = BAW ${styleId} (${r.part} part) — salon finish shape only; retint color; keep IMAGE 2 pose.`;
   });
   return [
-    '=== BAW STYLING REFERENCE IMAGES (AUTHORITATIVE SALON FINISH — NOT MANNEQUIN DEFAULT) ===',
-    'Each styling IMAGE below is tied to a specific STYLE id + part. Use the matching IMAGE for that look only.',
-    'Never blend part lines from multiple styling IMAGEs onto one client photo — each thumb/preview gets **one** PART from its manifest.',
-    'Styling IMAGEs supply **hair finish shape only** — IMAGE 2 keeps the master head + body pose on every client photo.',
+    '=== BAW STYLING REFERENCE IMAGES ===',
+    'Use the matching IMAGE per look STYLE + PART — hair finish only; IMAGE 2 keeps master pose.',
     ...lines,
   ].join('\n');
 }

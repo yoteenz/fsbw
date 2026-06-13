@@ -363,7 +363,6 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
     'Keep IMAGE 2 head angle, gaze, and shoulder line — **never** turn the client profile or 3/4 to match a styling/mannequin IMAGE.',
     `PART ${part} **only** on this thumb — one scalp line; erase any other part from IMAGE 2 or other refs.`,
     uniformRootColorBlock(look, 'thumbnail'),
-    lookHairAccuracyLines(look),
     realisticHairDensityBlock(displayDensity(look.density), true),
     mannequinRefLine(look.unit, refs, look.styling),
   ]
@@ -573,7 +572,6 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
 
   const lines: string[] = [
     '=== MATCH 02–04 ROW VALUES — PRINT EXACTLY IN VALUE SLOTS ===',
-    matchRowScoreColorBlock(),
     `TEXTURE, COLOR, LENGTH = black Futura PT Medium. MATCH SCORE % = gray ${MATCH_SCORE_GRAY} only — never black.`,
   ];
 
@@ -726,7 +724,6 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — PART: ${displayPart(look.part)}`,
     `MANIFEST — HAIRLINE: ${displayHairline(look.hairline)}`,
     `MANIFEST — STYLE: ${style}`,
-    lookHairAccuracyLines(look),
     `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS/24"/13X6 HD/250%/MIDDLE defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
     'LACE, DENSITY, and PART value slots must print the manifest exactly — never reuse baked template placeholder 13X6 HD / 250% / MIDDLE when manifest differs.',
     'The manifest below is the **only** source of truth for TOP MATCH specs — never reuse template placeholder text.',
@@ -735,11 +732,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
 }
 
 function altRowBlock(label: string, look: FalAnalysisLook): string {
-  return [
-    label,
-    matchScoreFalLine(look),
-    `Thumbnail only — apply STYLE ${displayStyle(look.styling, look.unit)} on the square photo; do not print STYLE in the match row.`,
-  ].join('\n');
+  const style = displayStyle(look.styling, look.unit);
+  return `${label}: row values in MATCH 02–04 manifest below; thumb STYLE ${style} only.`;
 }
 
 function appendEveryDetailMattersLines(
