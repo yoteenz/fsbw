@@ -133,7 +133,8 @@ function clientPreviewTabLine(): string {
   return [
     'CLIENT PREVIEW TAB (white pill above main photo, rose icon on left):',
     'REPLACE the words "CLIENT PREVIEW" inside that pill with "TOP MATCH" — same pill shape, rose icon, border, and position.',
-    'Do NOT add "TOP MATCH" as separate text below, above, or beside the pill.',
+    'Paint over the old pill letters completely — **one crisp text layer only** (no offset duplicate, shadow echo, or red/black ghost copy).',
+    'Do NOT add "TOP MATCH" as separate text below, above, beside, or floating over the portrait.',
     `Pill text: brand red ${BRAND_RED}, uppercase "TOP MATCH", bold sans-serif inside the pill only.`,
   ].join('\n');
 }
@@ -143,9 +144,19 @@ function topMatchHeaderLine(fullName: string): string {
     '=== CLIENT NAME HEADER (ABOVE OVERALL SCORE PANEL) ===',
     'The template prints black uppercase "TOP MATCH" as a section header directly above the OVERALL SCORE / MATCH RATING panels on the right.',
     `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's first and last name, uppercase.`,
+    'Erase the old header letters first — **single clean text layer** (no double-print, ghost offset, or stacked duplicates).',
     'Use the same black Futura PT Medium style, size, weight, and letter-spacing as the original header — only swap the words.',
     '**Center the client name horizontally within the frosted header panel** above OVERALL SCORE and MATCH RATING — equal padding left and right; do NOT left-align.',
     'Do NOT leave "TOP MATCH" visible in that header slot. Do NOT duplicate the client name in the red pill (pill stays "TOP MATCH" only).',
+  ].join('\n');
+}
+
+function templateTextIntegrityBlock(): string {
+  return [
+    '=== TEMPLATE TEXT — NO GHOST / DUPLICATE LAYERS ===',
+    'When replacing template words (pill, header, value slots): paint over old text fully, then print **one** crisp layer.',
+    'FORBIDDEN: offset duplicate text (red/black echo), shadow stacks, semi-transparent ghost copies, or printing the same label twice.',
+    'Keep "FRONTAL SLAYER" and "hairstyle analysis" header art from IMAGE 1 untouched — do not re-render or duplicate them.',
   ].join('\n');
 }
 
@@ -577,6 +588,8 @@ function buildTemplateRules(
     'COLOR value fields: color name only (e.g. JET BLACK) — never print hex codes, # symbols, or parenthetical color notes.',
     '',
     panelChromePreservationBlock(),
+    '',
+    templateTextIntegrityBlock(),
     '',
     '=== REMOVE TIER / SUBSCRIPTION LABEL (CRITICAL) ===',
     'The template may include a subtitle such as "FREE HAIRSTYLE ANALYSIS", "3 MONTH HAIRSTYLE ANALYSIS",',
