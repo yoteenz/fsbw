@@ -28347,3 +28347,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause of wrong person:** Face paste does not fix Fal identity; two-step hair-only preview is the correct path — but **`HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true`** and **`HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS=false`** defaults stripped PEAK/LAGOS/part-specific styling IMAGEs; **`preEditedClientPanelBlock`** froze all main hair so step 2 could not fix part/hairline.
 - **Shipped (2dffc54e):** Deleted **`hairstyleAnalysisClientFaceRestore.ts`**; composite back to roses → optional fade → mirror only. Defaults: **hairline refs ON**, **styling refs ON** (`MINIMAL_REFS` opt-in). Step 1 attaches hairline + styling IMAGEs for TOP MATCH. **`buildClientPreviewHairOnlyPrompt`** accepts refs + **`hairPartLockBlock`**. **`preEditedClientPanelBlock`** allows PART/hairline/color micro-refine on main photo (face/neck locked). Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** **No server face paste.** Identity = Fal step-1 hair-only on raw selfie; PART/HAIRLINE = hairline + styling IMAGE refs both steps; mannequin refs still opt-in.
+
+---
+
+## 2026-06-13 — Panel footer text: remove red borders
+
+- **Context:** User asked to remove red borders around **YOUR BUILD SPECS ARE LOCKED IN PLACE.** and **UNIT · 34" · COLOR** build summary on free-tier hairstyle analysis cards.
+- **Cause:** Fal prompt used **"build ribbon"** / footer language; model styled footers like the red-bordered **BUILD THIS LOOK** CTA instead of plain text.
+- **Shipped:** **`panelFooterPlainTextRules()`** in **`hairstyleAnalysisFalPrompt.ts`** — plain centered text only; forbid red/black borders, boxes, pills, ribbons; erase placeholder bordered rectangles; do not mimic CTA chrome. Updated **`freeTierPanelFooterBlock()`**, **`freePromptFooter`**, and free-tier template rules. Renamed comments ribbon → build summary in layout/format/display files.
+- **Conventions:** Free-tier panel footers = plain text on frosted panel (black specs-locked, gray build summary) — never bordered boxes.
