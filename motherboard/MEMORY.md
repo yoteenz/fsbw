@@ -27704,3 +27704,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal prompt tied match-row scores to overall-score sizing/placement; misleading “same row as texture/color/length” wording; debug slot **`topScore`** mislabeled “Match score”; saved **`slotOverrides`** could include score slots (only photo post-process should use layout overrides).
 - **Shipped:** **`matchRowScoreIsolationBlock()`** in **`hairstyleAnalysisFalPrompt.ts`** — gray MATCH SCORE % separate from red OVERALL SCORE; per-label row alignment; server never composites match rows. **`overallScoreAndStarsSizeRules`** scoped to overall panel only. **`photoPostProcessLayoutOverrides()`** — post-process uses **`clientImage`** / **`clientPhotoFade`** only. Debug label → **Overall score**; preview copy clarifies font picker is overall-score only.
 - **Conventions:** MATCH 02–04 gray scores = Fal in-image in each row's MATCH SCORE slot; overall score font picker affects red OVERALL SCORE panel only; server post-process = client photo cutout/fade only.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: baby hairs match catalog hair color
+
+- **Context:** User reported on colored hair looks (e.g. CHERRY, PLATINUM), **baby hairs** at the hairline stayed **black** instead of matching the assigned catalog color.
+- **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **`hairlineRulesBlock()`** recolors existing edge wisps to catalog pigment; forbids black baby hairs from mannequin/styling refs; **`realisticHairRecolorBlock()`** includes hairline strands. **`hairstyleAnalysisUnitCatalog.ts`** — uniform-color lines require baby hairs/edge wisps same tone; BLANCO + fashion colors explicit.
+- **Conventions:** Fashion/vivid BAW colors = uniform root to tip **including** hairline baby hairs and edge flyaways — never black wisps on colored installs.
