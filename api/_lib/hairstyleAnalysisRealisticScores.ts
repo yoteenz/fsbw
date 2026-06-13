@@ -8,14 +8,15 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-function ratingForScore(score: number): number {
-  return Math.round(score) >= 95 ? 5 : 4;
+function dynamicMatchRating(score: number): number {
+  if (Math.round(score) >= 95) return 5.0;
+  return Math.round((4 + randomInt(5, 9) / 10) * 10) / 10;
 }
 
 /** Assign varied, rank-aware scores on each generation so matches feel realistic. */
 export function applyRealisticMatchScores(analysis: FalHairstyleAnalysis): FalHairstyleAnalysis {
   const topScore = randomInt(94, 99);
-  const topRating = ratingForScore(topScore);
+  const topRating = dynamicMatchRating(topScore);
 
   if (analysis.tier === 'free') {
     return {
@@ -39,7 +40,7 @@ export function applyRealisticMatchScores(analysis: FalHairstyleAnalysis): FalHa
     return {
       ...look,
       score,
-      rating: ratingForScore(score),
+      rating: dynamicMatchRating(score),
       rank: look.rank > 0 ? look.rank : index + 2,
     };
   });

@@ -33,6 +33,7 @@ import {
   displayPart,
   displayStyle,
   formatScorePercent,
+  formatMatchRatingDecimal,
   matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
@@ -159,7 +160,8 @@ function topMatchHeaderLine(fullName: string): string {
   return [
     '=== CLIENT NAME HEADER (ABOVE OVERALL SCORE PANEL) ===',
     'The template prints black uppercase "TOP MATCH" as a section header directly above the OVERALL SCORE / MATCH RATING panels on the right.',
-    `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's first and last name, uppercase.`,
+    `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's **full first and last name**, uppercase.`,
+    `PRINT **EVERY WORD** of "${fullName}" — **never first name only**, never truncate after the first word.`,
     'Erase the old header letters first — **single clean text layer** (no double-print, ghost offset, or stacked duplicates).',
     `Use **brand red ${BRAND_RED}** Futura PT Medium — same size, weight, and letter-spacing as the original header.`,
     '**Center the client name horizontally within the frosted header panel** above OVERALL SCORE and MATCH RATING — equal padding left and right; do NOT left-align.',
@@ -418,19 +420,21 @@ function overallScoreAndRatingRules(
   const starPx = matchRatingFalStarSize(RATING_SLOT);
   const filled = filledStarCountFromOverallScore(look.score);
   const scorePct = formatScorePercent(look.score);
+  const ratingLabel = formatMatchRatingDecimal(look.rating);
   const tierKey = normalizeTier(tier);
   const starErase =
     tierKey === 'free'
-      ? `Draw 5 petite embossed-gradient red stars (~${starPx}px max each).`
-      : `Erase large template star glyphs; draw 5 new petite stars (~${starPx}px max each).`;
+      ? `Draw 5 petite embossed-gradient red stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box, below the ${ratingLabel} number.`
+      : `Erase large template star glyphs; draw 5 new petite stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box, below the ${ratingLabel} number.`;
   const fillRule =
     filled === 5 ? 'Fill all 5 stars left → right.' : 'Fill left 4 only; star 5 empty outline.';
 
   return [
     '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE) ===',
     `OVERALL SCORE: erase placeholder %; print ${scorePct} in ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script (~${scorePx}px max height, centered, wide padding). Digits + % same script.`,
-    `MATCH RATING: ${fillRule} ${starErase} Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
-    'FORBIDDEN: billboard score, chunky/emoji stars, gray or sans-serif overall score.',
+    `MATCH RATING: erase placeholder; print **${ratingLabel}** in the **upper third** of the MATCH RATING value box — ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script, **same font family and visual weight as OVERALL SCORE %** (~${scorePx}px max height, centered).`,
+    `MATCH RATING STARS (below ${ratingLabel}): ${fillRule} ${starErase} Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
+    'FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif overall score or match-rating text.',
   ].join('\n');
 }
 
@@ -481,8 +485,7 @@ function freeTierOnlyBlock(): string {
     'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
-    'ONLY fill: client preview photo, TOP MATCH spec column, and EVERY DETAIL MATTERS text rows beside rose icons.',
-    'Leave OVERALL SCORE % and MATCH RATING stars **blank** (server overlays petite score + stars after generation).',
+    'ONLY fill: client preview photo, TOP MATCH spec column, EVERY DETAIL MATTERS text rows, OVERALL SCORE %, MATCH RATING decimal + stars.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -648,7 +651,7 @@ function freePromptFooter(
     '=== FINAL CHECK ===',
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **brand red** Futura PT Medium.',
-    'TOP MATCH specs + every detail matters filled; OVERALL SCORE + MATCH RATING printed in-image at petite sizes (erase large template placeholders first).',
+    'TOP MATCH specs + every detail matters filled; OVERALL SCORE % + MATCH RATING decimal (e.g. 5.0 / 4.7) + stars printed in-image at petite sizes (erase large template placeholders first).',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
   ].join('\n');

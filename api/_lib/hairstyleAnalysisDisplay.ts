@@ -25,6 +25,12 @@ export function formatScorePercent(score: number): string {
   return `${Math.round(score)}%`;
 }
 
+/** One-decimal match rating label above stars (e.g. 5.0, 4.7). */
+export function formatMatchRatingDecimal(rating: number): string {
+  const clamped = Math.min(5, Math.max(0, Number(rating) || 0));
+  return clamped.toFixed(1);
+}
+
 /** MATCH RATING stars: 95%+ → 5 filled; below 95% → 4 filled (left four), rightmost empty. */
 export function matchRatingFilledStarsFromScore(score: number): number {
   return Math.round(score) >= 95 ? 5 : 4;

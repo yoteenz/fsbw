@@ -85,7 +85,7 @@ export function buildKateenaDemoAnalysis(
   tier: AnalysisTier,
   clientPreviewUrl = DEMO_CLIENT_PREVIEW_URL
 ): HairstyleAnalysis {
-  const clientName = tier === 'free' ? 'KATEENA' : 'KATEENA ARMSTRONG';
+  const clientName = 'KATEENA ARMSTRONG';
   const { topMatch, additionalLooks } = diversifyHairstyleAnalysisLooks(
     { ...KATEENA_TOP, imageUrl: clientPreviewUrl },
     altsForTier(tier)
