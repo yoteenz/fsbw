@@ -43,6 +43,16 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
 export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
 export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
+/** Expand wipe rect slightly so Fal star/score bleed outside the value box is cleared before server overlay. */
+export function expandPixelRect(slot: PixelRect, padPx: number): PixelRect {
+  const { width: W, height: H } = HAIRSTYLE_ANALYSIS_CANVAS;
+  const left = Math.max(0, slot.left - padPx);
+  const top = Math.max(0, slot.top - padPx);
+  const right = Math.min(W, slot.left + slot.width + padPx);
+  const bottom = Math.min(H, slot.top + slot.height + padPx);
+  return { left, top, width: right - left, height: bottom - top };
+}
+
 /** Five petite star rects centered inside the MATCH RATING value box (server composite). */
 export function matchRatingStarRects(slot: PixelRect, starSizePx: number): PixelRect[] {
   const count = 5;

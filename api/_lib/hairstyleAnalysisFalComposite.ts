@@ -14,6 +14,7 @@ import { applyClientPhotoMirrorReflection } from './hairstyleAnalysisClientPhoto
 import { matchRatingFilledStarsFromScore } from './hairstyleAnalysisDisplay.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import {
+  expandPixelRect,
   HAIRSTYLE_ANALYSIS_CANVAS,
   matchRatingStarRects,
   type PixelRect,
@@ -188,7 +189,11 @@ export async function compositeOverallScoreAndStars(
   const ratingSlot = resolveRatingSlot(analysis.tier, layoutOverrides);
   const sharp = (await import('sharp')).default;
 
-  let base = await prepareScoreRatingSlots(falBuf, templateBuf, [scoreSlot, ratingSlot]);
+  const wipePad = 10;
+  let base = await prepareScoreRatingSlots(falBuf, templateBuf, [
+    expandPixelRect(scoreSlot, wipePad),
+    expandPixelRect(ratingSlot, wipePad),
+  ]);
 
   const scoreOverlay = await sharp(buildPetiteOverallScoreOverlay(analysis.topMatch.score, scoreSlot))
     .png()

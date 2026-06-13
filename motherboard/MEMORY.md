@@ -27984,3 +27984,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to use **2D mannequin images from the BAW hairline sub-page** as Fal reference IMAGEs for **realistic hairline only** on **PEAK**, **LAGOS**, and **LAGOS + PEAK** (not NATURAL).
 - **Shipped (7541afa9):** **`hairstyleAnalysisBawHairlineRefs.ts`** — `/assets/peak front.png` (PEAK + LAGOS+PEAK combo, same as BAW `hasPeak` branch) and `/assets/lagos front.png` (LAGOS-only); **`collectHairlineRefsForAnalysis`** + compact prompt block; wired in **`hairstyleAnalysisFal.ts`** (`image_urls` after template/client/mannequins, before styling refs). **`hairstyleAnalysisFalPrompt.ts`** — forehead lace-edge shape only, retint to catalog color; IMAGE 2 keeps face/pose. **`bawStaticMannequinReferencePaths.ts`** — `NOIR_PEAK_FRONT_MANNEQUIN_SRC` / `NOIR_LAGOS_FRONT_MANNEQUIN_SRC`. **`docs/STYLE_ANALYSIS.md`** updated.
 - **Conventions:** BAW hairline Fal refs = **forehead edge geometry only** for PEAK/LAGOS manifests; NATURAL = no extra ref; LAGOS+PEAK uses **peak front** mannequin.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: tighter score/star blank-slot Fal prompt
+
+- **Context:** User said composite for **overall score % + match rating stars** still looks weird / doesn’t match — wanted **tighter, more defined Fal prompt about petite sizes** (server-composited, not Fal-drawn).
+- **Cause:** Verbose duplicate score/star blocks still leaked manifest score % into Fal prompt; Fal sometimes left ~118px template star art / placeholder % that clashed with petite server overlay.
+- **Shipped (5c934e73):** **`scoreRatingServerOverlayBlankBlock()`** — exact **199×148px** value box regions (OVERALL SCORE @ x=1120 y=410, MATCH RATING @ x=1419 y=410), erase template placeholders, forbid Fal digits/stars; removed score % from Fal prompt entirely. **`prepareScoreRatingSlots`** wipe expanded **+10px** before petite overlay. **`docs/STYLE_ANALYSIS.md`** updated.
+- **Conventions:** OVERALL SCORE + MATCH RATING = **empty frosted boxes in Fal**; server only source for petite score (~33px) + stars (~25px).
