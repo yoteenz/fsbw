@@ -28198,3 +28198,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Shipped (9023fa45):** **`hairstyleAnalysisLookDiversity.ts`** (api + src) — **`varyTopMatchPerGeneration()`** on free single-look path (keeps PSA unit, rotates color bucket/length/lace/density/part/hairline); **`isStubbornDefaultStack()`** broadens placeholder detection beyond generic NOIR; removed index-0 install locks in **`varyInstallSpecs`**; **`diversifyLook`** shuffles length picks. Premium: full diversify when top is stubborn/generic or alts homogeneous; otherwise install rotation with random **`genIdx`**.
 - **Pipeline:** Every Fal generate → **`normalizeHairstyleAnalysisForFal`** → **`diversifyHairstyleAnalysisLooks`** before manifest + EDM rebuild.
 - **Conventions:** Printed TOP MATCH specs must never be static template defaults — PSA picks or per-generate diversity only.
+
+---
+
+## 2026-06-13 — Fal hairstyle analysis: stop inventing baby hairs
+
+- **Context:** User reported Fal generator still **adding baby hairs** at the hairline despite prior no-baby-hairs rule.
+- **Cause:** Later color-matching edits contradicted the original ban — prompts said "baby hairs/wisps = catalog color", "incl. baby hairs", NATURAL shape guide had "light baby-hair edge", and `hairlineRulesBlock` only said "do not invent **heavy** new baby-hair clutter" (implying light wisps OK).
+- **Shipped (dd55ac52):** **`noInventedBabyHairsBlock()`** in **`hairstyleAnalysisBawHairlineRefs.ts`** — authoritative FORBIDDEN block (no wisps on skin, no mannequin edge copy). **`hairlineRulesBlock`** → shape-only (PEAK/LAGOS/NATURAL). Removed baby-hair-add language from **`hairstyleAnalysisFalPrompt.ts`**, **`hairstyleAnalysisUnitCatalog.ts`**, hairline shape lines, color/root manifest lines, FINAL CHECK. Root-to-tip repaint keeps **no dark roots** without instructing model to add wisps.
+- **Conventions:** Hairstyle analysis Fal = **clean lace-front edge, no baby hairs on skin**; retint only if IMAGE 2 already has edge strands in hair region — never spawn new fuzz (matches **`buildClientHairstylePreviewPrompt`** + live try-on).
