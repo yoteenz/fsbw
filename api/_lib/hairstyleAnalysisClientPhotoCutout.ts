@@ -30,8 +30,8 @@ export function hairstyleAnalysisClientPhotoPostProcessEnabled(): boolean {
   return true;
 }
 
-/** Sample corner pixels and key out a uniform studio backdrop (tan/beige/gray). */
-async function chromaKeyStudioBackground(pngBuf: Buffer): Promise<Buffer> {
+/** Sample corner pixels and key out a uniform studio backdrop (tan/beige/gray) in place — same crop/position. */
+export async function chromaKeyStudioBackgroundInPlace(pngBuf: Buffer): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   const { data, info } = await sharp(pngBuf).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const w = info.width;
@@ -152,5 +152,5 @@ export async function removeBackgroundFromClientRegion(
       console.warn('[hairstyle-analysis] Ideogram cutout failed, trying chroma key:', e);
     }
   }
-  return chromaKeyStudioBackground(regionPng);
+  return chromaKeyStudioBackgroundInPlace(regionPng);
 }

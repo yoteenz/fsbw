@@ -43,7 +43,7 @@ function pctRect(left: string, top: string, width: string, height: string): Pixe
 export const TOP_SCORE_SLOT = pctRect('54.7%', '16%', '9.7%', '5.8%');
 export const RATING_SLOT = pctRect('69.3%', '16%', '9.7%', '5.8%');
 
-/** Main client preview photo cutout (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
+/** Main client preview photo window (mirrors src/utils/hairstyleAnalysisTemplateLayouts.ts). */
 export const CLIENT_IMAGE_SLOT = pctRect('4%', '14%', '44.5%', '68.5%');
 
 /** Inner client photo window — bottom fade mask target (debug square default). */

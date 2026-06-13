@@ -1,20 +1,8 @@
 import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
 import {
   intersectPixelRects,
-  pixelRectRelativeTo,
 } from './hairstyleAnalysisLayoutSlots.js';
-import {
-  bottomAnchorCutoutInCanvas,
-  removeBackgroundFromClientRegion,
-} from './hairstyleAnalysisClientPhotoCutout.js';
-
-type FalClient = {
-  storage: { upload: (file: File) => Promise<string> };
-  subscribe: (
-    model: string,
-    opts: { input: Record<string, unknown>; logs?: boolean }
-  ) => Promise<unknown>;
-};
+import { chromaKeyStudioBackgroundInPlace } from './hairstyleAnalysisClientPhotoCutout.js';
 
 /** Symmetrical bottom fade on the client photo alpha only — template marble shows through. */
 const FADE_START_PCT = 72;
@@ -42,43 +30,6 @@ function buildSymmetricalBottomFadeMaskSvg(width: number, height: number): Buffe
   return Buffer.from(svg);
 }
 
-async function resizePng(buf: Buffer, width: number, height: number): Promise<Buffer> {
-  const sharp = (await import('sharp')).default;
-  return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
-}
-
-async function compositeOverlay(
-  base: Buffer,
-  overlay: Buffer,
-  left: number,
-  top: number
-): Promise<Buffer> {
-  const sharp = (await import('sharp')).default;
-  const baseMeta = await sharp(base).metadata();
-  const overlayMeta = await sharp(overlay).metadata();
-  const baseW = baseMeta.width ?? 0;
-  const baseH = baseMeta.height ?? 0;
-  let overlayW = overlayMeta.width ?? 0;
-  let overlayH = overlayMeta.height ?? 0;
-
-  const maxW = baseW - left;
-  const maxH = baseH - top;
-  if (maxW <= 0 || maxH <= 0) {
-    return base;
-  }
-
-  if (overlayW > maxW || overlayH > maxH) {
-    overlay = await resizePng(overlay, maxW, maxH);
-    overlayW = maxW;
-    overlayH = maxH;
-  }
-
-  return sharp(base)
-    .composite([{ input: overlay, left, top }])
-    .png()
-    .toBuffer();
-}
-
 function clampExtractRect(rect: PixelRect, imageW: number, imageH: number): PixelRect {
   const left = Math.max(0, Math.min(rect.left, imageW - 1));
   const top = Math.max(0, Math.min(rect.top, imageH - 1));
@@ -88,17 +39,15 @@ function clampExtractRect(rect: PixelRect, imageW: number, imageH: number): Pixe
 }
 
 /**
- * Server post-process: Ideogram-cut the hair-edited panel, bottom-anchor + fade inside
- * the inner photo window only, then patch that window back onto the Fal card.
- * Never wipe the full client panel to template marble — that caused a floating white card
- * and duplicated TOP MATCH chrome over the portrait.
+ * Server post-process: in-place bottom fade on the Fal-painted photo window only.
+ * No Ideogram cutout, no bottom-anchor rescale, no second portrait layer — that
+ * stack caused a smaller cutout pasted over the original inside a white frame.
  */
 export async function applyClientPhotoBottomFade(
   falBuf: Buffer,
   templateBuf: Buffer,
   fadeRect: PixelRect,
-  panelRect: PixelRect,
-  fal?: FalClient | null
+  panelRect: PixelRect
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   const falMeta = await sharp(falBuf).metadata();
@@ -114,36 +63,18 @@ export async function applyClientPhotoBottomFade(
   }
 
   const { left, top, width, height } = fadeInsidePanel;
-  const { left: panelLeft, top: panelTop, width: panelWidth, height: panelHeight } = panel;
 
   const maskPng = await sharp(buildSymmetricalBottomFadeMaskSvg(width, height)).png().toBuffer();
 
-  const falPanelRaw = await sharp(falBuf)
-    .extract({ left: panelLeft, top: panelTop, width: panelWidth, height: panelHeight })
+  const falRegion = await sharp(falBuf)
+    .extract({ left, top, width, height })
     .ensureAlpha()
     .png()
     .toBuffer();
 
-  let cutoutPanel = await removeBackgroundFromClientRegion(fal ?? null, falPanelRaw);
-  const cutoutMeta = await sharp(cutoutPanel).metadata();
-  if (cutoutMeta.width !== panelWidth || cutoutMeta.height !== panelHeight) {
-    cutoutPanel = await resizePng(cutoutPanel, panelWidth, panelHeight);
-  }
+  const keyedRegion = await chromaKeyStudioBackgroundInPlace(falRegion);
 
-  const fadeInPanel = pixelRectRelativeTo(panel, fadeInsidePanel);
-  const cutoutFade = await sharp(cutoutPanel)
-    .extract({
-      left: fadeInPanel.left,
-      top: fadeInPanel.top,
-      width,
-      height,
-    })
-    .png()
-    .toBuffer();
-
-  const falRegion = await bottomAnchorCutoutInCanvas(cutoutFade, width, height);
-
-  const maskedPhoto = await sharp(await resizePng(falRegion, width, height))
+  const maskedPhoto = await sharp(keyedRegion)
     .composite([{ input: maskPng, blend: 'dest-in' }])
     .png()
     .toBuffer();
@@ -158,5 +89,8 @@ export async function applyClientPhotoBottomFade(
     .png()
     .toBuffer();
 
-  return compositeOverlay(falBuf, fadePatch, left, top);
+  return sharp(falBuf)
+    .composite([{ input: fadePatch, left, top }])
+    .png()
+    .toBuffer();
 }
