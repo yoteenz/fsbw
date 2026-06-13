@@ -10,6 +10,7 @@ import {
   lookHairAccuracyLines,
   requiresUniformRootToTipColor,
   unitTexturePromptLine,
+  unitTextureAppearanceLock,
 } from './hairstyleAnalysisUnitCatalog.js';
 import {
   bawStylingRefListBlock,
@@ -101,16 +102,27 @@ function mannequinRefLine(unit: string, refs: { mannequinRefs: MannequinRefIndex
   const idx = mannequinIndexForUnit(refs, unit);
   if (!idx) return '';
   const style = displayStyle(stylingRaw, unit);
+  const unitKey = unit.trim().toUpperCase();
+  const textureLock = unitTextureAppearanceLock(unit);
+  const noneStyleNote =
+    unitKey === 'SOFT CURL'
+      ? 'Copy **tight wave** strand pattern from that mannequin — elongated S-waves only, volume, and one-shoulder drape — **NOT** spiral curls or OCEAN CURL ringlets.'
+      : unitKey === 'OCEAN CURL'
+        ? 'Copy **tight curl** spiral pattern from that mannequin — springy ringlets, volume, and one-shoulder drape.'
+        : 'Copy **hair** strand pattern, definition, volume, and one-shoulder drape from that mannequin — hair region only.';
   const shapeNote =
     style !== 'NONE'
       ? 'Mannequin = **hair-strand texture + hair-end drape direction only** (above the collarbone). Salon finish comes from the BAW styling reference IMAGE — not the mannequin default shape.'
-      : 'Copy **hair** curl pattern, strand definition, volume, and one-shoulder drape from that mannequin — hair region only.';
+      : noneStyleNote;
   return [
     `Optional hair guide — IMAGE ${idx} (${unit} mannequin front):`,
     shapeNote,
+    textureLock ?? '',
     'NECK/BODY LOCK: do NOT copy mannequin neck, throat, collarbones, shoulders, chest, or skin — keep IMAGE 2 client anatomy exactly.',
     'HAIRLINE LOCK: do NOT copy mannequin baby hairs or black edge wisps — retint any edge strands to the look catalog color.',
-  ].join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 }
 
 function neckAndBodyPreservationBlock(): string {
@@ -195,12 +207,15 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
       : unitTexturePromptLine(look.unit);
   }
   const stylingRef = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
+  const textureLock = unitTextureAppearanceLock(look.unit);
   if (stylingRef) {
     const hex = (look.hex || '#000000').toUpperCase();
     return [
       `STYLE **${style}** — print exactly "${style}" in the STYLE value field (never substitute LAYERS unless STYLE is LAYERS or DEFINE).`,
+      textureLock ?? unitTexturePromptLine(look.unit),
       `Hairstyle shape: copy **hair strands only** from IMAGE ${stylingRef.imageIndex} (BAW ${style} reference, ${stylingRef.part} part) — **never** copy head pose, profile angle, or neck rotation from that IMAGE.`,
-      `Match the curl, crimp, straight, or defined-curl pattern from IMAGE ${stylingRef.imageIndex} exactly; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots; hairline edge wisps same ${look.color}, not black.`,
+      `Salon ref adjusts finish within the unit texture tier — never upgrade SOFT CURL to OCEAN CURL spirals or add waves to NOIR/BLANCO.`,
+      `Match the salon finish pattern from IMAGE ${stylingRef.imageIndex}; retint strands to uniform ${look.color} (${hex}) root to tip — no dark roots; hairline edge wisps same ${look.color}, not black.`,
       'The styling reference IMAGE overrides the unit mannequin default finish — do NOT apply layered waves when STYLE is FLAT IRON or CRIMPS/WAND CURLS.',
       'Do not invent a different salon finish.',
     ].join(' ');
