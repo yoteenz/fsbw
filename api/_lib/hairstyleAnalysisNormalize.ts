@@ -1,4 +1,7 @@
-import { normalizeAnalysisStylingId } from './hairstyleAnalysisDisplay.js';
+import {
+  compactEveryDetailMattersLines,
+  normalizeAnalysisStylingId,
+} from './hairstyleAnalysisDisplay.js';
 import { hexForHairColorName } from './hairstyleHairColors.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { resolveCatalogLookForFal } from './hairstyleAnalysisUnitCatalog.js';
@@ -37,5 +40,10 @@ export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis)
           })
         );
 
-  return { ...withScores, topMatch: top, additionalLooks };
+  return {
+    ...withScores,
+    topMatch: top,
+    additionalLooks,
+    whyItWorks: compactEveryDetailMattersLines(withScores.whyItWorks),
+  };
 }
