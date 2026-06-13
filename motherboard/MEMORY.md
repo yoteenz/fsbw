@@ -27877,3 +27877,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal kept IMAGE 2's original part + added manifest PART; dark regrowth from selfie bled through on recolor. Color prompt line 172 used single quotes so `${colorKey}` never interpolated.
 - **Shipped:** **`hairPartLockBlock()`** — exactly one PART per photo; erase IMAGE 2 part if different; never blend part lines from multiple styling IMAGEs. **`uniformRootColorBlock()`** per preview/thumb — vivid/blonde uniform root to tip, no shadow band. **`matchThumbnailBlock`** + **`matchStylingManifestBlock`** + FINAL CHECK updated. Fixed **`unitColorPromptLine`** template literal. BAW styling ref list warns against cross-IMAGE part bleed.
 - **Conventions:** Each look = **one PART** (MIDDLE/LEFT/RIGHT); blonde/vivid = **uniform color root to tip** on thumbs and preview — no dark roots from IMAGE 2.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: fix FUNCTION_INVOCATION_FAILED on generate
+
+- **Context:** User hit **FUNCTION_INVOCATION_FAILED** on **Generate template preview** (THREE MONTH, base64 client photo) after catalog validation passed.
+- **Cause:** **`clientPhotoPanelRulesBlock()`** function declaration was accidentally dropped in **`hairstyleAnalysisFalPrompt.ts`** during hairPartLockBlock edit — orphaned `return [` caused **syntax error** at API module load.
+- **Shipped:** Restored **`function clientPhotoPanelRulesBlock(): string`** wrapper.
