@@ -484,14 +484,25 @@ function overallScoreAndRatingRules(
   ].join('\n');
 }
 
-function matchScoreFalLine(look: FalAnalysisLook): string {
+function matchRowScoreColorBlock(): string {
   return [
-    `TEXTURE: ${look.unit.trim().toUpperCase()}`,
-    `COLOR: ${look.color.trim().toUpperCase()}`,
-    `LENGTH: ${displayLength(look.length)}`,
-    `MATCH SCORE: print ${formatScorePercent(look.score)} in gray ${MATCH_SCORE_GRAY} inside this row's MATCH SCORE value slot only (small Futura PT Medium — not the red OVERALL SCORE panel).`,
-    'Print each value beside its pre-printed label on this MATCH row — TEXTURE, COLOR, LENGTH, then MATCH SCORE on separate labeled lines.',
-    'TEXTURE, COLOR, LENGTH = black uppercase Futura PT Medium in their value slots.',
+    '=== MATCH SCORE % COLOR — GRAY #808080 ONLY (CRITICAL — NEVER BLACK) ===',
+    `MATCH 02, MATCH 03, and MATCH 04 each have a separate MATCH SCORE % value slot — paint **only** that percentage in medium gray **${MATCH_SCORE_GRAY}**.`,
+    'TEXTURE, COLOR, and LENGTH on the same row stay **black** Futura PT Medium — **only** the MATCH SCORE % digits + % suffix are gray.',
+    `FORBIDDEN on MATCH SCORE %: black (#000000 / #1a1a1a), red (${BRAND_RED}), Covered By Your Grace script, large digits, or copying OVERALL SCORE panel styling.`,
+    'Do not paint all four row values black — the MATCH SCORE line is the **one gray exception** on every additional-match row.',
+    'If placeholder or prior text in the MATCH SCORE slot is black, erase and repaint **gray ${MATCH_SCORE_GRAY}**.',
+  ].join('\n');
+}
+
+function matchScoreFalLine(look: FalAnalysisLook): string {
+  const scorePct = formatScorePercent(look.score);
+  return [
+    `TEXTURE: ${look.unit.trim().toUpperCase()} (black Futura PT Medium)`,
+    `COLOR: ${look.color.trim().toUpperCase()} (black Futura PT Medium)`,
+    `LENGTH: ${displayLength(look.length)} (black Futura PT Medium)`,
+    `MATCH SCORE: ${scorePct} — **gray ${MATCH_SCORE_GRAY} only** in this row's MATCH SCORE value slot (small Futura PT Medium — never black, never red OVERALL SCORE styling).`,
+    'Print each value beside its pre-printed label on separate labeled lines — TEXTURE, COLOR, LENGTH, then MATCH SCORE.',
   ].join(' ');
 }
 
@@ -502,6 +513,8 @@ function matchRowScoreIsolationBlock(): string {
     `MATCH SCORE % only: gray ${MATCH_SCORE_GRAY}, small Futura PT Medium, in the MATCH SCORE value slot on that row (below LENGTH on the same MATCH block).`,
     'FORBIDDEN: red/script/large overall-score styling on MATCH SCORE %; printing match scores in the OVERALL SCORE panel; floating % away from the MATCH SCORE label.',
     'Server does **not** composite match-row text — print TEXTURE, COLOR, LENGTH, and gray MATCH SCORE % in-image in each row\'s value slots.',
+    '',
+    matchRowScoreColorBlock(),
   ].join('\n');
 }
 
@@ -523,12 +536,15 @@ function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
 
   const lines: string[] = [
     '=== MATCH 02–04 ROW VALUES — PRINT EXACTLY IN VALUE SLOTS ===',
-    `TEXTURE, COLOR, LENGTH = black Futura PT Medium. MATCH SCORE % = gray ${MATCH_SCORE_GRAY} only.`,
+    matchRowScoreColorBlock(),
+    `TEXTURE, COLOR, LENGTH = black Futura PT Medium. MATCH SCORE % = gray ${MATCH_SCORE_GRAY} only — never black.`,
   ];
 
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
+    const label = `MATCH ${String(i + 2).padStart(2, '0')}`;
     lines.push(
-      `MATCH ${String(i + 2).padStart(2, '0')}: TEXTURE ${look.unit.trim().toUpperCase()}, COLOR ${look.color.trim().toUpperCase()}, LENGTH ${displayLength(look.length)}, MATCH SCORE ${formatScorePercent(look.score)} (${MATCH_SCORE_GRAY})`
+      `${label}: TEXTURE ${look.unit.trim().toUpperCase()}, COLOR ${look.color.trim().toUpperCase()}, LENGTH ${displayLength(look.length)} (all black).`,
+      `${label} MATCH SCORE: ${formatScorePercent(look.score)} — paint gray ${MATCH_SCORE_GRAY} (NOT black).`
     );
   });
 
@@ -767,7 +783,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    'FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
+    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
   );
   return lines.join('\n');
 }
