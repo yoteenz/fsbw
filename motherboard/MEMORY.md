@@ -27850,3 +27850,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to **tighten the Fal prompt** so generated **MATCH RATING stars** and **overall score %** render **smaller** in their value panels.
 - **Shipped (fe20e581):** **`overallScoreFalFontSize()`** reduced (~22% slot height, max 36px, min 16px — was ~34%/52px). New **`matchRatingFalStarSize()`** (~17% slot height, max 26px, min 14px — was ~24%/36px). **`hairstyleAnalysisFalPrompt.ts`** — stronger **petite / wide padding / never billboard** language in score + star design blocks, size rules, and per-line Fal instructions. **`docs/STYLE_ANALYSIS.md`** updated.
 - **Conventions:** OVERALL SCORE + stars = small, understated, generous inner padding — must not dominate or touch panel borders.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: dynamic every-detail-matters from TOP MATCH
+
+- **Context:** User said **every detail matters** bullets must be **dynamic** and change per card — they specified **structure** (one bullet per TOP MATCH spec), not static reuse. Reused bullets (HD LACE / JET BLACK examples) were causing **TOP MATCH specs** to stop diversifying on Fal output.
+- **Cause:** Fal prompt **structure block** hardcoded example bullets; **`buildEveryDetailMattersFromTopMatch`** used rigid templates (length always "MID CHEST FALL"); premium **`whyItWorks`** rebuilt even though premium template has no rose rows.
+- **Shipped (7ad304fa):** Rewrote **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) — lines embed **live catalog values** (unit, color, length inches, lace, style, etc.); **`formatEveryDetailMattersForFal()`** labels each line with **TOP MATCH SPEC = value**; length phrasing varies by inches. **`normalizeHairstyleAnalysisForFal`** rebuilds **`whyItWorks` only on free tier** from diversified top match. Fal prompt removes static examples; forbids placeholder/demo bullet reuse; sync rule between spec column + bullets. Dev overlay rebuilds bullets from **`topMatch`** each render.
+- **Conventions:** Every-detail-matters = **generated fresh from TOP MATCH manifest** each generate; structure = lace/color/texture/style/length rose rows on free tier; bullets and spec column must stay in sync.
