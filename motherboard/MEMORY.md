@@ -27825,3 +27825,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal prompt mentioned **cutout/fade after generation** and free-tier header **HAIR IN PANEL CUTOUT**; server **Ideogram cutout + bottom-anchor** composited a second layer over Fal's full portrait in the fade window only.
 - **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **one in-place full-bleed portrait**; forbid cutout, inset frame, duplicate layer; no "cutout" language for Fal. **`hairstyleAnalysisClientPhotoFade.ts`** — in-place extract + chroma key + symmetrical fade only (no Ideogram, no bottom-anchor). **`hairstyleAnalysisPrompts.ts`**, **`STYLE_ANALYSIS.md`**, preview debug copy updated.
 - **Conventions:** Fal = single layer hair edit in panel; server = bottom marble fade in place only — never paste a cutout card over the original.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: MATCH RATING stars left-to-right, score-based
+
+- **Context:** User reported stars **filling backwards** and inconsistently. **95%+** overall score should show **5 filled stars**; **&lt;95%** = **4 filled** (left four), **5th rightmost empty**.
+- **Shipped:** **`matchRatingFilledStarsFromScore()`** in display/format; **`matchRatingStarsFalLine()`** uses **overall score %** (not fractional rating), explicit **left-to-right** fill (star 1 left, star 5 right), forbids right-to-left fill. **`applyRealisticMatchScores`** rating → 5 or 4 only. Dev overlay **`formatStarRatingFromScore`**.
+- **Conventions:** MATCH RATING stars tied to TOP MATCH overall score % — ≥95 → 5 stars, else 4 + empty rightmost.
