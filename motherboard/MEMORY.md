@@ -28010,3 +28010,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause (bullets):** **`normalizeHairstyleAnalysisForFal`** set **`whyItWorks: []`** for non-free tiers — **`appendEveryDetailMattersLines`** skipped when empty. **Hairline:** Fal prompt lacked per-match hairline manifest; thumbs defaulted to NATURAL edge. **Client name:** prompt specified black Futura.
 - **Shipped:** Gray **`#808080`** client header in **`topMatchHeaderLine`** + **`.clientHeaderNameText`**. **`matchHairlineManifestBlock()`** + stronger **`matchThumbnailBlock`** / styling manifest hairline binding. **`whyItWorks`** rebuilt on **all tiers** from **`buildEveryDetailMattersFromTopMatch`**; premium **`threeMonthFields`** + overlay include **`whyLine-*`**; demo/validation expect 5 lines. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Every-detail-matters bullets on **free and premium**; client header name = **gray only** (spec column stays black); each look’s **HAIRLINE** must shape preview + MATCH thumbs (PEAK/LAGOS via BAW hairline IMAGE when attached).
+
+---
+
+## 2026-06-13 — Hairstyle analysis: Fal prompt 32k limit (generate error)
+
+- **Context:** User hit generate error **“HAIRSTYLE ANALYSIS PROMPT TOO LONG (34735 CHARACTERS; FAL LIMIT IS 32000)”** after recent prompt additions (verbose score/star rules, every-detail lines, duplicate hairline blocks).
+- **Shipped (2e48e832):** **`hairstyleAnalysisFalPrompt.ts`** — compact **`overallScoreAndRatingRules()`**, shorter **`matchThumbnailBlock`** / **`matchRowScoreIsolationBlock`** / **`everyDetailMattersRulesBlock`** / FINAL CHECK; removed duplicate **`matchHairlineManifestBlock`** and dead helpers; **`formatEveryDetailMattersForFal()`** → **`EDM 1:`** … **`EDM 5:`** (api + src). Three-month Kateena demo prompt ~**28.4k** chars with full mannequin/styling/hairline refs. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Keep premium Fal prompts **under 32k** — prefer compact EDM/score/thumb lines over verbose duplicate rule blocks; hairline still bound via **`matchStylingManifestBlock`** + **`hairlineRefPromptLine`**.
