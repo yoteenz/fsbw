@@ -28091,3 +28091,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User said EDM rose rows still felt like the same sentences rearranged — wanted much more variety (e.g. **ESPRESSO TO ACCENTUATE YOUR FEATURES**) instead of repeating almond eyes every time; study Noir PDP **DETAILS** tab for dynamic spec phrasing.
 - **Shipped:** **`hairstyleAnalysisEveryDetailMattersPools.ts`** (api + src) — large variant pools per theme: **lace** (14, PDP melt/knots/HD film), **color** (16 generic + 6 face optional — eyes only ~2 variants), **texture** (16+4 face), **style** (16 salon / 12 natural), **length** (7–8 per bucket). Generic benefit angles: features, complexion, cheekbones, depth, glow, strand flow, versatility — not eyes/jaw every row. Main builder files import pools; **`everyDetailVariationSeed()`** unchanged per generate.
 - **Conventions:** Face-aware lines are optional extras in pools — most color/texture variants never mention eyes; PDP signature phrases (melted lace, single strand knots, raw texture, natural state) inform lace/style pools.
+
+---
+
+## 2026-06-13 — STYLE NONE for all natural-texture looks (not just top match)
+
+- **Context:** BEACH WAVE (and other units) still printed **FLAT IRON** in STYLE slot while image showed default unit texture — should be **NONE** unless BAW salon styling ref applies.
+- **Root cause:** **`resolveStylingForCatalog`** only preserved NONE for styleIndex 0; additional looks coerced NONE → FLAT IRON/LAYERS via **`coerceSalonStyleForUnit`**. **`diversifyLook`** rotated salon styles on index > 0.
+- **Shipped:** NONE preserved for **all** looks in **`resolveStylingForCatalog`** / **`resolveCatalogLook`**; **`diversifyLook`** + **`varyInstallSpecs`** default to NONE unless explicit salon pick; demo top/soft wave → NONE; Fal prompt updated for STYLE NONE on additional matches.
+- **Conventions:** STYLE **NONE** = natural unit texture on every look (top + MATCH 02–04); LAYERS/FLAT IRON/CRIMPS/DEFINE/WAND CURLS only when explicitly picked in PSA/manifest.

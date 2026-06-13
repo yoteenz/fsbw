@@ -520,7 +520,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
 
   return [
     '=== ADDITIONAL MATCHES — VARIED STYLING ===',
-    'Each additional match uses a **different catalog unit** and **different STYLE** from the manifest — never duplicate NOIR + FLAT IRON on every row.',
+    'Each additional match uses a **different catalog unit** from the manifest — STYLE NONE = natural unit texture; print LAYERS/FLAT IRON/CRIMPS/DEFINE/WAND CURLS only when manifest says so.',
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
     'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
