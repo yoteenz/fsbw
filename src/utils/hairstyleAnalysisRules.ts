@@ -100,9 +100,8 @@ export function validateHairstyleAnalysis(
     });
   });
 
-  const tierNorm = normalizeAnalysisTier(analysis.tier);
-  const expectedWhy = tierNorm === 'free' ? 5 : 0;
-  if (expectedWhy > 0 && analysis.whyItWorks.length !== expectedWhy) {
+  const expectedWhy = 5;
+  if (analysis.whyItWorks.length !== expectedWhy) {
     issues.push({
       field: 'whyItWorks',
       message: `Expected ${expectedWhy} why lines for tier ${analysis.tier}, got ${analysis.whyItWorks.length}`,
@@ -177,12 +176,7 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
     everyDetailFaceFeatures: options.everyDetailFaceFeatures,
     whyItWorks:
       options.whyItWorks ??
-      (normalizeAnalysisTier(options.tier) === 'free'
-        ? buildEveryDetailMattersFromTopMatch(
-            resolvedTop,
-            options.everyDetailFaceFeatures
-          )
-        : []),
+      buildEveryDetailMattersFromTopMatch(resolvedTop, options.everyDetailFaceFeatures),
     createdAt: new Date().toISOString(),
   };
 }

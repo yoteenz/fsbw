@@ -95,10 +95,10 @@ export function buildKateenaDemoAnalysis(
   );
   const resolvedTop = resolveCatalogLook(topMatch, 0);
   const resolvedAlts = additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1));
-  const whyItWorks =
-    tier === 'free'
-      ? buildEveryDetailMattersFromTopMatch(resolvedTop, KATEENA_DEMO_FACE_FEATURES)
-      : [];
+  const whyItWorks = buildEveryDetailMattersFromTopMatch(
+    resolvedTop,
+    KATEENA_DEMO_FACE_FEATURES
+  );
 
   return {
     id: `kateena-demo-${tier}`,
@@ -108,7 +108,7 @@ export function buildKateenaDemoAnalysis(
     clientPreviewUrl,
     topMatch: resolvedTop,
     additionalLooks: resolvedAlts,
-    everyDetailFaceFeatures: tier === 'free' ? KATEENA_DEMO_FACE_FEATURES : undefined,
+    everyDetailFaceFeatures: KATEENA_DEMO_FACE_FEATURES,
     whyItWorks,
     createdAt: new Date().toISOString(),
   };

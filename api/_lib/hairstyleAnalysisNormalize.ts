@@ -57,11 +57,8 @@ export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis)
     topMatch: top,
     additionalLooks,
     everyDetailFaceFeatures: analysis.everyDetailFaceFeatures,
-    whyItWorks:
-      tierKey === 'free'
-        ? compactEveryDetailMattersLines(
-            buildEveryDetailMattersFromTopMatch(top, analysis.everyDetailFaceFeatures ?? {})
-          )
-        : [],
+    whyItWorks: compactEveryDetailMattersLines(
+      buildEveryDetailMattersFromTopMatch(top, analysis.everyDetailFaceFeatures ?? {})
+    ),
   };
 }

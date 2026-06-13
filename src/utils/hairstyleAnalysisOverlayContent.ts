@@ -73,6 +73,13 @@ function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, st
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     applyMatchRow(out, `match${i + 2}`, look);
   });
+  const whyLines = buildEveryDetailMattersFromTopMatch(
+    analysis.topMatch,
+    analysis.everyDetailFaceFeatures
+  );
+  whyLines.forEach((line, i) => {
+    out[`whyLine-${i}`] = line;
+  });
   return out;
 }
 

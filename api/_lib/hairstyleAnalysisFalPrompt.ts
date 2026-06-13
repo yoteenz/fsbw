@@ -18,6 +18,7 @@ import {
 } from './hairstyleAnalysisBawStylingRefs.js';
 import {
   bawHairlineRefListBlock,
+  hairlineRefForLook,
   hairlineRefPromptLine,
   type HairstyleAnalysisHairlineRef,
 } from './hairstyleAnalysisBawHairlineRefs.js';
@@ -160,7 +161,7 @@ function topMatchHeaderLine(fullName: string): string {
     'The template prints black uppercase "TOP MATCH" as a section header directly above the OVERALL SCORE / MATCH RATING panels on the right.',
     `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's first and last name, uppercase.`,
     'Erase the old header letters first — **single clean text layer** (no double-print, ghost offset, or stacked duplicates).',
-    'Use the same black Futura PT Medium style, size, weight, and letter-spacing as the original header — only swap the words.',
+    `Use **medium gray ${MATCH_SCORE_GRAY}** Futura PT Medium — same size, weight, and letter-spacing as the original header; **only** the color is gray (not black).`,
     '**Center the client name horizontally within the frosted header panel** above OVERALL SCORE and MATCH RATING — equal padding left and right; do NOT left-align.',
     'Do NOT leave "TOP MATCH" visible in that header slot. Do NOT duplicate the client name in the red pill (pill stays "TOP MATCH" only).',
   ].join('\n');
@@ -244,7 +245,12 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const style = displayStyle(look.styling, look.unit);
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
     const refNote = ref ? `IMAGE ${ref.imageIndex}` : 'mannequin texture only';
-    lines.push(`${label}: STYLE ${style}, PART ${displayPart(look.part)} (one part only on thumb), COLOR ${look.color.trim().toUpperCase()} uniform root to tip if vivid/blonde, ${refNote}`);
+    const hl = displayHairline(look.hairline);
+    const hlRef = hairlineRefForLook(refs.hairlineRefs, look.hairline);
+    const hlNote = hlRef ? `HAIRLINE ${hl} via IMAGE ${hlRef.imageIndex}` : `HAIRLINE ${hl}`;
+    lines.push(
+      `${label}: STYLE ${style}, PART ${displayPart(look.part)} (one part only on thumb), ${hlNote}, COLOR ${look.color.trim().toUpperCase()} uniform root to tip if vivid/blonde, ${refNote}`
+    );
   });
 
   return lines.join('\n');
@@ -367,10 +373,18 @@ function realisticHairDensityBlock(densityLabel: string, isThumbnail = false): s
 function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
+  const hairlineLabel = displayHairline(look.hairline);
+  const hairlineRef = hairlineRefForLook(refs.hairlineRefs, look.hairline);
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
+  const hairlineNote = hairlineRef
+    ? `**HAIRLINE ${hairlineLabel}** — forehead lace-edge shape from IMAGE ${hairlineRef.imageIndex} (mandatory; not NATURAL)`
+    : hairlineLabel === 'NATURAL'
+      ? 'HAIRLINE NATURAL — soft lace-front edge'
+      : `**HAIRLINE ${hairlineLabel}** — apply ${hairlineLabel} forehead edge (not NATURAL)`;
   return [
     `${label} THUMB: same client face **and same head/body pose** as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); one-shoulder drape; hair-only edits.`,
+    hairlineNote,
     'Keep IMAGE 2 head angle, gaze, and shoulder line — **never** turn the client profile or 3/4 to match a styling/mannequin IMAGE.',
     `PART ${part} **only** on this thumb — one scalp line; erase any other part from IMAGE 2 or other refs.`,
     uniformRootColorBlock(look, 'thumbnail'),
@@ -615,6 +629,40 @@ function matchRowValuesFalRules(): string {
   ].join('\n');
 }
 
+function matchHairlineManifestBlock(
+  analysis: FalHairstyleAnalysis,
+  refs: FalPromptImageRefs
+): string {
+  const tier = normalizeTier(analysis.tier);
+  if (tier === 'free') return '';
+
+  const lines: string[] = [
+    '=== HAIRLINE — PER LOOK (TOP MATCH + MATCH 02–04 THUMBS — CRITICAL) ===',
+    'Each look has its own HAIRLINE (NATURAL, PEAK, LAGOS, or LAGOS + PEAK). Shape the **forehead lace-front edge** on **every** client photo to that manifest — never default all matches to NATURAL.',
+    'When HAIRLINE is PEAK or LAGOS: use the matching BAW hairline reference IMAGE for **forehead edge geometry only**; retint baby hairs to the look catalog color.',
+  ];
+
+  const allLooks = [analysis.topMatch, ...analysis.additionalLooks.slice(0, 3)];
+  allLooks.forEach((look, i) => {
+    const label = i === 0 ? 'TOP MATCH preview' : `MATCH ${String(i + 1).padStart(2, '0')} thumb`;
+    const hl = displayHairline(look.hairline);
+    const ref = hairlineRefForLook(refs.hairlineRefs, look.hairline);
+    const refNote = ref
+      ? `use IMAGE ${ref.imageIndex} (${ref.key}) for lace-edge shape`
+      : hl === 'NATURAL'
+        ? 'natural soft lace-front edge'
+        : `apply ${hl} edge — erase NATURAL placeholder`;
+    lines.push(`${label}: HAIRLINE **${hl}** — ${refNote}.`);
+  });
+
+  lines.push(
+    'TOP MATCH spec HAIRLINE value must print the manifest exactly — erase template placeholder NATURAL when manifest is PEAK or LAGOS.',
+    'FORBIDDEN: PEAK/LAGOS manifest with NATURAL-looking hairline on thumbs; ignoring BAW hairline IMAGE when attached; one NATURAL edge on every match.'
+  );
+
+  return lines.join('\n');
+}
+
 function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
   const tier = normalizeTier(analysis.tier);
   if (tier === 'free') return '';
@@ -662,7 +710,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
     '=== MATCH THUMBNAILS — SAME CLIENT FACE + SAME POSE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
     '**All MATCH 02–04 thumbnails share one pose** — identical head angle, gaze, and shoulders as IMAGE 2 and as each other.',
-    'Each thumb: **one PART only** + **uniform catalog color root to tip** on blonde/vivid installs — no dark roots from IMAGE 2.',
+    'Each thumb: **one PART only** + **manifest HAIRLINE edge shape** (PEAK/LAGOS/NATURAL per look) + **uniform catalog color root to tip** on blonde/vivid installs — no dark roots from IMAGE 2.',
     'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
     mannequinLine,
     'NEVER use back-of-head stock photos, different people, hair-only swatches, repainted lower-body clothing, or symmetric both-shoulder hair.',
@@ -808,7 +856,7 @@ function freePromptFooter(
     '',
     '=== FINAL CHECK ===',
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
-    'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel — **centered** in the header panel.',
+    'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not black).',
     'TOP MATCH specs + every detail matters filled; OVERALL SCORE + MATCH RATING printed in-image at petite sizes (erase large template placeholders first).',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
@@ -860,10 +908,12 @@ function threeMonthPrompt(
   lines.push('');
   lines.push(matchStylingManifestBlock(analysis, refs));
   lines.push('');
+  lines.push(matchHairlineManifestBlock(analysis, refs));
+  lines.push('');
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); OVERALL SCORE + MATCH RATING = **petite in-image** score ~${overallScoreFalFontSize(TOP_SCORE_SLOT)}px + stars ~${matchRatingFalStarSize(RATING_SLOT)}px (erase ~118px template star placeholders + oversized % before drawing); thumbs = same client + **same pose as IMAGE 2 on every row** + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
+    `FINAL CHECK: red pill = "TOP MATCH" only; header above score panels = client first + last name **centered** in **gray ${MATCH_SCORE_GRAY}** Futura PT Medium (not black); TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE) — HAIRLINE must match manifest on preview + every thumb; OVERALL SCORE + MATCH RATING = **petite in-image** score ~${overallScoreFalFontSize(TOP_SCORE_SLOT)}px + stars ~${matchRatingFalStarSize(RATING_SLOT)}px (erase ~118px template star placeholders + oversized % before drawing); every-detail-matters rose rows filled verbatim; thumbs = same client + **same pose as IMAGE 2 on every row** + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
   );
   return lines.join('\n');
 }
