@@ -593,6 +593,8 @@ function buildTemplateRules(
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
     ...(tierKey === 'free' ? [freeTierOnlyBlock(), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
+    topMatchSpecManifestBlock(analysis.topMatch),
+    '',
     ...photoRules,
     '',
     ...(tierKey === 'free'
@@ -610,6 +612,26 @@ function buildTemplateRules(
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
+  const style = displayStyle(look.styling, look.unit);
+  return [
+    '=== TOP MATCH SPEC COLUMN — PRINT EXACTLY IN VALUE SLOTS (RIGHT PANEL) ===',
+    'The template may show placeholder catalog text (e.g. NOIR, JET BLACK, LAYERS) — ERASE every placeholder and REPLACE with the manifest below.',
+    'Print each value in black uppercase Futura PT Medium in the empty slot beside its pre-printed label only — do not duplicate labels.',
+    `MANIFEST — TEXTURE: ${look.unit.trim().toUpperCase()}`,
+    `MANIFEST — COLOR: ${look.color.trim().toUpperCase()}`,
+    `MANIFEST — LENGTH: ${displayLength(look.length)}`,
+    `MANIFEST — LACE: ${displayLace(look.lace)}`,
+    `MANIFEST — DENSITY: ${displayDensity(look.density)}`,
+    `MANIFEST — PART: ${displayPart(look.part)}`,
+    `MANIFEST — HAIRLINE: ${displayHairline(look.hairline)}`,
+    `MANIFEST — STYLE: ${style}`,
+    lookHairAccuracyLines(look),
+    `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
+    `STYLE value must print exactly "${style}" — never default to LAYERS when manifest STYLE is FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
+  ].join('\n');
 }
 
 function topMatchBlock(look: FalAnalysisLook): string[] {
@@ -655,6 +677,7 @@ function freePromptFooter(
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
+    'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     overallScoreFalLine(analysis.topMatch, promptOptions?.overallScoreFontLabel),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
   ].join('\n');
@@ -712,7 +735,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    'FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name; TOP MATCH specs + every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
+    'FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length + gray score % printed on each row.'
   );
   return lines.join('\n');
 }

@@ -3,6 +3,8 @@
  * Mirrors src/data/hairstyleCatalog.ts and unit PDP specs (unitPdpDetailsConfig).
  */
 
+import { normalizeAnalysisStylingId } from './hairstyleAnalysisDisplay.js';
+
 export const CATALOG_UNITS = [
   'NOIR',
   'BLANCO',
@@ -189,4 +191,58 @@ export function lookHairAccuracyLines(look: { unit: string; color: string; hex: 
   return [unitTexturePromptLine(look.unit), unitColorPromptLine(look.unit, look.color, look.hex)].join(
     '\n'
   );
+}
+
+const VALID_SALON_STYLES: Record<CatalogUnitName, readonly string[]> = {
+  NOIR: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
+  BLANCO: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
+  'SOFT WAVE': ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
+  'BEACH WAVE': ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
+  'SOFT CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
+  'OCEAN CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
+};
+
+function defaultSalonStyleForPattern(pattern: UnitCatalogEntry['pattern']): string {
+  if (pattern === 'STRAIGHT') return 'FLAT IRON';
+  if (pattern === 'WAVY') return 'LAYERS';
+  return 'DEFINE';
+}
+
+function coerceSalonStyleForUnit(unitKey: CatalogUnitName, styling: string): string {
+  if (styling === 'NONE') {
+    return defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern);
+  }
+  const allowed = VALID_SALON_STYLES[unitKey];
+  if (allowed.includes(styling)) return styling;
+  return defaultSalonStyleForPattern(UNIT_CATALOG[unitKey].pattern);
+}
+
+/** Align TOP MATCH / look specs with BAW catalog unit (density, valid salon STYLE id). */
+export function resolveCatalogLookForFal<
+  T extends {
+    unit: string;
+    styling: string;
+    density: string;
+    color: string;
+    hex: string;
+  },
+>(look: T): T {
+  const unit = look.unit.trim().toUpperCase();
+  const unitKey = normalizeCatalogUnit(unit);
+  const styling = normalizeAnalysisStylingId(unit, look.styling);
+  const catalog = unitKey ? UNIT_CATALOG[unitKey] : null;
+  const resolvedStyling = unitKey ? coerceSalonStyleForUnit(unitKey, styling) : styling;
+  const density =
+    catalog && (!look.density?.trim() || (look.density === '250%' && catalog.density !== '250%'))
+      ? catalog.density
+      : look.density;
+
+  return {
+    ...look,
+    unit,
+    styling: resolvedStyling,
+    density,
+    color: look.color.trim().toUpperCase(),
+    hex: look.hex?.trim() || '#000000',
+  };
 }
