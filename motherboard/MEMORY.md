@@ -28207,3 +28207,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Later color-matching edits contradicted the original ban — prompts said "baby hairs/wisps = catalog color", "incl. baby hairs", NATURAL shape guide had "light baby-hair edge", and `hairlineRulesBlock` only said "do not invent **heavy** new baby-hair clutter" (implying light wisps OK).
 - **Shipped (dd55ac52):** **`noInventedBabyHairsBlock()`** in **`hairstyleAnalysisBawHairlineRefs.ts`** — authoritative FORBIDDEN block (no wisps on skin, no mannequin edge copy). **`hairlineRulesBlock`** → shape-only (PEAK/LAGOS/NATURAL). Removed baby-hair-add language from **`hairstyleAnalysisFalPrompt.ts`**, **`hairstyleAnalysisUnitCatalog.ts`**, hairline shape lines, color/root manifest lines, FINAL CHECK. Root-to-tip repaint keeps **no dark roots** without instructing model to add wisps.
 - **Conventions:** Hairstyle analysis Fal = **clean lace-front edge, no baby hairs on skin**; retint only if IMAGE 2 already has edge strands in hair region — never spawn new fuzz (matches **`buildClientHairstylePreviewPrompt`** + live try-on).
+
+---
+
+## 2026-06-13 — Hairstyle Fal: hairline refs restored, one-shoulder drape reprioritized
+
+- **Context:** User reported prior baby-hair fix **deprioritized one-shoulder drape**; baby hair still present; **PEAK / LAGOS / LAGOS+PEAK** hairlines not generating (text-only guide insufficient).
+- **Cause:** Hairline ref IMAGEs removed in favor of text guide (`collectHairlineRefsForAnalysis` returned empty); conflicting baby-hair/color lines; one-shoulder block buried mid-prompt after catalog/color/part blocks.
+- **Shipped (20a4cec6):** Restored **`collectHairlineRefsForAnalysis`** + Fal upload of **`/assets/peak front.png`** / **`/assets/lagos front.png`**; **`hairlineBindingPromptLine`** per look; **`bawHairlineRefListBlock`** in prompt. Moved **`asymmetricOneShoulderDrapeBlock`** + **`noInventedBabyHairsBlock`** early in template rules; **`oneShoulderDrapeCompactLock()`** repeated in TOP MATCH hair + thumbs + FINAL CHECK. Baby hair rule = **erase** fuzz on skin (no retint loophole). Diversity adds **LAGOS + PEAK** to hairline rotation.
+- **Conventions:** PEAK/LAGOS+PEAK → peak front ref; LAGOS-only → lagos front ref; NATURAL → text guide only; one-shoulder drape = **equal priority** to face/hairline locks.
