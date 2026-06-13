@@ -28159,6 +28159,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-13 — Free tier panel footers (specs locked + build ribbon)
+
+- **Context:** User wanted centered red footer lines to fill empty space on free/1-pick template only — **YOUR BUILD SPECS ARE LOCKED IN PLACE.** below TOP MATCH specs; **SOFT CURL · 22" · CHESTNUT** build ribbon below every-detail-matters rows.
+- **Shipped:** Free-tier slots **`topMatchSummary`** + **`edmBuildSummary`** in **`hairstyleAnalysisTemplateLayouts.ts`**; **`FREE_TOP_MATCH_PANEL_FOOTER`** + **`formatEdmPanelBuildSummary()`** (api + src); Fal **`freeTierPanelFooterBlock()`**; dev overlay red Futura centered styling.
+- **Conventions:** Free tier only — panel footers are centered red Futura PT Medium; EDM ribbon = UNIT · inches" · COLOR.
+
+---
+
 ## 2026-06-13 — EDM brand copy (hairline, pairs well, natural state)
 
 - **Context:** User flagged weak EDM lines from screenshot — **EDGE** terminology (use **hairline** only), **PAIRED WITH YOUR SKIN TONE** (meaningless), **HAIR THAT FALLS CLEANLY** (irrelevant), **LEFT IN RAW TEXTURE** (prefer details-tab phrasing).
