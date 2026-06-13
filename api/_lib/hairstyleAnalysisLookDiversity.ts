@@ -3,6 +3,7 @@
  * instead of collapsing to NOIR 24" 250% FLAT IRON / LAYERS on every generate.
  */
 import {
+  allowedColorsForCatalogUnit,
   CATALOG_UNITS,
   normalizeCatalogUnit,
   type CatalogUnitName,
@@ -41,8 +42,8 @@ const LENGTH_OPTIONS = ['22 INCHES', '24 INCHES', '26 INCHES', '28 INCHES', '30 
 const PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
 
 const NEUTRAL_COLORS = ['JET BLACK', 'OFF BLACK', 'ESPRESSO', 'CHESTNUT'] as const;
-const BLONDE_COLORS = ['PLATINUM', 'GOLDEN', 'ASH', 'HONEY'] as const;
-const VIBRANT_COLORS = ['CHERRY', 'COPPER', 'GINGER', 'PLUM', 'COBALT', 'SANGRIA'] as const;
+const LIGHT_NEUTRAL_COLORS = ['HONEY', 'CHESTNUT'] as const;
+const VIBRANT_COLORS = ['CHERRY', 'COPPER', 'GINGER', 'PLUM', 'COBALT', 'SANGRIA', 'RASPBERRY', 'TEAL', 'SLIME', 'CITRINE'] as const;
 
 function shuffle<T>(items: readonly T[]): T[] {
   const out = [...items];
@@ -57,15 +58,31 @@ function salonStylesForUnit(unitKey: CatalogUnitName): string[] {
   return VALID_SALON_STYLES[unitKey].filter((s) => s !== 'NONE');
 }
 
-function colorForUnit(unitKey: CatalogUnitName, bucket: 'neutral' | 'blonde' | 'vibrant' | 'any'): string {
+function pickAllowedColor(
+  unitKey: CatalogUnitName,
+  bucket: 'neutral' | 'blonde' | 'vibrant' | 'any'
+): string {
+  const allowed = allowedColorsForCatalogUnit(unitKey);
+  const allowedSet = new Set(allowed.map((c) => c.toUpperCase()));
+  const filter = (colors: readonly string[]) =>
+    colors.filter((c) => allowedSet.has(c.toUpperCase()));
+
   if (unitKey === 'BLANCO') {
-    return shuffle(BLONDE_COLORS)[0] ?? 'PLATINUM';
+    return shuffle(filter(['GOLDEN', 'PLATINUM', 'ASH']))[0] ?? 'PLATINUM';
   }
-  if (bucket === 'blonde') return shuffle(BLONDE_COLORS)[0] ?? 'HONEY';
-  if (bucket === 'vibrant') return shuffle(VIBRANT_COLORS)[0] ?? 'CHERRY';
-  if (bucket === 'neutral') return shuffle(NEUTRAL_COLORS)[0] ?? 'OFF BLACK';
-  const pool = shuffle([...NEUTRAL_COLORS, ...BLONDE_COLORS, ...VIBRANT_COLORS]);
-  return pool[0] ?? 'JET BLACK';
+
+  const neutral = filter(NEUTRAL_COLORS);
+  const light = filter(LIGHT_NEUTRAL_COLORS);
+  const vibrant = filter(VIBRANT_COLORS);
+
+  if (bucket === 'neutral') return shuffle(neutral)[0] ?? allowed[0];
+  if (bucket === 'blonde') return shuffle(light.length ? light : neutral)[0] ?? allowed[0];
+  if (bucket === 'vibrant') return shuffle(vibrant)[0] ?? allowed[0];
+  return shuffle([...neutral, ...light, ...vibrant])[0] ?? allowed[0];
+}
+
+function colorForUnit(unitKey: CatalogUnitName, bucket: 'neutral' | 'blonde' | 'vibrant' | 'any'): string {
+  return pickAllowedColor(unitKey, bucket);
 }
 
 function isGenericNoirStack(look: DiversifiableLook): boolean {
@@ -99,29 +116,43 @@ function needsDiversification(looks: DiversifiableLook[]): boolean {
   return false;
 }
 
-function assignUniqueUnits(count: number, keepFirstUnit: string | null): CatalogUnitName[] {
-  const shuffled = shuffle(CATALOG_UNITS);
-  const out: CatalogUnitName[] = [];
+function assignUnitsForBuckets(
+  count: number,
+  keepFirstUnit: string | null,
+  buckets: Array<'neutral' | 'blonde' | 'vibrant' | 'any'>
+): CatalogUnitName[] {
+  const out: CatalogUnitName[] = new Array(count);
   const used = new Set<string>();
+  const shuffled = shuffle(CATALOG_UNITS);
 
   const firstKey = keepFirstUnit ? normalizeCatalogUnit(keepFirstUnit) : null;
   if (firstKey && count > 0) {
-    out.push(firstKey);
+    out[0] = firstKey;
     used.add(firstKey);
   }
 
-  for (const unit of shuffled) {
-    if (out.length >= count) break;
-    if (used.has(unit)) continue;
-    out.push(unit);
-    used.add(unit);
+  buckets.forEach((bucket, i) => {
+    if (out[i] || bucket !== 'blonde') return;
+    out[i] = 'BLANCO';
+    used.add('BLANCO');
+  });
+
+  let poolIdx = 0;
+  for (let i = 0; i < count; i++) {
+    if (out[i]) continue;
+    while (poolIdx < shuffled.length && used.has(shuffled[poolIdx])) poolIdx++;
+    if (poolIdx < shuffled.length) {
+      out[i] = shuffled[poolIdx];
+      used.add(shuffled[poolIdx]);
+      poolIdx++;
+      continue;
+    }
+    const fallback = CATALOG_UNITS.find((u) => !used.has(u)) ?? CATALOG_UNITS[i % CATALOG_UNITS.length];
+    out[i] = fallback;
+    used.add(fallback);
   }
 
-  while (out.length < count) {
-    out.push(CATALOG_UNITS[out.length % CATALOG_UNITS.length]);
-  }
-
-  return out.slice(0, count);
+  return out;
 }
 
 function diversifyLook<L extends DiversifiableLook>(
@@ -160,12 +191,11 @@ export function diversifyHairstyleAnalysisLooks<L extends DiversifiableLook>(
 
   const keepTopUnit =
     !isGenericNoirStack(topMatch) && normalizeCatalogUnit(topMatch.unit) ? topMatch.unit : null;
-  const units = assignUniqueUnits(all.length, keepTopUnit);
-
   const colorBuckets: Array<'neutral' | 'blonde' | 'vibrant' | 'any'> =
     all.length === 1
       ? ['any']
       : ['neutral', 'blonde', 'vibrant', ...Array.from({ length: all.length - 3 }, () => 'any' as const)];
+  const units = assignUnitsForBuckets(all.length, keepTopUnit, colorBuckets);
 
   const diversifiedTop = diversifyLook(topMatch, 0, units[0], colorBuckets[0] ?? 'any');
   const diversifiedAlts = additionalLooks.map((look, i) =>
