@@ -27816,3 +27816,12 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted lace rose row to read **HD LACE FOR AN ULTRA REALISTIC FINISH** (not **THE**).
 - **Shipped:** **`hairstyleAnalysisEveryDetailMatters.ts`** (api + src) + Fal prompt example updated.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: fix cutout prompt double-portrait glitch
+
+- **Context:** User reported **cutout prompt articulated wrong** — Fal/server produced a **smaller cutout pasted on top of the original** inside a white frame (Polaroid glitch in TOP MATCH panel).
+- **Cause:** Fal prompt mentioned **cutout/fade after generation** and free-tier header **HAIR IN PANEL CUTOUT**; server **Ideogram cutout + bottom-anchor** composited a second layer over Fal's full portrait in the fade window only.
+- **Shipped:** **`hairstyleAnalysisFalPrompt.ts`** — **one in-place full-bleed portrait**; forbid cutout, inset frame, duplicate layer; no "cutout" language for Fal. **`hairstyleAnalysisClientPhotoFade.ts`** — in-place extract + chroma key + symmetrical fade only (no Ideogram, no bottom-anchor). **`hairstyleAnalysisPrompts.ts`**, **`STYLE_ANALYSIS.md`**, preview debug copy updated.
+- **Conventions:** Fal = single layer hair edit in panel; server = bottom marble fade in place only — never paste a cutout card over the original.
