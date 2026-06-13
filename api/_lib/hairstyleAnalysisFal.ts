@@ -120,6 +120,32 @@ async function uploadPublicUrlToFal(fal: FalClient, url: string, fileName: strin
   return uploadBufferToFal(fal, buf, fileName, mimeFromUrl(url));
 }
 
+async function resolveClientPreviewBuffer(raw: string, siteOrigin: string): Promise<Buffer> {
+  const trimmed = raw.trim();
+  if (!trimmed) throw new Error('client-preview URL is required');
+
+  if (trimmed.startsWith('data:')) {
+    const { mime, buf } = parseDataUrl(trimmed);
+    const normalized = await normalizeClientPreviewBuffer(buf, mime);
+    return normalized.buf;
+  }
+
+  const publicUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://')
+    ? trimmed
+    : trimmed.startsWith('/')
+      ? `${siteOrigin.replace(/\/$/, '')}${trimmed}`
+      : null;
+
+  if (!publicUrl) throw new Error('Unsupported client-preview URL');
+  const res = await fetch(publicUrl);
+  if (!res.ok) throw new Error(`client preview fetch failed (${res.status})`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  if (!buf.length) throw new Error('client preview image empty');
+  const mime = mimeFromUrl(publicUrl);
+  const normalized = await normalizeClientPreviewBuffer(buf, mime);
+  return normalized.buf;
+}
+
 async function normalizeClientPreviewBuffer(buf: Buffer, mime: string): Promise<{ buf: Buffer; mime: string }> {
   if (buf.length <= 1_500_000) return { buf, mime };
   const sharp = (await import('sharp')).default;
@@ -231,16 +257,23 @@ function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
 
-/** Template + client by default. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true to skip BAW styling refs. */
+/** Template + client by default. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false to attach BAW styling ref IMAGEs. */
 export function hairstyleAnalysisFalMinimalImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS?.trim().toLowerCase();
-  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
-  return false;
+  if (raw === 'false' || raw === '0' || raw === 'no') return false;
+  return true;
 }
 
 /** Opt-in unit mannequin fronts for hair texture/drape hints. Default off — avoids neck/shoulder bleed from mannequin geometry. */
 export function hairstyleAnalysisFalMannequinImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MANNEQUIN_REFS?.trim().toLowerCase();
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return false;
+}
+
+/** Opt-in PEAK/LAGOS hairline mannequin IMAGEs. Default off — full mannequin faces bleed into client portrait. */
+export function hairstyleAnalysisFalHairlineImageRefs(): boolean {
+  const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS?.trim().toLowerCase();
   if (raw === 'true' || raw === '1' || raw === 'yes') return true;
   return false;
 }
@@ -271,24 +304,18 @@ export async function generateHairstyleAnalysisWithFal(
   if (!falKey) throw new Error('FAL_KEY is not configured');
 
   const fal = await getFalClient(falKey);
-  const templateUrl = await resolvePublicImageUrl(
-    fal,
-    input.templateUrl,
-    input.siteOrigin,
-    'template'
-  );
-  const clientUrl = await resolvePublicImageUrl(
-    fal,
-    input.clientPreviewUrl,
-    input.siteOrigin,
-    'client-preview'
-  );
+  const [templateUrl, clientUrl, clientPreviewBuf] = await Promise.all([
+    resolvePublicImageUrl(fal, input.templateUrl, input.siteOrigin, 'template'),
+    resolvePublicImageUrl(fal, input.clientPreviewUrl, input.siteOrigin, 'client-preview'),
+    resolveClientPreviewBuffer(input.clientPreviewUrl, input.siteOrigin),
+  ]);
 
   const analysis = normalizeHairstyleAnalysisForFal(input.analysis, {
     skipDiversification: input.skipLookDiversification === true,
   });
   const minimalRefs = hairstyleAnalysisFalMinimalImageRefs();
   const includeMannequins = hairstyleAnalysisFalMannequinImageRefs();
+  const includeHairlineRefs = hairstyleAnalysisFalHairlineImageRefs();
   const mannequinRefs = includeMannequins
     ? collectMannequinRefsForAnalysis(unitsFromAnalysis(analysis), 3)
     : [];
@@ -301,15 +328,16 @@ export async function generateHairstyleAnalysisWithFal(
     : [];
 
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks];
-  const hairlineRefs = collectHairlineRefsForAnalysis(
-    allLooks,
-    3 + mannequinRefs.length
-  );
-  const hairlineUrls = await Promise.all(
-    hairlineRefs.map((ref) =>
-      resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `hairline-${ref.key}`)
-    )
-  );
+  const hairlineRefs = includeHairlineRefs
+    ? collectHairlineRefsForAnalysis(allLooks, 3 + mannequinRefs.length)
+    : [];
+  const hairlineUrls = includeHairlineRefs
+    ? await Promise.all(
+        hairlineRefs.map((ref) =>
+          resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `hairline-${ref.key}`)
+        )
+      )
+    : [];
 
   const stylingRefs = minimalRefs
     ? []
@@ -340,12 +368,13 @@ export async function generateHairstyleAnalysisWithFal(
     input.templateUrl.startsWith('http://') || input.templateUrl.startsWith('https://')
       ? input.templateUrl
       : `${input.siteOrigin.replace(/\/$/, '')}${input.templateUrl.startsWith('/') ? '' : '/'}${input.templateUrl}`;
-  const composited = await compositeHairstyleAnalysisPostProcess(
-    imageUrl,
-    templateFetchUrl,
-    input.layoutOverrides,
-    hairstyleAnalysisClientPhotoPostProcessEnabled()
-  );
+  const composited = await compositeHairstyleAnalysisPostProcess({
+    falImageUrl: imageUrl,
+    templateImageUrl: templateFetchUrl,
+    clientPreviewBuf,
+    layoutOverrides: input.layoutOverrides,
+    applyPhotoFade: hairstyleAnalysisClientPhotoPostProcessEnabled(),
+  });
   imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');
 
   return {
