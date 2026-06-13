@@ -28267,3 +28267,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Face/pose/baby-hair/drape rules buried late in prompt (after catalog + styling refs); styling/hairline ref IMAGEs include mannequin faces Fal could copy; compressed EDM rules lacked explicit **forbid AI/sparkle/checkmark bullets** beside rose rows.
 - **Shipped:** **`criticalClientPhotoLocksBlock()`** early in **`buildTemplateRules`** (face identity, pose, no baby hairs, one-shoulder drape). Strengthened **`faceIdentityLockBlock`** — IMAGE 2 wins over all ref faces; styling/hairline refs = hair geometry only. **`roseIconAndEdmPreservationBlock()`** in EDM rules — text only to right of existing roses; forbid AI/sparkle/checkmark icons. **`bawStylingRefListBlock`** + **`bawHairlineRefListBlock`** — never copy ref faces. Enhanced FINAL CHECK + thumb lines. Prompt ~25.5k chars (under 32k).
 - **Conventions:** Client face from **IMAGE 2 only** on all photos; EDM = **pre-rendered rose icons + black text** — never redraw bullets or swap icon type.
+
+---
+
+## 2026-06-13 — Manifest picker: persist selections per tier
+
+- **Context:** User asked manifest test picker to **store/save previous chosen selections** across reloads.
+- **Shipped:** **`hairstyleAnalysisManifestStorage.ts`** — localStorage key **`hairstyle_analysis_manifest_test`**; per-tier **`topMatch`** + **`additionalLooks`**; persists **manifest test mode** checkbox. **`HairstyleAnalysisPreview`** loads on mount, saves on change, loads saved tier on tier switch (defaults only when no save); **Reset manifest defaults** clears tier storage. Picker copy notes browser save.
+- **Conventions:** Admin manifest picks persist **per analysis tier** in localStorage — same pattern as overlay layout debug.
