@@ -30,10 +30,79 @@ const DEFAULT_FACE: Required<EveryDetailMattersFaceFeatures> = {
   eyeDescriptor: 'ALMOND',
 };
 
-type SpecKey = 'lace' | 'color' | 'texture' | 'style' | 'length' | 'density' | 'part' | 'hairline';
+export type EveryDetailSpecKey =
+  | 'texture'
+  | 'color'
+  | 'length'
+  | 'lace'
+  | 'density'
+  | 'part'
+  | 'hairline'
+  | 'style';
 
-/** Five rose rows — each maps to one TOP MATCH spec column value. */
-const FIVE_LINE_SPEC_ORDER: SpecKey[] = ['lace', 'color', 'texture', 'style', 'length'];
+export const EVERY_DETAIL_SPEC_COLUMN_ORDER: EveryDetailSpecKey[] = [
+  'texture',
+  'color',
+  'length',
+  'lace',
+  'density',
+  'part',
+  'hairline',
+  'style',
+];
+
+export const FREE_TIER_EVERY_DETAIL_SPEC_ORDER: EveryDetailSpecKey[] = [
+  'lace',
+  'color',
+  'texture',
+  'style',
+  'length',
+];
+
+const SPEC_MANIFEST_LABEL: Record<EveryDetailSpecKey, string> = {
+  texture: 'TEXTURE',
+  color: 'COLOR',
+  length: 'LENGTH',
+  lace: 'LACE',
+  density: 'DENSITY',
+  part: 'PART',
+  hairline: 'HAIRLINE',
+  style: 'STYLE',
+};
+
+export function everyDetailMattersSpecKeys(lineCount = 5): EveryDetailSpecKey[] {
+  return FREE_TIER_EVERY_DETAIL_SPEC_ORDER.slice(
+    0,
+    Math.min(lineCount, FREE_TIER_EVERY_DETAIL_SPEC_ORDER.length)
+  );
+}
+
+export function specManifestLabel(key: EveryDetailSpecKey): string {
+  return SPEC_MANIFEST_LABEL[key];
+}
+
+export function specValueFromLook(look: AnalysisLook, key: EveryDetailSpecKey): string {
+  switch (key) {
+    case 'texture':
+      return look.unit.trim().toUpperCase();
+    case 'color':
+      return look.color.trim().toUpperCase();
+    case 'length':
+      return displayLength(look);
+    case 'lace':
+      return displayLace(look);
+    case 'density':
+      return displayDensity(look);
+    case 'part':
+      return displayPart(look);
+    case 'hairline':
+      return displayHairline(look);
+    case 'style':
+      return displayStyle(look);
+    default:
+      return look.unit.trim().toUpperCase();
+  }
+}
 
 function lacePhrase(lace: string): string {
   const normalized = displayLace({ lace } as AnalysisLook);
@@ -41,18 +110,24 @@ function lacePhrase(lace: string): string {
   return normalized.includes('LACE') ? normalized : `${normalized} LACE`;
 }
 
+function lengthInches(length: string): number | null {
+  const match = displayLength({ length } as AnalysisLook).match(/(\d+)/);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
 function lineForSpec(
-  key: SpecKey,
+  key: EveryDetailSpecKey,
   look: AnalysisLook,
   face: Required<EveryDetailMattersFaceFeatures>
 ): string {
-  const unit = look.unit.trim().toUpperCase();
-  const color = look.color.trim().toUpperCase();
-  const style = displayStyle(look);
-  const length = displayLength(look);
-  const density = displayDensity(look);
-  const part = displayPart(look);
-  const hairline = displayHairline(look);
+  const unit = specValueFromLook(look, 'texture');
+  const color = specValueFromLook(look, 'color');
+  const style = specValueFromLook(look, 'style');
+  const length = specValueFromLook(look, 'length');
+  const density = specValueFromLook(look, 'density');
+  const part = specValueFromLook(look, 'part');
+  const hairline = specValueFromLook(look, 'hairline');
+  const inches = lengthInches(look.length);
 
   switch (key) {
     case 'lace':
@@ -63,18 +138,24 @@ function lineForSpec(
       return `${unit} TO FRAME YOUR ${face.faceShape}`;
     case 'style':
       return style === 'NONE'
-        ? `${unit} TO COMPLEMENT YOUR ${face.faceShape}`
+        ? `${unit} SILHOUETTE TO SOFTEN YOUR ${face.faceShape}`
         : `${style} TO ENHANCE YOUR JAWLINE`;
     case 'length':
+      if (inches !== null && inches >= 28) {
+        return `${length} FOR STATEMENT LENGTH ON YOUR ${face.faceShape}`;
+      }
+      if (inches !== null && inches <= 22) {
+        return `${length} FOR A SOFT COLLARBONE GRAZE`;
+      }
       return `${length} FOR A FLATTERING MID CHEST FALL`;
     case 'density':
-      return `${density} DENSITY FOR BALANCED FULLNESS`;
+      return `${density} DENSITY FOR BALANCED FULLNESS ON YOUR ${face.faceShape}`;
     case 'part':
-      return `${part} PART TO FRAME YOUR FEATURES`;
+      return `${part} PART TO BALANCE YOUR ${face.faceShape}`;
     case 'hairline':
-      return `${hairline} HAIRLINE FOR A SEAMLESS LACE BLEND`;
+      return `${hairline} HAIRLINE FOR A SEAMLESS ${lacePhrase(look.lace)} BLEND`;
     default:
-      return `${unit} FOR YOUR ${face.faceShape}`;
+      return `${unit} SELECTED FOR YOUR ${face.faceShape}`;
   }
 }
 
@@ -87,7 +168,20 @@ export function buildEveryDetailMattersFromTopMatch(
     ...DEFAULT_FACE,
     ...faceFeatures,
   };
-  const order = FIVE_LINE_SPEC_ORDER.slice(0, Math.min(lineCount, FIVE_LINE_SPEC_ORDER.length));
+  const order = everyDetailMattersSpecKeys(lineCount);
   const lines = order.map((key) => lineForSpec(key, look, face));
   return compactEveryDetailMattersLines(lines);
+}
+
+export function formatEveryDetailMattersForFal(
+  look: AnalysisLook,
+  lines: string[]
+): string[] {
+  const keys = everyDetailMattersSpecKeys(lines.length);
+  return lines.map((line, i) => {
+    const key = keys[i] ?? keys[keys.length - 1];
+    const label = specManifestLabel(key);
+    const value = specValueFromLook(look, key);
+    return `EVERY DETAIL MATTERS LINE ${i + 1} (TOP MATCH ${label} = ${value}): ${line}`;
+  });
 }

@@ -11,6 +11,7 @@ import {
   formatStarRatingFromScore,
 } from './hairstyleAnalysisFormat';
 import { normalizeAnalysisTier } from './hairstyleAnalysisRules';
+import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters';
 
 function specValues(look: AnalysisLook): Record<string, string> {
   const resolved = resolveCatalogLook(look);
@@ -58,7 +59,8 @@ function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> 
     clientName: 'TOP MATCH',
     clientHeaderName: analysis.clientName.toUpperCase(),
   };
-  analysis.whyItWorks.forEach((line, i) => {
+  const whyLines = buildEveryDetailMattersFromTopMatch(analysis.topMatch);
+  whyLines.forEach((line, i) => {
     out[`whyLine-${i}`] = line;
   });
   return out;
