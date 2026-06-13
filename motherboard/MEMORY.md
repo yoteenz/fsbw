@@ -28318,3 +28318,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Free-tier **`edmBuildSummary`** overlay slot was at **88.5%** — same vertical band as the pre-rendered **BUILD THIS LOOK** CTA on Supabase **IMG_2554** (~88.8–90%). Fal was also instructed to print the gray build ribbon at "panel bottom," covering the template button.
 - **Shipped (79d87c60):** Moved **`EDM_PANEL_FOOTER`** to **85.5%** (below last EDM row, above CTA). Fal **`panelChromePreservationBlock()`** + **`freeTierPanelFooterBlock()`** + **`freePromptFooter`** now preserve **BUILD THIS LOOK** and place build ribbon only in the empty band above it. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** **BUILD THIS LOOK** = baked template chrome — never overlay or Fal-print on it; EDM build ribbon sits between last rose row and that CTA.
+
+---
+
+## 2026-06-13 — EDM rose rows: text only (no 1. 2. 3.)
+
+- **Context:** User asked to remove **1. 2. 3.** numbering from every-detail-matters rows — text only beside each rose.
+- **Cause:** **`formatEveryDetailMattersForFal()`** prefixed lines with **`EDM 1:`** … **`EDM 5:`**; Fal prompt said "print numbered EDM lines," so GPT Image 2 rendered list numbers on the card.
+- **Shipped (5f5a9ac6):** **`formatEveryDetailMattersForFal()`** returns plain lines (api + src). Fal **`everyDetailMattersRulesBlock()`** + **`freePromptFooter`** forbid row numbers / **`EDM N:`** prefixes. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** EDM = rose icon + plain uppercase text; no numbered list prefixes on card.
