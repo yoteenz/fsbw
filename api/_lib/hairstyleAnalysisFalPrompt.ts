@@ -8,6 +8,7 @@ import {
   bawColorApplicationRulesBlock,
   bawUnitCatalogBlock,
   lookHairAccuracyLines,
+  requiresUniformRootToTipColor,
   unitTexturePromptLine,
 } from './hairstyleAnalysisUnitCatalog.js';
 import {
@@ -231,13 +232,39 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const style = displayStyle(look.styling, look.unit);
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
     const refNote = ref ? `IMAGE ${ref.imageIndex}` : 'mannequin texture only';
-    lines.push(`${label}: STYLE ${style}, PART ${displayPart(look.part)}, ${refNote}`);
+    lines.push(`${label}: STYLE ${style}, PART ${displayPart(look.part)} (one part only on thumb), COLOR ${look.color.trim().toUpperCase()} uniform root to tip if vivid/blonde, ${refNote}`);
   });
 
   return lines.join('\n');
 }
 
-function clientPhotoPanelRulesBlock(): string {
+function hairPartLockBlock(): string {
+  return [
+    '=== HAIR PART — ONE PART ONLY (CRITICAL — ALL PHOTOS) ===',
+    'Each look has **exactly one** PART (MIDDLE, LEFT, or RIGHT) — render **only one** scalp part line for that look.',
+    'Use the **assigned PART** from the manifest / MATCH row — erase IMAGE 2\'s original part if it differs.',
+    'Styling reference IMAGE = salon **shape/finish** for that STYLE — parting on the client must still be **only** the assigned PART.',
+    'When multiple styling IMAGEs are attached: use **only** the IMAGE whose STYLE + PART match **that specific look** — never borrow a part line from another IMAGE.',
+    'FORBIDDEN: two part lines at once (middle + side), ghost/double part, T-part, zigzag dual part, or center part plus side-swept root on the same head.',
+    'Self-check: count visible scalp part lines — must be **exactly one** per photo.',
+  ].join('\n');
+}
+
+function uniformRootColorBlock(look: FalAnalysisLook, scope: 'preview' | 'thumbnail'): string {
+  const color = look.color.trim().toUpperCase();
+  const hex = (look.hex || '#000000').toUpperCase();
+  if (!requiresUniformRootToTipColor(color) && color !== 'JET BLACK' && color !== 'OFF BLACK') {
+    return `COLOR ${color}: strand-level recolor on ${scope} — natural depth within ${color} only.`;
+  }
+  if (color === 'JET BLACK' || color === 'OFF BLACK' || color === 'ESPRESSO') {
+    return `COLOR ${color}: natural brunette/black depth on ${scope} — no fashion-color root band under a different body tone.`;
+  }
+  return [
+    `COLOR ${color} on ${scope}: **uniform ${color} pigment root to tip** (${hex}) — full install one tone.`,
+    `Repaint scalp, lace line, regrowth zone, and ends — **IMAGE 2 dark/black roots must not show through** on ${color}.`,
+    `FORBIDDEN on ${scope}: dark roots, black roots, shadow root band, ombré, or two-tone regrowth under ${color}.`,
+  ].join(' ');
+}
   return [
     '=== TOP MATCH CLIENT PHOTO — LEFT PANEL ===',
     'Place IMAGE 2 in the left-panel photo window on IMAGE 1:',
@@ -252,9 +279,12 @@ function clientPhotoPanelRulesBlock(): string {
 }
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
+  const part = displayPart(look.part);
   return [
     '=== TOP MATCH HAIR (IMAGE 2) ===',
-    `${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}, ${displayDensity(look.density)}.`,
+    `${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${displayStyle(look.styling, look.unit)}, PART ${part}, ${displayDensity(look.density)}.`,
+    `PART ${part} only — one scalp part line; erase IMAGE 2 part if different.`,
+    uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
     styledHairLine(look, refs),
     mannequinRefLine(look.unit, refs, look.styling),
@@ -304,10 +334,13 @@ function realisticHairDensityBlock(densityLabel: string, isThumbnail = false): s
 
 function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
+  const part = displayPart(look.part);
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const refNote = ref ? `salon shape from IMAGE ${ref.imageIndex}` : 'mannequin hair texture only';
   return [
-    `${label} THUMB: same client face as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style} (${refNote}); one-shoulder drape like hero; hair-only edits.`,
+    `${label} THUMB: same client face as IMAGE 2; tight face/neck crop; ${look.unit}, ${look.color}, ${displayLength(look.length)}, STYLE ${style}, PART ${part} (${refNote}); one-shoulder drape; hair-only edits.`,
+    `PART ${part} **only** on this thumb — one scalp line; erase any other part from IMAGE 2 or other refs.`,
+    uniformRootColorBlock(look, 'thumbnail'),
     lookHairAccuracyLines(look),
     realisticHairDensityBlock(displayDensity(look.density), true),
     mannequinRefLine(look.unit, refs, look.styling),
@@ -580,6 +613,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
     '',
     '=== MATCH THUMBNAILS — SAME CLIENT FACE ===',
     'Every thumbnail square must show the client from IMAGE 2 with different unit/color/length/styling applied.',
+    'Each thumb: **one PART only** + **uniform catalog color root to tip** on blonde/vivid installs — no dark roots from IMAGE 2.',
     'Thumbnails use an even tighter face/neck crop than the main preview — no invented clothing below the jaw.',
     mannequinLine,
     'NEVER use back-of-head stock photos, different people, hair-only swatches, repainted lower-body clothing, or symmetric both-shoulder hair.',
@@ -634,6 +668,8 @@ function buildTemplateRules(
     bawUnitCatalogBlock(),
     '',
     bawColorApplicationRulesBlock(),
+    '',
+    hairPartLockBlock(),
     '',
     ...(tierKey === 'free' ? [neckAndBodyPreservationBlock(), ''] : []),
     asymmetricOneShoulderDrapeBlock('all_photos', hasMannequinRefs),
@@ -783,7 +819,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
+    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); overall score % + match rating stars in-image; thumbs = same client + assigned STYLE + **one PART only** + **uniform color root to tip on blonde/vivid** (no dark roots); MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
   );
   return lines.join('\n');
 }

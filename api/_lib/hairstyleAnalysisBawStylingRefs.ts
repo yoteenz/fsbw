@@ -172,6 +172,7 @@ export function bawStylingRefListBlock(refs: HairstyleAnalysisStylingRef[]): str
   return [
     '=== BAW STYLING REFERENCE IMAGES (AUTHORITATIVE SALON FINISH — NOT MANNEQUIN DEFAULT) ===',
     'Each styling IMAGE below is tied to a specific STYLE id + part. Use the matching IMAGE for that look only.',
+    'Never blend part lines from multiple styling IMAGEs onto one client photo — each thumb/preview gets **one** PART from its manifest.',
     ...lines,
   ].join('\n');
 }
