@@ -27868,3 +27868,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Conflicting Fal rules (forbid bg removal + in-place full-bleed vs server post-process fade) caused collage/white-mat artifacts.
 - **Shipped (eebe0242):** **`clientPhotoPanelRulesBlock()`** rewritten as four clear steps. Removed in-place/no-cutout contradictions from **`panelChromePreservationBlock`**. Slimmed **`sharedClientPhotoRulesBlock`** + **`clientPreviewHairLine`**. **`HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_POST_PROCESS`** default **off** (opt-in `true`) so server does not double-process Fal fade. Docs + preview copy updated.
 - **Conventions:** TOP MATCH photo = bg removed, 9:16 centered, bottom-anchored, symmetrical fade into marble — hair edits only.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: match thumbs one PART, no dark roots
+
+- **Context:** User screenshot — MATCH 02–04 thumbnails on blonde (PLATINUM) and vivid (blue/COBALT etc.) installs incorrectly show **dark roots** and **two part lines** (middle + side) at once.
+- **Cause:** Fal kept IMAGE 2's original part + added manifest PART; dark regrowth from selfie bled through on recolor. Color prompt line 172 used single quotes so `${colorKey}` never interpolated.
+- **Shipped:** **`hairPartLockBlock()`** — exactly one PART per photo; erase IMAGE 2 part if different; never blend part lines from multiple styling IMAGEs. **`uniformRootColorBlock()`** per preview/thumb — vivid/blonde uniform root to tip, no shadow band. **`matchThumbnailBlock`** + **`matchStylingManifestBlock`** + FINAL CHECK updated. Fixed **`unitColorPromptLine`** template literal. BAW styling ref list warns against cross-IMAGE part bleed.
+- **Conventions:** Each look = **one PART** (MIDDLE/LEFT/RIGHT); blonde/vivid = **uniform color root to tip** on thumbs and preview — no dark roots from IMAGE 2.
