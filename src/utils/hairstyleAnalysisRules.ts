@@ -9,7 +9,13 @@ import { resolveCatalogLook } from './hairstyleAnalysisCatalogResolve';
 import { diversifyHairstyleAnalysisLooks } from './hairstyleAnalysisLookDiversity';
 import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters';
 import type { PsaSelfieStylePick } from '../types/styleAnalysis';
-import type { AnalysisLook, AnalysisTier, HairstyleAnalysis, UnitName } from '../types/hairstyleAnalysis';
+import type {
+  AnalysisLook,
+  AnalysisTier,
+  EveryDetailFaceFeatures,
+  HairstyleAnalysis,
+  UnitName,
+} from '../types/hairstyleAnalysis';
 
 export const ADDITIONAL_LOOKS_BY_TIER: Record<AnalysisTier, number> = {
   free: 0,
@@ -147,6 +153,7 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
   clientPreviewUrl: string;
   picks: PsaSelfieStylePick[];
   whyItWorks?: string[];
+  everyDetailFaceFeatures?: EveryDetailFaceFeatures;
 }): HairstyleAnalysis {
   const limit = additionalLooksLimit(options.tier);
   const sorted = [...options.picks].sort((a, b) => a.rank - b.rank);
@@ -168,10 +175,14 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
     clientPreviewUrl: options.clientPreviewUrl,
     topMatch: resolvedTop,
     additionalLooks: resolvedAlts,
+    everyDetailFaceFeatures: options.everyDetailFaceFeatures,
     whyItWorks:
       options.whyItWorks ??
       (normalizeAnalysisTier(options.tier) === 'free'
-        ? buildEveryDetailMattersFromTopMatch(resolvedTop)
+        ? buildEveryDetailMattersFromTopMatch(
+            resolvedTop,
+            options.everyDetailFaceFeatures
+          )
         : []),
     createdAt: new Date().toISOString(),
   };

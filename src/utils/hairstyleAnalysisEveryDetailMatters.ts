@@ -14,9 +14,7 @@ import {
 import { compactEveryDetailMattersLines } from './hairstyleAnalysisEveryDetailMattersCompact';
 
 export type EveryDetailMattersFaceFeatures = {
-  /** Flattering only — e.g. HEART SHAPED FACE */
   faceShape?: string;
-  /** e.g. BLACK ALMOND */
   eyeDescriptor?: string;
 };
 
@@ -26,8 +24,8 @@ export const KATEENA_DEMO_FACE_FEATURES: EveryDetailMattersFaceFeatures = {
 };
 
 const DEFAULT_FACE: Required<EveryDetailMattersFaceFeatures> = {
-  faceShape: 'FEATURES',
-  eyeDescriptor: 'ALMOND',
+  faceShape: 'FACE SHAPE',
+  eyeDescriptor: 'EYE TONE',
 };
 
 export type EveryDetailSpecKey =
@@ -39,17 +37,6 @@ export type EveryDetailSpecKey =
   | 'part'
   | 'hairline'
   | 'style';
-
-export const EVERY_DETAIL_SPEC_COLUMN_ORDER: EveryDetailSpecKey[] = [
-  'texture',
-  'color',
-  'length',
-  'lace',
-  'density',
-  'part',
-  'hairline',
-  'style',
-];
 
 export const FREE_TIER_EVERY_DETAIL_SPEC_ORDER: EveryDetailSpecKey[] = [
   'lace',
@@ -115,10 +102,27 @@ function lengthInches(length: string): number | null {
   return match ? Number.parseInt(match[1], 10) : null;
 }
 
+function hasFaceContext(faceFeatures: EveryDetailMattersFaceFeatures): boolean {
+  return Boolean(faceFeatures.faceShape?.trim() || faceFeatures.eyeDescriptor?.trim());
+}
+
+function lengthLine(length: string, inches: number | null, faceShape: string, withFace: boolean): string {
+  if (inches !== null && inches >= 28) {
+    return withFace
+      ? `${length} FOR LONG LENGTH ON YOUR ${faceShape}`
+      : `${length} FOR LONG INSTALL LENGTH`;
+  }
+  if (inches !== null && inches <= 22) {
+    return `${length} AT COLLARBONE LENGTH`;
+  }
+  return `${length} AT MID CHEST LENGTH`;
+}
+
 function lineForSpec(
   key: EveryDetailSpecKey,
   look: AnalysisLook,
-  face: Required<EveryDetailMattersFaceFeatures>
+  face: Required<EveryDetailMattersFaceFeatures>,
+  withFace: boolean
 ): string {
   const unit = specValueFromLook(look, 'texture');
   const color = specValueFromLook(look, 'color');
@@ -133,29 +137,29 @@ function lineForSpec(
     case 'lace':
       return `${lacePhrase(look.lace)} FOR AN ULTRA REALISTIC FINISH`;
     case 'color':
-      return `${color} TO COMPLEMENT YOUR ${face.eyeDescriptor} EYES`;
+      return withFace
+        ? `${color} TO COMPLEMENT YOUR ${face.eyeDescriptor} EYES`
+        : `${color} FOR RICH CONTRAST WITH YOUR LOOK`;
     case 'texture':
-      return `${unit} TO FRAME YOUR ${face.faceShape}`;
+      return withFace
+        ? `${unit} TO FRAME YOUR ${face.faceShape}`
+        : `${unit} TEXTURE FOR CLEAN LINES`;
     case 'style':
       return style === 'NONE'
-        ? `${unit} SILHOUETTE TO SOFTEN YOUR ${face.faceShape}`
+        ? withFace
+          ? `${unit} SILHOUETTE FOR YOUR ${face.faceShape}`
+          : `${unit} SILHOUETTE FOR CLEAN LINES`
         : `${style} TO ENHANCE YOUR JAWLINE`;
     case 'length':
-      if (inches !== null && inches >= 28) {
-        return `${length} FOR STATEMENT LENGTH ON YOUR ${face.faceShape}`;
-      }
-      if (inches !== null && inches <= 22) {
-        return `${length} FOR A SOFT COLLARBONE GRAZE`;
-      }
-      return `${length} FOR A FLATTERING MID CHEST FALL`;
+      return lengthLine(length, inches, face.faceShape, withFace);
     case 'density':
-      return `${density} DENSITY FOR BALANCED FULLNESS ON YOUR ${face.faceShape}`;
+      return `${density} DENSITY FOR INSTALL FULLNESS`;
     case 'part':
-      return `${part} PART TO BALANCE YOUR ${face.faceShape}`;
+      return `${part} PART FOR BALANCED FRAMING`;
     case 'hairline':
       return `${hairline} HAIRLINE FOR A SEAMLESS ${lacePhrase(look.lace)} BLEND`;
     default:
-      return `${unit} SELECTED FOR YOUR ${face.faceShape}`;
+      return `${unit} FOR THIS TOP MATCH`;
   }
 }
 
@@ -168,8 +172,9 @@ export function buildEveryDetailMattersFromTopMatch(
     ...DEFAULT_FACE,
     ...faceFeatures,
   };
+  const withFace = hasFaceContext(faceFeatures);
   const order = everyDetailMattersSpecKeys(lineCount);
-  const lines = order.map((key) => lineForSpec(key, look, face));
+  const lines = order.map((key) => lineForSpec(key, look, face, withFace));
   return compactEveryDetailMattersLines(lines);
 }
 
