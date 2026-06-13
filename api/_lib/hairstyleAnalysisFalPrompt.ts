@@ -502,6 +502,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
 
   return [
     '=== ADDITIONAL MATCHES — VARIED STYLING ===',
+    'Each additional match uses a **different catalog unit** and **different STYLE** from the manifest — never duplicate NOIR + FLAT IRON on every row.',
     'Each additional match uses its own STYLE value — salon finish must differ across matches for variety.',
     'Apply the assigned BAW styling reference on every additional-match thumbnail.',
     '',
@@ -622,7 +623,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — HAIRLINE: ${displayHairline(look.hairline)}`,
     `MANIFEST — STYLE: ${style}`,
     lookHairAccuracyLines(look),
-    `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
+    `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS/24"/250% defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
+    'The manifest below is the **only** source of truth for TOP MATCH specs — never reuse template placeholder text.',
     `STYLE value must print exactly "${style}" — never default to LAYERS when manifest STYLE is FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
 }

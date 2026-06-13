@@ -3,17 +3,18 @@ import {
   normalizeAnalysisStylingId,
 } from './hairstyleAnalysisDisplay.js';
 import { hexForHairColorName } from './hairstyleHairColors.js';
+import { diversifyHairstyleAnalysisLooks } from './hairstyleAnalysisLookDiversity.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { resolveCatalogLookForFal } from './hairstyleAnalysisUnitCatalog.js';
 import { applyRealisticMatchScores } from './hairstyleAnalysisRealisticScores.js';
 
-function normalizeLookStyling<T extends { unit: string; styling: string; density: string; color: string; hex: string }>(
-  look: T
-): T {
+function normalizeLookStyling<
+  T extends { unit: string; styling: string; density: string; color: string; hex: string },
+>(look: T, styleIndex: number): T {
   return resolveCatalogLookForFal({
     ...look,
     styling: normalizeAnalysisStylingId(look.unit, look.styling),
-  });
+  }, styleIndex);
 }
 
 function normalizeTier(tier: FalHairstyleAnalysis['tier']): FalHairstyleAnalysis['tier'] | 'twelve_month' {
@@ -24,20 +25,30 @@ function normalizeTier(tier: FalHairstyleAnalysis['tier']): FalHairstyleAnalysis
 export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis): FalHairstyleAnalysis {
   const tierKey = normalizeTier(analysis.tier);
   const withScores = applyRealisticMatchScores(analysis);
+  const diversified = diversifyHairstyleAnalysisLooks(
+    withScores.topMatch,
+    tierKey === 'free' ? [] : withScores.additionalLooks
+  );
 
-  const top = normalizeLookStyling({
-    ...withScores.topMatch,
-    hex: withScores.topMatch.hex || hexForHairColorName(withScores.topMatch.color),
-  });
+  const top = normalizeLookStyling(
+    {
+      ...diversified.topMatch,
+      hex: diversified.topMatch.hex || hexForHairColorName(diversified.topMatch.color),
+    },
+    0
+  );
 
   const additionalLooks =
     tierKey === 'free'
       ? []
-      : withScores.additionalLooks.map((look) =>
-          normalizeLookStyling({
-            ...look,
-            hex: look.hex || hexForHairColorName(look.color),
-          })
+      : diversified.additionalLooks.map((look, i) =>
+          normalizeLookStyling(
+            {
+              ...look,
+              hex: look.hex || hexForHairColorName(look.color),
+            },
+            i + 1
+          )
         );
 
   return {

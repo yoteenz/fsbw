@@ -36,18 +36,18 @@ function defaultSalonStyle(pattern: 'STRAIGHT' | 'WAVY' | 'CURLY'): string {
 }
 
 /** Align dev overlay specs with BAW catalog unit (mirrors api resolveCatalogLookForFal). */
-export function resolveCatalogLook(look: AnalysisLook): AnalysisLook {
+export function resolveCatalogLook(look: AnalysisLook, styleIndex = 0): AnalysisLook {
   const unit = look.unit.trim().toUpperCase() as UnitName;
   const pattern = UNIT_PATTERN[unit];
   const styling = normalizeAnalysisStylingId(unit, look.styling);
-  const allowed = VALID_SALON_STYLES[unit];
+  const allowed = VALID_SALON_STYLES[unit]?.filter((s) => s !== 'NONE') ?? [];
   const resolvedStyling =
     styling === 'NONE' && pattern
-      ? defaultSalonStyle(pattern)
+      ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
       : allowed?.includes(styling)
         ? styling
         : pattern
-          ? defaultSalonStyle(pattern)
+          ? (allowed[styleIndex % allowed.length] ?? defaultSalonStyle(pattern))
           : styling;
   const catalogDensity = UNIT_DEFAULT_DENSITY[unit];
   const density =
