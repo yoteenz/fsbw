@@ -161,7 +161,7 @@ function topMatchHeaderLine(fullName: string): string {
     'The template prints black uppercase "TOP MATCH" as a section header directly above the OVERALL SCORE / MATCH RATING panels on the right.',
     `REPLACE that black "TOP MATCH" header with "${fullName}" — the client's first and last name, uppercase.`,
     'Erase the old header letters first — **single clean text layer** (no double-print, ghost offset, or stacked duplicates).',
-    `Use **medium gray ${MATCH_SCORE_GRAY}** Futura PT Medium — same size, weight, and letter-spacing as the original header; **only** the color is gray (not black).`,
+    `Use **brand red ${BRAND_RED}** Futura PT Medium — same size, weight, and letter-spacing as the original header.`,
     '**Center the client name horizontally within the frosted header panel** above OVERALL SCORE and MATCH RATING — equal padding left and right; do NOT left-align.',
     'Do NOT leave "TOP MATCH" visible in that header slot. Do NOT duplicate the client name in the red pill (pill stays "TOP MATCH" only).',
   ].join('\n');
@@ -370,9 +370,8 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
     'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
     `Fill exactly ${lineCount} text rows — **one short line per rose row** (single row, no wrap).`,
     `Row map: ${rowGuide}.`,
-    '**FORMAT:** each line = **TOP MATCH catalog spec value** + **one concrete fit note** (eyes, jaw, face shape, or install benefit).',
-    '**GOOD:** MELTED LACE, NATURAL HAIRLINE | PLATINUM TO COMPLEMENT YOUR BLACK ALMOND EYES | SOFT WAVE TO FRAME YOUR HEART SHAPED FACE | FLAT IRON TO ENHANCE YOUR JAWLINE | 24 INCHES AT MID CHEST LENGTH',
-    'Lace rose row = **MELTED LACE, {HAIRLINE} HAIRLINE** — adjective before noun; never "LACE MELTED" or "HAIRLINE NATURAL".',
+    '**FORMAT:** each line = **TOP MATCH catalog spec value** + **one concrete fit note** (eyes, jaw, face shape, or install benefit). Wording varies per line — print the numbered EDM lines below **verbatim**.',
+    'Lace rose row must name the manifest hairline — adjective before noun; never "LACE MELTED" or "HAIRLINE NATURAL".',
     '**BAD (FORBIDDEN):** empowerment slogans, you deserve, embrace your beauty, confidence, queen energy, generic inspiration — NOT why-it-works essays.',
     `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars — **no trailing period**, **no dashes or hyphens**.`,
     'Print each EVERY DETAIL MATTERS LINE below **verbatim** — black uppercase Futura PT Medium beside its rose icon.',
@@ -648,7 +647,7 @@ function freePromptFooter(
     '',
     '=== FINAL CHECK ===',
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
-    'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not black).',
+    'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **brand red** Futura PT Medium.',
     'TOP MATCH specs + every detail matters filled; OVERALL SCORE + MATCH RATING printed in-image at petite sizes (erase large template placeholders first).',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
@@ -703,7 +702,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: gray centered client name; specs + EDM lines verbatim; petite score/stars in-image; each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    `FINAL CHECK: red centered client name; specs + EDM lines verbatim; petite score/stars in-image; each thumb = IMAGE 2 pose + manifest HAIRLINE + STYLE; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }

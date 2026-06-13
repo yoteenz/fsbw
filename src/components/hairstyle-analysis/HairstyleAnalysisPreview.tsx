@@ -25,6 +25,10 @@ import { getCurrentUser, isAdminEmail } from '../../utils/adminAuth';
 import { validateHairstyleAnalysis } from '../../utils/hairstyleAnalysisRules';
 import { appendHairstyleAnalysisToLocalCart } from '../../utils/hairstyleAnalysisPurchase';
 import { requestOpenPsaChat } from '../../utils/psaOpenChatRequest';
+import {
+  buildEveryDetailMattersFromTopMatch,
+  everyDetailVariationSeed,
+} from '../../utils/hairstyleAnalysisEveryDetailMatters';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
 
@@ -253,8 +257,18 @@ export default function HairstyleAnalysisPreview({
     try {
       const hasLayoutOverrides = Object.keys(slotOverrides).length > 0;
       const hasFontOverrides = Object.keys(fontOverrides).length > 0;
+      const freshWhyItWorks = buildEveryDetailMattersFromTopMatch(
+        resolvedAnalysis.topMatch,
+        resolvedAnalysis.everyDetailFaceFeatures,
+        5,
+        everyDetailVariationSeed()
+      );
+      const analysisForGenerate = {
+        ...resolvedAnalysis,
+        whyItWorks: freshWhyItWorks,
+      };
       const result = await postHairstyleAnalysisGenerate(
-        resolvedAnalysis as unknown as Record<string, unknown>,
+        analysisForGenerate as unknown as Record<string, unknown>,
         hasLayoutOverrides || hasFontOverrides
           ? {
               slotOverrides: hasLayoutOverrides ? slotOverrides : undefined,
