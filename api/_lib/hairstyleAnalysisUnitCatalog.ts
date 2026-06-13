@@ -39,7 +39,8 @@ const UNIFORM_ROOT_TO_TIP_COLORS = new Set([
 ]);
 
 type UnitCatalogEntry = {
-  pattern: 'STRAIGHT' | 'WAVY' | 'CURLY';
+  pattern: 'STRAIGHT' | 'WAVY' | 'TIGHT_WAVE' | 'CURLY';
+  appearance: string;
   origin: string;
   density: string;
   fiber: string;
@@ -50,55 +51,66 @@ type UnitCatalogEntry = {
 const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
   NOIR: {
     pattern: 'STRAIGHT',
+    appearance: 'straight',
     origin: 'Cambodian',
     density: '250%',
     fiber: 'silky straight (stock SILKY finish — high gloss, pin-straight)',
     render:
-      'pin-straight sleek Cambodian raw straight hair with silky shine — falls straight with natural weight',
-    forbidden: 'kinky, yaki, coily, afro-textured, tight curls, or beach waves',
+      'appears **straight** — pin-straight sleek Cambodian raw hair with silky shine; falls straight with natural weight',
+    forbidden: 'any wave, wavy motion, curls, kinky, yaki, coily, afro-textured, or beach-wave pattern',
   },
   BLANCO: {
     pattern: 'STRAIGHT',
+    appearance: 'straight',
     origin: 'Russian',
     density: '250%',
     fiber: 'silky straight (stock SILKY finish — glassy sleek straight only)',
     render:
-      'silky glass-straight Russian raw straight hair — smooth, lustrous, pin-straight blonde/platinum family',
+      'appears **straight** — silky glass-straight Russian raw hair; smooth, lustrous, pin-straight blonde/platinum family',
     forbidden:
-      'kinky, yaki, coily, afro-textured, curly, wavy, crimped, or fuzzy texture — BLANCO is NEVER kinky',
+      'any wave, wavy motion, curls, kinky, yaki, coily, afro-textured, crimped, or fuzzy texture — BLANCO is NEVER wavy or curly',
   },
   'SOFT WAVE': {
     pattern: 'WAVY',
+    appearance: 'loose wave',
     origin: 'Indian',
     density: '200%',
-    fiber: 'soft wavy (natural S-wave pattern)',
-    render: 'soft brushed S-wave — Indian raw wavy hair with gentle wave motion, not pin-straight',
-    forbidden: 'pin-straight ironing, kinky afro texture, or tight curls',
+    fiber: 'loose soft wave (gentlest S-wave tier)',
+    render:
+      'appears **loose wave** — soft brushed S-wave with gentle relaxed motion; loosest wave tier (less defined than BEACH WAVE)',
+    forbidden: 'pin-straight, tight waves (SOFT CURL), tight spiral curls (OCEAN CURL), or kinky afro texture',
   },
   'BEACH WAVE': {
     pattern: 'WAVY',
+    appearance: 'true wavy',
     origin: 'Indonesian',
     density: '200%',
-    fiber: 'relaxed beach wave',
-    render: 'relaxed loose beach-wave pattern — Indonesian raw wavy hair, effortless S-waves',
-    forbidden: 'pin-straight, kinky texture, or tight spiral curls',
+    fiber: 'true beach wave (rolling S-waves)',
+    render:
+      'appears **true wavy** — clear rolling beach-wave S-pattern; more defined wave than SOFT WAVE loose wave',
+    forbidden: 'pin-straight, loose-only SOFT WAVE fluff, tight waves (SOFT CURL), tight spiral curls (OCEAN CURL), or kinky texture',
   },
   'SOFT CURL': {
-    pattern: 'CURLY',
+    pattern: 'TIGHT_WAVE',
+    appearance: 'tight wave',
     origin: 'Filipino',
     density: '200%',
-    fiber: 'soft curl definition',
-    render: 'soft defined curls — Filipino raw curly hair with springy curl clumps',
-    forbidden: 'straight, wavy-only, or kinky afro texture unrelated to soft curl',
+    fiber: 'tight wave (compact elongated S-waves — NOT spiral curls)',
+    render:
+      'appears **tight wave** — compact elongated waves with minimal spiral; Filipino raw hair at the tightest **wave** tier only',
+    forbidden:
+      'spiral curls, ringlets, corkscrews, ocean-curl pattern, springy curl clumps, or any texture that reads like OCEAN CURL',
   },
   'OCEAN CURL': {
     pattern: 'CURLY',
+    appearance: 'tight curl',
     origin: 'Vietnamese',
     density: '200%',
-    fiber: 'deeper ocean curl pattern',
+    fiber: 'tight spiral curl pattern',
     render:
-      'deeper defined curl pattern than SOFT CURL — Vietnamese raw curly hair, richer curl formation',
-    forbidden: 'straight, loose wave only, or kinky unrelated texture',
+      'appears **tight curl** — springy spiral ringlets and defined curl clumps; Vietnamese raw hair — the only BAW unit with true tight curls',
+    forbidden:
+      'straight, loose wave (SOFT WAVE), true wavy-only (BEACH WAVE), tight-wave-only (SOFT CURL), or pin-straight',
   },
 };
 
@@ -145,10 +157,18 @@ export function unitTexturePromptLine(unit: string): string {
   if (!key) return `Render catalog unit ${unit.trim().toUpperCase()} with accurate BAW strand pattern.`;
   const entry = UNIT_CATALOG[key];
   return [
-    `TEXTURE ${key} = ${entry.origin} raw ${entry.pattern} human hair, ${entry.fiber}.`,
+    `TEXTURE ${key} = ${entry.origin} raw human hair — catalog appearance: **${entry.appearance}** (${entry.fiber}).`,
     `Render: ${entry.render}.`,
     `FORBIDDEN for ${key}: ${entry.forbidden}.`,
   ].join(' ');
+}
+
+/** One-line texture tier lock for mannequin/styling refs — never swap unit appearance. */
+export function unitTextureAppearanceLock(unit: string): string | null {
+  const key = normalizeCatalogUnit(unit);
+  if (!key) return null;
+  const entry = UNIT_CATALOG[key];
+  return `${key} must appear **${entry.appearance}** — ${entry.render}; NOT: ${entry.forbidden}.`;
 }
 
 export function unitColorPromptLine(unit: string, color: string, hex: string): string {
@@ -185,15 +205,18 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
 
 export function bawUnitCatalogBlock(): string {
   const lines = [
-    '=== BAW CATALOG UNITS — TEXTURE + PATTERN (MANDATORY) ===',
-    'TEXTURE value = unit name. Each unit has a fixed raw pattern — render precisely, never swap patterns between units.',
-    'Stock presentation = SILKY fiber on straight units; native wave/curl pattern on wave/curl units.',
+    '=== BAW CATALOG UNITS — TEXTURE APPEARANCE (MANDATORY — NEVER SWAP) ===',
+    'TEXTURE value = unit name. Each unit has a fixed visual tier — render precisely, never swap patterns between units.',
+    'Appearance ladder: NOIR + BLANCO = **straight** | SOFT WAVE = **loose wave** | BEACH WAVE = **true wavy** | SOFT CURL = **tight wave** | OCEAN CURL = **tight curl**.',
+    'CRITICAL: SOFT CURL is **tight wave only** (elongated waves) — never spiral curls like OCEAN CURL. OCEAN CURL is the **only** tight-curl unit.',
+    'SELF-CHECK: SOFT CURL that looks like OCEAN CURL spirals → wrong. NOIR/BLANCO with visible wave → wrong.',
+    'Stock presentation = SILKY fiber on straight units; native wave/curl tier on wave/curl units.',
   ];
 
   for (const key of CATALOG_UNITS) {
     const entry = UNIT_CATALOG[key];
     lines.push(
-      `${key}: ${entry.origin} ${entry.pattern}, ${entry.density} density — ${entry.render}. NOT: ${entry.forbidden}.`
+      `${key}: **${entry.appearance}** — ${entry.origin}, ${entry.density} density — ${entry.render}. NOT: ${entry.forbidden}.`
     );
   }
 
@@ -233,7 +256,8 @@ const VALID_SALON_STYLES: Record<CatalogUnitName, readonly string[]> = {
 function defaultSalonStyleForPattern(pattern: UnitCatalogEntry['pattern']): string {
   if (pattern === 'STRAIGHT') return 'FLAT IRON';
   if (pattern === 'WAVY') return 'LAYERS';
-  return 'DEFINE';
+  if (pattern === 'TIGHT_WAVE' || pattern === 'CURLY') return 'DEFINE';
+  return 'LAYERS';
 }
 
 function coerceSalonStyleForUnit(
