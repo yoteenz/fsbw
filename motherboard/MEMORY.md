@@ -28042,3 +28042,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **SOFT CURL** generating curl pattern too similar to **OCEAN CURL**; wanted fixed texture appearance per unit: NOIR+BLANCO **straight**, SOFT WAVE **loose wave**, BEACH WAVE **true wavy**, SOFT CURL **tight wave** (not spirals), OCEAN CURL **tight curl**.
 - **Shipped:** **`hairstyleAnalysisUnitCatalog.ts`** — rewritten unit render/fiber/forbidden copy + **`TIGHT_WAVE`** pattern for SOFT CURL; appearance ladder in **`bawUnitCatalogBlock()`**; **`unitTextureAppearanceLock()`**. **`hairstyleAnalysisFalPrompt.ts`** — mannequin + styling ref lines enforce SOFT CURL ≠ OCEAN CURL. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Unit TEXTURE tier is locked — salon STYLE ref adjusts finish within tier only; SOFT CURL never renders OCEAN CURL spirals.
+
+---
+
+## 2026-06-13 — Hairstyle analysis: red "hairstyle analysis" subtitle, gray client name (correction)
+
+- **Context:** User clarified prior red-header change was wrong — **client name** above overall score should stay **gray**; they wanted the script **"hairstyle analysis"** text **below FRONTAL SLAYER** at the card top repainted **brand red** (not the client header).
+- **Shipped:** Restored **gray `#808080`** client header in **`topMatchHeaderLine`**, FINAL CHECK, **`.clientHeaderNameText`**. Added **`cardHeaderHairstyleAnalysisSubtitleBlock()`** — Fal repaints script "hairstyle analysis" under FRONTAL SLAYER to **`#EB1C24`**; tier subscription line still erased. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Card top script **"hairstyle analysis"** = **red**; client name header above OVERALL SCORE = **gray only**.
