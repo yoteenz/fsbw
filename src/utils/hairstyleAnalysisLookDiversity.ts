@@ -9,10 +9,15 @@ type DiversifiableLook = {
   color: string;
   hex: string;
   length: string;
+  lace: string;
   density: string;
   styling: string;
   part: string;
+  hairline?: string;
 };
+
+const LACE_OPTIONS = ['13X6 HD', '13X4 HD'] as const;
+const DENSITY_OPTIONS = ['200%', '250%', '300%'] as const;
 
 const VALID_SALON_STYLES: Record<UnitName, readonly string[]> = {
   NOIR: ['NONE', 'LAYERS', 'CRIMPS', 'FLAT IRON'],
@@ -23,17 +28,9 @@ const VALID_SALON_STYLES: Record<UnitName, readonly string[]> = {
   'OCEAN CURL': ['NONE', 'DEFINE', 'WAND CURLS'],
 };
 
-const UNIT_DENSITY: Record<UnitName, string> = {
-  NOIR: '250%',
-  BLANCO: '250%',
-  'SOFT WAVE': '200%',
-  'BEACH WAVE': '200%',
-  'SOFT CURL': '200%',
-  'OCEAN CURL': '200%',
-};
-
 const LENGTH_OPTIONS = ['22 INCHES', '24 INCHES', '26 INCHES', '28 INCHES', '30 INCHES'];
 const PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
+const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS'] as const;
 
 const NEUTRAL_COLORS = ['JET BLACK', 'OFF BLACK', 'ESPRESSO', 'CHESTNUT'] as const;
 const LIGHT_NEUTRAL_COLORS = ['HONEY', 'CHESTNUT'] as const;
@@ -84,6 +81,21 @@ function colorForUnit(unitKey: UnitName, bucket: 'neutral' | 'blonde' | 'vibrant
   return pickAllowedColor(unitKey, bucket);
 }
 
+function isDefaultLace(lace: string): boolean {
+  const n = lace.trim().toUpperCase().replace(/\s*LACE\s*$/i, '');
+  return !n || n === '13X6' || n === '13X6 HD';
+}
+
+function isDefaultPart(part: string): boolean {
+  const n = part.trim().toUpperCase().replace(/\s*PART\s*$/i, '');
+  return !n || n === 'MIDDLE';
+}
+
+function isDefaultDensity(density: string): boolean {
+  const n = density.trim().replace(/\s*DENSITY\s*$/i, '');
+  return !n || n === '250%' || n === '200%';
+}
+
 function isGenericNoirStack(look: DiversifiableLook): boolean {
   const unit = look.unit.trim().toUpperCase();
   const styling = look.styling.trim().toUpperCase();
@@ -91,7 +103,9 @@ function isGenericNoirStack(look: DiversifiableLook): boolean {
     unit === 'NOIR' &&
     (look.color.trim().toUpperCase() === 'JET BLACK' || !look.color.trim()) &&
     (!look.length.trim() || look.length.includes('24')) &&
-    (!look.density.trim() || look.density === '250%') &&
+    isDefaultDensity(look.density) &&
+    isDefaultLace(look.lace) &&
+    isDefaultPart(look.part) &&
     (!styling || styling === 'NONE' || styling === 'FLAT IRON')
   );
 }
@@ -148,6 +162,32 @@ function assignUnitsForBuckets(
   return out;
 }
 
+/** Rotate lace, density, part when still on template defaults — preserves explicit PSA picks. */
+export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0): L {
+  const laceOrder = shuffle(LACE_OPTIONS);
+  const densityOrder = shuffle(DENSITY_OPTIONS);
+  const partOrder = shuffle(PART_OPTIONS);
+  const hairlineOrder = shuffle(HAIRLINE_OPTIONS);
+  const hairlineRaw = look.hairline?.trim()
+    ? look.hairline.trim().toUpperCase().replace(/\s*HAIRLINE\s*$/i, '')
+    : (hairlineOrder[index % hairlineOrder.length] ?? 'NATURAL');
+  const hairline = hairlineRaw.includes('HAIRLINE') ? hairlineRaw : `${hairlineRaw} HAIRLINE`;
+
+  return {
+    ...look,
+    lace: isDefaultLace(look.lace)
+      ? (laceOrder[index % laceOrder.length] ?? LACE_OPTIONS[0])
+      : look.lace,
+    density: isDefaultDensity(look.density)
+      ? (densityOrder[index % densityOrder.length] ?? DENSITY_OPTIONS[1])
+      : look.density,
+    part: isDefaultPart(look.part)
+      ? (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
+      : look.part,
+    hairline: look.hairline?.trim() ? look.hairline : hairline,
+  };
+}
+
 function diversifyLook<L extends DiversifiableLook>(
   look: L,
   index: number,
@@ -158,18 +198,18 @@ function diversifyLook<L extends DiversifiableLook>(
   const styling = styles[index % styles.length] ?? styles[0] ?? 'NONE';
   const color = colorForUnit(unitKey, colorBucket);
   const length = LENGTH_OPTIONS[index % LENGTH_OPTIONS.length] ?? '24 INCHES';
-  const part = PART_OPTIONS[index % PART_OPTIONS.length] ?? 'MIDDLE';
 
-  return {
-    ...look,
-    unit: unitKey,
-    color,
-    hex: hexForHairColor(color),
-    length,
-    density: UNIT_DENSITY[unitKey],
-    styling,
-    part,
-  };
+  return varyInstallSpecs(
+    {
+      ...look,
+      unit: unitKey,
+      color,
+      hex: hexForHairColor(color),
+      length,
+      styling,
+    },
+    index
+  );
 }
 
 export function diversifyHairstyleAnalysisLooks<L extends DiversifiableLook>(
@@ -178,7 +218,10 @@ export function diversifyHairstyleAnalysisLooks<L extends DiversifiableLook>(
 ): { topMatch: L; additionalLooks: L[] } {
   const all = [topMatch, ...additionalLooks];
   if (!needsDiversification(all)) {
-    return { topMatch, additionalLooks };
+    return {
+      topMatch: varyInstallSpecs(topMatch, 0),
+      additionalLooks: additionalLooks.map((look, i) => varyInstallSpecs(look, i + 1)),
+    };
   }
 
   const keepTopUnit =

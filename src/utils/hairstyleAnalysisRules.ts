@@ -123,7 +123,6 @@ export function validateHairstyleAnalysis(
 export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
   const unit = pick.unitLabel.trim().toUpperCase() as UnitName;
   const color = pick.color.trim().toUpperCase();
-  const lace = pick.texture ? `${pick.texture}` : '13X6 HD LACE';
   const unitName = isUnitName(unit) ? unit : 'NOIR';
   const styling = normalizeAnalysisStylingId(unitName, pick.styling || 'NONE');
 
@@ -134,8 +133,8 @@ export function psaPickToAnalysisLook(pick: PsaSelfieStylePick): AnalysisLook {
     color,
     hex: hexForHairColor(color),
     length: pick.length.includes('INCH') ? pick.length.toUpperCase() : `${pick.length.toUpperCase()} INCHES`,
-    lace: lace.includes('LACE') ? lace.toUpperCase() : `${lace.toUpperCase()} LACE`,
-    density: pick.density.includes('DENSITY') ? pick.density.toUpperCase() : `${pick.density.toUpperCase()} DENSITY`,
+    lace: '13X6 HD',
+    density: pick.density.includes('%') ? pick.density.toUpperCase() : `${pick.density.toUpperCase()}%`,
     hairline: pick.hairline.includes('HAIRLINE')
       ? pick.hairline.toUpperCase()
       : `${pick.hairline.toUpperCase()} HAIRLINE`,

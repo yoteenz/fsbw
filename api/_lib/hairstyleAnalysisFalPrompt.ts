@@ -707,7 +707,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook): string {
     `MANIFEST — HAIRLINE: ${displayHairline(look.hairline)}`,
     `MANIFEST — STYLE: ${style}`,
     lookHairAccuracyLines(look),
-    `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS/24"/250% defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
+    `FORBIDDEN: leaving template placeholder NOIR/JET BLACK/LAYERS/24"/13X6 HD/250%/MIDDLE defaults; printing a different unit or STYLE than the manifest; copying MATCH 02 row values into the TOP MATCH column.`,
+    'LACE, DENSITY, and PART value slots must print the manifest exactly — never reuse baked template placeholder 13X6 HD / 250% / MIDDLE when manifest differs.',
     'The manifest below is the **only** source of truth for TOP MATCH specs — never reuse template placeholder text.',
     `STYLE value must print exactly "${style}" — never default to LAYERS when manifest STYLE is FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
