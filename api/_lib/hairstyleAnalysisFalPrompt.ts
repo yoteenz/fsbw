@@ -24,7 +24,7 @@ import {
   type HairstyleAnalysisHairlineRef,
 } from './hairstyleAnalysisBawHairlineRefs.js';
 import { RATING_SLOT, TOP_SCORE_SLOT, type PixelRect } from './hairstyleAnalysisLayoutSlots.js';
-import { matchRatingFalStarSize, overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
+import { matchRatingDecimalFalFontSize, matchRatingFalStarSize, overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
 import { clientFullName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
   displayDensity,
@@ -470,6 +470,7 @@ function overallScoreAndRatingRules(
   tier: FalHairstyleAnalysis['tier']
 ): string {
   const scorePx = overallScoreFalFontSize(TOP_SCORE_SLOT);
+  const ratingPx = matchRatingDecimalFalFontSize(RATING_SLOT);
   const starPx = matchRatingFalStarSize(RATING_SLOT);
   const filled = filledStarCountFromOverallScore(look.score);
   const scorePct = formatScorePercent(look.score);
@@ -484,9 +485,9 @@ function overallScoreAndRatingRules(
     return [
       '=== OVERALL SCORE + MATCH RATING (PETITE IN-IMAGE — FREE TIER ONLY) ===',
       overallScoreLine,
-      `MATCH RATING (FREE ONLY): erase placeholder; print **${ratingLabel}** in the **upper third** of the MATCH RATING value box — ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script, **same font family and visual weight as OVERALL SCORE %** (~${scorePx}px max height, centered).`,
+      `MATCH RATING (FREE ONLY): erase placeholder; print **${ratingLabel}** in the **upper third** of the MATCH RATING value box — Futura PT Medium gray ${MATCH_SCORE_GRAY} (~${ratingPx}px max height, centered). **NOT** red, **NOT** Covered By Your Grace script — separate from red OVERALL SCORE %.`,
       `MATCH RATING STARS (below ${ratingLabel}): ${fillRule} Draw 5 petite embossed-gradient red stars (~${starPx}px max each) in the **lower half** of the MATCH RATING value box. Embossed radial pink-coral → ${BRAND_RED} fill; dark-red stroke; empty = outline only.`,
-      'FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif overall score or match-rating text.',
+      `FORBIDDEN: billboard score/rating numbers, chunky/emoji stars, gray or sans-serif OVERALL SCORE %, red or script styling on MATCH RATING decimal (${ratingLabel} must stay gray Futura PT Medium).`,
     ].join('\n');
   }
 
@@ -724,7 +725,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; OVERALL SCORE % + MATCH RATING decimal above stars (e.g. 5.0 / 4.7) + stars below — **free tier only**; erase large template placeholders first.',
+    'TOP MATCH specs + every detail matters filled; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars (e.g. 5.0 / 4.7) — **free tier only**; erase large template placeholders first.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print numbered lines verbatim, not empowerment fluff.',
     rootCheck,
