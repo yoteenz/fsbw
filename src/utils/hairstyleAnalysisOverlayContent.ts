@@ -48,17 +48,21 @@ function applyMatchRow(out: Record<string, string>, prefix: string, look: Analys
   out[`${prefix}-score`] = row.score;
 }
 
+function everyDetailWhyLines(analysis: HairstyleAnalysis): string[] {
+  if (analysis.whyItWorks.length > 0) return analysis.whyItWorks;
+  return buildEveryDetailMattersFromTopMatch(
+    analysis.topMatch,
+    analysis.everyDetailFaceFeatures
+  );
+}
+
 function freeOverlayValues(analysis: HairstyleAnalysis): Record<string, string> {
   const out: Record<string, string> = {
     ...topMatchHeader(analysis.topMatch),
     clientName: 'TOP MATCH',
     clientHeaderName: analysis.clientName.toUpperCase(),
   };
-  const whyLines = buildEveryDetailMattersFromTopMatch(
-    analysis.topMatch,
-    analysis.everyDetailFaceFeatures
-  );
-  whyLines.forEach((line, i) => {
+  everyDetailWhyLines(analysis).forEach((line, i) => {
     out[`whyLine-${i}`] = line;
   });
   return out;
@@ -73,11 +77,7 @@ function threeMonthOverlayValues(analysis: HairstyleAnalysis): Record<string, st
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     applyMatchRow(out, `match${i + 2}`, look);
   });
-  const whyLines = buildEveryDetailMattersFromTopMatch(
-    analysis.topMatch,
-    analysis.everyDetailFaceFeatures
-  );
-  whyLines.forEach((line, i) => {
+  everyDetailWhyLines(analysis).forEach((line, i) => {
     out[`whyLine-${i}`] = line;
   });
   return out;

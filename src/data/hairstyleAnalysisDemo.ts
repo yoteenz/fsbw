@@ -2,10 +2,7 @@ import { hexForHairColor } from './hairstyleCatalog';
 import type { AnalysisLook, AnalysisTier, HairstyleAnalysis } from '../types/hairstyleAnalysis';
 import { resolveCatalogLook } from '../utils/hairstyleAnalysisCatalogResolve';
 import { diversifyHairstyleAnalysisLooks } from '../utils/hairstyleAnalysisLookDiversity';
-import {
-  buildEveryDetailMattersFromTopMatch,
-  KATEENA_DEMO_FACE_FEATURES,
-} from '../utils/hairstyleAnalysisEveryDetailMatters';
+import { buildEveryDetailMattersFromTopMatch, everyDetailVariationSeed, KATEENA_DEMO_FACE_FEATURES } from '../utils/hairstyleAnalysisEveryDetailMatters';
 import { additionalLooksLimit, resolveTemplateUrl } from '../utils/hairstyleAnalysisRules';
 
 export const DEMO_CLIENT_PREVIEW_URL = '/assets/natural front.png';
@@ -97,7 +94,9 @@ export function buildKateenaDemoAnalysis(
   const resolvedAlts = additionalLooks.map((look, i) => resolveCatalogLook(look, i + 1));
   const whyItWorks = buildEveryDetailMattersFromTopMatch(
     resolvedTop,
-    KATEENA_DEMO_FACE_FEATURES
+    KATEENA_DEMO_FACE_FEATURES,
+    5,
+    everyDetailVariationSeed()
   );
 
   return {

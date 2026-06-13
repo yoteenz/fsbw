@@ -2,7 +2,7 @@ import {
   compactEveryDetailMattersLines,
   normalizeAnalysisStylingId,
 } from './hairstyleAnalysisDisplay.js';
-import { buildEveryDetailMattersFromTopMatch } from './hairstyleAnalysisEveryDetailMatters.js';
+import { buildEveryDetailMattersFromTopMatch, everyDetailVariationSeed } from './hairstyleAnalysisEveryDetailMatters.js';
 import { hexForHairColorName } from './hairstyleHairColors.js';
 import { diversifyHairstyleAnalysisLooks } from './hairstyleAnalysisLookDiversity.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
@@ -58,7 +58,12 @@ export function normalizeHairstyleAnalysisForFal(analysis: FalHairstyleAnalysis)
     additionalLooks,
     everyDetailFaceFeatures: analysis.everyDetailFaceFeatures,
     whyItWorks: compactEveryDetailMattersLines(
-      buildEveryDetailMattersFromTopMatch(top, analysis.everyDetailFaceFeatures ?? {})
+      buildEveryDetailMattersFromTopMatch(
+        top,
+        analysis.everyDetailFaceFeatures ?? {},
+        5,
+        everyDetailVariationSeed()
+      )
     ),
   };
 }
