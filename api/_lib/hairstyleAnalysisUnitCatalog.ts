@@ -152,7 +152,7 @@ export function requiresUniformRootToTipColor(color: string): boolean {
   return UNIFORM_ROOT_TO_TIP_COLORS.has(c);
 }
 
-/** Blonde/vivid/custom installs — one pigment root to tip incl. baby hairs (not IMAGE 2 dark roots). */
+/** Blonde/vivid/custom installs — one pigment root to tip (not IMAGE 2 dark roots). */
 export function needsUniformRootRepaint(color: string, unit?: string): boolean {
   if (requiresUniformRootToTipColor(color)) return true;
   const key = unit ? normalizeCatalogUnit(unit) : null;
@@ -187,7 +187,7 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
     return [
       `COLOR ${colorKey} on BLANCO: uniform ${colorKey} blonde tone root to tip on silky straight Russian hair (pigment ${pigment}).`,
       'NO dark roots, NO ash band at roots, NO ombré — one light blonde family from lace to ends.',
-      `Hairline baby hairs and edge wisps = same ${colorKey} tone — never black.`,
+      'Clean lace-front edge — do NOT add baby hairs; if IMAGE 2 has edge strands in hair only, retint to same blonde tone.',
     ].join(' ');
   }
 
@@ -195,8 +195,8 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
     return [
       `COLOR ${colorKey} on ${unitKey ?? unit}: BAW custom color — **one uniform ${colorKey} tone root to tip** (pigment ${pigment}).`,
       'FORBIDDEN: dark roots, black roots, shadow roots, ombré, dip-dye, two-tone regrowth, or natural root melt.',
-      `Every strand from hairline to ends reads as ${colorKey} — lighting shine only, not a second root color.`,
-      `Baby hairs and lace-edge wisps at the forehead/temples = same ${colorKey} pigment — never black/dark when the install color is ${colorKey}.`,
+      `Every strand from lace to ends reads as ${colorKey} — lighting shine only, not a second root color.`,
+      `Clean lace-front edge — do NOT add baby hairs; if IMAGE 2 has edge strands in hair only, retint to ${colorKey} (never black on vivid/blonde).`,
     ].join(' ');
   }
 
@@ -236,7 +236,8 @@ export function bawColorApplicationRulesBlock(): string {
     'Build-a-Wig custom/lifted colors are **one uniform tone from root to tip** on the installed unit.',
     'FORBIDDEN on vivid + blonde colors: dark/black roots, shadow roots, ombré, dip-dye, or two-tone regrowth.',
     'Repaint IMAGE 2 natural black roots fully — mannequin/styling IMAGEs are black stock; copy texture only, never black pigment.',
-    'Baby hairs, temple wisps, and lace-edge strands = **same catalog color** as the main hair — never black on PLATINUM/CHERRY/COPPER/etc.',
+    'Clean lace-front edge on all looks — **do NOT add** baby hairs, flyaways, or edge fuzz on skin.',
+    'If IMAGE 2 already has tiny edge strands in the hair region, retint to catalog color — never leave black wisps on PLATINUM/CHERRY/COPPER installs.',
     'CHERRY example: vivid red (#FF1400) **same saturation from lace to ends** — zero dark root band.',
     'BLANCO (GOLDEN / PLATINUM / ASH only): silky straight blonde/light uniform root to tip.',
     'MATCH 02–04 thumbnails: PLATINUM/GOLDEN/ASH/vivid colors must show **zero dark root band** — repaint scalp zone fully.',
