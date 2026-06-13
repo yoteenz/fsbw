@@ -170,8 +170,10 @@ export default function HairstyleAnalysisCard({
             ? styles.clientNameText
             : field.id === 'clientHeaderName'
               ? styles.clientHeaderNameText
-              : field.id === 'topMatchSummary' || field.id === 'edmBuildSummary'
-                ? styles.panelFooterText
+              : field.id === 'topMatchSummary'
+                ? styles.topMatchPanelFooterText
+                : field.id === 'edmBuildSummary'
+                  ? styles.panelFooterText
                 : matchRowClass
                   ? matchRowClass
                   : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
