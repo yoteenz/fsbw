@@ -30,6 +30,8 @@ import {
   EVERY_DETAIL_MATTERS_MAX_CHARS,
 } from './hairstyleAnalysisDisplay.js';
 
+import { formatEveryDetailMattersForFal } from './hairstyleAnalysisEveryDetailMatters.js';
+
 export type FalAnalysisLook = {
   rank: number;
   unit: string;
@@ -323,10 +325,12 @@ function everyDetailMattersStructureBlock(lineCount: number): string {
     '=== EVERY DETAIL MATTERS PANEL — FIXED STRUCTURE (DO NOT CHANGE) ===',
     'The script header "every detail matters" and rose bullet icons are pre-rendered on IMAGE 1.',
     `Fill exactly ${lineCount} text rows below that header — **one short line per row** (single row only, no wrapping).`,
-    `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} characters — each row explains **one TOP MATCH spec** (texture, color, length, lace, density, part, hairline, or style).`,
-    'Use punchy phrasing (e.g. "HD LACE FOR AN ULTRA REALISTIC FINISH" or "JET BLACK TO COMPLEMENT YOUR BLACK ALMOND EYES") — **no trailing period**, **no dashes or hyphens**.',
+    `Each line ≤ ${EVERY_DETAIL_MATTERS_MAX_CHARS} characters — each row explains **one TOP MATCH spec** from the manifest (lace, color, texture, style, length, density, part, or hairline).`,
+    'Each numbered EVERY DETAIL MATTERS LINE below is **generated fresh for this card** from the TOP MATCH manifest — print it verbatim.',
+    'The spec value in parentheses on each line (e.g. TOP MATCH COLOR = CHERRY) is the **source of truth** — bullets must change when manifest values change.',
+    'Use punchy phrasing — **no trailing period**, **no dashes or hyphens** — but always include the **actual catalog value** for that spec row.',
     'Print each EVERY DETAIL MATTERS LINE verbatim — character-for-character — as black uppercase Futura PT Medium beside its rose icon.',
-    'FORBIDDEN: multi-clause essays, label:value rows, keyword lists, line wraps, or a different number of lines.',
+    'FORBIDDEN: reusing placeholder/demo bullets (NOIR/JET BLACK/HD LACE defaults), multi-clause essays, label:value rows, line wraps, or a different number of lines.',
     'This is NOT motivational copy — do not rewrite into empowerment fluff.',
     'Tone: flattering and respectful only — celebrate features; never call the face long, wide, narrow, or criticize forehead, chin, or proportions.',
   ].join('\n');
@@ -358,7 +362,8 @@ function everyDetailMattersRulesBlock(lineCount: number): string {
     everyDetailMattersStructureBlock(lineCount),
     '',
     '=== EVERY DETAIL MATTERS LINES (PRINT VERBATIM — ZERO REWRITES) ===',
-    'Copy each line below exactly. Do not paraphrase, merge rows, wrap to a second line, or add words.',
+    'Copy each numbered line below exactly. Do not paraphrase, merge rows, wrap to a second line, or add words.',
+    'When TOP MATCH manifest values change (unit, color, length, lace, style), these lines change too — **never** keep bullets from a prior card or template placeholder text.',
     `Each line must fit **one text row** (max ${EVERY_DETAIL_MATTERS_MAX_CHARS} chars) — one TOP MATCH spec value + why it suits the client (no period, dash, or hyphen).`,
     `FORBIDDEN PHRASES / TONE: ${EVERY_DETAIL_MATTERS_FORBIDDEN_PHRASES}.`,
     'Do not invent marketing copy. Do not treat this section as inspirational "why it works" fluff.',
@@ -717,8 +722,11 @@ function appendEveryDetailMattersLines(
   if (analysis.whyItWorks.length === 0) return;
   lines.push('');
   lines.push(everyDetailMattersRulesBlock(analysis.whyItWorks.length));
-  analysis.whyItWorks.forEach((line, i) => {
-    lines.push(`EVERY DETAIL MATTERS LINE ${i + 1}: ${line}`);
+  lines.push(
+    'TOP MATCH spec column and every-detail-matters bullets must stay **in sync** — if manifest says SOFT WAVE + CHERRY, bullets must say SOFT WAVE + CHERRY, not NOIR + JET BLACK.'
+  );
+  formatEveryDetailMattersForFal(analysis.topMatch, analysis.whyItWorks).forEach((line) => {
+    lines.push(line);
   });
 }
 
@@ -733,6 +741,7 @@ function freePromptFooter(
     'HEADER: client first + last name replaces black "TOP MATCH" above overall score panel — **centered** in the header panel.',
     'TOP MATCH specs + every detail matters filled; overall score % + match rating stars generated in-image.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
+    'Every-detail-matters bullets must match the same manifest values as the spec column — regenerate when specs change.',
     overallScoreFalLine(analysis.topMatch),
     matchRatingStarsFalLine(analysis.topMatch, analysis.tier),
   ].join('\n');
@@ -786,7 +795,7 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); every detail matters + overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
+    `FINAL CHECK: red pill = "TOP MATCH" only; black header above score panels = client first + last name **centered** in panel; TOP MATCH spec column = manifest values exactly (unit, color, length, lace, density, part, hairline, STYLE); overall score % + match rating stars in-image; thumbs = same client + assigned STYLE; MATCH 02–04 texture/color/length = black; MATCH SCORE % on each row = **gray ${MATCH_SCORE_GRAY} only** — if any match score looks black, repaint it gray before finishing.`
   );
   return lines.join('\n');
 }

@@ -170,7 +170,9 @@ export function buildHairstyleAnalysisFromPsaPicks(options: {
     additionalLooks: resolvedAlts,
     whyItWorks:
       options.whyItWorks ??
-      buildEveryDetailMattersFromTopMatch(resolvedTop),
+      (normalizeAnalysisTier(options.tier) === 'free'
+        ? buildEveryDetailMattersFromTopMatch(resolvedTop)
+        : []),
     createdAt: new Date().toISOString(),
   };
 }
