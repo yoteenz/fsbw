@@ -28413,3 +28413,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked to rename admin **Membership tier (admin test)** dropdown labels and drop unused options on the hairstyle analysis demo page.
 - **Labels (internal keys unchanged):** `free` → **1 pick**, `three_month` → **4 pick**, `six_month` → **hair consult** (wig consult style analysis tier). Removed **`twelve_month`** and **`black`** from the admin dropdown only.
 - **Shipped (e2f0c023):** **`formatHairstyleAnalysisTierLabel()`** + **`HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS`** in **`hairstyleAnalysisRules.ts`**; **`HairstyleAnalysisPreview.tsx`** uses labels in dropdown, debug save/reset, card tier line, and generate overlay; **`HairstyleAnalysisDemo.tsx`** tier pick counts copy updated. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-13 — Free-tier EDM build summary wrong placement fix
+
+- **Context:** User reported gray **SOFT WAVE · 3 PLUM** build summary broken — split across columns below TOP MATCH specs instead of one centered line above **BUILD THIS LOOK**.
+- **Cause:** Fal painted gray **UNIT · LENGTH · COLOR** ribbon in the wrong zone (between spec panel and every-detail-matters header); truncated length; split fragments under photo vs spec column.
+- **Shipped (a5a6afdf):** **`compositeFreeTierEdmBuildSummary()`** — server-composites gray ribbon at **`EDM_PANEL_FOOTER_SLOT`** (85.5%); **`EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT`** restores clean template over misplaced zone. Fal prompt leaves build summary **blank** (forbidden between spec panel and EDM header). Free tier only in post-process. Pushed **`master`** + **`preview/mobile`**.
