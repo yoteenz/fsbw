@@ -137,6 +137,11 @@ export function matchRowValueFontSize(rect: PixelRect): number {
   return Math.max(14, Math.round(rect.height * 0.88) - 2);
 }
 
+/** TOP MATCH spec column values — petite to align with baked template labels. */
+export function topMatchSpecValueFontSize(rect: PixelRect): number {
+  return Math.max(11, Math.min(18, Math.round(rect.height * 0.34)));
+}
+
 /** Free-tier EDM build summary (UNIT · 22" · COLOR) — centered gray ribbon. */
 export function edmPanelFooterFontSize(rect: PixelRect): number {
   return Math.max(12, Math.min(20, Math.round(rect.height * 0.72)));

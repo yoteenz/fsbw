@@ -601,7 +601,7 @@ function freeTierOnlyBlock(): string {
     'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
-    'ONLY fill: client preview photo, TOP MATCH spec column, TOP MATCH panel footer (black specs-locked line only), EVERY DETAIL MATTERS text rows, OVERALL SCORE %, MATCH RATING decimal + stars.',
+    'ONLY fill: client preview photo, TOP MATCH panel footer (black specs-locked line only), EVERY DETAIL MATTERS text rows, OVERALL SCORE %, MATCH RATING decimal + stars.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -690,15 +690,15 @@ function buildTemplateRules(
     '',
     ...(tierKey === 'free'
       ? [
-          'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
+          'TOP MATCH spec values: server overlay (petite black Futura) — Fal leaves value slots blank.',
           'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: **leave blank** (server-composited gray ribbon above BUILD THIS LOOK — Fal must not print it).',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
         ]
       : []),
     '',
     tierKey === 'free'
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH + specs + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH specs + thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
+      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH photo + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes. TOP MATCH spec values = server overlay.'
+      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH spec values = server overlay; thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -715,9 +715,12 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     ? `COLOR ${color} (${hex}) uniform root-to-tip — erase IMAGE 2 dark roots; clean edge, no baby hairs;`
     : '';
   return [
-    '=== TOP MATCH SPEC COLUMN — PRINT EXACTLY IN VALUE SLOTS (RIGHT PANEL) ===',
-    'The template may show placeholder catalog text (e.g. NOIR, JET BLACK, LAYERS) — ERASE every placeholder and REPLACE with the manifest below.',
-    'Print each value in black uppercase Futura PT Medium in the empty slot beside its pre-printed label only — do not duplicate labels.',
+    '=== TOP MATCH SPEC COLUMN — VALUE SLOTS BLANK (SERVER OVERLAY) ===',
+    'Leave all eight TOP MATCH spec **value slots** empty — server composites petite black Futura PT Medium text aligned with each label.',
+    'Erase template placeholder catalog text (NOIR, JET BLACK, LAYERS, 13X6 HD, etc.) — paint clean frosted panel only in each value slot.',
+    'Pre-printed labels (TEXTURE:, COLOR:, LENGTH:, etc.) stay untouched — do not duplicate labels or print values in-image.',
+    '',
+    '=== TOP MATCH MANIFEST (PHOTO + EDM SYNC — DO NOT PRINT IN VALUE SLOTS) ===',
     `MANIFEST — TEXTURE: ${look.unit.trim().toUpperCase()}`,
     `MANIFEST — COLOR: ${look.color.trim().toUpperCase()}`,
     `MANIFEST — LENGTH: ${displayLength(look.length)}`,
@@ -727,8 +730,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
     `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
-    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
-    `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
+    `FORBIDDEN: printing spec values in-image; template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
+    `STYLE manifest is "${style}" — hair photo must match; value slot text is server-added.`,
   ].join('\n');
 }
 
@@ -760,8 +763,8 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; centered **black** specs-locked footer only (gray UNIT · LENGTH · COLOR build summary is server-added — **leave blank**); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
-    'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
+    'TOP MATCH spec column values are server-added — Fal leaves value slots blank; centered **black** specs-locked footer only (gray UNIT · LENGTH · COLOR build summary is server-added — **leave blank**); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
+    'TOP MATCH spec column must match the MANIFEST exactly — value slot text is server-added, not Fal-printed.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print each line verbatim (text only, no 1. 2. 3. prefixes), not empowerment fluff.',
     oneShoulderDrapeCompactLock(),
     rootCheck,
