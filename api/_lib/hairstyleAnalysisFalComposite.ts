@@ -18,6 +18,8 @@ import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout
 export type HairstyleAnalysisPostProcessContext = {
   topMatch: TopMatchSpecLook;
   tier: 'free' | 'three_month' | 'six_month' | 'twelve_month' | 'black';
+  /** When true, Fal printed spec values + footers — skip Sharp text overlay. */
+  skipServerTextOverlay?: boolean;
 };
 
 async function fetchBuffer(url: string): Promise<Buffer> {
@@ -65,9 +67,11 @@ export async function compositeHairstyleAnalysisPostProcess(
 
   base = await applyClientPhotoMirrorReflection(base, panelRect, fadeRect);
 
-  base = await restoreTemplateSlots(base, templateBuf, hairstyleAnalysisGhostWipeSlots());
+  if (!postProcess?.skipServerTextOverlay) {
+    base = await restoreTemplateSlots(base, templateBuf, hairstyleAnalysisGhostWipeSlots());
+  }
 
-  if (postProcess) {
+  if (postProcess && !postProcess.skipServerTextOverlay) {
     base = await compositeTopMatchSpecValues(base, templateBuf, postProcess.topMatch);
 
     if (isFreeLayoutHairstyleAnalysisTier(postProcess.tier)) {

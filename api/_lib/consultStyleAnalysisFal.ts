@@ -63,6 +63,7 @@ export async function generateConsultStyleAnalysis(
     clientPreviewUrl: input.selfieUrl,
     inspoPreviewUrl: input.inspoUrl,
     consultInspoMode: input.comparisonCount === 4,
+    falInImageTextOnly: true,
     siteOrigin: input.siteOrigin,
     skipLookDiversification: true,
   });

@@ -38,6 +38,7 @@ import {
   formatScorePercent,
   formatMatchRatingDecimal,
   FREE_TOP_MATCH_PANEL_FOOTER,
+  formatEdmPanelBuildSummary,
   matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
   partPlacementCompact,
@@ -91,6 +92,8 @@ export type FalPromptBuildOptions = {
   clientPreviewPreEdited?: boolean;
   /** Wig consult — MATCH 02–04 are color-only variants of the inspo hairstyle on TOP MATCH. */
   consultInspoMode?: boolean;
+  /** Fal prints TOP MATCH specs + panel footers in-image — skip server Sharp text overlay. */
+  falInImageTextOnly?: boolean;
 };
 
 const BRAND_RED = '#EB1C24';
@@ -601,13 +604,16 @@ function panelFooterPlainTextRules(): string {
   ].join('\n');
 }
 
-function freeTierPanelFooterBlock(top: FalAnalysisLook): string {
+function freeTierPanelFooterBlock(top: FalAnalysisLook, falInImageTextOnly = false): string {
+  const edmSummary = formatEdmPanelBuildSummary(top.unit, top.color, top.length);
   return [
     panelFooterPlainTextRules(),
     '',
     '=== FREE TIER — PANEL FOOTERS (CENTERED PLAIN TEXT) ===',
     `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium **black** (#1a1a1a), uppercase, centered, **no border or box**.`,
-    'EVERY DETAIL MATTERS build summary (gray UNIT · XX" · COLOR ribbon): **LEAVE COMPLETELY BLANK** — server composites it below the last rose row, above BUILD THIS LOOK. Do **NOT** paint gray build summary text anywhere on the card.',
+    falInImageTextOnly
+      ? `EVERY DETAIL MATTERS build summary: print **${edmSummary}** — centered **gray #808080** Futura PT Medium below the last rose row, above BUILD THIS LOOK. One line, full string including middle dot separators.`
+      : 'EVERY DETAIL MATTERS build summary (gray UNIT · XX" · COLOR ribbon): **LEAVE COMPLETELY BLANK** — server composites it below the last rose row, above BUILD THIS LOOK. Do **NOT** paint gray build summary text anywhere on the card.',
     '**FORBIDDEN:** gray UNIT · LENGTH · COLOR ribbon between the TOP MATCH spec panel and the "every detail matters" header; split fragments under the client photo or spec column; truncated length (e.g. "3" instead of "34\\"").',
     'The BUILD THIS LOOK button at the card bottom is template chrome — leave it untouched; never print footer summary text on that button.',
     'Panel footers are separate from rose rows and spec values — do not merge into EDM bullets.',
@@ -710,28 +716,36 @@ function buildTemplateRules(
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
-    ...(isFreeLayoutHairstyleAnalysisTier(tierKey) ? [freeTierOnlyBlock(), '', freeTierPanelFooterBlock(analysis.topMatch), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
-    topMatchSpecManifestBlock(analysis.topMatch, refs),
+    ...(isFreeLayoutHairstyleAnalysisTier(tierKey) ? [freeTierOnlyBlock(), '', freeTierPanelFooterBlock(analysis.topMatch, promptOptions?.falInImageTextOnly === true), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
+    topMatchSpecManifestBlock(analysis.topMatch, refs, promptOptions),
     '',
     ...photoRules,
     '',
     ...(isFreeLayoutHairstyleAnalysisTier(tierKey)
       ? [
-          'TOP MATCH spec values: server overlay (petite black Futura) — Fal leaves value slots blank.',
-          'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: **leave blank** (server-composited gray ribbon above BUILD THIS LOOK — Fal must not print it).',
+          promptOptions?.falInImageTextOnly
+            ? 'TOP MATCH spec values + panel footers: **Fal in-image** (black specs, gray EDM build summary) — no server overlay.'
+            : 'TOP MATCH spec values: server overlay (petite black Futura) — Fal leaves value slots blank.',
+          promptOptions?.falInImageTextOnly
+            ? 'TOP MATCH panel footer + gray every-detail-matters build summary: **print in-image** (Fal).'
+            : 'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: **leave blank** (server-composited gray ribbon above BUILD THIS LOOK — Fal must not print it).',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
         ]
       : []),
     '',
     isFreeLayoutHairstyleAnalysisTier(tierKey)
-      ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH photo + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes. TOP MATCH spec values = server overlay.'
-      : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH spec values = server overlay; thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
+      ? promptOptions?.falInImageTextOnly
+        ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH photo + **Fal-printed** spec values + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes.'
+        : 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH photo + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes. TOP MATCH spec values = server overlay.'
+      : promptOptions?.falInImageTextOnly
+        ? 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — **all** TOP MATCH spec values + MATCH 02–04 row values + every detail matters **Fal in-image**; thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.'
+        : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH spec values = server overlay; thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
   ]
     .filter(Boolean)
     .join('\n');
 }
 
-function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
+function topMatchSpecFalInImageBlock(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
   const hairline = displayHairline(look.hairline);
@@ -742,13 +756,55 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     ? `COLOR ${color} (${hex}) uniform root-to-tip — erase IMAGE 2 dark roots; clean edge, no baby hairs;`
     : '';
   return [
-    '=== TOP MATCH SPEC COLUMN — VALUE SLOTS BLANK (SERVER OVERLAY) ===',
-    'Leave all eight TOP MATCH spec **value slots** empty — server composites **extra petite** black Futura PT Medium text aligned with each label (~26% of slot height, max ~14px).',
-    'Erase template placeholder catalog text (NOIR, JET BLACK, LAYERS, 13X6 HD, etc.) — paint clean frosted panel only in each value slot.',
-    'Pre-printed labels (TEXTURE:, COLOR:, LENGTH:, etc.) stay untouched — do not duplicate labels or print values in-image.',
-    '**FORBIDDEN:** printing unit/color/length ribbon text between OVERALL SCORE / MATCH RATING and the spec column; any build-summary fragments in the right panel mid-zone.',
+    '=== TOP MATCH SPEC COLUMN — PRINT VALUES IN TEMPLATE (FAL IN-IMAGE) ===',
+    'Print all eight TOP MATCH spec **values** in **black uppercase Futura PT Medium** in each value slot beside the pre-printed labels.',
+    'Erase template placeholder catalog text (NOIR, JET BLACK, LAYERS, 13X6 HD, etc.) before printing manifest values.',
+    'Labels (TEXTURE:, COLOR:, LENGTH:, LACE:, DENSITY:, PART:, HAIRLINE:, STYLE:) are pre-printed — do not duplicate labels.',
+    'Keep each value aligned with its own label on the same horizontal line.',
+    `TEXTURE: ${look.unit.trim().toUpperCase()}`,
+    `COLOR: ${color} (name only — no hex)`,
+    `LENGTH: ${displayLength(look.length)}`,
+    `LACE: ${displayLace(look.lace)}`,
+    `DENSITY: ${displayDensity(look.density)}`,
+    `PART: ${part}`,
+    `HAIRLINE: ${hairline}`,
+    `STYLE: ${style}`,
+  ].join('\n');
+}
+
+function topMatchSpecManifestBlock(
+  look: FalAnalysisLook,
+  refs: FalPromptImageRefs,
+  promptOptions?: FalPromptBuildOptions
+): string {
+  const style = displayStyle(look.styling, look.unit);
+  const part = displayPart(look.part);
+  const hairline = displayHairline(look.hairline);
+  const hlBinding = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
+  const color = look.color.trim().toUpperCase();
+  const hex = (look.hex || '#000000').toUpperCase();
+  const colorLock = needsUniformRootRepaint(color, look.unit)
+    ? `COLOR ${color} (${hex}) uniform root-to-tip — erase IMAGE 2 dark roots; clean edge, no baby hairs;`
+    : '';
+
+  const specValuesBlock = promptOptions?.falInImageTextOnly
+    ? topMatchSpecFalInImageBlock(look, refs)
+    : [
+        '=== TOP MATCH SPEC COLUMN — VALUE SLOTS BLANK (SERVER OVERLAY) ===',
+        'Leave all eight TOP MATCH spec **value slots** empty — server composites **extra petite** black Futura PT Medium text aligned with each label (~26% of slot height, max ~14px).',
+        'Erase template placeholder catalog text (NOIR, JET BLACK, LAYERS, 13X6 HD, etc.) — paint clean frosted panel only in each value slot.',
+        'Pre-printed labels (TEXTURE:, COLOR:, LENGTH:, etc.) stay untouched — do not duplicate labels or print values in-image.',
+        '**FORBIDDEN:** printing unit/color/length ribbon text between OVERALL SCORE / MATCH RATING and the spec column; any build-summary fragments in the right panel mid-zone.',
+      ].join('\n');
+
+  const valueSlotRule = promptOptions?.falInImageTextOnly
+    ? 'value slots must show manifest text in-image (black Futura) — do not leave blank'
+    : 'value slot text is server-added';
+
+  return [
+    specValuesBlock,
     '',
-    '=== TOP MATCH MANIFEST (PHOTO + EDM SYNC — DO NOT PRINT IN VALUE SLOTS) ===',
+    '=== TOP MATCH MANIFEST (PHOTO + EDM SYNC) ===',
     `MANIFEST — TEXTURE: ${look.unit.trim().toUpperCase()}`,
     `MANIFEST — COLOR: ${look.color.trim().toUpperCase()}`,
     `MANIFEST — LENGTH: ${displayLength(look.length)}`,
@@ -758,8 +814,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
     `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} ${lengthBodyPlacementPromptLine(look.length)}; ${partPlacementPromptLine(look.part)}; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
-    `FORBIDDEN: printing spec values in-image; template placeholder defaults; wrong part side (LEFT on image LEFT or RIGHT on image RIGHT); wrong length body placement (e.g. 16" at hip, 34" at waist); PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
-    `STYLE manifest is "${style}" — hair photo must match; value slot text is server-added.`,
+    `FORBIDDEN: template placeholder defaults; wrong part side (LEFT on image LEFT or RIGHT on image RIGHT); wrong length body placement (e.g. 16" at hip, 34" at waist); PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
+    `STYLE manifest is "${style}" — hair photo must match; ${valueSlotRule}.`,
   ].join('\n');
 }
 
@@ -778,10 +834,11 @@ function appendEveryDetailMattersLines(
   });
 }
 
-function freePromptFooter(analysis: FalHairstyleAnalysis): string {
+function freePromptFooter(analysis: FalHairstyleAnalysis, falInImageTextOnly = false): string {
   const top = analysis.topMatch;
   const color = top.color.trim().toUpperCase();
   const hex = (top.hex || '#000000').toUpperCase();
+  const edmSummary = formatEdmPanelBuildSummary(top.unit, top.color, top.length);
   const rootCheck = needsUniformRootRepaint(color, top.unit)
     ? `${color} (${hex}) uniform root-to-tip — fully erase IMAGE 2 dark/black roots. Clean lace-front edge — no baby hairs on skin.`
     : '';
@@ -791,8 +848,12 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH spec column values are server-added — Fal leaves value slots blank; centered **black** specs-locked footer only (gray UNIT · LENGTH · COLOR build summary is server-added — **leave blank**); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
-    'TOP MATCH spec column must match the MANIFEST exactly — value slot text is server-added, not Fal-printed.',
+    falInImageTextOnly
+      ? `TOP MATCH spec column: print all eight manifest values in-image (black Futura). Centered **black** specs-locked footer **${FREE_TOP_MATCH_PANEL_FOOTER}**. Gray EDM build summary **${edmSummary}** below last rose row. BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars.`
+      : 'TOP MATCH spec column values are server-added — Fal leaves value slots blank; centered **black** specs-locked footer only (gray UNIT · LENGTH · COLOR build summary is server-added — **leave blank**); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
+    falInImageTextOnly
+      ? 'TOP MATCH spec column + gray build summary must match MANIFEST exactly — all Fal-printed in-image.'
+      : 'TOP MATCH spec column must match the MANIFEST exactly — value slot text is server-added, not Fal-printed.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print each line verbatim (text only, no 1. 2. 3. prefixes), not empowerment fluff.',
     oneShoulderDrapeCompactLock(),
     rootCheck,
@@ -818,7 +879,7 @@ function freePrompt(
     clientPreviewPanelLine(top, refs, promptOptions),
   ];
   appendEveryDetailMattersLines(lines, analysis);
-  lines.push(freePromptFooter(analysis));
+  lines.push(freePromptFooter(analysis, promptOptions?.falInImageTextOnly === true));
   return lines.join('\n');
 }
 
@@ -851,7 +912,9 @@ function threeMonthPrompt(
   lines.push(matchScoreManifestBlock(analysis));
   lines.push('');
   lines.push(
-    `FINAL CHECK: **same client face as IMAGE 2** on main photo + all MATCH thumbs; gray centered client name; specs + EDM verbatim; EDM rows keep **original red rose icons** (text only — no AI/sparkle/checkmark bullets); ${oneShoulderDrapeCompactLock()}; manifest HAIRLINE on every photo; **erase baby hairs on skin**; clean lace-front edge; MATCH RATING stars only; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+    promptOptions?.falInImageTextOnly
+      ? `FINAL CHECK: **same client face as IMAGE 2** on main photo + all MATCH thumbs; gray centered client name; **Fal-printed** TOP MATCH spec values + MATCH 02–04 rows + EDM verbatim; EDM rows keep **original red rose icons** (text only — no AI/sparkle/checkmark bullets); ${oneShoulderDrapeCompactLock()}; manifest HAIRLINE on every photo; **erase baby hairs on skin**; clean lace-front edge; MATCH RATING stars only; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
+      : `FINAL CHECK: **same client face as IMAGE 2** on main photo + all MATCH thumbs; gray centered client name; specs + EDM verbatim; EDM rows keep **original red rose icons** (text only — no AI/sparkle/checkmark bullets); ${oneShoulderDrapeCompactLock()}; manifest HAIRLINE on every photo; **erase baby hairs on skin**; clean lace-front edge; MATCH RATING stars only; MATCH SCORE % gray ${MATCH_SCORE_GRAY} only.`
   );
   return lines.join('\n');
 }
