@@ -28495,3 +28495,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **LEFT part** rendered on the wrong side of the head (should be reversed); **RIGHT part** was correct.
 - **Root cause:** Fal prompts used bare **PART LEFT** without BAW salon mirror semantics (**UI LEFT** → groove on **image RIGHT** scalp).
 - **Shipped:** **`partPlacementPromptLine()`** / **`partPlacementCompact()`** in **`hairstyleAnalysisDisplay.ts`**; wired into **`hairPartLockBlock()`**, client preview, hair-only step, thumbnails, and TOP MATCH manifest photo lock in **`hairstyleAnalysisFalPrompt.ts`**.
+
+---
+
+## 2026-06-14 — Manifest length → body placement in Fal hair generation
+
+- **Context:** User asked whether generated **lengths** reflect **where hair ends land on the body** (e.g. **16"** at collarbone, **34"** very low). Prior work in this chat also shipped consult optional style analysis, consult debug tiers/dual upload, EDM gray ribbon fix, and LEFT part mirror.
+- **Prior state:** EDM **`lengthLinePool()`** copy described collarbone/waist/hip for marketing text, but **Fal prompts** only passed **`displayLength()`** in manifests — no anatomical endpoint lock — so generated hair could ignore inch count on the body.
+- **Shipped (f2684a35):** **`parseLengthInches()`**, **`lengthBodyLandmark()`**, **`lengthBodyPlacementPromptLine()`**, **`lengthBodyPlacementCompact()`** in **`api/_lib/hairstyleAnalysisDisplay.ts`**. Buckets: ≤16 collarbone; 17 above waist; 18–24 waist; 25 below waist; 26–28 hip; 29–31 upper thigh; 32–33 mid-thigh; 34+ knee/low. Wired into **`hairLengthBodyPlacementLockBlock()`**, client preview, hair-only step, MATCH thumbnails, styling manifest, TOP MATCH **PHOTO↔SPEC LOCK** in **`hairstyleAnalysisFalPrompt.ts`**. EDM **`lengthLinePool()`** extended for 29"+ in api + src pools. **Consult inspo pipeline** unchanged (length from inspo image). Regenerate cards to see effect (cached Fal output won't update). Pushed **`master`** + **`preview/mobile`**.
