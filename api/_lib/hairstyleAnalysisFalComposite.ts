@@ -5,10 +5,6 @@ import {
   resolveClientPhotoFadeSlotOrDefault,
 } from './hairstyleAnalysisCompositeLayout.js';
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
-import {
-  applyClientPanelPhotoRestore,
-  hairstyleAnalysisClientPanelRestoreEnabled,
-} from './hairstyleAnalysisClientPanelRestore.js';
 import { applyClientPhotoMirrorReflection } from './hairstyleAnalysisClientPhotoReflection.js';
 import { hairstyleAnalysisClientPhotoPostProcessEnabled } from './hairstyleAnalysisClientPhotoCutout.js';
 import { edmRoseIconSlots, HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
@@ -29,26 +25,16 @@ async function resizeToAnalysisCanvas(buf: Buffer): Promise<Buffer> {
   return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
 }
 
-export type HairstyleAnalysisPostProcessInput = {
-  falImageUrl: string;
-  templateImageUrl: string;
-  /** Hair-edited step-1 portrait (preferred) or raw selfie — free-tier panel paste. */
-  clientPreviewBuf?: Buffer | null;
-  /** When true, paste full client portrait into main photo window after Fal. */
-  restoreFreeClientPanel?: boolean;
-  layoutOverrides?: CompositeLayoutOverrides;
-  applyPhotoFade?: boolean;
-};
-
-/** Post-process: restore EDM roses, optional free client panel paste, optional fade, mirror reflection. */
+/** Post-process: restore EDM rose icons, optional photo fade, mirror reflection. */
 export async function compositeHairstyleAnalysisPostProcess(
-  input: HairstyleAnalysisPostProcessInput
+  falImageUrl: string,
+  templateImageUrl: string,
+  layoutOverrides?: CompositeLayoutOverrides,
+  applyPhotoFade = false
 ): Promise<Buffer> {
-  const applyPhotoFade = input.applyPhotoFade ?? hairstyleAnalysisClientPhotoPostProcessEnabled();
-
   const [falRaw, templateRaw] = await Promise.all([
-    fetchBuffer(input.falImageUrl),
-    fetchBuffer(input.templateImageUrl),
+    fetchBuffer(falImageUrl),
+    fetchBuffer(templateImageUrl),
   ]);
 
   const [falBuf, templateBuf] = await Promise.all([
@@ -58,23 +44,9 @@ export async function compositeHairstyleAnalysisPostProcess(
 
   let base = await restoreTemplateSlots(falBuf, templateBuf, edmRoseIconSlots());
 
-  const photoOverrides = photoPostProcessLayoutOverrides(input.layoutOverrides);
+  const photoOverrides = photoPostProcessLayoutOverrides(layoutOverrides);
   const panelRect = resolveClientImageSlotOrDefault(photoOverrides);
   const fadeRect = resolveClientPhotoFadeSlotOrDefault(photoOverrides);
-
-  if (
-    input.restoreFreeClientPanel &&
-    input.clientPreviewBuf?.length &&
-    hairstyleAnalysisClientPanelRestoreEnabled()
-  ) {
-    base = await applyClientPanelPhotoRestore(
-      base,
-      templateBuf,
-      input.clientPreviewBuf,
-      panelRect,
-      fadeRect
-    );
-  }
 
   if (applyPhotoFade) {
     base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
