@@ -4,7 +4,7 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 
 ## Wig consult add-on (all consult bookers)
 
-**Where:** `/booking/consultation` → **STYLE ANALYSIS ADD-ON** (required) — pick **1** or **4** comparisons, then **CHOOSE SELFIE** (PSA-style upload). **Hair inspo** (above) is also required; generation combines selfie + first inspo photo.
+**Where:** `/booking/consultation` → **STYLE ANALYSIS ADD-ON (OPTIONAL)** — choose **NO STYLE ANALYSIS** ($40 deposit only), **1 COMPARISON** (+$20), or **4 COMPARISONS** (+$60). When a paid tier is selected, **CHOOSE SELFIE** appears **inside that panel** (PSA-style upload). **Hair inspo** (above) is required for generation when the add-on is purchased; generation combines selfie + first inspo photo.
 
 **Pricing (non-refundable add-on only):**
 

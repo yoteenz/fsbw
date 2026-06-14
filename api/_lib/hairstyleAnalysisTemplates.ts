@@ -11,7 +11,7 @@ export type HairstyleAnalysisCardTier = 'free' | 'three_month' | 'six_month' | '
 export const HAIRSTYLE_ANALYSIS_TEMPLATE_URLS: Record<HairstyleAnalysisCardTier, string> = {
   free: HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL,
   three_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
-  six_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
+  six_month: HAIRSTYLE_ANALYSIS_FREE_TEMPLATE_URL,
   twelve_month: HAIRSTYLE_ANALYSIS_PREMIUM_TEMPLATE_URL,
 };
 

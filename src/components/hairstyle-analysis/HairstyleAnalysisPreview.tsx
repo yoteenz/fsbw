@@ -18,6 +18,7 @@ import {
 import { getTemplateFields } from '../../utils/hairstyleAnalysisTemplateLayouts';
 import {
   getHairstyleAnalysisUsage,
+  postConsultStyleAnalysisGenerate,
   postHairstyleAnalysisGenerate,
   type HairstyleAnalysisUsageResult,
 } from '../../utils/api';
@@ -53,9 +54,12 @@ import {
 } from '../../utils/hairstyleAnalysisManifestStorage';
 import {
   additionalLooksLimit,
+  consultComparisonCountForAdminTier,
   formatHairstyleAnalysisTierLabel,
   HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS,
+  isConsultStyleAnalysisAdminTier,
 } from '../../utils/hairstyleAnalysisRules';
+import type { StyleAnalysisChart } from '../../types/styleAnalysis';
 
 type HairstyleAnalysisPreviewProps = {
   analysis: HairstyleAnalysis;
@@ -128,11 +132,15 @@ export default function HairstyleAnalysisPreview({
   const generatedRef = useRef<HTMLDivElement>(null);
   const overlayCardRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inspoFileInputRef = useRef<HTMLInputElement>(null);
 
   const [generating, setGenerating] = useState(false);
   const [generateProgress, setGenerateProgress] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
+  const [generatedChart, setGeneratedChart] = useState<StyleAnalysisChart | null>(null);
+  const [hairInspoUrl, setHairInspoUrl] = useState<string | null>(null);
+  const [inspoUploadError, setInspoUploadError] = useState<string | null>(null);
   const [lastPrompt, setLastPrompt] = useState<string | null>(null);
   const [showOverlayPreview, setShowOverlayPreview] = useState(false);
   const [showDebugFrames, setShowDebugFrames] = useState(false);
@@ -173,6 +181,8 @@ export default function HairstyleAnalysisPreview({
     const user = getCurrentUser();
     return user ? isAdminEmail(user.email || '') : false;
   }, []);
+
+  const consultDebugMode = isConsultStyleAnalysisAdminTier(analysis.tier);
 
   useEffect(() => {
     let cancelled = false;
@@ -290,9 +300,32 @@ export default function HairstyleAnalysisPreview({
 
   const onTierSelect = (tier: AnalysisTier) => {
     setGeneratedUrl(null);
+    setGeneratedChart(null);
     setLastPrompt(null);
     setGenerateError(null);
     onTierChange?.(tier);
+  };
+
+  const onInspoSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setInspoUploadError(null);
+    const dataUrl = await readFileAsDataUrl(file);
+    if (!dataUrl) {
+      setInspoUploadError('COULD NOT READ THAT PHOTO');
+      return;
+    }
+    try {
+      const compressed = await compressClientPreviewDataUrl(dataUrl);
+      setHairInspoUrl(compressed);
+    } catch {
+      setInspoUploadError('PHOTO TOO LARGE — TRY A SMALLER IMAGE');
+      return;
+    }
+    setGeneratedUrl(null);
+    setGeneratedChart(null);
+    setLastPrompt(null);
   };
 
   const onPhotoSelected = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -313,16 +346,33 @@ export default function HairstyleAnalysisPreview({
       return;
     }
     setGeneratedUrl(null);
+    setGeneratedChart(null);
     setLastPrompt(null);
   };
 
+  const previewPhotoUrl = clientPreviewUrl ?? resolvedAnalysis.clientPreviewUrl;
+
   const canGenerate = useMemo(() => {
-    if (validationIssues.length > 0 || generating || usageLoading) return false;
+    if (generating || usageLoading) return false;
+    if (consultDebugMode) {
+      if (!isAdmin) return false;
+      return Boolean(previewPhotoUrl?.trim()) && Boolean(hairInspoUrl?.trim());
+    }
+    if (validationIssues.length > 0) return false;
     if (isAdmin || usageState?.unlimited) return true;
     if (!usageState?.eligible) return false;
     if (usageState.canGenerate === true) return true;
     return (usageState.monthRemaining ?? 0) > 0 || (usageState.paidCreditsRemaining ?? 0) > 0;
-  }, [generating, isAdmin, usageLoading, usageState, validationIssues.length]);
+  }, [
+    consultDebugMode,
+    generating,
+    hairInspoUrl,
+    isAdmin,
+    previewPhotoUrl,
+    usageLoading,
+    usageState,
+    validationIssues.length,
+  ]);
 
   const purchaseRequired = useMemo(() => {
     if (isAdmin || usageState?.unlimited || !usageState?.eligible || usageLoading) return false;
@@ -359,6 +409,33 @@ export default function HairstyleAnalysisPreview({
     setGenerating(true);
     setGenerateError(null);
     try {
+      const consultCount = consultComparisonCountForAdminTier(analysis.tier);
+      if (consultCount) {
+        const selfie = previewPhotoUrl;
+        if (!selfie?.trim() || !hairInspoUrl?.trim()) {
+          throw new Error('SELFIE AND HAIR INSPO PHOTOS ARE REQUIRED');
+        }
+        let selfieForApi = selfie;
+        if (selfie.startsWith('data:')) {
+          selfieForApi = await compressClientPreviewDataUrl(selfie);
+        }
+        let inspoForApi = hairInspoUrl;
+        if (inspoForApi.startsWith('data:')) {
+          inspoForApi = await compressClientPreviewDataUrl(inspoForApi);
+        }
+        const result = await postConsultStyleAnalysisGenerate({
+          selfieDataUrl: selfieForApi,
+          inspoDataUrl: inspoForApi,
+          comparisonCount: consultCount,
+        });
+        if (!result.ok) throw new Error(result.error);
+        setGenerateProgress(1);
+        setGeneratedChart(result.chart);
+        setGeneratedUrl(null);
+        setLastPrompt(null);
+        return;
+      }
+
       const hasLayoutOverrides = Object.keys(slotOverrides).length > 0;
       const hasFontOverrides = Object.keys(fontOverrides).length > 0;
       const freshWhyItWorks = buildEveryDetailMattersFromTopMatch(
@@ -387,6 +464,7 @@ export default function HairstyleAnalysisPreview({
       );
       setGenerateProgress(1);
       setGeneratedUrl(result.imageUrl);
+      setGeneratedChart(null);
       setLastPrompt(result.prompt);
       if (result.usage) {
         setUsageState((prev) =>
@@ -411,7 +489,18 @@ export default function HairstyleAnalysisPreview({
     } finally {
       setGenerating(false);
     }
-  }, [fontOverrides, isAdmin, manifestTestMode, resolvedAnalysis, slotOverrides, usageState?.unlimited, clientPreviewUrl]);
+  }, [
+    analysis.tier,
+    fontOverrides,
+    hairInspoUrl,
+    isAdmin,
+    manifestTestMode,
+    previewPhotoUrl,
+    resolvedAnalysis,
+    slotOverrides,
+    usageState?.unlimited,
+    clientPreviewUrl,
+  ]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({
@@ -613,8 +702,37 @@ export default function HairstyleAnalysisPreview({
               disabled={generating}
               className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black disabled:opacity-40"
             >
-              Upload client preview photo
+              {consultDebugMode ? 'Upload client selfie' : 'Upload client preview photo'}
             </button>
+            {consultDebugMode ? (
+              <>
+                <input
+                  ref={inspoFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => void onInspoSelected(e)}
+                />
+                <button
+                  type="button"
+                  onClick={() => inspoFileInputRef.current?.click()}
+                  disabled={generating}
+                  className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black disabled:opacity-40"
+                >
+                  Upload hair inspo photo
+                </button>
+                {hairInspoUrl ? (
+                  <img
+                    src={hairInspoUrl}
+                    alt=""
+                    className="w-20 h-24 object-cover border border-black mx-auto"
+                  />
+                ) : null}
+                {inspoUploadError ? (
+                  <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{inspoUploadError}</p>
+                ) : null}
+              </>
+            ) : null}
             <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
               Or paste image URL
               <input
@@ -643,12 +761,19 @@ export default function HairstyleAnalysisPreview({
           className="w-full py-3 border border-black uppercase disabled:opacity-40"
           style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#FFFFFF', backgroundColor: '#EB1C24' }}
         >
-          {generating ? 'GENERATING WITH GPT IMAGE 2…' : 'GENERATE TEMPLATE PREVIEW (GPT IMAGE 2 · 4:5 · 2K)'}
+          {generating
+            ? consultDebugMode
+              ? 'GENERATING CONSULT STYLE CHART…'
+              : 'GENERATING WITH GPT IMAGE 2…'
+            : consultDebugMode
+              ? 'GENERATE CONSULT STYLE CHART (SELFIE + INSPO)'
+              : 'GENERATE TEMPLATE PREVIEW (GPT IMAGE 2 · 4:5 · 2K)'}
         </button>
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
-          Sends the static Supabase template + client photo to Fal with the tier population prompt. This is the
-          client-facing card — not the React text overlay composer.
+          {consultDebugMode
+            ? 'Uses the wig consult pipeline (selfie + inspo → exact hairstyle on you, then color-only alternates). Template overlay below matches 1 pick / 4 pick layout for slot QA only.'
+            : 'Sends the static Supabase template + client photo to Fal with the tier population prompt. This is the client-facing card — not the React text overlay composer.'}
         </p>
       </div>
 
@@ -673,9 +798,34 @@ export default function HairstyleAnalysisPreview({
 
       {generating ? (
         <AnalysisGenerateProgressOverlay
-          label={`GPT IMAGE 2 IS POPULATING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} TEMPLATE`}
+          label={
+            consultDebugMode
+              ? `GPT IMAGE 2 IS BUILDING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} CONSULT CHART`
+              : `GPT IMAGE 2 IS POPULATING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} TEMPLATE`
+          }
           progress={generateProgress}
         />
+      ) : generatedChart ? (
+        <div ref={generatedRef} className="w-full shadow-lg border border-black/10 p-3 flex flex-col gap-3">
+          <p className="text-[10px] uppercase tracking-[0.12em] text-black text-center">
+            {generatedChart.title}
+            {generatedChart.subtitle ? ` · ${generatedChart.subtitle}` : ''}
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {generatedChart.cells.map((cell) => (
+              <div key={cell.id} className="flex flex-col gap-1">
+                {cell.imageUrl ? (
+                  <img src={cell.imageUrl} alt="" className="w-full aspect-[3/4] object-cover border border-black/10" />
+                ) : (
+                  <div className="w-full aspect-[3/4] border border-black/10 bg-black/5" />
+                )}
+                <p className="text-[8px] uppercase tracking-[0.1em] text-[#808080] text-center leading-snug">
+                  {cell.subtitle ?? cell.color ?? cell.role}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       ) : generatedUrl ? (
         <div ref={generatedRef} className="w-full shadow-lg border border-black/10">
           <img
