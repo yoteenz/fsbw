@@ -45,7 +45,8 @@ export default function HairstyleAnalysisDemo() {
           <ul className="space-y-1">
             <li>1 pick — 1 recommendation (top match)</li>
             <li>4 pick — top + 3 additional</li>
-            <li>Hair consult — wig consult style analysis (top + 3 additional)</li>
+            <li>Hair consult 1 pick — selfie + inspo chart (1 comparison)</li>
+            <li>Hair consult 4 pick — selfie + inspo chart (4 comparisons)</li>
           </ul>
           <p className="mt-3">
             Production path: Fal fills the static Supabase template from the tier prompt. Pick a tier, upload a

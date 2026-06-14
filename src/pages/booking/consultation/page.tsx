@@ -43,8 +43,9 @@ import {
   consultCheckoutTotalUsd,
   consultStyleAnalysisBagSubtitle,
   consultStyleAnalysisUsd,
+  hasConsultStyleAnalysisAddon,
+  type ConsultStyleAnalysisSelection,
 } from '../../../utils/consultStyleAnalysisAddon';
-import type { StyleAnalysisComparisonTier } from '../../../types/styleAnalysis';
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
@@ -209,7 +210,7 @@ export default function BookingConsultationPage() {
   const [consultMeasurementsHydrateKey, setConsultMeasurementsHydrateKey] = useState(0);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
-  const [styleAnalysisTier, setStyleAnalysisTier] = useState<StyleAnalysisComparisonTier>(1);
+  const [styleAnalysisTier, setStyleAnalysisTier] = useState<ConsultStyleAnalysisSelection>(null);
   const [styleAnalysisSelfie, setStyleAnalysisSelfie] = useState<ConsultStyleAnalysisSelfieItem | null>(
     loadSelfieDraft
   );
@@ -394,7 +395,7 @@ export default function BookingConsultationPage() {
       });
       return;
     }
-    if (!styleAnalysisSelfie?.dataUrl?.startsWith('data:image/')) {
+    if (hasConsultStyleAnalysisAddon(styleAnalysisTier) && !styleAnalysisSelfie?.dataUrl?.startsWith('data:image/')) {
       setConsultFormNotice({
         title: 'FORGETTING SOMETHING?',
         message: 'PLEASE CHOOSE A SELFIE FOR YOUR STYLE ANALYSIS ADD-ON.'
@@ -464,10 +465,14 @@ export default function BookingConsultationPage() {
           bookingInspoFileName: inspoItems.map((it) => it.name).join(' · '),
           bookingBagSubtitle: [hairOption, styleAnalysisSubtitle].filter(Boolean).join(' · '),
           consultDepositUsd: CONSULT_DEPOSIT_USD,
-          consultStyleAnalysisComparisonCount: styleAnalysisTier,
-          consultStyleAnalysisNonRefundable: true,
-          consultStyleAnalysisSelfieUrl: styleAnalysisSelfie.dataUrl,
-          consultStyleAnalysisSelfieFileName: styleAnalysisSelfie.name,
+          ...(hasConsultStyleAnalysisAddon(styleAnalysisTier)
+            ? {
+                consultStyleAnalysisComparisonCount: styleAnalysisTier,
+                consultStyleAnalysisNonRefundable: true,
+                consultStyleAnalysisSelfieUrl: styleAnalysisSelfie!.dataUrl,
+                consultStyleAnalysisSelfieFileName: styleAnalysisSelfie!.name,
+              }
+            : {}),
           ...(hairOption === 'WIG + INSTALL' && consultPreferredDateIso.trim()
             ? { bookingPreferredDate: consultPreferredDateIso.trim() }
             : {}),
@@ -933,7 +938,12 @@ export default function BookingConsultationPage() {
           >
             <ConsultStyleAnalysisAddonPicker
               value={styleAnalysisTier}
-              onChange={setStyleAnalysisTier}
+              onChange={(next) => {
+                setStyleAnalysisTier(next);
+                if (!hasConsultStyleAnalysisAddon(next)) {
+                  setStyleAnalysisSelfie(null);
+                }
+              }}
               selfie={styleAnalysisSelfie}
               onSelfieChange={setStyleAnalysisSelfie}
               disabled={addToBagState === 'adding'}
@@ -1127,8 +1137,14 @@ export default function BookingConsultationPage() {
                 lineHeight: 1.45,
               }}
             >
-              ${CONSULT_DEPOSIT_USD} CONSULT DEPOSIT (CREDITABLE ON OFFER) + $
-              {consultStyleAnalysisUsd(styleAnalysisTier)} STYLE ANALYSIS (NON-REFUNDABLE)
+              {hasConsultStyleAnalysisAddon(styleAnalysisTier) ? (
+                <>
+                  ${CONSULT_DEPOSIT_USD} CONSULT DEPOSIT (CREDITABLE ON OFFER) + $
+                  {consultStyleAnalysisUsd(styleAnalysisTier)} STYLE ANALYSIS (NON-REFUNDABLE)
+                </>
+              ) : (
+                <>${CONSULT_DEPOSIT_USD} CONSULT DEPOSIT ONLY (CREDITABLE ON OFFER)</>
+              )}
             </p>
           </div>
         </div>

@@ -45,6 +45,8 @@ type ConsultStyleAnalysisSelfiePickerProps = {
   value: ConsultStyleAnalysisSelfieItem | null;
   onChange: (next: ConsultStyleAnalysisSelfieItem | null) => void;
   disabled?: boolean;
+  /** Inside a selected tier panel — no top rule / extra margin. */
+  embedded?: boolean;
 };
 
 /** PSA-style selfie upload — combined with hair inspo at fulfillment (not PSA ranked picks). */
@@ -52,6 +54,7 @@ export default function ConsultStyleAnalysisSelfiePicker({
   value,
   onChange,
   disabled,
+  embedded = false,
 }: ConsultStyleAnalysisSelfiePickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -131,7 +134,15 @@ export default function ConsultStyleAnalysisSelfiePicker({
   };
 
   return (
-    <div style={{ width: '100%', minWidth: 0, marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+    <div
+      style={{
+        width: '100%',
+        minWidth: 0,
+        marginTop: embedded ? '12px' : '16px',
+        paddingTop: embedded ? 0 : '16px',
+        borderTop: embedded ? 'none' : '1px solid #e5e7eb',
+      }}
+    >
       <p style={{ ...labelStyle, marginTop: 0 }}>
         YOUR SELFIE:
         <span style={{ color: '#EB1C24' }}>*</span>

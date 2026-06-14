@@ -20,7 +20,7 @@ import type {
 export const ADDITIONAL_LOOKS_BY_TIER: Record<AnalysisTier, number> = {
   free: 0,
   three_month: 3,
-  six_month: 3,
+  six_month: 0,
   twelve_month: 3,
   black: 3,
 };
@@ -30,15 +30,26 @@ export const HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS: AnalysisTier[] = [
   'free',
   'three_month',
   'six_month',
+  'twelve_month',
 ];
 
 const HAIRSTYLE_ANALYSIS_TIER_LABELS: Record<AnalysisTier, string> = {
   free: '1 pick',
   three_month: '4 pick',
-  six_month: 'hair consult',
-  twelve_month: '12 month',
+  six_month: 'hair consult 1 pick',
+  twelve_month: 'hair consult 4 pick',
   black: 'black',
 };
+
+export function isConsultStyleAnalysisAdminTier(tier: AnalysisTier): boolean {
+  return tier === 'six_month' || tier === 'twelve_month';
+}
+
+export function consultComparisonCountForAdminTier(tier: AnalysisTier): 1 | 4 | null {
+  if (tier === 'six_month') return 1;
+  if (tier === 'twelve_month') return 4;
+  return null;
+}
 
 export function formatHairstyleAnalysisTierLabel(tier: AnalysisTier): string {
   return HAIRSTYLE_ANALYSIS_TIER_LABELS[tier] ?? tier.replace(/_/g, ' ');
@@ -49,6 +60,9 @@ export function normalizeAnalysisTier(tier: AnalysisTier): Exclude<AnalysisTier,
 }
 
 export function resolveTemplateUrl(tier: AnalysisTier): string {
+  if (tier === 'six_month') {
+    return HAIRSTYLE_ANALYSIS_TEMPLATE_URLS.free;
+  }
   return HAIRSTYLE_ANALYSIS_TEMPLATE_URLS[normalizeAnalysisTier(tier)];
 }
 

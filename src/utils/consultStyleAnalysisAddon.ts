@@ -1,8 +1,10 @@
 /**
- * Wig consult — required Style Analysis add-on (non-refundable).
+ * Wig consult — optional Style Analysis add-on (non-refundable).
  * Priced by comparison-option count: 1 / 4 → $20 / $60, bundled with $40 deposit at checkout.
  */
 import type { StyleAnalysisComparisonTier } from '../types/styleAnalysis';
+
+export type ConsultStyleAnalysisSelection = StyleAnalysisComparisonTier | null;
 
 export const CONSULT_DEPOSIT_USD = 40;
 
@@ -41,21 +43,27 @@ export function consultStyleAnalysisTierByCount(
 }
 
 export function consultStyleAnalysisUsd(
-  count: StyleAnalysisComparisonTier | null | undefined
+  count: ConsultStyleAnalysisSelection | undefined
 ): number {
-  return consultStyleAnalysisTierByCount(count)?.priceUsd ?? 0;
+  return consultStyleAnalysisTierByCount(count ?? undefined)?.priceUsd ?? 0;
 }
 
 export function consultCheckoutTotalUsd(
-  comparisonCount: StyleAnalysisComparisonTier | null | undefined
+  comparisonCount: ConsultStyleAnalysisSelection | undefined
 ): number {
   return CONSULT_DEPOSIT_USD + consultStyleAnalysisUsd(comparisonCount);
 }
 
 export function consultStyleAnalysisBagSubtitle(
-  comparisonCount: StyleAnalysisComparisonTier | null | undefined
+  comparisonCount: ConsultStyleAnalysisSelection | undefined
 ): string | undefined {
-  const tier = consultStyleAnalysisTierByCount(comparisonCount);
+  const tier = consultStyleAnalysisTierByCount(comparisonCount ?? undefined);
   if (!tier) return undefined;
   return `STYLE ANALYSIS · ${tier.label}`;
+}
+
+export function hasConsultStyleAnalysisAddon(
+  comparisonCount: ConsultStyleAnalysisSelection | undefined
+): comparisonCount is StyleAnalysisComparisonTier {
+  return comparisonCount === 1 || comparisonCount === 4;
 }
