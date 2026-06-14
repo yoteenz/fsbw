@@ -390,7 +390,14 @@ export async function generateHairstyleAnalysisWithFal(
     imageUrl,
     templateFetchUrl,
     input.layoutOverrides,
-    hairstyleAnalysisClientPhotoPostProcessEnabled()
+    hairstyleAnalysisClientPhotoPostProcessEnabled(),
+    analysis.tier === 'free'
+      ? {
+          unit: analysis.topMatch.unit,
+          color: analysis.topMatch.color,
+          length: analysis.topMatch.length,
+        }
+      : null
   );
   imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');
 

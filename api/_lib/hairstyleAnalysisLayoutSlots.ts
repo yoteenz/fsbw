@@ -185,6 +185,18 @@ export function edmRoseIconSlots(): PixelRect[] {
   return Array.from({ length: EDM_ROSE_ROW_COUNT }, (_, i) => edmRoseIconSlot(i));
 }
 
+/** Free tier — black specs-locked line below TOP MATCH spec column. */
+export const TOP_MATCH_PANEL_FOOTER_SLOT = pctRect('56%', '46%', '32%', '2.8%');
+
+/** Free tier — gray UNIT · 22" · COLOR build summary above BUILD THIS LOOK CTA. */
+export const EDM_PANEL_FOOTER_SLOT = pctRect('56%', '85.5%', '38%', '2.3%');
+
+/**
+ * Wide band between TOP MATCH spec footer and every-detail-matters header — Fal sometimes
+ * paints the gray build summary here (split across columns). Restore clean template art.
+ */
+export const EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT = pctRect('4%', '49%', '92%', '7%');
+
 /** MATCH 02–04 thumbnail slots — premium template (IMG_2549 @ 2048×2560). */
 const MATCH_THUMB_BLOCK_TOPS = [48.0, 60.5, 73.0];
 

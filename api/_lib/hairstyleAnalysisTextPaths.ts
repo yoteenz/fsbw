@@ -136,3 +136,8 @@ export function buildTextPathsSvg(
 export function matchRowValueFontSize(rect: PixelRect): number {
   return Math.max(14, Math.round(rect.height * 0.88) - 2);
 }
+
+/** Free-tier EDM build summary (UNIT · 22" · COLOR) — centered gray ribbon. */
+export function edmPanelFooterFontSize(rect: PixelRect): number {
+  return Math.max(12, Math.min(20, Math.round(rect.height * 0.72)));
+}

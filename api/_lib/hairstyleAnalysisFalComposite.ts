@@ -7,6 +7,10 @@ import {
 import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.js';
 import { applyClientPhotoMirrorReflection } from './hairstyleAnalysisClientPhotoReflection.js';
 import { hairstyleAnalysisClientPhotoPostProcessEnabled } from './hairstyleAnalysisClientPhotoCutout.js';
+import {
+  compositeFreeTierEdmBuildSummary,
+  type FreeTierEdmBuildSummary,
+} from './hairstyleAnalysisFreeTierFooters.js';
 import { edmRoseIconSlots, HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
 import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
 
@@ -25,12 +29,13 @@ async function resizeToAnalysisCanvas(buf: Buffer): Promise<Buffer> {
   return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
 }
 
-/** Post-process: restore EDM rose icons, optional photo fade, mirror reflection. */
+/** Post-process: restore EDM rose icons, optional photo fade, mirror reflection, free-tier EDM build summary. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
   templateImageUrl: string,
   layoutOverrides?: CompositeLayoutOverrides,
-  applyPhotoFade = false
+  applyPhotoFade = false,
+  freeTierEdmBuildSummary?: FreeTierEdmBuildSummary | null
 ): Promise<Buffer> {
   const [falRaw, templateRaw] = await Promise.all([
     fetchBuffer(falImageUrl),
@@ -52,5 +57,17 @@ export async function compositeHairstyleAnalysisPostProcess(
     base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
   }
 
-  return applyClientPhotoMirrorReflection(base, panelRect, fadeRect);
+  base = await applyClientPhotoMirrorReflection(base, panelRect, fadeRect);
+
+  if (freeTierEdmBuildSummary) {
+    const { formatEdmPanelBuildSummary } = await import('./hairstyleAnalysisDisplay.js');
+    const summaryText = formatEdmPanelBuildSummary(
+      freeTierEdmBuildSummary.unit,
+      freeTierEdmBuildSummary.color,
+      freeTierEdmBuildSummary.length
+    );
+    base = await compositeFreeTierEdmBuildSummary(base, templateBuf, summaryText);
+  }
+
+  return base;
 }
