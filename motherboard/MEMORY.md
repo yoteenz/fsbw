@@ -28450,3 +28450,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User clarified wig consult style analysis: **required selfie** (same upload flow as PSA) combined with **hair inspo**; add-on price **adds to consult checkout total**; **only $40 deposit** is creditable on consult offer — style analysis fee is **non-refundable**.
 - **Shipped (a567842b):** **`ConsultStyleAnalysisSelfiePicker`** reworked to PSA pattern (**CHOOSE SELFIE**, centered 72×96 preview). Selfie nested inside **`ConsultStyleAnalysisAddonPicker`** below tier selection. Itemized checkout copy: **$40 creditable deposit + $20/$60 non-refundable add-on**. Updated **`CONSULT_STYLE_ANALYSIS_NON_REFUNDABLE_NOTE`** and **`STYLE_ANALYSIS.md`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-14 — PSA hair analysis 24-hour delivery timeline
+
+- **Context:** User requested PSA hair analysis reflect **24-hour** delivery — not immediate in-chat results. Timeline only in member-facing copy (no internal review rationale).
+- **Shipped:** **`PsaSelfieStyleAnalysisPanel`** — **SUBMIT SELFIE** flow; chat shows submission confirmation within **24 hours** (no instant picks). **`psaInstructions.ts`**, **`hairstyleAnalysisStatus.ts`**, **`psaTools.ts`**, **`psaHairAnalysisDelivery.ts`**, **`STYLE_ANALYSIS.md`**, **`CORE.md`** updated.
