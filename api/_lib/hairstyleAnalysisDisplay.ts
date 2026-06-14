@@ -113,6 +113,85 @@ export function partPlacementCompact(part: string): string {
   return 'RIGHT part → image LEFT scalp';
 }
 
+/** Inch count from catalog length string (e.g. "16", "34 INCHES"). */
+export function parseLengthInches(length: string): number | null {
+  const match = displayLength(length).match(/(\d+)/);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
+export type LengthBodyLandmark =
+  | 'collarbone'
+  | 'above_waist'
+  | 'waist'
+  | 'below_waist'
+  | 'hip'
+  | 'upper_thigh'
+  | 'mid_thigh'
+  | 'knee';
+
+/** Where manifest hair **ends** should land on the client's visible body (front portrait). */
+export function lengthBodyLandmark(inches: number | null): LengthBodyLandmark {
+  if (inches === null) return 'waist';
+  if (inches <= 16) return 'collarbone';
+  if (inches === 17) return 'above_waist';
+  if (inches <= 24) return 'waist';
+  if (inches === 25) return 'below_waist';
+  if (inches <= 28) return 'hip';
+  if (inches <= 31) return 'upper_thigh';
+  if (inches <= 33) return 'mid_thigh';
+  return 'knee';
+}
+
+/**
+ * Fal hair-generation lock — manifest LENGTH inches control where hair **ends** terminate on the body.
+ * Aligns with Every Detail Matters length copy (collarbone → waist → hip → thigh → knee).
+ */
+export function lengthBodyPlacementPromptLine(length: string): string {
+  const inches = parseLengthInches(length);
+  const len = displayLength(length);
+  const landmark = lengthBodyLandmark(inches);
+
+  if (landmark === 'collarbone') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** terminate at the **collarbone / clavicle line** on the client's visible torso — short hem, not waist- or hip-long. **FORBIDDEN:** ends at waist, hip, or thigh when manifest is ${len}.`;
+  }
+  if (landmark === 'above_waist') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** fall **above the natural waist** — between collarbone and waist (lower ribcage / upper torso), clearly shorter than waist-length. **FORBIDDEN:** collarbone-short or full waist-length when manifest is ${len}.`;
+  }
+  if (landmark === 'waist') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** terminate at the **natural waist** (navel band) — classic waist-length hem on the visible body. **FORBIDDEN:** collarbone-short or hip-long when manifest is ${len}.`;
+  }
+  if (landmark === 'below_waist') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** sit **below the waist and above the hip** — longer than waist-length, not yet full hip. **FORBIDDEN:** waist-short or hip-long when manifest is ${len}.`;
+  }
+  if (landmark === 'hip') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** terminate at the **hip line** (hip bone / upper hip on the visible torso). **FORBIDDEN:** waist-length or thigh-length when manifest is ${len}.`;
+  }
+  if (landmark === 'upper_thigh') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** fall **below the hip onto the upper thigh** — long dramatic line, clearly past the hip. **FORBIDDEN:** stopping at waist or hip when manifest is ${len}.`;
+  }
+  if (landmark === 'mid_thigh') {
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** reach **mid-thigh** on the visible body — very long, low on the torso/legs in frame. **FORBIDDEN:** hip-high or waist-length when manifest is ${len}.`;
+  }
+  return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** reach **knee level or lower** on the visible body — maximum dramatic length, very low in the portrait. **FORBIDDEN:** hip-high, waist-length, or mid-thigh when manifest is ${len} (34" must read unmistakably longer than 26"–28").`;
+}
+
+export function lengthBodyPlacementCompact(length: string): string {
+  const inches = parseLengthInches(length);
+  const len = displayLength(length);
+  const landmark = lengthBodyLandmark(inches);
+  const labels: Record<LengthBodyLandmark, string> = {
+    collarbone: 'ends @ collarbone',
+    above_waist: 'ends above waist',
+    waist: 'ends @ waist',
+    below_waist: 'ends below waist',
+    hip: 'ends @ hip',
+    upper_thigh: 'ends upper thigh',
+    mid_thigh: 'ends mid-thigh',
+    knee: 'ends knee/low',
+  };
+  return `${len} → ${labels[landmark]}`;
+}
+
 /** Salon styling ids as shown on Build-a-Wig (LAYERS, FLAT IRON, CRIMPS, etc.). */
 export function displayStyle(styling: string, unit = ''): string {
   return normalizeAnalysisStylingId(unit, styling);

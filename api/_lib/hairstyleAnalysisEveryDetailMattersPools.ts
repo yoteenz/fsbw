@@ -147,7 +147,51 @@ export function lengthLinePool(ctx: EveryDetailLineCtx): EveryDetailLineBuilder[
     return [...collarbone, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
   }
 
-  // 26"+ — hip length and longer.
+  // 34"+ — knee level and lower (maximum length).
+  if (inches !== null && inches >= 34) {
+    const knee: EveryDetailLineBuilder[] = [
+      (c) => `${c.length} FALLS TO THE KNEE`,
+      (c) => `${c.length} SITS AT KNEE LEVEL`,
+      (c) => `${c.length} FOR MAXIMUM DRAMATIC LENGTH`,
+      (c) => `${c.length} WITH CLEAN ENDS`,
+      (c) => `${c.length} THAT DRAWS THE EYE DOWN`,
+      (c) => `${c.length} FOR A STATEMENT LENGTH`,
+      (c) => `${c.length} FALLS BELOW THE HIP`,
+      (c) => `${c.length} FOR LENGTH AT KNEE OR LOWER`,
+    ];
+    if (!withFace) return knee;
+    return [...knee, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+  }
+
+  // 32"–33" — mid-thigh.
+  if (inches !== null && inches >= 32) {
+    const midThigh: EveryDetailLineBuilder[] = [
+      (c) => `${c.length} FALLS TO MID-THIGH`,
+      (c) => `${c.length} SITS AT MID-THIGH`,
+      (c) => `${c.length} FOR A LONG, DRAMATIC LINE`,
+      (c) => `${c.length} WITH CLEAN ENDS`,
+      (c) => `${c.length} THAT DRAWS THE EYE DOWN`,
+      (c) => `${c.length} FOR LENGTH BELOW THE HIP`,
+    ];
+    if (!withFace) return midThigh;
+    return [...midThigh, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+  }
+
+  // 29"–31" — upper thigh.
+  if (inches !== null && inches >= 29) {
+    const upperThigh: EveryDetailLineBuilder[] = [
+      (c) => `${c.length} FALLS TO THE UPPER THIGH`,
+      (c) => `${c.length} SITS BELOW THE HIP`,
+      (c) => `${c.length} FOR A LONG, DRAMATIC LINE`,
+      (c) => `${c.length} WITH CLEAN ENDS`,
+      (c) => `${c.length} THAT DRAWS THE EYE DOWN`,
+      (c) => `${c.length} FOR LENGTH BELOW THE HIP`,
+    ];
+    if (!withFace) return upperThigh;
+    return [...upperThigh, (c) => `${c.length} FLATTERS YOUR ${face.faceShape}`];
+  }
+
+  // 26"–28" — hip length.
   if (inches !== null && inches >= 26) {
     const hip: EveryDetailLineBuilder[] = [
       (c) => `${c.length} FALLS TO THE HIP`,
