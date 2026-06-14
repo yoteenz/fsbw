@@ -37,6 +37,7 @@ const CURLY_STYLING_IDS = [
 const STRAIGHT_STYLING = STRAIGHT_STYLING_IDS.join(', ');
 const CURLY_STYLING = CURLY_STYLING_IDS.join(', ');
 const CONSULT_LENGTH_OPTIONS = [16, 18, 20, 22, 24, 26, 28, 30] as const;
+const MANUAL_LENGTH_OPTIONS = [16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40] as const;
 
 export type ConsultInspoSpecs = {
   unit: CatalogUnitName;
@@ -55,6 +56,18 @@ type RawInspoSpecs = {
   styling?: string;
   lengthInches?: number;
   part?: string;
+};
+
+export type ManualConsultInspoSpecs = {
+  unit?: string;
+  color?: string;
+  styling?: string;
+  length?: string;
+  lengthInches?: number;
+  part?: string;
+  lace?: string;
+  density?: string;
+  hairline?: string;
 };
 
 function parseSpecsJson(raw: string | null): RawInspoSpecs | null {
@@ -77,12 +90,30 @@ function normalizePart(part: string | undefined): 'MIDDLE' | 'LEFT' | 'RIGHT' {
   return 'MIDDLE';
 }
 
-function normalizeLength(inches: number | undefined): string {
+function normalizeDetectedLength(inches: number | undefined): string {
   const n = typeof inches === 'number' && Number.isFinite(inches) ? Math.round(inches) : 24;
   const clamped = Math.min(30, Math.max(16, n));
   const roundedDown =
     [...CONSULT_LENGTH_OPTIONS].reverse().find((option) => option <= clamped) ?? 24;
   return `${roundedDown} INCHES`;
+}
+
+function parseManualLengthInches(length: string | undefined, lengthInches: number | undefined): number {
+  if (typeof lengthInches === 'number' && Number.isFinite(lengthInches)) return Math.round(lengthInches);
+  const match = String(length || '').match(/(\d+)/);
+  return match ? Number.parseInt(match[1], 10) : 24;
+}
+
+function normalizeManualLength(length: string | undefined, lengthInches: number | undefined): string {
+  const n = parseManualLengthInches(length, lengthInches);
+  const clamped = Math.min(40, Math.max(16, n));
+  const exact = MANUAL_LENGTH_OPTIONS.find((option) => option === clamped);
+  if (exact) return `${exact} INCHES`;
+  const closest =
+    MANUAL_LENGTH_OPTIONS.reduce((best, option) =>
+      Math.abs(option - clamped) < Math.abs(best - clamped) ? option : best
+    ) ?? 24;
+  return `${closest} INCHES`;
 }
 
 function resolveColorForUnit(
@@ -165,6 +196,24 @@ function defaultDensityForUnit(unit: CatalogUnitName): string {
   return '250%';
 }
 
+function normalizeManualLace(lace: string | undefined, fallback: string): string {
+  const cleaned = String(lace || '').trim().toUpperCase();
+  if (!cleaned) return fallback;
+  return cleaned.includes('HD') ? cleaned : `${cleaned} HD`;
+}
+
+function normalizeManualDensity(density: string | undefined, fallback: string): string {
+  const cleaned = String(density || '').trim().toUpperCase().replace(/\s*DENSITY\s*$/i, '');
+  if (!cleaned) return fallback;
+  return cleaned.includes('%') ? cleaned : `${cleaned}%`;
+}
+
+function normalizeManualHairline(hairline: string | undefined, fallback: string): string {
+  const cleaned = String(hairline || '').trim().toUpperCase();
+  if (!cleaned) return fallback;
+  return cleaned.includes('HAIRLINE') ? cleaned : `${cleaned} HAIRLINE`;
+}
+
 /** Map silver/platinum/blonde inspo → BLANCO + PLATINUM when vision picks a vivid color on straight blonde hair. */
 function inferUnitFromColorHint(unit: CatalogUnitName, color: ConsultHairColorName): CatalogUnitName {
   if (unit === 'BLANCO') return 'BLANCO';
@@ -187,11 +236,42 @@ export function normalizeConsultInspoSpecs(raw: RawInspoSpecs, fallbackColor: Co
     unit,
     color,
     styling,
-    length: normalizeLength(raw.lengthInches),
+    length: normalizeDetectedLength(raw.lengthInches),
     part: normalizePart(raw.part),
     lace: '13X6 HD',
     density: defaultDensityForUnit(unit),
     hairline: 'NATURAL HAIRLINE',
+  };
+}
+
+/** Manual/admin specs for a submitted hair inspo image. Skips vision spec detection. */
+export function normalizeManualConsultInspoSpecs(
+  manual: ManualConsultInspoSpecs,
+  fallbackColor: ConsultHairColorName
+): ConsultInspoSpecs {
+  const unitRaw = normalizeCatalogUnit(manual.unit || 'NOIR') ?? 'NOIR';
+  let color = resolveColorForUnit(unitRaw, manual.color || fallbackColor, fallbackColor);
+  let unit = inferUnitFromColorHint(unitRaw, color);
+  if (unit === 'BLANCO') {
+    color = resolveColorForUnit('BLANCO', manual.color || color, color);
+  } else {
+    color = resolveColorForUnit(unit, manual.color || fallbackColor, fallbackColor);
+  }
+  const base: ConsultInspoSpecs = {
+    unit,
+    color,
+    styling: defaultStylingForUnit(unit, manual.styling || 'NONE'),
+    length: normalizeManualLength(manual.length, manual.lengthInches),
+    part: normalizePart(manual.part),
+    lace: '13X6 HD',
+    density: defaultDensityForUnit(unit),
+    hairline: 'NATURAL HAIRLINE',
+  };
+  return {
+    ...base,
+    lace: normalizeManualLace(manual.lace, base.lace),
+    density: normalizeManualDensity(manual.density, base.density),
+    hairline: normalizeManualHairline(manual.hairline, base.hairline),
   };
 }
 

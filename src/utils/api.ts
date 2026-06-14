@@ -2244,12 +2244,25 @@ export type ConsultStyleAnalysisGenerateResponse =
     }
   | { ok: false; error: string };
 
+export type ConsultStyleAnalysisManualSpecs = {
+  unit?: string;
+  color?: string;
+  styling?: string;
+  length?: string;
+  lengthInches?: number;
+  part?: string;
+  lace?: string;
+  density?: string;
+  hairline?: string;
+};
+
 /** Wig consult — selfie + inspo → hairstyle analysis 1 pick / 4 pick template card. */
 export async function postConsultStyleAnalysisGenerate(input: {
   selfieDataUrl: string;
   inspoDataUrl: string;
   comparisonCount: import('../types/styleAnalysis').StyleAnalysisComparisonTier;
   clientName?: string;
+  manualSpecs?: ConsultStyleAnalysisManualSpecs;
 }): Promise<ConsultStyleAnalysisGenerateResponse> {
   const token = await getAccessToken();
   if (!token) {
@@ -2265,6 +2278,7 @@ export async function postConsultStyleAnalysisGenerate(input: {
         inspoDataUrl: input.inspoDataUrl,
         comparisonCount: input.comparisonCount,
         ...(input.clientName ? { clientName: input.clientName } : {}),
+        ...(input.manualSpecs ? { manualSpecs: input.manualSpecs } : {}),
       },
     });
   } catch (e) {
