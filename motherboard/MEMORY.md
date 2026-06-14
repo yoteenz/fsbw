@@ -28453,6 +28453,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-14 — TOP MATCH spec petite sizing + hero white-strip ghost wipe
+
+- **Context:** User reported TOP MATCH spec values still too large / misaligned and a horizontal white strip across the hero portrait on generated hairstyle analysis cards.
+- **Root cause:** **`EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT`** spanned **4%–96%** width — restoring template art over the **left client photo** mid-panel. Fal also painted stray unit/color/length ribbons above the spec column.
+- **Shipped:** Ghost wipe narrowed to **right panel only** (`52%`–`96%`); added **`TOP_MATCH_SPEC_HEADER_GHOST_WIPE_SLOT`**; ghost wipes run **all tiers** before spec composite. **`topMatchSpecValueFontSize()`** → max **14px** (~26% slot height); expanded spec slot wipes + **`verticalBias: 0.54`**. Dev overlay **`.topMatchSpecValueText`** max **7px**.
+
+---
+
 ## 2026-06-14 — PSA hair analysis 24-hour delivery timeline
 
 - **Context:** User requested PSA hair analysis reflect **24-hour** delivery — not immediate in-chat results. Timeline only in member-facing copy (no internal review rationale).
