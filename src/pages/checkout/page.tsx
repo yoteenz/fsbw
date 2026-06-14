@@ -2653,6 +2653,12 @@ function CheckoutPage() {
                   (u): u is string => typeof u === 'string' && u.trim().length > 0
                 )
               : undefined;
+          const consultSelfiePersist =
+            bookingFlowTypePersist === 'consult' &&
+            typeof bookingCartLineForPersist?.consultStyleAnalysisSelfieUrl === 'string' &&
+            bookingCartLineForPersist.consultStyleAnalysisSelfieUrl.trim().length > 0
+              ? bookingCartLineForPersist.consultStyleAnalysisSelfieUrl.trim()
+              : undefined;
           const persistedLineItems =
             digitalFulfillmentOnly ? undefined : buildPersistedLineItemsFromCart(cartItems as any[]);
           const newOrder = {
@@ -2680,6 +2686,15 @@ function CheckoutPage() {
               : {}),
             ...(consultInspoPersist && consultInspoPersist.length > 0
               ? { bookingInspoPhotoUrls: consultInspoPersist }
+              : {}),
+            ...(consultSelfiePersist ? { consultStyleAnalysisSelfieUrl: consultSelfiePersist } : {}),
+            ...(bookingFlowTypePersist === 'consult' &&
+            (bookingCartLineForPersist?.consultStyleAnalysisComparisonCount === 1 ||
+              bookingCartLineForPersist?.consultStyleAnalysisComparisonCount === 4)
+              ? {
+                  consultStyleAnalysisComparisonCount:
+                    bookingCartLineForPersist.consultStyleAnalysisComparisonCount,
+                }
               : {}),
           };
           activeOrders.push(newOrder);

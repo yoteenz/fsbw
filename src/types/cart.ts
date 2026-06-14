@@ -55,6 +55,9 @@ export interface CartItem {
   consultDepositUsd?: number;
   /** Consult style analysis add-on — 1 / 4 comparison options ($20 / $60, non-refundable). */
   consultStyleAnalysisComparisonCount?: 1 | 4;
+  /** Consult style analysis — client selfie for inspo composite (not PSA analysis). */
+  consultStyleAnalysisSelfieUrl?: string;
+  consultStyleAnalysisSelfieFileName?: string;
   consultStyleAnalysisNonRefundable?: boolean;
   /** Standalone hairstyle analysis purchase — 1 / 4 comparisons ($20 / $60, non-refundable). */
   hairstyleAnalysisComparisonCount?: 1 | 4;

@@ -2220,3 +2220,50 @@ export async function postAdminMeetingClientAlert(body: {
     throw new Error(msg || 'Alert failed');
   }
 }
+
+export type ConsultStyleAnalysisGenerateResponse =
+  | { ok: true; chart: import('../types/styleAnalysis').StyleAnalysisChart }
+  | { ok: false; error: string };
+
+/** Wig consult — selfie + inspo composite (separate from PSA / template hairstyle analysis). */
+export async function postConsultStyleAnalysisGenerate(input: {
+  selfieDataUrl: string;
+  inspoDataUrl: string;
+  comparisonCount: import('../types/styleAnalysis').StyleAnalysisComparisonTier;
+}): Promise<ConsultStyleAnalysisGenerateResponse> {
+  const token = await getAccessToken();
+  if (!token) {
+    return { ok: false, error: 'Sign in required' };
+  }
+
+  let res: Response;
+  try {
+    res = await apiFetch('/api/consult-style-analysis-generate', {
+      method: 'POST',
+      body: {
+        selfieDataUrl: input.selfieDataUrl,
+        inspoDataUrl: input.inspoDataUrl,
+        comparisonCount: input.comparisonCount,
+      },
+    });
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+  }
+
+  const text = await res.text();
+  if (!res.ok) {
+    return { ok: false, error: parseApiErrorText(text, 'Consult style analysis generation failed') };
+  }
+
+  try {
+    const data = JSON.parse(text) as {
+      ok?: boolean;
+      chart?: import('../types/styleAnalysis').StyleAnalysisChart;
+      error?: string;
+    };
+    if (data.ok && data.chart) return { ok: true, chart: data.chart };
+    return { ok: false, error: data.error || 'Generation failed' };
+  } catch {
+    return { ok: false, error: 'Invalid server response' };
+  }
+}

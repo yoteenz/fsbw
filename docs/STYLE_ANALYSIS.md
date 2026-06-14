@@ -4,27 +4,31 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 
 ## Wig consult add-on (all consult bookers)
 
-**Where:** `/booking/consultation` → **STYLE ANALYSIS ADD-ON** (optional, below hair inspo).
+**Where:** `/booking/consultation` → **STYLE ANALYSIS SELFIE** + **STYLE ANALYSIS ADD-ON** (required; below hair inspo).
+
+**Inputs:** Client uploads **one selfie** + **hair inspo** (up to 3 inspo photos; generation uses the **first** inspo). This is **not** the PSA hairstyle analysis card or template `IMG_2554` / `IMG_2549` path.
 
 **Pricing (non-refundable add-on only):**
 
-| Comparison options | Price |
-|-------------------|-------|
-| 1 | $20 |
-| 4 | $60 |
+| Comparison options | Price | Output |
+|-------------------|-------|--------|
+| 1 | $20 | Inspo hairstyle on client + **1** alternate **color** (same cut/style) |
+| 4 | $60 | Inspo hairstyle on client + **4** alternate **colors** (same cut/style; colors differ from inspo) |
 
-The **$40 consult deposit** remains separate and creditable per existing consult policy. Checkout total = **$40 + add-on** when selected.
+The **$40 consult deposit** remains separate and creditable per existing consult policy. Checkout total = **$40 + add-on**.
 
-**Fulfillment (v1 spec):** When admin sends the consult quote (~72h), attach a **style analysis chart** derived from the client’s **hair inspo** photos:
+**Generation pipeline (consult-only):** `POST /api/consult-style-analysis-generate` (signed in). Fal **GPT Image 2** (`openai/gpt-image-2/edit`):
 
-1. **Hero:** Client selfie composited in the inspo look (e.g. jet black layered curls).
-2. **Comparisons:** Same silhouette/styling with alternate **colors & lengths** (count = tier).
+1. **Hero (`inspo_match`):** Selfie + inspo → client in the **exact inspo hairstyle** (geometry from inspo, identity from selfie, color from inspo).
+2. **Comparisons:** Recolor hero only — **catalog color swap**, same hairstyle; alternates never reuse the inspo’s detected catalog color.
 
-Cart fields: `consultStyleAnalysisComparisonCount`, `consultStyleAnalysisNonRefundable`, `consultDepositUsd`.
+OpenAI vision classifies inspo dominant hair color against the BAW catalog (`consultStyleAnalysisInspoColor.ts`).
+
+Cart fields: `consultStyleAnalysisComparisonCount`, `consultStyleAnalysisSelfieUrl`, `consultStyleAnalysisSelfieFileName`, `consultStyleAnalysisNonRefundable`, `consultDepositUsd`, `bookingInspoPhotoUrls`.
 
 Server quote: `api/_lib/pricing/resolveQuote.ts` adds add-on to `booking-consult` lines.
 
-**Code:** `src/utils/consultStyleAnalysisAddon.ts`, `src/components/booking/ConsultStyleAnalysisAddonPicker.tsx`.
+**Code:** `api/_lib/consultStyleAnalysisFal.ts`, `api/consult-style-analysis-generate.ts`, `src/utils/consultStyleAnalysisAddon.ts`, `src/utils/consultStyleAnalysisGenerate.ts`, `src/utils/consultStyleAnalysisInputs.ts`, `src/components/booking/ConsultStyleAnalysisSelfiePicker.tsx`, `src/components/booking/ConsultStyleAnalysisAddonPicker.tsx`.
 
 ---
 
@@ -86,6 +90,5 @@ Paid tiers share one premium template (fewer rows, higher quality). Monthly free
 ## Phase 2 (not in v1 UI)
 
 - Wire PSA selfie results → `HairstyleAnalysisCard` + template PNG export.
-- Fal/GPT compositing pipeline for consult chart cells (`StyleAnalysisChart` in `src/types/styleAnalysis.ts`).
-- Admin **Send offer** attaches generated chart to `consultOfferSnapshot`.
+- Admin **Send offer** attaches generated `StyleAnalysisChart` to `consultOfferSnapshot` (inputs: order `consultStyleAnalysisSelfieUrl` + first `bookingInspoPhotoUrls` + `consultStyleAnalysisComparisonCount`; call `postConsultStyleAnalysisGenerate`).
 - Persist PSA analysis runs in Supabase for rate limits / history.

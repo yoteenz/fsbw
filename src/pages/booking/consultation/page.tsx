@@ -33,6 +33,11 @@ import {
   BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX,
 } from '../../../utils/bookingConsultHairInspoThumb';
 import ConsultStyleAnalysisAddonPicker from '../../../components/booking/ConsultStyleAnalysisAddonPicker';
+import ConsultStyleAnalysisSelfiePicker, {
+  CONSULT_STYLE_ANALYSIS_SELFIE_SESSION_KEY,
+  loadSelfieDraft,
+  type ConsultStyleAnalysisSelfieItem,
+} from '../../../components/booking/ConsultStyleAnalysisSelfiePicker';
 import {
   CONSULT_DEPOSIT_USD,
   consultCheckoutTotalUsd,
@@ -204,6 +209,9 @@ export default function BookingConsultationPage() {
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
   const [styleAnalysisTier, setStyleAnalysisTier] = useState<StyleAnalysisComparisonTier>(1);
+  const [styleAnalysisSelfie, setStyleAnalysisSelfie] = useState<ConsultStyleAnalysisSelfieItem | null>(
+    loadSelfieDraft
+  );
   const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
 
@@ -385,6 +393,13 @@ export default function BookingConsultationPage() {
       });
       return;
     }
+    if (!styleAnalysisSelfie?.dataUrl?.startsWith('data:image/')) {
+      setConsultFormNotice({
+        title: 'FORGETTING SOMETHING?',
+        message: 'PLEASE UPLOAD A STYLE ANALYSIS SELFIE.'
+      });
+      return;
+    }
     if (!headMeasurements.circumference.trim() || !headMeasurements.frontToNape.trim()) {
       setConsultFormNotice({
         title: 'FORGETTING SOMETHING?',
@@ -450,6 +465,8 @@ export default function BookingConsultationPage() {
           consultDepositUsd: CONSULT_DEPOSIT_USD,
           consultStyleAnalysisComparisonCount: styleAnalysisTier,
           consultStyleAnalysisNonRefundable: true,
+          consultStyleAnalysisSelfieUrl: styleAnalysisSelfie.dataUrl,
+          consultStyleAnalysisSelfieFileName: styleAnalysisSelfie.name,
           ...(hairOption === 'WIG + INSTALL' && consultPreferredDateIso.trim()
             ? { bookingPreferredDate: consultPreferredDateIso.trim() }
             : {}),
@@ -465,11 +482,13 @@ export default function BookingConsultationPage() {
         window.dispatchEvent(new Event('cartUpdated'));
         try {
           sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+          sessionStorage.removeItem(CONSULT_STYLE_ANALYSIS_SELFIE_SESSION_KEY);
         } catch {
           /* ignore */
         }
         inspoSessionMayClearWhenEmptyRef.current = true;
         setInspoItems([]);
+        setStyleAnalysisSelfie(null);
         setAddToBagState('added');
         setTimeout(() => {
           setAddToBagState('idle');
@@ -524,7 +543,7 @@ export default function BookingConsultationPage() {
             BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY OR OVERALL FINISH. SELECT WIG + INSTALL OR WIG ONLY.
           </BookingBodyParagraph>
           <BookingBodyParagraph style={{ marginBottom: 0 }}>
-            ADD YOUR HEAD MEASUREMENTS ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
+            ADD YOUR HEAD MEASUREMENTS, A CLEAR SELFIE, AND HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
           </BookingBodyParagraph>
         </div>
 
@@ -901,6 +920,21 @@ export default function BookingConsultationPage() {
                 );
               })}
             </div>
+          </div>
+
+          <div
+            style={{
+              width: '100%',
+              minWidth: 0,
+              borderTop: '1px solid #e5e7eb',
+              paddingTop: '20px',
+            }}
+          >
+            <ConsultStyleAnalysisSelfiePicker
+              value={styleAnalysisSelfie}
+              onChange={setStyleAnalysisSelfie}
+              disabled={addToBagState === 'adding'}
+            />
           </div>
 
           <div
