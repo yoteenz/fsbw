@@ -118,10 +118,10 @@ function mannequinRefLine(
   const textureLock = unitTextureAppearanceLock(look.unit);
   const noneStyleNote =
     unitKey === 'SOFT CURL'
-      ? 'Copy **tight wave** strand pattern from that mannequin — elongated S-waves only, volume, and one-shoulder drape — **NOT** spiral curls or OCEAN CURL ringlets.'
+      ? 'Copy **tight wave** strand pattern from that mannequin — elongated S-waves only, volume, and asymmetric shoulder sweep — **NOT** spiral curls or OCEAN CURL ringlets.'
       : unitKey === 'OCEAN CURL'
-        ? 'Copy **tight curl** spiral pattern from that mannequin — springy ringlets, volume, and one-shoulder drape.'
-        : 'Copy **hair** strand pattern, definition, volume, and one-shoulder drape from that mannequin — hair region only.';
+        ? 'Copy **tight curl** spiral pattern from that mannequin — springy ringlets, volume, and asymmetric shoulder sweep.'
+        : 'Copy **hair** strand pattern, definition, volume, and asymmetric shoulder sweep from that mannequin — hair region only.';
   const shapeNote =
     style !== 'NONE'
       ? 'Mannequin = **hair-strand texture + hair-end drape direction only** (above the collarbone). Salon finish comes from the BAW styling reference IMAGE — not the mannequin default shape.'
@@ -145,39 +145,39 @@ function neckAndBodyPreservationBlock(): string {
     '=== NECK + SHOULDERS — CLIENT ANATOMY LOCK (CRITICAL) ===',
     'IMAGE 2 (client selfie) is the **only** source for neck, throat, collarbones, shoulders, and visible skin below the hairline.',
     'Hair edits apply in the **hair region only** (strands from crown/hairline down to hair ends).',
-    '**Hair drape is an exception:** strand placement must follow **one-shoulder drape** below — **override** symmetric both-shoulder curtain from IMAGE 2 if present; keep shoulder **skin** visible on the clear side.',
+    '**Hair drape is an exception:** follow **asymmetric shoulder sweep** below — override symmetric **forward** both-shoulder curtain from IMAGE 2 if present; natural **back spill** behind one shoulder is fine.',
     'FORBIDDEN: elongating, slimming, or repainting the neck; mannequin neck geometry; pasted mannequin throat; warped collarbone; plastic neck skin; hair covering the neck unnaturally to hide edits.',
     'If a mannequin reference IMAGE is attached: use it for **hair strand texture and hair-end drape direction only** — never replace the client neck or shoulders.',
   ].join('\n');
 }
 
-/** Front portrait drape — one-shoulder hair placement (prompt-led; mannequin IMAGE optional). */
+/** Front portrait drape — asymmetric shoulder sweep (prompt-led; mannequin IMAGE optional). */
 function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only', hasMannequinRefs: boolean): string {
   const scopeLine =
     scope === 'all_photos'
-      ? 'Applies to the **main client preview** AND **every MATCH 02–04 thumbnail** — identical shoulder geometry on all photos.'
-      : '**MATCH 02–04 thumbnails only:** use the **same** one-shoulder drape as the main client preview — never revert to both-shoulder hair on small squares.';
+      ? 'Applies to the **main client preview** AND **every MATCH 02–04 thumbnail** — same asymmetric drape geometry on all photos.'
+      : '**MATCH 02–04 thumbnails only:** use the **same** asymmetric shoulder sweep as the main client preview — never revert to symmetric twin forward curtains.';
 
   const mannequinNote = hasMannequinRefs
-    ? 'When a unit mannequin IMAGE is attached: borrow **hair-end drape direction** only — not neck or shoulder anatomy.'
+    ? 'When a unit mannequin IMAGE is attached: borrow **hair-end drape direction** only — primary forward + back spill silhouette, not neck or shoulder anatomy.'
     : 'Follow these drape rules from the prompt — no mannequin IMAGE is attached for body geometry.';
 
   return [
-    '=== HAIR DRAPE — ONE SHOULDER ONLY (CRITICAL — DO NOT SKIP) ===',
+    '=== HAIR DRAPE — ASYMMETRIC SHOULDER SWEEP (NOT SYMMETRIC TWIN CURTAIN) ===',
     scopeLine,
-    'Long hair uses **asymmetric one-shoulder drape** — heavy cascade on **one shoulder only**, other shoulder kept clear. This rule is **equal priority** to face lock and hairline shape.',
-    '**FORWARD DRAPE (only heavy cascade):** length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the **only** shoulder with thick hair down the chest.',
-    '**BEHIND / CLEAR SHOULDER:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — sweep hair **behind** the shoulder or tuck it back so the shoulder cap, neck line, and jewelry stay **visible**. No thick forward hair on this shoulder.',
-    '**FORBIDDEN:** symmetrical curtain on **both** shoulders, twin waterfalls, equal hair mass left and right, mirrored twin drape, or “balanced” split over both collarbones.',
-    '**Self-check:** thick hair forward on **both** shoulders → **failed**; symmetric drape on MATCH thumbs → **failed**.',
+    'Long hair uses **asymmetric shoulder drape** like BAW mannequin fronts — **primary** length forward over **one** shoulder; **not** equal thick forward panels on both collarbones.',
+    '**PRIMARY FORWARD DRAPE (heaviest):** most visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the main chest cascade.',
+    '**BACK + BEHIND (natural spill — keep this):** remaining length may sweep **behind** the model\'s RIGHT shoulder and down the **upper back** — soft back panel. Some strands behind the neck/shoulder are **correct**; do **NOT** route **100%** of all hair forward onto the one shoulder only.',
+    '**CLEAR SHOULDER CAP:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — shoulder skin stays **visible**. Use thin tuck, hair falling **behind** the shoulder, or light back spill — **never** a second **thick forward** curtain matching the main side.',
+    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back spill.',
+    '**Self-check failed if:** matching thick **forward** panels on **both** collarbones. **Not failed if:** some length trails behind the clear shoulder onto the back.',
     mannequinNote,
   ].join('\n');
 }
 
 function oneShoulderDrapeCompactLock(): string {
   return [
-    'ONE-SHOULDER DRAPE LOCK: heavy length forward on viewer\'s RIGHT only (model\'s left); viewer\'s LEFT shoulder clear/tucked — **FORBIDDEN** symmetric both-shoulder curtain.',
-    'Self-check: thick hair forward on **both** shoulders → **failed**.',
+    'ASYMMETRIC DRAPE: primary forward mass on viewer\'s RIGHT only; allow natural back spill behind viewer\'s LEFT shoulder — **FORBIDDEN** symmetric twin **forward** curtains on both shoulders and **FORBIDDEN** routing 100% of hair forward with no back panel.',
   ].join(' ');
 }
 
@@ -328,7 +328,7 @@ function clientPhotoPanelRulesBlock(): string {
     'Place IMAGE 2 in the left-panel photo window: bg removed; 9:16 portrait; anchor subject low; symmetrical bottom fade; subtle mirror reflection (~10%) in lower panel.',
     'Edit **hair strands only** for TOP MATCH — face, skin, neck, clothing stay identical to IMAGE 2.',
     oneShoulderDrapeCompactLock(),
-    'MATCH thumbnails: same face/pose as IMAGE 2; tighter square crop; **same** one-shoulder drape; bg removed.',
+    'MATCH thumbnails: same face/pose as IMAGE 2; tighter square crop; **same** asymmetric drape; bg removed.',
   ].join('\n');
 }
 
@@ -366,7 +366,7 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     '',
     '=== HAIR-ONLY EDIT (IMAGE 1) ===',
     'CHANGE **ONLY** the hair strands. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
-    '**Re-shape hair ends for one-shoulder drape** per rules above — **override** any symmetric both-shoulder curtain in IMAGE 1.',
+    '**Re-shape hair ends for asymmetric shoulder sweep** per rules above — primary forward on one side, natural **back spill** allowed — **override** only symmetric **forward** both-shoulder curtains in IMAGE 1.',
     'NO wig cap. NO visible lace. NO different person. NO beauty filter. NO face slimming.',
     noInventedBabyHairsBlock(),
     oneShoulderDrapeCompactLock(),
@@ -375,17 +375,17 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     hairlineShapePromptLine(look.hairline),
     `LOCK: PART ${part}; STYLE ${style}.`,
     '',
-    'OUTPUT: the **same person** with TOP MATCH hair + **one-shoulder drape** — portrait ready for template placement.',
+    'OUTPUT: the **same person** with TOP MATCH hair + **asymmetric shoulder drape** (primary forward + natural back spill) — portrait ready for template placement.',
   ].join('\n');
 }
 
 /** Template pass when IMAGE 2 is already hair-edited — place client; preserve one-shoulder drape. */
 function preEditedClientPanelBlock(): string {
   return [
-    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR + ONE-SHOULDER DRAPE APPLIED) ===',
-    'IMAGE 2 is the real client with TOP MATCH hair and **one-shoulder drape** already rendered upstream.',
+    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR + ASYMMETRIC DRAPE APPLIED) ===',
+    'IMAGE 2 is the real client with TOP MATCH hair and **asymmetric shoulder drape** already rendered upstream.',
     '**Do not change face, skin, expression, or neck** on the main left-panel preview.',
-    '**Preserve upstream one-shoulder drape exactly** — do **NOT** revert to symmetric both-shoulder curtain or twin waterfalls.',
+    '**Preserve upstream drape exactly** — primary forward on one shoulder + natural back spill — do **NOT** revert to symmetric twin **forward** curtains or pile 100% of hair forward with no back panel.',
     'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
   ].join('\n');
 }
@@ -440,10 +440,10 @@ function clientPoseLockBlock(): string {
     '=== HEAD + BODY POSE LOCK — IMAGE 2 IS MASTER (ALL PHOTOS) ===',
     'IMAGE 2 (client selfie) is the **only** source for head angle, neck rotation, shoulder line, gaze direction, and facial orientation.',
     'Applies to **TOP MATCH client preview** AND **every MATCH 02–04 thumbnail** — all must show the **same pose** as IMAGE 2.',
-    '**Hair strand drape is separate from pose:** one-shoulder drape rules **override** symmetric hair layout from IMAGE 2 — reposition ends only; do not rotate head or shoulders.',
+    '**Hair strand drape is separate from pose:** asymmetric shoulder-sweep rules **override** symmetric **forward** hair layout from IMAGE 2 — reposition ends only; do not rotate head or shoulders.',
     'BAW styling reference IMAGEs and unit mannequin IMAGEs are **hair strand finish only** — never copy their head yaw, profile angle, 3/4 turn, or body rotation onto the client.',
     'FORBIDDEN: profile or side-view thumbnails when IMAGE 2 is frontal; turning the client to match a styling ref; different head angles across MATCH 02 vs MATCH 03 vs MATCH 04.',
-    'Self-check: every MORE MATCHES square must look like the **same client in the same pose** as IMAGE 2 — only hair color, texture, style, and **one-shoulder drape** change.',
+    'Self-check: every MORE MATCHES square must look like the **same client in the same pose** as IMAGE 2 — only hair color, texture, style, and **asymmetric drape** change.',
   ].join('\n');
 }
 
