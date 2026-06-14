@@ -42,6 +42,8 @@ import {
   EVERY_DETAIL_MATTERS_MAX_CHARS,
   partPlacementCompact,
   partPlacementPromptLine,
+  lengthBodyPlacementCompact,
+  lengthBodyPlacementPromptLine,
 } from './hairstyleAnalysisDisplay.js';
 
 import {
@@ -265,7 +267,9 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
     const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
     const refNote = ref ? `IMAGE ${ref.imageIndex}` : 'natural';
     const hlNote = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
-    lines.push(`${label}: STYLE ${style} PART ${part} | ${hlNote} | ${refNote}`);
+    lines.push(
+      `${label}: STYLE ${style} PART ${part} | ${hlNote} | ${lengthBodyPlacementCompact(look.length)} | ${refNote}`
+    );
   });
   return lines.join('\n');
 }
@@ -278,6 +282,17 @@ function hairPartLockBlock(): string {
     'Each look: **exactly one** PART (MIDDLE, LEFT, or RIGHT) — erase IMAGE 2 part if it differs.',
     'Styling IMAGE = salon shape only — parting must match assigned PART for that look (use mirror rule above for LEFT/RIGHT).',
     'FORBIDDEN: dual part, ghost part, placing LEFT part on image LEFT, placing RIGHT part on image RIGHT, or borrowing a part line from another styling IMAGE.',
+  ].join('\n');
+}
+
+function hairLengthBodyPlacementLockBlock(): string {
+  return [
+    '=== HAIR LENGTH — BODY PLACEMENT (ALL PHOTOS) ===',
+    'Manifest **LENGTH** (inches) controls where hair **ends** terminate on the **client\'s visible body** — not just volume or strand count.',
+    'Scale hair downward from crown/hairline so the **lowest hair ends** land at the anatomical landmark for that inch count (collarbone → waist → hip → thigh → knee).',
+    '16" and shorter → **collarbone**; 17" → above waist; 18"–24" → **waist**; 25" → below waist; 26"–28" → **hip**; 29"–31" → upper thigh; 32"–33" → mid-thigh; 34"+ → **knee or lower**.',
+    'Asymmetric shoulder drape still applies — primary forward cascade + back spill — but **overall vertical reach** must match manifest LENGTH.',
+    'FORBIDDEN: every look the same length regardless of manifest; 16" hair ending at hip; 34" hair stopping at waist or hip.',
   ].join('\n');
 }
 
@@ -347,6 +362,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     styledHairLine(look, refs),
     hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs),
     mannequinRefLine(look, refs),
+    lengthBodyPlacementPromptLine(look.length),
     `LOCK: ${partPlacementPromptLine(look.part)} STYLE ${style} finish in portrait.`,
   ]
     .filter(Boolean)
@@ -376,6 +392,7 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     lookHairAccuracyLines(look),
     hairlineShapePromptLine(look.hairline),
     partPlacementPromptLine(look.part),
+    lengthBodyPlacementPromptLine(look.length),
     `LOCK: STYLE ${style}.`,
     '',
     'OUTPUT: the **same person** with TOP MATCH hair + **asymmetric shoulder drape** (primary forward + natural back spill) — portrait ready for template placement.',
@@ -459,7 +476,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const root = needsUniformRootRepaint(color, look.unit)
     ? `${color} uniform root-tip; no baby hairs`
     : color;
-  return `${label} THUMB: **same IMAGE 2 face** + pose; ${look.unit} ${root} ${displayLength(look.length)}; STYLE ${style}; ${partPlacementCompact(look.part)} (${refNote}); ${displayDensity(look.density)}; ${hl}; ${oneShoulderDrapeCompactLock()}; no baby hairs on skin.`;
+  return `${label} THUMB: **same IMAGE 2 face** + pose; ${look.unit} ${root} ${displayLength(look.length)}; ${lengthBodyPlacementCompact(look.length)}; STYLE ${style}; ${partPlacementCompact(look.part)} (${refNote}); ${displayDensity(look.density)}; ${hl}; ${oneShoulderDrapeCompactLock()}; no baby hairs on skin.`;
 }
 
 function everyDetailMattersRulesBlock(lineCount: number): string {
@@ -615,7 +632,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
 
   return [
     '=== MATCH 02–04 THUMBNAILS ===',
-    'Same client face + pose as IMAGE 2; different unit/color/length/styling per manifest; one PART + manifest HAIRLINE per thumb.',
+    'Same client face + pose as IMAGE 2; different unit/color/length/styling per manifest; one PART + manifest HAIRLINE + **LENGTH body placement** per thumb.',
     oneShoulderDrapeCompactLock(),
     mannequinLine,
     'NEVER: back-of-head stock, different people, symmetric both-shoulder hair.',
@@ -670,6 +687,8 @@ function buildTemplateRules(
     bawColorApplicationRulesBlock(),
     '',
     hairPartLockBlock(),
+    '',
+    hairLengthBodyPlacementLockBlock(),
     '',
     '=== ROSE ICONS — PIXEL-PERFECT PRESERVATION (CRITICAL) ===',
     'EVERY RED ROSE ICON ON THE TEMPLATE IS PRE-RENDERED ART — DO NOT REDRAW, REGENERATE, STRETCH, BLUR, OR REPLACE ANY ROSE.',
@@ -732,8 +751,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     `MANIFEST — PART: ${part}`,
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
-    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} ${partPlacementPromptLine(look.part)}; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
-    `FORBIDDEN: printing spec values in-image; template placeholder defaults; wrong part side (LEFT on image LEFT or RIGHT on image RIGHT); PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} ${lengthBodyPlacementPromptLine(look.length)}; ${partPlacementPromptLine(look.part)}; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
+    `FORBIDDEN: printing spec values in-image; template placeholder defaults; wrong part side (LEFT on image LEFT or RIGHT on image RIGHT); wrong length body placement (e.g. 16" at hip, 34" at waist); PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
     `STYLE manifest is "${style}" — hair photo must match; value slot text is server-added.`,
   ].join('\n');
 }
