@@ -108,8 +108,8 @@ export default function ConsultStyleAnalysisAddonPicker({
           lineHeight: 1.45,
         }}
       >
-        WE MATCH YOUR HAIR INSPO TO YOUR FACE — SELFIE COMPOSITES + COLOR & LENGTH COMPARISONS
-        RETURN WITH YOUR CONSULT OUTPUT.
+        WE MATCH YOUR SELFIE TO YOUR HAIR INSPO — SAME HAIRSTYLE ON YOU, THEN COLOR-ONLY
+        COMPARISONS. SEPARATE FROM PSA HAIRSTYLE ANALYSIS CARDS.
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {CONSULT_STYLE_ANALYSIS_TIERS.map((tier) =>

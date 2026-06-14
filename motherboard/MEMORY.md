@@ -28435,3 +28435,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported one-shoulder drape prompt too aggressive — **all** hair routed forward on one shoulder instead of natural look with some length falling **behind** on the back.
 - **Shipped (c25a7cbb):** **`asymmetricOneShoulderDrapeBlock()`** + **`oneShoulderDrapeCompactLock()`** rewritten — primary forward mass on viewer's RIGHT; **require** natural back spill behind clear shoulder; forbid symmetric twin **forward** curtains and 100% forward-only routing. Updated step-1 hair-only + pre-edited client + pose-lock copy. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-13 — Consult style analysis pipeline (selfie + inspo, not PSA)
+
+- **Context:** User required wig consult hair analysis to work **differently** from PSA/template hairstyle analysis. Consult uploads **selfie + hair inspo**; Fal should place client in the **exact inspo hairstyle**; **1-pick** tier = hero + 1 color alternate; **4-pick** tier = hero + 4 color alternates that **differ from inspo color** (same hairstyle geometry only).
+- **Decisions:** Separate API **`POST /api/consult-style-analysis-generate`** + **`consultStyleAnalysisFal.ts`** (GPT Image 2 edit). Step 1: selfie + inspo → inspo match. Step 2: recolor hero per catalog color (`pickConsultComparisonColors` excludes inspo color). OpenAI vision detects inspo catalog color. **Not** `IMG_2554`/`IMG_2549` template path or PSA ranked picks.
+- **Shipped:** **`ConsultStyleAnalysisSelfiePicker`** on **`/booking/consultation`** (required); cart **`consultStyleAnalysisSelfieUrl`**, **`consultStyleAnalysisSelfieFileName`**; checkout persists selfie + comparison count on consult orders. Client **`postConsultStyleAnalysisGenerate`** in **`api.ts`**. **`consultStyleAnalysisInputs.ts`** extracts generate inputs from cart/order. Copy updated (color-only comparisons). **`STYLE_ANALYSIS.md`**, **`CORE.md`** document consult vs PSA split. Phase 2: admin send-offer attaches generated chart to offer snapshot.

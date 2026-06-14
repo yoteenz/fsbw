@@ -9,11 +9,13 @@ export type StyleAnalysisChartCell = {
   id: string;
   /** Hero inspo match vs comparison variant. */
   role: 'inspo_match' | 'comparison';
-  unitKey: UnitId;
-  unitLabel: string;
+  /** PSA picks — omitted for consult inspo charts. */
+  unitKey?: UnitId;
+  unitLabel?: string;
   length?: string;
   density?: string;
   texture?: string;
+  /** Consult inspo charts — BAW catalog color name. */
   color?: string;
   hairline?: string;
   styling?: string;
