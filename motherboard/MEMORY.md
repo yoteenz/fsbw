@@ -28487,3 +28487,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported hair consult debug dropdown on **`/tools/hairstyle-analysis`** only showed one attachment upload; consult pipeline needs **selfie + hair inspo** (unlike template analysis which needs client preview only).
 - **Shipped:** **`HairstyleAnalysisPreview`** — consult tiers render **two bordered panels**: (1) selfie choose/replace + thumb + URL paste, (2) hair inspo choose/replace + thumb + URL paste. Template **1 pick / 4 pick** unchanged (single client preview). **`HairstyleAnalysisDemo.tsx`** copy updated.
+
+---
+
+## 2026-06-14 — Hairstyle analysis LEFT part mirror placement
+
+- **Context:** User reported **LEFT part** rendered on the wrong side of the head (should be reversed); **RIGHT part** was correct.
+- **Root cause:** Fal prompts used bare **PART LEFT** without BAW salon mirror semantics (**UI LEFT** → groove on **image RIGHT** scalp).
+- **Shipped:** **`partPlacementPromptLine()`** / **`partPlacementCompact()`** in **`hairstyleAnalysisDisplay.ts`**; wired into **`hairPartLockBlock()`**, client preview, hair-only step, thumbnails, and TOP MATCH manifest photo lock in **`hairstyleAnalysisFalPrompt.ts`**.
