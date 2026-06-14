@@ -28465,3 +28465,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User requested PSA hair analysis reflect **24-hour** delivery — not immediate in-chat results. Timeline only in member-facing copy (no internal review rationale).
 - **Shipped:** **`PsaSelfieStyleAnalysisPanel`** — **SUBMIT SELFIE** flow; chat shows submission confirmation within **24 hours** (no instant picks). **`psaInstructions.ts`**, **`hairstyleAnalysisStatus.ts`**, **`psaTools.ts`**, **`psaHairAnalysisDelivery.ts`**, **`STYLE_ANALYSIS.md`**, **`CORE.md`** updated.
+
+---
+
+## 2026-06-14 — Fix missing free-tier EDM gray build summary
+
+- **Context:** User reported the gray **every-detail-matters build summary** ribbon (`UNIT · 22" · COLOR` above **BUILD THIS LOOK**) was gone on generated free-tier hairstyle analysis cards.
+- **Root cause:** Server-composited footer used a **single combined opentype path**; Sharp/librsvg silently failed to rasterize certain strings (e.g. **`SOFT WAVE · 34" · PLUM`**, **`BODY WAVE · 22" · BLACK`**) — only a few pixels rendered. Recent **`textPathData()`** default **`verticalBias`** also changed vertical centering for all centered text.
+- **Shipped (c2cac3b2):** **`centeredTextPathItems()`** — per-glyph SVG paths for EDM footer via **`compositeFreeTierEdmBuildSummary()`**. **`textPathData()`** keeps classic vertical centering when **`verticalBias`** is omitted; bias formula only when explicitly passed (spec values). Pushed **`master`** + **`preview/mobile`**.
