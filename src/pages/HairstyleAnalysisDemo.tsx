@@ -43,10 +43,9 @@ export default function HairstyleAnalysisDemo() {
         <section className="border border-black/15 p-3 text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
           <p className="text-black mb-2">Tier pick counts</p>
           <ul className="space-y-1">
-            <li>Free — 1 recommendation (top match)</li>
-            <li>3 month — top + 3 additional</li>
-            <li>6 month — top + 6 additional</li>
-            <li>12 month / black — top + 9 additional</li>
+            <li>1 pick — 1 recommendation (top match)</li>
+            <li>4 pick — top + 3 additional</li>
+            <li>Hair consult — wig consult style analysis (top + 3 additional)</li>
           </ul>
           <p className="mt-3">
             Production path: Fal fills the static Supabase template from the tier prompt. Pick a tier, upload a

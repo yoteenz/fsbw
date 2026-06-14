@@ -51,7 +51,11 @@ import {
   saveManifestForTier,
   saveManifestTestModeEnabled,
 } from '../../utils/hairstyleAnalysisManifestStorage';
-import { additionalLooksLimit } from '../../utils/hairstyleAnalysisRules';
+import {
+  additionalLooksLimit,
+  formatHairstyleAnalysisTierLabel,
+  HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS,
+} from '../../utils/hairstyleAnalysisRules';
 
 type HairstyleAnalysisPreviewProps = {
   analysis: HairstyleAnalysis;
@@ -61,13 +65,7 @@ type HairstyleAnalysisPreviewProps = {
   onClientPreviewUrlChange?: (url: string) => void;
 };
 
-const DEFAULT_TIER_OPTIONS: AnalysisTier[] = [
-  'free',
-  'three_month',
-  'six_month',
-  'twelve_month',
-  'black',
-];
+const DEFAULT_TIER_OPTIONS: AnalysisTier[] = HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS;
 
 /** Simulated progress cap before Fal returns (API maxDuration 300s). */
 const HAIRSTYLE_ANALYSIS_GENERATE_ESTIMATE_MS = 180_000;
@@ -450,7 +448,7 @@ export default function HairstyleAnalysisPreview({
       textOverrides,
       fontOverrides,
     });
-    setDebugSaveMessage(`Saved layout for ${analysis.tier.replace(/_/g, ' ')}`);
+    setDebugSaveMessage(`Saved layout for ${formatHairstyleAnalysisTierLabel(analysis.tier)}`);
     window.setTimeout(() => setDebugSaveMessage(null), 2500);
   }, [analysis.tier, fontOverrides, slotOverrides, textOverrides]);
 
@@ -459,7 +457,7 @@ export default function HairstyleAnalysisPreview({
     setSlotOverrides({});
     setTextOverrides({});
     setFontOverrides({});
-    setDebugSaveMessage(`Reset ${analysis.tier.replace(/_/g, ' ')} to defaults`);
+    setDebugSaveMessage(`Reset ${formatHairstyleAnalysisTierLabel(analysis.tier)} to defaults`);
     window.setTimeout(() => setDebugSaveMessage(null), 2500);
   }, [analysis.tier]);
 
@@ -542,14 +540,14 @@ export default function HairstyleAnalysisPreview({
             >
               {tierOptions.map((tier) => (
                 <option key={tier} value={tier}>
-                  {tier.replace(/_/g, ' ')}
+                  {formatHairstyleAnalysisTierLabel(tier)}
                 </option>
               ))}
             </select>
           </label>
         ) : usageState?.analysisTier ? (
           <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080]">
-            Your card tier: {usageState.analysisTier.replace(/_/g, ' ')}
+            Your card tier: {formatHairstyleAnalysisTierLabel(usageState.analysisTier as AnalysisTier)}
           </p>
         ) : null}
 
@@ -675,7 +673,7 @@ export default function HairstyleAnalysisPreview({
 
       {generating ? (
         <AnalysisGenerateProgressOverlay
-          label={`GPT IMAGE 2 IS POPULATING THE ${analysis.tier.replace(/_/g, ' ')} TEMPLATE`}
+          label={`GPT IMAGE 2 IS POPULATING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} TEMPLATE`}
           progress={generateProgress}
         />
       ) : generatedUrl ? (
