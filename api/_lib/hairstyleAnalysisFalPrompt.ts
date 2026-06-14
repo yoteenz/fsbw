@@ -37,7 +37,6 @@ import {
   displayStyle,
   formatScorePercent,
   formatMatchRatingDecimal,
-  formatEdmPanelBuildSummary,
   FREE_TOP_MATCH_PANEL_FOOTER,
   matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
@@ -583,14 +582,14 @@ function panelFooterPlainTextRules(): string {
 }
 
 function freeTierPanelFooterBlock(top: FalAnalysisLook): string {
-  const edmSummary = formatEdmPanelBuildSummary(top.unit, top.color, top.length);
   return [
     panelFooterPlainTextRules(),
     '',
     '=== FREE TIER — PANEL FOOTERS (CENTERED PLAIN TEXT) ===',
     `TOP MATCH panel bottom (centered below spec column): print **${FREE_TOP_MATCH_PANEL_FOOTER}** — Futura PT Medium **black** (#1a1a1a), uppercase, centered, **no border or box**.`,
-    `EVERY DETAIL MATTERS build summary (centered in the empty band **below the last rose row** and **above** the pre-rendered BUILD THIS LOOK button): print **${edmSummary}** — Futura PT Medium gray ${MATCH_SCORE_GRAY}, uppercase, centered, **no border or box**. Middle-dot separators only (UNIT · XX" · COLOR).`,
-    'The BUILD THIS LOOK button at the card bottom is template chrome — leave it untouched; never print the build summary on or over that button.',
+    'EVERY DETAIL MATTERS build summary (gray UNIT · XX" · COLOR ribbon): **LEAVE COMPLETELY BLANK** — server composites it below the last rose row, above BUILD THIS LOOK. Do **NOT** paint gray build summary text anywhere on the card.',
+    '**FORBIDDEN:** gray UNIT · LENGTH · COLOR ribbon between the TOP MATCH spec panel and the "every detail matters" header; split fragments under the client photo or spec column; truncated length (e.g. "3" instead of "34\\"").',
+    'The BUILD THIS LOOK button at the card bottom is template chrome — leave it untouched; never print footer summary text on that button.',
     'Panel footers are separate from rose rows and spec values — do not merge into EDM bullets.',
   ].join('\n');
 }
@@ -602,7 +601,7 @@ function freeTierOnlyBlock(): string {
     'DO NOT create MATCH 02, MATCH 03, MATCH 04, or any additional-match rows.',
     'DO NOT add portfolio thumbnails, horizontal thumbnail strips, alternative grids, or extra gray match-score percentages.',
     'DO NOT populate "MORE MATCHES" or any comparison section — the free card has no additional matches.',
-    'ONLY fill: client preview photo, TOP MATCH spec column, TOP MATCH panel footer, EVERY DETAIL MATTERS text rows, EVERY DETAIL MATTERS panel footer, OVERALL SCORE %, MATCH RATING decimal + stars.',
+    'ONLY fill: client preview photo, TOP MATCH spec column, TOP MATCH panel footer (black specs-locked line only), EVERY DETAIL MATTERS text rows, OVERALL SCORE %, MATCH RATING decimal + stars.',
     'Leave all other template areas unchanged — marble/panel chrome only; never invent extra hairstyle comparisons.',
   ].join('\n');
 }
@@ -692,7 +691,7 @@ function buildTemplateRules(
     ...(tierKey === 'free'
       ? [
           'TOP MATCH spec values and every-detail-matters lines: black uppercase Futura PT Medium.',
-          'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: centered gray Futura PT Medium **above** the BUILD THIS LOOK button (never on it), plain text only (no border).',
+          'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: **leave blank** (server-composited gray ribbon above BUILD THIS LOOK — Fal must not print it).',
           'FREE TIER: no match-row scores, no additional-match thumbnails, no portfolio strip.',
         ]
       : []),
@@ -761,7 +760,7 @@ function freePromptFooter(analysis: FalHairstyleAnalysis): string {
     'PILL: red uppercase "TOP MATCH" replaces "CLIENT PREVIEW" inside the tab only.',
     'HEADER: client first + last name replaces "TOP MATCH" above overall score panel — **centered**, **gray #808080** Futura PT Medium (not red).',
     'CARD TOP: keep "FRONTAL SLAYER" + script "hairstyle analysis" from IMAGE 1 untouched (gray subtitle — do not recolor red).',
-    'TOP MATCH specs + every detail matters filled; centered **black** specs-locked footer + centered **gray** build summary (plain text, **no borders** — above BUILD THIS LOOK button, not on it); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
+    'TOP MATCH specs + every detail matters filled; centered **black** specs-locked footer only (gray UNIT · LENGTH · COLOR build summary is server-added — **leave blank**); BUILD THIS LOOK CTA preserved from IMAGE 1; OVERALL SCORE % (red script) + MATCH RATING decimal in **gray Futura PT Medium** above **red** stars — **free tier only**.',
     'TOP MATCH spec column must match the MANIFEST exactly — not template placeholder NOIR/LAYERS defaults.',
     'Every-detail-matters bullets must match the same manifest values as the spec column — print each line verbatim (text only, no 1. 2. 3. prefixes), not empowerment fluff.',
     oneShoulderDrapeCompactLock(),
