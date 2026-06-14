@@ -420,6 +420,7 @@ export async function generateHairstyleAnalysisWithFal(
       skipServerTextOverlay: input.falInImageTextOnly === true,
       forceClientPhotoFade: consultInspo,
       restoreClientPhotoPanelChrome: consultInspo,
+      clipClientPhotoOverflow: consultInspo,
     }
   );
   imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');
