@@ -368,6 +368,7 @@ function preEditedClientPanelBlock(): string {
   return [
     '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR ALREADY APPLIED) ===',
     'IMAGE 2 is the real client with TOP MATCH hair already rendered upstream.',
+    '**ERASE any template stock model face** in the left photo window — replace the entire photo area with **IMAGE 2 only** (same person, same face pixels).',
     '**Do not change face, skin, expression, neck, or hair** on the main left-panel preview.',
     'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
     'MATCH 02–04 thumbnails: **same IMAGE 2 face and pose**; change **only hair** per each look manifest.',
