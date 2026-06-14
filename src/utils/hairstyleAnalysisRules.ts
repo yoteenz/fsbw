@@ -25,6 +25,25 @@ export const ADDITIONAL_LOOKS_BY_TIER: Record<AnalysisTier, number> = {
   black: 3,
 };
 
+/** Admin hairstyle-analysis test dropdown (internal keys unchanged). */
+export const HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS: AnalysisTier[] = [
+  'free',
+  'three_month',
+  'six_month',
+];
+
+const HAIRSTYLE_ANALYSIS_TIER_LABELS: Record<AnalysisTier, string> = {
+  free: '1 pick',
+  three_month: '4 pick',
+  six_month: 'hair consult',
+  twelve_month: '12 month',
+  black: 'black',
+};
+
+export function formatHairstyleAnalysisTierLabel(tier: AnalysisTier): string {
+  return HAIRSTYLE_ANALYSIS_TIER_LABELS[tier] ?? tier.replace(/_/g, ' ');
+}
+
 export function normalizeAnalysisTier(tier: AnalysisTier): Exclude<AnalysisTier, 'black'> {
   return tier === 'black' ? 'twelve_month' : tier;
 }
