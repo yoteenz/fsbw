@@ -6,7 +6,7 @@ import {
   displayPart,
   displayStyle,
 } from './hairstyleAnalysisDisplay.js';
-import { topMatchSpecSlots } from './hairstyleAnalysisLayoutSlots.js';
+import { topMatchSpecSlots, expandPixelRect } from './hairstyleAnalysisLayoutSlots.js';
 import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
 import {
   buildTextPathsSvg,
@@ -58,6 +58,7 @@ async function compositeLeftAlignedText(
     fontSize,
     fill: TOP_MATCH_SPEC_BLACK,
     align: 'left',
+    verticalBias: 0.54,
   });
   const svg = buildTextPathsSvg([{ pathData, fill: TOP_MATCH_SPEC_BLACK }]);
   return sharp(baseBuf)
@@ -79,7 +80,7 @@ export async function compositeTopMatchSpecValues(
   let base = await restoreTemplateSlots(
     baseBuf,
     templateBuf,
-    slots.map((slot) => slot.rect)
+    slots.map((slot) => expandPixelRect(slot.rect, 10))
   );
 
   for (const slot of slots) {

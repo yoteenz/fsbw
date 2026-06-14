@@ -1,5 +1,4 @@
 import {
-  EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT,
   EDM_PANEL_FOOTER_SLOT,
   type PixelRect,
 } from './hairstyleAnalysisLayoutSlots.js';
@@ -44,10 +43,7 @@ export async function compositeFreeTierEdmBuildSummary(
   templateBuf: Buffer,
   summaryText: string
 ): Promise<Buffer> {
-  let base = await restoreTemplateSlots(baseBuf, templateBuf, [
-    EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT,
-    EDM_PANEL_FOOTER_SLOT,
-  ]);
+  let base = await restoreTemplateSlots(baseBuf, templateBuf, [EDM_PANEL_FOOTER_SLOT]);
 
   const fontSize = edmPanelFooterFontSize(EDM_PANEL_FOOTER_SLOT);
   base = await compositeCenteredText(base, summaryText, EDM_PANEL_FOOTER_SLOT, {

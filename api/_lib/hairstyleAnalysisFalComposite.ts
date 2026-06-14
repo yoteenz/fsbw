@@ -8,7 +8,7 @@ import { applyClientPhotoBottomFade } from './hairstyleAnalysisClientPhotoFade.j
 import { applyClientPhotoMirrorReflection } from './hairstyleAnalysisClientPhotoReflection.js';
 import { hairstyleAnalysisClientPhotoPostProcessEnabled } from './hairstyleAnalysisClientPhotoCutout.js';
 import { compositeFreeTierEdmBuildSummary } from './hairstyleAnalysisFreeTierFooters.js';
-import { edmRoseIconSlots, HAIRSTYLE_ANALYSIS_CANVAS } from './hairstyleAnalysisLayoutSlots.js';
+import { edmRoseIconSlots, HAIRSTYLE_ANALYSIS_CANVAS, hairstyleAnalysisGhostWipeSlots } from './hairstyleAnalysisLayoutSlots.js';
 import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
 import {
   compositeTopMatchSpecValues,
@@ -64,6 +64,8 @@ export async function compositeHairstyleAnalysisPostProcess(
   }
 
   base = await applyClientPhotoMirrorReflection(base, panelRect, fadeRect);
+
+  base = await restoreTemplateSlots(base, templateBuf, hairstyleAnalysisGhostWipeSlots());
 
   if (postProcess) {
     base = await compositeTopMatchSpecValues(base, templateBuf, postProcess.topMatch);
