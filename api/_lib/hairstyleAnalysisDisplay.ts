@@ -83,6 +83,36 @@ export function displayPart(part: string): string {
     .toUpperCase();
 }
 
+export type AnalysisPartKey = 'MIDDLE' | 'LEFT' | 'RIGHT';
+
+export function normalizeAnalysisPartKey(part: string): AnalysisPartKey {
+  const p = displayPart(part);
+  if (p === 'LEFT' || p === 'RIGHT') return p;
+  return 'MIDDLE';
+}
+
+/**
+ * Fal front-portrait part placement — mirror rule from BAW salon UI:
+ * UI LEFT → groove on image RIGHT; UI RIGHT → groove on image LEFT.
+ */
+export function partPlacementPromptLine(part: string): string {
+  const key = normalizeAnalysisPartKey(part);
+  if (key === 'MIDDLE') {
+    return '**MIDDLE part:** visible **center** part groove at crown/forehead midline.';
+  }
+  if (key === 'LEFT') {
+    return '**LEFT part (UI “L”):** part groove on **image RIGHT** — **right third** of forehead/scalp. **FORBIDDEN:** part on **image LEFT** (that is RIGHT part / UI “R”).';
+  }
+  return '**RIGHT part (UI “R”):** part groove on **image LEFT** — **left third** of forehead/scalp. **FORBIDDEN:** part on **image RIGHT** (that is LEFT part / UI “L”).';
+}
+
+export function partPlacementCompact(part: string): string {
+  const key = normalizeAnalysisPartKey(part);
+  if (key === 'MIDDLE') return 'MIDDLE part @ crown center';
+  if (key === 'LEFT') return 'LEFT part → image RIGHT scalp';
+  return 'RIGHT part → image LEFT scalp';
+}
+
 /** Salon styling ids as shown on Build-a-Wig (LAYERS, FLAT IRON, CRIMPS, etc.). */
 export function displayStyle(styling: string, unit = ''): string {
   return normalizeAnalysisStylingId(unit, styling);
