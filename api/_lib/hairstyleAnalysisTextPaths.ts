@@ -47,10 +47,35 @@ export function textPathData(
     align === 'center'
       ? rect.left + (rect.width - pathW) / 2 - bb.x1
       : rect.left + Math.round(rect.width * 0.02) - bb.x1;
-  const bias = options.verticalBias ?? 0.5;
-  const y = rect.top + rect.height * bias - pathH * 0.45 - bb.y1;
+  const y =
+    options.verticalBias !== undefined
+      ? rect.top + rect.height * options.verticalBias - pathH * 0.45 - bb.y1
+      : rect.top + (rect.height - pathH) / 2 - bb.y1;
   const path = font.getPath(text, x, y, options.fontSize);
   return path.toPathData(2);
+}
+
+/** Per-glyph paths — librsvg chokes on some combined opentype paths (e.g. SOFT WAVE). */
+export function centeredTextPathItems(
+  text: string,
+  rect: PixelRect,
+  options: {
+    fontFile: string;
+    fontSize: number;
+    fill: string;
+  }
+): Array<{ pathData: string; fill: string }> {
+  const font = loadFont(options.fontFile);
+  const measure = font.getPath(text, 0, 0, options.fontSize);
+  const bb = measure.getBoundingBox();
+  const pathW = bb.x2 - bb.x1;
+  const pathH = bb.y2 - bb.y1;
+  const x = rect.left + (rect.width - pathW) / 2 - bb.x1;
+  const y = rect.top + (rect.height - pathH) / 2 - bb.y1;
+  return font.getPaths(text, x, y, options.fontSize).map((glyphPath) => ({
+    pathData: glyphPath.toPathData(2),
+    fill: options.fill,
+  }));
 }
 
 /** Admin BRAND card (StatsCard): CBYG number at text-lg (18px) + Futura PT Medium % at 14px. */

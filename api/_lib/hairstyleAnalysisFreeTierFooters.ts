@@ -5,8 +5,8 @@ import {
 import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
 import {
   buildTextPathsSvg,
+  centeredTextPathItems,
   edmPanelFooterFontSize,
-  textPathData,
 } from './hairstyleAnalysisTextPaths.js';
 
 const EDM_BUILD_SUMMARY_GRAY = '#808080';
@@ -24,13 +24,12 @@ async function compositeCenteredText(
   options: { fontSize: number; fill: string }
 ): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
-  const pathData = textPathData(text, slot, {
+  const pathItems = centeredTextPathItems(text, slot, {
     fontFile: 'FuturaPTMedium.ttf',
     fontSize: options.fontSize,
     fill: options.fill,
-    align: 'center',
   });
-  const svg = buildTextPathsSvg([{ pathData, fill: options.fill }]);
+  const svg = buildTextPathsSvg(pathItems);
   return sharp(baseBuf)
     .composite([{ input: svg, left: 0, top: 0 }])
     .png()
