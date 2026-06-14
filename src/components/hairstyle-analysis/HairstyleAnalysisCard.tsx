@@ -46,6 +46,13 @@ function matchRowValueClassName(fieldId: string): string | undefined {
   return fieldId.endsWith('-score') ? styles.matchRowScoreText : styles.matchRowValueText;
 }
 
+function topMatchSpecValueClassName(fieldId: string): string | undefined {
+  if (!/^spec(?:Texture|Color|Length|Lace|Density|Parting|Hairline|Style)$/.test(fieldId)) {
+    return undefined;
+  }
+  return styles.topMatchSpecValueText;
+}
+
 export default function HairstyleAnalysisCard({
   analysis,
   showDebugFrames = false,
@@ -165,6 +172,7 @@ export default function HairstyleAnalysisCard({
 
         const value = text(field.id, overlayValues[field.id] ?? '');
         const matchRowClass = matchRowValueClassName(field.id);
+        const topMatchSpecClass = topMatchSpecValueClassName(field.id);
         const textClassName =
           field.id === 'clientName'
             ? styles.clientNameText
@@ -176,6 +184,8 @@ export default function HairstyleAnalysisCard({
                   ? styles.panelFooterText
                 : matchRowClass
                   ? matchRowClass
+                  : topMatchSpecClass
+                    ? topMatchSpecClass
                   : field.id.endsWith('-score') || /^alt-\d+-score$/.test(field.id)
                     ? styles.matchScoreText
                     : undefined;
