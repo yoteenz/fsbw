@@ -40,6 +40,8 @@ import {
   FREE_TOP_MATCH_PANEL_FOOTER,
   matchRatingFilledStarsFromScore,
   EVERY_DETAIL_MATTERS_MAX_CHARS,
+  partPlacementCompact,
+  partPlacementPromptLine,
 } from './hairstyleAnalysisDisplay.js';
 
 import {
@@ -271,9 +273,11 @@ function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalProm
 function hairPartLockBlock(): string {
   return [
     '=== HAIR PART — ONE PART ONLY (ALL PHOTOS) ===',
+    '**PART vs image (front portrait):** **image LEFT** / **image RIGHT** = toward that edge of the photo.',
+    '**UI LEFT** part → visible groove on **image RIGHT** scalp. **UI RIGHT** part → groove on **image LEFT** scalp (mirror-opposite of UI LEFT).',
     'Each look: **exactly one** PART (MIDDLE, LEFT, or RIGHT) — erase IMAGE 2 part if it differs.',
-    'Styling IMAGE = salon shape only — parting must match assigned PART for that look.',
-    'FORBIDDEN: dual part, ghost part, or borrowing a part line from another styling IMAGE.',
+    'Styling IMAGE = salon shape only — parting must match assigned PART for that look (use mirror rule above for LEFT/RIGHT).',
+    'FORBIDDEN: dual part, ghost part, placing LEFT part on image LEFT, placing RIGHT part on image RIGHT, or borrowing a part line from another styling IMAGE.',
   ].join('\n');
 }
 
@@ -333,7 +337,6 @@ function clientPhotoPanelRulesBlock(): string {
 }
 
 function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
-  const part = displayPart(look.part);
   const style = displayStyle(look.styling, look.unit);
   return [
     '=== TOP MATCH HAIR (IMAGE 2) ===',
@@ -344,7 +347,7 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     styledHairLine(look, refs),
     hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs),
     mannequinRefLine(look, refs),
-    `LOCK: PART ${part} only; STYLE ${style} finish in portrait.`,
+    `LOCK: ${partPlacementPromptLine(look.part)} STYLE ${style} finish in portrait.`,
   ]
     .filter(Boolean)
     .join('\n');
@@ -353,7 +356,6 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
 /** Upstream step — hair-only edit on raw selfie (IMAGE 1 only; no template or mannequin refs). */
 export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientName: string): string {
   const name = clientName.trim().toUpperCase() || 'CLIENT';
-  const part = displayPart(look.part);
   const style = displayStyle(look.styling, look.unit);
   return [
     `Edit IMAGE 1 — client selfie for ${name}. Output ONE photo-realistic portrait.`,
@@ -373,7 +375,8 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
     hairlineShapePromptLine(look.hairline),
-    `LOCK: PART ${part}; STYLE ${style}.`,
+    partPlacementPromptLine(look.part),
+    `LOCK: STYLE ${style}.`,
     '',
     'OUTPUT: the **same person** with TOP MATCH hair + **asymmetric shoulder drape** (primary forward + natural back spill) — portrait ready for template placement.',
   ].join('\n');
@@ -449,7 +452,6 @@ function clientPoseLockBlock(): string {
 
 function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
-  const part = displayPart(look.part);
   const ref = stylingRefForLook(refs.stylingRefs, look.styling, look.part, look.unit);
   const refNote = ref ? `styling IMAGE ${ref.imageIndex}` : 'natural texture';
   const hl = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
@@ -457,7 +459,7 @@ function matchThumbnailBlock(label: string, look: FalAnalysisLook, refs: FalProm
   const root = needsUniformRootRepaint(color, look.unit)
     ? `${color} uniform root-tip; no baby hairs`
     : color;
-  return `${label} THUMB: **same IMAGE 2 face** + pose; ${look.unit} ${root} ${displayLength(look.length)}; STYLE ${style} PART ${part} (${refNote}); ${displayDensity(look.density)}; ${hl}; ${oneShoulderDrapeCompactLock()}; no baby hairs on skin.`;
+  return `${label} THUMB: **same IMAGE 2 face** + pose; ${look.unit} ${root} ${displayLength(look.length)}; STYLE ${style}; ${partPlacementCompact(look.part)} (${refNote}); ${displayDensity(look.density)}; ${hl}; ${oneShoulderDrapeCompactLock()}; no baby hairs on skin.`;
 }
 
 function everyDetailMattersRulesBlock(lineCount: number): string {
@@ -730,8 +732,8 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     `MANIFEST — PART: ${part}`,
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
-    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
-    `FORBIDDEN: printing spec values in-image; template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} ${partPlacementPromptLine(look.part)}; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
+    `FORBIDDEN: printing spec values in-image; template placeholder defaults; wrong part side (LEFT on image LEFT or RIGHT on image RIGHT); PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
     `STYLE manifest is "${style}" — hair photo must match; value slot text is server-added.`,
   ].join('\n');
 }
