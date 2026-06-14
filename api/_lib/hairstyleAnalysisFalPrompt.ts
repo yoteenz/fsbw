@@ -337,67 +337,39 @@ function clientPreviewHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs):
     .join('\n');
 }
 
-/** Upstream step — hair-only edit on raw selfie + optional BAW hairline/styling refs. */
-export function buildClientPreviewHairOnlyPrompt(
-  look: FalAnalysisLook,
-  clientName: string,
-  refs: FalPromptImageRefs = { mannequinRefs: [], stylingRefs: [], hairlineRefs: [] }
-): string {
+/** Upstream step — hair-only edit on raw selfie (IMAGE 1 only; no template or mannequin refs). */
+export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientName: string): string {
   const name = clientName.trim().toUpperCase() || 'CLIENT';
   const part = displayPart(look.part);
   const style = displayStyle(look.styling, look.unit);
-  const hairlineBlock = [
-    bawHairlineRefListBlock(refs.hairlineRefs),
-    refs.hairlineRefs.length > 0 ? bawHairlineShapeGuideBlock() : '',
-    hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs),
-  ]
-    .filter(Boolean)
-    .join('\n');
-  const stylingBlock = [
-    bawStylingRefListBlock(refs.stylingRefs),
-    styledHairLine(look, refs),
-  ]
-    .filter(Boolean)
-    .join('\n');
-
   return [
     `Edit IMAGE 1 — client selfie for ${name}. Output ONE photo-realistic portrait.`,
     '',
     '=== FACE IDENTITY LOCK (HIGHEST PRIORITY) ===',
     'IMAGE 1 is the real client — copy face pixels exactly: same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
     'Hair edits apply ONLY in the hair region — never regenerate, repaint, beautify, or alter facial skin.',
-    'Hairline and styling reference IMAGEs = **forehead lace-edge / salon finish only** — never copy their faces, necks, or pose.',
     '',
     '=== HAIR-ONLY EDIT (IMAGE 1) ===',
     'CHANGE **ONLY** the hair. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
     'NO wig cap. NO visible lace. NO different person. NO beauty filter. NO face slimming.',
     noInventedBabyHairsBlock(),
-    hairPartLockBlock(),
     oneShoulderDrapeCompactLock(),
     uniformRootColorBlock(look, 'preview'),
     lookHairAccuracyLines(look),
-    hairlineBlock,
-    stylingBlock,
-    `LOCK: PART ${part} only — erase IMAGE 1 part if it differs; STYLE ${style}.`,
+    hairlineShapePromptLine(look.hairline),
+    `LOCK: PART ${part}; STYLE ${style}.`,
     '',
     'OUTPUT: the **same person** with TOP MATCH hair — portrait ready for template placement.',
-  ]
-    .filter(Boolean)
-    .join('\n');
+  ].join('\n');
 }
 
-/** Template pass when IMAGE 2 is already hair-edited — place client; allow small part/hairline fixes. */
-function preEditedClientPanelBlock(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
-  const part = displayPart(look.part);
-  const hl = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
+/** Template pass when IMAGE 2 is already hair-edited — place only; do not repaint face or main hair. */
+function preEditedClientPanelBlock(): string {
   return [
-    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR MOSTLY APPLIED) ===',
+    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR ALREADY APPLIED) ===',
     'IMAGE 2 is the real client with TOP MATCH hair already rendered upstream.',
-    '**Do not change face, skin, expression, neck, or shoulders** on the main left-panel preview.',
-    'You MAY refine **hair strands only** on the main preview if upstream missed manifest: **PART line**, **lace-front HAIRLINE edge**, and **COLOR** root uniformity.',
-    `MANIFEST locks on main photo: PART ${part} | ${hl}`,
-    'Do NOT replace the whole hairstyle, length, or unit texture when refining — only part line, forehead lace edge, and root color if needed.',
-    'Also: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
+    '**Do not change face, skin, expression, neck, or hair** on the main left-panel preview.',
+    'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
     'MATCH 02–04 thumbnails: **same IMAGE 2 face and pose**; change **only hair** per each look manifest.',
   ].join('\n');
 }
@@ -407,7 +379,7 @@ function clientPreviewPanelLine(
   refs: FalPromptImageRefs,
   promptOptions?: FalPromptBuildOptions
 ): string {
-  if (promptOptions?.clientPreviewPreEdited) return preEditedClientPanelBlock(look, refs);
+  if (promptOptions?.clientPreviewPreEdited) return preEditedClientPanelBlock();
   return clientPreviewHairLine(look, refs);
 }
 

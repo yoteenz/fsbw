@@ -240,11 +240,11 @@ function unitsFromAnalysis(analysis: FalHairstyleAnalysis): string[] {
   return [analysis.topMatch.unit, ...analysis.additionalLooks.map((l) => l.unit)];
 }
 
-/** Attach BAW styling ref IMAGEs on template pass. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=true for template + client only. */
+/** Template + client by default. Set HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS=false to attach BAW styling ref IMAGEs on template pass. */
 export function hairstyleAnalysisFalMinimalImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_MINIMAL_REFS?.trim().toLowerCase();
-  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
-  return false;
+  if (raw === 'false' || raw === '0' || raw === 'no') return false;
+  return true;
 }
 
 /** Opt-in unit mannequin fronts for hair texture/drape hints. Default off — avoids neck/shoulder bleed from mannequin geometry. */
@@ -254,11 +254,11 @@ export function hairstyleAnalysisFalMannequinImageRefs(): boolean {
   return false;
 }
 
-/** PEAK/LAGOS hairline mannequin IMAGEs on template + hair-only preview passes. Set false to text-only hairline. */
+/** Opt-in PEAK/LAGOS hairline mannequin IMAGEs on template pass. Default off — mannequin faces bleed into client. */
 export function hairstyleAnalysisFalHairlineImageRefs(): boolean {
   const raw = process.env.HAIRSTYLE_ANALYSIS_FAL_HAIRLINE_REFS?.trim().toLowerCase();
-  if (raw === 'false' || raw === '0' || raw === 'no') return false;
-  return true;
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return false;
 }
 
 /** Upstream hair-only edit on raw selfie before template population (documented architecture). */
@@ -313,38 +313,10 @@ export async function generateHairstyleAnalysisWithFal(
   let clientUrl = rawClientUrl;
   const clientPreviewPreEdited = hairstyleAnalysisClientPreviewStepEnabled();
   if (clientPreviewPreEdited) {
-    const previewHairlineRefs = includeHairlineRefs
-      ? collectHairlineRefsForAnalysis([analysis.topMatch], 2)
-      : [];
-    const previewHairlineUrls = includeHairlineRefs
-      ? await Promise.all(
-          previewHairlineRefs.map((ref) =>
-            resolvePublicImageUrl(fal, ref.publicPath, input.siteOrigin, `hairline-${ref.key}`)
-          )
-        )
-      : [];
-    const previewStylingRefs = minimalRefs
-      ? []
-      : collectStylingRefsForAnalysis(
-          [analysis.topMatch],
-          2 + previewHairlineRefs.length
-        );
-    const previewStylingUrls = minimalRefs
-      ? []
-      : await Promise.all(previewStylingRefs.map((ref) => resolveStylingRefForFal(fal, ref)));
-    const previewRefs = {
-      mannequinRefs: [],
-      stylingRefs: previewStylingRefs,
-      hairlineRefs: previewHairlineRefs,
-    };
-    const hairOnlyPrompt = buildClientPreviewHairOnlyPrompt(
-      analysis.topMatch,
-      analysis.clientName,
-      previewRefs
-    );
+    const hairOnlyPrompt = buildClientPreviewHairOnlyPrompt(analysis.topMatch, analysis.clientName);
     const previewResult = await subscribeHairstyleAnalysisFal(
       fal,
-      [rawClientUrl, ...previewHairlineUrls, ...previewStylingUrls],
+      [rawClientUrl],
       hairOnlyPrompt,
       HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_IMAGE_SIZE
     );
