@@ -418,6 +418,8 @@ export async function generateHairstyleAnalysisWithFal(
       topMatch: analysis.topMatch,
       tier: analysis.tier,
       skipServerTextOverlay: input.falInImageTextOnly === true,
+      forceClientPhotoFade: consultInspo,
+      restoreClientPhotoPanelChrome: consultInspo,
     }
   );
   imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');

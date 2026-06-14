@@ -28540,3 +28540,14 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Files touched:** `api/_lib/consultStyleAnalysisInspoSpecs.ts`, `api/_lib/consultStyleAnalysisFal.ts`, `api/consult-style-analysis-generate.ts`, `src/utils/api.ts`, `src/components/hairstyle-analysis/HairstyleAnalysisPreview.tsx`, `docs/STYLE_ANALYSIS.md`, `motherboard/CORE.md`, and this `MEMORY.md`.
 - **Verification:** `npm run build` passed; esbuild bundle check for `api/consult-style-analysis-generate.ts` passed; `git diff --check` passed.
 - **Conventions:** For Hair consult fulfillment/debug generation, manual specs are the preferred source for template values and model nudging. Use OpenAI inspo spec detection only as a fallback when manual specs are omitted; keep Fal focused on recreating the submitted inspo hairstyle.
+
+---
+
+## 2026-06-14 — Hair consult main photo panel fade/chrome fix
+
+- **Context:** User attached a generated Hair consult template screenshot showing a glitch between the main left photo panel and generated photo; the soft bottom fade above the mirror reflection had disappeared.
+- **Topics covered:** Continued the same chat after manual-spec override work. Traced the hairstyle-analysis post-process path: `compositeHairstyleAnalysisPostProcess()` restored EDM roses and always added mirror reflection, but `applyClientPhotoBottomFade()` was only run when `HAIRSTYLE_ANALYSIS_CLIENT_PHOTO_POST_PROCESS=true`. Prior history showed generic fade post-process was made opt-in to avoid older over-processing artifacts, leaving consult outputs with reflection but no deterministic fade.
+- **Shipped:** Added consult-specific post-process controls in `HairstyleAnalysisPostProcessContext`: **`forceClientPhotoFade`** and **`restoreClientPhotoPanelChrome`**. `generateHairstyleAnalysisWithFal()` sets both when `consultInspoMode` is active. The compositor now forces the bottom fade pass for Hair consult templates even when the generic env flag is off, then restores thin template chrome strips around the left photo panel after reflection so Fal cannot smear/erase the panel border. Generic template analysis still keeps the env-controlled fade behavior.
+- **Files touched:** `api/_lib/hairstyleAnalysisFalComposite.ts`, `api/_lib/hairstyleAnalysisFal.ts`, `docs/STYLE_ANALYSIS.md`, `motherboard/CORE.md`, and this `MEMORY.md`.
+- **Verification:** `npm run build` passed; esbuild bundle check for `api/consult-style-analysis-generate.ts` passed; `git diff --check` passed.
+- **Conventions:** For Hair consult template cards, always preserve the bottom fade above the mirror reflection and restore the left photo panel chrome after Fal image generation. Do not globally re-enable the older client-photo post-process for all template-analysis flows unless explicitly requested.
