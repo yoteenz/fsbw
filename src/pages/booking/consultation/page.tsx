@@ -33,7 +33,7 @@ import {
   BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX,
 } from '../../../utils/bookingConsultHairInspoThumb';
 import ConsultStyleAnalysisAddonPicker from '../../../components/booking/ConsultStyleAnalysisAddonPicker';
-import ConsultStyleAnalysisSelfiePicker, {
+import {
   CONSULT_STYLE_ANALYSIS_SELFIE_SESSION_KEY,
   loadSelfieDraft,
   type ConsultStyleAnalysisSelfieItem,
@@ -42,6 +42,7 @@ import {
   CONSULT_DEPOSIT_USD,
   consultCheckoutTotalUsd,
   consultStyleAnalysisBagSubtitle,
+  consultStyleAnalysisUsd,
 } from '../../../utils/consultStyleAnalysisAddon';
 import type { StyleAnalysisComparisonTier } from '../../../types/styleAnalysis';
 
@@ -396,7 +397,7 @@ export default function BookingConsultationPage() {
     if (!styleAnalysisSelfie?.dataUrl?.startsWith('data:image/')) {
       setConsultFormNotice({
         title: 'FORGETTING SOMETHING?',
-        message: 'PLEASE UPLOAD A STYLE ANALYSIS SELFIE.'
+        message: 'PLEASE CHOOSE A SELFIE FOR YOUR STYLE ANALYSIS ADD-ON.'
       });
       return;
     }
@@ -930,24 +931,11 @@ export default function BookingConsultationPage() {
               paddingTop: '20px',
             }}
           >
-            <ConsultStyleAnalysisSelfiePicker
-              value={styleAnalysisSelfie}
-              onChange={setStyleAnalysisSelfie}
-              disabled={addToBagState === 'adding'}
-            />
-          </div>
-
-          <div
-            style={{
-              width: '100%',
-              minWidth: 0,
-              borderTop: '1px solid #e5e7eb',
-              paddingTop: '20px',
-            }}
-          >
             <ConsultStyleAnalysisAddonPicker
               value={styleAnalysisTier}
               onChange={setStyleAnalysisTier}
+              selfie={styleAnalysisSelfie}
+              onSelfieChange={setStyleAnalysisSelfie}
               disabled={addToBagState === 'adding'}
             />
           </div>
@@ -1121,7 +1109,7 @@ export default function BookingConsultationPage() {
 
           <div className="text-center" style={{ paddingTop: '6px' }}>
             <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
-              TOTAL DUE
+              TOTAL DUE AT CHECKOUT
             </p>
             <p
               className="text-black font-medium text-base md:text-xl lg:text-2xl"
@@ -1136,10 +1124,11 @@ export default function BookingConsultationPage() {
                 color: '#808080',
                 textTransform: 'uppercase',
                 margin: '6px 0 0',
-                lineHeight: 1.4,
+                lineHeight: 1.45,
               }}
             >
-              INCLUDES ${CONSULT_DEPOSIT_USD} DEPOSIT + STYLE ANALYSIS ADD-ON (NON-REFUNDABLE)
+              ${CONSULT_DEPOSIT_USD} CONSULT DEPOSIT (CREDITABLE ON OFFER) + $
+              {consultStyleAnalysisUsd(styleAnalysisTier)} STYLE ANALYSIS (NON-REFUNDABLE)
             </p>
           </div>
         </div>
