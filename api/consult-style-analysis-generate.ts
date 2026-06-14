@@ -4,6 +4,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { isAdminEmail } from './_lib/adminAuth.js';
 import { getAuthUser } from './_lib/auth.js';
 import { generateConsultStyleAnalysis } from './_lib/consultStyleAnalysisFal.js';
+import type { ManualConsultInspoSpecs } from './_lib/consultStyleAnalysisInspoSpecs.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -27,6 +28,32 @@ function parseBody(req: VercelRequest): Record<string, unknown> {
 function readString(obj: Record<string, unknown>, key: string): string {
   const v = obj[key];
   return typeof v === 'string' ? v.trim() : '';
+}
+
+function readManualSpecs(body: Record<string, unknown>): ManualConsultInspoSpecs | undefined {
+  const raw = body.manualSpecs ?? body.inspoSpecs ?? body.consultInspoSpecs;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const src = raw as Record<string, unknown>;
+  const read = (key: string) => (typeof src[key] === 'string' ? String(src[key]).trim() : undefined);
+  const readNumber = (key: string) => {
+    const value = src[key];
+    const n = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : Number.NaN;
+    return Number.isFinite(n) ? n : undefined;
+  };
+  const specs: ManualConsultInspoSpecs = {
+    unit: read('unit'),
+    color: read('color'),
+    styling: read('styling') ?? read('style'),
+    length: read('length'),
+    lengthInches: readNumber('lengthInches'),
+    part: read('part'),
+    lace: read('lace'),
+    density: read('density'),
+    hairline: read('hairline'),
+  };
+  return Object.values(specs).some((value) => value !== undefined && String(value).trim() !== '')
+    ? specs
+    : undefined;
 }
 
 function siteOriginFromRequest(req: VercelRequest): string {
@@ -76,6 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     body.comparisonCount ?? body.consultStyleAnalysisComparisonCount
   );
   const clientName = readString(body, 'clientName');
+  const manualSpecs = readManualSpecs(body);
 
   if (!selfieUrl || !inspoUrl) {
     sendJson(res, 400, {
@@ -95,6 +123,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       comparisonCount,
       siteOrigin: siteOriginFromRequest(req),
       clientName: clientName || user.email?.split('@')[0] || 'CLIENT',
+      manualSpecs,
     });
 
     sendJson(res, 200, {

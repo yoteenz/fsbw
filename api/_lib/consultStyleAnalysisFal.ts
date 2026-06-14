@@ -3,7 +3,9 @@ import type { ConsultHairColorName } from './consultStyleAnalysisCatalog.js';
 import {
   detectInspoHairSpecs,
   inspoDataUrlFromFetch,
+  normalizeManualConsultInspoSpecs,
   type ConsultInspoSpecs,
+  type ManualConsultInspoSpecs,
 } from './consultStyleAnalysisInspoSpecs.js';
 import { generateHairstyleAnalysisWithFal } from './hairstyleAnalysisFal.js';
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
@@ -25,6 +27,7 @@ export type GenerateConsultStyleAnalysisInput = {
   comparisonCount: 1 | 4;
   siteOrigin: string;
   clientName?: string;
+  manualSpecs?: ManualConsultInspoSpecs;
 };
 
 async function inspoDataUrlFromInput(
@@ -49,7 +52,9 @@ export async function generateConsultStyleAnalysis(
   input: GenerateConsultStyleAnalysisInput
 ): Promise<ConsultStyleAnalysisGenerateResult> {
   const inspoDataUrl = await inspoDataUrlFromInput(input.inspoUrl, input.siteOrigin);
-  const specs = await detectInspoHairSpecs(inspoDataUrl);
+  const specs = input.manualSpecs
+    ? normalizeManualConsultInspoSpecs(input.manualSpecs, 'OFF BLACK')
+    : await detectInspoHairSpecs(inspoDataUrl);
   const analysis = buildConsultHairstyleAnalysis({
     clientName: input.clientName?.trim() || 'CLIENT',
     comparisonCount: input.comparisonCount,

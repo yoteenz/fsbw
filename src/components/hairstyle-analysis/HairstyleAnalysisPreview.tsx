@@ -432,6 +432,7 @@ export default function HairstyleAnalysisPreview({
           inspoDataUrl: inspoForApi,
           comparisonCount: consultCount,
           clientName: resolvedAnalysis.clientName,
+          manualSpecs: topManifest,
         });
         if (!result.ok) throw new Error(result.error);
         setGenerateProgress(1);
@@ -503,6 +504,7 @@ export default function HairstyleAnalysisPreview({
     previewPhotoUrl,
     resolvedAnalysis,
     slotOverrides,
+    topManifest,
     usageState?.unlimited,
     clientPreviewUrl,
   ]);
@@ -645,7 +647,7 @@ export default function HairstyleAnalysisPreview({
           </p>
         ) : null}
 
-        {isAdmin ? (
+        {isAdmin && !consultDebugMode ? (
           <div className="flex flex-col gap-3 border border-black/15 p-3">
             <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
               <input
@@ -796,6 +798,36 @@ export default function HairstyleAnalysisPreview({
                   <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{inspoUploadError}</p>
                 ) : null}
               </div>
+
+              <div className="border border-black/20 p-3 flex flex-col gap-3">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-black font-medium">
+                  3. Manual specs for this hair inspo
+                  <span className="text-[#eb1c24]">*</span>
+                </p>
+                <p className="text-[8px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
+                  Choose the specs that match this submitted hair inspo photo. Generation skips OpenAI spec
+                  detection and sends these values to Fal so it can focus on recreating the photographed
+                  hairstyle.
+                </p>
+                <ManifestSpecPicker
+                  tier="six_month"
+                  topMatch={topManifest}
+                  additionalLooks={[]}
+                  onTopMatchChange={(draft) => {
+                    setTopManifest(draft);
+                    setGeneratedUrl(null);
+                    setGeneratedChart(null);
+                    setLastPrompt(null);
+                  }}
+                  onAdditionalLookChange={() => undefined}
+                  onResetDefaults={() => {
+                    setTopManifest(defaultTopMatchManifest());
+                    setGeneratedUrl(null);
+                    setGeneratedChart(null);
+                    setLastPrompt(null);
+                  }}
+                />
+              </div>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -854,7 +886,7 @@ export default function HairstyleAnalysisPreview({
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
           {consultDebugMode
-            ? 'Uses the wig consult pipeline: inspo vision suggests BAW catalog specs (e.g. BLANCO PLATINUM, LAYERS), then populates the same 1 pick / 4 pick hairstyle analysis template. 4 pick shows the inspo hairstyle on you in three alternate colors.'
+            ? 'Uses the wig consult pipeline: you choose the BAW specs for the submitted inspo photo, then Fal focuses on recreating that photographed hairstyle on the client. 4 pick keeps the same hairstyle and changes color only for MATCH 02–04.'
             : 'Sends the static Supabase template + client photo to Fal with the tier population prompt. This is the client-facing card — not the React text overlay composer.'}
         </p>
       </div>
