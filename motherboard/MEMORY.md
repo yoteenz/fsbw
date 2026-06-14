@@ -28405,3 +28405,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **one-shoulder positioning rule** being bypassed on generated cards (symmetric both-shoulder hair returning).
 - **Cause:** Two-step pipeline — **`preEditedClientPanelBlock`** told step 2 **do not change hair**, blocking drape preservation; step 1 only had compact drape hint; **`clientPoseLockBlock`** / **`neckAndBodyPreservationBlock`** read as “keep IMAGE 2 shoulder/hair layout” from selfie.
 - **Shipped:** Step 1 **`buildClientPreviewHairOnlyPrompt`** — full **`asymmetricOneShoulderDrapeBlock`**, override symmetric selfie curtain. **`preEditedClientPanelBlock`** — preserve upstream one-shoulder drape (face/neck locked, not all hair frozen). Pose/neck blocks — drape overrides strand placement only. Stronger compact lock + manifest/MATCH thumb rules. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-13 — Admin hairstyle analysis tier dropdown labels
+
+- **Context:** User asked to rename admin **Membership tier (admin test)** dropdown labels and drop unused options on the hairstyle analysis demo page.
+- **Labels (internal keys unchanged):** `free` → **1 pick**, `three_month` → **4 pick**, `six_month` → **hair consult** (wig consult style analysis tier). Removed **`twelve_month`** and **`black`** from the admin dropdown only.
+- **Shipped (e2f0c023):** **`formatHairstyleAnalysisTierLabel()`** + **`HAIRSTYLE_ANALYSIS_ADMIN_TIER_OPTIONS`** in **`hairstyleAnalysisRules.ts`**; **`HairstyleAnalysisPreview.tsx`** uses labels in dropdown, debug save/reset, card tier line, and generate overlay; **`HairstyleAnalysisDemo.tsx`** tier pick counts copy updated. Pushed **`master`** + **`preview/mobile`**.
