@@ -28480,3 +28480,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted **CHOOSE SELFIE** inside the **1 pick / 4 pick** style analysis panels (not below both); clients who skip the add-on should **not** upload a selfie. Admin **Hairstyle Analysis** debug dropdown should add **hair consult 1 pick** and **hair consult 4 pick** using the same templates as template analysis with the consult generate pipeline.
 - **Shipped (09a7e161):** **`ConsultStyleAnalysisAddonPicker`** — **NO STYLE ANALYSIS** ($40 only) + paid tiers as cards; selfie picker only in the **selected** paid panel. Consult page defaults to no add-on; selfie validation/cart fields only when 1/4 selected. **`HairstyleAnalysisPreview`** — admin tiers **`six_month`** / **`twelve_month`** labeled hair consult 1/4 pick; **`six_month`** → free template layout, **`twelve_month`** → premium; generate calls **`postConsultStyleAnalysisGenerate`** with selfie + inspo uploads; chart grid output. **`hairstyleAnalysisRules.ts`**, **`STYLE_ANALYSIS.md`**, **`CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-14 — Consult debug dual upload (selfie + inspo)
+
+- **Context:** User reported hair consult debug dropdown on **`/tools/hairstyle-analysis`** only showed one attachment upload; consult pipeline needs **selfie + hair inspo** (unlike template analysis which needs client preview only).
+- **Shipped:** **`HairstyleAnalysisPreview`** — consult tiers render **two bordered panels**: (1) selfie choose/replace + thumb + URL paste, (2) hair inspo choose/replace + thumb + URL paste. Template **1 pick / 4 pick** unchanged (single client preview). **`HairstyleAnalysisDemo.tsx`** copy updated.
