@@ -22,7 +22,6 @@ const DENSITY_OPTIONS = ['200%', '250%', '300%'] as const;
 
 const LENGTH_OPTIONS = ['22 INCHES', '24 INCHES', '26 INCHES', '28 INCHES', '30 INCHES'];
 const PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
-const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS', 'LAGOS + PEAK'] as const;
 const COLOR_BUCKETS = ['neutral', 'blonde', 'vivid', 'any'] as const;
 
 const NEUTRAL_COLORS = ['JET BLACK', 'OFF BLACK', 'ESPRESSO', 'CHESTNUT'] as const;
@@ -184,13 +183,6 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
   const laceOrder = shuffle(LACE_OPTIONS);
   const densityOrder = shuffle(DENSITY_OPTIONS);
   const partOrder = shuffle(PART_OPTIONS);
-  const hairlineOrder = shuffle(HAIRLINE_OPTIONS);
-  const hairlinePick = hairlineOrder[index % hairlineOrder.length] ?? 'NATURAL';
-  const hairline = isDefaultHairline(look.hairline)
-    ? `${hairlinePick} HAIRLINE`
-    : look.hairline!.trim().toUpperCase().includes('HAIRLINE')
-      ? look.hairline!.trim().toUpperCase()
-      : `${look.hairline!.trim().toUpperCase()} HAIRLINE`;
 
   return {
     ...look,
@@ -203,7 +195,7 @@ export function varyInstallSpecs<L extends DiversifiableLook>(look: L, index = 0
     part: isDefaultPart(look.part)
       ? (partOrder[index % partOrder.length] ?? PART_OPTIONS[0])
       : look.part,
-    hairline: isDefaultHairline(look.hairline) ? hairline : look.hairline,
+    hairline: 'NATURAL HAIRLINE',
     styling: isDefaultStyling(look.styling) ? 'NONE' : look.styling,
   };
 }

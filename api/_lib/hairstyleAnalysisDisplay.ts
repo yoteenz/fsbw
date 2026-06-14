@@ -67,6 +67,13 @@ export function displayHairline(hairline: string): string {
   return hairline.replace(/\s*HAIRLINE\s*$/i, '').trim().toUpperCase();
 }
 
+/** Locked for Fal cards until PEAK/LAGOS render reliably on both templates. */
+export const HAIRSTYLE_ANALYSIS_LOCKED_HAIRLINE = 'NATURAL HAIRLINE';
+
+export function withLockedHairstyleAnalysisHairline<T extends { hairline: string }>(look: T): T {
+  return { ...look, hairline: HAIRSTYLE_ANALYSIS_LOCKED_HAIRLINE };
+}
+
 /** Part value only — template label already says PART. */
 export function displayPart(part: string): string {
   return part

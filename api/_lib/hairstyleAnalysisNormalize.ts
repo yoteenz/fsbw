@@ -1,6 +1,7 @@
 import {
   compactEveryDetailMattersLines,
   normalizeAnalysisStylingId,
+  withLockedHairstyleAnalysisHairline,
 } from './hairstyleAnalysisDisplay.js';
 import { buildEveryDetailMattersFromTopMatch, everyDetailVariationSeed } from './hairstyleAnalysisEveryDetailMatters.js';
 import { hexForHairColorName } from './hairstyleHairColors.js';
@@ -39,24 +40,28 @@ export function normalizeHairstyleAnalysisForFal(
         tierKey === 'free' ? [] : withScores.additionalLooks
       );
 
-  const top = normalizeLookStyling(
-    {
-      ...diversified.topMatch,
-      hex: diversified.topMatch.hex || hexForHairColorName(diversified.topMatch.color),
-    },
-    0
+  const top = withLockedHairstyleAnalysisHairline(
+    normalizeLookStyling(
+      {
+        ...diversified.topMatch,
+        hex: diversified.topMatch.hex || hexForHairColorName(diversified.topMatch.color),
+      },
+      0
+    )
   );
 
   const additionalLooks =
     tierKey === 'free'
       ? []
       : diversified.additionalLooks.map((look, i) =>
-          normalizeLookStyling(
-            {
-              ...look,
-              hex: look.hex || hexForHairColorName(look.color),
-            },
-            i + 1
+          withLockedHairstyleAnalysisHairline(
+            normalizeLookStyling(
+              {
+                ...look,
+                hex: look.hex || hexForHairColorName(look.color),
+              },
+              i + 1
+            )
           )
         );
 
