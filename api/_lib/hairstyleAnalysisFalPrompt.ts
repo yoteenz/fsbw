@@ -877,6 +877,7 @@ function freePrompt(
     clientPreviewTabLine(),
     topMatchHeaderLine(fullName),
     clientPreviewPanelLine(top, refs, promptOptions),
+    ...consultInspoRulesForPrompt(promptOptions),
   ];
   appendEveryDetailMattersLines(lines, analysis);
   lines.push(freePromptFooter(analysis, promptOptions?.falInImageTextOnly === true));

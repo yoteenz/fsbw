@@ -62,7 +62,7 @@ export async function generateConsultStyleAnalysis(
     templateUrl,
     clientPreviewUrl: input.selfieUrl,
     inspoPreviewUrl: input.inspoUrl,
-    consultInspoMode: input.comparisonCount === 4,
+    consultInspoMode: true,
     falInImageTextOnly: true,
     siteOrigin: input.siteOrigin,
     skipLookDiversification: true,
