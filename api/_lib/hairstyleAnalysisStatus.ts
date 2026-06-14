@@ -1,6 +1,10 @@
 import { isAdminEmail } from './adminAuth.js';
 import { resolveHairstyleAnalysisEntitlement } from './hairstyleAnalysisEntitlement.js';
 import {
+  PSA_HAIR_ANALYSIS_DELIVERY_HOURS,
+  PSA_HAIR_ANALYSIS_DELIVERY_NOTE,
+} from './psaHairAnalysisDelivery.js';
+import {
   getHairstyleAnalysisUsage,
   hairstyleAnalysisPurchaseOptions,
 } from './hairstyleAnalysisUsage.js';
@@ -27,6 +31,8 @@ export async function buildHairstyleAnalysisMemberStatus(
       purchaseOptions: hairstyleAnalysisPurchaseOptions(),
       guidance:
         'Hairstyle analysis template cards require a 3, 6, or 12 month premium subscription.',
+      deliveryHours: PSA_HAIR_ANALYSIS_DELIVERY_HOURS,
+      deliveryNote: PSA_HAIR_ANALYSIS_DELIVERY_NOTE,
     };
   }
 
@@ -42,6 +48,8 @@ export async function buildHairstyleAnalysisMemberStatus(
       purchaseRequired: false,
       purchaseOptions: hairstyleAnalysisPurchaseOptions(),
       guidance: 'Admin or unlimited test access.',
+      deliveryHours: PSA_HAIR_ANALYSIS_DELIVERY_HOURS,
+      deliveryNote: PSA_HAIR_ANALYSIS_DELIVERY_NOTE,
     };
   }
 
@@ -59,9 +67,11 @@ export async function buildHairstyleAnalysisMemberStatus(
     purchaseRequired,
     purchaseOptions: hairstyleAnalysisPurchaseOptions(),
     guidance: purchaseRequired
-      ? 'Monthly free analysis used. Offer purchase at consult style analysis add-on prices: 1 comparison $20, 4 comparisons $60. Use purchase_hairstyle_analysis then send them to checkout.'
+      ? `Monthly free analysis used. Offer purchase at consult style analysis add-on prices: 1 comparison $20, 4 comparisons $60. Use purchase_hairstyle_analysis then send them to checkout. ${PSA_HAIR_ANALYSIS_DELIVERY_NOTE}`
       : usage.monthRemaining > 0
-        ? `${usage.monthRemaining} free hairstyle analysis remaining this UTC month.`
-        : `${usage.paidCreditsRemaining} paid hairstyle analysis credit(s) available.`,
+        ? `${usage.monthRemaining} free hairstyle analysis remaining this UTC month. ${PSA_HAIR_ANALYSIS_DELIVERY_NOTE}`
+        : `${usage.paidCreditsRemaining} paid hairstyle analysis credit(s) available. ${PSA_HAIR_ANALYSIS_DELIVERY_NOTE}`,
+    deliveryHours: PSA_HAIR_ANALYSIS_DELIVERY_HOURS,
+    deliveryNote: PSA_HAIR_ANALYSIS_DELIVERY_NOTE,
   };
 }

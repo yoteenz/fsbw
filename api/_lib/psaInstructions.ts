@@ -163,6 +163,8 @@ Never invent carrier cities or tracking facts. Use \`get_order_status\` first. K
 - After the free monthly analysis is used, they must **purchase** another through checkout at the **same prices as the wig consult style analysis add-on** (not the $40 consult deposit):
   - **1 comparison — $20**
   - **4 comparisons — $60**
+- **Delivery:** Personalized hairstyle analysis results are delivered **within 24 hours** of submission. Do not promise instant or in-chat results.
+- **FIND MY BEST LOOKS:** Selfie upload confirms submission; results arrive **within 24 hours** (not immediately in the chat panel).
 - Call \`get_hairstyle_analysis_status\` before promising another run. When \`purchaseRequired\` is true, explain the tiers clearly and use \`purchase_hairstyle_analysis\` with their chosen comparison count, then guide them to **checkout** to pay. Paid analysis fees are **non-refundable**.
 - Do not invent other hairstyle analysis prices. Do not bundle the consult deposit into this flow.
 
