@@ -29,6 +29,8 @@ export type HairstyleAnalysisPostProcessContext = {
   forceClientPhotoFade?: boolean;
   /** Restore template chrome around the left photo panel after Fal image edits. */
   restoreClientPhotoPanelChrome?: boolean;
+  /** Remove Fal portrait overflow below the intended photo/fade window before reflection. */
+  clipClientPhotoOverflow?: boolean;
 };
 
 async function fetchBuffer(url: string): Promise<Buffer> {
@@ -64,6 +66,19 @@ function clientPhotoPanelChromeSlots(panel: PixelRect): PixelRect[] {
   ];
 }
 
+function clientPhotoBottomOverflowSlot(panel: PixelRect, photoWindow: PixelRect): PixelRect[] {
+  const { width: canvasW, height: canvasH } = HAIRSTYLE_ANALYSIS_CANVAS;
+  const panelLeft = Math.max(0, panel.left);
+  const panelRight = Math.min(canvasW, panel.left + panel.width);
+  const panelBottom = Math.min(canvasH, panel.top + panel.height);
+  const clipTop = Math.max(panel.top, photoWindow.top + photoWindow.height);
+  const top = Math.max(0, Math.min(clipTop, panelBottom));
+  const width = Math.max(0, panelRight - panelLeft);
+  const height = Math.max(0, panelBottom - top);
+  if (width <= 0 || height <= 0) return [];
+  return [{ left: panelLeft, top, width, height }];
+}
+
 /** Post-process: restore EDM rose icons, optional photo fade, mirror reflection, server text overlays. */
 export async function compositeHairstyleAnalysisPostProcess(
   falImageUrl: string,
@@ -90,6 +105,10 @@ export async function compositeHairstyleAnalysisPostProcess(
 
   if (applyPhotoFade || postProcess?.forceClientPhotoFade) {
     base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
+  }
+
+  if (postProcess?.clipClientPhotoOverflow) {
+    base = await restoreTemplateSlots(base, templateBuf, clientPhotoBottomOverflowSlot(panelRect, fadeRect));
   }
 
   base = await applyClientPhotoMirrorReflection(base, panelRect, fadeRect);

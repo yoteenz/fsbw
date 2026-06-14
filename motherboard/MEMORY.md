@@ -28551,3 +28551,14 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Files touched:** `api/_lib/hairstyleAnalysisFalComposite.ts`, `api/_lib/hairstyleAnalysisFal.ts`, `docs/STYLE_ANALYSIS.md`, `motherboard/CORE.md`, and this `MEMORY.md`.
 - **Verification:** `npm run build` passed; esbuild bundle check for `api/consult-style-analysis-generate.ts` passed; `git diff --check` passed.
 - **Conventions:** For Hair consult template cards, always preserve the bottom fade above the mirror reflection and restore the left photo panel chrome after Fal image generation. Do not globally re-enable the older client-photo post-process for all template-analysis flows unless explicitly requested.
+
+---
+
+## 2026-06-14 — Hair consult long-length overflow clipped before mirror reflection
+
+- **Context:** User attached another Hair consult result where longer hair generated too long on just one side and overlapped the mirror effect below the image. They clarified it needs to be clipped inside where the photo ends and not run into the mirror/reflection area.
+- **Topics covered:** Continued from the same-chat Hair consult fixes: stronger inspo matching, manual specs override, forced bottom fade, and left-panel chrome restoration. Reviewed the consult post-process order and added a more targeted overflow clip.
+- **Shipped:** Added **`clipClientPhotoOverflow`** to `HairstyleAnalysisPostProcessContext`; consult generation sets it with `consultInspoMode`. `compositeHairstyleAnalysisPostProcess()` now restores the template area below the intended client photo/fade window **before** applying the mirror reflection, so long generated hair cannot continue underneath the fade into the reflection zone. This is consult-only and does not globally change generic template-analysis photo processing.
+- **Files touched:** `api/_lib/hairstyleAnalysisFalComposite.ts`, `api/_lib/hairstyleAnalysisFal.ts`, `docs/STYLE_ANALYSIS.md`, `motherboard/CORE.md`, and this `MEMORY.md`.
+- **Verification:** `npm run build` passed; esbuild bundle check for `api/consult-style-analysis-generate.ts` passed; `git diff --check` passed.
+- **Conventions:** Hair consult post-process order: force bottom fade → clip bottom overflow below the intended photo/fade window → add subtle mirror reflection → restore thin left-panel chrome. Keep overflow clipping scoped to Hair consult cards unless requested otherwise.
