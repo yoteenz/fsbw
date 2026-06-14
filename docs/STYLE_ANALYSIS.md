@@ -34,6 +34,8 @@ Server quote: `api/_lib/pricing/resolveQuote.ts` adds add-on to `booking-consult
 
 **Where:** PSA chat → **MORE OPTIONS** → **FIND MY BEST LOOKS** (or chip match).
 
+**Delivery:** Results return **within 24 hours** of selfie submission — not immediately in chat.
+
 **Pick limits by subscription term:**
 
 | Term | Max ranked picks |
@@ -60,7 +62,7 @@ No change. NOIR (and existing) BAW live preview paths stay as documented in `mot
 
 **Where:** `/tools/hairstyle-analysis` — Kateena sample data, **Generate template preview** (signed in).
 
-**Allowance:** **3 / 6 / 12 month** premium subscribers get **1 free hairstyle analysis per UTC calendar month** (card tier matches subscription). API: `GET /api/hairstyle-analysis-usage`, enforced on `POST /api/hairstyle-analysis-generate` (refunds slot if Fal fails). Admins bypass the cap for testing.
+**Allowance:** **3 / 6 / 12 month** premium subscribers get **1 free hairstyle analysis per UTC calendar month** (card tier matches subscription). API: `GET /api/hairstyle-analysis-usage`, enforced on `POST /api/hairstyle-analysis-generate` (refunds slot if Fal fails). Admins bypass the cap for testing. **Member-facing delivery:** results within **24 hours** of submission (PSA copy).
 
 **After the monthly free is used:** members purchase another through checkout at the **same prices as the wig consult style analysis add-on** (not the $40 consult deposit): **1 comparison $20**, **4 comparisons $60**. Cart line type `hairstyle-analysis`; Stripe webhook grants paid credits. PSA tools: `get_hairstyle_analysis_status`, `purchase_hairstyle_analysis`.
 

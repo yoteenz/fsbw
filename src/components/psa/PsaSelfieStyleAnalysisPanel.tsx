@@ -1,13 +1,16 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postPsaSelfieStyleAnalysis } from '../../utils/psaSelfieStyleAnalysisApi';
-import { psaSelfieMaxPicksFromStorage, PSA_SELFIE_STYLE_CHIP } from '../../utils/psaSelfieStyleAnalysis';
-import type { PsaSelfieStylePick } from '../../types/styleAnalysis';
+import { PSA_SELFIE_STYLE_CHIP } from '../../utils/psaSelfieStyleAnalysis';
+import {
+  PSA_HAIR_ANALYSIS_PANEL_COPY,
+  PSA_HAIR_ANALYSIS_SUBMITTED_MESSAGE,
+} from '../../utils/psaHairAnalysisDelivery';
 
 type PsaSelfieStyleAnalysisPanelProps = {
   onClose: () => void;
   onPremiumRequired: () => void;
-  onResults: (summary: string, picks: PsaSelfieStylePick[]) => void;
+  onSubmitted: (message: string) => void;
 };
 
 function readFileAsDataUrl(file: File): Promise<string | null> {
@@ -25,14 +28,13 @@ function readFileAsDataUrl(file: File): Promise<string | null> {
 export default function PsaSelfieStyleAnalysisPanel({
   onClose,
   onPremiumRequired,
-  onResults,
+  onSubmitted,
 }: PsaSelfieStyleAnalysisPanelProps) {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const maxPicks = psaSelfieMaxPicksFromStorage();
 
   const onFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,7 +49,7 @@ export default function PsaSelfieStyleAnalysisPanel({
     setError(null);
   };
 
-  const runAnalysis = async () => {
+  const submitSelfie = async () => {
     if (!preview || busy) return;
     setBusy(true);
     setError(null);
@@ -64,14 +66,7 @@ export default function PsaSelfieStyleAnalysisPanel({
       );
       return;
     }
-    const summary = [
-      result.result.clientSummary,
-      result.result.faceShape ? `FACE: ${result.result.faceShape}` : '',
-      result.result.undertone ? `UNDERTONE: ${result.result.undertone}` : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-    onResults(summary, result.result.picks);
+    onSubmitted(PSA_HAIR_ANALYSIS_SUBMITTED_MESSAGE);
     onClose();
   };
 
@@ -83,10 +78,7 @@ export default function PsaSelfieStyleAnalysisPanel({
           ×
         </button>
       </header>
-      <p className="psa-selfie-analysis-copy">
-        UPLOAD A SELFIE — PSA RANKS UP TO {maxPicks} CUSTOMIZED UNIT + COLOR + STYLING PICKS FOR YOUR
-        FACE & VIBE. LIVE TRY-ON IN BUILD-A-WIG STAYS SEPARATE.
-      </p>
+      <p className="psa-selfie-analysis-copy">{PSA_HAIR_ANALYSIS_PANEL_COPY}</p>
       <input
         ref={inputRef}
         type="file"
@@ -112,9 +104,9 @@ export default function PsaSelfieStyleAnalysisPanel({
         type="button"
         className="psa-selfie-analysis-submit"
         disabled={!preview || busy}
-        onClick={() => void runAnalysis()}
+        onClick={() => void submitSelfie()}
       >
-        {busy ? 'ANALYZING…' : 'ANALYZE MY LOOKS'}
+        {busy ? 'SUBMITTING…' : 'SUBMIT SELFIE'}
       </button>
       <button
         type="button"

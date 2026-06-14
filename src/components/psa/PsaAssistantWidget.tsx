@@ -59,12 +59,12 @@ import {
 import { applyPsaBawPrefill, type PsaBawPrefillSelections } from '../../utils/psaBawPrefill';
 import { savePsaBawDraft } from '../../utils/psaBawDraft';
 import { resolvePsaQuickReplyNavigation } from '../../utils/psaQuickReplyNavigation';
-import type { PsaChatCard, PsaClientAction } from '../../utils/psaApi';
+import type { PsaClientAction } from '../../utils/psaApi';
 import {
   isPsaSelfieStyleChip,
   PSA_SELFIE_STYLE_CHIP,
 } from '../../utils/psaSelfieStyleAnalysis';
-import type { PsaSelfieStylePick } from '../../types/styleAnalysis';
+import { PSA_HAIR_ANALYSIS_SUBMITTED_MESSAGE } from '../../utils/psaHairAnalysisDelivery';
 import PsaSelfieStyleAnalysisPanel from './PsaSelfieStyleAnalysisPanel';
 import {
   PSA_OPEN_CHAT_REQUEST_EVENT,
@@ -492,26 +492,14 @@ export default function PsaAssistantWidget() {
     [navigate]
   );
 
-  const picksToCards = useCallback((picks: PsaSelfieStylePick[]): PsaChatCard[] => {
-    return picks.map((pick) => ({
-      type: 'product' as const,
-      name: pick.unitLabel,
-      path: `/shop/units`,
-      buildAWigPath: pick.buildAWigPath,
-      summary: `${pick.length} · ${pick.color} · ${pick.styling} — ${pick.why}`,
-    }));
-  }, []);
-
-  const handleSelfieStyleResults = useCallback(
-    (summary: string, picks: PsaSelfieStylePick[]) => {
+  const handleSelfieStyleSubmitted = useCallback(
+    (message: string) => {
       appendLocalExchange(PSA_SELFIE_STYLE_CHIP, {
-        content: summary,
-        cards: picksToCards(picks),
-        quickReplies: picks.slice(0, 3).map((p) => `OPEN ${p.unitLabel} IN BAW`),
+        content: message || PSA_HAIR_ANALYSIS_SUBMITTED_MESSAGE,
       });
       setLastReplyAt(Date.now());
     },
-    [appendLocalExchange, picksToCards]
+    [appendLocalExchange]
   );
 
   const handleSend = useCallback(
@@ -676,7 +664,7 @@ export default function PsaAssistantWidget() {
                       setIsOpen(false);
                       setShowUpgradeModal(true);
                     }}
-                    onResults={handleSelfieStyleResults}
+                    onSubmitted={handleSelfieStyleSubmitted}
                   />
                 ) : null
               }

@@ -7,6 +7,10 @@ import { summarizeOrderForPsa, summarizeOrderForPsaWithTrackingGate } from './ps
 import { PSA_PRODUCTS } from './psaKnowledge.js';
 import { buildHairstyleAnalysisMemberStatus } from './hairstyleAnalysisStatus.js';
 import {
+  PSA_HAIR_ANALYSIS_DELIVERY_HOURS,
+  PSA_HAIR_ANALYSIS_DELIVERY_NOTE,
+} from './psaHairAnalysisDelivery.js';
+import {
   hairstyleAnalysisComparisonUsd,
   parseHairstyleAnalysisComparisonTier,
 } from './hairstyleAnalysisPricing.js';
@@ -308,7 +312,7 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
     type: 'function',
     name: 'get_hairstyle_analysis_status',
     description:
-      'Check the member hairstyle analysis allowance: 1 free per UTC month on 3/6/12 month plans, plus any paid credits. Use before generate or when they hit the monthly limit.',
+      'Check the member hairstyle analysis allowance: 1 free per UTC month on 3/6/12 month plans, plus any paid credits. Results deliver within 24 hours of submission.',
     parameters: { type: 'object', properties: {}, additionalProperties: false },
     strict: true,
   },
@@ -316,7 +320,7 @@ export const PSA_ACTION_TOOL_DEFINITIONS = [
     type: 'function',
     name: 'purchase_hairstyle_analysis',
     description:
-      'Add a paid hairstyle analysis to cart after the monthly free is used. Same prices as wig consult style analysis add-on: 1 comparison $20, 4 comparisons $60. Member completes payment at checkout.',
+      'Add a paid hairstyle analysis to cart after the monthly free is used. Same prices as wig consult style analysis add-on: 1 comparison $20, 4 comparisons $60. Results deliver within 24 hours of submission.',
     parameters: {
       type: 'object',
       properties: {
@@ -636,7 +640,9 @@ export async function executePsaActionTool(
           nonRefundable: true,
           cartItemCount: updated.items.length,
           checkoutPath: '/checkout',
-          note: 'Paid hairstyle analysis is non-refundable. Credit applies after checkout payment succeeds.',
+          note: `Paid hairstyle analysis is non-refundable. ${PSA_HAIR_ANALYSIS_DELIVERY_NOTE}`,
+          deliveryHours: PSA_HAIR_ANALYSIS_DELIVERY_HOURS,
+          deliveryNote: PSA_HAIR_ANALYSIS_DELIVERY_NOTE,
           allowance: {
             monthRemaining: status.monthRemaining,
             paidCreditsRemaining: status.paidCreditsRemaining,
