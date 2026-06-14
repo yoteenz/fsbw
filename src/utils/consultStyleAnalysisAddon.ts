@@ -1,6 +1,6 @@
 /**
- * Wig consult — optional Style Analysis add-on (non-refundable).
- * Priced by comparison-option count: 1 / 4 → $20 / $60.
+ * Wig consult — required Style Analysis add-on (non-refundable).
+ * Priced by comparison-option count: 1 / 4 → $20 / $60, bundled with $40 deposit at checkout.
  */
 import type { StyleAnalysisComparisonTier } from '../types/styleAnalysis';
 
@@ -31,7 +31,7 @@ export const CONSULT_STYLE_ANALYSIS_TIERS: ConsultStyleAnalysisTierDef[] = [
 ];
 
 export const CONSULT_STYLE_ANALYSIS_NON_REFUNDABLE_NOTE =
-  'STYLE ANALYSIS ADD-ON FEES ARE NON-REFUNDABLE. THE $40 CONSULT DEPOSIT REMAINS CREDITABLE TOWARD YOUR UNIT OR INSTALL WHEN REDEEMED PER POLICY.';
+  'STYLE ANALYSIS ADD-ON FEES ARE NON-REFUNDABLE AND ARE NOT INCLUDED IN THE $40 CONSULT DEPOSIT CREDIT WHEN YOU CLAIM YOUR OFFER.';
 
 export function consultStyleAnalysisTierByCount(
   count: StyleAnalysisComparisonTier | null | undefined

@@ -4,9 +4,7 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 
 ## Wig consult add-on (all consult bookers)
 
-**Where:** `/booking/consultation` → **STYLE ANALYSIS SELFIE** + **STYLE ANALYSIS ADD-ON** (required; below hair inspo).
-
-**Inputs:** Client uploads **one selfie** + **hair inspo** (up to 3 inspo photos; generation uses the **first** inspo). This is **not** the PSA hairstyle analysis card or template `IMG_2554` / `IMG_2549` path.
+**Where:** `/booking/consultation` → **STYLE ANALYSIS ADD-ON** (required) — pick **1** or **4** comparisons, then **CHOOSE SELFIE** (PSA-style upload). **Hair inspo** (above) is also required; generation combines selfie + first inspo photo.
 
 **Pricing (non-refundable add-on only):**
 
@@ -15,7 +13,7 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 | 1 | $20 | Inspo hairstyle on client + **1** alternate **color** (same cut/style) |
 | 4 | $60 | Inspo hairstyle on client + **4** alternate **colors** (same cut/style; colors differ from inspo) |
 
-The **$40 consult deposit** remains separate and creditable per existing consult policy. Checkout total = **$40 + add-on**.
+The **$40 consult deposit** is creditable toward the unit/install when the client claims their consult offer. Checkout total = **$40 deposit + add-on**. **Only the $40 deposit** returns as credit on the consult order — the style analysis fee is **non-refundable**.
 
 **Generation pipeline (consult-only):** `POST /api/consult-style-analysis-generate` (signed in). Fal **GPT Image 2** (`openai/gpt-image-2/edit`):
 
