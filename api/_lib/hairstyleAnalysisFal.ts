@@ -282,6 +282,8 @@ export type GenerateHairstyleAnalysisFalInput = {
   inspoPreviewUrl?: string;
   /** Wig consult — MATCH 02–04 are color-only variants of inspo hairstyle. */
   consultInspoMode?: boolean;
+  /** Fal prints all card text in-image — skip server Sharp spec/footer overlay. */
+  falInImageTextOnly?: boolean;
 };
 
 export type GenerateHairstyleAnalysisFalResult = {
@@ -389,6 +391,7 @@ export async function generateHairstyleAnalysisWithFal(
     ),
     clientPreviewPreEdited,
     consultInspoMode: consultInspo,
+    falInImageTextOnly: input.falInImageTextOnly === true,
   };
   const prompt = buildHairstyleAnalysisFalPrompt(
     analysis,
@@ -414,6 +417,7 @@ export async function generateHairstyleAnalysisWithFal(
     {
       topMatch: analysis.topMatch,
       tier: analysis.tier,
+      skipServerTextOverlay: input.falInImageTextOnly === true,
     }
   );
   imageUrl = await uploadBufferToFal(fal, composited, 'hairstyle-analysis-final.png', 'image/png');
