@@ -28421,3 +28421,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported gray **SOFT WAVE · 3 PLUM** build summary broken — split across columns below TOP MATCH specs instead of one centered line above **BUILD THIS LOOK**.
 - **Cause:** Fal painted gray **UNIT · LENGTH · COLOR** ribbon in the wrong zone (between spec panel and every-detail-matters header); truncated length; split fragments under photo vs spec column.
 - **Shipped (a5a6afdf):** **`compositeFreeTierEdmBuildSummary()`** — server-composites gray ribbon at **`EDM_PANEL_FOOTER_SLOT`** (85.5%); **`EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT`** restores clean template over misplaced zone. Fal prompt leaves build summary **blank** (forbidden between spec panel and EDM header). Free tier only in post-process. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-13 — TOP MATCH spec values petite server overlay
+
+- **Context:** User approved shrinking generated TOP MATCH spec **value** text to match baked template **labels** (values looked larger than TEXTURE:/COLOR: etc.).
+- **Shipped (2d1caf4b):** **`compositeTopMatchSpecValues()`** — server-composites all eight spec fields at **`topMatchSpecValueFontSize()`** (~34% slot height, max 18px) after restoring template patches. Fal **`topMatchSpecManifestBlock`** leaves value slots blank (manifest kept for photo/EDM sync). Dev overlay **`.topMatchSpecValueText`** matches petite size. Applies free + premium tiers. Pushed **`master`** + **`preview/mobile`**.
