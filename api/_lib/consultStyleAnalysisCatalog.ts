@@ -43,9 +43,32 @@ export const CONSULT_DEFAULT_COLORS: ConsultHairColorName[] = [
   'CITRINE',
 ];
 
+function consultHairColorAlias(text: string): ConsultHairColorName | null {
+  if (/\b(ICY|ICE|SILVER|WHITE|PLATINUM)\b/.test(text)) return 'PLATINUM';
+  if (/\b(ASH|SMOKY|SMOKEY)\b/.test(text)) return 'ASH';
+  if (/\b(GOLD|GOLDEN|YELLOW BLONDE|WARM BLONDE|HONEY BLONDE)\b/.test(text)) return 'GOLDEN';
+  if (/\b(BURGUNDY|WINE|MERLOT|OXBLOOD)\b/.test(text)) return 'SANGRIA';
+  if (/\b(CHERRY|BRIGHT RED|VIVID RED|TRUE RED)\b/.test(text)) return 'CHERRY';
+  if (/\b(RASPBERRY|PINK|MAGENTA|FUCHSIA)\b/.test(text)) return 'RASPBERRY';
+  if (/\b(PURPLE|VIOLET|LAVENDER|PLUM)\b/.test(text)) return 'PLUM';
+  if (/\b(BLUE|COBALT|NAVY)\b/.test(text)) return 'COBALT';
+  if (/\b(TEAL|TURQUOISE|AQUA)\b/.test(text)) return 'TEAL';
+  if (/\b(LIME|NEON GREEN|BRIGHT GREEN|SLIME)\b/.test(text)) return 'SLIME';
+  if (/\b(CITRINE|NEON YELLOW|BRIGHT YELLOW)\b/.test(text)) return 'CITRINE';
+  if (/\b(GINGER|ORANGE|TANGERINE)\b/.test(text)) return 'GINGER';
+  if (/\b(COPPER|COPPERY)\b/.test(text)) return 'COPPER';
+  if (/\b(AUBURN|REDDISH BROWN)\b/.test(text)) return 'AUBURN';
+  if (/\b(CHESTNUT|BROWN)\b/.test(text)) return 'CHESTNUT';
+  if (/\b(ESPRESSO|DARK BROWN)\b/.test(text)) return 'ESPRESSO';
+  if (/\b(OFF BLACK|NATURAL BLACK|SOFT BLACK)\b/.test(text)) return 'OFF BLACK';
+  return null;
+}
+
 export function normalizeConsultHairColor(raw: string): ConsultHairColorName | null {
-  const key = raw.trim().toUpperCase().replace(/\s+/g, ' ') as ConsultHairColorName;
-  return key in CONSULT_HAIR_COLORS ? key : null;
+  const text = raw.trim().toUpperCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ');
+  const key = text as ConsultHairColorName;
+  if (key in CONSULT_HAIR_COLORS) return key;
+  return consultHairColorAlias(text);
 }
 
 export function hexForConsultHairColor(color: string): string {

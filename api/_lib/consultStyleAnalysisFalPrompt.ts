@@ -15,7 +15,9 @@ export function buildConsultInspoMatchPrompt(): string {
     '',
     'OUTPUT: ONE photorealistic front portrait of the **same person** as IMAGE 1 wearing the **exact hairstyle** from IMAGE 2.',
     'Copy from IMAGE 2: length, texture, curl/wave pattern, layering, part, volume, ends, and overall silhouette — not a generic catalog wig guess.',
-    'Copy hair **color** from IMAGE 2 as closely as possible.',
+    'If IMAGE 2 has bangs/fringe/curtain bangs, recreate the bang length, split, density, and face-framing blend exactly. If IMAGE 2 has no bangs, do not add bangs.',
+    'Copy hair **color family and saturation** from IMAGE 2 as closely as the BAW catalog color allows; colored units must stay vivid and uniform, not muted or shifted to brown/black.',
+    'Copy the apparent length from IMAGE 2 — do **not** extend the hair longer than the reference photo or add extra waist/hip/thigh length.',
     'FACE/BODY: IMAGE 1 only — never swap identity, never copy a model from IMAGE 2.',
     'Edit **hair strands only** — keep neck, shoulders, clothing, and pose from IMAGE 1.',
     'Soft neutral studio background. No visible wig cap, lace grid, or text overlays.',
@@ -43,19 +45,22 @@ export function buildConsultClientPreviewHairOnlyPrompt(
     lookHairAccuracyLines(look),
     lengthBodyPlacementPromptLine(look.length),
     partPlacementPromptLine(look.part),
-    `STYLE ${style} — match inspo salon finish when visible; otherwise natural ${look.unit.trim().toUpperCase()} texture.`,
+    `STYLE ${style} — this is the closest BAW label for the photographed inspo. The visual hairstyle must follow IMAGE 2 first; do not collapse unique inspo styling into generic LAYERS or NONE.`,
     '',
-    'OUTPUT: the **same person** as IMAGE 1 wearing the **exact inspo hairstyle** from IMAGE 2, tinted to manifest COLOR — portrait ready for hairstyle analysis template placement.',
+    'OUTPUT: the **same person** as IMAGE 1 wearing the **exact inspo hairstyle** from IMAGE 2, recolored only as needed to the manifest catalog COLOR — portrait ready for hairstyle analysis template placement.',
   ].join('\n');
 }
 
 export function consultInspoTemplateLockBlock(): string {
   return [
-    '=== WIG CONSULT — INSPO HAIRSTYLE LOCK (PREMIUM 4 PICK) ===',
-    'TOP MATCH portrait = inspo hairstyle on the client (pre-edited upstream) at manifest COLOR.',
-    'MATCH 02–04 thumbnails = **same client, same pose, same inspo hairstyle geometry** — change **COLOR only** per manifest.',
-    'All four looks share the same cut, length, curl pattern, part, and styling — only catalog COLOR differs.',
-    'FORBIDDEN: different lengths, units, or salon shapes across MATCH 02–04; color-swap thumbs that change the inspo silhouette.',
+    '=== WIG CONSULT — INSPO HAIRSTYLE LOCK (1 PICK + 4 PICK) ===',
+    'IMAGE 2 is the approved pre-edited consult portrait: client identity from selfie + exact inspo hairstyle already applied.',
+    'TOP MATCH portrait must preserve IMAGE 2 hair geometry exactly while fitting the template: same length, cut, curl/wave/crimp pattern, volume, bangs/fringe if present, part, ends, and drape.',
+    'Use manifest TEXTURE / STYLE / LENGTH as printed BAW specs and light guardrails only; they must not replace the photographed inspo silhouette with a generic catalog wig.',
+    'BAW styling reference images are secondary in consult mode. If a styling reference conflicts with IMAGE 2, preserve IMAGE 2.',
+    'If the card contains MATCH 02–04 thumbnails: use **same client, same pose, same inspo hairstyle geometry** — change **COLOR only** per manifest.',
+    'All consult comparison looks share the same cut, length, curl pattern, bangs/fringe, part, and styling — only catalog COLOR differs.',
+    'FORBIDDEN: different lengths, units, or salon shapes across MATCH 02–04; color-swap thumbs that change the inspo silhouette; adding bangs when IMAGE 2 has none; removing bangs when IMAGE 2 has them.',
   ].join('\n');
 }
 

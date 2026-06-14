@@ -1,12 +1,12 @@
 import {
-  CONSULT_DEFAULT_COLORS,
+  CONSULT_HAIR_COLORS,
   normalizeConsultHairColor,
   type ConsultHairColorName,
 } from './consultStyleAnalysisCatalog.js';
 
 const DEFAULT_MODEL = (process.env.PSA_OPENAI_MODEL || 'gpt-5.4-mini').trim();
 
-const COLOR_LIST = CONSULT_DEFAULT_COLORS.join(', ');
+const COLOR_LIST = Object.keys(CONSULT_HAIR_COLORS).join(', ');
 
 function parseColorJson(raw: string | null): ConsultHairColorName | null {
   if (!raw) return null;
@@ -38,7 +38,9 @@ export async function detectInspoHairColor(inspoDataUrl: string): Promise<Consul
           'You classify wig/hair color in a reference photo.',
           `Return JSON only: {"hairColor":"<ONE OF: ${COLOR_LIST}>"}`,
           'Pick the single closest BAW catalog name for the dominant hair color in the image.',
-          'If unsure, use JET BLACK.',
+          'Blonde family: PLATINUM = icy/silver/white blonde, GOLDEN = warm/yellow blonde, ASH = cool beige/ash blonde.',
+          'Fashion colors: SANGRIA = burgundy/wine, CHERRY = vivid red, RASPBERRY = pink-magenta, PLUM = purple, COBALT = blue, TEAL = teal/aqua, SLIME = neon green, CITRINE = neon yellow.',
+          'If unsure between black shades, use OFF BLACK for natural black hair and JET BLACK only for very deep black.',
         ].join(' '),
         input: [
           {
@@ -51,7 +53,7 @@ export async function detectInspoHairColor(inspoDataUrl: string): Promise<Consul
               {
                 type: 'input_image',
                 image_url: inspoDataUrl,
-                detail: 'low',
+                detail: 'high',
               },
             ],
           },

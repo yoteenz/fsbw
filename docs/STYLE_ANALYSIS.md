@@ -15,10 +15,10 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 
 The **$40 consult deposit** is creditable toward the unit/install when the client claims their consult offer. Checkout total = **$40 deposit + add-on**. **Only the $40 deposit** returns as credit on the consult order — the style analysis fee is **non-refundable**.
 
-**Generation pipeline (consult-only):** `POST /api/consult-style-analysis-generate` (signed in). OpenAI vision maps inspo → BAW catalog specs (`consultStyleAnalysisInspoSpecs.ts`). Fal **GPT Image 2** then populates the same templates as template hairstyle analysis (`generateHairstyleAnalysisWithFal`):
+**Generation pipeline (consult-only):** `POST /api/consult-style-analysis-generate` (signed in). OpenAI vision maps inspo → BAW catalog specs (`consultStyleAnalysisInspoSpecs.ts`). Consult mapping uses the full BAW style set (bangs, flat iron, crimps, layers/define, wand curls, and bangs combos), high-detail color reads, and conservative 16"–30" even-length rounding so the template does not over-extend hair. Fal **GPT Image 2** then populates the same templates as template hairstyle analysis (`generateHairstyleAnalysisWithFal`):
 
-1. **Hair-only step:** Selfie + inspo → client wearing exact inspo hairstyle (geometry from inspo, identity from selfie), aligned to suggested manifest specs.
-2. **Template pass:** `six_month` → free 1-pick card; `twelve_month` → premium 4-pick card with color-only MATCH 02–04 thumbs.
+1. **Hair-only step:** Selfie + inspo → client wearing exact inspo hairstyle (geometry from inspo, identity from selfie), aligned to suggested manifest specs but with the photo as the visual source of truth.
+2. **Template pass:** `six_month` → free 1-pick card; `twelve_month` → premium 4-pick card with color-only MATCH 02–04 thumbs. Both consult templates use the consult inspo lock; BAW styling refs are secondary and must not replace the photographed length, bangs/fringe, curl/crimp pattern, part, or silhouette.
 
 **Code:** `api/_lib/consultStyleAnalysisFal.ts`, `api/_lib/buildConsultHairstyleAnalysis.ts`, `api/_lib/consultStyleAnalysisInspoSpecs.ts`, `api/consult-style-analysis-generate.ts`, `src/utils/consultStyleAnalysisAddon.ts`, `src/utils/consultStyleAnalysisGenerate.ts`, `src/utils/consultStyleAnalysisInputs.ts`, `src/components/booking/ConsultStyleAnalysisAddonPicker.tsx`.
 
