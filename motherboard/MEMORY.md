@@ -28375,3 +28375,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Free template step 2 can still face-swap despite selfie-only step 1 + minimal refs — Fal may preserve template stock model in left photo window. Elliptical **face-only** server paste (c880967c) was rejected (rectangle on chest).
 - **Shipped (931414c7):** **`hairstyleAnalysisClientPanelRestore.ts`** — after Fal, **free tier only**, paste **full** step-1 hair-edited portrait into client photo window (chroma key + bottom-anchor + symmetrical fade on template marble). Not face-only mask. **`hairstyleAnalysisFal.ts`** retains **`identityBuf`** (prefers step-1 hair edit). **`preEditedClientPanelBlock`** — erase template stock model, IMAGE 2 only. Env: **`HAIRSTYLE_ANALYSIS_CLIENT_PANEL_RESTORE=false`** to disable. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Free template identity = two-step Fal + **full panel paste** from step 1 (default on). No elliptical face mask restore.
+
+---
+
+## 2026-06-14 — Revert free template panel restore (user forgot selfie)
+
+- **Context:** User asked to **undo** free template panel restore (931414c7) — identity was already working; they had forgotten to add their selfie image when testing.
+- **Shipped (9d6d7ad0):** Reverted **`hairstyleAnalysisClientPanelRestore.ts`** and related wiring in **`hairstyleAnalysisFal.ts`** / **`hairstyleAnalysisFalComposite.ts`**. Free + premium use **two-step Fal only** (selfie-only step 1, minimal refs step 2) — no server panel paste. Pushed **`master`** + **`preview/mobile`**.
