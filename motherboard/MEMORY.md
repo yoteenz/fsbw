@@ -28428,3 +28428,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User approved shrinking generated TOP MATCH spec **value** text to match baked template **labels** (values looked larger than TEXTURE:/COLOR: etc.).
 - **Shipped (2d1caf4b):** **`compositeTopMatchSpecValues()`** — server-composites all eight spec fields at **`topMatchSpecValueFontSize()`** (~34% slot height, max 18px) after restoring template patches. Fal **`topMatchSpecManifestBlock`** leaves value slots blank (manifest kept for photo/EDM sync). Dev overlay **`.topMatchSpecValueText`** matches petite size. Applies free + premium tiers. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-13 — Soften asymmetric hair drape prompt (back spill)
+
+- **Context:** User reported one-shoulder drape prompt too aggressive — **all** hair routed forward on one shoulder instead of natural look with some length falling **behind** on the back.
+- **Shipped (c25a7cbb):** **`asymmetricOneShoulderDrapeBlock()`** + **`oneShoulderDrapeCompactLock()`** rewritten — primary forward mass on viewer's RIGHT; **require** natural back spill behind clear shoulder; forbid symmetric twin **forward** curtains and 100% forward-only routing. Updated step-1 hair-only + pre-edited client + pose-lock copy. Pushed **`master`** + **`preview/mobile`**.
