@@ -49,8 +49,9 @@ export default function HairstyleAnalysisDemo() {
             <li>Hair consult 4 pick — selfie + inspo chart (4 comparisons)</li>
           </ul>
           <p className="mt-3">
-            Production path: Fal fills the static Supabase template from the tier prompt. Pick a tier, upload a
-            client photo, then generate to preview what the client receives.
+            Template analysis (1 pick / 4 pick): upload one client preview photo, then generate. Hair consult
+            debug tiers: upload <span className="text-black">selfie + hair inspo</span> (two attachments), then
+            generate the consult comparison chart.
           </p>
         </section>
       </div>

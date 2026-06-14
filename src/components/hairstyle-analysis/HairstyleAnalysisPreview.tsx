@@ -303,6 +303,10 @@ export default function HairstyleAnalysisPreview({
     setGeneratedChart(null);
     setLastPrompt(null);
     setGenerateError(null);
+    if (!isConsultStyleAnalysisAdminTier(tier)) {
+      setHairInspoUrl(null);
+      setInspoUploadError(null);
+    }
     onTierChange?.(tier);
   };
 
@@ -688,70 +692,147 @@ export default function HairstyleAnalysisPreview({
         ) : null}
 
         {onClientPreviewUrlChange ? (
-          <div className="flex flex-col gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => void onPhotoSelected(e)}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={generating}
-              className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black disabled:opacity-40"
-            >
-              {consultDebugMode ? 'Upload client selfie' : 'Upload client preview photo'}
-            </button>
-            {consultDebugMode ? (
-              <>
+          consultDebugMode ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[#808080] leading-relaxed">
+                Wig consult debug — upload <span className="text-black">two photos</span> (selfie + hair inspo).
+                Template analysis tiers below use client preview only.
+              </p>
+
+              <div className="border border-black/20 p-3 flex flex-col gap-2">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-black font-medium">
+                  1. Your selfie
+                  <span className="text-[#eb1c24]">*</span>
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,image/heic,image/heif,.heic,.heif"
+                  className="hidden"
+                  onChange={(e) => void onPhotoSelected(e)}
+                />
+                {previewPhotoUrl ? (
+                  <img
+                    src={previewPhotoUrl}
+                    alt=""
+                    className="w-[72px] h-24 object-cover border border-black mx-auto block"
+                  />
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={generating}
+                  className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black disabled:opacity-40"
+                >
+                  {previewPhotoUrl ? 'Replace selfie' : 'Choose selfie'}
+                </button>
+                <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
+                  Or paste selfie URL
+                  <input
+                    type="text"
+                    value={clientPreviewUrl ?? analysis.clientPreviewUrl}
+                    onChange={(e) => {
+                      onClientPreviewUrlChange(e.target.value);
+                      setGeneratedUrl(null);
+                      setGeneratedChart(null);
+                      setLastPrompt(null);
+                    }}
+                    disabled={generating}
+                    className="border border-black bg-white px-2 py-2 text-black text-[11px]"
+                    placeholder="/assets/… or https://…"
+                  />
+                </label>
+                {uploadError ? (
+                  <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{uploadError}</p>
+                ) : null}
+              </div>
+
+              <div className="border border-black/20 p-3 flex flex-col gap-2">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-black font-medium">
+                  2. Hair inspo
+                  <span className="text-[#eb1c24]">*</span>
+                </p>
                 <input
                   ref={inspoFileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/*,image/heic,image/heif,.heic,.heif"
                   className="hidden"
                   onChange={(e) => void onInspoSelected(e)}
                 />
+                {hairInspoUrl ? (
+                  <img
+                    src={hairInspoUrl}
+                    alt=""
+                    className="w-[72px] h-24 object-cover border border-black mx-auto block"
+                  />
+                ) : null}
                 <button
                   type="button"
                   onClick={() => inspoFileInputRef.current?.click()}
                   disabled={generating}
                   className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black disabled:opacity-40"
                 >
-                  Upload hair inspo photo
+                  {hairInspoUrl ? 'Replace hair inspo' : 'Choose hair inspo'}
                 </button>
-                {hairInspoUrl ? (
-                  <img
-                    src={hairInspoUrl}
-                    alt=""
-                    className="w-20 h-24 object-cover border border-black mx-auto"
+                <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
+                  Or paste inspo URL
+                  <input
+                    type="text"
+                    value={hairInspoUrl ?? ''}
+                    onChange={(e) => {
+                      setHairInspoUrl(e.target.value.trim() || null);
+                      setInspoUploadError(null);
+                      setGeneratedUrl(null);
+                      setGeneratedChart(null);
+                      setLastPrompt(null);
+                    }}
+                    disabled={generating}
+                    className="border border-black bg-white px-2 py-2 text-black text-[11px]"
+                    placeholder="/assets/… or https://…"
                   />
-                ) : null}
+                </label>
                 {inspoUploadError ? (
                   <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{inspoUploadError}</p>
                 ) : null}
-              </>
-            ) : null}
-            <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
-              Or paste image URL
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
               <input
-                type="text"
-                value={clientPreviewUrl ?? analysis.clientPreviewUrl}
-                onChange={(e) => {
-                  onClientPreviewUrlChange(e.target.value);
-                  setGeneratedUrl(null);
-                  setLastPrompt(null);
-                }}
-                disabled={generating}
-                className="border border-black bg-white px-2 py-2 text-black text-[11px]"
-                placeholder="/assets/… or https://… (use Upload for large photos)"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => void onPhotoSelected(e)}
               />
-            </label>
-            {uploadError ? (
-              <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{uploadError}</p>
-            ) : null}
-          </div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={generating}
+                className="border border-black bg-white px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-black disabled:opacity-40"
+              >
+                Upload client preview photo
+              </button>
+              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.14em] text-[#808080]">
+                Or paste image URL
+                <input
+                  type="text"
+                  value={clientPreviewUrl ?? analysis.clientPreviewUrl}
+                  onChange={(e) => {
+                    onClientPreviewUrlChange(e.target.value);
+                    setGeneratedUrl(null);
+                    setLastPrompt(null);
+                  }}
+                  disabled={generating}
+                  className="border border-black bg-white px-2 py-2 text-black text-[11px]"
+                  placeholder="/assets/… or https://… (use Upload for large photos)"
+                />
+              </label>
+              {uploadError ? (
+                <p className="text-[9px] uppercase tracking-[0.1em] text-[#eb1c24]">{uploadError}</p>
+              ) : null}
+            </div>
+          )
         ) : null}
 
         <button
