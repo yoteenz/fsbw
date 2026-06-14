@@ -28397,3 +28397,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to keep hairline **set/locked at NATURAL** on **both** templates — PEAK and LAGOS not rendering properly.
 - **Shipped:** **`HAIRSTYLE_ANALYSIS_LOCKED_HAIRLINE`** + **`withLockedHairstyleAnalysisHairline`** in **`hairstyleAnalysisDisplay.ts`**; **`normalizeHairstyleAnalysisForFal`** forces NATURAL on TOP MATCH + all MATCH looks. **`varyInstallSpecs`** (api + src look diversity) no longer rotates PEAK/LAGOS. Fal **`hairlineNaturalLockBlock()`** — NATURAL arc only, forbids peak/Lagos shapes. Manifest defaults + picker **NATURAL** only. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-14 — One-shoulder drape bypass fix (hairstyle analysis)
+
+- **Context:** User reported **one-shoulder positioning rule** being bypassed on generated cards (symmetric both-shoulder hair returning).
+- **Cause:** Two-step pipeline — **`preEditedClientPanelBlock`** told step 2 **do not change hair**, blocking drape preservation; step 1 only had compact drape hint; **`clientPoseLockBlock`** / **`neckAndBodyPreservationBlock`** read as “keep IMAGE 2 shoulder/hair layout” from selfie.
+- **Shipped:** Step 1 **`buildClientPreviewHairOnlyPrompt`** — full **`asymmetricOneShoulderDrapeBlock`**, override symmetric selfie curtain. **`preEditedClientPanelBlock`** — preserve upstream one-shoulder drape (face/neck locked, not all hair frozen). Pose/neck blocks — drape overrides strand placement only. Stronger compact lock + manifest/MATCH thumb rules. Pushed **`master`** + **`preview/mobile`**.
