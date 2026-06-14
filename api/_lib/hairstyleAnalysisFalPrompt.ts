@@ -146,6 +146,7 @@ function neckAndBodyPreservationBlock(): string {
     '=== NECK + SHOULDERS — CLIENT ANATOMY LOCK (CRITICAL) ===',
     'IMAGE 2 (client selfie) is the **only** source for neck, throat, collarbones, shoulders, and visible skin below the hairline.',
     'Hair edits apply in the **hair region only** (strands from crown/hairline down to hair ends).',
+    '**Hair drape is an exception:** strand placement must follow **one-shoulder drape** below — **override** symmetric both-shoulder curtain from IMAGE 2 if present; keep shoulder **skin** visible on the clear side.',
     'FORBIDDEN: elongating, slimming, or repainting the neck; mannequin neck geometry; pasted mannequin throat; warped collarbone; plastic neck skin; hair covering the neck unnaturally to hide edits.',
     'If a mannequin reference IMAGE is attached: use it for **hair strand texture and hair-end drape direction only** — never replace the client neck or shoulders.',
   ].join('\n');
@@ -175,7 +176,10 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
 }
 
 function oneShoulderDrapeCompactLock(): string {
-  return 'ONE-SHOULDER DRAPE LOCK: heavy length forward on viewer\'s RIGHT only (model\'s left); viewer\'s LEFT shoulder clear/tucked — **FORBIDDEN** symmetric both-shoulder curtain.';
+  return [
+    'ONE-SHOULDER DRAPE LOCK: heavy length forward on viewer\'s RIGHT only (model\'s left); viewer\'s LEFT shoulder clear/tucked — **FORBIDDEN** symmetric both-shoulder curtain.',
+    'Self-check: thick hair forward on **both** shoulders → **failed**.',
+  ].join(' ');
 }
 
 function clientPreviewTabLine(): string {
@@ -323,8 +327,9 @@ function clientPhotoPanelRulesBlock(): string {
   return [
     '=== TOP MATCH CLIENT PHOTO — LEFT PANEL ===',
     'Place IMAGE 2 in the left-panel photo window: bg removed; 9:16 portrait; anchor subject low; symmetrical bottom fade; subtle mirror reflection (~10%) in lower panel.',
-    'Edit **hair only** for TOP MATCH — face, skin, neck, clothing stay identical to IMAGE 2.',
-    'MATCH thumbnails: same face/pose as IMAGE 2; tighter square crop; one-shoulder drape; bg removed.',
+    'Edit **hair strands only** for TOP MATCH — face, skin, neck, clothing stay identical to IMAGE 2.',
+    oneShoulderDrapeCompactLock(),
+    'MATCH thumbnails: same face/pose as IMAGE 2; tighter square crop; **same** one-shoulder drape; bg removed.',
   ].join('\n');
 }
 
@@ -358,8 +363,11 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     'IMAGE 1 is the real client — copy face pixels exactly: same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
     'Hair edits apply ONLY in the hair region — never regenerate, repaint, beautify, or alter facial skin.',
     '',
+    asymmetricOneShoulderDrapeBlock('all_photos', false),
+    '',
     '=== HAIR-ONLY EDIT (IMAGE 1) ===',
-    'CHANGE **ONLY** the hair. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
+    'CHANGE **ONLY** the hair strands. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
+    '**Re-shape hair ends for one-shoulder drape** per rules above — **override** any symmetric both-shoulder curtain in IMAGE 1.',
     'NO wig cap. NO visible lace. NO different person. NO beauty filter. NO face slimming.',
     noInventedBabyHairsBlock(),
     oneShoulderDrapeCompactLock(),
@@ -368,18 +376,18 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     hairlineShapePromptLine(look.hairline),
     `LOCK: PART ${part}; STYLE ${style}.`,
     '',
-    'OUTPUT: the **same person** with TOP MATCH hair — portrait ready for template placement.',
+    'OUTPUT: the **same person** with TOP MATCH hair + **one-shoulder drape** — portrait ready for template placement.',
   ].join('\n');
 }
 
-/** Template pass when IMAGE 2 is already hair-edited — place only; do not repaint face or main hair. */
+/** Template pass when IMAGE 2 is already hair-edited — place client; preserve one-shoulder drape. */
 function preEditedClientPanelBlock(): string {
   return [
-    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR ALREADY APPLIED) ===',
-    'IMAGE 2 is the real client with TOP MATCH hair already rendered upstream.',
-    '**Do not change face, skin, expression, neck, or hair** on the main left-panel preview.',
+    '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR + ONE-SHOULDER DRAPE APPLIED) ===',
+    'IMAGE 2 is the real client with TOP MATCH hair and **one-shoulder drape** already rendered upstream.',
+    '**Do not change face, skin, expression, or neck** on the main left-panel preview.',
+    '**Preserve upstream one-shoulder drape exactly** — do **NOT** revert to symmetric both-shoulder curtain or twin waterfalls.',
     'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
-    'MATCH 02–04 thumbnails: **same IMAGE 2 face and pose**; change **only hair** per each look manifest.',
   ].join('\n');
 }
 
@@ -433,9 +441,10 @@ function clientPoseLockBlock(): string {
     '=== HEAD + BODY POSE LOCK — IMAGE 2 IS MASTER (ALL PHOTOS) ===',
     'IMAGE 2 (client selfie) is the **only** source for head angle, neck rotation, shoulder line, gaze direction, and facial orientation.',
     'Applies to **TOP MATCH client preview** AND **every MATCH 02–04 thumbnail** — all must show the **same pose** as IMAGE 2.',
+    '**Hair strand drape is separate from pose:** one-shoulder drape rules **override** symmetric hair layout from IMAGE 2 — reposition ends only; do not rotate head or shoulders.',
     'BAW styling reference IMAGEs and unit mannequin IMAGEs are **hair strand finish only** — never copy their head yaw, profile angle, 3/4 turn, or body rotation onto the client.',
     'FORBIDDEN: profile or side-view thumbnails when IMAGE 2 is frontal; turning the client to match a styling ref; different head angles across MATCH 02 vs MATCH 03 vs MATCH 04.',
-    'Self-check: every MORE MATCHES square must look like the **same client in the same pose** as IMAGE 2 — only hair color, texture, and style change.',
+    'Self-check: every MORE MATCHES square must look like the **same client in the same pose** as IMAGE 2 — only hair color, texture, style, and **one-shoulder drape** change.',
   ].join('\n');
 }
 
@@ -606,6 +615,7 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
   return [
     '=== MATCH 02–04 THUMBNAILS ===',
     'Same client face + pose as IMAGE 2; different unit/color/length/styling per manifest; one PART + manifest HAIRLINE per thumb.',
+    oneShoulderDrapeCompactLock(),
     mannequinLine,
     'NEVER: back-of-head stock, different people, symmetric both-shoulder hair.',
     'Row values: black Futura PT Medium; MATCH SCORE % gray #808080 only.',
@@ -717,7 +727,7 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     `MANIFEST — PART: ${part}`,
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
-    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
+    `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}); ${oneShoulderDrapeCompactLock()}.`,
     `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
     `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
