@@ -51,6 +51,8 @@ import {
   formatEveryDetailMattersForFal,
   type EveryDetailMattersFaceFeatures,
 } from './hairstyleAnalysisEveryDetailMatters.js';
+import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout.js';
+import { consultInspoTemplateLockBlock } from './consultStyleAnalysisFalPrompt.js';
 
 export type FalAnalysisLook = {
   rank: number;
@@ -87,6 +89,8 @@ export type FalPromptBuildOptions = {
   overallScoreFontLabel?: string;
   /** IMAGE 2 already has TOP MATCH hair from upstream hair-only Fal step — template pass places it only. */
   clientPreviewPreEdited?: boolean;
+  /** Wig consult — MATCH 02–04 are color-only variants of the inspo hairstyle on TOP MATCH. */
+  consultInspoMode?: boolean;
 };
 
 const BRAND_RED = '#EB1C24';
@@ -255,8 +259,7 @@ function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string
 }
 
 function matchStylingManifestBlock(analysis: FalHairstyleAnalysis, refs: FalPromptImageRefs): string {
-  const tier = normalizeTier(analysis.tier);
-  if (tier === 'free') return '';
+  if (isFreeLayoutHairstyleAnalysisTier(analysis.tier)) return '';
 
   const lines: string[] = ['=== ALL LOOKS — STYLE + HAIRLINE BINDING ==='];
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks.slice(0, 3)];
@@ -324,8 +327,7 @@ function uniformRootColorBlock(look: FalAnalysisLook, scope: 'preview' | 'thumbn
 }
 
 function matchColorRootManifestBlock(analysis: FalHairstyleAnalysis): string {
-  const tier = normalizeTier(analysis.tier);
-  if (tier === 'free') return '';
+  if (isFreeLayoutHairstyleAnalysisTier(analysis.tier)) return '';
 
   const lines = ['=== COLOR ROOT REPAINT — PER LOOK ==='];
   const allLooks = [analysis.topMatch, ...analysis.additionalLooks.slice(0, 3)];
@@ -528,7 +530,7 @@ function overallScoreAndRatingRules(
 
   const overallScoreLine = `OVERALL SCORE: erase placeholder %; print ${scorePct} in ${OVERALL_SCORE_CANONICAL_FONT} red ${BRAND_RED} script (~${scorePx}px max height, centered, wide padding). Digits + % same script.`;
 
-  if (tierKey === 'free') {
+  if (isFreeLayoutHairstyleAnalysisTier(tierKey)) {
     const ratingLabel = formatMatchRatingDecimal(look.rating);
     return [
       '=== OVERALL SCORE + MATCH RATING (FREE TIER — VERTICALLY CENTERED) ===',
@@ -571,8 +573,7 @@ function matchRowValuesFalRules(): string {
 }
 
 function matchScoreManifestBlock(analysis: FalHairstyleAnalysis): string {
-  const tier = normalizeTier(analysis.tier);
-  if (tier === 'free') return '';
+  if (isFreeLayoutHairstyleAnalysisTier(analysis.tier)) return '';
 
   const lines: string[] = [
     '=== MATCH 02–04 ROW VALUES — PRINT EXACTLY IN VALUE SLOTS ===',
@@ -640,6 +641,11 @@ function additionalMatchTemplateRules(hasMannequinRefs: boolean): string[] {
   ];
 }
 
+function consultInspoRulesForPrompt(promptOptions?: FalPromptBuildOptions): string[] {
+  if (!promptOptions?.consultInspoMode) return [];
+  return ['', consultInspoTemplateLockBlock(), ''];
+}
+
 function buildTemplateRules(
   refs: FalPromptImageRefs,
   analysis: FalHairstyleAnalysis,
@@ -681,7 +687,7 @@ function buildTemplateRules(
     bawHairlineRefListBlock(refs.hairlineRefs),
     hairlineNaturalLockBlock(),
     '',
-    ...(tierKey === 'free' ? [neckAndBodyPreservationBlock(), ''] : []),
+    ...(isFreeLayoutHairstyleAnalysisTier(tierKey) ? [neckAndBodyPreservationBlock(), ''] : []),
     bawUnitCatalogBlock(),
     '',
     bawColorApplicationRulesBlock(),
@@ -704,12 +710,12 @@ function buildTemplateRules(
     'When STYLE is LAYERS, CRIMPS, FLAT IRON, DEFINE, or WAND CURLS: copy hairstyle shape from the matching BAW styling reference IMAGE.',
     'Retint hair to the look catalog color (hex in hair-edit instructions) — do not create new curl, crimp, or straight patterns.',
     '',
-    ...(tierKey === 'free' ? [freeTierOnlyBlock(), '', freeTierPanelFooterBlock(analysis.topMatch), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
+    ...(isFreeLayoutHairstyleAnalysisTier(tierKey) ? [freeTierOnlyBlock(), '', freeTierPanelFooterBlock(analysis.topMatch), ''] : [matchRowValuesFalRules(), '', ...additionalMatchTemplateRules(hasMannequinRefs)]),
     topMatchSpecManifestBlock(analysis.topMatch, refs),
     '',
     ...photoRules,
     '',
-    ...(tierKey === 'free'
+    ...(isFreeLayoutHairstyleAnalysisTier(tierKey)
       ? [
           'TOP MATCH spec values: server overlay (petite black Futura) — Fal leaves value slots blank.',
           'TOP MATCH panel footer: centered black Futura PT Medium, plain text only (no border); every-detail-matters build summary: **leave blank** (server-composited gray ribbon above BUILD THIS LOOK — Fal must not print it).',
@@ -717,7 +723,7 @@ function buildTemplateRules(
         ]
       : []),
     '',
-    tierKey === 'free'
+    isFreeLayoutHairstyleAnalysisTier(tierKey)
       ? 'OUTPUT ONE COMPLETE FREE-TIER CARD AT 4:5 PORTRAIT — TOP MATCH photo + panel footers + every detail matters; overall score % + MATCH RATING decimal + stars printed in-image at petite sizes. TOP MATCH spec values = server overlay.'
       : 'OUTPUT ONE COMPLETE FINISHED CARD AT 4:5 PORTRAIT — MATCH 02–04 row values (gray score %) + every detail matters in-image; TOP MATCH spec values = server overlay; thumbnails in-image; overall score % + MATCH RATING **stars only** (no decimal above stars) printed in-image at petite sizes.',
   ]
@@ -829,6 +835,7 @@ function threeMonthPrompt(
     clientPreviewTabLine(),
     topMatchHeaderLine(fullName),
     clientPreviewPanelLine(top, refs, promptOptions),
+    ...consultInspoRulesForPrompt(promptOptions),
   ];
   analysis.additionalLooks.slice(0, 3).forEach((look, i) => {
     const label = `MATCH ${String(i + 2).padStart(2, '0')}`;
@@ -855,10 +862,9 @@ export function buildHairstyleAnalysisFalPrompt(
   promptOptions?: FalPromptBuildOptions
 ): string {
   const tier = normalizeTier(analysis.tier);
-  const prompt =
-    tier === 'free'
-      ? freePrompt(analysis, refs, promptOptions)
-      : threeMonthPrompt(analysis, refs, promptOptions);
+  const prompt = isFreeLayoutHairstyleAnalysisTier(tier)
+    ? freePrompt(analysis, refs, promptOptions)
+    : threeMonthPrompt(analysis, refs, promptOptions);
   if (prompt.length > HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS) {
     throw new Error(
       `Hairstyle analysis prompt too long (${prompt.length} characters; Fal limit is ${HAIRSTYLE_ANALYSIS_FAL_PROMPT_MAX_CHARS}).`

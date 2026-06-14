@@ -75,6 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const comparisonCount = parseComparisonCount(
     body.comparisonCount ?? body.consultStyleAnalysisComparisonCount
   );
+  const clientName = readString(body, 'clientName');
 
   if (!selfieUrl || !inspoUrl) {
     sendJson(res, 400, {
@@ -88,31 +89,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   try {
-    const chart = await generateConsultStyleAnalysis({
+    const result = await generateConsultStyleAnalysis({
       selfieUrl,
       inspoUrl,
       comparisonCount,
       siteOrigin: siteOriginFromRequest(req),
+      clientName: clientName || user.email?.split('@')[0] || 'CLIENT',
     });
 
     sendJson(res, 200, {
       ok: true,
-      chart: {
-        kind: chart.kind,
-        title: 'STYLE ANALYSIS',
-        subtitle: 'YOUR INSPO ON YOU',
-        comparisonTier: chart.comparisonTier,
-        inspoHairColor: chart.inspoHairColor,
-        cells: chart.cells.map((cell) => ({
-          id: cell.id,
-          role: cell.role,
-          color: cell.color,
-          imageUrl: cell.imageUrl,
-          subtitle: cell.subtitle,
-          unitLabel: cell.color,
-        })),
-        createdAt: new Date().toISOString(),
-      },
+      imageUrl: result.imageUrl,
+      prompt: result.prompt,
+      comparisonTier: result.comparisonTier,
+      inspoHairColor: result.inspoHairColor,
+      inspoSpecs: result.inspoSpecs,
+      analysisTier: result.analysis.tier,
+      topMatch: result.analysis.topMatch,
+      additionalLooks: result.analysis.additionalLooks,
       admin: isAdminEmail(user.email),
     });
   } catch (e) {

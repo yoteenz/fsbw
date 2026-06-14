@@ -431,12 +431,13 @@ export default function HairstyleAnalysisPreview({
           selfieDataUrl: selfieForApi,
           inspoDataUrl: inspoForApi,
           comparisonCount: consultCount,
+          clientName: resolvedAnalysis.clientName,
         });
         if (!result.ok) throw new Error(result.error);
         setGenerateProgress(1);
-        setGeneratedChart(result.chart);
-        setGeneratedUrl(null);
-        setLastPrompt(null);
+        setGeneratedChart(null);
+        setGeneratedUrl(result.imageUrl);
+        setLastPrompt(result.prompt ?? null);
         return;
       }
 
@@ -844,16 +845,16 @@ export default function HairstyleAnalysisPreview({
         >
           {generating
             ? consultDebugMode
-              ? 'GENERATING CONSULT STYLE CHART…'
+              ? 'GENERATING CONSULT TEMPLATE CARD…'
               : 'GENERATING WITH GPT IMAGE 2…'
             : consultDebugMode
-              ? 'GENERATE CONSULT STYLE CHART (SELFIE + INSPO)'
+              ? 'GENERATE CONSULT TEMPLATE (SELFIE + INSPO)'
               : 'GENERATE TEMPLATE PREVIEW (GPT IMAGE 2 · 4:5 · 2K)'}
         </button>
 
         <p className="text-[9px] uppercase tracking-[0.1em] text-[#808080] leading-relaxed">
           {consultDebugMode
-            ? 'Uses the wig consult pipeline (selfie + inspo → exact hairstyle on you, then color-only alternates). Template overlay below matches 1 pick / 4 pick layout for slot QA only.'
+            ? 'Uses the wig consult pipeline: inspo vision suggests BAW catalog specs (e.g. BLANCO PLATINUM, LAYERS), then populates the same 1 pick / 4 pick hairstyle analysis template. 4 pick shows the inspo hairstyle on you in three alternate colors.'
             : 'Sends the static Supabase template + client photo to Fal with the tier population prompt. This is the client-facing card — not the React text overlay composer.'}
         </p>
       </div>
@@ -881,7 +882,7 @@ export default function HairstyleAnalysisPreview({
         <AnalysisGenerateProgressOverlay
           label={
             consultDebugMode
-              ? `GPT IMAGE 2 IS BUILDING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} CONSULT CHART`
+              ? `GPT IMAGE 2 IS POPULATING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} CONSULT TEMPLATE`
               : `GPT IMAGE 2 IS POPULATING THE ${formatHairstyleAnalysisTierLabel(analysis.tier).toUpperCase()} TEMPLATE`
           }
           progress={generateProgress}

@@ -10,23 +10,17 @@ Two related surfaces; **live try-on in Build-a-Wig is unchanged**.
 
 | Comparison options | Price | Output |
 |-------------------|-------|--------|
-| 1 | $20 | Inspo hairstyle on client + **1** alternate **color** (same cut/style) |
-| 4 | $60 | Inspo hairstyle on client + **4** alternate **colors** (same cut/style; colors differ from inspo) |
+| 1 | $20 | **1 pick** hairstyle analysis template (`IMG_2554`) — inspo vision suggests BAW catalog specs (unit, color, styling, length) on the client selfie |
+| 4 | $60 | **4 pick** premium template (`IMG_2549`) — TOP MATCH = inspo hairstyle on client at suggested color; **MATCH 02–04** = same inspo hairstyle in **3** alternate catalog colors |
 
 The **$40 consult deposit** is creditable toward the unit/install when the client claims their consult offer. Checkout total = **$40 deposit + add-on**. **Only the $40 deposit** returns as credit on the consult order — the style analysis fee is **non-refundable**.
 
-**Generation pipeline (consult-only):** `POST /api/consult-style-analysis-generate` (signed in). Fal **GPT Image 2** (`openai/gpt-image-2/edit`):
+**Generation pipeline (consult-only):** `POST /api/consult-style-analysis-generate` (signed in). OpenAI vision maps inspo → BAW catalog specs (`consultStyleAnalysisInspoSpecs.ts`). Fal **GPT Image 2** then populates the same templates as template hairstyle analysis (`generateHairstyleAnalysisWithFal`):
 
-1. **Hero (`inspo_match`):** Selfie + inspo → client in the **exact inspo hairstyle** (geometry from inspo, identity from selfie, color from inspo).
-2. **Comparisons:** Recolor hero only — **catalog color swap**, same hairstyle; alternates never reuse the inspo’s detected catalog color.
+1. **Hair-only step:** Selfie + inspo → client wearing exact inspo hairstyle (geometry from inspo, identity from selfie), aligned to suggested manifest specs.
+2. **Template pass:** `six_month` → free 1-pick card; `twelve_month` → premium 4-pick card with color-only MATCH 02–04 thumbs.
 
-OpenAI vision classifies inspo dominant hair color against the BAW catalog (`consultStyleAnalysisInspoColor.ts`).
-
-Cart fields: `consultStyleAnalysisComparisonCount`, `consultStyleAnalysisSelfieUrl`, `consultStyleAnalysisSelfieFileName`, `consultStyleAnalysisNonRefundable`, `consultDepositUsd`, `bookingInspoPhotoUrls`.
-
-Server quote: `api/_lib/pricing/resolveQuote.ts` adds add-on to `booking-consult` lines.
-
-**Code:** `api/_lib/consultStyleAnalysisFal.ts`, `api/consult-style-analysis-generate.ts`, `src/utils/consultStyleAnalysisAddon.ts`, `src/utils/consultStyleAnalysisGenerate.ts`, `src/utils/consultStyleAnalysisInputs.ts`, `src/components/booking/ConsultStyleAnalysisSelfiePicker.tsx`, `src/components/booking/ConsultStyleAnalysisAddonPicker.tsx`.
+**Code:** `api/_lib/consultStyleAnalysisFal.ts`, `api/_lib/buildConsultHairstyleAnalysis.ts`, `api/_lib/consultStyleAnalysisInspoSpecs.ts`, `api/consult-style-analysis-generate.ts`, `src/utils/consultStyleAnalysisAddon.ts`, `src/utils/consultStyleAnalysisGenerate.ts`, `src/utils/consultStyleAnalysisInputs.ts`, `src/components/booking/ConsultStyleAnalysisAddonPicker.tsx`.
 
 ---
 

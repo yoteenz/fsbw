@@ -9,6 +9,7 @@ import { diversifyHairstyleAnalysisLooks } from './hairstyleAnalysisLookDiversit
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
 import { resolveCatalogLookForFal } from './hairstyleAnalysisUnitCatalog.js';
 import { applyRealisticMatchScores } from './hairstyleAnalysisRealisticScores.js';
+import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout.js';
 
 function normalizeLookStyling<
   T extends { unit: string; styling: string; density: string; color: string; hex: string },
@@ -29,15 +30,16 @@ export function normalizeHairstyleAnalysisForFal(
   options?: { skipDiversification?: boolean }
 ): FalHairstyleAnalysis {
   const tierKey = normalizeTier(analysis.tier);
+  const freeLayout = isFreeLayoutHairstyleAnalysisTier(tierKey);
   const withScores = applyRealisticMatchScores(analysis);
   const diversified = options?.skipDiversification
     ? {
         topMatch: withScores.topMatch,
-        additionalLooks: tierKey === 'free' ? [] : withScores.additionalLooks,
+        additionalLooks: freeLayout ? [] : withScores.additionalLooks,
       }
     : diversifyHairstyleAnalysisLooks(
         withScores.topMatch,
-        tierKey === 'free' ? [] : withScores.additionalLooks
+        freeLayout ? [] : withScores.additionalLooks
       );
 
   const top = withLockedHairstyleAnalysisHairline(
@@ -51,7 +53,7 @@ export function normalizeHairstyleAnalysisForFal(
   );
 
   const additionalLooks =
-    tierKey === 'free'
+    freeLayout
       ? []
       : diversified.additionalLooks.map((look, i) =>
           withLockedHairstyleAnalysisHairline(
