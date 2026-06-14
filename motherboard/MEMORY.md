@@ -28390,3 +28390,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User hit **`REQUEST ENTITY TOO LARGE FUNCTION_PAYLOAD_TOO_LARGE`** when generating with a pasted **base64** client selfie on hairstyle analysis demo (premium template visible in screenshot).
 - **Cause:** Full **`data:image/...;base64,...`** in POST body to **`/api/hairstyle-analysis-generate`** exceeds Vercel serverless request size (~4.5MB).
 - **Shipped (2ff0f95d):** **`hairstyleAnalysisClientPreviewImage.ts`** — client-side resize/compress (max 1536×2048 JPEG, ~1.4MB target) on **Upload** and again before **Generate** for data URLs. **`parseApiErrorText`** maps payload-too-large to plain-language hint. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-14 — Hairline locked to NATURAL (free + premium templates)
+
+- **Context:** User asked to keep hairline **set/locked at NATURAL** on **both** templates — PEAK and LAGOS not rendering properly.
+- **Shipped:** **`HAIRSTYLE_ANALYSIS_LOCKED_HAIRLINE`** + **`withLockedHairstyleAnalysisHairline`** in **`hairstyleAnalysisDisplay.ts`**; **`normalizeHairstyleAnalysisForFal`** forces NATURAL on TOP MATCH + all MATCH looks. **`varyInstallSpecs`** (api + src look diversity) no longer rotates PEAK/LAGOS. Fal **`hairlineNaturalLockBlock()`** — NATURAL arc only, forbids peak/Lagos shapes. Manifest defaults + picker **NATURAL** only. Pushed **`master`** + **`preview/mobile`**.
