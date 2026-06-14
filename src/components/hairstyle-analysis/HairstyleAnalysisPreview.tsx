@@ -29,6 +29,9 @@ import {
   buildEveryDetailMattersFromTopMatch,
   everyDetailVariationSeed,
 } from '../../utils/hairstyleAnalysisEveryDetailMatters';
+import {
+  compressClientPreviewDataUrl,
+} from '../../utils/hairstyleAnalysisClientPreviewImage';
 import DownloadAnalysisButton from './DownloadAnalysisButton';
 import HairstyleAnalysisCard from './HairstyleAnalysisCard';
 import ManifestSpecPicker, {
@@ -304,7 +307,13 @@ export default function HairstyleAnalysisPreview({
       setUploadError('COULD NOT READ THAT PHOTO');
       return;
     }
-    onClientPreviewUrlChange(dataUrl);
+    try {
+      const compressed = await compressClientPreviewDataUrl(dataUrl);
+      onClientPreviewUrlChange(compressed);
+    } catch {
+      setUploadError('PHOTO TOO LARGE — TRY A SMALLER IMAGE');
+      return;
+    }
     setGeneratedUrl(null);
     setLastPrompt(null);
   };
@@ -360,8 +369,14 @@ export default function HairstyleAnalysisPreview({
         5,
         everyDetailVariationSeed()
       );
+      const previewUrl = clientPreviewUrl ?? resolvedAnalysis.clientPreviewUrl;
+      let clientPreviewForApi = previewUrl;
+      if (previewUrl.startsWith('data:')) {
+        clientPreviewForApi = await compressClientPreviewDataUrl(previewUrl);
+      }
       const analysisForGenerate = {
         ...resolvedAnalysis,
+        clientPreviewUrl: clientPreviewForApi,
         whyItWorks: freshWhyItWorks,
       };
       const result = await postHairstyleAnalysisGenerate(
@@ -398,7 +413,7 @@ export default function HairstyleAnalysisPreview({
     } finally {
       setGenerating(false);
     }
-  }, [fontOverrides, isAdmin, manifestTestMode, resolvedAnalysis, slotOverrides, usageState?.unlimited]);
+  }, [fontOverrides, isAdmin, manifestTestMode, resolvedAnalysis, slotOverrides, usageState?.unlimited, clientPreviewUrl]);
 
   const onSlotRectChange = useCallback((slotId: string, rect: PercentRect) => {
     setSlotOverrides((prev) => ({

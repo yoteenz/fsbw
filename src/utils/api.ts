@@ -1376,6 +1376,9 @@ function parseApiErrorText(text: string, fallback: string): string {
   if (/FUNCTION_INVOCATION_TIMEOUT/i.test(text)) {
     return 'STUDIO RENDER TIMED OUT — TRY AGAIN IN A MOMENT';
   }
+  if (/FUNCTION_PAYLOAD_TOO_LARGE|REQUEST ENTITY TOO LARGE/i.test(text)) {
+    return 'CLIENT PHOTO IS TOO LARGE FOR UPLOAD — USE UPLOAD CLIENT PREVIEW PHOTO (AUTO-COMPRESSES) OR A SHORT HTTPS URL';
+  }
   return text || fallback;
 }
 
