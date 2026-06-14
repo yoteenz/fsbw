@@ -19,7 +19,6 @@ import {
 } from './hairstyleAnalysisBawStylingRefs.js';
 import {
   bawHairlineRefListBlock,
-  bawHairlineShapeGuideBlock,
   hairlineBindingPromptLine,
   hairlineShapeKeyFromManifest,
   hairlineShapePromptLine,
@@ -272,6 +271,16 @@ function hairPartLockBlock(): string {
     'Each look: **exactly one** PART (MIDDLE, LEFT, or RIGHT) — erase IMAGE 2 part if it differs.',
     'Styling IMAGE = salon shape only — parting must match assigned PART for that look.',
     'FORBIDDEN: dual part, ghost part, or borrowing a part line from another styling IMAGE.',
+  ].join('\n');
+}
+
+function hairlineNaturalLockBlock(): string {
+  return [
+    '=== HAIRLINE LOCK — NATURAL ONLY (ALL LOOKS, BOTH TEMPLATES) ===',
+    'Every TOP MATCH + MATCH row: HAIRLINE value **NATURAL** — smooth wide convex lace-front arc.',
+    'Soft rounded center at the part (no center V); gentle temple curves; clean lace edge — **no baby hairs on skin**.',
+    'FORBIDDEN: PEAK, LAGOS, LAGOS + PEAK, widow\'s peak, scalloped/M-W edge, Lagos bump, sharp center V.',
+    'Do not use BAW PEAK/LAGOS mannequin hairline reference shapes on the client.',
   ].join('\n');
 }
 
@@ -642,7 +651,7 @@ function buildTemplateRules(
     'The client must NOT see any tier name, month count, or analysis type. Keep "FRONTAL SLAYER" and "hairstyle analysis" header art only.',
     '',
     bawHairlineRefListBlock(refs.hairlineRefs),
-    bawHairlineShapeGuideBlock(),
+    hairlineNaturalLockBlock(),
     '',
     ...(tierKey === 'free' ? [neckAndBodyPreservationBlock(), ''] : []),
     bawUnitCatalogBlock(),
@@ -709,7 +718,7 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     `MANIFEST — HAIRLINE: ${hairline}`,
     `MANIFEST — STYLE: ${style}`,
     `PHOTO↔SPEC LOCK: TOP MATCH portrait must match manifest — ${colorLock} PART ${part} visible in hair; ${hlBinding}; STYLE ${style} (${style === 'NONE' ? 'natural texture only' : `BAW ${style} ref shape`}).`,
-    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; all hairlines looking like NATURAL when manifest is PEAK/LAGOS; baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
+    `FORBIDDEN: template placeholder defaults; spec PART ${part === 'MIDDLE' ? 'LEFT/RIGHT' : part} when photo shows ${part}; PEAK/LAGOS/Lagos+Peak hairline shapes (NATURAL only); baby hairs on skin; symmetric both-shoulder drape; STYLE LAYERS when manifest is NONE.`,
     `STYLE value must print exactly "${style}" — never substitute LAYERS when manifest STYLE is NONE, FLAT IRON, CRIMPS, DEFINE, or WAND CURLS.`,
   ].join('\n');
 }

@@ -147,10 +147,6 @@ function densityOptionSet(): Set<string> {
   return new Set(MANIFEST_DENSITY_OPTIONS.map((d) => normalizeDensityValue(d)));
 }
 
-function hairlineOptionSet(): Set<string> {
-  return new Set(MANIFEST_HAIRLINE_OPTIONS.map((h) => h.toUpperCase()));
-}
-
 export function defaultTopMatchManifest(): ManifestLookDraft {
   return {
     unit: 'NOIR',
@@ -159,7 +155,7 @@ export function defaultTopMatchManifest(): ManifestLookDraft {
     lace: '13X6',
     density: '250%',
     part: 'MIDDLE',
-    hairline: 'PEAK',
+    hairline: 'NATURAL',
     styling: 'NONE',
   };
 }
@@ -173,7 +169,7 @@ export function defaultAdditionalManifests(): ManifestLookDraft[] {
       lace: '13X6',
       density: '250%',
       part: 'LEFT',
-      hairline: 'LAGOS',
+      hairline: 'NATURAL',
       styling: 'NONE',
     },
     {
@@ -183,7 +179,7 @@ export function defaultAdditionalManifests(): ManifestLookDraft[] {
       lace: '4X4',
       density: '250%',
       part: 'MIDDLE',
-      hairline: 'LAGOS + PEAK',
+      hairline: 'NATURAL',
       styling: 'BANGS, CRIMPS',
     },
     {
@@ -193,7 +189,7 @@ export function defaultAdditionalManifests(): ManifestLookDraft[] {
       lace: '13X4',
       density: '300%',
       part: 'MIDDLE',
-      hairline: 'PEAK',
+      hairline: 'NATURAL',
       styling: 'DEFINE',
     },
   ];
@@ -222,8 +218,7 @@ export function normalizeManifestDraft(draft: ManifestLookDraft): ManifestLookDr
   const density = densityOptionSet().has(densityNorm) ? densityNorm : '250%';
 
   const part = normalizePartValue(draft.part);
-  const hairlineNorm = normalizeHairlineValue(draft.hairline);
-  const hairline = hairlineOptionSet().has(hairlineNorm.toUpperCase()) ? hairlineNorm : 'NATURAL';
+  const hairline = 'NATURAL';
 
   return { unit, color, length, lace, density, part, hairline, styling };
 }
@@ -247,7 +242,7 @@ export function optionsForManifestField(
     case 'part':
       return MANIFEST_PART_OPTIONS;
     case 'hairline':
-      return MANIFEST_HAIRLINE_OPTIONS;
+      return ['NATURAL'];
     case 'styling':
       return stylingOptionsForUnit(normalized.unit);
     default:
