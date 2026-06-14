@@ -192,10 +192,18 @@ export const TOP_MATCH_PANEL_FOOTER_SLOT = pctRect('56%', '46%', '32%', '2.8%');
 export const EDM_PANEL_FOOTER_SLOT = pctRect('56%', '85.5%', '38%', '2.3%');
 
 /**
- * Wide band between TOP MATCH spec footer and every-detail-matters header — Fal sometimes
- * paints the gray build summary here (split across columns). Restore clean template art.
+ * Right-panel band where Fal sometimes paints split build-summary fragments.
+ * Must NOT span the left hero photo (was 4%–96% — caused a horizontal marble strip on the portrait).
  */
-export const EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT = pctRect('4%', '49%', '92%', '7%');
+export const EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT = pctRect('52%', '49%', '44%', '7%');
+
+/** Stray unit/color/length ribbon between score row and TOP MATCH spec column. */
+export const TOP_MATCH_SPEC_HEADER_GHOST_WIPE_SLOT = pctRect('52%', '21%', '40%', '4.8%');
+
+/** Restore clean template over Fal text fragments (all tiers). */
+export function hairstyleAnalysisGhostWipeSlots(): PixelRect[] {
+  return [EDM_BUILD_SUMMARY_GHOST_WIPE_SLOT, TOP_MATCH_SPEC_HEADER_GHOST_WIPE_SLOT];
+}
 
 /** MATCH 02–04 thumbnail slots — premium template (IMG_2549 @ 2048×2560). */
 const MATCH_THUMB_BLOCK_TOPS = [48.0, 60.5, 73.0];

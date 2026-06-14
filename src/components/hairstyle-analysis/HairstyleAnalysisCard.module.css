@@ -174,9 +174,9 @@
   font-size: clamp(2px, calc(2.65cqw - 2px), 8px);
 }
 
-/* TOP MATCH spec column values — petite to match baked label size. */
+/* TOP MATCH spec column values — extra petite to match baked label size. */
 .topMatchSpecValueText {
-  font-size: clamp(2px, calc(2.65cqw - 2px), 8px);
+  font-size: clamp(2px, calc(2.2cqw - 2px), 7px);
 }
 
 .matchRowScoreText {

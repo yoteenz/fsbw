@@ -716,9 +716,10 @@ function topMatchSpecManifestBlock(look: FalAnalysisLook, refs: FalPromptImageRe
     : '';
   return [
     '=== TOP MATCH SPEC COLUMN — VALUE SLOTS BLANK (SERVER OVERLAY) ===',
-    'Leave all eight TOP MATCH spec **value slots** empty — server composites petite black Futura PT Medium text aligned with each label.',
+    'Leave all eight TOP MATCH spec **value slots** empty — server composites **extra petite** black Futura PT Medium text aligned with each label (~26% of slot height, max ~14px).',
     'Erase template placeholder catalog text (NOIR, JET BLACK, LAYERS, 13X6 HD, etc.) — paint clean frosted panel only in each value slot.',
     'Pre-printed labels (TEXTURE:, COLOR:, LENGTH:, etc.) stay untouched — do not duplicate labels or print values in-image.',
+    '**FORBIDDEN:** printing unit/color/length ribbon text between OVERALL SCORE / MATCH RATING and the spec column; any build-summary fragments in the right panel mid-zone.',
     '',
     '=== TOP MATCH MANIFEST (PHOTO + EDM SYNC — DO NOT PRINT IN VALUE SLOTS) ===',
     `MANIFEST — TEXTURE: ${look.unit.trim().toUpperCase()}`,

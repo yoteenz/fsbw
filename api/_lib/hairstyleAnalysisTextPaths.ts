@@ -33,6 +33,8 @@ export function textPathData(
     fontSize: number;
     fill: string;
     align?: 'left' | 'center';
+    /** 0.5 = vertical center; higher nudges text down within the slot. */
+    verticalBias?: number;
   }
 ): string {
   const font = loadFont(options.fontFile);
@@ -45,7 +47,8 @@ export function textPathData(
     align === 'center'
       ? rect.left + (rect.width - pathW) / 2 - bb.x1
       : rect.left + Math.round(rect.width * 0.02) - bb.x1;
-  const y = rect.top + (rect.height - pathH) / 2 - bb.y1;
+  const bias = options.verticalBias ?? 0.5;
+  const y = rect.top + rect.height * bias - pathH * 0.45 - bb.y1;
   const path = font.getPath(text, x, y, options.fontSize);
   return path.toPathData(2);
 }
@@ -137,9 +140,9 @@ export function matchRowValueFontSize(rect: PixelRect): number {
   return Math.max(14, Math.round(rect.height * 0.88) - 2);
 }
 
-/** TOP MATCH spec column values — petite to align with baked template labels. */
+/** TOP MATCH spec column values — extra petite for baked label alignment. */
 export function topMatchSpecValueFontSize(rect: PixelRect): number {
-  return Math.max(11, Math.min(18, Math.round(rect.height * 0.34)));
+  return Math.max(9, Math.min(14, Math.round(rect.height * 0.26)));
 }
 
 /** Free-tier EDM build summary (UNIT · 22" · COLOR) — centered gray ribbon. */
