@@ -28366,3 +28366,12 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Shipped (c6366228):** Restored **`hairstyleAnalysisFalMinimalImageRefs()`** default **on**; **`hairstyleAnalysisFalHairlineImageRefs()`** default **off**; step 1 back to **`[rawClientUrl]`** + simple **`buildClientPreviewHairOnlyPrompt(look, name)`** (no refs). Restored strict **`preEditedClientPanelBlock()`**. **No server face restore.** Kept footer no-border, EDM no-numbering, BUILD THIS LOOK, and black specs-locked footer prompt fixes. **`.env.example`** comment updated. Pushed **`master`** + **`preview/mobile`**.
 - **Still open:** Footer **100% YOUR VIBE** heart stroke weight — baked in Supabase template **`IMG_2554.png`**.
 - **Conventions:** Client identity = two-step Fal (**selfie-only step 1**, minimal refs step 2, no server face paste). Opt into hairline/styling IMAGEs via env only when testing PART accuracy — not default.
+
+---
+
+## 2026-06-13 — Free template client panel restore (face identity)
+
+- **Context:** User reported prior identity restore did **not** fix **free template** (`IMG_2554`) — face still wrong on main photo. Premium path may work; free template still showed wrong person after reverting to 24448119 two-step pipeline.
+- **Cause:** Free template step 2 can still face-swap despite selfie-only step 1 + minimal refs — Fal may preserve template stock model in left photo window. Elliptical **face-only** server paste (c880967c) was rejected (rectangle on chest).
+- **Shipped (931414c7):** **`hairstyleAnalysisClientPanelRestore.ts`** — after Fal, **free tier only**, paste **full** step-1 hair-edited portrait into client photo window (chroma key + bottom-anchor + symmetrical fade on template marble). Not face-only mask. **`hairstyleAnalysisFal.ts`** retains **`identityBuf`** (prefers step-1 hair edit). **`preEditedClientPanelBlock`** — erase template stock model, IMAGE 2 only. Env: **`HAIRSTYLE_ANALYSIS_CLIENT_PANEL_RESTORE=false`** to disable. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Free template identity = two-step Fal + **full panel paste** from step 1 (default on). No elliptical face mask restore.
