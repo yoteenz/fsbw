@@ -28382,3 +28382,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to **undo** free template panel restore (931414c7) — identity was already working; they had forgotten to add their selfie image when testing.
 - **Shipped (9d6d7ad0):** Reverted **`hairstyleAnalysisClientPanelRestore.ts`** and related wiring in **`hairstyleAnalysisFal.ts`** / **`hairstyleAnalysisFalComposite.ts`**. Free + premium use **two-step Fal only** (selfie-only step 1, minimal refs step 2) — no server panel paste. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-14 — Hairstyle generate FUNCTION_PAYLOAD_TOO_LARGE fix
+
+- **Context:** User hit **`REQUEST ENTITY TOO LARGE FUNCTION_PAYLOAD_TOO_LARGE`** when generating with a pasted **base64** client selfie on hairstyle analysis demo (premium template visible in screenshot).
+- **Cause:** Full **`data:image/...;base64,...`** in POST body to **`/api/hairstyle-analysis-generate`** exceeds Vercel serverless request size (~4.5MB).
+- **Shipped (2ff0f95d):** **`hairstyleAnalysisClientPreviewImage.ts`** — client-side resize/compress (max 1536×2048 JPEG, ~1.4MB target) on **Upload** and again before **Generate** for data URLs. **`parseApiErrorText`** maps payload-too-large to plain-language hint. Pushed **`master`** + **`preview/mobile`**.
