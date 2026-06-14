@@ -10,10 +10,10 @@ import { hairstyleAnalysisClientPhotoPostProcessEnabled } from './hairstyleAnaly
 import { compositeFreeTierEdmBuildSummary } from './hairstyleAnalysisFreeTierFooters.js';
 import { edmRoseIconSlots, HAIRSTYLE_ANALYSIS_CANVAS, hairstyleAnalysisGhostWipeSlots } from './hairstyleAnalysisLayoutSlots.js';
 import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
-import {
-  compositeTopMatchSpecValues,
+import { compositeTopMatchSpecValues,
   type TopMatchSpecLook,
 } from './hairstyleAnalysisTopMatchSpecs.js';
+import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout.js';
 
 export type HairstyleAnalysisPostProcessContext = {
   topMatch: TopMatchSpecLook;
@@ -70,7 +70,7 @@ export async function compositeHairstyleAnalysisPostProcess(
   if (postProcess) {
     base = await compositeTopMatchSpecValues(base, templateBuf, postProcess.topMatch);
 
-    if (postProcess.tier === 'free') {
+    if (isFreeLayoutHairstyleAnalysisTier(postProcess.tier)) {
       const { formatEdmPanelBuildSummary } = await import('./hairstyleAnalysisDisplay.js');
       const summaryText = formatEdmPanelBuildSummary(
         postProcess.topMatch.unit,

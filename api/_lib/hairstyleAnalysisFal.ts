@@ -13,6 +13,7 @@ import {
   type FalHairstyleAnalysis,
   type FalPromptBuildOptions,
 } from './hairstyleAnalysisFalPrompt.js';
+import { buildConsultClientPreviewHairOnlyPrompt } from './consultStyleAnalysisFalPrompt.js';
 import {
   overallScoreFontPromptLabel,
   type HairstyleAnalysisFontOverrides,
@@ -277,6 +278,10 @@ export type GenerateHairstyleAnalysisFalInput = {
   fontOverrides?: HairstyleAnalysisFontOverrides;
   /** Admin manifest test — do not shuffle units/colors/lengths on generate. */
   skipLookDiversification?: boolean;
+  /** Wig consult — hair inspo reference for upstream hair-only edit. */
+  inspoPreviewUrl?: string;
+  /** Wig consult — MATCH 02–04 are color-only variants of inspo hairstyle. */
+  consultInspoMode?: boolean;
 };
 
 export type GenerateHairstyleAnalysisFalResult = {
@@ -312,11 +317,25 @@ export async function generateHairstyleAnalysisWithFal(
 
   let clientUrl = rawClientUrl;
   const clientPreviewPreEdited = hairstyleAnalysisClientPreviewStepEnabled();
+  const consultInspo = input.consultInspoMode === true && Boolean(input.inspoPreviewUrl?.trim());
   if (clientPreviewPreEdited) {
-    const hairOnlyPrompt = buildClientPreviewHairOnlyPrompt(analysis.topMatch, analysis.clientName);
+    const hairOnlyPrompt = consultInspo
+      ? buildConsultClientPreviewHairOnlyPrompt(analysis.topMatch, analysis.clientName)
+      : buildClientPreviewHairOnlyPrompt(analysis.topMatch, analysis.clientName);
+    const hairOnlyUrls = consultInspo
+      ? [
+          rawClientUrl,
+          await resolvePublicImageUrl(
+            fal,
+            input.inspoPreviewUrl!,
+            input.siteOrigin,
+            'consult-inspo'
+          ),
+        ]
+      : [rawClientUrl];
     const previewResult = await subscribeHairstyleAnalysisFal(
       fal,
-      [rawClientUrl],
+      hairOnlyUrls,
       hairOnlyPrompt,
       HAIRSTYLE_ANALYSIS_CLIENT_PREVIEW_IMAGE_SIZE
     );
@@ -369,6 +388,7 @@ export async function generateHairstyleAnalysisWithFal(
       input.fontOverrides?.topScore?.siteFontId
     ),
     clientPreviewPreEdited,
+    consultInspoMode: consultInspo,
   };
   const prompt = buildHairstyleAnalysisFalPrompt(
     analysis,

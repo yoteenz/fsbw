@@ -1,4 +1,5 @@
 import type { FalHairstyleAnalysis } from './hairstyleAnalysisFalPrompt.js';
+import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout.js';
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -18,7 +19,7 @@ export function applyRealisticMatchScores(analysis: FalHairstyleAnalysis): FalHa
   const topScore = randomInt(94, 99);
   const topRating = dynamicMatchRating(topScore);
 
-  if (analysis.tier === 'free') {
+  if (isFreeLayoutHairstyleAnalysisTier(analysis.tier)) {
     return {
       ...analysis,
       additionalLooks: [],

@@ -2222,14 +2222,34 @@ export async function postAdminMeetingClientAlert(body: {
 }
 
 export type ConsultStyleAnalysisGenerateResponse =
-  | { ok: true; chart: import('../types/styleAnalysis').StyleAnalysisChart }
+  | {
+      ok: true;
+      imageUrl: string;
+      prompt?: string;
+      comparisonTier: import('../types/styleAnalysis').StyleAnalysisComparisonTier;
+      inspoHairColor: string;
+      inspoSpecs?: {
+        unit: string;
+        color: string;
+        styling: string;
+        length: string;
+        part: string;
+        lace: string;
+        density: string;
+        hairline: string;
+      };
+      analysisTier?: string;
+      topMatch?: Record<string, unknown>;
+      additionalLooks?: Record<string, unknown>[];
+    }
   | { ok: false; error: string };
 
-/** Wig consult — selfie + inspo composite (separate from PSA / template hairstyle analysis). */
+/** Wig consult — selfie + inspo → hairstyle analysis 1 pick / 4 pick template card. */
 export async function postConsultStyleAnalysisGenerate(input: {
   selfieDataUrl: string;
   inspoDataUrl: string;
   comparisonCount: import('../types/styleAnalysis').StyleAnalysisComparisonTier;
+  clientName?: string;
 }): Promise<ConsultStyleAnalysisGenerateResponse> {
   const token = await getAccessToken();
   if (!token) {
@@ -2244,6 +2264,7 @@ export async function postConsultStyleAnalysisGenerate(input: {
         selfieDataUrl: input.selfieDataUrl,
         inspoDataUrl: input.inspoDataUrl,
         comparisonCount: input.comparisonCount,
+        ...(input.clientName ? { clientName: input.clientName } : {}),
       },
     });
   } catch (e) {
@@ -2258,10 +2279,38 @@ export async function postConsultStyleAnalysisGenerate(input: {
   try {
     const data = JSON.parse(text) as {
       ok?: boolean;
-      chart?: import('../types/styleAnalysis').StyleAnalysisChart;
+      imageUrl?: string;
+      prompt?: string;
+      comparisonTier?: import('../types/styleAnalysis').StyleAnalysisComparisonTier;
+      inspoHairColor?: string;
+      inspoSpecs?: {
+        unit: string;
+        color: string;
+        styling: string;
+        length: string;
+        part: string;
+        lace: string;
+        density: string;
+        hairline: string;
+      };
+      analysisTier?: string;
+      topMatch?: Record<string, unknown>;
+      additionalLooks?: Record<string, unknown>[];
       error?: string;
     };
-    if (data.ok && data.chart) return { ok: true, chart: data.chart };
+    if (data.ok && data.imageUrl) {
+      return {
+        ok: true,
+        imageUrl: data.imageUrl,
+        prompt: data.prompt,
+        comparisonTier: data.comparisonTier ?? input.comparisonCount,
+        inspoHairColor: data.inspoHairColor ?? '',
+        inspoSpecs: data.inspoSpecs,
+        analysisTier: data.analysisTier,
+        topMatch: data.topMatch,
+        additionalLooks: data.additionalLooks,
+      };
+    }
     return { ok: false, error: data.error || 'Generation failed' };
   } catch {
     return { ok: false, error: 'Invalid server response' };

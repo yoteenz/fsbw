@@ -1,4 +1,11 @@
 import { hexForConsultHairColor } from './consultStyleAnalysisCatalog.js';
+import {
+  displayStyle,
+  lengthBodyPlacementPromptLine,
+  partPlacementPromptLine,
+} from './hairstyleAnalysisDisplay.js';
+import type { FalAnalysisLook } from './hairstyleAnalysisFalPrompt.js';
+import { lookHairAccuracyLines } from './hairstyleAnalysisUnitCatalog.js';
 
 export function buildConsultInspoMatchPrompt(): string {
   return [
@@ -13,6 +20,42 @@ export function buildConsultInspoMatchPrompt(): string {
     'Edit **hair strands only** — keep neck, shoulders, clothing, and pose from IMAGE 1.',
     'Soft neutral studio background. No visible wig cap, lace grid, or text overlays.',
     'No beauty filter. No second person.',
+  ].join('\n');
+}
+
+/** Hair-only step for wig consult template cards — selfie + inspo → TOP MATCH hair before template pass. */
+export function buildConsultClientPreviewHairOnlyPrompt(
+  look: FalAnalysisLook,
+  clientName: string
+): string {
+  const name = clientName.trim().toUpperCase() || 'CLIENT';
+  const style = displayStyle(look.styling, look.unit);
+  return [
+    `Edit IMAGE 1 — client selfie for ${name}. IMAGE 2 = hair inspiration reference. Output ONE photo-realistic portrait.`,
+    '',
+    '=== FACE IDENTITY LOCK (HIGHEST PRIORITY) ===',
+    'IMAGE 1 is the real client — copy face pixels exactly: same eyes, nose, lips, cheeks, brows, skin tone, bone structure, expression, and age.',
+    'Hair edits apply ONLY in the hair region — never regenerate, repaint, beautify, or alter facial skin.',
+    '',
+    buildConsultInspoMatchPrompt(),
+    '',
+    '=== CATALOG MANIFEST (SUGGESTED BUILD SPECS — MATCH VISUALLY) ===',
+    lookHairAccuracyLines(look),
+    lengthBodyPlacementPromptLine(look.length),
+    partPlacementPromptLine(look.part),
+    `STYLE ${style} — match inspo salon finish when visible; otherwise natural ${look.unit.trim().toUpperCase()} texture.`,
+    '',
+    'OUTPUT: the **same person** as IMAGE 1 wearing the **exact inspo hairstyle** from IMAGE 2, tinted to manifest COLOR — portrait ready for hairstyle analysis template placement.',
+  ].join('\n');
+}
+
+export function consultInspoTemplateLockBlock(): string {
+  return [
+    '=== WIG CONSULT — INSPO HAIRSTYLE LOCK (PREMIUM 4 PICK) ===',
+    'TOP MATCH portrait = inspo hairstyle on the client (pre-edited upstream) at manifest COLOR.',
+    'MATCH 02–04 thumbnails = **same client, same pose, same inspo hairstyle geometry** — change **COLOR only** per manifest.',
+    'All four looks share the same cut, length, curl pattern, part, and styling — only catalog COLOR differs.',
+    'FORBIDDEN: different lengths, units, or salon shapes across MATCH 02–04; color-swap thumbs that change the inspo silhouette.',
   ].join('\n');
 }
 
