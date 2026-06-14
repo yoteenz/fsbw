@@ -28356,3 +28356,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** Fal prompt used **"build ribbon"** / footer language; model styled footers like the red-bordered **BUILD THIS LOOK** CTA instead of plain text.
 - **Shipped:** **`panelFooterPlainTextRules()`** in **`hairstyleAnalysisFalPrompt.ts`** — plain centered text only; forbid red/black borders, boxes, pills, ribbons; erase placeholder bordered rectangles; do not mimic CTA chrome. Updated **`freeTierPanelFooterBlock()`**, **`freePromptFooter`**, and free-tier template rules. Renamed comments ribbon → build summary in layout/format/display files.
 - **Conventions:** Free-tier panel footers = plain text on frosted panel (black specs-locked, gray build summary) — never bordered boxes.
+
+---
+
+## 2026-06-13 — Restore face identity to working two-step selfie-only pipeline
+
+- **Context:** User reported face identity still broken after revert of server face paste — wanted the version that worked **<12 hours ago** (their face on main photo + MATCH thumbnails, no chest rectangle overlay). Prior chat also covered heart icon thickness (template PNG, not fixed), BUILD THIS LOOK overlap, EDM numbering, specs-locked black footer, panel footer no-border rules.
+- **Root cause:** Commit **2dffc54e** inverted identity defaults and re-attached hairline/styling IMAGEs to **step 1** (selfie pass), causing mannequin face bleed / face swap. Working state was **24448119**: step 1 = **selfie only**, **`MINIMAL_REFS` default on** (template + client only on step 2), **`HAIRLINE_REFS` default off**, strict **`preEditedClientPanelBlock`** (place client — do not repaint face or main hair).
+- **Shipped (c6366228):** Restored **`hairstyleAnalysisFalMinimalImageRefs()`** default **on**; **`hairstyleAnalysisFalHairlineImageRefs()`** default **off**; step 1 back to **`[rawClientUrl]`** + simple **`buildClientPreviewHairOnlyPrompt(look, name)`** (no refs). Restored strict **`preEditedClientPanelBlock()`**. **No server face restore.** Kept footer no-border, EDM no-numbering, BUILD THIS LOOK, and black specs-locked footer prompt fixes. **`.env.example`** comment updated. Pushed **`master`** + **`preview/mobile`**.
+- **Still open:** Footer **100% YOUR VIBE** heart stroke weight — baked in Supabase template **`IMG_2554.png`**.
+- **Conventions:** Client identity = two-step Fal (**selfie-only step 1**, minimal refs step 2, no server face paste). Opt into hairline/styling IMAGEs via env only when testing PART accuracy — not default.
