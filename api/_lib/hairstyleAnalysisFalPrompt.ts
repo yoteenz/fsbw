@@ -176,19 +176,19 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
   return [
     '=== HAIR DRAPE — ASYMMETRIC SHOULDER SWEEP (NOT SYMMETRIC TWIN CURTAIN) ===',
     scopeLine,
-    'Long hair uses a **soft asymmetric shoulder drape** — one side has the main front cascade, but the opposite side still keeps natural hair visible behind/over the back. Think balanced **60/40**, not an extreme one-sided pile.',
-    '**PRIMARY FRONT CASCADE (slightly fuller):** visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the main chest cascade, but not 100% of the hair.',
-    '**BACK + BEHIND PANEL (required):** keep a visible secondary mass sweeping **behind** the model\'s RIGHT shoulder and down the **upper back** — soft back panel / behind-shoulder fall. Some strands behind the neck/shoulder are **correct** and must remain.',
-    '**CLEAR SHOULDER CAP:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — shoulder skin stays partly visible. Use thin front strands plus hair falling **behind** the shoulder; avoid only a second **thick forward** curtain matching the main side.',
+    'Long hair uses a **one-forward-shoulder drape** — only one side gets the forward chest cascade; the opposite side keeps visible hair **behind the shoulder / down the back**, not another forward curtain.',
+    '**PRIMARY FRONT CASCADE:** visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the single chest cascade.',
+    '**BACK + BEHIND PANEL (required):** keep a visible secondary mass sweeping **behind** the model\'s RIGHT shoulder and down the **upper back** — soft back panel / behind-shoulder fall. This prevents the hair from looking like 100% is piled on one shoulder.',
+    '**CLEAR SHOULDER CAP:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — shoulder/collarbone skin stays mostly visible. Any hair on this side must read as behind-the-shoulder/back hair, with at most a few thin face-framing strands — **no thick forward chest curtain**.',
     '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back/behind-shoulder hair.',
-    '**Self-check failed if:** matching thick **forward** panels on **both** collarbones OR all length piled on the primary shoulder. **Correct if:** primary side is fuller while a visible secondary panel trails behind the clear shoulder/back.',
+    '**Self-check failed if:** there is a forward hair curtain covering each collarbone, or if all hair is piled on the primary shoulder. **Correct if:** one forward chest cascade + one visible behind/back panel with the opposite shoulder mostly clear.',
     mannequinNote,
   ].join('\n');
 }
 
 function oneShoulderDrapeCompactLock(): string {
   return [
-    'SOFT ASYMMETRIC DRAPE: fuller front cascade on viewer\'s RIGHT, with visible back/behind-shoulder hair on viewer\'s LEFT (balanced ~60/40) — **FORBIDDEN** symmetric twin thick **forward** curtains and **FORBIDDEN** routing all hair forward with no back panel.',
+    'ONE-FORWARD-SHOULDER DRAPE: one forward chest cascade on viewer\'s RIGHT; viewer\'s LEFT shoulder stays mostly clear with visible hair routed behind shoulder/down the back — **FORBIDDEN** twin thick **forward** curtains and **FORBIDDEN** all hair forward with no back panel.',
   ].join(' ');
 }
 
@@ -389,7 +389,7 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     '',
     '=== HAIR-ONLY EDIT (IMAGE 1) ===',
     'CHANGE **ONLY** the hair strands. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
-    '**Re-shape hair ends for soft asymmetric shoulder sweep** per rules above — fuller front cascade on one side plus required natural **back/behind-shoulder spill** — **override** only symmetric **forward** both-shoulder curtains in IMAGE 1.',
+    '**Re-shape hair ends for one-forward-shoulder sweep** per rules above — single forward chest cascade on one side plus required natural **back/behind-shoulder spill** on the other — **override** symmetric **forward** both-shoulder curtains in IMAGE 1.',
     'NO wig cap. NO visible lace. NO different person. NO beauty filter. NO face slimming.',
     noInventedBabyHairsBlock(),
     oneShoulderDrapeCompactLock(),
@@ -400,7 +400,7 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     lengthBodyPlacementPromptLine(look.length),
     `LOCK: STYLE ${style}.`,
     '',
-    'OUTPUT: the **same person** with TOP MATCH hair + **soft asymmetric shoulder drape** (fuller front cascade + visible back/behind-shoulder spill) — portrait ready for template placement.',
+    'OUTPUT: the **same person** with TOP MATCH hair + **one-forward-shoulder drape** (single front cascade + visible back/behind-shoulder spill) — portrait ready for template placement.',
   ].join('\n');
 }
 
@@ -410,7 +410,7 @@ function preEditedClientPanelBlock(): string {
     '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR + ASYMMETRIC DRAPE APPLIED) ===',
     'IMAGE 2 is the real client with TOP MATCH hair and **asymmetric shoulder drape** already rendered upstream.',
     '**Do not change face, skin, expression, or neck** on the main left-panel preview.',
-    '**Preserve upstream drape exactly** — fuller front cascade on one shoulder + visible back/behind-shoulder spill — do **NOT** revert to symmetric twin **forward** curtains or pile 100% of hair forward with no back panel.',
+    '**Preserve/uphold the one-forward-shoulder drape** — single front cascade on one shoulder + visible back/behind-shoulder spill — do **NOT** revert to symmetric twin **forward** curtains or pile 100% of hair forward with no back panel.',
     'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
   ].join('\n');
 }

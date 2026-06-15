@@ -12,7 +12,6 @@ import {
   edmRoseIconSlots,
   HAIRSTYLE_ANALYSIS_CANVAS,
   hairstyleAnalysisGhostWipeSlots,
-  type PixelRect,
 } from './hairstyleAnalysisLayoutSlots.js';
 import { restoreTemplateSlots } from './hairstyleAnalysisTemplateRestore.js';
 import { compositeTopMatchSpecValues,
@@ -27,10 +26,6 @@ export type HairstyleAnalysisPostProcessContext = {
   skipServerTextOverlay?: boolean;
   /** Consult cards need the fade even when generic post-process is env-disabled. */
   forceClientPhotoFade?: boolean;
-  /** Restore template chrome around the left photo panel after Fal image edits. */
-  restoreClientPhotoPanelChrome?: boolean;
-  /** Remove Fal portrait overflow below the intended photo/fade window before reflection. */
-  clipClientPhotoOverflow?: boolean;
 };
 
 async function fetchBuffer(url: string): Promise<Buffer> {
@@ -46,37 +41,6 @@ async function resizeToAnalysisCanvas(buf: Buffer): Promise<Buffer> {
   const meta = await sharp(buf).metadata();
   if (meta.width === width && meta.height === height) return buf;
   return sharp(buf).resize(width, height, { fit: 'fill' }).png().toBuffer();
-}
-
-function clientPhotoPanelChromeSlots(panel: PixelRect): PixelRect[] {
-  const { width: canvasW, height: canvasH } = HAIRSTYLE_ANALYSIS_CANVAS;
-  const border = 10;
-  const left = Math.max(0, panel.left);
-  const top = Math.max(0, panel.top);
-  const right = Math.min(canvasW, panel.left + panel.width);
-  const bottom = Math.min(canvasH, panel.top + panel.height);
-  const width = right - left;
-  const height = bottom - top;
-  if (width <= border * 2 || height <= border * 2) return [];
-  return [
-    { left, top, width, height: border },
-    { left, top: bottom - border, width, height: border },
-    { left, top, width: border, height },
-    { left: right - border, top, width: border, height },
-  ];
-}
-
-function clientPhotoBottomOverflowSlot(panel: PixelRect, photoWindow: PixelRect): PixelRect[] {
-  const { width: canvasW, height: canvasH } = HAIRSTYLE_ANALYSIS_CANVAS;
-  const panelLeft = Math.max(0, panel.left);
-  const panelRight = Math.min(canvasW, panel.left + panel.width);
-  const panelBottom = Math.min(canvasH, panel.top + panel.height);
-  const clipTop = Math.max(panel.top, photoWindow.top + photoWindow.height);
-  const top = Math.max(0, Math.min(clipTop, panelBottom));
-  const width = Math.max(0, panelRight - panelLeft);
-  const height = Math.max(0, panelBottom - top);
-  if (width <= 0 || height <= 0) return [];
-  return [{ left: panelLeft, top, width, height }];
 }
 
 /** Post-process: restore EDM rose icons, optional photo fade, mirror reflection, server text overlays. */
@@ -107,15 +71,7 @@ export async function compositeHairstyleAnalysisPostProcess(
     base = await applyClientPhotoBottomFade(base, templateBuf, fadeRect, panelRect);
   }
 
-  if (postProcess?.clipClientPhotoOverflow) {
-    base = await restoreTemplateSlots(base, templateBuf, clientPhotoBottomOverflowSlot(panelRect, fadeRect));
-  }
-
   base = await applyClientPhotoMirrorReflection(base, panelRect, fadeRect);
-
-  if (postProcess?.restoreClientPhotoPanelChrome) {
-    base = await restoreTemplateSlots(base, templateBuf, clientPhotoPanelChromeSlots(panelRect));
-  }
 
   if (!postProcess?.skipServerTextOverlay) {
     base = await restoreTemplateSlots(base, templateBuf, hairstyleAnalysisGhostWipeSlots());
