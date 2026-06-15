@@ -176,19 +176,19 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
   return [
     '=== HAIR DRAPE — ASYMMETRIC SHOULDER SWEEP (NOT SYMMETRIC TWIN CURTAIN) ===',
     scopeLine,
-    'Long hair uses **asymmetric shoulder drape** like BAW mannequin fronts — **primary** length forward over **one** shoulder; **not** equal thick forward panels on both collarbones.',
-    '**PRIMARY FORWARD DRAPE (heaviest):** most visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the main chest cascade.',
-    '**BACK + BEHIND (natural spill — keep this):** remaining length may sweep **behind** the model\'s RIGHT shoulder and down the **upper back** — soft back panel. Some strands behind the neck/shoulder are **correct**; do **NOT** route **100%** of all hair forward onto the one shoulder only.',
-    '**CLEAR SHOULDER CAP:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — shoulder skin stays **visible**. Use thin tuck, hair falling **behind** the shoulder, or light back spill — **never** a second **thick forward** curtain matching the main side.',
-    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back spill.',
-    '**Self-check failed if:** matching thick **forward** panels on **both** collarbones. **Not failed if:** some length trails behind the clear shoulder onto the back.',
+    'Long hair uses a **soft asymmetric shoulder drape** — one side has the main front cascade, but the opposite side still keeps natural hair visible behind/over the back. Think balanced **60/40**, not an extreme one-sided pile.',
+    '**PRIMARY FRONT CASCADE (slightly fuller):** visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the main chest cascade, but not 100% of the hair.',
+    '**BACK + BEHIND PANEL (required):** keep a visible secondary mass sweeping **behind** the model\'s RIGHT shoulder and down the **upper back** — soft back panel / behind-shoulder fall. Some strands behind the neck/shoulder are **correct** and must remain.',
+    '**CLEAR SHOULDER CAP:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — shoulder skin stays partly visible. Use thin front strands plus hair falling **behind** the shoulder; avoid only a second **thick forward** curtain matching the main side.',
+    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back/behind-shoulder hair.',
+    '**Self-check failed if:** matching thick **forward** panels on **both** collarbones OR all length piled on the primary shoulder. **Correct if:** primary side is fuller while a visible secondary panel trails behind the clear shoulder/back.',
     mannequinNote,
   ].join('\n');
 }
 
 function oneShoulderDrapeCompactLock(): string {
   return [
-    'ASYMMETRIC DRAPE: primary forward mass on viewer\'s RIGHT only; allow natural back spill behind viewer\'s LEFT shoulder — **FORBIDDEN** symmetric twin **forward** curtains on both shoulders and **FORBIDDEN** routing 100% of hair forward with no back panel.',
+    'SOFT ASYMMETRIC DRAPE: fuller front cascade on viewer\'s RIGHT, with visible back/behind-shoulder hair on viewer\'s LEFT (balanced ~60/40) — **FORBIDDEN** symmetric twin thick **forward** curtains and **FORBIDDEN** routing all hair forward with no back panel.',
   ].join(' ');
 }
 
@@ -389,7 +389,7 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     '',
     '=== HAIR-ONLY EDIT (IMAGE 1) ===',
     'CHANGE **ONLY** the hair strands. KEEP exact face, skin, eyes, nose, lips, brows, expression, age, neck, shoulders, clothing, and camera angle from IMAGE 1.',
-    '**Re-shape hair ends for asymmetric shoulder sweep** per rules above — primary forward on one side, natural **back spill** allowed — **override** only symmetric **forward** both-shoulder curtains in IMAGE 1.',
+    '**Re-shape hair ends for soft asymmetric shoulder sweep** per rules above — fuller front cascade on one side plus required natural **back/behind-shoulder spill** — **override** only symmetric **forward** both-shoulder curtains in IMAGE 1.',
     'NO wig cap. NO visible lace. NO different person. NO beauty filter. NO face slimming.',
     noInventedBabyHairsBlock(),
     oneShoulderDrapeCompactLock(),
@@ -400,7 +400,7 @@ export function buildClientPreviewHairOnlyPrompt(look: FalAnalysisLook, clientNa
     lengthBodyPlacementPromptLine(look.length),
     `LOCK: STYLE ${style}.`,
     '',
-    'OUTPUT: the **same person** with TOP MATCH hair + **asymmetric shoulder drape** (primary forward + natural back spill) — portrait ready for template placement.',
+    'OUTPUT: the **same person** with TOP MATCH hair + **soft asymmetric shoulder drape** (fuller front cascade + visible back/behind-shoulder spill) — portrait ready for template placement.',
   ].join('\n');
 }
 
@@ -410,7 +410,7 @@ function preEditedClientPanelBlock(): string {
     '=== IMAGE 2 — PRE-EDITED CLIENT (TOP MATCH HAIR + ASYMMETRIC DRAPE APPLIED) ===',
     'IMAGE 2 is the real client with TOP MATCH hair and **asymmetric shoulder drape** already rendered upstream.',
     '**Do not change face, skin, expression, or neck** on the main left-panel preview.',
-    '**Preserve upstream drape exactly** — primary forward on one shoulder + natural back spill — do **NOT** revert to symmetric twin **forward** curtains or pile 100% of hair forward with no back panel.',
+    '**Preserve upstream drape exactly** — fuller front cascade on one shoulder + visible back/behind-shoulder spill — do **NOT** revert to symmetric twin **forward** curtains or pile 100% of hair forward with no back panel.',
     'Only: remove background, fit 9:16 in the photo window, bottom anchor, symmetrical bottom fade, subtle mirror reflection.',
   ].join('\n');
 }
