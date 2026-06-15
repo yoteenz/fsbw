@@ -15,7 +15,7 @@ export function buildConsultInspoMatchPrompt(): string {
     '',
     'OUTPUT: ONE photorealistic front portrait of the **same person** as IMAGE 1 wearing the **exact hairstyle** from IMAGE 2.',
     'Copy from IMAGE 2: length, texture, curl/wave pattern, layering, part, volume, ends, and overall silhouette — not a generic catalog wig guess.',
-    'For long hair, adapt the drape to a **soft asymmetric template layout**: one fuller front cascade plus visible back/behind-shoulder hair. Do not create equal thick forward curtains, and do not pile all hair onto one shoulder.',
+    'For long hair, adapt the drape to the template rule: **one forward chest cascade only**, with the opposite side routed **behind the shoulder/down the back**. Do not create equal thick forward curtains, and do not pile all hair onto one shoulder.',
     'If IMAGE 2 has bangs/fringe/curtain bangs, recreate the bang length, split, density, and face-framing blend exactly. If IMAGE 2 has no bangs, do not add bangs.',
     'Copy hair **color family and saturation** from IMAGE 2 as closely as the BAW catalog color allows; colored units must stay vivid and uniform, not muted or shifted to brown/black.',
     'Copy the apparent length from IMAGE 2 — do **not** extend the hair longer than the reference photo or add extra waist/hip/thigh length.',
@@ -56,12 +56,12 @@ export function consultInspoTemplateLockBlock(): string {
   return [
     '=== WIG CONSULT — INSPO HAIRSTYLE LOCK (1 PICK + 4 PICK) ===',
     'IMAGE 2 is the approved pre-edited consult portrait: client identity from selfie + exact inspo hairstyle already applied.',
-    'TOP MATCH portrait must preserve IMAGE 2 hair geometry while fitting the template: same length, cut, curl/wave/crimp pattern, volume, bangs/fringe if present, part, ends, and a **soft asymmetric** drape.',
-    'Drape balance: fuller front cascade on one side plus visible back/behind-shoulder hair on the other side. Do not create equal thick forward curtains, and do not route all hair onto one shoulder.',
+    'TOP MATCH portrait must preserve IMAGE 2 hair geometry while fitting the template: same length, cut, curl/wave/crimp pattern, volume, bangs/fringe if present, part, ends, and a **one-forward-shoulder** drape.',
+    'Drape rule: one side gets the forward chest cascade; the other side keeps visible hair routed behind the shoulder/down the back with the shoulder mostly clear. Do not create equal thick forward curtains, and do not route all hair onto one shoulder.',
     'Use manifest TEXTURE / STYLE / LENGTH as printed BAW specs and light guardrails only; they must not replace the photographed inspo silhouette with a generic catalog wig.',
     'BAW styling reference images are secondary in consult mode. If a styling reference conflicts with IMAGE 2, preserve IMAGE 2.',
     'If the card contains MATCH 02–04 thumbnails: use **same client, same pose, same inspo hairstyle geometry** — change **COLOR only** per manifest.',
-    'All consult comparison looks share the same cut, length, curl pattern, bangs/fringe, part, soft asymmetric drape, and styling — only catalog COLOR differs.',
+    'All consult comparison looks share the same cut, length, curl pattern, bangs/fringe, part, one-forward-shoulder drape, and styling — only catalog COLOR differs.',
     'FORBIDDEN: different lengths, units, or salon shapes across MATCH 02–04; color-swap thumbs that change the inspo silhouette; adding bangs when IMAGE 2 has none; removing bangs when IMAGE 2 has them.',
   ].join('\n');
 }
