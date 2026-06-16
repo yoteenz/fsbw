@@ -53,6 +53,7 @@ import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab'
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import {
   UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
+  UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
@@ -2964,7 +2965,7 @@ function NoirSelection() {
           {/* CAP SIZE CHART IMAGE — below quantity; 15% smaller than Blanco baseline */}
           <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '-4px' }}>
             <img
-              src="/assets/NOIR/cap-size-chart.png"
+              src={UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC}
               alt="Cap Size Chart"
               className="max-w-full h-auto object-contain"
               style={{
