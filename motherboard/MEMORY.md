@@ -28618,3 +28618,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User did not like **`IMG_2821.png`** and asked to undo. Reverted NOIR inline cap chart below quantity to original **`/assets/NOIR/cap-size-chart.png`** (also rolls back **`IMG_2811.jpeg`** experiment). Popup **`IMG_2798`** unchanged.
 - **Changes:** `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC` → `/assets/NOIR/cap-size-chart.png`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — NOIR inline cap chart restored to IMG_2811
+
+- **Context:** After reverting to the original local asset, user clarified the NOIR inline cap chart (below quantity) should be **`IMG_2811.jpeg`** — not **`IMG_2821`** and not `/assets/NOIR/cap-size-chart.png`. Popup **`IMG_2798`** unchanged.
+- **Changes:** `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC` → `IMG_2811.jpeg`. Pushed **`master`** + **`preview/mobile`**.
