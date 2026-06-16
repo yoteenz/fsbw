@@ -44,10 +44,10 @@ export const UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC =
 export const UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20Stock/IMG_2811.jpeg';
 
-/** NOIR inline cap chart — 20% larger than `UNIT_PDP_CAP_CHART_IMG_STYLE`. */
+/** NOIR inline cap chart — 15% larger than `UNIT_PDP_CAP_CHART_IMG_STYLE`. */
 export const UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE: CSSProperties = {
-  maxWidth: 'clamp(138.72px, 15.144vw, 183.6px)',
-  maxHeight: 'clamp(108.12px, 12.036vw, 142.8px)',
+  maxWidth: 'clamp(132.94px, 14.513vw, 175.95px)',
+  maxHeight: 'clamp(103.615px, 11.5345vw, 136.85px)',
   width: '100%',
   cursor: 'pointer',
 };
