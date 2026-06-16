@@ -53,6 +53,7 @@ import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab'
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import {
   UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
+  UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE,
   UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
@@ -2962,18 +2963,13 @@ function NoirSelection() {
             </button>
         </div>
 
-          {/* CAP SIZE CHART IMAGE — below quantity; 15% smaller than Blanco baseline */}
+          {/* CAP SIZE CHART IMAGE — below quantity; 20% larger than other unit PDPs */}
           <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '-4px' }}>
             <img
               src={UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC}
               alt="Cap Size Chart"
               className="max-w-full h-auto object-contain"
-              style={{
-                maxWidth: 'clamp(115.6px, 12.62vw, 153px)',
-                maxHeight: 'clamp(90.1px, 10.03vw, 119px)',
-                width: '100%',
-                cursor: 'pointer',
-              }}
+              style={UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE}
               onClick={handleChartClick}
             />
           </div>
