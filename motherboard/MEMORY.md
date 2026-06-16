@@ -28632,3 +28632,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to increase the NOIR inline cap chart (`IMG_2811.jpeg`, below quantity) size by **20%**. Popup unchanged.
 - **Changes:** Added **`UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE`** in `unitPdpLayoutConstants.ts` (each `clamp()` bound × 1.2 vs `UNIT_PDP_CAP_CHART_IMG_STYLE`); NOIR page uses it for the inline thumb. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — NOIR inline cap chart size adjusted to +15%
+
+- **Context:** User asked to change the NOIR inline cap chart size increase from **20%** to **15%** vs other unit PDPs (`UNIT_PDP_CAP_CHART_IMG_STYLE`). Image (`IMG_2811`) and popup (`IMG_2798`) unchanged.
+- **Changes:** `UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE` clamp bounds × **1.15** (was × 1.2). Pushed **`master`** + **`preview/mobile`**.
