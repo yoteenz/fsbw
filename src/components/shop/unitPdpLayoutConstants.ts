@@ -36,6 +36,10 @@ export const UNIT_PDP_CAP_CHART_IMG_STYLE: CSSProperties = {
   cursor: 'pointer',
 };
 
+/** Enlarged cap size chart shown in the unit PDP modal popup. */
+export const UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20Stock/IMG_2798.png';
+
 /** Product shots + details tabs share `mt-2 mb-4`; tabs must stay inside that wrapper (NOIR layout). */
 export const UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS = 'mt-2 mb-4';
 
