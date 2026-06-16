@@ -28625,3 +28625,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** After reverting to the original local asset, user clarified the NOIR inline cap chart (below quantity) should be **`IMG_2811.jpeg`** — not **`IMG_2821`** and not `/assets/NOIR/cap-size-chart.png`. Popup **`IMG_2798`** unchanged.
 - **Changes:** `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC` → `IMG_2811.jpeg`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — NOIR inline cap chart +20% size
+
+- **Context:** User asked to increase the NOIR inline cap chart (`IMG_2811.jpeg`, below quantity) size by **20%**. Popup unchanged.
+- **Changes:** Added **`UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE`** in `unitPdpLayoutConstants.ts` (each `clamp()` bound × 1.2 vs `UNIT_PDP_CAP_CHART_IMG_STYLE`); NOIR page uses it for the inline thumb. Pushed **`master`** + **`preview/mobile`**.
