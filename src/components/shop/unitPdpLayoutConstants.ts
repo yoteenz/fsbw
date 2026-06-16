@@ -42,7 +42,7 @@ export const UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC =
 
 /** NOIR unit PDP inline cap chart thumbnail (below quantity counter). */
 export const UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20Stock/IMG_2811.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20Stock/IMG_2821.png';
 
 /** Product shots + details tabs share `mt-2 mb-4`; tabs must stay inside that wrapper (NOIR layout). */
 export const UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS = 'mt-2 mb-4';
