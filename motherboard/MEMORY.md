@@ -28594,3 +28594,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Only the **modal popup** image was swapped (inline thumbnail `/assets/NOIR/cap-size-chart.png` unchanged). New URL centralized as **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`** so all six unit PDPs stay in sync.
 - **Changes:** `src/components/shop/unitPdpLayoutConstants.ts` (new constant); modal `<img src>` updated on NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL pages (replaced `/assets/wig-chart.png`). Committed and pushed to **`master`** and **`preview/mobile`**.
 - **Conventions:** Future cap size chart modal asset updates should change **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`** only.
+
+---
+
+## 2026-06-16 — NOIR inline cap chart thumb (IMG_2811); old popup audit
+
+- **Context:** Full chat: (1) replace unit PDP cap size chart **popup** with `IMG_2798.png`; (2) user asked whether the old popup (`wig-chart.png` / `cap-chart.svg`) still appears anywhere — confirmed it does **not** in live `src/` (only six unit PDP modals, all on `UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`; `canonical-backup/` still has old refs but is not served); (3) user asked to replace the **inline cap chart below the quantity counter on NOIR only** with `IMG_2811.jpeg`, **without** changing the popup image.
+- **Topics covered:** Inline thumbnail vs modal popup; NOIR-specific layout vs other five unit PDPs still using `/assets/NOIR/cap-size-chart.png` for inline thumb.
+- **Decisions / outcomes:** Popup stays **`IMG_2798`** (`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`) on all six PDPs. NOIR inline thumb only → **`UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC`** (`IMG_2811.jpeg`).
+- **Changes:** `unitPdpLayoutConstants.ts` (added `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC`); `src/pages/straight/noir/page.tsx` inline `<img src>` below quantity. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** NOIR inline cap chart thumb updates → **`UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC`**; modal popup updates → **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`**; other units’ inline thumbs remain `/assets/NOIR/cap-size-chart.png` unless product asks otherwise.
