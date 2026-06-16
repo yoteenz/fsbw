@@ -28611,3 +28611,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** Continuation of cap chart work. User asked to replace the NOIR inline cap chart (below quantity) with **`IMG_2821.png`** instead of the prior **`IMG_2811.jpeg`**; popup (`IMG_2798`) unchanged.
 - **Changes:** `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC` in `unitPdpLayoutConstants.ts` → `IMG_2821.png`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Revert NOIR inline cap chart (IMG_2821)
+
+- **Context:** User did not like **`IMG_2821.png`** and asked to undo. Reverted NOIR inline cap chart below quantity to original **`/assets/NOIR/cap-size-chart.png`** (also rolls back **`IMG_2811.jpeg`** experiment). Popup **`IMG_2798`** unchanged.
+- **Changes:** `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC` → `/assets/NOIR/cap-size-chart.png`. Pushed **`master`** + **`preview/mobile`**.
