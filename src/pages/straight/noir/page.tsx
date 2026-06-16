@@ -2963,7 +2963,7 @@ function NoirSelection() {
             </button>
         </div>
 
-          {/* CAP SIZE CHART IMAGE — below quantity; 20% larger than other unit PDPs */}
+          {/* CAP SIZE CHART IMAGE — below quantity; 15% larger than other unit PDPs */}
           <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '-4px' }}>
             <img
               src={UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC}
