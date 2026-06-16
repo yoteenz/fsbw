@@ -38,6 +38,7 @@ import { UnitPdpWigPreviewImages } from '../../../components/shop/UnitPdpWigPrev
 import {
   UNIT_PDP_CAP_CHART_IMG_STYLE,
   UNIT_PDP_CAP_CHART_ROW_STYLE,
+  UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
   UNIT_PDP_CAP_SIZE_HEADER_STYLE,
   UNIT_PDP_MAIN_CARD_STYLE,
   UNIT_PDP_TAB_CONTENT_STYLE,
@@ -1538,7 +1539,7 @@ function SoftCurlSelection() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
-                      src="/assets/wig-chart.png"
+                      src={UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC}
                       alt="Enlarged Cap Size Chart"
                       style={{ 
                         maxWidth: '100%',

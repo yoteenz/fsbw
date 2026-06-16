@@ -51,7 +51,10 @@ import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTa
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
-import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
+import {
+  UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
+  withUnitPdpRecentlyViewedVisibility,
+} from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 import {
   isNoirNaturalFrontMannequinSrc,
@@ -2574,7 +2577,7 @@ function NoirSelection() {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <img
-                    src="/assets/wig-chart.png"
+                    src={UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC}
                     alt="Enlarged Cap Size Chart"
                     style={{ 
                       maxWidth: '100%',
