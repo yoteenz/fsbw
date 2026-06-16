@@ -28604,3 +28604,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Popup stays **`IMG_2798`** (`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`) on all six PDPs. NOIR inline thumb only → **`UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC`** (`IMG_2811.jpeg`).
 - **Changes:** `unitPdpLayoutConstants.ts` (added `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC`); `src/pages/straight/noir/page.tsx` inline `<img src>` below quantity. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** NOIR inline cap chart thumb updates → **`UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC`**; modal popup updates → **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`**; other units’ inline thumbs remain `/assets/NOIR/cap-size-chart.png` unless product asks otherwise.
+
+---
+
+## 2026-06-16 — NOIR inline cap chart thumb swap to IMG_2821
+
+- **Context:** Continuation of cap chart work. User asked to replace the NOIR inline cap chart (below quantity) with **`IMG_2821.png`** instead of the prior **`IMG_2811.jpeg`**; popup (`IMG_2798`) unchanged.
+- **Changes:** `UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC` in `unitPdpLayoutConstants.ts` → `IMG_2821.png`. Pushed **`master`** + **`preview/mobile`**.
