@@ -44,6 +44,14 @@ export const UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC =
 export const UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20Stock/IMG_2811.jpeg';
 
+/** NOIR inline cap chart — 20% larger than `UNIT_PDP_CAP_CHART_IMG_STYLE`. */
+export const UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE: CSSProperties = {
+  maxWidth: 'clamp(138.72px, 15.144vw, 183.6px)',
+  maxHeight: 'clamp(108.12px, 12.036vw, 142.8px)',
+  width: '100%',
+  cursor: 'pointer',
+};
+
 /** Product shots + details tabs share `mt-2 mb-4`; tabs must stay inside that wrapper (NOIR layout). */
 export const UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS = 'mt-2 mb-4';
 
