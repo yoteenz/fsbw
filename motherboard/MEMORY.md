@@ -28584,3 +28584,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Changes:** **`api/_lib/hairstyleAnalysisFalComposite.ts`** removed `restoreClientPhotoPanelChrome`, `clipClientPhotoOverflow`, `clientPhotoPanelChromeSlots()`, and `clientPhotoBottomOverflowSlot()`; **`api/_lib/hairstyleAnalysisFal.ts`** no longer sends those flags and keeps only consult `forceClientPhotoFade`. **`api/_lib/hairstyleAnalysisFalPrompt.ts`** and **`api/_lib/consultStyleAnalysisFalPrompt.ts`** now use one-forward-shoulder wording for both the upstream inspo edit and template pass. **`docs/STYLE_ANALYSIS.md`** and **`motherboard/CORE.md`** updated to match; this MEMORY entry appended.
 - **Verification:** `npm run build`, esbuild bundle check for `api/consult-style-analysis-generate.ts`, and `git diff --check` passed.
 - **Conventions:** For Hair consult cards, do not re-add broad template restore strips around the left client panel as a quick fix; keep post-process to forced bottom fade plus mirror unless a targeted artifact fix is designed. Drape prompts should forbid twin forward curtains while preserving visible back/behind-shoulder hair.
+
+---
+
+## 2026-06-16 — Unit PDP cap size chart modal image (IMG_2798)
+
+- **Context:** User asked to replace the cap size chart image shown in the product pages’ popup modal with a new Supabase-hosted asset (`live-preview/3D Stock/IMG_2798.png`).
+- **Topics covered:** Unit PDP cap size chart inline thumbnail vs enlarged modal; shared layout constants in `unitPdpLayoutConstants.ts`.
+- **Decisions / outcomes:** Only the **modal popup** image was swapped (inline thumbnail `/assets/NOIR/cap-size-chart.png` unchanged). New URL centralized as **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`** so all six unit PDPs stay in sync.
+- **Changes:** `src/components/shop/unitPdpLayoutConstants.ts` (new constant); modal `<img src>` updated on NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL pages (replaced `/assets/wig-chart.png`). Committed and pushed to **`master`** and **`preview/mobile`**.
+- **Conventions:** Future cap size chart modal asset updates should change **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`** only.
