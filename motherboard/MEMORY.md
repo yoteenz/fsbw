@@ -28667,3 +28667,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to update the first **signature features** bullet on **all six** unit PDPs to **HD FILM LACE, PRE-PLUCKED HAIRLINE** (was **MELTED LACE, NATURAL HAIRLINE**). BLANCO-only knots/customization lines unchanged.
 - **Changes:** `SHARED_SIGNATURE_LACE_HAIRLINE` in `unitPdpDetailsConfig.ts`; used in `buildSignatureFeatures` for every `WigUnitKey`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — NOIR details bullet: natural off black color phrasing
+
+- **Context:** User asked to update the **HANDMADE UNIT MEASURING 24 INCHES…** details bullet where it applies — exact copy targets **NOIR** (250% density, **A NATURAL OFF BLACK HAIR COLOR**).
+- **Changes:** `noir.colorPhrase` in `unitPdpDetailsConfig.ts`: `AN OFF BLACK NATURAL HAIR COLOR` → `A NATURAL OFF BLACK HAIR COLOR`. Other units unchanged (200% off-black units, BLANCO platinum). Pushed **`master`** + **`preview/mobile`**.
