@@ -28653,3 +28653,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to update one **signature features** bullet on **BLANCO** PDP only to **VENTILATED SINGLE STRAND KNOTS** (other units keep **LIGHTLY BLEACHED SINGLE STRAND KNOTS**).
 - **Changes:** `src/utils/unitPdpDetailsConfig.ts` — `buildSignatureFeatures` branches on `unitKey === 'blanco'`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — BLANCO signature feature: colored dyed customized
+
+- **Context:** User asked to update another **BLANCO-only** signature features bullet to **CAN BE COLORED, DYED & CUSTOMIZED** (other units keep **CAN BE COLORED, BLEACHED & CUSTOMIZED**).
+- **Changes:** `buildSignatureFeatures` in `unitPdpDetailsConfig.ts` — `customizationLine` branch for `blanco`. Pushed **`master`** + **`preview/mobile`**.
