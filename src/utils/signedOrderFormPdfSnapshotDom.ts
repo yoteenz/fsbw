@@ -324,6 +324,22 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   emailWrap.appendChild(textInput(val(form, 'email')));
   formCol.appendChild(emailWrap);
 
+  const orderTotalWrap = document.createElement('div');
+  const orderTotalLab = document.createElement('label');
+  Object.assign(orderTotalLab.style, labelStyle());
+  orderTotalLab.innerHTML = `ORDER TOTAL PAID<span style="color:${RED};font-weight:normal">*</span>`;
+  orderTotalWrap.appendChild(orderTotalLab);
+  orderTotalWrap.appendChild(textInput(val(form, 'orderTotalPaid')));
+  formCol.appendChild(orderTotalWrap);
+
+  const paymentWrap = document.createElement('div');
+  const paymentLab = document.createElement('label');
+  Object.assign(paymentLab.style, labelStyle());
+  paymentLab.innerHTML = `PAYMENT METHOD USED<span style="color:${RED};font-weight:normal">*</span>`;
+  paymentWrap.appendChild(paymentLab);
+  paymentWrap.appendChild(textInput(val(form, 'paymentMethodUsed')));
+  formCol.appendChild(paymentWrap);
+
   const authChecks = document.createElement('div');
   Object.assign(authChecks.style, {
     display: 'flex',
@@ -356,7 +372,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
 
   const photoLabel = document.createElement('label');
   Object.assign(photoLabel.style, labelStyle());
-  photoLabel.innerHTML = `<span style="color:${RED};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">PHOTO ID</span> (CARDHOLDER) NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style="color:${RED};font-weight:normal">*</span>`;
+  photoLabel.innerHTML = `<span style="color:${RED};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">IDENTITY VERIFICATION</span> — CARDHOLDER NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style="color:${RED};font-weight:normal">*</span>`;
   const photoBlock = document.createElement('div');
   photoBlock.appendChild(photoLabel);
   const hasPhoto = !!(form.photoIdDataUrl && form.photoIdDataUrl.startsWith('data:image'));
@@ -365,7 +381,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
 
   const cardLabel = document.createElement('label');
   Object.assign(cardLabel.style, labelStyle());
-  cardLabel.innerHTML = `<span style="color:${RED};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">LAST 4 DIGITS</span> (CARDHOLDER) PHOTO IDENTIFICATION SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD THIS BOX IF USING A PAYMENT PLAN.`;
+  cardLabel.innerHTML = `<span style="color:${RED};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">PAYMENT VERIFICATION</span> — PHOTO SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD IF USING A PAYMENT PLAN.`;
   const cardBlock = document.createElement('div');
   Object.assign(cardBlock.style, { transform: 'translateY(7px)' });
   cardBlock.appendChild(cardLabel);
@@ -382,6 +398,41 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   addrReason.appendChild(addrLab);
   addrReason.appendChild(textareaBlock(val(form, 'addressDifferenceReason'), solidWhite));
   uploadCol.appendChild(addrReason);
+
+  const ackCol = document.createElement('div');
+  Object.assign(ackCol.style, {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    marginTop: '15px',
+  });
+  ackCol.appendChild(
+    checkboxRow(
+      signedLike && val(form, 'ackNoChargeback') === 'true',
+      `I AGREE TO CONTACT FRONTAL SLAYER DIRECTLY REGARDING ANY ORDER CONCERNS BEFORE INITIATING A CHARGEBACK, PAYMENT DISPUTE, OR CLAIM WITH MY FINANCIAL INSTITUTION.<span style="color:${RED}">*</span>`,
+    ),
+  );
+  if (val(form, 'ackRawHairVariation') === 'true') {
+    ackCol.appendChild(
+      checkboxRow(
+        true,
+        `I UNDERSTAND THAT RAW HUMAN HAIR IS A NATURAL PRODUCT AND SLIGHT VARIATIONS IN COLOR, TEXTURE, DENSITY, CURL PATTERN, AND LACE APPEARANCE ARE NORMAL AND NOT CONSIDERED DEFECTS.<span style="color:${RED}">*</span>`,
+      ),
+    );
+  }
+  if (val(form, 'ackProcessingTimeline') === 'true') {
+    const timeline = val(form, 'processingTimelineLabel');
+    const procLabel = timeline
+      ? `I HAVE REVIEWED AND UNDERSTAND THE PROCESSING TIMELINE ASSOCIATED WITH MY ORDER (${timeline}) AND UNDERSTAND THAT PROCESSING TIMES AND SHIPPING TIMES ARE SEPARATE.`
+      : 'I HAVE REVIEWED AND UNDERSTAND THE PROCESSING TIMELINE ASSOCIATED WITH MY ORDER AND UNDERSTAND THAT PROCESSING TIMES AND SHIPPING TIMES ARE SEPARATE.';
+    ackCol.appendChild(
+      checkboxRow(
+        true,
+        `${procLabel}<span style="color:${RED}">*</span>`,
+      ),
+    );
+  }
+  uploadCol.appendChild(ackCol);
 
   const signSection = document.createElement('div');
   Object.assign(signSection.style, { marginTop: '13px', marginBottom: solidWhite ? '0' : '-6px' });

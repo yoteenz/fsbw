@@ -1906,6 +1906,9 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         state: orderData.state,
                         zip: orderData.zip,
                         country: orderData.country,
+                        orderTotal: orderData.orderTotal,
+                        paymentMethod: orderData.paymentMethod,
+                        processingTime: (orderData as { processingTime?: string }).processingTime,
                         giftCardIdentityVerificationOnly: summaryRequiresGiftCardIdentityForm,
                       },
                     });

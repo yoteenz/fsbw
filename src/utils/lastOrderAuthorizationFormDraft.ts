@@ -28,6 +28,8 @@ export type OrderAuthorizationFormDraftFields = {
   cardLastFour?: string;
   cardType?: string;
   expirationDate?: string;
+  orderTotalPaid?: string;
+  paymentMethodUsed?: string;
   addressDifferenceReason?: string;
 };
 
@@ -67,6 +69,8 @@ export function saveLastOrderAuthorizationFormDraft(
       firstName: trimStr(f.firstName),
       lastName: trimStr(f.lastName),
       email: trimStr(f.email),
+      orderTotalPaid: trimStr(f.orderTotalPaid),
+      paymentMethodUsed: trimStr(f.paymentMethodUsed),
       phone: trimStr(f.phone),
       address: trimStr(f.address),
       city: trimStr(f.city),
@@ -116,6 +120,8 @@ export function loadLastOrderAuthorizationFormDraft(
         firstName: trimStr(fields.firstName),
         lastName: trimStr(fields.lastName),
         email: trimStr(fields.email),
+        orderTotalPaid: trimStr(fields.orderTotalPaid),
+        paymentMethodUsed: trimStr(fields.paymentMethodUsed),
         phone: trimStr(fields.phone),
         address: trimStr(fields.address),
         city: trimStr(fields.city),

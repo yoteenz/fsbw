@@ -2991,7 +2991,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                   city: currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || '',
                                   state: currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || '',
                                   zip: currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || '',
-                                  country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
+                                  country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES',
+                                  orderTotal: order.total,
+                                  paymentMethod: (order as { paymentMethod?: string }).paymentMethod,
+                                  processingTime: (order as { processingTime?: string }).processingTime,
                                 };
                               } else {
                                 customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
@@ -3935,7 +3938,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                   city: currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || '',
                                   state: currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || '',
                                   zip: currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || '',
-                                  country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
+                                  country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES',
+                                  orderTotal: order.total,
+                                  paymentMethod: (order as { paymentMethod?: string }).paymentMethod,
+                                  processingTime: (order as { processingTime?: string }).processingTime,
                                 };
                               } else {
                                 customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
