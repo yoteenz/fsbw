@@ -1543,7 +1543,7 @@ function OrderFormPage() {
                           <label
                             style={{
                               fontFamily: '"Futura PT Book"',
-                              fontSize: '10px',
+                              fontSize: '11px',
                               color: '#000000',
                               cursor: 'pointer',
                               textTransform: 'uppercase',
@@ -1597,7 +1597,7 @@ function OrderFormPage() {
                             <label
                               style={{
                                 fontFamily: '"Futura PT Book"',
-                                fontSize: '10px',
+                                fontSize: '11px',
                                 color: '#000000',
                                 cursor: 'pointer',
                                 textTransform: 'uppercase',
@@ -1637,7 +1637,7 @@ function OrderFormPage() {
                             <label
                               style={{
                                 fontFamily: '"Futura PT Book"',
-                                fontSize: '10px',
+                                fontSize: '11px',
                                 color: '#000000',
                                 cursor: 'pointer',
                                 textTransform: 'uppercase',
