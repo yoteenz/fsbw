@@ -47,7 +47,7 @@ const UNIT_PDP_DETAILS_SPECS: Record<WigUnitKey, UnitPdpDetailsSpec> = {
     origin: 'CAMBODIAN',
     pattern: 'STRAIGHT',
     density: '250%',
-    colorPhrase: 'AN OFF BLACK NATURAL HAIR COLOR',
+    colorPhrase: 'A NATURAL OFF BLACK HAIR COLOR',
   },
   blanco: {
     origin: 'RUSSIAN',
