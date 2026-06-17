@@ -28930,3 +28930,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to replace the order form hero image with **`live-preview/3D Stock/IMG_2949.png`** instead of the prior ChatGPT-generated filename.
 - **Changes:** **`ORDER_FORM_HERO_IMAGE_SRC`** in **`src/constants/orderFormAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form hero: 12px spacing above image
+
+- **Context:** User asked for **12px** spacing above the order form hero image (below the header divider).
+- **Changes:** **`order-form/page.tsx`** — hero **`marginTop: 12px`**. Pushed **`master`** + **`preview/mobile`**.
