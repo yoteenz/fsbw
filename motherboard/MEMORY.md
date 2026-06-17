@@ -28660,3 +28660,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to update another **BLANCO-only** signature features bullet to **CAN BE COLORED, DYED & CUSTOMIZED** (other units keep **CAN BE COLORED, BLEACHED & CUSTOMIZED**).
 - **Changes:** `buildSignatureFeatures` in `unitPdpDetailsConfig.ts` — `customizationLine` branch for `blanco`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — All units: HD film lace pre-plucked hairline signature
+
+- **Context:** User asked to update the first **signature features** bullet on **all six** unit PDPs to **HD FILM LACE, PRE-PLUCKED HAIRLINE** (was **MELTED LACE, NATURAL HAIRLINE**). BLANCO-only knots/customization lines unchanged.
+- **Changes:** `SHARED_SIGNATURE_LACE_HAIRLINE` in `unitPdpDetailsConfig.ts`; used in `buildSignatureFeatures` for every `WigUnitKey`. Pushed **`master`** + **`preview/mobile`**.
