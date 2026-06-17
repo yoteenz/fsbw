@@ -28888,6 +28888,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-17 — Order form: less spacing above BY SIGNING checkbox
+
+- **Context:** User asked to reduce spacing above the **BY SIGNING + SUBMITTING** checkbox by **4px** only.
+- **Changes:** Signature section **`marginTop` 9px → 5px** in **`order-form/page.tsx`** and **`signedOrderFormPdfSnapshotDom.ts`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-17 — Order form intro: rose bullet first-line alignment
 
 - **Context:** User reported **please note** rose bullets sat above the text line instead of inline with it (unlike NOIR PDP policy/shipping tabs).
