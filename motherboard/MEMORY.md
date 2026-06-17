@@ -28639,3 +28639,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to change the NOIR inline cap chart size increase from **20%** to **15%** vs other unit PDPs (`UNIT_PDP_CAP_CHART_IMG_STYLE`). Image (`IMG_2811`) and popup (`IMG_2798`) unchanged.
 - **Changes:** `UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE` clamp bounds × **1.15** (was × 1.2). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Home/tools gift card strip arrow vertical centering
+
+- **Context:** User asked to center the carousel arrows vertically within their container on **`/home/tools`** only (not **`/tools`**).
+- **Changes:** `src/pages/tools/page.tsx` — on **`/home/tools`**, gift card prev/next arrows use a flex overlay (`position: absolute; inset: 0; alignItems: center`) inside the marble strip viewport so they center against the strip content box; legacy `top: 50%` absolute arrows kept for **`/tools`**. Pushed **`master`** + **`preview/mobile`**.
