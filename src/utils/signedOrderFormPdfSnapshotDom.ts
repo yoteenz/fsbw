@@ -372,7 +372,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
 
   const photoLabel = document.createElement('label');
   Object.assign(photoLabel.style, labelStyle());
-  photoLabel.innerHTML = `<span style="color:${RED};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">IDENTITY VERIFICATION</span> — CARDHOLDER NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style="color:${RED};font-weight:normal">*</span>`;
+  photoLabel.innerHTML = `<span style="color:${GRAY_TEXT};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">IDENTITY VERIFICATION</span> — CARDHOLDER NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style="color:${RED};font-weight:normal">*</span>`;
   const photoBlock = document.createElement('div');
   photoBlock.appendChild(photoLabel);
   const hasPhoto = !!(form.photoIdDataUrl && form.photoIdDataUrl.startsWith('data:image'));
@@ -381,7 +381,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
 
   const cardLabel = document.createElement('label');
   Object.assign(cardLabel.style, labelStyle());
-  cardLabel.innerHTML = `<span style="color:${RED};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">PAYMENT VERIFICATION</span> — PHOTO SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD IF USING A PAYMENT PLAN.`;
+  cardLabel.innerHTML = `<span style="color:${GRAY_TEXT};font-family:&quot;Futura PT Medium&quot;,Futura,sans-serif">PAYMENT VERIFICATION</span> — PHOTO SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD IF USING A PAYMENT PLAN.`;
   const cardBlock = document.createElement('div');
   Object.assign(cardBlock.style, { transform: 'translateY(7px)' });
   cardBlock.appendChild(cardLabel);

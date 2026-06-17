@@ -1413,13 +1413,13 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>IDENTITY VERIFICATION</span> — CARDHOLDER NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                        <span style={{ color: '#808080', fontFamily: '"Futura PT Medium"' }}>IDENTITY VERIFICATION</span> — CARDHOLDER NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
                       <p
                         style={{
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
-                          color: '#EB1C24',
+                          color: '#808080',
                           textTransform: 'uppercase',
                           margin: '0 0 8px 0',
                           lineHeight: '1.35'
@@ -1451,13 +1451,13 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>PAYMENT VERIFICATION</span> — PHOTO SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD IF USING A PAYMENT PLAN.
+                        <span style={{ color: '#808080', fontFamily: '"Futura PT Medium"' }}>PAYMENT VERIFICATION</span> — PHOTO SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD IF USING A PAYMENT PLAN.
                       </label>
                       <p
                         style={{
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
-                          color: '#EB1C24',
+                          color: '#808080',
                           textTransform: 'uppercase',
                           margin: '0 0 8px 0',
                           lineHeight: '1.35'

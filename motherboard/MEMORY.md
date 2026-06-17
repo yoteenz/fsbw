@@ -28828,3 +28828,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to remove commas before **and** / **or** / **but** on the order form and relevant customer-facing pages (e.g. **CANCELLATIONS OR VERIFICATION** not **CANCELLATIONS, OR VERIFICATION**).
 - **Changes:** Batch-updated **`src/`** and customer-facing **`api/`** strings: order form intro/acks/PDF snapshot, brand about/member copy, shop policy tabs, checkout, sign-in, PSA quiz, affiliate/careers copy, meeting client alerts, etc. Regex skips state abbreviations (**PORTLAND, OR 97201**). Internal AI prompt files left unchanged where skipped. **`npm run build`** passes. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form upload labels: red → gray
+
+- **Context:** User asked to change red **IDENTITY VERIFICATION** and **PAYMENT VERIFICATION** text back to gray on the order form.
+- **Changes:** **`order-form/page.tsx`** — upload section headings and **`ORDER_FORM_UPLOAD_PRIVACY_NOTE`** paragraphs use **`#808080`** again (required **\*** stays red). **`signedOrderFormPdfSnapshotDom.ts`** — matching PDF label spans use **`GRAY_TEXT`**. Pushed **`master`** + **`preview/mobile`**.
