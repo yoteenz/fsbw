@@ -28814,3 +28814,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted **“this form serves as”** lowercase; confirmed the three chargeback/raw-hair/processing ack checkbox lines should match **11px** like the **BY SIGNING** line (they were **10px**).
 - **Changes:** **`orderFormIntroCopy.ts`** — **`ORDER_FORM_INTRO_PURPOSE_TITLE`** → **`this form serves as`**. **`order-form/page.tsx`** — ack checkbox labels **10px → 11px**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form please note: rose bullets
+
+- **Context:** User asked **please note** intro bullets to use Rose bullets (same as product PDP tabs) instead of red **•** marks.
+- **Changes:** **`OrderFormIntroText.tsx`** — **`RoseBulletLine`** uses **`/assets/rose-alert.svg`** via **`noirProductTabRoseBadge`** for **`ORDER_FORM_INTRO_PLEASE_NOTE_BULLETS`** only; **this form serves as** bullets unchanged. Pushed **`master`** + **`preview/mobile`**.
