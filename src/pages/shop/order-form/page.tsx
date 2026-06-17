@@ -1419,7 +1419,7 @@ function OrderFormPage() {
                         style={{
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
-                          color: '#808080',
+                          color: '#EB1C24',
                           textTransform: 'uppercase',
                           margin: '-2px 0 8px 0',
                           lineHeight: '1.35'
@@ -1457,7 +1457,7 @@ function OrderFormPage() {
                         style={{
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
-                          color: '#808080',
+                          color: '#EB1C24',
                           textTransform: 'uppercase',
                           margin: '-2px 0 8px 0',
                           lineHeight: '1.35'
