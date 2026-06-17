@@ -83,7 +83,7 @@ const placementStyle: Record<
   'bottom-center': { bottom: 0, left: '50%', transform: 'translateX(-50%)' },
 };
 
-/** Wraps a lobby asset; shows DOWNLOAD in dev, `?lobbyAssets=1`, or signed-in admin. */
+/** Wraps a lobby asset; shows DOWNLOAD in dev, `?lobbyAssets=1` or signed-in admin. */
 export function LobbyAssetDownloadAnchor({
   href,
   downloadFilename,

@@ -12,7 +12,7 @@ export type LobbyPhonePopoverLinePart = {
   emphasis?: 'futura-medium-gray';
 };
 
-/** Single-style line, or mixed spans (e.g. gray Medium “72 HOURS” mid-sentence). */
+/** Single-style line or mixed spans (e.g. gray Medium “72 HOURS” mid-sentence). */
 export type LobbyPhonePopoverLine =
   | { text: string; emphasis?: 'futura-medium-gray' }
   | { parts: readonly LobbyPhonePopoverLinePart[] };

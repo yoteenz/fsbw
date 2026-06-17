@@ -25,23 +25,23 @@ const FRONT_SINGLE_SHOULDER_DRAPE =
   'Front-view hair must drape asymmetrically: long hair falls over exactly ONE shoulder only (pick the shoulder that already carries more hair in the reference and commit). The opposite shoulder stays mostly clear — no matching “curtain” of hair, no mirrored twin drape, no equal lengths hanging on both sides.';
 
 const WIG_CONSULT_STEP1_PROMPT = [
-  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like your standard white/rose studio consult backdrop.',
+  'Recreate this exact mannequin image but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like your standard white/rose studio consult backdrop.',
   'On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible - red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red.',
   FRONT_SINGLE_SHOULDER_DRAPE,
   'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Keep mannequin identity, pose, and framing; only adjust background, brand mark clarity, and long-hair shoulder drape as specified — do not invent a second symmetric hair fall.',
+  'Keep mannequin identity, pose and framing; only adjust background, brand mark clarity and long-hair shoulder drape as specified — do not invent a second symmetric hair fall.',
 ].join(' ');
 
 const WIG_CONSULT_STEP1_PROMPT_WITH_BACKDROP_REFERENCE = [
   'You receive multiple images in order.',
   'IMAGE 1 is the exact mannequin image to recreate and must remain the output canvas.',
   'IMAGE 2 and any later images are white studio backdrop references with the correct rose detailing.',
-  'Replace only the gray brick background in IMAGE 1 with the same white backdrop and the same rose detailing placement, amount, scale, and edge treatment shown across the backdrop reference images.',
-  'Keep the mannequin identity, pose, framing, and lighting from IMAGE 1.',
+  'Replace only the gray brick background in IMAGE 1 with the same white backdrop and the same rose detailing placement, amount, scale and edge treatment shown across the backdrop reference images.',
+  'Keep the mannequin identity, pose, framing and lighting from IMAGE 1.',
   FRONT_SINGLE_SHOULDER_DRAPE,
   'On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible - red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Do not mirror hair equally onto both shoulders; do not change anything else about the mannequin beyond background, brand mark, and asymmetric shoulder drape above.',
+  'Do not mirror hair equally onto both shoulders; do not change anything else about the mannequin beyond background, brand mark and asymmetric shoulder drape above.',
 ].join(' ');
 
 const COLOR_SWATCHES: Record<string, ColorSwatch> = {
@@ -167,7 +167,7 @@ function formatStyling(styling: string, partSelection?: string): string {
   if (!phrases.length) return '';
   if (phrases.length === 1) return phrases[0];
   if (phrases.length === 2) return `${phrases[0]} with ${phrases[1]}`;
-  return `${phrases.slice(0, -1).join(', ')}, and ${phrases[phrases.length - 1]}`;
+  return `${phrases.slice(0, -1).join(', ')} and ${phrases[phrases.length - 1]}`;
 }
 
 function formatAddOns(addOns: string[]): string {
@@ -183,7 +183,7 @@ function formatAddOns(addOns: string[]): string {
   if (!phrases.length) return '';
   if (phrases.length === 1) return phrases[0];
   if (phrases.length === 2) return `${phrases[0]} and ${phrases[1]}`;
-  return `${phrases.slice(0, -1).join(', ')}, and ${phrases[phrases.length - 1]}`;
+  return `${phrases.slice(0, -1).join(', ')} and ${phrases[phrases.length - 1]}`;
 }
 
 function buildWigConsultChainEditPrompt(
@@ -195,7 +195,7 @@ function buildWigConsultChainEditPrompt(
   const toD = String(toDescription || '').trim() || 'target state';
   const asym = options?.frontHairAsymmetry ? FRONT_SINGLE_SHOULDER_DRAPE : '';
   return [
-    `Recreate this exact mannequin image, but change the ${fromD} to ${toD}.`,
+    `Recreate this exact mannequin image but change the ${fromD} to ${toD}.`,
     asym,
     bawFalEditPreserveReferenceBlock(),
     'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',

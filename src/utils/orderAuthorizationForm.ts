@@ -1,6 +1,6 @@
 /**
  * Order authorization form: only **custom units** (cap-size lines), **BCF bundles / closures / frontals**,
- * not bookings, gift cards, membership, or other digital-only lines.
+ * not bookings, gift cards, membership or other digital-only lines.
  */
 
 import { orderUsesDigitalFulfillmentTimeline } from './digitalOrderFulfillment';

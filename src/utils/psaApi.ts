@@ -152,7 +152,7 @@ async function refreshSupabaseSessionOnce(): Promise<void> {
 
 export function psaSessionExpiredMessage(): string {
   if (isSignedIn()) {
-    return 'Your session expired. Sign out and sign back in, or open Account → Settings and tap Sync my account, then try PSA again.';
+    return 'Your session expired. Sign out and sign back in or open Account → Settings and tap Sync my account, then try PSA again.';
   }
   return 'Sign in to chat with PSA.';
 }
@@ -361,7 +361,7 @@ export async function postPsaChat(
       ok: false,
       code: 'SERVER',
       message:
-        'PSA had trouble forming a reply. Ask again in a second, or open Build-a-Wig for live pricing on your unit.',
+        'PSA had trouble forming a reply. Ask again in a second or open Build-a-Wig for live pricing on your unit.',
     };
   }
   const clientActions = Array.isArray(data.clientActions) ? data.clientActions : undefined;

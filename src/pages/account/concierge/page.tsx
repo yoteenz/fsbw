@@ -2886,9 +2886,9 @@ function ConciergePage() {
                               const selectedOrder = activeOrders.find((o: any) => o.id === selectedOrderId);
                               const isDelivered = selectedOrder?.status === 'DELIVERED';
                               
-                              // If delivered, show "PACKAGE DELIVERED" with date, time, and location
+                              // If delivered, show "PACKAGE DELIVERED" with date, time and location
                               if (isDelivered) {
-                                // Format delivery date to get weekday, month, and day
+                                // Format delivery date to get weekday, month and day
                                 const formatDeliveryDate = (dateStr: string | undefined) => {
                                   if (!dateStr) return null;
                                   try {
@@ -3118,7 +3118,7 @@ function ConciergePage() {
                               const isDelivered = selectedOrder?.status === 'DELIVERED';
                               
                               if (isDelivered) {
-                                // Format delivery date to get weekday, month, and day
+                                // Format delivery date to get weekday, month and day
                                 const formatDeliveryDate = (dateStr: string | undefined) => {
                                   if (!dateStr) return null;
                                   try {
@@ -3805,7 +3805,7 @@ function ConciergePage() {
                                 
                                 // previousStageComplete is already calculated above, reuse it here
                                 
-                                // Allow expansion for completed, current, or next stage when previous is 100% complete
+                                // Allow expansion for completed, current or next stage when previous is 100% complete
                                 const isExpandable = isCompleted || isCurrent || isDeliveredLastStage || previousStageComplete;
 
                               return (
@@ -4672,7 +4672,7 @@ function ConciergePage() {
                                           ESTIMATED DURATION: {durationText}
                                         </p>
                                         
-                                        {/* Progress Bar - Always show for current, completed, or delivered stages */}
+                                        {/* Progress Bar - Always show for current, completed or delivered stages */}
                                         {(isCurrent || isCompleted || isDeliveredLastStage) && (
                                           <div style={{ marginTop: '3px' }}>
                                             <div

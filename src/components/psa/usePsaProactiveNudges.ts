@@ -15,7 +15,7 @@ const REFRESH_EVENTS = [
   'storage',
 ] as const;
 
-/** Recompute proactive FAB nudge when cart, orders, or alerts change. */
+/** Recompute proactive FAB nudge when cart, orders or alerts change. */
 export function usePsaProactiveNudges(enabled: boolean) {
   const location = useLocation();
   const [nudge, setNudge] = useState<PsaProactiveNudge | null>(() =>

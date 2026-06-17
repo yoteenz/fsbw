@@ -1209,7 +1209,7 @@ function ColorSelection() {
     if (currentColor === 'OFF BLACK') {
       return (
         <>
-          COLOR MATCH IS PROXIMATE, BUT NOT EXACT.<br />
+          COLOR MATCH IS PROXIMATE BUT NOT EXACT.<br />
           STANDARD PROCESSING TIME APPLIES.
         </>
       );
@@ -1218,7 +1218,7 @@ function ColorSelection() {
     // For all other color options
     return (
       <>
-        COLOR MATCH IS PROXIMATE, BUT NOT EXACT.<br />
+        COLOR MATCH IS PROXIMATE BUT NOT EXACT.<br />
         EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
       </>
     );
@@ -1810,7 +1810,7 @@ function ColorSelection() {
             .finally(() => setRegenAllBusy(false));
         }}
         title="REGENERATE ALL ANGLES"
-        message="REGENERATE LEFT, FRONT, AND RIGHT WITH FAL? THIS MAY TAKE A MINUTE AND REPLACES CACHED WEBPS FOR THIS COLOR TIER."
+        message="REGENERATE LEFT, FRONT AND RIGHT WITH FAL? THIS MAY TAKE A MINUTE AND REPLACES CACHED WEBPS FOR THIS COLOR TIER."
         confirmText="REGENERATE"
         cancelText="CANCEL"
         dataAttribute="regen-all-noir-color-confirm"

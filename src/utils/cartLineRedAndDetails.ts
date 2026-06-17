@@ -1,6 +1,6 @@
 /**
  * Collapsed red subtitle for BCF (`shop-texture-category`) + booking (A/C) lines in cart dropdown,
- * bag, and checkout strip — full specs live under VIEW DETAILS (like unit wigs).
+ * bag and checkout strip — full specs live under VIEW DETAILS (like unit wigs).
  * BCF uses {@link CART_RED_LINE_BCF_BOOKING}; A/C uses {@link bookingCartRedSubtitle}.
  */
 

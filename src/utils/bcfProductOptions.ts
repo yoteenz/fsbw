@@ -586,7 +586,7 @@ function bcfCartCategoryFromShopId(id?: string): ShopTextureCategoryThumbCategor
 }
 
 /**
- * BCF shop cart thumbnail: **bundles**, **closures**, and **frontals** all use the same marble PNGs as the home/shop
+ * BCF shop cart thumbnail: **bundles**, **closures** and **frontals** all use the same marble PNGs as the home/shop
  * grid (`shopTextureCategoryThumbSrc` → Supabase `live-preview/BCF/image (43–51).png`) —
  * not PDP hero JPG/Supabase photos stored on `item.image`.
  */

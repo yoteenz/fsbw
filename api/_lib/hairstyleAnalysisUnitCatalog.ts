@@ -57,7 +57,7 @@ const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
     fiber: 'silky straight (stock SILKY finish — high gloss, pin-straight)',
     render:
       'appears **straight** — pin-straight sleek Cambodian raw hair with silky shine; falls straight with natural weight',
-    forbidden: 'any wave, wavy motion, curls, kinky, yaki, coily, afro-textured, or beach-wave pattern',
+    forbidden: 'any wave, wavy motion, curls, kinky, yaki, coily, afro-textured or beach-wave pattern',
   },
   BLANCO: {
     pattern: 'STRAIGHT',
@@ -68,7 +68,7 @@ const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
     render:
       'appears **straight** — silky glass-straight Russian raw hair; smooth, lustrous, pin-straight blonde/platinum family',
     forbidden:
-      'any wave, wavy motion, curls, kinky, yaki, coily, afro-textured, crimped, or fuzzy texture — BLANCO is NEVER wavy or curly',
+      'any wave, wavy motion, curls, kinky, yaki, coily, afro-textured, crimped or fuzzy texture — BLANCO is NEVER wavy or curly',
   },
   'SOFT WAVE': {
     pattern: 'WAVY',
@@ -78,7 +78,7 @@ const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
     fiber: 'loose soft wave (gentlest S-wave tier)',
     render:
       'appears **loose wave** — soft brushed S-wave with gentle relaxed motion; loosest wave tier (less defined than BEACH WAVE)',
-    forbidden: 'pin-straight, tight waves (SOFT CURL), tight spiral curls (OCEAN CURL), or kinky afro texture',
+    forbidden: 'pin-straight, tight waves (SOFT CURL), tight spiral curls (OCEAN CURL) or kinky afro texture',
   },
   'BEACH WAVE': {
     pattern: 'WAVY',
@@ -88,7 +88,7 @@ const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
     fiber: 'true beach wave (rolling S-waves)',
     render:
       'appears **true wavy** — clear rolling beach-wave S-pattern; more defined wave than SOFT WAVE loose wave',
-    forbidden: 'pin-straight, loose-only SOFT WAVE fluff, tight waves (SOFT CURL), tight spiral curls (OCEAN CURL), or kinky texture',
+    forbidden: 'pin-straight, loose-only SOFT WAVE fluff, tight waves (SOFT CURL), tight spiral curls (OCEAN CURL) or kinky texture',
   },
   'SOFT CURL': {
     pattern: 'TIGHT_WAVE',
@@ -99,7 +99,7 @@ const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
     render:
       'appears **tight wave** — compact elongated waves with minimal spiral; Filipino raw hair at the tightest **wave** tier only',
     forbidden:
-      'spiral curls, ringlets, corkscrews, ocean-curl pattern, springy curl clumps, or any texture that reads like OCEAN CURL',
+      'spiral curls, ringlets, corkscrews, ocean-curl pattern, springy curl clumps or any texture that reads like OCEAN CURL',
   },
   'OCEAN CURL': {
     pattern: 'CURLY',
@@ -110,7 +110,7 @@ const UNIT_CATALOG: Record<CatalogUnitName, UnitCatalogEntry> = {
     render:
       'appears **tight curl** — springy spiral ringlets and defined curl clumps; Vietnamese raw hair — the only BAW unit with true tight curls',
     forbidden:
-      'straight, loose wave (SOFT WAVE), true wavy-only (BEACH WAVE), tight-wave-only (SOFT CURL), or pin-straight',
+      'straight, loose wave (SOFT WAVE), true wavy-only (BEACH WAVE), tight-wave-only (SOFT CURL) or pin-straight',
   },
 };
 
@@ -194,7 +194,7 @@ export function unitColorPromptLine(unit: string, color: string, hex: string): s
   if (requiresUniformRootToTipColor(colorKey)) {
     return [
       `COLOR ${colorKey} on ${unitKey ?? unit}: BAW custom color — **one uniform ${colorKey} tone root to tip** (pigment ${pigment}).`,
-      'FORBIDDEN: dark roots, black roots, shadow roots, ombré, dip-dye, two-tone regrowth, or natural root melt.',
+      'FORBIDDEN: dark roots, black roots, shadow roots, ombré, dip-dye, two-tone regrowth or natural root melt.',
       `Every strand from lace to ends reads as ${colorKey} — lighting shine only, not a second root color.`,
       `Clean lace-front edge — do NOT add baby hairs; **erase** forehead fuzz on skin; lace-zone hair strands = ${colorKey} only.`,
     ].join(' ');
@@ -234,7 +234,7 @@ export function bawColorApplicationRulesBlock(): string {
   return [
     '=== BAW COLOR — ROOT TO TIP (CRITICAL) ===',
     'Build-a-Wig custom/lifted colors are **one uniform tone from root to tip** on the installed unit.',
-    'FORBIDDEN on vivid + blonde colors: dark/black roots, shadow roots, ombré, dip-dye, or two-tone regrowth.',
+    'FORBIDDEN on vivid + blonde colors: dark/black roots, shadow roots, ombré, dip-dye or two-tone regrowth.',
     'Repaint IMAGE 2 natural black roots fully — mannequin/styling IMAGEs are black stock; copy texture only, never black pigment.',
     'Clean lace-front edge on all looks — **do NOT add** baby hairs; **erase** forehead/temple fuzz on skin.',
     'CHERRY example: vivid red (#FF1400) **same saturation from lace to ends** — zero dark root band.',

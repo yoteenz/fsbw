@@ -91,7 +91,7 @@ function mockSignatureDataUrl(): string {
 /**
  * Sample signed form for admin PDF approval: mock ID / card / signature images + fields.
  * Its PDF uses a **plain white** snapshot: same field stack/positions as `/shop/order-form`, without marble, card chrome,
- * intro paragraphs, submit, or “CLEAR SIGNATURE”. Real stored forms still use the full-page snapshot.
+ * intro paragraphs, submit or “CLEAR SIGNATURE”. Real stored forms still use the full-page snapshot.
  * Prepended to admin “signed forms” list only; not persisted to localStorage.
  */
 export function getMockSignedOrderFormForApproval(): StoredSignedOrderForm {

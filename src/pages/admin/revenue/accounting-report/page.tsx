@@ -358,7 +358,7 @@ export default function AdminAccountingReport() {
                   }}
                 >
                   <span style={{ padding: '4px 8px', border: '1px solid #808080', borderRadius: '4px', backgroundColor: '#F5F5F5', color: '#000000', fontFamily: '"Futura PT Book"' }}>CHOOSE FILE</span>
-                  <span style={{ marginLeft: '8px', color: '#808080', fontSize: '10px' }}>TAKE PHOTO, SCAN, OR CHOOSE FILE</span>
+                  <span style={{ marginLeft: '8px', color: '#808080', fontSize: '10px' }}>TAKE PHOTO, SCAN OR CHOOSE FILE</span>
                 </div>
               </div>
               {currentReceipts.length === 0 ? (

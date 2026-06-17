@@ -1,6 +1,6 @@
 /**
  * GET /api/psa/thread — load active or specific PSA thread + messages.
- * PATCH /api/psa/thread — archive, unarchive, or rename a thread.
+ * PATCH /api/psa/thread — archive, unarchive or rename a thread.
  * DELETE /api/psa/thread — permanently delete a thread (?threadId=).
  *
  * Query:

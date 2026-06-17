@@ -124,7 +124,7 @@ export function buildSlayForecastToolResult(destination: string): Record<string,
       found: false,
       destination,
       message:
-        'No preset forecast for that destination. Ask about heat, humidity, and maintenance tolerance, then recommend from catalog.',
+        'No preset forecast for that destination. Ask about heat, humidity and maintenance tolerance, then recommend from catalog.',
     };
   }
   return {
@@ -144,7 +144,7 @@ export function buildSlayForecastToolResult(destination: string): Record<string,
 
 export function buildPsaSlayForecastBlock(): string {
   return `## Slay Forecast (event / destination mode)
-When a member mentions a trip, wedding, or city (e.g. "going to Miami"), build a **SLAY FORECAST** block:
+When a member mentions a trip, wedding or city (e.g. "going to Miami"), build a **SLAY FORECAST** block:
 
 SLAY FORECAST
 HEAT: {LOW|MODERATE|HIGH}
@@ -154,5 +154,5 @@ WHY: (2 to 3 bullets)
 MAINTENANCE: (one line)
 INSTALL TIMING: (one line)
 
-Call \`get_slay_forecast\` with their destination before guessing. Tie into Build-a-Wig, booking, and Lounge lessons when relevant.`;
+Call \`get_slay_forecast\` with their destination before guessing. Tie into Build-a-Wig, booking and Lounge lessons when relevant.`;
 }

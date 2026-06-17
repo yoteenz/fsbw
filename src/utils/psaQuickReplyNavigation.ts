@@ -30,7 +30,7 @@ function unitPathFromFragment(fragment: string): string | null {
   return null;
 }
 
-/** Path to navigate immediately, or null if this chip should wait for PSA. */
+/** Path to navigate immediately or null if this chip should wait for PSA. */
 export function resolvePsaQuickReplyNavigation(text: string): string | null {
   const trimmed = text.trim();
   if (!trimmed) return null;

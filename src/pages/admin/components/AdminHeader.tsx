@@ -100,7 +100,7 @@ interface AdminHeaderProps {
 
 /**
  * AdminHeader – a small, reusable header bar used in the admin panel.
- * All JSX tags are properly closed, and a safe default handler for `onBack`
+ * All JSX tags are properly closed and a safe default handler for `onBack`
  * is provided to avoid runtime crashes when the prop is omitted or throws.
  */
 export default function AdminHeader({

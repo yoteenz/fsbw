@@ -1,6 +1,6 @@
 /**
  * Red Carpet Mode — premium event session (UI + tone, not a separate product surface).
- * Scoped to the open PSA chat: cleared when the panel closes, a new thread starts, or history switches threads.
+ * Scoped to the open PSA chat: cleared when the panel closes, a new thread starts or history switches threads.
  */
 const STORAGE_KEY = 'psa_red_carpet_active_until';
 

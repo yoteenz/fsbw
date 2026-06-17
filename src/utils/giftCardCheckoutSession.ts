@@ -102,7 +102,7 @@ export function maybeRestoreGiftCardCheckoutCartAfterAbandon(
  * Isolated gift-card checkout: **replaces** the bag with exactly one gift-card line (same idea as
  * `/checkout/gift-card` filtering — no units, BCF, bookings, etc. left in storage).
  * Backs up any existing non–gift-card lines first so cancel/remove can restore the prior bag.
- * Updates cartCount, persists, and dispatches cart sync events. Caller navigates to `/checkout/gift-card`.
+ * Updates cartCount, persists and dispatches cart sync events. Caller navigates to `/checkout/gift-card`.
  */
 export function writeGiftCardSelectionForCheckoutSession(opts: WriteGiftCardCheckoutOpts): number {
   backupCartBeforeGiftCardCheckoutSession();

@@ -48,7 +48,7 @@ function isSafariIos(): boolean {
   return /iP(?:hone|ad|od)/.test(ua) && /Safari|AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua);
 }
 
-/** Call once after every successful sign-in (session restore, password submit, or passkey). Records method, persists backup, and on Safari iOS schedules extra persist retries so backup sticks before app is closed. */
+/** Call once after every successful sign-in (session restore, password submit or passkey). Records method, persists backup and on Safari iOS schedules extra persist retries so backup sticks before app is closed. */
 export function onSignInSuccess(method: 'session_restore' | 'password' | 'passkey'): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
@@ -511,7 +511,7 @@ export function getPreviewAdminAllowedIp(): string | undefined {
   return v ? String(v).trim() : undefined;
 }
 
-/** True when running on preview (localhost, LAN IP, or Vercel preview), false on Vercel production deploy. */
+/** True when running on preview (localhost, LAN IP or Vercel preview), false on Vercel production deploy. */
 export function isPreviewEnvironment(): boolean {
   if (typeof window !== 'undefined') {
     const host = window.location.hostname;

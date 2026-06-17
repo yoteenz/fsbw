@@ -610,7 +610,7 @@ function NoirSelection() {
       const getHairlinePriceFromItem = (item: any) => {
         const hairline = item.hairline || 'NATURAL';
         
-        // CRITICAL: Handle NATURAL, PEAK, LAGOS, and LAGOS+PEAK combination
+        // CRITICAL: Handle NATURAL, PEAK, LAGOS and LAGOS+PEAK combination
         if (!hairline || hairline === 'NATURAL') {
           return 0;
         }
@@ -830,7 +830,7 @@ function NoirSelection() {
       }
       
       // REMOVED: Old code that was incorrectly resetting flexible cap prices to '0'
-      // Flexible caps (XXS/XS/S, S/M/L) correctly cost $40 extra, and this price should be preserved
+      // Flexible caps (XXS/XS/S, S/M/L) correctly cost $40 extra and this price should be preserved
     };
     
     updateExistingCartItems();
@@ -872,7 +872,7 @@ function NoirSelection() {
         // We'll pass the current values to matchesDefaultConfiguration
         // But first, let's get the current cap size - we need to read it fresh
         // Since we can't access state directly in the closure, we'll use a workaround:
-        // Read from the DOM or use a ref, OR better: pass current values to the matching function
+        // Read from the DOM or use a ref OR better: pass current values to the matching function
         
         // For now, let's use the state values but add a note that they might be stale
         // The real fix is to ensure matchesDefaultConfiguration reads current state

@@ -61,7 +61,7 @@ export function saveLastSubmittedBookingConsultHeadMeasurements(
   }
 }
 
-/** Load saved measurements for prefill, or null if none / parse error. */
+/** Load saved measurements for prefill or null if none / parse error. */
 export function loadLastSubmittedBookingConsultHeadMeasurements(
   email: string | null | undefined
 ): BookingConsultHeadMeasurementsSaved | null {

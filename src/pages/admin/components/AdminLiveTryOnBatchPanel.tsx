@@ -930,7 +930,7 @@ export default function AdminLiveTryOnBatchPanel() {
           <strong>RUN PORTRAITS ONLY</strong> — Step 2: all missing NBP/GPT2 portraits; compare before cut.
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
-          <strong>RUN NEXT STEP</strong> — one step (portrait, isolate, or Ideogram cut).
+          <strong>RUN NEXT STEP</strong> — one step (portrait, isolate or Ideogram cut).
         </p>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080' }}>
           <strong>RUN ALL FOR ROW</strong> — finish everything missing for the selected color (best for OFF BLACK now).

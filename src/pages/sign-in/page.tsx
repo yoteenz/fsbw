@@ -1617,7 +1617,7 @@ function SignInPage() {
                             });
                             if (signUpError) {
                               if (signUpError.message.includes('already registered')) {
-                                setEmailError('THIS EMAIL IS ALREADY REGISTERED. SIGN IN ABOVE, OR IF YOU DELETED THIS ACCOUNT AND NEED TO RE-CREATE IT, CONTACT SUPPORT.');
+                                setEmailError('THIS EMAIL IS ALREADY REGISTERED. SIGN IN ABOVE OR IF YOU DELETED THIS ACCOUNT AND NEED TO RE-CREATE IT, CONTACT SUPPORT.');
                               } else {
                                 setValidationMessage(signUpError.message.toUpperCase());
                                 setShowValidationModal(true);

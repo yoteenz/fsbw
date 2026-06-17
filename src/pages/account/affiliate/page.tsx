@@ -77,7 +77,7 @@ const AFFILIATE_PROGRAM_BULLET_MARK_STYLE = { color: '#EB1C24' };
 
 const AFFILIATE_REWARDS_OVERVIEW = [
   'Turn your content into rewards.',
-  'As a Frontal Slayer Affiliate Member, you can earn loyalty points simply by sharing your experience, creating content, referring friends, and engaging with the brand you already love. Every approved action helps you unlock exclusive rewards, discounts, VIP perks, and savings on future purchases.',
+  'As a Frontal Slayer Affiliate Member, you can earn loyalty points simply by sharing your experience, creating content, referring friends and engaging with the brand you already love. Every approved action helps you unlock exclusive rewards, discounts, VIP perks and savings on future purchases.',
   'The more you participate, the more you earn.',
 ];
 
@@ -130,7 +130,7 @@ const AFFILIATE_REWARDS_SECTIONS: AffiliateCopySection[] = [
       'Day to day wear content',
     ],
     closingParagraphs: [
-      'Approved content may be featured on our website, social media platforms, email campaigns, advertisements, and other marketing materials.',
+      'Approved content may be featured on our website, social media platforms, email campaigns, advertisements and other marketing materials.',
     ],
   },
   {
@@ -146,7 +146,7 @@ const AFFILIATE_REWARDS_SECTIONS: AffiliateCopySection[] = [
     paragraphs: ['Earn 600 Loyalty Points per approved platform, per unit when you:'],
     bullets: [
       'Post qualifying content featuring your Frontal Slayer product',
-      'Tag Frontal Slayer in the post, reel, video, short, or upload',
+      'Tag Frontal Slayer in the post, reel, video, short or upload',
       'Submit a direct link to the published content for review',
     ],
     closingParagraphs: ['Maximum Earnings: Up to 3,000 points per product across all eligible social media platforms.'],
@@ -167,7 +167,7 @@ const AFFILIATE_REWARDS_SECTIONS: AffiliateCopySection[] = [
     title: 'FEATURED CREATOR BONUS',
     paragraphs: [
       'Exceptional content deserves exceptional rewards.',
-      'If your photo, video, tutorial, transformation, review, or social content is selected for use in a Frontal Slayer marketing campaign, homepage feature, product page, email campaign, advertisement, or social media promotion, you may receive a Featured Creator Bonus of up to 1,500 additional Loyalty Points.',
+      'If your photo, video, tutorial, transformation, review or social content is selected for use in a Frontal Slayer marketing campaign, homepage feature, product page, email campaign, advertisement or social media promotion, you may receive a Featured Creator Bonus of up to 1,500 additional Loyalty Points.',
       'Featured creators may also receive:',
     ],
     bullets: [
@@ -184,7 +184,7 @@ const AFFILIATE_REWARDS_SECTIONS: AffiliateCopySection[] = [
     title: 'REFERRAL REWARDS',
     paragraphs: [
       'Love your hair? Put your friends on!',
-      'Every Affiliate Member receives a personalized referral code that can be shared with friends, family, clients, and followers.',
+      'Every Affiliate Member receives a personalized referral code that can be shared with friends, family, clients and followers.',
       'When a new customer uses your referral code:',
     ],
     bullets: [
@@ -230,7 +230,7 @@ const AFFILIATE_REWARDS_SECTIONS: AffiliateCopySection[] = [
     paragraphs: [
       'All submissions are reviewed for authenticity, quality, eligibility and compliance with program requirements.',
       'Please allow up to 72 business hours for content review and point allocation.',
-      'Frontal Slayer reserves the right to approve, deny, remove, or modify rewards at its sole discretion. Point values, eligibility requirements, earning limits, and program terms may be updated or discontinued at any time without prior notice.',
+      'Frontal Slayer reserves the right to approve, deny, remove or modify rewards at its sole discretion. Point values, eligibility requirements, earning limits and program terms may be updated or discontinued at any time without prior notice.',
     ],
   },
 ];
@@ -1191,7 +1191,7 @@ function AffiliatePage() {
     try {
         const orderContent = submittedContent[expandedOrderId] || { photos: [], videos: [], socials: [] };
         const filteredContent = getFilteredContent(expandedOrderId);
-      // Use filteredContent (current period) as base, but preserve content from other periods
+      // Use filteredContent (current period) as base but preserve content from other periods
       // This ensures we only work with current period content when submitting
       const updatedContent = { 
         photos: [...(orderContent.photos || [])], 

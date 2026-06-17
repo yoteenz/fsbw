@@ -1,4 +1,4 @@
-/** Gift card USD denominations — shared by tools strip, PDP picker, and checkout. */
+/** Gift card USD denominations — shared by tools strip, PDP picker and checkout. */
 export const GIFT_CARD_BALANCE_OPTIONS = [10, 15, 25, 50, 75, 100, 250, 500] as const;
 
 export type GiftCardBalanceUsd = (typeof GIFT_CARD_BALANCE_OPTIONS)[number];

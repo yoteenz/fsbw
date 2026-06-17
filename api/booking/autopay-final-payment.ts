@@ -156,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             stripe_customer_id: customerId || null,
             stripe_payment_method_id: paymentMethodId || null,
             error_code: 'autopay_not_ready',
-            error_message: 'Missing consent, customer, payment method, or amount',
+            error_message: 'Missing consent, customer, payment method or amount',
             created_at: nowIso,
             updated_at: nowIso,
           })

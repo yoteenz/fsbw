@@ -110,7 +110,7 @@ function stylingKey(salonMode: BawSalonMode, part: 'MIDDLE' | 'LEFT' | 'RIGHT'):
 
 /**
  * Unique BAW styling refs for all looks that use salon styling.
- * `startImageIndex` = first free slot after template, client, and unit mannequins.
+ * `startImageIndex` = first free slot after template, client and unit mannequins.
  */
 export function collectStylingRefsForAnalysis(
   looks: Array<{ styling: string; part: string }>,
@@ -168,7 +168,7 @@ export function bawStylingRefListBlock(refs: HairstyleAnalysisStylingRef[]): str
   return [
     '=== BAW STYLING REFERENCE IMAGES ===',
     'Use the matching IMAGE per look STYLE + PART — **hair finish shape only**; IMAGE 2 keeps master face and pose.',
-    'Never copy face, neck, or skin from styling reference IMAGEs.',
+    'Never copy face, neck or skin from styling reference IMAGEs.',
     ...lines,
   ].join('\n');
 }

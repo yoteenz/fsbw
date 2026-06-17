@@ -97,7 +97,7 @@ export const LOBBY_CASE_PHONE_DOWNLOAD_SRC = '/assets/lobby-phone.png';
 /** Set when user opens `/lobby?lobbyAssets=1` so carousel swipes keep downloads visible. */
 export const LOBBY_ASSET_DOWNLOADS_SESSION_KEY = 'baw_lobby_asset_downloads';
 
-/** Show small DOWNLOAD links on lobby art (dev, `?lobbyAssets=1`, or signed-in admin). */
+/** Show small DOWNLOAD links on lobby art (dev, `?lobbyAssets=1` or signed-in admin). */
 export function isLobbyAssetDownloadsVisibleFromSearch(search: string): boolean {
   if (import.meta.env.DEV) return true;
   const params = new URLSearchParams(search);
@@ -141,7 +141,7 @@ export const LOBBY_SCENE_FAL_PROMPTS = {
 
   shelfCustomUnits: `Photorealistic wall-mounted retail shelf graphic for "CUSTOM UNITS" made-to-order wigs. Slim shelf with 3–4 luxury boxes, bespoke / atelier packaging cues. Front-facing, premium salon lighting, PNG with fully transparent background, no wall.`,
 
-  /** Prefer neutral gray, white, or magenta backdrop for new shelf/case photos — green spill on clear acrylic is hard to key cleanly. */
+  /** Prefer neutral gray, white or magenta backdrop for new shelf/case photos — green spill on clear acrylic is hard to key cleanly. */
   shelfBackdropNote:
     'For Supabase source JPEGs: gray or off-white studio wall keys better than green for acrylic shelves/cases (less green cast on glass). If stuck on green screen, export high-res and use npm run lobby:bake-shelves / lobby:bake-case.',
 

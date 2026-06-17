@@ -23,7 +23,7 @@ export function buildLayersStylePromptFromColorTierWebp(
     catalog.label +
     '** (target **#' +
     hex +
-    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade. Only reshape/style the hair.';
+    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black or a different shade. Only reshape/style the hair.';
 
   return buildLayersStylePromptShared(angle, partSelection, colorLock, 'layers', Boolean(options?.includeBangs));
 }
@@ -43,7 +43,7 @@ export function buildCrimpsStylePromptFromColorTierWebp(
     catalog.label +
     '** (target **#' +
     hex +
-    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade. Only reshape/style the hair.';
+    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black or a different shade. Only reshape/style the hair.';
 
   return buildLayersStylePromptShared(angle, partSelection, colorLock, 'crimps', Boolean(options?.includeBangs));
 }
@@ -88,7 +88,7 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     catalog.label +
     '** (target **#' +
     hex +
-    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade.';
+    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black or a different shade.';
 
   const useBaseNoirSecondRef =
     Boolean(options?.baseNoirGeometrySecondRef) &&
@@ -117,10 +117,10 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     : '';
 
   const recreateLead = useBaseNoirSecondRef
-    ? '**Edit Image 1** as the **output canvas** — same **mannequin**, **brick background**, **lighting**, **FRONTAL SLAYER** chest logo. **Match Image 2** for **camera angle, head pose, and outer hair silhouette** in this **' +
+    ? '**Edit Image 1** as the **output canvas** — same **mannequin**, **brick background**, **lighting**, **FRONTAL SLAYER** chest logo. **Match Image 2** for **camera angle, head pose and outer hair silhouette** in this **' +
       (angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT') +
       '** view (base NOIR naturals). **Only** edit **hair**: apply **FLAT IRON** styling as below — **bone-straight** + **middle part**; **not** a new wig.'
-    : 'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.';
+    : 'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing** and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.';
 
   return [
     colorLock,
@@ -136,7 +136,7 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     bangsAddon.trim(),
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
-    'Output must be extremely high-quality, crisp, and pixel-perfect.',
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
   ]
     .filter((s) => s.length > 0)
     .join(' ');
@@ -173,7 +173,7 @@ function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLayersPartS
   if (partSelection === 'MIDDLE') return '';
   if (partSelection === 'LEFT') {
     return (
-      '**PART OVERRIDE (critical — ignore the color preview’s part line):** The input may show a **different** part (center, **image LEFT**, or weak/off-center). **Discard** it. **UI L** needs the **visible part groove** in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**). **Re-part** the roots to match — **do not** preserve the reference photo’s part placement. **Success check:** if the groove reads on the **image LEFT** half → wrong (that is **UI R**, not **UI L**).'
+      '**PART OVERRIDE (critical — ignore the color preview’s part line):** The input may show a **different** part (center, **image LEFT** or weak/off-center). **Discard** it. **UI L** needs the **visible part groove** in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**). **Re-part** the roots to match — **do not** preserve the reference photo’s part placement. **Success check:** if the groove reads on the **image LEFT** half → wrong (that is **UI R**, not **UI L**).'
     );
   }
   return (
@@ -193,19 +193,19 @@ export function buildUiRightSalonFromMiddlePartOutputPrompt(
   const angleLabel = _angle === 'left' ? 'LEFT 3/4' : _angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
   const styleKeep =
     _salon === 'layers'
-      ? 'Keep the **same voluminous layered S-waves**, volume, length, and color as this image — **only** change where the **part** sits.'
-      : 'Keep the **same crimp texture, scale, length, and color** as this image — **only** change where the **part** sits.';
+      ? 'Keep the **same voluminous layered S-waves**, volume, length and color as this image — **only** change where the **part** sits.'
+      : 'Keep the **same crimp texture, scale, length and color** as this image — **only** change where the **part** sits.';
   const bangsLine = includeBangs
     ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
     : '';
   const fidelity = bawFalEditPreserveReferenceBlock();
-  const tail = ` ${BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK} Output must be extremely high-quality, crisp, and pixel-perfect.`;
+  const tail = ` ${BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK} Output must be extremely high-quality, crisp and pixel-perfect.`;
   return (
-    '**INPUT:** This image is the **MIDDLE part** (**center part**) version of this hairstyle for this **same** camera angle — **same** mannequin, scene, lighting, and **hair color**. ' +
+    '**INPUT:** This image is the **MIDDLE part** (**center part**) version of this hairstyle for this **same** camera angle — **same** mannequin, scene, lighting and **hair color**. ' +
       '**TASK:** **Recreate this photograph** with the **part on the LEFT side of her scalp** (**UI R / RIGHT part**): **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair. ' +
       styleKeep +
       ' ' +
-      `**Camera:** **${angleLabel}** — preserve **framing, head pose, brick background, and FRONTAL SLAYER logo**; edit **hair only**. ` +
+      `**Camera:** **${angleLabel}** — preserve **framing, head pose, brick background and FRONTAL SLAYER logo**; edit **hair only**. ` +
       salonOneShoulderDrapeBlock() +
       bangsLine +
       ' ' +
@@ -217,7 +217,7 @@ export function buildUiRightSalonFromMiddlePartOutputPrompt(
 /** Product rule: long hair drapes **only** over the **viewer’s left** shoulder (left side of the image — “facing me”). */
 function salonOneShoulderDrapeBlock(): string {
   return (
-    '**DRAPE SIDE (fixed — all parts):** As you **face** the mannequin in the photo, almost **all** long hair must fall **forward over the viewer’s LEFT shoulder only** — the shoulder on the **left side of the image** (closer to the **left edge**). **FORBIDDEN:** a **thick** forward drape on the **viewer’s RIGHT shoulder** (right side of image). The **right** shoulder may show only a **thin** tuck, **nothing** crossing the collarbone, or hair **behind** the shoulder — **never** a second heavy cascade. **Shoulder still visible:** the drape must **not** be an **opaque blanket** — keep **gaps**, **separation between strands**, or **semi-sheer** fall so the **shoulder cap / curve** (and skin at the neck–shoulder) **still reads through** the hair; **FORBIDDEN:** a solid wall of hair that **fully hides** that shoulder. **Self-check:** if both shoulders have **matching** thick hair in front → **failed**.'
+    '**DRAPE SIDE (fixed — all parts):** As you **face** the mannequin in the photo, almost **all** long hair must fall **forward over the viewer’s LEFT shoulder only** — the shoulder on the **left side of the image** (closer to the **left edge**). **FORBIDDEN:** a **thick** forward drape on the **viewer’s RIGHT shoulder** (right side of image). The **right** shoulder may show only a **thin** tuck, **nothing** crossing the collarbone or hair **behind** the shoulder — **never** a second heavy cascade. **Shoulder still visible:** the drape must **not** be an **opaque blanket** — keep **gaps**, **separation between strands** or **semi-sheer** fall so the **shoulder cap / curve** (and skin at the neck–shoulder) **still reads through** the hair; **FORBIDDEN:** a solid wall of hair that **fully hides** that shoulder. **Self-check:** if both shoulders have **matching** thick hair in front → **failed**.'
   );
 }
 
@@ -227,7 +227,7 @@ function salonOneShoulderDrapeBlock(): string {
  */
 function salonStyleInvarianceAcrossColorsBlock(canonicalStyleLabel: string): string {
   return (
-    '**STYLE LOCK — SAME FOR EVERY SWATCH (critical):** The **color preview** image may show **different** current length, curl tightness, frizz, or layering than another color — **ignore that**. Output **one** canonical **' +
+    '**STYLE LOCK — SAME FOR EVERY SWATCH (critical):** The **color preview** image may show **different** current length, curl tightness, frizz or layering than another color — **ignore that**. Output **one** canonical **' +
       canonicalStyleLabel +
       '** for **this** salon mode + part + angle: **same** silhouette, **same** texture/wave/crimp **scale**, **same** part and **DRAPE SIDE** — **only** hair **pigment/tint** follows the color lock above. **FORBIDDEN:** copying the input’s **existing** style (e.g. looser curls, shorter length, different layering) instead of this spec. **Side parts:** **do not** copy **part-line position** from the color preview when **PART OVERRIDE** applies — follow **UI L** / **UI R** above. **Length / bulk:** follow **this prompt’s** target (long layered / extra-long crimps / sleek straight), **not** whatever length the input WebP happens to show. **Treat input as scene + base color**; **this prompt defines hair shape.**'
   );
@@ -261,7 +261,7 @@ function buildLayersStylePromptShared(
     'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered S-waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls. **FRONT (hero):** **single-shoulder drape** — see **DRAPE SIDE** block above; **never** equal “waterfall” curls on **both** shoulders.';
 
   const crimpsLook =
-    'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing**, and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural**. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT (hero):** **single-shoulder crimp drape** — see **DRAPE SIDE**; **never** thick matching crimp panels on **both** shoulders.';
+    'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing** and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural**. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT (hero):** **single-shoulder crimp drape** — see **DRAPE SIDE**; **never** thick matching crimp panels on **both** shoulders.';
 
   const lookBlock = salon === 'crimps' ? crimpsLook : layersLook;
 
@@ -325,8 +325,8 @@ function buildLayersStylePromptShared(
 
   const lengthNote =
     salon === 'crimps'
-      ? 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long crimped look.'
-      : 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long layered **wave** look (full-bodied, blended — not stringy).';
+      ? 'Do **not** change skin, bust, neck seam or background except as needed for hair silhouette. Length may increase for the long crimped look.'
+      : 'Do **not** change skin, bust, neck seam or background except as needed for hair silhouette. Length may increase for the long layered **wave** look (full-bodied, blended — not stringy).';
 
   const bangsLine = includeBangs
     ? curtainBangsAddonForSalonPart(partSelection) +
@@ -341,7 +341,7 @@ function buildLayersStylePromptShared(
     salonOneShoulderDrapeBlock(),
     'Recreate this photograph. **Only** change the **hairstyle** to **' +
       styleNoun +
-      '** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing**, and the **hair color** rules above.',
+      '** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing** and the **hair color** rules above.',
     lookBlock,
     partLine,
     angleConstraint,
@@ -349,7 +349,7 @@ function buildLayersStylePromptShared(
     ...(bangsLine ? [bangsLine] : []),
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
-    'Output must be extremely high-quality, crisp, and pixel-perfect.',
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
     'Change **only** the **hair** shape/style to ' +
       styleNoun +
       (includeBangs ? ' **with curtain bangs** as specified' : '') +
@@ -372,12 +372,12 @@ export function buildMiddlePartLayersStylePromptTwoImages(angle: 'front' | 'left
         : 'Camera is **FRONT**: match the geometry reference’s **part line and outer silhouette** for the hair; do not invent a different cut.';
 
   return [
-    'You get **two images in order**. **IMAGE 1** is the only **output canvas**: same mannequin, brick background, framing, chest logo, and **keep the hair color exactly as in image 1** (catalog / customer color).',
-    '**IMAGE 2** is a **hair geometry reference only** (middle part, layers, face-framing, volume, silhouette). Copy **only** the **cut, layering, and part** from image 2 onto the head in image 1. **Do not** use image 2’s hair color, **do not** swap in image 2’s background, and **do not** treat image 2 as a full composite to paste over image 1.',
+    'You get **two images in order**. **IMAGE 1** is the only **output canvas**: same mannequin, brick background, framing, chest logo and **keep the hair color exactly as in image 1** (catalog / customer color).',
+    '**IMAGE 2** is a **hair geometry reference only** (middle part, layers, face-framing, volume, silhouette). Copy **only** the **cut, layering and part** from image 2 onto the head in image 1. **Do not** use image 2’s hair color, **do not** swap in image 2’s background and **do not** treat image 2 as a full composite to paste over image 1.',
     angleConstraint,
     bawFalEditPreserveReferenceBlock(),
     'The **FRONTAL SLAYER** chest logo must stay fully legible, same position as in image 1.',
-    'Output must be extremely high-quality, crisp, and pixel-perfect.',
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
     'Change **only** the **hair mesh** in image 1 so its **shape** matches the geometry reference; everything else in image 1 stays the same, especially **hair color**.',
   ].join(' ');
 }
@@ -387,7 +387,7 @@ export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES = buildMiddlePartLay
 
 /** Single-image manual fal (no color base attachment) — “this” = the only image. */
 export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE = [
-  'Recreate this exact mannequin image, but change the hair to black #000000.',
+  'Recreate this exact mannequin image but change the hair to black #000000.',
   'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
   'Do not change anything else about the photo.',
@@ -409,7 +409,7 @@ export function buildBangsOnlyStylePrompt(angle: 'front' | 'left' | 'right'): st
         : 'This is the **FRONT view**: add bangs only; keep the rest of the hair layout and part as in the reference.';
 
   return [
-    'Recreate this exact mannequin image, but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair.',
+    'Recreate this exact mannequin image but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair.',
     angleConstraint,
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,

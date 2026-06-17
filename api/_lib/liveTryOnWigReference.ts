@@ -103,7 +103,7 @@ export function liveTryOnStudioStylingPromptLine(
 
   if (hasLayers && salonCount === 1) {
     const bangs = hasBangs ? ' with curtain bangs' : '';
-    return `Salon **layered S-wave curls** (${partLabel})${bangs} — match IMAGE 2 layer length, volume, and curl pattern exactly.`;
+    return `Salon **layered S-wave curls** (${partLabel})${bangs} — match IMAGE 2 layer length, volume and curl pattern exactly.`;
   }
   if (hasCrimps && salonCount === 1) {
     const bangs = hasBangs ? ' with curtain bangs' : '';

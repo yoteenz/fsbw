@@ -486,7 +486,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
     }
   };
 
-  // For list view, only show the specific list view notifications (no operational, system, or brand)
+  // For list view, only show the specific list view notifications (no operational, system or brand)
   const activeNotifications = listViewNotifications
     .filter((n) => !archivedNotifications.includes(n.id))
     .sort((a, b) => b.dateSort.getTime() - a.dateSort.getTime());

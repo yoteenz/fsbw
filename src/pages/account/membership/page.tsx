@@ -556,7 +556,7 @@ function MembershipPage() {
   const preservePremiumPersistForCheckoutRef = useRef(false);
 
   const [showPremiumView, setShowPremiumView] = useState(() => {
-    // Restore premium chart after: lobby upgrade, explicit back from `/checkout/upgrade`, or browser back (localStorage kept while on checkout).
+    // Restore premium chart after: lobby upgrade, explicit back from `/checkout/upgrade` or browser back (localStorage kept while on checkout).
     try {
       const isReturningFromCheckout = sessionStorage.getItem('returningFromCheckout') === 'true';
       if (isReturningFromCheckout) {
@@ -2042,7 +2042,7 @@ function MembershipPage() {
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
                       <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (1,000 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
                       <p style={{ margin: '8px 0 0 0' }}>Free gifts, discount codes and vouchers expire 6 months from the date they&apos;re redeemed. Free gifts can be combined with any other checkout offer. Digital cash and gift cards do not expire.</p>
-                      <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>12-month Premium</strong> members earn 2x points on purchases (takes precedence over tier). Red and Black tiers earn 1.25x and 1.5x points when not on 12-month Premium. Premium also includes lounge access, fast-track support, and more.</p>
+                      <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>12-month Premium</strong> members earn 2x points on purchases (takes precedence over tier). Red and Black tiers earn 1.25x and 1.5x points when not on 12-month Premium. Premium also includes lounge access, fast-track support and more.</p>
                     </div>
                   </div>
                   ) : (

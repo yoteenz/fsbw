@@ -1,5 +1,5 @@
 /**
- * Normalize email and password for sign-in so Chrome, Safari, and other browsers
+ * Normalize email and password for sign-in so Chrome, Safari and other browsers
  * behave the same (autofill can add invisible characters or different whitespace).
  */
 

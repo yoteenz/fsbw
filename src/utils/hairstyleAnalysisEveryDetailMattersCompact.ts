@@ -1,7 +1,7 @@
 /** Max chars per every-detail-matters row @ 2048×2560 (~38% slot width) — one line, no wrap. */
 export const EVERY_DETAIL_MATTERS_MAX_CHARS = 68;
 
-/** No em dashes, en dashes, or hyphenated compounds in client-facing rose rows. */
+/** No em dashes, en dashes or hyphenated compounds in client-facing rose rows. */
 export function stripEveryDetailMattersDashes(line: string): string {
   return line
     .replace(/\s*[—–]\s*/g, ' ')

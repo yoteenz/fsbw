@@ -100,8 +100,8 @@ export function bawHairlineRefListBlock(refs: HairstyleAnalysisHairlineRef[]): s
   });
   return [
     '=== BAW HAIRLINE REFERENCE IMAGES (MANDATORY FOR PEAK / LAGOS) ===',
-    'When manifest HAIRLINE is PEAK, LAGOS, or LAGOS + PEAK: copy **forehead edge shape** from the matching IMAGE below.',
-    'Hairline IMAGE = lace-edge silhouette only — **never** copy face, skin, neck, baby hairs, or wispy frizz from that IMAGE.',
+    'When manifest HAIRLINE is PEAK, LAGOS or LAGOS + PEAK: copy **forehead edge shape** from the matching IMAGE below.',
+    'Hairline IMAGE = lace-edge silhouette only — **never** copy face, skin, neck, baby hairs or wispy frizz from that IMAGE.',
     'IMAGE 2 client face/pose always wins over hairline ref faces.',
     ...lines,
   ].join('\n');
@@ -149,10 +149,10 @@ export function hairlineBindingPromptLine(
 export function noInventedBabyHairsBlock(): string {
   return [
     '=== HAIRLINE EDGE — NO BABY HAIRS (CRITICAL) ===',
-    '**FORBIDDEN:** baby hairs, wispy flyaways, edge fuzz, micro-strands, glued wisps, or temple frizz on forehead/temple **skin**.',
+    '**FORBIDDEN:** baby hairs, wispy flyaways, edge fuzz, micro-strands, glued wisps or temple frizz on forehead/temple **skin**.',
     'Lace-front edge = **clean sharp line** where installed hair meets skin — not a fuzzy halo.',
-    'Do NOT copy wispy edges from mannequin, styling, or hairline reference IMAGEs onto skin.',
-    '**ERASE** any forehead edge fuzz from IMAGE 2 — do not preserve, retint, or add wisps on skin.',
+    'Do NOT copy wispy edges from mannequin, styling or hairline reference IMAGEs onto skin.',
+    '**ERASE** any forehead edge fuzz from IMAGE 2 — do not preserve, retint or add wisps on skin.',
   ].join('\n');
 }
 

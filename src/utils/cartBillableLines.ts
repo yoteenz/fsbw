@@ -86,7 +86,7 @@ export function cartBillableSubtotalExcludingSpecialOffer(
   }, 0);
 }
 
-/** Taxable merchandise (excludes gift cards, digital, and sold-out wig units). */
+/** Taxable merchandise (excludes gift cards, digital and sold-out wig units). */
 export function cartBillableTaxableSubtotal(
   items: Array<{ price?: number; quantity?: number; name?: string; type?: string; productName?: string }> | null | undefined
 ): number {

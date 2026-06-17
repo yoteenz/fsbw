@@ -130,7 +130,7 @@ export function formatPsaSessionContextBlock(raw: unknown): string {
   }
   if (ctx.mode === 'what_might_i_regret') {
     lines.push(
-      '- **MODE: What Might I Regret** — pre-purchase regret prevention. Name maintenance, texture mismatch, or redundant rotation risks clearly. Build trust.'
+      '- **MODE: What Might I Regret** — pre-purchase regret prevention. Name maintenance, texture mismatch or redundant rotation risks clearly. Build trust.'
     );
   }
   if (ctx.mode === 'event_ready' || ctx.mode === 'slay_forecast') {

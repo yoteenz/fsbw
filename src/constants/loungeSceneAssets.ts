@@ -44,7 +44,7 @@ export const LOUNGE_SCENE_FAL_PROMPTS = {
 
   curtainLeft: `Left half of closed gray velvet theater curtains for a mobile lounge TV overlay. See loungeCurtainFalPrompts.ts WORKFLOW B step 1 for full style-lock wording.`,
 
-  curtainRight: `Right half matching the exported left curtain panel — mirror pleats, lighting, and gray tone. See loungeCurtainFalPrompts.ts WORKFLOW B step 2.`,
+  curtainRight: `Right half matching the exported left curtain panel — mirror pleats, lighting and gray tone. See loungeCurtainFalPrompts.ts WORKFLOW B step 2.`,
 
   tvRemoteHand: `Photorealistic hand holding a TV remote, lower edge of frame, soft studio light, PNG with fully transparent background for compositing over lounge TV overlay.`,
 

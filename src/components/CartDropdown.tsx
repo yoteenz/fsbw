@@ -571,7 +571,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return 0;
   };
 
-  // Helper function to get color price based on color name, length, and product name
+  // Helper function to get color price based on color name, length and product name
   const _getColorPrice = (color: string, length?: string, productName?: string) => {
     // BLANCO colors
     if (productName === 'BLANCO') {
@@ -849,7 +849,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   useEffect(() => {
     const handleBackdropClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Don't close if clicking inside cart dropdown, currency modal, confirmation modals, or cart icon
+      // Don't close if clicking inside cart dropdown, currency modal, confirmation modals or cart icon
       if (!target.closest('[data-dropdown-content]') && 
           !target.closest('[data-currency-modal]') &&
           !target.closest('[data-cart-icon]') &&

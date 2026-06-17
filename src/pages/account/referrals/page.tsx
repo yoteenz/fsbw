@@ -124,7 +124,7 @@ function ReferralsPage() {
     } catch (_) {}
   }, [userData?.email]);
 
-  // Code is active when user has at least one DELIVERED order, or (existing user) has orders but no hasMadeFirstPurchase
+  // Code is active when user has at least one DELIVERED order or (existing user) has orders but no hasMadeFirstPurchase
   useEffect(() => {
     const email = (userData?.email || '').trim().toLowerCase();
     if (!email) {

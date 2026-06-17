@@ -1,7 +1,7 @@
 /**
  * POST /api/psa/chat — Personal Slay Assistant (PSA) chat for premium members.
  *
- * v1: FAQ search, product catalog, and site navigation via OpenAI Responses API + server tools.
+ * v1: FAQ search, product catalog and site navigation via OpenAI Responses API + server tools.
  * Env: OPENAI_API_KEY (required), optional PSA_OPENAI_MODEL (default gpt-5.4-mini).
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
@@ -124,7 +124,7 @@ const PSA_TOOLS = [
     parameters: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Texture, unit name, or style keywords.' },
+        query: { type: 'string', description: 'Texture, unit name or style keywords.' },
       },
       required: ['query'],
       additionalProperties: false,
@@ -153,7 +153,7 @@ const PSA_TOOLS = [
     parameters: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Unit name, texture, or recommendation intent.' },
+        query: { type: 'string', description: 'Unit name, texture or recommendation intent.' },
       },
       required: ['query'],
       additionalProperties: false,
@@ -164,7 +164,7 @@ const PSA_TOOLS = [
     type: 'function',
     name: 'suggest_lounge_lesson',
     description:
-      'Match VIP Lounge lesson for lace, install, care, or styling education. Use proactively before purchases.',
+      'Match VIP Lounge lesson for lace, install, care or styling education. Use proactively before purchases.',
     parameters: {
       type: 'object',
       properties: {
@@ -183,7 +183,7 @@ const PSA_TOOLS = [
     parameters: {
       type: 'object',
       properties: {
-        destination: { type: 'string', description: 'City, trip, or event e.g. Miami, wedding, Vegas.' },
+        destination: { type: 'string', description: 'City, trip or event e.g. Miami, wedding, Vegas.' },
       },
       required: ['destination'],
       additionalProperties: false,
@@ -338,7 +338,7 @@ function extractOutputText(data: OpenAiResponse): string {
 }
 
 const PSA_EMPTY_REPLY_FALLBACK =
-  'Love, I hit a brief glitch pulling that together. Ask me again in a second, or open Build-a-Wig to see live pricing on your unit.';
+  'Love, I hit a brief glitch pulling that together. Ask me again in a second or open Build-a-Wig to see live pricing on your unit.';
 
 type PsaChatAiContext = {
   model: string;
@@ -491,7 +491,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           : `Monthly PSA limit reached (${consumed.usage.monthLimit} messages per month on ${engagementLimits.tierLabel}).`;
       res.setHeader('Retry-After', String(consumed.retryAfterSec ?? 3600));
       return res.status(429).json({
-        error: `${limitLabel} Resets automatically. Upgrade your plan for a higher limit, or use Concierge for hands-on help.`,
+        error: `${limitLabel} Resets automatically. Upgrade your plan for a higher limit or use Concierge for hands-on help.`,
         code: 'PSA_LIMIT_REACHED',
         reason: consumed.reason,
         usage: consumed.usage,

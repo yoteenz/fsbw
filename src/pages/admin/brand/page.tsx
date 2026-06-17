@@ -696,7 +696,7 @@ export default function AdminBrand() {
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
-              {/* Summary above tabs: analytics clicks, alerts usage, or brand score */}
+              {/* Summary above tabs: analytics clicks, alerts usage or brand score */}
               {activeTab === 'ANALYTICS' ? (
                 <div className="text-center py-4 px-5">
                   <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>{analyticsSummary.total}</p>

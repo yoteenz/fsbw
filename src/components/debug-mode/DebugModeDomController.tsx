@@ -12,7 +12,7 @@ import { snapDebugPx } from '../../utils/debugMode';
 
 const HIGHLIGHT_CLASS = 'baw-debug-selected';
 
-/** Pointer selection, drag nudge, tab reorder, and override application. */
+/** Pointer selection, drag nudge, tab reorder and override application. */
 export function DebugModeDomController() {
   const debug = useDebugMode();
   const dragRef = useRef<{

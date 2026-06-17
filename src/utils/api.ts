@@ -168,7 +168,7 @@ function rethrowWithNetworkHint(err: unknown, shortLabel: string): never {
     throw new Error(
       shortLabel.includes('try-on')
         ? 'LIVE_TRYON_TIMEOUT'
-        : `${shortLabel}: connection dropped or timed out before the server answered (browsers often show this as "Load failed"). For styling, try regen L, then M, then R one at a time, or set WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K on Vercel so each request finishes sooner.`
+        : `${shortLabel}: connection dropped or timed out before the server answered (browsers often show this as "Load failed"). For styling, try regen L, then M, then R one at a time or set WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K on Vercel so each request finishes sooner.`
     );
   }
   throw err instanceof Error ? err : new Error(String(err));
@@ -462,7 +462,7 @@ export async function putAdminLoungeTvConfig(config: Record<string, unknown>): P
   }
 }
 
-/** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */
+/** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503) or any API error so the UI does not sign out and pretend success. */
 export async function deleteAccount(options?: { deletedFrom?: string }): Promise<void> {
   const token = await getAccessToken();
   const base = API_BASE.replace(/\/$/, '');
@@ -1701,7 +1701,7 @@ export async function postAdminConsultQuote(body: {
     const msg = err instanceof Error ? err.message : String(err);
     if (/failed to fetch|load failed|network|request failed/i.test(msg)) {
       throw new Error(
-        'Network error — could not reach the server. Offer can still be saved locally when you confirm again, or check your connection and VITE_API_BASE.'
+        'Network error — could not reach the server. Offer can still be saved locally when you confirm again or check your connection and VITE_API_BASE.'
       );
     }
     throw err;

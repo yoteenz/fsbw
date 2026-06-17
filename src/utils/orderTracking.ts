@@ -1,5 +1,5 @@
 /**
- * Shared order tracking fields (localStorage userOrders_${email}) for admin, Orders, and Concierge.
+ * Shared order tracking fields (localStorage userOrders_${email}) for admin, Orders and Concierge.
  */
 
 /** Inject once per page (e.g. `<style>{ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}</style>`). Matches Concierge `pulsate`. */

@@ -1,5 +1,5 @@
 /**
- * Shared route helpers for /build-a-wig product, customize, and edit flows.
+ * Shared route helpers for /build-a-wig product, customize and edit flows.
  * Keeps breadcrumb navigation and customize-mode detection consistent across the main page and sub-pages.
  */
 
@@ -39,7 +39,7 @@ export function isBuildAWigCustomizeHubPathname(pathname: string): boolean {
 
 /**
  * Target for the grey "BUILD-A-WIG >" breadcrumb from a sub-page:
- * customize/edit/product main, or /build-a-wig for the generic flow.
+ * customize/edit/product main or /build-a-wig for the generic flow.
  */
 export function getBuildAWigFlowBasePath(pathname: string): string {
   if (!pathname.startsWith('/build-a-wig')) {

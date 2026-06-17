@@ -63,7 +63,7 @@ export function buildPsaLoungeLessonsBlock(): string {
   );
   return `## Lounge curator (underused — use proactively)
 PSA is the curator, not a link dump.
-- **Before a first unit purchase:** suggest the relevant Lounge lesson (lace, install, or care).
+- **Before a first unit purchase:** suggest the relevant Lounge lesson (lace, install or care).
 - **After recommending texture or install path:** pair with one Lounge lesson via \`suggest_lounge_lesson\`.
 - Example energy: "BEFORE YOU LOCK THIS IN, WATCH THE LACE CUSTOMIZATION LESSON IN THE LOUNGE."
 

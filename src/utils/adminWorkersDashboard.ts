@@ -32,15 +32,15 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Personal assistant / customer service',
     openings: 1,
     aboutTheRole:
-      'You represent Frontal Slayer / Build-a-Wig to shoppers and partners through email, DMs, and tools. You keep orders, returns, and admin Pending queues organized and escalate when policies or legal risk need the owner.',
+      'You represent Frontal Slayer / Build-a-Wig to shoppers and partners through email, DMs and tools. You keep orders, returns and admin Pending queues organized and escalate when policies or legal risk need the owner.',
     requiredEducation:
-      'High school diploma or equivalent; 2+ years customer service, e-commerce support, or executive assistance preferred.',
+      'High school diploma or equivalent; 2+ years customer service, e-commerce support or executive assistance preferred.',
     jobDuties: [
-      'First line for customer email, DMs, and order questions for the online shop (Build-a-Wig / Frontal Slayer)',
-      'Track and respond to shipping, returns, exchanges, and “where is my order” for wig and custom unit orders',
-      'Monitor admin Pending queues: affiliate submissions, reviews, order authorization forms — approve, reject, or escalate per SOP',
-      'Route concierge / priority messages to the owner, hair stylist, or lawyer when needed',
-      'Keep leadership calendar and internal follow-ups for drops, restocks, and campaign dates',
+      'First line for customer email, DMs and order questions for the online shop (Build-a-Wig / Frontal Slayer)',
+      'Track and respond to shipping, returns, exchanges and “where is my order” for wig and custom unit orders',
+      'Monitor admin Pending queues: affiliate submissions, reviews, order authorization forms — approve, reject or escalate per SOP',
+      'Route concierge / priority messages to the owner, hair stylist or lawyer when needed',
+      'Keep leadership calendar and internal follow-ups for drops, restocks and campaign dates',
     ],
     dailyTasks: [
       'Clear or flag pending items in admin; log outcomes',
@@ -58,16 +58,16 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Creative director',
     openings: 1,
     aboutTheRole:
-      'You guard the visual voice of the brand across the site, campaigns, and social. You align photographers, designers, and marketers so every asset matches wig quality and brand standards before it ships.',
+      'You guard the visual voice of the brand across the site, campaigns and social. You align photographers, designers and marketers so every asset matches wig quality and brand standards before it ships.',
     requiredEducation:
-      "Bachelor's degree in design, marketing, fashion, or related field; 4+ years creative leadership or brand direction; portfolio required.",
+      "Bachelor's degree in design, marketing, fashion or related field; 4+ years creative leadership or brand direction; portfolio required.",
     jobDuties: [
-      'Own creative direction for the wig brand across website, paid ads, email, and social',
+      'Own creative direction for the wig brand across website, paid ads, email and social',
       'Set visual standards for product presentation (texture, color accuracy, lace/cap details)',
-      'Approve campaign concepts, shot lists, and final assets before they go live',
+      'Approve campaign concepts, shot lists and final assets before they go live',
     ],
     dailyTasks: [
-      'Review creative queue from design, photo, and video',
+      'Review creative queue from design, photo and video',
       'Align launches with inventory and marketing calendar',
     ],
     scheduledHours: 'MON–FRI 10:00 AM – 6:00 PM (campaign weeks: TBD)',
@@ -81,12 +81,12 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Accountant',
     openings: 1,
     aboutTheRole:
-      'You keep e-commerce books accurate: sales, fees, taxes, and vendor payouts tied to our wig inventory and contractors. You surface cash and margin issues early for leadership.',
+      'You keep e-commerce books accurate: sales, fees, taxes and vendor payouts tied to our wig inventory and contractors. You surface cash and margin issues early for leadership.',
     requiredEducation:
       "Associate or bachelor's in accounting or finance; CPA or enrolled agent preferred; experience with Shopify or similar e-commerce accounting.",
     jobDuties: [
-      'Bookkeeping for e-commerce revenue, payment processors, refunds, and fees',
-      'Sales tax, 1099s, and vendor payouts (hair suppliers, contractors)',
+      'Bookkeeping for e-commerce revenue, payment processors, refunds and fees',
+      'Sales tax, 1099s and vendor payouts (hair suppliers, contractors)',
       'Month-end close; reconcile online sales to bank',
     ],
     dailyTasks: [
@@ -104,11 +104,11 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Lawyer',
     openings: 1,
     aboutTheRole:
-      'You protect the brand and business with clear terms, contracts, and IP for an online wig retailer. You advise on influencers, vendors, and compliance without slowing launches.',
+      'You protect the brand and business with clear terms, contracts and IP for an online wig retailer. You advise on influencers, vendors and compliance without slowing launches.',
     requiredEducation:
-      'J.D. and active bar membership; experience with e-commerce, retail, or consumer brands preferred.',
+      'J.D. and active bar membership; experience with e-commerce, retail or consumer brands preferred.',
     jobDuties: [
-      'Terms of service, privacy, and shop policies for online sales',
+      'Terms of service, privacy and shop policies for online sales',
       'Contracts: influencers, vendors, hair suppliers, contractors',
       'Trademarks / brand IP; content clearance for campaigns',
     ],
@@ -127,11 +127,11 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Graphic designer',
     openings: 1,
     aboutTheRole:
-      'You produce on-brand graphics for the site, email, ads, and product pages so units read clearly online. You maintain templates and hand off files that dev and marketing can ship fast.',
+      'You produce on-brand graphics for the site, email, ads and product pages so units read clearly online. You maintain templates and hand off files that dev and marketing can ship fast.',
     requiredEducation:
       "Associate or bachelor's in graphic design or equivalent; strong Figma/Adobe skills; portfolio with e-commerce or beauty samples.",
     jobDuties: [
-      'Web graphics, product tiles, email headers, and ad creatives for wig SKUs and collections',
+      'Web graphics, product tiles, email headers and ad creatives for wig SKUs and collections',
       'Maintain templates (sale badges, size charts, care cards) and export specs for dev',
       'Resize and package assets for social and paid placements',
     ],
@@ -149,12 +149,12 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Photographer',
     openings: 1,
     aboutTheRole:
-      'You capture wigs and custom units so texture, lace, and color read true on the shop and in campaigns. You partner with creative on shot lists and deliver organized selects.',
+      'You capture wigs and custom units so texture, lace and color read true on the shop and in campaigns. You partner with creative on shot lists and deliver organized selects.',
     requiredEducation:
       'Professional photography experience; portfolio with product or beauty; studio lighting and color management skills.',
     jobDuties: [
-      'Product photography for shop listings: units, lace, density, and color accuracy',
-      'Flat lays, on-model shots, and detail macros for custom Build-a-Wig options',
+      'Product photography for shop listings: units, lace, density and color accuracy',
+      'Flat lays, on-model shots and detail macros for custom Build-a-Wig options',
       'Deliver selects and retouch notes to creative director',
     ],
     dailyTasks: [
@@ -171,13 +171,13 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Videographer / editor',
     openings: 1,
     aboutTheRole:
-      'You film and edit short-form and tutorial content that teaches install, care, and styling while staying on brand. You export platform-ready cuts for social and the site.',
+      'You film and edit short-form and tutorial content that teaches install, care and styling while staying on brand. You export platform-ready cuts for social and the site.',
     requiredEducation:
-      'Demo reel required; experience with Premiere, DaVinci, or Final Cut; beauty, fashion, or product video preferred.',
+      'Demo reel required; experience with Premiere, DaVinci or Final Cut; beauty, fashion or product video preferred.',
     jobDuties: [
-      'Film and edit tutorials (install, care, styling), reels, and campaign video for wigs',
-      'Color, captions, and brand-safe pacing for TikTok / IG / YouTube',
-      'Export 9:16, 1:1, and 16:9 cuts as needed',
+      'Film and edit tutorials (install, care, styling), reels and campaign video for wigs',
+      'Color, captions and brand-safe pacing for TikTok / IG / YouTube',
+      'Export 9:16, 1:1 and 16:9 cuts as needed',
     ],
     dailyTasks: [
       'Sync with creative on hooks and shot list',
@@ -193,12 +193,12 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Social media content planner / manager',
     openings: 1,
     aboutTheRole:
-      'You plan and publish content around drops and campaigns, manage community touchpoints, and report what performs for a wig brand across social channels.',
+      'You plan and publish content around drops and campaigns, manage community touchpoints and report what performs for a wig brand across social channels.',
     requiredEducation:
-      "Bachelor's in marketing, communications, or related; 2+ years social management; analytics and scheduling tools experience.",
+      "Bachelor's in marketing, communications or related; 2+ years social management; analytics and scheduling tools experience.",
     jobDuties: [
-      'Content calendar tied to drops, restocks, and paid campaigns',
-      'Posting, community management, and UGC for the wig brand',
+      'Content calendar tied to drops, restocks and paid campaigns',
+      'Posting, community management and UGC for the wig brand',
       'Weekly metrics: reach, saves, clicks, best-performing hooks',
     ],
     dailyTasks: [
@@ -215,7 +215,7 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Makeup artist',
     openings: 1,
     aboutTheRole:
-      'You deliver camera-ready makeup for e-commerce and campaign shoots featuring our units. You follow creative direction, maintain kit hygiene, and keep call times tight.',
+      'You deliver camera-ready makeup for e-commerce and campaign shoots featuring our units. You follow creative direction, maintain kit hygiene and keep call times tight.',
     requiredEducation:
       'State cosmetology or makeup certification where required; professional kit; on-set beauty or editorial portfolio.',
     jobDuties: [
@@ -239,11 +239,11 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     aboutTheRole:
       'You style and install wigs for clients and prep units for shoots. You document technical notes in admin so custom Build-a-Wig orders match the client.',
     requiredEducation:
-      'Cosmetology license where required; advanced wig construction, customization, and install experience; client-facing professionalism.',
+      'Cosmetology license where required; advanced wig construction, customization and install experience; client-facing professionalism.',
     jobDuties: [
-      'Custom wig styling, installs, and consultations (in-person or by appointment per your model)',
+      'Custom wig styling, installs and consultations (in-person or by appointment per your model)',
       'Prep styled units for photography when scheduled',
-      'Document client cap size, texture, and finish notes for custom orders in admin',
+      'Document client cap size, texture and finish notes for custom orders in admin',
     ],
     dailyTasks: [
       'Review appointments and order notes',
@@ -260,7 +260,7 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
     role: 'Brand ambassador',
     openings: 5,
     aboutTheRole:
-      'You promote Frontal Slayer / Build-a-Wig through your channels with a clear monthly brief, trackable links, and your personal discount code. You earn when you hit agreed posting goals, when content converts, and when you complete program “quests” for complimentary units.',
+      'You promote Frontal Slayer / Build-a-Wig through your channels with a clear monthly brief, trackable links and your personal discount code. You earn when you hit agreed posting goals, when content converts and when you complete program “quests” for complimentary units.',
     requiredEducation:
       'Minimum 50,000 combined followers across your active platforms; consistent, brand-safe content; willingness to follow disclosure and FTC guidelines for sponsored or affiliate-style posts.',
     jobDuties: [
@@ -268,15 +268,15 @@ export const ADMIN_DASHBOARD_WORKERS: AdminDashboardWorker[] = [
       'Use your personal 10% shopper discount code; you retain 5% on qualifying sales attributed to your code',
       'Deliver approved monthly content packages for flat fees tied to conversion and performance metrics',
       'Maintain at least 50k combined followers and engagement that reflects the brand; wig perks ship only after you meet the program discount / redemption quota',
-      '50% off the invite-entry wig at default specs when eligible; link clicks, code purchases, and sign-ups accrue points toward your first free wig',
-      'Pick a 6-month quest tier (Slay Challenge–style): 12, 24, or 48 successful code uses unlocks one, two, or three wigs respectively over the period',
+      '50% off the invite-entry wig at default specs when eligible; link clicks, code purchases and sign-ups accrue points toward your first free wig',
+      'Pick a 6-month quest tier (Slay Challenge–style): 12, 24, or 48 successful code uses unlocks one, two or three wigs respectively over the period',
       'Earn upgrades on a separate points track for spec bumps beyond base rewards',
       'Top-performing ambassador receives an end-of-year bonus or gift',
     ],
     dailyTasks: [
       'Publish agreed posts and stories per the brief; submit links or proof for verification',
-      'Share a short weekly snapshot: reach, clicks, and redemptions tied to your code',
-      'Join launch beats and use provided tags, sounds, and asset notes',
+      'Share a short weekly snapshot: reach, clicks and redemptions tied to your code',
+      'Join launch beats and use provided tags, sounds and asset notes',
     ],
     scheduledHours: '1-year contract — posting & reporting cadence per program brief',
     pay: 'Monthly (goals) + content package fees + code commission — edit in adminWorkersDashboard.ts',

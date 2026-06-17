@@ -1,5 +1,5 @@
 /**
- * Debounced push of local cart, wishlist, and orders to Supabase (PUT /api/cart, /api/wishlist, /api/orders).
+ * Debounced push of local cart, wishlist and orders to Supabase (PUT /api/cart, /api/wishlist, /api/orders).
  * Call on navigation so signed-in users keep cloud state aligned without editing every page.
  */
 import { getSupabase, isSupabaseConfigured } from './supabase';

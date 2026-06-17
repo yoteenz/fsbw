@@ -227,7 +227,7 @@ export default function PsaChatCopyEditorPanel() {
     <div className="brand-copy-editor">
       {toast ? <p className="brand-copy-editor__toast">{toast}</p> : null}
       <p className="brand-copy-editor__intro">
-        Edit PSA chat design copy, welcome message templates, and starter quick replies. Scripted replies show
+        Edit PSA chat design copy, welcome message templates and starter quick replies. Scripted replies show
         instantly without calling the AI. Save syncs to Supabase for all members.
       </p>
       {loadingRemote ? <p className="brand-copy-editor__empty">Loading cloud copy…</p> : null}

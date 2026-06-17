@@ -1,6 +1,6 @@
 /**
  * When an admin declines a submitted order authorization form: cancel the order,
- * reverse loyalty from that order, and restock (inventory follows canceled orders via `getDepletedInventory`).
+ * reverse loyalty from that order and restock (inventory follows canceled orders via `getDepletedInventory`).
  */
 
 import { normalizeUserOrdersBuckets, sortArchivedOrdersNewestFirst } from './userOrdersBuckets';

@@ -173,7 +173,7 @@ export default function BuildAWigPage() {
           
           // CRITICAL: Only set editSelected* keys if they don't already exist
           // This prevents overwriting selections made by sub-pages when component re-mounts
-          // Sub-pages set these values, and we should preserve them
+          // Sub-pages set these values and we should preserve them
           if (!localStorage.getItem('editSelectedCapSize')) {
             localStorage.setItem('editSelectedCapSize', item.capSize || 'M');
           }
@@ -302,7 +302,7 @@ export default function BuildAWigPage() {
       }
       
       // CRITICAL: In edit mode, return early to prevent clearing localStorage
-      // The editSelected* keys are already set above, and useEffect will load from editingCartItem
+      // The editSelected* keys are already set above and useEffect will load from editingCartItem
       return {
         capSize: 'M',
         length: '24"',
@@ -533,7 +533,7 @@ export default function BuildAWigPage() {
     prices.texturePrice = texturePrices[selections.texture] || 0;
     
     // Calculate hairline price
-    // CRITICAL: Handle NATURAL, PEAK, LAGOS, and LAGOS+PEAK combination
+    // CRITICAL: Handle NATURAL, PEAK, LAGOS and LAGOS+PEAK combination
     // Options: NATURAL ($0), PEAK ($40), LAGOS ($60), LAGOS+PEAK ($80 with $20 discount)
     if (!selections.hairline || selections.hairline === 'NATURAL') {
       prices.hairlinePrice = 0;
@@ -692,7 +692,7 @@ export default function BuildAWigPage() {
 
   // Load selections from localStorage when returning from sub-pages or in edit mode
   useEffect(() => {
-    // Check if we're on the build-a-wig page, edit page, or customize page (not a sub-page)
+    // Check if we're on the build-a-wig page, edit page or customize page (not a sub-page)
     // NOTE: Removed check for '/' since root path now goes to lobby page
     // CRITICAL: Include product-specific main routes (blanco, soft-wave, soft-curl, noir)
     const isMainPage = location.pathname === '/build-a-wig' ||
@@ -915,7 +915,7 @@ export default function BuildAWigPage() {
         localStorage.setItem('customizeSelectedStylingPrice', savedStylingPrice);
         localStorage.setItem('customizeSelectedAddOnsPrice', savedAddOnsPrice);
         
-        // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
+        // Recalculate prices as fallback if any prices are missing but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
         // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
         // Only recalculate if localStorage doesn't have a value
@@ -1251,7 +1251,7 @@ export default function BuildAWigPage() {
         const savedStylingPrice = localStorage.getItem('editSelectedStylingPrice') || localStorage.getItem('selectedStylingPrice');
         const savedAddOnsPrice = localStorage.getItem('editSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
         
-        // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
+        // Recalculate prices as fallback if any prices are missing but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
         // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
         // Only recalculate if localStorage doesn't have a value
@@ -1341,9 +1341,9 @@ export default function BuildAWigPage() {
         
         // Force change detection to run after state update
         // Compare updatedCustomization with originalItem immediately (originalItem is in closure)
-        // The change detection useEffect will also run when customization state updates, but this ensures it happens
+        // The change detection useEffect will also run when customization state updates but this ensures it happens
         // Note: originalItem and hasChanges are defined later in the component
-        // CRITICAL: originalItem should be set from initial load, but if it's not, we need to ensure it's set
+        // CRITICAL: originalItem should be set from initial load but if it's not, we need to ensure it's set
         if (!originalItem) {
           // Try to get originalItem from the editingCartItem
           const editingCartItem = localStorage.getItem('editingCartItem');
@@ -1760,7 +1760,7 @@ export default function BuildAWigPage() {
               const selectedValue = localStorage.getItem(selectedKey);
               
               // Prefer editSelected* key, then selected* key, then calculated value
-              // CRITICAL: Check that value exists, is not empty, and is a valid number (including negative)
+              // CRITICAL: Check that value exists, is not empty and is a valid number (including negative)
               let result;
               if (editValue !== null && editValue !== undefined && editValue !== '' && !isNaN(parseFloat(editValue))) {
                 result = parseFloat(editValue);
@@ -2115,7 +2115,7 @@ export default function BuildAWigPage() {
         const savedStylingPrice = localStorage.getItem('selectedStylingPrice');
         const savedAddOnsPrice = localStorage.getItem('selectedAddOnsPrice');
         
-        // Recalculate prices as fallback if any prices are missing, but prioritize saved prices
+        // Recalculate prices as fallback if any prices are missing but prioritize saved prices
         const calculatedPrices = calculatePricesFromSelections(updatedCustomization);
         // CRITICAL: Preserve cap size price from localStorage if it exists (may have been set from cart item or sub-pages)
         // Only recalculate if localStorage doesn't have a value
@@ -2435,8 +2435,8 @@ export default function BuildAWigPage() {
     console.log('[SYNC TO STORAGE] Running sync to localStorage', { isEditMode, isCustomizeMode });
     
     // CRITICAL: In edit mode, DO NOT sync editSelected* keys back to localStorage
-    // Sub-pages set these values, and we should NOT overwrite them
-    // Only sync selected* keys for sub-pages to read, but don't overwrite editSelected* keys
+    // Sub-pages set these values and we should NOT overwrite them
+    // Only sync selected* keys for sub-pages to read but don't overwrite editSelected* keys
     if (isEditMode) {
       // CRITICAL: Match customize mode - sync selected* keys from editSelected* keys if they exist
       // This ensures sub-pages always see the latest selections when navigating between sub-pages
@@ -2485,8 +2485,8 @@ export default function BuildAWigPage() {
     }
     
     // CRITICAL: In customize mode, DO NOT sync customizeSelected* keys back to localStorage
-    // Sub-pages set these values, and we should NOT overwrite them
-    // Only sync selected* keys for sub-pages to read, but don't overwrite customizeSelected* keys
+    // Sub-pages set these values and we should NOT overwrite them
+    // Only sync selected* keys for sub-pages to read but don't overwrite customizeSelected* keys
     if (isCustomizeMode) {
       // Only sync selected* keys (for sub-pages), NOT customizeSelected* keys (set by sub-pages)
       const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
@@ -3686,7 +3686,7 @@ export default function BuildAWigPage() {
       }
       
       // Get prices from localStorage with fallback to calculated prices
-      // This ensures we use saved prices when available, but always have correct fallback
+      // This ensures we use saved prices when available but always have correct fallback
       const getPrice = (key: string, calculatedValue: number) => {
         const primaryKey = `${prefix}${key}Price`;
         const fallbackKey = `selected${key}Price`;
@@ -3752,7 +3752,7 @@ export default function BuildAWigPage() {
         }
         
         // Use localStorage value if it exists and is valid (including negative values), otherwise use calculated value
-        // CRITICAL: Check that value exists, is not empty, and is a valid number (including negative)
+        // CRITICAL: Check that value exists, is not empty and is a valid number (including negative)
         if (primaryValue !== null && primaryValue !== undefined && primaryValue !== '' && !isNaN(parseFloat(primaryValue))) {
           const parsedValue = parseFloat(primaryValue);
           // Return the parsed value (can be negative)
@@ -4379,7 +4379,7 @@ export default function BuildAWigPage() {
     
     // In edit mode: only allow if changes have been made
     if (isEditPage && !hasChanges) {
-      return; // Button should be disabled, but this is a safety check
+      return; // Button should be disabled but this is a safety check
     }
     
     // Prevent double-clicks
@@ -4565,7 +4565,7 @@ export default function BuildAWigPage() {
         addOns: customization.addOns
       };
       
-      console.log('[EDIT MODE SAVE] Updated item (for cart, wishlist, or saved for later):', updatedItem);
+      console.log('[EDIT MODE SAVE] Updated item (for cart, wishlist or saved for later):', updatedItem);
       
       const editingSource = localStorage.getItem('editingSource');
       const idStr = String(editingCartItemId);
@@ -4971,7 +4971,7 @@ export default function BuildAWigPage() {
       additionalWeekCount++;
     }
     
-    // Check hairline options (PEAK and LAGOS have additional week, but not when combined)
+    // Check hairline options (PEAK and LAGOS have additional week but not when combined)
     const selectedHairline = localStorage.getItem('selectedHairline');
     if (selectedHairline) {
       const hairlineArray = selectedHairline.split(',');
@@ -4984,7 +4984,7 @@ export default function BuildAWigPage() {
       }
     }
     
-    // Check styling options (CRIMPS, FLAT IRON, LAYERS, and all bangs combinations have additional week)
+    // Check styling options (CRIMPS, FLAT IRON, LAYERS and all bangs combinations have additional week)
     const selectedStyling = localStorage.getItem('selectedHairStyling');
     if (selectedStyling) {
       const stylingArray = selectedStyling.split(',');
@@ -4995,12 +4995,12 @@ export default function BuildAWigPage() {
         // Bangs + other styling combination has additional week
         additionalWeekCount++;
       } else if (stylingArray.includes('CRIMPS') || stylingArray.includes('FLAT IRON') || stylingArray.includes('LAYERS')) {
-        // Individual crimps, flat iron, or layers have additional week
+        // Individual crimps, flat iron or layers have additional week
         additionalWeekCount++;
       }
     }
     
-    // Check add-ons options (BLEACH, PLUCK, and combinations have additional week)
+    // Check add-ons options (BLEACH, PLUCK and combinations have additional week)
     const selectedAddOns = localStorage.getItem('selectedAddOns');
     if (selectedAddOns) {
       const addOnsArray = JSON.parse(selectedAddOns);

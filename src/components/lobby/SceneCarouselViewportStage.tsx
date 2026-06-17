@@ -12,7 +12,7 @@ type Props = {
   children?: ReactNode;
 };
 
-/** Visible lobby/lounge scene — fixed `100dvh` so cover, hits, and transition video share one box. */
+/** Visible lobby/lounge scene — fixed `100dvh` so cover, hits and transition video share one box. */
 export function SceneCarouselViewportStage({
   backgroundSrc,
   backgroundPosition,

@@ -1,5 +1,5 @@
 /**
- * Static knowledge for PSA v1: site navigation, unit catalog, and FAQ snippets.
+ * Static knowledge for PSA v1: site navigation, unit catalog and FAQ snippets.
  * Keep in sync with `src/constants/brandFaqCopy.ts` when FAQ changes materially.
  */
 import {
@@ -42,14 +42,14 @@ export function mapPsaProductForTool(product: PsaProduct) {
 export const PSA_NAV_LINKS: PsaNavLink[] = [
   { label: 'SHOP UNITS', path: '/home/shop', description: 'Browse all wig units and storefront categories.' },
   { label: 'UNITS HUB', path: '/shop/units', description: 'Unit collection landing from the lounge carousel.' },
-  { label: 'BUILD-A-WIG', path: '/build-a-wig', description: 'Customize a unit with length, color, lace, styling, and add-ons.' },
+  { label: 'BUILD-A-WIG', path: '/build-a-wig', description: 'Customize a unit with length, color, lace, styling and add-ons.' },
   { label: 'SHOPPING BAG', path: '/bag', description: 'View cart and saved-for-later items.' },
   { label: 'WISHLIST', path: '/wishlist', description: 'Saved items and lists.' },
-  { label: 'ACCOUNT', path: '/account', description: 'Profile, orders, settings, and member hub.' },
-  { label: 'CONCIERGE', path: '/account/concierge', description: 'Priority messages, special offers, Slay Challenge, and member perks.' },
+  { label: 'ACCOUNT', path: '/account', description: 'Profile, orders, settings and member hub.' },
+  { label: 'CONCIERGE', path: '/account/concierge', description: 'Priority messages, special offers, Slay Challenge and member perks.' },
   { label: 'REWARDS / MEMBERSHIP', path: '/account/rewards', description: 'Premium subscription chart and member rewards.' },
   { label: 'ORDERS', path: '/orders', description: 'Active and past order tracking.' },
-  { label: 'REFERRALS', path: '/account/referrals', description: 'Referral code, digital cash rewards, and share-with-friends perks.' },
+  { label: 'REFERRALS', path: '/account/referrals', description: 'Referral code, digital cash rewards and share-with-friends perks.' },
   { label: 'AFFILIATE', path: '/account/affiliate', description: 'Affiliate content submissions and community rewards for points.' },
   { label: 'BOOK CONSULTATION', path: '/booking/consultation', description: 'Standard consultation booking.' },
   { label: 'BOOK APPOINTMENT', path: '/booking/appointment', description: 'Hair install / appointment booking.' },
@@ -57,7 +57,7 @@ export const PSA_NAV_LINKS: PsaNavLink[] = [
   { label: 'PREMIUM APPOINTMENT', path: '/booking/premium/appointment', description: 'Premium-tier appointment (premium members).' },
   { label: 'VIP LOUNGE', path: '/lobby/lounge', description: 'Members-only lounge experience.' },
   { label: 'FAQ', path: '/brand/faq', description: 'Full FAQ and ask-a-question form.' },
-  { label: 'TERMS OF SERVICE', path: '/brand/terms', description: 'Returns, refunds, and full policy terms.' },
+  { label: 'TERMS OF SERVICE', path: '/brand/terms', description: 'Returns, refunds and full policy terms.' },
   { label: 'CONTACT', path: '/brand/contact', description: 'Brand contact form.' },
   { label: 'GIFT CARD', path: '/tools/gift-card', description: 'Purchase a gift card.' },
 ];
@@ -161,19 +161,19 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'hair-type',
     question: 'WHAT TYPE OF HAIR DO YOU SELL?',
     answer:
-      'Premium 100% raw human hair extensions and units sourced for longevity, softness, and minimal shedding when properly maintained.',
+      'Premium 100% raw human hair extensions and units sourced for longevity, softness and minimal shedding when properly maintained.',
   },
   {
     id: 'hair-longevity',
     question: 'HOW LONG DOES THE HAIR LAST?',
     answer:
-      'With proper care, hair can last 1–3+ years depending on wear frequency, coloring, heat styling, and maintenance.',
+      'With proper care, hair can last 1–3+ years depending on wear frequency, coloring, heat styling and maintenance.',
   },
   {
     id: 'color-bleach',
     question: 'CAN THE HAIR BE COLORED OR BLEACHED?',
     answer:
-      'Yes — professional color, tone, lift, and styling are supported. Use a licensed professional for chemical services.',
+      'Yes — professional color, tone, lift and styling are supported. Use a licensed professional for chemical services.',
   },
   {
     id: 'returns',
@@ -185,13 +185,13 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'membership',
     question: 'WHAT DO PREMIUM MEMBERS GET?',
     answer:
-      'Premium includes discounted shipping, Build-a-Wig premium options, VIP lounge access, fast-track support, priority booking, challenges, live order tracking, and tier-specific perks like priority messages (6mo+) and special offers (12mo). See Account → Rewards.',
+      'Premium includes discounted shipping, Build-a-Wig premium options, VIP lounge access, fast-track support, priority booking, challenges, live order tracking and tier-specific perks like priority messages (6mo+) and special offers (12mo). See Account → Rewards.',
   },
   {
     id: 'build-a-wig',
     question: 'WHAT IS BUILD-A-WIG?',
     answer:
-      'Build-a-Wig lets you customize unit length, density, lace, texture, hairline, color, styling, cap size, and add-ons. Sign in to access. Premium options require an active premium membership.',
+      'Build-a-Wig lets you customize unit length, density, lace, texture, hairline, color, styling, cap size and add-ons. Sign in to access. Premium options require an active premium membership.',
   },
   {
     id: 'priority-messages',
@@ -203,7 +203,7 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'shed-tangle',
     question: 'DOES THE HAIR SHED OR TANGLE?',
     answer:
-      'Minimal shedding is normal with extensions and wigs, especially after customization. Proper maintenance, brushing technique, and nighttime care reduce tangling and extend hair life.',
+      'Minimal shedding is normal with extensions and wigs, especially after customization. Proper maintenance, brushing technique and nighttime care reduce tangling and extend hair life.',
   },
   {
     id: 'bundle-count',
@@ -215,13 +215,13 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'beginner-friendly',
     question: 'ARE YOUR WIGS BEGINNER FRIENDLY?',
     answer:
-      'Yes — many units offer beginner-friendly customization options to make installation easier for everyday wear. Ask about pre-plucked hairlines, lace options, and cap size in Build-a-Wig or book a consult.',
+      'Yes — many units offer beginner-friendly customization options to make installation easier for everyday wear. Ask about pre-plucked hairlines, lace options and cap size in Build-a-Wig or book a consult.',
   },
   {
     id: 'pre-plucked',
     question: 'DO YOUR WIGS COME PRE-PLUCKED OR CUSTOMIZED?',
     answer:
-      'Customization varies by unit. Options include pre-plucking, bleached knots, styling, color, layering, and other upgrades at checkout or through Build-a-Wig.',
+      'Customization varies by unit. Options include pre-plucking, bleached knots, styling, color, layering and other upgrades at checkout or through Build-a-Wig.',
   },
   {
     id: 'cap-size',
@@ -239,19 +239,19 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'length-density',
     question: 'HOW DO I CHOOSE LENGTH AND DENSITY?',
     answer:
-      'In Build-a-Wig, pick your unit (texture), then set length, density, lace, hairline, color, and styling. Straight: NOIR or BLANCO. Wavy: SOFT WAVE or BEACH WAVE. Curly: SOFT CURL or OCEAN CURL. Higher density = fuller look; longer lengths may need higher density for balance.',
+      'In Build-a-Wig, pick your unit (texture), then set length, density, lace, hairline, color and styling. Straight: NOIR or BLANCO. Wavy: SOFT WAVE or BEACH WAVE. Curly: SOFT CURL or OCEAN CURL. Higher density = fuller look; longer lengths may need higher density for balance.',
   },
   {
     id: 'installation-care',
     question: 'INSTALLATION AND MAINTENANCE TIPS?',
     answer:
-      'Use a licensed professional for install and chemical services. Store on a wig stand, detangle gently from ends up, minimize heat, and follow night-care routines. Book an appointment at /booking/appointment for pro install; see FAQ for maintenance and longevity.',
+      'Use a licensed professional for install and chemical services. Store on a wig stand, detangle gently from ends up, minimize heat and follow night-care routines. Book an appointment at /booking/appointment for pro install; see FAQ for maintenance and longevity.',
   },
   {
     id: 'loyalty',
     question: 'HOW DOES THE LOYALTY REWARDS PROGRAM WORK?',
     answer:
-      'Earn loyalty points through purchases, product reviews, referrals, social engagement, and promotions. Redeem toward discounts, perks, free gifts, and savings. View points and rewards at Account → Rewards.',
+      'Earn loyalty points through purchases, product reviews, referrals, social engagement and promotions. Redeem toward discounts, perks, free gifts and savings. View points and rewards at Account → Rewards.',
   },
   {
     id: 'referral',
@@ -269,13 +269,13 @@ export const PSA_FAQ_ENTRIES: { id: string; question: string; answer: string }[]
     id: 'member-perks',
     question: 'DO YOU OFFER EXCLUSIVE PERKS FOR MEMBERS?',
     answer:
-      'Yes — early drops, giveaways, promotional offers, loyalty rewards, exclusive discounts, and VIP community perks. Premium members also get lounge access, priority booking, and tier-specific benefits on Account → Rewards.',
+      'Yes — early drops, giveaways, promotional offers, loyalty rewards, exclusive discounts and VIP community perks. Premium members also get lounge access, priority booking and tier-specific benefits on Account → Rewards.',
   },
   {
     id: 'returns-exchanges',
     question: 'DO YOU ACCEPT RETURNS OR EXCHANGES?',
     answer:
-      'Due to bespoke customization and hygiene standards, all sales are final — no refunds, returns, or exchanges. See /brand/terms. For wrong or damaged items, contact support within 48 hours with photos and order number.',
+      'Due to bespoke customization and hygiene standards, all sales are final — no refunds, returns or exchanges. See /brand/terms. For wrong or damaged items, contact support within 48 hours with photos and order number.',
   },
   {
     id: 'wrong-item',
