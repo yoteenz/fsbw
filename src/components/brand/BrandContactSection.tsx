@@ -8,6 +8,8 @@ import {
 } from '../../constants/brandContactCopy';
 import { postBrandContactSubmit } from '../../utils/api';
 import { appendBrandContactInquiryLocal } from '../../utils/brandContactInquiries';
+import { BRAND_CONTACT_HERO_IMAGE_SRC } from '../../constants/brandContactAssets';
+import PageHeroImage from '../PageHeroImage';
 
 const fieldLabelStyle: CSSProperties = {
   fontFamily: '"Futura PT Book"',
@@ -156,6 +158,7 @@ export default function BrandContactSection({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <PageHeroImage src={BRAND_CONTACT_HERO_IMAGE_SRC} />
       <div
         style={{
           display: 'flex',
