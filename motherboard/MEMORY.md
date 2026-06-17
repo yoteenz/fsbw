@@ -28873,6 +28873,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-17 — Order form: upload privacy note red again
+
+- **Context:** User noted **`ORDER_FORM_UPLOAD_PRIVACY_NOTE`** (**FOR YOUR PROTECTION…**) was still gray; should be red (**#EB1C24**) while **IDENTITY VERIFICATION** / **PAYMENT VERIFICATION** headings stay gray.
+- **Changes:** **`order-form/page.tsx`** — privacy **`<p>`** color **#808080 → #EB1C24** (both upload sections). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-17 — Order form intro: rose bullet first-line alignment
 
 - **Context:** User reported **please note** rose bullets sat above the text line instead of inline with it (unlike NOIR PDP policy/shipping tabs).
