@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import OrderFormIntroText from '../../../components/shop/OrderFormIntroText';
+import { ORDER_FORM_HERO_IMAGE_SRC } from '../../../constants/orderFormAssets';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
@@ -1051,6 +1052,18 @@ function OrderFormPage() {
                     ORDER AUTHORIZATION FORM
                   </h2>
                 </div>
+
+                <img
+                  src={ORDER_FORM_HERO_IMAGE_SRC}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    display: 'block',
+                    objectFit: 'contain',
+                    marginBottom: '12px',
+                  }}
+                />
 
                 <OrderFormIntroText />
 
