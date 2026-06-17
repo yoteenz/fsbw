@@ -28793,3 +28793,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User clarified gift cards do not need order forms — only hair-related high-ticket products (units, BCF bundles/closures/frontals).
 - **Changes:** Removed **`giftCardFirstPurchaseForm.ts`** and the first-time gift-card ID verification gate. **`orderNeedsClientAuthFormSignature`** now lives in **`orderAuthorizationForm.ts`** and matches **`orderRequiresOrderAuthorizationForm`** only. Checkout no longer sets **`requiresGiftCardIdentityForm`**; **`digitalOrderFulfillment`** always treats gift-card orders as digital timeline; checkout confirm / orders UI no longer show **VERIFY ID** or gift-card form CTAs; order-form page no longer has **`giftCardIdentityVerificationOnly`** auto-approve path. **`motherboard/CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form note paragraphs: gray → brand red
+
+- **Context:** User asked to change two helper paragraphs on the order authorization form from gray to red: upload privacy note (under identity/payment verification) and chargeback supporting note (under no-chargeback ack).
+- **Changes:** **`src/pages/shop/order-form/page.tsx`** — **`ORDER_FORM_UPLOAD_PRIVACY_NOTE`** (both upload sections) and **`ORDER_FORM_ACK_NO_CHARGEBACK_NOTE`** use **`#EB1C24`** instead of **`#808080`**. Pushed **`master`** + **`preview/mobile`**.
