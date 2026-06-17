@@ -332,14 +332,6 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   orderTotalWrap.appendChild(textInput(val(form, 'orderTotalPaid')));
   formCol.appendChild(orderTotalWrap);
 
-  const paymentWrap = document.createElement('div');
-  const paymentLab = document.createElement('label');
-  Object.assign(paymentLab.style, labelStyle());
-  paymentLab.innerHTML = `PAYMENT METHOD USED<span style="color:${RED};font-weight:normal">*</span>`;
-  paymentWrap.appendChild(paymentLab);
-  paymentWrap.appendChild(textInput(val(form, 'paymentMethodUsed')));
-  formCol.appendChild(paymentWrap);
-
   const authChecks = document.createElement('div');
   Object.assign(authChecks.style, {
     display: 'flex',
@@ -360,6 +352,14 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
     ),
   );
   formCol.appendChild(authChecks);
+
+  const paymentWrap = document.createElement('div');
+  const paymentLab = document.createElement('label');
+  Object.assign(paymentLab.style, labelStyle());
+  paymentLab.innerHTML = `PAYMENT METHOD USED<span style="color:${RED};font-weight:normal">*</span>`;
+  paymentWrap.appendChild(paymentLab);
+  paymentWrap.appendChild(textInput(val(form, 'paymentMethodUsed')));
+  formCol.appendChild(paymentWrap);
 
   const uploadCol = document.createElement('div');
   Object.assign(uploadCol.style, {

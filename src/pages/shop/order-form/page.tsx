@@ -1250,74 +1250,6 @@ function OrderFormPage() {
                     />
                   </div>
 
-                  <div>
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        color: '#000000',
-                        textTransform: 'uppercase',
-                        marginBottom: '8px',
-                        marginTop: 0
-                      }}
-                    >
-                      PAYMENT METHOD USED<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {ORDER_FORM_PAYMENT_METHOD_OPTIONS.map((opt) => {
-                        const selected = formData.paymentMethodUsed === opt.value;
-                        const selectPaymentMethod = () => {
-                          setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
-                          setInvalidFields((prev) => {
-                            const next = new Set(prev);
-                            next.delete('paymentMethodUsed');
-                            return next;
-                          });
-                        };
-                        return (
-                          <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div
-                              onClick={selectPaymentMethod}
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1.3px solid #000000',
-                                backgroundColor: 'transparent',
-                                position: 'relative',
-                                flexShrink: 0
-                              }}
-                            >
-                              {selected && (
-                                <img
-                                  src="/assets/checkbox.svg"
-                                  alt="checked"
-                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
-                                />
-                              )}
-                            </div>
-                            <label
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '10px',
-                                color: '#000000',
-                                cursor: 'pointer',
-                                textTransform: 'uppercase',
-                                lineHeight: '1.3'
-                              }}
-                              onClick={selectPaymentMethod}
-                            >
-                              {opt.label}
-                            </label>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
                   {/* Authorization Checkboxes */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1395,6 +1327,74 @@ function OrderFormPage() {
                       >
                         THE BILLING/SHIPPING ADDRESS BELONGS TO THE CARDHOLDER.<span style={{ color: '#EB1C24' }}>*</span>
                       </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        color: '#000000',
+                        textTransform: 'uppercase',
+                        marginBottom: '8px',
+                        marginTop: 0
+                      }}
+                    >
+                      PAYMENT METHOD USED<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {ORDER_FORM_PAYMENT_METHOD_OPTIONS.map((opt) => {
+                        const selected = formData.paymentMethodUsed === opt.value;
+                        const selectPaymentMethod = () => {
+                          setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
+                          setInvalidFields((prev) => {
+                            const next = new Set(prev);
+                            next.delete('paymentMethodUsed');
+                            return next;
+                          });
+                        };
+                        return (
+                          <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div
+                              onClick={selectPaymentMethod}
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1.3px solid #000000',
+                                backgroundColor: 'transparent',
+                                position: 'relative',
+                                flexShrink: 0
+                              }}
+                            >
+                              {selected && (
+                                <img
+                                  src="/assets/checkbox.svg"
+                                  alt="checked"
+                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                />
+                              )}
+                            </div>
+                            <label
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000000',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                lineHeight: '1.3'
+                              }}
+                              onClick={selectPaymentMethod}
+                            >
+                              {opt.label}
+                            </label>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
