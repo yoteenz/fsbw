@@ -5,7 +5,10 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import OrderFormIntroText from '../../../components/shop/OrderFormIntroText';
 import PageHeroImage from '../../../components/PageHeroImage';
-import { ORDER_FORM_HERO_IMAGE_SRC } from '../../../constants/orderFormAssets';
+import {
+  ORDER_FORM_HERO_IMAGE_SRC,
+  ORDER_FORM_HERO_VIDEO_SRC,
+} from '../../../constants/orderFormAssets';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
@@ -1064,7 +1067,7 @@ function OrderFormPage() {
                   </h2>
                 </div>
 
-                <PageHeroImage src={ORDER_FORM_HERO_IMAGE_SRC} />
+                <PageHeroImage src={ORDER_FORM_HERO_IMAGE_SRC} videoSrc={ORDER_FORM_HERO_VIDEO_SRC} />
 
                 <OrderFormIntroText />
 
