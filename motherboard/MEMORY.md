@@ -28649,6 +28649,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-16 — Home/tools arrow centering: route check + overlay container fix
+
+- **Context:** User reported gift card carousel arrow vertical centering on **`/home/tools`** was not applied; suspected overwrite. Causes: (1) Vercel builds on **`71029de`** failed (**`SHARED_SIGNATURE_FEATURES_TAIL`** TS6133) so prior arrow commit never deployed; (2) **`location.pathname === '/home/tools'`** skipped centered overlay on **`/home/tools/debug-mode`** (fell back to legacy **`top: 50%`** arrows); (3) flex overlay was on inner clip box, not full strip band.
+- **Fix:** `stripDebugModeSuffix(location.pathname) === '/home/tools'`; move flex overlay to strip inner wrapper with **`top: 6px`** (divider band) + **`alignItems: center`**. Build passes. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-16 — BLANCO signature feature: ventilated single strand knots
 
 - **Context:** User asked to update one **signature features** bullet on **BLANCO** PDP only to **VENTILATED SINGLE STRAND KNOTS** (other units keep **LIGHTLY BLEACHED SINGLE STRAND KNOTS**).
