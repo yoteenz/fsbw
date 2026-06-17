@@ -29008,3 +29008,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **About Us** (`/brand/about`) hero using **`live-preview/3D Stock/IMG_3006.png`**, same size/placement as order form (**`PageHeroImage`**: 75% width, centered, 22px top / 12px bottom margin).
 - **Changes:** **`src/constants/brandAboutAssets.ts`** (`BRAND_ABOUT_HERO_IMAGE_SRC`), **`BrandAboutUsBody.tsx`** — hero above mission copy. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Affiliate program hero + PageHeroImage
+
+- **Context:** User asked for **Affiliate Program** hero on **`/account/affiliate`** using **`live-preview/3D Stock/IMG_3007.png`**, same **`PageHeroImage`** sizing as order form (75% width, centered, 22px top / 12px bottom margin).
+- **Changes:** **`src/constants/affiliateProgramAssets.ts`** (`AFFILIATE_PROGRAM_HERO_IMAGE_SRC`), **`account/affiliate/page.tsx`** — hero below **AFFILIATE PROGRAM** header, above overview copy. Pushed **`master`** + **`preview/mobile`**.
