@@ -28986,3 +28986,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to reduce order form hero image size by **25%**.
 - **Changes:** Hero **`width` 100% → 75%**, centered with **`marginLeft`/`marginRight: auto`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Brand member hero + shared PageHeroImage
+
+- **Context:** User asked for **Become a Member** (`/brand/member`) hero using Supabase **`ChatGPT Image Jun 17, 2026 at 05_14_57 PM.png`**, same size/placement as order form hero (75% width, 22px top / 12px bottom margin, centered).
+- **Decisions / outcomes:** Extracted **`PageHeroImage`** + **`PAGE_HERO_IMAGE_STYLE`**; order form refactored to use it; member hero URL in **`brandMemberAssets.ts`** as **`BRAND_MEMBER_HERO_IMAGE_SRC`**; rendered at top of **`BrandMemberSection`** above copy.
+- **Changes:** **`src/components/PageHeroImage.tsx`**, **`src/constants/brandMemberAssets.ts`**, **`BrandMemberSection.tsx`**, **`order-form/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
