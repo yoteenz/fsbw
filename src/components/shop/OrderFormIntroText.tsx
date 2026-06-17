@@ -12,6 +12,10 @@ import {
   ORDER_FORM_INTRO_PURPOSE_TITLE,
   ORDER_FORM_INTRO_RECORDKEEPING,
 } from '../../constants/orderFormIntroCopy';
+import {
+  NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
+  NOIR_PRODUCT_TAB_ROSE_ALERT_SRC,
+} from './noirProductTabRoseBadge';
 
 const PARA_STYLE: CSSProperties = {
   fontFamily: '"Futura PT Book"',
@@ -50,6 +54,15 @@ function BulletLine({ line }: { line: string }) {
   );
 }
 
+function RoseBulletLine({ line }: { line: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', margin: '0 0 8px 0' }}>
+      <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
+      <p style={{ ...PARA_STYLE, margin: 0 }}>{line}</p>
+    </div>
+  );
+}
+
 /** Intro copy block for the Order Authorization Form main card. */
 export default function OrderFormIntroText() {
   return (
@@ -65,7 +78,7 @@ export default function OrderFormIntroText() {
 
       <p style={SUBHEAD_STYLE}>{ORDER_FORM_INTRO_PLEASE_NOTE_TITLE}</p>
       {ORDER_FORM_INTRO_PLEASE_NOTE_BULLETS.map((line) => (
-        <BulletLine key={line} line={line} />
+        <RoseBulletLine key={line} line={line} />
       ))}
 
       <p style={{ ...PARA_STYLE, margin: '12px 0 20px 0' }}>{ORDER_FORM_INTRO_AUTHORIZATION}</p>
