@@ -1266,27 +1266,39 @@ function OrderFormPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {ORDER_FORM_PAYMENT_METHOD_OPTIONS.map((opt) => {
                         const selected = formData.paymentMethodUsed === opt.value;
+                        const selectPaymentMethod = () => {
+                          setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
+                          setInvalidFields((prev) => {
+                            const next = new Set(prev);
+                            next.delete('paymentMethodUsed');
+                            return next;
+                          });
+                        };
                         return (
                           <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <div
-                              onClick={() => {
-                                setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
-                                setInvalidFields((prev) => {
-                                  const next = new Set(prev);
-                                  next.delete('paymentMethodUsed');
-                                  return next;
-                                });
-                              }}
+                              onClick={selectPaymentMethod}
                               style={{
                                 width: '16px',
                                 height: '16px',
-                                borderRadius: '50%',
                                 cursor: 'pointer',
-                                border: `1.3px solid ${selected ? '#EB1C24' : '#000000'}`,
-                                backgroundColor: selected ? '#EB1C24' : 'transparent',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1.3px solid #000000',
+                                backgroundColor: 'transparent',
+                                position: 'relative',
                                 flexShrink: 0
                               }}
-                            />
+                            >
+                              {selected && (
+                                <img
+                                  src="/assets/checkbox.svg"
+                                  alt="checked"
+                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                />
+                              )}
+                            </div>
                             <label
                               style={{
                                 fontFamily: '"Futura PT Book"',
@@ -1296,9 +1308,7 @@ function OrderFormPage() {
                                 textTransform: 'uppercase',
                                 lineHeight: '1.3'
                               }}
-                              onClick={() => {
-                                setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
-                              }}
+                              onClick={selectPaymentMethod}
                             >
                               {opt.label}
                             </label>
