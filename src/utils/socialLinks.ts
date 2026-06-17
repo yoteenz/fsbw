@@ -43,7 +43,7 @@ const PLATFORM_STRIP: Record<SocialPlatform, RegExp[]> = {
   ],
 };
 
-/** Strip leading @, https, www, and repeated platform host segments from user input or stored value. */
+/** Strip leading @, https, www and repeated platform host segments from user input or stored value. */
 export function stripSocialPlatformPrefixes(platform: SocialPlatform, raw: string): string {
   let s = String(raw || '').trim().replace(/^@/, '');
   if (!s) return '';

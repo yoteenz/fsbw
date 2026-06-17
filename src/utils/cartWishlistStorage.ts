@@ -2,7 +2,7 @@ import { writeStoredCartVersion } from './cartServerSync';
 import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
 
 /**
- * Per-user cart, wishlist, and saved lists storage.
+ * Per-user cart, wishlist and saved lists storage.
  * When the signed-in user changes, we swap global localStorage so the active user's data is shown.
  * New accounts get empty cart/wishlist/lists; no admin or previous user data is shown.
  */
@@ -24,7 +24,7 @@ function userListsKey(email: string | null): string {
 }
 
 /**
- * Save current global cart, wishlist, and userLists to the given user's per-user keys.
+ * Save current global cart, wishlist and userLists to the given user's per-user keys.
  * Call with previous user's email before switching (e.g. before Supabase sync) so their data is preserved.
  */
 export function saveCartAndWishlistToUserKeys(email: string): void {
@@ -46,7 +46,7 @@ export function saveCartAndWishlistToUserKeys(email: string): void {
 const CART_UI_KEYS = ['addToBagButtonState', 'lastAddedItemId', 'editingCartItem', 'editingCartItemId'] as const;
 
 /**
- * Load the given user's cart, wishlist, and userLists into global keys.
+ * Load the given user's cart, wishlist and userLists into global keys.
  * Use null to clear globals (e.g. on sign-out).
  * Clears cart UI state (editingCartItem, addToBagButtonState, etc.) so it doesn't bleed between users.
  */
@@ -87,7 +87,7 @@ function loadFromUserKeys(email: string | null): void {
 }
 
 /**
- * Call when the signed-in user changes (sign-in, sign-up, or sign-out).
+ * Call when the signed-in user changes (sign-in, sign-up or sign-out).
  * Saves the previous user's global cart/wishlist/lists to their per-user keys,
  * then loads the new user's data (or empty) into global keys.
  * @param previousEmail - Email of the user who was signed in (null if none).

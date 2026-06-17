@@ -188,7 +188,7 @@ function AccountPage() {
     return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
   };
 
-  // Mock voucher history – transaction: "1X FLEXIBLE CAP", "1X HAIRLINE", "1X COLOR", "1X STYLING", or "REDEEMED"; amount: +1 credited, -1 redeemed
+  // Mock voucher history – transaction: "1X FLEXIBLE CAP", "1X HAIRLINE", "1X COLOR", "1X STYLING" or "REDEEMED"; amount: +1 credited, -1 redeemed
   const MOCK_VOUCHER_HISTORY: Array<{ date: string; transaction: string; amount: number }> = [
     { date: '2-12-2025', transaction: '1X FLEXIBLE CAP', amount: 1 },
     { date: '2-10-2025', transaction: '1X HAIRLINE', amount: 1 },
@@ -1080,7 +1080,7 @@ function AccountPage() {
       
       const submittedContent = JSON.parse(submittedContentStr);
       
-      // Check for pending, approved, or rejected content that user hasn't seen
+      // Check for pending, approved or rejected content that user hasn't seen
       for (const orderId in submittedContent) {
         const content = submittedContent[orderId];
         const photos = content.photos || [];

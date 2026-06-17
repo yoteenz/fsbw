@@ -143,7 +143,7 @@ function defaultHairColorForUnit(itemName: unknown): string {
   return normalizeCartUnitName(itemName) === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
 }
 
-/** Single source of truth for voucher types: cart option key, default value, and item price key. Add new voucher types here to match vouchers available vs cart. */
+/** Single source of truth for voucher types: cart option key, default value and item price key. Add new voucher types here to match vouchers available vs cart. */
 const VOUCHER_TYPE_CONFIG: Record<string, { optionKey: string; getDefault: (item: any) => string; priceKey: string }> = {
   COLOR: { optionKey: 'color', getDefault: (item) => defaultHairColorForUnit(item?.name), priceKey: 'colorPrice' },
   HAIRLINE: { optionKey: 'hairline', getDefault: () => 'NATURAL', priceKey: 'hairlinePrice' },
@@ -653,7 +653,7 @@ function CheckoutPage() {
     return 'USD';
   });
 
-  // Check if any product has color, styling, or add-ons (non-default values)
+  // Check if any product has color, styling or add-ons (non-default values)
   const hasColorStylingOrAddOns = useMemo(() => {
     return cartItems.some((item) => {
       // Skip gift cards
@@ -1931,14 +1931,14 @@ function CheckoutPage() {
   const orderAmount = cartBillableSubtotal(cartItems);
   const orderAmountExcludingSpecialOffer = cartBillableSubtotalExcludingSpecialOffer(cartItems);
 
-  // Calculate taxable amount (exclude gift cards, digital items, sold-out units, and bookings-only A/C checkout)
+  // Calculate taxable amount (exclude gift cards, digital items, sold-out units and bookings-only A/C checkout)
   const taxableAmount = isBookingsOnlyCheckout ? 0 : cartBillableTaxableSubtotal(cartItems);
 
   const taxesProcessing = taxableAmount * 0.10; // 10% sales tax on taxable amount only (excluding gift cards, digital items, shipping & discounts)
   
   // Calculate shipping based on selected method (applies premium discount)
   const getShippingCost = () => {
-    if (checkoutSkipsShipping) return 0; // No shipping for upgrades, digital-only carts, or A/C bookings checkout
+    if (checkoutSkipsShipping) return 0; // No shipping for upgrades, digital-only carts or A/C bookings checkout
     if (!selectedShippingMethod) return 0;
     
     // Get premium discount
@@ -2746,7 +2746,7 @@ function CheckoutPage() {
   );
 
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
-  // Always calculate the protection fee amount (for display), but only add to total if selected
+  // Always calculate the protection fee amount (for display) but only add to total if selected
   const protectionFeeAmount = calculateProtectionFee(orderAmount);
   const protectionFee = packageProtection ? protectionFeeAmount : 0;
   // Calculate tip amount: if percentage is set, use that; otherwise use custom dollar amount (only if applied)
@@ -5698,7 +5698,7 @@ function CheckoutPage() {
                               // Apply tip: set applied state to true and format display
                               setCustomTipApplied(true);
                               setTipPercentage(null);
-                              // Format the display value with currency symbol, commas, and .00
+                              // Format the display value with currency symbol, commas and .00
                               const formattedAmount = customTipAmount.toLocaleString('en-US');
                               const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                               if (!currency) {
@@ -6331,7 +6331,7 @@ function CheckoutPage() {
                     const quoteResult = await fetchCheckoutQuote(cartItemsToQuoteLines(cartItems));
                     if (!quoteResult.ok || !quoteResult.quote.fullyResolved) {
                       setValidationMessage(
-                        'THIS CART CANNOT BE PAID BY CARD YET. REMOVE BUNDLE OR UNPRICED LINES, OR CONTACT CONCIERGE.'
+                        'THIS CART CANNOT BE PAID BY CARD YET. REMOVE BUNDLE OR UNPRICED LINES OR CONTACT CONCIERGE.'
                       );
                       setShowValidationModal(true);
                       return;
@@ -6358,7 +6358,7 @@ function CheckoutPage() {
                     return;
                   }
 
-                  // Billing required when not same-as-shipping, or when checkout skips shipping
+                  // Billing required when not same-as-shipping or when checkout skips shipping
                   const requireBilling = !sameAsBilling || checkoutSkipsShipping;
                   if (requireBilling) {
                     if (!billingFirstName?.trim()) {
@@ -6581,7 +6581,7 @@ function CheckoutPage() {
                       const subscriptionItem = localStorage.getItem('subscriptionUpgrade');
                       if (subscriptionItem) {
                         const item = JSON.parse(subscriptionItem);
-                        const subscriptionTier = item.subscriptionTier; // '3months', '6months', or '12months'
+                        const subscriptionTier = item.subscriptionTier; // '3months', '6months' or '12months'
                         
                         if (subscriptionTier) {
                           const currentUser = localStorage.getItem('currentUser');

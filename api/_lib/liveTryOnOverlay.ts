@@ -42,21 +42,21 @@ function angleConstraint(angle: LiveTryOnAngle): string {
       '**Head + shoulder yaw: +40° from front** (subject turned 40° toward **their right**; **left cheek** nearest camera).',
       '**Match the mannequin reference yaw exactly** — not 0° front, not −40° (opposite side).',
       'Hair mass toward the **viewer’s right**; **same part direction and shoulder bias** as the reference — do not mirror.',
-      'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
+      'Keep the same **camera distance, crop and shoulder line** as the mannequin frame.',
     ].join(' ');
   }
   if (angle === 'right') {
     return [
       '**Head + shoulder yaw: −40° from front** (subject turned 40° toward **their left**; **right cheek** nearest camera).',
       '**Match the mannequin reference yaw exactly at −40°** — **not** 0° (front), **not** +40° (mirrored left pose), **not** “eyes only” turned toward center while body stays front.',
-      'Nose, chin, neck, and **both shoulders** stay locked to **−40°** like the reference — same body angle as the left view but on the **opposite** side.',
+      'Nose, chin, neck and **both shoulders** stay locked to **−40°** like the reference — same body angle as the left view but on the **opposite** side.',
       'Hair mass toward the **viewer’s left**; **same part direction and shoulder bias** as the reference.',
-      'Keep the same **camera distance, crop, and shoulder line** as the mannequin frame.',
+      'Keep the same **camera distance, crop and shoulder line** as the mannequin frame.',
     ].join(' ');
   }
   return [
     '**Head + shoulder yaw: 0°** — square to camera (true front; no turn).',
-    '**Exact** center part line, length, volume, and one-sided shoulder sweep from the reference — do not symmetrically mirror hair.',
+    '**Exact** center part line, length, volume and one-sided shoulder sweep from the reference — do not symmetrically mirror hair.',
     'Keep the same **camera distance and crop** as the mannequin frame.',
   ].join(' ');
 }
@@ -70,27 +70,27 @@ function isJetBlackOffBlack(label: string, hex: string): boolean {
 
 /** Studio glam — NBP-style heavy DOF + subject pop on the customer’s real environment (no backdrop swap). */
 const STUDIO_GLAM_COMPOSITION = [
-  '**DEPTH OF FIELD — NBP portrait glam (critical):** Shot on a **fast portrait lens** (**f/1.4–f/2.8**). Keep the customer’s **real room** from IMAGE 1 (same general hues and shapes) — **do not** replace with grey seamless, white backdrop, or a different location.',
-  '**Background blur:** Defocus the room **heavily** — **creamy circular bokeh**; walls, furniture, bed, and doorways **barely readable**, melted into soft color patches. Background must be **much blurrier** than a phone snapshot — match **NBP admin portrait** thumb depth.',
-  '**Subject lighting:** **Brighten face, skin, hair, and lace** with soft flattering **key light** on the subject — subject reads **~1–2 stops brighter** with polished editorial grade and healthy sheen on skin and hair.',
+  '**DEPTH OF FIELD — NBP portrait glam (critical):** Shot on a **fast portrait lens** (**f/1.4–f/2.8**). Keep the customer’s **real room** from IMAGE 1 (same general hues and shapes) — **do not** replace with grey seamless, white backdrop or a different location.',
+  '**Background blur:** Defocus the room **heavily** — **creamy circular bokeh**; walls, furniture, bed and doorways **barely readable**, melted into soft color patches. Background must be **much blurrier** than a phone snapshot — match **NBP admin portrait** thumb depth.',
+  '**Subject lighting:** **Brighten face, skin, hair and lace** with soft flattering **key light** on the subject — subject reads **~1–2 stops brighter** with polished editorial grade and healthy sheen on skin and hair.',
   '**Background separation:** **Slightly darken** the defocused background (gentle exposure falloff / vignette behind subject) so the person **pops as center focus** — luminous sharp subject, soft darker backdrop.',
-  '**Sharp zone:** **Face, eyes, skin, lace front, and hair** stay **tack sharp**; only the room falls off.',
+  '**Sharp zone:** **Face, eyes, skin, lace front and hair** stay **tack sharp**; only the room falls off.',
   '**Forbidden:** sharp readable background; flat even lighting where background competes with the face; background as bright as the subject.',
 ].join(' ');
 
 /** Keep the selfie environment literal — blur only, never invent scenery. */
 const STUDIO_BACKGROUND_LOCK = [
-  '**BACKGROUND (mandatory):** Preserve **only** what exists in IMAGE 1 — same walls, furniture, doors, and clutter positions.',
-  'Apply **blur/defocus to existing pixels only** — do **not** repaint, replace, or “upgrade” the room.',
-  '**FORBIDDEN:** adding plants, lamps, mirrors, art, shelves, beds, chairs, decor, windows, people, or any object **not visible** in the selfie.',
-  '**FORBIDDEN:** swapping to a studio backdrop, grey seamless, or a “cleaner” invented room.',
+  '**BACKGROUND (mandatory):** Preserve **only** what exists in IMAGE 1 — same walls, furniture, doors and clutter positions.',
+  'Apply **blur/defocus to existing pixels only** — do **not** repaint, replace or “upgrade” the room.',
+  '**FORBIDDEN:** adding plants, lamps, mirrors, art, shelves, beds, chairs, decor, windows, people or any object **not visible** in the selfie.',
+  '**FORBIDDEN:** swapping to a studio backdrop, grey seamless or a “cleaner” invented room.',
 ].join(' ');
 
 /** Prevent hallucinated edge frizz / baby hairs at the hairline. */
 const STUDIO_HAIRLINE_LOCK = [
   '**HAIRLINE EDGE (mandatory):** Match the **natural hairline** at forehead and temples from IMAGE 1 — clean lace blend only where the wig meets skin.',
-  '**FORBIDDEN:** baby hairs, wispy edge frizz, flyaways, or micro-strands on the forehead/temples **unless they clearly exist** in IMAGE 1 natural hair.',
-  'Do **not** copy wispy edges, baby hairs, or skin-adjacent frizz from the mannequin or portrait reference onto the customer’s skin.',
+  '**FORBIDDEN:** baby hairs, wispy edge frizz, flyaways or micro-strands on the forehead/temples **unless they clearly exist** in IMAGE 1 natural hair.',
+  'Do **not** copy wispy edges, baby hairs or skin-adjacent frizz from the mannequin or portrait reference onto the customer’s skin.',
 ].join(' ');
 
 /**
@@ -99,20 +99,20 @@ const STUDIO_HAIRLINE_LOCK = [
  */
 const STUDIO_SKULL_FIT = [
   '**SKULL FIT — REAL HUMAN HEAD (critical — override mannequin display styling):**',
-  'Display mannequins mount wigs **high and forward** on a rigid bust for retail — that reads as **helmet hair** on a real person. **Do NOT** copy mannequin **vertical placement**, cap elevation, or hairline height from IMAGE 2 (or IMAGE 3).',
-  'From IMAGE 2 / mannequin refs use **only**: color, length, density, curl pattern, layer shape, lace width, and shoulder drape — **never** how high the wig sits on the bust.',
+  'Display mannequins mount wigs **high and forward** on a rigid bust for retail — that reads as **helmet hair** on a real person. **Do NOT** copy mannequin **vertical placement**, cap elevation or hairline height from IMAGE 2 (or IMAGE 3).',
+  'From IMAGE 2 / mannequin refs use **only**: color, length, density, curl pattern, layer shape, lace width and shoulder drape — **never** how high the wig sits on the bust.',
   '**Lace front + hairline:** sit **flush against IMAGE 1’s scalp** at a **natural human forehead hairline** (~one finger-width above brows, following IMAGE 1 skull curve) — lace band hugs skin, **not** floating above the forehead.',
   '**Part:** groove sits **in** the hair at **natural crown depth** on this person’s skull midline — **not** on a lifted hair mass or display-mannequin crown.',
-  '**Cap + volume:** wig cap follows **IMAGE 1 head contour at IMAGE 1 yaw** — hair grows **from** the turned scalp and crown, close to the skull; **forbidden** hovering cap, inflated crown bubble, or wig sitting above the cranium.',
+  '**Cap + volume:** wig cap follows **IMAGE 1 head contour at IMAGE 1 yaw** — hair grows **from** the turned scalp and crown, close to the skull; **forbidden** hovering cap, inflated crown bubble or wig sitting above the cranium.',
   '**Skull fit ≠ front-facing head:** lace sits flush on the **turned** scalp at IMAGE 1 yaw — **not** by squaring the face to 0° to “lower” the wig.',
   '**Self-check:** if the hairline or part reads higher than a salon lace install on this face → **failed** — lower until flush on the skull.',
 ].join(' ');
 
 /** Makeup pass must not reframe or pan the finished render. */
 const STUDIO_MAKEUP_FRAMING_LOCK = [
-  '**FRAMING LOCK (critical):** Output must be **pixel-aligned** with IMAGE 1 — **identical crop, scale, aspect ratio, head position, and horizontal center**.',
-  '**FORBIDDEN:** pan right/left, zoom, reframe, subject drift, or any shift in composition.',
-  'Treat IMAGE 1 as a **photograph to preserve** — edit **face-skin makeup pixels only**; **zero** changes to hair, wig, lace, neck, clothing, or background pixels.',
+  '**FRAMING LOCK (critical):** Output must be **pixel-aligned** with IMAGE 1 — **identical crop, scale, aspect ratio, head position and horizontal center**.',
+  '**FORBIDDEN:** pan right/left, zoom, reframe, subject drift or any shift in composition.',
+  'Treat IMAGE 1 as a **photograph to preserve** — edit **face-skin makeup pixels only**; **zero** changes to hair, wig, lace, neck, clothing or background pixels.',
 ].join(' ');
 
 function studioHeadYawDegrees(poseAngle: LiveTryOnAngle, headYawDeg?: number): number {
@@ -182,7 +182,7 @@ function studioHeadBodyPoseLock(poseAngle: LiveTryOnAngle, headYawDeg?: number):
 
   if (absYaw <= 8) {
     return [
-      '**HEAD + BODY POSE (mandatory):** Preserve **exact** head yaw, neck, chin, nose direction, and **both shoulders** from IMAGE 1 — **0°** square to camera.',
+      '**HEAD + BODY POSE (mandatory):** Preserve **exact** head yaw, neck, chin, nose direction and **both shoulders** from IMAGE 1 — **0°** square to camera.',
       '**FORBIDDEN:** rotating the customer to match the **front** mannequin (IMAGE 2) head angle.',
     ].join(' ');
   }
@@ -191,20 +191,20 @@ function studioHeadBodyPoseLock(poseAngle: LiveTryOnAngle, headYawDeg?: number):
     return [
       '**HEAD + BODY POSE — POSITIONED RIGHT (mandatory — full rotation, not a glance):**',
       `IMAGE 1 head yaw is **${yawLabel}** — **right cheek** nearest camera; entire head and upper body turned toward **their left**.`,
-      'Lock **nose tip, chin, neck, ears, and BOTH shoulders** to this **−40° class** rotation — **exactly as in IMAGE 1**, **not** the front mannequin.',
+      'Lock **nose tip, chin, neck, ears and BOTH shoulders** to this **−40° class** rotation — **exactly as in IMAGE 1**, **not** the front mannequin.',
       '**FORBIDDEN:** front-facing torso/shoulders with eyes or face **only** glancing toward image RIGHT — that is **“looking right”**, **not** **positioned right**.',
-      '**FORBIDDEN:** 0° front body, symmetric shoulders square to camera, or copying IMAGE 2’s **front-view** mannequin head angle.',
-      `Draw lace front, part, and hair mass on the **turned skull** at **${yawLabel}** — not on a 0° face.`,
+      '**FORBIDDEN:** 0° front body, symmetric shoulders square to camera or copying IMAGE 2’s **front-view** mannequin head angle.',
+      `Draw lace front, part and hair mass on the **turned skull** at **${yawLabel}** — not on a 0° face.`,
     ].join(' ');
   }
 
   return [
     '**HEAD + BODY POSE — POSITIONED LEFT (mandatory — full rotation, not a glance):**',
     `IMAGE 1 head yaw is **${yawLabel}** — **left cheek** nearest camera; entire head and upper body turned toward **their right**.`,
-    'Lock **nose tip, chin, neck, ears, and BOTH shoulders** to this **+40° class** rotation — **exactly as in IMAGE 1**, **not** the front mannequin.',
+    'Lock **nose tip, chin, neck, ears and BOTH shoulders** to this **+40° class** rotation — **exactly as in IMAGE 1**, **not** the front mannequin.',
     '**FORBIDDEN:** front-facing torso/shoulders with eyes or face **only** glancing toward image LEFT — that is a glance, **not** a positioned-left pose.',
     '**FORBIDDEN:** 0° front body or copying IMAGE 2’s **front-view** mannequin head angle.',
-    `Draw lace front, part, and hair mass on the **turned skull** at **${yawLabel}** — not on a 0° face.`,
+    `Draw lace front, part and hair mass on the **turned skull** at **${yawLabel}** — not on a 0° face.`,
   ].join(' ');
 }
 
@@ -212,8 +212,8 @@ function studioHeadBodyPoseLock(poseAngle: LiveTryOnAngle, headYawDeg?: number):
 const STUDIO_DRAPE_SIDE = [
   '**LENGTH DRAPE (mandatory — match portrait renders):** Copy the **one-sided shoulder sweep** from the references — **not** equal hair mass on both shoulders.',
   '**DRAPE SIDE:** Almost all long length falls **forward over the viewer’s LEFT shoulder only** (left edge of the image).',
-  '**Viewer’s RIGHT shoulder:** only a thin tuck, hair behind the shoulder, or nothing crossing the collarbone — **never** a second heavy cascade.',
-  '**FORBIDDEN:** symmetrical “curtain” on both shoulders, twin waterfalls, or matching thick panels on left and right.',
+  '**Viewer’s RIGHT shoulder:** only a thin tuck, hair behind the shoulder or nothing crossing the collarbone — **never** a second heavy cascade.',
+  '**FORBIDDEN:** symmetrical “curtain” on both shoulders, twin waterfalls or matching thick panels on left and right.',
   '**Self-check:** if both shoulders have matching thick hair in front → **failed**.',
 ].join(' ');
 
@@ -226,14 +226,14 @@ function studioMannequinRefBlock(poseAngle: LiveTryOnAngle, hasPortraitRef: bool
 
   if (hasPortraitRef) {
     return [
-      `**IMAGE 2** is the **${angleLabel}** mannequin — wig **color**, length, density, curl, and lace shape only (**not** vertical placement; **not** a reason to rotate IMAGE 1 to front).`,
-      `**IMAGE 3** is the **${angleLabel}** GPT portrait — copy **shoulder sweep, length drape, and silhouette** onto IMAGE 1 — **not** hairline height, crown elevation, front-facing head angle, or helmet-hair elevation.`,
-      'Replace **only** the hair on IMAGE 1; **face, neck, shoulders, and body pose stay from IMAGE 1**; drape geometry from IMAGE 3.',
+      `**IMAGE 2** is the **${angleLabel}** mannequin — wig **color**, length, density, curl and lace shape only (**not** vertical placement; **not** a reason to rotate IMAGE 1 to front).`,
+      `**IMAGE 3** is the **${angleLabel}** GPT portrait — copy **shoulder sweep, length drape and silhouette** onto IMAGE 1 — **not** hairline height, crown elevation, front-facing head angle or helmet-hair elevation.`,
+      'Replace **only** the hair on IMAGE 1; **face, neck, shoulders and body pose stay from IMAGE 1**; drape geometry from IMAGE 3.',
     ];
   }
 
   return [
-    `**IMAGE 2** is the **${angleLabel}** mannequin wig reference — use it for **length, density, curl, lace shape, color, and shoulder sweep** at this camera angle only.`,
+    `**IMAGE 2** is the **${angleLabel}** mannequin wig reference — use it for **length, density, curl, lace shape, color and shoulder sweep** at this camera angle only.`,
     '**Do NOT** rotate IMAGE 1 to match a front mannequin — IMAGE 2 shows the **same head yaw class** as the capture for **hair geometry only**.',
     'Replace **only** the hair on IMAGE 1 — installed **flush on their turned skull**, not at mannequin bust display height.',
   ];
@@ -254,7 +254,7 @@ export function buildLiveTryOnStudioTryOnPrompt(
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
   return [
-    '**IMAGE 1 (master pose — do not repose):** Customer selfie — keep **exact** face, skin tone, expression, **head yaw, neck, both shoulders, and torso rotation** from this image. **Never** square IMAGE 1 to front because IMAGE 2 exists.',
+    '**IMAGE 1 (master pose — do not repose):** Customer selfie — keep **exact** face, skin tone, expression, **head yaw, neck, both shoulders and torso rotation** from this image. **Never** square IMAGE 1 to front because IMAGE 2 exists.',
     ...studioMannequinRefBlock(poseAngle, hasPortraitRef),
     colorLine,
     ...(stylingHint ? [stylingHint] : []),
@@ -263,16 +263,16 @@ export function buildLiveTryOnStudioTryOnPrompt(
     studioCenterPartConstraint(poseAngle, headYawDeg),
     STUDIO_DRAPE_SIDE,
     hasPortraitRef
-      ? 'Match **length, density, curl pattern, layers, and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut; **never** copy mannequin crown height.'
-      : 'Match **length, density, curl pattern, layers, volume, and one-sided drape** from IMAGE 2 — not a new cut; **never** copy mannequin crown height.',
+      ? 'Match **length, density, curl pattern, layers and volume** from IMAGE 2 + **drape from IMAGE 3** — not a new cut; **never** copy mannequin crown height.'
+      : 'Match **length, density, curl pattern, layers, volume and one-sided drape** from IMAGE 2 — not a new cut; **never** copy mannequin crown height.',
     STUDIO_GLAM_COMPOSITION,
     STUDIO_BACKGROUND_LOCK,
     STUDIO_HAIRLINE_LOCK,
-    '**No visible makeup** — bare natural skin as in the selfie; do not add lipstick, blush, or eye makeup.',
+    '**No visible makeup** — bare natural skin as in the selfie; do not add lipstick, blush or eye makeup.',
     'Realistic lace-front blend: hairline **flush on scalp** at natural forehead position from IMAGE 1.',
     '**Delete from output only:** mannequin gray skin, bust, stand, bricks, FRONTAL SLAYER logo — never delete or swap the customer’s real room.',
     'No text or watermark.',
-    'Ultra sharp, photographic — not illustration, sticker, or cutout overlay.',
+    'Ultra sharp, photographic — not illustration, sticker or cutout overlay.',
   ].join(' ');
 }
 
@@ -292,7 +292,7 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
   return [
     'IMAGE 1 = customer selfie (master pose — keep head+shoulder yaw).',
     `IMAGE 2 = ${angleLabel} mannequin wig reference — hair only, never repose face.`,
-    `Keep face, skin, pose, and room from IMAGE 1. Head yaw ${yawLabel}.`,
+    `Keep face, skin, pose and room from IMAGE 1. Head yaw ${yawLabel}.`,
     yaw < -8
       ? 'Positioned RIGHT: full head+shoulder turn (−40° class), not eyes-only looking right. Do not copy mannequin front angle.'
       : yaw > 8
@@ -315,11 +315,11 @@ export function buildLiveTryOnStudioTryOnPromptCompact(
  */
 export function buildLiveTryOnStudioMakeupPassPrompt(): string {
   return [
-    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, lace, **part**, pose, expression, background, lighting, and outfit.',
+    '**IMAGE 1** is a finished studio portrait with lace-front wig — keep **everything identical**: wig, hair, lace, **part**, pose, expression, background, lighting and outfit.',
     STUDIO_MAKEUP_FRAMING_LOCK,
     'Apply **polished IG baddie / babygirl glam** on **face skin only** — same person, still recognizable; photoreal editorial, **not** cartoon or plastic.',
     '**Jaw + cheeks (soft snatched sculpt):** **soft, diffused contour** under cheekbones and along the jaw — **heavily blended**, **no harsh stripe or muddy brown line** on the cheek.',
-    '**Highlight (golden):** **warm golden/champagne highlight** on the **top of the cheekbones**, bridge of nose, and cupid’s bow — luminous, not grey or ashy.',
+    '**Highlight (golden):** **warm golden/champagne highlight** on the **top of the cheekbones**, bridge of nose and cupid’s bow — luminous, not grey or ashy.',
     '**Blush:** **flush of rosy pink blush** on the **apples of the cheeks** — healthy sun-kissed warmth, blended into skin (not clown circles).',
     '**Nose (slimmer):** gentle **soft side contour** on the alae + **highlight** down the bridge and tip — refined and slimmer, not harsh stripes.',
     '**Eyes:** shape reads more **almond**; **brighten undereyes** (concealer effect); **natural wispy lashes** (longer, fuller, curled — lash-extension look, not spidery strips).',
@@ -327,7 +327,7 @@ export function buildLiveTryOnStudioMakeupPassPrompt(): string {
     '**Lips (critical):** make the **upper lip visibly fuller** — plump **cupid’s bow** and center upper lip; soft satin nude-pink finish — not overlined clown lips.',
     '**Skin:** smooth evening with **soft glow** on cheekbones; keep believable texture (light freckles/moles OK) — airbrushed but still human. **Do not change forehead size or hairline.**',
     '**Overall:** soft contour + golden highlight + rosy blush balance — camera-ready glow, not heavy stage makeup.',
-    '**Locked — do not change:** hair, wig, lace front, **part line**, room, depth of field, body pose, neck, or clothing.',
+    '**Locked — do not change:** hair, wig, lace front, **part line**, room, depth of field, body pose, neck or clothing.',
     'No text or watermark.',
   ].join(' ');
 }
@@ -335,7 +335,7 @@ export function buildLiveTryOnStudioMakeupPassPrompt(): string {
 /** Shorter makeup pass for Fal retries. */
 export function buildLiveTryOnStudioMakeupPassPromptCompact(): string {
   return [
-    'IMAGE 1 is a finished studio portrait with wig — keep hair, part, pose, room, crop, and outfit pixel-identical.',
+    'IMAGE 1 is a finished studio portrait with wig — keep hair, part, pose, room, crop and outfit pixel-identical.',
     'Face-skin glam only: soft blended cheek/jaw contour (no harsh stripe), golden highlight on cheek tops, rosy blush on apples, slimmer nose, fuller upper lip, almond eyes, bright undereyes, natural lashes.',
     'No forehead shrink. No pan/reframe. Same person, photoreal. No text.',
   ].join(' ');
@@ -356,12 +356,12 @@ export function buildLiveTryOnPhotorealWomanPrompt(
     : `Wig hair color **${label}** (hex **#${hex}**) — salon-realistic dyed hair, not flat CGI.`;
 
   return [
-    'Use the attached **mannequin wig reference** for **color, length, density, curl, lace shape, and drape** — **not** display-mannequin vertical placement.',
+    'Use the attached **mannequin wig reference** for **color, length, density, curl, lace shape and drape** — **not** display-mannequin vertical placement.',
     'Create a **photorealistic** portrait of a beautiful woman wearing that lace-front wig installed **flush on a real human skull**:',
     colorLine,
     angleConstraint(angle),
-    '**SKULL FIT (critical):** Mannequins mount wigs **high on the bust** for display — on a real woman the lace front sits at a **natural forehead hairline** (~finger-width above brows), cap hugs the scalp, part at **natural crown depth**. **Forbidden:** helmet hair, floating wig cap, or crown bubble above the cranium.',
-    'Match **length, density, curl pattern, part direction, layers, and volume** from the mannequin — **not** how high the wig sits on the mannequin bust.',
+    '**SKULL FIT (critical):** Mannequins mount wigs **high on the bust** for display — on a real woman the lace front sits at a **natural forehead hairline** (~finger-width above brows), cap hugs the scalp, part at **natural crown depth**. **Forbidden:** helmet hair, floating wig cap or crown bubble above the cranium.',
+    'Match **length, density, curl pattern, part direction, layers and volume** from the mannequin — **not** how high the wig sits on the mannequin bust.',
     '**Delete from output:** mannequin bust, gray skin, stand, FRONTAL SLAYER logo, bricks, studio props.',
     'Woman: photoreal editorial beauty — **neutral, elegant, mid-20s**, soft natural makeup, realistic eyes; **head pose and neck angle locked to the mannequin reference** (only swap mannequin skin for real skin — **lower wig to human install height**).',
     'Neutral blurred studio background, head and shoulders only — no jewelry, no dramatic styling.',
@@ -375,7 +375,7 @@ export const LIVE_TRY_ON_HAIR_ISOLATION_NBP_PROMPT = [
   'Cut out **only** the lace-front wig for AR overlay — NOT a portrait.',
   'DELETE COMPLETELY: face, skin, eyes, ears, neck, shoulders, chest, clothing, hands, background.',
   'OUTPUT: ONLY the hair unit and visible lace band on solid flat #FFFFFF.',
-  'KEEP: exact hair color, length, curl, part, volume, and silhouette from the reference.',
+  'KEEP: exact hair color, length, curl, part, volume and silhouette from the reference.',
   'ZERO pixels of human skin or facial features may remain.',
 ].join(' ');
 

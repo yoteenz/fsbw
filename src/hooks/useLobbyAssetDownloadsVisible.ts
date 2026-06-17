@@ -5,7 +5,7 @@ import {
   isLobbyAssetDownloadsVisibleFromSearch,
 } from '../constants/lobbySceneAssets';
 
-/** Dev, `?lobbyAssets=1` (persisted for the session), or signed-in admin on `/lobby`. */
+/** Dev, `?lobbyAssets=1` (persisted for the session) or signed-in admin on `/lobby`. */
 export function useLobbyAssetDownloadsVisible(): boolean {
   const { search } = useLocation();
   const [adminVisible, setAdminVisible] = useState(false);

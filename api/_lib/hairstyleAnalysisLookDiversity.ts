@@ -238,7 +238,7 @@ function varyTopMatchPerGeneration<L extends DiversifiableLook>(topMatch: L, gen
   return diversifyLook(topMatch, genIdx, unitKey, bucket);
 }
 
-/** Rotate units, styles, lengths, and color families when picks are too repetitive. */
+/** Rotate units, styles, lengths and color families when picks are too repetitive. */
 export function diversifyHairstyleAnalysisLooks<L extends DiversifiableLook>(
   topMatch: L,
   additionalLooks: L[]

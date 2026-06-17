@@ -223,8 +223,8 @@ export default function AdminMeetingsSchedule() {
                   }}
                 >
                   {isConsultation
-                    ? 'Consultation covers custom wig goals, measurements, and timeline.'
-                    : 'Select install, beauty, or add-on services. Multiple selections allowed.'}
+                    ? 'Consultation covers custom wig goals, measurements and timeline.'
+                    : 'Select install, beauty or add-on services. Multiple selections allowed.'}
                 </p>
               </div>
               <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4" style={{ paddingTop: '8px' }}>

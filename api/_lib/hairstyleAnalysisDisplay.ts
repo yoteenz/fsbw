@@ -152,7 +152,7 @@ export function lengthBodyPlacementPromptLine(length: string): string {
   const landmark = lengthBodyLandmark(inches);
 
   if (landmark === 'collarbone') {
-    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** terminate at the **collarbone / clavicle line** on the client's visible torso — short hem, not waist- or hip-long. **FORBIDDEN:** ends at waist, hip, or thigh when manifest is ${len}.`;
+    return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** terminate at the **collarbone / clavicle line** on the client's visible torso — short hem, not waist- or hip-long. **FORBIDDEN:** ends at waist, hip or thigh when manifest is ${len}.`;
   }
   if (landmark === 'above_waist') {
     return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** fall **above the natural waist** — between collarbone and waist (lower ribcage / upper torso), clearly shorter than waist-length. **FORBIDDEN:** collarbone-short or full waist-length when manifest is ${len}.`;
@@ -172,7 +172,7 @@ export function lengthBodyPlacementPromptLine(length: string): string {
   if (landmark === 'mid_thigh') {
     return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** reach **mid-thigh** on the visible body — very long, low on the torso/legs in frame. **FORBIDDEN:** hip-high or waist-length when manifest is ${len}.`;
   }
-  return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** reach **knee level or lower** on the visible body — maximum dramatic length, very low in the portrait. **FORBIDDEN:** hip-high, waist-length, or mid-thigh when manifest is ${len} (34" must read unmistakably longer than 26"–28").`;
+  return `**${len} LENGTH — BODY PLACEMENT:** hair **ends** reach **knee level or lower** on the visible body — maximum dramatic length, very low in the portrait. **FORBIDDEN:** hip-high, waist-length or mid-thigh when manifest is ${len} (34" must read unmistakably longer than 26"–28").`;
 }
 
 export function lengthBodyPlacementCompact(length: string): string {

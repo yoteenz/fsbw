@@ -148,7 +148,7 @@ export function republishSharedSnapshotsForLists(lists: UserList[], ownerEmail: 
 }
 
 /**
- * Public share page: registry snapshot, or live owner list when the signed-in owner opens their link.
+ * Public share page: registry snapshot or live owner list when the signed-in owner opens their link.
  */
 export function resolveSharedListForViewer(token: string): WishlistSharedListSnapshot | null {
   const snap = getSharedListByToken(token);

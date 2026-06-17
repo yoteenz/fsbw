@@ -33,7 +33,7 @@ function writeIfChanged(key: string, next: unknown[], changed: boolean): void {
   localStorage.setItem(key, JSON.stringify(next));
 }
 
-/** Persist `stockStatus` on cart, wishlist, saved-for-later, and list items from admin inventory. */
+/** Persist `stockStatus` on cart, wishlist, saved-for-later and list items from admin inventory. */
 export function syncStoredLinesStockStatus(): boolean {
   if (typeof window === 'undefined') return false;
   let anyChanged = false;

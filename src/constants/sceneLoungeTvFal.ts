@@ -14,9 +14,9 @@ export const LOUNGE_TV_DESIGN_FAL_PASS1 = `Treat the uploaded image as the exact
 
 Charcoal-black plastic bezel: thin uniform frame on top and left/right, slightly thicker bottom chin (typical TV). Bezel has soft gradient (#454545 highlight to #121212 shadow), 1px dark outline, subtle inset highlight — not flat gray cardboard.
 
-Matte glass screen is OFF: uniform dark gray-black (#000–#1a1a1a), subtle glass reflection along the upper inner edge only. Inner screen aspect ratio width:height = 1:0.72 (slightly wider than tall). Square corners on bezel and screen. No on-screen UI, text, logos, or video content.
+Matte glass screen is OFF: uniform dark gray-black (#000–#1a1a1a), subtle glass reflection along the upper inner edge only. Inner screen aspect ratio width:height = 1:0.72 (slightly wider than tall). Square corners on bezel and screen. No on-screen UI, text, logos or video content.
 
-Soft studio lighting, no wall mount, no desk stand visible (or minimal cropped base). No room, curtains, sofa, or people. Photoreal enhancement only — same proportions and centered framing.`;
+Soft studio lighting, no wall mount, no desk stand visible (or minimal cropped base). No room, curtains, sofa or people. Photoreal enhancement only — same proportions and centered framing.`;
 
 export const LOUNGE_TV_DESIGN_FAL_PASS1_NEGATIVE = `${LOUNGE_TV_FAL_NEGATIVE}, pink bezel, silver frame, white screen, bright picture on screen, youtube UI, smart TV menu`;
 

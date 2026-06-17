@@ -98,7 +98,7 @@ const US_FULL_NAME_TO_ABBR: Record<string, string> = (() => {
 })();
 
 /**
- * Short region for review header: `TX` from full state name, existing 2-letter code, or first two letters.
+ * Short region for review header: `TX` from full state name, existing 2-letter code or first two letters.
  */
 export function compactRegionCodeForReviewHeader(region: string | undefined | null): string | undefined {
   const raw = (region || '').trim().toUpperCase();

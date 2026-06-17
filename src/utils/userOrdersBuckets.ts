@@ -69,7 +69,7 @@ export function filterOutPremiumMembershipUpgradeOrders<T>(active: T[], past: T[
 
 /**
  * Parse common order **`date`** strings to epoch ms (local midnight); **0** if invalid.
- * Supports **MM-DD-YYYY**, **M/D/YYYY**, and ISO-ish strings **`Date.parse`** accepts.
+ * Supports **MM-DD-YYYY**, **M/D/YYYY** and ISO-ish strings **`Date.parse`** accepts.
  */
 function parseOrderDateField(dateStr: unknown): number {
   if (typeof dateStr !== 'string' || !dateStr.trim()) return 0;

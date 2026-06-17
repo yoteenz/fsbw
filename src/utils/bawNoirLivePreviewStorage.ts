@@ -365,7 +365,7 @@ export function isNoirBawCustomizeHubOnlyPathname(pathname: string): boolean {
 
 /**
  * Live WebP hero + thumbnails on NOIR **step** routes only (`/noir/customize/<step>`, `/noir/edit/<step>`).
- * **Not** on `/build-a-wig/noir`, `/noir/customize`, or `/noir/edit` landing hubs — those stay static `/assets/` mannequins + brick.
+ * **Not** on `/build-a-wig/noir`, `/noir/customize` or `/noir/edit` landing hubs — those stay static `/assets/` mannequins + brick.
  */
 export function isNoirBawLivePreviewStepPathname(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
@@ -391,7 +391,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
     if (isNoirBawProductHubPathname(path)) return null;
     if (!isNoirBawLivePreviewStepPathname(path)) return null;
 
-    /** Color sub-page: always **color-tier** live WebPs (draft `pending` + committed) — not salon/bangs styling triples, or swatch taps would not update the hero. */
+    /** Color sub-page: always **color-tier** live WebPs (draft `pending` + committed) — not salon/bangs styling triples or swatch taps would not update the hero. */
     const pNorm = path.replace(/\/$/, '') || '/';
     const isNoirColorSubPage =
       (pNorm.startsWith('/build-a-wig/noir/customize/') || pNorm.startsWith('/build-a-wig/noir/edit/')) &&

@@ -12,7 +12,7 @@ export const SCENE_CAROUSEL_BG_HEIGHT = FINAL_SCENE_ART_HEIGHT;
 /** Slide shell fill behind `background-size: cover` art (marble — avoids harsh black if a sliver shows). */
 export const SCENE_CAROUSEL_LETTERBOX_BG = '#e8e4e0';
 
-/** Cover anchor for lobby, lounge, transition clip, and hit-map math — top-aligned composite art. */
+/** Cover anchor for lobby, lounge, transition clip and hit-map math — top-aligned composite art. */
 export function sceneCarouselCoverBackgroundPosition(): string {
   return 'center top';
 }

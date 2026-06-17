@@ -191,7 +191,7 @@ export function isNewAccount(user: { hasMadeFirstPurchase?: boolean; [k: string]
   return user.hasMadeFirstPurchase !== true;
 }
 
-/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. Exported so account page can compute badge (hasAlertsNotifications) from current list including mock voucher alerts. For new accounts (no first purchase yet) only tier, membership, shipping+payment, and update profile alerts are shown; all others fire only after activity. */
+/** Build account-specific notifications. All text UPPERCASE. Header (title) = short summary. Body (message) = one descriptive sentence that summarizes the alert. Exported so account page can compute badge (hasAlertsNotifications) from current list including mock voucher alerts. For new accounts (no first purchase yet) only tier, membership, shipping+payment and update profile alerts are shown; all others fire only after activity. */
 export function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
   if (!user?.email) return [];
   const email = (user.email || '').trim().toLowerCase();
@@ -492,7 +492,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
 
 /**
  * Alert **`date`** → local midnight ms for **primary** sort (**newest calendar day at top**).
- * Accepts **M-D-YYYY**, **MM-DD-YYYY**, **M/D/YYYY**, **MM/DD/YYYY**, or strings **`Date.parse`** handles.
+ * Accepts **M-D-YYYY**, **MM-DD-YYYY**, **M/D/YYYY**, **MM/DD/YYYY** or strings **`Date.parse`** handles.
  */
 function parseNotificationDisplayDateMs(dateStr: string): number {
   const t = (dateStr || '').trim();

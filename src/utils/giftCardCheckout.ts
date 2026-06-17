@@ -1,6 +1,6 @@
 /** Gift card cart lines — isolated checkout at `/checkout/gift-card`. */
 
-/** Thumbnail for gift-card lines in bag, cart dropdown, checkout strip, and order summary. */
+/** Thumbnail for gift-card lines in bag, cart dropdown, checkout strip and order summary. */
 export const GIFT_CARD_CART_THUMBNAIL_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/image%20(23).png';
 

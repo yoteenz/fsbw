@@ -409,14 +409,14 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   ackCol.appendChild(
     checkboxRow(
       signedLike && val(form, 'ackNoChargeback') === 'true',
-      `I AGREE TO CONTACT FRONTAL SLAYER DIRECTLY REGARDING ANY ORDER CONCERNS BEFORE INITIATING A CHARGEBACK, PAYMENT DISPUTE, OR CLAIM WITH MY FINANCIAL INSTITUTION.<span style="color:${RED}">*</span>`,
+      `I AGREE TO CONTACT FRONTAL SLAYER DIRECTLY REGARDING ANY ORDER CONCERNS BEFORE INITIATING A CHARGEBACK, PAYMENT DISPUTE OR CLAIM WITH MY FINANCIAL INSTITUTION.<span style="color:${RED}">*</span>`,
     ),
   );
   if (val(form, 'ackRawHairVariation') === 'true') {
     ackCol.appendChild(
       checkboxRow(
         true,
-        `I UNDERSTAND THAT RAW HUMAN HAIR IS A NATURAL PRODUCT AND SLIGHT VARIATIONS IN COLOR, TEXTURE, DENSITY, CURL PATTERN, AND LACE APPEARANCE ARE NORMAL AND NOT CONSIDERED DEFECTS.<span style="color:${RED}">*</span>`,
+        `I UNDERSTAND THAT RAW HUMAN HAIR IS A NATURAL PRODUCT AND SLIGHT VARIATIONS IN COLOR, TEXTURE, DENSITY, CURL PATTERN AND LACE APPEARANCE ARE NORMAL AND NOT CONSIDERED DEFECTS.<span style="color:${RED}">*</span>`,
       ),
     );
   }

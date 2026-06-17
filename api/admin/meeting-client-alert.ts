@@ -72,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         ? '[APPOINTMENT · CANCEL REQUEST]'
         : '[APPOINTMENT · RESCHEDULE REQUEST]';
     const bodyLine = message ? message.toUpperCase() : 'PLEASE REVIEW YOUR ALERTS.';
-    const notifText = `${header} REASON: ${reason}. NOTE: ${bodyLine} YOU CAN ACCEPT, PROPOSE A NEW TIME, OR CANCEL FROM YOUR ACCOUNT.`;
+    const notifText = `${header} REASON: ${reason}. NOTE: ${bodyLine} YOU CAN ACCEPT, PROPOSE A NEW TIME OR CANCEL FROM YOUR ACCOUNT.`;
 
     const newItem = {
       id: crypto.randomUUID(),

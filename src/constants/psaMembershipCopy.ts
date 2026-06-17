@@ -1,4 +1,4 @@
-/** PSA marketing copy for membership pages, upgrade chart, and brand Become a Member. */
+/** PSA marketing copy for membership pages, upgrade chart and brand Become a Member. */
 
 export type PsaEngagementTierKey = '3months' | '6months' | '12months';
 

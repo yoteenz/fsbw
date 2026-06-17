@@ -574,7 +574,7 @@ function NudgesPanel({ revision, onSaved, onToast }: { revision: number; onSaved
   return (
     <>
       <p className="brand-copy-editor__intro">
-        Edit, <strong>copy</strong>, <strong>duplicate</strong>, or <strong>create</strong> nudge variants. Save on a catalog card
+        Edit, <strong>copy</strong>, <strong>duplicate</strong> or <strong>create</strong> nudge variants. Save on a catalog card
         updates live copy; custom drafts can optionally link to a catalog variant. Use <code>{'{placeholders}'}</code> for dynamic text.
       </p>
       <div className="brand-copy-editor__toolbar">
@@ -661,7 +661,7 @@ function AlertsPanel({ revision, onSaved, onToast }: { revision: number; onSaved
   return (
     <>
       <p className="brand-copy-editor__intro">
-        Edit, copy, duplicate, or create alert rows. Save updates <strong>/account/alerts</strong> copy when linked to a catalog variant.
+        Edit, copy, duplicate or create alert rows. Save updates <strong>/account/alerts</strong> copy when linked to a catalog variant.
       </p>
       <div className="brand-copy-editor__toolbar">
         <button type="button" className="brand-copy-editor__btn brand-copy-editor__btn--primary" onClick={createNew}>

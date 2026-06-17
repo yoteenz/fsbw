@@ -3,7 +3,7 @@
  *
  * Enable any one of:
  * - **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** (or `true` / `yes`) in `.env.local` — rebuild dev / redeploy production.
- * - **`localStorage`** or **`sessionStorage`** key **`adminGlobeMockData`** = **`1`**, **`true`**, **`yes`**, or **`on`** (refresh).
+ * - **`localStorage`** or **`sessionStorage`** key **`adminGlobeMockData`** = **`1`**, **`true`**, **`yes`** or **`on`** (refresh).
  * - URL on Admin Revenue: **`?globe_mock=1`** (or **`true`**) — no persistence; works on production without env changes.
  */
 

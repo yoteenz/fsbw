@@ -17,7 +17,7 @@ export const NEON_LOGO_FAL_TWO_PASS_NOTE =
   'WORKFLOW: (1) NBP edit — glow pass. (2) birefnet/v2 — remove background to transparent PNG. Do not ask NBP for alpha.';
 
 /** Pass 1 — depth + bloom on uploaded sign (wall can stay for now). */
-export const LOBBY_NEON_LOGO_FAL_PASS1_GLOW = `Treat the uploaded image as the exact neon sign to preserve — same FS monogram, FRONTAL SLAYER letterforms, tube paths, mounting clips, and straight-on camera angle.
+export const LOBBY_NEON_LOGO_FAL_PASS1_GLOW = `Treat the uploaded image as the exact neon sign to preserve — same FS monogram, FRONTAL SLAYER letterforms, tube paths, mounting clips and straight-on camera angle.
 
 Add strong neon depth: bright hot pink-red bloom through the glass tubes, soft volumetric glow behind and around the sign, red light washing the dark wall. Rear halo plus gentle front fill so tubes look lit from inside, not flat stickers. Glow should spread 8–12 inches on the wall behind the sign. Keep wall and sign position unchanged — enhancement only.`;
 

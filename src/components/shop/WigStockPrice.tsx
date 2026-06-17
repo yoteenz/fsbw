@@ -133,7 +133,7 @@ export function WigProductPriceDisplay({
 /**
  * Cross-sell strip price (SIMILAR PRODUCTS / RECENTLY VIEWED on product pages). When the
  * referenced product is sold out, the price is shown gray + strikethrough with **no** red
- * "SOLD OUT" / "OUT OF STOCK" label. Pass `productName` for a wig unit, or an explicit
+ * "SOLD OUT" / "OUT OF STOCK" label. Pass `productName` for a wig unit or an explicit
  * `soldOut` boolean (e.g. BCF products gated by packaging).
  */
 export function WigStripPrice({

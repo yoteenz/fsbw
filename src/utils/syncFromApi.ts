@@ -24,7 +24,7 @@ export function didLastProfileSyncError(): boolean {
 }
 
 /**
- * `clearAppAuth()` removes `currentUser`, but `registeredUsers` still holds the last saved profile for that email
+ * `clearAppAuth()` removes `currentUser` but `registeredUsers` still holds the last saved profile for that email
  * (including `profileImage`). Without this, `syncProfileFromApi` sees no `existing` user, merges only API fields,
  * and overwrites `profileImage` with the default when the backend omits or clears `profile_image`.
  */
@@ -83,7 +83,7 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     const currentUserMatchesApi =
       existing &&
       ((existing.email as string) || '').trim().toLowerCase() === emailNorm;
-    // If currentUser is missing, wrong account, or stale, still merge from registeredUsers so API sync does not wipe local profile fields.
+    // If currentUser is missing, wrong account or stale, still merge from registeredUsers so API sync does not wipe local profile fields.
     if (!currentUserMatchesApi) {
       existing = getLocalUserSnapshotForEmail(email);
     }

@@ -148,7 +148,7 @@ function getLastNewOrderTime(client: Record<string, unknown>): number {
   }
 }
 
-/** Get most recent alert timestamp for sorting (priority message, order issue, or new order, whichever is newer) */
+/** Get most recent alert timestamp for sorting (priority message, order issue or new order, whichever is newer) */
 export function getLastUnreadPriorityMessageTime(client: Record<string, unknown>): number {
   let maxTime = 0;
   const msg = getClientUnreadPriorityMessage(client);

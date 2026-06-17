@@ -660,7 +660,7 @@ export function bookingInstallFeeUsdFromMeeting(m: AdminMeeting): number {
 /**
  * "Booking sales" = completed appointments whose booking balance is fully paid.
  * Uses strongest available indicators from meeting metadata (autopay paid, explicit
- * final due=0, or explicit final payment amount meeting/exceeding final due).
+ * final due=0 or explicit final payment amount meeting/exceeding final due).
  */
 export function bookingPaidInFullSalesUsd(m: AdminMeeting): number | null {
   if (String(m.status || '').trim().toLowerCase() !== 'completed') return null;

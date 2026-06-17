@@ -1063,7 +1063,7 @@ export default function AdminClients() {
       .catch(() => {});
   }, []);
 
-  // Selected client, order history (simplified), and raw orders (full objects for expand view)
+  // Selected client, order history (simplified) and raw orders (full objects for expand view)
   const { selectedClient, selectedOrderHistory, selectedRawOrders } = (() => {
     const email = (selectedClientEmail || '').trim().toLowerCase();
     if (!email) return { selectedClient: null, selectedOrderHistory: [], selectedRawOrders: [] };
@@ -1292,7 +1292,7 @@ export default function AdminClients() {
       .sort(compareAdminMeetingsNewestFirst);
   }, [selectedClient, selectedClientEmail, adminMeetingsTick, apiMeetingsForClientDetails]);
 
-  // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
+  // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {
     const name = ([(u.firstName || '').trim(), (u.lastName || '').trim()].filter(Boolean).join(' ') || u.email || '—').toUpperCase();
     let newCount: number | null = null;

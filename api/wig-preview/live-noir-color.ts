@@ -25,7 +25,7 @@ export const config = {
  *
  * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
  * Vercel’s output for nested `api/wig-preview/*` can fail to resolve `../_lib/*` at runtime (`ERR_MODULE_NOT_FOUND`).
- * If you change hashing, colors, or admin rules, update **`api/_lib/wigPreviewSelectionHash.ts`**, **`bawCatalogHairColors.ts`**, **`adminAuth.ts`**, **`supabase.ts`** and mirror here — or move this handler to **`api/live-noir-color.ts`** and use `./_lib/...` imports.
+ * If you change hashing, colors or admin rules, update **`api/_lib/wigPreviewSelectionHash.ts`**, **`bawCatalogHairColors.ts`**, **`adminAuth.ts`**, **`supabase.ts`** and mirror here — or move this handler to **`api/live-noir-color.ts`** and use `./_lib/...` imports.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
@@ -256,17 +256,17 @@ function isJetBlackOffBlackCatalogColor(label: string, hex: string): boolean {
 
 /** Keep in sync with `api/_lib/bawFalEditFidelityPrompt.ts` (this file cannot import `_lib` on Vercel). */
 const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
-  'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain, and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth, or add a plastic / waxy / painterly CGI look.',
-  'Lock **mannequin bust material**, **skin tone**, **facial features**, and **neck seam** to the reference — **no** melting, warping, retexturing, or “beauty filter” on the figure.',
-  'Lock **background bricks**, **lighting**, **shadows**, and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
-  'The words on the logo on the chest must read **FRONTAL SLAYER** — keep the logo **consistent** (same size, placement, sharp lettering) for accuracy — **no** smeared, redrawn, or re-typed lettering.',
+  'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth or add a plastic / waxy / painterly CGI look.',
+  'Lock **mannequin bust material**, **skin tone**, **facial features** and **neck seam** to the reference — **no** melting, warping, retexturing or “beauty filter” on the figure.',
+  'Lock **background bricks**, **lighting**, **shadows** and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
+  'The words on the logo on the chest must read **FRONTAL SLAYER** — keep the logo **consistent** (same size, placement, sharp lettering) for accuracy — **no** smeared, redrawn or re-typed lettering.',
 ].join(' ');
 
 const BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK =
-  'Keep **everything else exactly the same** — same mannequin, brick background, lighting, and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
+  'Keep **everything else exactly the same** — same mannequin, brick background, lighting and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
 
 const BAW_GPT2_NOIR_COLOR_FRAMING_LOCK =
-  '**Framing lock:** Do **not** resize, reposition, re-crop, or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **only** hair pigment changes.';
+  '**Framing lock:** Do **not** resize, reposition, re-crop or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **only** hair pigment changes.';
 
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
@@ -279,7 +279,7 @@ function buildStep2PromptNoLogoAttachment(
       ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
       : angle === 'right'
         ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette. **Keep the same camera angle and framing as the reference** (true right 3/4, not front, not mirrored left); do **not** rotate the head toward camera.'
-        : 'This is the **FRONT view**: keep the **exact** part line, silhouette, and **one-sided shoulder sweep** from the reference (same as the black reference — often more hair on one shoulder). Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” **Only** recolor the existing black hair; do **not** change cut, length, or volume.';
+        : 'This is the **FRONT view**: keep the **exact** part line, silhouette and **one-sided shoulder sweep** from the reference (same as the black reference — often more hair on one shoulder). Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape and do **not** widen the style to “both shoulders.” **Only** recolor the existing black hair; do **not** change cut, length or volume.';
 
   const nearBlack = isJetBlackOffBlackCatalogColor(label, hex);
   const recolorLead = nearBlack
@@ -287,8 +287,8 @@ function buildStep2PromptNoLogoAttachment(
       label +
       '** at hex **#' +
       hex +
-      '**: same silhouette, part, length, volume, and shoulder bias as the reference; **only** normalize tone/sheen to a consistent salon black. Do **not** restyle, do **not** change which side the hair falls toward, do **not** invent flyaways or a new part.'
-    : 'Recreate this exact mannequin image, but change the black hair color to ' +
+      '**: same silhouette, part, length, volume and shoulder bias as the reference; **only** normalize tone/sheen to a consistent salon black. Do **not** restyle, do **not** change which side the hair falls toward, do **not** invent flyaways or a new part.'
+    : 'Recreate this exact mannequin image but change the black hair color to ' +
       label +
       ' hex code #' +
       hex +

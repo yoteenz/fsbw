@@ -199,7 +199,7 @@ export default function BrandCareersPage() {
       const ph = form.phone.trim();
       const cl = form.coverLetter.trim();
       if (!fn || !em || !ph || !cl) {
-        setSubmitError('Please fill in name, email, phone, and cover letter.');
+        setSubmitError('Please fill in name, email, phone and cover letter.');
         return;
       }
       if (!form.requiredEducation.trim()) {
@@ -684,7 +684,7 @@ export default function BrandCareersPage() {
                       marginBottom: '16px',
                     }}
                   >
-                    Attach a résumé (PDF/DOC), portfolio or website, LinkedIn, and a short cover letter. Equal opportunity
+                    Attach a résumé (PDF/DOC), portfolio or website, LinkedIn and a short cover letter. Equal opportunity
                     employer.
                   </p>
                   {submitDone ? (
@@ -810,7 +810,7 @@ export default function BrandCareersPage() {
                           value={form.skillsAndExperience}
                           onChange={(e) => setForm((f) => ({ ...f, skillsAndExperience: e.target.value }))}
                           rows={4}
-                          placeholder="SUMMARIZE KEY SKILLS, TOOLS, AND RELEVANT BACKGROUND."
+                          placeholder="SUMMARIZE KEY SKILLS, TOOLS AND RELEVANT BACKGROUND."
                         />
                       </label>
                       <label>

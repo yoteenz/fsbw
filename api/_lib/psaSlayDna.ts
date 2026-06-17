@@ -188,5 +188,5 @@ ${dna.dnaNarrative}
 - Mismatch: "THIS DOES NOT MATCH YOUR SLAY DNA" then say why and offer a better fit
 
 Call \`get_slay_dna\` or \`score_unit_slay_dna\` before contradicting their pick or doubling down on a rec.
-Never invent DNA traits not supported by memories, archetype, orders, or purchase context.\n`;
+Never invent DNA traits not supported by memories, archetype, orders or purchase context.\n`;
 }

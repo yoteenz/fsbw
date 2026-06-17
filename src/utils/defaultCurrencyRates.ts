@@ -1,6 +1,6 @@
 import type { CurrencyRatesRecord } from './currencyFormat';
 
-/** Same table as `CartDropdown` — single source for display conversion across shop, bag, booking, and account. */
+/** Same table as `CartDropdown` — single source for display conversion across shop, bag, booking and account. */
 export const DEFAULT_CURRENCY_RATES: CurrencyRatesRecord = {
   USD: { symbol: '$', rate: 1.0, name: 'US Dollar' },
   EUR: { symbol: '€', rate: 0.85, name: 'Euro' },

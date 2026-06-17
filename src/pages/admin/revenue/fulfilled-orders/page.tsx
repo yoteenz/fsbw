@@ -56,7 +56,7 @@ export default function AdminFulfilledOrders() {
         <AdminHeader title="FULFILLED ORDERS" showBack onBack={() => navigate('/admin/revenue?tab=ORDERS')} breadcrumbParentLabel="REVENUE" breadcrumbParentPath="/admin/revenue" />
         <div className="pb-8 px-4 max-w-md mx-auto">
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', marginBottom: '16px', textTransform: 'none' }}>
-            Archived orders (shipped, delivered, or fulfilled) organized by client.
+            Archived orders (shipped, delivered or fulfilled) organized by client.
           </p>
           {byClient.length === 0 ? (
             <div className="bg-white/60 backdrop-blur-sm border border-black p-6 text-center" style={{ borderWidth: '1.3px' }}>

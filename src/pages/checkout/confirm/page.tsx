@@ -161,7 +161,7 @@ function CheckoutConfirmPage() {
     [ordersAnimationsEnabled]
   );
   
-  // Order data - get from location state, payment return, or generate
+  // Order data - get from location state, payment return or generate
   const [orderData, setOrderData] = useState(() => {
     // Check if returning from payment provider
     const urlParams = new URLSearchParams(window.location.search);

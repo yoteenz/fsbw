@@ -191,7 +191,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     if (!middleLayers && !middleCrimps && !middleFlatIron && !bangsOnly) {
       sendJson(res, 400, {
         error:
-          'Live styling: either **LAYERS**, **CRIMPS**, or **FLAT IRON** (each with part from partSelection), or **BANGS** only without those salon styles.',
+          'Live styling: either **LAYERS**, **CRIMPS** or **FLAT IRON** (each with part from partSelection) or **BANGS** only without those salon styles.',
       });
       return;
     }

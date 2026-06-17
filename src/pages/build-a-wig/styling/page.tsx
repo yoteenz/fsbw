@@ -814,7 +814,7 @@ export default function StylingSelectionPage() {
                                selectedHairStyling.some(s => s !== 'NONE' && s.trim() !== '');
     
     // Only allow changing part selection if hair styling is selected
-    // MIDDLE can always be selected, but LEFT and RIGHT require hair styling
+    // MIDDLE can always be selected but LEFT and RIGHT require hair styling
     if (partId === 'MIDDLE' || hasStylingSelected) {
       setSelectedPartSelection(partId);
       try {
@@ -1679,7 +1679,7 @@ export default function StylingSelectionPage() {
                 }}
                 aria-hidden={!showNoirStylingFalRegenText}
               >
-                GPT Image 2 regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
+                GPT Image 2 regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below or use the NOIR color page for color WebPs.
               </p>
             )}
             {showNoirLiveStylingRegenControls && (

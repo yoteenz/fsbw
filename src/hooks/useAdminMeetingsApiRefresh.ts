@@ -47,7 +47,7 @@ export function refreshAdminMeetingsApiIntoState(setRows: Dispatch<SetStateActio
 
 /**
  * Keeps Supabase/API meetings in sync across admin surfaces (meetings hub, client details, dashboard card):
- * initial fetch + refetch on window focus, storage, sign-in change, explicit dispatch, and `adminMeetingsUpdated` (local schedule writes).
+ * initial fetch + refetch on window focus, storage, sign-in change, explicit dispatch and `adminMeetingsUpdated` (local schedule writes).
  * @param skipInitial — set true when parent already awaited `fetchAdminMeetingsApiNormalized()` (e.g. dashboard bootstrap).
  */
 export function useAdminMeetingsApiRefresh(

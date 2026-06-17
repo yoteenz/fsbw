@@ -1,7 +1,7 @@
 import type { NavigateFunction } from 'react-router-dom';
 import { bookingAppointmentHref, bookingConsultationHref } from './bookingMemberRoutes';
 
-/** Handles SHOP tab expandable rows: UNITS, HD LACE, and BOOKING sub-links. */
+/** Handles SHOP tab expandable rows: UNITS, HD LACE and BOOKING sub-links. */
 export function navigateShopMenuSubItem(
   navigate: NavigateFunction,
   parentLabel: string,

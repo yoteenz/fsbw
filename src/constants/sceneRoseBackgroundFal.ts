@@ -19,9 +19,9 @@ export const LOBBY_ROSE_FAL_TWO_PASS_NOTE =
 export const LOBBY_ROSE_PANEL_COLOR_LOCK = `COLOR LOCK — two different surfaces: (1) CENTER vertical rose panel: dense real roses in deep saturated true red and burgundy (#8B0000–#B22222 range), rich crimson petals — NOT pink, NOT coral, NOT pastel, NOT faint. Keep cream/white roses and green leaves as in reference. (2) LEFT and RIGHT walls: muted dusty-rose / mauve-pink plaster wainscoting only.`;
 
 /** Pass 1 only — rear halo (NBP follows this; front light belongs in Pass 2). */
-export const LOBBY_ROSE_PANEL_REAR_LIGHT = `Add warm backlight behind the full-height center rose panel — soft halo at crown, edges, and through petals top to bottom. Side walls: soft reflected fill only.`;
+export const LOBBY_ROSE_PANEL_REAR_LIGHT = `Add warm backlight behind the full-height center rose panel — soft halo at crown, edges and through petals top to bottom. Side walls: soft reflected fill only.`;
 
-export const SCENE_ASSET_EDIT_PRESERVE_BLOCK = `Treat the uploaded image as the exact scene to preserve — same camera, crop, panel geometry, wainscoting, marble floor, pedestals and urn vases. Photoreal enhancement only. No people, products, text, or logos.`;
+export const SCENE_ASSET_EDIT_PRESERVE_BLOCK = `Treat the uploaded image as the exact scene to preserve — same camera, crop, panel geometry, wainscoting, marble floor, pedestals and urn vases. Photoreal enhancement only. No people, products, text or logos.`;
 
 export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1 =
   'pink roses, dusty-rose floral panel, coral roses, faded red, different room layout, redesigned wainscoting, extra furniture, people, text, logos, plastic CGI look';
@@ -29,7 +29,7 @@ export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS1 =
 /**
  * Pass 2 — photographer-style relight (Chase Jarvis / NBP pattern). **Only** this text in the prompt box.
  */
-export const LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT = `Add a large soft fill light to the scene. Fill light is placed in front of the camera, facing the center rose wall panel, warm white 3200K, medium-strong — brighten the front faces of the crimson roses so every petal is clearly visible, dimensional, and saturated. Keep the existing warm backlight halo behind the rose panel edges exactly as-is. Do not change walls, floor, vases, layout, panel shape, or rose colors.`;
+export const LOBBY_ROSE_BACKGROUND_FAL_PASS2_FRONT_LIGHT = `Add a large soft fill light to the scene. Fill light is placed in front of the camera, facing the center rose wall panel, warm white 3200K, medium-strong — brighten the front faces of the crimson roses so every petal is clearly visible, dimensional and saturated. Keep the existing warm backlight halo behind the rose panel edges exactly as-is. Do not change walls, floor, vases, layout, panel shape or rose colors.`;
 
 export const SCENE_ROSE_BACKGROUND_FAL_NEGATIVE_PASS2 =
   'remove backlight, kill halo, silhouette roses, dark rose faces, underexposed petals, change room, move walls, pink roses, flat lighting';
@@ -41,7 +41,7 @@ export const LOBBY_ROSE_BACKGROUND_FAL_PASS1 = `${SCENE_ASSET_EDIT_PRESERVE_BLOC
  * When the horizontal ceiling/soffit reads as covering the top of the rose panel (roses “behind” ceiling).
  * Single short pass on `landing-background.png` — do not bundle with Pass 1 preserve block.
  */
-export const LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX = `Depth and layering fix only. The center rose floral wall is a built-in vertical panel on the same plane as the red walls — it sits IN FRONT of the ceiling opening, not tucked behind it. Extend the dense crimson and white roses upward so the top rows of flowers fill the area under the ceiling recess and overlap in front of the ceiling edge (roses in front, ceiling surface behind). Keep the ceiling architecture, crown line, soffit shape, and ceiling color exactly unchanged — only fix rose-panel layering at the top. Do not lower the ceiling onto the roses. Keep side walls, floor, baseboard, pedestals, and vases unchanged.`;
+export const LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX = `Depth and layering fix only. The center rose floral wall is a built-in vertical panel on the same plane as the red walls — it sits IN FRONT of the ceiling opening, not tucked behind it. Extend the dense crimson and white roses upward so the top rows of flowers fill the area under the ceiling recess and overlap in front of the ceiling edge (roses in front, ceiling surface behind). Keep the ceiling architecture, crown line, soffit shape and ceiling color exactly unchanged — only fix rose-panel layering at the top. Do not lower the ceiling onto the roses. Keep side walls, floor, baseboard, pedestals and vases unchanged.`;
 
 export const LOBBY_ROSE_PANEL_CEILING_DEPTH_FIX_NEGATIVE =
   'roses behind ceiling, ceiling covering roses, ceiling occluding floral panel, roses clipped under ceiling lip, lowering ceiling, compressed rose panel, shorter rose wall, change ceiling design, new ceiling, coffered ceiling, move floor horizon, pink roses, people, text, logos';
@@ -63,26 +63,26 @@ export const SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT = `Carousel alignment with lobb
 export const SCENE_LOUNGE_CEILING_MATCH_LOBBY = `CEILING OUTPAINT ONLY — IMAGE 1 = lounge. IMAGE 2 = lobby ceiling reference. LOCK RULE: the crown molding row in Image 1 must stay at the exact same pixel height — do not move it down or up. Do not compress the room. Only repaint pixels ABOVE the crown molding: remove the second horizontal ledge/panel/soffit and replace with one continuous flat off-white ceiling like Image 2, extending to the top edge. More white ceiling above the molding, never less red wall below it. Marble floor and all furniture unchanged.`;
 
 /** Short crown-locked pass when long prompts keep lowering the ceiling. */
-export const LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT = `Outpaint upward only. Crown molding line is frozen — same pixel row as input. Delete the extra horizontal ceiling band above the molding. Flat cream ceiling to the top. Do not lower the molding. Do not move sofa, floor, or walls.`;
+export const LOUNGE_BACKGROUND_FAL_CEILING_OUTPAINT_SHORT = `Outpaint upward only. Crown molding line is frozen — same pixel row as input. Delete the extra horizontal ceiling band above the molding. Flat cream ceiling to the top. Do not lower the molding. Do not move sofa, floor or walls.`;
 
 /**
  * Lobby thick white baseboard where red wall meets marble (not the thin lounge strip).
  */
-export const SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY = `BASEBOARD — MATCH LOBBY (Image 2): where red walls meet the marble floor, add the same thick white architectural baseboard as landing-background.png — exactly TWO horizontal ridge lines (two-step profile), bright clean white, same height and depth as the lobby. Not three ridges. Not a thin flat strip. Marble floor pattern and horizon unchanged; do not move sofa, table, pedestal, or plant.`;
+export const SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY = `BASEBOARD — MATCH LOBBY (Image 2): where red walls meet the marble floor, add the same thick white architectural baseboard as landing-background.png — exactly TWO horizontal ridge lines (two-step profile), bright clean white, same height and depth as the lobby. Not three ridges. Not a thin flat strip. Marble floor pattern and horizon unchanged; do not move sofa, table, pedestal or plant.`;
 
 /** Ceiling + baseboard pass on lounge (Image 1) using lobby trim reference (Image 2). */
-export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH = `IMAGE 1 = lounge to edit. IMAGE 2 = lobby (landing-background.png) — ceiling and baseboard reference only. ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} ${SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY} ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT} Keep true red walls, sofa, glass table, wine, plant, white curtains, and furniture positions unchanged.`;
+export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH = `IMAGE 1 = lounge to edit. IMAGE 2 = lobby (landing-background.png) — ceiling and baseboard reference only. ${SCENE_LOUNGE_CEILING_MATCH_LOBBY} ${SCENE_LOUNGE_BASEBOARD_MATCH_LOBBY} ${SCENE_ROSE_BACKGROUND_FAL_ALIGNMENT} Keep true red walls, sofa, glass table, wine, plant, white curtains and furniture positions unchanged.`;
 
 export const LOUNGE_BACKGROUND_FAL_LOBBY_TRIM_MATCH_NEGATIVE =
   'lowering crown molding, moving ceiling down, low ceiling, thin baseboard, flat shoe molding only, no baseboard, missing baseboard, coffered ceiling, ceiling panel, ceiling ledge, second horizontal ceiling line, pink walls, move furniture, shift floor horizon, people, text, logos';
 
 /**
- * Fix pass for lounge output that has 3 baseboard ridges, ceiling soffit panel, and floor almost aligned.
+ * Fix pass for lounge output that has 3 baseboard ridges, ceiling soffit panel and floor almost aligned.
  * Image 1 = current lounge render; Image 2 = lobby (landing-background.png).
  */
 export const LOUNGE_BACKGROUND_FAL_FIX_TRIM_CURRENT_OUTPUT = `IMAGE 1 = lounge render to fix. IMAGE 2 = lobby (landing-background.png) — copy ceiling and floor trim only.
 
-FLOOR LOCK: marble floor horizon and veining are almost correct — do not shift the floor line up or down. Do not move sofa, table, wine, plant, curtains, or pedestal.
+FLOOR LOCK: marble floor horizon and veining are almost correct — do not shift the floor line up or down. Do not move sofa, table, wine, plant, curtains or pedestal.
 
 CEILING — RAISE + REMOVE PANEL: delete the extra white horizontal ceiling band/soffit/panel between the flat ceiling and the crown molding (the tiered strip under the ceiling). Replace with one tall continuous flat off-white ceiling like Image 2, extending down to a single white crown molding line. Raise the visible ceiling (more flat white above the crown, same as lobby). Do not add a second ceiling step. Do not lower the crown molding row downward into the red wall.
 
@@ -106,7 +106,7 @@ export const SCENE_LOBBY_WAINSCOTING_MATCH = `WALLS — MATCH LOBBY PANELING: du
 /**
  * Upload [landing-background.png, lounge PNG]. Lounge = color reference; lobby side walls lose panels.
  */
-export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF = `Use the lounge reference image for wall color and finish only. Change the lobby LEFT and RIGHT wall areas: remove all wainscoting panels and molding — smooth matte deep true red burgundy walls matching the lounge reference, NOT pink. Keep the CENTER vertical dense rose floral panel exactly (crimson roses, cream accents). Keep marble floor, baseboard, clear pedestals, urn vases, ceiling, camera crop, and layout unchanged.`;
+export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_REF = `Use the lounge reference image for wall color and finish only. Change the lobby LEFT and RIGHT wall areas: remove all wainscoting panels and molding — smooth matte deep true red burgundy walls matching the lounge reference, NOT pink. Keep the CENTER vertical dense rose floral panel exactly (crimson roses, cream accents). Keep marble floor, baseboard, clear pedestals, urn vases, ceiling, camera crop and layout unchanged.`;
 
 export const LOBBY_BACKGROUND_FAL_WALLS_FROM_LOUNGE_NEGATIVE =
   'pink walls, dusty rose walls, mauve, wainscoting, wall panels, rectangular molding, flat lobby without rose panel, remove floral center, change floor horizon, extra furniture, people, logos';

@@ -62,7 +62,7 @@ export const createRouteProtection = async (
     
     if (!routePublicKey) {
       console.warn('Route API key not configured. Package protection will not be registered with Route.');
-      // Return success to not block checkout, but log warning
+      // Return success to not block checkout but log warning
       return {
         success: true,
         error: 'Route API key not configured'

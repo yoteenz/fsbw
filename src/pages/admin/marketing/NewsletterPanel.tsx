@@ -21,7 +21,7 @@ const TEMPLATES: { id: string; label: string; subject: string; html: string }[] 
     html: `<div style="font-family:system-ui,-apple-system,sans-serif;line-height:1.5;color:#111;max-width:560px">
   <p style="margin:0 0 12px;font-size:18px;font-weight:600;color:#EB1C24;text-transform:uppercase">Limited-time offer</p>
   <p style="margin:0 0 12px;font-size:15px">Hi there — we wanted you to be the first to know about a new promotion. Tap through to shop your next unit.</p>
-  <p style="margin:0 0 12px;font-size:15px"><strong>Details:</strong> [Edit this line with dates, discount, or product links.]</p>
+  <p style="margin:0 0 12px;font-size:15px"><strong>Details:</strong> [Edit this line with dates, discount or product links.]</p>
   <p style="margin:16px 0 0;font-size:14px;color:#555">Thank you for subscribing — you can update email preferences anytime in Account → Settings.</p>
 </div>`,
   },
@@ -31,7 +31,7 @@ const TEMPLATES: { id: string; label: string; subject: string; html: string }[] 
     subject: 'You hit a milestone with Frontal Slayer',
     html: `<div style="font-family:system-ui,-apple-system,sans-serif;line-height:1.5;color:#111;max-width:560px">
   <p style="margin:0 0 12px;font-size:18px;font-weight:600;color:#EB1C24;text-transform:uppercase">Milestone unlocked</p>
-  <p style="margin:0 0 12px;font-size:15px">We noticed you reached an important milestone with us. [Describe the reward, tier step, or challenge progress here.]</p>
+  <p style="margin:0 0 12px;font-size:15px">We noticed you reached an important milestone with us. [Describe the reward, tier step or challenge progress here.]</p>
   <p style="margin:16px 0 0;font-size:14px;color:#555">Questions? Reply to this email or visit your concierge in the app.</p>
 </div>`,
   },
@@ -41,7 +41,7 @@ const TEMPLATES: { id: string; label: string; subject: string; html: string }[] 
     subject: 'Important update from Frontal Slayer',
     html: `<div style="font-family:system-ui,-apple-system,sans-serif;line-height:1.5;color:#111;max-width:560px">
   <p style="margin:0 0 12px;font-size:18px;font-weight:600;color:#EB1C24;text-transform:uppercase">Heads up</p>
-  <p style="margin:0 0 12px;font-size:15px">[Shipping timelines, inventory, policy, or service changes go here. Keep it short and clear.]</p>
+  <p style="margin:0 0 12px;font-size:15px">[Shipping timelines, inventory, policy or service changes go here. Keep it short and clear.]</p>
   <p style="margin:16px 0 0;font-size:14px;color:#555">You are receiving this because newsletter emails are enabled on your account.</p>
 </div>`,
   },
@@ -159,7 +159,7 @@ const NewsletterPanel = forwardRef<NewsletterPanelHandle, NewsletterPanelProps>(
     () => ({
       openSendConfirm: () => {
         if (!subject.trim() || !html.trim() || selected.size === 0) {
-          setSendMessage('Add subject, HTML body, and at least one recipient.');
+          setSendMessage('Add subject, HTML body and at least one recipient.');
           return;
         }
         setSendMessage(null);

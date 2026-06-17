@@ -112,7 +112,7 @@ export function buildPsaTierCapabilitiesBlock(profile: PsaPremiumProfile): strin
   ];
   if (!hasPsaFeature(profile, 'priority_messages')) {
     lines.push(
-      '- If they ask to send a priority message or urgent Concierge note: explain it is not on their plan, offer `/account/rewards` to upgrade, or `/brand/contact` for general help.'
+      '- If they ask to send a priority message or urgent Concierge note: explain it is not on their plan, offer `/account/rewards` to upgrade or `/brand/contact` for general help.'
     );
   }
   if (!hasPsaFeature(profile, 'live_order_tracking')) {

@@ -70,7 +70,7 @@ export function consultQuoteRowFromPersistedSnapshot(
 
 /**
  * Prefer the **persisted snapshot** thumbnail when present so **custom upload** images
- * always show in VIEW OFFER (API row may omit, truncate, or differ from what was sent).
+ * always show in VIEW OFFER (API row may omit, truncate or differ from what was sent).
  */
 export function mergeConsultQuoteWithPersistedThumbnail(
   quote: Record<string, unknown> | null | undefined,

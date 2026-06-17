@@ -180,7 +180,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const statusOk = typeof status === 'string' && ['pending', 'published', 'rejected'].includes(status);
     if (!id || (!statusOk && verifiedPurchase === undefined)) {
       return res.status(400).json({
-        error: 'id required, and either status (pending|published|rejected) or verifiedPurchase (boolean)',
+        error: 'id required and either status (pending|published|rejected) or verifiedPurchase (boolean)',
       });
     }
     try {

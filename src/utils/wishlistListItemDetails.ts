@@ -186,7 +186,7 @@ export function getWishlistItemRedSubtitle(item: any): string {
   return `${length} RAW ${hairOrigin}`;
 }
 
-/** Unit wigs only — not BCF, gift cards, or bookings. */
+/** Unit wigs only — not BCF, gift cards or bookings. */
 export function isWishlistBuildAWigEditableItem(item: any): boolean {
   if (!item) return false;
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return false;

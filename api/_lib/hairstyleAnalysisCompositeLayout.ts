@@ -132,7 +132,7 @@ export function resolveClientPhotoFadeSlotOrDefault(overrides?: CompositeLayoutO
   return CLIENT_PHOTO_FADE_SLOT;
 }
 
-/** Server post-process uses only client-photo slots — never topScore, rating, or match-row text slots. */
+/** Server post-process uses only client-photo slots — never topScore, rating or match-row text slots. */
 export function photoPostProcessLayoutOverrides(
   overrides?: CompositeLayoutOverrides
 ): CompositeLayoutOverrides | undefined {
