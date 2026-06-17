@@ -15,6 +15,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { marbleStripViewportStyle } from '../../utils/marbleStripStyles';
 import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../utils/giftCardCheckout';
+import { stripDebugModeSuffix } from '../../utils/debugMode';
 
 function ToolsPage() {
   const navigate = useNavigate();
@@ -261,7 +262,7 @@ function ToolsPage() {
   const handleGiftCardRightArrow = () =>
     setGiftCardPage((p) => Math.min(giftCardMaxPage, p + 1));
 
-  const isHomeToolsRoute = location.pathname === '/home/tools';
+  const isHomeToolsRoute = stripDebugModeSuffix(location.pathname) === '/home/tools';
 
   const giftCardArrowButtonStyle: React.CSSProperties = {
     background: 'none',
@@ -277,6 +278,23 @@ function ToolsPage() {
     width: '14px',
     height: '14px',
     display: 'block',
+  };
+
+  /** `/home/tools` only — flex overlay on full strip band (matches center divider top: 6px). */
+  const giftCardHomeToolsArrowOverlayStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '6px',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    pointerEvents: 'none',
+    zIndex: 25,
+    paddingLeft: 6,
+    paddingRight: 6,
+    boxSizing: 'border-box',
   };
 
   return (
@@ -751,49 +769,36 @@ function ToolsPage() {
                           </div>
                         ))}
                       </div>
-                      {isHomeToolsRoute && giftCardMaxPage > 0 && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            pointerEvents: 'none',
-                            zIndex: 25,
-                            paddingLeft: 6,
-                            paddingRight: 6,
-                            boxSizing: 'border-box',
-                          }}
-                        >
-                          <button
-                            type="button"
-                            onClick={handleGiftCardLeftArrow}
-                            aria-label="Previous gift cards"
-                            style={{ ...giftCardArrowButtonStyle, pointerEvents: 'auto' }}
-                          >
-                            <img
-                              src="/assets/NOIR/left-facing-arrow.svg"
-                              alt=""
-                              style={giftCardArrowImgStyle}
-                            />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleGiftCardRightArrow}
-                            aria-label="Next gift cards"
-                            style={{ ...giftCardArrowButtonStyle, pointerEvents: 'auto' }}
-                          >
-                            <img
-                              src="/assets/NOIR/right-facing-arrow.svg"
-                              alt=""
-                              style={giftCardArrowImgStyle}
-                            />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
+                  {isHomeToolsRoute && giftCardMaxPage > 0 && (
+                    <div style={giftCardHomeToolsArrowOverlayStyle}>
+                      <button
+                        type="button"
+                        onClick={handleGiftCardLeftArrow}
+                        aria-label="Previous gift cards"
+                        style={{ ...giftCardArrowButtonStyle, pointerEvents: 'auto' }}
+                      >
+                        <img
+                          src="/assets/NOIR/left-facing-arrow.svg"
+                          alt=""
+                          style={giftCardArrowImgStyle}
+                        />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleGiftCardRightArrow}
+                        aria-label="Next gift cards"
+                        style={{ ...giftCardArrowButtonStyle, pointerEvents: 'auto' }}
+                      >
+                        <img
+                          src="/assets/NOIR/right-facing-arrow.svg"
+                          alt=""
+                          style={giftCardArrowImgStyle}
+                        />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {giftCardMaxPage > 0 && !isHomeToolsRoute && (
