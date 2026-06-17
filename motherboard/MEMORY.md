@@ -28702,3 +28702,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to add a storage bullet below **ENSURE THE UNIT IS COMPLETELY DRY BEFORE STORING…** on all **unit** PDPs **CARE/STORAGE** tab.
 - **Changes:** `NoirProductCareStorageTab.tsx` — **AVOID FOLDING, CRUSHING, OR STORING THE LACE UNDER PRESSURE…** appended to `STORAGE_ITEMS`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Unit PDP details: HD film lace bullets
+
+- **Context:** User asked to add two **DETAILS** tab bullets below the **13X6 ULTRA THIN HD FILM LACE…** line on all six unit PDPs (lace realism + care/longevity).
+- **Changes:** `unitPdpDetailsConfig.ts` `buildDetailsBullets` — two new shared bullets after the lace feature line. Pushed **`master`** + **`preview/mobile`**.
