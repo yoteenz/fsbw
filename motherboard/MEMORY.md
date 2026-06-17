@@ -28856,3 +28856,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to reduce spacing above the **BY SIGNING + SUBMITTING** paragraph by **4px** only.
 - **Changes:** **`order-form/page.tsx`** — signature section **`marginTop` 13px → 9px**. **`signedOrderFormPdfSnapshotDom.ts`** — same. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: spacing above PAYMENT METHOD USED
+
+- **Context:** User asked to add **8px** spacing above the **PAYMENT METHOD USED\*** section only.
+- **Changes:** **`order-form/page.tsx`** — payment method wrapper **`marginTop: 8px`**. **`signedOrderFormPdfSnapshotDom.ts`** — **`paymentWrap`** matches. Pushed **`master`** + **`preview/mobile`**.
