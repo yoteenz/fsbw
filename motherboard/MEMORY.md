@@ -28842,3 +28842,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to move the two required checkboxes (**authorized purchase** + **billing/shipping cardholder**) above **PAYMENT METHOD USED** instead of below it.
 - **Changes:** **`order-form/page.tsx`** — checkbox block now sits after **ORDER TOTAL PAID** and before payment method options. **`signedOrderFormPdfSnapshotDom.ts`** — same field order for PDF capture. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: helper note paragraph spacing
+
+- **Context:** User asked to reduce spacing above two helper paragraphs by **2px** only: upload privacy note (**FOR YOUR PROTECTION…**) and chargeback supporting note (**FRONTAL SLAYER IS COMMITTED…**).
+- **Changes:** **`order-form/page.tsx`** — privacy **`<p>`** tags **`marginTop: -2px`**; chargeback note top margin **8px → 6px**. Pushed **`master`** + **`preview/mobile`**.
