@@ -28695,3 +28695,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to add four care bullets above the sleep/swim/exercise line on all **unit** PDPs **CARE/STORAGE** tab (plucking, tension, washing lace, adhesive removal).
 - **Changes:** `NoirProductCareStorageTab.tsx` — four new `CARE_BULLETS` entries before **DO NOT SLEEP, SWIM OR EXERCISE…**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Unit PDP care/storage: lace storage pressure bullet
+
+- **Context:** User asked to add a storage bullet below **ENSURE THE UNIT IS COMPLETELY DRY BEFORE STORING…** on all **unit** PDPs **CARE/STORAGE** tab.
+- **Changes:** `NoirProductCareStorageTab.tsx` — **AVOID FOLDING, CRUSHING, OR STORING THE LACE UNDER PRESSURE…** appended to `STORAGE_ITEMS`. Pushed **`master`** + **`preview/mobile`**.
