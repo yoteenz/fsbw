@@ -75,7 +75,7 @@ const ORDER_FORM_CHECKBOX_LABEL_STYLE: CSSProperties = {
 
 const ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE: CSSProperties = {
   fontFamily: '"Futura PT Medium"',
-  fontSize: '10px',
+  fontSize: '11px',
   color: '#808080',
   fontWeight: 500,
   cursor: 'pointer',
