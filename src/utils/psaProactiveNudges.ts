@@ -8,7 +8,7 @@ import {
   getNotificationsStorageKeyForUserEmail,
   type StoredNotification,
 } from './orderAccountAlerts';
-import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
+import { orderNeedsClientAuthFormSignature } from './orderAuthorizationForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { getWigUnitProductRoute } from './wigUnitProductRoutes';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';

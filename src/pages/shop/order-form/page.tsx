@@ -162,11 +162,9 @@ function OrderFormPage() {
   });
 
   const locationState = location.state as {
-    giftCardIdentityVerificationOnly?: boolean;
     processingTime?: string;
     orderId?: string;
   } | null;
-  const giftCardIdentityOnly = Boolean(locationState?.giftCardIdentityVerificationOnly);
   const processingTimelineLabel = String(locationState?.processingTime || '').trim();
 
   // Listen for cart count changes
@@ -615,12 +613,12 @@ function OrderFormPage() {
       setShowValidationModal(true);
       return;
     }
-    if (!giftCardIdentityOnly && !ackRawHairVariation) {
+    if (!ackRawHairVariation) {
       setValidationMessage('PLEASE CONFIRM THAT YOU UNDERSTAND RAW HUMAN HAIR MAY HAVE NATURAL VARIATIONS.');
       setShowValidationModal(true);
       return;
     }
-    if (!giftCardIdentityOnly && !ackProcessingTimeline) {
+    if (!ackProcessingTimeline) {
       setValidationMessage('PLEASE CONFIRM THAT YOU HAVE REVIEWED AND UNDERSTAND THE PROCESSING TIMELINE FOR YOUR ORDER.');
       setShowValidationModal(true);
       return;
@@ -657,7 +655,7 @@ function OrderFormPage() {
           : lastFourDigitsPreview && lastFourDigitsPreview.startsWith('data:image')
             ? lastFourDigitsPreview
             : '';
-        const stateData = location.state as { orderId?: string; giftCardIdentityVerificationOnly?: boolean } | null | undefined;
+        const stateData = location.state as { orderId?: string } | null | undefined;
         const orderId = stateData?.orderId != null ? String(stateData.orderId) : undefined;
         const cardDigits = formData.cardNumber.replace(/\D/g, '');
         const formFields: Record<string, string> = {};
@@ -676,18 +674,15 @@ function OrderFormPage() {
         }
         formFields.addressDifferenceReason = addressDifferenceReason.trim();
         formFields.ackNoChargeback = 'true';
-        if (!giftCardIdentityOnly) {
-          formFields.ackRawHairVariation = 'true';
-          formFields.ackProcessingTimeline = 'true';
-          if (processingTimelineLabel) {
-            formFields.processingTimelineLabel = processingTimelineLabel;
-          }
+        formFields.ackRawHairVariation = 'true';
+        formFields.ackProcessingTimeline = 'true';
+        if (processingTimelineLabel) {
+          formFields.processingTimelineLabel = processingTimelineLabel;
         }
         const submissionMeta = captureOrderFormClientSubmissionMeta();
         const entryId =
           orderId ||
           `form-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        const giftCardIdentityOnlySubmit = Boolean(stateData?.giftCardIdentityVerificationOnly);
         const formSnapshot = {
           id: entryId,
           orderId,
@@ -700,10 +695,10 @@ function OrderFormPage() {
           cardLastFourDataUrl: cardLastFourDataUrl || undefined,
           signatureDataUrl: signatureDataUrl || undefined,
           submissionMeta,
-          adminApproved: giftCardIdentityOnlySubmit ? true : false,
+          adminApproved: false,
         };
         appendSignedOrderForm(formSnapshot);
-        if (isSupabaseConfigured() && (await getAccessToken()) && !giftCardIdentityOnlySubmit) {
+        if (isSupabaseConfigured() && (await getAccessToken())) {
           try {
             await postClientSubmission({ kind: 'order_form', payload: formSnapshot });
             await syncProfileFromApi();
@@ -1564,11 +1559,9 @@ function OrderFormPage() {
                         </div>
                       </div>
 
-                      {!giftCardIdentityOnly && (
-                        <>
-                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                            <div
-                              onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                        <div
+                          onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
                               style={{
                                 width: '16px',
                                 height: '16px',
@@ -1645,8 +1638,6 @@ function OrderFormPage() {
                               {orderFormAckProcessingTimeline(processingTimelineLabel)}<span style={{ color: '#EB1C24' }}>*</span>
                             </label>
                           </div>
-                        </>
-                      )}
                     </div>
 
                     {/* Signature Section */}
