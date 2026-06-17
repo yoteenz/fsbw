@@ -28937,3 +28937,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **12px** spacing above the order form hero image (below the header divider).
 - **Changes:** **`order-form/page.tsx`** — hero **`marginTop: 12px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: payment method options gray Futura Medium
+
+- **Context:** User asked to style only the **PAYMENT METHOD USED** option labels (**CREDIT CARD** through **OTHER**) as gray **Futura PT Medium**; other checkbox rows unchanged.
+- **Changes:** **`order-form/page.tsx`** — **`ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE`** (`#808080`, Medium, 10px uppercase) on payment method labels only. Pushed **`master`** + **`preview/mobile`**.
