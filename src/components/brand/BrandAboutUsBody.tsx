@@ -3,6 +3,8 @@ import {
   BRAND_ABOUT_DEMI_PARAGRAPHS,
   BRAND_ABOUT_US_PARAGRAPHS,
 } from '../../constants/brandAboutCopy';
+import { BRAND_ABOUT_HERO_IMAGE_SRC } from '../../constants/brandAboutAssets';
+import PageHeroImage from '../PageHeroImage';
 
 /** About Us narrative body, shared by `/brand/about` and the hidden height measurer. */
 export default function BrandAboutUsBody() {
@@ -15,6 +17,7 @@ export default function BrandAboutUsBody() {
         textAlign: 'left',
       }}
     >
+      <PageHeroImage src={BRAND_ABOUT_HERO_IMAGE_SRC} />
       {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => {
         const isAccent = BRAND_ABOUT_ACCENT_PARAGRAPHS.has(paragraph);
         const isDemi = BRAND_ABOUT_DEMI_PARAGRAPHS.has(paragraph);

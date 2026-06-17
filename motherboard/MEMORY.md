@@ -28994,3 +28994,17 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User asked for **Become a Member** (`/brand/member`) hero using Supabase **`ChatGPT Image Jun 17, 2026 at 05_14_57 PM.png`**, same size/placement as order form hero (75% width, 22px top / 12px bottom margin, centered).
 - **Decisions / outcomes:** Extracted **`PageHeroImage`** + **`PAGE_HERO_IMAGE_STYLE`**; order form refactored to use it; member hero URL in **`brandMemberAssets.ts`** as **`BRAND_MEMBER_HERO_IMAGE_SRC`**; rendered at top of **`BrandMemberSection`** above copy.
 - **Changes:** **`src/components/PageHeroImage.tsx`**, **`src/constants/brandMemberAssets.ts`**, **`BrandMemberSection.tsx`**, **`order-form/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Brand member hero: IMG_3004 asset swap
+
+- **Context:** User asked to replace member hero with **`live-preview/3D Stock/IMG_3004.png`** (was ChatGPT Jun 17 filename).
+- **Changes:** **`BRAND_MEMBER_HERO_IMAGE_SRC`** in **`brandMemberAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Brand about hero + PageHeroImage
+
+- **Context:** User asked for **About Us** (`/brand/about`) hero using **`live-preview/3D Stock/IMG_3006.png`**, same size/placement as order form (**`PageHeroImage`**: 75% width, centered, 22px top / 12px bottom margin).
+- **Changes:** **`src/constants/brandAboutAssets.ts`** (`BRAND_ABOUT_HERO_IMAGE_SRC`), **`BrandAboutUsBody.tsx`** — hero above mission copy. Pushed **`master`** + **`preview/mobile`**.
