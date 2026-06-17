@@ -28771,3 +28771,18 @@ Pushed **`master`** + **`preview/mobile`**.
   - Tools strip tile clicks navigate to **`/tools/gift-card?balance=<amount>`**; whole tile is clickable (not image only).
   - Gift card PDP reads **`?balance=`** on mount and when query changes; invalid/missing → **$10** default. Header **GIFT CARD** link still opens PDP without query (default **$10**).
 - **Changes:** `giftCardBalance.ts` (new), `GiftCardBalancePicker.tsx`, `tools/page.tsx`, `tools/gift-card/page.tsx`, plus prior unit PDP / shipping / care / details / arrow / copy files in this chat. Pushed **`master`** (`e96e0c61`) + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order authorization form: chargeback audit improvements
+
+- **Context:** User shared a ChatGPT audit of the order authorization form (`/tools/order-form`) and asked to incorporate recommendations that align with Frontal Slayer brand and codebase.
+- **Topics covered:**
+  - **New required acknowledgments (above signature):** no-chargeback / contact-us-first checkbox + supporting note; raw human hair natural-variation checkbox; processing-timeline checkbox (timeline text injected when checkout passes `processingTime`). Gift-card-only ID verification flow skips hair + processing acks but keeps chargeback ack.
+  - **Order total + payment method:** **ORDER TOTAL PAID** field and **PAYMENT METHOD USED** radio group (Credit/Debit, Shop Pay, Affirm, Klarna, Afterpay, PayPal, Other); prefilled from checkout confirm and Account → Orders navigation (`orderTotal`, `paymentMethod`, `processingTime`).
+  - **Premium upload labels:** **PHOTO ID** → **IDENTITY VERIFICATION**; **LAST 4 DIGITS** → **PAYMENT VERIFICATION**; privacy note under both uploads (cover ID numbers / card digits before uploading).
+  - **Submission metadata (not shown to customer):** client captures user agent, device type, browser, timestamp; **`POST /api/client/submissions`** enriches `order_form` payload with **IP** (`clientIp`) + `serverReceivedAt` before `pending_order_forms` insert. Stored on `StoredSignedOrderForm.submissionMeta`.
+  - **Bugfix:** Removed stale validation for phone/address/billing/card fields that were no longer on the simplified form UI (blocked submit).
+  - **PDF / mock / draft:** `signedOrderFormPdfSnapshotDom.ts`, `mockSignedOrderFormForApproval.ts`, `lastOrderAuthorizationFormDraft.ts` updated for new fields.
+- **Decisions / outcomes:** Copy lives in **`src/constants/orderFormAcknowledgments.ts`**; metadata helpers in **`src/utils/orderFormSubmissionMeta.ts`**. Build verified; pushed **`master`** (`f0654c32`) + **`preview/mobile`**.
+- **Conventions:** Checkout confirm and Orders “sign form” navigations should pass **`orderTotal`**, **`paymentMethod`**, and **`processingTime`** when available so the form prefills dispute-evidence fields.
