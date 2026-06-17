@@ -28958,3 +28958,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **10px additional** spacing above the order form hero (was **12px** below header divider).
 - **Changes:** Hero **`marginTop` 12px → 22px** in **`order-form/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: spacing below BY SIGNING checkbox
+
+- **Context:** User asked for **12px** additional spacing below the **BY SIGNING + SUBMITTING** agreement checkbox row (above signature canvas).
+- **Changes:** **`order-form/page.tsx`** — that row **`marginBottom` 12px → 24px**. Pushed **`master`** + **`preview/mobile`**.
