@@ -28807,3 +28807,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked payment method options to use the same square boxes with red checkmark as other checkboxes on the order form (not circular radio dots).
 - **Changes:** **`src/pages/shop/order-form/page.tsx`** — payment method rows now use **`/assets/checkbox.svg`** in 16×16 black-bordered squares; still single-select (radio behavior). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form intro + ack checkbox typography
+
+- **Context:** User wanted **“this form serves as”** lowercase; confirmed the three chargeback/raw-hair/processing ack checkbox lines should match **11px** like the **BY SIGNING** line (they were **10px**).
+- **Changes:** **`orderFormIntroCopy.ts`** — **`ORDER_FORM_INTRO_PURPOSE_TITLE`** → **`this form serves as`**. **`order-form/page.tsx`** — ack checkbox labels **10px → 11px**. Pushed **`master`** + **`preview/mobile`**.
