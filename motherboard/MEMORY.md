@@ -28944,3 +28944,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to style only the **PAYMENT METHOD USED** option labels (**CREDIT CARD** through **OTHER**) as gray **Futura PT Medium**; other checkbox rows unchanged.
 - **Changes:** **`order-form/page.tsx`** — **`ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE`** (`#808080`, Medium, 10px uppercase) on payment method labels only. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: payment method labels +1px
+
+- **Context:** User asked to increase payment method option label size by **1px** (10px → **11px**); gray Futura Medium unchanged.
+- **Changes:** **`ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE`** **`fontSize: 11px`**. Pushed **`master`** + **`preview/mobile`**.
