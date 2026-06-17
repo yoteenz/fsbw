@@ -29029,3 +29029,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **Contact Us** hero on **`/brand/contact`** using **`live-preview/3D Stock/IMG_3021.png`**, same **`PageHeroImage`** sizing as order form.
 - **Changes:** **`src/constants/brandContactAssets.ts`** (`BRAND_CONTACT_HERO_IMAGE_SRC`), **`BrandContactSection.tsx`** — hero above intro copy + form. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form hero: looped MP4 test clip
+
+- **Context:** User supplied OpenArt/Kling loop **`openart-734d9bcb…c34bbe9d.mp4`** for order form hero; PNG poster stays **`IMG_2975.png`** (sealed ORDER FORM envelope).
+- **Changes:** **`ORDER_FORM_HERO_VIDEO_SRC`** in **`orderFormAssets.ts`**; **`PageHeroImage`** optional **`videoSrc`** — muted **`autoPlay` `loop` `playsInline`**, poster underlay until first frame; static PNG only when **`prefers-reduced-motion`**. Order form passes both src + videoSrc. Pushed **`master`** + **`preview/mobile`**.
