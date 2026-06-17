@@ -28870,3 +28870,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported **please note** rose bullets sat above the text line instead of inline with it (unlike NOIR PDP policy/shipping tabs).
 - **Changes:** **`OrderFormIntroText.tsx`** — **`RoseBulletLine`** text uses **`lineHeight: 1.45`** (same as product tab rose rows) instead of intro paragraph **`1.8`**, keeping flex row + **`rose-alert.svg`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form intro: rose bullet inline alignment (follow-up)
+
+- **Context:** User reported rose bullets still sat slightly above the first text line after line-height tweak.
+- **Changes:** **`OrderFormIntroText.tsx`** — **`RoseBulletLine`** now uses inline hanging-indent layout (rose in text flow + **`textIndent`** for wrapped lines) with **`verticalAlign: 2px`** instead of flex **`alignItems: flex-start`**. Pushed **`master`** + **`preview/mobile`**.
