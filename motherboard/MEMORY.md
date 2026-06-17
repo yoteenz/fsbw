@@ -29015,3 +29015,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **Affiliate Program** hero on **`/account/affiliate`** using **`live-preview/3D Stock/IMG_3007.png`**, same **`PageHeroImage`** sizing as order form (75% width, centered, 22px top / 12px bottom margin).
 - **Changes:** **`src/constants/affiliateProgramAssets.ts`** (`AFFILIATE_PROGRAM_HERO_IMAGE_SRC`), **`account/affiliate/page.tsx`** — hero below **AFFILIATE PROGRAM** header, above overview copy. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Brand FAQ hero + PageHeroImage
+
+- **Context:** User asked for **FAQ** hero on **`/brand/faq`** using **`live-preview/3D Stock/IMG_3014.png`**, same **`PageHeroImage`** sizing as order form.
+- **Changes:** **`src/constants/brandFaqAssets.ts`** (`BRAND_FAQ_HERO_IMAGE_SRC`), **`BrandFaqPageContent.tsx`** — hero above accordion + ask-a-question block. Pushed **`master`** + **`preview/mobile`**.
