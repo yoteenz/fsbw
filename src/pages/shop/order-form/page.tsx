@@ -1421,7 +1421,7 @@ function OrderFormPage() {
                           fontSize: '10px',
                           color: '#808080',
                           textTransform: 'uppercase',
-                          margin: '0 0 8px 0',
+                          margin: '-2px 0 8px 0',
                           lineHeight: '1.35'
                         }}
                       >
@@ -1459,7 +1459,7 @@ function OrderFormPage() {
                           fontSize: '10px',
                           color: '#808080',
                           textTransform: 'uppercase',
-                          margin: '0 0 8px 0',
+                          margin: '-2px 0 8px 0',
                           lineHeight: '1.35'
                         }}
                       >
@@ -1560,7 +1560,7 @@ function OrderFormPage() {
                               fontSize: '10px',
                               color: '#EB1C24',
                               textTransform: 'uppercase',
-                              margin: '8px 0 0 0',
+                              margin: '6px 0 0 0',
                               lineHeight: '1.35'
                             }}
                           >
