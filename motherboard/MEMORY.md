@@ -28800,3 +28800,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to change two helper paragraphs on the order authorization form from gray to red: upload privacy note (under identity/payment verification) and chargeback supporting note (under no-chargeback ack).
 - **Changes:** **`src/pages/shop/order-form/page.tsx`** — **`ORDER_FORM_UPLOAD_PRIVACY_NOTE`** (both upload sections) and **`ORDER_FORM_ACK_NO_CHARGEBACK_NOTE`** use **`#EB1C24`** instead of **`#808080`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form payment method: square checkbox style
+
+- **Context:** User asked payment method options to use the same square boxes with red checkmark as other checkboxes on the order form (not circular radio dots).
+- **Changes:** **`src/pages/shop/order-form/page.tsx`** — payment method rows now use **`/assets/checkbox.svg`** in 16×16 black-bordered squares; still single-select (radio behavior). Pushed **`master`** + **`preview/mobile`**.
