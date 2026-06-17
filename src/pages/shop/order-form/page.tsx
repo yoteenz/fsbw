@@ -1594,7 +1594,7 @@ function OrderFormPage() {
 
                     {/* Signature Section */}
                     <div style={{ marginTop: '5px', marginBottom: '-6px' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '24px' }}>
                         <div
                           onClick={() => setBySigningAgreement(!bySigningAgreement)}
                           style={ORDER_FORM_CHECKBOX_BOX_STYLE}
