@@ -28681,3 +28681,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to update the **handmade, not mass produced** paragraph under the **SHIPPING** tab for all six unit PDPs.
 - **Changes:** `NoirProductShippingTab.tsx` — new copy begins **FROM SOURCING TO FINAL QUALITY CONTROL…** (shared by all unit PDPs via `NoirProductShippingTab`). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Unit PDP care/storage: hairline brushing bullet
+
+- **Context:** User asked to add a care bullet above the heat-styling line on all **unit** PDPs **CARE/STORAGE** tab.
+- **Changes:** `NoirProductCareStorageTab.tsx` — **AVOID EXCESSIVE BRUSHING OR AGGRESSIVE DETANGLING NEAR THE HAIRLINE…** inserted before the heat protectant bullet. Pushed **`master`** + **`preview/mobile`**.
