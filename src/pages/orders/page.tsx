@@ -52,7 +52,7 @@ import {
   advanceConsultOrdersPlacedToProcessing,
   normalizeOrderNumberForConsultMatch,
 } from '../../utils/consultOrderLifecycle';
-import { orderNeedsClientAuthFormSignature } from '../../utils/giftCardFirstPurchaseForm';
+import { orderNeedsClientAuthFormSignature } from '../../utils/orderAuthorizationForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { getConsultQuote } from '../../utils/api';
@@ -121,8 +121,6 @@ interface Order {
   pointsEarned?: number;
   /** When false, no 24h authorization form flow (e.g. bookings-only). Omitted = legacy non-digital orders need form. */
   requiresOrderAuthorizationForm?: boolean;
-  /** First gift-card-only purchase: one-time ID verification via order form. */
-  requiresGiftCardIdentityForm?: boolean;
 }
 
 function OrdersPage() {
@@ -3000,19 +2998,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                 customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
                               }
                               navigate('/tools/order-form', {
-                                state: {
-                                  ...customerData,
-                                  giftCardIdentityVerificationOnly: (order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm === true,
-                                },
+                                state: customerData,
                               });
                              }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
                                <span style={{ color: '#EB1C24' }}>HERE</span>
-                               <span style={{ color: '#000000' }}>
-                                 {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
-                                   ? ' TO VERIFY ID (ONE-TIME FOR GIFT CARDS)'
-                                   : ' TO SIGN ORDER FORM'}
-                               </span>
+                               <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
                              </p>
                            )}
                            {order.status === 'PLACED' &&
@@ -3020,9 +3011,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                              orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
-                               {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
-                                 ? 'GIFT CARD VERIFICATION ON FILE'
-                                 : 'ORDER FORM IN REVIEW'}
+                               ORDER FORM IN REVIEW
                              </p>
                            )}
                            {!orderUsesDigitalFulfillmentTimeline(order) ? (
@@ -3947,19 +3936,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                 customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
                               }
                               navigate('/tools/order-form', {
-                                state: {
-                                  ...customerData,
-                                  giftCardIdentityVerificationOnly: (order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm === true,
-                                },
+                                state: customerData,
                               });
                              }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
                                <span style={{ color: '#EB1C24' }}>HERE</span>
-                               <span style={{ color: '#000000' }}>
-                                 {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
-                                   ? ' TO VERIFY ID (ONE-TIME FOR GIFT CARDS)'
-                                   : ' TO SIGN ORDER FORM'}
-                               </span>
+                               <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
                              </p>
                            )}
                            {order.status === 'PLACED' &&
@@ -3967,9 +3949,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                              orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
-                               {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
-                                 ? 'GIFT CARD VERIFICATION ON FILE'
-                                 : 'ORDER FORM IN REVIEW'}
+                               ORDER FORM IN REVIEW
                              </p>
                            )}
                            {!orderUsesDigitalFulfillmentTimeline(order) ? (

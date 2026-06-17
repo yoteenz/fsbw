@@ -8,7 +8,7 @@ import {
 import { getCurrentUserEmailFromStorage, getCurrentUserFirstNameFromStorage } from './perUserStorage';
 import { formatPsaMemberFirstName } from '../constants/psaConfig';
 import { resolvePsaWelcomeKind, type PsaWelcomeKind } from './psaWelcomeState';
-import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
+import { orderNeedsClientAuthFormSignature } from './orderAuthorizationForm';
 import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
 import { detectPsaBawResumeTarget } from './psaBawDraft';
 import { computePsaSlayReadiness } from './psaSlayReadiness';

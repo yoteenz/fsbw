@@ -35,3 +35,8 @@ export function orderRequiresOrderAuthorizationForm(order: Record<string, unknow
   if (v === true) return true;
   return !orderUsesDigitalFulfillmentTimeline(order);
 }
+
+/** Orders that still need a client-signed authorization form (units / BCF only — not gift cards). */
+export function orderNeedsClientAuthFormSignature(order: Record<string, unknown> | null | undefined): boolean {
+  return orderRequiresOrderAuthorizationForm(order);
+}

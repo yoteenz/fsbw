@@ -2,7 +2,7 @@
  * Slay Readiness Score — helps members finish consult → customize → checkout.
  */
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
-import { orderNeedsClientAuthFormSignature } from './giftCardFirstPurchaseForm';
+import { orderNeedsClientAuthFormSignature } from './orderAuthorizationForm';
 
 export type PsaSlayReadiness = {
   percent: number;
