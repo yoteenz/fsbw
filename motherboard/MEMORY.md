@@ -28786,3 +28786,10 @@ Pushed **`master`** + **`preview/mobile`**.
   - **PDF / mock / draft:** `signedOrderFormPdfSnapshotDom.ts`, `mockSignedOrderFormForApproval.ts`, `lastOrderAuthorizationFormDraft.ts` updated for new fields.
 - **Decisions / outcomes:** Copy lives in **`src/constants/orderFormAcknowledgments.ts`**; metadata helpers in **`src/utils/orderFormSubmissionMeta.ts`**. Build verified; pushed **`master`** (`f0654c32`) + **`preview/mobile`**.
 - **Conventions:** Checkout confirm and Orders “sign form” navigations should pass **`orderTotal`**, **`paymentMethod`**, and **`processingTime`** when available so the form prefills dispute-evidence fields.
+
+---
+
+## 2026-06-17 — Gift cards exempt from order authorization form
+
+- **Context:** User clarified gift cards do not need order forms — only hair-related high-ticket products (units, BCF bundles/closures/frontals).
+- **Changes:** Removed **`giftCardFirstPurchaseForm.ts`** and the first-time gift-card ID verification gate. **`orderNeedsClientAuthFormSignature`** now lives in **`orderAuthorizationForm.ts`** and matches **`orderRequiresOrderAuthorizationForm`** only. Checkout no longer sets **`requiresGiftCardIdentityForm`**; **`digitalOrderFulfillment`** always treats gift-card orders as digital timeline; checkout confirm / orders UI no longer show **VERIFY ID** or gift-card form CTAs; order-form page no longer has **`giftCardIdentityVerificationOnly`** auto-approve path. **`motherboard/CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
