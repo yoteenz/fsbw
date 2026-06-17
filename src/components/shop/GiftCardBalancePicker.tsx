@@ -1,6 +1,8 @@
 /** Gift card PDP — single-select balance chips (div-based to avoid mobile button sticky states). */
 
-const OPTIONS = [10, 15, 25, 50, 75, 100, 250, 500] as const;
+import { GIFT_CARD_BALANCE_OPTIONS } from '../../utils/giftCardBalance';
+
+const OPTIONS = GIFT_CARD_BALANCE_OPTIONS;
 
 type GiftCardBalancePickerProps = {
   value: number;
@@ -81,4 +83,4 @@ export default function GiftCardBalancePicker({ value, onChange }: GiftCardBalan
   );
 }
 
-export { OPTIONS as GIFT_CARD_BALANCE_OPTIONS };
+export { GIFT_CARD_BALANCE_OPTIONS } from '../../utils/giftCardBalance';
