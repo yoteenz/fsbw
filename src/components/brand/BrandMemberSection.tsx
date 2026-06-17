@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react';
 import { BRAND_MEMBER_BLOCKS } from '../../constants/brandMemberCopy';
+import { BRAND_MEMBER_HERO_IMAGE_SRC } from '../../constants/brandMemberAssets';
+import PageHeroImage from '../PageHeroImage';
 import PremiumRewardsMarketingList from '../membership/PremiumRewardsMarketingList';
 
 const BODY_FONT_SIZE_PX = 10;
@@ -65,6 +67,7 @@ export default function BrandMemberSection() {
         textAlign: 'left',
       }}
     >
+      <PageHeroImage src={BRAND_MEMBER_HERO_IMAGE_SRC} />
       {bodyBlocks.map((block) => {
         const variant =
           block.variant === 'bohemy'

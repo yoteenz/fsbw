@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import OrderFormIntroText from '../../../components/shop/OrderFormIntroText';
+import PageHeroImage from '../../../components/PageHeroImage';
 import { ORDER_FORM_HERO_IMAGE_SRC } from '../../../constants/orderFormAssets';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -1063,20 +1064,7 @@ function OrderFormPage() {
                   </h2>
                 </div>
 
-                <img
-                  src={ORDER_FORM_HERO_IMAGE_SRC}
-                  alt=""
-                  style={{
-                    width: '75%',
-                    height: 'auto',
-                    display: 'block',
-                    objectFit: 'contain',
-                    marginTop: '22px',
-                    marginBottom: '12px',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                  }}
-                />
+                <PageHeroImage src={ORDER_FORM_HERO_IMAGE_SRC} />
 
                 <OrderFormIntroText />
 
