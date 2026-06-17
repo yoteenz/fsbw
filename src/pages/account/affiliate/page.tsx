@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
+import PageHeroImage from '../../../components/PageHeroImage';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
@@ -18,6 +19,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import { AFFILIATE_PROGRAM_HERO_IMAGE_SRC } from '../../../constants/affiliateProgramAssets';
 
 interface Order {
   id: string;
@@ -3893,6 +3895,7 @@ function AffiliatePage() {
                       </h2>
                       <img src={moreWaysIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                     </div>
+                    <PageHeroImage src={AFFILIATE_PROGRAM_HERO_IMAGE_SRC} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                       <div>
                         {AFFILIATE_REWARDS_OVERVIEW.map((paragraph, index) => (
