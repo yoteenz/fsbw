@@ -28670,6 +28670,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-16 — Gift card: last minute gifting bullet
+
+- **Context:** User asked to update **the perfect gift** rose-alert line to **PERFECT FOR LAST MINUTE GIFTING** (no hyphen).
+- **Changes:** `GiftCardProductDetailsTab.tsx` `GIFT_CARD_THE_PERFECT_GIFT`. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-16 — BLANCO signature feature: ventilated single strand knots
 
 - **Context:** User asked to update one **signature features** bullet on **BLANCO** PDP only to **VENTILATED SINGLE STRAND KNOTS** (other units keep **LIGHTLY BLEACHED SINGLE STRAND KNOTS**).
