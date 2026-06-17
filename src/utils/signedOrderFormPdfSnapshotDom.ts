@@ -435,7 +435,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   uploadCol.appendChild(ackCol);
 
   const signSection = document.createElement('div');
-  Object.assign(signSection.style, { marginTop: '13px', marginBottom: solidWhite ? '0' : '-6px' });
+  Object.assign(signSection.style, { marginTop: '9px', marginBottom: solidWhite ? '0' : '-6px' });
   const signRow = document.createElement('div');
   Object.assign(signRow.style, {
     display: 'flex',

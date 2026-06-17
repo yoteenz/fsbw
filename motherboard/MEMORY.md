@@ -28849,3 +28849,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to reduce spacing above two helper paragraphs by **2px** only: upload privacy note (**FOR YOUR PROTECTION…**) and chargeback supporting note (**FRONTAL SLAYER IS COMMITTED…**).
 - **Changes:** **`order-form/page.tsx`** — privacy **`<p>`** tags **`marginTop: -2px`**; chargeback note top margin **8px → 6px**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: BY SIGNING paragraph spacing
+
+- **Context:** User asked to reduce spacing above the **BY SIGNING + SUBMITTING** paragraph by **4px** only.
+- **Changes:** **`order-form/page.tsx`** — signature section **`marginTop` 13px → 9px**. **`signedOrderFormPdfSnapshotDom.ts`** — same. Pushed **`master`** + **`preview/mobile`**.
