@@ -28751,3 +28751,23 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported **HD FILM LACE, PRE-PLUCKED HAIRLINE** signature feature change (commit `247b6b8b`) was not visible on site. Root cause: **`npm run build`** runs **`tsc --noEmit`** with **`noUnusedLocals`**; after signature refactor, unused **`SHARED_SIGNATURE_FEATURES_TAIL`** in `unitPdpDetailsConfig.ts` caused **TS6133** and **failed the build**, so Vercel kept serving the previous deployment.
 - **Fix:** Removed dead **`SHARED_SIGNATURE_FEATURES_TAIL`**; build passes; signature copy in `buildSignatureFeatures` unchanged (**HD FILM LACE, PRE-PLUCKED HAIRLINE**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Full conversation summary (unit PDPs, tools gift card, gift card PDP)
+
+- **Context:** Long chat spanning unit PDP copy/UI, Home/tools gift card strip, and gift card PDP behavior.
+- **Topics covered:**
+  - **Cap size chart:** Popup modal image centralized as **`UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC`** (`IMG_2798.png`); all six unit PDPs. NOIR inline cap chart tried **`IMG_2811`** / **`IMG_2821`**, then **reverted to match Blanco** — local **`/assets/NOIR/cap-size-chart.png`** + shared **`UNIT_PDP_CAP_CHART_*`** styles; removed **`UNIT_PDP_NOIR_CAP_CHART_*`**.
+  - **Signature features (all 6 units):** First bullet → **`HD FILM LACE, PRE-PLUCKED HAIRLINE`**. **BLANCO-only:** **`VENTILATED SINGLE STRAND KNOTS`**, **`CAN BE COLORED, DYED & CUSTOMIZED`**. **NOIR** details color phrase → **`A NATURAL OFF BLACK HAIR COLOR`**.
+  - **SHIPPING tab:** Handmade/quality-control copy in **`NoirProductShippingTab.tsx`**.
+  - **CARE/STORAGE tab:** New care bullets (hairline brushing, plucking, tension, lace handling, adhesive removal); storage bullet on lace pressure; two new **DETAILS** bullets after 13×6 lace line in **`unitPdpDetailsConfig.ts`**.
+  - **Deploy:** Signature text not live until **`SHARED_SIGNATURE_FEATURES_TAIL`** unused const removed (**TS6133** / **`noUnusedLocals`**).
+  - **Home/tools gift card strip:** Arrow vertical centering on **`/home/tools`** (+ **`debug-mode`** via **`stripDebugModeSuffix`**) — flex overlay on full strip band; legacy absolute arrows for **`/tools`** only.
+  - **Gift card PDP copy:** **`GiftCardProductDetailsTab.tsx`** intro merge, funds/digital-cash bullet, **`PERFECT FOR LAST MINUTE GIFTING`**.
+  - **Gift card balance pre-selection:** Tapping any denomination on Home/tools strip was opening PDP at default **$10**.
+- **Decisions / outcomes:**
+  - Shared gift card denominations in **`src/utils/giftCardBalance.ts`** (`GIFT_CARD_BALANCE_OPTIONS`, **`parseGiftCardBalance`**, **`giftCardPdpPath`**).
+  - Tools strip tile clicks navigate to **`/tools/gift-card?balance=<amount>`**; whole tile is clickable (not image only).
+  - Gift card PDP reads **`?balance=`** on mount and when query changes; invalid/missing → **$10** default. Header **GIFT CARD** link still opens PDP without query (default **$10**).
+- **Changes:** `giftCardBalance.ts` (new), `GiftCardBalancePicker.tsx`, `tools/page.tsx`, `tools/gift-card/page.tsx`, plus prior unit PDP / shipping / care / details / arrow / copy files in this chat. Pushed **`master`** (`e96e0c61`) + **`preview/mobile`**.
