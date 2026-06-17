@@ -5,6 +5,7 @@
 
 import { cancelAndRefundOrderAfterFormDecline } from './orderFormDeclineCancelRefund';
 import { setGiftCardPurchaserVerifiedForEmail } from './giftCardFirstPurchaseForm';
+import type { OrderFormSubmissionMeta } from './orderFormSubmissionMeta';
 
 export type StoredSignedOrderForm = {
   id: string;
@@ -28,6 +29,8 @@ export type StoredSignedOrderForm = {
   adminDeclineReason?: string;
   /** Set when row came from `pending_order_forms` server queue (admin PATCH target). */
   serverQueueId?: string;
+  /** IP, user agent, device/browser — not shown on the client form; stored for dispute evidence. */
+  submissionMeta?: OrderFormSubmissionMeta;
 };
 
 const STORAGE_KEY = 'signedOrderFormsByEmail';

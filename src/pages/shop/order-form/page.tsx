@@ -24,6 +24,23 @@ import { postClientSubmission, getAccessToken } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { syncProfileFromApi } from '../../../utils/syncFromApi';
 import OrderFormFilePicker from '../../../components/OrderFormFilePicker';
+import {
+  ORDER_FORM_ACK_NO_CHARGEBACK,
+  ORDER_FORM_ACK_NO_CHARGEBACK_NOTE,
+  ORDER_FORM_ACK_RAW_HAIR,
+  ORDER_FORM_PAYMENT_METHOD_OPTIONS,
+  ORDER_FORM_UPLOAD_PRIVACY_NOTE,
+  orderFormAckProcessingTimeline,
+} from '../../../constants/orderFormAcknowledgments';
+import {
+  captureOrderFormClientSubmissionMeta,
+  mapCheckoutPaymentMethodToFormValue,
+  orderFormPaymentMethodLabel,
+} from '../../../utils/orderFormSubmissionMeta';
+
+function formatOrderTotalUsd(amount: number): string {
+  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -56,6 +73,9 @@ function OrderFormPage() {
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   const [authorizedPurchase, setAuthorizedPurchase] = useState(false);
   const [billingShippingMatch, setBillingShippingMatch] = useState(false);
+  const [ackNoChargeback, setAckNoChargeback] = useState(false);
+  const [ackRawHairVariation, setAckRawHairVariation] = useState(false);
+  const [ackProcessingTimeline, setAckProcessingTimeline] = useState(false);
   const [bySigningAgreement, setBySigningAgreement] = useState(false);
   const [photoIdFile, setPhotoIdFile] = useState<File | null>(null);
   const [lastFourDigitsFile, setLastFourDigitsFile] = useState<File | null>(null);
@@ -74,6 +94,7 @@ function OrderFormPage() {
   const orderNumberRef = useRef<HTMLInputElement>(null);
   const orderDateRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const orderTotalPaidRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const addressRef = useRef<HTMLInputElement>(null);
   const cityRef = useRef<HTMLInputElement>(null);
@@ -92,13 +113,34 @@ function OrderFormPage() {
 
   // Form state - initialize with data from location.state if available
   const [formData, setFormData] = useState(() => {
-    const stateData = location.state as any;
+    const stateData = location.state as {
+      orderNumber?: string;
+      orderDate?: string;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      shippingAddress?: string;
+      city?: string;
+      state?: string;
+      zip?: string;
+      country?: string;
+      orderTotal?: number;
+      paymentMethod?: string;
+    } | null;
+    const orderTotalRaw = stateData?.orderTotal;
+    const orderTotalPaid =
+      typeof orderTotalRaw === 'number' && orderTotalRaw > 0
+        ? formatOrderTotalUsd(orderTotalRaw)
+        : '';
+    const paymentMethodUsed = mapCheckoutPaymentMethodToFormValue(stateData?.paymentMethod);
     return {
       orderNumber: stateData?.orderNumber || '',
       orderDate: stateData?.orderDate || '',
       firstName: stateData?.firstName || '',
       lastName: stateData?.lastName || '',
       email: stateData?.email || '',
+      orderTotalPaid,
+      paymentMethodUsed,
       phone: '',
       address: stateData?.shippingAddress || '',
       city: stateData?.city || '',
@@ -118,6 +160,14 @@ function OrderFormPage() {
       cvv: ''
     };
   });
+
+  const locationState = location.state as {
+    giftCardIdentityVerificationOnly?: boolean;
+    processingTime?: string;
+    orderId?: string;
+  } | null;
+  const giftCardIdentityOnly = Boolean(locationState?.giftCardIdentityVerificationOnly);
+  const processingTimelineLabel = String(locationState?.processingTime || '').trim();
 
   // Listen for cart count changes
   useEffect(() => {
@@ -220,6 +270,8 @@ function OrderFormPage() {
       take('firstName');
       take('lastName');
       take('email');
+      take('orderTotalPaid');
+      take('paymentMethodUsed');
       take('phone');
       take('address');
       take('city');
@@ -529,108 +581,15 @@ function OrderFormPage() {
       setShowValidationModal(true);
       return;
     }
-    if (!formData.phone.trim()) {
-      setValidationMessage('PHONE NUMBER IS REQUIRED.');
-      setFieldToFocus('phone');
-      setInvalidFields(prev => new Set(prev).add('phone'));
+    if (!formData.orderTotalPaid.trim()) {
+      setValidationMessage('ORDER TOTAL PAID IS REQUIRED.');
+      setFieldToFocus('orderTotalPaid');
+      setInvalidFields(prev => new Set(prev).add('orderTotalPaid'));
       setShowValidationModal(true);
       return;
     }
-    if (!formData.address.trim()) {
-      setValidationMessage('ADDRESS IS REQUIRED.');
-      setFieldToFocus('address');
-      setInvalidFields(prev => new Set(prev).add('address'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.city.trim()) {
-      setValidationMessage('CITY IS REQUIRED.');
-      setFieldToFocus('city');
-      setInvalidFields(prev => new Set(prev).add('city'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.state.trim()) {
-      setValidationMessage('STATE IS REQUIRED.');
-      setFieldToFocus('state');
-      setInvalidFields(prev => new Set(prev).add('state'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.zip.trim()) {
-      setValidationMessage('ZIP CODE IS REQUIRED.');
-      setFieldToFocus('zip');
-      setInvalidFields(prev => new Set(prev).add('zip'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.country.trim()) {
-      setValidationMessage('COUNTRY IS REQUIRED.');
-      setFieldToFocus('country');
-      setInvalidFields(prev => new Set(prev).add('country'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.billingAddress.trim()) {
-      setValidationMessage('BILLING ADDRESS IS REQUIRED.');
-      setFieldToFocus('billingAddress');
-      setInvalidFields(prev => new Set(prev).add('billingAddress'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.billingCity.trim()) {
-      setValidationMessage('BILLING CITY IS REQUIRED.');
-      setFieldToFocus('billingCity');
-      setInvalidFields(prev => new Set(prev).add('billingCity'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.billingState.trim()) {
-      setValidationMessage('BILLING STATE IS REQUIRED.');
-      setFieldToFocus('billingState');
-      setInvalidFields(prev => new Set(prev).add('billingState'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.billingZip.trim()) {
-      setValidationMessage('BILLING ZIP CODE IS REQUIRED.');
-      setFieldToFocus('billingZip');
-      setInvalidFields(prev => new Set(prev).add('billingZip'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.billingCountry.trim()) {
-      setValidationMessage('BILLING COUNTRY IS REQUIRED.');
-      setFieldToFocus('billingCountry');
-      setInvalidFields(prev => new Set(prev).add('billingCountry'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.cardholderName.trim()) {
-      setValidationMessage('CARDHOLDER NAME IS REQUIRED.');
-      setFieldToFocus('cardholderName');
-      setInvalidFields(prev => new Set(prev).add('cardholderName'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.cardNumber.trim()) {
-      setValidationMessage('CARD NUMBER IS REQUIRED.');
-      setFieldToFocus('cardNumber');
-      setInvalidFields(prev => new Set(prev).add('cardNumber'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.expirationDate.trim()) {
-      setValidationMessage('EXPIRATION DATE IS REQUIRED.');
-      setFieldToFocus('expirationDate');
-      setInvalidFields(prev => new Set(prev).add('expirationDate'));
-      setShowValidationModal(true);
-      return;
-    }
-    if (!formData.cvv.trim()) {
-      setValidationMessage('CVV IS REQUIRED.');
-      setFieldToFocus('cvv');
-      setInvalidFields(prev => new Set(prev).add('cvv'));
+    if (!formData.paymentMethodUsed.trim()) {
+      setValidationMessage('PLEASE SELECT THE PAYMENT METHOD USED FOR THIS ORDER.');
       setShowValidationModal(true);
       return;
     }
@@ -648,6 +607,21 @@ function OrderFormPage() {
     }
     if (!bySigningAgreement) {
       setValidationMessage('PLEASE CONFIRM THE AGREEMENT BY CHECKING THE "BY SIGNING" CHECKBOX.');
+      setShowValidationModal(true);
+      return;
+    }
+    if (!ackNoChargeback) {
+      setValidationMessage('PLEASE CONFIRM THAT YOU WILL CONTACT FRONTAL SLAYER BEFORE INITIATING A CHARGEBACK OR PAYMENT DISPUTE.');
+      setShowValidationModal(true);
+      return;
+    }
+    if (!giftCardIdentityOnly && !ackRawHairVariation) {
+      setValidationMessage('PLEASE CONFIRM THAT YOU UNDERSTAND RAW HUMAN HAIR MAY HAVE NATURAL VARIATIONS.');
+      setShowValidationModal(true);
+      return;
+    }
+    if (!giftCardIdentityOnly && !ackProcessingTimeline) {
+      setValidationMessage('PLEASE CONFIRM THAT YOU HAVE REVIEWED AND UNDERSTAND THE PROCESSING TIMELINE FOR YOUR ORDER.');
       setShowValidationModal(true);
       return;
     }
@@ -683,7 +657,7 @@ function OrderFormPage() {
           : lastFourDigitsPreview && lastFourDigitsPreview.startsWith('data:image')
             ? lastFourDigitsPreview
             : '';
-        const stateData = location.state as { orderId?: string } | null | undefined;
+        const stateData = location.state as { orderId?: string; giftCardIdentityVerificationOnly?: boolean } | null | undefined;
         const orderId = stateData?.orderId != null ? String(stateData.orderId) : undefined;
         const cardDigits = formData.cardNumber.replace(/\D/g, '');
         const formFields: Record<string, string> = {};
@@ -694,14 +668,26 @@ function OrderFormPage() {
               cardDigits.length >= 4 ? `ENDING IN ${cardDigits.slice(-4)}` : (v as string).trim();
             continue;
           }
+          if (k === 'paymentMethodUsed') {
+            formFields.paymentMethodUsed = orderFormPaymentMethodLabel(String(v || '').trim());
+            continue;
+          }
           formFields[k] = typeof v === 'string' ? v.trim() : String(v);
         }
+        formFields.addressDifferenceReason = addressDifferenceReason.trim();
+        formFields.ackNoChargeback = 'true';
+        if (!giftCardIdentityOnly) {
+          formFields.ackRawHairVariation = 'true';
+          formFields.ackProcessingTimeline = 'true';
+          if (processingTimelineLabel) {
+            formFields.processingTimelineLabel = processingTimelineLabel;
+          }
+        }
+        const submissionMeta = captureOrderFormClientSubmissionMeta();
         const entryId =
           orderId ||
           `form-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        const giftCardIdentityOnly = Boolean(
-          (location.state as { giftCardIdentityVerificationOnly?: boolean } | null)?.giftCardIdentityVerificationOnly
-        );
+        const giftCardIdentityOnlySubmit = Boolean(stateData?.giftCardIdentityVerificationOnly);
         const formSnapshot = {
           id: entryId,
           orderId,
@@ -713,10 +699,11 @@ function OrderFormPage() {
           photoIdDataUrl: photoIdDataUrl || undefined,
           cardLastFourDataUrl: cardLastFourDataUrl || undefined,
           signatureDataUrl: signatureDataUrl || undefined,
-          adminApproved: giftCardIdentityOnly ? true : false,
+          submissionMeta,
+          adminApproved: giftCardIdentityOnlySubmit ? true : false,
         };
         appendSignedOrderForm(formSnapshot);
-        if (isSupabaseConfigured() && (await getAccessToken()) && !giftCardIdentityOnly) {
+        if (isSupabaseConfigured() && (await getAccessToken()) && !giftCardIdentityOnlySubmit) {
           try {
             await postClientSubmission({ kind: 'order_form', payload: formSnapshot });
             await syncProfileFromApi();
@@ -1231,6 +1218,101 @@ function OrderFormPage() {
                     />
                   </div>
 
+                  <div>
+                    <label
+                      htmlFor="orderTotalPaid"
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        color: '#000000',
+                        textTransform: 'uppercase',
+                        marginBottom: '5px',
+                        display: 'block'
+                      }}
+                    >
+                      ORDER TOTAL PAID<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="orderTotalPaid"
+                      name="orderTotalPaid"
+                      ref={orderTotalPaidRef}
+                      value={formData.orderTotalPaid}
+                      onChange={handleInputChange}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        padding: '8px',
+                        border: `1.3px solid ${invalidFields.has('orderTotalPaid') ? '#EB1C24' : '#000000'}`,
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        backgroundColor: '#FFFFFF',
+                        color: '#808080',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        color: '#000000',
+                        textTransform: 'uppercase',
+                        marginBottom: '8px',
+                        marginTop: 0
+                      }}
+                    >
+                      PAYMENT METHOD USED<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {ORDER_FORM_PAYMENT_METHOD_OPTIONS.map((opt) => {
+                        const selected = formData.paymentMethodUsed === opt.value;
+                        return (
+                          <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div
+                              onClick={() => {
+                                setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
+                                setInvalidFields((prev) => {
+                                  const next = new Set(prev);
+                                  next.delete('paymentMethodUsed');
+                                  return next;
+                                });
+                              }}
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                borderRadius: '50%',
+                                cursor: 'pointer',
+                                border: `1.3px solid ${selected ? '#EB1C24' : '#000000'}`,
+                                backgroundColor: selected ? '#EB1C24' : 'transparent',
+                                flexShrink: 0
+                              }}
+                            />
+                            <label
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000000',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                lineHeight: '1.3'
+                              }}
+                              onClick={() => {
+                                setFormData((prev) => ({ ...prev, paymentMethodUsed: opt.value }));
+                              }}
+                            >
+                              {opt.label}
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {/* Authorization Checkboxes */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1326,8 +1408,20 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>PHOTO ID</span> (CARDHOLDER) NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
+                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>IDENTITY VERIFICATION</span> — CARDHOLDER NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#808080',
+                          textTransform: 'uppercase',
+                          margin: '0 0 8px 0',
+                          lineHeight: '1.35'
+                        }}
+                      >
+                        {ORDER_FORM_UPLOAD_PRIVACY_NOTE}
+                      </p>
                       <OrderFormFilePicker
                         id="photoId"
                         name="photoId"
@@ -1352,8 +1446,20 @@ function OrderFormPage() {
                           display: 'block'
                         }}
                       >
-                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>LAST 4 DIGITS</span> (CARDHOLDER) PHOTO IDENTIFICATION SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD THIS BOX IF USING A PAYMENT PLAN.
+                        <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>PAYMENT VERIFICATION</span> — PHOTO SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD IF USING A PAYMENT PLAN.
                       </label>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#808080',
+                          textTransform: 'uppercase',
+                          margin: '0 0 8px 0',
+                          lineHeight: '1.35'
+                        }}
+                      >
+                        {ORDER_FORM_UPLOAD_PRIVACY_NOTE}
+                      </p>
                       <OrderFormFilePicker
                         id="lastFourDigits"
                         name="lastFourDigits"
@@ -1399,6 +1505,148 @@ function OrderFormPage() {
                           outline: 'none'
                         }}
                       />
+                    </div>
+
+                    {/* Chargeback + product + processing acknowledgments (above signature) */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                        <div
+                          onClick={() => setAckNoChargeback(!ackNoChargeback)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1.3px solid #000000',
+                            backgroundColor: 'transparent',
+                            position: 'relative',
+                            flexShrink: 0,
+                            marginTop: '2px'
+                          }}
+                        >
+                          {ackNoChargeback && (
+                            <img
+                              src="/assets/checkbox.svg"
+                              alt="checked"
+                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            />
+                          )}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <label
+                            style={{
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '10px',
+                              color: '#000000',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                              lineHeight: '1.3',
+                              display: 'block'
+                            }}
+                            onClick={() => setAckNoChargeback(!ackNoChargeback)}
+                          >
+                            {ORDER_FORM_ACK_NO_CHARGEBACK}<span style={{ color: '#EB1C24' }}>*</span>
+                          </label>
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Book"',
+                              fontSize: '10px',
+                              color: '#808080',
+                              textTransform: 'uppercase',
+                              margin: '8px 0 0 0',
+                              lineHeight: '1.35'
+                            }}
+                          >
+                            {ORDER_FORM_ACK_NO_CHARGEBACK_NOTE}
+                          </p>
+                        </div>
+                      </div>
+
+                      {!giftCardIdentityOnly && (
+                        <>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                            <div
+                              onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1.3px solid #000000',
+                                backgroundColor: 'transparent',
+                                position: 'relative',
+                                flexShrink: 0,
+                                marginTop: '2px'
+                              }}
+                            >
+                              {ackRawHairVariation && (
+                                <img
+                                  src="/assets/checkbox.svg"
+                                  alt="checked"
+                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                />
+                              )}
+                            </div>
+                            <label
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000000',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                lineHeight: '1.3'
+                              }}
+                              onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
+                            >
+                              {ORDER_FORM_ACK_RAW_HAIR}<span style={{ color: '#EB1C24' }}>*</span>
+                            </label>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                            <div
+                              onClick={() => setAckProcessingTimeline(!ackProcessingTimeline)}
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1.3px solid #000000',
+                                backgroundColor: 'transparent',
+                                position: 'relative',
+                                flexShrink: 0,
+                                marginTop: '2px'
+                              }}
+                            >
+                              {ackProcessingTimeline && (
+                                <img
+                                  src="/assets/checkbox.svg"
+                                  alt="checked"
+                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                />
+                              )}
+                            </div>
+                            <label
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000000',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                lineHeight: '1.3'
+                              }}
+                              onClick={() => setAckProcessingTimeline(!ackProcessingTimeline)}
+                            >
+                              {orderFormAckProcessingTimeline(processingTimelineLabel)}<span style={{ color: '#EB1C24' }}>*</span>
+                            </label>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* Signature Section */}
@@ -1534,6 +1782,7 @@ function OrderFormPage() {
                 orderNumber: orderNumberRef,
                 orderDate: orderDateRef,
                 email: emailRef,
+                orderTotalPaid: orderTotalPaidRef,
                 phone: phoneRef,
                 address: addressRef,
                 city: cityRef,
@@ -1568,6 +1817,7 @@ function OrderFormPage() {
                 orderNumber: orderNumberRef,
                 orderDate: orderDateRef,
                 email: emailRef,
+                orderTotalPaid: orderTotalPaidRef,
                 phone: phoneRef,
                 address: addressRef,
                 city: cityRef,

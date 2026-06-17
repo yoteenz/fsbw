@@ -5,6 +5,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from '../_lib/auth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { clientIp } from '../_lib/rateLimit.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;
@@ -45,13 +46,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const payload = body.payload;
       if (!payload || typeof payload !== 'object') return res.status(400).json({ error: 'payload required' });
       const email = String((payload as { email?: string }).email || user.email).trim().toLowerCase();
+      const rawMeta = (payload as { submissionMeta?: unknown }).submissionMeta;
+      const clientMeta =
+        rawMeta && typeof rawMeta === 'object' && !Array.isArray(rawMeta)
+          ? { ...(rawMeta as Record<string, unknown>) }
+          : {};
+      const uaHeader = req.headers['user-agent'];
+      const enrichedPayload = {
+        ...(payload as Record<string, unknown>),
+        submissionMeta: {
+          ...clientMeta,
+          ipAddress: clientIp(req),
+          userAgent: String(clientMeta.userAgent || uaHeader || ''),
+          serverReceivedAt: new Date().toISOString(),
+        },
+      };
       const { data, error } = await supabase
         .from('pending_order_forms')
         .insert({
           user_id: user.id,
           email,
           status: 'pending',
-          payload,
+          payload: enrichedPayload,
         })
         .select('id')
         .single();
