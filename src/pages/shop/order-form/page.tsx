@@ -1071,7 +1071,7 @@ function OrderFormPage() {
                     height: 'auto',
                     display: 'block',
                     objectFit: 'contain',
-                    marginTop: '12px',
+                    marginTop: '22px',
                     marginBottom: '12px',
                   }}
                 />
