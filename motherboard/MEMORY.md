@@ -28951,3 +28951,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to increase payment method option label size by **1px** (10px → **11px**); gray Futura Medium unchanged.
 - **Changes:** **`ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE`** **`fontSize: 11px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form hero: +10px spacing above image
+
+- **Context:** User asked for **10px additional** spacing above the order form hero (was **12px** below header divider).
+- **Changes:** Hero **`marginTop` 12px → 22px** in **`order-form/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
