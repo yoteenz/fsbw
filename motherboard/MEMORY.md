@@ -28913,3 +28913,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported roses still sat above the first text line; inline **`verticalAlign: 2px`** moved them higher (positive length raises inline boxes).
 - **Changes:** **`OrderFormIntroText.tsx`** — back to PDP flex row; rose **`marginTop: 5px`** to align with **12px** first-line cap height. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Brand/tools hero brainstorm + order form hand-and-book image
+
+- **Context:** User brainstormed a cohesive **“The Hold”** visual system for brand/tools page heroes: same signature hand/nails as unit PDP 3D stock (hair bundle + white bow), each page presenting a different luxury prop on seamless white. Pilot concept for **order form**: hand holding a 3D **ORDER FORM** book (editorial lookbook, not office notebook); discussed page-by-page prop map (VIP card for member, wax-seal envelope for contact, etc.), bow only on gift/product shots, and subtle 3D tilt vs full spin.
+- **Topics covered:** Creative direction only in first message; second message requested shipping the generated asset on **`/tools/order-form`**.
+- **Decisions / outcomes:** Order form hero = Supabase **`live-preview/3D Stock/ChatGPT Image Jun 17, 2026 at 02_49_13 PM.png`** — full width, **`object-fit: contain`**, placed **below** the red **ORDER AUTHORIZATION FORM** header and **above** **`OrderFormIntroText`**. URL constant in **`src/constants/orderFormAssets.ts`** as **`ORDER_FORM_HERO_IMAGE_SRC`**.
+- **Changes:** **`src/constants/orderFormAssets.ts`** (new), **`src/pages/shop/order-form/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+- **Conventions:** Future brand/tools heroes can follow same pattern (asset constant + full-width img above page copy); keep hand spec locked across series.
