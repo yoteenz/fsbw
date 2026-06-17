@@ -28835,3 +28835,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to change red **IDENTITY VERIFICATION** and **PAYMENT VERIFICATION** text back to gray on the order form.
 - **Changes:** **`order-form/page.tsx`** — upload section headings and **`ORDER_FORM_UPLOAD_PRIVACY_NOTE`** paragraphs use **`#808080`** again (required **\*** stays red). **`signedOrderFormPdfSnapshotDom.ts`** — matching PDF label spans use **`GRAY_TEXT`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: authorization checkboxes above payment method
+
+- **Context:** User asked to move the two required checkboxes (**authorized purchase** + **billing/shipping cardholder**) above **PAYMENT METHOD USED** instead of below it.
+- **Changes:** **`order-form/page.tsx`** — checkbox block now sits after **ORDER TOTAL PAID** and before payment method options. **`signedOrderFormPdfSnapshotDom.ts`** — same field order for PDF capture. Pushed **`master`** + **`preview/mobile`**.
