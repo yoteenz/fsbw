@@ -354,6 +354,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   formCol.appendChild(authChecks);
 
   const paymentWrap = document.createElement('div');
+  Object.assign(paymentWrap.style, { marginTop: '8px' });
   const paymentLab = document.createElement('label');
   Object.assign(paymentLab.style, labelStyle());
   paymentLab.innerHTML = `PAYMENT METHOD USED<span style="color:${RED};font-weight:normal">*</span>`;

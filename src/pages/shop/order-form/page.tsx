@@ -1330,7 +1330,7 @@ function OrderFormPage() {
                     </div>
                   </div>
 
-                  <div>
+                  <div style={{ marginTop: '8px' }}>
                     <p
                       style={{
                         fontFamily: '"Futura PT Book"',
