@@ -28880,6 +28880,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-17 — Order form: ack checkboxes match payment method size
+
+- **Context:** User asked to confirm the four ack checkboxes (+ **BY SIGNING**) match **PAYMENT METHOD USED** checkbox size.
+- **Findings:** Box was already **16×16** but ack rows used **`marginTop: 2px`** and **11px** labels vs payment **10px** centered rows.
+- **Changes:** **`order-form/page.tsx`** — shared **`ORDER_FORM_CHECKBOX_BOX_STYLE`** / mark / label constants applied to auth, payment, ack, and signing rows; removed ack **`marginTop`**, labels **10px**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-17 — Order form intro: rose bullet first-line alignment
 
 - **Context:** User reported **please note** rose bullets sat above the text line instead of inline with it (unlike NOIR PDP policy/shipping tabs).
