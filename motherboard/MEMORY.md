@@ -28979,3 +28979,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to reduce spacing **above** two checkbox rows: **BY SIGNING + SUBMITTING** by **4px**; **I AGREE TO CONTACT FRONTAL SLAYER…** (chargeback ack) by **2px**.
 - **Changes:** **`order-form/page.tsx`** — signature section **`marginTop` 5px → 1px**; chargeback/ack block **`marginTop` 15px → 13px**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form hero: reduce size 25%
+
+- **Context:** User asked to reduce order form hero image size by **25%**.
+- **Changes:** Hero **`width` 100% → 75%**, centered with **`marginLeft`/`marginRight: auto`**. Pushed **`master`** + **`preview/mobile`**.
