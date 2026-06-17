@@ -28863,3 +28863,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to add **8px** spacing above the **PAYMENT METHOD USED\*** section only.
 - **Changes:** **`order-form/page.tsx`** — payment method wrapper **`marginTop: 8px`**. **`signedOrderFormPdfSnapshotDom.ts`** — **`paymentWrap`** matches. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form intro: rose bullet first-line alignment
+
+- **Context:** User reported **please note** rose bullets sat above the text line instead of inline with it (unlike NOIR PDP policy/shipping tabs).
+- **Changes:** **`OrderFormIntroText.tsx`** — **`RoseBulletLine`** text uses **`lineHeight: 1.45`** (same as product tab rose rows) instead of intro paragraph **`1.8`**, keeping flex row + **`rose-alert.svg`**. Pushed **`master`** + **`preview/mobile`**.

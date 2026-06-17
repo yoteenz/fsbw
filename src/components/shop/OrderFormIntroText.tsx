@@ -54,11 +54,22 @@ function BulletLine({ line }: { line: string }) {
   );
 }
 
+const ROSE_BULLET_TEXT_STYLE: CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '12px',
+  color: '#000000',
+  lineHeight: 1.45,
+  margin: 0,
+  textAlign: 'left',
+  textTransform: 'uppercase',
+  flex: 1,
+};
+
 function RoseBulletLine({ line }: { line: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', margin: '0 0 8px 0' }}>
       <img src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC} alt="" style={NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE} />
-      <p style={{ ...PARA_STYLE, margin: 0 }}>{line}</p>
+      <p style={ROSE_BULLET_TEXT_STYLE}>{line}</p>
     </div>
   );
 }
