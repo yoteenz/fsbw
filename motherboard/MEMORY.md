@@ -28923,3 +28923,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Order form hero = Supabase **`live-preview/3D Stock/ChatGPT Image Jun 17, 2026 at 02_49_13 PM.png`** — full width, **`object-fit: contain`**, placed **below** the red **ORDER AUTHORIZATION FORM** header and **above** **`OrderFormIntroText`**. URL constant in **`src/constants/orderFormAssets.ts`** as **`ORDER_FORM_HERO_IMAGE_SRC`**.
 - **Changes:** **`src/constants/orderFormAssets.ts`** (new), **`src/pages/shop/order-form/page.tsx`**. Pushed **`master`** + **`preview/mobile`**.
 - **Conventions:** Future brand/tools heroes can follow same pattern (asset constant + full-width img above page copy); keep hand spec locked across series.
+
+---
+
+## 2026-06-17 — Order form hero: IMG_2949 asset swap
+
+- **Context:** User asked to replace the order form hero image with **`live-preview/3D Stock/IMG_2949.png`** instead of the prior ChatGPT-generated filename.
+- **Changes:** **`ORDER_FORM_HERO_IMAGE_SRC`** in **`src/constants/orderFormAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
