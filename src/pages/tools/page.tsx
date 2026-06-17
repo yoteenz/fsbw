@@ -15,6 +15,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { marbleStripViewportStyle } from '../../utils/marbleStripStyles';
 import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../utils/giftCardCheckout';
+import { GIFT_CARD_BALANCE_OPTIONS, giftCardPdpPath } from '../../utils/giftCardBalance';
 import { stripDebugModeSuffix } from '../../utils/debugMode';
 
 function ToolsPage() {
@@ -88,16 +89,13 @@ function ToolsPage() {
   }, []);
 
   // Gift card products state
-  const [giftCardProducts] = useState([
-    { id: 'gift-card-10', name: 'GIFT CARD', price: 10 },
-    { id: 'gift-card-15', name: 'GIFT CARD', price: 15 },
-    { id: 'gift-card-25', name: 'GIFT CARD', price: 25 },
-    { id: 'gift-card-50', name: 'GIFT CARD', price: 50 },
-    { id: 'gift-card-75', name: 'GIFT CARD', price: 75 },
-    { id: 'gift-card-100', name: 'GIFT CARD', price: 100 },
-    { id: 'gift-card-250', name: 'GIFT CARD', price: 250 },
-    { id: 'gift-card-500', name: 'GIFT CARD', price: 500 },
-  ]);
+  const [giftCardProducts] = useState(() =>
+    GIFT_CARD_BALANCE_OPTIONS.map((price) => ({
+      id: `gift-card-${price}`,
+      name: 'GIFT CARD',
+      price,
+    }))
+  );
 
   // Gift card marble strip: measured snap (same as PDP similar / shop UNITS)
   const [giftCardPage, setGiftCardPage] = useState(0);
@@ -645,6 +643,15 @@ function ToolsPage() {
                         {giftCardProducts.map((product) => (
                           <div
                             key={product.id}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate(giftCardPdpPath(product.price))}
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                navigate(giftCardPdpPath(product.price));
+                              }
+                            }}
                             style={{
                               padding: 0,
                               display: 'flex',
@@ -655,6 +662,7 @@ function ToolsPage() {
                               position: 'relative',
                               overflow: 'visible',
                               minWidth: 0,
+                              cursor: 'pointer',
                             }}
                           >
                             <div
@@ -680,14 +688,12 @@ function ToolsPage() {
                                 <img
                                   src={GIFT_CARD_CART_THUMBNAIL_SRC}
                                   alt="Gift Card"
-                                  onClick={() => navigate('/tools/gift-card')}
                                   style={{
                                     width: '79.2%',
                                     height: 'auto',
                                     maxWidth: '100%',
                                     display: 'block',
                                     margin: 0,
-                                    cursor: 'pointer',
                                   }}
                                 />
                               </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -21,6 +21,10 @@ import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPo
 import GiftCardBalancePicker from '../../../components/shop/GiftCardBalancePicker';
 import ThumbBox from '../../../components/ThumbBox';
 import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../../utils/giftCardCheckout';
+import {
+  GIFT_CARD_DEFAULT_BALANCE,
+  parseGiftCardBalance,
+} from '../../../utils/giftCardBalance';
 
 const GIFT_CARD_PREVIEW_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
@@ -51,9 +55,16 @@ function withGiftCardSimilarProductsVisibility(
 function GiftCardPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
-  const [selectedBalance, setSelectedBalance] = useState<number>(() => 10);
+  const [selectedBalance, setSelectedBalance] = useState<number>(() => {
+    if (typeof window === 'undefined') return GIFT_CARD_DEFAULT_BALANCE;
+    return (
+      parseGiftCardBalance(new URLSearchParams(window.location.search).get('balance')) ??
+      GIFT_CARD_DEFAULT_BALANCE
+    );
+  });
   const [selectedGiftCardPreviewIndex, setSelectedGiftCardPreviewIndex] = useState(0);
   const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'POLICY' | 'REVIEWS'>({
     queryKey: 'tab',
@@ -120,6 +131,11 @@ function GiftCardPage() {
   }), []);
 
   const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
+
+  useEffect(() => {
+    const parsed = parseGiftCardBalance(searchParams.get('balance'));
+    if (parsed != null) setSelectedBalance(parsed);
+  }, [searchParams]);
 
   // Listen for cart count changes
   useEffect(() => {
