@@ -28674,3 +28674,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to update the **HANDMADE UNIT MEASURING 24 INCHES…** details bullet where it applies — exact copy targets **NOIR** (250% density, **A NATURAL OFF BLACK HAIR COLOR**).
 - **Changes:** `noir.colorPhrase` in `unitPdpDetailsConfig.ts`: `AN OFF BLACK NATURAL HAIR COLOR` → `A NATURAL OFF BLACK HAIR COLOR`. Other units unchanged (200% off-black units, BLANCO platinum). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Unit PDP shipping tab: sourcing to quality control copy
+
+- **Context:** User asked to update the **handmade, not mass produced** paragraph under the **SHIPPING** tab for all six unit PDPs.
+- **Changes:** `NoirProductShippingTab.tsx` — new copy begins **FROM SOURCING TO FINAL QUALITY CONTROL…** (shared by all unit PDPs via `NoirProductShippingTab`). Pushed **`master`** + **`preview/mobile`**.
