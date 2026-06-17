@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -41,6 +42,35 @@ import {
 function formatOrderTotalUsd(amount: number): string {
   return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
+
+/** Shared with PAYMENT METHOD USED rows — 16×16 box, 1.3px border, checkbox.svg mark. */
+const ORDER_FORM_CHECKBOX_BOX_STYLE: CSSProperties = {
+  width: '16px',
+  height: '16px',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  border: '1.3px solid #000000',
+  backgroundColor: 'transparent',
+  position: 'relative',
+  flexShrink: 0,
+};
+
+const ORDER_FORM_CHECKBOX_MARK_STYLE: CSSProperties = {
+  width: '16px',
+  height: '16px',
+  position: 'absolute',
+};
+
+const ORDER_FORM_CHECKBOX_LABEL_STYLE: CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  cursor: 'pointer',
+  textTransform: 'uppercase',
+  lineHeight: '1.3',
+};
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -1255,36 +1285,18 @@ function OrderFormPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div
                         onClick={() => setAuthorizedPurchase(!authorizedPurchase)}
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          border: '1.3px solid #000000',
-                          backgroundColor: 'transparent',
-                          position: 'relative',
-                          flexShrink: 0
-                        }}
+                        style={ORDER_FORM_CHECKBOX_BOX_STYLE}
                       >
                         {authorizedPurchase && (
                           <img 
                             src="/assets/checkbox.svg" 
                             alt="checked" 
-                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            style={ORDER_FORM_CHECKBOX_MARK_STYLE}
                           />
                         )}
                       </div>
                       <label 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          cursor: 'pointer',
-                          textTransform: 'uppercase',
-                          lineHeight: '1.3'
-                        }}
+                        style={ORDER_FORM_CHECKBOX_LABEL_STYLE}
                         onClick={() => setAuthorizedPurchase(!authorizedPurchase)}
                       >
                         I HAVE AUTHORIZED THIS PURCHASE ON THE DATE LISTED ABOVE.<span style={{ color: '#EB1C24' }}>*</span>
@@ -1293,36 +1305,18 @@ function OrderFormPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div
                         onClick={() => setBillingShippingMatch(!billingShippingMatch)}
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          border: '1.3px solid #000000',
-                          backgroundColor: 'transparent',
-                          position: 'relative',
-                          flexShrink: 0
-                        }}
+                        style={ORDER_FORM_CHECKBOX_BOX_STYLE}
                       >
                         {billingShippingMatch && (
                           <img 
                             src="/assets/checkbox.svg" 
                             alt="checked" 
-                            style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            style={ORDER_FORM_CHECKBOX_MARK_STYLE}
                           />
                         )}
                       </div>
                       <label 
-                        style={{ 
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          cursor: 'pointer',
-                          textTransform: 'uppercase',
-                          lineHeight: '1.3'
-                        }}
+                        style={ORDER_FORM_CHECKBOX_LABEL_STYLE}
                         onClick={() => setBillingShippingMatch(!billingShippingMatch)}
                       >
                         THE BILLING/SHIPPING ADDRESS BELONGS TO THE CARDHOLDER.<span style={{ color: '#EB1C24' }}>*</span>
@@ -1358,36 +1352,18 @@ function OrderFormPage() {
                           <div key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <div
                               onClick={selectPaymentMethod}
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1.3px solid #000000',
-                                backgroundColor: 'transparent',
-                                position: 'relative',
-                                flexShrink: 0
-                              }}
+                              style={ORDER_FORM_CHECKBOX_BOX_STYLE}
                             >
                               {selected && (
                                 <img
                                   src="/assets/checkbox.svg"
                                   alt="checked"
-                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
+                                  style={ORDER_FORM_CHECKBOX_MARK_STYLE}
                                 />
                               )}
                             </div>
                             <label
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '10px',
-                                color: '#000000',
-                                cursor: 'pointer',
-                                textTransform: 'uppercase',
-                                lineHeight: '1.3'
-                              }}
+                              style={ORDER_FORM_CHECKBOX_LABEL_STYLE}
                               onClick={selectPaymentMethod}
                             >
                               {opt.label}
@@ -1517,39 +1493,19 @@ function OrderFormPage() {
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                         <div
                           onClick={() => setAckNoChargeback(!ackNoChargeback)}
-                          style={{
-                            width: '16px',
-                            height: '16px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            border: '1.3px solid #000000',
-                            backgroundColor: 'transparent',
-                            position: 'relative',
-                            flexShrink: 0,
-                            marginTop: '2px'
-                          }}
+                          style={ORDER_FORM_CHECKBOX_BOX_STYLE}
                         >
                           {ackNoChargeback && (
                             <img
                               src="/assets/checkbox.svg"
                               alt="checked"
-                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                              style={ORDER_FORM_CHECKBOX_MARK_STYLE}
                             />
                           )}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <label
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              fontSize: '11px',
-                              color: '#000000',
-                              cursor: 'pointer',
-                              textTransform: 'uppercase',
-                              lineHeight: '1.3',
-                              display: 'block'
-                            }}
+                            style={{ ...ORDER_FORM_CHECKBOX_LABEL_STYLE, display: 'block' }}
                             onClick={() => setAckNoChargeback(!ackNoChargeback)}
                           >
                             {ORDER_FORM_ACK_NO_CHARGEBACK}<span style={{ color: '#EB1C24' }}>*</span>
@@ -1572,79 +1528,41 @@ function OrderFormPage() {
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                         <div
                           onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1.3px solid #000000',
-                                backgroundColor: 'transparent',
-                                position: 'relative',
-                                flexShrink: 0,
-                                marginTop: '2px'
-                              }}
-                            >
-                              {ackRawHairVariation && (
-                                <img
-                                  src="/assets/checkbox.svg"
-                                  alt="checked"
-                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
-                                />
-                              )}
-                            </div>
-                            <label
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '11px',
-                                color: '#000000',
-                                cursor: 'pointer',
-                                textTransform: 'uppercase',
-                                lineHeight: '1.3'
-                              }}
-                              onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
-                            >
+                          style={ORDER_FORM_CHECKBOX_BOX_STYLE}
+                        >
+                          {ackRawHairVariation && (
+                            <img
+                              src="/assets/checkbox.svg"
+                              alt="checked"
+                              style={ORDER_FORM_CHECKBOX_MARK_STYLE}
+                            />
+                          )}
+                        </div>
+                        <label
+                          style={ORDER_FORM_CHECKBOX_LABEL_STYLE}
+                          onClick={() => setAckRawHairVariation(!ackRawHairVariation)}
+                        >
                               {ORDER_FORM_ACK_RAW_HAIR}<span style={{ color: '#EB1C24' }}>*</span>
                             </label>
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                            <div
-                              onClick={() => setAckProcessingTimeline(!ackProcessingTimeline)}
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1.3px solid #000000',
-                                backgroundColor: 'transparent',
-                                position: 'relative',
-                                flexShrink: 0,
-                                marginTop: '2px'
-                              }}
-                            >
-                              {ackProcessingTimeline && (
-                                <img
-                                  src="/assets/checkbox.svg"
-                                  alt="checked"
-                                  style={{ width: '16px', height: '16px', position: 'absolute' }}
-                                />
-                              )}
-                            </div>
-                            <label
-                              style={{
-                                fontFamily: '"Futura PT Book"',
-                                fontSize: '11px',
-                                color: '#000000',
-                                cursor: 'pointer',
-                                textTransform: 'uppercase',
-                                lineHeight: '1.3'
-                              }}
-                              onClick={() => setAckProcessingTimeline(!ackProcessingTimeline)}
-                            >
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                        <div
+                          onClick={() => setAckProcessingTimeline(!ackProcessingTimeline)}
+                          style={ORDER_FORM_CHECKBOX_BOX_STYLE}
+                        >
+                          {ackProcessingTimeline && (
+                            <img
+                              src="/assets/checkbox.svg"
+                              alt="checked"
+                              style={ORDER_FORM_CHECKBOX_MARK_STYLE}
+                            />
+                          )}
+                        </div>
+                        <label
+                          style={ORDER_FORM_CHECKBOX_LABEL_STYLE}
+                          onClick={() => setAckProcessingTimeline(!ackProcessingTimeline)}
+                        >
                               {orderFormAckProcessingTimeline(processingTimelineLabel)}<span style={{ color: '#EB1C24' }}>*</span>
                             </label>
                           </div>
@@ -1655,38 +1573,21 @@ function OrderFormPage() {
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
                         <div
                           onClick={() => setBySigningAgreement(!bySigningAgreement)}
-                          style={{
-                            width: '16px',
-                            height: '16px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            border: '1.3px solid #000000',
-                            backgroundColor: 'transparent',
-                            position: 'relative',
-                            flexShrink: 0,
-                            marginTop: '2px'
-                          }}
+                          style={ORDER_FORM_CHECKBOX_BOX_STYLE}
                         >
                           {bySigningAgreement && (
                             <img 
                               src="/assets/checkbox.svg" 
                               alt="checked" 
-                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                              style={ORDER_FORM_CHECKBOX_MARK_STYLE}
                             />
                           )}
                         </div>
                         <p
                           style={{
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            color: '#000000',
-                            textTransform: 'uppercase',
+                            ...ORDER_FORM_CHECKBOX_LABEL_STYLE,
                             margin: '0',
                             display: 'block',
-                            cursor: 'pointer',
-                            lineHeight: '1.3'
                           }}
                           onClick={() => setBySigningAgreement(!bySigningAgreement)}
                         >
