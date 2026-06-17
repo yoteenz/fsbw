@@ -1061,6 +1061,7 @@ function OrderFormPage() {
                     height: 'auto',
                     display: 'block',
                     objectFit: 'contain',
+                    marginTop: '12px',
                     marginBottom: '12px',
                   }}
                 />
