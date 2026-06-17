@@ -73,6 +73,16 @@ const ORDER_FORM_CHECKBOX_LABEL_STYLE: CSSProperties = {
   lineHeight: '1.3',
 };
 
+const ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE: CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '10px',
+  color: '#808080',
+  fontWeight: 500,
+  cursor: 'pointer',
+  textTransform: 'uppercase',
+  lineHeight: '1.3',
+};
+
 function OrderFormPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1377,7 +1387,7 @@ function OrderFormPage() {
                               )}
                             </div>
                             <label
-                              style={ORDER_FORM_CHECKBOX_LABEL_STYLE}
+                              style={ORDER_FORM_PAYMENT_METHOD_LABEL_STYLE}
                               onClick={selectPaymentMethod}
                             >
                               {opt.label}
