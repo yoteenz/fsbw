@@ -1067,12 +1067,14 @@ function OrderFormPage() {
                   src={ORDER_FORM_HERO_IMAGE_SRC}
                   alt=""
                   style={{
-                    width: '100%',
+                    width: '75%',
                     height: 'auto',
                     display: 'block',
                     objectFit: 'contain',
                     marginTop: '22px',
                     marginBottom: '12px',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                   }}
                 />
 
