@@ -29022,3 +29022,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **FAQ** hero on **`/brand/faq`** using **`live-preview/3D Stock/IMG_3014.png`**, same **`PageHeroImage`** sizing as order form.
 - **Changes:** **`src/constants/brandFaqAssets.ts`** (`BRAND_FAQ_HERO_IMAGE_SRC`), **`BrandFaqPageContent.tsx`** — hero above accordion + ask-a-question block. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Brand contact hero + PageHeroImage
+
+- **Context:** User asked for **Contact Us** hero on **`/brand/contact`** using **`live-preview/3D Stock/IMG_3021.png`**, same **`PageHeroImage`** sizing as order form.
+- **Changes:** **`src/constants/brandContactAssets.ts`** (`BRAND_CONTACT_HERO_IMAGE_SRC`), **`BrandContactSection.tsx`** — hero above intro copy + form. Pushed **`master`** + **`preview/mobile`**.
