@@ -28663,6 +28663,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-16 — Gift card DETAILS: digital cash bullet
+
+- **Context:** User asked to update gift card **DETAILS** bullet to mention digital cash.
+- **Changes:** `GiftCardProductDetailsTab.tsx` — **FUNDS MAY BE LOADED DIRECTLY FROM YOUR ACCOUNT DURING PURCHASE WHICH CONVERTS INTO DIGITAL CASH.** Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-16 — BLANCO signature feature: ventilated single strand knots
 
 - **Context:** User asked to update one **signature features** bullet on **BLANCO** PDP only to **VENTILATED SINGLE STRAND KNOTS** (other units keep **LIGHTLY BLEACHED SINGLE STRAND KNOTS**).
