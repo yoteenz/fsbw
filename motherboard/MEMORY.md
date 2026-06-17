@@ -28972,3 +28972,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to replace order form hero with **`live-preview/3D Stock/IMG_2975.png`** (was IMG_2949).
 - **Changes:** **`ORDER_FORM_HERO_IMAGE_SRC`** in **`orderFormAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form: reduce spacing above ack checkboxes
+
+- **Context:** User asked to reduce spacing **above** two checkbox rows: **BY SIGNING + SUBMITTING** by **4px**; **I AGREE TO CONTACT FRONTAL SLAYER…** (chargeback ack) by **2px**.
+- **Changes:** **`order-form/page.tsx`** — signature section **`marginTop` 5px → 1px**; chargeback/ack block **`marginTop` 15px → 13px**. Pushed **`master`** + **`preview/mobile`**.
