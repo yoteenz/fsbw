@@ -54,37 +54,31 @@ function BulletLine({ line }: { line: string }) {
   );
 }
 
-const ROSE_BULLET_GAP_PX = 8;
-const ROSE_BULLET_ICON_PX = 12;
-const ROSE_BULLET_HANG_PX = ROSE_BULLET_ICON_PX + ROSE_BULLET_GAP_PX;
-
 const ROSE_BULLET_TEXT_STYLE: CSSProperties = {
   fontFamily: '"Futura PT Book"',
   fontSize: '12px',
   color: '#000000',
   lineHeight: 1.45,
-  margin: '0 0 8px 0',
+  margin: 0,
   textAlign: 'left',
   textTransform: 'uppercase',
-  paddingLeft: `${ROSE_BULLET_HANG_PX}px`,
-  textIndent: `-${ROSE_BULLET_HANG_PX}px`,
+  flex: 1,
 };
 
 function RoseBulletLine({ line }: { line: string }) {
   return (
-    <p style={ROSE_BULLET_TEXT_STYLE}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', margin: '0 0 8px 0' }}>
       <img
         src={NOIR_PRODUCT_TAB_ROSE_ALERT_SRC}
         alt=""
         style={{
           ...NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
-          display: 'inline-block',
-          verticalAlign: '2px',
-          marginRight: `${ROSE_BULLET_GAP_PX}px`,
+          // Nudge down to first-line cap height (12px copy vs 10px on PDP tabs).
+          marginTop: '5px',
         }}
       />
-      {line}
-    </p>
+      <p style={ROSE_BULLET_TEXT_STYLE}>{line}</p>
+    </div>
   );
 }
 

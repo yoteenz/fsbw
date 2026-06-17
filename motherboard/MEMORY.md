@@ -28906,3 +28906,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported rose bullets still sat slightly above the first text line after line-height tweak.
 - **Changes:** **`OrderFormIntroText.tsx`** — **`RoseBulletLine`** now uses inline hanging-indent layout (rose in text flow + **`textIndent`** for wrapped lines) with **`verticalAlign: 2px`** instead of flex **`alignItems: flex-start`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form intro: rose bullet nudge down (follow-up)
+
+- **Context:** User reported roses still sat above the first text line; inline **`verticalAlign: 2px`** moved them higher (positive length raises inline boxes).
+- **Changes:** **`OrderFormIntroText.tsx`** — back to PDP flex row; rose **`marginTop: 5px`** to align with **12px** first-line cap height. Pushed **`master`** + **`preview/mobile`**.
