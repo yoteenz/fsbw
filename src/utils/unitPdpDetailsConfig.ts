@@ -88,12 +88,18 @@ function buildDetailsBullets(spec: UnitPdpDetailsSpec): readonly string[] {
   ];
 }
 
-function buildSignatureFeatures(spec: UnitPdpDetailsSpec): readonly string[] {
+function buildSignatureFeatures(unitKey: WigUnitKey, spec: UnitPdpDetailsSpec): readonly string[] {
+  const knotsLine =
+    unitKey === 'blanco'
+      ? 'VENTILATED SINGLE STRAND KNOTS'
+      : 'LIGHTLY BLEACHED SINGLE STRAND KNOTS';
+
   return [
     'MELTED LACE, NATURAL HAIRLINE',
     `${spec.density} DENSITY FOR FULLNESS AND VOLUME`,
     `SINGLE DONOR RAW ${spec.origin} HUMAN HAIR`,
-    ...SHARED_SIGNATURE_FEATURES_TAIL.slice(1),
+    knotsLine,
+    ...SHARED_SIGNATURE_FEATURES_TAIL.slice(2),
   ];
 }
 
@@ -102,6 +108,6 @@ export function getUnitPdpDetailsConfig(unitKey: WigUnitKey) {
   return {
     intro: UNIT_DETAILS_INTRO,
     bullets: buildDetailsBullets(spec),
-    signatureFeatures: buildSignatureFeatures(spec),
+    signatureFeatures: buildSignatureFeatures(unitKey, spec),
   };
 }
