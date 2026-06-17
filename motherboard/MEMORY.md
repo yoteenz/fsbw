@@ -28716,3 +28716,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to revert the NOIR inline cap chart (below quantity) to match **Blanco** — local `/assets/NOIR/cap-size-chart.png` + `UNIT_PDP_CAP_CHART_IMG_STYLE` / `UNIT_PDP_CAP_CHART_ROW_STYLE` (removes `IMG_2811` Supabase thumb and +15% `UNIT_PDP_NOIR_CAP_CHART_*` constants). Popup **`IMG_2798`** unchanged.
 - **Changes:** `src/pages/straight/noir/page.tsx`, `unitPdpLayoutConstants.ts` (removed NOIR-only inline cap constants). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — Unit PDP signature text not live: build blocked by unused const
+
+- **Context:** User reported **HD FILM LACE, PRE-PLUCKED HAIRLINE** signature feature change (commit `247b6b8b`) was not visible on site. Root cause: **`npm run build`** runs **`tsc --noEmit`** with **`noUnusedLocals`**; after signature refactor, unused **`SHARED_SIGNATURE_FEATURES_TAIL`** in `unitPdpDetailsConfig.ts` caused **TS6133** and **failed the build**, so Vercel kept serving the previous deployment.
+- **Fix:** Removed dead **`SHARED_SIGNATURE_FEATURES_TAIL`**; build passes; signature copy in `buildSignatureFeatures` unchanged (**HD FILM LACE, PRE-PLUCKED HAIRLINE**). Pushed **`master`** + **`preview/mobile`**.
