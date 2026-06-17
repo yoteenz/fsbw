@@ -93,13 +93,20 @@ function buildSignatureFeatures(unitKey: WigUnitKey, spec: UnitPdpDetailsSpec): 
     unitKey === 'blanco'
       ? 'VENTILATED SINGLE STRAND KNOTS'
       : 'LIGHTLY BLEACHED SINGLE STRAND KNOTS';
+  const customizationLine =
+    unitKey === 'blanco'
+      ? 'CAN BE COLORED, DYED & CUSTOMIZED'
+      : 'CAN BE COLORED, BLEACHED & CUSTOMIZED';
 
   return [
     'MELTED LACE, NATURAL HAIRLINE',
     `${spec.density} DENSITY FOR FULLNESS AND VOLUME`,
     `SINGLE DONOR RAW ${spec.origin} HUMAN HAIR`,
     knotsLine,
-    ...SHARED_SIGNATURE_FEATURES_TAIL.slice(2),
+    'BEGINNER & STYLIST FRIENDLY',
+    customizationLine,
+    'BUILT TO LAST WITH PROPER CARE',
+    'COMPATIBLE WITH BUILD-A-WIG CUSTOMIZATION',
   ];
 }
 
