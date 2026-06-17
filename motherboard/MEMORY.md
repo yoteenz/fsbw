@@ -28965,3 +28965,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked for **12px** additional spacing below the **BY SIGNING + SUBMITTING** agreement checkbox row (above signature canvas).
 - **Changes:** **`order-form/page.tsx`** — that row **`marginBottom` 12px → 24px**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form hero: IMG_2975 asset swap
+
+- **Context:** User asked to replace order form hero with **`live-preview/3D Stock/IMG_2975.png`** (was IMG_2949).
+- **Changes:** **`ORDER_FORM_HERO_IMAGE_SRC`** in **`orderFormAssets.ts`**. Pushed **`master`** + **`preview/mobile`**.
