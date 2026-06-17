@@ -52,9 +52,9 @@ import NoirProductShippingTab from '../../../components/shop/NoirProductShipping
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
 import {
+  UNIT_PDP_CAP_CHART_IMG_STYLE,
+  UNIT_PDP_CAP_CHART_ROW_STYLE,
   UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
-  UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE,
-  UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
@@ -2963,13 +2963,13 @@ function NoirSelection() {
             </button>
         </div>
 
-          {/* CAP SIZE CHART IMAGE — below quantity; 15% larger than other unit PDPs */}
-          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '-4px' }}>
+          {/* CAP SIZE CHART IMAGE — below quantity; matches Blanco inline cap chart */}
+          <div className="flex justify-center w-full" style={UNIT_PDP_CAP_CHART_ROW_STYLE}>
             <img
-              src={UNIT_PDP_NOIR_CAP_CHART_THUMB_IMG_SRC}
+              src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
               className="max-w-full h-auto object-contain"
-              style={UNIT_PDP_NOIR_CAP_CHART_IMG_STYLE}
+              style={UNIT_PDP_CAP_CHART_IMG_STYLE}
               onClick={handleChartClick}
             />
           </div>
