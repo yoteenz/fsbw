@@ -1513,7 +1513,7 @@ function OrderFormPage() {
                     </div>
 
                     {/* Chargeback + product + processing acknowledgments (above signature) */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '13px' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                         <div
                           onClick={() => setAckNoChargeback(!ackNoChargeback)}
@@ -1593,7 +1593,7 @@ function OrderFormPage() {
                     </div>
 
                     {/* Signature Section */}
-                    <div style={{ marginTop: '5px', marginBottom: '-6px' }}>
+                    <div style={{ marginTop: '1px', marginBottom: '-6px' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '24px' }}>
                         <div
                           onClick={() => setBySigningAgreement(!bySigningAgreement)}
