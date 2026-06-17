@@ -28646,3 +28646,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to center the carousel arrows vertically within their container on **`/home/tools`** only (not **`/tools`**).
 - **Changes:** `src/pages/tools/page.tsx` — on **`/home/tools`**, gift card prev/next arrows use a flex overlay (`position: absolute; inset: 0; alignItems: center`) inside the marble strip viewport so they center against the strip content box; legacy `top: 50%` absolute arrows kept for **`/tools`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-16 — BLANCO signature feature: ventilated single strand knots
+
+- **Context:** User asked to update one **signature features** bullet on **BLANCO** PDP only to **VENTILATED SINGLE STRAND KNOTS** (other units keep **LIGHTLY BLEACHED SINGLE STRAND KNOTS**).
+- **Changes:** `src/utils/unitPdpDetailsConfig.ts` — `buildSignatureFeatures` branches on `unitKey === 'blanco'`. Pushed **`master`** + **`preview/mobile`**.
