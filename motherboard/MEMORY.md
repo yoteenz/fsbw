@@ -28821,3 +28821,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked **please note** intro bullets to use Rose bullets (same as product PDP tabs) instead of red **•** marks.
 - **Changes:** **`OrderFormIntroText.tsx`** — **`RoseBulletLine`** uses **`/assets/rose-alert.svg`** via **`noirProductTabRoseBadge`** for **`ORDER_FORM_INTRO_PLEASE_NOTE_BULLETS`** only; **this form serves as** bullets unchanged. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Site-wide: remove Oxford commas before AND/OR/BUT
+
+- **Context:** User asked to remove commas before **and** / **or** / **but** on the order form and relevant customer-facing pages (e.g. **CANCELLATIONS OR VERIFICATION** not **CANCELLATIONS, OR VERIFICATION**).
+- **Changes:** Batch-updated **`src/`** and customer-facing **`api/`** strings: order form intro/acks/PDF snapshot, brand about/member copy, shop policy tabs, checkout, sign-in, PSA quiz, affiliate/careers copy, meeting client alerts, etc. Regex skips state abbreviations (**PORTLAND, OR 97201**). Internal AI prompt files left unchanged where skipped. **`npm run build`** passes. Pushed **`master`** + **`preview/mobile`**.
