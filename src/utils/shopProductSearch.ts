@@ -26,6 +26,8 @@ import {
   BCF_ORIGIN_OPTIONS,
   BCF_TEXTURE_LABELS,
 } from './bcfProductOptions';
+import { GIFT_CARD_BALANCE_OPTIONS, giftCardPdpPath } from './giftCardBalance';
+import { GIFT_CARD_CART_THUMBNAIL_SRC } from './giftCardCheckout';
 
 export const ALL_UNIT_IDS: readonly UnitId[] = [
   'noir',
@@ -42,7 +44,19 @@ export type ShopUnitSearchRecord = {
   length?: string;
   hairOrigin?: string;
   route?: string;
+  kind?: 'unit';
 };
+
+export type ShopGiftCardSearchRecord = {
+  id: string;
+  name: 'GIFT CARD';
+  price: number;
+  image: string;
+  route: string;
+  kind: 'gift-card';
+};
+
+export type ShopSearchResultRecord = ShopUnitSearchRecord | ShopGiftCardSearchRecord;
 
 export type BcfCategorySlug = 'bundles' | 'closures' | 'frontals';
 export type ShopTextureSlug = 'straight' | 'wavy' | 'curly';
@@ -50,6 +64,8 @@ export type ShopTextureSlug = 'straight' | 'wavy' | 'curly';
 export type ShopSearchScope<T extends ShopUnitSearchRecord = ShopUnitSearchRecord> = {
   /** Filtered wig units for the UNITS strip (ranked best match first). */
   units: T[];
+  /** Filtered gift card denominations for search results. */
+  giftCards: ShopGiftCardSearchRecord[];
   /** BCF marble cards to show when search is active (empty = hide all BCF cards). */
   bcfCategories: BcfCategorySlug[];
   /** Texture tabs still relevant inside visible BCF cards (empty = all three). */
@@ -57,6 +73,71 @@ export type ShopSearchScope<T extends ShopUnitSearchRecord = ShopUnitSearchRecor
   /** True when the query matched a BAW option (color, styling, lace, etc.). */
   matchedBawOptions: boolean;
 };
+
+const GIFT_CARD_SEARCH_ALIASES = [
+  'gift',
+  'gift card',
+  'giftcard',
+  'gift-card',
+  'voucher',
+  'present',
+  'digital only',
+  'digital',
+  'denomination',
+  'balance',
+  'tools',
+] as const;
+
+/** Canonical gift card rows for storefront search (matches tools hub denominations). */
+export function defaultGiftCardSearchCatalog(): ShopGiftCardSearchRecord[] {
+  return GIFT_CARD_BALANCE_OPTIONS.map((price) => ({
+    id: `gift-card-${price}`,
+    name: 'GIFT CARD',
+    price,
+    image: GIFT_CARD_CART_THUMBNAIL_SRC,
+    route: giftCardPdpPath(price),
+    kind: 'gift-card' as const,
+  }));
+}
+
+function buildGiftCardSearchCorpus(price: number): string[] {
+  const priceStr = String(price);
+  return [
+    'gift card',
+    'gift',
+    `gift card ${priceStr}`,
+    `$${priceStr}`,
+    priceStr,
+    `${priceStr} dollars`,
+    `${priceStr} dollar`,
+    'digital only',
+    'digital',
+    'voucher',
+    'present',
+    'tools',
+    ...GIFT_CARD_SEARCH_ALIASES,
+  ].map(normalizeText);
+}
+
+function scoreGiftCardMatch(price: number, rawQuery: string): number {
+  const query = normalizeText(rawQuery);
+  const tokens = tokenizeQuery(rawQuery);
+  if (!query || tokens.length === 0) return 0;
+
+  const corpus = buildGiftCardSearchCorpus(price);
+  const allTokensMatch = tokens.every((tok) => tokenMatchesCorpus(tok, corpus));
+  if (!allTokensMatch) return 0;
+
+  let score = 70;
+  if (GIFT_CARD_SEARCH_ALIASES.some((alias) => query.includes(normalizeText(alias)))) score += 35;
+  if (query.includes(String(price)) || query.includes(`$${price}`) || tokens.includes(String(price))) score += 45;
+  return score;
+}
+
+function queryHasGiftCardIntent(rawQuery: string): boolean {
+  const query = normalizeText(rawQuery);
+  return GIFT_CARD_SEARCH_ALIASES.some((alias) => query.includes(normalizeText(alias)));
+}
 
 const CAP_SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XXS/XS/S', 'S/M/L'] as const;
 const PART_OPTIONS = ['LEFT', 'MIDDLE', 'RIGHT'] as const;
@@ -480,15 +561,48 @@ export function filterShopUnitsBySearch<T extends ShopUnitSearchRecord>(
   return scored.map((row) => row.unit);
 }
 
+/** Ranked gift card denominations for `/home/shop?q=` search results. */
+export function filterGiftCardsBySearch(
+  giftCards: ShopGiftCardSearchRecord[],
+  rawQuery: string
+): ShopGiftCardSearchRecord[] {
+  const query = normalizeText(rawQuery);
+  if (!query) return giftCards;
+
+  const scored = giftCards
+    .map((card) => {
+      const score = scoreGiftCardMatch(card.price, rawQuery);
+      return score > 0 ? { card, score } : null;
+    })
+    .filter((row): row is { card: ShopGiftCardSearchRecord; score: number } => row !== null)
+    .sort((a, b) => b.score - a.score);
+
+  return scored.map((row) => row.card);
+}
+
+/** Merge unit + gift card hits for the search results grid (gift-intent queries rank cards first). */
+export function mergeShopSearchResults<T extends ShopUnitSearchRecord>(
+  units: T[],
+  giftCards: ShopGiftCardSearchRecord[],
+  rawQuery: string
+): ShopSearchResultRecord[] {
+  if (queryHasGiftCardIntent(rawQuery)) {
+    return [...giftCards, ...units];
+  }
+  return [...units, ...giftCards];
+}
+
 /** Full search scope for home shop: units strip + BCF category visibility. */
 export function resolveShopSearchScope<T extends ShopUnitSearchRecord>(
   units: T[],
-  rawQuery: string
+  rawQuery: string,
+  giftCards: ShopGiftCardSearchRecord[] = defaultGiftCardSearchCatalog()
 ): ShopSearchScope<T> {
   const query = normalizeText(rawQuery);
   if (!query) {
     return {
       units,
+      giftCards: [],
       bcfCategories: ['bundles', 'closures', 'frontals'],
       bcfTextures: ['straight', 'wavy', 'curly'],
       matchedBawOptions: false,
@@ -496,12 +610,15 @@ export function resolveShopSearchScope<T extends ShopUnitSearchRecord>(
   }
 
   const filteredUnits = filterShopUnitsBySearch(units, rawQuery);
+  const filteredGiftCards = filterGiftCardsBySearch(giftCards, rawQuery);
   const bcfCategories = matchBcfCategories(rawQuery);
   let bcfTextures = matchBcfTextures(rawQuery);
 
   const bcfRelevant = bcfCategories.length > 0;
   const hideBcf =
-    filteredUnits.length > 0 && queryMatchesOnlyBawOptions(rawQuery) && !bcfRelevant;
+    (filteredUnits.length > 0 || filteredGiftCards.length > 0) &&
+    queryMatchesOnlyBawOptions(rawQuery) &&
+    !bcfRelevant;
   const categories = hideBcf ? ([] as BcfCategorySlug[]) : bcfCategories;
 
   if (categories.length > 0 && bcfTextures.length === 0) {
@@ -510,9 +627,13 @@ export function resolveShopSearchScope<T extends ShopUnitSearchRecord>(
 
   return {
     units: filteredUnits,
+    giftCards: filteredGiftCards,
     bcfCategories: categories,
     bcfTextures,
-    matchedBawOptions: queryMatchesOnlyBawOptions(rawQuery) || filteredUnits.length > 0,
+    matchedBawOptions:
+      queryMatchesOnlyBawOptions(rawQuery) ||
+      filteredUnits.length > 0 ||
+      filteredGiftCards.length > 0,
   };
 }
 

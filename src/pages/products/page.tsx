@@ -14,14 +14,14 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { bcfPdpPriceRangeUsd } from '../../utils/bcfProductOptions';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
-import { ShopSearchResultsGrid } from '../../components/shop/ShopSearchResultsGrid';
+import { ShopSearchResultsGrid, type ShopSearchResultProduct } from '../../components/shop/ShopSearchResultsGrid';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../components/shop/WigStockPrice';
 import {
   attachStockStatusToLineItem,
   isWigUnitSoldOut,
 } from '../../utils/productInventoryAvailability';
-import { resolveShopSearchScope } from '../../utils/shopProductSearch';
+import { mergeShopSearchResults, resolveShopSearchScope } from '../../utils/shopProductSearch';
 import {
   shopProductGridCapSizeRowStyle,
   shopProductGridCellBandStyle,
@@ -248,6 +248,25 @@ function ProductsPage() {
   );
 
   const unitsProductsFiltered = shopSearchScope.units;
+
+  const searchResultsProducts = React.useMemo((): ShopSearchResultProduct[] => {
+    if (!navSearchQuery) return [];
+    const merged = mergeShopSearchResults(
+      unitsProductsFiltered,
+      shopSearchScope.giftCards,
+      navSearchQuery
+    );
+    const results: ShopSearchResultProduct[] = [];
+    for (const item of merged) {
+      if (item.kind === 'gift-card') {
+        results.push(item);
+        continue;
+      }
+      const unit = unitsProducts.find((u) => u.id === item.id);
+      if (unit) results.push({ ...unit, kind: 'unit' });
+    }
+    return results;
+  }, [navSearchQuery, shopSearchScope.giftCards, unitsProducts, unitsProductsFiltered]);
 
   // UNITS strip: 2 products per “page”; row width = pairCount×100% of viewport; snap step after windowWidth (below)
   const [unitsHomePage, setUnitsHomePage] = useState(0);
@@ -984,7 +1003,7 @@ function ProductsPage() {
               </div>
             ) : navSearchQuery ? (
               <ShopSearchResultsGrid
-                products={unitsProductsFiltered}
+                products={searchResultsProducts}
                 formatPrice={formatPrice}
                 onProductClick={handleProductClick}
                 onAddToCart={handleAddToCart}

@@ -20,6 +20,7 @@ export type ShopSearchResultProduct = {
   route?: string;
   inCart?: boolean;
   selectedSize?: string;
+  kind?: 'unit' | 'gift-card';
 };
 
 type ShopSearchResultsGridProps = {
@@ -76,6 +77,7 @@ export function ShopSearchResultsGrid({
       {products.map((product, index) => {
         const isStaggered = index % 2 === 1;
         const bagOnLeft = index % 2 === 0;
+        const isGiftCard = product.kind === 'gift-card' || product.id.startsWith('gift-card-');
 
         return (
           <div
@@ -114,7 +116,7 @@ export function ShopSearchResultsGrid({
                   zIndex: 10,
                   width: '20px',
                   height: '23px',
-                  display: 'flex',
+                  display: isGiftCard ? 'none' : 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -164,11 +166,28 @@ export function ShopSearchResultsGrid({
                 />
               </div>
 
-              <div style={shopProductGridTextColStyle}>
+              <div style={isGiftCard ? { width: '100%', textAlign: 'center', boxSizing: 'border-box' } : shopProductGridTextColStyle}>
                 <p style={shopProductGridNameStyle()}>{product.name}</p>
-                <p style={shopProductGridRedLineStyle()}>
-                  {product.length} RAW {product.hairOrigin}
-                </p>
+                {isGiftCard ? (
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '10px',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase',
+                      margin: '2px 0 5px 0',
+                      fontWeight: '500',
+                      lineHeight: '0.84',
+                      minHeight: '12px',
+                    }}
+                  >
+                    DIGITAL ONLY
+                  </p>
+                ) : (
+                  <p style={shopProductGridRedLineStyle()}>
+                    {product.length} RAW {product.hairOrigin}
+                  </p>
+                )}
                 <WigProductPriceDisplay
                   productName={product.name}
                   soldOutPriceTreatment="strikethrough-only"
@@ -176,6 +195,7 @@ export function ShopSearchResultsGrid({
                   priceStyle={shopProductGridPriceStyle()}
                   labelStyle={{ transform: 'translateY(1px)' }}
                 />
+                {!isGiftCard && (
                 <div style={shopProductGridCapSizeRowStyle}>
                   {['XS', 'S', 'M', 'L'].map((size) => (
                     <span
@@ -195,6 +215,7 @@ export function ShopSearchResultsGrid({
                     </span>
                   ))}
                 </div>
+                )}
               </div>
             </div>
           </div>
