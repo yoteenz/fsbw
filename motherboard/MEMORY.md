@@ -29119,4 +29119,12 @@ Pushed **`master`** + **`preview/mobile`**.
 ## 2026-06-18 — Shop search includes gift cards
 
 - **Context:** User wanted search results to include **gift cards**, not only hair/wig products.
-- **Changes:** **`shopProductSearch.ts`** — **`defaultGiftCardSearchCatalog()`** from **`GIFT_CARD_BALANCE_OPTIONS`**; **`filterGiftCardsBySearch`** (aliases: gift, voucher, digital, denomination amounts); **`mergeShopSearchResults`** (gift-intent queries rank cards first). **`ShopSearchResultsGrid`** — gift card cards show **DIGITAL ONLY**, no cap row; tap → **`/tools/gift-card?balance=`**. **`products/page.tsx`** merges unit + gift card hits. Pushed **`master`** + **`preview/mobile`**.
+- **Changes:** **`shopProductSearch.ts`** — **`defaultGiftCardSearchCatalog()`** from **`GIFT_CARD_BALANCE_OPTIONS`**; **`filterGiftCardsBySearch`**; **`mergeShopSearchResults`**. **`ShopSearchResultsGrid`** — gift cards. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Shop search texture filter fix (straight / wavy / curly)
+
+- **Context:** User searched **straight** and **all units** appeared; expected only **NOIR**, **BLANCO**, and **straight BCF** (bundles/closures/frontals).
+- **Cause:** Loose substring match — **straight** matched **straightened** (FLAT IRON styling alias) on every unit; no strict texture-family gate; BCF straight rows missing from search results grid.
+- **Changes:** **`shopProductSearch.ts`** — **`termMatchesQuery`** word-boundary matching; **`resolveTextureFamilyIntent`** gates units by **`UNIT_TEXTURE_FAMILY`**; **`filterBcfProductsBySearch`** + **`ShopBcfSearchRecord`**; texture queries show BCF × straight/wavy/curly. **`ShopSearchResultsGrid`** — BCF cards with **`BcfShopThumb`**. Pushed **`master`** + **`preview/mobile`**.
