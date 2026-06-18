@@ -107,8 +107,8 @@ export function useSiteNavSearch(queryKey: string = DEFAULT_QUERY_KEY) {
     className:
       'site-nav-search-input w-full max-w-full min-w-0 bg-transparent border-none outline-none text-xs uppercase',
     style: {
-      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-      fontWeight: 400,
+      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+      fontWeight: 500,
       color: '#EB1C24',
       fontSize: '12px',
       textAlign: 'left' as const,
