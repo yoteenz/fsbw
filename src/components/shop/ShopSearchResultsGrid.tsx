@@ -1,11 +1,15 @@
 import type { MouseEvent, ReactNode } from 'react';
+import { bcfPdpPriceRangeUsd } from '../../utils/bcfProductOptions';
+import type { BcfCategorySlug, ShopTextureSlug } from '../../utils/shopProductSearch';
 import {
   shopProductGridCapSizeRowStyle,
   shopProductGridNameStyle,
   shopProductGridPriceStyle,
   shopProductGridRedLineStyle,
   shopProductGridTextColStyle,
+  shopProductGridThumbWrapStyle,
 } from '../../utils/shopProductGridCopyStyles';
+import { BcfShopThumb } from './BcfShopThumb';
 import { WigProductPriceDisplay } from './WigStockPrice';
 
 type PriceHtml = { __html: string };
@@ -13,19 +17,23 @@ type PriceHtml = { __html: string };
 export type ShopSearchResultProduct = {
   id: string;
   name: string;
-  price: number;
-  image: string;
+  price?: number;
+  image?: string;
   length?: string;
   hairOrigin?: string;
   route?: string;
   inCart?: boolean;
   selectedSize?: string;
-  kind?: 'unit' | 'gift-card';
+  kind?: 'unit' | 'gift-card' | 'bcf';
+  title?: string;
+  categorySlug?: BcfCategorySlug;
+  textureSlug?: ShopTextureSlug;
 };
 
 type ShopSearchResultsGridProps = {
   products: ShopSearchResultProduct[];
   formatPrice: (price: number) => PriceHtml;
+  formatPriceRange?: (minUsd: number, maxUsd: number) => PriceHtml;
   onProductClick: (product: ShopSearchResultProduct) => void;
   onAddToCart: (product: ShopSearchResultProduct, e?: MouseEvent<HTMLDivElement>) => void;
   onSizeSelect: (productId: string, size: string) => void;
@@ -38,6 +46,7 @@ type ShopSearchResultsGridProps = {
 export function ShopSearchResultsGrid({
   products,
   formatPrice,
+  formatPriceRange,
   onProductClick,
   onAddToCart,
   onSizeSelect,
@@ -78,6 +87,19 @@ export function ShopSearchResultsGrid({
         const isStaggered = index % 2 === 1;
         const bagOnLeft = index % 2 === 0;
         const isGiftCard = product.kind === 'gift-card' || product.id.startsWith('gift-card-');
+        const isBcf = product.kind === 'bcf';
+        const showBag = !isGiftCard && !isBcf;
+        const displayName = isBcf ? (product.title ?? product.name) : product.name;
+        const bcfPriceHtml =
+          isBcf &&
+          product.categorySlug &&
+          product.textureSlug &&
+          formatPriceRange
+            ? formatPriceRange(
+                bcfPdpPriceRangeUsd(product.categorySlug, product.textureSlug).minUsd,
+                bcfPdpPriceRangeUsd(product.categorySlug, product.textureSlug).maxUsd
+              )
+            : null;
 
         return (
           <div
@@ -116,7 +138,7 @@ export function ShopSearchResultsGrid({
                   zIndex: 10,
                   width: '20px',
                   height: '23px',
-                  display: isGiftCard ? 'none' : 'flex',
+                  display: showBag ? 'flex' : 'none',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -149,25 +171,43 @@ export function ShopSearchResultsGrid({
                   width: '100%',
                   marginTop: '2px',
                   marginBottom: '0',
+                  cursor: product.route ? 'pointer' : 'default',
                 }}
+                onClick={() => product.route && onProductClick(product)}
               >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  onClick={() => onProductClick(product)}
-                  style={{
-                    width: '100%',
-                    maxWidth: '100%',
-                    height: 'auto',
-                    margin: '0 0 10px 0',
-                    display: 'block',
-                    cursor: product.route ? 'pointer' : 'default',
-                  }}
-                />
+                {isBcf && product.categorySlug && product.textureSlug ? (
+                  <div style={{ ...shopProductGridThumbWrapStyle, width: '100%' }}>
+                    <BcfShopThumb
+                      texture={product.textureSlug}
+                      category={product.categorySlug}
+                      variant="grid"
+                      alt={displayName}
+                      imgStyle={{ pointerEvents: 'none' }}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={product.image}
+                    alt={displayName}
+                    style={{
+                      width: '100%',
+                      maxWidth: '100%',
+                      height: 'auto',
+                      margin: '0 0 10px 0',
+                      display: 'block',
+                    }}
+                  />
+                )}
               </div>
 
-              <div style={isGiftCard ? { width: '100%', textAlign: 'center', boxSizing: 'border-box' } : shopProductGridTextColStyle}>
-                <p style={shopProductGridNameStyle()}>{product.name}</p>
+              <div
+                style={
+                  isGiftCard || isBcf
+                    ? { width: '100%', textAlign: 'center', boxSizing: 'border-box' }
+                    : shopProductGridTextColStyle
+                }
+              >
+                <p style={shopProductGridNameStyle()}>{displayName}</p>
                 {isGiftCard ? (
                   <p
                     style={{
@@ -183,38 +223,43 @@ export function ShopSearchResultsGrid({
                   >
                     DIGITAL ONLY
                   </p>
+                ) : isBcf ? (
+                  <p style={shopProductGridRedLineStyle()}>RAW HUMAN HAIR</p>
                 ) : (
                   <p style={shopProductGridRedLineStyle()}>
                     {product.length} RAW {product.hairOrigin}
                   </p>
                 )}
                 <WigProductPriceDisplay
-                  productName={product.name}
+                  productName={isBcf ? `bcf-${product.id}` : product.name}
                   soldOutPriceTreatment="strikethrough-only"
-                  priceHtml={formatPrice(product.price)}
+                  priceHtml={
+                    bcfPriceHtml ?? formatPrice(product.price ?? 0)
+                  }
                   priceStyle={shopProductGridPriceStyle()}
                   labelStyle={{ transform: 'translateY(1px)' }}
                 />
-                {!isGiftCard && (
-                <div style={shopProductGridCapSizeRowStyle}>
-                  {['XS', 'S', 'M', 'L'].map((size) => (
-                    <span
-                      key={size}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSizeSelect(product.id, size);
-                      }}
-                      style={{
-                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                        fontSize: '12px',
-                        color: product.selectedSize === size ? '#EB1C24' : 'black',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {size}
-                    </span>
-                  ))}
-                </div>
+                {!isGiftCard && !isBcf && (
+                  <div style={shopProductGridCapSizeRowStyle}>
+                    {['XS', 'S', 'M', 'L'].map((size) => (
+                      <span
+                        key={size}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSizeSelect(product.id, size);
+                        }}
+                        style={{
+                          fontFamily:
+                            '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '12px',
+                          color: product.selectedSize === size ? '#EB1C24' : 'black',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {size}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
