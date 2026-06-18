@@ -85,14 +85,14 @@ const CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX = 30;
 const CART_DROPDOWN_SIDE_INSET = '1rem';
 const CART_DROPDOWN_PANEL_WIDTH = 'calc(100% - 2rem)';
 
-type CurrencyPanelLayout = { left: number; width: number };
+type CurrencyPanelLayout = { left: number; width: number; top: number; height: number };
 
 function readCartDropdownShellLayout(): CurrencyPanelLayout | null {
   const el = document.querySelector('[data-dropdown-content="true"]') as HTMLElement | null;
   if (!el) return null;
   const rect = el.getBoundingClientRect();
-  if (rect.width <= 0) return null;
-  return { left: rect.left, width: rect.width };
+  if (rect.width <= 0 || rect.height <= 0) return null;
+  return { left: rect.left, width: rect.width, top: rect.top, height: rect.height };
 }
 
 type UnitCartDetailDescriptor = { type: string; value?: unknown; partSelection?: string };
@@ -323,6 +323,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       window.removeEventListener('bawPageDebugOverridesUpdated', sync);
     };
   }, [showCurrencyModal, isOpen]);
+
+  // Prevent cart list / page scroll while the currency panel is open.
+  useEffect(() => {
+    if (!showCurrencyModal) return;
+    const cartScroll = cartItemsScrollRef.current;
+    const prevCartOverflow = cartScroll?.style.overflowY ?? '';
+    if (cartScroll) cartScroll.style.overflowY = 'hidden';
+    const prevBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      if (cartScroll) cartScroll.style.overflowY = prevCartOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, [showCurrencyModal]);
 
   const currencyRates = DEFAULT_CURRENCY_RATES;
 
@@ -965,18 +979,28 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   /** Same top offset on every route so the panel lines up with the shared nav bar (was 88px on e.g. `/sign-in`, read as lower than 86px routes). */
   const dropdownTop = '86px';
 
-  const currencyPanelHorizontalStyle: CSSProperties = currencyPanelLayout
+  const currencyPanelShellStyle: CSSProperties = currencyPanelLayout
     ? {
+        position: 'fixed',
+        top: `${currencyPanelLayout.top}px`,
         left: `${currencyPanelLayout.left}px`,
         width: `${currencyPanelLayout.width}px`,
+        height: `${currencyPanelLayout.height}px`,
         right: 'auto',
+        bottom: 'auto',
         maxWidth: `min(${currencyPanelLayout.width}px, calc(100vw - 2rem))`,
+        maxHeight: `${currencyPanelLayout.height}px`,
       }
     : {
+        position: 'fixed',
+        top: dropdownTop,
         left: CART_DROPDOWN_SIDE_INSET,
         width: CART_DROPDOWN_PANEL_WIDTH,
+        height: 'calc(100vh - 100px)',
         right: 'auto',
+        bottom: 'auto',
         maxWidth: 'calc(100vw - 2rem)',
+        maxHeight: 'calc(100vh - 100px)',
       };
 
   const dropdownContent = (
@@ -2130,14 +2154,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const currencyModalContent = showCurrencyModal && (
     <div
       data-currency-modal
-      className="fixed z-50"
+      className="fixed inset-0"
       style={{
-        top: '0',
-        left: '0',
-        right: '0',
-        bottom: '0',
         zIndex: 1000000000,
-        pointerEvents: 'none'
+        pointerEvents: 'auto',
       }}
       onClick={(e) => {
         e.stopPropagation();
@@ -2147,21 +2167,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       <GlobalOverlayDebugRegion
         overlayId="currency-modal"
         regionId="shell"
-        className="absolute bg-white border border-black shadow-lg baw-brand-modal-shell"
-        baseOverride={{
-          top: '50px',
-          bottom: '14px',
-        }}
+        className="bg-white border border-black shadow-lg baw-brand-modal-shell"
+        baseOverride={{}}
         style={{
           borderWidth: '1.3px',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
-          top: '50px',
-          bottom: '14px',
-          ...currencyPanelHorizontalStyle,
+          ...currencyPanelShellStyle,
           boxSizing: 'border-box',
+          overflow: 'hidden',
           overflowX: 'hidden',
+          overscrollBehavior: 'contain',
           pointerEvents: 'auto',
           paddingTop: '8px',
           paddingLeft: '8px',
@@ -2231,11 +2248,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           className="space-y-1 overflow-y-auto flex-1"
           style={{
             flex: '1 1 auto',
-            minHeight: '0',
+            minHeight: 0,
             minWidth: 0,
-            maxHeight: 'calc(100% - 6px)',
             marginBottom: '6px',
+            overflowY: 'auto',
             overflowX: 'hidden',
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'pan-y',
           }}
         >
           {Object.entries(currencyRates).map(([code, currency], index, array) => (
