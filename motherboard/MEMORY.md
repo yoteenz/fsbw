@@ -29067,3 +29067,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Cause:** The portaled currency panel used fixed **`12px`** horizontal insets while the cart dropdown anchor uses **`left-4` / `right-4`** (**`1rem`** / **`calc(100% - 2rem)`**). Long currency names/rates could also overflow horizontally because the list had no **`overflow-x`** constraint.
 - **Changes:** **`src/components/CartDropdown.tsx`** — on open, **`useLayoutEffect`** measures **`[data-dropdown-content]`** and positions the currency shell with the same **`left`** + **`width`** as the cart card (fallback **`1rem`** inset). Added **`boxSizing`**, **`overflowX: hidden`**, **`maxWidth: calc(100vw - 2rem)`**, and **`truncate`** on currency row text. Removed stale **`12px`** **`left`/`right`** from currency **`baseOverride`**.
 - **Conventions:** Currency exchange overlay should stay edge-aligned with the cart dropdown shell, not use a separate inset.
+
+---
+
+## 2026-06-18 — Cart dropdown VIEW DETAILS scroll focus preserved
+
+- **Context:** User reported that opening or closing **VIEW DETAILS** in the cart dropdown jumped the list back to the top instead of staying focused on the same product line.
+- **Cause:** Toggling **`viewingDetailsFor`** re-rendered the scrollable list (single-item filter vs full list) without preserving **`scrollTop`** or refocusing the row.
+- **Changes:** **`src/components/CartDropdown.tsx`** — **`cartItemsScrollRef`**, **`toggleCartItemDetails`**, **`useLayoutEffect`**: save list **`scrollTop`** before opening details; on close restore **`scrollTop`** and **`scrollIntoView`** the same **`data-cart-item-row`**; on open reset scroll to top for the details panel. Pushed **`master`** + **`preview/mobile`**.
