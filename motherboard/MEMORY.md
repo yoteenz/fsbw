@@ -29075,3 +29075,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported that opening or closing **VIEW DETAILS** in the cart dropdown jumped the list back to the top instead of staying focused on the same product line.
 - **Cause:** Toggling **`viewingDetailsFor`** re-rendered the scrollable list (single-item filter vs full list) without preserving **`scrollTop`** or refocusing the row.
 - **Changes:** **`src/components/CartDropdown.tsx`** — **`cartItemsScrollRef`**, **`toggleCartItemDetails`**, **`useLayoutEffect`**: save list **`scrollTop`** before opening details; on close restore **`scrollTop`** and **`scrollIntoView`** the same **`data-cart-item-row`**; on open reset scroll to top for the details panel. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Currency pop-up: match cart Y axis + fix scroll
+
+- **Context:** User reported currency pop-up scroll did not work (main cart scrolled behind it) and the panel was positioned too high (**`top: 50px`**), overlapping the nav bar instead of aligning with the cart card.
+- **Cause:** Currency shell used fixed **`50px`** top / **`14px`** bottom insets instead of measuring the cart shell rect; backdrop had **`pointerEvents: none`** so touches could reach the cart; cart list was not scroll-locked while currency was open; flex scroll child lacked **`overscroll-behavior`** / **`touch-action`** constraints.
+- **Changes:** **`src/components/CartDropdown.tsx`** — **`CurrencyPanelLayout`** now includes **`top`** + **`height`** from **`[data-dropdown-content]`**; currency shell uses **`position: fixed`** with same rect as cart card; backdrop **`pointerEvents: auto`**; **`body`** + cart list **`overflow`** locked while open; currency list gets **`overscrollBehavior: contain`**, **`WebkitOverflowScrolling: touch`**, **`touchAction: pan-y`**. Pushed **`master`** + **`preview/mobile`**.
