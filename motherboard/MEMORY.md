@@ -29043,3 +29043,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported first Kling/OpenArt loop did not match start/end; **`PageHeroImage`** got manual loop seek + poster crossfade + end-trim. User then supplied replacement clip **`openart-af16d189…0417d752.mp4`**.
 - **Changes:** **`ORDER_FORM_HERO_VIDEO_SRC`** updated to new MP4. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Creative Preview mode (designer showcase URL)
+
+- **Context:** Full chat arc: brand hero brainstorm (**"The Hold"** — signature hand + one prop per page); order form / member / about / affiliate / FAQ / contact heroes via shared **`PageHeroImage`**; order form spacing/copy tweaks; looped order-form hero MP4 (envelope **`IMG_2975`**); designer outreach copy; user approved **Creative Preview** — secret URL on preview deployment only, no sign-up/payment, bypass premium guards, demo data + banner.
+- **Decisions / outcomes:** Activate with **`https://<preview-url>/?creativePreview=<secret>`** where secret matches **`VITE_CREATIVE_PREVIEW_TOKEN`** (Vercel **Preview** env only). Session persists in **`sessionStorage`** for the tab; token stripped from URL after load. Demo user **`creative.preview@frontalslayer.com`** — premium + BLACK, sample orders. Payments blocked on checkout + Stripe membership subscribe. Not admin access; not production.
+- **Changes:** **`src/utils/creativePreviewMode.ts`**, **`CreativePreviewBanner.tsx`**, bootstrap in **`main.tsx`** / **`App.tsx`**; patches **`AccountRouteGuard`**, **`CommerceRouteGuard`**, **`isPremiumMemberForGatedFeatures`**, **`clearTestDataForNonAdmin`**, checkout confirm + Stripe subscribe; **`isPreviewEnvironment`** also treats **`*.vercel.app`** as preview; **`docs/CREATIVE_PREVIEW.md`**, **`.env.example`**, **`CORE.md`** convention line.
