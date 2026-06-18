@@ -12,6 +12,7 @@ import {
 import { registerServerSessionCookie } from '../utils/sessionRestore';
 import { tryServerSessionRestore } from '../utils/sessionRestore';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
+import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 
 const SERVER_RESTORE_ATTEMPT_KEY = 'baw_server_restore_attempted_v1';
 
@@ -35,9 +36,13 @@ function shouldAttemptServerRestoreNow(): boolean {
  */
 export default function AccountRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const [recoveryDone, setRecoveryDone] = useState(false);
+  const [recoveryDone, setRecoveryDone] = useState(() => isCreativePreviewMode());
 
   useEffect(() => {
+    if (isCreativePreviewMode()) {
+      setRecoveryDone(true);
+      return;
+    }
     if (!isSupabaseConfigured()) {
       setRecoveryDone(true);
       return;

@@ -5,6 +5,7 @@
  */
 
 import { isMockDataAccount } from './adminAuth';
+import { isCreativePreviewDemoEmail } from './creativePreviewMode';
 
 const CLEARED_FLAG_PREFIX = '_clearedTestData_v1_';
 
@@ -66,6 +67,7 @@ export function clearTestDataForNonAdminUserIfNeeded(): void {
     const user = JSON.parse(raw);
     if (!user || typeof user !== 'object' || !user.email) return;
     if (isMockDataAccount(user)) return;
+    if (isCreativePreviewDemoEmail(user.email)) return;
     const email = getEmailKey(user.email);
     if (!email) return;
     const flagKey = CLEARED_FLAG_PREFIX + email;

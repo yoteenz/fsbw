@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth'
+import { bootstrapCreativePreviewMode, isCreativePreviewMode } from './utils/creativePreviewMode'
 import { sanitizeStoredAuthPasswords } from './utils/authPasswordSanitize'
 import { restoreSupabaseSessionFromCookie, getSupabase, signOutIfSessionEmailUnconfirmed } from './utils/supabase'
 import { tryServerSessionRestore } from './utils/sessionRestore'
@@ -18,8 +19,13 @@ void preloadPsaNudgeAssets()
 // Strip any legacy plaintext passwords from browser storage (one-time migration).
 sanitizeStoredAuthPasswords()
 
+// Designer creative preview (preview deployments only) — before auth backup restore.
+bootstrapCreativePreviewMode()
+
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
-ensureAuthRestoredFromBackup()
+if (!isCreativePreviewMode()) {
+  ensureAuthRestoredFromBackup()
+}
 
 // Restore Supabase session from cookies into localStorage so Safari (which may clear localStorage on close) keeps the user signed in
 restoreSupabaseSessionFromCookie()
@@ -28,6 +34,9 @@ getSupabase()
 
 async function bootstrapAuthBeforeRender(): Promise<void> {
   if (typeof window === 'undefined') return;
+  if (isCreativePreviewMode()) {
+    return;
+  }
   if (isSignedIn()) {
     return;
   }
