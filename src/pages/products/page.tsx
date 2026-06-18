@@ -20,6 +20,7 @@ import {
   attachStockStatusToLineItem,
   isWigUnitSoldOut,
 } from '../../utils/productInventoryAvailability';
+import { resolveShopSearchScope } from '../../utils/shopProductSearch';
 import {
   shopProductGridCapSizeRowStyle,
   shopProductGridCellBandStyle,
@@ -240,13 +241,12 @@ function ProductsPage() {
     }
   }, [location.search]);
 
-  const unitsProductsFiltered = React.useMemo(() => {
-    if (!navSearchQuery) return unitsProducts;
-    return unitsProducts.filter((p) => {
-      const blob = `${p.id} ${p.name} ${p.length} ${p.hairOrigin} ${p.route || ''}`.toLowerCase();
-      return blob.includes(navSearchQuery);
-    });
-  }, [unitsProducts, navSearchQuery]);
+  const shopSearchScope = React.useMemo(
+    () => resolveShopSearchScope(unitsProducts, navSearchQuery),
+    [unitsProducts, navSearchQuery]
+  );
+
+  const unitsProductsFiltered = shopSearchScope.units;
 
   // UNITS strip: 2 products per “page”; row width = pairCount×100% of viewport; snap step after windowWidth (below)
   const [unitsHomePage, setUnitsHomePage] = useState(0);
@@ -271,9 +271,21 @@ function ProductsPage() {
         { title: 'BUNDLES', route: '/shop/bundles', categorySlug: 'bundles' as const },
         { title: 'CLOSURES', route: '/shop/closures', categorySlug: 'closures' as const },
         { title: 'FRONTALS', route: '/shop/frontals', categorySlug: 'frontals' as const }
-      ] as const,
-    []
+      ].filter(
+        (card) =>
+          !navSearchQuery ||
+          shopSearchScope.bcfCategories.length === 0 ||
+          shopSearchScope.bcfCategories.includes(card.categorySlug)
+      ),
+    [navSearchQuery, shopSearchScope.bcfCategories]
   );
+
+  const shopTextureStripItemsFiltered = React.useMemo(() => {
+    if (!navSearchQuery || shopSearchScope.bcfTextures.length === 0) {
+      return shopTextureStripItems;
+    }
+    return shopTextureStripItems.filter((t) => shopSearchScope.bcfTextures.includes(t.slug));
+  }, [navSearchQuery, shopSearchScope.bcfTextures, shopTextureStripItems]);
 
   // Scroll state for gift card container
   const [giftCardScroll, setGiftCardScroll] = useState(0);
@@ -1397,7 +1409,7 @@ function ProductsPage() {
                           boxSizing: 'border-box'
                         }}
                       >
-                        {shopTextureStripItems.map((t) => (
+                        {shopTextureStripItemsFiltered.map((t) => (
                             <div
                               key={`${route}-${t.label}`}
                               role="button"
