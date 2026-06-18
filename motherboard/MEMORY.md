@@ -29099,3 +29099,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported nav search bar text was gray/centered instead of red Futura PT Book left-aligned; searching (e.g. **noir**) from other pages did nothing visible.
 - **Cause:** Input used Medium weight + centered layout; **Enter** only set **`?q=`** on the **current path** — only **`/home/shop`** filters the UNITS strip, so PDP/other routes showed no results.
 - **Changes:** **`src/hooks/useSiteNavSearch.ts`** — Futura PT Book **`400`**, **`#EB1C24`**, **`textAlign: left`**, class **`site-nav-search-input`**; **Enter** → **`navigate(shopProductSearchHref(value))`**. **`src/utils/shopNavSearch.ts`** — **`SHOP_PRODUCT_SEARCH_PATH`**, **`shopProductSearchHref`**. **`src/components/shop/useShopNavSearchBar.tsx`** — **`justify-start`** when search open. **`src/index.css`** — red Book placeholder. **`src/pages/products/page.tsx`** — filter blob includes **`p.id`**; reset UNITS page on **`q`** change; empty-state **NO PRODUCTS MATCH YOUR SEARCH.**; fixed JSX ternary close. **`motherboard/CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Intelligent shop search: products + BAW options
+
+- **Context:** User wanted nav search to return **products** and **Build-a-Wig customization options** (e.g. **cherry** color, **layers** styling) — searching **layers** should list all units customizable with layers (straight/wavy **LAYERS**; curly **DEFINE** as cross-family equivalent).
+- **Changes:** **`src/utils/shopProductSearch.ts`** — unified index from **`productOptions.ts`** + **`bawUnitStylingOptions.ts`** + BCF catalog; tokenized multi-word matching; ranked unit results; BCF marble/texture visibility (hide BCF for unit-only styling searches; show BCF + units for shared color terms like **cherry**). **`src/pages/products/page.tsx`** uses **`resolveShopSearchScope`**. **`motherboard/CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
