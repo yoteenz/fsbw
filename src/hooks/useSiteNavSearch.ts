@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { shopProductSearchHref } from '../utils/shopNavSearch';
 
 const DEFAULT_QUERY_KEY = 'q';
 
 /**
- * Shop-style nav: search icon opens a centered input **in place of** breadcrumb text (same UX idea as admin header).
- * **Enter** navigates with `?q=...` on the current path; **Escape** / **Backspace** on empty / blur when empty closes and clears.
+ * Shop-style nav: search icon opens a left-aligned input **in place of** breadcrumb text.
+ * **Enter** navigates to **`/home/shop?q=...`** for product results; **Escape** / **Backspace** on empty / blur when empty closes and clears.
  */
 export function useSiteNavSearch(queryKey: string = DEFAULT_QUERY_KEY) {
   const navigate = useNavigate();
@@ -42,14 +43,14 @@ export function useSiteNavSearch(queryKey: string = DEFAULT_QUERY_KEY) {
 
   const submitNavSearch = useCallback(() => {
     const value = navSearchDraft.trim();
-    const next = new URLSearchParams(location.search);
     if (!value) {
+      const next = new URLSearchParams(location.search);
       next.delete(queryKey);
-    } else {
-      next.set(queryKey, value);
+      const qs = next.toString();
+      navigate(qs ? `${location.pathname}?${qs}` : location.pathname, { replace: true });
+      return;
     }
-    const qs = next.toString();
-    navigate(qs ? `${location.pathname}?${qs}` : location.pathname, { replace: true });
+    navigate(shopProductSearchHref(value, queryKey));
   }, [location.pathname, location.search, navigate, navSearchDraft, queryKey]);
 
   const closeNavSearch = useCallback(() => {
@@ -104,13 +105,13 @@ export function useSiteNavSearch(queryKey: string = DEFAULT_QUERY_KEY) {
     onKeyDown: handleNavSearchKeyDown,
     placeholder: 'SEARCH…',
     className:
-      'w-full max-w-full min-w-0 bg-transparent border-none outline-none text-xs uppercase placeholder:text-[#EB1C24]',
+      'site-nav-search-input w-full max-w-full min-w-0 bg-transparent border-none outline-none text-xs uppercase',
     style: {
-      fontFamily: "'Futura PT Medium'",
-      fontWeight: 500,
+      fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+      fontWeight: 400,
       color: '#EB1C24',
       fontSize: '12px',
-      textAlign: 'center' as const,
+      textAlign: 'left' as const,
     },
     autoFocus: true,
   };
