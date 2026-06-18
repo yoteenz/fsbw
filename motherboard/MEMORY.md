@@ -29113,3 +29113,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted search input **red Futura PT Medium** (not Book); search results page should match **`/units/straight`** staggered marble cards (not **`/shop/units`** carousel); only show products matching search criteria.
 - **Changes:** **`useSiteNavSearch.ts`** + **`.site-nav-search-input`** placeholder → **Futura PT Medium** **`500`**. **`ShopSearchResultsGrid.tsx`** — straight-page card grid. **`products/page.tsx`** — when **`?q=`** set, render search grid only (no UNITS carousel / BCF marbles); breadcrumb **SHOP > SEARCH**; strict filter via **`resolveShopSearchScope`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Shop search includes gift cards
+
+- **Context:** User wanted search results to include **gift cards**, not only hair/wig products.
+- **Changes:** **`shopProductSearch.ts`** — **`defaultGiftCardSearchCatalog()`** from **`GIFT_CARD_BALANCE_OPTIONS`**; **`filterGiftCardsBySearch`** (aliases: gift, voucher, digital, denomination amounts); **`mergeShopSearchResults`** (gift-intent queries rank cards first). **`ShopSearchResultsGrid`** — gift card cards show **DIGITAL ONLY**, no cap row; tap → **`/tools/gift-card?balance=`**. **`products/page.tsx`** merges unit + gift card hits. Pushed **`master`** + **`preview/mobile`**.
