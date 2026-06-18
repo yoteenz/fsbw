@@ -29106,3 +29106,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted nav search to return **products** and **Build-a-Wig customization options** (e.g. **cherry** color, **layers** styling) — searching **layers** should list all units customizable with layers (straight/wavy **LAYERS**; curly **DEFINE** as cross-family equivalent).
 - **Changes:** **`src/utils/shopProductSearch.ts`** — unified index from **`productOptions.ts`** + **`bawUnitStylingOptions.ts`** + BCF catalog; tokenized multi-word matching; ranked unit results; BCF marble/texture visibility (hide BCF for unit-only styling searches; show BCF + units for shared color terms like **cherry**). **`src/pages/products/page.tsx`** uses **`resolveShopSearchScope`**. **`motherboard/CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Search input Medium + straight-units results layout
+
+- **Context:** User wanted search input **red Futura PT Medium** (not Book); search results page should match **`/units/straight`** staggered marble cards (not **`/shop/units`** carousel); only show products matching search criteria.
+- **Changes:** **`useSiteNavSearch.ts`** + **`.site-nav-search-input`** placeholder → **Futura PT Medium** **`500`**. **`ShopSearchResultsGrid.tsx`** — straight-page card grid. **`products/page.tsx`** — when **`?q=`** set, render search grid only (no UNITS carousel / BCF marbles); breadcrumb **SHOP > SEARCH**; strict filter via **`resolveShopSearchScope`**. Pushed **`master`** + **`preview/mobile`**.
