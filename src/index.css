@@ -511,8 +511,8 @@ img.natural-front-mobile {
 .site-nav-search-input::placeholder {
   color: #eb1c24;
   opacity: 1;
-  font-family: "Futura PT Book", futuristic-pt, Futura, Inter, sans-serif;
-  font-weight: 400;
+  font-family: "Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif;
+  font-weight: 500;
 }
 
 /*

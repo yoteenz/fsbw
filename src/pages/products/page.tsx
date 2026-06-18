@@ -14,6 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { bcfPdpPriceRangeUsd } from '../../utils/bcfProductOptions';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
+import { ShopSearchResultsGrid } from '../../components/shop/ShopSearchResultsGrid';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../components/shop/WigStockPrice';
 import {
@@ -34,7 +35,7 @@ import {
 function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  const { NavCenter, SearchTrigger, navSearchOpen } = useShopNavSearchBar();
   useProductInventorySnapshot();
 
   /** TEMP: green outlines on home/shop product flex cells — set `false` to hide. */
@@ -795,6 +796,20 @@ function ProductsPage() {
                       MENU
                     </span>
                   </>
+                ) : navSearchQuery && !navSearchOpen ? (
+                  <>
+                    <span
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/home/shop')}
+                    >
+                      SHOP &gt;
+                    </span>{' '}
+                    <span
+                      style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                    >
+                      SEARCH
+                    </span>
+                  </>
                 ) : (
                   <>
                     <span 
@@ -967,6 +982,14 @@ function ProductsPage() {
                 <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
                 </div>
               </div>
+            ) : navSearchQuery ? (
+              <ShopSearchResultsGrid
+                products={unitsProductsFiltered}
+                formatPrice={formatPrice}
+                onProductClick={handleProductClick}
+                onAddToCart={handleAddToCart}
+                onSizeSelect={handleSizeSelect}
+              />
             ) : (
               /* SHOP CONTENT — UNITS + BUNDLES / CLOSURES / FRONTALS (spacing matches /shop/units stacked marbles) */
           <div className="transition-all duration-300 ease-out">
