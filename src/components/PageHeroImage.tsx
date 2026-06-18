@@ -12,9 +12,9 @@ export const PAGE_HERO_IMAGE_STYLE: CSSProperties = {
   marginRight: 'auto',
 };
 
-/** Fade + trim before loop seek — hides Kling clips that do not match first frame. */
-const HERO_VIDEO_LOOP_FADE_SEC = 0.22;
-const HERO_VIDEO_LOOP_END_TRIM_SEC = 0.14;
+/** Fade before manual loop seek — hides clips that do not match first frame. */
+const HERO_VIDEO_LOOP_FADE_SEC = 0.2;
+const HERO_VIDEO_LOOP_END_TRIM_SEC = 0.12;
 
 type PageHeroImageProps = {
   /** Poster / static fallback (also used as `poster` when `videoSrc` is set). */
@@ -40,12 +40,41 @@ function usePrefersReducedMotion(): boolean {
 export default function PageHeroImage({ src, videoSrc }: PageHeroImageProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const pendingLoopFadeRef = useRef(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
   const [loopOpacity, setLoopOpacity] = useState(1);
 
   useEffect(() => {
+    setVideoReady(false);
+    setVideoFailed(false);
+    setLoopOpacity(1);
+    pendingLoopFadeRef.current = false;
+  }, [videoSrc]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video || !videoSrc) return;
+    if (!video || !videoSrc || videoFailed) return;
+
+    const tryPlay = () => {
+      void video.play().catch(() => {
+        /* Autoplay may be blocked until user gesture — poster remains visible. */
+      });
+    };
+
+    video.addEventListener('canplay', tryPlay);
+    video.addEventListener('loadeddata', tryPlay);
+    tryPlay();
+
+    return () => {
+      video.removeEventListener('canplay', tryPlay);
+      video.removeEventListener('loadeddata', tryPlay);
+    };
+  }, [videoSrc, videoFailed]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoSrc || videoFailed) return;
 
     const onTimeUpdate = () => {
       const duration = video.duration;
@@ -57,18 +86,22 @@ export default function PageHeroImage({ src, videoSrc }: PageHeroImageProps) {
       const loopPoint = Math.max(fade + trim + 0.05, duration - trim);
 
       if (t >= loopPoint) {
+        pendingLoopFadeRef.current = true;
         video.currentTime = 0;
         setLoopOpacity(0);
         return;
       }
 
-      if (t >= loopPoint - fade) {
-        setLoopOpacity((loopPoint - t) / fade);
-        return;
+      if (pendingLoopFadeRef.current) {
+        if (t < fade) {
+          setLoopOpacity(Math.min(1, t / fade));
+          return;
+        }
+        pendingLoopFadeRef.current = false;
       }
 
-      if (t <= fade) {
-        setLoopOpacity(Math.min(1, t / fade));
+      if (t >= loopPoint - fade) {
+        setLoopOpacity(Math.max(0, (loopPoint - t) / fade));
         return;
       }
 
@@ -77,14 +110,14 @@ export default function PageHeroImage({ src, videoSrc }: PageHeroImageProps) {
 
     video.addEventListener('timeupdate', onTimeUpdate);
     return () => video.removeEventListener('timeupdate', onTimeUpdate);
-  }, [videoSrc]);
+  }, [videoSrc, videoFailed]);
 
-  if (!videoSrc || prefersReducedMotion) {
+  if (!videoSrc || prefersReducedMotion || videoFailed) {
     return <img src={src} alt="" style={PAGE_HERO_IMAGE_STYLE} />;
   }
 
-  const videoOpacity = videoReady ? loopOpacity : 0;
-  const posterOpacity = videoReady ? Math.max(0, 1 - loopOpacity) : 1;
+  const showVideo = videoReady && loopOpacity > 0.01;
+  const posterOpacity = showVideo ? Math.max(0, 1 - loopOpacity) : 1;
 
   return (
     <div
@@ -108,11 +141,13 @@ export default function PageHeroImage({ src, videoSrc }: PageHeroImageProps) {
           display: 'block',
           objectFit: 'contain',
           opacity: posterOpacity,
-          transition: posterOpacity > 0.98 || posterOpacity < 0.02 ? 'opacity 0.12s ease-out' : 'none',
+          visibility: posterOpacity < 0.01 ? 'hidden' : 'visible',
+          transition: 'opacity 0.15s ease-out',
         }}
       />
       <video
         ref={videoRef}
+        key={videoSrc}
         src={videoSrc}
         poster={src}
         preload="auto"
@@ -120,8 +155,15 @@ export default function PageHeroImage({ src, videoSrc }: PageHeroImageProps) {
         muted
         autoPlay
         aria-hidden
-        onLoadedData={() => setVideoReady(true)}
-        onCanPlay={() => setVideoReady(true)}
+        onLoadedData={() => {
+          setVideoReady(true);
+          setLoopOpacity(1);
+        }}
+        onCanPlay={() => {
+          setVideoReady(true);
+          setLoopOpacity(1);
+        }}
+        onError={() => setVideoFailed(true)}
         style={{
           position: 'absolute',
           left: 0,
@@ -129,9 +171,10 @@ export default function PageHeroImage({ src, videoSrc }: PageHeroImageProps) {
           width: '100%',
           height: '100%',
           objectFit: 'contain',
-          opacity: videoOpacity,
-          transition: videoOpacity > 0.98 || videoOpacity < 0.02 ? 'opacity 0.12s ease-out' : 'none',
+          opacity: videoReady ? loopOpacity : 0,
+          transition: 'opacity 0.15s ease-out',
           backgroundColor: 'transparent',
+          pointerEvents: 'none',
         }}
       />
     </div>
