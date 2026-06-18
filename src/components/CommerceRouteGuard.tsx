@@ -4,6 +4,7 @@ import { isSupabaseConfigured, getSupabase } from '../utils/supabase';
 import { syncCartFromApi } from '../utils/syncFromApi';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
+import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 
 /**
  * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`):
@@ -24,9 +25,15 @@ function isGuestCommerceAllowedPath(pathname: string): boolean {
 
 export default function CommerceRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const [allowed, setAllowed] = useState<boolean | null>(null);
+  const [allowed, setAllowed] = useState<boolean | null>(() =>
+    isCreativePreviewMode() ? true : null
+  );
 
   useEffect(() => {
+    if (isCreativePreviewMode()) {
+      setAllowed(true);
+      return;
+    }
     let cancelled = false;
     (async () => {
       if (isGuestCommerceAllowedPath(location.pathname)) {

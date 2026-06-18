@@ -22,6 +22,7 @@ import ProductInventorySync from './components/ProductInventorySync';
 import PsaAssistantWidget from './components/psa/PsaAssistantWidget';
 import { PsaChatCopyBootstrap } from './components/psa/PsaChatCopyBootstrap';
 import { DebugModeShell } from './components/debug-mode/DebugModeShell';
+import CreativePreviewBanner from './components/CreativePreviewBanner';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -33,6 +34,7 @@ import {
   isDynamicImportChunkFailure,
   reloadForStaleChunks,
 } from './utils/chunkLoadRecovery';
+import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -297,6 +299,10 @@ function App() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
+      if (isCreativePreviewMode()) {
+        seedCreativePreviewDemoSession();
+        return;
+      }
       ensureAuthRestoredFromBackup();
       persistAuthBackup();
       const signedIn = localStorage.getItem('isSignedIn') === 'true';
@@ -368,6 +374,7 @@ function App() {
     let cancelled = false;
     (async () => {
       if (typeof window === 'undefined') return;
+      if (isCreativePreviewMode()) return;
       if (!isSignedIn()) return;
       const { isSupabaseConfigured, getSupabase, signOutIfSessionEmailUnconfirmed } = await import('./utils/supabase');
       if (!isSupabaseConfigured()) return;
@@ -405,6 +412,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <CreativePreviewBanner />
       <MembershipRouteSync />
       <ProductInventorySync />
       <PsaChatCopyBootstrap />

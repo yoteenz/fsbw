@@ -48,6 +48,7 @@ import {
 } from '../../utils/giftCardCheckoutSession';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import { pushLocalUserOrdersAfterCheckout } from '../../utils/checkoutOrderServerSync';
+import { isCreativePreviewCheckoutBlocked } from '../../utils/creativePreviewMode';
 import CheckoutStripeCardSection, {
   type CheckoutStripeCardHandle,
 } from '../../components/checkout/CheckoutStripeCardSection';
@@ -1110,6 +1111,13 @@ function CheckoutPage() {
   }, [location.pathname, searchParams, navigate, setSearchParams]);
 
   const handleStripeMembershipSubscribe = useCallback(async () => {
+    if (isCreativePreviewCheckoutBlocked()) {
+      setCheckoutNotice({
+        title: 'CREATIVE PREVIEW',
+        message: 'PAYMENTS ARE DISABLED IN CREATIVE PREVIEW MODE. THIS DEPLOYMENT IS FOR DESIGN REVIEW ONLY.',
+      });
+      return;
+    }
     const tierRaw = cartItems[0]?.subscriptionTier;
     if (!isSubscriptionTierId(tierRaw)) {
       setCheckoutNotice({
@@ -6197,6 +6205,11 @@ function CheckoutPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                   <button
                     onClick={() => void (async () => {
+                  if (isCreativePreviewCheckoutBlocked()) {
+                    setValidationMessage('PAYMENTS ARE DISABLED IN CREATIVE PREVIEW MODE. THIS DEPLOYMENT IS FOR DESIGN REVIEW ONLY.');
+                    setShowValidationModal(true);
+                    return;
+                  }
                   let stripePaymentIntentId: string | undefined;
                   // Validate required fields (shipping fields only when checkout collects shipping)
                   if (!checkoutSkipsShipping) {

@@ -519,8 +519,11 @@ export function isPreviewEnvironment(): boolean {
     if (/^10\./.test(host) || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host) || /^192\.168\./.test(host)) {
       return true;
     }
+    if (host.endsWith('.vercel.app')) return true;
   }
-  const env = typeof process !== 'undefined' && process.env?.VERCEL_ENV;
+  const env =
+    (typeof import.meta !== 'undefined' && (import.meta as { env?: Record<string, string> }).env?.VITE_VERCEL_ENV) ||
+    (typeof process !== 'undefined' && process.env?.VERCEL_ENV);
   return env === 'preview' || env === 'development';
 }
 

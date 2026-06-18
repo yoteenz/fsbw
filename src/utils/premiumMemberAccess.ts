@@ -1,10 +1,12 @@
 import { getEffectiveSubscriptionTier, getEffectiveTierName } from './adminAuth';
+import { isCreativePreviewMode } from './creativePreviewMode';
 
 /**
  * Same gate as `/lobby` and PSA: signed-in users need an active premium **subscription** and/or **BLACK** spend tier
  * to access subscriber-only areas (lobby, lounge, PSA, premium-only PDP options, etc.).
  */
 export function isPremiumMemberForGatedFeatures(): boolean {
+  if (isCreativePreviewMode()) return true;
   try {
     if (localStorage.getItem('isSignedIn') !== 'true') return false;
     const raw = localStorage.getItem('currentUser');
