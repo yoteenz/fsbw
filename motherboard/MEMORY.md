@@ -29091,3 +29091,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported some **X close** icons still used the wrong red vs header icons; all should match brand **`#EB1C24`**.
 - **Cause:** **`close-icon.svg`** is native red, but several usages still applied legacy CSS **`filter`** tint (cart dropdown, lobby popover, affiliate photo deletes) which skewed the color; scattered raw **`<img src="/assets/close-icon.svg">`** made drift likely.
 - **Changes:** Added **`src/components/BrandRedCloseIcon.tsx`** (native asset, no filter). Migrated site-wide close × usages to it (cart, modals, account/admin pages, checkout, orders, careers, etc.). Removed leftover filter constants from **`LobbyCasePropPopover`**. **`brandRedIconFilter.ts`** documents that close icons must not use **`BRAND_RED_ICON_CSS_FILTER`**. Lounge TV bezel close stays **gray** (**`LOUNGE_TV_CLOSE_ICON_FILTER`**) by design.
+
+---
+
+## 2026-06-18 — Nav search: red Futura Book, left-aligned, product results on Enter
+
+- **Context:** User reported nav search bar text was gray/centered instead of red Futura PT Book left-aligned; searching (e.g. **noir**) from other pages did nothing visible.
+- **Cause:** Input used Medium weight + centered layout; **Enter** only set **`?q=`** on the **current path** — only **`/home/shop`** filters the UNITS strip, so PDP/other routes showed no results.
+- **Changes:** **`src/hooks/useSiteNavSearch.ts`** — Futura PT Book **`400`**, **`#EB1C24`**, **`textAlign: left`**, class **`site-nav-search-input`**; **Enter** → **`navigate(shopProductSearchHref(value))`**. **`src/utils/shopNavSearch.ts`** — **`SHOP_PRODUCT_SEARCH_PATH`**, **`shopProductSearchHref`**. **`src/components/shop/useShopNavSearchBar.tsx`** — **`justify-start`** when search open. **`src/index.css`** — red Book placeholder. **`src/pages/products/page.tsx`** — filter blob includes **`p.id`**; reset UNITS page on **`q`** change; empty-state **NO PRODUCTS MATCH YOUR SEARCH.**; fixed JSX ternary close. **`motherboard/CORE.md`** updated. Pushed **`master`** + **`preview/mobile`**.
