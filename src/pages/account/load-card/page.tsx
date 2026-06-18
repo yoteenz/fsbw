@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -609,14 +610,7 @@ function LoadCardPage() {
                           lineHeight: 0
                         }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt=""
-                          style={{
-                            width: '14.5px',
-                            height: '14.5px',
-                            display: 'block'}}
-                        />
+                        <BrandRedCloseIcon size={'14.5px'} />
                       </button>
                     </div>
                     <div style={{ borderBottom: '1px solid #e5e7eb' }} />

@@ -58,6 +58,7 @@ import {
   cartBillableSubtotal,
   cartLineExtendedPriceUsd,
 } from '../utils/cartBillableLines';
+import BrandRedCloseIcon from './BrandRedCloseIcon';
 import { GlobalOverlayDebugRegion } from './debug-mode/GlobalOverlayDebugRegion';
 import {
   GLOBAL_OVERLAY_DEBUG_OPEN_CURRENCY_EVENT,
@@ -2220,15 +2221,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               transform: 'translate(-2px, 1px)'
             }}
           >
-            <img
-              src="/assets/close-icon.svg"
-              alt="Close"
-              style={{
-                width: '12.32px',
-                height: '12.32px',
-                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-              }}
-            />
+            <BrandRedCloseIcon size={12.32} alt="Close" />
           </button>
         </div>
         <div

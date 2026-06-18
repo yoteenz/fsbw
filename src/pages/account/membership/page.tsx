@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -1232,14 +1233,11 @@ function MembershipPage() {
                     </h2>
                     <div className="flex items-center gap-2">
                         <RewardsHeaderIcon sizePx={19.76} />
-                        <img
-                          src="/assets/close-icon.svg"
+                        <BrandRedCloseIcon
+                          size={16}
                           alt="Close"
                           onClick={() => setShowLoyaltyRewards(false)}
-                          style={{
-                            width: '16px',
-                            height: '16px',
-                            cursor: 'pointer'}}
+                          style={{ cursor: 'pointer' }}
                         />
                     </div>
                       </div>
@@ -1445,14 +1443,7 @@ function MembershipPage() {
                             justifyContent: 'center'
                           }}
                         >
-                          <img
-                            src="/assets/close-icon.svg"
-                            alt=""
-                            style={{
-                              width: '16px',
-                              height: '16px',
-                              objectFit: 'contain'}}
-                          />
+                          <BrandRedCloseIcon size={'16px'} />
                         </button>
                       </div>
 
@@ -2019,14 +2010,11 @@ function MembershipPage() {
                       <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500', margin: 0, textTransform: 'uppercase' }}>
                         TIER BENEFITS & HOW IT WORKS
                       </h2>
-                      <img
-                        src="/assets/close-icon.svg"
+                      <BrandRedCloseIcon
+                        size={16}
                         alt="Close"
                         onClick={() => setShowBenefitsModal(false)}
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          cursor: 'pointer'}}
+                        style={{ cursor: 'pointer' }}
                       />
                     </div>
                     <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0, textTransform: 'uppercase' }}>

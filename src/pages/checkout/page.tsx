@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import BrandRedCloseIcon from '../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -5731,11 +5732,7 @@ function CheckoutPage() {
                           }}
                         >
                           {customTipApplied ? (
-                            <img 
-                              src="/assets/close-icon.svg" 
-                              alt="remove tip" 
-                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain'}}
-                            />
+                            <BrandRedCloseIcon size={'16px'} alt="remove tip" />
                           ) : (
                             <img 
                               src="/assets/discount-check.svg" 

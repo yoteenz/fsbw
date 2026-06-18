@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -409,21 +410,7 @@ function PaymentPage() {
             transform: 'translateX(1px)'
           }}
         >
-          <img
-            src="/assets/close-icon.svg"
-            alt="Remove"
-            role="presentation"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setPaymentToRemove(entry);
-            }}
-            style={{
-              width: '14.5px',
-              height: '14.5px',
-              cursor: 'pointer',
-              pointerEvents: 'auto'}}
-          />
+          <BrandRedCloseIcon size={14.5} alt="Remove" role="presentation" />
         </button>
       </div>
     );

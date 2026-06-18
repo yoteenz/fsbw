@@ -42,7 +42,7 @@ export const LOUNGE_TV_OVERLAY_ANIMATION_ENABLED = false;
 /** Lobby lounge TV play control tint (white PNG masked to this color). */
 export const LOUNGE_TV_PLAY_BUTTON_COLOR = '#535453';
 
-/** Matches affiliate photo delete control (`account/affiliate/page.tsx`). */
+/** @deprecated Lounge TV close uses {@link LOUNGE_TV_CLOSE_ICON_FILTER} (gray on bezel). Brand UI: use `BrandRedCloseIcon`. */
 export const AFFILIATE_CLOSE_ICON_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 

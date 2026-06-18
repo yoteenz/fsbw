@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, type CSSProperties } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -654,19 +655,7 @@ export default function BrandCareersPage() {
                   onClick={closeApply}
                   className="absolute top-3 right-3 z-10 flex items-center justify-center p-2 border-0 bg-transparent cursor-pointer"
                 >
-                  <img
-                    src="/assets/close-icon.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      display: 'block',
-                      flexShrink: 0,
-                      objectFit: 'contain'
-                    }}
-                  />
+                  <BrandRedCloseIcon size={'16px'} />
                 </button>
                 <div className="flex-1 overflow-y-auto min-h-0 pr-1" style={{ paddingTop: '8px' }}>
                   <RoleCardSectionHeader

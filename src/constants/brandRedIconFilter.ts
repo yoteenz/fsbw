@@ -2,8 +2,10 @@
 export const BRAND_RED = '#EB1C24';
 
 /**
- * CSS `filter` for black/neutral SVG assets (close ×, NOIR icons, etc.)
+ * CSS `filter` for black/neutral SVG assets (NOIR icons, etc.)
  * so icon color matches section header text.
+ *
+ * `close-icon.svg` is already native `#EB1C24` — use `BrandRedCloseIcon` instead of filtering.
  */
 export const BRAND_RED_ICON_CSS_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';

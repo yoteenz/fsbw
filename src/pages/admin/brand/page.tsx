@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import BrandAlertsPanel, { type BrandAlertsPanelHandle } from '../components/BrandAlertsPanel';
@@ -285,18 +286,7 @@ export default function AdminBrand() {
                         className="p-0 border-0 bg-transparent cursor-pointer shrink-0"
                         style={{ lineHeight: 0 }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt=""
-                          style={{
-                            width: '20px',
-                            height: '20px',
-                            flexShrink: 0,
-                            objectFit: 'contain',
-                            marginTop: '-2px',
-                            display: 'block'
-                          }}
-                        />
+                        <BrandRedCloseIcon size={'20px'} />
                       </button>
                     </div>
                   </div>

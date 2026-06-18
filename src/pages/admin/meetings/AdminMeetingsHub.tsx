@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { createPortal } from 'react-dom';
 import BrandExpiresDatePicker, { type AdminCalendarDayMeta } from '../../../components/BrandExpiresDatePicker';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -1968,13 +1969,7 @@ export default function AdminMeetingsHub() {
                         lineHeight: 0,
                       }}
                     >
-                      <img
-                        src="/assets/close-icon.svg"
-                        alt=""
-                        width={16}
-                        height={16}
-                        style={{ display: 'block' }}
-                      />
+                      <BrandRedCloseIcon size={16} />
                     </button>
                   </div>
                   <div

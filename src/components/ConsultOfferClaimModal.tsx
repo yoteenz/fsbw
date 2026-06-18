@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import BrandRedCloseIcon from '../components/BrandRedCloseIcon';
 import { useNavigate } from 'react-router-dom';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
@@ -344,7 +345,7 @@ export default function ConsultOfferClaimModal({
             className="shrink-0 cursor-pointer"
             style={{ lineHeight: 0, padding: 0, border: 'none', background: 'none' }}
           >
-            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block' }} />
+            <BrandRedCloseIcon size={16} />
           </button>
         </div>
         <div style={{ borderBottom: '1px solid #d1d5db', marginTop: '10px', marginBottom: '12px' }} />

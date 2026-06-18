@@ -29083,3 +29083,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported currency pop-up scroll did not work (main cart scrolled behind it) and the panel was positioned too high (**`top: 50px`**), overlapping the nav bar instead of aligning with the cart card.
 - **Cause:** Currency shell used fixed **`50px`** top / **`14px`** bottom insets instead of measuring the cart shell rect; backdrop had **`pointerEvents: none`** so touches could reach the cart; cart list was not scroll-locked while currency was open; flex scroll child lacked **`overscroll-behavior`** / **`touch-action`** constraints.
 - **Changes:** **`src/components/CartDropdown.tsx`** — **`CurrencyPanelLayout`** now includes **`top`** + **`height`** from **`[data-dropdown-content]`**; currency shell uses **`position: fixed`** with same rect as cart card; backdrop **`pointerEvents: auto`**; **`body`** + cart list **`overflow`** locked while open; currency list gets **`overscrollBehavior: contain`**, **`WebkitOverflowScrolling: touch`**, **`touchAction: pan-y`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Close X icons: native brand red (no CSS filter)
+
+- **Context:** User reported some **X close** icons still used the wrong red vs header icons; all should match brand **`#EB1C24`**.
+- **Cause:** **`close-icon.svg`** is native red, but several usages still applied legacy CSS **`filter`** tint (cart dropdown, lobby popover, affiliate photo deletes) which skewed the color; scattered raw **`<img src="/assets/close-icon.svg">`** made drift likely.
+- **Changes:** Added **`src/components/BrandRedCloseIcon.tsx`** (native asset, no filter). Migrated site-wide close × usages to it (cart, modals, account/admin pages, checkout, orders, careers, etc.). Removed leftover filter constants from **`LobbyCasePropPopover`**. **`brandRedIconFilter.ts`** documents that close icons must not use **`BRAND_RED_ICON_CSS_FILTER`**. Lounge TV bezel close stays **gray** (**`LOUNGE_TV_CLOSE_ICON_FILTER`**) by design.

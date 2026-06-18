@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import BrandRedCloseIcon from '../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -2320,13 +2321,7 @@ function OrdersPage() {
                           flexShrink: 0
                         }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt="Close"
-                          style={{
-                            width: '16px',
-                            height: '16px'}}
-                        />
+                        <BrandRedCloseIcon size={'16px'} alt="Close" />
                       </button>
                     </>
                   ) : (
@@ -3266,13 +3261,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           flexShrink: 0
                         }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt="Close"
-                          style={{
-                            width: '16px',
-                            height: '16px'}}
-                        />
+                        <BrandRedCloseIcon size={'16px'} alt="Close" />
                       </button>
                     </>
                   ) : (

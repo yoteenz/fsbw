@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useLayoutEffect, useMemo } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -1879,15 +1880,7 @@ export default function AdminClients() {
                           flexShrink: 0,
                         }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt=""
-                          width={16}
-                          height={16}
-                          style={{
-                            display: 'block'
-                          }}
-                        />
+                        <BrandRedCloseIcon size={16} />
                       </button>
                     </div>
                     {selectedClient ? (
@@ -2836,7 +2829,7 @@ export default function AdminClients() {
                                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                                       aria-label="Close"
                                     >
-                                      <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px' }} />
+                                      <BrandRedCloseIcon size={'16px'} alt="Close" />
                                     </button>
                                   </div>
                                   <div
@@ -4068,15 +4061,7 @@ export default function AdminClients() {
                   aria-label={signedFormDetailId ? 'Back to signed forms list' : 'Close signed forms'}
                 >
                   {signedFormDetail ? (
-                    <img
-                      src="/assets/close-icon.svg"
-                      alt=""
-                      style={{
-                        width: '18px',
-                        height: '18px',
-                        display: 'block'
-                      }}
-                    />
+                    <BrandRedCloseIcon size={'18px'} />
                   ) : (
                     <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain'}} />
                   )}

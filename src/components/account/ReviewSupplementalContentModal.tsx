@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect, type CSSProperties, type RefObject } from 'react';
+import BrandRedCloseIcon from '../../components/BrandRedCloseIcon';
 import type { PendingMockReview } from '../../utils/adminPendingMockQueues';
 import { fileToDataUrl } from '../../utils/signedOrderFormsStorage';
 import {
@@ -336,15 +337,7 @@ export function ReviewSupplementalContentModal({
             {headerProductTitle}
           </p>
           <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
-            <img
-              src="/assets/close-icon.svg"
-              alt=""
-              style={{
-                width: '18px',
-                height: '18px',
-                display: 'block'
-              }}
-            />
+            <BrandRedCloseIcon size={'18px'} />
           </button>
         </div>
         <div className="overflow-y-auto flex-1 px-4 py-3" style={{ minHeight: 0 }}>
