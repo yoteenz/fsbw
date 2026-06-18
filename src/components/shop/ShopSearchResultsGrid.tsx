@@ -79,13 +79,14 @@ export function ShopSearchResultsGrid({
         flexWrap: 'wrap',
         gap: '28px',
         paddingTop: '12px',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         position: 'relative',
       }}
     >
       {products.map((product, index) => {
+        const isLeftColumn = index % 2 === 0;
         const isStaggered = index % 2 === 1;
-        const bagOnLeft = index % 2 === 0;
+        const bagOnLeft = isLeftColumn;
         const isGiftCard = product.kind === 'gift-card' || product.id.startsWith('gift-card-');
         const isBcf = product.kind === 'bcf';
         const showBag = !isGiftCard && !isBcf;
@@ -109,6 +110,7 @@ export function ShopSearchResultsGrid({
               width: 'calc(50% - 15px)',
               minWidth: '160px',
               maxWidth: '300px',
+              marginLeft: isLeftColumn ? 0 : 'auto',
             }}
           >
             <div
