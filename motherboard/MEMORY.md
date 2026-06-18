@@ -29051,3 +29051,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** Full chat arc: brand hero brainstorm (**"The Hold"** — signature hand + one prop per page); order form / member / about / affiliate / FAQ / contact heroes via shared **`PageHeroImage`**; order form spacing/copy tweaks; looped order-form hero MP4 (envelope **`IMG_2975`**); designer outreach copy; user approved **Creative Preview** — secret URL on preview deployment only, no sign-up/payment, bypass premium guards, demo data + banner.
 - **Decisions / outcomes:** Activate with **`https://<preview-url>/?creativePreview=<secret>`** where secret matches **`VITE_CREATIVE_PREVIEW_TOKEN`** (Vercel **Preview** env only). Session persists in **`sessionStorage`** for the tab; token stripped from URL after load. Demo user **`creative.preview@frontalslayer.com`** — premium + BLACK, sample orders. Payments blocked on checkout + Stripe membership subscribe. Not admin access; not production.
 - **Changes:** **`src/utils/creativePreviewMode.ts`**, **`CreativePreviewBanner.tsx`**, bootstrap in **`main.tsx`** / **`App.tsx`**; patches **`AccountRouteGuard`**, **`CommerceRouteGuard`**, **`isPremiumMemberForGatedFeatures`**, **`clearTestDataForNonAdmin`**, checkout confirm + Stripe subscribe; **`isPreviewEnvironment`** also treats **`*.vercel.app`** as preview; **`docs/CREATIVE_PREVIEW.md`**, **`.env.example`**, **`CORE.md`** convention line.
+
+---
+
+## 2026-06-17 — NOIR signature features density copy + Creative Preview URL clarification
+
+- **Context:** User clarified Creative Preview link format (token **`graphic-designer-preview`** goes in **`?creativePreview=`**, not as hostname — use actual Vercel preview deployment URL). User asked to update NOIR **signature features** text to **`200% DENSITY FOR FULLNESS AND VOLUME`**.
+- **Changes:** **`src/utils/unitPdpDetailsConfig.ts`** — NOIR **`density`** spec **`250%` → `200%`** (signature features line + DETAILS tab handmade-unit bullet). Pushed **`master`** + **`preview/mobile`**.
