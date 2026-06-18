@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, type CSSProperties } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef, type CSSProperties } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
@@ -188,6 +188,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewingDetailsFor, setViewingDetailsFor] = useState<string | null>(null);
+  const cartItemsScrollRef = useRef<HTMLDivElement>(null);
+  const cartListScrollTopBeforeDetailsRef = useRef(0);
+  const cartDetailsFocusItemIdRef = useRef<string | null>(null);
+  const prevViewingDetailsForRef = useRef<string | null>(null);
   const [bawEditFromCartSignInOpen, setBawEditFromCartSignInOpen] = useState(false);
   const [bawEditFromCartReturnTo, setBawEditFromCartReturnTo] = useState<{ pathname: string; search?: string }>({
     pathname: '/build-a-wig/noir/edit',
@@ -226,10 +230,47 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   useEffect(() => {
     if (!isOpen) {
       setViewingDetailsFor(null);
+      cartListScrollTopBeforeDetailsRef.current = 0;
+      cartDetailsFocusItemIdRef.current = null;
+      prevViewingDetailsForRef.current = null;
       // Close currency modal when cart closes
       setShowCurrencyModal(false);
     }
   }, [isOpen]);
+
+  const toggleCartItemDetails = useCallback((itemId: string) => {
+    setViewingDetailsFor((current) => {
+      if (current === itemId) {
+        cartDetailsFocusItemIdRef.current = itemId;
+        return null;
+      }
+      cartListScrollTopBeforeDetailsRef.current = cartItemsScrollRef.current?.scrollTop ?? 0;
+      cartDetailsFocusItemIdRef.current = itemId;
+      return itemId;
+    });
+  }, []);
+
+  // Keep the cart list focused on the same line when opening/closing VIEW DETAILS.
+  useLayoutEffect(() => {
+    const scrollEl = cartItemsScrollRef.current;
+    if (!scrollEl) return;
+
+    const wasViewing = prevViewingDetailsForRef.current;
+    const nowViewing = viewingDetailsFor;
+
+    if (nowViewing && !wasViewing) {
+      scrollEl.scrollTop = 0;
+    } else if (!nowViewing && wasViewing) {
+      scrollEl.scrollTop = cartListScrollTopBeforeDetailsRef.current;
+      const focusId = cartDetailsFocusItemIdRef.current ?? wasViewing;
+      if (focusId) {
+        const row = scrollEl.querySelector(`[data-cart-item-row="${focusId}"]`) as HTMLElement | null;
+        row?.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    prevViewingDetailsForRef.current = nowViewing;
+  }, [viewingDetailsFor]);
 
   // Single source of truth — PSA + overlays read this (not per-page DynamicCartIcon state).
   useEffect(() => {
@@ -1033,7 +1074,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         )}
 
         {/* Cart Items — flex-1 only when scrollable; single-row bags shrink-wrap (no viewport stretch) */}
-          <div 
+          <div
+            ref={cartItemsScrollRef}
             className={`px-3${cartItemsAreaScrollable ? ' overflow-y-auto flex-1' : ' flex-shrink-0'}`}
             style={{
               ...(cartItemsScrollMaxHeight ? { maxHeight: cartItemsScrollMaxHeight } : {}),
@@ -1103,7 +1145,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             ? bcfCartThumbPx
                             : unitThumbPx;
                     return (
-                    <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(unitDetailsShiftLayout ? { paddingBottom: '16px' } : {}) }}>
+                    <div
+                      key={item.id}
+                      data-cart-item-row={item.id}
+                      className="bg-transparent border border-gray-200 p-2 mb-2 w-full"
+                      style={{ boxSizing: 'border-box', ...(unitDetailsShiftLayout ? { paddingBottom: '16px' } : {}) }}
+                    >
                     <div
                       className={`flex justify-start space-x-3 ${unitDetailsShiftLayout ? 'items-start' : 'items-center'}`}
                       style={{ minHeight: '120px', height: unitDetailsShiftLayout ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}
@@ -1899,11 +1946,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               }}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (viewingDetailsFor === item.id) {
-                                  setViewingDetailsFor(null);
-                                } else {
-                                  setViewingDetailsFor(item.id);
-                                }
+                                toggleCartItemDetails(item.id);
                               }}
                             >
                               {viewingDetailsFor === item.id ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
@@ -1974,11 +2017,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (viewingDetailsFor === item.id) {
-                                setViewingDetailsFor(null);
-                              } else {
-                                setViewingDetailsFor(item.id);
-                              }
+                              toggleCartItemDetails(item.id);
                             }}
                           >
                             {viewingDetailsFor === item.id ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
