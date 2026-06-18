@@ -29036,3 +29036,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User supplied OpenArt/Kling loop **`openart-734d9bcb…c34bbe9d.mp4`** for order form hero; PNG poster stays **`IMG_2975.png`** (sealed ORDER FORM envelope).
 - **Changes:** **`ORDER_FORM_HERO_VIDEO_SRC`** in **`orderFormAssets.ts`**; **`PageHeroImage`** optional **`videoSrc`** — muted **`autoPlay` `loop` `playsInline`**, poster underlay until first frame; static PNG only when **`prefers-reduced-motion`**. Order form passes both src + videoSrc. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-17 — Order form hero video: new OpenArt clip + loop crossfade
+
+- **Context:** User reported first Kling/OpenArt loop did not match start/end; **`PageHeroImage`** got manual loop seek + poster crossfade + end-trim. User then supplied replacement clip **`openart-af16d189…0417d752.mp4`**.
+- **Changes:** **`ORDER_FORM_HERO_VIDEO_SRC`** updated to new MP4. Pushed **`master`** + **`preview/mobile`**.
