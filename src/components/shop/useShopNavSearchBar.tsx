@@ -4,7 +4,7 @@ import { useSiteNavSearch } from '../../hooks/useSiteNavSearch';
 type SearchTriggerProps = Omit<ComponentPropsWithoutRef<'button'>, 'onClick'>;
 
 /**
- * Shop / product nav bars: search icon + centered input (replaces breadcrumb only), same behavior as admin header search.
+ * Shop / product nav bars: search icon + left-aligned input (replaces breadcrumb only).
  */
 export function useShopNavSearchBar() {
   const { navSearchOpen, handleSearchIconClick, navSearchInputProps } = useSiteNavSearch();
@@ -17,12 +17,13 @@ export function useShopNavSearchBar() {
     /** Breadcrumb row (typically a `<p>`); shown when menu open or search closed */
     children: ReactNode;
   }) {
+    const searchActive = navSearchOpen && !showMobileMenu;
     return (
       <div
-        className="flex-1 flex items-center justify-center min-w-0 h-full whitespace-nowrap"
+        className={`flex-1 flex items-center min-w-0 h-full whitespace-nowrap ${searchActive ? 'justify-start' : 'justify-center'}`}
         style={{ paddingLeft: '64px', paddingRight: '64px' }}
       >
-        {navSearchOpen && !showMobileMenu ? <input {...navSearchInputProps} /> : children}
+        {searchActive ? <input {...navSearchInputProps} /> : children}
       </div>
     );
   }

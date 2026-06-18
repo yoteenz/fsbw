@@ -243,7 +243,7 @@ function ProductsPage() {
   const unitsProductsFiltered = React.useMemo(() => {
     if (!navSearchQuery) return unitsProducts;
     return unitsProducts.filter((p) => {
-      const blob = `${p.name} ${p.length} ${p.hairOrigin} ${p.route || ''}`.toLowerCase();
+      const blob = `${p.id} ${p.name} ${p.length} ${p.hairOrigin} ${p.route || ''}`.toLowerCase();
       return blob.includes(navSearchQuery);
     });
   }, [unitsProducts, navSearchQuery]);
@@ -407,6 +407,10 @@ function ProductsPage() {
   useEffect(() => {
     setUnitsHomePage(0);
   }, [windowWidth]);
+
+  useEffect(() => {
+    setUnitsHomePage(0);
+  }, [navSearchQuery]);
 
   useEffect(() => {
     setUnitsHomePage((p) => Math.min(p, unitsHomeMaxPage));
@@ -990,7 +994,22 @@ function ProductsPage() {
                   UNITS
                 </h3>
               </div>
-              
+
+              {navSearchQuery && unitsProductsFiltered.length === 0 ? (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    margin: '20px 0 8px',
+                  }}
+                >
+                  NO PRODUCTS MATCH YOUR SEARCH.
+                </p>
+              ) : (
+              <>
               {/* Full-width track; arrows are siblings, positioned to marble card for vertical center */}
               <div style={{ position: 'relative', width: '100%', overflow: 'visible', boxSizing: 'border-box' }}>
                 <div style={{ width: '100%', position: 'relative', overflow: 'visible', minWidth: 0, boxSizing: 'border-box' }}>
@@ -1260,6 +1279,8 @@ function ProductsPage() {
                     <img src="/assets/NOIR/right-facing-arrow.svg" alt="" style={{ width: '14px', height: '14px', display: 'block' }} />
                   </button>
                 </>
+              )}
+              </>
               )}
             </div>
 
