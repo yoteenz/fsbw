@@ -29058,3 +29058,12 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User clarified Creative Preview link format (token **`graphic-designer-preview`** goes in **`?creativePreview=`**, not as hostname — use actual Vercel preview deployment URL). User asked to update NOIR **signature features** text to **`200% DENSITY FOR FULLNESS AND VOLUME`**.
 - **Changes:** **`src/utils/unitPdpDetailsConfig.ts`** — NOIR **`density`** spec **`250%` → `200%`** (signature features line + DETAILS tab handmade-unit bullet). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Cart dropdown currency panel width matches cart card
+
+- **Context:** User reported the **SELECT CURRENCY** pop-up on the cart dropdown was wider than the shopping bag card and extended beyond the viewport.
+- **Cause:** The portaled currency panel used fixed **`12px`** horizontal insets while the cart dropdown anchor uses **`left-4` / `right-4`** (**`1rem`** / **`calc(100% - 2rem)`**). Long currency names/rates could also overflow horizontally because the list had no **`overflow-x`** constraint.
+- **Changes:** **`src/components/CartDropdown.tsx`** — on open, **`useLayoutEffect`** measures **`[data-dropdown-content]`** and positions the currency shell with the same **`left`** + **`width`** as the cart card (fallback **`1rem`** inset). Added **`boxSizing`**, **`overflowX: hidden`**, **`maxWidth: calc(100vw - 2rem)`**, and **`truncate`** on currency row text. Removed stale **`12px`** **`left`/`right`** from currency **`baseOverride`**.
+- **Conventions:** Currency exchange overlay should stay edge-aligned with the cart dropdown shell, not use a separate inset.

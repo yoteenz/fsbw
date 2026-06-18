@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, type CSSProperties } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
@@ -80,6 +80,20 @@ const CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX = 40;
 
 /** Details-open rows use items-start; nudge QTY / × / VIEW DETAILS to 120px-row vertical center. */
 const CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX = 30;
+
+/** Match cart dropdown anchor (`left-4` / `right-4`) when shell measurement is unavailable. */
+const CART_DROPDOWN_SIDE_INSET = '1rem';
+const CART_DROPDOWN_PANEL_WIDTH = 'calc(100% - 2rem)';
+
+type CurrencyPanelLayout = { left: number; width: number };
+
+function readCartDropdownShellLayout(): CurrencyPanelLayout | null {
+  const el = document.querySelector('[data-dropdown-content="true"]') as HTMLElement | null;
+  if (!el) return null;
+  const rect = el.getBoundingClientRect();
+  if (rect.width <= 0) return null;
+  return { left: rect.left, width: rect.width };
+}
 
 type UnitCartDetailDescriptor = { type: string; value?: unknown; partSelection?: string };
 
@@ -247,8 +261,27 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     return 'USD';
   });
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [currencyPanelLayout, setCurrencyPanelLayout] = useState<CurrencyPanelLayout | null>(null);
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   const [itemToRemove, setItemToRemove] = useState<string | null>(null);
+
+  // Match currency panel width to the open cart dropdown shell (same card edges).
+  useLayoutEffect(() => {
+    if (!showCurrencyModal || !isOpen) {
+      setCurrencyPanelLayout(null);
+      return;
+    }
+    const sync = () => {
+      setCurrencyPanelLayout(readCartDropdownShellLayout());
+    };
+    sync();
+    window.addEventListener('resize', sync);
+    window.addEventListener('bawPageDebugOverridesUpdated', sync);
+    return () => {
+      window.removeEventListener('resize', sync);
+      window.removeEventListener('bawPageDebugOverridesUpdated', sync);
+    };
+  }, [showCurrencyModal, isOpen]);
 
   const currencyRates = DEFAULT_CURRENCY_RATES;
 
@@ -890,6 +923,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   /** Same top offset on every route so the panel lines up with the shared nav bar (was 88px on e.g. `/sign-in`, read as lower than 86px routes). */
   const dropdownTop = '86px';
+
+  const currencyPanelHorizontalStyle: CSSProperties = currencyPanelLayout
+    ? {
+        left: `${currencyPanelLayout.left}px`,
+        width: `${currencyPanelLayout.width}px`,
+        right: 'auto',
+        maxWidth: `min(${currencyPanelLayout.width}px, calc(100vw - 2rem))`,
+      }
+    : {
+        left: CART_DROPDOWN_SIDE_INSET,
+        width: CART_DROPDOWN_PANEL_WIDTH,
+        right: 'auto',
+        maxWidth: 'calc(100vw - 2rem)',
+      };
 
   const dropdownContent = (
     <div 
@@ -2065,8 +2112,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
         baseOverride={{
           top: '50px',
           bottom: '14px',
-          left: '12px',
-          right: '12px',
         }}
         style={{
           borderWidth: '1.3px',
@@ -2075,8 +2120,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
           top: '50px',
           bottom: '14px',
-          left: '12px',
-          right: '12px',
+          ...currencyPanelHorizontalStyle,
+          boxSizing: 'border-box',
+          overflowX: 'hidden',
           pointerEvents: 'auto',
           paddingTop: '8px',
           paddingLeft: '8px',
@@ -2147,8 +2193,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           style={{
             flex: '1 1 auto',
             minHeight: '0',
+            minWidth: 0,
             maxHeight: 'calc(100% - 6px)',
-            marginBottom: '6px'
+            marginBottom: '6px',
+            overflowX: 'hidden',
           }}
         >
           {Object.entries(currencyRates).map(([code, currency], index, array) => (
@@ -2176,14 +2224,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 marginBottom: index < array.length - 1 ? '-1.3px' : '0'
               }}
             >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center" style={{ gap: '8px' }}>
-                  <span>{currency.name}</span>
+              <div className="flex justify-between items-center" style={{ minWidth: 0, gap: '8px' }}>
+                <div className="flex items-center min-w-0" style={{ gap: '8px' }}>
+                  <span className="truncate">{currency.name}</span>
                 </div>
-                <span style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>{currency.symbol}</span>
+                <span
+                  className="flex-shrink-0"
+                  style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}
+                >
+                  {currency.symbol}
+                </span>
               </div>
               <div
-                className="text-xs mt-0.5"
+                className="text-xs mt-0.5 truncate"
                 style={{ fontSize: '8px', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}
               >
                 <span style={{ color: '#EB1C24' }}>1 USD</span>
