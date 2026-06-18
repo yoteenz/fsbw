@@ -21,6 +21,7 @@ import {
 } from './productOptions';
 import { BAW_SALON_STYLING_IDS } from './bawUnitStylingOptions';
 import {
+  BCF_CATEGORY_LABELS,
   BCF_COLOR_OPTIONS,
   BCF_LACE_OPTIONS,
   BCF_ORIGIN_OPTIONS,
@@ -56,7 +57,19 @@ export type ShopGiftCardSearchRecord = {
   kind: 'gift-card';
 };
 
-export type ShopSearchResultRecord = ShopUnitSearchRecord | ShopGiftCardSearchRecord;
+export type ShopBcfSearchRecord = {
+  id: string;
+  title: string;
+  route: string;
+  categorySlug: BcfCategorySlug;
+  textureSlug: ShopTextureSlug;
+  kind: 'bcf';
+};
+
+export type ShopSearchResultRecord =
+  | ShopUnitSearchRecord
+  | ShopGiftCardSearchRecord
+  | ShopBcfSearchRecord;
 
 export type BcfCategorySlug = 'bundles' | 'closures' | 'frontals';
 export type ShopTextureSlug = 'straight' | 'wavy' | 'curly';
@@ -66,6 +79,8 @@ export type ShopSearchScope<T extends ShopUnitSearchRecord = ShopUnitSearchRecor
   units: T[];
   /** Filtered gift card denominations for search results. */
   giftCards: ShopGiftCardSearchRecord[];
+  /** Filtered BCF texture × category hits for search results. */
+  bcfProducts: ShopBcfSearchRecord[];
   /** BCF marble cards to show when search is active (empty = hide all BCF cards). */
   bcfCategories: BcfCategorySlug[];
   /** Texture tabs still relevant inside visible BCF cards (empty = all three). */
@@ -214,6 +229,74 @@ const TEXTURE_KEYWORDS: Record<ShopTextureSlug, string[]> = {
   curly: ['curly', 'curl'],
 };
 
+/** Tokens that denote a hair texture family (not BAW silky/yaki). */
+function isTextureFamilyToken(token: string): ShopTextureSlug | null {
+  const t = normalizeText(token);
+  for (const [slug, keywords] of Object.entries(TEXTURE_KEYWORDS) as [ShopTextureSlug, string[]][]) {
+    if (keywords.includes(t) || t === slug) return slug;
+  }
+  return null;
+}
+
+/**
+ * When the query is primarily a texture family (e.g. **straight**, **wavy**, **curl**),
+ * units must belong to that family only.
+ */
+export function resolveTextureFamilyIntent(rawQuery: string): ShopTextureSlug | null {
+  const tokens = tokenizeQuery(rawQuery);
+  if (tokens.length === 0) return null;
+
+  const familyTokens = tokens.map(isTextureFamilyToken);
+  const families = new Set(familyTokens.filter((f): f is ShopTextureSlug => f !== null));
+  if (families.size === 1) return [...families][0];
+  if (tokens.length === 1 && families.size === 0) return null;
+
+  // Multi-word with a single family token, e.g. "straight noir"
+  if (families.size === 1) return [...families][0];
+  return null;
+}
+
+function isQueryTermPrefixOfLongerWord(term: string, word: string): boolean {
+  const t = normalizeText(term);
+  const w = normalizeText(word);
+  if (!t || !w || t === w) return false;
+  if (!w.startsWith(t)) return false;
+  const rest = w.slice(t.length);
+  return rest.length > 0 && /^[a-z]/.test(rest);
+}
+
+/** Avoid false positives such as **straight** ⊂ **straightened** or **curl** ⊂ **curly** (handled via exact token rules). */
+function termMatchesQuery(term: string, query: string): boolean {
+  const t = normalizeText(term);
+  const q = normalizeText(query);
+  if (!t || !q) return false;
+  if (t === q) return true;
+  if (q.includes(t) && !isQueryTermPrefixOfLongerWord(t, q)) {
+    return hasBoundedSubstringMatch(q, t);
+  }
+  if (t.includes(q) && !isQueryTermPrefixOfLongerWord(q, t)) {
+    return hasBoundedSubstringMatch(t, q);
+  }
+  const tc = compactText(term);
+  const qc = compactText(query);
+  if (tc && qc && tc === qc) return true;
+  return false;
+}
+
+function hasBoundedSubstringMatch(haystack: string, needle: string): boolean {
+  if (haystack === needle) return true;
+  let idx = haystack.indexOf(needle);
+  while (idx !== -1) {
+    const before = idx === 0 ? ' ' : haystack[idx - 1];
+    const after = haystack[idx + needle.length] ?? ' ';
+    const boundaryBefore = !/[a-z0-9]/.test(before);
+    const boundaryAfter = !/[a-z0-9]/.test(after);
+    if (boundaryBefore && boundaryAfter) return true;
+    idx = haystack.indexOf(needle, idx + 1);
+  }
+  return false;
+}
+
 const BAW_CATEGORY_KEYWORDS: Record<string, string[]> = {
   color: ['color', 'colors', 'colour', 'colours', 'dye', 'tone'],
   styling: ['styling', 'style', 'salon', 'styled'],
@@ -269,7 +352,9 @@ function stylingQueryMatchesUnit(query: string, unitId: UnitId): boolean {
   for (const entry of stylingList) {
     const atomic = entry.split(',').map((p) => p.trim());
     for (const id of atomic) {
-      if (expandStylingSearchTerms(id).some((term) => queryNorm.includes(term) || term.includes(queryNorm))) {
+      if (
+        expandStylingSearchTerms(id).some((term) => termMatchesQuery(term, queryNorm) || termMatchesQuery(queryNorm, term))
+      ) {
         return true;
       }
     }
@@ -277,7 +362,9 @@ function stylingQueryMatchesUnit(query: string, unitId: UnitId): boolean {
 
   for (const [from, toList] of Object.entries(STYLING_CROSS_FAMILY)) {
     const fromTerms = expandStylingSearchTerms(from, true);
-    if (!fromTerms.some((term) => queryNorm.includes(term) || term.includes(queryNorm))) continue;
+    if (!fromTerms.some((term) => termMatchesQuery(term, queryNorm) || termMatchesQuery(queryNorm, term))) {
+      continue;
+    }
     if (unitsForStylingToken(from).includes(unitId)) return true;
     for (const cross of toList) {
       if (unitsForStylingToken(cross).includes(unitId)) return true;
@@ -380,12 +467,17 @@ function buildUnitSearchCorpus(unitId: UnitId): string[] {
 
 function tokenMatchesCorpus(token: string, corpus: string[]): boolean {
   const t = normalizeText(token);
-  const tc = compactText(token);
   if (!t) return false;
-  return corpus.some((entry) => {
-    const ec = compactText(entry);
-    if (entry === t || entry.includes(t) || t.includes(entry)) return true;
-    if (ec && tc && (ec.includes(tc) || tc.includes(ec))) return true;
+  return corpus.some((entry) => termMatchesQuery(t, entry) || termMatchesQuery(entry, t));
+}
+
+function unitMatchesNonTextureTokens(unitId: UnitId, tokens: string[]): boolean {
+  if (tokens.length === 0) return true;
+  const corpus = buildUnitSearchCorpus(unitId);
+  return tokens.every((tok) => {
+    if (isTextureFamilyToken(tok)) return true;
+    if (tokenMatchesCorpus(tok, corpus)) return true;
+    if (stylingQueryMatchesUnit(tok, unitId)) return true;
     return false;
   });
 }
@@ -395,6 +487,11 @@ function scoreUnitMatch(unitId: UnitId, rawQuery: string): number {
   const tokens = tokenizeQuery(rawQuery);
   if (!query) return 0;
 
+  const textureIntent = resolveTextureFamilyIntent(rawQuery);
+  if (textureIntent && UNIT_TEXTURE_FAMILY[unitId] !== textureIntent) {
+    return 0;
+  }
+
   const corpus = buildUnitSearchCorpus(unitId);
   const corpusJoined = corpus.join(' ');
   const unitName = UNIT_DISPLAY_NAMES[unitId].toLowerCase();
@@ -403,15 +500,17 @@ function scoreUnitMatch(unitId: UnitId, rawQuery: string): number {
   let score = 0;
 
   if (query === unitSlug || query === unitName) score += 200;
-  if (corpusJoined.includes(query)) score += 120;
+  if (corpusJoined.includes(query) && termMatchesQuery(query, corpusJoined)) score += 120;
+
+  if (textureIntent && tokens.every((tok) => isTextureFamilyToken(tok) || unitMatchesNonTextureTokens(unitId, [tok]))) {
+    const nonTexture = tokens.filter((tok) => !isTextureFamilyToken(tok));
+    if (nonTexture.length === 0) return 100 + score;
+    if (!unitMatchesNonTextureTokens(unitId, nonTexture)) return 0;
+    score += 90;
+  }
 
   if (tokens.length > 0) {
-    const allTokensMatch = tokens.every((tok) => {
-      if (tokenMatchesCorpus(tok, corpus)) return true;
-      if (stylingQueryMatchesUnit(tok, unitId)) return true;
-      return false;
-    });
-    if (!allTokensMatch) return 0;
+    if (!unitMatchesNonTextureTokens(unitId, tokens)) return 0;
     score += 60 + tokens.length * 10;
   } else {
     return 0;
@@ -421,30 +520,62 @@ function scoreUnitMatch(unitId: UnitId, rawQuery: string): number {
 
   for (const color of [...COLOR_OPTIONS_DEFAULT, ...COLOR_OPTIONS_BLANCO]) {
     const colorTerms = expandColorSearchTerms(color);
-    if (colorTerms.some((term) => query.includes(term) || term.includes(query))) {
+    if (colorTerms.some((term) => termMatchesQuery(term, query) || termMatchesQuery(query, term))) {
       if (unitsForColor(color).includes(unitId)) score += 90;
     }
   }
 
   for (const stylingId of BAW_SALON_STYLING_IDS) {
     const styleTerms = expandStylingSearchTerms(stylingId, true);
-    if (styleTerms.some((term) => query.includes(term) || term.includes(query))) {
+    if (styleTerms.some((term) => termMatchesQuery(term, query) || termMatchesQuery(query, term))) {
       if (unitsForStylingToken(stylingId).includes(unitId)) score += 85;
     }
   }
 
   for (const lace of LACE_OPTIONS) {
     const laceNorm = compactText(lace);
-    if (query.includes(normalizeText(lace)) || compactText(query).includes(laceNorm)) score += 70;
+    if (termMatchesQuery(lace, query) || compactText(query).includes(laceNorm)) score += 70;
   }
 
   for (const origin of UNIT_ORIGIN_KEYWORDS[unitId]) {
     if (query.includes(origin)) score += 50;
   }
 
-  if (TEXTURE_KEYWORDS[UNIT_TEXTURE_FAMILY[unitId]].some((kw) => query.includes(kw))) score += 45;
+  if (TEXTURE_KEYWORDS[UNIT_TEXTURE_FAMILY[unitId]].some((kw) => termMatchesQuery(kw, query))) score += 45;
 
   return score;
+}
+
+/** BCF rows for search results (category × texture). */
+export function filterBcfProductsBySearch(rawQuery: string): ShopBcfSearchRecord[] {
+  const query = normalizeText(rawQuery);
+  if (!query) return [];
+
+  const textureIntent = resolveTextureFamilyIntent(rawQuery);
+  let textures = matchBcfTextures(rawQuery);
+  if (textures.length === 0 && textureIntent) textures = [textureIntent];
+
+  let categories = matchBcfCategories(rawQuery);
+  if (categories.length === 0 && textures.length > 0) {
+    categories = ['bundles', 'closures', 'frontals'];
+  }
+
+  if (categories.length === 0 || textures.length === 0) return [];
+
+  const results: ShopBcfSearchRecord[] = [];
+  for (const categorySlug of categories) {
+    for (const textureSlug of textures) {
+      results.push({
+        id: `bcf-${categorySlug}-${textureSlug}`,
+        title: `${BCF_TEXTURE_LABELS[textureSlug]} ${BCF_CATEGORY_LABELS[categorySlug]}`,
+        route: `/shop/${categorySlug}?texture=${textureSlug}`,
+        categorySlug,
+        textureSlug,
+        kind: 'bcf',
+      });
+    }
+  }
+  return results;
 }
 
 function matchBcfCategories(rawQuery: string): BcfCategorySlug[] {
@@ -458,7 +589,7 @@ function matchBcfCategories(rawQuery: string): BcfCategorySlug[] {
 
   const bcfColorHit = BCF_COLOR_OPTIONS.some((c) => {
     const terms = expandColorSearchTerms(c.id);
-    return terms.some((term) => query.includes(term) || term.includes(query));
+    return terms.some((term) => termMatchesQuery(term, query) || termMatchesQuery(query, term));
   });
   const bcfLaceHit = BCF_LACE_OPTIONS.some((l) => query.includes(compactText(l.id)));
   const bcfOriginHit = BCF_ORIGIN_OPTIONS.some((o) => query.includes(o.label.toLowerCase()));
@@ -470,6 +601,10 @@ function matchBcfCategories(rawQuery: string): BcfCategorySlug[] {
     query.includes('raw human hair');
 
   if (bcfColorHit || bcfLaceHit || bcfOriginHit || bcfGeneric) {
+    return ['bundles', 'closures', 'frontals'];
+  }
+
+  if (matchBcfTextures(rawQuery).length > 0 || resolveTextureFamilyIntent(rawQuery)) {
     return ['bundles', 'closures', 'frontals'];
   }
 
@@ -502,9 +637,11 @@ function queryMatchesOnlyBawOptions(rawQuery: string): boolean {
   if (!query) return false;
 
   const unitNameHit = ALL_UNIT_IDS.some(
-    (id) => query.includes(id) || query.includes(UNIT_DISPLAY_NAMES[id].toLowerCase())
+    (id) => termMatchesQuery(id, query) || termMatchesQuery(UNIT_DISPLAY_NAMES[id], query)
   );
   if (unitNameHit) return false;
+
+  if (resolveTextureFamilyIntent(rawQuery)) return false;
 
   const bcfHit = matchBcfCategories(query).length > 0;
   if (bcfHit) return false;
@@ -531,7 +668,7 @@ function queryMatchesOnlyBawOptions(rawQuery: string): boolean {
       ...expandStylingSearchTerms(signal),
       ...expandHairlineSearchTerms(signal),
     ];
-    return terms.some((term) => term && (query.includes(term) || term.includes(query)));
+    return terms.some((term) => term && (termMatchesQuery(term, query) || termMatchesQuery(query, term)));
   });
 }
 
@@ -584,12 +721,16 @@ export function filterGiftCardsBySearch(
 export function mergeShopSearchResults<T extends ShopUnitSearchRecord>(
   units: T[],
   giftCards: ShopGiftCardSearchRecord[],
+  bcfProducts: ShopBcfSearchRecord[],
   rawQuery: string
 ): ShopSearchResultRecord[] {
   if (queryHasGiftCardIntent(rawQuery)) {
-    return [...giftCards, ...units];
+    return [...giftCards, ...units, ...bcfProducts];
   }
-  return [...units, ...giftCards];
+  if (resolveTextureFamilyIntent(rawQuery)) {
+    return [...units, ...bcfProducts, ...giftCards];
+  }
+  return [...units, ...bcfProducts, ...giftCards];
 }
 
 /** Full search scope for home shop: units strip + BCF category visibility. */
@@ -603,6 +744,7 @@ export function resolveShopSearchScope<T extends ShopUnitSearchRecord>(
     return {
       units,
       giftCards: [],
+      bcfProducts: [],
       bcfCategories: ['bundles', 'closures', 'frontals'],
       bcfTextures: ['straight', 'wavy', 'curly'],
       matchedBawOptions: false,
@@ -611,14 +753,17 @@ export function resolveShopSearchScope<T extends ShopUnitSearchRecord>(
 
   const filteredUnits = filterShopUnitsBySearch(units, rawQuery);
   const filteredGiftCards = filterGiftCardsBySearch(giftCards, rawQuery);
+  const filteredBcfProducts = filterBcfProductsBySearch(rawQuery);
   const bcfCategories = matchBcfCategories(rawQuery);
   let bcfTextures = matchBcfTextures(rawQuery);
 
   const bcfRelevant = bcfCategories.length > 0;
+  const textureIntent = resolveTextureFamilyIntent(rawQuery);
   const hideBcf =
     (filteredUnits.length > 0 || filteredGiftCards.length > 0) &&
     queryMatchesOnlyBawOptions(rawQuery) &&
-    !bcfRelevant;
+    !bcfRelevant &&
+    !textureIntent;
   const categories = hideBcf ? ([] as BcfCategorySlug[]) : bcfCategories;
 
   if (categories.length > 0 && bcfTextures.length === 0) {
@@ -628,6 +773,7 @@ export function resolveShopSearchScope<T extends ShopUnitSearchRecord>(
   return {
     units: filteredUnits,
     giftCards: filteredGiftCards,
+    bcfProducts: hideBcf ? [] : filteredBcfProducts,
     bcfCategories: categories,
     bcfTextures,
     matchedBawOptions:

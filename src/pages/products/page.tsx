@@ -254,6 +254,7 @@ function ProductsPage() {
     const merged = mergeShopSearchResults(
       unitsProductsFiltered,
       shopSearchScope.giftCards,
+      shopSearchScope.bcfProducts,
       navSearchQuery
     );
     const results: ShopSearchResultProduct[] = [];
@@ -262,11 +263,29 @@ function ProductsPage() {
         results.push(item);
         continue;
       }
+      if (item.kind === 'bcf') {
+        results.push({
+          id: item.id,
+          name: item.title,
+          title: item.title,
+          route: item.route,
+          kind: 'bcf',
+          categorySlug: item.categorySlug,
+          textureSlug: item.textureSlug,
+        });
+        continue;
+      }
       const unit = unitsProducts.find((u) => u.id === item.id);
       if (unit) results.push({ ...unit, kind: 'unit' });
     }
     return results;
-  }, [navSearchQuery, shopSearchScope.giftCards, unitsProducts, unitsProductsFiltered]);
+  }, [
+    navSearchQuery,
+    shopSearchScope.bcfProducts,
+    shopSearchScope.giftCards,
+    unitsProducts,
+    unitsProductsFiltered,
+  ]);
 
   // UNITS strip: 2 products per “page”; row width = pairCount×100% of viewport; snap step after windowWidth (below)
   const [unitsHomePage, setUnitsHomePage] = useState(0);
@@ -1005,6 +1024,7 @@ function ProductsPage() {
               <ShopSearchResultsGrid
                 products={searchResultsProducts}
                 formatPrice={formatPrice}
+                formatPriceRange={formatShopTextureRange}
                 onProductClick={handleProductClick}
                 onAddToCart={handleAddToCart}
                 onSizeSelect={handleSizeSelect}
