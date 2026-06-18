@@ -29128,3 +29128,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User searched **straight** and **all units** appeared; expected only **NOIR**, **BLANCO**, and **straight BCF** (bundles/closures/frontals).
 - **Cause:** Loose substring match — **straight** matched **straightened** (FLAT IRON styling alias) on every unit; no strict texture-family gate; BCF straight rows missing from search results grid.
 - **Changes:** **`shopProductSearch.ts`** — **`termMatchesQuery`** word-boundary matching; **`resolveTextureFamilyIntent`** gates units by **`UNIT_TEXTURE_FAMILY`**; **`filterBcfProductsBySearch`** + **`ShopBcfSearchRecord`**; texture queries show BCF × straight/wavy/curly. **`ShopSearchResultsGrid`** — BCF cards with **`BcfShopThumb`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Search grid: orphan card left/right alternation
+
+- **Context:** User reported the last search result card centered on its row when an odd count left a single card; it should follow the staggered left/right column (e.g. after a right-column card, the next/last card should be **left**, not centered).
+- **Changes:** **`ShopSearchResultsGrid.tsx`** — container **`justifyContent: flex-start`**; even indices stay left, odd indices **`marginLeft: auto`** for right column. Pushed **`master`** + **`preview/mobile`**.
