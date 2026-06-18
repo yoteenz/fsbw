@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import BrandRedCloseIcon from '../BrandRedCloseIcon';
 import type { LobbyPaymentIcon, LobbyPaymentPopoverLayout } from '../../constants/lobbyPaymentIcons';
 import {
   LOBBY_CASE_POPOVER_MIN_HEIGHT_PX,
@@ -86,10 +87,6 @@ const popoverPanelGlassStyle: React.CSSProperties = {
   WebkitBackdropFilter: 'blur(12px)',
 };
 
-/** Brand red — matches account/affiliate close-icon filter. */
-const LOBBY_POPOVER_CLOSE_ICON_FILTER =
-  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
-
 function LobbyPopoverCloseButton({ onClose }: { onClose: () => void }) {
   const btnPx = LOBBY_POPOVER_CLOSE_BTN_PX;
   const iconPx = lobbyPopoverPx(10);
@@ -118,18 +115,7 @@ function LobbyPopoverCloseButton({ onClose }: { onClose: () => void }) {
         touchAction: 'manipulation',
       }}
     >
-      <img
-        src="/assets/close-icon.svg"
-        alt=""
-        draggable={false}
-        style={{
-          width: `${iconPx}px`,
-          height: `${iconPx}px`,
-          display: 'block',
-          objectFit: 'contain',
-          filter: LOBBY_POPOVER_CLOSE_ICON_FILTER,
-        }}
-      />
+      <BrandRedCloseIcon size={iconPx} />
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -1516,15 +1517,7 @@ export default function AdminPending() {
                   {modalTitle}
                 </p>
                 <button type="button" onClick={closeAdminReviewModal} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
-                  <img
-                    src="/assets/close-icon.svg"
-                    alt=""
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      display: 'block'
-                    }}
-                  />
+                  <BrandRedCloseIcon size={'18px'} />
                 </button>
               </div>
               <div

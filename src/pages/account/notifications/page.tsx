@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -1201,13 +1202,7 @@ function NotificationsPage() {
                                       transform: 'translate(-2px, -3px)'
                                     }}
                                   >
-                                    <img
-                                      src="/assets/close-icon.svg"
-                                      alt="Delete notification"
-                                      style={{
-                                        width: '16px',
-                                        height: '16px'}}
-                                    />
+                                    <BrandRedCloseIcon size={'16px'} alt="Delete notification" />
                                   </button>
                                 )}
                               </div>

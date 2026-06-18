@@ -7,6 +7,7 @@
  * - Payments: local membership rows + Supabase `membership_payments` (Stripe webhooks) when admin + API; fraud analysis runs on the order list.
  */
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -344,7 +345,7 @@ function AdminRevenueOrdersTab({
                   ORDER #{(order.orderNumber || order.id || '').toString().replace(/^ORDER\s*#?\s*/i, '') || '—'}
                 </h3>
                 <button type="button" onClick={onCloseExpanded} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
-                  <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px' }} />
+                  <BrandRedCloseIcon size={'16px'} alt="Close" />
                 </button>
               </div>
               {editTrackingMode ? (

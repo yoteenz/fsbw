@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -2278,15 +2279,7 @@ function AffiliatePage() {
                                    flexShrink: 0
                                  }}
                                >
-                                 <img
-                                   src="/assets/close-icon.svg"
-                                   alt="Close"
-                                   style={{
-                                     width: '16px',
-                                     height: '16px',
-                                     filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                                   }}
-                                 />
+                                 <BrandRedCloseIcon size={'16px'} alt="Close" />
                                </button>
                              </div>
                            </div>
@@ -3609,18 +3602,7 @@ function AffiliatePage() {
                                               flexShrink: 0
                                             }}
                                           >
-                                            <img
-                                              src="/assets/close-icon.svg"
-                                              alt="Close"
-                                              style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                objectFit: 'contain',
-                                                display: 'block',
-                                                flexShrink: 0,
-                                                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                                              }}
-                                            />
+                                            <BrandRedCloseIcon size={'12px'} alt="Close" />
                                           </button>
                                         )}
                                         <div style={{ 
@@ -3741,18 +3723,7 @@ function AffiliatePage() {
                                               flexShrink: 0
                                             }}
                                           >
-                                            <img
-                                              src="/assets/close-icon.svg"
-                                              alt="Close"
-                                              style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                objectFit: 'contain',
-                                                display: 'block',
-                                                flexShrink: 0,
-                                                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                                              }}
-                                            />
+                                            <BrandRedCloseIcon size={'12px'} alt="Close" />
                                           </button>
                                         )}
                                         <div style={{ 
@@ -3835,18 +3806,7 @@ function AffiliatePage() {
                                                padding: 0
                                              }}
                                            >
-                                             <img
-                                               src="/assets/close-icon.svg"
-                                               alt="Close"
-                                               style={{
-                                                 width: '11px',
-                                                 height: '11px',
-                                                 objectFit: 'contain',
-                                                 display: 'block',
-                                                 flexShrink: 0,
-                                                 filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                                               }}
-                                             />
+                                             <BrandRedCloseIcon size={'11px'} alt="Close" />
                                            </button>
                                          )}
                                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', textTransform: 'uppercase', margin: '0 0 8px 0', fontWeight: '500' }}>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   LOUNGE_TV_MAIN_TABS,
@@ -558,7 +559,7 @@ export default function AdminLoungeTvContentPanel({
                 flexShrink: 0,
               }}
             >
-              <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block' }} />
+              <BrandRedCloseIcon size={16} />
             </button>
           </div>
           <div style={{ borderBottom: '1px solid #d1d5db', marginTop: '8px' }} />

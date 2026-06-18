@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import BrandRedCloseIcon from '../../components/BrandRedCloseIcon';
 import { PREMIUM_BENEFITS_BY_TIER } from '../../constants/premiumBenefitsByTier';
 import { PSA_ENGAGEMENT_LIMITS_SUMMARY } from '../../constants/psaMembershipCopy';
 import {
@@ -70,15 +71,7 @@ export default function PremiumSubscriptionUpgradeChart({
           justifyContent: 'center'
         }}
       >
-        <img
-          src="/assets/close-icon.svg"
-          alt=""
-          style={{
-            width: '16px',
-            height: '16px',
-            objectFit: 'contain',
-          }}
-        />
+        <BrandRedCloseIcon size={'16px'} />
       </button>
     </div>
 
