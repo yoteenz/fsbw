@@ -2546,9 +2546,9 @@ fontFamily: '"Futura PT Book"',
                                       onClick={() => setShowBenefitsModal((prev) => !prev)}
                                       style={{
                                         fontFamily: '"Futura PT Medium"',
-                                        color: '#EB1C24',
+                                        color: '#808080',
                                         fontSize: '10px',
-                                        margin: 0,
+                                        margin: '4px 0 0 0',
                                         textTransform: 'uppercase',
                                         textAlign: 'left',
                                         background: 'none',
