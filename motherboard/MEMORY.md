@@ -29192,3 +29192,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User updated About Bohemy line to **because frontal slayer isn't just a name…** (removed **it's a mindset.**).
 - **Changes:** **`brandAboutCopy.ts`** — paragraph + **`BRAND_ABOUT_BOHEMY_PARAGRAPHS`** entry. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand pages: unified main card height + internal scroll (terms pattern)
+
+- **Context:** User wanted **all** brand pages (**about**, **member**, **contact**, **reviews**, **faq**, **terms**, etc.) to use the same main card height as the **menu toggle** panel, with **internal scroll** inside the card like **`/brand/terms`** (not content-hug or member-measurer heights).
+- **Changes:** **`src/pages/brand/page.tsx`** — removed per-slug height exceptions (**`brandMainCardScrollable`**, reviews viewport shell, **`BRAND_PAGE_MAIN_CARD_HEIGHT`**); **`MarblePageShell`** always viewport-locked; main card **`flex: 1`** + inner body **`overflowY: auto`** for every slug; action buttons remain below card. **`BrandReviewsEmptyState.tsx`** — top-aligned copy (no flex fill centering). Pushed **`master`** + **`preview/mobile`**.
