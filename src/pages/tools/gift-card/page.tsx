@@ -25,15 +25,7 @@ import {
   GIFT_CARD_DEFAULT_BALANCE,
   parseGiftCardBalance,
 } from '../../../utils/giftCardBalance';
-
-const GIFT_CARD_PREVIEW_BASE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content';
-
-/** Gift card PDP hero + thumbnail gallery (Supabase live-preview). */
-const GIFT_CARD_PREVIEW_IMAGES = [
-  `${GIFT_CARD_PREVIEW_BASE}/IMG_1799.png`,
-  `${GIFT_CARD_PREVIEW_BASE}/IMG_1788.png`,
-] as const;
+import { GIFT_CARD_PREVIEW_IMAGES } from '../../../constants/giftCardAssets';
 
 /** Portrait thumb frames — 4px white mat; width fixed, shorter height for landscape gift-card art. */
 const GIFT_CARD_THUMB_MAT_PX = 4;

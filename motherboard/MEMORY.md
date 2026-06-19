@@ -29278,3 +29278,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The account overview grid continues to use product-managed fixed messaging rather than live counts. The latest wording now sets **REWARDS** to **`UNLOCK POINTS, PERKS + UPGRADES`** and **ORDERS** to **`PROCESSING + DELIVERY DETAILS`**, while all earlier subtitle changes from this chat remain in place.
 - **Changes:** **`src/pages/account/page.tsx`** now uses **`UNLOCK POINTS, PERKS + UPGRADES`** for **REWARDS** and **`PROCESSING + DELIVERY DETAILS`** for **ORDERS**. Verified with **`npm run build`**.
 - **Conventions:** In this account overview card system, the red subtitle lines are iterative marketing copy and can be adjusted independently card by card without reintroducing the old count-based summaries.
+
+---
+
+## 2026-06-19 — Gift card load-card thumbnail synced to PDP second preview
+
+- **Context:** Continuing the same chat after the account-card subtitle iterations and admin revenue BCF grouping work, the user asked to update the **Load Gift Card** thumbnail so it uses the **second thumbnail shown on the gift card product page**.
+- **Topics covered:** Traced the load-card page image source in **`src/pages/account/load-card/page.tsx`**, compared it with the gift card PDP preview gallery in **`src/pages/tools/gift-card/page.tsx`**, and confirmed the load-card view was still using its own local **`load-card.png`** instead of the shared gift card preview set. Introduced a shared gift-card asset constant module so both pages can point at the same preview source rather than duplicating URLs.
+- **Decisions / outcomes:** The load-card account view now uses the exact second gift-card PDP thumbnail (**`IMG_1788.png`**) via a shared exported constant, which keeps the account screen visually aligned with the product page and avoids another one-off thumbnail definition.
+- **Changes:** Added **`src/constants/giftCardAssets.ts`** with **`GIFT_CARD_PREVIEW_IMAGES`** and **`GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC`** (the second preview image). Updated **`src/pages/tools/gift-card/page.tsx`** to import **`GIFT_CARD_PREVIEW_IMAGES`** from the new shared constant file. Updated **`src/pages/account/load-card/page.tsx`** to replace the bundled **`load-card.png`** import with **`GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC`** for the displayed thumbnail. Verified with **`npm run build`**.
+- **Conventions:** Gift card visuals that need to match the PDP gallery should reuse shared constants from **`src/constants/giftCardAssets.ts`** so the account/tool views stay aligned when those preview images change.
