@@ -8,7 +8,9 @@ import {
   BRAND_TERMS_INTRO_PARAGRAPHS,
   BRAND_TERMS_SECTIONS,
 } from '../../constants/brandTermsCopy';
+import { BRAND_TERMS_HERO_IMAGE_SRC } from '../../constants/brandTermsAssets';
 import { BRAND_HERE_LINK_STYLE } from './BrandInlineHereLink';
+import PageHeroImage from '../PageHeroImage';
 
 const BODY_STYLE = {
   fontFamily: '"Futura PT Book"',
@@ -92,6 +94,7 @@ export default function BrandTermsBody() {
         paddingBottom: '4px',
       }}
     >
+      <PageHeroImage src={BRAND_TERMS_HERO_IMAGE_SRC} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {BRAND_TERMS_INTRO_PARAGRAPHS.map((paragraph, index) =>
           renderParagraph(paragraph, `intro-${index}`)

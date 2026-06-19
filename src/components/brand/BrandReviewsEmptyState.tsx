@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react';
 import { BRAND_REVIEWS_BLOCKS, type BrandReviewsBlockVariant } from '../../constants/brandReviewsCopy';
+import { BRAND_REVIEWS_HERO_IMAGE_SRC } from '../../constants/brandReviewsAssets';
+import PageHeroImage from '../PageHeroImage';
 
 const BODY_FONT_SIZE_PX = 10;
 const BRAND_GRAY = '#808080';
@@ -72,6 +74,7 @@ export default function BrandReviewsEmptyState() {
         textAlign: 'left',
       }}
     >
+      <PageHeroImage src={BRAND_REVIEWS_HERO_IMAGE_SRC} />
       {BRAND_REVIEWS_BLOCKS.map((block) => (
         <p key={block.id} style={blockStyle(block.variant)}>
           {block.text}
