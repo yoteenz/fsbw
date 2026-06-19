@@ -29408,3 +29408,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the balance label and amount centered, but changed only the explanatory paragraph alignment to **left** so the body copy reads like an informational note while preserving the existing copy, font, color, and spacing.
 - **Changes:** **`src/pages/account/load-card/page.tsx`** — the helper paragraph below the balance now uses **`textAlign: 'left'`** instead of **`center`**. Verified with **`npm run build`**.
 - **Conventions:** On the Add Funds balance card, the **CURRENT BALANCE** label/amount remain centered, while the explanatory Futura Book paragraph below them should align left.
+
+---
+
+## 2026-06-19 — Add Funds helper paragraph expanded copy
+
+- **Context:** In this chat, the user added a black **Futura PT Book** helper paragraph below **CURRENT BALANCE** on **Account > Add Funds**, changed the breadcrumb to **`ACCOUNT > BALANCE`**, clarified the paragraph should be left-aligned, and then supplied revised paragraph copy mentioning gift card(s), checkout with no code needed, eligible purchases, and choosing exactly how much digital cash to apply per order.
+- **Topics covered:** Updated the Add Funds helper paragraph text while preserving the existing left alignment, black color, Futura Book font, uppercase treatment, and placement below the balance.
+- **Decisions / outcomes:** Treated this as copy-only UI iteration; no route, balance, checkout, barcode, or digital-cash logic changed.
+- **Changes:** **`src/pages/account/load-card/page.tsx`** now uses: **`LOAD A GIFT CARD(S) TO ADD FUNDS TO YOUR ACCOUNT. YOUR AVAILABLE DIGITAL CASH BALANCE WILL BE AUTOMATICALLY APPLIED AT CHECKOUT, WITH NO CODE NEEDED. AVAILABLE FUNDS CAN BE APPLIED TOWARD ANY ELIGIBLE PURCHASE. FOR ADDED FLEXIBILITY, YOU MAY CHOOSE EXACTLY HOW MUCH DIGITAL CASH TO APPLY TO EACH ORDER.`** Verified with **`npm run build`**.
+- **Conventions:** Continue treating the Add Funds helper paragraph as product-managed copy that can be updated independently from the underlying digital-cash behavior.
