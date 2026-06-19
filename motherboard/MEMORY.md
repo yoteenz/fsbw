@@ -29838,3 +29838,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Restored the **VIEW ALL BENEFITS / HIDE ALL BENEFITS** button to the position directly below the premium membership hero image. Kept the expanded benefits content below the comparison chart and above **TOTAL DUE TODAY**.
 - **Changes:** Updated both **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline Account -> Rewards premium chart in **`src/pages/account/membership/page.tsx`**. Verified the source order is hero image -> View/Hide button -> comparison chart -> expanded benefits content (when open) -> Total Due Today, and verified with **`npm run build`**.
 - **Conventions:** Premium subscription upgrade charts should keep the View/Hide All Benefits button below the hero image; only the expanded benefits content belongs below the comparison chart.
+
+---
+
+## 2026-06-19 — Tier Benefits Guide height matched to menu toggle
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide copy/typography/rose bullets/close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup and expanded benefits styling; Settings row rhythm; Reviews subtitle styling; compact Points History scrolling; tier threshold typography; Concierge card gating; gray expanded premium benefit headings; and premium chart toggle placement correction.
+- **Topics covered:** The latest request asked for the Tier Benefits Guide toggle main card height to match the menu toggle main card height, and for the **all tiers** header text on the TBG toggle to be gray.
+- **Decisions / outcomes:** Replaced the hard-coded **560px** TBG card min/height/max-height with shared **`MENU_TOGGLE_PANEL_HEIGHT`** so it matches the menu toggle card. Set **all tiers** to gray while keeping lowercase Bohemy styling.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
+- **Conventions:** Account -> Rewards Tier Benefits Guide card height should use **`MENU_TOGGLE_PANEL_HEIGHT`** to stay aligned with the menu toggle main card; **all tiers** should be gray lowercase Bohemy.
