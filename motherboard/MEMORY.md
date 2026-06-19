@@ -29638,3 +29638,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Updated both the mock admin digital-cash alert and real generated digital-cash deposit alerts so new Account Alerts rows use the singular action text. Updated the alerts catalog/debug copy as well to keep the source-of-truth catalog aligned.
 - **Changes:** **`src/pages/account/notifications/page.tsx`**, **`src/utils/orderAccountAlerts.ts`**, and **`src/utils/accountAlertsCatalog.ts`** now use **`VIEW TRANSACTION`** for digital-cash deposit alert action text. Verified no remaining **`VIEW TRANSACTIONS`** matches under **`src/`** and verified with **`npm run build`**.
 - **Conventions:** Digital-cash alert action text on Account → Alerts should read **VIEW TRANSACTION** (singular), even though it opens the shared Digital Cash History popup.
+
+---
+
+## 2026-06-19 — Membership Status tier perks headings removed
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds copy/nav, UPR and Brand Member premium perk copy/styling/order, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting/copy, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, IIYM 12-month-only double points, UPR **DOUBLE YOUR POINTS** ordering, and **EXPLORE ALL BENEFITS** spacing.
+- **Topics covered:** The latest request asked to remove the **SILVER TIER PERKS:** / **RED TIER PERKS:** / **BLACK TIER PERKS:** text from the Membership Status section of Account → Rewards.
+- **Decisions / outcomes:** Removed only the tier-heading paragraph above the rose-icon perk lists. The actual Silver / Red / Black rose-icon perk rows remain unchanged.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** to remove the conditional paragraph rendering **BLACK TIER PERKS:** / **RED TIER PERKS:** / **SILVER TIER PERKS:**. Verified no remaining matching strings in the membership page and verified with **`npm run build`**.
+- **Conventions:** Membership Status card tier perk lists should display directly as rose-icon rows without a **[TIER] TIER PERKS:** heading above them.
