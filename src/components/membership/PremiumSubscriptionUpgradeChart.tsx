@@ -156,6 +156,30 @@ export default function PremiumSubscriptionUpgradeChart({
       />
     </div>
 
+    <button
+      type="button"
+      onClick={() => setShowAllBenefits((v) => !v)}
+      aria-expanded={showAllBenefits}
+      style={{
+        display: 'block',
+        width: '100%',
+        textAlign: 'center',
+        fontFamily: '"Futura PT Medium"',
+        fontWeight: '500',
+        color: '#000000',
+        fontSize: '10px',
+        textTransform: 'uppercase',
+        margin: '0 0 18px 0',
+        padding: 0,
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        lineHeight: 1.35
+      }}
+    >
+      {showAllBenefits ? 'HIDE ALL BENEFITS' : 'VIEW ALL BENEFITS'}
+    </button>
+
     {/* Comparison Table */}
       <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '18px', display: 'flex', justifyContent: 'center' }}>
         <table style={{ width: 'max-content', borderCollapse: 'collapse', fontSize: '9px', transform: 'translateZ(0)' }}>
@@ -581,29 +605,6 @@ export default function PremiumSubscriptionUpgradeChart({
         </table>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setShowAllBenefits((v) => !v)}
-        aria-expanded={showAllBenefits}
-        style={{
-          display: 'block',
-          width: '100%',
-          textAlign: 'center',
-          fontFamily: '"Futura PT Medium"',
-          fontWeight: '500',
-          color: '#000000',
-          fontSize: '10px',
-          textTransform: 'uppercase',
-          margin: '0 0 18px 0',
-          padding: 0,
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          lineHeight: 1.35
-        }}
-      >
-        {showAllBenefits ? 'HIDE ALL BENEFITS' : 'VIEW ALL BENEFITS'}
-      </button>
       {showAllBenefits && (
         <div
           style={{

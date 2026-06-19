@@ -29828,3 +29828,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the headings left-aligned, lowercase, Bohemy, and **18px**, but changed their color from brand red to shared gray **`#808080`**.
 - **Changes:** Updated **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline expanded benefits heading style in **`src/pages/account/membership/page.tsx`**. Verified with **`npm run build`**.
 - **Conventions:** In premium subscription upgrade chart expanded benefits, **3 months premium / 6 months premium / 12 months premium** headings should be left-aligned lowercase Bohemy in gray, not red.
+
+---
+
+## 2026-06-19 — Premium chart toggle button restored below hero image
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide copy/typography/rose bullets/close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup and expanded benefits styling; Settings row rhythm; Reviews subtitle styling; compact Points History scrolling; tier threshold typography; Concierge card gating; and gray expanded premium benefit headings.
+- **Topics covered:** The latest request clarified that only the content revealed by **VIEW ALL BENEFITS / HIDE ALL BENEFITS** should have moved below the comparison chart, not the button text itself. The button should be restored below the hero image.
+- **Decisions / outcomes:** Restored the **VIEW ALL BENEFITS / HIDE ALL BENEFITS** button to the position directly below the premium membership hero image. Kept the expanded benefits content below the comparison chart and above **TOTAL DUE TODAY**.
+- **Changes:** Updated both **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline Account -> Rewards premium chart in **`src/pages/account/membership/page.tsx`**. Verified the source order is hero image -> View/Hide button -> comparison chart -> expanded benefits content (when open) -> Total Due Today, and verified with **`npm run build`**.
+- **Conventions:** Premium subscription upgrade charts should keep the View/Hide All Benefits button below the hero image; only the expanded benefits content belongs below the comparison chart.
