@@ -833,7 +833,7 @@ function LoadCardPage() {
                         margin: '0 0 22px 0',
                         fontWeight: '400',
                         lineHeight: '1.35',
-                        textAlign: 'center',
+                        textAlign: 'left',
                         textTransform: 'uppercase',
                         width: '100%'
                       }}
