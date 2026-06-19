@@ -29798,3 +29798,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the Points History card header and column labels fixed, and moved only transaction rows into a capped scroll container sized for six rows. Added a scroll listener and ref-backed **BACK TO TOP** text button that appears once the row list is scrolled away from the top.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** with six-row scroll sizing constants, a points-history list ref/state, scroll/back-to-top handlers, row min-height styling, and the conditional **BACK TO TOP** button. Verified with **`npm run build`**.
 - **Conventions:** Account -> Rewards **POINTS HISTORY** should stay compact by showing six visible transaction rows; row seven and beyond scroll inside the card, and **BACK TO TOP** appears only after scrolling.
+
+---
+
+## 2026-06-19 — Tier Benefits Guide threshold typography adjusted
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide content, rose bullets, Bohemy/header typography, threshold typography, and close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup; Settings row rhythm; Reviews subtitle styling; premium subscription chart toggle placement; expanded premium benefit list styling; and compact Points History scrolling.
+- **Topics covered:** The latest request asked for **RED TIER STATUS — 2,000 PTS** and **BLACK TIER STATUS — 4,000 PTS** in the Tier Benefits Guide toggle to use **Futura PT Medium** instead of Book, and for the **ALL TIERS** header to be lowercase Bohemy too.
+- **Decisions / outcomes:** Restored **all tiers** to the shared lowercase Bohemy Tier Benefits Guide section-header style. Updated the Red and Black threshold rows to explicitly use **Futura PT Medium** / 500; Red keeps brand red and Black keeps the inherited black text color.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
+- **Conventions:** In the Tier Benefits Guide, **all tiers** should be lowercase Bohemy with the other section headers; Status Progression threshold rows for Silver/Red/Black should use Futura PT Medium, with Red in brand red and Silver gray.
