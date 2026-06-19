@@ -29164,3 +29164,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to restyle **because frontal slayer isn't just a name… it's a mindset.** on **`/brand/about`** as lowercase **Bohemy** (gray), not red uppercase Futura accent.
 - **Changes:** **`brandAboutCopy.ts`** — line lowercased; moved from **`BRAND_ABOUT_ACCENT_PARAGRAPHS`** to **`BRAND_ABOUT_BOHEMY_PARAGRAPHS`**. **`BrandAboutUsBody.tsx`** — Bohemy **17px** **`#808080`**, **`textTransform: none`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand reviews headline: gray Futura Medium combined line
+
+- **Context:** User merged reviews opener into one line — **THE FRONTAL SLAYER COMMUNITY IS GROWING. YOUR REVIEW COULD BE THE FIRST.** — styled gray **Futura PT Medium** (not red accent / Demi).
+- **Changes:** **`brandReviewsCopy.ts`** — single **`mediumGray`** headline block; removed separate red/gray headline lines. **`BrandReviewsEmptyState.tsx`** — **`mediumGray`** variant (**Medium**, **`#808080`**). Pushed **`master`** + **`preview/mobile`**.
