@@ -91,7 +91,7 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
   {
     title: 'TIER 1 — DISCOVER',
     description: 'EASY TASKS THAT GET MEMBERS INVOLVED.',
-    requirement: 'THEY ONLY NEED TO COMPLETE 3/7 TO ADVANCE TIERS.',
+    requirement: 'YOU ONLY NEED TO COMPLETE 3/7 TO ADVANCE TIERS.',
     tasks: [
       'MAKE A PURCHASE',
       'LEAVE A PRODUCT REVIEW',
