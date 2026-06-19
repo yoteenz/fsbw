@@ -29185,3 +29185,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to change **UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.** on **`/brand/reviews`** to brand red.
 - **Changes:** **`brandReviewsCopy.ts`** — **`until-then`** block variant **`demiGray` → `accent`** (Futura PT Medium **`#EB1C24`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — About mindset Bohemy copy shortened
+
+- **Context:** User updated About Bohemy line to **because frontal slayer isn't just a name…** (removed **it's a mindset.**).
+- **Changes:** **`brandAboutCopy.ts`** — paragraph + **`BRAND_ABOUT_BOHEMY_PARAGRAPHS`** entry. Pushed **`master`** + **`preview/mobile`**.
