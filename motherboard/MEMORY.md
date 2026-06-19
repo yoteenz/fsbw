@@ -29878,3 +29878,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Replaced the longer TBG sentence with the exact shorter client-facing sentence, rendered uppercase by the existing TBG container.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
 - **Conventions:** TBG status-progression copy should use **eligible purchase points** wording without hyphenated **purchase-earned** in the visible sentence.
+
+---
+
+## 2026-06-19 — Premium upgrade total label matched to BAW
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards and related membership surfaces: Add Funds copy/nav; digital-cash alert sorting/history popup consolidation; premium rewards and IIYM copy, rose bullets, PSA cleanup, and UPR ordering; Brand Member perks styling; voucher-history disclaimer removal; Membership Status tier descriptions/perks/spacing/progress typography; Settings and Reviews typography/spacing; Tier Benefits Guide copy, rose bullets, Bohemy headers, card height, close icon, purchase-only tier-status wording, and **premium advantage** header naming; premium upgrade chart close icon, View/Hide placement, expanded benefits styling, and compact Points History scrolling; plus Account Profile Concierge gating.
+- **Topics covered:** The latest request asked to change the premium upgrade toggle’s **TOTAL DUE TODAY** text to use the same **TOTAL DUE** text and styling as the Build-a-Wig main page total label.
+- **Decisions / outcomes:** Changed the premium upgrade total label from red **TOTAL DUE TODAY** to gray **TOTAL DUE**, matching the BAW main page’s mobile label treatment: Futura PT Medium, 12px, uppercase, gray **`#808080`**, weight 500.
+- **Changes:** Updated both premium chart render paths: **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline Account -> Rewards premium upgrade chart in **`src/pages/account/membership/page.tsx`**. Verified no remaining **TOTAL DUE TODAY** text exists under `src/` and verified with **`npm run build`**.
+- **Conventions:** Premium subscription upgrade charts should use the same total label text/styling as the BAW main page: **TOTAL DUE** in gray Futura PT Medium at 12px; avoid the older red **TOTAL DUE TODAY** label.

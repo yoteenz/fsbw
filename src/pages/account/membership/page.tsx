@@ -2017,19 +2017,19 @@ function MembershipPage() {
                           </div>
                         )}
 
-                        {/* Total Due Today - negative margin pulls card bottom up without changing button distance (12px) from card */}
+                        {/* Total Due - negative margin pulls card bottom up without changing button distance (12px) from card */}
                         <div style={{ textAlign: 'center', marginBottom: '-10px', paddingBottom: '0' }}>
                           <p
                             style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '11px',
-                              margin: '0 0 4px 0',
+                              fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
+                              color: '#808080',
+                              fontSize: '12px',
+                              margin: 0,
                               textTransform: 'uppercase',
                               fontWeight: '500'
                             }}
                           >
-                            TOTAL DUE TODAY
+                            TOTAL DUE
                           </p>
                           <p
                             style={{
