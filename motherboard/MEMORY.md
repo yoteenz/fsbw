@@ -29548,3 +29548,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the copy and placement unchanged, but changed the tier description paragraph from black **Futura PT Book** to gray **Futura PT Medium** with medium weight.
 - **Changes:** **`src/pages/account/membership/page.tsx`** now styles the Membership Status tier description paragraph with **`fontFamily: "Futura PT Medium"`**, **`color: BRAND_GRAY`**, and **`fontWeight: "500"`**. Verified with **`npm run build`**.
 - **Conventions:** Membership Status tier description paragraphs above **BENEFITS INCLUDE** should read as gray Futura PT Medium supporting copy.
+
+---
+
+## 2026-06-19 — Membership Status tier perks use rose-icon lists
+
+- **Context:** In this chat, after styling the Membership Status tier descriptions, the user asked to replace the **BENEFITS INCLUDE** section for each tier on the Membership Status card with new Silver / Red / Black perk lists and to use rose icons for the bullets.
+- **Topics covered:** Reused the existing **`TierRoseBenefit`** helper in **`src/pages/account/membership/page.tsx`** so the Membership Status card perk rows match the rose-icon treatment already used in the Tier Benefits modal.
+- **Decisions / outcomes:** Replaced the old single-line **BENEFITS INCLUDE** summaries with tier-specific headings (**SILVER TIER PERKS:** / **RED TIER PERKS:** / **BLACK TIER PERKS:**) and rose-icon list rows. Left pending users on **REACH SILVER TO UNLOCK TIER BENEFITS!**
+- **Changes:** **`src/pages/account/membership/page.tsx`** now renders the requested Silver, Red, and Black perk lists with **`/assets/rose-alert.svg`** bullets on the Membership Status card. Removed the now-unused **`getWelcomeDiscountAmount`** import after the old hidden welcome-discount span was removed. Verified with **`npm run build`**.
+- **Conventions:** Membership Status tier perks should be explicit rose-icon lists instead of compact comma-separated **BENEFITS INCLUDE** summaries.

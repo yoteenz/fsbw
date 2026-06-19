@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { PREMIUM_BENEFITS_BY_TIER } from '../../../constants/premiumBenefitsByTier';
-import { getWelcomeDiscountAmount } from '../../../constants/tiers';
 import { SUBSCRIPTION_TIERS, type SubscriptionTierId } from '../../../constants/subscriptionPricing';
 import { SOCIAL_EARN_LINKS } from '../../../constants/socialLinks';
 import { recordSocialClick } from '../../../utils/socialAnalytics';
@@ -2486,24 +2485,61 @@ fontFamily: '"Futura PT Book"',
                                           : 'YOUR FOUNDATION FOR EARNING EXCLUSIVE REWARDS, MEMBER SAVINGS, DIGITAL CASH REDEMPTIONS AND FUTURE STATUS UPGRADES.'}
                                     </p>
                                   )}
-                                  <p
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      color: '#000000',
-                                      fontSize: '10px',
-                                      margin: displayTier === 'PENDING' ? '16px 0 4px 0' : '0 0 4px 0',
-                                      textTransform: 'uppercase'
-                                    }}
-                                  >
-                                    {(() => {
-                                      const t = displayTier;
-                                      const welcomeAmount = getWelcomeDiscountAmount(t);
-                                      if (t === 'PENDING') return <>REACH SILVER TO UNLOCK TIER BENEFITS!</>;
-                                      if (t === 'BLACK') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X COLOR VOUCHER <br />1X STYLING VOUCHER, 1,000 LOYALTY POINTS</>;
-                                      if (t === 'RED') return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 1X FLEXIBLE CAP VOUCHER <br />1X HAIRLINE VOUCHER, 500 LOYALTY POINTS</>;
-                                      return <><span data-welcome-discount-amount={welcomeAmount} aria-hidden style={{ display: 'none' }} />BENEFITS INCLUDE: DIGITAL CASH, 250 LOYALTY POINTS</>;
-                                    })()}
-                                  </p>
+                                  {displayTier === 'PENDING' ? (
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#000000',
+                                        fontSize: '10px',
+                                        margin: '16px 0 4px 0',
+                                        textTransform: 'uppercase'
+                                      }}
+                                    >
+                                      REACH SILVER TO UNLOCK TIER BENEFITS!
+                                    </p>
+                                  ) : (
+                                    <div style={{ margin: '0 0 4px 0' }}>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          color: displayTier === 'BLACK' ? '#000000' : displayTier === 'RED' ? '#EB1C24' : BRAND_GRAY,
+                                          fontSize: '10px',
+                                          margin: '0 0 6px 0',
+                                          textTransform: 'uppercase',
+                                          fontWeight: '500'
+                                        }}
+                                      >
+                                        {displayTier === 'BLACK'
+                                          ? 'BLACK TIER PERKS:'
+                                          : displayTier === 'RED'
+                                            ? 'RED TIER PERKS:'
+                                            : 'SILVER TIER PERKS:'}
+                                      </p>
+                                      {displayTier === 'BLACK' ? (
+                                        <>
+                                          <TierRoseBenefit>1,000 BONUS LOYALTY POINTS</TierRoseBenefit>
+                                          <TierRoseBenefit>COLOR VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>STYLING VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>1.5X POINT EARNING BONUS</TierRoseBenefit>
+                                          <TierRoseBenefit>BLACK STATUS PROTECTION BENEFIT</TierRoseBenefit>
+                                          <TierRoseBenefit>ANNUAL BLACK STATUS REWARD</TierRoseBenefit>
+                                        </>
+                                      ) : displayTier === 'RED' ? (
+                                        <>
+                                          <TierRoseBenefit>500 BONUS LOYALTY POINTS</TierRoseBenefit>
+                                          <TierRoseBenefit>FLEXIBLE CAP VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>HAIRLINE VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>1.25X POINT EARNING BONUS</TierRoseBenefit>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <TierRoseBenefit>250 BONUS LOYALTY POINTS</TierRoseBenefit>
+                                          <TierRoseBenefit>MEMBERS ONLY REWARD ACCESS</TierRoseBenefit>
+                                          <TierRoseBenefit>STATUS PROGRESSION TRACKING</TierRoseBenefit>
+                                        </>
+                                      )}
+                                    </div>
+                                  )}
                                   <div style={{ marginBottom: '24px' }}>
                                     <button
                                       type="button"
