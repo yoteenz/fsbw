@@ -29868,3 +29868,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Renamed only the displayed Bohemy header text; the supporting premium-member paragraph below it remains unchanged.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`**. Verified with **`npm run build`**.
 - **Conventions:** In the TBG toggle, the section header should read **premium advantage**.
+
+---
+
+## 2026-06-19 — Tier status sentence shortened
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards and related membership surfaces, including Tier Benefits Guide copy/typography/card height, purchase-only tier status clarification, premium upgrade chart layout/styling, compact Points History scrolling, Account Profile Concierge gating, and TBG header naming.
+- **Topics covered:** The latest request asked to remove dashed wording from the TBG status-progression sentence so it says: **“Tier status is based only on eligible purchase points earned during each 6 month cycle.”**
+- **Decisions / outcomes:** Replaced the longer TBG sentence with the exact shorter client-facing sentence, rendered uppercase by the existing TBG container.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
+- **Conventions:** TBG status-progression copy should use **eligible purchase points** wording without hyphenated **purchase-earned** in the visible sentence.

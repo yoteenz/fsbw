@@ -2153,7 +2153,7 @@ function MembershipPage() {
                       </div>
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>status progression</p>
-                      <p style={{ margin: '0 0 6px 0' }}>YOUR STATUS IS BASED ONLY ON POINTS EARNED FROM ELIGIBLE PURCHASES DURING EACH 6 MONTH QUALIFICATION PERIOD. TOTAL LOYALTY POINTS MAY INCLUDE ALL WAYS TO EARN, BUT ONLY PURCHASE-EARNED POINTS COUNT TOWARD TIER STATUS:</p>
+                      <p style={{ margin: '0 0 6px 0' }}>TIER STATUS IS BASED ONLY ON ELIGIBLE PURCHASE POINTS EARNED DURING EACH 6 MONTH CYCLE.</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY, fontWeight: 500, margin: '0 0 2px 0' }}>SILVER TIER STATUS &mdash; 1,000 PTS</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontWeight: 500, margin: '0 0 2px 0' }}>RED TIER STATUS &mdash; 2,000 PTS</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: 500, margin: '0 0 8px 0' }}>BLACK TIER STATUS &mdash; 4,000 PTS</p>
