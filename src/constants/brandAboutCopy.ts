@@ -14,7 +14,7 @@ export const BRAND_ABOUT_US_PARAGRAPHS = [
 /** Red accent lines on About Us, Futura PT Medium. */
 export const BRAND_ABOUT_ACCENT_PARAGRAPHS: ReadonlySet<string> = new Set([]);
 
-/** Lowercase Bohemy lines on About Us. */
+/** Lowercase Bohemy lines on About Us (brand red). */
 export const BRAND_ABOUT_BOHEMY_PARAGRAPHS: ReadonlySet<string> = new Set([
   "because frontal slayer isn't just a name… it's a mindset.",
 ]);
