@@ -1989,7 +1989,7 @@ function MembershipPage() {
                                   style={{
                                     fontFamily: '"Bohemy", cursive',
                                     fontSize: '18px',
-                                    color: '#EB1C24',
+                                    color: BRAND_GRAY,
                                     margin: '0 0 6px 0',
                                     textTransform: 'lowercase',
                                     textAlign: 'left',
