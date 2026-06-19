@@ -2470,12 +2470,13 @@ fontFamily: '"Futura PT Book"',
                                   {displayTier !== 'PENDING' && (
                                     <p
                                       style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        color: '#000000',
+                                        fontFamily: '"Futura PT Medium"',
+                                        color: BRAND_GRAY,
                                         fontSize: '10px',
                                         margin: '16px 0 6px 0',
                                         textTransform: 'uppercase',
-                                        lineHeight: 1.35
+                                        lineHeight: 1.35,
+                                        fontWeight: '500'
                                       }}
                                     >
                                       {displayTier === 'BLACK'
