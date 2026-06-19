@@ -38,10 +38,12 @@ import {
   CONCIERGE_SPECIAL_OFFER_ICON,
 } from '../../../assets/concierge/conciergeSectionIcons';
 import ConciergeSectionHeader from '../../../components/account/ConciergeSectionHeader';
+import SlayQuestRewardAsset from '../../../components/account/SlayQuestRewardAsset';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import type { SlayQuestRewardType } from '../../../config/slayQuestRewardAssets';
 
 /** Currency rates (USD base) and display symbols for special offer and elsewhere. */
 const CURRENCY_RATES: Record<string, { rate: number; symbol: string }> = {
@@ -369,6 +371,50 @@ function SlayChallengeGuide({ currentTierIndex }: { currentTierIndex: number }) 
     </div>
   );
 }
+
+type SlayChallengeTier1RewardValue = 'voucher' | '600points' | '';
+type SlayChallengeTier2RewardValue = '2xpoints' | '1000points' | '';
+
+type SlayChallengeRewardAssetSelection = {
+  rewardType: SlayQuestRewardType;
+  selectedRewardLabel: string;
+};
+
+const getSlayChallengeTier1RewardAssetSelection = (
+  reward: SlayChallengeTier1RewardValue
+): SlayChallengeRewardAssetSelection | null => {
+  if (reward === 'voucher') {
+    return {
+      rewardType: 'free_voucher',
+      selectedRewardLabel: '1X FLEXIBLE CAP VOUCHER',
+    };
+  }
+  if (reward === '600points') {
+    return {
+      rewardType: 'loyalty_points',
+      selectedRewardLabel: '600 LOYALTY POINTS',
+    };
+  }
+  return null;
+};
+
+const getSlayChallengeTier2RewardAssetSelection = (
+  reward: SlayChallengeTier2RewardValue
+): SlayChallengeRewardAssetSelection | null => {
+  if (reward === '2xpoints') {
+    return {
+      rewardType: 'double_points',
+      selectedRewardLabel: '2X LOYALTY POINTS',
+    };
+  }
+  if (reward === '1000points') {
+    return {
+      rewardType: 'loyalty_points',
+      selectedRewardLabel: '1,000 LOYALTY POINTS',
+    };
+  }
+  return null;
+};
 
 type SlayQuestReward = string | { type: 'or' };
 
@@ -1194,7 +1240,7 @@ function ConciergePage() {
     return `${year}-H2`; // after Jun 30 -> same year Jul–Dec
   };
 
-  const [slayChallengeTier1Reward] = useState<'voucher' | '600points' | ''>(() => {
+  const [slayChallengeTier1Reward] = useState<SlayChallengeTier1RewardValue>(() => {
     try {
       const saved = localStorage.getItem('slayChallengeTier1Reward');
       if (saved === 'voucher' || saved === '600points') return saved;
@@ -1203,7 +1249,7 @@ function ConciergePage() {
       return '600points';
     } catch (e) { return '600points'; }
   });
-  const [slayChallengeTier2Reward] = useState<'2xpoints' | '1000points' | ''>(() => {
+  const [slayChallengeTier2Reward] = useState<SlayChallengeTier2RewardValue>(() => {
     try {
       const saved = localStorage.getItem('slayChallengeTier2Reward');
       if (saved === '2xpoints' || saved === '1000points') return saved;
@@ -1252,6 +1298,8 @@ function ConciergePage() {
   const slayChallengeActive = slayChallengeSelectedCycle === slayChallengeCurrentCycleLabel;
   const slayChallengeTier1Complete = slayChallengeTier1Progress.purchase && slayChallengeTier1Progress.review && slayChallengeTier1Progress.post;
   const slayChallengeTier2Complete = slayChallengeTier2Progress.purchase && slayChallengeTier2Progress.review && slayChallengeTier2Progress.socialTag;
+  const slayChallengeTier1CompletedRequirements = Object.values(slayChallengeTier1Progress).filter(Boolean).length;
+  const slayChallengeTier2CompletedRequirements = Object.values(slayChallengeTier2Progress).filter(Boolean).length;
   const storedSlayChallengeTierIndex = (() => {
     try {
       const raw = localStorage.getItem('slayChallengeCurrentTierIndex');
@@ -1265,6 +1313,20 @@ function ConciergePage() {
     ? (slayChallengeTier2Complete ? 2 : 1)
     : 0;
   const slayChallengeCurrentTierIndex = Math.max(storedSlayChallengeTierIndex, progressSlayChallengeTierIndex);
+  const slayChallengeTier1RewardAssetSelection = getSlayChallengeTier1RewardAssetSelection(slayChallengeTier1Reward);
+  const slayChallengeTier2RewardAssetSelection = getSlayChallengeTier2RewardAssetSelection(slayChallengeTier2Reward);
+  const slayChallengeCurrentRewardAsset =
+    slayChallengeCurrentTierIndex === 1
+      ? slayChallengeTier2RewardAssetSelection
+      : slayChallengeCurrentTierIndex === 0
+        ? slayChallengeTier1RewardAssetSelection
+        : null;
+  const slayChallengeCurrentRewardCompletedRequirements =
+    slayChallengeCurrentTierIndex === 1
+      ? slayChallengeTier2CompletedRequirements
+      : slayChallengeTier1CompletedRequirements;
+  const slayChallengeCurrentRewardTierLabel =
+    slayChallengeCurrentTierIndex === 1 ? 'TIER 2 COLLECTIBLE' : 'TIER 1 COLLECTIBLE';
 
   // Ayoteenz admin: disable time limit and force stage for testing (selection | selected_waiting | active | closed)
   const SLAY_CHALLENGE_ADMIN_STAGE_KEY = 'slayChallengeAdminStage';
@@ -6002,6 +6064,31 @@ function ConciergePage() {
                     </div>
                   )}
                   <SlayChallengeGuide currentTierIndex={slayChallengeCurrentTierIndex} />
+                  {slayChallengeCurrentRewardAsset && (
+                    <div style={{ marginTop: '-2px', marginBottom: '10px' }}>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#EB1C24',
+                          fontSize: '9px',
+                          margin: '0 0 6px 0',
+                          lineHeight: 1.25,
+                          textTransform: 'uppercase',
+                          fontWeight: 500,
+                          letterSpacing: '0.08em',
+                          textAlign: 'left',
+                        }}
+                      >
+                        {slayChallengeCurrentRewardTierLabel}
+                      </p>
+                      <SlayQuestRewardAsset
+                        rewardType={slayChallengeCurrentRewardAsset.rewardType}
+                        completedRequirements={slayChallengeCurrentRewardCompletedRequirements}
+                        totalRequirements={3}
+                        selectedRewardLabel={slayChallengeCurrentRewardAsset.selectedRewardLabel}
+                      />
+                    </div>
+                  )}
                   {effectiveInSelectionWindow && effectiveHasSelectedForNext && (
                     <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase', textAlign: 'left' }}>
                       You’re set for the next cycle. Your challenge begins when the new cycle starts.
