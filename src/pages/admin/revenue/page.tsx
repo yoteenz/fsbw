@@ -18,6 +18,7 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   buildRevenueOrdersList,
+  getBcfProductSalesCounts,
   countGiftCardsSoldFromOrders,
   getDepletedInventory,
   getOrdersStats,
@@ -72,6 +73,7 @@ const FINANCIAL_DEBT_RATIO_COLOR: Record<string, string> = {
 };
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
+const PRODUCT_TAB_WIG_LABELS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
 
 /** Live globe polls GET /api/admin/live-presence; balance freshness vs Supabase reads while OVERVIEW is open (was 30s; 90s ≈ middle vs 2m). */
 const LIVE_GLOBE_REFRESH_MS = 90_000;
@@ -734,6 +736,31 @@ export default function AdminRevenue() {
   const giftCardInventoryCap = STARTING_INVENTORY.giftCards;
   const ordersStats = useMemo(() => getOrdersStats(orders, totalRevenue), [orders, totalRevenue]);
   const inventoryTotal = depletedInventory.totalUnits;
+  const bcfProductSales = useMemo(() => getBcfProductSalesCounts(orders), [orders]);
+  const visibleWigInventoryLabels = useMemo(
+    () => PRODUCT_TAB_WIG_LABELS.filter((label) => !searchQuery || label.includes(searchQuery)),
+    [searchQuery]
+  );
+  const visibleBcfProductSections = useMemo(() => {
+    const showAllBcfRows = !searchQuery || 'BCF'.includes(searchQuery);
+    const sections = new Map<string, typeof bcfProductSales>();
+    for (const row of bcfProductSales) {
+      const includeRow =
+        showAllBcfRows ||
+        row.label.includes(searchQuery) ||
+        row.textureLabel.includes(searchQuery) ||
+        row.categoryLabel.includes(searchQuery);
+      if (!includeRow) continue;
+      const rows = sections.get(row.textureLabel) ?? [];
+      rows.push(row);
+      sections.set(row.textureLabel, rows);
+    }
+    return Array.from(sections.entries()).map(([textureLabel, rows]) => ({ textureLabel, rows }));
+  }, [bcfProductSales, searchQuery]);
+  const giftCardsMatchesSearch =
+    !searchQuery || 'GIFT CARD'.includes(searchQuery) || 'GIFT CARDS'.includes(searchQuery);
+  const productSearchHasMatches =
+    visibleWigInventoryLabels.length > 0 || visibleBcfProductSections.length > 0 || giftCardsMatchesSearch;
 
   // Orders tab: only show awaiting form / unfulfilled (new) in main list; shipped + pending-with-tracking go to Pending card; delivered/fulfilled are on fulfilled orders page
   const unfulfilledOrders = useMemo(() => {
@@ -1403,30 +1430,50 @@ export default function AdminRevenue() {
                 {activeTab === 'PRODUCTS' && (
                   <>
                     <div className="space-y-2 mb-4">
-                      {['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL']
-                        .filter((label) => !searchQuery || label.includes(searchQuery))
-                        .map((label) => (
+                      {visibleWigInventoryLabels.map((label) => (
                         <div key={label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                           <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{label}</span>
                           <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{depletedInventory.products[label] ?? 0}</span>
                         </div>
                       ))}
                     </div>
-                    {searchQuery && ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'].every((label) => !label.includes(searchQuery)) && (
+                    <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />
+                    {visibleBcfProductSections.length > 0 && (
+                      <div className="mb-4">
+                        <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '0 0 10px 0' }}>BCF</h3>
+                        <div className="space-y-4">
+                          {visibleBcfProductSections.map((section) => (
+                            <div key={section.textureLabel} className="space-y-2">
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
+                                {section.textureLabel}
+                              </p>
+                              {section.rows.map((row) => (
+                                <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                  <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.categoryLabel}</span>
+                                  <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.count} SOLD</span>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {searchQuery && !productSearchHasMatches && (
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: '0 0 12px 0' }}>
                         NO PRODUCTS MATCH YOUR SEARCH.
                       </p>
                     )}
-                    {/** Invisible separator — same vertical rhythm as prior “Tools” / “Packaging” label rows. */}
                     <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />
+                    {giftCardsMatchesSearch && (
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>GIFT CARDS</span>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
-                          {giftCardsSoldCount} / {giftCardInventoryCap}
-                        </span>
+                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>GIFT CARDS</span>
+                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
+                            {giftCardsSoldCount} / {giftCardInventoryCap}
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />
                     <div className="space-y-2 mb-4">
                       {Object.entries(depletedInventory.packaging).map(([label, value]) => (

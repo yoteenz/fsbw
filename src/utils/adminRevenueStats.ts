@@ -17,7 +17,22 @@ export type RevenueOrderForStats = {
   [k: string]: unknown;
 };
 
+export type BcfTextureKey = 'straight' | 'wavy' | 'curly';
+export type BcfCategoryKey = 'bundles' | 'closures' | 'frontals';
+
 const PRODUCT_NAMES = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
+const BCF_TEXTURES: BcfTextureKey[] = ['straight', 'wavy', 'curly'];
+const BCF_CATEGORIES: BcfCategoryKey[] = ['bundles', 'closures', 'frontals'];
+const BCF_TEXTURE_LABELS: Record<BcfTextureKey, string> = {
+  straight: 'STRAIGHT',
+  wavy: 'WAVY',
+  curly: 'CURLY',
+};
+const BCF_CATEGORY_LABELS: Record<BcfCategoryKey, string> = {
+  bundles: 'BUNDLES',
+  closures: 'CLOSURES',
+  frontals: 'FRONTALS',
+};
 
 /** Starting inventory: products (10 each), packaging counts. */
 export const STARTING_INVENTORY = {
@@ -255,6 +270,58 @@ export function getDepletedInventory(orders: RevenueOrderForStats[]): DepletedIn
 
 /** Per-unit line-item sales counts (same normalization as admin Revenue overview TOP PRODUCTS). */
 export type ProductSalesRow = { label: string; count: number };
+export type BcfProductSalesRow = {
+  texture: BcfTextureKey;
+  textureLabel: string;
+  category: BcfCategoryKey;
+  categoryLabel: string;
+  label: string;
+  count: number;
+};
+
+function parseBcfProductSalesMeta(
+  line: { type?: string; productName?: string; name?: string }
+): { texture: BcfTextureKey; category: BcfCategoryKey } | null {
+  const type = String(line.type || '').toLowerCase();
+  const raw = String(line.productName || line.name || '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!raw) return null;
+
+  const parseTexture = (value: string): BcfTextureKey | null =>
+    BCF_TEXTURES.find((texture) => BCF_TEXTURE_LABELS[texture] === value) ?? null;
+  const parseCategory = (value: string): BcfCategoryKey | null =>
+    BCF_CATEGORIES.find((category) => BCF_CATEGORY_LABELS[category] === value) ?? null;
+
+  const dotParts = raw
+    .split('·')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (dotParts.length >= 2) {
+    const categoryFirst = parseCategory(dotParts[0] || '');
+    const textureSecond = parseTexture(dotParts[1] || '');
+    if (categoryFirst && textureSecond) {
+      return { texture: textureSecond, category: categoryFirst };
+    }
+    const textureFirst = parseTexture(dotParts[0] || '');
+    const categorySecond = parseCategory(dotParts[1] || '');
+    if (textureFirst && categorySecond) {
+      return { texture: textureFirst, category: categorySecond };
+    }
+  }
+
+  const texture = BCF_TEXTURES.find((key) => raw.includes(BCF_TEXTURE_LABELS[key]));
+  const category = BCF_CATEGORIES.find((key) => raw.includes(BCF_CATEGORY_LABELS[key]));
+  if (texture && category) return { texture, category };
+  if (type === 'shop-texture-category') {
+    return {
+      texture: texture ?? 'straight',
+      category: category ?? 'bundles',
+    };
+  }
+  return null;
+}
 
 /**
  * Count how many order line items map to each canonical product (NOIR, BLANCO, …).
@@ -277,6 +344,44 @@ export function getProductSalesCounts(orders: RevenueOrderForStats[]): ProductSa
     }
   }
   return PRODUCT_NAMES.map((name) => ({ label: name, count: counts[name] ?? 0 })).sort((a, b) => b.count - a.count);
+}
+
+/**
+ * Count BCF product sales by saved cart label (e.g. `BUNDLES · WAVY`) so the admin Revenue
+ * Products tab can group bundles / closures / frontals under STRAIGHT / WAVY / CURLY.
+ */
+export function getBcfProductSalesCounts(orders: RevenueOrderForStats[]): BcfProductSalesRow[] {
+  const counts = new Map<string, number>();
+  for (const texture of BCF_TEXTURES) {
+    for (const category of BCF_CATEGORIES) {
+      counts.set(`${texture}:${category}`, 0);
+    }
+  }
+
+  for (const order of orders) {
+    if (orderInventoryCanceled(order)) continue;
+    const items = order.lineItems?.length
+      ? order.lineItems
+      : [{ productName: order.productName, quantity: 1, type: (order as { type?: string }).type }];
+    for (const item of items) {
+      const parsed = parseBcfProductSalesMeta(item as { type?: string; productName?: string; name?: string });
+      if (!parsed) continue;
+      const key = `${parsed.texture}:${parsed.category}`;
+      const qty = Math.max(1, Math.floor(Number((item as { quantity?: number }).quantity) || 1));
+      counts.set(key, (counts.get(key) ?? 0) + qty);
+    }
+  }
+
+  return BCF_TEXTURES.flatMap((texture) =>
+    BCF_CATEGORIES.map((category) => ({
+      texture,
+      textureLabel: BCF_TEXTURE_LABELS[texture],
+      category,
+      categoryLabel: BCF_CATEGORY_LABELS[category],
+      label: `${BCF_TEXTURE_LABELS[texture]} ${BCF_CATEGORY_LABELS[category]}`,
+      count: counts.get(`${texture}:${category}`) ?? 0,
+    }))
+  );
 }
 
 /** Best-selling unit by line-item count; null if no product sales recorded. */
