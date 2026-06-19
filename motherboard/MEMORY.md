@@ -29338,3 +29338,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Hardened the Add Funds page to prefer the richer digital-cash state instead of allowing a stale zero from sync to win. The page now chooses the higher available balance and fuller history when merging local snapshots, and after the page-level sync runs it restores the richer pre-sync digital-cash balance/history if the rehydrate tries to collapse it back to zero or a thinner history.
 - **Changes:** **`src/pages/account/load-card/page.tsx`** now adds **`DigitalCashHistoryEntry`**, **`pickPreferredDigitalCashHistory()`**, and **`pickPreferredDigitalCashBalance()`** helpers. **`readStoredSignedInUser()`** now prefers the richer digital-cash balance/history across **`currentUser`** and **`registeredUsers`** instead of always taking the current snapshot’s numeric balance. The Add Funds **rehydrate effect** now captures the pre-sync digital-cash state, compares it with the post-sync state, and repairs the local/queued profile snapshot when a stale sync comes back with a lower balance (especially **0**) or a thinner history. Verified with **`npm run build`**.
 - **Conventions:** On the Add Funds page, treat a non-zero local digital-cash balance/history as the richer state when a page-open sync returns a stale lower balance; do not let the sync path silently zero out a known-good digital-cash snapshot.
+
+---
+
+## 2026-06-19 — Add Funds CTA label update
+
+- **Context:** Continuing the same chat after the Add Funds balance, alert, and sync fixes, the user asked to update the Add Funds button text from **`SUBMIT CODE`** to **`SUBMIT CODE(S)`**.
+- **Topics covered:** Located the Add Funds submit CTA in **`src/pages/account/load-card/page.tsx`** and changed only the visible label, leaving the button behavior, barcode submission flow, and surrounding layout untouched. Rebuilt immediately after the copy change to confirm the page still compiles cleanly.
+- **Decisions / outcomes:** The Add Funds CTA now reflects that the screen accepts multiple barcodes by showing **`SUBMIT CODE(S)`**. No logic changes were needed beyond the copy update.
+- **Changes:** **`src/pages/account/load-card/page.tsx`** — button label **`SUBMIT CODE`** → **`SUBMIT CODE(S)`**. Verified with **`npm run build`**.
+- **Conventions:** On the Add Funds screen, button copy should match the multi-barcode input behavior shown above the CTA.
