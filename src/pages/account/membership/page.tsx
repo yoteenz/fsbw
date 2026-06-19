@@ -2041,14 +2041,38 @@ function MembershipPage() {
                   >
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', flexShrink: 0 }}>
                       <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500', margin: 0, textTransform: 'uppercase' }}>
-                        TIER BENEFITS & HOW IT WORKS
+                        TIER BENEFITS GUIDE
                       </h2>
-                      <BrandRedCloseIcon
-                        size={16}
-                        alt="Close"
+                      <button
+                        type="button"
+                        aria-label="Close tier benefits guide"
                         onClick={() => setShowBenefitsModal(false)}
-                        style={{ cursor: 'pointer' }}
-                      />
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: 'pointer',
+                          color: '#EB1C24',
+                          lineHeight: 0,
+                        }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          style={{ display: 'block' }}
+                        >
+                          <path
+                            d="M6.40038 18.3074L5.69238 17.5994L11.2924 11.9994L5.69238 6.39941L6.40038 5.69141L12.0004 11.2914L17.6004 5.69141L18.3084 6.39941L12.7084 11.9994L18.3084 17.5994L17.6004 18.3074L12.0004 12.7074L6.40038 18.3074Z"
+                            fill="currentColor"
+                            stroke="currentColor"
+                            strokeWidth="0.1"
+                          />
+                        </svg>
+                      </button>
                     </div>
                     <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0, textTransform: 'uppercase' }}>
                       <p style={{ margin: '0 0 12px 0' }}>WELCOME BENEFITS ARE AWARDED ONCE UPON REACHING A NEW TIER. ONCE CLAIMED, YOUR STATUS CONTINUES TO UNLOCK EXCLUSIVE PRIVILEGES, EARNING BONUSES AND MEMBER REWARDS THROUGHOUT EACH 6 MONTH CYCLE.</p>
@@ -2540,7 +2564,7 @@ fontFamily: '"Futura PT Book"',
                                       )}
                                     </div>
                                   )}
-                                  <div style={{ marginBottom: '24px' }}>
+                                  <div style={{ marginBottom: '22px' }}>
                                     <button
                                       type="button"
                                       onClick={() => setShowBenefitsModal((prev) => !prev)}

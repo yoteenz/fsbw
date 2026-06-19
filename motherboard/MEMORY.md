@@ -29578,3 +29578,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the existing button behavior and typography, changing only its visual color and top spacing.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** so the **EXPLORE ALL BENEFITS** button uses gray **`#808080`** instead of brand red and has **`margin: 4px 0 0 0`**. Verified with **`npm run build`**.
 - **Conventions:** In the Membership Status card, **EXPLORE ALL BENEFITS** should be a subdued gray Futura PT Medium link with 4px top spacing unless the product owner asks to restore red emphasis.
+
+---
+
+## 2026-06-19 — Tier Benefits guide title, close icon, and link spacing
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds balance copy/nav, rewards disclaimer removals, UPR perk copy/styling, Brand Member copy changes, IIYM rose bullets and PSA label cleanup, Tier Benefits modal copy/styling, Membership Status tier descriptions/perks, alert sorting, shared Digital Cash History popup behavior, and **EXPLORE ALL BENEFITS** gray/top-spacing styling.
+- **Topics covered:** The latest request asked to reduce spacing below **EXPLORE ALL BENEFITS** by **2px**, change **TIER BENEFITS & HOW IT WORKS** to **TIER BENEFITS GUIDE**, and make the tier-benefits toggle close X brand red instead of black.
+- **Decisions / outcomes:** Kept the modal layout and behavior intact while tightening the link block spacing, shortening the title, and rendering the tier-benefits close icon as an inline SVG using **`currentColor`** with brand red **`#EB1C24`** so it cannot display as black.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`**: **EXPLORE ALL BENEFITS** wrapper bottom margin changed from **24px** to **22px**; the benefits modal header now reads **TIER BENEFITS GUIDE**; and that modal’s close control uses an accessible button with a red inline X SVG. Verified with **`npm run build`**.
+- **Conventions:** The tier benefits modal should be labeled **TIER BENEFITS GUIDE** and its close X should render in brand red. The **EXPLORE ALL BENEFITS** link area should keep the gray text / 4px top spacing from the prior change, with 22px below the link.
