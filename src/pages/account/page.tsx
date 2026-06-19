@@ -5,6 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
 import { hasNewReviewApproved } from '../../constants/reviews';
 import {
+  isAdminEmail,
   isAyoteenzAdminAccount,
   isMockDataAccount,
   isMockProfileChromeActive,
@@ -519,32 +520,28 @@ function AccountPage() {
 
   // Initialize admin (mock-data) account only with proper gift card balance and unlocked discounts – no test data for non-admin accounts
   useEffect(() => {
-    if (userData && isMockDataAccount(userData) && !(isAyoteenzAdminAccount(userData) && founderViewAsClient)) {
+    if (userData && isAdminEmail(String(userData.email || '')) && !(isAyoteenzAdminAccount(userData) && founderViewAsClient)) {
         try {
           const currentUser = localStorage.getItem('currentUser');
           if (currentUser) {
             const user = JSON.parse(currentUser);
-            const isPremium = user.membershipType === 'PREMIUM' || (user.unlockedDiscounts || []).includes('12months');
-            // Only top up to $70 for premium (12-month) members; standard members keep $10 welcome discount only
-            if (!isPremium) return;
-
             let needsUpdate = false;
             const updatedUser = { ...user };
 
-            // Ensure gift card balance is $80 for founder-admin testing ($10 signup + $60 premium + $10 manual test top-up)
+            // Ensure admin test accounts have an extra $10 on top of the usual digital cash state for Add Funds QA.
             const expectedBalance = 80;
             if (!user.giftCardBalance || user.giftCardBalance < expectedBalance) {
               updatedUser.giftCardBalance = expectedBalance;
               needsUpdate = true;
             }
 
-            // Ensure unlocked discounts include signup and 12months
+            // Ensure admin test accounts keep the baseline unlocked discount set used by existing mock flows.
             const unlockedDiscounts = user.unlockedDiscounts || [];
             if (!unlockedDiscounts.includes('signup')) {
               updatedUser.unlockedDiscounts = [...unlockedDiscounts, 'signup'];
               needsUpdate = true;
             }
-            if (!unlockedDiscounts.includes('12months')) {
+            if (!unlockedDiscounts.includes('12months') && (user.membershipType === 'PREMIUM' || unlockedDiscounts.includes('12months'))) {
               updatedUser.unlockedDiscounts = [...(updatedUser.unlockedDiscounts || unlockedDiscounts), '12months'];
               needsUpdate = true;
             }

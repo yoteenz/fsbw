@@ -5,7 +5,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { isAyoteenzAdminAccount, isSignedIn as isUserSignedIn, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
+import { isAdminEmail, isSignedIn as isUserSignedIn, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getNotifications } from '../../../utils/api';
 import {
   DIGITAL_CASH_HISTORY_POPUP_ACTION,
@@ -287,7 +287,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     icon: 'f'
   });
 
-  if (newAccount && !isAyoteenzAdminAccount(user)) {
+  if (newAccount && !isAdminEmail(String(user?.email || ''))) {
     return notifs;
   }
 
@@ -348,7 +348,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     });
   }
 
-  if (isAyoteenzAdminAccount(user)) {
+  if (isAdminEmail(String(user?.email || ''))) {
     const mockVoucherTypes = ['COLOR', 'HAIRLINE', 'STYLING', 'FLEXIBLE CAP'];
     const mockTimeStates: Array<{ label: string; key: string }> = [
       { label: '24 HOURS', key: '24h' },
