@@ -21,6 +21,6 @@ export const BRAND_REVIEWS_BLOCKS: BrandReviewsBlock[] = [
   {
     id: 'until-then',
     text: 'UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.',
-    variant: 'demiGray',
+    variant: 'accent',
   },
 ];
