@@ -2131,18 +2131,7 @@ function MembershipPage() {
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>continuing tier privileges</p>
                       <p style={{ margin: '0 0 8px 0' }}>YOUR STATUS BENEFITS REFRESH EACH QUALIFYING CYCLE, PROVIDING ONGOING VALUE AS YOU MAINTAIN OR ADVANCE TIERS.</p>
 
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '10px',
-                          color: BRAND_GRAY,
-                          margin: '10px 0 4px 0',
-                          textTransform: 'uppercase',
-                          fontWeight: 500,
-                        }}
-                      >
-                        ALL TIERS
-                      </p>
+                      <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0' }}>all tiers</p>
                       <div style={{ margin: '0 0 10px 0' }}>
                         <TierRoseBenefit>MEMBER SAVINGS ON ELIGIBLE PURCHASES</TierRoseBenefit>
                         <TierRoseBenefit>ANNUAL CONSULTATION BENEFIT</TierRoseBenefit>
@@ -2164,8 +2153,8 @@ function MembershipPage() {
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>status progression</p>
                       <p style={{ margin: '0 0 6px 0' }}>YOUR STATUS IS BASED ON THE TOTAL NUMBER OF LOYALTY POINTS EARNED DURING EACH 6 MONTH QUALIFICATION PERIOD:</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY, fontWeight: 500, margin: '0 0 2px 0' }}>SILVER TIER STATUS &mdash; 1,000 PTS</p>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24', fontWeight: 400, margin: '0 0 2px 0' }}>RED TIER STATUS &mdash; 2,000 PTS</p>
-                      <p style={{ margin: '0 0 8px 0' }}>BLACK TIER STATUS &mdash; 4,000 PTS</p>
+                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontWeight: 500, margin: '0 0 2px 0' }}>RED TIER STATUS &mdash; 2,000 PTS</p>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: 500, margin: '0 0 8px 0' }}>BLACK TIER STATUS &mdash; 4,000 PTS</p>
                       <p style={{ margin: '0 0 12px 0' }}>MAINTAINING OR EXCEEDING YOUR STATUS REQUIREMENT ALLOWS YOU TO KEEP YOUR BENEFITS FOR THE FOLLOWING CYCLE WHILE CONTINUING TO UNLOCK NEW REWARDS ALONG THE WAY.</p>
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>reward terms</p>
