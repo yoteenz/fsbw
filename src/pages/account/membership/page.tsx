@@ -44,10 +44,21 @@ const CHART_BORDER = '0.8px solid #000';
 
 const TIER_STATUS_HEADER_STYLE: CSSProperties = {
   fontFamily: '"Bohemy", cursive',
-  fontSize: '14px',
+  fontSize: '18px',
   margin: '12px 0 4px 0',
   textTransform: 'lowercase',
   fontWeight: 400,
+  lineHeight: 1.1,
+};
+
+const TIER_GUIDE_SECTION_HEADER_STYLE: CSSProperties = {
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '18px',
+  margin: '14px 0 6px 0',
+  textTransform: 'lowercase',
+  fontWeight: 400,
+  lineHeight: 1.1,
+  color: '#000000',
 };
 
 const TIER_ROSE_BENEFIT_ROW_STYLE: CSSProperties = {
@@ -2094,39 +2105,39 @@ function MembershipPage() {
                         <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
                       </div>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>CONTINUING TIER PRIVILEGES</p>
-                      <p style={{ margin: '0 0 8px 0' }}>YOUR STATUS BENEFITS REFRESH EACH QUALIFYING CYCLE, PROVIDING ONGOING VALUE AS YOU MAINTAIN OR ADVANCE YOUR MEMBERSHIP STATUS.</p>
+                      <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>continuing tier privileges</p>
+                      <p style={{ margin: '0 0 8px 0' }}>YOUR STATUS BENEFITS REFRESH EACH QUALIFYING CYCLE, PROVIDING ONGOING VALUE AS YOU MAINTAIN OR ADVANCE TIERS.</p>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '10px 0 4px 0', textTransform: 'uppercase' }}>ALL TIERS</p>
-                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
-                        <li>MEMBER SAVINGS ON ELIGIBLE PURCHASES</li>
-                        <li>ANNUAL CONSULTATION BENEFIT</li>
-                        <li>ACCESS TO POINT REDEMPTIONS, VOUCHERS, DIGITAL CASH AND REWARD OFFERS</li>
-                      </ul>
+                      <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0' }}>all tiers</p>
+                      <div style={{ margin: '0 0 10px 0' }}>
+                        <TierRoseBenefit>MEMBER SAVINGS ON ELIGIBLE PURCHASES</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL CONSULTATION BENEFIT</TierRoseBenefit>
+                        <TierRoseBenefit>ACCESS TO POINT REDEMPTIONS, VOUCHERS, DIGITAL CASH AND REWARD OFFERS</TierRoseBenefit>
+                      </div>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '10px 0 4px 0', textTransform: 'uppercase', color: '#EB1C24' }}>RED TIER</p>
-                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
-                        <li>1.25X POINT MULTIPLIER</li>
-                      </ul>
+                      <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0', color: '#EB1C24' }}>red tier</p>
+                      <div style={{ margin: '0 0 10px 0' }}>
+                        <TierRoseBenefit>1.25X POINT MULTIPLIER</TierRoseBenefit>
+                      </div>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '10px 0 4px 0', textTransform: 'uppercase' }}>BLACK TIER</p>
-                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
-                        <li>1.5X POINT MULTIPLIER</li>
-                        <li>ANNUAL BLACK STATUS GIFT</li>
-                        <li>STATUS PROTECTION BENEFIT</li>
-                      </ul>
+                      <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0' }}>black tier</p>
+                      <div style={{ margin: '0 0 10px 0' }}>
+                        <TierRoseBenefit>1.5X POINT MULTIPLIER</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL BLACK STATUS GIFT</TierRoseBenefit>
+                        <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
+                      </div>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>STATUS PROGRESSION</p>
+                      <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>status progression</p>
                       <p style={{ margin: '0 0 6px 0' }}>YOUR STATUS IS BASED ON THE TOTAL NUMBER OF LOYALTY POINTS EARNED DURING EACH 6 MONTH QUALIFICATION PERIOD:</p>
                       <p style={{ margin: '0 0 2px 0' }}>SILVER TIER STATUS &mdash; 1,000 PTS</p>
                       <p style={{ margin: '0 0 2px 0' }}>RED TIER STATUS &mdash; 2,000 PTS</p>
                       <p style={{ margin: '0 0 8px 0' }}>BLACK TIER STATUS &mdash; 4,000 PTS</p>
                       <p style={{ margin: '0 0 12px 0' }}>MAINTAINING OR EXCEEDING YOUR STATUS REQUIREMENT ALLOWS YOU TO KEEP YOUR BENEFITS FOR THE FOLLOWING CYCLE WHILE CONTINUING TO UNLOCK NEW REWARDS ALONG THE WAY.</p>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>REWARD TERMS</p>
+                      <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>reward terms</p>
                       <p style={{ margin: '0 0 12px 0' }}>VOUCHERS, DISCOUNT OFFERS AND FREE GIFT REWARDS REMAIN VALID FOR 6 MONTHS FROM THE DATE OF REDEMPTION. DIGITAL CASH AND GIFT CARD BALANCES NEVER EXPIRE AND MAY BE USED TOWARD ELIGIBLE PURCHASES.</p>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>PREMIUM MEMBER ADVANTAGE</p>
+                      <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>premium member advantage</p>
                       <p style={{ margin: '0 0 8px 0' }}>PREMIUM MEMBERS RECEIVE ENHANCED BENEFITS BEYOND STATUS REWARDS INCLUDING ACCESS TO THE MEMBERS ONLY LOBBY + LOUNGE, PERSONAL SLAY ASSISTANT, PRIORITY SUPPORT, EXCLUSIVE CONTENT AND BONUS EARNING OPPORTUNITIES.</p>
                       <p style={{ margin: '0 0 0 0' }}>12 MONTH PREMIUM MEMBERS RECEIVE A 2X POINT MULTIPLIER ON ELIGIBLE PURCHASES, OVERRIDING RED AND BLACK TIER STATUS MULTIPLIERS.</p>
                     </div>
