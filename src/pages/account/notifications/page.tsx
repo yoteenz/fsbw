@@ -377,7 +377,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     notifs.push({
       id: `${ACCOUNT_NOTIFICATION_PREFIX}digital_cash_deposit_mock`,
       title: 'YOUR FUNDS HAVE BEEN DEPOSITED!',
-      message: '$50.00 USD HAS BEEN ADDED TO YOUR DIGITAL CASH BALANCE.',
+      message: '$50.00 USD HAS BEEN ADDED TO YOUR BALANCE.',
       actionText: 'VIEW TRANSACTIONS',
       actionRoute: DIGITAL_CASH_HISTORY_POPUP_ACTION,
       date: today,
