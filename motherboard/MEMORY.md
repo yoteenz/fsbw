@@ -29199,3 +29199,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User wanted **all** brand pages (**about**, **member**, **contact**, **reviews**, **faq**, **terms**, etc.) to use the same main card height as the **menu toggle** panel, with **internal scroll** inside the card like **`/brand/terms`** (not content-hug or member-measurer heights).
 - **Changes:** **`src/pages/brand/page.tsx`** — removed per-slug height exceptions (**`brandMainCardScrollable`**, reviews viewport shell, **`BRAND_PAGE_MAIN_CARD_HEIGHT`**); **`MarblePageShell`** always viewport-locked; main card **`flex: 1`** + inner body **`overflowY: auto`** for every slug; action buttons remain below card. **`BrandReviewsEmptyState.tsx`** — top-aligned copy (no flex fill centering). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand reviews copy: gray Bohemy opener + merged body
+
+- **Context:** User updated **`/brand/reviews`** text — gray lowercase **Bohemy** line **the frontal slayer community is growing.** then uppercase body **YOUR REVIEW COULD BE THE FIRST. SOON YOU'LL FIND…**; removed red **UNTIL THEN…** closing line.
+- **Changes:** **`brandReviewsCopy.ts`** — **`bohemy`** + **`body`** blocks. **`BrandReviewsEmptyState.tsx`** — **`bohemy`** variant (17px gray Bohemy, no uppercase). Pushed **`master`** + **`preview/mobile`**.
