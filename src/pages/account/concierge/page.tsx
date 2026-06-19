@@ -82,9 +82,7 @@ type SlayChallengeGuideTier = {
   requirement: string;
   tasks: string[];
   rewardHeading: string;
-  rewardNote: string;
   rewards: string[];
-  finePrint?: string;
 };
 
 const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
@@ -102,7 +100,6 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
       'JOIN THE NEWSLETTER',
     ],
     rewardHeading: 'TIER 1 REWARD SELECTION',
-    rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
     rewards: [
       '600 LOYALTY POINTS',
       '1X FLEXIBLE CAP VOUCHER',
@@ -110,8 +107,6 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
       'FREE SHIPPING CREDIT',
       'EXCLUSIVE DIGITAL WALLPAPER / MEMBER COLLECTIBLE',
     ],
-    finePrint:
-      'VERY LOW COST. COULD BE LUXURY 3D ARTWORK, COLLECTIBLE BADGES, SEASONAL FS ARTWORK, PROFILE DECORATIONS, ETC.',
   },
   {
     title: 'TIER 2 — ENGAGE',
@@ -126,7 +121,6 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
       'WATCH 3 ACADEMY TUTORIALS (FUTURE ACTIVITY)',
     ],
     rewardHeading: 'TIER 2 REWARD SELECTION',
-    rewardNote: '7 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
     rewards: [
       '1,000 LOYALTY POINTS',
       '1X HAIRLINE VOUCHER',
@@ -136,7 +130,6 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
       'MYSTERY REWARD',
       'BONUS HAIRSTYLE ANALYSIS CREDIT',
     ],
-    finePrint: 'ESPECIALLY VALUABLE ONCE THE HAIRSTYLE ANALYSIS SYSTEM LAUNCHES.',
   },
   {
     title: 'TIER 3 — ELEVATE',
@@ -153,7 +146,6 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
       'POST ON SOCIAL MEDIA + TAG BRAND',
     ],
     rewardHeading: 'TIER 3 REWARD SELECTION',
-    rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
     rewards: [
       '2,500 LOYALTY POINTS',
       '1X STYLING VOUCHER',
@@ -177,7 +169,6 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
       'POST ON SOCIAL MEDIA + TAG BRAND',
     ],
     rewardHeading: 'TIER 4 REWARD SELECTION',
-    rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
     rewards: [
       '5,000 LOYALTY POINTS',
       '1X COLOR VOUCHER',
@@ -356,37 +347,9 @@ function SlayChallengeGuide({ currentTierIndex }: { currentTierIndex: number }) 
         >
           {tier.rewardHeading}
         </p>
-        <p
-          style={{
-            fontFamily: '"Futura PT Book"',
-            color: '#808080',
-            fontSize: '9px',
-            margin: '0 0 6px 0',
-            lineHeight: 1.4,
-            textTransform: 'uppercase',
-            textAlign: 'left',
-          }}
-        >
-          {tier.rewardNote}
-        </p>
         {tier.rewards.map((reward) => (
           <SlayChallengeRoseBullet key={`${tier.title}-${reward}`}>{reward}</SlayChallengeRoseBullet>
         ))}
-        {tier.finePrint && (
-          <p
-            style={{
-              fontFamily: '"Futura PT Book"',
-              color: '#808080',
-              fontSize: '9px',
-              margin: '4px 0 0 20px',
-              lineHeight: 1.4,
-              textTransform: 'uppercase',
-              textAlign: 'left',
-            }}
-          >
-            {tier.finePrint}
-          </p>
-        )}
         {safeTierIndex < SLAY_CHALLENGE_TIERS.length - 1 && (
           <p
             style={{
@@ -5582,11 +5545,6 @@ function ConciergePage() {
                     </div>
                   )}
                   <SlayChallengeGuide currentTierIndex={slayChallengeCurrentTierIndex} />
-                  {effectiveInSelectionWindow && !effectiveHasSelectedForNext && (
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '10px', margin: '2px 0 12px 0', textTransform: 'uppercase', textAlign: 'left', lineHeight: 1.45 }}>
-                      REWARD OPTIONS WILL RANDOMLY POPULATE FOR THE NEXT CYCLE ({slayChallengeNextCycleLabel}).
-                    </p>
-                  )}
                   {effectiveInSelectionWindow && effectiveHasSelectedForNext && (
                     <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase', textAlign: 'left' }}>
                       You’re set for the next cycle. Your challenge begins when the new cycle starts.
