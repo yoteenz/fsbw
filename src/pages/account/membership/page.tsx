@@ -398,7 +398,8 @@ function MembershipPage() {
     }
   };
 
-  // Tier is based on money spent (order totals) in the current 6‑month period. Spend also earns loyalty PTS (1:1).
+  // Tier status is based only on points earned from purchases (order totals) in the current 6-month period.
+  // Other earning methods still count toward total loyalty points, but not tier status.
   const SPEND_TIER_THRESHOLDS = { SILVER: 1000, RED: 2000, BLACK: 4000 };
   // Welcome discount (digital cash) credited to account balance and used at checkout — see constants/tiers.ts
 
@@ -412,7 +413,7 @@ function MembershipPage() {
     return { start: new Date(currentYear, 6, 1), end: new Date(currentYear, 11, 31) };
   };
 
-  /** Sum of order.total in current 6‑month period (tier spend; also 1:1 loyalty PTS earned from spend). */
+  /** Purchase-earned tier points in the current 6-month period (order totals at 1 point per $1). */
   const getCurrentPeriodSpending = (): number => {
     if (!userData?.email) return 0;
     try {
@@ -434,10 +435,10 @@ function MembershipPage() {
     }
   };
 
-  /** Loyalty PTS from spend (1:1 with $ in current period). Included in displayed balance so tier PTS = loyalty PTS from spend. */
+  /** Loyalty points from purchases (1:1 with $ in current period); these are the only points used for tier status. */
   const getPointsFromSpend = (): number => getCurrentPeriodSpending();
 
-  /** Displayed loyalty balance = stored balance + affiliate points + points earned from spend in period. */
+  /** Displayed total loyalty balance = stored balance + affiliate/social/content points + purchase-earned points. */
   const getDisplayLoyaltyPoints = (): number =>
     (userData?.loyaltyPoints ?? 0) + calculateTotalAffiliatePoints() + getPointsFromSpend();
 
@@ -529,7 +530,7 @@ function MembershipPage() {
     setShowPointsHistoryBackToTop(false);
   };
 
-  // Progress toward next tier based on spend (Silver → Red → Black).
+  // Progress toward next tier based only on purchase-earned points (Silver -> Red -> Black).
   const getNextTierProgress = () => {
     // When no one is signed in, show mock: Silver tier with 300 pts → "EARN 200 MORE TO REMAIN SILVER TIER!"
     if (!userData) {
@@ -576,7 +577,7 @@ function MembershipPage() {
       }
       return getEffectiveTierName(userData);
     })();
-    // Only retain stored tier if current period spend meets that tier's threshold; otherwise revert to spend-based tier (PENDING if below Silver).
+    // Only retain stored tier if current-period purchase-earned points meet that tier's threshold; otherwise revert to purchase-point tier (PENDING if below Silver).
     const hasRetainedTier = (effectiveTier === 'SILVER' && currentSpend >= SPEND_TIER_THRESHOLDS.SILVER)
       || (effectiveTier === 'RED' && currentSpend >= SPEND_TIER_THRESHOLDS.RED)
       || (effectiveTier === 'BLACK' && currentSpend >= SPEND_TIER_THRESHOLDS.BLACK);
@@ -2152,7 +2153,7 @@ function MembershipPage() {
                       </div>
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>status progression</p>
-                      <p style={{ margin: '0 0 6px 0' }}>YOUR STATUS IS BASED ON THE TOTAL NUMBER OF LOYALTY POINTS EARNED DURING EACH 6 MONTH QUALIFICATION PERIOD:</p>
+                      <p style={{ margin: '0 0 6px 0' }}>YOUR STATUS IS BASED ONLY ON POINTS EARNED FROM ELIGIBLE PURCHASES DURING EACH 6 MONTH QUALIFICATION PERIOD. TOTAL LOYALTY POINTS MAY INCLUDE ALL WAYS TO EARN, BUT ONLY PURCHASE-EARNED POINTS COUNT TOWARD TIER STATUS:</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY, fontWeight: 500, margin: '0 0 2px 0' }}>SILVER TIER STATUS &mdash; 1,000 PTS</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontWeight: 500, margin: '0 0 2px 0' }}>RED TIER STATUS &mdash; 2,000 PTS</p>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: 500, margin: '0 0 8px 0' }}>BLACK TIER STATUS &mdash; 4,000 PTS</p>

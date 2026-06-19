@@ -29848,3 +29848,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Replaced the hard-coded **560px** TBG card min/height/max-height with shared **`MENU_TOGGLE_PANEL_HEIGHT`** so it matches the menu toggle card. Set **all tiers** to gray while keeping lowercase Bohemy styling.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
 - **Conventions:** Account -> Rewards Tier Benefits Guide card height should use **`MENU_TOGGLE_PANEL_HEIGHT`** to stay aligned with the menu toggle main card; **all tiers** should be gray lowercase Bohemy.
+
+---
+
+## 2026-06-19 — Tier status clarified as purchase-earned points only
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide copy/typography/rose bullets/close icons/card height; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup and expanded benefits styling; Settings row rhythm; Reviews subtitle styling; compact Points History scrolling; tier threshold typography; Concierge card gating; gray expanded premium benefit headings; and premium chart toggle placement correction.
+- **Topics covered:** The latest request clarified the rewards rules: **tier points for each 6-month cycle are based only on points earned from purchases**, while **total loyalty points** can include all ways to earn points.
+- **Decisions / outcomes:** Confirmed the existing tier-progress calculation already uses current-period order totals/purchase-earned points, not affiliate/social/content points. Updated TBG status progression copy so it no longer says tier status is based on total loyalty points. Updated local comments around tier thresholds/progress to explicitly state that purchase-earned points alone count toward status, while total loyalty balance may include purchase, affiliate, social, content, and other earning methods.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. TBG now says status is based only on eligible-purchase points during each 6-month qualification period, and total loyalty points may include all earning methods. Verified with **`npm run build`**.
+- **Conventions:** Distinguish **purchase-earned tier points** from **total loyalty points**: tier status/progression uses purchase-earned points only; total loyalty points may include purchases plus all other earning opportunities.
