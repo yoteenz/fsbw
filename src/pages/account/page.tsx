@@ -33,6 +33,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
+import DigitalCashHistoryPopup from '../../components/account/DigitalCashHistoryPopup';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -2547,109 +2548,12 @@ function AccountPage() {
         </div>
       )}
 
-      {/* Digital Cash History Popup */}
-      {showDigitalCashHistoryPopup && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            padding: '16px'
-          }}
-          onClick={() => setShowDigitalCashHistoryPopup(false)}
-        >
-          <div
-            className="bg-white/60 backdrop-blur-sm border border-black"
-            style={{
-              borderWidth: '1.3px',
-              padding: '16px',
-              maxWidth: '400px',
-              width: '100%',
-              maxHeight: '85vh',
-              overflow: 'auto',
-              position: 'relative'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#EB1C24',
-                  fontSize: '12px',
-                  margin: '0',
-                  textTransform: 'uppercase',
-                  fontWeight: '500',
-                  textAlign: 'left'
-                }}
-              >
-                DIGITAL CASH HISTORY
-              </p>
-              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain'}} />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
-              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
-              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>TRANSACTION</span>
-              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>AMOUNT</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {(() => {
-                const history = (userData?.digitalCashHistory ?? []) as Array<{ date: string; transaction: string; amount: number }>;
-                const formatDate = (dateStr: string): string => {
-                  const parts = dateStr.split('-').map(Number);
-                  if (parts.length === 3) {
-                    const [month, day, year] = parts;
-                    const d = new Date(year, month - 1, day);
-                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                  }
-                  const d = new Date(dateStr);
-                  if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                  return dateStr;
-                };
-                const displayHistory = history.length === 0 && profileUsesMockChrome
-                  ? MOCK_DIGITAL_CASH_HISTORY
-                  : history;
-                if (displayHistory.length === 0) {
-                  return (
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
-                      YOU HAVEN'T HAD ANY DIGITAL CASH TRANSACTIONS YET.
-                    </p>
-                  );
-                }
-                const sorted = [...displayHistory].sort((a, b) => {
-                  const parse = (s: string) => {
-                    const parts = s.split('-').map(Number);
-                    if (parts.length === 3) {
-                      const [month, day, year] = parts;
-                      return new Date(year, month - 1, day).getTime();
-                    }
-                    return new Date(s).getTime();
-                  };
-                  return parse(b.date) - parse(a.date);
-                });
-                return sorted.map((row, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
-<span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
-                                      {row.amount >= 0 ? '+' : ''}{formatPrice(row.amount)}
-                                    </span>
-                  </div>
-                ));
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
+      <DigitalCashHistoryPopup
+        isOpen={showDigitalCashHistoryPopup}
+        onClose={() => setShowDigitalCashHistoryPopup(false)}
+        userData={userData}
+        fallbackHistory={profileUsesMockChrome ? MOCK_DIGITAL_CASH_HISTORY : []}
+      />
 
       {/* Voucher History Popup */}
       {showVoucherHistoryPopup && (
