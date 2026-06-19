@@ -29958,3 +29958,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Added **SLAY CAM** as a non-expandable Shop menu item immediately after **BUILD-A-WIG** and added an Account Profile card below **REWARDS** with subtitle **SHOWCASE YOUR LOOKS + EARN REWARDS**. To avoid dead links, added an initial public `/slay-cam` page using the existing marble/mobile nav/menu style and lightweight showcase copy for real client photos/videos, Shop This Slay tags, Slay MVP recognition, and reward opportunities.
 - **Changes:** Updated **`src/components/ShopMobileMenuShopTab.tsx`**, **`src/pages/account/page.tsx`**, **`src/App.tsx`**, and added **`src/pages/slay-cam/page.tsx`**. Verified with **`npm run build`**.
 - **Conventions:** Slay Cam should be treated as a public core showcase/conversion surface rather than hidden inside Membership. The current implementation is an entry/stub only; upload workflows, moderation, likes, rewards, achievements, Members Lounge integration, product-page **Shop This Slay**, and Slay MVP systems remain future phases.
+
+---
+
+## 2026-06-19 — Slay Challenge guide copy expanded
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Concierge, PSA nudges, membership rewards, Slay Challenge, and Slay Cam. Recent work added Slay Cam navigation/account entry and raised Slay Challenge Tier 1 points, then the user provided a fuller Slay Challenge description/guide.
+- **Topics covered:** The latest request asked to update the Slay Challenge description text with left-aligned uppercase copy, rose bullets, **CHOOSE YOUR REWARDS**, and four tiers: **TIER 1 — DISCOVER**, **TIER 2 — ENGAGE**, **TIER 3 — ELEVATE**, and **TIER 4 — ICON**, including task lists, completion thresholds, reward-selection notes, and reward option lists.
+- **Decisions / outcomes:** Replaced the old short Slay Challenge description and old visible two-tier task/reward copy with a structured left-aligned guide. Added rose-icon bullet rows, uppercase Futura body copy, lowercase Bohemy **complete the following** / **reward selection** subheads, and the full tier/reward text the user supplied. Kept the existing underlying challenge start/state flow intact for now, but removed the old visible two-option selection buttons from the text area to avoid conflicting with the new guide.
+- **Changes:** Updated **`src/pages/account/concierge/page.tsx`** only. Verified with **`npm run build`** after removing unused setters from the old visible selection buttons.
+- **Conventions:** Slay Challenge descriptive copy should be left-aligned, uppercase, and use rose-icon bullets. Subheads like **complete the following** and **reward selection** should use lowercase Bohemy styling.

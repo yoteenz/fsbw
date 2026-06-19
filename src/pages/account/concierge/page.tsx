@@ -69,6 +69,329 @@ const pulsateStyle = `
   }
 `;
 
+const SLAY_CHALLENGE_INTRO_BULLETS = [
+  'CHOOSE YOUR PREFERRED REWARD FOR EACH TIER BEFORE THE NEXT 6 MONTH CHALLENGE CYCLE BEGINS.',
+  'COMPLETE QUALIFYING ACTIVITIES THROUGHOUT THE CYCLE TO UNLOCK THEM.',
+  'PROGRESS THROUGH EACH TIER IN ORDER, WITH NEW REWARDS BECOMING AVAILABLE AS YOU ADVANCE.',
+  'ONCE A CYCLE BEGINS, SELECTIONS ARE LOCKED UNTIL THE NEXT REWARD WINDOW OPENS.',
+  'NEW SELECTIONS CAN BE MADE DURING THE FINAL 3 DAYS OF EACH ACTIVE CYCLE FOR THE FOLLOWING CHALLENGE PERIOD.',
+];
+
+type SlayChallengeGuideTier = {
+  title: string;
+  description?: string;
+  requirement: string;
+  tasks: string[];
+  rewardHeading: string;
+  rewardNote: string;
+  rewards: string[];
+  finePrint?: string;
+};
+
+const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
+  {
+    title: 'TIER 1 — DISCOVER',
+    description: 'EASY TASKS THAT GET MEMBERS INVOLVED.',
+    requirement: 'THEY ONLY NEED TO COMPLETE 3/7 TO ADVANCE TIERS.',
+    tasks: [
+      'MAKE A PURCHASE',
+      'LEAVE A PRODUCT REVIEW',
+      'COMPLETE A HAIRSTYLE ANALYSIS',
+      'USE PSA FOR THE FIRST TIME',
+      'CREATE A WISHLIST',
+      'ADD FUNDS TO DIGITAL CASH',
+      'JOIN THE NEWSLETTER',
+    ],
+    rewardHeading: 'TIER 1 REWARD SELECTION',
+    rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
+    rewards: [
+      '200 LOYALTY POINTS',
+      '1X FLEXIBLE CAP VOUCHER',
+      'MYSTERY REWARD',
+      'FREE SHIPPING CREDIT',
+      'EXCLUSIVE DIGITAL WALLPAPER / MEMBER COLLECTIBLE',
+    ],
+    finePrint:
+      'VERY LOW COST. COULD BE LUXURY 3D ARTWORK, COLLECTIBLE BADGES, SEASONAL FS ARTWORK, PROFILE DECORATIONS, ETC.',
+  },
+  {
+    title: 'TIER 2 — ENGAGE',
+    requirement: 'THEY ONLY NEED TO COMPLETE 4/7 TO ADVANCE TIERS.',
+    tasks: [
+      'PURCHASE A PRODUCT',
+      'COMPLETE A BUILD-A-WIG DESIGN',
+      'TAG FRONTAL SLAYER ON SOCIAL MEDIA',
+      'REFER A FRIEND',
+      'SUBMIT A VIDEO REVIEW',
+      'ATTEND A LOUNGE EVENT (FUTURE ACTIVITY)',
+      'WATCH 3 ACADEMY TUTORIALS (FUTURE ACTIVITY)',
+    ],
+    rewardHeading: 'TIER 2 REWARD SELECTION',
+    rewardNote: '7 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
+    rewards: [
+      '1,000 LOYALTY POINTS',
+      '1X HAIRLINE VOUCHER',
+      '2X POINTS NEXT PURCHASE',
+      '$40 DIGITAL CASH',
+      'PRIORITY ORDER PROCESSING UPGRADE',
+      'MYSTERY REWARD',
+      'BONUS HAIRSTYLE ANALYSIS CREDIT',
+    ],
+    finePrint: 'ESPECIALLY VALUABLE ONCE THE HAIRSTYLE ANALYSIS SYSTEM LAUNCHES.',
+  },
+  {
+    title: 'TIER 3 — ELEVATE',
+    requirement: 'THEY ONLY NEED TO COMPLETE 5/9 TO ADVANCE TIERS.',
+    tasks: [
+      'REFER 2 FRIENDS',
+      'COMPLETE A BUILD-A-WIG PURCHASE',
+      'SUBMIT BEFORE & AFTER PHOTOS',
+      'POST ON SOCIAL MEDIA + TAG FRONTAL SLAYER',
+      'COMPLETE 3 PRODUCT REVIEWS',
+      'SAVE 3 BUILD-A-WIG DESIGNS',
+      'COMPLETE A PREMIUM HAIRSTYLE ANALYSIS',
+      'ATTEND A VIRTUAL CLASS (FUTURE ACTIVITY)',
+      'POST ON SOCIAL MEDIA + TAG BRAND',
+    ],
+    rewardHeading: 'TIER 3 REWARD SELECTION',
+    rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
+    rewards: [
+      '2,500 LOYALTY POINTS',
+      '1X STYLING VOUCHER',
+      '$60 DIGITAL CASH',
+      '2.5X POINTS NEXT PURCHASE',
+      'PREMIUM MYSTERY REWARD',
+    ],
+  },
+  {
+    title: 'TIER 4 — ICON',
+    requirement: 'THEY ONLY NEED TO COMPLETE 6/9 TO ADVANCE TIERS.',
+    tasks: [
+      'REFER 2 FRIENDS',
+      'COMPLETE A BUILD-A-WIG PURCHASE',
+      'SUBMIT BEFORE & AFTER PHOTOS',
+      'POST ON SOCIAL MEDIA + TAG FRONTAL SLAYER',
+      'COMPLETE 3 PRODUCT REVIEWS',
+      'SAVE 3 BUILD-A-WIG DESIGNS',
+      'COMPLETE A PREMIUM HAIRSTYLE ANALYSIS',
+      'ATTEND A VIRTUAL CLASS (FUTURE ACTIVITY)',
+      'POST ON SOCIAL MEDIA + TAG BRAND',
+    ],
+    rewardHeading: 'TIER 4 REWARD SELECTION',
+    rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
+    rewards: [
+      '5,000 LOYALTY POINTS',
+      '1X COLOR VOUCHER',
+      '$80 DIGITAL CASH',
+      '3X POINTS NEXT PURCHASE',
+      'PREMIUM MYSTERY REWARD',
+    ],
+  },
+];
+
+function SlayChallengeRoseBullet({ children }: { children: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '4px', textAlign: 'left' }}>
+      <img
+        src="/assets/rose-alert.svg"
+        alt=""
+        style={{ width: '12px', height: '12px', marginTop: '2px', flexShrink: 0 }}
+      />
+      <p
+        style={{
+          fontFamily: '"Futura PT Book"',
+          color: '#000000',
+          fontSize: '10px',
+          margin: 0,
+          lineHeight: 1.45,
+          textTransform: 'uppercase',
+          textAlign: 'left',
+        }}
+      >
+        {children}
+      </p>
+    </div>
+  );
+}
+
+function SlayChallengeBohemySubhead({ children }: { children: string }) {
+  return (
+    <p
+      style={{
+        fontFamily: '"Bohemy", cursive',
+        color: '#000000',
+        fontSize: '18px',
+        margin: '8px 0 4px 0',
+        lineHeight: 1.1,
+        textTransform: 'lowercase',
+        fontWeight: 400,
+        textAlign: 'left',
+      }}
+    >
+      {children}
+    </p>
+  );
+}
+
+function SlayChallengeGuide() {
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          color: '#000000',
+          fontSize: '10px',
+          margin: '0 0 10px 0',
+          lineHeight: 1.45,
+          textTransform: 'uppercase',
+          fontWeight: 500,
+          textAlign: 'left',
+        }}
+      >
+        COMPLETE CHALLENGES. UNLOCK REWARDS. CUSTOMIZE YOUR EXPERIENCE.
+      </p>
+
+      <div style={{ marginBottom: '14px' }}>
+        {SLAY_CHALLENGE_INTRO_BULLETS.map((bullet) => (
+          <SlayChallengeRoseBullet key={bullet}>{bullet}</SlayChallengeRoseBullet>
+        ))}
+      </div>
+
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          color: '#EB1C24',
+          fontSize: '11px',
+          margin: '0 0 6px 0',
+          lineHeight: 1.3,
+          textTransform: 'uppercase',
+          fontWeight: 500,
+          textAlign: 'left',
+        }}
+      >
+        CHOOSE YOUR REWARDS
+      </p>
+      <p
+        style={{
+          fontFamily: '"Futura PT Book"',
+          color: '#000000',
+          fontSize: '10px',
+          margin: '0 0 14px 0',
+          lineHeight: 1.45,
+          textTransform: 'uppercase',
+          textAlign: 'left',
+        }}
+      >
+        COMPLETE EACH MILESTONE TO UNLOCK YOUR SELECTED REWARD DURING THE UPCOMING CHALLENGE CYCLE.
+      </p>
+
+      {SLAY_CHALLENGE_TIERS.map((tier) => (
+        <div key={tier.title} style={{ marginBottom: '16px' }}>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              color: tier.title.includes('TIER 1')
+                ? '#808080'
+                : tier.title.includes('TIER 2')
+                  ? '#EB1C24'
+                  : '#000000',
+              fontSize: '11px',
+              margin: '0 0 4px 0',
+              lineHeight: 1.3,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              textAlign: 'left',
+            }}
+          >
+            {tier.title}
+          </p>
+          {tier.description && (
+            <p
+              style={{
+                fontFamily: '"Futura PT Book"',
+                color: '#000000',
+                fontSize: '10px',
+                margin: '0 0 4px 0',
+                lineHeight: 1.45,
+                textTransform: 'uppercase',
+                textAlign: 'left',
+              }}
+            >
+              {tier.description}
+            </p>
+          )}
+          <SlayChallengeBohemySubhead>complete the following</SlayChallengeBohemySubhead>
+          <p
+            style={{
+              fontFamily: '"Futura PT Book"',
+              color: '#808080',
+              fontSize: '9px',
+              margin: '0 0 6px 0',
+              lineHeight: 1.4,
+              textTransform: 'uppercase',
+              textAlign: 'left',
+            }}
+          >
+            {tier.requirement}
+          </p>
+          <div style={{ marginBottom: '10px' }}>
+            {tier.tasks.map((task) => (
+              <SlayChallengeRoseBullet key={`${tier.title}-${task}`}>{task}</SlayChallengeRoseBullet>
+            ))}
+          </div>
+
+          <SlayChallengeBohemySubhead>reward selection</SlayChallengeBohemySubhead>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              color: '#000000',
+              fontSize: '10px',
+              margin: '0 0 2px 0',
+              lineHeight: 1.35,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              textAlign: 'left',
+            }}
+          >
+            {tier.rewardHeading}
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Book"',
+              color: '#808080',
+              fontSize: '9px',
+              margin: '0 0 6px 0',
+              lineHeight: 1.4,
+              textTransform: 'uppercase',
+              textAlign: 'left',
+            }}
+          >
+            {tier.rewardNote}
+          </p>
+          {tier.rewards.map((reward) => (
+            <SlayChallengeRoseBullet key={`${tier.title}-${reward}`}>{reward}</SlayChallengeRoseBullet>
+          ))}
+          {tier.finePrint && (
+            <p
+              style={{
+                fontFamily: '"Futura PT Book"',
+                color: '#808080',
+                fontSize: '9px',
+                margin: '4px 0 0 20px',
+                lineHeight: 1.4,
+                textTransform: 'uppercase',
+                textAlign: 'left',
+              }}
+            >
+              {tier.finePrint}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ConciergePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -165,7 +488,7 @@ function ConciergePage() {
     return `${year}-H2`; // after Jun 30 -> same year Jul–Dec
   };
 
-  const [slayChallengeTier1Reward, setSlayChallengeTier1Reward] = useState<'voucher' | '600points' | ''>(() => {
+  const [slayChallengeTier1Reward] = useState<'voucher' | '600points' | ''>(() => {
     try {
       const saved = localStorage.getItem('slayChallengeTier1Reward');
       if (saved === 'voucher' || saved === '600points') return saved;
@@ -174,7 +497,7 @@ function ConciergePage() {
       return '600points';
     } catch (e) { return '600points'; }
   });
-  const [slayChallengeTier2Reward, setSlayChallengeTier2Reward] = useState<'2xpoints' | '1000points' | ''>(() => {
+  const [slayChallengeTier2Reward] = useState<'2xpoints' | '1000points' | ''>(() => {
     try {
       const saved = localStorage.getItem('slayChallengeTier2Reward');
       if (saved === '2xpoints' || saved === '1000points') return saved;
@@ -221,7 +544,6 @@ function ConciergePage() {
   const slayChallengeInSelectionWindow = isInSlayChallengeSelectionWindow();
   const slayChallengeHasSelectedForNext = slayChallengeSelectedCycle === slayChallengeNextCycleLabel;
   const slayChallengeActive = slayChallengeSelectedCycle === slayChallengeCurrentCycleLabel;
-  const slayChallengeTier1Complete = slayChallengeTier1Progress.purchase && slayChallengeTier1Progress.review && slayChallengeTier1Progress.post;
 
   // Ayoteenz admin: disable time limit and force stage for testing (selection | selected_waiting | active | closed)
   const SLAY_CHALLENGE_ADMIN_STAGE_KEY = 'slayChallengeAdminStage';
@@ -4958,135 +5280,29 @@ function ConciergePage() {
                       </select>
                     </div>
                   )}
-                  <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 12px 0', textTransform: 'uppercase' }}>
-                    Complete tasks in 6 months. Choose your rewards for each tier; tier 2 unlocks after tier 1. You have 3 days before each cycle ends to select your challenge—or wait for the next cycle.
-                  </p>
+                  <SlayChallengeGuide />
                   {effectiveInSelectionWindow && !effectiveHasSelectedForNext && (
-                    <>
-                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                        Select rewards for the next cycle ({slayChallengeNextCycleLabel}):
-                      </p>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                        Tier 1 — Complete: 1 purchase, 1 content review, 1 post. Reward:
-                      </p>
-                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setSlayChallengeTier1Reward(slayChallengeTier1Reward === 'voucher' ? '' : 'voucher')}
-                          style={{
-                            flex: 1,
-                            height: '32px',
-                            border: slayChallengeTier1Reward === 'voucher' ? '1.3px solid #EB1C24' : '1.3px solid #000',
-                            background: '#FFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: slayChallengeTier1Reward === 'voucher' ? '#EB1C24' : '#000',
-                            textTransform: 'uppercase',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          RANDOM VOUCHER
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSlayChallengeTier1Reward(slayChallengeTier1Reward === '600points' ? '' : '600points')}
-                          style={{
-                            flex: 1,
-                            height: '32px',
-                            border: slayChallengeTier1Reward === '600points' ? '1.3px solid #EB1C24' : '1.3px solid #000',
-                            background: '#FFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: slayChallengeTier1Reward === '600points' ? '#EB1C24' : '#000',
-                            textTransform: 'uppercase',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          600 LOYALTY PTS
-                        </button>
-                      </div>
-                      <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                        Tier 2 — Complete: 1 purchase, 1 content review, 1 social tag. Reward:
-                      </p>
-                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setSlayChallengeTier2Reward(slayChallengeTier2Reward === '2xpoints' ? '' : '2xpoints')}
-                          style={{
-                            flex: 1,
-                            height: '32px',
-                            border: slayChallengeTier2Reward === '2xpoints' ? '1.3px solid #EB1C24' : '1.3px solid #000',
-                            background: '#FFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: slayChallengeTier2Reward === '2xpoints' ? '#EB1C24' : '#000',
-                            textTransform: 'uppercase',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          2X PTS NEXT PURCHASE
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSlayChallengeTier2Reward(slayChallengeTier2Reward === '1000points' ? '' : '1000points')}
-                          style={{
-                            flex: 1,
-                            height: '32px',
-                            border: slayChallengeTier2Reward === '1000points' ? '1.3px solid #EB1C24' : '1.3px solid #000',
-                            background: '#FFF',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '10px',
-                            color: slayChallengeTier2Reward === '1000points' ? '#EB1C24' : '#000',
-                            textTransform: 'uppercase',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          1K LOYALTY PTS
-                        </button>
-                      </div>
-                    </>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '10px', margin: '2px 0 12px 0', textTransform: 'uppercase', textAlign: 'left', lineHeight: 1.45 }}>
+                      REWARD OPTIONS WILL RANDOMLY POPULATE FOR THE NEXT CYCLE ({slayChallengeNextCycleLabel}).
+                    </p>
                   )}
                   {effectiveInSelectionWindow && effectiveHasSelectedForNext && (
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase', textAlign: 'left' }}>
                       You’re set for the next cycle. Your challenge begins when the new cycle starts.
                     </p>
                   )}
                   {!effectiveInSelectionWindow && effectiveActive && (
-                    <>
-                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                        Tier 1 — Reward: {slayChallengeTier1Reward === 'voucher' ? 'Random voucher' : '600 loyalty points'}
-                      </p>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px 0', fontSize: '10px', fontFamily: '"Futura PT Book"', textTransform: 'uppercase' }}>
-                        <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.purchase ? '✓' : '○'} Complete a purchase</li>
-                        <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.review ? '✓' : '○'} Complete a content review</li>
-                        <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.post ? '✓' : '○'} Make a post</li>
-                      </ul>
-                      {slayChallengeTier1Complete && (
-                        <>
-                          <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                            Tier 2 — Reward: {slayChallengeTier2Reward === '2xpoints' ? '2x points on next purchase' : '1,000 loyalty points'}
-                          </p>
-                          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px 0', fontSize: '10px', fontFamily: '"Futura PT Book"', textTransform: 'uppercase' }}>
-                            <li style={{ marginBottom: '4px' }}>{slayChallengeTier2Progress.purchase ? '✓' : '○'} Complete another purchase</li>
-                            <li style={{ marginBottom: '4px' }}>{slayChallengeTier2Progress.review ? '✓' : '○'} Complete a content review</li>
-                            <li style={{ marginBottom: '4px' }}>{slayChallengeTier2Progress.socialTag ? '✓' : '○'} Make a social tag</li>
-                          </ul>
-                        </>
-                      )}
-                      {!slayChallengeTier1Complete && (
-                        <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
-                          Complete tier 1 to unlock tier 2.
-                        </p>
-                      )}
-                    </>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase', textAlign: 'left', lineHeight: 1.45 }}>
+                      YOUR ACTIVE CHALLENGE IS IN PROGRESS. COMPLETE QUALIFYING ACTIVITIES TO ADVANCE THROUGH EACH TIER.
+                    </p>
                   )}
                   {!effectiveInSelectionWindow && !effectiveActive && effectiveHasSelectedCycle && (
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0', textTransform: 'uppercase', textAlign: 'left', lineHeight: 1.45 }}>
                       Your next selection window is in the last 3 days of the current cycle. Complete your current challenge or wait for the next cycle.
                     </p>
                   )}
                   {!effectiveInSelectionWindow && !effectiveActive && !effectiveHasSelectedCycle && (
-                    <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0', textTransform: 'uppercase', textAlign: 'left', lineHeight: 1.45 }}>
                       Selection window closed. You have 3 days before the next cycle ends to choose your challenge—or wait 6 months for the next window.
                     </p>
                   )}
