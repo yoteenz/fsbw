@@ -622,8 +622,8 @@ function LoadCardPage() {
                       alignSelf: 'center',
                       width: '100%',
                       maxWidth: '400px',
-                      marginTop: '-38px',
-                      marginBottom: '-26px',
+                      marginTop: '-24px',
+                      marginBottom: '6px',
                       lineHeight: 0,
                       flexShrink: 0
                     }}
@@ -649,7 +649,7 @@ function LoadCardPage() {
                     style={{
                       width: '100%',
                       textAlign: 'center',
-                      marginTop: '-15px',
+                      marginTop: '8px',
                       marginBottom: 0,
                       flexShrink: 0
                     }}

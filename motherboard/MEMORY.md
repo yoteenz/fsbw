@@ -29288,3 +29288,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The load-card account view now uses the exact second gift-card PDP thumbnail (**`IMG_1788.png`**) via a shared exported constant, which keeps the account screen visually aligned with the product page and avoids another one-off thumbnail definition.
 - **Changes:** Added **`src/constants/giftCardAssets.ts`** with **`GIFT_CARD_PREVIEW_IMAGES`** and **`GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC`** (the second preview image). Updated **`src/pages/tools/gift-card/page.tsx`** to import **`GIFT_CARD_PREVIEW_IMAGES`** from the new shared constant file. Updated **`src/pages/account/load-card/page.tsx`** to replace the bundled **`load-card.png`** import with **`GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC`** for the displayed thumbnail. Verified with **`npm run build`**.
 - **Conventions:** Gift card visuals that need to match the PDP gallery should reuse shared constants from **`src/constants/giftCardAssets.ts`** so the account/tool views stay aligned when those preview images change.
+
+---
+
+## 2026-06-19 — Load-card hero spacing adjusted for taller gift card thumbnail
+
+- **Context:** Continuing the same chat after syncing the load-card thumbnail to the second gift card PDP preview, the user reported that the balance text was overlapping the hero image on **Account > Add Funds** and asked for the spacing to be adjusted.
+- **Topics covered:** Re-read the load-card layout in **`src/pages/account/load-card/page.tsx`**, identified the overlap as a result of the old negative hero margins that were tuned for the previous shorter local image, and adjusted the hero wrapper and balance block spacing so the new taller gift-card preview has room above the **CURRENT BALANCE** text.
+- **Decisions / outcomes:** Kept the same thumbnail image and overall layout structure, but reduced the upward pull on the hero and replaced the negative text offset with positive spacing so the balance copy now sits below the card image instead of intruding into it.
+- **Changes:** **`src/pages/account/load-card/page.tsx`** — hero wrapper **`marginTop`** changed from **`-38px`** to **`-24px`**, **`marginBottom`** changed from **`-26px`** to **`6px`**, and the balance text block **`marginTop`** changed from **`-15px`** to **`8px`**. Verified with **`npm run build`**.
+- **Conventions:** When swapping in taller gift-card artwork on the load-card page, revisit the hero/text spacing instead of reusing the old negative offsets designed for the prior image proportions.
