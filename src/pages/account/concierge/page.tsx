@@ -1142,57 +1142,59 @@ function SlayQuestsSection() {
         })}
       </div>
 
-      <div
-        style={{
-          backgroundImage:
-            'linear-gradient(135deg, rgba(255,255,255,0.96), rgba(244,244,244,0.96)), radial-gradient(circle at top left, rgba(235,28,36,0.08), transparent 32%)',
-          border: '1px solid #000000',
-          padding: '12px',
-          marginBottom: '14px',
-        }}
-      >
-        <p
+      {selectedCategory === 'ALL' && (
+        <div
           style={{
-            fontFamily: '"Futura PT Medium"',
-            color: '#EB1C24',
-            fontSize: '10px',
-            margin: '0 0 10px 0',
-            lineHeight: 1.25,
-            textTransform: 'uppercase',
-            fontWeight: 500,
-            letterSpacing: '0.06em',
-            textAlign: 'left',
-          }}
-        >
-          FEATURED QUESTS
-        </p>
-        {featuredQuests.map(renderQuestCard)}
-        <button
-          type="button"
-          onClick={() => {
-            setShowAllQuests((currentValue) => !currentValue);
-            setExpandedQuestTitle(null);
-          }}
-          style={{
-            width: '100%',
-            background: '#ffffff',
-            color: '#000000',
+            backgroundImage:
+              'linear-gradient(135deg, rgba(255,255,255,0.96), rgba(244,244,244,0.96)), radial-gradient(circle at top left, rgba(235,28,36,0.08), transparent 32%)',
             border: '1px solid #000000',
-            fontFamily: '"Futura PT Medium"',
-            fontSize: '10px',
-            lineHeight: 1,
-            textTransform: 'uppercase',
-            fontWeight: 500,
-            letterSpacing: '0.06em',
-            padding: '11px 12px',
-            cursor: 'pointer',
+            padding: '12px',
+            marginBottom: '14px',
           }}
         >
-          {showAllQuests ? 'HIDE ALL QUESTS' : 'VIEW ALL QUESTS'}
-        </button>
-      </div>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              color: '#EB1C24',
+              fontSize: '10px',
+              margin: '0 0 10px 0',
+              lineHeight: 1.25,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              letterSpacing: '0.06em',
+              textAlign: 'left',
+            }}
+          >
+            FEATURED QUESTS
+          </p>
+          {featuredQuests.map(renderQuestCard)}
+          <button
+            type="button"
+            onClick={() => {
+              setShowAllQuests((currentValue) => !currentValue);
+              setExpandedQuestTitle(null);
+            }}
+            style={{
+              width: '100%',
+              background: '#ffffff',
+              color: '#000000',
+              border: '1px solid #000000',
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '10px',
+              lineHeight: 1,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              letterSpacing: '0.06em',
+              padding: '11px 12px',
+              cursor: 'pointer',
+            }}
+          >
+            {showAllQuests ? 'HIDE ALL QUESTS' : 'VIEW ALL QUESTS'}
+          </button>
+        </div>
+      )}
 
-      {showAllQuests && (
+      {(selectedCategory !== 'ALL' || showAllQuests) && (
         <div>
           <p
             style={{
