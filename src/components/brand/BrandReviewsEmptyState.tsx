@@ -1,4 +1,4 @@
-/** Empty state for `/brand/reviews`, centered in a card sized like Become a Member. */
+/** Empty state for `/brand/reviews`, centered in a menu-toggle-height card. */
 export default function BrandReviewsEmptyState() {
   return (
     <div
@@ -8,7 +8,6 @@ export default function BrandReviewsEmptyState() {
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        padding: '24px 12px',
         minHeight: 0,
       }}
     >
