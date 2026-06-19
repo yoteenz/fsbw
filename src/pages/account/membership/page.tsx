@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties, type ReactNode, type UIEvent } from 'react';
 import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -179,6 +179,12 @@ const LOYALTY_REWARDS = [
 
 /** Bohemy on loyalty rewards view only (red + gray labels, disclaimer, redeem). */
 const LOYALTY_BOHEMY_FONT_PX = 18;
+const POINTS_HISTORY_VISIBLE_ROW_COUNT = 6;
+const POINTS_HISTORY_ROW_MIN_HEIGHT_PX = 14;
+const POINTS_HISTORY_ROW_GAP_PX = 8;
+const POINTS_HISTORY_SCROLL_MAX_HEIGHT_PX =
+  POINTS_HISTORY_VISIBLE_ROW_COUNT * POINTS_HISTORY_ROW_MIN_HEIGHT_PX +
+  (POINTS_HISTORY_VISIBLE_ROW_COUNT - 1) * POINTS_HISTORY_ROW_GAP_PX;
 
 const EARN_TASKS = [
   { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
@@ -514,6 +520,15 @@ function MembershipPage() {
     }
   };
 
+  const handlePointsHistoryScroll = (event: UIEvent<HTMLDivElement>) => {
+    setShowPointsHistoryBackToTop(event.currentTarget.scrollTop > 0);
+  };
+
+  const handlePointsHistoryBackToTop = () => {
+    pointsHistoryListRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    setShowPointsHistoryBackToTop(false);
+  };
+
   // Progress toward next tier based on spend (Silver → Red → Black).
   const getNextTierProgress = () => {
     // When no one is signed in, show mock: Silver tier with 300 pts → "EARN 200 MORE TO REMAIN SILVER TIER!"
@@ -645,6 +660,8 @@ function MembershipPage() {
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
   const [showPremiumUpgradeAllBenefits, setShowPremiumUpgradeAllBenefits] = useState(false);
+  const pointsHistoryListRef = useRef<HTMLDivElement | null>(null);
+  const [showPointsHistoryBackToTop, setShowPointsHistoryBackToTop] = useState(false);
   const [redeemNoticeMessage, setRedeemNoticeMessage] = useState<string | null>(null);
 
   // Clear rewards card alerts when user visits rewards page (they've seen tier/subscription updates)
@@ -2342,6 +2359,7 @@ fontFamily: '"Futura PT Book"',
                         {(() => {
                           const pointsHistoryRows = getPointsHistoryRows();
                           if (pointsHistoryRows.length === 0) return null;
+                          const hasScrollablePointsHistory = pointsHistoryRows.length > POINTS_HISTORY_VISIBLE_ROW_COUNT;
                           return (
                         <div className="bg-white/60 backdrop-blur-sm border border-black mb-4" style={{ borderWidth: '1.3px', padding: '16px' }}>
                           <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2365,15 +2383,63 @@ fontFamily: '"Futura PT Book"',
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>REWARD</span>
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>POINTS</span>
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div
+                            ref={pointsHistoryListRef}
+                            onScroll={handlePointsHistoryScroll}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: `${POINTS_HISTORY_ROW_GAP_PX}px`,
+                              maxHeight: hasScrollablePointsHistory ? `${POINTS_HISTORY_SCROLL_MAX_HEIGHT_PX}px` : undefined,
+                              overflowY: hasScrollablePointsHistory ? 'auto' : 'visible',
+                              paddingRight: hasScrollablePointsHistory ? '4px' : 0,
+                              overscrollBehavior: 'contain',
+                              scrollBehavior: 'smooth',
+                            }}
+                          >
                             {pointsHistoryRows.map((row, i) => (
-                              <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
+                              <div
+                                key={i}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  minHeight: `${POINTS_HISTORY_ROW_MIN_HEIGHT_PX}px`,
+                                  flexShrink: 0,
+                                  fontSize: '10px',
+                                  lineHeight: `${POINTS_HISTORY_ROW_MIN_HEIGHT_PX}px`,
+                                  textTransform: 'uppercase',
+                                }}
+                              >
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatPointsHistoryDateDisplay(row.date)}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.points.startsWith('+') ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
                               </div>
                             ))}
                           </div>
+                          {hasScrollablePointsHistory && showPointsHistoryBackToTop && (
+                            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                              <button
+                                type="button"
+                                onClick={handlePointsHistoryBackToTop}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  margin: 0,
+                                  color: '#EB1C24',
+                                  cursor: 'pointer',
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '10px',
+                                  fontWeight: 500,
+                                  textTransform: 'uppercase',
+                                  lineHeight: 1.3,
+                                }}
+                              >
+                                BACK TO TOP
+                              </button>
+                            </div>
+                          )}
                         </div>
                           );
                         })()}

@@ -29788,3 +29788,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Restyled the expanded all-benefits tier labels as left-aligned **18px** red lowercase Bohemy (`3 months premium`, `6 months premium`, `12 months premium`) and replaced default `<ul>/<li>` bullets with rose-icon benefit rows.
 - **Changes:** Updated both the reusable **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline Account -> Rewards premium chart in **`src/pages/account/membership/page.tsx`**. Added a local rose-row helper to the reusable component; the inline chart reuses the existing **`TierRoseBenefit`** helper. Verified with **`npm run build`**.
 - **Conventions:** In premium subscription upgrade chart expanded benefits, tier labels should be red lowercase Bohemy and left aligned, and benefit items should use rose-icon rows rather than browser bullets.
+
+---
+
+## 2026-06-19 — Points History limited to six visible rows
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide content, rose bullets, Bohemy/header typography, threshold typography, and close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup; Settings row rhythm; Reviews subtitle styling; premium subscription chart toggle placement; and expanded premium benefit list styling.
+- **Topics covered:** The latest request asked for **POINTS HISTORY** to show only the first six entries, with remaining entries scrolling below, plus a **BACK TO TOP** text control at the bottom of the card that appears after scrolling and returns the list to the top.
+- **Decisions / outcomes:** Kept the Points History card header and column labels fixed, and moved only transaction rows into a capped scroll container sized for six rows. Added a scroll listener and ref-backed **BACK TO TOP** text button that appears once the row list is scrolled away from the top.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** with six-row scroll sizing constants, a points-history list ref/state, scroll/back-to-top handlers, row min-height styling, and the conditional **BACK TO TOP** button. Verified with **`npm run build`**.
+- **Conventions:** Account -> Rewards **POINTS HISTORY** should stay compact by showing six visible transaction rows; row seven and beyond scroll inside the card, and **BACK TO TOP** appears only after scrolling.
