@@ -29898,3 +29898,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the six-row scroll behavior, but aligned the column header and scrollable rows by applying the same right-side scroll padding to the header row when the list is scrollable. Also made the gray reward value cell explicitly flex-centered.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
 - **Conventions:** When Points History rows are scrollable, header-row spacing should mirror the scroll row padding so the **DATE / REWARD / POINTS** columns stay visually aligned; reward values should be explicitly centered in their column.
+
+---
+
+## 2026-06-19 — Membership Status voucher bullets clarified
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards and related membership surfaces, including Add Funds copy/nav, digital-cash history/alerts, premium rewards copy and typography, Tier Benefits Guide copy/styling/card behavior, Membership Status tier descriptions/perks/spacing, premium upgrade chart layout/styling, Points History scrolling/alignment, Account Profile Concierge gating, and BAW-matched premium total labels.
+- **Topics covered:** The latest request asked to update Red and Black tier voucher bullets in the Account -> Rewards **Membership Status** section.
+- **Decisions / outcomes:** Added **`1X`** quantity prefixes to the Membership Status voucher benefit labels: Red now shows **1X FLEXIBLE CAP VOUCHER** and **1X HAIRLINE VOUCHER**; Black now shows **1X COLOR VOUCHER** and **1X STYLING VOUCHER**.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
+- **Conventions:** Membership Status voucher benefits should include explicit **1X** quantity prefixes for Red cap/hairline vouchers and Black color/styling vouchers.
