@@ -1,5 +1,6 @@
 import {
   BRAND_ABOUT_ACCENT_PARAGRAPHS,
+  BRAND_ABOUT_BOHEMY_PARAGRAPHS,
   BRAND_ABOUT_DEMI_PARAGRAPHS,
   BRAND_ABOUT_US_PARAGRAPHS,
 } from '../../constants/brandAboutCopy';
@@ -21,21 +22,24 @@ export default function BrandAboutUsBody() {
       {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => {
         const isAccent = BRAND_ABOUT_ACCENT_PARAGRAPHS.has(paragraph);
         const isDemi = BRAND_ABOUT_DEMI_PARAGRAPHS.has(paragraph);
+        const isBohemy = BRAND_ABOUT_BOHEMY_PARAGRAPHS.has(paragraph);
         return (
           <p
             key={paragraph}
             style={{
-              fontFamily: isDemi
-                ? '"Futura PT Demi"'
-                : isAccent
-                  ? '"Futura PT Medium"'
-                  : '"Futura PT Book"',
-              fontSize: '10px',
-              color: isAccent ? '#EB1C24' : isDemi ? '#808080' : '#000000',
+              fontFamily: isBohemy
+                ? '"Bohemy", cursive'
+                : isDemi
+                  ? '"Futura PT Demi"'
+                  : isAccent
+                    ? '"Futura PT Medium"'
+                    : '"Futura PT Book"',
+              fontSize: isBohemy ? '17px' : '10px',
+              color: isAccent ? '#EB1C24' : isDemi || isBohemy ? '#808080' : '#000000',
               fontWeight: isDemi || isAccent ? 500 : 400,
               margin: 0,
               lineHeight: 1.45,
-              textTransform: 'uppercase',
+              textTransform: isBohemy ? 'none' : 'uppercase',
             }}
           >
             {paragraph}
