@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../constants/tiers';
-import { getTotalReviewCount, getUserSubmittedReviewCount, hasNewReviewApproved } from '../../constants/reviews';
+import { hasNewReviewApproved } from '../../constants/reviews';
 import {
   isAyoteenzAdminAccount,
   isMockDataAccount,
@@ -74,20 +74,6 @@ function AccountPage() {
       }
     }
     return null;
-  });
-  const [activeOrdersCount, setActiveOrdersCount] = useState(() => {
-    // Will be calculated by getActiveOrdersCount
-    return 0;
-  });
-  const [reviewCount, setReviewCount] = useState(() => {
-    if (typeof window === 'undefined') return 0;
-    try {
-      const currentUser = localStorage.getItem('currentUser');
-      const user = currentUser ? JSON.parse(currentUser) : null;
-      return isMockDataAccount(user) ? getTotalReviewCount(user?.email) : getUserSubmittedReviewCount(user?.email);
-    } catch {
-      return 0;
-    }
   });
   const [membershipType, _setMembershipType] = useState<'STANDARD' | 'PREMIUM'>('STANDARD'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
@@ -253,22 +239,6 @@ function AccountPage() {
         return excludeFounderSeedMockOrders(all);
       }
       return all;
-    } catch {
-      return [];
-    }
-  };
-
-  const activeUserOrdersFromStorageForAccount = (): any[] => {
-    if (!userData?.email) return [];
-    try {
-      const raw = localStorage.getItem(`userOrders_${userData.email}`);
-      if (!raw) return [];
-      const data = JSON.parse(raw);
-      const active = data.activeOrders || [];
-      if (founderViewAsClient && isMockDataAccount(userData)) {
-        return excludeFounderSeedMockOrders(active);
-      }
-      return active;
     } catch {
       return [];
     }
@@ -597,51 +567,6 @@ function AccountPage() {
         }
     }
   }, [userData, founderViewAsClient]);
-
-  // Update active orders count when user data or orders change
-  useEffect(() => {
-    const updateActiveOrdersCount = () => {
-      const count = getActiveOrdersCount();
-      setActiveOrdersCount(count);
-    };
-
-    updateActiveOrdersCount();
-
-    // Listen for order updates
-    const handleStorageChange = () => {
-      updateActiveOrdersCount();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    // Also listen for custom events that might indicate order changes
-    window.addEventListener('ordersUpdated', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('ordersUpdated', handleStorageChange);
-    };
-  }, [userData]);
-
-  // Update review count when user data or stored reviews change (synced with reviews page). New accounts show only their submitted count (0); mock data accounts see mock + submitted.
-  useEffect(() => {
-    const updateReviewCount = () => {
-      const count = profileUsesMockChrome ? getTotalReviewCount(userData?.email) : getUserSubmittedReviewCount(userData?.email);
-      setReviewCount(count);
-    };
-
-    updateReviewCount();
-
-    const handleStorageChange = () => updateReviewCount();
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('reviewsUpdated', handleStorageChange);
-    window.addEventListener('focus', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('reviewsUpdated', handleStorageChange);
-      window.removeEventListener('focus', handleStorageChange);
-    };
-  }, [userData, location.pathname, profileUsesMockChrome]);
 
   // Keep founder "view as client" in sync across tabs / custom events
   useEffect(() => {
@@ -1198,33 +1123,6 @@ function AccountPage() {
     }
   };
 
-  const getAddressCount = (): number => {
-    const defaultAddr = userData?.defaultAddress || userData?.shippingAddress;
-    const saved = Array.isArray(userData?.savedAddresses) ? userData.savedAddresses : [];
-    if (!defaultAddr && saved.length === 0) return 0;
-    const list: Array<{ address?: string; city?: string; zip?: string }> = [];
-    if (defaultAddr && typeof defaultAddr === 'object' && (defaultAddr.address || defaultAddr.city)) list.push(defaultAddr);
-    saved.forEach((a: any) => {
-      if (!a?.address && !a?.city) return;
-      const isDup = list.some((e) => e.address === a.address && e.city === a.city && e.zip === a.zip);
-      if (!isDup) list.push(a);
-    });
-    return list.length;
-  };
-
-  const getPaymentCount = (): number => {
-    const defaultPay = userData?.defaultPaymentMethod;
-    const saved = Array.isArray(userData?.savedPaymentMethods) ? userData.savedPaymentMethods : [];
-    const list: Array<{ cardNumber?: string; cardholder?: string }> = [];
-    if (defaultPay && (defaultPay.cardholder || defaultPay.cardNumber)) list.push(defaultPay);
-    saved.forEach((p: any) => {
-      const hasInfo = p?.cardholder || p?.cardNumber;
-      const isDup = list.some((e) => e.cardNumber === p.cardNumber && e.cardholder === p.cardholder);
-      if (hasInfo && !isDup) list.push(p);
-    });
-    return list.length;
-  };
-
   // Helper function to get default card order
   const getDefaultCardOrder = (): Array<{ title: string; subtitle: string; route: string | null }> => {
     const userMembershipType = userData?.membershipType || membershipType;
@@ -1232,16 +1130,6 @@ function AccountPage() {
     const showConcierge =
       isPremium || (isAyoteenzAdminAccount(userData) && !founderViewAsClient);
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
-
-    let referralInvitesUsed = 0;
-    if (userData?.email) {
-      try {
-        const earningsKey = getPerUserKey(PER_USER_KEYS.referralEarnings, userData.email);
-        const log = JSON.parse(localStorage.getItem(earningsKey) || '[]');
-        const email = (userData.email || '').trim().toLowerCase();
-        referralInvitesUsed = log.filter((e: { referrerEmail?: string }) => (e.referrerEmail || '').trim().toLowerCase() === email).length;
-      } catch (_) {}
-    }
 
     if (showConcierge) {
       defaultCards.push({
@@ -1252,35 +1140,35 @@ function AccountPage() {
     }
     
     defaultCards.push(
-      { title: 'ALERTS', subtitle: 'NOTIFICATIONS + NEWSLETTER', route: '/account/alerts' },
+      { title: 'ALERTS', subtitle: 'NEWS, OFFERS + EXCLUSIVE UPDATES', route: '/account/alerts' },
       { 
         title: 'ORDERS', 
-        subtitle: activeOrdersCount > 0 ? `${activeOrdersCount} ACTIVE ORDER${activeOrdersCount !== 1 ? 'S' : ''}` : '0 ACTIVE ORDERS', 
+        subtitle: 'TRACK YOUR CURRENT ORDERS',
         route: '/account/orders' 
       },
-      { title: 'REWARDS', subtitle: 'MEMBERSHIP + SUBSCRIPTION', route: '/account/rewards' },
+      { title: 'REWARDS', subtitle: 'UNLOCK POINTS, PERKS + BENEFITS', route: '/account/rewards' },
       { 
         title: 'REVIEWS', 
-        subtitle: reviewCount === 1 ? '1 TOTAL REVIEW' : `${reviewCount} TOTAL REVIEWS`, 
+        subtitle: 'SHARE YOUR EXPERIENCE',
         route: '/account/reviews' 
       },
-      { title: 'AFFILIATE', subtitle: 'SUBMIT CONTENT FOR POINTS', route: '/account/affiliate' },
+      { title: 'AFFILIATE', subtitle: 'CREATE. EARN. REPEAT.', route: '/account/affiliate' },
       {
         title: 'REFERRALS',
-        subtitle: referralInvitesUsed === 1 ? '1 INVITE USED' : `${referralInvitesUsed} INVITES USED`,
+        subtitle: 'INVITE FRIENDS. EARN REWARDS.',
         route: '/account/referrals'
       },
       {
         title: 'PAYMENT METHOD',
-        subtitle: (() => { const n = getPaymentCount(); return n === 1 ? '1 CARD ON FILE' : `${n} CARDS ON FILE`; })(),
+        subtitle: 'SECURE PAYMENT OPTIONS',
         route: '/account/payment'
       },
       { 
         title: 'SHIPPING ADDRESS', 
-        subtitle: (() => { const n = getAddressCount(); return n === 1 ? '1 ADDRESS ON FILE' : `${n} ADDRESSES ON FILE`; })(), 
+        subtitle: 'DELIVERY DETAILS + PREFERENCES',
         route: '/account/shipping' 
       },
-      { title: 'SETTINGS', subtitle: 'PASSWORD + CONTROLS', route: '/account/settings' }
+      { title: 'SETTINGS', subtitle: 'ACCOUNT + SECURITY SETTINGS', route: '/account/settings' }
     );
     
     return defaultCards;
@@ -1326,17 +1214,6 @@ function AccountPage() {
       default:
         return false;
     }
-  };
-
-  // Helper function to get active orders count (matches orders page: length of activeOrders array)
-  const getActiveOrdersCount = (): number => {
-    if (!userData?.email) return 0;
-    try {
-      return activeUserOrdersFromStorageForAccount().length;
-    } catch (e) {
-      console.error('Error loading order count:', e);
-    }
-    return 0;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
