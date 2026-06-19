@@ -29998,3 +29998,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Updated the Tier 1 requirement copy from third-person **THEY ONLY NEED...** wording to direct user-facing **YOU ONLY NEED...** wording.
 - **Changes:** Updated **`src/pages/account/concierge/page.tsx`** and appended this motherboard entry. Verified with **`npm run build`**.
 - **Conventions:** Slay Challenge requirement text should speak directly to the member when shown in the Concierge UI.
+
+---
+
+## 2026-06-19 — Slay Challenge internal reward notes hidden
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Concierge, PSA nudges, membership reward surfaces, Slay Challenge, Slay Cam, and Slay Quests. Earlier completed work included BAW-matched **TOTAL DUE** premium labels, Points History reward-column centering, Membership Status voucher quantity labels, internal-only premium/Black reward deposits, PSA order authorization form nudge copy, Slay Challenge Tier 1 points raised to **600**, initial **Slay Cam** setup, the expanded Slay Challenge guide, the separate **Slay Quests** section, the compact current-tier-only Slay Challenge card, and direct-address Tier 1 requirement wording.
+- **Topics covered:** The latest request asked to remove internal/client-inappropriate Slay Challenge lines: randomization counts like **5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE**, internal cost/value notes, and the **REWARD OPTIONS WILL RANDOMLY POPULATE FOR THE NEXT CYCLE** status line.
+- **Decisions / outcomes:** Removed `rewardNote` and `finePrint` from the Slay Challenge tier display model and deleted the selection-window randomization message. Members now see only the current tier, tasks, reward heading, and reward options without internal randomization/cost/launch-value details.
+- **Changes:** Updated **`src/pages/account/concierge/page.tsx`** and appended this motherboard entry. Verified the removed phrases no longer match in the file and verified with **`npm run build`**.
+- **Conventions:** Keep Slay Challenge randomization mechanics and internal reward economics out of client-facing Concierge copy.
