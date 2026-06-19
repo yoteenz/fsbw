@@ -42,6 +42,35 @@ interface Notification {
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
 const ADMIN_SENT_PREFIX = 'admin_';
+const ADMIN_MOCK_DIGITAL_CASH_DEPOSIT_AMOUNT = 50;
+const ADMIN_MOCK_DIGITAL_CASH_TRANSACTION = 'GIFT CARD BARCODE';
+
+type DigitalCashHistoryRow = {
+  date: string;
+  transaction: string;
+  amount: number;
+  sortAt?: number;
+};
+
+function todayMdy(): string {
+  const d = new Date();
+  return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+}
+
+function adminMockDigitalCashDepositSortAt(userEmail: string | undefined): number {
+  const email = String(userEmail || 'admin').trim().toLowerCase() || 'admin';
+  const key = `adminMockDigitalCashDepositSortAt_${email}`;
+  try {
+    if (typeof window === 'undefined') return Date.now();
+    const existing = Number(localStorage.getItem(key) || '');
+    if (Number.isFinite(existing) && existing > 0) return existing;
+    const now = Date.now();
+    localStorage.setItem(key, String(now));
+    return now;
+  } catch {
+    return Date.now();
+  }
+}
 
 function readCurrentUserFromStorage(): Record<string, unknown> | null {
   try {
@@ -206,10 +235,7 @@ export function isNewAccount(user: { hasMadeFirstPurchase?: boolean; [k: string]
 export function getAccountNotifications(user: { email?: string; [k: string]: any } | null): Notification[] {
   if (!user?.email) return [];
   const email = (user.email || '').trim().toLowerCase();
-  const today = (() => {
-    const d = new Date();
-    return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
-  })();
+  const today = todayMdy();
   const notifs: Notification[] = [];
   const newAccount = isNewAccount(user);
 
@@ -381,6 +407,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
       actionText: 'VIEW TRANSACTIONS',
       actionRoute: DIGITAL_CASH_HISTORY_POPUP_ACTION,
       date: today,
+      sortAt: adminMockDigitalCashDepositSortAt(email),
       isRead: false,
       icon: 'f'
     });
@@ -532,26 +559,18 @@ function parseNotificationDisplayDateMs(dateStr: string): number {
   return Number.isNaN(d) ? 0 : d;
 }
 
-/** Within the same **`date`** calendar day, use **`sortAt`** when set; else fall back to day start so **`date`** still wins across days. */
-function notificationWithinDaySortMs(n: Notification, dayMs: number): number {
+function notificationSortTimestampMs(n: Notification): number {
   if (typeof n.sortAt === 'number' && !Number.isNaN(n.sortAt)) return n.sortAt;
-  return dayMs;
+  return parseNotificationDisplayDateMs(n.date);
 }
 
 /**
- * **Newest alert date first** (parsed **`date`**), then **newest `sortAt`** within the same day.
- * Previously **`sortAt`** was the primary key, so an old consult (**`sortAt`** last week) could sit above a **today** row that only had **`date: today`**.
- * Removed per-type tie-break ranks that reordered same-day rows (e.g. consult above order-received).
+ * Newest alert first using only each row's timestamp/date.
+ * Ties keep their existing order via stable sort; no alert type/id ranking is applied.
  */
 export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
   return [...list].sort((a, b) => {
-    const da = parseNotificationDisplayDateMs(a.date);
-    const db = parseNotificationDisplayDateMs(b.date);
-    if (db !== da) return db - da;
-    const wa = notificationWithinDaySortMs(a, da);
-    const wb = notificationWithinDaySortMs(b, db);
-    if (wb !== wa) return wb - wa;
-    return String(b.id).localeCompare(String(a.id));
+    return notificationSortTimestampMs(b) - notificationSortTimestampMs(a);
   });
 }
 
@@ -582,6 +601,35 @@ async function mergeAdminNotificationsFromApi(merged: Notification[], today: str
   } catch {
     return merged;
   }
+}
+
+function digitalCashHistorySortTimestampMs(row: DigitalCashHistoryRow): number {
+  if (typeof row.sortAt === 'number' && !Number.isNaN(row.sortAt)) return row.sortAt;
+  return parseNotificationDisplayDateMs(row.date);
+}
+
+function withAdminMockDigitalCashHistoryRow(
+  history: DigitalCashHistoryRow[],
+  user: Record<string, unknown> | null
+): DigitalCashHistoryRow[] {
+  if (!isAdminEmail(String(user?.email || ''))) return history;
+  const today = todayMdy();
+  const email = String(user?.email || '').trim().toLowerCase();
+  const hasTodayMockAmount = history.some(
+    (row) =>
+      row.date === today &&
+      Math.round(Number(row.amount || 0) * 100) === ADMIN_MOCK_DIGITAL_CASH_DEPOSIT_AMOUNT * 100
+  );
+  if (hasTodayMockAmount) return history;
+  return [
+    {
+      date: today,
+      transaction: ADMIN_MOCK_DIGITAL_CASH_TRANSACTION,
+      amount: ADMIN_MOCK_DIGITAL_CASH_DEPOSIT_AMOUNT,
+      sortAt: adminMockDigitalCashDepositSortAt(email),
+    },
+    ...history,
+  ];
 }
 
 function NotificationsPage() {
@@ -1415,9 +1463,10 @@ function NotificationsPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {(() => {
-                const history = Array.isArray(userData?.digitalCashHistory)
-                  ? (userData.digitalCashHistory as Array<{ date: string; transaction: string; amount: number }>)
+                const storedHistory = Array.isArray(userData?.digitalCashHistory)
+                  ? (userData.digitalCashHistory as DigitalCashHistoryRow[])
                   : [];
+                const history = withAdminMockDigitalCashHistoryRow(storedHistory, userData);
                 const formatDate = (dateStr: string): string => {
                   const parts = dateStr.split('-').map(Number);
                   if (parts.length === 3) {
@@ -1437,15 +1486,7 @@ function NotificationsPage() {
                   );
                 }
                 const sorted = [...history].sort((a, b) => {
-                  const parse = (s: string) => {
-                    const parts = s.split('-').map(Number);
-                    if (parts.length === 3) {
-                      const [month, day, year] = parts;
-                      return new Date(year, month - 1, day).getTime();
-                    }
-                    return new Date(s).getTime();
-                  };
-                  return parse(b.date) - parse(a.date);
+                  return digitalCashHistorySortTimestampMs(b) - digitalCashHistorySortTimestampMs(a);
                 });
                 return sorted.map((row, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
