@@ -29908,3 +29908,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Added **`1X`** quantity prefixes to the Membership Status voucher benefit labels: Red now shows **1X FLEXIBLE CAP VOUCHER** and **1X HAIRLINE VOUCHER**; Black now shows **1X COLOR VOUCHER** and **1X STYLING VOUCHER**.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
 - **Conventions:** Membership Status voucher benefits should include explicit **1X** quantity prefixes for Red cap/hairline vouchers and Black color/styling vouchers.
+
+---
+
+## 2026-06-19 — Annual Black and premium anniversary reward points
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards and related membership surfaces, including Add Funds copy/nav, digital-cash history/alerts, premium rewards copy and typography, Tier Benefits Guide copy/styling/card behavior, Membership Status tier descriptions/perks/spacing, premium upgrade chart layout/styling, Points History scrolling/alignment, Account Profile Concierge gating, BAW-matched premium total labels, and explicit voucher quantities.
+- **Topics covered:** The latest request clarified reward amounts: the annual Black status reward should be **2,500 loyalty points** and requires maintaining Black status for the full year / both 6-month cycles uninterrupted; premium anniversary rewards should be **500 points** for 3 months, **1,000 points** for 6 months, and **1,500 points** for 12 months.
+- **Decisions / outcomes:** Replaced generic annual Black status gift/reward copy with **ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS** and added the uninterrupted full-year Black status requirement to Tier Benefits Guide reward terms. Updated premium anniversary reward copy to show tier-specific point amounts in IIYM / expanded premium benefit lists and in the shared Unlock Premium Rewards marketing subtitle.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`**, **`src/constants/premiumBenefitsByTier.ts`**, and **`src/constants/brandMemberPremiumRewards.ts`**. Verified no remaining **ANNUAL BLACK STATUS GIFT** text exists under `src/` and verified with **`npm run build`**.
+- **Conventions:** Annual Black status reward is **2,500 loyalty points** and requires uninterrupted Black status across both 6-month cycles in a full year. Premium anniversary rewards are **500 / 1,000 / 1,500 loyalty points** for **3 / 6 / 12 month** premium tiers respectively.

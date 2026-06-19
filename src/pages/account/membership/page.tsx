@@ -2126,7 +2126,7 @@ function MembershipPage() {
                         <TierRoseBenefit>STYLING VOUCHER</TierRoseBenefit>
                         <TierRoseBenefit>1,000 BONUS LOYALTY POINTS</TierRoseBenefit>
                         <TierRoseBenefit>1.5X POINT MULTIPLIER ON ELIGIBLE PURCHASES</TierRoseBenefit>
-                        <TierRoseBenefit>ANNUAL BLACK STATUS GIFT</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS</TierRoseBenefit>
                         <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
                       </div>
 
@@ -2148,7 +2148,7 @@ function MembershipPage() {
                       <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0' }}>black tier</p>
                       <div style={{ margin: '0 0 10px 0' }}>
                         <TierRoseBenefit>1.5X POINT MULTIPLIER</TierRoseBenefit>
-                        <TierRoseBenefit>ANNUAL BLACK STATUS GIFT</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS</TierRoseBenefit>
                         <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
                       </div>
 
@@ -2161,6 +2161,7 @@ function MembershipPage() {
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>reward terms</p>
                       <p style={{ margin: '0 0 12px 0' }}>VOUCHERS, DISCOUNT OFFERS AND FREE GIFT REWARDS REMAIN VALID FOR 6 MONTHS FROM THE DATE OF REDEMPTION. DIGITAL CASH AND GIFT CARD BALANCES NEVER EXPIRE AND MAY BE USED TOWARD ELIGIBLE PURCHASES.</p>
+                      <p style={{ margin: '0 0 12px 0' }}>ANNUAL BLACK STATUS REWARD REQUIRES MAINTAINING BLACK STATUS FOR THE FULL YEAR, INCLUDING BOTH 6 MONTH CYCLES UNINTERRUPTED.</p>
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>premium advantage</p>
                       <p style={{ margin: '0 0 8px 0' }}>PREMIUM MEMBERS RECEIVE ENHANCED BENEFITS BEYOND STATUS REWARDS INCLUDING ACCESS TO THE MEMBERS ONLY LOBBY + LOUNGE, PERSONAL SLAY ASSISTANT, PRIORITY SUPPORT, EXCLUSIVE CONTENT AND BONUS EARNING OPPORTUNITIES.</p>
@@ -2613,7 +2614,7 @@ fontFamily: '"Futura PT Book"',
                                           <TierRoseBenefit>1X STYLING VOUCHER</TierRoseBenefit>
                                           <TierRoseBenefit>1.5X POINT EARNING BONUS</TierRoseBenefit>
                                           <TierRoseBenefit>BLACK STATUS PROTECTION BENEFIT</TierRoseBenefit>
-                                          <TierRoseBenefit>ANNUAL BLACK STATUS REWARD</TierRoseBenefit>
+                                          <TierRoseBenefit>ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS</TierRoseBenefit>
                                         </>
                                       ) : displayTier === 'RED' ? (
                                         <>
