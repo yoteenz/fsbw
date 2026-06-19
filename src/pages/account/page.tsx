@@ -1149,7 +1149,7 @@ function AccountPage() {
       { title: 'REWARDS', subtitle: 'UNLOCK POINTS, PERKS + BENEFITS', route: '/account/rewards' },
       { 
         title: 'REVIEWS', 
-        subtitle: 'SHARE YOUR EXPERIENCE',
+        subtitle: 'SHARE YOUR EXPERIENCES',
         route: '/account/reviews' 
       },
       { title: 'AFFILIATE', subtitle: 'CREATE. EARN. REPEAT.', route: '/account/affiliate' },
@@ -1165,10 +1165,10 @@ function AccountPage() {
       },
       { 
         title: 'SHIPPING ADDRESS', 
-        subtitle: 'DELIVERY DETAILS + PREFERENCES',
+        subtitle: 'DELIVERY DETAILS + SETTINGS',
         route: '/account/shipping' 
       },
-      { title: 'SETTINGS', subtitle: 'ACCOUNT + SECURITY SETTINGS', route: '/account/settings' }
+      { title: 'SETTINGS', subtitle: 'SECURITY + ACCOUNT PREFERENCES', route: '/account/settings' }
     );
     
     return defaultCards;
