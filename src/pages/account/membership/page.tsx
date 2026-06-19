@@ -2369,7 +2369,20 @@ fontFamily: '"Futura PT Book"',
                             </p>
                             <img src={pointsHistoryIcon} alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain' }} />
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              width: '100%',
+                              fontSize: '10px',
+                              textTransform: 'uppercase',
+                              marginBottom: '8px',
+                              fontFamily: '"Futura PT Medium"',
+                              fontWeight: '500',
+                              color: '#000000',
+                              paddingRight: hasScrollablePointsHistory ? '4px' : 0,
+                            }}
+                          >
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>REWARD</span>
                             <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>POINTS</span>
@@ -2403,7 +2416,7 @@ fontFamily: '"Futura PT Book"',
                                 }}
                               >
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatPointsHistoryDateDisplay(row.date)}</span>
-                                <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
+                                <span style={{ flex: '1 1 0', minWidth: 0, display: 'flex', justifyContent: 'center', textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.discount}</span>
                                 <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.points.startsWith('+') ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.points}</span>
                               </div>
                             ))}
