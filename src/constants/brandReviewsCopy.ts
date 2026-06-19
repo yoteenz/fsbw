@@ -18,4 +18,9 @@ export const BRAND_REVIEWS_BLOCKS: BrandReviewsBlock[] = [
     text: "YOUR REVIEW COULD BE THE FIRST. SOON YOU'LL FIND REAL REVIEWS, CLIENT TRANSFORMATIONS, UNBOXINGS AND SUCCESS STORIES FROM WOMEN WHO CHOSE LUXURY WITHOUT LIMITS.",
     variant: 'body',
   },
+  {
+    id: 'until-then',
+    text: 'UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.',
+    variant: 'accent',
+  },
 ];
