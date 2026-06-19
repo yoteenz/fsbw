@@ -384,6 +384,176 @@ type SlayQuest = {
   levels: SlayQuestLevel[];
 };
 
+type SlayQuestCategory = 'SHOP' | 'CREATE' | 'LEARN' | 'SHARE' | 'LOYALTY' | 'MEMBERSHIP';
+
+type SlayQuestMeta = {
+  category: SlayQuestCategory;
+  description: string;
+  currentLevelIndex: number;
+  progressCurrent: number;
+  progressTarget: number;
+  progressLabel: string;
+};
+
+const SLAY_QUEST_FILTERS: Array<'ALL' | SlayQuestCategory> = [
+  'ALL',
+  'SHOP',
+  'CREATE',
+  'LEARN',
+  'SHARE',
+  'LOYALTY',
+  'MEMBERSHIP',
+];
+
+const FEATURED_SLAY_QUEST_TITLES = ['PSA EXPLORER', 'BUILD-A-WIG DESIGNER', 'SLAY CAM STAR'];
+
+const SLAY_QUEST_META: Record<string, SlayQuestMeta> = {
+  'PSA EXPLORER': {
+    category: 'LEARN',
+    description: 'USE PSA TO UNLOCK CONCIERGE REWARDS.',
+    currentLevelIndex: 0,
+    progressCurrent: 5,
+    progressTarget: 25,
+    progressLabel: 'USES',
+  },
+  'DIGITAL CASH COLLECTOR': {
+    category: 'LOYALTY',
+    description: 'LOAD, SAVE + REDEEM DIGITAL CASH.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 4,
+    progressLabel: 'MILESTONES',
+  },
+  'BUILD-A-WIG DESIGNER': {
+    category: 'SHOP',
+    description: 'SAVE CUSTOM WIG DESIGNS + BUILD YOUR DREAM LOOK.',
+    currentLevelIndex: 1,
+    progressCurrent: 5,
+    progressTarget: 10,
+    progressLabel: 'DESIGNS',
+  },
+  'HAIRSTYLE ANALYSIS': {
+    category: 'LEARN',
+    description: 'COMPLETE ANALYSES TO REFINE YOUR BEST LOOKS.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 5,
+    progressLabel: 'ANALYSES',
+  },
+  'LOUNGE MEMBER': {
+    category: 'MEMBERSHIP',
+    description: 'VISIT THE MEMBERS LOUNGE + JOIN MEMBER ACTIVITIES.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 5,
+    progressLabel: 'VISITS',
+  },
+  'COLLECTION EXPLORER': {
+    category: 'SHOP',
+    description: 'EXPLORE SIGNATURE UNITS + SAVE YOUR FAVORITES.',
+    currentLevelIndex: 1,
+    progressCurrent: 6,
+    progressTarget: 15,
+    progressLabel: 'VIEWS',
+  },
+  'COLOR CURATOR': {
+    category: 'SHOP',
+    description: 'SAVE CUSTOM COLOR COMBINATIONS + UNLOCK COLOR PERKS.',
+    currentLevelIndex: 1,
+    progressCurrent: 10,
+    progressTarget: 25,
+    progressLabel: 'COLORS',
+  },
+  'SLAY SCHOLAR': {
+    category: 'LEARN',
+    description: 'COMPLETE ACADEMY LESSONS + BUILD SLAY KNOWLEDGE.',
+    currentLevelIndex: 0,
+    progressCurrent: 0,
+    progressTarget: 5,
+    progressLabel: 'LESSONS',
+  },
+  'COMMUNITY MVP': {
+    category: 'SHARE',
+    description: 'REFER FRIENDS + GROW THE FRONTAL SLAYER COMMUNITY.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 3,
+    progressLabel: 'FRIENDS',
+  },
+  'CONTENT CREATOR': {
+    category: 'CREATE',
+    description: 'SUBMIT APPROVED PHOTOS + VIDEOS FOR FEATURES.',
+    currentLevelIndex: 1,
+    progressCurrent: 5,
+    progressTarget: 10,
+    progressLabel: 'PIECES',
+  },
+  'REVIEW ROYALTY': {
+    category: 'CREATE',
+    description: 'SHARE APPROVED REVIEWS + HELP OTHER SLAYERS SHOP.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 5,
+    progressLabel: 'REVIEWS',
+  },
+  'ORDER COLLECTOR': {
+    category: 'SHOP',
+    description: 'COMPLETE PURCHASES + BUILD YOUR COLLECTION.',
+    currentLevelIndex: 1,
+    progressCurrent: 5,
+    progressTarget: 15,
+    progressLabel: 'ORDERS',
+  },
+  'REWARDS HUNTER': {
+    category: 'LOYALTY',
+    description: 'REDEEM REWARDS + OPEN THE MEMBER VAULT.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 5,
+    progressLabel: 'REDEMPTIONS',
+  },
+  'EARLY ACCESS INSIDER': {
+    category: 'SHOP',
+    description: 'JOIN EARLY-ACCESS RELEASES + GET FRONT-OF-LINE PERKS.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 3,
+    progressLabel: 'RELEASES',
+  },
+  'SLAY CAM STAR': {
+    category: 'CREATE',
+    description: 'GET FEATURED ON SLAY CAM + EARN COMMUNITY STATUS.',
+    currentLevelIndex: 1,
+    progressCurrent: 5,
+    progressTarget: 10,
+    progressLabel: 'FEATURES',
+  },
+  'LOYALTY LEGEND': {
+    category: 'LOYALTY',
+    description: 'EARN LIFETIME POINTS + CLIMB TOWARD LEGEND STATUS.',
+    currentLevelIndex: 0,
+    progressCurrent: 5000,
+    progressTarget: 25000,
+    progressLabel: 'POINTS',
+  },
+  'MEMBERSHIP ELITE': {
+    category: 'MEMBERSHIP',
+    description: 'MAINTAIN MEMBERSHIP + UNLOCK ANNIVERSARY STATUS.',
+    currentLevelIndex: 0,
+    progressCurrent: 3,
+    progressTarget: 6,
+    progressLabel: 'MONTHS',
+  },
+  'REFERRAL ROYALTY': {
+    category: 'SHARE',
+    description: 'REFER SUCCESSFUL CUSTOMERS + EARN ROYALTY STATUS.',
+    currentLevelIndex: 0,
+    progressCurrent: 1,
+    progressTarget: 5,
+    progressLabel: 'REFERRALS',
+  },
+};
+
 const SLAY_QUESTS: SlayQuest[] = [
   {
     title: 'PSA EXPLORER',
@@ -551,6 +721,254 @@ const SLAY_QUESTS: SlayQuest[] = [
 ];
 
 function SlayQuestsSection() {
+  const [selectedCategory, setSelectedCategory] = useState<'ALL' | SlayQuestCategory>('ALL');
+  const [showAllQuests, setShowAllQuests] = useState(false);
+  const [expandedQuestTitle, setExpandedQuestTitle] = useState<string | null>(null);
+
+  const featuredQuests = FEATURED_SLAY_QUEST_TITLES
+    .map((title) => SLAY_QUESTS.find((quest) => quest.title === title))
+    .filter((quest): quest is SlayQuest => Boolean(quest));
+  const visibleQuests = SLAY_QUESTS.filter((quest) => {
+    const meta = SLAY_QUEST_META[quest.title];
+    return selectedCategory === 'ALL' || meta.category === selectedCategory;
+  });
+  const directoryQuests = visibleQuests.filter((quest) => !FEATURED_SLAY_QUEST_TITLES.includes(quest.title));
+
+  const handleCategorySelect = (category: 'ALL' | SlayQuestCategory) => {
+    setSelectedCategory(category);
+    setShowAllQuests(true);
+    setExpandedQuestTitle(null);
+  };
+
+  const handleToggleQuest = (title: string) => {
+    setExpandedQuestTitle((currentTitle) => (currentTitle === title ? null : title));
+  };
+
+  const renderQuestCard = (quest: SlayQuest) => {
+    const meta = SLAY_QUEST_META[quest.title];
+    const currentLevel = quest.levels[meta.currentLevelIndex] || quest.levels[0];
+    const rewardPreview = currentLevel.rewards.find((reward): reward is string => typeof reward === 'string') || 'LOYALTY REWARD';
+    const progressPercent = Math.min(100, Math.max(0, (meta.progressCurrent / meta.progressTarget) * 100));
+    const isExpanded = expandedQuestTitle === quest.title;
+
+    return (
+      <div
+        key={quest.title}
+        style={{
+          background: '#ffffff',
+          border: '1px solid #000000',
+          padding: '14px',
+          marginBottom: '12px',
+          boxShadow: '4px 4px 0 rgba(0,0,0,0.08)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px' }}>
+          <div style={{ flex: 1 }}>
+            <p
+              style={{
+                fontFamily: '"Bohemy", cursive',
+                color: '#000000',
+                fontSize: '24px',
+                margin: '0 0 6px 0',
+                lineHeight: 1,
+                textTransform: 'lowercase',
+                fontWeight: 400,
+                textAlign: 'left',
+              }}
+            >
+              {quest.future ? `${quest.title.toLowerCase()} future quest` : quest.title.toLowerCase()}
+            </p>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                color: '#808080',
+                fontSize: '9px',
+                margin: '0 0 10px 0',
+                lineHeight: 1.45,
+                textTransform: 'uppercase',
+                fontWeight: 500,
+                letterSpacing: '0.03em',
+                textAlign: 'left',
+              }}
+            >
+              {meta.description}
+            </p>
+          </div>
+          <span
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              color: '#EB1C24',
+              fontSize: '9px',
+              lineHeight: 1,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              border: '1px solid #EB1C24',
+              padding: '5px 7px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {meta.category}
+          </span>
+        </div>
+
+        <p
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: '#000000',
+            fontSize: '10px',
+            margin: '0 0 5px 0',
+            lineHeight: 1.35,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            textAlign: 'left',
+          }}
+        >
+          {currentLevel.title}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '6px' }}>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              color: '#808080',
+              fontSize: '9px',
+              margin: 0,
+              lineHeight: 1.25,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              textAlign: 'left',
+            }}
+          >
+            CURRENT LEVEL
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              color: '#000000',
+              fontSize: '9px',
+              margin: 0,
+              lineHeight: 1.25,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              textAlign: 'right',
+            }}
+          >
+            {meta.progressCurrent.toLocaleString()} / {meta.progressTarget.toLocaleString()} {meta.progressLabel}
+          </p>
+        </div>
+        <div
+          aria-hidden="true"
+          style={{
+            width: '100%',
+            height: '8px',
+            background: '#f2f2f2',
+            border: '1px solid #000000',
+            marginBottom: '9px',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ width: `${progressPercent}%`, height: '100%', background: '#EB1C24' }} />
+        </div>
+        <p
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: '#000000',
+            fontSize: '10px',
+            margin: '0 0 12px 0',
+            lineHeight: 1.35,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ color: '#808080' }}>REWARD:</span> {rewardPreview}
+        </p>
+        <button
+          type="button"
+          onClick={() => handleToggleQuest(quest.title)}
+          aria-expanded={isExpanded}
+          style={{
+            width: '100%',
+            background: isExpanded ? '#EB1C24' : '#000000',
+            color: '#ffffff',
+            border: '1px solid #000000',
+            fontFamily: '"Futura PT Medium"',
+            fontSize: '10px',
+            lineHeight: 1,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            letterSpacing: '0.06em',
+            padding: '10px 12px',
+            cursor: 'pointer',
+          }}
+        >
+          {isExpanded ? 'HIDE LEVELS' : 'VIEW LEVELS'}
+        </button>
+
+        {isExpanded && (
+          <div
+            style={{
+              borderTop: '1px solid #000000',
+              marginTop: '14px',
+              paddingTop: '12px',
+            }}
+          >
+            {quest.levels.map((level) => (
+              <div key={`${quest.title}-${level.title}`} style={{ marginBottom: '12px' }}>
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    fontSize: '10px',
+                    margin: '0 0 3px 0',
+                    lineHeight: 1.35,
+                    textTransform: 'uppercase',
+                    fontWeight: 500,
+                    textAlign: 'left',
+                  }}
+                >
+                  {level.title}
+                </p>
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    color: '#000000',
+                    fontSize: '10px',
+                    margin: '0 0 5px 0',
+                    lineHeight: 1.45,
+                    textTransform: 'uppercase',
+                    textAlign: 'left',
+                  }}
+                >
+                  {level.task}
+                </p>
+                {level.rewards.map((reward, rewardIndex) =>
+                  typeof reward === 'string' ? (
+                    <SlayChallengeRoseBullet key={`${level.title}-${reward}-${rewardIndex}`}>{reward}</SlayChallengeRoseBullet>
+                  ) : (
+                    <p
+                      key={`${level.title}-or-${rewardIndex}`}
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        color: '#808080',
+                        fontSize: '9px',
+                        margin: '2px 0 2px 20px',
+                        lineHeight: 1.35,
+                        textTransform: 'uppercase',
+                        textAlign: 'left',
+                      }}
+                    >
+                      OR
+                    </p>
+                  )
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div style={{ textAlign: 'left' }}>
       <p
@@ -565,78 +983,117 @@ function SlayQuestsSection() {
           textAlign: 'left',
         }}
       >
-        FRONTAL SLAYER SPECIFIC CHALLENGES DESIGNED TO REWARD HOW YOU SHOP, CREATE, SHARE + ENGAGE.
+        FRONTAL SLAYER CHALLENGES DESIGNED TO REWARD HOW YOU SHOP, CREATE, SHARE + ENGAGE.
       </p>
-      {SLAY_QUESTS.map((quest) => (
-        <div key={quest.title} style={{ marginBottom: '18px' }}>
+
+      <div
+        style={{
+          display: 'flex',
+          overflowX: 'auto',
+          gap: '8px',
+          paddingBottom: '10px',
+          marginBottom: '12px',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        {SLAY_QUEST_FILTERS.map((category) => {
+          const isSelected = selectedCategory === category;
+          return (
+            <button
+              key={category}
+              type="button"
+              onClick={() => handleCategorySelect(category)}
+              style={{
+                flex: '0 0 auto',
+                background: isSelected ? '#EB1C24' : '#ffffff',
+                color: isSelected ? '#ffffff' : '#000000',
+                border: `1px solid ${isSelected ? '#EB1C24' : '#000000'}`,
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '9px',
+                lineHeight: 1,
+                textTransform: 'uppercase',
+                fontWeight: 500,
+                letterSpacing: '0.06em',
+                padding: '9px 11px',
+                cursor: 'pointer',
+              }}
+            >
+              {category}
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        style={{
+          backgroundImage:
+            'linear-gradient(135deg, rgba(255,255,255,0.96), rgba(244,244,244,0.96)), radial-gradient(circle at top left, rgba(235,28,36,0.08), transparent 32%)',
+          border: '1px solid #000000',
+          padding: '12px',
+          marginBottom: '14px',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: '#EB1C24',
+            fontSize: '10px',
+            margin: '0 0 10px 0',
+            lineHeight: 1.25,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            letterSpacing: '0.06em',
+            textAlign: 'left',
+          }}
+        >
+          FEATURED QUESTS
+        </p>
+        {featuredQuests.map(renderQuestCard)}
+        <button
+          type="button"
+          onClick={() => {
+            setShowAllQuests((currentValue) => !currentValue);
+            setExpandedQuestTitle(null);
+          }}
+          style={{
+            width: '100%',
+            background: '#ffffff',
+            color: '#000000',
+            border: '1px solid #000000',
+            fontFamily: '"Futura PT Medium"',
+            fontSize: '10px',
+            lineHeight: 1,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            letterSpacing: '0.06em',
+            padding: '11px 12px',
+            cursor: 'pointer',
+          }}
+        >
+          {showAllQuests ? 'HIDE ALL QUESTS' : 'VIEW ALL QUESTS'}
+        </button>
+      </div>
+
+      {showAllQuests && (
+        <div>
           <p
             style={{
-              fontFamily: '"Bohemy", cursive',
+              fontFamily: '"Futura PT Medium"',
               color: '#000000',
-              fontSize: '20px',
-              margin: '0 0 6px 0',
-              lineHeight: 1.05,
-              textTransform: 'lowercase',
-              fontWeight: 400,
+              fontSize: '10px',
+              margin: '0 0 10px 0',
+              lineHeight: 1.35,
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              letterSpacing: '0.06em',
               textAlign: 'left',
             }}
           >
-            {quest.future ? `${quest.title.toLowerCase()} (future quest)` : quest.title.toLowerCase()}
+            {selectedCategory === 'ALL' ? 'ALL QUESTS' : `${selectedCategory} QUESTS`}
           </p>
-          {quest.levels.map((level) => (
-            <div key={`${quest.title}-${level.title}`} style={{ marginBottom: '10px' }}>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#EB1C24',
-                  fontSize: '10px',
-                  margin: '0 0 2px 0',
-                  lineHeight: 1.35,
-                  textTransform: 'uppercase',
-                  fontWeight: 500,
-                  textAlign: 'left',
-                }}
-              >
-                {level.title}
-              </p>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Book"',
-                  color: '#000000',
-                  fontSize: '10px',
-                  margin: '0 0 4px 0',
-                  lineHeight: 1.45,
-                  textTransform: 'uppercase',
-                  textAlign: 'left',
-                }}
-              >
-                {level.task}
-              </p>
-              <SlayChallengeBohemySubhead>reward</SlayChallengeBohemySubhead>
-              {level.rewards.map((reward, rewardIndex) =>
-                typeof reward === 'string' ? (
-                  <SlayChallengeRoseBullet key={`${level.title}-${reward}`}>{reward}</SlayChallengeRoseBullet>
-                ) : (
-                  <p
-                    key={`${level.title}-or-${rewardIndex}`}
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      color: '#808080',
-                      fontSize: '9px',
-                      margin: '2px 0 2px 20px',
-                      lineHeight: 1.35,
-                      textTransform: 'uppercase',
-                      textAlign: 'left',
-                    }}
-                  >
-                    OR
-                  </p>
-                )
-              )}
-            </div>
-          ))}
+          {directoryQuests.map(renderQuestCard)}
         </div>
-      ))}
+      )}
     </div>
   );
 }
