@@ -7,7 +7,8 @@ const SHOP_TAB_ITEMS = [
   { label: 'UNITS', hasArrow: true, isExpandable: true, subItems: ['STRAIGHT', 'WAVY', 'CURLY'] as const },
   { label: 'HD LACE', hasArrow: true, isExpandable: true, subItems: ['CLOSURES', 'FRONTALS'] as const },
   { label: 'BUNDLES', hasArrow: false, isExpandable: false },
-  { label: 'BUILD-A-WIG', hasArrow: false, isExpandable: false }
+  { label: 'BUILD-A-WIG', hasArrow: false, isExpandable: false },
+  { label: 'SLAY CAM', hasArrow: false, isExpandable: false }
 ] as const;
 
 type Item = (typeof SHOP_TAB_ITEMS)[number];
@@ -18,6 +19,8 @@ function staticNavPath(label: string, buildAWigPath: string): string | null {
       return '/shop/bundles';
     case 'BUILD-A-WIG':
       return buildAWigPath;
+    case 'SLAY CAM':
+      return '/slay-cam';
     default:
       return null;
   }

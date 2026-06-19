@@ -29948,3 +29948,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Updated the Slay Challenge Tier 1 points reward option to **600 LOYALTY PTS** and the active challenge summary to **600 loyalty points**. Existing stored selections using the old `200points` value are interpreted as `600points` so prior selections upgrade automatically.
 - **Changes:** Updated **`src/pages/account/concierge/page.tsx`** only. Verified with **`npm run build`**.
 - **Conventions:** Slay Challenge Tier 1 points reward is **600 loyalty points**. Keep backward compatibility for older localStorage value `200points` by mapping it to the current `600points` reward.
+
+---
+
+## 2026-06-19 — Slay Cam initial navigation and account entry
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Concierge, PSA nudges, membership rewards, and now the emerging **Slay Cam** concept. Slay Cam was described as the official Frontal Slayer showcase: public community content, real client photos/videos, separate from reviews and affiliate submissions, future Slay MVP recognition, rewards/achievements, product tags, and eventual **Shop This Slay** conversion flows.
+- **Topics covered:** The latest request asked to incorporate Slay Cam where it makes sense for now by adding it to the **SHOP** tab of the mobile menu toggle below **BUILD-A-WIG** and adding a **SLAY CAM** card to Account Profile below the **REWARDS** card.
+- **Decisions / outcomes:** Added **SLAY CAM** as a non-expandable Shop menu item immediately after **BUILD-A-WIG** and added an Account Profile card below **REWARDS** with subtitle **SHOWCASE YOUR LOOKS + EARN REWARDS**. To avoid dead links, added an initial public `/slay-cam` page using the existing marble/mobile nav/menu style and lightweight showcase copy for real client photos/videos, Shop This Slay tags, Slay MVP recognition, and reward opportunities.
+- **Changes:** Updated **`src/components/ShopMobileMenuShopTab.tsx`**, **`src/pages/account/page.tsx`**, **`src/App.tsx`**, and added **`src/pages/slay-cam/page.tsx`**. Verified with **`npm run build`**.
+- **Conventions:** Slay Cam should be treated as a public core showcase/conversion surface rather than hidden inside Membership. The current implementation is an entry/stub only; upload workflows, moderation, likes, rewards, achievements, Members Lounge integration, product-page **Shop This Slay**, and Slay MVP systems remain future phases.
