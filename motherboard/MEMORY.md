@@ -29488,3 +29488,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Removed the Voucher History popup footer disclaimer without changing voucher history data, voucher expiration logic, or gift-card policy copy elsewhere.
 - **Changes:** **`src/pages/account/page.tsx`** no longer renders the rewards expiration/combinability paragraph at the bottom of the Voucher History popup. Verified with **`npm run build`**.
 - **Conventions:** If a rewards disclaimer is removed from Account → Rewards, check related account popups such as Voucher History for duplicated client-facing copies.
+
+---
+
+## 2026-06-19 — IIYM PSA benefit label hides message limits
+
+- **Context:** In this chat, after multiple Account / Brand Member copy and rewards-display cleanups, the user asked to remove **`— 45 MSGS/MO (10/DAY)`** and similar PSA usage-limit suffixes from the **INCLUDED IN YOUR MEMBERSHIP** section because they do not need to be client-facing there.
+- **Topics covered:** Traced the IIYM benefit labels to **`src/constants/premiumBenefitsByTier.ts`**, where each tier used **`psaBenefitLabelForTier()`** from **`psaMembershipCopy.ts`** to append tier-specific monthly/daily message limits.
+- **Decisions / outcomes:** Kept PSA usage-limit constants and logic intact for places that still need them, but changed the included-benefit label to the generic **`PERSONAL SLAY ASSISTANT (PSA)`** display text.
+- **Changes:** **`src/constants/premiumBenefitsByTier.ts`** now imports **`PSA_MEMBERSHIP_BENEFIT_LABEL`** and uses it for 3-month, 6-month, and 12-month premium benefit lists instead of **`psaBenefitLabelForTier(...)`**. Verified with **`npm run build`**.
+- **Conventions:** In IIYM / included-benefit lists, use concise benefit names; do not expose PSA message quotas unless the user explicitly asks for that detail in a plan-comparison or usage context.
