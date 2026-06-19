@@ -838,34 +838,36 @@ function SettingsPage() {
                     />
                   </div>
                 </div>
-                <div style={{ marginBottom: '20px', width: 'calc((100% - 12px) / 2)' }}>
-                  <label style={{ ...labelStyle, marginBottom: '4px' }}>BIRTHDAY</label>
-                  <input
-                    type="text"
-                    value={birthday}
-                    placeholder="MM/DD/YYYY"
-                    className="settings-personal-input"
-                    readOnly={!canEditAdminBirthday}
-                    onChange={(e) => canEditAdminBirthday && setBirthday(formatBirthday(e.target.value))}
-                    onBlur={() => canEditAdminBirthday && persistPersonalInfo({ birthday })}
-                    style={{ ...inputBaseStyle, marginBottom: 0, ...(!canEditAdminBirthday && { cursor: 'default', color: '#808080' }) }}
-                  />
-                </div>
-                <div style={{ marginBottom: '20px', width: 'calc((100% - 12px) / 2)' }}>
-                  <label style={{ ...labelStyle, marginBottom: '4px' }}>PHONE NUMBER</label>
-                  <input
-                    type="text"
-                    value={phoneNumber}
-                    placeholder="(555) 555-5555"
-                    className="settings-personal-input"
-                    onChange={(e) => {
-                      const nextPhone = formatPhoneWithHyphens(e.target.value);
-                      setPhoneNumber(nextPhone);
-                      persistPersonalInfo({ phoneNumber: nextPhone.trim() });
-                    }}
-                    onBlur={() => persistPersonalInfo({ phoneNumber: phoneNumber.trim() })}
-                    style={{ ...inputBaseStyle, marginBottom: 0 }}
-                  />
+                <div style={{ marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ ...labelStyle, marginBottom: '4px' }}>BIRTHDAY</label>
+                    <input
+                      type="text"
+                      value={birthday}
+                      placeholder="MM/DD/YYYY"
+                      className="settings-personal-input"
+                      readOnly={!canEditAdminBirthday}
+                      onChange={(e) => canEditAdminBirthday && setBirthday(formatBirthday(e.target.value))}
+                      onBlur={() => canEditAdminBirthday && persistPersonalInfo({ birthday })}
+                      style={{ ...inputBaseStyle, marginBottom: 0, ...(!canEditAdminBirthday && { cursor: 'default', color: '#808080' }) }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ ...labelStyle, marginBottom: '4px' }}>PHONE NUMBER</label>
+                    <input
+                      type="text"
+                      value={phoneNumber}
+                      placeholder="(555) 555-5555"
+                      className="settings-personal-input"
+                      onChange={(e) => {
+                        const nextPhone = formatPhoneWithHyphens(e.target.value);
+                        setPhoneNumber(nextPhone);
+                        persistPersonalInfo({ phoneNumber: nextPhone.trim() });
+                      }}
+                      onBlur={() => persistPersonalInfo({ phoneNumber: phoneNumber.trim() })}
+                      style={{ ...inputBaseStyle, marginBottom: 0 }}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={labelStyle}>EMAIL</label>
@@ -1127,7 +1129,7 @@ function SettingsPage() {
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ ...sectionHeaderWrapperStyle, marginTop: '8px' }}>
                   <h2 style={sectionHeaderTextStyle}>HELP CENTER</h2>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '6px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '6px' }}>
                   <button
                     type="button"
                     onClick={() => navigate('/brand/faq')}

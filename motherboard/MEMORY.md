@@ -29658,3 +29658,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Changed the Membership Status reward-progress line’s base typography from Medium/500 to Book/400 while keeping its size, uppercase styling, black base color, and colored reward-label span intact.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** so that progress line uses **`"Futura PT Book"`** with **`fontWeight: '400'`**. Verified with **`npm run build`**.
 - **Conventions:** On the Account → Rewards Membership Status card, the black reward-progress sentence should render in **Futura PT Book**; colored reward labels may continue to use the inherited progress-line typography unless product asks otherwise.
+
+---
+
+## 2026-06-19 — Account Settings birthday/phone row and Help Center spacing
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds copy/nav, UPR and Brand Member premium perk copy/styling/order, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting/copy, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, IIYM 12-month-only double points, UPR **DOUBLE YOUR POINTS** ordering, **EXPLORE ALL BENEFITS** spacing, Membership Status tier-perk heading removal, and Account Rewards progress-text typography.
+- **Topics covered:** The latest request asked for Account → Settings to put **PHONE NUMBER** to the right of **BIRTHDAY** instead of below it, and for **HELP CENTER** text spacing to match the **NOTIFICATIONS** text spacing.
+- **Decisions / outcomes:** Reused the existing two-column grid pattern already used for first/last name so Birthday and Phone align in one row. Matched Help Center list vertical spacing to the Notifications list by using the same **14px** column gap.
+- **Changes:** Updated **`src/pages/account/settings/page.tsx`**: Birthday and Phone now render inside one `gridTemplateColumns: '1fr 1fr'` row with a **12px** gap; Help Center button list gap changed from **10px** to **14px**. Verified with **`npm run build`**.
+- **Conventions:** On Account → Settings, Birthday and Phone should sit side-by-side in the Personal Information section, and Help Center list spacing should mirror Notifications list spacing.
