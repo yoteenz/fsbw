@@ -29458,3 +29458,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Removed both visible instances of that disclaimer copy without changing the underlying reward/voucher expiration behavior or any checkout/digital-cash logic.
 - **Changes:** **`src/pages/account/membership/page.tsx`** no longer renders the rewards expiration/combinability paragraph in either branch where it appeared. Verified with **`npm run build`**.
 - **Conventions:** Keep operational reward-expiration rules out of client-facing membership copy unless the product owner explicitly asks to surface them.
+
+---
+
+## 2026-06-19 — Brand Member perks use shared black/gray premium rewards styling
+
+- **Context:** In this chat, after the Add Funds / Balance, alerts/history, included-membership bullets, and premium rewards copy updates, the user asked to update the premium member perks section on the **Brand → Member** page with the newly updated gray/black header text.
+- **Topics covered:** Confirmed **`BrandMemberSection`** already reused **`PremiumRewardsMarketingList`** and the newly updated shared premium rewards copy, but it was still passing **`bohemyPerkTitles`**, which changed perk titles to lowercase Bohemy instead of the Account Rewards black header style.
+- **Decisions / outcomes:** Removed the Brand Member-specific Bohemy override so the page now uses the shared premium perk rendering: black uppercase perk headers and gray uppercase descriptions from **`brandMemberPremiumRewards.ts`**.
+- **Changes:** **`src/components/brand/BrandMemberSection.tsx`** now calls **`<PremiumRewardsMarketingList heading="PREMIUM MEMBER PERKS" />`** without **`bohemyPerkTitles`**. Verified with **`npm run build`**.
+- **Conventions:** When the user asks Brand → Member premium perks to match Account Rewards black/gray copy styling, use the default **`PremiumRewardsMarketingList`** title treatment rather than the Bohemy override.
