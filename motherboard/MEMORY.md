@@ -29698,3 +29698,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the parent progress sentence as Book/400 and restored only the colored reward label spans to Medium/500. Because the exclamation mark is outside the colored label span, it continues to inherit Book/400 from the parent sentence.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** so both colored `nextReward.label` spans in the Membership Status progress sentence explicitly use **`"Futura PT Medium"`** and **`fontWeight: '500'`** while preserving `nextLabelColor`. Verified with **`npm run build`**.
 - **Conventions:** In the Account → Rewards Membership Status progress sentence, use Futura Book for the black surrounding copy and punctuation, but Futura Medium for the colored reward label only.
+
+---
+
+## 2026-06-19 — Membership Status spacing refined
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member / Settings / Reviews refinements: Add Funds copy/nav, membership copy/styling, Account Alerts copy/sorting, shared Digital Cash History popup behavior, Account Settings layout and Help Center spacing, Account Reviews subtitle typography, and Account Rewards progress-text typography.
+- **Topics covered:** The latest request asked to add **2px** spacing above the gray **EXPLORE ALL BENEFITS** text in the Membership Status section, and add **4px** spacing below the gray tier description paragraphs such as **YOUR FOUNDATION FOR EARNING EXCLUSIVE REWARDS...** for each tier.
+- **Decisions / outcomes:** Treated both requests as additive spacing changes to the existing values: Explore link wrapper top padding increased from **4px** to **6px**, and the tier description paragraph bottom margin increased from **6px** to **10px**.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** in the Membership Status card spacing only. Verified with **`npm run build`**.
+- **Conventions:** Membership Status tier description paragraphs should leave a 10px bottom gap before the rose-icon perk list, and **EXPLORE ALL BENEFITS** should have 6px top padding above the gray link text.

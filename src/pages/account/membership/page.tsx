@@ -2496,7 +2496,7 @@ fontFamily: '"Futura PT Book"',
                                         fontFamily: '"Futura PT Medium"',
                                         color: BRAND_GRAY,
                                         fontSize: '10px',
-                                        margin: '16px 0 6px 0',
+                                        margin: '16px 0 10px 0',
                                         textTransform: 'uppercase',
                                         lineHeight: 1.35,
                                         fontWeight: '500'
@@ -2548,7 +2548,7 @@ fontFamily: '"Futura PT Book"',
                                       )}
                                     </div>
                                   )}
-                                  <div style={{ marginBottom: '22px', paddingTop: '4px' }}>
+                                  <div style={{ marginBottom: '22px', paddingTop: '6px' }}>
                                     <button
                                       type="button"
                                       onClick={() => setShowBenefitsModal((prev) => !prev)}
