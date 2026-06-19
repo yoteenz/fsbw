@@ -2054,9 +2054,9 @@ function MembershipPage() {
                       borderWidth: '1.3px',
                       padding: '20px 20px 20px 20px',
                       backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      minHeight: '560px',
-                      height: '560px',
-                      maxHeight: '560px'
+                      minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                      height: MENU_TOGGLE_PANEL_HEIGHT,
+                      maxHeight: MENU_TOGGLE_PANEL_HEIGHT
                     }}
                   >
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', flexShrink: 0 }}>
@@ -2132,7 +2132,7 @@ function MembershipPage() {
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>continuing tier privileges</p>
                       <p style={{ margin: '0 0 8px 0' }}>YOUR STATUS BENEFITS REFRESH EACH QUALIFYING CYCLE, PROVIDING ONGOING VALUE AS YOU MAINTAIN OR ADVANCE TIERS.</p>
 
-                      <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0' }}>all tiers</p>
+                      <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0', color: BRAND_GRAY }}>all tiers</p>
                       <div style={{ margin: '0 0 10px 0' }}>
                         <TierRoseBenefit>MEMBER SAVINGS ON ELIGIBLE PURCHASES</TierRoseBenefit>
                         <TierRoseBenefit>ANNUAL CONSULTATION BENEFIT</TierRoseBenefit>
