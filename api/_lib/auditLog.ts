@@ -21,7 +21,8 @@ export type AuditAction =
   | 'pending_review_supplemental.approve'
   | 'pending_review_supplemental.decline'
   | 'reviews.publish'
-  | 'reviews.reject';
+  | 'reviews.reject'
+  | 'live_try_on.batch_step';
 
 export async function writeAuditLog(params: {
   actorId: string | null;

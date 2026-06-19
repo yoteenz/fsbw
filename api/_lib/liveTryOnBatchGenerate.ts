@@ -69,6 +69,15 @@ function mimeForStoragePath(path: string): string {
 
 const TRYON_OVERLAY_MAX_PX = 1536;
 const TRYON_IDEOGRAM_MAX_BYTES = 9_500_000;
+type JimpImage = Awaited<ReturnType<typeof Jimp.read>>;
+
+function intToRgba(i: number): { r: number; g: number; b: number; a: number } {
+  const r = Math.floor(i / 256 ** 3);
+  const g = Math.floor((i - r * 256 ** 3) / 256 ** 2);
+  const b = Math.floor((i - r * 256 ** 3 - g * 256 ** 2) / 256);
+  const a = Math.floor(i - r * 256 ** 3 - g * 256 ** 2 - b * 256);
+  return { r, g, b, a };
+}
 
 function formatFalSubscribeError(e: unknown, stepLabel: string): Error {
   const raw = e instanceof Error ? e.message : String(e);
@@ -103,20 +112,20 @@ async function uploadStorageObjectToFal(
   return fal.storage.upload(file);
 }
 
-function sampleOverlayAlpha(img: Jimp, u: number, v: number): number {
+function sampleOverlayAlpha(img: JimpImage, u: number, v: number): number {
   const w = img.width;
   const h = img.height;
   const x = Math.min(w - 1, Math.max(0, Math.floor(u * w)));
   const y = Math.min(h - 1, Math.max(0, Math.floor(v * h)));
-  return Jimp.intToRGBA(img.getPixelColor(x, y)).a;
+  return intToRgba(img.getPixelColor(x, y)).a;
 }
 
-function sampleOverlayLuma(img: Jimp, u: number, v: number): number {
+function sampleOverlayLuma(img: JimpImage, u: number, v: number): number {
   const w = img.width;
   const h = img.height;
   const x = Math.min(w - 1, Math.max(0, Math.floor(u * w)));
   const y = Math.min(h - 1, Math.max(0, Math.floor(v * h)));
-  const { r, g, b, a } = Jimp.intToRGBA(img.getPixelColor(x, y));
+  const { r, g, b, a } = intToRgba(img.getPixelColor(x, y));
   if (a < 16) return 0;
   return Math.round(0.299 * r + 0.587 * g + 0.114 * b);
 }
@@ -365,18 +374,18 @@ async function workPngToHairOverlay(buf: Buffer): Promise<Buffer> {
     img.scaleToFit({ w: TRYON_OVERLAY_MAX_PX, h: TRYON_OVERLAY_MAX_PX });
   }
   const threshold = 235;
-  img.scan(0, 0, img.width, img.height, function (_x, _y, idx) {
-    const r = this.bitmap.data[idx];
-    const g = this.bitmap.data[idx + 1];
-    const b = this.bitmap.data[idx + 2];
+  img.scan(0, 0, img.width, img.height, (_x, _y, idx) => {
+    const r = img.bitmap.data[idx];
+    const g = img.bitmap.data[idx + 1];
+    const b = img.bitmap.data[idx + 2];
     if (r >= threshold && g >= threshold && b >= threshold) {
-      this.bitmap.data[idx + 3] = 0;
+      img.bitmap.data[idx + 3] = 0;
       return;
     }
     const avg = (r + g + b) / 3;
     if (avg >= threshold - 25) {
       const alpha = Math.max(0, Math.min(255, Math.floor((threshold - avg) * 10)));
-      this.bitmap.data[idx + 3] = Math.min(this.bitmap.data[idx + 3], alpha);
+      img.bitmap.data[idx + 3] = Math.min(img.bitmap.data[idx + 3], alpha);
     }
   });
   return img.getBuffer('image/png');

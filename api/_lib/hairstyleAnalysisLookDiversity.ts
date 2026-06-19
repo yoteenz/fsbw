@@ -28,6 +28,7 @@ const DENSITY_OPTIONS = ['200%', '250%', '300%'] as const;
 
 const LENGTH_OPTIONS = ['22 INCHES', '24 INCHES', '26 INCHES', '28 INCHES', '30 INCHES'];
 const PART_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
+const COLOR_BUCKETS = ['neutral', 'blonde', 'vivid', 'any'] as const;
 
 function shuffle<T>(items: readonly T[]): T[] {
   const out = [...items];

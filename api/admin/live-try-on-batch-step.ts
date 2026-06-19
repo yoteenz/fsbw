@@ -126,7 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       }
     }
 
-    res.status(200).json({ ok: true, ...result, job });
+    res.status(200).json({ ...result, ok: true, job });
   } catch (e) {
     console.error('live-try-on-batch-step failed', { step, angle, photoModel, color: job.color, e });
     const msg =
