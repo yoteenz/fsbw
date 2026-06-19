@@ -10,11 +10,184 @@ import { MarblePageShell } from '../../layouts/MarblePageShell';
 
 type MobileMenuTab = 'SHOP' | 'TOOLS' | 'BRAND';
 
-const SLAY_CAM_FEATURES = [
-  'REAL FRONTAL SLAYER CLIENT PHOTOS + VIDEOS',
-  'SHOP THIS SLAY PRODUCT TAGS',
-  'MONTHLY SLAY MVP RECOGNITION',
-  'LOYALTY POINTS + REWARD OPPORTUNITIES',
+type SlayCamPost = {
+  id: string;
+  title: string;
+  clientName: string;
+  image: string;
+  category: string;
+  product: string;
+  length: string;
+  color: string;
+  density: string;
+  texture: string;
+  saves: number;
+  points: number;
+  route: string;
+  badge?: string;
+  isVideo?: boolean;
+  height?: number;
+};
+
+const SLAY_CAM_CATEGORIES = [
+  'ALL',
+  'STRAIGHT',
+  'WAVY',
+  'CURLY',
+  'BLONDE',
+  'COLOR',
+  'BEFORE & AFTER',
+  'VIDEOS',
+  'SLAY MVP',
+];
+
+const SLAY_CAM_POSTS: SlayCamPost[] = [
+  {
+    id: 'mvp-ocean-curl',
+    title: 'FEATURED LOOK OF THE MONTH',
+    clientName: 'MAYA R.',
+    image: '/assets/OCEAN CURL FRONT.JPG',
+    category: 'SLAY MVP',
+    product: 'OCEAN CURL',
+    length: '30"',
+    color: 'CHESTNUT',
+    density: '250%',
+    texture: 'CURLY',
+    saves: 482,
+    points: 2500,
+    route: '/curly/ocean-curl',
+    badge: 'SLAY MVP',
+    height: 310,
+  },
+  {
+    id: 'trending-soft-wave',
+    title: 'SOFT GLAM REVEAL',
+    clientName: 'JANELLE K.',
+    image: '/assets/SOFT-WAVE FRONT.png',
+    category: 'WAVY',
+    product: 'SOFT WAVE',
+    length: '26"',
+    color: 'OFF BLACK',
+    density: '200%',
+    texture: 'WAVY',
+    saves: 319,
+    points: 500,
+    route: '/wavy/soft-wave',
+    isVideo: true,
+    height: 246,
+  },
+  {
+    id: 'blonde-blanco',
+    title: 'BLONDE BOSS ENERGY',
+    clientName: 'ARI S.',
+    image: '/assets/2D BLANCO FRONT.png',
+    category: 'BLONDE',
+    product: 'BLANCO',
+    length: '24"',
+    color: 'BLONDE',
+    density: '200%',
+    texture: 'STRAIGHT',
+    saves: 274,
+    points: 1000,
+    route: '/straight/blanco',
+    badge: 'MOST SAVED',
+    height: 270,
+  },
+  {
+    id: 'beach-wave-color',
+    title: 'VACATION SLAY',
+    clientName: 'NIA T.',
+    image: '/assets/BEACH WAVE FRONT.JPG',
+    category: 'COLOR',
+    product: 'BEACH WAVE',
+    length: '28"',
+    color: 'CARAMEL RIBBON',
+    density: '250%',
+    texture: 'WAVY',
+    saves: 238,
+    points: 500,
+    route: '/wavy/beach-wave',
+    height: 225,
+  },
+  {
+    id: 'soft-curl-video',
+    title: 'CURL POP CHECK',
+    clientName: 'LEAH M.',
+    image: '/assets/SOFT CURL FRONT.JPG',
+    category: 'VIDEOS',
+    product: 'SOFT CURL',
+    length: '22"',
+    color: 'NATURAL BLACK',
+    density: '200%',
+    texture: 'CURLY',
+    saves: 196,
+    points: 750,
+    route: '/curly/soft-curl',
+    isVideo: true,
+    height: 252,
+  },
+  {
+    id: 'noir-straight',
+    title: 'SLEEK INSTALL DIARY',
+    clientName: 'KAY C.',
+    image: '/assets/natural front.png',
+    category: 'STRAIGHT',
+    product: 'NOIR',
+    length: '30"',
+    color: 'OFF BLACK',
+    density: '250%',
+    texture: 'STRAIGHT',
+    saves: 421,
+    points: 1000,
+    route: '/straight/noir',
+    badge: 'TRENDING',
+    height: 295,
+  },
+  {
+    id: 'before-after-frontal',
+    title: 'BEFORE + AFTER MELT',
+    clientName: 'TAYLOR B.',
+    image: '/assets/wavy-frontal-product.JPG',
+    category: 'BEFORE & AFTER',
+    product: 'WAVY FRONTAL',
+    length: '20"',
+    color: 'OFF BLACK',
+    density: '200%',
+    texture: 'WAVY',
+    saves: 187,
+    points: 300,
+    route: '/home/shop',
+    height: 210,
+  },
+  {
+    id: 'closure-curly',
+    title: 'EVERYDAY CURL MOMENT',
+    clientName: 'IMANI P.',
+    image: '/assets/curly-closure-product.JPG',
+    category: 'CURLY',
+    product: 'CURLY CLOSURE',
+    length: '18"',
+    color: 'NATURAL BLACK',
+    density: '180%',
+    texture: 'CURLY',
+    saves: 143,
+    points: 250,
+    route: '/home/shop',
+    height: 232,
+  },
+];
+
+const SLAY_CAM_STATS = [
+  { value: '128', label: 'FEATURED SLAYS' },
+  { value: '42K', label: 'LOOK SAVES' },
+  { value: '18', label: 'MVP WINNERS' },
+];
+
+const SUBMIT_REWARDS = [
+  'LOYALTY POINTS',
+  'SLAY CAM FEATURES',
+  'MVP STATUS',
+  'EXCLUSIVE REWARDS',
 ];
 
 export default function SlayCamPage() {
@@ -31,6 +204,7 @@ export default function SlayCamPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<MobileMenuTab>('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [isSignedIn, setIsSignedIn] = useState(() => {
     try {
       return typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
@@ -83,6 +257,15 @@ export default function SlayCamPage() {
     background: 'none',
     cursor: 'pointer',
   });
+
+  const visiblePosts = selectedCategory === 'ALL'
+    ? SLAY_CAM_POSTS
+    : SLAY_CAM_POSTS.filter((post) => post.category === selectedCategory);
+  const mvpPost = SLAY_CAM_POSTS[0];
+  const shopThisSlayPosts = SLAY_CAM_POSTS.filter((post) =>
+    ['mvp-ocean-curl', 'noir-straight', 'blonde-blanco'].includes(post.id)
+  );
+  const recentPosts = SLAY_CAM_POSTS.slice(4);
 
   return (
     <MarblePageShell>
@@ -222,43 +405,317 @@ export default function SlayCamPage() {
             </div>
           ) : (
             <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
-              <div
+              <section
                 className="border border-black bg-white/60 backdrop-blur-sm w-full"
-                style={{ borderWidth: '1.3px', padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+                style={{ borderWidth: '1.3px', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
               >
-                <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
-                  <h1 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
-                    SLAY CAM
-                  </h1>
+                <div
+                  style={{
+                    position: 'relative',
+                    minHeight: '430px',
+                    border: '1.3px solid #000',
+                    overflow: 'hidden',
+                    background: '#000',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <img
+                    src={mvpPost.image}
+                    alt={mvpPost.title}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      opacity: 0.92,
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.78) 100%)',
+                    }}
+                  />
+                  <div style={{ position: 'relative', zIndex: 1, padding: '18px 14px', width: '100%' }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#FFFFFF', fontSize: '10px', margin: '0 0 7px 0', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      OFFICIAL FRONTAL SLAYER SHOWCASE
+                    </p>
+                    <h1 style={{ fontFamily: '"Futura PT Medium"', color: '#FFFFFF', fontSize: '30px', margin: '0 0 5px 0', lineHeight: 0.94, textTransform: 'uppercase', fontWeight: 500 }}>
+                      REAL CLIENTS. REAL SLAYS.
+                    </h1>
+                    <p style={{ fontFamily: '"Bohemy", cursive', color: '#FFFFFF', fontSize: '25px', margin: '0 0 12px 0', lineHeight: 1, textTransform: 'lowercase', fontWeight: 400 }}>
+                      explore the luxury lookbook
+                    </p>
+                    <p style={{ fontFamily: '"Futura PT Book"', color: '#FFFFFF', fontSize: '10px', margin: '0 0 14px 0', lineHeight: 1.55, textTransform: 'uppercase' }}>
+                      DISCOVER FEATURED TRANSFORMATIONS, VIDEO REVEALS, TRENDING LOOKS + COMMUNITY-POWERED SHOPPING INSPIRATION.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => navigate(mvpPost.route)}
+                      style={{
+                        width: '100%',
+                        height: '34px',
+                        border: '1.3px solid #FFFFFF',
+                        background: 'rgba(255,255,255,0.92)',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '11px',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      SHOP THE FEATURED SLAY
+                    </button>
+                  </div>
                 </div>
 
-                <p style={{ fontFamily: '"Bohemy", cursive', fontSize: '24px', color: '#000000', margin: '0 0 8px 0', lineHeight: 1.05, textTransform: 'lowercase', fontWeight: 400 }}>
-                  official frontal slayer showcase
-                </p>
-                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0 0 16px 0', lineHeight: 1.5, textTransform: 'uppercase' }}>
-                  SHARE YOUR LOOKS, INSPIRE THE COMMUNITY + GET RECOGNIZED THROUGH SLAY MVP.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '18px' }}>
-                  {SLAY_CAM_FEATURES.map((feature) => (
-                    <div key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                      <img src="/assets/rose-alert.svg" alt="" style={{ width: '12px', height: '12px', marginTop: '2px', flexShrink: 0 }} />
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: 0, lineHeight: 1.5, textTransform: 'uppercase' }}>
-                        {feature}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginTop: '8px' }}>
+                  {SLAY_CAM_STATS.map((stat) => (
+                    <div key={stat.label} style={{ border: '1px solid #000', background: '#FFFFFF', padding: '8px 4px', textAlign: 'center' }}>
+                      <p style={{ fontFamily: '"Covered By Your Grace", cursive', color: '#EB1C24', fontSize: '20px', margin: '0 0 1px 0', lineHeight: 1 }}>
+                        {stat.value}
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '8px', margin: 0, lineHeight: 1.2, textTransform: 'uppercase' }}>
+                        {stat.label}
                       </p>
                     </div>
                   ))}
                 </div>
+              </section>
 
+              <section
+                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                style={{ borderWidth: '1.3px', padding: '14px 12px', marginTop: '8px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '10px' }}>
+                  <div>
+                    <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '0 0 3px 0', textTransform: 'uppercase', fontWeight: 500 }}>
+                      SLAY MVP
+                    </p>
+                    <p style={{ fontFamily: '"Bohemy", cursive', color: '#000000', fontSize: '23px', margin: 0, lineHeight: 1, textTransform: 'lowercase', fontWeight: 400 }}>
+                      featured look of the month
+                    </p>
+                  </div>
+                  <div style={{ border: '1px solid #EB1C24', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '8px', padding: '4px 6px', textTransform: 'uppercase', whiteSpace: 'nowrap', background: '#FFFFFF' }}>
+                    {mvpPost.points.toLocaleString()} PTS EARNED
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '43% 1fr', gap: '10px', alignItems: 'stretch' }}>
+                  <div style={{ border: '1.3px solid #000', overflow: 'hidden', minHeight: '190px', background: '#FFFFFF' }}>
+                    <img src={mvpPost.image} alt={mvpPost.clientName} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
+                    <div>
+                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '12px', margin: '0 0 3px 0', textTransform: 'uppercase' }}>
+                        {mvpPost.clientName}
+                      </p>
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '9px', margin: '0 0 8px 0', textTransform: 'uppercase', lineHeight: 1.4 }}>
+                        MOST SAVED CURL TRANSFORMATION THIS MONTH.
+                      </p>
+                      {[mvpPost.product, mvpPost.length, mvpPost.color, mvpPost.density].map((tag) => (
+                        <div key={tag} style={{ display: 'flex', gap: '6px', alignItems: 'flex-start', marginBottom: '4px' }}>
+                          <img src="/assets/rose-alert.svg" alt="" style={{ width: '10px', height: '10px', marginTop: '1px', flexShrink: 0 }} />
+                          <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '9px', margin: 0, lineHeight: 1.35, textTransform: 'uppercase' }}>
+                            {tag}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => navigate(mvpPost.route)}
+                      style={{ border: '1.3px solid #000', background: '#FFFFFF', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '10px', height: '30px', textTransform: 'uppercase', cursor: 'pointer' }}
+                    >
+                      SHOP THIS SLAY
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section
+                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                style={{ borderWidth: '1.3px', padding: '14px 0 12px 0', marginTop: '8px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
+                <div style={{ padding: '0 12px' }}>
+                  <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '0 0 4px 0', textTransform: 'uppercase', fontWeight: 500 }}>
+                    EXPLORE SLAY CAM
+                  </p>
+                  <p style={{ fontFamily: '"Bohemy", cursive', color: '#000000', fontSize: '23px', margin: '0 0 10px 0', lineHeight: 1, textTransform: 'lowercase', fontWeight: 400 }}>
+                    shop the community lookbook
+                  </p>
+                </div>
+                <div style={{ overflowX: 'auto', display: 'flex', gap: '7px', padding: '0 12px 12px 12px', WebkitOverflowScrolling: 'touch' }}>
+                  {SLAY_CAM_CATEGORIES.map((category) => {
+                    const active = selectedCategory === category;
+                    return (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => setSelectedCategory(category)}
+                        style={{
+                          flex: '0 0 auto',
+                          height: '28px',
+                          border: active ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                          background: '#FFFFFF',
+                          color: active ? '#EB1C24' : '#000000',
+                          fontFamily: active ? '"Futura PT Medium"' : '"Futura PT Book"',
+                          fontSize: '9px',
+                          padding: '0 9px',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {category}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '8px', padding: '0 12px' }}>
+                  {visiblePosts.map((post) => (
+                    <article key={post.id} style={{ border: '1.3px solid #000', background: '#FFFFFF', overflow: 'hidden', minWidth: 0 }}>
+                      <div style={{ position: 'relative', height: `${post.height ?? 240}px`, background: '#f4f4f4', overflow: 'hidden' }}>
+                        <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        {(post.badge || post.isVideo) && (
+                          <div style={{ position: 'absolute', top: '7px', left: '7px', background: post.badge === 'SLAY MVP' ? '#EB1C24' : '#FFFFFF', color: post.badge === 'SLAY MVP' ? '#FFFFFF' : '#EB1C24', border: '1px solid #EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '8px', padding: '3px 5px', textTransform: 'uppercase' }}>
+                            {post.isVideo ? 'VIDEO' : post.badge}
+                          </div>
+                        )}
+                        <div style={{ position: 'absolute', right: '7px', bottom: '7px', background: 'rgba(255,255,255,0.92)', border: '1px solid #000', padding: '3px 5px', fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#000000', textTransform: 'uppercase' }}>
+                          {post.saves} SAVES
+                        </div>
+                      </div>
+                      <div style={{ padding: '8px' }}>
+                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: '0 0 2px 0', textTransform: 'uppercase', lineHeight: 1.25 }}>
+                          {post.title}
+                        </p>
+                        <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '8px', margin: '0 0 7px 0', textTransform: 'uppercase' }}>
+                          BY {post.clientName}
+                        </p>
+                        {[post.product, post.length, post.color, post.density].map((tag) => (
+                          <div key={`${post.id}-${tag}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '5px', marginBottom: '3px' }}>
+                            <img src="/assets/rose-alert.svg" alt="" style={{ width: '9px', height: '9px', marginTop: '1px', flexShrink: 0 }} />
+                            <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '8px', margin: 0, lineHeight: 1.35, textTransform: 'uppercase' }}>
+                              {tag}
+                            </p>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => navigate(post.route)}
+                          style={{ marginTop: '6px', width: '100%', height: '27px', border: '1px solid #000', background: '#FFFFFF', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '9px', textTransform: 'uppercase', cursor: 'pointer' }}
+                        >
+                          SHOP THIS SLAY
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section
+                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                style={{ borderWidth: '1.3px', padding: '14px 12px', marginTop: '8px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
+                <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '0 0 4px 0', textTransform: 'uppercase', fontWeight: 500 }}>
+                  SHOP THIS SLAY
+                </p>
+                <p style={{ fontFamily: '"Bohemy", cursive', color: '#000000', fontSize: '23px', margin: '0 0 10px 0', lineHeight: 1, textTransform: 'lowercase', fontWeight: 400 }}>
+                  most purchased community looks
+                </p>
+                <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '2px', WebkitOverflowScrolling: 'touch' }}>
+                  {shopThisSlayPosts.map((post) => (
+                    <button
+                      key={`shop-${post.id}`}
+                      type="button"
+                      onClick={() => navigate(post.route)}
+                      style={{ flex: '0 0 158px', border: '1.3px solid #000', background: '#FFFFFF', padding: 0, textAlign: 'left', cursor: 'pointer', overflow: 'hidden' }}
+                    >
+                      <div style={{ height: '156px', background: '#f4f4f4' }}>
+                        <img src={post.image} alt={post.product} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      </div>
+                      <div style={{ padding: '8px' }}>
+                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: '0 0 3px 0', textTransform: 'uppercase' }}>
+                          {post.product}
+                        </p>
+                        <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '8px', margin: '0 0 7px 0', lineHeight: 1.35, textTransform: 'uppercase' }}>
+                          {post.length} / {post.color} / {post.density}
+                        </p>
+                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '9px', margin: 0, textTransform: 'uppercase' }}>
+                          SHOP THIS SLAY
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section
+                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                style={{ borderWidth: '1.3px', padding: '14px 12px', marginTop: '8px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
+                <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '0 0 4px 0', textTransform: 'uppercase', fontWeight: 500 }}>
+                  RECENTLY FEATURED
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {recentPosts.map((post) => (
+                    <button
+                      key={`recent-${post.id}`}
+                      type="button"
+                      onClick={() => navigate(post.route)}
+                      style={{ display: 'grid', gridTemplateColumns: '76px 1fr auto', gap: '9px', alignItems: 'center', border: '1.3px solid #000', background: '#FFFFFF', padding: '6px', textAlign: 'left', cursor: 'pointer' }}
+                    >
+                      <div style={{ width: '76px', height: '76px', overflow: 'hidden', background: '#f4f4f4' }}>
+                        <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: '0 0 3px 0', textTransform: 'uppercase', lineHeight: 1.25 }}>
+                          {post.title}
+                        </p>
+                        <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '8px', margin: 0, textTransform: 'uppercase', lineHeight: 1.35 }}>
+                          {post.clientName} / {post.product} / {post.category}
+                        </p>
+                      </div>
+                      <p style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '9px', margin: 0, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                        VIEW
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section
+                className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                style={{ borderWidth: '1.3px', padding: '16px 12px', marginTop: '8px', backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
+                <p style={{ fontFamily: '"Bohemy", cursive', color: '#000000', fontSize: '26px', margin: '0 0 7px 0', lineHeight: 1, textTransform: 'lowercase', fontWeight: 400 }}>
+                  submit your look
+                </p>
+                <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '10px', margin: '0 0 11px 0', lineHeight: 1.5, textTransform: 'uppercase' }}>
+                  SHARE YOUR FRONTAL SLAYER PHOTO OR VIDEO FOR A CHANCE TO EARN REWARDS, FEATURES + SLAY MVP STATUS.
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '6px', marginBottom: '12px' }}>
+                  {SUBMIT_REWARDS.map((reward) => (
+                    <div key={reward} style={{ display: 'flex', gap: '6px', alignItems: 'flex-start', border: '1px solid #000', background: '#FFFFFF', padding: '7px 6px' }}>
+                      <img src="/assets/rose-alert.svg" alt="" style={{ width: '10px', height: '10px', marginTop: '1px', flexShrink: 0 }} />
+                      <p style={{ fontFamily: '"Futura PT Book"', color: '#000000', fontSize: '8px', margin: 0, lineHeight: 1.35, textTransform: 'uppercase' }}>
+                        {reward}
+                      </p>
+                    </div>
+                  ))}
+                </div>
                 <button
                   type="button"
                   onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', backgroundColor: '#FFFFFF' }}
                 >
-                  {isSignedIn ? 'OPEN ACCOUNT' : 'SIGN IN TO PREP YOUR SLAY'}
+                  {isSignedIn ? 'PREP YOUR SLAY CAM SUBMISSION' : 'SIGN IN TO SUBMIT YOUR LOOK'}
                 </button>
-              </div>
+              </section>
             </div>
           )}
         </div>
