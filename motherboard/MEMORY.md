@@ -29718,3 +29718,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the recently requested **6px** top spacing above **EXPLORE ALL BENEFITS** unchanged and reduced only the wrapper’s bottom margin.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** so the **EXPLORE ALL BENEFITS** wrapper `marginBottom` changes from **22px** to **20px**. Verified with **`npm run build`**.
 - **Conventions:** Membership Status **EXPLORE ALL BENEFITS** should keep 6px top padding and 20px bottom margin unless adjusted again.
+
+---
+
+## 2026-06-19 — Subscription chart Personal Slay Assistant label cleaned up
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member / Settings / Reviews refinements: Add Funds copy/nav, membership copy/styling/spacing, Account Alerts copy/sorting, shared Digital Cash History popup behavior, Account Settings layout/spacing, Account Reviews subtitle typography, and Account Rewards progress-text typography.
+- **Topics covered:** The latest request asked to remove **`(PSA)`** from **PERSONAL SLAY ASSISTANT** on the subscription upgrade chart.
+- **Decisions / outcomes:** Updated both the inline Account → Rewards comparison chart and the reusable subscription upgrade chart component so the label renders as **PERSONAL SLAY / ASSISTANT** without the parenthetical wherever that chart appears.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** and **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`**. Verified no remaining **PERSONAL SLAY ASSISTANT (PSA)** / **ASSISTANT (PSA)** matches under **`src/`** and verified with **`npm run build`**.
+- **Conventions:** Subscription upgrade charts should label the benefit **PERSONAL SLAY ASSISTANT** without the **(PSA)** parenthetical.
