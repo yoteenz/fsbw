@@ -29938,3 +29938,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Updated the unsigned-order-form PSA proactive nudge headline copy for both with-order-number and no-order-number variants to **SIGN YOUR ORDER AUTHORIZATION FORM**.
 - **Changes:** Updated **`src/utils/psaProactiveNudgeCatalog.ts`** only. Verified the old **SIGN YOUR ORDER FORM** headline no longer appears in `src/` and verified with **`npm run build`**.
 - **Conventions:** PSA unsigned form nudges should refer to the **order authorization form** in the headline.
+
+---
+
+## 2026-06-19 — Slay Challenge Tier 1 points increased
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Concierge, PSA nudges, and membership reward surfaces. Recent work included internal premium/Black reward point rules, restored client-facing reward copy, and PSA order authorization form nudge copy.
+- **Topics covered:** The latest request asked to change Slay Challenge Tier 1 loyalty points from **200** to **600**.
+- **Decisions / outcomes:** Updated the Slay Challenge Tier 1 points reward option to **600 LOYALTY PTS** and the active challenge summary to **600 loyalty points**. Existing stored selections using the old `200points` value are interpreted as `600points` so prior selections upgrade automatically.
+- **Changes:** Updated **`src/pages/account/concierge/page.tsx`** only. Verified with **`npm run build`**.
+- **Conventions:** Slay Challenge Tier 1 points reward is **600 loyalty points**. Keep backward compatibility for older localStorage value `200points` by mapping it to the current `600points` reward.

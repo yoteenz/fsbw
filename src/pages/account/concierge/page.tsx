@@ -165,13 +165,14 @@ function ConciergePage() {
     return `${year}-H2`; // after Jun 30 -> same year Jul–Dec
   };
 
-  const [slayChallengeTier1Reward, setSlayChallengeTier1Reward] = useState<'voucher' | '200points' | ''>(() => {
+  const [slayChallengeTier1Reward, setSlayChallengeTier1Reward] = useState<'voucher' | '600points' | ''>(() => {
     try {
       const saved = localStorage.getItem('slayChallengeTier1Reward');
-      if (saved === 'voucher' || saved === '200points') return saved;
+      if (saved === 'voucher' || saved === '600points') return saved;
+      if (saved === '200points') return '600points';
       // Default: show as if user made selection in time
-      return '200points';
-    } catch (e) { return '200points'; }
+      return '600points';
+    } catch (e) { return '600points'; }
   });
   const [slayChallengeTier2Reward, setSlayChallengeTier2Reward] = useState<'2xpoints' | '1000points' | ''>(() => {
     try {
@@ -4988,20 +4989,20 @@ function ConciergePage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => setSlayChallengeTier1Reward(slayChallengeTier1Reward === '200points' ? '' : '200points')}
+                          onClick={() => setSlayChallengeTier1Reward(slayChallengeTier1Reward === '600points' ? '' : '600points')}
                           style={{
                             flex: 1,
                             height: '32px',
-                            border: slayChallengeTier1Reward === '200points' ? '1.3px solid #EB1C24' : '1.3px solid #000',
+                            border: slayChallengeTier1Reward === '600points' ? '1.3px solid #EB1C24' : '1.3px solid #000',
                             background: '#FFF',
                             fontFamily: '"Futura PT Book"',
                             fontSize: '10px',
-                            color: slayChallengeTier1Reward === '200points' ? '#EB1C24' : '#000',
+                            color: slayChallengeTier1Reward === '600points' ? '#EB1C24' : '#000',
                             textTransform: 'uppercase',
                             cursor: 'pointer'
                           }}
                         >
-                          200 LOYALTY PTS
+                          600 LOYALTY PTS
                         </button>
                       </div>
                       <p style={{ fontFamily: '"Futura PT Book"', color: '#666', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
@@ -5053,7 +5054,7 @@ function ConciergePage() {
                   {!effectiveInSelectionWindow && effectiveActive && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '10px', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                        Tier 1 — Reward: {slayChallengeTier1Reward === 'voucher' ? 'Random voucher' : '200 loyalty points'}
+                        Tier 1 — Reward: {slayChallengeTier1Reward === 'voucher' ? 'Random voucher' : '600 loyalty points'}
                       </p>
                       <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px 0', fontSize: '10px', fontFamily: '"Futura PT Book"', textTransform: 'uppercase' }}>
                         <li style={{ marginBottom: '4px' }}>{slayChallengeTier1Progress.purchase ? '✓' : '○'} Complete a purchase</li>
