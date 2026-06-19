@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -27,6 +27,30 @@ type SlayCamPost = {
   badge?: string;
   isVideo?: boolean;
   height?: number;
+};
+
+const SLAY_CAM_IMAGE_FRAME_BACKGROUND =
+  'linear-gradient(135deg, rgba(255,255,255,0.98), rgba(247,247,247,0.9))';
+const SLAY_CAM_IMAGE_PADDING_PX = 8;
+const SLAY_CAM_IMAGE_PADDING = `${SLAY_CAM_IMAGE_PADDING_PX}px`;
+
+const slayCamImageFrameStyle = (height: string | number, extraStyles: CSSProperties = {}): CSSProperties => ({
+  position: 'relative',
+  height,
+  background: SLAY_CAM_IMAGE_FRAME_BACKGROUND,
+  padding: SLAY_CAM_IMAGE_PADDING,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  overflow: 'hidden',
+  ...extraStyles,
+});
+
+const slayCamProductImageStyle: CSSProperties = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+  display: 'block',
 };
 
 const SLAY_CAM_CATEGORIES = [
@@ -80,7 +104,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'blonde-blanco',
     title: 'BLONDE BOSS ENERGY',
     clientName: 'ARI S.',
-    image: '/assets/2D BLANCO FRONT.png',
+    image: '/assets/BLANCO-FRONT.png',
     category: 'BLONDE',
     product: 'BLANCO',
     length: '24"',
@@ -147,7 +171,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'before-after-frontal',
     title: 'BEFORE + AFTER MELT',
     clientName: 'TAYLOR B.',
-    image: '/assets/wavy-frontal-product.JPG',
+    image: '/assets/frontal-wavy.png',
     category: 'BEFORE & AFTER',
     product: 'WAVY FRONTAL',
     length: '20"',
@@ -163,7 +187,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'closure-curly',
     title: 'EVERYDAY CURL MOMENT',
     clientName: 'IMANI P.',
-    image: '/assets/curly-closure-product.JPG',
+    image: '/assets/closure-curly.png',
     category: 'CURLY',
     product: 'CURLY CLOSURE',
     length: '18"',
@@ -415,7 +439,7 @@ export default function SlayCamPage() {
                     minHeight: '430px',
                     border: '1.3px solid #000',
                     overflow: 'hidden',
-                    background: '#000',
+                    background: SLAY_CAM_IMAGE_FRAME_BACKGROUND,
                     display: 'flex',
                     alignItems: 'flex-end',
                   }}
@@ -425,10 +449,13 @@ export default function SlayCamPage() {
                     alt={mvpPost.title}
                     style={{
                       position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
+                      top: SLAY_CAM_IMAGE_PADDING,
+                      right: SLAY_CAM_IMAGE_PADDING,
+                      bottom: SLAY_CAM_IMAGE_PADDING,
+                      left: SLAY_CAM_IMAGE_PADDING,
+                      width: `calc(100% - ${SLAY_CAM_IMAGE_PADDING_PX * 2}px)`,
+                      height: `calc(100% - ${SLAY_CAM_IMAGE_PADDING_PX * 2}px)`,
+                      objectFit: 'contain',
                       opacity: 0.92,
                     }}
                   />
@@ -504,8 +531,8 @@ export default function SlayCamPage() {
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '43% 1fr', gap: '10px', alignItems: 'stretch' }}>
-                  <div style={{ border: '1.3px solid #000', overflow: 'hidden', minHeight: '190px', background: '#FFFFFF' }}>
-                    <img src={mvpPost.image} alt={mvpPost.clientName} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <div style={{ border: '1.3px solid #000', minHeight: '190px', ...slayCamImageFrameStyle('100%') }}>
+                    <img src={mvpPost.image} alt={mvpPost.clientName} style={slayCamProductImageStyle} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
                     <div>
@@ -577,8 +604,8 @@ export default function SlayCamPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '8px', padding: '0 12px' }}>
                   {visiblePosts.map((post) => (
                     <article key={post.id} style={{ border: '1.3px solid #000', background: '#FFFFFF', overflow: 'hidden', minWidth: 0 }}>
-                      <div style={{ position: 'relative', height: `${post.height ?? 240}px`, background: '#f4f4f4', overflow: 'hidden' }}>
-                        <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <div style={slayCamImageFrameStyle(`${post.height ?? 240}px`)}>
+                        <img src={post.image} alt={post.title} style={slayCamProductImageStyle} />
                         {(post.badge || post.isVideo) && (
                           <div style={{ position: 'absolute', top: '7px', left: '7px', background: post.badge === 'SLAY MVP' ? '#EB1C24' : '#FFFFFF', color: post.badge === 'SLAY MVP' ? '#FFFFFF' : '#EB1C24', border: '1px solid #EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '8px', padding: '3px 5px', textTransform: 'uppercase' }}>
                             {post.isVideo ? 'VIDEO' : post.badge}
@@ -634,8 +661,8 @@ export default function SlayCamPage() {
                       onClick={() => navigate(post.route)}
                       style={{ flex: '0 0 158px', border: '1.3px solid #000', background: '#FFFFFF', padding: 0, textAlign: 'left', cursor: 'pointer', overflow: 'hidden' }}
                     >
-                      <div style={{ height: '156px', background: '#f4f4f4' }}>
-                        <img src={post.image} alt={post.product} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <div style={slayCamImageFrameStyle('156px')}>
+                        <img src={post.image} alt={post.product} style={slayCamProductImageStyle} />
                       </div>
                       <div style={{ padding: '8px' }}>
                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: '0 0 3px 0', textTransform: 'uppercase' }}>
@@ -668,8 +695,8 @@ export default function SlayCamPage() {
                       onClick={() => navigate(post.route)}
                       style={{ display: 'grid', gridTemplateColumns: '76px 1fr auto', gap: '9px', alignItems: 'center', border: '1.3px solid #000', background: '#FFFFFF', padding: '6px', textAlign: 'left', cursor: 'pointer' }}
                     >
-                      <div style={{ width: '76px', height: '76px', overflow: 'hidden', background: '#f4f4f4' }}>
-                        <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <div style={slayCamImageFrameStyle('76px', { width: '76px', flexShrink: 0 })}>
+                        <img src={post.image} alt={post.title} style={slayCamProductImageStyle} />
                       </div>
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '10px', margin: '0 0 3px 0', textTransform: 'uppercase', lineHeight: 1.25 }}>
