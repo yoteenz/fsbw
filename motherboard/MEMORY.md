@@ -29268,3 +29268,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The account overview grid continues using fixed marketing copy instead of live counts. The latest wording now reflects the user’s requested plural/phrasing updates for reviews, shipping, and settings, while the earlier concierge and other card updates from this chat remain intact.
 - **Changes:** **`src/pages/account/page.tsx`** now uses **`SHARE YOUR EXPERIENCES`** for **REVIEWS**, **`DELIVERY DETAILS + SETTINGS`** for **SHIPPING ADDRESS**, and **`SECURITY + ACCOUNT PREFERENCES`** for **SETTINGS**. Verified with **`npm run build`**.
 - **Conventions:** In this chat’s account overview card system, red subtitle lines are product-managed marketing copy and may be iterated independently of underlying counts or account data.
+
+---
+
+## 2026-06-19 — Account copy follow-up: rewards and orders subtitles
+
+- **Context:** Continuing the same chat after the earlier account-card subtitle refreshes, concierge wording update, admin revenue BCF grouping, and the reviews/shipping/settings wording pass, the user asked for two more account overview subtitle changes: **`UNLOCK POINTS, PERKS + UPGRADES`** and **`PROCESSING + DELIVERY DETAILS`** for the orders card.
+- **Topics covered:** Reused the same account overview card configuration in **`src/pages/account/page.tsx`**, located the current **REWARDS** and **ORDERS** red subtitle strings, and replaced only those two values while keeping the card order, routes, and fixed marketing-copy model unchanged. Rebuilt the app immediately after the text swap to confirm the account page still compiles without regressions.
+- **Decisions / outcomes:** The account overview grid continues to use product-managed fixed messaging rather than live counts. The latest wording now sets **REWARDS** to **`UNLOCK POINTS, PERKS + UPGRADES`** and **ORDERS** to **`PROCESSING + DELIVERY DETAILS`**, while all earlier subtitle changes from this chat remain in place.
+- **Changes:** **`src/pages/account/page.tsx`** now uses **`UNLOCK POINTS, PERKS + UPGRADES`** for **REWARDS** and **`PROCESSING + DELIVERY DETAILS`** for **ORDERS**. Verified with **`npm run build`**.
+- **Conventions:** In this account overview card system, the red subtitle lines are iterative marketing copy and can be adjusted independently card by card without reintroducing the old count-based summaries.

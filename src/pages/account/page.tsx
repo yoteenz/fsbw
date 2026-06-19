@@ -1143,10 +1143,10 @@ function AccountPage() {
       { title: 'ALERTS', subtitle: 'NEWS, OFFERS + EXCLUSIVE UPDATES', route: '/account/alerts' },
       { 
         title: 'ORDERS', 
-        subtitle: 'TRACK YOUR CURRENT ORDERS',
+        subtitle: 'PROCESSING + DELIVERY DETAILS',
         route: '/account/orders' 
       },
-      { title: 'REWARDS', subtitle: 'UNLOCK POINTS, PERKS + BENEFITS', route: '/account/rewards' },
+      { title: 'REWARDS', subtitle: 'UNLOCK POINTS, PERKS + UPGRADES', route: '/account/rewards' },
       { 
         title: 'REVIEWS', 
         subtitle: 'SHARE YOUR EXPERIENCES',
