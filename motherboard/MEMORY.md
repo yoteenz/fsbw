@@ -29818,3 +29818,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Removed the previous admin/non-client exception that could show **CONCIERGE** for a standard account. The card now renders only when the effective subscription tier is present. Founder **View as Client** uses the stored subscription tier instead of the admin override, matching the profile display pattern.
 - **Changes:** Updated **`src/pages/account/page.tsx`** `getDefaultCardOrder()` so **CONCIERGE** is gated by `getEffectiveSubscriptionTier(userData)` / stored tier for founder view-as-client. Verified with **`npm run build`**.
 - **Conventions:** Account Profile **CONCIERGE** card visibility should follow premium subscription status only; standard rewards members should not see it.
+
+---
+
+## 2026-06-19 — Premium expanded benefits tier headings changed to gray
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide copy/typography/rose bullets/close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup and expanded benefits styling; Settings row rhythm; Reviews subtitle styling; compact Points History scrolling; tier threshold typography; and Account Profile Concierge card gating.
+- **Topics covered:** The latest request asked to change the expanded premium upgrade chart **3/6/12 months premium** Bohemy heading text from red to gray.
+- **Decisions / outcomes:** Kept the headings left-aligned, lowercase, Bohemy, and **18px**, but changed their color from brand red to shared gray **`#808080`**.
+- **Changes:** Updated **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline expanded benefits heading style in **`src/pages/account/membership/page.tsx`**. Verified with **`npm run build`**.
+- **Conventions:** In premium subscription upgrade chart expanded benefits, **3 months premium / 6 months premium / 12 months premium** headings should be left-aligned lowercase Bohemy in gray, not red.
