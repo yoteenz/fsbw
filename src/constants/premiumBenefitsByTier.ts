@@ -12,7 +12,7 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'WATCH + LEARN',
       'SLAY ACADEMY',
       'EXCLUSIVE REWARDS + CHALLENGES',
-      'ANNIVERSARY REWARD: 500 LOYALTY POINTS',
+      'ANNIVERSARY REWARDS',
       'LIVE ORDER TRACKING'
     ],
     '6months': [
@@ -26,7 +26,7 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'WATCH + LEARN',
       'SLAY ACADEMY',
       'EXCLUSIVE REWARDS + CHALLENGES',
-      'ANNIVERSARY REWARD: 1,000 LOYALTY POINTS',
+      'ANNIVERSARY REWARDS',
       'LIVE ORDER TRACKING',
       'PRIORITY MESSAGES'
     ],
@@ -41,7 +41,7 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'WATCH + LEARN',
       'SLAY ACADEMY',
       'EXCLUSIVE REWARDS + CHALLENGES',
-      'ANNIVERSARY REWARD: 1,500 LOYALTY POINTS',
+      'ANNIVERSARY REWARDS',
       'LIVE ORDER TRACKING',
       'PRIORITY MESSAGES',
       'SPECIAL OFFERS',

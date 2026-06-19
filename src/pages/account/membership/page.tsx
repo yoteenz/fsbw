@@ -4,7 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { PREMIUM_BENEFITS_BY_TIER } from '../../../constants/premiumBenefitsByTier';
-import { SUBSCRIPTION_TIERS, type SubscriptionTierId } from '../../../constants/subscriptionPricing';
+import {
+  isSubscriptionTierId,
+  SUBSCRIPTION_TIERS,
+  type SubscriptionTierId,
+} from '../../../constants/subscriptionPricing';
 import { SOCIAL_EARN_LINKS } from '../../../constants/socialLinks';
 import { recordSocialClick } from '../../../utils/socialAnalytics';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -185,6 +189,31 @@ const POINTS_HISTORY_ROW_GAP_PX = 8;
 const POINTS_HISTORY_SCROLL_MAX_HEIGHT_PX =
   POINTS_HISTORY_VISIBLE_ROW_COUNT * POINTS_HISTORY_ROW_MIN_HEIGHT_PX +
   (POINTS_HISTORY_VISIBLE_ROW_COUNT - 1) * POINTS_HISTORY_ROW_GAP_PX;
+
+const PREMIUM_ANNIVERSARY_REWARD_POINTS: Record<SubscriptionTierId, number> = {
+  '3months': 500,
+  '6months': 1000,
+  '12months': 1500,
+};
+
+const PREMIUM_ANNIVERSARY_REWARD_MONTHS: Record<SubscriptionTierId, number> = {
+  '3months': 3,
+  '6months': 6,
+  '12months': 12,
+};
+
+const ANNUAL_BLACK_STATUS_REWARD_POINTS = 2500;
+const BLACK_STATUS_TIER_POINTS_THRESHOLD = 4000;
+
+type LoyaltyPointRewardHistoryEntry = {
+  id: string;
+  date: string;
+  reward: string;
+  points: number;
+  awardedAt: string;
+};
+
+type LoyaltyPointAward = Omit<LoyaltyPointRewardHistoryEntry, 'date' | 'awardedAt'>;
 
 const EARN_TASKS = [
   { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
@@ -474,6 +503,158 @@ function MembershipPage() {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
+  const loyaltyRewardHistoryDate = (date = new Date()): string =>
+    `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
+
+  const addMonthsToDate = (date: Date, months: number): Date => {
+    const next = new Date(date);
+    next.setMonth(next.getMonth() + months);
+    return next;
+  };
+
+  const getPremiumAnniversaryAward = (user: any): LoyaltyPointAward | null => {
+    const tierRaw = user?.subscriptionTier;
+    if (!isSubscriptionTierId(tierRaw)) return null;
+    if (String(user?.membershipType || '').toUpperCase() !== 'PREMIUM') return null;
+    const months = PREMIUM_ANNIVERSARY_REWARD_MONTHS[tierRaw];
+    const points = PREMIUM_ANNIVERSARY_REWARD_POINTS[tierRaw];
+    const purchasedAtMs = Date.parse(String(user?.subscriptionPurchasedAt || ''));
+    const endDateMs = Date.parse(String(user?.subscriptionEndDate || ''));
+    let milestoneMs: number | null = null;
+    let anchorMs: number | null = null;
+
+    if (Number.isFinite(purchasedAtMs)) {
+      const milestone = addMonthsToDate(new Date(purchasedAtMs), months);
+      milestoneMs = milestone.getTime();
+      anchorMs = purchasedAtMs;
+    } else if (Number.isFinite(endDateMs)) {
+      milestoneMs = endDateMs;
+      const inferredStart = addMonthsToDate(new Date(endDateMs), -months);
+      anchorMs = inferredStart.getTime();
+    }
+
+    if (milestoneMs == null || anchorMs == null || Date.now() < milestoneMs) return null;
+
+    const anchor = new Date(anchorMs).toISOString().slice(0, 10);
+    return {
+      id: `premium-anniversary-${tierRaw}-${anchor}`,
+      reward: 'REWARD',
+      points,
+    };
+  };
+
+  const getPreviousCompletedSixMonthPeriods = (now = new Date()) => {
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    if (month < 6) {
+      return [
+        { id: `${year - 1}-jul-dec`, start: new Date(year - 1, 6, 1), end: new Date(year - 1, 11, 31) },
+        { id: `${year - 1}-jan-jun`, start: new Date(year - 1, 0, 1), end: new Date(year - 1, 5, 30) },
+      ];
+    }
+    return [
+      { id: `${year}-jan-jun`, start: new Date(year, 0, 1), end: new Date(year, 5, 30) },
+      { id: `${year - 1}-jul-dec`, start: new Date(year - 1, 6, 1), end: new Date(year - 1, 11, 31) },
+    ];
+  };
+
+  const getPurchasePointsForPeriod = (period: { start: Date; end: Date }): number => {
+    return ordersFromStorageForRewards().reduce((sum, order: any) => {
+      if (!order?.date) return sum;
+      const orderDateMs = parsePointsHistoryDateToTime(order.date);
+      if (orderDateMs === 0) return sum;
+      const orderDate = new Date(orderDateMs);
+      if (orderDate < period.start || orderDate > period.end) return sum;
+      return sum + (Number(order.total) || 0);
+    }, 0);
+  };
+
+  const getAnnualBlackStatusAward = (): LoyaltyPointAward | null => {
+    const periods = getPreviousCompletedSixMonthPeriods();
+    const maintainedBlackStatus = periods.every(
+      (period) => getPurchasePointsForPeriod(period) >= BLACK_STATUS_TIER_POINTS_THRESHOLD
+    );
+    if (!maintainedBlackStatus) return null;
+    return {
+      id: `annual-black-status-${periods[1].id}-${periods[0].id}`,
+      reward: 'REWARD',
+      points: ANNUAL_BLACK_STATUS_REWARD_POINTS,
+    };
+  };
+
+  const persistLoyaltyPointAwards = useCallback((awards: LoyaltyPointAward[]) => {
+    const validAwards = awards.filter((award) => award && award.points > 0 && award.id);
+    if (!validAwards.length) return;
+    try {
+      const currentUserRaw = localStorage.getItem('currentUser');
+      if (!currentUserRaw) return;
+      const currentUser = JSON.parse(currentUserRaw);
+      const currentEmail = String(currentUser?.email || '').trim().toLowerCase();
+      const pageEmail = String(userData?.email || '').trim().toLowerCase();
+      if (!currentEmail || currentEmail !== pageEmail) return;
+
+      const existingHistory: LoyaltyPointRewardHistoryEntry[] = Array.isArray(currentUser.loyaltyPointRewardHistory)
+        ? currentUser.loyaltyPointRewardHistory
+        : [];
+      const existingAwardIds = new Set<string>([
+        ...existingHistory.map((entry) => String(entry.id || '')).filter(Boolean),
+        ...(Array.isArray(currentUser.awardedLoyaltyRewardIds)
+          ? currentUser.awardedLoyaltyRewardIds.map((id: unknown) => String(id)).filter(Boolean)
+          : []),
+      ]);
+      const freshAwards = validAwards.filter((award) => !existingAwardIds.has(award.id));
+      if (!freshAwards.length) return;
+
+      const awardedAt = new Date().toISOString();
+      const date = loyaltyRewardHistoryDate(new Date());
+      const newHistoryEntries: LoyaltyPointRewardHistoryEntry[] = freshAwards.map((award) => ({
+        ...award,
+        reward: award.reward || 'REWARD',
+        date,
+        awardedAt,
+      }));
+      const pointsToAdd = newHistoryEntries.reduce((sum, entry) => sum + entry.points, 0);
+      const updatedUser = {
+        ...currentUser,
+        loyaltyPoints: (Number(currentUser.loyaltyPoints) || 0) + pointsToAdd,
+        loyaltyPointRewardHistory: [...existingHistory, ...newHistoryEntries],
+        awardedLoyaltyRewardIds: Array.from(new Set([...existingAwardIds, ...newHistoryEntries.map((entry) => entry.id)])),
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      if (Array.isArray(registeredUsers)) {
+        const nextRegisteredUsers = registeredUsers.map((registeredUser: any) => {
+          const registeredEmail = String(registeredUser?.email || '').trim().toLowerCase();
+          return registeredEmail === currentEmail ? { ...registeredUser, ...updatedUser } : registeredUser;
+        });
+        localStorage.setItem('registeredUsers', JSON.stringify(nextRegisteredUsers));
+      }
+      setUserData(updatedUser);
+      window.dispatchEvent(new CustomEvent('loyaltyRewardsUpdated'));
+    } catch (error) {
+      console.error('Error awarding loyalty reward points:', error);
+    }
+  }, [userData?.email]);
+
+  useEffect(() => {
+    if (!userData?.email) return;
+    persistLoyaltyPointAwards([
+      getPremiumAnniversaryAward(userData),
+      getAnnualBlackStatusAward(),
+    ].filter(Boolean) as LoyaltyPointAward[]);
+    // Re-evaluate when the signed-in rewards profile changes; awards are idempotent by id.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    userData?.email,
+    userData?.membershipType,
+    userData?.subscriptionTier,
+    userData?.subscriptionPurchasedAt,
+    userData?.subscriptionEndDate,
+    userData?.loyaltyPointRewardHistory,
+    persistLoyaltyPointAwards,
+  ]);
+
   /** Points history rows: PURCHASE + AFFILIATE (CONTENT + SOCIAL) from orders in current period. */
   const getPointsHistoryRows = (): { date: string; discount: string; points: string }[] => {
     if (!userData?.email) return [];
@@ -513,6 +694,22 @@ function MembershipPage() {
             }
           }
         }
+      });
+      const rewardHistory: LoyaltyPointRewardHistoryEntry[] = Array.isArray(userData?.loyaltyPointRewardHistory)
+        ? userData.loyaltyPointRewardHistory
+        : [];
+      rewardHistory.forEach((entry) => {
+        const rewardDateMs = parsePointsHistoryDateToTime(entry.date);
+        if (rewardDateMs === 0) return;
+        const rewardDate = new Date(rewardDateMs);
+        if (rewardDate < period.start || rewardDate > period.end) return;
+        const points = Number(entry.points) || 0;
+        if (points <= 0) return;
+        rows.push({
+          date: normalizePointsHistoryDate(entry.date),
+          discount: entry.reward || 'REWARD',
+          points: `+${Math.round(points).toLocaleString()} PTS`
+        });
       });
       rows.sort((a, b) => parsePointsHistoryDateToTime(b.date) - parsePointsHistoryDateToTime(a.date));
       return rows;
@@ -2126,7 +2323,7 @@ function MembershipPage() {
                         <TierRoseBenefit>STYLING VOUCHER</TierRoseBenefit>
                         <TierRoseBenefit>1,000 BONUS LOYALTY POINTS</TierRoseBenefit>
                         <TierRoseBenefit>1.5X POINT MULTIPLIER ON ELIGIBLE PURCHASES</TierRoseBenefit>
-                        <TierRoseBenefit>ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL BLACK STATUS GIFT</TierRoseBenefit>
                         <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
                       </div>
 
@@ -2148,7 +2345,7 @@ function MembershipPage() {
                       <p style={{ ...TIER_GUIDE_SECTION_HEADER_STYLE, margin: '10px 0 4px 0' }}>black tier</p>
                       <div style={{ margin: '0 0 10px 0' }}>
                         <TierRoseBenefit>1.5X POINT MULTIPLIER</TierRoseBenefit>
-                        <TierRoseBenefit>ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL BLACK STATUS GIFT</TierRoseBenefit>
                         <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
                       </div>
 
@@ -2161,7 +2358,6 @@ function MembershipPage() {
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>reward terms</p>
                       <p style={{ margin: '0 0 12px 0' }}>VOUCHERS, DISCOUNT OFFERS AND FREE GIFT REWARDS REMAIN VALID FOR 6 MONTHS FROM THE DATE OF REDEMPTION. DIGITAL CASH AND GIFT CARD BALANCES NEVER EXPIRE AND MAY BE USED TOWARD ELIGIBLE PURCHASES.</p>
-                      <p style={{ margin: '0 0 12px 0' }}>ANNUAL BLACK STATUS REWARD REQUIRES MAINTAINING BLACK STATUS FOR THE FULL YEAR, INCLUDING BOTH 6 MONTH CYCLES UNINTERRUPTED.</p>
 
                       <p style={TIER_GUIDE_SECTION_HEADER_STYLE}>premium advantage</p>
                       <p style={{ margin: '0 0 8px 0' }}>PREMIUM MEMBERS RECEIVE ENHANCED BENEFITS BEYOND STATUS REWARDS INCLUDING ACCESS TO THE MEMBERS ONLY LOBBY + LOUNGE, PERSONAL SLAY ASSISTANT, PRIORITY SUPPORT, EXCLUSIVE CONTENT AND BONUS EARNING OPPORTUNITIES.</p>
@@ -2614,7 +2810,7 @@ fontFamily: '"Futura PT Book"',
                                           <TierRoseBenefit>1X STYLING VOUCHER</TierRoseBenefit>
                                           <TierRoseBenefit>1.5X POINT EARNING BONUS</TierRoseBenefit>
                                           <TierRoseBenefit>BLACK STATUS PROTECTION BENEFIT</TierRoseBenefit>
-                                          <TierRoseBenefit>ANNUAL BLACK STATUS REWARD: 2,500 LOYALTY POINTS</TierRoseBenefit>
+                                          <TierRoseBenefit>ANNUAL BLACK STATUS REWARD</TierRoseBenefit>
                                         </>
                                       ) : displayTier === 'RED' ? (
                                         <>
