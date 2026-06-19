@@ -1970,38 +1970,29 @@ function MembershipPage() {
                               <div key={tierKey} style={{ marginBottom: '14px' }}>
                                 <p
                                   style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '10px',
-                                    color: '#000000',
+                                    fontFamily: '"Bohemy", cursive',
+                                    fontSize: '18px',
+                                    color: '#EB1C24',
                                     margin: '0 0 6px 0',
-                                    textTransform: 'uppercase',
-                                    textAlign: 'center',
-                                    fontWeight: '500'
+                                    textTransform: 'lowercase',
+                                    textAlign: 'left',
+                                    fontWeight: 400,
+                                    lineHeight: 1.1
                                   }}
                                 >
                                   {tierKey === '3months'
-                                    ? '3 MONTHS PREMIUM'
+                                    ? '3 months premium'
                                     : tierKey === '6months'
-                                      ? '6 MONTHS PREMIUM'
-                                      : '12 MONTHS PREMIUM'}
+                                      ? '6 months premium'
+                                      : '12 months premium'}
                                 </p>
-                                <ul
-                                  style={{
-                                    margin: 0,
-                                    paddingLeft: '20px',
-                                    fontFamily: '"Futura PT Book"',
-                                    fontSize: '9px',
-                                    color: '#000000',
-                                    textTransform: 'uppercase',
-                                    lineHeight: 1.4
-                                  }}
-                                >
+                                <div>
                                   {PREMIUM_BENEFITS_BY_TIER[tierKey].map((b) => (
-                                    <li key={b} style={{ marginBottom: '3px' }}>
+                                    <TierRoseBenefit key={b}>
                                       {b}
-                                    </li>
+                                    </TierRoseBenefit>
                                   ))}
-                                </ul>
+                                </div>
                               </div>
                             ))}
                           </div>
