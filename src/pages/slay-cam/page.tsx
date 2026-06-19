@@ -6,6 +6,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { shopTextureCategoryThumbSrc } from '../../utils/shopTextureCategoryThumb';
 import { MarblePageShell } from '../../layouts/MarblePageShell';
 
 type MobileMenuTab = 'SHOP' | 'TOOLS' | 'BRAND';
@@ -53,6 +54,11 @@ const slayCamProductImageStyle: CSSProperties = {
   display: 'block',
 };
 
+const SLAY_CAM_BCF_ASSETS = {
+  wavyFrontal: shopTextureCategoryThumbSrc('wavy', 'frontals'),
+  curlyClosure: shopTextureCategoryThumbSrc('curly', 'closures'),
+};
+
 const SLAY_CAM_CATEGORIES = [
   'ALL',
   'STRAIGHT',
@@ -70,7 +76,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'mvp-ocean-curl',
     title: 'FEATURED LOOK OF THE MONTH',
     clientName: 'MAYA R.',
-    image: '/assets/OCEAN CURL FRONT.JPG',
+    image: '/assets/ocean curl thumbnail.png',
     category: 'SLAY MVP',
     product: 'OCEAN CURL',
     length: '30"',
@@ -87,7 +93,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'trending-soft-wave',
     title: 'SOFT GLAM REVEAL',
     clientName: 'JANELLE K.',
-    image: '/assets/SOFT-WAVE FRONT.png',
+    image: '/assets/NOIR/wave front.png',
     category: 'WAVY',
     product: 'SOFT WAVE',
     length: '26"',
@@ -104,7 +110,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'blonde-blanco',
     title: 'BLONDE BOSS ENERGY',
     clientName: 'ARI S.',
-    image: '/assets/BLANCO-FRONT.png',
+    image: '/assets/NOIR/blanco front.png',
     category: 'BLONDE',
     product: 'BLANCO',
     length: '24"',
@@ -121,7 +127,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'beach-wave-color',
     title: 'VACATION SLAY',
     clientName: 'NIA T.',
-    image: '/assets/BEACH WAVE FRONT.JPG',
+    image: '/assets/beach wave thumbnail.png',
     category: 'COLOR',
     product: 'BEACH WAVE',
     length: '28"',
@@ -137,7 +143,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'soft-curl-video',
     title: 'CURL POP CHECK',
     clientName: 'LEAH M.',
-    image: '/assets/SOFT CURL FRONT.JPG',
+    image: '/assets/soft curl thumbnail.png',
     category: 'VIDEOS',
     product: 'SOFT CURL',
     length: '22"',
@@ -154,7 +160,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'noir-straight',
     title: 'SLEEK INSTALL DIARY',
     clientName: 'KAY C.',
-    image: '/assets/natural front.png',
+    image: '/assets/NOIR/noir front.png',
     category: 'STRAIGHT',
     product: 'NOIR',
     length: '30"',
@@ -171,7 +177,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'before-after-frontal',
     title: 'BEFORE + AFTER MELT',
     clientName: 'TAYLOR B.',
-    image: '/assets/frontal-wavy.png',
+    image: SLAY_CAM_BCF_ASSETS.wavyFrontal,
     category: 'BEFORE & AFTER',
     product: 'WAVY FRONTAL',
     length: '20"',
@@ -187,7 +193,7 @@ const SLAY_CAM_POSTS: SlayCamPost[] = [
     id: 'closure-curly',
     title: 'EVERYDAY CURL MOMENT',
     clientName: 'IMANI P.',
-    image: '/assets/closure-curly.png',
+    image: SLAY_CAM_BCF_ASSETS.curlyClosure,
     category: 'CURLY',
     product: 'CURLY CLOSURE',
     length: '18"',

@@ -24,7 +24,7 @@ type BcfShopThumbProps = {
   className?: string;
 };
 
-/** BCF marble thumb with fixed contain slot (grid + similar strip). */
+/** BCF transparent cutout thumb with fixed contain slot (grid + similar strip). */
 export function BcfShopThumb({
   texture,
   category,
