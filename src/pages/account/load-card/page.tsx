@@ -12,8 +12,7 @@ import {
   parseGiftCardDollars,
   updateBrandPromoCode,
 } from '../../../utils/adminBrandCodes';
-/** Bundled asset so dev/prod always resolve (avoids broken `/load-card.png` when public isn’t deployed). */
-import loadCardImage from './load-card.png';
+import { GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC } from '../../../constants/giftCardAssets';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -630,7 +629,7 @@ function LoadCardPage() {
                     }}
                   >
                     <img
-                      src={loadCardImage}
+                      src={GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC}
                       alt="Gift card"
                       decoding="async"
                       style={{
