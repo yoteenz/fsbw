@@ -137,6 +137,7 @@ const CurlyUnitsPage = lazyWithRetry(() => import('./pages/units/curly/page'), '
 const ProductsPage = lazyWithRetry(() => import('./pages/products/page'), 'ProductsPage');
 const ProductsUnitsPage = lazyWithRetry(() => import('./pages/products/units/page'), 'ProductsUnitsPage');
 const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage');
+const SlayCamPage = lazyWithRetry(() => import('./pages/slay-cam/page'), 'SlayCamPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const LiveTryOnPage = lazyWithRetry(() => import('./pages/tools/live-try-on/page'), 'LiveTryOnPage');
 const HairstyleAnalysisDemoPage = lazyWithRetry(
@@ -841,6 +842,11 @@ function App() {
         <Route path="/home/tools" element={
           <Suspense fallback={<LoadingScreen />}>
             <ToolsPage />
+          </Suspense>
+        } />
+        <Route path="/slay-cam" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SlayCamPage />
           </Suspense>
         } />
         <Route path="/tools/gift-card" element={
