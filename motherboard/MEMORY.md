@@ -29142,3 +29142,11 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User requested **all text** on brand careers and application pages be uppercase (job listings, role details, apply form, messages).
 - **Changes:** **`src/pages/brand/careers/page.tsx`** — removed **`normal-case`** / **`textTransform: none`** overrides on job detail sections (about, education, duties, tasks, notes) so parent **`uppercase`** applies; apply header/intro/success/error strings uppercased; **`checkoutInputStyle`** / **`checkoutTextareaStyle`** + file input **`textTransform: uppercase`**; form fields uppercased on **`onChange`**. **`src/index.css`** — careers apply placeholder **`text-transform: uppercase`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand reviews main card: menu-toggle height + centered empty copy
+
+- **Context:** User reported **`/brand/reviews`** main card broken — incorrect spacing above/below empty-state text; card should match **menu toggle main card** height (mostly empty shell).
+- **Cause:** Hidden **Become a Member** measurer set a pixel height from full member copy, not the viewport-filled menu panel; **`BrandReviewsEmptyState`** had extra vertical padding skewing centering.
+- **Changes:** **`src/pages/brand/page.tsx`** — removed member-card **`ResizeObserver`** measurer; **`brandReviewsViewportShell`** locks viewport and gives main card **`flex: 1`** (same flex fill as open menu panel on brand pages). **`BrandReviewsEmptyState.tsx`** — removed vertical padding; flex-centers copy in remaining card area below header rule. Pushed **`master`** + **`preview/mobile`**.
