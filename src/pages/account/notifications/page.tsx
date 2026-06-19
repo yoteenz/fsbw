@@ -382,7 +382,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
       id: `${ACCOUNT_NOTIFICATION_PREFIX}digital_cash_deposit_mock`,
       title: 'YOUR FUNDS HAVE BEEN DEPOSITED!',
       message: '$50.00 USD HAS BEEN ADDED TO YOUR BALANCE.',
-      actionText: 'VIEW TRANSACTIONS',
+      actionText: 'VIEW TRANSACTION',
       actionRoute: DIGITAL_CASH_HISTORY_POPUP_ACTION,
       date: today,
       sortAt: adminMockDigitalCashDepositSortAt(email),

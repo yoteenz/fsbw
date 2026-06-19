@@ -29628,3 +29628,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The prior implementation placed the spacing on the button’s top margin inside a plain wrapper, which can be visually swallowed/collapsed in this layout. Moved the spacing to the wrapper as padding so it creates a reliable internal 4px gap above the text.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** so the **EXPLORE ALL BENEFITS** wrapper uses **`paddingTop: '4px'`** and the button itself uses **`margin: 0`**. Kept the gray text and the existing **22px** below-link wrapper spacing. Verified with **`npm run build`**.
 - **Conventions:** For tiny vertical gaps around Account Rewards inline buttons/links, prefer wrapper padding over child top margin when the parent is an otherwise plain div, to avoid margin-collapse/visibility issues.
+
+---
+
+## 2026-06-19 — Account Alerts digital-cash action link singular
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds copy/nav, UPR and Brand Member premium perk copy/styling/order, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, IIYM 12-month-only double points, and fixing **EXPLORE ALL BENEFITS** spacing.
+- **Topics covered:** The latest request asked to change the red **VIEW TRANSACTIONS** link on Account → Alerts to singular **VIEW TRANSACTION**.
+- **Decisions / outcomes:** Updated both the mock admin digital-cash alert and real generated digital-cash deposit alerts so new Account Alerts rows use the singular action text. Updated the alerts catalog/debug copy as well to keep the source-of-truth catalog aligned.
+- **Changes:** **`src/pages/account/notifications/page.tsx`**, **`src/utils/orderAccountAlerts.ts`**, and **`src/utils/accountAlertsCatalog.ts`** now use **`VIEW TRANSACTION`** for digital-cash deposit alert action text. Verified no remaining **`VIEW TRANSACTIONS`** matches under **`src/`** and verified with **`npm run build`**.
+- **Conventions:** Digital-cash alert action text on Account → Alerts should read **VIEW TRANSACTION** (singular), even though it opens the shared Digital Cash History popup.
