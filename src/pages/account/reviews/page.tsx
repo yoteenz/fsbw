@@ -549,12 +549,13 @@ function ReviewsPage() {
         </p>
         <p
           style={{
-            fontFamily: '"Futura PT Medium"',
-            fontSize: '10px',
+            fontFamily: '"Bohemy", cursive',
+            fontSize: '18px',
             color: '#EB1C24',
             margin: '0 0 3px 0',
-            textTransform: 'uppercase',
-            fontWeight: '500'
+            lineHeight: '1.1',
+            textTransform: 'lowercase',
+            fontWeight: '400'
           }}
         >
           {review.subtitle}
