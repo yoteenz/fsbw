@@ -881,7 +881,7 @@ function LoadCardPage() {
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    SUBMIT CODE
+                    SUBMIT CODE(S)
                   </button>
                 </div>
               </div>
