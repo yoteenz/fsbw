@@ -29678,3 +29678,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Updated the shared review subtitle style so all review subtitles change together. Kept the red brand color and applied lowercase via text transform.
 - **Changes:** Updated **`src/pages/account/reviews/page.tsx`** so `review.subtitle` renders with **`"Bohemy", cursive`**, **18px**, red **`#EB1C24`**, **`textTransform: 'lowercase'`**, and **400** weight. Verified with **`npm run build`**.
 - **Conventions:** Account → Reviews card subtitle/header text should display as red lowercase Bohemy rather than uppercase Futura Medium.
+
+---
+
+## 2026-06-19 — Help Center spacing matches Notifications row rhythm
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member / Settings / Reviews refinements: Add Funds copy/nav, rewards and membership copy/styling, Account Alerts copy/sorting, shared Digital Cash History popup behavior, Account Settings Birthday/Phone layout, Account Reviews subtitle typography, and Help Center spacing.
+- **Topics covered:** The latest request pointed out that Help Center text still did not visually match Notifications spacing and asked why.
+- **Decisions / outcomes:** The cause was that Notifications rows include a **24px** switch button, so the visible text baseline spacing is the row height plus the 14px gap. Help Center buttons were text-height only, so the same 14px gap looked tighter. Fixed the visual spacing by matching Help Center button row height to Notifications row height.
+- **Changes:** Updated **`src/pages/account/settings/page.tsx`** so each Help Center button uses **`minHeight: '24px'`**, **`display: 'flex'`**, and **`alignItems: 'center'`** while keeping the existing **14px** container gap. Verified with **`npm run build`**.
+- **Conventions:** When matching Settings list spacing to Notifications, match the full row rhythm (row height + gap), not just the flex gap value.
