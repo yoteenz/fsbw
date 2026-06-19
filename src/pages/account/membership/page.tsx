@@ -2609,8 +2609,8 @@ fontFamily: '"Futura PT Book"',
                                       {displayTier === 'BLACK' ? (
                                         <>
                                           <TierRoseBenefit>1,000 BONUS LOYALTY POINTS</TierRoseBenefit>
-                                          <TierRoseBenefit>COLOR VOUCHER</TierRoseBenefit>
-                                          <TierRoseBenefit>STYLING VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>1X COLOR VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>1X STYLING VOUCHER</TierRoseBenefit>
                                           <TierRoseBenefit>1.5X POINT EARNING BONUS</TierRoseBenefit>
                                           <TierRoseBenefit>BLACK STATUS PROTECTION BENEFIT</TierRoseBenefit>
                                           <TierRoseBenefit>ANNUAL BLACK STATUS REWARD</TierRoseBenefit>
@@ -2618,8 +2618,8 @@ fontFamily: '"Futura PT Book"',
                                       ) : displayTier === 'RED' ? (
                                         <>
                                           <TierRoseBenefit>500 BONUS LOYALTY POINTS</TierRoseBenefit>
-                                          <TierRoseBenefit>FLEXIBLE CAP VOUCHER</TierRoseBenefit>
-                                          <TierRoseBenefit>HAIRLINE VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>1X FLEXIBLE CAP VOUCHER</TierRoseBenefit>
+                                          <TierRoseBenefit>1X HAIRLINE VOUCHER</TierRoseBenefit>
                                           <TierRoseBenefit>1.25X POINT EARNING BONUS</TierRoseBenefit>
                                         </>
                                       ) : (
