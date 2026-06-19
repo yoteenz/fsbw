@@ -534,7 +534,7 @@ function LoadCardPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    ADD FUNDS
+                    BALANCE
                   </span>
                 </>
               )}

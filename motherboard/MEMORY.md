@@ -29388,3 +29388,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Added the requested uppercase explanatory paragraph immediately below the displayed balance amount, keeping it black and using **Futura PT Book**. Reduced the balance amount bottom margin and gave the paragraph its own bottom spacing so the new copy sits between the balance and **ENTER BARCODE(S):** without pushing the layout through a larger structural refactor.
 - **Changes:** **`src/pages/account/load-card/page.tsx`** now displays: **`LOAD A GIFT CARD TO ADD FUNDS TO YOUR ACCOUNT. YOUR AVAILABLE DIGITAL CASH BALANCE WILL BE AUTOMATICALLY APPLIED AT CHECKOUT, NO CODE NEEDED. AVAILABLE FUNDS CAN BE APPLIED TOWARD ANY ELIGIBLE PURCHASE.`** under the balance. Verified with **`npm run build`**.
 - **Conventions:** For Add Funds explanatory copy near the current balance, use black **Futura PT Book** uppercase text and keep it inline with the existing mobile card spacing.
+
+---
+
+## 2026-06-19 — Add Funds nav label changed to Balance
+
+- **Context:** In this chat, the user first asked to add a black **Futura PT Book** explanatory paragraph below the current balance section on the **Account > Add Funds** page, then asked to change the Add Funds breadcrumb/nav text to **`ACCOUNT > BALANCE`**.
+- **Topics covered:** Loaded the required motherboard context, updated the Add Funds balance section paragraph, verified the app, pushed the change to **master** and **preview/mobile**, then returned for the nav-label follow-up in **`src/pages/account/load-card/page.tsx`**.
+- **Decisions / outcomes:** Kept the Add Funds route and page behavior unchanged, but changed only the visible red breadcrumb segment from **`ADD FUNDS`** to **`BALANCE`** so the top nav now reads **`ACCOUNT > BALANCE`**.
+- **Changes:** **`src/pages/account/load-card/page.tsx`** now renders **`BALANCE`** in the breadcrumb/nav label for the Add Funds page. Verified with **`npm run build`**.
+- **Conventions:** Product-facing account nav labels can be copy-adjusted without renaming the underlying route when the requested change is visual text only.
