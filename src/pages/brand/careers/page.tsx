@@ -61,6 +61,7 @@ const checkoutInputStyle: CSSProperties = {
   boxSizing: 'border-box',
   borderRadius: '0',
   outline: 'none',
+  textTransform: 'uppercase',
 };
 
 const checkoutTextareaStyle: CSSProperties = {
@@ -76,6 +77,7 @@ const checkoutTextareaStyle: CSSProperties = {
   borderRadius: '0',
   outline: 'none',
   resize: 'vertical' as const,
+  textTransform: 'uppercase',
 };
 
 const checkoutSelectStyle: CSSProperties = {
@@ -200,11 +202,11 @@ export default function BrandCareersPage() {
       const ph = form.phone.trim();
       const cl = form.coverLetter.trim();
       if (!fn || !em || !ph || !cl) {
-        setSubmitError('Please fill in name, email, phone and cover letter.');
+        setSubmitError('PLEASE FILL IN NAME, EMAIL, PHONE AND COVER LETTER.');
         return;
       }
       if (!form.requiredEducation.trim()) {
-        setSubmitError('Please select your required education level.');
+        setSubmitError('PLEASE SELECT YOUR REQUIRED EDUCATION LEVEL.');
         return;
       }
       setSubmitting(true);
@@ -213,7 +215,7 @@ export default function BrandCareersPage() {
       try {
         if (resumeFile) {
           if (resumeFile.size > MAX_RESUME_BYTES) {
-            setSubmitError(`Resume must be under ${Math.round(MAX_RESUME_BYTES / (1024 * 1024))} MB for this demo save.`);
+            setSubmitError(`RÉSUMÉ MUST BE UNDER ${Math.round(MAX_RESUME_BYTES / (1024 * 1024))} MB FOR THIS DEMO SAVE.`);
             setSubmitting(false);
             return;
           }
@@ -243,7 +245,7 @@ export default function BrandCareersPage() {
           closeApply();
         }, 2200);
       } catch (err) {
-        setSubmitError(err instanceof Error ? err.message : 'Submit failed. Try again.');
+        setSubmitError(err instanceof Error ? err.message.toUpperCase() : 'SUBMIT FAILED. TRY AGAIN.');
       } finally {
         setSubmitting(false);
       }
@@ -539,9 +541,7 @@ export default function BrandCareersPage() {
                               >
                                 ABOUT THE ROLE
                               </p>
-                              <p className="leading-snug normal-case" style={{ textTransform: 'none' }}>
-                                {job.aboutTheRole}
-                              </p>
+                              <p className="leading-snug">{job.aboutTheRole}</p>
                             </section>
                             <section>
                               <p
@@ -568,9 +568,7 @@ export default function BrandCareersPage() {
                               >
                                 REQUIRED EDUCATION
                               </p>
-                              <p className="leading-snug normal-case" style={{ textTransform: 'none' }}>
-                                {job.requiredEducation}
-                              </p>
+                              <p className="leading-snug">{job.requiredEducation}</p>
                             </section>
                             <section>
                               <p
@@ -579,7 +577,7 @@ export default function BrandCareersPage() {
                               >
                                 JOB DUTIES
                               </p>
-                              <ul className="list-disc pl-4 space-y-1 normal-case" style={{ textTransform: 'none' }}>
+                              <ul className="list-disc pl-4 space-y-1">
                                 {job.jobDuties.map((d, i) => (
                                   <li key={i}>{d}</li>
                                 ))}
@@ -592,7 +590,7 @@ export default function BrandCareersPage() {
                               >
                                 DAILY TASKS
                               </p>
-                              <ul className="list-disc pl-4 space-y-1 normal-case" style={{ textTransform: 'none' }}>
+                              <ul className="list-disc pl-4 space-y-1">
                                 {job.dailyTasks.map((t, i) => (
                                   <li key={i}>{t}</li>
                                 ))}
@@ -606,9 +604,7 @@ export default function BrandCareersPage() {
                                 >
                                   NOTES
                                 </p>
-                                <p className="leading-snug normal-case" style={{ textTransform: 'none' }}>
-                                  {job.notes}
-                                </p>
+                                <p className="leading-snug">{job.notes}</p>
                               </section>
                             ) : null}
                           </div>
@@ -659,7 +655,7 @@ export default function BrandCareersPage() {
                 </button>
                 <div className="flex-1 overflow-y-auto min-h-0 pr-1" style={{ paddingTop: '8px' }}>
                   <RoleCardSectionHeader
-                    title={`Apply, ${activeJob.role}`}
+                    title={`APPLY, ${activeJob.role}`}
                     className="pr-12"
                     iconSrc={workerRoleHeaderIconSrc(activeJob.id)}
                   />
@@ -673,12 +669,12 @@ export default function BrandCareersPage() {
                       marginBottom: '16px',
                     }}
                   >
-                    Attach a résumé (PDF/DOC), portfolio or website, LinkedIn and a short cover letter. Equal opportunity
-                    employer.
+                    ATTACH A RÉSUMÉ (PDF/DOC), PORTFOLIO OR WEBSITE, LINKEDIN AND A SHORT COVER LETTER. EQUAL OPPORTUNITY
+                    EMPLOYER.
                   </p>
                   {submitDone ? (
                     <p className="text-sm font-futura text-green-700 py-6" style={{ fontFamily: '"Futura PT Book"' }}>
-                      Application received. Thank you.
+                      APPLICATION RECEIVED. THANK YOU.
                     </p>
                   ) : (
                     <form
@@ -695,7 +691,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.fullName}
-                          onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value.toUpperCase() }))}
                           required
                         />
                       </label>
@@ -721,7 +717,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.phone}
-                          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value.toUpperCase() }))}
                           required
                         />
                       </label>
@@ -731,7 +727,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.currentLocation}
-                          onChange={(e) => setForm((f) => ({ ...f, currentLocation: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, currentLocation: e.target.value.toUpperCase() }))}
                         />
                       </label>
                       <label>
@@ -740,7 +736,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.linkedInUrl}
-                          onChange={(e) => setForm((f) => ({ ...f, linkedInUrl: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, linkedInUrl: e.target.value.toUpperCase() }))}
                         />
                       </label>
                       <label>
@@ -749,7 +745,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.portfolioUrl}
-                          onChange={(e) => setForm((f) => ({ ...f, portfolioUrl: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, portfolioUrl: e.target.value.toUpperCase() }))}
                         />
                       </label>
                       <label>
@@ -758,7 +754,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.otherLinks}
-                          onChange={(e) => setForm((f) => ({ ...f, otherLinks: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, otherLinks: e.target.value.toUpperCase() }))}
                         />
                       </label>
                       <label>
@@ -788,7 +784,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutInputStyle}
                           value={form.yearsExperience}
-                          onChange={(e) => setForm((f) => ({ ...f, yearsExperience: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, yearsExperience: e.target.value.toUpperCase() }))}
                         />
                       </label>
                       <label>
@@ -797,7 +793,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutTextareaStyle}
                           value={form.skillsAndExperience}
-                          onChange={(e) => setForm((f) => ({ ...f, skillsAndExperience: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, skillsAndExperience: e.target.value.toUpperCase() }))}
                           rows={4}
                           placeholder="SUMMARIZE KEY SKILLS, TOOLS AND RELEVANT BACKGROUND."
                         />
@@ -826,6 +822,7 @@ export default function BrandCareersPage() {
                               fontFamily: '"Futura PT Book"',
                               fontSize: '10px',
                               color: '#808080',
+                              textTransform: 'uppercase',
                             }}
                             onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
                           />
@@ -839,7 +836,7 @@ export default function BrandCareersPage() {
                           className="careers-apply-checkout-field mt-1 block"
                           style={checkoutTextareaStyle}
                           value={form.coverLetter}
-                          onChange={(e) => setForm((f) => ({ ...f, coverLetter: e.target.value }))}
+                          onChange={(e) => setForm((f) => ({ ...f, coverLetter: e.target.value.toUpperCase() }))}
                           required
                           rows={5}
                           placeholder="WHY THIS ROLE AND WHAT YOU BRING TO FRONTAL SLAYER / BUILD-A-WIG."

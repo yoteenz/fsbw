@@ -4237,6 +4237,7 @@ textarea.careers-apply-checkout-field::placeholder {
   font-family: 'Futura PT Book', sans-serif;
   font-size: 11px;
   opacity: 1;
+  text-transform: uppercase;
 }
 input.careers-apply-checkout-field,
 textarea.careers-apply-checkout-field,
