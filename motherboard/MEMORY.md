@@ -29928,3 +29928,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Restored visible copy to the prior wording: generic **ANNIVERSARY REWARDS** in premium benefit lists, the previous Anniversary Rewards marketing subtitle, **ANNUAL BLACK STATUS GIFT** in the Tier Benefits Guide, and **ANNUAL BLACK STATUS REWARD** in Membership Status. Kept point amounts as internal constants and added idempotent award logic on the Rewards page: 3/6/12 month premium anniversary awards deposit **500/1,000/1,500** points once the saved subscription milestone is reached; annual Black status deposits **2,500** points once the previous two completed 6-month purchase-point cycles each meet Black threshold.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`**, **`src/constants/premiumBenefitsByTier.ts`**, **`src/constants/brandMemberPremiumRewards.ts`**, and this motherboard entry. The Rewards page now stores award entries in `loyaltyPointRewardHistory`, increments `loyaltyPoints`, updates `currentUser` and `registeredUsers`, and shows generic **REWARD** rows in Points History. Verified with **`npm run build`**.
 - **Conventions:** Reward point amounts and detailed eligibility rules for premium anniversaries and annual Black status should remain internal logic, not marketing/TBG/IIYM copy. Deposits must be idempotent via stable award IDs and should use generic visible reward labels.
+
+---
+
+## 2026-06-19 — PSA order authorization form nudge headline
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards and related membership surfaces, plus PSA/order-related copy. Recent work included internal reward point rules and restored client-facing rewards copy.
+- **Topics covered:** The latest request asked for the Bohemy PSA nudge header text **“sign your order form”** to say **“sign your order authorization form.”**
+- **Decisions / outcomes:** Updated the unsigned-order-form PSA proactive nudge headline copy for both with-order-number and no-order-number variants to **SIGN YOUR ORDER AUTHORIZATION FORM**.
+- **Changes:** Updated **`src/utils/psaProactiveNudgeCatalog.ts`** only. Verified the old **SIGN YOUR ORDER FORM** headline no longer appears in `src/` and verified with **`npm run build`**.
+- **Conventions:** PSA unsigned form nudges should refer to the **order authorization form** in the headline.
