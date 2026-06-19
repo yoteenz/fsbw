@@ -29378,3 +29378,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The Add Funds deposit alert now uses the shorter body copy **`$__.00 USD HAS BEEN ADDED TO YOUR BALANCE.`** instead of the longer **digital cash balance** wording. This applies consistently to both real deposit alerts and the admin-only mock alert used for UI validation.
 - **Changes:** **`src/utils/orderAccountAlerts.ts`** now builds real deposit alerts with **`$${amount.toFixed(2)} USD HAS BEEN ADDED TO YOUR BALANCE.`**. **`src/pages/account/notifications/page.tsx`** now uses **`$50.00 USD HAS BEEN ADDED TO YOUR BALANCE.`** for the admin mock deposit alert row. **`src/utils/accountAlertsCatalog.ts`** now documents both the real and mock deposit alert variants with the shortened body copy. Verified with **`npm run build`**.
 - **Conventions:** When alert copy changes for a runtime notification variant, keep the implementation and **`accountAlertsCatalog`** documentation in sync so the product/debug source of truth matches the UI exactly.
+
+---
+
+## 2026-06-19 — Add Funds balance explanatory paragraph
+
+- **Context:** In this chat, the user asked to add a paragraph in black **Futura PT Book** below the current balance section on the **Account > Add Funds** page.
+- **Topics covered:** Loaded the required motherboard context first, then located the Add Funds layout in **`src/pages/account/load-card/page.tsx`** and found the current balance block directly above the barcode inputs.
+- **Decisions / outcomes:** Added the requested uppercase explanatory paragraph immediately below the displayed balance amount, keeping it black and using **Futura PT Book**. Reduced the balance amount bottom margin and gave the paragraph its own bottom spacing so the new copy sits between the balance and **ENTER BARCODE(S):** without pushing the layout through a larger structural refactor.
+- **Changes:** **`src/pages/account/load-card/page.tsx`** now displays: **`LOAD A GIFT CARD TO ADD FUNDS TO YOUR ACCOUNT. YOUR AVAILABLE DIGITAL CASH BALANCE WILL BE AUTOMATICALLY APPLIED AT CHECKOUT, NO CODE NEEDED. AVAILABLE FUNDS CAN BE APPLIED TOWARD ANY ELIGIBLE PURCHASE.`** under the balance. Verified with **`npm run build`**.
+- **Conventions:** For Add Funds explanatory copy near the current balance, use black **Futura PT Book** uppercase text and keep it inline with the existing mobile card spacing.

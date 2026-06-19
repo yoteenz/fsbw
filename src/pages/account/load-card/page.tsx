@@ -817,13 +817,28 @@ function LoadCardPage() {
                         fontFamily: '"Futura PT Medium"',
                         fontSize: '16px',
                         color: '#EB1C24',
-                        margin: '-2px 0 35px 0',
+                        margin: '-2px 0 14px 0',
                         fontWeight: '500',
                         textAlign: 'center',
                         width: '100%'
                       }}
                     >
                       {formatPrice(typeof userData?.giftCardBalance === 'number' ? userData.giftCardBalance : 0)}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '10px',
+                        color: '#000000',
+                        margin: '0 0 22px 0',
+                        fontWeight: '400',
+                        lineHeight: '1.35',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                        width: '100%'
+                      }}
+                    >
+                      LOAD A GIFT CARD TO ADD FUNDS TO YOUR ACCOUNT. YOUR AVAILABLE DIGITAL CASH BALANCE WILL BE AUTOMATICALLY APPLIED AT CHECKOUT, NO CODE NEEDED. AVAILABLE FUNDS CAN BE APPLIED TOWARD ANY ELIGIBLE PURCHASE.
                     </p>
                   </div>
 
