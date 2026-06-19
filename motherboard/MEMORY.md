@@ -29178,3 +29178,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User asked to change **because frontal slayer isn't just a name… it's a mindset.** from gray to brand red and increase size by **4px** (17px → **21px**), keeping lowercase Bohemy.
 - **Changes:** **`BrandAboutUsBody.tsx`** — Bohemy line **`#EB1C24`**, **`21px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand reviews closing line: red
+
+- **Context:** User asked to change **UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.** on **`/brand/reviews`** to brand red.
+- **Changes:** **`brandReviewsCopy.ts`** — **`until-then`** block variant **`demiGray` → `accent`** (Futura PT Medium **`#EB1C24`**). Pushed **`master`** + **`preview/mobile`**.
