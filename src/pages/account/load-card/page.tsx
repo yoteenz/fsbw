@@ -36,6 +36,27 @@ function toCanonicalBarcode(value: string): string {
   return `${alnum.slice(0, 4)}-${alnum.slice(4, 8)}-${alnum.slice(8, 12)}`;
 }
 
+type DigitalCashHistoryEntry = { date: string; transaction: string; amount: number };
+
+function pickPreferredDigitalCashHistory(
+  currentHistory: unknown,
+  registeredHistory: unknown
+): DigitalCashHistoryEntry[] {
+  const current = Array.isArray(currentHistory) ? (currentHistory as DigitalCashHistoryEntry[]) : [];
+  const registered = Array.isArray(registeredHistory) ? (registeredHistory as DigitalCashHistoryEntry[]) : [];
+  if (registered.length > current.length) return registered;
+  return current;
+}
+
+function pickPreferredDigitalCashBalance(
+  currentBalance: unknown,
+  registeredBalance: unknown
+): number {
+  const current = typeof currentBalance === 'number' ? currentBalance : 0;
+  const registered = typeof registeredBalance === 'number' ? registeredBalance : 0;
+  return Math.max(current, registered);
+}
+
 function readStoredSignedInUser(): Record<string, unknown> | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -58,17 +79,14 @@ function readStoredSignedInUser(): Record<string, unknown> | null {
     const merged = {
       ...registeredUser,
       ...currentUser,
-      giftCardBalance:
-        typeof currentUser.giftCardBalance === 'number'
-          ? currentUser.giftCardBalance
-          : typeof registeredUser.giftCardBalance === 'number'
-            ? registeredUser.giftCardBalance
-            : 0,
-      digitalCashHistory: Array.isArray(currentUser.digitalCashHistory)
-        ? currentUser.digitalCashHistory
-        : Array.isArray(registeredUser.digitalCashHistory)
-          ? registeredUser.digitalCashHistory
-          : [],
+      giftCardBalance: pickPreferredDigitalCashBalance(
+        currentUser.giftCardBalance,
+        registeredUser.giftCardBalance
+      ),
+      digitalCashHistory: pickPreferredDigitalCashHistory(
+        currentUser.digitalCashHistory,
+        registeredUser.digitalCashHistory
+      ),
     };
 
     const needsCurrentRepair =
@@ -166,11 +184,53 @@ function LoadCardPage() {
   useEffect(() => {
     let cancelled = false;
     if (!isSignedIn) return;
+    const preSyncUser = readStoredSignedInUser();
+    const preSyncBalance =
+      typeof preSyncUser?.giftCardBalance === 'number' ? (preSyncUser.giftCardBalance as number) : 0;
+    const preSyncHistory = pickPreferredDigitalCashHistory(preSyncUser?.digitalCashHistory, []);
+
     syncAllFromApi()
       .catch(() => null)
       .finally(() => {
         if (cancelled) return;
-        setUserData(readStoredSignedInUser());
+        const syncedUser = readStoredSignedInUser();
+        const syncedBalance =
+          typeof syncedUser?.giftCardBalance === 'number' ? (syncedUser.giftCardBalance as number) : 0;
+        const syncedHistory = pickPreferredDigitalCashHistory(syncedUser?.digitalCashHistory, []);
+
+        // Guard against a stale profile sync wiping out a richer local digital-cash balance/history.
+        if ((preSyncBalance > syncedBalance || preSyncHistory.length > syncedHistory.length) && preSyncUser?.email) {
+          void persistUserBalance(
+            String(preSyncUser.email),
+            Math.max(preSyncBalance, syncedBalance),
+            // When restoring after stale sync, do not append a new transaction row.
+            { date: '', transaction: '', amount: 0 }
+          );
+          const repaired: Record<string, unknown> = {
+            ...(syncedUser || preSyncUser),
+            giftCardBalance: Math.max(preSyncBalance, syncedBalance),
+            digitalCashHistory:
+              preSyncHistory.length >= syncedHistory.length ? preSyncHistory : syncedHistory,
+          };
+          try {
+            localStorage.setItem('currentUser', JSON.stringify(repaired));
+            const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const idx = registered.findIndex(
+              (user: { email?: string }) =>
+                String(user.email || '').trim().toLowerCase() === String(repaired.email || '').trim().toLowerCase()
+            );
+            if (idx !== -1) {
+              registered[idx] = repaired;
+              localStorage.setItem('registeredUsers', JSON.stringify(registered));
+            }
+          } catch {
+            /* ignore */
+          }
+          setUserData(repaired);
+          return;
+        }
+
+        setUserData(syncedUser);
       });
     return () => {
       cancelled = true;
@@ -244,7 +304,7 @@ function LoadCardPage() {
       const u = readStoredSignedInUser();
       if (!u) return;
       if (String(u.email || '').toLowerCase() !== email.toLowerCase()) return;
-      const updatedHistory = [...(Array.isArray(u.digitalCashHistory) ? u.digitalCashHistory : []), historyEntry];
+      const updatedHistory = [...(Array.isArray(u.digitalCashHistory) ? u.digitalCashHistory : []), ...(historyEntry.date ? [historyEntry] : [])];
       const updated = {
         ...u,
         giftCardBalance: newBalance,
