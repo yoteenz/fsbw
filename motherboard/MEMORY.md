@@ -29478,3 +29478,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Added a new **`bohemyAccent`** copy variant for lowercase red Bohemy at **21px** (4px larger than the existing 17px Bohemy style), changed the perks-continuation line to lowercase, and removed the separate PSA intro block.
 - **Changes:** **`src/constants/brandMemberCopy.ts`** now supports **`bohemyAccent`**, renders **`but the perks don't stop there…`** with that variant, and no longer includes the **`psa-intro`** block. **`src/components/brand/BrandMemberSection.tsx`** now styles **`bohemyAccent`** as **Bohemy**, **`#EB1C24`**, **21px**, no uppercase transform. Verified with **`npm run build`**.
 - **Conventions:** Use **`bohemyAccent`** for Brand Member lowercase red Bohemy emphasis lines that should be larger than the standard gray Bohemy body line.
+
+---
+
+## 2026-06-19 — Voucher History popup disclaimer removed
+
+- **Context:** In this chat, after removing the rewards expiration/combinability disclaimer from the membership/rewards page, the user clarified that the same paragraph also needed to be removed from the **Voucher History** popup.
+- **Topics covered:** Searched for remaining client-facing instances of **`FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION...`** and found the popup footer in **`src/pages/account/page.tsx`**.
+- **Decisions / outcomes:** Removed the Voucher History popup footer disclaimer without changing voucher history data, voucher expiration logic, or gift-card policy copy elsewhere.
+- **Changes:** **`src/pages/account/page.tsx`** no longer renders the rewards expiration/combinability paragraph at the bottom of the Voucher History popup. Verified with **`npm run build`**.
+- **Conventions:** If a rewards disclaimer is removed from Account → Rewards, check related account popups such as Voucher History for duplicated client-facing copies.

@@ -2783,9 +2783,6 @@ function AccountPage() {
                 ));
               })()}
             </p>
-            <p style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', fontSize: '8px', color: '#808080', margin: '10px 0 0 0', lineHeight: '1.35', textTransform: 'uppercase' }}>
-              FREE GIFTS, DISCOUNT CODES &amp; VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. FREE GIFTS CAN BE COMBINED WITH ANY OTHER OFFER AT CHECKOUT. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.
-            </p>
           </div>
         </div>
       )}
