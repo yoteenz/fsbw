@@ -29988,3 +29988,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Changed the Slay Challenge guide from a full four-tier catalog to a compact current-tier display. The guide now renders only one tier at a time, starts on **TIER 1 — DISCOVER**, advances to **TIER 2 — ENGAGE** when existing Tier 1 progress is complete, and supports a future `slayChallengeCurrentTierIndex` localStorage value for later Tier 3/Tier 4 unlock logic. Updated explanatory bullets to say rewards unlock one tier at a time and corrected the guide’s Tier 1 points option to **600 LOYALTY POINTS**.
 - **Changes:** Updated **`src/pages/account/concierge/page.tsx`** and appended this motherboard entry. Verified with **`npm run build`**.
 - **Conventions:** The Concierge **SLAY CHALLENGE** card should stay compact and show only the currently unlocked tier. Do not expose Tier 2/Tier 3/Tier 4 in that card until prior tiers are completed/unlocked. Slay Quests remains the separate long challenge library below it.
+
+---
+
+## 2026-06-19 — Slay Challenge Tier 1 requirement wording
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Concierge, PSA nudges, membership reward surfaces, Slay Challenge, Slay Cam, and Slay Quests. Earlier completed work included BAW-matched **TOTAL DUE** premium labels, Points History reward-column centering, Membership Status voucher quantity labels, internal-only premium/Black reward deposits, PSA order authorization form nudge copy, Slay Challenge Tier 1 points raised to **600**, initial **Slay Cam** navigation/account/page setup, the expanded Slay Challenge guide, the separate long **Slay Quests** section, and the compact current-tier-only Slay Challenge card.
+- **Topics covered:** The latest request asked for the Tier 1 Slay Challenge requirement line to say exactly: **“YOU ONLY NEED TO COMPLETE 3/7 TO ADVANCE TIERS.”**
+- **Decisions / outcomes:** Updated the Tier 1 requirement copy from third-person **THEY ONLY NEED...** wording to direct user-facing **YOU ONLY NEED...** wording.
+- **Changes:** Updated **`src/pages/account/concierge/page.tsx`** and appended this motherboard entry. Verified with **`npm run build`**.
+- **Conventions:** Slay Challenge requirement text should speak directly to the member when shown in the Concierge UI.
