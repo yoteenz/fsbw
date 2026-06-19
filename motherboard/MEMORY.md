@@ -29448,3 +29448,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Treated the requested perk descriptions as product-managed marketing copy. Added the three new perks to the shared unlock list. Updated included-membership tier summaries so they mention **MEMBERS ONLY LOBBY + LOUNGE**, **PRIORITY MEMBER SUPPORT**, **PRIORITY BOOKING + PROCESSING**, **WATCH + LEARN**, **SLAY ACADEMY**, **EXCLUSIVE REWARDS + CHALLENGES**, **ANNIVERSARY REWARDS**, and **DOUBLE YOUR POINTS**. This is the best-fit codebase incorporation for anniversary rewards because it makes the perk visible in both the marketing and included-membership benefit surfaces without inventing reward-award logic.
 - **Changes:** **`src/constants/brandMemberPremiumRewards.ts`** now uses the supplied expanded gray copy for PSA, Premium 3D Wig Selections, Members Only Lobby + Lounge, Priority Member Support, Priority Booking + Processing, Exclusive Rewards + Challenges, Double Your Points, Watch + Learn, Slay Academy, and Anniversary Rewards. **`src/constants/premiumBenefitsByTier.ts`** now includes the renamed perks and adds **WATCH + LEARN**, **SLAY ACADEMY**, and **ANNIVERSARY REWARDS** to premium tier benefit lists. Verified with **`npm run build`**.
 - **Conventions:** Keep shared premium perk marketing copy in **`brandMemberPremiumRewards.ts`** and keep high-level included-benefit labels in **`premiumBenefitsByTier.ts`** aligned when new membership perks are introduced.
+
+---
+
+## 2026-06-19 — Removed client-facing rewards expiration disclaimer
+
+- **Context:** In this chat, after Add Funds / Balance copy updates, alerts/history sorting fixes, rose bullets for membership included benefits, and premium rewards copy updates, the user asked to remove the client-facing paragraph: **`FREE GIFTS, DISCOUNT CODES & VOUCHERS EXPIRE 6 MONTHS FROM REDEMPTION. FREE GIFTS CAN BE COMBINED WITH ANY OTHER OFFER AT CHECKOUT. DIGITAL CASH / GIFT CARDS DO NOT EXPIRE.`**
+- **Topics covered:** Located the paragraph in two render branches of **`src/pages/account/membership/page.tsx`** on the Account → Rewards / membership page.
+- **Decisions / outcomes:** Removed both visible instances of that disclaimer copy without changing the underlying reward/voucher expiration behavior or any checkout/digital-cash logic.
+- **Changes:** **`src/pages/account/membership/page.tsx`** no longer renders the rewards expiration/combinability paragraph in either branch where it appeared. Verified with **`npm run build`**.
+- **Conventions:** Keep operational reward-expiration rules out of client-facing membership copy unless the product owner explicitly asks to surface them.
