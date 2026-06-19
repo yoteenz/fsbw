@@ -29135,3 +29135,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User reported the last search result card centered on its row when an odd count left a single card; it should follow the staggered left/right column (e.g. after a right-column card, the next/last card should be **left**, not centered).
 - **Changes:** **`ShopSearchResultsGrid.tsx`** — container **`justifyContent: flex-start`**; even indices stay left, odd indices **`marginLeft: auto`** for right column. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand careers/application pages: all text uppercase
+
+- **Context:** User requested **all text** on brand careers and application pages be uppercase (job listings, role details, apply form, messages).
+- **Changes:** **`src/pages/brand/careers/page.tsx`** — removed **`normal-case`** / **`textTransform: none`** overrides on job detail sections (about, education, duties, tasks, notes) so parent **`uppercase`** applies; apply header/intro/success/error strings uppercased; **`checkoutInputStyle`** / **`checkoutTextareaStyle`** + file input **`textTransform: uppercase`**; form fields uppercased on **`onChange`**. **`src/index.css`** — careers apply placeholder **`text-transform: uppercase`**. Pushed **`master`** + **`preview/mobile`**.
