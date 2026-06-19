@@ -29648,3 +29648,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Removed only the tier-heading paragraph above the rose-icon perk lists. The actual Silver / Red / Black rose-icon perk rows remain unchanged.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** to remove the conditional paragraph rendering **BLACK TIER PERKS:** / **RED TIER PERKS:** / **SILVER TIER PERKS:**. Verified no remaining matching strings in the membership page and verified with **`npm run build`**.
 - **Conventions:** Membership Status card tier perk lists should display directly as rose-icon rows without a **[TIER] TIER PERKS:** heading above them.
+
+---
+
+## 2026-06-19 — Account Rewards progress text uses Futura Book
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds copy/nav, UPR and Brand Member premium perk copy/styling/order, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting/copy, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, IIYM 12-month-only double points, UPR **DOUBLE YOUR POINTS** ordering, **EXPLORE ALL BENEFITS** spacing, and Membership Status tier-perk heading removal.
+- **Topics covered:** The latest request asked for the black **“3,300 MORE POINTS TO EARN A ...”** progress text on Account → Rewards (for example, **“3,300 MORE POINTS TO EARN A DISCOUNT CODE!”**) to use **Futura PT Book** instead of **Futura PT Medium**.
+- **Decisions / outcomes:** Changed the Membership Status reward-progress line’s base typography from Medium/500 to Book/400 while keeping its size, uppercase styling, black base color, and colored reward-label span intact.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** so that progress line uses **`"Futura PT Book"`** with **`fontWeight: '400'`**. Verified with **`npm run build`**.
+- **Conventions:** On the Account → Rewards Membership Status card, the black reward-progress sentence should render in **Futura PT Book**; colored reward labels may continue to use the inherited progress-line typography unless product asks otherwise.
