@@ -2240,7 +2240,7 @@ fontFamily: '"Futura PT Book"',
                                       </div>
                                       <p style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', color: '#000000', fontSize: '10px', margin: '0', textTransform: 'uppercase' }}>
                                         {nextReward
-                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor }}>{nextReward.label}</span></>}!</>
+                                          ? <>{((nextReward.points - totalPoints).toLocaleString())} MORE POINTS TO EARN {nextReward.type === 'digital_cash' ? <span style={{ color: nextLabelColor, fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>{nextReward.label}</span> : <>A <span style={{ color: nextLabelColor, fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}>{nextReward.label}</span></>}!</>
                                           : 'MAX REWARD REACHED'}
                                       </p>
                                     </div>
