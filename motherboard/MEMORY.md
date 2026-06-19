@@ -29157,3 +29157,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User replaced gray centered empty message on **`/brand/reviews`** with multi-paragraph marketing copy (headline **YOUR REVIEW COULD BE THE FIRST.**, community growth, future reviews, closing CTA), all uppercase, matching other brand pages.
 - **Changes:** **`src/constants/brandReviewsCopy.ts`** (new) — four blocks with **`accent`** / **`demiGray`** / **`body`** variants. **`BrandReviewsEmptyState.tsx`** — left-aligned **10px** Futura stack (**Book** black, **Demi** gray, **Medium** red accent), **`gap: 12px`**, same pattern as About/Member. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — About Us mindset line: lowercase Bohemy
+
+- **Context:** User asked to restyle **because frontal slayer isn't just a name… it's a mindset.** on **`/brand/about`** as lowercase **Bohemy** (gray), not red uppercase Futura accent.
+- **Changes:** **`brandAboutCopy.ts`** — line lowercased; moved from **`BRAND_ABOUT_ACCENT_PARAGRAPHS`** to **`BRAND_ABOUT_BOHEMY_PARAGRAPHS`**. **`BrandAboutUsBody.tsx`** — Bohemy **17px** **`#808080`**, **`textTransform: none`**. Pushed **`master`** + **`preview/mobile`**.
