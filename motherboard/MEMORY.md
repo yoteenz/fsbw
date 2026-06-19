@@ -29688,3 +29688,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The cause was that Notifications rows include a **24px** switch button, so the visible text baseline spacing is the row height plus the 14px gap. Help Center buttons were text-height only, so the same 14px gap looked tighter. Fixed the visual spacing by matching Help Center button row height to Notifications row height.
 - **Changes:** Updated **`src/pages/account/settings/page.tsx`** so each Help Center button uses **`minHeight: '24px'`**, **`display: 'flex'`**, and **`alignItems: 'center'`** while keeping the existing **14px** container gap. Verified with **`npm run build`**.
 - **Conventions:** When matching Settings list spacing to Notifications, match the full row rhythm (row height + gap), not just the flex gap value.
+
+---
+
+## 2026-06-19 — Account Rewards colored reward label restored to Futura Medium
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member / Settings / Reviews refinements: Add Funds copy/nav, membership copy/styling, Account Alerts copy/sorting, shared Digital Cash History popup behavior, Account Settings Birthday/Phone layout and Help Center spacing, Account Reviews subtitle typography, and Account Rewards progress-text typography.
+- **Topics covered:** The latest request clarified the prior Account Rewards progress-text change: only the black sentence text (for example, **“3,300 MORE POINTS TO EARN A”**) and the ending exclamation mark should be **Futura PT Book**; the colored reward label itself should remain **Futura PT Medium**.
+- **Decisions / outcomes:** Kept the parent progress sentence as Book/400 and restored only the colored reward label spans to Medium/500. Because the exclamation mark is outside the colored label span, it continues to inherit Book/400 from the parent sentence.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** so both colored `nextReward.label` spans in the Membership Status progress sentence explicitly use **`"Futura PT Medium"`** and **`fontWeight: '500'`** while preserving `nextLabelColor`. Verified with **`npm run build`**.
+- **Conventions:** In the Account → Rewards Membership Status progress sentence, use Futura Book for the black surrounding copy and punctuation, but Futura Medium for the colored reward label only.
