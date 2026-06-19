@@ -91,7 +91,7 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
   {
     title: 'TIER 1 — DISCOVER',
     description: 'EASY TASKS THAT GET MEMBERS INVOLVED.',
-    requirement: 'YOU ONLY NEED TO COMPLETE 3/7 TO ADVANCE TIERS.',
+    requirement: 'YOU NEED TO COMPLETE AT LEAST 5/7 TO ADVANCE TIERS.',
     tasks: [
       'MAKE A PURCHASE',
       'LEAVE A PRODUCT REVIEW',
@@ -428,6 +428,42 @@ function SlayChallengeGuide({
 type SlayChallengeRewardAssetSelection = {
   rewardType: SlayQuestRewardType;
   selectedRewardLabel: string;
+};
+
+type SlayChallengeTier1Progress = {
+  purchase: boolean;
+  review: boolean;
+  hairstyleAnalysis: boolean;
+  psaUse: boolean;
+  wishlist: boolean;
+  digitalCash: boolean;
+  newsletter: boolean;
+};
+
+const SLAY_CHALLENGE_TIER1_REQUIRED_COUNT = 5;
+
+const getDefaultSlayChallengeTier1Progress = (): SlayChallengeTier1Progress => ({
+  purchase: false,
+  review: false,
+  hairstyleAnalysis: false,
+  psaUse: false,
+  wishlist: false,
+  digitalCash: false,
+  newsletter: false,
+});
+
+const normalizeSlayChallengeTier1Progress = (progress: unknown): SlayChallengeTier1Progress => {
+  const candidate = (progress && typeof progress === 'object') ? progress as Partial<SlayChallengeTier1Progress> & { post?: boolean } : {};
+  return {
+    purchase: !!candidate.purchase,
+    review: !!candidate.review,
+    hairstyleAnalysis: !!candidate.hairstyleAnalysis,
+    psaUse: !!candidate.psaUse,
+    wishlist: !!candidate.wishlist,
+    digitalCash: !!candidate.digitalCash,
+    // Preserve any old three-step "post" credit without keeping it as an eighth requirement.
+    newsletter: !!candidate.newsletter || !!candidate.post,
+  };
 };
 
 const pickTwoSlayChallengeRewards = (rewards: string[]): string[] => {
@@ -1379,20 +1415,19 @@ function ConciergePage() {
       return now.getMonth() < 6 ? `${now.getFullYear()}-H1` : `${now.getFullYear()}-H2`;
     }
   });
-  const [slayChallengeTier1Progress, setSlayChallengeTier1Progress] = useState<{ purchase: boolean; review: boolean; post: boolean }>(() => {
+  const [slayChallengeTier1Progress, setSlayChallengeTier1Progress] = useState<SlayChallengeTier1Progress>(() => {
     try {
       if (localStorage.getItem('slayChallengeProgressCycle') !== slayChallengeCurrentCycleLabel) {
         localStorage.setItem('slayChallengeProgressCycle', slayChallengeCurrentCycleLabel);
         localStorage.removeItem('slayChallengeTier1Progress');
         localStorage.removeItem('slayChallengeTier2Progress');
         localStorage.removeItem('slayChallengeCurrentTierIndex');
-        return { purchase: false, review: false, post: false };
+        return getDefaultSlayChallengeTier1Progress();
       }
       const raw = localStorage.getItem('slayChallengeTier1Progress');
-      if (!raw) return { purchase: false, review: false, post: false };
-      const p = JSON.parse(raw);
-      return { purchase: !!p.purchase, review: !!p.review, post: !!p.post };
-    } catch (e) { return { purchase: false, review: false, post: false }; }
+      if (!raw) return getDefaultSlayChallengeTier1Progress();
+      return normalizeSlayChallengeTier1Progress(JSON.parse(raw));
+    } catch (e) { return getDefaultSlayChallengeTier1Progress(); }
   });
   const [slayChallengeTier2Progress, setSlayChallengeTier2Progress] = useState<{ purchase: boolean; review: boolean; socialTag: boolean }>(() => {
     try {
@@ -1405,10 +1440,10 @@ function ConciergePage() {
   const slayChallengeInSelectionWindow = isInSlayChallengeSelectionWindow();
   const slayChallengeHasSelectedForNext = slayChallengeSelectedCycle === slayChallengeNextCycleLabel;
   const slayChallengeActive = slayChallengeSelectedCycle === slayChallengeCurrentCycleLabel;
-  const slayChallengeTier1Complete = slayChallengeTier1Progress.purchase && slayChallengeTier1Progress.review && slayChallengeTier1Progress.post;
-  const slayChallengeTier2Complete = slayChallengeTier2Progress.purchase && slayChallengeTier2Progress.review && slayChallengeTier2Progress.socialTag;
   const slayChallengeTier1CompletedRequirements = Object.values(slayChallengeTier1Progress).filter(Boolean).length;
   const slayChallengeTier2CompletedRequirements = Object.values(slayChallengeTier2Progress).filter(Boolean).length;
+  const slayChallengeTier1Complete = slayChallengeTier1CompletedRequirements >= SLAY_CHALLENGE_TIER1_REQUIRED_COUNT;
+  const slayChallengeTier2Complete = slayChallengeTier2Progress.purchase && slayChallengeTier2Progress.review && slayChallengeTier2Progress.socialTag;
   const progressSlayChallengeTierIndex = slayChallengeTier1Complete
     ? (slayChallengeTier2Complete ? 2 : 1)
     : 0;
@@ -1477,10 +1512,10 @@ function ConciergePage() {
     if (!slayChallengeCurrentSelectedReward) return;
     try {
       localStorage.setItem('slayChallengeSelectedCycle', slayChallengeNextCycleLabel);
-      localStorage.setItem('slayChallengeTier1Progress', JSON.stringify({ purchase: false, review: false, post: false }));
+      localStorage.setItem('slayChallengeTier1Progress', JSON.stringify(getDefaultSlayChallengeTier1Progress()));
       localStorage.setItem('slayChallengeTier2Progress', JSON.stringify({ purchase: false, review: false, socialTag: false }));
       setSlayChallengeSelectedCycle(slayChallengeNextCycleLabel);
-      setSlayChallengeTier1Progress({ purchase: false, review: false, post: false });
+      setSlayChallengeTier1Progress(getDefaultSlayChallengeTier1Progress());
       setSlayChallengeTier2Progress({ purchase: false, review: false, socialTag: false });
     } catch (e) {
       console.error('Error saving Slay Challenge selection:', e);
