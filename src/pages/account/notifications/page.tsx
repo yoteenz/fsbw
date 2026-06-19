@@ -287,7 +287,7 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     icon: 'f'
   });
 
-  if (newAccount) {
+  if (newAccount && !isAyoteenzAdminAccount(user)) {
     return notifs;
   }
 

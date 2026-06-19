@@ -531,8 +531,8 @@ function AccountPage() {
             let needsUpdate = false;
             const updatedUser = { ...user };
 
-            // Ensure gift card balance is $70 ($10 signup + $60 for 12 months premium)
-            const expectedBalance = 70;
+            // Ensure gift card balance is $80 for founder-admin testing ($10 signup + $60 premium + $10 manual test top-up)
+            const expectedBalance = 80;
             if (!user.giftCardBalance || user.giftCardBalance < expectedBalance) {
               updatedUser.giftCardBalance = expectedBalance;
               needsUpdate = true;
