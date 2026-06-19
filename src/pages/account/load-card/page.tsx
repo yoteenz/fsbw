@@ -5,7 +5,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import { clearAppAuth, FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { clearAppAuth, FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY, isAdminEmail } from '../../../utils/adminAuth';
 import {
   findGiftPromoByNormalizedCode,
   giftPromoRedeemBlockReason,
@@ -59,7 +59,7 @@ function pickPreferredDigitalCashBalance(
 }
 
 function shouldApplyAdminTestDigitalCash(user: Record<string, unknown> | null | undefined): boolean {
-  if (!user || !isAyoteenzAdminAccount({ email: String(user.email || '') })) return false;
+  if (!user || !isAdminEmail(String(user.email || ''))) return false;
   try {
     return localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) !== 'true';
   } catch {
