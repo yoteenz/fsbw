@@ -29598,3 +29598,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Updated the shared PSA membership display constants so all those surfaces change together. Also removed the same parenthetical from the remaining Account Rewards benefits-guide sentence and from the tier-label helper so future client-facing labels do not reintroduce it.
 - **Changes:** **`src/constants/psaMembershipCopy.ts`** now sets **`PSA_MEMBERSHIP_TITLE`** and **`PSA_MEMBERSHIP_BENEFIT_LABEL`** to **`PERSONAL SLAY ASSISTANT`**, and `psaBenefitLabelForTier()` no longer includes **`(PSA)`**. **`src/pages/account/membership/page.tsx`** no longer includes **`PERSONAL SLAY ASSISTANT (PSA)`** in the Premium Member Advantage body copy. Verified no remaining **`PERSONAL SLAY ASSISTANT (PSA)`** matches under **`src/`** and verified with **`npm run build`**.
 - **Conventions:** Client-facing membership benefit headers should use **PERSONAL SLAY ASSISTANT** without the **(PSA)** parenthetical in UPR, Brand Member premium perks, and IIYM displays.
+
+---
+
+## 2026-06-19 — IIYM double points limited to 12-month premium
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds balance copy/nav, UPR and Brand Member premium perk copy/styling, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting, shared Digital Cash History popup behavior, and removal of **(PSA)** from Personal Slay Assistant benefit headers.
+- **Topics covered:** The latest request clarified that the 3-month and 6-month **INCLUDED IN YOUR MEMBERSHIP** lists should not say **DOUBLE YOUR POINTS**; only the 12-month premium tier includes double points.
+- **Decisions / outcomes:** Kept the existing 12-month double-points benefit and removed the label from the 3-month and 6-month IIYM benefit arrays only.
+- **Changes:** Updated **`src/constants/premiumBenefitsByTier.ts`** so **`DOUBLE YOUR POINTS`** appears only in the **`12months`** benefits list. Verified with **`npm run build`**.
+- **Conventions:** In IIYM displays, **DOUBLE YOUR POINTS** is a 12-month premium benefit only; do not list it for 3-month or 6-month premium plans.
