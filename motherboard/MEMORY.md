@@ -29708,3 +29708,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Treated both requests as additive spacing changes to the existing values: Explore link wrapper top padding increased from **4px** to **6px**, and the tier description paragraph bottom margin increased from **6px** to **10px**.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** in the Membership Status card spacing only. Verified with **`npm run build`**.
 - **Conventions:** Membership Status tier description paragraphs should leave a 10px bottom gap before the rose-icon perk list, and **EXPLORE ALL BENEFITS** should have 6px top padding above the gray link text.
+
+---
+
+## 2026-06-19 — Membership Status Explore link below-spacing tightened
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member / Settings / Reviews refinements: Add Funds copy/nav, membership copy/styling and spacing, Account Alerts copy/sorting, shared Digital Cash History popup behavior, Account Settings layout/spacing, Account Reviews subtitle typography, and Account Rewards progress-text typography.
+- **Topics covered:** The latest request asked to reduce the spacing below the gray **EXPLORE ALL BENEFITS** text in the Membership Status section by **2px**.
+- **Decisions / outcomes:** Kept the recently requested **6px** top spacing above **EXPLORE ALL BENEFITS** unchanged and reduced only the wrapper’s bottom margin.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** so the **EXPLORE ALL BENEFITS** wrapper `marginBottom` changes from **22px** to **20px**. Verified with **`npm run build`**.
+- **Conventions:** Membership Status **EXPLORE ALL BENEFITS** should keep 6px top padding and 20px bottom margin unless adjusted again.
