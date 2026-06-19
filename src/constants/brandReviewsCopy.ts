@@ -10,7 +10,7 @@ export type BrandReviewsBlock = {
 export const BRAND_REVIEWS_BLOCKS: BrandReviewsBlock[] = [
   {
     id: 'community',
-    text: 'the frontal slayer community is growing.',
+    text: 'the slay community is growing...',
     variant: 'bohemy',
   },
   {
