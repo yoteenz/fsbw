@@ -1,10 +1,10 @@
 import type { CSSProperties } from 'react';
 
-/** Home/shop marbles, cart/bag/checkout, wishlist BCF lines — Supabase BCF PNGs (marble background). */
+/** Home/shop, cart/bag/checkout, wishlist BCF lines — Supabase transparent cutout PNGs. */
 export type ShopTextureCategoryThumbTexture = 'straight' | 'wavy' | 'curly';
 export type ShopTextureCategoryThumbCategory = 'bundles' | 'closures' | 'frontals';
 
-/** Primary BCF marble thumbs (home/shop grid, cart, similar standard slots). */
+/** Primary BCF transparent cutouts (home/shop grid, cart, similar standard slots). */
 const BCF_THUMB_SUPABASE_SRC: Record<
   ShopTextureCategoryThumbCategory,
   Record<ShopTextureCategoryThumbTexture, string>
@@ -32,7 +32,7 @@ const BCF_THUMB_SUPABASE_SRC: Record<
   }
 };
 
-/** Legacy `public/assets` marble PNGs — `onError` fallback only. */
+/** Legacy `public/assets` cutout PNGs — `onError` fallback only. */
 const BCF_THUMB_LEGACY_ASSET_SRC: Record<
   ShopTextureCategoryThumbCategory,
   Record<ShopTextureCategoryThumbTexture, string>
@@ -61,7 +61,7 @@ export function shopTextureCategoryThumbSrc(
   return BCF_THUMB_SUPABASE_SRC[category][texture];
 }
 
-/** Legacy marble PNG for a BCF thumb (`onError` step before unit-style noir fallbacks). */
+/** Legacy cutout PNG for a BCF thumb (`onError` step before unit-style noir fallbacks). */
 export function shopTextureCategoryThumbLegacySrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
@@ -69,7 +69,7 @@ export function shopTextureCategoryThumbLegacySrc(
   return BCF_THUMB_LEGACY_ASSET_SRC[category][texture];
 }
 
-/** Same PNG marbles as `/products` grid — not BCF PDP hero JPG/Supabase URLs. */
+/** Same transparent cutout PNGs as `/products` grid — not BCF PDP hero JPG/Supabase URLs. */
 export function shopTextureCategoryHeroPhotoSrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
@@ -169,7 +169,7 @@ export function bcfPlatinumCrossSimilarThumbSrc(
   return BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC[category][texture];
 }
 
-/** BCF similar strip (2D marble) — same 79.2% width band as `marbleStripThumbImg(false)`. */
+/** BCF similar strip cutouts — same 79.2% width band as `marbleStripThumbImg(false)`. */
 export function bcfThumbMarbleStripContainSlotStyle(): CSSProperties {
   return {
     width: '79.2%',
