@@ -29608,3 +29608,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the existing 12-month double-points benefit and removed the label from the 3-month and 6-month IIYM benefit arrays only.
 - **Changes:** Updated **`src/constants/premiumBenefitsByTier.ts`** so **`DOUBLE YOUR POINTS`** appears only in the **`12months`** benefits list. Verified with **`npm run build`**.
 - **Conventions:** In IIYM displays, **DOUBLE YOUR POINTS** is a 12-month premium benefit only; do not list it for 3-month or 6-month premium plans.
+
+---
+
+## 2026-06-19 — UPR Double Your Points moved to bottom
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds balance copy/nav, UPR and Brand Member premium perk copy/styling, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, and limiting IIYM **DOUBLE YOUR POINTS** to 12-month only.
+- **Topics covered:** The latest request asked to move the **DOUBLE YOUR POINTS** UPR perk and its gray description (**ACCELERATE YOUR REWARDS JOURNEY WITH 2X POINTS...**) below the **ANNIVERSARY REWARDS** paragraph so it appears at the bottom of the UPR section.
+- **Decisions / outcomes:** Reordered the shared premium rewards marketing list data rather than changing either page separately, so Account → Rewards UPR and Brand → Member premium perks stay consistent.
+- **Changes:** Updated **`src/constants/brandMemberPremiumRewards.ts`** so the **`points`** item now follows **`anniversary-rewards`** and is the final item in **`BRAND_UNLOCK_PREMIUM_REWARD_ITEMS`**. Verified with **`npm run build`**.
+- **Conventions:** In UPR / shared premium rewards marketing lists, **DOUBLE YOUR POINTS** should appear after **ANNIVERSARY REWARDS** as the last perk.
