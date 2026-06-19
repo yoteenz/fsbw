@@ -34,8 +34,8 @@ export default function BrandAboutUsBody() {
                   : isAccent
                     ? '"Futura PT Medium"'
                     : '"Futura PT Book"',
-              fontSize: isBohemy ? '17px' : '10px',
-              color: isAccent ? '#EB1C24' : isDemi || isBohemy ? '#808080' : '#000000',
+              fontSize: isBohemy ? '21px' : '10px',
+              color: isAccent || isBohemy ? '#EB1C24' : isDemi ? '#808080' : '#000000',
               fontWeight: isDemi || isAccent ? 500 : 400,
               margin: 0,
               lineHeight: 1.45,
