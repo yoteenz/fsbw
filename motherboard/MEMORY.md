@@ -29768,3 +29768,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Replaced the premium subscription chart’s simple stroked 16x16 close mark with the same 24x24 `currentColor` SVG path used by the Tier Benefits Guide close button, while keeping it rendered at 16px and brand red.
 - **Changes:** Updated **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline premium chart header in **`src/pages/account/membership/page.tsx`**. Verified both premium chart close buttons now use the same `viewBox="0 0 24 24"` / filled `currentColor` path as the Tier Benefits Guide close icon, and verified with **`npm run build`**.
 - **Conventions:** Premium subscription upgrade chart close icons should match the Tier Benefits Guide close icon SVG exactly, using button `color: '#EB1C24'` and the shared `currentColor` path.
+
+---
+
+## 2026-06-19 — Premium chart benefits toggle moved below comparison table
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide content, rose bullets, Bohemy/header typography, threshold typography, and close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup; Settings row rhythm; and Reviews subtitle styling.
+- **Topics covered:** The latest request asked for the premium membership subscription upgrade chart **VIEW ALL BENEFITS / HIDE ALL BENEFITS** toggle text to populate below the comparison chart and above the **TOTAL DUE TODAY** text, instead of above the chart.
+- **Decisions / outcomes:** Moved the entire toggle button and its expanded all-benefits list so the chart order is now: premium image, comparison table, **VIEW/HIDE ALL BENEFITS**, expanded benefits when open, then **TOTAL DUE TODAY**. Reduced the comparison table bottom margin from **38px** to **18px** so the relocated toggle sits closer to the chart.
+- **Changes:** Updated both **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline premium chart in **`src/pages/account/membership/page.tsx`**. Verified source order and verified with **`npm run build`**.
+- **Conventions:** Premium subscription upgrade charts should render **VIEW ALL BENEFITS / HIDE ALL BENEFITS** below the comparison table and before **TOTAL DUE TODAY**.
