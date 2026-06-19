@@ -25,3 +25,9 @@ For full command details and protocol, see **`motherboard/README.md`**.
 - Implement and commit on **`master`**, then keep **`preview/mobile`** in sync (typically fast-forward merge from `master` or merge `preview/mobile` → `master` depending on which tip is ahead—goal: same app changes on both).
 - **Always push both:** `git push -u origin master` and `git push -u origin preview/mobile` after completing work, unless the user names a different single branch.
 - See **`motherboard/CORE.md`** (branch policy) for the canonical rule.
+
+## Cursor Cloud environment
+
+- Cloud agents should use the repo environment hook in **`.cursor/environment.json`**, which runs **`./scripts/cloud-update.sh`** on startup.
+- The install hook uses **`npm ci`** at repo root so local project binaries like **`tsc`** and **`vite`** are available before verification commands such as **`npm run build`**.
+- Keep secrets in Cursor web environment settings, not in this repository.
