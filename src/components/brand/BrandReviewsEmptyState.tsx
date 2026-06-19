@@ -47,7 +47,7 @@ function blockStyle(variant: BrandReviewsBlockVariant): CSSProperties {
       lineHeight: 1.45,
       textTransform: 'none',
       fontFamily: '"Bohemy", cursive',
-      fontSize: '17px',
+      fontSize: '21px',
       color: BRAND_GRAY,
       fontWeight: 400,
     };
