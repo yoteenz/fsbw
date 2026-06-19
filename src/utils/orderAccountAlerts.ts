@@ -32,6 +32,7 @@ export type StoredNotification = {
 };
 
 const STANDARD_NOTIFICATION_ICON = 'f';
+export const DIGITAL_CASH_HISTORY_POPUP_ACTION = 'popup:digital-cash-history';
 
 function notificationsKey(email: string): string {
   return `notifications_${email.trim().toLowerCase()}`;
@@ -224,6 +225,39 @@ export function appendOrderReceivedAccountAlert(
     const existing: StoredNotification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
     const merged = [next, ...existing.filter((n) => n.id !== next.id)];
     localStorage.setItem(key, JSON.stringify(merged));
+    window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    window.dispatchEvent(new Event('notificationsUpdated'));
+    window.dispatchEvent(new Event('storage'));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function appendDigitalCashDepositAccountAlert(
+  clientEmail: string,
+  amountUsd: number
+): void {
+  const email = String(clientEmail || '').trim().toLowerCase();
+  if (!email || typeof window === 'undefined') return;
+  const amount = Math.max(0, Math.round(Number(amountUsd || 0) * 100) / 100);
+  if (amount <= 0) return;
+  const now = Date.now();
+  const item: StoredNotification = {
+    id: `digital_cash_deposit_${now}`,
+    title: 'YOUR FUNDS HAVE BEEN DEPOSITED!',
+    message: `$${amount.toFixed(2)} USD HAS BEEN ADDED TO YOUR DIGITAL CASH BALANCE.`,
+    actionText: 'VIEW TRANSACTIONS',
+    actionRoute: DIGITAL_CASH_HISTORY_POPUP_ACTION,
+    date: todayMdy(),
+    sortAt: now,
+    isRead: false,
+    icon: STANDARD_NOTIFICATION_ICON,
+  };
+  try {
+    const key = notificationsKey(email);
+    const raw = localStorage.getItem(key);
+    const existing: StoredNotification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
+    localStorage.setItem(key, JSON.stringify([item, ...existing]));
     window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
     window.dispatchEvent(new Event('notificationsUpdated'));
     window.dispatchEvent(new Event('storage'));

@@ -8,6 +8,7 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { isAyoteenzAdminAccount, isSignedIn as isUserSignedIn, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getNotifications } from '../../../utils/api';
 import {
+  DIGITAL_CASH_HISTORY_POPUP_ACTION,
   buildConsultViewOfferOrdersHref,
   getNotificationsStorageKeyForUserEmail,
   getOrderReceivedAccountAlerts,
@@ -41,6 +42,15 @@ interface Notification {
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
 const ADMIN_SENT_PREFIX = 'admin_';
+
+function readCurrentUserFromStorage(): Record<string, unknown> | null {
+  try {
+    const raw = localStorage.getItem('currentUser');
+    return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
 
 /** Parse admin-sent notification text "[HEADER · TOPIC] body" into title (short, like other alerts) and message (one line). */
 export function parseAdminSentNotificationText(text: string): { title: string; message: string } {
@@ -618,6 +628,8 @@ function NotificationsPage() {
     }
     return '/assets/profile-thumb.png';
   });
+  const [userData, setUserData] = useState<Record<string, unknown> | null>(() => readCurrentUserFromStorage());
+  const [showDigitalCashHistoryPopup, setShowDigitalCashHistoryPopup] = useState(false);
 
   const [notifications, setNotifications] = useState<Notification[]>(() => {
     try {
@@ -658,6 +670,7 @@ function NotificationsPage() {
       try {
         const rawUser = localStorage.getItem('currentUser');
         const user = rawUser ? JSON.parse(rawUser) : null;
+        setUserData(user);
         migrateNotificationsLocalStorageKeys(user?.email);
         const key = getNotificationsStorageKeyForUserEmail(user?.email);
         const raw = localStorage.getItem(key);
@@ -689,6 +702,7 @@ function NotificationsPage() {
       try {
         const rawUser = localStorage.getItem('currentUser');
         const user = rawUser ? JSON.parse(rawUser) : null;
+        setUserData(user);
         migrateNotificationsLocalStorageKeys(user?.email);
         const key = getNotificationsStorageKeyForUserEmail(user?.email);
         const raw = localStorage.getItem(key);
@@ -735,6 +749,7 @@ function NotificationsPage() {
         } else if (!savedImage && profileImage !== '/assets/profile-thumb.png') {
           setProfileImage('/assets/profile-thumb.png');
         }
+        setUserData(readCurrentUserFromStorage());
       } catch (e) {
         setCartCount(0);
       }
@@ -789,6 +804,11 @@ function NotificationsPage() {
   };
 
   const handleNotificationClick = (notification: Notification) => {
+    if (notification.actionRoute === DIGITAL_CASH_HISTORY_POPUP_ACTION) {
+      setUserData(readCurrentUserFromStorage());
+      setShowDigitalCashHistoryPopup(true);
+      return;
+    }
     if (notification.actionRoute) {
       navigate(notification.actionRoute);
     }
@@ -1229,7 +1249,10 @@ function NotificationsPage() {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    if (notification.actionRoute) {
+                                    if (notification.actionRoute === DIGITAL_CASH_HISTORY_POPUP_ACTION) {
+                                      setUserData(readCurrentUserFromStorage());
+                                      setShowDigitalCashHistoryPopup(true);
+                                    } else if (notification.actionRoute) {
                                       navigate(notification.actionRoute);
                                     }
                                   }}
@@ -1326,6 +1349,108 @@ function NotificationsPage() {
         cancelText="CANCEL"
         dataAttribute="delete-notification-confirm"
       />
+
+      {showDigitalCashHistoryPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            padding: '16px'
+          }}
+          onClick={() => setShowDigitalCashHistoryPopup(false)}
+        >
+          <div
+            className="bg-white/60 backdrop-blur-sm border border-black"
+            style={{
+              borderWidth: '1.3px',
+              padding: '16px',
+              maxWidth: '400px',
+              width: '100%',
+              maxHeight: '85vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  fontSize: '12px',
+                  margin: '0',
+                  textTransform: 'uppercase',
+                  fontWeight: '500',
+                  textAlign: 'left'
+                }}
+              >
+                DIGITAL CASH HISTORY
+              </p>
+              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>TRANSACTION</span>
+              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>AMOUNT</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {(() => {
+                const history = Array.isArray(userData?.digitalCashHistory)
+                  ? (userData.digitalCashHistory as Array<{ date: string; transaction: string; amount: number }>)
+                  : [];
+                const formatDate = (dateStr: string): string => {
+                  const parts = dateStr.split('-').map(Number);
+                  if (parts.length === 3) {
+                    const [month, day, year] = parts;
+                    const d = new Date(year, month - 1, day);
+                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  }
+                  const d = new Date(dateStr);
+                  if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  return dateStr;
+                };
+                if (history.length === 0) {
+                  return (
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
+                      YOU HAVEN'T HAD ANY DIGITAL CASH TRANSACTIONS YET.
+                    </p>
+                  );
+                }
+                const sorted = [...history].sort((a, b) => {
+                  const parse = (s: string) => {
+                    const parts = s.split('-').map(Number);
+                    if (parts.length === 3) {
+                      const [month, day, year] = parts;
+                      return new Date(year, month - 1, day).getTime();
+                    }
+                    return new Date(s).getTime();
+                  };
+                  return parse(b.date) - parse(a.date);
+                });
+                return sorted.map((row, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
+                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
+                      {row.amount >= 0 ? '+' : ''}${Math.abs(row.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                    </span>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
