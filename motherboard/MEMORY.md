@@ -29748,3 +29748,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Increased the shared Tier Benefits Guide tier-status Bohemy header size from **14px** to **18px** and added a shared **18px** Bohemy section-header style for the requested continuing/status/reward/premium headings. Replaced the continuing-privilege browser `<ul>/<li>` bullets with existing **`TierRoseBenefit`** rose-icon rows.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified the old continuing-privileges sentence and old list items are gone, and verified with **`npm run build`**.
 - **Conventions:** In the Account -> Rewards Tier Benefits Guide, section headers should be lowercase Bohemy at **18px**, and the continuing privilege lists under **all tiers**, **red tier**, and **black tier** should use rose-icon bullets.
+
+---
+
+## 2026-06-19 — Tier Benefits Guide point-line typography overrides
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide content, rose bullets, header typography, and close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup; Settings row rhythm; and Reviews subtitle styling.
+- **Topics covered:** The latest request asked for the Tier Benefits Guide **SILVER TIER STATUS — 1,000 PTS** line to become gray **Futura PT Medium**, **RED TIER STATUS — 2,000 PTS** to become red **Futura PT Book**, and **ALL TIERS** to become gray **Futura PT Medium**.
+- **Decisions / outcomes:** Applied local style overrides only to those three TBG lines, preserving the rest of the newly added Bohemy section headers and rose-icon bullet rows.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** so **ALL TIERS** renders uppercase gray Futura PT Medium, the Silver point threshold line renders gray Futura PT Medium, and the Red point threshold line renders brand-red Futura PT Book. Verified with **`npm run build`**.
+- **Conventions:** In the Tier Benefits Guide, **ALL TIERS** is an exception to the surrounding Bohemy section labels and should appear in gray Futura PT Medium; Status Progression threshold lines can use tier-specific typography/color overrides.
