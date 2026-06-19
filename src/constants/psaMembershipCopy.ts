@@ -20,12 +20,8 @@ export const PSA_ENGAGEMENT_BY_TIER: Record<
   '12months': { tierLabel: '12 MONTH PREMIUM', monthlyLimit: 180, dailyLimit: 30 },
 };
 
-export const PSA_ENGAGEMENT_LIMITS_SUMMARY =
-  'PSA CHAT LIMITS BY PLAN — 3 MONTH: 45 MESSAGES/MONTH (10/DAY) · 6 MONTH: 90/MONTH (18/DAY) · 12 MONTH: 180/MONTH (30/DAY)';
-
-export function psaBenefitLabelForTier(tierKey: PsaEngagementTierKey): string {
-  const t = PSA_ENGAGEMENT_BY_TIER[tierKey];
-  return `PERSONAL SLAY ASSISTANT — ${t.monthlyLimit} MSGS/MO (${t.dailyLimit}/DAY)`;
+export function psaBenefitLabelForTier(_tierKey: PsaEngagementTierKey): string {
+  return PSA_MEMBERSHIP_BENEFIT_LABEL;
 }
 
 export function formatPsaUsageRemaining(
