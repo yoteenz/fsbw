@@ -1,14 +1,32 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import opentype from 'opentype.js';
 import type { PixelRect } from './hairstyleAnalysisLayoutSlots.js';
 
 const FONTS_DIR = join(dirname(fileURLToPath(import.meta.url)), 'fonts');
+const require = createRequire(import.meta.url);
 
-const fontCache = new Map<string, opentype.Font>();
+type OpenTypePath = {
+  getBoundingBox: () => { x1: number; y1: number; x2: number; y2: number };
+  toPathData: (decimalPlaces?: number) => string;
+};
 
-function loadFont(fileName: string): opentype.Font {
+type OpenTypeFont = {
+  ascender: number;
+  descender: number;
+  unitsPerEm: number;
+  getPath: (text: string, x: number, y: number, fontSize: number) => OpenTypePath;
+  getPaths: (text: string, x: number, y: number, fontSize: number) => OpenTypePath[];
+};
+
+const opentype = require('opentype.js') as {
+  parse: (buffer: ArrayBuffer) => OpenTypeFont;
+};
+
+const fontCache = new Map<string, OpenTypeFont>();
+
+function loadFont(fileName: string): OpenTypeFont {
   const cached = fontCache.get(fileName);
   if (cached) return cached;
   const buf = readFileSync(join(FONTS_DIR, fileName));

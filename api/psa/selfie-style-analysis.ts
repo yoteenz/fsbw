@@ -131,12 +131,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   const auth = await getAuthUser(req);
-  if (!auth?.user?.id) {
+  if (!auth?.id) {
     sendJson(res, 401, { ok: false, code: 'SIGN_IN_REQUIRED', message: 'Sign in required.' });
     return;
   }
 
-  const profile = await getPsaPremiumProfile(auth.user.id, auth.accessToken, auth.user.email);
+  const profile = await getPsaPremiumProfile(auth.id, auth.accessToken, auth.email);
   if (!profile?.isPremium) {
     sendJson(res, 403, {
       ok: false,

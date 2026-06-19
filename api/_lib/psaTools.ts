@@ -3,7 +3,7 @@
  * See docs/PSA_TOOLS.md
  */
 import { getSupabaseUser } from './supabase.js';
-import { summarizeOrderForPsa, summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
+import { summarizeOrderForPsaWithTrackingGate } from './psaOrderTracking.js';
 import { PSA_PRODUCTS } from './psaKnowledge.js';
 import { buildHairstyleAnalysisMemberStatus } from './hairstyleAnalysisStatus.js';
 import {

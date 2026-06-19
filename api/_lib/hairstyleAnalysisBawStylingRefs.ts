@@ -113,7 +113,7 @@ function stylingKey(salonMode: BawSalonMode, part: 'MIDDLE' | 'LEFT' | 'RIGHT'):
  * `startImageIndex` = first free slot after template, client and unit mannequins.
  */
 export function collectStylingRefsForAnalysis(
-  looks: Array<{ styling: string; part: string }>,
+  looks: Array<{ unit: string; styling: string; part: string }>,
   startImageIndex: number
 ): HairstyleAnalysisStylingRef[] {
   const seen = new Set<string>();

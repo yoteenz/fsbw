@@ -20,12 +20,11 @@ import {
 import {
   bawHairlineRefListBlock,
   hairlineBindingPromptLine,
-  hairlineShapeKeyFromManifest,
   hairlineShapePromptLine,
   noInventedBabyHairsBlock,
   type HairstyleAnalysisHairlineRef,
 } from './hairstyleAnalysisBawHairlineRefs.js';
-import { RATING_SLOT, TOP_SCORE_SLOT, type PixelRect } from './hairstyleAnalysisLayoutSlots.js';
+import { RATING_SLOT, TOP_SCORE_SLOT } from './hairstyleAnalysisLayoutSlots.js';
 import { matchRatingDecimalFalFontSize, matchRatingFalStarSize, overallScoreFalFontSize } from './hairstyleAnalysisTextPaths.js';
 import { clientFullName, type MannequinRefIndex } from './hairstyleAnalysisMannequinRefs.js';
 import {
@@ -222,15 +221,6 @@ function templateTextIntegrityBlock(): string {
     'FORBIDDEN: offset duplicate text (red/black echo), shadow stacks, semi-transparent ghost copies, or printing the same label twice.',
     'Keep "FRONTAL SLAYER" and "hairstyle analysis" header art from IMAGE 1 untouched — do not re-render, recolor, or duplicate them.',
   ].join('\n');
-}
-
-function colorValueLine(look: FalAnalysisLook): string {
-  return `COLOR: ${look.color}`;
-}
-
-/** Hair-edit guidance only — hex guides retint; never print hex on template value fields. */
-function colorHairGuidanceLine(look: FalAnalysisLook): string {
-  return lookHairAccuracyLines(look).split('\n')[1] ?? '';
 }
 
 function styledHairLine(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
@@ -745,16 +735,11 @@ function buildTemplateRules(
     .join('\n');
 }
 
-function topMatchSpecFalInImageBlock(look: FalAnalysisLook, refs: FalPromptImageRefs): string {
+function topMatchSpecFalInImageBlock(look: FalAnalysisLook, _refs: FalPromptImageRefs): string {
   const style = displayStyle(look.styling, look.unit);
   const part = displayPart(look.part);
   const hairline = displayHairline(look.hairline);
-  const hlBinding = hairlineBindingPromptLine(look.hairline, look.color, refs.hairlineRefs);
   const color = look.color.trim().toUpperCase();
-  const hex = (look.hex || '#000000').toUpperCase();
-  const colorLock = needsUniformRootRepaint(color, look.unit)
-    ? `COLOR ${color} (${hex}) uniform root-to-tip — erase IMAGE 2 dark roots; clean edge, no baby hairs;`
-    : '';
   return [
     '=== TOP MATCH SPEC COLUMN — PRINT VALUES IN TEMPLATE (FAL IN-IMAGE) ===',
     'Print all eight TOP MATCH spec **values** in **black uppercase Futura PT Medium** in each value slot beside the pre-printed labels.',

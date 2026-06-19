@@ -7,7 +7,7 @@ import { getPsaPremiumProfile } from '../_lib/psaPremiumCheck.js';
 import { setSlayArchetype } from '../_lib/psaMemberMemories.js';
 import { refreshPsaMemberContext } from '../_lib/psaMemberContext.js';
 import { sanitizePsaMemberContextForClient } from '../_lib/psaMemberContextClient.js';
-import { ARCHETYPE_DNA_HINTS } from '../_lib/psaSlayArchetype.js';
+import { ARCHETYPE_DNA_HINTS, normalizeSlayArchetype } from '../_lib/psaSlayArchetype.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -51,10 +51,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.warn('[psa/slay-identity] context refresh', err);
   }
 
-  const hints = ARCHETYPE_DNA_HINTS[saved];
+  const savedArchetype = normalizeSlayArchetype(saved);
+  if (!savedArchetype) {
+    return res.status(400).json({ error: 'Invalid archetype' });
+  }
+
+  const hints = ARCHETYPE_DNA_HINTS[savedArchetype];
   return res.status(200).json({
     ok: true,
-    slayArchetype: saved,
+    slayArchetype: savedArchetype,
     recommendedUnits: hints.recommendedUnits,
     vibeLine: hints.vibeLine,
     memberContext: sanitizePsaMemberContextForClient(memberContext),

@@ -15,7 +15,7 @@ export async function buildHairstyleAnalysisMemberStatus(
   premium: PsaPremiumProfile | null | undefined,
   email?: string | null
 ) {
-  const entitlement = resolveHairstyleAnalysisEntitlement(premium, email);
+  const entitlement = resolveHairstyleAnalysisEntitlement(premium ?? null, email);
   const isAdmin = isAdminEmail(email);
 
   if (!entitlement.eligible && !isAdmin) {

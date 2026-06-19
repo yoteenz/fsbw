@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { getSupabaseAdmin } from './_lib/supabase.js';
 
 const CONFIG_KEY = 'psa_chat_copy_admin';
 

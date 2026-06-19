@@ -121,28 +121,6 @@ function buildReferenceImageUrl(req: VercelRequest, body: BuildWigUnitImageBody)
   return new URL(normalizedPath, `${proto}://${host}`).toString();
 }
 
-function buildOptionalImageUrl(
-  req: VercelRequest,
-  explicitUrl: string,
-  explicitPath: string,
-  fallbackPath = ''
-): string | null {
-  if (/^https?:\/\//i.test(explicitUrl)) return explicitUrl;
-  const refPath = explicitPath || fallbackPath;
-  if (!refPath) return null;
-  const proto =
-    String(req.headers['x-forwarded-proto'] || 'https')
-      .split(',')[0]
-      .trim() || 'https';
-  const host =
-    String(req.headers['x-forwarded-host'] || req.headers.host || '')
-      .split(',')[0]
-      .trim();
-  if (!host) return null;
-  const normalizedPath = refPath.startsWith('/') ? refPath : `/${refPath}`;
-  return new URL(normalizedPath, `${proto}://${host}`).toString();
-}
-
 function mimeForPath(assetPath: string, fallback = 'image/png'): string {
   const lower = assetPath.toLowerCase();
   if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
