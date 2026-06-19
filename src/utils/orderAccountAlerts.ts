@@ -245,7 +245,7 @@ export function appendDigitalCashDepositAccountAlert(
   const item: StoredNotification = {
     id: `digital_cash_deposit_${now}`,
     title: 'YOUR FUNDS HAVE BEEN DEPOSITED!',
-    message: `$${amount.toFixed(2)} USD HAS BEEN ADDED TO YOUR DIGITAL CASH BALANCE.`,
+    message: `$${amount.toFixed(2)} USD HAS BEEN ADDED TO YOUR BALANCE.`,
     actionText: 'VIEW TRANSACTIONS',
     actionRoute: DIGITAL_CASH_HISTORY_POPUP_ACTION,
     date: todayMdy(),
