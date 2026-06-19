@@ -2570,7 +2570,7 @@ fontFamily: '"Futura PT Book"',
                                 return benefits;
                               })()).map((label: string, i: number) => (
                                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                  <img src="/assets/premium-check.svg" alt="Included" style={{ width: '8.4px', height: '8.4px', marginTop: '4px', flexShrink: 0 }} />
+                                  <img src="/assets/rose-alert.svg" alt="" style={{ width: '12px', height: '12px', marginTop: '1px', flexShrink: 0 }} />
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
                                     {label}
                                   </p>
