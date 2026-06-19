@@ -29508,3 +29508,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Made lowercase black Bohemy the shared/default title style for premium reward perk items so both UPR surfaces match. Removed the old optional branch that rendered item titles in Covered By Your Grace.
 - **Changes:** **`src/components/membership/PremiumRewardsMarketingList.tsx`** now renders every perk title with **Bohemy**, **20px**, black, lowercase; descriptions remain gray Futura PT Medium. Verified with **`npm run build`**.
 - **Conventions:** UPR perk item headers on both Account → Rewards and Brand → Member should use lowercase black Bohemy; avoid reverting them to Covered By Your Grace.
+
+---
+
+## 2026-06-19 — Tier Benefits & How It Works toggle copy replaced
+
+- **Context:** In this chat, after several Account Rewards / Brand Member copy and display updates, the user asked to update/replace the **TIER BENEFITS & HOW IT WORKS** toggle text with new full copy covering welcome benefits, Silver/Red/Black status, continuing privileges, status progression, reward terms, premium member advantage, and 12-month premium point multiplier precedence.
+- **Topics covered:** Located the toggle/modal body in **`src/pages/account/membership/page.tsx`** under the **TIER BENEFITS & HOW IT WORKS** header and replaced the old brief intro/recurring/how-it-works copy.
+- **Decisions / outcomes:** Kept the existing modal structure and typography pattern, but expanded the content into structured paragraphs and bullet lists so each tier and section is readable in the scrollable card. Used the supplied wording, including reward terms and premium member advantage language.
+- **Changes:** **`src/pages/account/membership/page.tsx`** now renders the new welcome benefits intro; Silver, Red, and Black tier status sections with bullet lists; continuing tier privileges with All Tiers / Red Tier / Black Tier bullet groups; status progression thresholds; reward terms; and premium member advantage notes. Verified with **`npm run build`**.
+- **Conventions:** The Tier Benefits / How It Works toggle is the client-facing place for detailed tier status rules and reward terms; preserve the modal’s scrollable card behavior when expanding this copy.

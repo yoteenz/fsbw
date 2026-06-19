@@ -2015,19 +2015,75 @@ function MembershipPage() {
                       />
                     </div>
                     <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0, textTransform: 'uppercase' }}>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0 0 6px 0', textTransform: 'uppercase' }}>INTRO BENEFITS (ONE-TIME PER ACCOUNT)</p>
-                      <p style={{ margin: '0 0 8px 0' }}>Once you reach a tier and collect its intro benefits, they do not repeat.</p>
-                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #808080' }}><span style={{ fontFamily: '"Futura PT Medium"', color: BRAND_GRAY }}>SILVER:</span> Welcome discount, 250 loyalty points</p>
-                      <p style={{ margin: '4px 0 2px 0', paddingLeft: '8px', borderLeft: '3px solid #EB1C24' }}><span style={{ fontFamily: '"Futura PT Book"', color: '#EB1C24' }}>RED:</span> Welcome discount, 1x Flexible Cap Voucher, 1x Hairline Voucher, 500 loyalty points</p>
-                      <p style={{ margin: '4px 0 8px 0', paddingLeft: '8px', borderLeft: '3px solid #000' }}><span style={{ fontFamily: '"Futura PT Medium"', color: '#000000' }}>BLACK:</span> Welcome discount, 1x Color Voucher, 1x Styling Voucher, 1,000 loyalty points</p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>RECURRING PERKS (EVERY 6-MONTH CYCLE)</p>
-                      <p style={{ margin: '0 0 2px 0' }}><strong>All tiers:</strong> Member discount (Silver 5%, Red 10%, Black 15%); 1x complimentary consultation per year.</p>
-                      <p style={{ margin: '6px 0 2px 0' }}><strong>Red:</strong> 1.25x loyalty points on purchases. <strong>Black:</strong> 1.5x loyalty points on purchases.</p>
-                      <p style={{ margin: '6px 0 8px 0' }}><strong>Black only:</strong> Annual Black tier gift; status protection (stay Black when short on points, 1x per year).</p>
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 6px 0', textTransform: 'uppercase' }}>HOW IT WORKS</p>
-                      <p style={{ margin: 0 }}>Tiers run in 6-month cycles. Earn points from purchases to unlock or keep a tier. Hit the threshold (1,000 Silver, 2,000 Red, 4,000 Black) by period end to keep that tier and its perks for the next cycle. Intro benefits unlock once per account; recurring perks apply each cycle you maintain or reach that tier.</p>
-                      <p style={{ margin: '8px 0 0 0' }}>Free gifts, discount codes and vouchers expire 6 months from the date they&apos;re redeemed. Free gifts can be combined with any other checkout offer. Digital cash and gift cards do not expire.</p>
-                      <p style={{ margin: '10px 0 0 0', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000' }}><strong>12-month Premium</strong> members earn 2x points on purchases (takes precedence over tier). Red and Black tiers earn 1.25x and 1.5x points when not on 12-month Premium. Premium also includes lounge access, fast-track support and more.</p>
+                      <p style={{ margin: '0 0 12px 0' }}>WELCOME BENEFITS ARE AWARDED ONCE UPON REACHING A NEW STATUS TIER. ONCE CLAIMED, YOUR STATUS CONTINUES TO UNLOCK EXCLUSIVE PRIVILEGES, EARNING BONUSES AND MEMBER REWARDS THROUGHOUT EACH CYCLE.</p>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 4px 0', textTransform: 'uppercase' }}>SILVER TIER STATUS</p>
+                      <p style={{ margin: '0 0 4px 0' }}>YOUR ENTRY INTO THE FRONTAL SLAYER REWARDS PROGRAM:</p>
+                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
+                        <li>WELCOME DISCOUNT</li>
+                        <li>250 BONUS LOYALTY POINTS</li>
+                        <li>ACCESS TO MEMBER REWARD REDEMPTIONS</li>
+                        <li>STATUS PROGRESSION TRACKING</li>
+                      </ul>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 4px 0', textTransform: 'uppercase', color: '#EB1C24' }}>RED TIER STATUS</p>
+                      <p style={{ margin: '0 0 4px 0' }}>UNLOCK ENHANCED REWARDS, HIGHER EARNING POTENTIAL AND EXCLUSIVE MEMBER PRIVILEGES:</p>
+                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
+                        <li>WELCOME DISCOUNT</li>
+                        <li>FLEXIBLE CAP VOUCHER</li>
+                        <li>HAIRLINE VOUCHER</li>
+                        <li>500 BONUS LOYALTY POINTS</li>
+                        <li>1.25X POINT MULTIPLIER ON ELIGIBLE PURCHASES</li>
+                        <li>PRIORITY ACCESS TO SELECT PROMOTIONS</li>
+                      </ul>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 4px 0', textTransform: 'uppercase' }}>BLACK TIER STATUS</p>
+                      <p style={{ margin: '0 0 4px 0' }}>OUR HIGHEST REWARDS STATUS RESERVED FOR OUR MOST LOYAL CLIENTS:</p>
+                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
+                        <li>WELCOME DISCOUNT</li>
+                        <li>COLOR VOUCHER</li>
+                        <li>STYLING VOUCHER</li>
+                        <li>1,000 BONUS LOYALTY POINTS</li>
+                        <li>1.5X POINT MULTIPLIER ON ELIGIBLE PURCHASES</li>
+                        <li>ANNUAL BLACK STATUS GIFT</li>
+                        <li>STATUS PROTECTION BENEFIT</li>
+                      </ul>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>CONTINUING TIER PRIVILEGES</p>
+                      <p style={{ margin: '0 0 8px 0' }}>YOUR STATUS BENEFITS REFRESH EACH QUALIFYING CYCLE, PROVIDING ONGOING VALUE AS YOU MAINTAIN OR ADVANCE YOUR MEMBERSHIP STATUS.</p>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '10px 0 4px 0', textTransform: 'uppercase' }}>ALL TIERS</p>
+                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
+                        <li>MEMBER SAVINGS ON ELIGIBLE PURCHASES</li>
+                        <li>ANNUAL CONSULTATION BENEFIT</li>
+                        <li>ACCESS TO POINT REDEMPTIONS, VOUCHERS, DIGITAL CASH AND REWARD OFFERS</li>
+                      </ul>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '10px 0 4px 0', textTransform: 'uppercase', color: '#EB1C24' }}>RED TIER</p>
+                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
+                        <li>1.25X POINT MULTIPLIER</li>
+                      </ul>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '10px 0 4px 0', textTransform: 'uppercase' }}>BLACK TIER</p>
+                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
+                        <li>1.5X POINT MULTIPLIER</li>
+                        <li>ANNUAL BLACK STATUS GIFT</li>
+                        <li>STATUS PROTECTION BENEFIT</li>
+                      </ul>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>STATUS PROGRESSION</p>
+                      <p style={{ margin: '0 0 6px 0' }}>YOUR STATUS IS BASED ON THE TOTAL NUMBER OF LOYALTY POINTS EARNED DURING EACH 6 MONTH QUALIFICATION PERIOD:</p>
+                      <p style={{ margin: '0 0 2px 0' }}>SILVER TIER STATUS &mdash; 1,000 PTS</p>
+                      <p style={{ margin: '0 0 2px 0' }}>RED TIER STATUS &mdash; 2,000 PTS</p>
+                      <p style={{ margin: '0 0 8px 0' }}>BLACK TIER STATUS &mdash; 4,000 PTS</p>
+                      <p style={{ margin: '0 0 12px 0' }}>MAINTAINING OR EXCEEDING YOUR STATUS REQUIREMENT ALLOWS YOU TO KEEP YOUR BENEFITS FOR THE FOLLOWING CYCLE WHILE CONTINUING TO UNLOCK NEW REWARDS ALONG THE WAY.</p>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>REWARD TERMS</p>
+                      <p style={{ margin: '0 0 12px 0' }}>VOUCHERS, DISCOUNT OFFERS AND FREE GIFT REWARDS REMAIN VALID FOR 6 MONTHS FROM THE DATE OF REDEMPTION. DIGITAL CASH AND GIFT CARD BALANCES NEVER EXPIRE AND MAY BE USED TOWARD ELIGIBLE PURCHASES.</p>
+
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>PREMIUM MEMBER ADVANTAGE</p>
+                      <p style={{ margin: '0 0 8px 0' }}>PREMIUM MEMBERS RECEIVE ENHANCED BENEFITS BEYOND STATUS REWARDS INCLUDING ACCESS TO THE MEMBERS ONLY LOBBY + LOUNGE, PERSONAL SLAY ASSISTANT (PSA), PRIORITY SUPPORT, EXCLUSIVE CONTENT AND BONUS EARNING OPPORTUNITIES.</p>
+                      <p style={{ margin: '0 0 0 0' }}>12 MONTH PREMIUM MEMBERS RECEIVE A 2X POINT MULTIPLIER ON ELIGIBLE PURCHASES, OVERRIDING RED AND BLACK TIER STATUS MULTIPLIERS.</p>
                     </div>
                   </div>
                   ) : (
