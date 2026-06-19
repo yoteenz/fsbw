@@ -2523,22 +2523,6 @@ fontFamily: '"Futura PT Book"',
                                     </p>
                                   ) : (
                                     <div style={{ margin: '0 0 4px 0' }}>
-                                      <p
-                                        style={{
-                                          fontFamily: '"Futura PT Medium"',
-                                          color: displayTier === 'BLACK' ? '#000000' : displayTier === 'RED' ? '#EB1C24' : BRAND_GRAY,
-                                          fontSize: '10px',
-                                          margin: '0 0 6px 0',
-                                          textTransform: 'uppercase',
-                                          fontWeight: '500'
-                                        }}
-                                      >
-                                        {displayTier === 'BLACK'
-                                          ? 'BLACK TIER PERKS:'
-                                          : displayTier === 'RED'
-                                            ? 'RED TIER PERKS:'
-                                            : 'SILVER TIER PERKS:'}
-                                      </p>
                                       {displayTier === 'BLACK' ? (
                                         <>
                                           <TierRoseBenefit>1,000 BONUS LOYALTY POINTS</TierRoseBenefit>
