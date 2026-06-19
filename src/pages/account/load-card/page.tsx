@@ -12,6 +12,7 @@ import {
   parseGiftCardDollars,
   updateBrandPromoCode,
 } from '../../../utils/adminBrandCodes';
+import { appendDigitalCashDepositAccountAlert } from '../../../utils/orderAccountAlerts';
 import { GIFT_CARD_LOAD_CARD_THUMBNAIL_SRC } from '../../../constants/giftCardAssets';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -261,6 +262,7 @@ function LoadCardPage() {
         giftCardBalance: newBalance,
         digitalCashHistory: updatedHistory,
       });
+      appendDigitalCashDepositAccountAlert(email, historyEntry.amount);
     } catch {
       /* ignore */
     }
