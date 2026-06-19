@@ -29538,3 +29538,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** The tier status headers now use lowercase Bohemy at **14px** (4px larger than the prior 10px tier headers) with tier-specific colors. The Silver/Red/Black benefit lists now use rose icon rows instead of browser bullet lists. The intro sentence now says **new tier** and **each 6 month cycle** per the user’s wording.
 - **Changes:** **`src/pages/account/membership/page.tsx`** now defines **`TIER_STATUS_HEADER_STYLE`**, **`TierRoseBenefit`**, and rose-row text styles; updates the welcome-benefits intro text; changes the three tier status headings to lowercase Bohemy; and renders every listed benefit under those tier sections with **`/assets/rose-alert.svg`**. Verified with **`npm run build`**.
 - **Conventions:** In the Tier Benefits modal, Silver/Red/Black tier status headers should use lowercase Bohemy tier-color styling, and tier benefit lists should use rose icon rows rather than plain list bullets.
+
+---
+
+## 2026-06-19 — Membership status tier descriptions styled gray Futura Medium
+
+- **Context:** In this chat, after adding tier-specific description lines above **BENEFITS INCLUDE** on the Membership Status card, the user asked to change those paragraph lines for each tier to gray **Futura PT Medium**.
+- **Topics covered:** Updated the shared paragraph style for the Silver/Red/Black tier description block in **`src/pages/account/membership/page.tsx`**.
+- **Decisions / outcomes:** Kept the copy and placement unchanged, but changed the tier description paragraph from black **Futura PT Book** to gray **Futura PT Medium** with medium weight.
+- **Changes:** **`src/pages/account/membership/page.tsx`** now styles the Membership Status tier description paragraph with **`fontFamily: "Futura PT Medium"`**, **`color: BRAND_GRAY`**, and **`fontWeight: "500"`**. Verified with **`npm run build`**.
+- **Conventions:** Membership Status tier description paragraphs above **BENEFITS INCLUDE** should read as gray Futura PT Medium supporting copy.
