@@ -7,7 +7,7 @@ import PremiumRewardsMarketingList from '../membership/PremiumRewardsMarketingLi
 const BODY_FONT_SIZE_PX = 10;
 const BRAND_GRAY = '#808080';
 
-function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProperties {
+function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy' | 'bohemyAccent'): CSSProperties {
   const base: CSSProperties = {
     margin: 0,
     lineHeight: 1.45,
@@ -22,6 +22,18 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
       fontFamily: '"Bohemy", cursive',
       fontSize: '17px',
       color: BRAND_GRAY,
+      fontWeight: 400,
+    };
+  }
+
+  if (variant === 'bohemyAccent') {
+    return {
+      margin: 0,
+      lineHeight: 1.45,
+      textTransform: 'none',
+      fontFamily: '"Bohemy", cursive',
+      fontSize: '21px',
+      color: '#EB1C24',
       fontWeight: 400,
     };
   }
@@ -76,7 +88,9 @@ export default function BrandMemberSection() {
               ? 'accent'
               : block.variant === 'demiGray'
                 ? 'demiGray'
-                : 'body';
+                : block.variant === 'bohemyAccent'
+                  ? 'bohemyAccent'
+                  : 'body';
         return (
           <p
             key={block.id}

@@ -29468,3 +29468,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Removed the Brand Member-specific Bohemy override so the page now uses the shared premium perk rendering: black uppercase perk headers and gray uppercase descriptions from **`brandMemberPremiumRewards.ts`**.
 - **Changes:** **`src/components/brand/BrandMemberSection.tsx`** now calls **`<PremiumRewardsMarketingList heading="PREMIUM MEMBER PERKS" />`** without **`bohemyPerkTitles`**. Verified with **`npm run build`**.
 - **Conventions:** When the user asks Brand → Member premium perks to match Account Rewards black/gray copy styling, use the default **`PremiumRewardsMarketingList`** title treatment rather than the Bohemy override.
+
+---
+
+## 2026-06-19 — Brand Member perks line red Bohemy + PSA intro removed
+
+- **Context:** In this chat, after the Add Funds / Balance updates, alerts/history fixes, membership rose bullets, premium rewards copy updates, rewards disclaimer removal, and Brand Member premium perks styling alignment, the user asked to change **`BUT THE PERKS DON'T STOP THERE…`** on the Brand Member page to lowercase red Bohemy with text size increased by 4px, and to remove **`MEET PSA — YOUR PERSONAL SLAY ASSISTANT.`**
+- **Topics covered:** Updated the Brand Member copy constants and renderer rather than hard-coding page-specific markup, so the typography remains data-driven like the other Brand Member body blocks.
+- **Decisions / outcomes:** Added a new **`bohemyAccent`** copy variant for lowercase red Bohemy at **21px** (4px larger than the existing 17px Bohemy style), changed the perks-continuation line to lowercase, and removed the separate PSA intro block.
+- **Changes:** **`src/constants/brandMemberCopy.ts`** now supports **`bohemyAccent`**, renders **`but the perks don't stop there…`** with that variant, and no longer includes the **`psa-intro`** block. **`src/components/brand/BrandMemberSection.tsx`** now styles **`bohemyAccent`** as **Bohemy**, **`#EB1C24`**, **21px**, no uppercase transform. Verified with **`npm run build`**.
+- **Conventions:** Use **`bohemyAccent`** for Brand Member lowercase red Bohemy emphasis lines that should be larger than the standard gray Bohemy body line.

@@ -1,5 +1,5 @@
-/** Become a Member body copy for `/brand/member`, displayed in uppercase on the page. */
-export type BrandMemberBlockVariant = 'body' | 'accent' | 'demiGray' | 'bohemy';
+/** Become a Member body copy for `/brand/member`, displayed in uppercase on the page unless a variant opts out. */
+export type BrandMemberBlockVariant = 'body' | 'accent' | 'demiGray' | 'bohemy' | 'bohemyAccent';
 
 export type BrandMemberBlock = {
   id: string;
@@ -30,13 +30,8 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'perks-continue',
-    text: "BUT THE PERKS DON'T STOP THERE…",
-    variant: 'accent',
-  },
-  {
-    id: 'psa-intro',
-    text: 'MEET PSA — YOUR PERSONAL SLAY ASSISTANT.',
-    variant: 'accent',
+    text: "but the perks don't stop there…",
+    variant: 'bohemyAccent',
   },
   {
     id: 'psa-detail',
