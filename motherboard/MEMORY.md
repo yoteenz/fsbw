@@ -29171,3 +29171,10 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User merged reviews opener into one line — **THE FRONTAL SLAYER COMMUNITY IS GROWING. YOUR REVIEW COULD BE THE FIRST.** — styled gray **Futura PT Medium** (not red accent / Demi).
 - **Changes:** **`brandReviewsCopy.ts`** — single **`mediumGray`** headline block; removed separate red/gray headline lines. **`BrandReviewsEmptyState.tsx`** — **`mediumGray`** variant (**Medium**, **`#808080`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — About mindset Bohemy: red + 4px larger
+
+- **Context:** User asked to change **because frontal slayer isn't just a name… it's a mindset.** from gray to brand red and increase size by **4px** (17px → **21px**), keeping lowercase Bohemy.
+- **Changes:** **`BrandAboutUsBody.tsx`** — Bohemy line **`#EB1C24`**, **`21px`**. Pushed **`master`** + **`preview/mobile`**.
