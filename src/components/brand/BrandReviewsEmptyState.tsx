@@ -31,6 +31,16 @@ function blockStyle(variant: BrandReviewsBlockVariant): CSSProperties {
     };
   }
 
+  if (variant === 'mediumGray') {
+    return {
+      ...base,
+      fontFamily: '"Futura PT Medium"',
+      fontSize: `${BODY_FONT_SIZE_PX}px`,
+      color: BRAND_GRAY,
+      fontWeight: 500,
+    };
+  }
+
   return {
     ...base,
     fontFamily: '"Futura PT Book"',

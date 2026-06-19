@@ -1,5 +1,5 @@
 /** Body copy for `/brand/reviews` empty state — displayed uppercase on the page. */
-export type BrandReviewsBlockVariant = 'body' | 'accent' | 'demiGray';
+export type BrandReviewsBlockVariant = 'body' | 'accent' | 'demiGray' | 'mediumGray';
 
 export type BrandReviewsBlock = {
   id: string;
@@ -10,13 +10,8 @@ export type BrandReviewsBlock = {
 export const BRAND_REVIEWS_BLOCKS: BrandReviewsBlock[] = [
   {
     id: 'headline',
-    text: 'YOUR REVIEW COULD BE THE FIRST.',
-    variant: 'accent',
-  },
-  {
-    id: 'community',
-    text: 'THE FRONTAL SLAYER COMMUNITY IS GROWING.',
-    variant: 'demiGray',
+    text: 'THE FRONTAL SLAYER COMMUNITY IS GROWING. YOUR REVIEW COULD BE THE FIRST.',
+    variant: 'mediumGray',
   },
   {
     id: 'soon',
