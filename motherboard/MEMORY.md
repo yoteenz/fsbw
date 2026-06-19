@@ -29207,4 +29207,4 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User updated **`/brand/reviews`** text — gray lowercase **Bohemy** line **the frontal slayer community is growing.** then uppercase body **YOUR REVIEW COULD BE THE FIRST. SOON YOU'LL FIND…**; removed red **UNTIL THEN…** closing line.
 - **Changes:** **`brandReviewsCopy.ts`** — **`bohemy`** + **`body`** blocks. **`BrandReviewsEmptyState.tsx`** — **`bohemy`** variant (17px gray Bohemy, no uppercase). Pushed **`master`** + **`preview/mobile`**.
 
-**Follow-up:** User asked to **keep** red closing line — restored **`UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.`** (**`accent`**).
+**Follow-up:** User asked to **keep** red closing line — restored **`UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.`** (**`accent`**). Bohemy opener **17px → 21px** (+4px).
