@@ -29588,3 +29588,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the modal layout and behavior intact while tightening the link block spacing, shortening the title, and rendering the tier-benefits close icon as an inline SVG using **`currentColor`** with brand red **`#EB1C24`** so it cannot display as black.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`**: **EXPLORE ALL BENEFITS** wrapper bottom margin changed from **24px** to **22px**; the benefits modal header now reads **TIER BENEFITS GUIDE**; and that modal’s close control uses an accessible button with a red inline X SVG. Verified with **`npm run build`**.
 - **Conventions:** The tier benefits modal should be labeled **TIER BENEFITS GUIDE** and its close X should render in brand red. The **EXPLORE ALL BENEFITS** link area should keep the gray text / 4px top spacing from the prior change, with 22px below the link.
+
+---
+
+## 2026-06-19 — Personal Slay Assistant labels remove PSA parenthetical
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds balance copy/nav, UPR and Brand Member premium perk copy/styling, IIYM rose bullets and PSA quota cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting, and shared Digital Cash History popup behavior.
+- **Topics covered:** The latest request asked to remove **`(PSA)`** from the **PERSONAL SLAY ASSISTANT (PSA)** header text so it reads **PERSONAL SLAY ASSISTANT** on the Brand → Member premium member perks section, the Account → Rewards **UNLOCK PREMIUM REWARDS** section, and the Account → Rewards **INCLUDED IN YOUR MEMBERSHIP** section.
+- **Decisions / outcomes:** Updated the shared PSA membership display constants so all those surfaces change together. Also removed the same parenthetical from the remaining Account Rewards benefits-guide sentence and from the tier-label helper so future client-facing labels do not reintroduce it.
+- **Changes:** **`src/constants/psaMembershipCopy.ts`** now sets **`PSA_MEMBERSHIP_TITLE`** and **`PSA_MEMBERSHIP_BENEFIT_LABEL`** to **`PERSONAL SLAY ASSISTANT`**, and `psaBenefitLabelForTier()` no longer includes **`(PSA)`**. **`src/pages/account/membership/page.tsx`** no longer includes **`PERSONAL SLAY ASSISTANT (PSA)`** in the Premium Member Advantage body copy. Verified no remaining **`PERSONAL SLAY ASSISTANT (PSA)`** matches under **`src/`** and verified with **`npm run build`**.
+- **Conventions:** Client-facing membership benefit headers should use **PERSONAL SLAY ASSISTANT** without the **(PSA)** parenthetical in UPR, Brand Member premium perks, and IIYM displays.
