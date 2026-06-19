@@ -44,6 +44,43 @@ import { PSA_ENGAGEMENT_LIMITS_SUMMARY } from '../../../constants/psaMembershipC
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
 
+const TIER_STATUS_HEADER_STYLE: CSSProperties = {
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '14px',
+  margin: '12px 0 4px 0',
+  textTransform: 'lowercase',
+  fontWeight: 400,
+};
+
+const TIER_ROSE_BENEFIT_ROW_STYLE: CSSProperties = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '8px',
+  margin: '0 0 4px 0',
+};
+
+const TIER_ROSE_BENEFIT_TEXT_STYLE: CSSProperties = {
+  margin: 0,
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  textTransform: 'uppercase',
+  lineHeight: 1.5,
+};
+
+function TierRoseBenefit({ children }: { children: string }) {
+  return (
+    <div style={TIER_ROSE_BENEFIT_ROW_STYLE}>
+      <img
+        src="/assets/rose-alert.svg"
+        alt=""
+        style={{ width: '12px', height: '12px', marginTop: '2px', flexShrink: 0 }}
+      />
+      <p style={TIER_ROSE_BENEFIT_TEXT_STYLE}>{children}</p>
+    </div>
+  );
+}
+
 const premiumChartLabelTd: CSSProperties = {
   borderRight: CHART_BORDER,
   borderBottom: CHART_BORDER,
@@ -2015,39 +2052,39 @@ function MembershipPage() {
                       />
                     </div>
                     <div style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', lineHeight: 1.5, flex: 1, overflowY: 'auto', minHeight: 0, textTransform: 'uppercase' }}>
-                      <p style={{ margin: '0 0 12px 0' }}>WELCOME BENEFITS ARE AWARDED ONCE UPON REACHING A NEW STATUS TIER. ONCE CLAIMED, YOUR STATUS CONTINUES TO UNLOCK EXCLUSIVE PRIVILEGES, EARNING BONUSES AND MEMBER REWARDS THROUGHOUT EACH CYCLE.</p>
+                      <p style={{ margin: '0 0 12px 0' }}>WELCOME BENEFITS ARE AWARDED ONCE UPON REACHING A NEW TIER. ONCE CLAIMED, YOUR STATUS CONTINUES TO UNLOCK EXCLUSIVE PRIVILEGES, EARNING BONUSES AND MEMBER REWARDS THROUGHOUT EACH 6 MONTH CYCLE.</p>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 4px 0', textTransform: 'uppercase' }}>SILVER TIER STATUS</p>
+                      <p style={{ ...TIER_STATUS_HEADER_STYLE, color: BRAND_GRAY }}>silver tier status</p>
                       <p style={{ margin: '0 0 4px 0' }}>YOUR ENTRY INTO THE FRONTAL SLAYER REWARDS PROGRAM:</p>
-                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
-                        <li>WELCOME DISCOUNT</li>
-                        <li>250 BONUS LOYALTY POINTS</li>
-                        <li>ACCESS TO MEMBER REWARD REDEMPTIONS</li>
-                        <li>STATUS PROGRESSION TRACKING</li>
-                      </ul>
+                      <div style={{ margin: '0 0 10px 0' }}>
+                        <TierRoseBenefit>WELCOME DISCOUNT</TierRoseBenefit>
+                        <TierRoseBenefit>250 BONUS LOYALTY POINTS</TierRoseBenefit>
+                        <TierRoseBenefit>ACCESS TO MEMBER REWARD REDEMPTIONS</TierRoseBenefit>
+                        <TierRoseBenefit>STATUS PROGRESSION TRACKING</TierRoseBenefit>
+                      </div>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 4px 0', textTransform: 'uppercase', color: '#EB1C24' }}>RED TIER STATUS</p>
+                      <p style={{ ...TIER_STATUS_HEADER_STYLE, color: '#EB1C24' }}>red tier status</p>
                       <p style={{ margin: '0 0 4px 0' }}>UNLOCK ENHANCED REWARDS, HIGHER EARNING POTENTIAL AND EXCLUSIVE MEMBER PRIVILEGES:</p>
-                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
-                        <li>WELCOME DISCOUNT</li>
-                        <li>FLEXIBLE CAP VOUCHER</li>
-                        <li>HAIRLINE VOUCHER</li>
-                        <li>500 BONUS LOYALTY POINTS</li>
-                        <li>1.25X POINT MULTIPLIER ON ELIGIBLE PURCHASES</li>
-                        <li>PRIORITY ACCESS TO SELECT PROMOTIONS</li>
-                      </ul>
+                      <div style={{ margin: '0 0 10px 0' }}>
+                        <TierRoseBenefit>WELCOME DISCOUNT</TierRoseBenefit>
+                        <TierRoseBenefit>FLEXIBLE CAP VOUCHER</TierRoseBenefit>
+                        <TierRoseBenefit>HAIRLINE VOUCHER</TierRoseBenefit>
+                        <TierRoseBenefit>500 BONUS LOYALTY POINTS</TierRoseBenefit>
+                        <TierRoseBenefit>1.25X POINT MULTIPLIER ON ELIGIBLE PURCHASES</TierRoseBenefit>
+                        <TierRoseBenefit>PRIORITY ACCESS TO SELECT PROMOTIONS</TierRoseBenefit>
+                      </div>
 
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '12px 0 4px 0', textTransform: 'uppercase' }}>BLACK TIER STATUS</p>
+                      <p style={{ ...TIER_STATUS_HEADER_STYLE, color: '#000000' }}>black tier status</p>
                       <p style={{ margin: '0 0 4px 0' }}>OUR HIGHEST REWARDS STATUS RESERVED FOR OUR MOST LOYAL CLIENTS:</p>
-                      <ul style={{ margin: '0 0 10px 0', paddingLeft: '18px' }}>
-                        <li>WELCOME DISCOUNT</li>
-                        <li>COLOR VOUCHER</li>
-                        <li>STYLING VOUCHER</li>
-                        <li>1,000 BONUS LOYALTY POINTS</li>
-                        <li>1.5X POINT MULTIPLIER ON ELIGIBLE PURCHASES</li>
-                        <li>ANNUAL BLACK STATUS GIFT</li>
-                        <li>STATUS PROTECTION BENEFIT</li>
-                      </ul>
+                      <div style={{ margin: '0 0 10px 0' }}>
+                        <TierRoseBenefit>WELCOME DISCOUNT</TierRoseBenefit>
+                        <TierRoseBenefit>COLOR VOUCHER</TierRoseBenefit>
+                        <TierRoseBenefit>STYLING VOUCHER</TierRoseBenefit>
+                        <TierRoseBenefit>1,000 BONUS LOYALTY POINTS</TierRoseBenefit>
+                        <TierRoseBenefit>1.5X POINT MULTIPLIER ON ELIGIBLE PURCHASES</TierRoseBenefit>
+                        <TierRoseBenefit>ANNUAL BLACK STATUS GIFT</TierRoseBenefit>
+                        <TierRoseBenefit>STATUS PROTECTION BENEFIT</TierRoseBenefit>
+                      </div>
 
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '14px 0 6px 0', textTransform: 'uppercase' }}>CONTINUING TIER PRIVILEGES</p>
                       <p style={{ margin: '0 0 8px 0' }}>YOUR STATUS BENEFITS REFRESH EACH QUALIFYING CYCLE, PROVIDING ONGOING VALUE AS YOU MAINTAIN OR ADVANCE YOUR MEMBERSHIP STATUS.</p>
