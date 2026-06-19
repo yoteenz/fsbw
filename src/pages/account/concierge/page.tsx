@@ -392,6 +392,277 @@ function SlayChallengeGuide() {
   );
 }
 
+type SlayQuestReward = string | { type: 'or' };
+
+type SlayQuestLevel = {
+  title: string;
+  task: string;
+  rewards: SlayQuestReward[];
+};
+
+type SlayQuest = {
+  title: string;
+  future?: boolean;
+  levels: SlayQuestLevel[];
+};
+
+const SLAY_QUESTS: SlayQuest[] = [
+  {
+    title: 'PSA EXPLORER',
+    levels: [
+      { title: 'LEVEL 1 — FIRST CONSULTATION', task: 'USE PSA 5 TIMES.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — REGULAR CLIENT', task: 'USE PSA 25 TIMES.', rewards: ['250 LOYALTY POINTS', 'PSA EXPLORER BADGE'] },
+      { title: 'LEVEL 3 — CONCIERGE INSIDER', task: 'USE PSA 50 TIMES.', rewards: ['500 LOYALTY POINTS', 'PRIORITY PSA QUEUE PASS'] },
+      { title: 'LEVEL 4 — PSA MASTER', task: 'USE PSA 100 TIMES.', rewards: ['1,000 LOYALTY POINTS', 'EXCLUSIVE PROFILE BADGE', 'PREMIUM MYSTERY REWARD'] },
+    ],
+  },
+  {
+    title: 'DIGITAL CASH COLLECTOR',
+    levels: [
+      { title: 'LEVEL 1 — FIRST DEPOSIT', task: 'LOAD DIGITAL CASH FOR THE FIRST TIME.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — SAVINGS BUILDER', task: 'MAINTAIN A $100+ DIGITAL CASH BALANCE.', rewards: ['$20 DIGITAL CASH BONUS', { type: 'or' }, 'FREE SHIPPING CREDIT'] },
+      { title: 'LEVEL 3 — DIGITAL VAULT', task: 'LOAD OR REDEEM $500+ DIGITAL CASH LIFETIME.', rewards: ['500 LOYALTY POINTS', 'COLLECTOR BADGE'] },
+      { title: 'LEVEL 4 — CASH CURATOR', task: 'LOAD OR REDEEM $1,000+ DIGITAL CASH LIFETIME.', rewards: ['$40 DIGITAL CASH', 'EXCLUSIVE BADGE'] },
+    ],
+  },
+  {
+    title: 'BUILD-A-WIG DESIGNER',
+    levels: [
+      { title: 'LEVEL 1 — FIRST DESIGN', task: 'SAVE 1 BUILD-A-WIG CONFIGURATION.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — CREATOR', task: 'SAVE 5 CONFIGURATIONS.', rewards: ['250 LOYALTY POINTS', 'DESIGNER BADGE'] },
+      { title: 'LEVEL 3 — CURATOR', task: 'SAVE 10 CONFIGURATIONS.', rewards: ['FLEXIBLE CAP VOUCHER', '500 LOYALTY POINTS'] },
+      { title: 'LEVEL 4 — ARCHITECT', task: 'SAVE 25 CONFIGURATIONS.', rewards: ['1,000 LOYALTY POINTS', 'EARLY ACCESS PASS', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'HAIRSTYLE ANALYSIS',
+    levels: [
+      { title: 'LEVEL 1 — STYLE EXPLORER', task: 'COMPLETE YOUR FIRST ANALYSIS.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — STYLE CURATOR', task: 'COMPLETE 5 ANALYSES.', rewards: ['BONUS ANALYSIS CREDIT', { type: 'or' }, '250 LOYALTY POINTS'] },
+      { title: 'LEVEL 3 — STYLE STRATEGIST', task: 'COMPLETE 10 ANALYSES.', rewards: ['PREMIUM ANALYSIS UPGRADE', 'EXCLUSIVE BADGE'] },
+      { title: 'LEVEL 4 — STYLE ICON', task: 'COMPLETE 25 ANALYSES.', rewards: ['1,000 LOYALTY POINTS', 'VIP ANALYSIS PERK'] },
+    ],
+  },
+  {
+    title: 'LOUNGE MEMBER',
+    levels: [
+      { title: 'LEVEL 1 — FIRST ENTRY', task: 'VISIT THE MEMBERS LOUNGE.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — REGULAR', task: 'VISIT THE LOUNGE 5 TIMES.', rewards: ['250 LOYALTY POINTS'] },
+      { title: 'LEVEL 3 — INSIDER', task: 'ATTEND A LOUNGE EVENT OR COMPLETE LOUNGE ACTIVITIES.', rewards: ['EARLY ACCESS PASS'] },
+      { title: 'LEVEL 4 — FOUNDING MEMBER', task: 'REACH 25 LOUNGE VISITS.', rewards: ['EXCLUSIVE DIGITAL COLLECTIBLE', '500 LOYALTY POINTS'] },
+    ],
+  },
+  {
+    title: 'COLLECTION EXPLORER',
+    levels: [
+      { title: 'LEVEL 1 — DISCOVERY', task: 'VIEW ALL 6 SIGNATURE COLLECTION UNITS.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — ENTHUSIAST', task: 'VIEW ALL COLLECTION UNITS 5 TIMES.', rewards: ['250 LOYALTY POINTS'] },
+      { title: 'LEVEL 3 — COLLECTOR', task: 'SAVE 3 UNITS TO WISHLIST.', rewards: ['500 LOYALTY POINTS', 'COLLECTION BADGE'] },
+      { title: 'LEVEL 4 — CONNOISSEUR', task: 'SAVE ALL 6 UNITS TO WISHLIST.', rewards: ['1,000 LOYALTY POINTS', 'MYSTERY REWARD', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'COLOR CURATOR',
+    levels: [
+      { title: 'LEVEL 1 — COLOR EXPLORER', task: 'SAVE 3 CUSTOM COLOR COMBINATIONS.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — CUSTOM COLORIST', task: 'SAVE 10 CUSTOM COLOR COMBINATIONS.', rewards: ['250 LOYALTY POINTS', 'COLOR CURATOR BADGE'] },
+      { title: 'LEVEL 3 — TRENDSETTER', task: 'SAVE 25 CUSTOM COLOR COMBINATIONS.', rewards: ['500 LOYALTY POINTS', 'HAIRLINE VOUCHER'] },
+      { title: 'LEVEL 4 — MASTER COLORIST', task: 'SAVE 50 CUSTOM COLOR COMBINATIONS.', rewards: ['1,000 LOYALTY POINTS', 'COLOR VOUCHER', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'SLAY SCHOLAR',
+    future: true,
+    levels: [
+      { title: 'LEVEL 1 — STUDENT', task: 'COMPLETE 5 ACADEMY LESSONS.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — GRADUATE', task: 'COMPLETE 15 ACADEMY LESSONS.', rewards: ['250 LOYALTY POINTS', 'SCHOLAR BADGE'] },
+      { title: 'LEVEL 3 — EXPERT', task: 'COMPLETE 30 ACADEMY LESSONS.', rewards: ['500 LOYALTY POINTS', 'BONUS HAIRSTYLE ANALYSIS CREDIT'] },
+      { title: 'LEVEL 4 — PROFESSOR', task: 'COMPLETE 50 ACADEMY LESSONS.', rewards: ['1,000 LOYALTY POINTS', 'PREMIUM MYSTERY REWARD', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'COMMUNITY MVP',
+    levels: [
+      { title: 'LEVEL 1 — CONNECTOR', task: 'REFER 1 FRIEND WHO CREATES AN ACCOUNT.', rewards: ['250 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — INFLUENCER', task: 'REFER 3 FRIENDS WHO CREATE ACCOUNTS.', rewards: ['$10 DIGITAL CASH', { type: 'or' }, 'HAIRLINE VOUCHER'] },
+      { title: 'LEVEL 3 — AMBASSADOR', task: 'REFER 5 FRIENDS WHO CREATE ACCOUNTS.', rewards: ['1,000 LOYALTY POINTS', 'COMMUNITY MVP BADGE'] },
+      { title: 'LEVEL 4 — ICON', task: 'REFER 10 SUCCESSFUL CUSTOMERS.', rewards: ['$25 DIGITAL CASH', 'EXCLUSIVE REWARD SELECTION', 'ANNUAL MVP RECOGNITION'] },
+    ],
+  },
+  {
+    title: 'CONTENT CREATOR',
+    levels: [
+      { title: 'LEVEL 1 — CONTRIBUTOR', task: 'SUBMIT 1 APPROVED PHOTO.', rewards: ['200 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — CREATOR', task: 'SUBMIT 5 APPROVED PIECES OF CONTENT.', rewards: ['500 LOYALTY POINTS', 'CONTENT CREATOR BADGE'] },
+      { title: 'LEVEL 3 — FEATURED CREATOR', task: 'SUBMIT 10 APPROVED PIECES OF CONTENT.', rewards: ['1,000 LOYALTY POINTS', 'SLAY CAM FEATURE OPPORTUNITY'] },
+      { title: 'LEVEL 4 — ICON CREATOR', task: 'SUBMIT 25 APPROVED PIECES OF CONTENT.', rewards: ['2,500 LOYALTY POINTS', 'PREMIUM MYSTERY REWARD', 'EXCLUSIVE PROFILE BADGE', 'ANNUAL CREATOR RECOGNITION'] },
+    ],
+  },
+  {
+    title: 'REVIEW ROYALTY',
+    levels: [
+      { title: 'LEVEL 1 — FIRST IMPRESSION', task: 'SUBMIT 1 APPROVED REVIEW.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — TRUSTED VOICE', task: 'SUBMIT 5 APPROVED REVIEWS.', rewards: ['250 LOYALTY POINTS', 'REVIEW ROYALTY BADGE'] },
+      { title: 'LEVEL 3 — COMMUNITY ADVISOR', task: 'SUBMIT 15 APPROVED REVIEWS.', rewards: ['500 LOYALTY POINTS', 'BONUS REWARD SELECTION TOKEN'] },
+      { title: 'LEVEL 4 — REVIEW ICON', task: 'SUBMIT 30 APPROVED REVIEWS.', rewards: ['1,000 LOYALTY POINTS', 'EXCLUSIVE PROFILE BADGE', 'ANNUAL RECOGNITION'] },
+    ],
+  },
+  {
+    title: 'ORDER COLLECTOR',
+    levels: [
+      { title: 'LEVEL 1 — FIRST ORDER', task: 'COMPLETE 1 PURCHASE.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — REGULAR CLIENT', task: 'COMPLETE 5 PURCHASES.', rewards: ['500 LOYALTY POINTS', 'ORDER COLLECTOR BADGE'] },
+      { title: 'LEVEL 3 — LOYAL CUSTOMER', task: 'COMPLETE 15 PURCHASES.', rewards: ['1,000 LOYALTY POINTS', 'EARLY ACCESS PASS'] },
+      { title: "LEVEL 4 — COLLECTOR'S CIRCLE", task: 'COMPLETE 30 PURCHASES.', rewards: ['2,500 LOYALTY POINTS', 'ANNUAL COLLECTOR REWARD', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'REWARDS HUNTER',
+    levels: [
+      { title: 'LEVEL 1 — FIRST REDEMPTION', task: 'REDEEM 1 REWARD.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — SAVVY SHOPPER', task: 'REDEEM 5 REWARDS.', rewards: ['250 LOYALTY POINTS', 'REWARDS HUNTER BADGE'] },
+      { title: 'LEVEL 3 — MASTER REDEEMER', task: 'REDEEM 15 REWARDS.', rewards: ['500 LOYALTY POINTS', 'MYSTERY REWARD'] },
+      { title: 'LEVEL 4 — VAULT OPENER', task: 'REDEEM 30 REWARDS.', rewards: ['1,000 LOYALTY POINTS', 'PREMIUM MYSTERY REWARD', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'EARLY ACCESS INSIDER',
+    levels: [
+      { title: 'LEVEL 1 — FIRST ACCESS', task: 'PARTICIPATE IN 1 EARLY-ACCESS RELEASE.', rewards: ['100 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — PRIORITY MEMBER', task: 'PARTICIPATE IN 3 EARLY-ACCESS RELEASES.', rewards: ['250 LOYALTY POINTS', 'INSIDER BADGE'] },
+      { title: 'LEVEL 3 — FRONT OF THE LINE', task: 'PARTICIPATE IN 6 EARLY-ACCESS RELEASES.', rewards: ['500 LOYALTY POINTS', '24-HOUR EARLY ACCESS UPGRADE'] },
+      { title: 'LEVEL 4 — FOUNDING INSIDER', task: 'PARTICIPATE IN 12 EARLY-ACCESS RELEASES.', rewards: ['1,000 LOYALTY POINTS', 'EXCLUSIVE DROP INVITATION', 'PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'SLAY CAM STAR',
+    levels: [
+      { title: 'LEVEL 1 — FEATURED', task: 'RECEIVE 1 SLAY CAM FEATURE.', rewards: ['250 LOYALTY POINTS', 'FEATURED BADGE'] },
+      { title: 'LEVEL 2 — TRENDING', task: 'RECEIVE 5 SLAY CAM FEATURES.', rewards: ['500 LOYALTY POINTS', 'SLAY CAM STAR BADGE'] },
+      { title: 'LEVEL 3 — COMMUNITY FAVORITE', task: 'RECEIVE 10 SLAY CAM FEATURES.', rewards: ['1,000 LOYALTY POINTS', 'HOMEPAGE FEATURE OPPORTUNITY'] },
+      { title: 'LEVEL 4 — SLAY ICON', task: 'RECEIVE 25 SLAY CAM FEATURES.', rewards: ['2,500 LOYALTY POINTS', 'ANNUAL SLAY CAM RECOGNITION', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'LOYALTY LEGEND',
+    levels: [
+      { title: 'LEVEL 1 — POINTS EARNER', task: 'EARN 5,000 LIFETIME POINTS.', rewards: ['250 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — POINTS COLLECTOR', task: 'EARN 25,000 LIFETIME POINTS.', rewards: ['500 LOYALTY POINTS', 'LOYALTY LEGEND BADGE'] },
+      { title: 'LEVEL 3 — REWARDS MASTER', task: 'EARN 50,000 LIFETIME POINTS.', rewards: ['1,000 LOYALTY POINTS', 'MYSTERY REWARD'] },
+      { title: 'LEVEL 4 — LEGEND STATUS', task: 'EARN 100,000 LIFETIME POINTS.', rewards: ['2,500 LOYALTY POINTS', 'EXCLUSIVE PROFILE BADGE', 'ANNUAL RECOGNITION'] },
+    ],
+  },
+  {
+    title: 'MEMBERSHIP ELITE',
+    levels: [
+      { title: 'LEVEL 1 — COMMITTED', task: 'MAINTAIN MEMBERSHIP FOR 3 CONSECUTIVE MONTHS.', rewards: ['250 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — DEDICATED', task: 'MAINTAIN MEMBERSHIP FOR 6 CONSECUTIVE MONTHS.', rewards: ['500 LOYALTY POINTS', 'MEMBERSHIP ELITE BADGE'] },
+      { title: 'LEVEL 3 — LOYAL', task: 'MAINTAIN MEMBERSHIP FOR 12 CONSECUTIVE MONTHS.', rewards: ['1,000 LOYALTY POINTS', 'ANNIVERSARY REWARD'] },
+      { title: 'LEVEL 4 — ELITE STATUS', task: 'MAINTAIN MEMBERSHIP FOR 24 CONSECUTIVE MONTHS.', rewards: ['2,500 LOYALTY POINTS', 'EXCLUSIVE ANNIVERSARY GIFT', 'ELITE PROFILE BADGE'] },
+    ],
+  },
+  {
+    title: 'REFERRAL ROYALTY',
+    levels: [
+      { title: 'LEVEL 1 — CONNECTOR', task: 'REFER 1 SUCCESSFUL CUSTOMER.', rewards: ['250 LOYALTY POINTS'] },
+      { title: 'LEVEL 2 — ADVOCATE', task: 'REFER 5 SUCCESSFUL CUSTOMERS.', rewards: ['500 LOYALTY POINTS', 'REFERRAL ROYALTY BADGE'] },
+      { title: 'LEVEL 3 — AMBASSADOR', task: 'REFER 10 SUCCESSFUL CUSTOMERS.', rewards: ['1,000 LOYALTY POINTS', '$25 DIGITAL CASH'] },
+      { title: 'LEVEL 4 — ROYALTY STATUS', task: 'REFER 25 SUCCESSFUL CUSTOMERS.', rewards: ['2,500 LOYALTY POINTS', 'ANNUAL AMBASSADOR RECOGNITION', 'EXCLUSIVE PROFILE BADGE'] },
+    ],
+  },
+];
+
+function SlayQuestsSection() {
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          color: '#000000',
+          fontSize: '10px',
+          margin: '0 0 12px 0',
+          lineHeight: 1.45,
+          textTransform: 'uppercase',
+          fontWeight: 500,
+          textAlign: 'left',
+        }}
+      >
+        FRONTAL SLAYER SPECIFIC CHALLENGES DESIGNED TO REWARD HOW YOU SHOP, CREATE, SHARE + ENGAGE.
+      </p>
+      {SLAY_QUESTS.map((quest) => (
+        <div key={quest.title} style={{ marginBottom: '18px' }}>
+          <p
+            style={{
+              fontFamily: '"Bohemy", cursive',
+              color: '#000000',
+              fontSize: '20px',
+              margin: '0 0 6px 0',
+              lineHeight: 1.05,
+              textTransform: 'lowercase',
+              fontWeight: 400,
+              textAlign: 'left',
+            }}
+          >
+            {quest.future ? `${quest.title.toLowerCase()} (future quest)` : quest.title.toLowerCase()}
+          </p>
+          {quest.levels.map((level) => (
+            <div key={`${quest.title}-${level.title}`} style={{ marginBottom: '10px' }}>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  fontSize: '10px',
+                  margin: '0 0 2px 0',
+                  lineHeight: 1.35,
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                  textAlign: 'left',
+                }}
+              >
+                {level.title}
+              </p>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  color: '#000000',
+                  fontSize: '10px',
+                  margin: '0 0 4px 0',
+                  lineHeight: 1.45,
+                  textTransform: 'uppercase',
+                  textAlign: 'left',
+                }}
+              >
+                {level.task}
+              </p>
+              <SlayChallengeBohemySubhead>reward</SlayChallengeBohemySubhead>
+              {level.rewards.map((reward, rewardIndex) =>
+                typeof reward === 'string' ? (
+                  <SlayChallengeRoseBullet key={`${level.title}-${reward}`}>{reward}</SlayChallengeRoseBullet>
+                ) : (
+                  <p
+                    key={`${level.title}-or-${rewardIndex}`}
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      color: '#808080',
+                      fontSize: '9px',
+                      margin: '2px 0 2px 20px',
+                      lineHeight: 1.35,
+                      textTransform: 'uppercase',
+                      textAlign: 'left',
+                    }}
+                  >
+                    OR
+                  </p>
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ConciergePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -5328,6 +5599,30 @@ function ConciergePage() {
 
                 </>
                 )}
+
+                {/* Slay Quests Section */}
+                <div
+                  className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
+                  style={{
+                    borderWidth: '1.3px',
+                    paddingTop: '20px',
+                    paddingLeft: '10px',
+                    paddingRight: '10px',
+                    paddingBottom: '12px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  }}
+                >
+                  <ConciergeSectionHeader
+                    title="SLAY QUESTS"
+                    iconSrc={CONCIERGE_SLAY_CHALLENGE_ICON}
+                    iconWidth="17.26px"
+                    iconHeight="17.26px"
+                    marginBottom="16px"
+                    iconTransform="translateY(-1.5px)"
+                    iconAlt="Slay Quests"
+                  />
+                  <SlayQuestsSection />
+                </div>
 
                 {/* Free Gift Section */}
                 <div
