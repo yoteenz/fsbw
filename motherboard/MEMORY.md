@@ -29888,3 +29888,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Changed the premium upgrade total label from red **TOTAL DUE TODAY** to gray **TOTAL DUE**, matching the BAW main page’s mobile label treatment: Futura PT Medium, 12px, uppercase, gray **`#808080`**, weight 500.
 - **Changes:** Updated both premium chart render paths: **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline Account -> Rewards premium upgrade chart in **`src/pages/account/membership/page.tsx`**. Verified no remaining **TOTAL DUE TODAY** text exists under `src/` and verified with **`npm run build`**.
 - **Conventions:** Premium subscription upgrade charts should use the same total label text/styling as the BAW main page: **TOTAL DUE** in gray Futura PT Medium at 12px; avoid the older red **TOTAL DUE TODAY** label.
+
+---
+
+## 2026-06-19 — Points History reward column alignment
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards and related membership surfaces, including Add Funds copy/nav, digital-cash history/alerts, premium rewards copy and typography, Tier Benefits Guide copy/styling/card behavior, Membership Status spacing and perk lists, premium upgrade chart layout/styling, Points History scrolling, Account Profile Concierge gating, and BAW-matched premium total labels.
+- **Topics covered:** The latest request noted that the gray text in the **REWARD** column of Account -> Rewards **POINTS HISTORY** should be centered directly below the **REWARD** header.
+- **Decisions / outcomes:** Kept the six-row scroll behavior, but aligned the column header and scrollable rows by applying the same right-side scroll padding to the header row when the list is scrollable. Also made the gray reward value cell explicitly flex-centered.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
+- **Conventions:** When Points History rows are scrollable, header-row spacing should mirror the scroll row padding so the **DATE / REWARD / POINTS** columns stay visually aligned; reward values should be explicitly centered in their column.
