@@ -29398,3 +29398,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the Add Funds route and page behavior unchanged, but changed only the visible red breadcrumb segment from **`ADD FUNDS`** to **`BALANCE`** so the top nav now reads **`ACCOUNT > BALANCE`**.
 - **Changes:** **`src/pages/account/load-card/page.tsx`** now renders **`BALANCE`** in the breadcrumb/nav label for the Add Funds page. Verified with **`npm run build`**.
 - **Conventions:** Product-facing account nav labels can be copy-adjusted without renaming the underlying route when the requested change is visual text only.
+
+---
+
+## 2026-06-19 — Add Funds helper paragraph left-aligned
+
+- **Context:** In this chat, the user asked to add the black **Futura PT Book** explanatory paragraph below **CURRENT BALANCE** on **Account > Add Funds**, then changed the page breadcrumb to **`ACCOUNT > BALANCE`**, then clarified that the new helper paragraph should be left-aligned instead of centered.
+- **Topics covered:** Updated the Add Funds page paragraph under the balance, adjusted the breadcrumb nav label, and revisited the paragraph style after the user flagged the alignment.
+- **Decisions / outcomes:** Kept the balance label and amount centered, but changed only the explanatory paragraph alignment to **left** so the body copy reads like an informational note while preserving the existing copy, font, color, and spacing.
+- **Changes:** **`src/pages/account/load-card/page.tsx`** — the helper paragraph below the balance now uses **`textAlign: 'left'`** instead of **`center`**. Verified with **`npm run build`**.
+- **Conventions:** On the Add Funds balance card, the **CURRENT BALANCE** label/amount remain centered, while the explanatory Futura Book paragraph below them should align left.
