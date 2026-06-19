@@ -29668,3 +29668,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Reused the existing two-column grid pattern already used for first/last name so Birthday and Phone align in one row. Matched Help Center list vertical spacing to the Notifications list by using the same **14px** column gap.
 - **Changes:** Updated **`src/pages/account/settings/page.tsx`**: Birthday and Phone now render inside one `gridTemplateColumns: '1fr 1fr'` row with a **12px** gap; Help Center button list gap changed from **10px** to **14px**. Verified with **`npm run build`**.
 - **Conventions:** On Account → Settings, Birthday and Phone should sit side-by-side in the Personal Information section, and Help Center list spacing should mirror Notifications list spacing.
+
+---
+
+## 2026-06-19 — Account Reviews subtitles changed to red lowercase Bohemy
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member / Settings refinements: Add Funds copy/nav, UPR and Brand Member premium perk copy/styling/order, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting/copy, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, IIYM 12-month-only double points, UPR **DOUBLE YOUR POINTS** ordering, **EXPLORE ALL BENEFITS** spacing, Membership Status tier-perk heading removal, Account Rewards progress-text typography, and Account Settings Birthday/Phone + Help Center spacing.
+- **Topics covered:** The latest request asked to change the red review header text on Account → Reviews, such as **VERY VERSATILE** and **EXACTLY AS DESCRIBED**, to red lowercase Bohemy.
+- **Decisions / outcomes:** Updated the shared review subtitle style so all review subtitles change together. Kept the red brand color and applied lowercase via text transform.
+- **Changes:** Updated **`src/pages/account/reviews/page.tsx`** so `review.subtitle` renders with **`"Bohemy", cursive`**, **18px**, red **`#EB1C24`**, **`textTransform: 'lowercase'`**, and **400** weight. Verified with **`npm run build`**.
+- **Conventions:** Account → Reviews card subtitle/header text should display as red lowercase Bohemy rather than uppercase Futura Medium.
