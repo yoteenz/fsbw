@@ -22,6 +22,8 @@ import { WISHLIST_STOCK_ALERTS_UPDATED_EVENT } from '../../../utils/wishlistStoc
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { resolveAccountAlertCopy } from '../../../utils/copyDebugResolve';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import DigitalCashHistoryPopup from '../../../components/account/DigitalCashHistoryPopup';
+import { adminMockDigitalCashDepositSortAt } from '../../../utils/digitalCashHistoryDisplay';
 
 interface Notification {
   id: string;
@@ -42,34 +44,10 @@ interface Notification {
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
 const ADMIN_SENT_PREFIX = 'admin_';
-const ADMIN_MOCK_DIGITAL_CASH_DEPOSIT_AMOUNT = 50;
-const ADMIN_MOCK_DIGITAL_CASH_TRANSACTION = 'GIFT CARD BARCODE';
-
-type DigitalCashHistoryRow = {
-  date: string;
-  transaction: string;
-  amount: number;
-  sortAt?: number;
-};
 
 function todayMdy(): string {
   const d = new Date();
   return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
-}
-
-function adminMockDigitalCashDepositSortAt(userEmail: string | undefined): number {
-  const email = String(userEmail || 'admin').trim().toLowerCase() || 'admin';
-  const key = `adminMockDigitalCashDepositSortAt_${email}`;
-  try {
-    if (typeof window === 'undefined') return Date.now();
-    const existing = Number(localStorage.getItem(key) || '');
-    if (Number.isFinite(existing) && existing > 0) return existing;
-    const now = Date.now();
-    localStorage.setItem(key, String(now));
-    return now;
-  } catch {
-    return Date.now();
-  }
 }
 
 function readCurrentUserFromStorage(): Record<string, unknown> | null {
@@ -601,35 +579,6 @@ async function mergeAdminNotificationsFromApi(merged: Notification[], today: str
   } catch {
     return merged;
   }
-}
-
-function digitalCashHistorySortTimestampMs(row: DigitalCashHistoryRow): number {
-  if (typeof row.sortAt === 'number' && !Number.isNaN(row.sortAt)) return row.sortAt;
-  return parseNotificationDisplayDateMs(row.date);
-}
-
-function withAdminMockDigitalCashHistoryRow(
-  history: DigitalCashHistoryRow[],
-  user: Record<string, unknown> | null
-): DigitalCashHistoryRow[] {
-  if (!isAdminEmail(String(user?.email || ''))) return history;
-  const today = todayMdy();
-  const email = String(user?.email || '').trim().toLowerCase();
-  const hasTodayMockAmount = history.some(
-    (row) =>
-      row.date === today &&
-      Math.round(Number(row.amount || 0) * 100) === ADMIN_MOCK_DIGITAL_CASH_DEPOSIT_AMOUNT * 100
-  );
-  if (hasTodayMockAmount) return history;
-  return [
-    {
-      date: today,
-      transaction: ADMIN_MOCK_DIGITAL_CASH_TRANSACTION,
-      amount: ADMIN_MOCK_DIGITAL_CASH_DEPOSIT_AMOUNT,
-      sortAt: adminMockDigitalCashDepositSortAt(email),
-    },
-    ...history,
-  ];
 }
 
 function NotificationsPage() {
@@ -1408,100 +1357,11 @@ function NotificationsPage() {
         dataAttribute="delete-notification-confirm"
       />
 
-      {showDigitalCashHistoryPopup && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            padding: '16px'
-          }}
-          onClick={() => setShowDigitalCashHistoryPopup(false)}
-        >
-          <div
-            className="bg-white/60 backdrop-blur-sm border border-black"
-            style={{
-              borderWidth: '1.3px',
-              padding: '16px',
-              maxWidth: '400px',
-              width: '100%',
-              maxHeight: '85vh',
-              overflow: 'auto',
-              position: 'relative'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  color: '#EB1C24',
-                  fontSize: '12px',
-                  margin: '0',
-                  textTransform: 'uppercase',
-                  fontWeight: '500',
-                  textAlign: 'left'
-                }}
-              >
-                DIGITAL CASH HISTORY
-              </p>
-              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain' }} />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
-              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
-              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center' }}>TRANSACTION</span>
-              <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right' }}>AMOUNT</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {(() => {
-                const storedHistory = Array.isArray(userData?.digitalCashHistory)
-                  ? (userData.digitalCashHistory as DigitalCashHistoryRow[])
-                  : [];
-                const history = withAdminMockDigitalCashHistoryRow(storedHistory, userData);
-                const formatDate = (dateStr: string): string => {
-                  const parts = dateStr.split('-').map(Number);
-                  if (parts.length === 3) {
-                    const [month, day, year] = parts;
-                    const d = new Date(year, month - 1, day);
-                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                  }
-                  const d = new Date(dateStr);
-                  if (!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                  return dateStr;
-                };
-                if (history.length === 0) {
-                  return (
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontWeight: '500', fontSize: '10px', color: '#808080', margin: '6px 0', textTransform: 'uppercase', textAlign: 'center' }}>
-                      YOU HAVEN'T HAD ANY DIGITAL CASH TRANSACTIONS YET.
-                    </p>
-                  );
-                }
-                const sorted = [...history].sort((a, b) => {
-                  return digitalCashHistorySortTimestampMs(b) - digitalCashHistorySortTimestampMs(a);
-                });
-                return sorted.map((row, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase' }}>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left', color: '#000000', fontFamily: '"Futura PT Book"' }}>{formatDate(row.date)}</span>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'center', color: '#808080', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{row.transaction}</span>
-                    <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'right', color: row.amount >= 0 ? '#16a34a' : '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
-                      {row.amount >= 0 ? '+' : ''}${Math.abs(row.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
-                    </span>
-                  </div>
-                ));
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
+      <DigitalCashHistoryPopup
+        isOpen={showDigitalCashHistoryPopup}
+        onClose={() => setShowDigitalCashHistoryPopup(false)}
+        userData={userData}
+      />
     </>
   );
 }
