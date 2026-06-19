@@ -29150,3 +29150,10 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User reported **`/brand/reviews`** main card broken — incorrect spacing above/below empty-state text; card should match **menu toggle main card** height (mostly empty shell).
 - **Cause:** Hidden **Become a Member** measurer set a pixel height from full member copy, not the viewport-filled menu panel; **`BrandReviewsEmptyState`** had extra vertical padding skewing centering.
 - **Changes:** **`src/pages/brand/page.tsx`** — removed member-card **`ResizeObserver`** measurer; **`brandReviewsViewportShell`** locks viewport and gives main card **`flex: 1`** (same flex fill as open menu panel on brand pages). **`BrandReviewsEmptyState.tsx`** — removed vertical padding; flex-centers copy in remaining card area below header rule. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-18 — Brand reviews empty copy refresh (About/Member typography)
+
+- **Context:** User replaced gray centered empty message on **`/brand/reviews`** with multi-paragraph marketing copy (headline **YOUR REVIEW COULD BE THE FIRST.**, community growth, future reviews, closing CTA), all uppercase, matching other brand pages.
+- **Changes:** **`src/constants/brandReviewsCopy.ts`** (new) — four blocks with **`accent`** / **`demiGray`** / **`body`** variants. **`BrandReviewsEmptyState.tsx`** — left-aligned **10px** Futura stack (**Book** black, **Demi** gray, **Medium** red accent), **`gap: 12px`**, same pattern as About/Member. Pushed **`master`** + **`preview/mobile`**.
