@@ -29418,3 +29418,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Treated this as copy-only UI iteration; no route, balance, checkout, barcode, or digital-cash logic changed.
 - **Changes:** **`src/pages/account/load-card/page.tsx`** now uses: **`LOAD A GIFT CARD(S) TO ADD FUNDS TO YOUR ACCOUNT. YOUR AVAILABLE DIGITAL CASH BALANCE WILL BE AUTOMATICALLY APPLIED AT CHECKOUT, WITH NO CODE NEEDED. AVAILABLE FUNDS CAN BE APPLIED TOWARD ANY ELIGIBLE PURCHASE. FOR ADDED FLEXIBILITY, YOU MAY CHOOSE EXACTLY HOW MUCH DIGITAL CASH TO APPLY TO EACH ORDER.`** Verified with **`npm run build`**.
 - **Conventions:** Continue treating the Add Funds helper paragraph as product-managed copy that can be updated independently from the underlying digital-cash behavior.
+
+---
+
+## 2026-06-19 — Membership included list uses rose bullets
+
+- **Context:** In this chat, the user iterated on **Account > Add Funds / Balance** copy and layout (helper paragraph below current balance, breadcrumb label **`ACCOUNT > BALANCE`**, left-aligned helper copy, expanded helper text), asked why the admin **$50** mock deposit alert did not appear in the digital-cash history popup, and then asked to use rose bullets instead of checkmarks on the **INCLUDED IN YOUR MEMBERSHIP** sections.
+- **Topics covered:** Traced Add Funds and Alerts digital-cash behavior, confirming the admin **$50** row is a synthetic/mock alert and not a real `digitalCashHistory` transaction. Then located the membership included-benefits section in **`src/pages/account/membership/page.tsx`** and checked existing rose bullet assets/styles used by product tabs.
+- **Decisions / outcomes:** Left the premium comparison chart checkmarks unchanged because those are tabular included/not-included indicators, and changed the benefit-list markers under **INCLUDED IN YOUR MEMBERSHIP** from the premium check SVG to the rose bullet asset.
+- **Changes:** **`src/pages/account/membership/page.tsx`** now renders **`/assets/rose-alert.svg`** as the marker for each included membership benefit row instead of **`/assets/premium-check.svg`**. Verified with **`npm run build`**.
+- **Conventions:** For the **INCLUDED IN YOUR MEMBERSHIP** benefits list, use rose bullets as decorative list markers; keep checkmarks for comparison tables unless product asks to change those too.
