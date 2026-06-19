@@ -17,6 +17,8 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
+import { syncAllFromApi } from '../../../utils/syncFromApi';
 
 /** Uppercase A–Z / 0–9 only, max 12 chars, shown as XXXX-XXXX-XXXX */
 function formatGiftBarcodeInput(raw: string): string {
@@ -31,6 +33,60 @@ function toCanonicalBarcode(value: string): string {
   const alnum = value.replace(/[^A-Z0-9]/gi, '').toUpperCase().slice(0, 12);
   if (alnum.length !== 12) return '';
   return `${alnum.slice(0, 4)}-${alnum.slice(4, 8)}-${alnum.slice(8, 12)}`;
+}
+
+function readStoredSignedInUser(): Record<string, unknown> | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const signedIn = localStorage.getItem('isSignedIn') === 'true';
+    if (!signedIn) return null;
+    const currentRaw = localStorage.getItem('currentUser');
+    const currentUser = currentRaw ? (JSON.parse(currentRaw) as Record<string, unknown>) : null;
+    const currentEmail = String(currentUser?.email || '')
+      .trim()
+      .toLowerCase();
+    const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as Array<Record<string, unknown>>;
+    const registeredUser = currentEmail
+      ? registered.find((user) => String(user?.email || '').trim().toLowerCase() === currentEmail) ?? null
+      : null;
+
+    if (!currentUser && registeredUser) return registeredUser;
+    if (!currentUser) return null;
+    if (!registeredUser) return currentUser;
+
+    const merged = {
+      ...registeredUser,
+      ...currentUser,
+      giftCardBalance:
+        typeof currentUser.giftCardBalance === 'number'
+          ? currentUser.giftCardBalance
+          : typeof registeredUser.giftCardBalance === 'number'
+            ? registeredUser.giftCardBalance
+            : 0,
+      digitalCashHistory: Array.isArray(currentUser.digitalCashHistory)
+        ? currentUser.digitalCashHistory
+        : Array.isArray(registeredUser.digitalCashHistory)
+          ? registeredUser.digitalCashHistory
+          : [],
+    };
+
+    const needsCurrentRepair =
+      currentUser.giftCardBalance !== merged.giftCardBalance ||
+      currentUser.digitalCashHistory !== merged.digitalCashHistory;
+    if (needsCurrentRepair) {
+      localStorage.setItem('currentUser', JSON.stringify(merged));
+      const registeredIdx = registered.findIndex(
+        (user) => String(user?.email || '').trim().toLowerCase() === currentEmail
+      );
+      if (registeredIdx !== -1) {
+        registered[registeredIdx] = merged;
+        localStorage.setItem('registeredUsers', JSON.stringify(registered));
+      }
+    }
+    return merged;
+  } catch {
+    return null;
+  }
 }
 
 function LoadCardPage() {
@@ -65,15 +121,7 @@ function LoadCardPage() {
     return false;
   });
   const [userData, setUserData] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const currentUser = localStorage.getItem('currentUser');
-        return currentUser ? JSON.parse(currentUser) : null;
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
+    return readStoredSignedInUser();
   });
   const [barcodes, setBarcodes] = useState(['', '']);
 
@@ -97,13 +145,7 @@ function LoadCardPage() {
   useEffect(() => {
     const syncUser = () => {
       try {
-        const currentUser = localStorage.getItem('currentUser');
-        const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        if (signedIn && currentUser) {
-          setUserData(JSON.parse(currentUser));
-        } else {
-          setUserData(null);
-        }
+        setUserData(readStoredSignedInUser());
       } catch {
         setUserData(null);
       }
@@ -118,6 +160,21 @@ function LoadCardPage() {
       window.removeEventListener('focus', syncUser);
     };
   }, []);
+
+  // Rehydrate the signed-in profile so Add Funds shows the same digital cash amount as Account.
+  useEffect(() => {
+    let cancelled = false;
+    if (!isSignedIn) return;
+    syncAllFromApi()
+      .catch(() => null)
+      .finally(() => {
+        if (cancelled) return;
+        setUserData(readStoredSignedInUser());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignedIn]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -181,16 +238,16 @@ function LoadCardPage() {
     setBarcodes(next);
   };
 
-  const persistUserBalance = (email: string, newBalance: number, historyEntry: { date: string; transaction: string; amount: number }) => {
+  const persistUserBalance = async (email: string, newBalance: number, historyEntry: { date: string; transaction: string; amount: number }) => {
     try {
-      const raw = localStorage.getItem('currentUser');
-      if (!raw) return;
-      const u = JSON.parse(raw);
-      if ((u.email || '').toLowerCase() !== email.toLowerCase()) return;
+      const u = readStoredSignedInUser();
+      if (!u) return;
+      if (String(u.email || '').toLowerCase() !== email.toLowerCase()) return;
+      const updatedHistory = [...(Array.isArray(u.digitalCashHistory) ? u.digitalCashHistory : []), historyEntry];
       const updated = {
         ...u,
         giftCardBalance: newBalance,
-        digitalCashHistory: [...(u.digitalCashHistory || []), historyEntry],
+        digitalCashHistory: updatedHistory,
       };
       localStorage.setItem('currentUser', JSON.stringify(updated));
       setUserData(updated);
@@ -200,6 +257,10 @@ function LoadCardPage() {
         registered[idx] = updated;
         localStorage.setItem('registeredUsers', JSON.stringify(registered));
       }
+      await patchProfileWithRetryQueue({
+        giftCardBalance: newBalance,
+        digitalCashHistory: updatedHistory,
+      });
     } catch {
       /* ignore */
     }
@@ -257,9 +318,15 @@ function LoadCardPage() {
     }
 
     if (totalAdded > 0) {
-      const email = userData.email;
-      const prev = typeof userData.giftCardBalance === 'number' ? userData.giftCardBalance : 0;
-      persistUserBalance(email, prev + totalAdded, {
+      const email = String(userData.email || '');
+      const latestStoredUser = readStoredSignedInUser();
+      const prev =
+        typeof latestStoredUser?.giftCardBalance === 'number'
+          ? (latestStoredUser.giftCardBalance as number)
+          : typeof userData.giftCardBalance === 'number'
+            ? userData.giftCardBalance
+            : 0;
+      void persistUserBalance(email, prev + totalAdded, {
         date: dateStr,
         transaction: 'GIFT CARD BARCODE',
         amount: totalAdded,
@@ -678,7 +745,7 @@ function LoadCardPage() {
                         width: '100%'
                       }}
                     >
-                      {formatPrice(userData?.giftCardBalance || 0)}
+                      {formatPrice(typeof userData?.giftCardBalance === 'number' ? userData.giftCardBalance : 0)}
                     </p>
                   </div>
 
