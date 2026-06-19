@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -27,8 +27,8 @@ const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', '
 /** Max height when brand main card scrolls (contact form, member premium chart). */
 const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
 
-/** Empty Reviews shell matches Become a Member main card height (not About). */
-const BRAND_SLUGS_MATCH_MEMBER_CARD_HEIGHT = new Set(['reviews']);
+/** Empty Reviews shell fills the viewport like the mobile menu toggle main card. */
+const BRAND_REVIEWS_VIEWPORT_SHELL = 'reviews';
 
 function BrandPage() {
   const navigate = useNavigate();
@@ -110,32 +110,10 @@ function BrandPage() {
 
   const hideMemberCardHeader = slug === 'member' && memberPremium.showPremiumChart;
 
-  const brandMainCardMatchMemberHeight = BRAND_SLUGS_MATCH_MEMBER_CARD_HEIGHT.has(slug);
+  const brandReviewsViewportShell = slug === BRAND_REVIEWS_VIEWPORT_SHELL;
 
-  /** Lock shell to one viewport when the main card scrolls internally (terms, contact, etc.). */
-  const brandPageViewportLocked = brandMainCardScrollable || showMobileMenu;
-
-  const memberMainCardMeasureRef = useRef<HTMLDivElement>(null);
-  const [memberMainCardMinHeightPx, setMemberMainCardMinHeightPx] = useState<number | null>(null);
-
-  useLayoutEffect(() => {
-    const node = memberMainCardMeasureRef.current;
-    if (!node) return;
-
-    const measure = () => {
-      setMemberMainCardMinHeightPx(node.offsetHeight);
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    window.addEventListener('resize', measure);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, []);
+  /** Lock shell to one viewport when the main card scrolls internally or reviews empty shell fills height. */
+  const brandPageViewportLocked = brandMainCardScrollable || showMobileMenu || brandReviewsViewportShell;
 
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
@@ -207,37 +185,6 @@ function BrandPage() {
               : { overflow: 'visible' }),
           }}
         >
-          <div
-            ref={memberMainCardMeasureRef}
-            aria-hidden
-            className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
-            style={{
-              borderWidth: '1.3px',
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: '100%',
-              visibility: 'hidden',
-              pointerEvents: 'none',
-              zIndex: -1,
-            }}
-          >
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '12px',
-                color: '#EB1C24',
-                margin: '0 0 8px 0',
-                textTransform: 'uppercase',
-                fontWeight: '500',
-                flexShrink: 0,
-              }}
-            >
-              {getBrandCardHeaderTitle('member')}
-            </p>
-            <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
-            <BrandMemberSection />
-          </div>
           {/* HEADER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
@@ -388,10 +335,11 @@ function BrandPage() {
                           maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
                           overflow: 'hidden',
                         }
-                    : brandMainCardMatchMemberHeight && memberMainCardMinHeightPx != null
+                    : brandReviewsViewportShell
                       ? {
-                          height: memberMainCardMinHeightPx,
-                          minHeight: memberMainCardMinHeightPx,
+                          flex: 1,
+                          minHeight: 0,
+                          overflow: 'hidden',
                           boxSizing: 'border-box',
                         }
                       : {}),
@@ -419,7 +367,7 @@ function BrandPage() {
                   style={
                     brandMainCardScrollable
                       ? { flex: 1, minHeight: 0, overflowY: 'auto' }
-                      : brandMainCardMatchMemberHeight
+                      : brandReviewsViewportShell
                         ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }
                         : undefined
                   }
