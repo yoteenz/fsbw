@@ -1550,6 +1550,30 @@ function MembershipPage() {
                         />
                       </div>
 
+                      <button
+                        type="button"
+                        onClick={() => setShowPremiumUpgradeAllBenefits((v) => !v)}
+                        aria-expanded={showPremiumUpgradeAllBenefits}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          textAlign: 'center',
+                          fontFamily: '"Futura PT Medium"',
+                          fontWeight: '500',
+                          color: '#000000',
+                          fontSize: '10px',
+                          textTransform: 'uppercase',
+                          margin: '0 0 18px 0',
+                          padding: 0,
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          lineHeight: 1.35
+                        }}
+                      >
+                        {showPremiumUpgradeAllBenefits ? 'HIDE ALL BENEFITS' : 'VIEW ALL BENEFITS'}
+                      </button>
+
                       {/* Comparison Table */}
                         <div style={{ overflowX: 'auto', marginTop: '44px', marginBottom: '18px', display: 'flex', justifyContent: 'center' }}>
                           <table style={{ width: 'max-content', borderCollapse: 'collapse', fontSize: '9px', transform: 'translateZ(0)' }}>
@@ -1951,29 +1975,6 @@ function MembershipPage() {
                           </table>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setShowPremiumUpgradeAllBenefits((v) => !v)}
-                          aria-expanded={showPremiumUpgradeAllBenefits}
-                          style={{
-                            display: 'block',
-                            width: '100%',
-                            textAlign: 'center',
-                            fontFamily: '"Futura PT Medium"',
-                            fontWeight: '500',
-                            color: '#000000',
-                            fontSize: '10px',
-                            textTransform: 'uppercase',
-                            margin: '0 0 18px 0',
-                            padding: 0,
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            lineHeight: 1.35
-                          }}
-                        >
-                          {showPremiumUpgradeAllBenefits ? 'HIDE ALL BENEFITS' : 'VIEW ALL BENEFITS'}
-                        </button>
                         {showPremiumUpgradeAllBenefits && (
                           <div
                             style={{
