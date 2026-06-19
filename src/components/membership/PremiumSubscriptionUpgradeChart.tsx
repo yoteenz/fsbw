@@ -25,6 +25,46 @@ export type PremiumSubscriptionUpgradeChartProps = {
   embedded?: boolean;
 };
 
+const PREMIUM_UPGRADE_BENEFIT_TIER_LABEL_STYLE: CSSProperties = {
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '18px',
+  color: '#EB1C24',
+  margin: '0 0 6px 0',
+  textTransform: 'lowercase',
+  textAlign: 'left',
+  fontWeight: 400,
+  lineHeight: 1.1,
+};
+
+const PREMIUM_UPGRADE_ROSE_BENEFIT_ROW_STYLE: CSSProperties = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '8px',
+  margin: '0 0 4px 0',
+};
+
+const PREMIUM_UPGRADE_ROSE_BENEFIT_TEXT_STYLE: CSSProperties = {
+  margin: 0,
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  textTransform: 'uppercase',
+  lineHeight: 1.5,
+};
+
+function PremiumUpgradeRoseBenefit({ children }: { children: string }) {
+  return (
+    <div style={PREMIUM_UPGRADE_ROSE_BENEFIT_ROW_STYLE}>
+      <img
+        src="/assets/rose-alert.svg"
+        alt=""
+        style={{ width: '12px', height: '12px', marginTop: '2px', flexShrink: 0 }}
+      />
+      <p style={PREMIUM_UPGRADE_ROSE_BENEFIT_TEXT_STYLE}>{children}</p>
+    </div>
+  );
+}
+
 export default function PremiumSubscriptionUpgradeChart({
   onClose,
   hasPremiumSubscription,
@@ -575,40 +615,20 @@ export default function PremiumSubscriptionUpgradeChart({
         >
           {(['3months', '6months', '12months'] as const).map((tierKey) => (
             <div key={tierKey} style={{ marginBottom: '14px' }}>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '10px',
-                  color: '#000000',
-                  margin: '0 0 6px 0',
-                  textTransform: 'uppercase',
-                  textAlign: 'center',
-                  fontWeight: '500'
-                }}
-              >
+              <p style={PREMIUM_UPGRADE_BENEFIT_TIER_LABEL_STYLE}>
                 {tierKey === '3months'
-                  ? '3 MONTHS PREMIUM'
+                  ? '3 months premium'
                   : tierKey === '6months'
-                    ? '6 MONTHS PREMIUM'
-                    : '12 MONTHS PREMIUM'}
+                    ? '6 months premium'
+                    : '12 months premium'}
               </p>
-              <ul
-                style={{
-                  margin: 0,
-                  paddingLeft: '20px',
-                  fontFamily: '"Futura PT Book"',
-                  fontSize: '9px',
-                  color: '#000000',
-                  textTransform: 'uppercase',
-                  lineHeight: 1.4
-                }}
-              >
+              <div>
                 {PREMIUM_BENEFITS_BY_TIER[tierKey].map((b) => (
-                  <li key={b} style={{ marginBottom: '3px' }}>
+                  <PremiumUpgradeRoseBenefit key={b}>
                     {b}
-                  </li>
+                  </PremiumUpgradeRoseBenefit>
                 ))}
-              </ul>
+              </div>
             </div>
           ))}
         </div>

@@ -29778,3 +29778,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Moved the entire toggle button and its expanded all-benefits list so the chart order is now: premium image, comparison table, **VIEW/HIDE ALL BENEFITS**, expanded benefits when open, then **TOTAL DUE TODAY**. Reduced the comparison table bottom margin from **38px** to **18px** so the relocated toggle sits closer to the chart.
 - **Changes:** Updated both **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline premium chart in **`src/pages/account/membership/page.tsx`**. Verified source order and verified with **`npm run build`**.
 - **Conventions:** Premium subscription upgrade charts should render **VIEW ALL BENEFITS / HIDE ALL BENEFITS** below the comparison table and before **TOTAL DUE TODAY**.
+
+---
+
+## 2026-06-19 — Premium chart expanded benefit list restyled
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide content, rose bullets, Bohemy/header typography, threshold typography, and close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup; Settings row rhythm; Reviews subtitle styling; and premium subscription chart toggle placement.
+- **Topics covered:** The latest request asked for the expanded **VIEW ALL BENEFITS** section in the premium subscription upgrade chart to show **3/6/12 months premium** headings left-aligned, red, lowercase Bohemy, and to use rose icons for the benefit bullets.
+- **Decisions / outcomes:** Restyled the expanded all-benefits tier labels as left-aligned **18px** red lowercase Bohemy (`3 months premium`, `6 months premium`, `12 months premium`) and replaced default `<ul>/<li>` bullets with rose-icon benefit rows.
+- **Changes:** Updated both the reusable **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline Account -> Rewards premium chart in **`src/pages/account/membership/page.tsx`**. Added a local rose-row helper to the reusable component; the inline chart reuses the existing **`TierRoseBenefit`** helper. Verified with **`npm run build`**.
+- **Conventions:** In premium subscription upgrade chart expanded benefits, tier labels should be red lowercase Bohemy and left aligned, and benefit items should use rose-icon rows rather than browser bullets.
