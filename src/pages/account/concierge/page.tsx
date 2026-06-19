@@ -70,11 +70,10 @@ const pulsateStyle = `
 `;
 
 const SLAY_CHALLENGE_INTRO_BULLETS = [
-  'CHOOSE YOUR PREFERRED REWARD FOR EACH TIER BEFORE THE NEXT 6 MONTH CHALLENGE CYCLE BEGINS.',
-  'COMPLETE QUALIFYING ACTIVITIES THROUGHOUT THE CYCLE TO UNLOCK THEM.',
-  'PROGRESS THROUGH EACH TIER IN ORDER, WITH NEW REWARDS BECOMING AVAILABLE AS YOU ADVANCE.',
-  'ONCE A CYCLE BEGINS, SELECTIONS ARE LOCKED UNTIL THE NEXT REWARD WINDOW OPENS.',
-  'NEW SELECTIONS CAN BE MADE DURING THE FINAL 3 DAYS OF EACH ACTIVE CYCLE FOR THE FOLLOWING CHALLENGE PERIOD.',
+  'CHOOSE YOUR REWARD FOR THE CURRENT TIER ONLY.',
+  'COMPLETE QUALIFYING ACTIVITIES TO UNLOCK THE NEXT TIER.',
+  'TIER 2, TIER 3 + TIER 4 REWARD CHOICES APPEAR AFTER YOU COMPLETE THE TIER BEFORE THEM.',
+  'ONCE A TIER REWARD IS SELECTED, IT STAYS LOCKED UNTIL THAT TIER IS COMPLETED.',
 ];
 
 type SlayChallengeGuideTier = {
@@ -105,7 +104,7 @@ const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
     rewardHeading: 'TIER 1 REWARD SELECTION',
     rewardNote: '5 OPTIONS, ONLY RANDOMLY POPULATE 2 SELECTION OPTIONS PER CYCLE.',
     rewards: [
-      '200 LOYALTY POINTS',
+      '600 LOYALTY POINTS',
       '1X FLEXIBLE CAP VOUCHER',
       'MYSTERY REWARD',
       'FREE SHIPPING CREDIT',
@@ -233,7 +232,10 @@ function SlayChallengeBohemySubhead({ children }: { children: string }) {
   );
 }
 
-function SlayChallengeGuide() {
+function SlayChallengeGuide({ currentTierIndex }: { currentTierIndex: number }) {
+  const safeTierIndex = Math.min(Math.max(currentTierIndex, 0), SLAY_CHALLENGE_TIERS.length - 1);
+  const tier = SLAY_CHALLENGE_TIERS[safeTierIndex];
+
   return (
     <div style={{ textAlign: 'left' }}>
       <p
@@ -248,7 +250,7 @@ function SlayChallengeGuide() {
           textAlign: 'left',
         }}
       >
-        COMPLETE CHALLENGES. UNLOCK REWARDS. CUSTOMIZE YOUR EXPERIENCE.
+        COMPLETE CHALLENGES. UNLOCK REWARDS ONE TIER AT A TIME.
       </p>
 
       <div style={{ marginBottom: '14px' }}>
@@ -269,7 +271,7 @@ function SlayChallengeGuide() {
           textAlign: 'left',
         }}
       >
-        CHOOSE YOUR REWARDS
+        CURRENT TIER
       </p>
       <p
         style={{
@@ -282,112 +284,125 @@ function SlayChallengeGuide() {
           textAlign: 'left',
         }}
       >
-        COMPLETE EACH MILESTONE TO UNLOCK YOUR SELECTED REWARD DURING THE UPCOMING CHALLENGE CYCLE.
+        ONLY THIS TIER IS SHOWN NOW. THE NEXT TIER APPEARS AFTER THIS ONE IS COMPLETED.
       </p>
 
-      {SLAY_CHALLENGE_TIERS.map((tier) => (
-        <div key={tier.title} style={{ marginBottom: '16px' }}>
-          <p
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              color: tier.title.includes('TIER 1')
-                ? '#808080'
-                : tier.title.includes('TIER 2')
-                  ? '#EB1C24'
-                  : '#000000',
-              fontSize: '11px',
-              margin: '0 0 4px 0',
-              lineHeight: 1.3,
-              textTransform: 'uppercase',
-              fontWeight: 500,
-              textAlign: 'left',
-            }}
-          >
-            {tier.title}
-          </p>
-          {tier.description && (
-            <p
-              style={{
-                fontFamily: '"Futura PT Book"',
-                color: '#000000',
-                fontSize: '10px',
-                margin: '0 0 4px 0',
-                lineHeight: 1.45,
-                textTransform: 'uppercase',
-                textAlign: 'left',
-              }}
-            >
-              {tier.description}
-            </p>
-          )}
-          <SlayChallengeBohemySubhead>complete the following</SlayChallengeBohemySubhead>
+      <div style={{ marginBottom: '16px' }}>
+        <p
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: tier.title.includes('TIER 1')
+              ? '#808080'
+              : tier.title.includes('TIER 2')
+                ? '#EB1C24'
+                : '#000000',
+            fontSize: '11px',
+            margin: '0 0 4px 0',
+            lineHeight: 1.3,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            textAlign: 'left',
+          }}
+        >
+          {tier.title}
+        </p>
+        {tier.description && (
           <p
             style={{
               fontFamily: '"Futura PT Book"',
-              color: '#808080',
-              fontSize: '9px',
-              margin: '0 0 6px 0',
-              lineHeight: 1.4,
-              textTransform: 'uppercase',
-              textAlign: 'left',
-            }}
-          >
-            {tier.requirement}
-          </p>
-          <div style={{ marginBottom: '10px' }}>
-            {tier.tasks.map((task) => (
-              <SlayChallengeRoseBullet key={`${tier.title}-${task}`}>{task}</SlayChallengeRoseBullet>
-            ))}
-          </div>
-
-          <SlayChallengeBohemySubhead>reward selection</SlayChallengeBohemySubhead>
-          <p
-            style={{
-              fontFamily: '"Futura PT Medium"',
               color: '#000000',
               fontSize: '10px',
-              margin: '0 0 2px 0',
-              lineHeight: 1.35,
+              margin: '0 0 4px 0',
+              lineHeight: 1.45,
               textTransform: 'uppercase',
-              fontWeight: 500,
               textAlign: 'left',
             }}
           >
-            {tier.rewardHeading}
+            {tier.description}
           </p>
+        )}
+        <SlayChallengeBohemySubhead>complete the following</SlayChallengeBohemySubhead>
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            color: '#808080',
+            fontSize: '9px',
+            margin: '0 0 6px 0',
+            lineHeight: 1.4,
+            textTransform: 'uppercase',
+            textAlign: 'left',
+          }}
+        >
+          {tier.requirement}
+        </p>
+        <div style={{ marginBottom: '10px' }}>
+          {tier.tasks.map((task) => (
+            <SlayChallengeRoseBullet key={`${tier.title}-${task}`}>{task}</SlayChallengeRoseBullet>
+          ))}
+        </div>
+
+        <SlayChallengeBohemySubhead>reward selection</SlayChallengeBohemySubhead>
+        <p
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            color: '#000000',
+            fontSize: '10px',
+            margin: '0 0 2px 0',
+            lineHeight: 1.35,
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            textAlign: 'left',
+          }}
+        >
+          {tier.rewardHeading}
+        </p>
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            color: '#808080',
+            fontSize: '9px',
+            margin: '0 0 6px 0',
+            lineHeight: 1.4,
+            textTransform: 'uppercase',
+            textAlign: 'left',
+          }}
+        >
+          {tier.rewardNote}
+        </p>
+        {tier.rewards.map((reward) => (
+          <SlayChallengeRoseBullet key={`${tier.title}-${reward}`}>{reward}</SlayChallengeRoseBullet>
+        ))}
+        {tier.finePrint && (
           <p
             style={{
               fontFamily: '"Futura PT Book"',
               color: '#808080',
               fontSize: '9px',
-              margin: '0 0 6px 0',
+              margin: '4px 0 0 20px',
               lineHeight: 1.4,
               textTransform: 'uppercase',
               textAlign: 'left',
             }}
           >
-            {tier.rewardNote}
+            {tier.finePrint}
           </p>
-          {tier.rewards.map((reward) => (
-            <SlayChallengeRoseBullet key={`${tier.title}-${reward}`}>{reward}</SlayChallengeRoseBullet>
-          ))}
-          {tier.finePrint && (
-            <p
-              style={{
-                fontFamily: '"Futura PT Book"',
-                color: '#808080',
-                fontSize: '9px',
-                margin: '4px 0 0 20px',
-                lineHeight: 1.4,
-                textTransform: 'uppercase',
-                textAlign: 'left',
-              }}
-            >
-              {tier.finePrint}
-            </p>
-          )}
-        </div>
-      ))}
+        )}
+        {safeTierIndex < SLAY_CHALLENGE_TIERS.length - 1 && (
+          <p
+            style={{
+              fontFamily: '"Futura PT Book"',
+              color: '#808080',
+              fontSize: '9px',
+              margin: '8px 0 0 0',
+              lineHeight: 1.4,
+              textTransform: 'uppercase',
+              textAlign: 'left',
+            }}
+          >
+            COMPLETE THIS TIER TO UNLOCK {SLAY_CHALLENGE_TIERS[safeTierIndex + 1].title}.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -815,6 +830,21 @@ function ConciergePage() {
   const slayChallengeInSelectionWindow = isInSlayChallengeSelectionWindow();
   const slayChallengeHasSelectedForNext = slayChallengeSelectedCycle === slayChallengeNextCycleLabel;
   const slayChallengeActive = slayChallengeSelectedCycle === slayChallengeCurrentCycleLabel;
+  const slayChallengeTier1Complete = slayChallengeTier1Progress.purchase && slayChallengeTier1Progress.review && slayChallengeTier1Progress.post;
+  const slayChallengeTier2Complete = slayChallengeTier2Progress.purchase && slayChallengeTier2Progress.review && slayChallengeTier2Progress.socialTag;
+  const storedSlayChallengeTierIndex = (() => {
+    try {
+      const raw = localStorage.getItem('slayChallengeCurrentTierIndex');
+      const parsed = raw ? Number.parseInt(raw, 10) : 0;
+      return Number.isFinite(parsed) ? Math.min(Math.max(parsed, 0), SLAY_CHALLENGE_TIERS.length - 1) : 0;
+    } catch (_) {
+      return 0;
+    }
+  })();
+  const progressSlayChallengeTierIndex = slayChallengeTier1Complete
+    ? (slayChallengeTier2Complete ? 2 : 1)
+    : 0;
+  const slayChallengeCurrentTierIndex = Math.max(storedSlayChallengeTierIndex, progressSlayChallengeTierIndex);
 
   // Ayoteenz admin: disable time limit and force stage for testing (selection | selected_waiting | active | closed)
   const SLAY_CHALLENGE_ADMIN_STAGE_KEY = 'slayChallengeAdminStage';
@@ -5551,7 +5581,7 @@ function ConciergePage() {
                       </select>
                     </div>
                   )}
-                  <SlayChallengeGuide />
+                  <SlayChallengeGuide currentTierIndex={slayChallengeCurrentTierIndex} />
                   {effectiveInSelectionWindow && !effectiveHasSelectedForNext && (
                     <p style={{ fontFamily: '"Futura PT Book"', color: '#808080', fontSize: '10px', margin: '2px 0 12px 0', textTransform: 'uppercase', textAlign: 'left', lineHeight: 1.45 }}>
                       REWARD OPTIONS WILL RANDOMLY POPULATE FOR THE NEXT CYCLE ({slayChallengeNextCycleLabel}).
