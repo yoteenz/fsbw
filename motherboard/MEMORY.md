@@ -29518,3 +29518,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept the existing modal structure and typography pattern, but expanded the content into structured paragraphs and bullet lists so each tier and section is readable in the scrollable card. Used the supplied wording, including reward terms and premium member advantage language.
 - **Changes:** **`src/pages/account/membership/page.tsx`** now renders the new welcome benefits intro; Silver, Red, and Black tier status sections with bullet lists; continuing tier privileges with All Tiers / Red Tier / Black Tier bullet groups; status progression thresholds; reward terms; and premium member advantage notes. Verified with **`npm run build`**.
 - **Conventions:** The Tier Benefits / How It Works toggle is the client-facing place for detailed tier status rules and reward terms; preserve the modal’s scrollable card behavior when expanding this copy.
+
+---
+
+## 2026-06-19 — Membership status card tier descriptions added
+
+- **Context:** In this chat, after the Tier Benefits toggle copy replacement, the user asked to add tier-specific text lines above the **BENEFITS INCLUDE** section on the **Membership Status** card of **Account → Rewards** for Silver, Red, and Black.
+- **Topics covered:** Located the Membership Status card in **`src/pages/account/membership/page.tsx`**, where `displayTier` already controls the Silver / Red / Black / Pending benefits summary.
+- **Decisions / outcomes:** Added a tier description paragraph only when the current display tier is **SILVER**, **RED**, or **BLACK**; left **PENDING** users on the existing **REACH SILVER TO UNLOCK TIER BENEFITS!** copy.
+- **Changes:** **`src/pages/account/membership/page.tsx`** now shows the supplied Silver, Red, and Black status description lines immediately above the existing **BENEFITS INCLUDE** summary. Verified with **`npm run build`**.
+- **Conventions:** Keep Membership Status card tier description copy colocated with the existing `displayTier` benefits summary so admin tier toggles and user tier state stay visually aligned.

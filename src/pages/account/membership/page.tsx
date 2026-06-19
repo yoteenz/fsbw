@@ -2430,12 +2430,30 @@ fontFamily: '"Futura PT Book"',
                                       })()}
                                     </p>
                                   </div>
+                                  {displayTier !== 'PENDING' && (
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#000000',
+                                        fontSize: '10px',
+                                        margin: '16px 0 6px 0',
+                                        textTransform: 'uppercase',
+                                        lineHeight: 1.35
+                                      }}
+                                    >
+                                      {displayTier === 'BLACK'
+                                        ? 'OUR HIGHEST STATUS LEVEL, DESIGNED FOR CLIENTS WHO CONSISTENTLY INVEST IN THE FRONTAL SLAYER EXPERIENCE.'
+                                        : displayTier === 'RED'
+                                          ? 'UNLOCK ENHANCED REWARDS, EXCLUSIVE VOUCHERS AND ACCELERATED EARNING POWER RESERVED FOR OUR MOST ENGAGED MEMBERS.'
+                                          : 'YOUR FOUNDATION FOR EARNING EXCLUSIVE REWARDS, MEMBER SAVINGS, DIGITAL CASH REDEMPTIONS AND FUTURE STATUS UPGRADES.'}
+                                    </p>
+                                  )}
                                   <p
                                     style={{
                                       fontFamily: '"Futura PT Book"',
                                       color: '#000000',
                                       fontSize: '10px',
-                                      margin: '16px 0 4px 0',
+                                      margin: displayTier === 'PENDING' ? '16px 0 4px 0' : '0 0 4px 0',
                                       textTransform: 'uppercase'
                                     }}
                                   >
