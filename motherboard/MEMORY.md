@@ -29858,3 +29858,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Confirmed the existing tier-progress calculation already uses current-period order totals/purchase-earned points, not affiliate/social/content points. Updated TBG status progression copy so it no longer says tier status is based on total loyalty points. Updated local comments around tier thresholds/progress to explicitly state that purchase-earned points alone count toward status, while total loyalty balance may include purchase, affiliate, social, content, and other earning methods.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. TBG now says status is based only on eligible-purchase points during each 6-month qualification period, and total loyalty points may include all earning methods. Verified with **`npm run build`**.
 - **Conventions:** Distinguish **purchase-earned tier points** from **total loyalty points**: tier status/progression uses purchase-earned points only; total loyalty points may include purchases plus all other earning opportunities.
+
+---
+
+## 2026-06-19 — Tier Benefits Guide premium advantage header renamed
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces, including Tier Benefits Guide copy/typography/card height, purchase-only tier status clarification, premium upgrade chart layout/styling, compact Points History scrolling, and Account Profile Concierge gating.
+- **Topics covered:** The latest request asked to change the Tier Benefits Guide header **premium member advantage** to **premium advantage**.
+- **Decisions / outcomes:** Renamed only the displayed Bohemy header text; the supporting premium-member paragraph below it remains unchanged.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`**. Verified with **`npm run build`**.
+- **Conventions:** In the TBG toggle, the section header should read **premium advantage**.
