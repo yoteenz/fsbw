@@ -2,13 +2,13 @@
 
 export type PsaEngagementTierKey = '3months' | '6months' | '12months';
 
-export const PSA_MEMBERSHIP_TITLE = 'PERSONAL SLAY ASSISTANT (PSA)';
+export const PSA_MEMBERSHIP_TITLE = 'PERSONAL SLAY ASSISTANT';
 
 export const PSA_MEMBERSHIP_SUBTITLE =
   'YOUR AI HAIR CONCIERGE — PRODUCT MATCHING, BUILD-A-WIG GUIDANCE, POLICIES, LOYALTY + IN-APP NAV';
 
 /** Short label for tier benefit bullet lists (generic). */
-export const PSA_MEMBERSHIP_BENEFIT_LABEL = 'PERSONAL SLAY ASSISTANT (PSA)';
+export const PSA_MEMBERSHIP_BENEFIT_LABEL = 'PERSONAL SLAY ASSISTANT';
 
 /** Tier-based chat limits — keep in sync with `api/_lib/psaEngagementLimits.ts`. */
 export const PSA_ENGAGEMENT_BY_TIER: Record<
@@ -25,7 +25,7 @@ export const PSA_ENGAGEMENT_LIMITS_SUMMARY =
 
 export function psaBenefitLabelForTier(tierKey: PsaEngagementTierKey): string {
   const t = PSA_ENGAGEMENT_BY_TIER[tierKey];
-  return `PERSONAL SLAY ASSISTANT (PSA) — ${t.monthlyLimit} MSGS/MO (${t.dailyLimit}/DAY)`;
+  return `PERSONAL SLAY ASSISTANT — ${t.monthlyLimit} MSGS/MO (${t.dailyLimit}/DAY)`;
 }
 
 export function formatPsaUsageRemaining(
