@@ -29528,3 +29528,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Added a tier description paragraph only when the current display tier is **SILVER**, **RED**, or **BLACK**; left **PENDING** users on the existing **REACH SILVER TO UNLOCK TIER BENEFITS!** copy.
 - **Changes:** **`src/pages/account/membership/page.tsx`** now shows the supplied Silver, Red, and Black status description lines immediately above the existing **BENEFITS INCLUDE** summary. Verified with **`npm run build`**.
 - **Conventions:** Keep Membership Status card tier description copy colocated with the existing `displayTier` benefits summary so admin tier toggles and user tier state stay visually aligned.
+
+---
+
+## 2026-06-19 — Tier benefits modal Bohemy headers + rose benefit icons
+
+- **Context:** In this chat, after replacing the Tier Benefits & How It Works toggle copy and adding Membership Status card tier descriptions, the user asked to update the intro sentence, change **SILVER / RED / BLACK TIER STATUS** headers to lowercase Bohemy (Silver gray, Red red, Black black) with all three increased by 4px, and add rose icons to each listed benefit below the tier sections.
+- **Topics covered:** Updated the Tier Benefits modal in **`src/pages/account/membership/page.tsx`**, added local helper styles for the tier status headers and rose-icon benefit rows, and reused the existing **`/assets/rose-alert.svg`** marker.
+- **Decisions / outcomes:** The tier status headers now use lowercase Bohemy at **14px** (4px larger than the prior 10px tier headers) with tier-specific colors. The Silver/Red/Black benefit lists now use rose icon rows instead of browser bullet lists. The intro sentence now says **new tier** and **each 6 month cycle** per the user’s wording.
+- **Changes:** **`src/pages/account/membership/page.tsx`** now defines **`TIER_STATUS_HEADER_STYLE`**, **`TierRoseBenefit`**, and rose-row text styles; updates the welcome-benefits intro text; changes the three tier status headings to lowercase Bohemy; and renders every listed benefit under those tier sections with **`/assets/rose-alert.svg`**. Verified with **`npm run build`**.
+- **Conventions:** In the Tier Benefits modal, Silver/Red/Black tier status headers should use lowercase Bohemy tier-color styling, and tier benefit lists should use rose icon rows rather than plain list bullets.
