@@ -5,7 +5,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import { clearAppAuth } from '../../../utils/adminAuth';
+import { clearAppAuth, FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 import {
   findGiftPromoByNormalizedCode,
   giftPromoRedeemBlockReason,
@@ -37,6 +37,7 @@ function toCanonicalBarcode(value: string): string {
 }
 
 type DigitalCashHistoryEntry = { date: string; transaction: string; amount: number };
+const ADMIN_TEST_DIGITAL_CASH_MIN = 80;
 
 function pickPreferredDigitalCashHistory(
   currentHistory: unknown,
@@ -55,6 +56,15 @@ function pickPreferredDigitalCashBalance(
   const current = typeof currentBalance === 'number' ? currentBalance : 0;
   const registered = typeof registeredBalance === 'number' ? registeredBalance : 0;
   return Math.max(current, registered);
+}
+
+function shouldApplyAdminTestDigitalCash(user: Record<string, unknown> | null | undefined): boolean {
+  if (!user || !isAyoteenzAdminAccount({ email: String(user.email || '') })) return false;
+  try {
+    return localStorage.getItem(FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY) !== 'true';
+  } catch {
+    return true;
+  }
 }
 
 function readStoredSignedInUser(): Record<string, unknown> | null {
@@ -88,6 +98,12 @@ function readStoredSignedInUser(): Record<string, unknown> | null {
         registeredUser.digitalCashHistory
       ),
     };
+    if (shouldApplyAdminTestDigitalCash(merged)) {
+      merged.giftCardBalance = Math.max(
+        ADMIN_TEST_DIGITAL_CASH_MIN,
+        typeof merged.giftCardBalance === 'number' ? merged.giftCardBalance : 0
+      );
+    }
 
     const needsCurrentRepair =
       currentUser.giftCardBalance !== merged.giftCardBalance ||
