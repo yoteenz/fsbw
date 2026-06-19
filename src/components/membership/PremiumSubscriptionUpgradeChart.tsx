@@ -66,11 +66,26 @@ export default function PremiumSubscriptionUpgradeChart({
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          color: '#EB1C24',
+          lineHeight: 0
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false" style={{ display: 'block' }}>
-          <path d="M3 3L13 13M13 3L3 13" stroke="#EB1C24" strokeWidth="2" strokeLinecap="round" />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          style={{ display: 'block' }}
+        >
+          <path
+            d="M6.40038 18.3074L5.69238 17.5994L11.2924 11.9994L5.69238 6.39941L6.40038 5.69141L12.0004 11.2914L17.6004 5.69141L18.3084 6.39941L12.7084 11.9994L18.3084 17.5994L17.6004 18.3074L12.0004 12.7074L6.40038 18.3074Z"
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth="0.1"
+          />
         </svg>
       </button>
     </div>

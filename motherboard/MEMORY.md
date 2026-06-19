@@ -29758,3 +29758,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Applied local style overrides only to those three TBG lines, preserving the rest of the newly added Bohemy section headers and rose-icon bullet rows.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** so **ALL TIERS** renders uppercase gray Futura PT Medium, the Silver point threshold line renders gray Futura PT Medium, and the Red point threshold line renders brand-red Futura PT Book. Verified with **`npm run build`**.
 - **Conventions:** In the Tier Benefits Guide, **ALL TIERS** is an exception to the surrounding Bohemy section labels and should appear in gray Futura PT Medium; Status Progression threshold lines can use tier-specific typography/color overrides.
+
+---
+
+## 2026-06-19 — Premium subscription close icon matched to Tier Benefits Guide
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide content, rose bullets, header typography, threshold typography, and close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup; Settings row rhythm; and Reviews subtitle styling.
+- **Topics covered:** The latest request asked for the premium membership subscription upgrade toggle **x** close icon to use the same icon as the Explore All Benefits / Tier Benefits Guide toggle close icon.
+- **Decisions / outcomes:** Replaced the premium subscription chart’s simple stroked 16x16 close mark with the same 24x24 `currentColor` SVG path used by the Tier Benefits Guide close button, while keeping it rendered at 16px and brand red.
+- **Changes:** Updated **`src/components/membership/PremiumSubscriptionUpgradeChart.tsx`** and the inline premium chart header in **`src/pages/account/membership/page.tsx`**. Verified both premium chart close buttons now use the same `viewBox="0 0 24 24"` / filled `currentColor` path as the Tier Benefits Guide close icon, and verified with **`npm run build`**.
+- **Conventions:** Premium subscription upgrade chart close icons should match the Tier Benefits Guide close icon SVG exactly, using button `color: '#EB1C24'` and the shared `currentColor` path.
