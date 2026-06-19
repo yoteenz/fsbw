@@ -29568,3 +29568,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Consolidated the duplicated Profile and Alerts digital-cash popup markup into one shared component. Moved the admin mock transaction-row display logic into a shared utility so both entry points use the same row injection, timestamp ordering, amount formatting, and empty-state behavior. The mock admin row remains display-only and is not persisted into actual `digitalCashHistory`.
 - **Changes:** Added **`src/components/account/DigitalCashHistoryPopup.tsx`** and **`src/utils/digitalCashHistoryDisplay.ts`**. Updated **`src/pages/account/page.tsx`** to render the shared component and pass its existing founder/mock fallback history. Updated **`src/pages/account/notifications/page.tsx`** so the alert **VIEW TRANSACTIONS** action opens the same shared component, while retaining the shared mock alert timestamp helper for newest-first alert ordering. Verified with **`npm run build`**.
 - **Conventions:** Digital Cash History should now be changed in the shared popup/component path only; do not reintroduce separate inline popup copies on Profile or Alerts. Admin mock digital-cash display rows should be injected through the shared display utility, not persisted as real transaction data.
+
+---
+
+## 2026-06-19 — Explore All Benefits link changed to gray with spacing
+
+- **Context:** In this chat, the user has been iterating on Account / Rewards / Brand Member UI and copy: Add Funds balance copy/nav, rewards disclaimer removals, UPR perk copy/styling, Brand Member copy changes, IIYM rose bullets and PSA label cleanup, Tier Benefits modal copy/styling, Membership Status tier descriptions/perks, alert sorting, and shared Digital Cash History popup behavior.
+- **Topics covered:** The latest request asked to change the red **EXPLORE ALL BENEFITS** text to gray and add **4px** of spacing above that text.
+- **Decisions / outcomes:** Kept the existing button behavior and typography, changing only its visual color and top spacing.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** so the **EXPLORE ALL BENEFITS** button uses gray **`#808080`** instead of brand red and has **`margin: 4px 0 0 0`**. Verified with **`npm run build`**.
+- **Conventions:** In the Membership Status card, **EXPLORE ALL BENEFITS** should be a subdued gray Futura PT Medium link with 4px top spacing unless the product owner asks to restore red emphasis.
