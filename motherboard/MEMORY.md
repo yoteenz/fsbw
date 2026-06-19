@@ -29498,3 +29498,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Kept PSA usage-limit constants and logic intact for places that still need them, but changed the included-benefit label to the generic **`PERSONAL SLAY ASSISTANT (PSA)`** display text.
 - **Changes:** **`src/constants/premiumBenefitsByTier.ts`** now imports **`PSA_MEMBERSHIP_BENEFIT_LABEL`** and uses it for 3-month, 6-month, and 12-month premium benefit lists instead of **`psaBenefitLabelForTier(...)`**. Verified with **`npm run build`**.
 - **Conventions:** In IIYM / included-benefit lists, use concise benefit names; do not expose PSA message quotas unless the user explicitly asks for that detail in a plan-comparison or usage context.
+
+---
+
+## 2026-06-19 — UPR perk headers use lowercase Bohemy on both sections
+
+- **Context:** In this chat, after Brand Member premium perks were changed to the default shared list styling, the user clarified that **both UPR sections** should have black header/perk-title text in lowercase **Bohemy**, not Covered By Your Grace.
+- **Topics covered:** Checked **`PremiumRewardsMarketingList`** usage and confirmed it is shared by the Account → Rewards **UNLOCK PREMIUM REWARDS** section and the Brand → Member premium perks section.
+- **Decisions / outcomes:** Made lowercase black Bohemy the shared/default title style for premium reward perk items so both UPR surfaces match. Removed the old optional branch that rendered item titles in Covered By Your Grace.
+- **Changes:** **`src/components/membership/PremiumRewardsMarketingList.tsx`** now renders every perk title with **Bohemy**, **20px**, black, lowercase; descriptions remain gray Futura PT Medium. Verified with **`npm run build`**.
+- **Conventions:** UPR perk item headers on both Account → Rewards and Brand → Member should use lowercase black Bohemy; avoid reverting them to Covered By Your Grace.
