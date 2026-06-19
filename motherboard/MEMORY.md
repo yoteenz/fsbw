@@ -29618,3 +29618,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Reordered the shared premium rewards marketing list data rather than changing either page separately, so Account → Rewards UPR and Brand → Member premium perks stay consistent.
 - **Changes:** Updated **`src/constants/brandMemberPremiumRewards.ts`** so the **`points`** item now follows **`anniversary-rewards`** and is the final item in **`BRAND_UNLOCK_PREMIUM_REWARD_ITEMS`**. Verified with **`npm run build`**.
 - **Conventions:** In UPR / shared premium rewards marketing lists, **DOUBLE YOUR POINTS** should appear after **ANNIVERSARY REWARDS** as the last perk.
+
+---
+
+## 2026-06-19 — Explore All Benefits spacing made non-collapsing
+
+- **Context:** In this chat, the user continued Account / Rewards / Brand Member refinements: Add Funds copy/nav, UPR and Brand Member premium perk copy/styling, IIYM rose bullets and PSA label cleanup, Membership Status tier copy/rose lists, Tier Benefits Guide styling, alert sorting, shared Digital Cash History popup behavior, Personal Slay Assistant label cleanup, IIYM 12-month-only double points, and moving UPR **DOUBLE YOUR POINTS** to the bottom.
+- **Topics covered:** The latest request noted that the previously added **4px spacing above EXPLORE ALL BENEFITS** did not appear and asked whether something was overriding the spacing.
+- **Decisions / outcomes:** The prior implementation placed the spacing on the button’s top margin inside a plain wrapper, which can be visually swallowed/collapsed in this layout. Moved the spacing to the wrapper as padding so it creates a reliable internal 4px gap above the text.
+- **Changes:** Updated **`src/pages/account/membership/page.tsx`** so the **EXPLORE ALL BENEFITS** wrapper uses **`paddingTop: '4px'`** and the button itself uses **`margin: 0`**. Kept the gray text and the existing **22px** below-link wrapper spacing. Verified with **`npm run build`**.
+- **Conventions:** For tiny vertical gaps around Account Rewards inline buttons/links, prefer wrapper padding over child top margin when the parent is an otherwise plain div, to avoid margin-collapse/visibility issues.
