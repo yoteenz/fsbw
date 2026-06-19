@@ -29208,3 +29208,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Changes:** **`brandReviewsCopy.ts`** — **`bohemy`** + **`body`** blocks. **`BrandReviewsEmptyState.tsx`** — **`bohemy`** variant (17px gray Bohemy, no uppercase). Pushed **`master`** + **`preview/mobile`**.
 
 **Follow-up:** User asked to **keep** red closing line — restored **`UNTIL THEN, YOUR REVIEW COULD BECOME THE ONE THAT STARTS IT ALL.`** (**`accent`**). Bohemy opener **17px → 21px** (+4px). Opener copy → **the slay community is growing...**
+
+---
+
+## 2026-06-19 — Brand terms + reviews hero images
+
+- **Context:** User asked to update the hero image on **`/brand/terms`** to **`live-preview/3D Stock/IMG_3037.png`** and the hero image on **`/brand/reviews`** to **`live-preview/3D Stock/IMG_3036.png`**.
+- **Topics covered:** Checked the brand page structure and confirmed **terms** and **reviews** were the two remaining brand bodies not yet using the shared **`PageHeroImage`** pattern that About / Member / FAQ / Contact already use. Verified the existing brand hero asset constant convention before editing.
+- **Decisions / outcomes:** Implemented both updates with the existing shared hero-image layout so spacing stays consistent with the other brand pages. No copy or layout changes beyond adding the new hero artwork.
+- **Changes:** Added **`src/constants/brandTermsAssets.ts`** and **`src/constants/brandReviewsAssets.ts`** with the supplied Supabase image URLs. Updated **`src/components/brand/BrandTermsBody.tsx`** and **`src/components/brand/BrandReviewsEmptyState.tsx`** to render **`PageHeroImage`** above their existing content. Installed project dependencies in the cloud workspace so verification could run, then confirmed **`npm run build`** passed.
+- **Conventions:** Keep using per-page **`src/constants/brand*Assets.ts`** files plus shared **`PageHeroImage`** when adding hero art to brand pages.
