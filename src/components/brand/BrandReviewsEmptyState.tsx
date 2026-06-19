@@ -41,6 +41,18 @@ function blockStyle(variant: BrandReviewsBlockVariant): CSSProperties {
     };
   }
 
+  if (variant === 'bohemy') {
+    return {
+      margin: 0,
+      lineHeight: 1.45,
+      textTransform: 'none',
+      fontFamily: '"Bohemy", cursive',
+      fontSize: '17px',
+      color: BRAND_GRAY,
+      fontWeight: 400,
+    };
+  }
+
   return {
     ...base,
     fontFamily: '"Futura PT Book"',
