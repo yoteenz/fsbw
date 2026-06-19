@@ -1123,10 +1123,11 @@ function AccountPage() {
 
   // Helper function to get default card order
   const getDefaultCardOrder = (): Array<{ title: string; subtitle: string; route: string | null }> => {
-    const userMembershipType = userData?.membershipType || membershipType;
-    const isPremium = userMembershipType === 'PREMIUM' || userMembershipType === 'Premium';
-    const showConcierge =
-      isPremium || (isAyoteenzAdminAccount(userData) && !founderViewAsClient);
+    const effectiveSubTier =
+      founderViewAsClient && isAyoteenzAdminAccount(userData)
+        ? userData?.subscriptionTier ?? null
+        : getEffectiveSubscriptionTier(userData);
+    const showConcierge = effectiveSubTier != null;
     const defaultCards: Array<{ title: string; subtitle: string; route: string | null }> = [];
 
     if (showConcierge) {

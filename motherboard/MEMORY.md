@@ -29808,3 +29808,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Restored **all tiers** to the shared lowercase Bohemy Tier Benefits Guide section-header style. Updated the Red and Black threshold rows to explicitly use **Futura PT Medium** / 500; Red keeps brand red and Black keeps the inherited black text color.
 - **Changes:** Updated **`src/pages/account/membership/page.tsx`** only. Verified with **`npm run build`**.
 - **Conventions:** In the Tier Benefits Guide, **all tiers** should be lowercase Bohemy with the other section headers; Status Progression threshold rows for Silver/Red/Black should use Futura PT Medium, with Red in brand red and Silver gray.
+
+---
+
+## 2026-06-19 — Account Profile Concierge card gated to premium subscription
+
+- **Context:** In this chat, the user has continued precise mobile UI/content refinements across Account / Rewards, Brand Member, Settings, Reviews, Alerts, Add Funds, and membership surfaces: Add Funds copy/nav; digital-cash alerts/history; premium rewards and IIYM copy/styling; Tier Benefits Guide copy/typography/rose bullets/close icons; Membership Status descriptions/spacing/progress typography; subscription chart PSA cleanup and expanded benefits styling; Settings row rhythm; Reviews subtitle styling; compact Points History scrolling; and tier threshold typography.
+- **Topics covered:** The latest request said standard rewards members should not see the **CONCIERGE** card on the Account Profile; it should only be visible for premium members.
+- **Decisions / outcomes:** Removed the previous admin/non-client exception that could show **CONCIERGE** for a standard account. The card now renders only when the effective subscription tier is present. Founder **View as Client** uses the stored subscription tier instead of the admin override, matching the profile display pattern.
+- **Changes:** Updated **`src/pages/account/page.tsx`** `getDefaultCardOrder()` so **CONCIERGE** is gated by `getEffectiveSubscriptionTier(userData)` / stored tier for founder view-as-client. Verified with **`npm run build`**.
+- **Conventions:** Account Profile **CONCIERGE** card visibility should follow premium subscription status only; standard rewards members should not see it.
