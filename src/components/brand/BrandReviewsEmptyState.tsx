@@ -58,8 +58,6 @@ export default function BrandReviewsEmptyState() {
         flexDirection: 'column',
         gap: '12px',
         textAlign: 'left',
-        flex: 1,
-        minHeight: 0,
       }}
     >
       {BRAND_REVIEWS_BLOCKS.map((block) => (

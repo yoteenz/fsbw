@@ -24,12 +24,6 @@ import { isMockDataAccount } from '../../utils/adminAuth';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
-/** Max height when brand main card scrolls (contact form, member premium chart). */
-const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
-
-/** Empty Reviews shell fills the viewport like the mobile menu toggle main card. */
-const BRAND_REVIEWS_VIEWPORT_SHELL = 'reviews';
-
 function BrandPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,16 +98,7 @@ function BrandPage() {
   const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
   const cardHeaderTitle = validSlug ? getBrandCardHeaderTitle(slug) : 'MISSION STATEMENT';
 
-  /** Tall content only: cap card height and scroll inside; short pages hug content (no viewport gap). */
-  const brandMainCardScrollable =
-    slug === 'contact' || slug === 'faq' || slug === 'terms' || (slug === 'member' && memberPremium.showPremiumChart);
-
   const hideMemberCardHeader = slug === 'member' && memberPremium.showPremiumChart;
-
-  const brandReviewsViewportShell = slug === BRAND_REVIEWS_VIEWPORT_SHELL;
-
-  /** Lock shell to one viewport when the main card scrolls internally or reviews empty shell fills height. */
-  const brandPageViewportLocked = brandMainCardScrollable || showMobileMenu || brandReviewsViewportShell;
 
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
@@ -166,23 +151,19 @@ function BrandPage() {
   }
 
   return (
-    <MarblePageShell viewportLocked={brandPageViewportLocked}>
+    <MarblePageShell viewportLocked>
         <div
           className="flex flex-col py-5 px-4"
           style={{
             minWidth: '100%',
             maxWidth: 'none',
             position: 'relative',
-            ...(brandPageViewportLocked
-              ? {
-                  flex: 1,
-                  minHeight: 0,
-                  height: '100%',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }
-              : { overflow: 'visible' }),
+            flex: 1,
+            minHeight: 0,
+            height: '100%',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           {/* HEADER */}
@@ -314,35 +295,21 @@ function BrandPage() {
             <>
             <div
               className="flex flex-col gap-4"
-              style={
-                brandPageViewportLocked && !showMobileMenu
-                  ? { flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }
-                  : undefined
-              }
+              style={{
+                flex: 1,
+                minHeight: 0,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
             >
               <div
                 className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
                 style={{
                   borderWidth: '1.3px',
-                  ...(brandMainCardScrollable
-                    ? brandPageViewportLocked
-                      ? {
-                          flex: 1,
-                          minHeight: 0,
-                          overflow: 'hidden',
-                        }
-                      : {
-                          maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
-                          overflow: 'hidden',
-                        }
-                    : brandReviewsViewportShell
-                      ? {
-                          flex: 1,
-                          minHeight: 0,
-                          overflow: 'hidden',
-                          boxSizing: 'border-box',
-                        }
-                      : {}),
+                  flex: 1,
+                  minHeight: 0,
+                  overflow: 'hidden',
                 }}
               >
                 {!hideMemberCardHeader ? (
@@ -363,15 +330,7 @@ function BrandPage() {
                     <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
                   </>
                 ) : null}
-                <div
-                  style={
-                    brandMainCardScrollable
-                      ? { flex: 1, minHeight: 0, overflowY: 'auto' }
-                      : brandReviewsViewportShell
-                        ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }
-                        : undefined
-                  }
-                >
+                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
                   {slug === 'about' ? (
                     <BrandAboutUsBody />
                   ) : slug === 'member' ? (
