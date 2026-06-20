@@ -30247,3 +30247,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User could barely see the acrylic **IMG_3405** ticket-lock watermark on gated tiles (~38% opacity + blur made it disappear).
 - **Decisions / outcomes:** Show watermark **fully** — **95% opacity**, **no blur**, **90% tile / 92% thumb** size, light **drop-shadow** for contrast; tile dim overlay reduced **0.18 → 0.08**. Shared styles exported from **`LoungeTvTileTicketChrome`** (`loungeTvTicketLockWatermarkImageStyle`, `loungeTvBlogThumbLockWatermarkStyle`) for grid tiles + Slay Tips list thumbs. Badges/title stay above (z-index unchanged).
 - **Changes:** `LoungeTvTileTicketChrome.tsx`, `LoungeTvBlogPostView.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — CPO product strategy critique and 12-month roadmap
+
+- **Context:** User asked for a ruthless Chief Product Officer analysis of Frontal Slayer as a venture-backed ecommerce product, specifically reviewing Build-A-Wig, Memberships, PSA, Slay Cam, Rewards, Hairstyle Analysis, Referrals, Checkout, and the full customer journey.
+- **Topics covered:** Loaded motherboard context, cross-checked active product surfaces, and evaluated features by customer value, revenue impact, retention impact, complexity, customer confusion risk, and launch priority.
+- **Decisions / outcomes:** Strategic stance: prioritize the money path above everything else — simple mobile shopping, Build-A-Wig confidence, fit/style analysis tied to purchase, checkout conversion, post-purchase trust, and a focused paid membership. Delay or simplify broad gamification/social surfaces until the core purchase loop is converting reliably. PSA should be concierge/sales support, not a general AI toy. Slay Cam should start as shoppable UGC proof, not a full social network. Rewards should remain narrow and margin-aware.
+- **Changes:** No product code changed. Added this MEMORY entry only.
+- **Conventions:** Future product prioritization should rank features by proximity to purchase, reduction of wig-buying anxiety, margin/repeat-order leverage, and operational complexity. Avoid launching overlapping loyalty, referrals, Slay Cam, Slay Tickets, PSA, and membership mechanics before the customer journey is understandable.
