@@ -1,7 +1,7 @@
-import { isSlayTicketPackCartLine } from './slayTicketPacks';
+import { isSlayTicketPackCartLine, SLAY_TICKET_CART_LINE_NAME } from './slayTicketPacks';
 import { SLAY_TICKET_CART_THUMBNAIL_SRC } from '../constants/slayTicketAssets';
 
-export { isSlayTicketPackCartLine };
+export { isSlayTicketPackCartLine, SLAY_TICKET_CART_LINE_NAME };
 
 export function slayTicketCartThumbnailSrc(): string {
   return SLAY_TICKET_CART_THUMBNAIL_SRC;

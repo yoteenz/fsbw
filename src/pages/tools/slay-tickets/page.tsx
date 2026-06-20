@@ -341,7 +341,7 @@ function SlayTicketsPage() {
         packId: selectedPackId,
       });
       setCartCount(newCartCount);
-      trackActivity('add_to_cart', { source: 'slay_ticket_pdp', productName: selectedPack.label });
+      trackActivity('add_to_cart', { source: 'slay_ticket_pdp', productName: 'SLAY TICKET' });
       trackActivity('cart_navigate', { destination: 'checkout_slay_tickets' });
       navigate('/checkout/slay-tickets');
     } catch (e) {
@@ -480,7 +480,7 @@ function SlayTicketsPage() {
               <span
                 style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
               >
-                SLAY TICKETS
+                SLAY TICKET
               </span>
                 </>
               )}
@@ -718,7 +718,7 @@ function SlayTicketsPage() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                SLAY TICKETS
+                SLAY TICKET
               </p>
 
               {/* DIGITAL ONLY */}

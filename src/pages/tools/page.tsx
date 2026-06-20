@@ -102,7 +102,7 @@ function ToolsPage() {
   const [slayTicketProducts] = useState(() =>
     SLAY_TICKET_PACKS.map((pack) => ({
       id: pack.id,
-      name: 'SLAY TICKETS',
+      name: 'SLAY TICKET',
       price: pack.priceUsd,
     }))
   );

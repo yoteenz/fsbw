@@ -65,6 +65,9 @@ function hairOriginForProductName(productName: string): string {
 
 /** Black title line — same rules as cart dropdown / shopping bag. */
 export function orderStripTitleLine(item: { name?: string; type?: string; category?: string }): string {
+  if (isSlayTicketPackCartLine(item)) {
+    return 'SLAY TICKET';
+  }
   if (item.type === 'booking-appointment') {
     return 'BOOKING';
   }

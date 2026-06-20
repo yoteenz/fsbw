@@ -3332,7 +3332,7 @@ function CheckoutPage() {
                         : isGiftCardCheckoutRoute
                           ? 'GIFT CARD'
                           : isSlayTicketCheckoutRoute
-                            ? 'SLAY TICKETS'
+                            ? 'SLAY TICKET'
                             : 'BAG'}
                   </span>
                 </>
