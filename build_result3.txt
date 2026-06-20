@@ -1,0 +1,12 @@
+﻿
+> build-a-wig@0.0.0 build
+> tsc --noEmit && vite build
+
+src/components/checkout/CheckoutStripeCardSection.tsx(2,63): error TS2307: Cannot find module '@stripe/react-stripe-js' or its corresponding type declarations.
+src/components/checkout/CheckoutStripeCardSection.tsx(75,22): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/hairstyle-analysis/DownloadAnalysisButton.tsx(2,23): error TS2307: Cannot find module 'html-to-image' or its corresponding type declarations.
+src/components/liveTryOn/LiveTryOnStudioCapture.tsx(2,49): error TS2307: Cannot find module '@mediapipe/tasks-vision' or its corresponding type declarations.
+src/components/liveTryOn/LiveTryOnViewport.tsx(2,49): error TS2307: Cannot find module '@mediapipe/tasks-vision' or its corresponding type declarations.
+src/utils/productCheckoutStripe.ts(1,65): error TS2307: Cannot find module '@stripe/stripe-js' or its corresponding type declarations.
+src/utils/productCheckoutStripe.ts(22,3): error TS2322: Type 'Promise<any> | null' is not assignable to type 'Promise<any>'.
+  Type 'null' is not assignable to type 'Promise<any>'.
