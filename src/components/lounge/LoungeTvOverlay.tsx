@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
+import { createPortal } from 'react-dom';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
@@ -552,6 +553,7 @@ function LoungeTvScreen({
   });
 
   return (
+    <>
     <div
       style={{
         width: '100%',
@@ -740,48 +742,56 @@ function LoungeTvScreen({
           ) : null}
         </LoungeTvInnerLayoutEditor>
       </div>
-
-      <ConfirmationModal
-        isOpen={Boolean(unlockConfirmTile)}
-        onClose={() => !unlockBusy && setUnlockConfirmTile(null)}
-        onConfirm={() => void confirmUnlockAndPlay()}
-        title={
-          unlockConfirmTile
-            ? loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
-              ? `REWATCH WITH ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET?`
-              : `UNLOCK WITH ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET(S)?`
-            : 'UNLOCK CONTENT'
-        }
-        message={
-          unlockConfirmTile
-            ? loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
-              ? `YOUR LIBRARY ACCESS EXPIRED. SPEND 1 SLAY TICKET TO REWATCH "${unlockConfirmTile.title}" FOR ANOTHER YEAR.`
-              : `SPEND ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET(S) TO ADD "${unlockConfirmTile.title}" TO YOUR LIBRARY FOR 1 YEAR. REWATCHES AFTER EXPIRY COST 1 TICKET.`
-            : ''
-        }
-        confirmText={
-          unlockConfirmTile && loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
-            ? 'REWATCH'
-            : 'UNLOCK + WATCH'
-        }
-        cancelText="CANCEL"
-        dataAttribute="lounge-tv-unlock-confirm"
-      />
-
-      <ConfirmationModal
-        isOpen={showNeedMoreTickets}
-        onClose={() => setShowNeedMoreTickets(false)}
-        onConfirm={() => {
-          setShowNeedMoreTickets(false);
-          navigate(slayTicketPackPdpPath());
-        }}
-        title="YOU NEED MORE SLAY TICKETS TO WATCH THIS."
-        message="PURCHASE A SLAY TICKET PACK TO UNLOCK LOUNGE TV CONTENT."
-        confirmText="BUY SLAY TICKETS"
-        cancelText="CANCEL"
-        dataAttribute="lounge-tv-need-tickets"
-      />
     </div>
+
+    {typeof document !== 'undefined'
+      ? createPortal(
+            <>
+              <ConfirmationModal
+                isOpen={Boolean(unlockConfirmTile)}
+                onClose={() => !unlockBusy && setUnlockConfirmTile(null)}
+                onConfirm={() => void confirmUnlockAndPlay()}
+                title={
+                  unlockConfirmTile
+                    ? loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
+                      ? `REWATCH WITH ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET?`
+                      : `UNLOCK WITH ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET(S)?`
+                    : 'UNLOCK CONTENT'
+                }
+                message={
+                  unlockConfirmTile
+                    ? loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
+                      ? `YOUR LIBRARY ACCESS EXPIRED. SPEND 1 SLAY TICKET TO REWATCH "${unlockConfirmTile.title}" FOR ANOTHER YEAR.`
+                      : `SPEND ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET(S) TO ADD "${unlockConfirmTile.title}" TO YOUR LIBRARY FOR 1 YEAR. REWATCHES AFTER EXPIRY COST 1 TICKET.`
+                    : ''
+                }
+                confirmText={
+                  unlockConfirmTile && loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
+                    ? 'REWATCH'
+                    : 'UNLOCK + WATCH'
+                }
+                cancelText="CANCEL"
+                dataAttribute="lounge-tv-unlock-confirm"
+              />
+
+              <ConfirmationModal
+                isOpen={showNeedMoreTickets}
+                onClose={() => setShowNeedMoreTickets(false)}
+                onConfirm={() => {
+                  setShowNeedMoreTickets(false);
+                  navigate(slayTicketPackPdpPath());
+                }}
+                title="YOU NEED MORE SLAY TICKETS TO WATCH THIS."
+                message="PURCHASE A SLAY TICKET PACK TO UNLOCK LOUNGE TV CONTENT."
+                confirmText="BUY SLAY TICKETS"
+                cancelText="CANCEL"
+                dataAttribute="lounge-tv-need-tickets"
+              />
+            </>,
+            document.body
+          )
+        : null}
+    </>
   );
 }
 
