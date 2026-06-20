@@ -30121,6 +30121,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-20 — Slay Challenge admin collectibles preview dropdown
+
+- **Context:** User wanted a **Collectibles** option in the Slay Challenge admin test dropdown to preview all reward collectible assets in **phase 1, 2, and 3** for QA.
+- **Decisions / outcomes:** Added **`collectibles`** to the admin **Test stage** select on Concierge → Slay Challenge. When selected, renders **`SlayChallengeCollectiblesPreview`** — all 10 `slayQuestRewardAssets` types, each with forced phase 1/2/3 cards via optional **`phase`** prop on **`SlayQuestRewardAsset`**. Normal challenge guide, status copy, and START CHALLENGE hidden in this mode.
+- **Changes:** `SlayChallengeCollectiblesPreview.tsx` (new), `SlayQuestRewardAsset.tsx`, `concierge/page.tsx`. Build verified.
+
+---
+
 ## 2026-06-20 — Slay Tickets Lounge TV content-access system
 
 - **Context:** User requested a full **Slay Tickets** branded ticket-gated experience for Lounge TV: balance on profile, transaction history, per-content ticket costs, unlock records, earning from physical hair purchases, spending to unlock/play content, purchasable ticket packs, and Lounge TV UI badges (cost, locked/unlocked, free preview, WATCH/UNLOCK) without changing the dark theater aesthetic.
