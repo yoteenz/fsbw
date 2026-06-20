@@ -30138,3 +30138,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Hero images from Supabase live-preview: `IMG_3392.png`, `IMG_3397.png`, `IMG_3396.png` (`src/constants/slayTicketAssets.ts`). Pack picker offers 4/8/12/24 tickets at $10/$18/$24/$40. Checkout session replaces bag with one pack line (backs up prior non-ticket lines like gift card flow). Promo codes blocked on slay-ticket-only checkout (same as gift cards). Stripe product card flow skipped on isolated slay-ticket route.
 - **Changes:** **`src/pages/tools/slay-tickets/page.tsx`** (full PDP rewrite), **`SlayTicketPackPicker`**, **`SlayTicketProductDetailsTab`**, **`SlayTicketProductPolicyTab`**, **`slayTicketCheckout.ts`**, **`slayTicketCheckoutSession.ts`**, **`slayTicketAssets.ts`**; route **`/checkout/slay-tickets`** in **`App.tsx`**, **`CommerceRouteGuard`**, **`checkoutNavigatePath`**, **`checkout/page.tsx`**, **`checkoutOrderStripDisplay.ts`**, **`productCheckoutPolicy.ts`**, **`signInReturnTo.ts`**. Verified **`npm run build`**.
 - **Conventions:** Slay Ticket PDP/checkout parity follows gift card patterns: `writeSlayTicketSelectionForCheckoutSession` → `/checkout/slay-tickets`; `?pack=slay-tickets-4` query on PDP; cart lines use `slayTicketProduct: true` + `type: 'digital'`.
+
+---
+
+## 2026-06-20 — Slay Ticket icon asset (IMG_3403) for cart/tools thumbnails
+
+- **Context:** User supplied **`IMG_3403.png`** as the Slay Ticket icon for Home/tools, cart, bag, and checkout thumbnails — explicitly **not** for PDP hero gallery (heroes stay `IMG_3392` / `IMG_3397` / `IMG_3396`).
+- **Decisions / outcomes:** `SLAY_TICKET_CART_THUMBNAIL_SRC` in `slayTicketAssets.ts` now points to `IMG_3403.png`. PDP checkout no longer passes selected hero into cart lines. Order strip always uses the icon URL for slay-ticket lines. Added **SLAY TICKETS** marble strip on `/home/tools` and `/tools` (mirrors gift card hub).
+- **Changes:** `slayTicketAssets.ts`, `CartDropdown.tsx`, `shopping-bag/page.tsx`, `checkoutOrderStripDisplay.ts`, `tools/page.tsx`, `slay-tickets/page.tsx` (checkout session image). Build verified.
