@@ -101,7 +101,7 @@ function bagProductTitleLine(item: { name?: string; type?: string; category?: st
     return 'GIFT CARD';
   }
   if (isSlayTicketPackCartLine(item)) {
-    return (item.name || 'SLAY TICKETS').replace(/WIG/gi, '').trim();
+    return 'SLAY TICKET';
   }
   if (item.type === 'booking-appointment') {
     return 'BOOKING';

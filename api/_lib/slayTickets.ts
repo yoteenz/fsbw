@@ -59,15 +59,18 @@ export function slayTicketsPurchasedForLineItems(lines: SlayTicketLineItem[] | n
   if (!Array.isArray(lines)) return 0;
   return lines.reduce((sum, line) => {
     if (!isSlayTicketPackLine(line)) return sum;
+    const name = String(line.name || '').trim().toUpperCase();
+    const q = Math.max(1, Math.floor(Number(line.quantity) || 1));
+    if (name === 'SLAY TICKET') {
+      return sum + q;
+    }
     const pack = Math.max(0, Math.floor(Number(line.slayTicketPackCount) || 0));
     if (pack > 0) {
-      const qty = Math.max(1, Math.floor(Number(line.quantity) || 1));
-      return sum + pack * qty;
+      return sum + pack * q;
     }
     const match = String(line.name || '').match(/(\d+)\s*SLAY\s+TICKETS?/i);
     if (match) {
-      const qty = Math.max(1, Math.floor(Number(line.quantity) || 1));
-      return sum + Number(match[1]) * qty;
+      return sum + Number(match[1]) * q;
     }
     return sum;
   }, 0);

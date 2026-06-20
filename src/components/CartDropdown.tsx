@@ -1509,6 +1509,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             if (item.type === 'booking-consult') {
                               return 'CONSULT';
                             }
+                            if (isSlayTicketPackCartLine(item)) {
+                              return 'SLAY TICKET';
+                            }
                             if (item.type === 'shop-texture-category') {
                               const c = (item as CartItem & { category?: string }).category;
                               if (c === 'bundles') return 'BUNDLES';
