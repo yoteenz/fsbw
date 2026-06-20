@@ -35,6 +35,7 @@ export function prepareMembershipUpgradeNavigation(): void {
 
 type CartLinePremiumGated = {
   bcfBundleDeal?: boolean;
+  slayTicketProduct?: boolean;
   quantity?: number;
   type?: string;
   bookingTier?: string;
@@ -43,6 +44,7 @@ type CartLinePremiumGated = {
 /** True when this cart row requires premium and should be removed if the user no longer qualifies. */
 export function isPremiumGatedCartLine(item: CartLinePremiumGated): boolean {
   if (item.bcfBundleDeal) return true;
+  if (item.slayTicketProduct === true) return true;
   if (item.type === 'booking-appointment') return true;
   if (item.type === 'booking-consult' && item.bookingTier === 'premium') return true;
   return false;
@@ -50,7 +52,7 @@ export function isPremiumGatedCartLine(item: CartLinePremiumGated): boolean {
 
 /**
  * Removes premium-only rows when the user no longer qualifies (`isPremiumMemberForGatedFeatures`):
- * **BCF bundle-deal**, **hair appointments** (`booking-appointment`), **premium-tier consults**
+ * **BCF bundle-deal**, **Slay Ticket packs** (`slayTicketProduct`), **hair appointments** (`booking-appointment`), **premium-tier consults**
  * (`booking-consult` + `bookingTier === 'premium'`). Standard consults stay in the cart.
  */
 export function stripIneligibleBcfBundleDealLines<T extends CartLinePremiumGated>(

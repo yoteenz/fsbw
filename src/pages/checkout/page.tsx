@@ -76,7 +76,7 @@ import {
 } from '../../utils/adminBrandCodes';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
-import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
+import { isPremiumMemberForGatedFeatures, stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import {
   orderStripRedSubtitle,
@@ -856,8 +856,19 @@ function CheckoutPage() {
           }
         }
         const onlySlayTickets = filterSlayTicketCartLines(regularCartItems);
+        const strip = stripIneligibleBcfBundleDealLines(onlySlayTickets);
+        if (strip.removedUnitCount > 0) {
+          const nonSlay = regularCartItems.filter((i: { slayTicketProduct?: boolean }) => !isSlayTicketPackCartLine(i));
+          const merged = [...nonSlay, ...strip.next];
+          localStorage.setItem('cartItems', JSON.stringify(merged));
+          const newCount = merged.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+          localStorage.setItem('cartCount', String(newCount));
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+          window.dispatchEvent(new Event('cartUpdated'));
+        }
         setIsSubscriptionUpgrade(false);
-        setCartItems(onlySlayTickets);
+        setCartItems(filterSlayTicketCartLines(strip.removedUnitCount > 0 ? strip.next : onlySlayTickets));
         return;
       }
 
@@ -911,7 +922,12 @@ function CheckoutPage() {
             navigate('/checkout/gift-card', { replace: true });
             return;
           }
-          if (regularCartItems.every((i: { type?: string; name?: string; slayTicketProduct?: boolean }) => isSlayTicketPackCartLine(i))) {
+          if (
+            isPremiumMemberForGatedFeatures() &&
+            regularCartItems.every((i: { type?: string; name?: string; slayTicketProduct?: boolean }) =>
+              isSlayTicketPackCartLine(i)
+            )
+          ) {
             navigate('/checkout/slay-tickets', { replace: true });
             return;
           }

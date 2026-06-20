@@ -5,6 +5,7 @@ import {
   type SlayTicketPack,
 } from './slayTicketPacks';
 import { isSlayTicketPackCartLine } from './slayTicketCheckout';
+import { isPremiumMemberForGatedFeatures } from './premiumMemberAccess';
 
 export type WriteSlayTicketCheckoutOpts = {
   packId: string;
@@ -101,6 +102,9 @@ export function maybeRestoreSlayTicketCheckoutCartAfterAbandon(
  * Backs up any existing non–slay-ticket lines first.
  */
 export function writeSlayTicketSelectionForCheckoutSession(opts: WriteSlayTicketCheckoutOpts): number {
+  if (!isPremiumMemberForGatedFeatures()) {
+    throw new Error('Premium membership required for Slay Ticket purchase');
+  }
   backupCartBeforeSlayTicketCheckoutSession();
 
   const pack = getSlayTicketPackById(opts.packId);

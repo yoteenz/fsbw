@@ -16,6 +16,10 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { trackActivity } from '../../../utils/activity';
 import { writeSlayTicketSelectionForCheckoutSession } from '../../../utils/slayTicketCheckoutSession';
+import {
+  isPremiumMemberForGatedFeatures,
+  prepareMembershipUpgradeNavigation,
+} from '../../../utils/premiumMemberAccess';
 import SlayTicketProductDetailsTab from '../../../components/shop/SlayTicketProductDetailsTab';
 import SlayTicketProductPolicyTab from '../../../components/shop/SlayTicketProductPolicyTab';
 import SlayTicketPackPicker from '../../../components/shop/SlayTicketPackPicker';
@@ -121,6 +125,7 @@ function SlayTicketsPage() {
   }), []);
 
   const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
+  const [showPremiumUpgradeModal, setShowPremiumUpgradeModal] = useState(false);
 
   useEffect(() => {
     const parsed = parseSlayTicketPackId(searchParams.get('pack'));
@@ -326,6 +331,10 @@ function SlayTicketsPage() {
 
   const handleProceedToCheckout = () => {
     if (checkoutSubmitting) return;
+    if (!isPremiumMemberForGatedFeatures()) {
+      setShowPremiumUpgradeModal(true);
+      return;
+    }
     setCheckoutSubmitting(true);
     try {
       const newCartCount = writeSlayTicketSelectionForCheckoutSession({
@@ -341,6 +350,14 @@ function SlayTicketsPage() {
       setCheckoutSubmitting(false);
     }
   };
+
+  const handlePremiumUpgradeConfirm = () => {
+    setShowPremiumUpgradeModal(false);
+    prepareMembershipUpgradeNavigation();
+    navigate('/account/rewards');
+  };
+
+  const handlePremiumUpgradeClose = () => setShowPremiumUpgradeModal(false);
 
   // Similar products scroll handlers
   const handleSimilarProductsLeftArrow = () => {
@@ -1688,6 +1705,17 @@ function SlayTicketsPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      <ConfirmationModal
+        isOpen={showPremiumUpgradeModal}
+        onClose={handlePremiumUpgradeClose}
+        onConfirm={handlePremiumUpgradeConfirm}
+        title="UPGRADE YOUR SUBSCRIPTION"
+        message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
+        confirmText="UPGRADE"
+        cancelText="CANCEL"
+        dataAttribute="upgrade-subscription-modal-slay-tickets"
       />
     </div>
   );
