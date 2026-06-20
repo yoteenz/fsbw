@@ -26,6 +26,12 @@ const fallbackLabelByIcon: Record<SlayQuestFallbackIcon, string> = {
   voucher: 'VOUCHER',
   gift: 'GIFT',
   double_points: '2X',
+  wallpaper: 'WALLPAPER',
+  mystery: 'MYSTERY',
+  shipping: 'SHIP',
+  processing: 'PROCESS',
+  analysis: 'ANALYSIS',
+  cash: 'CASH',
 };
 
 const isPlaceholderAssetUrl = (url: string) => !url || url.startsWith('REPLACE_WITH_SUPABASE_URL_');
@@ -53,10 +59,11 @@ function SlayQuestRewardFallback({ icon }: { icon: SlayQuestFallbackIcon }) {
         style={{
           fontFamily: '"Futura PT Medium"',
           color: '#EB1C24',
-          fontSize: icon === 'double_points' ? '20px' : '9px',
+          fontSize: icon === 'double_points' ? '20px' : '8px',
           fontWeight: 500,
           letterSpacing: icon === 'double_points' ? '0.04em' : '0.09em',
           lineHeight: 1,
+          textAlign: 'center',
           textTransform: 'uppercase',
         }}
       >
