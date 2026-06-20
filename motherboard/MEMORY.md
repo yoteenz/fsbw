@@ -30145,5 +30145,13 @@ Pushed **`master`** + **`preview/mobile`**.
 
 - **Context:** User supplied **`IMG_3403.png`** as the Slay Ticket icon for Home/tools, cart, bag, and checkout thumbnails — explicitly **not** for PDP hero gallery (heroes stay `IMG_3392` / `IMG_3397` / `IMG_3396`).
 - **Decisions / outcomes:** `SLAY_TICKET_CART_THUMBNAIL_SRC` in `slayTicketAssets.ts` now points to `IMG_3403.png`. PDP checkout no longer passes selected hero into cart lines. Order strip always uses the icon URL for slay-ticket lines. Added **SLAY TICKETS** marble strip on `/home/tools` and `/tools` (mirrors gift card hub).
-- **Changes:** `premiumMemberAccess.ts` (`isPremiumGatedCartLine` + strip), slay ticket PDP upgrade modal (same copy as bundle deal), `slayTicketCheckoutSession` gate, checkout/cart strip + route guard, `checkoutNavigatePath`, `credit-order` API premium check, details/policy copy. Build verified.
-- **Conventions:** Slay Ticket **pack purchase** = premium-only (subscription or BLACK tier), same as BCF bundle deal. Non-premium users may still browse PDP/tools; **PROCEED TO CHECKOUT** shows upgrade modal → `/account/rewards`. Cart lines stripped on load/focus/sign-in like bundle deals.
+- **Changes:** `slayTicketAssets.ts`, `CartDropdown.tsx`, `shopping-bag/page.tsx`, `checkoutOrderStripDisplay.ts`, `tools/page.tsx`, `slay-tickets/page.tsx` (checkout session image). Build verified.
+
+---
+
+## 2026-06-20 — Slay Ticket purchase premium gate (bundle-deal parity)
+
+- **Context:** User requested that only premium members can purchase Slay Ticket packs, using the same gating logic as BCF **bundle deal** (premium subscription and/or BLACK tier).
+- **Decisions / outcomes:** `slayTicketProduct` cart lines added to `isPremiumGatedCartLine` / `stripIneligibleBcfBundleDealLines`. PDP **PROCEED TO CHECKOUT** shows the same **UPGRADE YOUR SUBSCRIPTION** modal as bundle deal → `/account/rewards`. `writeSlayTicketSelectionForCheckoutSession` throws if not premium. Isolated `/checkout/slay-tickets` strips ineligible lines; bag route to slay checkout only when premium. Server **`POST /api/slay-tickets/credit-order`** rejects pack purchases for non-premium profiles.
+- **Changes:** `premiumMemberAccess.ts`, `slay-tickets/page.tsx`, `slayTicketCheckoutSession.ts`, `checkout/page.tsx`, `checkoutNavigatePath.ts`, `api/slay-tickets/credit-order.ts`, `SlayTicketProductDetailsTab.tsx`, `SlayTicketProductPolicyTab.tsx`. Build verified.
+- **Conventions:** Browse PDP/tools allowed for all; **purchase** is premium-only. Earned tickets from physical hair orders unchanged for all members.
