@@ -13,6 +13,8 @@ type SlayQuestRewardAssetProps = {
   totalRequirements?: number;
   selectedRewardLabel: string;
   className?: string;
+  /** Admin preview: force a specific collectible phase instead of deriving from progress. */
+  phase?: SlayQuestAssetPhase;
 };
 
 const phaseLabelByPhase: Record<SlayQuestAssetPhase, string> = {
@@ -79,10 +81,21 @@ export default function SlayQuestRewardAsset({
   totalRequirements = 3,
   selectedRewardLabel,
   className = '',
+  phase: forcedPhase,
 }: SlayQuestRewardAssetProps) {
   const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
   const asset = slayQuestRewardAssets[rewardType];
-  const phase = getSlayQuestAssetPhase(completedRequirements, totalRequirements);
+  const safeTotal = Math.max(1, Math.floor(totalRequirements));
+  const derivedPhase = getSlayQuestAssetPhase(completedRequirements, safeTotal);
+  const phase = forcedPhase ?? derivedPhase;
+  const displayCompletedRequirements =
+    forcedPhase === 'phase3'
+      ? safeTotal
+      : forcedPhase === 'phase2'
+        ? Math.max(2, Math.floor(safeTotal * 0.75))
+        : forcedPhase === 'phase1'
+          ? 0
+          : completedRequirements;
   const phaseUrlByPhase: Record<SlayQuestAssetPhase, string> = {
     phase1: asset.phase1Url,
     phase2: asset.phase2Url,
@@ -212,7 +225,7 @@ export default function SlayQuestRewardAsset({
           >
             <div
               style={{
-                width: `${Math.min(100, Math.max(0, (completedRequirements / Math.max(1, totalRequirements)) * 100))}%`,
+                width: `${Math.min(100, Math.max(0, (displayCompletedRequirements / Math.max(1, safeTotal)) * 100))}%`,
                 height: '100%',
                 background: phase === 'phase3' ? '#EB1C24' : '#808080',
               }}
@@ -230,7 +243,7 @@ export default function SlayQuestRewardAsset({
               textTransform: 'uppercase',
             }}
           >
-            {Math.min(completedRequirements, totalRequirements)} / {totalRequirements} REQUIREMENTS
+            {Math.min(displayCompletedRequirements, safeTotal)} / {safeTotal} REQUIREMENTS
           </p>
         </div>
       </div>
