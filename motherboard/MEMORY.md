@@ -30213,3 +30213,13 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User added **48** and **60** ticket packs using existing volume pricing; picker **3 per row** (6 packs → 2 rows); removed red **SAVE \$** labels from pack chips.
 - **Decisions / outcomes:** New packs **`slay-tickets-48`** (**\$180**) and **`slay-tickets-60`** (**\$225**) — same **\$0.25/ticket** bulk discount as 24-pack (\$3.75 effective). Centralized totals in **`slayTicketPackPriceUsd()`**. Picker: 3 columns, slightly smaller chips, no savings callout.
 - **Changes:** `slayTicketPacks.ts`, `SlayTicketPackPicker.tsx`, `SlayTicketProductDetailsTab.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — Lounge TV ticket modal centering fix
+
+- **Context:** User reported Lounge TV unlock / “need more tickets” popups were **off-center to the left** and clipped off screen (screenshot showed title text cut off). Close (X) on TV was fine; modal content box misaligned.
+- **Root cause:** `ConfirmationModal` uses `position: fixed` but was rendered inside `LoungeTvScreen`, nested under transformed/filtered TV overlay ancestors (`LoungeTvFullscreenShell`, scene-mapped glass). Fixed positioning becomes relative to that ancestor, not the viewport.
+- **Decisions / outcomes:** Portal both Lounge TV ticket modals to **`document.body`** via `createPortal` so they center on the full viewport. Unlock confirm (`lounge-tv-unlock-confirm`) and need-tickets (`lounge-tv-need-tickets`) modals both portaled.
+- **Changes:** `src/components/lounge/LoungeTvOverlay.tsx` — `createPortal` import; fragment wrapper; modals portaled outside TV DOM; fixed missing `</div>` that broke build. Build verified.
+- **Conventions:** Any `position: fixed` modal/dialog inside Lounge TV (or other transformed overlays) should render via portal to `document.body`.
