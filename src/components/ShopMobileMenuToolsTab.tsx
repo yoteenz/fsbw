@@ -2,6 +2,7 @@ import type { NavigateFunction } from 'react-router-dom';
 
 const TOOLS_MENU_LINKS = [
   { label: 'GIFT CARD', to: '/tools/gift-card' as const },
+  { label: 'SLAY TICKETS', to: '/tools/slay-tickets' as const },
   { label: 'ORDER AUTHORIZATION FORM', to: '/tools/order-form' as const }
 ] as const;
 

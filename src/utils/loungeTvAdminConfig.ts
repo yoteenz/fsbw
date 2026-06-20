@@ -1,7 +1,8 @@
-import type { LoungeTvMainTab, LoungeTvVideoTile } from '../components/lounge/loungeTvContent';
+import type { LoungeTvMainTab, LoungeTvVideoTile, LoungeTvAccessType } from '../components/lounge/loungeTvContent';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
+  applyDefaultLoungeTvTicketAccess,
   getLoungeTvTilesStatic,
   getWatchLearnVideoCopy,
 } from '../components/lounge/loungeTvContent';
@@ -21,6 +22,10 @@ export type LoungeTvAdminItem = {
   thumbSrc?: string;
   isNew?: boolean;
   durationLabel?: string;
+  ticketCost?: number;
+  accessType?: LoungeTvAccessType;
+  isFreePreview?: boolean;
+  isPremium?: boolean;
 };
 
 export type LoungeTvAdminPlacement = {
@@ -58,6 +63,10 @@ function tileToAdminItem(tile: LoungeTvVideoTile): LoungeTvAdminItem {
     thumbSrc: tile.thumbSrc,
     isNew: tile.isNew,
     durationLabel: tile.durationLabel,
+    ticketCost: tile.ticketCost,
+    accessType: tile.accessType,
+    isFreePreview: tile.isFreePreview,
+    isPremium: tile.isPremium,
   };
 }
 
@@ -109,6 +118,13 @@ function normalizeConfig(raw: unknown): LoungeTvAdminConfig | null {
           thumbSrc: typeof item.thumbSrc === 'string' ? item.thumbSrc : undefined,
           isNew: Boolean(item.isNew),
           durationLabel: typeof item.durationLabel === 'string' ? item.durationLabel : undefined,
+          ticketCost:
+            typeof item.ticketCost === 'number' && Number.isFinite(item.ticketCost)
+              ? Math.max(0, Math.floor(item.ticketCost))
+              : undefined,
+          accessType: item.accessType === 'rental' ? 'rental' : item.accessType === 'permanent' ? 'permanent' : undefined,
+          isFreePreview: typeof item.isFreePreview === 'boolean' ? item.isFreePreview : undefined,
+          isPremium: typeof item.isPremium === 'boolean' ? item.isPremium : undefined,
         });
       }
     }
@@ -129,6 +145,10 @@ function mergeAdminItem(primary: LoungeTvAdminItem, secondary: LoungeTvAdminItem
       primary.mediaType === 'video' || secondary.mediaType === 'video' ? 'video' : primary.mediaType,
     isNew: primary.isNew ?? secondary.isNew,
     durationLabel: primary.durationLabel ?? secondary.durationLabel,
+    ticketCost: primary.ticketCost ?? secondary.ticketCost,
+    accessType: primary.accessType ?? secondary.accessType,
+    isFreePreview: primary.isFreePreview ?? secondary.isFreePreview,
+    isPremium: primary.isPremium ?? secondary.isPremium,
   };
 }
 
@@ -256,6 +276,10 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
     title: item.title.toUpperCase(),
     isNew: item.isNew,
     thumbSrc,
+    ticketCost: item.ticketCost,
+    accessType: item.accessType,
+    isFreePreview: item.isFreePreview,
+    isPremium: item.isPremium,
   };
   const bodyUpper =
     mainTab === 'watch-learn' ? watchLearnDescriptionForItem(item) : item.body.trim().toUpperCase();
@@ -272,7 +296,7 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
         tile.thumbSrc = item.mediaUrl.trim();
       }
     }
-    return tile;
+    return applyDefaultLoungeTvTicketAccess(tile);
   }
   if (mainTab === 'watch-learn') {
     if (item.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID) {
@@ -294,7 +318,7 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
       tile.body = item.body.trim() ? item.body.trim().toUpperCase() : tile.description;
     }
   }
-  return tile;
+  return applyDefaultLoungeTvTicketAccess(tile);
 }
 
 function enrichWatchLearnTiles(

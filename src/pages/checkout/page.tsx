@@ -49,6 +49,7 @@ import {
 } from '../../utils/giftCardCheckoutSession';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import { pushLocalUserOrdersAfterCheckout } from '../../utils/checkoutOrderServerSync';
+import { creditSlayTicketsForOrder } from '../../utils/api';
 import { isCreativePreviewCheckoutBlocked } from '../../utils/creativePreviewMode';
 import CheckoutStripeCardSection, {
   type CheckoutStripeCardHandle,
@@ -2747,6 +2748,28 @@ function CheckoutPage() {
           markFirstPurchaseOnProfile: wasFirstOrder,
           stripePaymentIntentId: args.stripePaymentIntentId,
         });
+
+        if (!isSubscriptionUpgrade) {
+          const orderId = `order-${nextOrderNumber}`;
+          void creditSlayTicketsForOrder({
+            orderId,
+            lineItems: cartItems as unknown[],
+          }).then((result) => {
+            if (result && typeof result.balance === 'number') {
+              try {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                  const user = JSON.parse(currentUser);
+                  const updated = { ...user, slayTicketBalance: result.balance };
+                  localStorage.setItem('currentUser', JSON.stringify(updated));
+                  window.dispatchEvent(new CustomEvent('slayTicketsUpdated'));
+                }
+              } catch {
+                /* ignore */
+              }
+            }
+          });
+        }
       } catch (error) {
         console.error('Error saving order / first purchase:', error);
       }

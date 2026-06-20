@@ -37,6 +37,7 @@ export function fromProfileRow(row: Record<string, unknown>): Record<string, unk
     voucherList: row.voucher_list,
     voucherHistory: row.voucher_history,
     digitalCashHistory: row.digital_cash_history,
+    slayTicketBalance: row.slay_ticket_balance ?? 0,
     welcomeDiscountTiersCreditedByPeriod: row.welcome_discount_tiers_credited_by_period,
     notificationNewsletter:
       (row.notification_newsletter as boolean | null | undefined) ??

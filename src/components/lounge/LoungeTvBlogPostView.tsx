@@ -1,5 +1,10 @@
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
+import {
+  loungeTvTileActionLabel,
+  loungeTvTicketCostLabel,
+  resolveLoungeTvTicketCost,
+} from './loungeTvTicketAccess';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const BOOK_FONT = '"Futura PT Book", Futura, sans-serif';
@@ -20,10 +25,12 @@ function excerpt(text: string, maxLen = 72): string {
 type LoungeTvBlogPostListProps = {
   tiles: LoungeTvVideoTile[];
   onSelect: (tileId: string) => void;
+  isUnlocked?: (contentId: string) => boolean;
 };
 
 /** Slay Tips index — vertical blog cards (not the Watch + Learn video grid). */
-export function LoungeTvBlogPostList({ tiles, onSelect }: LoungeTvBlogPostListProps) {
+export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked }: LoungeTvBlogPostListProps) {
+  const unlockedFn = isUnlocked ?? (() => false);
   return (
     <div
       style={{
@@ -36,6 +43,8 @@ export function LoungeTvBlogPostList({ tiles, onSelect }: LoungeTvBlogPostListPr
       {tiles.map((tile) => {
         const showNew = loungeTvTileShowsAsNew(tile);
         const body = blogBodyText(tile);
+        const cost = resolveLoungeTvTicketCost(tile);
+        const action = loungeTvTileActionLabel(tile, unlockedFn);
         return (
           <button
             key={tile.id}
@@ -54,23 +63,25 @@ export function LoungeTvBlogPostList({ tiles, onSelect }: LoungeTvBlogPostListPr
               cursor: 'pointer',
               textAlign: 'left',
               boxSizing: 'border-box',
+              position: 'relative',
             }}
             aria-label={tile.title}
           >
             {tile.thumbSrc ? (
-              <img
-                src={tile.thumbSrc}
-                alt=""
-                draggable={false}
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  objectFit: 'cover',
-                  flexShrink: 0,
-                  display: 'block',
-                  filter: showNew ? 'blur(3px)' : 'none',
-                }}
-              />
+              <span style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
+                <img
+                  src={tile.thumbSrc}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    objectFit: 'cover',
+                    display: 'block',
+                    filter: showNew ? 'blur(3px)' : 'none',
+                  }}
+                />
+              </span>
             ) : (
               <span
                 aria-hidden
@@ -86,17 +97,51 @@ export function LoungeTvBlogPostList({ tiles, onSelect }: LoungeTvBlogPostListPr
             <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <span
                 style={{
-                  fontFamily: BODY_FONT,
-                  fontSize: '9px',
-                  letterSpacing: '0.04em',
-                  color: showNew ? BRAND_RED : '#ffffff',
-                  textTransform: 'uppercase',
-                  lineHeight: 1.25,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '6px',
                 }}
               >
-                {showNew ? '*NEW* ' : ''}
-                {tile.title}
+                <span
+                  style={{
+                    fontFamily: BODY_FONT,
+                    fontSize: '9px',
+                    letterSpacing: '0.04em',
+                    color: showNew ? BRAND_RED : '#ffffff',
+                    textTransform: 'uppercase',
+                    lineHeight: 1.25,
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  {showNew ? '*NEW* ' : ''}
+                  {tile.title}
+                </span>
+                <span
+                  style={{
+                    fontFamily: BODY_FONT,
+                    fontSize: '7px',
+                    color: cost > 0 ? '#ffffff' : BRAND_RED,
+                    textTransform: 'uppercase',
+                    flexShrink: 0,
+                  }}
+                >
+                  {loungeTvTicketCostLabel(cost)}
+                </span>
               </span>
+              {tile.isFreePreview ? (
+                <span
+                  style={{
+                    fontFamily: BODY_FONT,
+                    fontSize: '7px',
+                    color: BRAND_RED,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  FREE PREVIEW
+                </span>
+              ) : null}
               {body ? (
                 <span
                   style={{
@@ -110,6 +155,16 @@ export function LoungeTvBlogPostList({ tiles, onSelect }: LoungeTvBlogPostListPr
                   {excerpt(body)}
                 </span>
               ) : null}
+              <span
+                style={{
+                  fontFamily: BODY_FONT,
+                  fontSize: '7px',
+                  color: action === 'WATCH' ? BRAND_RED : '#ffffff',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {action}
+              </span>
             </span>
           </button>
         );

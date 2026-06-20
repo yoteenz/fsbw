@@ -34,6 +34,9 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
 import DigitalCashHistoryPopup from '../../components/account/DigitalCashHistoryPopup';
+import SlayTicketHistoryPopup from '../../components/account/SlayTicketHistoryPopup';
+import { useSlayTickets } from '../../hooks/useSlayTickets';
+import { getSlayTicketBalanceFromUser } from '../../utils/slayTicketHistoryDisplay';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -77,6 +80,11 @@ function AccountPage() {
     }
     return null;
   });
+  const { balance: slayTicketBalance, history: slayTicketHistory } = useSlayTickets(userData);
+  const ticketBalanceDisplay =
+    typeof slayTicketBalance === 'number'
+      ? slayTicketBalance
+      : getSlayTicketBalanceFromUser(userData);
   const [membershipType, _setMembershipType] = useState<'STANDARD' | 'PREMIUM'>('STANDARD'); // Will be set dynamically later
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
@@ -109,6 +117,7 @@ function AccountPage() {
   const [showEnlargedImage, setShowEnlargedImage] = useState(false);
   const [showDigitalCashHistoryPopup, setShowDigitalCashHistoryPopup] = useState(false);
   const [showVoucherHistoryPopup, setShowVoucherHistoryPopup] = useState(false);
+  const [showSlayTicketHistoryPopup, setShowSlayTicketHistoryPopup] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropPosition, setCropPosition] = useState({ x: 0, y: 0 });
   const [cropScale, setCropScale] = useState(1);
@@ -2083,6 +2092,30 @@ function AccountPage() {
                       <p
                         role="button"
                         tabIndex={0}
+                        onClick={() => setShowSlayTicketHistoryPopup(true)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setShowSlayTicketHistoryPopup(true);
+                          }
+                        }}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#808080',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          transform: 'translateY(3px)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        SLAY TICKETS: {ticketBalanceDisplay} AVAILABLE
+                      </p>
+
+                      <p
+                        role="button"
+                        tabIndex={0}
                         onClick={() => setShowDigitalCashHistoryPopup(true)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
@@ -2555,6 +2588,12 @@ function AccountPage() {
         onClose={() => setShowDigitalCashHistoryPopup(false)}
         userData={userData}
         fallbackHistory={profileUsesMockChrome ? MOCK_DIGITAL_CASH_HISTORY : []}
+      />
+
+      <SlayTicketHistoryPopup
+        isOpen={showSlayTicketHistoryPopup}
+        onClose={() => setShowSlayTicketHistoryPopup(false)}
+        history={slayTicketHistory}
       />
 
       {/* Voucher History Popup */}
