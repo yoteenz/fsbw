@@ -30189,3 +30189,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User wanted ticket pack options on `/tools/slay-tickets` in **2 rows** instead of one horizontal row.
 - **Decisions / outcomes:** **`SlayTicketPackPicker`** — row 1: **4 / 8 TICKETS**; row 2: **12 / 24 TICKETS**; centered flex rows with 12px gap.
 - **Changes:** `src/components/shop/SlayTicketPackPicker.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — Slay Ticket 24-pack volume deal (\$90)
+
+- **Context:** User wanted volume incentive on pack pricing: **\$4/ticket list rate** on 4/8/12 packs (**\$16 / \$32 / \$48**), with **24 tickets at \$90** (not \$96).
+- **Decisions / outcomes:** **`SLAY_TICKET_PACKS`** — 24-pack `priceUsd: 90`. Cart lines use **effective unit price** (`pack total ÷ ticket count`) + `slayTicketPackTotalUsd` for exact checkout totals. Pack picker shows **SAVE \$6** on discounted packs. Details tab notes list rate + 24-pack deal.
+- **Changes:** `slayTicketPacks.ts`, `SlayTicketPackPicker.tsx`, `SlayTicketProductDetailsTab.tsx`. Build verified.
