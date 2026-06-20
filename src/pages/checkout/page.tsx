@@ -47,6 +47,15 @@ import {
   clearGiftCardCheckoutCartBackup,
   maybeRestoreGiftCardCheckoutCartAfterAbandon,
 } from '../../utils/giftCardCheckoutSession';
+import {
+  filterSlayTicketCartLines,
+  isSlayTicketPackCartLine,
+  isSlayTicketCheckoutPath,
+} from '../../utils/slayTicketCheckout';
+import {
+  clearSlayTicketCheckoutCartBackup,
+  maybeRestoreSlayTicketCheckoutCartAfterAbandon,
+} from '../../utils/slayTicketCheckoutSession';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import { pushLocalUserOrdersAfterCheckout } from '../../utils/checkoutOrderServerSync';
 import { creditSlayTicketsForOrder } from '../../utils/api';
@@ -253,6 +262,7 @@ function CheckoutPage() {
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
   const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
+  const isSlayTicketCheckoutRoute = isSlayTicketCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
   const applyDiscountCodeRef = useRef<() => Promise<void>>(async () => {});
   const [pendingConsultDiscountCode, setPendingConsultDiscountCode] = useState<string | null>(null);
@@ -273,7 +283,7 @@ function CheckoutPage() {
   const headerCartCount = useMemo(() => {
     const path = location.pathname;
     if (path === '/checkout/upgrade') return undefined;
-    if (path.includes('/checkout/bookings') || path.includes('/checkout/gift-card')) return undefined;
+    if (path.includes('/checkout/bookings') || path.includes('/checkout/gift-card') || path.includes('/checkout/slay-tickets')) return undefined;
     const fromLines = cartBillableQuantityUnits(cartItems);
     return cartItems.length > 0 ? fromLines : undefined;
   }, [cartItems, location.pathname, inventory.version]);
@@ -289,7 +299,7 @@ function CheckoutPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
-    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {
       return 'TOOLS';
     } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
       return 'BRAND';
@@ -638,9 +648,10 @@ function CheckoutPage() {
       path: location.pathname,
       upgrade: location.pathname === '/checkout/upgrade',
       giftCard: isGiftCardCheckoutRoute,
+      slayTickets: isSlayTicketCheckoutRoute,
       bookings: isBookingsCheckoutRoute,
     });
-  }, [location.pathname, isGiftCardCheckoutRoute, isBookingsCheckoutRoute]);
+  }, [location.pathname, isGiftCardCheckoutRoute, isSlayTicketCheckoutRoute, isBookingsCheckoutRoute]);
 
   // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -659,8 +670,8 @@ function CheckoutPage() {
   // Check if any product has color, styling or add-ons (non-default values)
   const hasColorStylingOrAddOns = useMemo(() => {
     return cartItems.some((item) => {
-      // Skip gift cards
-      if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+      // Skip gift cards and slay ticket packs
+      if (item.name === 'GIFT CARD' || item.type === 'gift-card' || isSlayTicketPackCartLine(item)) {
         return false;
       }
 
@@ -783,7 +794,8 @@ function CheckoutPage() {
       if (
         isUpgradeRoute ||
         location.pathname.includes('/checkout/bookings') ||
-        location.pathname.includes('/checkout/gift-card')
+        location.pathname.includes('/checkout/gift-card') ||
+        location.pathname.includes('/checkout/slay-tickets')
       ) {
         if (!cancelled) setUseStripeProductCardFields(false);
         return;
@@ -831,6 +843,21 @@ function CheckoutPage() {
         const onlyGift = filterGiftCardCartLines(regularCartItems);
         setIsSubscriptionUpgrade(false);
         setCartItems(onlyGift);
+        return;
+      }
+
+      if (location.pathname.includes('/checkout/slay-tickets')) {
+        const stored = localStorage.getItem('cartItems');
+        let regularCartItems: any[] = [];
+        if (stored) {
+          const items = JSON.parse(stored);
+          if (Array.isArray(items) && items.length > 0) {
+            regularCartItems = items;
+          }
+        }
+        const onlySlayTickets = filterSlayTicketCartLines(regularCartItems);
+        setIsSubscriptionUpgrade(false);
+        setCartItems(onlySlayTickets);
         return;
       }
 
@@ -884,6 +911,10 @@ function CheckoutPage() {
             navigate('/checkout/gift-card', { replace: true });
             return;
           }
+          if (regularCartItems.every((i: { type?: string; name?: string; slayTicketProduct?: boolean }) => isSlayTicketPackCartLine(i))) {
+            navigate('/checkout/slay-tickets', { replace: true });
+            return;
+          }
         }
         return;
       }
@@ -924,6 +955,28 @@ function CheckoutPage() {
     return () => clearTimeout(t);
   }, [isGiftCardCheckoutRoute, navigate, cartItems.length]);
 
+  /**
+   * Isolated slay-ticket checkout with nothing to buy → back to Slay Ticket PDP.
+   */
+  useEffect(() => {
+    if (!isSlayTicketCheckoutRoute) return;
+    const run = () => {
+      let slayLines: unknown[] = [];
+      try {
+        const stored = localStorage.getItem('cartItems');
+        const parsed = stored ? JSON.parse(stored) : [];
+        slayLines = filterSlayTicketCartLines(Array.isArray(parsed) ? parsed : []);
+      } catch {
+        /* ignore */
+      }
+      if (slayLines.length > 0) return;
+      maybeRestoreSlayTicketCheckoutCartAfterAbandon([]);
+      navigate('/tools/slay-tickets', { replace: true });
+    };
+    const t = window.setTimeout(run, 0);
+    return () => clearTimeout(t);
+  }, [isSlayTicketCheckoutRoute, navigate, cartItems.length]);
+
   /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */
   const goBackToMembershipUpgradeChart = useCallback(() => {
     try {
@@ -956,8 +1009,24 @@ function CheckoutPage() {
       navigate('/bag');
       return;
     }
+    if (isSlayTicketCheckoutRoute) {
+      let slayLines: { type?: string; name?: string; slayTicketProduct?: boolean }[] = [];
+      try {
+        const stored = localStorage.getItem('cartItems');
+        const parsed = stored ? JSON.parse(stored) : [];
+        slayLines = filterSlayTicketCartLines(Array.isArray(parsed) ? parsed : []);
+      } catch {
+        /* ignore */
+      }
+      const restoredCount = maybeRestoreSlayTicketCheckoutCartAfterAbandon(slayLines);
+      if (restoredCount != null) {
+        setCartCount(restoredCount);
+      }
+      navigate('/bag');
+      return;
+    }
     navigate('/bag');
-  }, [goBackToMembershipUpgradeChart, isGiftCardCheckoutRoute, isSubscriptionUpgrade, navigate]);
+  }, [goBackToMembershipUpgradeChart, isGiftCardCheckoutRoute, isSlayTicketCheckoutRoute, isSubscriptionUpgrade, navigate]);
 
   useEffect(() => {
     if (!isSubscriptionUpgrade) {
@@ -1697,7 +1766,7 @@ function CheckoutPage() {
   // Update active tab based on current route
   useEffect(() => {
     const pathname = location.pathname;
-    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {
       setMobileMenuActiveTab('TOOLS');
     } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
       setMobileMenuActiveTab('BRAND');
@@ -1710,7 +1779,7 @@ function CheckoutPage() {
   useEffect(() => {
     if (showMobileMenu) {
       const pathname = location.pathname;
-      if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {
         setMobileMenuActiveTab('TOOLS');
       } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
         setMobileMenuActiveTab('BRAND');
@@ -1912,6 +1981,8 @@ function CheckoutPage() {
     return item.name === 'GIFT CARD' || item.type === 'gift-card';
   });
 
+  const isOnlySlayTickets = cartItems.length > 0 && cartItems.every((item) => isSlayTicketPackCartLine(item));
+
   const isBookingsOnlyCheckout = isBookingsOnlyCheckoutState(location.pathname, cartItems);
   const checkoutSkipsShipping =
     isSubscriptionUpgrade || isOnlyDigitalProducts || isBookingsOnlyCheckout;
@@ -2091,8 +2162,8 @@ function CheckoutPage() {
       return;
     }
     
-    // Show error for digital products (subscription upgrades or gift cards)
-    if (isSubscriptionUpgrade || isOnlyGiftCards) {
+    // Show error for digital products (subscription upgrades, gift cards, or slay ticket packs)
+    if (isSubscriptionUpgrade || isOnlyGiftCards || isOnlySlayTickets) {
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
@@ -2345,7 +2416,7 @@ function CheckoutPage() {
   /** After "Claim offer" adds a unit to the bag, queue CONSULT-* from session or `?consultClaim=` + fetch quote. */
   useEffect(() => {
     if (consultClaimBootstrapDoneRef.current) return;
-    if (isSubscriptionUpgrade || isBookingsCheckoutRoute || isGiftCardCheckoutRoute) return;
+    if (isSubscriptionUpgrade || isBookingsCheckoutRoute || isGiftCardCheckoutRoute || isSlayTicketCheckoutRoute) return;
 
     let claimId = '';
     let claimCode = '';
@@ -2405,7 +2476,7 @@ function CheckoutPage() {
     return () => {
       cancelled = true;
     };
-  }, [isSubscriptionUpgrade, isBookingsCheckoutRoute, isGiftCardCheckoutRoute, searchParams, setSearchParams]);
+  }, [isSubscriptionUpgrade, isBookingsCheckoutRoute, isGiftCardCheckoutRoute, isSlayTicketCheckoutRoute, searchParams, setSearchParams]);
 
   useEffect(() => {
     if (!pendingConsultDiscountCode) return;
@@ -2624,6 +2695,9 @@ function CheckoutPage() {
             );
           if (onlyGiftOrDigital && cartItems.every((i: any) => isGiftCardCartLine(i))) {
             clearGiftCardCheckoutCartBackup();
+          }
+          if (onlyGiftOrDigital && cartItems.every((i: any) => isSlayTicketPackCartLine(i))) {
+            clearSlayTicketCheckoutCartBackup();
           }
           const digitalFulfillmentOnly = Boolean(onlyGiftOrDigital);
           const bookingsOnlyAc = isBookingsOnlyCheckoutState(location.pathname, cartItems);
@@ -3241,7 +3315,9 @@ function CheckoutPage() {
                         ? 'BOOKING'
                         : isGiftCardCheckoutRoute
                           ? 'GIFT CARD'
-                          : 'BAG'}
+                          : isSlayTicketCheckoutRoute
+                            ? 'SLAY TICKETS'
+                            : 'BAG'}
                   </span>
                 </>
               )}
@@ -6353,6 +6429,7 @@ function CheckoutPage() {
                     isSubscriptionUpgrade,
                     isBookingsCheckoutRoute,
                     isGiftCardCheckoutRoute,
+                    isSlayTicketCheckoutRoute,
                     usedFounderDummyPan,
                   });
                   if (stripePlan.reason) {

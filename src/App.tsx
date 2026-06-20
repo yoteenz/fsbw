@@ -1036,6 +1036,13 @@ function App() {
             </Suspense>
           </CommerceRouteGuard>
         } />
+        <Route path="/checkout/slay-tickets" element={
+          <CommerceRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <CheckoutPage />
+            </Suspense>
+          </CommerceRouteGuard>
+        } />
         <Route path="/checkout" element={
           <CommerceRouteGuard>
             <Suspense fallback={<LoadingScreen />}>

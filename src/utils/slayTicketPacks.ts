@@ -1,3 +1,5 @@
+import { SLAY_TICKET_CART_THUMBNAIL_SRC } from '../constants/slayTicketAssets';
+
 /** Purchasable Slay Ticket pack products (digital — no bonus tickets on purchase). */
 
 export type SlayTicketPack = {
@@ -52,8 +54,8 @@ export function slayTicketPackCartLine(pack: SlayTicketPack) {
     type: 'digital' as const,
     slayTicketProduct: true,
     slayTicketPackCount: pack.ticketCount,
+    image: SLAY_TICKET_CART_THUMBNAIL_SRC,
   };
 }
 
-/** Thumbnail for Slay Ticket pack lines in bag / checkout. */
-export const SLAY_TICKET_CART_THUMBNAIL_SRC = '/assets/slay-challenge.svg';
+export { SLAY_TICKET_CART_THUMBNAIL_SRC };

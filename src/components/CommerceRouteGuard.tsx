@@ -7,7 +7,7 @@ import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 
 /**
- * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`):
+ * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`, `/checkout/slay-tickets`):
  * always allowed — guests can view the bag and complete purchase without signing in.
  * Other commerce routes wrapped by this guard: require a live Supabase session when Supabase is configured.
  *
@@ -20,6 +20,7 @@ function isGuestCommerceAllowedPath(pathname: string): boolean {
   if (pathname === '/checkout') return true;
   if (pathname === '/checkout/bookings') return true;
   if (pathname === '/checkout/gift-card') return true;
+  if (pathname === '/checkout/slay-tickets') return true;
   return false;
 }
 
