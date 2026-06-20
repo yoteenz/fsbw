@@ -1,9 +1,19 @@
-import { SLAY_TICKET_PACKS, slayTicketPackListPriceUsd } from '../../utils/slayTicketPacks';
+import { SLAY_TICKET_PACKS } from '../../utils/slayTicketPacks';
+
+const PACKS_PER_ROW = 3;
 
 type SlayTicketPackPickerProps = {
   value: string;
   onChange: (packId: string) => void;
 };
+
+function slayTicketPackRows() {
+  const rows: (typeof SLAY_TICKET_PACKS)[] = [];
+  for (let i = 0; i < SLAY_TICKET_PACKS.length; i += PACKS_PER_ROW) {
+    rows.push(SLAY_TICKET_PACKS.slice(i, i + PACKS_PER_ROW));
+  }
+  return rows;
+}
 
 export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPackPickerProps) {
   return (
@@ -14,11 +24,13 @@ export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPack
           box-sizing: border-box;
           border: 1.3px solid #000000;
           background-color: #ffffff !important;
-          padding: 4px 12px;
-          min-width: 72px;
+          padding: 4px 8px;
+          min-width: 0;
+          flex: 1 1 0;
+          max-width: 96px;
           text-align: center;
           font-family: "Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif;
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 500;
           line-height: 1.2;
           color: #000000 !important;
@@ -51,22 +63,25 @@ export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPack
           alignItems: 'center',
           gap: '10px',
           transform: 'translateY(-7px)',
+          width: '100%',
+          maxWidth: '320px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
         }}
       >
-        {[SLAY_TICKET_PACKS.slice(0, 2), SLAY_TICKET_PACKS.slice(2, 4)].map((row, rowIndex) => (
+        {slayTicketPackRows().map((row, rowIndex) => (
           <div
             key={rowIndex}
             style={{
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center',
-              gap: '12px',
+              alignItems: 'stretch',
+              gap: '8px',
               width: '100%',
             }}
           >
             {row.map((pack) => {
               const isSelected = value === pack.id;
-              const savingsUsd = slayTicketPackListPriceUsd(pack.ticketCount) - pack.priceUsd;
               return (
                 <div
                   key={pack.id}
@@ -87,19 +102,6 @@ export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPack
                   }}
                 >
                   {pack.ticketCount} TICKETS
-                  {savingsUsd > 0 ? (
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '8px',
-                        color: '#EB1C24',
-                        marginTop: '2px',
-                        letterSpacing: '0.02em',
-                      }}
-                    >
-                      SAVE ${savingsUsd}
-                    </span>
-                  ) : null}
                 </div>
               );
             })}

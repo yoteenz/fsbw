@@ -25,29 +25,61 @@ export function slayTicketPackUnitPriceUsd(pack: SlayTicketPack): number {
   return pack.priceUsd / pack.ticketCount;
 }
 
+/** Volume pack totals (below {@link slayTicketPackListPriceUsd} for the same ticket count). */
+export function slayTicketPackPriceUsd(ticketCount: number): number {
+  switch (ticketCount) {
+    case 4:
+      return 16;
+    case 8:
+      return 30;
+    case 12:
+      return 46;
+    case 24:
+      return 90;
+    case 48:
+      return 180;
+    case 60:
+      return 225;
+    default:
+      return slayTicketPackListPriceUsd(ticketCount);
+  }
+}
+
 export const SLAY_TICKET_PACKS: SlayTicketPack[] = [
   {
     id: 'slay-tickets-4',
     ticketCount: 4,
-    priceUsd: 16,
+    priceUsd: slayTicketPackPriceUsd(4),
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-8',
     ticketCount: 8,
-    priceUsd: 30,
+    priceUsd: slayTicketPackPriceUsd(8),
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-12',
     ticketCount: 12,
-    priceUsd: 46,
+    priceUsd: slayTicketPackPriceUsd(12),
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-24',
     ticketCount: 24,
-    priceUsd: 90,
+    priceUsd: slayTicketPackPriceUsd(24),
+    label: SLAY_TICKET_CART_LINE_NAME,
+  },
+  {
+    id: 'slay-tickets-48',
+    ticketCount: 48,
+    priceUsd: slayTicketPackPriceUsd(48),
+    label: SLAY_TICKET_CART_LINE_NAME,
+  },
+  {
+    id: 'slay-tickets-60',
+    ticketCount: 60,
+    priceUsd: slayTicketPackPriceUsd(60),
     label: SLAY_TICKET_CART_LINE_NAME,
   },
 ];

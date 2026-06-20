@@ -30205,3 +30205,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User adjusted volume deals: **8 tickets → \$30** (was \$32), **12 tickets → \$46** (was \$48); 4-pack **\$16** and 24-pack **\$90** unchanged.
 - **Decisions / outcomes:** Pack picker **SAVE \$2** on 8/12, **SAVE \$6** on 24 (auto from list rate). Details tab lists volume pack prices **\$30 / \$46 / \$90**.
 - **Changes:** `slayTicketPacks.ts`, `SlayTicketProductDetailsTab.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — Slay Ticket 48/60 packs + 3-column picker
+
+- **Context:** User added **48** and **60** ticket packs using existing volume pricing; picker **3 per row** (6 packs → 2 rows); removed red **SAVE \$** labels from pack chips.
+- **Decisions / outcomes:** New packs **`slay-tickets-48`** (**\$180**) and **`slay-tickets-60`** (**\$225**) — same **\$0.25/ticket** bulk discount as 24-pack (\$3.75 effective). Centralized totals in **`slayTicketPackPriceUsd()`**. Picker: 3 columns, slightly smaller chips, no savings callout.
+- **Changes:** `slayTicketPacks.ts`, `SlayTicketPackPicker.tsx`, `SlayTicketProductDetailsTab.tsx`. Build verified.
