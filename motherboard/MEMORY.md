@@ -30129,6 +30129,14 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-20 — Collectibles preview tap-to-expand tier requirements
+
+- **Context:** User wanted each collectible phase card in the admin **Collectibles (all phases)** dropdown to reveal that tier&apos;s **requirements and rewards** on tap.
+- **Decisions / outcomes:** Phase cards are tappable; expand **`SlayChallengeTierPhaseDetail`** with tier title, requirement line, simulated progress for phase 1/2/3, all tasks (rose bullets, checked by phase), full tier reward pool with matching collectible highlighted. Shared **`slayChallengeTiers.ts`**, **`slayChallengeRewardAssetMap.ts`**, **`SlayChallengeRoseBullet.tsx`** extracted from Concierge.
+- **Changes:** `SlayChallengeCollectiblesPreview.tsx`, `SlayChallengeTierPhaseDetail.tsx`, `slayChallengeTiers.ts`, `slayChallengeRewardAssetMap.ts`, `SlayChallengeRoseBullet.tsx`, `concierge/page.tsx`. Build verified.
+
+---
+
 ## 2026-06-20 — Slay Tickets Lounge TV content-access system
 
 - **Context:** User requested a full **Slay Tickets** branded ticket-gated experience for Lounge TV: balance on profile, transaction history, per-content ticket costs, unlock records, earning from physical hair purchases, spending to unlock/play content, purchasable ticket packs, and Lounge TV UI badges (cost, locked/unlocked, free preview, WATCH/UNLOCK) without changing the dark theater aesthetic.
