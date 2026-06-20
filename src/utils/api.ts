@@ -293,14 +293,20 @@ export async function createStripeMembershipCheckoutSession(
  * Requires Supabase session. Cart must only contain server-resolvable lines (see `/api/checkout/quote`).
  * Wire Stripe.js `confirmCardPayment(clientSecret)` when you replace the founder card flow.
  */
-export async function createProductPaymentIntent(lines: unknown[]): Promise<{
+export async function createProductPaymentIntent(
+  lines: unknown[],
+  chargeCurrency?: string
+): Promise<{
   clientSecret: string | null;
   paymentIntentId: string;
   quote: unknown;
 }> {
   const res = await apiFetch('/api/stripe/create-product-payment-intent', {
     method: 'POST',
-    body: { lines },
+    body: {
+      lines,
+      ...(chargeCurrency ? { chargeCurrency } : {}),
+    },
   });
   const text = await res.text();
   if (!res.ok) {

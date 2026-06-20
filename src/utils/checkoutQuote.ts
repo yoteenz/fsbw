@@ -21,6 +21,10 @@ export type CheckoutQuoteLinePayload = {
 export type ServerCheckoutQuote = {
   currency: 'usd';
   totalCents: number;
+  chargeCurrency: string;
+  chargeAmountMinor: number;
+  fxRate: number;
+  fxAsOf: string;
   lines: Array<{
     key: string;
     description: string;
@@ -51,7 +55,8 @@ export function cartItemsToQuoteLines(items: CartItem[]): CheckoutQuoteLinePaylo
 }
 
 export async function fetchCheckoutQuote(
-  lines: CheckoutQuoteLinePayload[]
+  lines: CheckoutQuoteLinePayload[],
+  chargeCurrency?: string
 ): Promise<{ ok: true; quote: ServerCheckoutQuote } | { ok: false; error: string }> {
   const env = (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env;
   const base = (env?.VITE_API_BASE || '').replace(/\/$/, '');
@@ -60,7 +65,10 @@ export async function fetchCheckoutQuote(
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lines })
+      body: JSON.stringify({
+        lines,
+        ...(chargeCurrency ? { chargeCurrency } : {}),
+      }),
     });
     const text = await res.text();
     if (!res.ok) {

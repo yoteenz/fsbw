@@ -65,7 +65,10 @@ import CheckoutStripeCardSection, {
 } from '../../components/checkout/CheckoutStripeCardSection';
 import { fetchProductCheckoutPolicy } from '../../utils/productCheckoutPolicy';
 import { shouldRunStripeProductPayment } from '../../utils/productCheckoutPolicy';
-import { cartItemsToQuoteLines, fetchCheckoutQuote } from '../../utils/checkoutQuote';
+import { cartItemsToQuoteLines, fetchCheckoutQuote, type ServerCheckoutQuote } from '../../utils/checkoutQuote';
+import { DEFAULT_CURRENCY_RATES } from '../../utils/defaultCurrencyRates';
+import type { CurrencyRatesRecord } from '../../utils/currencyFormat';
+import { formatChargeAmountMinor } from '../../utils/chargeCurrencyFormat';
 import {
   discountPromoCheckoutBlockReason,
   findDiscountPromoByNormalizedCode,
@@ -741,18 +744,7 @@ function CheckoutPage() {
     });
   }, [availableVouchersByType, cartVoucherApplicability]);
   
-  const currencyRates = useMemo(() => ({
-    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
-    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
-    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
-    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
-    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
-    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
-    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
-    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
-    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
-    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
-  }), []);
+  const currencyRates = DEFAULT_CURRENCY_RATES as CurrencyRatesRecord;
 
 
   // Check if this is a subscription upgrade
@@ -786,6 +778,32 @@ function CheckoutPage() {
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
   const [useStripeProductCardFields, setUseStripeProductCardFields] = useState(false);
   const stripeCardRef = useRef<CheckoutStripeCardHandle | null>(null);
+  const [stripeServerQuote, setStripeServerQuote] = useState<ServerCheckoutQuote | null>(null);
+  const [stripeServerQuoteLoading, setStripeServerQuoteLoading] = useState(false);
+
+  useEffect(() => {
+    if (!useStripeProductCardFields || cartItems.length === 0) {
+      setStripeServerQuote(null);
+      setStripeServerQuoteLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setStripeServerQuoteLoading(true);
+    void (async () => {
+      const result = await fetchCheckoutQuote(
+        cartItemsToQuoteLines(cartItems),
+        selectedCurrency
+      );
+      if (cancelled) return;
+      setStripeServerQuote(result.ok ? result.quote : null);
+      setStripeServerQuoteLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [useStripeProductCardFields, cartItems, selectedCurrency]);
 
   useEffect(() => {
     let cancelled = false;
@@ -4975,6 +4993,35 @@ function CheckoutPage() {
                               handleRef={stripeCardRef}
                             />
                           ) : null}
+                          {useStripeProductCardFields && stripeServerQuote?.fullyResolved ? (
+                            <p
+                              className="mt-2"
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#808080',
+                                textTransform: 'uppercase',
+                                lineHeight: 1.35,
+                              }}
+                            >
+                              {stripeServerQuoteLoading
+                                ? 'LOADING CARD CHARGE QUOTE…'
+                                : stripeServerQuote.chargeCurrency === 'USD'
+                                  ? `YOUR CARD WILL BE CHARGED ${formatChargeAmountMinor(
+                                      stripeServerQuote.chargeAmountMinor,
+                                      stripeServerQuote.chargeCurrency,
+                                      currencyRates.USD?.symbol || '$'
+                                    )}.`
+                                  : `YOUR CARD WILL BE CHARGED ${formatChargeAmountMinor(
+                                      stripeServerQuote.chargeAmountMinor,
+                                      stripeServerQuote.chargeCurrency,
+                                      currencyRates[stripeServerQuote.chargeCurrency]?.symbol || ''
+                                    )} (≈ $${(stripeServerQuote.totalCents / 100).toLocaleString('en-US', {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })} USD AT CHECKOUT FX).`}
+                            </p>
+                          ) : null}
                           {!useStripeProductCardFields ? (
                           <>
                           <div>
@@ -6454,7 +6501,10 @@ function CheckoutPage() {
                     return;
                   }
                   if (stripePlan.run) {
-                    const quoteResult = await fetchCheckoutQuote(cartItemsToQuoteLines(cartItems));
+                    const quoteResult = await fetchCheckoutQuote(
+                      cartItemsToQuoteLines(cartItems),
+                      selectedCurrency
+                    );
                     if (!quoteResult.ok || !quoteResult.quote.fullyResolved) {
                       setValidationMessage(
                         'THIS CART CANNOT BE PAID BY CARD YET. REMOVE BUNDLE OR UNPRICED LINES OR CONTACT CONCIERGE.'
@@ -6469,6 +6519,7 @@ function CheckoutPage() {
                     }
                     const pay = await stripeCardRef.current.confirmPayment({
                       lines: cartItemsToQuoteLines(cartItems),
+                      chargeCurrency: selectedCurrency,
                       billingName: cardholder.trim(),
                       billingEmail: email.trim(),
                     });

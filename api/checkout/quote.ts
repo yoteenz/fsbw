@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { enrichQuoteWithChargeCurrency } from '../_lib/pricing/fxRates.js';
 import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
@@ -23,7 +24,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> {
 
 /**
  * POST /api/checkout/quote
- * Body: { lines: QuoteLineInput[] } — do not send trusted totals; server recomputes USD.
+ * Body: { lines: QuoteLineInput[], chargeCurrency?: string } — do not send trusted totals; server recomputes USD.
  * Public (no auth) so the bag can show a server-verified subtotal for display.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -77,6 +78,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     };
   });
 
-  const quote = resolveCheckoutQuoteLines(lines);
+  const usdQuote = resolveCheckoutQuoteLines(lines);
+  const chargeCurrency =
+    typeof body.chargeCurrency === 'string' ? body.chargeCurrency : undefined;
+  const quote = enrichQuoteWithChargeCurrency(usdQuote, chargeCurrency);
   sendJson(res, 200, { ok: true, quote });
 }

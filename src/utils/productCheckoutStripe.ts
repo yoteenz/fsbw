@@ -24,6 +24,7 @@ export function getStripeJs(): Promise<Stripe | null> {
 
 export async function confirmProductCheckoutPayment(args: {
   lines: CheckoutQuoteLinePayload[];
+  chargeCurrency?: string;
   card: StripeCardElement;
   billingName: string;
   billingEmail: string;
@@ -36,7 +37,7 @@ export async function confirmProductCheckoutPayment(args: {
   let clientSecret: string | null;
   let paymentIntentId: string;
   try {
-    const pi = await createProductPaymentIntent(args.lines);
+    const pi = await createProductPaymentIntent(args.lines, args.chargeCurrency);
     clientSecret = pi.clientSecret;
     paymentIntentId = pi.paymentIntentId;
   } catch (e) {
