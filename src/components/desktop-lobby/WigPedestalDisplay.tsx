@@ -101,7 +101,6 @@ export function WigPedestalDisplay() {
       setActiveIndex(index);
       setTimeout(() => {
         setIsTransitioning(false);
-        setPrevIndex(null);
       }, 80);
     }, 280);
   };
