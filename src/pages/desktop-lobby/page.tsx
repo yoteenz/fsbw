@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
-import { WigPedestalDisplay } from '../../components/desktop-lobby/WigPedestalDisplay';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
 import { ZonePortals } from '../../components/desktop-lobby/ZonePortals';
@@ -10,7 +9,7 @@ import { ZoneLoungeReveal } from '../../components/desktop-lobby/ZoneLoungeRevea
 const LOBBY_BG = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3528.png';
 const FALLBACK_BG = '/assets/marble%20bg.png';
 
-function ZoneArrival() {
+function DigitalLobby() {
   const [visible, setVisible] = useState(false);
   const [bgSrc, setBgSrc] = useState(LOBBY_BG);
 
@@ -25,44 +24,54 @@ function ZoneArrival() {
     img.src = LOBBY_BG;
   }, []);
 
-  const floatIn = (delayMs: number, dy = 32) => ({
+  const floatIn = (delayMs: number, dy = 24) => ({
     transition: `opacity 1.1s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms, transform 1.2s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms`,
     opacity: visible ? 1 : 0,
     transform: visible ? 'translateY(0)' : `translateY(${dy}px)`,
   });
 
   return (
-    <section className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
-      {/* Locked flagship environment — do not replace */}
-      <div
-        style={{
-          position: 'absolute', inset: 0, zIndex: 0,
-          backgroundImage: `url(${bgSrc})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-      {/* Edge vignette — frames the space */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 120% 100% at 50% 50%, transparent 52%, rgba(0,0,0,0.24) 100%)',
-        zIndex: 1,
+    <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+
+      {/* ENVIRONMENT — locked flagship background */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        backgroundImage: `url(${bgSrc})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
       }} />
+
+      {/* Edge vignette */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.2) 100%)',
+      }} />
+
       {/* NavBar gradient support */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.12) 14%, transparent 30%)',
-        zIndex: 1,
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.08) 12%, transparent 26%)',
       }} />
+
+      {/* Bottom anchor gradient — floats panels above darkness */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '42%',
+        zIndex: 1, pointerEvents: 'none',
+        background: 'linear-gradient(0deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, transparent 100%)',
+      }} />
+
       {/* Particle field */}
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2 }}>
+      <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
         <ParticleField />
       </div>
 
-      {/* Brand lock-up */}
-      <div
-        className="absolute pointer-events-none text-center"
-        style={{ top: '138px', left: 0, right: 0, zIndex: 10, ...floatIn(200, 20) }}
-      >
+      {/* BRAND LOCK-UP */}
+      <div style={{
+        position: 'absolute', top: '138px', left: 0, right: 0,
+        zIndex: 20, textAlign: 'center', pointerEvents: 'none',
+        ...floatIn(200, 16),
+      }}>
         <div style={{
           fontFamily: '"Futura PT Medium"',
           fontSize: '15px',
@@ -70,7 +79,7 @@ function ZoneArrival() {
           textTransform: 'uppercase',
           color: '#C81C24',
           lineHeight: 1,
-          textShadow: '0 0 20px rgba(200,28,36,0.6), 0 0 48px rgba(200,28,36,0.32), 0 0 80px rgba(200,28,36,0.16), 0 2px 8px rgba(0,0,0,0.55)',
+          textShadow: '0 0 20px rgba(200,28,36,0.65), 0 0 48px rgba(200,28,36,0.35), 0 0 80px rgba(200,28,36,0.18), 0 2px 8px rgba(0,0,0,0.55)',
         }}>
           FRONTAL SLAYER
         </div>
@@ -86,48 +95,43 @@ function ZoneArrival() {
         }}>
           LUXURY WITHOUT LIMITS
         </div>
-        <div className="flex items-center justify-center gap-3 mt-3">
-          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.65))' }} />
-          <div style={{ width: '4px', height: '4px', transform: 'rotate(45deg)', background: 'rgba(255,255,255,0.85)' }} />
-          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, rgba(255,255,255,0.65), transparent)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
+          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.55))' }} />
+          <div style={{ width: '4px', height: '4px', transform: 'rotate(45deg)', background: 'rgba(255,255,255,0.8)' }} />
+          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, rgba(255,255,255,0.55), transparent)' }} />
         </div>
       </div>
 
-      {/* Floating overlay system — acrylic panels above environment */}
-      <div
-        className="relative flex items-end justify-center"
-        style={{
-          zIndex: 12,
-          paddingTop: '200px',
-          paddingBottom: '56px',
-          paddingLeft: '7%',
-          paddingRight: '7%',
-          gap: '40px',
-          minHeight: '100vh',
-          boxSizing: 'border-box',
-        }}
-      >
-        <div style={{
-          width: '268px', flexShrink: 0, alignSelf: 'center',
-          filter: 'drop-shadow(0 60px 90px rgba(0,0,0,0.3))',
-          ...floatIn(400, 36),
-        }}>
-          <BuildAWigPanel />
-        </div>
-        <div className="flex flex-col items-center" style={{
-          flex: 1, minWidth: 0, alignSelf: 'flex-end',
-          ...floatIn(120, 24),
-        }}>
-          <WigPedestalDisplay />
-        </div>
-        <div style={{
-          width: '268px', flexShrink: 0, alignSelf: 'center',
-          filter: 'drop-shadow(0 60px 90px rgba(0,0,0,0.3))',
-          ...floatIn(560, 36),
-        }}>
-          <PSAConciergePanel />
-        </div>
+      {/* LEFT PANEL — Build-A-Wig Studio */}
+      <div style={{
+        position: 'absolute', bottom: '92px', left: '6%',
+        zIndex: 30,
+        filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.3))',
+        ...floatIn(400, 32),
+      }}>
+        <BuildAWigPanel />
       </div>
+
+      {/* RIGHT PANEL — PSA Concierge */}
+      <div style={{
+        position: 'absolute', bottom: '92px', right: '6%',
+        zIndex: 30,
+        filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.3))',
+        ...floatIn(560, 32),
+      }}>
+        <PSAConciergePanel />
+      </div>
+
+      {/* BOTTOM NAV — Holographic portal strip */}
+      <div style={{
+        position: 'absolute', bottom: '22px', left: 0, right: 0,
+        zIndex: 30,
+        display: 'flex', justifyContent: 'center',
+        ...floatIn(700, 18),
+      }}>
+        <ZonePortals />
+      </div>
+
     </section>
   );
 }
@@ -158,8 +162,7 @@ export default function DesktopLobbyPage() {
   return (
     <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
       <NavBar activeLink="HOME" />
-      <ZoneArrival />
-      <ZonePortals />
+      <DigitalLobby />
       <ZoneLoungeReveal />
     </div>
   );
