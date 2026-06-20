@@ -30,18 +30,42 @@ const badgeBase: CSSProperties = {
   zIndex: 4,
 };
 
+const ticketLockDimOverlayStyle: CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  background: 'rgba(0,0,0,0.08)',
+  zIndex: 0,
+  pointerEvents: 'none',
+};
+
+/** Shared acrylic lock art — high opacity, no blur, so IMG_3405 reads clearly on thumbs. */
+export const loungeTvTicketLockWatermarkImageStyle: CSSProperties = {
+  objectFit: 'contain',
+  pointerEvents: 'none',
+  opacity: 0.95,
+  filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.28))',
+};
+
 const ticketLockWatermarkStyle: CSSProperties = {
+  ...loungeTvTicketLockWatermarkImageStyle,
   position: 'absolute',
   left: '50%',
   top: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '72%',
-  height: '72%',
-  objectFit: 'contain',
+  width: '90%',
+  height: '90%',
   zIndex: 1,
-  pointerEvents: 'none',
-  opacity: 0.38,
-  filter: 'blur(2.5px)',
+};
+
+/** Slay Tips list row thumbs (44×44). */
+export const loungeTvBlogThumbLockWatermarkStyle: CSSProperties = {
+  ...loungeTvTicketLockWatermarkImageStyle,
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '92%',
+  height: '92%',
 };
 
 export function LoungeTvTileTicketLockWatermark({
@@ -73,18 +97,7 @@ export function LoungeTvTileTicketChrome({
 
   return (
     <>
-      {showLock ? (
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'rgba(0,0,0,0.18)',
-            zIndex: 0,
-            pointerEvents: 'none',
-          }}
-        />
-      ) : null}
+      {showLock ? <span aria-hidden style={ticketLockDimOverlayStyle} /> : null}
       <LoungeTvTileTicketLockWatermark tile={tile} isUnlocked={isUnlocked} unlocks={unlocks} />
       <span
         style={{

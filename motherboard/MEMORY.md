@@ -30121,6 +30121,22 @@ Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
+## 2026-06-20 — Slay Challenge admin collectibles preview dropdown
+
+- **Context:** User wanted a **Collectibles** option in the Slay Challenge admin test dropdown to preview all reward collectible assets in **phase 1, 2, and 3** for QA.
+- **Decisions / outcomes:** Added **`collectibles`** to the admin **Test stage** select on Concierge → Slay Challenge. When selected, renders **`SlayChallengeCollectiblesPreview`** — all 10 `slayQuestRewardAssets` types, each with forced phase 1/2/3 cards via optional **`phase`** prop on **`SlayQuestRewardAsset`**. Normal challenge guide, status copy, and START CHALLENGE hidden in this mode.
+- **Changes:** `SlayChallengeCollectiblesPreview.tsx` (new), `SlayQuestRewardAsset.tsx`, `concierge/page.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — Collectibles preview tap-to-expand tier requirements
+
+- **Context:** User wanted each collectible phase card in the admin **Collectibles (all phases)** dropdown to reveal that tier&apos;s **requirements and rewards** on tap.
+- **Decisions / outcomes:** Phase cards are tappable; expand **`SlayChallengeTierPhaseDetail`** with tier title, requirement line, simulated progress for phase 1/2/3, all tasks (rose bullets, checked by phase), full tier reward pool with matching collectible highlighted. Shared **`slayChallengeTiers.ts`**, **`slayChallengeRewardAssetMap.ts`**, **`SlayChallengeRoseBullet.tsx`** extracted from Concierge.
+- **Changes:** `SlayChallengeCollectiblesPreview.tsx`, `SlayChallengeTierPhaseDetail.tsx`, `slayChallengeTiers.ts`, `slayChallengeRewardAssetMap.ts`, `SlayChallengeRoseBullet.tsx`, `concierge/page.tsx`. Build verified.
+
+---
+
 ## 2026-06-20 — Slay Tickets Lounge TV content-access system
 
 - **Context:** User requested a full **Slay Tickets** branded ticket-gated experience for Lounge TV: balance on profile, transaction history, per-content ticket costs, unlock records, earning from physical hair purchases, spending to unlock/play content, purchasable ticket packs, and Lounge TV UI badges (cost, locked/unlocked, free preview, WATCH/UNLOCK) without changing the dark theater aesthetic.
@@ -30223,3 +30239,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Portal both Lounge TV ticket modals to **`document.body`** via `createPortal` so they center on the full viewport. Unlock confirm (`lounge-tv-unlock-confirm`) and need-tickets (`lounge-tv-need-tickets`) modals both portaled.
 - **Changes:** `src/components/lounge/LoungeTvOverlay.tsx` — `createPortal` import; fragment wrapper; modals portaled outside TV DOM; fixed missing `</div>` that broke build. Build verified.
 - **Conventions:** Any `position: fixed` modal/dialog inside Lounge TV (or other transformed overlays) should render via portal to `document.body`.
+
+---
+
+## 2026-06-20 — Lounge TV lock watermark visibility (IMG_3405)
+
+- **Context:** User could barely see the acrylic **IMG_3405** ticket-lock watermark on gated tiles (~38% opacity + blur made it disappear).
+- **Decisions / outcomes:** Show watermark **fully** — **95% opacity**, **no blur**, **90% tile / 92% thumb** size, light **drop-shadow** for contrast; tile dim overlay reduced **0.18 → 0.08**. Shared styles exported from **`LoungeTvTileTicketChrome`** (`loungeTvTicketLockWatermarkImageStyle`, `loungeTvBlogThumbLockWatermarkStyle`) for grid tiles + Slay Tips list thumbs. Badges/title stay above (z-index unchanged).
+- **Changes:** `LoungeTvTileTicketChrome.tsx`, `LoungeTvBlogPostView.tsx`. Build verified.
