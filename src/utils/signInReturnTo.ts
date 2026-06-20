@@ -31,6 +31,7 @@ function normalizeReturnToParam(returnToParam: string | null | undefined): strin
   const legacy = raw.replace(/^\//, '').toLowerCase();
   if (legacy === 'checkout') return '/checkout';
   if (legacy === 'checkout/gift-card') return '/checkout/gift-card';
+  if (legacy === 'checkout/slay-tickets') return '/checkout/slay-tickets';
   if (legacy === 'checkout/bookings') return '/checkout/bookings';
   if (legacy === 'checkout/summary') return '/checkout/summary';
   if (legacy === 'account/settings') return '/account/settings';

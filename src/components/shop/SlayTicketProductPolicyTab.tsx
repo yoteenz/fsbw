@@ -1,0 +1,59 @@
+const BODY_STYLE = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  fontWeight: 400,
+  margin: 0,
+  lineHeight: 1.45,
+  textTransform: 'uppercase' as const,
+};
+
+const BULLET_STYLE = {
+  ...BODY_STYLE,
+  paddingLeft: '12px',
+};
+
+const BULLET_MARK_STYLE = { color: '#EB1C24' };
+
+const EMAIL_STYLE = {
+  ...BODY_STYLE,
+  color: '#EB1C24',
+  fontFamily: '"Futura PT Medium"',
+  fontWeight: 500,
+};
+
+const SLAY_TICKET_POLICY_BULLETS = [
+  'SLAY TICKETS ARE NON-REFUNDABLE ONCE CREDITED TO YOUR ACCOUNT, EXCEPT WHERE REQUIRED BY LAW.',
+  'TICKET PACK PURCHASES DO NOT EARN BONUS SLAY TICKETS.',
+  'PHYSICAL HAIR PRODUCT PURCHASES EARN 2 SLAY TICKETS PER ELIGIBLE LINE ITEM.',
+  'SPENT TICKETS ARE DEDUCTED WHEN YOU CONFIRM AN UNLOCK IN LOUNGE TV.',
+  'UNLOCKED CONTENT ACCESS DEPENDS ON THE ITEM ACCESS TYPE SET FOR THAT CONTENT.',
+  'SLAY TICKETS MAY NOT BE TRANSFERRED BETWEEN ACCOUNTS.',
+  'FRONTAL SLAYER RESERVES THE RIGHT TO ADJUST TICKET COSTS, PACK PRICING, OR CONTENT ACCESS RULES WITH REASONABLE NOTICE.',
+  'ALL SLAY TICKET PURCHASES AND REDEMPTIONS ARE SUBJECT TO OUR GENERAL TERMS OF SERVICE AND WEBSITE POLICIES.',
+] as const;
+
+export default function SlayTicketProductPolicyTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '16px' }}>
+      <p style={BODY_STYLE}>
+        SLAY TICKETS ARE DESIGNED TO GIVE YOU FLEXIBLE ACCESS TO LOUNGE TV WHILE KEEPING DIGITAL DELIVERY SIMPLE AND
+        INSTANT.
+      </p>
+
+      {SLAY_TICKET_POLICY_BULLETS.map((bullet) => (
+        <p key={bullet} style={BULLET_STYLE}>
+          <span style={BULLET_MARK_STYLE}>•</span> {bullet}
+        </p>
+      ))}
+
+      <p style={BODY_STYLE}>
+        IF YOU EXPERIENCE AN ISSUE WITH YOUR SLAY TICKET BALANCE OR UNLOCK, PLEASE EMAIL{' '}
+        <span style={EMAIL_STYLE}>CONTACT@FRONTALSLAYER.COM</span>
+      </p>
+      <p style={BODY_STYLE}>
+        OUR TEAM WILL BE HAPPY TO ASSIST YOU WITH BALANCE INQUIRIES, UNLOCK ISSUES, OR PURCHASE CONCERNS.
+      </p>
+    </div>
+  );
+}

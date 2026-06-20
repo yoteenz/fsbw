@@ -1,221 +1,1697 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
-import { formatPriceUsdPlain } from '../../../utils/currencyFormat';
+import ConfirmationModal from '../../../components/ConfirmationModal';
+import BrandMenuLinks from '../../../components/BrandMenuLinks';
+import SocialMenuIcons from '../../../components/SocialMenuIcons';
+import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
+import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
+import { formatPriceUsd } from '../../../utils/currencyFormat';
+import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
+import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { trackActivity } from '../../../utils/activity';
+import { writeSlayTicketSelectionForCheckoutSession } from '../../../utils/slayTicketCheckoutSession';
+import SlayTicketProductDetailsTab from '../../../components/shop/SlayTicketProductDetailsTab';
+import SlayTicketProductPolicyTab from '../../../components/shop/SlayTicketProductPolicyTab';
+import SlayTicketPackPicker from '../../../components/shop/SlayTicketPackPicker';
+import ThumbBox from '../../../components/ThumbBox';
+import { SLAY_TICKET_PREVIEW_IMAGES } from '../../../constants/slayTicketAssets';
 import {
   SLAY_TICKET_DEFAULT_PACK_ID,
-  SLAY_TICKET_PACKS,
-  SLAY_TICKET_CART_THUMBNAIL_SRC,
   getSlayTicketPackById,
   parseSlayTicketPackId,
-  slayTicketPackCartLine,
-  type SlayTicketPack,
 } from '../../../utils/slayTicketPacks';
-import { getSlayTicketBalanceFromUser } from '../../../utils/slayTicketHistoryDisplay';
-import { useSlayTickets } from '../../../hooks/useSlayTickets';
 
-const USD_RATES = {
-  USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
-};
+/** Portrait thumb frames — 4px white mat. */
+const SLAY_TICKET_THUMB_MAT_PX = 4;
+const SLAY_TICKET_THUMB_INNER_W_PX = 48;
+const SLAY_TICKET_THUMB_INNER_H_PX = 50;
+const SLAY_TICKET_THUMB_OUTER_W_PX = SLAY_TICKET_THUMB_INNER_W_PX + SLAY_TICKET_THUMB_MAT_PX * 2;
+const SLAY_TICKET_THUMB_OUTER_H_PX = SLAY_TICKET_THUMB_INNER_H_PX + SLAY_TICKET_THUMB_MAT_PX * 2;
 
-export default function SlayTicketsPage() {
+const SLAY_TICKET_SIMILAR_PRODUCTS_VISIBLE = false;
+
+function withSlayTicketSimilarProductsVisibility(style: React.CSSProperties): React.CSSProperties {
+  if (SLAY_TICKET_SIMILAR_PRODUCTS_VISIBLE) return style;
+  return { ...style, display: 'none' };
+}
+
+function SlayTicketsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const [selectedPackId, setSelectedPackId] = useState(
-    () => parseSlayTicketPackId(searchParams.get('pack')) ?? SLAY_TICKET_DEFAULT_PACK_ID
-  );
-  const [cartCount, setCartCount] = useState(() => parseInt(localStorage.getItem('cartCount') || '0', 10));
-  const [userData, setUserData] = useState<Record<string, unknown> | null>(() => {
-    try {
-      const raw = localStorage.getItem('currentUser');
-      return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
-    } catch {
-      return null;
-    }
+
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  const [selectedPackId, setSelectedPackId] = useState<string>(() => {
+    if (typeof window === 'undefined') return SLAY_TICKET_DEFAULT_PACK_ID;
+    return (
+      parseSlayTicketPackId(new URLSearchParams(window.location.search).get('pack')) ??
+      SLAY_TICKET_DEFAULT_PACK_ID
+    );
   });
-  const { balance } = useSlayTickets(userData);
-  const ticketBalance = typeof balance === 'number' ? balance : getSlayTicketBalanceFromUser(userData);
-  const selectedPack = getSlayTicketPackById(selectedPackId) ?? SLAY_TICKET_PACKS[0];
-  const formatPrice = (usd: number) => formatPriceUsdPlain(usd, 'USD', USD_RATES);
+  const selectedPack = getSlayTicketPackById(selectedPackId) ?? getSlayTicketPackById(SLAY_TICKET_DEFAULT_PACK_ID)!;
+  const [selectedSlayTicketPreviewIndex, setSelectedSlayTicketPreviewIndex] = useState(0);
+  const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'POLICY' | 'REVIEWS'>({
+    queryKey: 'tab',
+    storageKey: 'slayTicketActiveTab',
+    defaultValue: 'DETAILS',
+    allowedValues: ['DETAILS', 'POLICY', 'REVIEWS'] as const,
+  });
+  const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
+  const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
+  const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
+  const [recentSnapPx, setRecentStripViewportRef] = useMarbleStripSnapStep();
+  const [cartCount, setCartCount] = useState(() => {
+    return parseInt(localStorage.getItem('cartCount') || '0');
+  });
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/slay-tickets') {
+      return 'TOOLS';
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      return 'BRAND';
+    }
+    return 'SHOP';
+  });
+  const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('isSignedIn') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+
+  // Currency state (per user)
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        const savedCurrency = localStorage.getItem(key);
+        return savedCurrency || 'USD';
+      } catch (e) {
+        return 'USD';
+      }
+    }
+    return 'USD';
+  });
+
+  // Currency exchange rates
+  const currencyRates = React.useMemo(() => ({
+    USD: { symbol: '&#36;', rate: 1.0, name: 'US Dollar' },
+    EUR: { symbol: '&euro;', rate: 0.85, name: 'Euro' },
+    GBP: { symbol: '&pound;', rate: 0.73, name: 'British Pound' },
+    CAD: { symbol: 'C&#36;', rate: 1.25, name: 'Canadian Dollar' },
+    AUD: { symbol: 'A&#36;', rate: 1.35, name: 'Australian Dollar' },
+    JPY: { symbol: '&yen;', rate: 110.0, name: 'Japanese Yen' },
+    CNY: { symbol: '&yen;', rate: 6.45, name: 'Chinese Yuan' },
+    INR: { symbol: '&#8377;', rate: 75.0, name: 'Indian Rupee' },
+    BRL: { symbol: 'R&#36;', rate: 5.2, name: 'Brazilian Real' },
+    MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
+  }), []);
+
+  const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
 
   useEffect(() => {
     const parsed = parseSlayTicketPackId(searchParams.get('pack'));
     if (parsed) setSelectedPackId(parsed);
   }, [searchParams]);
 
+  // Listen for cart count changes
   useEffect(() => {
-    const sync = () => {
-      setCartCount(parseInt(localStorage.getItem('cartCount') || '0', 10));
+    const handleCartCountUpdate = (event: CustomEvent) => {
+      setCartCount(event.detail);
+    };
+
+    const handleStorageChange = () => {
       try {
-        const raw = localStorage.getItem('currentUser');
-        setUserData(raw ? (JSON.parse(raw) as Record<string, unknown>) : null);
-      } catch {
-        setUserData(null);
+        const newCartCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
+        setCartCount(newCartCount);
+      } catch (e) {
+        setCartCount(0);
       }
     };
-    sync();
-    window.addEventListener('cartCountUpdated', sync as EventListener);
-    window.addEventListener('signInStateChanged', sync);
+
+    window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+    window.addEventListener('cartUpdated', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+
     return () => {
-      window.removeEventListener('cartCountUpdated', sync as EventListener);
-      window.removeEventListener('signInStateChanged', sync);
+      window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
+      window.removeEventListener('cartUpdated', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
     };
   }, []);
 
-  const packOptions = useMemo(() => SLAY_TICKET_PACKS, []);
+  // Load selected currency from localStorage (per-user key)
+  useEffect(() => {
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    const savedCurrency = localStorage.getItem(key);
+    if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+      setSelectedCurrency(savedCurrency);
+    }
+  }, [currencyRates]);
 
-  const addPackToBag = () => {
-    const line = slayTicketPackCartLine(selectedPack);
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as unknown[];
-    const next = [
-      ...cartItems.filter((item) => {
-        const row = item as { slayTicketProduct?: boolean };
-        return !row.slayTicketProduct;
-      }),
-      line,
-    ];
-    localStorage.setItem('cartItems', JSON.stringify(next));
-    localStorage.setItem('cartCount', String(next.length));
-    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: next.length }));
-    window.dispatchEvent(new CustomEvent('cartUpdated'));
-    trackActivity('add_to_cart', { product: selectedPack.id, slayTicketPackCount: selectedPack.ticketCount });
-    navigate('/bag');
+  // Save selected currency to localStorage (per-user key)
+  useEffect(() => {
+    const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+    localStorage.setItem(key, selectedCurrency);
+  }, [selectedCurrency]);
+
+  // Listen for currency changes
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+      const savedCurrency = localStorage.getItem(key);
+      if (savedCurrency && currencyRates[savedCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(savedCurrency);
+      }
+    };
+
+    window.addEventListener('storage', handleCurrencyChange);
+    
+    const handleCustomCurrencyChange = (event: CustomEvent) => {
+      const newCurrency = event.detail;
+      if (newCurrency && currencyRates[newCurrency as keyof typeof currencyRates]) {
+        setSelectedCurrency(newCurrency);
+        const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
+        localStorage.setItem(key, newCurrency);
+      }
+    };
+    
+    window.addEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    
+    const interval = setInterval(() => {
+      handleCurrencyChange();
+    }, 500);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleCurrencyChange);
+      window.removeEventListener('currencyChanged', handleCustomCurrencyChange as EventListener);
+    };
+  }, [currencyRates]);
+
+  const formatPrice = React.useCallback(
+    (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
+    [currencyRates, selectedCurrency]
+  );
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  // Update active tab based on current route
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname.includes('/tools') || pathname === '/tools/slay-tickets') {
+      setMobileMenuActiveTab('TOOLS');
+    } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+      setMobileMenuActiveTab('BRAND');
+    } else {
+      setMobileMenuActiveTab('SHOP');
+    }
+  }, [location.pathname]);
+
+  // Ensure active tab is set correctly when menu opens
+  useEffect(() => {
+    if (showMobileMenu) {
+      const pathname = location.pathname;
+      if (pathname.includes('/tools') || pathname === '/tools/slay-tickets') {
+        setMobileMenuActiveTab('TOOLS');
+      } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
+        setMobileMenuActiveTab('BRAND');
+      } else {
+        setMobileMenuActiveTab('SHOP');
+      }
+    }
+  }, [showMobileMenu, location.pathname]);
+
+  // Check sign-in status on mount and listen for changes
+  useEffect(() => {
+    const checkSignInStatus = () => {
+      try {
+        const signedIn = localStorage.getItem('isSignedIn') === 'true';
+        setIsSignedIn(prev => {
+          // Only update if value has changed to prevent unnecessary re-renders
+          if (prev !== signedIn) {
+            return signedIn;
+          }
+          return prev;
+        });
+      } catch (e) {
+        setIsSignedIn(prev => {
+          if (prev !== false) {
+            return false;
+          }
+          return prev;
+        });
+      }
+    };
+
+    // Skip initial check since useState already reads from localStorage
+    // Only set up listeners for future changes
+
+    // Listen for storage changes (when user signs in/out in another tab)
+    const handleStorageChange = () => {
+      checkSignInStatus();
+    };
+
+    // Listen for sign-in state changes from sign-in page
+    const handleSignInStateChange = () => {
+      checkSignInStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
+    };
+  }, []);
+
+  const handleMobileMenuToggle = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const handleMobileMenuTabClick = (tab: string) => {
+    setMobileMenuActiveTab(tab);
+  };
+
+  const handleMobileMenuItemToggle = (item: string) => {
+    setMobileMenuExpandedItems(prev => 
+      prev.includes(item) 
+        ? prev.filter(i => i !== item)
+        : [...prev, item]
+    );
+  };
+
+  const handleMobileMenuSignInToggle = () => {
+    if (isSignedIn) {
+      // Show confirmation modal when signing out
+      setShowSignOutConfirm(true);
+    } else {
+      navigate(signInHrefWithReturnTo(location));
+    }
+  };
+
+  const handleSignOut = async () => {
+    setIsSignedIn(false);
+    await signOutAppAndSupabaseSession();
+    setShowSignOutConfirm(false);
+    // Close mobile menu
+    setShowMobileMenu(false);
+  };
+
+  const handleTabClick = (tab: 'DETAILS' | 'POLICY' | 'REVIEWS') => {
+    setActiveTab(tab);
+  };
+
+  const getTotalPrice = () => selectedPack.priceUsd;
+
+  const handleProceedToCheckout = () => {
+    if (checkoutSubmitting) return;
+    setCheckoutSubmitting(true);
+    try {
+      const newCartCount = writeSlayTicketSelectionForCheckoutSession({
+        packId: selectedPackId,
+        image: SLAY_TICKET_PREVIEW_IMAGES[selectedSlayTicketPreviewIndex],
+      });
+      setCartCount(newCartCount);
+      trackActivity('add_to_cart', { source: 'slay_ticket_pdp', productName: selectedPack.label });
+      trackActivity('cart_navigate', { destination: 'checkout_slay_tickets' });
+      navigate('/checkout/slay-tickets');
+    } catch (e) {
+      console.error('Error proceeding to Slay Ticket checkout:', e);
+    } finally {
+      setCheckoutSubmitting(false);
+    }
+  };
+
+  // Similar products scroll handlers
+  const handleSimilarProductsLeftArrow = () => {
+    // Move to previous 2 products (scroll right) - snap to 0 position
+    setSimilarProductsScroll(0);
+  };
+
+  const handleSimilarProductsRightArrow = () => {
+    setSimilarProductsScroll(-similarSnapPx);
+  };
+
+  const handleRecentlyViewedLeftArrow = () => {
+    // Move to previous 2 products (scroll right) - snap to 0 position
+    setRecentlyViewedScroll(0);
+  };
+
+  const handleRecentlyViewedRightArrow = () => {
+    setRecentlyViewedScroll(-recentSnapPx);
   };
 
   return (
-    <div className="min-h-screen bg-white" style={{ paddingBottom: '24px' }}>
-      <div
-        className="flex items-center justify-between px-4 py-3 border-b border-black"
-        style={{ borderWidth: '1.3px' }}
-      >
-        <button
-          type="button"
-          onClick={() => navigate('/tools')}
-          style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase' }}
-        >
-          ← TOOLS
-        </button>
-        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', margin: 0 }}>
-          SLAY TICKETS
-        </p>
-        <DynamicCartIcon count={cartCount} />
-      </div>
-
-      <div className="px-4 pt-4">
-        <p
-          style={{
-            fontFamily: '"Covered By Your Grace"',
-            fontSize: '22px',
-            textTransform: 'uppercase',
-            margin: '0 0 8px',
-          }}
-        >
-          BUY SLAY TICKETS
-        </p>
-        <p
-          style={{
-            fontFamily: '"Futura PT Medium"',
-            fontSize: '10px',
-            color: '#808080',
-            textTransform: 'uppercase',
-            margin: '0 0 16px',
-          }}
-        >
-          UNLOCK LOUNGE TV CONTENT. YOUR BALANCE: {ticketBalance} AVAILABLE
-        </p>
-
-        <div className="border border-black bg-white/60 backdrop-blur-sm p-4 mb-4" style={{ borderWidth: '1.3px' }}>
-          <div className="flex gap-4 items-start">
-            <img
-              src={SLAY_TICKET_CART_THUMBNAIL_SRC}
-              alt=""
-              style={{ width: '72px', height: '72px', objectFit: 'contain' }}
-            />
-            <div style={{ flex: 1 }}>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '12px',
-                  textTransform: 'uppercase',
-                  margin: '0 0 8px',
-                }}
+    <div className="min-h-screen" style={{ position: 'relative' }}>
+      {/* Fixed Background Layer */}
+      <div 
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url('/assets/marble-half.png')`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed'
+        }}
+      ></div>
+      
+      {/* Scrollable Content */}
+      <div className="relative z-10">
+        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+          {/* HEADER */}
+          <div
+            className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
+            style={{ border: '1.3px solid black' }}
+          >
+            <div className="flex gap-5 absolute left-4">
+              {showMobileMenu ? (
+                <>
+                  <button 
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
+                    className="cursor-pointer" 
+                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
+                  >
+                    <img
+                      alt="Account icon"
+                      width="16"
+                      height="16"
+                      src="/assets/NOIR/account-icon.svg"
+                    />
+                  </button>
+                  <button 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
+                    className="cursor-pointer"
+                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
+                  >
+                    <img
+                      alt="Wishlist"
+                      width="18"
+                      height="18"
+                      src="/assets/wishlist-heart.svg"
+                    />
+                  </button>
+                </>
+              ) : (
+                <>
+              <button 
+                onClick={handleBack} 
+                className="cursor-pointer"
+                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
               >
-                {selectedPack.label}
-              </p>
-              <p
-                style={{
-                  fontFamily: '"Futura PT Book"',
-                  fontSize: '10px',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                  margin: '0 0 12px',
-                }}
+                <img
+                  alt="Back"
+                  width="21"
+                  height="15"
+                  src="/assets/back-button.svg"
+                />
+              </button>
+              <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
+                  width="16"
+                  height="15"
+                  src="/assets/search-icon.svg"
+                />
+              </SearchTrigger>
+                </>
+              )}
+            </div>
+            <NavCenter showMobileMenu={showMobileMenu}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+              {showMobileMenu ? (
+                <>
+                  <span 
+                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                    onClick={() => navigate('/lobby')}
+                  >
+                    HOME &gt;
+                  </span>{' '}
+                  <span
+                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                  >
+                    MENU
+                  </span>
+                </>
+              ) : (
+                <>
+              <span 
+                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                onClick={() => navigate('/home/tools')}
               >
-                DIGITAL ONLY — INSTANT DELIVERY TO YOUR ACCOUNT
-              </p>
-              <p
-                style={{ fontFamily: '"Futura PT Medium"', fontSize: '14px', color: '#EB1C24', margin: 0 }}
-                dangerouslySetInnerHTML={{ __html: formatPrice(selectedPack.priceUsd) }}
-              />
+                TOOLS &gt;
+              </span>{' '}
+              <span
+                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+              >
+                SLAY TICKETS
+              </span>
+                </>
+              )}
+            </p>
+            </NavCenter>
+            <div className="gap-5 flex absolute" style={{ right: '17px' }}>
+<div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
+              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
+              </div>
+              <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 16 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer"
+                  onClick={handleMobileMenuToggle}
+                  style={{ marginTop: '2px' }}
+                >
+                  <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
+                </svg>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            {packOptions.map((pack: SlayTicketPack) => (
-              <button
-                key={pack.id}
-                type="button"
-                onClick={() => setSelectedPackId(pack.id)}
-                style={{
-                  border: selectedPackId === pack.id ? '1.3px solid #EB1C24' : '1.3px solid #9ca3af',
-                  background: selectedPackId === pack.id ? 'rgba(235,28,36,0.08)' : 'rgba(255,255,255,0.6)',
-                  padding: '10px 8px',
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '10px',
-                  textTransform: 'uppercase',
-                  color: selectedPackId === pack.id ? '#EB1C24' : '#000000',
-                }}
-              >
-                {pack.label}
-                <br />
-                <span dangerouslySetInnerHTML={{ __html: formatPrice(pack.priceUsd) }} />
-              </button>
-            ))}
-          </div>
+          {showMobileMenu ? (
+            /* MENU CONTENT */
+            <div
+              className="menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+              style={{ 
+                borderWidth: '1.3px', 
+                minWidth: '100%', 
+                maxWidth: 'none', 
+                overflow: 'visible',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                minHeight: 'calc(100dvh - 80px)',
+                height: 'calc(100dvh - 80px)'
+              }}
+            >
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
+                {/* Navigation Links */}
+                <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('SHOP')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'SHOP' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'SHOP' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'SHOP' ? '1px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    SHOP
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('TOOLS')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'TOOLS' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'TOOLS' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'TOOLS' ? '1px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    TOOLS
+                  </button>
+                  <button
+                    onClick={() => handleMobileMenuTabClick('BRAND')}
+                    style={{ 
+                      fontFamily: mobileMenuActiveTab === 'BRAND' ? '"Futura PT Medium"' : '"Futura PT Book"',
+                      fontSize: '14px',
+                      color: mobileMenuActiveTab === 'BRAND' ? '#EB1C24' : 'black',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      borderBottom: mobileMenuActiveTab === 'BRAND' ? '1px solid #EB1C24' : 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      paddingBottom: '4px',
+                      background: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    BRAND
+                  </button>
+                </div>
 
-          <button
-            type="button"
-            onClick={addPackToBag}
-            style={{
-              width: '100%',
-              marginTop: '16px',
-              background: '#EB1C24',
-              color: '#ffffff',
-              border: 'none',
-              padding: '12px',
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '11px',
-              textTransform: 'uppercase',
+                {/* Menu Items - Fixed height with scroll if needed */}
+                <div style={{ flex: '1', overflowY: 'auto', marginBottom: '20px', minHeight: '0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
+                    {mobileMenuActiveTab === 'TOOLS' ? (
+                      <ShopMobileMenuToolsTab
+                        navigate={navigate}
+                        closeMenu={() => setShowMobileMenu(false)}
+                        labelTranslateX="7px"
+                      />
+                    ) : mobileMenuActiveTab === 'BRAND' ? (
+                      <BrandMenuLinks onClose={() => setShowMobileMenu(false)} />
+                    ) : (
+                      // SHOP tab with dropdown functionality
+                                            <ShopMobileMenuShopTab
+                                              navigate={navigate}
+                                              mobileMenuExpandedItems={mobileMenuExpandedItems}
+                                              handleMobileMenuItemToggle={handleMobileMenuItemToggle}
+                                              closeSubItemMenu={() => setShowMobileMenu(false)}
+                                            />
+                    )}
+                  </div>
+                </div>
+
+                {/* Sign In/Out - Fixed at bottom */}
+                <div className="flex justify-center" style={{ marginBottom: '20px', marginTop: 'auto' }}>
+                  <span 
+                    onClick={handleMobileMenuSignInToggle}
+                    style={{ 
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '14px',
+                      color: '#EB1C24',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSignedIn ? 'SIGN OUT' : 'SIGN IN'}
+                  </span>
+                </div>
+
+                {/* Social Media Icons - Fixed at bottom */}
+                <div style={{ marginBottom: '20px' }}><SocialMenuIcons /></div>
+              </div>
+            </div>
+          ) : (
+            <>
+          {/* MAIN BUILD AREA */}
+          <div
+            className="border border-black flex flex-col pt-6 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            style={{ 
+              borderWidth: '1.3px', 
+              minWidth: '100%', 
+              maxWidth: 'none', 
+              overflow: 'visible',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              paddingBottom: '16px',
             }}
           >
-            ADD TO BAG
-          </button>
-        </div>
+            {/* SLAY TICKET PREVIEW */}
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+                marginBottom: '8px',
+                overflow: 'visible',
+                minWidth: '100%',
+                maxWidth: 'none',
+              }}
+            >
+              {/* Main Hero Image */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <img
+                  src={SLAY_TICKET_PREVIEW_IMAGES[selectedSlayTicketPreviewIndex]}
+                  alt="Slay Tickets"
+                  style={{
+                    width: '100%',
+                    maxWidth: '400px',
+                    height: 'auto',
+                    margin: '0 auto',
+                    display: 'block',
+                  }}
+                />
+              </div>
 
-        <p
-          style={{
-            fontFamily: '"Futura PT Book"',
-            fontSize: '9px',
-            color: '#808080',
-            textTransform: 'uppercase',
-            lineHeight: 1.5,
-          }}
-        >
-          EARN 2 SLAY TICKETS FOR EVERY PHYSICAL HAIR PRODUCT PURCHASED. GIFT CARDS, MEMBERSHIPS, DIGITAL CASH, AND
-          SLAY TICKET PACKS DO NOT EARN BONUS TICKETS.
-        </p>
+              <div
+                className="flex flex-row flex-nowrap justify-center items-center"
+                style={{
+                  gap: '8px',
+                  marginBottom: '14px',
+                  width: '100%',
+                }}
+              >
+                {SLAY_TICKET_PREVIEW_IMAGES.map((src, index) => (
+                  <ThumbBox
+                    key={src}
+                    image={src}
+                    imageAlt={`Slay ticket preview ${index + 1}`}
+                    title=""
+                    label=""
+                    isSelected={selectedSlayTicketPreviewIndex === index}
+                    onClick={() => setSelectedSlayTicketPreviewIndex(index)}
+                    containerWidth={SLAY_TICKET_THUMB_OUTER_W_PX}
+                    containerHeight={SLAY_TICKET_THUMB_OUTER_H_PX}
+                    imageWidth={SLAY_TICKET_THUMB_INNER_W_PX}
+                    imageHeight={SLAY_TICKET_THUMB_INNER_H_PX}
+                    topPosition="50%"
+                  />
+                ))}
+              </div>
+
+              {/* PRODUCT NAME */}
+              <p
+                className="text-center text-black mb-2 slay-ticket-product-name"
+                style={{
+                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                  fontSize: '38px',
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  margin: '0 0 6px 0',
+                  padding: 0,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                SLAY TICKETS
+              </p>
+
+              {/* DIGITAL ONLY */}
+              <p
+                className="text-center text-red-500 uppercase mb-2"
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontWeight: '500',
+                  fontSize: '12px',
+                  margin: '0 0 6px 0',
+                }}
+              >
+                DIGITAL ONLY
+              </p>
+
+              {/* PRICE */}
+              <p
+                className="text-center text-black mb-1"
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  width: '100%',
+                  margin: '0 0 6px 0',
+                }}
+                dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
+              />
+
+              {/* STAR RATINGS */}
+              <div className="flex justify-center mb-2 gap-1">
+                {[...Array(5)].map((_, index) => (
+                  <img
+                    key={index}
+                    src="/assets/NOIR/star-symbol.png"
+                    alt="Star Rating"
+                    className="w-auto h-auto"
+                    style={{ 
+                      width: '15px', 
+                      height: '15px',
+                      filter: 'drop-shadow(0 0 0 1px black)',
+                      stroke: '1px black'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* SELECT TICKET PACK */}
+            <div>
+              <p
+                className="text-center text-black uppercase mb-4"
+                style={{ 
+                  fontFamily: '"Futura PT Demi"',
+                  fontSize: '11px',
+                  fontWeight: '500',
+                  transform: 'translateY(0px)'
+                }}
+              >
+                SELECT TICKET PACK
+              </p>
+
+              <SlayTicketPackPicker
+                value={selectedPackId}
+                onChange={setSelectedPackId}
+              />
+            </div>
+
+            {/* Tabs — spacing matches BCF texture-category PDP */}
+            <div className="mt-1.5 w-full" style={{ paddingTop: '4px' }}>
+              <div className="flex justify-center w-full" style={{ gap: '16px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleTabClick('DETAILS')}
+                  className={`py-1 text-xs font-medium ${activeTab === 'DETAILS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'DETAILS' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
+                >
+                  DETAILS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabClick('POLICY')}
+                  className={`py-1 text-xs font-medium ${activeTab === 'POLICY' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'POLICY' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
+                >
+                  POLICY
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabClick('REVIEWS')}
+                  className={`py-1 text-xs font-medium ${activeTab === 'REVIEWS' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    borderBottom: activeTab === 'REVIEWS' ? '1px solid #EB1C24' : 'none',
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
+                >
+                  REVIEWS
+                </button>
+              </div>
+
+              <div
+                className="mt-4 space-y-4"
+                style={{
+                  maxWidth: 'none',
+                  width: '100%',
+                  marginBottom: 0,
+                  paddingTop: '4px',
+                  paddingBottom: '12px',
+                }}
+              >
+                {activeTab === 'DETAILS' && <SlayTicketProductDetailsTab />}
+                
+                {activeTab === 'POLICY' && <SlayTicketProductPolicyTab />}
+                
+                {activeTab === 'REVIEWS' && (
+                  <>
+                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px', textAlign: 'center', textTransform: 'uppercase' }}>
+                      NO REVIEWS YET. BE THE FIRST TO REVIEW THIS PRODUCT.
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* PROCEED TO CHECKOUT — Slay Ticket PDP goes straight to isolated /checkout/slay-tickets (filtered view) */}
+          <div className="px-0 md:px-0" style={{ marginTop: '8px' }}>
+            <button
+              type="button"
+              onClick={handleProceedToCheckout}
+              disabled={checkoutSubmitting}
+              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+                checkoutSubmitting ? 'bg-white cursor-not-allowed' : 'bg-white cursor-pointer hover:bg-gray-50'
+              }`}
+              style={{
+                borderWidth: '1.3px',
+                color: '#EB1C24',
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                backgroundColor: '#FFFFFF',
+              }}
+            >
+              {checkoutSubmitting ? '…' : 'PROCEED TO CHECKOUT'}
+            </button>
+          </div>
+
+          {/* SIMILAR PRODUCTS SECTION */}
+          <div
+            className="px-0 md:px-0"
+            style={withSlayTicketSimilarProductsVisibility({ marginTop: '20px', marginBottom: '20px' })}
+          >
+            <div 
+              className="backdrop-blur-sm"
+              style={{ 
+              border: '1.3px solid black', 
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              padding: '0px',
+              maxWidth: '100%',
+              margin: '0 auto'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                <div style={{ 
+                  width: '1px', 
+                  height: '15px', 
+                  backgroundColor: 'black',
+                  margin: '0 auto 8px auto'
+                }}></div>
+                <h3 style={{ 
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '12px',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                  margin: '0',
+                  fontWeight: '500'
+                }}>
+                  SIMILAR PRODUCTS
+                </h3>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                <button 
+                  onClick={handleSimilarProductsLeftArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: 'translateX(10px) translateY(-10px)'
+                  }}>
+                  <img
+                    src="/assets/NOIR/left-facing-arrow.svg"
+                    alt="Left Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+                
+                <div style={{ flex: '1', position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '1px',
+                    backgroundColor: 'black',
+                    zIndex: 20,
+                    transform: 'translateX(-50%)'
+                  }}></div>
+                  
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '10px',
+                    backgroundColor: 'transparent',
+                    zIndex: 15,
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'none'
+                  }}></div>
+                  
+                  <div
+                    ref={setSimilarStripViewportRef}
+                    style={{
+                    overflowX: 'hidden',
+                    width: '100%',
+                    position: 'relative',
+                    maxWidth: '100%'
+                  }}
+                  >
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        gap: '0',
+                        transform: `translateX(${similarProductsScroll}px) translateY(-15px)`,
+                        transition: 'none',
+                        width: '200%'
+                      }}
+                    >
+                      {/* Product 1 - BLANCO */}
+                      <div 
+                        style={{ 
+                          padding: '10px 10px 4px 0px',
+                          textAlign: 'center',
+                          transform: 'translateX(-2.5px)'
+                        }}
+                      >
+                        <img
+                          src="/assets/NOIR/blanco-thumb.png"
+                          alt="BLANCO"
+                          onClick={() => navigate('/straight/blanco')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          BLANCO
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW RUSSIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(820)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 2 - SOFT WAVE */}
+                      <div 
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: 'translateX(13px)'
+                        }}
+                      >
+                        <img
+                          src="/assets/NOIR/wave-thumb.png"
+                          alt="SOFT WAVE"
+                          onClick={() => navigate('/wavy/soft-wave')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          SOFT WAVE
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW INDONESIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(760)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 3 - NOIR */}
+                      <div 
+                        style={{ 
+                          padding: '10px 10px 4px 0px',
+                          textAlign: 'center',
+                          transform: 'translateX(-2.5px)'
+                        }}
+                      >
+                        <img
+                          src="/assets/NOIR/noir-thumb.png"
+                          alt="NOIR"
+                          onClick={() => navigate('/straight/noir')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '19px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          NOIR
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW CAMBODIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(740)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 4 - SOFT CURL */}
+                      <div 
+                        style={{ 
+                          padding: '10px 10px 4px 10px',
+                          textAlign: 'center',
+                          transform: 'translateX(13px)'
+                        }}
+                      >
+                        <img
+                          src="/assets/NOIR/curl-thumb.png"
+                          alt="SOFT CURL"
+                          onClick={() => navigate('/curly/soft-curl')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          SOFT CURL
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW FILIPINO
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(780)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleSimilarProductsRightArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: 'translateX(-10px) translateY(-10px)'
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* RECENTLY VIEWED SECTION */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+            <div 
+              className="backdrop-blur-sm"
+              style={{ 
+              border: '1.3px solid black', 
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              padding: '0px',
+              maxWidth: '100%',
+              margin: '0 auto'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                <div style={{ 
+                  width: '1px', 
+                  height: '15px', 
+                  backgroundColor: 'black',
+                  margin: '0 auto 8px auto'
+                }}></div>
+                <h3 style={{ 
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '12px',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                  margin: '0',
+                  fontWeight: '500'
+                }}>
+                  RECENTLY VIEWED
+                </h3>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                <button 
+                  onClick={handleRecentlyViewedLeftArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: 'translateX(10px) translateY(-10px)'
+                  }}>
+                  <img
+                    src="/assets/NOIR/left-facing-arrow.svg"
+                    alt="Left Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+                
+                <div style={{ flex: '1', position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '1px',
+                    backgroundColor: 'black',
+                    zIndex: 20,
+                    transform: 'translateX(-50%)'
+                  }}></div>
+                  
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '0',
+                    bottom: '0',
+                    width: '10px',
+                    backgroundColor: 'transparent',
+                    zIndex: 15,
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'none'
+                  }}></div>
+                  
+                  <div
+                    ref={setRecentStripViewportRef}
+                    style={{
+                    overflowX: 'hidden',
+                    width: '100%',
+                    position: 'relative',
+                    maxWidth: '100%'
+                  }}
+                  >
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        gap: '0',
+                        transform: `translateX(${recentlyViewedScroll}px) translateY(-15px)`,
+                        transition: 'none',
+                        width: '200%'
+                      }}
+                    >
+                      {/* Product 1 - BEACH WAVE */}
+                      <div style={{ 
+                        padding: '10px 10px 4px 0px',
+                        textAlign: 'center',
+                        transform: 'translateX(-2.5px)'
+                      }}>
+                        <img
+                          src="/assets/NOIR/wave-thumb.png"
+                          alt="SOFT WAVE"
+                          onClick={() => navigate('/wavy/soft-wave')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          SOFT WAVE
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW INDONESIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(760)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 2 - SOFT CURL */}
+                      <div style={{ 
+                        padding: '10px 10px 4px 10px',
+                        textAlign: 'center',
+                        transform: 'translateX(13px)'
+                      }}>
+                        <img
+                          src="/assets/NOIR/curl-thumb.png"
+                          alt="SOFT CURL"
+                          onClick={() => navigate('/curly/soft-curl')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          SOFT CURL
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW FILIPINO
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(780)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 3 - NOIR */}
+                      <div style={{ 
+                        padding: '10px 10px 4px 0px',
+                        textAlign: 'center',
+                        transform: 'translateX(-2.5px)'
+                      }}>
+                        <img
+                          src="/assets/NOIR/noir-thumb.png"
+                          alt="NOIR"
+                          onClick={() => navigate('/straight/noir')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '19px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          NOIR
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW CAMBODIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(740)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Product 4 - BLANCO */}
+                      <div style={{ 
+                        padding: '10px 10px 4px 10px',
+                        textAlign: 'center',
+                        transform: 'translateX(13px)'
+                      }}>
+                        <img
+                          src="/assets/NOIR/blanco-thumb.png"
+                          alt="BLANCO"
+                          onClick={() => navigate('/straight/blanco')}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            marginBottom: '10px',
+                            marginLeft: '10px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <p style={{ 
+                          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                          fontSize: '18px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '-10px 0 -3px 0',
+                          fontWeight: '500',
+                          transform: 'translateX(10px)'
+                        }}>
+                          BLANCO
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}>
+                          24" RAW RUSSIAN
+                        </p>
+                        <p style={{ 
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: 'black',
+                          textTransform: 'uppercase',
+                          margin: '0 0 5px 0',
+                          fontWeight: '500',
+                          lineHeight: '0.84',
+                          transform: 'translateX(10px)'
+                        }}
+                        dangerouslySetInnerHTML={formatPrice(820)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px', transform: 'translateX(10px)' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <img
+                              key={index}
+                              src="/assets/NOIR/star-symbol.png"
+                              alt="Star Rating"
+                              style={{ 
+                                width: '10px', 
+                                height: '10px',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                                stroke: '1px black'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={handleRecentlyViewedRightArrow}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    minHeight: '50px',
+                    transform: 'translateX(-10px) translateY(-10px)'
+                  }}>
+                  <img
+                    src="/assets/NOIR/right-facing-arrow.svg"
+                    alt="Right Arrow"
+                    style={{ width: '14px', height: '14px' }}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Sign Out Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showSignOutConfirm}
+        onClose={() => setShowSignOutConfirm(false)}
+        onConfirm={handleSignOut}
+        title="SIGN OUT"
+        message="ARE YOU SURE YOU WANT TO SIGN OUT?"
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="sign-out-confirm"
+      />
     </div>
   );
 }
+
+export default SlayTicketsPage;

@@ -71,9 +71,15 @@ export async function shouldRunStripeProductPayment(args: {
   isSubscriptionUpgrade: boolean;
   isBookingsCheckoutRoute: boolean;
   isGiftCardCheckoutRoute: boolean;
+  isSlayTicketCheckoutRoute: boolean;
   usedFounderDummyPan: boolean;
 }): Promise<{ run: boolean; blockLegacy: boolean; reason?: string }> {
-  if (args.isSubscriptionUpgrade || args.isBookingsCheckoutRoute || args.isGiftCardCheckoutRoute) {
+  if (
+    args.isSubscriptionUpgrade ||
+    args.isBookingsCheckoutRoute ||
+    args.isGiftCardCheckoutRoute ||
+    args.isSlayTicketCheckoutRoute
+  ) {
     return { run: false, blockLegacy: false };
   }
 

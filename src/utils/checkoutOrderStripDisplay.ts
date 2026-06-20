@@ -20,6 +20,10 @@ import {
   giftCardStripQuantitySteps,
   isGiftCardCartLine,
 } from './giftCardCheckout';
+import {
+  isSlayTicketPackCartLine,
+  slayTicketCartThumbnailSrc,
+} from './slayTicketCheckout';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -38,7 +42,7 @@ export type OrderStripThumbOptions = {
   checkoutStrip?: boolean;
 };
 
-export type OrderStripThumbKind = 'gift' | 'booking' | 'bcf' | 'membership' | 'unit';
+export type OrderStripThumbKind = 'gift' | 'slayTicket' | 'booking' | 'bcf' | 'membership' | 'unit';
 
 function hairOriginForProductName(productName: string): string {
   switch (productName) {
@@ -96,7 +100,7 @@ export function orderStripRedSubtitle(item: any, itemLength: string): string {
 }
 
 function isMembershipTierStripItem(item: any, isSubscriptionUpgrade: boolean): boolean {
-  if (!item || item.name === 'GIFT CARD' || item.type === 'gift-card') return false;
+  if (!item || item.name === 'GIFT CARD' || item.type === 'gift-card' || isSlayTicketPackCartLine(item)) return false;
   if (
     item.subscriptionTier === '12months' ||
     item.subscriptionTier === '6months' ||
@@ -116,6 +120,9 @@ function isMembershipTierStripItem(item: any, isSubscriptionUpgrade: boolean): b
 export function orderStripThumbnailSrc(item: any, isSubscriptionUpgrade: boolean): string {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
     return giftCardCartThumbnailSrc();
+  }
+  if (isSlayTicketPackCartLine(item)) {
+    return typeof item.image === 'string' && item.image.trim() ? item.image : slayTicketCartThumbnailSrc();
   }
   const bookingThumb = bookingCartItemThumbnailSrc(item);
   if (bookingThumb) return bookingThumb;
@@ -187,6 +194,7 @@ export function orderStripThumbMetrics(
 ): OrderStripThumbMetrics {
   const checkout = Boolean(options?.checkoutStrip);
   const isGift = item.name === 'GIFT CARD' || item.type === 'gift-card';
+  const isSlayTicket = isSlayTicketPackCartLine(item);
   const isBooking = isBookingCartBadgeItem(item);
   const isBcf = item.type === 'shop-texture-category';
   const isMem = isMembershipTierStripItem(item, isSubscriptionUpgrade);
@@ -194,6 +202,15 @@ export function orderStripThumbMetrics(
   if (isGift) {
     return {
       kind: 'gift',
+      cellWidthPx: 165,
+      imgPx: 165,
+      slotPx: 165,
+      objectContain: true
+    };
+  }
+  if (isSlayTicket) {
+    return {
+      kind: 'slayTicket',
       cellWidthPx: 165,
       imgPx: 165,
       slotPx: 165,
@@ -288,6 +305,7 @@ export function orderStripTitleFontPx(item: any): string {
 /** Gift cards use the tighter vertical stack (-25px title nudge). Membership upgrade uses standard spacing below the thumb. */
 export function orderStripUseDigitalStackLayout(item: any, isSubscriptionUpgrade: boolean): boolean {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return true;
+  if (isSlayTicketPackCartLine(item)) return true;
   if (isMembershipTierStripItem(item, isSubscriptionUpgrade)) return false;
   return false;
 }
