@@ -1,6 +1,7 @@
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
 import { LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC } from '../../constants/slayTicketAssets';
+import { loungeTvBlogThumbLockWatermarkStyle } from './LoungeTvTileTicketChrome';
 import {
   loungeTvTileActionLabel,
   loungeTvTicketCostLabel,
@@ -93,16 +94,7 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
                     alt=""
                     aria-hidden
                     draggable={false}
-                    style={{
-                      position: 'absolute',
-                      inset: '8%',
-                      width: '84%',
-                      height: '84%',
-                      objectFit: 'contain',
-                      opacity: 0.38,
-                      filter: 'blur(1.5px)',
-                      pointerEvents: 'none',
-                    }}
+                    style={loungeTvBlogThumbLockWatermarkStyle}
                   />
                 ) : null}
               </span>
