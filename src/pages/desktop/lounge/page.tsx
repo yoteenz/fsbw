@@ -127,8 +127,8 @@ function CSSofa({ flipped, style }: { flipped?: boolean; style?: React.CSSProper
     <div style={{
       position: 'relative',
       width: '340px',
-      transform: flipped ? 'scaleX(-1)' : undefined,
       ...style,
+      ...(flipped ? { transform: 'scaleX(-1)' } : {}),
     }}>
       {/* Back rest */}
       <div style={{
