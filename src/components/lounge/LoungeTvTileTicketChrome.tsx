@@ -1,10 +1,11 @@
 import { type CSSProperties } from 'react';
 import type { LoungeTvVideoTile } from './loungeTvContent';
-import { LOUNGE_TV_ACRYLIC_LOCK_SRC } from './loungeTvAssets';
+import { LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC } from '../../constants/slayTicketAssets';
 import {
   loungeTvContentIsAccessible,
   loungeTvTileActionLabel,
   loungeTvTicketCostLabel,
+  loungeTvTileShowsTicketLock,
   resolveLoungeTvBadgeCost,
 } from './loungeTvTicketAccess';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
@@ -26,22 +27,65 @@ const badgeBase: CSSProperties = {
   textTransform: 'uppercase',
   padding: `${loungeTvGlassCqw(0.5, 1, 2)} ${loungeTvGlassCqw(0.8, 2, 4)}`,
   pointerEvents: 'none',
-  zIndex: 2,
+  zIndex: 4,
 };
+
+const ticketLockWatermarkStyle: CSSProperties = {
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '72%',
+  height: '72%',
+  objectFit: 'contain',
+  zIndex: 1,
+  pointerEvents: 'none',
+  opacity: 0.38,
+  filter: 'blur(2.5px)',
+};
+
+export function LoungeTvTileTicketLockWatermark({
+  tile,
+  isUnlocked,
+  unlocks,
+}: LoungeTvTileTicketChromeProps) {
+  if (!loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked)) return null;
+  return (
+    <img
+      src={LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC}
+      alt=""
+      aria-hidden
+      draggable={false}
+      style={ticketLockWatermarkStyle}
+    />
+  );
+}
 
 export function LoungeTvTileTicketChrome({
   tile,
   isUnlocked,
   unlocks,
 }: LoungeTvTileTicketChromeProps) {
-  const catalogCost = tile.ticketCost ?? 0;
   const accessible = loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked);
   const badgeCost = resolveLoungeTvBadgeCost(tile, unlocks);
   const action = loungeTvTileActionLabel(tile, unlocks ?? isUnlocked);
-  const showLock = !accessible && catalogCost > 0 && !tile.isFreePreview;
+  const showLock = loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked);
 
   return (
     <>
+      {showLock ? (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(0,0,0,0.18)',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      ) : null}
+      <LoungeTvTileTicketLockWatermark tile={tile} isUnlocked={isUnlocked} unlocks={unlocks} />
       <span
         style={{
           ...badgeBase,
@@ -66,38 +110,6 @@ export function LoungeTvTileTicketChrome({
         >
           FREE PREVIEW
         </span>
-      ) : null}
-      {showLock ? (
-        <>
-          <span
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'rgba(0,0,0,0.42)',
-              zIndex: 1,
-              pointerEvents: 'none',
-            }}
-          />
-          <img
-            src={LOUNGE_TV_ACRYLIC_LOCK_SRC}
-            alt=""
-            aria-hidden
-            draggable={false}
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -58%)',
-              width: loungeTvGlassCqw(9, 22, 36),
-              height: loungeTvGlassCqw(9, 22, 36),
-              objectFit: 'contain',
-              zIndex: 2,
-              pointerEvents: 'none',
-              filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.45))',
-            }}
-          />
-        </>
       ) : null}
       <span
         style={{

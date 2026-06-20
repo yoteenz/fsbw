@@ -1,8 +1,10 @@
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
+import { LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC } from '../../constants/slayTicketAssets';
 import {
   loungeTvTileActionLabel,
   loungeTvTicketCostLabel,
+  loungeTvTileShowsTicketLock,
   resolveLoungeTvBadgeCost,
 } from './loungeTvTicketAccess';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
@@ -48,6 +50,7 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
         const body = blogBodyText(tile);
         const cost = resolveLoungeTvBadgeCost(tile, unlocks);
         const action = loungeTvTileActionLabel(tile, unlocksOrFn);
+        const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, unlockedFn);
         return (
           <button
             key={tile.id}
@@ -84,6 +87,24 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
                     filter: showNew ? 'blur(3px)' : 'none',
                   }}
                 />
+                {ticketLocked ? (
+                  <img
+                    src={LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC}
+                    alt=""
+                    aria-hidden
+                    draggable={false}
+                    style={{
+                      position: 'absolute',
+                      inset: '8%',
+                      width: '84%',
+                      height: '84%',
+                      objectFit: 'contain',
+                      opacity: 0.38,
+                      filter: 'blur(1.5px)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                ) : null}
               </span>
             ) : (
               <span
