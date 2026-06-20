@@ -30,6 +30,8 @@ export const PROFILE_PRIVILEGED_BODY_KEYS = [
   'voucher_history',
   'digitalCashHistory',
   'digital_cash_history',
+  'slayTicketBalance',
+  'slay_ticket_balance',
   'welcomeDiscountTiersCreditedByPeriod',
   'welcome_discount_tiers_credited_by_period',
   'stripeCustomerId',

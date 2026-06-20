@@ -388,6 +388,7 @@ export function buildMinimalUserFromSupabaseSession(sessionUser: {
     membershipType: 'STANDARD',
     role: isAdminEmail(email) || isAyoteenzAdminAccount({ email }) ? 'admin' : undefined,
     giftCardBalance: 10,
+    slayTicketBalance: 0,
     hasMadeFirstPurchase: false,
     loyaltyPoints: 0,
     unlockedDiscounts: ['signup'],
@@ -575,6 +576,7 @@ export function buildProfilePayloadForBackend(minimal: Record<string, unknown>):
     // Avoid writing local default asset path to cloud profile_image on fallback.
     profileImage: (minimal.profileImage as string) || null,
     giftCardBalance: typeof minimal.giftCardBalance === 'number' ? minimal.giftCardBalance : 10,
+    slayTicketBalance: typeof minimal.slayTicketBalance === 'number' ? minimal.slayTicketBalance : 0,
     hasMadeFirstPurchase: Boolean(minimal.hasMadeFirstPurchase),
     loyaltyPoints: Number(minimal.loyaltyPoints) || 0,
     unlockedDiscounts: Array.isArray(minimal.unlockedDiscounts) ? minimal.unlockedDiscounts : ['signup'],

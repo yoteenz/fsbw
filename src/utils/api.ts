@@ -405,6 +405,60 @@ export async function getLoungeTvAdminConfig(): Promise<Record<string, unknown> 
   }
 }
 
+export type SlayTicketApiState = {
+  balance: number;
+  history: Array<{
+    id: string;
+    type: string;
+    amount: number;
+    source: string | null;
+    description: string;
+    related_order_id: string | null;
+    related_content_id: string | null;
+    created_at: string;
+  }>;
+  unlocks: Array<{
+    id: string;
+    content_id: string;
+    ticket_cost: number;
+    unlocked_at: string;
+    access_type: string;
+    expires_at: string | null;
+  }>;
+};
+
+/** Signed-in: Slay Ticket balance, history, and lounge unlocks. */
+export async function fetchSlayTicketState(): Promise<SlayTicketApiState | null> {
+  const res = await apiFetch('/api/slay-tickets');
+  if (res.status === 401) return null;
+  if (!res.ok) return null;
+  return (await res.json()) as SlayTicketApiState;
+}
+
+/** Unlock Lounge TV content with Slay Tickets. */
+export async function unlockLoungeTvContent(params: {
+  contentId: string;
+  ticketCost: number;
+  accessType?: 'permanent' | 'rental';
+  contentTitle?: string;
+  expiresAt?: string | null;
+}): Promise<{ balance: number; alreadyUnlocked?: boolean } | { error: string; balance?: number }> {
+  const res = await apiFetch('/api/lounge-tv/unlock', { method: 'POST', body: params });
+  const data = (await res.json()) as { balance?: number; alreadyUnlocked?: boolean; error?: string };
+  if (!res.ok) return { error: data.error || 'Unlock failed', balance: data.balance };
+  return { balance: data.balance ?? 0, alreadyUnlocked: data.alreadyUnlocked };
+}
+
+/** Credit Slay Tickets after checkout (earned from physical hair + purchased packs). */
+export async function creditSlayTicketsForOrder(params: {
+  orderId: string;
+  lineItems: unknown[];
+}): Promise<{ credited: number; balance: number } | null> {
+  const res = await apiFetch('/api/slay-tickets/credit-order', { method: 'POST', body: params });
+  if (!res.ok) return null;
+  return (await res.json()) as { credited: number; balance: number };
+}
+
 /** Public read of admin-edited PSA chat copy JSON (no auth). */
 export async function getPsaChatAdminConfig(): Promise<Record<string, unknown> | null> {
   const base = API_BASE.replace(/\/$/, '');

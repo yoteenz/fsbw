@@ -376,6 +376,62 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         SHOW *NEW* BADGE
       </label>
 
+      <div className="mt-3 pt-3 border-t border-gray-200">
+        <p className="text-xs mb-2" style={{ ...adminHubSectionTitleStyle }}>
+          SLAY TICKET ACCESS
+        </p>
+        <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
+          TICKET COST (0 = FREE)
+        </label>
+        <input
+          type="number"
+          min={0}
+          step={1}
+          value={item.ticketCost ?? 0}
+          onChange={(e) =>
+            onChange({
+              ...item,
+              ticketCost: Math.max(0, Math.floor(Number(e.target.value) || 0)),
+            })
+          }
+          className="w-full px-2 py-1 text-xs mb-2"
+          style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
+        />
+        <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
+          ACCESS TYPE
+        </label>
+        <select
+          value={item.accessType ?? 'permanent'}
+          onChange={(e) =>
+            onChange({
+              ...item,
+              accessType: e.target.value === 'rental' ? 'rental' : 'permanent',
+            })
+          }
+          className="w-full px-2 py-1 text-xs mb-2"
+          style={{ ...adminTvFieldStyle, ...adminTvInputStyle }}
+        >
+          <option value="permanent">PERMANENT</option>
+          <option value="rental">RENTAL</option>
+        </select>
+        <label className="flex items-center gap-2 text-xs cursor-pointer mb-2" style={{ fontFamily: '"Futura PT Medium"' }}>
+          <input
+            type="checkbox"
+            checked={Boolean(item.isFreePreview)}
+            onChange={(e) => onChange({ ...item, isFreePreview: e.target.checked })}
+          />
+          FREE PREVIEW BADGE
+        </label>
+        <label className="flex items-center gap-2 text-xs cursor-pointer" style={{ fontFamily: '"Futura PT Medium"' }}>
+          <input
+            type="checkbox"
+            checked={Boolean(item.isPremium)}
+            onChange={(e) => onChange({ ...item, isPremium: e.target.checked })}
+          />
+          PREMIUM MEMBERS ONLY
+        </label>
+      </div>
+
       {uploadError ? (
         <p className="text-xs text-red-600 mt-2 px-2 py-1" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
           {uploadError}

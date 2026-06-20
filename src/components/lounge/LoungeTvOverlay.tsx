@@ -3,6 +3,7 @@ import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
   type LoungeTvMainTab,
+  type LoungeTvVideoTile,
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 import {
@@ -46,6 +47,15 @@ import {
   LOUNGE_TV_GLASS_THUMB_FONT,
   loungeTvGlassCqw,
 } from './loungeTvResponsive';
+import ConfirmationModal from '../ConfirmationModal';
+import { LoungeTvTileTicketChrome } from './LoungeTvTileTicketChrome';
+import { loungeTvContentIsAccessible, resolveLoungeTvTicketCost } from './loungeTvTicketAccess';
+import { useSlayTickets } from '../../hooks/useSlayTickets';
+import { unlockLoungeTvContent } from '../../utils/api';
+import { getCurrentUserEmailFromStorage } from '../../utils/perUserStorage';
+import { isPremiumMemberForGatedFeatures } from '../../utils/premiumMemberAccess';
+import { useNavigate } from 'react-router-dom';
+import { slayTicketPackPdpPath } from '../../utils/slayTicketPacks';
 
 type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'closing';
 
@@ -239,6 +249,19 @@ function LoungeTvScreen({
   onMainTabChange: (tab: LoungeTvMainTab) => void;
   onSidebarChange: (id: string) => void;
 }) {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState<Record<string, unknown> | null>(() => {
+    try {
+      const raw = localStorage.getItem('currentUser');
+      return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
+    } catch {
+      return null;
+    }
+  });
+  const { balance, isUnlocked, refresh } = useSlayTickets(userData);
+  const [unlockConfirmTile, setUnlockConfirmTile] = useState<LoungeTvVideoTile | null>(null);
+  const [showNeedMoreTickets, setShowNeedMoreTickets] = useState(false);
+  const [unlockBusy, setUnlockBusy] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [tilesRevision, setTilesRevision] = useState(0);
@@ -260,6 +283,26 @@ function LoungeTvScreen({
     const onConfigUpdated = () => setTilesRevision((n) => n + 1);
     window.addEventListener(LOUNGE_TV_CONFIG_UPDATED_EVENT, onConfigUpdated);
     return () => window.removeEventListener(LOUNGE_TV_CONFIG_UPDATED_EVENT, onConfigUpdated);
+  }, []);
+
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        setUserData(raw ? (JSON.parse(raw) as Record<string, unknown>) : null);
+      } catch {
+        setUserData(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('signInStateChanged', syncUser);
+    window.addEventListener('storage', syncUser);
+    window.addEventListener('slayTicketsUpdated', syncUser);
+    return () => {
+      window.removeEventListener('signInStateChanged', syncUser);
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('slayTicketsUpdated', syncUser);
+    };
   }, []);
 
   useEffect(() => {
@@ -376,6 +419,70 @@ function LoungeTvScreen({
     },
     [tiles]
   );
+
+  const playTile = useCallback(
+    (tile: LoungeTvVideoTile) => {
+      if (loungeTvTileShowsAsNew(tile)) markLoungeTvTileViewed(tile.id);
+      if (isWatchLearn && tile.videoSrc) {
+        setSelectedVideoId(tile.id);
+        return;
+      }
+      if (isSlayTips) handleSlayTipsSelect(tile.id);
+    },
+    [handleSlayTipsSelect, isSlayTips, isWatchLearn]
+  );
+
+  const handleTileAccess = useCallback(
+    (tile: LoungeTvVideoTile) => {
+      if (tile.isPremium && !isPremiumMemberForGatedFeatures()) {
+        setShowNeedMoreTickets(false);
+        navigate('/account/rewards');
+        return;
+      }
+      const cost = resolveLoungeTvTicketCost(tile);
+      if (loungeTvContentIsAccessible(tile, isUnlocked)) {
+        playTile(tile);
+        return;
+      }
+      if (balance >= cost) {
+        setUnlockConfirmTile(tile);
+        return;
+      }
+      setShowNeedMoreTickets(true);
+    },
+    [balance, isUnlocked, navigate, playTile]
+  );
+
+  const confirmUnlockAndPlay = useCallback(async () => {
+    const tile = unlockConfirmTile;
+    if (!tile) return;
+    const cost = resolveLoungeTvTicketCost(tile);
+    setUnlockBusy(true);
+    try {
+      const email = getCurrentUserEmailFromStorage();
+      if (!email) {
+        setShowNeedMoreTickets(true);
+        setUnlockConfirmTile(null);
+        return;
+      }
+      const result = await unlockLoungeTvContent({
+        contentId: tile.id,
+        ticketCost: cost,
+        accessType: tile.accessType || 'permanent',
+        contentTitle: tile.title,
+      });
+      if ('error' in result) {
+        setUnlockConfirmTile(null);
+        setShowNeedMoreTickets(true);
+        return;
+      }
+      await refresh();
+      setUnlockConfirmTile(null);
+      playTile(tile);
+    } finally {
+      setUnlockBusy(false);
+    }
+  }, [unlockConfirmTile, playTile, refresh]);
 
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -517,7 +624,14 @@ function LoungeTvScreen({
             <LoungeTvBlogPostDetail tile={slayTipsPost} onBack={() => setSelectedPostId(null)} />
           ) : tiles && tiles.length > 0 ? (
             isSlayTips ? (
-              <LoungeTvBlogPostList tiles={tiles} onSelect={handleSlayTipsSelect} />
+              <LoungeTvBlogPostList
+                tiles={tiles}
+                onSelect={(tileId) => {
+                  const tile = tiles.find((t) => t.id === tileId);
+                  if (tile) handleTileAccess(tile);
+                }}
+                isUnlocked={isUnlocked}
+              />
             ) : (
               <div
                 style={{
@@ -544,10 +658,7 @@ function LoungeTvScreen({
                         overflow: 'hidden',
                       }}
                       aria-label={tile.title}
-                      onClick={() => {
-                        if (showNew) markLoungeTvTileViewed(tile.id);
-                        if (isWatchLearn && tile.videoSrc) setSelectedVideoId(tile.id);
-                      }}
+                      onClick={() => handleTileAccess(tile)}
                     >
                       {tile.thumbSrc ? (
                         <img
@@ -567,6 +678,7 @@ function LoungeTvScreen({
                           } as React.CSSProperties}
                         />
                       ) : null}
+                      <LoungeTvTileTicketChrome tile={tile} isUnlocked={isUnlocked} />
                       <LoungeTvTileLabel title={tile.title} showNew={showNew} />
                     </button>
                   );
@@ -576,6 +688,35 @@ function LoungeTvScreen({
           ) : null}
         </LoungeTvInnerLayoutEditor>
       </div>
+
+      <ConfirmationModal
+        isOpen={Boolean(unlockConfirmTile)}
+        onClose={() => !unlockBusy && setUnlockConfirmTile(null)}
+        onConfirm={() => void confirmUnlockAndPlay()}
+        title={`UNLOCK WITH ${unlockConfirmTile ? resolveLoungeTvTicketCost(unlockConfirmTile) : 0} SLAY TICKET(S)?`}
+        message={
+          unlockConfirmTile
+            ? `SPEND ${resolveLoungeTvTicketCost(unlockConfirmTile)} SLAY TICKET(S) TO WATCH "${unlockConfirmTile.title}".`
+            : ''
+        }
+        confirmText="UNLOCK + WATCH"
+        cancelText="CANCEL"
+        dataAttribute="lounge-tv-unlock-confirm"
+      />
+
+      <ConfirmationModal
+        isOpen={showNeedMoreTickets}
+        onClose={() => setShowNeedMoreTickets(false)}
+        onConfirm={() => {
+          setShowNeedMoreTickets(false);
+          navigate(slayTicketPackPdpPath());
+        }}
+        title="YOU NEED MORE SLAY TICKETS TO WATCH THIS."
+        message="PURCHASE A SLAY TICKET PACK TO UNLOCK LOUNGE TV CONTENT."
+        confirmText="BUY SLAY TICKETS"
+        cancelText="CANCEL"
+        dataAttribute="lounge-tv-need-tickets"
+      />
     </div>
   );
 }
