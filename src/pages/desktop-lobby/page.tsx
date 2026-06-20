@@ -12,226 +12,229 @@ function ZoneArrival() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 120);
+    const t = setTimeout(() => setVisible(true), 80);
     return () => clearTimeout(t);
   }, []);
-
-  const floatIn = (delay: string, dx = 0, dy = 24) => ({
-    transform: visible ? 'translate(0,0)' : `translate(${dx}px,${dy}px)`,
-    opacity: visible ? 1 : 0,
-    transition: `transform 1s ${delay} cubic-bezier(0.16,1,0.3,1), opacity 0.9s ${delay} ease`,
-  });
 
   return (
     <section
       className="relative overflow-hidden"
       style={{
         minHeight: '100vh',
-        // Marble environment — visible and rich, NOT bleached
-        background: '#F5EFE8',
+        // The room — marble is the dominant material, not a background image
+        background: '#EDE5D8',
         backgroundImage: 'url(/assets/marble%20bg.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
-        backgroundAttachment: 'local',
       }}
     >
-      {/* === DEPTH LAYER SYSTEM === */}
+      {/* ═══════════════════════════════════════════════════
+          ENVIRONMENT DEPTH SYSTEM
+          Think: ceiling → midair → floor
+      ═══════════════════════════════════════════════════ */}
 
-      {/* Layer 1: Very subtle warm tint — preserves marble visibility */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'rgba(255,252,246,0.18)', zIndex: 1 }}
-      />
+      {/* Ceiling — warm architectural wash from above */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'linear-gradient(180deg, rgba(255,252,240,0.82) 0%, rgba(255,250,238,0.42) 16%, rgba(255,255,255,0) 38%)',
+        zIndex: 1,
+      }} />
 
-      {/* Layer 2: Ceiling atmospheric gradient — sense of architectural ceiling above */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(180deg, rgba(255,252,242,0.78) 0%, rgba(255,250,240,0.35) 14%, rgba(255,255,255,0) 36%)',
-          zIndex: 2,
-        }}
-      />
+      {/* Floor — polished marble, warmth from below */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'linear-gradient(0deg, rgba(245,236,220,0.62) 0%, rgba(248,240,226,0.28) 18%, rgba(255,255,255,0) 35%)',
+        zIndex: 1,
+      }} />
 
-      {/* Layer 3: Floor warmth — sense of polished marble floor below */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(0deg, rgba(248,242,234,0.52) 0%, rgba(255,255,255,0) 28%)',
-          zIndex: 2,
-        }}
-      />
+      {/* Side walls — architectural vignette creating a room boundary */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'linear-gradient(90deg, rgba(220,208,192,0.62) 0%, rgba(228,218,204,0.22) 10%, transparent 20%, transparent 80%, rgba(228,218,204,0.22) 90%, rgba(220,208,192,0.62) 100%)',
+        zIndex: 1,
+      }} />
 
-      {/* Layer 4: Side architectural vignette — frames the space like walls */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(90deg, rgba(228,218,206,0.55) 0%, rgba(235,226,216,0.18) 12%, transparent 22%, transparent 78%, rgba(235,226,216,0.18) 88%, rgba(228,218,206,0.55) 100%)',
-          zIndex: 2,
-        }}
-      />
+      {/* Marble surface tint — preserves texture visibility */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'rgba(255,251,244,0.12)',
+        zIndex: 1,
+      }} />
 
-      {/* === CHANDELIER LIGHT SOURCE === */}
+      {/* ═══════════════════════════════════════════════════
+          CHANDELIER — THE PRIMARY LIGHT SOURCE
+          A single dominant cone of warm light from the ceiling
+          illuminates the center exhibit below
+      ═══════════════════════════════════════════════════ */}
 
-      {/* Primary chandelier cone — dominant warm beam from above center */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '1000px',
-          height: '560px',
-          background: 'radial-gradient(ellipse 52% 65% at 50% 0%, rgba(255,246,215,0.95) 0%, rgba(255,244,205,0.7) 12%, rgba(255,245,220,0.35) 32%, rgba(255,248,230,0.12) 55%, transparent 72%)',
-          zIndex: 3,
-        }}
-      />
+      {/* Primary chandelier beam */}
+      <div className="absolute pointer-events-none" style={{
+        top: 0, left: '50%', transform: 'translateX(-50%)',
+        width: '1100px', height: '680px',
+        background: 'radial-gradient(ellipse 42% 60% at 50% 0%, rgba(255,246,210,0.92) 0%, rgba(255,244,202,0.65) 10%, rgba(255,246,215,0.3) 30%, rgba(255,248,225,0.1) 52%, transparent 68%)',
+        zIndex: 2,
+      }} />
+      {/* Soft ambient fill — fills the upper vault */}
+      <div className="absolute pointer-events-none" style={{
+        top: 0, left: '50%', transform: 'translateX(-50%)',
+        width: '2000px', height: '380px',
+        background: 'radial-gradient(ellipse 85% 100% at 50% 0%, rgba(255,250,228,0.38) 0%, transparent 68%)',
+        zIndex: 2,
+      }} />
 
-      {/* Secondary diffused ambient glow — fills the upper vault */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '1800px',
-          height: '340px',
-          background: 'radial-gradient(ellipse 80% 100% at 50% 0%, rgba(255,250,232,0.42) 0%, transparent 70%)',
-          zIndex: 3,
-        }}
-      />
+      {/* ═══════════════════════════════════════════════════
+          PERSPECTIVE FLOOR PLANE
+          Creates the illusion of depth — you are STANDING
+          in this space, looking toward the exhibit
+      ═══════════════════════════════════════════════════ */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden" style={{ height: '220px', zIndex: 2 }}>
+        {/* Polished marble floor surface */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: '220px',
+          background: 'linear-gradient(0deg, rgba(232,222,206,0.6) 0%, rgba(240,230,215,0.2) 60%, transparent 100%)',
+        }} />
+        {/* Floor reflection lines — perspective lines converging to center */}
+        <svg
+          viewBox="0 0 1440 220"
+          preserveAspectRatio="none"
+          style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', opacity: 0.15 }}
+        >
+          {[...Array(7)].map((_, i) => {
+            const x = 120 + i * 200;
+            return (
+              <line key={i} x1={720} y1={0} x2={x} y2={220}
+                stroke="rgba(160,145,128,0.8)" strokeWidth="0.8" />
+            );
+          })}
+        </svg>
+      </div>
 
-      {/* === ARCHITECTURAL COLUMN ELEMENTS === */}
+      {/* ═══════════════════════════════════════════════════
+          ARCHITECTURAL PILASTERS
+      ═══════════════════════════════════════════════════ */}
+      <div className="absolute top-0 bottom-0 left-0 pointer-events-none" style={{
+        width: '64px', zIndex: 3,
+        background: 'linear-gradient(90deg, rgba(215,204,188,0.72) 0%, rgba(225,215,202,0.32) 55%, transparent 100%)',
+        borderRight: '1px solid rgba(255,255,255,0.42)',
+      }} />
+      <div className="absolute pointer-events-none" style={{ top: '68px', left: 0, width: '64px', height: '1px', background: 'linear-gradient(90deg, rgba(190,178,162,0.95) 0%, transparent 100%)', zIndex: 3 }} />
 
-      {/* Left pilaster */}
-      <div
-        className="absolute top-0 bottom-0 left-0 pointer-events-none"
-        style={{
-          width: '72px',
-          background: 'linear-gradient(90deg, rgba(222,212,200,0.65) 0%, rgba(228,220,210,0.28) 55%, transparent 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.45)',
-          zIndex: 4,
-        }}
-      />
-      {/* Left capital shadow */}
-      <div
-        className="absolute left-0 pointer-events-none"
-        style={{ top: '68px', width: '72px', height: '1px', background: 'linear-gradient(90deg, rgba(195,183,168,0.9) 0%, transparent 100%)', zIndex: 4 }}
-      />
+      <div className="absolute top-0 bottom-0 right-0 pointer-events-none" style={{
+        width: '64px', zIndex: 3,
+        background: 'linear-gradient(270deg, rgba(215,204,188,0.72) 0%, rgba(225,215,202,0.32) 55%, transparent 100%)',
+        borderLeft: '1px solid rgba(255,255,255,0.42)',
+      }} />
+      <div className="absolute pointer-events-none" style={{ top: '68px', right: 0, width: '64px', height: '1px', background: 'linear-gradient(270deg, rgba(190,178,162,0.95) 0%, transparent 100%)', zIndex: 3 }} />
 
-      {/* Right pilaster */}
-      <div
-        className="absolute top-0 bottom-0 right-0 pointer-events-none"
-        style={{
-          width: '72px',
-          background: 'linear-gradient(270deg, rgba(222,212,200,0.65) 0%, rgba(228,220,210,0.28) 55%, transparent 100%)',
-          borderLeft: '1px solid rgba(255,255,255,0.45)',
-          zIndex: 4,
-        }}
-      />
-      {/* Right capital shadow */}
-      <div
-        className="absolute right-0 pointer-events-none"
-        style={{ top: '68px', width: '72px', height: '1px', background: 'linear-gradient(270deg, rgba(195,183,168,0.9) 0%, transparent 100%)', zIndex: 4 }}
-      />
-
-      {/* === CRYSTAL PARTICLE FIELD === */}
-      <div className="absolute inset-0" style={{ zIndex: 5 }}>
+      {/* ═══════════════════════════════════════════════════
+          CRYSTAL PARTICLES
+      ═══════════════════════════════════════════════════ */}
+      <div className="absolute inset-0" style={{ zIndex: 4 }}>
         <ParticleField />
       </div>
 
-      {/* === ROSE ARRANGEMENTS === */}
-      <div
-        className="absolute left-0 bottom-0 pointer-events-none"
-        style={{ width: '280px', transform: 'translateX(-55px) translateY(28px)', zIndex: 6, opacity: 0.58 }}
-      >
-        <img src="/assets/roses.png" alt="" className="w-full" style={{ transform: 'scaleX(-1)' }} />
+      {/* ═══════════════════════════════════════════════════
+          ROSE ARRANGEMENTS — environmental dressing
+      ═══════════════════════════════════════════════════ */}
+      <div className="absolute left-0 bottom-0 pointer-events-none" style={{
+        width: '260px', transform: 'translateX(-50px) translateY(24px)', zIndex: 5, opacity: 0.62,
+        animation: 'roseSway 12s ease-in-out infinite',
+      }}>
+        <img src="/assets/roses.png" alt="" style={{ width: '100%', transform: 'scaleX(-1)', filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.1))' }} />
       </div>
-      <div
-        className="absolute right-0 bottom-0 pointer-events-none"
-        style={{ width: '300px', transform: 'translateX(68px) translateY(18px)', zIndex: 6, opacity: 0.52 }}
-      >
-        <img src="/assets/roses.png" alt="" className="w-full" />
+      <div className="absolute right-0 bottom-0 pointer-events-none" style={{
+        width: '280px', transform: 'translateX(55px) translateY(16px)', zIndex: 5, opacity: 0.56,
+        animation: 'roseSway 10s ease-in-out infinite reverse',
+      }}>
+        <img src="/assets/roses.png" alt="" style={{ width: '100%', filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.1))' }} />
       </div>
 
-      {/* === MAIN STAGE LAYOUT === */}
+      {/* ═══════════════════════════════════════════════════
+          SHOWROOM FLOOR PLAN
+          Left: Design Console — Center: The Exhibit — Right: Concierge Kiosk
+          The exhibit dominates at ~50% of available width
+      ═══════════════════════════════════════════════════ */}
       <div
-        className="relative flex items-center gap-8 px-16"
+        className="relative flex items-stretch"
         style={{
           minHeight: '100vh',
-          paddingTop: '88px',
-          paddingBottom: '64px',
+          paddingTop: '80px',
+          paddingBottom: '48px',
+          paddingLeft: '80px',
+          paddingRight: '80px',
+          gap: '32px',
           zIndex: 10,
         }}
       >
-        {/* LEFT — Build-A-Wig Panel: floats in from left */}
+        {/* LEFT — Design Console */}
         <div
           className="flex-shrink-0 self-center"
-          style={{ width: '264px', ...floatIn('0.05s', -28, 0) }}
+          style={{
+            width: '228px',
+            transform: visible ? 'translateX(0) translateY(0)' : 'translateX(-32px) translateY(0)',
+            opacity: visible ? 1 : 0,
+            transition: 'transform 1.1s 0s cubic-bezier(0.16,1,0.3,1), opacity 1s 0s ease',
+            // Panels float above the floor — slight bottom shadow
+            filter: 'drop-shadow(0 32px 48px rgba(0,0,0,0.12))',
+          }}
         >
           <BuildAWigPanel />
         </div>
 
-        {/* CENTER — The Showroom Stage */}
+        {/* CENTER — The Exhibit (museum quality, 40-50% of layout) */}
         <div
           className="flex-1 flex flex-col items-center justify-center"
-          style={{ minWidth: 0, ...floatIn('0.15s', 0, 28) }}
+          style={{
+            minWidth: 0,
+            transform: visible ? 'translateY(0)' : 'translateY(32px)',
+            opacity: visible ? 1 : 0,
+            transition: 'transform 1.1s 0.1s cubic-bezier(0.16,1,0.3,1), opacity 1s 0.1s ease',
+          }}
         >
-          {/* Venue title — architectural label, not a website header */}
+          {/* Exhibit title placard — architectural label, not a heading */}
           <div
-            className="text-center mb-10"
             style={{
+              textAlign: 'center',
+              marginBottom: '36px',
               transform: visible ? 'translateY(0)' : 'translateY(-16px)',
               opacity: visible ? 1 : 0,
-              transition: 'transform 1s 0.05s cubic-bezier(0.16,1,0.3,1), opacity 0.9s 0.05s ease',
+              transition: 'transform 1.1s 0.05s cubic-bezier(0.16,1,0.3,1), opacity 1s 0.05s ease',
             }}
           >
-            <div
-              style={{
-                fontFamily: '"Futura PT Book"',
-                fontSize: '9px',
-                letterSpacing: '0.42em',
-                textTransform: 'uppercase',
-                color: '#A89070',
-                marginBottom: '10px',
-              }}
-            >
+            <div style={{
+              fontFamily: '"Futura PT Book"', fontSize: '8px',
+              letterSpacing: '0.45em', textTransform: 'uppercase',
+              color: '#A08860', marginBottom: '10px',
+            }}>
               ── WELCOME TO ──
             </div>
-            <div
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '44px',
-                letterSpacing: '0.07em',
-                textTransform: 'uppercase',
-                color: '#1A1A1A',
-                lineHeight: 1,
-              }}
-            >
+            <div style={{
+              fontFamily: '"Futura PT Medium"', fontSize: '46px',
+              letterSpacing: '0.06em', textTransform: 'uppercase',
+              color: '#1A1A1A', lineHeight: 1,
+            }}>
               FRONTAL{' '}
               <span style={{ color: '#C81C24' }}>SLAYER</span>
             </div>
-            <div
-              style={{
-                fontFamily: '"Futura PT Book"',
-                fontSize: '10px',
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                color: '#A89070',
-                marginTop: '10px',
-              }}
-            >
+            <div style={{
+              fontFamily: '"Futura PT Book"', fontSize: '9px',
+              letterSpacing: '0.32em', textTransform: 'uppercase',
+              color: '#A08860', marginTop: '10px',
+            }}>
               THE DIGITAL FLAGSHIP
             </div>
           </div>
 
-          {/* The stage centerpiece */}
+          {/* The exhibit itself */}
           <WigPedestalDisplay />
         </div>
 
-        {/* RIGHT — PSA Concierge Panel: floats in from right */}
+        {/* RIGHT — Concierge Kiosk */}
         <div
           className="flex-shrink-0 self-center"
-          style={{ width: '264px', ...floatIn('0.08s', 28, 0) }}
+          style={{
+            width: '228px',
+            transform: visible ? 'translateX(0) translateY(0)' : 'translateX(32px) translateY(0)',
+            opacity: visible ? 1 : 0,
+            transition: 'transform 1.1s 0.04s cubic-bezier(0.16,1,0.3,1), opacity 1s 0.04s ease',
+            filter: 'drop-shadow(0 32px 48px rgba(0,0,0,0.12))',
+          }}
         >
           <PSAConciergePanel />
         </div>
@@ -271,8 +274,7 @@ export default function DesktopLobbyPage() {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ fontFamily: '"Futura PT Book"', background: '#FFFFFF', overflowX: 'hidden' }}
+      style={{ fontFamily: '"Futura PT Book"', background: '#FFFFFF', overflowX: 'hidden', minHeight: '100vh' }}
     >
       <NavBar activeLink="HOME" />
       <ZoneArrival />
