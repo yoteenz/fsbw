@@ -39,6 +39,7 @@ import {
 } from '../../../assets/concierge/conciergeSectionIcons';
 import ConciergeSectionHeader from '../../../components/account/ConciergeSectionHeader';
 import SlayQuestRewardAsset from '../../../components/account/SlayQuestRewardAsset';
+import { SlayChallengeCollectiblesPreview } from '../../../components/account/SlayChallengeCollectiblesPreview';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -1517,6 +1518,8 @@ function ConciergePage() {
   const effectiveHasSelectedCycle = isSlayChallengeAdmin && slayChallengeAdminStage === 'closed'
     ? false
     : !!slayChallengeSelectedCycle;
+  const isSlayChallengeCollectiblesPreview =
+    isSlayChallengeAdmin && slayChallengeAdminStage === 'collectibles';
   const setSlayChallengeAdminStageAndSave = (stage: string) => {
     setSlayChallengeAdminStage(stage);
     try {
@@ -6245,9 +6248,14 @@ function ConciergePage() {
                         <option value="selected_waiting">Selected — waiting for cycle</option>
                         <option value="active">Active challenge (progress)</option>
                         <option value="closed">Selection closed</option>
+                        <option value="collectibles">Collectibles (all phases)</option>
                       </select>
                     </div>
                   )}
+                  {isSlayChallengeCollectiblesPreview ? (
+                    <SlayChallengeCollectiblesPreview />
+                  ) : (
+                    <>
                   <SlayChallengeGuide
                     currentTierIndex={slayChallengeCurrentTierIndex}
                     rewardOptions={slayChallengeCurrentRewardOptions}
@@ -6299,8 +6307,10 @@ function ConciergePage() {
                       Selection window closed. You have 3 days before the next cycle ends to choose your challenge—or wait 6 months for the next window.
                     </p>
                   )}
+                    </>
+                  )}
                 </div>
-                {effectiveInSelectionWindow && !effectiveHasSelectedForNext && (
+                {effectiveInSelectionWindow && !effectiveHasSelectedForNext && !isSlayChallengeCollectiblesPreview && (
                   <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px', transform: 'translateY(-2px)' }}>
                     <button
                       type="button"
