@@ -16,6 +16,8 @@ import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { marbleStripViewportStyle } from '../../utils/marbleStripStyles';
 import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../utils/giftCardCheckout';
 import { GIFT_CARD_BALANCE_OPTIONS, giftCardPdpPath } from '../../utils/giftCardBalance';
+import { SLAY_TICKET_CART_THUMBNAIL_SRC } from '../../constants/slayTicketAssets';
+import { SLAY_TICKET_PACKS, slayTicketPackPdpPath } from '../../utils/slayTicketPacks';
 import { stripDebugModeSuffix } from '../../utils/debugMode';
 
 function ToolsPage() {
@@ -97,6 +99,34 @@ function ToolsPage() {
     }))
   );
 
+  const [slayTicketProducts] = useState(() =>
+    SLAY_TICKET_PACKS.map((pack) => ({
+      id: pack.id,
+      name: 'SLAY TICKETS',
+      price: pack.priceUsd,
+    }))
+  );
+
+  const [slayTicketPage, setSlayTicketPage] = useState(0);
+  const [slayTicketSnapPx, setSlayTicketStripViewportRef] = useMarbleStripSnapStep();
+  const slayTicketPairCount = Math.ceil(slayTicketProducts.length / 2);
+  const slayTicketMaxPage = Math.max(0, slayTicketPairCount - 1);
+  const slayTicketScrollPx = -slayTicketPage * slayTicketSnapPx;
+  const slayTicketStripUsesSnap = slayTicketProducts.length >= 4;
+  const slayTicketCellFlexBasis = slayTicketStripUsesSnap
+    ? `calc(100% / ${slayTicketProducts.length})`
+    : '50%';
+
+  useEffect(() => {
+    setSlayTicketPage((p) => Math.min(p, slayTicketMaxPage));
+  }, [slayTicketMaxPage]);
+
+  useEffect(() => {
+    const handleResize = () => setSlayTicketPage(0);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Gift card marble strip: measured snap (same as PDP similar / shop UNITS)
   const [giftCardPage, setGiftCardPage] = useState(0);
   const [giftCardSnapPx, setGiftCardStripViewportRef] = useMarbleStripSnapStep();
@@ -122,7 +152,7 @@ function ToolsPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
-    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {
       return 'TOOLS';
     } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
       return 'BRAND';
@@ -200,7 +230,7 @@ function ToolsPage() {
   // Update active tab based on current route
   useEffect(() => {
     const pathname = location.pathname;
-    if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+    if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {
       setMobileMenuActiveTab('TOOLS');
     } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
       setMobileMenuActiveTab('BRAND');
@@ -213,7 +243,7 @@ function ToolsPage() {
   useEffect(() => {
     if (showMobileMenu) {
       const pathname = location.pathname;
-      if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
+      if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {
         setMobileMenuActiveTab('TOOLS');
       } else if (pathname.includes('/brand') || pathname.includes('/about') || pathname.includes('/contact') || pathname.includes('/faq') || pathname.includes('/reviews') || pathname.includes('/terms')) {
         setMobileMenuActiveTab('BRAND');
@@ -259,6 +289,10 @@ function ToolsPage() {
   const handleGiftCardLeftArrow = () => setGiftCardPage((p) => Math.max(0, p - 1));
   const handleGiftCardRightArrow = () =>
     setGiftCardPage((p) => Math.min(giftCardMaxPage, p + 1));
+
+  const handleSlayTicketLeftArrow = () => setSlayTicketPage((p) => Math.max(0, p - 1));
+  const handleSlayTicketRightArrow = () =>
+    setSlayTicketPage((p) => Math.min(slayTicketMaxPage, p + 1));
 
   const isHomeToolsRoute = stripDebugModeSuffix(location.pathname) === '/home/tools';
 
@@ -540,7 +574,8 @@ function ToolsPage() {
           ) : null}
 
           {!showMobileMenu && (
-            /* GIFT CARD CONTAINER */
+            <>
+            {/* GIFT CARD CONTAINER */}
             <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px', transform: 'translateY(-17px)' }}>
             <div style={{ 
               border: '1.3px solid black', 
@@ -852,6 +887,318 @@ function ToolsPage() {
               </div>
             </div>
           </div>
+
+          {/* SLAY TICKETS CONTAINER */}
+          <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+            <div style={{
+              border: '1.3px solid black',
+              backgroundColor: '#f5f5f5',
+              backgroundImage: `url('/assets/marble-container.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              padding: '0px',
+              maxWidth: '100%',
+              margin: '0 auto'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '5px' }}>
+                <div style={{
+                  width: '1px',
+                  height: '15px',
+                  backgroundColor: 'black',
+                  margin: '0 auto 8px auto'
+                }}></div>
+                <h3
+                  onClick={() => navigate('/tools/slay-tickets')}
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '12px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    margin: '0',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'inline-block',
+                    width: 'auto',
+                    height: 'auto'
+                  }}
+                >
+                  SLAY TICKETS
+                </h3>
+              </div>
+
+              <div style={{ position: 'relative', width: '100%', overflow: 'visible', boxSizing: 'border-box' }}>
+                <div style={{ width: '100%', position: 'relative', overflow: 'visible', minWidth: 0, boxSizing: 'border-box' }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '6px',
+                      bottom: '0',
+                      width: '1px',
+                      backgroundColor: 'black',
+                      zIndex: 20,
+                      transform: 'translateX(-50%)',
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '6px',
+                      bottom: '0',
+                      width: '10px',
+                      backgroundColor: 'transparent',
+                      zIndex: 15,
+                      transform: 'translateX(-50%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+
+                  <div
+                    ref={setSlayTicketStripViewportRef}
+                    style={{
+                      width: '100%',
+                      position: 'relative',
+                      maxWidth: '100%',
+                      marginTop: 0,
+                      paddingTop: '10px',
+                      overflow: 'visible',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        ...marbleStripViewportStyle,
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'nowrap',
+                          alignItems: 'stretch',
+                          gap: '0',
+                          transform: `translateX(${slayTicketScrollPx}px)`,
+                          transition: 'none',
+                          width: slayTicketStripUsesSnap ? `${slayTicketPairCount * 100}%` : '100%',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        {slayTicketProducts.map((product) => (
+                          <div
+                            key={product.id}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate(slayTicketPackPdpPath(product.id))}
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                navigate(slayTicketPackPdpPath(product.id));
+                              }
+                            }}
+                            style={{
+                              padding: 0,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'stretch',
+                              flex: `0 0 ${slayTicketCellFlexBasis}`,
+                              boxSizing: 'border-box',
+                              position: 'relative',
+                              overflow: 'visible',
+                              minWidth: 0,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                boxSizing: 'border-box',
+                                padding: '5px 12px 4px 12px',
+                                transform: 'translateY(-10px)',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  marginBottom: '8px',
+                                }}
+                              >
+                                <img
+                                  src={SLAY_TICKET_CART_THUMBNAIL_SRC}
+                                  alt="Slay Tickets"
+                                  style={{
+                                    width: '79.2%',
+                                    height: 'auto',
+                                    maxWidth: '100%',
+                                    display: 'block',
+                                    margin: 0,
+                                  }}
+                                />
+                              </div>
+
+                              <div style={{ width: '100%', textAlign: 'center', boxSizing: 'border-box' }}>
+                                <p
+                                  style={{
+                                    fontFamily:
+                                      '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    fontSize: '18px',
+                                    color: 'black',
+                                    textTransform: 'uppercase',
+                                    margin: 0,
+                                    fontWeight: '500',
+                                    lineHeight: 1.05,
+                                    minHeight: '22px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  {product.name}
+                                </p>
+
+                                <p
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '10px',
+                                    color: '#EB1C24',
+                                    textTransform: 'uppercase',
+                                    margin: '2px 0 5px 0',
+                                    fontWeight: '500',
+                                    lineHeight: '0.84',
+                                    minHeight: '12px',
+                                  }}
+                                >
+                                  DIGITAL ONLY
+                                </p>
+
+                                <p
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '12px',
+                                    color: 'black',
+                                    textTransform: 'uppercase',
+                                    margin: '0 0 5px 0',
+                                    fontWeight: '500',
+                                    lineHeight: '0.84',
+                                    textAlign: 'center',
+                                  }}
+                                  dangerouslySetInnerHTML={formatPrice(product.price)}
+                                />
+
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    gap: '2px',
+                                    marginTop: '2px',
+                                    marginBottom: '5px',
+                                  }}
+                                >
+                                  {[...Array(5)].map((_, starIndex) => (
+                                    <img
+                                      key={starIndex}
+                                      src="/assets/NOIR/star-symbol.png"
+                                      alt="Star Rating"
+                                      style={{
+                                        width: '10px',
+                                        height: '10px',
+                                        filter: 'drop-shadow(0 0 0 1px black)',
+                                        stroke: '1px black',
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {isHomeToolsRoute && slayTicketMaxPage > 0 && (
+                    <div style={giftCardHomeToolsArrowOverlayStyle}>
+                      <button
+                        type="button"
+                        onClick={handleSlayTicketLeftArrow}
+                        aria-label="Previous slay ticket packs"
+                        style={{ ...giftCardArrowButtonStyle, pointerEvents: 'auto' }}
+                      >
+                        <img
+                          src="/assets/NOIR/left-facing-arrow.svg"
+                          alt=""
+                          style={giftCardArrowImgStyle}
+                        />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSlayTicketRightArrow}
+                        aria-label="Next slay ticket packs"
+                        style={{ ...giftCardArrowButtonStyle, pointerEvents: 'auto' }}
+                      >
+                        <img
+                          src="/assets/NOIR/right-facing-arrow.svg"
+                          alt=""
+                          style={giftCardArrowImgStyle}
+                        />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {slayTicketMaxPage > 0 && !isHomeToolsRoute && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleSlayTicketLeftArrow}
+                      aria-label="Previous slay ticket packs"
+                      style={{
+                        ...giftCardArrowButtonStyle,
+                        position: 'absolute',
+                        left: 6,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 25,
+                      }}
+                    >
+                      <img
+                        src="/assets/NOIR/left-facing-arrow.svg"
+                        alt=""
+                        style={giftCardArrowImgStyle}
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSlayTicketRightArrow}
+                      aria-label="Next slay ticket packs"
+                      style={{
+                        ...giftCardArrowButtonStyle,
+                        position: 'absolute',
+                        right: 6,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 25,
+                      }}
+                    >
+                      <img
+                        src="/assets/NOIR/right-facing-arrow.svg"
+                        alt=""
+                        style={giftCardArrowImgStyle}
+                      />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+            </>
           )}
         </div>
       </div>

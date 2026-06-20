@@ -41,6 +41,11 @@ import {
   giftCardLineTotalUsd,
   isGiftCardCartLine,
 } from '../utils/giftCardCheckout';
+import {
+  isSlayTicketPackCartLine,
+  slayTicketCartThumbnailSrc,
+} from '../utils/slayTicketCheckout';
+import { slayTicketPackPdpPath } from '../utils/slayTicketPacks';
 import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../utils/giftCardCheckoutSession';
 import { CartLineProductTextStack, CartLineTextLayer } from './cart/CartLineProductTextStack';
 import {
@@ -1162,7 +1167,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         ? BOOKING_APPOINTMENT_CART_BADGE_IMG_PX
                         : BOOKING_CART_BADGE_IMG_PX;
                     const cartThumbBoxPx =
-                      item.name === 'GIFT CARD' || item.type === 'gift-card'
+                      item.name === 'GIFT CARD' || item.type === 'gift-card' || isSlayTicketPackCartLine(item)
                         ? 108
                         : isBookingCartThumb
                           ? BOOKING_CART_BADGE_IMG_PX
@@ -1212,6 +1217,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           let productRoute = '/straight/noir';
                           if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                             productRoute = '/tools/gift-card';
+                          } else if (isSlayTicketPackCartLine(item)) {
+                            productRoute = slayTicketPackPdpPath(item.id);
                           } else if (item.type === 'booking-consult') {
                             productRoute = bookingConsultationHrefForCartItem(item as any);
                           } else if (item.type === 'booking-appointment') {
@@ -1254,6 +1261,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const thumbSrc = (() => {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return giftCardCartThumbnailSrc();
+                            }
+                            if (isSlayTicketPackCartLine(item)) {
+                              return slayTicketCartThumbnailSrc();
                             }
                             if (item.type === 'shop-texture-category') {
                               const bcf = shopBcfCartLineThumbnailSrc(item as CartItem);
@@ -1344,6 +1354,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         {!(
                           item.name === 'GIFT CARD' ||
                           item.type === 'gift-card' ||
+                          isSlayTicketPackCartLine(item) ||
                           item.type === 'booking-consult' ||
                           item.type === 'booking-appointment' ||
                           item.type === 'shop-texture-category'
@@ -1517,7 +1528,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         >
                         {(() => {
                           // Gift card shows "DIGITAL ONLY"
-                          if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
+                          if (item.name === 'GIFT CARD' || item.type === 'gift-card' || isSlayTicketPackCartLine(item)) {
                             return 'DIGITAL ONLY';
                           }
                           if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
