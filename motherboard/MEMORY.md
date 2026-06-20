@@ -30173,3 +30173,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User supplied **`IMG_3405.png`** (Supabase Slay Ticket folder) for ticket-gated Lounge TV content: show **behind tile text**, slightly **faded and out of focus**; users should **route to the content page** when tapping tiles (**Watch + Learn** and other non–Slay Tips grids) even when locked; **play** triggers the existing unlock / need-tickets popup. **Slay Tips** excluded from routing — locked rows show purchase popup on tap (same modal flow).
 - **Decisions / outcomes:** **`LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC`** → `IMG_3405.png` in `slayTicketAssets.ts`. Watermark at ~38% opacity + `blur(2.5px)` centered behind title stack (z-index under labels/badges). **Watch + Learn:** grid tap → player page; video **paused** when locked; tap play → unlock confirm or need-tickets modal (**TAP TO UNLOCK**). **Slay Tips:** tap locked row → modal (no blog detail until owned); unlocked → opens post. Deprecated bundled SVG lock constant.
 - **Changes:** `slayTicketAssets.ts`, `LoungeTvTileTicketChrome.tsx`, `LoungeTvOverlay.tsx`, `LoungeTvWatchLearnPlayer.tsx`, `LoungeTvBlogPostView.tsx`, `loungeTvTicketAccess.ts` (`loungeTvTileShowsTicketLock`). Build verified; pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-06-20 — Slay Ticket \$4/unit pricing + singular cart line name
+
+- **Context:** User requested **\$4 per ticket** (was ~\$2.50 on the 4-pack) and a consistent product line name **`SLAY TICKET`** (singular) everywhere — pack size belongs in **quantity**, not the title (e.g. 4-pack → name `SLAY TICKET`, qty **4**).
+- **Decisions / outcomes:** **`SLAY_TICKET_UNIT_PRICE_USD = 4`**; pack totals **\$16 / \$32 / \$48 / \$96** for 4/8/12/24. Cart line: `name: SLAY TICKET`, `price: 4`, `quantity: ticketCount`. Server **`slayTicketsPurchasedForLineItems`** credits **`quantity`** when name is `SLAY TICKET` (avoids double-count with legacy `slayTicketPackCount`). Display helpers in cart dropdown, bag, checkout strip, PDP product title, checkout breadcrumb.
+- **Changes:** `slayTicketPacks.ts`, `api/_lib/slayTickets.ts`, `CartDropdown.tsx`, `shopping-bag/page.tsx`, `checkoutOrderStripDisplay.ts`, `checkout/page.tsx`, `tools/slay-tickets/page.tsx`, `tools/page.tsx`. Build verified.
