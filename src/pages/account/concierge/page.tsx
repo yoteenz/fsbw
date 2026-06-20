@@ -44,7 +44,13 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
-import type { SlayQuestRewardType } from '../../../config/slayQuestRewardAssets';
+import {
+  SLAY_CHALLENGE_INTRO_BULLETS,
+  SLAY_CHALLENGE_TIER1_REQUIRED_COUNT,
+  SLAY_CHALLENGE_TIERS,
+} from '../../../config/slayChallengeTiers';
+import { getSlayChallengeRewardAssetSelection } from '../../../utils/slayChallengeRewardAssetMap';
+import { SlayChallengeBohemySubhead, SlayChallengeRoseBullet } from '../../../components/account/SlayChallengeRoseBullet';
 
 /** Currency rates (USD base) and display symbols for special offer and elsewhere. */
 const CURRENCY_RATES: Record<string, { rate: number; symbol: string }> = {
@@ -71,160 +77,6 @@ const pulsateStyle = `
     }
   }
 `;
-
-const SLAY_CHALLENGE_INTRO_BULLETS = [
-  'CHOOSE YOUR REWARD FOR THE CURRENT TIER ONLY.',
-  'COMPLETE QUALIFYING ACTIVITIES TO UNLOCK THE NEXT TIER.',
-  'TIER 2, TIER 3 + TIER 4 REWARD CHOICES APPEAR AFTER YOU COMPLETE THE TIER BEFORE THEM.',
-  'ONCE A TIER REWARD IS SELECTED, IT STAYS LOCKED UNTIL THAT TIER IS COMPLETED.',
-];
-
-type SlayChallengeGuideTier = {
-  title: string;
-  description?: string;
-  requirement: string;
-  tasks: string[];
-  rewardHeading: string;
-  rewards: string[];
-};
-
-const SLAY_CHALLENGE_TIERS: SlayChallengeGuideTier[] = [
-  {
-    title: 'TIER 1 — DISCOVER',
-    description: 'EASY TASKS THAT GET MEMBERS INVOLVED.',
-    requirement: 'YOU NEED TO COMPLETE AT LEAST 5/7 TO ADVANCE TIERS.',
-    tasks: [
-      'MAKE A PURCHASE',
-      'LEAVE A PRODUCT REVIEW',
-      'COMPLETE A HAIRSTYLE ANALYSIS',
-      'USE PSA FOR THE FIRST TIME',
-      'CREATE A WISHLIST',
-      'ADD FUNDS TO DIGITAL CASH',
-      'JOIN THE NEWSLETTER',
-    ],
-    rewardHeading: 'TIER 1 REWARD SELECTION',
-    rewards: [
-      '600 LOYALTY POINTS',
-      '1X FLEXIBLE CAP VOUCHER',
-      'MYSTERY REWARD',
-      'FREE SHIPPING CREDIT',
-      'EXCLUSIVE DIGITAL WALLPAPER / MEMBER COLLECTIBLE',
-    ],
-  },
-  {
-    title: 'TIER 2 — ENGAGE',
-    requirement: 'THEY ONLY NEED TO COMPLETE 4/7 TO ADVANCE TIERS.',
-    tasks: [
-      'PURCHASE A PRODUCT',
-      'COMPLETE A BUILD-A-WIG DESIGN',
-      'TAG FRONTAL SLAYER ON SOCIAL MEDIA',
-      'REFER A FRIEND',
-      'SUBMIT A VIDEO REVIEW',
-      'ATTEND A LOUNGE EVENT (FUTURE ACTIVITY)',
-      'WATCH 3 ACADEMY TUTORIALS (FUTURE ACTIVITY)',
-    ],
-    rewardHeading: 'TIER 2 REWARD SELECTION',
-    rewards: [
-      '1,000 LOYALTY POINTS',
-      '1X HAIRLINE VOUCHER',
-      '2X POINTS NEXT PURCHASE',
-      '$40 DIGITAL CASH',
-      'PRIORITY ORDER PROCESSING UPGRADE',
-      'MYSTERY REWARD',
-      'BONUS HAIRSTYLE ANALYSIS CREDIT',
-    ],
-  },
-  {
-    title: 'TIER 3 — ELEVATE',
-    requirement: 'THEY ONLY NEED TO COMPLETE 5/9 TO ADVANCE TIERS.',
-    tasks: [
-      'REFER 2 FRIENDS',
-      'COMPLETE A BUILD-A-WIG PURCHASE',
-      'SUBMIT BEFORE & AFTER PHOTOS',
-      'POST ON SOCIAL MEDIA + TAG FRONTAL SLAYER',
-      'COMPLETE 3 PRODUCT REVIEWS',
-      'SAVE 3 BUILD-A-WIG DESIGNS',
-      'COMPLETE A PREMIUM HAIRSTYLE ANALYSIS',
-      'ATTEND A VIRTUAL CLASS (FUTURE ACTIVITY)',
-      'POST ON SOCIAL MEDIA + TAG BRAND',
-    ],
-    rewardHeading: 'TIER 3 REWARD SELECTION',
-    rewards: [
-      '2,500 LOYALTY POINTS',
-      '1X STYLING VOUCHER',
-      '$60 DIGITAL CASH',
-      '2.5X POINTS NEXT PURCHASE',
-      'PREMIUM MYSTERY REWARD',
-    ],
-  },
-  {
-    title: 'TIER 4 — ICON',
-    requirement: 'THEY ONLY NEED TO COMPLETE 6/9 TO ADVANCE TIERS.',
-    tasks: [
-      'REFER 2 FRIENDS',
-      'COMPLETE A BUILD-A-WIG PURCHASE',
-      'SUBMIT BEFORE & AFTER PHOTOS',
-      'POST ON SOCIAL MEDIA + TAG FRONTAL SLAYER',
-      'COMPLETE 3 PRODUCT REVIEWS',
-      'SAVE 3 BUILD-A-WIG DESIGNS',
-      'COMPLETE A PREMIUM HAIRSTYLE ANALYSIS',
-      'ATTEND A VIRTUAL CLASS (FUTURE ACTIVITY)',
-      'POST ON SOCIAL MEDIA + TAG BRAND',
-    ],
-    rewardHeading: 'TIER 4 REWARD SELECTION',
-    rewards: [
-      '5,000 LOYALTY POINTS',
-      '1X COLOR VOUCHER',
-      '$80 DIGITAL CASH',
-      '3X POINTS NEXT PURCHASE',
-      'PREMIUM MYSTERY REWARD',
-    ],
-  },
-];
-
-function SlayChallengeRoseBullet({ children }: { children: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '4px', textAlign: 'left' }}>
-      <img
-        src="/assets/rose-alert.svg"
-        alt=""
-        style={{ width: '12px', height: '12px', marginTop: '2px', flexShrink: 0 }}
-      />
-      <p
-        style={{
-          fontFamily: '"Futura PT Book"',
-          color: '#000000',
-          fontSize: '10px',
-          margin: 0,
-          lineHeight: 1.45,
-          textTransform: 'uppercase',
-          textAlign: 'left',
-        }}
-      >
-        {children}
-      </p>
-    </div>
-  );
-}
-
-function SlayChallengeBohemySubhead({ children }: { children: string }) {
-  return (
-    <p
-      style={{
-        fontFamily: '"Bohemy", cursive',
-        color: '#000000',
-        fontSize: '18px',
-        margin: '8px 0 4px 0',
-        lineHeight: 1.1,
-        textTransform: 'lowercase',
-        fontWeight: 400,
-        textAlign: 'left',
-      }}
-    >
-      {children}
-    </p>
-  );
-}
 
 type SlayChallengeGuideProps = {
   currentTierIndex: number;
@@ -426,11 +278,6 @@ function SlayChallengeGuide({
   );
 }
 
-type SlayChallengeRewardAssetSelection = {
-  rewardType: SlayQuestRewardType;
-  selectedRewardLabel: string;
-};
-
 type SlayChallengeTier1Progress = {
   purchase: boolean;
   review: boolean;
@@ -440,8 +287,6 @@ type SlayChallengeTier1Progress = {
   digitalCash: boolean;
   newsletter: boolean;
 };
-
-const SLAY_CHALLENGE_TIER1_REQUIRED_COUNT = 5;
 
 const getDefaultSlayChallengeTier1Progress = (): SlayChallengeTier1Progress => ({
   purchase: false,
@@ -497,68 +342,6 @@ const legacySlayChallengeRewardToLabel = (tierIndex: number, reward: string | nu
     if (reward === '1000points') return '1,000 LOYALTY POINTS';
   }
   return '';
-};
-
-const getSlayChallengeRewardAssetSelection = (reward: string): SlayChallengeRewardAssetSelection | null => {
-  if (!reward) return null;
-  if (reward.includes('WALLPAPER') || reward.includes('DIGITAL COLLECTIBLE') || reward.includes('MEMBER COLLECTIBLE')) {
-    return {
-      rewardType: 'exclusive_digital_wallpaper',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('MYSTERY')) {
-    return {
-      rewardType: 'mystery_reward',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('SHIPPING')) {
-    return {
-      rewardType: 'free_expedited_shipping',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('PROCESSING')) {
-    return {
-      rewardType: 'free_expedited_processing',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('HAIRSTYLE ANALYSIS') || reward.includes('ANALYSIS CREDIT') || reward.includes('ANALYSIS UPGRADE')) {
-    return {
-      rewardType: 'bonus_hairstyle_analysis',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('DIGITAL CASH')) {
-    return {
-      rewardType: 'digital_cash',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('POINTS') && (reward.includes('2X') || reward.includes('2.5X') || reward.includes('3X'))) {
-    return {
-      rewardType: 'double_points',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('LOYALTY POINTS')) {
-    return {
-      rewardType: 'loyalty_points',
-      selectedRewardLabel: reward,
-    };
-  }
-  if (reward.includes('VOUCHER') || reward.includes('CREDIT') || reward.includes('UPGRADE')) {
-    return {
-      rewardType: 'free_voucher',
-      selectedRewardLabel: reward,
-    };
-  }
-  return {
-    rewardType: 'free_gift',
-    selectedRewardLabel: reward,
-  };
 };
 
 type SlayQuestReward = string | { type: 'or' };
