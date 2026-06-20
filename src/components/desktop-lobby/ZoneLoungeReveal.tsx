@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GlassPanel } from './ui/GlassPanel';
 import { RedButton, GhostButton } from './ui/Buttons';
@@ -452,8 +452,6 @@ export function ZoneLoungeReveal() {
         background: '#FDF9F8',
         backgroundImage: 'url(/assets/mini-marble.png)',
         backgroundSize: '600px',
-        backgroundBlendMode: 'overlay',
-        backgroundOpacity: '0.06',
         minHeight: '100vh',
         paddingTop: '64px',
         paddingBottom: '48px',

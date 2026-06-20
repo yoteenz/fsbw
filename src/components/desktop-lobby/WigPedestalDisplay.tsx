@@ -87,7 +87,6 @@ const AUTO_ADVANCE_MS = 5000;
 export function WigPedestalDisplay() {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [prevIndex, setPrevIndex] = useState<number | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,7 +96,6 @@ export function WigPedestalDisplay() {
 
   const goToUnit = (index: number) => {
     if (index === activeIndex || isTransitioning) return;
-    setPrevIndex(activeIndex);
     setIsTransitioning(true);
     setTimeout(() => {
       setActiveIndex(index);

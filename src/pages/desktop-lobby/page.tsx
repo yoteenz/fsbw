@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { WigPedestalDisplay } from '../../components/desktop-lobby/WigPedestalDisplay';
