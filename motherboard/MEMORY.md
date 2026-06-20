@@ -30197,3 +30197,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User wanted volume incentive on pack pricing: **\$4/ticket list rate** on 4/8/12 packs (**\$16 / \$32 / \$48**), with **24 tickets at \$90** (not \$96).
 - **Decisions / outcomes:** **`SLAY_TICKET_PACKS`** — 24-pack `priceUsd: 90`. Cart lines use **effective unit price** (`pack total ÷ ticket count`) + `slayTicketPackTotalUsd` for exact checkout totals. Pack picker shows **SAVE \$6** on discounted packs. Details tab notes list rate + 24-pack deal.
 - **Changes:** `slayTicketPacks.ts`, `SlayTicketPackPicker.tsx`, `SlayTicketProductDetailsTab.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — Slay Ticket 8- and 12-pack volume pricing tweak
+
+- **Context:** User adjusted volume deals: **8 tickets → \$30** (was \$32), **12 tickets → \$46** (was \$48); 4-pack **\$16** and 24-pack **\$90** unchanged.
+- **Decisions / outcomes:** Pack picker **SAVE \$2** on 8/12, **SAVE \$6** on 24 (auto from list rate). Details tab lists volume pack prices **\$30 / \$46 / \$90**.
+- **Changes:** `slayTicketPacks.ts`, `SlayTicketProductDetailsTab.tsx`. Build verified.
