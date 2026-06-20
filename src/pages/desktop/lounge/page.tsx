@@ -286,9 +286,11 @@ export default function DesktopLoungePage() {
 
         {/* Chandelier */}
         <div className="absolute pointer-events-none" style={{
-          top: 0, left: '50%', transform: 'translateX(-50%) translateY(-12px)',
+          top: 0, left: '50%',
           zIndex: 5,
-          ...floatIn(300, -10),
+          transition: floatIn(300, -10).transition,
+          opacity: floatIn(300, -10).opacity,
+          transform: ('translateX(-50%) translateY(-12px) ' + floatIn(300, -10).transform) as string,
         }}>
           <LoungeChandelier />
         </div>
