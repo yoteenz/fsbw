@@ -30269,3 +30269,14 @@ Summary of the **whole conversation so far** in this chat: user asked why admin 
 - **Changes:** `src/constants/bawTutorialConfig.ts`, `src/utils/bawTutorialStorage.ts`, `src/utils/bawSlayCard.ts`, `src/components/buildWig/BawTutorialGuidePanel.tsx`, `src/pages/build-a-wig/try/page.tsx`, `src/App.tsx` route, `UnitPdpCartActions` optional `onTryFree`, `products/page.tsx`, `straight/noir/page.tsx`, `activity.ts` tutorial event types. Build verified.
 - **Conventions:** Tutorial = separate route; do not bypass `isPremiumMemberForGatedFeatures` in full BAW. Guide copy stays generic (“BUILD GUIDE”), not PSA-named.
 
+---
+
+## 2026-06-20 — Multi-currency Stripe checkout (Phase 1 + 2)
+
+Summary of the **whole conversation so far** in this chat: admin upgrade prompts diagnosis; hairstyle analysis migration order; CPO strategy recommendations; currency conversion lanes (user chose **Lane 3** — server FX + Stripe charge in picker currency); guest BAW tutorial shipped (`/build-a-wig/try`); user confirmed ready for **multi-currency Phase 1 + 2**.
+
+- **Context:** Shoppers pick currency site-wide; Stripe product checkout should charge the converted amount in that currency (not USD-only display).
+- **Decisions / outcomes:** **Phase 1 + 2** — server FX table (`api/_lib/pricing/fxRates.ts`, mirrors `DEFAULT_CURRENCY_RATES`), public `GET /api/fx/rates`, `POST /api/checkout/quote` accepts `chargeCurrency` and returns `chargeAmountMinor` / `fxRate` / `fxAsOf`; `POST /api/stripe/create-product-payment-intent` creates PI in charge currency with metadata (`usd_total_cents`, `charge_currency`, `fx_rate`). Checkout uses shared `DEFAULT_CURRENCY_RATES`, fetches server quote when Stripe card fields active, shows **YOUR CARD WILL BE CHARGED …** disclosure, passes `selectedCurrency` through confirm. **Not in scope:** membership Checkout Session, booking autopay, BCF/BAW custom lines, full subtotal (tax/shipping/vouchers) on PI.
+- **Changes:** `api/_lib/pricing/fxRates.ts`, `api/fx/rates.ts`, `api/checkout/quote.ts`, `api/stripe/create-product-payment-intent.ts`, `src/utils/checkoutQuote.ts`, `src/utils/api.ts`, `src/utils/productCheckoutStripe.ts`, `src/utils/chargeCurrencyFormat.ts`, `CheckoutStripeCardSection.tsx`, `checkout/page.tsx`, `docs/CHECKOUT_SERVER_QUOTE.md`, `motherboard/CORE.md`.
+- **Conventions:** Catalog pricing stays USD on server; FX is static table until provider feed. PI only for `fullyResolved` server quotes.
+
