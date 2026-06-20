@@ -1,7 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '../_lib/auth.js';
-import { creditSlayTicketsForOrder, type SlayTicketLineItem } from '../_lib/slayTickets.js';
+import { getPsaPremiumProfile } from '../_lib/psaPremiumCheck.js';
+import {
+  creditSlayTicketsForOrder,
+  slayTicketsPurchasedForLineItems,
+  type SlayTicketLineItem,
+} from '../_lib/slayTickets.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -65,6 +70,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   if (!orderId) {
     sendJson(res, 400, { error: 'orderId required' });
     return;
+  }
+
+  const purchased = slayTicketsPurchasedForLineItems(lineItems);
+  if (purchased > 0) {
+    const premium = await getPsaPremiumProfile(user.id, user.accessToken, user.email);
+    if (!premium?.isPremium) {
+      sendJson(res, 403, { error: 'Premium membership required to purchase Slay Tickets' });
+      return;
+    }
   }
 
   try {
