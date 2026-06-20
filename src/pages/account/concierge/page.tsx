@@ -500,6 +500,42 @@ const legacySlayChallengeRewardToLabel = (tierIndex: number, reward: string | nu
 
 const getSlayChallengeRewardAssetSelection = (reward: string): SlayChallengeRewardAssetSelection | null => {
   if (!reward) return null;
+  if (reward.includes('WALLPAPER') || reward.includes('DIGITAL COLLECTIBLE') || reward.includes('MEMBER COLLECTIBLE')) {
+    return {
+      rewardType: 'exclusive_digital_wallpaper',
+      selectedRewardLabel: reward,
+    };
+  }
+  if (reward.includes('MYSTERY')) {
+    return {
+      rewardType: 'mystery_reward',
+      selectedRewardLabel: reward,
+    };
+  }
+  if (reward.includes('SHIPPING')) {
+    return {
+      rewardType: 'free_expedited_shipping',
+      selectedRewardLabel: reward,
+    };
+  }
+  if (reward.includes('PROCESSING')) {
+    return {
+      rewardType: 'free_expedited_processing',
+      selectedRewardLabel: reward,
+    };
+  }
+  if (reward.includes('HAIRSTYLE ANALYSIS') || reward.includes('ANALYSIS CREDIT') || reward.includes('ANALYSIS UPGRADE')) {
+    return {
+      rewardType: 'bonus_hairstyle_analysis',
+      selectedRewardLabel: reward,
+    };
+  }
+  if (reward.includes('DIGITAL CASH')) {
+    return {
+      rewardType: 'digital_cash',
+      selectedRewardLabel: reward,
+    };
+  }
   if (reward.includes('POINTS') && (reward.includes('2X') || reward.includes('2.5X') || reward.includes('3X'))) {
     return {
       rewardType: 'double_points',
