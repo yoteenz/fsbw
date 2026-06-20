@@ -90,11 +90,10 @@ export function BuildAWigPanel() {
             style={{
               padding: '10px 20px 10px 17px',
               background: hoveredRow === i ? 'rgba(200,28,36,0.05)' : 'transparent',
+              borderTop: 'none', borderRight: 'none', borderBottom: 'none',
               borderLeft: hoveredRow === i ? '2px solid #C81C24' : '2px solid transparent',
               transition: 'all 0.15s ease',
               cursor: 'pointer',
-              border: 'none',
-              borderLeft: hoveredRow === i ? '2px solid #C81C24' : '2px solid transparent',
             }}
           >
             {/* Parameter row */}

@@ -118,11 +118,10 @@ export function PSAConciergePanel() {
             style={{
               padding: '8px 20px 8px 17px',
               background: hoveredItem === i ? 'rgba(200,28,36,0.05)' : 'transparent',
+              borderTop: 'none', borderLeft: 'none', borderBottom: 'none',
               borderRight: hoveredItem === i ? '2px solid #C81C24' : '2px solid transparent',
               transition: 'all 0.15s ease',
               cursor: 'pointer',
-              border: 'none',
-              borderRight: hoveredItem === i ? '2px solid #C81C24' : '2px solid transparent',
             }}
           >
             <div
