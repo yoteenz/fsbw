@@ -1,0 +1,45 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="acrylic-body" x1="18" y1="12" x2="78" y2="88" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="0.45" stop-color="#E8EEF5" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#B8C8DC" stop-opacity="0.38"/>
+    </linearGradient>
+    <linearGradient id="acrylic-shine" x1="24" y1="18" x2="56" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="shackle-metal" x1="30" y1="10" x2="66" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F7FB"/>
+      <stop offset="0.5" stop-color="#C5D0DE"/>
+      <stop offset="1" stop-color="#8FA0B8"/>
+    </linearGradient>
+    <filter id="acrylic-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#FFFFFF" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#acrylic-glow)">
+    <path
+      d="M30 40V30C30 20.0589 38.0589 12 48 12C57.9411 12 66 20.0589 66 30V40"
+      stroke="url(#shackle-metal)"
+      stroke-width="7"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <path
+      d="M30 40V30C30 20.0589 38.0589 12 48 12C57.9411 12 66 20.0589 66 30V40"
+      stroke="#FFFFFF"
+      stroke-width="2"
+      stroke-linecap="round"
+      fill="none"
+      opacity="0.55"
+    />
+    <rect x="22" y="40" width="52" height="42" rx="10" fill="url(#acrylic-body)" stroke="#FFFFFF" stroke-width="1.6" stroke-opacity="0.75"/>
+    <path d="M26 48H74" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1"/>
+    <ellipse cx="36" cy="52" rx="10" ry="6" fill="url(#acrylic-shine)" opacity="0.85"/>
+    <circle cx="48" cy="62" r="6.5" fill="#1A1F28" fill-opacity="0.55" stroke="#FFFFFF" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="45.5" y="62" width="5" height="10" rx="2.5" fill="#1A1F28" fill-opacity="0.55" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.55"/>
+    <path d="M22 50C22 44.4772 26.4772 40 32 40H64C69.5228 40 74 44.4772 74 50" stroke="#EB1C24" stroke-width="1.2" stroke-opacity="0.35"/>
+  </g>
+</svg>

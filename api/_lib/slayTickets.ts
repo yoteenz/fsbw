@@ -199,6 +199,27 @@ export async function creditSlayTicketsForOrder(
   return { ok: true, credited: totalCredit, balance };
 }
 
+const LOUNGE_TV_LIBRARY_ACCESS_MS = 365 * 24 * 60 * 60 * 1000;
+const LOUNGE_TV_REWATCH_TICKET_COST = 1;
+
+function unlockRowIsActive(row: { expires_at?: string | null; unlocked_at?: string }): boolean {
+  const exp = row.expires_at;
+  if (exp) {
+    const expMs = new Date(exp).getTime();
+    if (!Number.isNaN(expMs)) return expMs > Date.now();
+  }
+  const unlockedAt = row.unlocked_at;
+  if (unlockedAt) {
+    const start = new Date(unlockedAt).getTime();
+    if (!Number.isNaN(start)) return start + LOUNGE_TV_LIBRARY_ACCESS_MS > Date.now();
+  }
+  return false;
+}
+
+function computeLibraryExpiresAt(): string {
+  return new Date(Date.now() + LOUNGE_TV_LIBRARY_ACCESS_MS).toISOString();
+}
+
 export async function unlockLoungeContentWithTickets(
   supabase: SupabaseClient,
   userId: string,
@@ -210,33 +231,34 @@ export async function unlockLoungeContentWithTickets(
     contentTitle?: string;
   }
 ): Promise<{ ok: boolean; balance: number; error?: string; alreadyUnlocked?: boolean }> {
-  const cost = Math.max(0, Math.floor(params.ticketCost));
+  const catalogCost = Math.max(0, Math.floor(params.ticketCost));
   const contentId = params.contentId.trim();
   if (!contentId) return { ok: false, balance: 0, error: 'Missing content id' };
 
   const { data: existingUnlock } = await supabase
     .from('lounge_content_unlocks')
-    .select('id, expires_at')
+    .select('id, expires_at, unlocked_at')
     .eq('user_id', userId)
     .eq('content_id', contentId)
     .maybeSingle();
 
-  if (existingUnlock) {
-    const exp = (existingUnlock as { expires_at?: string | null }).expires_at;
-    if (!exp || new Date(exp).getTime() > Date.now()) {
-      const balance = await readBalance(supabase, userId);
-      return { ok: true, balance, alreadyUnlocked: true };
-    }
+  if (existingUnlock && unlockRowIsActive(existingUnlock as { expires_at?: string | null; unlocked_at?: string })) {
+    const balance = await readBalance(supabase, userId);
+    return { ok: true, balance, alreadyUnlocked: true };
   }
 
-  if (cost === 0) {
+  const isRewatch = Boolean(existingUnlock);
+  const chargeCost = isRewatch ? LOUNGE_TV_REWATCH_TICKET_COST : catalogCost;
+  const expiresAt = params.expiresAt ?? computeLibraryExpiresAt();
+
+  if (chargeCost === 0) {
     await supabase.from('lounge_content_unlocks').upsert(
       {
         user_id: userId,
         content_id: contentId,
         ticket_cost: 0,
-        access_type: params.accessType || 'permanent',
-        expires_at: params.expiresAt ?? null,
+        access_type: 'rental',
+        expires_at: expiresAt,
         unlocked_at: new Date().toISOString(),
       },
       { onConflict: 'user_id,content_id' }
@@ -246,20 +268,20 @@ export async function unlockLoungeContentWithTickets(
   }
 
   const balance = await readBalance(supabase, userId);
-  if (balance < cost) {
+  if (balance < chargeCost) {
     return { ok: false, balance, error: 'Insufficient Slay Tickets' };
   }
 
-  const nextBalance = balance - cost;
+  const nextBalance = balance - chargeCost;
   await writeBalance(supabase, userId, nextBalance);
 
   const title = (params.contentTitle || contentId).toUpperCase();
   const tx = await insertTransaction(supabase, {
     userId,
     type: 'used',
-    amount: -cost,
+    amount: -chargeCost,
     source: 'lounge_tv',
-    description: `UNLOCKED ${title} (-${cost})`,
+    description: isRewatch ? `REWATCHED ${title} (-${chargeCost})` : `UNLOCKED ${title} (-${chargeCost})`,
     relatedContentId: contentId,
   });
   if (!tx.ok) {
@@ -271,9 +293,9 @@ export async function unlockLoungeContentWithTickets(
     {
       user_id: userId,
       content_id: contentId,
-      ticket_cost: cost,
-      access_type: params.accessType || 'permanent',
-      expires_at: params.expiresAt ?? null,
+      ticket_cost: chargeCost,
+      access_type: 'rental',
+      expires_at: expiresAt,
       unlocked_at: new Date().toISOString(),
     },
     { onConflict: 'user_id,content_id' }

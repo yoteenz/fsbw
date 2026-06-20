@@ -98,17 +98,16 @@ export function writeStoredLoungeUnlocks(email: string, unlocks: LoungeContentUn
   }
 }
 
+import {
+  findLoungeContentUnlock,
+  loungeUnlockRowIsActive,
+} from '../components/lounge/loungeTvTicketAccess';
+
 export function isLoungeContentUnlocked(
   contentId: string,
   unlocks: LoungeContentUnlock[]
 ): boolean {
-  const row = unlocks.find((u) => u.contentId === contentId);
-  if (!row) return false;
-  if (row.expiresAt) {
-    const exp = new Date(row.expiresAt).getTime();
-    if (!Number.isNaN(exp) && exp <= Date.now()) return false;
-  }
-  return true;
+  return loungeUnlockRowIsActive(findLoungeContentUnlock(contentId, unlocks));
 }
 
 export function applyLocalSlayTicketState(

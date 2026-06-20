@@ -49,7 +49,7 @@ import {
 } from './loungeTvResponsive';
 import ConfirmationModal from '../ConfirmationModal';
 import { LoungeTvTileTicketChrome } from './LoungeTvTileTicketChrome';
-import { loungeTvContentIsAccessible, resolveLoungeTvTicketCost } from './loungeTvTicketAccess';
+import { loungeTvContentIsAccessible, resolveLoungeTvUnlockCost, loungeTvTileActionLabel } from './loungeTvTicketAccess';
 import { useSlayTickets } from '../../hooks/useSlayTickets';
 import { unlockLoungeTvContent } from '../../utils/api';
 import { getCurrentUserEmailFromStorage } from '../../utils/perUserStorage';
@@ -258,7 +258,7 @@ function LoungeTvScreen({
       return null;
     }
   });
-  const { balance, isUnlocked, refresh } = useSlayTickets(userData);
+  const { balance, isUnlocked, unlocks, refresh } = useSlayTickets(userData);
   const [unlockConfirmTile, setUnlockConfirmTile] = useState<LoungeTvVideoTile | null>(null);
   const [showNeedMoreTickets, setShowNeedMoreTickets] = useState(false);
   const [unlockBusy, setUnlockBusy] = useState(false);
@@ -439,8 +439,8 @@ function LoungeTvScreen({
         navigate('/account/rewards');
         return;
       }
-      const cost = resolveLoungeTvTicketCost(tile);
-      if (loungeTvContentIsAccessible(tile, isUnlocked)) {
+      const cost = resolveLoungeTvUnlockCost(tile, unlocks);
+      if (loungeTvContentIsAccessible(tile, unlocks)) {
         playTile(tile);
         return;
       }
@@ -450,13 +450,13 @@ function LoungeTvScreen({
       }
       setShowNeedMoreTickets(true);
     },
-    [balance, isUnlocked, navigate, playTile]
+    [balance, unlocks, navigate, playTile]
   );
 
   const confirmUnlockAndPlay = useCallback(async () => {
     const tile = unlockConfirmTile;
     if (!tile) return;
-    const cost = resolveLoungeTvTicketCost(tile);
+    const cost = resolveLoungeTvUnlockCost(tile, unlocks);
     setUnlockBusy(true);
     try {
       const email = getCurrentUserEmailFromStorage();
@@ -467,8 +467,8 @@ function LoungeTvScreen({
       }
       const result = await unlockLoungeTvContent({
         contentId: tile.id,
-        ticketCost: cost,
-        accessType: tile.accessType || 'permanent',
+        ticketCost: tile.ticketCost ?? cost,
+        accessType: 'rental',
         contentTitle: tile.title,
       });
       if ('error' in result) {
@@ -482,7 +482,7 @@ function LoungeTvScreen({
     } finally {
       setUnlockBusy(false);
     }
-  }, [unlockConfirmTile, playTile, refresh]);
+  }, [unlockConfirmTile, unlocks, playTile, refresh]);
 
   const navLinkStyle = (active: boolean, accent?: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -631,6 +631,7 @@ function LoungeTvScreen({
                   if (tile) handleTileAccess(tile);
                 }}
                 isUnlocked={isUnlocked}
+                unlocks={unlocks}
               />
             ) : (
               <div
@@ -678,7 +679,7 @@ function LoungeTvScreen({
                           } as React.CSSProperties}
                         />
                       ) : null}
-                      <LoungeTvTileTicketChrome tile={tile} isUnlocked={isUnlocked} />
+                      <LoungeTvTileTicketChrome tile={tile} isUnlocked={isUnlocked} unlocks={unlocks} />
                       <LoungeTvTileLabel title={tile.title} showNew={showNew} />
                     </button>
                   );
@@ -693,13 +694,25 @@ function LoungeTvScreen({
         isOpen={Boolean(unlockConfirmTile)}
         onClose={() => !unlockBusy && setUnlockConfirmTile(null)}
         onConfirm={() => void confirmUnlockAndPlay()}
-        title={`UNLOCK WITH ${unlockConfirmTile ? resolveLoungeTvTicketCost(unlockConfirmTile) : 0} SLAY TICKET(S)?`}
+        title={
+          unlockConfirmTile
+            ? loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
+              ? `REWATCH WITH ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET?`
+              : `UNLOCK WITH ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET(S)?`
+            : 'UNLOCK CONTENT'
+        }
         message={
           unlockConfirmTile
-            ? `SPEND ${resolveLoungeTvTicketCost(unlockConfirmTile)} SLAY TICKET(S) TO WATCH "${unlockConfirmTile.title}".`
+            ? loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
+              ? `YOUR LIBRARY ACCESS EXPIRED. SPEND 1 SLAY TICKET TO REWATCH "${unlockConfirmTile.title}" FOR ANOTHER YEAR.`
+              : `SPEND ${resolveLoungeTvUnlockCost(unlockConfirmTile, unlocks)} SLAY TICKET(S) TO ADD "${unlockConfirmTile.title}" TO YOUR LIBRARY FOR 1 YEAR. REWATCHES AFTER EXPIRY COST 1 TICKET.`
             : ''
         }
-        confirmText="UNLOCK + WATCH"
+        confirmText={
+          unlockConfirmTile && loungeTvTileActionLabel(unlockConfirmTile, unlocks) === 'REWATCH'
+            ? 'REWATCH'
+            : 'UNLOCK + WATCH'
+        }
         cancelText="CANCEL"
         dataAttribute="lounge-tv-unlock-confirm"
       />

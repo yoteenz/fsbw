@@ -5,6 +5,11 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
+/** 3D acrylic lock — ticket-gated Lounge TV tiles (not in library). */
+export const LOUNGE_TV_ACRYLIC_LOCK_ASSET_VERSION = 'v1';
+
+export const LOUNGE_TV_ACRYLIC_LOCK_SRC = `/assets/lounge-tv-acrylic-lock.svg?v=${LOUNGE_TV_ACRYLIC_LOCK_ASSET_VERSION}`;
+
 /** End-of-open still — TV bezel + theater frame for overlay menu (`Final LP/ChatGPT Image…`). */
 export const LOUNGE_TV_CONTENT_FRAME_ASSET_VERSION = 'final-lp-tv-frame-jun2';
 

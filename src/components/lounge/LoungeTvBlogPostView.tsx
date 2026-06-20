@@ -3,8 +3,9 @@ import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
 import {
   loungeTvTileActionLabel,
   loungeTvTicketCostLabel,
-  resolveLoungeTvTicketCost,
+  resolveLoungeTvBadgeCost,
 } from './loungeTvTicketAccess';
+import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const BOOK_FONT = '"Futura PT Book", Futura, sans-serif';
@@ -26,11 +27,13 @@ type LoungeTvBlogPostListProps = {
   tiles: LoungeTvVideoTile[];
   onSelect: (tileId: string) => void;
   isUnlocked?: (contentId: string) => boolean;
+  unlocks?: LoungeContentUnlock[];
 };
 
 /** Slay Tips index — vertical blog cards (not the Watch + Learn video grid). */
-export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked }: LoungeTvBlogPostListProps) {
+export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: LoungeTvBlogPostListProps) {
   const unlockedFn = isUnlocked ?? (() => false);
+  const unlocksOrFn = unlocks ?? unlockedFn;
   return (
     <div
       style={{
@@ -43,8 +46,8 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked }: LoungeTvBl
       {tiles.map((tile) => {
         const showNew = loungeTvTileShowsAsNew(tile);
         const body = blogBodyText(tile);
-        const cost = resolveLoungeTvTicketCost(tile);
-        const action = loungeTvTileActionLabel(tile, unlockedFn);
+        const cost = resolveLoungeTvBadgeCost(tile, unlocks);
+        const action = loungeTvTileActionLabel(tile, unlocksOrFn);
         return (
           <button
             key={tile.id}
