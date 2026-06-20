@@ -330,7 +330,6 @@ function SlayTicketsPage() {
     try {
       const newCartCount = writeSlayTicketSelectionForCheckoutSession({
         packId: selectedPackId,
-        image: SLAY_TICKET_PREVIEW_IMAGES[selectedSlayTicketPreviewIndex],
       });
       setCartCount(newCartCount);
       trackActivity('add_to_cart', { source: 'slay_ticket_pdp', productName: selectedPack.label });

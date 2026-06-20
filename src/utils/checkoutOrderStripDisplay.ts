@@ -122,7 +122,7 @@ export function orderStripThumbnailSrc(item: any, isSubscriptionUpgrade: boolean
     return giftCardCartThumbnailSrc();
   }
   if (isSlayTicketPackCartLine(item)) {
-    return typeof item.image === 'string' && item.image.trim() ? item.image : slayTicketCartThumbnailSrc();
+    return slayTicketCartThumbnailSrc();
   }
   const bookingThumb = bookingCartItemThumbnailSrc(item);
   if (bookingThumb) return bookingThumb;

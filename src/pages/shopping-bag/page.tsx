@@ -57,6 +57,11 @@ import {
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
 import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../../utils/giftCardCheckoutSession';
+import {
+  isSlayTicketPackCartLine,
+  slayTicketCartThumbnailSrc,
+} from '../../utils/slayTicketCheckout';
+import { slayTicketPackPdpPath } from '../../utils/slayTicketPacks';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
 import { CartLineProductTextStack, CartLineTextLayer } from '../../components/cart/CartLineProductTextStack';
 import {
@@ -82,8 +87,8 @@ const BAG_BOOKING_BADGE_PX = BOOKING_CART_BADGE_IMG_PX;
 const BAG_BOOKING_APPOINTMENT_BADGE_PX = BOOKING_APPOINTMENT_CART_BADGE_IMG_PX;
 const BAG_GIFT_THUMB_PX = 108;
 
-function bagRowCartThumbBoxPx(item: { name?: string; type?: string }): number {
-  if (item.name === 'GIFT CARD' || item.type === 'gift-card') return BAG_GIFT_THUMB_PX;
+function bagRowCartThumbBoxPx(item: { name?: string; type?: string; slayTicketProduct?: boolean }): number {
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card' || isSlayTicketPackCartLine(item)) return BAG_GIFT_THUMB_PX;
   if (item.type === 'booking-appointment') return BAG_BOOKING_APPOINTMENT_BADGE_PX;
   if (item.type === 'booking-consult') return BAG_BOOKING_BADGE_PX;
   if (item.type === 'shop-texture-category') return BAG_BCF_THUMB_PX;
@@ -94,6 +99,9 @@ function bagRowCartThumbBoxPx(item: { name?: string; type?: string }): number {
 function bagProductTitleLine(item: { name?: string; type?: string; category?: string; balance?: number; price?: number }): string {
   if (isGiftCardCartLine(item)) {
     return 'GIFT CARD';
+  }
+  if (isSlayTicketPackCartLine(item)) {
+    return (item.name || 'SLAY TICKETS').replace(/WIG/gi, '').trim();
   }
   if (item.type === 'booking-appointment') {
     return 'BOOKING';
@@ -114,7 +122,7 @@ function bagProductTitleLine(item: { name?: string; type?: string; category?: st
 
 /** Red subtitle — same rules as cart dropdown. */
 function bagProductRedSubtitle(item: any, itemLength: string, hairOriginForName: (productName: string) => string): string {
-  if (item.name === 'GIFT CARD' || item.type === 'gift-card' || item.type === 'hairstyle-analysis') {
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card' || item.type === 'hairstyle-analysis' || isSlayTicketPackCartLine(item)) {
     return 'DIGITAL ONLY';
   }
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
@@ -171,6 +179,7 @@ function ShoppingBagLineThumb({
   onEditAppointment?: (item: any) => void;
 }) {
   const isGift = item.name === 'GIFT CARD' || item.type === 'gift-card';
+  const isSlayTicket = isSlayTicketPackCartLine(item);
   const isBooking = item.type === 'booking-consult' || item.type === 'booking-appointment';
   const isBcf = item.type === 'shop-texture-category';
   const cartThumbBoxPx = bagRowCartThumbBoxPx(item);
@@ -181,6 +190,8 @@ function ShoppingBagLineThumb({
     let productRoute = '/straight/noir';
     if (isGift) {
       productRoute = '/tools/gift-card';
+    } else if (isSlayTicket) {
+      productRoute = slayTicketPackPdpPath(item.id);
     } else if (item.type === 'booking-consult') {
       productRoute = bookingConsultationHrefForCartItem(item);
     } else if (item.type === 'booking-appointment') {
@@ -1524,6 +1535,9 @@ function ShoppingBagPage() {
                         if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                           return giftCardCartThumbnailSrc();
                         }
+                        if (isSlayTicketPackCartLine(item)) {
+                          return slayTicketCartThumbnailSrc();
+                        }
                         const bookingThumb = bookingCartItemThumbnailSrc(item);
                         if (bookingThumb) return bookingThumb;
                         const bcfThumb = shopBcfCartLineThumbnailSrc(item);
@@ -2100,6 +2114,9 @@ function ShoppingBagPage() {
                   const getItemImage = () => {
                     if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                       return giftCardCartThumbnailSrc();
+                    }
+                    if (isSlayTicketPackCartLine(item)) {
+                      return slayTicketCartThumbnailSrc();
                     }
                     const bookingThumb = bookingCartItemThumbnailSrc(item);
                     if (bookingThumb) return bookingThumb;
