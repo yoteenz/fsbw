@@ -30223,3 +30223,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Portal both Lounge TV ticket modals to **`document.body`** via `createPortal` so they center on the full viewport. Unlock confirm (`lounge-tv-unlock-confirm`) and need-tickets (`lounge-tv-need-tickets`) modals both portaled.
 - **Changes:** `src/components/lounge/LoungeTvOverlay.tsx` — `createPortal` import; fragment wrapper; modals portaled outside TV DOM; fixed missing `</div>` that broke build. Build verified.
 - **Conventions:** Any `position: fixed` modal/dialog inside Lounge TV (or other transformed overlays) should render via portal to `document.body`.
+
+---
+
+## 2026-06-20 — Lounge TV lock watermark visibility (IMG_3405)
+
+- **Context:** User could barely see the acrylic **IMG_3405** ticket-lock watermark on gated tiles (~38% opacity + blur made it disappear).
+- **Decisions / outcomes:** Show watermark **fully** — **95% opacity**, **no blur**, **90% tile / 92% thumb** size, light **drop-shadow** for contrast; tile dim overlay reduced **0.18 → 0.08**. Shared styles exported from **`LoungeTvTileTicketChrome`** (`loungeTvTicketLockWatermarkImageStyle`, `loungeTvBlogThumbLockWatermarkStyle`) for grid tiles + Slay Tips list thumbs. Badges/title stay above (z-index unchanged).
+- **Changes:** `LoungeTvTileTicketChrome.tsx`, `LoungeTvBlogPostView.tsx`. Build verified.
