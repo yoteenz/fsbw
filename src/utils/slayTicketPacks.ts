@@ -35,13 +35,13 @@ export const SLAY_TICKET_PACKS: SlayTicketPack[] = [
   {
     id: 'slay-tickets-8',
     ticketCount: 8,
-    priceUsd: 32,
+    priceUsd: 30,
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-12',
     ticketCount: 12,
-    priceUsd: 48,
+    priceUsd: 46,
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
