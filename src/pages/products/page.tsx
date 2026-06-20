@@ -1046,6 +1046,41 @@ function ProductsPage() {
               overflow: 'visible',
               position: 'relative'
             }}>
+              {/* Try Build-A-Wig tutorial */}
+              <div
+                className="mx-auto mb-3 px-3 py-3 border border-black bg-white/70 backdrop-blur-sm text-center"
+                style={{ borderWidth: '1.3px', maxWidth: '100%' }}
+              >
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    fontSize: '10px',
+                    color: '#808080',
+                    textTransform: 'uppercase',
+                    margin: '0 0 8px',
+                  }}
+                >
+                  NEW — TRY THE BUILDER FREE, NO SIGN-IN
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/build-a-wig/try')}
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#FFFFFF',
+                    backgroundColor: '#EB1C24',
+                    border: '1.3px solid #000',
+                    padding: '10px 16px',
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    maxWidth: '280px',
+                  }}
+                >
+                  TRY BUILD-A-WIG
+                </button>
+              </div>
+
               {/* Header — match /shop/units marble header spacing */}
               <div style={{ textAlign: 'center', marginBottom: '2px' }}>
                 <div style={{ width: '1px', height: '15px', backgroundColor: 'black', margin: '0 auto 2px auto' }}></div>

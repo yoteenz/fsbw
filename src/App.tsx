@@ -11,6 +11,7 @@ import HairlinePage from './pages/build-a-wig/hairline/page';
 import CapSizePage from './pages/build-a-wig/cap-size/page';
 import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
+import BawTutorialPage from './pages/build-a-wig/try/page';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
@@ -614,7 +615,8 @@ function App() {
         <Route path="/curly/closures" element={<Navigate to="/shop/closures" replace />} />
         <Route path="/curly/frontals" element={<Navigate to="/shop/frontals" replace />} />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
-        
+        <Route path="/build-a-wig/try" element={<BawTutorialPage />} />
+
         {/* Noir routes */}
         <Route path="/build-a-wig/noir/edit/color" element={<ColorPage />} />
         <Route path="/build-a-wig/noir/edit/length" element={<LengthPage />} />

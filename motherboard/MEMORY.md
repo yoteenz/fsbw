@@ -30257,3 +30257,15 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Strategic stance: prioritize the money path above everything else — simple mobile shopping, Build-A-Wig confidence, fit/style analysis tied to purchase, checkout conversion, post-purchase trust, and a focused paid membership. Delay or simplify broad gamification/social surfaces until the core purchase loop is converting reliably. PSA should be concierge/sales support, not a general AI toy. Slay Cam should start as shoppable UGC proof, not a full social network. Rewards should remain narrow and margin-aware.
 - **Changes:** No product code changed. Added this MEMORY entry only.
 - **Conventions:** Future product prioritization should rank features by proximity to purchase, reduction of wig-buying anxiety, margin/repeat-order leverage, and operational complexity. Avoid launching overlapping loyalty, referrals, Slay Cam, Slay Tickets, PSA, and membership mechanics before the customer journey is understandable.
+
+---
+
+## 2026-06-20 — Guest Build-A-Wig tutorial (`/build-a-wig/try`) + slay card
+
+Summary of the **whole conversation so far** in this chat: user asked why admin on laptop saw upgrade prompts (admin ≠ premium; lobby gates subscription/BLACK tier; founder `adminSubscriptionOverride` on new browser); hairstyle analysis paid-credits migration error (run `20260610120000_hairstyle_analysis_usage.sql` before `20260610140000_hairstyle_analysis_paid_credits.sql`); product recommendations for free-play BAW tutorial, rewards first-quest, and PSA companion (user wanted premium BAW gates kept, no PSA/founder naming in tutorial); currency conversion issue with Stripe USD (display FX vs settlement — lanes 1–3); then asked to **implement** tutorial route + share card.
+
+- **Context:** Ship guest tutorial BAW without touching production premium gates or PSA branding.
+- **Decisions / outcomes:** New route **`/build-a-wig/try`** — no sign-in, NOIR only, static mannequin triple, limited palette (length/density/color/styling), generic **BUILD GUIDE** panel (not PSA / founder). Ends in **slay card** (canvas PNG, share or download). **SIGN IN FOR FULL BUILD-A-WIG** applies draft to `selected*` / `customizeSelected*` keys and returns to `/build-a-wig/noir/customize`. CTAs on **`/home/shop`** and **NOIR PDP** (`TRY BUILD-A-WIG FREE`). Production BAW `useBuildWigPremiumMembershipStepGate` unchanged.
+- **Changes:** `src/constants/bawTutorialConfig.ts`, `src/utils/bawTutorialStorage.ts`, `src/utils/bawSlayCard.ts`, `src/components/buildWig/BawTutorialGuidePanel.tsx`, `src/pages/build-a-wig/try/page.tsx`, `src/App.tsx` route, `UnitPdpCartActions` optional `onTryFree`, `products/page.tsx`, `straight/noir/page.tsx`, `activity.ts` tutorial event types. Build verified.
+- **Conventions:** Tutorial = separate route; do not bypass `isPremiumMemberForGatedFeatures` in full BAW. Guide copy stays generic (“BUILD GUIDE”), not PSA-named.
+

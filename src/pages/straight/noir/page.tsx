@@ -2981,6 +2981,7 @@ function NoirSelection() {
           soldOut={isNoirSoldOut('NOIR')}
           addToBagState={addToBagState}
           onAddToBag={handleAddToBag}
+          onTryFree={() => navigate('/build-a-wig/try')}
           onCustomize={() => {
                 if (!isSignedIn) {
                   setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
