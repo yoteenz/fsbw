@@ -18,12 +18,6 @@ function DigitalLobby() {
     return () => clearTimeout(t);
   }, []);
 
-  useEffect(() => {
-    const img = new Image();
-    img.onerror = () => setBgSrc(FALLBACK_BG);
-    img.src = LOBBY_BG;
-  }, []);
-
   const floatIn = (delayMs: number, dy = 24) => ({
     transition: `opacity 1.1s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms, transform 1.2s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms`,
     opacity: visible ? 1 : 0,
@@ -31,44 +25,59 @@ function DigitalLobby() {
   });
 
   return (
-    <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+    <section style={{ position: 'relative', height: '100vh', overflow: 'hidden', background: '#080808' }}>
 
-      {/* ENVIRONMENT — locked flagship background */}
+      {/* Letterbox fill — subtle dark marble for areas outside the environment */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: `url(${bgSrc})`,
+        backgroundImage: 'url(/assets/marble%20bg.png)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        opacity: 0.07,
+        filter: 'grayscale(1)',
       }} />
+
+      {/* ENVIRONMENT — full uncropped showroom, rendered as image element */}
+      <img
+        src={bgSrc}
+        alt=""
+        onError={() => setBgSrc(FALLBACK_BG)}
+        style={{
+          position: 'absolute', inset: 0, zIndex: 1,
+          width: '100%', height: '100%',
+          objectFit: 'contain',
+          objectPosition: 'center center',
+          display: 'block',
+        }}
+      />
 
       {/* Edge vignette */}
       <div style={{
-        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
         background: 'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.2) 100%)',
       }} />
 
       {/* NavBar gradient support */}
       <div style={{
-        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
         background: 'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.08) 12%, transparent 26%)',
       }} />
 
-      {/* Bottom anchor gradient — floats panels above darkness */}
+      {/* Bottom anchor gradient */}
       <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0, height: '42%',
-        zIndex: 1, pointerEvents: 'none',
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '38%',
+        zIndex: 2, pointerEvents: 'none',
         background: 'linear-gradient(0deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, transparent 100%)',
       }} />
 
       {/* Particle field */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
+      <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
         <ParticleField />
       </div>
 
       {/* BRAND LOCK-UP */}
       <div style={{
-        position: 'absolute', top: '138px', left: 0, right: 0,
+        position: 'absolute', top: '12vh', left: 0, right: 0,
         zIndex: 20, textAlign: 'center', pointerEvents: 'none',
         ...floatIn(200, 16),
       }}>
@@ -104,7 +113,7 @@ function DigitalLobby() {
 
       {/* LEFT PANEL — Build-A-Wig Studio */}
       <div style={{
-        position: 'absolute', bottom: '92px', left: '6%',
+        position: 'absolute', bottom: '12vh', left: '6%',
         zIndex: 30,
         filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.3))',
         ...floatIn(400, 32),
@@ -114,7 +123,7 @@ function DigitalLobby() {
 
       {/* RIGHT PANEL — PSA Concierge */}
       <div style={{
-        position: 'absolute', bottom: '92px', right: '6%',
+        position: 'absolute', bottom: '12vh', right: '6%',
         zIndex: 30,
         filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.3))',
         ...floatIn(560, 32),
@@ -124,7 +133,7 @@ function DigitalLobby() {
 
       {/* BOTTOM NAV — Holographic portal strip */}
       <div style={{
-        position: 'absolute', bottom: '22px', left: 0, right: 0,
+        position: 'absolute', bottom: '3vh', left: 0, right: 0,
         zIndex: 30,
         display: 'flex', justifyContent: 'center',
         ...floatIn(700, 18),
@@ -153,14 +162,14 @@ export default function DesktopLobbyPage() {
           FRONTAL SLAYER
         </div>
         <div style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', letterSpacing: '0.06em', color: '#4A3728', maxWidth: '280px', lineHeight: 1.7 }}>
-          The Digital Flagship is designed for desktop viewing. Please visit on a device with a wider screen for the full experience.
+          THE DIGITAL FLAGSHIP IS DESIGNED FOR DESKTOP VIEWING. PLEASE VISIT ON A DEVICE WITH A WIDER SCREEN FOR THE FULL EXPERIENCE.
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
+    <div style={{ background: '#080808', minHeight: '100vh' }}>
       <NavBar activeLink="HOME" />
       <DigitalLobby />
       <ZoneLoungeReveal />
