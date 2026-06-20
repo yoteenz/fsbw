@@ -1,4 +1,11 @@
-import { useState, useEffect } from 'react';
+#!/usr/bin/env python3
+"""Writes src/pages/desktop-lobby/page.tsx as clean UTF-8."""
+import os, sys
+
+ROOT = os.path.join(os.path.dirname(__file__), '..')
+TARGET = os.path.join(ROOT, 'src', 'pages', 'desktop-lobby', 'page.tsx')
+
+CONTENT = r"""import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { WigPedestalDisplay } from '../../components/desktop-lobby/WigPedestalDisplay';
@@ -304,3 +311,9 @@ export default function DesktopLobbyPage() {
     </div>
   );
 }
+"""
+
+out_path = os.path.normpath(TARGET)
+with open(out_path, 'w', encoding='utf-8', newline='\n') as f:
+    f.write(CONTENT)
+print(f"Written {len(CONTENT)} chars to {out_path}")
