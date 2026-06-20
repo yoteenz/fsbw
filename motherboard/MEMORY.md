@@ -30181,3 +30181,11 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Context:** User requested **\$4 per ticket** (was ~\$2.50 on the 4-pack) and a consistent product line name **`SLAY TICKET`** (singular) everywhere — pack size belongs in **quantity**, not the title (e.g. 4-pack → name `SLAY TICKET`, qty **4**).
 - **Decisions / outcomes:** **`SLAY_TICKET_UNIT_PRICE_USD = 4`**; pack totals **\$16 / \$32 / \$48 / \$96** for 4/8/12/24. Cart line: `name: SLAY TICKET`, `price: 4`, `quantity: ticketCount`. Server **`slayTicketsPurchasedForLineItems`** credits **`quantity`** when name is `SLAY TICKET` (avoids double-count with legacy `slayTicketPackCount`). Display helpers in cart dropdown, bag, checkout strip, PDP product title, checkout breadcrumb.
 - **Changes:** `slayTicketPacks.ts`, `api/_lib/slayTickets.ts`, `CartDropdown.tsx`, `shopping-bag/page.tsx`, `checkoutOrderStripDisplay.ts`, `checkout/page.tsx`, `tools/slay-tickets/page.tsx`, `tools/page.tsx`. Build verified.
+
+---
+
+## 2026-06-20 — Slay Ticket PDP pack picker two-row layout
+
+- **Context:** User wanted ticket pack options on `/tools/slay-tickets` in **2 rows** instead of one horizontal row.
+- **Decisions / outcomes:** **`SlayTicketPackPicker`** — row 1: **4 / 8 TICKETS**; row 2: **12 / 24 TICKETS**; centered flex rows with 12px gap.
+- **Changes:** `src/components/shop/SlayTicketPackPicker.tsx`. Build verified.
