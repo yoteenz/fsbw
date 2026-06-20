@@ -6,96 +6,13 @@ import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
 import { ZonePortals } from '../../components/desktop-lobby/ZonePortals';
 import { ZoneLoungeReveal } from '../../components/desktop-lobby/ZoneLoungeReveal';
-import { DESKTOP_LOBBY_BG_URL, hasDesktopLobbyBg } from '../../constants/desktopLobbyEnv';
 
-function CrystalChandelier() {
-  return (
-    <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" style={{ width: '360px', height: '180px', overflow: 'visible' }}>
-      <ellipse cx="180" cy="6" rx="28" ry="6" fill="rgba(215,205,185,0.85)" />
-      <ellipse cx="180" cy="5" rx="18" ry="4" fill="rgba(240,232,215,0.9)" />
-      <line x1="180" y1="10" x2="180" y2="52" stroke="rgba(195,180,152,0.8)" strokeWidth="2.5" />
-      <rect x="175" y="20" width="10" height="4" rx="1" fill="rgba(220,210,188,0.8)" />
-      <rect x="176" y="30" width="8" height="4" rx="1" fill="rgba(215,205,185,0.75)" />
-      <ellipse cx="180" cy="64" rx="18" ry="8" fill="rgba(255,252,245,0.85)" stroke="rgba(255,255,255,0.7)" strokeWidth="0.8" />
-      <rect x="162" y="62" width="36" height="22" rx="2" fill="rgba(255,253,247,0.72)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" />
-      <ellipse cx="180" cy="86" rx="18" ry="7" fill="rgba(252,248,238,0.88)" stroke="rgba(255,255,255,0.65)" strokeWidth="0.8" />
-      <ellipse cx="180" cy="74" rx="12" ry="8" fill="rgba(255,244,190,0.5)" />
-      <line x1="80" y1="90" x2="280" y2="90" stroke="rgba(205,192,168,0.7)" strokeWidth="1.8" />
-      {[80, 108, 144, 216, 252, 280].map((x, i) => (
-        <g key={i}>
-          <line x1={x} y1="92" x2={x} y2={108 + (i % 3) * 5} stroke="rgba(195,183,162,0.55)" strokeWidth="0.9" />
-          <ellipse cx={x} cy={114 + (i % 3) * 5} rx="5" ry="8" fill="rgba(255,252,242,0.78)" stroke="rgba(255,255,255,0.65)" strokeWidth="0.6" />
-        </g>
-      ))}
-      {[128, 160, 200, 232].map((x, i) => (
-        <g key={i}>
-          <line x1={x} y1="92" x2={x} y2="102" stroke="rgba(195,183,162,0.45)" strokeWidth="0.8" />
-          <ellipse cx={x} cy="108" rx="4" ry="6.5" fill="rgba(255,252,242,0.7)" stroke="rgba(255,255,255,0.58)" strokeWidth="0.5" />
-        </g>
-      ))}
-      <line x1="180" y1="92" x2="180" y2="118" stroke="rgba(195,183,162,0.6)" strokeWidth="1.2" />
-      <ellipse cx="180" cy="128" rx="8" ry="12" fill="rgba(255,253,245,0.82)" stroke="rgba(255,255,255,0.72)" strokeWidth="0.8" />
-      <ellipse cx="180" cy="95" rx="90" ry="40" fill="rgba(255,244,190,0.12)" />
-    </svg>
-  );
-}
-
-function FloorGrid({ width, height }: { width: number; height: number }) {
-  const cx = width / 2;
-  const lines: JSX.Element[] = [];
-  for (let i = 0; i < 10; i++) {
-    const t = Math.pow(i / 9, 1.7);
-    const y = t * height;
-    const opacity = 0.08 + t * 0.14;
-    lines.push(<line key={'h' + i} x1={0} y1={y} x2={width} y2={y} stroke={`rgba(160,145,120,${opacity})`} strokeWidth="0.8" />);
-  }
-  const count = 14;
-  for (let i = 0; i <= count; i++) {
-    const t = i / count;
-    const xBottom = t * width;
-    const xTop = cx + (xBottom - cx) * 0.2;
-    const opacity = 0.06 + Math.abs(t - 0.5) * 0.16;
-    lines.push(<line key={'v' + i} x1={xTop} y1={0} x2={xBottom} y2={height} stroke={`rgba(160,145,120,${opacity})`} strokeWidth="0.8" />);
-  }
-  return (
-    <svg viewBox={`0 0 ${width} ${height}`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-      {lines}
-    </svg>
-  );
-}
-
-function ShowroomFloorPlan({ floatIn }: { floatIn: (delayMs: number, dy?: number) => object }) {
-  return (
-    <div
-      className="relative flex items-end justify-center"
-      style={{
-        zIndex: 12,
-        paddingTop: '200px',
-        paddingBottom: '56px',
-        paddingLeft: '7%',
-        paddingRight: '7%',
-        gap: '40px',
-        minHeight: '100vh',
-        boxSizing: 'border-box',
-      }}
-    >
-      <div style={{ width: '268px', flexShrink: 0, alignSelf: 'center', filter: 'drop-shadow(0 60px 90px rgba(0,0,0,0.22))', ...floatIn(400, 36) }}>
-        <BuildAWigPanel />
-      </div>
-      <div className="flex flex-col items-center" style={{ flex: 1, minWidth: 0, alignSelf: 'flex-end', ...floatIn(120, 24) }}>
-        <WigPedestalDisplay />
-      </div>
-      <div style={{ width: '268px', flexShrink: 0, alignSelf: 'center', filter: 'drop-shadow(0 60px 90px rgba(0,0,0,0.22))', ...floatIn(560, 36) }}>
-        <PSAConciergePanel />
-      </div>
-    </div>
-  );
-}
+const LOBBY_BG = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3528.png';
+const FALLBACK_BG = '/assets/marble%20bg.png';
 
 function ZoneArrival() {
   const [visible, setVisible] = useState(false);
-  const [bgLoaded, setBgLoaded] = useState(false);
-  const [bgError, setBgError] = useState(false);
+  const [bgSrc, setBgSrc] = useState(LOBBY_BG);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80);
@@ -103,11 +20,9 @@ function ZoneArrival() {
   }, []);
 
   useEffect(() => {
-    if (!hasDesktopLobbyBg || !DESKTOP_LOBBY_BG_URL) return;
     const img = new Image();
-    img.onload = () => setBgLoaded(true);
-    img.onerror = () => setBgError(true);
-    img.src = DESKTOP_LOBBY_BG_URL;
+    img.onerror = () => setBgSrc(FALLBACK_BG);
+    img.src = LOBBY_BG;
   }, []);
 
   const floatIn = (delayMs: number, dy = 32) => ({
@@ -116,122 +31,103 @@ function ZoneArrival() {
     transform: visible ? 'translateY(0)' : `translateY(${dy}px)`,
   });
 
-  if (hasDesktopLobbyBg && DESKTOP_LOBBY_BG_URL && !bgError) {
-    return (
-      <section className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
-        <div
-          style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: `url(${DESKTOP_LOBBY_BG_URL})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
-            transition: 'opacity 1.4s ease',
-            opacity: bgLoaded ? 1 : 0,
-            zIndex: 0,
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: 'url(/assets/marble%20bg.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
-            transition: 'opacity 1.4s ease',
-            opacity: bgLoaded ? 0 : 1,
-            zIndex: 0,
-          }}
-        />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 45%, rgba(0,0,0,0.18) 100%)', zIndex: 1 }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 18%, transparent 36%)', zIndex: 1 }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2 }}>
-          <ParticleField />
-        </div>
-        <div
-          className="absolute pointer-events-none text-center"
-          style={{ top: '138px', left: 0, right: 0, zIndex: 10, ...floatIn(200, 20) }}
-        >
-          <div style={{
-            fontFamily: '"Futura PT Medium"',
-            fontSize: '14px',
-            letterSpacing: '0.5em',
-            textTransform: 'uppercase',
-            color: '#C81C24',
-            lineHeight: 1,
-            textShadow: '0 0 20px rgba(200,28,36,0.5), 0 0 48px rgba(200,28,36,0.28), 0 0 80px rgba(200,28,36,0.14)',
-          }}>
-            FRONTAL SLAYER
-          </div>
-          <div style={{
-            fontFamily: '"Futura PT Book"',
-            fontSize: '8.5px',
-            letterSpacing: '0.32em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.9)',
-            marginTop: '8px',
-            lineHeight: 1,
-            textShadow: '0 0 14px rgba(255,255,255,0.6), 0 0 28px rgba(255,255,255,0.3)',
-          }}>
-            LUXURY WITHOUT LIMITS
-          </div>
-          <div className="flex items-center justify-center gap-3 mt-3">
-            <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5))' }} />
-            <div style={{ width: '4px', height: '4px', transform: 'rotate(45deg)', background: 'rgba(255,255,255,0.7)' }} />
-            <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, rgba(255,255,255,0.5), transparent)' }} />
-          </div>
-        </div>
-        <ShowroomFloorPlan floatIn={floatIn} />
-      </section>
-    );
-  }
-
   return (
-    <section
-      className="relative overflow-hidden"
-      style={{
-        minHeight: '100vh',
-        background: '#F5F5F7',
-        backgroundImage: 'url(/assets/marble%20bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-      }}
-    >
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.4) 20%, transparent 45%)', zIndex: 1 }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(0deg, rgba(230,232,238,0.42) 0%, rgba(240,241,245,0.18) 22%, transparent 44%)', zIndex: 1 }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(90deg, rgba(220,222,228,0.24) 0%, rgba(240,241,245,0.08) 14%, transparent 26%, transparent 74%, rgba(240,241,245,0.08) 86%, rgba(220,222,228,0.24) 100%)', zIndex: 1 }} />
-      <div className="absolute pointer-events-none" style={{ bottom: 0, left: 0, right: 0, height: '38%', zIndex: 2, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(240,241,246,0.22) 0%, rgba(230,231,238,0.35) 45%, rgba(215,217,228,0.5) 100%)' }} />
-        <FloorGrid width={1440} height={400} />
+    <section className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
+      {/* Locked flagship environment — do not replace */}
+      <div
+        style={{
+          position: 'absolute', inset: 0, zIndex: 0,
+          backgroundImage: `url(${bgSrc})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      {/* Edge vignette — frames the space */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse 120% 100% at 50% 50%, transparent 52%, rgba(0,0,0,0.24) 100%)',
+        zIndex: 1,
+      }} />
+      {/* NavBar gradient support */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.12) 14%, transparent 30%)',
+        zIndex: 1,
+      }} />
+      {/* Particle field */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2 }}>
+        <ParticleField />
       </div>
-      <div className="absolute pointer-events-none flex justify-center" style={{ top: 0, left: 0, right: 0, zIndex: 5 }}>
-        <div style={{ transform: 'translateY(-18px)' }}><CrystalChandelier /></div>
-      </div>
-      <div className="absolute pointer-events-none" style={{ top: 0, left: '50%', transform: 'translateX(-50%)', width: '800px', height: '100vh', background: 'radial-gradient(ellipse 28% 55% at 50% 0%, rgba(255,255,255,0.82) 0%, rgba(245,247,255,0.4) 10%, rgba(230,232,245,0.14) 28%, transparent 50%)', zIndex: 3 }} />
-      <div className="absolute pointer-events-none" style={{ top: '-40px', left: '50%', transform: 'translateX(-50%)', width: '1200px', height: '600px', background: 'radial-gradient(ellipse 80% 80% at 50% 5%, rgba(255,255,255,0.32) 0%, transparent 62%)', zIndex: 3 }} />
-      <div className="absolute pointer-events-none" style={{ top: 0, left: '5%', bottom: 0, width: '28px', zIndex: 4, background: 'linear-gradient(90deg, rgba(200,202,210,0.35) 0%, rgba(225,226,232,0.15) 60%, transparent 100%)' }} />
-      <div className="absolute pointer-events-none" style={{ top: 0, left: '5%', width: '2px', height: '100%', zIndex: 4, background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(230,231,238,0.5) 50%, rgba(200,202,210,0.6) 100%)' }} />
-      <div className="absolute pointer-events-none" style={{ top: 0, right: '5%', bottom: 0, width: '28px', zIndex: 4, background: 'linear-gradient(270deg, rgba(200,202,210,0.35) 0%, rgba(225,226,232,0.15) 60%, transparent 100%)' }} />
-      <div className="absolute pointer-events-none" style={{ top: 0, right: '5%', width: '2px', height: '100%', zIndex: 4, background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(230,231,238,0.5) 50%, rgba(200,202,210,0.6) 100%)' }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 6 }}><ParticleField /></div>
-      <div className="absolute pointer-events-none" style={{ left: '7.5%', bottom: '28%', width: '120px', zIndex: 5, transform: 'rotate(-12deg)', opacity: 0.65, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.14))', animation: 'roseSway 8s ease-in-out infinite' }}>
-        <img src="/assets/roses.png" alt="" style={{ width: '100%' }} />
-      </div>
-      <div className="absolute pointer-events-none" style={{ right: '7.5%', bottom: '28%', width: '120px', zIndex: 5, transform: 'rotate(12deg) scaleX(-1)', opacity: 0.6, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.14))', animation: 'roseSway 9s ease-in-out infinite 1.5s' }}>
-        <img src="/assets/roses.png" alt="" style={{ width: '100%' }} />
-      </div>
-      <div className="absolute pointer-events-none text-center" style={{ top: '138px', left: 0, right: 0, zIndex: 10, ...floatIn(200, 20) }}>
-        <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '13px', letterSpacing: '0.5em', textTransform: 'uppercase', color: '#C81C24', lineHeight: 1, textShadow: '0 0 20px rgba(200,28,36,0.35), 0 0 48px rgba(200,28,36,0.18), 0 0 80px rgba(200,28,36,0.1)' }}>
+
+      {/* Brand lock-up */}
+      <div
+        className="absolute pointer-events-none text-center"
+        style={{ top: '138px', left: 0, right: 0, zIndex: 10, ...floatIn(200, 20) }}
+      >
+        <div style={{
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '15px',
+          letterSpacing: '0.5em',
+          textTransform: 'uppercase',
+          color: '#C81C24',
+          lineHeight: 1,
+          textShadow: '0 0 20px rgba(200,28,36,0.6), 0 0 48px rgba(200,28,36,0.32), 0 0 80px rgba(200,28,36,0.16), 0 2px 8px rgba(0,0,0,0.55)',
+        }}>
           FRONTAL SLAYER
         </div>
-        <div style={{ fontFamily: '"Futura PT Book"', fontSize: '8.5px', letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.88)', marginTop: '8px', lineHeight: 1, textShadow: '0 0 14px rgba(255,255,255,0.7), 0 0 28px rgba(255,255,255,0.35)' }}>
+        <div style={{
+          fontFamily: '"Futura PT Book"',
+          fontSize: '8.5px',
+          letterSpacing: '0.32em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.96)',
+          marginTop: '8px',
+          lineHeight: 1,
+          textShadow: '0 0 14px rgba(255,255,255,0.7), 0 0 28px rgba(255,255,255,0.35), 0 1px 4px rgba(0,0,0,0.45)',
+        }}>
           LUXURY WITHOUT LIMITS
         </div>
         <div className="flex items-center justify-center gap-3 mt-3">
-          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5))' }} />
-          <div style={{ width: '4px', height: '4px', transform: 'rotate(45deg)', background: 'rgba(255,255,255,0.7)' }} />
-          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, rgba(255,255,255,0.5), transparent)' }} />
+          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.65))' }} />
+          <div style={{ width: '4px', height: '4px', transform: 'rotate(45deg)', background: 'rgba(255,255,255,0.85)' }} />
+          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, rgba(255,255,255,0.65), transparent)' }} />
         </div>
       </div>
-      <ShowroomFloorPlan floatIn={floatIn} />
+
+      {/* Floating overlay system — acrylic panels above environment */}
+      <div
+        className="relative flex items-end justify-center"
+        style={{
+          zIndex: 12,
+          paddingTop: '200px',
+          paddingBottom: '56px',
+          paddingLeft: '7%',
+          paddingRight: '7%',
+          gap: '40px',
+          minHeight: '100vh',
+          boxSizing: 'border-box',
+        }}
+      >
+        <div style={{
+          width: '268px', flexShrink: 0, alignSelf: 'center',
+          filter: 'drop-shadow(0 60px 90px rgba(0,0,0,0.3))',
+          ...floatIn(400, 36),
+        }}>
+          <BuildAWigPanel />
+        </div>
+        <div className="flex flex-col items-center" style={{
+          flex: 1, minWidth: 0, alignSelf: 'flex-end',
+          ...floatIn(120, 24),
+        }}>
+          <WigPedestalDisplay />
+        </div>
+        <div style={{
+          width: '268px', flexShrink: 0, alignSelf: 'center',
+          filter: 'drop-shadow(0 60px 90px rgba(0,0,0,0.3))',
+          ...floatIn(560, 36),
+        }}>
+          <PSAConciergePanel />
+        </div>
+      </div>
     </section>
   );
 }
@@ -253,14 +149,14 @@ export default function DesktopLobbyPage() {
           FRONTAL SLAYER
         </div>
         <div style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', letterSpacing: '0.06em', color: '#4A3728', maxWidth: '280px', lineHeight: 1.7 }}>
-          The Digital Flagship is designed for desktop viewing. Please visit on a device with a wider screen for the full luxury experience.
+          The Digital Flagship is designed for desktop viewing. Please visit on a device with a wider screen for the full experience.
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ background: '#08080A', minHeight: '100vh' }}>
+    <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
       <NavBar activeLink="HOME" />
       <ZoneArrival />
       <ZonePortals />

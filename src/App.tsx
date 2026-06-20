@@ -156,6 +156,7 @@ const BookingAppointmentPage = lazyWithRetry(() => import('./pages/booking/appoi
 const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage');
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 const DesktopLobbyPage = lazyWithRetry(() => import('./pages/desktop-lobby/page'), 'DesktopLobbyPage');
+const DesktopLoungePage = lazyWithRetry(() => import('./pages/desktop/lounge/page'), 'DesktopLoungePage');
 
 // Error Boundary to catch component errors with auto-recovery
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -426,6 +427,11 @@ function App() {
         <Route path="/desktop/lobby" element={
           <Suspense fallback={<LoadingScreen />}>
             <DesktopLobbyPage />
+          </Suspense>
+        } />
+        <Route path="/desktop/lounge" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <DesktopLoungePage />
           </Suspense>
         } />
         <Route path="/lobby/lounge" element={<LobbyPage />} />
