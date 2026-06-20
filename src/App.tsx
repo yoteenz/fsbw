@@ -423,7 +423,7 @@ function App() {
       <DebugModeShell>
         <Route index element={<HomeLandingRedirect />} />
         <Route path="/" element={<HomeLandingRedirect />} />
-        <Route path="/desktop-lobby" element={
+        <Route path="/desktop/lobby" element={
           <Suspense fallback={<LoadingScreen />}>
             <DesktopLobbyPage />
           </Suspense>

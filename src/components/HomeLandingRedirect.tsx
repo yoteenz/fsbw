@@ -19,16 +19,16 @@ function homeLandingPath(): '/lobby' | '/home/shop' {
  * `/` and index route — desktop → /desktop-lobby; mobile premium → /lobby; mobile guest → /home/shop.
  */
 export default function HomeLandingRedirect() {
-  const [target, setTarget] = useState<'/desktop-lobby' | '/lobby' | '/home/shop' | null>(() => {
+  const [target, setTarget] = useState<'/desktop/lobby' | '/lobby' | '/home/shop' | null>(() => {
     if (typeof window === 'undefined') return null;
-    if (isDesktop()) return '/desktop-lobby';
+    if (isDesktop()) return '/desktop/lobby';
     if (localStorage.getItem('isSignedIn') !== 'true') return '/home/shop';
     return homeLandingPath();
   });
 
   useEffect(() => {
     if (isDesktop()) {
-      setTarget('/desktop-lobby');
+      setTarget('/desktop/lobby');
       return;
     }
 
