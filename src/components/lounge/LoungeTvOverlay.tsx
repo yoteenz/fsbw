@@ -49,7 +49,7 @@ import {
 } from './loungeTvResponsive';
 import ConfirmationModal from '../ConfirmationModal';
 import { LoungeTvTileTicketChrome } from './LoungeTvTileTicketChrome';
-import { loungeTvContentIsAccessible, resolveLoungeTvUnlockCost, loungeTvTileActionLabel } from './loungeTvTicketAccess';
+import { loungeTvContentIsAccessible, resolveLoungeTvTicketCost, resolveLoungeTvUnlockCost, loungeTvTileActionLabel, loungeTvTileShowsTicketLock } from './loungeTvTicketAccess';
 import { useSlayTickets } from '../../hooks/useSlayTickets';
 import { unlockLoungeTvContent } from '../../utils/api';
 import { getCurrentUserEmailFromStorage } from '../../utils/perUserStorage';
@@ -170,6 +170,12 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   textTransform: 'uppercase',
   background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.65))',
   boxSizing: 'border-box',
+  zIndex: 3,
+  pointerEvents: 'none',
+};
+
+const loungeTvThumbLabelLockedStyle: React.CSSProperties = {
+  background: 'linear-gradient(to bottom, rgba(0,0,0,0.22), rgba(0,0,0,0.48))',
 };
 
 const loungeTvThumbTitleBlockStyle: React.CSSProperties = {
@@ -211,12 +217,20 @@ function loungeTvTitleSplit(title: string): { head: string; trail: string } | nu
   return { head: title.slice(0, i), trail: title.slice(i + 1) };
 }
 
-function LoungeTvTileLabel({ title, showNew }: { title: string; showNew?: boolean }) {
+function LoungeTvTileLabel({
+  title,
+  showNew,
+  ticketLocked,
+}: {
+  title: string;
+  showNew?: boolean;
+  ticketLocked?: boolean;
+}) {
   const split = loungeTvTitleSplit(title);
   const titleColor = showNew ? '#ffffff' : LOUNGE_TV_THUMB_LABEL_GRAY;
 
   return (
-    <span style={loungeTvThumbLabelBase}>
+    <span style={{ ...loungeTvThumbLabelBase, ...(ticketLocked ? loungeTvThumbLabelLockedStyle : {}) }}>
       <span style={loungeTvThumbTitleBlockStyle}>
         {showNew ? (
           <span style={loungeTvNewBadgeOverlayStyle}>
@@ -432,25 +446,51 @@ function LoungeTvScreen({
     [handleSlayTipsSelect, isSlayTips, isWatchLearn]
   );
 
-  const handleTileAccess = useCallback(
+  const openTileDetail = useCallback(
     (tile: LoungeTvVideoTile) => {
       if (tile.isPremium && !isPremiumMemberForGatedFeatures()) {
         setShowNeedMoreTickets(false);
         navigate('/account/rewards');
         return;
       }
-      const cost = resolveLoungeTvUnlockCost(tile, unlocks);
-      if (loungeTvContentIsAccessible(tile, unlocks)) {
-        playTile(tile);
-        return;
+      playTile(tile);
+    },
+    [navigate, playTile]
+  );
+
+  const requestContentAccess = useCallback(
+    (tile: LoungeTvVideoTile): boolean => {
+      if (tile.isPremium && !isPremiumMemberForGatedFeatures()) {
+        setShowNeedMoreTickets(false);
+        navigate('/account/rewards');
+        return false;
       }
+      if (loungeTvContentIsAccessible(tile, unlocks)) return true;
+      const cost = resolveLoungeTvUnlockCost(tile, unlocks);
+      if (resolveLoungeTvTicketCost(tile) === 0) return true;
       if (balance >= cost) {
         setUnlockConfirmTile(tile);
-        return;
+        return false;
       }
       setShowNeedMoreTickets(true);
+      return false;
     },
-    [balance, unlocks, navigate, playTile]
+    [balance, unlocks, navigate]
+  );
+
+  const handleGridTileClick = useCallback(
+    (tile: LoungeTvVideoTile) => {
+      if (isSlayTips) {
+        if (loungeTvContentIsAccessible(tile, unlocks) || resolveLoungeTvTicketCost(tile) === 0) {
+          handleSlayTipsSelect(tile.id);
+          return;
+        }
+        requestContentAccess(tile);
+        return;
+      }
+      openTileDetail(tile);
+    },
+    [handleSlayTipsSelect, isSlayTips, openTileDetail, requestContentAccess, unlocks]
   );
 
   const confirmUnlockAndPlay = useCallback(async () => {
@@ -619,7 +659,14 @@ function LoungeTvScreen({
           }}
         >
           {watchLearnTile ? (
-            <LoungeTvWatchLearnPlayer tile={watchLearnTile} />
+            <LoungeTvWatchLearnPlayer
+              tile={watchLearnTile}
+              playBlocked={
+                resolveLoungeTvTicketCost(watchLearnTile) > 0 &&
+                !loungeTvContentIsAccessible(watchLearnTile, unlocks)
+              }
+              onPlayBlocked={() => requestContentAccess(watchLearnTile)}
+            />
           ) : slayTipsPost ? (
             <LoungeTvBlogPostDetail tile={slayTipsPost} onBack={() => setSelectedPostId(null)} />
           ) : tiles && tiles.length > 0 ? (
@@ -628,7 +675,7 @@ function LoungeTvScreen({
                 tiles={tiles}
                 onSelect={(tileId) => {
                   const tile = tiles.find((t) => t.id === tileId);
-                  if (tile) handleTileAccess(tile);
+                  if (tile) handleGridTileClick(tile);
                 }}
                 isUnlocked={isUnlocked}
                 unlocks={unlocks}
@@ -659,7 +706,7 @@ function LoungeTvScreen({
                         overflow: 'hidden',
                       }}
                       aria-label={tile.title}
-                      onClick={() => handleTileAccess(tile)}
+                      onClick={() => handleGridTileClick(tile)}
                     >
                       {tile.thumbSrc ? (
                         <img
@@ -680,7 +727,11 @@ function LoungeTvScreen({
                         />
                       ) : null}
                       <LoungeTvTileTicketChrome tile={tile} isUnlocked={isUnlocked} unlocks={unlocks} />
-                      <LoungeTvTileLabel title={tile.title} showNew={showNew} />
+                      <LoungeTvTileLabel
+                        title={tile.title}
+                        showNew={showNew}
+                        ticketLocked={loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked)}
+                      />
                     </button>
                   );
                 })}

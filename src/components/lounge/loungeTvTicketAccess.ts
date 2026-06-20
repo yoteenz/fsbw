@@ -102,6 +102,16 @@ export function loungeTvTicketCostLabel(cost: number): string {
   return cost === 1 ? '1 TICKET' : `${cost} TICKETS`;
 }
 
+export function loungeTvTileShowsTicketLock(
+  tile: LoungeTvVideoTile,
+  unlocks: LoungeContentUnlock[] | undefined,
+  isUnlocked?: (contentId: string) => boolean
+): boolean {
+  const catalogCost = resolveLoungeTvTicketCost(tile);
+  if (catalogCost === 0 || tile.isFreePreview) return false;
+  return !loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked ?? (() => false));
+}
+
 export function loungeTvLibraryExpiresAtIso(): string {
   return new Date(Date.now() + LOUNGE_TV_LIBRARY_ACCESS_MS).toISOString();
 }

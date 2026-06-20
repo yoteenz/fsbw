@@ -13,6 +13,9 @@ const TAP_DELAY_MS = 280;
 
 type LoungeTvWatchLearnPlayerProps = {
   tile: LoungeTvVideoTile;
+  /** When true, tap-to-play opens ticket purchase instead of starting playback. */
+  playBlocked?: boolean;
+  onPlayBlocked?: () => void;
 };
 
 function FullscreenExpandIcon() {
@@ -48,7 +51,11 @@ function isSameOriginMediaUrl(url: string): boolean {
   }
 }
 
-export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps) {
+export function LoungeTvWatchLearnPlayer({
+  tile,
+  playBlocked = false,
+  onPlayBlocked,
+}: LoungeTvWatchLearnPlayerProps) {
   const videoFrameRegion = useSceneHitRegionConfig('lounge-tv-video-frame');
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -57,7 +64,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   const isScrubbingRef = useRef(false);
   const wasPlayingBeforeScrubRef = useRef(false);
   const [videoSrc, setVideoSrc] = useState(tile.videoSrc ?? '');
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(playBlocked);
   const [isScrubbing, setIsScrubbing] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -100,7 +107,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         if (!video) return;
         const restore = () => {
           if (resumeTime > 0) video.currentTime = resumeTime;
-          if (resumePaused) {
+          if (resumePaused || playBlocked) {
             video.pause();
             setPaused(true);
           } else {
@@ -124,7 +131,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         blobUrlRef.current = null;
       }
     };
-  }, [tile.id, tile.videoSrc]);
+  }, [tile.id, tile.videoSrc, playBlocked]);
 
   useEffect(() => {
     if (!tile.videoSrc) return;
@@ -133,6 +140,11 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     video.currentTime = 0;
     setCurrentTime(0);
     setDuration(0);
+    if (playBlocked) {
+      video.pause();
+      setPaused(true);
+      return;
+    }
     const syncPaused = () => setPaused(video.paused);
     const playPromise = video.play();
     if (playPromise) {
@@ -140,7 +152,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     } else {
       syncPaused();
     }
-  }, [tile.id]);
+  }, [tile.id, playBlocked]);
 
   useEffect(() => {
     return () => {
@@ -152,6 +164,10 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     const video = videoRef.current;
     if (!video) return;
     if (video.paused) {
+      if (playBlocked) {
+        onPlayBlocked?.();
+        return;
+      }
       void video.play();
       setPaused(false);
     } else {
@@ -159,7 +175,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       setPaused(true);
       syncTimeFromVideo();
     }
-  }, [syncTimeFromVideo]);
+  }, [onPlayBlocked, playBlocked, syncTimeFromVideo]);
 
   const enterFullscreen = useCallback(() => {
     const video = videoRef.current as VideoWithIosFullscreen | null;
@@ -271,11 +287,11 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     const video = videoRef.current;
     if (!video) return;
     setCurrentTime(video.currentTime);
-    if (wasPlayingBeforeScrubRef.current) {
+    if (wasPlayingBeforeScrubRef.current && !playBlocked) {
       void video.play();
       setPaused(false);
     }
-  }, []);
+  }, [playBlocked]);
 
   useEffect(() => {
     if (!isScrubbing) return;
@@ -401,7 +417,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
                   paddingBottom: '22px',
                 }}
               >
-                PAUSED
+                {playBlocked ? 'TAP TO UNLOCK' : 'PAUSED'}
               </span>
             ) : null}
 
