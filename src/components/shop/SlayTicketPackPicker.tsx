@@ -44,34 +44,53 @@ export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPack
       <div
         role="radiogroup"
         aria-label="Select ticket pack"
-        className="flex justify-center gap-3 flex-wrap mb-6"
-        style={{ transform: 'translateY(-7px)' }}
+        className="mb-6"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '10px',
+          transform: 'translateY(-7px)',
+        }}
       >
-        {SLAY_TICKET_PACKS.map((pack) => {
-          const isSelected = value === pack.id;
-          return (
-            <div
-              key={pack.id}
-              role="radio"
-              aria-checked={isSelected}
-              tabIndex={0}
-              data-selected={isSelected ? 'true' : 'false'}
-              className="slay-ticket-pack-option"
-              onPointerDown={(event) => {
-                event.preventDefault();
-                onChange(pack.id);
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  onChange(pack.id);
-                }
-              }}
-            >
-              {pack.ticketCount} TICKETS
-            </div>
-          );
-        })}
+        {[SLAY_TICKET_PACKS.slice(0, 2), SLAY_TICKET_PACKS.slice(2, 4)].map((row, rowIndex) => (
+          <div
+            key={rowIndex}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '12px',
+              width: '100%',
+            }}
+          >
+            {row.map((pack) => {
+              const isSelected = value === pack.id;
+              return (
+                <div
+                  key={pack.id}
+                  role="radio"
+                  aria-checked={isSelected}
+                  tabIndex={0}
+                  data-selected={isSelected ? 'true' : 'false'}
+                  className="slay-ticket-pack-option"
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    onChange(pack.id);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onChange(pack.id);
+                    }
+                  }}
+                >
+                  {pack.ticketCount} TICKETS
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </>
   );
