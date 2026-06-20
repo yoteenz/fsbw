@@ -1,4 +1,4 @@
-import { SLAY_TICKET_PACKS } from '../../utils/slayTicketPacks';
+import { SLAY_TICKET_PACKS, slayTicketPackListPriceUsd } from '../../utils/slayTicketPacks';
 
 type SlayTicketPackPickerProps = {
   value: string;
@@ -66,6 +66,7 @@ export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPack
           >
             {row.map((pack) => {
               const isSelected = value === pack.id;
+              const savingsUsd = slayTicketPackListPriceUsd(pack.ticketCount) - pack.priceUsd;
               return (
                 <div
                   key={pack.id}
@@ -86,6 +87,19 @@ export default function SlayTicketPackPicker({ value, onChange }: SlayTicketPack
                   }}
                 >
                   {pack.ticketCount} TICKETS
+                  {savingsUsd > 0 ? (
+                    <span
+                      style={{
+                        display: 'block',
+                        fontSize: '8px',
+                        color: '#EB1C24',
+                        marginTop: '2px',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      SAVE ${savingsUsd}
+                    </span>
+                  ) : null}
                 </div>
               );
             })}

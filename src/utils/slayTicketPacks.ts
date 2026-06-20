@@ -1,7 +1,6 @@
 import { SLAY_TICKET_CART_THUMBNAIL_SRC } from '../constants/slayTicketAssets';
 
-/** Purchasable Slay Ticket pack products (digital — no bonus tickets on purchase). */
-
+/** List rate per ticket before pack volume discounts. */
 export const SLAY_TICKET_UNIT_PRICE_USD = 4;
 
 /** Cart / bag / checkout line title — always singular; quantity holds ticket count. */
@@ -10,34 +9,45 @@ export const SLAY_TICKET_CART_LINE_NAME = 'SLAY TICKET';
 export type SlayTicketPack = {
   id: string;
   ticketCount: number;
+  /** Pack checkout total (may be below list rate for larger packs). */
   priceUsd: number;
   /** @deprecated Display-only; cart lines use {@link SLAY_TICKET_CART_LINE_NAME}. */
   label: string;
 };
 
+/** List price at {@link SLAY_TICKET_UNIT_PRICE_USD} per ticket (no volume discount). */
+export function slayTicketPackListPriceUsd(ticketCount: number): number {
+  return SLAY_TICKET_UNIT_PRICE_USD * ticketCount;
+}
+
+/** Per-ticket unit price for cart/checkout (pack total ÷ ticket count). */
+export function slayTicketPackUnitPriceUsd(pack: SlayTicketPack): number {
+  return pack.priceUsd / pack.ticketCount;
+}
+
 export const SLAY_TICKET_PACKS: SlayTicketPack[] = [
   {
     id: 'slay-tickets-4',
     ticketCount: 4,
-    priceUsd: SLAY_TICKET_UNIT_PRICE_USD * 4,
+    priceUsd: 16,
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-8',
     ticketCount: 8,
-    priceUsd: SLAY_TICKET_UNIT_PRICE_USD * 8,
+    priceUsd: 32,
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-12',
     ticketCount: 12,
-    priceUsd: SLAY_TICKET_UNIT_PRICE_USD * 12,
+    priceUsd: 48,
     label: SLAY_TICKET_CART_LINE_NAME,
   },
   {
     id: 'slay-tickets-24',
     ticketCount: 24,
-    priceUsd: SLAY_TICKET_UNIT_PRICE_USD * 24,
+    priceUsd: 90,
     label: SLAY_TICKET_CART_LINE_NAME,
   },
 ];
@@ -76,11 +86,12 @@ export function slayTicketPackCartLine(pack: SlayTicketPack) {
   return {
     id: pack.id,
     name: SLAY_TICKET_CART_LINE_NAME,
-    price: SLAY_TICKET_UNIT_PRICE_USD,
+    price: slayTicketPackUnitPriceUsd(pack),
     quantity: pack.ticketCount,
     type: 'digital' as const,
     slayTicketProduct: true,
     slayTicketPackCount: pack.ticketCount,
+    slayTicketPackTotalUsd: pack.priceUsd,
     image: SLAY_TICKET_CART_THUMBNAIL_SRC,
   };
 }
@@ -106,11 +117,18 @@ export function slayTicketsCreditedForCartLine(line: {
 export function slayTicketLineTotalUsd(item: {
   price?: number;
   quantity?: number;
+  id?: string;
+  slayTicketPackTotalUsd?: number;
 } | null | undefined): number {
   if (!item) return 0;
-  const unit = Math.round(Number(item.price) || SLAY_TICKET_UNIT_PRICE_USD);
+  const packTotal = Number(item.slayTicketPackTotalUsd);
+  if (Number.isFinite(packTotal) && packTotal > 0) return Math.round(packTotal);
+  const pack = getSlayTicketPackById(item.id);
   const q = Math.max(1, Math.floor(Number(item.quantity) || 1));
-  return unit * q;
+  if (pack && pack.ticketCount === q) return pack.priceUsd;
+  const unit = Number(item.price);
+  if (Number.isFinite(unit)) return Math.round(unit * q);
+  return SLAY_TICKET_UNIT_PRICE_USD * q;
 }
 
 export { SLAY_TICKET_CART_THUMBNAIL_SRC };
