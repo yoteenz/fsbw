@@ -45,7 +45,7 @@ export function BuildAWigPanel() {
         {/* Header */}
         <div style={{ padding: '16px 20px 12px 22px', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '7.5px', letterSpacing: '0.38em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
+            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '7.5px', letterSpacing: '0.38em', textTransform: 'uppercase', color: '#959B9B' }}>
               DESIGN STUDIO
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -53,10 +53,10 @@ export function BuildAWigPanel() {
               <span style={{ fontFamily: '"Futura PT Book"', fontSize: '7px', letterSpacing: '0.18em', color: '#C81C24' }}>LIVE</span>
             </div>
           </div>
-          <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '17px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#FFFFFF', lineHeight: 1.2 }}>
+          <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '17px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1A1A1A', lineHeight: 1.2 }}>
             BUILD-A-WIG
           </div>
-          <div style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
+          <div style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', letterSpacing: '0.08em', color: '#9A8868', marginTop: '2px' }}>
             CONFIGURATION CONSOLE
           </div>
         </div>
@@ -71,7 +71,7 @@ export function BuildAWigPanel() {
               borderRadius: '20px',
               fontFamily: '"Futura PT Book"', fontSize: '7.5px',
               letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.65)',
+              color: '#4A3728',
             }}>
               {spec}
             </span>

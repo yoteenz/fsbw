@@ -43,7 +43,7 @@ export function PSAConciergePanel() {
         {/* Header */}
         <div style={{ padding: '16px 22px 12px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '7.5px', letterSpacing: '0.38em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
+            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '7.5px', letterSpacing: '0.38em', textTransform: 'uppercase', color: '#959B9B' }}>
               CONCIERGE SUITE
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -51,17 +51,17 @@ export function PSAConciergePanel() {
               <span style={{ fontFamily: '"Futura PT Book"', fontSize: '7px', letterSpacing: '0.18em', color: '#22C55E' }}>AVAILABLE</span>
             </div>
           </div>
-          <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '17px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#FFFFFF', lineHeight: 1.2 }}>
+          <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '17px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1A1A1A', lineHeight: 1.2 }}>
             PSA
           </div>
-          <div style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
+          <div style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', letterSpacing: '0.08em', color: '#9A8868', marginTop: '2px' }}>
             PERSONAL STYLE ADVISOR
           </div>
         </div>
 
         {/* Description */}
         <div style={{ padding: '14px 22px 12px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'relative', zIndex: 10 }}>
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: 0 }}>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', letterSpacing: '0.05em', textTransform: 'uppercase', color: '#4A3728', lineHeight: 1.7, margin: 0 }}>
             Your personal styling advisor is ready to guide you through the Frontal Slayer flagship experience.
           </p>
         </div>
@@ -76,7 +76,7 @@ export function PSAConciergePanel() {
               borderRadius: '20px',
               fontFamily: '"Futura PT Book"', fontSize: '7.5px',
               letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.65)',
+              color: '#4A3728',
             }}>
               {svc}
             </span>
@@ -91,14 +91,14 @@ export function PSAConciergePanel() {
               width: '100%', padding: '12px 0',
               background: 'rgba(255,255,255,0.12)',
               backdropFilter: 'blur(12px)',
-              color: '#FFFFFF',
+              color: '#1A1A1A',
               fontFamily: '"Futura PT Medium"', fontSize: '10px', letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              border: '1px solid rgba(255,255,255,0.28)', borderRadius: '3px',
+              border: '1px solid rgba(0,0,0,0.14)', borderRadius: '3px',
               cursor: 'pointer', transition: 'all 0.2s ease',
             }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#C81C24'; el.style.borderColor = 'transparent'; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = 'rgba(255,255,255,0.12)'; el.style.borderColor = 'rgba(255,255,255,0.28)'; }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#C81C24'; el.style.color = '#FFFFFF'; el.style.borderColor = 'transparent'; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = 'rgba(255,255,255,0.12)'; el.style.color = '#1A1A1A'; el.style.borderColor = 'rgba(0,0,0,0.14)'; }}
           >
             ENTER SUITE
           </button>
