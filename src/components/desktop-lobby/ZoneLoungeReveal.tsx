@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { desktopArtboardHeightStyle } from '../../utils/desktopPreview';
+import { DESKTOP_LOUNGE_BG_FALLBACK, DESKTOP_LOUNGE_BG_URL } from '../../constants/desktopLobbyEnv';
 import { GlassPanel } from './ui/GlassPanel';
 import { RedButton, GhostButton } from './ui/Buttons';
 
@@ -431,6 +432,7 @@ function LoungeNavBar() {
 export function ZoneLoungeReveal() {
   const dividerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [bgSrc, setBgSrc] = useState(DESKTOP_LOUNGE_BG_URL);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -450,24 +452,31 @@ export function ZoneLoungeReveal() {
     <section
       className="relative overflow-hidden"
       style={{
-        background: '#FDF9F8',
-        backgroundImage: 'url(/assets/mini-marble.png)',
-        backgroundSize: '600px',
         minHeight: desktopArtboardHeightStyle(),
         paddingTop: '64px',
         paddingBottom: '48px',
       }}
     >
-      {/* Warm marble overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'rgba(253,249,248,0.88)' }}
+      <img
+        src={bgSrc}
+        alt=""
+        onError={() => setBgSrc(DESKTOP_LOUNGE_BG_FALLBACK)}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center center',
+          display: 'block',
+        }}
       />
 
       {/* Rose accent - right side */}
       <div
         className="absolute right-0 bottom-0 pointer-events-none opacity-15"
-        style={{ width: '280px', transform: 'translateX(60px)' }}
+        style={{ width: '280px', transform: 'translateX(60px)', zIndex: 1 }}
       >
         <img src="/assets/roses.png" alt="" className="w-full" />
       </div>

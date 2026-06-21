@@ -4,8 +4,7 @@ import { getDesktopLayoutViewportWidth } from '../../../utils/desktopPreview';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 
-const LOUNGE_BG = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3567.png';
-const MARBLE = '/assets/marble%20bg.png';
+import { DESKTOP_LOUNGE_BG_FALLBACK, DESKTOP_LOUNGE_BG_URL } from '../../../constants/desktopLobbyEnv';
 
 // Acrylic panel used for lounge content blocks
 function AcrylicBlock({
@@ -191,7 +190,7 @@ function CoffeeTable() {
       <div style={{
         height: '14px',
         background: 'linear-gradient(180deg, rgba(255,255,255,0.82) 0%, rgba(240,236,230,0.7) 100%)',
-        backgroundImage: `url(${MARBLE}), linear-gradient(180deg, rgba(255,255,255,0.82) 0%, rgba(240,236,230,0.7) 100%)`,
+        backgroundImage: `url(${DESKTOP_LOUNGE_BG_FALLBACK}), linear-gradient(180deg, rgba(255,255,255,0.82) 0%, rgba(240,236,230,0.7) 100%)`,
         backgroundSize: 'cover',
         backgroundBlendMode: 'overlay',
         borderRadius: '4px',
@@ -216,7 +215,7 @@ function CoffeeTable() {
 export default function DesktopLoungePage() {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
-  const [bgSrc, setBgSrc] = useState(LOUNGE_BG);
+  const [bgSrc, setBgSrc] = useState(DESKTOP_LOUNGE_BG_URL);
   const [isTooSmall, setIsTooSmall] = useState(() => getDesktopLayoutViewportWidth() < 1024);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -257,7 +256,7 @@ export default function DesktopLoungePage() {
         <img
           src={bgSrc}
           alt=""
-          onError={() => setBgSrc(MARBLE)}
+          onError={() => setBgSrc(DESKTOP_LOUNGE_BG_FALLBACK)}
           style={{
             position: 'absolute', inset: 0, zIndex: 0,
             width: '100%', height: '100%',
