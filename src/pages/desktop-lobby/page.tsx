@@ -25,19 +25,17 @@ function DigitalLobby() {
   });
 
   return (
-    <section style={{ position: 'relative', height: '100vh', overflow: 'hidden', background: '#080808' }}>
+    <section style={{ position: 'relative', height: '100vh', overflow: 'hidden', background: '#ECE8E4' }}>
 
-      {/* Letterbox fill — subtle dark marble for areas outside the environment */}
+      {/* Marble underlay — fills any crop edges from cover */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url(/assets/marble%20bg.png)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        opacity: 0.07,
-        filter: 'grayscale(1)',
+        backgroundPosition: 'center top',
       }} />
 
-      {/* ENVIRONMENT — full uncropped showroom, rendered as image element */}
+      {/* ENVIRONMENT — edge-to-edge under nav (cover, no letterbox bars) */}
       <img
         src={bgSrc}
         alt=""
@@ -45,8 +43,8 @@ function DigitalLobby() {
         style={{
           position: 'absolute', inset: 0, zIndex: 1,
           width: '100%', height: '100%',
-          objectFit: 'contain',
-          objectPosition: 'center center',
+          objectFit: 'cover',
+          objectPosition: 'center top',
           display: 'block',
         }}
       />
@@ -54,13 +52,7 @@ function DigitalLobby() {
       {/* Edge vignette */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.2) 100%)',
-      }} />
-
-      {/* NavBar gradient support */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.08) 12%, transparent 26%)',
+        background: 'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.12) 100%)',
       }} />
 
       {/* Bottom anchor gradient */}
@@ -169,7 +161,7 @@ export default function DesktopLobbyPage() {
   }
 
   return (
-    <div style={{ background: '#080808', minHeight: '100vh' }}>
+    <div style={{ background: '#ECE8E4', minHeight: '100vh' }}>
       <NavBar activeLink="HOME" />
       <DigitalLobby />
       <ZoneLoungeReveal />

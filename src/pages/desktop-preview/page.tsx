@@ -88,7 +88,7 @@ function DesktopPreviewPage() {
     iframe.style.cssText = [
       'display:block',
       'border:0',
-      'background:#080808',
+      'background:#ECE8E4',
       `width:${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`,
       `height:${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px`,
     ].join(';');
