@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { desktopArtboardHeightStyle } from '../../utils/desktopPreview';
 import { GlassPanel } from './ui/GlassPanel';
 import { RedButton, GhostButton } from './ui/Buttons';
 
@@ -452,7 +453,7 @@ export function ZoneLoungeReveal() {
         background: '#FDF9F8',
         backgroundImage: 'url(/assets/mini-marble.png)',
         backgroundSize: '600px',
-        minHeight: '100vh',
+        minHeight: desktopArtboardHeightStyle(),
         paddingTop: '64px',
         paddingBottom: '48px',
       }}

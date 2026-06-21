@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import {
+  DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   DESKTOP_PREVIEW_VIEWPORT_WIDTH,
   installDesktopPreviewShellViewportLock,
 } from '../../utils/desktopPreview';
@@ -9,8 +10,8 @@ type Props = {
 };
 
 /**
- * Fits a 1920px-wide desktop page on a phone: scale via transform, scroll in this shell.
- * No iframe — one document, no Safari iframe reload on pinch/zoom.
+ * Phone preview: one 1920×1080 desktop viewport fills the screen height (zoomed in),
+ * sides crop if needed. Scroll vertically through lobby → lounge.
  */
 export function ScaledDesktopViewport({ children }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
@@ -26,14 +27,18 @@ export function ScaledDesktopViewport({ children }: Props) {
       const stage = stageRef.current;
       if (!shell || !scaler || !stage) return;
 
-      const scale = shell.clientWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
-      stage.style.width = `${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`;
-      stage.style.transform = `scale(${scale})`;
-      stage.style.transformOrigin = 'top left';
-
+      // Fill phone height with one 1080p desktop screen (zoom in), not shrink whole page.
+      const scale = shell.clientHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
+      const scaledWidth = DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale;
       const contentHeight = stage.scrollHeight;
-      scaler.style.width = `${DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale}px`;
+
+      stage.style.width = `${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`;
+      stage.style.transformOrigin = 'top left';
+      stage.style.transform = `scale(${scale})`;
+
+      scaler.style.width = `${scaledWidth}px`;
       scaler.style.height = `${contentHeight * scale}px`;
+      scaler.style.marginLeft = `${(shell.clientWidth - scaledWidth) / 2}px`;
     };
 
     layoutStage();
@@ -70,7 +75,7 @@ export function ScaledDesktopViewport({ children }: Props) {
         touchAction: 'pan-y',
       }}
     >
-      <div ref={scalerRef} style={{ position: 'relative', margin: '0 auto' }}>
+      <div ref={scalerRef} style={{ position: 'relative' }}>
         <div ref={stageRef}>{children}</div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
-import { getDesktopLayoutViewportWidth } from '../../utils/desktopPreview';
+import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle } from '../../utils/desktopPreview';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
@@ -26,7 +26,7 @@ function DigitalLobby() {
   });
 
   return (
-    <section style={{ position: 'relative', height: '100vh', overflow: 'hidden', background: '#ECE8E4' }}>
+    <section style={{ position: 'relative', height: desktopArtboardHeightStyle(), overflow: 'hidden', background: '#ECE8E4' }}>
 
       {/* Marble underlay — fills any crop edges from cover */}
       <div style={{

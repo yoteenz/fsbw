@@ -49,6 +49,11 @@ export function getDesktopLayoutViewportWidth(): number {
   return typeof window !== 'undefined' ? window.innerWidth : DESKTOP_PREVIEW_VIEWPORT_WIDTH;
 }
 
+/** Hero / full-screen desktop sections: 1080px artboard in preview, real vh on desktop. */
+export function desktopArtboardHeightStyle(): string {
+  return isDesktopPreviewActive() ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh';
+}
+
 /** @deprecated Legacy iframe embed detection; preview no longer uses iframes. */
 export function isDesktopEmbedFrame(): boolean {
   return isDesktopPreviewActive() && window.self !== window.top;
