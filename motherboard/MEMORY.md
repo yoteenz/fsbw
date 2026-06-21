@@ -30370,3 +30370,12 @@ Summary of the **whole conversation so far** in this chat: phone QA / staging de
 - **Kept:** Top **`NavBar`**, Build-A-Wig / PSA side panels, particle field, lounge section below on scroll.
 - **Changes:** `src/pages/desktop-lobby/page.tsx` only. Build verified.
 
+---
+
+## 2026-06-21 — Desktop lounge: IMG_3567 environment background
+
+Summary of the **whole conversation so far** in this chat: desktop flagship staging QA; lobby hero cleanup (removed brand lock-up + bottom portal nav); user supplied **`IMG_3567.png`** for desktop lounge background only.
+
+- **Change:** `/desktop/lounge` environment layer now uses **`https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3567.png`** (`object-fit: cover`); falls back to local marble on load error. Lobby hero and **`ZoneLoungeReveal`** unchanged.
+- **Changes:** `src/pages/desktop/lounge/page.tsx`. Build verified.
+
