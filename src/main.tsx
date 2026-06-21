@@ -5,7 +5,6 @@ import App from './App.tsx'
 import './index.css'
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth'
 import { bootstrapCreativePreviewMode, isCreativePreviewMode } from './utils/creativePreviewMode'
-import { bootstrapDesktopEmbedFrame } from './utils/desktopPreview'
 import { sanitizeStoredAuthPasswords } from './utils/authPasswordSanitize'
 import { restoreSupabaseSessionFromCookie, getSupabase, signOutIfSessionEmailUnconfirmed } from './utils/supabase'
 import { tryServerSessionRestore } from './utils/sessionRestore'
@@ -22,9 +21,6 @@ sanitizeStoredAuthPasswords()
 
 // Designer creative preview (preview deployments only) — before auth backup restore.
 bootstrapCreativePreviewMode()
-
-// Desktop preview iframe (`/desktop-preview` → `/desktop/*?desktopEmbed=1`) — before first paint.
-bootstrapDesktopEmbedFrame()
 
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
 if (!isCreativePreviewMode()) {

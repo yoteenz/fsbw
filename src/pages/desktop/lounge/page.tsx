@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getDesktopLayoutViewportWidth } from '../../../utils/desktopPreview';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 
@@ -218,7 +219,7 @@ export default function DesktopLoungePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const check = () => setIsTooSmall(window.innerWidth < 1024);
+    const check = () => setIsTooSmall(getDesktopLayoutViewportWidth() < 1024);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);

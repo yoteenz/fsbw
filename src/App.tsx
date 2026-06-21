@@ -36,7 +36,7 @@ import {
   reloadForStaleChunks,
 } from './utils/chunkLoadRecovery';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
-import { isDesktopEmbedFrame, isDesktopPreviewWrapperPath } from './utils/desktopPreview';
+import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -287,8 +287,7 @@ const BuildAWigPageWrapper = () => {
 function App() {
   const location = useLocation();
   const isDesktopPreviewShell = isDesktopPreviewWrapperPath(location.pathname);
-  const isDesktopEmbedShell = isDesktopEmbedFrame();
-  const hidePreviewChrome = isDesktopPreviewShell || isDesktopEmbedShell;
+  const hidePreviewChrome = isDesktopPreviewShell;
 
   // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {

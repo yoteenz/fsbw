@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
+import { getDesktopLayoutViewportWidth } from '../../utils/desktopPreview';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
@@ -141,7 +142,7 @@ export default function DesktopLobbyPage() {
   const [isTooSmall, setIsTooSmall] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsTooSmall(window.innerWidth < 1024);
+    const check = () => setIsTooSmall(getDesktopLayoutViewportWidth() < 1024);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
