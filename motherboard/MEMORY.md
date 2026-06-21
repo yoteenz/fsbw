@@ -30315,3 +30315,15 @@ Summary of the **whole conversation so far** in this chat: desktop preview shell
 - **Changes:** `src/components/desktop-lobby/NavBar.tsx`. Build verified.
 - **Conventions:** Desktop flagship **`NavBar`** stays **always visible** at top — do not reintroduce scroll-gated transparency without product sign-off.
 
+---
+
+## 2026-06-21 — Desktop preview pinch-zoom reload (real fix)
+
+Summary of the **whole conversation so far** in this chat: **`/desktop-preview`** scaled iframe shell for phone QA of desktop design; staging URL **`fsbw.vercel.app`**; first zoom fix (ref `src`, drop `resize` listener) **insufficient** — user reported reloads still happen on pinch zoom.
+
+- **Context:** Preview must stay stable while pinching/zooming on phone; prior fix only reduced symptoms.
+- **Root causes:** (1) React-managed `<iframe src>` still re-navigated in Safari on parent re-renders; (2) pinch zoom fired layout updates / browser zoom inside nested browsing context; (3) inner `/desktop/*` frame still used mobile viewport (`innerWidth` + default meta).
+- **Fix (proper):** **Imperative iframe** via `document.createElement` + `replaceChildren` — React never owns `src`; scale applied via **DOM refs only** (no `useState`), **no `resize` listener** (orientation only); **`memo`** on preview page; outer + inner **viewport locks** + **`gesturestart/change/end` preventDefault**; iframe loads **`?desktopEmbed=1`**; **`bootstrapDesktopEmbedFrame()`** in **`main.tsx`** sets inner viewport to **`width=1920`**; suppress global chrome/sync widgets in embed frame (**`isDesktopEmbedFrame()`**).
+- **Changes:** `src/utils/desktopPreview.ts`, `src/pages/desktop-preview/page.tsx`, `src/main.tsx`, `src/App.tsx`. Build verified.
+- **Conventions:** Desktop phone preview = outer shell + embed iframe with **`desktopEmbed=1`**; do not use reactive React `iframe src` on preview shell; pinch zoom is blocked — rotate device to refit scale.
+
