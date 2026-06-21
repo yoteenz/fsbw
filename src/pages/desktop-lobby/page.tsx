@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
-import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle } from '../../utils/desktopPreview';
+import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle, isDesktopPreviewActive } from '../../utils/desktopPreview';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
@@ -162,7 +162,12 @@ export default function DesktopLobbyPage() {
   }
 
   return (
-    <div style={{ background: '#ECE8E4', minHeight: '100vh' }}>
+    <div
+      style={{
+        background: '#ECE8E4',
+        ...(isDesktopPreviewActive() ? {} : { minHeight: '100vh' }),
+      }}
+    >
       <NavBar activeLink="HOME" />
       <DigitalLobby />
       <ZoneLoungeReveal />

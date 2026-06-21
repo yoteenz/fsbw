@@ -10,8 +10,8 @@ type Props = {
 };
 
 /**
- * Phone preview: one 1920×1080 desktop viewport fills the screen height (zoomed in),
- * sides crop if needed. Scroll vertically through lobby → lounge.
+ * Phone preview: scale the 1920×1080 desktop artboard down to fit the phone screen
+ * (uniform scale, no stretch). Scroll vertically for lobby → lounge.
  */
 export function ScaledDesktopViewport({ children }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
@@ -27,8 +27,10 @@ export function ScaledDesktopViewport({ children }: Props) {
       const stage = stageRef.current;
       if (!shell || !scaler || !stage) return;
 
-      // Fill phone height with one 1080p desktop screen (zoom in), not shrink whole page.
-      const scale = shell.clientHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
+      const scaleX = shell.clientWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
+      const scaleY = shell.clientHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
+      const scale = Math.min(scaleX, scaleY);
+
       const scaledWidth = DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale;
       const contentHeight = stage.scrollHeight;
 
@@ -64,15 +66,20 @@ export function ScaledDesktopViewport({ children }: Props) {
   return (
     <div
       ref={shellRef}
+      className="desktop-preview-scroll-shell"
       style={{
-        position: 'fixed',
-        inset: 0,
-        overflowY: 'auto',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: '100%',
+        overflowY: 'scroll',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        overscrollBehaviorY: 'none',
+        overscrollBehaviorY: 'contain',
         background: '#050505',
-        touchAction: 'pan-y',
+        touchAction: 'auto',
       }}
     >
       <div ref={scalerRef} style={{ position: 'relative' }}>

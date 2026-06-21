@@ -9,7 +9,7 @@ const DESKTOP_PREFIX = '/desktop';
 
 const DEFAULT_VIEWPORT_CONTENT = 'width=device-width, initial-scale=1.0';
 const OUTER_PREVIEW_VIEWPORT_CONTENT =
-  'width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover';
+  'width=device-width, initial-scale=1, viewport-fit=cover';
 
 let outerViewportLockInstalled = false;
 
@@ -93,14 +93,25 @@ export function installDesktopPreviewShellViewportLock(): () => void {
   const previousBodyMargin = document.body.style.margin;
   const previousBodyBackground = document.body.style.background;
   const previousBodyTouchAction = document.body.style.touchAction;
+  const root = document.getElementById('root');
+  const previousRootHeight = root?.style.height ?? '';
+  const previousRootOverflow = root?.style.overflow ?? '';
+  const previousRootPosition = root?.style.position ?? '';
 
+  document.documentElement.style.height = '100%';
+  document.body.style.height = '100%';
   document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
   document.documentElement.style.overscrollBehaviorY = 'none';
   document.body.style.overscrollBehaviorY = 'none';
   document.body.style.margin = '0';
   document.body.style.background = '#050505';
-  document.body.style.touchAction = 'manipulation';
+  document.body.style.touchAction = 'auto';
+  if (root) {
+    root.style.height = '100%';
+    root.style.overflow = 'hidden';
+    root.style.position = 'relative';
+  }
 
   return () => {
     outerViewportLockInstalled = false;
@@ -112,6 +123,11 @@ export function installDesktopPreviewShellViewportLock(): () => void {
     document.body.style.margin = previousBodyMargin;
     document.body.style.background = previousBodyBackground;
     document.body.style.touchAction = previousBodyTouchAction;
+    if (root) {
+      root.style.height = previousRootHeight;
+      root.style.overflow = previousRootOverflow;
+      root.style.position = previousRootPosition;
+    }
   };
 }
 
