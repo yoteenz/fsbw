@@ -30389,3 +30389,13 @@ Summary of the **whole conversation so far** in this chat: user set **`IMG_3567.
 - **Fix:** **`ZoneLoungeReveal`** uses shared **`DESKTOP_LOUNGE_BG_URL`** (`desktopLobbyEnv.ts`), full-bleed **`img`** + **`object-fit: cover`**; removed mini-marble tile and 88% white wash. **`/desktop/lounge`** imports same constant.
 - **Changes:** `src/components/desktop-lobby/ZoneLoungeReveal.tsx`, `src/constants/desktopLobbyEnv.ts`, `src/pages/desktop/lounge/page.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Desktop acrylic panels: white text → black
+
+Summary of the **whole conversation so far** in this chat: desktop flagship lobby/lounge QA; backgrounds and UI cleanup; user asked to change **white text on acrylic panels** over desktop lobby/lounge backgrounds to **black** for visibility.
+
+- **Lobby hero panels:** **`BuildAWigPanel`** + **`PSAConciergePanel`** — titles, labels, chips, description, and PSA ghost CTA default text now **`#1A1A1A`** / muted **`#959B9B`** / **`#4A3728`** (was white/translucent white). Red primary CTAs keep white text on **`#C81C24`**.
+- **Lounge panels:** **`ZoneLoungeReveal`** GlassPanels and **`/desktop/lounge`** AcrylicBlocks already used dark text — no change needed.
+- **Changes:** `src/components/desktop-lobby/BuildAWigPanel.tsx`, `src/components/desktop-lobby/PSAConciergePanel.tsx`. Build verified.
+
