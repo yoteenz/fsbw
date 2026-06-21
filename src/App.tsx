@@ -36,7 +36,7 @@ import {
   reloadForStaleChunks,
 } from './utils/chunkLoadRecovery';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
-import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
+import { isDesktopEmbedFrame, isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -287,6 +287,8 @@ const BuildAWigPageWrapper = () => {
 function App() {
   const location = useLocation();
   const isDesktopPreviewShell = isDesktopPreviewWrapperPath(location.pathname);
+  const isDesktopEmbedShell = isDesktopEmbedFrame();
+  const hidePreviewChrome = isDesktopPreviewShell || isDesktopEmbedShell;
 
   // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {
@@ -420,11 +422,11 @@ function App() {
 
   return (
     <ErrorBoundary>
-      {!isDesktopPreviewShell ? <CreativePreviewBanner /> : null}
-      <MembershipRouteSync />
-      <ProductInventorySync />
-      {!isDesktopPreviewShell ? <PsaChatCopyBootstrap /> : null}
-      {!isDesktopPreviewShell ? <PsaAssistantWidget /> : null}
+      {!hidePreviewChrome ? <CreativePreviewBanner /> : null}
+      {!hidePreviewChrome ? <MembershipRouteSync /> : null}
+      {!hidePreviewChrome ? <ProductInventorySync /> : null}
+      {!hidePreviewChrome ? <PsaChatCopyBootstrap /> : null}
+      {!hidePreviewChrome ? <PsaAssistantWidget /> : null}
       <DebugModeShell>
         <Route index element={<HomeLandingRedirect />} />
         <Route path="/" element={<HomeLandingRedirect />} />

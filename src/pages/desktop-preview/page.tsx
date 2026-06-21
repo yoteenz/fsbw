@@ -1,43 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useLayoutEffect, useMemo, useRef } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   DESKTOP_PREVIEW_VIEWPORT_WIDTH,
+  buildDesktopEmbedIframeSrc,
+  installDesktopPreviewShellViewportLock,
   isDesktopPreviewEnvironment,
+  measureDesktopPreviewScaleBox,
   resolveDesktopIframePath,
 } from '../../utils/desktopPreview';
 
-type ScaleBox = {
-  scale: number;
-  width: number;
-  height: number;
-};
-
-function measureScaleBox(): ScaleBox {
-  if (typeof window === 'undefined') {
-    return { scale: 1, width: DESKTOP_PREVIEW_VIEWPORT_WIDTH, height: DESKTOP_PREVIEW_VIEWPORT_HEIGHT };
-  }
-
-  const scaleX = window.innerWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
-  const scaleY = window.innerHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
-  const scale = Math.min(scaleX, scaleY);
-
-  return {
-    scale,
-    width: DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale,
-    height: DESKTOP_PREVIEW_VIEWPORT_HEIGHT * scale,
-  };
-}
-
-const DEFAULT_VIEWPORT_CONTENT = 'width=device-width, initial-scale=1.0';
-const LOCKED_VIEWPORT_CONTENT =
-  'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
-
 /**
  * Temporary dev shell: scales a 1920×1080 desktop viewport to fit a phone browser.
- * Staging only — open `https://fsbw.vercel.app/desktop-preview` (or `/desktop-preview/lounge`).
+ * Staging only — open `https://fsbw.vercel.app/desktop-preview`.
+ *
+ * Iframe is mounted imperatively (not via React `src`) so parent re-renders never
+ * reload Safari. Scale is applied once (+ orientation change), never on pinch zoom.
  */
-export default function DesktopPreviewPage() {
+function DesktopPreviewPage() {
   const location = useLocation();
   const previewAllowed = isDesktopPreviewEnvironment();
   const desktopPath = useMemo(
@@ -45,56 +25,76 @@ export default function DesktopPreviewPage() {
     [location.pathname],
   );
   const iframeTarget = useMemo(
-    () => `${desktopPath}${location.search}${location.hash}`,
+    () => buildDesktopEmbedIframeSrc(desktopPath, location.search, location.hash),
     [desktopPath, location.hash, location.search],
   );
 
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const mountRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const iframeTargetRef = useRef('');
 
-  const [scaleBox, setScaleBox] = useState<ScaleBox>(() => measureScaleBox());
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!previewAllowed) return;
-    if (iframeTargetRef.current === iframeTarget) return;
-    const el = iframeRef.current;
-    if (!el) return;
-    iframeTargetRef.current = iframeTarget;
-    el.src = iframeTarget;
-  }, [iframeTarget, previewAllowed]);
+    return installDesktopPreviewShellViewportLock();
+  }, [previewAllowed]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!previewAllowed) return;
-    const update = () => setScaleBox(measureScaleBox());
-    update();
+
+    const applyScale = () => {
+      const shell = shellRef.current;
+      const clip = clipRef.current;
+      const stage = stageRef.current;
+      const badge = badgeRef.current;
+      if (!shell || !clip || !stage) return;
+
+      const box = measureDesktopPreviewScaleBox(shell.clientWidth, shell.clientHeight);
+      clip.style.width = `${box.width}px`;
+      clip.style.height = `${box.height}px`;
+      stage.style.width = `${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`;
+      stage.style.height = `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px`;
+      stage.style.transform = `scale(${box.scale})`;
+      if (badge) {
+        badge.textContent = `Desktop preview · ${desktopPath} · ${Math.round(box.scale * 100)}%`;
+      }
+    };
+
+    applyScale();
     const onOrientation = () => {
-      window.setTimeout(update, 150);
+      window.setTimeout(applyScale, 150);
     };
     window.addEventListener('orientationchange', onOrientation);
     return () => window.removeEventListener('orientationchange', onOrientation);
-  }, [previewAllowed]);
+  }, [desktopPath, previewAllowed]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!previewAllowed) return;
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    document.body.style.margin = '0';
-    document.body.style.background = '#050505';
-    document.body.style.touchAction = 'manipulation';
+    if (iframeTargetRef.current === iframeTarget) return;
 
-    const meta = document.querySelector('meta[name="viewport"]');
-    const previousViewport = meta?.getAttribute('content') ?? DEFAULT_VIEWPORT_CONTENT;
-    meta?.setAttribute('content', LOCKED_VIEWPORT_CONTENT);
+    const mount = mountRef.current;
+    if (!mount) return;
 
-    return () => {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.body.style.margin = '';
-      document.body.style.background = '';
-      document.body.style.touchAction = '';
-      meta?.setAttribute('content', previousViewport);
-    };
-  }, [previewAllowed]);
+    iframeTargetRef.current = iframeTarget;
+    mount.replaceChildren();
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('title', 'Desktop preview');
+    iframe.setAttribute('width', String(DESKTOP_PREVIEW_VIEWPORT_WIDTH));
+    iframe.setAttribute('height', String(DESKTOP_PREVIEW_VIEWPORT_HEIGHT));
+    iframe.setAttribute('loading', 'eager');
+    iframe.style.cssText = [
+      'display:block',
+      'border:0',
+      'background:#080808',
+      `width:${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`,
+      `height:${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px`,
+    ].join(';');
+    iframe.src = iframeTarget;
+    mount.appendChild(iframe);
+  }, [iframeTarget, previewAllowed]);
 
   if (!previewAllowed) {
     return <Navigate to="/home/shop" replace />;
@@ -102,47 +102,33 @@ export default function DesktopPreviewPage() {
 
   return (
     <div
+      ref={shellRef}
       style={{
-        minHeight: '100dvh',
-        width: '100vw',
+        position: 'fixed',
+        inset: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         background: '#050505',
         overflow: 'hidden',
-        position: 'relative',
         touchAction: 'manipulation',
       }}
     >
       <div
+        ref={clipRef}
         style={{
-          width: scaleBox.width,
-          height: scaleBox.height,
           overflow: 'hidden',
           flexShrink: 0,
           boxShadow: '0 24px 80px rgba(0,0,0,0.55)',
         }}
       >
         <div
+          ref={stageRef}
           style={{
-            width: DESKTOP_PREVIEW_VIEWPORT_WIDTH,
-            height: DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
-            transform: `scale(${scaleBox.scale})`,
             transformOrigin: 'top left',
-            willChange: 'transform',
           }}
         >
-          <iframe
-            ref={iframeRef}
-            title="Desktop preview"
-            width={DESKTOP_PREVIEW_VIEWPORT_WIDTH}
-            height={DESKTOP_PREVIEW_VIEWPORT_HEIGHT}
-            style={{
-              display: 'block',
-              border: 0,
-              background: '#080808',
-            }}
-          />
+          <div ref={mountRef} />
         </div>
       </div>
 
@@ -160,6 +146,7 @@ export default function DesktopPreviewPage() {
         }}
       >
         <div
+          ref={badgeRef}
           style={{
             fontFamily: '"Futura PT Medium", system-ui, sans-serif',
             fontSize: '9px',
@@ -176,9 +163,11 @@ export default function DesktopPreviewPage() {
             whiteSpace: 'nowrap',
           }}
         >
-          Desktop preview · {desktopPath} · {Math.round(scaleBox.scale * 100)}%
+          Desktop preview · {desktopPath}
         </div>
       </div>
     </div>
   );
 }
+
+export default memo(DesktopPreviewPage);
