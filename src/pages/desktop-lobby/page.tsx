@@ -4,7 +4,6 @@ import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle, isDesktopArt
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
-import { ZonePortals } from '../../components/desktop-lobby/ZonePortals';
 import { ZoneLoungeReveal } from '../../components/desktop-lobby/ZoneLoungeReveal';
 
 const LOBBY_BG = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3528.png';
@@ -68,42 +67,6 @@ function DigitalLobby() {
         <ParticleField />
       </div>
 
-      {/* BRAND LOCK-UP */}
-      <div style={{
-        position: 'absolute', top: '12vh', left: 0, right: 0,
-        zIndex: 20, textAlign: 'center', pointerEvents: 'none',
-        ...floatIn(200, 16),
-      }}>
-        <div style={{
-          fontFamily: '"Futura PT Medium"',
-          fontSize: '15px',
-          letterSpacing: '0.5em',
-          textTransform: 'uppercase',
-          color: '#C81C24',
-          lineHeight: 1,
-          textShadow: '0 0 20px rgba(200,28,36,0.65), 0 0 48px rgba(200,28,36,0.35), 0 0 80px rgba(200,28,36,0.18), 0 2px 8px rgba(0,0,0,0.55)',
-        }}>
-          FRONTAL SLAYER
-        </div>
-        <div style={{
-          fontFamily: '"Futura PT Book"',
-          fontSize: '8.5px',
-          letterSpacing: '0.32em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.96)',
-          marginTop: '8px',
-          lineHeight: 1,
-          textShadow: '0 0 14px rgba(255,255,255,0.7), 0 0 28px rgba(255,255,255,0.35), 0 1px 4px rgba(0,0,0,0.45)',
-        }}>
-          LUXURY WITHOUT LIMITS
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
-          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.55))' }} />
-          <div style={{ width: '4px', height: '4px', transform: 'rotate(45deg)', background: 'rgba(255,255,255,0.8)' }} />
-          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(90deg, rgba(255,255,255,0.55), transparent)' }} />
-        </div>
-      </div>
-
       {/* LEFT PANEL — Build-A-Wig Studio */}
       <div style={{
         position: 'absolute', bottom: '12vh', left: '6%',
@@ -122,16 +85,6 @@ function DigitalLobby() {
         ...floatIn(560, 32),
       }}>
         <PSAConciergePanel />
-      </div>
-
-      {/* BOTTOM NAV — Holographic portal strip */}
-      <div style={{
-        position: 'absolute', bottom: '3vh', left: 0, right: 0,
-        zIndex: 30,
-        display: 'flex', justifyContent: 'center',
-        ...floatIn(700, 18),
-      }}>
-        <ZonePortals />
       </div>
 
     </section>
