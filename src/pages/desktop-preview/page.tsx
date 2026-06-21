@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
@@ -29,6 +29,10 @@ function measureScaleBox(): ScaleBox {
   };
 }
 
+const DEFAULT_VIEWPORT_CONTENT = 'width=device-width, initial-scale=1.0';
+const LOCKED_VIEWPORT_CONTENT =
+  'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+
 /**
  * Temporary dev shell: scales a 1920×1080 desktop viewport to fit a phone browser.
  * Staging only — open `https://fsbw.vercel.app/desktop-preview` (or `/desktop-preview/lounge`).
@@ -40,20 +44,34 @@ export default function DesktopPreviewPage() {
     () => resolveDesktopIframePath(location.pathname),
     [location.pathname],
   );
-  const iframeSrc = `${desktopPath}${location.search}${location.hash}`;
+  const iframeTarget = useMemo(
+    () => `${desktopPath}${location.search}${location.hash}`,
+    [desktopPath, location.hash, location.search],
+  );
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const iframeTargetRef = useRef('');
 
   const [scaleBox, setScaleBox] = useState<ScaleBox>(() => measureScaleBox());
 
   useEffect(() => {
     if (!previewAllowed) return;
+    if (iframeTargetRef.current === iframeTarget) return;
+    const el = iframeRef.current;
+    if (!el) return;
+    iframeTargetRef.current = iframeTarget;
+    el.src = iframeTarget;
+  }, [iframeTarget, previewAllowed]);
+
+  useEffect(() => {
+    if (!previewAllowed) return;
     const update = () => setScaleBox(measureScaleBox());
     update();
-    window.addEventListener('resize', update);
-    window.addEventListener('orientationchange', update);
-    return () => {
-      window.removeEventListener('resize', update);
-      window.removeEventListener('orientationchange', update);
+    const onOrientation = () => {
+      window.setTimeout(update, 150);
     };
+    window.addEventListener('orientationchange', onOrientation);
+    return () => window.removeEventListener('orientationchange', onOrientation);
   }, [previewAllowed]);
 
   useEffect(() => {
@@ -62,12 +80,19 @@ export default function DesktopPreviewPage() {
     document.body.style.overflow = 'hidden';
     document.body.style.margin = '0';
     document.body.style.background = '#050505';
+    document.body.style.touchAction = 'manipulation';
+
+    const meta = document.querySelector('meta[name="viewport"]');
+    const previousViewport = meta?.getAttribute('content') ?? DEFAULT_VIEWPORT_CONTENT;
+    meta?.setAttribute('content', LOCKED_VIEWPORT_CONTENT);
 
     return () => {
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
       document.body.style.margin = '';
       document.body.style.background = '';
+      document.body.style.touchAction = '';
+      meta?.setAttribute('content', previousViewport);
     };
   }, [previewAllowed]);
 
@@ -86,6 +111,7 @@ export default function DesktopPreviewPage() {
         background: '#050505',
         overflow: 'hidden',
         position: 'relative',
+        touchAction: 'manipulation',
       }}
     >
       <div
@@ -103,11 +129,12 @@ export default function DesktopPreviewPage() {
             height: DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
             transform: `scale(${scaleBox.scale})`,
             transformOrigin: 'top left',
+            willChange: 'transform',
           }}
         >
           <iframe
+            ref={iframeRef}
             title="Desktop preview"
-            src={iframeSrc}
             width={DESKTOP_PREVIEW_VIEWPORT_WIDTH}
             height={DESKTOP_PREVIEW_VIEWPORT_HEIGHT}
             style={{
