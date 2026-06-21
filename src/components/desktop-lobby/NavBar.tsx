@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const NAV_LINKS = [
@@ -18,23 +18,7 @@ interface NavBarProps {
 
 export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
   const navigate = useNavigate();
-  const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const ticking = useRef(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!ticking.current) {
-        requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 40);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const syncCart = () => {
@@ -55,15 +39,13 @@ export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10"
+      className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between px-10"
       style={{
         height: '68px',
-        // Ghost on arrival — materializes on scroll into a frosted crystal bar
-        background: scrolled ? 'rgba(255,255,255,0.84)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(28px) saturate(1.6)' : 'none',
-        WebkitBackdropFilter: scrolled ? 'blur(28px) saturate(1.6)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(0,0,0,0.07)' : '1px solid transparent',
-        transition: 'background 0.5s ease, backdrop-filter 0.5s ease, border-color 0.5s ease',
+        background: 'rgba(255,255,255,0.84)',
+        backdropFilter: 'blur(28px) saturate(1.6)',
+        WebkitBackdropFilter: 'blur(28px) saturate(1.6)',
+        borderBottom: '1px solid rgba(0,0,0,0.07)',
       }}
     >
       {/* Wordmark */}
