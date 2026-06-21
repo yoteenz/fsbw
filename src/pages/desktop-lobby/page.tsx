@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavBar } from '../../components/desktop-lobby/NavBar';
-import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle, isDesktopPreviewActive } from '../../utils/desktopPreview';
+import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle, isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
@@ -139,7 +139,7 @@ function DigitalLobby() {
 }
 
 export default function DesktopLobbyPage() {
-  const [isTooSmall, setIsTooSmall] = useState(false);
+  const [isTooSmall, setIsTooSmall] = useState(() => getDesktopLayoutViewportWidth() < 1024);
 
   useEffect(() => {
     const check = () => setIsTooSmall(getDesktopLayoutViewportWidth() < 1024);
@@ -165,7 +165,7 @@ export default function DesktopLobbyPage() {
     <div
       style={{
         background: '#ECE8E4',
-        ...(isDesktopPreviewActive() ? {} : { minHeight: '100vh' }),
+        ...(isDesktopArtboardLayoutActive() ? {} : { minHeight: '100vh' }),
       }}
     >
       <NavBar activeLink="HOME" />

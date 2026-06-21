@@ -215,7 +215,7 @@ function CoffeeTable() {
 export default function DesktopLoungePage() {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
-  const [isTooSmall, setIsTooSmall] = useState(false);
+  const [isTooSmall, setIsTooSmall] = useState(() => getDesktopLayoutViewportWidth() < 1024);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

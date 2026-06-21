@@ -3,6 +3,8 @@ export const DESKTOP_PREVIEW_VIEWPORT_WIDTH = 1920;
 export const DESKTOP_PREVIEW_VIEWPORT_HEIGHT = 1080;
 
 export const DESKTOP_EMBED_QUERY = 'desktopEmbed';
+export const MOBILE_DESKTOP_QUERY = 'mobileDesktop';
+const MOBILE_DESKTOP_SESSION_KEY = 'baw_mobile_desktop';
 
 const PREVIEW_PREFIX = '/desktop-preview';
 const DESKTOP_PREFIX = '/desktop';
@@ -10,8 +12,11 @@ const DESKTOP_PREFIX = '/desktop';
 const DEFAULT_VIEWPORT_CONTENT = 'width=device-width, initial-scale=1.0';
 const OUTER_PREVIEW_VIEWPORT_CONTENT =
   'width=device-width, initial-scale=1, viewport-fit=cover';
+const MOBILE_DESKTOP_VIEWPORT_CONTENT =
+  `width=${DESKTOP_PREVIEW_VIEWPORT_WIDTH}, viewport-fit=cover`;
 
 let outerViewportLockInstalled = false;
+let mobileDesktopViewportInstalled = false;
 
 /** Staging / dev only — not exposed on production custom domain (e.g. frontalslayer.com). */
 export function isDesktopPreviewEnvironment(): boolean {
@@ -43,15 +48,44 @@ export function isDesktopPreviewActive(): boolean {
   return false;
 }
 
+function isDesktopRoutePath(pathname: string): boolean {
+  return pathname === DESKTOP_PREFIX || pathname.startsWith(`${DESKTOP_PREFIX}/`);
+}
+
+/**
+ * Staging-only: `?mobileDesktop=1` on `/desktop/*` — real desktop layout on phone
+ * (1920px viewport, browser pinch-zoom). Persists for the tab session.
+ */
+export function isMobileDesktopBypassActive(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (!isDesktopPreviewEnvironment()) return false;
+  if (!isDesktopRoutePath(window.location.pathname)) return false;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get(MOBILE_DESKTOP_QUERY) === '1') {
+      window.sessionStorage.setItem(MOBILE_DESKTOP_SESSION_KEY, '1');
+      return true;
+    }
+    return window.sessionStorage.getItem(MOBILE_DESKTOP_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Desktop artboard layout (1920-wide) — preview shell or mobile desktop bypass. */
+export function isDesktopArtboardLayoutActive(): boolean {
+  return isDesktopPreviewActive() || isMobileDesktopBypassActive();
+}
+
 /** Layout width for desktop breakpoint checks — fixed 1920 inside preview shell. */
 export function getDesktopLayoutViewportWidth(): number {
-  if (isDesktopPreviewActive()) return DESKTOP_PREVIEW_VIEWPORT_WIDTH;
+  if (isDesktopArtboardLayoutActive()) return DESKTOP_PREVIEW_VIEWPORT_WIDTH;
   return typeof window !== 'undefined' ? window.innerWidth : DESKTOP_PREVIEW_VIEWPORT_WIDTH;
 }
 
 /** Hero / full-screen desktop sections: 1080px artboard in preview, real vh on desktop. */
 export function desktopArtboardHeightStyle(): string {
-  return isDesktopPreviewActive() ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh';
+  return isDesktopArtboardLayoutActive() ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh';
 }
 
 /** @deprecated Legacy iframe embed detection; preview no longer uses iframes. */
@@ -136,6 +170,17 @@ export type DesktopPreviewScaleBox = {
   width: number;
   height: number;
 };
+
+export function bootstrapMobileDesktopViewport(): void {
+  if (!isMobileDesktopBypassActive()) return;
+  if (typeof document === 'undefined' || mobileDesktopViewportInstalled) return;
+  mobileDesktopViewportInstalled = true;
+  setViewportContent(MOBILE_DESKTOP_VIEWPORT_CONTENT);
+}
+
+export function bootstrapDesktopPreviewModes(): void {
+  bootstrapMobileDesktopViewport();
+}
 
 export function measureDesktopPreviewScaleBox(
   shellWidth: number,

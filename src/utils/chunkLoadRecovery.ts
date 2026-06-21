@@ -65,11 +65,11 @@ export function cacheBustReloadOnceForStaleChunks(): boolean {
   return true;
 }
 
-import { isDesktopPreviewActive } from './desktopPreview';
+import { isDesktopArtboardLayoutActive } from './desktopPreview';
 
 /** Try plain reload first, then cache-busted navigation (covers post-deploy stale tabs). */
 export function reloadForStaleChunks(): boolean {
-  if (isDesktopPreviewActive()) return false;
+  if (isDesktopArtboardLayoutActive()) return false;
   if (hardReloadOnceForStaleChunks()) return true;
   return cacheBustReloadOnceForStaleChunks();
 }
