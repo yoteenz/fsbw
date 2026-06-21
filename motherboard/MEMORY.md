@@ -30303,3 +30303,15 @@ Summary of the **whole conversation so far** in this chat: user building desktop
 - **Changes:** `src/pages/desktop-preview/page.tsx`. Build verified.
 - **Conventions:** Do not bind iframe `src` as a reactive React prop on a page that re-renders often; avoid `resize` for fit-to-screen on mobile preview shells (pinch zoom fires it).
 
+---
+
+## 2026-06-21 — Desktop lobby NavBar always visible + fixed on scroll
+
+Summary of the **whole conversation so far** in this chat: desktop preview shell at **`/desktop-preview`** (staging); zoom reload fix; user reported **desktop lobby top nav only appears when scrolling down** — should stay **fixed and visible** when scrolling into the lounge section below.
+
+- **Context:** `/desktop/lobby` is one long page: hero (`DigitalLobby` 100vh) + **`ZoneLoungeReveal`** lounge section on scroll.
+- **Root cause:** **`NavBar`** was `position: fixed` but **transparent until `scrollY > 40`** (“ghost on arrival”); frosted bar + readable links only after scroll — felt like nav was missing at top and on lounge until user scrolled.
+- **Fix:** Remove scroll listener / `scrolled` state; always render frosted crystal bar (`rgba(255,255,255,0.84)` + blur); bump **`z-index` to 200** so nav stays above lounge content.
+- **Changes:** `src/components/desktop-lobby/NavBar.tsx`. Build verified.
+- **Conventions:** Desktop flagship **`NavBar`** stays **always visible** at top — do not reintroduce scroll-gated transparency without product sign-off.
+
