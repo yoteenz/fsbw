@@ -30327,3 +30327,13 @@ Summary of the **whole conversation so far** in this chat: **`/desktop-preview`*
 - **Changes:** `src/utils/desktopPreview.ts`, `src/pages/desktop-preview/page.tsx`, `src/main.tsx`, `src/App.tsx`. Build verified.
 - **Conventions:** Desktop phone preview = outer shell + embed iframe with **`desktopEmbed=1`**; do not use reactive React `iframe src` on preview shell; pinch zoom is blocked — rotate device to refit scale.
 
+---
+
+## 2026-06-21 — Desktop lobby hero: remove letterbox gap under NavBar
+
+Summary of the **whole conversation so far** in this chat: desktop preview shell, zoom reload fixes, NavBar always visible; user reported **black strip between navigation bar and lobby background image** — suspected letterboxing frame.
+
+- **Root cause:** Hero environment image used **`object-fit: contain`** inside **`100vh`** with **`#080808`** section background → top/bottom letterbox bars; plus dark **nav gradient overlay** (`rgba(0,0,0,0.28)` at top) read as black band below frosted NavBar.
+- **Fix:** **`object-fit: cover`** + **`object-position: center top`** so showroom fills edge-to-edge under fixed NavBar; marble underlay **`cover`/`top`** instead of dim letterbox fill; removed top nav gradient overlay; page fallback **`#ECE8E4`** (not **`#080808`**); preview iframe bg matches.
+- **Changes:** `src/pages/desktop-lobby/page.tsx`, `src/pages/desktop-preview/page.tsx`. Build verified.
+
