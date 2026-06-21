@@ -30348,3 +30348,14 @@ Summary of the **whole conversation so far** in this chat: desktop preview shell
 - **Fix:** **`object-fit: cover`** + **`object-position: center top`** so showroom fills edge-to-edge under fixed NavBar; marble underlay **`cover`/`top`** instead of dim letterbox fill; removed top nav gradient overlay; page fallback **`#ECE8E4`** (not **`#080808`**); preview iframe bg matches.
 - **Changes:** `src/pages/desktop-lobby/page.tsx`, `src/pages/desktop-preview/page.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Staging mobileDesktop=1: view real desktop on phone
+
+Summary of the **whole conversation so far** in this chat: phone QA of desktop flagship on **`fsbw.vercel.app`**; **`/desktop-preview`** scaled shell had pinch-zoom reload and scroll UX issues; user tried **`/desktop/lobby?mobileDesktop=1`** but still saw the “designed for desktop viewing” gate because bypass was not yet deployed.
+
+- **Context:** Need a simpler phone path to the **real** `/desktop/*` pages (native scroll + Safari pinch-zoom), not only the scaled preview shell.
+- **Fix:** Staging-only **`?mobileDesktop=1`** on **`/desktop/*`**: persists in **`sessionStorage`** (`baw_mobile_desktop`); **`bootstrapMobileDesktopViewport()`** in **`main.tsx`** sets viewport **`width=1920`** before paint; **`isDesktopArtboardLayoutActive()`** = preview shell **or** mobile bypass; **`getDesktopLayoutViewportWidth()`** returns **1920** so **&lt;1024** gate is skipped; **`reloadForStaleChunks`** skipped in artboard mode; lobby/lounge **`isTooSmall`** initialized synchronously from layout width.
+- **Usage:** `https://fsbw.vercel.app/desktop/lobby?mobileDesktop=1` — scroll down for lounge; pinch to zoom. Param not required on subsequent `/desktop/*` navigations in same tab. **Not** on production **`frontalslayer.com`**.
+- **Changes:** `src/utils/desktopPreview.ts`, `src/main.tsx`, `src/utils/chunkLoadRecovery.ts`, `src/pages/desktop-lobby/page.tsx`, `src/pages/desktop/lounge/page.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
+
