@@ -30329,6 +30329,17 @@ Summary of the **whole conversation so far** in this chat: **`/desktop-preview`*
 
 ---
 
+## 2026-06-21 — Desktop preview: drop iframe, restore lounge scroll, stop auto-reload
+
+Summary of the **whole conversation so far** in this chat: **`/desktop-preview`** for phone QA; repeated pinch-zoom **reload** reports (iframe fixes insufficient); letterbox under NavBar fixed with **cover**; user reported **scroll to lounge broken** and **reload still happening** — iframe approach was wrong.
+
+- **Root causes:** (1) **Iframe** — Safari reloads nested browsing context on zoom/parent updates; (2) **`overflow: hidden`** on embed `html/body` **blocked scroll** to **`ZoneLoungeReveal`**; (3) fixed **1080px** iframe clip hid content below fold; (4) pull-to-refresh / chunk auto-reload on outer page.
+- **Fix (correct architecture):** **Remove iframe entirely.** **`ScaledDesktopViewport`** renders **`DesktopLobbyPage`** / **`DesktopLoungePage`** directly at **1920px** width, **`transform: scale()`** to fit phone width, **scroll in one shell** (`overflow-y: auto`, `overscroll-behavior-y: none`). **`getDesktopLayoutViewportWidth()`** returns **1920** on **`/desktop-preview`** so desktop breakpoint gates pass. **`reloadForStaleChunks`** skipped when **`isDesktopPreviewActive()`**. Removed embed viewport lock + **`bootstrapDesktopEmbedFrame`**.
+- **Changes:** `src/components/desktop-preview/ScaledDesktopViewport.tsx`, `src/pages/desktop-preview/page.tsx`, `src/utils/desktopPreview.ts`, `src/pages/desktop-lobby/page.tsx`, `src/pages/desktop/lounge/page.tsx`, `src/utils/chunkLoadRecovery.ts`, `src/main.tsx`, `src/App.tsx`. Build verified.
+- **Conventions:** **`/desktop-preview`** = direct scaled render, **not** iframe; lounge is reached by **scrolling** the preview shell.
+
+---
+
 ## 2026-06-21 — Desktop lobby hero: remove letterbox gap under NavBar
 
 Summary of the **whole conversation so far** in this chat: desktop preview shell, zoom reload fixes, NavBar always visible; user reported **black strip between navigation bar and lobby background image** — suspected letterboxing frame.
