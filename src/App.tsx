@@ -36,6 +36,7 @@ import {
   reloadForStaleChunks,
 } from './utils/chunkLoadRecovery';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
+import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -158,6 +159,7 @@ const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage')
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 const DesktopLobbyPage = lazyWithRetry(() => import('./pages/desktop-lobby/page'), 'DesktopLobbyPage');
 const DesktopLoungePage = lazyWithRetry(() => import('./pages/desktop/lounge/page'), 'DesktopLoungePage');
+const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 // Error Boundary to catch component errors with auto-recovery
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -284,6 +286,7 @@ const BuildAWigPageWrapper = () => {
 
 function App() {
   const location = useLocation();
+  const isDesktopPreviewShell = isDesktopPreviewWrapperPath(location.pathname);
 
   // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {
@@ -417,14 +420,19 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <CreativePreviewBanner />
+      {!isDesktopPreviewShell ? <CreativePreviewBanner /> : null}
       <MembershipRouteSync />
       <ProductInventorySync />
-      <PsaChatCopyBootstrap />
-      <PsaAssistantWidget />
+      {!isDesktopPreviewShell ? <PsaChatCopyBootstrap /> : null}
+      {!isDesktopPreviewShell ? <PsaAssistantWidget /> : null}
       <DebugModeShell>
         <Route index element={<HomeLandingRedirect />} />
         <Route path="/" element={<HomeLandingRedirect />} />
+        <Route path="/desktop-preview/*" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <DesktopPreviewPage />
+          </Suspense>
+        } />
         <Route path="/desktop/lobby" element={
           <Suspense fallback={<LoadingScreen />}>
             <DesktopLobbyPage />
