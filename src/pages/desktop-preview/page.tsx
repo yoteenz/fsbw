@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   DESKTOP_PREVIEW_VIEWPORT_WIDTH,
+  isDesktopPreviewEnvironment,
   resolveDesktopIframePath,
 } from '../../utils/desktopPreview';
 
@@ -30,10 +31,11 @@ function measureScaleBox(): ScaleBox {
 
 /**
  * Temporary dev shell: scales a 1920×1080 desktop viewport to fit a phone browser.
- * Visit `/desktop-preview` (defaults to desktop lobby) or `/desktop-preview/lounge`, etc.
+ * Staging only — open `https://fsbw.vercel.app/desktop-preview` (or `/desktop-preview/lounge`).
  */
 export default function DesktopPreviewPage() {
   const location = useLocation();
+  const previewAllowed = isDesktopPreviewEnvironment();
   const desktopPath = useMemo(
     () => resolveDesktopIframePath(location.pathname),
     [location.pathname],
@@ -43,6 +45,7 @@ export default function DesktopPreviewPage() {
   const [scaleBox, setScaleBox] = useState<ScaleBox>(() => measureScaleBox());
 
   useEffect(() => {
+    if (!previewAllowed) return;
     const update = () => setScaleBox(measureScaleBox());
     update();
     window.addEventListener('resize', update);
@@ -51,9 +54,10 @@ export default function DesktopPreviewPage() {
       window.removeEventListener('resize', update);
       window.removeEventListener('orientationchange', update);
     };
-  }, []);
+  }, [previewAllowed]);
 
   useEffect(() => {
+    if (!previewAllowed) return;
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
     document.body.style.margin = '0';
@@ -65,7 +69,11 @@ export default function DesktopPreviewPage() {
       document.body.style.margin = '';
       document.body.style.background = '';
     };
-  }, []);
+  }, [previewAllowed]);
+
+  if (!previewAllowed) {
+    return <Navigate to="/home/shop" replace />;
+  }
 
   return (
     <div
