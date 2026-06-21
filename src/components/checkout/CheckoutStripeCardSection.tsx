@@ -6,6 +6,7 @@ import type { CheckoutQuoteLinePayload } from '../../utils/checkoutQuote';
 export type CheckoutStripeCardHandle = {
   confirmPayment: (args: {
     lines: CheckoutQuoteLinePayload[];
+    chargeCurrency?: string;
     billingName: string;
     billingEmail: string;
   }) => Promise<{ ok: true; paymentIntentId: string } | { ok: false; error: string }>;

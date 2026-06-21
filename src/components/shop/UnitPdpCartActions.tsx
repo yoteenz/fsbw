@@ -9,6 +9,8 @@ type UnitPdpCartActionsProps = {
   addToBagState: AddToBagState;
   onAddToBag: () => void;
   onCustomize: () => void;
+  /** Guest tutorial — no sign-in, static preview + share card. */
+  onTryFree?: () => void;
   buttonFontFamily?: string;
   /** `bcf`: no customize row when in stock; notify row only when sold out. */
   variant?: 'unit' | 'bcf';
@@ -26,6 +28,7 @@ export function UnitPdpCartActions({
   addToBagState,
   onAddToBag,
   onCustomize,
+  onTryFree,
   buttonFontFamily = defaultFont,
   variant = 'unit',
   children,
@@ -89,6 +92,20 @@ export function UnitPdpCartActions({
           >
             {soldOut ? 'NOTIFY WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
           </button>
+          {!soldOut && onTryFree ? (
+            <button
+              type="button"
+              onClick={onTryFree}
+              className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 mt-2"
+              style={{
+                borderWidth: '1.3px',
+                color: '#808080',
+                fontFamily: '"Futura PT Demi", Futura, sans-serif',
+              }}
+            >
+              TRY BUILD-A-WIG FREE
+            </button>
+          ) : null}
         </div>
       ) : null}
 

@@ -3,6 +3,10 @@ import Stripe from 'stripe';
 import { getAuthUser } from '../_lib/auth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import { hairstyleAnalysisGrantsFromQuoteLines } from '../_lib/hairstyleAnalysisCheckoutGrants.js';
+import {
+  convertUsdCentsToChargeMinor,
+  stripeCurrencyCode,
+} from '../_lib/pricing/fxRates.js';
 import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
@@ -40,8 +44,8 @@ function getStripe(): Stripe {
 
 /**
  * POST /api/stripe/create-product-payment-intent
- * Body: { lines: QuoteLineInput[] } — same shape as /api/checkout/quote.
- * Amount is always recomputed server-side (USD, cents).
+ * Body: { lines: QuoteLineInput[], chargeCurrency?: string } — same shape as /api/checkout/quote.
+ * Amount is always recomputed server-side from USD catalog pricing, then converted to chargeCurrency.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -116,6 +120,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
+  const charge = convertUsdCentsToChargeMinor(quote.totalCents, body.chargeCurrency);
+  if (charge.chargeAmountMinor <= 0) {
+    sendJson(res, 400, { error: 'Converted charge amount must be greater than zero' });
+    return;
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     sendJson(res, 503, { error: 'Stripe is not configured' });
     return;
@@ -158,8 +168,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       }
     }
     const pi = await stripe.paymentIntents.create({
-      amount: quote.totalCents,
-      currency: 'usd',
+      amount: charge.chargeAmountMinor,
+      currency: stripeCurrencyCode(charge.chargeCurrency),
       automatic_payment_methods: { enabled: true },
       ...(savePaymentMethodForFuture ? { setup_future_usage: 'off_session' as const } : {}),
       ...(stripeCustomerId ? { customer: stripeCustomerId } : {}),
@@ -168,6 +178,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         supabase_user_id: user.id,
         user_email: user.email || '',
         computed_total_cents: String(quote.totalCents),
+        usd_total_cents: String(quote.totalCents),
+        charge_currency: charge.chargeCurrency,
+        charge_amount_minor: String(charge.chargeAmountMinor),
+        fx_rate: String(charge.fxRate),
+        fx_as_of: charge.fxAsOf,
         line_count: String(lines.length),
         booking_autopay_enroll: savePaymentMethodForFuture ? 'true' : 'false',
         ...(hairstyleAnalysisGrants.length > 0
@@ -180,7 +195,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       clientSecret: pi.client_secret,
       paymentIntentId: pi.id,
       stripeCustomerId: stripeCustomerId || null,
-      quote
+      quote: {
+        ...quote,
+        chargeCurrency: charge.chargeCurrency,
+        chargeAmountMinor: charge.chargeAmountMinor,
+        fxRate: charge.fxRate,
+        fxAsOf: charge.fxAsOf,
+      },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Stripe error';

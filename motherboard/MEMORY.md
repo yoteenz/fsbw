@@ -30257,3 +30257,26 @@ Pushed **`master`** + **`preview/mobile`**.
 - **Decisions / outcomes:** Strategic stance: prioritize the money path above everything else — simple mobile shopping, Build-A-Wig confidence, fit/style analysis tied to purchase, checkout conversion, post-purchase trust, and a focused paid membership. Delay or simplify broad gamification/social surfaces until the core purchase loop is converting reliably. PSA should be concierge/sales support, not a general AI toy. Slay Cam should start as shoppable UGC proof, not a full social network. Rewards should remain narrow and margin-aware.
 - **Changes:** No product code changed. Added this MEMORY entry only.
 - **Conventions:** Future product prioritization should rank features by proximity to purchase, reduction of wig-buying anxiety, margin/repeat-order leverage, and operational complexity. Avoid launching overlapping loyalty, referrals, Slay Cam, Slay Tickets, PSA, and membership mechanics before the customer journey is understandable.
+
+---
+
+## 2026-06-20 — Guest Build-A-Wig tutorial (`/build-a-wig/try`) + slay card
+
+Summary of the **whole conversation so far** in this chat: user asked why admin on laptop saw upgrade prompts (admin ≠ premium; lobby gates subscription/BLACK tier; founder `adminSubscriptionOverride` on new browser); hairstyle analysis paid-credits migration error (run `20260610120000_hairstyle_analysis_usage.sql` before `20260610140000_hairstyle_analysis_paid_credits.sql`); product recommendations for free-play BAW tutorial, rewards first-quest, and PSA companion (user wanted premium BAW gates kept, no PSA/founder naming in tutorial); currency conversion issue with Stripe USD (display FX vs settlement — lanes 1–3); then asked to **implement** tutorial route + share card.
+
+- **Context:** Ship guest tutorial BAW without touching production premium gates or PSA branding.
+- **Decisions / outcomes:** New route **`/build-a-wig/try`** — no sign-in, NOIR only, static mannequin triple, limited palette (length/density/color/styling), generic **BUILD GUIDE** panel (not PSA / founder). Ends in **slay card** (canvas PNG, share or download). **SIGN IN FOR FULL BUILD-A-WIG** applies draft to `selected*` / `customizeSelected*` keys and returns to `/build-a-wig/noir/customize`. CTAs on **`/home/shop`** and **NOIR PDP** (`TRY BUILD-A-WIG FREE`). Production BAW `useBuildWigPremiumMembershipStepGate` unchanged.
+- **Changes:** `src/constants/bawTutorialConfig.ts`, `src/utils/bawTutorialStorage.ts`, `src/utils/bawSlayCard.ts`, `src/components/buildWig/BawTutorialGuidePanel.tsx`, `src/pages/build-a-wig/try/page.tsx`, `src/App.tsx` route, `UnitPdpCartActions` optional `onTryFree`, `products/page.tsx`, `straight/noir/page.tsx`, `activity.ts` tutorial event types. Build verified.
+- **Conventions:** Tutorial = separate route; do not bypass `isPremiumMemberForGatedFeatures` in full BAW. Guide copy stays generic (“BUILD GUIDE”), not PSA-named.
+
+---
+
+## 2026-06-20 — Multi-currency Stripe checkout (Phase 1 + 2)
+
+Summary of the **whole conversation so far** in this chat: admin upgrade prompts diagnosis; hairstyle analysis migration order; CPO strategy recommendations; currency conversion lanes (user chose **Lane 3** — server FX + Stripe charge in picker currency); guest BAW tutorial shipped (`/build-a-wig/try`); user confirmed ready for **multi-currency Phase 1 + 2**.
+
+- **Context:** Shoppers pick currency site-wide; Stripe product checkout should charge the converted amount in that currency (not USD-only display).
+- **Decisions / outcomes:** **Phase 1 + 2** — server FX table (`api/_lib/pricing/fxRates.ts`, mirrors `DEFAULT_CURRENCY_RATES`), public `GET /api/fx/rates`, `POST /api/checkout/quote` accepts `chargeCurrency` and returns `chargeAmountMinor` / `fxRate` / `fxAsOf`; `POST /api/stripe/create-product-payment-intent` creates PI in charge currency with metadata (`usd_total_cents`, `charge_currency`, `fx_rate`). Checkout uses shared `DEFAULT_CURRENCY_RATES`, fetches server quote when Stripe card fields active, shows **YOUR CARD WILL BE CHARGED …** disclosure, passes `selectedCurrency` through confirm. **Not in scope:** membership Checkout Session, booking autopay, BCF/BAW custom lines, full subtotal (tax/shipping/vouchers) on PI.
+- **Changes:** `api/_lib/pricing/fxRates.ts`, `api/fx/rates.ts`, `api/checkout/quote.ts`, `api/stripe/create-product-payment-intent.ts`, `src/utils/checkoutQuote.ts`, `src/utils/api.ts`, `src/utils/productCheckoutStripe.ts`, `src/utils/chargeCurrencyFormat.ts`, `CheckoutStripeCardSection.tsx`, `checkout/page.tsx`, `docs/CHECKOUT_SERVER_QUOTE.md`, `motherboard/CORE.md`.
+- **Conventions:** Catalog pricing stays USD on server; FX is static table until provider feed. PI only for `fullyResolved` server quotes.
+
