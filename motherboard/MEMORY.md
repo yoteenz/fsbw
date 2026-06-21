@@ -30280,3 +30280,14 @@ Summary of the **whole conversation so far** in this chat: admin upgrade prompts
 - **Changes:** `api/_lib/pricing/fxRates.ts`, `api/fx/rates.ts`, `api/checkout/quote.ts`, `api/stripe/create-product-payment-intent.ts`, `src/utils/checkoutQuote.ts`, `src/utils/api.ts`, `src/utils/productCheckoutStripe.ts`, `src/utils/chargeCurrencyFormat.ts`, `CheckoutStripeCardSection.tsx`, `checkout/page.tsx`, `docs/CHECKOUT_SERVER_QUOTE.md`, `motherboard/CORE.md`.
 - **Conventions:** Catalog pricing stays USD on server; FX is static table until provider feed. PI only for `fullyResolved` server quotes.
 
+---
+
+## 2026-06-21 — Desktop preview shell (`/desktop-preview`)
+
+Summary of the **whole conversation so far** in this chat: user is building the desktop site at `/desktop/lobby` and asked for a **temporary** phone preview that scales a **1920×1080** desktop viewport down with CSS `transform: scale()` so they can preview the **desktop design only** from a mobile browser (e.g. `frontalslayer.com/desktop-preview`).
+
+- **Context:** Mobile-first project; desktop flagship in progress; need dev QA of desktop layouts on phone without treating mobile routes as desktop.
+- **Decisions / outcomes:** New route **`/desktop-preview`** (and **`/desktop-preview/*`**) wraps an **iframe** pointed at **`/desktop/...`** only. Default iframe target **`/desktop/lobby`**; **`/desktop-preview/lounge`** → **`/desktop/lounge`**. Scale = `min(innerWidth/1920, innerHeight/1080)`; transform origin top-left. Outer shell hides PSA widget + creative preview banner; iframe loads full app at desktop width so lounge `innerWidth < 1024` gate passes. Small bottom pill shows path + scale %.
+- **Changes:** `src/utils/desktopPreview.ts`, `src/pages/desktop-preview/page.tsx`, `src/App.tsx` (lazy route + `isDesktopPreviewWrapperPath` chrome suppression). Build verified.
+- **Conventions:** **`/desktop-preview`** is dev-only scaling shell — not the production desktop entry; production desktop remains **`/desktop/lobby`**. Remove when native desktop mobile QA is no longer needed.
+
