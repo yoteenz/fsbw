@@ -30359,3 +30359,14 @@ Summary of the **whole conversation so far** in this chat: phone QA of desktop f
 - **Usage:** `https://fsbw.vercel.app/desktop/lobby?mobileDesktop=1` — scroll down for lounge; pinch to zoom. Param not required on subsequent `/desktop/*` navigations in same tab. **Not** on production **`frontalslayer.com`**.
 - **Changes:** `src/utils/desktopPreview.ts`, `src/main.tsx`, `src/utils/chunkLoadRecovery.ts`, `src/pages/desktop-lobby/page.tsx`, `src/pages/desktop/lounge/page.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Desktop lobby: remove hero brand lock-up and bottom nav
+
+Summary of the **whole conversation so far** in this chat: phone QA / staging desktop flagship; **`?mobileDesktop=1`** bypass deployed; user asked to clean up desktop lobby hero — remove centered red **FRONTAL SLAYER** branding and gray bottom navigation strip.
+
+- **Removed:** **BRAND LOCK-UP** block (red FRONTAL SLAYER, LUXURY WITHOUT LIMITS tagline, decorative rules) from hero center.
+- **Removed:** **BOTTOM NAV** **`ZonePortals`** holographic portal strip at bottom of hero (SHOP, BUILD-A-WIG, GALLERY, etc.).
+- **Kept:** Top **`NavBar`**, Build-A-Wig / PSA side panels, particle field, lounge section below on scroll.
+- **Changes:** `src/pages/desktop-lobby/page.tsx` only. Build verified.
+
