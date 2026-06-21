@@ -30379,3 +30379,13 @@ Summary of the **whole conversation so far** in this chat: desktop flagship stag
 - **Change:** `/desktop/lounge` environment layer now uses **`https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3567.png`** (`object-fit: cover`); falls back to local marble on load error. Lobby hero and **`ZoneLoungeReveal`** unchanged.
 - **Changes:** `src/pages/desktop/lounge/page.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — ZoneLoungeReveal: IMG_3567 (lobby scroll lounge)
+
+Summary of the **whole conversation so far** in this chat: user set **`IMG_3567.png`** for desktop lounge; first change only hit **`/desktop/lounge`** route — lounge **directly below lobby** on **`/desktop/lobby`** is **`ZoneLoungeReveal`**, which still showed **`mini-marble.png`** plus **`rgba(253,249,248,0.88)`** overlay hiding any new art.
+
+- **Root cause:** Wrong surface updated; **`ZoneLoungeReveal`** owned the scroll lounge background, not **`/desktop/lounge`** alone.
+- **Fix:** **`ZoneLoungeReveal`** uses shared **`DESKTOP_LOUNGE_BG_URL`** (`desktopLobbyEnv.ts`), full-bleed **`img`** + **`object-fit: cover`**; removed mini-marble tile and 88% white wash. **`/desktop/lounge`** imports same constant.
+- **Changes:** `src/components/desktop-lobby/ZoneLoungeReveal.tsx`, `src/constants/desktopLobbyEnv.ts`, `src/pages/desktop/lounge/page.tsx`. Build verified.
+
