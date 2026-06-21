@@ -30291,3 +30291,15 @@ Summary of the **whole conversation so far** in this chat: user is building the 
 - **Changes:** `src/utils/desktopPreview.ts`, `src/pages/desktop-preview/page.tsx`, `src/App.tsx` (lazy route + `isDesktopPreviewWrapperPath` chrome suppression). Build verified.
 - **Conventions:** Open **`https://fsbw.vercel.app/desktop-preview`** on phone for desktop QA. Not for production **`frontalslayer.com`** until desktop launches. Production desktop entry remains **`/desktop/lobby`** on staging.
 
+---
+
+## 2026-06-21 — Desktop preview zoom reload fix
+
+Summary of the **whole conversation so far** in this chat: user building desktop at `/desktop/lobby`; asked for temporary **`/desktop-preview`** scaled iframe shell (1920×1080 → phone via CSS `transform: scale()`); corrected URL to **`https://fsbw.vercel.app/desktop-preview`** (staging only, gated with **`isDesktopPreviewEnvironment()`**); then reported **auto reload on pinch zoom**.
+
+- **Context:** Phone QA of desktop design; pinch-zoom caused constant refresh.
+- **Root cause:** (1) **`window.resize`** listener recalculated scale on every pinch-zoom; (2) React re-rendering `<iframe src={...}>` re-assigned `src` in Safari → full iframe reload even when URL unchanged.
+- **Fix:** Assign iframe **`src` once via ref** (only when desktop path changes); remove **`resize`** listener — recalc scale on mount + **`orientationchange`** only; lock preview viewport meta (`maximum-scale=1, user-scalable=no`) + `touch-action: manipulation` on shell.
+- **Changes:** `src/pages/desktop-preview/page.tsx`. Build verified.
+- **Conventions:** Do not bind iframe `src` as a reactive React prop on a page that re-renders often; avoid `resize` for fit-to-screen on mobile preview shells (pinch zoom fires it).
+
