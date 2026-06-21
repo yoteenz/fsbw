@@ -4,6 +4,7 @@ import { getDesktopLayoutViewportWidth } from '../../../utils/desktopPreview';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 
+const LOUNGE_BG = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3567.png';
 const MARBLE = '/assets/marble%20bg.png';
 
 // Acrylic panel used for lounge content blocks
@@ -215,6 +216,7 @@ function CoffeeTable() {
 export default function DesktopLoungePage() {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
+  const [bgSrc, setBgSrc] = useState(LOUNGE_BG);
   const [isTooSmall, setIsTooSmall] = useState(() => getDesktopLayoutViewportWidth() < 1024);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -251,13 +253,19 @@ export default function DesktopLoungePage() {
 
       <section className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
 
-        {/* Marble environment base */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 0,
-          backgroundImage: `url(${MARBLE})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-        }} />
+        {/* Lounge environment */}
+        <img
+          src={bgSrc}
+          alt=""
+          onError={() => setBgSrc(MARBLE)}
+          style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center center',
+            display: 'block',
+          }}
+        />
 
         {/* Intimate ceiling — softer, lower gradient than lobby */}
         <div className="absolute inset-0 pointer-events-none" style={{
