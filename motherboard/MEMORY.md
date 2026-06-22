@@ -30547,3 +30547,16 @@ Summary of the **whole conversation so far** in this chat: desktop penthouse/nav
 - **Tradeoff:** Horizontal room isolation is looser than 0.30 room-zoom (pan-only); **`DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO`** retained for future tuning.
 - **Changes:** `desktopLobbyPanorama.ts`, `penthouse/page.tsx`, `DesktopFloorZonePage.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Luxury architectural room destination directory
+
+Summary of the **whole conversation so far** in this chat: luxury floor directory, panorama vertical fill fix; user requested **room/zone directory** match same building ecosystem as floor directory — not tabs/pills/button group.
+
+- **`DesktopRoomNavPanel` → destination directory:** Horizontal companion panel to floor directory — same acrylic glass frame, marble base, chrome cap, crystal edge, frosted destination cards (**R1**, **R2**, **R3** via **`getDirectoryRoomCode`**).
+- **Status labels:** Active → “Active destination”; idle → “Available”; hover → “Select destination”; coming soon → “Explore”; pending → “Destination”.
+- **Active state:** Red ambient glow capsule, card elevation, crystal highlights — mirrors floor directory.
+- **Horizontal connector:** Illuminated line through cards; glow dot at active room; directional pulse (**left/right**) + glow travel on room change via **`roomIndexToConnectorRatio`** + **`resolveRoomTravelDirection`**.
+- **Hierarchy:** Floor directory = building level; room directory = penthouse destination selector (bottom center on **`/desktop/penthouse`**).
+- **Changes:** `DesktopRoomNavPanel.tsx`, `DesktopRoomDirectory.css`, `desktopRoomDirectory.ts`. Build verified; pushed **`master`** + **`preview/mobile`**.
+
