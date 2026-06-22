@@ -2,10 +2,8 @@
   position: fixed;
   inset: 0;
   z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(ellipse 120% 90% at 50% 20%, #f4f2ef 0%, #e8e4df 55%, #d4cec8 100%);
+  overflow: hidden;
+  background: #0a0a0a;
   opacity: 1;
   transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: auto;
@@ -24,10 +22,13 @@
 }
 
 .desktop-tower-elevator__shell {
-  position: relative;
-  width: min(96vw, calc(90vh * 1915 / 821));
-  max-height: 90vh;
-  filter: drop-shadow(0 32px 80px rgba(0, 0, 0, 0.14));
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: calc(100vh - 68px);
+  width: max(100vw, calc((100vh - 68px) * 1915 / 821));
+  max-width: none;
 }
 
 /* Glass-masked exterior — only visible through window cutouts */
@@ -115,7 +116,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center center;
   z-index: 2;
   pointer-events: none;
   user-select: none;

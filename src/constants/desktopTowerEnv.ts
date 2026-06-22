@@ -4,3 +4,6 @@ export const DESKTOP_TOWER_ELEVATOR_SHELL_URL =
 
 export const DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH = 1915;
 export const DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT = 821;
+
+/** Fixed desktop NavBar height — scene backgrounds sit below this offset. */
+export const DESKTOP_NAVBAR_HEIGHT_PX = 68;

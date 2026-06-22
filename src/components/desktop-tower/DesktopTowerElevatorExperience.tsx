@@ -135,10 +135,7 @@ export function DesktopTowerElevatorExperience({
         </defs>
       </svg>
 
-      <div
-        className="desktop-tower-elevator__shell"
-        style={{ aspectRatio: `${DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH} / ${DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT}` }}
-      >
+      <div className="desktop-tower-elevator__shell">
         {/* Moving exterior — visible only through glass clip */}
         <div className="desktop-tower-elevator__glass-clip">
           <div
