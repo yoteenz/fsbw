@@ -1,11 +1,11 @@
 import { Navigate, useSearchParams } from 'react-router-dom';
-import { DESKTOP_LOBBY_PATH, DESKTOP_FLOORS } from '../../../constants/desktopFloors';
+import { DESKTOP_FLOORS, DESKTOP_GALLERY_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
 import DesktopFloorZonePage from '../_shared/DesktopFloorZonePage';
 
-const FLOOR = DESKTOP_FLOORS.find((f) => f.path === DESKTOP_LOBBY_PATH)!;
+const FLOOR = DESKTOP_FLOORS.find((f) => f.path === DESKTOP_GALLERY_PATH)!;
 
-export default function DesktopLobbyFloorPage() {
+export default function DesktopGalleryPage() {
   const [searchParams] = useSearchParams();
 
   if (!searchParams.get('zone')) {

@@ -13,16 +13,31 @@ export type DesktopLobbyPanoramaRoom = {
   label: string;
   /** Horizontal focal point on the full source image (0 = left, 1 = right). */
   focalXRatio: number;
+  comingSoon?: boolean;
 };
 
 /** Top-floor rooms on the single panoramic asset (left → right). */
 export const DESKTOP_LOBBY_PANORAMA_ROOMS: readonly DesktopLobbyPanoramaRoom[] = [
-  { id: 'analysis-lab', label: 'Hair Analysis Lab', focalXRatio: 0.165 },
+  { id: 'analysis-lab', label: 'Hair Analysis Lab', focalXRatio: 0.165, comingSoon: true },
   { id: 'showroom', label: 'Hair Showroom', focalXRatio: 0.5 },
   { id: 'boutique', label: 'Extensions Boutique', focalXRatio: 0.835 },
 ] as const;
 
-export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX = 1;
+export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID = 'showroom';
+
+export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX = DESKTOP_LOBBY_PANORAMA_ROOMS.findIndex(
+  (r) => r.id === DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID,
+);
+
+export function getPenthouseRoomIndexById(roomId: string | null | undefined): number {
+  if (!roomId) return DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX;
+  const i = DESKTOP_LOBBY_PANORAMA_ROOMS.findIndex((r) => r.id === roomId);
+  return i >= 0 ? i : DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX;
+}
+
+export function getPenthouseRoomIdByIndex(index: number): string {
+  return DESKTOP_LOBBY_PANORAMA_ROOMS[index]?.id ?? DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID;
+}
 
 /**
  * Horizontal slice of the source image shown per room (smaller = more zoom).

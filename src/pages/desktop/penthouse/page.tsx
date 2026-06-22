@@ -1,14 +1,49 @@
-import { useState, useEffect } from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useMemo } from 'react';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../../components/desktop-lobby/PSAConciergePanel';
-import { DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX } from '../../../constants/desktopLobbyPanorama';
+import {
+  DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID,
+  DESKTOP_LOBBY_PANORAMA_ROOMS,
+  getPenthouseRoomIdByIndex,
+  getPenthouseRoomIndexById,
+} from '../../../constants/desktopLobbyPanorama';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
+import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
 import { DesktopLobbyPanorama } from '../../../components/desktop-lobby/DesktopLobbyPanorama';
 import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
 import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
+
+function PenthouseComingSoonBadge({ label }: { label: string }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 'clamp(88px, 12vh, 120px)',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 40,
+        pointerEvents: 'none',
+        fontFamily: '"Futura PT Medium"',
+        fontSize: '9px',
+        letterSpacing: '0.24em',
+        textTransform: 'uppercase',
+        color: '#EB1C24',
+        background: 'rgba(255,255,255,0.82)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid rgba(235,28,36,0.35)',
+        padding: '8px 16px',
+        borderRadius: '8px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+      }}
+    >
+      {label} — coming soon
+    </div>
+  );
+}
 
 function PenthouseViewport({
   roomIndex,
@@ -17,20 +52,8 @@ function PenthouseViewport({
   roomIndex: number;
   onRoomIndexChange: (index: number) => void;
 }) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 80);
-    return () => clearTimeout(t);
-  }, []);
-
-  const floatIn = (delayMs: number, dy = 24) => ({
-    transition: `opacity 1.1s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms, transform 1.2s cubic-bezier(0.16,1,0.3,1) ${delayMs}ms`,
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : `translateY(${dy}px)`,
-  });
-
   const sceneHeight = isDesktopArtboardLayoutActive() ? '1012px' : 'calc(100vh - 68px)';
+  const room = DESKTOP_LOBBY_PANORAMA_ROOMS[roomIndex];
 
   return (
     <section
@@ -59,6 +82,8 @@ function PenthouseViewport({
         <ParticleField />
       </div>
 
+      {room?.comingSoon ? <PenthouseComingSoonBadge label={room.label} /> : null}
+
       <div
         style={{
           position: 'absolute',
@@ -66,7 +91,6 @@ function PenthouseViewport({
           left: '6%',
           zIndex: 30,
           filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.3))',
-          ...floatIn(400, 32),
         }}
       >
         <BuildAWigPanel />
@@ -79,7 +103,6 @@ function PenthouseViewport({
           right: '6%',
           zIndex: 30,
           filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.3))',
-          ...floatIn(560, 32),
         }}
       >
         <PSAConciergePanel />
@@ -92,12 +115,32 @@ function PenthouseViewport({
 }
 
 export default function DesktopPenthousePage() {
-  const [roomIndex, setRoomIndex] = useState(DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const roomParam = searchParams.get('room');
+
+  const roomIndex = useMemo(() => getPenthouseRoomIndexById(roomParam), [roomParam]);
+
+  const onRoomIndexChange = useCallback(
+    (index: number) => {
+      const roomId = getPenthouseRoomIdByIndex(index);
+      setSearchParams({ room: roomId }, { replace: true });
+    },
+    [setSearchParams],
+  );
+
+  if (!roomParam) {
+    return (
+      <Navigate
+        to={buildDesktopElevatorHref(DESKTOP_PENTHOUSE_PATH, DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID)}
+        replace
+      />
+    );
+  }
 
   return (
     <div style={{ height: '100vh', overflow: 'hidden', background: '#0A0A0A' }}>
-      <NavBar activeLink="HOME" />
-      <PenthouseViewport roomIndex={roomIndex} onRoomIndexChange={setRoomIndex} />
+      <NavBar />
+      <PenthouseViewport roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
     </div>
   );
 }

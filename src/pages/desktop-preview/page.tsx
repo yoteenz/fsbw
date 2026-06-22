@@ -6,9 +6,10 @@ import {
   isDesktopPreviewEnvironment,
   resolveDesktopIframePath,
 } from '../../utils/desktopPreview';
+import { DESKTOP_GALLERY_PATH } from '../../constants/desktopFloors';
 
 const DesktopPenthousePageLazy = lazy(() => import('../desktop/penthouse/page'));
-const DesktopLoungePageLazy = lazy(() => import('../desktop/lounge/page'));
+const DesktopGalleryPageLazy = lazy(() => import('../desktop/gallery/page'));
 
 /**
  * Staging phone preview: renders desktop pages directly inside a scaled 1920px
@@ -27,8 +28,8 @@ function DesktopPreviewPage() {
   }
 
   const page =
-    desktopPath === '/desktop/lounge' ? (
-      <DesktopLoungePageLazy />
+    desktopPath === DESKTOP_GALLERY_PATH || desktopPath.startsWith(`${DESKTOP_GALLERY_PATH}?`) ? (
+      <DesktopGalleryPageLazy />
     ) : (
       <DesktopPenthousePageLazy />
     );

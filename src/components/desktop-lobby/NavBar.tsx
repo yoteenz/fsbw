@@ -1,24 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  DESKTOP_NAV_QUICK_ROUTES,
+  buildDesktopQuickRouteHref,
+  resolveDesktopNavActiveLabel,
+} from '../../constants/desktopNavQuickRoutes';
 
-const NAV_LINKS = [
-  { label: 'HOME', path: '/desktop/penthouse' },
-  { label: 'SHOP', path: '/home/shop' },
-  { label: 'BUILD-A-WIG', path: '/build-a-wig' },
-  { label: 'SLAY CAM', path: '/tools/slay-cam' },
-  { label: 'ANALYSIS', path: '/tools/live-try-on' },
-  { label: 'MEMBERSHIP', path: '/account/membership' },
-  { label: 'REWARDS', path: '/account/rewards' },
-  { label: 'PSA', path: '/account/concierge' },
-];
-
-interface NavBarProps {
-  activeLink?: string;
-}
-
-export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
+export function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(0);
+
+  const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search);
 
   useEffect(() => {
     const syncCart = () => {
@@ -37,6 +30,8 @@ export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
     return () => window.removeEventListener('cartUpdated', syncCart);
   }, []);
 
+  const homeRoute = DESKTOP_NAV_QUICK_ROUTES.find((r) => r.label === 'HOME')!;
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between px-10"
@@ -48,9 +43,8 @@ export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
         borderBottom: '1px solid rgba(0,0,0,0.07)',
       }}
     >
-      {/* Wordmark */}
       <button
-        onClick={() => navigate('/desktop/penthouse')}
+        onClick={() => navigate(buildDesktopQuickRouteHref(homeRoute))}
         className="flex items-center flex-shrink-0"
         style={{ fontFamily: '"Futura PT Medium"', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
@@ -62,12 +56,11 @@ export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
         </span>
       </button>
 
-      {/* Primary navigation */}
       <div className="flex items-center gap-8">
-        {NAV_LINKS.map((link) => (
+        {DESKTOP_NAV_QUICK_ROUTES.map((link) => (
           <button
             key={link.label}
-            onClick={() => navigate(link.path)}
+            onClick={() => navigate(buildDesktopQuickRouteHref(link))}
             className="relative"
             style={{
               fontFamily: '"Futura PT Medium"',
@@ -101,11 +94,10 @@ export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
         ))}
       </div>
 
-      {/* Icon cluster */}
       <div className="flex items-center gap-5">
         <button
           className="hover:opacity-50 transition-opacity"
-          onClick={() => navigate('/home/shop')}
+          onClick={() => navigate(buildDesktopQuickRouteHref(DESKTOP_NAV_QUICK_ROUTES.find((r) => r.label === 'SHOP')!))}
           aria-label="Search"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >

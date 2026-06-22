@@ -159,9 +159,10 @@ const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage')
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 const DesktopPenthousePage = lazyWithRetry(() => import('./pages/desktop/penthouse/page'), 'DesktopPenthousePage');
 const DesktopLobbyFloorPage = lazyWithRetry(() => import('./pages/desktop/lobby/page'), 'DesktopLobbyFloorPage');
-const DesktopLoungePage = lazyWithRetry(() => import('./pages/desktop/lounge/page'), 'DesktopLoungePage');
+const DesktopLoungeRedirectPage = lazyWithRetry(() => import('./pages/desktop/lounge/page'), 'DesktopLoungeRedirectPage');
+const DesktopGalleryPage = lazyWithRetry(() => import('./pages/desktop/gallery/page'), 'DesktopGalleryPage');
 const DesktopConciergePage = lazyWithRetry(() => import('./pages/desktop/concierge/page'), 'DesktopConciergePage');
-const DesktopSlayCamPage = lazyWithRetry(() => import('./pages/desktop/slay-cam/page'), 'DesktopSlayCamPage');
+const DesktopSlayCamRedirectPage = lazyWithRetry(() => import('./pages/desktop/slay-cam/page'), 'DesktopSlayCamRedirectPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 // Error Boundary to catch component errors with auto-recovery
@@ -449,7 +450,12 @@ function App() {
         } />
         <Route path="/desktop/lounge" element={
           <Suspense fallback={<LoadingScreen />}>
-            <DesktopLoungePage />
+            <DesktopLoungeRedirectPage />
+          </Suspense>
+        } />
+        <Route path="/desktop/gallery" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <DesktopGalleryPage />
           </Suspense>
         } />
         <Route path="/desktop/concierge" element={
@@ -459,7 +465,7 @@ function App() {
         } />
         <Route path="/desktop/slay-cam" element={
           <Suspense fallback={<LoadingScreen />}>
-            <DesktopSlayCamPage />
+            <DesktopSlayCamRedirectPage />
           </Suspense>
         } />
         <Route path="/lobby/lounge" element={<LobbyPage />} />

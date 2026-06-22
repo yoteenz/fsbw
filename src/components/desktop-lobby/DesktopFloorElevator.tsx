@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { DESKTOP_FLOORS } from '../../constants/desktopFloors';
+import { buildDesktopElevatorHref } from '../../constants/desktopNavQuickRoutes';
 import { DESKTOP_BRAND_RED, desktopAcrylicPanelStyle } from './desktopLobbyAcrylic';
 
 type DesktopFloorElevatorProps = {
@@ -76,7 +77,7 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
                 key={floor.path}
                 type="button"
                 onClick={() => {
-                  if (!active) navigate(floor.path);
+                  if (!active) navigate(buildDesktopElevatorHref(floor.path, floor.defaultZoneId));
                 }}
                 title={`Level ${floor.level} — ${floor.name}`}
                 style={{
