@@ -30501,3 +30501,12 @@ Summary of the **whole conversation so far** in this chat: penthouse immersive p
 - **URLs:** penthouse **`?room=`**; lobby/gallery/concierge **`?zone=`**. **`DesktopFloorZonePage`** for zone placeholders + coming soon.
 - **Changes:** `desktopFloors.ts`, `desktopNavQuickRoutes.ts`, `NavBar.tsx`, `DesktopFloorElevator.tsx`, floor pages, penthouse URL sync, `App.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Penthouse panorama: fix stretch (uniform scale)
+
+Summary of the **whole conversation so far** in this chat: 4-floor desktop, quick-transport nav, single-room zoom; user reported image looked **stretched** after independent scaleX/scaleY (width zoom correct, proportions wrong).
+
+- **Fix:** Single **`scale = max(scaleX, scaleY)`** — proportional zoom for one-room width + slab height; **`translateY`** bottom-aligns slab edge when room zoom is taller than viewport. No more **`scale(scaleX, scaleY)`** anisotropic stretch.
+- **Changes:** `desktopLobbyPanorama.ts`, `DesktopLobbyPanorama.tsx`. Build verified.
+
