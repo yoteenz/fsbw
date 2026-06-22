@@ -31,8 +31,6 @@ export function ExtensionsBoutiqueHotspot({ rect, onActivate, disabled = false }
       onKeyDown={onKeyDown}
       style={{
         ...rectToPercentStyle(rect),
-        zIndex: 12,
-        pointerEvents: disabled ? 'none' : 'auto',
       }}
     >
       <span className="extensions-boutique-hotspot__cue" aria-hidden>

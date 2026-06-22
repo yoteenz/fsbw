@@ -1,18 +1,18 @@
 import type { FinalSceneHitRect } from '../constants/finalLobbySceneAssets';
 
-/** Extensions Boutique hero art — 21:9 room environment. */
-export const EXTENSIONS_BOUTIQUE_ART_WIDTH = 2560;
-export const EXTENSIONS_BOUTIQUE_ART_HEIGHT = 1080;
+/** Extensions Boutique hero art — matches `8358D320…684.png` (1915×821). */
+export const EXTENSIONS_BOUTIQUE_ART_WIDTH = 1915;
+export const EXTENSIONS_BOUTIQUE_ART_HEIGHT = 821;
 
 /**
- * Hanging extensions wall — image-normalized hit rect (0–1).
- * Tuned to the left wall display in `8358D320…684.png`.
+ * Central hanging-extensions wall — image-normalized hit rect (0–1).
+ * Covers the lit recess + bundles display below the red signage.
  */
 export const EXTENSIONS_WALL_HOTSPOT_RECT: FinalSceneHitRect = {
-  left: 0.048,
-  top: 0.14,
-  width: 0.175,
-  height: 0.58,
+  left: 0.36,
+  top: 0.15,
+  width: 0.3,
+  height: 0.6,
 };
 
 export const EXTENSIONS_BOUTIQUE_SHOP_TABS = ['bundles', 'frontals', 'closures'] as const;

@@ -30,11 +30,11 @@ export function ExtensionsBoutiqueExperience({ viewportMeasureRef, active }: Pro
   if (!active) return null;
 
   return (
-    <>
+    <div className="extensions-boutique-layer" aria-hidden={false}>
       {hotspotRect && !panelOpen ? (
         <ExtensionsBoutiqueHotspot rect={hotspotRect} onActivate={openPanel} />
       ) : null}
       <ExtensionsBoutiqueShopPanel isOpen={panelOpen} onClose={closePanel} />
-    </>
+    </div>
   );
 }
