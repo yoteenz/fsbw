@@ -30813,3 +30813,15 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **`useDesktopRoomCoverHitRect`** + **`desktopExtensionsBoutique.ts`** hit rect constants (21:9 art, cover/contain aware).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Revert iPad artboard: phone-only scaled layout
+
+Summary of the **whole conversation so far** in this chat: desktop tower features (nav, heroes, PSA suite, Extensions Boutique hotspot); user reported **iPad should not get phone artboard/letterboxing** — restore native desktop on iPad.
+
+- **Artboard bypass** (`desktopPreview.ts`): scaled 1920×1080 shell only when viewport **< 1024px** (phones) or staging **`?mobileDesktop=1`** — removed **`DESKTOP_ARTBOARD_MAX_WIDTH = 1366`** tablet threshold.
+- **Room heroes** (`DesktopZoneRoomScene.css`): **`object-fit: cover`** on iPad/desktop again; **`contain`** only on phone artboard class (preview shell / mobile bypass).
+- **Elevator video** (`DesktopTowerElevator.css`): removed **`max-width: 1366px`** contain override — always **`cover`** on native desktop/iPad.
+- Panel responsive breakpoints in boutique/PSA suite CSS tightened to **1023px** (phone artboard only).
+- Pushed **`master`** + **`preview/mobile`**.
+
