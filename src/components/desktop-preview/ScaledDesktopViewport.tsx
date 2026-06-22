@@ -10,7 +10,8 @@ type Props = {
 };
 
 /**
- * Scale the 1920×1080 desktop artboard to fit phones (uniform scale, no stretch).
+ * Phone / mobile desktop: fill the screen height with the 1920×1080 artboard (zoom in).
+ * Sides crop when needed; scroll vertically for taller floors.
  */
 export function ScaledDesktopViewport({ children }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
@@ -26,23 +27,18 @@ export function ScaledDesktopViewport({ children }: Props) {
       const stage = stageRef.current;
       if (!shell || !scaler || !stage) return;
 
-      const scaleX = shell.clientWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
-      const scaleY = shell.clientHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
-      const scale = Math.min(scaleX, scaleY);
-
+      const scale = shell.clientHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
       const scaledWidth = DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale;
       const contentHeight = stage.scrollHeight;
-      const scaledHeight = contentHeight * scale;
 
       stage.style.width = `${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`;
       stage.style.transformOrigin = 'top left';
       stage.style.transform = `scale(${scale})`;
 
       scaler.style.width = `${scaledWidth}px`;
-      scaler.style.height = `${scaledHeight}px`;
-      scaler.style.marginLeft = `${Math.max(0, (shell.clientWidth - scaledWidth) / 2)}px`;
-      scaler.style.marginTop =
-        scaledHeight <= shell.clientHeight ? `${Math.max(0, (shell.clientHeight - scaledHeight) / 2)}px` : '0';
+      scaler.style.height = `${contentHeight * scale}px`;
+      scaler.style.marginLeft = `${(shell.clientWidth - scaledWidth) / 2}px`;
+      scaler.style.marginTop = '0';
     };
 
     layoutStage();
@@ -74,19 +70,14 @@ export function ScaledDesktopViewport({ children }: Props) {
       ref={shellRef}
       className="desktop-preview-scroll-shell"
       style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: '100%',
-        maxHeight: '100dvh',
+        position: 'fixed',
+        inset: 0,
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
         overscrollBehaviorY: 'contain',
         background: '#050505',
-        touchAction: 'auto',
+        touchAction: 'pan-y',
       }}
     >
       <div ref={scalerRef} style={{ position: 'relative' }}>

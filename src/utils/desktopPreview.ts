@@ -199,12 +199,10 @@ export function bootstrapDesktopPreviewModes(): void {
 }
 
 export function measureDesktopPreviewScaleBox(
-  shellWidth: number,
+  _shellWidth: number,
   shellHeight: number,
 ): DesktopPreviewScaleBox {
-  const scaleX = shellWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
-  const scaleY = shellHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
-  const scale = Math.min(scaleX, scaleY);
+  const scale = shellHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
   return {
     scale,
     width: DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale,

@@ -12,8 +12,7 @@ function getScaledShellSnapshot(): boolean {
 }
 
 /**
- * On phone + tablet `/desktop/*`, scale the fixed 1920×1080 artboard to fit the screen
- * (same model as `/desktop-preview`) instead of a raw desktop crop.
+ * On phone `/desktop/*`, scale the fixed 1920×1080 artboard to fill screen height (zoom in).
  */
 export function DesktopRouteShell({ children }: { children: ReactNode }) {
   const useScaledShell = useSyncExternalStore(subscribe, getScaledShellSnapshot, () => false);
