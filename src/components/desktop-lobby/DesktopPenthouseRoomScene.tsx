@@ -1,42 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   DESKTOP_PENTHOUSE_DEFAULT_ROOM_INDEX,
   DESKTOP_PENTHOUSE_ROOMS,
   getPenthouseRoomIdByIndex,
   resolvePenthouseRoomBackground,
 } from '../../constants/desktopPenthouseRooms';
-import { isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
-import './DesktopPenthouseRoomScene.css';
+import { DesktopZoneRoomScene } from './DesktopZoneRoomScene';
 
-const ROOM_TRANSITION_MS = 880;
-
-type RoomBackgroundProps = {
-  roomId: string;
-  className: string;
-};
-
-function RoomBackground({ roomId, className }: RoomBackgroundProps) {
-  const [src, setSrc] = useState(() => resolvePenthouseRoomBackground(roomId));
-
-  useEffect(() => {
-    setSrc(resolvePenthouseRoomBackground(roomId));
-  }, [roomId]);
-
-  return (
-    <img
-      src={src}
-      alt=""
-      draggable={false}
-      className={className}
-      onError={() => {
-        setSrc((current) => {
-          const fallback = resolvePenthouseRoomBackground(roomId, { fallback: true });
-          return current === fallback ? current : fallback;
-        });
-      }}
-    />
-  );
-}
+const PENTHOUSE_ZONE_IDS = DESKTOP_PENTHOUSE_ROOMS.map((room) => room.id);
 
 type DesktopPenthouseRoomSceneProps = {
   roomIndex: number;
@@ -49,9 +20,6 @@ export function DesktopPenthouseRoomScene({
   onRoomIndexChange,
   className = '',
 }: DesktopPenthouseRoomSceneProps) {
-  const [activeIndex, setActiveIndex] = useState(roomIndex);
-  const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
-
   const setRoomIndex = useCallback(
     (next: number) => {
       const clamped = Math.max(0, Math.min(DESKTOP_PENTHOUSE_ROOMS.length - 1, next));
@@ -59,19 +27,6 @@ export function DesktopPenthouseRoomScene({
     },
     [onRoomIndexChange],
   );
-
-  useEffect(() => {
-    if (roomIndex === activeIndex) return;
-
-    setLeavingIndex(activeIndex);
-    setActiveIndex(roomIndex);
-
-    const timer = window.setTimeout(() => {
-      setLeavingIndex(null);
-    }, ROOM_TRANSITION_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [activeIndex, roomIndex]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -82,43 +37,15 @@ export function DesktopPenthouseRoomScene({
     return () => window.removeEventListener('keydown', onKey);
   }, [roomIndex, setRoomIndex]);
 
-  const activeRoomId = getPenthouseRoomIdByIndex(activeIndex);
-  const leavingRoomId = leavingIndex !== null ? getPenthouseRoomIdByIndex(leavingIndex) : null;
-  const isTransitioning = leavingIndex !== null;
-  const artboard = isDesktopArtboardLayoutActive();
-
   return (
-    <div
-      className={`penthouse-room-scene${artboard ? ' penthouse-room-scene--artboard' : ''} ${className}`.trim()}
-      aria-hidden
-    >
-      {!isTransitioning ? (
-        <div className="penthouse-room-scene__layer">
-          <RoomBackground
-            roomId={activeRoomId}
-            className="penthouse-room-scene__bg penthouse-room-scene__bg--steady"
-          />
-        </div>
-      ) : (
-        <>
-          {leavingRoomId ? (
-            <div className="penthouse-room-scene__layer">
-              <RoomBackground
-                roomId={leavingRoomId}
-                className="penthouse-room-scene__bg penthouse-room-scene__bg--exit"
-              />
-            </div>
-          ) : null}
-          <div className="penthouse-room-scene__layer">
-            <RoomBackground
-              roomId={activeRoomId}
-              className="penthouse-room-scene__bg penthouse-room-scene__bg--enter"
-            />
-          </div>
-        </>
-      )}
-    </div>
+    <DesktopZoneRoomScene
+      zoneIds={PENTHOUSE_ZONE_IDS}
+      zoneIndex={roomIndex}
+      resolveBackground={(zoneId) => resolvePenthouseRoomBackground(zoneId)}
+      resolveFallbackBackground={(zoneId) => resolvePenthouseRoomBackground(zoneId, { fallback: true })}
+      className={className}
+    />
   );
 }
 
-export { DESKTOP_PENTHOUSE_DEFAULT_ROOM_INDEX };
+export { DESKTOP_PENTHOUSE_DEFAULT_ROOM_INDEX, getPenthouseRoomIdByIndex };

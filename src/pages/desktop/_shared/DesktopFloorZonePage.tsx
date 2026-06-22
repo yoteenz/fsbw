@@ -1,12 +1,16 @@
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
 import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
+import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
+import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
 import {
-  getDesktopZoneOnFloor,
   resolveDesktopFloorZoneId,
   type DesktopFloor,
 } from '../../../constants/desktopFloors';
+import { resolveFloorZoneBackground } from '../../../constants/desktopFloorZoneBackgrounds';
+import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
@@ -17,12 +21,21 @@ type Props = {
   floor: DesktopFloor;
 };
 
+function resolveZoneBackground(zoneId: string): string {
+  return resolveFloorZoneBackground(zoneId) ?? DESKTOP_LOUNGE_BG_FALLBACK;
+}
+
 export default function DesktopFloorZonePage({ floor }: Props) {
   const [searchParams] = useSearchParams();
   const zoneId = resolveDesktopFloorZoneId(floor, searchParams.get('zone'));
-  const zone = getDesktopZoneOnFloor(floor, zoneId) ?? getDesktopZoneOnFloor(floor, floor.defaultZoneId);
   const { pageStyle } = useDesktopTowerPageReveal();
   const artboard = isDesktopArtboardLayoutActive();
+
+  const zoneIds = useMemo(() => floor.zones.map((zone) => zone.id), [floor.zones]);
+  const zoneIndex = useMemo(() => {
+    const index = zoneIds.indexOf(zoneId);
+    return index >= 0 ? index : 0;
+  }, [zoneId, zoneIds]);
 
   return (
     <div
@@ -33,7 +46,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        background: '#ECE8E4',
+        background: '#0A0A0A',
         position: 'relative',
         ...pageStyle,
       }}
@@ -42,73 +55,35 @@ export default function DesktopFloorZonePage({ floor }: Props) {
       <section
         style={{
           position: 'relative',
-          flex: 1,
-          minHeight: 0,
+          flex: artboard ? 'none' : 1,
+          height: artboard ? '1012px' : undefined,
+          minHeight: artboard ? '1012px' : 0,
           overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '80px 120px 140px 48px',
+          background: '#0A0A0A',
         }}
       >
-        <div style={{ textAlign: 'center', maxWidth: '520px' }}>
-          <div
-            style={{
-              fontFamily: '"Futura PT Book"',
-              fontSize: '10px',
-              letterSpacing: '0.4em',
-              textTransform: 'uppercase',
-              color: '#959B9B',
-              marginBottom: '12px',
-            }}
-          >
-            Level {floor.id} — {floor.name}
-          </div>
-          <div
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '26px',
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              color: '#1A1A1A',
-              marginBottom: '12px',
-            }}
-          >
-            {zone?.label ?? floor.name}
-          </div>
-          {zone?.comingSoon ? (
-            <div
-              style={{
-                display: 'inline-block',
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '9px',
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: '#EB1C24',
-                border: '1px solid rgba(235,28,36,0.35)',
-                background: 'rgba(235,28,36,0.06)',
-                padding: '6px 14px',
-                borderRadius: '6px',
-                marginBottom: '14px',
-              }}
-            >
-              Coming soon
-            </div>
-          ) : null}
-          <div
-            style={{
-              fontFamily: '"Futura PT Book"',
-              fontSize: '12px',
-              letterSpacing: '0.06em',
-              color: '#4A3728',
-              lineHeight: 1.7,
-            }}
-          >
-            {zone?.comingSoon
-              ? 'This destination is under construction. Use the elevator to explore other floors.'
-              : 'Welcome to the Frontal Slayer digital flagship. More experiences arriving soon.'}
-          </div>
+        <DesktopZoneRoomScene
+          zoneIds={zoneIds}
+          zoneIndex={zoneIndex}
+          resolveBackground={resolveZoneBackground}
+          resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
+        />
+
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            pointerEvents: 'none',
+            background:
+              'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.1) 100%)',
+          }}
+        />
+
+        <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+          <ParticleField />
         </div>
+
         <DesktopFloorElevator />
         <DesktopRoomNavPanel />
       </section>
