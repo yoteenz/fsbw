@@ -30724,3 +30724,14 @@ Summary of the **whole conversation so far** in this chat: lobby/concierge label
 - **Fix:** shell now **`top: 0`**, **`height: 100vh`**, full-bleed width aspect — elevator image fills viewport edge-to-edge during travel.
 - **Changes:** `DesktopTowerElevator.css`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Lobby/gallery/concierge zone hero backgrounds
+
+Summary of the **whole conversation so far** in this chat: zone labels, static elevator, mobile artboard fit, elevator top gap; user supplied Supabase hero URLs for lobby, gallery, and concierge zones.
+
+- **`desktopFloorZoneBackgrounds.ts`:** per-zone backgrounds — atelier (**IMG_4011**), lounge (**140E544B…**), gallery zones (**IMG_4025/4034/4026**), concierge (**IMG_4014**, **80957FCA…**, **8D5E0E87…**). **Grand Lobby** URL omitted by user → **`IMG_4013.png`** (verified on storage between atelier/reception).
+- **`DesktopZoneRoomScene`:** shared fade hero component (penthouse + floor zones); **`DesktopPenthouseRoomScene`** now thin wrapper.
+- **`DesktopFloorZonePage`:** replaced placeholder copy with full-screen zone heroes + vignette/particles (matches penthouse layout).
+- Pushed **`master`** + **`preview/mobile`**.
+
