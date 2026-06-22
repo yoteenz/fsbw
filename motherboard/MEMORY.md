@@ -30535,3 +30535,15 @@ Summary of the **whole conversation so far** in this chat: desktop penthouse res
 - **Tower sync:** **`DesktopTowerNavProvider`** exposes **`journey`** + **`travelDisplayLevelId`** for directory microinteractions; floor select calls **`travelTo(buildDesktopElevatorHref(...))`**.
 - **Changes:** `DesktopFloorElevator.tsx`, `DesktopFloorDirectory.css`, `desktopFloorDirectory.ts`, `DesktopTowerNavProvider.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Penthouse panorama vertical fill + navbar layout gap
+
+Summary of the **whole conversation so far** in this chat: desktop penthouse/nav/elevator work through luxury floor directory; user reported penthouse background **clipped vertically** with **gaps** top/bottom after room-zoom width/height changes.
+
+- **Cause (layout):** Fixed **`NavBar`** (68px) + scene **`calc(100vh - 68px)`** starting at page top → **68px empty band** at viewport bottom; image did not reach screen edge.
+- **Cause (transform):** **`scale = max(scaleX, scaleY)`** for single-room zoom over-scaled vertically and **`translateY`** bottom-crop hid ceiling-to-slab extent.
+- **Fix:** Penthouse + zone pages use **`paddingTop: 68px`**, **`boxSizing: border-box`**, flex child **`flex: 1`** so scene fills exactly below navbar. Panorama uses **height-only uniform scale** (`containerHeight / visibleSrcH`, top-aligned **`translateY: 0`**) so **ceiling through marble slab** fills viewport edge-to-edge without stretch.
+- **Tradeoff:** Horizontal room isolation is looser than 0.30 room-zoom (pan-only); **`DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO`** retained for future tuning.
+- **Changes:** `desktopLobbyPanorama.ts`, `penthouse/page.tsx`, `DesktopFloorZonePage.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
+
