@@ -19,7 +19,6 @@ export const DESKTOP_PENTHOUSE_ROOMS: readonly DesktopPenthouseRoom[] = [
     name: 'Hair Analysis Lab',
     background:
       'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/17119677-8B89-4BEB-91A7-F4A65B74270A.png',
-    comingSoon: true,
   },
   {
     id: 'showroom',
