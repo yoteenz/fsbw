@@ -30419,3 +30419,18 @@ Summary of the **whole conversation so far** in this chat: desktop flagship lobb
 - **Tune:** **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`** and room **`focalXRatio`** values in **`src/constants/desktopLobbyPanorama.ts`** after QA.
 - **Changes:** `src/constants/desktopLobbyPanorama.ts`, `src/components/desktop-lobby/DesktopLobbyPanorama.tsx`, `src/pages/desktop-lobby/page.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Desktop skyscraper: penthouse route + acrylic elevator panel
+
+Summary of the **whole conversation so far** in this chat: desktop flagship staging QA (mobile bypass, backgrounds, acrylic text, panoramic crop); user restructured the desktop experience into a **virtual skyscraper** — **one floor per page**, penthouse as full-screen luxury destination, floating acrylic **elevator panel** for room pan + floor routing.
+
+- **Route change:** Flagship penthouse moved **`/desktop/lobby` → `/desktop/penthouse`**. **`HomeLandingRedirect`**, **`NavBar` HOME**, **`desktop-preview`**, and legacy **`desktop-lobby/page.tsx`** redirect/import penthouse. **`/desktop/lobby`** is now **Level 1 Lobby** (placeholder).
+- **One floor at a time:** Penthouse is **~100vh**, **`overflow:hidden`**, no **`ZoneLoungeReveal`** stack below — lounge is **Level 4** at **`/desktop/lounge`** only.
+- **Panoramic penthouse:** **`DesktopLobbyPanorama`** on **`IMG_3880.png`** (3808×1632); slab crop via **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`**; room nav (**Hair Analysis Lab**, **Hair Showroom**, **Extensions Boutique**) pans with **`translate3d` + `scale`** (no page load); **←/→** keys still work.
+- **Elevator panel:** **`DesktopElevatorPanel`** — glass/acrylic (`rgba(255,255,255,0.72)`, blur, red **`#EB1C24`** accents); **room nav** (penthouse only) + **floor nav** (L5 Penthouse → L1 Lobby). Floor clicks **`navigate`** to route; active room/floor get red accent styling.
+- **Floor routes:** **`desktopFloors.ts`** — penthouse (full), lounge (existing + elevator), concierge / slay-cam / lobby via **`DesktopFloorPlaceholder`**.
+- **Mobile QA:** **`?mobileDesktop=1`** bypass for phone artboard — use **`/desktop/penthouse?mobileDesktop=1`** (not **`/desktop/lobby`**).
+- **Tune after QA:** **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`**, room **`focalXRatio`**, elevator vs side-panel overlap at narrow desktop widths.
+- **Changes:** `src/pages/desktop/penthouse/page.tsx`, `DesktopElevatorPanel.tsx`, `desktopFloors.ts`, `DesktopFloorPlaceholder.tsx`, floor pages, `App.tsx`, `HomeLandingRedirect.tsx`, `NavBar.tsx`, `DesktopLobbyPanorama.tsx`, `desktopLobbyPanorama.ts`, `desktop/lounge/page.tsx`, `desktop-lobby/page.tsx`, `desktopPreview.ts`, `desktop-preview/page.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
+
