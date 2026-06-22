@@ -20,7 +20,6 @@ import {
   resolveTowerDirection,
   TOWER_ARRIVED_MS,
   TOWER_BOARD_MS,
-  TOWER_DOORS_MS,
   TOWER_FADE_MS,
   TOWER_TRAVEL_MS,
   towerEaseInOut,
@@ -30,7 +29,9 @@ import {
   DesktopTowerElevatorExperience,
   type TowerElevatorPhase,
 } from './DesktopTowerElevatorExperience';
+import { DesktopFloorElevator } from '../desktop-lobby/DesktopFloorElevator';
 import { markDesktopTowerArrival } from './useDesktopTowerPageReveal';
+import './DesktopTowerElevator.css';
 
 type TowerJourney = {
   fromFloor: DesktopFloor;
@@ -111,18 +112,13 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             const arrivedTimer = window.setTimeout(() => {
               markDesktopTowerArrival();
               navigate(next.destinationHref);
-              setPhase('opening');
+              setPhase('exiting');
 
-              const doorsTimer = window.setTimeout(() => {
-                setPhase('exiting');
-
-                const fadeTimer = window.setTimeout(() => {
-                  setJourney(null);
-                  setPhase('boarding');
-                }, TOWER_FADE_MS);
-                timersRef.current.push(fadeTimer);
-              }, TOWER_DOORS_MS);
-              timersRef.current.push(doorsTimer);
+              const fadeTimer = window.setTimeout(() => {
+                setJourney(null);
+                setPhase('boarding');
+              }, TOWER_FADE_MS);
+              timersRef.current.push(fadeTimer);
             }, TOWER_ARRIVED_MS);
             timersRef.current.push(arrivedTimer);
           }
@@ -187,14 +183,19 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
     <DesktopTowerNavContext.Provider value={value}>
       {children}
       {journey ? (
-        <DesktopTowerElevatorExperience
-          floors={DESKTOP_FLOORS}
-          fromFloor={journey.fromFloor}
-          toFloor={journey.toFloor}
-          direction={journey.direction}
-          phase={phase}
-          displayLevelId={displayLevelId}
-        />
+        <>
+          <DesktopTowerElevatorExperience
+            floors={DESKTOP_FLOORS}
+            fromFloor={journey.fromFloor}
+            toFloor={journey.toFloor}
+            direction={journey.direction}
+            phase={phase}
+            displayLevelId={displayLevelId}
+          />
+          <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>
+            <DesktopFloorElevator activeFloorPath={journey.fromFloor.path} />
+          </div>
+        </>
       ) : null}
     </DesktopTowerNavContext.Provider>
   );

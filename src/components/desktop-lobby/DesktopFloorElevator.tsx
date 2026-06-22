@@ -21,11 +21,15 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
 
   const floorIds = useMemo(() => DESKTOP_FLOORS.map((f) => f.id), []);
 
+  const currentFloorId = useMemo(() => {
+    if (journey) return Math.round(travelDisplayLevelId);
+    return DESKTOP_FLOORS.find((f) => f.path === activeFloorPath)?.id ?? 4;
+  }, [activeFloorPath, journey, travelDisplayLevelId]);
+
   const spineLightTop = useMemo(() => {
-    const levelId = journey ? travelDisplayLevelId : DESKTOP_FLOORS.find((f) => f.path === activeFloorPath)?.id ?? 4;
-    const ratio = floorIdToSpineRatio(Math.round(levelId), floorIds);
+    const ratio = floorIdToSpineRatio(currentFloorId, floorIds);
     return `${ratio * 100}%`;
-  }, [activeFloorPath, floorIds, journey, travelDisplayLevelId]);
+  }, [currentFloorId, floorIds]);
 
   const spinePulseClass = journey
     ? journey.direction === 'up'
@@ -78,9 +82,9 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
           />
 
           {DESKTOP_FLOORS.map((floor) => {
-            const isActive = floor.path === activeFloorPath;
+            const isActive = floor.id === currentFloorId;
             const isDestination =
-              (journey?.toFloor.id === floor.id) || pendingId === floor.id;
+              (journey?.toFloor.id === floor.id && !isActive) || pendingId === floor.id;
             const isHovered = hoveredId === floor.id;
             const status = getDirectoryFloorStatus(isActive, isDestination, isHovered);
 
