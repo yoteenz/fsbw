@@ -30881,3 +30881,13 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **`ExtensionsBoutiqueExperience`:** new **`extensions-boutique-layer`** at **z-index 52** (above floating nav **50**) with **`pointer-events: none`** + hotspot **`pointer-events: auto`** so wall tap and shop panel controls receive clicks.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Remove red active indicator bar on floor/room directory panels
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish (acrylic nav, boutique hotspot fix, elevator reverse on down); user asked to **remove the red bar** on active items in the **floor (elevator)** and **room** directory panels.
+
+- **Removed:** active **card-glow** halos (JSX + CSS); idle **spine-glow** on floor directory (now only during elevator **journey**); idle **connector-glow** on room directory (hidden until traveling).
+- **Active card styling:** neutral white borders/shadows instead of red tint; floor level number stays dark when **YOU ARE HERE** (red reserved for status label only).
+- Pushed **`master`** + **`preview/mobile`**.
+
