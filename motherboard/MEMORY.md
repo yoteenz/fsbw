@@ -30768,3 +30768,13 @@ Summary of the **whole conversation so far** in this chat: zone backgrounds, nav
 - **Elevator overlay:** embedded **`FloorNavDrawer`** during travel (directory visible in journey).
 - **Changes:** `floating-nav/*`, penthouse + `DesktopFloorZonePage`, `DesktopTowerNavProvider`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator overlay: MP4 travel video
+
+Summary of the **whole conversation so far** in this chat: floating nav refactor; user supplied OpenArt elevator **MP4** to replace static shell during travel.
+
+- **`DESKTOP_TOWER_ELEVATOR_VIDEO_URL`** — `openart-d19d9436…mp4` on Supabase; loops muted during overlay; existing shell PNG kept as **poster + fallback** on video error.
+- **`DesktopTowerElevatorExperience`:** `<video>` full-bleed `cover`; autoplay on journey mount.
+- Pushed **`master`** + **`preview/mobile`**.
+
