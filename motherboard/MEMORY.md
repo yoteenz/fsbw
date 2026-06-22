@@ -30789,3 +30789,15 @@ Summary of the **whole conversation so far** in this chat: floating nav, elevato
 - **Room heroes + elevator media:** **`object-fit: contain`** at **`max-width: 1366px`** (CSS + artboard class) so full frame visible without crop.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — PSA desktop: suite-only standing hologram
+
+Summary of the **whole conversation so far** in this chat: zone backgrounds, navbar frost, penthouse heroes, collapsible floating nav, elevator MP4, iPad artboard responsiveness; user asked to **hide the floating PSA on desktop/tablet** and interact with PSA **only in the PSA Suite** as a **standing hologram**.
+
+- **Global widget hidden** on **`/desktop/*`** and **`/desktop-preview/*`** via **`PSA_HIDDEN_PATH_PREFIXES`** in **`psaConfig.ts`**; mobile site FAB unchanged.
+- **`PsaAssistantWidget`** accepts **`variant="suite"`** — inline render (no body portal), no FAB/nudge chips; full chat logic preserved.
+- **`PsaStandingHologram`** + **`desktopPsaSuite.css`**: tall holo figure with glow pedestal, scanlines, float animation; tap opens **`PsaChatPanel`** beside the hologram.
+- **`DesktopFloorZonePage`**: mounts suite variant when **`zoneId === 'psa-suite'`** (Concierge floor).
+- Pushed **`master`** + **`preview/mobile`**.
+
