@@ -30682,3 +30682,13 @@ Summary: user reported floor + destination directories too large, covering penth
 - **Room directory:** width **520px** max (was 780), cards **148px** max, smaller padding/fonts; sits lower on viewport.
 - **Changes:** `DesktopFloorDirectory.css`, `DesktopRoomDirectory.css`, `DesktopFloorElevator.tsx`, `DesktopRoomNavPanel.tsx`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Penthouse: remove side panels, Hair Analysis Lab live
+
+Summary: user asked to remove Design Studio (Build-A-Wig) and PSA concierge panels from penthouse; Hair Analysis Lab is live (not coming soon).
+
+- **Removed** **`BuildAWigPanel`** + **`PSAConciergePanel`** from **`penthouse/page.tsx`**; removed coming-soon badge component.
+- **`analysis-lab`:** cleared **`comingSoon`** in **`desktopPenthouseRooms.ts`** (flows through floor/room directories).
+- Pushed **`master`** + **`preview/mobile`**.
+
