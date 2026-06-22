@@ -18,19 +18,19 @@ export const DESKTOP_PENTHOUSE_ROOMS: readonly DesktopPenthouseRoom[] = [
     id: 'analysis-lab',
     name: 'Hair Analysis Lab',
     background:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/17119677-8B89-4BEB-91A7-F4A65B74270A.png',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/A6B0A7CB-0299-4DAF-A39E-49468BE1A6F9.png',
   },
   {
     id: 'showroom',
     name: 'Hair Showroom',
     background:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/BA4C3C3F-2BA5-4DBD-B932-0B787787D94D.png',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/7F16AAFA-F3D1-4FD2-B6E3-F20F6B10CBD3.png',
   },
   {
     id: 'boutique',
     name: 'Extensions Boutique',
     background:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/2E6CF455-E09B-4A5C-B8BE-009242C6FCCA.png',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/8358D320-29F7-48DC-97B7-484432003684.png',
   },
 ] as const;
 
