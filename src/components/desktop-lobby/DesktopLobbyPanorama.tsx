@@ -62,7 +62,7 @@ export function DesktopLobbyPanorama({
     return () => window.removeEventListener('keydown', onKey);
   }, [roomIndex, setRoomIndex]);
 
-  const { translateX, scale, imageWidth, imageHeight } = computeDesktopLobbyPanoramaTransform(
+  const { translateX, scaleX, scaleY, imageWidth, imageHeight } = computeDesktopLobbyPanoramaTransform(
     metrics.width,
     metrics.height,
     roomIndex,
@@ -92,7 +92,7 @@ export function DesktopLobbyPanorama({
           height: `${imageHeight}px`,
           maxWidth: 'none',
           display: 'block',
-          transform: `translate3d(${translateX}px, 0, 0) scale(${scale})`,
+          transform: `translate3d(${translateX}px, 0, 0) scale(${scaleX}, ${scaleY})`,
           transformOrigin: 'top left',
           transition: 'transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1)',
           willChange: 'transform',

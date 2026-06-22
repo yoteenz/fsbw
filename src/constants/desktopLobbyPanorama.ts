@@ -24,14 +24,21 @@ export const DESKTOP_LOBBY_PANORAMA_ROOMS: readonly DesktopLobbyPanoramaRoom[] =
 
 export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX = 1;
 
+/**
+ * Horizontal slice of the source image shown per room (smaller = more zoom).
+ * ~0.30 keeps a single zone centered without bleeding adjacent rooms.
+ */
+export const DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO = 0.3;
+
 export type DesktopLobbyPanoramaTransform = {
   translateX: number;
-  scale: number;
+  scaleX: number;
+  scaleY: number;
   imageWidth: number;
   imageHeight: number;
 };
 
-/** Panoramic map math — cover-fill viewport; pan clamps so edges never expose gaps. */
+/** One room fills the viewport width; vertical scale preserves slab crop. */
 export function computeDesktopLobbyPanoramaTransform(
   containerWidth: number,
   containerHeight: number,
@@ -44,14 +51,14 @@ export function computeDesktopLobbyPanoramaTransform(
 
   const visibleSrcH = srcH * floorEdge;
   const scaleY = containerHeight / visibleSrcH;
-  const scaleX = containerWidth / srcW;
-  const scale = Math.max(scaleY, scaleX);
+  const roomViewSrcW = srcW * DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO;
+  const scaleX = containerWidth / roomViewSrcW;
 
-  const scaledW = srcW * scale;
-  const focalX = room.focalXRatio * srcW * scale;
+  const scaledW = srcW * scaleX;
+  const focalX = room.focalXRatio * srcW * scaleX;
   let translateX = containerWidth / 2 - focalX;
   const minTranslateX = containerWidth - scaledW;
   translateX = Math.max(minTranslateX, Math.min(0, translateX));
 
-  return { translateX, scale, imageWidth: srcW, imageHeight: srcH };
+  return { translateX, scaleX, scaleY, imageWidth: srcW, imageHeight: srcH };
 }
