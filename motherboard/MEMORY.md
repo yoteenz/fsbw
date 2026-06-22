@@ -30579,3 +30579,16 @@ Summary of the **whole conversation so far** in this chat: luxury floor + room d
 - **Rationale:** Navbar = express concierge transport; side directory = deliberate building journey.
 - **Changes:** `NavBar.tsx`, `DesktopTowerNavProvider.tsx` (`quickTravelTo`), `desktopNavQuickRoutes.ts`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Elevator shell image tower transition
+
+Summary of the **whole conversation so far** in this chat: luxury directories, panorama/layout, navbar quick travel; user supplied **elevator shell PNG** (Supabase `FD314D28-…6427.png`) as transition environment — do not redraw cabin.
+
+- **Shell:** **`DESKTOP_TOWER_ELEVATOR_SHELL_URL`** in **`desktopTowerEnv.ts`** (1536×1024); overlays positioned via **`desktopTowerElevatorLayout.ts`** ratios.
+- **Holo panel:** Top-center acrylic **TRAVELING TO / ARRIVED** + **`LEVEL n`** + floor **`name`** from **`DESKTOP_FLOORS`**; passing counter during travel; **`formatTowerLevelLabel`**.
+- **Motion:** Subtle parallax, pillar light sweep, in-cabin floor markers scroll (up → markers down); **`translate3d`** + **`will-change`**; ~**2.45s** total (**200+1600+300+350** ms).
+- **Floor directory:** Rendered in overlay during journey; active floor tracks **`travelDisplayLevelId`**; spine light + destination highlight sync.
+- **Arrival:** ARRIVED state → navigate → shell fade → page reveal (**`useDesktopTowerPageReveal`**); no door animation.
+- **Changes:** `DesktopTowerElevatorExperience.tsx`, `DesktopTowerElevator.css`, `DesktopTowerNavProvider.tsx`, `DesktopFloorElevator.tsx`, tower motion/env/layout constants. Pushed **`master`** + **`preview/mobile`**.
+
