@@ -30891,3 +30891,13 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **Active card styling:** neutral white borders/shadows instead of red tint; floor level number stays dark when **YOU ARE HERE** (red reserved for status label only).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Center floating nav trigger icons vertically
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish (acrylic nav, boutique hotspot, elevator reverse, remove red active bar); user reported **elevator + room trigger icons sit too low** in their acrylic buttons.
+
+- **Cause:** **`margin-top: 19%`** on **`.floating-nav-trigger__glyph`** — percentage margins resolve against button **width**, not height, so icons drifted toward the bottom.
+- **Fix:** **`display: flex; align-items: center; justify-content: center`** on **`.floating-nav-trigger`**; glyph **`margin: 0`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
