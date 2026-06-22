@@ -19,12 +19,25 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const { pageStyle } = useDesktopTowerPageReveal();
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: '#ECE8E4', position: 'relative', ...pageStyle }}>
+    <div
+      style={{
+        height: '100vh',
+        boxSizing: 'border-box',
+        paddingTop: '68px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        background: '#ECE8E4',
+        position: 'relative',
+        ...pageStyle,
+      }}
+    >
       <NavBar />
       <section
         style={{
           position: 'relative',
-          height: 'calc(100vh - 68px)',
+          flex: 1,
+          minHeight: 0,
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',

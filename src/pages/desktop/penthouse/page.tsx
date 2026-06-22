@@ -53,16 +53,16 @@ function PenthouseViewport({
   roomIndex: number;
   onRoomIndexChange: (index: number) => void;
 }) {
-  const sceneHeight = isDesktopArtboardLayoutActive() ? '1012px' : 'calc(100vh - 68px)';
+  const artboard = isDesktopArtboardLayoutActive();
   const room = DESKTOP_LOBBY_PANORAMA_ROOMS[roomIndex];
 
   return (
     <section
       style={{
         position: 'relative',
-        height: sceneHeight,
-        minHeight: sceneHeight,
-        maxHeight: sceneHeight,
+        flex: artboard ? 'none' : 1,
+        height: artboard ? '1012px' : undefined,
+        minHeight: artboard ? '1012px' : 0,
         overflow: 'hidden',
         background: '#0A0A0A',
       }}
@@ -139,8 +139,21 @@ export default function DesktopPenthousePage() {
     );
   }
 
+  const artboard = isDesktopArtboardLayoutActive();
+
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: '#0A0A0A', ...pageStyle }}>
+    <div
+      style={{
+        height: artboard ? '1080px' : '100vh',
+        boxSizing: 'border-box',
+        paddingTop: '68px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        background: '#0A0A0A',
+        ...pageStyle,
+      }}
+    >
       <NavBar />
       <PenthouseViewport roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
     </div>

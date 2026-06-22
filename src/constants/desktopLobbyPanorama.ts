@@ -53,7 +53,11 @@ export type DesktopLobbyPanoramaTransform = {
   imageHeight: number;
 };
 
-/** One room fills width; uniform scale (no stretch) + vertical offset keeps slab at bottom. */
+/**
+ * Cover-fill the viewport from panorama top through the marble slab (floor edge).
+ * Uniform scale preserves proportions; horizontal pan centers the active room.
+ * Vertical scale wins over room-width zoom so ceiling-to-slab stays visible.
+ */
 export function computeDesktopLobbyPanoramaTransform(
   containerWidth: number,
   containerHeight: number,
@@ -65,10 +69,7 @@ export function computeDesktopLobbyPanoramaTransform(
   const floorEdge = DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO;
 
   const visibleSrcH = srcH * floorEdge;
-  const scaleY = containerHeight / visibleSrcH;
-  const roomViewSrcW = srcW * DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO;
-  const scaleX = containerWidth / roomViewSrcW;
-  const scale = Math.max(scaleX, scaleY);
+  const scale = containerHeight / visibleSrcH;
 
   const scaledW = srcW * scale;
   const focalX = room.focalXRatio * srcW * scale;
@@ -76,8 +77,5 @@ export function computeDesktopLobbyPanoramaTransform(
   const minTranslateX = containerWidth - scaledW;
   translateX = Math.max(minTranslateX, Math.min(0, translateX));
 
-  let translateY = containerHeight - visibleSrcH * scale;
-  if (translateY > 0) translateY = 0;
-
-  return { translateX, translateY, scale, imageWidth: srcW, imageHeight: srcH };
+  return { translateX, translateY: 0, scale, imageWidth: srcW, imageHeight: srcH };
 }
