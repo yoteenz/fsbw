@@ -330,6 +330,8 @@
 }
 
 .room-directory__name {
+  display: block;
+  width: 100%;
   font-family: 'Futura PT Medium', sans-serif;
   font-size: 8px;
   letter-spacing: 0.14em;
@@ -348,12 +350,15 @@
 }
 
 .room-directory__status {
+  display: block;
+  width: 100%;
   font-family: 'Futura PT Book', sans-serif;
   font-size: 6px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #959b9b;
-  margin-top: 5px;
+  line-height: 1.2;
+  white-space: nowrap;
   transition: color 0.35s ease;
 }
 

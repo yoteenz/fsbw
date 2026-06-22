@@ -1,6 +1,6 @@
 .floor-directory {
   position: relative;
-  width: min(200px, 18vw);
+  width: min(220px, 20vw);
   perspective: 1200px;
 }
 
@@ -227,9 +227,9 @@
   display: grid;
   grid-template-columns: 44px 1fr;
   gap: 10px;
-  align-items: center;
+  align-items: start;
   width: 100%;
-  padding: 10px 12px 10px 10px;
+  padding: 10px 22px 10px 10px;
   border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 12px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.28) 100%);
@@ -312,14 +312,21 @@
 
 .floor-directory__body {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .floor-directory__name {
+  display: block;
+  width: 100%;
   font-family: 'Futura PT Medium', sans-serif;
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #1a1a1a;
+  line-height: 1.2;
   transition: letter-spacing 0.35s ease, color 0.35s ease;
 }
 
@@ -333,12 +340,15 @@
 }
 
 .floor-directory__status {
+  display: block;
+  width: 100%;
   font-family: 'Futura PT Book', sans-serif;
   font-size: 6px;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #959b9b;
-  margin-top: 4px;
+  line-height: 1.2;
+  white-space: nowrap;
   transition: color 0.35s ease;
 }
 
