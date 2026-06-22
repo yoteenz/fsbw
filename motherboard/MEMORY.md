@@ -30434,3 +30434,14 @@ Summary of the **whole conversation so far** in this chat: desktop flagship stag
 - **Tune after QA:** **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`**, room **`focalXRatio`**, elevator vs side-panel overlap at narrow desktop widths.
 - **Changes:** `src/pages/desktop/penthouse/page.tsx`, `DesktopElevatorPanel.tsx`, `desktopFloors.ts`, `DesktopFloorPlaceholder.tsx`, floor pages, `App.tsx`, `HomeLandingRedirect.tsx`, `NavBar.tsx`, `DesktopLobbyPanorama.tsx`, `desktopLobbyPanorama.ts`, `desktop/lounge/page.tsx`, `desktop-lobby/page.tsx`, `desktopPreview.ts`, `desktop-preview/page.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Penthouse panorama crop: slab-bottom alignment
+
+Summary of the **whole conversation so far** in this chat: desktop skyscraper penthouse restructure; user QA'd crop and reported **way too much** vertical crop — crop should land at **bottom of marble slab** (red-line reference), not mid-penthouse.
+
+- **Fix:** **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`** **0.505 → 0.672** (~1094px / 1632px source) — shows full penthouse floor + structural slab; hides lower-floor lounge below.
+- **Layout:** Penthouse scene height **`calc(100vh - 68px)`** (navbar was clipping bottom when scene was also 100vh).
+- **Tune:** Nudge ratio in **`desktopLobbyPanorama.ts`** if slab edge needs ± few px after staging QA.
+- **Changes:** `src/constants/desktopLobbyPanorama.ts`, `src/pages/desktop/penthouse/page.tsx`. Build verified.
+
