@@ -13,8 +13,9 @@ export function NavBar() {
   const towerTravel = useDesktopTowerTravelOptional();
   const [cartCount, setCartCount] = useState(0);
 
+  /** Express transport to exact zone/room — no elevator; floor directory owns that journey. */
   const go = (href: string) => {
-    if (towerTravel) towerTravel.travelTo(href);
+    if (towerTravel) towerTravel.quickTravelTo(href);
     else navigate(href);
   };
 

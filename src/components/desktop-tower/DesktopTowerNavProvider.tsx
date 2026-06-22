@@ -41,6 +41,8 @@ type TowerJourney = {
 
 type DesktopTowerNavContextValue = {
   travelTo: (href: string) => void;
+  /** Instant route change — used by navbar quick links; floor directory uses {@link travelTo}. */
+  quickTravelTo: (href: string) => void;
   isTraveling: boolean;
   journey: TowerJourney | null;
   travelDisplayLevelId: number;
@@ -135,6 +137,14 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
     [clearTimers, navigate],
   );
 
+  const quickTravelTo = useCallback(
+    (href: string) => {
+      if (journey) return;
+      navigate(href);
+    },
+    [journey, navigate],
+  );
+
   const travelTo = useCallback(
     (href: string) => {
       if (!isDesktopTowerPath(location.pathname)) {
@@ -165,11 +175,12 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       travelTo,
+      quickTravelTo,
       isTraveling: journey !== null,
       journey,
       travelDisplayLevelId: displayLevelId,
     }),
-    [journey, displayLevelId, travelTo],
+    [journey, displayLevelId, quickTravelTo, travelTo],
   );
 
   return (

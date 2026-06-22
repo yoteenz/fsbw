@@ -12,7 +12,7 @@ export type DesktopNavQuickRoute = {
   zone?: string;
 };
 
-/** Navbar time-travel — lands on exact floor zone/room (not elevator default hub). */
+/** Navbar express transport — lands on exact floor zone/room instantly (no elevator). */
 export const DESKTOP_NAV_QUICK_ROUTES: readonly DesktopNavQuickRoute[] = [
   { label: 'HOME', path: DESKTOP_LOBBY_PATH, zone: 'shop' },
   { label: 'SHOP', path: DESKTOP_PENTHOUSE_PATH, room: 'boutique' },
