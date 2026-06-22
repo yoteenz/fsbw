@@ -4,7 +4,6 @@ import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../../components/desktop-lobby/PSAConciergePanel';
-import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX } from '../../../constants/desktopLobbyPanorama';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { DesktopLobbyPanorama } from '../../../components/desktop-lobby/DesktopLobbyPanorama';
@@ -40,20 +39,9 @@ function PenthouseViewport({
         minHeight: sceneHeight,
         maxHeight: sceneHeight,
         overflow: 'hidden',
-        background: '#ECE8E4',
+        background: '#0A0A0A',
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 0,
-          backgroundImage: `url(${DESKTOP_LOUNGE_BG_FALLBACK})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-        }}
-      />
-
       <DesktopLobbyPanorama roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
 
       <div
@@ -110,7 +98,7 @@ export default function DesktopPenthousePage() {
   const [roomIndex, setRoomIndex] = useState(DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX);
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: '#ECE8E4' }}>
+    <div style={{ height: '100vh', overflow: 'hidden', background: '#0A0A0A' }}>
       <NavBar activeLink="HOME" />
       <PenthouseViewport roomIndex={roomIndex} onRoomIndexChange={setRoomIndex} />
     </div>

@@ -31,7 +31,7 @@ export type DesktopLobbyPanoramaTransform = {
   imageHeight: number;
 };
 
-/** Panoramic map math — one asset, translateX + optional scale; bottom clipped by viewport. */
+/** Panoramic map math — cover-fill viewport; pan clamps so edges never expose gaps. */
 export function computeDesktopLobbyPanoramaTransform(
   containerWidth: number,
   containerHeight: number,
@@ -43,9 +43,15 @@ export function computeDesktopLobbyPanoramaTransform(
   const floorEdge = DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO;
 
   const visibleSrcH = srcH * floorEdge;
-  const scale = containerHeight / visibleSrcH;
+  const scaleY = containerHeight / visibleSrcH;
+  const scaleX = containerWidth / srcW;
+  const scale = Math.max(scaleY, scaleX);
+
+  const scaledW = srcW * scale;
   const focalX = room.focalXRatio * srcW * scale;
-  const translateX = containerWidth / 2 - focalX;
+  let translateX = containerWidth / 2 - focalX;
+  const minTranslateX = containerWidth - scaledW;
+  translateX = Math.max(minTranslateX, Math.min(0, translateX));
 
   return { translateX, scale, imageWidth: srcW, imageHeight: srcH };
 }
