@@ -1,7 +1,13 @@
+import { useMemo, useState } from 'react';
 import { DESKTOP_FLOORS } from '../../constants/desktopFloors';
+import {
+  floorIdToSpineRatio,
+  getDirectoryFloorNumber,
+  getDirectoryFloorStatus,
+} from '../../constants/desktopFloorDirectory';
 import { buildDesktopElevatorHref } from '../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravel } from '../desktop-tower/DesktopTowerNavProvider';
-import { DESKTOP_BRAND_RED, desktopAcrylicPanelStyle } from './desktopLobbyAcrylic';
+import './DesktopFloorDirectory.css';
 
 type DesktopFloorElevatorProps = {
   activeFloorPath: string;
@@ -9,10 +15,34 @@ type DesktopFloorElevatorProps = {
 };
 
 export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: DesktopFloorElevatorProps) {
-  const { travelTo } = useDesktopTowerTravel();
+  const { travelTo, journey, travelDisplayLevelId } = useDesktopTowerTravel();
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [pendingId, setPendingId] = useState<number | null>(null);
+
+  const floorIds = useMemo(() => DESKTOP_FLOORS.map((f) => f.id), []);
+
+  const spineLightTop = useMemo(() => {
+    const levelId = journey ? travelDisplayLevelId : DESKTOP_FLOORS.find((f) => f.path === activeFloorPath)?.id ?? 4;
+    const ratio = floorIdToSpineRatio(Math.round(levelId), floorIds);
+    return `${ratio * 100}%`;
+  }, [activeFloorPath, floorIds, journey, travelDisplayLevelId]);
+
+  const spinePulseClass = journey
+    ? journey.direction === 'up'
+      ? 'floor-directory__spine-pulse--up'
+      : 'floor-directory__spine-pulse--down'
+    : '';
+
+  const handleSelect = (floorPath: string, floorId: number, defaultZoneId: string, isActive: boolean) => {
+    if (isActive || journey) return;
+    setPendingId(floorId);
+    travelTo(buildDesktopElevatorHref(floorPath, defaultZoneId));
+    window.setTimeout(() => setPendingId(null), 2200);
+  };
 
   return (
     <div
+      className="floor-directory"
       style={{
         position: 'absolute',
         top: '50%',
@@ -23,117 +53,71 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
         zIndex: 50,
         pointerEvents: 'auto',
       }}
+      aria-label="Tower floor directory"
     >
-      <div
-        style={{
-          ...desktopAcrylicPanelStyle,
-          borderRadius: '12px',
-          borderLeft: side === 'right' ? `2px solid ${DESKTOP_BRAND_RED}` : desktopAcrylicPanelStyle.border,
-          borderRight: side === 'left' ? `2px solid ${DESKTOP_BRAND_RED}` : desktopAcrylicPanelStyle.border,
-          padding: '12px 10px',
-          minWidth: '72px',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: '"Futura PT Book"',
-            fontSize: '7px',
-            letterSpacing: '0.28em',
-            textTransform: 'uppercase',
-            color: '#959B9B',
-            textAlign: 'center',
-            marginBottom: '10px',
-            paddingBottom: '8px',
-            borderBottom: '1px solid rgba(0,0,0,0.06)',
-          }}
-        >
-          Elevator
-        </div>
+      <div className="floor-directory__marble-base" aria-hidden />
+      <div className="floor-directory__frame">
+        <div className="floor-directory__chrome-cap" aria-hidden />
+        <div className="floor-directory__crystal-edge" aria-hidden />
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            position: 'relative',
-          }}
-        >
+        <header className="floor-directory__header">
+          <div className="floor-directory__header-label">Frontal Slayer</div>
+          <div className="floor-directory__header-title">Floor directory</div>
+        </header>
+
+        <div className="floor-directory__stack">
+          <div className="floor-directory__spine" aria-hidden>
+            {journey ? (
+              <div className={`floor-directory__spine-pulse ${spinePulseClass}`} />
+            ) : null}
+          </div>
           <div
+            className={`floor-directory__spine-glow ${journey || pendingId ? 'floor-directory__spine-glow--active' : ''}`}
+            style={{ top: spineLightTop }}
             aria-hidden
-            style={{
-              position: 'absolute',
-              top: '8px',
-              bottom: '8px',
-              ...(side === 'right' ? { right: '6px' } : { left: '6px' }),
-              width: '1px',
-              background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.08) 15%, rgba(0,0,0,0.08) 85%, transparent)',
-            }}
           />
 
           {DESKTOP_FLOORS.map((floor) => {
-            const active = floor.path === activeFloorPath;
+            const isActive = floor.path === activeFloorPath;
+            const isDestination =
+              (journey?.toFloor.id === floor.id) || pendingId === floor.id;
+            const isHovered = hoveredId === floor.id;
+            const status = getDirectoryFloorStatus(isActive, isDestination, isHovered);
+
             return (
-              <button
-                key={floor.path}
-                type="button"
-                onClick={() => {
-                  if (!active) travelTo(buildDesktopElevatorHref(floor.path, floor.defaultZoneId));
-                }}
-                title={`Level ${floor.id} — ${floor.name}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  padding: '7px 8px',
-                  borderRadius: '8px',
-                  border: active ? `1px solid ${DESKTOP_BRAND_RED}` : '1px solid transparent',
-                  background: active ? 'rgba(235,28,36,0.08)' : 'rgba(255,255,255,0.35)',
-                  cursor: active ? 'default' : 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s ease',
-                  boxShadow: active ? `0 0 0 1px rgba(235,28,36,0.12)` : 'none',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '11px',
-                    letterSpacing: '0.06em',
-                    color: active ? DESKTOP_BRAND_RED : '#1A1A1A',
-                    minWidth: '22px',
-                  }}
-                >
-                  L{floor.id}
-                </span>
-                <span
-                  style={{
-                    flex: 1,
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '7px',
-                    letterSpacing: '0.14em',
-                    textTransform: 'uppercase',
-                    color: active ? DESKTOP_BRAND_RED : '#4A3728',
-                    lineHeight: 1.3,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {floor.name}
-                </span>
-                <span
+              <div key={floor.path} className="floor-directory__card-wrap">
+                <div
+                  className={`floor-directory__card-glow ${isActive ? 'floor-directory__card-glow--active' : ''}`}
                   aria-hidden
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: active ? DESKTOP_BRAND_RED : 'transparent',
-                    boxShadow: active ? `0 0 0 1px rgba(235,28,36,0.15)` : 'none',
-                    flexShrink: 0,
-                  }}
                 />
-              </button>
+                <button
+                  type="button"
+                  className={[
+                    'floor-directory__card',
+                    isActive ? 'floor-directory__card--active' : '',
+                    isDestination && !isActive ? 'floor-directory__card--destination' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  disabled={isActive || !!journey}
+                  onClick={() => handleSelect(floor.path, floor.id, floor.defaultZoneId, isActive)}
+                  onMouseEnter={() => setHoveredId(floor.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  aria-current={isActive ? 'true' : undefined}
+                  aria-label={`Level ${floor.id} ${floor.name}`}
+                >
+                  <span className="floor-directory__number">{getDirectoryFloorNumber(floor.id)}</span>
+                  <span className="floor-directory__body">
+                    <span className="floor-directory__name">{floor.name}</span>
+                    {status ? <span className="floor-directory__status">{status}</span> : null}
+                  </span>
+                  {!isActive ? (
+                    <span className="floor-directory__arrow" aria-hidden>
+                      →
+                    </span>
+                  ) : null}
+                </button>
+              </div>
             );
           })}
         </div>

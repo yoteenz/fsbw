@@ -42,6 +42,8 @@ type TowerJourney = {
 type DesktopTowerNavContextValue = {
   travelTo: (href: string) => void;
   isTraveling: boolean;
+  journey: TowerJourney | null;
+  travelDisplayLevelId: number;
 };
 
 const DesktopTowerNavContext = createContext<DesktopTowerNavContextValue | null>(null);
@@ -161,8 +163,13 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ travelTo, isTraveling: journey !== null }),
-    [journey, travelTo],
+    () => ({
+      travelTo,
+      isTraveling: journey !== null,
+      journey,
+      travelDisplayLevelId: displayLevelId,
+    }),
+    [journey, displayLevelId, travelTo],
   );
 
   return (
