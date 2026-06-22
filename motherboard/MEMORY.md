@@ -30848,3 +30848,13 @@ Summary of the **whole conversation so far** in this chat: desktop tower work (P
 - **`FloatingNavTrigger.css`:** **`object-fit: contain`** on **`.floating-nav-trigger__glyph`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Remove gray connector lines on floor/room nav panels
+
+Summary of the **whole conversation so far** in this chat: desktop tower work (PSA suite, Extensions Boutique, iPad artboard revert, elevator MP4 fix, floating nav Supabase trigger icons); user asked to **remove the gray line connecting selections** on the floor and room/zone directory panels.
+
+- **Room panel** (`DesktopRoomDirectory.css`): removed gray **`background`** gradient from **`.room-directory__connector`** — horizontal connector line no longer visible; red travel glow/pulse kept.
+- **Floor panel** (`DesktopFloorDirectory.css`): removed gray **`background`** gradient from **`.floor-directory__spine`** — vertical spine line no longer visible; red spine glow/pulse kept.
+- Pushed **`master`** + **`preview/mobile`**.
+
