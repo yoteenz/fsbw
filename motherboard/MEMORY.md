@@ -30745,3 +30745,14 @@ Summary of the **whole conversation so far** in this chat: floor zone background
 - **Fix:** **`desktopNavBarStyle`** in **`desktopLobbyAcrylic.ts`** — bright white gradient (**0.94→0.82**), lighter blur + higher saturate, white border + inset highlight; **`NavBar.tsx`** uses shared token.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Penthouse room hero background swap
+
+Summary of the **whole conversation so far** in this chat: floor zone backgrounds, white navbar frost; user supplied new Supabase hero URLs for all three penthouse rooms.
+
+- **analysis-lab:** **A6B0A7CB…png**
+- **showroom:** **7F16AAFA…png**
+- **boutique:** **8358D320…png**
+- **Changes:** `desktopPenthouseRooms.ts`. Pushed **`master`** + **`preview/mobile`**.
+
