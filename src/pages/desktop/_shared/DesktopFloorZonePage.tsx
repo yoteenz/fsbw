@@ -4,6 +4,7 @@ import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
+import PsaAssistantWidget from '../../../components/psa/PsaAssistantWidget';
 import {
   resolveDesktopFloorZoneId,
   type DesktopFloor,
@@ -84,6 +85,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         </div>
 
         <DesktopFloatingNav />
+
+        {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
       </section>
     </div>
   );

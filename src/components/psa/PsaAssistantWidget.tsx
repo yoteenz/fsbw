@@ -33,6 +33,7 @@ import {
   LOUNGE_TV_THEATER_MODE_CHANGED_EVENT,
 } from '../../utils/loungeTvTheaterMode';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
+import PsaStandingHologram from './PsaStandingHologram';
 import PsaChatPanel from './PsaChatPanel';
 import { preloadPsaNudgeAssets } from '../../utils/psaNudgeAssetPreload';
 import {
@@ -71,6 +72,11 @@ import {
   type PsaOpenChatRequestDetail,
 } from '../../utils/psaOpenChatRequest';
 import './psaAssistant.css';
+import './desktopPsaSuite.css';
+
+type PsaAssistantWidgetProps = {
+  variant?: 'global' | 'suite';
+};
 
 function draftSelectionsFromPrefill(
   selections?: PsaBawPrefillSelections
@@ -89,7 +95,8 @@ function draftSelectionsFromPrefill(
   return Object.keys(out).length ? out : undefined;
 }
 
-export default function PsaAssistantWidget() {
+export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantWidgetProps) {
+  const isSuite = variant === 'suite';
   const location = useLocation();
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(() => isSignedIn());
@@ -152,7 +159,7 @@ export default function PsaAssistantWidget() {
   );
 
   const proactiveNudge = usePsaProactiveNudges(
-    !isOpen && !isFabCollapsed && !cartDropdownOpen
+    !isSuite && !isOpen && !isFabCollapsed && !cartDropdownOpen
   );
 
   const showContinueHint =
@@ -381,7 +388,23 @@ export default function PsaAssistantWidget() {
     if (!isOpen) endRedCarpetMode();
   }, [isOpen, endRedCarpetMode]);
 
+  const handleCloseChat = useCallback(() => {
+    endRedCarpetMode();
+    setShowSelfieStyleAnalysis(false);
+    setIsOpen(false);
+    closeHistory();
+  }, [closeHistory, endRedCarpetMode]);
+
   const handleFabClick = useCallback(() => {
+    if (isSuite) {
+      if (isOpen) {
+        handleCloseChat();
+        return;
+      }
+      setIsOpen(true);
+      startWelcomeWave();
+      return;
+    }
     if (isFabCollapsed) {
       setIsFabCollapsed(false);
       return;
@@ -395,14 +418,7 @@ export default function PsaAssistantWidget() {
     }
     setIsOpen(true);
     startWelcomeWave();
-  }, [isFabCollapsed, isOpen, startWelcomeWave, closeHistory, endRedCarpetMode]);
-
-  const handleCloseChat = useCallback(() => {
-    endRedCarpetMode();
-    setShowSelfieStyleAnalysis(false);
-    setIsOpen(false);
-    closeHistory();
-  }, [closeHistory, endRedCarpetMode]);
+  }, [isSuite, isFabCollapsed, isOpen, startWelcomeWave, closeHistory, endRedCarpetMode, handleCloseChat]);
 
   const handleNewChat = useCallback(() => {
     endRedCarpetMode();
@@ -611,125 +627,163 @@ export default function PsaAssistantWidget() {
     idleExpressionCycle.expression,
   ]);
 
+  const suiteCtaLabel = isOpen ? uiCopy.hideChatCta : uiCopy.widgetCta;
+
+  const chatPanel = (
+    <PsaChatPanel
+      messages={messages}
+      isSending={isSending}
+      isLoadingHistory={isLoadingHistory}
+      usageLabel={usageLabel}
+      redCarpetMode={redCarpetMode}
+      bonusStarterChips={bonusStarterChips}
+      panelQuickReplies={panelQuickReplies}
+      historyOpen={historyOpen}
+      historyArchivedView={historyArchivedView}
+      isLoadingThreadList={isLoadingThreadList}
+      historyAvailable={historyAvailable}
+      threadList={threadList}
+      activeThreadId={threadId}
+      onClose={handleCloseChat}
+      onSend={handleSend}
+      onNewChat={handleNewChat}
+      onOpenHistory={() => void openHistory()}
+      onCloseHistory={closeHistory}
+      onToggleHistoryArchived={() => void toggleHistoryArchivedView()}
+      onSelectThread={handleSelectThread}
+      onArchiveThread={(id) => void archiveThread(id)}
+      onUnarchiveThread={(id) => void unarchiveThread(id)}
+      onDeleteThread={(id) => void removeThread(id)}
+      onRenameThread={(id, title) => void renameThread(id, title)}
+      onInputFocusChange={setIsInputFocused}
+      onInputTextChange={setInputHasText}
+      initialInput={prefillInput}
+      selfieStyleAnalysisOverlay={
+        showSelfieStyleAnalysis ? (
+          <PsaSelfieStyleAnalysisPanel
+            onClose={() => setShowSelfieStyleAnalysis(false)}
+            onPremiumRequired={() => {
+              setShowSelfieStyleAnalysis(false);
+              setIsOpen(false);
+              setShowUpgradeModal(true);
+            }}
+            onSubmitted={handleSelfieStyleSubmitted}
+          />
+        ) : null
+      }
+    />
+  );
+
   // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
-  if (!signedIn || !isPremium || isPsaHiddenPath(location.pathname) || loungeTvTheater) {
+  if (!signedIn || !isPremium || loungeTvTheater) {
+    return null;
+  }
+  if (!isSuite && isPsaHiddenPath(location.pathname)) {
     return null;
   }
 
   const widget = (
     <>
-      <div className="psa-widget-root" data-attribute="psa-assistant-widget">
-        {isOpen ? (
-          <>
-            <button
-              type="button"
-              className="psa-chat-backdrop"
-              aria-label="Close PSA chat"
-              onClick={handleCloseChat}
-            />
-            <PsaChatPanel
-              messages={messages}
-              isSending={isSending}
-              isLoadingHistory={isLoadingHistory}
-              usageLabel={usageLabel}
-              redCarpetMode={redCarpetMode}
-              bonusStarterChips={bonusStarterChips}
-              panelQuickReplies={panelQuickReplies}
-              historyOpen={historyOpen}
-              historyArchivedView={historyArchivedView}
-              isLoadingThreadList={isLoadingThreadList}
-              historyAvailable={historyAvailable}
-              threadList={threadList}
-              activeThreadId={threadId}
-              onClose={handleCloseChat}
-              onSend={handleSend}
-              onNewChat={handleNewChat}
-              onOpenHistory={() => void openHistory()}
-              onCloseHistory={closeHistory}
-              onToggleHistoryArchived={() => void toggleHistoryArchivedView()}
-              onSelectThread={handleSelectThread}
-              onArchiveThread={(id) => void archiveThread(id)}
-              onUnarchiveThread={(id) => void unarchiveThread(id)}
-              onDeleteThread={(id) => void removeThread(id)}
-              onRenameThread={(id, title) => void renameThread(id, title)}
-              onInputFocusChange={setIsInputFocused}
-              onInputTextChange={setInputHasText}
-              initialInput={prefillInput}
-              selfieStyleAnalysisOverlay={
-                showSelfieStyleAnalysis ? (
-                  <PsaSelfieStyleAnalysisPanel
-                    onClose={() => setShowSelfieStyleAnalysis(false)}
-                    onPremiumRequired={() => {
-                      setShowSelfieStyleAnalysis(false);
-                      setIsOpen(false);
-                      setShowUpgradeModal(true);
-                    }}
-                    onSubmitted={handleSelfieStyleSubmitted}
-                  />
-                ) : null
-              }
-            />
-          </>
-        ) : null}
-        {!isPsaFabHiddenPath(location.pathname) ? (
-        <div
-          className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
-        >
-          {!cartDropdownOpen && !isFabCollapsed && !isOpen && proactiveNudge ? (
-            <button
-              type="button"
-              className={`psa-nudge-chip${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
-              onClick={handleNudgeAction}
-              aria-label={proactiveNudge.headline}
-            >
-              <img
-                className="psa-nudge-chip-art"
-                src={PSA_NUDGE_BUBBLE_SRC}
-                alt=""
-                aria-hidden
-                draggable={false}
-              />
-              <span className="psa-nudge-chip-content">
-                <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
-                {proactiveNudge.body ? (
-                  <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
-                ) : null}
-              </span>
-            </button>
-          ) : null}
-          {isFabCollapsed ? (
-            !cartDropdownOpen ? (
-            <button
-              type="button"
-              className={`psa-nudge-chip psa-nudge-chip-show-chat${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
-              onClick={handleFabClick}
-              aria-label="Show chat"
-            >
-              <img
-                className="psa-nudge-chip-art"
-                src={PSA_NUDGE_BUBBLE_SRC}
-                alt=""
-                aria-hidden
-                draggable={false}
-              />
-              <span className="psa-nudge-chip-content">
-                <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>
-              </span>
-            </button>
-            ) : null
-          ) : (
-            <PsaAvatarTrigger
+      <div
+        className={isSuite ? 'psa-suite-root' : 'psa-widget-root'}
+        data-attribute={isSuite ? 'psa-suite-experience' : 'psa-assistant-widget'}
+      >
+        {isSuite ? (
+          <div className="psa-suite-layout">
+            <PsaStandingHologram
               onClick={handleFabClick}
               isOpen={isOpen}
               idle={!isOpen}
               expression={avatarExpression}
-              ctaLabel={fabCtaLabel}
-              ctaSubline={fabCtaSubline}
+              ctaLabel={suiteCtaLabel}
               aria-label={isOpen ? 'Hide chat' : 'Open Personal Slay Assistant'}
             />
-          )}
-        </div>
-        ) : null}
+            {isOpen ? (
+              <>
+                <button
+                  type="button"
+                  className="psa-chat-backdrop"
+                  aria-label="Close PSA chat"
+                  onClick={handleCloseChat}
+                />
+                {chatPanel}
+              </>
+            ) : null}
+          </div>
+        ) : (
+          <>
+            {isOpen ? (
+              <>
+                <button
+                  type="button"
+                  className="psa-chat-backdrop"
+                  aria-label="Close PSA chat"
+                  onClick={handleCloseChat}
+                />
+                {chatPanel}
+              </>
+            ) : null}
+            {!isPsaFabHiddenPath(location.pathname) ? (
+              <div
+                className={`psa-widget-fab-stack${isFabCollapsed ? ' psa-widget-fab-stack--collapsed' : ''}${cartDropdownOpen ? ' psa-widget-fab-stack--cart-open' : ''}`}
+              >
+                {!cartDropdownOpen && !isFabCollapsed && !isOpen && proactiveNudge ? (
+                  <button
+                    type="button"
+                    className={`psa-nudge-chip${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
+                    onClick={handleNudgeAction}
+                    aria-label={proactiveNudge.headline}
+                  >
+                    <img
+                      className="psa-nudge-chip-art"
+                      src={PSA_NUDGE_BUBBLE_SRC}
+                      alt=""
+                      aria-hidden
+                      draggable={false}
+                    />
+                    <span className="psa-nudge-chip-content">
+                      <span className="psa-nudge-chip-headline">{proactiveNudge.headline}</span>
+                      {proactiveNudge.body ? (
+                        <span className="psa-nudge-chip-body">{proactiveNudge.body}</span>
+                      ) : null}
+                    </span>
+                  </button>
+                ) : null}
+                {isFabCollapsed ? (
+                  !cartDropdownOpen ? (
+                    <button
+                      type="button"
+                      className={`psa-nudge-chip psa-nudge-chip-show-chat${nudgeBubbleReady ? '' : ' psa-nudge-chip--pending'}`}
+                      onClick={handleFabClick}
+                      aria-label="Show chat"
+                    >
+                      <img
+                        className="psa-nudge-chip-art"
+                        src={PSA_NUDGE_BUBBLE_SRC}
+                        alt=""
+                        aria-hidden
+                        draggable={false}
+                      />
+                      <span className="psa-nudge-chip-content">
+                        <span className="psa-nudge-chip-headline">{uiCopy.showChatCta}</span>
+                      </span>
+                    </button>
+                  ) : null
+                ) : (
+                  <PsaAvatarTrigger
+                    onClick={handleFabClick}
+                    isOpen={isOpen}
+                    idle={!isOpen}
+                    expression={avatarExpression}
+                    ctaLabel={fabCtaLabel}
+                    ctaSubline={fabCtaSubline}
+                    aria-label={isOpen ? 'Hide chat' : 'Open Personal Slay Assistant'}
+                  />
+                )}
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
 
       <ConfirmationModal
@@ -745,6 +799,6 @@ export default function PsaAssistantWidget() {
     </>
   );
 
-  if (typeof document === 'undefined') return widget;
+  if (isSuite || typeof document === 'undefined') return widget;
   return createPortal(widget, document.body);
 }

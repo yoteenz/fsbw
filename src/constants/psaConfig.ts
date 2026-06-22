@@ -203,12 +203,27 @@ export const PSA_TEST_TOOL_PATH_PREFIXES = [
 ] as const;
 
 /** Routes where the floating PSA widget is hidden (admin chrome, full-screen flows, debug/test). */
-export const PSA_HIDDEN_PATH_PREFIXES = ['/admin', ...PSA_TEST_TOOL_PATH_PREFIXES];
+export const PSA_HIDDEN_PATH_PREFIXES = [
+  '/admin',
+  '/desktop',
+  '/desktop-preview',
+  ...PSA_TEST_TOOL_PATH_PREFIXES,
+];
 
 export function isPsaHiddenPath(pathname: string): boolean {
   if (isDebugModePath(pathname)) return true;
   return PSA_HIDDEN_PATH_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
+
+/** Desktop tower — PSA lives in the PSA Suite zone only (standing hologram). */
+export function isPsaDesktopPath(pathname: string): boolean {
+  return (
+    pathname === '/desktop' ||
+    pathname.startsWith('/desktop/') ||
+    pathname === '/desktop-preview' ||
+    pathname.startsWith('/desktop-preview/')
   );
 }
 
