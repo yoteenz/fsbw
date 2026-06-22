@@ -34,6 +34,7 @@ type HoloState = {
 export function DesktopTowerElevatorExperience({
   fromFloor,
   toFloor,
+  direction,
   phase,
   displayLevelId,
 }: Props) {
@@ -75,7 +76,7 @@ export function DesktopTowerElevatorExperience({
   useEffect(() => {
     setVideoFailed(false);
     setVideoPlaying(false);
-  }, [fromFloor.id, toFloor.id]);
+  }, [direction, fromFloor.id, toFloor.id]);
 
   useLayoutEffect(() => {
     const video = videoRef.current;
@@ -83,10 +84,11 @@ export function DesktopTowerElevatorExperience({
 
     return bindDesktopTowerElevatorVideoPlayback(
       video,
+      direction,
       () => setVideoPlaying(true),
       () => setVideoFailed(true),
     );
-  }, [fromFloor.id, toFloor.id, videoFailed]);
+  }, [direction, fromFloor.id, toFloor.id, videoFailed]);
 
   const exiting = phase === 'exiting';
   const traveling = phase === 'traveling';
@@ -112,7 +114,7 @@ export function DesktopTowerElevatorExperience({
         ) : (
           <video
             ref={videoRef}
-            key={`${fromFloor.id}-${toFloor.id}-${videoSrc}`}
+            key={`${fromFloor.id}-${toFloor.id}-${direction}-${videoSrc}`}
             src={videoSrc}
             poster={videoPlaying ? undefined : DESKTOP_TOWER_ELEVATOR_SHELL_URL}
             className={`desktop-tower-elevator__shell-media${

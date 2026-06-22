@@ -1,4 +1,5 @@
 import { DESKTOP_TOWER_ELEVATOR_VIDEO_URL } from '../constants/desktopTowerEnv';
+import type { TowerTravelDirection } from '../constants/desktopTowerMotion';
 
 let warmVideoEl: HTMLVideoElement | null = null;
 let cachedBlobUrl: string | null = null;
@@ -56,9 +57,38 @@ export function getDesktopTowerElevatorVideoSrc(): string {
   return resolvePlayableSrc();
 }
 
+function supportsReversePlayback(video: HTMLVideoElement): boolean {
+  const previousRate = video.playbackRate;
+  video.playbackRate = -1;
+  const supported = video.playbackRate === -1;
+  video.playbackRate = previousRate;
+  return supported;
+}
+
+function applyElevatorVideoDirection(video: HTMLVideoElement, direction: TowerTravelDirection): void {
+  video.classList.remove('desktop-tower-elevator__shell-media--reverse-fallback');
+  video.style.transform = '';
+
+  if (direction === 'down' && supportsReversePlayback(video)) {
+    video.playbackRate = -1;
+    if (Number.isFinite(video.duration) && video.duration > 0) {
+      video.currentTime = Math.max(0, video.duration - 0.05);
+    }
+    return;
+  }
+
+  video.playbackRate = 1;
+  video.currentTime = 0;
+
+  if (direction === 'down') {
+    video.classList.add('desktop-tower-elevator__shell-media--reverse-fallback');
+  }
+}
+
 /** Attach listeners and attempt muted autoplay for the overlay video element. */
 export function bindDesktopTowerElevatorVideoPlayback(
   video: HTMLVideoElement,
+  direction: TowerTravelDirection,
   onPlaying: () => void,
   onFailed: () => void,
 ): () => void {
@@ -66,7 +96,8 @@ export function bindDesktopTowerElevatorVideoPlayback(
 
   const tryPlay = () => {
     if (cancelled) return;
-    video.currentTime = 0;
+    applyElevatorVideoDirection(video, direction);
+
     const attempt = video.play();
     if (attempt && typeof attempt.then === 'function') {
       void attempt
@@ -80,9 +111,15 @@ export function bindDesktopTowerElevatorVideoPlayback(
   };
 
   const onCanPlay = () => tryPlay();
+  const onLoadedMetadata = () => {
+    if (direction === 'down') {
+      applyElevatorVideoDirection(video, direction);
+    }
+  };
   const onPlayingEvent = () => onPlaying();
 
   video.addEventListener('canplay', onCanPlay);
+  video.addEventListener('loadedmetadata', onLoadedMetadata);
   video.addEventListener('playing', onPlayingEvent);
 
   const targetSrc = resolvePlayableSrc();
@@ -96,7 +133,11 @@ export function bindDesktopTowerElevatorVideoPlayback(
   return () => {
     cancelled = true;
     video.removeEventListener('canplay', onCanPlay);
+    video.removeEventListener('loadedmetadata', onLoadedMetadata);
     video.removeEventListener('playing', onPlayingEvent);
     video.pause();
+    video.playbackRate = 1;
+    video.classList.remove('desktop-tower-elevator__shell-media--reverse-fallback');
+    video.style.transform = '';
   };
 }

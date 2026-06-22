@@ -40,6 +40,10 @@
   opacity: 1;
 }
 
+.desktop-tower-elevator__shell-media--reverse-fallback {
+  transform: scaleY(-1);
+}
+
 /* Destination holo */
 .desktop-tower-elevator__holo {
   position: absolute;
