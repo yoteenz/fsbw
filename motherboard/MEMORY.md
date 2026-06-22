@@ -30825,3 +30825,14 @@ Summary of the **whole conversation so far** in this chat: desktop tower feature
 - Panel responsive breakpoints in boutique/PSA suite CSS tightened to **1023px** (phone artboard only).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator MP4 playback fix (preload + blob cache)
+
+Summary of the **whole conversation so far** in this chat: desktop tower features + iPad artboard revert; user reported **elevator travel MP4 animation not playing** (static shell poster visible instead).
+
+- **Cause:** ~20MB MP4 could not buffer within the ~2.7s travel overlay; **`poster`** (static PNG) stayed visible; play effect was fragile.
+- **`desktopTowerElevatorVideo.ts`:** hidden warm-buffer on app load; fetch → **blob URL** cache for instant replay; **`bindDesktopTowerElevatorVideoPlayback`** with reliable muted autoplay.
+- **`DesktopTowerElevatorExperience`:** poster removed once **`playing`**; remount play on journey change.
+- Pushed **`master`** + **`preview/mobile`**.
+
