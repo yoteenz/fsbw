@@ -30692,3 +30692,15 @@ Summary: user asked to remove Design Studio (Build-A-Wig) and PSA concierge pane
 - **`analysis-lab`:** cleared **`comingSoon`** in **`desktopPenthouseRooms.ts`** (flows through floor/room directories).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Lobby/concierge zone labels + static elevator shell
+
+Summary of the **whole conversation so far** in this chat: elevator shell asset + glass-mask retune; two-step floor/zone directory UX; full-bleed elevator sizing; penthouse per-room heroes; compact directory panels; penthouse panel cleanup; then user requested updated lobby/concierge room labels and removal of elevator image animation.
+
+- **Lobby (L3) zones:** Build-A-Wig Atelier (`build-a-wig-atelier`), Grand Lobby (`grand-lobby`, default), Lounge (`lounge`). Replaced prior shop/lobby/gallery-style ids.
+- **Concierge (L1) zones:** Founder Suite (`founder-suite`), Reception (`reception`, default), PSA Suite (`psa-suite`). Replaced prior founder/reception/psa-concierge-suite ids.
+- **Quick routes:** HOME → `grand-lobby`; BUILD-A-WIG → `build-a-wig-atelier`; PSA → `psa-suite`.
+- **Elevator overlay:** removed moving exterior track, glass clip-path, frame mask SVG, and holo arrival animation — static shell PNG + holo display only during travel.
+- **Changes:** `desktopFloors.ts`, `desktopNavQuickRoutes.ts`, `DesktopTowerElevatorExperience.tsx`, `DesktopTowerElevator.css`. Pushed **`master`** + **`preview/mobile`**.
+
