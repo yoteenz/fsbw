@@ -90,7 +90,7 @@ export function DesktopRoomNavPanel() {
       style={{
         position: 'absolute',
         left: '50%',
-        bottom: 'clamp(16px, 2.5vh, 32px)',
+        bottom: 'clamp(10px, 1.2vh, 16px)',
         transform: 'translateX(-50%)',
         zIndex: 50,
         pointerEvents: 'auto',

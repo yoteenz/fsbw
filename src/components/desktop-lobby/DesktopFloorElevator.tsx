@@ -44,11 +44,12 @@ export function DesktopFloorElevator({ side = 'right' }: DesktopFloorElevatorPro
       className="floor-directory"
       style={{
         position: 'absolute',
-        top: '50%',
+        bottom: 'clamp(96px, 13vh, 148px)',
         ...(side === 'right'
-          ? { right: 'clamp(12px, 1.5vw, 24px)' }
-          : { left: 'clamp(12px, 1.5vw, 24px)' }),
-        transform: 'translateY(-50%)',
+          ? { right: 'clamp(10px, 1.2vw, 18px)' }
+          : { left: 'clamp(10px, 1.2vw, 18px)' }),
+        top: 'auto',
+        transform: 'none',
         zIndex: 50,
         pointerEvents: 'auto',
       }}

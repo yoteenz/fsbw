@@ -1,6 +1,6 @@
 .room-directory {
   position: relative;
-  width: min(780px, calc(100vw - 140px));
+  width: min(520px, calc(100vw - 300px));
   perspective: 1200px;
 }
 
@@ -20,8 +20,8 @@
 .room-directory__frame {
   position: relative;
   z-index: 1;
-  padding: 14px 16px 16px;
-  border-radius: 16px;
+  padding: 9px 11px 10px;
+  border-radius: 12px;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.62) 48%, rgba(248, 246, 244, 0.78) 100%);
   backdrop-filter: blur(32px) saturate(1.75);
@@ -73,33 +73,33 @@
 
 .room-directory__header {
   text-align: center;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
+  margin-bottom: 7px;
+  padding-bottom: 5px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .room-directory__header-label {
   font-family: 'Futura PT Book', sans-serif;
-  font-size: 7px;
-  letter-spacing: 0.38em;
+  font-size: 6px;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: #959b9b;
 }
 
 .room-directory__header-title {
   font-family: 'Futura PT Medium', sans-serif;
-  font-size: 9px;
-  letter-spacing: 0.22em;
+  font-size: 7px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #1a1a1a;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .room-directory__row {
   position: relative;
   display: flex;
-  gap: 10px;
-  padding: 6px 4px 4px;
+  gap: 6px;
+  padding: 3px 2px 2px;
   justify-content: center;
 }
 
@@ -203,7 +203,7 @@
   z-index: 2;
   flex: 1 1 0;
   min-width: 0;
-  max-width: 220px;
+  max-width: 148px;
 }
 
 .room-directory__card-glow {
@@ -243,9 +243,9 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 12px 10px 10px;
+  padding: 7px 6px 6px;
   border: 1px solid rgba(255, 255, 255, 0.65);
-  border-radius: 12px;
+  border-radius: 9px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.28) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -289,7 +289,7 @@
 }
 
 .room-directory__card--active {
-  transform: translate3d(0, -3px, 0) scale(1.03);
+  transform: translate3d(0, -1px, 0) scale(1.015);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.5) 100%);
   border-color: rgba(235, 28, 36, 0.22);
   box-shadow:
@@ -313,12 +313,12 @@
   display: block;
   width: 100%;
   font-family: 'Futura PT Medium', sans-serif;
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  font-size: 7px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #1a1a1a;
-  line-height: 1.2;
-  margin-bottom: 4px;
+  line-height: 1.25;
+  margin-bottom: 2px;
   transition: letter-spacing 0.35s ease, color 0.35s ease;
 }
 
@@ -339,8 +339,8 @@
   display: block;
   width: 100%;
   font-family: 'Futura PT Book', sans-serif;
-  font-size: 6px;
-  letter-spacing: 0.18em;
+  font-size: 5px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #959b9b;
   line-height: 1.2;
@@ -358,10 +358,10 @@
 
 .room-directory__arrow {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 6px;
+  right: 6px;
   opacity: 0;
-  font-size: 9px;
+  font-size: 7px;
   color: #eb1c24;
   transform: translateY(2px);
   transition:
