@@ -1,5 +1,5 @@
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
-import { DesktopElevatorPanel } from '../../../components/desktop-lobby/DesktopElevatorPanel';
+import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
 import type { DesktopFloor } from '../../../constants/desktopFloors';
 
 type Props = {
@@ -32,7 +32,7 @@ export default function DesktopFloorPlaceholder({ floor }: Props) {
             This floor is coming soon. Use the elevator to visit the Penthouse or Lounge.
           </div>
         </div>
-        <DesktopElevatorPanel activeFloorPath={floor.path} />
+        <DesktopFloorElevator activeFloorPath={floor.path} />
       </section>
     </div>
   );

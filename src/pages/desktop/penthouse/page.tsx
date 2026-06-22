@@ -7,7 +7,8 @@ import { PSAConciergePanel } from '../../../components/desktop-lobby/PSAConcierg
 import { DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX } from '../../../constants/desktopLobbyPanorama';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { DesktopLobbyPanorama } from '../../../components/desktop-lobby/DesktopLobbyPanorama';
-import { DesktopElevatorPanel } from '../../../components/desktop-lobby/DesktopElevatorPanel';
+import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
+import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
 
 function PenthouseViewport({
   roomIndex,
@@ -84,12 +85,8 @@ function PenthouseViewport({
         <PSAConciergePanel />
       </div>
 
-      <DesktopElevatorPanel
-        activeFloorPath={DESKTOP_PENTHOUSE_PATH}
-        roomIndex={roomIndex}
-        onRoomSelect={onRoomIndexChange}
-        showRoomNav
-      />
+      <DesktopFloorElevator activeFloorPath={DESKTOP_PENTHOUSE_PATH} />
+      <DesktopRoomNavPanel roomIndex={roomIndex} onRoomSelect={onRoomIndexChange} />
     </section>
   );
 }

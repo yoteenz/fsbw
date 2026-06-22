@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
-import { DesktopElevatorPanel } from '../../../components/desktop-lobby/DesktopElevatorPanel';
+import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
 
 import { DESKTOP_LOUNGE_BG_FALLBACK, DESKTOP_LOUNGE_BG_URL } from '../../../constants/desktopLobbyEnv';
 
@@ -448,7 +448,7 @@ export default function DesktopLoungePage() {
         </div>
 
         <canvas ref={canvasRef} style={{ display: 'none' }} />
-        <DesktopElevatorPanel activeFloorPath="/desktop/lounge" />
+        <DesktopFloorElevator activeFloorPath="/desktop/lounge" />
       </section>
     </div>
   );
