@@ -3,14 +3,8 @@ export function getDirectoryFloorNumber(floorId: number): string {
   return floorId === 4 ? `P${floorId}` : `L${floorId}`;
 }
 
-export function getDirectoryFloorStatus(
-  isActive: boolean,
-  isDestination: boolean,
-  isHovered: boolean,
-): string | null {
-  if (isActive) return 'You are here';
-  if (isDestination) return 'Destination';
-  if (isHovered) return 'Select destination';
+export function getDirectoryFloorStatus(isSelected: boolean, isHovered: boolean): string | null {
+  if (isHovered && !isSelected) return 'Select destination';
   return null;
 }
 

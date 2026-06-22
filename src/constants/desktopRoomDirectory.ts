@@ -1,19 +1,12 @@
-/** Architectural room code on destination cards — 1-based, left to right. */
-export function getDirectoryRoomCode(roomIndex: number): string {
-  return `R${roomIndex + 1}`;
-}
-
-export function getDirectoryRoomStatus(
-  isActive: boolean,
-  isDestination: boolean,
+export function getDirectoryZoneStatus(
+  isHere: boolean,
+  isPending: boolean,
   isHovered: boolean,
-  comingSoon?: boolean,
 ): string | null {
-  if (isActive) return 'Active destination';
-  if (isDestination) return 'Destination';
-  if (isHovered) return comingSoon ? 'Explore' : 'Select destination';
-  if (comingSoon) return 'Explore';
-  return 'Available';
+  if (isHere) return 'You are here';
+  if (isPending) return 'Destination';
+  if (isHovered) return 'Select destination';
+  return null;
 }
 
 /** Map room index to horizontal position on connector (0 = left, 1 = right). */

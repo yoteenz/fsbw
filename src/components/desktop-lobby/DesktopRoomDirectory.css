@@ -309,44 +309,30 @@
   opacity: 0.92;
 }
 
-.room-directory__code {
-  font-family: 'Futura PT Medium', sans-serif;
-  font-size: 18px;
-  line-height: 1;
-  letter-spacing: 0.06em;
-  color: rgba(26, 26, 26, 0.35);
-  margin-bottom: 6px;
-  transition: color 0.35s ease, text-shadow 0.35s ease;
-}
-
-.room-directory__card--active .room-directory__code,
-.room-directory__card:not(:disabled):hover .room-directory__code {
-  color: #eb1c24;
-  text-shadow: 0 0 20px rgba(235, 28, 36, 0.25);
-}
-
-.room-directory__card--destination .room-directory__code {
-  color: #eb1c24;
-}
-
 .room-directory__name {
   display: block;
   width: 100%;
   font-family: 'Futura PT Medium', sans-serif;
-  font-size: 8px;
-  letter-spacing: 0.14em;
+  font-size: 9px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #1a1a1a;
-  line-height: 1.35;
-  transition: letter-spacing 0.35s ease;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  transition: letter-spacing 0.35s ease, color 0.35s ease;
 }
 
 .room-directory__card--active .room-directory__name {
-  letter-spacing: 0.16em;
+  color: #1a1a1a;
+  letter-spacing: 0.18em;
 }
 
 .room-directory__card:not(:disabled):hover .room-directory__name {
-  letter-spacing: 0.17em;
+  letter-spacing: 0.2em;
+}
+
+.room-directory__card--destination .room-directory__name {
+  color: #eb1c24;
 }
 
 .room-directory__status {

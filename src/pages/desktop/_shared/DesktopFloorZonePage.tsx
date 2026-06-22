@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
+import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
 import {
   getDesktopZoneOnFloor,
   resolveDesktopFloorZoneId,
@@ -103,7 +104,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
               : 'Welcome to the Frontal Slayer digital flagship. More experiences arriving soon.'}
           </div>
         </div>
-        <DesktopFloorElevator activeFloorPath={floor.path} />
+        <DesktopFloorElevator />
+        <DesktopRoomNavPanel />
       </section>
     </div>
   );

@@ -34,10 +34,15 @@ export function buildDesktopQuickRouteHref(route: Pick<DesktopNavQuickRoute, 'pa
 
 /** Elevator — floor default zone/room only (middle hub), no deep-link params from nav. */
 export function buildDesktopElevatorHref(floorPath: string, defaultZoneId: string): string {
+  return buildDesktopDestinationHref(floorPath, defaultZoneId);
+}
+
+/** Deep-link to a specific zone/room on a floor (elevator + directory destinations). */
+export function buildDesktopDestinationHref(floorPath: string, destinationId: string): string {
   if (floorPath === DESKTOP_PENTHOUSE_PATH) {
-    return `${floorPath}?room=${defaultZoneId}`;
+    return `${floorPath}?room=${destinationId}`;
   }
-  return `${floorPath}?zone=${defaultZoneId}`;
+  return `${floorPath}?zone=${destinationId}`;
 }
 
 export function resolveDesktopNavActiveLabel(pathname: string, search: string): string | undefined {

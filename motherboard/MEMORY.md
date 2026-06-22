@@ -30625,3 +30625,14 @@ Summary: user asked to stop animating elevator image; animate **exterior tower b
 - **Motion:** only **`exterior-track`** `translate3d` from **`displayLevelId`**; shell **`transform: none`** always.
 - **Changes:** tower elevator component/CSS. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — New elevator shell asset + glass mask retune
+
+Summary: user supplied updated OpenArt elevator PNG (**0A372BA0-…C33.png**, **1915×821** panoramic); retune moving exterior glass placement.
+
+- **`DESKTOP_TOWER_ELEVATOR_SHELL_URL`** → new asset; dimensions **1915×821**.
+- **Glass masks retuned** in **`desktopTowerElevatorLayout.ts`**: rear center cityscape **23/11/54/62%**; side panels **3.5%** inset, **17×58%**; holo **top 4%**.
+- Shell container aspect **`calc(90vh * 1915/821)`**.
+- **Changes:** `desktopTowerEnv.ts`, `desktopTowerElevatorLayout.ts`, `DesktopTowerElevator.css`. Pushed **`master`** + **`preview/mobile`**.
+

@@ -109,8 +109,8 @@ function PenthouseViewport({
         <PSAConciergePanel />
       </div>
 
-      <DesktopFloorElevator activeFloorPath={DESKTOP_PENTHOUSE_PATH} />
-      <DesktopRoomNavPanel roomIndex={roomIndex} onRoomSelect={onRoomIndexChange} />
+      <DesktopFloorElevator />
+      <DesktopRoomNavPanel />
     </section>
   );
 }

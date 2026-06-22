@@ -5,31 +5,28 @@ import {
   getDirectoryFloorNumber,
   getDirectoryFloorStatus,
 } from '../../constants/desktopFloorDirectory';
-import { buildDesktopElevatorHref } from '../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravel } from '../desktop-tower/DesktopTowerNavProvider';
 import './DesktopFloorDirectory.css';
 
 type DesktopFloorElevatorProps = {
-  activeFloorPath: string;
   side?: 'left' | 'right';
 };
 
-export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: DesktopFloorElevatorProps) {
-  const { travelTo, journey, travelDisplayLevelId } = useDesktopTowerTravel();
+export function DesktopFloorElevator({ side = 'right' }: DesktopFloorElevatorProps) {
+  const { journey, travelDisplayLevelId, selectedFloorId, setSelectedFloorId } = useDesktopTowerTravel();
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [pendingId, setPendingId] = useState<number | null>(null);
 
   const floorIds = useMemo(() => DESKTOP_FLOORS.map((f) => f.id), []);
 
-  const currentFloorId = useMemo(() => {
+  const spineFloorId = useMemo(() => {
     if (journey) return Math.round(travelDisplayLevelId);
-    return DESKTOP_FLOORS.find((f) => f.path === activeFloorPath)?.id ?? 4;
-  }, [activeFloorPath, journey, travelDisplayLevelId]);
+    return selectedFloorId;
+  }, [journey, selectedFloorId, travelDisplayLevelId]);
 
   const spineLightTop = useMemo(() => {
-    const ratio = floorIdToSpineRatio(currentFloorId, floorIds);
+    const ratio = floorIdToSpineRatio(spineFloorId, floorIds);
     return `${ratio * 100}%`;
-  }, [currentFloorId, floorIds]);
+  }, [spineFloorId, floorIds]);
 
   const spinePulseClass = journey
     ? journey.direction === 'up'
@@ -37,11 +34,9 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
       : 'floor-directory__spine-pulse--down'
     : '';
 
-  const handleSelect = (floorPath: string, floorId: number, defaultZoneId: string, isActive: boolean) => {
-    if (isActive || journey) return;
-    setPendingId(floorId);
-    travelTo(buildDesktopElevatorHref(floorPath, defaultZoneId));
-    window.setTimeout(() => setPendingId(null), 2800);
+  const handleSelect = (floorId: number) => {
+    if (journey) return;
+    setSelectedFloorId(floorId);
   };
 
   return (
@@ -76,38 +71,35 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
             ) : null}
           </div>
           <div
-            className={`floor-directory__spine-glow ${journey || pendingId ? 'floor-directory__spine-glow--active' : ''}`}
+            className={`floor-directory__spine-glow ${journey || selectedFloorId ? 'floor-directory__spine-glow--active' : ''}`}
             style={{ top: spineLightTop }}
             aria-hidden
           />
 
           {DESKTOP_FLOORS.map((floor) => {
-            const isActive = floor.id === currentFloorId;
-            const isDestination =
-              (journey?.toFloor.id === floor.id && !isActive) || pendingId === floor.id;
+            const isSelected = floor.id === selectedFloorId;
             const isHovered = hoveredId === floor.id;
-            const status = getDirectoryFloorStatus(isActive, isDestination, isHovered);
+            const status = getDirectoryFloorStatus(isSelected, isHovered);
 
             return (
               <div key={floor.path} className="floor-directory__card-wrap">
                 <div
-                  className={`floor-directory__card-glow ${isActive ? 'floor-directory__card-glow--active' : ''}`}
+                  className={`floor-directory__card-glow ${isSelected ? 'floor-directory__card-glow--active' : ''}`}
                   aria-hidden
                 />
                 <button
                   type="button"
                   className={[
                     'floor-directory__card',
-                    isActive ? 'floor-directory__card--active' : '',
-                    isDestination && !isActive ? 'floor-directory__card--destination' : '',
+                    isSelected ? 'floor-directory__card--active' : '',
                   ]
                     .filter(Boolean)
                     .join(' ')}
-                  disabled={isActive || !!journey}
-                  onClick={() => handleSelect(floor.path, floor.id, floor.defaultZoneId, isActive)}
+                  disabled={!!journey}
+                  onClick={() => handleSelect(floor.id)}
                   onMouseEnter={() => setHoveredId(floor.id)}
                   onMouseLeave={() => setHoveredId(null)}
-                  aria-current={isActive ? 'true' : undefined}
+                  aria-pressed={isSelected}
                   aria-label={`Level ${floor.id} ${floor.name}`}
                 >
                   <span className="floor-directory__number">{getDirectoryFloorNumber(floor.id)}</span>
@@ -115,7 +107,7 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
                     <span className="floor-directory__name">{floor.name}</span>
                     {status ? <span className="floor-directory__status">{status}</span> : null}
                   </span>
-                  {!isActive ? (
+                  {!isSelected ? (
                     <span className="floor-directory__arrow" aria-hidden>
                       →
                     </span>

@@ -1,3 +1,5 @@
+import { DESKTOP_LOBBY_PANORAMA_ROOMS } from './desktopLobbyPanorama';
+
 export type DesktopZone = {
   id: string;
   label: string;
@@ -28,7 +30,11 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     name: 'PENTHOUSE',
     path: DESKTOP_PENTHOUSE_PATH,
     defaultZoneId: 'showroom',
-    zones: [],
+    zones: DESKTOP_LOBBY_PANORAMA_ROOMS.map((room) => ({
+      id: room.id,
+      label: room.label,
+      comingSoon: room.comingSoon,
+    })),
   },
   {
     id: 3,
@@ -75,6 +81,18 @@ export function getDesktopZoneOnFloor(floor: DesktopFloor, zoneId: string): Desk
 export function resolveDesktopFloorZoneId(floor: DesktopFloor, zoneParam: string | null): string {
   if (zoneParam && floor.zones.some((z) => z.id === zoneParam)) return zoneParam;
   return floor.defaultZoneId;
+}
+
+/** Active destination id from URL — `room` on penthouse, `zone` elsewhere. */
+export function resolveDesktopActiveDestinationId(
+  floor: DesktopFloor,
+  search: string,
+): string {
+  const params = new URLSearchParams(search);
+  if (floor.path === DESKTOP_PENTHOUSE_PATH) {
+    return resolveDesktopFloorZoneId(floor, params.get('room'));
+  }
+  return resolveDesktopFloorZoneId(floor, params.get('zone'));
 }
 
 /** @deprecated Use floor.id — kept for elevator title strings during migration. */

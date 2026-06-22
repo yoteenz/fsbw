@@ -11,6 +11,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   getDesktopFloorByPath,
+  DESKTOP_FLOORS,
   type DesktopFloor,
 } from '../../constants/desktopFloors';
 import {
@@ -46,6 +47,9 @@ type DesktopTowerNavContextValue = {
   isTraveling: boolean;
   journey: TowerJourney | null;
   travelDisplayLevelId: number;
+  /** Floor selected in the directory — drives the bottom zone panel. */
+  selectedFloorId: number;
+  setSelectedFloorId: (floorId: number) => void;
 };
 
 const DesktopTowerNavContext = createContext<DesktopTowerNavContextValue | null>(null);
@@ -63,6 +67,16 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   const [journey, setJourney] = useState<TowerJourney | null>(null);
   const [phase, setPhase] = useState<TowerElevatorPhase>('boarding');
   const [displayLevelId, setDisplayLevelId] = useState(1);
+  const [selectedFloorId, setSelectedFloorId] = useState(
+    () => getDesktopFloorByPath(location.pathname)?.id ?? DESKTOP_FLOORS[0].id,
+  );
+
+  const currentFloor = getDesktopFloorByPath(location.pathname);
+
+  useEffect(() => {
+    if (journey || !currentFloor) return;
+    setSelectedFloorId(currentFloor.id);
+  }, [currentFloor?.id, journey, location.pathname]);
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
@@ -174,8 +188,10 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       isTraveling: journey !== null,
       journey,
       travelDisplayLevelId: displayLevelId,
+      selectedFloorId,
+      setSelectedFloorId,
     }),
-    [journey, displayLevelId, quickTravelTo, travelTo],
+    [journey, displayLevelId, quickTravelTo, selectedFloorId, travelTo],
   );
 
   return (
@@ -191,7 +207,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             displayLevelId={displayLevelId}
           />
           <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>
-            <DesktopFloorElevator activeFloorPath={journey.fromFloor.path} />
+            <DesktopFloorElevator />
           </div>
         </>
       ) : null}
