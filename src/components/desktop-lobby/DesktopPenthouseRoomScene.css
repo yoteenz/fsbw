@@ -22,6 +22,11 @@
   -webkit-user-drag: none;
 }
 
+/* Phone / preview artboard — show full room frame (no cover crop). */
+.penthouse-room-scene--artboard .penthouse-room-scene__bg {
+  object-fit: contain;
+}
+
 .penthouse-room-scene__bg--steady {
   z-index: 0;
 }

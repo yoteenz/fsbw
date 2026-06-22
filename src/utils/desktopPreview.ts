@@ -12,8 +12,6 @@ const DESKTOP_PREFIX = '/desktop';
 const DEFAULT_VIEWPORT_CONTENT = 'width=device-width, initial-scale=1.0';
 const OUTER_PREVIEW_VIEWPORT_CONTENT =
   'width=device-width, initial-scale=1, viewport-fit=cover';
-const MOBILE_DESKTOP_VIEWPORT_CONTENT =
-  `width=${DESKTOP_PREVIEW_VIEWPORT_WIDTH}, viewport-fit=cover`;
 
 let outerViewportLockInstalled = false;
 let mobileDesktopViewportInstalled = false;
@@ -189,7 +187,7 @@ export function bootstrapMobileDesktopViewport(): void {
   if (!isMobileDesktopBypassActive()) return;
   if (typeof document === 'undefined' || mobileDesktopViewportInstalled) return;
   mobileDesktopViewportInstalled = true;
-  setViewportContent(MOBILE_DESKTOP_VIEWPORT_CONTENT);
+  // Viewport + scale are owned by DesktopRouteShell → ScaledDesktopViewport on `/desktop/*`.
 }
 
 export function bootstrapDesktopPreviewModes(): void {

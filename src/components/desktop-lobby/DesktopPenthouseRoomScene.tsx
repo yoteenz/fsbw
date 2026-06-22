@@ -5,6 +5,7 @@ import {
   getPenthouseRoomIdByIndex,
   resolvePenthouseRoomBackground,
 } from '../../constants/desktopPenthouseRooms';
+import { isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
 import './DesktopPenthouseRoomScene.css';
 
 const ROOM_TRANSITION_MS = 880;
@@ -84,9 +85,13 @@ export function DesktopPenthouseRoomScene({
   const activeRoomId = getPenthouseRoomIdByIndex(activeIndex);
   const leavingRoomId = leavingIndex !== null ? getPenthouseRoomIdByIndex(leavingIndex) : null;
   const isTransitioning = leavingIndex !== null;
+  const artboard = isDesktopArtboardLayoutActive();
 
   return (
-    <div className={`penthouse-room-scene ${className}`.trim()} aria-hidden>
+    <div
+      className={`penthouse-room-scene${artboard ? ' penthouse-room-scene--artboard' : ''} ${className}`.trim()}
+      aria-hidden
+    >
       {!isTransitioning ? (
         <div className="penthouse-room-scene__layer">
           <RoomBackground

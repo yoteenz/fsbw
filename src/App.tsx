@@ -1,4 +1,4 @@
-import { Route, useLocation, Navigate } from 'react-router-dom';
+import { Route, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { Component, ErrorInfo, ReactNode, useEffect } from 'react';
 import LobbyPage from './pages/lobby/page';
 import BuildAWigPage from './pages/build-a-wig/page';
@@ -24,6 +24,7 @@ import PsaAssistantWidget from './components/psa/PsaAssistantWidget';
 import { PsaChatCopyBootstrap } from './components/psa/PsaChatCopyBootstrap';
 import { DebugModeShell } from './components/debug-mode/DebugModeShell';
 import CreativePreviewBanner from './components/CreativePreviewBanner';
+import { DesktopRouteShell } from './components/desktop-preview/DesktopRouteShell';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -165,6 +166,14 @@ const DesktopGalleryPage = lazyWithRetry(() => import('./pages/desktop/gallery/p
 const DesktopConciergePage = lazyWithRetry(() => import('./pages/desktop/concierge/page'), 'DesktopConciergePage');
 const DesktopSlayCamRedirectPage = lazyWithRetry(() => import('./pages/desktop/slay-cam/page'), 'DesktopSlayCamRedirectPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
+
+function DesktopRoutesLayout() {
+  return (
+    <DesktopRouteShell>
+      <Outlet />
+    </DesktopRouteShell>
+  );
+}
 
 // Error Boundary to catch component errors with auto-recovery
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -440,36 +449,38 @@ function App() {
             <DesktopPreviewPage />
           </Suspense>
         } />
-        <Route path="/desktop/penthouse" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <DesktopPenthousePage />
-          </Suspense>
-        } />
-        <Route path="/desktop/lobby" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <DesktopLobbyFloorPage />
-          </Suspense>
-        } />
-        <Route path="/desktop/lounge" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <DesktopLoungeRedirectPage />
-          </Suspense>
-        } />
-        <Route path="/desktop/gallery" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <DesktopGalleryPage />
-          </Suspense>
-        } />
-        <Route path="/desktop/concierge" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <DesktopConciergePage />
-          </Suspense>
-        } />
-        <Route path="/desktop/slay-cam" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <DesktopSlayCamRedirectPage />
-          </Suspense>
-        } />
+        <Route element={<DesktopRoutesLayout />}>
+          <Route path="/desktop/penthouse" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopPenthousePage />
+            </Suspense>
+          } />
+          <Route path="/desktop/lobby" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopLobbyFloorPage />
+            </Suspense>
+          } />
+          <Route path="/desktop/lounge" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopLoungeRedirectPage />
+            </Suspense>
+          } />
+          <Route path="/desktop/gallery" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopGalleryPage />
+            </Suspense>
+          } />
+          <Route path="/desktop/concierge" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopConciergePage />
+            </Suspense>
+          } />
+          <Route path="/desktop/slay-cam" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopSlayCamRedirectPage />
+            </Suspense>
+          } />
+        </Route>
         <Route path="/lobby/lounge" element={<LobbyPage />} />
         <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />

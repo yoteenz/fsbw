@@ -8,6 +8,10 @@ import {
   type DesktopFloor,
 } from '../../../constants/desktopFloors';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
+import {
+  DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
+  isDesktopArtboardLayoutActive,
+} from '../../../utils/desktopPreview';
 
 type Props = {
   floor: DesktopFloor;
@@ -18,11 +22,12 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const zoneId = resolveDesktopFloorZoneId(floor, searchParams.get('zone'));
   const zone = getDesktopZoneOnFloor(floor, zoneId) ?? getDesktopZoneOnFloor(floor, floor.defaultZoneId);
   const { pageStyle } = useDesktopTowerPageReveal();
+  const artboard = isDesktopArtboardLayoutActive();
 
   return (
     <div
       style={{
-        height: '100vh',
+        height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
         boxSizing: 'border-box',
         paddingTop: '68px',
         display: 'flex',
