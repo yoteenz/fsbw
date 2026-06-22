@@ -30399,3 +30399,12 @@ Summary of the **whole conversation so far** in this chat: desktop flagship lobb
 - **Lounge panels:** **`ZoneLoungeReveal`** GlassPanels and **`/desktop/lounge`** AcrylicBlocks already used dark text — no change needed.
 - **Changes:** `src/components/desktop-lobby/BuildAWigPanel.tsx`, `src/components/desktop-lobby/PSAConciergePanel.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Desktop lobby hero: IMG_3880 background
+
+Summary of the **whole conversation so far** in this chat: desktop flagship lobby/lounge staging work; user replaced desktop **lobby** hero background with **`IMG_3880.png`** (`/desktop/lobby` only — lounge **`IMG_3567`** unchanged).
+
+- **Change:** **`DESKTOP_LOBBY_BG_URL`** → **`…/Desktop/IMG_3880.png`** in **`desktopLobbyEnv.ts`**; **`desktop-lobby/page.tsx`** imports shared constant (removed duplicate **`IMG_3528`** URL).
+- **Changes:** `src/constants/desktopLobbyEnv.ts`, `src/pages/desktop-lobby/page.tsx`. Build verified.
+
