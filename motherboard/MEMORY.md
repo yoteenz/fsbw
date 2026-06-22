@@ -30714,3 +30714,13 @@ Summary of the **whole conversation so far** in this chat: lobby/concierge zone 
 - **Fix:** **`DesktopRouteShell`** wraps all **`/desktop/*`** routes with **`ScaledDesktopViewport`** on narrow viewports (same fit-to-screen model as **`/desktop-preview`**); removed **`width=1920`** bootstrap. Penthouse **`penthouse-room-scene--artboard`** uses **`object-fit: contain`** so full room frame visible on phone/preview. **`DesktopFloorZonePage`** uses **1080px** artboard height on mobile bypass.
 - **Changes:** `DesktopRouteShell.tsx`, `App.tsx`, `DesktopPenthouseRoomScene.tsx/css`, `desktopPreview.ts`, `DesktopFloorZonePage.tsx`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator overlay: remove top navbar gap
+
+Summary of the **whole conversation so far** in this chat: lobby/concierge labels, static elevator, mobile desktop artboard fit; user reported empty **border/band at top** of elevator image during travel (leftover navbar offset).
+
+- **Cause:** **`desktop-tower-elevator__shell`** used **`top: 68px`** + **`height: calc(100vh - 68px)`** (penthouse scene band sizing) while the elevator overlay is full-screen — exposed **`#0a0a0a`** strip above the shell.
+- **Fix:** shell now **`top: 0`**, **`height: 100vh`**, full-bleed width aspect — elevator image fills viewport edge-to-edge during travel.
+- **Changes:** `DesktopTowerElevator.css`. Pushed **`master`** + **`preview/mobile`**.
+
