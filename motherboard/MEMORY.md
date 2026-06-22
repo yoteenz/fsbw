@@ -30925,3 +30925,13 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **`measureDesktopPreviewScaleBox`** aligned to height-fill model.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Ultra-light acrylic floating nav + directory panels
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish through mobile desktop zoom fix; user asked to **lower opacity further** on floor/room trigger buttons and open directory drawers — **near-transparent** with only a slight white frost.
+
+- **`FloatingNavTrigger.css`:** base white fill **~7–14%** alpha (was ~20–38%); stronger blur; softer inset/border rings; hover/active capped ~**20–22%**.
+- **`DesktopFloorDirectory.css`** + **`DesktopRoomDirectory.css`:** frame fills **~8–16%**; cards **~5–12%**; border rings **~28–32%**; active/hover/passing states kept readable but still glassy (~**22–28%** max).
+- Pushed **`master`** + **`preview/mobile`**.
+
