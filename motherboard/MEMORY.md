@@ -30735,3 +30735,13 @@ Summary of the **whole conversation so far** in this chat: zone labels, static e
 - **`DesktopFloorZonePage`:** replaced placeholder copy with full-screen zone heroes + vignette/particles (matches penthouse layout).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Desktop NavBar: white frost over room heroes
+
+Summary of the **whole conversation so far** in this chat: floor zone backgrounds, prior elevator/mobile work; user reported top **NavBar** read **gray/transparent** over room scenes — should be **white/transparent**.
+
+- **Cause:** flat **`rgba(255,255,255,0.84)`** + heavy blur over dark heroes + dark **`border-bottom`** pulled gray through the frost.
+- **Fix:** **`desktopNavBarStyle`** in **`desktopLobbyAcrylic.ts`** — bright white gradient (**0.94→0.82**), lighter blur + higher saturate, white border + inset highlight; **`NavBar.tsx`** uses shared token.
+- Pushed **`master`** + **`preview/mobile`**.
+
