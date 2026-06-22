@@ -1,0 +1,385 @@
+.room-directory {
+  position: relative;
+  width: min(780px, calc(100vw - 140px));
+  perspective: 1200px;
+}
+
+.room-directory__marble-base {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -10px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0, 0, 0, 0.08), transparent 70%);
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.room-directory__frame {
+  position: relative;
+  z-index: 1;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.62) 48%, rgba(248, 246, 244, 0.78) 100%);
+  backdrop-filter: blur(32px) saturate(1.75);
+  -webkit-backdrop-filter: blur(32px) saturate(1.75);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 24px 64px rgba(0, 0, 0, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.room-directory__frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(200, 200, 200, 0.25) 40%, rgba(255, 255, 255, 0.6));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.room-directory__chrome-cap {
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4d4d4 20%, #ffffff 50%, #c0c0c0 80%, transparent);
+  border-radius: 0 0 2px 2px;
+  opacity: 0.9;
+}
+
+.room-directory__crystal-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.room-directory__header {
+  text-align: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.room-directory__header-label {
+  font-family: 'Futura PT Book', sans-serif;
+  font-size: 7px;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: #959b9b;
+}
+
+.room-directory__header-title {
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin-top: 4px;
+}
+
+.room-directory__row {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  padding: 6px 4px 4px;
+  justify-content: center;
+}
+
+.room-directory__connector {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(200, 200, 200, 0.35) 8%,
+    rgba(180, 180, 180, 0.5) 50%,
+    rgba(200, 200, 200, 0.35) 92%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.room-directory__connector-glow {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(235, 28, 36, 0.65) 0%, rgba(235, 28, 36, 0.15) 45%, transparent 70%);
+  box-shadow: 0 0 12px rgba(235, 28, 36, 0.3);
+  opacity: 0.5;
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.room-directory__connector-glow--traveling {
+  opacity: 1;
+  box-shadow: 0 0 16px rgba(235, 28, 36, 0.45);
+}
+
+.room-directory__connector-pulse {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(235, 28, 36, 0.15),
+    transparent
+  );
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.room-directory__connector-pulse--right {
+  animation: room-connector-right 0.85s cubic-bezier(0.42, 0, 0.2, 1) forwards;
+}
+
+.room-directory__connector-pulse--left {
+  animation: room-connector-left 0.85s cubic-bezier(0.42, 0, 0.2, 1) forwards;
+}
+
+@keyframes room-connector-right {
+  0% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+
+@keyframes room-connector-left {
+  0% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+}
+
+.room-directory__card-wrap {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 220px;
+}
+
+.room-directory__card-glow {
+  position: absolute;
+  inset: -4px -6px;
+  border-radius: 14px;
+  background: radial-gradient(ellipse 90% 80% at 50% 50%, rgba(235, 28, 36, 0.14), transparent 70%);
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.room-directory__card-glow--active {
+  opacity: 1;
+  transform: scale(1);
+  animation: directory-glow-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes directory-glow-shimmer {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.room-directory__card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 12px 10px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.28) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  text-align: center;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease,
+    background 0.4s ease,
+    border-color 0.4s ease;
+  will-change: transform;
+}
+
+.room-directory__card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 38%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+  border-radius: 12px 12px 0 0;
+  pointer-events: none;
+}
+
+.room-directory__card:disabled {
+  cursor: default;
+}
+
+.room-directory__card:not(:disabled):hover {
+  transform: translate3d(0, -2px, 0) scale(1.02);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.42) 100%);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.room-directory__card--active {
+  transform: translate3d(0, -3px, 0) scale(1.03);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.5) 100%);
+  border-color: rgba(235, 28, 36, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 16px 36px rgba(235, 28, 36, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.room-directory__card--destination {
+  border-color: rgba(235, 28, 36, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 24px rgba(235, 28, 36, 0.12);
+}
+
+.room-directory__card--coming-soon:not(.room-directory__card--active) {
+  opacity: 0.92;
+}
+
+.room-directory__code {
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: rgba(26, 26, 26, 0.35);
+  margin-bottom: 6px;
+  transition: color 0.35s ease, text-shadow 0.35s ease;
+}
+
+.room-directory__card--active .room-directory__code,
+.room-directory__card:not(:disabled):hover .room-directory__code {
+  color: #eb1c24;
+  text-shadow: 0 0 20px rgba(235, 28, 36, 0.25);
+}
+
+.room-directory__card--destination .room-directory__code {
+  color: #eb1c24;
+}
+
+.room-directory__name {
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  line-height: 1.35;
+  transition: letter-spacing 0.35s ease;
+}
+
+.room-directory__card--active .room-directory__name {
+  letter-spacing: 0.16em;
+}
+
+.room-directory__card:not(:disabled):hover .room-directory__name {
+  letter-spacing: 0.17em;
+}
+
+.room-directory__status {
+  font-family: 'Futura PT Book', sans-serif;
+  font-size: 6px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #959b9b;
+  margin-top: 5px;
+  transition: color 0.35s ease;
+}
+
+.room-directory__card--active .room-directory__status {
+  color: #eb1c24;
+}
+
+.room-directory__card--destination .room-directory__status {
+  color: #eb1c24;
+}
+
+.room-directory__arrow {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  font-size: 9px;
+  color: #eb1c24;
+  transform: translateY(2px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.room-directory__card:not(:disabled):hover .room-directory__arrow {
+  opacity: 0.7;
+  transform: translateY(0);
+}
