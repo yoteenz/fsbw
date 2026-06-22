@@ -204,7 +204,7 @@
   }
 }
 
-@media (max-width: 1366px) {
+@media (max-width: 1023px) {
   .psa-suite-root {
     padding-bottom: 5%;
   }

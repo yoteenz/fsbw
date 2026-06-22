@@ -448,7 +448,7 @@
   }
 }
 
-@media (max-width: 1366px) {
+@media (max-width: 1023px) {
   .extensions-boutique-panel__body {
     grid-template-columns: 1fr;
     overflow-y: auto;

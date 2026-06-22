@@ -10,7 +10,7 @@ type Props = {
 };
 
 /**
- * Scale the 1920×1080 desktop artboard to fit phones and tablets (uniform scale, no stretch).
+ * Scale the 1920×1080 desktop artboard to fit phones (uniform scale, no stretch).
  */
 export function ScaledDesktopViewport({ children }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
