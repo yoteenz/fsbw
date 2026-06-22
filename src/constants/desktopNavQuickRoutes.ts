@@ -14,14 +14,14 @@ export type DesktopNavQuickRoute = {
 
 /** Navbar express transport — lands on exact floor zone/room instantly (no elevator). */
 export const DESKTOP_NAV_QUICK_ROUTES: readonly DesktopNavQuickRoute[] = [
-  { label: 'HOME', path: DESKTOP_LOBBY_PATH, zone: 'shop' },
+  { label: 'HOME', path: DESKTOP_LOBBY_PATH, zone: 'grand-lobby' },
   { label: 'SHOP', path: DESKTOP_PENTHOUSE_PATH, room: 'boutique' },
   { label: 'BUILD-A-WIG', path: DESKTOP_LOBBY_PATH, zone: 'build-a-wig-atelier' },
   { label: 'SLAY CAM', path: DESKTOP_GALLERY_PATH, zone: 'slay-cam-gallery' },
   { label: 'ANALYSIS', path: DESKTOP_PENTHOUSE_PATH, room: 'analysis-lab' },
   { label: 'MEMBERSHIP', path: DESKTOP_GALLERY_PATH, zone: 'members-lounge' },
   { label: 'REWARDS', path: DESKTOP_GALLERY_PATH, zone: 'rewards-gallery' },
-  { label: 'PSA', path: DESKTOP_CONCIERGE_PATH, zone: 'psa-concierge-suite' },
+  { label: 'PSA', path: DESKTOP_CONCIERGE_PATH, zone: 'psa-suite' },
 ] as const;
 
 export function buildDesktopQuickRouteHref(route: Pick<DesktopNavQuickRoute, 'path' | 'room' | 'zone'>): string {

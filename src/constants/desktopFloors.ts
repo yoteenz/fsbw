@@ -40,10 +40,11 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     id: 3,
     name: 'LOBBY',
     path: DESKTOP_LOBBY_PATH,
-    defaultZoneId: 'shop',
+    defaultZoneId: 'grand-lobby',
     zones: [
-      { id: 'shop', label: 'Shop' },
-      { id: 'build-a-wig-atelier', label: 'Build-A-Wig Atelier', comingSoon: true },
+      { id: 'build-a-wig-atelier', label: 'Build-A-Wig Atelier' },
+      { id: 'grand-lobby', label: 'Grand Lobby' },
+      { id: 'lounge', label: 'Lounge' },
     ],
   },
   {
@@ -61,8 +62,12 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     id: 1,
     name: 'CONCIERGE',
     path: DESKTOP_CONCIERGE_PATH,
-    defaultZoneId: 'psa-concierge-suite',
-    zones: [{ id: 'psa-concierge-suite', label: 'PSA Concierge Suite', comingSoon: true }],
+    defaultZoneId: 'reception',
+    zones: [
+      { id: 'founder-suite', label: 'Founder Suite' },
+      { id: 'reception', label: 'Reception' },
+      { id: 'psa-suite', label: 'PSA Suite' },
+    ],
   },
 ] as const;
 

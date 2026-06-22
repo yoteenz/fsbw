@@ -14,13 +14,6 @@
   pointer-events: none;
 }
 
-.desktop-tower-elevator__svg-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
 .desktop-tower-elevator__shell {
   position: absolute;
   top: 68px;
@@ -31,86 +24,6 @@
   max-width: none;
 }
 
-/* Glass-masked exterior — only visible through window cutouts */
-.desktop-tower-elevator__glass-clip {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  clip-path: url(#tower-glass-clip);
-  -webkit-clip-path: url(#tower-glass-clip);
-  overflow: hidden;
-}
-
-.desktop-tower-elevator__exterior-track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -130%;
-  height: 340%;
-  will-change: transform;
-  transition: none;
-}
-
-.desktop-tower-elevator--arrived .desktop-tower-elevator__exterior-track {
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.desktop-tower-elevator__exterior-sky {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    #b8d4e8 0%,
-    #d4e6f2 22%,
-    #e8f0f5 45%,
-    #f0ebe6 72%,
-    #e2ddd8 100%
-  );
-}
-
-.desktop-tower-elevator__exterior-horizon {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 38%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
-  opacity: 0.7;
-}
-
-.desktop-tower-elevator__exterior-tower {
-  position: absolute;
-  left: 5%;
-  right: 5%;
-  top: 26%;
-  bottom: 0;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0%, transparent 16%, transparent 84%, rgba(255, 255, 255, 0.1) 100%),
-    repeating-linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.07) 0px,
-      rgba(255, 255, 255, 0.07) 2px,
-      transparent 2px,
-      transparent 32px
-    ),
-    linear-gradient(180deg, #c8ccd2 0%, #a8adb5 38%, #9098a2 100%);
-  box-shadow: inset 0 0 48px rgba(255, 255, 255, 0.18);
-}
-
-.desktop-tower-elevator__exterior-facade-lines {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    180deg,
-    transparent,
-    transparent 64px,
-    rgba(235, 28, 36, 0.05) 64px,
-    rgba(235, 28, 36, 0.05) 66px
-  );
-  opacity: 0.7;
-}
-
-/* Static interior shell — no transform, no animation */
 .desktop-tower-elevator__shell-img {
   position: absolute;
   inset: 0;
@@ -118,10 +31,9 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
   user-select: none;
-  transform: none;
 }
 
 /* Destination holo */
@@ -129,7 +41,7 @@
   position: absolute;
   left: 50%;
   transform: translate3d(-50%, 0, 0);
-  z-index: 3;
+  z-index: 2;
   padding: 12px 20px 14px;
   text-align: center;
   background: linear-gradient(
@@ -162,23 +74,6 @@
   background: linear-gradient(90deg, transparent, #eb1c24, transparent);
 }
 
-.desktop-tower-elevator__holo--arrived {
-  animation: tower-holo-arrived 0.4s ease forwards;
-}
-
-@keyframes tower-holo-arrived {
-  0% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 1),
-      0 20px 48px rgba(0, 0, 0, 0.12);
-  }
-  100% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 1),
-      0 20px 48px rgba(235, 28, 36, 0.14);
-  }
-}
-
 .desktop-tower-elevator__holo-label {
   font-family: 'Futura PT Book', sans-serif;
   font-size: 8px;
@@ -197,8 +92,7 @@
   line-height: 1.2;
 }
 
-.desktop-tower-elevator__holo--accent .desktop-tower-elevator__holo-level,
-.desktop-tower-elevator__holo--arrived .desktop-tower-elevator__holo-level {
+.desktop-tower-elevator__holo--accent .desktop-tower-elevator__holo-level {
   color: #eb1c24;
 }
 
