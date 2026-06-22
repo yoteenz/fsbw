@@ -30614,3 +30614,14 @@ Summary: user rejected bouncing static shell image; requested layered animation 
 - **Timing:** ~**2.7s** journey (**150+2200+350** ms travel core + **400** ms shell fade).
 - **Changes:** `DesktopTowerElevatorExperience.tsx`, `DesktopTowerElevator.css`, `desktopTowerExterior.ts`, `desktopTowerElevatorLayout.ts`, `desktopTowerMotion.ts`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator: static shell + glass-masked exterior only
+
+Summary: user asked to stop animating elevator image; animate **exterior tower behind glass only** via window masks.
+
+- **Removed:** full-image bounce, light bands, ghost markers, glass shimmer, arrival veil, side parallax layers.
+- **Stack:** (1) **`clip-path: url(#tower-glass-clip)`** on unified exterior track — rear + side glass rects; (2) **static** shell PNG with **frame mask** (interior only, glass holes); (3) holo display.
+- **Motion:** only **`exterior-track`** `translate3d` from **`displayLevelId`**; shell **`transform: none`** always.
+- **Changes:** tower elevator component/CSS. Pushed **`master`** + **`preview/mobile`**.
+
