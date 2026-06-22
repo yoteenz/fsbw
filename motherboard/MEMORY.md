@@ -30636,3 +30636,16 @@ Summary: user supplied updated OpenArt elevator PNG (**0A372BA0-…C33.png**, **
 - Shell container aspect **`calc(90vh * 1915/821)`**.
 - **Changes:** `desktopTowerEnv.ts`, `desktopTowerElevatorLayout.ts`, `DesktopTowerElevator.css`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator directory two-step navigation
+
+Summary of the **whole conversation so far** in this chat: updated elevator shell asset (**0A372BA0-…C33.png**, 1915×821) with retuned glass masks; user then requested floor/destination directory UX fixes.
+
+- **Floor click no longer auto-travels:** **`DesktopFloorElevator`** sets **`selectedFloorId`** in **`DesktopTowerNavProvider`** — switches bottom destination panel only.
+- **Zone click triggers travel:** **`DesktopRoomNavPanel`** shows zones for **`selectedFloor`**; same-floor zone = instant **`quickTravelTo`**; cross-floor = cinematic **`travelTo`**.
+- **Single floor highlight:** only **`selectedFloorId`** card gets **`--active`**; removed simultaneous current + destination highlights and floor-level “You are here”.
+- **Zone labels:** removed **R1/R2/R3** codes; panel header = floor name (**PENTHOUSE**); cards show zone name + **You are here** / **Select destination** (matches floor directory).
+- **Penthouse zones** added to **`DESKTOP_FLOORS`** from panorama rooms; zone panel on all desktop floor pages.
+- **Changes:** `DesktopFloorElevator.tsx`, `DesktopRoomNavPanel.tsx`, `DesktopTowerNavProvider.tsx`, `desktopFloors.ts`, `desktopFloorDirectory.ts`, `desktopRoomDirectory.ts`, `desktopNavQuickRoutes.ts`, floor pages. Pushed **`master`** + **`preview/mobile`**.
+
