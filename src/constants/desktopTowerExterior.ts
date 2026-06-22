@@ -23,8 +23,3 @@ export function computeTowerExteriorOffsetY(
   const distance = Math.abs(toFloorId - fromFloorId) * TOWER_EXTERIOR_PX_PER_FLOOR;
   return direction === 'up' ? progress * distance : -progress * distance;
 }
-
-/** Ghost markers scroll with exterior; opposite sign for light bands. */
-export function computeTowerLightBandOffsetY(exteriorOffsetY: number): number {
-  return -exteriorOffsetY * 0.35;
-}

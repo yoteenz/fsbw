@@ -31,6 +31,3 @@ export const TOWER_SHELL_GLASS_RIGHT = {
 
 /** Vertical travel distance in the exterior track per floor id crossed. */
 export const TOWER_EXTERIOR_PX_PER_FLOOR = 140;
-
-/** Spacing between ghosted level markers in the exterior track. */
-export const TOWER_EXTERIOR_MARKER_STEP_PX = 120;

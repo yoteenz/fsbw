@@ -10,7 +10,6 @@ import {
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  DESKTOP_FLOORS,
   getDesktopFloorByPath,
   type DesktopFloor,
 } from '../../constants/desktopFloors';
@@ -185,7 +184,6 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       {journey ? (
         <>
           <DesktopTowerElevatorExperience
-            floors={DESKTOP_FLOORS}
             fromFloor={journey.fromFloor}
             toFloor={journey.toFloor}
             direction={journey.direction}
