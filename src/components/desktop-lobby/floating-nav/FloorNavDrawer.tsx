@@ -75,7 +75,7 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
               ) : null}
             </div>
             <div
-              className={`floor-directory__spine-glow ${journey || currentFloor ? 'floor-directory__spine-glow--active' : ''}`}
+              className={`floor-directory__spine-glow ${journey ? 'floor-directory__spine-glow--active' : ''}`}
               style={{ top: spineLightTop }}
               aria-hidden
             />
@@ -87,10 +87,6 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
 
               return (
                 <div key={floor.path} className="floor-directory__card-wrap">
-                  <div
-                    className={`floor-directory__card-glow ${isHere ? 'floor-directory__card-glow--active' : ''}`}
-                    aria-hidden
-                  />
                   <button
                     type="button"
                     className={[

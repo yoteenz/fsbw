@@ -124,7 +124,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(235, 28, 36, 0.65) 0%, rgba(235, 28, 36, 0.15) 45%, transparent 70%);
   box-shadow: 0 0 12px rgba(235, 28, 36, 0.3);
-  opacity: 0.5;
+  opacity: 0;
   transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
   z-index: 1;
   pointer-events: none;
@@ -198,36 +198,6 @@
   max-width: 148px;
 }
 
-.room-directory__card-glow {
-  position: absolute;
-  inset: -4px -6px;
-  border-radius: 14px;
-  background: radial-gradient(ellipse 90% 80% at 50% 50%, rgba(235, 28, 36, 0.14), transparent 70%);
-  opacity: 0;
-  transform: scale(0.96);
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.room-directory__card-glow--active {
-  opacity: 1;
-  transform: scale(1);
-  animation: directory-glow-shimmer 4s ease-in-out infinite;
-}
-
-@keyframes directory-glow-shimmer {
-  0%,
-  100% {
-    opacity: 0.85;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 .room-directory__card {
   position: relative;
   z-index: 1;
@@ -283,18 +253,18 @@
 .room-directory__card--active {
   transform: translate3d(0, -1px, 0) scale(1.015);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.5) 100%);
-  border-color: rgba(235, 28, 36, 0.22);
+  border-color: rgba(255, 255, 255, 0.82);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 1),
-    0 16px 36px rgba(235, 28, 36, 0.08),
-    0 8px 20px rgba(0, 0, 0, 0.06);
+    0 12px 28px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.05);
 }
 
 .room-directory__card--destination {
-  border-color: rgba(235, 28, 36, 0.35);
+  border-color: rgba(255, 255, 255, 0.9);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 1),
-    0 0 24px rgba(235, 28, 36, 0.12);
+    0 0 20px rgba(255, 255, 255, 0.18);
 }
 
 .room-directory__card--coming-soon:not(.room-directory__card--active) {

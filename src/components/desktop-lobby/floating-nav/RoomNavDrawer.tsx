@@ -111,10 +111,6 @@ export function RoomNavDrawer({ isOpen, onClose }: Props) {
 
               return (
                 <div key={zone.id} className="room-directory__card-wrap">
-                  <div
-                    className={`room-directory__card-glow ${isHere ? 'room-directory__card-glow--active' : ''}`}
-                    aria-hidden
-                  />
                   <button
                     type="button"
                     className={[
