@@ -30836,3 +30836,15 @@ Summary of the **whole conversation so far** in this chat: desktop tower feature
 - **`DesktopTowerElevatorExperience`:** poster removed once **`playing`**; remount play on journey change.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Floating nav trigger icons (Supabase PNGs)
+
+Summary of the **whole conversation so far** in this chat: desktop tower work (PSA suite, Extensions Boutique, iPad artboard revert, elevator MP4 fix); user requested **custom Supabase PNG assets** for the floating nav panel trigger icons.
+
+- **Floor/elevator panel trigger:** `IMG_4066.png` — `DESKTOP_FLOATING_NAV_FLOOR_ICON_URL` in **`desktopFloatingNav.ts`**.
+- **Room/zone panel trigger:** `IMG_4065.png` — `DESKTOP_FLOATING_NAV_ROOM_ICON_URL`.
+- **`FloatingNavTrigger.tsx`:** replaced inline SVG **`ElevatorGlyph`** / **`DestinationGlyph`** with **`<img>`** via **`FloatingNavTriggerIcon`**; decorative **`aria-hidden`** (label on button).
+- **`FloatingNavTrigger.css`:** **`object-fit: contain`** on **`.floating-nav-trigger__glyph`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
