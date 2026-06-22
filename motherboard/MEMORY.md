@@ -30869,3 +30869,15 @@ Summary of the **whole conversation so far** in this chat: desktop tower work (f
 - **`DesktopTowerElevatorExperience`:** passes **`direction`** into bind; video **`key`** includes direction for clean remount per journey.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Acrylic nav triggers + Extensions Boutique click fix
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish (floating nav icons, remove connector lines, elevator reverse on down); user asked for **more acrylic/transparent** floor + room icon triggers/panels, and reported **Extensions Boutique wall + shop panel not clickable**.
+
+- **Acrylic nav UI:** **`FloatingNavTrigger.css`**, **`DesktopFloorDirectory.css`**, **`DesktopRoomDirectory.css`** — lowered opaque white fills (~0.38–0.42 alpha), stronger blur, lighter borders/shadows on triggers and directory frames/cards.
+- **Boutique click fix — root cause:** art size constants were **2560×1080** but production hero **`8358D320…684.png`** is **1915×821**; hotspot rect was tuned to the **far left** instead of the **center extensions wall**.
+- **`desktopExtensionsBoutique.ts`:** corrected art dimensions; hotspot recentred on lit bundles wall (**~36–66%** width).
+- **`ExtensionsBoutiqueExperience`:** new **`extensions-boutique-layer`** at **z-index 52** (above floating nav **50**) with **`pointer-events: none`** + hotspot **`pointer-events: auto`** so wall tap and shop panel controls receive clicks.
+- Pushed **`master`** + **`preview/mobile`**.
+
