@@ -30560,3 +30560,12 @@ Summary of the **whole conversation so far** in this chat: luxury floor director
 - **Hierarchy:** Floor directory = building level; room directory = penthouse destination selector (bottom center on **`/desktop/penthouse`**).
 - **Changes:** `DesktopRoomNavPanel.tsx`, `DesktopRoomDirectory.css`, `desktopRoomDirectory.ts`. Build verified; pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Directory status label line layout
+
+Summary of the **whole conversation so far** in this chat: luxury floor + room directories, panorama vertical fill; user reported status text (**You are here**, **Select destination**) wrapping incorrectly — half on same row as floor name.
+
+- **Fix:** **`.floor-directory__body`** / room cards use **`flex-direction: column`** so name and status are separate rows; status uses **`display: block`**, **`white-space: nowrap`**, slightly reduced letter-spacing; floor panel widened to **220px** and extra right padding for arrow clearance.
+- **Changes:** `DesktopFloorDirectory.css`, `DesktopRoomDirectory.css`. Pushed **`master`** + **`preview/mobile`**.
+
