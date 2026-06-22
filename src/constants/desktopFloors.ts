@@ -30,11 +30,11 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     name: 'PENTHOUSE',
     path: DESKTOP_PENTHOUSE_PATH,
     defaultZoneId: 'showroom',
-    zones: DESKTOP_PENTHOUSE_ROOMS.map((room) => ({
-      id: room.id,
-      label: room.name,
-      comingSoon: room.comingSoon,
-    })),
+    zones: DESKTOP_PENTHOUSE_ROOMS.map((room) => {
+      const zone: DesktopZone = { id: room.id, label: room.name };
+      if (room.comingSoon) zone.comingSoon = true;
+      return zone;
+    }),
   },
   {
     id: 3,
