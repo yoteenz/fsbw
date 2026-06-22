@@ -16,11 +16,11 @@
 
 .desktop-tower-elevator__shell {
   position: absolute;
-  top: 68px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  height: calc(100vh - 68px);
-  width: max(100vw, calc((100vh - 68px) * 1915 / 821));
+  height: 100vh;
+  width: max(100vw, calc(100vh * 1915 / 821));
   max-width: none;
 }
 
