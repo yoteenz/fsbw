@@ -253,6 +253,21 @@
     0 0 20px rgba(255, 255, 255, 0.18);
 }
 
+.floor-directory__card--passing {
+  transform: translate3d(0, -1px, 0) scale(1.015);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.56) 100%);
+  border-color: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 14px 32px rgba(0, 0, 0, 0.1),
+    0 0 18px rgba(255, 255, 255, 0.22);
+}
+
+.floor-directory__card--passing .floor-directory__number,
+.floor-directory__card--passing .floor-directory__status {
+  color: #eb1c24;
+}
+
 .floor-directory__number {
   font-family: 'Futura PT Medium', sans-serif;
   font-size: 16px;
@@ -274,6 +289,10 @@
 
 .floor-directory__card--destination .floor-directory__number {
   color: #eb1c24;
+}
+
+.floor-directory__card--destination .floor-directory__status {
+  color: #959b9b;
 }
 
 .floor-directory__body {

@@ -5,6 +5,8 @@ import {
   floorIdToSpineRatio,
   getDirectoryFloorNumber,
   getDirectoryFloorStatus,
+  getElevatorDirectoryCardState,
+  getElevatorDirectoryStatus,
 } from '../../../constants/desktopFloorDirectory';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravel } from '../../desktop-tower/DesktopTowerNavProvider';
@@ -19,16 +21,17 @@ type Props = {
 
 export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
   const location = useLocation();
-  const { journey, travelDisplayLevelId, travelTo, setSelectedFloorId } = useDesktopTowerTravel();
+  const { journey, travelCabinFloorId, travelPhase, travelTo, setSelectedFloorId } =
+    useDesktopTowerTravel();
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const currentFloor = getDesktopFloorByPath(location.pathname);
   const floorIds = useMemo(() => DESKTOP_FLOORS.map((f) => f.id), []);
 
   const spineFloorId = useMemo(() => {
-    if (journey) return Math.round(travelDisplayLevelId);
+    if (journey) return travelCabinFloorId;
     return currentFloor?.id ?? DESKTOP_FLOORS[0].id;
-  }, [currentFloor?.id, journey, travelDisplayLevelId]);
+  }, [currentFloor?.id, journey, travelCabinFloorId]);
 
   const spineLightTop = useMemo(() => {
     const ratio = floorIdToSpineRatio(spineFloorId, floorIds);
@@ -81,9 +84,20 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
             />
 
             {DESKTOP_FLOORS.map((floor) => {
-              const isHere = floor.id === currentFloor?.id;
+              const isHere = !journey && floor.id === currentFloor?.id;
               const isHovered = hoveredId === floor.id;
-              const status = getDirectoryFloorStatus(isHere, isHovered);
+              const elevatorState = journey
+                ? getElevatorDirectoryCardState(
+                    floor.id,
+                    journey.fromFloor.id,
+                    journey.toFloor.id,
+                    travelCabinFloorId,
+                    travelPhase,
+                  )
+                : null;
+              const status = journey
+                ? getElevatorDirectoryStatus(elevatorState)
+                : getDirectoryFloorStatus(isHere, isHovered);
 
               return (
                 <div key={floor.path} className="floor-directory__card-wrap">
@@ -92,6 +106,13 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
                     className={[
                       'floor-directory__card',
                       isHere ? 'floor-directory__card--active' : '',
+                      elevatorState === 'passing' || elevatorState === 'boarding'
+                        ? 'floor-directory__card--passing'
+                        : '',
+                      elevatorState === 'destination' || elevatorState === 'arriving'
+                        ? 'floor-directory__card--destination'
+                        : '',
+                      elevatorState === 'arrived' ? 'floor-directory__card--active' : '',
                     ]
                       .filter(Boolean)
                       .join(' ')}
@@ -99,7 +120,7 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
                     onClick={() => handleSelect(floor.id)}
                     onMouseEnter={() => setHoveredId(floor.id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    aria-current={isHere ? 'true' : undefined}
+                    aria-current={isHere || elevatorState === 'passing' ? 'true' : undefined}
                     aria-label={`Level ${floor.id} ${floor.name}`}
                   >
                     <span className="floor-directory__number">{getDirectoryFloorNumber(floor.id)}</span>
@@ -107,7 +128,7 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
                       <span className="floor-directory__name">{floor.name}</span>
                       {status ? <span className="floor-directory__status">{status}</span> : null}
                     </span>
-                    {!isHere ? (
+                    {!isHere && !journey ? (
                       <span className="floor-directory__arrow" aria-hidden>
                         →
                       </span>

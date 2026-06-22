@@ -57,6 +57,50 @@ export function getDesktopTowerElevatorVideoSrc(): string {
   return resolvePlayableSrc();
 }
 
+/** Resolve once the warmed elevator clip can play (blob or remote). */
+export function waitForDesktopTowerElevatorVideoReady(
+  timeoutMs = 3500,
+): Promise<boolean> {
+  if (typeof document === 'undefined') return Promise.resolve(false);
+
+  warmDesktopTowerElevatorVideo();
+
+  return new Promise((resolve) => {
+    const el = warmVideoEl;
+    if (!el) {
+      resolve(false);
+      return;
+    }
+
+    const finish = (ready: boolean) => {
+      cleanup();
+      resolve(ready);
+    };
+
+    const cleanup = () => {
+      window.clearTimeout(timer);
+      el.removeEventListener('canplaythrough', onReady);
+      el.removeEventListener('canplay', onReady);
+    };
+
+    const onReady = () => {
+      if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        finish(true);
+      }
+    };
+
+    if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      finish(true);
+      return;
+    }
+
+    el.addEventListener('canplaythrough', onReady);
+    el.addEventListener('canplay', onReady);
+
+    const timer = window.setTimeout(() => finish(false), timeoutMs);
+  });
+}
+
 function supportsReversePlayback(video: HTMLVideoElement): boolean {
   const previousRate = video.playbackRate;
   video.playbackRate = -1;

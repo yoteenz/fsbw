@@ -22,6 +22,7 @@ type Props = {
   direction: TowerTravelDirection;
   phase: TowerElevatorPhase;
   displayLevelId: number;
+  cabinFloorId: number;
 };
 
 type HoloState = {
@@ -36,14 +37,16 @@ export function DesktopTowerElevatorExperience({
   toFloor,
   direction,
   phase,
-  displayLevelId,
+  cabinFloorId,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
 
-  const nearestFloorId = Math.round(displayLevelId);
-  const nearestFloor = getDesktopFloorById(nearestFloorId) ?? fromFloor;
+  const cabinFloor = getDesktopFloorById(cabinFloorId) ?? fromFloor;
+  const isPassingIntermediate =
+    phase === 'traveling' && cabinFloorId !== toFloor.id && cabinFloorId !== fromFloor.id;
+  const isArriving = phase === 'traveling' && cabinFloorId === toFloor.id;
 
   const holo = useMemo((): HoloState => {
     if (phase === 'boarding') {
@@ -54,6 +57,22 @@ export function DesktopTowerElevatorExperience({
       };
     }
     if (phase === 'traveling') {
+      if (isPassingIntermediate) {
+        return {
+          kicker: 'Passing',
+          level: formatTowerLevelLabel(cabinFloor),
+          name: cabinFloor.name,
+          accent: true,
+        };
+      }
+      if (isArriving) {
+        return {
+          kicker: 'Arriving',
+          level: formatTowerLevelLabel(toFloor),
+          name: toFloor.name,
+          accent: true,
+        };
+      }
       return {
         kicker: 'Traveling to',
         level: formatTowerLevelLabel(toFloor),
@@ -67,7 +86,7 @@ export function DesktopTowerElevatorExperience({
       name: toFloor.name,
       accent: true,
     };
-  }, [phase, fromFloor, toFloor]);
+  }, [cabinFloor, fromFloor, isArriving, isPassingIntermediate, phase, toFloor]);
 
   useEffect(() => {
     warmDesktopTowerElevatorVideo();
@@ -139,11 +158,11 @@ export function DesktopTowerElevatorExperience({
           <div className="desktop-tower-elevator__holo-label">{holo.kicker}</div>
           <div className="desktop-tower-elevator__holo-level">{holo.level}</div>
           <div className="desktop-tower-elevator__holo-name">{holo.name}</div>
-          {traveling ? (
+          {traveling && !isPassingIntermediate && !isArriving ? (
             <div className="desktop-tower-elevator__holo-counter">
               <span className="desktop-tower-elevator__holo-counter-label">Passing</span>
               <span className="desktop-tower-elevator__holo-counter-value">
-                {formatTowerLevelLabel(nearestFloor)}
+                {formatTowerLevelLabel(cabinFloor)} · {cabinFloor.name}
               </span>
             </div>
           ) : null}
