@@ -30466,3 +30466,15 @@ Summary of the **whole conversation so far** in this chat: penthouse skyscraper,
 - **Fix:** **`computeDesktopLobbyPanoramaTransform`** uses **cover** scale `max(scaleY, scaleX)` + **clamp `translateX`** so pan never exposes side gaps. Removed marble underlay div from **`penthouse/page.tsx`**.
 - **Changes:** `src/constants/desktopLobbyPanorama.ts`, `src/pages/desktop/penthouse/page.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Desktop nav split: room bar + side floor elevator
+
+Summary of the **whole conversation so far** in this chat: penthouse skyscraper, slab crop, mobile gate, full-width panorama; user asked to **separate floor vs room navigation** — rooms at bottom, floors in a **side elevator panel**.
+
+- **Room nav:** **`DesktopRoomNavPanel`** — bottom-centered acrylic bar (Hair Analysis Lab / Showroom / Boutique); pans panorama in-place on penthouse only.
+- **Floor nav:** **`DesktopFloorElevator`** — vertical **right-side** acrylic panel (L5→L1 stack, red active dot); routes between **`/desktop/*`** floors.
+- **Shared:** **`desktopLobbyAcrylic.ts`** — glass/blur/red accent tokens. Removed **`DesktopElevatorPanel.tsx`**.
+- **Pages:** penthouse uses both; lounge + floor placeholders use floor elevator only.
+- **Changes:** new nav components, penthouse/lounge/placeholder pages. Build verified.
+
