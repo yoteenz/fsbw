@@ -30510,3 +30510,14 @@ Summary of the **whole conversation so far** in this chat: 4-floor desktop, quic
 - **Fix:** Single **`scale = max(scaleX, scaleY)`** — proportional zoom for one-room width + slab height; **`translateY`** bottom-aligns slab edge when room zoom is taller than viewport. No more **`scale(scaleX, scaleY)`** anisotropic stretch.
 - **Changes:** `desktopLobbyPanorama.ts`, `DesktopLobbyPanorama.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Luxury glass tower elevator navigation
+
+Summary of the **whole conversation so far** in this chat: 4-floor desktop, quick-transport, single-room zoom, uniform scale; user requested **premium glass elevator** as core floor-to-floor navigation (not a loading screen).
+
+- **Data-driven floors:** **`DESKTOP_FLOORS`** uses **`{ id, name, path, defaultZoneId, zones }`** — L1 CONCIERGE → L4 PENTHOUSE; names/labels generated from config (no hardcoded floor copy in UI).
+- **`DesktopTowerElevatorExperience`:** Full-screen luxury cabin (marble, acrylic glass, chrome, holographic display, particles); phases **Current → Traveling → Arrived → doors open → fade**; ~2s eased travel with animated level counter + shaft markers; direction **up/down** from floor ids.
+- **`DesktopTowerNavProvider`:** **`travelTo(href)`** on level change only; same-floor zone/room nav skips elevator; integrates **NavBar** + **`DesktopFloorElevator`**; **`useDesktopTowerPageReveal`** fades destination in after doors.
+- **Changes:** `src/components/desktop-tower/*`, `desktopTowerMotion.ts`, `desktopFloors.ts` (id-based), `App.tsx`. Build verified.
+
