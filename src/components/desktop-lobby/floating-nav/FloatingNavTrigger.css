@@ -1,5 +1,8 @@
 .floating-nav-trigger {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: clamp(48px, 4.8vw, 56px);
   height: clamp(48px, 4.8vw, 56px);
   padding: 0;
@@ -75,7 +78,8 @@
   z-index: 3;
   width: 62%;
   height: 62%;
-  margin: 19% auto 0;
+  margin: 0;
+  flex-shrink: 0;
   display: block;
   object-fit: contain;
   object-position: center center;
