@@ -30858,3 +30858,14 @@ Summary of the **whole conversation so far** in this chat: desktop tower work (P
 - **Floor panel** (`DesktopFloorDirectory.css`): removed gray **`background`** gradient from **`.floor-directory__spine`** — vertical spine line no longer visible; red spine glow/pulse kept.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator video reverse playback when traveling down
+
+Summary of the **whole conversation so far** in this chat: desktop tower work (floating nav icons, remove gray connector lines on floor/room panels); user reported **elevator MP4 always plays upward** even when descending (e.g. penthouse L4 → first level L1).
+
+- **Cause:** `journey.direction` was computed via **`resolveTowerDirection`** but **never applied** to the overlay video — **`bindDesktopTowerElevatorVideoPlayback`** always reset **`currentTime = 0`** and played forward.
+- **`desktopTowerElevatorVideo.ts`:** **`bindDesktopTowerElevatorVideoPlayback(video, direction, …)`** — **`down`** uses **`playbackRate = -1`** from end of clip; browsers without negative rate get **`scaleY(-1)`** fallback class.
+- **`DesktopTowerElevatorExperience`:** passes **`direction`** into bind; video **`key`** includes direction for clean remount per journey.
+- Pushed **`master`** + **`preview/mobile`**.
+
