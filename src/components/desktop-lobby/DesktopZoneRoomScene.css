@@ -22,9 +22,16 @@
   -webkit-user-drag: none;
 }
 
-/* Phone / preview artboard — show full room frame (no cover crop). */
+/* Phone / preview / tablet artboard — show full room frame (no cover crop). */
 .desktop-zone-room-scene--artboard .desktop-zone-room-scene__bg {
   object-fit: contain;
+}
+
+@media (max-width: 1366px) {
+  .desktop-zone-room-scene__bg {
+    object-fit: contain;
+    object-position: center center;
+  }
 }
 
 .desktop-zone-room-scene__bg--steady {

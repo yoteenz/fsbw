@@ -10,8 +10,7 @@ type Props = {
 };
 
 /**
- * Phone preview: scale the 1920×1080 desktop artboard down to fit the phone screen
- * (uniform scale, no stretch). Scroll vertically for lobby → lounge.
+ * Scale the 1920×1080 desktop artboard to fit phones and tablets (uniform scale, no stretch).
  */
 export function ScaledDesktopViewport({ children }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
@@ -33,14 +32,17 @@ export function ScaledDesktopViewport({ children }: Props) {
 
       const scaledWidth = DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale;
       const contentHeight = stage.scrollHeight;
+      const scaledHeight = contentHeight * scale;
 
       stage.style.width = `${DESKTOP_PREVIEW_VIEWPORT_WIDTH}px`;
       stage.style.transformOrigin = 'top left';
       stage.style.transform = `scale(${scale})`;
 
       scaler.style.width = `${scaledWidth}px`;
-      scaler.style.height = `${contentHeight * scale}px`;
-      scaler.style.marginLeft = `${(shell.clientWidth - scaledWidth) / 2}px`;
+      scaler.style.height = `${scaledHeight}px`;
+      scaler.style.marginLeft = `${Math.max(0, (shell.clientWidth - scaledWidth) / 2)}px`;
+      scaler.style.marginTop =
+        scaledHeight <= shell.clientHeight ? `${Math.max(0, (shell.clientHeight - scaledHeight) / 2)}px` : '0';
     };
 
     layoutStage();
@@ -49,16 +51,20 @@ export function ScaledDesktopViewport({ children }: Props) {
       window.setTimeout(layoutStage, 150);
     };
     window.addEventListener('orientationchange', onOrientation);
+    window.addEventListener('resize', layoutStage);
 
+    const shellEl = shellRef.current;
     const stageEl = stageRef.current;
     const resizeObserver =
-      typeof ResizeObserver !== 'undefined' && stageEl
+      typeof ResizeObserver !== 'undefined'
         ? new ResizeObserver(() => layoutStage())
         : undefined;
+    if (shellEl) resizeObserver?.observe(shellEl);
     if (stageEl) resizeObserver?.observe(stageEl);
 
     return () => {
       window.removeEventListener('orientationchange', onOrientation);
+      window.removeEventListener('resize', layoutStage);
       resizeObserver?.disconnect();
     };
   }, []);
@@ -74,7 +80,8 @@ export function ScaledDesktopViewport({ children }: Props) {
         right: 0,
         bottom: 0,
         height: '100%',
-        overflowY: 'scroll',
+        maxHeight: '100dvh',
+        overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
         overscrollBehaviorY: 'contain',

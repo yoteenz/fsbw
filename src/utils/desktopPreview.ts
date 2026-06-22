@@ -47,14 +47,24 @@ export function isDesktopPreviewActive(): boolean {
 }
 
 const DESKTOP_LAYOUT_BREAKPOINT = 1024;
+/** iPad Pro 12.9″ landscape and smaller tablets use scaled artboard on `/desktop/*`. */
+export const DESKTOP_ARTBOARD_MAX_WIDTH = 1366;
 
 function isDesktopRoutePath(pathname: string): boolean {
   return pathname === DESKTOP_PREFIX || pathname.startsWith(`${DESKTOP_PREFIX}/`);
 }
 
+function isCompactDesktopViewport(): boolean {
+  if (typeof window === 'undefined') return false;
+  const width = window.innerWidth;
+  if (width < DESKTOP_LAYOUT_BREAKPOINT) return true;
+  if (width <= DESKTOP_ARTBOARD_MAX_WIDTH) return true;
+  return false;
+}
+
 /**
- * Mobile /desktop/* artboard mode — 1920px viewport, pinch-zoom, no "too small" gate.
- * Active when: staging `?mobileDesktop=1` (tab session), or any narrow viewport on `/desktop/*`.
+ * Phone + tablet `/desktop/*` artboard mode — scaled 1920×1080 shell (no crop).
+ * Active when: staging `?mobileDesktop=1` (tab session), or viewport ≤ iPad Pro landscape width.
  */
 export function isMobileDesktopBypassActive(): boolean {
   if (typeof window === 'undefined') return false;
@@ -73,9 +83,7 @@ export function isMobileDesktopBypassActive(): boolean {
     }
   }
 
-  if (window.innerWidth < DESKTOP_LAYOUT_BREAKPOINT) return true;
-
-  return false;
+  return isCompactDesktopViewport();
 }
 
 /** Never block `/desktop/*` with the "designed for desktop" gate — mobile gets artboard layout. */

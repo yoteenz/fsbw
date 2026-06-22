@@ -36,6 +36,13 @@
   user-select: none;
 }
 
+@media (max-width: 1366px) {
+  .desktop-tower-elevator__shell-media {
+    object-fit: contain;
+    background: #0a0a0a;
+  }
+}
+
 /* Destination holo */
 .desktop-tower-elevator__holo {
   position: absolute;
