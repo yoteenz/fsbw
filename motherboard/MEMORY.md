@@ -30778,3 +30778,14 @@ Summary of the **whole conversation so far** in this chat: floating nav refactor
 - **`DesktopTowerElevatorExperience`:** `<video>` full-bleed `cover`; autoplay on journey mount.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — iPad responsive desktop artboard + room heroes
+
+Summary of the **whole conversation so far** in this chat: floating nav, elevator MP4; user asked desktop room images to be responsive on **iPad** as well as phone.
+
+- **Artboard threshold:** **`DESKTOP_ARTBOARD_MAX_WIDTH = 1366`** — `/desktop/*` uses scaled 1920×1080 shell on phones + tablets (incl. iPad Pro 12.9″ landscape); full monitors **>1366** keep native cover layout.
+- **`ScaledDesktopViewport`:** shell **`ResizeObserver`** + **`resize`** listener; vertical center when letterboxed; **`100dvh`** cap.
+- **Room heroes + elevator media:** **`object-fit: contain`** at **`max-width: 1366px`** (CSS + artboard class) so full frame visible without crop.
+- Pushed **`master`** + **`preview/mobile`**.
+
