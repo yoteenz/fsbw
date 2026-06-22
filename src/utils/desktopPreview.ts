@@ -48,28 +48,42 @@ export function isDesktopPreviewActive(): boolean {
   return false;
 }
 
+const DESKTOP_LAYOUT_BREAKPOINT = 1024;
+
 function isDesktopRoutePath(pathname: string): boolean {
   return pathname === DESKTOP_PREFIX || pathname.startsWith(`${DESKTOP_PREFIX}/`);
 }
 
 /**
- * Staging-only: `?mobileDesktop=1` on `/desktop/*` — real desktop layout on phone
- * (1920px viewport, browser pinch-zoom). Persists for the tab session.
+ * Mobile /desktop/* artboard mode — 1920px viewport, pinch-zoom, no "too small" gate.
+ * Active when: staging `?mobileDesktop=1` (tab session), or any narrow viewport on `/desktop/*`.
  */
 export function isMobileDesktopBypassActive(): boolean {
   if (typeof window === 'undefined') return false;
-  if (!isDesktopPreviewEnvironment()) return false;
   if (!isDesktopRoutePath(window.location.pathname)) return false;
-  try {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get(MOBILE_DESKTOP_QUERY) === '1') {
-      window.sessionStorage.setItem(MOBILE_DESKTOP_SESSION_KEY, '1');
-      return true;
+
+  if (isDesktopPreviewEnvironment()) {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get(MOBILE_DESKTOP_QUERY) === '1') {
+        window.sessionStorage.setItem(MOBILE_DESKTOP_SESSION_KEY, '1');
+        return true;
+      }
+      if (window.sessionStorage.getItem(MOBILE_DESKTOP_SESSION_KEY) === '1') return true;
+    } catch {
+      /* ignore */
     }
-    return window.sessionStorage.getItem(MOBILE_DESKTOP_SESSION_KEY) === '1';
-  } catch {
-    return false;
   }
+
+  if (window.innerWidth < DESKTOP_LAYOUT_BREAKPOINT) return true;
+
+  return false;
+}
+
+/** Never block `/desktop/*` with the "designed for desktop" gate — mobile gets artboard layout. */
+export function shouldShowDesktopViewportGate(): boolean {
+  if (typeof window !== 'undefined' && isDesktopRoutePath(window.location.pathname)) return false;
+  return getDesktopLayoutViewportWidth() < DESKTOP_LAYOUT_BREAKPOINT;
 }
 
 /** Desktop artboard layout (1920-wide) — preview shell or mobile desktop bypass. */

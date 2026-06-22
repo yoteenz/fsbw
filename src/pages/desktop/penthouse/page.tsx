@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
-import { getDesktopLayoutViewportWidth, isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
+import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../../components/desktop-lobby/PSAConciergePanel';
@@ -108,27 +108,6 @@ function PenthouseViewport({
 
 export default function DesktopPenthousePage() {
   const [roomIndex, setRoomIndex] = useState(DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX);
-  const [isTooSmall, setIsTooSmall] = useState(() => getDesktopLayoutViewportWidth() < 1024);
-
-  useEffect(() => {
-    const check = () => setIsTooSmall(getDesktopLayoutViewportWidth() < 1024);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  if (isTooSmall) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FAF8F7', padding: '40px 24px', textAlign: 'center' }}>
-        <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', letterSpacing: '0.3em', color: '#C81C24', marginBottom: '16px' }}>
-          FRONTAL SLAYER
-        </div>
-        <div style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', letterSpacing: '0.06em', color: '#4A3728', maxWidth: '280px', lineHeight: 1.7 }}>
-          THE DIGITAL FLAGSHIP IS DESIGNED FOR DESKTOP VIEWING. PLEASE VISIT ON A DEVICE WITH A WIDER SCREEN FOR THE FULL EXPERIENCE.
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ height: '100vh', overflow: 'hidden', background: '#ECE8E4' }}>

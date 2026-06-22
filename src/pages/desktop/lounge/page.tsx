@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDesktopLayoutViewportWidth } from '../../../utils/desktopPreview';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopElevatorPanel } from '../../../components/desktop-lobby/DesktopElevatorPanel';
@@ -217,15 +216,7 @@ export default function DesktopLoungePage() {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [bgSrc, setBgSrc] = useState(DESKTOP_LOUNGE_BG_URL);
-  const [isTooSmall, setIsTooSmall] = useState(() => getDesktopLayoutViewportWidth() < 1024);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const check = () => setIsTooSmall(getDesktopLayoutViewportWidth() < 1024);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 100);
@@ -237,15 +228,6 @@ export default function DesktopLoungePage() {
     opacity: visible ? 1 : 0,
     transform: visible ? 'translateY(0)' : `translateY(${dy}px)`,
   });
-
-  if (isTooSmall) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAF8F7', flexDirection: 'column', padding: '40px 24px', textAlign: 'center' }}>
-        <div style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', letterSpacing: '0.3em', color: '#C81C24', marginBottom: '16px' }}>FRONTAL SLAYER</div>
-        <div style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', color: '#4A3728', maxWidth: '280px', lineHeight: 1.7 }}>The Members Lounge is designed for desktop viewing.</div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ background: '#0A0A0A', height: '100vh', overflow: 'hidden' }}>
