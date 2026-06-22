@@ -1,0 +1,303 @@
+.desktop-tower-elevator {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse 120% 100% at 50% 0%, #faf8f6 0%, #ece8e4 45%, #d8d2cc 100%);
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  will-change: opacity, transform;
+  pointer-events: auto;
+}
+
+.desktop-tower-elevator--exiting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.desktop-tower-elevator__cabin {
+  position: relative;
+  width: min(920px, 92vw);
+  height: min(720px, 88vh);
+  border-radius: 6px;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  box-shadow:
+    0 40px 120px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.desktop-tower-elevator__chrome-frame {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-image: linear-gradient(145deg, #f5f5f5, #b8b8b8 35%, #ffffff 55%, #9a9a9a 75%, #e8e8e8) 1;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.desktop-tower-elevator__ceiling {
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 48px;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f2ef 100%);
+  box-shadow:
+    0 8px 32px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  z-index: 5;
+}
+
+.desktop-tower-elevator__ceiling-glow {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 8px;
+  background: linear-gradient(90deg, transparent, rgba(235, 28, 36, 0.15), transparent);
+  filter: blur(4px);
+}
+
+.desktop-tower-elevator__glass-left,
+.desktop-tower-elevator__glass-right {
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  width: 14%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(12px);
+  z-index: 4;
+}
+
+.desktop-tower-elevator__glass-left {
+  left: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.desktop-tower-elevator__glass-right {
+  right: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.65);
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.08));
+}
+
+.desktop-tower-elevator__marble-floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.4) 20%),
+    url('/assets/marble-half.png') center bottom / cover no-repeat,
+    linear-gradient(180deg, #f8f6f4 0%, #ebe6e1 100%);
+  z-index: 3;
+}
+
+.desktop-tower-elevator__shaft {
+  position: absolute;
+  top: 56px;
+  bottom: 28%;
+  left: 18%;
+  right: 18%;
+  overflow: hidden;
+  z-index: 2;
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.desktop-tower-elevator__shaft-track {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, 0, 0);
+  will-change: transform;
+  transition: transform 0.08s linear;
+}
+
+.desktop-tower-elevator__floor-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+  opacity: 0.35;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.desktop-tower-elevator__floor-marker--active {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.desktop-tower-elevator__floor-marker--destination {
+  opacity: 0.75;
+}
+
+.desktop-tower-elevator__floor-level {
+  font-family: 'Futura PT Book', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: #959b9b;
+  text-transform: uppercase;
+}
+
+.desktop-tower-elevator__floor-name {
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.desktop-tower-elevator__floor-marker--active .floor-level,
+.desktop-tower-elevator__floor-marker--active .floor-name {
+  color: #eb1c24;
+}
+
+.desktop-tower-elevator__holo {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  min-width: 280px;
+  padding: 14px 28px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-top: 2px solid #eb1c24;
+  border-radius: 12px;
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.desktop-tower-elevator__holo-label {
+  font-family: 'Futura PT Book', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #959b9b;
+  margin-bottom: 6px;
+}
+
+.desktop-tower-elevator__holo-value {
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+.desktop-tower-elevator__holo-value--accent {
+  color: #eb1c24;
+}
+
+.desktop-tower-elevator__doors {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.desktop-tower-elevator__door {
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 246, 244, 0.96) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.5);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.desktop-tower-elevator__door--left {
+  left: 0;
+  border-right: 1px solid rgba(180, 180, 180, 0.35);
+}
+
+.desktop-tower-elevator__door--right {
+  right: 0;
+  border-left: 1px solid rgba(180, 180, 180, 0.35);
+}
+
+.desktop-tower-elevator__doors--open .desktop-tower-elevator__door--left {
+  transform: translate3d(-102%, 0, 0);
+}
+
+.desktop-tower-elevator__doors--open .desktop-tower-elevator__door--right {
+  transform: translate3d(102%, 0, 0);
+}
+
+.desktop-tower-elevator__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.8) 0, transparent 2px),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.6) 0, transparent 1.5px),
+    radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.5) 0, transparent 1px);
+  background-size: 200px 200px;
+  opacity: 0.35;
+  animation: tower-particles-drift 12s linear infinite;
+}
+
+@keyframes tower-particles-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-30px, -40px, 0);
+  }
+}
+
+.desktop-tower-elevator__motion {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.15;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent 48px,
+    rgba(0, 0, 0, 0.03) 48px,
+    rgba(0, 0, 0, 0.03) 49px
+  );
+  will-change: transform;
+}
+
+.desktop-tower-elevator--traveling-up .desktop-tower-elevator__motion {
+  animation: tower-shaft-down 2s cubic-bezier(0.42, 0, 0.2, 1) forwards;
+}
+
+.desktop-tower-elevator--traveling-down .desktop-tower-elevator__motion {
+  animation: tower-shaft-up 2s cubic-bezier(0.42, 0, 0.2, 1) forwards;
+}
+
+@keyframes tower-shaft-down {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 80px, 0);
+  }
+}
+
+@keyframes tower-shaft-up {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -80px, 0);
+  }
+}

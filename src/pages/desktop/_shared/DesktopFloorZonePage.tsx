@@ -6,6 +6,7 @@ import {
   resolveDesktopFloorZoneId,
   type DesktopFloor,
 } from '../../../constants/desktopFloors';
+import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 
 type Props = {
   floor: DesktopFloor;
@@ -15,9 +16,10 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const [searchParams] = useSearchParams();
   const zoneId = resolveDesktopFloorZoneId(floor, searchParams.get('zone'));
   const zone = getDesktopZoneOnFloor(floor, zoneId) ?? getDesktopZoneOnFloor(floor, floor.defaultZoneId);
+  const { pageStyle } = useDesktopTowerPageReveal();
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: '#ECE8E4', position: 'relative' }}>
+    <div style={{ height: '100vh', overflow: 'hidden', background: '#ECE8E4', position: 'relative', ...pageStyle }}>
       <NavBar />
       <section
         style={{
@@ -41,7 +43,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
               marginBottom: '12px',
             }}
           >
-            Level {floor.level} — {floor.name}
+            Level {floor.id} — {floor.name}
           </div>
           <div
             style={{

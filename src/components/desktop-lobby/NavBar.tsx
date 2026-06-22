@@ -5,11 +5,18 @@ import {
   buildDesktopQuickRouteHref,
   resolveDesktopNavActiveLabel,
 } from '../../constants/desktopNavQuickRoutes';
+import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
 
 export function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const towerTravel = useDesktopTowerTravelOptional();
   const [cartCount, setCartCount] = useState(0);
+
+  const go = (href: string) => {
+    if (towerTravel) towerTravel.travelTo(href);
+    else navigate(href);
+  };
 
   const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search);
 
@@ -44,7 +51,7 @@ export function NavBar() {
       }}
     >
       <button
-        onClick={() => navigate(buildDesktopQuickRouteHref(homeRoute))}
+        onClick={() => go(buildDesktopQuickRouteHref(homeRoute))}
         className="flex items-center flex-shrink-0"
         style={{ fontFamily: '"Futura PT Medium"', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
@@ -60,7 +67,7 @@ export function NavBar() {
         {DESKTOP_NAV_QUICK_ROUTES.map((link) => (
           <button
             key={link.label}
-            onClick={() => navigate(buildDesktopQuickRouteHref(link))}
+            onClick={() => go(buildDesktopQuickRouteHref(link))}
             className="relative"
             style={{
               fontFamily: '"Futura PT Medium"',
@@ -97,7 +104,7 @@ export function NavBar() {
       <div className="flex items-center gap-5">
         <button
           className="hover:opacity-50 transition-opacity"
-          onClick={() => navigate(buildDesktopQuickRouteHref(DESKTOP_NAV_QUICK_ROUTES.find((r) => r.label === 'SHOP')!))}
+          onClick={() => go(buildDesktopQuickRouteHref(DESKTOP_NAV_QUICK_ROUTES.find((r) => r.label === 'SHOP')!))}
           aria-label="Search"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >

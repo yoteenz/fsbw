@@ -37,6 +37,7 @@ import {
 } from './utils/chunkLoadRecovery';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
+import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -425,6 +426,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <DesktopTowerNavProvider>
       {!hidePreviewChrome ? <CreativePreviewBanner /> : null}
       {!hidePreviewChrome ? <MembershipRouteSync /> : null}
       {!hidePreviewChrome ? <ProductInventorySync /> : null}
@@ -1103,6 +1105,7 @@ function App() {
           </Suspense>
         } />
       </DebugModeShell>
+      </DesktopTowerNavProvider>
     </ErrorBoundary>
   );
 }

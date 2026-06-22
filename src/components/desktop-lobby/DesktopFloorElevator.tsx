@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import { DESKTOP_FLOORS } from '../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../constants/desktopNavQuickRoutes';
+import { useDesktopTowerTravel } from '../desktop-tower/DesktopTowerNavProvider';
 import { DESKTOP_BRAND_RED, desktopAcrylicPanelStyle } from './desktopLobbyAcrylic';
 
 type DesktopFloorElevatorProps = {
@@ -9,7 +9,7 @@ type DesktopFloorElevatorProps = {
 };
 
 export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: DesktopFloorElevatorProps) {
-  const navigate = useNavigate();
+  const { travelTo } = useDesktopTowerTravel();
 
   return (
     <div
@@ -77,9 +77,9 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
                 key={floor.path}
                 type="button"
                 onClick={() => {
-                  if (!active) navigate(buildDesktopElevatorHref(floor.path, floor.defaultZoneId));
+                  if (!active) travelTo(buildDesktopElevatorHref(floor.path, floor.defaultZoneId));
                 }}
-                title={`Level ${floor.level} — ${floor.name}`}
+                title={`Level ${floor.id} — ${floor.name}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -88,7 +88,7 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
                   padding: '7px 8px',
                   borderRadius: '8px',
                   border: active ? `1px solid ${DESKTOP_BRAND_RED}` : '1px solid transparent',
-                  background: active ? 'rgba(235,28,36,0.1)' : 'rgba(255,255,255,0.35)',
+                  background: active ? 'rgba(235,28,36,0.08)' : 'rgba(255,255,255,0.35)',
                   cursor: active ? 'default' : 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.2s ease',
@@ -104,7 +104,7 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
                     minWidth: '22px',
                   }}
                 >
-                  L{floor.level}
+                  L{floor.id}
                 </span>
                 <span
                   style={{
@@ -129,7 +129,7 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
                     height: '6px',
                     borderRadius: '50%',
                     background: active ? DESKTOP_BRAND_RED : 'transparent',
-                    boxShadow: active ? `0 0 6px rgba(235,28,36,0.5)` : 'none',
+                    boxShadow: active ? `0 0 0 1px rgba(235,28,36,0.15)` : 'none',
                     flexShrink: 0,
                   }}
                 />

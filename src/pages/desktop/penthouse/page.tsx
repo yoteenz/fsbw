@@ -16,6 +16,7 @@ import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRout
 import { DesktopLobbyPanorama } from '../../../components/desktop-lobby/DesktopLobbyPanorama';
 import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
 import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
+import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 
 function PenthouseComingSoonBadge({ label }: { label: string }) {
   return (
@@ -117,6 +118,7 @@ function PenthouseViewport({
 export default function DesktopPenthousePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const roomParam = searchParams.get('room');
+  const { pageStyle } = useDesktopTowerPageReveal();
 
   const roomIndex = useMemo(() => getPenthouseRoomIndexById(roomParam), [roomParam]);
 
@@ -138,7 +140,7 @@ export default function DesktopPenthousePage() {
   }
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: '#0A0A0A' }}>
+    <div style={{ height: '100vh', overflow: 'hidden', background: '#0A0A0A', ...pageStyle }}>
       <NavBar />
       <PenthouseViewport roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
     </div>

@@ -5,7 +5,7 @@ export type DesktopZone = {
 };
 
 export type DesktopFloor = {
-  level: number;
+  id: number;
   name: string;
   path: string;
   /** Elevator lands on this zone (middle / default hub of the floor). */
@@ -18,18 +18,21 @@ export const DESKTOP_LOBBY_PATH = '/desktop/lobby';
 export const DESKTOP_GALLERY_PATH = '/desktop/gallery';
 export const DESKTOP_CONCIERGE_PATH = '/desktop/concierge';
 
-/** Virtual skyscraper — L4 (top) through L1. Elevator lands on each floor's default zone. */
+/**
+ * Frontal Slayer tower — fully data-driven floor registry.
+ * Display order: highest id first in elevator shaft (L4 at top).
+ */
 export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
   {
-    level: 4,
-    name: 'Penthouse',
+    id: 4,
+    name: 'PENTHOUSE',
     path: DESKTOP_PENTHOUSE_PATH,
     defaultZoneId: 'showroom',
     zones: [],
   },
   {
-    level: 3,
-    name: 'Lobby',
+    id: 3,
+    name: 'LOBBY',
     path: DESKTOP_LOBBY_PATH,
     defaultZoneId: 'shop',
     zones: [
@@ -38,8 +41,8 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     ],
   },
   {
-    level: 2,
-    name: 'Gallery',
+    id: 2,
+    name: 'GALLERY',
     path: DESKTOP_GALLERY_PATH,
     defaultZoneId: 'members-lounge',
     zones: [
@@ -49,8 +52,8 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     ],
   },
   {
-    level: 1,
-    name: 'Concierge',
+    id: 1,
+    name: 'CONCIERGE',
     path: DESKTOP_CONCIERGE_PATH,
     defaultZoneId: 'psa-concierge-suite',
     zones: [{ id: 'psa-concierge-suite', label: 'PSA Concierge Suite', comingSoon: true }],
@@ -61,6 +64,10 @@ export function getDesktopFloorByPath(pathname: string): DesktopFloor | undefine
   return DESKTOP_FLOORS.find((f) => f.path === pathname);
 }
 
+export function getDesktopFloorById(id: number): DesktopFloor | undefined {
+  return DESKTOP_FLOORS.find((f) => f.id === id);
+}
+
 export function getDesktopZoneOnFloor(floor: DesktopFloor, zoneId: string): DesktopZone | undefined {
   return floor.zones.find((z) => z.id === zoneId);
 }
@@ -68,4 +75,9 @@ export function getDesktopZoneOnFloor(floor: DesktopFloor, zoneId: string): Desk
 export function resolveDesktopFloorZoneId(floor: DesktopFloor, zoneParam: string | null): string {
   if (zoneParam && floor.zones.some((z) => z.id === zoneParam)) return zoneParam;
   return floor.defaultZoneId;
+}
+
+/** @deprecated Use floor.id — kept for elevator title strings during migration. */
+export function getDesktopFloorLevel(floor: DesktopFloor): number {
+  return floor.id;
 }
