@@ -30456,3 +30456,13 @@ Summary of the **whole conversation so far** in this chat: penthouse skyscraper 
 - **Helper:** **`shouldShowDesktopViewportGate()`** in **`desktopPreview.ts`** (always false on `/desktop/*`).
 - **Changes:** `src/utils/desktopPreview.ts`, penthouse, lounge, placeholder pages. Build verified.
 
+---
+
+## 2026-06-21 — Penthouse panorama: full-width cover (no marble side gaps)
+
+Summary of the **whole conversation so far** in this chat: penthouse skyscraper, slab crop, mobile gate removal; user reported **marble background visible on both sides** — panoramic image not full viewport width.
+
+- **Cause:** Panorama scaled **height-only** (`scale = containerHeight / visibleSrcH`); on wide viewports scaled width &lt; container width → **`DESKTOP_LOUNGE_BG_FALLBACK`** marble underlay showed through.
+- **Fix:** **`computeDesktopLobbyPanoramaTransform`** uses **cover** scale `max(scaleY, scaleX)` + **clamp `translateX`** so pan never exposes side gaps. Removed marble underlay div from **`penthouse/page.tsx`**.
+- **Changes:** `src/constants/desktopLobbyPanorama.ts`, `src/pages/desktop/penthouse/page.tsx`. Build verified.
+
