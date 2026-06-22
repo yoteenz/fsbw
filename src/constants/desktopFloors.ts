@@ -1,4 +1,4 @@
-import { DESKTOP_LOBBY_PANORAMA_ROOMS } from './desktopLobbyPanorama';
+import { DESKTOP_PENTHOUSE_ROOMS } from './desktopPenthouseRooms';
 
 export type DesktopZone = {
   id: string;
@@ -30,9 +30,9 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     name: 'PENTHOUSE',
     path: DESKTOP_PENTHOUSE_PATH,
     defaultZoneId: 'showroom',
-    zones: DESKTOP_LOBBY_PANORAMA_ROOMS.map((room) => ({
+    zones: DESKTOP_PENTHOUSE_ROOMS.map((room) => ({
       id: room.id,
-      label: room.label,
+      label: room.name,
       comingSoon: room.comingSoon,
     })),
   },

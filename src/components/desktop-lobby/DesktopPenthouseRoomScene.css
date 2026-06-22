@@ -1,0 +1,63 @@
+.penthouse-room-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+  background: #0a0a0a;
+}
+
+.penthouse-room-scene__layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.penthouse-room-scene__bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.penthouse-room-scene__bg--steady {
+  z-index: 0;
+}
+
+.penthouse-room-scene__bg--exit {
+  z-index: 1;
+  animation: penthouse-room-exit 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.penthouse-room-scene__bg--enter {
+  z-index: 2;
+  animation: penthouse-room-enter 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes penthouse-room-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+    filter: blur(5px);
+  }
+}
+
+@keyframes penthouse-room-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.012);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}

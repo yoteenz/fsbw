@@ -1,87 +1,33 @@
-/** Wide desktop flagship panorama (`IMG_3880.png`) — source pixels. */
-export const DESKTOP_PANORAMA_SOURCE_WIDTH = 3808;
-export const DESKTOP_PANORAMA_SOURCE_HEIGHT = 1632;
-
 /**
- * Vertical crop: viewport ends at the bottom of the front marble slab (hide lower floor below).
- * ~1094px on the 1632px-tall source — tune after QA on device.
+ * @deprecated Panorama pan/zoom removed — penthouse uses per-room backgrounds in
+ * `desktopPenthouseRooms.ts`. This module re-exports room ids for legacy imports.
  */
-export const DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO = 0.672;
+import {
+  DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID,
+  DESKTOP_PENTHOUSE_DEFAULT_ROOM_INDEX,
+  DESKTOP_PENTHOUSE_ROOMS,
+  getPenthouseRoomIdByIndex,
+  getPenthouseRoomIndexById,
+  type DesktopPenthouseRoom,
+} from './desktopPenthouseRooms';
 
-export type DesktopLobbyPanoramaRoom = {
-  id: string;
+export type DesktopLobbyPanoramaRoom = Pick<DesktopPenthouseRoom, 'id' | 'comingSoon'> & {
   label: string;
-  /** Horizontal focal point on the full source image (0 = left, 1 = right). */
-  focalXRatio: number;
-  comingSoon?: boolean;
 };
 
-/** Top-floor rooms on the single panoramic asset (left → right). */
-export const DESKTOP_LOBBY_PANORAMA_ROOMS: readonly DesktopLobbyPanoramaRoom[] = [
-  { id: 'analysis-lab', label: 'Hair Analysis Lab', focalXRatio: 0.165, comingSoon: true },
-  { id: 'showroom', label: 'Hair Showroom', focalXRatio: 0.5 },
-  { id: 'boutique', label: 'Extensions Boutique', focalXRatio: 0.835 },
-] as const;
-
-export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID = 'showroom';
-
-export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX = DESKTOP_LOBBY_PANORAMA_ROOMS.findIndex(
-  (r) => r.id === DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID,
+/** @deprecated Use DESKTOP_PENTHOUSE_ROOMS */
+export const DESKTOP_LOBBY_PANORAMA_ROOMS: readonly DesktopLobbyPanoramaRoom[] = DESKTOP_PENTHOUSE_ROOMS.map(
+  (room) => ({
+    id: room.id,
+    label: room.name,
+    comingSoon: room.comingSoon,
+  }),
 );
 
-export function getPenthouseRoomIndexById(roomId: string | null | undefined): number {
-  if (!roomId) return DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX;
-  const i = DESKTOP_LOBBY_PANORAMA_ROOMS.findIndex((r) => r.id === roomId);
-  return i >= 0 ? i : DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX;
-}
+/** @deprecated Use DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID */
+export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID = DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID;
 
-export function getPenthouseRoomIdByIndex(index: number): string {
-  return DESKTOP_LOBBY_PANORAMA_ROOMS[index]?.id ?? DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID;
-}
+/** @deprecated Use DESKTOP_PENTHOUSE_DEFAULT_ROOM_INDEX */
+export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX = DESKTOP_PENTHOUSE_DEFAULT_ROOM_INDEX;
 
-/**
- * Horizontal slice of the source image shown per room (smaller = more zoom).
- * ~0.30 keeps a single zone centered without bleeding adjacent rooms.
- */
-export const DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO = 0.3;
-
-export type DesktopLobbyPanoramaTransform = {
-  translateX: number;
-  translateY: number;
-  scale: number;
-  imageWidth: number;
-  imageHeight: number;
-};
-
-/**
- * Single-room viewport: uniform scale fills the scene edge-to-edge (no gaps).
- * Room-width zoom isolates one zone; vertical offset keeps the marble slab aligned
- * at the bottom when room zoom exceeds height scale.
- * Page layout (navbar padding + flex scene) supplies the correct container size.
- */
-export function computeDesktopLobbyPanoramaTransform(
-  containerWidth: number,
-  containerHeight: number,
-  roomIndex: number,
-): DesktopLobbyPanoramaTransform {
-  const room = DESKTOP_LOBBY_PANORAMA_ROOMS[roomIndex] ?? DESKTOP_LOBBY_PANORAMA_ROOMS[DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX];
-  const srcW = DESKTOP_PANORAMA_SOURCE_WIDTH;
-  const srcH = DESKTOP_PANORAMA_SOURCE_HEIGHT;
-  const floorEdge = DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO;
-
-  const visibleSrcH = srcH * floorEdge;
-  const scaleY = containerHeight / visibleSrcH;
-  const roomViewSrcW = srcW * DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO;
-  const scaleX = containerWidth / roomViewSrcW;
-  const scale = Math.max(scaleX, scaleY);
-
-  const scaledW = srcW * scale;
-  const focalX = room.focalXRatio * srcW * scale;
-  let translateX = containerWidth / 2 - focalX;
-  const minTranslateX = containerWidth - scaledW;
-  translateX = Math.max(minTranslateX, Math.min(0, translateX));
-
-  const translateY = containerHeight - visibleSrcH * scale;
-
-  return { translateX, translateY, scale, imageWidth: srcW, imageHeight: srcH };
-}
+export { getPenthouseRoomIdByIndex, getPenthouseRoomIndexById };

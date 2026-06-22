@@ -6,14 +6,14 @@ import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../../components/desktop-lobby/PSAConciergePanel';
 import {
-  DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID,
-  DESKTOP_LOBBY_PANORAMA_ROOMS,
+  DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID,
+  DESKTOP_PENTHOUSE_ROOMS,
   getPenthouseRoomIdByIndex,
   getPenthouseRoomIndexById,
-} from '../../../constants/desktopLobbyPanorama';
+} from '../../../constants/desktopPenthouseRooms';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
-import { DesktopLobbyPanorama } from '../../../components/desktop-lobby/DesktopLobbyPanorama';
+import { DesktopPenthouseRoomScene } from '../../../components/desktop-lobby/DesktopPenthouseRoomScene';
 import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
 import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
@@ -54,7 +54,7 @@ function PenthouseViewport({
   onRoomIndexChange: (index: number) => void;
 }) {
   const artboard = isDesktopArtboardLayoutActive();
-  const room = DESKTOP_LOBBY_PANORAMA_ROOMS[roomIndex];
+  const room = DESKTOP_PENTHOUSE_ROOMS[roomIndex];
 
   return (
     <section
@@ -67,7 +67,7 @@ function PenthouseViewport({
         background: '#0A0A0A',
       }}
     >
-      <DesktopLobbyPanorama roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
+      <DesktopPenthouseRoomScene roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
 
       <div
         style={{
@@ -83,7 +83,7 @@ function PenthouseViewport({
         <ParticleField />
       </div>
 
-      {room?.comingSoon ? <PenthouseComingSoonBadge label={room.label} /> : null}
+      {room?.comingSoon ? <PenthouseComingSoonBadge label={room.name} /> : null}
 
       <div
         style={{
@@ -133,7 +133,7 @@ export default function DesktopPenthousePage() {
   if (!roomParam) {
     return (
       <Navigate
-        to={buildDesktopElevatorHref(DESKTOP_PENTHOUSE_PATH, DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_ID)}
+        to={buildDesktopElevatorHref(DESKTOP_PENTHOUSE_PATH, DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID)}
         replace
       />
     );
