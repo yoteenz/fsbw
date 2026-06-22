@@ -30408,3 +30408,14 @@ Summary of the **whole conversation so far** in this chat: desktop flagship lobb
 - **Change:** **`DESKTOP_LOBBY_BG_URL`** → **`…/Desktop/IMG_3880.png`** in **`desktopLobbyEnv.ts`**; **`desktop-lobby/page.tsx`** imports shared constant (removed duplicate **`IMG_3528`** URL).
 - **Changes:** `src/constants/desktopLobbyEnv.ts`, `src/pages/desktop-lobby/page.tsx`. Build verified.
 
+---
+
+## 2026-06-22 — Desktop lobby: panoramic top-floor crop + room pan
+
+Summary of the **whole conversation so far** in this chat: desktop flagship lobby/lounge staging; backgrounds, acrylic text, **`IMG_3880`**; user asked **not** to replace the asset — **crop top-floor in the frontend** only, stop at **marble slab edge**, **`overflow:hidden`**, pan same wide image with **`translateX` + `scale`** for room switching (not separate crops).
+
+- **Asset:** **`IMG_3880.png`** (3808×1632) — three top-floor rooms (Analysis Lab / Showroom / Boutique); cityscape below slab hidden.
+- **Implementation:** **`DesktopLobbyPanorama`** + **`desktopLobbyPanorama.ts`** — viewport clips at **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`** (~0.505); rooms use **`focalXRatio`**; default **Showroom** (center); **←/→** keys switch rooms with animated transform. Lounge scroll zone (**`ZoneLoungeReveal`**) unchanged.
+- **Tune:** **`DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO`** and room **`focalXRatio`** values in **`src/constants/desktopLobbyPanorama.ts`** after QA.
+- **Changes:** `src/constants/desktopLobbyPanorama.ts`, `src/components/desktop-lobby/DesktopLobbyPanorama.tsx`, `src/pages/desktop-lobby/page.tsx`. Build verified.
+
