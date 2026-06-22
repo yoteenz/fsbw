@@ -30478,3 +30478,14 @@ Summary of the **whole conversation so far** in this chat: penthouse skyscraper,
 - **Pages:** penthouse uses both; lounge + floor placeholders use floor elevator only.
 - **Changes:** new nav components, penthouse/lounge/placeholder pages. Build verified.
 
+---
+
+## 2026-06-21 — Penthouse room pan: single-room zoom (immersive)
+
+Summary of the **whole conversation so far** in this chat: penthouse skyscraper, slab crop, mobile gate, full-width cover, split room/floor nav; user reported **adjacent rooms visible** when centered on one room (e.g. Showroom showed Lab + Boutique on sides).
+
+- **Cause:** Panorama **`scaleX`** fit the **full** 3808px asset width — ~⅓ of image per screen, three zones visible at once.
+- **Fix:** Independent **`scale(scaleX, scaleY)`** — **`scaleX = containerWidth / (srcW × 0.30)`** zooms to one room slice; **`scaleY`** unchanged (slab crop). Pan **`translateX`** still clamps per room **`focalXRatio`**.
+- **Tune:** **`DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO`** (default **0.30**) and room **`focalXRatio`** in **`desktopLobbyPanorama.ts`** after QA.
+- **Changes:** `src/constants/desktopLobbyPanorama.ts`, `DesktopLobbyPanorama.tsx`. Build verified.
+
