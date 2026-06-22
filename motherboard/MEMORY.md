@@ -30901,3 +30901,16 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **Fix:** **`display: flex; align-items: center; justify-content: center`** on **`.floating-nav-trigger`**; glyph **`margin: 0`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator timing, video-ready gate, multi-floor stop sequence
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish (acrylic nav, boutique hotspot, remove red bar, center trigger icons); user reported **elevator too fast / video not loaded**, and wants **real elevator behavior** when skipping floors (e.g. P4 → L2: highlight **L3** then **L2**, holo + side directory call out each level).
+
+- **Timing** (`desktopTowerMotion.ts`): **1500ms/floor** travel + **550ms dwell** on intermediate stops; boarding **500ms**; waits for video before travel starts.
+- **Video gate** (`waitForDesktopTowerElevatorVideoReady`): travel phase starts only after warmed clip is playable (or timeout) **and** minimum board time.
+- **Floor stops** (`getTowerFloorStops`, `resolveTowerTravelFrame`): discrete progression through every floor between origin and destination.
+- **Holo** (`DesktopTowerElevatorExperience`): **Passing** / **Arriving** / **Traveling to** states with floor name at top; passing counter while in motion.
+- **Floor directory** (`FloorNavDrawer`): **passing** / **destination** / **arriving** card highlights + spine glow tracks cabin floor; status labels (**Passing**, **Destination**, **Arriving**).
+- Pushed **`master`** + **`preview/mobile`**.
+
