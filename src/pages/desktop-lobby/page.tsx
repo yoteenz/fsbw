@@ -4,14 +4,12 @@ import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle, isDesktopArt
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
+import { DESKTOP_LOBBY_BG_URL, DESKTOP_LOUNGE_BG_FALLBACK } from '../../constants/desktopLobbyEnv';
 import { ZoneLoungeReveal } from '../../components/desktop-lobby/ZoneLoungeReveal';
-
-const LOBBY_BG = 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_3528.png';
-const FALLBACK_BG = '/assets/marble%20bg.png';
 
 function DigitalLobby() {
   const [visible, setVisible] = useState(false);
-  const [bgSrc, setBgSrc] = useState(LOBBY_BG);
+  const [bgSrc, setBgSrc] = useState(DESKTOP_LOBBY_BG_URL);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80);
@@ -39,7 +37,7 @@ function DigitalLobby() {
       <img
         src={bgSrc}
         alt=""
-        onError={() => setBgSrc(FALLBACK_BG)}
+        onError={() => setBgSrc(DESKTOP_LOUNGE_BG_FALLBACK)}
         style={{
           position: 'absolute', inset: 0, zIndex: 1,
           width: '100%', height: '100%',
