@@ -30801,3 +30801,15 @@ Summary of the **whole conversation so far** in this chat: zone backgrounds, nav
 - **`DesktopFloorZonePage`**: mounts suite variant when **`zoneId === 'psa-suite'`** (Concierge floor).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Extensions Boutique interactive wall hotspot + shop panel
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish (nav, heroes, iPad artboard, PSA suite hologram); user requested an **interactive clickable product hotspot** on the **Extensions Boutique** hanging-extensions wall with a **luxury acrylic shop panel** (Bundles / Frontals / Closures).
+
+- **`ExtensionsBoutiqueExperience`** on penthouse **`room=boutique`**: mapped wall hotspot only (not full room); acrylic outline + soft white hover glow + chrome/red **SHOP EXTENSIONS** cue.
+- **`ExtensionsBoutiqueShopPanel`**: frosted marble acrylic overlay; tabs **BUNDLES / FRONTALS / CLOSURES**; left hero image + right selection options; close / outside click / Escape; focus trap.
+- **Reused mobile BCF logic:** **`useBcfShopSelection`**, **`BcfProductSelectionFields`**, **`bcfPdpHeroAssets`** (extracted from mobile PDP); same cart **`addToBag`** payload.
+- **`useDesktopRoomCoverHitRect`** + **`desktopExtensionsBoutique.ts`** hit rect constants (21:9 art, cover/contain aware).
+- Pushed **`master`** + **`preview/mobile`**.
+
