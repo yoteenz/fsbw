@@ -347,7 +347,7 @@
 
 /* BCF selection fields — desktop panel density */
 .bcf-selection-fields--compact .bcf-selection-fields__profile-label {
-  font-family: '"Bohemy", cursive';
+  font-family: 'Bohemy', cursive;
   font-size: 17px;
   text-align: center;
   margin: 0 0 8px;
