@@ -30914,3 +30914,14 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **Floor directory** (`FloorNavDrawer`): **passing** / **destination** / **arriving** card highlights + spine glow tracks cabin floor; status labels (**Passing**, **Destination**, **Arriving**).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Fix mobile desktop black screen: restore height-fill zoom
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish through elevator multi-floor sequence; user reported **mobile `/desktop/*` shows content tiny in top third with black void below** — broken vs prior working zoom.
+
+- **Cause:** `ScaledDesktopViewport` used **`min(scaleX, scaleY)`** + vertical centering — on portrait phones width-limited scale (~0.2) letterboxed the 1920×1080 artboard, leaving large black bars.
+- **Fix:** Restored **height-fill scale** (`scale = shellHeight / 1080`) so one desktop screen fills phone height (sides crop); **`position: fixed; inset: 0`** scroll shell; removed top margin centering.
+- **`measureDesktopPreviewScaleBox`** aligned to height-fill model.
+- Pushed **`master`** + **`preview/mobile`**.
+
