@@ -94,3 +94,64 @@ export function applyScreenOffsetToCoverRect(
     height: rect.height,
   };
 }
+
+/**
+ * Map a hit rect when the image uses `object-fit: cover` + `object-position: center center`
+ * (desktop penthouse room heroes).
+ */
+export function mapImageRectToCoverContainerCenter(
+  rect: FinalSceneHitRect,
+  containerWidth: number,
+  containerHeight: number,
+  imageWidth: number,
+  imageHeight: number,
+): FinalSceneHitRect {
+  if (containerWidth <= 0 || containerHeight <= 0) return rect;
+
+  const scale = Math.max(containerWidth / imageWidth, containerHeight / imageHeight);
+  const renderedW = imageWidth * scale;
+  const renderedH = imageHeight * scale;
+  const offsetX = (containerWidth - renderedW) / 2;
+  const offsetY = (containerHeight - renderedH) / 2;
+
+  const x = offsetX + rect.left * imageWidth * scale;
+  const y = offsetY + rect.top * imageHeight * scale;
+  const w = rect.width * imageWidth * scale;
+  const h = rect.height * imageHeight * scale;
+
+  return {
+    left: x / containerWidth,
+    top: y / containerHeight,
+    width: w / containerWidth,
+    height: h / containerHeight,
+  };
+}
+
+/** Map a hit rect when the image uses `object-fit: contain` + `object-position: center center`. */
+export function mapImageRectToContainContainerCenter(
+  rect: FinalSceneHitRect,
+  containerWidth: number,
+  containerHeight: number,
+  imageWidth: number,
+  imageHeight: number,
+): FinalSceneHitRect {
+  if (containerWidth <= 0 || containerHeight <= 0) return rect;
+
+  const scale = Math.min(containerWidth / imageWidth, containerHeight / imageHeight);
+  const renderedW = imageWidth * scale;
+  const renderedH = imageHeight * scale;
+  const offsetX = (containerWidth - renderedW) / 2;
+  const offsetY = (containerHeight - renderedH) / 2;
+
+  const x = offsetX + rect.left * imageWidth * scale;
+  const y = offsetY + rect.top * imageHeight * scale;
+  const w = rect.width * imageWidth * scale;
+  const h = rect.height * imageHeight * scale;
+
+  return {
+    left: x / containerWidth,
+    top: y / containerHeight,
+    width: w / containerWidth,
+    height: h / containerHeight,
+  };
+}

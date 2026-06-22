@@ -1,5 +1,5 @@
 import { Navigate, useSearchParams } from 'react-router-dom';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
@@ -12,19 +12,24 @@ import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
 import { DesktopPenthouseRoomScene } from '../../../components/desktop-lobby/DesktopPenthouseRoomScene';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
+import { ExtensionsBoutiqueExperience } from '../../../components/desktop-penthouse/ExtensionsBoutiqueExperience';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 
 function PenthouseViewport({
   roomIndex,
+  roomId,
   onRoomIndexChange,
 }: {
   roomIndex: number;
+  roomId: string;
   onRoomIndexChange: (index: number) => void;
 }) {
   const artboard = isDesktopArtboardLayoutActive();
+  const viewportMeasureRef = useRef<HTMLElement>(null);
 
   return (
     <section
+      ref={viewportMeasureRef}
       style={{
         position: 'relative',
         flex: artboard ? 'none' : 1,
@@ -51,6 +56,11 @@ function PenthouseViewport({
       </div>
 
       <DesktopFloatingNav />
+
+      <ExtensionsBoutiqueExperience
+        viewportMeasureRef={viewportMeasureRef}
+        active={roomId === 'boutique'}
+      />
     </section>
   );
 }
@@ -95,7 +105,11 @@ export default function DesktopPenthousePage() {
       }}
     >
       <NavBar />
-      <PenthouseViewport roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
+      <PenthouseViewport
+        roomIndex={roomIndex}
+        roomId={roomParam}
+        onRoomIndexChange={onRoomIndexChange}
+      />
     </div>
   );
 }
