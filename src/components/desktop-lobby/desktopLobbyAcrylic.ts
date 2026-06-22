@@ -14,3 +14,13 @@ export const desktopAcrylicPanelStyle: CSSProperties = {
     '0 4px 16px rgba(0,0,0,0.08)',
   ].join(', '),
 };
+
+/** Fixed top nav — bright white frost (not gray) over dark room heroes. */
+export const desktopNavBarStyle: CSSProperties = {
+  background:
+    'linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.82) 100%)',
+  backdropFilter: 'blur(20px) saturate(1.85)',
+  WebkitBackdropFilter: 'blur(20px) saturate(1.85)',
+  borderBottom: '1px solid rgba(255,255,255,0.95)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,1)',
+};

@@ -6,6 +6,7 @@ import {
   resolveDesktopNavActiveLabel,
 } from '../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
+import { desktopNavBarStyle } from './desktopLobbyAcrylic';
 
 export function NavBar() {
   const navigate = useNavigate();
@@ -45,10 +46,7 @@ export function NavBar() {
       className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between px-10"
       style={{
         height: '68px',
-        background: 'rgba(255,255,255,0.84)',
-        backdropFilter: 'blur(28px) saturate(1.6)',
-        WebkitBackdropFilter: 'blur(28px) saturate(1.6)',
-        borderBottom: '1px solid rgba(0,0,0,0.07)',
+        ...desktopNavBarStyle,
       }}
     >
       <button
