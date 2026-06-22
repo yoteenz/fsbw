@@ -4,12 +4,12 @@ import { getDesktopLayoutViewportWidth, desktopArtboardHeightStyle, isDesktopArt
 import { ParticleField } from '../../components/desktop-lobby/ParticleField';
 import { BuildAWigPanel } from '../../components/desktop-lobby/BuildAWigPanel';
 import { PSAConciergePanel } from '../../components/desktop-lobby/PSAConciergePanel';
-import { DESKTOP_LOBBY_BG_URL, DESKTOP_LOUNGE_BG_FALLBACK } from '../../constants/desktopLobbyEnv';
+import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../constants/desktopLobbyEnv';
+import { DesktopLobbyPanorama } from '../../components/desktop-lobby/DesktopLobbyPanorama';
 import { ZoneLoungeReveal } from '../../components/desktop-lobby/ZoneLoungeReveal';
 
 function DigitalLobby() {
   const [visible, setVisible] = useState(false);
-  const [bgSrc, setBgSrc] = useState(DESKTOP_LOBBY_BG_URL);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80);
@@ -25,27 +25,16 @@ function DigitalLobby() {
   return (
     <section style={{ position: 'relative', height: desktopArtboardHeightStyle(), overflow: 'hidden', background: '#ECE8E4' }}>
 
-      {/* Marble underlay — fills any crop edges from cover */}
+      {/* Marble underlay — fills any crop edges from panorama viewport */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: 'url(/assets/marble%20bg.png)',
+        backgroundImage: `url(${DESKTOP_LOUNGE_BG_FALLBACK})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
       }} />
 
-      {/* ENVIRONMENT — edge-to-edge under nav (cover, no letterbox bars) */}
-      <img
-        src={bgSrc}
-        alt=""
-        onError={() => setBgSrc(DESKTOP_LOUNGE_BG_FALLBACK)}
-        style={{
-          position: 'absolute', inset: 0, zIndex: 1,
-          width: '100%', height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center top',
-          display: 'block',
-        }}
-      />
+      {/* Top-floor panoramic map — single asset, horizontal room pan, slab crop via overflow */}
+      <DesktopLobbyPanorama />
 
       {/* Edge vignette */}
       <div style={{
