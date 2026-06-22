@@ -11,8 +11,7 @@ import {
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
 import { DesktopPenthouseRoomScene } from '../../../components/desktop-lobby/DesktopPenthouseRoomScene';
-import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
-import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
+import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 
 function PenthouseViewport({
@@ -51,8 +50,7 @@ function PenthouseViewport({
         <ParticleField />
       </div>
 
-      <DesktopFloorElevator />
-      <DesktopRoomNavPanel />
+      <DesktopFloatingNav />
     </section>
   );
 }

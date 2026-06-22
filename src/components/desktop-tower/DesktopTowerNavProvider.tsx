@@ -29,7 +29,7 @@ import {
   DesktopTowerElevatorExperience,
   type TowerElevatorPhase,
 } from './DesktopTowerElevatorExperience';
-import { DesktopFloorElevator } from '../desktop-lobby/DesktopFloorElevator';
+import { FloorNavDrawer } from '../desktop-lobby/floating-nav/FloorNavDrawer';
 import { markDesktopTowerArrival } from './useDesktopTowerPageReveal';
 import './DesktopTowerElevator.css';
 
@@ -207,7 +207,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             displayLevelId={displayLevelId}
           />
           <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>
-            <DesktopFloorElevator />
+            <FloorNavDrawer isOpen embedded />
           </div>
         </>
       ) : null}

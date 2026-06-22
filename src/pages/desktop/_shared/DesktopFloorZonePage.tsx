@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
-import { DesktopFloorElevator } from '../../../components/desktop-lobby/DesktopFloorElevator';
-import { DesktopRoomNavPanel } from '../../../components/desktop-lobby/DesktopRoomNavPanel';
+import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
 import {
@@ -84,8 +83,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           <ParticleField />
         </div>
 
-        <DesktopFloorElevator />
-        <DesktopRoomNavPanel />
+        <DesktopFloatingNav />
       </section>
     </div>
   );
