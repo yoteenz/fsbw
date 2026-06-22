@@ -1,9 +1,9 @@
 import type { DesktopFloor } from './desktopFloors';
 
-export const TOWER_TRAVEL_MS = 1600;
-export const TOWER_BOARD_MS = 200;
-export const TOWER_ARRIVED_MS = 300;
-export const TOWER_FADE_MS = 350;
+export const TOWER_TRAVEL_MS = 2200;
+export const TOWER_BOARD_MS = 150;
+export const TOWER_ARRIVED_MS = 350;
+export const TOWER_FADE_MS = 400;
 
 /** @deprecated Doors are not used with shell image — kept for migration. */
 export const TOWER_DOORS_MS = 0;

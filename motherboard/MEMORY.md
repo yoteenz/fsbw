@@ -30602,3 +30602,15 @@ Summary: user reported regression — height-only panorama scale (prior vertical
 - **Unchanged:** Penthouse **`paddingTop` + `flex: 1`** scene sizing for fixed navbar.
 - **Changes:** `desktopLobbyPanorama.ts`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Layered cinematic elevator transition
+
+Summary: user rejected bouncing static shell image; requested layered animation — stable interior, moving exterior through glass, light bands, reflections, ghost floor markers, holo display.
+
+- **Static shell:** OpenArt PNG as **frame-only** overlay via **SVG mask** (rear + side glass cutouts); interior never translates.
+- **Animated layers (behind glass):** vertical **exterior tower** track synced to **`displayLevelId`**; **passing floor light bands**; **ghost LEVEL markers** from **`DESKTOP_FLOORS`**; **glass shimmer**; side-glass parallax at 0.42×.
+- **Motion rules:** up → exterior/markers move down; down → reverse; eased stop on **arrived**; arrival **veil** fades on rear glass; holo **TRAVELING TO / ARRIVED** unchanged.
+- **Timing:** ~**2.7s** journey (**150+2200+350** ms travel core + **400** ms shell fade).
+- **Changes:** `DesktopTowerElevatorExperience.tsx`, `DesktopTowerElevator.css`, `desktopTowerExterior.ts`, `desktopTowerElevatorLayout.ts`, `desktopTowerMotion.ts`. Pushed **`master`** + **`preview/mobile`**.
+

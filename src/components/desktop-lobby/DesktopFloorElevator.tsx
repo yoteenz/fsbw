@@ -41,7 +41,7 @@ export function DesktopFloorElevator({ activeFloorPath, side = 'right' }: Deskto
     if (isActive || journey) return;
     setPendingId(floorId);
     travelTo(buildDesktopElevatorHref(floorPath, defaultZoneId));
-    window.setTimeout(() => setPendingId(null), 2200);
+    window.setTimeout(() => setPendingId(null), 2800);
   };
 
   return (
