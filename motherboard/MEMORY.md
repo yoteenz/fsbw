@@ -30489,3 +30489,15 @@ Summary of the **whole conversation so far** in this chat: penthouse skyscraper,
 - **Tune:** **`DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO`** (default **0.30**) and room **`focalXRatio`** in **`desktopLobbyPanorama.ts`** after QA.
 - **Changes:** `src/constants/desktopLobbyPanorama.ts`, `DesktopLobbyPanorama.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Desktop 4-floor model + navbar quick-transport
+
+Summary of the **whole conversation so far** in this chat: penthouse immersive pan/zoom, nav split; user redefined **4 floors** and **navbar time-travel** vs **elevator default hubs**.
+
+- **Floors (L4→L1):** Penthouse, Lobby, **Gallery** (replaces Slay Cam + old Lounge floor), Concierge. **`/desktop/lounge`** + **`/desktop/slay-cam`** redirect to gallery default zone.
+- **Elevator:** **`buildDesktopElevatorHref`** — lands **middle/default zone** per floor (`showroom`, `shop`, `members-lounge`, `psa-concierge-suite`).
+- **Navbar quick-routes** (`desktopNavQuickRoutes.ts`): HOME → lobby **shop**; SHOP → penthouse **boutique**; BUILD-A-WIG → lobby **atelier** (soon); SLAY CAM / MEMBERSHIP / REWARDS → gallery zones (soon); ANALYSIS → penthouse **analysis-lab** (soon); PSA → concierge **suite** (soon). Active nav inferred from **`?room=`** / **`?zone=`**.
+- **URLs:** penthouse **`?room=`**; lobby/gallery/concierge **`?zone=`**. **`DesktopFloorZonePage`** for zone placeholders + coming soon.
+- **Changes:** `desktopFloors.ts`, `desktopNavQuickRoutes.ts`, `NavBar.tsx`, `DesktopFloorElevator.tsx`, floor pages, penthouse URL sync, `App.tsx`. Build verified.
+
