@@ -30445,3 +30445,14 @@ Summary of the **whole conversation so far** in this chat: desktop skyscraper pe
 - **Tune:** Nudge ratio in **`desktopLobbyPanorama.ts`** if slab edge needs ± few px after staging QA.
 - **Changes:** `src/constants/desktopLobbyPanorama.ts`, `src/pages/desktop/penthouse/page.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Desktop /desktop/* mobile: remove viewport gate
+
+Summary of the **whole conversation so far** in this chat: penthouse skyscraper + slab crop fixes; user reported **desktop viewing gate** blocking mobile browser on `/desktop/*` again after penthouse refactor.
+
+- **Fix:** **`isMobileDesktopBypassActive()`** now auto-enables on any **`/desktop/*`** route when **`innerWidth < 1024`** (sets 1920px viewport via **`bootstrapMobileDesktopViewport`**). Staging **`?mobileDesktop=1`** + session persist unchanged.
+- **Gate removed** from **`penthouse/page.tsx`**, **`DesktopFloorPlaceholder`**, **`lounge/page.tsx`** — no “designed for desktop viewing” block on explicit desktop routes.
+- **Helper:** **`shouldShowDesktopViewportGate()`** in **`desktopPreview.ts`** (always false on `/desktop/*`).
+- **Changes:** `src/utils/desktopPreview.ts`, penthouse, lounge, placeholder pages. Build verified.
+
