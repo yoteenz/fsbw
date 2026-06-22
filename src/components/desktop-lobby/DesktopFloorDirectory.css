@@ -99,17 +99,9 @@
   bottom: 12px;
   width: 2px;
   transform: translateX(-50%);
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(200, 200, 200, 0.35) 8%,
-    rgba(180, 180, 180, 0.5) 50%,
-    rgba(200, 200, 200, 0.35) 92%,
-    transparent 100%
-  );
-  border-radius: 2px;
   z-index: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .floor-directory__spine-glow {
