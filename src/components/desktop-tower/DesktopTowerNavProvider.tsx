@@ -31,6 +31,7 @@ import {
 } from './DesktopTowerElevatorExperience';
 import { FloorNavDrawer } from '../desktop-lobby/floating-nav/FloorNavDrawer';
 import { markDesktopTowerArrival } from './useDesktopTowerPageReveal';
+import { warmDesktopTowerElevatorVideo } from '../../utils/desktopTowerElevatorVideo';
 import './DesktopTowerElevator.css';
 
 type TowerJourney = {
@@ -88,6 +89,10 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
+
+  useEffect(() => {
+    warmDesktopTowerElevatorVideo();
+  }, []);
 
   useEffect(() => {
     if (journey) {

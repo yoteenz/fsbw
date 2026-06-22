@@ -36,6 +36,10 @@
   user-select: none;
 }
 
+.desktop-tower-elevator__shell-media--playing {
+  opacity: 1;
+}
+
 /* Destination holo */
 .desktop-tower-elevator__holo {
   position: absolute;

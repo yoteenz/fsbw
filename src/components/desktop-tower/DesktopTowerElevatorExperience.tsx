@@ -1,13 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { getDesktopFloorById, type DesktopFloor } from '../../constants/desktopFloors';
 import {
   DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT,
   DESKTOP_TOWER_ELEVATOR_SHELL_URL,
   DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH,
-  DESKTOP_TOWER_ELEVATOR_VIDEO_URL,
 } from '../../constants/desktopTowerEnv';
 import { TOWER_SHELL_HOLO } from '../../constants/desktopTowerElevatorLayout';
 import { formatTowerLevelLabel, type TowerTravelDirection } from '../../constants/desktopTowerMotion';
+import {
+  bindDesktopTowerElevatorVideoPlayback,
+  getDesktopTowerElevatorVideoSrc,
+  warmDesktopTowerElevatorVideo,
+} from '../../utils/desktopTowerElevatorVideo';
 import './DesktopTowerElevator.css';
 
 export type TowerElevatorPhase = 'boarding' | 'traveling' | 'arrived' | 'opening' | 'exiting';
@@ -35,6 +39,7 @@ export function DesktopTowerElevatorExperience({
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const nearestFloorId = Math.round(displayLevelId);
   const nearestFloor = getDesktopFloorById(nearestFloorId) ?? fromFloor;
@@ -64,31 +69,28 @@ export function DesktopTowerElevatorExperience({
   }, [phase, fromFloor, toFloor]);
 
   useEffect(() => {
-    setVideoFailed(false);
-  }, [fromFloor.id, toFloor.id]);
+    warmDesktopTowerElevatorVideo();
+  }, []);
 
   useEffect(() => {
+    setVideoFailed(false);
+    setVideoPlaying(false);
+  }, [fromFloor.id, toFloor.id]);
+
+  useLayoutEffect(() => {
     const video = videoRef.current;
     if (!video || videoFailed) return undefined;
 
-    const play = () => {
-      video.currentTime = 0;
-      void video.play().catch(() => {
-        /* Autoplay blocked — poster remains visible. */
-      });
-    };
-
-    video.addEventListener('canplay', play);
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) play();
-
-    return () => {
-      video.removeEventListener('canplay', play);
-      video.pause();
-    };
-  }, [videoFailed]);
+    return bindDesktopTowerElevatorVideoPlayback(
+      video,
+      () => setVideoPlaying(true),
+      () => setVideoFailed(true),
+    );
+  }, [fromFloor.id, toFloor.id, videoFailed]);
 
   const exiting = phase === 'exiting';
   const traveling = phase === 'traveling';
+  const videoSrc = getDesktopTowerElevatorVideoSrc();
 
   return (
     <div
@@ -110,9 +112,12 @@ export function DesktopTowerElevatorExperience({
         ) : (
           <video
             ref={videoRef}
-            src={DESKTOP_TOWER_ELEVATOR_VIDEO_URL}
-            poster={DESKTOP_TOWER_ELEVATOR_SHELL_URL}
-            className="desktop-tower-elevator__shell-media"
+            key={`${fromFloor.id}-${toFloor.id}-${videoSrc}`}
+            src={videoSrc}
+            poster={videoPlaying ? undefined : DESKTOP_TOWER_ELEVATOR_SHELL_URL}
+            className={`desktop-tower-elevator__shell-media${
+              videoPlaying ? ' desktop-tower-elevator__shell-media--playing' : ''
+            }`}
             playsInline
             muted
             loop
