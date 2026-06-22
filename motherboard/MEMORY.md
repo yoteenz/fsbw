@@ -30521,3 +30521,17 @@ Summary of the **whole conversation so far** in this chat: 4-floor desktop, quic
 - **`DesktopTowerNavProvider`:** **`travelTo(href)`** on level change only; same-floor zone/room nav skips elevator; integrates **NavBar** + **`DesktopFloorElevator`**; **`useDesktopTowerPageReveal`** fades destination in after doors.
 - **Changes:** `src/components/desktop-tower/*`, `desktopTowerMotion.ts`, `desktopFloors.ts` (id-based), `App.tsx`. Build verified.
 
+---
+
+## 2026-06-21 — Luxury architectural floor directory panel
+
+Summary of the **whole conversation so far** in this chat: desktop penthouse restructure, mobile gate, panorama crop/cover/single-room zoom, 4-floor model + navbar quick-transport, full-screen glass tower elevator; user requested **side floor nav redesign** — luxury skyscraper directory (not a SaaS sidebar or red-dot list). Floor structure unchanged (L4 Penthouse → L1 Concierge).
+
+- **`DesktopFloorElevator` → directory panel:** Suspended acrylic glass frame with marble reflection base, chrome cap, crystal edge highlight, frosted glass cards per floor, oversized architectural numbers (**P4**, **L3**, **L2**, **L1** via **`getDirectoryFloorNumber`**).
+- **Active state:** Floating red ambient glow capsule behind active card; card elevates slightly with stronger glass reflections; subtle shimmer animation — no red dot.
+- **Status labels:** Active → “You are here”; hovered → “Select destination”; travel/pending destination → “Destination”.
+- **Vertical spine:** Illuminated center spine; **`floorIdToSpineRatio`** positions glow; directional pulse animation (**up/down**) during **`journey`**; glow tracks **`travelDisplayLevelId`** during elevator travel.
+- **Hover:** Glass brightens, card lifts, title sharpens, subtle arrow appears — restrained motion only.
+- **Tower sync:** **`DesktopTowerNavProvider`** exposes **`journey`** + **`travelDisplayLevelId`** for directory microinteractions; floor select calls **`travelTo(buildDesktopElevatorHref(...))`**.
+- **Changes:** `DesktopFloorElevator.tsx`, `DesktopFloorDirectory.css`, `desktopFloorDirectory.ts`, `DesktopTowerNavProvider.tsx`. Build verified; pushed **`master`** + **`preview/mobile`**.
+
