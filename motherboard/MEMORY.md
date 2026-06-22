@@ -30569,3 +30569,13 @@ Summary of the **whole conversation so far** in this chat: luxury floor + room d
 - **Fix:** **`.floor-directory__body`** / room cards use **`flex-direction: column`** so name and status are separate rows; status uses **`display: block`**, **`white-space: nowrap`**, slightly reduced letter-spacing; floor panel widened to **220px** and extra right padding for arrow clearance.
 - **Changes:** `DesktopFloorDirectory.css`, `DesktopRoomDirectory.css`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-21 — Navbar quick travel vs floor elevator
+
+Summary of the **whole conversation so far** in this chat: luxury floor + room directories, panorama/layout fixes, status label wrap fix; user asked whether **navbar fast-travel** should use the elevator animation — agreed it defeats quick-travel purpose.
+
+- **Split:** **Floor directory** → **`travelTo`** (cinematic elevator on level change). **Navbar quick routes** → **`quickTravelTo`** (instant navigate to exact zone/room, no elevator). Same-floor nav was already instant.
+- **Rationale:** Navbar = express concierge transport; side directory = deliberate building journey.
+- **Changes:** `NavBar.tsx`, `DesktopTowerNavProvider.tsx` (`quickTravelTo`), `desktopNavQuickRoutes.ts`. Pushed **`master`** + **`preview/mobile`**.
+
