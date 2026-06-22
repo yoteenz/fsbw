@@ -96,13 +96,13 @@ export function isDesktopEmbedFrame(): boolean {
 /** Map `/desktop-preview/...` → `/desktop/...` route key. */
 export function resolveDesktopIframePath(previewPathname: string): string {
   if (previewPathname === PREVIEW_PREFIX || previewPathname === `${PREVIEW_PREFIX}/`) {
-    return `${DESKTOP_PREFIX}/lobby`;
+    return `${DESKTOP_PREFIX}/penthouse`;
   }
   if (previewPathname.startsWith(`${PREVIEW_PREFIX}/`)) {
     const suffix = previewPathname.slice(PREVIEW_PREFIX.length);
     return `${DESKTOP_PREFIX}${suffix}`;
   }
-  return `${DESKTOP_PREFIX}/lobby`;
+  return `${DESKTOP_PREFIX}/penthouse`;
 }
 
 function setViewportContent(content: string): string {

@@ -17,9 +17,9 @@ export type DesktopLobbyPanoramaRoom = {
 
 /** Top-floor rooms on the single panoramic asset (left → right). */
 export const DESKTOP_LOBBY_PANORAMA_ROOMS: readonly DesktopLobbyPanoramaRoom[] = [
-  { id: 'analysis-lab', label: 'HAIR ANALYSIS LAB', focalXRatio: 0.165 },
-  { id: 'showroom', label: 'HAIR SHOWROOM', focalXRatio: 0.5 },
-  { id: 'boutique', label: 'EXTENSIONS BOUTIQUE', focalXRatio: 0.835 },
+  { id: 'analysis-lab', label: 'Hair Analysis Lab', focalXRatio: 0.165 },
+  { id: 'showroom', label: 'Hair Showroom', focalXRatio: 0.5 },
+  { id: 'boutique', label: 'Extensions Boutique', focalXRatio: 0.835 },
 ] as const;
 
 export const DESKTOP_LOBBY_PANORAMA_DEFAULT_ROOM_INDEX = 1;

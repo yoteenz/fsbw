@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDesktopLayoutViewportWidth } from '../../../utils/desktopPreview';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
+import { DesktopElevatorPanel } from '../../../components/desktop-lobby/DesktopElevatorPanel';
 
 import { DESKTOP_LOUNGE_BG_FALLBACK, DESKTOP_LOUNGE_BG_URL } from '../../../constants/desktopLobbyEnv';
 
@@ -247,10 +248,10 @@ export default function DesktopLoungePage() {
   }
 
   return (
-    <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
-      <NavBar activeLink="LOUNGE" />
+    <div style={{ background: '#0A0A0A', height: '100vh', overflow: 'hidden' }}>
+      <NavBar activeLink="HOME" />
 
-      <section className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
+      <section className="relative overflow-hidden" style={{ height: '100vh', position: 'relative' }}>
 
         {/* Lounge environment */}
         <img
@@ -451,12 +452,12 @@ export default function DesktopLoungePage() {
                 </div>
                 <div style={{ padding: '14px 22px', borderTop: '1px solid rgba(0,0,0,0.065)' }}>
                   <button
-                    onClick={() => navigate('/desktop/lobby')}
+                    onClick={() => navigate('/desktop/penthouse')}
                     style={{ width: '100%', padding: '12px 0', background: 'rgba(255,255,255,0.52)', backdropFilter: 'blur(12px)', color: '#1A1A1A', fontFamily: '"Futura PT Medium"', fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', border: '1px solid rgba(0,0,0,0.12)', borderRadius: '2px', cursor: 'pointer' }}
                     onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#C81C24'; el.style.color = '#FFF'; el.style.borderColor = 'transparent'; }}
                     onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = 'rgba(255,255,255,0.52)'; el.style.color = '#1A1A1A'; el.style.borderColor = 'rgba(0,0,0,0.12)'; }}
                   >
-                    RETURN TO LOBBY
+                    RETURN TO PENTHOUSE
                   </button>
                 </div>
               </AcrylicBlock>
@@ -465,6 +466,7 @@ export default function DesktopLoungePage() {
         </div>
 
         <canvas ref={canvasRef} style={{ display: 'none' }} />
+        <DesktopElevatorPanel activeFloorPath="/desktop/lounge" />
       </section>
     </div>
   );

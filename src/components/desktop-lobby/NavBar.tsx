@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const NAV_LINKS = [
-  { label: 'HOME', path: '/desktop/lobby' },
+  { label: 'HOME', path: '/desktop/penthouse' },
   { label: 'SHOP', path: '/home/shop' },
   { label: 'BUILD-A-WIG', path: '/build-a-wig' },
   { label: 'SLAY CAM', path: '/tools/slay-cam' },
@@ -50,7 +50,7 @@ export function NavBar({ activeLink = 'HOME' }: NavBarProps) {
     >
       {/* Wordmark */}
       <button
-        onClick={() => navigate('/desktop/lobby')}
+        onClick={() => navigate('/desktop/penthouse')}
         className="flex items-center flex-shrink-0"
         style={{ fontFamily: '"Futura PT Medium"', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >

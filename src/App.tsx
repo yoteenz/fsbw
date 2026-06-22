@@ -157,8 +157,11 @@ const BookingConsultationPage = lazyWithRetry(() => import('./pages/booking/cons
 const BookingAppointmentPage = lazyWithRetry(() => import('./pages/booking/appointment/page'), 'BookingAppointmentPage');
 const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage');
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
-const DesktopLobbyPage = lazyWithRetry(() => import('./pages/desktop-lobby/page'), 'DesktopLobbyPage');
+const DesktopPenthousePage = lazyWithRetry(() => import('./pages/desktop/penthouse/page'), 'DesktopPenthousePage');
+const DesktopLobbyFloorPage = lazyWithRetry(() => import('./pages/desktop/lobby/page'), 'DesktopLobbyFloorPage');
 const DesktopLoungePage = lazyWithRetry(() => import('./pages/desktop/lounge/page'), 'DesktopLoungePage');
+const DesktopConciergePage = lazyWithRetry(() => import('./pages/desktop/concierge/page'), 'DesktopConciergePage');
+const DesktopSlayCamPage = lazyWithRetry(() => import('./pages/desktop/slay-cam/page'), 'DesktopSlayCamPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 // Error Boundary to catch component errors with auto-recovery
@@ -434,14 +437,29 @@ function App() {
             <DesktopPreviewPage />
           </Suspense>
         } />
+        <Route path="/desktop/penthouse" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <DesktopPenthousePage />
+          </Suspense>
+        } />
         <Route path="/desktop/lobby" element={
           <Suspense fallback={<LoadingScreen />}>
-            <DesktopLobbyPage />
+            <DesktopLobbyFloorPage />
           </Suspense>
         } />
         <Route path="/desktop/lounge" element={
           <Suspense fallback={<LoadingScreen />}>
             <DesktopLoungePage />
+          </Suspense>
+        } />
+        <Route path="/desktop/concierge" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <DesktopConciergePage />
+          </Suspense>
+        } />
+        <Route path="/desktop/slay-cam" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <DesktopSlayCamPage />
           </Suspense>
         } />
         <Route path="/lobby/lounge" element={<LobbyPage />} />

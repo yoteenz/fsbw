@@ -7,7 +7,7 @@ import {
   resolveDesktopIframePath,
 } from '../../utils/desktopPreview';
 
-const DesktopLobbyPageLazy = lazy(() => import('../desktop-lobby/page'));
+const DesktopPenthousePageLazy = lazy(() => import('../desktop/penthouse/page'));
 const DesktopLoungePageLazy = lazy(() => import('../desktop/lounge/page'));
 
 /**
@@ -30,7 +30,7 @@ function DesktopPreviewPage() {
     desktopPath === '/desktop/lounge' ? (
       <DesktopLoungePageLazy />
     ) : (
-      <DesktopLobbyPageLazy />
+      <DesktopPenthousePageLazy />
     );
 
   return (

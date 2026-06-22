@@ -94,7 +94,7 @@ export function DesktopLobbyPanorama({
           display: 'block',
           transform: `translate3d(${translateX}px, 0, 0) scale(${scale})`,
           transformOrigin: 'top left',
-          transition: 'transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1)',
           willChange: 'transform',
         }}
       />
