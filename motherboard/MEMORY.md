@@ -30660,3 +30660,15 @@ Summary: user asked elevator PNG to use same container as penthouse/desktop back
 - **`DESKTOP_NAVBAR_HEIGHT_PX = 68`** in **`desktopTowerEnv.ts`**.
 - **Changes:** `DesktopTowerElevator.css`, `DesktopTowerElevatorExperience.tsx`, `desktopTowerEnv.ts`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Penthouse per-room hero backgrounds (end panorama pan/zoom)
+
+Summary: user stopped the single 3-room panorama pan/zoom loop; each penthouse room now has its own dedicated 21:9 hero asset.
+
+- **`desktopPenthouseRooms.ts`:** **`DESKTOP_PENTHOUSE_ROOMS`** — analysis-lab, showroom, boutique with Supabase PNG URLs; master **`IMG_3880`** panorama fallback on load error only.
+- **`DesktopPenthouseRoomScene`:** replaces **`DesktopLobbyPanorama`** — **`object-fit: cover`**, **`object-position: center center`**, scene fills viewport below navbar; luxury fade + ~1.5% scale + blur crossfade between rooms (no horizontal pan).
+- **Removed:** **`computeDesktopLobbyPanoramaTransform`**, focal ratios, scaleX/scaleY tuning; deleted **`DesktopLobbyPanorama.tsx`**.
+- **URLs unchanged:** **`?room=showroom|analysis-lab|boutique`**; zone directory + elevator unchanged.
+- Pushed **`master`** + **`preview/mobile`**.
+
