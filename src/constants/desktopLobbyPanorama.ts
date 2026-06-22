@@ -47,13 +47,13 @@ export const DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO = 0.3;
 
 export type DesktopLobbyPanoramaTransform = {
   translateX: number;
-  scaleX: number;
-  scaleY: number;
+  translateY: number;
+  scale: number;
   imageWidth: number;
   imageHeight: number;
 };
 
-/** One room fills the viewport width; vertical scale preserves slab crop. */
+/** One room fills width; uniform scale (no stretch) + vertical offset keeps slab at bottom. */
 export function computeDesktopLobbyPanoramaTransform(
   containerWidth: number,
   containerHeight: number,
@@ -68,12 +68,16 @@ export function computeDesktopLobbyPanoramaTransform(
   const scaleY = containerHeight / visibleSrcH;
   const roomViewSrcW = srcW * DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO;
   const scaleX = containerWidth / roomViewSrcW;
+  const scale = Math.max(scaleX, scaleY);
 
-  const scaledW = srcW * scaleX;
-  const focalX = room.focalXRatio * srcW * scaleX;
+  const scaledW = srcW * scale;
+  const focalX = room.focalXRatio * srcW * scale;
   let translateX = containerWidth / 2 - focalX;
   const minTranslateX = containerWidth - scaledW;
   translateX = Math.max(minTranslateX, Math.min(0, translateX));
 
-  return { translateX, scaleX, scaleY, imageWidth: srcW, imageHeight: srcH };
+  let translateY = containerHeight - visibleSrcH * scale;
+  if (translateY > 0) translateY = 0;
+
+  return { translateX, translateY, scale, imageWidth: srcW, imageHeight: srcH };
 }
