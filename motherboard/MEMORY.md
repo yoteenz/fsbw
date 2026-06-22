@@ -30649,3 +30649,14 @@ Summary of the **whole conversation so far** in this chat: updated elevator shel
 - **Penthouse zones** added to **`DESKTOP_FLOORS`** from panorama rooms; zone panel on all desktop floor pages.
 - **Changes:** `DesktopFloorElevator.tsx`, `DesktopRoomNavPanel.tsx`, `DesktopTowerNavProvider.tsx`, `desktopFloors.ts`, `desktopFloorDirectory.ts`, `desktopRoomDirectory.ts`, `desktopNavQuickRoutes.ts`, floor pages. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator shell full-bleed scene sizing
+
+Summary: user asked elevator PNG to use same container as penthouse/desktop backgrounds — no letterboxing.
+
+- **Shell container:** **`top: 68px`**, **`height: calc(100vh - 68px)`**, **`width: max(100vw, …)`** at **1915×821** aspect — edge-to-edge cover in scene band below NavBar (matches penthouse section layout).
+- **Removed:** centered flex overlay, radial matte, **`min(96vw, 90vh)`** contain box, **`object-fit: contain`**.
+- **`DESKTOP_NAVBAR_HEIGHT_PX = 68`** in **`desktopTowerEnv.ts`**.
+- **Changes:** `DesktopTowerElevator.css`, `DesktopTowerElevatorExperience.tsx`, `desktopTowerEnv.ts`. Pushed **`master`** + **`preview/mobile`**.
+
