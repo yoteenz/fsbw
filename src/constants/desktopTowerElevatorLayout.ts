@@ -1,32 +1,32 @@
-/** Percentage layout zones on the elevator shell artboard (1536×1024). */
+/** Percentage layout zones on the elevator shell artboard (1915×821). */
 export const TOWER_SHELL_HOLO = {
-  top: 9,
-  width: 30,
+  top: 4,
+  width: 26,
 } as const;
 
-/** Rear glass viewport — moving exterior visible here. */
+/** Rear glass viewport — center cityscape (moving exterior). */
 export const TOWER_SHELL_GLASS_REAR = {
-  left: 28,
-  top: 16,
-  width: 44,
-  height: 58,
+  left: 23,
+  top: 11,
+  width: 54,
+  height: 62,
 } as const;
 
-/** Side glass strips (parallax exterior). */
+/** Side glass strips — curved tower exterior visible through side panels. */
 export const TOWER_SHELL_GLASS_SIDE = {
-  top: 20,
-  width: 11.4,
-  height: 51,
+  top: 14,
+  width: 17,
+  height: 58,
 } as const;
 
 export const TOWER_SHELL_GLASS_LEFT = {
   ...TOWER_SHELL_GLASS_SIDE,
-  left: 7.5,
+  left: 3.5,
 } as const;
 
 export const TOWER_SHELL_GLASS_RIGHT = {
   ...TOWER_SHELL_GLASS_SIDE,
-  right: 7.5,
+  right: 3.5,
 } as const;
 
 /** Vertical travel distance in the exterior track per floor id crossed. */
