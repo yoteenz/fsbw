@@ -30672,3 +30672,13 @@ Summary: user stopped the single 3-room panorama pan/zoom loop; each penthouse r
 - **URLs unchanged:** **`?room=showroom|analysis-lab|boutique`**; zone directory + elevator unchanged.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Compact floor/room directory panels
+
+Summary: user reported floor + destination directories too large, covering penthouse hero background.
+
+- **Floor directory:** width **168px** (was 220), tighter padding/type/cards; anchored **bottom-right above room bar** (no longer vertically centered).
+- **Room directory:** width **520px** max (was 780), cards **148px** max, smaller padding/fonts; sits lower on viewport.
+- **Changes:** `DesktopFloorDirectory.css`, `DesktopRoomDirectory.css`, `DesktopFloorElevator.tsx`, `DesktopRoomNavPanel.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
