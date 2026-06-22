@@ -30704,3 +30704,13 @@ Summary of the **whole conversation so far** in this chat: elevator shell asset 
 - **Elevator overlay:** removed moving exterior track, glass clip-path, frame mask SVG, and holo arrival animation — static shell PNG + holo display only during travel.
 - **Changes:** `desktopFloors.ts`, `desktopNavQuickRoutes.ts`, `DesktopTowerElevatorExperience.tsx`, `DesktopTowerElevator.css`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Mobile desktop: stop background zoom / show full artboard
+
+Summary of the **whole conversation so far** in this chat: lobby/concierge zone labels + static elevator; user reported mobile **`/desktop/*`** on **`fsbw.vercel.app`** zooming/cropping penthouse backgrounds (e.g. Hair Showroom text cut off) after per-room hero refactor.
+
+- **Cause:** (1) mobile bypass set viewport **`width=1920`** — phone showed a cropped slice of the layout; (2) penthouse **`object-fit: cover`** on 21:9 room heroes cropped within the scene.
+- **Fix:** **`DesktopRouteShell`** wraps all **`/desktop/*`** routes with **`ScaledDesktopViewport`** on narrow viewports (same fit-to-screen model as **`/desktop-preview`**); removed **`width=1920`** bootstrap. Penthouse **`penthouse-room-scene--artboard`** uses **`object-fit: contain`** so full room frame visible on phone/preview. **`DesktopFloorZonePage`** uses **1080px** artboard height on mobile bypass.
+- **Changes:** `DesktopRouteShell.tsx`, `App.tsx`, `DesktopPenthouseRoomScene.tsx/css`, `desktopPreview.ts`, `DesktopFloorZonePage.tsx`. Pushed **`master`** + **`preview/mobile`**.
+
