@@ -54,9 +54,10 @@ export type DesktopLobbyPanoramaTransform = {
 };
 
 /**
- * Cover-fill the viewport from panorama top through the marble slab (floor edge).
- * Uniform scale preserves proportions; horizontal pan centers the active room.
- * Vertical scale wins over room-width zoom so ceiling-to-slab stays visible.
+ * Single-room viewport: uniform scale fills the scene edge-to-edge (no gaps).
+ * Room-width zoom isolates one zone; vertical offset keeps the marble slab aligned
+ * at the bottom when room zoom exceeds height scale.
+ * Page layout (navbar padding + flex scene) supplies the correct container size.
  */
 export function computeDesktopLobbyPanoramaTransform(
   containerWidth: number,
@@ -69,7 +70,10 @@ export function computeDesktopLobbyPanoramaTransform(
   const floorEdge = DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO;
 
   const visibleSrcH = srcH * floorEdge;
-  const scale = containerHeight / visibleSrcH;
+  const scaleY = containerHeight / visibleSrcH;
+  const roomViewSrcW = srcW * DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO;
+  const scaleX = containerWidth / roomViewSrcW;
+  const scale = Math.max(scaleX, scaleY);
 
   const scaledW = srcW * scale;
   const focalX = room.focalXRatio * srcW * scale;
@@ -77,5 +81,7 @@ export function computeDesktopLobbyPanoramaTransform(
   const minTranslateX = containerWidth - scaledW;
   translateX = Math.max(minTranslateX, Math.min(0, translateX));
 
-  return { translateX, translateY: 0, scale, imageWidth: srcW, imageHeight: srcH };
+  const translateY = containerHeight - visibleSrcH * scale;
+
+  return { translateX, translateY, scale, imageWidth: srcW, imageHeight: srcH };
 }

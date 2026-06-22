@@ -30592,3 +30592,13 @@ Summary of the **whole conversation so far** in this chat: luxury directories, p
 - **Arrival:** ARRIVED state → navigate → shell fade → page reveal (**`useDesktopTowerPageReveal`**); no door animation.
 - **Changes:** `DesktopTowerElevatorExperience.tsx`, `DesktopTowerElevator.css`, `DesktopTowerNavProvider.tsx`, `DesktopFloorElevator.tsx`, tower motion/env/layout constants. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Penthouse panorama: restore single-room zoom
+
+Summary: user reported regression — height-only panorama scale (prior vertical-gap fix) showed **all three rooms** again; they want **one room** (showroom) filling the viewport corners, **not** a revert of navbar layout (**paddingTop 68px + flex scene** stays).
+
+- **Fix:** Restore **`scale = max(scaleX, scaleY)`** with **`translateY = containerHeight - visibleSrcH * scale`** (uniform, no stretch); **`DESKTOP_PANORAMA_ROOM_VIEW_WIDTH_RATIO`** isolates single room. Removed erroneous **`translateY > 0 → 0`** clamp from earlier iteration.
+- **Unchanged:** Penthouse **`paddingTop` + `flex: 1`** scene sizing for fixed navbar.
+- **Changes:** `desktopLobbyPanorama.ts`. Pushed **`master`** + **`preview/mobile`**.
+
