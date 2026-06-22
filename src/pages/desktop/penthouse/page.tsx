@@ -30,7 +30,7 @@ function PenthouseViewport({
     transform: visible ? 'translateY(0)' : `translateY(${dy}px)`,
   });
 
-  const sceneHeight = isDesktopArtboardLayoutActive() ? '1080px' : '100vh';
+  const sceneHeight = isDesktopArtboardLayoutActive() ? '1012px' : 'calc(100vh - 68px)';
 
   return (
     <section

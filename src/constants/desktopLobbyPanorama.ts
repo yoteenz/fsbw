@@ -3,10 +3,10 @@ export const DESKTOP_PANORAMA_SOURCE_WIDTH = 3808;
 export const DESKTOP_PANORAMA_SOURCE_HEIGHT = 1632;
 
 /**
- * Vertical crop: top-floor viewport ends at the front marble slab (hide cityscape below).
- * Normalized source height (0–1); tune after QA on device.
+ * Vertical crop: viewport ends at the bottom of the front marble slab (hide lower floor below).
+ * ~1094px on the 1632px-tall source — tune after QA on device.
  */
-export const DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO = 0.505;
+export const DESKTOP_PANORAMA_FLOOR_EDGE_Y_RATIO = 0.672;
 
 export type DesktopLobbyPanoramaRoom = {
   id: string;
