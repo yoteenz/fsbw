@@ -30756,3 +30756,15 @@ Summary of the **whole conversation so far** in this chat: floor zone background
 - **boutique:** **8358D320…png**
 - **Changes:** `desktopPenthouseRooms.ts`. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Collapsible floating floor/room navigation
+
+Summary of the **whole conversation so far** in this chat: zone backgrounds, navbar frost, penthouse hero swap; user requested immersive desktop nav — panels collapsed by default, luxury floating triggers only.
+
+- **`DesktopFloatingNav`:** `activeDrawer = floors | rooms | null`; backdrop dim/blur, Escape + outside click close, toggle icon to close.
+- **`FloatingNavTrigger`:** acrylic chrome elevator + destination glyphs; bottom-right (floors), bottom-left (rooms).
+- **`FloorNavDrawer` / `RoomNavDrawer`:** bloom/slide expansion; existing acrylic directory UI preserved. Floor click → **`travelTo`** default zone on other floors. Room drawer shows **current floor** zones only; hidden when no zones.
+- **Elevator overlay:** embedded **`FloorNavDrawer`** during travel (directory visible in journey).
+- **Changes:** `floating-nav/*`, penthouse + `DesktopFloorZonePage`, `DesktopTowerNavProvider`. Pushed **`master`** + **`preview/mobile`**.
+
