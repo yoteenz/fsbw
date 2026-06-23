@@ -31184,3 +31184,12 @@ User reported on phone **`/desktop/*`** they could not see room/floor selection 
 - **Cause:** On **`ScaledDesktopViewport`** (phone artboard), CSS **`vw`/`vh`** still refer to the **device viewport**, not the **1920×1080** design canvas. **`min(168px, 15vw)`** → ~58px floor panel; **`min(520px, calc(100vw - 300px))`** → ~90px room panel — labels clipped or stacked.
 - **Fix:** Base directory widths → artboard **px** (**168px** floor, **520px** room). **`desktop-artboard-stage`** class on scaled stage; scoped overrides in **`FloatingNavTrigger.css`** for triggers/drawers + room row wrap. Files: **`ScaledDesktopViewport.tsx`**, **`DesktopFloorDirectory.css`**, **`DesktopRoomDirectory.css`**, **`FloatingNavTrigger.css`**. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Mobile desktop: elevator travel super-zoomed + no pinch zoom
+
+User reported elevator animation on phone **`/desktop/*`** looked **super zoomed in** (city fill-frame, cabin frame lost) and they **could not zoom out**.
+
+- **Cause:** Travel overlay rendered at **app root** (outside **`ScaledDesktopViewport`**) with **`position: fixed` + `100vh`/`100vw`** and **`object-fit: cover`** on a wide (**1915×821**) clip — on portrait phones **`cover`** crops to a tight exterior view. **`document.body overflow: hidden`** during journey blocked pinch-zoom on the artboard shell.
+- **Fix:** **`useDesktopArtboardPortalTarget`** — portal journey overlay + embedded floor directory into **`.desktop-artboard-stage`** on phone artboard. **`desktop-tower-elevator--phone-artboard`**: shell **`100%`×`100%`**, media **`object-fit: contain`**. Skip body scroll lock on phone artboard so **`pan-y pinch-zoom`** on **`ScaledDesktopViewport`** still works when not traveling. Files: **`useDesktopArtboardPortalTarget.ts`**, **`DesktopTowerNavProvider.tsx`**, **`DesktopTowerElevatorExperience.tsx`**, **`DesktopTowerElevator.css`**. Pushed **`master`** + **`preview/mobile`**.
+
