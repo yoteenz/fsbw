@@ -4,7 +4,6 @@ import {
   useDesktopRoomTitleDebugEnabled,
   useDesktopRoomTitleEditEnabled,
   useDesktopRoomTitleViewportProfile,
-  DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH,
 } from '../../utils/desktopRoomTitlePlacementDebug';
 import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementEditorContext';
 
@@ -41,25 +40,6 @@ export function DesktopRoomTitlePlacementEditorPanel() {
   const profile = useDesktopRoomTitleViewportProfile();
   const editor = useDesktopRoomTitlePlacementEditor();
   const [expanded, setExpanded] = useState(false);
-
-  if (debugEnabled && !profile) {
-    return (
-      <div
-        style={{
-          ...shellStyle,
-          maxWidth: 'min(360px, calc(100vw - 16px))',
-          padding: '8px 10px',
-        }}
-      >
-        <p style={{ margin: 0, fontWeight: 700 }}>Room label debug — phone layout</p>
-        <p style={{ margin: '6px 0 0 0' }}>
-          Debug squares and drag editing need a viewport at least {DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH}px wide
-          (tablet/desktop). On phone artboard, labels still render on the wall; widen the window or open on a
-          larger device to use <code>?roomTitleDebug=1&amp;roomTitleEdit=1</code>.
-        </p>
-      </div>
-    );
-  }
 
   if (!debugEnabled || !editEnabled || !editor || !profile) return null;
 

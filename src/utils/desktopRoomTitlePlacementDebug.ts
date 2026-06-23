@@ -7,8 +7,6 @@ export const ROOM_TITLE_EDIT_SESSION_KEY = 'baw_room_title_edit';
 
 export const DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH = 768;
 export const DESKTOP_ROOM_TITLE_DESKTOP_MIN_WIDTH = 1024;
-/** Matches phone artboard cutoff in `desktopPreview.ts`. */
-export const DESKTOP_ROOM_TITLE_PHONE_MAX_WIDTH = 767;
 
 export type DesktopRoomTitleViewportProfile = 'desktop' | 'tablet';
 
@@ -60,14 +58,13 @@ export function useDesktopRoomTitleEditEnabled(): boolean {
 }
 
 /**
- * Layout profile for room-label QA squares — null only on phone artboard (≤767px).
- * Scaled artboard at tablet/desktop widths (e.g. `?mobileDesktop=1` on a wide monitor)
- * still gets a profile so debug chrome and wall anchors stay aligned.
+ * Layout profile for room-label QA squares.
+ * Scaled 1920×1080 artboard (phone `/desktop/*`) uses the desktop grid — same % anchors as native layout.
  */
 export function getDesktopRoomTitleViewportProfile(): DesktopRoomTitleViewportProfile | null {
   if (typeof window === 'undefined') return null;
+  if (isDesktopArtboardLayoutActive()) return 'desktop';
   const width = window.innerWidth;
-  if (isDesktopArtboardLayoutActive() && width <= DESKTOP_ROOM_TITLE_PHONE_MAX_WIDTH) return null;
   if (width >= DESKTOP_ROOM_TITLE_DESKTOP_MIN_WIDTH) return 'desktop';
   if (width >= DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH) return 'tablet';
   return null;
