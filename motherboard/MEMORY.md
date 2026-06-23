@@ -31990,3 +31990,14 @@ User asked to **reduce panel debug toolbar size** — it was covering the **bott
 - **Files:** `PerspectivePanelDebugToolbar.tsx`, `perspectivePanelDebug.css`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Panel debug TL/TR corners blocked on mobile desktop
+
+User reported **top two corners (TL/TR) won't move** on mobile desktop panel debug.
+
+- **Cause:** Debug polygon lived inside the scene layer (z-20) while desktop **`NavBar`** is **`position: fixed; z-index: 200`**, covering the top ~68px of the hero. Bottom corners (BR/BL) were below that strip and draggable; top corners were not.
+- **Fix:** Portal debug overlay to **`document.body`** with **`position: fixed`** screen coords from **`useElementScreenRect(measureRef)`** (updates on scroll/resize); overlay z-index **321+** above nav. Added **`touch-action: none`** + **`setPointerCapture`** on handles for mobile drag.
+- **Files:** `PerspectivePanelDebugPolygon.tsx`, `useElementScreenRect.ts`, `perspectivePanelDebug.css`.
+- Pushed **`master`** + **`preview/mobile`**.
+
