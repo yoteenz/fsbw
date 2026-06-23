@@ -31038,6 +31038,16 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 
 - **Elevator:** **`formatTowerLevelLabel`** in **`desktopTowerMotion.ts`** maps floor ids 1–4 to named labels (red **`desktop-tower-elevator__holo-level`** line).
 - **PSA Suite:** **`PsaStandingHologram`** gains **`showCta`** prop; suite widget passes **`showCta={false}`**. **`desktopPsaSuite.css`:** hologram **`translateY(-40px)`** on standing button.
-- **Files:** `desktopTowerMotion.ts`, `PsaStandingHologram.tsx`, `PsaAssistantWidget.tsx`, `desktopPsaSuite.css`.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-22 — SHOWROOM nav link + viewport-pinned floor/room panels
+
+Summary of the **whole conversation so far** in this chat: elevator holo floor names; PSA suite holo tweaks; user asked for **SHOWROOM** nav item after **BUILD-A-WIG** (routes to penthouse hair showroom); floor/room floating panels should stay visible at viewport position without scrolling to page bottom.
+
+- **Nav:** **`DESKTOP_NAV_QUICK_ROUTES`** — **`SHOWROOM`** → **`/desktop/penthouse?room=showroom`** after BUILD-A-WIG; active state via existing **`resolveDesktopNavActiveLabel`**.
+- **Floating nav:** **`DesktopFloatingNav`** portaled to **`document.body`**; **`.floating-nav-system`** **`position: fixed`** + **`z-index: 180`** (below NavBar 200, above room content). Triggers/drawers stay at screen corners on desktop and scaled phone artboard.
+- **Files:** `desktopNavQuickRoutes.ts`, `DesktopFloatingNav.tsx`, `FloatingNavTrigger.css`.
 - Pushed **`master`** + **`preview/mobile`**.
 
