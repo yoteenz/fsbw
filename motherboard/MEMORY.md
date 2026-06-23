@@ -31089,6 +31089,15 @@ Summary of the **whole conversation so far** in this chat: room transition loadi
 
 - **Scaling change:** **`ScaledDesktopViewport`** — **`scale = shell.clientWidth / 1920`** (was **`clientHeight / 1080`** height-fill). **`marginLeft = 0`** (was centered crop). Vertical scroll via existing **`overflowY: auto`** shell when content exceeds viewport.
 - **`measureDesktopPreviewScaleBox`** + **`DesktopRouteShell`** comments aligned to width-fit model.
-- **Trade-off:** On portrait phones the 1080px-tall artboard is shorter on screen (~20% scale); user scrolls vertically for full floor content rather than zooming/cropping horizontally.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-22 — Floating nav: rooms caption → station
+
+Summary of the **whole conversation so far** in this chat: room transition loading; mobile letterboxing; elevator holo labels; PSA suite holo; SHOWROOM nav; viewport-pinned floating panels; floating nav captions (**zones → rooms** earlier); elevator loop fix; bidirectional elevator video; mobile desktop width-fit artboard; user asked to change **room** text on the floating panel to **station**.
+
+- **`FloatingNavTrigger.tsx`:** visible Bohemy caption **`rooms` → `station`** (elevator caption unchanged).
+- **`DesktopFloatingNav.tsx`:** aria-label **`Open room directory` → `Open station directory`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
