@@ -31894,3 +31894,15 @@ User reported **letterboxing** (black bars) on the shopping bag and checkout des
 - **File:** **`src/components/desktop-shopping-bag/DesktopShoppingBag.css`**
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop shopping bag mock products for UI testing
+
+User asked to **add mock products back** on **`/desktop/shopping-bag`** so they can test the Curator tablet UI without seeding a real cart.
+
+- **`desktopShoppingBagMockCart.ts`** — five display-only lines: **NOIR**, **BLANCO** (qty 2 + flex cap), **CLOSURES** (BCF wavy), **SOFT WAVE**, **OCEAN CURL** (enough for carousel **+ 2 More**).
+- **When active:** real cart empty + (**`import.meta.env.DEV`** or **`?shoppingBagMock=1`**). Real cart lines always win when present.
+- **Behavior:** mock remove animations work in page state only — **no `localStorage` writes**. **ACQUIRE** with mocks navigates to acquisition with mock lines in memory (acquisition/checkout still read live cart unless items were added for real).
+- **File:** **`src/pages/desktop/shopping-bag/page.tsx`** wires display totals + remove.
+- Pushed **`master`** + **`preview/mobile`**.
+
