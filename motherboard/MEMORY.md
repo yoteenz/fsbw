@@ -31714,3 +31714,13 @@ User asked that **clients who sign in on desktop/tablet** be **automatically rou
 - **`signInReturnTo.ts`** — **`DESKTOP_CLIENT_RECEPTION_PATH`** = `/desktop/concierge?zone=reception`; **`isDesktopTabletClientSignInViewport()`** (≥768px, or phone `/desktop/*` artboard). **`resolveReturnToAfterSignIn`** uses Reception when no explicit **`returnTo`** / **`state.from`**; checkout and other **`returnTo`** paths unchanged. Phones on standard mobile routes still default to **`/account`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Penthouse room label subtitle centering (follow-up)
+
+User reported subtitle centering fix did **not** apply on **penthouse** rooms (Analysis Lab, Showroom, Boutique) — black subtitles still sat right of red foil titles.
+
+- **Cause:** `.desktop-room-title` still used **`width: min(100%, max-width)`** + **`align-items: center`**, so each line centered independently in a full-width box; wide penthouse foil titles vs shorter subtitles looked misaligned. Foil slot lacked **`letter-spacing: 0.08em`** trailing-space compensation (subtitle had **`0.15em`**).
+- **Fix:** **`DesktopRoomTitle.css`** — label block **`width: fit-content`** + **`align-items: stretch`**; lines **`width: 100%`** so subtitle row spans title width; foil slot **`padding-right: 0.08em`**; debug inner **`fit-content`** not **`width: 100%`**. Applies to all floors including penthouse via shared **`DesktopRoomTitle`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
