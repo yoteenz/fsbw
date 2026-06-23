@@ -31403,3 +31403,12 @@ User requested red foil room titles and black subtitles scaled **30% bigger in t
 - **`DesktopRoomTitle.tsx`** — **`--desktop-room-subtitle-gap`** uses **`subtitleGapPx * 1.3`** so spacing scales with type.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop room labels +10% additional scale
+
+User asked to scale red foil titles and black subtitles **another 10%** (cumulative **+43%** from original base after prior +30%).
+
+- Title **`clamp(46px, 3.58vw, 97px)`**; subtitle **`clamp(13px, 1.05vw, 25px)`**; gap multiplier **`1.43`** (was 1.3), fallback **14px**.
+- Pushed **`master`** + **`preview/mobile`**.
+
