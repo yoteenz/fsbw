@@ -31,7 +31,7 @@ function FloatingNavTriggerIcon({ kind }: { kind: FloatingNavTriggerKind }) {
 }
 
 export function FloatingNavTrigger({ kind, isActive, label, onClick }: Props) {
-  const caption = kind === 'floors' ? 'elevator' : 'zones';
+  const caption = kind === 'floors' ? 'elevator' : 'rooms';
 
   return (
     <button
