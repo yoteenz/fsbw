@@ -31771,3 +31771,17 @@ Follow-up: user said the penthouse image is a **room shell with visible acrylic 
 - Panel clicks navigate to existing account routes (no floating tooltips). Tune panel alignment with **`?penthouseSuiteDebug=1`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Reception desktop discovery dashboard (embedded glass panels)
+
+User supplied a **21:9 Reception** mansion PNG (`C466C40A-…F227.png`) and asked for a **luxury discovery hub** on the Reception zone — same embedded-panel rules as Penthouse redo: content **inside** visible acrylic panels only; **no** floating popups, tooltip tags, route labels, or scattered badges.
+
+- **Layout:** Left wall (5) = Today in the Mansion — New Lounge Content, New Slay Cam Uploads, New Collectible, Build-A-Wig Trends, Community Spotlight. Center billboard = Featured Experience (The Lounge / Watch now). Right wall (5) = Recommended Destinations — Hair Analysis Lab, Build-A-Wig Atelier, The Lounge, Rewards Gallery, Slay Cam.
+- **`desktopReceptionDashboard.ts`** — panel rects (left column ×5, center billboard, right column ×5); **`?receptionDashboardDebug=1`** for alignment tuning.
+- **`receptionDashboardData.ts`** — static discovery copy + hrefs via **`buildDesktopDestinationHref()`**.
+- **`DesktopEmbeddedGlassPanel`** + **`DesktopEmbeddedDiscoveryCard`** — shared translucent acrylic/glass UI (chrome border, red `#EB1C24` accent line, Futura-style uppercase labels, thumb previews, hover glow inside panel).
+- **`ReceptionDashboard`** — 11 cover-locked panels via **`DesktopRoomCoverRectAnchor`**; wired in **`DesktopFloorZonePage`** when **`zone=reception`**; navigation uses **`quickTravelTo`** when tower context is available.
+- **Background:** **`DESKTOP_NO_TEXT_ROOM_BACKGROUNDS.reception`** updated to new PNG; reception room title overlay cleared (empty title + subtitle).
+- Pushed **`master`** + **`preview/mobile`**.
+
