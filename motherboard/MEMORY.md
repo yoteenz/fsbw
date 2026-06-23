@@ -31009,3 +31009,14 @@ Summary of the **whole conversation so far** in this chat: elevator loop fix; Ex
 - **Fix:** Artboard now **phones only** (`≤767px`) in **`desktopPreview.ts`**; **tablets (768px+)** use native desktop layout like monitors. **`desktopPsaSuite.css`:** holo **`bottom: 18%`** (section-relative, not `vh`); **`z-index: 55`** (above floating nav); phone artboard tweaks at **`767px`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Desktop room transitions: hold previous background (no black crystal screen)
+
+Summary of the **whole conversation so far** in this chat: PSA Suite hologram; elevator descending/directory/preload/loop fixes; Extensions Boutique portal hotspot; floating nav Bohemy labels; PSA tablet holo fix; user reported a **black loading screen with floating crystals** between rooms after the FS logo loader — wanted the **previous room image to stay visible** until the next background fully loads (not a second loading screen).
+
+- **Root cause:** `DesktopZoneRoomScene` swapped `<img src>` to the new room URL immediately while the asset was still loading, exposing the `#0a0a0a` scene background; `ParticleField` (crystal diamonds) rendered on top during that gap.
+- **Fix:** Added **`src/utils/desktopRoomBackgroundCache.ts`** — tracks last **displayed** background and preloaded URLs separately (prefetch does not overwrite displayed image). **`ZoneBackground`** keeps showing cached/previous `displaySrc` until `preloadDesktopRoomBackground()` completes. Zone crossfade **defers** until the next image is ready. **`ParticleField`** hidden until `onBackgroundReadyChange(true)` on floor zone pages and penthouse. Elevator **`prefetchDesktopTowerDestination`** uses shared preload + penthouse room URLs.
+- **Files:** `desktopRoomBackgroundCache.ts`, `DesktopZoneRoomScene.tsx`, `DesktopPenthouseRoomScene.tsx`, `DesktopFloorZonePage.tsx`, `penthouse/page.tsx`, `DesktopTowerNavProvider.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
