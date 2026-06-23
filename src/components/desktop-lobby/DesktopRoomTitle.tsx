@@ -8,6 +8,9 @@ import { DesktopRoomTitleDebugSquare } from './DesktopRoomTitleDebugSquare';
 import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementEditorContext';
 import './DesktopRoomTitle.css';
 
+/** Scales placement row-gap with room label type size (1.43 base × 1.15 type bump). */
+const DESKTOP_ROOM_SUBTITLE_GAP_SCALE = 1.43 * 1.15;
+
 /** Extra space between red foil title and black subtitle (not scaled with placement editor). */
 const DESKTOP_ROOM_SUBTITLE_BOOST_PX = 0;
 
@@ -43,7 +46,7 @@ export function DesktopRoomTitle({
 
   if (!hasTitle && !hasSubtitle) return null;
 
-  const scaledSubtitleGapPx = (placement.subtitleGapPx * 1.43 * layoutWidth) / 1920;
+  const scaledSubtitleGapPx = (placement.subtitleGapPx * DESKTOP_ROOM_SUBTITLE_GAP_SCALE * layoutWidth) / 1920;
   const artboardScale =
     typeof window !== 'undefined' && isDesktopArtboardLayoutActive()
       ? window.innerWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH

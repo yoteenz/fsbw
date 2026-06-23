@@ -30,7 +30,7 @@
   align-items: center;
   justify-content: center;
   height: 1.05em;
-  font-size: clamp(46px, 3.58vw, 97px);
+  font-size: clamp(53px, 4.12vw, 112px);
   line-height: 1.05;
   overflow: visible;
 }
@@ -79,7 +79,7 @@
   margin: 0;
   padding: 0;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, sans-serif;
-  font-size: calc(clamp(13px, 1.05vw, 25px) + 6px);
+  font-size: calc(clamp(15px, 1.21vw, 29px) + 7px);
   font-weight: 500;
   line-height: 1.2;
   text-transform: uppercase;
