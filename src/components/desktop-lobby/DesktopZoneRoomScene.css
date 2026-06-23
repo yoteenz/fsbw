@@ -4,6 +4,14 @@
   overflow: hidden;
   z-index: 1;
   background: #0a0a0a;
+  pointer-events: none;
+}
+
+.desktop-zone-room-scene__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
 }
 
 .desktop-zone-room-scene__layer {

@@ -12,22 +12,35 @@ interface Particle {
   maxLife: number;
 }
 
-export function ParticleField() {
+type ParticleFieldProps = {
+  particleCount?: number;
+};
+
+export function ParticleField({ particleCount = 45 }: ParticleFieldProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const root = rootRef.current;
+    if (!canvas || !root) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      const width = root.clientWidth;
+      const height = root.clientHeight;
+      if (width <= 0 || height <= 0) return;
+      canvas.width = width;
+      canvas.height = height;
     };
     resize();
+
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => resize()) : null;
+    resizeObserver?.observe(root);
     window.addEventListener('resize', resize);
 
     const spawnParticle = (): Particle => ({
@@ -42,11 +55,15 @@ export function ParticleField() {
       maxLife: Math.random() * 200 + 120,
     });
 
-    // Initial particles
-    for (let i = 0; i < 45; i++) {
+    const targetCount = Math.max(12, Math.round(particleCount));
+    particlesRef.current = [];
+
+    for (let i = 0; i < targetCount; i++) {
       const p = spawnParticle();
-      p.y = Math.random() * canvas.height;
-      p.life = Math.random() * p.maxLife;
+      if (canvas.height > 0) {
+        p.y = Math.random() * canvas.height;
+        p.life = Math.random() * p.maxLife;
+      }
       particlesRef.current.push(p);
     }
 
@@ -60,6 +77,11 @@ export function ParticleField() {
     };
 
     const animate = () => {
+      if (canvas.width <= 0 || canvas.height <= 0) {
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particlesRef.current.forEach((p, i) => {
@@ -67,7 +89,6 @@ export function ParticleField() {
         p.x += p.speedX;
         p.y += p.speedY;
 
-        // Fade in/out
         const lifeRatio = p.life / p.maxLife;
         if (lifeRatio < 0.1) {
           p.opacity = (lifeRatio / 0.1) * p.maxOpacity;
@@ -77,7 +98,6 @@ export function ParticleField() {
           p.opacity = p.maxOpacity;
         }
 
-        // Reset when dead
         if (p.life >= p.maxLife) {
           particlesRef.current[i] = spawnParticle();
           return;
@@ -86,10 +106,8 @@ export function ParticleField() {
         ctx.save();
         ctx.globalAlpha = p.opacity;
 
-        // Crystal diamond shape
         drawDiamond(ctx, p.x, p.y, p.size);
 
-        // Gradient fill
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 1.5);
         grad.addColorStop(0, 'rgba(255,255,255,0.95)');
         grad.addColorStop(0.6, 'rgba(240,240,255,0.7)');
@@ -107,15 +125,14 @@ export function ParticleField() {
 
     return () => {
       cancelAnimationFrame(rafRef.current);
+      resizeObserver?.disconnect();
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [particleCount]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 2 }}
-    />
+    <div ref={rootRef} className="absolute inset-0 w-full h-full pointer-events-none">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ zIndex: 2 }} />
+    </div>
   );
 }

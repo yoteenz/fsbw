@@ -10,6 +10,7 @@ import { resolveDesktopRoomTitlePlacement } from '../../constants/desktopRoomTit
 import { resolveDesktopRoomTitleCopy } from '../../constants/desktopRoomTitles';
 import type { DesktopLoungeSlayCinemaMode } from '../../constants/desktopLoungeSlayCinema';
 import { DesktopRoomTitle } from './DesktopRoomTitle';
+import { DesktopRoomAmbientOverlay } from './DesktopRoomAmbientOverlay';
 import './DesktopZoneRoomScene.css';
 
 const ZONE_TRANSITION_MS = 880;
@@ -184,6 +185,7 @@ function ZoneBackground({
       className={bgClass}
       onLoad={() => {
         setLastDesktopRoomBackground(displayBrightSrc);
+        onReadyChange?.(true);
       }}
       onError={() => {
         if (!fallbackSrc || displayBrightSrc === fallbackSrc) return;
@@ -239,6 +241,7 @@ export function DesktopZoneRoomScene({
 }: DesktopZoneRoomSceneProps) {
   const [activeIndex, setActiveIndex] = useState(zoneIndex);
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
+  const [backgroundReady, setBackgroundReady] = useState(false);
   const transitionTimerRef = useRef<number | null>(null);
   const layerMeasureRef = useRef<HTMLDivElement>(null);
 
@@ -251,6 +254,7 @@ export function DesktopZoneRoomScene({
 
   const handleReadyChange = useCallback(
     (ready: boolean) => {
+      setBackgroundReady(ready);
       onBackgroundReadyChange?.(ready);
     },
     [onBackgroundReadyChange],
@@ -320,6 +324,7 @@ export function DesktopZoneRoomScene({
       className={`desktop-zone-room-scene${artboard ? ' desktop-zone-room-scene--artboard' : ''} ${className}`.trim()}
       aria-hidden
     >
+      <DesktopRoomAmbientOverlay active={backgroundReady} />
       {!isTransitioning ? (
         <div ref={layerMeasureRef} className="desktop-zone-room-scene__layer">
           <ZoneBackground

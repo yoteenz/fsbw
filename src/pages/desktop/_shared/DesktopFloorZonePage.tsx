@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { DesktopLoungeSlayCinemaPlay } from '../../../components/desktop-lobby/DesktopLoungeSlayCinemaPlay';
-import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
 import PsaAssistantWidget from '../../../components/psa/PsaAssistantWidget';
 import {
@@ -42,7 +41,6 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const travel = useDesktopTowerTravelOptional();
   const isTraveling = travel?.isTraveling ?? false;
   const artboard = isDesktopArtboardLayoutActive();
-  const [backgroundReady, setBackgroundReady] = useState(false);
   const [isSlayCinemaEnabled, setIsSlayCinemaEnabled] = useState(false);
 
   const isLoungeZone = zoneId === DESKTOP_LOUNGE_ZONE_ID;
@@ -119,26 +117,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           zoneIndex={zoneIndex}
           resolveBackground={resolveZoneBackground}
           resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
-          onBackgroundReadyChange={setBackgroundReady}
           loungeSlayCinema={loungeSlayCinema}
         />
-
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 2,
-            pointerEvents: 'none',
-            background:
-              'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.1) 100%)',
-          }}
-        />
-
-        {backgroundReady ? (
-          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-            <ParticleField />
-          </div>
-        ) : null}
 
         <DesktopLoungeSlayCinemaPlay
           measureRef={viewportMeasureRef}
