@@ -31847,3 +31847,15 @@ User asked for a **Desktop Acquisition Page** that keeps the **exact same** Cura
 - **`CommerceRouteGuard`** — guest-allowed for all **`/desktop/acquisition*`** paths.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Shopping bag tablet rect debug (`?shoppingBagDebug=1`)
+
+User reported the shopping bag debug square was **not adjustable** on mobile desktop view. Replaced the static `curated-tablet--debug` outline with a full **tablet rect alignment tool** (same gesture model as panel debug).
+
+- **Enable:** **`?shoppingBagDebug=1`** on **`/desktop/shopping-bag`** or **`/desktop/acquisition`**.
+- **Overlay:** amber dashed **TABLET SCREEN** boundary — drag to move, edge/corner handles to resize; tablet UI follows the rect live.
+- **Inspector:** fixed bottom bar — **TABLET RECT ON/OFF**, editable **x/y/width/height** (% of hero), **EXPORT TABLET RECT** (clipboard snippet for **`desktopShoppingBag.ts`**), **Reset**.
+- **Persistence:** **`localStorage`** key **`desktopShoppingBagTabletRect`** while tuning.
+- **Files:** **`desktopShoppingBagTabletDebug.ts`**, **`DesktopShoppingBagTabletDebugProvider`**, **`DesktopShoppingBagTabletDebugRect`**, **`DesktopShoppingBagTabletDebugInspector`**; wired in **`DesktopCuratorSuiteScene`**.
+
