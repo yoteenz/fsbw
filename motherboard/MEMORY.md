@@ -31193,3 +31193,14 @@ User reported elevator animation on phone **`/desktop/*`** looked **super zoomed
 - **Cause:** Travel overlay rendered at **app root** (outside **`ScaledDesktopViewport`**) with **`position: fixed` + `100vh`/`100vw`** and **`object-fit: cover`** on a wide (**1915×821**) clip — on portrait phones **`cover`** crops to a tight exterior view. **`document.body overflow: hidden`** during journey blocked pinch-zoom on the artboard shell.
 - **Fix:** **`useDesktopArtboardPortalTarget`** — portal journey overlay + embedded floor directory into **`.desktop-artboard-stage`** on phone artboard. **`desktop-tower-elevator--phone-artboard`**: shell **`100%`×`100%`**, media **`object-fit: contain`**. Skip body scroll lock on phone artboard so **`pan-y pinch-zoom`** on **`ScaledDesktopViewport`** still works when not traveling. Files: **`useDesktopArtboardPortalTarget.ts`**, **`DesktopTowerNavProvider.tsx`**, **`DesktopTowerElevatorExperience.tsx`**, **`DesktopTowerElevator.css`**. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop room background text-removal batch pipeline (full chat)
+
+User requested **automated processing** of all desktop tower room backgrounds: Fal edit to remove baked title/subtitle only, upload clean WebPs to **`Desktop/backgrounds/clean/`**, validate fidelity, patch route constants, emit report — no confirmation prompts.
+
+- **Pipeline:** **`npm run desktop:clean-room-backgrounds`** → **`scripts/desktop-clean-room-backgrounds.mjs`**. Manifest **`scripts/desktop/desktop-room-background-manifest.json`** — **12 rooms** (lobby/gallery/concierge zones + penthouse rooms). Approved prompt in **`scripts/desktop/desktop-room-text-removal-prompt.mjs`**. Fal **`fal-ai/nano-banana-pro/edit`** (same stack as lobby scene edits). Post-process: resize to source dimensions, **sharp** MAD validation (reject drift / unchanged), auto-retry **`MAX_RETRIES`**, upload WebP, patch **`desktopFloorZoneBackgrounds.ts`** + **`desktopPenthouseRooms.ts`**, report **`tmp/desktop-clean-backgrounds-report.json`**. Optional **`DISCOVER_SUPABASE=1`** for new **`Desktop/`** assets.
+- **Cloud agent note:** **`FAL_KEY`** / **`SUPABASE_*`** not present in VM — script dry-run verified; **live batch not executed** in that environment. Run locally with **`.env.wig-preview`** credentials.
+- **Same chat (earlier):** elevator timeline ↔ video sync; floating nav caption spacing; mobile directory **vw** fix; elevator phone artboard zoom/portal fix.
+- Pushed **`master`** + **`preview/mobile`** (pipeline commit); constants update when batch runs successfully.
+
