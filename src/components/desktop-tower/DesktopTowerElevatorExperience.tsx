@@ -110,6 +110,23 @@ export function DesktopTowerElevatorExperience({
     );
   }, [direction, fromFloor.id, toFloor.id, videoFailed]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || videoFailed) return;
+
+    const shouldPlay = phase === 'boarding' || phase === 'traveling';
+    video.loop = shouldPlay;
+
+    if (!shouldPlay) {
+      video.pause();
+      return;
+    }
+
+    if (video.paused) {
+      void video.play().catch(() => setVideoFailed(true));
+    }
+  }, [phase, videoFailed]);
+
   const exiting = phase === 'exiting';
   const videoSrc = getDesktopTowerElevatorVideoSrc();
 
@@ -133,7 +150,7 @@ export function DesktopTowerElevatorExperience({
         ) : (
           <video
             ref={videoRef}
-            key={`${fromFloor.id}-${toFloor.id}-${direction}-${videoSrc}`}
+            key={`${fromFloor.id}-${toFloor.id}-${direction}`}
             src={videoSrc}
             poster={videoPlaying ? undefined : DESKTOP_TOWER_ELEVATOR_SHELL_URL}
             className={`desktop-tower-elevator__shell-media${
@@ -141,7 +158,6 @@ export function DesktopTowerElevatorExperience({
             }`}
             playsInline
             muted
-            loop
             autoPlay
             preload="auto"
             draggable={false}

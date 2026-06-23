@@ -105,7 +105,6 @@ export function waitForDesktopTowerElevatorVideoReady(
 function applyElevatorVideoDirection(video: HTMLVideoElement, direction: TowerTravelDirection): void {
   video.playbackRate = 1;
   video.classList.toggle('desktop-tower-elevator__shell-media--reverse-fallback', direction === 'down');
-  video.currentTime = 0;
 }
 
 /** Attach listeners and attempt muted autoplay for the overlay video element. */
@@ -116,36 +115,52 @@ export function bindDesktopTowerElevatorVideoPlayback(
   onFailed: () => void,
 ): () => void {
   let cancelled = false;
+  let started = false;
 
   const tryPlay = () => {
-    if (cancelled) return;
+    if (cancelled || started) return;
     applyElevatorVideoDirection(video, direction);
 
     const attempt = video.play();
     if (attempt && typeof attempt.then === 'function') {
       void attempt
         .then(() => {
-          if (!cancelled) onPlaying();
+          if (cancelled) return;
+          started = true;
+          onPlaying();
         })
         .catch(() => {
           if (!cancelled) onFailed();
         });
+    } else if (!cancelled) {
+      started = true;
+      onPlaying();
     }
   };
 
   const onCanPlay = () => tryPlay();
-  const onLoadedMetadata = () => applyElevatorVideoDirection(video, direction);
-  const onPlayingEvent = () => onPlaying();
+  const onLoadedMetadata = () => {
+    if (!started && video.currentTime > 0.05) {
+      video.currentTime = 0;
+    }
+    applyElevatorVideoDirection(video, direction);
+  };
+  const onPlayingEvent = () => {
+    if (!started) {
+      started = true;
+      onPlaying();
+    }
+  };
 
   video.addEventListener('canplay', onCanPlay);
   video.addEventListener('loadedmetadata', onLoadedMetadata);
   video.addEventListener('playing', onPlayingEvent);
 
   const targetSrc = resolvePlayableSrc();
-  video.src = targetSrc;
-  video.load();
-
-  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+  if (video.src !== targetSrc) {
+    video.src = targetSrc;
+    video.load();
+  } else if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
     tryPlay();
   }
 
@@ -156,6 +171,7 @@ export function bindDesktopTowerElevatorVideoPlayback(
     video.removeEventListener('playing', onPlayingEvent);
     video.pause();
     video.playbackRate = 1;
+    video.loop = false;
     video.classList.remove('desktop-tower-elevator__shell-media--reverse-fallback');
   };
 }

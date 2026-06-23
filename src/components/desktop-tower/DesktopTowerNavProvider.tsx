@@ -154,9 +154,44 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       const startTravel = () => {
         if (journeyRunRef.current !== runId) return;
 
-        navigate(next.destinationHref);
         setPhase('traveling');
         const start = performance.now();
+        let travelFinished = false;
+
+        const finishTravel = () => {
+          if (travelFinished || journeyRunRef.current !== runId) return;
+          travelFinished = true;
+
+          window.clearTimeout(travelEndTimer);
+
+          if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+          }
+
+          setDisplayLevelId(next.toFloor.id);
+          setCabinFloorId(next.toFloor.id);
+          setPhase('arrived');
+
+          const arrivedTimer = window.setTimeout(() => {
+            if (journeyRunRef.current !== runId) return;
+
+            markDesktopTowerArrival();
+            navigate(next.destinationHref);
+            setPhase('exiting');
+
+            const fadeTimer = window.setTimeout(() => {
+              if (journeyRunRef.current !== runId) return;
+              setJourney(null);
+              setPhase('boarding');
+            }, TOWER_FADE_MS);
+            timersRef.current.push(fadeTimer);
+          }, TOWER_ARRIVED_MS);
+          timersRef.current.push(arrivedTimer);
+        };
+
+        const travelEndTimer = window.setTimeout(finishTravel, travelDurationMs + 32);
+        timersRef.current.push(travelEndTimer);
 
         const tick = (now: number) => {
           if (journeyRunRef.current !== runId) return;
@@ -171,25 +206,8 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             return;
           }
 
-          rafRef.current = null;
-          setDisplayLevelId(next.toFloor.id);
-          setCabinFloorId(next.toFloor.id);
-          setPhase('arrived');
-
-          const arrivedTimer = window.setTimeout(() => {
-            if (journeyRunRef.current !== runId) return;
-
-            markDesktopTowerArrival();
-            setPhase('exiting');
-
-            const fadeTimer = window.setTimeout(() => {
-              if (journeyRunRef.current !== runId) return;
-              setJourney(null);
-              setPhase('boarding');
-            }, TOWER_FADE_MS);
-            timersRef.current.push(fadeTimer);
-          }, TOWER_ARRIVED_MS);
-          timersRef.current.push(arrivedTimer);
+          window.clearTimeout(travelEndTimer);
+          finishTravel();
         };
 
         rafRef.current = requestAnimationFrame(tick);
