@@ -31101,3 +31101,18 @@ Summary of the **whole conversation so far** in this chat: room transition loadi
 - **`DesktopFloatingNav.tsx`:** aria-label **`Open room directory` → `Open station directory`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Luxury brand audit + desktop tower art-direction brief (docs)
+
+Summary of the **whole conversation**: user (as "Creative Director") requested a brutally honest $50k-style luxury brand audit of Frontal Slayer across positioning, emotional resonance, luxury perception, website, membership, PSA, Build-A-Wig, rewards, Slay Cam, packaging, community. Then a series of strategy + design discussions, ending in a committed doc.
+
+- **Audit (no code):** Verdict — innovative product (Build-A-Wig live AI preview + PSA founder-hologram concierge are the two world-class assets) wrapped in a mass-market loyalty layer. Flagged: visual clutter, currency overlap, Slay Cam mock data, no returns, no desktop, gated magic.
+- **User pushback (important framing — future agents heed):** brand is **intentionally immersive + nostalgic-gaming + interactive (challenges/quests)**, **not** pure/stuffy luxury — luxury is only **one component**. Vouchers + digital cash are **one explained ecosystem** (not "currency soup"). Slay Cam is **very early dev** (placeholder data is expected). Recalibrated audit to "immersive gamified premium" frame; retracted luxury-purist critiques.
+- **"Two registers" concept:** explained PLAY (loud marble/red HUD — lobby, lounge, Slay Cam, quests) vs REVERENT (quiet premium — product pages, Build-A-Wig final reveal, checkout); proposed `register` prop on `MarblePageShell` + CSS-variable token sets. Rule: **gamify the journey, not the transaction.**
+- **Desktop concept review:** read the desktop **Tower** architecture (`src/pages/desktop/*`, `src/components/desktop-lobby/*`, `desktopFloors.ts`, `desktopPenthouseRooms.ts`, `desktopFloorZoneBackgrounds.ts`). 4 floors (L4 Penthouse / L3 Lobby / L2 Gallery / L1 Concierge), elevator (vertical) + zones (horizontal 880ms crossfade), `GlassPanel` crystal material, `ParticleField`, #0A0A0A stage, PSA-as-a-room. Praised metaphor + elevator theater + glass; flagged mobile/desktop brand coherence, wayfinding, asset weight.
+- **Viewed the actual 12 room renders** (pulled the public Supabase `live-preview/Desktop/*.png`). Consistency is strong (one building); real risks now: **sameness across rooms, baked-in text (e.g. broken `BUILD-A-WiG` letterform), ~8MB file weight, generic-penthouse vs hair-specific props.**
+- **Change (docs only):** added **`docs/DESKTOP_TOWER_ROOM_ART_DIRECTION.md`** — shared DNA, vertical mood gradient (warm/bright low → moody/exclusive high), per-room identity matrix for all 12 rooms, **text-free render mandate + HTML overlay** spec, responsive 21:9 center-safe composition, hair-house prop library, AVIF/WebP ≤600KB export specs + filename convention, master generation prompt template, acceptance checklist, current asset inventory.
+- **Strategic recommendations recorded (not yet built):** make the Tower the **master brand metaphor** (bring mobile into it); **map membership tiers to floors** (ascend tower = status/membership progression); free-play shareable Build-A-Wig as acquisition hook.
+- Committed to **`master`** + merged/pushed **`preview/mobile`**.
+
