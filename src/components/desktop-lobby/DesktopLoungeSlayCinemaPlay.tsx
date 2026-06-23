@@ -66,6 +66,14 @@ export function DesktopLoungeSlayCinemaPlay({
     [onToggleSlayCinema],
   );
 
+  const handleCloseCinema = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onCloseSlayCinema();
+    },
+    [onCloseSlayCinema],
+  );
+
   if (!active || !frameMapped) return null;
 
   const frameStyle = {
@@ -79,11 +87,71 @@ export function DesktopLoungeSlayCinemaPlay({
     zIndex: 12,
     pointerEvents: 'auto' as const,
     overflow: 'hidden' as const,
+    isolation: 'isolate' as const,
     ...LOUNGE_TV_GLASS_CONTAINER_STYLE,
   };
 
   return (
-    <>
+    <div data-desktop-lounge-slay-cinema-tv style={frameStyle}>
+      {isSlayCinemaEnabled ? (
+        <>
+          <LoungeTvCloseButton
+            visible
+            position={{ top: 0, right: 0 }}
+            size={22}
+            iconSize={12}
+            onClick={handleCloseCinema}
+          />
+          <LoungeTvContentProtection
+            active
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
+            <LoungeTvScreen
+              mainTab={mainTab}
+              sidebarId={sidebarId}
+              onMainTabChange={setMainTab}
+              onSidebarChange={setSidebarId}
+            />
+          </LoungeTvContentProtection>
+        </>
+      ) : (
+        <button
+          type="button"
+          data-desktop-lounge-slay-cinema-toggle
+          onClick={onToggleSlayCinema}
+          onKeyDown={onKeyDown}
+          aria-label="Toggle Slay Cinema mode"
+          aria-pressed={false}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            margin: 0,
+            padding: 8,
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            touchAction: 'manipulation',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxSizing: 'border-box',
+          }}
+        >
+          <span aria-hidden style={LOUNGE_TV_PRESS_PLAY_LABEL_STYLE}>
+            {LOUNGE_TV_PRESS_PLAY_LABEL}
+          </span>
+        </button>
+      )}
+
       {tvDebug ? (
         <DesktopLoungeTvFrameDebugOverlay
           measureRef={measureRef}
@@ -91,71 +159,12 @@ export function DesktopLoungeSlayCinemaPlay({
           screenOffsetX={frameConfig.screenOffsetX}
           screenOffsetY={frameConfig.screenOffsetY}
           layout={frameConfig.layout}
-          showClosePreview
+          placement="inset"
+          zIndex={20}
+          showClosePreview={isSlayCinemaEnabled}
           onClose={isSlayCinemaEnabled ? onCloseSlayCinema : undefined}
         />
       ) : null}
-
-      <div data-desktop-lounge-slay-cinema-tv style={frameStyle}>
-        {isSlayCinemaEnabled && !tvDebug ? (
-          <LoungeTvCloseButton
-            visible
-            position={{ top: 0, right: 0 }}
-            size={22}
-            iconSize={12}
-            onClick={(e) => {
-              e.stopPropagation();
-              onCloseSlayCinema();
-            }}
-          />
-        ) : null}
-        {isSlayCinemaEnabled ? (
-          <LoungeTvContentProtection
-              active
-              style={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                boxSizing: 'border-box',
-              }}
-            >
-              <LoungeTvScreen
-                mainTab={mainTab}
-                sidebarId={sidebarId}
-                onMainTabChange={setMainTab}
-                onSidebarChange={setSidebarId}
-              />
-            </LoungeTvContentProtection>
-        ) : (
-          <button
-            type="button"
-            data-desktop-lounge-slay-cinema-toggle
-            onClick={onToggleSlayCinema}
-            onKeyDown={onKeyDown}
-            aria-label="Toggle Slay Cinema mode"
-            aria-pressed={isSlayCinemaEnabled}
-            style={{
-              width: '100%',
-              height: '100%',
-              margin: 0,
-              padding: 8,
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              touchAction: 'manipulation',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxSizing: 'border-box',
-            }}
-          >
-            <span aria-hidden style={LOUNGE_TV_PRESS_PLAY_LABEL_STYLE}>
-              {LOUNGE_TV_PRESS_PLAY_LABEL}
-            </span>
-          </button>
-        )}
-      </div>
-    </>
+    </div>
   );
 }

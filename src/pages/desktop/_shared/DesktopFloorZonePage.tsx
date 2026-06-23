@@ -69,9 +69,9 @@ export default function DesktopFloorZonePage({ floor }: Props) {
 
   const loungeSlayCinema = useMemo(
     () =>
-      isLoungeZone
+      isLoungeZone && isSlayCinemaEnabled
         ? {
-            enabled: isSlayCinemaEnabled,
+            enabled: true,
             brightSrc: DESKTOP_LOUNGE_BRIGHT_BACKGROUND,
             dimmedSrc: DESKTOP_LOUNGE_SLAY_CINEMA_BACKGROUND,
             crossfadeMs: DESKTOP_LOUNGE_SLAY_CINEMA_CROSSFADE_MS,

@@ -40,7 +40,7 @@ function ZoneBackground({
 
   const [displayBrightSrc, setDisplayBrightSrc] = useState(() => {
     const cached = getLastDesktopRoomBackground();
-    if (cached && (!dimmedSrc || cached === brightSrc || cached === dimmedSrc)) return cached;
+    if (cached === brightSrc) return cached;
     if (isDesktopRoomBackgroundLoaded(brightSrc)) return brightSrc;
     return brightSrc;
   });
@@ -110,8 +110,12 @@ function ZoneBackground({
 
   useEffect(() => {
     if (!dimmedSrc) return;
-    const activeSrc = useCinemaDimmed ? dimmedSrc : brightSrc;
-    setLastDesktopRoomBackground(activeSrc);
+    if (!useCinemaDimmed) {
+      setDisplayBrightSrc(brightSrc);
+      setLastDesktopRoomBackground(brightSrc);
+      return;
+    }
+    setLastDesktopRoomBackground(dimmedSrc);
   }, [useCinemaDimmed, dimmedSrc, brightSrc]);
 
   const handleBrightLoad = useCallback(() => {

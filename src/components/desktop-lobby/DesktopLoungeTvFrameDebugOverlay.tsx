@@ -109,6 +109,8 @@ type Props = {
   zIndex?: number;
   showClosePreview?: boolean;
   onClose?: () => void;
+  /** `inset` fills the parent TV frame; `positioned` maps via scene cover math (legacy). */
+  placement?: 'positioned' | 'inset';
 };
 
 /** QA square on desktop lounge TV glass — drag + corner/edge resize with save. */
@@ -121,6 +123,7 @@ export function DesktopLoungeTvFrameDebugOverlay({
   zIndex = 30,
   showClosePreview = false,
   onClose,
+  placement = 'positioned',
 }: Props) {
   const editor = useDesktopLoungeTvFrameEditor();
   const editSessionActive = Boolean(editor?.editEnabled);
@@ -227,13 +230,27 @@ export function DesktopLoungeTvFrameDebugOverlay({
     [beginPointerGesture, canGesture],
   );
 
+  const boxStyle =
+    placement === 'inset'
+      ? {
+          position: 'absolute' as const,
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          boxSizing: 'border-box' as const,
+        }
+      : sceneHitLayoutBoxStyle(mappedRect, screenOffsetX, screenOffsetY, layout);
+
+  const overlayPointerEvents =
+    editSessionActive || (showClosePreview && onClose) ? 'auto' : 'none';
+
   return (
     <div
       data-desktop-lounge-tv-frame-debug
       style={{
-        ...sceneHitLayoutBoxStyle(mappedRect, screenOffsetX, screenOffsetY, layout),
+        ...boxStyle,
         zIndex,
-        pointerEvents: editSessionActive ? 'auto' : 'none',
+        pointerEvents: overlayPointerEvents,
         cursor: canGesture ? 'move' : editSessionActive ? 'pointer' : undefined,
         touchAction: canGesture ? 'none' : undefined,
         backgroundColor: 'rgba(255, 193, 7, 0.42)',
