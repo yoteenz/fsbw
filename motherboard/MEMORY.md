@@ -31284,3 +31284,12 @@ User reported redundant **PENTHOUSE** twice on elevator destination holo (red le
 - **`formatTowerElevatorHoloName()`** in **`desktopTowerMotion.ts`** — floor **id 4** → **`VIP SUITE`**; other floors unchanged.
 - **`DesktopTowerElevatorExperience.tsx`** uses it for holo **`name`** line only (floor registry / directories still **PENTHOUSE**). Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Floating nav: close panels on outside click
+
+User reported elevator/station directory panels would not close when clicking outside — only toggling the panel icon worked.
+
+- **Cause:** **`.floating-nav-system`** uses **`pointer-events: none`**; clicks on the room scene passed through to content below instead of hitting the backdrop.
+- **Fix:** **`DesktopFloatingNav`** — capture-phase **`pointerdown`** on **`document`** closes active drawer unless target is inside **`.floating-nav-trigger`** or **`.floating-nav-drawer--open`**. Backdrop **`pointer-events: auto`**, z-index stack adjusted (backdrop **50**, drawer **51**, triggers **52**). Pushed **`master`** + **`preview/mobile`**.
+
