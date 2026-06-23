@@ -31393,3 +31393,13 @@ User requested the red foil room title on **Members Lounge** (gallery floor) rea
 - **`desktopRoomTitles.ts`** — **`members-lounge`** **`title`** → **`MEMBERS ONLY LOUNGE`** (matches **`desktopFloors.ts`** zone label).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop room labels +30% scale (title + subtitle)
+
+User requested red foil room titles and black subtitles scaled **30% bigger in tandem** on all desktop rooms.
+
+- **`DesktopRoomTitle.css`** — title **`clamp(42px, 3.25vw, 88px)`** (was 32/2.5vw/68); subtitle **`clamp(12px, 0.95vw, 23px)`** (was 9/0.73vw/18); default subtitle gap fallback **13px** (was 10).
+- **`DesktopRoomTitle.tsx`** — **`--desktop-room-subtitle-gap`** uses **`subtitleGapPx * 1.3`** so spacing scales with type.
+- Pushed **`master`** + **`preview/mobile`**.
+
