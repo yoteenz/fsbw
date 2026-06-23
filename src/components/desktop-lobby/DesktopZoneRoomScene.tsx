@@ -1,5 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
+import {
+  getLastDesktopRoomBackground,
+  isDesktopRoomBackgroundLoaded,
+  preloadDesktopRoomBackground,
+  setLastDesktopRoomBackground,
+} from '../../utils/desktopRoomBackgroundCache';
 import './DesktopZoneRoomScene.css';
 
 const ZONE_TRANSITION_MS = 880;
@@ -9,6 +15,7 @@ type ZoneBackgroundProps = {
   className: string;
   resolveBackground: (zoneId: string) => string;
   resolveFallbackBackground?: (zoneId: string) => string;
+  onReadyChange?: (ready: boolean) => void;
 };
 
 function ZoneBackground({
@@ -16,24 +23,61 @@ function ZoneBackground({
   className,
   resolveBackground,
   resolveFallbackBackground,
+  onReadyChange,
 }: ZoneBackgroundProps) {
-  const [src, setSrc] = useState(() => resolveBackground(zoneId));
+  const targetSrc = resolveBackground(zoneId);
+  const fallbackSrc = resolveFallbackBackground?.(zoneId);
+  const [displaySrc, setDisplaySrc] = useState(() => {
+    const cached = getLastDesktopRoomBackground();
+    if (cached) return cached;
+    if (isDesktopRoomBackgroundLoaded(targetSrc)) return targetSrc;
+    return targetSrc;
+  });
 
   useEffect(() => {
-    setSrc(resolveBackground(zoneId));
-  }, [resolveBackground, zoneId]);
+    let cancelled = false;
+    const target = resolveBackground(zoneId);
+    const fallback = resolveFallbackBackground?.(zoneId);
+
+    const markReady = (src: string) => {
+      onReadyChange?.(true);
+      setLastDesktopRoomBackground(src);
+    };
+
+    if (isDesktopRoomBackgroundLoaded(target)) {
+      setDisplaySrc(target);
+      markReady(target);
+      return;
+    }
+
+    onReadyChange?.(false);
+
+    void preloadDesktopRoomBackground(target, fallback).then((loaded) => {
+      if (cancelled) return;
+      setDisplaySrc(loaded);
+      markReady(loaded);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [zoneId, resolveBackground, resolveFallbackBackground, onReadyChange]);
 
   return (
     <img
-      src={src}
+      src={displaySrc}
       alt=""
       draggable={false}
       className={className}
+      onLoad={() => {
+        setLastDesktopRoomBackground(displaySrc);
+      }}
       onError={() => {
-        if (!resolveFallbackBackground) return;
-        setSrc((current) => {
-          const fallback = resolveFallbackBackground(zoneId);
-          return current === fallback ? current : fallback;
+        if (!fallbackSrc || displaySrc === fallbackSrc) return;
+        void preloadDesktopRoomBackground(fallbackSrc).then((loaded) => {
+          setDisplaySrc(loaded);
+          setLastDesktopRoomBackground(loaded);
+          onReadyChange?.(true);
         });
       }}
     />
@@ -46,6 +90,7 @@ type DesktopZoneRoomSceneProps = {
   resolveBackground: (zoneId: string) => string;
   resolveFallbackBackground?: (zoneId: string) => string;
   className?: string;
+  onBackgroundReadyChange?: (ready: boolean) => void;
 };
 
 export function DesktopZoneRoomScene({
@@ -54,27 +99,72 @@ export function DesktopZoneRoomScene({
   resolveBackground,
   resolveFallbackBackground,
   className = '',
+  onBackgroundReadyChange,
 }: DesktopZoneRoomSceneProps) {
   const [activeIndex, setActiveIndex] = useState(zoneIndex);
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
+  const transitionTimerRef = useRef<number | null>(null);
+
+  const clearTransitionTimer = useCallback(() => {
+    if (transitionTimerRef.current !== null) {
+      window.clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+  }, []);
+
+  const handleReadyChange = useCallback(
+    (ready: boolean) => {
+      onBackgroundReadyChange?.(ready);
+    },
+    [onBackgroundReadyChange],
+  );
 
   useEffect(() => {
     if (zoneIndex === activeIndex) return;
 
-    setLeavingIndex(activeIndex);
-    setActiveIndex(zoneIndex);
+    const nextZoneId = zoneIds[zoneIndex];
+    if (!nextZoneId) return;
 
-    const timer = window.setTimeout(() => {
-      setLeavingIndex(null);
-    }, ZONE_TRANSITION_MS);
+    const nextSrc = resolveBackground(nextZoneId);
+    const fallback = resolveFallbackBackground?.(nextZoneId);
+    let cancelled = false;
 
-    return () => window.clearTimeout(timer);
-  }, [activeIndex, zoneIndex]);
+    onBackgroundReadyChange?.(false);
+
+    void preloadDesktopRoomBackground(nextSrc, fallback).then(() => {
+      if (cancelled) return;
+
+      setLeavingIndex(activeIndex);
+      setActiveIndex(zoneIndex);
+      onBackgroundReadyChange?.(true);
+
+      clearTransitionTimer();
+      transitionTimerRef.current = window.setTimeout(() => {
+        setLeavingIndex(null);
+        transitionTimerRef.current = null;
+      }, ZONE_TRANSITION_MS);
+    });
+
+    return () => {
+      cancelled = true;
+      clearTransitionTimer();
+    };
+  }, [
+    activeIndex,
+    zoneIndex,
+    zoneIds,
+    resolveBackground,
+    resolveFallbackBackground,
+    onBackgroundReadyChange,
+    clearTransitionTimer,
+  ]);
 
   const clampedActiveIndex = Math.max(0, Math.min(zoneIds.length - 1, activeIndex));
   const activeZoneId = zoneIds[clampedActiveIndex] ?? zoneIds[0];
   const leavingZoneId =
-    leavingIndex !== null ? (zoneIds[Math.max(0, Math.min(zoneIds.length - 1, leavingIndex))] ?? null) : null;
+    leavingIndex !== null
+      ? (zoneIds[Math.max(0, Math.min(zoneIds.length - 1, leavingIndex))] ?? null)
+      : null;
   const isTransitioning = leavingIndex !== null;
   const artboard = isDesktopArtboardLayoutActive();
 
@@ -92,6 +182,7 @@ export function DesktopZoneRoomScene({
             className="desktop-zone-room-scene__bg desktop-zone-room-scene__bg--steady"
             resolveBackground={resolveBackground}
             resolveFallbackBackground={resolveFallbackBackground}
+            onReadyChange={handleReadyChange}
           />
         </div>
       ) : (
@@ -112,6 +203,7 @@ export function DesktopZoneRoomScene({
               className="desktop-zone-room-scene__bg desktop-zone-room-scene__bg--enter"
               resolveBackground={resolveBackground}
               resolveFallbackBackground={resolveFallbackBackground}
+              onReadyChange={handleReadyChange}
             />
           </div>
         </>

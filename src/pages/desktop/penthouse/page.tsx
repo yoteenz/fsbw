@@ -1,5 +1,5 @@
 import { Navigate, useSearchParams } from 'react-router-dom';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
@@ -27,6 +27,7 @@ function PenthouseViewport({
 }) {
   const artboard = isDesktopArtboardLayoutActive();
   const viewportMeasureRef = useRef<HTMLElement>(null);
+  const [backgroundReady, setBackgroundReady] = useState(false);
 
   return (
     <section
@@ -40,7 +41,11 @@ function PenthouseViewport({
         background: '#0A0A0A',
       }}
     >
-      <DesktopPenthouseRoomScene roomIndex={roomIndex} onRoomIndexChange={onRoomIndexChange} />
+      <DesktopPenthouseRoomScene
+        roomIndex={roomIndex}
+        onRoomIndexChange={onRoomIndexChange}
+        onBackgroundReadyChange={setBackgroundReady}
+      />
 
       <div
         style={{
@@ -52,9 +57,11 @@ function PenthouseViewport({
         }}
       />
 
-      <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-        <ParticleField />
-      </div>
+      {backgroundReady ? (
+        <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+          <ParticleField />
+        </div>
+      ) : null}
 
       <DesktopFloatingNav />
 

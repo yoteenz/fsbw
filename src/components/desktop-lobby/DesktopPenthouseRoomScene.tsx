@@ -12,12 +12,14 @@ const PENTHOUSE_ZONE_IDS = DESKTOP_PENTHOUSE_ROOMS.map((room) => room.id);
 type DesktopPenthouseRoomSceneProps = {
   roomIndex: number;
   onRoomIndexChange?: (index: number) => void;
+  onBackgroundReadyChange?: (ready: boolean) => void;
   className?: string;
 };
 
 export function DesktopPenthouseRoomScene({
   roomIndex,
   onRoomIndexChange,
+  onBackgroundReadyChange,
   className = '',
 }: DesktopPenthouseRoomSceneProps) {
   const setRoomIndex = useCallback(
@@ -43,6 +45,7 @@ export function DesktopPenthouseRoomScene({
       zoneIndex={roomIndex}
       resolveBackground={(zoneId) => resolvePenthouseRoomBackground(zoneId)}
       resolveFallbackBackground={(zoneId) => resolvePenthouseRoomBackground(zoneId, { fallback: true })}
+      onBackgroundReadyChange={onBackgroundReadyChange}
       className={className}
     />
   );

@@ -17,6 +17,8 @@ import {
   type DesktopFloor,
 } from '../../constants/desktopFloors';
 import { resolveFloorZoneBackground } from '../../constants/desktopFloorZoneBackgrounds';
+import { resolvePenthouseRoomBackground } from '../../constants/desktopPenthouseRooms';
+import { preloadDesktopRoomBackground } from '../../utils/desktopRoomBackgroundCache';
 import {
   computeTowerTravelDurationMs,
   getDesktopFloorFromHref,
@@ -80,12 +82,12 @@ function prefetchDesktopTowerDestination(href: string): void {
   const zoneParam =
     destFloor.path === DESKTOP_PENTHOUSE_PATH ? params.get('room') : params.get('zone');
   const zoneId = resolveDesktopFloorZoneId(destFloor, zoneParam);
-  const background = resolveFloorZoneBackground(zoneId);
+  const background =
+    resolveFloorZoneBackground(zoneId) ??
+    (destFloor.path === DESKTOP_PENTHOUSE_PATH ? resolvePenthouseRoomBackground(zoneId) : undefined);
   if (!background) return;
 
-  const img = new Image();
-  img.decoding = 'async';
-  img.src = background;
+  void preloadDesktopRoomBackground(background);
 }
 
 export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {

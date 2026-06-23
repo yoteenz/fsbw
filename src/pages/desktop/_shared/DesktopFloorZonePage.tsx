@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
@@ -33,6 +33,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const travel = useDesktopTowerTravelOptional();
   const isTraveling = travel?.isTraveling ?? false;
   const artboard = isDesktopArtboardLayoutActive();
+  const [backgroundReady, setBackgroundReady] = useState(false);
 
   const zoneIds = useMemo(() => floor.zones.map((zone) => zone.id), [floor.zones]);
   const zoneIndex = useMemo(() => {
@@ -72,6 +73,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           zoneIndex={zoneIndex}
           resolveBackground={resolveZoneBackground}
           resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
+          onBackgroundReadyChange={setBackgroundReady}
         />
 
         <div
@@ -85,9 +87,11 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           }}
         />
 
-        <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-          <ParticleField />
-        </div>
+        {backgroundReady ? (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+            <ParticleField />
+          </div>
+        ) : null}
 
         <DesktopFloatingNav />
 
