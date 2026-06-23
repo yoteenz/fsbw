@@ -1,0 +1,59 @@
+.desktop-penthouse-suite-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.desktop-penthouse-suite-scene__bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.desktop-penthouse-suite-scene__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.desktop-penthouse-suite-scene__hotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.desktop-penthouse-suite-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+}
+
+.desktop-penthouse-suite-page__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.desktop-penthouse-suite-page--artboard .desktop-penthouse-suite-page__viewport {
+  flex: none;
+  height: 1012px;
+  min-height: 1012px;
+}
+
+@media (max-width: 1023px) {
+  .desktop-penthouse-suite-scene__bg {
+    object-fit: contain;
+    object-position: center center;
+    background: #0a0a0a;
+  }
+}

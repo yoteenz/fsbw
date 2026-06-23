@@ -21,6 +21,8 @@ export function NavBar() {
   };
 
   const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search);
+  const isDesktopRoute =
+    location.pathname === '/desktop' || location.pathname.startsWith('/desktop/');
 
   useEffect(() => {
     const syncCart = () => {
@@ -125,7 +127,7 @@ export function NavBar() {
 
         <button
           className="hover:opacity-50 transition-opacity"
-          onClick={() => navigate('/account')}
+          onClick={() => navigate(isDesktopRoute ? '/desktop/account' : '/account')}
           aria-label="Account"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >

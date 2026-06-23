@@ -1,0 +1,106 @@
+.penthouse-suite-hotspot {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    border-color 0.32s ease,
+    box-shadow 0.32s ease,
+    background 0.32s ease;
+  overflow: visible;
+}
+
+.penthouse-suite-hotspot::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.32s ease;
+}
+
+.penthouse-suite-hotspot:hover,
+.penthouse-suite-hotspot:focus-visible {
+  border-color: rgba(235, 28, 36, 0.58);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 22px rgba(235, 28, 36, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32),
+    inset 0 0 18px rgba(235, 28, 36, 0.06);
+  outline: none;
+}
+
+.penthouse-suite-hotspot:hover::before,
+.penthouse-suite-hotspot:focus-visible::before {
+  opacity: 1;
+}
+
+.penthouse-suite-hotspot--debug {
+  border-color: rgba(255, 193, 7, 0.55);
+  background: rgba(255, 193, 7, 0.14);
+}
+
+.penthouse-suite-hotspot__label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%) translateY(4px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid rgba(192, 192, 192, 0.55);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(255, 255, 255, 0.62) 48%,
+    rgba(245, 245, 245, 0.76) 100%
+  );
+  backdrop-filter: blur(10px) saturate(1.45);
+  -webkit-backdrop-filter: blur(10px) saturate(1.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 6px 18px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease, transform 0.32s ease;
+  white-space: nowrap;
+}
+
+.penthouse-suite-hotspot__label-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #eb1c24;
+  box-shadow: 0 0 6px rgba(235, 28, 36, 0.65);
+  flex-shrink: 0;
+}
+
+.penthouse-suite-hotspot__label-text {
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+.penthouse-suite-hotspot:hover .penthouse-suite-hotspot__label,
+.penthouse-suite-hotspot:focus-visible .penthouse-suite-hotspot__label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .penthouse-suite-hotspot__label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
