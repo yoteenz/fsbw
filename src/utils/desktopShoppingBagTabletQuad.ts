@@ -16,8 +16,12 @@ export type ShoppingBagTabletQuad = Quad4;
 
 export const SHOPPING_BAG_TABLET_LAYOUT_STORAGE_KEY = 'desktopShoppingBagTabletRect';
 
-type StoredLayoutV2 = {
-  version: 2;
+/** Bump when hero art changes so stale debug saves are ignored. */
+export const SHOPPING_BAG_TABLET_LAYOUT_REVISION = 3;
+
+type StoredLayoutV3 = {
+  version: 3;
+  revision: number;
   quad: ShoppingBagTabletQuad;
 };
 
@@ -69,9 +73,16 @@ function parseStoredQuad(raw: string): ShoppingBagTabletQuad | null {
 
     const record = parsed as Record<string, unknown>;
 
-    if (record.version === 2 && record.quad && typeof record.quad === 'object') {
+    if (record.version === 3 && record.quad && typeof record.quad === 'object') {
+      const revision =
+        typeof record.revision === 'number' ? record.revision : SHOPPING_BAG_TABLET_LAYOUT_REVISION;
+      if (revision !== SHOPPING_BAG_TABLET_LAYOUT_REVISION) return null;
       const q = record.quad as ShoppingBagTabletQuad;
       if (q.tl && q.tr && q.br && q.bl) return clampQuad(q);
+    }
+
+    if (record.version === 2 && record.quad && typeof record.quad === 'object') {
+      return null;
     }
 
     if ('tl' in record && 'tr' in record && 'br' in record && 'bl' in record) {
@@ -95,6 +106,14 @@ export function loadShoppingBagTabletQuad(): ShoppingBagTabletQuad | null {
 }
 
 export function loadEffectiveShoppingBagTabletQuad(): ShoppingBagTabletQuad {
+  if (typeof window !== 'undefined') {
+    try {
+      const debug = new URLSearchParams(window.location.search).get('shoppingBagDebug') === '1';
+      if (!debug) return defaultShoppingBagTabletQuad();
+    } catch {
+      /* ignore */
+    }
+  }
   return loadShoppingBagTabletQuad() ?? defaultShoppingBagTabletQuad();
 }
 
@@ -104,7 +123,11 @@ export function hasSavedShoppingBagTabletQuad(): boolean {
 
 export function saveShoppingBagTabletQuad(quad: ShoppingBagTabletQuad): boolean {
   if (typeof window === 'undefined') return false;
-  const payload: StoredLayoutV2 = { version: 2, quad: clampQuad(quad) };
+  const payload: StoredLayoutV3 = {
+    version: 3,
+    revision: SHOPPING_BAG_TABLET_LAYOUT_REVISION,
+    quad: clampQuad(quad),
+  };
   const json = JSON.stringify(payload, null, 2);
   try {
     window.localStorage.setItem(SHOPPING_BAG_TABLET_LAYOUT_STORAGE_KEY, json);

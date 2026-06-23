@@ -2,8 +2,10 @@ import type { ReactNode, RefObject } from 'react';
 import {
   DESKTOP_SHOPPING_BAG_BACKGROUND_URL,
   DESKTOP_SHOPPING_BAG_IMAGE,
+  DESKTOP_SHOPPING_BAG_TABLET_RECT,
   isDesktopShoppingBagDebugEnabled,
 } from '../../constants/desktopShoppingBag';
+import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
 import { CuratorTabletQuadHost } from './CuratorTabletQuadHost';
 import {
   DesktopShoppingBagTabletDebugProvider,
@@ -29,6 +31,13 @@ function DesktopCuratorSuiteSceneInner({
 }: Props) {
   const quad = useDesktopShoppingBagTabletQuad();
   const debug = isDesktopShoppingBagDebugEnabled();
+  const tabletShellClass = [
+    'curated-tablet',
+    tabletEntering ? 'curated-tablet--acquisition-enter' : '',
+    tabletClassName,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className="desktop-shopping-bag-scene" aria-label="Curator collection suite">
@@ -41,21 +50,28 @@ function DesktopCuratorSuiteSceneInner({
         height={DESKTOP_SHOPPING_BAG_IMAGE.height}
       />
       <div className="desktop-shopping-bag-scene__layer">
-        <CuratorTabletQuadHost
-          measureRef={measureRef}
-          quad={quad}
-          image={DESKTOP_SHOPPING_BAG_IMAGE}
-          zIndex={6}
-          className={[
-            'curated-tablet',
-            tabletEntering ? 'curated-tablet--acquisition-enter' : '',
-            tabletClassName,
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          {children}
-        </CuratorTabletQuadHost>
+        {debug ? (
+          <CuratorTabletQuadHost
+            measureRef={measureRef}
+            quad={quad}
+            image={DESKTOP_SHOPPING_BAG_IMAGE}
+            zIndex={6}
+            className={tabletShellClass}
+          >
+            {children}
+          </CuratorTabletQuadHost>
+        ) : (
+          <DesktopRoomCoverRectAnchor
+            measureRef={measureRef}
+            imageRect={DESKTOP_SHOPPING_BAG_TABLET_RECT}
+            image={DESKTOP_SHOPPING_BAG_IMAGE}
+            zIndex={6}
+            className={tabletShellClass}
+            style={{ pointerEvents: 'auto' }}
+          >
+            {children}
+          </DesktopRoomCoverRectAnchor>
+        )}
         {debug ? <DesktopShoppingBagTabletDebugPolygon measureRef={measureRef} /> : null}
       </div>
       {debug ? <DesktopShoppingBagTabletDebugInspector /> : null}

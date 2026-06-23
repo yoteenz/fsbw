@@ -80,14 +80,19 @@ export function loadCommerceCartFromStorage(): any[] {
 
 export function readCartCountFromStorage(): number {
   try {
+    const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    if (Array.isArray(items)) {
+      const fromItems = cartTotalQuantityUnits(items as { quantity?: number }[]);
+      const raw = localStorage.getItem('cartCount');
+      if (raw != null && raw !== '' && raw !== String(fromItems)) {
+        localStorage.setItem('cartCount', String(fromItems));
+      }
+      return fromItems;
+    }
     const raw = localStorage.getItem('cartCount');
     if (raw != null && raw !== '') {
       const n = parseInt(raw, 10);
       if (Number.isFinite(n) && n >= 0) return n;
-    }
-    const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    if (Array.isArray(items)) {
-      return cartTotalQuantityUnits(items as { quantity?: number }[]);
     }
   } catch {
     /* ignore */

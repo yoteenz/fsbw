@@ -54,8 +54,9 @@ export function DesktopShoppingBagTabletDebugProvider({ children }: { children: 
   }, []);
 
   useEffect(() => {
+    if (!debugEnabled) return;
     persistQuad(quad);
-  }, [quad, persistQuad]);
+  }, [quad, persistQuad, debugEnabled]);
 
   const patchCorner = useCallback((cornerId: QuadCornerId, point: { x: number; y: number }) => {
     setQuad((prev) =>
