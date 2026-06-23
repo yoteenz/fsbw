@@ -31,6 +31,8 @@ function FloatingNavTriggerIcon({ kind }: { kind: FloatingNavTriggerKind }) {
 }
 
 export function FloatingNavTrigger({ kind, isActive, label, onClick }: Props) {
+  const caption = kind === 'floors' ? 'elevator' : 'zones';
+
   return (
     <button
       type="button"
@@ -48,7 +50,12 @@ export function FloatingNavTrigger({ kind, isActive, label, onClick }: Props) {
       <span className="floating-nav-trigger__chrome-cap" aria-hidden />
       <span className="floating-nav-trigger__crystal" aria-hidden />
       <span className="floating-nav-trigger__foil" aria-hidden />
-      <FloatingNavTriggerIcon kind={kind} />
+      <span className="floating-nav-trigger__inner">
+        <FloatingNavTriggerIcon kind={kind} />
+        <span className="floating-nav-trigger__caption" aria-hidden>
+          {caption}
+        </span>
+      </span>
     </button>
   );
 }
