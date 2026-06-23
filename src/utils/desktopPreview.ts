@@ -60,7 +60,7 @@ function isPhoneDesktopViewport(): boolean {
 }
 
 /**
- * Phone-only `/desktop/*` artboard mode — height-fill scaled 1920×1080 shell.
+ * Phone-only `/desktop/*` artboard mode — width-fit scaled 1920×1080 shell.
  * Active when: staging `?mobileDesktop=1` (tab session), or viewport ≤767px (phones).
  * Tablets (768px+) and desktops use native full-bleed layout.
  */
@@ -201,10 +201,10 @@ export function bootstrapDesktopPreviewModes(): void {
 }
 
 export function measureDesktopPreviewScaleBox(
-  _shellWidth: number,
-  shellHeight: number,
+  shellWidth: number,
+  _shellHeight: number,
 ): DesktopPreviewScaleBox {
-  const scale = shellHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
+  const scale = shellWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
   return {
     scale,
     width: DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale,

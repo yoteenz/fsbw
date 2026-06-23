@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import {
-  DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   DESKTOP_PREVIEW_VIEWPORT_WIDTH,
   installDesktopPreviewShellViewportLock,
 } from '../../utils/desktopPreview';
@@ -10,8 +9,8 @@ type Props = {
 };
 
 /**
- * Phone / mobile desktop: fill the screen height with the 1920×1080 artboard (zoom in).
- * Sides crop when needed; scroll vertically for taller floors.
+ * Phone / mobile desktop: fit the full 1920px artboard to screen width (edge to edge).
+ * Scroll vertically when content is taller than the viewport.
  */
 export function ScaledDesktopViewport({ children }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
@@ -27,7 +26,7 @@ export function ScaledDesktopViewport({ children }: Props) {
       const stage = stageRef.current;
       if (!shell || !scaler || !stage) return;
 
-      const scale = shell.clientHeight / DESKTOP_PREVIEW_VIEWPORT_HEIGHT;
+      const scale = shell.clientWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH;
       const scaledWidth = DESKTOP_PREVIEW_VIEWPORT_WIDTH * scale;
       const contentHeight = stage.scrollHeight;
 
@@ -37,7 +36,7 @@ export function ScaledDesktopViewport({ children }: Props) {
 
       scaler.style.width = `${scaledWidth}px`;
       scaler.style.height = `${contentHeight * scale}px`;
-      scaler.style.marginLeft = `${(shell.clientWidth - scaledWidth) / 2}px`;
+      scaler.style.marginLeft = '0';
       scaler.style.marginTop = '0';
     };
 
