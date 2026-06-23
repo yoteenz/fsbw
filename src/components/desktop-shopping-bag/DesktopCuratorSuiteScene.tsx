@@ -4,12 +4,12 @@ import {
   DESKTOP_SHOPPING_BAG_IMAGE,
   isDesktopShoppingBagDebugEnabled,
 } from '../../constants/desktopShoppingBag';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
+import { CuratorTabletQuadHost } from './CuratorTabletQuadHost';
 import {
   DesktopShoppingBagTabletDebugProvider,
-  useDesktopShoppingBagTabletRect,
+  useDesktopShoppingBagTabletQuad,
 } from './DesktopShoppingBagTabletDebugProvider';
-import { DesktopShoppingBagTabletDebugRect } from './DesktopShoppingBagTabletDebugRect';
+import { DesktopShoppingBagTabletDebugPolygon } from './DesktopShoppingBagTabletDebugPolygon';
 import { DesktopShoppingBagTabletDebugInspector } from './DesktopShoppingBagTabletDebugInspector';
 import './DesktopShoppingBag.css';
 import './DesktopAcquisition.css';
@@ -27,7 +27,7 @@ function DesktopCuratorSuiteSceneInner({
   tabletClassName = '',
   tabletEntering = false,
 }: Props) {
-  const tabletRect = useDesktopShoppingBagTabletRect();
+  const quad = useDesktopShoppingBagTabletQuad();
   const debug = isDesktopShoppingBagDebugEnabled();
 
   return (
@@ -41,25 +41,22 @@ function DesktopCuratorSuiteSceneInner({
         height={DESKTOP_SHOPPING_BAG_IMAGE.height}
       />
       <div className="desktop-shopping-bag-scene__layer">
-        <DesktopRoomCoverRectAnchor
+        <CuratorTabletQuadHost
           measureRef={measureRef}
-          imageRect={tabletRect}
+          quad={quad}
           image={DESKTOP_SHOPPING_BAG_IMAGE}
           zIndex={6}
+          className={[
+            'curated-tablet',
+            tabletEntering ? 'curated-tablet--acquisition-enter' : '',
+            tabletClassName,
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
-          <div
-            className={[
-              'curated-tablet',
-              tabletEntering ? 'curated-tablet--acquisition-enter' : '',
-              tabletClassName,
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
-            {children}
-          </div>
-        </DesktopRoomCoverRectAnchor>
-        {debug ? <DesktopShoppingBagTabletDebugRect measureRef={measureRef} /> : null}
+          {children}
+        </CuratorTabletQuadHost>
+        {debug ? <DesktopShoppingBagTabletDebugPolygon measureRef={measureRef} /> : null}
       </div>
       {debug ? <DesktopShoppingBagTabletDebugInspector /> : null}
     </div>

@@ -1,46 +1,58 @@
 import { useState } from 'react';
-import { roundPanelDebugPercent } from '../../utils/desktopPanelDebugMode';
+import { roundQuadCoord } from '../../utils/quadPerspectiveTransform';
 import { useDesktopShoppingBagTabletDebugRequired } from './DesktopShoppingBagTabletDebugProvider';
+import type { QuadCornerId } from '../../utils/quadPerspectiveTransform';
 import './DesktopShoppingBagTabletDebug.css';
 
 const btnClass = 'desktop-shopping-bag-tablet-debug-inspector__btn';
 
+const CORNERS: { id: QuadCornerId; label: string }[] = [
+  { id: 'tl', label: 'Top left' },
+  { id: 'tr', label: 'Top right' },
+  { id: 'br', label: 'Bottom right' },
+  { id: 'bl', label: 'Bottom left' },
+];
+
 export function DesktopShoppingBagTabletDebugInspector() {
   const editor = useDesktopShoppingBagTabletDebugRequired();
   const [expanded, setExpanded] = useState(true);
-  const [exportStatus, setExportStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [showExportText, setShowExportText] = useState(false);
 
   if (!editor.debugEnabled) return null;
 
-  const patchField = (field: 'x' | 'y' | 'width' | 'height', raw: string) => {
+  const patchCornerAxis = (cornerId: QuadCornerId, axis: 'x' | 'y', raw: string) => {
     const value = Number.parseFloat(raw);
     if (!Number.isFinite(value)) return;
-    editor.patchRect({ [field]: roundPanelDebugPercent(value) });
+    const current = editor.quad[cornerId];
+    editor.patchCorner(cornerId, {
+      ...current,
+      [axis]: roundQuadCoord(value / 100),
+    });
   };
 
   const onSave = () => {
     const ok = editor.saveLayout();
-    setExportStatus(
+    setStatus(
       ok
         ? 'Saved on this device — remove ?shoppingBagDebug=1 to preview'
         : 'Save failed — copy the export snippet below into desktopShoppingBag.ts',
     );
-    window.setTimeout(() => setExportStatus(null), 5000);
+    window.setTimeout(() => setStatus(null), 5000);
   };
 
   const onExport = async () => {
     setShowExportText(true);
-    const copied = await editor.exportRect();
-    setExportStatus(copied ? 'Copied to clipboard' : 'Select snippet below and copy manually');
-    window.setTimeout(() => setExportStatus(null), 4000);
+    const copied = await editor.exportLayout();
+    setStatus(copied ? 'Copied to clipboard' : 'Select snippet below and copy manually');
+    window.setTimeout(() => setStatus(null), 4000);
   };
 
   if (!expanded) {
     return (
       <div className="desktop-shopping-bag-tablet-debug-inspector">
         <div className="desktop-shopping-bag-tablet-debug-inspector__header">
-          <span>SHOPPING BAG TABLET DEBUG</span>
+          <span>TABLET PERSPECTIVE DEBUG</span>
           <button type="button" className={btnClass} onClick={() => setExpanded(true)}>
             Expand
           </button>
@@ -53,10 +65,10 @@ export function DesktopShoppingBagTabletDebugInspector() {
     <div
       className="desktop-shopping-bag-tablet-debug-inspector"
       role="region"
-      aria-label="Shopping bag tablet debug inspector"
+      aria-label="Shopping bag tablet perspective debug inspector"
     >
       <div className="desktop-shopping-bag-tablet-debug-inspector__header">
-        <span>SHOPPING BAG TABLET DEBUG</span>
+        <span>TABLET PERSPECTIVE DEBUG</span>
         <button
           type="button"
           className={[
@@ -68,7 +80,7 @@ export function DesktopShoppingBagTabletDebugInspector() {
           ].join(' ')}
           onClick={() => editor.setOverlayVisible(!editor.overlayVisible)}
         >
-          TABLET RECT: {editor.overlayVisible ? 'ON' : 'OFF'}
+          POLYGON: {editor.overlayVisible ? 'ON' : 'OFF'}
         </button>
         <button
           type="button"
@@ -82,9 +94,9 @@ export function DesktopShoppingBagTabletDebugInspector() {
           className={`${btnClass} desktop-shopping-bag-tablet-debug-inspector__btn--primary`}
           onClick={() => void onExport()}
         >
-          Export Tablet Rect
+          Export Quad
         </button>
-        <button type="button" className={btnClass} onClick={editor.resetRect}>
+        <button type="button" className={btnClass} onClick={editor.resetLayout}>
           Reset
         </button>
         <button type="button" className={btnClass} onClick={() => setExpanded(false)}>
@@ -94,26 +106,36 @@ export function DesktopShoppingBagTabletDebugInspector() {
 
       <div className="desktop-shopping-bag-tablet-debug-inspector__body">
         <p className="desktop-shopping-bag-tablet-debug-inspector__hint">
-          Drag the yellow boundary or edit values. Tap <strong>Save Layout</strong> — your alignment
-          persists on this browser even without <code>?shoppingBagDebug=1</code>.
+          Drag each corner handle independently. Tap <strong>Save Layout</strong> — perspective
+          polygon persists on this browser even without <code>?shoppingBagDebug=1</code>.
           {editor.hasCustomLayout ? ' Custom layout active.' : ''}
         </p>
 
-        {exportStatus ? (
-          <p className="desktop-shopping-bag-tablet-debug-inspector__status">{exportStatus}</p>
-        ) : null}
+        {status ? <p className="desktop-shopping-bag-tablet-debug-inspector__status">{status}</p> : null}
 
-        <div className="desktop-shopping-bag-tablet-debug-inspector__row">
-          {(['x', 'y', 'width', 'height'] as const).map((field) => (
-            <label key={field} className="desktop-shopping-bag-tablet-debug-inspector__field">
-              {field}
-              <input
-                type="number"
-                step="0.1"
-                value={editor.percentRect[field]}
-                onChange={(e) => patchField(field, e.target.value)}
-              />
-            </label>
+        <div className="desktop-shopping-bag-tablet-debug-inspector__corners">
+          {CORNERS.map(({ id, label }) => (
+            <div key={id} className="desktop-shopping-bag-tablet-debug-inspector__corner-group">
+              <span className="desktop-shopping-bag-tablet-debug-inspector__corner-label">{label}</span>
+              <label className="desktop-shopping-bag-tablet-debug-inspector__field">
+                x %
+                <input
+                  type="number"
+                  step="0.1"
+                  value={roundQuadCoord(editor.quad[id].x * 100)}
+                  onChange={(e) => patchCornerAxis(id, 'x', e.target.value)}
+                />
+              </label>
+              <label className="desktop-shopping-bag-tablet-debug-inspector__field">
+                y %
+                <input
+                  type="number"
+                  step="0.1"
+                  value={roundQuadCoord(editor.quad[id].y * 100)}
+                  onChange={(e) => patchCornerAxis(id, 'y', e.target.value)}
+                />
+              </label>
+            </div>
           ))}
         </div>
 

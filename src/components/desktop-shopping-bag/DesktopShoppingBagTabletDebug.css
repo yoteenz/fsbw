@@ -1,3 +1,75 @@
+.desktop-shopping-bag-tablet-debug-polygon {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+}
+
+.desktop-shopping-bag-tablet-debug-polygon__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.desktop-shopping-bag-tablet-debug-polygon__shape {
+  fill: rgba(255, 193, 7, 0.14);
+  stroke: rgba(255, 193, 7, 0.95);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.desktop-shopping-bag-tablet-debug-polygon__handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid rgba(255, 193, 7, 0.95);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  cursor: grab;
+  touch-action: none;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.desktop-shopping-bag-tablet-debug-polygon__handle:active {
+  cursor: grabbing;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__corners {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__corner-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-end;
+  padding: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__corner-label {
+  width: 100%;
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.curator-tablet-quad-host__warp.curated-tablet {
+  box-sizing: border-box;
+}
+
 .desktop-shopping-bag-tablet-debug-rect {
   position: absolute;
   inset: 0;

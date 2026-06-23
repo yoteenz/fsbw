@@ -8,36 +8,34 @@ import {
   type ReactNode,
 } from 'react';
 import { isDesktopShoppingBagDebugEnabled } from '../../constants/desktopShoppingBag';
-import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
 import {
-  clearShoppingBagTabletPercentRect,
+  clearShoppingBagTabletQuad,
   copyShoppingBagTabletDebugText,
-  defaultShoppingBagTabletPercentRect,
-  formatShoppingBagTabletRectForExport,
-  hasSavedShoppingBagTabletRect,
-  loadEffectiveShoppingBagTabletPercentRect,
-  resolveShoppingBagTabletImageRect,
-  saveShoppingBagTabletPercentRect,
-  shoppingBagTabletRectsEqual,
-  type ShoppingBagTabletPercentRect,
-} from '../../utils/desktopShoppingBagTabletDebug';
-import { clampPanelDebugPercentRect } from '../../utils/desktopPanelDebugMode';
+  defaultShoppingBagTabletQuad,
+  formatShoppingBagTabletQuadForExport,
+  hasSavedShoppingBagTabletQuad,
+  loadEffectiveShoppingBagTabletQuad,
+  saveShoppingBagTabletQuad,
+  shoppingBagTabletQuadsEqual,
+  type ShoppingBagTabletQuad,
+} from '../../utils/desktopShoppingBagTabletQuad';
+import { clampQuad, clampQuadPoint, type QuadCornerId } from '../../utils/quadPerspectiveTransform';
 
 export type ShoppingBagTabletSaveStatus = 'idle' | 'saved' | 'failed';
 
 type ContextValue = {
   debugEnabled: boolean;
-  percentRect: ShoppingBagTabletPercentRect;
-  imageRect: FinalSceneHitRect;
+  quad: ShoppingBagTabletQuad;
   overlayVisible: boolean;
   hasCustomLayout: boolean;
   saveStatus: ShoppingBagTabletSaveStatus;
   exportSnippet: string;
   setOverlayVisible: (visible: boolean) => void;
-  patchRect: (patch: Partial<ShoppingBagTabletPercentRect>) => void;
+  patchCorner: (cornerId: QuadCornerId, point: { x: number; y: number }) => void;
+  patchQuad: (quad: ShoppingBagTabletQuad) => void;
   saveLayout: () => boolean;
-  exportRect: () => Promise<boolean>;
-  resetRect: () => void;
+  exportLayout: () => Promise<boolean>;
+  resetLayout: () => void;
 };
 
 const DesktopShoppingBagTabletDebugContext = createContext<ContextValue | null>(null);
@@ -45,86 +43,83 @@ const DesktopShoppingBagTabletDebugContext = createContext<ContextValue | null>(
 export function DesktopShoppingBagTabletDebugProvider({ children }: { children: ReactNode }) {
   const debugEnabled = isDesktopShoppingBagDebugEnabled();
 
-  const [percentRect, setPercentRect] = useState<ShoppingBagTabletPercentRect>(() =>
-    loadEffectiveShoppingBagTabletPercentRect(),
-  );
+  const [quad, setQuad] = useState<ShoppingBagTabletQuad>(() => loadEffectiveShoppingBagTabletQuad());
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [saveStatus, setSaveStatus] = useState<ShoppingBagTabletSaveStatus>('idle');
 
-  const persistRect = useCallback((rect: ShoppingBagTabletPercentRect) => {
-    const ok = saveShoppingBagTabletPercentRect(rect);
+  const persistQuad = useCallback((next: ShoppingBagTabletQuad) => {
+    const ok = saveShoppingBagTabletQuad(next);
     setSaveStatus(ok ? 'saved' : 'failed');
     return ok;
   }, []);
 
   useEffect(() => {
-    persistRect(percentRect);
-  }, [percentRect, persistRect]);
+    persistQuad(quad);
+  }, [quad, persistQuad]);
 
-  const patchRect = useCallback((patch: Partial<ShoppingBagTabletPercentRect>) => {
-    setPercentRect((prev) => clampPanelDebugPercentRect({ ...prev, ...patch }));
+  const patchCorner = useCallback((cornerId: QuadCornerId, point: { x: number; y: number }) => {
+    setQuad((prev) =>
+      clampQuad({
+        ...prev,
+        [cornerId]: clampQuadPoint(point),
+      }),
+    );
   }, []);
 
-  const saveLayout = useCallback(() => {
-    return persistRect(percentRect);
-  }, [percentRect, persistRect]);
+  const patchQuad = useCallback((next: ShoppingBagTabletQuad) => {
+    setQuad(clampQuad(next));
+  }, []);
 
-  const exportRect = useCallback(async () => {
-    const snippet = formatShoppingBagTabletRectForExport(percentRect);
+  const saveLayout = useCallback(() => persistQuad(quad), [persistQuad, quad]);
+
+  const exportLayout = useCallback(async () => {
+    const snippet = formatShoppingBagTabletQuadForExport(quad);
     return copyShoppingBagTabletDebugText(snippet);
-  }, [percentRect]);
+  }, [quad]);
 
-  const resetRect = useCallback(() => {
-    const fresh = defaultShoppingBagTabletPercentRect();
-    setPercentRect(fresh);
-    clearShoppingBagTabletPercentRect();
+  const resetLayout = useCallback(() => {
+    const fresh = defaultShoppingBagTabletQuad();
+    setQuad(fresh);
+    clearShoppingBagTabletQuad();
     setSaveStatus('idle');
   }, []);
 
-  const imageRect = useMemo(
-    () => resolveShoppingBagTabletImageRect(percentRect),
-    [percentRect],
-  );
-
   const hasCustomLayout = useMemo(
     () =>
-      hasSavedShoppingBagTabletRect() ||
-      !shoppingBagTabletRectsEqual(percentRect, defaultShoppingBagTabletPercentRect()),
-    [percentRect],
+      hasSavedShoppingBagTabletQuad() ||
+      !shoppingBagTabletQuadsEqual(quad, defaultShoppingBagTabletQuad()),
+    [quad],
   );
 
-  const exportSnippet = useMemo(
-    () => formatShoppingBagTabletRectForExport(percentRect),
-    [percentRect],
-  );
+  const exportSnippet = useMemo(() => formatShoppingBagTabletQuadForExport(quad), [quad]);
 
   const value = useMemo(
     () => ({
       debugEnabled,
-      percentRect,
-      imageRect,
+      quad,
       overlayVisible,
       hasCustomLayout,
       saveStatus,
       exportSnippet,
       setOverlayVisible,
-      patchRect,
+      patchCorner,
+      patchQuad,
       saveLayout,
-      exportRect,
-      resetRect,
+      exportLayout,
+      resetLayout,
     }),
     [
       debugEnabled,
-      percentRect,
-      imageRect,
+      quad,
       overlayVisible,
       hasCustomLayout,
       saveStatus,
       exportSnippet,
-      patchRect,
+      patchCorner,
+      patchQuad,
       saveLayout,
-      exportRect,
-      resetRect,
+      exportLayout,
+      resetLayout,
     ],
   );
 
@@ -135,10 +130,10 @@ export function DesktopShoppingBagTabletDebugProvider({ children }: { children: 
   );
 }
 
-export function useDesktopShoppingBagTabletRect(): FinalSceneHitRect {
+export function useDesktopShoppingBagTabletQuad(): ShoppingBagTabletQuad {
   const ctx = useContext(DesktopShoppingBagTabletDebugContext);
-  if (ctx) return ctx.imageRect;
-  return resolveShoppingBagTabletImageRect(loadEffectiveShoppingBagTabletPercentRect());
+  if (ctx) return ctx.quad;
+  return loadEffectiveShoppingBagTabletQuad();
 }
 
 export function useDesktopShoppingBagTabletDebug(): ContextValue | null {
