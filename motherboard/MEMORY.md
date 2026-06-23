@@ -31067,6 +31067,17 @@ Summary: user reported elevator **still endlessly looping** after prior fix.
 
 - **Causes:** (1) **`video.loop = true`** during boarding/traveling restarted clip on every end. (2) **`getDesktopTowerElevatorVideoSrc()`** updated mid-journey when blob cache warmed → React **`src`** prop reload restarted video. (3) **`loadedmetadata`** **`currentTime = 0`** reset could retrigger playback.
 - **Fix:** **`loop={false}`** always; **`ended`** holds last frame during travel. **`lockedVideoSrc`** frozen at overlay mount; bind uses locked src only. Removed metadata time reset. **Journey watchdog** in **`DesktopTowerNavProvider`** forces navigate + dismiss if timers/RAF stall.
-- **Files:** `desktopTowerElevatorVideo.ts`, `DesktopTowerElevatorExperience.tsx`, `DesktopTowerNavProvider.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-22 — Elevator: one video both directions (forward / reverse scrub)
+
+Summary: user required **same elevator MP4** for up and down — **no separate descending asset**, **no CSS reverse**; up **`play()`** forward, down **scrub `currentTime` backward** via **rAF / `requestVideoFrameCallback`**; preload, no remount between transitions, fade destination only after reverse completes.
+
+- **`desktopTowerElevatorVideo.ts`:** blob preload + duration cache; **`runElevatorVideoTransition`** — up from 0 forward, down pause at **`duration`** then step backward to 0 over clip length; optional **`DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL`** fallback if scrub fails. Removed CSS **`scaleY(-1)`**.
+- **`DesktopTowerElevatorExperience`:** stable **`<video>`** (no per-trip key), poster until ready, playback on **`traveling`** phase only.
+- **`DesktopTowerNavProvider`:** **`tryFinishTravel`** waits for **floor timeline + video sequence** before navigate/fade.
+- **`scripts/elevator-reverse-video.mjs`** + **`npm run elevator:reverse-video`** for optional build-time reversed MP4 fallback.
 - Pushed **`master`** + **`preview/mobile`**.
 
