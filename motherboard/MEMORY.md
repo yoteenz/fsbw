@@ -31858,6 +31858,7 @@ User reported the shopping bag debug square was **not adjustable** on mobile des
 - **Inspector:** fixed bottom bar — **TABLET RECT ON/OFF**, editable **x/y/width/height** (% of hero), **EXPORT TABLET RECT** (clipboard snippet for **`desktopShoppingBag.ts`**), **Reset**.
 - **Persistence:** **`localStorage`** key **`desktopShoppingBagTabletRect`** while tuning.
 - **Files:** **`desktopShoppingBagTabletDebug.ts`**, **`DesktopShoppingBagTabletDebugProvider`**, **`DesktopShoppingBagTabletDebugRect`**, **`DesktopShoppingBagTabletDebugInspector`**; wired in **`DesktopCuratorSuiteScene`**.
+- **Save fix (follow-up):** Saved layout now **applies in production** (without **`?shoppingBagDebug=1`**) via **`localStorage`** key **`desktopShoppingBagTabletRect`**. Inspector adds **Save Layout**, **Show export snippet** textarea (mobile copy), clipboard **`execCommand`** fallback; provider always mounted so saved rect drives tablet position on bag + acquisition.
 
 ---
 
