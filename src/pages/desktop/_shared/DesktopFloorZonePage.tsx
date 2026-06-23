@@ -19,8 +19,16 @@ import {
 import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
+import { DesktopPanelDebugLayer } from '../../../components/desktop-panel-debug/DesktopPanelDebugLayer';
+import { DesktopPanelDebugProvider } from '../../../components/desktop-panel-debug/DesktopPanelDebugProvider';
 import { ReceptionDashboard } from '../../../components/desktop-reception/ReceptionDashboard';
-import { DESKTOP_RECEPTION_BACKGROUND_URL } from '../../../constants/desktopReceptionDashboard';
+import { RECEPTION_PANEL_DEBUG_PANELS } from '../../../constants/desktopReceptionPanelDebugConfig';
+import {
+  DESKTOP_RECEPTION_BACKGROUND_URL,
+  RECEPTION_DASHBOARD_IMAGE,
+} from '../../../constants/desktopReceptionDashboard';
+import { isPanelDebugModeEnabled } from '../../../utils/desktopPanelDebugMode';
+import '../../../components/desktop-panel-debug/desktopPanelDebug.css';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
@@ -47,6 +55,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
 
   const isLoungeZone = zoneId === DESKTOP_LOUNGE_ZONE_ID;
   const isReceptionZone = zoneId === 'reception';
+  const panelDebug = isPanelDebugModeEnabled() && isReceptionZone;
 
   useEffect(() => {
     if (!isLoungeZone) {
@@ -138,7 +147,18 @@ export default function DesktopFloorZonePage({ floor }: Props) {
 
         <DesktopFloatingNav />
 
-        {isReceptionZone ? <ReceptionDashboard measureRef={viewportMeasureRef} /> : null}
+        {isReceptionZone ? (
+          <DesktopPanelDebugProvider sceneId="reception" panels={RECEPTION_PANEL_DEBUG_PANELS}>
+            {panelDebug ? null : <ReceptionDashboard measureRef={viewportMeasureRef} />}
+            {panelDebug ? (
+              <DesktopPanelDebugLayer
+                measureRef={viewportMeasureRef}
+                image={RECEPTION_DASHBOARD_IMAGE}
+                panels={RECEPTION_PANEL_DEBUG_PANELS}
+              />
+            ) : null}
+          </DesktopPanelDebugProvider>
+        ) : null}
 
         {zoneId === 'psa-suite' ? (
           <PsaAssistantWidget variant="suite" measureRef={viewportMeasureRef} />

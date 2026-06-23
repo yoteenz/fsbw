@@ -1,0 +1,153 @@
+.desktop-panel-debug-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.desktop-panel-debug-rect {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: auto;
+  overflow: visible;
+  resize: both;
+  cursor: move;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.desktop-panel-debug-rect--selected {
+  outline: 2px dashed #eb1c24;
+  outline-offset: 2px;
+}
+
+.desktop-panel-debug-rect__label {
+  margin: 0;
+  padding: 4px 6px;
+  text-align: center;
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  font-weight: 700;
+  font-size: clamp(8px, 1.4cqi, 14px);
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+  pointer-events: none;
+  user-select: none;
+  max-width: 92%;
+  word-break: break-word;
+}
+
+.desktop-panel-debug-rect__tag {
+  display: block;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+.desktop-panel-debug-handle {
+  position: absolute;
+  touch-action: none;
+  z-index: 2;
+  background: transparent;
+}
+
+.desktop-panel-debug-handle--corner {
+  width: 10px;
+  height: 10px;
+}
+
+.desktop-panel-debug-inspector {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100010;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #000;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  pointer-events: auto;
+  max-width: min(96vw, 720px);
+}
+
+.desktop-panel-debug-inspector__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.desktop-panel-debug-inspector__body {
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.desktop-panel-debug-inspector__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.desktop-panel-debug-inspector__field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.desktop-panel-debug-inspector__field input,
+.desktop-panel-debug-inspector__field select {
+  font-family: monospace;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  width: 64px;
+}
+
+.desktop-panel-debug-inspector__field select {
+  width: auto;
+  min-width: 140px;
+  max-width: 220px;
+}
+
+.desktop-panel-debug-inspector__btn {
+  font-family: monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.desktop-panel-debug-inspector__btn--primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.desktop-panel-debug-inspector__toggle {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.desktop-panel-debug-inspector__toggle--on {
+  color: #16a34a;
+}
+
+.desktop-panel-debug-inspector__toggle--off {
+  color: #dc2626;
+}
