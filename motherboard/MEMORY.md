@@ -31293,3 +31293,14 @@ User reported elevator/station directory panels would not close when clicking ou
 - **Cause:** **`.floating-nav-system`** uses **`pointer-events: none`**; clicks on the room scene passed through to content below instead of hitting the backdrop.
 - **Fix:** **`DesktopFloatingNav`** — capture-phase **`pointerdown`** on **`document`** closes active drawer unless target is inside **`.floating-nav-trigger`** or **`.floating-nav-drawer--open`**. Backdrop **`pointer-events: auto`**, z-index stack adjusted (backdrop **50**, drawer **51**, triggers **52**). Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Elevator: descending animation works on tablet but not desktop (why + fix)
+
+User asked why the **descending** elevator animation works on **tablet** but not **desktop**.
+
+- **Not a layout split:** Tablets (768px+) and desktops share the same native full-bleed elevator code — only phones ≤767px use the scaled artboard path. So the difference is not React/CSS viewport branching.
+- **Root cause:** **Up** uses normal forward **`video.play()`**; **down** had been using **reverse scrub** — stepping **`currentTime` backward on a paused `<video>`**. **Desktop Chrome** often **does not repaint** the displayed frame during paused seeks (you see a frozen poster/first frame even though the scrub loop runs). **Safari on iPad** tends to present each seeked frame, so motion appears to work on tablet. An earlier rAF fix stopped descents from **hanging forever** (rVFC stall) but did not fix invisible motion on Chrome desktop.
+- **Fix:** Generated **`public/assets/desktop-tower-elevator-reverse.mp4`** (`npm run elevator:reverse-video`) and wired **`DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL`** → **`DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_LOCAL_PATH`**. Down journeys now **play the reversed clip forward** (same reliable path as ascending). **`resolveDesktopTowerElevatorVideoSrc(direction)`** picks the clip; scrub remains fallback only if reverse asset is absent.
+- **Files:** `desktopTowerElevatorVideo.ts`, `DesktopTowerElevatorExperience.tsx`, `public/assets/desktop-tower-elevator-reverse.mp4`, `.gitignore` (`.elevator-source-tmp.mp4`). Pushed **`master`** + **`preview/mobile`**.
+
