@@ -4,7 +4,10 @@ import { DesktopPenthouseSuiteScene } from '../../../components/desktop-account/
 import { getCurrentUser } from '../../../utils/adminAuth';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL } from '../../../constants/desktopPenthouseSuite';
-import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
+import {
+  DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
+  isDesktopArtboardLayoutActive,
+} from '../../../utils/desktopPreview';
 import '../../../components/desktop-account/DesktopPenthouseSuiteScene.css';
 import '../../../components/desktop-lobby/panel-text/DesktopPanelTextOverlay.css';
 
@@ -32,17 +35,29 @@ export default function DesktopAccountPage() {
     <div
       className={`desktop-penthouse-suite-page${artboard ? ' desktop-penthouse-suite-page--artboard' : ''}`}
       style={{
-        height: artboard ? '1080px' : '100vh',
+        height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100dvh',
         boxSizing: 'border-box',
         paddingTop: '68px',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         background: '#0A0A0A',
+        position: 'relative',
       }}
     >
       <NavBar />
-      <section ref={viewportRef} className="desktop-penthouse-suite-page__viewport">
+      <section
+        ref={viewportRef}
+        className="desktop-penthouse-suite-page__viewport"
+        style={{
+          position: 'relative',
+          flex: artboard ? 'none' : 1,
+          height: artboard ? '1012px' : undefined,
+          minHeight: artboard ? '1012px' : 0,
+          overflow: 'hidden',
+          background: '#0A0A0A',
+        }}
+      >
         <DesktopPenthouseSuiteScene measureRef={viewportRef} user={userData} />
       </section>
     </div>

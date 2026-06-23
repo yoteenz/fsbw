@@ -22,14 +22,16 @@ export function DesktopPenthouseSuiteScene({ measureRef, user }: Props) {
   return (
     <DesktopPanelDebugProvider sceneId="penthouse" panels={PENTHOUSE_PANEL_DEBUG_PANELS}>
       <div className="desktop-penthouse-suite-scene" aria-label="The Penthouse Suite account dashboard">
-        <img
-          src={DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL}
-          alt=""
-          className="desktop-penthouse-suite-scene__bg"
-          draggable={false}
-          width={PENTHOUSE_SUITE_IMAGE.width}
-          height={PENTHOUSE_SUITE_IMAGE.height}
-        />
+        <div className="desktop-penthouse-suite-scene__bg-stack" aria-hidden>
+          <img
+            src={DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL}
+            alt=""
+            className="desktop-penthouse-suite-scene__bg"
+            draggable={false}
+            width={PENTHOUSE_SUITE_IMAGE.width}
+            height={PENTHOUSE_SUITE_IMAGE.height}
+          />
+        </div>
         <div className="desktop-penthouse-suite-scene__layer">
           {panelDebug ? null : (
             <PenthouseSuiteDashboard measureRef={measureRef} user={user} />

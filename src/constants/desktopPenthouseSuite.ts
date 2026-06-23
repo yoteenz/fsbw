@@ -1,16 +1,13 @@
 import type { FinalSceneHitRect } from './finalLobbySceneAssets';
-import {
-  DESKTOP_ROOM_HERO_ART_HEIGHT,
-  DESKTOP_ROOM_HERO_ART_WIDTH,
-} from './desktopRoomHeroArt';
 
 /** Full-bleed 21:9 Penthouse Suite account dashboard — do not crop or edit. */
 export const DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/NO%20TEXT%20BG/97EC97C2-BE02-46BA-8D62-AD8107B35670.png';
 
+/** Live asset is 1835×857 (not the shared 1915×821 hero size). */
 export const PENTHOUSE_SUITE_IMAGE = {
-  width: DESKTOP_ROOM_HERO_ART_WIDTH,
-  height: DESKTOP_ROOM_HERO_ART_HEIGHT,
+  width: 1835,
+  height: 857,
 } as const;
 
 export type PenthouseSuitePanelId =
