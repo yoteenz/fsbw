@@ -30967,3 +30967,14 @@ Summary of the **whole conversation so far** in this chat: PSA Suite hologram po
 - **Reveal (`DesktopFloorZonePage.tsx`, `penthouse/page.tsx`):** **`opacity: 0`** while **`isTraveling`** so background loads invisibly; fades in when elevator exits.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Extensions Boutique: portal hotspot fix (desktop/tablet clicks)
+
+Summary of the **whole conversation so far** in this chat: PSA Suite hologram; elevator descending/directory/preload fixes; user reported **Extensions Boutique wall still not clickable** on desktop/tablet — shop panel never appears.
+
+- **Root cause:** hotspot in **`absolute` layer** with parent **`pointer-events: none`**; nearly invisible percent-positioned button only. Misalignment / scaled artboard let taps pass through to non-interactive layers. **`ExtensionsBoutiqueShopPanel`** only renders after hotspot opens.
+- **Fix:** portal **`ExtensionsBoutiqueExperience`** to **`document.body`**; **`useDesktopViewportScreenHitRect`** maps wall to **fixed screen pixels** (scroll/resize aware). Portal **`z-index: 220`**. Retuned center wall rect. Touch shows **Shop Extensions** cue always.
+- **Files:** `ExtensionsBoutiqueExperience.tsx`, `ExtensionsBoutiqueHotspot.tsx`, `extensionsBoutique.css`, `useDesktopRoomCoverHitRect.ts`, `desktopExtensionsBoutique.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+
