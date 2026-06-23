@@ -31241,3 +31241,12 @@ User asked to increase **station** and **elevator** panel **icons only** by **4p
 
 - **`FloatingNavTrigger.css`:** **`.floating-nav-trigger__glyph`** **`max-height`** **26px → 30px**. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — DesktopRoomTitle: Futura Book + fix station transition duplicate labels
+
+User asked to change room title typography from **Futura PT Medium** to **Futura PT Book**, and fix **duplicated** title/subtitle when navigating station to station.
+
+- **`DesktopRoomTitle.css`:** title **`font-family: Futura PT Book`**, **`font-weight: 400`** (subtitle unchanged Book/400). Single gradient foil layer on **`.desktop-room-title__title`** — removed stacked **`title-foil` + `title-face`** duplicate spans that read as double text.
+- **`DesktopZoneRoomScene.tsx`:** during zone crossfade, render **`ZoneRoomTitle`** only on the **entering** layer (not the exiting layer) so old + new labels do not overlap at the same anchor. Pushed **`master`** + **`preview/mobile`**.
+
