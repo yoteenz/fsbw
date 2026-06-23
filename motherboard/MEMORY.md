@@ -31594,3 +31594,13 @@ User reported red room-title debug squares no longer moved after cover-locked pl
 - **Fix:** **`DesktopRoomTitleDebugSquare`** — drag in **cover-mapped container %** (1:1 with mouse), convert to image placement on each move; read live box from **`measureRef`** via **`measureDesktopRoomCoverBox`**. **`useDesktopRoomCoverMeasure`** retries ResizeObserver attach on next frame when ref was null initially.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room label debug pinch scale (title + subtitle tandem)
+
+User asked to **pinch shrink/enlarge** on the red debug square so both text lines resize together — some labels were too large for their wall spot.
+
+- **`textScale`** on **`DesktopRoomTitlePlacement`** (default **1**, range **0.45–1.5**); scales title font, subtitle font, gap, and max width in tandem; saved in placement overrides.
+- **`DesktopRoomTitleDebugSquare`:** two-finger **pinch** on selected square; **ctrl+wheel** (trackpad pinch) on desktop; scale shown in debug chip (e.g. **`0.85×`**).
+- Pushed **`master`** + **`preview/mobile`**.
+
