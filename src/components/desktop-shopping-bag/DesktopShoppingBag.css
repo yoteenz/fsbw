@@ -505,11 +505,6 @@
 }
 
 @media (max-width: 1023px) {
-  .desktop-shopping-bag-scene__bg {
-    object-fit: contain;
-    object-position: center center;
-  }
-
   .curated-gallery__track {
     justify-content: flex-start;
     padding: 0 clamp(4px, 1cqi, 8px);
