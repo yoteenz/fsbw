@@ -31644,3 +31644,12 @@ User asked for a **debug square around the PSA hologram in the PSA suite** so it
 - **`DesktopFloorZonePage`** passes **`viewportMeasureRef`**; **`App.tsx`** wires **`DesktopPsaSuiteFrameEditorProvider`** + panel.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Reception subtitle −14px
+
+User asked to change reception black subtitle offset from **−10px** to **−14px**.
+
+- Updated **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX.reception`** from **−10** to **−14** in **`desktopRoomTitlePlacement.ts`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
