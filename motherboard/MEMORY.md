@@ -31233,3 +31233,11 @@ User supplied two **`Desktop/NO TEXT BG/`** PNGs for commerce pages on desktop (
 - **`CommercePageBackground`:** **`src/components/commerce/CommercePageBackground.tsx`** — marble tile below **1024px**; full-bleed hero **`object-fit: cover`** + **`center top`** at **≥1024px** (matches desktop room scenes).
 - Wired on **`/sign-in`** and **`/checkout`** (all checkout subpaths share the page module). Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Floating nav: +4px elevator/station trigger icons
+
+User asked to increase **station** and **elevator** panel **icons only** by **4px** (not the acrylic trigger chrome).
+
+- **`FloatingNavTrigger.css`:** **`.floating-nav-trigger__glyph`** **`max-height`** **26px → 30px**. Pushed **`master`** + **`preview/mobile`**.
+
