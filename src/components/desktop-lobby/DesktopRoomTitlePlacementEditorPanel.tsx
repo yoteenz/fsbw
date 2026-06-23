@@ -131,7 +131,8 @@ export function DesktopRoomTitlePlacementEditorPanel() {
       </div>
       <p style={{ margin: '0 0 8px 0' }}>
         <strong>Red square = desktop</strong> (≥1024px). <strong>Cyan square = tablet</strong> (768–1023px). Title +
-        subtitle move together. Tap a square, drag to reposition, then <strong>Save</strong> to lock on this device.
+        subtitle move together. Tap a square, drag to reposition, <strong>pinch</strong> (or <strong>ctrl+wheel</strong>)
+        on a selected square to shrink/grow both lines, then <strong>Save</strong> to lock on this device.
       </p>
       <p style={{ margin: '0 0 8px 0', opacity: 0.9 }}>
         Enable with <code>?roomTitleDebug=1&amp;roomTitleEdit=1</code> on any <code>/desktop/*</code> room. Saved
@@ -148,7 +149,7 @@ export function DesktopRoomTitlePlacementEditorPanel() {
           return (
             <li key={zoneId} style={{ marginBottom: 2 }}>
               {zoneId} — top:{placement.titleTopPct.toFixed(2)}% offset:{placement.centerOffsetPct.toFixed(2)}%
-              gap:{placement.subtitleGapPx}px
+              gap:{placement.subtitleGapPx}px scale:{(placement.textScale ?? 1).toFixed(2)}×
             </li>
           );
         })}

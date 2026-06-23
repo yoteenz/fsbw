@@ -11,6 +11,7 @@ import {
   desktopRoomCoverTypography,
   mapDesktopRoomTitlePlacementToContainer,
 } from '../../utils/desktopRoomCoverLayout';
+import { resolveDesktopRoomTitleTextScale } from '../../constants/desktopRoomTitleTextScale';
 import { useDesktopRoomCoverMeasure } from '../../hooks/useDesktopRoomCoverMeasure';
 import { DesktopRoomTitleMetallicSvg } from './DesktopRoomTitleMetallicSvg';
 import { DesktopRoomTitleDebugSquare } from './DesktopRoomTitleDebugSquare';
@@ -51,6 +52,8 @@ export function DesktopRoomTitle({
 
   if (!hasTitle && !hasSubtitle) return null;
 
+  const textScale = resolveDesktopRoomTitleTextScale(placement);
+
   const mapped =
     width > 0 && height > 0
       ? mapDesktopRoomTitlePlacementToContainer(placement, width, height)
@@ -67,17 +70,17 @@ export function DesktopRoomTitle({
         };
 
   const scaledSubtitleGapPx =
-    width > 0 && height > 0
+    (width > 0 && height > 0
       ? desktopRoomCoverSubtitleGapPx(placement, width, height, DESKTOP_ROOM_SUBTITLE_GAP_SCALE)
-      : placement.subtitleGapPx * DESKTOP_ROOM_SUBTITLE_GAP_SCALE;
+      : placement.subtitleGapPx * DESKTOP_ROOM_SUBTITLE_GAP_SCALE) * textScale;
 
   const anchorStyle = {
     '--desktop-room-title-left': `${mapped.leftPct}%`,
     '--desktop-room-title-top': `${mapped.topPct}%`,
     '--desktop-room-subtitle-gap': `${scaledSubtitleGapPx}px`,
-    '--desktop-room-title-font-size': `${typography.titleFontPx}px`,
-    '--desktop-room-subtitle-font-size': `${typography.subtitleFontPx}px`,
-    '--desktop-room-title-max-width': `${typography.titleMaxWidthPx}px`,
+    '--desktop-room-title-font-size': `${typography.titleFontPx * textScale}px`,
+    '--desktop-room-subtitle-font-size': `${typography.subtitleFontPx * textScale}px`,
+    '--desktop-room-title-max-width': `${typography.titleMaxWidthPx * textScale}px`,
   } as CSSProperties;
 
   const flexStyle = {
@@ -122,6 +125,7 @@ export function DesktopRoomTitle({
       zoneId={zoneId}
       measureRef={measureRef}
       anchorStyle={anchorStyle}
+      textScale={textScale}
     >
       <div
         className="desktop-room-title desktop-room-title--anchored-inner"

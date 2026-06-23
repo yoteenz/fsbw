@@ -13,6 +13,8 @@ export type DesktopRoomTitlePlacement = {
   subtitleGapPx: number;
   /** Optional horizontal nudge from dead center (%) — all rooms centered at 0 */
   centerOffsetPct: number;
+  /** Pinch scale for red title + black subtitle together (1 = design default). */
+  textScale?: number;
   notes: string;
 };
 

@@ -1,11 +1,15 @@
 import {
   useCallback,
+  useEffect,
   useRef,
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
+import {
+  roundDesktopRoomTitleTextScale,
+} from '../../constants/desktopRoomTitleTextScale';
 import {
   ROOM_TITLE_PROFILE_DEBUG_COLOR,
   ROOM_TITLE_PROFILE_DEBUG_FILL,
@@ -24,39 +28,66 @@ type Props = {
   zoneId: string;
   measureRef: RefObject<HTMLElement | null>;
   anchorStyle: CSSProperties;
+  textScale: number;
   children: ReactNode;
 };
 
 type DragState = {
+  pointerId: number;
   startX: number;
   startY: number;
   startLeftPct: number;
   startTopPct: number;
 };
 
-/** Temporary QA square wrapping title + subtitle — drag moves both in cover-mapped space. */
-export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, children }: Props) {
+type PinchState = {
+  startDistance: number;
+  startScale: number;
+};
+
+function pointerDistance(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  return Math.hypot(dx, dy);
+}
+
+/** Temporary QA square — drag to move; pinch (or ctrl+wheel) to scale title + subtitle together. */
+export function DesktopRoomTitleDebugSquare({
+  zoneId,
+  measureRef,
+  anchorStyle,
+  textScale,
+  children,
+}: Props) {
   const editor = useDesktopRoomTitlePlacementEditor();
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
   const profileHook = useDesktopRoomTitleViewportProfile();
   const profile = editor?.profile ?? profileHook;
   const rootRef = useRef<HTMLDivElement>(null);
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
   const dragRef = useRef<DragState | null>(null);
+  const pinchRef = useRef<PinchState | null>(null);
 
   const editEnabled = Boolean(editor?.editEnabled && profile);
   const showSquare = Boolean(debugEnabled && profile);
   const isSelected = editor?.activeZoneId === zoneId;
 
-  const onPointerDown = useCallback(
-    (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editor?.editEnabled || !profile) return;
-      event.preventDefault();
-      event.stopPropagation();
+  const patchTextScale = useCallback(
+    (nextScale: number) => {
+      if (!editor) return;
+      editor.patchPlacement(zoneId, {
+        textScale: roundDesktopRoomTitleTextScale(nextScale),
+      });
+    },
+    [editor, zoneId],
+  );
 
-      if (!isSelected) {
-        editor.setActiveZoneId(zoneId);
-        return;
-      }
+  const beginDrag = useCallback(
+    (pointerId: number, clientX: number, clientY: number) => {
+      if (!editor) return;
 
       const layer = measureRef.current ?? (rootRef.current?.offsetParent as HTMLElement | null);
       const { width, height } = measureDesktopRoomCoverBox(layer);
@@ -65,50 +96,140 @@ export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, c
       const placement = editor.getPlacement(zoneId);
       const mapped = mapDesktopRoomTitlePlacementToContainer(placement, width, height);
       dragRef.current = {
-        startX: event.clientX,
-        startY: event.clientY,
+        pointerId,
+        startX: clientX,
+        startY: clientY,
         startLeftPct: mapped.leftPct,
         startTopPct: mapped.topPct,
       };
-
-      const onMove = (e: PointerEvent) => {
-        const drag = dragRef.current;
-        if (!drag || !editor) return;
-
-        const liveLayer = measureRef.current ?? (rootRef.current?.offsetParent as HTMLElement | null);
-        const { width: w, height: h } = measureDesktopRoomCoverBox(liveLayer);
-        if (w <= 0 || h <= 0) return;
-
-        const dxPct = ((e.clientX - drag.startX) / w) * 100;
-        const dyPct = ((e.clientY - drag.startY) / h) * 100;
-        const imagePoint = mapDesktopRoomContainerPointToImage(
-          {
-            left: (drag.startLeftPct + dxPct) / 100,
-            top: (drag.startTopPct + dyPct) / 100,
-          },
-          w,
-          h,
-        );
-
-        editor.patchPlacement(zoneId, {
-          titleTopPct: Math.round(imagePoint.y * 10000) / 100,
-          centerOffsetPct: Math.round((imagePoint.x - 0.5) * 10000) / 100,
-        });
-      };
-
-      const onUp = () => {
-        dragRef.current = null;
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-        window.removeEventListener('pointercancel', onUp);
-      };
-
-      window.addEventListener('pointermove', onMove);
-      window.addEventListener('pointerup', onUp);
-      window.addEventListener('pointercancel', onUp);
+      pinchRef.current = null;
     },
-    [editor, isSelected, measureRef, profile, zoneId],
+    [editor, measureRef, zoneId],
   );
+
+  const beginPinch = useCallback(() => {
+    if (!editor || pointersRef.current.size < 2) return;
+    const points = [...pointersRef.current.values()];
+    dragRef.current = null;
+    pinchRef.current = {
+      startDistance: Math.max(24, pointerDistance(points[0], points[1])),
+      startScale: editor.getPlacement(zoneId).textScale ?? 1,
+    };
+  }, [editor, zoneId]);
+
+  const onPointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!editor?.editEnabled || !profile) return;
+      event.preventDefault();
+      event.stopPropagation();
+
+      rootRef.current?.setPointerCapture(event.pointerId);
+      pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+      if (!isSelected) {
+        editor.setActiveZoneId(zoneId);
+        return;
+      }
+
+      if (pointersRef.current.size === 1) {
+        beginDrag(event.pointerId, event.clientX, event.clientY);
+      } else if (pointersRef.current.size === 2) {
+        beginPinch();
+      }
+    },
+    [beginDrag, beginPinch, editor, isSelected, profile, zoneId],
+  );
+
+  const onPointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!editor?.editEnabled || !profile || !isSelected) return;
+      if (!pointersRef.current.has(event.pointerId)) return;
+
+      pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+      if (pointersRef.current.size >= 2 && pinchRef.current) {
+        const points = [...pointersRef.current.values()];
+        if (points.length < 2) return;
+        const distance = pointerDistance(points[0], points[1]);
+        const ratio = distance / pinchRef.current.startDistance;
+        patchTextScale(pinchRef.current.startScale * ratio);
+        return;
+      }
+
+      const drag = dragRef.current;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+
+      const liveLayer = measureRef.current ?? (rootRef.current?.offsetParent as HTMLElement | null);
+      const { width: w, height: h } = measureDesktopRoomCoverBox(liveLayer);
+      if (w <= 0 || h <= 0) return;
+
+      const dxPct = ((event.clientX - drag.startX) / w) * 100;
+      const dyPct = ((event.clientY - drag.startY) / h) * 100;
+      const imagePoint = mapDesktopRoomContainerPointToImage(
+        {
+          left: (drag.startLeftPct + dxPct) / 100,
+          top: (drag.startTopPct + dyPct) / 100,
+        },
+        w,
+        h,
+      );
+
+      editor.patchPlacement(zoneId, {
+        titleTopPct: Math.round(imagePoint.y * 10000) / 100,
+        centerOffsetPct: Math.round((imagePoint.x - 0.5) * 10000) / 100,
+      });
+    },
+    [editor, isSelected, measureRef, patchTextScale, profile, zoneId],
+  );
+
+  const endPointer = useCallback((pointerId: number) => {
+    pointersRef.current.delete(pointerId);
+    if (dragRef.current?.pointerId === pointerId) {
+      dragRef.current = null;
+    }
+    if (pointersRef.current.size < 2) {
+      pinchRef.current = null;
+    }
+    if (pointersRef.current.size === 1) {
+      const [remainingId, point] = [...pointersRef.current.entries()][0];
+      beginDrag(remainingId, point.x, point.y);
+    }
+  }, [beginDrag]);
+
+  const onPointerUp = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (rootRef.current?.hasPointerCapture(event.pointerId)) {
+        rootRef.current.releasePointerCapture(event.pointerId);
+      }
+      endPointer(event.pointerId);
+    },
+    [endPointer],
+  );
+
+  const onPointerCancel = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (rootRef.current?.hasPointerCapture(event.pointerId)) {
+        rootRef.current.releasePointerCapture(event.pointerId);
+      }
+      endPointer(event.pointerId);
+    },
+    [endPointer],
+  );
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !editEnabled || !isSelected) return;
+
+    const onWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey) return;
+      event.preventDefault();
+      const factor = event.deltaY < 0 ? 1.04 : 0.96;
+      patchTextScale(textScale * factor);
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [editEnabled, isSelected, patchTextScale, textScale]);
 
   if (!showSquare || !profile) {
     return (
@@ -120,6 +241,7 @@ export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, c
 
   const outline = ROOM_TITLE_PROFILE_DEBUG_COLOR[profile];
   const fill = ROOM_TITLE_PROFILE_DEBUG_FILL[profile];
+  const scaleLabel = textScale === 1 ? '' : ` · ${textScale.toFixed(2)}×`;
 
   const debugStyle: CSSProperties = {
     outline: `${isSelected ? 2 : 1}px dashed ${outline}`,
@@ -137,6 +259,9 @@ export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, c
       className="desktop-room-title desktop-room-title-debug-square"
       style={{ ...anchorStyle, ...debugStyle }}
       onPointerDown={editEnabled ? onPointerDown : undefined}
+      onPointerMove={editEnabled ? onPointerMove : undefined}
+      onPointerUp={editEnabled ? onPointerUp : undefined}
+      onPointerCancel={editEnabled ? onPointerCancel : undefined}
     >
       <span
         aria-hidden
@@ -158,6 +283,7 @@ export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, c
         }}
       >
         {ROOM_TITLE_PROFILE_LABEL[profile]} · {zoneId}
+        {scaleLabel}
       </span>
       {children}
     </div>
