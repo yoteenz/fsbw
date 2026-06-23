@@ -31470,3 +31470,13 @@ User requested **another 4px** between red foil room title and black subtitle on
 - **`DesktopRoomTitle.css`** — **`row-gap`** fallback **18px → 22px**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Subtitle spacing override fix (+8px boost reliable)
+
+User reported **+4px / +8px gap above black subtitle** still looked unchanged — something overriding spacing.
+
+- **Causes:** (1) boost baked into **`calc(... 100vw ... + 8px)`** — **`vw`** wrong on scaled artboard; (2) debug mode set gap vars on outer anchor while flex container is inner **`--anchored-inner`**; (3) **`margin-top: 0`** on **`.desktop-room-title__line--subtitle`** blocked margin-based boost.
+- **Fix:** **`DesktopRoomTitle.tsx`** — resolve scaled gap to **px** via **`getDesktopLayoutViewportWidth()`**; separate **`--desktop-room-subtitle-boost`** (8px screen); artboard compensates boost by **`1/artboardScale`**; apply **`flexStyle` on flex root** in debug path. **`DesktopRoomTitle.css`** — sibling rule **`.line--title + .line--subtitle { margin-top: var(--desktop-room-subtitle-boost) }`** after **`margin-top: 0`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
