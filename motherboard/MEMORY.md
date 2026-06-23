@@ -31785,3 +31785,15 @@ User supplied a **21:9 Reception** mansion PNG (`C466C40A-…F227.png`) and aske
 - **Background:** **`DESKTOP_NO_TEXT_ROOM_BACKGROUNDS.reception`** updated to new PNG; reception room title overlay cleared (empty title + subtitle).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Penthouse Suite etched acrylic overlay redo
+
+Follow-up: user rejected the first embedded glass version as **generic white HTML cards** over the image. Redo to match the **filled reference** — luxury content **printed/etched** onto existing illuminated acrylic panels, not separate boxes.
+
+- **Removed:** opaque white/marble card backgrounds, oversized typography, stacked subtext, progress bars, activity bullet lists, paragraph copy, floating misaligned icons, separate flat rectangles on hover.
+- **New style:** transparent panel shells at rest; subtle `rgba(255,255,255,0.06)` + `blur(2px)` inner glow on hover only. Small uppercase Futura labels, thin red `#EB1C24` divider, **one value max** per panel, micro icons (7cqi), no paragraph text.
+- **`PenthouseSuiteEtchedPanel`** — minimal label / rule / value / optional tiny CTA. Hero = red diamond badge + tier + member since.
+- **Content:** Hero (tier, member since); Row 1 (DP, Slay Tickets, Vouchers, Digital Cash); Row 2 (Orders, Rewards Collection → View Collection, Referrals); Row 3 (Wishlist, My Activity → Recent Activity, Affiliate, Account Settings → Manage Settings). Live data from **`penthouseSuiteDashboardData.ts`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
