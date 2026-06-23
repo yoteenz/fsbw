@@ -5,22 +5,47 @@ import {
   RECEPTION_DASHBOARD_IMAGE,
   RECEPTION_DASHBOARD_PANEL_RECTS,
 } from '../../constants/desktopReceptionDashboard';
-import {
-  buildReceptionDashboardContent,
-  type ReceptionDiscoveryCard,
-  type ReceptionFeaturedExperience,
-} from '../../utils/receptionDashboardData';
+import { buildReceptionDashboardContent } from '../../utils/receptionDashboardData';
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
 import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import {
-  DesktopEmbeddedDiscoveryCard,
-  DesktopEmbeddedGlassPanel,
-} from '../desktop-lobby/embedded-glass/DesktopEmbeddedGlassPanel';
-import '../desktop-lobby/embedded-glass/DesktopEmbeddedGlassPanel.css';
+import { DesktopPanelTextOverlay } from '../desktop-lobby/panel-text/DesktopPanelTextOverlay';
+import '../desktop-lobby/panel-text/DesktopPanelTextOverlay.css';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
 };
+
+const LEFT_LABELS = [
+  'New Lounge Content',
+  'New Slay Cam Uploads',
+  'New Collectible',
+  'Build-A-Wig Trends',
+  'Community Spotlight',
+] as const;
+
+const RIGHT_LABELS = [
+  'Hair Analysis Lab',
+  'Build-A-Wig Atelier',
+  'The Lounge',
+  'Rewards Gallery',
+  'Slay Cam',
+] as const;
+
+const LEFT_PANEL_IDS = [
+  'loungeContent',
+  'slayCamUploads',
+  'newCollectible',
+  'bawTrends',
+  'communitySpotlight',
+] as const;
+
+const RIGHT_PANEL_IDS = [
+  'hairAnalysisLab',
+  'bawAtelier',
+  'theLounge',
+  'rewardsGallery',
+  'slayCam',
+] as const;
 
 function useReceptionNavigate() {
   const navigate = useNavigate();
@@ -32,108 +57,29 @@ function useReceptionNavigate() {
   };
 }
 
-function FeaturedBillboard({
-  data,
-  onActivate,
-  debug,
-}: {
-  data: ReceptionFeaturedExperience;
-  onActivate: () => void;
-  debug?: boolean;
-}) {
-  return (
-    <DesktopEmbeddedGlassPanel
-      ariaLabel={data.ariaLabel}
-      onActivate={onActivate}
-      debug={debug}
-      variant="billboard"
-    >
-      <div className="desktop-embedded-glass__row">
-        {data.thumbSrc ? (
-          <div className="desktop-embedded-glass__thumb" aria-hidden>
-            <img src={data.thumbSrc} alt="" draggable={false} />
-          </div>
-        ) : null}
-        <div className="desktop-embedded-glass__copy">
-          <p className="desktop-embedded-glass__kicker">{data.kicker}</p>
-          <p className="desktop-embedded-glass__title">{data.title}</p>
-          <p className="desktop-embedded-glass__metric">{data.metric}</p>
-          <p className="desktop-embedded-glass__subtext">{data.subtext}</p>
-          <div className="desktop-embedded-glass__cta">{data.cta}</div>
-        </div>
-      </div>
-    </DesktopEmbeddedGlassPanel>
-  );
-}
-
-function DiscoveryPanel({
-  card,
-  imageRect,
-  measureRef,
-  onActivate,
-  debug,
-}: {
-  card: ReceptionDiscoveryCard;
-  imageRect: (typeof RECEPTION_DASHBOARD_PANEL_RECTS)[keyof typeof RECEPTION_DASHBOARD_PANEL_RECTS];
-  measureRef: RefObject<HTMLElement | null>;
-  onActivate: () => void;
-  debug?: boolean;
-}) {
-  return (
-    <DesktopRoomCoverRectAnchor
-      measureRef={measureRef}
-      imageRect={imageRect}
-      image={RECEPTION_DASHBOARD_IMAGE}
-      zIndex={6}
-    >
-      <DesktopEmbeddedDiscoveryCard
-        title={card.title}
-        metric={card.metric}
-        subtext={card.subtext}
-        cta={card.cta}
-        iconSrc={card.iconSrc}
-        thumbSrc={card.thumbSrc}
-        ariaLabel={card.ariaLabel}
-        onActivate={onActivate}
-        debug={debug}
-      />
-    </DesktopRoomCoverRectAnchor>
-  );
-}
-
 export function ReceptionDashboard({ measureRef }: Props) {
   const go = useReceptionNavigate();
   const debug = isReceptionDashboardDebugEnabled();
   const content = buildReceptionDashboardContent();
   const rects = RECEPTION_DASHBOARD_PANEL_RECTS;
 
-  const leftPanelIds = [
-    'loungeContent',
-    'slayCamUploads',
-    'newCollectible',
-    'bawTrends',
-    'communitySpotlight',
-  ] as const;
-
-  const rightPanelIds = [
-    'hairAnalysisLab',
-    'bawAtelier',
-    'theLounge',
-    'rewardsGallery',
-    'slayCam',
-  ] as const;
-
   return (
-    <div className="reception-dashboard" aria-label="Reception discovery dashboard">
-      {content.todayInMansion.map((card, index) => (
-        <DiscoveryPanel
-          key={card.id}
-          card={card}
-          imageRect={rects[leftPanelIds[index]]}
+    <div className="reception-dashboard" aria-label="Reception discovery labels">
+      {LEFT_LABELS.map((label, index) => (
+        <DesktopRoomCoverRectAnchor
+          key={LEFT_PANEL_IDS[index]}
           measureRef={measureRef}
-          onActivate={() => go(card.href)}
-          debug={debug}
-        />
+          imageRect={rects[LEFT_PANEL_IDS[index]]}
+          image={RECEPTION_DASHBOARD_IMAGE}
+          zIndex={6}
+        >
+          <DesktopPanelTextOverlay
+            lines={[{ text: label }]}
+            ariaLabel={label}
+            onActivate={() => go(content.todayInMansion[index].href)}
+            debug={debug}
+          />
+        </DesktopRoomCoverRectAnchor>
       ))}
 
       <DesktopRoomCoverRectAnchor
@@ -142,22 +88,34 @@ export function ReceptionDashboard({ measureRef }: Props) {
         image={RECEPTION_DASHBOARD_IMAGE}
         zIndex={6}
       >
-        <FeaturedBillboard
-          data={content.featured}
+        <DesktopPanelTextOverlay
+          lines={[
+            { text: 'Featured Experience' },
+            { text: 'The Lounge' },
+            { text: 'Watch Now', accent: true },
+          ]}
+          ariaLabel="Featured experience: The Lounge"
           onActivate={() => go(content.featured.href)}
           debug={debug}
+          align="center"
         />
       </DesktopRoomCoverRectAnchor>
 
-      {content.recommendedDestinations.map((card, index) => (
-        <DiscoveryPanel
-          key={card.id}
-          card={card}
-          imageRect={rects[rightPanelIds[index]]}
+      {RIGHT_LABELS.map((label, index) => (
+        <DesktopRoomCoverRectAnchor
+          key={RIGHT_PANEL_IDS[index]}
           measureRef={measureRef}
-          onActivate={() => go(card.href)}
-          debug={debug}
-        />
+          imageRect={rects[RIGHT_PANEL_IDS[index]]}
+          image={RECEPTION_DASHBOARD_IMAGE}
+          zIndex={6}
+        >
+          <DesktopPanelTextOverlay
+            lines={[{ text: label }]}
+            ariaLabel={label}
+            onActivate={() => go(content.recommendedDestinations[index].href)}
+            debug={debug}
+          />
+        </DesktopRoomCoverRectAnchor>
       ))}
     </div>
   );

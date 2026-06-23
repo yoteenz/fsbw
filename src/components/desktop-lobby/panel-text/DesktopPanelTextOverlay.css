@@ -1,0 +1,60 @@
+.desktop-panel-text {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.35em;
+  margin: 0;
+  padding: 9% 8%;
+  overflow: hidden;
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  text-align: left;
+  container-type: size;
+}
+
+.desktop-panel-text--center {
+  align-items: center;
+  text-align: center;
+}
+
+.desktop-panel-text--debug {
+  outline: 1px dashed rgba(255, 193, 7, 0.75);
+}
+
+.desktop-panel-text:focus-visible {
+  outline: 1px solid rgba(235, 28, 36, 0.45);
+  outline-offset: -1px;
+}
+
+.desktop-panel-text__line {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 4.6cqi;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #111;
+  line-height: 1.2;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.desktop-panel-text__line--accent {
+  color: #eb1c24;
+}
+
+.penthouse-suite-dashboard,
+.reception-dashboard {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}

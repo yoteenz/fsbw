@@ -6,7 +6,7 @@ import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgrou
 import { DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL } from '../../../constants/desktopPenthouseSuite';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import '../../../components/desktop-account/DesktopPenthouseSuiteScene.css';
-import '../../../components/desktop-account/PenthouseSuiteDashboard.css';
+import '../../../components/desktop-lobby/panel-text/DesktopPanelTextOverlay.css';
 
 export default function DesktopAccountPage() {
   const viewportRef = useRef<HTMLElement>(null);
