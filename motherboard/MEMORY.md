@@ -31662,3 +31662,15 @@ User reported lounge showed **cinema/dimmed background before PRESS TO PLAY**, *
 - **TV frame:** Single mapped container — **`LoungeTvScreen`** uses **`position: absolute; inset: 0`**. Debug square uses **`placement="inset"`** inside the same frame (not a misaligned sibling). **Close (X)** always shown in cinema mode (including debug). **PRESS TO PLAY** only when cinema off.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Floating crystals on tablet room backgrounds
+
+User asked to add the same **floating crystal diamonds** from the desktop background design to the **tablet design** (768–1023px) for equal immersion.
+
+- **`DesktopRoomAmbientOverlay`** — shared vignette + **`ParticleField`** inside **`DesktopZoneRoomScene`** (penthouse + all floor zones).
+- **`desktopRoomAmbientEffects.ts`** — explicit enable for desktop ≥1024, tablet 768–1023, and phone artboard.
+- **`ParticleField`** — **ResizeObserver** on container for reliable canvas sizing on tablet/native layouts.
+- Removed duplicate ambient markup from **`DesktopFloorZonePage`** and **`penthouse/page.tsx`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
