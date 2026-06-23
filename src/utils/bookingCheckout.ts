@@ -13,7 +13,7 @@ export function filterBookingCartLines<T extends { type?: string }>(items: T[]):
 }
 
 export function isBookingsCheckoutPath(pathname: string): boolean {
-  return pathname.includes('/checkout/bookings');
+  return pathname.includes('/checkout/bookings') || pathname.includes('/desktop/acquisition/bookings');
 }
 
 /** True when `/checkout/bookings` is showing a non-empty cart of only A/C lines (appointment + consult). */

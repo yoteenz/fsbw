@@ -1,10 +1,5 @@
 import type { RefObject } from 'react';
-import {
-  DESKTOP_SHOPPING_BAG_BACKGROUND_URL,
-  DESKTOP_SHOPPING_BAG_IMAGE,
-  DESKTOP_SHOPPING_BAG_TABLET_RECT,
-} from '../../constants/desktopShoppingBag';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
+import { DesktopCuratorSuiteScene } from './DesktopCuratorSuiteScene';
 import { CuratedCollectionTablet } from './CuratedCollectionTablet';
 import './DesktopShoppingBag.css';
 
@@ -34,35 +29,18 @@ export function DesktopShoppingBagScene({
   onEnterShowroom,
 }: Props) {
   return (
-    <div className="desktop-shopping-bag-scene" aria-label="Curator's tablet shopping bag">
-      <img
-        src={DESKTOP_SHOPPING_BAG_BACKGROUND_URL}
-        alt=""
-        className="desktop-shopping-bag-scene__bg"
-        draggable={false}
-        width={DESKTOP_SHOPPING_BAG_IMAGE.width}
-        height={DESKTOP_SHOPPING_BAG_IMAGE.height}
+    <DesktopCuratorSuiteScene measureRef={measureRef}>
+      <CuratedCollectionTablet
+        cartItems={cartItems}
+        itemCount={itemCount}
+        subtotal={subtotal}
+        removingIds={removingIds}
+        onEdit={onEdit}
+        onRemove={onRemove}
+        onOpenPdp={onOpenPdp}
+        onAcquire={onAcquire}
+        onEnterShowroom={onEnterShowroom}
       />
-      <div className="desktop-shopping-bag-scene__layer">
-        <DesktopRoomCoverRectAnchor
-          measureRef={measureRef}
-          imageRect={DESKTOP_SHOPPING_BAG_TABLET_RECT}
-          image={DESKTOP_SHOPPING_BAG_IMAGE}
-          zIndex={6}
-        >
-          <CuratedCollectionTablet
-            cartItems={cartItems}
-            itemCount={itemCount}
-            subtotal={subtotal}
-            removingIds={removingIds}
-            onEdit={onEdit}
-            onRemove={onRemove}
-            onOpenPdp={onOpenPdp}
-            onAcquire={onAcquire}
-            onEnterShowroom={onEnterShowroom}
-          />
-        </DesktopRoomCoverRectAnchor>
-      </div>
-    </div>
+    </DesktopCuratorSuiteScene>
   );
 }

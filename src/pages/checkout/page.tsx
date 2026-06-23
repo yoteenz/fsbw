@@ -119,6 +119,11 @@ import {
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { CommercePageBackground } from '../../components/commerce/CommercePageBackground';
 import { DESKTOP_CHECKOUT_PAGE_BACKGROUND } from '../../constants/desktopNoTextBackgrounds';
+import { useDesktopCuratorCheckout } from '../../utils/desktopCuratorCheckout';
+import { useDesktopCuratorCheckoutBridge } from '../../components/desktop-shopping-bag/DesktopCuratorCheckoutBridge';
+import { CuratedAcquisitionCartList } from '../../components/desktop-shopping-bag/CuratedAcquisitionCartList';
+import { CuratorAcquisitionSummaryPanel } from '../../components/desktop-shopping-bag/CuratorAcquisitionSummaryPanel';
+import '../../components/desktop-shopping-bag/DesktopAcquisition.css';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -268,6 +273,9 @@ function CheckoutPage() {
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
   const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
   const isSlayTicketCheckoutRoute = isSlayTicketCheckoutPath(location.pathname);
+  const isDesktopCuratorCheckout = useDesktopCuratorCheckout();
+  const curatorCheckoutBridge = useDesktopCuratorCheckoutBridge();
+  const confirmOrderButtonRef = useRef<HTMLButtonElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const applyDiscountCodeRef = useRef<() => Promise<void>>(async () => {});
   const [pendingConsultDiscountCode, setPendingConsultDiscountCode] = useState<string | null>(null);
@@ -289,6 +297,7 @@ function CheckoutPage() {
     const path = location.pathname;
     if (path === '/checkout/upgrade') return undefined;
     if (path.includes('/checkout/bookings') || path.includes('/checkout/gift-card') || path.includes('/checkout/slay-tickets')) return undefined;
+    if (path.includes('/desktop/acquisition/bookings') || path.includes('/desktop/acquisition/gift-card') || path.includes('/desktop/acquisition/slay-tickets')) return undefined;
     const fromLines = cartBillableQuantityUnits(cartItems);
     return cartItems.length > 0 ? fromLines : undefined;
   }, [cartItems, location.pathname, inventory.version]);
@@ -1061,8 +1070,12 @@ function CheckoutPage() {
       navigate('/bag');
       return;
     }
+    if (isDesktopCuratorCheckout) {
+      navigate('/desktop/shopping-bag');
+      return;
+    }
     navigate('/bag');
-  }, [goBackToMembershipUpgradeChart, isGiftCardCheckoutRoute, isSlayTicketCheckoutRoute, isSubscriptionUpgrade, navigate]);
+  }, [goBackToMembershipUpgradeChart, isDesktopCuratorCheckout, isGiftCardCheckoutRoute, isSlayTicketCheckoutRoute, isSubscriptionUpgrade, navigate]);
 
   useEffect(() => {
     if (!isSubscriptionUpgrade) {
@@ -2895,6 +2908,18 @@ function CheckoutPage() {
   const tipAmount = tipPercentage !== null ? Math.round(orderAmount * (tipPercentage / 100)) : (customTipApplied ? customTipAmount : 0);
   const subtotal = orderAmount + taxesProcessing + shippingHandling + rushProcessing + protectionFee - totalDiscount + tipAmount;
 
+  useEffect(() => {
+    if (!isDesktopCuratorCheckout || !curatorCheckoutBridge) return;
+    curatorCheckoutBridge.setFinalTotal(subtotal);
+  }, [isDesktopCuratorCheckout, curatorCheckoutBridge, subtotal]);
+
+  useEffect(() => {
+    if (!isDesktopCuratorCheckout || !curatorCheckoutBridge) return;
+    curatorCheckoutBridge.registerSubmit(() => {
+      confirmOrderButtonRef.current?.click();
+    });
+  }, [isDesktopCuratorCheckout, curatorCheckoutBridge]);
+
   // Prepare payment data for payment handlers
   const preparePaymentData = (): PaymentData => {
     const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
@@ -3241,16 +3266,31 @@ function CheckoutPage() {
           }
         }
       `}</style>
-      <div className="min-h-screen" style={{ position: 'relative' }}>
+      <div
+        className={isDesktopCuratorCheckout ? 'min-h-screen curated-acquisition-checkout' : 'min-h-screen'}
+        style={{ position: 'relative' }}
+      >
         {/* Marble (mobile) / desktop hero (≥1024px) */}
-        <CommercePageBackground desktopSrc={DESKTOP_CHECKOUT_PAGE_BACKGROUND} />
+        {!isDesktopCuratorCheckout ? (
+          <CommercePageBackground desktopSrc={DESKTOP_CHECKOUT_PAGE_BACKGROUND} />
+        ) : null}
         
         {/* Scrollable Content */}
         <div className="relative z-10">
-          <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+          <div
+            className="flex flex-col py-5 px-4"
+            data-checkout-outer-padding
+            style={{
+              minWidth: '100%',
+              maxWidth: 'none',
+              overflow: 'visible',
+              ...(isDesktopCuratorCheckout ? { padding: 0, minHeight: 0, height: '100%' } : {}),
+            }}
+          >
             {/* NAV BAR CONTAINER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
+            data-checkout-nav-shell
             style={{ border: '1.3px solid black' }}
           >
             {/* Left side buttons */}
@@ -3375,16 +3415,18 @@ function CheckoutPage() {
 
           {/* MAIN CARD - only apply menu-toggle-card when menu is open so main card height is not forced when showing checkout form. */}
           <div
+            data-checkout-main-card
             className={showMobileMenu ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out' : 'border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'}
             style={{ 
-              borderWidth: '1.3px',
+              borderWidth: isDesktopCuratorCheckout ? '0' : '1.3px',
               minWidth: '100%', 
               maxWidth: 'none', 
               overflow: 'visible',
-              backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
-              height: showMobileMenu ? 'calc(100dvh - 80px)' : 'auto',
-              boxSizing: 'border-box'
+              backgroundColor: isDesktopCuratorCheckout ? 'transparent' : 'rgba(255, 255, 255, 0.6)',
+              minHeight: showMobileMenu ? 'calc(100dvh - 80px)' : isDesktopCuratorCheckout ? 0 : 'auto',
+              height: showMobileMenu ? 'calc(100dvh - 80px)' : isDesktopCuratorCheckout ? '100%' : 'auto',
+              boxSizing: 'border-box',
+              ...(isDesktopCuratorCheckout ? { padding: 0, margin: 0 } : {}),
             }}
           >
             {showMobileMenu ? (
@@ -3497,7 +3539,27 @@ function CheckoutPage() {
               </div>
             ) : (
               /* CHECKOUT CONTENT */
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', rowGap: '24px' }}>
+              <div
+                className={isDesktopCuratorCheckout ? 'curator-checkout-grid' : ''}
+                style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: isDesktopCuratorCheckout ? '12px' : '24px', rowGap: isDesktopCuratorCheckout ? '12px' : '24px' }}
+              >
+                {isDesktopCuratorCheckout ? <CuratedAcquisitionCartList /> : null}
+                {isDesktopCuratorCheckout ? (
+                  <CuratorAcquisitionSummaryPanel
+                    orderAmount={orderAmount}
+                    taxesProcessing={taxesProcessing}
+                    shippingHandling={shippingHandling}
+                    rushProcessing={rushProcessing}
+                    protectionFee={protectionFee}
+                    tipAmount={tipAmount}
+                    totalDiscount={totalDiscount}
+                    subtotal={subtotal}
+                    checkoutSkipsShipping={checkoutSkipsShipping}
+                    premiumShippingDiscount={premiumShippingDiscount}
+                  />
+                ) : null}
+                {!isDesktopCuratorCheckout ? (
+                <>
                 {/* ORDER SUMMARY HEADER */}
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '-1px', marginTop: '-12px' }}>
                   <button
@@ -3843,6 +3905,8 @@ function CheckoutPage() {
                   }}>
                   </div>
                 </div>
+                </>
+                ) : null}
 
                 {/* DISCOUNT CODE SECTION */}
                 <div>
@@ -4118,7 +4182,7 @@ function CheckoutPage() {
                       fontWeight: '500'
                     }}
                   >
-                    SHIPPING ADDRESS:
+                    SHIPPING {isDesktopCuratorCheckout ? 'DESTINATION' : 'ADDRESS'}:
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -4936,7 +5000,7 @@ function CheckoutPage() {
                       fontWeight: '500'
                     }}
                   >
-                    PAYMENT:
+                    {isDesktopCuratorCheckout ? 'PAYMENT METHOD:' : 'PAYMENT:'}
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                           <div>
@@ -5902,7 +5966,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* ORDER SUMMARY (COST BREAKDOWN) */}
-                <div style={{ marginBottom: '24px' }}>
+                <div style={{ marginBottom: '24px' }} data-checkout-cost-summary>
                   <h2 
                     style={{ 
                       fontFamily: '"Futura PT Medium"',
@@ -6354,8 +6418,9 @@ function CheckoutPage() {
 
           {/* CONFIRM ORDER BUTTON - Outside main card */}
           {!showMobileMenu && (
-            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+            <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }} data-checkout-confirm-host>
                   <button
+                    ref={confirmOrderButtonRef}
                     onClick={() => void (async () => {
                   if (isCreativePreviewCheckoutBlocked()) {
                     setValidationMessage('PAYMENTS ARE DISABLED IN CREATIVE PREVIEW MODE. THIS DEPLOYMENT IS FOR DESIGN REVIEW ONLY.');

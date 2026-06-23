@@ -1,0 +1,471 @@
+.curated-tablet--acquisition-enter {
+  animation: curated-tablet-acquire-enter 0.72s cubic-bezier(0.22, 1, 0.36,  1) both;
+}
+
+@keyframes curated-tablet-acquire-enter {
+  from {
+    opacity: 0.88;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.curated-tablet__header--acquisition {
+  padding-bottom: clamp(4px, 1cqi, 8px);
+}
+
+.curated-acquisition__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.curated-acquisition-complete {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: clamp(8px, 2cqi, 14px);
+  padding: clamp(8px, 1.8cqi, 12px) clamp(10px, 2.2cqi, 14px);
+  margin-top: auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.2) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.curated-acquisition-complete__left {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 1.2cqi, 8px);
+  min-width: 0;
+}
+
+.curated-acquisition-complete__lock {
+  display: flex;
+  color: #333;
+  opacity: 0.85;
+}
+
+.curated-acquisition-complete__secure {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.8cqi, 9px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #333;
+  white-space: nowrap;
+}
+
+.curated-acquisition-complete__total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.curated-acquisition-complete__total-label {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.6cqi, 9px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.curated-acquisition-complete__total-value {
+  font-family: 'Futura PT Demi', 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(9px, 2.6cqi, 14px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.curated-acquisition-complete__cta {
+  padding: clamp(8px, 1.8cqi, 12px) clamp(12px, 2.8cqi, 20px);
+  border: 1px solid rgba(168, 15, 22, 0.65);
+  background: linear-gradient(180deg, #ff3b44 0%, #eb1c24 48%, #b51218 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 2px 8px rgba(235, 28, 36, 0.22);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2.1cqi, 11px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.2s ease;
+}
+
+.curated-acquisition-complete__cta:hover {
+  filter: brightness(1.05);
+}
+
+/* Checkout embedded inside acquisition tablet */
+.curated-acquisition-checkout {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.curated-acquisition-checkout .curated-acquisition-checkout-host {
+  height: 100%;
+  min-height: 0;
+}
+
+.curated-acquisition-checkout [data-checkout-nav-shell] {
+  display: none !important;
+}
+
+.curated-acquisition-checkout [data-checkout-outer-padding] {
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+.curated-acquisition-checkout .curator-checkout-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(8px, 2cqi, 14px);
+  width: 100%;
+  min-height: 0;
+  align-items: start;
+  flex-direction: unset !important;
+}
+
+.curated-acquisition-checkout .curator-checkout-grid > [data-checkout-collection-list],
+.curated-acquisition-checkout .curator-checkout-grid > .curated-acquisition-list__empty {
+  grid-column: 1;
+  grid-row: 1 / span 30;
+  align-self: start;
+  max-height: 100%;
+}
+
+.curated-acquisition-checkout .curator-checkout-grid > [data-checkout-acquisition-summary] {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.curated-acquisition-checkout .curator-checkout-grid > [data-checkout-acquisition-summary] ~ * {
+  grid-column: 2;
+}
+
+.curated-acquisition-checkout [data-checkout-main-grid] {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(8px, 2cqi, 14px);
+  width: 100%;
+  min-height: 0;
+  align-items: start;
+}
+
+.curated-acquisition-checkout [data-checkout-left-col],
+.curated-acquisition-checkout [data-checkout-right-col] {
+  min-width: 0;
+}
+
+.curated-acquisition-checkout [data-checkout-left-col] {
+  max-height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.curated-acquisition-checkout [data-checkout-right-col] {
+  max-height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.curated-acquisition-checkout [data-checkout-confirm-host] {
+  display: none !important;
+}
+
+.curated-acquisition-checkout .shipping-calculator-input,
+.curated-acquisition-checkout .shipping-calculator-select,
+.curated-acquisition-checkout input,
+.curated-acquisition-checkout select,
+.curated-acquisition-checkout textarea {
+  background: rgba(255, 255, 255, 0.28) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.curated-acquisition-checkout label {
+  font-size: clamp(6px, 1.7cqi, 9px) !important;
+  letter-spacing: 0.12em;
+}
+
+@media (max-width: 1100px) {
+  .curated-acquisition-checkout [data-checkout-main-grid] {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+}
+
+/* Curator acquisition — embedded checkout shell */
+.curated-acquisition-checkout.min-h-screen,
+.curated-acquisition-checkout {
+  min-height: 0 !important;
+  height: 100%;
+}
+
+.curated-acquisition-checkout [data-checkout-main-card] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.curated-acquisition-checkout [data-checkout-cost-summary] {
+  display: none !important;
+}
+
+.curated-acquisition-checkout [data-checkout-section-title='shipping'] {
+  /* shipping destination label handled in JSX */
+}
+
+/* Acquisition summary panel */
+.curator-acquisition-summary {
+  margin-bottom: clamp(8px, 2cqi, 14px);
+  padding: clamp(8px, 1.8cqi, 12px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.curator-acquisition-summary__title {
+  margin: 0 0 clamp(6px, 1.4cqi, 10px);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2cqi, 11px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #eb1c24;
+  text-align: center;
+}
+
+.curator-acquisition-summary__rows {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.8cqi, 5px);
+}
+
+.curator-acquisition-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.7cqi, 9px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #222;
+}
+
+.curator-acquisition-summary__row dt,
+.curator-acquisition-summary__row dd {
+  margin: 0;
+}
+
+.curator-acquisition-summary__row--discount dd {
+  color: #eb1c24;
+}
+
+.curator-acquisition-summary__row--total {
+  margin-top: clamp(4px, 1cqi, 6px);
+  padding-top: clamp(4px, 1cqi, 6px);
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  font-family: 'Futura PT Demi', 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+}
+
+/* Vertical collection list (left column) */
+.curated-acquisition-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2cqi, 12px);
+  max-height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  padding-right: 2px;
+}
+
+.curated-acquisition-list__empty {
+  margin: 0;
+  text-align: center;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2cqi, 10px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #444;
+}
+
+.curated-acquisition-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(6px, 1.6cqi, 10px);
+  padding: clamp(6px, 1.4cqi, 10px);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.curated-acquisition-item--removing {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.curated-acquisition-item__image-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.curated-acquisition-item__plinth {
+  width: clamp(48px, 12cqi, 72px);
+  height: clamp(48px, 12cqi, 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curated-acquisition-item__plinth img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.curated-acquisition-item__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.curated-acquisition-item__name {
+  margin: 0;
+  font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', cursive, sans-serif;
+  font-size: clamp(9px, 2.4cqi, 13px);
+  text-transform: uppercase;
+  color: #111;
+  line-height: 1.15;
+}
+
+.curated-acquisition-item__specs {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.6cqi, 8px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #eb1c24;
+}
+
+.curated-acquisition-item__price {
+  margin: 0;
+  font-family: 'Futura PT Demi', 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 1.9cqi, 10px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.curated-acquisition-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(4px, 1.2cqi, 8px);
+  margin-top: clamp(4px, 1cqi, 6px);
+}
+
+.curated-acquisition-item__qty {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(4px, 1cqi, 6px);
+  padding: 2px clamp(4px, 1cqi, 6px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.curated-acquisition-item__qty button {
+  width: clamp(14px, 3.6cqi, 18px);
+  height: clamp(14px, 3.6cqi, 18px);
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.35);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 2cqi, 11px);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.curated-acquisition-item__qty span {
+  min-width: 1.2em;
+  text-align: center;
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 1.8cqi, 9px);
+}
+
+.curated-acquisition-item__qty-label {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.6cqi, 8px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.curated-acquisition-item__edit,
+.curated-acquisition-item__remove {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.6cqi, 8px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.curated-acquisition-item__edit {
+  color: #333;
+}
+
+.curated-acquisition-item__remove {
+  color: #eb1c24;
+}
+
+.curated-tablet__enter-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  animation: curated-tablet-enter-flash 0.72s ease-out both;
+}
+
+@keyframes curated-tablet-enter-flash {
+  from {
+    opacity: 0.9;
+    transform: translateX(-30%);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+}
+
+.curated-tablet__shimmer--acquisition {
+  animation-duration: 0.72s;
+  animation-iteration-count: 1;
+}
+

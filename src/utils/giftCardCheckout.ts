@@ -45,7 +45,7 @@ export function filterGiftCardCartLines<T extends { type?: string; name?: string
 }
 
 export function isGiftCardCheckoutPath(pathname: string): boolean {
-  return pathname.includes('/checkout/gift-card');
+  return pathname.includes('/checkout/gift-card') || pathname.includes('/desktop/acquisition/gift-card');
 }
 
 /** True when `/checkout/gift-card` is showing a non-empty cart of only gift card lines. */

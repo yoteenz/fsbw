@@ -7,7 +7,10 @@ import {
   isGiftCardCartLine,
   migrateGiftCardCartLinesForStorage,
 } from '../utils/giftCardCheckout';
+import { applyGiftCardBagQuantityDelta } from '../utils/giftCardCheckout';
 import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../utils/giftCardCheckoutSession';
+import { isBookingCartLine } from '../utils/bookingCheckout';
+import { isSlayTicketPackCartLine } from '../utils/slayTicketCheckout';
 import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 import { trackActivity } from '../utils/activity';
@@ -155,12 +158,59 @@ export function useDesktopShoppingBagCart() {
     }, 280);
   }, []);
 
+  const changeQuantity = useCallback(
+    (itemId: string, delta: number) => {
+      try {
+        const current = loadCartFromStorage();
+        const currentItem = current.find((i) => i.id === itemId);
+        if (!currentItem) return;
+        if (currentItem.consultOfferQtyLocked === true) return;
+        if (currentItem.bcfBundleDeal) return;
+        if (isBookingCartLine(currentItem) || isSlayTicketPackCartLine(currentItem)) return;
+
+        const giftDelta = applyGiftCardBagQuantityDelta(currentItem, delta > 0 ? 1 : -1);
+        if (giftDelta) {
+          if (giftDelta.atMax) return;
+          if (giftDelta.removeLine) {
+            removeItem(itemId);
+            return;
+          }
+          const next = current.map((i) => (i.id === itemId ? giftDelta.next : i));
+          persistCart(next);
+          setCartItems(next);
+          return;
+        }
+
+        const maxQty = currentItem.isSpecialOffer ? 2 : 10;
+        const currentQty = currentItem.quantity ?? 1;
+        const newQty = currentQty + delta;
+        if (newQty <= 0) {
+          removeItem(itemId);
+          return;
+        }
+        const clampedQty = Math.max(1, Math.min(maxQty, newQty));
+        const next = current.map((i) => (i.id === itemId ? { ...i, quantity: clampedQty } : i));
+        persistCart(next);
+        setCartItems(next);
+        trackActivity(delta > 0 ? 'add_to_cart' : 'remove_from_cart', {
+          source: 'desktop_acquisition',
+          change: delta > 0 ? 'quantity_up' : 'quantity_down',
+          productName: (currentItem.name || currentItem.productName || '').toString().trim() || undefined,
+        });
+      } catch {
+        /* ignore */
+      }
+    },
+    [removeItem],
+  );
+
   return {
     cartItems,
     itemCount,
     subtotal,
     removingIds,
     removeItem,
+    changeQuantity,
     reload,
   };
 }

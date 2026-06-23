@@ -21,6 +21,10 @@ function isGuestCommerceAllowedPath(pathname: string): boolean {
   if (pathname === '/checkout/bookings') return true;
   if (pathname === '/checkout/gift-card') return true;
   if (pathname === '/checkout/slay-tickets') return true;
+  if (pathname === '/desktop/acquisition') return true;
+  if (pathname === '/desktop/acquisition/bookings') return true;
+  if (pathname === '/desktop/acquisition/gift-card') return true;
+  if (pathname === '/desktop/acquisition/slay-tickets') return true;
   return false;
 }
 

@@ -173,6 +173,7 @@ const DesktopConciergePage = lazyWithRetry(() => import('./pages/desktop/concier
 const DesktopSlayCamRedirectPage = lazyWithRetry(() => import('./pages/desktop/slay-cam/page'), 'DesktopSlayCamRedirectPage');
 const DesktopAccountPage = lazyWithRetry(() => import('./pages/desktop/account/page'), 'DesktopAccountPage');
 const DesktopShoppingBagPage = lazyWithRetry(() => import('./pages/desktop/shopping-bag/page'), 'DesktopShoppingBagPage');
+const DesktopAcquisitionPage = lazyWithRetry(() => import('./pages/desktop/acquisition/page'), 'DesktopAcquisitionPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 function DesktopRoutesLayout() {
@@ -515,6 +516,34 @@ function App() {
             <CommerceRouteGuard>
               <Suspense fallback={<LoadingScreen />}>
                 <DesktopShoppingBagPage />
+              </Suspense>
+            </CommerceRouteGuard>
+          } />
+          <Route path="/desktop/acquisition" element={
+            <CommerceRouteGuard>
+              <Suspense fallback={<LoadingScreen />}>
+                <DesktopAcquisitionPage />
+              </Suspense>
+            </CommerceRouteGuard>
+          } />
+          <Route path="/desktop/acquisition/bookings" element={
+            <CommerceRouteGuard>
+              <Suspense fallback={<LoadingScreen />}>
+                <DesktopAcquisitionPage />
+              </Suspense>
+            </CommerceRouteGuard>
+          } />
+          <Route path="/desktop/acquisition/gift-card" element={
+            <CommerceRouteGuard>
+              <Suspense fallback={<LoadingScreen />}>
+                <DesktopAcquisitionPage />
+              </Suspense>
+            </CommerceRouteGuard>
+          } />
+          <Route path="/desktop/acquisition/slay-tickets" element={
+            <CommerceRouteGuard>
+              <Suspense fallback={<LoadingScreen />}>
+                <DesktopAcquisitionPage />
               </Suspense>
             </CommerceRouteGuard>
           } />

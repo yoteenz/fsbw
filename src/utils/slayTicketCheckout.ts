@@ -14,7 +14,7 @@ export function filterSlayTicketCartLines<T extends { type?: string; name?: stri
 }
 
 export function isSlayTicketCheckoutPath(pathname: string): boolean {
-  return pathname.includes('/checkout/slay-tickets');
+  return pathname.includes('/checkout/slay-tickets') || pathname.includes('/desktop/acquisition/slay-tickets');
 }
 
 /** True when `/checkout/slay-tickets` is showing a non-empty cart of only Slay Ticket pack lines. */

@@ -8,7 +8,7 @@ import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgrou
 import { DESKTOP_SHOPPING_BAG_BACKGROUND_URL } from '../../../constants/desktopShoppingBag';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopDestinationHref } from '../../../constants/desktopNavQuickRoutes';
-import { checkoutPathForCartItems } from '../../../utils/checkoutNavigatePath';
+import { desktopAcquisitionPathForCartItems } from '../../../utils/desktopCheckoutNavigatePath';
 import {
   executeCartLineEditAction,
   resolveCartLineEditAction,
@@ -44,7 +44,7 @@ export default function DesktopShoppingBagPage() {
       goShowroom();
       return;
     }
-    navigate(checkoutPathForCartItems(cartItems));
+    navigate(desktopAcquisitionPathForCartItems(cartItems), { state: { fromCollection: true } });
   }, [cartItems, goShowroom, navigate]);
 
   const onEdit = useCallback(
