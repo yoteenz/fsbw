@@ -31584,3 +31584,13 @@ User asked for red room labels + black subtitles (and future desktop room overla
 - **Future overlays:** **`DesktopRoomCoverPointAnchor`** / **`DesktopRoomCoverRectAnchor`** + **`desktopRoomHeroArt.ts`** (1915×821); convention added to **`CORE.md`**. TV lounge frame already uses the same cover pattern.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Fix room title debug square drag after cover lock
+
+User reported red room-title debug squares no longer moved after cover-locked placement landed.
+
+- **Cause:** Drag handler bailed when **`useDesktopRoomCoverMeasure`** returned **0×0** (stale closure / ref not attached on first layout pass) and used image-space pixel deltas that did not track the pointer 1:1.
+- **Fix:** **`DesktopRoomTitleDebugSquare`** — drag in **cover-mapped container %** (1:1 with mouse), convert to image placement on each move; read live box from **`measureRef`** via **`measureDesktopRoomCoverBox`**. **`useDesktopRoomCoverMeasure`** retries ResizeObserver attach on next frame when ref was null initially.
+- Pushed **`master`** + **`preview/mobile`**.
+
