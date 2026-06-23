@@ -31450,3 +31450,13 @@ User reported **`/desktop/gallery?zone=members-lounge&roomTitleDebug=1&roomTitle
 - **Fix:** **`DesktopRoomTitle.tsx`** — debug chrome only when **`editor?.profile`** exists; **`DesktopRoomTitleDebugSquare.tsx`** — fallback wraps children with **`anchorStyle`** if profile missing; **`desktopRoomTitlePlacementDebug.ts`** — profile on scaled artboard when width **≥768** (phone artboard still **`null`**); **`DesktopRoomTitlePlacementEditorPanel.tsx`** — banner on phone when debug flags on but squares unavailable.
 - **QA:** Debug squares need viewport **≥768px**; phone artboard still shows wall labels but not drag squares. Commit **`34fee0c0`** on **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room label debug squares on phone artboard
+
+Follow-up: user saw **room text** after anchor fix but still **no red debug squares** and the **“phone layout”** banner on **`?roomTitleDebug=1&roomTitleEdit=1`**.
+
+- **Cause:** Phone scaled artboard (≤767px) still returned **`profile: null`**, so debug chrome stayed off.
+- **Fix:** **`getDesktopRoomTitleViewportProfile()`** — scaled artboard always uses **`desktop`** profile (same 1920×1080 % grid); removed phone-only null + “phone layout” panel banner.
+- Pushed **`master`** + **`preview/mobile`** (commit **`a89511ec`**).
+
