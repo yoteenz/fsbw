@@ -30989,3 +30989,13 @@ Summary of the **whole conversation so far** in this chat: PSA Suite hologram; e
 - **Files:** `DesktopTowerNavProvider.tsx`, `DesktopTowerElevatorExperience.tsx`, `desktopTowerElevatorVideo.ts`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Floating nav trigger labels: elevator / zones (Bohemy)
+
+Summary of the **whole conversation so far** in this chat: elevator loop/routing fix; Extensions Boutique portal hotspot; user asked for **"elevator"** and **"zones"** labels below the floor/room trigger icons inside their acrylic panels — red lowercase **Bohemy**.
+
+- **`FloatingNavTrigger.tsx`:** caption **`elevator`** (floors) / **`zones`** (rooms) below glyph inside panel.
+- **`FloatingNavTrigger.css`:** taller trigger column; **`.floating-nav-trigger__caption`** — `Bohemy`, `#eb1c24`, lowercase; drawer bottom offset nudged for taller triggers.
+- Pushed **`master`** + **`preview/mobile`**.
+
