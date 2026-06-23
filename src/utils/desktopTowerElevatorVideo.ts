@@ -281,7 +281,8 @@ function playElevatorVideoReverseScrub(video: HTMLVideoElement): Promise<void> {
 
     const cleanup = () => {
       cancelled = true;
-      if (frameHandle) cancelFrame(video, frameHandle);
+      if (frameHandle) cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
       activePlaybackCancel = null;
     };
 
@@ -300,12 +301,24 @@ function playElevatorVideoReverseScrub(video: HTMLVideoElement): Promise<void> {
     video.pause();
     video.playbackRate = 1;
     video.loop = false;
-    video.currentTime = Math.max(0, duration - 1 / 30);
+    try {
+      video.currentTime = Math.max(0, duration - 1 / 30);
+    } catch {
+      /* seek before fully decoded — first tick retries */
+    }
 
-    const tick = (now: number) => {
+    /**
+     * Drive the scrub with requestAnimationFrame (wall-clock), NOT requestVideoFrameCallback.
+     * rVFC only fires when a paused video presents a *new* frame; coalesced/duplicate seek
+     * frames can stop it firing, which stalled descents on the elevator screen forever (the
+     * promise never resolved → journey hung until the watchdog). rAF fires every frame
+     * regardless of the video, so elapsed time always reaches the end and the transition
+     * completes.
+     */
+    const tick = () => {
       if (cancelled) return;
 
-      const elapsed = now - startAt;
+      const elapsed = performance.now() - startAt;
       const progress = Math.min(1, elapsed / playbackMs);
       const targetTime = duration * (1 - progress);
 
@@ -323,10 +336,10 @@ function playElevatorVideoReverseScrub(video: HTMLVideoElement): Promise<void> {
         return;
       }
 
-      frameHandle = scheduleFrame(video, tick);
+      frameHandle = requestAnimationFrame(tick);
     };
 
-    frameHandle = scheduleFrame(video, tick);
+    frameHandle = requestAnimationFrame(tick);
   });
 }
 
