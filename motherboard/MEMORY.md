@@ -31613,3 +31613,12 @@ User asked to reduce **reception station** black subtitle text only by **4px**.
 - **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX`** — **`reception: -4`**; applied in **`DesktopRoomTitle`** to subtitle font size only (red foil title unchanged).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Reception subtitle −3px more (total −7px)
+
+User asked to reduce reception black subtitle by **another 3px** (now **−7px** total vs default).
+
+- Updated **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX.reception`** from **−4** to **−7**.
+- Pushed **`master`** + **`preview/mobile`**.
+
