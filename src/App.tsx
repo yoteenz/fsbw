@@ -217,8 +217,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'red',
-          color: 'white',
+          backgroundColor: 'white',
+          color: '#eb1c24',
           padding: '20px',
           fontSize: '24px',
           zIndex: 99999,
@@ -226,47 +226,53 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '20px'
+          gap: '20px',
+          textTransform: 'uppercase',
         }}>
-          <h1 style={{ fontSize: '18px', textAlign: 'center', margin: 0 }}>
+          <h1 style={{ fontSize: '18px', textAlign: 'center', margin: 0, fontWeight: 600, letterSpacing: '0.12em' }}>
             {isChunkError ? 'UPDATING THE APP' : 'ERROR: COMPONENT FAILED TO LOAD'}
           </h1>
-          <p style={{ fontSize: '14px', textAlign: 'center', maxWidth: '320px', lineHeight: 1.4, margin: 0 }}>
+          <p style={{ fontSize: '14px', textAlign: 'center', maxWidth: '320px', lineHeight: 1.4, margin: 0, letterSpacing: '0.06em' }}>
             {isChunkError
               ? 'A new version was deployed while this tab was open. Tap reload to refresh — your data on this device is kept.'
               : this.state.error?.message}
           </p>
           {isChunkError ? (
-            <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-              <button
-                type="button"
-                onClick={() => forceReloadForStaleChunks()}
-                style={{
-                  padding: '10px 20px',
-                  fontSize: '16px',
-                  backgroundColor: 'white',
-                  color: 'red',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                }}
-              >
-                Reload Page
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => forceReloadForStaleChunks()}
+              style={{
+                marginTop: '8px',
+                padding: 0,
+                fontSize: '16px',
+                backgroundColor: 'transparent',
+                color: '#eb1c24',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 600,
+                letterSpacing: '0.14em',
+                textDecoration: 'underline',
+                textUnderlineOffset: '4px',
+              }}
+            >
+              Reload Page
+            </button>
           ) : (
             <button
               type="button"
               onClick={this.handleRetry}
               style={{
-                padding: '10px 20px',
+                marginTop: '8px',
+                padding: 0,
                 fontSize: '16px',
-                backgroundColor: 'white',
-                color: 'red',
+                backgroundColor: 'transparent',
+                color: '#eb1c24',
                 border: 'none',
                 cursor: 'pointer',
-                fontWeight: 'bold',
-                marginTop: '8px',
+                fontWeight: 600,
+                letterSpacing: '0.14em',
+                textDecoration: 'underline',
+                textUnderlineOffset: '4px',
               }}
             >
               Retry
