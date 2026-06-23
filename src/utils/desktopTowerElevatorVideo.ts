@@ -3,6 +3,8 @@ import {
   DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_LOCAL_PATH,
 } from '../constants/desktopTowerEnv';
 import type { TowerTravelDirection } from '../constants/desktopTowerMotion';
+import type { ElevatorPlaybackPlan } from './elevatorPlaybackPlan';
+import { logElevatorPlaybackPlanDebug } from './elevatorPlaybackPlan';
 
 /**
  * Pre-reversed MP4 (same source clip, reversed at build time via `npm run elevator:reverse-video`).
@@ -364,7 +366,145 @@ function playElevatorVideoReverseScrub(video: HTMLVideoElement): Promise<void> {
   });
 }
 
-/** Run one full elevator clip — forward (up) or reversed clip forward (down). */
+function seekVideoTo(video: HTMLVideoElement, timeSec: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const target = Math.max(0, timeSec);
+
+    if (Math.abs(video.currentTime - target) < 0.04) {
+      resolve();
+      return;
+    }
+
+    const onSeeked = () => {
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('error', onError);
+      resolve();
+    };
+
+    const onError = () => {
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('error', onError);
+      reject(new Error('elevator video seek failed'));
+    };
+
+    video.addEventListener('seeked', onSeeked);
+    video.addEventListener('error', onError);
+
+    try {
+      video.currentTime = target;
+    } catch (error) {
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('error', onError);
+      reject(error);
+    }
+  });
+}
+
+function playVideoUntil(
+  video: HTMLVideoElement,
+  endTimeSec: number,
+  isCancelled: () => boolean,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let frameHandle = 0;
+
+    const cleanup = () => {
+      if (frameHandle) cancelAnimationFrame(frameHandle);
+      video.removeEventListener('ended', onEnded);
+    };
+
+    const finish = () => {
+      cleanup();
+      video.pause();
+      resolve();
+    };
+
+    const onEnded = () => finish();
+
+    const tick = () => {
+      if (isCancelled()) {
+        cleanup();
+        reject(new DOMException('Aborted', 'AbortError'));
+        return;
+      }
+
+      if (video.currentTime >= endTimeSec - 0.04 || video.ended) {
+        finish();
+        return;
+      }
+
+      frameHandle = requestAnimationFrame(tick);
+    };
+
+    video.loop = false;
+    video.playbackRate = 1;
+
+    void video
+      .play()
+      .then(() => {
+        if (isCancelled()) {
+          reject(new DOMException('Aborted', 'AbortError'));
+          return;
+        }
+        video.addEventListener('ended', onEnded);
+        frameHandle = requestAnimationFrame(tick);
+      })
+      .catch(reject);
+  });
+}
+
+export type ElevatorVideoPlaybackCallbacks = {
+  onDoorOpenStart?: () => void;
+};
+
+/**
+ * Play only the travel + door-open segments for the journey (not the full clip).
+ */
+export async function runElevatorVideoPlaybackPlan(
+  video: HTMLVideoElement,
+  plan: ElevatorPlaybackPlan,
+  callbacks?: ElevatorVideoPlaybackCallbacks,
+): Promise<void> {
+  cancelElevatorVideoTransition(video);
+  logElevatorPlaybackPlanDebug(plan);
+
+  let cancelled = false;
+  activePlaybackCancel = () => {
+    cancelled = true;
+  };
+
+  await ensureVideoSrc(video, plan.videoSrc);
+  await waitForVideoEvent(video, 'canplaythrough').catch(() => undefined);
+
+  try {
+    video.pause();
+    video.playbackRate = 1;
+    video.loop = false;
+
+    await seekVideoTo(video, plan.startTime);
+    if (cancelled) throw new DOMException('Aborted', 'AbortError');
+
+    await playVideoUntil(video, plan.travelEndTime, () => cancelled);
+    if (cancelled) throw new DOMException('Aborted', 'AbortError');
+
+    await seekVideoTo(video, plan.doorOpenStart);
+    if (cancelled) throw new DOMException('Aborted', 'AbortError');
+
+    callbacks?.onDoorOpenStart?.();
+
+    await playVideoUntil(video, plan.doorOpenEnd, () => cancelled);
+  } finally {
+    activePlaybackCancel = null;
+    video.pause();
+    try {
+      video.currentTime = plan.doorOpenEnd;
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+/** @deprecated Prefer {@link runElevatorVideoPlaybackPlan} with a floor-based plan. */
 export async function runElevatorVideoTransition(
   video: HTMLVideoElement,
   direction: TowerTravelDirection,

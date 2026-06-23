@@ -25,14 +25,10 @@ import {
   getTowerFloorStops,
   resolveTowerDirection,
   resolveTowerTravelFrame,
-  resolveTowerTravelTiming,
-  TOWER_ARRIVED_MS,
   TOWER_BOARD_MS,
-  TOWER_ELEVATOR_VIDEO_FALLBACK_MS,
   TOWER_FADE_MS,
   TOWER_VIDEO_READY_TIMEOUT_MS,
   type TowerTravelDirection,
-  type TowerTravelTiming,
 } from '../../constants/desktopTowerMotion';
 import {
   DesktopTowerElevatorExperience,
@@ -41,9 +37,14 @@ import {
 import { FloorNavDrawer } from '../desktop-lobby/floating-nav/FloorNavDrawer';
 import { markDesktopTowerArrival } from './useDesktopTowerPageReveal';
 import {
+  getElevatorPlaybackPlan,
+  logElevatorPlaybackPlanDebug,
+  type ElevatorPlaybackPlan,
+} from '../../utils/elevatorPlaybackPlan';
+import {
   waitForDesktopTowerElevatorVideoReady,
   warmDesktopTowerElevatorVideo,
-  getDesktopTowerElevatorVideoDurationSec,
+  resolveDesktopTowerElevatorVideoSrc,
 } from '../../utils/desktopTowerElevatorVideo';
 import {
   isPhoneDesktopArtboardActive,
@@ -57,6 +58,7 @@ type TowerJourney = {
   direction: TowerTravelDirection;
   destinationHref: string;
   floorStops: number[];
+  playbackPlan: ElevatorPlaybackPlan;
 };
 
 type DesktopTowerNavContextValue = {
@@ -106,6 +108,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   const timersRef = useRef<number[]>([]);
   const journeyRunRef = useRef(0);
   const videoPlaybackCompleteRef = useRef<(() => void) | null>(null);
+  const doorOpenHandledRef = useRef(false);
 
   const [journey, setJourney] = useState<TowerJourney | null>(null);
   const [phase, setPhase] = useState<TowerElevatorPhase>('boarding');
@@ -147,29 +150,26 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   }, [journey]);
 
   const runTravelAnimation = useCallback(
-    (next: Omit<TowerJourney, 'floorStops'> & { floorStops?: number[] }) => {
+    (next: Omit<TowerJourney, 'floorStops' | 'playbackPlan'> & { floorStops?: number[] }) => {
       clearTimers();
       const runId = journeyRunRef.current + 1;
       journeyRunRef.current = runId;
 
       const floorStops = next.floorStops ?? getTowerFloorStops(next.fromFloor.id, next.toFloor.id);
-      const journeyWithStops: TowerJourney = { ...next, floorStops };
+      const playbackPlan: ElevatorPlaybackPlan = {
+        ...getElevatorPlaybackPlan(next.fromFloor.id, next.toFloor.id),
+        videoSrc: resolveDesktopTowerElevatorVideoSrc(
+          resolveTowerDirection(next.fromFloor, next.toFloor),
+        ),
+      };
+      logElevatorPlaybackPlanDebug(playbackPlan);
 
-      const resolveElevatorVideoMs = () =>
-        Math.ceil(
-          (getDesktopTowerElevatorVideoDurationSec() ?? TOWER_ELEVATOR_VIDEO_FALLBACK_MS / 1000) * 1000,
-        );
-
-      let travelDurationMs = resolveTowerTravelTiming(
-        floorStops,
-        resolveElevatorVideoMs(),
-      ).totalDurationMs;
+      const journeyWithStops: TowerJourney = { ...next, floorStops, playbackPlan };
 
       const maxJourneyMs =
         TOWER_VIDEO_READY_TIMEOUT_MS +
         TOWER_BOARD_MS +
-        travelDurationMs +
-        TOWER_ARRIVED_MS +
+        playbackPlan.totalTransitionDurationMs +
         TOWER_FADE_MS +
         3000;
 
@@ -187,6 +187,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       const journeyWatchdog = window.setTimeout(forceCompleteJourney, maxJourneyMs);
       timersRef.current.push(journeyWatchdog);
 
+      doorOpenHandledRef.current = false;
       setJourney(journeyWithStops);
       setPhase('boarding');
       setDisplayLevelId(next.fromFloor.id);
@@ -196,18 +197,12 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       const startTravel = () => {
         if (journeyRunRef.current !== runId) return;
 
-        const travelTiming = resolveTowerTravelTiming(floorStops, resolveElevatorVideoMs());
-        travelDurationMs = travelTiming.totalDurationMs;
-
         setPhase('traveling');
         const start = performance.now();
         let travelFinished = false;
         let travelTimelineComplete = false;
         let videoPlaybackComplete = false;
-        const motionTiming: Pick<TowerTravelTiming, 'travelMsPerFloor' | 'floorDwellMs'> = {
-          travelMsPerFloor: travelTiming.travelMsPerFloor,
-          floorDwellMs: travelTiming.floorDwellMs,
-        };
+        const travelMsPerFloor = playbackPlan.travelDurationMs / playbackPlan.floorsTraveled;
 
         const tryFinishTravel = () => {
           if (travelFinished || journeyRunRef.current !== runId) return;
@@ -224,25 +219,14 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             rafRef.current = null;
           }
 
-          setDisplayLevelId(next.toFloor.id);
-          setCabinFloorId(next.toFloor.id);
-          setPhase('arrived');
+          setPhase('exiting');
 
-          const arrivedTimer = window.setTimeout(() => {
+          const fadeTimer = window.setTimeout(() => {
             if (journeyRunRef.current !== runId) return;
-
-            markDesktopTowerArrival();
-            navigate(next.destinationHref);
-            setPhase('exiting');
-
-            const fadeTimer = window.setTimeout(() => {
-              if (journeyRunRef.current !== runId) return;
-              setJourney(null);
-              setPhase('boarding');
-            }, TOWER_FADE_MS);
-            timersRef.current.push(fadeTimer);
-          }, TOWER_ARRIVED_MS);
-          timersRef.current.push(arrivedTimer);
+            setJourney(null);
+            setPhase('boarding');
+          }, TOWER_FADE_MS);
+          timersRef.current.push(fadeTimer);
         };
 
         videoPlaybackCompleteRef.current = () => {
@@ -255,18 +239,21 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
           if (journeyRunRef.current !== runId) return;
           travelTimelineComplete = true;
           tryFinishTravel();
-        }, travelDurationMs + 32);
+        }, playbackPlan.totalTransitionDurationMs + 32);
         timersRef.current.push(travelEndTimer);
 
         const tick = (now: number) => {
           if (journeyRunRef.current !== runId) return;
 
           const elapsed = now - start;
-          const frame = resolveTowerTravelFrame(floorStops, elapsed, motionTiming);
+          const frame = resolveTowerTravelFrame(floorStops, elapsed, {
+            travelMsPerFloor,
+            floorDwellMs: 0,
+          });
           setDisplayLevelId(frame.displayLevelId);
           setCabinFloorId(frame.cabinFloorId);
 
-          if (elapsed < travelDurationMs) {
+          if (elapsed < playbackPlan.totalTransitionDurationMs) {
             rafRef.current = requestAnimationFrame(tick);
             return;
           }
@@ -310,6 +297,17 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   );
 
   /** Stable identity — routed through a ref so per-frame re-renders never restart playback. */
+  const handleDoorOpenStart = useCallback(() => {
+    if (!journey || doorOpenHandledRef.current) return;
+    doorOpenHandledRef.current = true;
+
+    markDesktopTowerArrival();
+    navigate(journey.destinationHref);
+    setDisplayLevelId(journey.toFloor.id);
+    setCabinFloorId(journey.toFloor.id);
+    setPhase('opening');
+  }, [journey, navigate]);
+
   const handleVideoPlaybackComplete = useCallback(() => {
     videoPlaybackCompleteRef.current?.();
   }, []);
@@ -366,6 +364,8 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
           phase={phase}
           displayLevelId={displayLevelId}
           cabinFloorId={cabinFloorId}
+          playbackPlan={journey.playbackPlan}
+          onDoorOpenStart={handleDoorOpenStart}
           onVideoPlaybackComplete={handleVideoPlaybackComplete}
         />
         <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>

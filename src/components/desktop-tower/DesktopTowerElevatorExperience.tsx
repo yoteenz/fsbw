@@ -9,11 +9,11 @@ import { TOWER_SHELL_HOLO } from '../../constants/desktopTowerElevatorLayout';
 import { formatTowerLevelLabel, formatTowerElevatorHoloName, type TowerTravelDirection } from '../../constants/desktopTowerMotion';
 import {
   cancelElevatorVideoTransition,
-  getDesktopTowerElevatorVideoSrc,
   resolveDesktopTowerElevatorVideoSrc,
-  runElevatorVideoTransition,
+  runElevatorVideoPlaybackPlan,
   warmDesktopTowerElevatorVideo,
 } from '../../utils/desktopTowerElevatorVideo';
+import type { ElevatorPlaybackPlan } from '../../utils/elevatorPlaybackPlan';
 import { isPhoneDesktopArtboardActive } from '../../hooks/useDesktopArtboardPortalTarget';
 import './DesktopTowerElevator.css';
 
@@ -26,6 +26,8 @@ type Props = {
   phase: TowerElevatorPhase;
   displayLevelId: number;
   cabinFloorId: number;
+  playbackPlan: ElevatorPlaybackPlan;
+  onDoorOpenStart?: () => void;
   onVideoPlaybackComplete?: () => void;
 };
 
@@ -42,6 +44,8 @@ export function DesktopTowerElevatorExperience({
   direction,
   phase,
   cabinFloorId,
+  playbackPlan,
+  onDoorOpenStart,
   onVideoPlaybackComplete,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -61,6 +65,11 @@ export function DesktopTowerElevatorExperience({
   useEffect(() => {
     onVideoPlaybackCompleteRef.current = onVideoPlaybackComplete;
   }, [onVideoPlaybackComplete]);
+
+  const onDoorOpenStartRef = useRef(onDoorOpenStart);
+  useEffect(() => {
+    onDoorOpenStartRef.current = onDoorOpenStart;
+  }, [onDoorOpenStart]);
 
   const cabinFloor = getDesktopFloorById(cabinFloorId) ?? fromFloor;
   const isAtDestination = phase === 'traveling' && cabinFloorId === toFloor.id;
@@ -146,13 +155,12 @@ export function DesktopTowerElevatorExperience({
     playbackRunRef.current = runId;
     setVideoPlaying(true);
 
-    const lockedSrc =
-      direction === 'up'
-        ? getDesktopTowerElevatorVideoSrc()
-        : resolveDesktopTowerElevatorVideoSrc('down');
+    const lockedSrc = playbackPlan.videoSrc || resolveDesktopTowerElevatorVideoSrc(direction);
     lockedVideoSrcRef.current = lockedSrc;
 
-    void runElevatorVideoTransition(video, direction, lockedSrc)
+    void runElevatorVideoPlaybackPlan(video, { ...playbackPlan, videoSrc: lockedSrc }, {
+      onDoorOpenStart: () => onDoorOpenStartRef.current?.(),
+    })
       .then(() => {
         if (playbackRunRef.current !== runId) return;
         onVideoPlaybackCompleteRef.current?.();
@@ -169,7 +177,7 @@ export function DesktopTowerElevatorExperience({
       cancelElevatorVideoTransition(video);
       setVideoPlaying(false);
     };
-  }, [direction, phase, videoFailed, videoReady]);
+  }, [direction, phase, playbackPlan, videoFailed, videoReady]);
 
   useEffect(() => {
     if (phase === 'boarding' || phase === 'traveling') return;
@@ -220,7 +228,7 @@ export function DesktopTowerElevatorExperience({
             ) : null}
             <video
               ref={videoRef}
-              src={resolveDesktopTowerElevatorVideoSrc(direction)}
+              src={playbackPlan.videoSrc || resolveDesktopTowerElevatorVideoSrc(direction)}
               className={`desktop-tower-elevator__shell-media${
                 videoPlaying ? ' desktop-tower-elevator__shell-media--playing' : ''
               }`}
@@ -243,6 +251,32 @@ export function DesktopTowerElevatorExperience({
           className={`desktop-tower-elevator__holo ${holo.accent ? 'desktop-tower-elevator__holo--accent' : ''}`}
           style={{ top: `${TOWER_SHELL_HOLO.top}%`, width: `${TOWER_SHELL_HOLO.width}%` }}
         >
+          {import.meta.env.DEV ? (
+            <div
+              className="desktop-tower-elevator__debug-plan"
+              aria-hidden
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '100%',
+                marginTop: 4,
+                fontFamily: 'monospace',
+                fontSize: 9,
+                lineHeight: 1.35,
+                textAlign: 'left',
+                color: '#111',
+                background: 'rgba(255,255,255,0.88)',
+                border: '1px solid rgba(0,0,0,0.2)',
+                padding: '4px 6px',
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+              }}
+            >
+              F{playbackPlan.currentFloor}→F{playbackPlan.destinationFloor} · {playbackPlan.direction} ·
+              Δ{playbackPlan.floorsTraveled} · travel {playbackPlan.travelDurationMs}ms · doors{' '}
+              {playbackPlan.doorOpenStart.toFixed(2)}–{playbackPlan.doorOpenEnd.toFixed(2)}s
+            </div>
+          ) : null}
           <div className="desktop-tower-elevator__holo-label">{holo.kicker}</div>
           <div className="desktop-tower-elevator__holo-level">{holo.level}</div>
           <div className="desktop-tower-elevator__holo-name">{holo.name}</div>
