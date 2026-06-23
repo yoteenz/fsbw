@@ -31480,3 +31480,12 @@ User reported **+4px / +8px gap above black subtitle** still looked unchanged �
 - **Fix:** **`DesktopRoomTitle.tsx`** — resolve scaled gap to **px** via **`getDesktopLayoutViewportWidth()`**; separate **`--desktop-room-subtitle-boost`** (8px screen); artboard compensates boost by **`1/artboardScale`**; apply **`flexStyle` on flex root** in debug path. **`DesktopRoomTitle.css`** — sibling rule **`.line--title + .line--subtitle { margin-top: var(--desktop-room-subtitle-boost) }`** after **`margin-top: 0`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Subtitle spacing −6px
+
+User asked to **decrease spacing by 6px** between red foil title and black subtitle.
+
+- **`DESKTOP_ROOM_SUBTITLE_BOOST_PX`** **8 → 2** in **`DesktopRoomTitle.tsx`**; CSS fallback **8px → 2px**.
+- Pushed **`master`** + **`preview/mobile`**.
+
