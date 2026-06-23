@@ -4,9 +4,9 @@
   z-index: 40;
   pointer-events: none;
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   justify-content: center;
-  padding: 0 6% 7%;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -16,11 +16,9 @@
 
 .psa-suite-layout {
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: clamp(16px, 2.4vw, 32px);
-  width: min(920px, 100%);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 .psa-suite-root .psa-chat-backdrop {
@@ -30,18 +28,22 @@
 }
 
 .psa-suite-root .psa-chat-panel {
-  position: relative;
+  position: absolute;
+  right: clamp(16px, 3.5vw, 48px);
+  bottom: clamp(24px, 4vh, 56px);
   z-index: 2;
   flex: 0 0 auto;
   width: min(360px, 34vw);
   height: min(400px, 48vh);
   max-height: min(400px, 48vh);
   transform: none;
-  margin-bottom: clamp(24px, 4vh, 56px);
+  margin-bottom: 0;
 }
 
 .psa-standing-hologram {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  bottom: clamp(108px, 20vh, 196px);
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -51,13 +53,14 @@
   border: none;
   background: transparent;
   cursor: pointer;
+  transform: translateX(-50%);
   -webkit-tap-highlight-color: transparent;
 }
 
 .psa-standing-hologram__stage {
   position: relative;
-  width: clamp(180px, 16vw, 260px);
-  height: clamp(280px, 34vh, 420px);
+  width: clamp(126px, 11.2vw, 182px);
+  height: clamp(196px, 23.8vh, 294px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -68,33 +71,12 @@
   animation: psa-suite-holo-float 6s ease-in-out infinite;
 }
 
-.psa-standing-hologram__glow-rotator {
-  position: absolute;
-  left: 50%;
-  bottom: 8%;
-  width: 145%;
-  z-index: 0;
-  pointer-events: none;
-  transform: translate(-50%, 0);
-  animation: psa-holo-glow-spin 11s linear infinite;
-}
-
-.psa-standing-hologram__glow {
-  display: block;
-  width: 100%;
-  height: auto;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  animation: psa-holo-glow-live 4.5s ease-in-out infinite;
-  opacity: 0.92;
-}
-
 .psa-standing-hologram__scanlines {
   position: absolute;
-  inset: 4% 8% 14%;
+  inset: 10% 14% 22%;
   z-index: 2;
   pointer-events: none;
+  border-radius: 2px;
   background: repeating-linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.04) 0,
@@ -111,11 +93,12 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 88%;
+  height: 76%;
+  margin-bottom: 12%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  filter: drop-shadow(0 0 28px rgba(120, 200, 255, 0.22));
+  filter: drop-shadow(0 0 18px rgba(120, 200, 255, 0.18));
 }
 
 .psa-standing-hologram__figure .psa-avatar-img-stack {
@@ -133,9 +116,9 @@
 .psa-standing-hologram__pedestal {
   position: absolute;
   left: 50%;
-  bottom: 0;
-  width: 72%;
-  height: 10px;
+  bottom: 6%;
+  width: 58%;
+  height: 8px;
   transform: translateX(-50%);
   border-radius: 50%;
   background: radial-gradient(
@@ -144,7 +127,7 @@
     rgba(120, 210, 255, 0.18) 42%,
     transparent 72%
   );
-  box-shadow: 0 0 32px rgba(100, 190, 255, 0.35);
+  box-shadow: 0 0 24px rgba(100, 190, 255, 0.32);
   animation: psa-suite-pedestal-pulse 3.5s ease-in-out infinite;
 }
 
@@ -175,10 +158,10 @@
 @keyframes psa-suite-holo-float {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateX(-50%) translateY(-8px);
   }
 }
 
@@ -205,18 +188,19 @@
 }
 
 @media (max-width: 1023px) {
-  .psa-suite-root {
-    padding-bottom: 5%;
-  }
-
   .psa-suite-root .psa-chat-panel {
+    right: clamp(12px, 3vw, 28px);
     width: min(320px, 42vw);
     height: min(340px, 42vh);
     max-height: min(340px, 42vh);
   }
 
+  .psa-standing-hologram {
+    bottom: clamp(88px, 17vh, 160px);
+  }
+
   .psa-standing-hologram__stage {
-    width: clamp(150px, 22vw, 210px);
-    height: clamp(230px, 30vh, 320px);
+    width: clamp(105px, 15.4vw, 147px);
+    height: clamp(161px, 21vh, 224px);
   }
 }

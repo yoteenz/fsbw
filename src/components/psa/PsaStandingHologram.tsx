@@ -1,5 +1,4 @@
 import {
-  PSA_NUDGE_HOLO_GLOW_SRC,
   PSA_WIDGET_CTA,
   type PsaAvatarExpression,
 } from '../../constants/psaConfig';
@@ -34,14 +33,6 @@ export default function PsaStandingHologram({
       aria-expanded={isOpen}
     >
       <div className={`psa-standing-hologram__stage${idle ? ' psa-standing-hologram__stage--idle' : ''}`}>
-        <div className="psa-standing-hologram__glow-rotator" aria-hidden>
-          <img
-            className="psa-standing-hologram__glow"
-            src={PSA_NUDGE_HOLO_GLOW_SRC}
-            alt=""
-            draggable={false}
-          />
-        </div>
         <div className="psa-standing-hologram__scanlines" aria-hidden />
         <div className="psa-standing-hologram__figure">
           <PsaAvatarImageCrossfade expression={expression} />
