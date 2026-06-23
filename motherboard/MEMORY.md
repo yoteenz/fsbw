@@ -31541,3 +31541,14 @@ User supplied dimmed lounge hero **`A2C48719-797A-446D-8ADA-E1AEB9AEC4F4.png`** 
 - **Preload:** both bright + dimmed URLs when entering lounge zone.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Slay Cinema: PRESS TO PLAY replaces floating button
+
+User disliked the **Slay Cinema** floating nav button; asked to remove it and use the same pulsing **PRESS TO PLAY** text as mobile lounge (on the TV screen), where tap toggles Slay Cinema mode instead of opening the TV animation.
+
+- **Removed:** **`SlayCinemaToggle`**, **`SlayCinemaIcon`**, **`SlayCinemaContext`**, **`SlayCinemaProvider`** — no separate nav control.
+- **Added:** **`DesktopLoungeSlayCinemaPlay`** — cover-mapped tap on TV glass (**`desktopLoungeTvLayout.ts`**, 1915×821 art); shared **`loungeTvPressPlay.ts`** pulse style with mobile **`LoungeCompositeTvPlay`**.
+- **Unchanged:** dual-layer bright/dimmed crossfade, preload, lounge-only state, **`aria-pressed`** toggle.
+- Pushed **`master`** + **`preview/mobile`**.
+
