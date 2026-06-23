@@ -31906,3 +31906,14 @@ User asked to **add mock products back** on **`/desktop/shopping-bag`** so they 
 - **File:** **`src/pages/desktop/shopping-bag/page.tsx`** wires display totals + remove.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Shopping bag mock cart sync (mobile + desktop, Vercel preview)
+
+User reported **no mock products** on **`https://fsbw.vercel.app/desktop/shopping-bag`** and wanted **mobile `/bag` + desktop `/desktop/shopping-bag` carts synced**.
+
+- **Cause:** Prior mock was **display-only React state** on the desktop page; **`import.meta.env.DEV`** is false on Vercel production builds, so mocks only appeared with **`?shoppingBagMock=1`** and never reached **`localStorage`** / mobile bag.
+- **Fix:** **`shoppingBagMockCart.ts`** seeds five mock lines into shared **`localStorage.cartItems`** when the cart is empty. Enabled on **local dev** + **`isPreviewEnvironment()`** (includes **`*.vercel.app`** / **`fsbw.vercel.app`**). Opt out: **`?shoppingBagMock=0`** (tab session). Override on custom production: **`?shoppingBagMock=1`**.
+- **Wired:** **`App.tsx`** bootstrap, **`useDesktopShoppingBagCart`**, **`/bag`** **`loadCartItems`**. Desktop page uses live cart hook only (removes display-only mock state).
+- Pushed **`master`** + **`preview/mobile`**.
+
