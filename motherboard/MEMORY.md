@@ -31629,3 +31629,18 @@ User asked to reduce reception black subtitle by **another 3px** (now **−7px**
 User set reception black subtitle offset to **−10px** ( **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX.reception`** ).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — PSA Suite hologram debug square
+
+User asked for a **debug square around the PSA hologram in the PSA suite** so it can be **resized and repositioned** (like lounge TV frame / room label editors).
+
+- **`desktopPsaSuiteLayout.ts`** — default **`DESKTOP_PSA_SUITE_HOLOGRAM_HIT_REGION`** (image-normalized on 1915×821 hero); **`layoutOffsetY: -40`** preserves legacy **`translateY(-40px)`**.
+- **`desktopPsaSuiteFrameDebug.ts`** — **`?desktopPsaSuiteDebug=1&desktopPsaSuiteEdit=1`** session flags.
+- **`desktopPsaSuiteFrameOverrides.ts`** — **`baw_desktop_psa_suite_frame_overrides`** localStorage save/reset/copy.
+- **`DesktopPsaSuiteFrameEditorContext`**, **`DesktopPsaSuiteFrameDebugOverlay`**, **`DesktopPsaSuiteFrameEditorPanel`** — drag, corner/edge resize, Save/Reset/Copy JSON (reuses **`desktopLoungeTvFrameEditorGestures`**).
+- **`PsaAssistantWidget`** — suite mode accepts **`measureRef`**; hologram positioned via **`useSceneCoverHitRect`** + **`sceneHitLayoutBoxStyle`**; debug overlay rendered inside portaled suite root (z above holo).
+- **`PsaStandingHologram`** — **`frameStyle`** + **`psa-standing-hologram--cover-mapped`** CSS (stage fills mapped box).
+- **`DesktopFloorZonePage`** passes **`viewportMeasureRef`**; **`App.tsx`** wires **`DesktopPsaSuiteFrameEditorProvider`** + panel.
+- Pushed **`master`** + **`preview/mobile`**.
+
