@@ -253,9 +253,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
                 letterSpacing: '0.14em',
                 textDecoration: 'underline',
                 textUnderlineOffset: '4px',
+                textTransform: 'uppercase',
               }}
             >
-              Reload Page
+              RELOAD PAGE
             </button>
           ) : (
             <button
