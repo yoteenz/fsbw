@@ -31518,3 +31518,13 @@ User asked to increase **red room labels** and **black subtitle** size **in tand
 - **`DesktopRoomTitle.tsx`** — gap scale **1.43 → 1.6445** (`DESKTOP_ROOM_SUBTITLE_GAP_SCALE`).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Debug squares missing on mobile except members lounge
+
+User reported **debug links showed squares only on Members Only Lounge** on mobile desktop; penthouse and other rooms failed.
+
+- **Causes:** (1) **Penthouse** never mounted **`DesktopRoomTitlePlacementEditorProvider`** (only **`DesktopFloorZonePage`** floors had it); (2) floor **redirects** dropped **`roomTitleDebug`/`roomTitleEdit`** from URL before session was set; (3) **navbar / elevator** links omitted debug params; (4) penthouse **room swipe** replaced entire search params.
+- **Fix:** Provider + panel on **`DesktopRoutesLayout`** for all **`/desktop/*`**; **`appendRoomTitleDebugToHref`**, **`persistRoomTitleDebugFromSearch`**; redirects + **`buildDesktopDestinationHref`** / quick routes preserve flags; penthouse **`setSearchParams`** merges; profile hook fallback in **`DesktopRoomTitle`** / **`DesktopRoomTitleDebugSquare`**.
+- Pushed **`master`** + **`preview/mobile`** (commit **`579eed0f`**).
+
