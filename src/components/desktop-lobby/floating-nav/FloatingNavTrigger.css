@@ -102,6 +102,10 @@
   pointer-events: none;
 }
 
+.floating-nav-trigger--rooms .floating-nav-trigger__glyph {
+  max-height: 32px;
+}
+
 .floating-nav-trigger__caption {
   font-family: 'Futura PT Medium', sans-serif;
   font-size: 8px;
