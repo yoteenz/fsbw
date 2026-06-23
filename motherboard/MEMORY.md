@@ -31275,3 +31275,12 @@ User asked that **Grand Central Lobby** desktop hero should **not** show room la
 
 - Removed **`grand-lobby`** from **`desktopRoomTitles.ts`** — **`resolveDesktopRoomTitleCopy`** returns undefined, so **`DesktopZoneRoomScene`** renders no **`DesktopRoomTitle`** for that zone (legacy **`IMG_4013.png`** asset unchanged). Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Elevator holo: VIP SUITE under PENTHOUSE
+
+User reported redundant **PENTHOUSE** twice on elevator destination holo (red level + black name). Wanted black subtitle **VIP SUITE** on elevator only.
+
+- **`formatTowerElevatorHoloName()`** in **`desktopTowerMotion.ts`** — floor **id 4** → **`VIP SUITE`**; other floors unchanged.
+- **`DesktopTowerElevatorExperience.tsx`** uses it for holo **`name`** line only (floor registry / directories still **PENTHOUSE**). Pushed **`master`** + **`preview/mobile`**.
+
