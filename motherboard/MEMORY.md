@@ -31528,3 +31528,12 @@ User reported **debug links showed squares only on Members Only Lounge** on mobi
 - **Fix:** Provider + panel on **`DesktopRoutesLayout`** for all **`/desktop/*`**; **`appendRoomTitleDebugToHref`**, **`persistRoomTitleDebugFromSearch`**; redirects + **`buildDesktopDestinationHref`** / quick routes preserve flags; penthouse **`setSearchParams`** merges; profile hook fallback in **`DesktopRoomTitle`** / **`DesktopRoomTitleDebugSquare`**.
 - Pushed **`master`** + **`preview/mobile`** (commit **`579eed0f`**).
 
+---
+
+## 2026-06-23 — Debug panel bottom center (not over titles)
+
+User reported **room label debug panel** covered wall title/subtitle at top.
+
+- **`DesktopRoomTitlePlacementEditorPanel.tsx`** — **`position: fixed`** **`bottom: 8px`**, **`left: 50%`**, **`transform: translateX(-50%)`** (was top-right).
+- Pushed **`master`** + **`preview/mobile`**.
+
