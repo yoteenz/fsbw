@@ -2,9 +2,15 @@ import type { ReactNode, RefObject } from 'react';
 import {
   DESKTOP_SHOPPING_BAG_BACKGROUND_URL,
   DESKTOP_SHOPPING_BAG_IMAGE,
-  DESKTOP_SHOPPING_BAG_TABLET_RECT,
+  isDesktopShoppingBagDebugEnabled,
 } from '../../constants/desktopShoppingBag';
 import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
+import {
+  DesktopShoppingBagTabletDebugProvider,
+  useDesktopShoppingBagTabletRect,
+} from './DesktopShoppingBagTabletDebugProvider';
+import { DesktopShoppingBagTabletDebugRect } from './DesktopShoppingBagTabletDebugRect';
+import { DesktopShoppingBagTabletDebugInspector } from './DesktopShoppingBagTabletDebugInspector';
 import './DesktopShoppingBag.css';
 import './DesktopAcquisition.css';
 
@@ -15,12 +21,15 @@ type Props = {
   tabletEntering?: boolean;
 };
 
-export function DesktopCuratorSuiteScene({
+function DesktopCuratorSuiteSceneInner({
   measureRef,
   children,
   tabletClassName = '',
   tabletEntering = false,
 }: Props) {
+  const tabletRect = useDesktopShoppingBagTabletRect();
+  const debug = isDesktopShoppingBagDebugEnabled();
+
   return (
     <div className="desktop-shopping-bag-scene" aria-label="Curator collection suite">
       <img
@@ -34,7 +43,7 @@ export function DesktopCuratorSuiteScene({
       <div className="desktop-shopping-bag-scene__layer">
         <DesktopRoomCoverRectAnchor
           measureRef={measureRef}
-          imageRect={DESKTOP_SHOPPING_BAG_TABLET_RECT}
+          imageRect={tabletRect}
           image={DESKTOP_SHOPPING_BAG_IMAGE}
           zIndex={6}
         >
@@ -50,7 +59,23 @@ export function DesktopCuratorSuiteScene({
             {children}
           </div>
         </DesktopRoomCoverRectAnchor>
+        {debug ? <DesktopShoppingBagTabletDebugRect measureRef={measureRef} /> : null}
       </div>
+      {debug ? <DesktopShoppingBagTabletDebugInspector /> : null}
     </div>
   );
+}
+
+export function DesktopCuratorSuiteScene(props: Props) {
+  const debug = isDesktopShoppingBagDebugEnabled();
+
+  if (debug) {
+    return (
+      <DesktopShoppingBagTabletDebugProvider>
+        <DesktopCuratorSuiteSceneInner {...props} />
+      </DesktopShoppingBagTabletDebugProvider>
+    );
+  }
+
+  return <DesktopCuratorSuiteSceneInner {...props} />;
 }

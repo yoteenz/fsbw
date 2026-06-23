@@ -13,7 +13,7 @@ export const DESKTOP_SHOPPING_BAG_IMAGE = {
   height: DESKTOP_ROOM_HERO_ART_HEIGHT,
 } as const;
 
-/** Acrylic tablet screen on the hero — tune with `?shoppingBagDebug=1`. */
+/** Acrylic tablet screen on the hero — tune with `?shoppingBagDebug=1` (drag/resize boundary + export). */
 export const DESKTOP_SHOPPING_BAG_TABLET_RECT: FinalSceneHitRect = {
   left: 0.198,
   top: 0.092,

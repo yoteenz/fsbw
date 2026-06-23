@@ -1,0 +1,116 @@
+.desktop-shopping-bag-tablet-debug-rect {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: move;
+  border: 2px dashed rgba(255, 193, 7, 0.95);
+  background: rgba(255, 193, 7, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.desktop-shopping-bag-tablet-debug-rect__label {
+  margin: 0;
+  padding: 2px 6px;
+  font-family: 'Futura PT Demi', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 1.4cqi, 12px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #111;
+  background: rgba(255, 255, 255, 0.82);
+  pointer-events: none;
+  user-select: none;
+}
+
+.desktop-shopping-bag-tablet-debug-handle {
+  position: absolute;
+  touch-action: none;
+  z-index: 2;
+  background: transparent;
+}
+
+.desktop-shopping-bag-tablet-debug-handle--corner {
+  width: 14px;
+  height: 14px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100010;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #000;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  pointer-events: auto;
+  max-width: min(96vw, 720px);
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__body {
+  padding: 8px 10px 10px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__field input {
+  width: 72px;
+  padding: 4px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: #fff;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__btn--primary {
+  border-color: #eb1c24;
+  color: #eb1c24;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__toggle--on {
+  background: rgba(255, 193, 7, 0.25);
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__toggle--off {
+  opacity: 0.65;
+}

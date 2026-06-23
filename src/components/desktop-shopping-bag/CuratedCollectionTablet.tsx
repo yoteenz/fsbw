@@ -1,7 +1,6 @@
 import { AcquisitionSummaryBar } from './AcquisitionSummaryBar';
 import { CuratedCartGallery } from './CuratedCartGallery';
 import { EmptyCollectionState } from './EmptyCollectionState';
-import { isDesktopShoppingBagDebugEnabled } from '../../constants/desktopShoppingBag';
 import './DesktopShoppingBag.css';
 
 type Props = {
@@ -27,19 +26,10 @@ export function CuratedCollectionTablet({
   onAcquire,
   onEnterShowroom,
 }: Props) {
-  const debug = isDesktopShoppingBagDebugEnabled();
   const isEmpty = cartItems.length === 0;
 
   return (
-    <div
-      className={[
-        'curated-tablet',
-        debug ? 'curated-tablet--debug' : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      aria-label="Curated collection tablet"
-    >
+    <div aria-label="Curated collection tablet">
       <div className="curated-tablet__shimmer" aria-hidden />
 
       {isEmpty ? (
