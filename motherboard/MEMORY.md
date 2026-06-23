@@ -31129,3 +31129,18 @@ Continuation of the same chat (audit → desktop tower review → art-direction 
 - **Possible follow-up (not done):** the cabin floor-number timeline (`TOWER_TRAVEL_MS_PER_FLOOR` 1500ms/floor) and the elevator video length are independent; for short trips the holo can read "Destination" before the video ends. Align them if arrival should feel snappier.
 - Committed to **`master`** + merged/pushed **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Floating nav caption restyle + live mobile-desktop artboard fixes
+
+Same chat, two more requests after the elevator fix.
+
+- **Caption restyle:** `.floating-nav-trigger__caption` (the red **STATION** / **ELEVATOR** labels in `FloatingNavTrigger.css`) changed from **Bohemy cursive lowercase 12px** → **Futura PT Medium, uppercase, 8px** (−4px). Color `#eb1c24` unchanged.
+- **Live mobile-desktop (`/desktop/*` on a phone) three fixes** reported from a phone screenshot — buttons stuck to the device bottom, black area below the room, no pinch-zoom:
+  1. **Floating nav anchoring:** `DesktopFloatingNav` portaled to `document.body` (`position: fixed`) escaped the artboard's `transform: scale()`, pinning it to the device viewport. Now, when `isMobileDesktopBypassActive() && !isDesktopPreviewActive()`, it renders **inline** (no portal) so `position: fixed` resolves against the transformed stage → buttons sit at the scaled artboard's bottom corners and scale with it. The `/desktop-preview` designer tool keeps the body portal (unchanged).
+  2. **White page below artboard:** `ScaledDesktopViewport` shell background + the shared `installDesktopPreviewShellViewportLock` body background are now **`#ffffff` for live mobile-desktop**, **`#050505` only for the designer preview** (`isDesktopPreviewActive()`). Lock signature now takes `options?: { background?: string }`.
+  3. **Pinch-zoom:** shell `touch-action` was `pan-y` (blocks pinch) → **`pan-y pinch-zoom`** for live mobile-desktop (designer preview stays `pan-y`). Viewport meta already allowed scaling.
+- **Files:** `src/components/desktop-lobby/floating-nav/FloatingNavTrigger.css`, `src/components/desktop-lobby/floating-nav/DesktopFloatingNav.tsx`, `src/components/desktop-preview/ScaledDesktopViewport.tsx`, `src/utils/desktopPreview.ts`. `npx tsc --noEmit` clean.
+- **Note for future agents:** `ScaledDesktopViewport` is shared by BOTH the live phone `/desktop/*` shell (via `DesktopRouteShell`) and the `/desktop-preview` designer page — gate any styling differences on `isDesktopPreviewActive()`. Fixed-position descendants of the scaled stage are contained by the transform, so they anchor to the artboard, not the device viewport.
+- Committed to **`master`** + merged/pushed **`preview/mobile`** (two commits: caption restyle, then artboard fixes).
+
