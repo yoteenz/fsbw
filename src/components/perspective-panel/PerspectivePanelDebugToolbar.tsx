@@ -12,7 +12,7 @@ import './perspectivePanelDebug.css';
 
 export function PerspectivePanelDebugToolbar() {
   const editor = usePerspectivePanelDebug();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState('');
   const [importStatus, setImportStatus] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export function PerspectivePanelDebugToolbar() {
           className="perspective-panel-debug-toolbar__toggle"
           onClick={() => editor.setOverlaysVisible(!editor.overlaysVisible)}
         >
-          {editor.overlaysVisible ? 'Hide overlays' : 'Show overlays'}
+          {editor.overlaysVisible ? 'Hide' : 'Show'}
         </button>
       </header>
 
@@ -120,13 +120,13 @@ export function PerspectivePanelDebugToolbar() {
 
           <div className="perspective-panel-debug-toolbar__actions">
             <button type="button" onClick={() => editor.resetSelectedPanel()}>
-              Reset selected
+              Reset
             </button>
             <button type="button" onClick={() => void onCopy()}>
-              Copy JSON
+              Copy
             </button>
             <button type="button" onClick={() => setImportOpen((v) => !v)}>
-              Import JSON
+              Import
             </button>
             <button
               type="button"
@@ -143,16 +143,16 @@ export function PerspectivePanelDebugToolbar() {
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
                 placeholder="Paste panel JSON…"
-                rows={5}
+                rows={3}
               />
               <button type="button" onClick={onImport}>
-                Apply import
+                Apply
               </button>
             </div>
           ) : null}
 
           {editor.saveStatus === 'saved' ? (
-            <p className="perspective-panel-debug-toolbar__status">Saved to localStorage.</p>
+            <p className="perspective-panel-debug-toolbar__status">Saved.</p>
           ) : null}
           {editor.saveStatus === 'failed' ? (
             <p className="perspective-panel-debug-toolbar__status perspective-panel-debug-toolbar__status--error">
