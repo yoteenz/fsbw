@@ -5,8 +5,10 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from 'react';
+import { createPortal } from 'react-dom';
 import type { PerspectivePanelCornerId, PerspectivePanelId, PerspectivePanelQuad } from '../../types/perspectivePanel';
 import { useDesktopRoomCoverMeasure } from '../../hooks/useDesktopRoomCoverMeasure';
+import { useElementScreenRect } from '../../hooks/useElementScreenRect';
 import {
   mapDesktopRoomContainerPointToImage,
   mapDesktopRoomImagePointToContainer,
@@ -47,6 +49,7 @@ export function PerspectivePanelDebugPolygon({
 }: Props) {
   const editor = usePerspectivePanelDebug();
   const { width: cw, height: ch, isMeasured } = useDesktopRoomCoverMeasure(measureRef);
+  const screenBox = useElementScreenRect(measureRef);
   const dragCornerRef = useRef<PerspectivePanelCornerId | null>(null);
 
   const highlighted = editor?.isPanelHighlighted(id) ?? false;
@@ -71,6 +74,7 @@ export function PerspectivePanelDebugPolygon({
       const el = measureRef.current;
       if (!el || cw <= 0 || ch <= 0) return null;
       const rect = el.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return null;
       const left = (clientX - rect.left) / rect.width;
       const top = (clientY - rect.top) / rect.height;
       return clampPerspectivePanelPoint(
@@ -113,12 +117,13 @@ export function PerspectivePanelDebugPolygon({
       if (!editable) return;
       e.preventDefault();
       e.stopPropagation();
+      e.currentTarget.setPointerCapture(e.pointerId);
       beginCornerDrag(cornerId, e.clientX, e.clientY);
     },
     [beginCornerDrag, editable],
   );
 
-  if (!editor?.debugEnabled || !editor.overlaysVisible || !containerQuad) return null;
+  if (!editor?.debugEnabled || !editor.overlaysVisible || !containerQuad || !screenBox) return null;
 
   const polygonPoints = containerQuad.pointsPx.map((p) => `${p.x},${p.y}`).join(' ');
   const centerX =
@@ -126,15 +131,23 @@ export function PerspectivePanelDebugPolygon({
   const centerY =
     containerQuad.pointsPx.reduce((sum, p) => sum + p.y, 0) / containerQuad.pointsPx.length;
 
-  return (
+  const overlay = (
     <div
       className={[
         'perspective-panel-debug-polygon',
+        'perspective-panel-debug-polygon--screen',
         highlighted ? 'perspective-panel-debug-polygon--selected' : '',
         dimmed ? 'perspective-panel-debug-polygon--dimmed' : '',
       ]
         .filter(Boolean)
         .join(' ')}
+      style={{
+        left: `${screenBox.left}px`,
+        top: `${screenBox.top}px`,
+        width: `${screenBox.width}px`,
+        height: `${screenBox.height}px`,
+        zIndex: highlighted ? 322 : 321,
+      }}
       aria-hidden
     >
       <svg
@@ -179,4 +192,6 @@ export function PerspectivePanelDebugPolygon({
       })}
     </div>
   );
+
+  return createPortal(overlay, document.body);
 }

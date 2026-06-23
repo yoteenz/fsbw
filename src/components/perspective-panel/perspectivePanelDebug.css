@@ -9,6 +9,13 @@
   pointer-events: none;
 }
 
+/** Portaled above fixed desktop NavBar (z-200) on phone scaled artboard. */
+.perspective-panel-debug-polygon--screen {
+  position: fixed;
+  inset: auto;
+  z-index: 320;
+}
+
 .perspective-panel-debug-polygon__svg {
   position: absolute;
   inset: 0;
@@ -51,6 +58,7 @@
   letter-spacing: 0.08em;
   cursor: grab;
   pointer-events: auto;
+  touch-action: none;
 }
 
 .perspective-panel-debug-polygon__handle:active {
