@@ -131,7 +131,10 @@ function setViewportContent(content: string): string {
 }
 
 /** Outer `/desktop-preview` shell — lock viewport; scroll happens inside ScaledDesktopViewport. */
-export function installDesktopPreviewShellViewportLock(): () => void {
+export function installDesktopPreviewShellViewportLock(
+  options?: { background?: string },
+): () => void {
+  const background = options?.background ?? '#050505';
   if (typeof document === 'undefined' || outerViewportLockInstalled) {
     return () => undefined;
   }
@@ -157,7 +160,7 @@ export function installDesktopPreviewShellViewportLock(): () => void {
   document.documentElement.style.overscrollBehaviorY = 'none';
   document.body.style.overscrollBehaviorY = 'none';
   document.body.style.margin = '0';
-  document.body.style.background = '#050505';
+  document.body.style.background = background;
   document.body.style.touchAction = 'auto';
   if (root) {
     root.style.height = '100%';

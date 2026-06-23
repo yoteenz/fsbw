@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { FloatingNavBackdrop, FloatingNavTrigger } from './FloatingNavTrigger';
 import { FloorNavDrawer } from './FloorNavDrawer';
 import { RoomNavDrawer, useCurrentFloorHasRooms } from './RoomNavDrawer';
+import { isDesktopPreviewActive, isMobileDesktopBypassActive } from '../../../utils/desktopPreview';
 import './FloatingNavTrigger.css';
 
 export type ActiveFloatingDrawer = 'floors' | 'rooms' | null;
@@ -45,7 +46,7 @@ export function DesktopFloatingNav() {
 
   if (!mounted) return null;
 
-  return createPortal(
+  const navContent = (
     <div className="floating-nav-system" aria-label="Tower navigation controls">
       {activeDrawer ? <FloatingNavBackdrop onClose={closeDrawer} /> : null}
 
@@ -71,7 +72,19 @@ export function DesktopFloatingNav() {
 
       <FloorNavDrawer isOpen={activeDrawer === 'floors'} onClose={closeDrawer} />
       {hasRooms ? <RoomNavDrawer isOpen={activeDrawer === 'rooms'} onClose={closeDrawer} /> : null}
-    </div>,
-    document.body,
+    </div>
   );
+
+  /**
+   * Live phone `/desktop/*` (scaled artboard, not the `/desktop-preview` designer tool):
+   * render inline so the nav lives inside the transformed stage — it then scales and positions
+   * with the artboard (bottom corners of the 1920×1080 frame) instead of sticking to the device
+   * viewport via a body portal. `position: fixed` resolves against the transformed stage, so it
+   * anchors to the artboard corners and is not clipped by intermediate overflow.
+   */
+  if (isMobileDesktopBypassActive() && !isDesktopPreviewActive()) {
+    return navContent;
+  }
+
+  return createPortal(navContent, document.body);
 }

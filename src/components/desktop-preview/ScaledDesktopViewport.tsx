@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import {
   DESKTOP_PREVIEW_VIEWPORT_WIDTH,
   installDesktopPreviewShellViewportLock,
+  isDesktopPreviewActive,
 } from '../../utils/desktopPreview';
 
 type Props = {
@@ -17,7 +18,17 @@ export function ScaledDesktopViewport({ children }: Props) {
   const scalerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => installDesktopPreviewShellViewportLock(), []);
+  // Live mobile-desktop (`/desktop/*` on a phone) shows the page as a scaled artboard on a
+  // plain white page and allows pinch-zoom. The `/desktop-preview` designer tool keeps its
+  // dark, zoom-locked frame.
+  const isDesignerPreview = isDesktopPreviewActive();
+  const shellBackground = isDesignerPreview ? '#050505' : '#ffffff';
+  const shellTouchAction = isDesignerPreview ? 'pan-y' : 'pan-y pinch-zoom';
+
+  useLayoutEffect(
+    () => installDesktopPreviewShellViewportLock({ background: shellBackground }),
+    [shellBackground],
+  );
 
   useLayoutEffect(() => {
     const layoutStage = () => {
@@ -75,8 +86,8 @@ export function ScaledDesktopViewport({ children }: Props) {
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
         overscrollBehaviorY: 'contain',
-        background: '#050505',
-        touchAction: 'pan-y',
+        background: shellBackground,
+        touchAction: shellTouchAction,
       }}
     >
       <div ref={scalerRef} style={{ position: 'relative' }}>
