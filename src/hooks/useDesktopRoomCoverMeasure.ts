@@ -12,17 +12,26 @@ export function measureDesktopRoomCoverBox(el: HTMLElement | null): { width: num
   return { width: 0, height: 0 };
 }
 
+export type DesktopRoomCoverMeasure = {
+  width: number;
+  height: number;
+  /** True once the scene layer has a non-zero layout size. */
+  isMeasured: boolean;
+};
+
 /** Live width/height of the desktop room scene layer (matches cover background box). */
 export function useDesktopRoomCoverMeasure(
   measureRef: RefObject<HTMLElement | null>,
-): { width: number; height: number } {
+): DesktopRoomCoverMeasure {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useLayoutEffect(() => {
     let ro: ResizeObserver | null = null;
+    let raf = 0;
 
     const update = () => {
       const next = measureDesktopRoomCoverBox(measureRef.current);
+      if (next.width <= 0 || next.height <= 0) return;
       setSize((prev) =>
         prev.width === next.width && prev.height === next.height ? prev : next,
       );
@@ -38,22 +47,21 @@ export function useDesktopRoomCoverMeasure(
       return true;
     };
 
+    update();
     if (!attach()) {
-      const raf = requestAnimationFrame(() => attach());
-      window.addEventListener('resize', update);
-      return () => {
-        cancelAnimationFrame(raf);
-        ro?.disconnect();
-        window.removeEventListener('resize', update);
-      };
+      raf = requestAnimationFrame(() => attach());
     }
 
     window.addEventListener('resize', update);
     return () => {
+      if (raf) cancelAnimationFrame(raf);
       ro?.disconnect();
       window.removeEventListener('resize', update);
     };
   }, [measureRef]);
 
-  return size;
+  return {
+    ...size,
+    isMeasured: size.width > 0 && size.height > 0,
+  };
 }

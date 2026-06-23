@@ -42,7 +42,7 @@ export function DesktopRoomTitle({
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
   const editEnabledHook = useDesktopRoomTitleEditEnabled();
   const profileHook = useDesktopRoomTitleViewportProfile();
-  const { width, height } = useDesktopRoomCoverMeasure(measureRef);
+  const { width, height, isMeasured } = useDesktopRoomCoverMeasure(measureRef);
 
   const placement = editor
     ? editor.getPlacement(zoneId)
@@ -53,30 +53,19 @@ export function DesktopRoomTitle({
 
   if (!hasTitle && !hasSubtitle) return null;
 
+  // Avoid a one-frame flash of viewport/fallback typography before cover mapping runs.
+  if (!isMeasured) return null;
+
   const textScale = resolveDesktopRoomTitleTextScale(placement);
   const titleTextScale = resolveDesktopRoomTitleLineTextScale(placement, 'title');
   const subtitleTextScale = resolveDesktopRoomTitleLineTextScale(placement, 'subtitle');
   const subtitleFontOffsetPx = resolveDesktopRoomSubtitleFontOffsetPx(zoneId);
 
-  const mapped =
-    width > 0 && height > 0
-      ? mapDesktopRoomTitlePlacementToContainer(placement, width, height)
-      : { leftPct: 50 + placement.centerOffsetPct, topPct: placement.titleTopPct };
-
-  const typography =
-    width > 0 && height > 0
-      ? desktopRoomCoverTypography(width, height)
-      : {
-          coverScale: 1,
-          titleFontPx: 79,
-          subtitleFontPx: 30,
-          titleMaxWidthPx: 1400,
-        };
-
+  const mapped = mapDesktopRoomTitlePlacementToContainer(placement, width, height);
+  const typography = desktopRoomCoverTypography(width, height);
   const scaledSubtitleGapPx =
-    (width > 0 && height > 0
-      ? desktopRoomCoverSubtitleGapPx(placement, width, height, DESKTOP_ROOM_SUBTITLE_GAP_SCALE)
-      : placement.subtitleGapPx * DESKTOP_ROOM_SUBTITLE_GAP_SCALE) * titleTextScale;
+    desktopRoomCoverSubtitleGapPx(placement, width, height, DESKTOP_ROOM_SUBTITLE_GAP_SCALE) *
+    titleTextScale;
 
   const anchorStyle = {
     '--desktop-room-title-left': `${mapped.leftPct}%`,

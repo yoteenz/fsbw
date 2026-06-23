@@ -31695,3 +31695,13 @@ User reported black **subtitles** on desktop room labels were **shifted right** 
 - **Debug editing:** **`DesktopRoomTitlePlacementEditorPanel`** — **Title** / **Subtitle** **+/−** steppers in minimized + expanded panel when a zone is selected. **`DesktopRoomTitleDebugSquare`** — **wheel** scales both (no ctrl required); **shift+wheel** = title only; **alt+wheel** = subtitle only; pinch still scales both via **`textScale`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room label text size flash on desktop load
+
+User reported red room label + black subtitle text appeared **extremely enlarged** on desktop page load, then snapped down to normal size (loading-state typography mismatch).
+
+- **Cause:** `DesktopRoomTitle` rendered with **fallback typography** (`coverScale: 1` / viewport `vw` CSS fallbacks) before `useDesktopRoomCoverMeasure` had a real scene-layer size, then re-rendered with cover-mapped font sizes.
+- **Fix:** Return **`null`** until `isMeasured` (non-zero layer width/height); always compute typography from measured cover box. **`useDesktopRoomCoverMeasure`** now exposes **`isMeasured`** and sync-measures in layout effect. CSS fallbacks changed from **`vw` clamps** to design **min px** (`53px` / `22px`) as a safety net only.
+- Pushed **`master`** + **`preview/mobile`**.
+

@@ -32,7 +32,7 @@
   align-items: center;
   justify-content: center;
   height: 1.05em;
-  font-size: var(--desktop-room-title-font-size, clamp(53px, 4.12vw, 112px));
+  font-size: var(--desktop-room-title-font-size, 53px);
   line-height: 1.05;
   overflow: visible;
 }
@@ -83,7 +83,7 @@
   padding-right: 0.15em;
   display: inline-block;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, sans-serif;
-  font-size: var(--desktop-room-subtitle-font-size, calc(clamp(15px, 1.21vw, 29px) + 7px));
+  font-size: var(--desktop-room-subtitle-font-size, 22px);
   font-weight: 500;
   line-height: 1.2;
   text-transform: uppercase;
