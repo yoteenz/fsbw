@@ -31363,3 +31363,13 @@ User still could not see PSA in PSA Suite on desktop/tablet after the always-vis
 - **Fix:** **`clearLoungeTvTheaterModeIfOutsideLobby()`** on route change; suite variant ignores theater gate on **`isPsaDesktopPath`**. Desktop/tablet suite PSA now **portals to `document.body`** with **`.psa-suite-root--viewport-portal`** (`position: fixed; top: 68px; z-index: 185`). Phone artboard (≤767px) keeps inline section mount.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room label title/subtitle drift after foil restore
+
+User reported room labels had **title and subtitle drifted apart** after restoring black subtitle HTML (foil title only) — e.g. PSA SUITE title near ceiling, subtitle far below.
+
+- **Cause:** Foil **`DesktopRoomTitleMetallicSvg`** drop-shadow/filter bounds inflated the title line’s layout height in the flex column; with **`translate(-50%, -50%)`** anchor, the oversized block separated visual title from subtitle.
+- **Fix:** **`desktop-room-title__foil-slot`** — fixed **`1.05em`** one-line height; SVG **`height="1em"`** with text at **`y="0.5em"`**; filters paint outside without affecting flex. Subtitle back in **`__line--subtitle`** wrapper with gap on the line (matches pre-foil structure).
+- Pushed **`master`** + **`preview/mobile`**.
+
