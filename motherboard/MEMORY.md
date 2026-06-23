@@ -32001,3 +32001,13 @@ User reported **top two corners (TL/TR) won't move** on mobile desktop panel deb
 - **Files:** `PerspectivePanelDebugPolygon.tsx`, `useElementScreenRect.ts`, `perspectivePanelDebug.css`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Perspective panel saves independent on mobile vs desktop
+
+User reported **panel debug saves on mobile desktop don't translate to desktop** — saves were independent.
+
+- **Cause:** Coordinates only in **`localStorage.perspectivePanelMap`** per browser/device; no cloud merge; provider didn't reload on focus/storage when switching viewport/device; legacy **`desktopShoppingBagTabletRect`** was a separate key.
+- **Fix:** Founder **Supabase `app_config`** sync via **`GET/PUT /api/admin/perspective-panel-config`** (`perspective_panel_map`); **`perspectivePanelSync.ts`** + **`PerspectivePanelFounderBootstrap`** merge on sign-in/focus; **Save** pushes cloud; storage **`updatedAt`** + **`perspectivePanelMapUpdated`** event reloads all tabs; legacy tablet quad migrates into shared map.
+- Pushed **`master`** + **`preview/mobile`**.
+
