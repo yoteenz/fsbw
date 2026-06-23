@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "bucket": "live-preview",
+  "cleanStoragePrefix": "Desktop/backgrounds/clean",
+  "items": [
+    {
+      "id": "grand-lobby",
+      "name": "Grand Central Lobby",
+      "route": "/desktop/lobby?zone=grand-lobby",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_4013.png",
+      "cleanFileName": "grand-central-lobby-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "grand-lobby"
+    },
+    {
+      "id": "build-a-wig-atelier",
+      "name": "Build-A-Wig Atelier",
+      "route": "/desktop/lobby?zone=build-a-wig-atelier",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_4011.png",
+      "cleanFileName": "build-a-wig-atelier-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "build-a-wig-atelier"
+    },
+    {
+      "id": "lounge",
+      "name": "Lounge",
+      "route": "/desktop/lobby?zone=lounge",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/140E544B-FF7D-49C9-A693-71AF1C7ABEC9.png",
+      "cleanFileName": "lounge-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "lounge"
+    },
+    {
+      "id": "slay-cam-gallery",
+      "name": "Slay Cam Gallery",
+      "route": "/desktop/gallery?zone=slay-cam-gallery",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_4025.png",
+      "cleanFileName": "slay-cam-gallery-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "slay-cam-gallery"
+    },
+    {
+      "id": "members-lounge",
+      "name": "Members Lounge",
+      "route": "/desktop/gallery?zone=members-lounge",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_4034.png",
+      "cleanFileName": "members-lounge-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "members-lounge"
+    },
+    {
+      "id": "rewards-gallery",
+      "name": "Rewards Gallery",
+      "route": "/desktop/gallery?zone=rewards-gallery",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_4026.png",
+      "cleanFileName": "rewards-gallery-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "rewards-gallery"
+    },
+    {
+      "id": "reception",
+      "name": "Reception",
+      "route": "/desktop/concierge?zone=reception",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/IMG_4014.png",
+      "cleanFileName": "reception-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "reception"
+    },
+    {
+      "id": "founder-suite",
+      "name": "Founder Suite",
+      "route": "/desktop/concierge?zone=founder-suite",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/80957FCA-ACF1-4FAA-9448-59DE0A0D739A.png",
+      "cleanFileName": "founder-suite-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "founder-suite"
+    },
+    {
+      "id": "psa-suite",
+      "name": "PSA Suite",
+      "route": "/desktop/concierge?zone=psa-suite",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/8D5E0E87-1363-4E72-85EE-E10294F1172B.png",
+      "cleanFileName": "psa-suite-clean.webp",
+      "constantFile": "src/constants/desktopFloorZoneBackgrounds.ts",
+      "constantKey": "psa-suite"
+    },
+    {
+      "id": "analysis-lab",
+      "name": "Hair Analysis Lab",
+      "route": "/desktop/penthouse?room=analysis-lab",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/A6B0A7CB-0299-4DAF-A39E-49468BE1A6F9.png",
+      "cleanFileName": "hair-analysis-lab-clean.webp",
+      "constantFile": "src/constants/desktopPenthouseRooms.ts",
+      "constantKey": "analysis-lab"
+    },
+    {
+      "id": "showroom",
+      "name": "Hair Showroom",
+      "route": "/desktop/penthouse?room=showroom",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/7F16AAFA-F3D1-4FD2-B6E3-F20F6B10CBD3.png",
+      "cleanFileName": "hair-showroom-clean.webp",
+      "constantFile": "src/constants/desktopPenthouseRooms.ts",
+      "constantKey": "showroom"
+    },
+    {
+      "id": "boutique",
+      "name": "Extensions Boutique",
+      "route": "/desktop/penthouse?room=boutique",
+      "sourceUrl": "https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/8358D320-29F7-48DC-97B7-484432003684.png",
+      "cleanFileName": "extensions-boutique-clean.webp",
+      "constantFile": "src/constants/desktopPenthouseRooms.ts",
+      "constantKey": "boutique"
+    }
+  ]
+}
