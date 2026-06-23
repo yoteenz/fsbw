@@ -49,3 +49,6 @@ Motherboard.md
 /playwright/.cache/
 e2e/.auth/
 .env.e2e.local
+
+# Elevator reverse-video script temp download
+public/assets/.elevator-source-tmp.mp4

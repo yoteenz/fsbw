@@ -1,13 +1,16 @@
 import {
   DESKTOP_TOWER_ELEVATOR_VIDEO_URL,
+  DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_LOCAL_PATH,
 } from '../constants/desktopTowerEnv';
 import type { TowerTravelDirection } from '../constants/desktopTowerMotion';
 
 /**
- * Optional pre-reversed MP4 (same source clip, reversed at build time).
- * When reverse scrubbing is choppy, playback falls back to this asset played forward.
+ * Pre-reversed MP4 (same source clip, reversed at build time via `npm run elevator:reverse-video`).
+ * Downward travel plays this forward — reliable on desktop Chrome, which often does not repaint
+ * frames when scrubbing `currentTime` on a paused `<video>`.
  */
-export const DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL: string | null = null;
+export const DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL: string | null =
+  DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_LOCAL_PATH;
 
 let warmVideoEl: HTMLVideoElement | null = null;
 let cachedBlobUrl: string | null = null;
@@ -25,6 +28,16 @@ type VideoWithFrameCallback = HTMLVideoElement & {
 
 function resolvePlayableSrc(): string {
   return cachedBlobUrl ?? DESKTOP_TOWER_ELEVATOR_VIDEO_URL;
+}
+
+/** Clip URL for a journey direction — down uses the pre-reversed asset when available. */
+export function resolveDesktopTowerElevatorVideoSrc(
+  direction: TowerTravelDirection,
+): string {
+  if (direction === 'down' && DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL) {
+    return DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL;
+  }
+  return resolvePlayableSrc();
 }
 
 function rememberDuration(video: HTMLVideoElement): void {
@@ -120,6 +133,14 @@ export function warmDesktopTowerElevatorVideo(): void {
     },
     { once: true },
   );
+
+  if (DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL) {
+    const reverseWarm = document.createElement('link');
+    reverseWarm.rel = 'preload';
+    reverseWarm.as = 'video';
+    reverseWarm.href = DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL;
+    document.head.appendChild(reverseWarm);
+  }
 
   if (!blobFetchPromise) {
     blobFetchPromise = fetch(DESKTOP_TOWER_ELEVATOR_VIDEO_URL)
@@ -343,15 +364,7 @@ function playElevatorVideoReverseScrub(video: HTMLVideoElement): Promise<void> {
   });
 }
 
-async function playElevatorVideoForwardFromSrc(
-  video: HTMLVideoElement,
-  src: string,
-): Promise<void> {
-  await ensureVideoSrc(video, src);
-  await playElevatorVideoForward(video);
-}
-
-/** Run one full elevator clip — forward (up) or reverse scrub (down). */
+/** Run one full elevator clip — forward (up) or reversed clip forward (down). */
 export async function runElevatorVideoTransition(
   video: HTMLVideoElement,
   direction: TowerTravelDirection,
@@ -359,7 +372,7 @@ export async function runElevatorVideoTransition(
 ): Promise<void> {
   cancelElevatorVideoTransition(video);
 
-  const src = lockedSrc ?? resolvePlayableSrc();
+  const src = lockedSrc ?? resolveDesktopTowerElevatorVideoSrc(direction);
   await ensureVideoSrc(video, src);
   await waitForVideoEvent(video, 'canplaythrough').catch(() => undefined);
 
@@ -368,13 +381,10 @@ export async function runElevatorVideoTransition(
     return;
   }
 
-  try {
-    await playElevatorVideoReverseScrub(video);
-  } catch (error) {
-    if (DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL) {
-      await playElevatorVideoForwardFromSrc(video, DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL);
-      return;
-    }
-    throw error;
+  if (DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL) {
+    await playElevatorVideoForward(video);
+    return;
   }
+
+  await playElevatorVideoReverseScrub(video);
 }

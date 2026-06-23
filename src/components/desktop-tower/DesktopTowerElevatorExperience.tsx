@@ -10,6 +10,7 @@ import { formatTowerLevelLabel, formatTowerElevatorHoloName, type TowerTravelDir
 import {
   cancelElevatorVideoTransition,
   getDesktopTowerElevatorVideoSrc,
+  resolveDesktopTowerElevatorVideoSrc,
   runElevatorVideoTransition,
   warmDesktopTowerElevatorVideo,
 } from '../../utils/desktopTowerElevatorVideo';
@@ -45,7 +46,7 @@ export function DesktopTowerElevatorExperience({
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playbackRunRef = useRef(0);
-  const lockedVideoSrcRef = useRef(getDesktopTowerElevatorVideoSrc());
+  const lockedVideoSrcRef = useRef(resolveDesktopTowerElevatorVideoSrc(direction));
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
@@ -145,7 +146,13 @@ export function DesktopTowerElevatorExperience({
     playbackRunRef.current = runId;
     setVideoPlaying(true);
 
-    void runElevatorVideoTransition(video, direction, lockedVideoSrcRef.current)
+    const lockedSrc =
+      direction === 'up'
+        ? getDesktopTowerElevatorVideoSrc()
+        : resolveDesktopTowerElevatorVideoSrc('down');
+    lockedVideoSrcRef.current = lockedSrc;
+
+    void runElevatorVideoTransition(video, direction, lockedSrc)
       .then(() => {
         if (playbackRunRef.current !== runId) return;
         onVideoPlaybackCompleteRef.current?.();
@@ -213,7 +220,7 @@ export function DesktopTowerElevatorExperience({
             ) : null}
             <video
               ref={videoRef}
-              src={lockedVideoSrcRef.current}
+              src={resolveDesktopTowerElevatorVideoSrc(direction)}
               className={`desktop-tower-elevator__shell-media${
                 videoPlaying ? ' desktop-tower-elevator__shell-media--playing' : ''
               }`}
