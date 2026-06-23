@@ -31917,3 +31917,18 @@ User reported **no mock products** on **`https://fsbw.vercel.app/desktop/shoppin
 - **Wired:** **`App.tsx`** bootstrap, **`useDesktopShoppingBagCart`**, **`/bag`** **`loadCartItems`**. Desktop page uses live cart hook only (removes display-only mock state).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Account commerce sync (mobile + desktop routes)
+
+User asked that **all mobile/desktop pages under the same account should be synced** (cart parity across **`/bag`**, **`/desktop/shopping-bag`**, checkout, devices).
+
+- **Gaps fixed:** Guest commerce routes (**`/bag`**, checkout, desktop acquisition) skipped **`syncCartFromApi`** even when signed in; desktop cart writes did not mirror **`cartItems_${email}`** or schedule cloud push; mock seed could run for signed-in users before API hydrate.
+- **`AccountCommerceSync`** — pulls cart + wishlist from Supabase on commerce paths, window **focus**, and **signInStateChanged**.
+- **`CommerceRouteGuard`** — **`hydrateSignedInCommerceCart()`** on guest-allowed paths when signed in.
+- **`cartLocalStorage.persistCartItemsToLocalStorage`** — global + per-user mirror + **`schedulePushCartWishlistToCloud`**; used by **`useDesktopShoppingBagCart`**.
+- **`hydrateGlobalCartFromUserKeyIfEmpty`** — restores per-user snapshot when globals empty.
+- **`syncCartFromApi`** — quantity-based **`cartCount`**, **`cartItemsChanged`**, per-user mirror after merge.
+- Mock seed now **skipped when signed in** (guest/preview QA only).
+- Pushed **`master`** + **`preview/mobile`**.
+
