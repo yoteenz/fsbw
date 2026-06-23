@@ -12,7 +12,18 @@ export const DESKTOP_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {
   height: 0.34,
 };
 
-/** Transparent tap over baked play cue on TV glass. */
+/** Production nudge for TV frame after cover map (`center top`). */
+export const DESKTOP_LOUNGE_TV_FRAME_LAYOUT = {
+  layoutOffsetX: 0,
+  layoutOffsetY: 0,
+  layoutWidthExtraPx: 0,
+  layoutHeightExtraPx: 0,
+} as const;
+
+export const DESKTOP_LOUNGE_TV_SCREEN_OFFSET_X_PX = 0;
+export const DESKTOP_LOUNGE_TV_SCREEN_OFFSET_Y_PX = 0;
+
+/** @deprecated Play cue uses full {@link DESKTOP_LOUNGE_TV_HIT_REGION} frame. */
 export const DESKTOP_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {
   left: 0.455,
   top: 0.26,
@@ -20,7 +31,7 @@ export const DESKTOP_LOUNGE_TV_PLAY_TAP_RECT: FinalSceneHitRect = {
   height: 0.08,
 };
 
-/** Production nudge for play tap after cover map (`center top`). */
+/** @deprecated */
 export const DESKTOP_LOUNGE_TV_PLAY_TAP_LAYOUT = {
   layoutOffsetX: 0,
   layoutOffsetY: 0,
@@ -28,5 +39,6 @@ export const DESKTOP_LOUNGE_TV_PLAY_TAP_LAYOUT = {
   layoutHeightExtraPx: 0,
 } as const;
 
+/** @deprecated */
 export const DESKTOP_LOUNGE_TV_PLAY_SCREEN_OFFSET_X_PX = 0;
 export const DESKTOP_LOUNGE_TV_PLAY_SCREEN_OFFSET_Y_PX = 0;

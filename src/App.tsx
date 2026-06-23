@@ -27,6 +27,8 @@ import CreativePreviewBanner from './components/CreativePreviewBanner';
 import { DesktopRouteShell } from './components/desktop-preview/DesktopRouteShell';
 import { DesktopRoomTitlePlacementEditorProvider } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorContext';
 import { DesktopRoomTitlePlacementEditorPanel } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorPanel';
+import { DesktopLoungeTvFrameEditorProvider } from './components/desktop-lobby/DesktopLoungeTvFrameEditorContext';
+import { DesktopLoungeTvFrameEditorPanel } from './components/desktop-lobby/DesktopLoungeTvFrameEditorPanel';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -172,10 +174,13 @@ const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/p
 function DesktopRoutesLayout() {
   return (
     <DesktopRoomTitlePlacementEditorProvider>
-      <DesktopRouteShell>
-        <Outlet />
-      </DesktopRouteShell>
-      <DesktopRoomTitlePlacementEditorPanel />
+      <DesktopLoungeTvFrameEditorProvider>
+        <DesktopRouteShell>
+          <Outlet />
+        </DesktopRouteShell>
+        <DesktopRoomTitlePlacementEditorPanel />
+        <DesktopLoungeTvFrameEditorPanel />
+      </DesktopLoungeTvFrameEditorProvider>
     </DesktopRoomTitlePlacementEditorProvider>
   );
 }

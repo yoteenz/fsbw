@@ -63,6 +63,10 @@ export default function DesktopFloorZonePage({ floor }: Props) {
     setIsSlayCinemaEnabled((current) => !current);
   }, []);
 
+  const closeSlayCinema = useCallback(() => {
+    setIsSlayCinemaEnabled(false);
+  }, []);
+
   const loungeSlayCinema = useMemo(
     () =>
       isLoungeZone
@@ -141,6 +145,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           active={isLoungeZone}
           isSlayCinemaEnabled={isSlayCinemaEnabled}
           onToggleSlayCinema={toggleSlayCinema}
+          onCloseSlayCinema={closeSlayCinema}
         />
 
         <DesktopFloatingNav />

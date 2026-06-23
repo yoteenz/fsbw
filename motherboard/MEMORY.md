@@ -31552,3 +31552,14 @@ User disliked the **Slay Cinema** floating nav button; asked to remove it and us
 - **Unchanged:** dual-layer bright/dimmed crossfade, preload, lounge-only state, **`aria-pressed`** toggle.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Slay Cinema: embedded mobile TV content + TV frame debug square
+
+User requested that when **Slay Cinema** is active, **mobile lounge TV content** appear inside the desktop TV screen only; **PRESS TO PLAY** hidden in cinema mode; **X close** top-right of TV to collapse content and exit cinema; plus a **debug square** on the TV frame (draggable/resizable corners + edges, Save to localStorage) to lock the frame to the background TV for responsiveness, with **PRESS TO PLAY** centered inside the frame as an alignment guide.
+
+- **Cinema content:** **`DesktopLoungeSlayCinemaPlay`** — when **`isSlayCinemaEnabled`**, embeds exported **`LoungeTvScreen`** (from **`LoungeTvOverlay.tsx`**) inside cover-mapped TV frame with **`LoungeTvContentProtection`**, **`container-type: size`** (`loungeTvResponsive`), and **`LoungeTvCloseButton`** (top-right **`2%`**) calling **`onCloseSlayCinema`**. Hydrates TV admin config on cinema open. When off, full-frame **PRESS TO PLAY** tap toggles cinema (no small play-tap rect).
+- **TV frame layout:** **`desktopLoungeTvLayout.ts`** — **`DESKTOP_LOUNGE_TV_HIT_REGION`** + **`DESKTOP_LOUNGE_TV_FRAME_LAYOUT`** / screen offsets; play-tap constants deprecated.
+- **Debug tooling:** **`?desktopLoungeTvDebug=1&desktopLoungeTvEdit=1`** — **`desktopLoungeTvFrameDebug.ts`**, **`desktopLoungeTvFrameOverrides.ts`** (localStorage **`baw_desktop_lounge_tv_frame_overrides`**), **`DesktopLoungeTvFrameEditorContext`**, **`DesktopLoungeTvFrameEditorPanel`** (Save / Reset / Copy JSON), **`DesktopLoungeTvFrameDebugOverlay`** (amber square, corner + edge resize, drag move). Provider wired in **`DesktopRoutesLayout`** alongside room-title editor.
+- Pushed **`master`** + **`preview/mobile`**.
+

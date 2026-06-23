@@ -253,7 +253,7 @@ function LoungeTvTileLabel({
   );
 }
 
-function LoungeTvScreen({
+export function LoungeTvScreen({
   mainTab,
   sidebarId,
   onMainTabChange,
