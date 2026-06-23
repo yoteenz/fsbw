@@ -6,6 +6,8 @@ import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 import { hydrateGlobalCartFromUserKeyIfEmpty } from '../utils/cartWishlistStorage';
+import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
+import { dispatchAccountCommerceSyncComplete } from '../utils/cartLocalStorage';
 
 async function hydrateSignedInCommerceCart(): Promise<void> {
   if (!isAppSignedIn()) return;
@@ -15,6 +17,8 @@ async function hydrateSignedInCommerceCart(): Promise<void> {
   } catch {
     /* local cart until sync succeeds */
   }
+  seedShoppingBagMockCartIfEmpty();
+  dispatchAccountCommerceSyncComplete();
 }
 
 /**
@@ -28,6 +32,7 @@ async function hydrateSignedInCommerceCart(): Promise<void> {
  */
 function isGuestCommerceAllowedPath(pathname: string): boolean {
   if (pathname === '/bag') return true;
+  if (pathname === '/desktop/shopping-bag') return true;
   if (pathname === '/checkout') return true;
   if (pathname === '/checkout/bookings') return true;
   if (pathname === '/checkout/gift-card') return true;
@@ -53,7 +58,10 @@ export default function CommerceRouteGuard({ children }: { children: React.React
     let cancelled = false;
     (async () => {
       if (isGuestCommerceAllowedPath(location.pathname)) {
+        hydrateGlobalCartFromUserKeyIfEmpty();
         await hydrateSignedInCommerceCart();
+        seedShoppingBagMockCartIfEmpty();
+        dispatchAccountCommerceSyncComplete();
         if (!cancelled) setAllowed(true);
         return;
       }

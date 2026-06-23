@@ -1,73 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { sortCartPremiumBookingFirst } from '../utils/bookingCart';
 import { cartBillableSubtotal, cartLineExtendedPriceUsd } from '../utils/cartBillableLines';
 import { cartTotalQuantityUnits } from '../utils/cartTotalQuantityUnits';
 import {
   giftCardLineTotalUsd,
   isGiftCardCartLine,
-  migrateGiftCardCartLinesForStorage,
 } from '../utils/giftCardCheckout';
 import { applyGiftCardBagQuantityDelta } from '../utils/giftCardCheckout';
 import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../utils/giftCardCheckoutSession';
 import { isBookingCartLine } from '../utils/bookingCheckout';
 import { isSlayTicketPackCartLine } from '../utils/slayTicketCheckout';
-import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
-import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 import { trackActivity } from '../utils/activity';
-import { persistCartItemsToLocalStorage } from '../utils/cartLocalStorage';
-import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
-
-function clampCartRows(items: any[]): any[] {
-  return items.map((i: any) => {
-    let row = i;
-    if (i.consultOfferQtyLocked === true) row = { ...row, quantity: 1 };
-    if (i.isSpecialOffer && (i.quantity ?? 1) > 2) row = { ...row, quantity: 2 };
-    if (i.bcfBundleDeal) row = { ...row, quantity: 3 };
-    return row;
-  });
-}
-
-function persistCart(items: any[]) {
-  return persistCartItemsToLocalStorage(items);
-}
-
-function loadCartFromStorage(): any[] {
-  seedShoppingBagMockCartIfEmpty();
-  try {
-    const stored = localStorage.getItem('cartItems');
-    if (!stored) return [];
-    const items = JSON.parse(stored);
-    if (!Array.isArray(items)) return [];
-
-    const clamped = clampCartRows(items);
-    const cartChanged = items.some(
-      (i: any, idx: number) => (i.quantity ?? 1) !== (clamped[idx].quantity ?? 1),
-    );
-    if (cartChanged) {
-      persistCart(clamped);
-    }
-
-    const giftMigrated = migrateGiftCardCartLinesForStorage(clamped);
-    let afterGift = giftMigrated.next;
-    if (giftMigrated.changed) {
-      persistCart(afterGift);
-    }
-
-    const strip = stripIneligibleBcfBundleDealLines(afterGift);
-    if (strip.removedUnitCount > 0) {
-      persistCart(strip.next);
-      return sortCartPremiumBookingFirst(
-        strip.next.map((row: any) => attachStockStatusToLineItem(row)),
-      );
-    }
-
-    return sortCartPremiumBookingFirst(
-      afterGift.map((row: any) => attachStockStatusToLineItem(row)),
-    );
-  } catch {
-    return [];
-  }
-}
+import {
+  ACCOUNT_COMMERCE_SYNC_EVENT,
+  loadCommerceCartFromStorage,
+  persistCartItemsToLocalStorage,
+} from '../utils/cartLocalStorage';
 
 export function resolveCartLineDisplayPriceUsd(item: any): number {
   if (isGiftCardCartLine(item)) {
@@ -90,22 +37,28 @@ export function formatCuratedCollectionPrice(amount: number): string {
 }
 
 export function useDesktopShoppingBagCart() {
-  const [cartItems, setCartItems] = useState<any[]>(() => loadCartFromStorage());
+  const [cartItems, setCartItems] = useState<any[]>(() => loadCommerceCartFromStorage());
   const [removingIds, setRemovingIds] = useState<Set<string>>(() => new Set());
 
   const reload = useCallback(() => {
-    setCartItems(loadCartFromStorage());
+    setCartItems(loadCommerceCartFromStorage());
   }, []);
+
+  useEffect(() => {
+    reload();
+  }, [reload]);
 
   useEffect(() => {
     const onChange = () => reload();
     window.addEventListener('cartUpdated', onChange);
     window.addEventListener('cartItemsChanged', onChange);
+    window.addEventListener(ACCOUNT_COMMERCE_SYNC_EVENT, onChange);
     window.addEventListener('storage', onChange);
     window.addEventListener('focus', onChange);
     return () => {
       window.removeEventListener('cartUpdated', onChange);
       window.removeEventListener('cartItemsChanged', onChange);
+      window.removeEventListener(ACCOUNT_COMMERCE_SYNC_EVENT, onChange);
       window.removeEventListener('storage', onChange);
       window.removeEventListener('focus', onChange);
     };
@@ -119,7 +72,7 @@ export function useDesktopShoppingBagCart() {
 
     window.setTimeout(() => {
       try {
-        const current = loadCartFromStorage();
+        const current = loadCommerceCartFromStorage();
         const removed = current.find((i) => i.id === itemId);
         const label = (removed?.name || removed?.productName || '').toString().trim();
         const newItems = current.filter((i) => i.id !== itemId);
@@ -132,9 +85,9 @@ export function useDesktopShoppingBagCart() {
           } catch {
             finalItems = newItems;
           }
-          persistCart(finalItems);
+          persistCartItemsToLocalStorage(finalItems);
         } else {
-          persistCart(newItems);
+          persistCartItemsToLocalStorage(newItems);
         }
 
         setCartItems(finalItems);
@@ -158,7 +111,7 @@ export function useDesktopShoppingBagCart() {
   const changeQuantity = useCallback(
     (itemId: string, delta: number) => {
       try {
-        const current = loadCartFromStorage();
+        const current = loadCommerceCartFromStorage();
         const currentItem = current.find((i) => i.id === itemId);
         if (!currentItem) return;
         if (currentItem.consultOfferQtyLocked === true) return;
@@ -173,7 +126,7 @@ export function useDesktopShoppingBagCart() {
             return;
           }
           const next = current.map((i) => (i.id === itemId ? giftDelta.next : i));
-          persistCart(next);
+          persistCartItemsToLocalStorage(next);
           setCartItems(next);
           return;
         }
@@ -187,7 +140,7 @@ export function useDesktopShoppingBagCart() {
         }
         const clampedQty = Math.max(1, Math.min(maxQty, newQty));
         const next = current.map((i) => (i.id === itemId ? { ...i, quantity: clampedQty } : i));
-        persistCart(next);
+        persistCartItemsToLocalStorage(next);
         setCartItems(next);
         trackActivity(delta > 0 ? 'add_to_cart' : 'remove_from_cart', {
           source: 'desktop_acquisition',

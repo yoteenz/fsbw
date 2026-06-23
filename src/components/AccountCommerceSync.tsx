@@ -5,6 +5,8 @@ import { hydrateGlobalCartFromUserKeyIfEmpty } from '../utils/cartWishlistStorag
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 import { isSupabaseConfigured, getSupabase } from '../utils/supabase';
 import { syncCartFromApi, syncWishlistFromApi } from '../utils/syncFromApi';
+import { dispatchAccountCommerceSyncComplete } from '../utils/cartLocalStorage';
+import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
 
 /** Routes where bag/checkout UI should hydrate cart + wishlist from cloud before render. */
 const COMMERCE_SYNC_PATH =
@@ -24,6 +26,8 @@ async function pullAccountCommerceFromCloud(): Promise<void> {
 
   hydrateGlobalCartFromUserKeyIfEmpty();
   await Promise.all([syncCartFromApi(), syncWishlistFromApi()]);
+  seedShoppingBagMockCartIfEmpty();
+  dispatchAccountCommerceSyncComplete();
 }
 
 /**

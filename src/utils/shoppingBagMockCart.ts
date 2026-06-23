@@ -149,8 +149,16 @@ function persistSeededMockCart(items: Record<string, unknown>[]): void {
 /** Seed shared mock lines into `localStorage` when enabled and the cart is empty. */
 export function seedShoppingBagMockCartIfEmpty(): boolean {
   if (typeof window === 'undefined' || !isShoppingBagMockCartEnabled()) return false;
-  if (isSignedIn()) return false;
   if (readStoredCartItems().length > 0) return false;
+
+  // Production (non-preview): only seed guests unless `?shoppingBagMock=1`.
+  if (isSignedIn() && !isPreviewEnvironment() && !import.meta.env.DEV) {
+    try {
+      if (new URLSearchParams(window.location.search).get('shoppingBagMock') !== '1') return false;
+    } catch {
+      return false;
+    }
+  }
 
   try {
     const seeded = SHOPPING_BAG_MOCK_CART_ITEMS.map((row) => ({ ...row }));

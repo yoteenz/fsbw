@@ -7,6 +7,7 @@ import {
 } from '../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
 import { desktopNavBarStyle } from './desktopLobbyAcrylic';
+import { readCartCountFromStorage } from '../../utils/cartLocalStorage';
 
 export function NavBar() {
   const navigate = useNavigate();
@@ -26,19 +27,17 @@ export function NavBar() {
 
   useEffect(() => {
     const syncCart = () => {
-      try {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const count = Array.isArray(cart)
-          ? cart.reduce((acc: number, item: { quantity?: number }) => acc + (item.quantity || 1), 0)
-          : 0;
-        setCartCount(count);
-      } catch {
-        setCartCount(0);
-      }
+      setCartCount(readCartCountFromStorage());
     };
     syncCart();
     window.addEventListener('cartUpdated', syncCart);
-    return () => window.removeEventListener('cartUpdated', syncCart);
+    window.addEventListener('cartCountUpdated', syncCart);
+    window.addEventListener('cartItemsChanged', syncCart);
+    return () => {
+      window.removeEventListener('cartUpdated', syncCart);
+      window.removeEventListener('cartCountUpdated', syncCart);
+      window.removeEventListener('cartItemsChanged', syncCart);
+    };
   }, []);
 
   const homeRoute = DESKTOP_NAV_QUICK_ROUTES.find((r) => r.label === 'HOME')!;

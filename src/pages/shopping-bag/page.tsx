@@ -74,6 +74,7 @@ import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin'
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
+import { hydrateGlobalCartFromUserKeyIfEmpty } from '../../utils/cartWishlistStorage';
 import { seedShoppingBagMockCartIfEmpty } from '../../utils/shoppingBagMockCart';
 import {
   cartBillablePointsEligibleSubtotal,
@@ -432,6 +433,7 @@ function ShoppingBagPage() {
   }, []);
 
   const loadCartItems = () => {
+    hydrateGlobalCartFromUserKeyIfEmpty();
     seedShoppingBagMockCartIfEmpty();
     try {
       const stored = localStorage.getItem('cartItems');
