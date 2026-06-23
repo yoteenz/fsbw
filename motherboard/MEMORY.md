@@ -31530,10 +31530,14 @@ User reported **debug links showed squares only on Members Only Lounge** on mobi
 
 ---
 
-## 2026-06-23 — Debug panel bottom center (not over titles)
+## 2026-06-23 — Desktop TV Lounge Slay Cinema background mode
 
-User reported **room label debug panel** covered wall title/subtitle at top.
+User supplied dimmed lounge hero **`A2C48719-797A-446D-8ADA-E1AEB9AEC4F4.png`** and requested **Slay Cinema** — a lounge-only toggle between bright default TV Lounge background and the dimmed movie-viewing asset (real image swap, no CSS filters), with luxury acrylic floating control, 400–700ms crossfade, preload both assets, no routing/nav changes.
 
-- **`DesktopRoomTitlePlacementEditorPanel.tsx`** — **`position: fixed`** **`bottom: 8px`**, **`left: 50%`**, **`transform: translateX(-50%)`** (was top-right).
+- **Assets:** **`desktopNoTextBackgrounds.ts`** — **`lounge-slay-cinema`** URL under **`Desktop/NO TEXT BG/`**. Bright default remains **`lounge`** JPEG. Helpers in **`desktopLoungeSlayCinema.ts`**.
+- **State:** **`isSlayCinemaEnabled`** in **`DesktopFloorZonePage`** (default **false**); resets when leaving **`lounge`** zone; **`SlayCinemaProvider`** context for floating nav toggle.
+- **Background:** **`DesktopZoneRoomScene`** dual-layer stack for lounge — crossfade **550ms**, **`object-fit: cover`**, same framing; only image layer swaps (no room remount).
+- **UI:** **`SlayCinemaToggle`** — bottom-right above elevator trigger; label **SLAY CINEMA** + **ON/OFF**; acrylic/chrome/red foil styling; CSS cinema glyph (**`SlayCinemaIcon`**); **`aria-label`** / **`aria-pressed`**. Wired in **`DesktopFloatingNav`**; visible only on **`/desktop/lobby?zone=lounge`**.
+- **Preload:** both bright + dimmed URLs when entering lounge zone.
 - Pushed **`master`** + **`preview/mobile`**.
 
