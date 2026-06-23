@@ -31499,3 +31499,12 @@ User asked to **reduce spacing another 2px** and **increase subtitle text only b
 - **`.desktop-room-title__subtitle`** **`font-size`** **`+ 4px` → `+ 6px`** (foil title unchanged).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room subtitle Futura PT Medium
+
+User asked to change **black subtitle** to **Futura Medium** (red foil title unchanged).
+
+- **`.desktop-room-title__subtitle`** — **`font-family: 'Futura PT Medium'`**, **`font-weight: 500`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
