@@ -31155,3 +31155,14 @@ User: "why does the descending elevator get stuck on the elevator screen". Only 
 - **Process note:** a prior attempt's tool calls were echoed but not actually applied (working tree was clean); re-applied and verified `npx tsc --noEmit` clean before committing.
 - Committed to **`master`** + merged/pushed **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Elevator: align floor timeline with MP4 duration
+
+Continuation of the same chat (elevator playback fixes, floating nav captions, descending stall fix). User asked to align the floor-number timeline with the elevator video so **Destination** lands exactly when the animation ends — short trips had been showing Destination before the clip finished.
+
+- **Cause:** `TOWER_TRAVEL_MS_PER_FLOOR` (1500ms) + dwells were fixed regardless of trip length, while the overlay always plays one full MP4 per journey (~8s). `tryFinishTravel` waited for both timeline + video, but holo/directory read **Destination** as soon as the cabin timeline reached the target floor (e.g. ~1.5s on a one-floor hop).
+- **Fix:** **`resolveTowerTravelTiming`** in **`desktopTowerMotion.ts`** scales per-floor travel + intermediate dwells proportionally so **`totalDurationMs` equals the warmed clip length** (fallback **8000ms**). **`resolveTowerTravelFrame`** accepts optional scaled timing. **`DesktopTowerNavProvider`** resolves timing inside **`startTravel()`** after **`waitForDesktopTowerElevatorVideoReady`** so real metadata drives the scale; journey watchdog no longer double-counts video duration.
+- **Result:** cabin floor progression, holo **Destination**, and side directory highlights reach the target floor when the MP4 ends (ascents and descents).
+- Pushed **`master`** + **`preview/mobile`**.
+
