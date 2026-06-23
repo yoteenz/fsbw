@@ -20,20 +20,11 @@ import { SceneHitDebugBanner } from '../lobby/SceneHitDebugBanner';
 import { SceneHitDebugOverlay } from '../lobby/SceneHitDebugOverlay';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { SceneViewportOverlay } from '../lobby/SceneViewportOverlay';
+import {
+  LOUNGE_TV_PRESS_PLAY_LABEL,
+  LOUNGE_TV_PRESS_PLAY_LABEL_STYLE,
+} from '../../constants/loungeTvPressPlay';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
-
-const PRESS_PLAY_LABEL_STYLE: CSSProperties = {
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '9px',
-  fontWeight: 500,
-  letterSpacing: '0.14em',
-  textTransform: 'uppercase',
-  color: '#808080',
-  lineHeight: 1.2,
-  textAlign: 'center',
-  whiteSpace: 'nowrap',
-  animation: 'lounge-tv-press-play-pulse 1.6s ease-in-out infinite',
-};
 
 type Props = {
   /** {@link SceneCarouselViewportStage} root — `100dvh` cover box on `final-lounge.png`. */
@@ -224,8 +215,8 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
               boxSizing: 'border-box',
             }}
           >
-            <span aria-hidden style={PRESS_PLAY_LABEL_STYLE}>
-              PRESS TO PLAY
+            <span aria-hidden style={LOUNGE_TV_PRESS_PLAY_LABEL_STYLE}>
+              {LOUNGE_TV_PRESS_PLAY_LABEL}
             </span>
           </button>
         </div>

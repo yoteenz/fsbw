@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
-import { SlayCinemaProvider } from '../../../components/desktop-lobby/floating-nav/SlayCinemaContext';
+import { DesktopLoungeSlayCinemaPlay } from '../../../components/desktop-lobby/DesktopLoungeSlayCinemaPlay';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
 import PsaAssistantWidget from '../../../components/psa/PsaAssistantWidget';
@@ -37,6 +37,7 @@ function resolveZoneBackground(zoneId: string): string {
 export default function DesktopFloorZonePage({ floor }: Props) {
   const [searchParams] = useSearchParams();
   const zoneId = resolveDesktopFloorZoneId(floor, searchParams.get('zone'));
+  const viewportMeasureRef = useRef<HTMLElement>(null);
   const { pageStyle } = useDesktopTowerPageReveal();
   const travel = useDesktopTowerTravelOptional();
   const isTraveling = travel?.isTraveling ?? false;
@@ -62,15 +63,6 @@ export default function DesktopFloorZonePage({ floor }: Props) {
     setIsSlayCinemaEnabled((current) => !current);
   }, []);
 
-  const slayCinemaContextValue = useMemo(
-    () => ({
-      isLoungeZone,
-      isSlayCinemaEnabled,
-      toggleSlayCinema,
-    }),
-    [isLoungeZone, isSlayCinemaEnabled, toggleSlayCinema],
-  );
-
   const loungeSlayCinema = useMemo(
     () =>
       isLoungeZone
@@ -91,64 +83,70 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   }, [zoneId, zoneIds]);
 
   return (
-    <SlayCinemaProvider value={slayCinemaContextValue}>
-      <div
+    <div
+      style={{
+        height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
+        boxSizing: 'border-box',
+        paddingTop: '68px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        background: '#0A0A0A',
+        position: 'relative',
+        ...pageStyle,
+        opacity: isTraveling ? 0 : pageStyle.opacity,
+        pointerEvents: isTraveling ? 'none' : undefined,
+      }}
+    >
+      <NavBar />
+      <section
+        ref={viewportMeasureRef}
         style={{
-          height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
-          boxSizing: 'border-box',
-          paddingTop: '68px',
-          display: 'flex',
-          flexDirection: 'column',
+          position: 'relative',
+          flex: artboard ? 'none' : 1,
+          height: artboard ? '1012px' : undefined,
+          minHeight: artboard ? '1012px' : 0,
           overflow: 'hidden',
           background: '#0A0A0A',
-          position: 'relative',
-          ...pageStyle,
-          opacity: isTraveling ? 0 : pageStyle.opacity,
-          pointerEvents: isTraveling ? 'none' : undefined,
         }}
       >
-        <NavBar />
-        <section
+        <DesktopZoneRoomScene
+          zoneIds={zoneIds}
+          zoneIndex={zoneIndex}
+          resolveBackground={resolveZoneBackground}
+          resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
+          onBackgroundReadyChange={setBackgroundReady}
+          loungeSlayCinema={loungeSlayCinema}
+        />
+
+        <div
           style={{
-            position: 'relative',
-            flex: artboard ? 'none' : 1,
-            height: artboard ? '1012px' : undefined,
-            minHeight: artboard ? '1012px' : 0,
-            overflow: 'hidden',
-            background: '#0A0A0A',
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            pointerEvents: 'none',
+            background:
+              'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.1) 100%)',
           }}
-        >
-          <DesktopZoneRoomScene
-            zoneIds={zoneIds}
-            zoneIndex={zoneIndex}
-            resolveBackground={resolveZoneBackground}
-            resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
-            onBackgroundReadyChange={setBackgroundReady}
-            loungeSlayCinema={loungeSlayCinema}
-          />
+        />
 
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 2,
-              pointerEvents: 'none',
-              background:
-                'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.1) 100%)',
-            }}
-          />
+        {backgroundReady ? (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+            <ParticleField />
+          </div>
+        ) : null}
 
-          {backgroundReady ? (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-              <ParticleField />
-            </div>
-          ) : null}
+        <DesktopLoungeSlayCinemaPlay
+          measureRef={viewportMeasureRef}
+          active={isLoungeZone}
+          isSlayCinemaEnabled={isSlayCinemaEnabled}
+          onToggleSlayCinema={toggleSlayCinema}
+        />
 
-          <DesktopFloatingNav />
+        <DesktopFloatingNav />
 
-          {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
-        </section>
-      </div>
-    </SlayCinemaProvider>
+        {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
+      </section>
+    </div>
   );
 }
