@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import {
+  isPsaDesktopPath,
   isPsaFabHiddenPath,
   isPsaHiddenPath,
   PSA_NUDGE_BUBBLE_SRC,
@@ -29,9 +30,11 @@ import {
   prepareMembershipUpgradeNavigation,
 } from '../../utils/premiumMemberAccess';
 import {
+  clearLoungeTvTheaterModeIfOutsideLobby,
   isLoungeTvTheaterModeActive,
   LOUNGE_TV_THEATER_MODE_CHANGED_EVENT,
 } from '../../utils/loungeTvTheaterMode';
+import { isPhoneDesktopArtboardActive } from '../../hooks/useDesktopArtboardPortalTarget';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaStandingHologram from './PsaStandingHologram';
 import PsaChatPanel from './PsaChatPanel';
@@ -179,6 +182,11 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     window.addEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
     return () => window.removeEventListener(LOUNGE_TV_THEATER_MODE_CHANGED_EVENT, syncTheater);
   }, []);
+
+  /** Stale lounge TV theater state from `/lobby` must not hide the desktop PSA Suite hologram. */
+  useEffect(() => {
+    clearLoungeTvTheaterModeIfOutsideLobby(location.pathname);
+  }, [location.pathname]);
 
   useEffect(() => subscribeCartDropdownOpenState(setCartDropdownOpen), []);
 
@@ -684,8 +692,9 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
   );
 
   // Desktop PSA Suite: hologram always visible; chat opens only for premium members.
+  const suiteBlockedByTheater = loungeTvTheater && !isPsaDesktopPath(location.pathname);
   if (isSuite) {
-    if (loungeTvTheater) return null;
+    if (suiteBlockedByTheater) return null;
   } else if (!signedIn || !isPremium || loungeTvTheater) {
     return null;
   }
@@ -693,10 +702,16 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     return null;
   }
 
+  const suiteUsesViewportPortal = isSuite && !isPhoneDesktopArtboardActive();
+
   const widget = (
     <>
       <div
-        className={isSuite ? 'psa-suite-root' : 'psa-widget-root'}
+        className={
+          isSuite
+            ? `psa-suite-root${suiteUsesViewportPortal ? ' psa-suite-root--viewport-portal' : ''}`
+            : 'psa-widget-root'
+        }
         data-attribute={isSuite ? 'psa-suite-experience' : 'psa-assistant-widget'}
       >
         {isSuite ? (
@@ -810,6 +825,7 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     </>
   );
 
-  if (isSuite || typeof document === 'undefined') return widget;
+  if (typeof document === 'undefined') return widget;
+  if (isSuite && !suiteUsesViewportPortal) return widget;
   return createPortal(widget, document.body);
 }

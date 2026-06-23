@@ -10,6 +10,16 @@
   box-sizing: border-box;
 }
 
+/* Desktop/tablet: portaled to body so holo sits above floating nav (z 180) and room scene. */
+.psa-suite-root--viewport-portal {
+  position: fixed;
+  top: 68px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 185;
+}
+
 .psa-suite-root > * {
   pointer-events: auto;
 }

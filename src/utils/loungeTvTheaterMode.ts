@@ -17,6 +17,13 @@ export function setLoungeTvTheaterMode(active: boolean): void {
   );
 }
 
+/** Lounge TV theater is lobby-only — clear stale module state after leaving `/lobby`. */
+export function clearLoungeTvTheaterModeIfOutsideLobby(pathname: string): void {
+  if (pathname === '/lobby' || pathname.startsWith('/lobby/')) return;
+  if (!theaterActive) return;
+  setLoungeTvTheaterMode(false);
+}
+
 /** Subscribe to theater mode (open animation through close complete). */
 export function useLoungeTvTheaterMode(): boolean {
   const [active, setActive] = useState(() => isLoungeTvTheaterModeActive());
