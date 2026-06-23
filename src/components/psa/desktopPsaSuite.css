@@ -10,7 +10,7 @@
   box-sizing: border-box;
 }
 
-/* Desktop/tablet: portaled to body so holo sits above floating nav (z 180) and room scene. */
+/* Desktop/tablet: portaled to body so holo stacks above room scene; layout is click-through except holo/chat. */
 .psa-suite-root--viewport-portal {
   position: fixed;
   top: 68px;
@@ -20,8 +20,13 @@
   z-index: 185;
 }
 
-.psa-suite-root > * {
-  pointer-events: auto;
+.psa-suite-root--viewport-portal {
+  position: fixed;
+  top: 68px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 185;
 }
 
 .psa-suite-layout {
@@ -29,12 +34,14 @@
   width: 100%;
   height: 100%;
   min-height: 0;
+  pointer-events: none;
 }
 
 .psa-suite-root .psa-chat-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
+  pointer-events: auto;
 }
 
 .psa-suite-root .psa-chat-panel {
@@ -48,6 +55,7 @@
   max-height: min(400px, 48vh);
   transform: none;
   margin-bottom: 0;
+  pointer-events: auto;
 }
 
 .psa-standing-hologram {
@@ -66,6 +74,7 @@
   transform: translateX(-50%) translateY(-40px);
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
+  pointer-events: auto;
 }
 
 .psa-standing-hologram--cover-mapped {
