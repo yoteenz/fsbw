@@ -8,6 +8,7 @@ import {
 } from '../../utils/desktopRoomBackgroundCache';
 import { resolveDesktopRoomTitlePlacement } from '../../constants/desktopRoomTitlePlacement';
 import { resolveDesktopRoomTitleCopy } from '../../constants/desktopRoomTitles';
+import type { DesktopLoungeSlayCinemaMode } from '../../constants/desktopLoungeSlayCinema';
 import { DesktopRoomTitle } from './DesktopRoomTitle';
 import './DesktopZoneRoomScene.css';
 
@@ -19,6 +20,7 @@ type ZoneBackgroundProps = {
   resolveBackground: (zoneId: string) => string;
   resolveFallbackBackground?: (zoneId: string) => string;
   onReadyChange?: (ready: boolean) => void;
+  slayCinema?: DesktopLoungeSlayCinemaMode;
 };
 
 function ZoneBackground({
@@ -27,58 +29,162 @@ function ZoneBackground({
   resolveBackground,
   resolveFallbackBackground,
   onReadyChange,
+  slayCinema,
 }: ZoneBackgroundProps) {
   const targetSrc = resolveBackground(zoneId);
   const fallbackSrc = resolveFallbackBackground?.(zoneId);
-  const [displaySrc, setDisplaySrc] = useState(() => {
+  const crossfadeMs = slayCinema?.crossfadeMs ?? 550;
+  const useCinemaDimmed = Boolean(slayCinema?.enabled);
+  const brightSrc = slayCinema?.brightSrc ?? targetSrc;
+  const dimmedSrc = slayCinema?.dimmedSrc;
+
+  const [displayBrightSrc, setDisplayBrightSrc] = useState(() => {
     const cached = getLastDesktopRoomBackground();
-    if (cached) return cached;
-    if (isDesktopRoomBackgroundLoaded(targetSrc)) return targetSrc;
-    return targetSrc;
+    if (cached && (!dimmedSrc || cached === brightSrc || cached === dimmedSrc)) return cached;
+    if (isDesktopRoomBackgroundLoaded(brightSrc)) return brightSrc;
+    return brightSrc;
   });
+  const [displayDimmedSrc, setDisplayDimmedSrc] = useState(dimmedSrc ?? '');
+  const [dimmedReady, setDimmedReady] = useState(() =>
+    dimmedSrc ? isDesktopRoomBackgroundLoaded(dimmedSrc) : true,
+  );
 
   useEffect(() => {
     let cancelled = false;
     const target = resolveBackground(zoneId);
     const fallback = resolveFallbackBackground?.(zoneId);
+    const primary = slayCinema?.brightSrc ?? target;
+    const alternate = slayCinema?.dimmedSrc;
 
     const markReady = (src: string) => {
       onReadyChange?.(true);
       setLastDesktopRoomBackground(src);
     };
 
-    if (isDesktopRoomBackgroundLoaded(target)) {
-      setDisplaySrc(target);
-      markReady(target);
-      return;
-    }
+    const loadPrimary = async () => {
+      if (isDesktopRoomBackgroundLoaded(primary)) {
+        if (!cancelled) setDisplayBrightSrc(primary);
+        return primary;
+      }
+      onReadyChange?.(false);
+      const loaded = await preloadDesktopRoomBackground(primary, fallback);
+      if (!cancelled) setDisplayBrightSrc(loaded);
+      return loaded;
+    };
 
-    onReadyChange?.(false);
+    const loadAlternate = async () => {
+      if (!alternate) {
+        setDimmedReady(true);
+        return;
+      }
+      if (isDesktopRoomBackgroundLoaded(alternate)) {
+        if (!cancelled) {
+          setDisplayDimmedSrc(alternate);
+          setDimmedReady(true);
+        }
+        return;
+      }
+      const loaded = await preloadDesktopRoomBackground(alternate, primary);
+      if (!cancelled) {
+        setDisplayDimmedSrc(loaded);
+        setDimmedReady(true);
+      }
+    };
 
-    void preloadDesktopRoomBackground(target, fallback).then((loaded) => {
+    void Promise.all([loadPrimary(), loadAlternate()]).then(([loadedPrimary]) => {
       if (cancelled) return;
-      setDisplaySrc(loaded);
-      markReady(loaded);
+      markReady(loadedPrimary);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [zoneId, resolveBackground, resolveFallbackBackground, onReadyChange]);
+  }, [
+    zoneId,
+    resolveBackground,
+    resolveFallbackBackground,
+    onReadyChange,
+    slayCinema?.brightSrc,
+    slayCinema?.dimmedSrc,
+  ]);
+
+  useEffect(() => {
+    if (!dimmedSrc) return;
+    const activeSrc = useCinemaDimmed ? dimmedSrc : brightSrc;
+    setLastDesktopRoomBackground(activeSrc);
+  }, [useCinemaDimmed, dimmedSrc, brightSrc]);
+
+  const handleBrightLoad = useCallback(() => {
+    if (!useCinemaDimmed) setLastDesktopRoomBackground(displayBrightSrc);
+  }, [displayBrightSrc, useCinemaDimmed]);
+
+  const handleDimmedLoad = useCallback(() => {
+    if (useCinemaDimmed && displayDimmedSrc) setLastDesktopRoomBackground(displayDimmedSrc);
+  }, [displayDimmedSrc, useCinemaDimmed]);
+
+  const bgClass = `desktop-zone-room-scene__bg ${className}`.trim();
+  const crossfadeStyle = {
+    transition: `opacity ${crossfadeMs}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+  };
+
+  if (dimmedSrc) {
+    return (
+      <div className="desktop-zone-room-scene__bg-stack" aria-hidden>
+        <img
+          src={displayBrightSrc}
+          alt=""
+          draggable={false}
+          className={`${bgClass} desktop-zone-room-scene__bg-layer`}
+          style={{
+            ...crossfadeStyle,
+            opacity: useCinemaDimmed ? 0 : 1,
+          }}
+          onLoad={handleBrightLoad}
+          onError={() => {
+            if (!fallbackSrc || displayBrightSrc === fallbackSrc) return;
+            void preloadDesktopRoomBackground(fallbackSrc).then((loaded) => {
+              setDisplayBrightSrc(loaded);
+              if (!useCinemaDimmed) {
+                setLastDesktopRoomBackground(loaded);
+                onReadyChange?.(true);
+              }
+            });
+          }}
+        />
+        {displayDimmedSrc ? (
+          <img
+            src={displayDimmedSrc}
+            alt=""
+            draggable={false}
+            className={`${bgClass} desktop-zone-room-scene__bg-layer`}
+            style={{
+              ...crossfadeStyle,
+              opacity: useCinemaDimmed && dimmedReady ? 1 : 0,
+            }}
+            onLoad={handleDimmedLoad}
+            onError={() => {
+              if (!useCinemaDimmed) return;
+              setDisplayBrightSrc(displayBrightSrc);
+            }}
+          />
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <img
-      src={displaySrc}
+      src={displayBrightSrc}
       alt=""
       draggable={false}
-      className={className}
+      className={bgClass}
       onLoad={() => {
-        setLastDesktopRoomBackground(displaySrc);
+        setLastDesktopRoomBackground(displayBrightSrc);
       }}
       onError={() => {
-        if (!fallbackSrc || displaySrc === fallbackSrc) return;
+        if (!fallbackSrc || displayBrightSrc === fallbackSrc) return;
         void preloadDesktopRoomBackground(fallbackSrc).then((loaded) => {
-          setDisplaySrc(loaded);
+          setDisplayBrightSrc(loaded);
           setLastDesktopRoomBackground(loaded);
           onReadyChange?.(true);
         });
@@ -108,6 +214,7 @@ type DesktopZoneRoomSceneProps = {
   resolveFallbackBackground?: (zoneId: string) => string;
   className?: string;
   onBackgroundReadyChange?: (ready: boolean) => void;
+  loungeSlayCinema?: DesktopLoungeSlayCinemaMode | null;
 };
 
 export function DesktopZoneRoomScene({
@@ -117,6 +224,7 @@ export function DesktopZoneRoomScene({
   resolveFallbackBackground,
   className = '',
   onBackgroundReadyChange,
+  loungeSlayCinema = null,
 }: DesktopZoneRoomSceneProps) {
   const [activeIndex, setActiveIndex] = useState(zoneIndex);
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
@@ -185,6 +293,14 @@ export function DesktopZoneRoomScene({
   const isTransitioning = leavingIndex !== null;
   const artboard = isDesktopArtboardLayoutActive();
 
+  const resolveSlayCinemaForZone = useCallback(
+    (id: string): DesktopLoungeSlayCinemaMode | undefined => {
+      if (id !== 'lounge' || !loungeSlayCinema) return undefined;
+      return loungeSlayCinema;
+    },
+    [loungeSlayCinema],
+  );
+
   if (!activeZoneId) return null;
 
   return (
@@ -200,6 +316,7 @@ export function DesktopZoneRoomScene({
             resolveBackground={resolveBackground}
             resolveFallbackBackground={resolveFallbackBackground}
             onReadyChange={handleReadyChange}
+            slayCinema={resolveSlayCinemaForZone(activeZoneId)}
           />
           <ZoneRoomTitle zoneId={activeZoneId} />
         </div>
@@ -212,6 +329,7 @@ export function DesktopZoneRoomScene({
                 className="desktop-zone-room-scene__bg desktop-zone-room-scene__bg--exit"
                 resolveBackground={resolveBackground}
                 resolveFallbackBackground={resolveFallbackBackground}
+                slayCinema={resolveSlayCinemaForZone(leavingZoneId)}
               />
             </div>
           ) : null}
@@ -222,6 +340,7 @@ export function DesktopZoneRoomScene({
               resolveBackground={resolveBackground}
               resolveFallbackBackground={resolveFallbackBackground}
               onReadyChange={handleReadyChange}
+              slayCinema={resolveSlayCinemaForZone(activeZoneId)}
             />
             <ZoneRoomTitle zoneId={activeZoneId} />
           </div>

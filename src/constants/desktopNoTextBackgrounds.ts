@@ -8,6 +8,8 @@ export const DESKTOP_NO_TEXT_ROOM_BACKGROUNDS: Readonly<Record<string, string>> 
   boutique: `${DESKTOP_NO_TEXT_BG_BASE}/dISdQyX8DIDDJ3oMT_eUi_FfYwxSxP.jpeg`,
   'build-a-wig-atelier': `${DESKTOP_NO_TEXT_BG_BASE}/z_n-ACvo96ORB2QznRNC4_m1t1r8BK.jpeg`,
   lounge: `${DESKTOP_NO_TEXT_BG_BASE}/0VpEgtJArTv2pyH93WfAc_3etFNwUm.jpeg`,
+  /** Dimmed movie-viewing variant for TV Lounge Slay Cinema mode. */
+  'lounge-slay-cinema': `${DESKTOP_NO_TEXT_BG_BASE}/A2C48719-797A-446D-8ADA-E1AEB9AEC4F4.png`,
   'slay-cam-gallery': `${DESKTOP_NO_TEXT_BG_BASE}/n-G4gj-JF3iYTU4vn_6Br_1Wt0fNh2.jpeg`,
   'members-lounge': `${DESKTOP_NO_TEXT_BG_BASE}/lwp0E0tpL0KRQxgVKQ6gs_oiPvOiml.jpeg`,
   'rewards-gallery': `${DESKTOP_NO_TEXT_BG_BASE}/JP5Klzh6u0YiOcEoLL60U_6IGydIjo.jpeg`,

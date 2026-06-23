@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
+import { SlayCinemaProvider } from '../../../components/desktop-lobby/floating-nav/SlayCinemaContext';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
 import PsaAssistantWidget from '../../../components/psa/PsaAssistantWidget';
@@ -10,9 +11,16 @@ import {
   type DesktopFloor,
 } from '../../../constants/desktopFloors';
 import { resolveFloorZoneBackground } from '../../../constants/desktopFloorZoneBackgrounds';
+import {
+  DESKTOP_LOUNGE_BRIGHT_BACKGROUND,
+  DESKTOP_LOUNGE_SLAY_CINEMA_BACKGROUND,
+  DESKTOP_LOUNGE_SLAY_CINEMA_CROSSFADE_MS,
+  DESKTOP_LOUNGE_ZONE_ID,
+} from '../../../constants/desktopLoungeSlayCinema';
 import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
+import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   isDesktopArtboardLayoutActive,
@@ -34,6 +42,47 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const isTraveling = travel?.isTraveling ?? false;
   const artboard = isDesktopArtboardLayoutActive();
   const [backgroundReady, setBackgroundReady] = useState(false);
+  const [isSlayCinemaEnabled, setIsSlayCinemaEnabled] = useState(false);
+
+  const isLoungeZone = zoneId === DESKTOP_LOUNGE_ZONE_ID;
+
+  useEffect(() => {
+    if (!isLoungeZone) {
+      setIsSlayCinemaEnabled(false);
+    }
+  }, [isLoungeZone]);
+
+  useEffect(() => {
+    if (!isLoungeZone) return;
+    void preloadDesktopRoomBackground(DESKTOP_LOUNGE_BRIGHT_BACKGROUND);
+    void preloadDesktopRoomBackground(DESKTOP_LOUNGE_SLAY_CINEMA_BACKGROUND);
+  }, [isLoungeZone]);
+
+  const toggleSlayCinema = useCallback(() => {
+    setIsSlayCinemaEnabled((current) => !current);
+  }, []);
+
+  const slayCinemaContextValue = useMemo(
+    () => ({
+      isLoungeZone,
+      isSlayCinemaEnabled,
+      toggleSlayCinema,
+    }),
+    [isLoungeZone, isSlayCinemaEnabled, toggleSlayCinema],
+  );
+
+  const loungeSlayCinema = useMemo(
+    () =>
+      isLoungeZone
+        ? {
+            enabled: isSlayCinemaEnabled,
+            brightSrc: DESKTOP_LOUNGE_BRIGHT_BACKGROUND,
+            dimmedSrc: DESKTOP_LOUNGE_SLAY_CINEMA_BACKGROUND,
+            crossfadeMs: DESKTOP_LOUNGE_SLAY_CINEMA_CROSSFADE_MS,
+          }
+        : null,
+    [isLoungeZone, isSlayCinemaEnabled],
+  );
 
   const zoneIds = useMemo(() => floor.zones.map((zone) => zone.id), [floor.zones]);
   const zoneIndex = useMemo(() => {
@@ -42,7 +91,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   }, [zoneId, zoneIds]);
 
   return (
-    <div
+    <SlayCinemaProvider value={slayCinemaContextValue}>
+      <div
         style={{
           height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
           boxSizing: 'border-box',
@@ -74,6 +124,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
             resolveBackground={resolveZoneBackground}
             resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
             onBackgroundReadyChange={setBackgroundReady}
+            loungeSlayCinema={loungeSlayCinema}
           />
 
           <div
@@ -98,5 +149,6 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
         </section>
       </div>
+    </SlayCinemaProvider>
   );
 }

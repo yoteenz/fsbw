@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { FloatingNavBackdrop, FloatingNavTrigger } from './FloatingNavTrigger';
 import { FloorNavDrawer } from './FloorNavDrawer';
 import { RoomNavDrawer, useCurrentFloorHasRooms } from './RoomNavDrawer';
+import { SlayCinemaToggle } from './SlayCinemaToggle';
 import { isDesktopPreviewActive, isMobileDesktopBypassActive } from '../../../utils/desktopPreview';
 import './FloatingNavTrigger.css';
 
@@ -53,6 +54,7 @@ export function DesktopFloatingNav() {
       if (!(target instanceof Element)) return;
 
       if (target.closest('.floating-nav-trigger')) return;
+      if (target.closest('.slay-cinema-toggle')) return;
       if (target.closest('.floating-nav-drawer--open')) return;
       closeDrawer();
     };
@@ -86,6 +88,8 @@ export function DesktopFloatingNav() {
           />
         </div>
       ) : null}
+
+      <SlayCinemaToggle />
 
       <FloorNavDrawer isOpen={activeDrawer === 'floors'} onClose={closeDrawer} />
       {hasRooms ? <RoomNavDrawer isOpen={activeDrawer === 'rooms'} onClose={closeDrawer} /> : null}
