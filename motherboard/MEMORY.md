@@ -31980,3 +31980,13 @@ User requested a **reusable Perspective Panel Mapping System** for all tilted/an
 - **Not yet migrated:** TV lounge, PSA hologram, extensions boutique, sign-in tablet (defs exist; still on legacy frame editors / no overlay).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Panel debug toolbar size / glyph overlap
+
+User asked to **reduce panel debug toolbar size** — it was covering the **bottom corner floor-nav crystal glyph**.
+
+- **Fix:** Moved toolbar to **top-right** (`top: 76px`, below nav bar) instead of bottom-right; **defaults collapsed**; narrower width (~228px), smaller type/padding, 2-column coords grid, compact action buttons; z-index **120** (below floating nav **180**) so glyphs stay clickable.
+- **Files:** `PerspectivePanelDebugToolbar.tsx`, `perspectivePanelDebug.css`.
+- Pushed **`master`** + **`preview/mobile`**.
+
