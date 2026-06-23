@@ -24,7 +24,6 @@
 }
 
 .desktop-penthouse-suite-page {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: #0a0a0a;
@@ -42,12 +41,4 @@
   flex: none;
   height: 1012px;
   min-height: 1012px;
-}
-
-@media (max-width: 1023px) {
-  .desktop-penthouse-suite-scene__bg {
-    object-fit: contain;
-    object-position: center center;
-    background: #0a0a0a;
-  }
 }

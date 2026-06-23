@@ -31,6 +31,15 @@ export default function DesktopAccountPage() {
   return (
     <div
       className={`desktop-penthouse-suite-page${artboard ? ' desktop-penthouse-suite-page--artboard' : ''}`}
+      style={{
+        height: artboard ? '1080px' : '100vh',
+        boxSizing: 'border-box',
+        paddingTop: '68px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        background: '#0A0A0A',
+      }}
     >
       <NavBar />
       <section ref={viewportRef} className="desktop-penthouse-suite-page__viewport">
