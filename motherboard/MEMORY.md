@@ -31166,3 +31166,12 @@ Continuation of the same chat (elevator playback fixes, floating nav captions, d
 - **Result:** cabin floor progression, holo **Destination**, and side directory highlights reach the target floor when the MP4 ends (ascents and descents).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Floating nav caption spacing + elevator timeline sync (full chat)
+
+Summary of the **whole conversation so far** in this chat.
+
+- **Elevator timeline ↔ video:** User asked to align floor-number progression with the MP4 so **Destination** lands when the animation ends (short trips had shown Destination early). **`resolveTowerTravelTiming`** scales per-floor travel + dwells to match warmed clip length; timing resolved in **`startTravel()`** after video ready. Files: **`desktopTowerMotion.ts`**, **`DesktopTowerNavProvider.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+- **Floating nav caption spacing:** User asked for **3px more** spacing above the red **STATION** / **ELEVATOR** captions (prior change had **`margin-top: 2px`** on **`.floating-nav-trigger__caption`**). Updated to **`margin-top: 5px`** in **`FloatingNavTrigger.css`**. Pushed **`master`** + **`preview/mobile`**.
+
