@@ -16,7 +16,6 @@ import {
 } from '../../../utils/cartEditFromBag';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
-import { seedShoppingBagMockCartIfEmpty } from '../../../utils/shoppingBagMockCart';
 import { useEffect } from 'react';
 
 export default function DesktopShoppingBagPage() {
@@ -24,7 +23,7 @@ export default function DesktopShoppingBagPage() {
   const navigate = useNavigate();
   const towerTravel = useDesktopTowerTravelOptional();
   const artboard = isDesktopArtboardLayoutActive();
-  const { cartItems, itemCount, subtotal, removingIds, removeItem, reload } = useDesktopShoppingBagCart();
+  const { cartItems, itemCount, subtotal, removingIds, removeItem } = useDesktopShoppingBagCart();
   const [bawSignInOpen, setBawSignInOpen] = useState(false);
   const [bawSignInReturnTo, setBawSignInReturnTo] = useState<{ pathname: string; search?: string }>({
     pathname: '/build-a-wig/noir/edit',
@@ -33,10 +32,6 @@ export default function DesktopShoppingBagPage() {
   useEffect(() => {
     void preloadDesktopRoomBackground(DESKTOP_SHOPPING_BAG_BACKGROUND_URL);
   }, []);
-
-  useEffect(() => {
-    if (seedShoppingBagMockCartIfEmpty()) reload();
-  }, [reload]);
 
   const goShowroom = useCallback(() => {
     const href = buildDesktopDestinationHref(DESKTOP_PENTHOUSE_PATH, 'showroom');

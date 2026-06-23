@@ -5,6 +5,17 @@ import { syncCartFromApi } from '../utils/syncFromApi';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
+import { hydrateGlobalCartFromUserKeyIfEmpty } from '../utils/cartWishlistStorage';
+
+async function hydrateSignedInCommerceCart(): Promise<void> {
+  if (!isAppSignedIn()) return;
+  hydrateGlobalCartFromUserKeyIfEmpty();
+  try {
+    await syncCartFromApi();
+  } catch {
+    /* local cart until sync succeeds */
+  }
+}
 
 /**
  * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`, `/checkout/slay-tickets`):
@@ -42,6 +53,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
     let cancelled = false;
     (async () => {
       if (isGuestCommerceAllowedPath(location.pathname)) {
+        await hydrateSignedInCommerceCart();
         if (!cancelled) setAllowed(true);
         return;
       }
@@ -66,11 +78,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
           if (cancelled) return;
           const { data: d2 } = await client.auth.getSession();
           if (d2.session?.access_token) {
-            try {
-              await syncCartFromApi();
-            } catch {
-              /* still allow */
-            }
+            await hydrateSignedInCommerceCart();
             if (!cancelled) setAllowed(true);
             return;
           }
@@ -81,11 +89,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
         if (!cancelled) setAllowed(false);
         return;
       }
-      try {
-        await syncCartFromApi();
-      } catch {
-        /* still allow — cart stays local until sync works */
-      }
+      await hydrateSignedInCommerceCart();
       setAllowed(true);
     })();
 
@@ -95,6 +99,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
       if (cancelled) return;
       void (async () => {
         if (isGuestCommerceAllowedPath(location.pathname)) {
+          void hydrateSignedInCommerceCart();
           setAllowed(true);
           return;
         }
@@ -104,11 +109,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
           if (isAppSignedIn()) setAllowed(true);
           else setAllowed(false);
         } else {
-          try {
-            await syncCartFromApi();
-          } catch {
-            /* ignore */
-          }
+          await hydrateSignedInCommerceCart();
           setAllowed(true);
         }
       })();

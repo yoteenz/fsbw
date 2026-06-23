@@ -8,6 +8,8 @@ import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './a
 import { persistServerProfileQueuesToLocal } from './clientPendingServerSync';
 import { mergeCartItemsUnion, writeStoredCartVersion } from './cartServerSync';
 import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
+import { saveCartAndWishlistToUserKeys } from './cartWishlistStorage';
+import { getCurrentUserEmailFromStorage } from './perUserStorage';
 import {
   isAdminEmail,
   isAyoteenzAdminAccount,
@@ -190,10 +192,18 @@ export async function syncCartFromApi(): Promise<void> {
     }
     const merged = mergeCartItemsUnion(local, serverArr);
     localStorage.setItem('cartItems', JSON.stringify(merged));
-    localStorage.setItem('cartCount', String(merged.length));
+    localStorage.setItem('cartCount', String(cartTotalQuantityUnits(merged as { quantity?: number }[])));
     if (version != null) writeStoredCartVersion(version);
+    const email = getCurrentUserEmailFromStorage();
+    if (email) saveCartAndWishlistToUserKeys(email);
     if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
       window.dispatchEvent(new Event('cartUpdated'));
+      window.dispatchEvent(
+        new CustomEvent('cartCountUpdated', {
+          detail: cartTotalQuantityUnits(merged as { quantity?: number }[]),
+        }),
+      );
     }
   } catch {
     // ignore
@@ -205,6 +215,11 @@ export async function syncWishlistFromApi(): Promise<void> {
     const { items } = await getWishlist();
     const arr = Array.isArray(items) ? items : [];
     localStorage.setItem('wishlistItems', JSON.stringify(arr));
+    const email = getCurrentUserEmailFromStorage();
+    if (email) saveCartAndWishlistToUserKeys(email);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    }
   } catch {
     // ignore
   }

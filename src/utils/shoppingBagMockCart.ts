@@ -1,4 +1,4 @@
-import { isPreviewEnvironment } from './adminAuth';
+import { isPreviewEnvironment, isSignedIn } from './adminAuth';
 import { sortCartPremiumBookingFirst } from './bookingCart';
 import { migrateGiftCardCartLinesForStorage } from './giftCardCheckout';
 import { attachStockStatusToLineItem } from './productInventoryAvailability';
@@ -149,6 +149,7 @@ function persistSeededMockCart(items: Record<string, unknown>[]): void {
 /** Seed shared mock lines into `localStorage` when enabled and the cart is empty. */
 export function seedShoppingBagMockCartIfEmpty(): boolean {
   if (typeof window === 'undefined' || !isShoppingBagMockCartEnabled()) return false;
+  if (isSignedIn()) return false;
   if (readStoredCartItems().length > 0) return false;
 
   try {

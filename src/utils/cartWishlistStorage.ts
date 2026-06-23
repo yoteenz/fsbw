@@ -1,5 +1,6 @@
 import { writeStoredCartVersion } from './cartServerSync';
 import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
+import { getCurrentUserEmailFromStorage } from './perUserStorage';
 
 /**
  * Per-user cart, wishlist and saved lists storage.
@@ -99,4 +100,37 @@ export function swapCartAndWishlistToUser(previousEmail: string | null, newEmail
     saveCartAndWishlistToUserKeys(previousEmail);
   }
   loadFromUserKeys(newEmail);
+}
+
+/**
+ * When global `cartItems` is empty but the signed-in user has a per-user snapshot,
+ * restore globals so mobile `/bag` and desktop `/desktop/shopping-bag` match.
+ */
+export function hydrateGlobalCartFromUserKeyIfEmpty(): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    const email = getCurrentUserEmailFromStorage();
+    if (!email) return;
+
+    const globalRaw = localStorage.getItem('cartItems');
+    const globalParsed = globalRaw ? JSON.parse(globalRaw) : [];
+    if (Array.isArray(globalParsed) && globalParsed.length > 0) return;
+
+    const userRaw = localStorage.getItem(cartKey(email));
+    if (!userRaw) return;
+    const userParsed = JSON.parse(userRaw);
+    if (!Array.isArray(userParsed) || userParsed.length === 0) return;
+
+    localStorage.setItem('cartItems', userRaw);
+    localStorage.setItem('cartCount', String(cartTotalQuantityUnits(userParsed)));
+    window.dispatchEvent(
+      new CustomEvent('cartCountUpdated', {
+        detail: cartTotalQuantityUnits(userParsed),
+      }),
+    );
+    window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+    window.dispatchEvent(new Event('cartUpdated'));
+  } catch {
+    // ignore
+  }
 }

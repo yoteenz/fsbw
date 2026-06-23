@@ -18,6 +18,7 @@ import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import CommerceRouteGuard from './components/CommerceRouteGuard';
 import MembershipRouteSync from './components/MembershipRouteSync';
+import AccountCommerceSync from './components/AccountCommerceSync';
 import HomeLandingRedirect from './components/HomeLandingRedirect';
 import ProductInventorySync from './components/ProductInventorySync';
 import PsaAssistantWidget from './components/psa/PsaAssistantWidget';
@@ -332,7 +333,7 @@ function App() {
   // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {
     clearTestDataForNonAdminUserIfNeeded();
-    seedShoppingBagMockCartIfEmpty();
+    if (!isSignedIn()) seedShoppingBagMockCartIfEmpty();
   }, []);
 
   // Client activity: cart/wishlist debounced snapshots + bawTrackActivity bridge (admin Activity tab)
@@ -465,6 +466,7 @@ function App() {
       <DesktopTowerNavProvider>
       {!hidePreviewChrome ? <CreativePreviewBanner /> : null}
       {!hidePreviewChrome ? <MembershipRouteSync /> : null}
+      {!hidePreviewChrome ? <AccountCommerceSync /> : null}
       {!hidePreviewChrome ? <ProductInventorySync /> : null}
       {!hidePreviewChrome ? <PsaChatCopyBootstrap /> : null}
       {!hidePreviewChrome ? <PsaAssistantWidget /> : null}

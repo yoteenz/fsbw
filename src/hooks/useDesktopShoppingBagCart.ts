@@ -14,6 +14,7 @@ import { isSlayTicketPackCartLine } from '../utils/slayTicketCheckout';
 import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 import { trackActivity } from '../utils/activity';
+import { persistCartItemsToLocalStorage } from '../utils/cartLocalStorage';
 import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
 
 function clampCartRows(items: any[]): any[] {
@@ -27,13 +28,7 @@ function clampCartRows(items: any[]): any[] {
 }
 
 function persistCart(items: any[]) {
-  localStorage.setItem('cartItems', JSON.stringify(items));
-  const newCount = items.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
-  localStorage.setItem('cartCount', String(newCount));
-  window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
-  window.dispatchEvent(new CustomEvent('cartItemsChanged'));
-  window.dispatchEvent(new Event('cartUpdated'));
-  return newCount;
+  return persistCartItemsToLocalStorage(items);
 }
 
 function loadCartFromStorage(): any[] {
