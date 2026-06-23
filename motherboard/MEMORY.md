@@ -31650,6 +31650,15 @@ User asked for a **debug square around the PSA hologram in the PSA suite** so it
 
 User asked to change reception black subtitle offset from **−10px** to **−14px**.
 
-- Updated **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX.reception`** from **−10** to **−14** in **`desktopRoomTitlePlacement.ts`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — Desktop lounge Slay Cinema regressions fixed
+
+User reported lounge showed **cinema/dimmed background before PRESS TO PLAY**, **PRESS TO PLAY** persisted in cinema mode, **X close** did not exit cinema, and **TV content floated above** the debug square instead of filling it.
+
+- **Background:** `loungeSlayCinema` crossfade config now passed **only when `isSlayCinemaEnabled`** (default lounge bright hero otherwise). **`ZoneBackground`** no longer seeds bright layer from cached dimmed/cinema URL; resets to **`brightSrc`** when cinema off.
+- **TV frame:** Single mapped container — **`LoungeTvScreen`** uses **`position: absolute; inset: 0`**. Debug square uses **`placement="inset"`** inside the same frame (not a misaligned sibling). **Close (X)** always shown in cinema mode (including debug). **PRESS TO PLAY** only when cinema off.
 - Pushed **`master`** + **`preview/mobile`**.
 
