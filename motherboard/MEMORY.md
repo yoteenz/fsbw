@@ -31883,3 +31883,14 @@ User asked to convert the debug square into a **4-point perspective editor**: po
 - **Defaults:** **`DESKTOP_SHOPPING_BAG_TABLET_QUAD`** in **`desktopShoppingBag.ts`**; export snippet for repo commit.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Shopping bag / checkout desktop background letterboxing fix
+
+User reported **letterboxing** (black bars) on the shopping bag and checkout desktop room background when there shouldn’t be.
+
+- **Cause:** **`DesktopShoppingBag.css`** had **`@media (max-width: 1023px)`** overriding **`.desktop-shopping-bag-scene__bg`** to **`object-fit: contain`** + **`center center`**, while default (and all other desktop room scenes) use **`cover`** + **`center top`**. That media query fires on tablet widths and on phone **`/desktop/*`** artboard mode (device viewport &lt;1024 even though layout is 1920-wide), producing visible **`#0a0a0a`** letterbox bands.
+- **Fix:** Removed the contain override; scene hero always **`cover`** / **`center top`** per **`CORE.md`** 1915×821 hero convention. Standalone **`/checkout`** **`CommercePageBackground`** was already cover at ≥1024px; curator checkout-in-tablet uses the same suite scene.
+- **File:** **`src/components/desktop-shopping-bag/DesktopShoppingBag.css`**
+- Pushed **`master`** + **`preview/mobile`**.
+
