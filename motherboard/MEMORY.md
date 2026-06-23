@@ -31932,3 +31932,17 @@ User asked that **all mobile/desktop pages under the same account should be sync
 - Mock seed now **skipped when signed in** (guest/preview QA only).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop cart empty: root causes + fix
+
+User still saw **nothing in the desktop cart** on **`fsbw.vercel.app`** after sync work — asked what overrides or fails to recognize products.
+
+- **Root causes:**
+  1. **Mock seed blocked for signed-in users** — preview site requires sign-in for **`/desktop/shopping-bag`**, but last sync change skipped mocks when **`isSignedIn()`**, so empty cloud cart = empty UI.
+  2. **Desktop `NavBar` read wrong key** — badge used **`localStorage.cart`** (always empty) instead of **`cartItems` / `cartCount`**.
+  3. **Per-user cart not hydrated** — **`cartItems_${email}`** snapshot not restored into globals before desktop load when cloud session missing/slow.
+  4. **Async race** — hook initialized before **`CommerceRouteGuard`** / **`AccountCommerceSync`** finished; no reload after hydrate.
+- **Fix:** **`loadCommerceCartFromStorage()`** (hydrate per-user → seed preview mocks if still empty → parse). Preview mocks allowed when signed in on **`*.vercel.app`**. **`/desktop/shopping-bag`** guest-allowed like **`/bag`**. **`accountCommerceSyncComplete`** event + hook mount reload. NavBar uses **`readCartCountFromStorage()`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
