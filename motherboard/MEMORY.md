@@ -30999,3 +30999,13 @@ Summary of the **whole conversation so far** in this chat: elevator loop/routing
 - **`FloatingNavTrigger.css`:** taller trigger column; **`.floating-nav-trigger__caption`** — `Bohemy`, `#eb1c24`, lowercase; drawer bottom offset nudged for taller triggers.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — PSA Suite on tablet: native layout + section-relative holo position
+
+Summary of the **whole conversation so far** in this chat: elevator loop fix; Extensions Boutique portal; floating nav Bohemy labels; user reported **PSA standing hologram shows on desktop but not on tablet** in PSA Suite.
+
+- **Root cause:** `/desktop/*` artboard scaling applied to **all viewports < 1024px** (iPad portrait included). PSA Suite holo used **`vh`** positioning inside the scaled artboard — misaligned/clipped vs native desktop.
+- **Fix:** Artboard now **phones only** (`≤767px`) in **`desktopPreview.ts`**; **tablets (768px+)** use native desktop layout like monitors. **`desktopPsaSuite.css`:** holo **`bottom: 18%`** (section-relative, not `vh`); **`z-index: 55`** (above floating nav); phone artboard tweaks at **`767px`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
