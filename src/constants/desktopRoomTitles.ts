@@ -5,10 +5,6 @@ export type DesktopRoomTitleCopy = {
 
 /** Live overlay copy — replaces baked wall text on NO TEXT BG heroes. */
 export const DESKTOP_ROOM_TITLES: Readonly<Record<string, DesktopRoomTitleCopy>> = {
-  'grand-lobby': {
-    title: 'GRAND CENTRAL LOBBY',
-    subtitle: 'LUXURY WITHOUT LIMITS',
-  },
   'analysis-lab': {
     title: 'HAIR ANALYSIS LAB',
     subtitle: 'ANALYZE. CUSTOMIZE. PERFECT.',
