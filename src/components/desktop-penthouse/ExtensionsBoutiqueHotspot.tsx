@@ -1,14 +1,13 @@
 import { useCallback } from 'react';
-import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
-import { rectToPercentStyle } from '../lobby/SceneHitRegion';
+import type { DesktopViewportScreenHitRect } from '../../hooks/useDesktopRoomCoverHitRect';
 
 type Props = {
-  rect: FinalSceneHitRect;
+  screenRect: DesktopViewportScreenHitRect;
   onActivate: () => void;
   disabled?: boolean;
 };
 
-export function ExtensionsBoutiqueHotspot({ rect, onActivate, disabled = false }: Props) {
+export function ExtensionsBoutiqueHotspot({ screenRect, onActivate, disabled = false }: Props) {
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (disabled) return;
@@ -30,7 +29,10 @@ export function ExtensionsBoutiqueHotspot({ rect, onActivate, disabled = false }
       onClick={disabled ? undefined : onActivate}
       onKeyDown={onKeyDown}
       style={{
-        ...rectToPercentStyle(rect),
+        left: `${screenRect.left}px`,
+        top: `${screenRect.top}px`,
+        width: `${screenRect.width}px`,
+        height: `${screenRect.height}px`,
       }}
     >
       <span className="extensions-boutique-hotspot__cue" aria-hidden>

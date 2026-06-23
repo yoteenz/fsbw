@@ -1,20 +1,21 @@
-.extensions-boutique-layer {
-  position: absolute;
+.extensions-boutique-portal {
+  position: fixed;
   inset: 0;
-  z-index: 52;
+  z-index: 220;
   pointer-events: none;
 }
 
 .extensions-boutique-hotspot {
-  position: absolute;
+  position: fixed;
   margin: 0;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   cursor: pointer;
   pointer-events: auto;
+  z-index: 1;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   box-sizing: border-box;
@@ -76,10 +77,24 @@
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .extensions-boutique-hotspot__cue {
+    opacity: 1;
+    transform: translateX(-50%) translateY(calc(100% + 2px));
+  }
+}
+
 .extensions-boutique-hotspot:hover .extensions-boutique-hotspot__cue,
 .extensions-boutique-hotspot:focus-visible .extensions-boutique-hotspot__cue {
   opacity: 1;
   transform: translateX(-50%) translateY(calc(100% + 2px));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .extensions-boutique-hotspot__cue {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%);
+  }
 }
 
 .extensions-boutique-hotspot__cue-dot {
@@ -103,9 +118,9 @@
 /* ── Shop panel overlay ── */
 
 .extensions-boutique-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 45;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;

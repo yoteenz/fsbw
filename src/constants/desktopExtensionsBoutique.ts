@@ -9,10 +9,10 @@ export const EXTENSIONS_BOUTIQUE_ART_HEIGHT = 821;
  * Covers the lit recess + bundles display below the red signage.
  */
 export const EXTENSIONS_WALL_HOTSPOT_RECT: FinalSceneHitRect = {
-  left: 0.36,
-  top: 0.15,
-  width: 0.3,
-  height: 0.6,
+  left: 0.33,
+  top: 0.2,
+  width: 0.34,
+  height: 0.52,
 };
 
 export const EXTENSIONS_BOUTIQUE_SHOP_TABS = ['bundles', 'frontals', 'closures'] as const;
