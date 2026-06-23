@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FloatingNavBackdrop, FloatingNavTrigger } from './FloatingNavTrigger';
 import { FloorNavDrawer } from './FloorNavDrawer';
 import { RoomNavDrawer, useCurrentFloorHasRooms } from './RoomNavDrawer';
@@ -8,7 +9,12 @@ export type ActiveFloatingDrawer = 'floors' | 'rooms' | null;
 
 export function DesktopFloatingNav() {
   const [activeDrawer, setActiveDrawer] = useState<ActiveFloatingDrawer>(null);
+  const [mounted, setMounted] = useState(false);
   const hasRooms = useCurrentFloorHasRooms();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const closeDrawer = useCallback(() => setActiveDrawer(null), []);
 
@@ -37,7 +43,9 @@ export function DesktopFloatingNav() {
     }
   }, [activeDrawer, hasRooms]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="floating-nav-system" aria-label="Tower navigation controls">
       {activeDrawer ? <FloatingNavBackdrop onClose={closeDrawer} /> : null}
 
@@ -63,6 +71,7 @@ export function DesktopFloatingNav() {
 
       <FloorNavDrawer isOpen={activeDrawer === 'floors'} onClose={closeDrawer} />
       {hasRooms ? <RoomNavDrawer isOpen={activeDrawer === 'rooms'} onClose={closeDrawer} /> : null}
-    </div>
+    </div>,
+    document.body,
   );
 }
