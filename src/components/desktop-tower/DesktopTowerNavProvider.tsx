@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   getDesktopFloorByPath,
@@ -44,6 +45,10 @@ import {
   warmDesktopTowerElevatorVideo,
   getDesktopTowerElevatorVideoDurationSec,
 } from '../../utils/desktopTowerElevatorVideo';
+import {
+  isPhoneDesktopArtboardActive,
+  useDesktopArtboardPortalTarget,
+} from '../../hooks/useDesktopArtboardPortalTarget';
 import './DesktopTowerElevator.css';
 
 type TowerJourney = {
@@ -96,6 +101,7 @@ function prefetchDesktopTowerDestination(href: string): void {
 export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const artboardPortalTarget = useDesktopArtboardPortalTarget();
   const rafRef = useRef<number | null>(null);
   const timersRef = useRef<number[]>([]);
   const journeyRunRef = useRef(0);
@@ -132,13 +138,12 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (journey) {
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }
-    return undefined;
+    if (!journey || isPhoneDesktopArtboardActive()) return undefined;
+
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [journey]);
 
   const runTravelAnimation = useCallback(
@@ -351,25 +356,30 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
     [journey, displayLevelId, cabinFloorId, phase, quickTravelTo, selectedFloorId, travelTo],
   );
 
+  const journeyOverlay =
+    journey === null ? null : (
+      <>
+        <DesktopTowerElevatorExperience
+          fromFloor={journey.fromFloor}
+          toFloor={journey.toFloor}
+          direction={journey.direction}
+          phase={phase}
+          displayLevelId={displayLevelId}
+          cabinFloorId={cabinFloorId}
+          onVideoPlaybackComplete={handleVideoPlaybackComplete}
+        />
+        <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>
+          <FloorNavDrawer isOpen embedded />
+        </div>
+      </>
+    );
+
   return (
     <DesktopTowerNavContext.Provider value={value}>
       {children}
-      {journey ? (
-        <>
-          <DesktopTowerElevatorExperience
-            fromFloor={journey.fromFloor}
-            toFloor={journey.toFloor}
-            direction={journey.direction}
-            phase={phase}
-            displayLevelId={displayLevelId}
-            cabinFloorId={cabinFloorId}
-            onVideoPlaybackComplete={handleVideoPlaybackComplete}
-          />
-          <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>
-            <FloorNavDrawer isOpen embedded />
-          </div>
-        </>
-      ) : null}
+      {journeyOverlay && artboardPortalTarget
+        ? createPortal(journeyOverlay, artboardPortalTarget)
+        : journeyOverlay}
     </DesktopTowerNavContext.Provider>
   );
 }

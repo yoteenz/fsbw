@@ -13,6 +13,7 @@ import {
   runElevatorVideoTransition,
   warmDesktopTowerElevatorVideo,
 } from '../../utils/desktopTowerElevatorVideo';
+import { isPhoneDesktopArtboardActive } from '../../hooks/useDesktopArtboardPortalTarget';
 import './DesktopTowerElevator.css';
 
 export type TowerElevatorPhase = 'boarding' | 'traveling' | 'arrived' | 'opening' | 'exiting';
@@ -173,10 +174,17 @@ export function DesktopTowerElevatorExperience({
   const exiting = phase === 'exiting';
   const showVideo = videoReady && !videoFailed;
   const showPoster = !showVideo || !videoPlaying;
+  const phoneArtboard = isPhoneDesktopArtboardActive();
 
   return (
     <div
-      className={`desktop-tower-elevator ${exiting ? 'desktop-tower-elevator--exiting' : ''}`}
+      className={[
+        'desktop-tower-elevator',
+        exiting ? 'desktop-tower-elevator--exiting' : '',
+        phoneArtboard ? 'desktop-tower-elevator--phone-artboard' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       role="dialog"
       aria-label={`Elevator traveling to ${toFloor.name}`}
       aria-live="polite"
