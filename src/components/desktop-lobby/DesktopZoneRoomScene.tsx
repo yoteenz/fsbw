@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
 import {
   getLastDesktopRoomBackground,
@@ -193,7 +193,13 @@ function ZoneBackground({
   );
 }
 
-function ZoneRoomTitle({ zoneId }: { zoneId: string }) {
+function ZoneRoomTitle({
+  zoneId,
+  measureRef,
+}: {
+  zoneId: string;
+  measureRef: RefObject<HTMLElement | null>;
+}) {
   const copy = resolveDesktopRoomTitleCopy(zoneId);
   if (!copy) return null;
 
@@ -203,6 +209,7 @@ function ZoneRoomTitle({ zoneId }: { zoneId: string }) {
       title={copy.title}
       subtitle={copy.subtitle}
       placement={resolveDesktopRoomTitlePlacement(zoneId)}
+      measureRef={measureRef}
     />
   );
 }
@@ -229,6 +236,7 @@ export function DesktopZoneRoomScene({
   const [activeIndex, setActiveIndex] = useState(zoneIndex);
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
   const transitionTimerRef = useRef<number | null>(null);
+  const layerMeasureRef = useRef<HTMLDivElement>(null);
 
   const clearTransitionTimer = useCallback(() => {
     if (transitionTimerRef.current !== null) {
@@ -309,7 +317,7 @@ export function DesktopZoneRoomScene({
       aria-hidden
     >
       {!isTransitioning ? (
-        <div className="desktop-zone-room-scene__layer">
+        <div ref={layerMeasureRef} className="desktop-zone-room-scene__layer">
           <ZoneBackground
             zoneId={activeZoneId}
             className="desktop-zone-room-scene__bg desktop-zone-room-scene__bg--steady"
@@ -318,7 +326,7 @@ export function DesktopZoneRoomScene({
             onReadyChange={handleReadyChange}
             slayCinema={resolveSlayCinemaForZone(activeZoneId)}
           />
-          <ZoneRoomTitle zoneId={activeZoneId} />
+          <ZoneRoomTitle zoneId={activeZoneId} measureRef={layerMeasureRef} />
         </div>
       ) : (
         <>
@@ -333,7 +341,7 @@ export function DesktopZoneRoomScene({
               />
             </div>
           ) : null}
-          <div className="desktop-zone-room-scene__layer">
+          <div ref={layerMeasureRef} className="desktop-zone-room-scene__layer">
             <ZoneBackground
               zoneId={activeZoneId}
               className="desktop-zone-room-scene__bg desktop-zone-room-scene__bg--enter"
@@ -342,7 +350,7 @@ export function DesktopZoneRoomScene({
               onReadyChange={handleReadyChange}
               slayCinema={resolveSlayCinemaForZone(activeZoneId)}
             />
-            <ZoneRoomTitle zoneId={activeZoneId} />
+            <ZoneRoomTitle zoneId={activeZoneId} measureRef={layerMeasureRef} />
           </div>
         </>
       )}

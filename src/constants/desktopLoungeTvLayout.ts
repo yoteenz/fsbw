@@ -1,8 +1,12 @@
 import type { FinalSceneHitRect } from './finalLobbySceneAssets';
+import {
+  DESKTOP_ROOM_HERO_ART_HEIGHT,
+  DESKTOP_ROOM_HERO_ART_WIDTH,
+} from './desktopRoomHeroArt';
 
-/** TV Lounge NO TEXT BG heroes — `0VpEgtJAr…jpeg` / `A2C48719-…png` (1915×821). */
-export const DESKTOP_LOUNGE_ART_WIDTH = 1915;
-export const DESKTOP_LOUNGE_ART_HEIGHT = 821;
+/** TV Lounge NO TEXT BG heroes — shared 1915×821 art with all desktop room heroes. */
+export const DESKTOP_LOUNGE_ART_WIDTH = DESKTOP_ROOM_HERO_ART_WIDTH;
+export const DESKTOP_LOUNGE_ART_HEIGHT = DESKTOP_ROOM_HERO_ART_HEIGHT;
 
 /** Wall-mounted cinema screen on desktop lounge hero (image-normalized 0–1). */
 export const DESKTOP_LOUNGE_TV_HIT_REGION: FinalSceneHitRect = {

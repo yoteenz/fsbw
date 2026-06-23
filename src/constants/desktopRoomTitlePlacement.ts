@@ -1,10 +1,7 @@
 /**
- * Original baked-text placement on production desktop room heroes (pre–NO TEXT BG).
- * All rooms share the same camera + symmetrical hero wall; overlays use these anchors
- * so live type lands where the Fal/red-foil + black subtitle were painted in.
- *
- * Coordinate system: percentage of the full-bleed background frame (21:9 masters),
- * with `object-fit: cover` + `object-position: center top` in DesktopZoneRoomScene.
+ * Placement on the **source hero image** (0–100%), not the viewport.
+ * Runtime positions are cover-mapped via `desktopRoomCoverLayout.ts`
+ * (`object-fit: cover` + `object-position: center top` in DesktopZoneRoomScene).
  */
 
 import { getEffectiveDesktopRoomTitlePlacement } from '../utils/desktopRoomTitlePlacementOverrides';

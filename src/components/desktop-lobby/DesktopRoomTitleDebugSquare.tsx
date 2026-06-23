@@ -4,6 +4,7 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import {
   ROOM_TITLE_PROFILE_DEBUG_COLOR,
@@ -12,20 +13,24 @@ import {
   useDesktopRoomTitleDebugEnabled,
   useDesktopRoomTitleViewportProfile,
 } from '../../utils/desktopRoomTitlePlacementDebug';
+import { desktopRoomContainerPixelDeltaToImageNormalized } from '../../utils/desktopRoomCoverLayout';
+import { useDesktopRoomCoverMeasure } from '../../hooks/useDesktopRoomCoverMeasure';
 import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementEditorContext';
 
 type Props = {
   zoneId: string;
+  measureRef: RefObject<HTMLElement | null>;
   anchorStyle: CSSProperties;
   children: ReactNode;
 };
 
-/** Temporary QA square wrapping title + subtitle — drag moves both in tandem. */
-export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: Props) {
+/** Temporary QA square wrapping title + subtitle — drag moves both in image-normalized space. */
+export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, children }: Props) {
   const editor = useDesktopRoomTitlePlacementEditor();
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
   const profileHook = useDesktopRoomTitleViewportProfile();
   const profile = editor?.profile ?? profileHook;
+  const { width, height } = useDesktopRoomCoverMeasure(measureRef);
   const rootRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ startX: number; startY: number; topPct: number; offsetPct: number } | null>(null);
 
@@ -52,18 +57,15 @@ export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: P
         offsetPct: placement.centerOffsetPct,
       };
 
-      const layer = rootRef.current?.offsetParent as HTMLElement | null;
-      const bounds = layer?.getBoundingClientRect();
-      if (!bounds || bounds.width <= 0 || bounds.height <= 0) return;
-
       const onMove = (e: PointerEvent) => {
         const drag = dragRef.current;
-        if (!drag || !profile) return;
-        const dxPct = ((e.clientX - drag.startX) / bounds.width) * 100;
-        const dyPct = ((e.clientY - drag.startY) / bounds.height) * 100;
+        if (!drag || !profile || width <= 0 || height <= 0) return;
+        const dxPx = e.clientX - drag.startX;
+        const dyPx = e.clientY - drag.startY;
+        const { dx, dy } = desktopRoomContainerPixelDeltaToImageNormalized(dxPx, dyPx, width, height);
         editor.patchPlacement(zoneId, {
-          titleTopPct: Math.round((drag.topPct + dyPct) * 100) / 100,
-          centerOffsetPct: Math.round((drag.offsetPct + dxPct) * 100) / 100,
+          titleTopPct: Math.round((drag.topPct + dy * 100) * 100) / 100,
+          centerOffsetPct: Math.round((drag.offsetPct + dx * 100) * 100) / 100,
         });
       };
 
@@ -78,7 +80,7 @@ export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: P
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [editor, isSelected, profile, zoneId],
+    [editor, isSelected, profile, width, height, zoneId],
   );
 
   if (!showSquare || !profile) {
