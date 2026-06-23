@@ -31960,3 +31960,23 @@ User reported **nav cart badge shows count (e.g. 2)** but **desktop `/desktop/sh
 - **Files:** `DesktopCuratorSuiteScene.tsx`, `DesktopShoppingBagTabletDebugProvider.tsx`, `desktopShoppingBagTabletQuad.ts`, `cartLocalStorage.ts`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Universal Perspective Panel Mapping System (desktop mansion)
+
+User requested a **reusable Perspective Panel Mapping System** for all tilted/angled desktop surfaces (reception walls, curator/checkout tablets, TV, PSA hologram, extensions wall, etc.) — content embedded into architectural surfaces via **4-point polygon** coords, not flat rectangles.
+
+- **Built:**
+  - **`src/types/perspectivePanel.ts`** — panel IDs, quad types (`topLeft` / `topRight` / `bottomRight` / `bottomLeft`).
+  - **`src/constants/perspectivePanelConfig.ts`** — nine initial panels with seed coords from existing rects/quads.
+  - **`src/components/perspective-panel/PerspectivePanel.tsx`** — public API; warps children with homography + clip-path.
+  - **`PerspectivePanelHost`**, **`PerspectivePanelDebugProvider`**, **`PerspectivePanelDebugPolygon`**, **`PerspectivePanelDebugToolbar`**.
+  - **`localStorage.perspectivePanelMap`** for dev saves; export JSON → paste into config for production.
+  - **Debug:** **`window.PANEL_DEBUG = true`** or **`?panelDebug=1`** — crimson 20% fill, dashed outlines, corner handles, toolbar (select, edit all, reset, copy/import JSON, save).
+- **Migrated:**
+  - **Reception** — three panels (`reception-left`, `reception-center`, `reception-right`) with stacked label content inside each warped region.
+  - **Shopping bag / acquisition** — `curator-tablet` and `checkout-tablet` via `DesktopCuratorSuiteScene` + `PerspectivePanel` (replaces rect-only tablet anchor).
+- **Provider** mounted in **`DesktopRoutesLayout`** (`App.tsx`) so toolbar works on all `/desktop/*` routes.
+- **Not yet migrated:** TV lounge, PSA hologram, extensions boutique, sign-in tablet (defs exist; still on legacy frame editors / no overlay).
+- Pushed **`master`** + **`preview/mobile`**.
+
