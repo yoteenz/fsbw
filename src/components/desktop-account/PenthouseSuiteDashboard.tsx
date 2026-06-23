@@ -8,10 +8,9 @@ import {
 import {
   buildPenthouseSuiteDashboardData,
   formatPenthouseSuiteCurrency,
-  type PenthouseSuiteDashboardData,
 } from '../../utils/penthouseSuiteDashboardData';
 import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import { PenthouseSuiteGlassPanel, PenthouseSuiteStatPanel } from './PenthouseSuiteGlassPanel';
+import { PenthouseSuiteEtchedPanel, PenthouseSuiteGlassPanel } from './PenthouseSuiteGlassPanel';
 import './PenthouseSuiteDashboard.css';
 
 type Props = {
@@ -38,36 +37,38 @@ function go(navigate: ReturnType<typeof useNavigate>, href: string) {
   navigate(href);
 }
 
-function HeroPanel({
-  data,
-  onActivate,
-  debug,
-}: {
-  data: PenthouseSuiteDashboardData['hero'];
-  onActivate: () => void;
-  debug?: boolean;
-}) {
-  return (
-    <PenthouseSuiteGlassPanel ariaLabel="Membership overview" onActivate={onActivate} debug={debug} variant="hero">
-      <div className="penthouse-suite-hero__badge">
-        <img src={ICONS.badge} alt="" draggable={false} />
-      </div>
-      <p className="penthouse-suite-hero__tier">{data.tierLabel}</p>
-      <p className="penthouse-suite-hero__since">Member since {data.memberSinceYear}</p>
-    </PenthouseSuiteGlassPanel>
-  );
-}
-
 export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
   const navigate = useNavigate();
   const debug = isPenthouseSuiteHotspotDebugEnabled();
   const data = buildPenthouseSuiteDashboardData(user);
   const rects = PENTHOUSE_SUITE_PANEL_RECTS;
 
+  const ordersLabel =
+    data.myOrders.activeCount === 1
+      ? '1 ACTIVE ORDER'
+      : `${data.myOrders.activeCount} ACTIVE ORDERS`;
+
+  const wishlistLabel =
+    data.wishlist.savedCount === 1
+      ? '1 SAVED ITEM'
+      : `${data.wishlist.savedCount} SAVED ITEMS`;
+
   return (
     <div className="penthouse-suite-dashboard" aria-label="Account dashboard panels">
       <DesktopRoomCoverRectAnchor measureRef={measureRef} imageRect={rects.hero} image={PENTHOUSE_SUITE_IMAGE} zIndex={6}>
-        <HeroPanel data={data.hero} onActivate={() => go(navigate, data.hero.href)} debug={debug} />
+        <PenthouseSuiteGlassPanel
+          ariaLabel="Membership overview"
+          onActivate={() => go(navigate, data.hero.href)}
+          debug={debug}
+          variant="hero"
+        >
+          <div className="penthouse-suite-hero__badge">
+            <img src={ICONS.badge} alt="" draggable={false} />
+          </div>
+          <p className="penthouse-suite-hero__tier">{data.hero.tierLabel}</p>
+          <div className="penthouse-suite-glass__rule" aria-hidden />
+          <p className="penthouse-suite-hero__since">Member since {data.hero.memberSinceYear}</p>
+        </PenthouseSuiteGlassPanel>
       </DesktopRoomCoverRectAnchor>
 
       <DesktopRoomCoverRectAnchor
@@ -76,17 +77,11 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Diamond Points"
+          value={`${data.diamondPoints.points.toLocaleString()} DP`}
           iconSrc={ICONS.diamond}
-          title="Diamond Points"
-          metric={`${data.diamondPoints.points.toLocaleString()} DP`}
-          subtext={[
-            `Lifetime earned ${data.diamondPoints.lifetimeEarned.toLocaleString()} DP`,
-            `Next milestone ${data.diamondPoints.nextMilestoneLabel}`,
-          ]}
-          progressPct={data.diamondPoints.progressPct}
-          cta="View rewards →"
-          ariaLabel="Loyalty points and rewards"
+          ariaLabel="Diamond points and rewards"
           onActivate={() => go(navigate, data.diamondPoints.href)}
           debug={debug}
         />
@@ -98,12 +93,11 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Slay Tickets"
+          value={`${data.slayTickets.available} AVAILABLE`}
           iconSrc={ICONS.tickets}
-          title="Slay Tickets"
-          metric={`${data.slayTickets.available} available`}
-          cta="View history →"
-          ariaLabel="Slay tickets balance and history"
+          ariaLabel="Slay tickets balance"
           onActivate={() => go(navigate, data.slayTickets.href)}
           debug={debug}
         />
@@ -115,12 +109,11 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Vouchers"
+          value={`${data.vouchers.activeCount} ACTIVE`}
           iconSrc={ICONS.vouchers}
-          title="Vouchers"
-          metric={`${data.vouchers.activeCount} active`}
-          cta="View vouchers →"
-          ariaLabel="Vouchers and voucher history"
+          ariaLabel="Vouchers"
           onActivate={() => go(navigate, data.vouchers.href)}
           debug={debug}
         />
@@ -132,13 +125,11 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Digital Cash"
+          value={formatPenthouseSuiteCurrency(data.digitalCash.balance)}
           iconSrc={ICONS.cash}
-          title="Digital Cash"
-          metric={formatPenthouseSuiteCurrency(data.digitalCash.balance)}
-          subtext="Available balance"
-          cta="View transactions →"
-          ariaLabel="Digital cash balance and transactions"
+          ariaLabel="Digital cash balance"
           onActivate={() => go(navigate, data.digitalCash.href)}
           debug={debug}
         />
@@ -150,11 +141,10 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="My Orders"
+          value={ordersLabel}
           iconSrc={ICONS.orders}
-          title="My Orders"
-          metric={`${data.myOrders.activeCount} active order${data.myOrders.activeCount === 1 ? '' : 's'}`}
-          cta="View orders →"
           ariaLabel="My orders"
           onActivate={() => go(navigate, data.myOrders.href)}
           debug={debug}
@@ -167,12 +157,11 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Rewards Collection"
+          value="View Collection"
           iconSrc={ICONS.rewards}
-          title="Rewards Collection"
-          metric={data.rewardsCollection.rewardCount > 0 ? `${data.rewardsCollection.rewardCount} unlocked` : 'Start collecting'}
-          cta="View collection →"
-          ariaLabel="Rewards collection and collectibles"
+          ariaLabel="Rewards collection"
           onActivate={() => go(navigate, data.rewardsCollection.href)}
           debug={debug}
         />
@@ -184,13 +173,10 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Referrals"
+          value={`${data.referrals.successfulCount} SUCCESSFUL`}
           iconSrc={ICONS.referrals}
-          title="Referrals"
-          metric={`${data.referrals.successfulCount} successful`}
-          subtext={`Next bonus: ${data.referrals.nextBonusRemaining} more`}
-          progressPct={data.referrals.progressPct}
-          cta="View referrals →"
           ariaLabel="Referrals"
           onActivate={() => go(navigate, data.referrals.href)}
           debug={debug}
@@ -203,12 +189,11 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Wishlist"
+          value={wishlistLabel}
           iconSrc={ICONS.wishlist}
-          title="Wishlist"
-          metric={`${data.wishlist.savedCount} saved item${data.wishlist.savedCount === 1 ? '' : 's'}`}
-          cta="View wishlist →"
-          ariaLabel="Wishlist and saved items"
+          ariaLabel="Wishlist"
           onActivate={() => go(navigate, data.wishlist.href)}
           debug={debug}
         />
@@ -220,31 +205,14 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteGlassPanel
+        <PenthouseSuiteEtchedPanel
+          label="My Activity"
+          value="Recent Activity"
+          iconSrc={ICONS.activity}
           ariaLabel="Activity history"
           onActivate={() => go(navigate, data.myActivity.href)}
           debug={debug}
-          variant="compact"
-        >
-          <div className="penthouse-suite-glass__head">
-            <img src={ICONS.activity} alt="" className="penthouse-suite-glass__icon" draggable={false} />
-            <div className="penthouse-suite-glass__body">
-              <p className="penthouse-suite-glass__title">My Activity</p>
-              <ul className="penthouse-suite-glass__activity-list">
-                {data.myActivity.items.map((item) => (
-                  <li key={`${item.label}-${item.when}`} className="penthouse-suite-glass__activity-item">
-                    <span className="penthouse-suite-glass__activity-dot" aria-hidden />
-                    <span className="penthouse-suite-glass__activity-copy">
-                      {item.label}
-                      <span className="penthouse-suite-glass__activity-when">({item.when})</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="penthouse-suite-glass__cta">View all activity →</div>
-        </PenthouseSuiteGlassPanel>
+        />
       </DesktopRoomCoverRectAnchor>
 
       <DesktopRoomCoverRectAnchor
@@ -253,12 +221,10 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteStatPanel
+        <PenthouseSuiteEtchedPanel
+          label="Affiliate"
+          value={`${data.affiliate.totalEarnedPoints.toLocaleString()} PTS EARNED`}
           iconSrc={ICONS.affiliate}
-          title="Affiliate"
-          metric={`${data.affiliate.totalEarnedPoints.toLocaleString()} pts earned`}
-          subtext={`Commission rate ${data.affiliate.commissionRateLabel}`}
-          cta="View affiliate dashboard →"
           ariaLabel="Affiliate dashboard"
           onActivate={() => go(navigate, data.affiliate.href)}
           debug={debug}
@@ -271,23 +237,14 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
         image={PENTHOUSE_SUITE_IMAGE}
         zIndex={6}
       >
-        <PenthouseSuiteGlassPanel
-          ariaLabel="Account settings, security, addresses, and payment"
+        <PenthouseSuiteEtchedPanel
+          label="Account Settings"
+          value="Manage Settings"
+          iconSrc={ICONS.settings}
+          ariaLabel="Account settings"
           onActivate={() => go(navigate, data.accountSettings.href)}
           debug={debug}
-          variant="settings"
-        >
-          <div className="penthouse-suite-glass__head">
-            <img src={ICONS.settings} alt="" className="penthouse-suite-glass__icon" draggable={false} />
-            <div className="penthouse-suite-glass__body">
-              <p className="penthouse-suite-glass__title">Account Settings</p>
-              <p className="penthouse-suite-glass__subtext">
-                Manage your preferences, security, addresses and payment methods.
-              </p>
-            </div>
-          </div>
-          <div className="penthouse-suite-glass__cta">Manage settings →</div>
-        </PenthouseSuiteGlassPanel>
+        />
       </DesktopRoomCoverRectAnchor>
     </div>
   );
