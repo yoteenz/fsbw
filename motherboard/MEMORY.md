@@ -31175,3 +31175,12 @@ Summary of the **whole conversation so far** in this chat.
 - **Elevator timeline ↔ video:** User asked to align floor-number progression with the MP4 so **Destination** lands when the animation ends (short trips had shown Destination early). **`resolveTowerTravelTiming`** scales per-floor travel + dwells to match warmed clip length; timing resolved in **`startTravel()`** after video ready. Files: **`desktopTowerMotion.ts`**, **`DesktopTowerNavProvider.tsx`**. Pushed **`master`** + **`preview/mobile`**.
 - **Floating nav caption spacing:** User asked for **3px more** spacing above the red **STATION** / **ELEVATOR** captions (prior change had **`margin-top: 2px`** on **`.floating-nav-trigger__caption`**). Updated to **`margin-top: 5px`** in **`FloatingNavTrigger.css`**. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Mobile desktop: floor/room directory panels unreadable (vw bug)
+
+User reported on phone **`/desktop/*`** they could not see room/floor selection options — floor names truncated, station room labels overlapping.
+
+- **Cause:** On **`ScaledDesktopViewport`** (phone artboard), CSS **`vw`/`vh`** still refer to the **device viewport**, not the **1920×1080** design canvas. **`min(168px, 15vw)`** → ~58px floor panel; **`min(520px, calc(100vw - 300px))`** → ~90px room panel — labels clipped or stacked.
+- **Fix:** Base directory widths → artboard **px** (**168px** floor, **520px** room). **`desktop-artboard-stage`** class on scaled stage; scoped overrides in **`FloatingNavTrigger.css`** for triggers/drawers + room row wrap. Files: **`ScaledDesktopViewport.tsx`**, **`DesktopFloorDirectory.css`**, **`DesktopRoomDirectory.css`**, **`FloatingNavTrigger.css`**. Pushed **`master`** + **`preview/mobile`**.
+
