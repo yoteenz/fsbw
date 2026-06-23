@@ -31020,3 +31020,14 @@ Summary of the **whole conversation so far** in this chat: PSA Suite hologram; e
 - **Files:** `desktopRoomBackgroundCache.ts`, `DesktopZoneRoomScene.tsx`, `DesktopPenthouseRoomScene.tsx`, `DesktopFloorZonePage.tsx`, `penthouse/page.tsx`, `DesktopTowerNavProvider.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Phone artboard room heroes: cover fill (no contain letterbox)
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish through room background hold; user reported **background fixed with no scroll + letterboxing** — black bars from scaling/`contain` mismatch on phone.
+
+- **Cause:** `ScaledDesktopViewport` uses **height-fill** (`scale = shellHeight / 1080`), but **`DesktopZoneRoomScene--artboard`** forced **`object-fit: contain`** on room heroes — 21:9 images letterboxed with **`#0a0a0a`** bars. Prior **`min(scaleX, scaleY)`** viewport fit caused the same symptom; height-fill restored in **`83e72b66`** but contain override remained on phone.
+- **Fix:** Removed artboard **`contain`** override; room heroes use **`cover`** + **`center top`**. **`useDesktopRoomCoverHitRect`** always uses **cover** mapping. Clarified phone artboard comment in **`desktopPreview.ts`**.
+- **Files:** `DesktopZoneRoomScene.css`, `useDesktopRoomCoverHitRect.ts`, `desktopPreview.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+
