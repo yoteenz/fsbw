@@ -49,6 +49,17 @@ export function DesktopTowerElevatorExperience({
   const [videoReady, setVideoReady] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
 
+  /**
+   * Keep the latest completion callback in a ref so the playback effect does NOT
+   * depend on its (per-render) identity. The provider re-renders every animation
+   * frame during travel; depending on the callback would tear down and restart
+   * the video each frame — freezing the animation and preventing completion.
+   */
+  const onVideoPlaybackCompleteRef = useRef(onVideoPlaybackComplete);
+  useEffect(() => {
+    onVideoPlaybackCompleteRef.current = onVideoPlaybackComplete;
+  }, [onVideoPlaybackComplete]);
+
   const cabinFloor = getDesktopFloorById(cabinFloorId) ?? fromFloor;
   const isAtDestination = phase === 'traveling' && cabinFloorId === toFloor.id;
   const isAtIntermediate =
@@ -136,13 +147,13 @@ export function DesktopTowerElevatorExperience({
     void runElevatorVideoTransition(video, direction, lockedVideoSrcRef.current)
       .then(() => {
         if (playbackRunRef.current !== runId) return;
-        onVideoPlaybackComplete?.();
+        onVideoPlaybackCompleteRef.current?.();
       })
       .catch((error: unknown) => {
         if (playbackRunRef.current !== runId) return;
         if (error instanceof DOMException && error.name === 'AbortError') return;
         setVideoFailed(true);
-        onVideoPlaybackComplete?.();
+        onVideoPlaybackCompleteRef.current?.();
       });
 
     return () => {
@@ -150,7 +161,7 @@ export function DesktopTowerElevatorExperience({
       cancelElevatorVideoTransition(video);
       setVideoPlaying(false);
     };
-  }, [direction, onVideoPlaybackComplete, phase, videoFailed, videoReady]);
+  }, [direction, phase, videoFailed, videoReady]);
 
   useEffect(() => {
     if (phase === 'boarding' || phase === 'traveling') return;
@@ -207,7 +218,7 @@ export function DesktopTowerElevatorExperience({
               height={DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT}
               onError={() => {
                 setVideoFailed(true);
-                onVideoPlaybackComplete?.();
+                onVideoPlaybackCompleteRef.current?.();
               }}
             />
           </>

@@ -287,6 +287,11 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
     [journey, navigate],
   );
 
+  /** Stable identity — routed through a ref so per-frame re-renders never restart playback. */
+  const handleVideoPlaybackComplete = useCallback(() => {
+    videoPlaybackCompleteRef.current?.();
+  }, []);
+
   const travelTo = useCallback(
     (href: string) => {
       if (!isDesktopTowerPath(location.pathname)) {
@@ -341,7 +346,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             phase={phase}
             displayLevelId={displayLevelId}
             cabinFloorId={cabinFloorId}
-            onVideoPlaybackComplete={() => videoPlaybackCompleteRef.current?.()}
+            onVideoPlaybackComplete={handleVideoPlaybackComplete}
           />
           <div className="desktop-tower-elevator__directory-layer" aria-hidden={false}>
             <FloorNavDrawer isOpen embedded />
