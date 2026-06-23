@@ -31317,3 +31317,14 @@ User asked why the **descending** elevator animation works on **tablet** but not
 - **`DesktopRoomTitle.css`** — container/placement unchanged; typography via SVG **`font-size: clamp(...)`** matching prior metrics.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop PSA Suite: always show hologram (upgrade on tap)
+
+User requested PSA **always visible on desktop only** without premium/sign-in render gates; non-premium users **prompted to upgrade** on interaction.
+
+- **`PsaAssistantWidget`** **`variant="suite"`**: bypasses **`!signedIn || !isPremium`** early return — **`PsaStandingHologram`** always renders at **`/desktop/concierge?zone=psa-suite`**.
+- **Tap / `PSA_OPEN_CHAT_REQUEST`:** **`!signedIn || !isPremium`** → existing upgrade modal; premium signed-in → chat opens.
+- **Mobile/global FAB** unchanged (hidden on **`/desktop/*`**, premium required to render).
+- Pushed **`master`** + **`preview/mobile`**.
+
