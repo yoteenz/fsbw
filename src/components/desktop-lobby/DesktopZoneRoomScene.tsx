@@ -6,6 +6,9 @@ import {
   preloadDesktopRoomBackground,
   setLastDesktopRoomBackground,
 } from '../../utils/desktopRoomBackgroundCache';
+import { resolveDesktopRoomTitlePlacement } from '../../constants/desktopRoomTitlePlacement';
+import { resolveDesktopRoomTitleCopy } from '../../constants/desktopRoomTitles';
+import { DesktopRoomTitle } from './DesktopRoomTitle';
 import './DesktopZoneRoomScene.css';
 
 const ZONE_TRANSITION_MS = 880;
@@ -80,6 +83,19 @@ function ZoneBackground({
           onReadyChange?.(true);
         });
       }}
+    />
+  );
+}
+
+function ZoneRoomTitle({ zoneId }: { zoneId: string }) {
+  const copy = resolveDesktopRoomTitleCopy(zoneId);
+  if (!copy) return null;
+
+  return (
+    <DesktopRoomTitle
+      title={copy.title}
+      subtitle={copy.subtitle}
+      placement={resolveDesktopRoomTitlePlacement(zoneId)}
     />
   );
 }
@@ -184,6 +200,7 @@ export function DesktopZoneRoomScene({
             resolveFallbackBackground={resolveFallbackBackground}
             onReadyChange={handleReadyChange}
           />
+          <ZoneRoomTitle zoneId={activeZoneId} />
         </div>
       ) : (
         <>
@@ -195,6 +212,7 @@ export function DesktopZoneRoomScene({
                 resolveBackground={resolveBackground}
                 resolveFallbackBackground={resolveFallbackBackground}
               />
+              <ZoneRoomTitle zoneId={leavingZoneId} />
             </div>
           ) : null}
           <div className="desktop-zone-room-scene__layer">
@@ -205,6 +223,7 @@ export function DesktopZoneRoomScene({
               resolveFallbackBackground={resolveFallbackBackground}
               onReadyChange={handleReadyChange}
             />
+            <ZoneRoomTitle zoneId={activeZoneId} />
           </div>
         </>
       )}

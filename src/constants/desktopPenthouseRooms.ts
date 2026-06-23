@@ -1,3 +1,4 @@
+import { DESKTOP_NO_TEXT_ROOM_BACKGROUNDS } from './desktopNoTextBackgrounds';
 import { DESKTOP_LOBBY_BG_URL } from './desktopLobbyEnv';
 
 /** Master 3-room panorama — reference / fallback only (not panned in production). */
@@ -17,20 +18,17 @@ export const DESKTOP_PENTHOUSE_ROOMS: readonly DesktopPenthouseRoom[] = [
   {
     id: 'analysis-lab',
     name: 'Hair Analysis Lab',
-    background:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/A6B0A7CB-0299-4DAF-A39E-49468BE1A6F9.png',
+    background: DESKTOP_NO_TEXT_ROOM_BACKGROUNDS['analysis-lab'],
   },
   {
     id: 'showroom',
     name: 'Hair Showroom',
-    background:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/7F16AAFA-F3D1-4FD2-B6E3-F20F6B10CBD3.png',
+    background: DESKTOP_NO_TEXT_ROOM_BACKGROUNDS.showroom,
   },
   {
     id: 'boutique',
     name: 'Extensions Boutique',
-    background:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/8358D320-29F7-48DC-97B7-484432003684.png',
+    background: DESKTOP_NO_TEXT_ROOM_BACKGROUNDS.boutique,
   },
 ] as const;
 
