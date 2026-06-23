@@ -31421,3 +31421,12 @@ User requested **black subtitle only** (below red foil room titles) increased by
 - **`DesktopRoomTitle.css`** — **`.desktop-room-title__subtitle`** **`font-size: calc(clamp(13px, 1.05vw, 25px) + 4px)`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop room subtitle +4px gap above
+
+User requested **4px more spacing above** the black subtitle only (between red foil title and subtitle).
+
+- **`DesktopRoomTitle.css`** — **`.desktop-room-title__line--subtitle`** **`margin-top: calc(var(--desktop-room-subtitle-gap, 14px) + 4px)`**; subtitle-only lines unchanged (**`margin-top: 0`**).
+- Pushed **`master`** + **`preview/mobile`**.
+
