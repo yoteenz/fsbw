@@ -47,6 +47,8 @@ export function isDesktopPreviewActive(): boolean {
 }
 
 const DESKTOP_LAYOUT_BREAKPOINT = 1024;
+/** Scaled 1920×1080 artboard on `/desktop/*` — phones only; tablets use native layout like desktop. */
+const DESKTOP_PHONE_ARTBOARD_MAX_WIDTH = 767;
 
 function isDesktopRoutePath(pathname: string): boolean {
   return pathname === DESKTOP_PREFIX || pathname.startsWith(`${DESKTOP_PREFIX}/`);
@@ -54,13 +56,13 @@ function isDesktopRoutePath(pathname: string): boolean {
 
 function isPhoneDesktopViewport(): boolean {
   if (typeof window === 'undefined') return false;
-  return window.innerWidth < DESKTOP_LAYOUT_BREAKPOINT;
+  return window.innerWidth <= DESKTOP_PHONE_ARTBOARD_MAX_WIDTH;
 }
 
 /**
  * Phone-only `/desktop/*` artboard mode — scaled 1920×1080 shell (no crop).
- * Active when: staging `?mobileDesktop=1` (tab session), or viewport < 1024px.
- * iPad and desktop use native full-bleed layout (no artboard letterboxing).
+ * Active when: staging `?mobileDesktop=1` (tab session), or viewport ≤767px (phones).
+ * Tablets (768px+) and desktops use native full-bleed layout.
  */
 export function isMobileDesktopBypassActive(): boolean {
   if (typeof window === 'undefined') return false;
