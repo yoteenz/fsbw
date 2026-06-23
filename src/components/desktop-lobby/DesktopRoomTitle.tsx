@@ -12,7 +12,7 @@ import {
   desktopRoomCoverTypography,
   mapDesktopRoomTitlePlacementToContainer,
 } from '../../utils/desktopRoomCoverLayout';
-import { resolveDesktopRoomTitleTextScale } from '../../constants/desktopRoomTitleTextScale';
+import { resolveDesktopRoomTitleLineTextScale, resolveDesktopRoomTitleTextScale } from '../../constants/desktopRoomTitleTextScale';
 import { useDesktopRoomCoverMeasure } from '../../hooks/useDesktopRoomCoverMeasure';
 import { DesktopRoomTitleMetallicSvg } from './DesktopRoomTitleMetallicSvg';
 import { DesktopRoomTitleDebugSquare } from './DesktopRoomTitleDebugSquare';
@@ -54,6 +54,8 @@ export function DesktopRoomTitle({
   if (!hasTitle && !hasSubtitle) return null;
 
   const textScale = resolveDesktopRoomTitleTextScale(placement);
+  const titleTextScale = resolveDesktopRoomTitleLineTextScale(placement, 'title');
+  const subtitleTextScale = resolveDesktopRoomTitleLineTextScale(placement, 'subtitle');
   const subtitleFontOffsetPx = resolveDesktopRoomSubtitleFontOffsetPx(zoneId);
 
   const mapped =
@@ -74,15 +76,15 @@ export function DesktopRoomTitle({
   const scaledSubtitleGapPx =
     (width > 0 && height > 0
       ? desktopRoomCoverSubtitleGapPx(placement, width, height, DESKTOP_ROOM_SUBTITLE_GAP_SCALE)
-      : placement.subtitleGapPx * DESKTOP_ROOM_SUBTITLE_GAP_SCALE) * textScale;
+      : placement.subtitleGapPx * DESKTOP_ROOM_SUBTITLE_GAP_SCALE) * titleTextScale;
 
   const anchorStyle = {
     '--desktop-room-title-left': `${mapped.leftPct}%`,
     '--desktop-room-title-top': `${mapped.topPct}%`,
     '--desktop-room-subtitle-gap': `${scaledSubtitleGapPx}px`,
-    '--desktop-room-title-font-size': `${typography.titleFontPx * textScale}px`,
-    '--desktop-room-subtitle-font-size': `${Math.max(1, typography.subtitleFontPx * textScale + subtitleFontOffsetPx)}px`,
-    '--desktop-room-title-max-width': `${typography.titleMaxWidthPx * textScale}px`,
+    '--desktop-room-title-font-size': `${typography.titleFontPx * titleTextScale}px`,
+    '--desktop-room-subtitle-font-size': `${Math.max(1, typography.subtitleFontPx * subtitleTextScale + subtitleFontOffsetPx)}px`,
+    '--desktop-room-title-max-width': `${typography.titleMaxWidthPx * titleTextScale}px`,
   } as CSSProperties;
 
   const flexStyle = {
@@ -128,6 +130,8 @@ export function DesktopRoomTitle({
       measureRef={measureRef}
       anchorStyle={anchorStyle}
       textScale={textScale}
+      titleTextScale={titleTextScale}
+      subtitleTextScale={subtitleTextScale}
     >
       <div
         className="desktop-room-title desktop-room-title--anchored-inner"

@@ -8,7 +8,9 @@ import {
   type RefObject,
 } from 'react';
 import {
+  clampDesktopRoomTitleTextScale,
   roundDesktopRoomTitleTextScale,
+  resolveDesktopRoomTitleLineTextScale,
 } from '../../constants/desktopRoomTitleTextScale';
 import {
   ROOM_TITLE_PROFILE_DEBUG_COLOR,
@@ -29,6 +31,8 @@ type Props = {
   measureRef: RefObject<HTMLElement | null>;
   anchorStyle: CSSProperties;
   textScale: number;
+  titleTextScale: number;
+  subtitleTextScale: number;
   children: ReactNode;
 };
 
@@ -54,12 +58,14 @@ function pointerDistance(
   return Math.hypot(dx, dy);
 }
 
-/** Temporary QA square — drag to move; pinch (or ctrl+wheel) to scale title + subtitle together. */
+/** Temporary QA square — drag to move; pinch / wheel to scale title + subtitle. */
 export function DesktopRoomTitleDebugSquare({
   zoneId,
   measureRef,
   anchorStyle,
   textScale,
+  titleTextScale,
+  subtitleTextScale,
   children,
 }: Props) {
   const editor = useDesktopRoomTitlePlacementEditor();
@@ -80,6 +86,34 @@ export function DesktopRoomTitleDebugSquare({
       if (!editor) return;
       editor.patchPlacement(zoneId, {
         textScale: roundDesktopRoomTitleTextScale(nextScale),
+      });
+    },
+    [editor, zoneId],
+  );
+
+  const patchTitleTextScale = useCallback(
+    (nextScale: number) => {
+      if (!editor) return;
+      const placement = editor.getPlacement(zoneId);
+      const master = placement.textScale ?? 1;
+      const clampedEffective = clampDesktopRoomTitleTextScale(nextScale);
+      const lineScale = master > 0 ? clampedEffective / master : clampedEffective;
+      editor.patchPlacement(zoneId, {
+        titleTextScale: roundDesktopRoomTitleTextScale(lineScale),
+      });
+    },
+    [editor, zoneId],
+  );
+
+  const patchSubtitleTextScale = useCallback(
+    (nextScale: number) => {
+      if (!editor) return;
+      const placement = editor.getPlacement(zoneId);
+      const master = placement.textScale ?? 1;
+      const clampedEffective = clampDesktopRoomTitleTextScale(nextScale);
+      const lineScale = master > 0 ? clampedEffective / master : clampedEffective;
+      editor.patchPlacement(zoneId, {
+        subtitleTextScale: roundDesktopRoomTitleTextScale(lineScale),
       });
     },
     [editor, zoneId],
@@ -218,18 +252,29 @@ export function DesktopRoomTitleDebugSquare({
 
   useEffect(() => {
     const el = rootRef.current;
-    if (!el || !editEnabled || !isSelected) return;
+    if (!el || !editEnabled || !isSelected || !editor) return;
 
     const onWheel = (event: WheelEvent) => {
-      if (!event.ctrlKey) return;
       event.preventDefault();
       const factor = event.deltaY < 0 ? 1.04 : 0.96;
-      patchTextScale(textScale * factor);
+      const placement = editor.getPlacement(zoneId);
+      const master = placement.textScale ?? 1;
+
+      if (event.shiftKey) {
+        patchTitleTextScale(resolveDesktopRoomTitleLineTextScale(placement, 'title') * factor);
+        return;
+      }
+      if (event.altKey) {
+        patchSubtitleTextScale(resolveDesktopRoomTitleLineTextScale(placement, 'subtitle') * factor);
+        return;
+      }
+
+      patchTextScale(master * factor);
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [editEnabled, isSelected, patchTextScale, textScale]);
+  }, [editEnabled, editor, isSelected, patchSubtitleTextScale, patchTextScale, patchTitleTextScale, zoneId]);
 
   if (!showSquare || !profile) {
     return (
@@ -241,7 +286,10 @@ export function DesktopRoomTitleDebugSquare({
 
   const outline = ROOM_TITLE_PROFILE_DEBUG_COLOR[profile];
   const fill = ROOM_TITLE_PROFILE_DEBUG_FILL[profile];
-  const scaleLabel = textScale === 1 ? '' : ` · ${textScale.toFixed(2)}×`;
+  const scaleLabel =
+    textScale === 1 && titleTextScale === 1 && subtitleTextScale === 1
+      ? ''
+      : ` · ${titleTextScale.toFixed(2)} / ${subtitleTextScale.toFixed(2)}×`;
 
   const debugStyle: CSSProperties = {
     outline: `${isSelected ? 2 : 1}px dashed ${outline}`,

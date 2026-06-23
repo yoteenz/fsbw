@@ -17,7 +17,8 @@
 .desktop-room-title__line {
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   line-height: 1;
 }
 
@@ -79,6 +80,8 @@
 .desktop-room-title__subtitle {
   margin: 0;
   padding: 0;
+  padding-right: 0.15em;
+  display: inline-block;
   font-family: 'Futura PT Medium', futuristic-pt, Futura, sans-serif;
   font-size: var(--desktop-room-subtitle-font-size, calc(clamp(15px, 1.21vw, 29px) + 7px));
   font-weight: 500;

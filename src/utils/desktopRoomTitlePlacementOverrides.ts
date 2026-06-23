@@ -9,7 +9,15 @@ import { getDesktopRoomTitleViewportProfile } from './desktopRoomTitlePlacementD
 export const DESKTOP_ROOM_TITLE_PLACEMENT_OVERRIDES_KEY = 'baw_desktop_room_title_placement_overrides';
 
 export type DesktopRoomTitlePlacementPatch = Partial<
-  Pick<DesktopRoomTitlePlacement, 'titleTopPct' | 'centerOffsetPct' | 'subtitleGapPx' | 'textScale'>
+  Pick<
+    DesktopRoomTitlePlacement,
+    | 'titleTopPct'
+    | 'centerOffsetPct'
+    | 'subtitleGapPx'
+    | 'textScale'
+    | 'titleTextScale'
+    | 'subtitleTextScale'
+  >
 >;
 
 export type DesktopRoomTitlePlacementProfileOverrides = Record<string, DesktopRoomTitlePlacementPatch>;

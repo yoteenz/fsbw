@@ -31684,3 +31684,14 @@ User could not navigate room-to-room on Concierge floor in **PSA Suite** — **s
 - **Fix:** **`psa-suite-layout`** is **`pointer-events: none`**; only **`.psa-standing-hologram`**, **`.psa-chat-backdrop`**, and **`.psa-chat-panel`** capture input. Hologram still visible for all users; chat still premium-gated via upgrade modal.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room label subtitle centering + debug text size controls
+
+User reported black **subtitles** on desktop room labels were **shifted right** instead of centered under the red foil title, and could **not edit text sizes** for room label vs subtitle in debug mode (`?roomTitleDebug=1&roomTitleEdit=1`).
+
+- **Subtitle centering:** **`DesktopRoomTitle.css`** — label lines use **`width: fit-content`** so each line boxes to content; subtitle is **`display: inline-block`** with **`padding-right: 0.15em`** to compensate **`letter-spacing: 0.15em`** trailing space so black text centers under the foil title.
+- **Separate text scales:** **`titleTextScale`** / **`subtitleTextScale`** on **`DesktopRoomTitlePlacement`** (multiply with legacy **`textScale`**); **`resolveDesktopRoomTitleLineTextScale`** in **`desktopRoomTitleTextScale.ts`**; applied independently in **`DesktopRoomTitle.tsx`**.
+- **Debug editing:** **`DesktopRoomTitlePlacementEditorPanel`** — **Title** / **Subtitle** **+/−** steppers in minimized + expanded panel when a zone is selected. **`DesktopRoomTitleDebugSquare`** — **wheel** scales both (no ctrl required); **shift+wheel** = title only; **alt+wheel** = subtitle only; pinch still scales both via **`textScale`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
