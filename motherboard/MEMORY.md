@@ -31604,3 +31604,12 @@ User asked to **pinch shrink/enlarge** on the red debug square so both text line
 - **`DesktopRoomTitleDebugSquare`:** two-finger **pinch** on selected square; **ctrl+wheel** (trackpad pinch) on desktop; scale shown in debug chip (e.g. **`0.85×`**).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Reception subtitle −4px
+
+User asked to reduce **reception station** black subtitle text only by **4px**.
+
+- **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX`** — **`reception: -4`**; applied in **`DesktopRoomTitle`** to subtitle font size only (red foil title unchanged).
+- Pushed **`master`** + **`preview/mobile`**.
+
