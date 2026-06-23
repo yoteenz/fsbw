@@ -31250,3 +31250,12 @@ User asked to change room title typography from **Futura PT Medium** to **Futura
 - **`DesktopRoomTitle.css`:** title **`font-family: Futura PT Book`**, **`font-weight: 400`** (subtitle unchanged Book/400). Single gradient foil layer on **`.desktop-room-title__title`** — removed stacked **`title-foil` + `title-face`** duplicate spans that read as double text.
 - **`DesktopZoneRoomScene.tsx`:** during zone crossfade, render **`ZoneRoomTitle`** only on the **entering** layer (not the exiting layer) so old + new labels do not overlap at the same anchor. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Floor/station directory: name-only centering + subtitle type
+
+User asked for floor + station directory cards to **vertically center** the name when there is **no red subtitle**, and to increase red subtitle text by **2px** with **Futura PT Medium**.
+
+- **`DesktopFloorDirectory.css`:** **`:not(:has(.floor-directory__status))`** → **`align-items: center`** on card grid. **`.floor-directory__status`** **5px → 7px**, **Futura PT Book → Medium**.
+- **`DesktopRoomDirectory.css`:** **`:not(:has(.room-directory__status))`** → **`justify-content: center`**, clear name **`margin-bottom`**. **`.room-directory__status`** same **7px / Medium** bump. Pushed **`master`** + **`preview/mobile`**.
+
