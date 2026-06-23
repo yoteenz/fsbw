@@ -209,6 +209,13 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
   useEffect(() => {
     const onOpenRequest = (event: Event) => {
       const detail = (event as CustomEvent<PsaOpenChatRequestDetail>).detail;
+      if (isSuite && (!signedIn || !isPremium)) {
+        if (detail?.prefillMessage?.trim()) {
+          setPrefillInput(detail.prefillMessage.trim());
+        }
+        setShowUpgradeModal(true);
+        return;
+      }
       if (detail?.prefillMessage?.trim()) {
         setPrefillInput(detail.prefillMessage.trim());
       }
@@ -217,7 +224,7 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     };
     window.addEventListener(PSA_OPEN_CHAT_REQUEST_EVENT, onOpenRequest);
     return () => window.removeEventListener(PSA_OPEN_CHAT_REQUEST_EVENT, onOpenRequest);
-  }, []);
+  }, [isSuite, isPremium, signedIn]);
 
   useEffect(() => {
     if (!isPremium) return;
@@ -401,6 +408,10 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
         handleCloseChat();
         return;
       }
+      if (!signedIn || !isPremium) {
+        setShowUpgradeModal(true);
+        return;
+      }
       setIsOpen(true);
       startWelcomeWave();
       return;
@@ -418,7 +429,7 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     }
     setIsOpen(true);
     startWelcomeWave();
-  }, [isSuite, isFabCollapsed, isOpen, startWelcomeWave, closeHistory, endRedCarpetMode, handleCloseChat]);
+  }, [isSuite, isFabCollapsed, isOpen, isPremium, signedIn, startWelcomeWave, closeHistory, endRedCarpetMode, handleCloseChat]);
 
   const handleNewChat = useCallback(() => {
     endRedCarpetMode();
@@ -672,8 +683,10 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     />
   );
 
-  // Same gate as /lobby + lounge: premium subscription and/or BLACK tier only (not standard members).
-  if (!signedIn || !isPremium || loungeTvTheater) {
+  // Desktop PSA Suite: hologram always visible; chat opens only for premium members.
+  if (isSuite) {
+    if (loungeTvTheater) return null;
+  } else if (!signedIn || !isPremium || loungeTvTheater) {
     return null;
   }
   if (!isSuite && isPsaHiddenPath(location.pathname)) {
