@@ -30954,3 +30954,16 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **`desktopPsaSuite.css`:** stage **70%** smaller; hologram **absolutely centered** over suite pedestal (`bottom: ~20vh`); figure **76%** height + **12%** lift above pedestal glow; scanlines tightened to screen bounds; chat panel **absolute** right when open.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator: fix descending glitch, floor directory flow, preload destination
+
+Summary of the **whole conversation so far** in this chat: PSA Suite hologram polish (remove halo, scale 30%, align over pedestal); user reported **elevator animation stuck/lagging/glitching** on **descending** travel and wrong **floor directory** highlight sequence; asked for destination **background to load during** the elevator overlay.
+
+- **Video (`desktopTowerElevatorVideo.ts`):** removed **`playbackRate = -1`** reverse playback (browser glitch source); **always play forward**; **descending** uses CSS **`scaleY(-1)`** only (`--reverse-fallback` class).
+- **Floor directory (`desktopFloorDirectory.ts`, `FloorNavDrawer.tsx`, `DesktopFloorDirectory.css`):** **one active card at a time** — e.g. P4→L2: **P4 Boarding** (white card) → **L3 Descending** (P4 off) → **L2 Destination** (L3/P4 off). Status **Ascending** when going up. New **`--elevator-focus`** white acrylic + red text for all elevator-active cards.
+- **Holo (`DesktopTowerElevatorExperience.tsx`):** labels match — **Boarding**, **Descending/Ascending**, **Destination** (removed redundant Passing counter).
+- **Preload (`DesktopTowerNavProvider.tsx`):** **`navigate(destination)`** at **travel start** (after boarding); **`prefetchDesktopTowerDestination`** warms zone hero PNG during boarding. Destination route mounts **under** elevator overlay.
+- **Reveal (`DesktopFloorZonePage.tsx`, `penthouse/page.tsx`):** **`opacity: 0`** while **`isTraveling`** so background loads invisibly; fades in when elevator exits.
+- Pushed **`master`** + **`preview/mobile`**.
+
