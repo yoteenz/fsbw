@@ -30978,3 +30978,14 @@ Summary of the **whole conversation so far** in this chat: PSA Suite hologram; e
 - **Files:** `ExtensionsBoutiqueExperience.tsx`, `ExtensionsBoutiqueHotspot.tsx`, `extensionsBoutique.css`, `useDesktopRoomCoverHitRect.ts`, `desktopExtensionsBoutique.ts`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Elevator: fix infinite video loop + restore route on arrival
+
+Summary of the **whole conversation so far** in this chat: PSA Suite hologram; elevator descending/directory/preload; Extensions Boutique portal hotspot; user reported **elevator animation keeps looping** and **destination page never opens**.
+
+- **Root causes:** (1) Early **`navigate()` at travel start** broke arrival/reveal timing. (2) Video **`canplay`** handler kept resetting **`currentTime = 0`**, making the clip restart endlessly. (3) **`loop`** attribute + blob URL remount (`key` included `videoSrc`) kept animation running after travel should end.
+- **Fix:** **`navigate(destination)`** restored to **arrival** (after floor sequence completes); **prefetch** still during boarding. Video: play once per bind, no reset on every `canplay`, **`loop` only during boarding/traveling**, pause on arrived/exiting, stable video `key` (no blob remount). **`finishTravel`** backup `setTimeout` ensures journey completes if RAF is throttled.
+- **Files:** `DesktopTowerNavProvider.tsx`, `DesktopTowerElevatorExperience.tsx`, `desktopTowerElevatorVideo.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+
