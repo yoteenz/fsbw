@@ -30,7 +30,7 @@ export const DESKTOP_ROOM_TITLES: Readonly<Record<string, DesktopRoomTitleCopy>>
     subtitle: 'YOU SLAY. WE CELEBRATE.',
   },
   'members-lounge': {
-    title: 'MEMBERS LOUNGE',
+    title: 'MEMBERS ONLY LOUNGE',
     subtitle: 'EXCLUSIVE ACCESS. EXCLUSIVE REWARDS.',
   },
   'rewards-gallery': {
