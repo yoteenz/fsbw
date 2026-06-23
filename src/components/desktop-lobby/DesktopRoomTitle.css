@@ -23,15 +23,6 @@
   line-height: 1.05;
 }
 
-.desktop-room-title__line--subtitle {
-  margin-top: var(--desktop-room-subtitle-gap, 10px);
-  line-height: 1.2;
-}
-
-.desktop-room-title__line--subtitle-only {
-  margin-top: 0;
-}
-
 .desktop-room-title__foil-svg {
   overflow: visible;
   display: block;
@@ -42,10 +33,6 @@
 
 .desktop-room-title__foil-svg--title {
   font-size: clamp(32px, 2.5vw, 68px);
-}
-
-.desktop-room-title__foil-svg--subtitle {
-  font-size: clamp(9px, 0.73vw, 18px);
 }
 
 .desktop-room-title__foil-stack {
@@ -66,8 +53,21 @@
   letter-spacing: 0.08em;
 }
 
-.desktop-room-title__foil-text--subtitle {
+.desktop-room-title__subtitle {
+  margin: var(--desktop-room-subtitle-gap, 10px) 0 0;
+  padding: 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, sans-serif;
+  font-size: clamp(9px, 0.73vw, 18px);
+  font-weight: 400;
+  line-height: 1.2;
+  text-transform: uppercase;
   letter-spacing: 0.15em;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.desktop-room-title__subtitle--only {
+  margin-top: 0;
 }
 
 .desktop-room-title--anchored-inner {

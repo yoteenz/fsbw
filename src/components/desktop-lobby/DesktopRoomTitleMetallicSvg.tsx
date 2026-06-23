@@ -1,20 +1,16 @@
 import { useId, useMemo } from 'react';
 
-export type MetallicFoilVariant = 'title' | 'subtitle';
-
 type Props = {
   text: string;
-  variant: MetallicFoilVariant;
 };
 
 /**
- * Luxury red-foil stamped room signage — SVG gradients + lighting filters only
- * (no flat CSS text fills). Typography metrics match legacy DesktopRoomTitle CSS.
+ * Luxury red-foil stamped room name — SVG gradients + lighting filters only.
+ * Room subtitles stay plain black HTML (see DesktopRoomTitle.css).
  */
-export function DesktopRoomTitleMetallicSvg({ text, variant }: Props) {
+export function DesktopRoomTitleMetallicSvg({ text }: Props) {
   const rawId = useId();
   const uid = useMemo(() => rawId.replace(/:/g, ''), [rawId]);
-  const isTitle = variant === 'title';
 
   const ids = {
     body: `${uid}-body`,
@@ -30,20 +26,15 @@ export function DesktopRoomTitleMetallicSvg({ text, variant }: Props) {
     chrome: `${uid}-chrome`,
   };
 
-  const textClass = isTitle
-    ? 'desktop-room-title__foil-text desktop-room-title__foil-text--title'
-    : 'desktop-room-title__foil-text desktop-room-title__foil-text--subtitle';
-
-  const svgClass = isTitle
-    ? 'desktop-room-title__foil-svg desktop-room-title__foil-svg--title'
-    : 'desktop-room-title__foil-svg desktop-room-title__foil-svg--subtitle';
-
-  const shadowDy = isTitle ? 0.14 : 0.18;
-  const depthDy = isTitle ? 0.05 : 0.07;
-  const strokeW = isTitle ? 0.045 : 0.055;
+  const textClass = 'desktop-room-title__foil-text desktop-room-title__foil-text--title';
 
   return (
-    <svg className={svgClass} aria-hidden overflow="visible" role="presentation">
+    <svg
+      className="desktop-room-title__foil-svg desktop-room-title__foil-svg--title"
+      aria-hidden
+      overflow="visible"
+      role="presentation"
+    >
       <defs>
         <linearGradient id={ids.body} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#4a080c" />
@@ -120,13 +111,13 @@ export function DesktopRoomTitleMetallicSvg({ text, variant }: Props) {
           <feGaussianBlur in="SourceAlpha" stdDeviation="0.5" result="blur" />
           <feSpecularLighting
             in="blur"
-            surfaceScale={isTitle ? 3.5 : 2.8}
+            surfaceScale={3.5}
             specularConstant="0.85"
-            specularExponent={isTitle ? 22 : 18}
+            specularExponent={22}
             lightingColor="#fff8f8"
             result="spec"
           >
-            <fePointLight x={isTitle ? -120 : -80} y={isTitle ? -140 : -90} z={220} />
+            <fePointLight x={-120} y={-140} z={220} />
           </feSpecularLighting>
           <feComposite in="spec" in2="SourceAlpha" operator="in" result="specClipped" />
           <feComposite in="SourceGraphic" in2="specClipped" operator="arithmetic" k1="0" k2="1" k3="0.65" k4="0" />
@@ -150,11 +141,11 @@ export function DesktopRoomTitleMetallicSvg({ text, variant }: Props) {
       </defs>
 
       <g className="desktop-room-title__foil-stack" textAnchor="middle">
-        <text className={textClass} y="0" dy={`${shadowDy}em`} fill="#120203" filter={`url(#${ids.shadow})`}>
+        <text className={textClass} y="0" dy="0.14em" fill="#120203" filter={`url(#${ids.shadow})`}>
           {text}
         </text>
 
-        <text className={textClass} y="0" dy={`${depthDy}em`} fill={`url(#${ids.edge})`} opacity="0.92">
+        <text className={textClass} y="0" dy="0.05em" fill={`url(#${ids.edge})`} opacity="0.92">
           {text}
         </text>
 
@@ -163,7 +154,7 @@ export function DesktopRoomTitleMetallicSvg({ text, variant }: Props) {
           y="0"
           fill={`url(#${ids.body})`}
           stroke={`url(#${ids.edge})`}
-          strokeWidth={strokeW}
+          strokeWidth={0.045}
           paintOrder="stroke fill"
           filter={`url(#${ids.depth})`}
         >

@@ -41,17 +41,17 @@ export function DesktopRoomTitle({
     <>
       {hasTitle ? (
         <div className="desktop-room-title__line desktop-room-title__line--title">
-          <DesktopRoomTitleMetallicSvg text={title} variant="title" />
+          <DesktopRoomTitleMetallicSvg text={title} />
         </div>
       ) : null}
       {hasSubtitle ? (
-        <div
-          className={`desktop-room-title__line desktop-room-title__line--subtitle${
-            hasTitle ? '' : ' desktop-room-title__line--subtitle-only'
+        <p
+          className={`desktop-room-title__subtitle${
+            hasTitle ? '' : ' desktop-room-title__subtitle--only'
           }`}
         >
-          <DesktopRoomTitleMetallicSvg text={subtitle} variant="subtitle" />
-        </div>
+          {subtitle}
+        </p>
       ) : null}
     </>
   );
