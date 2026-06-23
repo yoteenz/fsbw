@@ -6,6 +6,7 @@ import {
   PERSPECTIVE_PANEL_BY_ID,
 } from '../../constants/perspectivePanelConfig';
 import type { PerspectivePanelId } from '../../types/perspectivePanel';
+import { canAccessPageDebugMode } from '../../utils/adminAuth';
 import { isPerspectivePanelDebugEnabled } from '../../utils/perspectivePanelDebug';
 import { usePerspectivePanelDebug } from './PerspectivePanelDebugProvider';
 import './perspectivePanelDebug.css';
@@ -152,7 +153,9 @@ export function PerspectivePanelDebugToolbar() {
           ) : null}
 
           {editor.saveStatus === 'saved' ? (
-            <p className="perspective-panel-debug-toolbar__status">Saved.</p>
+            <p className="perspective-panel-debug-toolbar__status">
+              Saved{canAccessPageDebugMode() ? ' (syncing across devices)' : ''}.
+            </p>
           ) : null}
           {editor.saveStatus === 'failed' ? (
             <p className="perspective-panel-debug-toolbar__status perspective-panel-debug-toolbar__status--error">

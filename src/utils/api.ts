@@ -373,6 +373,26 @@ export async function putAdminPageDebugConfig(config: Record<string, unknown>): 
   if (!res.ok) throw new Error(await res.text());
 }
 
+/** Admin: read perspective panel map from Supabase (founder session). */
+export async function getAdminPerspectivePanelConfig(): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await apiFetch('/api/admin/perspective-panel-config');
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin founder: upsert perspective panel map to Supabase (cross-device sync). */
+export async function putAdminPerspectivePanelConfig(config: Record<string, unknown>): Promise<void> {
+  const res = await apiFetch('/api/admin/perspective-panel-config', { method: 'PUT', body: config });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 /** Public read of admin special-offer card JSON (no auth). Used by concierge; returns null if missing or API unreachable. */
 export async function getSpecialOfferAdminConfig(): Promise<Record<string, unknown> | null> {
   const base = API_BASE.replace(/\/$/, '');

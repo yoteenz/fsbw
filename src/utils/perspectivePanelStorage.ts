@@ -1,41 +1,23 @@
 import type { PerspectivePanelId, PerspectivePanelMap, PerspectivePanelQuad } from '../types/perspectivePanel';
 import { defaultPerspectivePanelQuad } from '../constants/perspectivePanelConfig';
-import { clampPerspectivePanelQuad } from './perspectivePanelQuad';
+import { clampPerspectivePanelQuad, quad4ToPerspectivePanelQuad } from './perspectivePanelQuad';
+import { loadShoppingBagTabletQuad } from './desktopShoppingBagTabletQuad';
 
 export const PERSPECTIVE_PANEL_STORAGE_KEY = 'perspectivePanelMap';
 export const PERSPECTIVE_PANEL_STORAGE_REVISION = 1;
+export const PERSPECTIVE_PANEL_UPDATED_EVENT = 'perspectivePanelMapUpdated';
 
-type StoredPerspectivePanelMap = {
+export type StoredPerspectivePanelPayload = {
   version: number;
   revision: number;
   panels: PerspectivePanelMap;
+  updatedAt: number;
 };
 
 function readStoredRaw(): string | null {
   if (typeof window === 'undefined') return null;
   try {
     return window.localStorage.getItem(PERSPECTIVE_PANEL_STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function parseStoredMap(raw: string): PerspectivePanelMap | null {
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== 'object') return null;
-
-    const record = parsed as Record<string, unknown>;
-    if (record.version === 1 && record.panels && typeof record.panels === 'object') {
-      if (record.revision !== PERSPECTIVE_PANEL_STORAGE_REVISION) return null;
-      return normalizePanelMap(record.panels as PerspectivePanelMap);
-    }
-
-    if ('panels' in record && typeof record.panels === 'object') {
-      return normalizePanelMap(record.panels as PerspectivePanelMap);
-    }
-
-    return normalizePanelMap(record as PerspectivePanelMap);
   } catch {
     return null;
   }
@@ -52,21 +34,94 @@ function normalizePanelMap(map: PerspectivePanelMap): PerspectivePanelMap {
   return next;
 }
 
-export function loadPerspectivePanelOverrides(): PerspectivePanelMap {
-  const raw = readStoredRaw();
-  if (!raw) return {};
-  return parseStoredMap(raw) ?? {};
+function migrateLegacyShoppingBagTablet(map: PerspectivePanelMap): PerspectivePanelMap {
+  if (map['curator-tablet'] && map['checkout-tablet']) return map;
+  const legacy = loadShoppingBagTabletQuad();
+  if (!legacy) return map;
+  const quad = quad4ToPerspectivePanelQuad(legacy);
+  return {
+    ...map,
+    'curator-tablet': map['curator-tablet'] ?? quad,
+    'checkout-tablet': map['checkout-tablet'] ?? quad,
+  };
 }
 
-export function savePerspectivePanelOverrides(map: PerspectivePanelMap): boolean {
+function parseStoredPayload(raw: string): StoredPerspectivePanelPayload | null {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return null;
+
+    const record = parsed as Record<string, unknown>;
+    let panels: PerspectivePanelMap | null = null;
+
+    if (record.version === 1 && record.panels && typeof record.panels === 'object') {
+      if (record.revision !== PERSPECTIVE_PANEL_STORAGE_REVISION) return null;
+      panels = normalizePanelMap(record.panels as PerspectivePanelMap);
+    } else if ('panels' in record && typeof record.panels === 'object') {
+      panels = normalizePanelMap(record.panels as PerspectivePanelMap);
+    } else {
+      panels = normalizePanelMap(record as PerspectivePanelMap);
+    }
+
+    if (!panels) return null;
+    const updatedAt = typeof record.updatedAt === 'number' ? record.updatedAt : 0;
+    return {
+      version: 1,
+      revision: PERSPECTIVE_PANEL_STORAGE_REVISION,
+      panels: migrateLegacyShoppingBagTablet(panels),
+      updatedAt,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function readPerspectivePanelStoragePayload(): StoredPerspectivePanelPayload | null {
+  const raw = readStoredRaw();
+  if (!raw) return null;
+  return parseStoredPayload(raw);
+}
+
+export function mergePerspectivePanelMaps(
+  local: PerspectivePanelMap,
+  remote: PerspectivePanelMap,
+): PerspectivePanelMap {
+  return migrateLegacyShoppingBagTablet({
+    ...local,
+    ...remote,
+  });
+}
+
+export function loadPerspectivePanelOverrides(): PerspectivePanelMap {
+  const payload = readPerspectivePanelStoragePayload();
+  if (!payload) return migrateLegacyShoppingBagTablet({});
+  return payload.panels;
+}
+
+export function dispatchPerspectivePanelMapUpdated(): void {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event(PERSPECTIVE_PANEL_UPDATED_EVENT));
+}
+
+type SaveOptions = {
+  updatedAt?: number;
+  syncCloud?: boolean;
+};
+
+export function savePerspectivePanelOverrides(
+  map: PerspectivePanelMap,
+  options: SaveOptions = {},
+): boolean {
   if (typeof window === 'undefined') return false;
-  const payload: StoredPerspectivePanelMap = {
+  const payload: StoredPerspectivePanelPayload = {
     version: 1,
     revision: PERSPECTIVE_PANEL_STORAGE_REVISION,
-    panels: normalizePanelMap(map),
+    panels: migrateLegacyShoppingBagTablet(normalizePanelMap(map)),
+    updatedAt: options.updatedAt ?? Date.now(),
   };
   try {
     window.localStorage.setItem(PERSPECTIVE_PANEL_STORAGE_KEY, JSON.stringify(payload, null, 2));
+    dispatchPerspectivePanelMapUpdated();
     return true;
   } catch {
     return false;
@@ -83,6 +138,7 @@ export function clearAllPerspectivePanelOverrides(): void {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.removeItem(PERSPECTIVE_PANEL_STORAGE_KEY);
+    dispatchPerspectivePanelMapUpdated();
   } catch {
     /* ignore */
   }
@@ -92,6 +148,6 @@ export function resolvePerspectivePanelQuad(
   id: PerspectivePanelId,
   overrides?: PerspectivePanelMap,
 ): PerspectivePanelQuad {
-  const map = overrides ?? loadPerspectivePanelOverrides();
+  const map = migrateLegacyShoppingBagTablet(overrides ?? loadPerspectivePanelOverrides());
   return map[id] ?? defaultPerspectivePanelQuad(id);
 }

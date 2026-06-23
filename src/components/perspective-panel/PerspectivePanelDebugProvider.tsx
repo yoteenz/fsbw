@@ -1,13 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { canAccessPageDebugMode } from '../../utils/adminAuth';
 import {
   PERSPECTIVE_PANEL_DEFINITIONS,
   PERSPECTIVE_PANEL_BY_ID,
@@ -33,9 +26,12 @@ import {
 import {
   clearPerspectivePanelOverride,
   loadPerspectivePanelOverrides,
+  PERSPECTIVE_PANEL_STORAGE_KEY,
+  PERSPECTIVE_PANEL_UPDATED_EVENT,
   resolvePerspectivePanelQuad,
   savePerspectivePanelOverrides,
 } from '../../utils/perspectivePanelStorage';
+import { syncPerspectivePanelMapToCloud } from '../../utils/perspectivePanelSync';
 import { defaultPerspectivePanelQuad } from '../../constants/perspectivePanelConfig';
 
 export type PerspectivePanelSaveStatus = 'idle' | 'saved' | 'failed';
@@ -89,6 +85,27 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
     if (pagePanelIds.length === 0) return;
     setSelectedPanelId((prev) => (pagePanelIds.includes(prev) ? prev : pagePanelIds[0]));
   }, [pagePanelIds]);
+
+  const reloadFromStorage = useCallback(() => {
+    setPanelOverrides(loadPerspectivePanelOverrides());
+    setSaveStatus('idle');
+  }, []);
+
+  useEffect(() => {
+    reloadFromStorage();
+    const onStorage = (event: StorageEvent) => {
+      if (event.key != null && event.key !== PERSPECTIVE_PANEL_STORAGE_KEY) return;
+      reloadFromStorage();
+    };
+    window.addEventListener(PERSPECTIVE_PANEL_UPDATED_EVENT, reloadFromStorage);
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('focus', reloadFromStorage);
+    return () => {
+      window.removeEventListener(PERSPECTIVE_PANEL_UPDATED_EVENT, reloadFromStorage);
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('focus', reloadFromStorage);
+    };
+  }, [reloadFromStorage]);
 
   const resolveQuad = useCallback(
     (id: PerspectivePanelId) => resolvePerspectivePanelQuad(id, panelOverrides),
@@ -152,6 +169,12 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
         next[id] = clampPerspectivePanelQuad(q);
       }
       setPanelOverrides(next);
+      savePerspectivePanelOverrides(next);
+      if (canAccessPageDebugMode()) {
+        void syncPerspectivePanelMapToCloud(next).catch(() => {
+          /* ignore */
+        });
+      }
       setSaveStatus('idle');
       return true;
     } catch {
@@ -161,6 +184,11 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
 
   const save = useCallback(() => {
     const ok = savePerspectivePanelOverrides(panelOverrides);
+    if (ok && canAccessPageDebugMode()) {
+      void syncPerspectivePanelMapToCloud(panelOverrides).catch(() => {
+        /* local save still valid */
+      });
+    }
     setSaveStatus(ok ? 'saved' : 'failed');
     return ok;
   }, [panelOverrides]);

@@ -34,6 +34,7 @@ import { DesktopPsaSuiteFrameEditorProvider } from './components/desktop-lobby/D
 import { DesktopPsaSuiteFrameEditorPanel } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorPanel';
 import { PerspectivePanelDebugProvider } from './components/perspective-panel/PerspectivePanelDebugProvider';
 import { PerspectivePanelDebugToolbar } from './components/perspective-panel/PerspectivePanelDebugToolbar';
+import { PerspectivePanelFounderBootstrap } from './components/perspective-panel/PerspectivePanelFounderBootstrap';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { seedShoppingBagMockCartIfEmpty } from './utils/shoppingBagMockCart';
@@ -183,6 +184,7 @@ const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/p
 function DesktopRoutesLayout() {
   return (
     <PerspectivePanelDebugProvider>
+      <PerspectivePanelFounderBootstrap />
       <DesktopRoomTitlePlacementEditorProvider>
         <DesktopLoungeTvFrameEditorProvider>
           <DesktopPsaSuiteFrameEditorProvider>
