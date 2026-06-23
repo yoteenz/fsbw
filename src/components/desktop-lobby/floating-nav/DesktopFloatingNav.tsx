@@ -63,7 +63,7 @@ export function DesktopFloatingNav() {
           <FloatingNavTrigger
             kind="rooms"
             isActive={activeDrawer === 'rooms'}
-            label="Open room directory"
+            label="Open station directory"
             onClick={toggleRooms}
           />
         </div>
