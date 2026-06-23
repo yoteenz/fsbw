@@ -31211,3 +31211,15 @@ User requested **automated processing** of all desktop tower room backgrounds: F
 - **Fal batch settings (documented, not live-run in cloud):** **`fal-ai/nano-banana-pro/edit`**, **`aspect_ratio: auto`**, **`resolution: 4K`** (env **`FAL_RESOLUTION`**), **`output_format: png`**, **`num_images: 1`**, approved text-removal prompt in **`desktop-room-text-removal-prompt.mjs`**; post sharp resize to source dims, WebP q92 upload to **`Desktop/backgrounds/clean/`**; only dry-run report exists in repo.
 - **App update screen:** User wanted **RELOAD PAGE** uppercase on stale-chunk **`ErrorBoundary`** — button text **`RELOAD PAGE`** + explicit **`textTransform: uppercase`** (buttons don’t inherit parent uppercase). **`App.tsx`**. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop NO TEXT BG assets + live foil room titles
+
+User ran Fal locally and supplied **11 text-free JPEG heroes** under Supabase **`Desktop/NO TEXT BG/`**; asked to note original baked label placement, wire new URLs (step 1), and add reusable **`DesktopRoomTitle`** live overlays (step 3).
+
+- **Placement notes:** All rooms use **upper-center** hero wall anchor (~**10–15%** from top, horizontally centered). Per-room **`titleTopPct`** in **`desktopRoomTitlePlacement.ts`** (mostly **12–12.5%**); **`subtitleGapPx: 10`** at **1920** design width; **`centerOffsetPct: 0`** everywhere. Coordinate system matches **`DesktopZoneRoomScene`** **`object-fit: cover`** + **`object-position: center top`**.
+- **Backgrounds:** **`desktopNoTextBackgrounds.ts`** — 11 room URLs. **`desktopFloorZoneBackgrounds.ts`** + **`desktopPenthouseRooms.ts`** now import those for all rooms except **`grand-lobby`** (still legacy **`IMG_4013.png`** until user supplies NO TEXT asset).
+- **`DesktopRoomTitle`:** **`src/components/desktop-lobby/DesktopRoomTitle.tsx`** + **`.css`**. API **`<DesktopRoomTitle title="" subtitle="" />`**. Title: **Futura PT Medium**, **600**, **0.08em**, reflective crimson foil gradient (**#EB1C24**, no neon/glow). Subtitle: **Futura PT Book**, **400**, **0.15em**, pure **#000000**. Responsive **`clamp`/`vw`** scaling for **1920→5120** ultrawide. Copy in **`desktopRoomTitles.ts`**; overlays wired in **`DesktopZoneRoomScene`** on active + transition layers.
+- **Copy:** Reception per user spec — **empty title**, subtitle **`DESIGN. CUSTOMIZE. SLAY.`** Lounge (TV) not in step-3 list — kept **`THE LOUNGE` / `WATCH. LEARN. GET INSPIRED.`**
+- Pushed **`master`** + **`preview/mobile`**.
+
