@@ -31373,3 +31373,14 @@ User reported room labels had **title and subtitle drifted apart** after restori
 - **Fix:** **`desktop-room-title__foil-slot`** — fixed **`1.05em`** one-line height; SVG **`height="1em"`** with text at **`y="0.5em"`**; filters paint outside without affecting flex. Subtitle back in **`__line--subtitle`** wrapper with gap on the line (matches pre-foil structure).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — PSA Suite hologram invisible (collapsed stage height)
+
+User in PSA Suite still saw no standing hologram after portal/theater fixes.
+
+- **Verified** with Playwright on **`/desktop/concierge?zone=psa-suite`**: **`[data-attribute="psa-suite-experience"]`** mounted, but **`.psa-standing-hologram__stage`** collapsed to **~16px** tall and avatar **height 0** — invisible.
+- **Cause:** **`desktopPsaSuite.css`** used **`height: clamp(161px, 27%, 294px)`** on the stage; **`27%`** needs a definite parent height, but **`.psa-standing-hologram`** is shrink-to-fit (absolute, no height), so **% failed** and flex layout collapsed the stage (regression from tablet **`vh` → `%`** change in **`cbf1e820`**).
+- **Fix:** Stage **`height: clamp(161px, 24vh, 294px)`** + **`min-height: 161px`** (phone MQ: **`148px` / `20vh`**). Playwright post-fix: desktop avatar **~164px**, tablet **~140px** tall.
+- Pushed **`master`** + **`preview/mobile`**.
+
