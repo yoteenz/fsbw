@@ -31028,6 +31028,16 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 
 - **Cause:** `ScaledDesktopViewport` uses **height-fill** (`scale = shellHeight / 1080`), but **`DesktopZoneRoomScene--artboard`** forced **`object-fit: contain`** on room heroes — 21:9 images letterboxed with **`#0a0a0a`** bars. Prior **`min(scaleX, scaleY)`** viewport fit caused the same symptom; height-fill restored in **`83e72b66`** but contain override remained on phone.
 - **Fix:** Removed artboard **`contain`** override; room heroes use **`cover`** + **`center top`**. **`useDesktopRoomCoverHitRect`** always uses **cover** mapping. Clarified phone artboard comment in **`desktopPreview.ts`**.
-- **Files:** `DesktopZoneRoomScene.css`, `useDesktopRoomCoverHitRect.ts`, `desktopPreview.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-22 — Elevator holo floor names + PSA suite holo position
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish through phone artboard cover fix; user asked to change red **LEVEL n** text on elevator holo panel to **GROUND FLOOR / SECOND FLOOR / THIRD FLOOR / PENTHOUSE**; remove **TAP TO CHAT** below desktop PSA **only in PSA Suite**; move PSA hologram **up 40px**.
+
+- **Elevator:** **`formatTowerLevelLabel`** in **`desktopTowerMotion.ts`** maps floor ids 1–4 to named labels (red **`desktop-tower-elevator__holo-level`** line).
+- **PSA Suite:** **`PsaStandingHologram`** gains **`showCta`** prop; suite widget passes **`showCta={false}`**. **`desktopPsaSuite.css`:** hologram **`translateY(-40px)`** on standing button.
+- **Files:** `desktopTowerMotion.ts`, `PsaStandingHologram.tsx`, `PsaAssistantWidget.tsx`, `desktopPsaSuite.css`.
 - Pushed **`master`** + **`preview/mobile`**.
 
