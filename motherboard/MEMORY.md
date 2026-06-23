@@ -31622,3 +31622,10 @@ User asked to reduce reception black subtitle by **another 3px** (now **−7px**
 - Updated **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX.reception`** from **−4** to **−7**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Reception subtitle −10px total
+
+User set reception black subtitle offset to **−10px** ( **`DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX.reception`** ).
+- Pushed **`master`** + **`preview/mobile`**.
+
