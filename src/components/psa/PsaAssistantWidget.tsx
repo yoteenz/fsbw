@@ -627,8 +627,6 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     idleExpressionCycle.expression,
   ]);
 
-  const suiteCtaLabel = isOpen ? uiCopy.hideChatCta : uiCopy.widgetCta;
-
   const chatPanel = (
     <PsaChatPanel
       messages={messages}
@@ -695,7 +693,7 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
               isOpen={isOpen}
               idle={!isOpen}
               expression={avatarExpression}
-              ctaLabel={suiteCtaLabel}
+              showCta={false}
               aria-label={isOpen ? 'Hide chat' : 'Open Personal Slay Assistant'}
             />
             {isOpen ? (

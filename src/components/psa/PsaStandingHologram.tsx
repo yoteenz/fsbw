@@ -12,6 +12,7 @@ type PsaStandingHologramProps = {
   expression: PsaAvatarExpression;
   ctaLabel?: string;
   ctaSubline?: string | null;
+  showCta?: boolean;
   'aria-label'?: string;
 };
 
@@ -22,6 +23,7 @@ export default function PsaStandingHologram({
   expression,
   ctaLabel = PSA_WIDGET_CTA,
   ctaSubline = null,
+  showCta = true,
   'aria-label': ariaLabel = 'Open Personal Slay Assistant',
 }: PsaStandingHologramProps) {
   return (
@@ -39,7 +41,7 @@ export default function PsaStandingHologram({
         </div>
         <div className="psa-standing-hologram__pedestal" aria-hidden />
       </div>
-      <span className="psa-standing-hologram__cta">{ctaLabel}</span>
+      {showCta ? <span className="psa-standing-hologram__cta">{ctaLabel}</span> : null}
       {ctaSubline ? <span className="psa-standing-hologram__cta-subline">{ctaSubline}</span> : null}
     </button>
   );

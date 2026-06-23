@@ -53,7 +53,7 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-40px);
   -webkit-tap-highlight-color: transparent;
 }
 

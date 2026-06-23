@@ -104,7 +104,13 @@ export function resolveTowerTravelFrame(
 }
 
 export function formatTowerLevelLabel(floor: DesktopFloor): string {
-  return `LEVEL ${floor.id}`;
+  const labels: Record<number, string> = {
+    1: 'GROUND FLOOR',
+    2: 'SECOND FLOOR',
+    3: 'THIRD FLOOR',
+    4: 'PENTHOUSE',
+  };
+  return labels[floor.id] ?? floor.name;
 }
 
 export function getDesktopFloorFromHref(
