@@ -19,6 +19,8 @@ import {
 import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
+import { ReceptionDashboard } from '../../../components/desktop-reception/ReceptionDashboard';
+import { DESKTOP_RECEPTION_BACKGROUND_URL } from '../../../constants/desktopReceptionDashboard';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
@@ -44,6 +46,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const [isSlayCinemaEnabled, setIsSlayCinemaEnabled] = useState(false);
 
   const isLoungeZone = zoneId === DESKTOP_LOUNGE_ZONE_ID;
+  const isReceptionZone = zoneId === 'reception';
 
   useEffect(() => {
     if (!isLoungeZone) {
@@ -56,6 +59,11 @@ export default function DesktopFloorZonePage({ floor }: Props) {
     void preloadDesktopRoomBackground(DESKTOP_LOUNGE_BRIGHT_BACKGROUND);
     void preloadDesktopRoomBackground(DESKTOP_LOUNGE_SLAY_CINEMA_BACKGROUND);
   }, [isLoungeZone]);
+
+  useEffect(() => {
+    if (!isReceptionZone) return;
+    void preloadDesktopRoomBackground(DESKTOP_RECEPTION_BACKGROUND_URL);
+  }, [isReceptionZone]);
 
   const toggleSlayCinema = useCallback(() => {
     setIsSlayCinemaEnabled((current) => !current);
@@ -129,6 +137,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         />
 
         <DesktopFloatingNav />
+
+        {isReceptionZone ? <ReceptionDashboard measureRef={viewportMeasureRef} /> : null}
 
         {zoneId === 'psa-suite' ? (
           <PsaAssistantWidget variant="suite" measureRef={viewportMeasureRef} />

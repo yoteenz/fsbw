@@ -14,7 +14,7 @@ export const DESKTOP_NO_TEXT_ROOM_BACKGROUNDS: Readonly<Record<string, string>> 
   'members-lounge': `${DESKTOP_NO_TEXT_BG_BASE}/lwp0E0tpL0KRQxgVKQ6gs_oiPvOiml.jpeg`,
   'rewards-gallery': `${DESKTOP_NO_TEXT_BG_BASE}/JP5Klzh6u0YiOcEoLL60U_6IGydIjo.jpeg`,
   'founder-suite': `${DESKTOP_NO_TEXT_BG_BASE}/XgeVBCLtE-pl3_xylNcNt_DevYxmgM.jpeg`,
-  reception: `${DESKTOP_NO_TEXT_BG_BASE}/F72_QE-dezN5AqcNQ6hHC_94JB8qgZ.jpeg`,
+  reception: `${DESKTOP_NO_TEXT_BG_BASE}/C466C40A-E04C-477B-A4F7-8A963F83F227.png`,
   'psa-suite': `${DESKTOP_NO_TEXT_BG_BASE}/Ustsscdn8Zowhig_LNZ-t_CzrXcvyL.jpeg`,
 };
 

@@ -43,7 +43,7 @@ export const DESKTOP_ROOM_TITLES: Readonly<Record<string, DesktopRoomTitleCopy>>
   },
   reception: {
     title: '',
-    subtitle: 'DESIGN. CUSTOMIZE. SLAY.',
+    subtitle: '',
   },
   'psa-suite': {
     title: 'PSA SUITE',
