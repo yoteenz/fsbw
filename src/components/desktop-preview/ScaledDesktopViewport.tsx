@@ -91,7 +91,9 @@ export function ScaledDesktopViewport({ children }: Props) {
       }}
     >
       <div ref={scalerRef} style={{ position: 'relative' }}>
-        <div ref={stageRef}>{children}</div>
+        <div ref={stageRef} className="desktop-artboard-stage">
+          {children}
+        </div>
       </div>
     </div>
   );

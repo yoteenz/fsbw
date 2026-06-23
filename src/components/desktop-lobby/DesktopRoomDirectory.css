@@ -1,6 +1,7 @@
 .room-directory {
   position: relative;
-  width: min(520px, calc(100vw - 300px));
+  width: 520px;
+  max-width: calc(100% - 32px);
   perspective: 1200px;
 }
 

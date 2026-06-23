@@ -1,6 +1,6 @@
 .floor-directory {
   position: relative;
-  width: min(168px, 15vw);
+  width: 168px;
   perspective: 1200px;
 }
 

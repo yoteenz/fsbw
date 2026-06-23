@@ -235,3 +235,57 @@
   left: clamp(16px, 2vw, 28px);
   bottom: clamp(16px, 2vh, 28px);
 }
+
+/**
+ * Phone scaled artboard (`ScaledDesktopViewport`): vw/vh are device pixels, not the
+ * 1920×1080 design canvas. Keep nav + directory layout in artboard coordinates.
+ */
+.desktop-artboard-stage .floating-nav-trigger {
+  width: 60px;
+  min-height: 68px;
+}
+
+.desktop-artboard-stage .floating-nav-system__trigger--floors {
+  right: 28px;
+  bottom: 28px;
+}
+
+.desktop-artboard-stage .floating-nav-system__trigger--rooms {
+  left: 28px;
+  bottom: 28px;
+}
+
+.desktop-artboard-stage .floating-nav-drawer--bottom-right {
+  right: 18px;
+  bottom: 108px;
+}
+
+.desktop-artboard-stage .floating-nav-drawer--bottom-left {
+  left: 18px;
+  bottom: 108px;
+}
+
+.desktop-artboard-stage .floating-nav-drawer--embedded.floating-nav-drawer--bottom-right {
+  right: 18px;
+  bottom: 28px;
+}
+
+.desktop-artboard-stage .floor-directory {
+  width: 168px;
+}
+
+.desktop-artboard-stage .room-directory {
+  width: 520px;
+  max-width: calc(100% - 64px);
+}
+
+.desktop-artboard-stage .room-directory__row {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 6px;
+}
+
+.desktop-artboard-stage .room-directory__card-wrap {
+  flex: 1 1 140px;
+  max-width: 168px;
+}
