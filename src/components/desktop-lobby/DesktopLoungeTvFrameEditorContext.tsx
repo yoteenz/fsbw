@@ -63,10 +63,17 @@ export function DesktopLoungeTvFrameEditorProvider({ children }: { children: Rea
   const select = useCallback(() => setSelected(true), []);
   const clearSelected = useCallback(() => setSelected(false), []);
 
-  const patchRect = useCallback((patch: Partial<FinalSceneHitRect>) => {
+  const patchRect = useCallback((patch: Partial<FinalSceneHitRect> | FinalSceneHitRect) => {
     setDraft((prev) => ({
       ...prev,
       rect: { ...getEffectiveDesktopLoungeTvFrameConfig(prev).rect, ...patch },
+      layout: {
+        ...getEffectiveDesktopLoungeTvFrameConfig(prev).layout,
+        layoutOffsetX: 0,
+        layoutOffsetY: 0,
+        layoutWidthExtraPx: 0,
+        layoutHeightExtraPx: 0,
+      },
     }));
   }, []);
 

@@ -1,13 +1,23 @@
-import { useCallback, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  useCallback,
+  useRef,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+  type RefObject,
+} from 'react';
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
 import {
-  layoutPatchForCornerResize,
-  layoutPatchForEdgeResize,
+  rectFromCornerResizeGesture,
+  rectFromEdgeResizeGesture,
+  rectFromMoveGesture,
+} from '../../utils/desktopLoungeTvFrameEditorGestures';
+import {
   SCENE_HIT_EDGE_HIT_PX,
   type SceneHitResizeCorner,
   type SceneHitResizeEdge,
 } from '../../utils/sceneHitLayoutEditorGestures';
 import { sceneHitLayoutBoxStyle, type SceneHitLayoutOptions } from '../../utils/sceneHitLayout';
+import { LoungeTvCloseButton } from '../lounge/loungeTvFrame';
 import { useDesktopLoungeTvFrameEditor } from './DesktopLoungeTvFrameEditorContext';
 
 const DEBUG_LABEL_STYLE: CSSProperties = {
@@ -78,21 +88,39 @@ const EDGE_HANDLE_STYLE: CSSProperties = {
   background: 'transparent',
 };
 
+function measureContainer(el: HTMLElement | null): { width: number; height: number } {
+  if (!el) return { width: 1, height: 1 };
+  const width = el.offsetWidth;
+  const height = el.offsetHeight;
+  if (width > 0 && height > 0) return { width, height };
+  const rect = el.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0) {
+    return { width: rect.width, height: rect.height };
+  }
+  return { width: 1, height: 1 };
+}
+
 type Props = {
+  measureRef: RefObject<HTMLElement | null>;
   mappedRect: FinalSceneHitRect;
   screenOffsetX: number;
   screenOffsetY: number;
   layout: SceneHitLayoutOptions;
   zIndex?: number;
+  showClosePreview?: boolean;
+  onClose?: () => void;
 };
 
 /** QA square on desktop lounge TV glass — drag + corner/edge resize with save. */
 export function DesktopLoungeTvFrameDebugOverlay({
+  measureRef,
   mappedRect,
   screenOffsetX,
   screenOffsetY,
   layout,
   zIndex = 30,
+  showClosePreview = false,
+  onClose,
 }: Props) {
   const editor = useDesktopLoungeTvFrameEditor();
   const editSessionActive = Boolean(editor?.editEnabled);
@@ -105,7 +133,7 @@ export function DesktopLoungeTvFrameDebugOverlay({
     corner?: SceneHitResizeCorner;
     startX: number;
     startY: number;
-    layout: SceneHitLayoutOptions;
+    initialRect: FinalSceneHitRect;
   } | null>(null);
 
   const beginPointerGesture = useCallback(
@@ -123,24 +151,28 @@ export function DesktopLoungeTvFrameDebugOverlay({
         corner,
         startX: clientX,
         startY: clientY,
-        layout: { ...layout, ...(layout.layoutScale ? { layoutScale: { ...layout.layoutScale } } : {}) },
+        initialRect: { ...editor.config.rect },
       };
 
       const onMove = (e: PointerEvent) => {
         const drag = dragRef.current;
-        if (!drag) return;
+        if (!drag || !editor) return;
         const dx = e.clientX - drag.startX;
         const dy = e.clientY - drag.startY;
+        const { width, height } = measureContainer(measureRef.current);
+
+        let nextRect: FinalSceneHitRect;
         if (drag.mode === 'move') {
-          editor.patchLayout({
-            layoutOffsetX: (drag.layout.layoutOffsetX ?? 0) + dx,
-            layoutOffsetY: (drag.layout.layoutOffsetY ?? 0) + dy,
-          });
+          nextRect = rectFromMoveGesture(drag.initialRect, dx, dy, width, height);
         } else if (drag.mode === 'resize-edge' && drag.edge) {
-          editor.patchLayout(layoutPatchForEdgeResize(drag.edge, dx, dy, drag.layout));
+          nextRect = rectFromEdgeResizeGesture(drag.edge, drag.initialRect, dx, dy, width, height);
         } else if (drag.mode === 'resize-corner' && drag.corner) {
-          editor.patchLayout(layoutPatchForCornerResize(drag.corner, dx, dy, drag.layout));
+          nextRect = rectFromCornerResizeGesture(drag.corner, drag.initialRect, dx, dy, width, height);
+        } else {
+          return;
         }
+
+        editor.patchRect(nextRect);
       };
 
       const onUp = () => {
@@ -154,7 +186,7 @@ export function DesktopLoungeTvFrameDebugOverlay({
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [canGesture, editor, layout],
+    [canGesture, editor, measureRef],
   );
 
   const onOverlayPointerDown = useCallback(
@@ -214,6 +246,18 @@ export function DesktopLoungeTvFrameDebugOverlay({
       }}
       onPointerDown={onOverlayPointerDown}
     >
+      {showClosePreview ? (
+        <LoungeTvCloseButton
+          visible
+          position={{ top: 0, right: 0 }}
+          size={22}
+          iconSize={12}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose?.();
+          }}
+        />
+      ) : null}
       <span style={DEBUG_LABEL_STYLE}>desktop lounge tv</span>
       {canGesture
         ? EDGE_HANDLES.map(({ edge, cursor, style }) => (

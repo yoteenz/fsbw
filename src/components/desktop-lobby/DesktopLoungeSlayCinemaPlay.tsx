@@ -14,11 +14,7 @@ import { getLoungeTvAdminConfig } from '../../utils/api';
 import { LoungeTvContentProtection } from '../lounge/LoungeTvContentProtection';
 import { LoungeTvScreen } from '../lounge/LoungeTvOverlay';
 import { LoungeTvCloseButton } from '../lounge/loungeTvFrame';
-import {
-  LOUNGE_TV_GLASS_CLOSE_ICON_SIZE,
-  LOUNGE_TV_GLASS_CLOSE_SIZE,
-  LOUNGE_TV_GLASS_CONTAINER_STYLE,
-} from '../lounge/loungeTvResponsive';
+import { LOUNGE_TV_GLASS_CONTAINER_STYLE } from '../lounge/loungeTvResponsive';
 import type { LoungeTvMainTab } from '../lounge/loungeTvContent';
 import { useDesktopLoungeTvDebugEnabled } from '../../utils/desktopLoungeTvFrameDebug';
 import { useEffectiveDesktopLoungeTvFrameConfig } from './DesktopLoungeTvFrameEditorContext';
@@ -90,27 +86,31 @@ export function DesktopLoungeSlayCinemaPlay({
     <>
       {tvDebug ? (
         <DesktopLoungeTvFrameDebugOverlay
+          measureRef={measureRef}
           mappedRect={frameMapped}
           screenOffsetX={frameConfig.screenOffsetX}
           screenOffsetY={frameConfig.screenOffsetY}
           layout={frameConfig.layout}
+          showClosePreview
+          onClose={isSlayCinemaEnabled ? onCloseSlayCinema : undefined}
         />
       ) : null}
 
       <div data-desktop-lounge-slay-cinema-tv style={frameStyle}>
+        {isSlayCinemaEnabled && !tvDebug ? (
+          <LoungeTvCloseButton
+            visible
+            position={{ top: 0, right: 0 }}
+            size={22}
+            iconSize={12}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCloseSlayCinema();
+            }}
+          />
+        ) : null}
         {isSlayCinemaEnabled ? (
-          <>
-            <LoungeTvCloseButton
-              visible
-              position={{ top: '2%', right: '2%' }}
-              size={LOUNGE_TV_GLASS_CLOSE_SIZE}
-              iconSize={LOUNGE_TV_GLASS_CLOSE_ICON_SIZE}
-              onClick={(e) => {
-                e.stopPropagation();
-                onCloseSlayCinema();
-              }}
-            />
-            <LoungeTvContentProtection
+          <LoungeTvContentProtection
               active
               style={{
                 position: 'relative',
@@ -126,7 +126,6 @@ export function DesktopLoungeSlayCinemaPlay({
                 onSidebarChange={setSidebarId}
               />
             </LoungeTvContentProtection>
-          </>
         ) : (
           <button
             type="button"
