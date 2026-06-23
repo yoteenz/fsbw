@@ -32022,3 +32022,14 @@ User reported **black letterbox/border below** the Penthouse Suite (`/desktop/ac
 - **Files:** `DesktopPenthouseSuiteScene.css`, `desktop/account/page.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Penthouse letterbox persists: wrong hero asset dimensions
+
+User reported the **black letterbox below the Penthouse Suite background** was still present after the prior contain-media-query fix.
+
+- **Root cause:** The Penthouse NO TEXT BG PNG is **1835×857**, not the shared **1915×821** desktop hero size (shopping bag / reception assets are 1915×821). The `<img>` still declared **1915×821**, so the browser reserved the wrong aspect ratio and the hero did not fill the viewport — leaving a **#0a0a0a** band below the image (and white page shell below on mobile-desktop scale).
+- **Fix:** Set **`PENTHOUSE_SUITE_IMAGE`** to **1835×857** for cover math + img attributes; wrap background in **`desktop-penthouse-suite-scene__bg-stack`** with **`position: absolute; inset: 0`** (same pattern as **`DesktopZoneRoomScene`**); account page viewport shell aligned with **`DesktopFloorZonePage`** (`100dvh`, explicit flex viewport `minHeight: 0` / artboard `1012px`).
+- **Files:** `desktopPenthouseSuite.ts`, `DesktopPenthouseSuiteScene.css`, `DesktopPenthouseSuiteScene.tsx`, `desktop/account/page.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
