@@ -31081,3 +31081,14 @@ Summary: user required **same elevator MP4** for up and down — **no separate d
 - **`scripts/elevator-reverse-video.mjs`** + **`npm run elevator:reverse-video`** for optional build-time reversed MP4 fallback.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — Mobile desktop: width-fit artboard (edge-to-edge, no side crop)
+
+Summary of the **whole conversation so far** in this chat: room transition loading; mobile letterboxing; elevator holo labels; PSA suite holo; SHOWROOM nav; viewport-pinned floating panels; floating nav captions; elevator loop fix; bidirectional elevator video (forward play + reverse scrub); user asked mobile **`/desktop/*`** to show the **full 1920px desktop width edge-to-edge** instead of height-fill zoom that cropped sides and felt like there was nothing to drag horizontally.
+
+- **Scaling change:** **`ScaledDesktopViewport`** — **`scale = shell.clientWidth / 1920`** (was **`clientHeight / 1080`** height-fill). **`marginLeft = 0`** (was centered crop). Vertical scroll via existing **`overflowY: auto`** shell when content exceeds viewport.
+- **`measureDesktopPreviewScaleBox`** + **`DesktopRouteShell`** comments aligned to width-fit model.
+- **Trade-off:** On portrait phones the 1080px-tall artboard is shorter on screen (~20% scale); user scrolls vertically for full floor content rather than zooming/cropping horizontally.
+- Pushed **`master`** + **`preview/mobile`**.
+
