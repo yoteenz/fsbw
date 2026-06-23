@@ -31871,3 +31871,15 @@ User supplied updated Curator Collection Suite hero: **`527324F7-2F45-4700-9BFA-
 - Tablet rect unchanged; re-tune with **`?shoppingBagDebug=1`** if the new art shifts the acrylic screen.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Tablet 4-point perspective polygon editor
+
+User asked to convert the debug square into a **4-point perspective editor**: polygon (not rectangle), independent corner drags, **localStorage** persistence, polygon used as **clip + layout region** for all tablet content.
+
+- **`?shoppingBagDebug=1`:** amber polygon overlay + **TL/TR/BR/BL** corner handles (each draggable); inspector shows per-corner **x/y %** + **Save Layout** / **Export Quad**.
+- **Persistence:** **`localStorage`** **`desktopShoppingBagTabletRect`** stores **`{ version: 2, quad }`**; legacy rect saves auto-migrate to quad.
+- **Runtime:** **`CuratorTabletQuadHost`** maps quad through cover math, applies **`clip-path: polygon`** + **`matrix3d`** homography warp; all bag/acquisition tablet UI lives inside the warped host.
+- **Defaults:** **`DESKTOP_SHOPPING_BAG_TABLET_QUAD`** in **`desktopShoppingBag.ts`**; export snippet for repo commit.
+- Pushed **`master`** + **`preview/mobile`**.
+
