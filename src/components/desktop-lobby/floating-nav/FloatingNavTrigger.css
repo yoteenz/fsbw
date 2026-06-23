@@ -111,7 +111,7 @@
   letter-spacing: 0.02em;
   white-space: nowrap;
   pointer-events: none;
-  margin-top: 2px;
+  margin-top: 5px;
 }
 
 .floating-nav-trigger:hover {
