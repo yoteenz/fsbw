@@ -10,6 +10,10 @@ import {
 } from '../../../constants/desktopPenthouseRooms';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
+import {
+  appendRoomTitleDebugToHref,
+  persistRoomTitleDebugFromSearch,
+} from '../../../utils/desktopRoomTitlePlacementDebug';
 import { DesktopPenthouseRoomScene } from '../../../components/desktop-lobby/DesktopPenthouseRoomScene';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { ExtensionsBoutiqueExperience } from '../../../components/desktop-penthouse/ExtensionsBoutiqueExperience';
@@ -85,15 +89,27 @@ export default function DesktopPenthousePage() {
   const onRoomIndexChange = useCallback(
     (index: number) => {
       const roomId = getPenthouseRoomIdByIndex(index);
-      setSearchParams({ room: roomId }, { replace: true });
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('room', roomId);
+          return next;
+        },
+        { replace: true },
+      );
     },
     [setSearchParams],
   );
 
+  persistRoomTitleDebugFromSearch(searchParams.toString());
+
   if (!roomParam) {
     return (
       <Navigate
-        to={buildDesktopElevatorHref(DESKTOP_PENTHOUSE_PATH, DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID)}
+        to={appendRoomTitleDebugToHref(
+          buildDesktopElevatorHref(DESKTOP_PENTHOUSE_PATH, DESKTOP_PENTHOUSE_DEFAULT_ROOM_ID),
+          searchParams,
+        )}
         replace
       />
     );

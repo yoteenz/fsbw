@@ -57,6 +57,63 @@ export function useDesktopRoomTitleEditEnabled(): boolean {
   return useMemo(() => isDesktopRoomTitleEditEnabledFromSearch(search), [search]);
 }
 
+/** Persist debug/edit flags from URL into sessionStorage (safe before redirects strip query). */
+export function persistRoomTitleDebugFromSearch(search: string): void {
+  if (typeof window === 'undefined') return;
+  isDesktopRoomTitleDebugEnabledFromSearch(search);
+  isDesktopRoomTitleEditEnabledFromSearch(search);
+}
+
+/** Read room-title debug query flags from URL and/or session. */
+export function readRoomTitleDebugParams(search?: string | URLSearchParams): URLSearchParams {
+  const out = new URLSearchParams();
+  if (typeof window === 'undefined') return out;
+
+  try {
+    const src =
+      search instanceof URLSearchParams
+        ? search
+        : new URLSearchParams(search ?? window.location.search);
+
+    for (const key of ['roomTitleDebug', 'roomTitleEdit'] as const) {
+      const val = src.get(key);
+      if (val === '1' || val === 'true' || val === 'yes') {
+        out.set(key, '1');
+      } else if (val === '0') {
+        out.set(key, '0');
+      }
+    }
+
+    if (!out.has('roomTitleDebug') && sessionStorage.getItem(ROOM_TITLE_DEBUG_SESSION_KEY) === '1') {
+      out.set('roomTitleDebug', '1');
+    }
+    if (
+      out.get('roomTitleDebug') === '1' &&
+      !out.has('roomTitleEdit') &&
+      sessionStorage.getItem(ROOM_TITLE_EDIT_SESSION_KEY) === '1'
+    ) {
+      out.set('roomTitleEdit', '1');
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return out;
+}
+
+/** Merge `roomTitleDebug` / `roomTitleEdit` onto any `/desktop/*` href. */
+export function appendRoomTitleDebugToHref(href: string, search?: string | URLSearchParams): string {
+  const debugParams = readRoomTitleDebugParams(search);
+  if ([...debugParams.keys()].length === 0) return href;
+
+  const qIndex = href.indexOf('?');
+  const path = qIndex === -1 ? href : href.slice(0, qIndex);
+  const params = new URLSearchParams(qIndex === -1 ? '' : href.slice(qIndex + 1));
+  debugParams.forEach((value, key) => params.set(key, value));
+  const q = params.toString();
+  return q ? `${path}?${q}` : path;
+}
+
 /**
  * Layout profile for room-label QA squares.
  * Scaled 1920×1080 artboard (phone `/desktop/*`) uses the desktop grid — same % anchors as native layout.

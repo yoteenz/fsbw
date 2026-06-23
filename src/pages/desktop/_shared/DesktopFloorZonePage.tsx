@@ -4,8 +4,6 @@ import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
-import { DesktopRoomTitlePlacementEditorProvider } from '../../../components/desktop-lobby/DesktopRoomTitlePlacementEditorContext';
-import { DesktopRoomTitlePlacementEditorPanel } from '../../../components/desktop-lobby/DesktopRoomTitlePlacementEditorPanel';
 import PsaAssistantWidget from '../../../components/psa/PsaAssistantWidget';
 import {
   resolveDesktopFloorZoneId,
@@ -44,8 +42,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   }, [zoneId, zoneIds]);
 
   return (
-    <DesktopRoomTitlePlacementEditorProvider>
-      <div
+    <div
         style={{
           height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
           boxSizing: 'border-box',
@@ -101,7 +98,5 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
         </section>
       </div>
-      <DesktopRoomTitlePlacementEditorPanel />
-    </DesktopRoomTitlePlacementEditorProvider>
   );
 }

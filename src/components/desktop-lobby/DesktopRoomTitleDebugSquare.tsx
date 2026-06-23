@@ -9,9 +9,10 @@ import {
   ROOM_TITLE_PROFILE_DEBUG_COLOR,
   ROOM_TITLE_PROFILE_DEBUG_FILL,
   ROOM_TITLE_PROFILE_LABEL,
+  useDesktopRoomTitleDebugEnabled,
+  useDesktopRoomTitleViewportProfile,
 } from '../../utils/desktopRoomTitlePlacementDebug';
 import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementEditorContext';
-import { useDesktopRoomTitleDebugEnabled } from '../../utils/desktopRoomTitlePlacementDebug';
 
 type Props = {
   zoneId: string;
@@ -23,16 +24,18 @@ type Props = {
 export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: Props) {
   const editor = useDesktopRoomTitlePlacementEditor();
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
+  const profileHook = useDesktopRoomTitleViewportProfile();
+  const profile = editor?.profile ?? profileHook;
   const rootRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ startX: number; startY: number; topPct: number; offsetPct: number } | null>(null);
 
-  const editEnabled = Boolean(editor?.editEnabled && editor.profile);
-  const showSquare = Boolean(debugEnabled && editor?.profile);
+  const editEnabled = Boolean(editor?.editEnabled && profile);
+  const showSquare = Boolean(debugEnabled && profile);
   const isSelected = editor?.activeZoneId === zoneId;
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (!editor?.editEnabled || !editor.profile) return;
+      if (!editor?.editEnabled || !profile) return;
       event.preventDefault();
       event.stopPropagation();
 
@@ -55,7 +58,7 @@ export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: P
 
       const onMove = (e: PointerEvent) => {
         const drag = dragRef.current;
-        if (!drag || !editor.profile) return;
+        if (!drag || !profile) return;
         const dxPct = ((e.clientX - drag.startX) / bounds.width) * 100;
         const dyPct = ((e.clientY - drag.startY) / bounds.height) * 100;
         editor.patchPlacement(zoneId, {
@@ -75,10 +78,10 @@ export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: P
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [editor, isSelected, zoneId],
+    [editor, isSelected, profile, zoneId],
   );
 
-  if (!showSquare || !editor?.profile) {
+  if (!showSquare || !profile) {
     return (
       <div className="desktop-room-title" style={anchorStyle}>
         {children}
@@ -86,7 +89,6 @@ export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: P
     );
   }
 
-  const profile = editor.profile;
   const outline = ROOM_TITLE_PROFILE_DEBUG_COLOR[profile];
   const fill = ROOM_TITLE_PROFILE_DEBUG_FILL[profile];
 

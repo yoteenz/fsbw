@@ -1,7 +1,7 @@
 import { useSyncExternalStore, type CSSProperties } from 'react';
 import type { DesktopRoomTitlePlacement } from '../../constants/desktopRoomTitlePlacement';
 import { getEffectiveDesktopRoomTitlePlacement } from '../../utils/desktopRoomTitlePlacementOverrides';
-import { useDesktopRoomTitleDebugEnabled } from '../../utils/desktopRoomTitlePlacementDebug';
+import { useDesktopRoomTitleDebugEnabled, useDesktopRoomTitleEditEnabled, useDesktopRoomTitleViewportProfile } from '../../utils/desktopRoomTitlePlacementDebug';
 import { DESKTOP_PREVIEW_VIEWPORT_WIDTH, getDesktopLayoutViewportWidth, isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
 import { DesktopRoomTitleMetallicSvg } from './DesktopRoomTitleMetallicSvg';
 import { DesktopRoomTitleDebugSquare } from './DesktopRoomTitleDebugSquare';
@@ -29,6 +29,8 @@ export function DesktopRoomTitle({
 }: DesktopRoomTitleProps) {
   const editor = useDesktopRoomTitlePlacementEditor();
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
+  const editEnabledHook = useDesktopRoomTitleEditEnabled();
+  const profileHook = useDesktopRoomTitleViewportProfile();
   const layoutWidth = useSyncExternalStore(
     (onStoreChange) => {
       window.addEventListener('resize', onStoreChange);
@@ -84,7 +86,9 @@ export function DesktopRoomTitle({
     </>
   );
 
-  const showDebugChrome = Boolean((editor?.editEnabled || debugEnabled) && editor?.profile);
+  const showDebugChrome = Boolean(
+    ((editor?.editEnabled ?? editEnabledHook) || debugEnabled) && (editor?.profile ?? profileHook),
+  );
 
   if (!showDebugChrome) {
     return (

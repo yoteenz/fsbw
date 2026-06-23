@@ -4,6 +4,7 @@ import {
   DESKTOP_LOBBY_PATH,
   DESKTOP_PENTHOUSE_PATH,
 } from './desktopFloors';
+import { appendRoomTitleDebugToHref } from '../utils/desktopRoomTitlePlacementDebug';
 
 export type DesktopNavQuickRoute = {
   label: string;
@@ -30,7 +31,8 @@ export function buildDesktopQuickRouteHref(route: Pick<DesktopNavQuickRoute, 'pa
   if (route.room) params.set('room', route.room);
   if (route.zone) params.set('zone', route.zone);
   const q = params.toString();
-  return q ? `${route.path}?${q}` : route.path;
+  const base = q ? `${route.path}?${q}` : route.path;
+  return typeof window !== 'undefined' ? appendRoomTitleDebugToHref(base) : base;
 }
 
 /** Elevator — floor default zone/room only (middle hub), no deep-link params from nav. */
@@ -40,10 +42,11 @@ export function buildDesktopElevatorHref(floorPath: string, defaultZoneId: strin
 
 /** Deep-link to a specific zone/room on a floor (elevator + directory destinations). */
 export function buildDesktopDestinationHref(floorPath: string, destinationId: string): string {
-  if (floorPath === DESKTOP_PENTHOUSE_PATH) {
-    return `${floorPath}?room=${destinationId}`;
-  }
-  return `${floorPath}?zone=${destinationId}`;
+  const base =
+    floorPath === DESKTOP_PENTHOUSE_PATH
+      ? `${floorPath}?room=${destinationId}`
+      : `${floorPath}?zone=${destinationId}`;
+  return typeof window !== 'undefined' ? appendRoomTitleDebugToHref(base) : base;
 }
 
 export function resolveDesktopNavActiveLabel(pathname: string, search: string): string | undefined {

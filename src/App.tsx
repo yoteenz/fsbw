@@ -25,6 +25,8 @@ import { PsaChatCopyBootstrap } from './components/psa/PsaChatCopyBootstrap';
 import { DebugModeShell } from './components/debug-mode/DebugModeShell';
 import CreativePreviewBanner from './components/CreativePreviewBanner';
 import { DesktopRouteShell } from './components/desktop-preview/DesktopRouteShell';
+import { DesktopRoomTitlePlacementEditorProvider } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorContext';
+import { DesktopRoomTitlePlacementEditorPanel } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorPanel';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -169,9 +171,12 @@ const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/p
 
 function DesktopRoutesLayout() {
   return (
-    <DesktopRouteShell>
-      <Outlet />
-    </DesktopRouteShell>
+    <DesktopRoomTitlePlacementEditorProvider>
+      <DesktopRouteShell>
+        <Outlet />
+      </DesktopRouteShell>
+      <DesktopRoomTitlePlacementEditorPanel />
+    </DesktopRoomTitlePlacementEditorProvider>
   );
 }
 
