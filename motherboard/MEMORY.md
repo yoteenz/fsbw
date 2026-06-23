@@ -31057,6 +31057,16 @@ Summary of the **whole conversation so far** in this chat: elevator holo floor n
 Summary: user asked to change **zones** caption to **rooms** on the room panel icon and increase both Bohemy caption sizes by **2px** (**elevator** + **rooms**).
 
 - **`FloatingNavTrigger.tsx`:** room trigger caption **`zones` → `rooms`**.
-- **`FloatingNavTrigger.css`:** **`.floating-nav-trigger__caption`** **`10px` → `12px`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-22 — Elevator: fix endless video loop / stuck overlay (follow-up)
+
+Summary: user reported elevator **still endlessly looping** after prior fix.
+
+- **Causes:** (1) **`video.loop = true`** during boarding/traveling restarted clip on every end. (2) **`getDesktopTowerElevatorVideoSrc()`** updated mid-journey when blob cache warmed → React **`src`** prop reload restarted video. (3) **`loadedmetadata`** **`currentTime = 0`** reset could retrigger playback.
+- **Fix:** **`loop={false}`** always; **`ended`** holds last frame during travel. **`lockedVideoSrc`** frozen at overlay mount; bind uses locked src only. Removed metadata time reset. **Journey watchdog** in **`DesktopTowerNavProvider`** forces navigate + dismiss if timers/RAF stall.
+- **Files:** `desktopTowerElevatorVideo.ts`, `DesktopTowerElevatorExperience.tsx`, `DesktopTowerNavProvider.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
