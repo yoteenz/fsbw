@@ -44,6 +44,23 @@ export function DesktopFloatingNav() {
     }
   }, [activeDrawer, hasRooms]);
 
+  /** Close when clicking outside drawer panels (room scene / nav bar / etc. pass through the shell). */
+  useEffect(() => {
+    if (!activeDrawer) return undefined;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      if (target.closest('.floating-nav-trigger')) return;
+      if (target.closest('.floating-nav-drawer--open')) return;
+      closeDrawer();
+    };
+
+    document.addEventListener('pointerdown', onPointerDown, true);
+    return () => document.removeEventListener('pointerdown', onPointerDown, true);
+  }, [activeDrawer, closeDrawer]);
+
   if (!mounted) return null;
 
   const navContent = (
