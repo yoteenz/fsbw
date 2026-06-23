@@ -31724,3 +31724,12 @@ User reported subtitle centering fix did **not** apply on **penthouse** rooms (A
 - **Fix:** **`DesktopRoomTitle.css`** — label block **`width: fit-content`** + **`align-items: stretch`**; lines **`width: 100%`** so subtitle row spans title width; foil slot **`padding-right: 0.08em`**; debug inner **`fit-content`** not **`width: 100%`**. Applies to all floors including penthouse via shared **`DesktopRoomTitle`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Elevator holo: VIP SUITES (plural)
+
+User asked to change penthouse elevator holo black subtitle from **VIP SUITE** to **VIP SUITES**.
+
+- **`formatTowerElevatorHoloName()`** in **`desktopTowerMotion.ts`** — floor **id 4** → **`VIP SUITES`**.
+- Pushed **`master`** + **`preview/mobile`**.
+

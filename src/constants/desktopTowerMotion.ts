@@ -156,9 +156,9 @@ export function formatTowerLevelLabel(floor: DesktopFloor): string {
   return labels[floor.id] ?? floor.name;
 }
 
-/** Elevator holo subtitle — penthouse level already reads PENTHOUSE, so use VIP SUITE here only. */
+/** Elevator holo subtitle — penthouse level already reads PENTHOUSE, so use VIP SUITES here only. */
 export function formatTowerElevatorHoloName(floor: DesktopFloor): string {
-  if (floor.id === 4) return 'VIP SUITE';
+  if (floor.id === 4) return 'VIP SUITES';
   return floor.name;
 }
 
