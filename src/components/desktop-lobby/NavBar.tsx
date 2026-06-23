@@ -8,6 +8,10 @@ import {
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
 import { desktopNavBarStyle } from './desktopLobbyAcrylic';
 import { readCartCountFromStorage } from '../../utils/cartLocalStorage';
+import {
+  resolveAccountHubPath,
+  resolveShoppingBagPath,
+} from '../../utils/desktopCommerceRoutes';
 
 export function NavBar() {
   const navigate = useNavigate();
@@ -22,8 +26,8 @@ export function NavBar() {
   };
 
   const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search);
-  const isDesktopRoute =
-    location.pathname === '/desktop' || location.pathname.startsWith('/desktop/');
+  const accountHubPath = resolveAccountHubPath(location.pathname);
+  const shoppingBagPath = resolveShoppingBagPath(location.pathname);
 
   useEffect(() => {
     const syncCart = () => {
@@ -126,7 +130,7 @@ export function NavBar() {
 
         <button
           className="hover:opacity-50 transition-opacity"
-          onClick={() => navigate(isDesktopRoute ? '/desktop/account' : '/account')}
+          onClick={() => navigate(accountHubPath)}
           aria-label="Account"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >
@@ -137,7 +141,7 @@ export function NavBar() {
 
         <button
           className="relative hover:opacity-50 transition-opacity"
-          onClick={() => navigate(isDesktopRoute ? '/desktop/shopping-bag' : '/bag')}
+          onClick={() => navigate(shoppingBagPath)}
           aria-label="Cart"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >

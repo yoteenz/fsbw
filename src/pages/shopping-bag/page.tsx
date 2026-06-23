@@ -48,6 +48,7 @@ import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { resolveAccountHubPath } from '../../utils/desktopCommerceRoutes';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { checkoutPathForCartItems } from '../../utils/checkoutNavigatePath';
 import {
@@ -1228,7 +1229,7 @@ function ShoppingBagPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
+                    onClick={() => navigate(isSignedIn ? resolveAccountHubPath(location.pathname) : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >

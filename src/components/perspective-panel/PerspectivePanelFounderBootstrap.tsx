@@ -22,12 +22,10 @@ export function PerspectivePanelFounderBootstrap() {
       void run();
     };
     window.addEventListener('signInStateChanged', onAuth);
-    window.addEventListener('focus', onAuth);
 
     return () => {
       cancelled = true;
       window.removeEventListener('signInStateChanged', onAuth);
-      window.removeEventListener('focus', onAuth);
     };
   }, []);
 

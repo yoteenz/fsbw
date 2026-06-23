@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { canAccessPageDebugMode } from '../../utils/adminAuth';
 import {
@@ -80,6 +80,9 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   const [editAll, setEditAll] = useState(false);
   const [overlaysVisible, setOverlaysVisible] = useState(true);
   const [saveStatus, setSaveStatus] = useState<PerspectivePanelSaveStatus>('idle');
+  const dirtyRef = useRef(false);
+  const suppressReloadRef = useRef(false);
+  const draftSaveTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (pagePanelIds.length === 0) return;
@@ -87,23 +90,42 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   }, [pagePanelIds]);
 
   const reloadFromStorage = useCallback(() => {
+    if (dirtyRef.current) return;
     setPanelOverrides(loadPerspectivePanelOverrides());
     setSaveStatus('idle');
+  }, []);
+
+  const scheduleDraftSave = useCallback((map: PerspectivePanelMap) => {
+    if (draftSaveTimerRef.current != null) {
+      window.clearTimeout(draftSaveTimerRef.current);
+    }
+    draftSaveTimerRef.current = window.setTimeout(() => {
+      draftSaveTimerRef.current = null;
+      suppressReloadRef.current = true;
+      savePerspectivePanelOverrides(map, { silent: true });
+      suppressReloadRef.current = false;
+    }, 350);
   }, []);
 
   useEffect(() => {
     reloadFromStorage();
     const onStorage = (event: StorageEvent) => {
       if (event.key != null && event.key !== PERSPECTIVE_PANEL_STORAGE_KEY) return;
+      if (dirtyRef.current || suppressReloadRef.current) return;
       reloadFromStorage();
     };
-    window.addEventListener(PERSPECTIVE_PANEL_UPDATED_EVENT, reloadFromStorage);
+    const onUpdated = () => {
+      if (dirtyRef.current || suppressReloadRef.current) return;
+      reloadFromStorage();
+    };
+    window.addEventListener(PERSPECTIVE_PANEL_UPDATED_EVENT, onUpdated);
     window.addEventListener('storage', onStorage);
-    window.addEventListener('focus', reloadFromStorage);
     return () => {
-      window.removeEventListener(PERSPECTIVE_PANEL_UPDATED_EVENT, reloadFromStorage);
+      window.removeEventListener(PERSPECTIVE_PANEL_UPDATED_EVENT, onUpdated);
       window.removeEventListener('storage', onStorage);
-      window.removeEventListener('focus', reloadFromStorage);
+      if (draftSaveTimerRef.current != null) {
+        window.clearTimeout(draftSaveTimerRef.current);
+      }
     };
   }, [reloadFromStorage]);
 
@@ -114,22 +136,30 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
 
   const patchCorner = useCallback(
     (id: PerspectivePanelId, cornerId: PerspectivePanelCornerId, point: PerspectivePanelPoint) => {
+      dirtyRef.current = true;
       setPanelOverrides((prev) => {
         const current = resolvePerspectivePanelQuad(id, prev);
-        return {
+        const next = {
           ...prev,
           [id]: clampPerspectivePanelQuad({
             ...current,
             [cornerId]: clampPerspectivePanelPoint(point),
           }),
         };
+        scheduleDraftSave(next);
+        return next;
       });
       setSaveStatus('idle');
     },
-    [],
+    [scheduleDraftSave],
   );
 
   const resetSelectedPanel = useCallback(() => {
+    if (draftSaveTimerRef.current != null) {
+      window.clearTimeout(draftSaveTimerRef.current);
+      draftSaveTimerRef.current = null;
+    }
+    dirtyRef.current = false;
     clearPerspectivePanelOverride(selectedPanelId);
     setPanelOverrides((prev) => {
       const next = { ...prev };
@@ -169,6 +199,7 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
         next[id] = clampPerspectivePanelQuad(q);
       }
       setPanelOverrides(next);
+      dirtyRef.current = false;
       savePerspectivePanelOverrides(next);
       if (canAccessPageDebugMode()) {
         void syncPerspectivePanelMapToCloud(next).catch(() => {
@@ -183,7 +214,12 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   }, [panelOverrides]);
 
   const save = useCallback(() => {
+    if (draftSaveTimerRef.current != null) {
+      window.clearTimeout(draftSaveTimerRef.current);
+      draftSaveTimerRef.current = null;
+    }
     const ok = savePerspectivePanelOverrides(panelOverrides);
+    dirtyRef.current = false;
     if (ok && canAccessPageDebugMode()) {
       void syncPerspectivePanelMapToCloud(panelOverrides).catch(() => {
         /* local save still valid */

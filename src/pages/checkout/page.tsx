@@ -97,6 +97,7 @@ import {
   computePointsEligibleNetUsd,
 } from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { resolveAccountHubPath } from '../../utils/desktopCommerceRoutes';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
@@ -3298,7 +3299,7 @@ function CheckoutPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
+                    onClick={() => navigate(isSignedIn ? resolveAccountHubPath(location.pathname) : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >

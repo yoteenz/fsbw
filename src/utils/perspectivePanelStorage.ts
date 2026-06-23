@@ -55,7 +55,9 @@ function parseStoredPayload(raw: string): StoredPerspectivePanelPayload | null {
     let panels: PerspectivePanelMap | null = null;
 
     if (record.version === 1 && record.panels && typeof record.panels === 'object') {
-      if (record.revision !== PERSPECTIVE_PANEL_STORAGE_REVISION) return null;
+      const revision =
+        typeof record.revision === 'number' ? record.revision : PERSPECTIVE_PANEL_STORAGE_REVISION;
+      if (revision !== PERSPECTIVE_PANEL_STORAGE_REVISION) return null;
       panels = normalizePanelMap(record.panels as PerspectivePanelMap);
     } else if ('panels' in record && typeof record.panels === 'object') {
       panels = normalizePanelMap(record.panels as PerspectivePanelMap);
@@ -106,6 +108,8 @@ export function dispatchPerspectivePanelMapUpdated(): void {
 type SaveOptions = {
   updatedAt?: number;
   syncCloud?: boolean;
+  /** When true, persist without broadcasting `perspectivePanelMapUpdated` (draft drag saves). */
+  silent?: boolean;
 };
 
 export function savePerspectivePanelOverrides(
@@ -121,7 +125,9 @@ export function savePerspectivePanelOverrides(
   };
   try {
     window.localStorage.setItem(PERSPECTIVE_PANEL_STORAGE_KEY, JSON.stringify(payload, null, 2));
-    dispatchPerspectivePanelMapUpdated();
+    if (!options.silent) {
+      dispatchPerspectivePanelMapUpdated();
+    }
     return true;
   } catch {
     return false;

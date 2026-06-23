@@ -1,5 +1,9 @@
 import { DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH } from './desktopRoomTitlePlacementDebug';
 import { isDesktopArtboardLayoutActive } from './desktopPreview';
+import {
+  DESKTOP_ACCOUNT_HUB_PATH,
+  shouldUseDesktopAccountHub,
+} from './desktopCommerceRoutes';
 
 /** Max length for return path (pathname + search) after sign-in. */
 const MAX_RETURN_LEN = 1024;
@@ -42,7 +46,12 @@ function normalizeReturnToParam(returnToParam: string | null | undefined): strin
     // use raw
   }
   raw = raw.slice(0, MAX_RETURN_LEN);
-  if (isSafeInternalPath(raw)) return raw;
+  if (isSafeInternalPath(raw)) {
+    if (raw === '/account' && shouldUseDesktopAccountHub()) {
+      return DESKTOP_ACCOUNT_HUB_PATH;
+    }
+    return raw;
+  }
 
   const legacy = raw.replace(/^\//, '').toLowerCase();
   if (legacy === 'checkout') return '/checkout';

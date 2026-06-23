@@ -16,6 +16,7 @@ import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
+import { AccountHubRedirect } from './components/AccountHubRedirect';
 import CommerceRouteGuard from './components/CommerceRouteGuard';
 import MembershipRouteSync from './components/MembershipRouteSync';
 import AccountCommerceSync from './components/AccountCommerceSync';
@@ -1047,9 +1048,11 @@ function App() {
         } />
         <Route path="/account" element={
           <AccountRouteGuard>
-            <Suspense fallback={<LoadingScreen />}>
-              <AccountPage />
-            </Suspense>
+            <AccountHubRedirect>
+              <Suspense fallback={<LoadingScreen />}>
+                <AccountPage />
+              </Suspense>
+            </AccountHubRedirect>
           </AccountRouteGuard>
         } />
         <Route path="/account/concierge" element={
