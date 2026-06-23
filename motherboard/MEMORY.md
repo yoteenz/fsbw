@@ -31440,3 +31440,13 @@ User reported **4px spacing above black subtitle** did nothing.
 - **Fix:** **`row-gap: var(--desktop-room-subtitle-gap, 18px)`** on **`.desktop-room-title`**; subtitle line **`margin-top: 0`**; bake **`+ 4px`** into TSX **`--desktop-room-subtitle-gap`** (`calc(... * 100vw / 1920 + 4px)`). Subtitle-only rooms unaffected (single flex child).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room label debug URL broken (no text / no squares)
+
+User reported **`/desktop/gallery?zone=members-lounge&roomTitleDebug=1&roomTitleEdit=1`** showed **no room text and no debug squares**.
+
+- **Root cause:** With **`roomTitleDebug=1`**, labels entered the debug wrapper path even when **`getDesktopRoomTitleViewportProfile()`** returned **`null`** (phone artboard ≤767px, or any artboard when profile excluded artboard entirely). **`DesktopRoomTitleDebugSquare`** then returned unanchored children with **`desktop-room-title--anchored-inner`** (`position: relative`), stripping wall **`absolute`** placement — labels landed off-wall or looked invisible (especially with **`?mobileDesktop=1`** session on a wide monitor).
+- **Fix:** **`DesktopRoomTitle.tsx`** — debug chrome only when **`editor?.profile`** exists; **`DesktopRoomTitleDebugSquare.tsx`** — fallback wraps children with **`anchorStyle`** if profile missing; **`desktopRoomTitlePlacementDebug.ts`** — profile on scaled artboard when width **≥768** (phone artboard still **`null`**); **`DesktopRoomTitlePlacementEditorPanel.tsx`** — banner on phone when debug flags on but squares unavailable.
+- **QA:** Debug squares need viewport **≥768px**; phone artboard still shows wall labels but not drag squares. Commit **`34fee0c0`** on **`master`** + **`preview/mobile`**.
+
