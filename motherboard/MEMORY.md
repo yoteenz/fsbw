@@ -30944,3 +30944,13 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **`App.tsx` ErrorBoundary:** background **white** (was red); text **#eb1c24** + **`text-transform: uppercase`**; **Reload Page** is plain underlined text (no button box).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — PSA Suite: remove halo, scale hologram, align to screen
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish through app update screen restyle; user asked to **remove floating halo** above desktop PSA in **PSA Suite only**, **scale her down 30%**, fit inside the holographic screen, float above the room pedestal.
+
+- **`PsaStandingHologram.tsx`:** removed **`PSA_NUDGE_HOLO_GLOW_SRC`** rotator halo image.
+- **`desktopPsaSuite.css`:** stage **70%** smaller; hologram **absolutely centered** over suite pedestal (`bottom: ~20vh`); figure **76%** height + **12%** lift above pedestal glow; scanlines tightened to screen bounds; chat panel **absolute** right when open.
+- Pushed **`master`** + **`preview/mobile`**.
+
