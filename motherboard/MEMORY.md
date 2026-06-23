@@ -31048,6 +31048,15 @@ Summary of the **whole conversation so far** in this chat: elevator holo floor n
 
 - **Nav:** **`DESKTOP_NAV_QUICK_ROUTES`** — **`SHOWROOM`** → **`/desktop/penthouse?room=showroom`** after BUILD-A-WIG; active state via existing **`resolveDesktopNavActiveLabel`**.
 - **Floating nav:** **`DesktopFloatingNav`** portaled to **`document.body`**; **`.floating-nav-system`** **`position: fixed`** + **`z-index: 180`** (below NavBar 200, above room content). Triggers/drawers stay at screen corners on desktop and scaled phone artboard.
-- **Files:** `desktopNavQuickRoutes.ts`, `DesktopFloatingNav.tsx`, `FloatingNavTrigger.css`.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-22 — Floating nav captions: rooms label + larger Bohemy
+
+Summary: user asked to change **zones** caption to **rooms** on the room panel icon and increase both Bohemy caption sizes by **2px** (**elevator** + **rooms**).
+
+- **`FloatingNavTrigger.tsx`:** room trigger caption **`zones` → `rooms`**.
+- **`FloatingNavTrigger.css`:** **`.floating-nav-trigger__caption`** **`10px` → `12px`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
