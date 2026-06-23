@@ -58,7 +58,7 @@ export function DesktopRoomTitle({
     </>
   );
 
-  const showDebugChrome = Boolean(editor?.editEnabled || debugEnabled);
+  const showDebugChrome = Boolean((editor?.editEnabled || debugEnabled) && editor?.profile);
 
   if (!showDebugChrome) {
     return (

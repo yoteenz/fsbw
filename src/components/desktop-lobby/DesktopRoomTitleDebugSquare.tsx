@@ -79,7 +79,11 @@ export function DesktopRoomTitleDebugSquare({ zoneId, anchorStyle, children }: P
   );
 
   if (!showSquare || !editor?.profile) {
-    return <>{children}</>;
+    return (
+      <div className="desktop-room-title" style={anchorStyle}>
+        {children}
+      </div>
+    );
   }
 
   const profile = editor.profile;
