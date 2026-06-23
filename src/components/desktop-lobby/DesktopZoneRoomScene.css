@@ -16,15 +16,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center top;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
-}
-
-/* Phone artboard / preview shell — show full room frame (no cover crop). */
-.desktop-zone-room-scene--artboard .desktop-zone-room-scene__bg {
-  object-fit: contain;
 }
 
 .desktop-zone-room-scene__bg--steady {

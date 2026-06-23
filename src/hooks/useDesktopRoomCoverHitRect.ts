@@ -1,10 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { FinalSceneHitRect } from '../constants/finalLobbySceneAssets';
-import {
-  mapImageRectToContainContainerCenter,
-  mapImageRectToCoverContainerCenter,
-} from '../utils/sceneCoverHitMap';
-import { isDesktopArtboardLayoutActive } from '../utils/desktopPreview';
+import { mapImageRectToCoverContainerCenter } from '../utils/sceneCoverHitMap';
 
 function coverRectsEqual(a: FinalSceneHitRect | null, b: FinalSceneHitRect): boolean {
   if (a === b) return true;
@@ -30,9 +26,7 @@ function mapRoomHeroHitRect(
   imageWidth: number,
   imageHeight: number,
 ): FinalSceneHitRect {
-  return (isDesktopArtboardLayoutActive()
-    ? mapImageRectToContainContainerCenter
-    : mapImageRectToCoverContainerCenter)(
+  return mapImageRectToCoverContainerCenter(
     imageRect,
     containerWidth,
     containerHeight,

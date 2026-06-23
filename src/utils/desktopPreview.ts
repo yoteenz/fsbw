@@ -60,7 +60,7 @@ function isPhoneDesktopViewport(): boolean {
 }
 
 /**
- * Phone-only `/desktop/*` artboard mode — scaled 1920×1080 shell (no crop).
+ * Phone-only `/desktop/*` artboard mode — height-fill scaled 1920×1080 shell.
  * Active when: staging `?mobileDesktop=1` (tab session), or viewport ≤767px (phones).
  * Tablets (768px+) and desktops use native full-bleed layout.
  */
