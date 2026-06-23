@@ -19,8 +19,9 @@ const panelButtonStyle: CSSProperties = {
 
 const shellStyle: CSSProperties = {
   position: 'fixed',
-  top: 8,
-  right: 8,
+  bottom: 8,
+  left: '50%',
+  transform: 'translateX(-50%)',
   zIndex: 100002,
   fontFamily: 'monospace',
   fontSize: 10,
@@ -70,6 +71,7 @@ export function DesktopRoomTitlePlacementEditorPanel() {
           ...shellStyle,
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
           flexWrap: 'wrap',
           gap: 6,
           padding: '6px 8px',
