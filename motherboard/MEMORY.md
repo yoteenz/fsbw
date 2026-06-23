@@ -31833,3 +31833,17 @@ User requested a **dedicated PANEL DEBUG MODE** — not styling — to manually 
 - **CORE.md** updated with panel debug URL + paths.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop acquisition page (Review & Acquire tablet state)
+
+User asked for a **Desktop Acquisition Page** that keeps the **exact same** Curator Collection Suite room/background as **`/desktop/shopping-bag`** — only the tablet content evolves from **YOUR CURATED COLLECTION** → **REVIEW & ACQUIRE** after **ACQUIRE** (no new room, no white checkout page).
+
+- **Route:** **`/desktop/acquisition`** (+ **`/bookings`**, **`/gift-card`**, **`/slay-tickets`** variants via **`desktopAcquisitionPathForCartItems`**).
+- **Flow:** Shopping bag **ACQUIRE** → **`navigate(..., { state: { fromCollection: true } })`** → acquisition page with tablet enter shimmer; **COMPLETE ACQUISITION** footer CTA wires to hidden checkout **CONFIRM ORDER** via **`DesktopCuratorCheckoutBridge`**.
+- **Shared scene:** **`DesktopCuratorSuiteScene`** — same **`DESKTOP_SHOPPING_BAG_BACKGROUND_URL`** + **`DESKTOP_SHOPPING_BAG_TABLET_RECT`** as shopping bag.
+- **Tablet chrome:** **`AcquisitionTabletChrome`** — foil **Review & Acquire** / **Finalize Your Selections**, integrated bottom bar (**Secure Acquisition** / **Final Total** / **Complete Acquisition**).
+- **Checkout embed:** **`CheckoutPage`** inside tablet when **`DesktopCuratorCheckoutContext`** is true — skips **`CommercePageBackground`** + mobile nav; **`curator-checkout-grid`** two-column layout: left **`CuratedAcquisitionCartList`** (live cart, qty/edit/remove), right **`CuratorAcquisitionSummaryPanel`** + existing shipping/payment fields (acrylic-styled via **`DesktopAcquisition.css`**).
+- **`CommerceRouteGuard`** — guest-allowed for all **`/desktop/acquisition*`** paths.
+- Pushed **`master`** + **`preview/mobile`**.
+
