@@ -31563,3 +31563,13 @@ User requested that when **Slay Cinema** is active, **mobile lounge TV content**
 - **Debug tooling:** **`?desktopLoungeTvDebug=1&desktopLoungeTvEdit=1`** — **`desktopLoungeTvFrameDebug.ts`**, **`desktopLoungeTvFrameOverrides.ts`** (localStorage **`baw_desktop_lounge_tv_frame_overrides`**), **`DesktopLoungeTvFrameEditorContext`**, **`DesktopLoungeTvFrameEditorPanel`** (Save / Reset / Copy JSON), **`DesktopLoungeTvFrameDebugOverlay`** (amber square, corner + edge resize, drag move). Provider wired in **`DesktopRoutesLayout`** alongside room-title editor.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop lounge TV debug: all-edge resize + close at frame corner
+
+User reported the orange TV debug square only adjusted on **top/left** (right/bottom edges did not move inward), and asked for the **X close** at the **top-right corner of the debug square** (production position).
+
+- **Resize fix:** Debug gestures now patch the **image-normalized rect** (`left`/`top`/`width`/`height`) via **`desktopLoungeTvFrameEditorGestures.ts`** — all four edges and corners resize correctly and stay responsive to the cover background. Pixel layout extras reset on rect drag so they do not fight normalized sizing.
+- **Close position:** **`LoungeTvCloseButton`** at **`top: 0, right: 0`** on the TV frame; in debug mode the preview close renders on the amber overlay so it aligns with the square corner.
+- Pushed **`master`** + **`preview/mobile`**.
+
