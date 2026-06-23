@@ -113,9 +113,11 @@ export function bindDesktopTowerElevatorVideoPlayback(
   direction: TowerTravelDirection,
   onPlaying: () => void,
   onFailed: () => void,
+  lockedSrc?: string,
 ): () => void {
   let cancelled = false;
   let started = false;
+  const targetSrc = lockedSrc ?? resolvePlayableSrc();
 
   const tryPlay = () => {
     if (cancelled || started) return;
@@ -140,9 +142,6 @@ export function bindDesktopTowerElevatorVideoPlayback(
 
   const onCanPlay = () => tryPlay();
   const onLoadedMetadata = () => {
-    if (!started && video.currentTime > 0.05) {
-      video.currentTime = 0;
-    }
     applyElevatorVideoDirection(video, direction);
   };
   const onPlayingEvent = () => {
@@ -152,12 +151,12 @@ export function bindDesktopTowerElevatorVideoPlayback(
     }
   };
 
+  video.loop = false;
   video.addEventListener('canplay', onCanPlay);
   video.addEventListener('loadedmetadata', onLoadedMetadata);
   video.addEventListener('playing', onPlayingEvent);
 
-  const targetSrc = resolvePlayableSrc();
-  if (video.src !== targetSrc) {
+  if (video.getAttribute('src') !== targetSrc) {
     video.src = targetSrc;
     video.load();
   } else if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {

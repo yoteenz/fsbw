@@ -146,6 +146,27 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       const floorStops = next.floorStops ?? getTowerFloorStops(next.fromFloor.id, next.toFloor.id);
       const journeyWithStops: TowerJourney = { ...next, floorStops };
       const travelDurationMs = computeTowerTravelDurationMs(floorStops);
+      const maxJourneyMs =
+        TOWER_VIDEO_READY_TIMEOUT_MS +
+        TOWER_BOARD_MS +
+        travelDurationMs +
+        TOWER_ARRIVED_MS +
+        TOWER_FADE_MS +
+        3000;
+
+      const forceCompleteJourney = () => {
+        if (journeyRunRef.current !== runId) return;
+        clearTimers();
+        markDesktopTowerArrival();
+        navigate(next.destinationHref);
+        setDisplayLevelId(next.toFloor.id);
+        setCabinFloorId(next.toFloor.id);
+        setJourney(null);
+        setPhase('boarding');
+      };
+
+      const journeyWatchdog = window.setTimeout(forceCompleteJourney, maxJourneyMs);
+      timersRef.current.push(journeyWatchdog);
 
       setJourney(journeyWithStops);
       setPhase('boarding');
@@ -165,6 +186,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
           travelFinished = true;
 
           window.clearTimeout(travelEndTimer);
+          window.clearTimeout(journeyWatchdog);
 
           if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
@@ -216,17 +238,22 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       };
 
       void (async () => {
-        warmDesktopTowerElevatorVideo();
-        await Promise.all([
-          waitForDesktopTowerElevatorVideoReady(TOWER_VIDEO_READY_TIMEOUT_MS),
-          new Promise<void>((resolve) => {
-            const boardTimer = window.setTimeout(resolve, TOWER_BOARD_MS);
-            timersRef.current.push(boardTimer);
-          }),
-        ]);
+        try {
+          warmDesktopTowerElevatorVideo();
+          await Promise.all([
+            waitForDesktopTowerElevatorVideoReady(TOWER_VIDEO_READY_TIMEOUT_MS),
+            new Promise<void>((resolve) => {
+              const boardTimer = window.setTimeout(resolve, TOWER_BOARD_MS);
+              timersRef.current.push(boardTimer);
+            }),
+          ]);
 
-        if (journeyRunRef.current !== runId) return;
-        startTravel();
+          if (journeyRunRef.current !== runId) return;
+          startTravel();
+        } catch {
+          if (journeyRunRef.current !== runId) return;
+          startTravel();
+        }
       })();
     },
     [clearTimers, navigate],

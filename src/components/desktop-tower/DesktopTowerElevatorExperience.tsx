@@ -32,6 +32,13 @@ type HoloState = {
   accent?: boolean;
 };
 
+function holdElevatorVideoLastFrame(video: HTMLVideoElement): void {
+  video.pause();
+  video.loop = false;
+  if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+  video.currentTime = Math.max(0, video.duration - 1 / 30);
+}
+
 export function DesktopTowerElevatorExperience({
   fromFloor,
   toFloor,
@@ -42,6 +49,7 @@ export function DesktopTowerElevatorExperience({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [lockedVideoSrc] = useState(() => getDesktopTowerElevatorVideoSrc());
 
   const cabinFloor = getDesktopFloorById(cabinFloorId) ?? fromFloor;
   const isAtDestination = phase === 'traveling' && cabinFloorId === toFloor.id;
@@ -107,28 +115,37 @@ export function DesktopTowerElevatorExperience({
       direction,
       () => setVideoPlaying(true),
       () => setVideoFailed(true),
+      lockedVideoSrc,
     );
-  }, [direction, fromFloor.id, toFloor.id, videoFailed]);
+  }, [direction, fromFloor.id, lockedVideoSrc, toFloor.id, videoFailed]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || videoFailed) return;
+    if (!video || videoFailed) return undefined;
+
+    const handleEnded = () => {
+      if (phase === 'boarding' || phase === 'traveling') {
+        holdElevatorVideoLastFrame(video);
+      }
+    };
+
+    video.loop = false;
+    video.addEventListener('ended', handleEnded);
 
     const shouldPlay = phase === 'boarding' || phase === 'traveling';
-    video.loop = shouldPlay;
-
     if (!shouldPlay) {
       video.pause();
-      return;
+      return () => video.removeEventListener('ended', handleEnded);
     }
 
-    if (video.paused) {
+    if (!video.ended && video.paused) {
       void video.play().catch(() => setVideoFailed(true));
     }
+
+    return () => video.removeEventListener('ended', handleEnded);
   }, [phase, videoFailed]);
 
   const exiting = phase === 'exiting';
-  const videoSrc = getDesktopTowerElevatorVideoSrc();
 
   return (
     <div
@@ -151,13 +168,14 @@ export function DesktopTowerElevatorExperience({
           <video
             ref={videoRef}
             key={`${fromFloor.id}-${toFloor.id}-${direction}`}
-            src={videoSrc}
+            src={lockedVideoSrc}
             poster={videoPlaying ? undefined : DESKTOP_TOWER_ELEVATOR_SHELL_URL}
             className={`desktop-tower-elevator__shell-media${
               videoPlaying ? ' desktop-tower-elevator__shell-media--playing' : ''
             }`}
             playsInline
             muted
+            loop={false}
             autoPlay
             preload="auto"
             draggable={false}
