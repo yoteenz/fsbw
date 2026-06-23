@@ -212,7 +212,6 @@ export function DesktopZoneRoomScene({
                 resolveBackground={resolveBackground}
                 resolveFallbackBackground={resolveFallbackBackground}
               />
-              <ZoneRoomTitle zoneId={leavingZoneId} />
             </div>
           ) : null}
           <div className="desktop-zone-room-scene__layer">

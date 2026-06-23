@@ -27,14 +27,7 @@ export function DesktopRoomTitle({
 
   return (
     <div className="desktop-room-title" style={style} aria-hidden>
-      {hasTitle ? (
-        <p className="desktop-room-title__title">
-          <span className="desktop-room-title__title-foil" aria-hidden>
-            {title}
-          </span>
-          <span className="desktop-room-title__title-face">{title}</span>
-        </p>
-      ) : null}
+      {hasTitle ? <p className="desktop-room-title__title">{title}</p> : null}
       {hasSubtitle ? <p className="desktop-room-title__subtitle">{subtitle}</p> : null}
     </div>
   );
