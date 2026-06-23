@@ -11,23 +11,32 @@ import { isDesktopShoppingBagDebugEnabled } from '../../constants/desktopShoppin
 import type { FinalSceneHitRect } from '../../constants/finalLobbySceneAssets';
 import {
   clearShoppingBagTabletPercentRect,
+  copyShoppingBagTabletDebugText,
   defaultShoppingBagTabletPercentRect,
   formatShoppingBagTabletRectForExport,
-  loadShoppingBagTabletPercentRect,
+  hasSavedShoppingBagTabletRect,
+  loadEffectiveShoppingBagTabletPercentRect,
   resolveShoppingBagTabletImageRect,
   saveShoppingBagTabletPercentRect,
+  shoppingBagTabletRectsEqual,
   type ShoppingBagTabletPercentRect,
 } from '../../utils/desktopShoppingBagTabletDebug';
 import { clampPanelDebugPercentRect } from '../../utils/desktopPanelDebugMode';
+
+export type ShoppingBagTabletSaveStatus = 'idle' | 'saved' | 'failed';
 
 type ContextValue = {
   debugEnabled: boolean;
   percentRect: ShoppingBagTabletPercentRect;
   imageRect: FinalSceneHitRect;
   overlayVisible: boolean;
+  hasCustomLayout: boolean;
+  saveStatus: ShoppingBagTabletSaveStatus;
+  exportSnippet: string;
   setOverlayVisible: (visible: boolean) => void;
   patchRect: (patch: Partial<ShoppingBagTabletPercentRect>) => void;
-  exportRect: () => Promise<void>;
+  saveLayout: () => boolean;
+  exportRect: () => Promise<boolean>;
   resetRect: () => void;
 };
 
@@ -37,32 +46,56 @@ export function DesktopShoppingBagTabletDebugProvider({ children }: { children: 
   const debugEnabled = isDesktopShoppingBagDebugEnabled();
 
   const [percentRect, setPercentRect] = useState<ShoppingBagTabletPercentRect>(() =>
-    loadShoppingBagTabletPercentRect() ?? defaultShoppingBagTabletPercentRect(),
+    loadEffectiveShoppingBagTabletPercentRect(),
   );
   const [overlayVisible, setOverlayVisible] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<ShoppingBagTabletSaveStatus>('idle');
+
+  const persistRect = useCallback((rect: ShoppingBagTabletPercentRect) => {
+    const ok = saveShoppingBagTabletPercentRect(rect);
+    setSaveStatus(ok ? 'saved' : 'failed');
+    return ok;
+  }, []);
 
   useEffect(() => {
-    if (!debugEnabled) return;
-    saveShoppingBagTabletPercentRect(percentRect);
-  }, [debugEnabled, percentRect]);
+    persistRect(percentRect);
+  }, [percentRect, persistRect]);
 
   const patchRect = useCallback((patch: Partial<ShoppingBagTabletPercentRect>) => {
     setPercentRect((prev) => clampPanelDebugPercentRect({ ...prev, ...patch }));
   }, []);
 
+  const saveLayout = useCallback(() => {
+    return persistRect(percentRect);
+  }, [percentRect, persistRect]);
+
   const exportRect = useCallback(async () => {
-    await navigator.clipboard.writeText(formatShoppingBagTabletRectForExport(percentRect));
+    const snippet = formatShoppingBagTabletRectForExport(percentRect);
+    return copyShoppingBagTabletDebugText(snippet);
   }, [percentRect]);
 
   const resetRect = useCallback(() => {
     const fresh = defaultShoppingBagTabletPercentRect();
     setPercentRect(fresh);
     clearShoppingBagTabletPercentRect();
+    setSaveStatus('idle');
   }, []);
 
   const imageRect = useMemo(
-    () => (debugEnabled ? resolveShoppingBagTabletImageRect(percentRect) : resolveShoppingBagTabletImageRect(null)),
-    [debugEnabled, percentRect],
+    () => resolveShoppingBagTabletImageRect(percentRect),
+    [percentRect],
+  );
+
+  const hasCustomLayout = useMemo(
+    () =>
+      hasSavedShoppingBagTabletRect() ||
+      !shoppingBagTabletRectsEqual(percentRect, defaultShoppingBagTabletPercentRect()),
+    [percentRect],
+  );
+
+  const exportSnippet = useMemo(
+    () => formatShoppingBagTabletRectForExport(percentRect),
+    [percentRect],
   );
 
   const value = useMemo(
@@ -71,12 +104,28 @@ export function DesktopShoppingBagTabletDebugProvider({ children }: { children: 
       percentRect,
       imageRect,
       overlayVisible,
+      hasCustomLayout,
+      saveStatus,
+      exportSnippet,
       setOverlayVisible,
       patchRect,
+      saveLayout,
       exportRect,
       resetRect,
     }),
-    [debugEnabled, percentRect, imageRect, overlayVisible, patchRect, exportRect, resetRect],
+    [
+      debugEnabled,
+      percentRect,
+      imageRect,
+      overlayVisible,
+      hasCustomLayout,
+      saveStatus,
+      exportSnippet,
+      patchRect,
+      saveLayout,
+      exportRect,
+      resetRect,
+    ],
   );
 
   return (
@@ -89,7 +138,7 @@ export function DesktopShoppingBagTabletDebugProvider({ children }: { children: 
 export function useDesktopShoppingBagTabletRect(): FinalSceneHitRect {
   const ctx = useContext(DesktopShoppingBagTabletDebugContext);
   if (ctx) return ctx.imageRect;
-  return resolveShoppingBagTabletImageRect(null);
+  return resolveShoppingBagTabletImageRect(loadEffectiveShoppingBagTabletPercentRect());
 }
 
 export function useDesktopShoppingBagTabletDebug(): ContextValue | null {

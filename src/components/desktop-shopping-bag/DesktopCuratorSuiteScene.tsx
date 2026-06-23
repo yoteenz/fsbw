@@ -67,15 +67,9 @@ function DesktopCuratorSuiteSceneInner({
 }
 
 export function DesktopCuratorSuiteScene(props: Props) {
-  const debug = isDesktopShoppingBagDebugEnabled();
-
-  if (debug) {
-    return (
-      <DesktopShoppingBagTabletDebugProvider>
-        <DesktopCuratorSuiteSceneInner {...props} />
-      </DesktopShoppingBagTabletDebugProvider>
-    );
-  }
-
-  return <DesktopCuratorSuiteSceneInner {...props} />;
+  return (
+    <DesktopShoppingBagTabletDebugProvider>
+      <DesktopCuratorSuiteSceneInner {...props} />
+    </DesktopShoppingBagTabletDebugProvider>
+  );
 }

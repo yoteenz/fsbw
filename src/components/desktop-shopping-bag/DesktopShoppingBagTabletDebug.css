@@ -107,6 +107,59 @@
   color: #eb1c24;
 }
 
+.desktop-shopping-bag-tablet-debug-inspector__btn--save {
+  border-color: #1a7f37;
+  color: #1a7f37;
+  font-weight: 700;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__hint {
+  margin: 0 0 8px;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 10px;
+  line-height: 1.45;
+  color: #333;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__hint code {
+  font-size: 9px;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__status {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  background: rgba(26, 127, 55, 0.12);
+  border: 1px solid rgba(26, 127, 55, 0.35);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #1a5c28;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__export {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__export-text {
+  width: 100%;
+  min-height: 88px;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.35;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.desktop-shopping-bag-tablet-debug-inspector__show-export {
+  margin-top: 8px;
+}
+
 .desktop-shopping-bag-tablet-debug-inspector__toggle--on {
   background: rgba(255, 193, 7, 0.25);
 }

@@ -9,6 +9,7 @@ export function DesktopShoppingBagTabletDebugInspector() {
   const editor = useDesktopShoppingBagTabletDebugRequired();
   const [expanded, setExpanded] = useState(true);
   const [exportStatus, setExportStatus] = useState<string | null>(null);
+  const [showExportText, setShowExportText] = useState(false);
 
   if (!editor.debugEnabled) return null;
 
@@ -18,15 +19,21 @@ export function DesktopShoppingBagTabletDebugInspector() {
     editor.patchRect({ [field]: roundPanelDebugPercent(value) });
   };
 
+  const onSave = () => {
+    const ok = editor.saveLayout();
+    setExportStatus(
+      ok
+        ? 'Saved on this device — remove ?shoppingBagDebug=1 to preview'
+        : 'Save failed — copy the export snippet below into desktopShoppingBag.ts',
+    );
+    window.setTimeout(() => setExportStatus(null), 5000);
+  };
+
   const onExport = async () => {
-    try {
-      await editor.exportRect();
-      setExportStatus('Copied to clipboard');
-      window.setTimeout(() => setExportStatus(null), 2000);
-    } catch {
-      setExportStatus('Copy failed');
-      window.setTimeout(() => setExportStatus(null), 2000);
-    }
+    setShowExportText(true);
+    const copied = await editor.exportRect();
+    setExportStatus(copied ? 'Copied to clipboard' : 'Select snippet below and copy manually');
+    window.setTimeout(() => setExportStatus(null), 4000);
   };
 
   if (!expanded) {
@@ -65,12 +72,18 @@ export function DesktopShoppingBagTabletDebugInspector() {
         </button>
         <button
           type="button"
+          className={`${btnClass} desktop-shopping-bag-tablet-debug-inspector__btn--save`}
+          onClick={onSave}
+        >
+          Save Layout
+        </button>
+        <button
+          type="button"
           className={`${btnClass} desktop-shopping-bag-tablet-debug-inspector__btn--primary`}
           onClick={() => void onExport()}
         >
-          EXPORT TABLET RECT
+          Export Tablet Rect
         </button>
-        {exportStatus ? <span>{exportStatus}</span> : null}
         <button type="button" className={btnClass} onClick={editor.resetRect}>
           Reset
         </button>
@@ -80,6 +93,16 @@ export function DesktopShoppingBagTabletDebugInspector() {
       </div>
 
       <div className="desktop-shopping-bag-tablet-debug-inspector__body">
+        <p className="desktop-shopping-bag-tablet-debug-inspector__hint">
+          Drag the yellow boundary or edit values. Tap <strong>Save Layout</strong> — your alignment
+          persists on this browser even without <code>?shoppingBagDebug=1</code>.
+          {editor.hasCustomLayout ? ' Custom layout active.' : ''}
+        </p>
+
+        {exportStatus ? (
+          <p className="desktop-shopping-bag-tablet-debug-inspector__status">{exportStatus}</p>
+        ) : null}
+
         <div className="desktop-shopping-bag-tablet-debug-inspector__row">
           {(['x', 'y', 'width', 'height'] as const).map((field) => (
             <label key={field} className="desktop-shopping-bag-tablet-debug-inspector__field">
@@ -93,6 +116,26 @@ export function DesktopShoppingBagTabletDebugInspector() {
             </label>
           ))}
         </div>
+
+        {showExportText ? (
+          <label className="desktop-shopping-bag-tablet-debug-inspector__export">
+            Paste into <code>desktopShoppingBag.ts</code>
+            <textarea
+              className="desktop-shopping-bag-tablet-debug-inspector__export-text"
+              readOnly
+              value={editor.exportSnippet}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          </label>
+        ) : (
+          <button
+            type="button"
+            className={`${btnClass} desktop-shopping-bag-tablet-debug-inspector__show-export`}
+            onClick={() => setShowExportText(true)}
+          >
+            Show export snippet
+          </button>
+        )}
       </div>
     </div>
   );
