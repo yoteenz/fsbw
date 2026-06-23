@@ -31384,3 +31384,12 @@ User in PSA Suite still saw no standing hologram after portal/theater fixes.
 - **Fix:** Stage **`height: clamp(161px, 24vh, 294px)`** + **`min-height: 161px`** (phone MQ: **`148px` / `20vh`**). Playwright post-fix: desktop avatar **~164px**, tablet **~140px** tall.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Members lounge room label copy
+
+User requested the red foil room title on **Members Lounge** (gallery floor) read **MEMBERS ONLY LOUNGE** instead of **MEMBERS LOUNGE**.
+
+- **`desktopRoomTitles.ts`** — **`members-lounge`** **`title`** → **`MEMBERS ONLY LOUNGE`** (matches **`desktopFloors.ts`** zone label).
+- Pushed **`master`** + **`preview/mobile`**.
+
