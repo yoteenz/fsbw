@@ -15,3 +15,7 @@ export const DESKTOP_NO_TEXT_ROOM_BACKGROUNDS: Readonly<Record<string, string>> 
   reception: `${DESKTOP_NO_TEXT_BG_BASE}/F72_QE-dezN5AqcNQ6hHC_94JB8qgZ.jpeg`,
   'psa-suite': `${DESKTOP_NO_TEXT_BG_BASE}/Ustsscdn8Zowhig_LNZ-t_CzrXcvyL.jpeg`,
 };
+
+/** Commerce pages — full-bleed desktop heroes (mobile keeps marble tile). */
+export const DESKTOP_SIGN_IN_PAGE_BACKGROUND = `${DESKTOP_NO_TEXT_BG_BASE}/B14FE9FF-6113-4563-B87D-9021E999DB61.png`;
+export const DESKTOP_CHECKOUT_PAGE_BACKGROUND = `${DESKTOP_NO_TEXT_BG_BASE}/E041D036-5757-42A3-ABE9-8B95A71702A7.png`;

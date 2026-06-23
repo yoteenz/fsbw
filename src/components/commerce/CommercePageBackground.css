@@ -1,0 +1,25 @@
+.commerce-page-background--desktop {
+  display: none;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.commerce-page-background__hero {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (min-width: 1024px) {
+  .commerce-page-background--desktop {
+    display: block;
+  }
+
+  .commerce-page-background--mobile {
+    display: none;
+  }
+}

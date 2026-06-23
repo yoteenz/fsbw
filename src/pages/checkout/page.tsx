@@ -117,6 +117,8 @@ import {
   isBillableCartLine,
 } from '../../utils/cartBillableLines';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
+import { CommercePageBackground } from '../../components/commerce/CommercePageBackground';
+import { DESKTOP_CHECKOUT_PAGE_BACKGROUND } from '../../constants/desktopNoTextBackgrounds';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -3240,17 +3242,8 @@ function CheckoutPage() {
         }
       `}</style>
       <div className="min-h-screen" style={{ position: 'relative' }}>
-        {/* Marble Background */}
-        <div 
-          className="fixed inset-0 -z-10"
-          style={{
-            backgroundImage: `url('/assets/marble-half.png')`,
-            backgroundSize: 'contain',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'repeat',
-            backgroundAttachment: 'fixed'
-          }}
-        />
+        {/* Marble (mobile) / desktop hero (≥1024px) */}
+        <CommercePageBackground desktopSrc={DESKTOP_CHECKOUT_PAGE_BACKGROUND} />
         
         {/* Scrollable Content */}
         <div className="relative z-10">

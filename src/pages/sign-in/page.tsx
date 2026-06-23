@@ -28,6 +28,8 @@ import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { resolveReturnToAfterSignIn } from '../../utils/signInReturnTo';
+import { CommercePageBackground } from '../../components/commerce/CommercePageBackground';
+import { DESKTOP_SIGN_IN_PAGE_BACKGROUND } from '../../constants/desktopNoTextBackgrounds';
 
 function SignInPage() {
   const navigate = useNavigate();
@@ -454,17 +456,8 @@ function SignInPage() {
         }
       `}</style>
     <div className="min-h-screen" style={{ position: 'relative' }}>
-      {/* Marble Background */}
-      <div 
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundImage: `url('/assets/marble-half.png')`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'repeat',
-          backgroundAttachment: 'fixed'
-        }}
-      />
+      {/* Marble (mobile) / desktop hero (≥1024px) */}
+      <CommercePageBackground desktopSrc={DESKTOP_SIGN_IN_PAGE_BACKGROUND} />
       
       {/* Scrollable Content */}
       <div className="relative z-10">
