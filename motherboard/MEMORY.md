@@ -31489,3 +31489,13 @@ User asked to **decrease spacing by 6px** between red foil title and black subti
 - **`DESKTOP_ROOM_SUBTITLE_BOOST_PX`** **8 → 2** in **`DesktopRoomTitle.tsx`**; CSS fallback **8px → 2px**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Subtitle −2px spacing, +2px font
+
+User asked to **reduce spacing another 2px** and **increase subtitle text only by 2px**.
+
+- **`DESKTOP_ROOM_SUBTITLE_BOOST_PX`** **2 → 0**; CSS fallback **0px**.
+- **`.desktop-room-title__subtitle`** **`font-size`** **`+ 4px` → `+ 6px`** (foil title unchanged).
+- Pushed **`master`** + **`preview/mobile`**.
+
