@@ -1,5 +1,6 @@
 import type { CSSProperties, RefObject } from 'react';
 import type { DesktopRoomTitlePlacement } from '../../constants/desktopRoomTitlePlacement';
+import { resolveDesktopRoomSubtitleFontOffsetPx } from '../../constants/desktopRoomTitlePlacement';
 import { getEffectiveDesktopRoomTitlePlacement } from '../../utils/desktopRoomTitlePlacementOverrides';
 import {
   useDesktopRoomTitleDebugEnabled,
@@ -53,6 +54,7 @@ export function DesktopRoomTitle({
   if (!hasTitle && !hasSubtitle) return null;
 
   const textScale = resolveDesktopRoomTitleTextScale(placement);
+  const subtitleFontOffsetPx = resolveDesktopRoomSubtitleFontOffsetPx(zoneId);
 
   const mapped =
     width > 0 && height > 0
@@ -79,7 +81,7 @@ export function DesktopRoomTitle({
     '--desktop-room-title-top': `${mapped.topPct}%`,
     '--desktop-room-subtitle-gap': `${scaledSubtitleGapPx}px`,
     '--desktop-room-title-font-size': `${typography.titleFontPx * textScale}px`,
-    '--desktop-room-subtitle-font-size': `${typography.subtitleFontPx * textScale}px`,
+    '--desktop-room-subtitle-font-size': `${Math.max(1, typography.subtitleFontPx * textScale + subtitleFontOffsetPx)}px`,
     '--desktop-room-title-max-width': `${typography.titleMaxWidthPx * textScale}px`,
   } as CSSProperties;
 

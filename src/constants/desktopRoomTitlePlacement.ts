@@ -110,3 +110,12 @@ export function resolveDesktopRoomTitlePlacement(zoneId: string): DesktopRoomTit
   }
   return DESKTOP_ROOM_TITLE_PLACEMENT[zoneId] ?? DESKTOP_ROOM_TITLE_DEFAULT_PLACEMENT;
 }
+
+/** Per-room subtitle-only font nudge (px) — does not affect red foil title. */
+export const DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX: Readonly<Partial<Record<string, number>>> = {
+  reception: -4,
+};
+
+export function resolveDesktopRoomSubtitleFontOffsetPx(zoneId: string): number {
+  return DESKTOP_ROOM_SUBTITLE_FONT_OFFSET_PX[zoneId] ?? 0;
+}
