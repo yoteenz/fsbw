@@ -35,7 +35,7 @@
 }
 
 .desktop-room-title__line--subtitle {
-  margin-top: var(--desktop-room-subtitle-gap, 14px);
+  margin-top: calc(var(--desktop-room-subtitle-gap, 14px) + 4px);
   line-height: 1.2;
 }
 
