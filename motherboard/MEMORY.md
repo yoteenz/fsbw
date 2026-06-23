@@ -31204,3 +31204,10 @@ User requested **automated processing** of all desktop tower room backgrounds: F
 - **Same chat (earlier):** elevator timeline ↔ video sync; floating nav caption spacing; mobile directory **vw** fix; elevator phone artboard zoom/portal fix.
 - Pushed **`master`** + **`preview/mobile`** (pipeline commit); constants update when batch runs successfully.
 
+---
+
+## 2026-06-23 — Fal desktop clean-bg settings Q + RELOAD PAGE uppercase
+
+- **Fal batch settings (documented, not live-run in cloud):** **`fal-ai/nano-banana-pro/edit`**, **`aspect_ratio: auto`**, **`resolution: 4K`** (env **`FAL_RESOLUTION`**), **`output_format: png`**, **`num_images: 1`**, approved text-removal prompt in **`desktop-room-text-removal-prompt.mjs`**; post sharp resize to source dims, WebP q92 upload to **`Desktop/backgrounds/clean/`**; only dry-run report exists in repo.
+- **App update screen:** User wanted **RELOAD PAGE** uppercase on stale-chunk **`ErrorBoundary`** — button text **`RELOAD PAGE`** + explicit **`textTransform: uppercase`** (buttons don’t inherit parent uppercase). **`App.tsx`**. Pushed **`master`** + **`preview/mobile`**.
+
