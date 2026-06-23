@@ -31508,3 +31508,13 @@ User asked to change **black subtitle** to **Futura Medium** (red foil title unc
 - **`.desktop-room-title__subtitle`** — **`font-family: 'Futura PT Medium'`**, **`font-weight: 500`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Room labels +15% type scale (foil + subtitle)
+
+User asked to increase **red room labels** and **black subtitle** size **in tandem by 15%**.
+
+- **`DesktopRoomTitle.css`** — foil **`clamp(46px, 3.58vw, 97px)` → `clamp(53px, 4.12vw, 112px)`**; subtitle **`calc(clamp(13px, 1.05vw, 25px) + 6px)` → `calc(clamp(15px, 1.21vw, 29px) + 7px)`**.
+- **`DesktopRoomTitle.tsx`** — gap scale **1.43 → 1.6445** (`DESKTOP_ROOM_SUBTITLE_GAP_SCALE`).
+- Pushed **`master`** + **`preview/mobile`**.
+
