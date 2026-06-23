@@ -6,6 +6,9 @@
  * Coordinate system: percentage of the full-bleed background frame (21:9 masters),
  * with `object-fit: cover` + `object-position: center top` in DesktopZoneRoomScene.
  */
+
+import { getEffectiveDesktopRoomTitlePlacement } from '../utils/desktopRoomTitlePlacementOverrides';
+
 export type DesktopRoomTitlePlacement = {
   /** Center of the red foil title block from top edge (%) */
   titleTopPct: number;
@@ -103,5 +106,8 @@ export const DESKTOP_ROOM_TITLE_DEFAULT_PLACEMENT: DesktopRoomTitlePlacement = {
 };
 
 export function resolveDesktopRoomTitlePlacement(zoneId: string): DesktopRoomTitlePlacement {
+  if (typeof window !== 'undefined') {
+    return getEffectiveDesktopRoomTitlePlacement(zoneId);
+  }
   return DESKTOP_ROOM_TITLE_PLACEMENT[zoneId] ?? DESKTOP_ROOM_TITLE_DEFAULT_PLACEMENT;
 }

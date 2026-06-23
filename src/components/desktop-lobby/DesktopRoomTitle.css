@@ -69,3 +69,16 @@
 .desktop-room-title__foil-text--subtitle {
   letter-spacing: 0.15em;
 }
+
+.desktop-room-title--anchored-inner {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+}
+
+.desktop-room-title-debug-square {
+  pointer-events: auto;
+  z-index: 5;
+}

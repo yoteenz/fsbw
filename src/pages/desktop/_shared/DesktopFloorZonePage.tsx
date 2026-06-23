@@ -4,6 +4,8 @@ import { NavBar } from '../../../components/desktop-lobby/NavBar';
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { ParticleField } from '../../../components/desktop-lobby/ParticleField';
 import { DesktopZoneRoomScene } from '../../../components/desktop-lobby/DesktopZoneRoomScene';
+import { DesktopRoomTitlePlacementEditorProvider } from '../../../components/desktop-lobby/DesktopRoomTitlePlacementEditorContext';
+import { DesktopRoomTitlePlacementEditorPanel } from '../../../components/desktop-lobby/DesktopRoomTitlePlacementEditorPanel';
 import PsaAssistantWidget from '../../../components/psa/PsaAssistantWidget';
 import {
   resolveDesktopFloorZoneId,
@@ -42,61 +44,64 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   }, [zoneId, zoneIds]);
 
   return (
-    <div
-      style={{
-        height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
-        boxSizing: 'border-box',
-        paddingTop: '68px',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        background: '#0A0A0A',
-        position: 'relative',
-        ...pageStyle,
-        opacity: isTraveling ? 0 : pageStyle.opacity,
-        pointerEvents: isTraveling ? 'none' : undefined,
-      }}
-    >
-      <NavBar />
-      <section
+    <DesktopRoomTitlePlacementEditorProvider>
+      <div
         style={{
-          position: 'relative',
-          flex: artboard ? 'none' : 1,
-          height: artboard ? '1012px' : undefined,
-          minHeight: artboard ? '1012px' : 0,
+          height: artboard ? `${DESKTOP_PREVIEW_VIEWPORT_HEIGHT}px` : '100vh',
+          boxSizing: 'border-box',
+          paddingTop: '68px',
+          display: 'flex',
+          flexDirection: 'column',
           overflow: 'hidden',
           background: '#0A0A0A',
+          position: 'relative',
+          ...pageStyle,
+          opacity: isTraveling ? 0 : pageStyle.opacity,
+          pointerEvents: isTraveling ? 'none' : undefined,
         }}
       >
-        <DesktopZoneRoomScene
-          zoneIds={zoneIds}
-          zoneIndex={zoneIndex}
-          resolveBackground={resolveZoneBackground}
-          resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
-          onBackgroundReadyChange={setBackgroundReady}
-        />
-
-        <div
+        <NavBar />
+        <section
           style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 2,
-            pointerEvents: 'none',
-            background:
-              'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.1) 100%)',
+            position: 'relative',
+            flex: artboard ? 'none' : 1,
+            height: artboard ? '1012px' : undefined,
+            minHeight: artboard ? '1012px' : 0,
+            overflow: 'hidden',
+            background: '#0A0A0A',
           }}
-        />
+        >
+          <DesktopZoneRoomScene
+            zoneIds={zoneIds}
+            zoneIndex={zoneIndex}
+            resolveBackground={resolveZoneBackground}
+            resolveFallbackBackground={() => DESKTOP_LOUNGE_BG_FALLBACK}
+            onBackgroundReadyChange={setBackgroundReady}
+          />
 
-        {backgroundReady ? (
-          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
-            <ParticleField />
-          </div>
-        ) : null}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 2,
+              pointerEvents: 'none',
+              background:
+                'radial-gradient(ellipse 130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.1) 100%)',
+            }}
+          />
 
-        <DesktopFloatingNav />
+          {backgroundReady ? (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
+              <ParticleField />
+            </div>
+          ) : null}
 
-        {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
-      </section>
-    </div>
+          <DesktopFloatingNav />
+
+          {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
+        </section>
+      </div>
+      <DesktopRoomTitlePlacementEditorPanel />
+    </DesktopRoomTitlePlacementEditorProvider>
   );
 }

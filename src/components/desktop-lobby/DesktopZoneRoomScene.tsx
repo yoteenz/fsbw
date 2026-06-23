@@ -93,6 +93,7 @@ function ZoneRoomTitle({ zoneId }: { zoneId: string }) {
 
   return (
     <DesktopRoomTitle
+      zoneId={zoneId}
       title={copy.title}
       subtitle={copy.subtitle}
       placement={resolveDesktopRoomTitlePlacement(zoneId)}
