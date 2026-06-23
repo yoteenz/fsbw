@@ -31805,7 +31805,19 @@ User directive: **stop redesigning dashboard UI** — background image already c
 - **Removed:** **`PenthouseSuiteGlassPanel`**, **`PenthouseSuiteDashboard.css`**, **`DesktopEmbeddedGlassPanel`** (+ CSS) — all card/chrome UI deleted.
 - **Added:** **`DesktopPanelTextOverlay`** — transparent clickable text groups (max 2–3 lines, small uppercase Futura, `#111` + `#EB1C24` accent line, etched text-shadow, ellipsis overflow, no fills).
 - **Penthouse (`/desktop/account`):** hero = tier label only; stat panels = label + live value (Loyalty Points/DP, Slay Tickets, Vouchers, Digital Cash, Orders, Rewards Collection, Referrals, Wishlist, Activity, Affiliate, Settings). **`?penthouseSuiteDebug=1`** for rect tuning.
-- **Reception (`zone=reception`):** center = Featured Experience / The Lounge / Watch Now; left/right = single-line destination labels; hrefs still from **`receptionDashboardData.ts`**. **`?receptionDashboardDebug=1`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — Desktop shopping bag Curator's Tablet UI
+
+User supplied **21:9 shopping bag** background (`9C0F1F93-…017C.png`) and asked for a **Curator's Tablet** luxury cart experience — all UI **inside** the acrylic tablet in the image, not a standard ecommerce cart page.
+
+- **Route:** **`/desktop/shopping-bag`** — desktop nav bag icon on **`/desktop/*`** routes here (mobile **`/bag`** unchanged).
+- **`desktopShoppingBag.ts`** — background URL + tablet screen rect; **`?shoppingBagDebug=1`** for alignment tuning.
+- **Components:** **`DesktopShoppingBagScene`**, **`CuratedCollectionTablet`**, **`CuratedCartGallery`**, **`CuratedCartItemCard`**, **`AcquisitionSummaryBar`**, **`EmptyCollectionState`** — frosted acrylic inside tablet, crimson foil title, product plinth gallery (1–3 visible, carousel + arrows for 4+), integrated bottom bar with **ACQUIRE** (not checkout).
+- **`useDesktopShoppingBagCart`** + **`cartEditFromBag.ts`** — live cart load/remove/edit/checkout using existing cart localStorage, thumbnails/copy from **`orderStrip*`** helpers, BAW edit sign-in modal when needed.
+- **Empty state:** Your Collection Awaits → **Enter Showroom** (penthouse showroom).
 - Pushed **`master`** + **`preview/mobile`**.
 
 ---
