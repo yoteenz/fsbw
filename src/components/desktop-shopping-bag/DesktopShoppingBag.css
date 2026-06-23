@@ -1,0 +1,517 @@
+.desktop-shopping-bag-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.desktop-shopping-bag-scene__bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.desktop-shopping-bag-scene__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.desktop-shopping-bag-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+}
+
+.desktop-shopping-bag-page__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.desktop-shopping-bag-page--artboard .desktop-shopping-bag-page__viewport {
+  flex: none;
+  height: 1012px;
+  min-height: 1012px;
+}
+
+/* Tablet shell — sits inside background acrylic screen */
+.curated-tablet {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+  padding: clamp(14px, 3.2cqi, 28px) clamp(16px, 3.6cqi, 32px) clamp(12px, 2.8cqi, 24px);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.05) 38%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 0 40px rgba(255, 255, 255, 0.08);
+  container-type: size;
+}
+
+.curated-tablet--debug {
+  outline: 1px dashed rgba(255, 193, 7, 0.8);
+}
+
+.curated-tablet__shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.14) 50%,
+    transparent 58%
+  );
+  background-size: 220% 100%;
+  animation: curated-tablet-shimmer 9s ease-in-out infinite;
+  opacity: 0.45;
+}
+
+@keyframes curated-tablet-shimmer {
+  0%,
+  100% {
+    background-position: 180% 0;
+  }
+  50% {
+    background-position: -80% 0;
+  }
+}
+
+.curated-tablet__header {
+  flex-shrink: 0;
+  text-align: center;
+  padding-bottom: clamp(6px, 1.4cqi, 12px);
+}
+
+.curated-tablet__crystal {
+  width: clamp(14px, 3.2cqi, 22px);
+  height: clamp(14px, 3.2cqi, 22px);
+  margin: 0 auto clamp(4px, 1cqi, 8px);
+  filter: drop-shadow(0 0 6px rgba(235, 28, 36, 0.35));
+}
+
+.curated-tablet__crystal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.curated-tablet__title {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(11px, 4.2cqi, 18px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.curated-tablet__title--foil {
+  background: linear-gradient(180deg, #ff4d55 0%, #eb1c24 42%, #a80f16 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12));
+}
+
+.curated-tablet__subtitle {
+  margin: clamp(3px, 0.8cqi, 6px) 0 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 2.4cqi, 11px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #222;
+}
+
+.curated-tablet__gallery-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  padding: clamp(4px, 1cqi, 10px) 0;
+}
+
+.curated-tablet__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(6px, 1.5cqi, 12px);
+  padding: clamp(12px, 3cqi, 24px);
+}
+
+.curated-tablet__enter-btn {
+  margin-top: clamp(6px, 1.5cqi, 12px);
+  padding: clamp(8px, 1.8cqi, 12px) clamp(16px, 3.6cqi, 24px);
+  border: 1px solid rgba(235, 28, 36, 0.55);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.28));
+  backdrop-filter: blur(4px);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 2.2cqi, 11px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #eb1c24;
+  cursor: pointer;
+  transition: box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.curated-tablet__enter-btn:hover {
+  border-color: rgba(235, 28, 36, 0.85);
+  box-shadow: inset 0 0 12px rgba(235, 28, 36, 0.12);
+}
+
+/* Gallery */
+.curated-gallery {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curated-gallery__track {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(8px, 2cqi, 16px);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.curated-gallery__track::-webkit-scrollbar {
+  display: none;
+}
+
+.curated-gallery--one .curated-gallery__track {
+  justify-content: center;
+}
+
+.curated-gallery--two .curated-gallery__track {
+  justify-content: center;
+}
+
+.curated-gallery--three .curated-gallery__track {
+  justify-content: center;
+}
+
+.curated-gallery__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: clamp(22px, 4.5cqi, 30px);
+  height: clamp(22px, 4.5cqi, 30px);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(6px);
+  color: #111;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.curated-gallery__arrow:hover {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.curated-gallery__arrow--prev {
+  left: 0;
+}
+
+.curated-gallery__arrow--next {
+  right: 0;
+}
+
+.curated-gallery__more {
+  position: absolute;
+  right: clamp(28px, 6cqi, 40px);
+  bottom: 0;
+  margin: 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2cqi, 10px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+/* Product plinth card */
+.curated-item {
+  position: relative;
+  flex: 1 1 0;
+  min-width: clamp(88px, 24cqi, 160px);
+  max-width: clamp(120px, 30cqi, 200px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(6px, 1.4cqi, 10px);
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.18) 55%,
+    rgba(255, 255, 255, 0.28) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 16px rgba(255, 255, 255, 0.12);
+  animation: curated-item-enter 0.45s ease both;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.curated-gallery--one .curated-item {
+  max-width: clamp(140px, 36cqi, 220px);
+}
+
+@keyframes curated-item-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.curated-item--removing {
+  opacity: 0;
+  transform: scale(0.96) translateY(4px);
+  pointer-events: none;
+}
+
+.curated-item__remove {
+  position: absolute;
+  top: clamp(4px, 1cqi, 8px);
+  right: clamp(4px, 1cqi, 8px);
+  width: clamp(18px, 4cqi, 24px);
+  height: clamp(18px, 4cqi, 24px);
+  display: grid;
+  place-items: center;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  color: #666;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.curated-item__remove:hover {
+  opacity: 1;
+  color: #eb1c24;
+}
+
+.curated-item__image-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+.curated-item__plinth {
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: clamp(72px, 22cqi, 130px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto clamp(4px, 1cqi, 8px);
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.2);
+}
+
+.curated-item__plinth img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+.curated-item__name {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2.2cqi, 11px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #111;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.curated-item__specs {
+  margin: clamp(2px, 0.5cqi, 4px) 0 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.8cqi, 9px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.curated-item__price {
+  margin: clamp(3px, 0.8cqi, 6px) 0 0;
+  font-family: 'Futura PT Demi', 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 2.4cqi, 12px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #eb1c24;
+}
+
+.curated-item__edit {
+  margin-top: auto;
+  padding-top: clamp(4px, 1cqi, 8px);
+  border: none;
+  background: transparent;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.8cqi, 9px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #333;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.curated-item__edit:hover {
+  color: #eb1c24;
+}
+
+/* Acquisition bar */
+.curated-acquire {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: clamp(8px, 2cqi, 16px);
+  padding: clamp(8px, 1.8cqi, 14px) clamp(10px, 2.2cqi, 16px);
+  margin-top: auto;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.curated-acquire__left {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.2cqi, 10px);
+  min-width: 0;
+}
+
+.curated-acquire__bag {
+  display: flex;
+  color: #111;
+  opacity: 0.85;
+}
+
+.curated-acquire__count {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2cqi, 10px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #222;
+  white-space: nowrap;
+}
+
+.curated-acquire__subtotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.curated-acquire__subtotal-label {
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 1.6cqi, 9px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.curated-acquire__subtotal-value {
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 2.2cqi, 11px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.curated-acquire__cta {
+  padding: clamp(8px, 1.8cqi, 12px) clamp(14px, 3.2cqi, 22px);
+  border: 1px solid rgba(168, 15, 22, 0.65);
+  background: linear-gradient(180deg, #ff3b44 0%, #eb1c24 48%, #b51218 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 2px 8px rgba(235, 28, 36, 0.22);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(8px, 2.4cqi, 12px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.curated-acquire__cta:hover {
+  filter: brightness(1.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 3px 12px rgba(235, 28, 36, 0.3);
+}
+
+@media (max-width: 1023px) {
+  .desktop-shopping-bag-scene__bg {
+    object-fit: contain;
+    object-position: center center;
+  }
+
+  .curated-gallery__track {
+    justify-content: flex-start;
+    padding: 0 clamp(4px, 1cqi, 8px);
+  }
+}

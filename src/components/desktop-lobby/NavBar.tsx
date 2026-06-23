@@ -138,7 +138,7 @@ export function NavBar() {
 
         <button
           className="relative hover:opacity-50 transition-opacity"
-          onClick={() => navigate('/shopping-bag')}
+          onClick={() => navigate(isDesktopRoute ? '/desktop/shopping-bag' : '/bag')}
           aria-label="Cart"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >

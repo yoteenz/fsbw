@@ -172,6 +172,7 @@ const DesktopGalleryPage = lazyWithRetry(() => import('./pages/desktop/gallery/p
 const DesktopConciergePage = lazyWithRetry(() => import('./pages/desktop/concierge/page'), 'DesktopConciergePage');
 const DesktopSlayCamRedirectPage = lazyWithRetry(() => import('./pages/desktop/slay-cam/page'), 'DesktopSlayCamRedirectPage');
 const DesktopAccountPage = lazyWithRetry(() => import('./pages/desktop/account/page'), 'DesktopAccountPage');
+const DesktopShoppingBagPage = lazyWithRetry(() => import('./pages/desktop/shopping-bag/page'), 'DesktopShoppingBagPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 function DesktopRoutesLayout() {
@@ -509,6 +510,13 @@ function App() {
                 <DesktopAccountPage />
               </AccountRouteGuard>
             </Suspense>
+          } />
+          <Route path="/desktop/shopping-bag" element={
+            <CommerceRouteGuard>
+              <Suspense fallback={<LoadingScreen />}>
+                <DesktopShoppingBagPage />
+              </Suspense>
+            </CommerceRouteGuard>
           } />
         </Route>
         <Route path="/lobby/lounge" element={<LobbyPage />} />
