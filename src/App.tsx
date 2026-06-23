@@ -33,6 +33,7 @@ import { DesktopPsaSuiteFrameEditorProvider } from './components/desktop-lobby/D
 import { DesktopPsaSuiteFrameEditorPanel } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorPanel';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
+import { seedShoppingBagMockCartIfEmpty } from './utils/shoppingBagMockCart';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
 import { registerGlobalClientActivityListeners } from './utils/clientActivityBootstrap';
@@ -331,6 +332,7 @@ function App() {
   // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {
     clearTestDataForNonAdminUserIfNeeded();
+    seedShoppingBagMockCartIfEmpty();
   }, []);
 
   // Client activity: cart/wishlist debounced snapshots + bawTrackActivity bridge (admin Activity tab)

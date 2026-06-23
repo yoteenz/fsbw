@@ -14,6 +14,7 @@ import { isSlayTicketPackCartLine } from '../utils/slayTicketCheckout';
 import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 import { trackActivity } from '../utils/activity';
+import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
 
 function clampCartRows(items: any[]): any[] {
   return items.map((i: any) => {
@@ -36,6 +37,7 @@ function persistCart(items: any[]) {
 }
 
 function loadCartFromStorage(): any[] {
+  seedShoppingBagMockCartIfEmpty();
   try {
     const stored = localStorage.getItem('cartItems');
     if (!stored) return [];
