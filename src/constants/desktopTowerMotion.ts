@@ -45,6 +45,45 @@ export function computeTowerTravelDurationMs(floorStops: readonly number[]): num
   return segments * TOWER_TRAVEL_MS_PER_FLOOR + intermediateDwells * TOWER_FLOOR_DWELL_MS;
 }
 
+/** Used when the warmed MP4 metadata is not available yet. */
+export const TOWER_ELEVATOR_VIDEO_FALLBACK_MS = 8000;
+
+export type TowerTravelTiming = {
+  travelMsPerFloor: number;
+  floorDwellMs: number;
+  totalDurationMs: number;
+};
+
+/**
+ * Scale per-floor travel + intermediate dwells so the cabin timeline ends exactly
+ * when the elevator clip finishes (keeps the same travel/dwell ratio as defaults).
+ */
+export function resolveTowerTravelTiming(
+  floorStops: readonly number[],
+  targetDurationMs: number = TOWER_ELEVATOR_VIDEO_FALLBACK_MS,
+): TowerTravelTiming {
+  const segments = Math.max(0, floorStops.length - 1);
+  const intermediateDwells = Math.max(0, floorStops.length - 2);
+  const defaultTotal = computeTowerTravelDurationMs(floorStops);
+  const safeTarget = Math.max(0, targetDurationMs);
+
+  if (segments === 0 || defaultTotal <= 0 || safeTarget <= 0) {
+    return {
+      travelMsPerFloor: safeTarget,
+      floorDwellMs: 0,
+      totalDurationMs: safeTarget,
+    };
+  }
+
+  const scale = safeTarget / defaultTotal;
+  const travelMsPerFloor = TOWER_TRAVEL_MS_PER_FLOOR * scale;
+  const floorDwellMs = TOWER_FLOOR_DWELL_MS * scale;
+  const totalDurationMs =
+    segments * travelMsPerFloor + intermediateDwells * floorDwellMs;
+
+  return { travelMsPerFloor, floorDwellMs, totalDurationMs };
+}
+
 /** Smooth acceleration / deceleration for believable cabin motion. */
 export function towerEaseInOut(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -58,7 +97,11 @@ export function interpolateTowerLevel(fromId: number, toId: number, progress: nu
 export function resolveTowerTravelFrame(
   floorStops: readonly number[],
   elapsedMs: number,
+  timing?: Pick<TowerTravelTiming, 'travelMsPerFloor' | 'floorDwellMs'>,
 ): TowerTravelFrame {
+  const travelMsPerFloor = timing?.travelMsPerFloor ?? TOWER_TRAVEL_MS_PER_FLOOR;
+  const floorDwellMs = timing?.floorDwellMs ?? TOWER_FLOOR_DWELL_MS;
+
   if (floorStops.length <= 1) {
     const only = floorStops[0] ?? 1;
     return { displayLevelId: only, cabinFloorId: only, atIntermediateDwell: false };
@@ -71,8 +114,8 @@ export function resolveTowerTravelFrame(
     const toId = floorStops[i + 1];
     const isFinalSegment = i === floorStops.length - 2;
 
-    if (remaining < TOWER_TRAVEL_MS_PER_FLOOR) {
-      const eased = towerEaseInOut(remaining / TOWER_TRAVEL_MS_PER_FLOOR);
+    if (remaining < travelMsPerFloor) {
+      const eased = towerEaseInOut(remaining / travelMsPerFloor);
       const displayLevelId = interpolateTowerLevel(fromId, toId, eased);
       return {
         displayLevelId,
@@ -81,17 +124,17 @@ export function resolveTowerTravelFrame(
       };
     }
 
-    remaining -= TOWER_TRAVEL_MS_PER_FLOOR;
+    remaining -= travelMsPerFloor;
 
     if (!isFinalSegment) {
-      if (remaining < TOWER_FLOOR_DWELL_MS) {
+      if (remaining < floorDwellMs) {
         return {
           displayLevelId: toId,
           cabinFloorId: toId,
           atIntermediateDwell: true,
         };
       }
-      remaining -= TOWER_FLOOR_DWELL_MS;
+      remaining -= floorDwellMs;
     }
   }
 

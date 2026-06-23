@@ -20,16 +20,18 @@ import { resolveFloorZoneBackground } from '../../constants/desktopFloorZoneBack
 import { resolvePenthouseRoomBackground } from '../../constants/desktopPenthouseRooms';
 import { preloadDesktopRoomBackground } from '../../utils/desktopRoomBackgroundCache';
 import {
-  computeTowerTravelDurationMs,
   getDesktopFloorFromHref,
   getTowerFloorStops,
   resolveTowerDirection,
   resolveTowerTravelFrame,
+  resolveTowerTravelTiming,
   TOWER_ARRIVED_MS,
   TOWER_BOARD_MS,
+  TOWER_ELEVATOR_VIDEO_FALLBACK_MS,
   TOWER_FADE_MS,
   TOWER_VIDEO_READY_TIMEOUT_MS,
   type TowerTravelDirection,
+  type TowerTravelTiming,
 } from '../../constants/desktopTowerMotion';
 import {
   DesktopTowerElevatorExperience,
@@ -147,13 +149,21 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
 
       const floorStops = next.floorStops ?? getTowerFloorStops(next.fromFloor.id, next.toFloor.id);
       const journeyWithStops: TowerJourney = { ...next, floorStops };
-      const travelDurationMs = computeTowerTravelDurationMs(floorStops);
-      const elevatorVideoMs = Math.ceil((getDesktopTowerElevatorVideoDurationSec() ?? 8) * 1000);
+
+      const resolveElevatorVideoMs = () =>
+        Math.ceil(
+          (getDesktopTowerElevatorVideoDurationSec() ?? TOWER_ELEVATOR_VIDEO_FALLBACK_MS / 1000) * 1000,
+        );
+
+      let travelDurationMs = resolveTowerTravelTiming(
+        floorStops,
+        resolveElevatorVideoMs(),
+      ).totalDurationMs;
+
       const maxJourneyMs =
         TOWER_VIDEO_READY_TIMEOUT_MS +
         TOWER_BOARD_MS +
         travelDurationMs +
-        elevatorVideoMs +
         TOWER_ARRIVED_MS +
         TOWER_FADE_MS +
         3000;
@@ -181,11 +191,18 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       const startTravel = () => {
         if (journeyRunRef.current !== runId) return;
 
+        const travelTiming = resolveTowerTravelTiming(floorStops, resolveElevatorVideoMs());
+        travelDurationMs = travelTiming.totalDurationMs;
+
         setPhase('traveling');
         const start = performance.now();
         let travelFinished = false;
         let travelTimelineComplete = false;
         let videoPlaybackComplete = false;
+        const motionTiming: Pick<TowerTravelTiming, 'travelMsPerFloor' | 'floorDwellMs'> = {
+          travelMsPerFloor: travelTiming.travelMsPerFloor,
+          floorDwellMs: travelTiming.floorDwellMs,
+        };
 
         const tryFinishTravel = () => {
           if (travelFinished || journeyRunRef.current !== runId) return;
@@ -240,7 +257,7 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
           if (journeyRunRef.current !== runId) return;
 
           const elapsed = now - start;
-          const frame = resolveTowerTravelFrame(floorStops, elapsed);
+          const frame = resolveTowerTravelFrame(floorStops, elapsed, motionTiming);
           setDisplayLevelId(frame.displayLevelId);
           setCabinFloorId(frame.cabinFloorId);
 
