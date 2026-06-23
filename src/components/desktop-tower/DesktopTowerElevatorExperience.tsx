@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getDesktopFloorById, type DesktopFloor } from '../../constants/desktopFloors';
 import {
   DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT,
@@ -8,8 +8,9 @@ import {
 import { TOWER_SHELL_HOLO } from '../../constants/desktopTowerElevatorLayout';
 import { formatTowerLevelLabel, type TowerTravelDirection } from '../../constants/desktopTowerMotion';
 import {
-  bindDesktopTowerElevatorVideoPlayback,
+  cancelElevatorVideoTransition,
   getDesktopTowerElevatorVideoSrc,
+  runElevatorVideoTransition,
   warmDesktopTowerElevatorVideo,
 } from '../../utils/desktopTowerElevatorVideo';
 import './DesktopTowerElevator.css';
@@ -23,6 +24,7 @@ type Props = {
   phase: TowerElevatorPhase;
   displayLevelId: number;
   cabinFloorId: number;
+  onVideoPlaybackComplete?: () => void;
 };
 
 type HoloState = {
@@ -32,24 +34,20 @@ type HoloState = {
   accent?: boolean;
 };
 
-function holdElevatorVideoLastFrame(video: HTMLVideoElement): void {
-  video.pause();
-  video.loop = false;
-  if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-  video.currentTime = Math.max(0, video.duration - 1 / 30);
-}
-
 export function DesktopTowerElevatorExperience({
   fromFloor,
   toFloor,
   direction,
   phase,
   cabinFloorId,
+  onVideoPlaybackComplete,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const playbackRunRef = useRef(0);
+  const lockedVideoSrcRef = useRef(getDesktopTowerElevatorVideoSrc());
   const [videoFailed, setVideoFailed] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const [lockedVideoSrc] = useState(() => getDesktopTowerElevatorVideoSrc());
 
   const cabinFloor = getDesktopFloorById(cabinFloorId) ?? fromFloor;
   const isAtDestination = phase === 'traveling' && cabinFloorId === toFloor.id;
@@ -102,50 +100,68 @@ export function DesktopTowerElevatorExperience({
   }, []);
 
   useEffect(() => {
-    setVideoFailed(false);
-    setVideoPlaying(false);
-  }, [direction, fromFloor.id, toFloor.id]);
-
-  useLayoutEffect(() => {
     const video = videoRef.current;
     if (!video || videoFailed) return undefined;
 
-    return bindDesktopTowerElevatorVideoPlayback(
-      video,
-      direction,
-      () => setVideoPlaying(true),
-      () => setVideoFailed(true),
-      lockedVideoSrc,
-    );
-  }, [direction, fromFloor.id, lockedVideoSrc, toFloor.id, videoFailed]);
+    let cancelled = false;
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || videoFailed) return undefined;
-
-    const handleEnded = () => {
-      if (phase === 'boarding' || phase === 'traveling') {
-        holdElevatorVideoLastFrame(video);
-      }
+    const markReady = () => {
+      if (!cancelled) setVideoReady(true);
     };
 
-    video.loop = false;
-    video.addEventListener('ended', handleEnded);
-
-    const shouldPlay = phase === 'boarding' || phase === 'traveling';
-    if (!shouldPlay) {
-      video.pause();
-      return () => video.removeEventListener('ended', handleEnded);
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      markReady();
     }
 
-    if (!video.ended && video.paused) {
-      void video.play().catch(() => setVideoFailed(true));
-    }
+    video.addEventListener('canplaythrough', markReady);
+    video.addEventListener('loadeddata', markReady);
 
-    return () => video.removeEventListener('ended', handleEnded);
-  }, [phase, videoFailed]);
+    return () => {
+      cancelled = true;
+      video.removeEventListener('canplaythrough', markReady);
+      video.removeEventListener('loadeddata', markReady);
+    };
+  }, [videoFailed]);
+
+  useEffect(() => {
+    if (phase !== 'traveling' || videoFailed || !videoReady) return undefined;
+
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    const runId = playbackRunRef.current + 1;
+    playbackRunRef.current = runId;
+    setVideoPlaying(true);
+
+    void runElevatorVideoTransition(video, direction, lockedVideoSrcRef.current)
+      .then(() => {
+        if (playbackRunRef.current !== runId) return;
+        onVideoPlaybackComplete?.();
+      })
+      .catch((error: unknown) => {
+        if (playbackRunRef.current !== runId) return;
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        setVideoFailed(true);
+        onVideoPlaybackComplete?.();
+      });
+
+    return () => {
+      playbackRunRef.current += 1;
+      cancelElevatorVideoTransition(video);
+      setVideoPlaying(false);
+    };
+  }, [direction, onVideoPlaybackComplete, phase, videoFailed, videoReady]);
+
+  useEffect(() => {
+    if (phase === 'boarding' || phase === 'traveling') return;
+    const video = videoRef.current;
+    if (video) cancelElevatorVideoTransition(video);
+    setVideoPlaying(false);
+  }, [phase]);
 
   const exiting = phase === 'exiting';
+  const showVideo = videoReady && !videoFailed;
+  const showPoster = !showVideo || !videoPlaying;
 
   return (
     <div
@@ -165,24 +181,36 @@ export function DesktopTowerElevatorExperience({
             height={DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT}
           />
         ) : (
-          <video
-            ref={videoRef}
-            key={`${fromFloor.id}-${toFloor.id}-${direction}`}
-            src={lockedVideoSrc}
-            poster={videoPlaying ? undefined : DESKTOP_TOWER_ELEVATOR_SHELL_URL}
-            className={`desktop-tower-elevator__shell-media${
-              videoPlaying ? ' desktop-tower-elevator__shell-media--playing' : ''
-            }`}
-            playsInline
-            muted
-            loop={false}
-            autoPlay
-            preload="auto"
-            draggable={false}
-            width={DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH}
-            height={DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT}
-            onError={() => setVideoFailed(true)}
-          />
+          <>
+            {showPoster ? (
+              <img
+                src={DESKTOP_TOWER_ELEVATOR_SHELL_URL}
+                alt=""
+                className="desktop-tower-elevator__shell-media desktop-tower-elevator__shell-media--poster"
+                draggable={false}
+                width={DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH}
+                height={DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT}
+              />
+            ) : null}
+            <video
+              ref={videoRef}
+              src={lockedVideoSrcRef.current}
+              className={`desktop-tower-elevator__shell-media${
+                videoPlaying ? ' desktop-tower-elevator__shell-media--playing' : ''
+              }`}
+              playsInline
+              muted
+              loop={false}
+              preload="auto"
+              draggable={false}
+              width={DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH}
+              height={DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT}
+              onError={() => {
+                setVideoFailed(true);
+                onVideoPlaybackComplete?.();
+              }}
+            />
+          </>
         )}
 
         <div

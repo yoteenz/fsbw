@@ -6,6 +6,10 @@ export const DESKTOP_TOWER_ELEVATOR_VIDEO_URL =
 export const DESKTOP_TOWER_ELEVATOR_SHELL_URL =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/0A372BA0-45B6-4291-B418-FB9710EC1C33.png';
 
+/** Optional local reversed MP4 fallback — run `npm run elevator:reverse-video`. */
+export const DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_LOCAL_PATH =
+  '/assets/desktop-tower-elevator-reverse.mp4';
+
 export const DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH = 1915;
 export const DESKTOP_TOWER_ELEVATOR_SHELL_HEIGHT = 821;
 

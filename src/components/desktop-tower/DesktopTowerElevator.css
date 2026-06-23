@@ -40,8 +40,17 @@
   opacity: 1;
 }
 
-.desktop-tower-elevator__shell-media--reverse-fallback {
-  transform: scaleY(-1);
+.desktop-tower-elevator__shell-media--poster {
+  z-index: 1;
+}
+
+.desktop-tower-elevator__shell-media:not(.desktop-tower-elevator__shell-media--poster) {
+  opacity: 0;
+}
+
+.desktop-tower-elevator__shell-media--playing:not(.desktop-tower-elevator__shell-media--poster) {
+  opacity: 1;
+  z-index: 2;
 }
 
 /* Destination holo */
