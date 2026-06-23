@@ -31733,3 +31733,17 @@ User asked to change penthouse elevator holo black subtitle from **VIP SUITE** t
 - **`formatTowerElevatorHoloName()`** in **`desktopTowerMotion.ts`** — floor **id 4** → **`VIP SUITES`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop elevator segmented video playback (floor-based timing)
+
+User reported the **full elevator MP4** played even for **one-floor** trips — transition felt too long and inaccurate. Goal: play only the correct **travel + arrival + door-open** segments based on current/destination floor, direction, and floors traveled; **swap floor/route at door open**, not at animation start; block concurrent transitions.
+
+- **`elevatorTransitionConfig.ts`** — ascending/descending marker configs: **`doorClosedStart`**, **`travelStart`**, **`perFloorTravelDuration`**, **`arrivalStartOffset`**, **`doorOpenStart`**, **`doorOpenEnd`** (starting placeholder values for visual QA).
+- **`elevatorPlaybackPlan.ts`** — **`getElevatorPlaybackPlan(currentFloor, destinationFloor)`** computes direction, floors traveled, segment timestamps, wall-clock durations; **`logElevatorPlaybackPlanDebug()`** logs plan in dev.
+- **`desktopTowerElevatorVideo.ts`** — **`runElevatorVideoPlaybackPlan()`**: seek to travel start → play until **`travelEndTime`** → seek to **`doorOpenStart`** → callback → play to **`doorOpenEnd`** → stop (no full-clip playback).
+- **`DesktopTowerNavProvider.tsx`** — builds plan per journey; holo timeline uses **`travelDurationMs / floorsTraveled`**; **`handleDoorOpenStart`** navigates + updates floor ids at door open; video complete → fade exit; **`if (journey) return`** blocks overlapping trips.
+- **`DesktopTowerElevatorExperience.tsx`** — uses playback plan; dev-only on-screen debug label (floors, direction, travel ms, door markers).
+- **Tune:** adjust marker seconds in **`elevatorTransitionConfig.ts`** after reviewing real MP4 timing.
+- Pushed **`master`** + **`preview/mobile`**.
+
