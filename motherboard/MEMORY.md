@@ -32011,3 +32011,14 @@ User reported **panel debug saves on mobile desktop don't translate to desktop**
 - **Fix:** Founder **Supabase `app_config`** sync via **`GET/PUT /api/admin/perspective-panel-config`** (`perspective_panel_map`); **`perspectivePanelSync.ts`** + **`PerspectivePanelFounderBootstrap`** merge on sign-in/focus; **Save** pushes cloud; storage **`updatedAt`** + **`perspectivePanelMapUpdated`** event reloads all tabs; legacy tablet quad migrates into shared map.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Penthouse suite desktop hero letterboxing
+
+User reported **black letterbox/border below** the Penthouse Suite (`/desktop/account`) background image.
+
+- **Cause:** Same as shopping bag — `@media (max-width: 1023px)` forced **`object-fit: contain`** on `.desktop-penthouse-suite-scene__bg`. Account page shell also lacked **`paddingTop: 68px`** / fixed **`100vh`/`1080px`** height used on other desktop room pages, leaving gap below the scene on some viewports.
+- **Fix:** Removed contain override; hero always **`cover` + `center top`**. Account page shell matches penthouse floor / floor-zone layout (`paddingTop: 68px`, `height: 100vh` or `1080px` artboard, `overflow: hidden`).
+- **Files:** `DesktopPenthouseSuiteScene.css`, `desktop/account/page.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
