@@ -31759,3 +31759,15 @@ User supplied a **21:9 Penthouse Suite** reference PNG and asked for a desktop *
 - **`NavBar`** profile icon on **`/desktop/*`** → **`/desktop/account`** (mobile **`/account`** unchanged). Route wrapped in **`AccountRouteGuard`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Penthouse Suite dashboard redo (embedded glass panels)
+
+Follow-up: user said the penthouse image is a **room shell with visible acrylic panels**, not a clickable map — redo with **real dashboard content inside each panel** (filled-reference look). Remove floating white route labels/tooltips/hotspots entirely.
+
+- **Removed** **`PenthouseSuiteHotspot`** + history popups on desktop account page.
+- **Added** **`PenthouseSuiteDashboard`** + **`PenthouseSuiteGlassPanel`** — cover-locked glass cards (marble/acrylic, chrome border, red accent line, icon, title, metric, subtext, CTA) inside each of 12 panel rects via **`DesktopRoomCoverRectAnchor`**.
+- **`penthouseSuiteDashboardData.ts`** — live stats from user/orders/referrals/wishlist/affiliate (tier, member since, DP, tickets, vouchers, digital cash, orders, rewards, referrals, activity list).
+- Panel clicks navigate to existing account routes (no floating tooltips). Tune panel alignment with **`?penthouseSuiteDebug=1`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
