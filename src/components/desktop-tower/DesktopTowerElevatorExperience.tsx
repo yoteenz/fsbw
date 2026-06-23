@@ -6,7 +6,7 @@ import {
   DESKTOP_TOWER_ELEVATOR_SHELL_WIDTH,
 } from '../../constants/desktopTowerEnv';
 import { TOWER_SHELL_HOLO } from '../../constants/desktopTowerElevatorLayout';
-import { formatTowerLevelLabel, type TowerTravelDirection } from '../../constants/desktopTowerMotion';
+import { formatTowerLevelLabel, formatTowerElevatorHoloName, type TowerTravelDirection } from '../../constants/desktopTowerMotion';
 import {
   cancelElevatorVideoTransition,
   getDesktopTowerElevatorVideoSrc,
@@ -71,7 +71,7 @@ export function DesktopTowerElevatorExperience({
       return {
         kicker: 'Boarding',
         level: formatTowerLevelLabel(fromFloor),
-        name: fromFloor.name,
+        name: formatTowerElevatorHoloName(fromFloor),
         accent: true,
       };
     }
@@ -80,7 +80,7 @@ export function DesktopTowerElevatorExperience({
         return {
           kicker: 'Destination',
           level: formatTowerLevelLabel(toFloor),
-          name: toFloor.name,
+          name: formatTowerElevatorHoloName(toFloor),
           accent: true,
         };
       }
@@ -88,21 +88,21 @@ export function DesktopTowerElevatorExperience({
         return {
           kicker: direction === 'up' ? 'Ascending' : 'Descending',
           level: formatTowerLevelLabel(cabinFloor),
-          name: cabinFloor.name,
+          name: formatTowerElevatorHoloName(cabinFloor),
           accent: true,
         };
       }
       return {
         kicker: direction === 'up' ? 'Ascending' : 'Descending',
         level: formatTowerLevelLabel(toFloor),
-        name: toFloor.name,
+        name: formatTowerElevatorHoloName(toFloor),
         accent: true,
       };
     }
     return {
       kicker: 'Destination',
       level: formatTowerLevelLabel(toFloor),
-      name: toFloor.name,
+      name: formatTowerElevatorHoloName(toFloor),
       accent: true,
     };
   }, [cabinFloor, direction, fromFloor, isAtDestination, isAtIntermediate, phase, toFloor]);
