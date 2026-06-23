@@ -226,6 +226,14 @@
   will-change: transform;
 }
 
+.room-directory__card:not(:has(.room-directory__status)) {
+  justify-content: center;
+}
+
+.room-directory__card:not(:has(.room-directory__status)) .room-directory__name {
+  margin-bottom: 0;
+}
+
 .room-directory__card::after {
   content: '';
   position: absolute;
@@ -301,8 +309,8 @@
 .room-directory__status {
   display: block;
   width: 100%;
-  font-family: 'Futura PT Book', sans-serif;
-  font-size: 5px;
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 7px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #959b9b;

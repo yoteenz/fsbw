@@ -211,6 +211,10 @@
   will-change: transform;
 }
 
+.floor-directory__card:not(:has(.floor-directory__status)) {
+  align-items: center;
+}
+
 .floor-directory__card::after {
   content: '';
   position: absolute;
@@ -342,8 +346,8 @@
 .floor-directory__status {
   display: block;
   width: 100%;
-  font-family: 'Futura PT Book', sans-serif;
-  font-size: 5px;
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 7px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #959b9b;
