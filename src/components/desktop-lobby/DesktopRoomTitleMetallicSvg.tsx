@@ -34,6 +34,7 @@ export function DesktopRoomTitleMetallicSvg({ text }: Props) {
       aria-hidden
       overflow="visible"
       role="presentation"
+      height="1em"
     >
       <defs>
         <linearGradient id={ids.body} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -141,17 +142,17 @@ export function DesktopRoomTitleMetallicSvg({ text }: Props) {
       </defs>
 
       <g className="desktop-room-title__foil-stack" textAnchor="middle">
-        <text className={textClass} y="0" dy="0.14em" fill="#120203" filter={`url(#${ids.shadow})`}>
+        <text className={textClass} y="0.5em" dy="0.14em" fill="#120203" filter={`url(#${ids.shadow})`}>
           {text}
         </text>
 
-        <text className={textClass} y="0" dy="0.05em" fill={`url(#${ids.edge})`} opacity="0.92">
+        <text className={textClass} y="0.5em" dy="0.05em" fill={`url(#${ids.edge})`} opacity="0.92">
           {text}
         </text>
 
         <text
           className={textClass}
-          y="0"
+          y="0.5em"
           fill={`url(#${ids.body})`}
           stroke={`url(#${ids.edge})`}
           strokeWidth={0.045}
@@ -161,29 +162,29 @@ export function DesktopRoomTitleMetallicSvg({ text }: Props) {
           {text}
         </text>
 
-        <text className={textClass} y="0" fill={`url(#${ids.inner})`} opacity="0.55">
+        <text className={textClass} y="0.5em" fill={`url(#${ids.inner})`} opacity="0.55">
           {text}
         </text>
 
-        <text className={textClass} y="0" fill={`url(#${ids.body})`} filter={`url(#${ids.bevel})`} opacity="0.98">
+        <text className={textClass} y="0.5em" fill={`url(#${ids.body})`} filter={`url(#${ids.bevel})`} opacity="0.98">
           {text}
         </text>
 
-        <text className={textClass} y="0" fill={`url(#${ids.streak})`} opacity="0.62">
+        <text className={textClass} y="0.5em" fill={`url(#${ids.streak})`} opacity="0.62">
           {text}
         </text>
 
-        <text className={textClass} y="0" fill={`url(#${ids.chrome})`} opacity="0.48">
+        <text className={textClass} y="0.5em" fill={`url(#${ids.chrome})`} opacity="0.48">
           {text}
         </text>
 
-        <text className={textClass} y="0" fill={`url(#${ids.gloss})`} opacity="0.42">
+        <text className={textClass} y="0.5em" fill={`url(#${ids.gloss})`} opacity="0.42">
           {text}
         </text>
 
         <text
           className={textClass}
-          y="0"
+          y="0.5em"
           fill={`url(#${ids.acrylicGrad})`}
           filter={`url(#${ids.acrylicFilter})`}
           opacity="0.36"
