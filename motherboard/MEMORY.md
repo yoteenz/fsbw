@@ -31352,3 +31352,14 @@ User reported the SVG foil room-label change was applied incorrectly: **subtitle
 - Reception zone (empty title) still shows subtitle-only black copy.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — PSA Suite hologram still missing on desktop/tablet (override chain + fix)
+
+User still could not see PSA in PSA Suite on desktop/tablet after the always-visible suite change.
+
+- **Override chain (intentional):** Global floating PSA is hidden on all **`/desktop/*`** via **`PSA_HIDDEN_PATH_PREFIXES`** in **`psaConfig.ts`** — PSA is **suite-only** on desktop. Suite hologram mounts only when **`zoneId === 'psa-suite'`** in **`DesktopFloorZonePage`** (URL **`/desktop/concierge?zone=psa-suite`**). Elevator to Concierge lands on **Reception** (`?zone=reception`) by default — not PSA Suite. Navbar **PSA** quick route and room directory select the correct zone.
+- **Override chain (bugs):** (1) **`loungeTvTheaterMode`** module flag from **`/lobby` TV overlay** could stay **true** after navigating to desktop and made **`variant="suite"`** return **`null`**. (2) Suite holo rendered **inside the room section** at **`z-index: 55`** while **floating nav** portals to **`body`** at **`z-index: 180`** — stacking could bury the holo on some desktop/tablet layouts.
+- **Fix:** **`clearLoungeTvTheaterModeIfOutsideLobby()`** on route change; suite variant ignores theater gate on **`isPsaDesktopPath`**. Desktop/tablet suite PSA now **portals to `document.body`** with **`.psa-suite-root--viewport-portal`** (`position: fixed; top: 68px; z-index: 185`). Phone artboard (≤767px) keeps inline section mount.
+- Pushed **`master`** + **`preview/mobile`**.
+
