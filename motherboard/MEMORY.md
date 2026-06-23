@@ -31573,3 +31573,14 @@ User reported the orange TV debug square only adjusted on **top/left** (right/bo
 - **Close position:** **`LoungeTvCloseButton`** at **`top: 0, right: 0`** on the TV frame; in debug mode the preview close renders on the amber overlay so it aligns with the square corner.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop room labels cover-locked to NO TEXT hero backgrounds
+
+User asked for red room labels + black subtitles (and future desktop room overlays) to stay **locked to the background image** — responsive alignment as the hero scales on different devices.
+
+- **Root cause:** Titles used **viewport %** / **vw** directly while heroes use **`object-fit: cover` + `center top`** — aspect-ratio changes desynced labels from the painted wall band.
+- **Fix:** **`desktopRoomCoverLayout.ts`** maps **image-normalized** placement (existing **`titleTopPct`** / **`centerOffsetPct`**) through cover math; typography scales with **`getDesktopRoomCoverScale`** (not vw). **`DesktopRoomTitle`** + **`DesktopZoneRoomScene`** layer **`measureRef`**; debug drag converts container pixels → image space.
+- **Future overlays:** **`DesktopRoomCoverPointAnchor`** / **`DesktopRoomCoverRectAnchor`** + **`desktopRoomHeroArt.ts`** (1915×821); convention added to **`CORE.md`**. TV lounge frame already uses the same cover pattern.
+- Pushed **`master`** + **`preview/mobile`**.
+
