@@ -96,8 +96,13 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
                   )
                 : null;
               const status = journey
-                ? getElevatorDirectoryStatus(elevatorState)
+                ? getElevatorDirectoryStatus(elevatorState, journey.direction)
                 : getDirectoryFloorStatus(isHere, isHovered);
+
+              const isElevatorFocus =
+                elevatorState === 'boarding' ||
+                elevatorState === 'passing' ||
+                elevatorState === 'destination';
 
               return (
                 <div key={floor.path} className="floor-directory__card-wrap">
@@ -105,14 +110,8 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
                     type="button"
                     className={[
                       'floor-directory__card',
-                      isHere ? 'floor-directory__card--active' : '',
-                      elevatorState === 'passing' || elevatorState === 'boarding'
-                        ? 'floor-directory__card--passing'
-                        : '',
-                      elevatorState === 'destination' || elevatorState === 'arriving'
-                        ? 'floor-directory__card--destination'
-                        : '',
-                      elevatorState === 'arrived' ? 'floor-directory__card--active' : '',
+                      isHere && !journey ? 'floor-directory__card--active' : '',
+                      isElevatorFocus ? 'floor-directory__card--elevator-focus' : '',
                     ]
                       .filter(Boolean)
                       .join(' ')}
@@ -120,7 +119,7 @@ export function FloorNavDrawer({ isOpen, onClose, embedded = false }: Props) {
                     onClick={() => handleSelect(floor.id)}
                     onMouseEnter={() => setHoveredId(floor.id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    aria-current={isHere || elevatorState === 'passing' ? 'true' : undefined}
+                    aria-current={isHere || isElevatorFocus ? 'true' : undefined}
                     aria-label={`Level ${floor.id} ${floor.name}`}
                   >
                     <span className="floor-directory__number">{getDirectoryFloorNumber(floor.id)}</span>

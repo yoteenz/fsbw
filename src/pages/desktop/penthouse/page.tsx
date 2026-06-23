@@ -14,6 +14,7 @@ import { DesktopPenthouseRoomScene } from '../../../components/desktop-lobby/Des
 import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-nav/DesktopFloatingNav';
 import { ExtensionsBoutiqueExperience } from '../../../components/desktop-penthouse/ExtensionsBoutiqueExperience';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
+import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
 
 function PenthouseViewport({
   roomIndex,
@@ -69,6 +70,8 @@ export default function DesktopPenthousePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const roomParam = searchParams.get('room');
   const { pageStyle } = useDesktopTowerPageReveal();
+  const travel = useDesktopTowerTravelOptional();
+  const isTraveling = travel?.isTraveling ?? false;
 
   const roomIndex = useMemo(() => getPenthouseRoomIndexById(roomParam), [roomParam]);
 
@@ -102,6 +105,8 @@ export default function DesktopPenthousePage() {
         overflow: 'hidden',
         background: '#0A0A0A',
         ...pageStyle,
+        opacity: isTraveling ? 0 : pageStyle.opacity,
+        pointerEvents: isTraveling ? 'none' : undefined,
       }}
     >
       <NavBar />

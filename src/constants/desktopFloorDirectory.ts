@@ -9,35 +9,53 @@ export function getDirectoryFloorStatus(isHere: boolean, isHovered: boolean): st
   return null;
 }
 
-export type ElevatorDirectoryCardState = 'boarding' | 'passing' | 'arriving' | 'arrived' | 'destination';
+export type ElevatorDirectoryCardState = 'boarding' | 'passing' | 'destination' | 'arrived';
 
+export type ElevatorDirectoryPhase =
+  | 'boarding'
+  | 'traveling'
+  | 'arrived'
+  | 'opening'
+  | 'exiting';
+
+/** Exactly one floor card is active per phase — no overlapping destination highlight. */
 export function getElevatorDirectoryCardState(
   floorId: number,
   fromFloorId: number,
   toFloorId: number,
   cabinFloorId: number,
-  phase: 'boarding' | 'traveling' | 'arrived' | 'opening' | 'exiting',
+  phase: ElevatorDirectoryPhase,
 ): ElevatorDirectoryCardState | null {
-  if (phase === 'boarding' && floorId === fromFloorId) return 'boarding';
-  if (phase === 'arrived' && floorId === toFloorId) return 'arrived';
-  if (floorId === cabinFloorId && cabinFloorId !== toFloorId) return 'passing';
-  if (floorId === toFloorId && cabinFloorId === toFloorId && phase === 'traveling') return 'arriving';
-  if (floorId === toFloorId && cabinFloorId !== toFloorId) return 'destination';
+  if (phase === 'boarding') {
+    return floorId === fromFloorId ? 'boarding' : null;
+  }
+
+  if (phase === 'traveling' && floorId === cabinFloorId) {
+    if (cabinFloorId === toFloorId) return 'destination';
+    if (cabinFloorId !== fromFloorId) return 'passing';
+    return null;
+  }
+
+  if ((phase === 'arrived' || phase === 'exiting') && floorId === toFloorId) {
+    return 'destination';
+  }
+
   return null;
 }
 
-export function getElevatorDirectoryStatus(state: ElevatorDirectoryCardState | null): string | null {
+export function getElevatorDirectoryStatus(
+  state: ElevatorDirectoryCardState | null,
+  direction?: 'up' | 'down',
+): string | null {
   switch (state) {
     case 'boarding':
       return 'Boarding';
     case 'passing':
-      return 'Passing';
-    case 'arriving':
-      return 'Arriving';
-    case 'arrived':
-      return 'Arrived';
+      return direction === 'up' ? 'Ascending' : 'Descending';
     case 'destination':
       return 'Destination';
+    case 'arrived':
+      return 'Arrived';
     default:
       return null;
   }

@@ -44,49 +44,50 @@ export function DesktopTowerElevatorExperience({
   const [videoPlaying, setVideoPlaying] = useState(false);
 
   const cabinFloor = getDesktopFloorById(cabinFloorId) ?? fromFloor;
-  const isPassingIntermediate =
+  const isAtDestination = phase === 'traveling' && cabinFloorId === toFloor.id;
+  const isAtIntermediate =
     phase === 'traveling' && cabinFloorId !== toFloor.id && cabinFloorId !== fromFloor.id;
-  const isArriving = phase === 'traveling' && cabinFloorId === toFloor.id;
 
   const holo = useMemo((): HoloState => {
     if (phase === 'boarding') {
       return {
-        kicker: 'Current level',
+        kicker: 'Boarding',
         level: formatTowerLevelLabel(fromFloor),
         name: fromFloor.name,
+        accent: true,
       };
     }
     if (phase === 'traveling') {
-      if (isPassingIntermediate) {
+      if (isAtDestination) {
         return {
-          kicker: 'Passing',
-          level: formatTowerLevelLabel(cabinFloor),
-          name: cabinFloor.name,
-          accent: true,
-        };
-      }
-      if (isArriving) {
-        return {
-          kicker: 'Arriving',
+          kicker: 'Destination',
           level: formatTowerLevelLabel(toFloor),
           name: toFloor.name,
           accent: true,
         };
       }
+      if (isAtIntermediate) {
+        return {
+          kicker: direction === 'up' ? 'Ascending' : 'Descending',
+          level: formatTowerLevelLabel(cabinFloor),
+          name: cabinFloor.name,
+          accent: true,
+        };
+      }
       return {
-        kicker: 'Traveling to',
+        kicker: direction === 'up' ? 'Ascending' : 'Descending',
         level: formatTowerLevelLabel(toFloor),
         name: toFloor.name,
         accent: true,
       };
     }
     return {
-      kicker: 'Arrived',
+      kicker: 'Destination',
       level: formatTowerLevelLabel(toFloor),
       name: toFloor.name,
       accent: true,
     };
-  }, [cabinFloor, fromFloor, isArriving, isPassingIntermediate, phase, toFloor]);
+  }, [cabinFloor, direction, fromFloor, isAtDestination, isAtIntermediate, phase, toFloor]);
 
   useEffect(() => {
     warmDesktopTowerElevatorVideo();
@@ -110,7 +111,6 @@ export function DesktopTowerElevatorExperience({
   }, [direction, fromFloor.id, toFloor.id, videoFailed]);
 
   const exiting = phase === 'exiting';
-  const traveling = phase === 'traveling';
   const videoSrc = getDesktopTowerElevatorVideoSrc();
 
   return (
@@ -158,14 +158,6 @@ export function DesktopTowerElevatorExperience({
           <div className="desktop-tower-elevator__holo-label">{holo.kicker}</div>
           <div className="desktop-tower-elevator__holo-level">{holo.level}</div>
           <div className="desktop-tower-elevator__holo-name">{holo.name}</div>
-          {traveling && !isPassingIntermediate && !isArriving ? (
-            <div className="desktop-tower-elevator__holo-counter">
-              <span className="desktop-tower-elevator__holo-counter-label">Passing</span>
-              <span className="desktop-tower-elevator__holo-counter-value">
-                {formatTowerLevelLabel(cabinFloor)} · {cabinFloor.name}
-              </span>
-            </div>
-          ) : null}
         </div>
       </div>
     </div>

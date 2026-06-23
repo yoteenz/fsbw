@@ -12,8 +12,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   getDesktopFloorByPath,
   DESKTOP_FLOORS,
+  DESKTOP_PENTHOUSE_PATH,
+  resolveDesktopFloorZoneId,
   type DesktopFloor,
 } from '../../constants/desktopFloors';
+import { resolveFloorZoneBackground } from '../../constants/desktopFloorZoneBackgrounds';
 import {
   computeTowerTravelDurationMs,
   getDesktopFloorFromHref,
@@ -64,6 +67,25 @@ const DesktopTowerNavContext = createContext<DesktopTowerNavContextValue | null>
 
 function isDesktopTowerPath(pathname: string): boolean {
   return pathname === '/desktop' || pathname.startsWith('/desktop/');
+}
+
+function prefetchDesktopTowerDestination(href: string): void {
+  if (typeof document === 'undefined') return;
+
+  const destFloor = getDesktopFloorFromHref(href, getDesktopFloorByPath);
+  if (!destFloor) return;
+
+  const query = href.includes('?') ? href.split('?')[1] : '';
+  const params = new URLSearchParams(query);
+  const zoneParam =
+    destFloor.path === DESKTOP_PENTHOUSE_PATH ? params.get('room') : params.get('zone');
+  const zoneId = resolveDesktopFloorZoneId(destFloor, zoneParam);
+  const background = resolveFloorZoneBackground(zoneId);
+  if (!background) return;
+
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = background;
 }
 
 export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
@@ -127,10 +149,12 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
       setPhase('boarding');
       setDisplayLevelId(next.fromFloor.id);
       setCabinFloorId(next.fromFloor.id);
+      prefetchDesktopTowerDestination(next.destinationHref);
 
       const startTravel = () => {
         if (journeyRunRef.current !== runId) return;
 
+        navigate(next.destinationHref);
         setPhase('traveling');
         const start = performance.now();
 
@@ -156,7 +180,6 @@ export function DesktopTowerNavProvider({ children }: { children: ReactNode }) {
             if (journeyRunRef.current !== runId) return;
 
             markDesktopTowerArrival();
-            navigate(next.destinationHref);
             setPhase('exiting');
 
             const fadeTimer = window.setTimeout(() => {

@@ -101,32 +101,11 @@ export function waitForDesktopTowerElevatorVideoReady(
   });
 }
 
-function supportsReversePlayback(video: HTMLVideoElement): boolean {
-  const previousRate = video.playbackRate;
-  video.playbackRate = -1;
-  const supported = video.playbackRate === -1;
-  video.playbackRate = previousRate;
-  return supported;
-}
-
+/** Always play forward — reverse playbackRate glitches/stutters in most browsers. */
 function applyElevatorVideoDirection(video: HTMLVideoElement, direction: TowerTravelDirection): void {
-  video.classList.remove('desktop-tower-elevator__shell-media--reverse-fallback');
-  video.style.transform = '';
-
-  if (direction === 'down' && supportsReversePlayback(video)) {
-    video.playbackRate = -1;
-    if (Number.isFinite(video.duration) && video.duration > 0) {
-      video.currentTime = Math.max(0, video.duration - 0.05);
-    }
-    return;
-  }
-
   video.playbackRate = 1;
+  video.classList.toggle('desktop-tower-elevator__shell-media--reverse-fallback', direction === 'down');
   video.currentTime = 0;
-
-  if (direction === 'down') {
-    video.classList.add('desktop-tower-elevator__shell-media--reverse-fallback');
-  }
 }
 
 /** Attach listeners and attempt muted autoplay for the overlay video element. */
@@ -155,11 +134,7 @@ export function bindDesktopTowerElevatorVideoPlayback(
   };
 
   const onCanPlay = () => tryPlay();
-  const onLoadedMetadata = () => {
-    if (direction === 'down') {
-      applyElevatorVideoDirection(video, direction);
-    }
-  };
+  const onLoadedMetadata = () => applyElevatorVideoDirection(video, direction);
   const onPlayingEvent = () => onPlaying();
 
   video.addEventListener('canplay', onCanPlay);
@@ -182,6 +157,5 @@ export function bindDesktopTowerElevatorVideoPlayback(
     video.pause();
     video.playbackRate = 1;
     video.classList.remove('desktop-tower-elevator__shell-media--reverse-fallback');
-    video.style.transform = '';
   };
 }

@@ -12,6 +12,7 @@ import {
 import { resolveFloorZoneBackground } from '../../../constants/desktopFloorZoneBackgrounds';
 import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
+import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   isDesktopArtboardLayoutActive,
@@ -29,6 +30,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
   const [searchParams] = useSearchParams();
   const zoneId = resolveDesktopFloorZoneId(floor, searchParams.get('zone'));
   const { pageStyle } = useDesktopTowerPageReveal();
+  const travel = useDesktopTowerTravelOptional();
+  const isTraveling = travel?.isTraveling ?? false;
   const artboard = isDesktopArtboardLayoutActive();
 
   const zoneIds = useMemo(() => floor.zones.map((zone) => zone.id), [floor.zones]);
@@ -49,6 +52,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         background: '#0A0A0A',
         position: 'relative',
         ...pageStyle,
+        opacity: isTraveling ? 0 : pageStyle.opacity,
+        pointerEvents: isTraveling ? 'none' : undefined,
       }}
     >
       <NavBar />

@@ -253,6 +253,21 @@
     0 0 14px rgba(255, 255, 255, 0.1);
 }
 
+.floor-directory__card--elevator-focus {
+  transform: translate3d(0, -1px, 0) scale(1.015);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.78) 100%);
+  border-color: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 10px 24px rgba(0, 0, 0, 0.08),
+    0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.floor-directory__card--elevator-focus .floor-directory__number,
+.floor-directory__card--elevator-focus .floor-directory__status {
+  color: #eb1c24;
+}
+
 .floor-directory__card--passing {
   transform: translate3d(0, -1px, 0) scale(1.015);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 100%);
