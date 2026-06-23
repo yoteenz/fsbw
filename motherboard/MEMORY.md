@@ -31223,3 +31223,13 @@ User ran Fal locally and supplied **11 text-free JPEG heroes** under Supabase **
 - **Copy:** Reception per user spec — **empty title**, subtitle **`DESIGN. CUSTOMIZE. SLAY.`** Lounge (TV) not in step-3 list — kept **`THE LOUNGE` / `WATCH. LEARN. GET INSPIRED.`**
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Commerce desktop heroes: sign-in + checkout
+
+User supplied two **`Desktop/NO TEXT BG/`** PNGs for commerce pages on desktop (account icon → sign-in when guest; checkout).
+
+- **`desktopNoTextBackgrounds.ts`:** **`DESKTOP_SIGN_IN_PAGE_BACKGROUND`** (`B14FE9FF-…DB61.png`), **`DESKTOP_CHECKOUT_PAGE_BACKGROUND`** (`E041D036-…02A7.png`).
+- **`CommercePageBackground`:** **`src/components/commerce/CommercePageBackground.tsx`** — marble tile below **1024px**; full-bleed hero **`object-fit: cover`** + **`center top`** at **≥1024px** (matches desktop room scenes).
+- Wired on **`/sign-in`** and **`/checkout`** (all checkout subpaths share the page module). Pushed **`master`** + **`preview/mobile`**.
+
