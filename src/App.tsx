@@ -32,6 +32,8 @@ import { DesktopLoungeTvFrameEditorProvider } from './components/desktop-lobby/D
 import { DesktopLoungeTvFrameEditorPanel } from './components/desktop-lobby/DesktopLoungeTvFrameEditorPanel';
 import { DesktopPsaSuiteFrameEditorProvider } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorContext';
 import { DesktopPsaSuiteFrameEditorPanel } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorPanel';
+import { PerspectivePanelDebugProvider } from './components/perspective-panel/PerspectivePanelDebugProvider';
+import { PerspectivePanelDebugToolbar } from './components/perspective-panel/PerspectivePanelDebugToolbar';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { seedShoppingBagMockCartIfEmpty } from './utils/shoppingBagMockCart';
@@ -180,18 +182,21 @@ const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/p
 
 function DesktopRoutesLayout() {
   return (
-    <DesktopRoomTitlePlacementEditorProvider>
-      <DesktopLoungeTvFrameEditorProvider>
-        <DesktopPsaSuiteFrameEditorProvider>
-          <DesktopRouteShell>
-            <Outlet />
-          </DesktopRouteShell>
-          <DesktopRoomTitlePlacementEditorPanel />
-          <DesktopLoungeTvFrameEditorPanel />
-          <DesktopPsaSuiteFrameEditorPanel />
-        </DesktopPsaSuiteFrameEditorProvider>
-      </DesktopLoungeTvFrameEditorProvider>
-    </DesktopRoomTitlePlacementEditorProvider>
+    <PerspectivePanelDebugProvider>
+      <DesktopRoomTitlePlacementEditorProvider>
+        <DesktopLoungeTvFrameEditorProvider>
+          <DesktopPsaSuiteFrameEditorProvider>
+            <DesktopRouteShell>
+              <Outlet />
+            </DesktopRouteShell>
+            <DesktopRoomTitlePlacementEditorPanel />
+            <DesktopLoungeTvFrameEditorPanel />
+            <DesktopPsaSuiteFrameEditorPanel />
+            <PerspectivePanelDebugToolbar />
+          </DesktopPsaSuiteFrameEditorProvider>
+        </DesktopLoungeTvFrameEditorProvider>
+      </DesktopRoomTitlePlacementEditorProvider>
+    </PerspectivePanelDebugProvider>
   );
 }
 

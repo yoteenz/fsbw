@@ -1,0 +1,288 @@
+.perspective-panel-host__warp {
+  box-sizing: border-box;
+}
+
+.perspective-panel-debug-polygon {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.perspective-panel-debug-polygon__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.perspective-panel-debug-polygon__shape {
+  fill: rgba(235, 28, 36, 0.2);
+  stroke: #eb1c24;
+  stroke-width: 2;
+  stroke-dasharray: 8 6;
+  vector-effect: non-scaling-stroke;
+}
+
+.perspective-panel-debug-polygon--selected .perspective-panel-debug-polygon__shape {
+  fill: rgba(235, 28, 36, 0.28);
+  stroke-width: 2.5;
+}
+
+.perspective-panel-debug-polygon--dimmed .perspective-panel-debug-polygon__shape {
+  fill: rgba(235, 28, 36, 0.08);
+  stroke: rgba(235, 28, 36, 0.35);
+}
+
+.perspective-panel-debug-polygon__handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid rgba(235, 28, 36, 0.85);
+  border-radius: 4px;
+  background: rgba(10, 10, 10, 0.82);
+  color: #fff;
+  font-family: 'Futura PT Medium', Futura, Inter, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.perspective-panel-debug-polygon__handle:active {
+  cursor: grabbing;
+}
+
+.perspective-panel-debug-polygon__label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.perspective-panel-debug-polygon__label-id {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(10, 10, 10, 0.78);
+  border: 1px solid rgba(235, 28, 36, 0.65);
+  color: #fff;
+  font-family: 'Futura PT Medium', Futura, Inter, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.perspective-panel-debug-polygon__label-coords {
+  color: rgba(255, 255, 255, 0.85);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+}
+
+.perspective-panel-debug-toolbar {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10050;
+  width: min(320px, calc(100vw - 32px));
+  border: 1px solid rgba(235, 28, 36, 0.55);
+  border-radius: 10px;
+  background: linear-gradient(165deg, rgba(18, 18, 18, 0.96), rgba(8, 8, 8, 0.94));
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  color: #f2f2f2;
+  font-family: 'Futura PT Book', Futura, Inter, sans-serif;
+  backdrop-filter: blur(10px);
+}
+
+.perspective-panel-debug-toolbar--collapsed {
+  width: auto;
+  min-width: 180px;
+}
+
+.perspective-panel-debug-toolbar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.perspective-panel-debug-toolbar__collapse {
+  border: none;
+  background: transparent;
+  color: #eb1c24;
+  font-family: 'Futura PT Medium', Futura, Inter, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.perspective-panel-debug-toolbar__toggle {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ddd;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.perspective-panel-debug-toolbar__body {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perspective-panel-debug-toolbar__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.perspective-panel-debug-toolbar__field select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 12px;
+}
+
+.perspective-panel-debug-toolbar__check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ccc;
+}
+
+.perspective-panel-debug-toolbar__coords {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  color: #ddd;
+}
+
+.perspective-panel-debug-toolbar__coords strong {
+  color: #eb1c24;
+  margin-right: 6px;
+}
+
+.perspective-panel-debug-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.perspective-panel-debug-toolbar__actions button,
+.perspective-panel-debug-toolbar__import button {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #eee;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.perspective-panel-debug-toolbar__save {
+  border-color: rgba(235, 28, 36, 0.65) !important;
+  color: #eb1c24 !important;
+}
+
+.perspective-panel-debug-toolbar__import textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 6px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+  color: #eee;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  resize: vertical;
+}
+
+.perspective-panel-debug-toolbar__status {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8fd48f;
+}
+
+.perspective-panel-debug-toolbar__status--error {
+  color: #ff7b7b;
+}
+
+.perspective-panel-debug-toolbar__hint {
+  margin: 0;
+  font-size: 10px;
+  color: #888;
+}
+
+.perspective-panel-debug-toolbar__hint code {
+  color: #ccc;
+}
+
+/* Reception perspective stacks inside warped panels */
+.reception-perspective-panel {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  pointer-events: auto;
+}
+
+.reception-perspective-panel--center {
+  align-items: center;
+  justify-content: center;
+  padding: 8% 6%;
+}
+
+.reception-perspective-panel--column {
+  gap: 1.1%;
+  padding: 2.5% 4%;
+}
+
+.reception-perspective-panel__row {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+
+.reception-perspective-panel--center .reception-perspective-panel__row {
+  flex: none;
+  width: 100%;
+  height: 100%;
+}

@@ -51,7 +51,7 @@ export default function DesktopAcquisitionPage() {
       <section ref={viewportRef} className="desktop-shopping-bag-page__viewport">
         <DesktopCuratorCheckoutBridgeProvider>
           <DesktopCuratorCheckoutContext.Provider value={true}>
-            <DesktopCuratorSuiteScene measureRef={viewportRef} tabletEntering={entering}>
+            <DesktopCuratorSuiteScene measureRef={viewportRef} panelId="checkout-tablet" tabletEntering={entering}>
               <AcquisitionTabletHost />
             </DesktopCuratorSuiteScene>
           </DesktopCuratorCheckoutContext.Provider>

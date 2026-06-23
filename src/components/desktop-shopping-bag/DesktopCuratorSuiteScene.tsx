@@ -2,35 +2,27 @@ import type { ReactNode, RefObject } from 'react';
 import {
   DESKTOP_SHOPPING_BAG_BACKGROUND_URL,
   DESKTOP_SHOPPING_BAG_IMAGE,
-  DESKTOP_SHOPPING_BAG_TABLET_RECT,
-  isDesktopShoppingBagDebugEnabled,
 } from '../../constants/desktopShoppingBag';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import { CuratorTabletQuadHost } from './CuratorTabletQuadHost';
-import {
-  DesktopShoppingBagTabletDebugProvider,
-  useDesktopShoppingBagTabletQuad,
-} from './DesktopShoppingBagTabletDebugProvider';
-import { DesktopShoppingBagTabletDebugPolygon } from './DesktopShoppingBagTabletDebugPolygon';
-import { DesktopShoppingBagTabletDebugInspector } from './DesktopShoppingBagTabletDebugInspector';
+import type { PerspectivePanelId } from '../../types/perspectivePanel';
+import { PerspectivePanel } from '../perspective-panel/PerspectivePanel';
 import './DesktopShoppingBag.css';
 import './DesktopAcquisition.css';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
   children: ReactNode;
+  panelId?: Extract<PerspectivePanelId, 'curator-tablet' | 'checkout-tablet'>;
   tabletClassName?: string;
   tabletEntering?: boolean;
 };
 
-function DesktopCuratorSuiteSceneInner({
+export function DesktopCuratorSuiteScene({
   measureRef,
   children,
+  panelId = 'curator-tablet',
   tabletClassName = '',
   tabletEntering = false,
 }: Props) {
-  const quad = useDesktopShoppingBagTabletQuad();
-  const debug = isDesktopShoppingBagDebugEnabled();
   const tabletShellClass = [
     'curated-tablet',
     tabletEntering ? 'curated-tablet--acquisition-enter' : '',
@@ -50,39 +42,17 @@ function DesktopCuratorSuiteSceneInner({
         height={DESKTOP_SHOPPING_BAG_IMAGE.height}
       />
       <div className="desktop-shopping-bag-scene__layer">
-        {debug ? (
-          <CuratorTabletQuadHost
-            measureRef={measureRef}
-            quad={quad}
-            image={DESKTOP_SHOPPING_BAG_IMAGE}
-            zIndex={6}
-            className={tabletShellClass}
-          >
-            {children}
-          </CuratorTabletQuadHost>
-        ) : (
-          <DesktopRoomCoverRectAnchor
-            measureRef={measureRef}
-            imageRect={DESKTOP_SHOPPING_BAG_TABLET_RECT}
-            image={DESKTOP_SHOPPING_BAG_IMAGE}
-            zIndex={6}
-            className={tabletShellClass}
-            style={{ pointerEvents: 'auto' }}
-          >
-            {children}
-          </DesktopRoomCoverRectAnchor>
-        )}
-        {debug ? <DesktopShoppingBagTabletDebugPolygon measureRef={measureRef} /> : null}
+        <PerspectivePanel
+          id={panelId}
+          measureRef={measureRef}
+          image={DESKTOP_SHOPPING_BAG_IMAGE}
+          zIndex={6}
+          className={tabletShellClass}
+          style={{ pointerEvents: 'auto' }}
+        >
+          {children}
+        </PerspectivePanel>
       </div>
-      {debug ? <DesktopShoppingBagTabletDebugInspector /> : null}
     </div>
-  );
-}
-
-export function DesktopCuratorSuiteScene(props: Props) {
-  return (
-    <DesktopShoppingBagTabletDebugProvider>
-      <DesktopCuratorSuiteSceneInner {...props} />
-    </DesktopShoppingBagTabletDebugProvider>
   );
 }
