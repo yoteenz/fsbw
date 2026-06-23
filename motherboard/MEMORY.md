@@ -31705,3 +31705,12 @@ User reported red room label + black subtitle text appeared **extremely enlarged
 - **Fix:** Return **`null`** until `isMeasured` (non-zero layer width/height); always compute typography from measured cover box. **`useDesktopRoomCoverMeasure`** now exposes **`isMeasured`** and sync-measures in layout effect. CSS fallbacks changed from **`vw` clamps** to design **min px** (`53px` / `22px`) as a safety net only.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Post sign-in redirect to desktop Reception (tablet/desktop)
+
+User asked that **clients who sign in on desktop/tablet** be **automatically routed to Reception** in the desktop tower (not default `/account`).
+
+- **`signInReturnTo.ts`** — **`DESKTOP_CLIENT_RECEPTION_PATH`** = `/desktop/concierge?zone=reception`; **`isDesktopTabletClientSignInViewport()`** (≥768px, or phone `/desktop/*` artboard). **`resolveReturnToAfterSignIn`** uses Reception when no explicit **`returnTo`** / **`state.from`**; checkout and other **`returnTo`** paths unchanged. Phones on standard mobile routes still default to **`/account`**.
+- Pushed **`master`** + **`preview/mobile`**.
+

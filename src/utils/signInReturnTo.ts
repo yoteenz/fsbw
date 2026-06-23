@@ -1,5 +1,21 @@
+import { DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH } from './desktopRoomTitlePlacementDebug';
+import { isDesktopArtboardLayoutActive } from './desktopPreview';
+
 /** Max length for return path (pathname + search) after sign-in. */
 const MAX_RETURN_LEN = 1024;
+
+/** Concierge floor — Reception (default client landing after sign-in on desktop/tablet). */
+export const DESKTOP_CLIENT_RECEPTION_PATH = '/desktop/concierge?zone=reception';
+
+/**
+ * Tablet (768+) and desktop layouts, including phone `/desktop/*` artboard mode.
+ * Phones on standard mobile routes stay on `/account` after sign-in.
+ */
+export function isDesktopTabletClientSignInViewport(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (isDesktopArtboardLayoutActive()) return true;
+  return window.innerWidth >= DESKTOP_ROOM_TITLE_TABLET_MIN_WIDTH;
+}
 
 /**
  * Build `/sign-in?returnTo=…` so after auth the user returns to the page they came from.
@@ -59,5 +75,10 @@ export function resolveReturnToAfterSignIn(
     if (isSafeInternalPath(t)) return t;
     if ((t.startsWith('/account') || t.startsWith('/wishlist')) && isSafeInternalPath(t)) return t;
   }
+
+  if (isDesktopTabletClientSignInViewport()) {
+    return DESKTOP_CLIENT_RECEPTION_PATH;
+  }
+
   return '/account';
 }
