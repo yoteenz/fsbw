@@ -31859,3 +31859,14 @@ User reported the shopping bag debug square was **not adjustable** on mobile des
 - **Persistence:** **`localStorage`** key **`desktopShoppingBagTabletRect`** while tuning.
 - **Files:** **`desktopShoppingBagTabletDebug.ts`**, **`DesktopShoppingBagTabletDebugProvider`**, **`DesktopShoppingBagTabletDebugRect`**, **`DesktopShoppingBagTabletDebugInspector`**; wired in **`DesktopCuratorSuiteScene`**.
 
+---
+
+## 2026-06-23 — Desktop shopping bag / checkout room background swap
+
+User supplied updated Curator Collection Suite hero: **`527324F7-2F45-4700-9BFA-DFF05672E8B8.png`** (replaces **`9C0F1F93-…017C.png`**).
+
+- **`DESKTOP_SHOPPING_BAG_BACKGROUND_URL`** in **`desktopShoppingBag.ts`** — drives **`/desktop/shopping-bag`**, **`/desktop/acquisition`**, and preload.
+- **`DESKTOP_CHECKOUT_PAGE_BACKGROUND`** in **`desktopNoTextBackgrounds.ts`** — now aliases the same URL (desktop **`/checkout`** **`CommercePageBackground`**).
+- Tablet rect unchanged; re-tune with **`?shoppingBagDebug=1`** if the new art shifts the acrylic screen.
+- Pushed **`master`** + **`preview/mobile`**.
+
