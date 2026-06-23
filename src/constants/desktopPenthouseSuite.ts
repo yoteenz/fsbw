@@ -27,19 +27,7 @@ export type PenthouseSuitePanelId =
   | 'affiliate'
   | 'accountSettings';
 
-export type PenthouseSuitePopupId = 'slayTickets' | 'vouchers' | 'digitalCash';
-
-export type PenthouseSuitePanelAction =
-  | { type: 'navigate'; href: string }
-  | { type: 'popup'; popup: PenthouseSuitePopupId };
-
-export type PenthouseSuitePanelDef = {
-  id: PenthouseSuitePanelId;
-  label: string;
-  ariaLabel: string;
-  rect: FinalSceneHitRect;
-  action: PenthouseSuitePanelAction;
-};
+export type PenthouseSuitePanelRects = Record<PenthouseSuitePanelId, FinalSceneHitRect>;
 
 /** Marble UI wall on the hero — tune with `?penthouseSuiteDebug=1`. */
 const WALL: FinalSceneHitRect = {
@@ -145,92 +133,7 @@ function buildPanelRects(): Record<PenthouseSuitePanelId, FinalSceneHitRect> {
 
 const PANEL_RECTS = buildPanelRects();
 
-export const PENTHOUSE_SUITE_PANELS: readonly PenthouseSuitePanelDef[] = [
-  {
-    id: 'hero',
-    label: 'Membership',
-    ariaLabel: 'Membership overview',
-    rect: PANEL_RECTS.hero,
-    action: { type: 'navigate', href: '/account/rewards' },
-  },
-  {
-    id: 'loyaltyPoints',
-    label: 'Loyalty Points',
-    ariaLabel: 'Loyalty points and rewards',
-    rect: PANEL_RECTS.loyaltyPoints,
-    action: { type: 'navigate', href: '/account/rewards' },
-  },
-  {
-    id: 'slayTickets',
-    label: 'Slay Tickets',
-    ariaLabel: 'Slay tickets balance and history',
-    rect: PANEL_RECTS.slayTickets,
-    action: { type: 'popup', popup: 'slayTickets' },
-  },
-  {
-    id: 'vouchers',
-    label: 'Vouchers',
-    ariaLabel: 'Vouchers and voucher history',
-    rect: PANEL_RECTS.vouchers,
-    action: { type: 'popup', popup: 'vouchers' },
-  },
-  {
-    id: 'digitalCash',
-    label: 'Digital Cash',
-    ariaLabel: 'Digital cash balance and transactions',
-    rect: PANEL_RECTS.digitalCash,
-    action: { type: 'popup', popup: 'digitalCash' },
-  },
-  {
-    id: 'myOrders',
-    label: 'My Orders',
-    ariaLabel: 'My orders',
-    rect: PANEL_RECTS.myOrders,
-    action: { type: 'navigate', href: '/account/orders' },
-  },
-  {
-    id: 'rewardsCollection',
-    label: 'Rewards Collection',
-    ariaLabel: 'Rewards collection and collectibles',
-    rect: PANEL_RECTS.rewardsCollection,
-    action: { type: 'navigate', href: '/account/rewards' },
-  },
-  {
-    id: 'referrals',
-    label: 'Referrals',
-    ariaLabel: 'Referrals',
-    rect: PANEL_RECTS.referrals,
-    action: { type: 'navigate', href: '/account/referrals' },
-  },
-  {
-    id: 'wishlist',
-    label: 'Wishlist',
-    ariaLabel: 'Wishlist and saved items',
-    rect: PANEL_RECTS.wishlist,
-    action: { type: 'navigate', href: '/wishlist' },
-  },
-  {
-    id: 'myActivity',
-    label: 'My Activity',
-    ariaLabel: 'Activity history',
-    rect: PANEL_RECTS.myActivity,
-    action: { type: 'navigate', href: '/account/alerts' },
-  },
-  {
-    id: 'affiliate',
-    label: 'Affiliate',
-    ariaLabel: 'Affiliate dashboard',
-    rect: PANEL_RECTS.affiliate,
-    action: { type: 'navigate', href: '/account/affiliate' },
-  },
-  {
-    id: 'accountSettings',
-    label: 'Account Settings',
-    ariaLabel: 'Account settings, security, addresses, and payment',
-    rect: PANEL_RECTS.accountSettings,
-    action: { type: 'navigate', href: '/account/settings' },
-  },
-] as const;
+export const PENTHOUSE_SUITE_PANEL_RECTS = PANEL_RECTS;
 
 export function isPenthouseSuiteHotspotDebugEnabled(): boolean {
   if (typeof window === 'undefined') return false;

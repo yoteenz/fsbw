@@ -23,12 +23,6 @@
   pointer-events: none;
 }
 
-.desktop-penthouse-suite-scene__hotspots {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
 .desktop-penthouse-suite-page {
   min-height: 100vh;
   display: flex;
