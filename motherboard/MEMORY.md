@@ -32033,3 +32033,23 @@ User reported the **black letterbox below the Penthouse Suite background** was s
 - **Files:** `desktopPenthouseSuite.ts`, `DesktopPenthouseSuiteScene.css`, `DesktopPenthouseSuiteScene.tsx`, `desktop/account/page.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Panel debug reset + tablet account hub routing
+
+User reported **tablet/panel debug keeps resetting position on each adjustment** and **account profile icon on tablet routes to mobile `/account`** instead of **`/desktop/account`** (Penthouse Suite).
+
+- **Panel debug reset:** `PerspectivePanelDebugProvider` reloaded **`localStorage`** on every **`focus`** + **`perspectivePanelMapUpdated`** event, wiping unsaved drags. **`PerspectivePanelFounderBootstrap`** also re-merged cloud on focus. **Fix:** track **dirty** state during drag; **debounced silent draft save** to localStorage; skip reload while dirty; remove focus listeners; tolerate missing **`revision`** in stored JSON.
+- **Tablet account routing:** Added **`desktopCommerceRoutes.ts`** (`resolveAccountHubPath`, `shouldUseDesktopAccountHub`) — **`/desktop/*`** and **768px+** viewports use **`/desktop/account`**. **`AccountHubRedirect`** on **`/account`**; NavBar + checkout/bag menu account icons + **`signInReturnTo`** **`/account` → `/desktop/account`** on tablet.
+
+---
+
+## 2026-06-23 — Cart lines vanishing during panel debug (decoupled from panel saves)
+
+User suspected **panel debug edits/saves** on `/desktop/shopping-bag?panelDebug=1` were wiping **cart items**. Panel debug (`perspectivePanelMap`) and cart (`cartItems`) use **separate localStorage keys** — not directly coupled.
+
+- **Root cause:** **Focus-triggered commerce sync race.** `AccountCommerceSync` pulled cart from Supabase on every **window focus** (Save clicks / panel toolbar focus changes). `useDesktopShoppingBagCart` also reloaded on focus. `syncCartFromApi` could read an **empty local cart** (before hydrate/mock seed) and merge with an **empty server cart**, then write **`[]`** to `cartItems` — wiping tablet UI while nav badge could still show stale `cartCount`.
+- **Fix:** Removed **focus** listeners from `AccountCommerceSync` and `useDesktopShoppingBagCart`; pull on **commerce route entry** + **`signInStateChanged`** only. Added **`prepareLocalCommerceCartBeforeCloudSync()`** (hydrate per-user key + mock seed) before cloud pulls. **`syncCartFromApi`**: snapshot local before GET, re-read after async GET, **refuse to wipe non-empty local with empty server** (schedule cloud push instead). **`pullAccountCommerceFromCloud`**: skip cloud pull while **`isPerspectivePanelDebugEnabled()`** unless `force: true`. Storage listener on shopping bag hook filters to **`cartItems`/`cartCount`** only (ignores `perspectivePanelMap`). **`pushCartWishlistToCloud`**: `cartCount` uses **`cartTotalQuantityUnits`** on conflict retry.
+- **Files:** `cartLocalStorage.ts`, `AccountCommerceSync.tsx`, `CommerceRouteGuard.tsx`, `syncFromApi.ts`, `useDesktopShoppingBagCart.ts`, `pushCartWishlistToCloud.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+

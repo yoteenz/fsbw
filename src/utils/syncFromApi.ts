@@ -7,6 +7,7 @@
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
 import { persistServerProfileQueuesToLocal } from './clientPendingServerSync';
 import { mergeCartItemsUnion, writeStoredCartVersion } from './cartServerSync';
+import { schedulePushCartWishlistToCloud } from './pushCartWishlistToCloud';
 import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
 import { saveCartAndWishlistToUserKeys } from './cartWishlistStorage';
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
@@ -180,17 +181,31 @@ export async function syncOrdersFromApi(): Promise<void> {
 
 export async function syncCartFromApi(): Promise<void> {
   try {
+    const readLocalCart = (): unknown[] => {
+      try {
+        const raw = localStorage.getItem('cartItems');
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    };
+
+    const localBefore = readLocalCart();
     const { items, version } = await getCart();
     const serverArr = Array.isArray(items) ? items : [];
-    let local: unknown[] = [];
-    try {
-      const raw = localStorage.getItem('cartItems');
-      const parsed = raw ? JSON.parse(raw) : [];
-      local = Array.isArray(parsed) ? parsed : [];
-    } catch {
-      local = [];
+    let merged = mergeCartItemsUnion(localBefore, serverArr);
+
+    // Hydrate/mock seed/user edits may have run while GET /api/cart was in flight.
+    const localAfter = readLocalCart();
+    merged = mergeCartItemsUnion(merged, localAfter);
+
+    // Empty cloud cart must not wipe lines that existed locally before this pull.
+    if (merged.length === 0 && localBefore.length > 0) {
+      merged = localBefore;
+      schedulePushCartWishlistToCloud();
     }
-    const merged = mergeCartItemsUnion(local, serverArr);
+
     localStorage.setItem('cartItems', JSON.stringify(merged));
     localStorage.setItem('cartCount', String(cartTotalQuantityUnits(merged as { quantity?: number }[])));
     if (version != null) writeStoredCartVersion(version);

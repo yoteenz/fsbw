@@ -1,38 +1,17 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { isSignedIn } from '../utils/adminAuth';
-import { hydrateGlobalCartFromUserKeyIfEmpty } from '../utils/cartWishlistStorage';
-import { isCreativePreviewMode } from '../utils/creativePreviewMode';
-import { isSupabaseConfigured, getSupabase } from '../utils/supabase';
-import { syncCartFromApi, syncWishlistFromApi } from '../utils/syncFromApi';
-import { dispatchAccountCommerceSyncComplete } from '../utils/cartLocalStorage';
-import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
+import { pullAccountCommerceFromCloud } from '../utils/cartLocalStorage';
 
 /** Routes where bag/checkout UI should hydrate cart + wishlist from cloud before render. */
 const COMMERCE_SYNC_PATH =
   /^\/(bag|checkout|wishlist|desktop\/(shopping-bag|acquisition)(?:\/|$))/;
 
-async function pullAccountCommerceFromCloud(): Promise<void> {
-  if (typeof window === 'undefined' || isCreativePreviewMode()) return;
-  if (!isSignedIn() || !isSupabaseConfigured()) return;
-
-  const supabase = getSupabase();
-  if (!supabase) return;
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session?.access_token) return;
-
-  hydrateGlobalCartFromUserKeyIfEmpty();
-  await Promise.all([syncCartFromApi(), syncWishlistFromApi()]);
-  seedShoppingBagMockCartIfEmpty();
-  dispatchAccountCommerceSyncComplete();
-}
-
 /**
  * Keep cart + wishlist aligned for the signed-in account across mobile `/bag`, desktop
  * `/desktop/shopping-bag`, checkout, and other devices (Supabase GET merge).
+ *
+ * Does not pull on window focus — focus during panel debug / Save clicks was racing
+ * cloud cart over local lines. Sign-in and commerce route entry still hydrate.
  */
 export default function AccountCommerceSync() {
   const location = useLocation();
@@ -47,16 +26,14 @@ export default function AccountCommerceSync() {
   }, [location.pathname, pull]);
 
   useEffect(() => {
-    pull();
-    const onFocus = () => pull();
-    const onSignIn = () => pull();
-    window.addEventListener('focus', onFocus);
+    const onSignIn = () => {
+      void pullAccountCommerceFromCloud({ force: true });
+    };
     window.addEventListener('signInStateChanged', onSignIn);
     return () => {
-      window.removeEventListener('focus', onFocus);
       window.removeEventListener('signInStateChanged', onSignIn);
     };
-  }, [pull]);
+  }, []);
 
   return null;
 }

@@ -100,6 +100,46 @@ export function readCartCountFromStorage(): number {
   return 0;
 }
 
+/** Prepare globals (per-user hydrate, mock seed, clamps) before a cloud cart pull. */
+export function prepareLocalCommerceCartBeforeCloudSync(): void {
+  hydrateGlobalCartFromUserKeyIfEmpty();
+  loadCommerceCartFromStorage();
+}
+
+/**
+ * Pull cart + wishlist from Supabase for signed-in users on commerce routes.
+ * Skipped while perspective panel debug is active so panel saves/focus do not race cart.
+ */
+export async function pullAccountCommerceFromCloud(options?: { force?: boolean }): Promise<void> {
+  if (typeof window === 'undefined') return;
+  const { isCreativePreviewMode } = await import('./creativePreviewMode');
+  if (isCreativePreviewMode()) return;
+
+  const { isSignedIn } = await import('./adminAuth');
+  if (!isSignedIn()) return;
+
+  const { isPerspectivePanelDebugEnabled } = await import('./perspectivePanelDebug');
+  if (!options?.force && isPerspectivePanelDebugEnabled()) return;
+
+  const { isSupabaseConfigured, getSupabase } = await import('./supabase');
+  if (!isSupabaseConfigured()) return;
+
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.access_token) return;
+
+  prepareLocalCommerceCartBeforeCloudSync();
+
+  const { syncCartFromApi, syncWishlistFromApi } = await import('./syncFromApi');
+  await Promise.all([syncCartFromApi(), syncWishlistFromApi()]);
+  seedShoppingBagMockCartIfEmpty();
+  dispatchAccountCommerceSyncComplete();
+}
+
 export function dispatchAccountCommerceSyncComplete(): void {
   if (typeof window === 'undefined') return;
   window.dispatchEvent(new Event(ACCOUNT_COMMERCE_SYNC_EVENT));

@@ -53,14 +53,16 @@ export function useDesktopShoppingBagCart() {
     window.addEventListener('cartUpdated', onChange);
     window.addEventListener('cartItemsChanged', onChange);
     window.addEventListener(ACCOUNT_COMMERCE_SYNC_EVENT, onChange);
-    window.addEventListener('storage', onChange);
-    window.addEventListener('focus', onChange);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key != null && event.key !== 'cartItems' && event.key !== 'cartCount') return;
+      reload();
+    };
+    window.addEventListener('storage', onStorage);
     return () => {
       window.removeEventListener('cartUpdated', onChange);
       window.removeEventListener('cartItemsChanged', onChange);
       window.removeEventListener(ACCOUNT_COMMERCE_SYNC_EVENT, onChange);
-      window.removeEventListener('storage', onChange);
-      window.removeEventListener('focus', onChange);
+      window.removeEventListener('storage', onStorage);
     };
   }, [reload]);
 

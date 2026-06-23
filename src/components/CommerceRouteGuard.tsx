@@ -5,19 +5,16 @@ import { syncCartFromApi } from '../utils/syncFromApi';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
-import { hydrateGlobalCartFromUserKeyIfEmpty } from '../utils/cartWishlistStorage';
-import { seedShoppingBagMockCartIfEmpty } from '../utils/shoppingBagMockCart';
-import { dispatchAccountCommerceSyncComplete } from '../utils/cartLocalStorage';
+import { dispatchAccountCommerceSyncComplete, prepareLocalCommerceCartBeforeCloudSync } from '../utils/cartLocalStorage';
 
 async function hydrateSignedInCommerceCart(): Promise<void> {
   if (!isAppSignedIn()) return;
-  hydrateGlobalCartFromUserKeyIfEmpty();
+  prepareLocalCommerceCartBeforeCloudSync();
   try {
     await syncCartFromApi();
   } catch {
     /* local cart until sync succeeds */
   }
-  seedShoppingBagMockCartIfEmpty();
   dispatchAccountCommerceSyncComplete();
 }
 
@@ -58,9 +55,8 @@ export default function CommerceRouteGuard({ children }: { children: React.React
     let cancelled = false;
     (async () => {
       if (isGuestCommerceAllowedPath(location.pathname)) {
-        hydrateGlobalCartFromUserKeyIfEmpty();
+        prepareLocalCommerceCartBeforeCloudSync();
         await hydrateSignedInCommerceCart();
-        seedShoppingBagMockCartIfEmpty();
         dispatchAccountCommerceSyncComplete();
         if (!cancelled) setAllowed(true);
         return;

@@ -7,6 +7,7 @@ import { isSignedIn } from './adminAuth';
 import { putCart, putWishlist, putOrders, getCart, CartVersionConflictError } from './api';
 import { trackActivity } from './activity';
 import { mergeCartItemsUnion, readStoredCartVersion, writeStoredCartVersion } from './cartServerSync';
+import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -39,7 +40,7 @@ export function schedulePushCartWishlistToCloud(): void {
               const merged = mergeCartItemsUnion(cart, Array.isArray(serverItems) ? serverItems : []);
               const put = await putCart(merged, serverVersion ?? null);
               localStorage.setItem('cartItems', JSON.stringify(merged));
-              localStorage.setItem('cartCount', String(merged.length));
+              localStorage.setItem('cartCount', String(cartTotalQuantityUnits(merged as { quantity?: number }[])));
               if (put.version != null) writeStoredCartVersion(put.version);
               window.dispatchEvent(new CustomEvent('cartItemsChanged'));
               window.dispatchEvent(new Event('cartUpdated'));
