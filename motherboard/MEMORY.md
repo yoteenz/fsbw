@@ -31267,3 +31267,11 @@ User asked to increase **station** panel trigger icon only by **2px** (elevator 
 
 - **`FloatingNavTrigger.css`:** **`.floating-nav-trigger--rooms .floating-nav-trigger__glyph`** **`max-height: 32px`** (station); base glyph / elevator stays **30px**. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Grand Central Lobby: no live title overlay
+
+User asked that **Grand Central Lobby** desktop hero should **not** show room label or subtitle text overlay.
+
+- Removed **`grand-lobby`** from **`desktopRoomTitles.ts`** — **`resolveDesktopRoomTitleCopy`** returns undefined, so **`DesktopZoneRoomScene`** renders no **`DesktopRoomTitle`** for that zone (legacy **`IMG_4013.png`** asset unchanged). Pushed **`master`** + **`preview/mobile`**.
+
