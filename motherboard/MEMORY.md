@@ -31259,3 +31259,11 @@ User asked for floor + station directory cards to **vertically center** the name
 - **`DesktopFloorDirectory.css`:** **`:not(:has(.floor-directory__status))`** → **`align-items: center`** on card grid. **`.floor-directory__status`** **5px → 7px**, **Futura PT Book → Medium**.
 - **`DesktopRoomDirectory.css`:** **`:not(:has(.room-directory__status))`** → **`justify-content: center`**, clear name **`margin-bottom`**. **`.room-directory__status`** same **7px / Medium** bump. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Station panel icon +2px (elevator unchanged)
+
+User asked to increase **station** panel trigger icon only by **2px** (elevator icon unchanged).
+
+- **`FloatingNavTrigger.css`:** **`.floating-nav-trigger--rooms .floating-nav-trigger__glyph`** **`max-height: 32px`** (station); base glyph / elevator stays **30px**. Pushed **`master`** + **`preview/mobile`**.
+
