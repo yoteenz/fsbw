@@ -31808,3 +31808,16 @@ User directive: **stop redesigning dashboard UI** — background image already c
 - **Reception (`zone=reception`):** center = Featured Experience / The Lounge / Watch Now; left/right = single-line destination labels; hrefs still from **`receptionDashboardData.ts`**. **`?receptionDashboardDebug=1`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Panel debug alignment mode (Penthouse Suite + Reception)
+
+User requested a **dedicated PANEL DEBUG MODE** — not styling — to manually drag/resize every dashboard panel until rectangles match illuminated acrylic in the background image, then export coordinates for production layout.
+
+- **Enable:** **`?panelDebug=1`** on **`/desktop/account`** (Penthouse Suite) or lobby floor with **`zone=reception`**.
+- **Behavior:** Hides production **`DesktopPanelTextOverlay`** labels; shows colored semi-transparent rectangles (RED/BLUE/GREEN/PURPLE for Penthouse; YELLOW/ORANGE/CYAN for Reception) with bold uppercase centered labels. Each panel: drag, corner/edge resize, **`resize: both`**, cover-locked via **`DesktopRoomCoverRectAnchor`**.
+- **Inspector:** floating bar — **DEBUG PANELS ON/OFF**, panel picker, editable **x/y/width/height** (0–100 % of hero), **EXPORT PANEL MAP** (JSON clipboard), Reset. Positions auto-save to **`localStorage`** (`desktopPanelDebug:penthouse` / `desktopPanelDebug:reception`).
+- **Files:** **`src/components/desktop-panel-debug/`** (layer, rect, provider, inspector), **`desktopPenthousePanelDebugConfig.ts`**, **`desktopReceptionPanelDebugConfig.ts`**, **`desktopPanelDebugMode.ts`**, **`desktopPanelDebugSeed.ts`** (one-time seed from prior layout math only when storage empty).
+- **CORE.md** updated with panel debug URL + paths.
+- Pushed **`master`** + **`preview/mobile`**.
+
