@@ -34,7 +34,7 @@ export function DesktopRoomTitle({
   const anchorStyle = {
     '--desktop-room-title-top': `${placement.titleTopPct}%`,
     '--desktop-room-title-center-offset': `${placement.centerOffsetPct}%`,
-    '--desktop-room-subtitle-gap': `calc(${placement.subtitleGapPx * 1.43} * 100vw / 1920 + 4px)`,
+    '--desktop-room-subtitle-gap': `calc(${placement.subtitleGapPx * 1.43} * 100vw / 1920 + 8px)`,
   } as CSSProperties;
 
   const labelBody = (
