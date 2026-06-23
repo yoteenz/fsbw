@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 
-function measureBox(el: HTMLElement | null): { width: number; height: number } {
+export function measureDesktopRoomCoverBox(el: HTMLElement | null): { width: number; height: number } {
   if (!el) return { width: 0, height: 0 };
   const width = el.offsetWidth;
   const height = el.offsetHeight;
@@ -19,21 +19,36 @@ export function useDesktopRoomCoverMeasure(
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useLayoutEffect(() => {
-    const el = measureRef.current;
-    if (!el) return;
+    let ro: ResizeObserver | null = null;
 
     const update = () => {
-      const next = measureBox(el);
+      const next = measureDesktopRoomCoverBox(measureRef.current);
       setSize((prev) =>
         prev.width === next.width && prev.height === next.height ? prev : next,
       );
     };
 
-    update();
-    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
-    ro?.observe(el);
-    window.addEventListener('resize', update);
+    const attach = () => {
+      const el = measureRef.current;
+      if (!el) return false;
+      update();
+      ro?.disconnect();
+      ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+      ro?.observe(el);
+      return true;
+    };
 
+    if (!attach()) {
+      const raf = requestAnimationFrame(() => attach());
+      window.addEventListener('resize', update);
+      return () => {
+        cancelAnimationFrame(raf);
+        ro?.disconnect();
+        window.removeEventListener('resize', update);
+      };
+    }
+
+    window.addEventListener('resize', update);
     return () => {
       ro?.disconnect();
       window.removeEventListener('resize', update);

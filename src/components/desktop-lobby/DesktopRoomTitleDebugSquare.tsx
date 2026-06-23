@@ -13,8 +13,11 @@ import {
   useDesktopRoomTitleDebugEnabled,
   useDesktopRoomTitleViewportProfile,
 } from '../../utils/desktopRoomTitlePlacementDebug';
-import { desktopRoomContainerPixelDeltaToImageNormalized } from '../../utils/desktopRoomCoverLayout';
-import { useDesktopRoomCoverMeasure } from '../../hooks/useDesktopRoomCoverMeasure';
+import {
+  mapDesktopRoomContainerPointToImage,
+  mapDesktopRoomTitlePlacementToContainer,
+} from '../../utils/desktopRoomCoverLayout';
+import { measureDesktopRoomCoverBox } from '../../hooks/useDesktopRoomCoverMeasure';
 import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementEditorContext';
 
 type Props = {
@@ -24,15 +27,21 @@ type Props = {
   children: ReactNode;
 };
 
-/** Temporary QA square wrapping title + subtitle — drag moves both in image-normalized space. */
+type DragState = {
+  startX: number;
+  startY: number;
+  startLeftPct: number;
+  startTopPct: number;
+};
+
+/** Temporary QA square wrapping title + subtitle — drag moves both in cover-mapped space. */
 export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, children }: Props) {
   const editor = useDesktopRoomTitlePlacementEditor();
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
   const profileHook = useDesktopRoomTitleViewportProfile();
   const profile = editor?.profile ?? profileHook;
-  const { width, height } = useDesktopRoomCoverMeasure(measureRef);
   const rootRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<{ startX: number; startY: number; topPct: number; offsetPct: number } | null>(null);
+  const dragRef = useRef<DragState | null>(null);
 
   const editEnabled = Boolean(editor?.editEnabled && profile);
   const showSquare = Boolean(debugEnabled && profile);
@@ -49,23 +58,41 @@ export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, c
         return;
       }
 
+      const layer = measureRef.current ?? (rootRef.current?.offsetParent as HTMLElement | null);
+      const { width, height } = measureDesktopRoomCoverBox(layer);
+      if (width <= 0 || height <= 0) return;
+
       const placement = editor.getPlacement(zoneId);
+      const mapped = mapDesktopRoomTitlePlacementToContainer(placement, width, height);
       dragRef.current = {
         startX: event.clientX,
         startY: event.clientY,
-        topPct: placement.titleTopPct,
-        offsetPct: placement.centerOffsetPct,
+        startLeftPct: mapped.leftPct,
+        startTopPct: mapped.topPct,
       };
 
       const onMove = (e: PointerEvent) => {
         const drag = dragRef.current;
-        if (!drag || !profile || width <= 0 || height <= 0) return;
-        const dxPx = e.clientX - drag.startX;
-        const dyPx = e.clientY - drag.startY;
-        const { dx, dy } = desktopRoomContainerPixelDeltaToImageNormalized(dxPx, dyPx, width, height);
+        if (!drag || !editor) return;
+
+        const liveLayer = measureRef.current ?? (rootRef.current?.offsetParent as HTMLElement | null);
+        const { width: w, height: h } = measureDesktopRoomCoverBox(liveLayer);
+        if (w <= 0 || h <= 0) return;
+
+        const dxPct = ((e.clientX - drag.startX) / w) * 100;
+        const dyPct = ((e.clientY - drag.startY) / h) * 100;
+        const imagePoint = mapDesktopRoomContainerPointToImage(
+          {
+            left: (drag.startLeftPct + dxPct) / 100,
+            top: (drag.startTopPct + dyPct) / 100,
+          },
+          w,
+          h,
+        );
+
         editor.patchPlacement(zoneId, {
-          titleTopPct: Math.round((drag.topPct + dy * 100) * 100) / 100,
-          centerOffsetPct: Math.round((drag.offsetPct + dx * 100) * 100) / 100,
+          titleTopPct: Math.round(imagePoint.y * 10000) / 100,
+          centerOffsetPct: Math.round((imagePoint.x - 0.5) * 10000) / 100,
         });
       };
 
@@ -80,7 +107,7 @@ export function DesktopRoomTitleDebugSquare({ zoneId, measureRef, anchorStyle, c
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [editor, isSelected, profile, width, height, zoneId],
+    [editor, isSelected, measureRef, profile, zoneId],
   );
 
   if (!showSquare || !profile) {
