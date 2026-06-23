@@ -31674,3 +31674,13 @@ User asked to add the same **floating crystal diamonds** from the desktop backgr
 - Removed duplicate ambient markup from **`DesktopFloorZonePage`** and **`penthouse/page.tsx`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — PSA Suite blocked station directory (pointer-events)
+
+User could not navigate room-to-room on Concierge floor in **PSA Suite** — **station panel** appeared disabled (not membership gating).
+
+- **Cause:** Portaled **`.psa-suite-root--viewport-portal`** (z 185) applied **`pointer-events: auto`** to full-screen **`.psa-suite-layout`**, intercepting clicks meant for **floating nav** station directory (z 180).
+- **Fix:** **`psa-suite-layout`** is **`pointer-events: none`**; only **`.psa-standing-hologram`**, **`.psa-chat-backdrop`**, and **`.psa-chat-panel`** capture input. Hologram still visible for all users; chat still premium-gated via upgrade modal.
+- Pushed **`master`** + **`preview/mobile`**.
+
