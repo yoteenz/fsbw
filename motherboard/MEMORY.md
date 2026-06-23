@@ -30935,3 +30935,12 @@ Summary of the **whole conversation so far** in this chat: desktop tower polish 
 - **`DesktopFloorDirectory.css`** + **`DesktopRoomDirectory.css`:** frame fills **~8–16%**; cards **~5–12%**; border rings **~28–32%**; active/hover/passing states kept readable but still glassy (~**22–28%** max).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-22 — App update / chunk reload screen restyle
+
+Summary of the **whole conversation so far** in this chat: desktop tower polish through ultra-light nav acrylic; user requested restyle of the **“UPDATING THE APP”** stale-chunk reload screen.
+
+- **`App.tsx` ErrorBoundary:** background **white** (was red); text **#eb1c24** + **`text-transform: uppercase`**; **Reload Page** is plain underlined text (no button box).
+- Pushed **`master`** + **`preview/mobile`**.
+
