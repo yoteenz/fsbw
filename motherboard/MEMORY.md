@@ -31328,3 +31328,15 @@ User requested PSA **always visible on desktop only** without premium/sign-in re
 - **Mobile/global FAB** unchanged (hidden on **`/desktop/*`**, premium required to render).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop room label placement debug squares (desktop + tablet profiles)
+
+User asked for **temporary debug squares** on room labels (title + subtitle coupled), draggable on desktop/tablet with **Save** to lock positions — separate profiles for **desktop** vs **tablet**.
+
+- **Enable:** **`?roomTitleDebug=1`** shows colored anchor squares; **`?roomTitleEdit=1`** enables drag + fixed **Room labels** panel (Save / Reset / Copy JSON). Session-persisted like scene-hit debug.
+- **Profiles:** **desktop** (viewport ≥1024px) = **red** square; **tablet** (768–1023px native layout) = **cyan** square. Phone artboard ≤767px excluded. Saved overrides in **`localStorage`** key **`baw_desktop_room_title_placement_overrides`** per profile per zone.
+- **Drag:** tap square to select, drag moves **`titleTopPct`** + **`centerOffsetPct`** for title+subtitle block together.
+- **Files:** **`desktopRoomTitlePlacementDebug.ts`**, **`desktopRoomTitlePlacementOverrides.ts`**, **`DesktopRoomTitleDebugSquare.tsx`**, **`DesktopRoomTitlePlacementEditorContext.tsx`**, **`DesktopRoomTitlePlacementEditorPanel.tsx`**; wired in **`DesktopFloorZonePage`**, **`DesktopRoomTitle.tsx`**, **`resolveDesktopRoomTitlePlacement`** merges saved overrides at runtime.
+- Pushed **`master`** + **`preview/mobile`**.
+
