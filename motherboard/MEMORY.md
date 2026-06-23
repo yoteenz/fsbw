@@ -31144,3 +31144,14 @@ Same chat, two more requests after the elevator fix.
 - **Note for future agents:** `ScaledDesktopViewport` is shared by BOTH the live phone `/desktop/*` shell (via `DesktopRouteShell`) and the `/desktop-preview` designer page — gate any styling differences on `isDesktopPreviewActive()`. Fixed-position descendants of the scaled stage are contained by the transform, so they anchor to the artboard, not the device viewport.
 - Committed to **`master`** + merged/pushed **`preview/mobile`** (two commits: caption restyle, then artboard fixes).
 
+---
+
+## 2026-06-23 — Elevator: fix DESCENDING stall (reverse scrub rVFC → rAF)
+
+User: "why does the descending elevator get stuck on the elevator screen". Only descents stalled (ascending was fine after the earlier playback-teardown fix).
+
+- **Root cause:** `playElevatorVideoReverseScrub` in `desktopTowerElevatorVideo.ts` drove its scrub loop via `scheduleFrame`, which prefers **`requestVideoFrameCallback`**. rVFC only fires when a **paused** video presents a genuinely new frame; while scrubbing by setting `currentTime`, seeks get coalesced / land on duplicate frames, so rVFC can stop firing → loop halts → `progress` never hits 1 → promise never resolves → `videoPlaybackComplete` never fires → journey hangs until the ~16s `journeyWatchdog`. Ascending uses forward `play()` + the reliable **`ended`** event, so it never had this.
+- **Fix:** reverse-scrub loop now uses **`requestAnimationFrame`** (wall-clock) + `cancelAnimationFrame`, independent of video frame presentation, so elapsed time always reaches the end and the transition completes. Wrapped the initial `currentTime` seek in try/catch. `scheduleFrame`/`cancelFrame` remain for the forward path.
+- **Process note:** a prior attempt's tool calls were echoed but not actually applied (working tree was clean); re-applied and verified `npx tsc --noEmit` clean before committing.
+- Committed to **`master`** + merged/pushed **`preview/mobile`**.
+
