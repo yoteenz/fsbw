@@ -31747,3 +31747,15 @@ User reported the **full elevator MP4** played even for **one-floor** trips — 
 - **Tune:** adjust marker seconds in **`elevatorTransitionConfig.ts`** after reviewing real MP4 timing.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Penthouse Suite desktop account page (hotspot dashboard)
+
+User supplied a **21:9 Penthouse Suite** reference PNG and asked for a desktop **account dashboard** — “The Penthouse Suite” — reached via the **profile icon** in desktop nav. Full-bleed background (unchanged image); **transparent clickable hotspots** aligned to the 12 baked-in panels only; luxury glass hover + red accent tooltips; no extra logos/panels/content outside the grid.
+
+- **`DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL`** — Supabase `97EC97C2-…B35670.png`; **`desktopPenthouseSuite.ts`** — grid-derived normalized rects (hero, 4+3+4 rows) + panel → route/popup map; tune with **`?penthouseSuiteDebug=1`**.
+- **`/desktop/account`** — **`DesktopAccountPage`** + **`DesktopPenthouseSuiteScene`** + **`PenthouseSuiteHotspot`** (cover-locked via **`DesktopRoomCoverRectAnchor`**).
+- **Routes:** loyalty/rewards/hero → **`/account/rewards`**; orders → **`/account/orders`**; referrals, affiliate, settings, wishlist, alerts (activity); Slay Tickets / Vouchers / Digital Cash → existing history popups (**`VoucherHistoryPopup`** extracted to **`components/account/`**).
+- **`NavBar`** profile icon on **`/desktop/*`** → **`/desktop/account`** (mobile **`/account`** unchanged). Route wrapped in **`AccountRouteGuard`**.
+- Pushed **`master`** + **`preview/mobile`**.
+
