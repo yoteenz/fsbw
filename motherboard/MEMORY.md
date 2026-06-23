@@ -31116,3 +31116,16 @@ Summary of the **whole conversation**: user (as "Creative Director") requested a
 - **Strategic recommendations recorded (not yet built):** make the Tower the **master brand metaphor** (bring mobile into it); **map membership tiers to floors** (ascend tower = status/membership progression); free-play shareable Build-A-Wig as acquisition hook.
 - Committed to **`master`** + merged/pushed **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Elevator: fix frozen animation + long arrival delay (per-frame playback teardown)
+
+Continuation of the same chat (audit → desktop tower review → art-direction doc). User reported: after the earlier loop fix, the elevator **animation no longer plays** and there's a **long delay after the cabin reaches the destination floor before the page loads**.
+
+- **Root cause (single bug, both symptoms):** `DesktopTowerNavProvider` passed **`onVideoPlaybackComplete={() => videoPlaybackCompleteRef.current?.()}`** — a new function identity every render. During travel the provider re-renders ~60fps (rAF `setDisplayLevelId`/`setCabinFloorId`). `DesktopTowerElevatorExperience`'s **video playback `useEffect` had `onVideoPlaybackComplete` in its deps**, so it tore down (`cancelElevatorVideoTransition`) and restarted every frame → video never actually played (frozen poster) AND `videoPlaybackComplete` never fired, so `tryFinishTravel` never ran → journey only ended via the ~16s **`journeyWatchdog`** (the "delay before page loads").
+- **Fix:** In `DesktopTowerElevatorExperience.tsx`, store the callback in **`onVideoPlaybackCompleteRef`** (synced via effect) and call **`onVideoPlaybackCompleteRef.current?.()`** in the playback `.then`/`.catch` and the `<video> onError`; **removed `onVideoPlaybackComplete` from the playback effect deps** (now `[direction, phase, videoFailed, videoReady]`). In `DesktopTowerNavProvider.tsx`, memoized **`handleVideoPlaybackComplete`** via `useCallback([])` (defense-in-depth) and passed it instead of the inline arrow.
+- **Result:** video plays once per trip; completion fires at the real clip end so navigation happens promptly after `TOWER_ARRIVED_MS` instead of waiting on the watchdog. `npx tsc --noEmit` clean.
+- **Lesson for future agents:** the tower provider re-renders every animation frame during travel — **never depend on per-render prop/callback identities inside effects in `DesktopTowerElevatorExperience`**; route callbacks through refs or `useCallback`.
+- **Possible follow-up (not done):** the cabin floor-number timeline (`TOWER_TRAVEL_MS_PER_FLOOR` 1500ms/floor) and the elevator video length are independent; for short trips the holo can read "Destination" before the video ends. Align them if arrival should feel snappier.
+- Committed to **`master`** + merged/pushed **`preview/mobile`**.
+
