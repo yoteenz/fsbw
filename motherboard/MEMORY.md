@@ -31430,3 +31430,13 @@ User requested **4px more spacing above** the black subtitle only (between red f
 - **`DesktopRoomTitle.css`** — **`.desktop-room-title__line--subtitle`** **`margin-top: calc(var(--desktop-room-subtitle-gap, 14px) + 4px)`**; subtitle-only lines unchanged (**`margin-top: 0`**).
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Subtitle +4px gap fix (row-gap; why margin looked unchanged)
+
+User reported **4px spacing above black subtitle** did nothing.
+
+- **Why:** **`margin-top: calc(var(--desktop-room-subtitle-gap) + 4px)`** nested a **`calc()` inside `calc()`** because the inline **`--desktop-room-subtitle-gap`** is already **`calc(14.3 * 100vw / 1920)`** — invalid/ignored in some engines; also **`margin-top` on a flex child** is easier to miss vs **`row-gap`** on the anchored column.
+- **Fix:** **`row-gap: var(--desktop-room-subtitle-gap, 18px)`** on **`.desktop-room-title`**; subtitle line **`margin-top: 0`**; bake **`+ 4px`** into TSX **`--desktop-room-subtitle-gap`** (`calc(... * 100vw / 1920 + 4px)`). Subtitle-only rooms unaffected (single flex child).
+- Pushed **`master`** + **`preview/mobile`**.
+
