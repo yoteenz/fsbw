@@ -90,12 +90,17 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   }, [pagePanelIds]);
 
   const reloadFromStorage = useCallback(() => {
+    if (!isPerspectivePanelDebugEnabled()) {
+      setPanelOverrides({});
+      return;
+    }
     if (dirtyRef.current) return;
     setPanelOverrides(loadPerspectivePanelOverrides());
     setSaveStatus('idle');
   }, []);
 
   const scheduleDraftSave = useCallback((map: PerspectivePanelMap) => {
+    if (!isPerspectivePanelDebugEnabled()) return;
     if (draftSaveTimerRef.current != null) {
       window.clearTimeout(draftSaveTimerRef.current);
     }
@@ -108,6 +113,11 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   }, []);
 
   useEffect(() => {
+    if (!debugEnabled) {
+      dirtyRef.current = false;
+      setPanelOverrides({});
+      return;
+    }
     reloadFromStorage();
     const onStorage = (event: StorageEvent) => {
       if (event.key != null && event.key !== PERSPECTIVE_PANEL_STORAGE_KEY) return;
@@ -127,11 +137,14 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
         window.clearTimeout(draftSaveTimerRef.current);
       }
     };
-  }, [reloadFromStorage]);
+  }, [debugEnabled, reloadFromStorage]);
 
   const resolveQuad = useCallback(
-    (id: PerspectivePanelId) => resolvePerspectivePanelQuad(id, panelOverrides),
-    [panelOverrides],
+    (id: PerspectivePanelId) => {
+      if (!debugEnabled) return defaultPerspectivePanelQuad(id);
+      return resolvePerspectivePanelQuad(id, panelOverrides);
+    },
+    [debugEnabled, panelOverrides],
   );
 
   const patchCorner = useCallback(
@@ -301,6 +314,7 @@ export function usePerspectivePanelDebug(): ContextValue | null {
 export function usePerspectivePanelQuad(id: PerspectivePanelId): PerspectivePanelQuad {
   const ctx = useContext(PerspectivePanelDebugContext);
   if (ctx) return ctx.resolveQuad(id);
+  if (!isPerspectivePanelDebugEnabled()) return defaultPerspectivePanelQuad(id);
   return resolvePerspectivePanelQuad(id);
 }
 

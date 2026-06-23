@@ -2,6 +2,7 @@ import type { PerspectivePanelId, PerspectivePanelMap, PerspectivePanelQuad } fr
 import { defaultPerspectivePanelQuad } from '../constants/perspectivePanelConfig';
 import { clampPerspectivePanelQuad, quad4ToPerspectivePanelQuad } from './perspectivePanelQuad';
 import { loadShoppingBagTabletQuad } from './desktopShoppingBagTabletQuad';
+import { isPerspectivePanelDebugEnabled } from './perspectivePanelDebug';
 
 export const PERSPECTIVE_PANEL_STORAGE_KEY = 'perspectivePanelMap';
 export const PERSPECTIVE_PANEL_STORAGE_REVISION = 1;
@@ -95,6 +96,7 @@ export function mergePerspectivePanelMaps(
 }
 
 export function loadPerspectivePanelOverrides(): PerspectivePanelMap {
+  if (!isPerspectivePanelDebugEnabled()) return {};
   const payload = readPerspectivePanelStoragePayload();
   if (!payload) return migrateLegacyShoppingBagTablet({});
   return payload.panels;
@@ -154,6 +156,9 @@ export function resolvePerspectivePanelQuad(
   id: PerspectivePanelId,
   overrides?: PerspectivePanelMap,
 ): PerspectivePanelQuad {
+  if (!isPerspectivePanelDebugEnabled()) {
+    return defaultPerspectivePanelQuad(id);
+  }
   const map = migrateLegacyShoppingBagTablet(overrides ?? loadPerspectivePanelOverrides());
   return map[id] ?? defaultPerspectivePanelQuad(id);
 }

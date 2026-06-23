@@ -32064,3 +32064,14 @@ User reported **cart products still not displayed** on the **desktop shopping ba
 - **Files:** `cartLocalStorage.ts`, `CommerceRouteGuard.tsx`, `AccountCommerceSync.tsx`, `syncFromApi.ts`, `useDesktopShoppingBagCart.ts`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Production ignored perspective override gate (tablet UI invisible)
+
+User said fixes **still overlooked the override** — cart badge could show items while **desktop shopping bag tablet** stayed empty/invisible.
+
+- **Root cause:** After the universal **`PerspectivePanel`** migration, **production always applied `localStorage.perspectivePanelMap` overrides** (and legacy **`desktopShoppingBagTabletRect`** migration) even without **`?panelDebug=1`**. Stale/bad saved quads warp+clip the **`curated-tablet`** shell off-screen — cart data can be fine but **UI is invisible**. Prior fix used shipped **`DESKTOP_SHOPPING_BAG_TABLET_QUAD`** in production and overrides only in debug; that gate was lost.
+- **Fix:** **`resolvePerspectivePanelQuad`** + **`loadPerspectivePanelOverrides`** return shipped **`perspectivePanelConfig`** defaults unless **`isPerspectivePanelDebugEnabled()`** (`?panelDebug=1`, `?shoppingBagDebug=1`, or `window.PANEL_DEBUG`). **`PerspectivePanelDebugProvider`** clears in-memory overrides when debug is off; **`usePerspectivePanelQuad`** uses defaults in production.
+- **Files:** `perspectivePanelStorage.ts`, `PerspectivePanelDebugProvider.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
