@@ -31340,3 +31340,15 @@ User asked for **temporary debug squares** on room labels (title + subtitle coup
 - **Files:** **`desktopRoomTitlePlacementDebug.ts`**, **`desktopRoomTitlePlacementOverrides.ts`**, **`DesktopRoomTitleDebugSquare.tsx`**, **`DesktopRoomTitlePlacementEditorContext.tsx`**, **`DesktopRoomTitlePlacementEditorPanel.tsx`**; wired in **`DesktopFloorZonePage`**, **`DesktopRoomTitle.tsx`**, **`resolveDesktopRoomTitlePlacement`** merges saved overrides at runtime.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Fix desktop room labels: foil titles only, black subtitles
+
+User reported the SVG foil room-label change was applied incorrectly: **subtitles** (e.g. `DESIGN. CUSTOMIZE. SLAY.`, `WATCH. LEARN. GET INSPIRED.`) were given red foil when only **room names** (`HAIR SHOWROOM`, `THE LOUNGE`, `SLAY CAM GALLERY`, etc.) should use foil; red room titles also appeared missing/broken.
+
+- **Fix:** **`DesktopRoomTitle.tsx`** — room **title** → **`DesktopRoomTitleMetallicSvg`** (red foil SVG); **subtitle** → plain **`<p className="desktop-room-title__subtitle">`** with **`color: #000000`**.
+- **`DesktopRoomTitleMetallicSvg.tsx`** — title-only (removed subtitle variant); restored original SVG text stack (`textAnchor="middle"` on `<g>`, per-layer `<text>`).
+- **`DesktopRoomTitle.css`** — restored black subtitle styles; foil SVG styles for title only.
+- Reception zone (empty title) still shows subtitle-only black copy.
+- Pushed **`master`** + **`preview/mobile`**.
+
