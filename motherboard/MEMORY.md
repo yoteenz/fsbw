@@ -31460,3 +31460,13 @@ Follow-up: user saw **room text** after anchor fix but still **no red debug squa
 - **Fix:** **`getDesktopRoomTitleViewportProfile()`** — scaled artboard always uses **`desktop`** profile (same 1920×1080 % grid); removed phone-only null + “phone layout” panel banner.
 - Pushed **`master`** + **`preview/mobile`** (commit **`a89511ec`**).
 
+---
+
+## 2026-06-23 — Black subtitle +4px more gap below foil title
+
+User requested **another 4px** between red foil room title and black subtitle only.
+
+- **`DesktopRoomTitle.tsx`** — **`--desktop-room-subtitle-gap`** offset **`+ 4px` → `+ 8px`** (cumulative +8px above scaled placement gap).
+- **`DesktopRoomTitle.css`** — **`row-gap`** fallback **18px → 22px**.
+- Pushed **`master`** + **`preview/mobile`**.
+
