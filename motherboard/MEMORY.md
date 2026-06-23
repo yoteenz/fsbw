@@ -31304,3 +31304,16 @@ User asked why the **descending** elevator animation works on **tablet** but not
 - **Fix:** Generated **`public/assets/desktop-tower-elevator-reverse.mp4`** (`npm run elevator:reverse-video`) and wired **`DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_URL`** → **`DESKTOP_TOWER_ELEVATOR_VIDEO_REVERSE_LOCAL_PATH`**. Down journeys now **play the reversed clip forward** (same reliable path as ascending). **`resolveDesktopTowerElevatorVideoSrc(direction)`** picks the clip; scrub remains fallback only if reverse asset is absent.
 - **Files:** `desktopTowerElevatorVideo.ts`, `DesktopTowerElevatorExperience.tsx`, `public/assets/desktop-tower-elevator-reverse.mp4`, `.gitignore` (`.elevator-source-tmp.mp4`). Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — PSA desktop suite visibility Q + SVG foil room labels
+
+**PSA not showing (Q):** User asked why PSA was removed on tablet/desktop. **Not removed** — on **2026-06-22** floating PSA was **intentionally hidden** on all **`/desktop/*`** routes; PSA lives **only** in **PSA Suite** (`/desktop/concierge?zone=psa-suite`) as **`PsaStandingHologram`**. Global FAB hidden via **`PSA_HIDDEN_PATH_PREFIXES`**. Suite mount remains in **`DesktopFloorZonePage`**. Widget returns **`null`** if **`!signedIn || !isPremium`** (no teaser UI) — can look removed. Concierge defaults to **Reception**, not PSA Suite.
+
+**SVG foil room labels (implemented):** User requested all desktop room labels as **luxury red foil stamped SVG signage** (not flat CSS text) — deep metallic gradient, dark edges, bright center, chrome streaks, bevel/specular depth, inner reflections, soft shadow, acrylic gloss; preserve Futura PT Book copy/placement/sizing.
+
+- **`DesktopRoomTitleMetallicSvg.tsx`** — layered **`<text>`** with SVG **`linearGradient`** fills + **`feDropShadow`**, **`feSpecularLighting`**, bevel/depth/acrylic filters; title + subtitle variants.
+- **`DesktopRoomTitle.tsx`** — renders metallic SVG lines instead of **`<p>`** + **`background-clip: text`**.
+- **`DesktopRoomTitle.css`** — container/placement unchanged; typography via SVG **`font-size: clamp(...)`** matching prior metrics.
+- Pushed **`master`** + **`preview/mobile`**.
+
