@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: var(--desktop-room-subtitle-gap, 22px);
+  row-gap: var(--desktop-room-subtitle-gap, 14px);
   width: min(92vw, 1400px);
   pointer-events: none;
   text-align: center;
@@ -99,4 +99,9 @@
 .desktop-room-title-debug-square {
   pointer-events: auto;
   z-index: 5;
+}
+
+/* Fixed boost below foil title — must follow `.desktop-room-title__line--subtitle { margin-top: 0 }`. */
+.desktop-room-title__line--title + .desktop-room-title__line--subtitle {
+  margin-top: var(--desktop-room-subtitle-boost, 8px);
 }

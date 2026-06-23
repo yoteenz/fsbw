@@ -1,11 +1,15 @@
-import type { CSSProperties } from 'react';
+import { useSyncExternalStore, type CSSProperties } from 'react';
 import type { DesktopRoomTitlePlacement } from '../../constants/desktopRoomTitlePlacement';
 import { getEffectiveDesktopRoomTitlePlacement } from '../../utils/desktopRoomTitlePlacementOverrides';
 import { useDesktopRoomTitleDebugEnabled } from '../../utils/desktopRoomTitlePlacementDebug';
+import { DESKTOP_PREVIEW_VIEWPORT_WIDTH, getDesktopLayoutViewportWidth, isDesktopArtboardLayoutActive } from '../../utils/desktopPreview';
 import { DesktopRoomTitleMetallicSvg } from './DesktopRoomTitleMetallicSvg';
 import { DesktopRoomTitleDebugSquare } from './DesktopRoomTitleDebugSquare';
 import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementEditorContext';
 import './DesktopRoomTitle.css';
+
+/** Extra space between red foil title and black subtitle (not scaled with placement editor). */
+const DESKTOP_ROOM_SUBTITLE_BOOST_PX = 8;
 
 export type DesktopRoomTitleProps = {
   zoneId: string;
@@ -22,6 +26,14 @@ export function DesktopRoomTitle({
 }: DesktopRoomTitleProps) {
   const editor = useDesktopRoomTitlePlacementEditor();
   const debugEnabled = useDesktopRoomTitleDebugEnabled();
+  const layoutWidth = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener('resize', onStoreChange);
+      return () => window.removeEventListener('resize', onStoreChange);
+    },
+    () => getDesktopLayoutViewportWidth(),
+    () => DESKTOP_PREVIEW_VIEWPORT_WIDTH,
+  );
   const placement = editor
     ? editor.getPlacement(zoneId)
     : (placementProp ?? getEffectiveDesktopRoomTitlePlacement(zoneId));
@@ -31,10 +43,21 @@ export function DesktopRoomTitle({
 
   if (!hasTitle && !hasSubtitle) return null;
 
+  const scaledSubtitleGapPx = (placement.subtitleGapPx * 1.43 * layoutWidth) / 1920;
+  const artboardScale =
+    typeof window !== 'undefined' && isDesktopArtboardLayoutActive()
+      ? window.innerWidth / DESKTOP_PREVIEW_VIEWPORT_WIDTH
+      : 1;
+  const subtitleBoostPx = DESKTOP_ROOM_SUBTITLE_BOOST_PX / artboardScale;
+
   const anchorStyle = {
     '--desktop-room-title-top': `${placement.titleTopPct}%`,
     '--desktop-room-title-center-offset': `${placement.centerOffsetPct}%`,
-    '--desktop-room-subtitle-gap': `calc(${placement.subtitleGapPx * 1.43} * 100vw / 1920 + 8px)`,
+  } as CSSProperties;
+
+  const flexStyle = {
+    '--desktop-room-subtitle-gap': `${scaledSubtitleGapPx}px`,
+    '--desktop-room-subtitle-boost': `${subtitleBoostPx}px`,
   } as CSSProperties;
 
   const labelBody = (
@@ -62,7 +85,7 @@ export function DesktopRoomTitle({
 
   if (!showDebugChrome) {
     return (
-      <div className="desktop-room-title" style={anchorStyle} aria-hidden>
+      <div className="desktop-room-title" style={{ ...anchorStyle, ...flexStyle }} aria-hidden>
         {labelBody}
       </div>
     );
@@ -70,7 +93,11 @@ export function DesktopRoomTitle({
 
   return (
     <DesktopRoomTitleDebugSquare zoneId={zoneId} anchorStyle={anchorStyle}>
-      <div className="desktop-room-title desktop-room-title--anchored-inner" aria-hidden>
+      <div
+        className="desktop-room-title desktop-room-title--anchored-inner"
+        style={flexStyle}
+        aria-hidden
+      >
         {labelBody}
       </div>
     </DesktopRoomTitleDebugSquare>
