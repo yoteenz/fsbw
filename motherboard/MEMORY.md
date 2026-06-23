@@ -31946,3 +31946,17 @@ User still saw **nothing in the desktop cart** on **`fsbw.vercel.app`** after sy
 - **Fix:** **`loadCommerceCartFromStorage()`** (hydrate per-user → seed preview mocks if still empty → parse). Preview mocks allowed when signed in on **`*.vercel.app`**. **`/desktop/shopping-bag`** guest-allowed like **`/bag`**. **`accountCommerceSyncComplete`** event + hook mount reload. NavBar uses **`readCartCountFromStorage()`**.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop shopping bag tablet UI invisible (perspective override)
+
+User reported **nav cart badge shows count (e.g. 2)** but **desktop `/desktop/shopping-bag` screen is completely empty** — only the hero acrylic tablet bezel, no frosted UI (not even empty-state copy). Believed serious CSS/layout overrides were being overlooked.
+
+- **Root cause:** Tablet content was rendered inside **`CuratorTabletQuadHost`** (perspective warp + **`clip-path`**). Stale **`localStorage.desktopShoppingBagTabletRect`** saves from the **old hero** plus **`DesktopShoppingBagTabletDebugProvider`** auto-persisting quad on every mount could warp/clipped the entire **`curated-tablet`** shell off the visible screen. Nav badge read **`cartCount`** separately and could disagree with **`cartItems`**.
+- **Fix:**
+  1. **Production** uses **`DesktopRoomCoverRectAnchor`** + **`DESKTOP_SHOPPING_BAG_TABLET_RECT`** (same pattern as Penthouse/Reception dashboards). **`CuratorTabletQuadHost`** only when **`?shoppingBagDebug=1`**.
+  2. Quad auto-save only in debug mode; layout storage bumped to **v3 + revision** — ignores stale v2 saves.
+  3. **`readCartCountFromStorage()`** derives count from **`cartItems`** and repairs mismatched **`cartCount`**.
+- **Files:** `DesktopCuratorSuiteScene.tsx`, `DesktopShoppingBagTabletDebugProvider.tsx`, `desktopShoppingBagTabletQuad.ts`, `cartLocalStorage.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+
