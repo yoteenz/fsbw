@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { DesktopRoomTitlePlacement } from '../../constants/desktopRoomTitlePlacement';
 import { DESKTOP_ROOM_TITLE_DEFAULT_PLACEMENT } from '../../constants/desktopRoomTitlePlacement';
+import { DesktopRoomTitleMetallicSvg } from './DesktopRoomTitleMetallicSvg';
 import './DesktopRoomTitle.css';
 
 export type DesktopRoomTitleProps = {
@@ -27,8 +28,20 @@ export function DesktopRoomTitle({
 
   return (
     <div className="desktop-room-title" style={style} aria-hidden>
-      {hasTitle ? <p className="desktop-room-title__title">{title}</p> : null}
-      {hasSubtitle ? <p className="desktop-room-title__subtitle">{subtitle}</p> : null}
+      {hasTitle ? (
+        <div className="desktop-room-title__line desktop-room-title__line--title">
+          <DesktopRoomTitleMetallicSvg text={title} variant="title" />
+        </div>
+      ) : null}
+      {hasSubtitle ? (
+        <div
+          className={`desktop-room-title__line desktop-room-title__line--subtitle${
+            hasTitle ? '' : ' desktop-room-title__line--subtitle-only'
+          }`}
+        >
+          <DesktopRoomTitleMetallicSvg text={subtitle} variant="subtitle" />
+        </div>
+      ) : null}
     </div>
   );
 }
