@@ -45,6 +45,8 @@ export function useDesktopShoppingBagCart() {
   }, []);
 
   useEffect(() => {
+    // Guard hydrates localStorage before this page mounts; re-read on mount so the tablet
+    // never sticks on an empty initial snapshot from a parallel sync race.
     reload();
   }, [reload]);
 

@@ -1,22 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { isSupabaseConfigured, getSupabase } from '../utils/supabase';
-import { syncCartFromApi } from '../utils/syncFromApi';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
-import { dispatchAccountCommerceSyncComplete, prepareLocalCommerceCartBeforeCloudSync } from '../utils/cartLocalStorage';
-
-async function hydrateSignedInCommerceCart(): Promise<void> {
-  if (!isAppSignedIn()) return;
-  prepareLocalCommerceCartBeforeCloudSync();
-  try {
-    await syncCartFromApi();
-  } catch {
-    /* local cart until sync succeeds */
-  }
-  dispatchAccountCommerceSyncComplete();
-}
+import { hydrateCommerceCartForRoute } from '../utils/cartLocalStorage';
 
 /**
  * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`, `/checkout/slay-tickets`):
@@ -43,21 +31,17 @@ function isGuestCommerceAllowedPath(pathname: string): boolean {
 
 export default function CommerceRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const [allowed, setAllowed] = useState<boolean | null>(() =>
-    isCreativePreviewMode() ? true : null
-  );
+  const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (isCreativePreviewMode()) {
-      setAllowed(true);
+      void hydrateCommerceCartForRoute().finally(() => setAllowed(true));
       return;
     }
     let cancelled = false;
     (async () => {
       if (isGuestCommerceAllowedPath(location.pathname)) {
-        prepareLocalCommerceCartBeforeCloudSync();
-        await hydrateSignedInCommerceCart();
-        dispatchAccountCommerceSyncComplete();
+        await hydrateCommerceCartForRoute();
         if (!cancelled) setAllowed(true);
         return;
       }
@@ -82,7 +66,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
           if (cancelled) return;
           const { data: d2 } = await client.auth.getSession();
           if (d2.session?.access_token) {
-            await hydrateSignedInCommerceCart();
+            await hydrateCommerceCartForRoute();
             if (!cancelled) setAllowed(true);
             return;
           }
@@ -93,7 +77,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
         if (!cancelled) setAllowed(false);
         return;
       }
-      await hydrateSignedInCommerceCart();
+      await hydrateCommerceCartForRoute();
       setAllowed(true);
     })();
 
@@ -103,7 +87,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
       if (cancelled) return;
       void (async () => {
         if (isGuestCommerceAllowedPath(location.pathname)) {
-          void hydrateSignedInCommerceCart();
+          void hydrateCommerceCartForRoute();
           setAllowed(true);
           return;
         }
@@ -113,7 +97,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
           if (isAppSignedIn()) setAllowed(true);
           else setAllowed(false);
         } else {
-          await hydrateSignedInCommerceCart();
+          await hydrateCommerceCartForRoute();
           setAllowed(true);
         }
       })();

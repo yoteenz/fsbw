@@ -32053,3 +32053,14 @@ User suspected **panel debug edits/saves** on `/desktop/shopping-bag?panelDebug=
 - **Files:** `cartLocalStorage.ts`, `AccountCommerceSync.tsx`, `CommerceRouteGuard.tsx`, `syncFromApi.ts`, `useDesktopShoppingBagCart.ts`, `pushCartWishlistToCloud.ts`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop shopping bag tablet still empty: duplicate route sync race
+
+User reported **cart products still not displayed** on the **desktop shopping bag tablet** after the prior focus-race fix.
+
+- **Root cause:** **Two parallel hydrators on route entry.** `CommerceRouteGuard` and `AccountCommerceSync` both called `syncCartFromApi` when navigating to `/desktop/shopping-bag`. `AccountCommerceSync` could run **before** `prepareLocalCommerceCartBeforeCloudSync` (hydrate per-user key + mock seed), read an empty `cartItems`, merge with empty server cart, and write **`[]`** — then the tablet rendered empty. `CommerceRouteGuard` also called `syncCartFromApi` directly during **panel debug** (bypassing the panel-debug skip). Creative preview mode skipped hydration entirely.
+- **Fix:** Added **`hydrateCommerceCartForRoute()`** as the **single** commerce-route hydrator (prepare → optional cloud merge → mock seed → `accountCommerceSyncComplete`). **`CommerceRouteGuard`** uses only that helper; **`AccountCommerceSync`** now pulls **only on `signInStateChanged`** (not pathname). **`syncCartFromApi`** always prepares local cart first and serializes concurrent calls with an in-flight mutex. Creative preview waits for local hydrate before showing the page.
+- **Files:** `cartLocalStorage.ts`, `CommerceRouteGuard.tsx`, `AccountCommerceSync.tsx`, `syncFromApi.ts`, `useDesktopShoppingBagCart.ts`.
+- Pushed **`master`** + **`preview/mobile`**.
+

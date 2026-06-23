@@ -10,6 +10,7 @@ import { mergeCartItemsUnion, writeStoredCartVersion } from './cartServerSync';
 import { schedulePushCartWishlistToCloud } from './pushCartWishlistToCloud';
 import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
 import { saveCartAndWishlistToUserKeys } from './cartWishlistStorage';
+import { prepareLocalCommerceCartBeforeCloudSync } from './cartLocalStorage';
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
 import {
   isAdminEmail,
@@ -179,50 +180,65 @@ export async function syncOrdersFromApi(): Promise<void> {
   }
 }
 
+let cartApiSyncInFlight: Promise<void> | null = null;
+
 export async function syncCartFromApi(): Promise<void> {
-  try {
-    const readLocalCart = (): unknown[] => {
-      try {
-        const raw = localStorage.getItem('cartItems');
-        const parsed = raw ? JSON.parse(raw) : [];
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    };
-
-    const localBefore = readLocalCart();
-    const { items, version } = await getCart();
-    const serverArr = Array.isArray(items) ? items : [];
-    let merged = mergeCartItemsUnion(localBefore, serverArr);
-
-    // Hydrate/mock seed/user edits may have run while GET /api/cart was in flight.
-    const localAfter = readLocalCart();
-    merged = mergeCartItemsUnion(merged, localAfter);
-
-    // Empty cloud cart must not wipe lines that existed locally before this pull.
-    if (merged.length === 0 && localBefore.length > 0) {
-      merged = localBefore;
-      schedulePushCartWishlistToCloud();
-    }
-
-    localStorage.setItem('cartItems', JSON.stringify(merged));
-    localStorage.setItem('cartCount', String(cartTotalQuantityUnits(merged as { quantity?: number }[])));
-    if (version != null) writeStoredCartVersion(version);
-    const email = getCurrentUserEmailFromStorage();
-    if (email) saveCartAndWishlistToUserKeys(email);
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
-      window.dispatchEvent(new Event('cartUpdated'));
-      window.dispatchEvent(
-        new CustomEvent('cartCountUpdated', {
-          detail: cartTotalQuantityUnits(merged as { quantity?: number }[]),
-        }),
-      );
-    }
-  } catch {
-    // ignore
+  if (cartApiSyncInFlight) {
+    await cartApiSyncInFlight;
+    return;
   }
+
+  cartApiSyncInFlight = (async () => {
+    try {
+      prepareLocalCommerceCartBeforeCloudSync();
+
+      const readLocalCart = (): unknown[] => {
+        try {
+          const raw = localStorage.getItem('cartItems');
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      };
+
+      const localBefore = readLocalCart();
+      const { items, version } = await getCart();
+      const serverArr = Array.isArray(items) ? items : [];
+      let merged = mergeCartItemsUnion(localBefore, serverArr);
+
+      // Hydrate/mock seed/user edits may have run while GET /api/cart was in flight.
+      const localAfter = readLocalCart();
+      merged = mergeCartItemsUnion(merged, localAfter);
+
+      // Empty cloud cart must not wipe lines that existed locally before this pull.
+      if (merged.length === 0 && localBefore.length > 0) {
+        merged = localBefore;
+        schedulePushCartWishlistToCloud();
+      }
+
+      localStorage.setItem('cartItems', JSON.stringify(merged));
+      localStorage.setItem('cartCount', String(cartTotalQuantityUnits(merged as { quantity?: number }[])));
+      if (version != null) writeStoredCartVersion(version);
+      const email = getCurrentUserEmailFromStorage();
+      if (email) saveCartAndWishlistToUserKeys(email);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+        window.dispatchEvent(new Event('cartUpdated'));
+        window.dispatchEvent(
+          new CustomEvent('cartCountUpdated', {
+            detail: cartTotalQuantityUnits(merged as { quantity?: number }[]),
+          }),
+        );
+      }
+    } catch {
+      // ignore
+    } finally {
+      cartApiSyncInFlight = null;
+    }
+  })();
+
+  await cartApiSyncInFlight;
 }
 
 export async function syncWishlistFromApi(): Promise<void> {
