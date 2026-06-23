@@ -9,7 +9,7 @@ import { useDesktopRoomTitlePlacementEditor } from './DesktopRoomTitlePlacementE
 import './DesktopRoomTitle.css';
 
 /** Extra space between red foil title and black subtitle (not scaled with placement editor). */
-const DESKTOP_ROOM_SUBTITLE_BOOST_PX = 2;
+const DESKTOP_ROOM_SUBTITLE_BOOST_PX = 0;
 
 export type DesktopRoomTitleProps = {
   zoneId: string;
