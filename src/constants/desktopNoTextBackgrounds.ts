@@ -1,3 +1,5 @@
+import { DESKTOP_SHOPPING_BAG_BACKGROUND_URL } from './desktopShoppingBag';
+
 /** User-produced text-free desktop room heroes (Supabase `Desktop/NO TEXT BG/`). */
 export const DESKTOP_NO_TEXT_BG_BASE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/NO%20TEXT%20BG';
@@ -20,4 +22,6 @@ export const DESKTOP_NO_TEXT_ROOM_BACKGROUNDS: Readonly<Record<string, string>> 
 
 /** Commerce pages — full-bleed desktop heroes (mobile keeps marble tile). */
 export const DESKTOP_SIGN_IN_PAGE_BACKGROUND = `${DESKTOP_NO_TEXT_BG_BASE}/B14FE9FF-6113-4563-B87D-9021E999DB61.png`;
-export const DESKTOP_CHECKOUT_PAGE_BACKGROUND = `${DESKTOP_NO_TEXT_BG_BASE}/E041D036-5757-42A3-ABE9-8B95A71702A7.png`;
+
+/** Same Curator Collection Suite room as desktop shopping bag / acquisition. */
+export const DESKTOP_CHECKOUT_PAGE_BACKGROUND = DESKTOP_SHOPPING_BAG_BACKGROUND_URL;

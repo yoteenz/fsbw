@@ -6,7 +6,7 @@ import type { FinalSceneHitRect } from './finalLobbySceneAssets';
 
 /** Full-bleed 21:9 Curator's Tablet shopping bag room — do not crop or edit. */
 export const DESKTOP_SHOPPING_BAG_BACKGROUND_URL =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/NO%20TEXT%20BG/9C0F1F93-7797-47B9-B7F2-B708E2DB017C.png';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Desktop/NO%20TEXT%20BG/527324F7-2F45-4700-9BFA-DFF05672E8B8.png';
 
 export const DESKTOP_SHOPPING_BAG_IMAGE = {
   width: DESKTOP_ROOM_HERO_ART_WIDTH,
