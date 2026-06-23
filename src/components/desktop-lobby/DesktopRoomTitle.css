@@ -103,5 +103,5 @@
 
 /* Fixed boost below foil title — must follow `.desktop-room-title__line--subtitle { margin-top: 0 }`. */
 .desktop-room-title__line--title + .desktop-room-title__line--subtitle {
-  margin-top: var(--desktop-room-subtitle-boost, 8px);
+  margin-top: var(--desktop-room-subtitle-boost, 2px);
 }
