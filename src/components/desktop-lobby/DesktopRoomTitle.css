@@ -78,9 +78,9 @@
 .desktop-room-title__subtitle {
   margin: 0;
   padding: 0;
-  font-family: 'Futura PT Book', futuristic-pt, Futura, sans-serif;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, sans-serif;
   font-size: calc(clamp(13px, 1.05vw, 25px) + 6px);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.2;
   text-transform: uppercase;
   letter-spacing: 0.15em;
