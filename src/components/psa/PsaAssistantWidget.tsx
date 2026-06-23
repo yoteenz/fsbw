@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
@@ -35,6 +35,15 @@ import {
   LOUNGE_TV_THEATER_MODE_CHANGED_EVENT,
 } from '../../utils/loungeTvTheaterMode';
 import { isPhoneDesktopArtboardActive } from '../../hooks/useDesktopArtboardPortalTarget';
+import { useSceneCoverHitRect, SCENE_COVER_FALLBACK_MEASURE_REF } from '../../hooks/useSceneCoverHitRect';
+import {
+  DESKTOP_PSA_SUITE_ART_HEIGHT,
+  DESKTOP_PSA_SUITE_ART_WIDTH,
+} from '../../constants/desktopPsaSuiteLayout';
+import { sceneHitLayoutBoxStyle } from '../../utils/sceneHitLayout';
+import { useDesktopPsaSuiteDebugEnabled } from '../../utils/desktopPsaSuiteFrameDebug';
+import { useEffectiveDesktopPsaSuiteFrameConfig } from '../desktop-lobby/DesktopPsaSuiteFrameEditorContext';
+import { DesktopPsaSuiteFrameDebugOverlay } from '../desktop-lobby/DesktopPsaSuiteFrameDebugOverlay';
 import PsaAvatarTrigger from './PsaAvatarTrigger';
 import PsaStandingHologram from './PsaStandingHologram';
 import PsaChatPanel from './PsaChatPanel';
@@ -79,6 +88,7 @@ import './desktopPsaSuite.css';
 
 type PsaAssistantWidgetProps = {
   variant?: 'global' | 'suite';
+  measureRef?: RefObject<HTMLElement | null>;
 };
 
 function draftSelectionsFromPrefill(
@@ -98,7 +108,7 @@ function draftSelectionsFromPrefill(
   return Object.keys(out).length ? out : undefined;
 }
 
-export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantWidgetProps) {
+export default function PsaAssistantWidget({ variant = 'global', measureRef }: PsaAssistantWidgetProps) {
   const isSuite = variant === 'suite';
   const location = useLocation();
   const navigate = useNavigate();
@@ -646,6 +656,25 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
     idleExpressionCycle.expression,
   ]);
 
+  const psaSuiteDebug = useDesktopPsaSuiteDebugEnabled();
+  const frameConfig = useEffectiveDesktopPsaSuiteFrameConfig();
+  const suiteMeasureRef = measureRef ?? SCENE_COVER_FALLBACK_MEASURE_REF;
+  const frameMapped = useSceneCoverHitRect(
+    frameConfig.rect,
+    suiteMeasureRef,
+    { x: frameConfig.screenOffsetX, y: frameConfig.screenOffsetY },
+    { width: DESKTOP_PSA_SUITE_ART_WIDTH, height: DESKTOP_PSA_SUITE_ART_HEIGHT },
+  );
+  const hologramFrameStyle = useMemo(() => {
+    if (!isSuite || !frameMapped) return undefined;
+    return sceneHitLayoutBoxStyle(
+      frameMapped,
+      frameConfig.screenOffsetX,
+      frameConfig.screenOffsetY,
+      frameConfig.layout,
+    );
+  }, [frameConfig, frameMapped, isSuite]);
+
   const chatPanel = (
     <PsaChatPanel
       messages={messages}
@@ -716,12 +745,22 @@ export default function PsaAssistantWidget({ variant = 'global' }: PsaAssistantW
       >
         {isSuite ? (
           <div className="psa-suite-layout">
+            {psaSuiteDebug && frameMapped ? (
+              <DesktopPsaSuiteFrameDebugOverlay
+                measureRef={suiteMeasureRef}
+                mappedRect={frameMapped}
+                screenOffsetX={frameConfig.screenOffsetX}
+                screenOffsetY={frameConfig.screenOffsetY}
+                layout={frameConfig.layout}
+              />
+            ) : null}
             <PsaStandingHologram
               onClick={handleFabClick}
               isOpen={isOpen}
               idle={!isOpen}
               expression={avatarExpression}
               showCta={false}
+              frameStyle={hologramFrameStyle}
               aria-label={isOpen ? 'Hide chat' : 'Open Personal Slay Assistant'}
             />
             {isOpen ? (

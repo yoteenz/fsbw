@@ -68,6 +68,20 @@
   flex-shrink: 0;
 }
 
+.psa-standing-hologram--cover-mapped {
+  left: unset;
+  bottom: unset;
+  transform: none;
+  gap: 0;
+  box-sizing: border-box;
+}
+
+.psa-standing-hologram--cover-mapped .psa-standing-hologram__stage {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
 .psa-standing-hologram__stage {
   position: relative;
   width: clamp(105px, 9.5vw, 182px);

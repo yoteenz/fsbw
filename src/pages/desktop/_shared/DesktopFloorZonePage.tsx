@@ -150,7 +150,9 @@ export default function DesktopFloorZonePage({ floor }: Props) {
 
         <DesktopFloatingNav />
 
-        {zoneId === 'psa-suite' ? <PsaAssistantWidget variant="suite" /> : null}
+        {zoneId === 'psa-suite' ? (
+          <PsaAssistantWidget variant="suite" measureRef={viewportMeasureRef} />
+        ) : null}
       </section>
     </div>
   );

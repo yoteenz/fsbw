@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import {
   PSA_WIDGET_CTA,
   type PsaAvatarExpression,
@@ -13,6 +14,7 @@ type PsaStandingHologramProps = {
   ctaLabel?: string;
   ctaSubline?: string | null;
   showCta?: boolean;
+  frameStyle?: CSSProperties;
   'aria-label'?: string;
 };
 
@@ -24,12 +26,14 @@ export default function PsaStandingHologram({
   ctaLabel = PSA_WIDGET_CTA,
   ctaSubline = null,
   showCta = true,
+  frameStyle,
   'aria-label': ariaLabel = 'Open Personal Slay Assistant',
 }: PsaStandingHologramProps) {
   return (
     <button
       type="button"
-      className="psa-standing-hologram"
+      className={`psa-standing-hologram${frameStyle ? ' psa-standing-hologram--cover-mapped' : ''}`}
+      style={frameStyle}
       onClick={onClick}
       aria-label={ariaLabel}
       aria-expanded={isOpen}

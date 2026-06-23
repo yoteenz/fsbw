@@ -29,6 +29,8 @@ import { DesktopRoomTitlePlacementEditorProvider } from './components/desktop-lo
 import { DesktopRoomTitlePlacementEditorPanel } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorPanel';
 import { DesktopLoungeTvFrameEditorProvider } from './components/desktop-lobby/DesktopLoungeTvFrameEditorContext';
 import { DesktopLoungeTvFrameEditorPanel } from './components/desktop-lobby/DesktopLoungeTvFrameEditorPanel';
+import { DesktopPsaSuiteFrameEditorProvider } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorContext';
+import { DesktopPsaSuiteFrameEditorPanel } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorPanel';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -175,11 +177,14 @@ function DesktopRoutesLayout() {
   return (
     <DesktopRoomTitlePlacementEditorProvider>
       <DesktopLoungeTvFrameEditorProvider>
-        <DesktopRouteShell>
-          <Outlet />
-        </DesktopRouteShell>
-        <DesktopRoomTitlePlacementEditorPanel />
-        <DesktopLoungeTvFrameEditorPanel />
+        <DesktopPsaSuiteFrameEditorProvider>
+          <DesktopRouteShell>
+            <Outlet />
+          </DesktopRouteShell>
+          <DesktopRoomTitlePlacementEditorPanel />
+          <DesktopLoungeTvFrameEditorPanel />
+          <DesktopPsaSuiteFrameEditorPanel />
+        </DesktopPsaSuiteFrameEditorProvider>
       </DesktopLoungeTvFrameEditorProvider>
     </DesktopRoomTitlePlacementEditorProvider>
   );
