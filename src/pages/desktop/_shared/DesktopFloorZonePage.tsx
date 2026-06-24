@@ -22,6 +22,7 @@ import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower
 import { ReceptionDashboard } from '../../../components/desktop-reception/ReceptionDashboard';
 import { DESKTOP_RECEPTION_BACKGROUND_URL } from '../../../constants/desktopReceptionDashboard';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
+import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   isDesktopArtboardLayoutActive,
@@ -101,7 +102,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        background: '#0A0A0A',
+        background: DESKTOP_ROOM_SHELL_BACKGROUND,
         position: 'relative',
         ...pageStyle,
         opacity: isTraveling ? 0 : pageStyle.opacity,
@@ -117,7 +118,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
           height: artboard ? '1012px' : undefined,
           minHeight: artboard ? '1012px' : 0,
           overflow: 'hidden',
-          background: '#0A0A0A',
+          background: DESKTOP_ROOM_SHELL_BACKGROUND,
         }}
       >
         <DesktopZoneRoomScene

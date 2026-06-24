@@ -4,6 +4,7 @@ import { DesktopPenthouseSuiteScene } from '../../../components/desktop-account/
 import { getCurrentUser } from '../../../utils/adminAuth';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL } from '../../../constants/desktopPenthouseSuite';
+import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   isDesktopArtboardLayoutActive,
@@ -41,7 +42,7 @@ export default function DesktopAccountPage() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        background: '#0A0A0A',
+        background: DESKTOP_ROOM_SHELL_BACKGROUND,
         position: 'relative',
       }}
     >
@@ -55,7 +56,7 @@ export default function DesktopAccountPage() {
           height: artboard ? '1012px' : undefined,
           minHeight: artboard ? '1012px' : 0,
           overflow: 'hidden',
-          background: '#0A0A0A',
+          background: DESKTOP_ROOM_SHELL_BACKGROUND,
         }}
       >
         <DesktopPenthouseSuiteScene measureRef={viewportRef} user={userData} />

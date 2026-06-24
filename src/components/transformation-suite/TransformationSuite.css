@@ -2,7 +2,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 .ts-scene__bg {
@@ -27,7 +27,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 .ts-page__viewport {
@@ -35,7 +35,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 .ts-page--artboard .ts-page__viewport {

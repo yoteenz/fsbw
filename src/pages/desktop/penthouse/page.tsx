@@ -7,6 +7,7 @@ import {
   getPenthouseRoomIdByIndex,
   getPenthouseRoomIndexById,
 } from '../../../constants/desktopPenthouseRooms';
+import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
 import { DESKTOP_PENTHOUSE_PATH } from '../../../constants/desktopFloors';
 import { buildDesktopElevatorHref } from '../../../constants/desktopNavQuickRoutes';
 import {
@@ -40,7 +41,7 @@ function PenthouseViewport({
         height: artboard ? '1012px' : undefined,
         minHeight: artboard ? '1012px' : 0,
         overflow: 'hidden',
-        background: '#0A0A0A',
+        background: DESKTOP_ROOM_SHELL_BACKGROUND,
       }}
     >
       <DesktopPenthouseRoomScene
@@ -107,7 +108,7 @@ export default function DesktopPenthousePage() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        background: '#0A0A0A',
+        background: DESKTOP_ROOM_SHELL_BACKGROUND,
         ...pageStyle,
         opacity: isTraveling ? 0 : pageStyle.opacity,
         pointerEvents: isTraveling ? 'none' : undefined,

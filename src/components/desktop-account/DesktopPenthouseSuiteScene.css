@@ -2,7 +2,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 .desktop-penthouse-suite-scene__bg-stack {
@@ -39,7 +39,7 @@
 .desktop-penthouse-suite-page {
   display: flex;
   flex-direction: column;
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 .desktop-penthouse-suite-page__viewport {
@@ -47,7 +47,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 .desktop-penthouse-suite-page--artboard .desktop-penthouse-suite-page__viewport {

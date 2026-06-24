@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 10000;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #ffffff;
   opacity: 1;
   transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: auto;
