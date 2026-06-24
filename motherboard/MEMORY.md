@@ -32174,3 +32174,16 @@ User asked to confirm **all desktop pages** maintain the tiny white floating cry
 - **Shared styling:** `DesktopRoomAmbientOverlay.css` (`.desktop-room-ambient`); zone scene layer `z-index: 0` so particles sit above the hero image.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Global Mansion Debug overlay (dev-only)
+
+User asked for a **global development-only Mansion Debug Overlay** on every desktop page — press **D** to toggle colored interactive region rects with labels, dimensions, position, hover inspection, and a floating control panel (no separate debug routes).
+
+- **`desktopDebugRegistry.ts`:** central registry; Grand Lobby five panels registered (`membership-access-panel`, `mansion-economy-panel`, `mansion-directory-panel`, `welcome-to-mansion-panel`, `house-information-panel`) with cover-locked bounds from `desktopGrandLobbyLayout`.
+- **`desktop-mansion-debug/`:** `MansionDebugProvider` (dev-only via `import.meta.env.DEV`), `MansionDebugLayer`, `MansionDebugControlPanel`, category colors (red nav, blue info, green destinations, purple elevator, orange hotspots, yellow economy).
+- **Shortcuts:** **D** toggle, **Shift+D** labels only, **Ctrl+D** boundaries only; filter checkboxes + page filter chips (All / Lobby / Gallery / Penthouse / Concierge).
+- **Wiring:** `DesktopRoutesLayout` provider + control panel; `useMansionDebugViewportBinding` + `MansionDebugLayer` on all desktop viewport pages (floor zones, penthouse, account, alerts, booking suite, shopping bag, acquisition). Removed legacy `?grandLobbyDebug=1` overlays.
+- **Extensibility:** `useRegisterMansionDebugRegion` for runtime registration on future rooms.
+- Pushed **`master`** + **`preview/mobile`**.
+
