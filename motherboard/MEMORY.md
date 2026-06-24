@@ -32107,6 +32107,17 @@ User provided approved **21:9 Notifications** desktop hero; content must live **
 - **Nav:** Bell icon routes to **`/desktop/notifications`** (was `/account/notifications`); active stroke `#C81C24`.
 - **Debug mode:** **CTRL+SHIFT+D** — draggable/resizable percentage overlays saved to **`desktopNotificationsLayout.ts`** + localStorage; export JSON for seed. Overlays: `recentNotification1–5`, `recentActivityButton`, `featuredNotificationPanel`, `priorityAlert1–5`, `priorityAlertsButton`. Production hidden while debug on.
 - **Production:** Left recent notifications (5 slots + View All Activity), center featured Hair Analysis panel + CTA, right priority alerts (5 slots + View All Alerts). Transparent etched acrylic styling, compact Futura uppercase, red `#EB1C24` accents/dividers, small icons.
-- **Files:** `src/constants/desktopNotifications.ts`, `desktopNotificationsLayout.ts`, `src/types/desktopNotifications.ts`, `src/utils/desktopNotificationsDebug.ts`, `desktopNotificationsLayoutMath.ts`, `src/components/desktop-notifications/*`, `src/pages/desktop/notifications/page.tsx`, `App.tsx`, `NavBar.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — Desktop Alerts room rename + reference UI polish
+
+User provided reference attachment for the luxury Alerts room and asked to **rename route** from `/desktop/notifications` to **`/desktop/alerts`**.
+
+- **Route:** **`/desktop/alerts`** (`DESKTOP_ALERTS_PATH`); `/desktop/notifications` redirects; nav bell → alerts (aria **Alerts**).
+- **UI (reference):** Recent rows — maroon titles, subtext, **timestamp + red dot** right-aligned; thin red row dividers. Priority rows — maroon titles, subtext, **priority label** right (High red, Medium/Low black/gray). Featured — pill **Featured Notification** badge, **Covered By Your Grace** serif title, solid maroon **View Analysis** CTA, left-aligned in panel. Footer CTAs — thin bordered **View All Activity / Alerts →**.
+- **Data fix:** Appointment row body includes full date/time; meta **2 hours ago**.
+- **Files:** `desktopNotifications.ts` (path alias), `NavBar.tsx`, `App.tsx`, `pages/desktop/alerts/page.tsx`, `desktop-notifications/*` components + CSS.
 - Pushed **`master`** + **`preview/mobile`**.
 
