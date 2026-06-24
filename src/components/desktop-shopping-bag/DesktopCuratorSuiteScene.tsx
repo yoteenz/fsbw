@@ -5,6 +5,7 @@ import {
 } from '../../constants/desktopShoppingBag';
 import type { PerspectivePanelId } from '../../types/perspectivePanel';
 import { PerspectivePanel } from '../perspective-panel/PerspectivePanel';
+import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './DesktopShoppingBag.css';
 import './DesktopAcquisition.css';
 
@@ -33,6 +34,7 @@ export function DesktopCuratorSuiteScene({
 
   return (
     <div className="desktop-shopping-bag-scene" aria-label="Curator collection suite">
+      <DesktopRoomAmbientOverlay active />
       <img
         src={DESKTOP_SHOPPING_BAG_BACKGROUND_URL}
         alt=""

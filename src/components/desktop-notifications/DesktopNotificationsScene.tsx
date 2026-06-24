@@ -9,6 +9,7 @@ import { preloadDesktopRoomBackground } from '../../utils/desktopRoomBackgroundC
 import { DesktopNotificationsDebugRect } from './DesktopNotificationsDebugRect';
 import { DesktopNotificationsProductionLayer } from './DesktopNotificationsProductionLayer';
 import { useDesktopNotificationsDebug } from './DesktopNotificationsDebugProvider';
+import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './DesktopNotifications.css';
 
 type Props = {
@@ -25,6 +26,7 @@ export function DesktopNotificationsScene({ measureRef }: Props) {
 
   return (
     <div className="dn-scene" aria-label="Alerts">
+      <DesktopRoomAmbientOverlay active />
       <img
         src={DESKTOP_NOTIFICATIONS_BACKGROUND_URL}
         alt=""

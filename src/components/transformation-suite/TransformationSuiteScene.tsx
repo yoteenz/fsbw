@@ -10,6 +10,7 @@ import { TransformationSuiteDebugCircle } from './TransformationSuiteDebugCircle
 import { TransformationSuiteDebugRect } from './TransformationSuiteDebugRect';
 import { TransformationSuiteProductionLayer } from './TransformationSuiteProductionLayer';
 import { useTransformationSuiteDebug } from './TransformationSuiteDebugProvider';
+import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './TransformationSuite.css';
 
 type Props = {
@@ -26,6 +27,7 @@ export function TransformationSuiteScene({ measureRef }: Props) {
 
   return (
     <div className="ts-scene" aria-label="The Transformation Suite">
+      <DesktopRoomAmbientOverlay active />
       <img
         src={TRANSFORMATION_SUITE_BACKGROUND_URL}
         alt=""

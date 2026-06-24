@@ -7,16 +7,10 @@
   pointer-events: none;
 }
 
-.desktop-zone-room-scene__ambient {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-}
-
 .desktop-zone-room-scene__layer {
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
 

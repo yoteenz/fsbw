@@ -4,6 +4,7 @@ import {
   getDesktopRoomParticleDensity,
   isDesktopRoomAmbientEffectsActive,
 } from '../../utils/desktopRoomAmbientEffects';
+import './DesktopRoomAmbientOverlay.css';
 
 function subscribeAmbient(onChange: () => void): () => void {
   window.addEventListener('resize', onChange);
@@ -25,7 +26,7 @@ export function DesktopRoomAmbientOverlay({ active }: Props) {
   if (!active || !effectsEnabled) return null;
 
   return (
-    <div className="desktop-zone-room-scene__ambient" aria-hidden>
+    <div className="desktop-room-ambient" aria-hidden>
       <div
         style={{
           position: 'absolute',

@@ -1,0 +1,6 @@
+.desktop-room-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}

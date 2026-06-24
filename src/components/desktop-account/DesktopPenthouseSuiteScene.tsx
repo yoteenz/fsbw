@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import { PENTHOUSE_PANEL_DEBUG_PANELS } from '../../constants/desktopPenthousePanelDebugConfig';
 import {
   DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL,
@@ -22,6 +23,7 @@ export function DesktopPenthouseSuiteScene({ measureRef, user }: Props) {
   return (
     <DesktopPanelDebugProvider sceneId="penthouse" panels={PENTHOUSE_PANEL_DEBUG_PANELS}>
       <div className="desktop-penthouse-suite-scene" aria-label="The Penthouse Suite account dashboard">
+        <DesktopRoomAmbientOverlay active />
         <div className="desktop-penthouse-suite-scene__bg-stack" aria-hidden>
           <img
             src={DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL}
