@@ -10,6 +10,7 @@ export const MANSION_DEBUG_ENABLED_KEY = 'mansionDebug:enabled';
 export const MANSION_DEBUG_DISPLAY_MODE_KEY = 'mansionDebug:displayMode';
 export const MANSION_DEBUG_PAGE_FILTER_KEY = 'mansionDebug:pageFilter';
 export const MANSION_DEBUG_FILTERS_KEY = 'mansionDebug:filters';
+export const MANSION_DEBUG_PANEL_POSITION_KEY = 'mansionDebug:panelPosition';
 export const MANSION_DEBUG_UPDATED_EVENT = 'mansionDebugUpdated';
 
 import type { MansionDebugCategory } from '../types/desktopMansionDebug';
@@ -158,4 +159,25 @@ export function registerMansionDebugShortcut(handler: (event: KeyboardEvent) => 
 
   window.addEventListener('keydown', onKeyDown);
   return () => window.removeEventListener('keydown', onKeyDown);
+}
+
+export type MansionDebugPanelPosition = {
+  x: number;
+  y: number;
+};
+
+export function readMansionDebugPanelPosition(): MansionDebugPanelPosition | null {
+  const raw = readSession(MANSION_DEBUG_PANEL_POSITION_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as MansionDebugPanelPosition;
+    if (typeof parsed?.x === 'number' && typeof parsed?.y === 'number') return parsed;
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+export function writeMansionDebugPanelPosition(position: MansionDebugPanelPosition): void {
+  writeSession(MANSION_DEBUG_PANEL_POSITION_KEY, JSON.stringify(position));
 }

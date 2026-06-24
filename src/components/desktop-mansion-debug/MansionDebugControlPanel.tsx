@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   MANSION_DEBUG_FILTER_GROUP_LABELS,
   MANSION_DEBUG_FILTER_GROUPS,
@@ -7,6 +7,7 @@ import {
 import type { MansionDebugDisplayMode } from '../../types/desktopMansionDebug';
 import { DESKTOP_DEBUG_REGISTRY } from '../../constants/desktopDebugRegistry';
 import { useMansionDebug } from './MansionDebugProvider';
+import { useMansionDebugPanelDrag } from './useMansionDebugPanelDrag';
 
 const DISPLAY_MODE_OPTIONS: { id: MansionDebugDisplayMode; label: string }[] = [
   { id: 'full', label: 'Full' },
@@ -35,6 +36,8 @@ const FILTER_SHORT: Partial<Record<(typeof MANSION_DEBUG_FILTER_GROUPS)[number],
 
 export function MansionDebugControlPanel() {
   const debug = useMansionDebug();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const { isDraggable, dragging, panelStyle, onDragHandlePointerDown } = useMansionDebugPanelDrag(panelRef);
   const [savedFlash, setSavedFlash] = useState(false);
   const [exportedFlash, setExportedFlash] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -56,13 +59,25 @@ export function MansionDebugControlPanel() {
     debug.enabled ? 'mansion-debug-panel--active' : '',
     debug.editMode ? 'mansion-debug-panel--editing' : '',
     expanded ? 'mansion-debug-panel--expanded' : 'mansion-debug-panel--collapsed',
+    isDraggable ? 'mansion-debug-panel--draggable' : '',
+    dragging ? 'mansion-debug-panel--dragging' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <div className={panelClass}>
+    <div ref={panelRef} className={panelClass} style={panelStyle}>
       <header className="mansion-debug-panel__header">
+        {isDraggable ? (
+          <div
+            className="mansion-debug-panel__drag-handle"
+            onPointerDown={onDragHandlePointerDown}
+            aria-label="Drag debug panel"
+            title="Drag to move"
+          >
+            <span aria-hidden>⋮⋮</span>
+          </div>
+        ) : null}
         <button
           type="button"
           className="mansion-debug-panel__title-btn"
