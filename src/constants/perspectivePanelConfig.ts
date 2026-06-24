@@ -1,4 +1,7 @@
 import { DESKTOP_SHOPPING_BAG_TABLET_QUAD } from './desktopShoppingBag';
+import {
+  defaultShoppingBagRegionPerspectiveQuad,
+} from './desktopShoppingBagPerspectivePanels';
 import { DESKTOP_LOUNGE_TV_HIT_REGION } from './desktopLoungeTvLayout';
 import { DESKTOP_PSA_SUITE_HOLOGRAM_HIT_REGION } from './desktopPsaSuiteLayout';
 import { EXTENSIONS_WALL_HOTSPOT_RECT } from './desktopExtensionsBoutique';
@@ -68,10 +71,46 @@ export const PERSPECTIVE_PANEL_DEFINITIONS: PerspectivePanelDefinition[] = [
     points: quad4ToPerspectivePanelQuad(DESKTOP_SHOPPING_BAG_TABLET_QUAD),
   },
   {
+    id: 'shopping-bag-collection-header',
+    label: 'Collection Header',
+    page: 'shopping-bag',
+    points: defaultShoppingBagRegionPerspectiveQuad('collectionHeader'),
+  },
+  {
+    id: 'shopping-bag-cart-gallery',
+    label: 'Cart Gallery',
+    page: 'shopping-bag',
+    points: defaultShoppingBagRegionPerspectiveQuad('cartGallery'),
+  },
+  {
+    id: 'shopping-bag-acquisition-summary',
+    label: 'Acquisition Summary',
+    page: 'shopping-bag',
+    points: defaultShoppingBagRegionPerspectiveQuad('acquisitionSummary'),
+  },
+  {
+    id: 'shopping-bag-empty-cta',
+    label: 'Empty Collection CTA',
+    page: 'shopping-bag',
+    points: defaultShoppingBagRegionPerspectiveQuad('emptyCollectionCta'),
+  },
+  {
     id: 'checkout-tablet',
     label: 'Checkout Tablet',
     page: 'acquisition',
     points: quad4ToPerspectivePanelQuad(DESKTOP_SHOPPING_BAG_TABLET_QUAD),
+  },
+  {
+    id: 'acquisition-collection-list',
+    label: 'Checkout Collection List',
+    page: 'acquisition',
+    points: defaultShoppingBagRegionPerspectiveQuad('cartGallery'),
+  },
+  {
+    id: 'acquisition-summary-panel',
+    label: 'Acquisition Summary Panel',
+    page: 'acquisition',
+    points: defaultShoppingBagRegionPerspectiveQuad('acquisitionSummary'),
   },
   {
     id: 'signin-tablet',

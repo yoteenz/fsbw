@@ -29,7 +29,8 @@ export function CuratedCollectionTablet({
   const isEmpty = cartItems.length === 0;
 
   return (
-    <div aria-label="Curated collection tablet">
+    <div className="acrylic-glass-surface__content" aria-label="Curated collection tablet">
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <div className="curated-tablet__shimmer" aria-hidden />
 
       {isEmpty ? (

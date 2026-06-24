@@ -45,6 +45,10 @@ import {
 } from './desktopRoomHeroArt';
 import { DESKTOP_SHOPPING_BAG_IMAGE } from './desktopShoppingBag';
 import {
+  ACQUISITION_REGION_TO_PERSPECTIVE_PANEL,
+  SHOPPING_BAG_REGION_TO_PERSPECTIVE_PANEL,
+} from './desktopShoppingBagPerspectivePanels';
+import {
   DESKTOP_SHOPPING_BAG_LAYOUT_SEED,
   desktopShoppingBagRectToImageRect,
 } from './desktopShoppingBagLayout';
@@ -192,7 +196,6 @@ function shoppingBagRegion(
   component: string,
   dataSource?: string,
   route?: string,
-  perspectivePanelId?: 'curator-tablet',
 ): MansionDebugRegion {
   return {
     id,
@@ -204,7 +207,7 @@ function shoppingBagRegion(
     component,
     route,
     dataSource,
-    perspectivePanelId,
+    perspectivePanelId: SHOPPING_BAG_REGION_TO_PERSPECTIVE_PANEL[regionId],
     bounds: shoppingBagBounds(regionId),
   };
 }
@@ -217,8 +220,8 @@ function acquisitionRegion(
   type: MansionDebugRegionType,
   component: string,
   dataSource?: string,
-  perspectivePanelId?: 'checkout-tablet',
 ): MansionDebugRegion {
+  const perspectivePanelId = ACQUISITION_REGION_TO_PERSPECTIVE_PANEL[regionId];
   return {
     id,
     page: 'acquisition',
@@ -441,8 +444,6 @@ const SHOPPING_BAG_REGIONS: MansionDebugRegion[] = [
     'hotspot',
     'PerspectivePanel',
     'curator-tablet',
-    undefined,
-    'curator-tablet',
   ),
   shoppingBagRegion(
     'collection-header',
@@ -491,7 +492,6 @@ const ACQUISITION_REGIONS: MansionDebugRegion[] = [
     'room-hotspot',
     'hotspot',
     'PerspectivePanel',
-    'checkout-tablet',
     'checkout-tablet',
   ),
   acquisitionRegion(

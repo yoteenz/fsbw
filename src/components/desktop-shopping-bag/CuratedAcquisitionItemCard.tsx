@@ -50,10 +50,15 @@ export function CuratedAcquisitionItemCard({
 
   return (
     <article
-      className={['curated-acquisition-item', removing ? 'curated-acquisition-item--removing' : '']
+      className={[
+        'curated-acquisition-item',
+        'acrylic-glass-surface',
+        removing ? 'curated-acquisition-item--removing' : '',
+      ]
         .filter(Boolean)
         .join(' ')}
     >
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <button
         type="button"
         className="curated-acquisition-item__image-btn"

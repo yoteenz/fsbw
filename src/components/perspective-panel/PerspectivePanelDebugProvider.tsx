@@ -30,6 +30,7 @@ import {
   loadPerspectivePanelOverrides,
   PERSPECTIVE_PANEL_STORAGE_KEY,
   PERSPECTIVE_PANEL_UPDATED_EVENT,
+  resolveEffectivePerspectivePanelQuad,
   resolvePerspectivePanelQuad,
   savePerspectivePanelOverrides,
 } from '../../utils/perspectivePanelStorage';
@@ -169,7 +170,7 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
 
   const resolveQuad = useCallback(
     (id: PerspectivePanelId) => {
-      if (!debugEnabled) return defaultPerspectivePanelQuad(id);
+      if (!debugEnabled) return resolveEffectivePerspectivePanelQuad(id);
       return resolvePerspectivePanelQuad(id, panelOverrides);
     },
     [debugEnabled, panelOverrides],
@@ -342,9 +343,8 @@ export function usePerspectivePanelDebug(): ContextValue | null {
 
 export function usePerspectivePanelQuad(id: PerspectivePanelId): PerspectivePanelQuad {
   const ctx = useContext(PerspectivePanelDebugContext);
-  if (ctx) return ctx.resolveQuad(id);
-  if (!isPerspectivePanelDebugEnabled()) return defaultPerspectivePanelQuad(id);
-  return resolvePerspectivePanelQuad(id);
+  if (ctx?.debugEnabled) return ctx.resolveQuad(id);
+  return resolveEffectivePerspectivePanelQuad(id);
 }
 
 export function panelHasCustomQuad(id: PerspectivePanelId, quad: PerspectivePanelQuad): boolean {

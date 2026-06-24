@@ -7,7 +7,6 @@ import {
 } from '../../constants/perspectivePanelConfig';
 import type { PerspectivePanelId } from '../../types/perspectivePanel';
 import { canAccessPageDebugMode } from '../../utils/adminAuth';
-import { isPerspectivePanelDebugEnabled } from '../../utils/perspectivePanelDebug';
 import { usePerspectivePanelDebug } from './PerspectivePanelDebugProvider';
 import './perspectivePanelDebug.css';
 
@@ -44,7 +43,7 @@ export function PerspectivePanelDebugToolbar() {
     window.setTimeout(() => setImportStatus(null), 2200);
   }, [editor, importText]);
 
-  if (!isPerspectivePanelDebugEnabled() || !editor) return null;
+  if (!editor?.debugEnabled) return null;
 
   const panel = PERSPECTIVE_PANEL_BY_ID[editor.selectedPanelId];
 

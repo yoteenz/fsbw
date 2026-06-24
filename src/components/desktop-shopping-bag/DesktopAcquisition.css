@@ -33,6 +33,7 @@
   gap: clamp(8px, 2cqi, 14px);
   padding: clamp(8px, 1.8cqi, 12px) clamp(10px, 2.2cqi, 14px);
   margin-top: auto;
+  border-radius: var(--curated-inner-radius, clamp(6px, 1.6cqi, 12px));
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.2) 100%);
   border: 1px solid rgba(255, 255, 255, 0.48);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
@@ -310,6 +311,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: clamp(6px, 1.6cqi, 10px);
   padding: clamp(6px, 1.4cqi, 10px);
+  border-radius: var(--curated-inner-radius, clamp(6px, 1.6cqi, 12px));
   background: linear-gradient(165deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%);
   border: 1px solid rgba(255, 255, 255, 0.38);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);

@@ -5,8 +5,10 @@ import {
 } from '../../constants/desktopShoppingBag';
 import type { PerspectivePanelId } from '../../types/perspectivePanel';
 import { PerspectivePanel } from '../perspective-panel/PerspectivePanel';
+import { PerspectivePanelPageDebugOverlays } from '../perspective-panel/PerspectivePanelPageDebugOverlays';
 import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './DesktopShoppingBag.css';
+import './acrylicGlass.css';
 import './DesktopAcquisition.css';
 
 type Props = {
@@ -24,8 +26,10 @@ export function DesktopCuratorSuiteScene({
   tabletClassName = '',
   tabletEntering = false,
 }: Props) {
+  const perspectivePage = panelId === 'checkout-tablet' ? 'acquisition' : 'shopping-bag';
   const tabletShellClass = [
     'curated-tablet',
+    'acrylic-glass-surface',
     tabletEntering ? 'curated-tablet--acquisition-enter' : '',
     tabletClassName,
   ]
@@ -54,6 +58,11 @@ export function DesktopCuratorSuiteScene({
         >
           {children}
         </PerspectivePanel>
+        <PerspectivePanelPageDebugOverlays
+          measureRef={measureRef}
+          page={perspectivePage}
+          image={DESKTOP_SHOPPING_BAG_IMAGE}
+        />
       </div>
     </div>
   );

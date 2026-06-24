@@ -1,0 +1,62 @@
+/**
+ * Luxury acrylic refraction stack — crystal edge catch, diagonal light bend,
+ * rose-tinted base. Apply to perspective-warped tablet shells and inner glass panels.
+ */
+.acrylic-glass-surface {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.acrylic-glass-surface::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 20%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.85) 80%,
+    transparent 100%
+  );
+}
+
+.acrylic-glass-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(
+    148deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.08) 30%,
+    transparent 55%,
+    rgba(200, 28, 36, 0.018) 100%
+  );
+}
+
+.acrylic-glass-surface__rose-base {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(0deg, rgba(200, 28, 36, 0.028) 0%, transparent 100%);
+}
+
+.acrylic-glass-surface__content {
+  position: relative;
+  z-index: 2;
+}

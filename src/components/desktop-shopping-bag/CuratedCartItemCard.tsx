@@ -44,11 +44,13 @@ export function CuratedCartItemCard({
     <article
       className={[
         'curated-item',
+        'acrylic-glass-surface',
         removing ? 'curated-item--removing' : '',
       ]
         .filter(Boolean)
         .join(' ')}
     >
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <button
         type="button"
         className="curated-item__remove"

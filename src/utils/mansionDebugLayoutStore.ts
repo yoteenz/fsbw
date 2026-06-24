@@ -15,13 +15,14 @@ import type { PenthouseSuitePanelId } from '../constants/desktopPenthouseSuite';
 import { PENTHOUSE_SUITE_PANEL_RECTS } from '../constants/desktopPenthouseSuite';
 import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../constants/desktopGrandLobbyLayout';
 import { defaultPerspectivePanelQuad } from '../constants/perspectivePanelConfig';
+import type { PerspectivePanelId } from '../types/perspectivePanel';
 import { DESKTOP_NOTIFICATIONS_LAYOUT_SEED } from '../constants/desktopNotificationsLayout';
 import { DESKTOP_SHOPPING_BAG_LAYOUT_SEED } from '../constants/desktopShoppingBagLayout';
 import { TRANSFORMATION_SUITE_LAYOUT_SEED } from '../constants/transformationSuiteLayout';
 import { imageRectToPercentRect } from './desktopPanelDebugMode';
 import { formatShoppingBagTabletQuadForExport } from './desktopShoppingBagTabletQuad';
 import { loadPerspectivePanelMapFromStorage } from './perspectivePanelStorage';
-import { perspectivePanelQuadToQuad4 } from './perspectivePanelQuad';
+import { perspectivePanelQuadToQuad4, formatPerspectivePanelMapForExport } from './perspectivePanelQuad';
 
 export const MANSION_DEBUG_LAYOUT_OVERRIDE_KEY = 'mansionDebug:layoutOverrides';
 export const MANSION_DEBUG_LAYOUT_UPDATED_EVENT = 'mansionDebugLayoutUpdated';
@@ -150,20 +151,44 @@ export const DESKTOP_GRAND_LOBBY_LAYOUT_SEED: DesktopGrandLobbyLayout = {
 
 export function formatShoppingBagPerspectiveLayoutExport(): string {
   const map = loadPerspectivePanelMapFromStorage();
-  const quad = perspectivePanelQuadToQuad4(
+  const tabletQuad = perspectivePanelQuadToQuad4(
     map['curator-tablet'] ?? defaultPerspectivePanelQuad('curator-tablet'),
   );
+  const innerPanelIds: PerspectivePanelId[] = [
+    'shopping-bag-collection-header',
+    'shopping-bag-cart-gallery',
+    'shopping-bag-acquisition-summary',
+    'shopping-bag-empty-cta',
+  ];
+  const innerMap: Record<string, ReturnType<typeof defaultPerspectivePanelQuad>> = {};
+  for (const id of innerPanelIds) {
+    innerMap[id] = map[id] ?? defaultPerspectivePanelQuad(id);
+  }
   return `// Paste into desktopShoppingBag.ts — DESKTOP_SHOPPING_BAG_TABLET_QUAD
-${formatShoppingBagTabletQuadForExport(quad)}`;
+${formatShoppingBagTabletQuadForExport(tabletQuad)}
+
+// Paste into perspectivePanelConfig.ts — inner shopping-bag panel seed quads
+${formatPerspectivePanelMapForExport(innerMap)}`;
 }
 
 export function formatAcquisitionPerspectiveLayoutExport(): string {
   const map = loadPerspectivePanelMapFromStorage();
-  const quad = perspectivePanelQuadToQuad4(
+  const tabletQuad = perspectivePanelQuadToQuad4(
     map['checkout-tablet'] ?? defaultPerspectivePanelQuad('checkout-tablet'),
   );
+  const innerPanelIds: PerspectivePanelId[] = [
+    'acquisition-collection-list',
+    'acquisition-summary-panel',
+  ];
+  const innerMap: Record<string, ReturnType<typeof defaultPerspectivePanelQuad>> = {};
+  for (const id of innerPanelIds) {
+    innerMap[id] = map[id] ?? defaultPerspectivePanelQuad(id);
+  }
   return `// Paste into desktopShoppingBag.ts — shared checkout quad (DESKTOP_SHOPPING_BAG_TABLET_QUAD)
-${formatShoppingBagTabletQuadForExport(quad)}`;
+${formatShoppingBagTabletQuadForExport(tabletQuad)}
+
+// Paste into perspectivePanelConfig.ts — inner acquisition panel seed quads
+${formatPerspectivePanelMapForExport(innerMap)}`;
 }
 
 export function formatShoppingBagLayoutExport(

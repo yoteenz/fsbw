@@ -8,7 +8,8 @@ type Props = {
 
 export function AcquisitionSummaryBar({ itemCount, subtotal, onAcquire }: Props) {
   return (
-    <footer className="curated-acquire">
+    <footer className="curated-acquire acrylic-glass-surface">
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <div className="curated-acquire__left">
         <span className="curated-acquire__bag" aria-hidden>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

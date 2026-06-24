@@ -9,7 +9,8 @@ type Props = {
 
 export function AcquisitionTabletChrome({ children, finalTotal, onComplete }: Props) {
   return (
-    <>
+    <div className="acrylic-glass-surface__content" aria-label="Acquisition review tablet">
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <div className="curated-tablet__shimmer curated-tablet__shimmer--acquisition" aria-hidden />
 
       <header className="curated-tablet__header curated-tablet__header--acquisition">
@@ -22,7 +23,8 @@ export function AcquisitionTabletChrome({ children, finalTotal, onComplete }: Pr
 
       <div className="curated-acquisition__body">{children}</div>
 
-      <footer className="curated-acquisition-complete">
+      <footer className="curated-acquisition-complete acrylic-glass-surface">
+        <div className="acrylic-glass-surface__rose-base" aria-hidden />
         <div className="curated-acquisition-complete__left">
           <span className="curated-acquisition-complete__lock" aria-hidden>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -44,6 +46,6 @@ export function AcquisitionTabletChrome({ children, finalTotal, onComplete }: Pr
           Complete Acquisition
         </button>
       </footer>
-    </>
+    </div>
   );
 }

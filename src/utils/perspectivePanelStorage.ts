@@ -161,9 +161,16 @@ export function resolvePerspectivePanelQuad(
   id: PerspectivePanelId,
   overrides?: PerspectivePanelMap,
 ): PerspectivePanelQuad {
-  if (!isPerspectivePanelDebugEnabled()) {
-    return defaultPerspectivePanelQuad(id);
-  }
-  const map = migrateLegacyShoppingBagTablet(overrides ?? loadPerspectivePanelOverrides());
+  const map = migrateLegacyShoppingBagTablet(
+    overrides ??
+      (isPerspectivePanelDebugEnabled()
+        ? loadPerspectivePanelOverrides()
+        : loadPerspectivePanelMapFromStorage()),
+  );
   return map[id] ?? defaultPerspectivePanelQuad(id);
+}
+
+/** Saved quad for live UI — localStorage overrides with config defaults, no debug flags required. */
+export function resolveEffectivePerspectivePanelQuad(id: PerspectivePanelId): PerspectivePanelQuad {
+  return resolvePerspectivePanelQuad(id);
 }
