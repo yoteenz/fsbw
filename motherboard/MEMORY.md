@@ -32202,3 +32202,25 @@ Full conversation in this chat: Grand Lobby panel overlays, floating crystals au
 - **Mobile desktop usage:** `/desktop/lobby?zone=grand-lobby` on phone → tap **ON** → **Edit** → drag colored squares → **Save** (browser) or **Copy** (paste into layout seed for permanent repo change).
 - Pushed **`master`** + **`preview/mobile`** (`0024a58e`).
 
+---
+
+## 2026-06-24 — Mobile Mansion app shell foundation
+
+User requested a **premium luxury mobile application shell** for Frontal Slayer Mansion (concept: luxury OS / private members club / Vision Pro aesthetic). Explicit constraints: **no final features**, **no Supabase**, **no business logic**, **no placeholder ecommerce pages** — foundation only.
+
+- **Stack added:** `framer-motion` dependency; React 19 + Vite + TypeScript + Tailwind (existing).
+- **Design tokens:** `src/constants/mobileMansionTokens.ts` — brand red `#EB1C24`, gray `#808080`, Playfair Display serif headings, Futura/Inter UI text, spacing, radii, shadows, blur, glow, animation timings, per-zone placeholder background URLs.
+- **Component system (`src/components/mobile-mansion/`):**
+  - `MansionBackground` — full-screen image, blur layer, gradient overlay, parallax offset, future `backgroundVideo` slot.
+  - Glass: `GlassPanel`, `GlassCard`, `GlassButton`, `GlassModal`, `GlassSection`, `GlassListItem` — bright white acrylic glassmorphism.
+  - `MobilePageHeader` — crown icon, uppercase serif title, subtitle, back button, optional action.
+  - `MobileBottomNav` — floating acrylic bar, 5 tabs (Home, Lobby, Concierge, Penthouse, Profile), red active indicator + animated icon states via Framer Motion `layoutId`.
+  - `MobileMansionLayout` — composes background, header, safe-area padding, page transitions, bottom nav.
+  - `PlaceholderSlot` — labeled `[SLOT]` blocks for future content regions.
+  - Animation presets in `animations.ts`: page enter/exit, panel fade/float/hover, card reveal, luxury spring.
+  - `MobileMansion.css` — glass styles, typography, nav, placeholder slots.
+- **Routes (`src/routes/MobileMansionRoutes.tsx`, wired in `App.tsx`):** `/mobile/home`, `/mobile/lobby`, `/mobile/concierge`, `/mobile/penthouse`, `/mobile/showroom`, `/mobile/analysis`, `/mobile/build-a-wig`, `/mobile/rewards`, `/mobile/slay-cam`, `/mobile/lounge`, `/mobile/profile` (+ `/mobile` → home redirect). Each page uses `MobileMansionLayout` with zone-specific placeholder slots; sub-pages have back navigation to parent tabs.
+- **Tailwind:** extended `mansion.red` / `mansion.gray` colors in `tailwind.config.js`.
+- **Build:** `npm run build` passes.
+- **Convention for future work:** plug real mansion photography into `mansionPlaceholderBackgrounds`; replace `PlaceholderSlot` regions with feature UI; keep all mobile pages on `MobileMansionLayout`.
+
