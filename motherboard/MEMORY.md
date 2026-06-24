@@ -32146,6 +32146,12 @@ User asked to **remove account icon** from desktop nav; **HOME** → **Penthouse
 
 ---
 
+## 2026-06-23 — Desktop nav: swap Slay Cam and Membership
+
+User asked to swap **SLAY CAM** and **MEMBERSHIP** positions in desktop nav bar order. **`DESKTOP_NAV_QUICK_ROUTES`:** MEMBERSHIP now before ANALYSIS; SLAY CAM after ANALYSIS. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-23 — Grand Lobby Panels hero + interactive glass overlays
 
 User supplied updated **Panels** hero asset for Desktop **Grand Lobby** and asked for five interactive glass overlays aligned to the reference (membership, economy, elevator directory, welcome, house information)—no reception/Concierge duplicate content, no redesign, image unchanged as fixed 21:9 background.
