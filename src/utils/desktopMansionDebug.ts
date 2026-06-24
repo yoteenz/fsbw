@@ -4,6 +4,7 @@ import type {
   MansionDebugFilterState,
   MansionDebugPageFilter,
 } from '../types/desktopMansionDebug';
+import { isDesktopPreviewEnvironment } from './desktopPreview';
 
 export const MANSION_DEBUG_ENABLED_KEY = 'mansionDebug:enabled';
 export const MANSION_DEBUG_DISPLAY_MODE_KEY = 'mansionDebug:displayMode';
@@ -45,8 +46,10 @@ export const MANSION_DEBUG_PAGE_FILTER_OPTIONS: { id: MansionDebugPageFilter; la
   { id: 'concierge', label: 'Concierge Only' },
 ];
 
+/** Local `npm run dev` or staging/preview hosts (not production custom domain). */
 export function isMansionDebugAvailable(): boolean {
-  return import.meta.env.DEV;
+  if (import.meta.env.DEV) return true;
+  return isDesktopPreviewEnvironment();
 }
 
 function readSession(key: string): string | null {

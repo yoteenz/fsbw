@@ -68,7 +68,7 @@ export function MansionDebugControlPanel() {
             </button>
           ))}
         </div>
-        <p className="mansion-debug-panel__hint">D toggle · Shift+D labels · Ctrl+D bounds</p>
+        <p className="mansion-debug-panel__hint">D toggle · Shift+D labels · Ctrl+D bounds · tap ON/OFF on phone</p>
       </div>
 
       <div className="mansion-debug-panel__section mansion-debug-panel__checks">
