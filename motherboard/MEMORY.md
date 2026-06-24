@@ -32285,3 +32285,12 @@ User reported the **shopping bag square panel isn't editable anymore** after Man
 - **How to tune:** `/desktop/shopping-bag` → press **D** → **Edit** → drag **TL/TR/BR/BL** on the tablet polygon → **Save** or **Copy**.
 - Pushed **`master`** + **`preview/mobile`** (`87ce8da2`).
 
+---
+
+## 2026-06-24 — Shopping bag glass panels rounded corners
+
+User asked for **transparent panels on the shopping bag page** to have **rounded corners instead of square**.
+
+- **Change:** `DesktopShoppingBag.css` — added container-scaled `--curated-panel-radius` / `--curated-inner-radius` on `.curated-tablet`; `border-radius` on main acrylic shell, shimmer overlay, cart item cards (`.curated-item`), plinths, acquisition summary bar (`.curated-acquire`), gallery arrows (circular), enter CTA, and Acquire button.
+- Pushed **`master`** + **`preview/mobile`** (`428cf129`).
+
