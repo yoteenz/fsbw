@@ -32215,6 +32215,16 @@ User reported **fsbw.vercel.app** not showing on mobile, desktop, or tablet (bla
 
 ---
 
+## 2026-06-24 — Mobile mansion shell broke all routes (router child pattern)
+
+User reported **ERROR: COMPONENT FAILED TO LOAD** on **fsbw.vercel.app** after the mobile mansion shell was added (blank/retry screen on phone).
+
+- **Cause:** `MobileMansionRoutes` was mounted as `<MobileMansionRoutes />` inside `<Routes>`. React Router v6 only reads **direct** `<Route>` or `<Fragment>` children — a wrapper component is ignored for route registration and broke the router (error in `vendor-router`, all pages including `/home/shop` hit `ErrorBoundary`).
+- **Fix:** Call `{MobileMansionRoutes()}` in `App.tsx` so returned `<Route>` elements are direct `Routes` children. Documented in `MobileMansionRoutes.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-06-24 — Mobile Mansion app shell foundation
 
 User requested a **premium luxury mobile application shell** for Frontal Slayer Mansion (concept: luxury OS / private members club / Vision Pro aesthetic). Explicit constraints: **no final features**, **no Supabase**, **no business logic**, **no placeholder ecommerce pages** — foundation only.
