@@ -32134,3 +32134,13 @@ User asked for **account** and **shopping bag** nav icons to turn **red** on the
 
 User asked to restyle the **UPDATING THE APP** stale-chunk screen: body copy **black Futura PT Book**; **RELOAD PAGE** link **gray** (`#808080`) instead of red. **`App.tsx`** `ErrorBoundary` chunk-error branch. Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — NavBar: remove account icon; HOME routes by auth
+
+User asked to **remove account icon** from desktop nav; **HOME** → **Penthouse Suite** (`/desktop/account`) when signed in; guests → **Grand Lobby** (`/desktop/lobby?zone=grand-lobby`). Post sign-in greeting on reception unchanged (`DESKTOP_CLIENT_RECEPTION_PATH` via `resolveReturnToAfterSignIn`).
+
+- **`NavBar.tsx`:** removed account button; tracks `isSignedIn`; logo + HOME use `resolveDesktopHomeHref`.
+- **`desktopNavQuickRoutes.ts`:** `resolveDesktopHomeHref`, `isDesktopHomeNavActive`, auth-aware `resolveDesktopNavActiveLabel`.
+- Pushed **`master`** + **`preview/mobile`**.
+
