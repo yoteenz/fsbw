@@ -32294,3 +32294,16 @@ User asked for **transparent panels on the shopping bag page** to have **rounded
 - **Change:** `DesktopShoppingBag.css` — added container-scaled `--curated-panel-radius` / `--curated-inner-radius` on `.curated-tablet`; `border-radius` on main acrylic shell, shimmer overlay, cart item cards (`.curated-item`), plinths, acquisition summary bar (`.curated-acquire`), gallery arrows (circular), enter CTA, and Acquire button.
 - Pushed **`master`** + **`preview/mobile`** (`428cf129`).
 
+---
+
+## 2026-06-23 — Shopping bag all panels: perspective quads + acrylic refraction
+
+User asked that **all panels** on the shopping bag tablet get the **4-point perspective quad** option (because some tilt and aren't perfectly square like the main tablet) plus the **light refracted acrylic effect** on inner glass surfaces.
+
+- **Context:** Follow-on from Mansion Debug registry expansion, tablet quad bridge, and rounded glass corners. Inner regions (collection header, cart gallery, acquisition summary, empty CTA, acquisition checkout list/summary) were still percent-rect only in debug; inner glass lacked the crystal-edge refraction stack used on the main tablet shell.
+- **Perspective quads:** Added `shopping-bag-collection-header`, `shopping-bag-cart-gallery`, `shopping-bag-acquisition-summary`, `shopping-bag-empty-cta`, `acquisition-collection-list`, `acquisition-summary-panel` to `perspectivePanelId` / `perspectivePanelConfig`. `desktopShoppingBagPerspectivePanels.ts` maps layout region IDs → panel IDs. `PerspectivePanelPageDebugOverlays` renders all page quads when Mansion Debug or `?panelDebug=1` is on; `MansionDebugLayer` skips rect overlays for perspective-linked regions. `resolveEffectivePerspectivePanelQuad` loads saved quads in production (not only URL debug).
+- **Acrylic refraction:** New `acrylicGlass.css` (`.acrylic-glass-surface` crystal edge, diagonal bend, rose base) applied to tablet shell, collection tablet content, cart item cards, acquisition summary bar, acquisition tablet chrome/footer, and acquisition line-item cards.
+- **Export:** Mansion Debug Copy on shopping-bag/acquisition pages exports main tablet quad **and** all inner panel quads for `perspectivePanelConfig` seeds.
+- **Tune:** `/desktop/shopping-bag` or acquisition → **D** → **Edit** → select region chip or drag TL/TR/BR/BL on overlay → **Save** / **Copy**.
+- Pushed **`master`** + **`preview/mobile`** (`4cc6af53`).
+
