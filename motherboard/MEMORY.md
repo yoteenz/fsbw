@@ -32215,6 +32215,16 @@ User reported **fsbw.vercel.app** not showing on mobile, desktop, or tablet (bla
 
 ---
 
+## 2026-06-24 — Shopping bag Mansion Debug: no colored edit rects
+
+User on **desktop shopping bag** with Mansion Debug ON saw no colored resize/move squares; only perspective/text debug resizing worked.
+
+- **Cause:** `DESKTOP_DEBUG_REGISTRY` only registered **Grand Lobby** panels. Shopping bag had `MansionDebugLayer` wired but **zero regions** for `page: 'shopping-bag'` → layer returned null. Separate systems: **Mansion Debug** (colored rects, **D** / Edit) vs **Perspective Panel Debug** (`PANEL_DEBUG` / `?panelDebug=1`) for curator-tablet warp vs legacy `?shoppingBagDebug=1` polygon.
+- **Fix:** Added five shopping-bag regions in `desktopDebugRegistry.ts` + `desktopShoppingBagLayout.ts` seeds: curator tablet screen, collection header, cart gallery, acquisition summary, empty CTA. Extended page filter options (Bag, Acq, etc.), auto-sync page filter on viewport bind, Copy exports `desktopShoppingBagLayout.ts` snippet when on shopping bag.
+- Pushed **`master`** + **`preview/mobile`** (`bb18f676`).
+
+---
+
 ## 2026-06-24 — Mobile mansion shell broke all routes (router child pattern)
 
 User reported **ERROR: COMPONENT FAILED TO LOAD** on **fsbw.vercel.app** after the mobile mansion shell was added (blank/retry screen on phone).
