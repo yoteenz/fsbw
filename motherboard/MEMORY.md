@@ -32255,3 +32255,22 @@ User requested a **premium luxury mobile application shell** for Frontal Slayer 
 - **Build:** `npm run build` passes.
 - **Convention for future work:** plug real mansion photography into `mansionPlaceholderBackgrounds`; replace `PlaceholderSlot` regions with feature UI; keep all mobile pages on `MobileMansionLayout`.
 
+---
+
+## 2026-06-23 — Full desktop Mansion Debug registry (all pages)
+
+Continuation of Mansion Debug work after shopping-bag-only regions. User asked that **the rest of the desktop pages with debugging should function properly too** — colored resize/move rects via Mansion Debug (**D** / Edit), not just Grand Lobby + Shopping Bag.
+
+- **Prior context in chat:** draggable Mansion Debug panel on mobile desktop; blank `fsbw.vercel.app` (Vite `scheduler` circular chunk); mobile routes crash (`{MobileMansionRoutes()}`); shopping bag registry fix (5 regions).
+- **Cause:** `DESKTOP_DEBUG_REGISTRY` only had Grand Lobby + Shopping Bag entries. Other pages already wired `useMansionDebugViewportBinding` + `MansionDebugLayer` but `visibleRegions.length === 0` when debug ON.
+- **Fix — `desktopDebugRegistry.ts` bulk registration from existing layout constants:**
+  - **Alerts** (`/desktop/alerts`): 13 rects from `DESKTOP_NOTIFICATIONS_LAYOUT_SEED`
+  - **Booking Suite** (`/desktop/booking-suite`): 14 rects + circle boundary bounding box from `TRANSFORMATION_SUITE_LAYOUT_SEED`
+  - **Account** (`/desktop/account`): 12 panels from `PENTHOUSE_SUITE_PANEL_RECTS`
+  - **Acquisition** (`/desktop/acquisition`): checkout tablet, collection list, summary (shared shopping-bag hero rects)
+  - **Concierge reception** (`?zone=reception`): 11 `RECEPTION_DASHBOARD_PANEL_RECTS`
+  - **Floor zones:** lounge TV (`DESKTOP_LOUNGE_TV_HIT_REGION`), PSA hologram, boutique extensions wall; placeholder hero rects for build-a-wig-atelier, gallery zones, founder-suite, penthouse showroom/analysis-lab
+- **Export/copy (`mansionDebugLayoutStore.ts`):** extended `formatMansionDebugLayoutExportForPage` for alerts → `desktopNotificationsLayout.ts`, booking-suite → `transformationSuiteLayout.ts`, account → `PENTHOUSE_SUITE_PANEL_RECTS`, acquisition → shared `desktopShoppingBagLayout.ts`.
+- **Note:** Mansion Debug (colored rects) remains separate from legacy per-page debug (`CTRL+SHIFT+D` on alerts/booking-suite, `?receptionDashboardDebug=1`, etc.) and Perspective Panel Debug (`?panelDebug=1`).
+- Pushed **`master`** + **`preview/mobile`** (`383c3aff`).
+
