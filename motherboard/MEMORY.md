@@ -32088,3 +32088,13 @@ User provided approved **Transformation Suite** desktop hero (architectural pane
 - **Files:** `src/constants/transformationSuite.ts`, `transformationSuiteLayout.ts`, `src/types/transformationSuite.ts`, `src/utils/transformationSuiteDebug.ts`, `transformationSuiteLayoutMath.ts`, `src/components/transformation-suite/*`, `src/pages/desktop/booking-suite/page.tsx`, `App.tsx`, `NavBar.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop hero shell background white (load flash)
+
+User asked to change the **black background underneath desktop background images** to **white** so image loading is less obvious.
+
+- **Change:** Replaced `#0a0a0a` shell/underlay with **`#ffffff`** on all desktop room hero scenes (lobby zones, penthouse, account suite, shopping bag, Transformation Suite, commerce page backgrounds, tower elevator). Added **`DESKTOP_ROOM_SHELL_BACKGROUND`** in **`desktopRoomHeroArt.ts`**; TS page shells import it; CSS scene files use matching white.
+- **Not changed:** Lounge TV frame borders / blog post chrome (intentional UI, not hero underlay).
+- Pushed **`master`** + **`preview/mobile`**.
+
