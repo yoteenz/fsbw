@@ -262,7 +262,22 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           <h1 style={{ fontSize: '18px', textAlign: 'center', margin: 0, fontWeight: 600, letterSpacing: '0.12em' }}>
             {isChunkError ? 'UPDATING THE APP' : 'ERROR: COMPONENT FAILED TO LOAD'}
           </h1>
-          <p style={{ fontSize: '14px', textAlign: 'center', maxWidth: '320px', lineHeight: 1.4, margin: 0, letterSpacing: '0.06em' }}>
+          <p
+            style={{
+              fontSize: '14px',
+              textAlign: 'center',
+              maxWidth: '320px',
+              lineHeight: 1.4,
+              margin: 0,
+              letterSpacing: '0.06em',
+              ...(isChunkError
+                ? {
+                    fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                    color: '#1A1A1A',
+                  }
+                : {}),
+            }}
+          >
             {isChunkError
               ? 'A new version was deployed while this tab was open. Tap reload to refresh — your data on this device is kept.'
               : this.state.error?.message}
@@ -276,7 +291,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
                 padding: 0,
                 fontSize: '16px',
                 backgroundColor: 'transparent',
-                color: '#eb1c24',
+                color: '#808080',
                 border: 'none',
                 cursor: 'pointer',
                 fontWeight: 600,

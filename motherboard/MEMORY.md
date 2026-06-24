@@ -32126,6 +32126,11 @@ User provided reference attachment for the luxury Alerts room and asked to **ren
 
 User asked for **account** and **shopping bag** nav icons to turn **red** on their desktop routes, matching alerts/booking behavior.
 
-- **`NavBar.tsx`:** `accountActive` on `/desktop/account`, `shoppingBagActive` on `/desktop/shopping-bag` — SVG stroke `#C81C24` when active (uses `DESKTOP_ACCOUNT_HUB_PATH` / `DESKTOP_SHOPPING_BAG_PATH`).
 - Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — Stale-chunk reload screen body + link colors
+
+User asked to restyle the **UPDATING THE APP** stale-chunk screen: body copy **black Futura PT Book**; **RELOAD PAGE** link **gray** (`#808080`) instead of red. **`App.tsx`** `ErrorBoundary` chunk-error branch. Pushed **`master`** + **`preview/mobile`**.
 
