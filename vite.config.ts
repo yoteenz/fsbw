@@ -116,18 +116,21 @@ export default defineConfig(({ mode, command }) => {
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
-        // Manual chunk splitting for better caching
+        // Keep the full React runtime (incl. scheduler) in one chunk so Rollup never
+        // creates a vendor <-> vendor-react circular import (blank page on production).
         manualChunks: (id) => {
-          // Split vendor chunks
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('react-router')) {
-              return 'vendor-router';
-            }
-            return 'vendor';
+          if (!id.includes('node_modules')) return;
+          if (
+            id.includes('/react-dom/') ||
+            id.includes('/react/') ||
+            id.includes('/scheduler/')
+          ) {
+            return 'vendor-react';
           }
+          if (id.includes('react-router')) {
+            return 'vendor-router';
+          }
+          return 'vendor';
         },
       },
     },
