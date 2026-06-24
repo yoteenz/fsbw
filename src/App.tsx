@@ -594,7 +594,7 @@ function App() {
             </CommerceRouteGuard>
           } />
         </Route>
-        <MobileMansionRoutes />
+        {MobileMansionRoutes()}
         <Route path="/lobby/lounge" element={<LobbyPage />} />
         <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />

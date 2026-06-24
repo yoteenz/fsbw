@@ -21,6 +21,9 @@ function MobileSuspense({ children }: { children: ReactNode }) {
 /**
  * Mobile Mansion app shell routes.
  * Foundation only — no business logic, no Supabase, no ecommerce.
+ *
+ * Must be invoked as `{MobileMansionRoutes()}` inside `<Routes>` — React Router
+ * only reads direct `<Route>` / `<Fragment>` children, not a wrapper component.
  */
 export function MobileMansionRoutes() {
   return (
