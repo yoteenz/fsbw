@@ -9,6 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import type {
+  MansionDebugBounds,
   MansionDebugDisplayMode,
   MansionDebugFilterState,
   MansionDebugPageFilter,
@@ -29,16 +30,33 @@ import {
   setMansionDebugPageFilter,
   toggleMansionDebugEnabled,
 } from '../../utils/desktopMansionDebug';
+import type { DesktopGrandLobbyPanelRegionId } from '../../types/desktopGrandLobby';
+import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../../constants/desktopGrandLobbyLayout';
+import {
+  clearMansionDebugLayoutOverrides,
+  copyMansionDebugText,
+  formatGrandLobbyLayoutExport,
+  MANSION_DEBUG_LAYOUT_UPDATED_EVENT,
+  readMansionDebugLayoutOverrides,
+  resolveGrandLobbyPercentRect,
+  resolveMansionDebugRegion,
+  type MansionDebugLayoutOverrides,
+  writeMansionDebugLayoutOverrides,
+} from '../../utils/mansionDebugLayoutStore';
 
 type ContextValue = {
   available: boolean;
   enabled: boolean;
+  editMode: boolean;
   displayMode: MansionDebugDisplayMode;
   pageFilter: MansionDebugPageFilter;
   filters: MansionDebugFilterState;
   viewport: MansionDebugViewportBinding | null;
   runtimeRegions: MansionDebugRegion[];
+  layoutOverrides: MansionDebugLayoutOverrides;
+  selectedRegionId: string | null;
   toggleEnabled: () => void;
+  toggleEditMode: () => void;
   setDisplayMode: (mode: MansionDebugDisplayMode) => void;
   setPageFilter: (filter: MansionDebugPageFilter) => void;
   setFilters: (filters: MansionDebugFilterState) => void;
@@ -46,6 +64,13 @@ type ContextValue = {
   bindViewport: (binding: MansionDebugViewportBinding | null) => void;
   registerRegion: (region: MansionDebugRegion) => void;
   unregisterRegion: (id: string) => void;
+  selectRegion: (id: string | null) => void;
+  patchRegionBounds: (id: string, bounds: MansionDebugBounds) => void;
+  resolveRegion: (region: MansionDebugRegion) => MansionDebugRegion;
+  resolveGrandLobbyRect: (regionId: DesktopGrandLobbyPanelRegionId) => ReturnType<typeof resolveGrandLobbyPercentRect>;
+  saveLayout: () => void;
+  exportLayout: () => Promise<boolean>;
+  resetLayout: () => void;
 };
 
 const MansionDebugContext = createContext<ContextValue | null>(null);
@@ -53,24 +78,36 @@ const MansionDebugContext = createContext<ContextValue | null>(null);
 export function MansionDebugProvider({ children }: { children: ReactNode }) {
   const available = isMansionDebugAvailable();
   const [enabled, setEnabled] = useState(() => isMansionDebugEnabled());
+  const [editMode, setEditMode] = useState(false);
   const [displayMode, setDisplayModeState] = useState(() => getMansionDebugDisplayMode());
   const [pageFilter, setPageFilterState] = useState(() => getMansionDebugPageFilter());
   const [filters, setFiltersState] = useState(() => getMansionDebugFilters());
   const [viewport, setViewport] = useState<MansionDebugViewportBinding | null>(null);
   const [runtimeRegions, setRuntimeRegions] = useState<MansionDebugRegion[]>([]);
+  const [layoutOverrides, setLayoutOverrides] = useState(() => readMansionDebugLayoutOverrides());
+  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
+
+  const reloadLayoutOverrides = useCallback(() => {
+    setLayoutOverrides(readMansionDebugLayoutOverrides());
+  }, []);
 
   const syncFromStorage = useCallback(() => {
     setEnabled(isMansionDebugEnabled());
     setDisplayModeState(getMansionDebugDisplayMode());
     setPageFilterState(getMansionDebugPageFilter());
     setFiltersState(getMansionDebugFilters());
-  }, []);
+    reloadLayoutOverrides();
+  }, [reloadLayoutOverrides]);
 
   useEffect(() => {
     if (!available) return;
     const onUpdate = () => syncFromStorage();
     window.addEventListener(MANSION_DEBUG_UPDATED_EVENT, onUpdate);
-    return () => window.removeEventListener(MANSION_DEBUG_UPDATED_EVENT, onUpdate);
+    window.addEventListener(MANSION_DEBUG_LAYOUT_UPDATED_EVENT, onUpdate);
+    return () => {
+      window.removeEventListener(MANSION_DEBUG_UPDATED_EVENT, onUpdate);
+      window.removeEventListener(MANSION_DEBUG_LAYOUT_UPDATED_EVENT, onUpdate);
+    };
   }, [available, syncFromStorage]);
 
   useEffect(() => {
@@ -112,6 +149,52 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
     setRuntimeRegions((current) => current.filter((entry) => entry.id !== id));
   }, []);
 
+  const selectRegion = useCallback((id: string | null) => {
+    setSelectedRegionId(id);
+  }, []);
+
+  const patchRegionBounds = useCallback(
+    (id: string, bounds: MansionDebugBounds) => {
+      setLayoutOverrides((current) => {
+        const next = {
+          regions: {
+            ...current.regions,
+            [id]: bounds,
+          },
+        };
+        writeMansionDebugLayoutOverrides(next);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const resolveRegion = useCallback(
+    (region: MansionDebugRegion) => resolveMansionDebugRegion(region, layoutOverrides),
+    [layoutOverrides],
+  );
+
+  const resolveGrandLobbyRect = useCallback(
+    (regionId: DesktopGrandLobbyPanelRegionId) => resolveGrandLobbyPercentRect(regionId, layoutOverrides),
+    [layoutOverrides],
+  );
+
+  const saveLayout = useCallback(() => {
+    writeMansionDebugLayoutOverrides(layoutOverrides);
+    reloadLayoutOverrides();
+  }, [layoutOverrides, reloadLayoutOverrides]);
+
+  const exportLayout = useCallback(async () => {
+    const text = formatGrandLobbyLayoutExport(layoutOverrides);
+    return copyMansionDebugText(text);
+  }, [layoutOverrides]);
+
+  const resetLayout = useCallback(() => {
+    clearMansionDebugLayoutOverrides();
+    setLayoutOverrides(readMansionDebugLayoutOverrides());
+    setSelectedRegionId(null);
+  }, []);
+
   const setDisplayMode = useCallback(
     (mode: MansionDebugDisplayMode) => {
       setMansionDebugDisplayMode(mode);
@@ -150,16 +233,24 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
     syncFromStorage();
   }, [syncFromStorage]);
 
+  const toggleEditMode = useCallback(() => {
+    setEditMode((current) => !current);
+  }, []);
+
   const value = useMemo(
     () => ({
       available,
       enabled,
+      editMode,
       displayMode,
       pageFilter,
       filters,
       viewport,
       runtimeRegions,
+      layoutOverrides,
+      selectedRegionId,
       toggleEnabled,
+      toggleEditMode,
       setDisplayMode,
       setPageFilter,
       setFilters,
@@ -167,16 +258,27 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
       bindViewport,
       registerRegion,
       unregisterRegion,
+      selectRegion,
+      patchRegionBounds,
+      resolveRegion,
+      resolveGrandLobbyRect,
+      saveLayout,
+      exportLayout,
+      resetLayout,
     }),
     [
       available,
       enabled,
+      editMode,
       displayMode,
       pageFilter,
       filters,
       viewport,
       runtimeRegions,
+      layoutOverrides,
+      selectedRegionId,
       toggleEnabled,
+      toggleEditMode,
       setDisplayMode,
       setPageFilter,
       setFilters,
@@ -184,6 +286,13 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
       bindViewport,
       registerRegion,
       unregisterRegion,
+      selectRegion,
+      patchRegionBounds,
+      resolveRegion,
+      resolveGrandLobbyRect,
+      saveLayout,
+      exportLayout,
+      resetLayout,
     ],
   );
 
@@ -221,4 +330,12 @@ export function useRegisterMansionDebugRegion(region: MansionDebugRegion | null)
     debug.registerRegion(region);
     return () => debug.unregisterRegion(region.id);
   }, [debug, region]);
+}
+
+export function useGrandLobbyLayoutRect(regionId: DesktopGrandLobbyPanelRegionId) {
+  const debug = useMansionDebug();
+  if (debug?.available) {
+    return debug.resolveGrandLobbyRect(regionId);
+  }
+  return DESKTOP_GRAND_LOBBY_LAYOUT_SEED.rects[regionId];
 }

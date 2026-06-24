@@ -1,12 +1,9 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react';
 import { DESKTOP_GRAND_LOBBY_IMAGE } from '../../constants/desktopGrandLobby';
-import {
-  desktopGrandLobbyRectToImageRect,
-  getDesktopGrandLobbyRect,
-} from '../../constants/desktopGrandLobbyLayout';
+import { desktopGrandLobbyRectToImageRect } from '../../constants/desktopGrandLobbyLayout';
 import type { DesktopGrandLobbyPanelRegionId } from '../../types/desktopGrandLobby';
 import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../../constants/desktopGrandLobbyLayout';
+import { useGrandLobbyLayoutRect } from '../desktop-mansion-debug/MansionDebugProvider';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
@@ -25,7 +22,7 @@ export function GrandLobbyPanelAnchor({
   style,
   zIndex = 8,
 }: Props) {
-  const rect = getDesktopGrandLobbyRect(DESKTOP_GRAND_LOBBY_LAYOUT_SEED, regionId);
+  const rect = useGrandLobbyLayoutRect(regionId);
 
   return (
     <DesktopRoomCoverRectAnchor

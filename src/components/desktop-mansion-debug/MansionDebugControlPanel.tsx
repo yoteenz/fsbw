@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import {
   MANSION_DEBUG_FILTER_GROUP_LABELS,
   MANSION_DEBUG_FILTER_GROUPS,
   MANSION_DEBUG_PAGE_FILTER_OPTIONS,
 } from '../../utils/desktopMansionDebug';
 import type { MansionDebugDisplayMode } from '../../types/desktopMansionDebug';
+import { DESKTOP_DEBUG_REGISTRY } from '../../constants/desktopDebugRegistry';
 import { useMansionDebug } from './MansionDebugProvider';
 
 const DISPLAY_MODE_OPTIONS: { id: MansionDebugDisplayMode; label: string }[] = [
@@ -14,8 +16,16 @@ const DISPLAY_MODE_OPTIONS: { id: MansionDebugDisplayMode; label: string }[] = [
 
 export function MansionDebugControlPanel() {
   const debug = useMansionDebug();
+  const [savedFlash, setSavedFlash] = useState(false);
+  const [exportedFlash, setExportedFlash] = useState(false);
 
   if (!debug?.available) return null;
+
+  const pageRegions = DESKTOP_DEBUG_REGISTRY.filter(
+    (region) =>
+      region.page === debug.viewport?.page &&
+      (!region.pageZone || region.pageZone === debug.viewport?.pageZone),
+  );
 
   return (
     <div className={`mansion-debug-panel${debug.enabled ? ' mansion-debug-panel--active' : ''}`}>
@@ -29,6 +39,73 @@ export function MansionDebugControlPanel() {
       <p className="mansion-debug-panel__page">
         Current Page: <span>{debug.viewport?.pageLabel ?? '—'}</span>
       </p>
+
+      {debug.enabled ? (
+        <div className="mansion-debug-panel__section mansion-debug-panel__actions">
+          <p className="mansion-debug-panel__section-title">Layout</p>
+          <div className="mansion-debug-panel__action-row">
+            <button
+              type="button"
+              className={
+                debug.editMode
+                  ? 'mansion-debug-panel__action mansion-debug-panel__action--active'
+                  : 'mansion-debug-panel__action'
+              }
+              onClick={debug.toggleEditMode}
+            >
+              {debug.editMode ? 'Editing…' : 'Edit panels'}
+            </button>
+            <button
+              type="button"
+              className="mansion-debug-panel__action"
+              onClick={() => {
+                debug.saveLayout();
+                setSavedFlash(true);
+                window.setTimeout(() => setSavedFlash(false), 1800);
+              }}
+            >
+              {savedFlash ? 'Saved' : 'Save'}
+            </button>
+            <button
+              type="button"
+              className="mansion-debug-panel__action"
+              onClick={async () => {
+                const ok = await debug.exportLayout();
+                if (ok) {
+                  setExportedFlash(true);
+                  window.setTimeout(() => setExportedFlash(false), 1800);
+                }
+              }}
+            >
+              {exportedFlash ? 'Copied' : 'Export'}
+            </button>
+            <button type="button" className="mansion-debug-panel__action" onClick={debug.resetLayout}>
+              Reset
+            </button>
+          </div>
+          <p className="mansion-debug-panel__hint">
+            Edit → drag panels · Save → browser storage · Export → paste into layout file
+          </p>
+          {debug.editMode && pageRegions.length > 0 ? (
+            <div className="mansion-debug-panel__chips">
+              {pageRegions.map((region) => (
+                <button
+                  key={region.id}
+                  type="button"
+                  className={
+                    debug.selectedRegionId === region.id
+                      ? 'mansion-debug-panel__chip mansion-debug-panel__chip--active'
+                      : 'mansion-debug-panel__chip'
+                  }
+                  onClick={() => debug.selectRegion(region.id)}
+                >
+                  {region.label.replace(/ Panel$/i, '')}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mansion-debug-panel__section">
         <p className="mansion-debug-panel__section-title">Show</p>
