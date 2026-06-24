@@ -32075,3 +32075,16 @@ User said fixes **still overlooked the override** — cart badge could show item
 - **Files:** `perspectivePanelStorage.ts`, `PerspectivePanelDebugProvider.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — The Transformation Suite desktop booking page (`/desktop/booking-suite`)
+
+User provided approved **Transformation Suite** desktop hero (architectural panels in image — no letterboxing, white cards, floating popups, or dashboard UI). Built luxury booking destination for consultations + salon services.
+
+- **Route:** `/desktop/booking-suite` — full-bleed hero (`TRANSFORMATION_SUITE_BACKGROUND_URL`), `object-fit: cover`, `#0a0a0a` shell like other desktop rooms.
+- **Nav:** New **calendar/appointment** icon in **`NavBar`** between **Notifications** and **Account**; navigates to suite; active stroke `#C81C24` on route.
+- **Debug mode (build first):** **CTRL+SHIFT+D** on booking-suite toggles alignment overlays; each overlay independently movable/resizable, percentage-based, saved to **`transformationSuiteLayout.ts`** seed + localStorage overrides during debug; export copies JSON for pasting into seed. Rect overlays: `DEBUG_CONSULT_1–4`, `DEBUG_FEATURED_EXPERIENCE`, `DEBUG_SERVICE_1–4`, `DEBUG_CIRCLE_HEADER`, `DEBUG_SERVICE_GRID`, `DEBUG_DATE_PICKER`, `DEBUG_TIME_PICKER`, `DEBUG_BOOK_BUTTON`. Circle: `DEBUG_CIRCLE_BOUNDARY` (not rectangle). Production content hidden while debug overlays visible.
+- **Production:** Left consult wall (4 panels), center featured strip (rotating promo scaffold), center booking circle (4 steps: experience grid, date, time, CTA), right salon services (4 panels). Glassmorphism acrylic panels, Futura PT uppercase, brand red `#EB1C24`. Book Now CTAs route to `/booking/consultation` (consult) and `/booking/appointment` (services).
+- **Files:** `src/constants/transformationSuite.ts`, `transformationSuiteLayout.ts`, `src/types/transformationSuite.ts`, `src/utils/transformationSuiteDebug.ts`, `transformationSuiteLayoutMath.ts`, `src/components/transformation-suite/*`, `src/pages/desktop/booking-suite/page.tsx`, `App.tsx`, `NavBar.tsx`.
+- Pushed **`master`** + **`preview/mobile`**.
+

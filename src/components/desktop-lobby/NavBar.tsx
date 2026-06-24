@@ -8,6 +8,7 @@ import {
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
 import { desktopNavBarStyle } from './desktopLobbyAcrylic';
 import { readCartCountFromStorage } from '../../utils/cartLocalStorage';
+import { DESKTOP_BOOKING_SUITE_PATH } from '../../constants/transformationSuite';
 import {
   resolveAccountHubPath,
   resolveShoppingBagPath,
@@ -28,6 +29,7 @@ export function NavBar() {
   const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search);
   const accountHubPath = resolveAccountHubPath(location.pathname);
   const shoppingBagPath = resolveShoppingBagPath(location.pathname);
+  const bookingSuiteActive = location.pathname === DESKTOP_BOOKING_SUITE_PATH;
 
   useEffect(() => {
     const syncCart = () => {
@@ -125,6 +127,28 @@ export function NavBar() {
         >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+        </button>
+
+        <button
+          className="hover:opacity-50 transition-opacity"
+          onClick={() => go(DESKTOP_BOOKING_SUITE_PATH)}
+          aria-label="The Transformation Suite"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
+        >
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={bookingSuiteActive ? '#C81C24' : '#1A1A1A'}
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+            <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
           </svg>
         </button>
 
