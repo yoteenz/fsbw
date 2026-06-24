@@ -32187,3 +32187,18 @@ User asked for a **global development-only Mansion Debug Overlay** on every desk
 - **Extensibility:** `useRegisterMansionDebugRegion` for runtime registration on future rooms.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Mansion Debug mobile UX: edit/save, compact panel, draggable
+
+Full conversation in this chat: Grand Lobby panel overlays, floating crystals audit, global Mansion Debug system, layout save/export, condensed mobile panel, and draggable panel on mobile desktop.
+
+- **Grand Lobby panels:** Five glass overlays on Desktop Grand Lobby (`GrandLobbyPanels`, `GrandLobbyPanelAnchor`, `desktopGrandLobbyLayout.ts`); baked-art transparent text; directory + house-info links clickable; hero from `desktopFloorZoneBackgrounds.ts`.
+- **Floating crystals:** Confirmed tower zones already had `DesktopRoomAmbientOverlay`; added to `DesktopPenthouseSuiteScene`, `DesktopCuratorSuiteScene`, `TransformationSuiteScene`, `DesktopNotificationsScene`.
+- **Global Mansion Debug:** Dev/staging overlay (`desktopDebugRegistry.ts`, `desktop-mansion-debug/`); **D** / **Shift+D** / **Ctrl+D** shortcuts; category colors; wired on all desktop viewport pages via `MansionDebugLayer` + provider in `App.tsx`; replaced legacy `?grandLobbyDebug=1`.
+- **Edit / Save / Copy / Reset:** `MansionDebugEditableRect` + `mansionDebugLayoutStore.ts` (localStorage); production Grand Lobby panels follow saved rects via `useGrandLobbyLayoutRect()`; Copy exports seed snippet for `desktopGrandLobbyLayout.ts`.
+- **Condensed mobile panel:** Collapsed by default; auto-collapses in edit mode; top-left on phone; compact toolbar (Edit / Save / Copy / Reset); tap header to expand filters.
+- **Draggable on mobile desktop:** When `isMobileDesktopBypassActive()` (`/desktop/*` on phone or `?mobileDesktop=1`), debug panel shows **⋮⋮** drag handle; `useMansionDebugPanelDrag.ts` repositions via pointer events with viewport clamping; position persisted in session storage (`mansionDebug:panelPosition`); ON/OFF and expand unaffected.
+- **Mobile desktop usage:** `/desktop/lobby?zone=grand-lobby` on phone → tap **ON** → **Edit** → drag colored squares → **Save** (browser) or **Copy** (paste into layout seed for permanent repo change).
+- Pushed **`master`** + **`preview/mobile`** (`0024a58e`).
+
