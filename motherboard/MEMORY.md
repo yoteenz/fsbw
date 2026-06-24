@@ -32118,6 +32118,14 @@ User provided reference attachment for the luxury Alerts room and asked to **ren
 - **Route:** **`/desktop/alerts`** (`DESKTOP_ALERTS_PATH`); `/desktop/notifications` redirects; nav bell → alerts (aria **Alerts**).
 - **UI (reference):** Recent rows — maroon titles, subtext, **timestamp + red dot** right-aligned; thin red row dividers. Priority rows — maroon titles, subtext, **priority label** right (High red, Medium/Low black/gray). Featured — pill **Featured Notification** badge, **Covered By Your Grace** serif title, solid maroon **View Analysis** CTA, left-aligned in panel. Footer CTAs — thin bordered **View All Activity / Alerts →**.
 - **Data fix:** Appointment row body includes full date/time; meta **2 hours ago**.
-- **Files:** `desktopNotifications.ts` (path alias), `NavBar.tsx`, `App.tsx`, `pages/desktop/alerts/page.tsx`, `desktop-notifications/*` components + CSS.
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — NavBar account + shopping bag active icon highlight
+
+User asked for **account** and **shopping bag** nav icons to turn **red** on their desktop routes, matching alerts/booking behavior.
+
+- **`NavBar.tsx`:** `accountActive` on `/desktop/account`, `shoppingBagActive` on `/desktop/shopping-bag` — SVG stroke `#C81C24` when active (uses `DESKTOP_ACCOUNT_HUB_PATH` / `DESKTOP_SHOPPING_BAG_PATH`).
 - Pushed **`master`** + **`preview/mobile`**.
 
