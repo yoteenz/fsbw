@@ -1,6 +1,8 @@
 import type { DesktopGrandLobbyPanelRegionId, DesktopGrandLobbyPercentRect } from '../types/desktopGrandLobby';
+import type { DesktopShoppingBagRegionId, DesktopShoppingBagPercentRect } from '../types/desktopShoppingBagLayout';
 import type { MansionDebugBounds, MansionDebugRegion } from '../types/desktopMansionDebug';
 import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../constants/desktopGrandLobbyLayout';
+import { DESKTOP_SHOPPING_BAG_LAYOUT_SEED } from '../constants/desktopShoppingBagLayout';
 import { imageRectToPercentRect } from './desktopPanelDebugMode';
 
 export const MANSION_DEBUG_LAYOUT_OVERRIDE_KEY = 'mansionDebug:layoutOverrides';
@@ -12,6 +14,14 @@ export const GRAND_LOBBY_LAYOUT_KEY_TO_DEBUG_ID: Record<DesktopGrandLobbyPanelRe
   mansionDirectory: 'mansion-directory-panel',
   welcomeMansion: 'welcome-to-mansion-panel',
   houseInformation: 'house-information-panel',
+};
+
+export const SHOPPING_BAG_LAYOUT_KEY_TO_DEBUG_ID: Record<DesktopShoppingBagRegionId, string> = {
+  curatorTablet: 'curator-tablet-screen',
+  collectionHeader: 'collection-header',
+  cartGallery: 'cart-gallery',
+  acquisitionSummary: 'acquisition-summary',
+  emptyCollectionCta: 'empty-collection-cta',
 };
 
 export type MansionDebugLayoutOverrides = {
@@ -109,6 +119,35 @@ export function formatGrandLobbyLayoutExport(
 export const DESKTOP_GRAND_LOBBY_LAYOUT_SEED: DesktopGrandLobbyLayout = {
   rects: ${JSON.stringify(rects, null, 2)},
 };`;
+}
+
+export function formatShoppingBagLayoutExport(
+  overrides: MansionDebugLayoutOverrides,
+): string {
+  const rects = { ...DESKTOP_SHOPPING_BAG_LAYOUT_SEED.rects };
+
+  for (const [regionId, debugId] of Object.entries(SHOPPING_BAG_LAYOUT_KEY_TO_DEBUG_ID) as [
+    DesktopShoppingBagRegionId,
+    string,
+  ][]) {
+    const override = overrides.regions[debugId];
+    if (override) {
+      rects[regionId] = imageRectToPercentRect(override.imageRect) as DesktopShoppingBagPercentRect;
+    }
+  }
+
+  return `// Paste into desktopShoppingBagLayout.ts — DESKTOP_SHOPPING_BAG_LAYOUT_SEED
+export const DESKTOP_SHOPPING_BAG_LAYOUT_SEED: DesktopShoppingBagLayout = {
+  rects: ${JSON.stringify(rects, null, 2)},
+};`;
+}
+
+export function formatMansionDebugLayoutExportForPage(
+  page: string,
+  overrides: MansionDebugLayoutOverrides,
+): string {
+  if (page === 'shopping-bag') return formatShoppingBagLayoutExport(overrides);
+  return formatGrandLobbyLayoutExport(overrides);
 }
 
 export async function copyMansionDebugText(text: string): Promise<boolean> {

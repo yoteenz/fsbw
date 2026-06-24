@@ -35,7 +35,7 @@ import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../../constants/desktopGrandLob
 import {
   clearMansionDebugLayoutOverrides,
   copyMansionDebugText,
-  formatGrandLobbyLayoutExport,
+  formatMansionDebugLayoutExportForPage,
   MANSION_DEBUG_LAYOUT_UPDATED_EVENT,
   readMansionDebugLayoutOverrides,
   resolveGrandLobbyPercentRect,
@@ -136,6 +136,13 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
 
   const bindViewport = useCallback((binding: MansionDebugViewportBinding | null) => {
     setViewport(binding);
+    if (binding) {
+      const currentFilter = getMansionDebugPageFilter();
+      if (currentFilter !== 'all' && currentFilter !== binding.page) {
+        setMansionDebugPageFilter(binding.page);
+        setPageFilterState(binding.page);
+      }
+    }
   }, []);
 
   const registerRegion = useCallback((region: MansionDebugRegion) => {
@@ -185,9 +192,12 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
   }, [layoutOverrides, reloadLayoutOverrides]);
 
   const exportLayout = useCallback(async () => {
-    const text = formatGrandLobbyLayoutExport(layoutOverrides);
+    const text = formatMansionDebugLayoutExportForPage(
+      viewport?.page ?? 'lobby',
+      layoutOverrides,
+    );
     return copyMansionDebugText(text);
-  }, [layoutOverrides]);
+  }, [layoutOverrides, viewport?.page]);
 
   const resetLayout = useCallback(() => {
     clearMansionDebugLayoutOverrides();

@@ -45,6 +45,11 @@ export const MANSION_DEBUG_PAGE_FILTER_OPTIONS: { id: MansionDebugPageFilter; la
   { id: 'gallery', label: 'Gallery Only' },
   { id: 'penthouse', label: 'Penthouse Only' },
   { id: 'concierge', label: 'Concierge Only' },
+  { id: 'shopping-bag', label: 'Shopping Bag Only' },
+  { id: 'acquisition', label: 'Acquisition Only' },
+  { id: 'account', label: 'Account Only' },
+  { id: 'alerts', label: 'Alerts Only' },
+  { id: 'booking-suite', label: 'Booking Suite Only' },
 ];
 
 /** Local `npm run dev` or staging/preview hosts (not production custom domain). */

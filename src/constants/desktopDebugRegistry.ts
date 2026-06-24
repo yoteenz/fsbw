@@ -9,7 +9,13 @@ import {
   DESKTOP_GRAND_LOBBY_LAYOUT_SEED,
   desktopGrandLobbyRectToImageRect,
 } from './desktopGrandLobbyLayout';
+import { DESKTOP_SHOPPING_BAG_IMAGE } from './desktopShoppingBag';
+import {
+  DESKTOP_SHOPPING_BAG_LAYOUT_SEED,
+  desktopShoppingBagRectToImageRect,
+} from './desktopShoppingBagLayout';
 import type { DesktopGrandLobbyPanelRegionId } from '../types/desktopGrandLobby';
+import type { DesktopShoppingBagRegionId } from '../types/desktopShoppingBagLayout';
 import type {
   MansionDebugBounds,
   MansionDebugCategory,
@@ -24,6 +30,38 @@ function grandLobbyBounds(regionId: DesktopGrandLobbyPanelRegionId): MansionDebu
   return {
     image: DESKTOP_GRAND_LOBBY_IMAGE,
     imageRect: desktopGrandLobbyRectToImageRect(rect),
+  };
+}
+
+function shoppingBagBounds(regionId: DesktopShoppingBagRegionId): MansionDebugBounds {
+  const rect = DESKTOP_SHOPPING_BAG_LAYOUT_SEED.rects[regionId];
+  return {
+    image: DESKTOP_SHOPPING_BAG_IMAGE,
+    imageRect: desktopShoppingBagRectToImageRect(rect),
+  };
+}
+
+function shoppingBagRegion(
+  id: string,
+  regionId: DesktopShoppingBagRegionId,
+  label: string,
+  category: MansionDebugCategory,
+  type: MansionDebugRegionType,
+  component: string,
+  dataSource?: string,
+  route?: string,
+): MansionDebugRegion {
+  return {
+    id,
+    page: 'shopping-bag',
+    category,
+    type,
+    filterGroup: 'room-hotspots',
+    label,
+    component,
+    route,
+    dataSource,
+    bounds: shoppingBagBounds(regionId),
   };
 }
 
@@ -106,6 +144,52 @@ export const DESKTOP_DEBUG_REGISTRY: readonly MansionDebugRegion[] = [
     'GrandLobbyPanels',
     'GRAND_LOBBY_HOUSE_INFO_LINKS',
     '/brand/about',
+  ),
+  shoppingBagRegion(
+    'curator-tablet-screen',
+    'curatorTablet',
+    'Curator Tablet Screen',
+    'room-hotspot',
+    'hotspot',
+    'PerspectivePanel',
+    'curator-tablet',
+  ),
+  shoppingBagRegion(
+    'collection-header',
+    'collectionHeader',
+    'Collection Header',
+    'information-panel',
+    'panel',
+    'CuratedCollectionTablet',
+    'curated-tablet__header',
+  ),
+  shoppingBagRegion(
+    'cart-gallery',
+    'cartGallery',
+    'Cart Gallery',
+    'clickable-destination',
+    'destination',
+    'CuratedCartGallery',
+    'curated-gallery',
+  ),
+  shoppingBagRegion(
+    'acquisition-summary',
+    'acquisitionSummary',
+    'Acquisition Summary Bar',
+    'navigation',
+    'nav',
+    'AcquisitionSummaryBar',
+    'acquisition-summary-bar',
+  ),
+  shoppingBagRegion(
+    'empty-collection-cta',
+    'emptyCollectionCta',
+    'Empty Collection CTA',
+    'clickable-destination',
+    'destination',
+    'EmptyCollectionState',
+    'curated-tablet__enter-btn',
+    '/desktop/penthouse?room=showroom',
   ),
 ] as const;
 

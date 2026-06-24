@@ -21,6 +21,11 @@ const PAGE_FILTER_SHORT: Record<string, string> = {
   gallery: 'Gallery',
   penthouse: 'PH',
   concierge: 'Con',
+  'shopping-bag': 'Bag',
+  acquisition: 'Acq',
+  account: 'Acct',
+  alerts: 'Alerts',
+  'booking-suite': 'Book',
 };
 
 const FILTER_SHORT: Partial<Record<(typeof MANSION_DEBUG_FILTER_GROUPS)[number], string>> = {
