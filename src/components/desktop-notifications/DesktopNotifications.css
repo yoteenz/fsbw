@@ -1,0 +1,336 @@
+.dn-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.dn-scene__bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.dn-scene__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dn-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.dn-page__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.dn-page--artboard .dn-page__viewport {
+  flex: none;
+  height: 1012px;
+  min-height: 1012px;
+}
+
+/* Embedded acrylic slots — transparent, etched into panels */
+.dn-slot {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(4px, 1cqi, 8px);
+  align-items: start;
+  padding: clamp(4px, 1.2cqi, 10px);
+  color: #1a1a1a;
+  background: transparent;
+  container-type: size;
+  position: relative;
+}
+
+.dn-slot__accent {
+  position: absolute;
+  left: clamp(3px, 0.8cqi, 6px);
+  top: clamp(6px, 1.4cqi, 10px);
+  bottom: clamp(6px, 1.4cqi, 10px);
+  width: 1px;
+  background: linear-gradient(180deg, transparent, #eb1c24 20%, #eb1c24 80%, transparent);
+  opacity: 0.75;
+}
+
+.dn-slot__icon {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: clamp(10px, 2.8cqi, 16px);
+  height: clamp(10px, 2.8cqi, 16px);
+  margin-top: clamp(1px, 0.3cqi, 2px);
+  margin-left: clamp(4px, 1cqi, 8px);
+  color: #eb1c24;
+  flex-shrink: 0;
+}
+
+.dn-slot__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dn-slot__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1px, 0.35cqi, 3px);
+}
+
+.dn-slot__title {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(6px, 2.2cqi, 10px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: #111;
+}
+
+.dn-slot__body {
+  margin: 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(5px, 1.8cqi, 8px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: #555;
+}
+
+.dn-slot__body--sub {
+  color: #777;
+}
+
+.dn-slot__meta {
+  margin: 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(4px, 1.5cqi, 7px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.dn-slot__priority {
+  margin: clamp(1px, 0.3cqi, 2px) 0 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(4px, 1.4cqi, 7px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dn-slot__priority--high {
+  color: #eb1c24;
+}
+
+.dn-slot__priority--medium {
+  color: #666;
+}
+
+.dn-slot__priority--low {
+  color: #999;
+}
+
+.dn-featured {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(3px, 0.8cqi, 6px);
+  padding: clamp(6px, 1.5cqi, 12px);
+  background: transparent;
+  container-type: size;
+}
+
+.dn-featured__eyebrow {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(5px, 1.8cqi, 9px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #eb1c24;
+}
+
+.dn-featured__title {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(7px, 2.4cqi, 12px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: #111;
+  max-width: 92%;
+}
+
+.dn-featured__body {
+  margin: 0;
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(5px, 1.8cqi, 9px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: #555;
+  max-width: 88%;
+}
+
+.dn-featured__cta {
+  margin-top: clamp(2px, 0.6cqi, 4px);
+  padding: clamp(3px, 0.8cqi, 6px) clamp(8px, 2cqi, 14px);
+  border: 1px solid rgba(235, 28, 36, 0.55);
+  background: rgba(255, 255, 255, 0.12);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(5px, 1.6cqi, 8px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #eb1c24;
+  cursor: pointer;
+}
+
+.dn-link-cta {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1cqi, 8px);
+  border: none;
+  background: transparent;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: clamp(5px, 1.6cqi, 8px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #eb1c24;
+  cursor: pointer;
+  container-type: size;
+}
+
+.dn-link-cta__arrow {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+/* Debug overlays */
+.dn-debug-rect__label {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.dn-debug-rect__corner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0;
+}
+
+.dn-debug-toolbar {
+  position: fixed;
+  top: 76px;
+  right: 12px;
+  z-index: 220;
+  width: min(240px, calc(100vw - 24px));
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-family: 'Futura PT Book', futuristic-pt, Futura, Inter, sans-serif;
+}
+
+.dn-debug-toolbar__title {
+  margin: 0 0 4px;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #eb1c24;
+}
+
+.dn-debug-toolbar__hint {
+  margin: 0 0 8px;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #666;
+}
+
+.dn-debug-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.dn-debug-toolbar__actions button,
+.dn-debug-toolbar__panels button {
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dn-debug-toolbar__actions button:hover,
+.dn-debug-toolbar__panels button:hover {
+  border-color: #eb1c24;
+  color: #eb1c24;
+}
+
+.dn-debug-toolbar__panels button.is-active {
+  border-color: #eb1c24;
+  background: rgba(235, 28, 36, 0.08);
+  color: #eb1c24;
+}
+
+.dn-debug-toolbar__panels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dn-debug-entry {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 180;
+  padding: 8px 12px;
+  border: 1px dashed rgba(235, 28, 36, 0.6);
+  background: rgba(255, 255, 255, 0.75);
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #eb1c24;
+  cursor: pointer;
+}

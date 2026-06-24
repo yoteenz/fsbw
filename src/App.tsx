@@ -181,6 +181,7 @@ const DesktopAccountPage = lazyWithRetry(() => import('./pages/desktop/account/p
 const DesktopShoppingBagPage = lazyWithRetry(() => import('./pages/desktop/shopping-bag/page'), 'DesktopShoppingBagPage');
 const DesktopAcquisitionPage = lazyWithRetry(() => import('./pages/desktop/acquisition/page'), 'DesktopAcquisitionPage');
 const DesktopBookingSuitePage = lazyWithRetry(() => import('./pages/desktop/booking-suite/page'), 'DesktopBookingSuitePage');
+const DesktopNotificationsPage = lazyWithRetry(() => import('./pages/desktop/notifications/page'), 'DesktopNotificationsPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 function DesktopRoutesLayout() {
@@ -535,6 +536,11 @@ function App() {
           <Route path="/desktop/booking-suite" element={
             <Suspense fallback={<LoadingScreen />}>
               <DesktopBookingSuitePage />
+            </Suspense>
+          } />
+          <Route path="/desktop/notifications" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <DesktopNotificationsPage />
             </Suspense>
           } />
           <Route path="/desktop/acquisition" element={
