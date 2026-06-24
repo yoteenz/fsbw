@@ -192,6 +192,7 @@ function shoppingBagRegion(
   component: string,
   dataSource?: string,
   route?: string,
+  perspectivePanelId?: 'curator-tablet',
 ): MansionDebugRegion {
   return {
     id,
@@ -203,6 +204,7 @@ function shoppingBagRegion(
     component,
     route,
     dataSource,
+    perspectivePanelId,
     bounds: shoppingBagBounds(regionId),
   };
 }
@@ -215,6 +217,7 @@ function acquisitionRegion(
   type: MansionDebugRegionType,
   component: string,
   dataSource?: string,
+  perspectivePanelId?: 'checkout-tablet',
 ): MansionDebugRegion {
   return {
     id,
@@ -225,6 +228,7 @@ function acquisitionRegion(
     label,
     component,
     dataSource,
+    perspectivePanelId,
     bounds: shoppingBagBounds(regionId),
   };
 }
@@ -437,6 +441,8 @@ const SHOPPING_BAG_REGIONS: MansionDebugRegion[] = [
     'hotspot',
     'PerspectivePanel',
     'curator-tablet',
+    undefined,
+    'curator-tablet',
   ),
   shoppingBagRegion(
     'collection-header',
@@ -485,6 +491,7 @@ const ACQUISITION_REGIONS: MansionDebugRegion[] = [
     'room-hotspot',
     'hotspot',
     'PerspectivePanel',
+    'checkout-tablet',
     'checkout-tablet',
   ),
   acquisitionRegion(

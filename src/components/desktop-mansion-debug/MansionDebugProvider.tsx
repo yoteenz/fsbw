@@ -244,8 +244,18 @@ export function MansionDebugProvider({ children }: { children: ReactNode }) {
   }, [syncFromStorage]);
 
   const toggleEditMode = useCallback(() => {
-    setEditMode((current) => !current);
-  }, []);
+    setEditMode((current) => {
+      const next = !current;
+      if (next && viewport) {
+        if (viewport.page === 'shopping-bag') {
+          setSelectedRegionId('curator-tablet-screen');
+        } else if (viewport.page === 'acquisition') {
+          setSelectedRegionId('acquisition-checkout-tablet');
+        }
+      }
+      return next;
+    });
+  }, [viewport]);
 
   const value = useMemo(
     () => ({

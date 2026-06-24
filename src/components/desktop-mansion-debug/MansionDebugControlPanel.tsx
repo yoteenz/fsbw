@@ -8,6 +8,7 @@ import type { MansionDebugDisplayMode } from '../../types/desktopMansionDebug';
 import { DESKTOP_DEBUG_REGISTRY } from '../../constants/desktopDebugRegistry';
 import { useMansionDebug } from './MansionDebugProvider';
 import { useMansionDebugPanelDrag } from './useMansionDebugPanelDrag';
+import { usePerspectivePanelDebug } from '../perspective-panel/PerspectivePanelDebugProvider';
 
 const DISPLAY_MODE_OPTIONS: { id: MansionDebugDisplayMode; label: string }[] = [
   { id: 'full', label: 'Full' },
@@ -41,6 +42,7 @@ const FILTER_SHORT: Partial<Record<(typeof MANSION_DEBUG_FILTER_GROUPS)[number],
 
 export function MansionDebugControlPanel() {
   const debug = useMansionDebug();
+  const perspectiveDebug = usePerspectivePanelDebug();
   const panelRef = useRef<HTMLDivElement>(null);
   const { isDraggable, dragging, panelStyle, onDragHandlePointerDown } = useMansionDebugPanelDrag(panelRef);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -118,6 +120,9 @@ export function MansionDebugControlPanel() {
             className="mansion-debug-panel__action"
             onClick={() => {
               debug.saveLayout();
+              if (perspectiveDebug?.debugEnabled) {
+                perspectiveDebug.save();
+              }
               setSavedFlash(true);
               window.setTimeout(() => setSavedFlash(false), 1800);
             }}
@@ -128,7 +133,10 @@ export function MansionDebugControlPanel() {
             type="button"
             className="mansion-debug-panel__action"
             onClick={async () => {
-              const ok = await debug.exportLayout();
+              let ok = await debug.exportLayout();
+              if (!ok && perspectiveDebug?.debugEnabled) {
+                ok = await perspectiveDebug.copyJson();
+              }
               if (ok) {
                 setExportedFlash(true);
                 window.setTimeout(() => setExportedFlash(false), 1800);

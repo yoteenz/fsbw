@@ -97,6 +97,11 @@ export function mergePerspectivePanelMaps(
 
 export function loadPerspectivePanelOverrides(): PerspectivePanelMap {
   if (!isPerspectivePanelDebugEnabled()) return {};
+  return loadPerspectivePanelMapFromStorage();
+}
+
+/** Load saved panel quads regardless of URL debug flags (Mansion Debug bridge). */
+export function loadPerspectivePanelMapFromStorage(): PerspectivePanelMap {
   const payload = readPerspectivePanelStoragePayload();
   if (!payload) return migrateLegacyShoppingBagTablet({});
   return payload.panels;

@@ -23,6 +23,7 @@ export function MansionDebugLayer() {
 
     return combined
       .filter((region) => {
+        if (region.perspectivePanelId) return false;
         if (!regionMatchesViewport(region, page, pageZone)) return false;
         if (debug.pageFilter !== 'all' && region.page !== debug.pageFilter) return false;
         if (!debug.filters[region.filterGroup]) return false;

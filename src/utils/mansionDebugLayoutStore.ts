@@ -14,10 +14,14 @@ import {
 import type { PenthouseSuitePanelId } from '../constants/desktopPenthouseSuite';
 import { PENTHOUSE_SUITE_PANEL_RECTS } from '../constants/desktopPenthouseSuite';
 import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../constants/desktopGrandLobbyLayout';
+import { defaultPerspectivePanelQuad } from '../constants/perspectivePanelConfig';
 import { DESKTOP_NOTIFICATIONS_LAYOUT_SEED } from '../constants/desktopNotificationsLayout';
 import { DESKTOP_SHOPPING_BAG_LAYOUT_SEED } from '../constants/desktopShoppingBagLayout';
 import { TRANSFORMATION_SUITE_LAYOUT_SEED } from '../constants/transformationSuiteLayout';
 import { imageRectToPercentRect } from './desktopPanelDebugMode';
+import { formatShoppingBagTabletQuadForExport } from './desktopShoppingBagTabletQuad';
+import { loadPerspectivePanelMapFromStorage } from './perspectivePanelStorage';
+import { perspectivePanelQuadToQuad4 } from './perspectivePanelQuad';
 
 export const MANSION_DEBUG_LAYOUT_OVERRIDE_KEY = 'mansionDebug:layoutOverrides';
 export const MANSION_DEBUG_LAYOUT_UPDATED_EVENT = 'mansionDebugLayoutUpdated';
@@ -144,6 +148,24 @@ export const DESKTOP_GRAND_LOBBY_LAYOUT_SEED: DesktopGrandLobbyLayout = {
 };`;
 }
 
+export function formatShoppingBagPerspectiveLayoutExport(): string {
+  const map = loadPerspectivePanelMapFromStorage();
+  const quad = perspectivePanelQuadToQuad4(
+    map['curator-tablet'] ?? defaultPerspectivePanelQuad('curator-tablet'),
+  );
+  return `// Paste into desktopShoppingBag.ts — DESKTOP_SHOPPING_BAG_TABLET_QUAD
+${formatShoppingBagTabletQuadForExport(quad)}`;
+}
+
+export function formatAcquisitionPerspectiveLayoutExport(): string {
+  const map = loadPerspectivePanelMapFromStorage();
+  const quad = perspectivePanelQuadToQuad4(
+    map['checkout-tablet'] ?? defaultPerspectivePanelQuad('checkout-tablet'),
+  );
+  return `// Paste into desktopShoppingBag.ts — shared checkout quad (DESKTOP_SHOPPING_BAG_TABLET_QUAD)
+${formatShoppingBagTabletQuadForExport(quad)}`;
+}
+
 export function formatShoppingBagLayoutExport(
   overrides: MansionDebugLayoutOverrides,
 ): string {
@@ -246,15 +268,15 @@ export function formatMansionDebugLayoutExportForPage(
 ): string {
   switch (page) {
     case 'shopping-bag':
-      return formatShoppingBagLayoutExport(overrides);
+      return formatShoppingBagPerspectiveLayoutExport();
+    case 'acquisition':
+      return formatAcquisitionPerspectiveLayoutExport();
     case 'alerts':
       return formatAlertsLayoutExport(overrides);
     case 'booking-suite':
       return formatBookingSuiteLayoutExport(overrides);
     case 'account':
       return formatAccountLayoutExport(overrides);
-    case 'acquisition':
-      return formatAcquisitionLayoutExport(overrides);
     default:
       return formatGrandLobbyLayoutExport(overrides);
   }

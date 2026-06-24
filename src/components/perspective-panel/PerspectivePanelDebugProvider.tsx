@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { DESKTOP_DEBUG_REGISTRY } from '../../constants/desktopDebugRegistry';
 import { canAccessPageDebugMode } from '../../utils/adminAuth';
 import {
   PERSPECTIVE_PANEL_DEFINITIONS,
@@ -25,6 +26,7 @@ import {
 } from '../../utils/perspectivePanelDebug';
 import {
   clearPerspectivePanelOverride,
+  loadPerspectivePanelMapFromStorage,
   loadPerspectivePanelOverrides,
   PERSPECTIVE_PANEL_STORAGE_KEY,
   PERSPECTIVE_PANEL_UPDATED_EVENT,
@@ -33,6 +35,7 @@ import {
 } from '../../utils/perspectivePanelStorage';
 import { syncPerspectivePanelMapToCloud } from '../../utils/perspectivePanelSync';
 import { defaultPerspectivePanelQuad } from '../../constants/perspectivePanelConfig';
+import { useMansionDebug } from '../desktop-mansion-debug/MansionDebugProvider';
 
 export type PerspectivePanelSaveStatus = 'idle' | 'saved' | 'failed';
 
@@ -65,8 +68,15 @@ function buildInitialOverrides(): PerspectivePanelMap {
 
 export function PerspectivePanelDebugProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
-  const debugEnabled = isPerspectivePanelDebugEnabled();
+  const mansionDebug = useMansionDebug();
+  const urlDebug = isPerspectivePanelDebugEnabled();
   const currentPage = resolvePerspectivePanelPage(location.pathname, location.search);
+
+  const mansionOverlayActive = Boolean(
+    mansionDebug?.available && mansionDebug.enabled && currentPage != null,
+  );
+  const mansionEditActive = Boolean(mansionOverlayActive && mansionDebug?.editMode);
+  const debugEnabled = urlDebug || mansionOverlayActive;
 
   const pagePanelIds = useMemo(() => {
     if (!currentPage) return [] as PerspectivePanelId[];
@@ -90,17 +100,19 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   }, [pagePanelIds]);
 
   const reloadFromStorage = useCallback(() => {
-    if (!isPerspectivePanelDebugEnabled()) {
+    if (!debugEnabled) {
       setPanelOverrides({});
       return;
     }
     if (dirtyRef.current) return;
-    setPanelOverrides(loadPerspectivePanelOverrides());
+    setPanelOverrides(
+      urlDebug ? loadPerspectivePanelOverrides() : loadPerspectivePanelMapFromStorage(),
+    );
     setSaveStatus('idle');
-  }, []);
+  }, [debugEnabled, urlDebug]);
 
   const scheduleDraftSave = useCallback((map: PerspectivePanelMap) => {
-    if (!isPerspectivePanelDebugEnabled()) return;
+    if (!debugEnabled) return;
     if (draftSaveTimerRef.current != null) {
       window.clearTimeout(draftSaveTimerRef.current);
     }
@@ -110,7 +122,7 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
       savePerspectivePanelOverrides(map, { silent: true });
       suppressReloadRef.current = false;
     }, 350);
-  }, []);
+  }, [debugEnabled]);
 
   useEffect(() => {
     if (!debugEnabled) {
@@ -138,6 +150,22 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
       }
     };
   }, [debugEnabled, reloadFromStorage]);
+
+  useEffect(() => {
+    if (!mansionEditActive || !mansionDebug?.selectedRegionId) return;
+    const region = [...DESKTOP_DEBUG_REGISTRY, ...mansionDebug.runtimeRegions].find(
+      (entry) => entry.id === mansionDebug.selectedRegionId,
+    );
+    if (region?.perspectivePanelId) {
+      setSelectedPanelId(region.perspectivePanelId);
+    }
+  }, [mansionEditActive, mansionDebug?.selectedRegionId, mansionDebug?.runtimeRegions]);
+
+  useEffect(() => {
+    if (!mansionEditActive || mansionDebug?.selectedRegionId || pagePanelIds.length === 0) return;
+    const defaultPanel = pagePanelIds[0];
+    if (defaultPanel) setSelectedPanelId(defaultPanel);
+  }, [mansionEditActive, mansionDebug?.selectedRegionId, pagePanelIds]);
 
   const resolveQuad = useCallback(
     (id: PerspectivePanelId) => {
@@ -245,10 +273,11 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
   const isPanelEditable = useCallback(
     (id: PerspectivePanelId) => {
       if (!debugEnabled || !overlaysVisible) return false;
+      if (mansionOverlayActive && !mansionEditActive) return false;
       if (editAll) return true;
       return id === selectedPanelId;
     },
-    [debugEnabled, overlaysVisible, editAll, selectedPanelId],
+    [debugEnabled, overlaysVisible, mansionOverlayActive, mansionEditActive, editAll, selectedPanelId],
   );
 
   const isPanelHighlighted = useCallback(

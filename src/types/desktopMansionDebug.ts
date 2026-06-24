@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import type { PerspectivePanelId } from './perspectivePanel';
 import type { DesktopRoomCoverImageSpace } from '../utils/desktopRoomCoverLayout';
 
 export type MansionDebugCategory =
@@ -59,6 +60,8 @@ export type MansionDebugRegion = {
   component?: string;
   route?: string;
   dataSource?: string;
+  /** When set, region is tuned via perspective-panel quad corners (not a plain rect). */
+  perspectivePanelId?: PerspectivePanelId;
   bounds: MansionDebugBounds;
 };
 
