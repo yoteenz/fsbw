@@ -53,6 +53,7 @@ import {
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
+import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -593,6 +594,7 @@ function App() {
             </CommerceRouteGuard>
           } />
         </Route>
+        <MobileMansionRoutes />
         <Route path="/lobby/lounge" element={<LobbyPage />} />
         <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />

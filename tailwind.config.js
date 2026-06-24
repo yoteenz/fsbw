@@ -10,6 +10,11 @@ export default {
         gray: {
           500: '#808080',
         },
+        mansion: {
+          red: '#EB1C24',
+          gray: '#808080',
+          chrome: 'rgba(200, 200, 200, 0.45)',
+        },
         brand: {
           red: '#C81C24',
           'red-hover': '#E02030',
