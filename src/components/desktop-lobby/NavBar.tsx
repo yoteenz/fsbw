@@ -3,17 +3,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   DESKTOP_NAV_QUICK_ROUTES,
   buildDesktopQuickRouteHref,
+  isDesktopHomeNavActive,
+  resolveDesktopHomeHref,
   resolveDesktopNavActiveLabel,
 } from '../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
 import { desktopNavBarStyle } from './desktopLobbyAcrylic';
 import { readCartCountFromStorage } from '../../utils/cartLocalStorage';
+import { isSignedIn } from '../../utils/adminAuth';
 import { DESKTOP_BOOKING_SUITE_PATH } from '../../constants/transformationSuite';
 import { DESKTOP_ALERTS_PATH } from '../../constants/desktopNotifications';
 import {
-  DESKTOP_ACCOUNT_HUB_PATH,
   DESKTOP_SHOPPING_BAG_PATH,
-  resolveAccountHubPath,
   resolveShoppingBagPath,
 } from '../../utils/desktopCommerceRoutes';
 
@@ -22,6 +23,7 @@ export function NavBar() {
   const location = useLocation();
   const towerTravel = useDesktopTowerTravelOptional();
   const [cartCount, setCartCount] = useState(0);
+  const [signedIn, setSignedIn] = useState(() => isSignedIn());
 
   /** Express transport to exact zone/room — no elevator; floor directory owns that journey. */
   const go = (href: string) => {
@@ -29,12 +31,12 @@ export function NavBar() {
     else navigate(href);
   };
 
-  const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search);
-  const accountHubPath = resolveAccountHubPath(location.pathname);
+  const activeLink = resolveDesktopNavActiveLabel(location.pathname, location.search, signedIn);
+  const homeHref = resolveDesktopHomeHref(signedIn);
+  const homeActive = isDesktopHomeNavActive(location.pathname, location.search, signedIn);
   const shoppingBagPath = resolveShoppingBagPath(location.pathname);
   const bookingSuiteActive = location.pathname === DESKTOP_BOOKING_SUITE_PATH;
   const alertsActive = location.pathname === DESKTOP_ALERTS_PATH;
-  const accountActive = location.pathname === DESKTOP_ACCOUNT_HUB_PATH;
   const shoppingBagActive = location.pathname === DESKTOP_SHOPPING_BAG_PATH;
 
   useEffect(() => {
@@ -52,7 +54,16 @@ export function NavBar() {
     };
   }, []);
 
-  const homeRoute = DESKTOP_NAV_QUICK_ROUTES.find((r) => r.label === 'HOME')!;
+  useEffect(() => {
+    const syncAuth = () => setSignedIn(isSignedIn());
+    syncAuth();
+    window.addEventListener('signInStateChanged', syncAuth);
+    window.addEventListener('storage', syncAuth);
+    return () => {
+      window.removeEventListener('signInStateChanged', syncAuth);
+      window.removeEventListener('storage', syncAuth);
+    };
+  }, []);
 
   return (
     <nav
@@ -63,7 +74,7 @@ export function NavBar() {
       }}
     >
       <button
-        onClick={() => go(buildDesktopQuickRouteHref(homeRoute))}
+        onClick={() => go(homeHref)}
         className="flex items-center flex-shrink-0"
         style={{ fontFamily: '"Futura PT Medium"', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
@@ -76,41 +87,44 @@ export function NavBar() {
       </button>
 
       <div className="flex items-center gap-8">
-        {DESKTOP_NAV_QUICK_ROUTES.map((link) => (
-          <button
-            key={link.label}
-            onClick={() => go(buildDesktopQuickRouteHref(link))}
-            className="relative"
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '10px',
-              letterSpacing: '0.13em',
-              textTransform: 'uppercase',
-              color: activeLink === link.label ? '#C81C24' : '#1A1A1A',
-              transition: 'color 0.15s ease',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-            }}
-            onMouseEnter={(e) => {
-              if (activeLink !== link.label)
-                (e.currentTarget as HTMLButtonElement).style.color = '#C81C24';
-            }}
-            onMouseLeave={(e) => {
-              if (activeLink !== link.label)
-                (e.currentTarget as HTMLButtonElement).style.color = '#1A1A1A';
-            }}
-          >
-            {link.label}
-            {activeLink === link.label && (
-              <span
-                className="absolute left-0 right-0"
-                style={{ bottom: '-2px', height: '1px', background: '#C81C24', display: 'block' }}
-              />
-            )}
-          </button>
-        ))}
+        {DESKTOP_NAV_QUICK_ROUTES.map((link) => {
+          const isActive = link.label === 'HOME' ? homeActive : activeLink === link.label;
+          const href = link.label === 'HOME' ? homeHref : buildDesktopQuickRouteHref(link);
+
+          return (
+            <button
+              key={link.label}
+              onClick={() => go(href)}
+              className="relative"
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                letterSpacing: '0.13em',
+                textTransform: 'uppercase',
+                color: isActive ? '#C81C24' : '#1A1A1A',
+                transition: 'color 0.15s ease',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = '#C81C24';
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = '#1A1A1A';
+              }}
+            >
+              {link.label}
+              {isActive && (
+                <span
+                  className="absolute left-0 right-0"
+                  style={{ bottom: '-2px', height: '1px', background: '#C81C24', display: 'block' }}
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex items-center gap-5">
@@ -164,26 +178,6 @@ export function NavBar() {
             <rect x="3" y="4" width="18" height="18" rx="2" />
             <path d="M16 2v4M8 2v4M3 10h18" />
             <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
-          </svg>
-        </button>
-
-        <button
-          className="hover:opacity-50 transition-opacity"
-          onClick={() => navigate(accountHubPath)}
-          aria-label="Account"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
-        >
-          <svg
-            width="17"
-            height="17"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={accountActive ? '#C81C24' : '#1A1A1A'}
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
           </svg>
         </button>
 

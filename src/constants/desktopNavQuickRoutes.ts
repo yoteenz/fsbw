@@ -4,6 +4,7 @@ import {
   DESKTOP_LOBBY_PATH,
   DESKTOP_PENTHOUSE_PATH,
 } from './desktopFloors';
+import { DESKTOP_ACCOUNT_HUB_PATH } from '../utils/desktopCommerceRoutes';
 import { appendRoomTitleDebugToHref } from '../utils/desktopRoomTitlePlacementDebug';
 
 export type DesktopNavQuickRoute = {
@@ -49,12 +50,34 @@ export function buildDesktopDestinationHref(floorPath: string, destinationId: st
   return typeof window !== 'undefined' ? appendRoomTitleDebugToHref(base) : base;
 }
 
-export function resolveDesktopNavActiveLabel(pathname: string, search: string): string | undefined {
+/** Signed-in clients land on Penthouse Suite; guests on Grand Lobby. */
+export function resolveDesktopHomeHref(isSignedIn: boolean): string {
+  if (isSignedIn) return DESKTOP_ACCOUNT_HUB_PATH;
+  return buildDesktopDestinationHref(DESKTOP_LOBBY_PATH, 'grand-lobby');
+}
+
+export function isDesktopHomeNavActive(pathname: string, search: string, isSignedIn: boolean): boolean {
+  if (isSignedIn) return pathname === DESKTOP_ACCOUNT_HUB_PATH;
+  if (pathname !== DESKTOP_LOBBY_PATH) return false;
+  const zone = new URLSearchParams(search).get('zone');
+  return !zone || zone === 'grand-lobby';
+}
+
+export function resolveDesktopNavActiveLabel(
+  pathname: string,
+  search: string,
+  isSignedIn?: boolean,
+): string | undefined {
+  if (isSignedIn !== undefined && isDesktopHomeNavActive(pathname, search, isSignedIn)) {
+    return 'HOME';
+  }
+
   const params = new URLSearchParams(search);
   const room = params.get('room');
   const zone = params.get('zone');
 
   for (const route of DESKTOP_NAV_QUICK_ROUTES) {
+    if (isSignedIn && route.label === 'HOME') continue;
     if (route.path !== pathname) continue;
     if (route.room) {
       if (route.room === room) return route.label;
