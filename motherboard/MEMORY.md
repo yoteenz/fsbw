@@ -32274,3 +32274,14 @@ Continuation of Mansion Debug work after shopping-bag-only regions. User asked t
 - **Note:** Mansion Debug (colored rects) remains separate from legacy per-page debug (`CTRL+SHIFT+D` on alerts/booking-suite, `?receptionDashboardDebug=1`, etc.) and Perspective Panel Debug (`?panelDebug=1`).
 - Pushed **`master`** + **`preview/mobile`** (`383c3aff`).
 
+---
+
+## 2026-06-24 — Shopping bag tablet quad editing restored in Mansion Debug
+
+User reported the **shopping bag square panel isn't editable anymore** after Mansion Debug added a plain rect for the curator tablet — the real screen is a **tilted 4-corner perspective quad** (`DESKTOP_SHOPPING_BAG_TABLET_QUAD`), not an axis-aligned rectangle.
+
+- **Cause:** Mansion Debug registered `curator-tablet-screen` as a percent rect (`MansionDebugEditableRect`), which cannot represent perspective tilt and overlaid/blocked the existing `PerspectivePanelDebugPolygon` TL/TR/BR/BL editor (`?panelDebug=1` / `?shoppingBagDebug=1`).
+- **Fix:** Added `perspectivePanelId` on `MansionDebugRegion`; shopping-bag `curator-tablet` and acquisition `checkout-tablet` use it. `PerspectivePanelDebugProvider` bridges when Mansion Debug is ON (polygon visible) and Edit mode (corners draggable). `MansionDebugLayer` skips rect overlays for perspective regions. Edit auto-selects tablet region; Save/Copy also persist `perspectivePanelMap` / export `DESKTOP_SHOPPING_BAG_TABLET_QUAD`.
+- **How to tune:** `/desktop/shopping-bag` → press **D** → **Edit** → drag **TL/TR/BR/BL** on the tablet polygon → **Save** or **Copy**.
+- Pushed **`master`** + **`preview/mobile`** (`87ce8da2`).
+
