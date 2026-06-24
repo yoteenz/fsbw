@@ -20,6 +20,8 @@ import { DESKTOP_LOUNGE_BG_FALLBACK } from '../../../constants/desktopLobbyEnv';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
 import { ReceptionDashboard } from '../../../components/desktop-reception/ReceptionDashboard';
+import { GrandLobbyPanels } from '../../../components/desktop-grand-lobby/GrandLobbyPanels';
+import '../../../components/desktop-grand-lobby/GrandLobby.css';
 import { DESKTOP_RECEPTION_BACKGROUND_URL } from '../../../constants/desktopReceptionDashboard';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
@@ -48,6 +50,7 @@ export default function DesktopFloorZonePage({ floor }: Props) {
 
   const isLoungeZone = zoneId === DESKTOP_LOUNGE_ZONE_ID;
   const isReceptionZone = zoneId === 'reception';
+  const isGrandLobbyZone = zoneId === 'grand-lobby';
 
   useEffect(() => {
     if (!isLoungeZone) {
@@ -140,6 +143,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         <DesktopFloatingNav />
 
         {isReceptionZone ? <ReceptionDashboard measureRef={viewportMeasureRef} /> : null}
+
+        {isGrandLobbyZone ? <GrandLobbyPanels measureRef={viewportMeasureRef} /> : null}
 
         {zoneId === 'psa-suite' ? (
           <PsaAssistantWidget variant="suite" measureRef={viewportMeasureRef} />

@@ -32141,11 +32141,19 @@ User asked to restyle the **UPDATING THE APP** stale-chunk screen: body copy **b
 User asked to **remove account icon** from desktop nav; **HOME** → **Penthouse Suite** (`/desktop/account`) when signed in; guests → **Grand Lobby** (`/desktop/lobby?zone=grand-lobby`). Post sign-in greeting on reception unchanged (`DESKTOP_CLIENT_RECEPTION_PATH` via `resolveReturnToAfterSignIn`).
 
 - **`NavBar.tsx`:** removed account button; tracks `isSignedIn`; logo + HOME use `resolveDesktopHomeHref`.
+- **`desktopNavQuickRoutes.ts`:** `resolveDesktopHomeHref`, `isDesktopHomeNavActive`, auth-aware `resolveDesktopNavActiveLabel`.
 - Pushed **`master`** + **`preview/mobile`**.
 
 ---
 
-## 2026-06-23 — Desktop nav: swap Slay Cam and Membership
+## 2026-06-23 — Grand Lobby Panels hero + interactive glass overlays
 
-User asked to swap **SLAY CAM** and **MEMBERSHIP** positions in desktop nav bar order. **`DESKTOP_NAV_QUICK_ROUTES`:** MEMBERSHIP now before ANALYSIS; SLAY CAM after ANALYSIS. Pushed **`master`** + **`preview/mobile`**.
+User supplied updated **Panels** hero asset for Desktop **Grand Lobby** and asked for five interactive glass overlays aligned to the reference (membership, economy, elevator directory, welcome, house information)—no reception/Concierge duplicate content, no redesign, image unchanged as fixed 21:9 background.
+
+- **Background:** `desktopFloorZoneBackgrounds.ts` → `grand-lobby` now uses `.../Desktop/Panels/2C0F492C-FD9E-442F-BE81-F7180060E713.png` (measured **1881×836**).
+- **Overlays:** `src/components/desktop-grand-lobby/` — `GrandLobbyPanels` mounted from `DesktopFloorZonePage` when `zone=grand-lobby`. Cover-locked anchors via `GrandLobbyPanelAnchor` + `desktopGrandLobbyLayout.ts` seed rects. Glass acrylic styling (`GrandLobby.css`); baked-art panels use transparent overlay text so hero art stays visible; directory rows + house-info links are clickable with hover glow/active states.
+- **Directory routing:** `buildDesktopDestinationHref` — Penthouse rooms (`analysis-lab`, `showroom`, `boutique`), Grand Lobby, Lounge (`/desktop/lobby?zone=lounge`), Gallery zones (`slay-cam-gallery`, `rewards-gallery`), Concierge (`reception`, `founder-suite`, `psa-suite`). Uses `quickTravelTo` when tower nav is active.
+- **House info:** `/brand/about`, `/brand/contact`, `/brand/faq`, `/brand/reviews`; shipping/returns/privacy → `/brand/terms` (no separate slugs yet).
+- **Debug:** `?grandLobbyDebug=1` shows dashed panel rect outlines for alignment tuning.
+- Pushed **`master`** + **`preview/mobile`**.
 
