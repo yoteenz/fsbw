@@ -34,6 +34,8 @@ import { DesktopLoungeTvFrameEditorPanel } from './components/desktop-lobby/Desk
 import { DesktopPsaSuiteFrameEditorProvider } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorContext';
 import { DesktopPsaSuiteFrameEditorPanel } from './components/desktop-lobby/DesktopPsaSuiteFrameEditorPanel';
 import { PerspectivePanelDebugProvider } from './components/perspective-panel/PerspectivePanelDebugProvider';
+import { MansionDebugControlPanel, MansionDebugProvider } from './components/desktop-mansion-debug';
+import './components/desktop-mansion-debug/MansionDebug.css';
 import { PerspectivePanelDebugToolbar } from './components/perspective-panel/PerspectivePanelDebugToolbar';
 import { PerspectivePanelFounderBootstrap } from './components/perspective-panel/PerspectivePanelFounderBootstrap';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
@@ -186,6 +188,7 @@ const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/p
 
 function DesktopRoutesLayout() {
   return (
+    <MansionDebugProvider>
     <PerspectivePanelDebugProvider>
       <PerspectivePanelFounderBootstrap />
       <DesktopRoomTitlePlacementEditorProvider>
@@ -202,6 +205,8 @@ function DesktopRoutesLayout() {
         </DesktopLoungeTvFrameEditorProvider>
       </DesktopRoomTitlePlacementEditorProvider>
     </PerspectivePanelDebugProvider>
+    <MansionDebugControlPanel />
+    </MansionDebugProvider>
   );
 }
 

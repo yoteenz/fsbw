@@ -12,6 +12,8 @@ import { DesktopCuratorCheckoutContext } from '../../../utils/desktopCuratorChec
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_SHOPPING_BAG_BACKGROUND_URL } from '../../../constants/desktopShoppingBag';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
+import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
+import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
 import '../../../components/desktop-shopping-bag/DesktopShoppingBag.css';
 import '../../../components/desktop-shopping-bag/DesktopAcquisition.css';
 
@@ -43,6 +45,11 @@ export default function DesktopAcquisitionPage() {
     void preloadDesktopRoomBackground(DESKTOP_SHOPPING_BAG_BACKGROUND_URL);
   }, []);
 
+  useMansionDebugViewportBinding(viewportRef, {
+    page: 'acquisition',
+    pageLabel: 'Acquisition',
+  });
+
   return (
     <div
       className={`desktop-shopping-bag-page${artboard ? ' desktop-shopping-bag-page--artboard' : ''}`}
@@ -56,6 +63,7 @@ export default function DesktopAcquisitionPage() {
             </DesktopCuratorSuiteScene>
           </DesktopCuratorCheckoutContext.Provider>
         </DesktopCuratorCheckoutBridgeProvider>
+        <MansionDebugLayer />
       </section>
     </div>
   );

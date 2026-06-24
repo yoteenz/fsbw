@@ -19,6 +19,8 @@ import { DesktopFloatingNav } from '../../../components/desktop-lobby/floating-n
 import { ExtensionsBoutiqueExperience } from '../../../components/desktop-penthouse/ExtensionsBoutiqueExperience';
 import { useDesktopTowerPageReveal } from '../../../components/desktop-tower/useDesktopTowerPageReveal';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
+import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
+import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
 
 function PenthouseViewport({
   roomIndex,
@@ -31,6 +33,12 @@ function PenthouseViewport({
 }) {
   const artboard = isDesktopArtboardLayoutActive();
   const viewportMeasureRef = useRef<HTMLElement>(null);
+
+  useMansionDebugViewportBinding(viewportMeasureRef, {
+    page: 'penthouse',
+    pageZone: roomId,
+    pageLabel: 'Penthouse',
+  });
 
   return (
     <section
@@ -55,6 +63,8 @@ function PenthouseViewport({
         viewportMeasureRef={viewportMeasureRef}
         active={roomId === 'boutique'}
       />
+
+      <MansionDebugLayer />
     </section>
   );
 }

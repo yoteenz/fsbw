@@ -5,6 +5,8 @@ import { TransformationSuiteDebugToolbar } from '../../../components/transformat
 import { TransformationSuiteScene } from '../../../components/transformation-suite/TransformationSuiteScene';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { useTransformationSuiteDebugRequired } from '../../../components/transformation-suite/TransformationSuiteDebugProvider';
+import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
+import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
 import '../../../components/transformation-suite/TransformationSuite.css';
 
 function TransformationSuiteDebugEntry() {
@@ -21,12 +23,18 @@ export default function DesktopBookingSuitePage() {
   const viewportRef = useRef<HTMLElement>(null);
   const artboard = isDesktopArtboardLayoutActive();
 
+  useMansionDebugViewportBinding(viewportRef, {
+    page: 'booking-suite',
+    pageLabel: 'Booking Suite',
+  });
+
   return (
     <TransformationSuiteDebugProvider>
       <div className={`ts-page${artboard ? ' ts-page--artboard' : ''}`}>
         <NavBar />
         <section ref={viewportRef} className="ts-page__viewport">
           <TransformationSuiteScene measureRef={viewportRef} />
+          <MansionDebugLayer />
         </section>
         <TransformationSuiteDebugToolbar />
         <TransformationSuiteDebugEntry />

@@ -105,12 +105,3 @@ export const GRAND_LOBBY_HOUSE_INFO_LINKS = [
   { label: 'Terms of Service', href: '/brand/terms' },
   { label: 'Privacy Policy', href: '/brand/terms' },
 ] as const;
-
-export function isGrandLobbyDebugEnabled(): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    return new URLSearchParams(window.location.search).get('grandLobbyDebug') === '1';
-  } catch {
-    return false;
-  }
-}

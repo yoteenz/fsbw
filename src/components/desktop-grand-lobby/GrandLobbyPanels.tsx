@@ -7,18 +7,9 @@ import {
   GRAND_LOBBY_HOUSE_INFO_LINKS,
   GRAND_LOBBY_MEMBERSHIP_BENEFITS,
   GRAND_LOBBY_WELCOME_COPY,
-  isGrandLobbyDebugEnabled,
 } from '../../constants/desktopGrandLobby';
-import {
-  DESKTOP_GRAND_LOBBY_DEBUG_PANELS,
-  desktopGrandLobbyRectToImageRect,
-  getDesktopGrandLobbyRect,
-} from '../../constants/desktopGrandLobbyLayout';
 import { buildDesktopDestinationHref } from '../../constants/desktopNavQuickRoutes';
 import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavProvider';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import { DESKTOP_GRAND_LOBBY_IMAGE } from '../../constants/desktopGrandLobby';
-import { DESKTOP_GRAND_LOBBY_LAYOUT_SEED } from '../../constants/desktopGrandLobbyLayout';
 import { GrandLobbyPanelAnchor } from './GrandLobbyPanelAnchor';
 import './GrandLobby.css';
 
@@ -48,7 +39,6 @@ function CrownMark() {
 
 export function GrandLobbyPanels({ measureRef }: Props) {
   const go = useGrandLobbyNavigate();
-  const debug = isGrandLobbyDebugEnabled();
 
   return (
     <div className="gl-layer" aria-label="Grand Lobby orientation panels">
@@ -165,41 +155,6 @@ export function GrandLobbyPanels({ measureRef }: Props) {
           </ul>
         </nav>
       </GrandLobbyPanelAnchor>
-
-      {debug
-        ? DESKTOP_GRAND_LOBBY_DEBUG_PANELS.map((panel) => {
-            const rect = getDesktopGrandLobbyRect(DESKTOP_GRAND_LOBBY_LAYOUT_SEED, panel.id);
-            return (
-              <DesktopRoomCoverRectAnchor
-                key={panel.id}
-                measureRef={measureRef}
-                image={DESKTOP_GRAND_LOBBY_IMAGE}
-                imageRect={desktopGrandLobbyRectToImageRect(rect)}
-                zIndex={20}
-                style={{
-                  pointerEvents: 'none',
-                  border: `2px dashed ${panel.color}`,
-                  background: `${panel.color}22`,
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 2,
-                    left: 4,
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                    color: panel.color,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {panel.label}
-                </span>
-              </DesktopRoomCoverRectAnchor>
-            );
-          })
-        : null}
     </div>
   );
 }

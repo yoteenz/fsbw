@@ -22,6 +22,12 @@ import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower
 import { ReceptionDashboard } from '../../../components/desktop-reception/ReceptionDashboard';
 import { GrandLobbyPanels } from '../../../components/desktop-grand-lobby/GrandLobbyPanels';
 import '../../../components/desktop-grand-lobby/GrandLobby.css';
+import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
+import {
+  resolveMansionDebugPageIdFromFloorPath,
+  resolveMansionDebugPageLabel,
+} from '../../../constants/desktopDebugRegistry';
+import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
 import { DESKTOP_RECEPTION_BACKGROUND_URL } from '../../../constants/desktopReceptionDashboard';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
@@ -96,6 +102,14 @@ export default function DesktopFloorZonePage({ floor }: Props) {
     return index >= 0 ? index : 0;
   }, [zoneId, zoneIds]);
 
+  const mansionDebugPage = resolveMansionDebugPageIdFromFloorPath(floor.path);
+  const mansionDebugPageLabel = resolveMansionDebugPageLabel(mansionDebugPage);
+  useMansionDebugViewportBinding(viewportMeasureRef, {
+    page: mansionDebugPage,
+    pageZone: zoneId,
+    pageLabel: mansionDebugPageLabel,
+  });
+
   return (
     <div
       style={{
@@ -149,6 +163,8 @@ export default function DesktopFloorZonePage({ floor }: Props) {
         {zoneId === 'psa-suite' ? (
           <PsaAssistantWidget variant="suite" measureRef={viewportMeasureRef} />
         ) : null}
+
+        <MansionDebugLayer />
       </section>
     </div>
   );

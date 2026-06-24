@@ -5,6 +5,8 @@ import { getCurrentUser } from '../../../utils/adminAuth';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_PENTHOUSE_SUITE_BACKGROUND_URL } from '../../../constants/desktopPenthouseSuite';
 import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
+import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
+import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
 import {
   DESKTOP_PREVIEW_VIEWPORT_HEIGHT,
   isDesktopArtboardLayoutActive,
@@ -31,6 +33,11 @@ export default function DesktopAccountPage() {
       window.removeEventListener('storage', syncUser);
     };
   }, []);
+
+  useMansionDebugViewportBinding(viewportRef, {
+    page: 'account',
+    pageLabel: 'Account',
+  });
 
   return (
     <div
@@ -60,6 +67,7 @@ export default function DesktopAccountPage() {
         }}
       >
         <DesktopPenthouseSuiteScene measureRef={viewportRef} user={userData} />
+        <MansionDebugLayer />
       </section>
     </div>
   );

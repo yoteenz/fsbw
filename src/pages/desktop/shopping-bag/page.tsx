@@ -15,6 +15,8 @@ import {
   resolveCartLinePdpHref,
 } from '../../../utils/cartEditFromBag';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
+import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
+import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import { useEffect } from 'react';
 
@@ -32,6 +34,11 @@ export default function DesktopShoppingBagPage() {
   useEffect(() => {
     void preloadDesktopRoomBackground(DESKTOP_SHOPPING_BAG_BACKGROUND_URL);
   }, []);
+
+  useMansionDebugViewportBinding(viewportRef, {
+    page: 'shopping-bag',
+    pageLabel: 'Shopping Bag',
+  });
 
   const goShowroom = useCallback(() => {
     const href = buildDesktopDestinationHref(DESKTOP_PENTHOUSE_PATH, 'showroom');
@@ -85,6 +92,7 @@ export default function DesktopShoppingBagPage() {
           onAcquire={onAcquire}
           onEnterShowroom={goShowroom}
         />
+        <MansionDebugLayer />
       </section>
 
       <BuildAWigFeatureSignInModal

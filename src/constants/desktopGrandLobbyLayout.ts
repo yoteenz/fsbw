@@ -6,7 +6,7 @@ import type {
 
 /**
  * Default alignment for Grand Lobby glass panels on the Panels hero.
- * Tune with `?grandLobbyDebug=1` on `/desktop/lobby?zone=grand-lobby`.
+ * Tune panel alignment with Mansion Debug (press D) on `/desktop/lobby?zone=grand-lobby`.
  */
 export const DESKTOP_GRAND_LOBBY_LAYOUT_SEED: DesktopGrandLobbyLayout = {
   rects: {
@@ -17,14 +17,6 @@ export const DESKTOP_GRAND_LOBBY_LAYOUT_SEED: DesktopGrandLobbyLayout = {
     houseInformation: { x: 82.2, y: 43.5, width: 13.8, height: 38.5 },
   },
 };
-
-export const DESKTOP_GRAND_LOBBY_DEBUG_PANELS = [
-  { id: 'membershipAccess' as const, label: 'MEMBERSHIP', color: '#3b82f6' },
-  { id: 'mansionEconomy' as const, label: 'ECONOMY', color: '#22c55e' },
-  { id: 'mansionDirectory' as const, label: 'DIRECTORY', color: '#a855f7' },
-  { id: 'welcomeMansion' as const, label: 'WELCOME', color: '#f59e0b' },
-  { id: 'houseInformation' as const, label: 'HOUSE INFO', color: '#ef4444' },
-] as const;
 
 export function getDesktopGrandLobbyRect(
   layout: DesktopGrandLobbyLayout,
