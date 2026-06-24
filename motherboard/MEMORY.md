@@ -32141,6 +32141,11 @@ User asked to restyle the **UPDATING THE APP** stale-chunk screen: body copy **b
 User asked to **remove account icon** from desktop nav; **HOME** → **Penthouse Suite** (`/desktop/account`) when signed in; guests → **Grand Lobby** (`/desktop/lobby?zone=grand-lobby`). Post sign-in greeting on reception unchanged (`DESKTOP_CLIENT_RECEPTION_PATH` via `resolveReturnToAfterSignIn`).
 
 - **`NavBar.tsx`:** removed account button; tracks `isSignedIn`; logo + HOME use `resolveDesktopHomeHref`.
-- **`desktopNavQuickRoutes.ts`:** `resolveDesktopHomeHref`, `isDesktopHomeNavActive`, auth-aware `resolveDesktopNavActiveLabel`.
 - Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — Desktop nav: swap Slay Cam and Membership
+
+User asked to swap **SLAY CAM** and **MEMBERSHIP** positions in desktop nav bar order. **`DESKTOP_NAV_QUICK_ROUTES`:** MEMBERSHIP now before ANALYSIS; SLAY CAM after ANALYSIS. Pushed **`master`** + **`preview/mobile`**.
 
