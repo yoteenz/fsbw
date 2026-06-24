@@ -32163,3 +32163,14 @@ User supplied updated **Panels** hero asset for Desktop **Grand Lobby** and aske
 - **Debug:** `?grandLobbyDebug=1` shows dashed panel rect outlines for alignment tuning.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Desktop floating crystals on all hero scenes
+
+User asked to confirm **all desktop pages** maintain the tiny white floating crystal ambient effect (`DesktopRoomAmbientOverlay` + `ParticleField`).
+
+- **Already had crystals:** Tower zone pages via `DesktopZoneRoomScene` (lobby, gallery, concierge, penthouse rooms).
+- **Added crystals:** Custom hero scenes that bypassed the shared scene — `DesktopPenthouseSuiteScene` (account), `DesktopCuratorSuiteScene` (shopping bag + acquisition), `TransformationSuiteScene` (booking suite), `DesktopNotificationsScene` (alerts).
+- **Shared styling:** `DesktopRoomAmbientOverlay.css` (`.desktop-room-ambient`); zone scene layer `z-index: 0` so particles sit above the hero image.
+- Pushed **`master`** + **`preview/mobile`**.
+
