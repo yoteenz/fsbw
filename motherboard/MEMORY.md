@@ -32204,6 +32204,17 @@ Full conversation in this chat: Grand Lobby panel overlays, floating crystals au
 
 ---
 
+## 2026-06-24 — fsbw.vercel.app blank page (vendor chunk cycle)
+
+User reported **fsbw.vercel.app** not showing on mobile, desktop, or tablet (blank white page).
+
+- **Diagnosis:** Live site returned HTTP 200 + HTML/JS, but React crashed before mount: `Cannot read properties of undefined (reading 'unstable_scheduleCallback')`. Playwright confirmed `#root` empty on **fsbw.vercel.app**; **frontalslayer.com** (separate older deploy) still rendered.
+- **Root cause:** Vite `manualChunks` split `react-dom` into `vendor-react` but left `scheduler` in `vendor`, and the deployed Rollup graph created a **circular import** (`vendor` ↔ `vendor-react`). React's scheduler was undefined at init → blank page on all devices.
+- **Fix:** `vite.config.ts` — include `/scheduler/` in the `vendor-react` chunk (with react/react-dom) so scheduler is never split across chunks.
+- Pushed **`master`** + **`preview/mobile`** (`366062cf`); Vercel redeploy required for live fix.
+
+---
+
 ## 2026-06-24 — Mobile Mansion app shell foundation
 
 User requested a **premium luxury mobile application shell** for Frontal Slayer Mansion (concept: luxury OS / private members club / Vision Pro aesthetic). Explicit constraints: **no final features**, **no Supabase**, **no business logic**, **no placeholder ecommerce pages** — foundation only.
