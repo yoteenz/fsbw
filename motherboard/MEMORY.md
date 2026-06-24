@@ -32095,6 +32095,18 @@ User provided approved **Transformation Suite** desktop hero (architectural pane
 User asked to change the **black background underneath desktop background images** to **white** so image loading is less obvious.
 
 - **Change:** Replaced `#0a0a0a` shell/underlay with **`#ffffff`** on all desktop room hero scenes (lobby zones, penthouse, account suite, shopping bag, Transformation Suite, commerce page backgrounds, tower elevator). Added **`DESKTOP_ROOM_SHELL_BACKGROUND`** in **`desktopRoomHeroArt.ts`**; TS page shells import it; CSS scene files use matching white.
-- **Not changed:** Lounge TV frame borders / blog post chrome (intentional UI, not hero underlay).
+- Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-06-23 — Desktop Notifications room (`/desktop/notifications`)
+
+User provided approved **21:9 Notifications** desktop hero; content must live **inside** existing acrylic panels only (no white cards, floating popups, dashboard UI).
+
+- **Route:** `/desktop/notifications` — full-bleed hero (`DESKTOP_NOTIFICATIONS_BACKGROUND_URL`), cover-fit, white shell.
+- **Nav:** Bell icon routes to **`/desktop/notifications`** (was `/account/notifications`); active stroke `#C81C24`.
+- **Debug mode:** **CTRL+SHIFT+D** — draggable/resizable percentage overlays saved to **`desktopNotificationsLayout.ts`** + localStorage; export JSON for seed. Overlays: `recentNotification1–5`, `recentActivityButton`, `featuredNotificationPanel`, `priorityAlert1–5`, `priorityAlertsButton`. Production hidden while debug on.
+- **Production:** Left recent notifications (5 slots + View All Activity), center featured Hair Analysis panel + CTA, right priority alerts (5 slots + View All Alerts). Transparent etched acrylic styling, compact Futura uppercase, red `#EB1C24` accents/dividers, small icons.
+- **Files:** `src/constants/desktopNotifications.ts`, `desktopNotificationsLayout.ts`, `src/types/desktopNotifications.ts`, `src/utils/desktopNotificationsDebug.ts`, `desktopNotificationsLayoutMath.ts`, `src/components/desktop-notifications/*`, `src/pages/desktop/notifications/page.tsx`, `App.tsx`, `NavBar.tsx`.
 - Pushed **`master`** + **`preview/mobile`**.
 
