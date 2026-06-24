@@ -24,7 +24,7 @@ export function DesktopNotificationsScene({ measureRef }: Props) {
   }, []);
 
   return (
-    <div className="dn-scene" aria-label="Notifications">
+    <div className="dn-scene" aria-label="Alerts">
       <img
         src={DESKTOP_NOTIFICATIONS_BACKGROUND_URL}
         alt=""

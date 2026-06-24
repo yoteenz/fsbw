@@ -12,4 +12,7 @@ export const DESKTOP_NOTIFICATIONS_IMAGE = {
   height: DESKTOP_ROOM_HERO_ART_HEIGHT,
 } as const;
 
-export const DESKTOP_NOTIFICATIONS_PATH = '/desktop/notifications';
+export const DESKTOP_ALERTS_PATH = '/desktop/alerts';
+
+/** @deprecated Use DESKTOP_ALERTS_PATH */
+export const DESKTOP_NOTIFICATIONS_PATH = DESKTOP_ALERTS_PATH;

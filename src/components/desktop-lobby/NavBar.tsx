@@ -9,7 +9,7 @@ import { useDesktopTowerTravelOptional } from '../desktop-tower/DesktopTowerNavP
 import { desktopNavBarStyle } from './desktopLobbyAcrylic';
 import { readCartCountFromStorage } from '../../utils/cartLocalStorage';
 import { DESKTOP_BOOKING_SUITE_PATH } from '../../constants/transformationSuite';
-import { DESKTOP_NOTIFICATIONS_PATH } from '../../constants/desktopNotifications';
+import { DESKTOP_ALERTS_PATH } from '../../constants/desktopNotifications';
 import {
   resolveAccountHubPath,
   resolveShoppingBagPath,
@@ -31,7 +31,7 @@ export function NavBar() {
   const accountHubPath = resolveAccountHubPath(location.pathname);
   const shoppingBagPath = resolveShoppingBagPath(location.pathname);
   const bookingSuiteActive = location.pathname === DESKTOP_BOOKING_SUITE_PATH;
-  const notificationsActive = location.pathname === DESKTOP_NOTIFICATIONS_PATH;
+  const alertsActive = location.pathname === DESKTOP_ALERTS_PATH;
 
   useEffect(() => {
     const syncCart = () => {
@@ -123,8 +123,8 @@ export function NavBar() {
 
         <button
           className="hover:opacity-50 transition-opacity"
-          onClick={() => go(DESKTOP_NOTIFICATIONS_PATH)}
-          aria-label="Notifications"
+          onClick={() => go(DESKTOP_ALERTS_PATH)}
+          aria-label="Alerts"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
         >
           <svg
@@ -132,7 +132,7 @@ export function NavBar() {
             height="17"
             viewBox="0 0 24 24"
             fill="none"
-            stroke={notificationsActive ? '#C81C24' : '#1A1A1A'}
+            stroke={alertsActive ? '#C81C24' : '#1A1A1A'}
             strokeWidth="1.6"
             strokeLinecap="round"
             strokeLinejoin="round"

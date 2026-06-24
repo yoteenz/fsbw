@@ -37,8 +37,8 @@ const RECENT_NOTIFICATIONS = [
   {
     regionId: 'recentNotification4' as const,
     title: 'Appointment Reminder',
-    body: 'Transformation Suite',
-    meta: 'May 25, 2025 · 2:00 PM',
+    body: 'Transformation Suite May 25, 2025 · 2:00 PM',
+    meta: '2 hours ago',
     icon: 'appointment' as const,
   },
   {

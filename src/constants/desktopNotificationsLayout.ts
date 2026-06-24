@@ -6,7 +6,7 @@ import type {
 
 /**
  * Default alignment for the desktop Notifications room.
- * Tune with CTRL+SHIFT+D on `/desktop/notifications`, then export into this file.
+ * Tune with CTRL+SHIFT+D on `/desktop/alerts`, then export into this file.
  */
 export const DESKTOP_NOTIFICATIONS_LAYOUT_SEED: DesktopNotificationsLayout = {
   rects: {

@@ -9,8 +9,8 @@ export function DesktopNotificationsDebugToolbar() {
   if (!editor.debugEnabled) return null;
 
   return (
-    <div className="dn-debug-toolbar" role="region" aria-label="Notifications debug">
-      <p className="dn-debug-toolbar__title">NOTIFICATIONS DEBUG</p>
+    <div className="dn-debug-toolbar" role="region" aria-label="Alerts debug">
+      <p className="dn-debug-toolbar__title">ALERTS DEBUG</p>
       <p className="dn-debug-toolbar__hint">CTRL + SHIFT + D toggles overlays</p>
 
       <div className="dn-debug-toolbar__actions">

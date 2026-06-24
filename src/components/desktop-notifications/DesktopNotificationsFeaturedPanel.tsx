@@ -5,7 +5,7 @@ type Props = {
 export function DesktopNotificationsFeaturedPanel({ onViewAnalysis }: Props) {
   return (
     <article className="dn-featured">
-      <p className="dn-featured__eyebrow">Featured Notification</p>
+      <span className="dn-featured__badge">Featured Notification</span>
       <h2 className="dn-featured__title">Your Hair Analysis Is Ready</h2>
       <p className="dn-featured__body">Your personalized Hair Analysis report is now available.</p>
       <button type="button" className="dn-featured__cta" onClick={onViewAnalysis}>

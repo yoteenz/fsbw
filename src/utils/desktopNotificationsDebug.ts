@@ -3,7 +3,7 @@ import {
   cloneDesktopNotificationsLayout,
   DESKTOP_NOTIFICATIONS_LAYOUT_SEED,
 } from '../constants/desktopNotificationsLayout';
-import { DESKTOP_NOTIFICATIONS_PATH } from '../constants/desktopNotifications';
+import { DESKTOP_ALERTS_PATH } from '../constants/desktopNotifications';
 
 const DEBUG_ENABLED_KEY = 'desktopNotificationsDebug:enabled';
 const LAYOUT_OVERRIDE_KEY = 'desktopNotificationsDebug:layoutOverrides';
@@ -114,7 +114,7 @@ export function registerDesktopNotificationsDebugShortcut(): () => void {
   const onKeyDown = (event: KeyboardEvent) => {
     if (!event.ctrlKey || !event.shiftKey) return;
     if (event.key.toLowerCase() !== 'd') return;
-    if (!window.location.pathname.startsWith(DESKTOP_NOTIFICATIONS_PATH)) return;
+    if (!window.location.pathname.startsWith(DESKTOP_ALERTS_PATH)) return;
     event.preventDefault();
     toggleDesktopNotificationsDebug();
   };

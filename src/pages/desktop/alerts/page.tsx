@@ -7,17 +7,17 @@ import { useDesktopNotificationsDebugRequired } from '../../../components/deskto
 import { isDesktopArtboardLayoutActive } from '../../../utils/desktopPreview';
 import '../../../components/desktop-notifications/DesktopNotifications.css';
 
-function DesktopNotificationsDebugEntry() {
+function DesktopAlertsDebugEntry() {
   const editor = useDesktopNotificationsDebugRequired();
   if (editor.debugEnabled) return null;
   return (
     <button type="button" className="dn-debug-entry" onClick={editor.toggleDebug}>
-      Notifications Debug (Ctrl+Shift+D)
+      Alerts Debug (Ctrl+Shift+D)
     </button>
   );
 }
 
-export default function DesktopNotificationsPage() {
+export default function DesktopAlertsPage() {
   const viewportRef = useRef<HTMLElement>(null);
   const artboard = isDesktopArtboardLayoutActive();
 
@@ -29,7 +29,7 @@ export default function DesktopNotificationsPage() {
           <DesktopNotificationsScene measureRef={viewportRef} />
         </section>
         <DesktopNotificationsDebugToolbar />
-        <DesktopNotificationsDebugEntry />
+        <DesktopAlertsDebugEntry />
       </div>
     </DesktopNotificationsDebugProvider>
   );

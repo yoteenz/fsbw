@@ -181,7 +181,7 @@ const DesktopAccountPage = lazyWithRetry(() => import('./pages/desktop/account/p
 const DesktopShoppingBagPage = lazyWithRetry(() => import('./pages/desktop/shopping-bag/page'), 'DesktopShoppingBagPage');
 const DesktopAcquisitionPage = lazyWithRetry(() => import('./pages/desktop/acquisition/page'), 'DesktopAcquisitionPage');
 const DesktopBookingSuitePage = lazyWithRetry(() => import('./pages/desktop/booking-suite/page'), 'DesktopBookingSuitePage');
-const DesktopNotificationsPage = lazyWithRetry(() => import('./pages/desktop/notifications/page'), 'DesktopNotificationsPage');
+const DesktopAlertsPage = lazyWithRetry(() => import('./pages/desktop/alerts/page'), 'DesktopAlertsPage');
 const DesktopPreviewPage = lazyWithRetry(() => import('./pages/desktop-preview/page'), 'DesktopPreviewPage');
 
 function DesktopRoutesLayout() {
@@ -538,11 +538,12 @@ function App() {
               <DesktopBookingSuitePage />
             </Suspense>
           } />
-          <Route path="/desktop/notifications" element={
+          <Route path="/desktop/alerts" element={
             <Suspense fallback={<LoadingScreen />}>
-              <DesktopNotificationsPage />
+              <DesktopAlertsPage />
             </Suspense>
           } />
+          <Route path="/desktop/notifications" element={<Navigate to="/desktop/alerts" replace />} />
           <Route path="/desktop/acquisition" element={
             <CommerceRouteGuard>
               <Suspense fallback={<LoadingScreen />}>

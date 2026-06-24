@@ -5,7 +5,7 @@ function NotificationIcon({ kind }: { kind: NotificationIconKind }) {
     <span className="dn-slot__icon" aria-hidden>
       {kind === 'reward' ? (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-          <path d="M12 2l2.4 4.8L20 8l-3.6 3.5.9 5.2L12 14.8 6.7 16.7l.9-5.2L4 8l5.6-1.2L12 2z" />
+          <path d="M6 3h12l1 5-7 4-7-4 1-5zM4 10l8 5 8-5M6 18h12" />
         </svg>
       ) : null}
       {kind === 'order' ? (
@@ -16,7 +16,7 @@ function NotificationIcon({ kind }: { kind: NotificationIconKind }) {
       ) : null}
       {kind === 'lounge' ? (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-          <rect x="2" y="5" width="20" height="14" rx="2" />
+          <circle cx="12" cy="12" r="9" />
           <path d="M10 9l5 3-5 3V9z" />
         </svg>
       ) : null}
@@ -28,7 +28,7 @@ function NotificationIcon({ kind }: { kind: NotificationIconKind }) {
       ) : null}
       {kind === 'analysis' ? (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-          <path d="M4 19h16M7 16V9M12 16V5M17 16v-4" />
+          <path d="M9 3v2M9 19v2M15 3v2M15 19v2M5 9H3M5 15H3M21 9h-2M21 15h-2M7 7h10v10H7z" />
         </svg>
       ) : null}
     </span>
@@ -40,17 +40,26 @@ type Props = {
   body: string;
   meta: string;
   icon?: NotificationIconKind;
+  unread?: boolean;
 };
 
-export function DesktopNotificationsRecentSlot({ title, body, meta, icon = 'reward' }: Props) {
+export function DesktopNotificationsRecentSlot({
+  title,
+  body,
+  meta,
+  icon = 'reward',
+  unread = true,
+}: Props) {
   return (
     <article className="dn-slot dn-slot--recent">
-      <div className="dn-slot__accent" aria-hidden />
       <NotificationIcon kind={icon} />
       <div className="dn-slot__copy">
-        <h3 className="dn-slot__title">{title}</h3>
+        <h3 className="dn-slot__title dn-slot__title--accent">{title}</h3>
         <p className="dn-slot__body">{body}</p>
+      </div>
+      <div className="dn-slot__aside">
         <p className="dn-slot__meta">{meta}</p>
+        {unread ? <span className="dn-slot__dot" aria-hidden /> : null}
       </div>
     </article>
   );
