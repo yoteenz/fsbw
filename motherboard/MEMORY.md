@@ -32316,3 +32316,14 @@ User asked to rename labels on the **station** (room directory drawer): **Member
 - **Change:** `desktopFloors.ts` zone labels only — `members-lounge` and `lounge` entries in `DESKTOP_FLOORS` (consumed by `RoomNavDrawer` / floating nav station directory). Room hero overlay copy (`desktopRoomTitles.ts`) and grand lobby reception panels unchanged.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-23 — Swap Cinema Suite and Members Lounge floors
+
+User asked to **swap Cinema Suite with Members Lounge** so Cinema Suite is on the **gallery** floor (not lobby).
+
+- **`desktopFloors.ts`:** `lounge` (Cinema Suite) moved to GALLERY zones (middle hub; `defaultZoneId: 'lounge'`); `members-lounge` (Members Lounge, comingSoon) moved to LOBBY zones.
+- **Routing/links:** `desktopNavQuickRoutes` MEMBERSHIP → lobby `members-lounge`; `desktopGrandLobby` directory Cinema Suite → gallery `lounge`; `receptionDashboardData` hrefs swapped; `/desktop/lounge` legacy redirect lands gallery cinema default.
+- **Mansion debug:** lounge TV hotspot → gallery pageZone `lounge`; zone placeholders updated.
+- Pushed **`master`** + **`preview/mobile`**.
+
