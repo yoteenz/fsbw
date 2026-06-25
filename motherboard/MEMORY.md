@@ -32307,3 +32307,12 @@ User asked that **all panels** on the shopping bag tablet get the **4-point pers
 - **Tune:** `/desktop/shopping-bag` or acquisition → **D** → **Edit** → select region chip or drag TL/TR/BR/BL on overlay → **Save** / **Copy**.
 - Pushed **`master`** + **`preview/mobile`** (`4cc6af53`).
 
+---
+
+## 2026-06-23 — Station directory lounge label renames
+
+User asked to rename labels on the **station** (room directory drawer): **Members Only Lounge** → **Members Lounge**; **Lounge** / **The Lounge** → **Cinema Suite**.
+
+- **Change:** `desktopFloors.ts` zone labels only — `members-lounge` and `lounge` entries in `DESKTOP_FLOORS` (consumed by `RoomNavDrawer` / floating nav station directory). Room hero overlay copy (`desktopRoomTitles.ts`) and grand lobby reception panels unchanged.
+- Pushed **`master`** + **`preview/mobile`**.
+
