@@ -44,7 +44,7 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     zones: [
       { id: 'build-a-wig-atelier', label: 'Build-A-Wig Atelier' },
       { id: 'grand-lobby', label: 'Grand Lobby' },
-      { id: 'lounge', label: 'Lounge' },
+      { id: 'lounge', label: 'Cinema Suite' },
     ],
   },
   {
@@ -54,7 +54,7 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     defaultZoneId: 'members-lounge',
     zones: [
       { id: 'slay-cam-gallery', label: 'Slay Cam Gallery', comingSoon: true },
-      { id: 'members-lounge', label: 'Members Only Lounge', comingSoon: true },
+      { id: 'members-lounge', label: 'Members Lounge', comingSoon: true },
       { id: 'rewards-gallery', label: 'Rewards Gallery', comingSoon: true },
     ],
   },
