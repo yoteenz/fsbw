@@ -22,13 +22,24 @@ import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower
 import { ReceptionDashboard } from '../../../components/desktop-reception/ReceptionDashboard';
 import { GrandLobbyPanels } from '../../../components/desktop-grand-lobby/GrandLobbyPanels';
 import '../../../components/desktop-grand-lobby/GrandLobby.css';
+import '../../../components/desktop-shared/acrylicGlass.css';
 import { MansionDebugLayer } from '../../../components/desktop-mansion-debug';
 import {
   resolveMansionDebugPageIdFromFloorPath,
   resolveMansionDebugPageLabel,
 } from '../../../constants/desktopDebugRegistry';
 import { useMansionDebugViewportBinding } from '../../../components/desktop-mansion-debug/MansionDebugProvider';
-import { DESKTOP_RECEPTION_BACKGROUND_URL } from '../../../constants/desktopReceptionDashboard';
+import { DESKTOP_GRAND_LOBBY_IMAGE } from '../../../constants/desktopGrandLobby';
+import { DESKTOP_RECEPTION_BACKGROUND_URL, RECEPTION_DASHBOARD_IMAGE } from '../../../constants/desktopReceptionDashboard';
+import {
+  DESKTOP_LOUNGE_ART_HEIGHT,
+  DESKTOP_LOUNGE_ART_WIDTH,
+} from '../../../constants/desktopLoungeTvLayout';
+import {
+  DESKTOP_PSA_SUITE_ART_HEIGHT,
+  DESKTOP_PSA_SUITE_ART_WIDTH,
+} from '../../../constants/desktopPsaSuiteLayout';
+import { PerspectivePanelPageDebugOverlays } from '../../../components/perspective-panel/PerspectivePanelPageDebugOverlays';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
 import {
@@ -162,6 +173,38 @@ export default function DesktopFloorZonePage({ floor }: Props) {
 
         {zoneId === 'psa-suite' ? (
           <PsaAssistantWidget variant="suite" measureRef={viewportMeasureRef} />
+        ) : null}
+
+        {isGrandLobbyZone ? (
+          <PerspectivePanelPageDebugOverlays
+            measureRef={viewportMeasureRef}
+            page="grand-lobby"
+            image={DESKTOP_GRAND_LOBBY_IMAGE}
+          />
+        ) : null}
+
+        {isReceptionZone ? (
+          <PerspectivePanelPageDebugOverlays
+            measureRef={viewportMeasureRef}
+            page="reception"
+            image={RECEPTION_DASHBOARD_IMAGE}
+          />
+        ) : null}
+
+        {isLoungeZone ? (
+          <PerspectivePanelPageDebugOverlays
+            measureRef={viewportMeasureRef}
+            page="lounge"
+            image={{ width: DESKTOP_LOUNGE_ART_WIDTH, height: DESKTOP_LOUNGE_ART_HEIGHT }}
+          />
+        ) : null}
+
+        {zoneId === 'psa-suite' ? (
+          <PerspectivePanelPageDebugOverlays
+            measureRef={viewportMeasureRef}
+            page="psa-suite"
+            image={{ width: DESKTOP_PSA_SUITE_ART_WIDTH, height: DESKTOP_PSA_SUITE_ART_HEIGHT }}
+          />
         ) : null}
 
         <MansionDebugLayer />

@@ -10,8 +10,10 @@ import { TransformationSuiteDebugCircle } from './TransformationSuiteDebugCircle
 import { TransformationSuiteDebugRect } from './TransformationSuiteDebugRect';
 import { TransformationSuiteProductionLayer } from './TransformationSuiteProductionLayer';
 import { useTransformationSuiteDebug } from './TransformationSuiteDebugProvider';
+import { PerspectivePanelPageDebugOverlays } from '../perspective-panel/PerspectivePanelPageDebugOverlays';
 import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './TransformationSuite.css';
+import '../desktop-shared/acrylicGlass.css';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
@@ -49,6 +51,12 @@ export function TransformationSuiteScene({ measureRef }: Props) {
             ))}
           </>
         ) : null}
+
+        <PerspectivePanelPageDebugOverlays
+          measureRef={measureRef}
+          page="booking-suite"
+          image={TRANSFORMATION_SUITE_IMAGE}
+        />
       </div>
     </div>
   );

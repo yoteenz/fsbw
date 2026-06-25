@@ -3,13 +3,14 @@ import type { RefObject } from 'react';
 import {
   isPenthouseSuiteHotspotDebugEnabled,
   PENTHOUSE_SUITE_IMAGE,
-  PENTHOUSE_SUITE_PANEL_RECTS,
+  type PenthouseSuitePanelId,
 } from '../../constants/desktopPenthouseSuite';
+import { ACCOUNT_PANEL_TO_PERSPECTIVE_PANEL } from '../../constants/desktopPagePerspectivePanels';
 import {
   buildPenthouseSuiteDashboardData,
   formatPenthouseSuiteCurrency,
 } from '../../utils/penthouseSuiteDashboardData';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
+import { DesktopPerspectivePanelAnchor } from '../desktop-shared/DesktopPerspectivePanelAnchor';
 import { DesktopPanelTextOverlay } from '../desktop-lobby/panel-text/DesktopPanelTextOverlay';
 import '../desktop-lobby/panel-text/DesktopPanelTextOverlay.css';
 
@@ -24,7 +25,7 @@ function go(navigate: ReturnType<typeof useNavigate>, href: string) {
 
 function PanelText({
   measureRef,
-  imageRect,
+  panelId,
   lines,
   ariaLabel,
   href,
@@ -32,7 +33,7 @@ function PanelText({
   align = 'left',
 }: {
   measureRef: RefObject<HTMLElement | null>;
-  imageRect: (typeof PENTHOUSE_SUITE_PANEL_RECTS)[keyof typeof PENTHOUSE_SUITE_PANEL_RECTS];
+  panelId: PenthouseSuitePanelId;
   lines: { text: string; accent?: boolean }[];
   ariaLabel: string;
   href: string;
@@ -42,9 +43,9 @@ function PanelText({
   const navigate = useNavigate();
 
   return (
-    <DesktopRoomCoverRectAnchor
+    <DesktopPerspectivePanelAnchor
+      id={ACCOUNT_PANEL_TO_PERSPECTIVE_PANEL[panelId]}
       measureRef={measureRef}
-      imageRect={imageRect}
       image={PENTHOUSE_SUITE_IMAGE}
       zIndex={6}
     >
@@ -55,20 +56,19 @@ function PanelText({
         debug={debug}
         align={align}
       />
-    </DesktopRoomCoverRectAnchor>
+    </DesktopPerspectivePanelAnchor>
   );
 }
 
 export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
   const debug = isPenthouseSuiteHotspotDebugEnabled();
   const data = buildPenthouseSuiteDashboardData(user);
-  const rects = PENTHOUSE_SUITE_PANEL_RECTS;
 
   return (
     <div className="penthouse-suite-dashboard" aria-label="Account dashboard labels">
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.hero}
+        panelId="hero"
         lines={[{ text: data.hero.tierLabel }]}
         ariaLabel="Membership tier"
         href={data.hero.href}
@@ -78,7 +78,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.loyaltyPoints}
+        panelId="loyaltyPoints"
         lines={[
           { text: 'Loyalty Points' },
           { text: `${data.diamondPoints.points.toLocaleString()} DP`, accent: true },
@@ -90,7 +90,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.slayTickets}
+        panelId="slayTickets"
         lines={[
           { text: 'Slay Tickets' },
           { text: `${data.slayTickets.available} Available`, accent: true },
@@ -102,7 +102,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.vouchers}
+        panelId="vouchers"
         lines={[
           { text: 'Vouchers' },
           { text: `${data.vouchers.activeCount} Active`, accent: true },
@@ -114,7 +114,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.digitalCash}
+        panelId="digitalCash"
         lines={[
           { text: 'Digital Cash' },
           { text: formatPenthouseSuiteCurrency(data.digitalCash.balance), accent: true },
@@ -126,7 +126,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.myOrders}
+        panelId="myOrders"
         lines={[
           { text: 'My Orders' },
           { text: `${data.myOrders.activeCount} Active`, accent: true },
@@ -138,7 +138,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.rewardsCollection}
+        panelId="rewardsCollection"
         lines={[
           { text: 'Rewards Collection' },
           { text: 'View Collection', accent: true },
@@ -150,7 +150,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.referrals}
+        panelId="referrals"
         lines={[
           { text: 'Referrals' },
           { text: `${data.referrals.successfulCount} Successful`, accent: true },
@@ -162,7 +162,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.wishlist}
+        panelId="wishlist"
         lines={[
           { text: 'Wishlist' },
           { text: `${data.wishlist.savedCount} Saved`, accent: true },
@@ -174,7 +174,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.myActivity}
+        panelId="myActivity"
         lines={[
           { text: 'My Activity' },
           { text: 'Recent', accent: true },
@@ -186,7 +186,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.affiliate}
+        panelId="affiliate"
         lines={[
           { text: 'Affiliate' },
           { text: `${data.affiliate.totalEarnedPoints.toLocaleString()} Pts`, accent: true },
@@ -198,7 +198,7 @@ export function PenthouseSuiteDashboard({ measureRef, user }: Props) {
 
       <PanelText
         measureRef={measureRef}
-        imageRect={rects.accountSettings}
+        panelId="accountSettings"
         lines={[
           { text: 'Account Settings' },
           { text: 'Manage', accent: true },

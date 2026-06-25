@@ -49,6 +49,14 @@ import {
   SHOPPING_BAG_REGION_TO_PERSPECTIVE_PANEL,
 } from './desktopShoppingBagPerspectivePanels';
 import {
+  ACCOUNT_PANEL_TO_PERSPECTIVE_PANEL,
+  ALERTS_REGION_TO_PERSPECTIVE_PANEL,
+  BOOKING_SUITE_CIRCLE_TO_PERSPECTIVE_PANEL,
+  BOOKING_SUITE_RECT_TO_PERSPECTIVE_PANEL,
+  GRAND_LOBBY_REGION_TO_PERSPECTIVE_PANEL,
+  RECEPTION_PANEL_TO_PERSPECTIVE_PANEL,
+} from './desktopPagePerspectivePanels';
+import {
   DESKTOP_SHOPPING_BAG_LAYOUT_SEED,
   desktopShoppingBagRectToImageRect,
 } from './desktopShoppingBagLayout';
@@ -183,6 +191,7 @@ function lobbyPanel(
     component,
     route,
     dataSource,
+    perspectivePanelId: GRAND_LOBBY_REGION_TO_PERSPECTIVE_PANEL[regionId],
     bounds: grandLobbyBounds(regionId),
   };
 }
@@ -251,6 +260,7 @@ function alertsRegion(
     label,
     component: 'DesktopNotificationsScene',
     dataSource: `DESKTOP_NOTIFICATIONS_LAYOUT_SEED.rects.${regionId}`,
+    perspectivePanelId: ALERTS_REGION_TO_PERSPECTIVE_PANEL[regionId],
     bounds: boundsFromPercent(
       DESKTOP_NOTIFICATIONS_IMAGE,
       DESKTOP_NOTIFICATIONS_LAYOUT_SEED.rects[regionId],
@@ -273,6 +283,7 @@ function bookingSuiteRectRegion(
     label,
     component: 'TransformationSuiteScene',
     dataSource: `TRANSFORMATION_SUITE_LAYOUT_SEED.rects.${regionId}`,
+    perspectivePanelId: BOOKING_SUITE_RECT_TO_PERSPECTIVE_PANEL[regionId],
     bounds: boundsFromPercent(
       TRANSFORMATION_SUITE_IMAGE,
       TRANSFORMATION_SUITE_LAYOUT_SEED.rects[regionId],
@@ -296,6 +307,7 @@ function bookingSuiteCircleRegion(
     label,
     component: 'TransformationSuiteScene',
     dataSource: `TRANSFORMATION_SUITE_LAYOUT_SEED.circles.${regionId}`,
+    perspectivePanelId: BOOKING_SUITE_CIRCLE_TO_PERSPECTIVE_PANEL[regionId],
     bounds: {
       image: TRANSFORMATION_SUITE_IMAGE,
       imageRect: circleToBoundingImageRect(circle),
@@ -328,6 +340,7 @@ function accountRegion(panelId: PenthouseSuitePanelId): MansionDebugRegion {
     label: PENTHOUSE_SUITE_LABELS[panelId],
     component: 'DesktopPenthouseSuiteScene',
     dataSource: `PENTHOUSE_SUITE_PANEL_RECTS.${panelId}`,
+    perspectivePanelId: ACCOUNT_PANEL_TO_PERSPECTIVE_PANEL[panelId],
     bounds: boundsFromFinalScene(PENTHOUSE_SUITE_IMAGE, PENTHOUSE_SUITE_PANEL_RECTS[panelId]),
   };
 }
@@ -357,6 +370,7 @@ function receptionRegion(panelId: ReceptionDashboardPanelId): MansionDebugRegion
     label: RECEPTION_PANEL_LABELS[panelId],
     component: 'ReceptionDashboard',
     dataSource: `RECEPTION_DASHBOARD_PANEL_RECTS.${panelId}`,
+    perspectivePanelId: RECEPTION_PANEL_TO_PERSPECTIVE_PANEL[panelId],
     bounds: boundsFromFinalScene(RECEPTION_DASHBOARD_IMAGE, RECEPTION_DASHBOARD_PANEL_RECTS[panelId]),
   };
 }
@@ -547,6 +561,7 @@ const FLOOR_ZONE_REGIONS: MansionDebugRegion[] = [
     label: 'Lounge TV Screen',
     component: 'DesktopLoungeSlayCinemaPlay',
     dataSource: 'DESKTOP_LOUNGE_TV_HIT_REGION',
+    perspectivePanelId: 'tv-lounge-screen',
     bounds: boundsFromFinalScene(
       { width: DESKTOP_LOUNGE_ART_WIDTH, height: DESKTOP_LOUNGE_ART_HEIGHT },
       DESKTOP_LOUNGE_TV_HIT_REGION,
@@ -567,6 +582,7 @@ const FLOOR_ZONE_REGIONS: MansionDebugRegion[] = [
     label: 'PSA Hologram',
     component: 'PsaAssistantWidget',
     dataSource: 'DESKTOP_PSA_SUITE_HOLOGRAM_HIT_REGION',
+    perspectivePanelId: 'psa-hologram-screen',
     bounds: boundsFromFinalScene(
       { width: DESKTOP_PSA_SUITE_ART_WIDTH, height: DESKTOP_PSA_SUITE_ART_HEIGHT },
       DESKTOP_PSA_SUITE_HOLOGRAM_HIT_REGION,
@@ -584,6 +600,7 @@ const FLOOR_ZONE_REGIONS: MansionDebugRegion[] = [
     label: 'Extensions Wall',
     component: 'ExtensionsBoutiqueExperience',
     dataSource: 'EXTENSIONS_WALL_HOTSPOT_RECT',
+    perspectivePanelId: 'extensions-boutique-wall',
     bounds: boundsFromFinalScene(
       { width: EXTENSIONS_BOUTIQUE_ART_WIDTH, height: EXTENSIONS_BOUTIQUE_ART_HEIGHT },
       EXTENSIONS_WALL_HOTSPOT_RECT,

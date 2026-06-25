@@ -1,9 +1,8 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react';
 import { DESKTOP_GRAND_LOBBY_IMAGE } from '../../constants/desktopGrandLobby';
-import { desktopGrandLobbyRectToImageRect } from '../../constants/desktopGrandLobbyLayout';
+import { GRAND_LOBBY_REGION_TO_PERSPECTIVE_PANEL } from '../../constants/desktopPagePerspectivePanels';
 import type { DesktopGrandLobbyPanelRegionId } from '../../types/desktopGrandLobby';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import { useGrandLobbyLayoutRect } from '../desktop-mansion-debug/MansionDebugProvider';
+import { DesktopPerspectivePanelAnchor } from '../desktop-shared/DesktopPerspectivePanelAnchor';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
@@ -22,18 +21,16 @@ export function GrandLobbyPanelAnchor({
   style,
   zIndex = 8,
 }: Props) {
-  const rect = useGrandLobbyLayoutRect(regionId);
-
   return (
-    <DesktopRoomCoverRectAnchor
+    <DesktopPerspectivePanelAnchor
+      id={GRAND_LOBBY_REGION_TO_PERSPECTIVE_PANEL[regionId]}
       measureRef={measureRef}
       image={DESKTOP_GRAND_LOBBY_IMAGE}
-      imageRect={desktopGrandLobbyRectToImageRect(rect)}
-      zIndex={zIndex}
       className={className}
-      style={{ pointerEvents: 'auto', overflow: 'hidden', ...style }}
+      style={style}
+      zIndex={zIndex}
     >
       {children}
-    </DesktopRoomCoverRectAnchor>
+    </DesktopPerspectivePanelAnchor>
   );
 }

@@ -216,7 +216,9 @@ export function PerspectivePanelDebugProvider({ children }: { children: ReactNod
     for (const panel of PERSPECTIVE_PANEL_DEFINITIONS) {
       exportMap[panel.id] = resolvePerspectivePanelQuad(panel.id, panelOverrides);
     }
-    const text = formatPerspectivePanelMapForExport(exportMap);
+    const text = formatPerspectivePanelMapForExport(
+      exportMap as Record<string, PerspectivePanelQuad>,
+    );
     return copyPerspectivePanelDebugText(text);
   }, [panelOverrides]);
 

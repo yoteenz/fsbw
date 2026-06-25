@@ -1,10 +1,8 @@
 import type { CSSProperties, ReactNode, RefObject } from 'react';
 import { TRANSFORMATION_SUITE_IMAGE } from '../../constants/transformationSuite';
-import type { TransformationSuitePercentRect, TransformationSuiteRectRegionId } from '../../types/transformationSuite';
-import { DesktopRoomCoverRectAnchor } from '../desktop-lobby/DesktopRoomCoverAnchor';
-import { getTransformationSuiteRect } from '../../constants/transformationSuiteLayout';
-import { transformationSuiteRectToImageRect } from '../../utils/transformationSuiteLayoutMath';
-import { useTransformationSuiteLayout } from './TransformationSuiteDebugProvider';
+import { BOOKING_SUITE_RECT_TO_PERSPECTIVE_PANEL } from '../../constants/desktopPagePerspectivePanels';
+import type { TransformationSuiteRectRegionId } from '../../types/transformationSuite';
+import { DesktopPerspectivePanelAnchor } from '../desktop-shared/DesktopPerspectivePanelAnchor';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
@@ -15,7 +13,7 @@ type Props = {
   zIndex?: number;
 };
 
-/** Production content anchor — maps layout rect to hero cover space. */
+/** Production content anchor — maps layout quad to hero cover space. */
 export function TransformationSuitePanelAnchor({
   measureRef,
   regionId,
@@ -24,19 +22,16 @@ export function TransformationSuitePanelAnchor({
   style,
   zIndex = 8,
 }: Props) {
-  const layout = useTransformationSuiteLayout();
-  const rect: TransformationSuitePercentRect = getTransformationSuiteRect(layout, regionId);
-
   return (
-    <DesktopRoomCoverRectAnchor
+    <DesktopPerspectivePanelAnchor
+      id={BOOKING_SUITE_RECT_TO_PERSPECTIVE_PANEL[regionId]}
       measureRef={measureRef}
       image={TRANSFORMATION_SUITE_IMAGE}
-      imageRect={transformationSuiteRectToImageRect(rect)}
-      zIndex={zIndex}
       className={className}
-      style={{ pointerEvents: 'auto', overflow: 'hidden', ...style }}
+      style={style}
+      zIndex={zIndex}
     >
       {children}
-    </DesktopRoomCoverRectAnchor>
+    </DesktopPerspectivePanelAnchor>
   );
 }

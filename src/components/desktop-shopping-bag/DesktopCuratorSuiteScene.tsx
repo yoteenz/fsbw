@@ -3,18 +3,17 @@ import {
   DESKTOP_SHOPPING_BAG_BACKGROUND_URL,
   DESKTOP_SHOPPING_BAG_IMAGE,
 } from '../../constants/desktopShoppingBag';
-import type { PerspectivePanelId } from '../../types/perspectivePanel';
 import { PerspectivePanel } from '../perspective-panel/PerspectivePanel';
 import { PerspectivePanelPageDebugOverlays } from '../perspective-panel/PerspectivePanelPageDebugOverlays';
 import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './DesktopShoppingBag.css';
-import './acrylicGlass.css';
+import '../desktop-shared/acrylicGlass.css';
 import './DesktopAcquisition.css';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
   children: ReactNode;
-  panelId?: Extract<PerspectivePanelId, 'curator-tablet' | 'checkout-tablet'>;
+  panelId?: 'curator-tablet' | 'checkout-tablet';
   tabletClassName?: string;
   tabletEntering?: boolean;
 };

@@ -5,6 +5,9 @@ import {
 import { DESKTOP_LOUNGE_TV_HIT_REGION } from './desktopLoungeTvLayout';
 import { DESKTOP_PSA_SUITE_HOLOGRAM_HIT_REGION } from './desktopPsaSuiteLayout';
 import { EXTENSIONS_WALL_HOTSPOT_RECT } from './desktopExtensionsBoutique';
+import {
+  buildDesktopPagePerspectivePanelDefinitions,
+} from './desktopPagePerspectivePanels';
 import type {
   PerspectivePanelDefinition,
   PerspectivePanelId,
@@ -136,6 +139,7 @@ export const PERSPECTIVE_PANEL_DEFINITIONS: PerspectivePanelDefinition[] = [
     page: 'penthouse-boutique',
     points: rectToPerspectivePanelQuad(EXTENSIONS_WALL_HOTSPOT_RECT),
   },
+  ...buildDesktopPagePerspectivePanelDefinitions(),
 ];
 
 export const PERSPECTIVE_PANEL_BY_ID: Record<PerspectivePanelId, PerspectivePanelDefinition> =

@@ -51,7 +51,8 @@ export function DesktopNotificationsRecentSlot({
   unread = true,
 }: Props) {
   return (
-    <article className="dn-slot dn-slot--recent">
+    <article className="dn-slot dn-slot--recent acrylic-glass-surface">
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <NotificationIcon kind={icon} />
       <div className="dn-slot__copy">
         <h3 className="dn-slot__title dn-slot__title--accent">{title}</h3>

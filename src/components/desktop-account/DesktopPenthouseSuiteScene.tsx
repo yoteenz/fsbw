@@ -8,9 +8,11 @@ import {
 import { DesktopPanelDebugLayer } from '../desktop-panel-debug/DesktopPanelDebugLayer';
 import { DesktopPanelDebugProvider } from '../desktop-panel-debug/DesktopPanelDebugProvider';
 import { isPanelDebugModeEnabled } from '../../utils/desktopPanelDebugMode';
+import { PerspectivePanelPageDebugOverlays } from '../perspective-panel/PerspectivePanelPageDebugOverlays';
 import { PenthouseSuiteDashboard } from './PenthouseSuiteDashboard';
 import './DesktopPenthouseSuiteScene.css';
 import '../desktop-panel-debug/desktopPanelDebug.css';
+import '../desktop-shared/acrylicGlass.css';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
@@ -45,6 +47,11 @@ export function DesktopPenthouseSuiteScene({ measureRef, user }: Props) {
               panels={PENTHOUSE_PANEL_DEBUG_PANELS}
             />
           ) : null}
+          <PerspectivePanelPageDebugOverlays
+            measureRef={measureRef}
+            page="account"
+            image={PENTHOUSE_SUITE_IMAGE}
+          />
         </div>
       </div>
     </DesktopPanelDebugProvider>

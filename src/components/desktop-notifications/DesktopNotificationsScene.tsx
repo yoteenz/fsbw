@@ -9,8 +9,10 @@ import { preloadDesktopRoomBackground } from '../../utils/desktopRoomBackgroundC
 import { DesktopNotificationsDebugRect } from './DesktopNotificationsDebugRect';
 import { DesktopNotificationsProductionLayer } from './DesktopNotificationsProductionLayer';
 import { useDesktopNotificationsDebug } from './DesktopNotificationsDebugProvider';
+import { PerspectivePanelPageDebugOverlays } from '../perspective-panel/PerspectivePanelPageDebugOverlays';
 import { DesktopRoomAmbientOverlay } from '../desktop-lobby/DesktopRoomAmbientOverlay';
 import './DesktopNotifications.css';
+import '../desktop-shared/acrylicGlass.css';
 
 type Props = {
   measureRef: RefObject<HTMLElement | null>;
@@ -43,6 +45,12 @@ export function DesktopNotificationsScene({ measureRef }: Props) {
               <DesktopNotificationsDebugRect key={panel.id} measureRef={measureRef} panel={panel} />
             ))
           : null}
+
+        <PerspectivePanelPageDebugOverlays
+          measureRef={measureRef}
+          page="alerts"
+          image={DESKTOP_NOTIFICATIONS_IMAGE}
+        />
       </div>
     </div>
   );

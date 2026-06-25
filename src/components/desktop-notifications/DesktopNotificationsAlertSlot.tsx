@@ -47,7 +47,8 @@ type Props = {
 
 export function DesktopNotificationsAlertSlot({ title, body, subline, priority, icon = 'action' }: Props) {
   return (
-    <article className="dn-slot dn-slot--alert">
+    <article className="dn-slot dn-slot--alert acrylic-glass-surface">
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <AlertIcon kind={icon} />
       <div className="dn-slot__copy">
         <h3 className="dn-slot__title dn-slot__title--accent">{title}</h3>

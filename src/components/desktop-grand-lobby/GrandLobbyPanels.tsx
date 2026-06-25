@@ -43,7 +43,8 @@ export function GrandLobbyPanels({ measureRef }: Props) {
   return (
     <div className="gl-layer" aria-label="Grand Lobby orientation panels">
       <GrandLobbyPanelAnchor measureRef={measureRef} regionId="membershipAccess">
-        <article className="gl-panel gl-panel--info gl-panel--baked">
+        <article className="gl-panel gl-panel--info gl-panel--baked acrylic-glass-surface">
+          <div className="acrylic-glass-surface__rose-base" aria-hidden />
           <header className="gl-panel__header">
             <CrownMark />
             <h2 className="gl-panel__title">Membership &amp; Access</h2>
@@ -63,7 +64,8 @@ export function GrandLobbyPanels({ measureRef }: Props) {
       </GrandLobbyPanelAnchor>
 
       <GrandLobbyPanelAnchor measureRef={measureRef} regionId="mansionEconomy">
-        <article className="gl-panel gl-panel--info gl-panel--baked">
+        <article className="gl-panel gl-panel--info gl-panel--baked acrylic-glass-surface">
+          <div className="acrylic-glass-surface__rose-base" aria-hidden />
           <header className="gl-panel__header">
             <CrownMark />
             <h2 className="gl-panel__title">The Mansion Economy</h2>
@@ -92,7 +94,8 @@ export function GrandLobbyPanels({ measureRef }: Props) {
       </GrandLobbyPanelAnchor>
 
       <GrandLobbyPanelAnchor measureRef={measureRef} regionId="mansionDirectory" zIndex={9}>
-        <nav className="gl-panel gl-panel--directory gl-panel--baked" aria-label="Mansion directory">
+        <nav className="gl-panel gl-panel--directory gl-panel--baked acrylic-glass-surface" aria-label="Mansion directory">
+          <div className="acrylic-glass-surface__rose-base" aria-hidden />
           <header className="gl-panel__header gl-panel__header--center">
             <CrownMark />
             <h2 className="gl-panel__title">Mansion Directory</h2>
@@ -127,7 +130,8 @@ export function GrandLobbyPanels({ measureRef }: Props) {
       </GrandLobbyPanelAnchor>
 
       <GrandLobbyPanelAnchor measureRef={measureRef} regionId="welcomeMansion">
-        <article className="gl-panel gl-panel--welcome gl-panel--baked">
+        <article className="gl-panel gl-panel--welcome gl-panel--baked acrylic-glass-surface">
+          <div className="acrylic-glass-surface__rose-base" aria-hidden />
           <header className="gl-panel__header">
             <CrownMark />
             <h2 className="gl-panel__title">Welcome to the Mansion</h2>
@@ -139,7 +143,8 @@ export function GrandLobbyPanels({ measureRef }: Props) {
       </GrandLobbyPanelAnchor>
 
       <GrandLobbyPanelAnchor measureRef={measureRef} regionId="houseInformation">
-        <nav className="gl-panel gl-panel--links gl-panel--baked" aria-label="House information">
+        <nav className="gl-panel gl-panel--links gl-panel--baked acrylic-glass-surface" aria-label="House information">
+          <div className="acrylic-glass-surface__rose-base" aria-hidden />
           <header className="gl-panel__header">
             <CrownMark />
             <h2 className="gl-panel__title">House Information</h2>

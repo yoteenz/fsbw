@@ -1,4 +1,4 @@
-import type { PerspectivePanelPage } from '../types/perspectivePanel';
+import type { PerspectivePanelPage } from '../constants/perspectivePanelIds';
 
 export function isPerspectivePanelDebugEnabled(): boolean {
   if (typeof window === 'undefined') return false;
@@ -19,6 +19,9 @@ export function resolvePerspectivePanelPage(
 ): PerspectivePanelPage | null {
   if (pathname.startsWith('/desktop/shopping-bag')) return 'shopping-bag';
   if (pathname.startsWith('/desktop/acquisition')) return 'acquisition';
+  if (pathname.startsWith('/desktop/alerts')) return 'alerts';
+  if (pathname.startsWith('/desktop/booking-suite')) return 'booking-suite';
+  if (pathname.startsWith('/desktop/account')) return 'account';
   if (pathname === '/sign-in' || pathname.startsWith('/sign-in/')) return 'sign-in';
 
   const zone = (() => {
@@ -29,6 +32,7 @@ export function resolvePerspectivePanelPage(
     }
   })();
 
+  if (zone === 'grand-lobby') return 'grand-lobby';
   if (zone === 'reception') return 'reception';
   if (zone === 'lounge' || pathname.startsWith('/desktop/lounge')) return 'lounge';
   if (zone === 'psa-suite') return 'psa-suite';

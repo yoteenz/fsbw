@@ -1,4 +1,5 @@
 import { DESKTOP_SHOPPING_BAG_LAYOUT_SEED } from './desktopShoppingBagLayout';
+import { SHOPPING_BAG_LEGACY_PANEL_IDS } from './perspectivePanelIds';
 import type { DesktopShoppingBagPercentRect, DesktopShoppingBagRegionId } from '../types/desktopShoppingBagLayout';
 import type { PerspectivePanelId, PerspectivePanelQuad } from '../types/perspectivePanel';
 import { rectToPerspectivePanelQuad } from '../utils/perspectivePanelQuad';
@@ -7,19 +8,19 @@ export const SHOPPING_BAG_REGION_TO_PERSPECTIVE_PANEL: Record<
   DesktopShoppingBagRegionId,
   PerspectivePanelId
 > = {
-  curatorTablet: 'curator-tablet',
-  collectionHeader: 'shopping-bag-collection-header',
-  cartGallery: 'shopping-bag-cart-gallery',
-  acquisitionSummary: 'shopping-bag-acquisition-summary',
-  emptyCollectionCta: 'shopping-bag-empty-cta',
+  curatorTablet: SHOPPING_BAG_LEGACY_PANEL_IDS.curatorTablet,
+  collectionHeader: SHOPPING_BAG_LEGACY_PANEL_IDS.collectionHeader,
+  cartGallery: SHOPPING_BAG_LEGACY_PANEL_IDS.cartGallery,
+  acquisitionSummary: SHOPPING_BAG_LEGACY_PANEL_IDS.acquisitionSummary,
+  emptyCollectionCta: SHOPPING_BAG_LEGACY_PANEL_IDS.emptyCollectionCta,
 };
 
 export const ACQUISITION_REGION_TO_PERSPECTIVE_PANEL: Partial<
   Record<DesktopShoppingBagRegionId, PerspectivePanelId>
 > = {
-  curatorTablet: 'checkout-tablet',
-  cartGallery: 'acquisition-collection-list',
-  acquisitionSummary: 'acquisition-summary-panel',
+  curatorTablet: SHOPPING_BAG_LEGACY_PANEL_IDS.checkoutTablet,
+  cartGallery: SHOPPING_BAG_LEGACY_PANEL_IDS.acquisitionCollectionList,
+  acquisitionSummary: SHOPPING_BAG_LEGACY_PANEL_IDS.acquisitionSummaryPanel,
 };
 
 export function shoppingBagPercentRectToPerspectiveQuad(

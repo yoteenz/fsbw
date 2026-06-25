@@ -7,7 +7,8 @@ type Props = {
 
 export function TransformationSuiteServicePanel({ title, subtitle, bullets, onBook }: Props) {
   return (
-    <article className="ts-panel ts-panel--service">
+    <article className="ts-panel ts-panel--service acrylic-glass-surface">
+      <div className="acrylic-glass-surface__rose-base" aria-hidden />
       <h2 className="ts-panel__title">{title}</h2>
       {subtitle ? <p className="ts-panel__subtitle">{subtitle}</p> : null}
       {bullets ? (
