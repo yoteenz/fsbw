@@ -32327,3 +32327,27 @@ User asked to **swap Cinema Suite with Members Lounge** so Cinema Suite is on th
 - **Mansion debug:** lounge TV hotspot → gallery pageZone `lounge`; zone placeholders updated.
 - Pushed **`master`** + **`preview/mobile`**.
 
+---
+
+## 2026-06-25 — Branch policy: master-only push; no preview/mobile unless asked
+
+**Context:** User asked to update the motherboard so agents **only commit and push to `master`**. Do **not** merge or push to **`preview/mobile`** unless the user explicitly asks.
+
+**Topics covered (entire conversation so far):**
+- User set a new permanent branch preference reversing the prior dual-push rule (2026-04-15 entry: push both `master` and `preview/mobile`).
+- Updated canonical branch policy in motherboard and agent-facing rules to match.
+
+**Decisions / outcomes:**
+- **Default workflow:** implement on **`master`**, commit, **`git push -u origin master`** only.
+- **Do not** merge into, fast-forward, or push **`preview/mobile`** unless the user explicitly requests it.
+- **Still banned:** creating **`cursor/*`**, **`feature/*`**, or other side branches (cloud-agent PR flows remain overridden).
+
+**Changes:**
+- `motherboard/CORE.md` — Conventions branch-policy bullet updated to master-only push.
+- `.cursor/rules/git-branch-policy.mdc` — always-applied Cursor rule aligned with CORE.
+- `AGENTS.md` — Git branches section aligned with CORE.
+- `motherboard/MEMORY.md` — this entry.
+
+**Conventions:**
+- Treat **`master`** as the sole default push target. **`preview/mobile`** is opt-in only when the user explicitly asks.
+
