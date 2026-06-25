@@ -44,17 +44,17 @@ export const DESKTOP_FLOORS: readonly DesktopFloor[] = [
     zones: [
       { id: 'build-a-wig-atelier', label: 'Build-A-Wig Atelier' },
       { id: 'grand-lobby', label: 'Grand Lobby' },
-      { id: 'lounge', label: 'Cinema Suite' },
+      { id: 'members-lounge', label: 'Members Lounge', comingSoon: true },
     ],
   },
   {
     id: 2,
     name: 'GALLERY',
     path: DESKTOP_GALLERY_PATH,
-    defaultZoneId: 'members-lounge',
+    defaultZoneId: 'lounge',
     zones: [
       { id: 'slay-cam-gallery', label: 'Slay Cam Gallery', comingSoon: true },
-      { id: 'members-lounge', label: 'Members Lounge', comingSoon: true },
+      { id: 'lounge', label: 'Cinema Suite' },
       { id: 'rewards-gallery', label: 'Rewards Gallery', comingSoon: true },
     ],
   },

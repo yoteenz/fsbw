@@ -72,7 +72,7 @@ export const GRAND_LOBBY_DIRECTORY_FLOORS: readonly GrandLobbyDirectoryFloor[] =
     level: 2,
     name: 'GALLERY',
     rooms: [
-      { label: 'The Lounge', floorPath: DESKTOP_LOBBY_PATH, destinationId: 'lounge' },
+      { label: 'Cinema Suite', floorPath: DESKTOP_GALLERY_PATH, destinationId: 'lounge' },
       { label: 'Slay Cam', floorPath: DESKTOP_GALLERY_PATH, destinationId: 'slay-cam-gallery' },
       { label: 'Rewards Gallery', floorPath: DESKTOP_GALLERY_PATH, destinationId: 'rewards-gallery' },
     ],

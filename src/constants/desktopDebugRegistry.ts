@@ -538,8 +538,8 @@ const RECEPTION_REGIONS: MansionDebugRegion[] = (
 const FLOOR_ZONE_REGIONS: MansionDebugRegion[] = [
   zonePlaceholder('lobby', 'build-a-wig-atelier', 'Build-A-Wig Atelier'),
   {
-    id: 'lobby-lounge-tv',
-    page: 'lobby',
+    id: 'gallery-lounge-tv',
+    page: 'gallery',
     pageZone: 'lounge',
     category: 'room-hotspot',
     type: 'hotspot',
@@ -552,8 +552,9 @@ const FLOOR_ZONE_REGIONS: MansionDebugRegion[] = [
       DESKTOP_LOUNGE_TV_HIT_REGION,
     ),
   },
+  zonePlaceholder('lobby', 'members-lounge', 'Members Lounge'),
   zonePlaceholder('gallery', 'slay-cam-gallery', 'Slay Cam Gallery'),
-  zonePlaceholder('gallery', 'members-lounge', 'Members Lounge'),
+  zonePlaceholder('gallery', 'lounge', 'Cinema Suite'),
   zonePlaceholder('gallery', 'rewards-gallery', 'Rewards Gallery'),
   zonePlaceholder('concierge', 'founder-suite', 'Founder Suite'),
   {

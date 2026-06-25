@@ -20,7 +20,7 @@ export const DESKTOP_NAV_QUICK_ROUTES: readonly DesktopNavQuickRoute[] = [
   { label: 'SHOP', path: DESKTOP_PENTHOUSE_PATH, room: 'boutique' },
   { label: 'BUILD-A-WIG', path: DESKTOP_LOBBY_PATH, zone: 'build-a-wig-atelier' },
   { label: 'SHOWROOM', path: DESKTOP_PENTHOUSE_PATH, room: 'showroom' },
-  { label: 'MEMBERSHIP', path: DESKTOP_GALLERY_PATH, zone: 'members-lounge' },
+  { label: 'MEMBERSHIP', path: DESKTOP_LOBBY_PATH, zone: 'members-lounge' },
   { label: 'ANALYSIS', path: DESKTOP_PENTHOUSE_PATH, room: 'analysis-lab' },
   { label: 'SLAY CAM', path: DESKTOP_GALLERY_PATH, zone: 'slay-cam-gallery' },
   { label: 'REWARDS', path: DESKTOP_GALLERY_PATH, zone: 'rewards-gallery' },

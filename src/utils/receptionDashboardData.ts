@@ -48,11 +48,11 @@ const ICONS = {
 } as const;
 
 export function buildReceptionDashboardContent(): ReceptionDashboardContent {
-  const loungeHref = buildDesktopDestinationHref(DESKTOP_LOBBY_PATH, 'lounge');
+  const loungeHref = buildDesktopDestinationHref(DESKTOP_GALLERY_PATH, 'lounge');
   const slayCamHref = buildDesktopDestinationHref(DESKTOP_GALLERY_PATH, 'slay-cam-gallery');
   const rewardsHref = buildDesktopDestinationHref(DESKTOP_GALLERY_PATH, 'rewards-gallery');
   const bawHref = buildDesktopDestinationHref(DESKTOP_LOBBY_PATH, 'build-a-wig-atelier');
-  const membersHref = buildDesktopDestinationHref(DESKTOP_GALLERY_PATH, 'members-lounge');
+  const membersHref = buildDesktopDestinationHref(DESKTOP_LOBBY_PATH, 'members-lounge');
   const analysisHref = buildDesktopDestinationHref(DESKTOP_PENTHOUSE_PATH, 'analysis-lab');
 
   return {
