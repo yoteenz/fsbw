@@ -32329,6 +32329,7 @@ User asked to **swap Cinema Suite with Members Lounge** so Cinema Suite is on th
 
 ---
 
+<<<<<<< HEAD
 ## 2026-06-25 — Branch policy: master-only push; no preview/mobile unless asked
 
 **Context:** User asked to update the motherboard so agents **only commit and push to `master`**. Do **not** merge or push to **`preview/mobile`** unless the user explicitly asks.
@@ -32350,4 +32351,16 @@ User asked to **swap Cinema Suite with Members Lounge** so Cinema Suite is on th
 
 **Conventions:**
 - Treat **`master`** as the sole default push target. **`preview/mobile`** is opt-in only when the user explicitly asks.
+=======
+## 2026-06-23 — Desktop-wide perspective quads + acrylic refraction
+
+User clarified **all desktop/tablet website pages** need the shopping-bag treatment — **4-corner perspective quad tuning** and **acrylic light-refraction** — not only shopping bag / acquisition.
+
+- **Perspective panels:** Added `perspectivePanelIds.ts` + `desktopPagePerspectivePanels.ts` — ~70 panel IDs seeded from layout constants for **grand lobby** (5), **alerts** (13), **booking suite** (15), **account** (12), **reception rows** (11), plus existing reception columns / floor hotspots / shopping bag.
+- **Production warp:** `DesktopPerspectivePanelAnchor` wraps `PerspectivePanel`; migrated `GrandLobbyPanelAnchor`, alerts/booking anchors, and account `PenthouseSuiteDashboard` off axis-aligned `DesktopRoomCoverRectAnchor`.
+- **Mansion debug:** Every registry region now has `perspectivePanelId`; rect overlays skipped where quads apply. `PerspectivePanelPageDebugOverlays` mounted on grand lobby, reception, lounge TV, PSA, alerts, booking suite, account, shopping bag scenes.
+- **Acrylic:** `acrylicGlass.css` moved to `src/components/desktop-shared/`; applied to grand lobby `.gl-panel`, alerts `.dn-slot`/`.dn-featured`, booking `.ts-panel`, shopping bag (unchanged behavior).
+- **Tune:** Any desktop mansion page → **D** → **Edit** → select region or drag TL/TR/BR/BL → **Save** / **Copy** (perspective JSON).
+- Pushed **`master`** + **`preview/mobile`**.
+>>>>>>> 65433dae (Motherboard: desktop-wide perspective quads + acrylic)
 
