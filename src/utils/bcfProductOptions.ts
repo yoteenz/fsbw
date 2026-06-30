@@ -270,7 +270,7 @@ function bcfSimilarStripItemFromSlot(slot: BcfSimilarSlot): BcfSimilarStripItem 
     href: shopBcfPdpHref(cat, tid, { origin, color }),
     title,
     subline: 'RAW HUMAN HAIR',
-    priceUsd: bcfBasePriceUsd(cat, tid)
+    priceUsd: bcfPdpPriceRangeUsd(cat, tid).minUsd
   };
 }
 
