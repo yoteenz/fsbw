@@ -639,10 +639,10 @@ function NoirSelection() {
         const styling = item.styling || 'NONE';
         const stylingPrices: { [key: string]: number } = {
           'NONE': 0,
-          'BANGS': 40,
+          'BANGS': 80,
           'CRIMPS': 140,
-          'FLAT IRON': 100,
-          'LAYERS': 180
+          'FLAT IRON': 120,
+          'LAYERS': 200
         };
         return stylingPrices[styling] || 0;
       };

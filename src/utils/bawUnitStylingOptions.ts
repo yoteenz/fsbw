@@ -1,6 +1,6 @@
 /**
  * Build-a-wig salon styling options — straight/wavy use CRIMPS + LAYERS;
- * soft-curl & ocean-curl use WAND CURLS ($80) + DEFINE ($60).
+ * soft-curl & ocean-curl use WAND CURLS ($140) + DEFINE ($200).
  */
 
 export interface BawHairStylingOption {
@@ -11,17 +11,17 @@ export interface BawHairStylingOption {
 }
 
 const DEFAULT_HAIR_STYLING_OPTIONS: BawHairStylingOption[] = [
-  { id: 'BANGS', name: 'BANGS', image: '/assets/Bangs-icon.svg', price: 40 },
-  { id: 'CRIMPS', name: 'CRIMPS', image: '/assets/Crimps-icon.svg', price: 80 },
-  { id: 'FLAT IRON', name: 'FLAT IRON', image: '/assets/Flat iron-icon.svg', price: 80 },
-  { id: 'LAYERS', name: 'LAYERS', image: '/assets/Layers-icon.svg', price: 120 },
+  { id: 'BANGS', name: 'BANGS', image: '/assets/Bangs-icon.svg', price: 80 },
+  { id: 'CRIMPS', name: 'CRIMPS', image: '/assets/Crimps-icon.svg', price: 140 },
+  { id: 'FLAT IRON', name: 'FLAT IRON', image: '/assets/Flat iron-icon.svg', price: 120 },
+  { id: 'LAYERS', name: 'LAYERS', image: '/assets/Layers-icon.svg', price: 200 },
 ];
 
 const CURLY_HAIR_STYLING_OPTIONS: BawHairStylingOption[] = [
-  { id: 'BANGS', name: 'BANGS', image: '/assets/Bangs-icon.svg', price: 40 },
-  { id: 'WAND CURLS', name: 'WAND CURLS', image: '/assets/Crimps-icon.svg', price: 80 },
-  { id: 'FLAT IRON', name: 'FLAT IRON', image: '/assets/Flat iron-icon.svg', price: 80 },
-  { id: 'DEFINE', name: 'DEFINE', image: '/assets/Layers-icon.svg', price: 60 },
+  { id: 'BANGS', name: 'BANGS', image: '/assets/Bangs-icon.svg', price: 80 },
+  { id: 'WAND CURLS', name: 'WAND CURLS', image: '/assets/Crimps-icon.svg', price: 140 },
+  { id: 'FLAT IRON', name: 'FLAT IRON', image: '/assets/Flat iron-icon.svg', price: 120 },
+  { id: 'DEFINE', name: 'DEFINE', image: '/assets/Layers-icon.svg', price: 200 },
 ];
 
 export const BAW_SALON_STYLING_IDS = [
@@ -145,7 +145,7 @@ export function computeBawStylingPriceUsd(
     if (isLongLength && longSurchargeIds.includes(otherStyling)) secondaryPrice += 40;
     return secondaryPrice + 20;
   }
-  if (hasBangs) return 40;
+  if (hasBangs) return stylingPrices.BANGS ?? 0;
 
   const stylingId = stylingArray[0];
   let basePrice = stylingPrices[stylingId] ?? 0;
@@ -169,7 +169,7 @@ export function computeBawStylingPriceFromSelectionArray(
     if (isLongLength && longSurchargeIds.includes(otherStyling)) secondaryPrice += 40;
     return secondaryPrice + 20;
   }
-  if (hasBangs) return 40;
+  if (hasBangs) return stylingPrices.BANGS ?? 0;
 
   const id = selectedHairStyling[0];
   let basePrice = stylingPrices[id] ?? 0;
