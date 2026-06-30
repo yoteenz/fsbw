@@ -32484,3 +32484,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Shipped:** **`src/pages/build-a-wig/styling/page.tsx`** — increased regen block lift to **`transform: translateY(-60px)`** (kept **`zIndex: 30`**) so the full founder regen stack clears the NOIR title during loading and idle states.
 
+---
+
+## 2026-06-30 — NOIR styling page: LIVE PREVIEW lift tuned to -40px
+
+**Context:** User said **-60px** was too high on styling page LIVE PREVIEW / regen block.
+
+**Shipped:** **`src/pages/build-a-wig/styling/page.tsx`** — regen block **`transform: translateY(-40px)`** (was **-60px**).
+
