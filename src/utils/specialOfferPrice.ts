@@ -47,7 +47,7 @@ const STYLING_PRICES: Record<string, number> = {
 };
 
 const ADDON_PRICES: Record<string, number> = {
-  BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20
+  BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 40
 };
 
 export type SpecialOfferOptions = {

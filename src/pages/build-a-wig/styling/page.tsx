@@ -917,7 +917,7 @@ export default function StylingSelectionPage() {
   // when style is deselected, remove BLEACH+PLUCK if they were auto-added (tandem deselect).
   const getAddOnsAndPriceForStylingSync = (isEdit: boolean, isCustomize: boolean, styleConfirmed: boolean) => {
     const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
-    const addOnPrices: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
+    const addOnPrices: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 40 };
     const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
 
     const laceKey = isEdit ? 'editSelectedLace' : (isCustomize ? 'customizeSelectedLace' : 'selectedLace');

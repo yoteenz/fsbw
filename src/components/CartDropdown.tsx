@@ -815,7 +815,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     const addOnBasePrices: { [key: string]: number } = {
       'BLEACH': 100,
       'PLUCK': 120,
-      'BLUNT CUT': 20
+      'BLUNT CUT': 40
     };
     
     // Lace sizes that get $20 discount for BLEACH and PLUCK
