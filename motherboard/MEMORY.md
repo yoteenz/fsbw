@@ -32508,3 +32508,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen styling L/M/R after deploy — cached PNGs still have old drape until **`forceRegenerate`**.
 
+---
+
+## 2026-06-30 — BAW styling helmet hair: IMAGE 3 + full text spec together
+
+**Context (continued chat):** User reported styled hair looked like unnatural **helmet hair** — flat molded cap, not the intended salon look. Asked to include the **previous full text description** **along with** the styling reference attachment (IMAGE 3).
+
+**Root cause:** When JET BLACK styling ref existed, **`buildBawSalonStylingWithSceneAndShapeRefsPrompt`** sent only short mode-lock/finish/drape blocks + IMAGE 3 authority — **not** the detailed **`buildLayersStylePromptFromColorTierWebp`** / crimps / flat-iron text spec used in the no-ref fallback. Fal copied ref shape but lost natural volume/strand detail → helmet look.
+
+**Shipped:** **`api/_lib/bawLiveStylingPrompts.ts`** — three-image path now appends **FULL TEXT SPEC** (`buildBawSalonColorTierTextSpec`) alongside IMAGE 3; **`bawSalonNaturalHairAntiHelmetBlock`**; IMAGE 3 authority = shape guide + text spec both required; single-pass-with-ref path also gets text spec. No-ref fallback unchanged (already had text spec).
+
+**Ops:** Regen styling after deploy — cached outputs keep old helmet look until **`forceRegenerate`**.
+
