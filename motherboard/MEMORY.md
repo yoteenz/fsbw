@@ -32450,3 +32450,37 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Existing **`.webp`** cache still works until regen; new generations write **`.png`**. Regen color L/M/R then styling to pick up full fidelity stack.
 
+---
+
+## 2026-06-30 — Fix BAW styling refs not applied (all modes looked flat/straight)
+
+**Context:** User reported styling reference images were not applied — **LAYERS/CRIMPS** all generated **flat iron / straight** look.
+
+**Root causes:**
+1. **`resolveStylingReferencePublicUrl`** only checked **`.png`** paths after format migration — JET BLACK refs still **`.webp`** in Storage → ref URL **null** → generic two-image prompt with no texture spec (Fal kept straight hair from color/gray-brick inputs).
+2. Styling ref resolved **once** with **`front`** only when running all three angles — L/R passes had no ref.
+3. Generic **`buildBawSalonStylingWithSceneRefPrompt`** lacked **LAYERS vs CRIMPS vs FLAT IRON** finish locks and detailed look blocks.
+
+**Shipped:**
+- **`livePreviewPublicUrlIfExists`** + per-**angle** ref resolution (fallback to **front** ref if angle missing).
+- **`bawStylingReferenceStoragePath(salon, part, angle)`** in **`hairstyleAnalysisBawStylingRefs.ts`**.
+- Prompts: **`STYLING MODE LOCK`**, finish specs, **`IMAGE 3 AUTHORITY`** on three-image path; **`buildBawSalonStylingWithSceneRefAndTextSpecPrompt`** fallback merges full **`buildLayersStylePromptFromColorTierWebp`** / crimps / flat iron text when ref missing.
+
+**Ops:** Seed JET BLACK **`layers-*` / `crimps-*` / `flat-iron-*`** refs in Storage (regen MIDDLE/LEFT/RIGHT per mode) so IMAGE 3 exists; until then text-spec fallback should still differentiate modes.
+
+---
+
+## 2026-06-30 — NOIR styling page: LIVE PREVIEW regen copy clear of NOIR title
+
+**Context:** User screenshot — LIVE PREVIEW + regenerate links overlapped the red **NOIR** hero label on **`/build-a-wig/noir/.../styling`**.
+
+**Shipped:** **`src/pages/build-a-wig/styling/page.tsx`** — wrapped live preview paragraph + regen controls in one block (parity with color page) with **`transform: translateY(-28px)`** and **`zIndex: 30`** so the taller styling copy sits above the **NOIR** title.
+
+---
+
+## 2026-06-30 — NOIR styling page: stronger LIVE PREVIEW lift (still overlapping NOIR)
+
+**Context:** Follow-up on styling-page overlap — **-28px** was insufficient when LIVE PREVIEW copy + **regenerate all angles** + **regen style L/M/R** stack three rows; red links still sat on the **NOIR** hero label (`top-[-20px]`, `text-5xl`).
+
+**Shipped:** **`src/pages/build-a-wig/styling/page.tsx`** — increased regen block lift to **`transform: translateY(-60px)`** (kept **`zIndex: 30`**) so the full founder regen stack clears the NOIR title during loading and idle states.
+
