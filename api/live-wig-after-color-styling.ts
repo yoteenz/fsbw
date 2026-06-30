@@ -44,11 +44,16 @@ import {
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
   buildBangsOnlyStylePrompt,
+  buildBawSalonStylingWithReferencePrompt,
   buildCrimpsStylePromptFromColorTierWebp,
   buildFlatIronStylePromptFromColorTierWebp,
   buildLayersStylePromptFromColorTierWebp,
   buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
+import {
+  bawStylingReferenceStoragePath,
+  type BawSalonMode,
+} from './_lib/hairstyleAnalysisBawStylingRefs.js';
 import {
   BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL,
   bawGptImage2EditFalInput,
@@ -56,6 +61,32 @@ import {
 import { noirFalGrayBrickMannequinPublicUrlForAngle } from './_lib/bawNoirFalMannequinUrls.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
+
+function liveSalonMode(
+  middleLayers: boolean,
+  middleCrimps: boolean,
+  middleFlatIron: boolean
+): BawSalonMode {
+  if (middleLayers) return 'layers';
+  if (middleCrimps) return 'crimps';
+  if (middleFlatIron) return 'flat_iron';
+  return 'none';
+}
+
+async function resolveStylingReferencePublicUrl(
+  supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
+  bucket: string,
+  salonMode: BawSalonMode,
+  part: LayersPartStyling
+): Promise<string | null> {
+  if (salonMode === 'none') return null;
+  const storagePath = bawStylingReferenceStoragePath(salonMode, part);
+  if (!storagePath) return null;
+  const { error } = await supabase.storage.from(bucket).download(storagePath);
+  if (error) return null;
+  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(storagePath);
+  return pub?.publicUrl ?? null;
+}
 
 function readLayersPartStyling(body: Record<string, unknown>): LayersPartStyling {
   const raw = readString(body, 'partSelection', 'MIDDLE').toUpperCase();
@@ -242,8 +273,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           )
         : null;
 
-    /** UI R + LAYERS/CRIMPS: use **MIDDLE-part** after-color output as Fal input (not raw color-tier WebP). */
-    const useMiddlePartOutputAsUiRightInput =
+    /** UI R + LAYERS/CRIMPS: prefer **RIGHT-part** BAW styling ref (two-image); fallback = MIDDLE-part output chain. */
+    const salonMode = liveSalonMode(middleLayers, middleCrimps, middleFlatIron);
+    let useMiddlePartOutputAsUiRightInput =
       partStyling === 'RIGHT' && (middleLayers || middleCrimps);
     const middleFolderKeyForUiR = middleLayers
       ? hasBangs
@@ -266,6 +298,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       sendJson(res, 503, { error: 'SUPABASE_SERVICE_ROLE_KEY required for Storage upload' });
       return;
     }
+
+    if (useMiddlePartOutputAsUiRightInput && salonMode !== 'none') {
+      const rightPartStylingRefUrl = await resolveStylingReferencePublicUrl(
+        supabase,
+        bucket,
+        salonMode,
+        'RIGHT'
+      );
+      if (rightPartStylingRefUrl) {
+        useMiddlePartOutputAsUiRightInput = false;
+      }
+    }
+
+    const stylingRefUrlForPart =
+      salonMode !== 'none' && !bangsOnly
+        ? await resolveStylingReferencePublicUrl(supabase, bucket, salonMode, partStyling)
+        : null;
 
     /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
     let flatIronLeftRightThumbOverrideUrl: string | null = null;
@@ -399,25 +448,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
 
         const flatIronMiddleUsesBaseNoirGeometry =
-          middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
+          middleFlatIron &&
+          partStyling === 'MIDDLE' &&
+          !bangsWithSalon &&
+          !stylingRefUrlForPart;
 
-        prompt = middleLayers
-          ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-              includeBangs: bangsWithSalon,
-            })
-          : middleCrimps
-            ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+        if (stylingRefUrlForPart && salonMode !== 'none') {
+          prompt = buildBawSalonStylingWithReferencePrompt(angle, partStyling, salonMode, catalog, {
+            includeBangs: bangsWithSalon,
+          });
+          imageUrls = [colorPublicUrl, stylingRefUrlForPart];
+        } else {
+          prompt = middleLayers
+            ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
                 includeBangs: bangsWithSalon,
               })
-            : middleFlatIron
-              ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+            : middleCrimps
+              ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
                   includeBangs: bangsWithSalon,
-                  baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
                 })
-              : buildBangsOnlyStylePrompt(angle);
-        imageUrls = flatIronMiddleUsesBaseNoirGeometry
-          ? [colorPublicUrl, noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle)]
-          : [colorPublicUrl];
+              : middleFlatIron
+                ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+                    includeBangs: bangsWithSalon,
+                    baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
+                  })
+                : buildBangsOnlyStylePrompt(angle);
+          imageUrls = flatIronMiddleUsesBaseNoirGeometry
+            ? [colorPublicUrl, noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle)]
+            : [colorPublicUrl];
+        }
       }
 
       const result = await fal.subscribe(BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL, {

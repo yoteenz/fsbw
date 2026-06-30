@@ -53,6 +53,10 @@ import {
 } from './hairstyleAnalysisEveryDetailMatters.js';
 import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout.js';
 import { consultInspoTemplateLockBlock } from './consultStyleAnalysisFalPrompt.js';
+import {
+  bawSalonAsymmetricDrapeCoreLines,
+  oneShoulderDrapeCompactLock as sharedOneShoulderDrapeCompactLock,
+} from './bawSalonHairGeometryPrompts.js';
 
 export type FalAnalysisLook = {
   rank: number;
@@ -175,20 +179,13 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
   return [
     '=== HAIR DRAPE — ASYMMETRIC SHOULDER SWEEP (NOT SYMMETRIC TWIN CURTAIN) ===',
     scopeLine,
-    'Long hair uses a **one-forward-shoulder drape** — only one side gets the forward chest cascade; the opposite side keeps visible hair **behind the shoulder / down the back**, not another forward curtain.',
-    '**PRIMARY FRONT CASCADE:** visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the single chest cascade.',
-    '**BACK + BEHIND PANEL (required):** keep a visible secondary mass sweeping **behind** the model\'s RIGHT shoulder and down the **upper back** — soft back panel / behind-shoulder fall. This prevents the hair from looking like 100% is piled on one shoulder.',
-    '**CLEAR SHOULDER CAP:** on the model\'s **RIGHT shoulder** — **left side of the image** (viewer\'s left) — shoulder/collarbone skin stays mostly visible. Any hair on this side must read as behind-the-shoulder/back hair, with at most a few thin face-framing strands — **no thick forward chest curtain**.',
-    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back/behind-shoulder hair.',
-    '**Self-check failed if:** there is a forward hair curtain covering each collarbone, or if all hair is piled on the primary shoulder. **Correct if:** one forward chest cascade + one visible behind/back panel with the opposite shoulder mostly clear.',
+    ...bawSalonAsymmetricDrapeCoreLines(),
     mannequinNote,
   ].join('\n');
 }
 
 function oneShoulderDrapeCompactLock(): string {
-  return [
-    'ONE-FORWARD-SHOULDER DRAPE: one forward chest cascade on viewer\'s RIGHT; viewer\'s LEFT shoulder stays mostly clear with visible hair routed behind shoulder/down the back — **FORBIDDEN** twin thick **forward** curtains and **FORBIDDEN** all hair forward with no back panel.',
-  ].join(' ');
+  return sharedOneShoulderDrapeCompactLock();
 }
 
 function clientPreviewTabLine(): string {
