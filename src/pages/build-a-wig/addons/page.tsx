@@ -224,7 +224,7 @@ export default function AddOnsSelectionPage() {
     const selectedLace = localStorage.getItem('selectedLace') || '';
     const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
     const hasLaceDiscount = discountedLaceSizes.includes(selectedLace);
-    const addOnPrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+    const addOnPrices: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
     const price = selectedAddOns.reduce((total, addOnId) => {
       let p = addOnPrices[addOnId] ?? 0;
       if (hasLaceDiscount && (addOnId === 'BLEACH' || addOnId === 'PLUCK')) p -= 20;
@@ -365,13 +365,13 @@ export default function AddOnsSelectionPage() {
       id: 'BLEACH',
       name: 'BLEACH',
       image: '/assets/Bleach-icon.svg',
-      price: 60
+      price: 100
     },
     {
       id: 'PLUCK',
       name: 'PLUCK',
       image: '/assets/Pluck-icon.svg',
-      price: 80
+      price: 120
     },
     {
       id: 'BLUNT CUT',

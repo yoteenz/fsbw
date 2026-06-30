@@ -572,8 +572,8 @@ export default function BuildAWigPage() {
     // Calculate add-ons price
     // Base prices from addons page
     const addOnBasePrices: { [key: string]: number } = {
-      'BLEACH': 60,
-      'PLUCK': 80,
+      'BLEACH': 100,
+      'PLUCK': 120,
       'BLUNT CUT': 20
     };
     
@@ -821,7 +821,7 @@ export default function BuildAWigPage() {
           updatedCustomization = { ...updatedCustomization, addOns: restoredAddOns };
           const discountedLaceSizesRm = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const hasLaceDiscountRm = discountedLaceSizesRm.includes(updatedCustomization.lace || '');
-          const addOnPricesRm: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnPricesRm: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
           const addOnsPriceAfterRm = updatedCustomization.addOns.reduce((sum: number, id: string) => {
             let p = addOnPricesRm[id] ?? 0;
             if (hasLaceDiscountRm && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
@@ -847,7 +847,7 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
           const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const hasLaceDiscount = discountedLaceSizes.includes(updatedCustomization.lace || '');
-          const addOnPrices: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnPrices: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
           const addOnsPriceValue = updatedCustomization.addOns.reduce((sum: number, id: string) => {
             let p = addOnPrices[id] ?? 0;
             if (hasLaceDiscount && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
@@ -1203,7 +1203,7 @@ export default function BuildAWigPage() {
           updatedCustomization = { ...updatedCustomization, addOns: restoredAddOnsE };
           const discountedLaceSizesRmE = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const hasLaceDiscountRmE = discountedLaceSizesRmE.includes(updatedCustomization.lace || '');
-          const addOnPricesRmE: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnPricesRmE: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
           const addOnsPriceAfterRmE = updatedCustomization.addOns.reduce((sum: number, id: string) => {
             let p = addOnPricesRmE[id] ?? 0;
             if (hasLaceDiscountRmE && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
@@ -1229,7 +1229,7 @@ export default function BuildAWigPage() {
           localStorage.setItem('selectedAddOns', JSON.stringify(updatedCustomization.addOns));
           const discountedLaceSizesEdit = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const hasLaceDiscountEdit = discountedLaceSizesEdit.includes(updatedCustomization.lace || '');
-          const addOnPricesEdit: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnPricesEdit: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
           const addOnsPriceValueEdit = updatedCustomization.addOns.reduce((sum: number, id: string) => {
             let p = addOnPricesEdit[id] ?? 0;
             if (hasLaceDiscountEdit && (id === 'BLEACH' || id === 'PLUCK')) p -= 20;
@@ -3814,7 +3814,7 @@ export default function BuildAWigPage() {
       const addOnsPrice = isEditMode ? calculatedPrices.addOnsPrice : getPrice('AddOns', calculatedPrices.addOnsPrice);
       
       // Per-addon breakdown for debug (edit/customize)
-      const addOnBasePricesForLog: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+      const addOnBasePricesForLog: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
       const discountedLaceForLog = ['2X6', '4X4', '5X5', '6X6', '7X7'];
       const laceForLog = currentCustomization.lace || '';
       const hasLaceDiscForLog = discountedLaceForLog.includes(laceForLog);
@@ -4694,7 +4694,7 @@ export default function BuildAWigPage() {
       );
       if (isEditSaveDebug) {
         try {
-          const addOnBasePricesSave: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnBasePricesSave: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
           const discountedLaceSave = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const laceSave = customization.lace || '';
           const hasLaceDiscSave = discountedLaceSave.includes(laceSave);
@@ -4813,7 +4813,7 @@ export default function BuildAWigPage() {
       );
       if (isAddToBagDebug) {
         try {
-          const addOnBasePricesPayload: Record<string, number> = { BLEACH: 60, PLUCK: 80, 'BLUNT CUT': 20 };
+          const addOnBasePricesPayload: Record<string, number> = { BLEACH: 100, PLUCK: 120, 'BLUNT CUT': 20 };
           const discountedLacePayload = ['2X6', '4X4', '5X5', '6X6', '7X7'];
           const lacePayload = customization.lace || '';
           const hasLaceDiscPayload = discountedLacePayload.includes(lacePayload);

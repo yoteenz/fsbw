@@ -386,10 +386,10 @@ export interface BcfLaceTreatmentOption {
   premium?: boolean;
 }
 
-/** Closures/frontals only — lace treatments. Same prices as build-a-wig add-ons (premium-only). */
+/** Closures/frontals only — lace treatments (premium-only; lower than build-a-wig add-ons). */
 export const BCF_LACE_TREATMENT_OPTIONS: BcfLaceTreatmentOption[] = [
-  { id: 'PLUCK', label: 'PLUCK HAIRLINE', price: 80, premium: true },
-  { id: 'BLEACH', label: 'BLEACH/TINT KNOTS', price: 60, premium: true }
+  { id: 'PLUCK', label: 'PLUCK HAIRLINE', price: 100, premium: true },
+  { id: 'BLEACH', label: 'BLEACH/TINT KNOTS', price: 80, premium: true }
 ];
 
 /** Total upcharge for the selected lace treatments. */
@@ -460,10 +460,10 @@ export function bcfPriceAdjustments(
 
 /**
  * Straight-texture base (USD) before length / color / lace.
- * Default PDP totals (16″ straight OFF BLACK): bundles $320; closures $220 (2×6); frontals $280 (13×4).
+ * Default PDP totals (16″ straight OFF BLACK): bundles $280; closures $220 (2×6); frontals $280 (13×4).
  */
 export const BCF_STRAIGHT_BASE_PRICE_USD: Record<ShopTextureCategoryThumbCategory, number> = {
-  bundles: 370,
+  bundles: 330,
   closures: 310,
   frontals: 370
 };

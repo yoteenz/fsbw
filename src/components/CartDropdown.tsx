@@ -813,8 +813,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     
     // Base prices from addons page
     const addOnBasePrices: { [key: string]: number } = {
-      'BLEACH': 60,
-      'PLUCK': 80,
+      'BLEACH': 100,
+      'PLUCK': 120,
       'BLUNT CUT': 20
     };
     

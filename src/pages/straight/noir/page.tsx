@@ -651,7 +651,7 @@ function NoirSelection() {
         const addOns = item.addOns || [];
         // Base prices from addons page
         const addOnBasePrices: { [key: string]: number } = {
-          'BLEACH': 80,
+          'BLEACH': 100,
           'PLUCK': 120,
           'BLUNT CUT': 20
         };
