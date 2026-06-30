@@ -32412,3 +32412,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Canonical **`bawUnitStylingOptions.ts`** (default + curly WAND CURLS/DEFINE mirrors); **`specialOfferPrice.ts`**; **`straight/noir/page.tsx`** cart recalc map. BANGS-only total now reads from price map (was hardcoded $40). BANGS + salon combo still **secondary + $20** surcharge rule unchanged.
 
+---
+
+## 2026-06-30 — BAW live styling aligned with hairstyle analysis (drape + part refs)
+
+**Context (full chat):** Pricing updates (BAW add-ons bleach $100/pluck $120/blunt $40; BCF bundles from $280/closures $220; lace bleach $80/pluck $100; similar-strip min price; salon styling BANGS $80/CRIMPS $140/FLAT IRON $120/LAYERS $200). User asked whether BAW styling uses the same logic as hairstyle analysis (HA) — BAW images still wrong on part angles. User confirmed: **yes**, BAW should align with HA and follow a **style reference**; asked whether per-part reference images would help L/R part angles.
+
+**Root cause:** BAW live styling used **text-only** prompts on color-tier WebPs with **inverted drape** (heavy on viewer/image LEFT) while HA uses **asymmetric drape** (primary forward cascade on **model's LEFT** = **image RIGHT**) plus attaches **JET BLACK BAW styling ref** images per salon mode + part.
+
+**Decisions / outcomes:**
+- **Yes — per-part refs help L/R angles** more than PART OVERRIDE text alone when color WebPs bake in a default part. Dedicated **MIDDLE / LEFT / RIGHT** refs (same Storage paths as HA: `hairstyleAnalysisBawStylingRefs.ts`) as Fal **IMAGE 2** copy shape; **IMAGE 1** keeps customer swatch color.
+- **`api/_lib/bawSalonHairGeometryPrompts.ts`** — shared part mirror rule + HA-aligned asymmetric drape (single source for BAW + HA).
+- **`api/_lib/bawLiveStylingPrompts.ts`** — imports shared geometry; **`buildBawSalonStylingWithReferencePrompt`** for two-image path; all drape/part lines updated off old viewer-LEFT rule.
+- **`api/live-wig-after-color-styling.ts`** — when JET BLACK styling ref exists in Storage for salon mode + part: `image_urls = [colorWebP, stylingRef]` + ref prompt. **UI R + LAYERS/CRIMPS:** prefer **RIGHT-part ref** directly; **middle-part output chain** remains fallback when RIGHT ref missing.
+- **`api/_lib/hairstyleAnalysisFalPrompt.ts`** — imports shared `bawSalonAsymmetricDrapeCoreLines` to prevent drift.
+- **`scripts/wig-preview/promptTemplate.mjs`** — synced drape + ref prompt builder.
+
+**Ops note:** Styling refs must exist in `live-preview` Storage (`wig-preview-live/.../after-color/layers-{middle|left|right}-part/` etc., JET BLACK tier) — seed via founder regen/batch if two-image path falls back to text-only.
+
+**Changes:** Committed **`0e51f198`** on **`master`**, pushed **`origin master`**.
+
