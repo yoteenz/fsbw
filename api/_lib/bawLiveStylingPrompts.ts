@@ -231,10 +231,10 @@ function buildLayersStylePromptShared(
   includeBangs: boolean
 ): string {
   const layersLook =
-    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered S-waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls. **FRONT (hero):** **single-shoulder drape** — see **DRAPE SIDE** block above; **never** equal “waterfall” curls on **both** shoulders.';
+    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered S-waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. Hair must show **natural root lift**, **strand separation**, and **soft hairline edges** — **FORBIDDEN:** flat **helmet** / molded-cap hair with no internal texture. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls. **FRONT (hero):** **single-shoulder drape** — see **DRAPE SIDE** block above; **never** equal “waterfall” curls on **both** shoulders.';
 
   const crimpsLook =
-    'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing** and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural**. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT (hero):** **single-shoulder crimp drape** — see **DRAPE SIDE**; **never** thick matching crimp panels on **both** shoulders.';
+    'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing** and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural** with visible **strand depth** — **FORBIDDEN:** flat **helmet** blob with no ridge detail. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT (hero):** **single-shoulder crimp drape** — see **DRAPE SIDE**; **never** thick matching crimp panels on **both** shoulders.';
 
   const lookBlock = salon === 'crimps' ? crimpsLook : layersLook;
 
@@ -330,6 +330,29 @@ function buildLayersStylePromptShared(
   ].join(' ');
 }
 
+function bawSalonNaturalHairAntiHelmetBlock(): string {
+  return (
+    '**NATURAL HAIR (not helmet):** Styled hair must read as **real long salon hair** — **root lift**, **strand separation**, **soft hairline transition**, and **organic movement** in waves/crimps/straight fall. **FORBIDDEN:** solid **helmet** / **molded cap** / **wig-hat** blob pasted on the head; **FORBIDDEN:** one flat paint layer with zero internal texture; **FORBIDDEN:** plastic shell hair.'
+  );
+}
+
+/** Full color-tier text spec (layers/crimps/flat iron) — used with or without IMAGE 3 styling ref. */
+function buildBawSalonColorTierTextSpec(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean; baseNoirGeometrySecondRef?: boolean }
+): string {
+  if (salon === 'layers') {
+    return buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog, options);
+  }
+  if (salon === 'crimps') {
+    return buildCrimpsStylePromptFromColorTierWebp(angle, partSelection, catalog, options);
+  }
+  return buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, catalog, options);
+}
+
 function bawSalonModeLockBlock(salon: 'layers' | 'crimps' | 'flat_iron'): string {
   if (salon === 'layers') {
     return (
@@ -372,9 +395,9 @@ function bawSalonShapeRefAuthorityBlock(
     imageLabel +
     ' AUTHORITY (critical):** **' +
     imageLabel +
-    '** is the canonical **' +
+    '** guides **' +
     salonLabel +
-    '** reference — match its **curl/crimp/straight pattern**, **part**, and **layering** exactly. **Drape** follows **DRAPE SIDE** below (not ref if conflict). **Do not** default to straight hair from the canvas. Retint **only** to the catalog swatch color.'
+    ' silhouette, curl/crimp scale, part, and layering** — **combine with the full TEXT SPEC below** (both are required). Text spec adds natural **strand detail and volume** the ref alone may not convey. **Drape** follows **DRAPE SIDE** below (override ref drape if conflict). **Do not** default to straight/helmet hair from the canvas. Retint **only** to the catalog swatch color.'
   );
 }
 
@@ -457,9 +480,8 @@ export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
       salonLabel +
       '**, **' +
       partSelection +
-      ' part**, JET BLACK). Copy **only** hairstyle **shape + texture** from IMAGE 3: **part line**, **' +
-      salonLabel +
-      '** finish pattern, **layering** — **never** copy IMAGE 3 color, face, neck, or background. **Drape** must follow **DRAPE SIDE** below (override ref drape if it conflicts).',
+      ' part**, JET BLACK). Use IMAGE 3 for **overall shape + finish pattern**; **also** follow the **full TEXT SPEC** below so hair is not flat **helmet** hair. **Never** copy IMAGE 3 color, face, neck, or background. **Drape** must follow **DRAPE SIDE** below (override ref drape if it conflicts).',
+    bawSalonNaturalHairAntiHelmetBlock(),
     bawSalonModeLockBlock(salon),
     bawSalonShapeRefAuthorityBlock(salon, 'IMAGE 3'),
     bawSalonFinishLookBlock(salon),
@@ -468,10 +490,13 @@ export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
     bawSalonOneShoulderDrapeBlock(),
     bawSalonStylingCameraLine(angle),
     ...(bangsLine ? [bangsLine] : []),
+    '=== ' + salonLabel + ' FULL TEXT SPEC (required WITH IMAGE 3 — follow every line below) ===',
+    'Apply **both** IMAGE 3 shape reference **and** this text spec. Text spec prevents **helmet hair** / flat molded wigs.',
+    buildBawSalonColorTierTextSpec(angle, partSelection, salon, catalog, options),
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp and pixel-perfect — **no** downscale, blur, plastic or waxy retexture.',
-    'Composite: **IMAGE 1** canvas + **IMAGE 1** hair color + **IMAGE 2** scene fidelity + **IMAGE 3** hair shape/texture (**' +
+    'Composite: **IMAGE 1** canvas + **IMAGE 1** hair color + **IMAGE 2** scene fidelity + **IMAGE 3** shape guide + **TEXT SPEC** natural finish (**' +
       salonLabel +
       '**).',
   ].join(' ');
@@ -489,12 +514,7 @@ export function buildBawSalonStylingWithSceneRefAndTextSpecPrompt(
 ): string {
   const hex = catalog.hex.replace(/^#/, '').toUpperCase();
   const salonLabel = bawSalonModePromptLabel(salon);
-  const textSpec =
-    salon === 'layers'
-      ? buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog, options)
-      : salon === 'crimps'
-        ? buildCrimpsStylePromptFromColorTierWebp(angle, partSelection, catalog, options)
-        : buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, catalog, options);
+  const textSpec = buildBawSalonColorTierTextSpec(angle, partSelection, salon, catalog, options);
 
   return [
     'You get **two images in order**.',
@@ -507,6 +527,7 @@ export function buildBawSalonStylingWithSceneRefAndTextSpecPrompt(
     '**No styling reference image (IMAGE 3) is attached** — follow the **' +
       salonLabel +
       '** text spec below exactly. **Do not** output straight hair unless **FLAT IRON**.',
+    bawSalonNaturalHairAntiHelmetBlock(),
     bawSalonModeLockBlock(salon),
     bawSalonFinishLookBlock(salon),
     '=== ' + salonLabel + ' TEXT SPEC (apply on IMAGE 1 canvas) ===',
@@ -531,11 +552,18 @@ export function buildBawSalonSinglePassFromGrayBrickPrompt(
   const shapeRefLine = options?.hasStylingShapeRef
     ? '**IMAGE 2** = **BAW ' +
       salonLabel +
-      ' styling reference** — copy **hair shape + texture only** (part, finish pattern, drape); retint to **#' +
+      ' styling reference** — use for **hair shape + finish pattern**; **also** follow **FULL TEXT SPEC** below (both required). Retint to **#' +
       hex +
       '**; **never** copy IMAGE 2 color or scene. ' +
       bawSalonShapeRefAuthorityBlock(salon, 'IMAGE 2')
     : null;
+  const textSpecBlock =
+    options?.hasStylingShapeRef
+      ? [
+          '=== ' + salonLabel + ' FULL TEXT SPEC (required WITH styling ref — follow every line) ===',
+          buildBawSalonColorTierTextSpec(angle, partSelection, salon, catalog, options),
+        ]
+      : [];
 
   return [
     options?.hasStylingShapeRef
@@ -550,6 +578,7 @@ export function buildBawSalonSinglePassFromGrayBrickPrompt(
       '** with **' +
       partSelection +
       ' part** — **only** edit **hair**; **do not** repaint bust, brick, or logo.',
+    bawSalonNaturalHairAntiHelmetBlock(),
     bawSalonModeLockBlock(salon),
     bawSalonFinishLookBlock(salon),
     ...(shapeRefLine ? [shapeRefLine] : []),
@@ -558,6 +587,7 @@ export function buildBawSalonSinglePassFromGrayBrickPrompt(
     bawSalonOneShoulderDrapeBlock(),
     bawSalonStylingCameraLine(angle),
     ...(bangsLine ? [bangsLine] : []),
+    ...textSpecBlock,
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp and pixel-perfect.',
