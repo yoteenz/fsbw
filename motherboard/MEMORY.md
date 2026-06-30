@@ -32492,3 +32492,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Shipped:** **`src/pages/build-a-wig/styling/page.tsx`** — regen block **`transform: translateY(-40px)`** (was **-60px**).
 
+---
+
+## 2026-06-30 — BAW salon drape on wrong shoulder (revert HA alignment for BAW)
+
+**Context (full chat):** Pricing/BCF/salon updates; BAW↔HA styling alignment + PNG fidelity + styling ref fix; styling page LIVE PREVIEW lift (**-28px → -60px → -40px**). User reported hair **draping on the wrong/opposite shoulder** on BAW styling live preview.
+
+**Root cause:** **`0e51f198`** aligned BAW **`DRAPE SIDE`** with HA client portraits (**model's LEFT** = **image RIGHT** forward cascade). BAW NOIR product rule has always been **viewer's LEFT** (**image LEFT**) — opposite side. Shared **`bawSalonAsymmetricDrapeCoreLines`** made BAW prompts match HA and flipped mannequin drape.
+
+**Shipped:**
+- **`api/_lib/bawSalonHairGeometryPrompts.ts`** — split **`bawLivePreviewAsymmetricDrapeCoreLines`** (viewer LEFT / image LEFT) vs **`haAnalysisAsymmetricDrapeCoreLines`** (model LEFT / image RIGHT); separate compact locks.
+- **`api/_lib/bawLiveStylingPrompts.ts`** — restored all BAW part/angle/bangs/flat-iron drape strings to **viewer's LEFT**; **IMAGE 3** copies texture/part/layering but **drape follows DRAPE SIDE text** (override ref if conflict).
+- **`api/_lib/hairstyleAnalysisFalPrompt.ts`** — uses **`haAnalysis*`** drape lines only.
+- **`scripts/wig-preview/promptTemplate.mjs`** — synced.
+
+**Ops:** Regen styling L/M/R after deploy — cached PNGs still have old drape until **`forceRegenerate`**.
+
