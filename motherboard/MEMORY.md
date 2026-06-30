@@ -32329,7 +32329,8 @@ User asked to **swap Cinema Suite with Members Lounge** so Cinema Suite is on th
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-06-25 — Branch policy: master-only push; no preview/mobile unless asked
 
 **Context:** User asked to update the motherboard so agents **only commit and push to `master`**. Do **not** merge or push to **`preview/mobile`** unless the user explicitly asks.
@@ -32351,7 +32352,9 @@ User asked to **swap Cinema Suite with Members Lounge** so Cinema Suite is on th
 
 **Conventions:**
 - Treat **`master`** as the sole default push target. **`preview/mobile`** is opt-in only when the user explicitly asks.
-=======
+
+---
+
 ## 2026-06-23 — Desktop-wide perspective quads + acrylic refraction
 
 User clarified **all desktop/tablet website pages** need the shopping-bag treatment — **4-corner perspective quad tuning** and **acrylic light-refraction** — not only shopping bag / acquisition.
@@ -32362,5 +32365,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **Acrylic:** `acrylicGlass.css` moved to `src/components/desktop-shared/`; applied to grand lobby `.gl-panel`, alerts `.dn-slot`/`.dn-featured`, booking `.ts-panel`, shopping bag (unchanged behavior).
 - **Tune:** Any desktop mansion page → **D** → **Edit** → select region or drag TL/TR/BR/BL → **Save** / **Copy** (perspective JSON).
 - Pushed **`master`** + **`preview/mobile`**.
->>>>>>> 65433dae (Motherboard: desktop-wide perspective quads + acrylic)
+
+---
+
+## 2026-06-30 — BAW add-on and BCF shop price updates
+
+**Context:** User requested updated pricing for build-a-wig add-ons, closure lace treatments, and BCF shop starting prices.
+
+**Decisions / outcomes:**
+- **Build-a-wig add-ons:** BLEACH **$100**, PLUCK **$120** (was $60 / $80). Lace-size $20 discount for BLEACH/PLUCK on 2×6–7×7 unchanged.
+- **Closures/frontals lace treatments (BCF):** BLEACH **$80** (was $40), PLUCK **$100** (was $60) — separate from BAW add-on prices.
+- **BCF starting prices (16″ straight OFF BLACK):** bundles **$280** (base $330, was $370 → $320); closures **$220** unchanged (base $310 + 16″ + 2×6 lace).
+
+**Changes:**
+- `src/utils/bcfProductOptions.ts` — `BCF_STRAIGHT_BASE_PRICE_USD.bundles` 370→330; `BCF_LACE_TREATMENT_OPTIONS` bleach/pluck prices.
+- BAW pricing synced in `build-a-wig/page.tsx`, `addons/page.tsx`, `styling/page.tsx`, `CartDropdown.tsx`, `specialOfferPrice.ts`, `straight/noir/page.tsx`.
+
+**Conventions:**
+- BCF closure/frontal lace treatments are **not** the same USD as build-a-wig add-ons; keep `BCF_LACE_TREATMENT_OPTIONS` separate from BAW add-on tables.
 
