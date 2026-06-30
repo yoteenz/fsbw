@@ -32404,3 +32404,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Synced **`BLUNT CUT`: 40** in `build-a-wig/page.tsx`, `addons/page.tsx` (option chip + calculator), `styling/page.tsx`, `CartDropdown.tsx`, `specialOfferPrice.ts`, `straight/noir/page.tsx`. BLEACH **$100** / PLUCK **$120** unchanged.
 
+---
+
+## 2026-06-30 — BAW salon styling price update
+
+**Context:** Same pricing chat — user set salon styling: **BANGS $80**, **CRIMPS $140**, **FLAT IRON $120**, **LAYERS $200**.
+
+**Changes:** Canonical **`bawUnitStylingOptions.ts`** (default + curly WAND CURLS/DEFINE mirrors); **`specialOfferPrice.ts`**; **`straight/noir/page.tsx`** cart recalc map. BANGS-only total now reads from price map (was hardcoded $40). BANGS + salon combo still **secondary + $20** surcharge rule unchanged.
+
