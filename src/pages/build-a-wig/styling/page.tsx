@@ -1683,6 +1683,16 @@ export default function StylingSelectionPage() {
               </p>
             )}
             {showNoirLiveStylingRegenControls && (
+              <div
+                className="w-full flex flex-col items-center"
+                style={{
+                  position: 'relative',
+                  zIndex: 30,
+                  transform: 'translateY(-28px)',
+                  ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
+                }}
+                aria-hidden={!showNoirStylingFalRegenText}
+              >
               <p
                 className="text-center mb-2 px-2"
                 style={{
@@ -1690,9 +1700,7 @@ export default function StylingSelectionPage() {
                   fontSize: '9px',
                   color: liveStylingError ? '#EB1C24' : '#808080',
                   maxWidth: '280px',
-                  ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
                 }}
-                aria-hidden={!showNoirStylingFalRegenText}
               >
                 {liveStylingLoading
                   ? `LIVE PREVIEW: ${salonLivePreviewLabel}${hasBangsWithSalon ? ' + bangs' : ''} + ${selectedPartSelection} part (after color)…`
@@ -1704,15 +1712,9 @@ export default function StylingSelectionPage() {
                         ? 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong (cached WebPs).'
                         : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong.'}
               </p>
-            )}
-            {showNoirLiveStylingRegenControls && (
               <div
                 className="flex flex-col items-center gap-y-2 mb-2 px-2"
-                style={{
-                  maxWidth: '280px',
-                  ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
-                }}
-                aria-hidden={!showNoirStylingFalRegenText}
+                style={{ maxWidth: '280px', position: 'relative', zIndex: 31 }}
               >
                 <button
                   type="button"
@@ -1884,6 +1886,7 @@ export default function StylingSelectionPage() {
                   );
                 })}
                 </div>
+              </div>
               </div>
             )}
             <BawNoirWigPreviewHeroThumbs
