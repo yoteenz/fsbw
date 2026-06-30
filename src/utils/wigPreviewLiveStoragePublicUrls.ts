@@ -1,4 +1,5 @@
 import { wigPreviewManifestHashLiveColorTier, type WigPreviewSelectionsForHash } from './wigPreviewLiveColorTierHash';
+import { wigPreviewLiveAngleFileName } from './wigPreviewLiveOutputFormat';
 
 function getSupabasePublicStorageBase(): string | null {
   const base =
@@ -25,18 +26,26 @@ function liveColorAngleBaseUrl(manifestHash: string): string | null {
   return `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}/wig-preview-live/${cfg.pv}/NOIR/${manifestHash}`;
 }
 
+function legacyWebpUrl(preferredUrl: string): string | null {
+  if (!preferredUrl.endsWith('.png')) return null;
+  return preferredUrl.replace(/\.png$/, '.webp');
+}
+
 /** Public URLs for L, F, R — same layout as `wigPreviewLiveAnglePaths` on the server. */
 export function wigPreviewLiveColorTriplePublicUrls(manifestHash: string): [string, string, string] | null {
   const base = liveColorAngleBaseUrl(manifestHash);
   if (!base) return null;
-  return [`${base}/left.webp`, `${base}/front.webp`, `${base}/right.webp`];
+  return [
+    `${base}/${wigPreviewLiveAngleFileName('left')}`,
+    `${base}/${wigPreviewLiveAngleFileName('front')}`,
+    `${base}/${wigPreviewLiveAngleFileName('right')}`,
+  ];
 }
 
 async function objectExistsAtPublicUrl(url: string): Promise<boolean> {
   try {
     const r = await fetch(url, { method: 'HEAD', mode: 'cors', cache: 'no-store' });
     if (r.ok) return true;
-    // Public buckets often reject HEAD (403/501) while GET still returns the object — do not treat non-OK HEAD as "missing" without trying GET.
     const g = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-store' });
     return g.ok;
   } catch {
@@ -59,8 +68,8 @@ export async function wigPreviewLiveColorTriplePublicUrlsForSelections(
 }
 
 /**
- * If live color WebPs already exist in Supabase, return public URLs so the founder color page can **skip** Fal.
- * Uses **one** `HEAD` on **front.webp** only (same upload batch as L/R — faster than three probes).
+ * If live color previews already exist in Supabase, return public URLs so the founder color page can **skip** Fal.
+ * Probes **front** (preferred PNG, then legacy WebP).
  */
 export async function resolveWigPreviewLiveColorTripleIfStored(
   sel: WigPreviewSelectionsForHash
@@ -69,21 +78,37 @@ export async function resolveWigPreviewLiveColorTripleIfStored(
   const triple = wigPreviewLiveColorTriplePublicUrls(hash);
   if (!triple) return null;
   const [, front] = triple;
-  const ok = await objectExistsAtPublicUrl(front);
+  let resolvedTriple = triple;
+  let ok = await objectExistsAtPublicUrl(front);
+  if (!ok) {
+    const legacyFront = legacyWebpUrl(front);
+    if (legacyFront && (await objectExistsAtPublicUrl(legacyFront))) {
+      resolvedTriple = [
+        legacyWebpUrl(triple[0]) ?? triple[0],
+        legacyFront,
+        legacyWebpUrl(triple[2]) ?? triple[2],
+      ];
+      ok = true;
+    }
+  }
   if (!ok) return null;
   const t = Date.now();
-  return [`${triple[0]}?t=${t}`, `${triple[1]}?t=${t}`, `${triple[2]}?t=${t}`] as [string, string, string];
+  return [
+    `${resolvedTriple[0]}?t=${t}`,
+    `${resolvedTriple[1]}?t=${t}`,
+    `${resolvedTriple[2]}?t=${t}`,
+  ] as [string, string, string];
 }
 
 /**
- * **RIGHT-part** flat-iron **right camera** (`.../after-color/flat-iron-right-part/right.webp`).
+ * **RIGHT-part** flat-iron **right camera** (`.../after-color/flat-iron-right-part/right.*`).
  * Same path layout as server `wigPreviewLiveAfterColorStylingPaths` — for **display-only** swap on UI L (client).
  */
 export function wigPreviewFlatIronRightPartRightAngleObjectUrl(manifestHash: string, withBangs: boolean): string | null {
   const cfg = wigPreviewStorageBucketAndPromptVersion();
   if (!cfg) return null;
   const sk = withBangs ? 'flat-iron-with-bangs-right-part' : 'flat-iron-right-part';
-  return `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}/wig-preview-live/${cfg.pv}/NOIR/${manifestHash}/after-color/${sk}/right.webp`;
+  return `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}/wig-preview-live/${cfg.pv}/NOIR/${manifestHash}/after-color/${sk}/${wigPreviewLiveAngleFileName('right')}`;
 }
 
 /**
@@ -96,7 +121,11 @@ export async function wigPreviewFlatIronRightPartRightAngleIfStored(
   const hash = await wigPreviewManifestHashLiveColorTier(sel);
   const raw = wigPreviewFlatIronRightPartRightAngleObjectUrl(hash, withBangs);
   if (!raw) return null;
-  const ok = await objectExistsAtPublicUrl(raw);
+  let ok = await objectExistsAtPublicUrl(raw);
+  if (!ok) {
+    const legacy = legacyWebpUrl(raw);
+    if (legacy) ok = await objectExistsAtPublicUrl(legacy);
+  }
   if (!ok) return null;
   return `${raw}?t=${Date.now()}`;
 }

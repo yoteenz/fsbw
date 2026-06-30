@@ -5,18 +5,10 @@ export const config = { maxDuration: 300 };
  *
  * **Signed-in** Supabase session (Bearer JWT). Runs **GPT Image 2** (`openai/gpt-image-2/edit`) once per angle when outputs are missing (or all angles when **`forceRegenerate: true`**).
  *
- * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP** from Storage (same paths
- * as live color — hair already matches selected swatch). Prompt: `buildLayersStylePromptFromColorTierWebp` — long layered curls
- * + part while **keeping** that hair color (fixes black output when input was HQ black-brick refs only).
- * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
- *
- * **CRIMPS** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP input as LAYERS; prompt `buildCrimpsStylePromptFromColorTierWebp`
- * — **crimps** texture + part, keeping swatch hair color.
- * **Output:** `.../after-color/crimps-{middle|left|right}-part/{angle}.webp`
- *
- * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
- *
- * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/`
+ * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
+ * with `buildBawSalonStylingWithSceneRefPrompt` / `buildBawSalonStylingWithSceneAndShapeRefsPrompt`.
+ * **Output:** `.../after-color/.../{angle}.png` (legacy `.webp` still read). Fal **`quality: high`**, **`output_format: png`**.
+ * **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`**: one pass from gray-brick (+ optional styling ref) via `buildBawSalonSinglePassFromGrayBrickPrompt`.
  * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
@@ -43,11 +35,10 @@ import {
 } from './_lib/wigPreviewSelectionHash.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
-  buildBangsOnlyStylePrompt,
-  buildBawSalonStylingWithReferencePrompt,
-  buildCrimpsStylePromptFromColorTierWebp,
-  buildFlatIronStylePromptFromColorTierWebp,
-  buildLayersStylePromptFromColorTierWebp,
+  buildBangsOnlyWithSceneRefPrompt,
+  buildBawSalonSinglePassFromGrayBrickPrompt,
+  buildBawSalonStylingWithSceneAndShapeRefsPrompt,
+  buildBawSalonStylingWithSceneRefPrompt,
   buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
@@ -57,7 +48,9 @@ import {
 import {
   BAW_LIVE_PREVIEW_GPT2_EDIT_MODEL,
   bawGptImage2EditFalInput,
+  bawLivePreviewUploadContentType,
 } from './_lib/bawGptImage2FalInput.js';
+import { livePreviewObjectExists } from './_lib/bawLivePreviewStorageDownload.js';
 import { noirFalGrayBrickMannequinPublicUrlForAngle } from './_lib/bawNoirFalMannequinUrls.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -140,6 +133,11 @@ function readBool(obj: Record<string, unknown>, key: string): boolean {
     return s === '1' || s === 'true' || s === 'yes';
   }
   return false;
+}
+
+function singlePassSalonEnabled(): boolean {
+  const v = process.env.WIG_PREVIEW_LIVE_SINGLE_PASS_SALON?.trim().toLowerCase();
+  return v === '1' || v === 'true' || v === 'yes';
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -320,9 +318,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     let flatIronLeftRightThumbOverrideUrl: string | null = null;
     if (flatIronRightPartOutPathsForLeftThumb) {
       const pRightPartRightAngle = flatIronRightPartOutPathsForLeftThumb.right;
-      const { error: rightPartRightDlErr } = await supabase.storage.from(bucket).download(pRightPartRightAngle);
-      if (!rightPartRightDlErr) {
-        const { data: pubOverride } = supabase.storage.from(bucket).getPublicUrl(pRightPartRightAngle);
+      const rightPartExists = await livePreviewObjectExists(supabase, bucket, pRightPartRightAngle);
+      if (rightPartExists) {
+        const { data: pubOverride } = supabase.storage.from(bucket).getPublicUrl(rightPartExists.storagePath);
         flatIronLeftRightThumbOverrideUrl = pubOverride?.publicUrl ?? null;
       }
     }
@@ -334,8 +332,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     if (!forceRegenerate) {
       let allOutputsExist = true;
       for (const angle of anglesToRun) {
-        const { error: outDlErr } = await supabase.storage.from(bucket).download(outPaths[angle]);
-        if (outDlErr) {
+        const exists = await livePreviewObjectExists(supabase, bucket, outPaths[angle]);
+        if (!exists) {
           allOutputsExist = false;
           break;
         }
@@ -392,8 +390,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     for (const angle of anglesToRun) {
       const outPath = outPaths[angle];
       if (!forceRegenerate) {
-        const { error: outDlErr } = await supabase.storage.from(bucket).download(outPath);
-        if (!outDlErr) {
+        const exists = await livePreviewObjectExists(supabase, bucket, outPath);
+        if (exists) {
           skipped.push(angle);
           continue;
         }
@@ -403,10 +401,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       let prompt: string;
       let imageUrls: string[];
 
+      const grayBrickUrl = noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle);
+      const salonPromptOpts = { includeBangs: bangsWithSalon };
+
       if (useMiddlePartOutputAsUiRightInput && middleOutPathsForUiR) {
         const middlePath = middleOutPathsForUiR[angle];
-        const { error: midDlErr } = await supabase.storage.from(bucket).download(middlePath);
-        if (midDlErr) {
+        const middleExists = await livePreviewObjectExists(supabase, bucket, middlePath);
+        if (!middleExists) {
           sendJson(res, 400, {
             error:
               'RIGHT part needs the **MIDDLE part** version of this style first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate** (or wait for preview), then select **RIGHT** part again.',
@@ -415,7 +416,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           });
           return;
         }
-        const { data: pubMid } = supabase.storage.from(bucket).getPublicUrl(middlePath);
+        const { data: pubMid } = supabase.storage.from(bucket).getPublicUrl(middleExists.storagePath);
         colorPublicUrl = pubMid?.publicUrl ?? '';
         if (!colorPublicUrl) {
           sendJson(res, 500, { error: 'Could not build public URL for middle-part styling layer' });
@@ -427,55 +428,67 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           bangsWithSalon
         );
         imageUrls = [colorPublicUrl];
+      } else if (
+        singlePassSalonEnabled() &&
+        salonMode !== 'none' &&
+        !bangsOnly
+      ) {
+        if (stylingRefUrlForPart) {
+          prompt = buildBawSalonSinglePassFromGrayBrickPrompt(angle, partStyling, salonMode, catalog, {
+            ...salonPromptOpts,
+            hasStylingShapeRef: true,
+          });
+          imageUrls = [grayBrickUrl, stylingRefUrlForPart];
+        } else {
+          prompt = buildBawSalonSinglePassFromGrayBrickPrompt(angle, partStyling, salonMode, catalog, salonPromptOpts);
+          imageUrls = [grayBrickUrl];
+        }
       } else {
         const colorPath = colorPaths[angle];
-        const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
-        if (colorDlErr) {
+        const colorExists = await livePreviewObjectExists(supabase, bucket, colorPath);
+        if (!colorExists) {
           sendJson(res, 400, {
             error:
-              'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
+              'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color previews exist, then try styling again.',
             colorTierHash,
             missingColorPath: colorPath,
           });
           return;
         }
 
-        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorExists.storagePath);
         colorPublicUrl = pubColor?.publicUrl ?? '';
         if (!colorPublicUrl) {
           sendJson(res, 500, { error: 'Could not build public URL for color layer' });
           return;
         }
 
-        const flatIronMiddleUsesBaseNoirGeometry =
-          middleFlatIron &&
-          partStyling === 'MIDDLE' &&
-          !bangsWithSalon &&
-          !stylingRefUrlForPart;
-
-        if (stylingRefUrlForPart && salonMode !== 'none') {
-          prompt = buildBawSalonStylingWithReferencePrompt(angle, partStyling, salonMode, catalog, {
-            includeBangs: bangsWithSalon,
-          });
-          imageUrls = [colorPublicUrl, stylingRefUrlForPart];
+        if (bangsOnly) {
+          prompt = buildBangsOnlyWithSceneRefPrompt(angle, catalog);
+          imageUrls = [colorPublicUrl, grayBrickUrl];
+        } else if (salonMode !== 'none') {
+          if (stylingRefUrlForPart) {
+            prompt = buildBawSalonStylingWithSceneAndShapeRefsPrompt(
+              angle,
+              partStyling,
+              salonMode,
+              catalog,
+              salonPromptOpts
+            );
+            imageUrls = [colorPublicUrl, grayBrickUrl, stylingRefUrlForPart];
+          } else {
+            prompt = buildBawSalonStylingWithSceneRefPrompt(
+              angle,
+              partStyling,
+              salonMode,
+              catalog,
+              salonPromptOpts
+            );
+            imageUrls = [colorPublicUrl, grayBrickUrl];
+          }
         } else {
-          prompt = middleLayers
-            ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-                includeBangs: bangsWithSalon,
-              })
-            : middleCrimps
-              ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-                  includeBangs: bangsWithSalon,
-                })
-              : middleFlatIron
-                ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-                    includeBangs: bangsWithSalon,
-                    baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
-                  })
-                : buildBangsOnlyStylePrompt(angle);
-          imageUrls = flatIronMiddleUsesBaseNoirGeometry
-            ? [colorPublicUrl, noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle)]
-            : [colorPublicUrl];
+          sendJson(res, 500, { error: 'Unexpected styling mode' });
+          return;
         }
       }
 
@@ -488,7 +501,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
       const buf = await downloadUrlToBuffer(falUrl);
       const { error: upErr } = await supabase.storage.from(bucket).upload(outPath, buf, {
-        contentType: 'image/webp',
+        contentType: bawLivePreviewUploadContentType(),
         upsert: true,
       });
       if (upErr) throw new Error(`upload ${outPath}: ${upErr.message}`);

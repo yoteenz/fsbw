@@ -3,6 +3,7 @@
  */
 import { createHash } from 'node:crypto';
 import { canonicalWigPreviewColorForHash } from './bawCatalogHairColors.js';
+import { wigPreviewLiveAngleFileName } from './bawLivePreviewOutputFormat.js';
 
 export type WigPreviewSelections = {
   unitKey: string;
@@ -63,9 +64,9 @@ export function wigPreviewLiveAnglePaths(
   const u = unitKey.toUpperCase();
   const base = `wig-preview-live/${promptVersion}/${u}/${manifestHash}`;
   return {
-    front: `${base}/front.webp`,
-    left: `${base}/left.webp`,
-    right: `${base}/right.webp`,
+    front: `${base}/${wigPreviewLiveAngleFileName('front')}`,
+    left: `${base}/${wigPreviewLiveAngleFileName('left')}`,
+    right: `${base}/${wigPreviewLiveAngleFileName('right')}`,
   };
 }
 
@@ -127,8 +128,8 @@ export function wigPreviewLiveAfterColorStylingPaths(
   const sk = stylingKey.replace(/[^a-z0-9-]/gi, '-').toLowerCase() || 'layers-middle-part';
   const base = `wig-preview-live/${promptVersion}/${u}/${colorTierHash}/after-color/${sk}`;
   return {
-    front: `${base}/front.webp`,
-    left: `${base}/left.webp`,
-    right: `${base}/right.webp`,
+    front: `${base}/${wigPreviewLiveAngleFileName('front')}`,
+    left: `${base}/${wigPreviewLiveAngleFileName('left')}`,
+    right: `${base}/${wigPreviewLiveAngleFileName('right')}`,
   };
 }

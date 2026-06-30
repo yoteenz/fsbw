@@ -12,7 +12,8 @@
 - Shared input helper: `api/_lib/bawGptImage2FalInput.ts`
 
 **Fal input pattern (NOIR live):**
-- `prompt`, `image_urls`, `image_size: { width: 1536, height: 2048 }` (3:4 portrait, ~2K), `quality: 'medium'`, `output_format: 'webp'`
+- `prompt`, `image_urls`, `image_size: { width: 1536, height: 2048 }` (3:4 portrait, ~2K), `quality: 'high'` (override `WIG_PREVIEW_LIVE_GPT2_QUALITY`), `output_format: 'png'` (override `WIG_PREVIEW_LIVE_OUTPUT_FORMAT=webp`)
+- Styling default: **three-image** `[color PNG, gray-brick PNG, optional JET BLACK styling ref]`; optional **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`** for one-pass from gray-brick
 
 **Env:** `FAL_KEY`
 

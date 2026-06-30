@@ -21,7 +21,7 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
- * Model: **`openai/gpt-image-2/edit`** — `image_size` **3:4** (`1536×2048`), `quality: medium` (~2K tier), `output_format: webp`.
+ * Model: **`openai/gpt-image-2/edit`** — `image_size` **3:4** (`1536×2048`), `quality: high` (override `WIG_PREVIEW_LIVE_GPT2_QUALITY`), `output_format: png` (override `WIG_PREVIEW_LIVE_OUTPUT_FORMAT=webp`).
  *
  * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
  * Vercel’s output for nested `api/wig-preview/*` can fail to resolve `../_lib/*` at runtime (`ERR_MODULE_NOT_FOUND`).
@@ -155,6 +155,37 @@ function wigPreviewManifestHashLiveColorTier(s: WigPreviewSelections): string {
   return wigPreviewManifestHash({ ...s, styling: 'NONE' });
 }
 
+/** Keep in sync with `api/_lib/bawLivePreviewOutputFormat.ts`. */
+function wigPreviewLiveOutputFormat(): 'png' | 'webp' {
+  const raw = process.env.WIG_PREVIEW_LIVE_OUTPUT_FORMAT?.trim().toLowerCase();
+  return raw === 'webp' ? 'webp' : 'png';
+}
+
+function wigPreviewLiveAngleFileName(angle: 'front' | 'left' | 'right'): string {
+  return `${angle}.${wigPreviewLiveOutputFormat()}`;
+}
+
+function bawGpt2LivePreviewQuality(): 'low' | 'medium' | 'high' | 'auto' {
+  const raw = process.env.WIG_PREVIEW_LIVE_GPT2_QUALITY?.trim().toLowerCase();
+  if (raw === 'medium' || raw === 'low' || raw === 'auto') return raw;
+  return 'high';
+}
+
+async function livePreviewObjectExists(
+  supabase: SupabaseClient,
+  bucket: string,
+  preferredPath: string
+): Promise<{ storagePath: string } | null> {
+  const { error } = await supabase.storage.from(bucket).download(preferredPath);
+  if (!error) return { storagePath: preferredPath };
+  if (preferredPath.endsWith('.png')) {
+    const legacy = preferredPath.replace(/\.png$/, '.webp');
+    const { error: legacyErr } = await supabase.storage.from(bucket).download(legacy);
+    if (!legacyErr) return { storagePath: legacy };
+  }
+  return null;
+}
+
 function wigPreviewLiveAnglePaths(
   promptVersion: string,
   unitKey: string,
@@ -163,9 +194,9 @@ function wigPreviewLiveAnglePaths(
   const u = unitKey.toUpperCase();
   const base = `wig-preview-live/${promptVersion}/${u}/${manifestHash}`;
   return {
-    front: `${base}/front.webp`,
-    left: `${base}/left.webp`,
-    right: `${base}/right.webp`,
+    front: `${base}/${wigPreviewLiveAngleFileName('front')}`,
+    left: `${base}/${wigPreviewLiveAngleFileName('left')}`,
+    right: `${base}/${wigPreviewLiveAngleFileName('right')}`,
   };
 }
 
@@ -390,8 +421,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     for (const angle of anglesToRun) {
       const path = paths[angle];
       if (!forceRegenerate) {
-        const { error: dlErr } = await supabase.storage.from(bucket).download(path);
-        if (!dlErr) {
+        const exists = await livePreviewObjectExists(supabase, bucket, path);
+        if (exists) {
           skipped.push(angle);
           continue;
         }
@@ -404,8 +435,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt,
           image_urls: [mannequinUrl],
           image_size: { width: 1536, height: 2048 },
-          quality: 'medium',
-          output_format: 'webp',
+          quality: bawGpt2LivePreviewQuality(),
+          output_format: wigPreviewLiveOutputFormat(),
           num_images: 1,
         },
         logs: false,
@@ -414,8 +445,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       if (!url) throw new Error(`fal: no image URL for ${angle}`);
 
       const buf = await downloadUrlToBuffer(url);
+      const uploadType = wigPreviewLiveOutputFormat() === 'png' ? 'image/png' : 'image/webp';
       const { error: upErr } = await supabase.storage.from(bucket).upload(path, buf, {
-        contentType: 'image/webp',
+        contentType: uploadType,
         upsert: true,
       });
       if (upErr) throw new Error(`upload ${path}: ${upErr.message}`);

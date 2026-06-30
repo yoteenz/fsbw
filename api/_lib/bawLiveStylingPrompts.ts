@@ -330,12 +330,21 @@ function buildLayersStylePromptShared(
   ].join(' ');
 }
 
+function bawSalonModePromptLabel(salon: 'layers' | 'crimps' | 'flat_iron'): string {
+  if (salon === 'flat_iron') return 'FLAT IRON';
+  if (salon === 'crimps') return 'CRIMPS';
+  return 'LAYERS';
+}
+
+function bawSalonStylingCameraLine(angle: 'front' | 'left' | 'right'): string {
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
+  return `**Camera:** **${angleLabel}** — match **IMAGE 2** head pose, framing, brick background and **FRONTAL SLAYER** logo; edit **hair only** on **IMAGE 1** canvas.`;
+}
+
 /**
- * **Two-image** live BAW styling with JET BLACK BAW styling reference (same Storage paths as hairstyle analysis).
- * **IMAGE 1** = customer color-tier WebP (output canvas + keep swatch color).
- * **IMAGE 2** = BAW salon styling ref for this mode + part — copy **shape only** (part, texture, drape).
+ * **Two-image** live salon styling: **IMAGE 1** = color-tier preview (swatch), **IMAGE 2** = sharp gray-brick mannequin (scene fidelity).
  */
-export function buildBawSalonStylingWithReferencePrompt(
+export function buildBawSalonStylingWithSceneRefPrompt(
   angle: 'front' | 'left' | 'right',
   partSelection: NoirLayersPartSelection,
   salon: 'layers' | 'crimps' | 'flat_iron',
@@ -343,44 +352,159 @@ export function buildBawSalonStylingWithReferencePrompt(
   options?: { includeBangs?: boolean }
 ): string {
   const hex = catalog.hex.replace(/^#/, '').toUpperCase();
-  const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
-  const angleLabel = angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
-  const angleConstraint =
-    angle === 'left'
-      ? `**Camera:** This output is **${angleLabel}** — preserve **IMAGE 1** head pose, framing and brick background; adapt **hair shape** from **IMAGE 2** to this left view without mirroring into twin-shoulder symmetry.`
-      : angle === 'right'
-        ? `**Camera:** This output is **${angleLabel}** — preserve **IMAGE 1** head pose, framing and brick background; adapt **hair shape** from **IMAGE 2** to this right view without mirroring into twin-shoulder symmetry.`
-        : '**Camera:** **FRONT** — match **IMAGE 2** part line, texture, layering and asymmetric drape on **IMAGE 1** canvas.';
-
+  const salonLabel = bawSalonModePromptLabel(salon);
   const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
 
   return [
     'You get **two images in order**.',
-    '**IMAGE 1** = **output canvas**: same mannequin, brick background, framing, **FRONTAL SLAYER** chest logo, and **keep hair color exactly as IMAGE 1** — **' +
+    '**IMAGE 1** = **output canvas** + **hair color only**: keep **exact** swatch **' +
       catalog.label +
       '** at **#' +
       hex +
-      '** (do **not** copy black/jet from IMAGE 2).',
-    '**IMAGE 2** = **BAW salon styling reference** (**' +
+      '** from IMAGE 1 — **do not** copy black/jet from IMAGE 2.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (sharp photograph). Lock **scene fidelity** from IMAGE 2: **mannequin bust material**, **skin tone**, **facial features**, **neck seam**, **brick background**, **lighting**, **shadows**, **camera perspective**, and **FRONTAL SLAYER** chest logo sharpness — **ignore** hair color on IMAGE 2.',
+    '**TASK:** On **IMAGE 1** as canvas, apply **' +
       salonLabel +
-      '**, **' +
+      '** salon finish with **' +
       partSelection +
-      ' part**, JET BLACK mannequin). Copy **only** hairstyle **shape** from IMAGE 2: **part line placement**, **salon finish** (' +
-      salonLabel +
-      '), **layering/texture**, **asymmetric drape** — **never** copy IMAGE 2 hair color, background, or paste IMAGE 2 over IMAGE 1.',
+      ' part** — reshape **hair only**; rebuild scene pixels to match IMAGE 2 fidelity.',
     ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
     salonPartDirectionSemanticsBlock(),
     bawSalonOneShoulderDrapeBlock(),
-    angleConstraint,
+    bawSalonStylingCameraLine(angle),
+    ...(bangsLine ? [bangsLine] : []),
+    bawFalEditPreserveReferenceBlock(),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect — **no** downscale, blur, plastic or waxy retexture.',
+    'Change **only** **hair** on IMAGE 1 (color from IMAGE 1, scene sharpness from IMAGE 2).',
+  ].join(' ');
+}
+
+/**
+ * **Three-image** live salon styling (preferred when JET BLACK styling ref exists):
+ * **IMAGE 1** = color (swatch), **IMAGE 2** = gray-brick (scene), **IMAGE 3** = BAW styling ref (hair shape).
+ */
+export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean }
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
+
+  return [
+    'You get **three images in order**.',
+    '**IMAGE 1** = **output canvas** + **hair color only**: keep **exact** swatch **' +
+      catalog.label +
+      '** at **#' +
+      hex +
+      '** — **never** copy pigment from IMAGE 2 or IMAGE 3.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (sharp photograph). **Scene fidelity lock:** mannequin bust, skin, face, neck seam, brick background, lighting, shadows, camera, **FRONTAL SLAYER** logo — match IMAGE 2 sharpness; **ignore** IMAGE 2 hair color.',
+    '**IMAGE 3** = **BAW salon styling reference** (**' +
+      salonLabel +
+      '**, **' +
+      partSelection +
+      ' part**, JET BLACK). Copy **only** hairstyle **shape** from IMAGE 3: **part line**, **' +
+      salonLabel +
+      '** texture/finish, **layering**, **asymmetric drape** — **never** copy IMAGE 3 color, face, neck, or background.',
+    ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
+    salonPartDirectionSemanticsBlock(),
+    bawSalonOneShoulderDrapeBlock(),
+    bawSalonStylingCameraLine(angle),
+    ...(bangsLine ? [bangsLine] : []),
+    bawFalEditPreserveReferenceBlock(),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect — **no** downscale, blur, plastic or waxy retexture.',
+    'Composite: **IMAGE 1** canvas + **IMAGE 1** hair color + **IMAGE 2** scene fidelity + **IMAGE 3** hair shape.',
+  ].join(' ');
+}
+
+/**
+ * **Single-pass** salon styling from sharp gray-brick (optional **IMAGE 2** styling ref) — one Fal edit, no color-tier canvas.
+ * Enable via **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`** on the styling API.
+ */
+export function buildBawSalonSinglePassFromGrayBrickPrompt(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean; hasStylingShapeRef?: boolean }
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
+  const shapeRefLine = options?.hasStylingShapeRef
+    ? '**IMAGE 2** = **BAW styling reference** — copy **hair shape only** (part, ' +
+      salonLabel +
+      ' finish, drape); retint to **#' +
+      hex +
+      '**; **never** copy IMAGE 2 color or scene.'
+    : null;
+
+  return [
+    options?.hasStylingShapeRef
+      ? 'You get **two images in order**. **IMAGE 1** = **NOIR gray-brick mannequin** — **output canvas** (lock entire scene from IMAGE 1).'
+      : 'You get **one image**. **IMAGE 1** = **NOIR gray-brick mannequin** — **output canvas** (preserve photograph sharpness).',
+    '**Hair task (one pass):** Tint all hair **' +
+      catalog.label +
+      '** at **#' +
+      hex +
+      '** root-to-tip and apply **' +
+      salonLabel +
+      '** with **' +
+      partSelection +
+      ' part** — **only** edit **hair**; **do not** repaint bust, brick, or logo.',
+    ...(shapeRefLine ? [shapeRefLine] : []),
+    ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
+    salonPartDirectionSemanticsBlock(),
+    bawSalonOneShoulderDrapeBlock(),
+    bawSalonStylingCameraLine(angle),
     ...(bangsLine ? [bangsLine] : []),
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp and pixel-perfect.',
-    'Change **only** the **hair** in IMAGE 1 so its **shape** matches IMAGE 2 (' +
-      salonLabel +
-      ' + **' +
-      partSelection +
-      ' part**); **everything** else stays as IMAGE 1, especially **hair color**.',
+  ].join(' ');
+}
+
+/** @deprecated Prefer `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (three-image). */
+export function buildBawSalonStylingWithReferencePrompt(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean }
+): string {
+  return buildBawSalonStylingWithSceneAndShapeRefsPrompt(angle, partSelection, salon, catalog, options);
+}
+
+/** **Two-image** bangs-only: color canvas + gray-brick scene fidelity. */
+export function buildBangsOnlyWithSceneRefPrompt(
+  angle: 'front' | 'left' | 'right',
+  catalog: CatalogColorForLayersPrompt
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const angleConstraint =
+    angle === 'left'
+      ? '**LEFT 3/4:** add bangs only; keep hair mass and part from IMAGE 1; scene sharpness from IMAGE 2.'
+      : angle === 'right'
+        ? '**RIGHT 3/4:** add bangs only; keep hair mass and part from IMAGE 1; scene sharpness from IMAGE 2.'
+        : '**FRONT:** add curtain bangs only; keep rest of hair layout from IMAGE 1.';
+
+  return [
+    'You get **two images in order**.',
+    '**IMAGE 1** = **output canvas** — keep **hair color** **' +
+      catalog.label +
+      '** **#' +
+      hex +
+      '** and existing length/part layout; **only** add lightly feathered **curtain bangs**.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** — lock **scene fidelity** (bust, brick, logo, lighting) to IMAGE 2 sharpness.',
+    angleConstraint,
+    bawFalEditPreserveReferenceBlock(),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
   ].join(' ');
 }
 
