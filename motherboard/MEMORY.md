@@ -32520,3 +32520,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen styling after deploy — cached outputs keep old helmet look until **`forceRegenerate`**.
 
+---
+
+## 2026-06-30 — Motherboard MEMORY: same commit as code (one deploy)
+
+**Context:** User asked why MEMORY updates were pushed as separate commits (`Motherboard: …`) after code commits, causing **two Vercel deployments** per task.
+
+**Decision:** Not a repo/CI requirement — agent workflow error. Auto-add must append **`MEMORY.md` before commit** and include it in the **same commit + push** as code changes. Separate memory-only commits only when no code changed.
+
+**Changes:** **`motherboard/ADDING.md`** rule 7 + checklist; **`.cursor/rules/motherboard.mdc`** auto-add line. This entry bundled in that same commit.
+

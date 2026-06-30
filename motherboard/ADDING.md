@@ -12,6 +12,7 @@ When the user says **"add to motherboard"** (in this or any past chat), follow t
 4. **Full conversation context.** Every entry must reflect the **entire conversation so far** in this chat—from inception to now—not just the last message. Summarize all prompts, topics, decisions, and changes so the motherboard stays fully up to date and accurate. When in doubt, err on the side of including more context so future agents have the full picture.
 5. **CORE.md updates are optional and minimal.** Only add to `CORE.md` when you have a **new, permanent** fact about design, stack, or flows that is not already there and that future agents should always see. Do not duplicate what's already in CORE.
 6. **MEMORY.md is the default place for conversation summaries.** Put learnings, one-off decisions, and "what we did in this chat" in `MEMORY.md`. Entries can be longer when summarizing a whole conversation; use bullets or short paragraphs per topic so they stay scannable.
+7. **Same commit as code (one deployment).** When auto-add or manual add accompanies a code change, **append `MEMORY.md` first**, then **`git add` code + `MEMORY.md` together** and make **one commit + one push**. Do **not** push the code change and then follow with a separate commit like `Motherboard: …` — that triggers a second Vercel deploy for the same task. Separate memory-only commits are fine only when there was **no** code change in that turn (e.g. user asked a question and you only updated MEMORY).
 
 ---
 
@@ -57,3 +58,4 @@ Use real date (today's date when adding). Title can be a short topic (e.g. "Admi
 - [ ] Optionally added a small, non-duplicative update to `CORE.md` only if it's a lasting design/stack/flow fact.
 - [ ] Did not delete or overwrite existing content.
 - [ ] If this was the user's first "add to motherboard" in this chat: auto-add is now **on** for the rest of this conversation.
+- [ ] If code changed in this task: **`MEMORY.md` is in the same git commit and push** as the code (not a follow-up commit).
