@@ -32384,3 +32384,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Conventions:**
 - BCF closure/frontal lace treatments are **not** the same USD as build-a-wig add-ons; keep `BCF_LACE_TREATMENT_OPTIONS` separate from BAW add-on tables.
 
+---
+
+## 2026-06-30 — BCF similar strip starting prices
+
+**Context:** Follow-up to BAW/BCF price update — user reported SIMILAR PRODUCTS / RECENTLY VIEWED containers still showed old BCF prices.
+
+**Cause:** `buildBcfSimilarStripItems` in `bcfProductOptions.ts` used `bcfBasePriceUsd` (raw base, e.g. bundles **$330** base / previously **$370**) instead of the shop grid “from” price.
+
+**Fix:** Similar-strip `priceUsd` now uses **`bcfPdpPriceRangeUsd(category, texture).minUsd`** (same as home/shop BCF grid) — straight bundles **$280**, closures **$220**, etc.
+
+**Changes:** `src/utils/bcfProductOptions.ts` — `bcfSimilarStripItemFromSlot` price source.
+
