@@ -54,8 +54,8 @@ import {
 import { isFreeLayoutHairstyleAnalysisTier } from './hairstyleAnalysisTierLayout.js';
 import { consultInspoTemplateLockBlock } from './consultStyleAnalysisFalPrompt.js';
 import {
-  bawSalonAsymmetricDrapeCoreLines,
-  oneShoulderDrapeCompactLock as sharedOneShoulderDrapeCompactLock,
+  haAnalysisAsymmetricDrapeCoreLines,
+  haOneShoulderDrapeCompactLock,
 } from './bawSalonHairGeometryPrompts.js';
 
 export type FalAnalysisLook = {
@@ -179,13 +179,13 @@ function asymmetricOneShoulderDrapeBlock(scope: 'all_photos' | 'thumbnails_only'
   return [
     '=== HAIR DRAPE — ASYMMETRIC SHOULDER SWEEP (NOT SYMMETRIC TWIN CURTAIN) ===',
     scopeLine,
-    ...bawSalonAsymmetricDrapeCoreLines(),
+    ...haAnalysisAsymmetricDrapeCoreLines(),
     mannequinNote,
   ].join('\n');
 }
 
 function oneShoulderDrapeCompactLock(): string {
-  return sharedOneShoulderDrapeCompactLock();
+  return haOneShoulderDrapeCompactLock();
 }
 
 function clientPreviewTabLine(): string {

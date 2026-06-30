@@ -1,7 +1,7 @@
 /**
- * Shared BAW salon hair geometry — part mirror rule + asymmetric drape aligned with
- * hairstyle analysis (`hairstyleAnalysisFalPrompt.ts`). Single source of truth for live
- * styling prompts and HA Fal prompts.
+ * Shared BAW salon hair geometry — part mirror rule + asymmetric drape.
+ * **BAW live preview** (NOIR mannequin) and **HA client portraits** use **opposite** forward-drape sides:
+ * BAW = viewer's LEFT (image LEFT); HA = model's LEFT (image RIGHT).
  */
 
 export type NoirLayersPartSelection = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -26,8 +26,20 @@ export function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLaye
   );
 }
 
-/** Core asymmetric drape lines — HA-aligned (model LEFT forward = image RIGHT). */
-export function bawSalonAsymmetricDrapeCoreLines(): string[] {
+/** BAW NOIR live preview — primary forward drape on **viewer's LEFT** (image LEFT). */
+export function bawLivePreviewAsymmetricDrapeCoreLines(): string[] {
+  return [
+    'Long hair uses a **one-forward-shoulder drape** — only one side gets the forward chest cascade; the opposite side keeps visible hair **behind the shoulder / down the back**, not another forward curtain.',
+    '**PRIMARY FRONT CASCADE:** as you **face** the mannequin in the photo, almost **all** long hair falls **forward over the viewer\'s LEFT shoulder only** — **left side of the image** (closer to the **left edge**). This is the single chest cascade.',
+    '**CLEAR SHOULDER CAP:** on the **viewer\'s RIGHT shoulder** — **right side of the image** — shoulder/collarbone stays mostly visible. Hair on this side reads as a **thin tuck**, hair **behind** the shoulder, or down the back — **no thick forward chest curtain**.',
+    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back/behind-shoulder hair.',
+    '**Shoulder still visible:** keep **gaps**, **separation between strands**, or **semi-sheer** fall so the clear shoulder cap still reads — **FORBIDDEN** an opaque blanket fully hiding that shoulder.',
+    '**Self-check failed if:** there is a forward hair curtain covering each collarbone, or heavy drape on **viewer\'s RIGHT** (image RIGHT). **Correct if:** one forward chest cascade (**image LEFT** / viewer\'s LEFT) + minimal/behind hair on **viewer\'s RIGHT**.',
+  ];
+}
+
+/** HA client portrait — primary forward cascade on **model's LEFT** = **image RIGHT**. */
+export function haAnalysisAsymmetricDrapeCoreLines(): string[] {
   return [
     'Long hair uses a **one-forward-shoulder drape** — only one side gets the forward chest cascade; the opposite side keeps visible hair **behind the shoulder / down the back**, not another forward curtain.',
     '**PRIMARY FRONT CASCADE:** visible length falls **forward over the model\'s LEFT shoulder** — **right side of the image** (viewer\'s right). This is the single chest cascade.',
@@ -39,15 +51,31 @@ export function bawSalonAsymmetricDrapeCoreLines(): string[] {
   ];
 }
 
-/** BAW mannequin/brick live styling — asymmetric shoulder sweep (matches HA). */
-export function bawSalonOneShoulderDrapeBlock(): string {
-  return ['**DRAPE SIDE (fixed — all parts):**', ...bawSalonAsymmetricDrapeCoreLines()].join(' ');
+/** @deprecated Prefer `bawLivePreviewAsymmetricDrapeCoreLines` for BAW; `haAnalysisAsymmetricDrapeCoreLines` for HA. */
+export function bawSalonAsymmetricDrapeCoreLines(): string[] {
+  return bawLivePreviewAsymmetricDrapeCoreLines();
 }
 
-export function oneShoulderDrapeCompactLock(): string {
+/** BAW mannequin/brick live styling — asymmetric shoulder sweep (viewer's LEFT / image LEFT). */
+export function bawSalonOneShoulderDrapeBlock(): string {
+  return ['**DRAPE SIDE (fixed — all parts):**', ...bawLivePreviewAsymmetricDrapeCoreLines()].join(' ');
+}
+
+export function bawOneShoulderDrapeCompactLock(): string {
+  return [
+    'ONE-FORWARD-SHOULDER DRAPE: heavy length **only** over **viewer\'s LEFT shoulder** (image LEFT) — **FORBIDDEN** thick forward drape on **viewer\'s RIGHT** (image RIGHT).',
+  ].join(' ');
+}
+
+export function haOneShoulderDrapeCompactLock(): string {
   return [
     'ONE-FORWARD-SHOULDER DRAPE: one forward chest cascade on **image RIGHT** (model\'s LEFT); **image LEFT** shoulder stays mostly clear with visible hair routed behind shoulder/down the back — **FORBIDDEN** twin thick **forward** curtains and **FORBIDDEN** all hair forward with no back panel.',
   ].join(' ');
+}
+
+/** @deprecated BAW uses `bawOneShoulderDrapeCompactLock`; HA uses `haOneShoulderDrapeCompactLock`. */
+export function oneShoulderDrapeCompactLock(): string {
+  return bawOneShoulderDrapeCompactLock();
 }
 
 /** @deprecated Use `bawSalonOneShoulderDrapeBlock` — kept for script grep parity during migration. */
