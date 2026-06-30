@@ -17,3 +17,15 @@ export async function livePreviewObjectExists(
   }
   return null;
 }
+
+/** Resolve a public URL for a Storage object (PNG preferred, legacy WebP fallback). */
+export async function livePreviewPublicUrlIfExists(
+  supabase: SupabaseClient,
+  bucket: string,
+  preferredPath: string
+): Promise<string | null> {
+  const hit = await livePreviewObjectExists(supabase, bucket, preferredPath);
+  if (!hit) return null;
+  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(hit.storagePath);
+  return pub?.publicUrl ?? null;
+}

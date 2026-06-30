@@ -83,24 +83,34 @@ function publicUrlForStoragePath(storagePath: string): string {
   return `${SUPABASE_PUBLIC_BASE}/${storagePath}`;
 }
 
-/** Storage path (inside `live-preview` bucket) for front-angle BAW styling reference WebP. */
+/** Storage path for BAW styling reference at a given camera angle (JET BLACK tier). */
 export function bawStylingReferenceStoragePath(
   salonMode: BawSalonMode,
-  part: 'MIDDLE' | 'LEFT' | 'RIGHT'
+  part: 'MIDDLE' | 'LEFT' | 'RIGHT',
+  angle: 'front' | 'left' | 'right' = 'front'
 ): string | null {
   if (salonMode === 'none') return null;
   const folder = afterColorFolderKey(salonMode, part);
   if (!folder) return null;
   const colorTierHash = wigPreviewManifestHashLiveColorTier(BAW_STYLING_REF_COLOR_TIER);
-  return wigPreviewLiveAfterColorStylingPaths(promptVersion(), 'NOIR', colorTierHash, folder).front;
+  return wigPreviewLiveAfterColorStylingPaths(promptVersion(), 'NOIR', colorTierHash, folder)[angle];
+}
+
+/** @deprecated Use `bawStylingReferenceStoragePath(salonMode, part, angle)`. */
+export function bawStylingReferenceStoragePathFront(
+  salonMode: BawSalonMode,
+  part: 'MIDDLE' | 'LEFT' | 'RIGHT'
+): string | null {
+  return bawStylingReferenceStoragePath(salonMode, part, 'front');
 }
 
 /** Front-angle BAW styling reference for a salon mode + part (JET BLACK NOIR tier). */
 export function bawStylingReferencePublicUrl(
   salonMode: BawSalonMode,
-  part: 'MIDDLE' | 'LEFT' | 'RIGHT'
+  part: 'MIDDLE' | 'LEFT' | 'RIGHT',
+  angle: 'front' | 'left' | 'right' = 'front'
 ): string | null {
-  const storagePath = bawStylingReferenceStoragePath(salonMode, part);
+  const storagePath = bawStylingReferenceStoragePath(salonMode, part, angle);
   return storagePath ? publicUrlForStoragePath(storagePath) : null;
 }
 

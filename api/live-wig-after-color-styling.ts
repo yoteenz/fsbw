@@ -39,6 +39,7 @@ import {
   buildBawSalonSinglePassFromGrayBrickPrompt,
   buildBawSalonStylingWithSceneAndShapeRefsPrompt,
   buildBawSalonStylingWithSceneRefPrompt,
+  buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
@@ -50,7 +51,7 @@ import {
   bawGptImage2EditFalInput,
   bawLivePreviewUploadContentType,
 } from './_lib/bawGptImage2FalInput.js';
-import { livePreviewObjectExists } from './_lib/bawLivePreviewStorageDownload.js';
+import { livePreviewObjectExists, livePreviewPublicUrlIfExists } from './_lib/bawLivePreviewStorageDownload.js';
 import { noirFalGrayBrickMannequinPublicUrlForAngle } from './_lib/bawNoirFalMannequinUrls.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -70,15 +71,19 @@ async function resolveStylingReferencePublicUrl(
   supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
   bucket: string,
   salonMode: BawSalonMode,
-  part: LayersPartStyling
+  part: LayersPartStyling,
+  angle: 'front' | 'left' | 'right'
 ): Promise<string | null> {
   if (salonMode === 'none') return null;
-  const storagePath = bawStylingReferenceStoragePath(salonMode, part);
-  if (!storagePath) return null;
-  const { error } = await supabase.storage.from(bucket).download(storagePath);
-  if (error) return null;
-  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(storagePath);
-  return pub?.publicUrl ?? null;
+  const preferredPath = bawStylingReferenceStoragePath(salonMode, part, angle);
+  if (!preferredPath) return null;
+  const atAngle = await livePreviewPublicUrlIfExists(supabase, bucket, preferredPath);
+  if (atAngle) return atAngle;
+  if (angle !== 'front') {
+    const frontPath = bawStylingReferenceStoragePath(salonMode, part, 'front');
+    if (frontPath) return livePreviewPublicUrlIfExists(supabase, bucket, frontPath);
+  }
+  return null;
 }
 
 function readLayersPartStyling(body: Record<string, unknown>): LayersPartStyling {
@@ -302,17 +307,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         supabase,
         bucket,
         salonMode,
-        'RIGHT'
+        'RIGHT',
+        'front'
       );
       if (rightPartStylingRefUrl) {
         useMiddlePartOutputAsUiRightInput = false;
       }
     }
 
-    const stylingRefUrlForPart =
-      salonMode !== 'none' && !bangsOnly
-        ? await resolveStylingReferencePublicUrl(supabase, bucket, salonMode, partStyling)
-        : null;
 
     /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
     let flatIronLeftRightThumbOverrideUrl: string | null = null;
@@ -403,6 +405,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
       const grayBrickUrl = noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle);
       const salonPromptOpts = { includeBangs: bangsWithSalon };
+      const stylingRefUrlForAngle =
+        salonMode !== 'none' && !bangsOnly
+          ? await resolveStylingReferencePublicUrl(supabase, bucket, salonMode, partStyling, angle)
+          : null;
 
       if (useMiddlePartOutputAsUiRightInput && middleOutPathsForUiR) {
         const middlePath = middleOutPathsForUiR[angle];
@@ -433,12 +439,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         salonMode !== 'none' &&
         !bangsOnly
       ) {
-        if (stylingRefUrlForPart) {
+        if (stylingRefUrlForAngle) {
           prompt = buildBawSalonSinglePassFromGrayBrickPrompt(angle, partStyling, salonMode, catalog, {
             ...salonPromptOpts,
             hasStylingShapeRef: true,
           });
-          imageUrls = [grayBrickUrl, stylingRefUrlForPart];
+          imageUrls = [grayBrickUrl, stylingRefUrlForAngle];
         } else {
           prompt = buildBawSalonSinglePassFromGrayBrickPrompt(angle, partStyling, salonMode, catalog, salonPromptOpts);
           imageUrls = [grayBrickUrl];
@@ -467,7 +473,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt = buildBangsOnlyWithSceneRefPrompt(angle, catalog);
           imageUrls = [colorPublicUrl, grayBrickUrl];
         } else if (salonMode !== 'none') {
-          if (stylingRefUrlForPart) {
+          if (stylingRefUrlForAngle) {
             prompt = buildBawSalonStylingWithSceneAndShapeRefsPrompt(
               angle,
               partStyling,
@@ -475,9 +481,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               catalog,
               salonPromptOpts
             );
-            imageUrls = [colorPublicUrl, grayBrickUrl, stylingRefUrlForPart];
+            imageUrls = [colorPublicUrl, grayBrickUrl, stylingRefUrlForAngle];
           } else {
-            prompt = buildBawSalonStylingWithSceneRefPrompt(
+            prompt = buildBawSalonStylingWithSceneRefAndTextSpecPrompt(
               angle,
               partStyling,
               salonMode,

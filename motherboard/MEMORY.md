@@ -32432,3 +32432,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Committed **`0e51f198`** on **`master`**, pushed **`origin master`**.
 
+---
+
+## 2026-06-30 — BAW live preview fidelity: PNG + high quality + three-image styling refs
+
+**Context (continued chat):** User asked how to prevent color/styling chain degradation; agreed to implement short/medium/long recommendations — especially **`quality: high`**.
+
+**Shipped:**
+- **`api/_lib/bawLivePreviewOutputFormat.ts`** — default Storage + Fal **`png`** (override `WIG_PREVIEW_LIVE_OUTPUT_FORMAT=webp`); legacy **`.webp`** still read via **`livePreviewObjectExists`**.
+- **`api/_lib/bawGptImage2FalInput.ts`** — default **`quality: high`** (override `WIG_PREVIEW_LIVE_GPT2_QUALITY`); PNG output aligned with Storage.
+- **`wigPreviewSelectionHash.ts`** + client **`wigPreviewLiveOutputFormat.ts`** / **`wigPreviewLiveStoragePublicUrls.ts`** — paths use **`.png`**; client probes legacy WebP when PNG missing.
+- **`live-noir-color.ts`** (inlined parity): high quality + PNG upload.
+- **`live-wig-after-color-styling.ts`**: default salon **`image_urls`** = **[ color, gray-brick, optional styling ref ]** with **`buildBawSalonStylingWithSceneRefPrompt`** / **`buildBawSalonStylingWithSceneAndShapeRefsPrompt`**; bangs-only uses **[ color, gray-brick ]**; **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`** enables one-pass from gray-brick (**`buildBawSalonSinglePassFromGrayBrickPrompt`**).
+- **`.env.example`**, **`motherboard/golden-models/gpt-image-2.md`** updated.
+
+**Not shipped (true long-term):** server-side **hair-mask composite** (template mannequin + AI hair only) — would need Sharp/mask pipeline; single-pass env is the interim one-edit path.
+
+**Ops:** Existing **`.webp`** cache still works until regen; new generations write **`.png`**. Regen color L/M/R then styling to pick up full fidelity stack.
+

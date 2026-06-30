@@ -330,6 +330,54 @@ function buildLayersStylePromptShared(
   ].join(' ');
 }
 
+function bawSalonModeLockBlock(salon: 'layers' | 'crimps' | 'flat_iron'): string {
+  if (salon === 'layers') {
+    return (
+      '**STYLING MODE LOCK — LAYERS (critical):** Output **voluminous layered S-waves** / brushed-out barrel curls — **NOT** bone-straight, **NOT** flat-ironed, **NOT** crimp ridges. **FORBIDDEN:** sleek straight hair from IMAGE 1 or IMAGE 2.'
+    );
+  }
+  if (salon === 'crimps') {
+    return (
+      '**STYLING MODE LOCK — CRIMPS (critical):** Output **salon crimp-iron** accordion ridges — **NOT** bone-straight, **NOT** loose waves, **NOT** barrel curls only. **FORBIDDEN:** flat-ironed or naturally straight hair.'
+    );
+  }
+  return (
+    '**STYLING MODE LOCK — FLAT IRON (critical):** Output **bone-straight** flat-ironed hair — **NOT** S-waves, **NOT** crimps, **NOT** curls. **FORBIDDEN:** wavy or crimped texture.'
+  );
+}
+
+function bawSalonFinishLookBlock(salon: 'layers' | 'crimps' | 'flat_iron'): string {
+  if (salon === 'layers') {
+    return (
+      '**LAYERS finish spec:** **Long** layered hair past shoulders. **Voluminous layered S-waves** — large soft S-shaped waves, brushed-out barrel curls, blended cohesive flow — **not** tight ringlets, **not** straight.'
+    );
+  }
+  if (salon === 'crimps') {
+    return (
+      '**CRIMPS finish spec:** **Extra-long** hair with **tight horizontal accordion crimp ridges** — uniform zig-zag/waffle pattern root-to-tip, high-gloss — **not** straight, **not** loose waves.'
+    );
+  }
+  return (
+    '**FLAT IRON finish spec:** **Smooth bone-straight** flat-ironed hair — sleek, high-gloss, **no** waves, **no** crimps, **no** curls.'
+  );
+}
+
+function bawSalonShapeRefAuthorityBlock(
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  imageLabel: 'IMAGE 2' | 'IMAGE 3'
+): string {
+  const salonLabel = bawSalonModePromptLabel(salon);
+  return (
+    '**' +
+    imageLabel +
+    ' AUTHORITY (critical):** **' +
+    imageLabel +
+    '** is the canonical **' +
+    salonLabel +
+    '** reference — match its **curl/crimp/straight pattern**, **part**, **layering**, and **drape** exactly. **Do not** default to straight hair from the canvas. Retint **only** to the catalog swatch color.'
+  );
+}
+
 function bawSalonModePromptLabel(salon: 'layers' | 'crimps' | 'flat_iron'): string {
   if (salon === 'flat_iron') return 'FLAT IRON';
   if (salon === 'crimps') return 'CRIMPS';
@@ -368,6 +416,8 @@ export function buildBawSalonStylingWithSceneRefPrompt(
       '** salon finish with **' +
       partSelection +
       ' part** — reshape **hair only**; rebuild scene pixels to match IMAGE 2 fidelity.',
+    bawSalonModeLockBlock(salon),
+    bawSalonFinishLookBlock(salon),
     ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
     salonPartDirectionSemanticsBlock(),
     bawSalonOneShoulderDrapeBlock(),
@@ -407,9 +457,12 @@ export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
       salonLabel +
       '**, **' +
       partSelection +
-      ' part**, JET BLACK). Copy **only** hairstyle **shape** from IMAGE 3: **part line**, **' +
+      ' part**, JET BLACK). Copy **only** hairstyle **shape + texture** from IMAGE 3: **part line**, **' +
       salonLabel +
-      '** texture/finish, **layering**, **asymmetric drape** — **never** copy IMAGE 3 color, face, neck, or background.',
+      '** finish pattern, **layering**, **asymmetric drape** — **never** copy IMAGE 3 color, face, neck, or background.',
+    bawSalonModeLockBlock(salon),
+    bawSalonShapeRefAuthorityBlock(salon, 'IMAGE 3'),
+    bawSalonFinishLookBlock(salon),
     ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
     salonPartDirectionSemanticsBlock(),
     bawSalonOneShoulderDrapeBlock(),
@@ -418,7 +471,46 @@ export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp and pixel-perfect — **no** downscale, blur, plastic or waxy retexture.',
-    'Composite: **IMAGE 1** canvas + **IMAGE 1** hair color + **IMAGE 2** scene fidelity + **IMAGE 3** hair shape.',
+    'Composite: **IMAGE 1** canvas + **IMAGE 1** hair color + **IMAGE 2** scene fidelity + **IMAGE 3** hair shape/texture (**' +
+      salonLabel +
+      '**).',
+  ].join(' ');
+}
+
+/**
+ * **Two-image** fallback when no JET BLACK styling ref in Storage — full text spec + gray-brick scene fidelity.
+ */
+export function buildBawSalonStylingWithSceneRefAndTextSpecPrompt(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean }
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const textSpec =
+    salon === 'layers'
+      ? buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog, options)
+      : salon === 'crimps'
+        ? buildCrimpsStylePromptFromColorTierWebp(angle, partSelection, catalog, options)
+        : buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, catalog, options);
+
+  return [
+    'You get **two images in order**.',
+    '**IMAGE 1** = **output canvas** + **hair color only**: keep **exact** swatch **' +
+      catalog.label +
+      '** at **#' +
+      hex +
+      '** from IMAGE 1.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (sharp photograph). Lock **scene fidelity** from IMAGE 2 — **ignore** IMAGE 2 hair color/texture.',
+    '**No styling reference image (IMAGE 3) is attached** — follow the **' +
+      salonLabel +
+      '** text spec below exactly. **Do not** output straight hair unless **FLAT IRON**.',
+    bawSalonModeLockBlock(salon),
+    bawSalonFinishLookBlock(salon),
+    '=== ' + salonLabel + ' TEXT SPEC (apply on IMAGE 1 canvas) ===',
+    textSpec,
   ].join(' ');
 }
 
@@ -437,11 +529,12 @@ export function buildBawSalonSinglePassFromGrayBrickPrompt(
   const salonLabel = bawSalonModePromptLabel(salon);
   const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
   const shapeRefLine = options?.hasStylingShapeRef
-    ? '**IMAGE 2** = **BAW styling reference** — copy **hair shape only** (part, ' +
+    ? '**IMAGE 2** = **BAW ' +
       salonLabel +
-      ' finish, drape); retint to **#' +
+      ' styling reference** — copy **hair shape + texture only** (part, finish pattern, drape); retint to **#' +
       hex +
-      '**; **never** copy IMAGE 2 color or scene.'
+      '**; **never** copy IMAGE 2 color or scene. ' +
+      bawSalonShapeRefAuthorityBlock(salon, 'IMAGE 2')
     : null;
 
   return [
@@ -457,6 +550,8 @@ export function buildBawSalonSinglePassFromGrayBrickPrompt(
       '** with **' +
       partSelection +
       ' part** — **only** edit **hair**; **do not** repaint bust, brick, or logo.',
+    bawSalonModeLockBlock(salon),
+    bawSalonFinishLookBlock(salon),
     ...(shapeRefLine ? [shapeRefLine] : []),
     ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
     salonPartDirectionSemanticsBlock(),
