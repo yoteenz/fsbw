@@ -32396,3 +32396,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `src/utils/bcfProductOptions.ts` — `bcfSimilarStripItemFromSlot` price source.
 
+---
+
+## 2026-06-30 — BAW BLUNT CUT add-on $40
+
+**Context:** Follow-up in same pricing chat — user asked to raise build-a-wig **BLUNT CUT** from **$20** to **$40**.
+
+**Changes:** Synced **`BLUNT CUT`: 40** in `build-a-wig/page.tsx`, `addons/page.tsx` (option chip + calculator), `styling/page.tsx`, `CartDropdown.tsx`, `specialOfferPrice.ts`, `straight/noir/page.tsx`. BLEACH **$100** / PLUCK **$120** unchanged.
+
