@@ -1688,7 +1688,8 @@ export default function StylingSelectionPage() {
                 style={{
                   position: 'relative',
                   zIndex: 30,
-                  transform: 'translateY(-28px)',
+                  /** Lift above NOIR hero label (`top-[-20px]`, text-5xl) when regen links stack 3 rows deep. */
+                  transform: 'translateY(-60px)',
                   ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
                 }}
                 aria-hidden={!showNoirStylingFalRegenText}
