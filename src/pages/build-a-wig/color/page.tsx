@@ -656,16 +656,16 @@ function ColorSelection() {
         setLiveWigViews(fromStorage);
         persistPendingBawNoirLiveColorWigViews(fromStorage);
         window.dispatchEvent(new CustomEvent('customStorageChange'));
-        setLivePreviewLoading(false);
-        return;
+      } else {
+        const optimistic = await wigPreviewLiveColorTriplePublicUrlsForSelections(payload);
+        if (cancelled || founderColorPreviewGenRef.current !== gen) return;
+        if (optimistic) {
+          setLiveWigViews(optimistic);
+          persistPendingBawNoirLiveColorWigViews(optimistic);
+          window.dispatchEvent(new CustomEvent('customStorageChange'));
+        }
       }
-      const optimistic = await wigPreviewLiveColorTriplePublicUrlsForSelections(payload);
-      if (cancelled || founderColorPreviewGenRef.current !== gen) return;
-      if (optimistic) {
-        setLiveWigViews(optimistic);
-        persistPendingBawNoirLiveColorWigViews(optimistic);
-        window.dispatchEvent(new CustomEvent('customStorageChange'));
-      }
+      /** Always call API — L/R may need re-run (pipeline metadata / stale vs FRONT) even when Storage triple exists. */
       void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
         .then((res) => {
           if (cancelled || founderColorPreviewGenRef.current !== gen) return;

@@ -21,7 +21,7 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
- * **L/R angles:** when **FRONT (M)** color output exists, side passes use **`[ front colored, gray-brick side pose ]`** (hair from FRONT, **lighting/scene from gray-brick**). Client: **front → left → right** sequentially. **L/R cache is skipped** when **FRONT (M)** is newer than the side file (re-anchors after M regen).
+ * **L/R angles:** when **FRONT (M)** color output exists, side passes use **`[ gray-brick side pose, front colored ]`** — **IMAGE 1** = scene/camera template (gray-brick), **IMAGE 2** = hair donor only (FRONT). Client: **front → left → right** sequentially. **L/R cache is skipped** when **FRONT (M)** is newer than the side file, or when side object lacks current **`noirColorSidePipelineGen`** metadata (auto re-run after pipeline changes).
  *
  * Model: **`openai/gpt-image-2/edit`** — `image_size` **3:4** (`1536×2048`), `quality: high` (override `WIG_PREVIEW_LIVE_GPT2_QUALITY`), `output_format: png` (override `WIG_PREVIEW_LIVE_OUTPUT_FORMAT=webp`).
  *
@@ -211,6 +211,32 @@ async function livePreviewStorageObjectUpdatedAt(
   return ts ? new Date(ts).getTime() : null;
 }
 
+/** Bump when L/R image order or side prompts change — old Storage objects without this metadata re-run Fal. */
+const NOIR_COLOR_SIDE_PIPELINE_GEN = '3';
+
+async function livePreviewStorageObjectMetadata(
+  supabase: SupabaseClient,
+  bucket: string,
+  preferredPath: string
+): Promise<Record<string, unknown> | null> {
+  const hit = await livePreviewObjectExists(supabase, bucket, preferredPath);
+  if (!hit) return null;
+  const parts = hit.storagePath.split('/');
+  const name = parts.pop();
+  if (!name) return null;
+  const dir = parts.join('/');
+  const { data, error } = await supabase.storage.from(bucket).list(dir, {
+    limit: 200,
+    sortBy: { column: 'name', order: 'asc' },
+  });
+  if (error || !data?.length) return null;
+  const obj = data.find((o) => o.name === name);
+  const meta = obj?.metadata;
+  return meta && typeof meta === 'object' && !Array.isArray(meta)
+    ? (meta as Record<string, unknown>)
+    : null;
+}
+
 /** True when FRONT (M) was regenerated after this L/R file — side must re-run with front anchor. */
 async function livePreviewSideColorStaleVsFront(
   supabase: SupabaseClient,
@@ -223,6 +249,21 @@ async function livePreviewSideColorStaleVsFront(
   const sideAt = await livePreviewStorageObjectUpdatedAt(supabase, bucket, sidePath);
   if (!sideAt) return true;
   return frontAt > sideAt;
+}
+
+/** Skip Fal for L/R only when file exists, pipeline metadata matches, and FRONT is not newer. */
+async function livePreviewSideColorCacheHit(
+  supabase: SupabaseClient,
+  bucket: string,
+  sidePath: string,
+  frontPath: string
+): Promise<boolean> {
+  const hit = await livePreviewObjectExists(supabase, bucket, sidePath);
+  if (!hit) return false;
+  const meta = await livePreviewStorageObjectMetadata(supabase, bucket, hit.storagePath);
+  if (meta?.noirColorSidePipelineGen !== NOIR_COLOR_SIDE_PIPELINE_GEN) return false;
+  if (await livePreviewSideColorStaleVsFront(supabase, bucket, sidePath, frontPath)) return false;
+  return true;
 }
 
 function wigPreviewLiveAnglePaths(
@@ -341,18 +382,20 @@ const BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK =
 const BAW_GPT2_NOIR_COLOR_FRAMING_LOCK =
   '**Framing lock:** Do **not** resize, reposition, re-crop or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **identical crop and zoom to the gray-brick reference on every swatch** — **only** hair pigment changes. **FORBIDDEN:** pan left/right, zoom, reframe, or any shift in composition.';
 
-/** Side L/R: camera angle + 3/4 handedness beat framing/zoom — mirrors styling `bawSalonFrontAnchorSideSceneLockBlock`. */
-function bawColorSideCameraBodyLockBlock(angle: 'left' | 'right', ref: 'input' | 'image2'): string {
+function bawColorSideHandednessBlock(angle: 'left' | 'right'): string {
+  return angle === 'left'
+    ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
+    : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+}
+
+/** Side L/R: camera angle + 3/4 handedness beat framing/zoom. */
+function bawColorSideCameraBodyLockBlock(angle: 'left' | 'right', ref: 'input' | 'image1'): string {
   const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
   const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
-  const refLabel = ref === 'image2' ? '**IMAGE 2**' : 'the **input photograph**';
-  const handedness =
-    angle === 'left'
-      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
-      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+  const refLabel = ref === 'image1' ? '**IMAGE 1**' : 'the **input photograph**';
   const frontDonorNote =
-    ref === 'image2'
-      ? ' **Do not** straighten or twist the head toward front-facing to match **IMAGE 1** (front donor is **hair color/silhouette only** — keep **IMAGE 2** body turn).'
+    ref === 'image1'
+      ? ' **Do not** straighten or twist the head toward front-facing to match **IMAGE 2** (front donor is **hair color/silhouette only** — keep **IMAGE 1** body turn).'
       : '';
   return (
     '**#0 CAMERA + BODY LOCK — HIGHEST PRIORITY (' +
@@ -370,7 +413,7 @@ function bawColorSideCameraBodyLockBlock(angle: 'left' | 'right', ref: 'input' |
     '**, **NOT** front-facing.' +
     frontDonorNote +
     ' **FORBIDDEN:** rotating the head toward camera; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing to match a front donor. **Only** hair **pigment + silhouette** may change. ' +
-    handedness
+    bawColorSideHandednessBlock(angle)
   );
 }
 
@@ -379,9 +422,15 @@ function bawColorSideFramingLockBlock(angle: 'left' | 'right'): string {
   return (
     '**#1 FRAMING LOCK (' +
     angleLabel +
-    ' — subordinate to #0 camera lock):** Do **not** resize, reposition, re-crop or zoom vs the gray-brick **' +
+    ' — subordinate to #0 camera lock):** Do **not** resize, reposition, re-crop or zoom vs **IMAGE 1** (gray-brick **' +
     angleLabel +
-    '** reference — same scale, same bottom alignment, same brick tile scale. **Do not** change camera angle or head turn to fix framing.'
+    '**) — same scale, same bottom alignment, same brick tile scale. **Do not** change camera angle or head turn to fix framing.'
+  );
+}
+
+function bawColorSideViewSceneMasterPreserveBlock(): string {
+  return (
+    'Treat **IMAGE 1** as the **photograph to preserve** — **same** turned head, bust, brick, lighting, shadows, **FRONTAL SLAYER** logo sharpness, and **3/4 camera**. **Only** edit **hair**. **Do not** straighten the head to front-facing. **Do not** copy **IMAGE 2**\'s face angle, pose, background, or framing.'
   );
 }
 
@@ -443,44 +492,53 @@ async function resolveFrontColorAnchorPublicUrl(
   return pub?.publicUrl ?? null;
 }
 
-/** Side color when **FRONT (M)** output exists — mirrors styling `buildBawSalonStylingWithFrontAnchorPrompt`. */
-function buildBawColorWithFrontAnchorPrompt(
+/**
+ * Side color when **FRONT (M)** exists — **IMAGE 1** gray-brick scene (same pattern as styling
+ * `buildBawSalonSidePartSideViewFromFrontHairPrompt`; avoids front-as-IMAGE-1 + preserve-reference conflict).
+ */
+function buildBawColorSideViewFromFrontHairPrompt(
   angle: 'left' | 'right',
   label: string,
   hex: string
 ): string {
   const h = hex.replace(/^#/, '').toUpperCase();
   const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
   const nearBlack = isJetBlackOffBlackCatalogColor(label, hex);
-  const colorLead = nearBlack
+  const hairColorLine = nearBlack
     ? '**exact** salon black (**' +
       label +
       '**, **#' +
       h +
-      '**) — **same** part line, silhouette, length, volume and **one-sided shoulder sweep** as **IMAGE 1**; **only** normalize tone/sheen consistently'
+      '**) — **same** part line, silhouette, length, volume and **one-sided shoulder sweep**; **only** normalize tone/sheen'
     : '**exact** swatch **' +
       label +
       '** at **#' +
       h +
-      '** — authentically dyed hair, **same** part line, silhouette, length, volume and **one-sided shoulder sweep** as **IMAGE 1**';
+      '** — authentically dyed; **same** part line, silhouette, length, volume and **one-sided shoulder sweep**';
 
   return [
-    bawColorSideCameraBodyLockBlock(angle, 'image2'),
+    bawColorSideCameraBodyLockBlock(angle, 'image1'),
     'You get **2 images in order**.',
-    '**IMAGE 1 = CANONICAL FRONT (M) COLOR OUTPUT (hair color + silhouette identity lock):** This is the **already-recolored FRONT** for this swatch. **Reproduce this exact hair** (color, part line, length, volume, **one-sided shoulder sweep**) on the **' +
+    '**IMAGE 1 = OUTPUT SCENE (pose + camera — copy exactly):** NOIR gray-brick mannequin **' +
       angleLabel +
-      '** camera from **IMAGE 2** — ' +
-      colorLead +
-      '. **FORBIDDEN:** a different shade or restyle; **FORBIDDEN:** re-parting; **FORBIDDEN:** inventing a **similar** but not identical look. **FORBIDDEN:** copying **IMAGE 1** head angle, neck, shoulders, or lighting — **hair donor only**.',
-    '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
+      '** photo. **This is the output photograph template.** Match **IMAGE 1** head turn, bust, brick, lighting, shadows, **FRONTAL SLAYER** logo, and framing **pixel-for-pixel**. **FORBIDDEN:** front-facing head; **FORBIDDEN:** **' +
+      wrongAngle +
+      '**. ' +
+      bawColorSideHandednessBlock(angle),
+    '**IMAGE 2 = HAIR DONOR ONLY (FRONT / M color — NOT a pose reference):** Already-recolored **FRONT** for this swatch — ' +
+      hairColorLine +
+      '. **Use only from IMAGE 2:** hair **color**, part line, silhouette, length, volume, **one-sided shoulder sweep**. **IGNORE from IMAGE 2:** head pose, face direction, camera, shoulders, background, brick, logo.',
+    '**TASK:** Composite **IMAGE 2**\'s **exact hair** onto **IMAGE 1**\'s **turned** head — **same hair** as **M (front)** viewed from **' +
       angleLabel +
-      '** photograph). **Mannequin body lock (overrides IMAGE 1 pose):** match **IMAGE 2** head turn, neck, shoulders, bust, framing, brick, **lighting**, **shadows**, **FRONTAL SLAYER** logo pixel-for-pixel — **ignore** IMAGE 2 hair color and hair shape; **do not** borrow **IMAGE 1**\'s front-facing head angle or front lighting.',
-    '**TASK:** Composite **IMAGE 1** hair (color + silhouette identity) onto **IMAGE 2** scene + lighting — **only** hair edits; bust/brick/logo/lighting/camera must match **IMAGE 2**.',
-    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
-    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+      '**. **FORBIDDEN:** inventing a new hairstyle; **FORBIDDEN:** pasting IMAGE 2\'s **front-facing face** onto IMAGE 1; **FORBIDDEN:** changing IMAGE 1\'s head turn.',
+    bawColorSideViewSceneMasterPreserveBlock(),
     bawColorSideFramingLockBlock(angle),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp and pixel-perfect.',
-    'Composite: **IMAGE 1** exact FRONT hair color + shape identity + **IMAGE 2** exact **' + angleLabel + '** scene.',
+    'Composite: **IMAGE 1** exact **' +
+      angleLabel +
+      '** scene + pose + **IMAGE 2** exact **M (front)** hair color identity.',
   ].join(' ');
 }
 
@@ -572,12 +630,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     for (const angle of anglesToRun) {
       const path = paths[angle];
       if (!forceRegenerate) {
-        const exists = await livePreviewObjectExists(supabase, bucket, path);
-        if (exists) {
-          const sideStaleVsFront =
-            (angle === 'left' || angle === 'right') &&
-            (await livePreviewSideColorStaleVsFront(supabase, bucket, path, paths.front));
-          if (!sideStaleVsFront) {
+        if (angle === 'left' || angle === 'right') {
+          if (await livePreviewSideColorCacheHit(supabase, bucket, path, paths.front)) {
+            skipped.push(angle);
+            continue;
+          }
+        } else {
+          const exists = await livePreviewObjectExists(supabase, bucket, path);
+          if (exists) {
             skipped.push(angle);
             continue;
           }
@@ -595,8 +655,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const frontAnchorUrl =
           frontColorAnchorUrl ?? (await resolveFrontColorAnchorPublicUrl(supabase, bucket, paths.front));
         if (frontAnchorUrl) {
-          prompt = buildBawColorWithFrontAnchorPrompt(angle, catalog.label, catalog.hex);
-          imageUrls = [frontAnchorUrl, mannequinUrl];
+          prompt = buildBawColorSideViewFromFrontHairPrompt(angle, catalog.label, catalog.hex);
+          imageUrls = [mannequinUrl, frontAnchorUrl];
         } else {
           prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex, angle);
           imageUrls = [mannequinUrl];
@@ -622,6 +682,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const { error: upErr } = await supabase.storage.from(bucket).upload(path, buf, {
         contentType: uploadType,
         upsert: true,
+        ...(angle === 'left' || angle === 'right'
+          ? { metadata: { noirColorSidePipelineGen: NOIR_COLOR_SIDE_PIPELINE_GEN } }
+          : {}),
       });
       if (upErr) throw new Error(`upload ${path}: ${upErr.message}`);
       generated.push(angle);

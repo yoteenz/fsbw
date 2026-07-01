@@ -32796,3 +32796,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** **Regen color L** and **R** (or full triple) per swatch — cached side files keep wrong angle until regenerated.
 
+---
+
+## 2026-06-30 — Live color L/R: gray-brick IMAGE 1 + auto stale side regen
+
+**Context (continued chat):** User reported **nothing changed** after prompt-only camera-lock fix — L/R still wrong 3/4 degrees.
+
+**Root causes:**
+1. Side **`image_urls`** were **`[ front colored, gray-brick ]`** — **IMAGE 1** was front; generic **`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`** told Fal to preserve the **input** → front pose won over gray-brick camera.
+2. Color page **early-returned** when Storage triple existed (`resolveWigPreviewLiveColorTripleIfStored`) — **never called** `postWigPreviewLiveNoirColor`, so prompt/deploy changes did not re-run Fal for cached L/R.
+
+**Fix:**
+- **`api/wig-preview/live-noir-color.ts`:** L/R with FRONT anchor → **`[ gray-brick side, front colored ]`** + **`buildBawColorSideViewFromFrontHairPrompt`** (IMAGE 1 = scene template, IMAGE 2 = hair donor only — same pattern as styling **`buildBawSalonSidePartSideViewFromFrontHairPrompt`**). Removed generic preserve block on side passes; **`bawColorSideViewSceneMasterPreserveBlock`** preserves **IMAGE 1** only.
+- **`NOIR_COLOR_SIDE_PIPELINE_GEN = '3'`** metadata on L/R uploads; **`livePreviewSideColorCacheHit`** skips Fal only when metadata matches + FRONT not newer — old side files auto re-run.
+- **`src/pages/build-a-wig/color/page.tsx`:** show cached triple immediately but **always** call **`postWigPreviewLiveNoirColor`** afterward (background stale/pipeline fill).
+
+**Ops:** Reload color sub-page (signed-in premium) — L/R should re-generate automatically once deploy is live; or founder **regen L/R**.
+
