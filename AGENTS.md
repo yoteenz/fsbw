@@ -26,6 +26,13 @@ For full command details and protocol, see **`motherboard/README.md`**.
 - **Push only `master`:** `git push -u origin master` after completing work. Do **not** merge or push **`preview/mobile`** unless the user explicitly asks.
 - See **`motherboard/CORE.md`** (branch policy) for the canonical rule.
 
+## One Vercel deploy per task
+
+- **Each completed user request = one commit + one push** to `master`. Pushing code and then a separate **`Motherboard:`** commit triggers **two production deploys** — forbidden for the same task.
+- **Order:** finish code → append **`motherboard/MEMORY.md`** → **`git add -A`** → one commit → **`git push -u origin master`**.
+- Use **`./scripts/agent-commit.sh "message"`** so MEMORY is staged with code before push.
+- Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`** rule 0.
+
 ## Cursor Cloud environment
 
 - Cloud agents should use the repo environment hook in **`.cursor/environment.json`**, which runs **`./scripts/cloud-update.sh`** on startup.

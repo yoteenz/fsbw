@@ -6,13 +6,15 @@ When the user says **"add to motherboard"** (in this or any past chat), follow t
 
 ## Rules
 
+0. **One Vercel deploy per task (critical).** When you change **any** code or docs, **`MEMORY.md` must land in the same git commit and the same `git push`** as those changes. **Never** push code first and a separate `"Motherboard: …"` commit second — that costs **two production deploys** for one prompt. Workflow: **code done → append MEMORY → `git add -A` → one commit → one push**. Use **`./scripts/agent-commit.sh "message"`** to enforce this. See **`.cursor/rules/one-deploy-per-task.mdc`**.
+
 1. **Append only.** Do not remove, replace, or rewrite existing sections in `CORE.md` or `MEMORY.md`. Only add new content.
 2. **No duplicates.** Before adding, read the full `MEMORY.md` and `CORE.md`. If the same fact or decision is already stated, do not add it again. You may add a short cross-reference or "(see entry YYYY-MM-DD)" if useful.
 3. **One entry per add.** Add exactly one new entry to `MEMORY.md` per invocation (or per exchange where you completed a task/change when auto-add is on). Use the format below.
 4. **Full conversation context.** Every entry must reflect the **entire conversation so far** in this chat—from inception to now—not just the last message. Summarize all prompts, topics, decisions, and changes so the motherboard stays fully up to date and accurate. When in doubt, err on the side of including more context so future agents have the full picture.
 5. **CORE.md updates are optional and minimal.** Only add to `CORE.md` when you have a **new, permanent** fact about design, stack, or flows that is not already there and that future agents should always see. Do not duplicate what's already in CORE.
 6. **MEMORY.md is the default place for conversation summaries.** Put learnings, one-off decisions, and "what we did in this chat" in `MEMORY.md`. Entries can be longer when summarizing a whole conversation; use bullets or short paragraphs per topic so they stay scannable.
-7. **Same commit as code (one deployment).** When auto-add or manual add accompanies a code change, **append `MEMORY.md` first**, then **`git add` code + `MEMORY.md` together** and make **one commit + one push**. Do **not** push the code change and then follow with a separate commit like `Motherboard: …` — that triggers a second Vercel deploy for the same task. Separate memory-only commits are fine only when there was **no** code change in that turn (e.g. user asked a question and you only updated MEMORY).
+7. **Same commit as code (one deployment).** When auto-add or manual add accompanies a code change, **append `MEMORY.md` first**, then **`git add -A`** (or at minimum code + docs + **`MEMORY.md`**) and make **exactly one commit + one push**. **Forbidden:** a follow-up commit whose message starts with **`Motherboard:`** after a code commit in the same task. If you forgot MEMORY before push: **`git commit --amend`** to fold it in — do **not** push twice. Separate memory-only commits are fine only when there was **no** code/doc change in that turn (Q&A only).
 
 ---
 
@@ -58,4 +60,5 @@ Use real date (today's date when adding). Title can be a short topic (e.g. "Admi
 - [ ] Optionally added a small, non-duplicative update to `CORE.md` only if it's a lasting design/stack/flow fact.
 - [ ] Did not delete or overwrite existing content.
 - [ ] If this was the user's first "add to motherboard" in this chat: auto-add is now **on** for the rest of this conversation.
-- [ ] If code changed in this task: **`MEMORY.md` is in the same git commit and push** as the code (not a follow-up commit).
+- [ ] If code/docs changed: **`MEMORY.md` appended before commit**, staged with **`git add -A`**, **one commit**, **one `git push -u origin master`** (prefer **`./scripts/agent-commit.sh`**).
+- [ ] Confirmed you will **not** push a second `"Motherboard: …"` commit for this task.

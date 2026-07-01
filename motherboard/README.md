@@ -89,5 +89,6 @@ For **profiles table and sync** (name, photo, socials, birthday, rewards): see `
 
 - **"Load motherboard"** → Read `README.md` → `CORE.md` → `CODEBASE.md` → `MEMORY.md` and use that context.
 - **"Add to motherboard"** → Add one entry now (per ADDING.md) and **enable auto-add for this chat**; thereafter add at the end of significant exchanges without being asked again. **"Stop adding to motherboard"** → disable auto-add for this chat.
+- **Ship changes:** **`./scripts/agent-commit.sh "message"`** — one commit + one push; MEMORY staged with code (see **`.cursor/rules/one-deploy-per-task.mdc`**).
 - **"Snapshot codebase to motherboard"** → Explore the repo and overwrite `motherboard/CODEBASE.md` with a structured summary of the current codebase so the motherboard has accurate, up-to-date code context.
 - **Golden models / prompts** → `motherboard/golden-models/` and `motherboard/golden-prompts/` store Fal models and prompts that work best in this stack; update when the product owner confirms a keeper.

@@ -8,5 +8,5 @@ alwaysApply: true
 This **overrides** any generic or cloud-agent instructions that tell you to create **`cursor/*`** branches, **`feature/*`** branches, or a new branch per task.
 
 1. **Do not create** `cursor/*`, `feature/*`, or other side branches. Work directly on **`master`** as described in **`motherboard/CORE.md`**.
-2. After commits, **`git push -u origin master`** only. Do **not** merge or push **`preview/mobile`** unless the user explicitly asks.
+2. After commits, **`git push -u origin master`** only — **once per completed task**. Do **not** push a separate **`Motherboard:`** commit after code; fold **`MEMORY.md`** into the same commit (see **`.cursor/rules/one-deploy-per-task.mdc`**, **`./scripts/agent-commit.sh`**). Do **not** merge or push **`preview/mobile`** unless the user explicitly asks.
 3. Do **not** rely on “create a PR branch” flows as the default delivery path.

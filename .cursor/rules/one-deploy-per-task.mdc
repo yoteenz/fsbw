@@ -1,0 +1,36 @@
+---
+description: One Vercel deploy per agent task — MEMORY and code in the same commit/push
+alwaysApply: true
+---
+
+# One deploy per task (Build-a-Wig)
+
+**Each user prompt / completed task = exactly ONE `git commit` + ONE `git push` to `master`.**  
+Pushing twice for the same task triggers **two Vercel production deploys** — avoid this.
+
+## Required order (when code or docs change)
+
+1. **Finish the code/docs change.**
+2. **Append `motherboard/MEMORY.md`** (auto-add) — summarize the **entire conversation so far**, not just the last turn. See `motherboard/ADDING.md`.
+3. **`git add -A`** (or stage **code + docs + `motherboard/MEMORY.md` together**).
+4. **Verify** `motherboard/MEMORY.md` is staged if any non-motherboard file changed:  
+   `git diff --cached --name-only | grep -q motherboard/MEMORY.md`
+5. **One commit** with a descriptive message (feature/fix — **not** a separate `"Motherboard: …"` commit).
+6. **One push:** `git push -u origin master`
+
+Prefer **`./scripts/agent-commit.sh "your message"`** — it enforces MEMORY staging before commit.
+
+## Forbidden
+
+- **Do not** push code, then push a follow-up commit only for `MEMORY.md`.
+- **Do not** use commit messages like **`Motherboard: …`** as a second deploy after a code commit in the same task.
+- **Do not** run **`git push`** more than once per completed user request (unless the user explicitly asked for a second change).
+
+## If you forgot MEMORY before pushing
+
+- **Before push:** amend — `git add motherboard/MEMORY.md && git commit --amend --no-edit` — then **one push**.
+- **After push (same task):** do **not** add a second MEMORY-only commit; note the miss and include MEMORY in the **next** code commit, or ask the user before a second push.
+
+## Memory-only turns
+
+When the user only asked a question and you changed **nothing** except optionally MEMORY — a MEMORY-only commit is OK (no code deploy impact beyond docs). When **any** code/docs changed, MEMORY **must** be in **that same commit**.

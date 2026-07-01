@@ -32619,3 +32619,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen order — **MIDDLE** all angles → **LEFT/RIGHT** **front** → **LEFT/RIGHT** **left/right** (or full triple with **`forceRegenerate`**).
 
+---
+
+## 2026-07-01 — One Vercel deploy per task (MEMORY + code same commit)
+
+**Context (continued chat):** User reported agents still **push twice** for one prompt — code commit then separate **`Motherboard: …`** commit — causing **two costly Vercel production deploys**. Asked to fix process so it does not happen again.
+
+**Shipped:**
+- **`.cursor/rules/one-deploy-per-task.mdc`** — always-applied rule: append MEMORY → **`git add -A`** → **one commit** → **one push**; forbid follow-up MEMORY-only commits; amend if forgot before push.
+- **`scripts/agent-commit.sh`** — fails if code changed without staged **`motherboard/MEMORY.md`**; then single commit + push to **`master`**.
+- Strengthened **`motherboard/ADDING.md`** (rule 0), **`.cursor/rules/motherboard.mdc`**, **`.cursor/rules/git-branch-policy.mdc`**, **`AGENTS.md`**, **`motherboard/CORE.md`**, **`motherboard/README.md`**.
+
+**Convention:** Agents must use **`./scripts/agent-commit.sh`** (or manually verify MEMORY is staged) before any push when code/docs changed.
+
