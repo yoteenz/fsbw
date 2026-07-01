@@ -32593,3 +32593,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen color **M** then **L/R** (or regen all) after deploy — cached color L/R unchanged until **`forceRegenerate`**.
 
+---
+
+## 2026-07-01 — NOIR styling UI L/R part: MIDDLE-part FRONT anchor chain
+
+**Context (continued chat):** User asked to apply the same **front-first anchor chain** used for L/R **camera angles** to **LEFT / RIGHT part selection** — same hairstyle as **MIDDLE part**, **only** the part groove moves (mirrors angle logic).
+
+**Shipped:**
+- **`buildBawSalonSidePartFromMiddleFrontPrompt`** (FRONT camera) + **`buildBawSalonSidePartFromMiddleFrontAnchorPrompt`** (L/R cameras) in **`api/_lib/bawLiveStylingPrompts.ts`** — **IMAGE 1** = **MIDDLE-part FRONT** styled output; **IMAGE 2** = gray-brick side pose when needed; **`salonPartMustOverrideInputReferenceBlock`** for UI L/R.
+- **`api/live-wig-after-color-styling.ts`**: **`useMiddlePartFrontAnchor`** for **`partSelection === 'LEFT' | 'RIGHT'`** (all salon modes incl. FLAT IRON + bangs variants); requires **MIDDLE-part FRONT** in Storage; removed old UI-R-only same-angle middle WebP path and styling-ref bypass.
+- **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** synced.
+
+**Ops:** Generate **MIDDLE** part + regen all angles first; then **LEFT** or **RIGHT** part regen uses middle FRONT anchor. Cached side-part outputs stale until **`forceRegenerate`**.
+
