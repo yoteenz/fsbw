@@ -503,6 +503,71 @@ export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
 }
 
 /**
+ * **Side angles (L/R)** when **FRONT (M)** styled output already exists in Storage (or was just generated):
+ * **IMAGE 1** = color canvas, **IMAGE 2** = gray-brick pose, **IMAGE 3** = **canonical FRONT styled hairstyle**,
+ * optional **IMAGE 4** = JET BLACK styling ref (subordinate to IMAGE 3).
+ */
+export function buildBawSalonStylingWithFrontAnchorPrompt(
+  angle: 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean; hasStylingShapeRef?: boolean }
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const imageCount = options?.hasStylingShapeRef ? 4 : 3;
+  const stylingRefLine = options?.hasStylingShapeRef
+    ? '**IMAGE 4** = **BAW salon styling reference** (**' +
+      salonLabel +
+      '**, **' +
+      partSelection +
+      ' part**, JET BLACK) — **supplementary texture hint only**; **IMAGE 3** (front output) is the **hairstyle identity lock**. Never copy IMAGE 4 color or scene.'
+    : null;
+
+  return [
+    'You get **' + imageCount + ' images in order**.',
+    '**IMAGE 1** = **output canvas** + **hair color only**: keep **exact** swatch **' +
+      catalog.label +
+      '** at **#' +
+      hex +
+      '** — **never** copy pigment from other images.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
+      angleLabel +
+      '** photograph). Lock **scene fidelity** from IMAGE 2: head pose, framing, brick, lighting, **FRONTAL SLAYER** logo — **ignore** IMAGE 2 hair.',
+    '**IMAGE 3 = CANONICAL FRONT VIEW (hairstyle identity lock):** This is the **already-styled FRONT (M)** output for this **exact** **' +
+      salonLabel +
+      '** + **' +
+      partSelection +
+      ' part** + swatch. **Reproduce this exact hairstyle** — **same** curl/wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape — **only** re-project onto the **' +
+      angleLabel +
+      '** camera from IMAGE 2. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** different curl family or scale on L/R vs IMAGE 3.',
+    ...(stylingRefLine ? [stylingRefLine] : []),
+    bawSalonNaturalHairAntiHelmetBlock(),
+    bawSalonModeLockBlock(salon),
+    bawSalonFinishLookBlock(salon),
+    ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
+    salonPartDirectionSemanticsBlock(),
+    bawSalonOneShoulderDrapeBlock(),
+    bawSalonStylingCameraLine(angle),
+    ...(bangsLine ? [bangsLine] : []),
+    '=== ' + salonLabel + ' FULL TEXT SPEC (with IMAGE 3 front lock — follow every line below) ===',
+    'Side view must match **IMAGE 3** hairstyle identity **and** this text spec — not a independently re-rolled style.',
+    buildBawSalonColorTierTextSpec(angle, partSelection, salon, catalog, options),
+    bawFalEditPreserveReferenceBlock(),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
+    'Composite: **IMAGE 1** color + **IMAGE 2** ' +
+      angleLabel +
+      ' pose + **IMAGE 3** exact hairstyle identity (**' +
+      salonLabel +
+      '**).',
+  ].join(' ');
+}
+
+/**
  * **Two-image** fallback when no JET BLACK styling ref in Storage — full text spec + gray-brick scene fidelity.
  */
 export function buildBawSalonStylingWithSceneRefAndTextSpecPrompt(

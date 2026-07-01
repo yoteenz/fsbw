@@ -2096,7 +2096,8 @@ export async function postLiveWigAfterColorStylingRegenerateAngle(
 }
 
 /**
- * Admin: middle + layers after color — **three sequential** one-angle API calls.
+ * Admin: middle + layers after color — **three sequential** one-angle API calls (**FRONT first**, then L/R).
+ * L/R passes use the FRONT styled output as hairstyle identity anchor when it exists in Storage.
  * A single invocation that runs three fal jobs often exceeds Vercel limits → `FUNCTION_INVOCATION_FAILED`.
  * Pass **`forceRegenerate: true`** on `body` (or in `opts`) to re-run fal when color/styling changed but Storage still has old WebPs.
  */
@@ -2104,7 +2105,7 @@ export async function postLiveWigAfterColorStyling(
   body: LiveWigAfterColorStylingPayload,
   opts?: { forceRegenerate?: boolean }
 ): Promise<LiveWigAfterColorStylingResult> {
-  const angles = ['left', 'front', 'right'] as const;
+  const angles = ['front', 'left', 'right'] as const;
   const pauseBetweenAnglesMs = 1200;
   const force = Boolean(opts?.forceRegenerate || body.forceRegenerate);
   const b = force ? { ...body, forceRegenerate: true as const } : body;

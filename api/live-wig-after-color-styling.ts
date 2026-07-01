@@ -7,6 +7,7 @@ export const config = { maxDuration: 300 };
  *
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
+ * **L/R angles:** when **FRONT (M)** output exists (or was just generated in the same request), **`buildBawSalonStylingWithFrontAnchorPrompt`** adds it as **IMAGE 3** so all three views share one hairstyle identity.
  * **Output:** `.../after-color/.../{angle}.png` (legacy `.webp` still read). Fal **`quality: high`**, **`output_format: png`**.
  * **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`**: one pass from gray-brick (+ optional styling ref) via `buildBawSalonSinglePassFromGrayBrickPrompt`.
  * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
@@ -40,6 +41,7 @@ import {
   buildBawSalonStylingWithSceneAndShapeRefsPrompt,
   buildBawSalonStylingWithSceneRefPrompt,
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
+  buildBawSalonStylingWithFrontAnchorPrompt,
   buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
@@ -154,6 +156,17 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
 /** Fal gray-brick scene refs (not UI transparent overlays). */
 function noirFalGrayBrickMannequinPublicUrlForAngleLocal(angle: 'front' | 'left' | 'right'): string {
   return noirFalGrayBrickMannequinPublicUrlForAngle(angle);
+}
+
+async function resolveFrontStylingAnchorPublicUrl(
+  supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
+  bucket: string,
+  frontOutPath: string
+): Promise<string | null> {
+  const frontExists = await livePreviewObjectExists(supabase, bucket, frontOutPath);
+  if (!frontExists) return null;
+  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(frontExists.storagePath);
+  return pub?.publicUrl ?? null;
 }
 
 function stylingModePayload(
@@ -385,6 +398,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const generated: string[] = [];
     const skipped: string[] = [];
+    /** FRONT (M) styled URL — used as hairstyle identity lock for L/R in this request. */
+    let frontStylingAnchorUrl: string | null = null;
 
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
@@ -473,7 +488,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt = buildBangsOnlyWithSceneRefPrompt(angle, catalog);
           imageUrls = [colorPublicUrl, grayBrickUrl];
         } else if (salonMode !== 'none') {
-          if (stylingRefUrlForAngle) {
+          const frontAnchorUrl =
+            angle !== 'front'
+              ? frontStylingAnchorUrl ??
+                (await resolveFrontStylingAnchorPublicUrl(supabase, bucket, outPaths.front))
+              : null;
+          if (frontAnchorUrl && angle !== 'front') {
+            prompt = buildBawSalonStylingWithFrontAnchorPrompt(
+              angle,
+              partStyling,
+              salonMode,
+              catalog,
+              { ...salonPromptOpts, hasStylingShapeRef: Boolean(stylingRefUrlForAngle) }
+            );
+            imageUrls = stylingRefUrlForAngle
+              ? [colorPublicUrl, grayBrickUrl, frontAnchorUrl, stylingRefUrlForAngle]
+              : [colorPublicUrl, grayBrickUrl, frontAnchorUrl];
+          } else if (stylingRefUrlForAngle) {
             prompt = buildBawSalonStylingWithSceneAndShapeRefsPrompt(
               angle,
               partStyling,
@@ -512,6 +543,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       });
       if (upErr) throw new Error(`upload ${outPath}: ${upErr.message}`);
       generated.push(angle);
+      if (angle === 'front') {
+        const { data: pubFrontAnchor } = supabase.storage.from(bucket).getPublicUrl(outPath);
+        frontStylingAnchorUrl = pubFrontAnchor?.publicUrl ?? null;
+      }
     }
 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);

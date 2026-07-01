@@ -32530,3 +32530,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`motherboard/ADDING.md`** rule 7 + checklist; **`.cursor/rules/motherboard.mdc`** auto-add line. This entry bundled in that same commit.
 
+---
+
+## 2026-06-30 — BAW styling triple: front-anchor chain for identical L/M/R hairstyle
+
+**Context (continued chat):** User reported **regenerate all angles** produces **three similar but different** curl patterns on L/M/R — not the **same hairstyle from different cameras**. Asked whether side angles should be generated from middle/front and what the proper fix is.
+
+**Root cause:** Each angle was an **independent** Fal edit (`color WebP + gray-brick + optional styling ref`) with **no shared hairstyle identity**. Client **`postLiveWigAfterColorStyling`** ran angles **`left → front → right`**, so L ran before a canonical front existed. GPT Image 2 re-rolls styling each call.
+
+**Proper fix (shipped):** **Front-first anchor chain** — generate **FRONT (M)** first; **L/R** attach the stored **front styled output** as **IMAGE 3 hairstyle identity lock** + gray-brick pose + color canvas (+ optional styling ref as IMAGE 4). Same pattern as existing **UI R from middle-part output** chain.
+
+**Shipped:**
+- **`buildBawSalonStylingWithFrontAnchorPrompt`** in **`bawLiveStylingPrompts.ts`**
+- **`live-wig-after-color-styling.ts`** — resolve front from Storage or same-request upload; L/R use front anchor when available
+- **`src/utils/api.ts`** — **regenerate all** order **`front → left → right`** (was left first)
+
+**Ops:** **Regenerate all angles** after deploy (or regen **M** first, then L/R). Single-angle **L/R** regen uses cached **M** as anchor when present.
+
