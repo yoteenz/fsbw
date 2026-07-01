@@ -19,7 +19,7 @@ export const config = {
  *     UI overlays (image 26|27|28) are **not** Fal inputs — see `api/_lib/bawNoirFalMannequinUrls.ts`.
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
- * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
+ * Optional **`reconcileSidesOnly`**: `true` — process **left + right** only in **one** invocation (FRONT must already exist); for Storage triple already present — lower Disk IO than triple sequential calls.
  *
  * **L/R angles:** when **FRONT (M)** color output exists, side passes use **`[ gray-brick side pose, front colored ]`** — **IMAGE 1** = scene/camera template (gray-brick), **IMAGE 2** = hair donor only (FRONT). Client: **front → left → right** sequentially. **L/R cache is skipped** when **FRONT (M)** is newer than the side file, or when side object lacks current **`noirColorSidePipelineGen`** metadata (auto re-run after pipeline changes).
  *
@@ -173,83 +173,69 @@ function bawGpt2LivePreviewQuality(): 'low' | 'medium' | 'high' | 'auto' {
   return 'high';
 }
 
+async function livePreviewStorageObjectHit(
+  supabase: SupabaseClient,
+  bucket: string,
+  preferredPath: string
+): Promise<{
+  storagePath: string;
+  updatedAt: number | null;
+  metadata: Record<string, unknown> | null;
+} | null> {
+  const splitStorageObjectPath = (path: string): { dir: string; name: string } | null => {
+    const parts = path.split('/');
+    const name = parts.pop();
+    if (!name) return null;
+    return { dir: parts.join('/'), name };
+  };
+  const resolveAtPath = async (
+    path: string
+  ): Promise<{
+    storagePath: string;
+    updatedAt: number | null;
+    metadata: Record<string, unknown> | null;
+  } | null> => {
+    const split = splitStorageObjectPath(path);
+    if (!split) return null;
+    const { data, error } = await supabase.storage.from(bucket).list(split.dir, {
+      limit: 200,
+      sortBy: { column: 'name', order: 'asc' },
+    });
+    if (error || !data?.length) return null;
+    const obj = data.find((o) => o.name === split.name);
+    if (!obj) return null;
+    const rawMeta = obj.metadata;
+    const metadata =
+      rawMeta && typeof rawMeta === 'object' && !Array.isArray(rawMeta)
+        ? (rawMeta as Record<string, unknown>)
+        : null;
+    const ts = obj.updated_at || obj.created_at;
+    return {
+      storagePath: path,
+      updatedAt: ts ? new Date(ts).getTime() : null,
+      metadata,
+    };
+  };
+
+  const preferred = await resolveAtPath(preferredPath);
+  if (preferred) return preferred;
+  if (preferredPath.endsWith('.png')) {
+    return resolveAtPath(preferredPath.replace(/\.png$/, '.webp'));
+  }
+  return null;
+}
+
 async function livePreviewObjectExists(
   supabase: SupabaseClient,
   bucket: string,
   preferredPath: string
 ): Promise<{ storagePath: string } | null> {
-  const { error } = await supabase.storage.from(bucket).download(preferredPath);
-  if (!error) return { storagePath: preferredPath };
-  if (preferredPath.endsWith('.png')) {
-    const legacy = preferredPath.replace(/\.png$/, '.webp');
-    const { error: legacyErr } = await supabase.storage.from(bucket).download(legacy);
-    if (!legacyErr) return { storagePath: legacy };
-  }
-  return null;
-}
-
-/** Storage `updated_at` for cache invalidation (side color must re-anchor when FRONT is newer). */
-async function livePreviewStorageObjectUpdatedAt(
-  supabase: SupabaseClient,
-  bucket: string,
-  preferredPath: string
-): Promise<number | null> {
-  const hit = await livePreviewObjectExists(supabase, bucket, preferredPath);
-  if (!hit) return null;
-  const parts = hit.storagePath.split('/');
-  const name = parts.pop();
-  if (!name) return null;
-  const dir = parts.join('/');
-  const { data, error } = await supabase.storage.from(bucket).list(dir, {
-    limit: 200,
-    sortBy: { column: 'name', order: 'asc' },
-  });
-  if (error || !data?.length) return null;
-  const obj = data.find((o) => o.name === name);
-  if (!obj) return null;
-  const ts = obj.updated_at || obj.created_at;
-  return ts ? new Date(ts).getTime() : null;
+  const hit = await livePreviewStorageObjectHit(supabase, bucket, preferredPath);
+  return hit ? { storagePath: hit.storagePath } : null;
 }
 
 /** Bump when L/R image order or side prompts change — old Storage objects without this metadata re-run Fal. */
 const NOIR_COLOR_SIDE_PIPELINE_GEN = '3';
-
-async function livePreviewStorageObjectMetadata(
-  supabase: SupabaseClient,
-  bucket: string,
-  preferredPath: string
-): Promise<Record<string, unknown> | null> {
-  const hit = await livePreviewObjectExists(supabase, bucket, preferredPath);
-  if (!hit) return null;
-  const parts = hit.storagePath.split('/');
-  const name = parts.pop();
-  if (!name) return null;
-  const dir = parts.join('/');
-  const { data, error } = await supabase.storage.from(bucket).list(dir, {
-    limit: 200,
-    sortBy: { column: 'name', order: 'asc' },
-  });
-  if (error || !data?.length) return null;
-  const obj = data.find((o) => o.name === name);
-  const meta = obj?.metadata;
-  return meta && typeof meta === 'object' && !Array.isArray(meta)
-    ? (meta as Record<string, unknown>)
-    : null;
-}
-
-/** True when FRONT (M) was regenerated after this L/R file — side must re-run with front anchor. */
-async function livePreviewSideColorStaleVsFront(
-  supabase: SupabaseClient,
-  bucket: string,
-  sidePath: string,
-  frontPath: string
-): Promise<boolean> {
-  const frontAt = await livePreviewStorageObjectUpdatedAt(supabase, bucket, frontPath);
-  if (!frontAt) return false;
-  const sideAt = await livePreviewStorageObjectUpdatedAt(supabase, bucket, sidePath);
-  if (!sideAt) return true;
-  return frontAt > sideAt;
-}
 
 /** Skip Fal for L/R only when file exists, pipeline metadata matches, and FRONT is not newer. */
 async function livePreviewSideColorCacheHit(
@@ -258,11 +244,13 @@ async function livePreviewSideColorCacheHit(
   sidePath: string,
   frontPath: string
 ): Promise<boolean> {
-  const hit = await livePreviewObjectExists(supabase, bucket, sidePath);
-  if (!hit) return false;
-  const meta = await livePreviewStorageObjectMetadata(supabase, bucket, hit.storagePath);
-  if (meta?.noirColorSidePipelineGen !== NOIR_COLOR_SIDE_PIPELINE_GEN) return false;
-  if (await livePreviewSideColorStaleVsFront(supabase, bucket, sidePath, frontPath)) return false;
+  const [sideHit, frontHit] = await Promise.all([
+    livePreviewStorageObjectHit(supabase, bucket, sidePath),
+    livePreviewStorageObjectHit(supabase, bucket, frontPath),
+  ]);
+  if (!sideHit) return false;
+  if (sideHit.metadata?.noirColorSidePipelineGen !== NOIR_COLOR_SIDE_PIPELINE_GEN) return false;
+  if (frontHit?.updatedAt && sideHit.updatedAt && frontHit.updatedAt > sideHit.updatedAt) return false;
   return true;
 }
 
@@ -607,7 +595,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
   const paths = wigPreviewLiveAnglePaths(promptVersion, 'NOIR', manifestHash);
   const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
-  const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
+  const reconcileSidesOnly = readBool(body, 'reconcileSidesOnly');
+  const anglesToRun = singleAngle
+    ? [singleAngle]
+    : reconcileSidesOnly
+      ? (['left', 'right'] as const)
+      : angleOrder;
   const mannequinByAngle = { front: frontUrl, left: leftUrl, right: rightUrl } as const;
 
   let supabase;

@@ -32813,3 +32813,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Reload color sub-page (signed-in premium) — L/R should re-generate automatically once deploy is live; or founder **regen L/R**.
 
+---
+
+## 2026-06-30 — Supabase Disk IO: reduce live-preview Storage churn
+
+**Context (continued chat):** User received **Supabase Disk IO Budget** email again for project **`hyycomvcaqxxvyrfupes`** (FS Website).
+
+**Causes in this app:**
+- Live NOIR color/styling APIs used **`storage.download()`** to check if preview files exist — reads **full PNG/WebP** per check (very high Disk IO).
+- Recent color-page fix **always called** triple sequential API (3 serverless invocations × multiple downloads per visit).
+- Side pipeline migration (L/R regen for **`noirColorSidePipelineGen`**) adds Fal upload burst until metadata backfilled.
+
+**Fix:**
+- **`api/_lib/bawLivePreviewStorageDownload.ts`** + inlined **`live-noir-color.ts`**: **`livePreviewStorageObjectHit`** via **`list()`** metadata only (no download); consolidated side cache check (one list per path).
+- **`reconcileSidesOnly`** on **`live-noir-color`**: one request processes **L+R only** when FRONT exists.
+- **`postWigPreviewLiveNoirColorReconcileSides`** + color page: reconcile at most **once per swatch per 6h** (`sessionStorage`); skip API when cached triple fresh.
+- Full triple sequential API only when Storage triple **missing**.
+
+**Ops:** Disk IO should drop after deploy + one-time L/R backfill. If warnings persist: Supabase dashboard → Disk IO charts; consider **compute add-on** upgrade per Supabase email.
+

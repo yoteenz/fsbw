@@ -26,6 +26,7 @@ import {
   resolveWigPreviewLiveColorTripleIfStored,
   wigPreviewLiveColorTriplePublicUrlsForSelections,
 } from '../../../utils/wigPreviewLiveStoragePublicUrls';
+import { wigPreviewManifestHashLiveColorTier } from '../../../utils/wigPreviewLiveColorTierHash';
 import {
   clearPendingBawNoirLiveColorWigViews,
   persistBawNoirLiveColorWigViews,
@@ -36,6 +37,7 @@ import {
 import {
   getAccessToken,
   postWigPreviewLiveNoirColor,
+  postWigPreviewLiveNoirColorReconcileSides,
   postWigPreviewLiveNoirColorRegenerateAll,
   postWigPreviewLiveNoirColorRegenerateAngle,
 } from '../../../utils/api';
@@ -650,6 +652,24 @@ function ColorSelection() {
       }
       const sel = readBuildWigLivePreviewSelections(pathname);
       const payload = { unitKey: 'NOIR' as const, color: selectedColor, ...sel };
+      const applyLiveTripleFromApi = (u: {
+        front: string | null;
+        left: string | null;
+        right: string | null;
+      }) => {
+        if (u.front && u.left && u.right) {
+          const bust = Date.now();
+          const triple: [string, string, string] = [
+            `${u.left}?t=${bust}`,
+            `${u.front}?t=${bust}`,
+            `${u.right}?t=${bust}`,
+          ];
+          setLiveWigViews(triple);
+          persistPendingBawNoirLiveColorWigViews(triple);
+          window.dispatchEvent(new CustomEvent('customStorageChange'));
+        }
+      };
+
       const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
       if (cancelled || founderColorPreviewGenRef.current !== gen) return;
       if (fromStorage) {
@@ -665,21 +685,31 @@ function ColorSelection() {
           window.dispatchEvent(new CustomEvent('customStorageChange'));
         }
       }
-      /** Always call API — L/R may need re-run (pipeline metadata / stale vs FRONT) even when Storage triple exists. */
-      void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
+
+      const manifestHash = await wigPreviewManifestHashLiveColorTier(payload);
+      const reconcileKey = `bawNoirColorSideReconcile:${manifestHash}`;
+      const reconcileTtlMs = 6 * 60 * 60 * 1000;
+      const lastReconcile = Number(sessionStorage.getItem(reconcileKey) || '0');
+      const shouldReconcileSides =
+        Boolean(fromStorage) && (!lastReconcile || Date.now() - lastReconcile > reconcileTtlMs);
+
+      const apiCall = shouldReconcileSides
+        ? postWigPreviewLiveNoirColorReconcileSides({ color: selectedColor, ...sel })
+        : fromStorage
+          ? null
+          : postWigPreviewLiveNoirColor({ color: selectedColor, ...sel });
+
+      if (!apiCall) {
+        if (!cancelled && founderColorPreviewGenRef.current === gen) setLivePreviewLoading(false);
+        return;
+      }
+
+      void apiCall
         .then((res) => {
           if (cancelled || founderColorPreviewGenRef.current !== gen) return;
-          const u = res.publicUrls;
-          if (u.front && u.left && u.right) {
-            const bust = Date.now();
-            const triple: [string, string, string] = [
-              `${u.left}?t=${bust}`,
-              `${u.front}?t=${bust}`,
-              `${u.right}?t=${bust}`,
-            ];
-            setLiveWigViews(triple);
-            persistPendingBawNoirLiveColorWigViews(triple);
-            window.dispatchEvent(new CustomEvent('customStorageChange'));
+          applyLiveTripleFromApi(res.publicUrls);
+          if (shouldReconcileSides) {
+            sessionStorage.setItem(reconcileKey, String(Date.now()));
           }
         })
         .catch((e: Error) => {

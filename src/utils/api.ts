@@ -1856,6 +1856,8 @@ export type WigPreviewLiveNoirColorPayload = {
   addOns?: string[];
   /** When true with a single `angle`, re-runs fal even if that WebP exists (admin regenerate). */
   forceRegenerate?: boolean;
+  /** L/R only in one request — skips FRONT cache check (lower Disk IO when Storage triple already exists). */
+  reconcileSidesOnly?: boolean;
 };
 
 export type WigPreviewLiveNoirColorResult = {
@@ -2039,6 +2041,35 @@ export async function postWigPreviewLiveNoirColor(
   opts?: { forceRegenerate?: boolean }
 ): Promise<WigPreviewLiveNoirColorResult> {
   return postWigPreviewLiveNoirColorSequential(body, opts);
+}
+
+/**
+ * When FRONT (M) already exists in Storage: one API call, L/R only — checks pipeline metadata / stale vs FRONT without re-hitting FRONT or triple sequential invocations.
+ */
+export async function postWigPreviewLiveNoirColorReconcileSides(
+  body: WigPreviewLiveNoirColorPayload
+): Promise<WigPreviewLiveNoirColorResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/wig-preview/live-noir-color', {
+      method: 'POST',
+      body: { ...body, reconcileSidesOnly: true },
+    });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Live color side reconcile');
+  }
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Live preview failed');
+  }
+  return JSON.parse(text) as WigPreviewLiveNoirColorResult;
 }
 
 export type LiveWigAfterColorStylingPayload = WigPreviewLiveNoirColorPayload & {
