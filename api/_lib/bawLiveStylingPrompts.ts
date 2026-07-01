@@ -202,8 +202,8 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(
 }
 
 /**
- * **UI L / UI R part, L/R camera angles:** Fal input = **MIDDLE-part same-angle** styled output — **only** re-part.
- * Middle **RIGHT 3/4** already has correct camera/hand/lighting; projecting from side-part **FRONT** re-rolls wrong handedness (often LEFT 3/4).
+ * **UI L / UI R part, L/R camera angles:** re-part from **MIDDLE-part same-angle** (deprecated for live API).
+ * Live API uses **`buildBawSalonStylingWithFrontAnchorPrompt`** with **this side part’s FRONT (M)** + gray-brick side pose.
  */
 export function buildBawSalonSidePartFromMiddleSameAnglePrompt(
   angle: 'left' | 'right',
@@ -679,7 +679,7 @@ function bawSalonFrontAnchorSideSceneLockBlock(angle: 'left' | 'right'): string 
   const handedness =
     angle === 'left'
       ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
-      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Keep true RIGHT 3/4** framing from **IMAGE 2** — **do not** rotate the head toward camera.';
   return (
     '**SCENE LOCK (' +
     angleLabel +
@@ -706,7 +706,7 @@ function buildBawSalonFrontAnchorSideSupplement(
       partSelection +
       ' part**. **Copy this exact hairstyle identity** onto **IMAGE 2**\'s **' +
       (angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4') +
-      '** camera — **same** wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** a different curl/wave family vs IMAGE 1.',
+      '** camera — **same** wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** a different curl/wave family vs IMAGE 1; **FORBIDDEN:** “same vibe” or “matching style” — must be **the same hair** rotated to the side camera.',
     bawSalonModeLockBlock(salon),
     bawSalonFinishLookBlock(salon),
     ...(layersWave ? [layersWave] : []),

@@ -8,7 +8,7 @@ export const config = { maxDuration: 300 };
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
  * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
- * **UI L / UI R part:** **FRONT** = re-part from **MIDDLE-part FRONT**. **L/R cameras** = re-part from **MIDDLE-part same-angle** output (middle **LEFT 3/4** / **RIGHT 3/4**) — preserves camera handedness; side-part FRONT anchor was re-rolling **LEFT 3/4** on the **R** camera.
+ * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **L/R cameras** = **same chain as MIDDLE part**: **`[ this side part’s FRONT (M), gray-brick side pose ]`** — exact FRONT hairstyle on side cameras (no styling-ref IMAGE 3).
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -41,7 +41,6 @@ import {
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildBawSalonStylingWithFrontAnchorPrompt,
   buildBawSalonSidePartFromMiddleFrontPrompt,
-  buildBawSalonSidePartFromMiddleSameAnglePrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
   bawStylingReferenceStoragePath,
@@ -289,7 +288,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
-    /** UI L / UI R part: **FRONT** re-parts from **MIDDLE-part FRONT**; **L/R cameras** re-part from **MIDDLE-part same-angle**. */
+    /** UI L / UI R part: **FRONT (M)** from middle FRONT; **L/R cameras** from **this part’s FRONT (M)** (same front-anchor chain as MIDDLE part). */
     const salonMode = liveSalonMode(middleLayers, middleCrimps, middleFlatIron);
     const useMiddlePartFrontAnchor =
       (partStyling === 'LEFT' || partStyling === 'RIGHT') && salonMode !== 'none' && !bangsOnly;
@@ -413,26 +412,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt = buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salonMode, salonPromptOpts);
           imageUrls = [middlePartFrontUrl];
         } else {
-          /** Re-part from **MIDDLE-part same camera** — keeps correct L/R 3/4 handedness (side-part FRONT anchor re-rolled wrong angle on R). */
-          const middleAnglePath = middleOutPaths[angle];
-          const middleAngleExists = await livePreviewObjectExists(supabase, bucket, middleAnglePath);
-          if (!middleAngleExists) {
+          /** Same front-anchor chain as **MIDDLE part**: **FRONT (M)** = hairstyle identity; gray-brick = camera/scene lock. */
+          const sidePartFrontAnchorUrl =
+            frontStylingAnchorUrl ??
+            (await resolveFrontStylingAnchorPublicUrl(supabase, bucket, outPaths.front));
+          if (!sidePartFrontAnchorUrl) {
             sendJson(res, 400, {
               error:
-                `${partStyling} part **${angle}** camera needs **MIDDLE part ${angle.toUpperCase()}** styled output first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate all angles** (front → left → right), then **${partStyling}** part again.`,
+                `${partStyling} part **${angle}** camera needs this part’s **FRONT (M)** styled output first. Regenerate **FRONT** for **${partStyling}** part (after **MIDDLE** part FRONT exists), then **${angle}** again.`,
               colorTierHash,
-              missingMiddlePartAnglePath: middleAnglePath,
+              missingSidePartFrontPath: outPaths.front,
             });
             return;
           }
-          const { data: pubMidAngle } = supabase.storage.from(bucket).getPublicUrl(middleAngleExists.storagePath);
-          const middlePartSameAngleUrl = pubMidAngle?.publicUrl ?? '';
-          if (!middlePartSameAngleUrl) {
-            sendJson(res, 500, { error: `Could not build public URL for middle-part ${angle} anchor` });
-            return;
-          }
-          prompt = buildBawSalonSidePartFromMiddleSameAnglePrompt(angle, targetPart, salonMode, salonPromptOpts);
-          imageUrls = [middlePartSameAngleUrl];
+          prompt = buildBawSalonStylingWithFrontAnchorPrompt(
+            angle,
+            partStyling,
+            salonMode,
+            catalog,
+            salonPromptOpts
+          );
+          imageUrls = [sidePartFrontAnchorUrl, grayBrickUrl];
         }
       } else if (
         singlePassSalonEnabled() &&
@@ -484,12 +484,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               partStyling,
               salonMode,
               catalog,
-              { ...salonPromptOpts, hasStylingShapeRef: Boolean(stylingRefUrlForAngle) }
+              salonPromptOpts
             );
-            /** Side views: **front styled (M)** = hairstyle + color identity; gray-brick = exact pose/lighting. Omit color-tier side WebP — its unstylized silhouette was pulling L off the front lock. */
-            imageUrls = stylingRefUrlForAngle
-              ? [frontAnchorUrl, grayBrickUrl, stylingRefUrlForAngle]
-              : [frontAnchorUrl, grayBrickUrl];
+            /** Side views: **FRONT (M)** = hairstyle identity; gray-brick = scene/camera lock. Omit styling ref — it re-rolls hair off the front lock. */
+            imageUrls = [frontAnchorUrl, grayBrickUrl];
           } else if (stylingRefUrlForAngle) {
             prompt = buildBawSalonStylingWithSceneAndShapeRefsPrompt(
               angle,

@@ -32660,3 +32660,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Convention:** One user request → edit code + MEMORY → **`./scripts/agent-commit.sh "final message"`** **once**. If already pushed in this task, **do not push again**.
 
+---
+
+## 2026-07-01 — Side-part L/R: front-anchor from side FRONT (M), not middle same-angle
+
+**Context (continued chat):** User reported **LEFT/RIGHT part** **L/R camera** thumbnails still **not identical** to **FRONT (M) camera** hairstyle — Fal was inventing new looks. Prior **middle same-angle** re-part path re-rolled hair from **middle part L/R** (center part) instead of locking **this side part’s FRONT (M)**.
+
+**Fix:**
+- **`api/live-wig-after-color-styling.ts`**: side-part **L/R** restored to **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`[ sidePartFront, grayBrickSide ]`** — **same pipeline as MIDDLE part**, IMAGE 1 = **this part’s FRONT (M)**. **Omit styling-ref IMAGE 3** on **all** front-anchor L/R passes (middle + side) — ref was pulling off identity lock.
+- **`bawLiveStylingPrompts.ts`**: stronger front-lock copy + **RIGHT 3/4** scene lock (no head rotate toward camera).
+- **`docs/WIG_PREVIEW_PREGENERATION.md`** updated.
+
+**Ops:** Regen **MIDDLE FRONT** → **side-part FRONT (M)** → **side-part L/R** with **`forceRegenerate`**.
+
