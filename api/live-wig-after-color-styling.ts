@@ -8,10 +8,7 @@ export const config = { maxDuration: 300 };
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
  * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
- * **UI L / UI R part:** **FRONT** = **`buildBawSalonSidePartFromMiddleFrontPrompt`** anchored to **MIDDLE-part FRONT** (re-part only). **L/R cameras** = same chain as **MIDDLE part**: **`buildBawSalonStylingWithFrontAnchorPrompt`** with **[ this part’s FRONT, gray-brick side pose ]**.
- * **Output:** `.../after-color/.../{angle}.png` (legacy `.webp` still read). Fal **`quality: high`**, **`output_format: png`**.
- * **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`**: one pass from gray-brick (+ optional styling ref) via `buildBawSalonSinglePassFromGrayBrickPrompt`.
- * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
+ * **UI L / UI R part:** **FRONT** = re-part from **MIDDLE-part FRONT**. **L/R cameras** = re-part from **MIDDLE-part same-angle** output (middle **LEFT 3/4** / **RIGHT 3/4**) — preserves camera handedness; side-part FRONT anchor was re-rolling **LEFT 3/4** on the **R** camera.
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -44,6 +41,7 @@ import {
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildBawSalonStylingWithFrontAnchorPrompt,
   buildBawSalonSidePartFromMiddleFrontPrompt,
+  buildBawSalonSidePartFromMiddleSameAnglePrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
   bawStylingReferenceStoragePath,
@@ -291,24 +289,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
-    /** FLAT IRON + UI LEFT: **right** camera thumbnail uses the same asset as **RIGHT** part `right.webp` (product request). */
-    const flatIronRightPartFolderForLeftThumb =
-      middleFlatIron && partStyling === 'LEFT'
-        ? hasBangs
-          ? wigPreviewLiveFlatIronWithBangsPartFolder('RIGHT')
-          : wigPreviewLiveFlatIronPartFolder('RIGHT')
-        : null;
-    const flatIronRightPartOutPathsForLeftThumb =
-      flatIronRightPartFolderForLeftThumb !== null
-        ? wigPreviewLiveAfterColorStylingPaths(
-            promptVersion,
-            'NOIR',
-            colorTierHash,
-            flatIronRightPartFolderForLeftThumb
-          )
-        : null;
-
-    /** UI L / UI R part: **FRONT** re-parts from **MIDDLE-part FRONT**; **L/R cameras** anchor to **this part’s FRONT** (same as MIDDLE part angle chain). */
+    /** UI L / UI R part: **FRONT** re-parts from **MIDDLE-part FRONT**; **L/R cameras** re-part from **MIDDLE-part same-angle**. */
     const salonMode = liveSalonMode(middleLayers, middleCrimps, middleFlatIron);
     const useMiddlePartFrontAnchor =
       (partStyling === 'LEFT' || partStyling === 'RIGHT') && salonMode !== 'none' && !bangsOnly;
@@ -324,17 +305,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     } catch {
       sendJson(res, 503, { error: 'SUPABASE_SERVICE_ROLE_KEY required for Storage upload' });
       return;
-    }
-
-    /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
-    let flatIronLeftRightThumbOverrideUrl: string | null = null;
-    if (flatIronRightPartOutPathsForLeftThumb) {
-      const pRightPartRightAngle = flatIronRightPartOutPathsForLeftThumb.right;
-      const rightPartExists = await livePreviewObjectExists(supabase, bucket, pRightPartRightAngle);
-      if (rightPartExists) {
-        const { data: pubOverride } = supabase.storage.from(bucket).getPublicUrl(rightPartExists.storagePath);
-        flatIronLeftRightThumbOverrideUrl = pubOverride?.publicUrl ?? null;
-      }
     }
 
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
@@ -355,8 +325,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
         const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
         const skippedAngles = [...anglesToRun];
-        const pubRightOut =
-          flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
         sendJson(res, 200, {
           ok: true,
           colorTierHash,
@@ -367,7 +335,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           publicUrls: {
             front: pubFront?.publicUrl ?? null,
             left: pubLeft?.publicUrl ?? null,
-            right: pubRightOut,
+            right: pubRight?.publicUrl ?? null,
           },
           generated: [] as string[],
           skipped: skippedAngles,
@@ -445,29 +413,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt = buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salonMode, salonPromptOpts);
           imageUrls = [middlePartFrontUrl];
         } else {
-          /** Mirror **MIDDLE part** L/R logic: anchor to **this side part’s FRONT**, not middle-part FRONT. */
-          const sidePartFrontAnchorUrl =
-            frontStylingAnchorUrl ??
-            (await resolveFrontStylingAnchorPublicUrl(supabase, bucket, outPaths.front));
-          if (!sidePartFrontAnchorUrl) {
+          /** Re-part from **MIDDLE-part same camera** — keeps correct L/R 3/4 handedness (side-part FRONT anchor re-rolled wrong angle on R). */
+          const middleAnglePath = middleOutPaths[angle];
+          const middleAngleExists = await livePreviewObjectExists(supabase, bucket, middleAnglePath);
+          if (!middleAngleExists) {
             sendJson(res, 400, {
               error:
-                `${partStyling} part **${angle}** camera needs this part’s **FRONT** styled output first. Regenerate **FRONT** for **${partStyling}** part (after **MIDDLE** part FRONT exists), then **${angle}** again.`,
+                `${partStyling} part **${angle}** camera needs **MIDDLE part ${angle.toUpperCase()}** styled output first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate all angles** (front → left → right), then **${partStyling}** part again.`,
               colorTierHash,
-              missingSidePartFrontPath: outPaths.front,
+              missingMiddlePartAnglePath: middleAnglePath,
             });
             return;
           }
-          prompt = buildBawSalonStylingWithFrontAnchorPrompt(
-            angle,
-            partStyling,
-            salonMode,
-            catalog,
-            { ...salonPromptOpts, hasStylingShapeRef: Boolean(stylingRefUrlForAngle) }
-          );
-          imageUrls = stylingRefUrlForAngle
-            ? [sidePartFrontAnchorUrl, grayBrickUrl, stylingRefUrlForAngle]
-            : [sidePartFrontAnchorUrl, grayBrickUrl];
+          const { data: pubMidAngle } = supabase.storage.from(bucket).getPublicUrl(middleAngleExists.storagePath);
+          const middlePartSameAngleUrl = pubMidAngle?.publicUrl ?? '';
+          if (!middlePartSameAngleUrl) {
+            sendJson(res, 500, { error: `Could not build public URL for middle-part ${angle} anchor` });
+            return;
+          }
+          prompt = buildBawSalonSidePartFromMiddleSameAnglePrompt(angle, targetPart, salonMode, salonPromptOpts);
+          imageUrls = [middlePartSameAngleUrl];
         }
       } else if (
         singlePassSalonEnabled() &&
@@ -573,8 +538,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
     const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
     const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
-    const pubRightOut =
-      flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
 
     sendJson(res, 200, {
       ok: true,
@@ -586,7 +549,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       publicUrls: {
         front: pubFront?.publicUrl ?? null,
         left: pubLeft?.publicUrl ?? null,
-        right: pubRightOut,
+        right: pubRight?.publicUrl ?? null,
       },
       generated,
       skipped,

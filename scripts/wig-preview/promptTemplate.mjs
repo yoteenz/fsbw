@@ -419,13 +419,65 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
   ].join(' ');
 }
 
-/** @deprecated Prefer `buildBawSalonSidePartFromMiddleFrontPrompt` / anchor variant in `bawLiveStylingPrompts.ts`. */
+/** UI L / UI R part L/R cameras: MIDDLE-part **same-angle** anchor. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
+export function buildBawSalonSidePartFromMiddleSameAnglePrompt(angle, targetPart, salon, options) {
+  const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
+  const partTask =
+    targetPart === 'LEFT'
+      ? '**UI L / LEFT part**: visible part groove in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**) — **not** center, **not** UI R.'
+      : '**UI R / RIGHT part**: visible part groove in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** center, **not** UI L.';
+  const styleKeep =
+    salon === 'layers'
+      ? 'Keep the **same uniform voluminous layered S-waves** (not ringlets), volume, length, and color — **only** change where the **part** sits.'
+      : salon === 'crimps'
+        ? 'Keep the **same crimp texture, scale, length, and color** — **only** change where the **part** sits.'
+        : 'Keep the **same bone-straight flat-ironed** finish, length, and color — **only** change where the **part** sits.';
+  const includeBangs = Boolean(options && options.includeBangs);
+  const bangsLine = includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const layersWave = salon === 'layers' ? bawLayersUniformWaveTextureBlock() : null;
+  const handedness =
+    angle === 'left'
+      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** front; **NOT** right 3/4.'
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** front; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+  return [
+    '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **' +
+      angleLabel +
+      '** styled output — **same** **' +
+      angleLabel +
+      '** camera, head pose, framing, brick, lighting, **hair color**, and **' +
+      salonLabel +
+      '** finish.',
+    '**TASK:** **Recreate this exact ' +
+      angleLabel +
+      ' photograph** with **only** the **part moved** to ' +
+      partTask +
+      ' **Do not** change camera angle or head pose; **do not** restyle texture; **do not** change volume, length, or drape except what the new part requires.',
+    '**CAMERA LOCK (critical):** Output **must** remain **' +
+      angleLabel +
+      '** — **same** handedness and composition as **IMAGE 1**. **FORBIDDEN:** outputting **' +
+      wrongAngle +
+      '** or a **front** view. **FORBIDDEN:** mirroring IMAGE 1 into the opposite 3/4. ' +
+      handedness,
+    salonPartMustOverrideInputReferenceBlock(targetPart),
+    salonPartDirectionSemanticsBlock(),
+    styleKeep,
+    salonOneShoulderDrapeBlock(),
+    ...(layersWave ? [layersWave] : []),
+    ...(bangsLine ? [bangsLine] : []),
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.',
+  ].join(' ');
+}
+
+/** @deprecated Prefer `buildBawSalonSidePartFromMiddleFrontPrompt` / `buildBawSalonSidePartFromMiddleSameAnglePrompt`. */
 export function buildUiRightSalonFromMiddlePartOutputPrompt(angle, salon, includeBangs, catalog) {
   const cat = catalog ?? { label: 'hair', hex: '000000' };
   if (angle === 'front') {
     return buildBawSalonSidePartFromMiddleFrontPrompt('RIGHT', salon, { includeBangs });
   }
-  return buildBawSalonSidePartFromMiddleFrontAnchorPrompt(angle, 'RIGHT', salon, cat, { includeBangs });
+  return buildBawSalonSidePartFromMiddleSameAnglePrompt(angle, 'RIGHT', salon, { includeBangs });
 }
 
 function buildBawSalonSidePartFromMiddleFrontAnchorPrompt(angle, targetPart, salon, catalog, options) {

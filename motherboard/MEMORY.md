@@ -32632,3 +32632,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Convention:** Agents must use **`./scripts/agent-commit.sh`** (or manually verify MEMORY is staged) before any push when code/docs changed.
 
+---
+
+## 2026-07-01 — Side-part R camera wrong handedness: middle same-angle anchor
+
+**Context (continued chat):** User reported **LEFT / RIGHT part** selections — **right camera (R)** thumbnail keeps generating **LEFT 3/4** view instead of **RIGHT 3/4** (again).
+
+**Root cause:** Side-part **L/R cameras** anchored to **this part’s FRONT** + gray-brick (mirroring middle’s *pipeline* but not workable for asymmetric side-part fronts). Fal re-projected **FRONT** onto side pose and re-rolled **wrong 3/4 handedness** on **R**. **FLAT IRON + UI LEFT** **`publicUrls.right`** override could also serve a **different part’s** URL vs stored output.
+
+**Fix:**
+- **`buildBawSalonSidePartFromMiddleSameAnglePrompt`** — side-part **L/R cameras** re-part from **MIDDLE-part same-angle** (**middle LEFT** / **middle RIGHT**) single-image edit; explicit **CAMERA LOCK** forbids opposite 3/4.
+- **`api/live-wig-after-color-styling.ts`**: side-part **FRONT** unchanged (middle FRONT); **L/R** use middle same-angle; removed **flat-iron LEFT `publicUrls.right`** override.
+- **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** synced.
+
+**Ops:** Regen **MIDDLE** **front → left → right** first; then **LEFT/RIGHT** part triple with **`forceRegenerate`** on **R** (cached wrong-handed files persist until regen).
+

@@ -201,6 +201,67 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(
   ].join(' ');
 }
 
+/**
+ * **UI L / UI R part, L/R camera angles:** Fal input = **MIDDLE-part same-angle** styled output — **only** re-part.
+ * Middle **RIGHT 3/4** already has correct camera/hand/lighting; projecting from side-part **FRONT** re-rolls wrong handedness (often LEFT 3/4).
+ */
+export function buildBawSalonSidePartFromMiddleSameAnglePrompt(
+  angle: 'left' | 'right',
+  targetPart: 'LEFT' | 'RIGHT',
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  options?: { includeBangs?: boolean }
+): string {
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
+  const partTask =
+    targetPart === 'LEFT'
+      ? '**UI L / LEFT part**: visible part groove in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**) — **not** center, **not** UI R.'
+      : '**UI R / RIGHT part**: visible part groove in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** center, **not** UI L.';
+  const styleKeep =
+    salon === 'layers'
+      ? 'Keep the **same uniform voluminous layered S-waves** (not ringlets), volume, length, and color — **only** change where the **part** sits.'
+      : salon === 'crimps'
+        ? 'Keep the **same crimp texture, scale, length, and color** — **only** change where the **part** sits.'
+        : 'Keep the **same bone-straight flat-ironed** finish, length, and color — **only** change where the **part** sits.';
+  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const handedness =
+    angle === 'left'
+      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** front; **NOT** right 3/4.'
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** front; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+
+  return [
+    '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **' +
+      angleLabel +
+      '** styled output — **same** **' +
+      angleLabel +
+      '** camera, head pose, framing, brick, lighting, **hair color**, and **' +
+      salonLabel +
+      '** finish.',
+    '**TASK:** **Recreate this exact ' +
+      angleLabel +
+      ' photograph** with **only** the **part moved** to ' +
+      partTask +
+      ' **Do not** change camera angle or head pose; **do not** restyle texture; **do not** change volume, length, or drape except what the new part requires.',
+    '**CAMERA LOCK (critical):** Output **must** remain **' +
+      angleLabel +
+      '** — **same** handedness and composition as **IMAGE 1**. **FORBIDDEN:** outputting **' +
+      wrongAngle +
+      '** or a **front** view. **FORBIDDEN:** mirroring IMAGE 1 into the opposite 3/4. ' +
+      handedness,
+    salonPartMustOverrideInputReferenceBlock(targetPart),
+    salonPartDirectionSemanticsBlock(),
+    bawSalonModeLockBlock(salon),
+    styleKeep,
+    bawSalonOneShoulderDrapeBlock(),
+    ...(salon === 'layers' ? [bawLayersUniformWaveTextureBlock()] : []),
+    ...(bangsLine ? [bangsLine] : []),
+    bawFalEditPreserveReferenceBlock(),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
+  ].join(' ');
+}
+
 function buildBawSalonMiddleFrontAnchorSideSupplement(
   angle: 'left' | 'right',
   targetPart: 'LEFT' | 'RIGHT',
@@ -231,7 +292,7 @@ function buildBawSalonMiddleFrontAnchorSideSupplement(
 
 /**
  * **UI L / UI R part, L/R camera angles:** **IMAGE 1** = **MIDDLE-part FRONT** identity; **IMAGE 2** = gray-brick side pose.
- * @deprecated Live API no longer uses this for side-part L/R cameras — use **`buildBawSalonStylingWithFrontAnchorPrompt`** with **this side part’s FRONT** (mirrors MIDDLE part). Kept for script/legacy callers.
+ * @deprecated Live API uses **`buildBawSalonSidePartFromMiddleSameAnglePrompt`** for side-part L/R cameras.
  */
 export function buildBawSalonSidePartFromMiddleFrontAnchorPrompt(
   angle: 'left' | 'right',
