@@ -8,7 +8,7 @@ export const config = { maxDuration: 300 };
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
  * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
- * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **UI R:** **`Ref Images/IMG_4665.jpeg`** attached as part-placement guide (groove only — not ref drape). **L/R cameras:** **`[ side-part FRONT, gray-brick side, optional UI R placement guide ]`**.
+ * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **UI R:** **`[ placement guide, MIDDLE FRONT ]`** (FRONT) or **`[ gray-brick, placement guide, FRONT donor ]`** (L/R) — **`Ref Images/IMG_4665.jpeg`** = part groove authority (#0 priority); donors = texture/color only.
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -417,7 +417,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             hasRightPartPlacementRef: targetPart === 'RIGHT',
           });
           imageUrls = rightPartPlacementRefUrl
-            ? [middlePartFrontUrl, rightPartPlacementRefUrl]
+            ? [rightPartPlacementRefUrl, middlePartFrontUrl]
             : [middlePartFrontUrl];
         } else {
           /** Same front-anchor chain as **MIDDLE part**: **FRONT (M)** = hairstyle identity; gray-brick = camera/scene lock. */
@@ -443,9 +443,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               hasRightPartPlacementRef: targetPart === 'RIGHT',
             }
           );
-          /** FRONT + gray-brick + optional UI R placement guide (part groove only; not ref drape). */
+          /** UI R: gray-brick body → placement guide (part) → FRONT donor (texture only). */
           imageUrls = rightPartPlacementRefUrl
-            ? [sidePartFrontAnchorUrl, grayBrickUrl, rightPartPlacementRefUrl]
+            ? [grayBrickUrl, rightPartPlacementRefUrl, sidePartFrontAnchorUrl]
             : [sidePartFrontAnchorUrl, grayBrickUrl];
         }
       } else if (

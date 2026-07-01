@@ -32742,3 +32742,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Force regen **RIGHT part** **FRONT (M)** → **L/R** after deploy.
 
+---
+
+## 2026-06-30 — UI R part #0 priority + reordered images (placement ref first)
+
+**Context (continued chat):** **RIGHT part** still on **same side as LEFT part** (groove **image RIGHT** / UI L) — placement ref **`IMG_4665.jpeg`** not winning; something (front donor + “preserve reference” + front-as-IMAGE-1) overrode part placement.
+
+**Fix:**
+- **Reordered UI R `image_urls`:** FRONT **`[ placement guide, MIDDLE FRONT ]`**; L/R **`[ gray-brick, placement guide, FRONT donor ]`** — placement guide no longer last; front/middle donors demoted to **texture/color only**.
+- **`bawSalonRightPartZeroPriorityBlock`** — **#0 PRIORITY** first line every UI R pass: mirror of UI L, **AUTOMATIC FAIL** if groove **image RIGHT**.
+- Dedicated prompts: **`buildBawSalonRightPartFromMiddleFrontPrompt`**, **`buildBawSalonRightPartSideViewWithPlacementRefPrompt`** — no generic “canonical FRONT = IMAGE 1 identity lock”; **`bawSalonRightPartHairEditLockBlock`** replaces preserve-reference for UI R (forbids locking wrong-side part).
+- **`bawSalonPartPlacementRefs.ts`** expanded with body-lock + donor-only blocks.
+
+**Ops:** Force regen **RIGHT FRONT (M)** then **L/R** — cached wrong-groove FRONT invalidates side views.
+
