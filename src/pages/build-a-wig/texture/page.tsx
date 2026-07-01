@@ -9,6 +9,12 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import {
+  markBawConfirmedReturnFromSubpage,
+  persistBawScalarConfirmed,
+  persistBawScalarDraftTap,
+  revertBawDraftScalarToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -200,21 +206,7 @@ function TextureSelection() {
   ];
 
   const persistTextureChoice = (textureId: string, priceUsd: number) => {
-    const pathname = window.location.pathname;
-    const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    const priceStr = String(priceUsd);
-    localStorage.setItem('selectedTexture', textureId);
-    localStorage.setItem('selectedTexturePrice', priceStr);
-    if (isOnEditRoute) {
-      localStorage.setItem('editSelectedTexture', textureId);
-      localStorage.setItem('editSelectedTexturePrice', priceStr);
-    }
-    if (isOnCustomizeRoute) {
-      localStorage.setItem('customizeSelectedTexture', textureId);
-      localStorage.setItem('customizeSelectedTexturePrice', priceStr);
-    }
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
+    persistBawScalarDraftTap(window.location.pathname, 'Texture', textureId, String(priceUsd));
   };
 
   const handleTextureSelect = (textureId: string) => {
@@ -243,32 +235,8 @@ function TextureSelection() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getSelectedPrice().toString();
-      
-      // Always save with 'selected' prefix
-      localStorage.setItem('selectedTexture', selectedTexture);
-      localStorage.setItem('selectedTexturePrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
-      if (isOnProductSpecificEditRoute) {
-        localStorage.setItem('editSelectedTexture', selectedTexture);
-        localStorage.setItem('editSelectedTexturePrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
-      if (isOnProductSpecificCustomizeRoute) {
-        localStorage.setItem('customizeSelectedTexture', selectedTexture);
-        localStorage.setItem('customizeSelectedTexturePrice', price);
-      }
-      
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-      
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawDraftScalarToConfirmed(pathname, 'Texture');
     }
     
     // Determine return route
@@ -442,21 +410,7 @@ function TextureSelection() {
       }
     }
     
-    // Always save with 'selected' prefix
-    localStorage.setItem('selectedTexture', selectedTexture);
-    localStorage.setItem('selectedTexturePrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode
-    if (isEditMode) {
-      localStorage.setItem('editSelectedTexture', selectedTexture);
-      localStorage.setItem('editSelectedTexturePrice', price);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isCustomizeMode) {
-      localStorage.setItem('customizeSelectedTexture', selectedTexture);
-      localStorage.setItem('customizeSelectedTexturePrice', price);
-    }
+    persistBawScalarConfirmed(pathname, 'Texture', selectedTexture, price, { isCustomizeMode, isEditMode });
     
     // Determine the correct route to navigate back to based on current pathname
     let returnRoute = '/build-a-wig'; // Default
@@ -488,10 +442,8 @@ function TextureSelection() {
     
     console.log('Texture page - Navigating back to route:', returnRoute);
     
-    // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
+    markBawConfirmedReturnFromSubpage();
     
-    // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
     navigate(returnRoute);

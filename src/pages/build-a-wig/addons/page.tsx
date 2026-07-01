@@ -8,6 +8,12 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import {
+  markBawConfirmedReturnFromSubpage,
+  persistBawJsonConfirmed,
+  persistBawJsonDraftTap,
+  revertBawDraftJsonToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -231,17 +237,7 @@ export default function AddOnsSelectionPage() {
       return total + p;
     }, 0);
     const priceStr = price.toString();
-    localStorage.setItem('selectedAddOns', JSON.stringify(selectedAddOns));
-    localStorage.setItem('selectedAddOnsPrice', priceStr);
-    if (isOnEditRoute) {
-      localStorage.setItem('editSelectedAddOns', JSON.stringify(selectedAddOns));
-      localStorage.setItem('editSelectedAddOnsPrice', priceStr);
-    }
-    if (isOnCustomizeRoute) {
-      localStorage.setItem('customizeSelectedAddOns', JSON.stringify(selectedAddOns));
-      localStorage.setItem('customizeSelectedAddOnsPrice', priceStr);
-    }
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
+    persistBawJsonDraftTap(pathname, 'AddOns', JSON.stringify(selectedAddOns), priceStr);
   }, [location.pathname, selectedAddOns]);
 
   // Get wig views based on selected hairline from localStorage
@@ -381,6 +377,19 @@ export default function AddOnsSelectionPage() {
     }
   ];
 
+  const computeAddOnPrice = (addOnIds: string[]) => {
+    const selectedLace = localStorage.getItem('selectedLace') || '';
+    const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
+    const hasLaceDiscount = discountedLaceSizes.includes(selectedLace);
+
+    return addOnIds.reduce((total, addOnId) => {
+      const addOn = addOnOptions.find(opt => opt.id === addOnId);
+      let p = addOn?.price || 0;
+      if (hasLaceDiscount && (addOnId === 'BLEACH' || addOnId === 'PLUCK')) p -= 20;
+      return total + p;
+    }, 0);
+  };
+
   const handleAddOnToggle = (addOnId: string) => {
     // Block BLEACH/PLUCK deselect when styling is confirmed (check at call time, not in setState)
     if ((addOnId === 'BLEACH' || addOnId === 'PLUCK') && getIsStylingConfirmed()) {
@@ -388,42 +397,26 @@ export default function AddOnsSelectionPage() {
       if (current.includes(addOnId)) return; // do not allow remove
     }
     setSelectedAddOns(prev => {
+      let next: string[];
       if (prev.includes(addOnId)) {
         if ((addOnId === 'BLEACH' || addOnId === 'PLUCK') && getIsStylingConfirmed()) return prev;
-        return prev.filter(id => id !== addOnId);
+        next = prev.filter(id => id !== addOnId);
       } else {
-        // Add the add-on in the correct order based on sub-page sequence
         const correctOrder = ADDONS_CORRECT_ORDER;
         const newSelections = [...prev, addOnId];
-        
-        // Sort the selections according to the correct order
-        return newSelections.sort((a, b) => {
+        next = newSelections.sort((a, b) => {
           const indexA = correctOrder.indexOf(a);
           const indexB = correctOrder.indexOf(b);
           return indexA - indexB;
         });
       }
+      const price = computeAddOnPrice(next);
+      persistBawJsonDraftTap(location.pathname, 'AddOns', JSON.stringify(next), String(price));
+      return next;
     });
   };
 
-  const getTotalAddOnPrice = () => {
-    // Get selected lace size from localStorage
-    const selectedLace = localStorage.getItem('selectedLace') || '';
-    const discountedLaceSizes = ['2X6', '4X4', '5X5', '6X6', '7X7'];
-    const hasLaceDiscount = discountedLaceSizes.includes(selectedLace);
-    
-    return selectedAddOns.reduce((total, addOnId) => {
-      const addOn = addOnOptions.find(opt => opt.id === addOnId);
-      let price = addOn?.price || 0;
-      
-      // Apply $20 discount for bleach and pluck when specific lace sizes are selected
-      if (hasLaceDiscount && (addOnId === 'BLEACH' || addOnId === 'PLUCK')) {
-        price -= 20;
-      }
-      
-      return total + price;
-    }, 0);
-  };
+  const getTotalAddOnPrice = () => computeAddOnPrice(selectedAddOns);
 
   const totalPrice = getTotalAddOnPrice();
 
@@ -552,32 +545,8 @@ export default function AddOnsSelectionPage() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getTotalAddOnPrice().toString();
-      
-      // Always save with 'selected' prefix
-      localStorage.setItem('selectedAddOns', JSON.stringify(selectedAddOns));
-      localStorage.setItem('selectedAddOnsPrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
-      if (isOnProductSpecificEditRoute) {
-        localStorage.setItem('editSelectedAddOns', JSON.stringify(selectedAddOns));
-        localStorage.setItem('editSelectedAddOnsPrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
-      if (isOnProductSpecificCustomizeRoute) {
-        localStorage.setItem('customizeSelectedAddOns', JSON.stringify(selectedAddOns));
-        localStorage.setItem('customizeSelectedAddOnsPrice', price);
-      }
-      
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-      
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawDraftJsonToConfirmed(pathname, 'AddOns');
     }
     
     // Determine return route
@@ -701,21 +670,7 @@ export default function AddOnsSelectionPage() {
       }
     }
     
-    // Always save with 'selected' prefix
-    localStorage.setItem('selectedAddOns', JSON.stringify(selectedAddOns));
-    localStorage.setItem('selectedAddOnsPrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode
-    if (isEditMode) {
-      localStorage.setItem('editSelectedAddOns', JSON.stringify(selectedAddOns));
-      localStorage.setItem('editSelectedAddOnsPrice', price);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isCustomizeMode) {
-      localStorage.setItem('customizeSelectedAddOns', JSON.stringify(selectedAddOns));
-      localStorage.setItem('customizeSelectedAddOnsPrice', price);
-    }
+    persistBawJsonConfirmed(pathname, 'AddOns', JSON.stringify(selectedAddOns), price, { isCustomizeMode, isEditMode });
     
     // Determine the correct route to navigate back to based on current pathname
     let returnRoute = '/build-a-wig'; // Default
@@ -751,10 +706,8 @@ export default function AddOnsSelectionPage() {
     
     console.log('Addons page - Navigating back to route:', returnRoute);
     
-    // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
+    markBawConfirmedReturnFromSubpage();
     
-    // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
     navigate(returnRoute);

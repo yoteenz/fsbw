@@ -9,6 +9,12 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import {
+  markBawConfirmedReturnFromSubpage,
+  persistBawScalarConfirmed,
+  persistBawScalarDraftTap,
+  revertBawDraftScalarToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -341,40 +347,11 @@ function CapSizeSelection() {
   const handleCapSizeSelect = (capSizeId: string) => {
     console.log('Cap-size page - selecting cap size:', capSizeId);
     setSelectedCapSize(capSizeId);
-    
-    // CRITICAL: Immediately save to localStorage when selecting in edit/customize mode
-    // This prevents useEffect hooks from overwriting the selection
-    const pathname = window.location.pathname;
-    const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    
-    // Calculate price for the selected cap size
-    // Use the same logic as getSelectedPrice() but with the capSizeId parameter
+
     const allOptions = [...capSizeOptions, ...flexibleSizeOptions];
     const selectedOption = allOptions.find(option => option.id === capSizeId);
     const priceUsd = selectedOption ? selectedOption.price : 0;
-    const price = String(priceUsd);
-    
-    // Always save with 'selected' prefix
-    localStorage.setItem('selectedCapSize', capSizeId);
-    localStorage.setItem('selectedCapSizePrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode
-    if (isOnEditRoute) {
-      localStorage.setItem('editSelectedCapSize', capSizeId);
-      localStorage.setItem('editSelectedCapSizePrice', price);
-      console.log('Cap-size page - saved to editSelected* keys:', capSizeId, price);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isOnCustomizeRoute) {
-      localStorage.setItem('customizeSelectedCapSize', capSizeId);
-      localStorage.setItem('customizeSelectedCapSizePrice', price);
-      console.log('Cap-size page - saved to customizeSelected* keys:', capSizeId, price);
-    }
-    
-    // Dispatch custom event to notify other components
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
+    persistBawScalarDraftTap(window.location.pathname, 'CapSize', capSizeId, String(priceUsd));
   };
 
   const handleBack = () => {
@@ -397,32 +374,8 @@ function CapSizeSelection() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getSelectedPrice().toString();
-      
-      // Always save with 'selected' prefix
-      localStorage.setItem('selectedCapSize', selectedCapSize);
-      localStorage.setItem('selectedCapSizePrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
-      if (isOnProductSpecificEditRoute) {
-        localStorage.setItem('editSelectedCapSize', selectedCapSize);
-        localStorage.setItem('editSelectedCapSizePrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
-      if (isOnProductSpecificCustomizeRoute) {
-        localStorage.setItem('customizeSelectedCapSize', selectedCapSize);
-        localStorage.setItem('customizeSelectedCapSizePrice', price);
-      }
-      
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-      
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawDraftScalarToConfirmed(pathname, 'CapSize');
     }
     
     // Determine return route
@@ -538,21 +491,7 @@ function CapSizeSelection() {
       }
     }
     
-    // Always save with 'selected' prefix
-    localStorage.setItem('selectedCapSize', selectedCapSize);
-    localStorage.setItem('selectedCapSizePrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode
-    if (isEditMode) {
-      localStorage.setItem('editSelectedCapSize', selectedCapSize);
-      localStorage.setItem('editSelectedCapSizePrice', price);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isCustomizeMode) {
-      localStorage.setItem('customizeSelectedCapSize', selectedCapSize);
-      localStorage.setItem('customizeSelectedCapSizePrice', price);
-    }
+    persistBawScalarConfirmed(pathname, 'CapSize', selectedCapSize, price, { isCustomizeMode, isEditMode });
     
     console.log('Cap-size page - saved to localStorage:', {
       selectedCapSize,
@@ -595,11 +534,8 @@ function CapSizeSelection() {
     
     console.log('Cap-size page - Navigating back to route:', returnRoute);
     
-    // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
+    markBawConfirmedReturnFromSubpage();
     
-    // Dispatch custom event to notify main page of changes
-    console.log('Cap-size page - dispatching customStorageChange event');
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
     // Add a small delay to ensure the event is processed

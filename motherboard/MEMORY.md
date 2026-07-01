@@ -32869,3 +32869,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Fix:** Reverted mistaken **`position: absolute`** on LIVE PREVIEW wrappers (restores preview lift). When founder regen UI is visible on NOIR **color** / **styling** sub-pages, NOIR **`heroChildren`** transform **`translate(-50%, 20px)`** (was **`translate(-50%, 0)`** at **`top-[-20px]`**) — **20px lower** than the too-high position. Color page also restores **`pointerEvents: 'none'`** on NOIR when regen strip shows so **regen M** taps pass through.
 
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
+
+---
+
+## 2026-07-01 — BAW sub-pages: confirm-only hub persistence + stale customize/edit load fix
+
+**Context:** User reported Build-a-Wig **sub-pages** were saving selections on **tap** (and carrying them to the hub **without Confirm**). **Customize** and **edit** hubs also showed **stale** localStorage instead of **product defaults** (customize) or **cart item** values (edit).
+
+**Root cause:** Sub-page tap handlers (`persist*Choice`, styling draft sync, add-ons auto-apply) wrote hub **`selected*`** keys immediately; **Back** also saved + set **`comingFromSubPage`**. Customize hub **`handleStorageChange`** and first-load paths prioritized **`customizeSelected*`** / **`editSelected*`** draft keys over confirmed **`selected*`**.
+
+**Fix:** New **`src/utils/bawSubpageSelectionPersist.ts`** — **`persistBawScalarDraftTap`** / **`persistBawJsonDraftTap`** (draft only on customize/edit sub-pages), **`persistBaw*Confirmed`** + **`markBawConfirmedReturnFromSubpage()`** on **Confirm selection** only, **`revertBawDraft*ToConfirmed`** / **`revertBawStylingDraftToConfirmed`** on **Back** (no **`comingFromSubPage`**). Updated all BAW option sub-pages (**length, density, lace, texture, cap-size, color, hairline, styling, add-ons**) + **`build-a-wig/page.tsx`** hub: live sync and customize first-load read **`selected*`** (confirmed); **`comingFromSubPage`** merge prefers **`selected*`** over draft keys.
+
+**Conventions:** On customize/edit **sub-pages**, in-progress taps → **`customizeSelected*`** / **`editSelected*`** only (for live preview). Hub tiles, price, and cart/edit state → **`selected*`** updated **only** on **Confirm selection**. Entering customize from PDP still seeds defaults via **`selected*`** + mirrored **`customizeSelected*`**; abandoned draft taps must not change the hub until Confirm.
+
+**Changes:** **`src/utils/bawSubpageSelectionPersist.ts`** (new), **`src/pages/build-a-wig/{length,density,lace,texture,cap-size,color,hairline,styling,addons}/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**. Build passes.

@@ -20,6 +20,14 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { markBawNavigateToCustomizeHubFromOtherStep } from '../../../utils/bawCrossStepSummary';
+import {
+  isBawCustomizeSubPage,
+  isBawEditSubPage,
+  markBawConfirmedReturnFromSubpage,
+  persistBawScalarConfirmed,
+  persistBawScalarDraftTap,
+  revertBawDraftScalarToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 
 interface HairlineOption {
   id: string;
@@ -259,49 +267,58 @@ function HairlineSelection() {
     }
   ];
 
+  const computeHairlinePrice = (selections: string[]) => {
+    let total = selections.reduce((sum, hairlineId) => {
+      const selected = hairlineOptions.find(option => option.id === hairlineId);
+      return sum + (selected ? selected.price : 0);
+    }, 0);
+    if (selections.includes('LAGOS') && selections.includes('PEAK')) {
+      total -= 20;
+    }
+    return total;
+  };
+
+  const persistHairlineDraft = (selections: string[]) => {
+    const pathname = window.location.pathname;
+    const hairlineValue = selections.length > 0 ? selections.join(',') : null;
+    const price = computeHairlinePrice(selections).toString();
+    if (hairlineValue) {
+      persistBawScalarDraftTap(pathname, 'Hairline', hairlineValue, price);
+    } else if (isBawCustomizeSubPage(pathname)) {
+      localStorage.removeItem('customizeSelectedHairline');
+      localStorage.setItem('customizeSelectedHairlinePrice', price);
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    } else if (isBawEditSubPage(pathname)) {
+      localStorage.removeItem('editSelectedHairline');
+      localStorage.setItem('editSelectedHairlinePrice', price);
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    }
+  };
+
   const handleHairlineSelect = (hairlineId: string) => {
     const currentSelections = selectedHairline;
+    let nextSelections: string[];
 
     if (currentSelections.includes(hairlineId)) {
-      // Deselect the hairline option
       if (hairlineId === 'LAGOS') {
-        // If deselecting Lagos, remove it but keep Peak if it exists
         const remainingSelections = currentSelections.filter(id => id !== 'LAGOS');
-        if (remainingSelections.length === 0) {
-          setSelectedHairline(['NATURAL']); // Default back to NATURAL
-        } else {
-          setSelectedHairline(remainingSelections);
-        }
+        nextSelections = remainingSelections.length === 0 ? ['NATURAL'] : remainingSelections;
       } else if (hairlineId === 'PEAK') {
-        // If deselecting Peak, remove it but keep Lagos if it exists
         const remainingSelections = currentSelections.filter(id => id !== 'PEAK');
-        if (remainingSelections.length === 0) {
-          setSelectedHairline(['NATURAL']); // Default back to NATURAL
-        } else {
-          setSelectedHairline(remainingSelections);
-        }
+        nextSelections = remainingSelections.length === 0 ? ['NATURAL'] : remainingSelections;
       } else {
-        // If deselecting NATURAL, default to NATURAL
-        setSelectedHairline(['NATURAL']);
+        nextSelections = ['NATURAL'];
       }
+    } else if (hairlineId === 'LAGOS') {
+      nextSelections = ['LAGOS'];
+    } else if (hairlineId === 'PEAK') {
+      nextSelections = currentSelections.includes('LAGOS') ? ['LAGOS', 'PEAK'] : ['PEAK'];
     } else {
-      // Add new hairline option with combination logic
-      if (hairlineId === 'LAGOS') {
-        // If selecting Lagos, it replaces current selection (no combo from other options)
-        setSelectedHairline(['LAGOS']);
-      } else if (hairlineId === 'PEAK') {
-        // If selecting Peak, only create combo if Lagos is already selected
-        if (currentSelections.includes('LAGOS')) {
-          setSelectedHairline(['LAGOS', 'PEAK']);
-        } else {
-          // If Lagos is not selected, Peak replaces current selection
-          setSelectedHairline(['PEAK']);
-        }
-      } else {
-        // If selecting NATURAL, it replaces current selection (resets combo)
-        setSelectedHairline(['NATURAL']);
-      }
+      nextSelections = ['NATURAL'];
     }
+
+    setSelectedHairline(nextSelections);
+    persistHairlineDraft(nextSelections);
   };
 
   const handleBack = () => {
@@ -324,40 +341,8 @@ function HairlineSelection() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getSelectedPrice().toString();
-      const hairlineValue = selectedHairline.length > 0 ? selectedHairline[0] : 'NATURAL';
-
-      if (isOnProductSpecificCustomizeRoute) {
-        if (hairlineValue) {
-          localStorage.setItem('customizeSelectedHairline', hairlineValue);
-        } else {
-          localStorage.removeItem('customizeSelectedHairline');
-        }
-        localStorage.setItem('customizeSelectedHairlinePrice', price);
-      }
-      if (isOnProductSpecificEditRoute) {
-        if (hairlineValue) {
-          localStorage.setItem('selectedHairline', hairlineValue);
-        } else {
-          localStorage.removeItem('selectedHairline');
-        }
-        localStorage.setItem('selectedHairlinePrice', price);
-        if (hairlineValue) {
-          localStorage.setItem('editSelectedHairline', hairlineValue);
-        } else {
-          localStorage.removeItem('editSelectedHairline');
-        }
-        localStorage.setItem('editSelectedHairlinePrice', price);
-      }
-
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawDraftScalarToConfirmed(pathname, 'Hairline');
     }
     
     // Determine return route
@@ -478,35 +463,21 @@ function HairlineSelection() {
       }
     }
     
-    // Save hairline (can be single selection or array)
     const hairlineValue = selectedHairline.length > 0 ? selectedHairline.join(',') : null;
-    
-    // Always save with 'selected' prefix
+
     if (hairlineValue) {
-      localStorage.setItem('selectedHairline', hairlineValue);
+      persistBawScalarConfirmed(pathname, 'Hairline', hairlineValue, price, { isCustomizeMode, isEditMode });
     } else {
       localStorage.removeItem('selectedHairline');
-    }
-    localStorage.setItem('selectedHairlinePrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode
-    if (isEditMode) {
-      if (hairlineValue) {
-        localStorage.setItem('editSelectedHairline', hairlineValue);
-      } else {
+      localStorage.removeItem('selectedHairlinePrice');
+      if (isEditMode) {
         localStorage.removeItem('editSelectedHairline');
+        localStorage.removeItem('editSelectedHairlinePrice');
       }
-      localStorage.setItem('editSelectedHairlinePrice', price);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isCustomizeMode) {
-      if (hairlineValue) {
-        localStorage.setItem('customizeSelectedHairline', hairlineValue);
-      } else {
+      if (isCustomizeMode) {
         localStorage.removeItem('customizeSelectedHairline');
+        localStorage.removeItem('customizeSelectedHairlinePrice');
       }
-      localStorage.setItem('customizeSelectedHairlinePrice', price);
     }
     
     // Determine the correct route to navigate back to based on current pathname
@@ -543,48 +514,15 @@ function HairlineSelection() {
     
     console.log('Hairline page - Navigating back to route:', returnRoute);
     
-    // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
+    markBawConfirmedReturnFromSubpage();
     
-    // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
     markBawNavigateToCustomizeHubFromOtherStep(returnRoute);
     navigate(returnRoute);
   };
 
-  const getSelectedPrice = () => {
-    let total = selectedHairline.reduce((sum, hairlineId) => {
-      const selected = hairlineOptions.find(option => option.id === hairlineId);
-      return sum + (selected ? selected.price : 0);
-    }, 0);
-    
-    // Apply $20 discount to Lagos when combined with Peak
-    if (selectedHairline.includes('LAGOS') && selectedHairline.includes('PEAK')) {
-      total -= 20;
-    }
-    
-    return total;
-  };
-
-  // NOIR customize sub-routes: draft hairline into `customizeSelected*` on every tap so hub previews
-  // do not read stale `selectedHairline` before Confirm.
-  useEffect(() => {
-    const p = location.pathname;
-    if (!p.startsWith('/build-a-wig/noir/customize/')) return;
-
-    const hairlineValue = selectedHairline.length > 0 ? selectedHairline.join(',') : null;
-    const price = getSelectedPrice().toString();
-
-    if (hairlineValue) {
-      localStorage.setItem('customizeSelectedHairline', hairlineValue);
-    } else {
-      localStorage.removeItem('customizeSelectedHairline');
-    }
-    localStorage.setItem('customizeSelectedHairlinePrice', price);
-
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
-  }, [location.pathname, selectedHairline]);
+  const getSelectedPrice = () => computeHairlinePrice(selectedHairline);
 
   // Get dynamic hairline note text based on selected hairline option
   const getHairlineNoteText = () => {

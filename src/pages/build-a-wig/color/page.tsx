@@ -48,6 +48,12 @@ import {
   readHairlineCsvForWigPreviewPath,
   resolveBawCustomizeColorSubPageSwatch,
 } from '../../../utils/bawCrossStepSummary';
+import {
+  markBawConfirmedReturnFromSubpage,
+  persistBawScalarConfirmed,
+  persistBawScalarDraftTap,
+  revertBawDraftScalarToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 
 interface ColorOption {
   id: string;
@@ -910,18 +916,7 @@ function ColorSelection() {
     })();
     const priceStr = String(priceForChoice);
 
-    if (isOnEditRoute) {
-      localStorage.setItem('editSelectedColor', colorId);
-      localStorage.setItem('editSelectedColorPrice', priceStr);
-    }
-    if (isOnCustomizeRoute) {
-      localStorage.setItem('customizeSelectedColor', colorId);
-      localStorage.setItem('customizeSelectedColorPrice', priceStr);
-    }
-    if (isOnEditRoute || !isOnCustomizeRoute) {
-      localStorage.setItem('selectedColor', colorId);
-      localStorage.setItem('selectedColorPrice', priceStr);
-    }
+    persistBawScalarDraftTap(pathname, 'Color', colorId, priceStr);
     if (onNoirColorRoute && colorId === 'OFF BLACK') {
       /** Same optimistic live-color resolution as other swatches — do not clear Storage (avoids static vs fal mismatch). */
       void (async () => {
@@ -994,28 +989,8 @@ function ColorSelection() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getSelectedPrice().toString();
-
-      // Customize draft: `customizeSelected*` only until Confirm — do not overwrite hub `selected*` on back.
-      if (isOnProductSpecificCustomizeRoute) {
-        localStorage.setItem('customizeSelectedColor', selectedColor);
-        localStorage.setItem('customizeSelectedColorPrice', price);
-      }
-      if (isOnProductSpecificEditRoute) {
-        localStorage.setItem('selectedColor', selectedColor);
-        localStorage.setItem('selectedColorPrice', price);
-        localStorage.setItem('editSelectedColor', selectedColor);
-        localStorage.setItem('editSelectedColorPrice', price);
-      }
-
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-      
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawDraftScalarToConfirmed(pathname, 'Color');
     }
     
     // Determine return route
@@ -1121,25 +1096,7 @@ function ColorSelection() {
       }
     }
     
-    // Always save with 'selected' prefix
-    localStorage.setItem('selectedColor', selectedColor);
-    localStorage.setItem('selectedColorPrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode
-    if (isEditMode) {
-      console.log('[COLOR PAGE] Saving editSelectedColor:', selectedColor, 'Price:', price);
-      localStorage.setItem('editSelectedColor', selectedColor);
-      localStorage.setItem('editSelectedColorPrice', price);
-      // Verify it was saved
-      const verify = localStorage.getItem('editSelectedColor');
-      console.log('[COLOR PAGE] Verification - editSelectedColor in localStorage:', verify);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode
-    if (isCustomizeMode) {
-      localStorage.setItem('customizeSelectedColor', selectedColor);
-      localStorage.setItem('customizeSelectedColorPrice', price);
-    }
+    persistBawScalarConfirmed(pathname, 'Color', selectedColor, price, { isCustomizeMode, isEditMode });
 
     const onNoirColorSub =
       pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
@@ -1190,11 +1147,8 @@ function ColorSelection() {
     
     console.log('Color page - Navigating back to route:', returnRoute);
     
-    // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
+    markBawConfirmedReturnFromSubpage();
     
-    // Dispatch custom event to notify main page of changes
-    console.log('Color page - dispatching customStorageChange event');
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
     // Add a small delay to ensure the event is processed

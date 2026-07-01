@@ -9,6 +9,12 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import {
+  isBawCustomizeSubPage,
+  isBawEditSubPage,
+  markBawConfirmedReturnFromSubpage,
+  revertBawStylingDraftToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import {
   postLiveWigAfterColorStyling,
@@ -819,15 +825,10 @@ export default function StylingSelectionPage() {
       setSelectedPartSelection(partId);
       try {
         const pathname = window.location.pathname;
-        const isCustomizeDraft =
-          pathname.includes('/build-a-wig/noir/customize/') ||
-          pathname.includes('/build-a-wig/blanco/customize/') ||
-          pathname.includes('/build-a-wig/soft-wave/customize/') ||
-          pathname.includes('/build-a-wig/soft-curl/customize/') ||
-          pathname.includes('/build-a-wig/ocean-curl/customize/') ||
-          pathname.includes('/build-a-wig/beach-wave/customize/');
-        if (isCustomizeDraft) {
+        if (isBawCustomizeSubPage(pathname)) {
           localStorage.setItem('customizeSelectedPartSelection', partId);
+        } else if (isBawEditSubPage(pathname)) {
+          localStorage.setItem('editSelectedPartSelection', partId);
         } else {
           localStorage.setItem('selectedPartSelection', partId);
         }
@@ -1110,64 +1111,8 @@ export default function StylingSelectionPage() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getTotalStylingPrice().toString();
-      const stylingValue = selectedHairStyling.length > 0 ? selectedHairStyling[0] : 'NONE';
-      const hairCsv = selectedHairStyling.length > 0 ? selectedHairStyling.join(',') : '';
-
-      // Customize draft: only `customizeSelected*` until Confirm — do not overwrite hub `selected*` on back.
-      if (isOnProductSpecificCustomizeRoute) {
-        if (hairCsv) {
-          localStorage.setItem('customizeSelectedHairStyling', hairCsv);
-        } else {
-          localStorage.removeItem('customizeSelectedHairStyling');
-        }
-        localStorage.setItem('customizeSelectedPartSelection', selectedPartSelection);
-        localStorage.setItem('customizeSelectedStyling', stylingValue === 'NONE' ? 'NONE' : stylingValue);
-        localStorage.setItem('customizeSelectedStylingPrice', price);
-        const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
-        const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
-          false,
-          true,
-          styleConfirmed
-        );
-        localStorage.setItem('customizeSelectedAddOns', JSON.stringify(syncedAddOns));
-        localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
-      }
-
-      if (isOnProductSpecificEditRoute) {
-        if (selectedHairStyling.length > 0) {
-          localStorage.setItem('selectedHairStyling', selectedHairStyling.join(','));
-        } else {
-          localStorage.removeItem('selectedHairStyling');
-        }
-        localStorage.setItem('selectedPartSelection', selectedPartSelection);
-        localStorage.setItem('selectedStylingPrice', price);
-        if (stylingValue && stylingValue !== 'NONE') {
-          localStorage.setItem('editSelectedStyling', stylingValue);
-        } else {
-          localStorage.removeItem('editSelectedStyling');
-        }
-        localStorage.setItem('editSelectedStylingPrice', price);
-        const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
-        const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
-          true,
-          false,
-          styleConfirmed
-        );
-        localStorage.setItem('selectedAddOns', JSON.stringify(syncedAddOns));
-        localStorage.setItem('selectedAddOnsPrice', addOnsPrice.toString());
-        localStorage.setItem('editSelectedAddOns', JSON.stringify(syncedAddOns));
-        localStorage.setItem('editSelectedAddOnsPrice', addOnsPrice.toString());
-      }
-
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawStylingDraftToConfirmed(pathname);
     }
     
     // Determine return route
@@ -1375,11 +1320,7 @@ export default function StylingSelectionPage() {
     
     console.log('Styling page - Navigating back to route:', returnRoute);
     
-    // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
-    
-    // Dispatch custom event to notify main page of changes
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
+    markBawConfirmedReturnFromSubpage();
     
     markBawNavigateToCustomizeHubFromOtherStep(returnRoute);
     navigate(returnRoute);

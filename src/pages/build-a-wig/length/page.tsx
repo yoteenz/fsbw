@@ -9,6 +9,12 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import {
+  markBawConfirmedReturnFromSubpage,
+  persistBawScalarConfirmed,
+  persistBawScalarDraftTap,
+  revertBawDraftScalarToConfirmed,
+} from '../../../utils/bawSubpageSelectionPersist';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -102,9 +108,7 @@ function LengthSelection() {
       if (editSelectedLength) {
         console.log('Length page - loading edit mode length from editSelectedLength:', editSelectedLength);
         setSelectedLength(editSelectedLength);
-        // Also save to selected* for consistency
-        localStorage.setItem('selectedLength', editSelectedLength);
-        return; // Exit early - we're done
+        return;
       }
       
       // Fallback to editingCartItem
@@ -115,10 +119,8 @@ function LengthSelection() {
           console.log('Length page - loading edit mode length from editingCartItem:', item.length);
           if (item.length) {
             setSelectedLength(item.length);
-            localStorage.setItem('selectedLength', item.length);
-            // Also save to editSelected* for consistency
             localStorage.setItem('editSelectedLength', item.length);
-            return; // Exit early - we're done
+            return;
           }
         } catch (error) {
           console.error('Length page - Error parsing editingCartItem:', error);
@@ -132,9 +134,7 @@ function LengthSelection() {
       if (customizeSelectedLength) {
         console.log('Length page - loading customize mode length from customizeSelectedLength:', customizeSelectedLength);
         setSelectedLength(customizeSelectedLength);
-        // Also save to selected* for consistency
-        localStorage.setItem('selectedLength', customizeSelectedLength);
-        return; // Exit early - we're done
+        return;
       }
     }
     
@@ -358,21 +358,7 @@ function LengthSelection() {
   ];
 
   const persistLengthChoice = (lengthId: string, priceUsd: number) => {
-    const pathname = window.location.pathname;
-    const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    const priceStr = String(priceUsd);
-    localStorage.setItem('selectedLength', lengthId);
-    localStorage.setItem('selectedLengthPrice', priceStr);
-    if (isOnEditRoute) {
-      localStorage.setItem('editSelectedLength', lengthId);
-      localStorage.setItem('editSelectedLengthPrice', priceStr);
-    }
-    if (isOnCustomizeRoute) {
-      localStorage.setItem('customizeSelectedLength', lengthId);
-      localStorage.setItem('customizeSelectedLengthPrice', priceStr);
-    }
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
+    persistBawScalarDraftTap(window.location.pathname, 'Length', lengthId, String(priceUsd));
   };
 
   const handleLengthSelect = (lengthId: string) => {
@@ -401,32 +387,8 @@ function LengthSelection() {
                                               pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
                                               pathname.startsWith('/build-a-wig/beach-wave/customize/');
     
-    // Only save if we're on a product-specific edit or customize sub-page route
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      // Calculate and save price
-      const price = getSelectedPrice().toString();
-      
-      // Always save with 'selected' prefix
-      localStorage.setItem('selectedLength', selectedLength);
-      localStorage.setItem('selectedLengthPrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
-      if (isOnProductSpecificEditRoute) {
-        localStorage.setItem('editSelectedLength', selectedLength);
-        localStorage.setItem('editSelectedLengthPrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
-      if (isOnProductSpecificCustomizeRoute) {
-        localStorage.setItem('customizeSelectedLength', selectedLength);
-        localStorage.setItem('customizeSelectedLengthPrice', price);
-      }
-      
-      // Set flag to indicate we're returning from a sub-page
-      sessionStorage.setItem('comingFromSubPage', 'true');
-      
-      // Dispatch custom event to notify main page of changes
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      revertBawDraftScalarToConfirmed(pathname, 'Length');
     }
     
     // Determine return route
@@ -605,21 +567,7 @@ function LengthSelection() {
       }
     }
     
-    // Always save with 'selected' prefix
-    localStorage.setItem('selectedLength', selectedLength);
-    localStorage.setItem('selectedLengthPrice', price);
-    
-    // Also save with 'editSelected' prefix in edit mode (for ALL products)
-    if (isEditMode) {
-      localStorage.setItem('editSelectedLength', selectedLength);
-      localStorage.setItem('editSelectedLengthPrice', price);
-    }
-    
-    // Also save with 'customizeSelected' prefix in customize mode (for ALL products)
-    if (isCustomizeMode) {
-      localStorage.setItem('customizeSelectedLength', selectedLength);
-      localStorage.setItem('customizeSelectedLengthPrice', price);
-    }
+    persistBawScalarConfirmed(pathname, 'Length', selectedLength, price, { isCustomizeMode, isEditMode });
     
     // Determine the correct route to navigate back to based on current pathname
     let returnRoute = '/build-a-wig'; // Default
@@ -656,7 +604,7 @@ function LengthSelection() {
     console.log('Length page - Navigating back to route:', returnRoute);
     
     // Set flag to indicate we're returning from a sub-page
-    sessionStorage.setItem('comingFromSubPage', 'true');
+    markBawConfirmedReturnFromSubpage();
     
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));

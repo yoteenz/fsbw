@@ -779,20 +779,20 @@ export default function BuildAWigPage() {
           defaultTexture = 'WAVY';
         }
         
-        const savedCapSizeFinal = savedCapSizeCustomize || savedCapSizeSelected || customization.capSize || 'M';
-        const savedLength = savedLengthCustomize || savedLengthSelected || customization.length || '24"';
-        const savedDensity = savedDensityCustomize || savedDensitySelected || customization.density || '200%';
-        const savedLace = savedLaceCustomize || savedLaceSelected || customization.lace || '13X6';
-        const savedTexture = savedTextureCustomize || savedTextureSelected || customization.texture || defaultTexture;
-        const savedColor = savedColorCustomize || savedColorSelected || customization.color || defaultColor;
-        const savedHairline = savedHairlineCustomize || savedHairlineSelected || customization.hairline || 'NATURAL';
+        const savedCapSizeFinal = savedCapSizeSelected || savedCapSizeCustomize || customization.capSize || 'M';
+        const savedLength = savedLengthSelected || savedLengthCustomize || customization.length || '24"';
+        const savedDensity = savedDensitySelected || savedDensityCustomize || customization.density || '200%';
+        const savedLace = savedLaceSelected || savedLaceCustomize || customization.lace || '13X6';
+        const savedTexture = savedTextureSelected || savedTextureCustomize || customization.texture || defaultTexture;
+        const savedColor = savedColorSelected || savedColorCustomize || customization.color || defaultColor;
+        const savedHairline = savedHairlineSelected || savedHairlineCustomize || customization.hairline || 'NATURAL';
         const savedStyling = mergeStylingForHub(
-          localStorage.getItem('customizeSelectedHairStyling'),
           localStorage.getItem('selectedHairStyling'),
-          savedStylingCustomize || savedStylingSelected,
+          localStorage.getItem('selectedHairStyling'),
+          savedStylingSelected || savedStylingCustomize,
           customization.styling || 'NONE'
         );
-        const savedAddOns = savedAddOnsCustomize || savedAddOnsSelected || JSON.stringify(customization.addOns) || '[]';
+        const savedAddOns = savedAddOnsSelected || savedAddOnsCustomize || JSON.stringify(customization.addOns) || '[]';
         
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
         let validStyling = savedStyling !== null && savedStyling !== 'NONE' ? savedStyling : 'NONE';
@@ -974,19 +974,19 @@ export default function BuildAWigPage() {
             defaultTextureForFirstLoad = 'WAVY';
           }
           
-          const existingLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength') || '24"';
-          const existingDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity') || '200%';
-          const existingLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace') || '13X6';
-          const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || defaultTextureForFirstLoad;
-          const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || defaultColorForFirstLoad;
-          const existingHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
+          const existingLength = localStorage.getItem('selectedLength') || '24"';
+          const existingDensity = localStorage.getItem('selectedDensity') || (isBlancoCustomizeRouteForDefaults ? '250%' : '200%');
+          const existingLace = localStorage.getItem('selectedLace') || '13X6';
+          const existingTexture = localStorage.getItem('selectedTexture') || defaultTextureForFirstLoad;
+          const existingColor = localStorage.getItem('selectedColor') || defaultColorForFirstLoad;
+          const existingHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
           const existingStyling = mergeStylingForHub(
-            localStorage.getItem('customizeSelectedHairStyling'),
+            null,
             localStorage.getItem('selectedHairStyling'),
-            localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling'),
+            localStorage.getItem('selectedStyling'),
             'NONE'
           );
-          const existingAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns') || '[]';
+          const existingAddOns = localStorage.getItem('selectedAddOns') || '[]';
           
           // Ensure styling is valid
           let validStyling = existingStyling !== null && existingStyling !== 'NONE' ? existingStyling : 'NONE';
@@ -1157,25 +1157,25 @@ export default function BuildAWigPage() {
         // Fall back to selected* keys if editSelected* keys don't exist
         // CRITICAL: Match customize mode - prioritize editSelected* keys, then selected* keys, then defaults (NOT current state)
         // This ensures we always use the saved values from sub-pages, not stale state
-        const savedCapSizeFinal = savedCapSizeEdit || savedCapSizeSelected || 'M';
-        const savedLength = savedLengthEdit || savedLengthSelected || '24"';
-        const savedDensity = savedDensityEdit || savedDensitySelected || '200%';
-        const savedLace = savedLaceEdit || savedLaceSelected || '13X6';
-        const savedTexture = savedTextureEdit || savedTextureSelected || 'SILKY';
+        const savedCapSizeFinal = savedCapSizeSelected || savedCapSizeEdit || 'M';
+        const savedLength = savedLengthSelected || savedLengthEdit || '24"';
+        const savedDensity = savedDensitySelected || savedDensityEdit || '200%';
+        const savedLace = savedLaceSelected || savedLaceEdit || '13X6';
+        const savedTexture = savedTextureSelected || savedTextureEdit || 'SILKY';
         // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
         const isBlancoRouteForSaved = location.pathname.startsWith('/build-a-wig/blanco');
         const defaultColorForSaved = isBlancoRouteForSaved ? 'PLATINUM' : 'OFF BLACK';
         // CRITICAL: Validate color for BLANCO routes - if invalid, default to PLATINUM
-        let savedColor = savedColorEdit || savedColorSelected || defaultColorForSaved;
+        let savedColor = savedColorSelected || savedColorEdit || defaultColorForSaved;
         if (isBlancoRouteForSaved) {
           const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
           if (!validBlancoColors.includes(savedColor)) {
             savedColor = 'PLATINUM'; // Invalid color for BLANCO, default to PLATINUM
           }
         }
-        const savedHairline = savedHairlineEdit || savedHairlineSelected || 'NATURAL';
-        const savedStyling = savedStylingEdit || savedStylingSelected || 'NONE';
-        const savedAddOns = savedAddOnsEdit || savedAddOnsSelected || '[]';
+        const savedHairline = savedHairlineSelected || savedHairlineEdit || 'NATURAL';
+        const savedStyling = savedStylingSelected || savedStylingEdit || 'NONE';
+        const savedAddOns = savedAddOnsSelected || savedAddOnsEdit || '[]';
         
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
         let validStyling = savedStyling !== null && savedStyling !== 'NONE' ? savedStyling : 'NONE';
@@ -2261,27 +2261,27 @@ export default function BuildAWigPage() {
         let savedAddOns: string | null = null;
         
         if (isEditMode) {
-          // Edit mode: prioritize editSelected* keys, fall back to selected* keys
-          savedCapSize = localStorage.getItem('editSelectedCapSize') || localStorage.getItem('selectedCapSize');
-          savedLength = localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength');
-          savedDensity = localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity');
-          savedLace = localStorage.getItem('editSelectedLace') || localStorage.getItem('selectedLace');
-          savedTexture = localStorage.getItem('editSelectedTexture') || localStorage.getItem('selectedTexture');
-          savedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor');
-          savedHairline = localStorage.getItem('editSelectedHairline') || localStorage.getItem('selectedHairline');
-          savedStyling = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
-          savedAddOns = localStorage.getItem('editSelectedAddOns') || localStorage.getItem('selectedAddOns');
+          // Edit hub: confirmed `selected*` only — draft `editSelected*` is sub-page WIP until Confirm.
+          savedCapSize = localStorage.getItem('selectedCapSize');
+          savedLength = localStorage.getItem('selectedLength');
+          savedDensity = localStorage.getItem('selectedDensity');
+          savedLace = localStorage.getItem('selectedLace');
+          savedTexture = localStorage.getItem('selectedTexture');
+          savedColor = localStorage.getItem('selectedColor');
+          savedHairline = localStorage.getItem('selectedHairline');
+          savedStyling = localStorage.getItem('selectedStyling');
+          savedAddOns = localStorage.getItem('selectedAddOns');
         } else if (isCustomizeMode) {
-          // Customize mode: prioritize customizeSelected* keys, fall back to selected* keys
-          savedCapSize = localStorage.getItem('customizeSelectedCapSize') || localStorage.getItem('selectedCapSize');
-          savedLength = localStorage.getItem('customizeSelectedLength') || localStorage.getItem('selectedLength');
-          savedDensity = localStorage.getItem('customizeSelectedDensity') || localStorage.getItem('selectedDensity');
-          savedLace = localStorage.getItem('customizeSelectedLace') || localStorage.getItem('selectedLace');
-          savedTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture');
-          savedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
-          savedHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline');
-          savedStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling');
-          savedAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns');
+          // Customize hub: confirmed `selected*` only — draft `customizeSelected*` is sub-page WIP until Confirm.
+          savedCapSize = localStorage.getItem('selectedCapSize');
+          savedLength = localStorage.getItem('selectedLength');
+          savedDensity = localStorage.getItem('selectedDensity');
+          savedLace = localStorage.getItem('selectedLace');
+          savedTexture = localStorage.getItem('selectedTexture');
+          savedColor = localStorage.getItem('selectedColor');
+          savedHairline = localStorage.getItem('selectedHairline');
+          savedStyling = localStorage.getItem('selectedStyling');
+          savedAddOns = localStorage.getItem('selectedAddOns');
         }
         
         setCustomization((prev) => {
@@ -2575,30 +2575,18 @@ export default function BuildAWigPage() {
           return;
         }
         
-        // CRITICAL: Read latest selections from localStorage (editSelected* keys take priority)
-        const editSelectedTexture = localStorage.getItem('editSelectedTexture');
-        const editSelectedColor = localStorage.getItem('editSelectedColor');
-        const editSelectedLength = localStorage.getItem('editSelectedLength');
-        const editSelectedDensity = localStorage.getItem('editSelectedDensity');
-        const editSelectedLace = localStorage.getItem('editSelectedLace');
-        const editSelectedHairline = localStorage.getItem('editSelectedHairline');
-        const editSelectedStyling = localStorage.getItem('editSelectedStyling');
-        const editSelectedCapSize = localStorage.getItem('editSelectedCapSize');
-        const editSelectedAddOns = localStorage.getItem('editSelectedAddOns');
-        
-        // Fallback to selected* keys if editSelected* don't exist
-        // For BLANCO routes, default to PLATINUM; for others, default to OFF BLACK
+        // Confirmed hub keys only — draft `editSelected*` is sub-page WIP until Confirm.
         const isBlancoRouteForCurrent = location.pathname.startsWith('/build-a-wig/blanco');
         const defaultColorForCurrent = isBlancoRouteForCurrent ? 'PLATINUM' : 'OFF BLACK';
-        const currentTexture = editSelectedTexture || localStorage.getItem('selectedTexture') || 'SILKY';
-        const currentColor = editSelectedColor || localStorage.getItem('selectedColor') || defaultColorForCurrent;
-        const currentLength = editSelectedLength || localStorage.getItem('selectedLength') || '24"';
-        const currentDensity = editSelectedDensity || localStorage.getItem('selectedDensity') || '200%';
-        const currentLace = editSelectedLace || localStorage.getItem('selectedLace') || '13X6';
-        const currentHairline = editSelectedHairline || localStorage.getItem('selectedHairline') || 'NATURAL';
-        const currentStyling = editSelectedStyling || localStorage.getItem('selectedStyling') || 'NONE';
-        const currentCapSize = editSelectedCapSize || localStorage.getItem('selectedCapSize') || 'M';
-        const currentAddOns = editSelectedAddOns || localStorage.getItem('selectedAddOns') || '[]';
+        const currentTexture = localStorage.getItem('selectedTexture') || 'SILKY';
+        const currentColor = localStorage.getItem('selectedColor') || defaultColorForCurrent;
+        const currentLength = localStorage.getItem('selectedLength') || '24"';
+        const currentDensity = localStorage.getItem('selectedDensity') || '200%';
+        const currentLace = localStorage.getItem('selectedLace') || '13X6';
+        const currentHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+        const currentStyling = localStorage.getItem('selectedStyling') || 'NONE';
+        const currentCapSize = localStorage.getItem('selectedCapSize') || 'M';
+        const currentAddOns = localStorage.getItem('selectedAddOns') || '[]';
         
         // Always update state from localStorage (use functional update to avoid dependency issues)
         setCustomization(prev => {
