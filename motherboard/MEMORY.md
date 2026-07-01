@@ -32895,3 +32895,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Fix:** **`resetBawCustomizeStylingAndAddOnsStorage()`** + **`readBawCustomizeHubConfirmedStyling()`** in **`bawCrossStepSummary.ts`**. Customize hub **first load** (not **`comingFromSubPage`**) resets styling/add-ons, forces **NONE** / **[]**, styling/add-on prices **0**. Live hub sync ignores stale hair CSV when single-token styling is **NONE**. All six unit PDP **Customize** handlers call **`resetBawCustomizeStylingAndAddOnsStorage()`** before navigate. **Confirm** on styling/add-ons sub-pages still promotes via **`comingFromSubPage`**.
 
 **Changes:** **`src/utils/bawCrossStepSummary.ts`**, **`src/pages/build-a-wig/page.tsx`**, unit PDP pages (**noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl**).
+
+---
+
+## 2026-07-01 — Cart VIEW DETAILS: texture + all BAW sub-page selections with price deltas
+
+**Context (continued chat):** User reported **texture** surcharges (**KINKY**, **YAKI**, etc.) and other BAW sub-page selections were **not shown** (or not priced) under **VIEW DETAILS** in the **cart dropdown** for unit wigs. Request: confirm **all** sub-page selections display and are **accounted for** in view-details mode.
+
+**Root cause:** **`buildUnitCartViewDetailItemDescriptors`** and the inline VIEW DETAILS HTML builder in **`CartDropdown.tsx`** omitted **texture** (comment: "Texture detail removed"). **`formatPriceDisplay`** was stubbed to **`() => ''`**, so **no price deltas** showed for any customization line even though pricing helpers existed.
+
+**Fix:** New shared **`src/utils/unitCartViewDetails.ts`** — **`getUnitDefaultTexture`**, **`buildUnitCartViewDetailItemDescriptors`** (includes **texture** when non-default: SILKY / WAVY / CURLY by product), **`buildUnitCartViewDetailsHtml`** (restored currency-aware **`+/-` price spans** for length, density, lace, texture, color, hairline, styling, add-ons), **`unitCartItemHasViewDetails`**, **`unitCartViewDetailsLineCount`**. **`CartDropdown.tsx`** uses the shared helper (removed ~200 lines duplicated logic + unused inline price helpers). **`wishlistListItemDetails.ts`** adds **texture** lines for parity (labels only, no prices).
+
+**Conventions:** Unit VIEW DETAILS lists non-default BAW options only (defaults: 24" length, 13X6 lace, product default density/texture/color, NATURAL hairline, NONE styling, no add-ons). **Cap size** stays on the gray CAP SIZE line, not in VIEW DETAILS. Flex cap still toggles VIEW DETAILS when it is the only customization.
+
+**Changes:** **`src/utils/unitCartViewDetails.ts`** (new), **`src/components/CartDropdown.tsx`**, **`src/utils/wishlistListItemDetails.ts`**. Build passes.

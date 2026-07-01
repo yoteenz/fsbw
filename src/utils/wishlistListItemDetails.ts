@@ -10,6 +10,8 @@ import {
   type ShopTextureCategoryThumbCategory,
   type ShopTextureCategoryThumbTexture,
 } from './shopTextureCategoryThumb';
+import { BAW_SALON_STYLING_IDS } from './bawUnitStylingOptions';
+import { getUnitDefaultTexture } from './unitCartViewDetails';
 
 const DEFAULT_UNIT_PRICES: Record<string, number> = {
   NOIR: 740,
@@ -256,6 +258,11 @@ export function buildWishlistItemDetailsHtml(item: any, options?: WishlistItemDe
   if (item.density && item.density !== defaultDensity) items.push({ type: 'density', value: item.density });
   if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace });
 
+  const defaultTexture = getUnitDefaultTexture(name);
+  if (item.texture && item.texture !== defaultTexture) {
+    items.push({ type: 'texture', value: item.texture });
+  }
+
   let itemColor = item.color;
   if (name === 'BLANCO') {
     const valid = ['GOLDEN', 'PLATINUM', 'ASH'];
@@ -267,7 +274,7 @@ export function buildWishlistItemDetailsHtml(item: any, options?: WishlistItemDe
   if (itemColor && !isDefaultColor) items.push({ type: 'color', value: itemColor });
   if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline });
 
-  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS', 'WAND CURLS', 'DEFINE'];
+  const hairStylingOptions: string[] = [...BAW_SALON_STYLING_IDS];
   if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
     items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection });
   }
@@ -294,6 +301,9 @@ export function buildWishlistItemDetailsHtml(item: any, options?: WishlistItemDe
     } else if (itemData.type === 'lace') {
       const laceValue = String(itemData.value);
       text += `${laceValue} LACE`.toUpperCase();
+    } else if (itemData.type === 'texture') {
+      const textureValue = String(itemData.value);
+      text += `${textureValue} TEXTURE`.toUpperCase();
     } else if (itemData.type === 'color') {
       const colorValue = String(itemData.value);
       text += `${colorValue} COLOR`.toUpperCase();
