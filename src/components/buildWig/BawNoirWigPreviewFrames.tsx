@@ -135,7 +135,6 @@ export function BawNoirWigPreviewHeroThumbs({
   return (
     <>
       <div className="leaf-stack hero-thumb">
-        {!hideBrick && <div className="leaf-bg" aria-hidden="true" />}
         {heroChildren ? <div className="baw-noir-hero-header-overlay">{heroChildren}</div> : null}
         <div
           className={`baw-noir-hero-brick-frame${hideBrick ? ' baw-noir-hero-brick-frame--live' : ''}`}

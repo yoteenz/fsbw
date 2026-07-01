@@ -335,8 +335,11 @@ const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
 const BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK =
   'Keep **everything else exactly the same** — same mannequin, brick background, lighting and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
 
+const BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK =
+  '**#0 SCENE MASTER (automatic fail if violated):** The input photograph is the **only** source for **crop, canvas size, aspect ratio, camera distance, zoom, head scale, bust scale, bottom alignment, brick tile scale**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Output must be **pixel-aligned** with that reference — **identical composition** across every color swatch. **FORBIDDEN:** zoom in/out, pan, reframe, subject drift, or a tighter/wider crop than the reference. **Only** hair **pigment** may change.';
+
 const BAW_GPT2_NOIR_COLOR_FRAMING_LOCK =
-  '**Framing lock:** Do **not** resize, reposition, re-crop or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **only** hair pigment changes.';
+  '**Framing lock:** Do **not** resize, reposition, re-crop or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **identical crop and zoom to the gray-brick reference on every swatch** — **only** hair pigment changes. **FORBIDDEN:** pan left/right, zoom, reframe, or any shift in composition.';
 
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
@@ -365,6 +368,7 @@ function buildStep2PromptNoLogoAttachment(
       ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.';
 
   return [
+    BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK,
     recolorLead,
     angleConstraint,
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
@@ -423,6 +427,9 @@ function buildBawColorWithFrontAnchorPrompt(
 
   return [
     'You get **2 images in order**.',
+    '**#0 SCENE MASTER (automatic fail if violated):** **IMAGE 2** (gray-brick **' +
+      angleLabel +
+      '** photograph) is the **only** source for **crop, zoom, camera distance, head scale, bust scale, bottom alignment, brick tile scale**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo. Output must be **pixel-aligned** with **IMAGE 2** on scene/bust/brick — **identical composition** to the gray-brick reference on every swatch. **FORBIDDEN:** zoom, pan, reframe, or borrowing **IMAGE 1**\'s front-facing crop/lighting. **Only** hair **pigment + silhouette** from **IMAGE 1** may be edited onto **IMAGE 2**.',
     '**IMAGE 1 = CANONICAL FRONT (M) COLOR OUTPUT (hair color + silhouette identity lock):** This is the **already-recolored FRONT** for this swatch. **Reproduce this exact hair** (color, part line, length, volume, **one-sided shoulder sweep**) on the **' +
       angleLabel +
       '** camera from **IMAGE 2** — ' +

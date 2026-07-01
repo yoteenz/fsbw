@@ -32769,3 +32769,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regenerate **FRONT (M)** then **LEFT (L)** (or full L/M/R batch) — L auto-regens when M is newer even without `forceRegenerate`.
 
+---
+
+## 2026-06-30 — NOIR color sub-page: duplicate hero brick + cross-color zoom drift
+
+**Context (continued chat):** User reported **duplicate background** on the **colors** sub-page behind the hero (stacked brick layers) and **inconsistent mannequin framing** across live color swatches (e.g. **GINGER** more zoomed in than **OFF BLACK**).
+
+**Fix:**
+- **`BawNoirWigPreviewHeroThumbs`:** removed hero **`.leaf-bg`** when static — inner **`baw-noir-hero-brick-bg`** already paints **`leaf-brick-resize.png`**; outer **`.leaf-bg`** (Readdy jfif) was a second visible layer on hub-like sub-steps including **color**. Live previews unchanged (**`hideBrick`** still omits all CSS brick).
+- **`api/wig-preview/live-noir-color.ts`:** **`BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK`** (#0 priority on single-image FRONT pass) + stronger **`BAW_GPT2_NOIR_COLOR_FRAMING_LOCK`** (pixel-aligned crop/zoom, identical composition across swatches). Side passes with front anchor: **#0 SCENE MASTER** on **IMAGE 2** (gray-brick) first line.
+
+**Ops:** Existing cached color WebPs keep old framing until **regen color M** (then L/R) per swatch — prompt changes apply on next Fal run only.
+
