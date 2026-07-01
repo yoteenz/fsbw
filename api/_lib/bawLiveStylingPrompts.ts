@@ -239,7 +239,7 @@ function salonPartSideViewFromFrontDonorBlock(
 
 /**
  * **UI L / UI R part, L/R camera angles:** **IMAGE 1** = gray-brick **side pose** (scene master); **IMAGE 2** = this part’s **FRONT (M)** (hair donor only).
- * Stops Fal from keeping the front-facing face from the hair reference instead of **IMAGE 1**’s 3/4 turn.
+ * @deprecated Live API uses **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`[ side-part FRONT, gray-brick side ]`** — same body lock as **MIDDLE part** L/R.
  */
 export function buildBawSalonSidePartSideViewFromFrontHairPrompt(
   angle: 'left' | 'right',
@@ -777,11 +777,15 @@ function bawSalonFrontAnchorSideSceneLockBlock(angle: 'left' | 'right'): string 
   const handedness =
     angle === 'left'
       ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
-      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten the head to front-facing (hair donor may be front — keep **IMAGE 2** scene turn).';
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten or twist the head toward front-facing to match **IMAGE 1** (front donor is **hair only** — keep **IMAGE 2** body turn).';
   return (
-    '**SCENE LOCK (' +
+    '**MANNEQUIN BODY LOCK — HIGHEST PRIORITY (' +
     angleLabel +
-    ' — critical):** **IMAGE 2** defines the **only** allowed **camera angle**, **head pose**, **framing**, **brick background**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Rebuild the output photograph to **match IMAGE 2** pixel-for-pixel on scene/bust — **edit hair only**. **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing. ' +
+    '):** **IMAGE 2** (gray-brick **' +
+    angleLabel +
+    '**) is the **only** source for mannequin **body position** — head turn, neck, shoulders, bust, brick, lighting, shadows, **FRONTAL SLAYER** logo, and framing. Output must match **IMAGE 2** pixel-for-pixel on scene/bust — **identical** mannequin pose to **MIDDLE part** **' +
+    angleLabel +
+    '**. **Only** hair (part + drape from **IMAGE 1**) may change. **FORBIDDEN:** twisting the **face/head** toward front to match **IMAGE 1**; **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing. ' +
     handedness
   );
 }
@@ -856,7 +860,7 @@ export function buildBawSalonStylingWithFrontAnchorPrompt(
       '** camera from **IMAGE 2** — **same** curl/wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape. **FORBIDDEN:** inventing a **new similar** hairstyle.',
     '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
       angleLabel +
-      '** photograph). **Scene fidelity lock:** match **IMAGE 2** head pose, framing, brick, lighting, shadows, **FRONTAL SLAYER** logo — **ignore** IMAGE 2 hair; **do not** copy its hair color.',
+      '** photograph). **Mannequin body lock (overrides IMAGE 1 pose):** match **IMAGE 2** head turn, neck, shoulders, bust, framing, brick, lighting, shadows, **FRONTAL SLAYER** logo pixel-for-pixel — **ignore** IMAGE 2 hair; **do not** copy its hair color; **do not** borrow **IMAGE 1**\'s front-facing head angle.',
     ...(stylingRefLine ? [stylingRefLine] : []),
     bawSalonNaturalHairAntiHelmetBlock(),
     bawSalonFrontAnchorSideSceneLockBlock(angle),

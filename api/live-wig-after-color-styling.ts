@@ -8,7 +8,7 @@ export const config = { maxDuration: 300 };
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
  * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
- * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **L/R cameras:** **`[ gray-brick side pose, side-part FRONT (M) ]`** + **`buildBawSalonSidePartSideViewFromFrontHairPrompt`** — scene first (pose master), front hair donor second.
+ * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **L/R cameras:** same chain as **MIDDLE part** — **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`[ side-part FRONT (M), gray-brick side pose ]`** (body/camera lock from gray-brick **IMAGE 2**; hair identity from front **IMAGE 1**).
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -41,7 +41,6 @@ import {
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildBawSalonStylingWithFrontAnchorPrompt,
   buildBawSalonSidePartFromMiddleFrontPrompt,
-  buildBawSalonSidePartSideViewFromFrontHairPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
   bawStylingReferenceStoragePath,
@@ -426,15 +425,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             });
             return;
           }
-          prompt = buildBawSalonSidePartSideViewFromFrontHairPrompt(
+          prompt = buildBawSalonStylingWithFrontAnchorPrompt(
             angle,
             targetPart,
             salonMode,
             catalog,
             salonPromptOpts
           );
-          /** Scene master first — stops Fal pasting front-facing face from the hair donor. */
-          imageUrls = [grayBrickUrl, sidePartFrontAnchorUrl];
+          /** Same as **MIDDLE part** L/R: front = hair identity; gray-brick = mannequin body/camera lock (omit styling ref). */
+          imageUrls = [sidePartFrontAnchorUrl, grayBrickUrl];
         }
       } else if (
         singlePassSalonEnabled() &&

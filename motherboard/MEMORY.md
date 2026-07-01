@@ -32699,3 +32699,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen **MIDDLE FRONT** → **RIGHT part FRONT (M)** → **L/R** with **`forceRegenerate`**.
 
+---
+
+## 2026-06-30 — Side-part L/R mannequin body lock restored (same pipeline as MIDDLE part)
+
+**Context (continued chat):** User reported side-part **LEFT/RIGHT** **L/R camera** outputs had **twisted mannequin face/head** — body reposition wrong; only **hair fall + part** should differ vs **MIDDLE part** same-angle shots. Earlier **scene-first** prompt (`buildBawSalonSidePartSideViewFromFrontHairPrompt` + `[ grayBrick, sidePartFront ]`) had deprioritized the gray-brick body lock. User also asked whether L/R runs **high** vs **medium** quality — code uses **`bawGptImage2EditFalInput`** default **`quality: high`** for all parts/angles (override **`WIG_PREVIEW_LIVE_GPT2_QUALITY`**); stale Storage cache can still show older medium outputs until **`forceRegenerate`**.
+
+**Fix:**
+- **`api/live-wig-after-color-styling.ts`**: UI L/R **L/R cameras** restored to **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`[ side-part FRONT (M), gray-brick side ]`** — **identical chain to MIDDLE part** L/R (front = hair identity, gray-brick = mannequin body/camera lock).
+- **`bawSalonFrontAnchorSideSceneLockBlock`**: **MANNEQUIN BODY LOCK — HIGHEST PRIORITY** — match **IMAGE 2** pixel-for-pixel; **FORBIDDEN** twisting head toward **IMAGE 1** front donor; must match **MIDDLE part** same **LEFT/RIGHT 3/4** pose.
+- **`buildBawSalonStylingWithFrontAnchorPrompt`**: IMAGE 2 line reinforces body lock overrides front pose.
+- **`buildBawSalonSidePartSideViewFromFrontHairPrompt`**: deprecated (scene-first path removed from live API).
+- **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`scripts/wig-preview/promptTemplate.mjs`** synced.
+
+**Ops:** Force regen **MIDDLE L/R** (optional baseline) → **side-part FRONT (M)** → **side-part L/R** with **`forceRegenerate`**.
+

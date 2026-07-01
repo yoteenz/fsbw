@@ -442,7 +442,7 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
   ].join(' ');
 }
 
-/** UI L / UI R part L/R cameras: gray-brick scene + front hair donor. Sync with `bawLiveStylingPrompts.ts`. */
+/** @deprecated Live API uses buildBawSalonStylingWithFrontAnchorPrompt + [ side-part FRONT, gray-brick side ]. Sync with `bawLiveStylingPrompts.ts`. */
 export function buildBawSalonSidePartSideViewFromFrontHairPrompt(angle, targetPart, salon, catalog, options) {
   const hex = String(catalog?.hex || '')
     .replace(/^#/, '')
@@ -481,7 +481,7 @@ export function buildBawSalonSidePartSideViewFromFrontHairPrompt(angle, targetPa
       angleLabel +
       '**. **FORBIDDEN:** inventing a new hairstyle; **FORBIDDEN:** pasting IMAGE 2’s **front-facing face** onto IMAGE 1; **FORBIDDEN:** changing IMAGE 1’s head turn.',
     ...(layersWave ? [layersWave] : []),
-    salonOneShoulderDrapeBlock(),
+    bawSalonDrapeBlockForPart(targetPart),
     ...(bangsLine ? [bangsLine] : []),
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The **FRONTAL SLAYER** chest logo must stay fully legible. Output must be extremely high-quality, crisp, and pixel-perfect.',
