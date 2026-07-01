@@ -32714,3 +32714,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Force regen **MIDDLE L/R** (optional baseline) → **side-part FRONT (M)** → **side-part L/R** with **`forceRegenerate`**.
 
+---
+
+## 2026-06-30 — UI R part mirror rule: prompt authority over reference images
+
+**Context (continued chat):** **RIGHT part** still rendered with part groove on the **same scalp side as LEFT part** (UI L geometry) instead of **mirror opposite**. User asked for **prompt-only** part placement — not relying on reference/styling-ref images for part side.
+
+**Fix:**
+- **`salonPartPromptAuthorityBlock`** in **`bawSalonHairGeometryPrompts.ts`**: **PART PLACEMENT — PROMPT AUTHORITY (highest priority)** + **MIRROR RULE (UI L ↔ UI R)** — UI L = groove **image RIGHT**; UI R = groove **image LEFT**; discard conflicting input part placement.
+- **`buildBawSalonSidePartFromMiddleFrontPrompt`**: lead with authority block; **IGNORE** center/wrong groove in MIDDLE-part FRONT input — only borrow color/texture/length.
+- **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`buildBawSalonFrontAnchorSideSupplement`**: removed blind “**same part line**” from IMAGE 1 for side parts; part groove follows **prompt text** if IMAGE 1 conflicts.
+- **`scripts/wig-preview/promptTemplate.mjs`** synced.
+
+**Ops:** Force regen **RIGHT part FRONT (M)** then **L/R** — old FRONT cache may still show UI L groove.
+

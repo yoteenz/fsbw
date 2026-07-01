@@ -13,6 +13,49 @@ export function salonPartDirectionSemanticsBlock(): string {
   );
 }
 
+/** Side parts: part groove is defined by this prompt — never copy from input if it conflicts. */
+export function salonPartPromptAuthorityBlock(partSelection: NoirLayersPartSelection): string {
+  if (partSelection === 'MIDDLE') return '';
+  const target = partSelection === 'LEFT' ? 'UI L / LEFT part' : 'UI R / RIGHT part';
+  const opposite = partSelection === 'LEFT' ? 'UI R / RIGHT part' : 'UI L / LEFT part';
+  const grooveSide = partSelection === 'LEFT' ? 'image RIGHT' : 'image LEFT';
+  const forbiddenGroove = partSelection === 'LEFT' ? 'image LEFT' : 'image RIGHT';
+  const edgeHint = partSelection === 'LEFT' ? 'right edge' : 'left edge';
+  return [
+    '**PART PLACEMENT — PROMPT AUTHORITY (highest priority):** Customer selected **' +
+      target +
+      '**. Draw the visible part groove on **' +
+      grooveSide +
+      '** scalp (**' +
+      (partSelection === 'LEFT' ? 'right' : 'left') +
+      ' third** of forehead — toward the **' +
+      edgeHint +
+      '** of the photo). **Do not** infer part side from reference photos — follow this text.',
+    '**MIRROR RULE (UI L ↔ UI R):** **' +
+      target +
+      '** and **' +
+      opposite +
+      '** are **mirror opposites** on the scalp. **' +
+      target +
+      '** = groove **' +
+      grooveSide +
+      '**. **' +
+      opposite +
+      '** = groove **' +
+      forbiddenGroove +
+      '**. **FORBIDDEN:** outputting **' +
+      opposite +
+      '** when **' +
+      target +
+      '** was requested (**' +
+      forbiddenGroove +
+      '** groove = wrong selection).',
+    '**If any input image shows the groove on **' +
+      forbiddenGroove +
+      '** (or center/MIDDLE part), **discard that part placement** — keep only hair color, texture, length, and salon finish from the input.',
+  ].join(' ');
+}
+
 /** Side parts: color-tier WebPs often bake in a default part — force re-part from prompt. */
 export function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLayersPartSelection): string {
   if (partSelection === 'MIDDLE') return '';

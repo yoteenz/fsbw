@@ -351,6 +351,48 @@ export function buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, 
     .join(' ');
 }
 
+function salonPartPromptAuthorityBlock(partSelection) {
+  if (partSelection === 'MIDDLE') return '';
+  const target = partSelection === 'LEFT' ? 'UI L / LEFT part' : 'UI R / RIGHT part';
+  const opposite = partSelection === 'LEFT' ? 'UI R / RIGHT part' : 'UI L / LEFT part';
+  const grooveSide = partSelection === 'LEFT' ? 'image RIGHT' : 'image LEFT';
+  const forbiddenGroove = partSelection === 'LEFT' ? 'image LEFT' : 'image RIGHT';
+  const edgeHint = partSelection === 'LEFT' ? 'right edge' : 'left edge';
+  return [
+    '**PART PLACEMENT — PROMPT AUTHORITY (highest priority):** Customer selected **' +
+      target +
+      '**. Draw the visible part groove on **' +
+      grooveSide +
+      '** scalp (**' +
+      (partSelection === 'LEFT' ? 'right' : 'left') +
+      ' third** of forehead — toward the **' +
+      edgeHint +
+      '** of the photo). **Do not** infer part side from reference photos — follow this text.',
+    '**MIRROR RULE (UI L ↔ UI R):** **' +
+      target +
+      '** and **' +
+      opposite +
+      '** are **mirror opposites** on the scalp. **' +
+      target +
+      '** = groove **' +
+      grooveSide +
+      '**. **' +
+      opposite +
+      '** = groove **' +
+      forbiddenGroove +
+      '**. **FORBIDDEN:** outputting **' +
+      opposite +
+      '** when **' +
+      target +
+      '** was requested (**' +
+      forbiddenGroove +
+      '** groove = wrong selection).',
+    '**If any input image shows the groove on **' +
+      forbiddenGroove +
+      '** (or center/MIDDLE part), **discard that part placement** — keep only hair color, texture, length, and salon finish from the input.',
+  ].join(' ');
+}
+
 function salonPartMustOverrideInputReferenceBlock(partSelection) {
   if (partSelection === 'MIDDLE') return '';
   if (partSelection === 'LEFT') {
@@ -426,14 +468,16 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
   const includeBangs = Boolean(options && options.includeBangs);
   const bangsLine = includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
   return [
+    salonPartPromptAuthorityBlock(targetPart),
     '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **FRONT** styled output — **same** mannequin, scene, lighting, **hair color**, and **' +
       salonLabel +
-      '** finish.',
+      '** finish. **IGNORE** its **center part** or any **side-part groove** — only borrow color, texture, length, and finish.',
     '**TASK:** **Recreate this FRONT photograph** with **only** the **part** and **part-specific drape** changed to ' +
       partTask +
       drapeChange +
       ' **Do not** mirror UI L onto UI R.',
-    ...(targetPart !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(targetPart)] : []),
+    salonPartMustOverrideInputReferenceBlock(targetPart),
+    salonPartDirectionSemanticsBlock(),
     styleKeep,
     bawSalonDrapeBlockForPart(targetPart),
     ...(bangsLine ? [bangsLine] : []),
