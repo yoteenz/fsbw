@@ -32580,3 +32580,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** **Regenerate all angles** (or at least **M** then **L**) after deploy — cached L may still be stale/wrong until **`forceRegenerate`**.
 
+---
+
+## 2026-07-01 — NOIR live color: front-anchor L/R chain (mirrors styling)
+
+**Context (continued chat):** User asked to update color regenerations so **L/R match M** the same way styling does — not three independent recolor passes per gray-brick ref.
+
+**Shipped:**
+- **`api/wig-preview/live-noir-color.ts`** — **FRONT (M)** first; **L/R** Fal input **`[ front colored output, gray-brick side pose ]`** + **`buildBawColorWithFrontAnchorPrompt`** (scene lock + hair identity from IMAGE 1). Fallback to single gray-brick recolor when **M** missing.
+- **`src/utils/api.ts`** — **`postWigPreviewLiveNoirColor`** / **`RegenerateAll`**: **sequential front → left → right** (was parallel); merge **`publicUrls`** per angle from the call that wrote each view.
+- **`docs/WIG_PREVIEW_PREGENERATION.md`** — sequential + front-anchor note.
+
+**Ops:** Regen color **M** then **L/R** (or regen all) after deploy — cached color L/R unchanged until **`forceRegenerate`**.
+

@@ -1900,35 +1900,36 @@ export async function postWigPreviewLiveNoirColorRegenerateAngle(
   return postWigPreviewLiveNoirColorOneAngle({ ...body, angle, forceRegenerate: true });
 }
 
-/**
- * Admin: batch regenerate all three color angles (fal for L, M, R even if WebPs exist).
- * Same parallel one-angle strategy as `postWigPreviewLiveNoirColor`, with `forceRegenerate: true`.
- */
-export async function postWigPreviewLiveNoirColorRegenerateAll(
-  body: WigPreviewLiveNoirColorPayload
+async function postWigPreviewLiveNoirColorSequential(
+  body: WigPreviewLiveNoirColorPayload,
+  opts?: { forceRegenerate?: boolean }
 ): Promise<WigPreviewLiveNoirColorResult> {
-  const angles = ['left', 'front', 'right'] as const;
-  const [ra, rb, rc] = await Promise.all(
-    angles.map((angle) => postWigPreviewLiveNoirColorOneAngle({ ...body, angle, forceRegenerate: true }))
-  );
+  const angles = ['front', 'left', 'right'] as const;
+  const pauseBetweenAnglesMs = 1200;
+  const force = Boolean(opts?.forceRegenerate || body.forceRegenerate);
+  const b = force ? { ...body, forceRegenerate: true as const } : body;
+  const ra = await postWigPreviewLiveNoirColorOneAngle({ ...b, angle: angles[0] });
+  await new Promise((r) => setTimeout(r, pauseBetweenAnglesMs));
+  const rb = await postWigPreviewLiveNoirColorOneAngle({ ...b, angle: angles[1] });
+  await new Promise((r) => setTimeout(r, pauseBetweenAnglesMs));
+  const rc = await postWigPreviewLiveNoirColorOneAngle({ ...b, angle: angles[2] });
   const hashes = new Set([ra.manifestHash, rb.manifestHash, rc.manifestHash]);
   if (hashes.size !== 1) {
     throw new Error('Live preview mismatch (try again)');
   }
   const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
   const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
-  /** Each request regenerates one angle — sibling URLs in a response can be stale until siblings finish; merge per angle. */
-  const publicUrls = {
-    left: ra.publicUrls.left,
-    front: rb.publicUrls.front,
-    right: rc.publicUrls.right,
-  };
+  /** Prefer the one-angle call that wrote each view (front←1st, left←2nd, right←3rd). */
   return {
     ok: true,
     manifestHash: ra.manifestHash,
     bucket: ra.bucket,
     paths: ra.paths,
-    publicUrls,
+    publicUrls: {
+      front: ra.publicUrls.front ?? rb.publicUrls.front ?? rc.publicUrls.front,
+      left: rb.publicUrls.left ?? rc.publicUrls.left ?? ra.publicUrls.left,
+      right: rc.publicUrls.right ?? rb.publicUrls.right ?? ra.publicUrls.right,
+    },
     generated: mergedGenerated,
     skipped: mergedSkipped,
     selections: ra.selections,
@@ -1936,8 +1937,18 @@ export async function postWigPreviewLiveNoirColorRegenerateAll(
 }
 
 /**
- * Admin only: ensure NOIR color preview WebPs exist in Storage (3 angles).
- * Uses **three parallel** API calls (one angle each) so each Vercel function stays within short timeouts (e.g. Hobby ~10s).
+ * Admin: batch regenerate all three color angles (fal for L, M, R even if files exist).
+ * **Sequential front → left → right** so L/R use the FRONT (M) color output as identity anchor (mirrors styling).
+ */
+export async function postWigPreviewLiveNoirColorRegenerateAll(
+  body: WigPreviewLiveNoirColorPayload
+): Promise<WigPreviewLiveNoirColorResult> {
+  return postWigPreviewLiveNoirColorSequential(body, { forceRegenerate: true });
+}
+
+/**
+ * Admin only: ensure NOIR color preview files exist in Storage (3 angles).
+ * Uses **three sequential** API calls (**front → left → right**, one angle each) so L/R anchor to FRONT (M).
  */
 export type LiveTryOnEnsureOverlaysPayload = WigPreviewLiveNoirColorPayload & {
   unitKey?: string;
@@ -2019,29 +2030,15 @@ export function postLiveTryOnEnsureOverlaysOneAngle(
   return postLiveTryOnEnsureOverlaysRaw({ ...body, step: 'overlay' });
 }
 
+/**
+ * Ensure NOIR color preview files exist in Storage (3 angles).
+ * **Three sequential** one-angle API calls (**front → left → right**) so L/R anchor to the FRONT (M) color output (mirrors styling). Pass **`forceRegenerate: true`** on `body` (or in opts) to re-run fal when the swatch changed but Storage still has old files.
+ */
 export async function postWigPreviewLiveNoirColor(
-  body: WigPreviewLiveNoirColorPayload
+  body: WigPreviewLiveNoirColorPayload,
+  opts?: { forceRegenerate?: boolean }
 ): Promise<WigPreviewLiveNoirColorResult> {
-  const angles = ['left', 'front', 'right'] as const;
-  const [ra, rb, rc] = await Promise.all(
-    angles.map((angle) => postWigPreviewLiveNoirColorOneAngle({ ...body, angle }))
-  );
-  const hashes = new Set([ra.manifestHash, rb.manifestHash, rc.manifestHash]);
-  if (hashes.size !== 1) {
-    throw new Error('Live preview mismatch (try again)');
-  }
-  const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
-  const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
-  return {
-    ok: true,
-    manifestHash: ra.manifestHash,
-    bucket: ra.bucket,
-    paths: ra.paths,
-    publicUrls: ra.publicUrls,
-    generated: mergedGenerated,
-    skipped: mergedSkipped,
-    selections: ra.selections,
-  };
+  return postWigPreviewLiveNoirColorSequential(body, opts);
 }
 
 export type LiveWigAfterColorStylingPayload = WigPreviewLiveNoirColorPayload & {

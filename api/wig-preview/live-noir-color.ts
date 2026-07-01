@@ -21,6 +21,8 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
+ * **L/R angles:** when **FRONT (M)** color output exists (or was just generated in the same request), side passes use **`[ front colored, gray-brick side pose ]`** so L/R match **M** hair color + silhouette (mirrors styling front-anchor chain). Client should call **front → left → right** sequentially.
+ *
  * Model: **`openai/gpt-image-2/edit`** — `image_size` **3:4** (`1536×2048`), `quality: high` (override `WIG_PREVIEW_LIVE_GPT2_QUALITY`), `output_format: png` (override `WIG_PREVIEW_LIVE_OUTPUT_FORMAT=webp`).
  *
  * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
@@ -335,6 +337,73 @@ function buildStep2PromptNoLogoAttachment(
   ].join(' ');
 }
 
+async function resolveFrontColorAnchorPublicUrl(
+  supabase: SupabaseClient,
+  bucket: string,
+  frontPath: string
+): Promise<string | null> {
+  const frontExists = await livePreviewObjectExists(supabase, bucket, frontPath);
+  if (!frontExists) return null;
+  const { data: pub } = supabase.storage.from(bucket).getPublicUrl(frontExists.storagePath);
+  return pub?.publicUrl ?? null;
+}
+
+function bawColorFrontAnchorSideSceneLockBlock(angle: 'front' | 'left' | 'right'): string {
+  if (angle === 'front') return '';
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const handedness =
+    angle === 'left'
+      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+  return (
+    '**SCENE LOCK (' +
+    angleLabel +
+    ' — critical):** **IMAGE 2** defines the **only** allowed **camera angle**, **head pose**, **framing**, **brick background**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Rebuild the output photograph to **match IMAGE 2** pixel-for-pixel on scene/bust — **edit hair only**. **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing. ' +
+    handedness
+  );
+}
+
+/** Side color when **FRONT (M)** output exists — mirrors styling `buildBawSalonStylingWithFrontAnchorPrompt`. */
+function buildBawColorWithFrontAnchorPrompt(
+  angle: 'left' | 'right',
+  label: string,
+  hex: string
+): string {
+  const h = hex.replace(/^#/, '').toUpperCase();
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const nearBlack = isJetBlackOffBlackCatalogColor(label, hex);
+  const colorLead = nearBlack
+    ? '**exact** salon black (**' +
+      label +
+      '**, **#' +
+      h +
+      '**) — **same** part line, silhouette, length, volume and **one-sided shoulder sweep** as **IMAGE 1**; **only** normalize tone/sheen consistently'
+    : '**exact** swatch **' +
+      label +
+      '** at **#' +
+      h +
+      '** — authentically dyed hair, **same** part line, silhouette, length, volume and **one-sided shoulder sweep** as **IMAGE 1**';
+
+  return [
+    'You get **2 images in order**.',
+    '**IMAGE 1 = CANONICAL FRONT (M) COLOR OUTPUT (hair identity lock):** This is the **already-recolored FRONT** for this swatch. **Reproduce this exact hair** on the **' +
+      angleLabel +
+      '** camera from **IMAGE 2** — ' +
+      colorLead +
+      '. **FORBIDDEN:** a different shade or restyle; **FORBIDDEN:** re-parting; **FORBIDDEN:** inventing a **similar** but not identical look.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
+      angleLabel +
+      '** photograph). **Scene fidelity lock:** match **IMAGE 2** head pose, framing, brick background, lighting, shadows, **FRONTAL SLAYER** logo — **ignore** IMAGE 2 hair color and hair shape.',
+    bawColorFrontAnchorSideSceneLockBlock(angle),
+    '**TASK:** Composite **IMAGE 1** hair (color + silhouette identity) onto **IMAGE 2** scene — **only** hair edits; bust/brick/logo must match **IMAGE 2**.',
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
+    'Composite: **IMAGE 1** exact FRONT hair color + shape identity + **IMAGE 2** exact **' + angleLabel + '** scene.',
+  ].join(' ');
+}
+
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`download ${url}: ${res.status}`);
@@ -413,6 +482,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const generated: string[] = [];
   const skipped: string[] = [];
+  /** FRONT (M) colored URL — hairstyle + swatch identity lock for L/R in this request. */
+  let frontColorAnchorUrl: string | null = null;
 
   try {
     const { fal } = await import('@fal-ai/client');
@@ -428,12 +499,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
 
-      const prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex, angle);
       const mannequinUrl = mannequinByAngle[angle];
+      let prompt: string;
+      let imageUrls: string[];
+
+      if (angle === 'front') {
+        prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex, 'front');
+        imageUrls = [mannequinUrl];
+      } else {
+        const frontAnchorUrl =
+          frontColorAnchorUrl ?? (await resolveFrontColorAnchorPublicUrl(supabase, bucket, paths.front));
+        if (frontAnchorUrl) {
+          prompt = buildBawColorWithFrontAnchorPrompt(angle, catalog.label, catalog.hex);
+          imageUrls = [frontAnchorUrl, mannequinUrl];
+        } else {
+          prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex, angle);
+          imageUrls = [mannequinUrl];
+        }
+      }
+
       const result = await fal.subscribe('openai/gpt-image-2/edit', {
         input: {
           prompt,
-          image_urls: [mannequinUrl],
+          image_urls: imageUrls,
           image_size: { width: 1536, height: 2048 },
           quality: bawGpt2LivePreviewQuality(),
           output_format: wigPreviewLiveOutputFormat(),
@@ -452,6 +540,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       });
       if (upErr) throw new Error(`upload ${path}: ${upErr.message}`);
       generated.push(angle);
+      if (angle === 'front') {
+        const { data: pubFrontAnchor } = supabase.storage.from(bucket).getPublicUrl(path);
+        frontColorAnchorUrl = pubFrontAnchor?.publicUrl ?? null;
+      }
     }
 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(paths.front);

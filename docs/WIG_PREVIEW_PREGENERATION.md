@@ -42,7 +42,7 @@ Or open `scripts/wig-preview/manifests/noir-sanity-v1.json` (or your preset’s 
 
 ### Live preview (Build-a-Wig → NOIR → Color) — admin only
 
-On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/customize/color`**, when you are signed in as an **admin** (same emails as `ADMIN_EMAILS` / `VITE_ADMIN_EMAILS`) **and** have a Supabase session, the color page calls **`POST /api/wig-preview/live-noir-color` three times in parallel** (body includes **`angle`**: `"left"` \| `"front"` \| `"right"`), so each serverless invocation only does **one** angle. That avoids **Vercel Hobby** killing one long request that would run **three** fal jobs back-to-back (which shows as **`FUNCTION_INVOCATION_FAILED`**).
+On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/customize/color`**, when you are signed in **and** have a Supabase session, the color page calls **`POST /api/wig-preview/live-noir-color` three times in sequence** (body includes **`angle`**: `"front"` then `"left"` then `"right"`), so each serverless invocation only does **one** angle. **L/R** use the stored **FRONT (M)** color output as a Fal identity anchor (same pattern as after-color styling). That avoids **Vercel Hobby** killing one long request that would run **three** fal jobs back-to-back (which shows as **`FUNCTION_INVOCATION_FAILED`**).
 
 The server (per request):
 
@@ -52,7 +52,7 @@ The server (per request):
 
 **Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus optional **`WIG_PREVIEW_NOIR_FAL_MANNEQUIN_*_URL`** — see `.env.example`. Fal uses **gray-brick baked** refs (`fal-gray-brick-{left|front|right}.png`), **not** the transparent UI overlays (`image (26|27|28)`). Build refs: **`npm run wig-preview:build-noir-fal-gray-brick-refs`**; verify: **`npm run wig-preview:verify-noir-mannequins`**. After Fal ref changes, **regen color L/M/R** (cached `wig-preview-live` WebPs are not auto-updated). Bucket must allow **public read**. Optional **`WIG_PREVIEW_FAL_RESOLUTION`**: **`4K`** (default), **`2K`**, or **`1K`**. The API still accepts a request **without** `angle` (all three angles in one invocation) for Pro / long `maxDuration`.
 
-**Color storage hash (important):** Live color WebPs use a **color-tier** hash: selections are hashed with **`styling` forced to `NONE`**, so changing salon styling (e.g. LAYERS) does **not** move the `wig-preview-live/.../{hash}/front.webp` folder. After-color styling reads those three files as Fal input.
+**Color storage hash (important):** Live color WebPs use a **color-tier** hash: selections are hashed with **`styling` forced to `NONE`**, so changing salon styling (e.g. LAYERS) does **not** move the `wig-preview-live/.../{hash}/front.webp` folder. After-color styling reads those three files as Fal input. **L/R color generation** uses the stored **FRONT (M)** output as a Fal identity anchor (same front-first sequential chain as styling) — **`image_urls`** = **[ front colored, gray-brick side pose ]** when **M** exists.
 
 **OFF BLACK vs JET BLACK:** **OFF BLACK** hashes to **`OFF_BLACK`** (own folder). **JET BLACK** hashes to **`JET_BLACK_OFF_BLACK`** so it keeps using **existing** Storage WebPs from the long-standing shared jet/off-black path; Fal prompts still use **#000000** for JET BLACK.
 
