@@ -32563,3 +32563,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Cached styling PNGs unchanged until **`forceRegenerate`** (regen all or per-angle L/M/R).
 
+---
+
+## 2026-06-30 — NOIR styling L vs M mismatch: merge bug + front-anchor side path
+
+**Context (continued chat):** User reported **left (L)** angle is **not** an exact copy of **middle (M)** styled output like **right (R)** is — L shows a **similar** style but **wrong angle, composition, and lighting**.
+
+**Root causes:**
+1. **Client merge bug** in **`postLiveWigAfterColorStyling`**: after **regenerate all** (front → left → right), merged **`publicUrls.left`** preferred the **first** (front) response’s left URL — often a **stale cached** Storage object from before the new M/R runs. Right could look correct if its old URL was missing/null and the third call’s URL won.
+2. **Front-anchor Fal inputs** used **[ color-tier side WebP, gray-brick, front styled ]** — the unstylized **color L** canvas pulled Fal off the front hairstyle lock and re-rolled composition.
+
+**Shipped:**
+- **`src/utils/api.ts`** — merge **`publicUrls`** per angle from the call that wrote it (**front**←1st, **left**←2nd, **right**←3rd).
+- **`api/live-wig-after-color-styling.ts`** — front-anchor side passes **`[ frontStyled, grayBrickSide, optional stylingRef ]`** (drop color-tier side WebP).
+- **`api/_lib/bawLiveStylingPrompts.ts`** — rewrote **`buildBawSalonStylingWithFrontAnchorPrompt`**: **IMAGE 1** = canonical **FRONT (M)**; **IMAGE 2** = **scene/camera lock**; added **`bawSalonFrontAnchorSideSceneLockBlock`** + minimal side supplement (no full independent L/R text spec re-roll).
+
+**Ops:** **Regenerate all angles** (or at least **M** then **L**) after deploy — cached L may still be stale/wrong until **`forceRegenerate`**.
+

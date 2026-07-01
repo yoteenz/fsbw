@@ -7,7 +7,7 @@ export const config = { maxDuration: 300 };
  *
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
- * **L/R angles:** when **FRONT (M)** output exists (or was just generated in the same request), **`buildBawSalonStylingWithFrontAnchorPrompt`** adds it as **IMAGE 3** so all three views share one hairstyle identity.
+ * **L/R angles:** when **FRONT (M)** output exists (or was just generated in the same request), **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose, optional styling ref ]** so L/R match **M** hairstyle on the correct 3/4 camera.
  * **Output:** `.../after-color/.../{angle}.png` (legacy `.webp` still read). Fal **`quality: high`**, **`output_format: png`**.
  * **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`**: one pass from gray-brick (+ optional styling ref) via `buildBawSalonSinglePassFromGrayBrickPrompt`.
  * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
@@ -501,9 +501,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               catalog,
               { ...salonPromptOpts, hasStylingShapeRef: Boolean(stylingRefUrlForAngle) }
             );
+            /** Side views: **front styled (M)** = hairstyle + color identity; gray-brick = exact pose/lighting. Omit color-tier side WebP — its unstylized silhouette was pulling L off the front lock. */
             imageUrls = stylingRefUrlForAngle
-              ? [colorPublicUrl, grayBrickUrl, frontAnchorUrl, stylingRefUrlForAngle]
-              : [colorPublicUrl, grayBrickUrl, frontAnchorUrl];
+              ? [frontAnchorUrl, grayBrickUrl, stylingRefUrlForAngle]
+              : [frontAnchorUrl, grayBrickUrl];
           } else if (stylingRefUrlForAngle) {
             prompt = buildBawSalonStylingWithSceneAndShapeRefsPrompt(
               angle,

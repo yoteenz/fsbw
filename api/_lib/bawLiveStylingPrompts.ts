@@ -509,10 +509,55 @@ export function buildBawSalonStylingWithSceneAndShapeRefsPrompt(
   ].join(' ');
 }
 
+function bawSalonFrontAnchorSideSceneLockBlock(angle: 'left' | 'right'): string {
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const handedness =
+    angle === 'left'
+      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+  return (
+    '**SCENE LOCK (' +
+    angleLabel +
+    ' — critical):** **IMAGE 2** defines the **only** allowed **camera angle**, **head pose**, **framing**, **brick background**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Rebuild the output photograph to **match IMAGE 2** pixel-for-pixel on scene/bust — **edit hair only**. **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing. ' +
+    handedness
+  );
+}
+
+/** Minimal side-view supplement when **IMAGE 1** is the canonical FRONT (M) styled output — avoids re-rolling an independent L/R style from the full color-tier text spec. */
+function buildBawSalonFrontAnchorSideSupplement(
+  angle: 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  options?: { includeBangs?: boolean }
+): string {
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
+  const layersWave =
+    salon === 'layers' ? bawLayersUniformWaveTextureBlock() : null;
+  return [
+    '**SIDE VIEW HAIR RULE (IMAGE 1 front lock):** **IMAGE 1** is the **already-styled FRONT (M)** for this **' +
+      salonLabel +
+      '** + **' +
+      partSelection +
+      ' part**. **Copy this exact hairstyle identity** onto **IMAGE 2**\'s **' +
+      (angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4') +
+      '** camera — **same** wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** a different curl/wave family vs IMAGE 1.',
+    bawSalonModeLockBlock(salon),
+    bawSalonFinishLookBlock(salon),
+    ...(layersWave ? [layersWave] : []),
+    ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
+    salonPartDirectionSemanticsBlock(),
+    bawSalonOneShoulderDrapeBlock(),
+    bawSalonFrontAnchorSideSceneLockBlock(angle),
+    ...(bangsLine ? [bangsLine] : []),
+  ].join(' ');
+}
+
 /**
  * **Side angles (L/R)** when **FRONT (M)** styled output already exists in Storage (or was just generated):
- * **IMAGE 1** = color canvas, **IMAGE 2** = gray-brick pose, **IMAGE 3** = **canonical FRONT styled hairstyle**,
- * optional **IMAGE 4** = JET BLACK styling ref (subordinate to IMAGE 3).
+ * **IMAGE 1** = **canonical FRONT (M)** styled output (hairstyle + color identity),
+ * **IMAGE 2** = gray-brick **side** pose (scene/lighting/camera lock),
+ * optional **IMAGE 3** = JET BLACK styling ref (supplementary texture only — subordinate to IMAGE 1).
  */
 export function buildBawSalonStylingWithFrontAnchorPrompt(
   angle: 'left' | 'right',
@@ -523,52 +568,43 @@ export function buildBawSalonStylingWithFrontAnchorPrompt(
 ): string {
   const hex = catalog.hex.replace(/^#/, '').toUpperCase();
   const salonLabel = bawSalonModePromptLabel(salon);
-  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(partSelection) : null;
   const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
-  const imageCount = options?.hasStylingShapeRef ? 4 : 3;
+  const imageCount = options?.hasStylingShapeRef ? 3 : 2;
   const stylingRefLine = options?.hasStylingShapeRef
-    ? '**IMAGE 4** = **BAW salon styling reference** (**' +
+    ? '**IMAGE 3** = **BAW salon styling reference** (**' +
       salonLabel +
       '**, **' +
       partSelection +
-      ' part**, JET BLACK) — **supplementary texture hint only**; **IMAGE 3** (front output) is the **hairstyle identity lock**. Never copy IMAGE 4 color or scene.'
+      ' part**, JET BLACK) — **supplementary texture hint only**; **IMAGE 1** (front output) is the **hairstyle identity lock**. Never copy IMAGE 3 color or scene.'
     : null;
 
   return [
     'You get **' + imageCount + ' images in order**.',
-    '**IMAGE 1** = **output canvas** + **hair color only**: keep **exact** swatch **' +
-      catalog.label +
-      '** at **#' +
-      hex +
-      '** — **never** copy pigment from other images.',
-    '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
-      angleLabel +
-      '** photograph). Lock **scene fidelity** from IMAGE 2: head pose, framing, brick, lighting, **FRONTAL SLAYER** logo — **ignore** IMAGE 2 hair.',
-    '**IMAGE 3 = CANONICAL FRONT VIEW (hairstyle identity lock):** This is the **already-styled FRONT (M)** output for this **exact** **' +
+    '**IMAGE 1 = CANONICAL FRONT (M) STYLED OUTPUT (hairstyle + color identity lock):** This is the **already-styled FRONT** for this **exact** **' +
       salonLabel +
       '** + **' +
       partSelection +
-      ' part** + swatch. **Reproduce this exact hairstyle** — **same** curl/wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape — **only** re-project onto the **' +
+      ' part** + swatch **' +
+      catalog.label +
+      '** (**#' +
+      hex +
+      '**). **Reproduce this exact hairstyle** on the **' +
       angleLabel +
-      '** camera from IMAGE 2. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** different curl family or scale on L/R vs IMAGE 3.',
+      '** camera from **IMAGE 2** — **same** curl/wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape. **FORBIDDEN:** inventing a **new similar** hairstyle.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
+      angleLabel +
+      '** photograph). **Scene fidelity lock:** match **IMAGE 2** head pose, framing, brick, lighting, shadows, **FRONTAL SLAYER** logo — **ignore** IMAGE 2 hair; **do not** copy its hair color.',
     ...(stylingRefLine ? [stylingRefLine] : []),
     bawSalonNaturalHairAntiHelmetBlock(),
-    bawSalonModeLockBlock(salon),
-    bawSalonFinishLookBlock(salon),
-    ...(partSelection !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(partSelection)] : []),
-    salonPartDirectionSemanticsBlock(),
-    bawSalonOneShoulderDrapeBlock(),
-    bawSalonStylingCameraLine(angle),
-    ...(bangsLine ? [bangsLine] : []),
-    '=== ' + salonLabel + ' FULL TEXT SPEC (with IMAGE 3 front lock — follow every line below) ===',
-    'Side view must match **IMAGE 3** hairstyle identity **and** this text spec — not a independently re-rolled style.',
-    buildBawSalonColorTierTextSpec(angle, partSelection, salon, catalog, options),
+    bawSalonFrontAnchorSideSceneLockBlock(angle),
+    '=== ' + salonLabel + ' SIDE VIEW (IMAGE 1 front lock — follow every line below) ===',
+    buildBawSalonFrontAnchorSideSupplement(angle, partSelection, salon, options),
     bawFalEditPreserveReferenceBlock(),
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     'Output must be extremely high-quality, crisp and pixel-perfect.',
-    'Composite: **IMAGE 1** color + **IMAGE 2** ' +
+    'Composite: **IMAGE 1** exact FRONT hairstyle identity + **IMAGE 2** exact **' +
       angleLabel +
-      ' pose + **IMAGE 3** exact hairstyle identity (**' +
+      '** scene (**' +
       salonLabel +
       '**).',
   ].join(' ');

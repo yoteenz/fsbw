@@ -2098,6 +2098,7 @@ export async function postLiveWigAfterColorStylingRegenerateAngle(
 /**
  * Admin: middle + layers after color — **three sequential** one-angle API calls (**FRONT first**, then L/R).
  * L/R passes use the FRONT styled output as hairstyle identity anchor when it exists in Storage.
+ * Merged `publicUrls` prefer each angle from the one-angle call that wrote it (front←1st, left←2nd, right←3rd).
  * A single invocation that runs three fal jobs often exceeds Vercel limits → `FUNCTION_INVOCATION_FAILED`.
  * Pass **`forceRegenerate: true`** on `body` (or in `opts`) to re-run fal when color/styling changed but Storage still has old WebPs.
  */
@@ -2120,6 +2121,7 @@ export async function postLiveWigAfterColorStyling(
   }
   const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
   const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
+  /** Each one-angle response snapshots all three Storage URLs; prefer the call that just wrote that angle. */
   return {
     ok: true,
     colorTierHash: ra.colorTierHash,
@@ -2128,9 +2130,9 @@ export async function postLiveWigAfterColorStyling(
     colorPaths: ra.colorPaths,
     outputPaths: ra.outputPaths,
     publicUrls: {
-      left: ra.publicUrls.left ?? rb.publicUrls.left ?? rc.publicUrls.left,
       front: ra.publicUrls.front ?? rb.publicUrls.front ?? rc.publicUrls.front,
-      right: ra.publicUrls.right ?? rb.publicUrls.right ?? rc.publicUrls.right,
+      left: rb.publicUrls.left ?? rc.publicUrls.left ?? ra.publicUrls.left,
+      right: rc.publicUrls.right ?? rb.publicUrls.right ?? ra.publicUrls.right,
     },
     generated: mergedGenerated,
     skipped: mergedSkipped,
