@@ -8,7 +8,7 @@ export const config = { maxDuration: 300 };
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
  * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
- * **UI L / UI R part:** **`buildBawSalonSidePartFromMiddleFrontPrompt`** / **`buildBawSalonSidePartFromMiddleFrontAnchorPrompt`** — **MIDDLE-part FRONT** output is the hairstyle identity lock; **only** the part groove moves (same pattern as angle anchor).
+ * **UI L / UI R part:** **FRONT** = **`buildBawSalonSidePartFromMiddleFrontPrompt`** anchored to **MIDDLE-part FRONT** (re-part only). **L/R cameras** = same chain as **MIDDLE part**: **`buildBawSalonStylingWithFrontAnchorPrompt`** with **[ this part’s FRONT, gray-brick side pose ]**.
  * **Output:** `.../after-color/.../{angle}.png` (legacy `.webp` still read). Fal **`quality: high`**, **`output_format: png`**.
  * **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`**: one pass from gray-brick (+ optional styling ref) via `buildBawSalonSinglePassFromGrayBrickPrompt`.
  * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
@@ -44,7 +44,6 @@ import {
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildBawSalonStylingWithFrontAnchorPrompt,
   buildBawSalonSidePartFromMiddleFrontPrompt,
-  buildBawSalonSidePartFromMiddleFrontAnchorPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
   bawStylingReferenceStoragePath,
@@ -309,7 +308,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           )
         : null;
 
-    /** UI L / UI R part: anchor hairstyle identity to **MIDDLE-part FRONT** output (mirrors angle front-anchor chain). */
+    /** UI L / UI R part: **FRONT** re-parts from **MIDDLE-part FRONT**; **L/R cameras** anchor to **this part’s FRONT** (same as MIDDLE part angle chain). */
     const salonMode = liveSalonMode(middleLayers, middleCrimps, middleFlatIron);
     const useMiddlePartFrontAnchor =
       (partStyling === 'LEFT' || partStyling === 'RIGHT') && salonMode !== 'none' && !bangsOnly;
@@ -446,14 +445,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt = buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salonMode, salonPromptOpts);
           imageUrls = [middlePartFrontUrl];
         } else {
-          prompt = buildBawSalonSidePartFromMiddleFrontAnchorPrompt(
+          /** Mirror **MIDDLE part** L/R logic: anchor to **this side part’s FRONT**, not middle-part FRONT. */
+          const sidePartFrontAnchorUrl =
+            frontStylingAnchorUrl ??
+            (await resolveFrontStylingAnchorPublicUrl(supabase, bucket, outPaths.front));
+          if (!sidePartFrontAnchorUrl) {
+            sendJson(res, 400, {
+              error:
+                `${partStyling} part **${angle}** camera needs this part’s **FRONT** styled output first. Regenerate **FRONT** for **${partStyling}** part (after **MIDDLE** part FRONT exists), then **${angle}** again.`,
+              colorTierHash,
+              missingSidePartFrontPath: outPaths.front,
+            });
+            return;
+          }
+          prompt = buildBawSalonStylingWithFrontAnchorPrompt(
             angle,
-            targetPart,
+            partStyling,
             salonMode,
             catalog,
-            salonPromptOpts
+            { ...salonPromptOpts, hasStylingShapeRef: Boolean(stylingRefUrlForAngle) }
           );
-          imageUrls = [middlePartFrontUrl, grayBrickUrl];
+          imageUrls = stylingRefUrlForAngle
+            ? [sidePartFrontAnchorUrl, grayBrickUrl, stylingRefUrlForAngle]
+            : [sidePartFrontAnchorUrl, grayBrickUrl];
         }
       } else if (
         singlePassSalonEnabled() &&

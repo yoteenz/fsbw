@@ -231,6 +231,7 @@ function buildBawSalonMiddleFrontAnchorSideSupplement(
 
 /**
  * **UI L / UI R part, L/R camera angles:** **IMAGE 1** = **MIDDLE-part FRONT** identity; **IMAGE 2** = gray-brick side pose.
+ * @deprecated Live API no longer uses this for side-part L/R cameras — use **`buildBawSalonStylingWithFrontAnchorPrompt`** with **this side part’s FRONT** (mirrors MIDDLE part). Kept for script/legacy callers.
  */
 export function buildBawSalonSidePartFromMiddleFrontAnchorPrompt(
   angle: 'left' | 'right',
@@ -282,7 +283,7 @@ export function buildBawSalonSidePartFromMiddleFrontAnchorPrompt(
 }
 
 /**
- * @deprecated Prefer **`buildBawSalonSidePartFromMiddleFrontPrompt`** (FRONT) or **`buildBawSalonSidePartFromMiddleFrontAnchorPrompt`** (L/R cameras).
+ * @deprecated Prefer **`buildBawSalonSidePartFromMiddleFrontPrompt`** (FRONT). Side-part L/R cameras: **`buildBawSalonStylingWithFrontAnchorPrompt`**.
  */
 export function buildUiRightSalonFromMiddlePartOutputPrompt(
   angle: 'front' | 'left' | 'right',
