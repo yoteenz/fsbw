@@ -150,6 +150,47 @@ export function mergeStylingForHub(
   return sf || 'NONE';
 }
 
+/**
+ * Customize hub styling: **NONE** unless `selectedStyling` confirms a real option.
+ * Ignores stale `*HairStyling` CSV left from prior sessions when the single-token key is NONE.
+ */
+export function readBawCustomizeHubConfirmedStyling(
+  stylingSingleToken: string | null | undefined,
+  hairCsvCustomize: string | null | undefined,
+  hairCsvSelected: string | null | undefined,
+  stateFallback = 'NONE',
+): string {
+  const token = primaryStylingTokenFromHairCsv(stylingSingleToken ?? 'NONE');
+  if (!token || token === 'NONE') return 'NONE';
+  return mergeStylingForHub(
+    hairCsvCustomize ?? null,
+    hairCsvSelected ?? null,
+    stylingSingleToken ?? null,
+    stateFallback,
+  );
+}
+
+/** Reset styling + add-ons to customize defaults (clears stale combo CSV and auto BLEACH+PLUCK session). */
+export function resetBawCustomizeStylingAndAddOnsStorage(): void {
+  localStorage.setItem('selectedStyling', 'NONE');
+  localStorage.setItem('customizeSelectedStyling', 'NONE');
+  localStorage.setItem('selectedAddOns', '[]');
+  localStorage.setItem('customizeSelectedAddOns', '[]');
+  localStorage.setItem('selectedStylingPrice', '0');
+  localStorage.setItem('customizeSelectedStylingPrice', '0');
+  localStorage.setItem('selectedAddOnsPrice', '0');
+  localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+  localStorage.removeItem('selectedHairStyling');
+  localStorage.removeItem('customizeSelectedHairStyling');
+  localStorage.removeItem('editSelectedHairStyling');
+  try {
+    sessionStorage.removeItem('bleachPluckAutoAddedForStyling');
+    sessionStorage.removeItem('addOnsBeforeStylingSelection');
+  } catch {
+    /* ignore */
+  }
+}
+
 export function mirrorCustomizeDraftKeysFromSelectedHubKeys(): void {
   const keys: [string, string][] = [
     ['customizeSelectedCapSize', 'selectedCapSize'],

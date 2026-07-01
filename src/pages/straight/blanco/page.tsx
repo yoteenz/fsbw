@@ -9,6 +9,7 @@ import ImageViewerModal, { type ImageViewerDownloadLink } from '../../../compone
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
+import { resetBawCustomizeStylingAndAddOnsStorage } from '../../../utils/bawCrossStepSummary';
 import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
 import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
@@ -1719,7 +1720,7 @@ function BlancoSelection() {
                 localStorage.removeItem('editingCartItemId');
                 
                 console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
-                
+                resetBawCustomizeStylingAndAddOnsStorage();
                 navigate('/build-a-wig/blanco/customize');
             }}
           />

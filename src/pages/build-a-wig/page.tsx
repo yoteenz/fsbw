@@ -42,6 +42,8 @@ import {
   mergeStylingForHub,
   mirrorCustomizeDraftKeysFromSelectedHubKeys,
   primaryStylingTokenFromHairCsv,
+  readBawCustomizeHubConfirmedStyling,
+  resetBawCustomizeStylingAndAddOnsStorage,
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
@@ -786,11 +788,11 @@ export default function BuildAWigPage() {
         const savedTexture = savedTextureSelected || savedTextureCustomize || customization.texture || defaultTexture;
         const savedColor = savedColorSelected || savedColorCustomize || customization.color || defaultColor;
         const savedHairline = savedHairlineSelected || savedHairlineCustomize || customization.hairline || 'NATURAL';
-        const savedStyling = mergeStylingForHub(
-          localStorage.getItem('selectedHairStyling'),
-          localStorage.getItem('selectedHairStyling'),
+        const savedStyling = readBawCustomizeHubConfirmedStyling(
           savedStylingSelected || savedStylingCustomize,
-          customization.styling || 'NONE'
+          localStorage.getItem('customizeSelectedHairStyling'),
+          localStorage.getItem('selectedHairStyling'),
+          customization.styling || 'NONE',
         );
         const savedAddOns = savedAddOnsSelected || savedAddOnsCustomize || JSON.stringify(customization.addOns) || '[]';
         
@@ -953,12 +955,12 @@ export default function BuildAWigPage() {
           isLoadingFromStorage.current = false;
         }, 300);
       } else {
-        // First load: Load cap size with defaults for other selections
-        // When NOT coming from sub-page (first load), prioritize selectedCapSize (set by customize button)
+        // First load: product defaults for customize — styling NONE + empty add-ons (not stale localStorage).
+        resetBawCustomizeStylingAndAddOnsStorage();
+
         const savedCapSize = localStorage.getItem('selectedCapSize') || localStorage.getItem('customizeSelectedCapSize');
         
         if (savedCapSize) {
-          // Load existing selections from customizeSelected* keys if they exist, otherwise use defaults
           const isBlancoCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/blanco');
           const isOceanCurlCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/ocean-curl');
           const isBeachWaveCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/beach-wave');
@@ -966,7 +968,6 @@ export default function BuildAWigPage() {
           const isSoftWaveCustomizeRouteForDefaults = location.pathname.startsWith('/build-a-wig/soft-wave');
           const defaultColorForFirstLoad = isBlancoCustomizeRouteForDefaults ? 'PLATINUM' : 'OFF BLACK';
           
-          // Determine product-specific default texture
           let defaultTextureForFirstLoad = 'SILKY';
           if (isOceanCurlCustomizeRouteForDefaults || isSoftCurlCustomizeRouteForDefaults) {
             defaultTextureForFirstLoad = 'CURLY';
@@ -980,23 +981,10 @@ export default function BuildAWigPage() {
           const existingTexture = localStorage.getItem('selectedTexture') || defaultTextureForFirstLoad;
           const existingColor = localStorage.getItem('selectedColor') || defaultColorForFirstLoad;
           const existingHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
-          const existingStyling = mergeStylingForHub(
-            null,
-            localStorage.getItem('selectedHairStyling'),
-            localStorage.getItem('selectedStyling'),
-            'NONE'
-          );
-          const existingAddOns = localStorage.getItem('selectedAddOns') || '[]';
+          const validStyling = 'NONE';
+          const stylingTokenForLs = 'NONE';
           
-          // Ensure styling is valid
-          let validStyling = existingStyling !== null && existingStyling !== 'NONE' ? existingStyling : 'NONE';
-          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-          if (partSelectionOptions.includes(validStyling)) {
-            validStyling = 'NONE';
-          }
-          const stylingTokenForLs = primaryStylingTokenFromHairCsv(validStyling);
-          
-          let initialCustomization = {
+          const initialCustomization = {
             capSize: savedCapSize,
           length: existingLength,
           density: existingDensity,
@@ -1005,20 +993,8 @@ export default function BuildAWigPage() {
           color: existingColor,
           hairline: existingHairline,
           styling: validStyling,
-          addOns: existingAddOns ? JSON.parse(existingAddOns) : [],
+          addOns: [] as string[],
         };
-
-          // When a style is confirmed on first load, BLEACH + PLUCK are required — auto-add so main page shows confirmed without visiting add-ons
-          if (validStyling !== 'NONE' && validStyling.trim() !== '' && (!initialCustomization.addOns.includes('BLEACH') || !initialCustomization.addOns.includes('PLUCK'))) {
-            sessionStorage.setItem('addOnsBeforeStylingSelection', JSON.stringify(initialCustomization.addOns));
-            const addOnsBeforeFirstLoad = initialCustomization.addOns.filter((x: string) => x !== 'BLEACH' && x !== 'PLUCK');
-            const addOnsOrder = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
-            const merged = [...addOnsBeforeFirstLoad, 'BLEACH', 'PLUCK'];
-            initialCustomization = { ...initialCustomization, addOns: merged.sort((a: string, b: string) => addOnsOrder.indexOf(a) - addOnsOrder.indexOf(b)) };
-            sessionStorage.setItem('bleachPluckAutoAddedForStyling', 'true');
-          }
-        
-        
         setCustomization(initialCustomization);
         
         // Save to both selected* and customizeSelected* keys
@@ -1041,17 +1017,8 @@ export default function BuildAWigPage() {
         localStorage.setItem('customizeSelectedHairline', initialCustomization.hairline);
         localStorage.setItem('customizeSelectedStyling', stylingTokenForLs);
         localStorage.setItem('customizeSelectedAddOns', JSON.stringify(initialCustomization.addOns));
-        try {
-          if (validStyling && validStyling !== 'NONE' && validStyling.trim() !== '') {
-            localStorage.setItem('selectedHairStyling', validStyling.trim());
-            localStorage.setItem('customizeSelectedHairStyling', validStyling.trim());
-          } else {
-            localStorage.removeItem('selectedHairStyling');
-            localStorage.removeItem('customizeSelectedHairStyling');
-          }
-        } catch {
-          /* ignore */
-        }
+        localStorage.removeItem('selectedHairStyling');
+        localStorage.removeItem('customizeSelectedHairStyling');
         
         // CRITICAL: Load existing prices from localStorage BEFORE calculating new ones
         // This preserves prices saved by sub-pages
@@ -1062,8 +1029,6 @@ export default function BuildAWigPage() {
         const existingLacePrice = localStorage.getItem('customizeSelectedLacePrice') || localStorage.getItem('selectedLacePrice');
         const existingTexturePrice = localStorage.getItem('customizeSelectedTexturePrice') || localStorage.getItem('selectedTexturePrice');
         const existingHairlinePrice = localStorage.getItem('customizeSelectedHairlinePrice') || localStorage.getItem('selectedHairlinePrice');
-        const existingStylingPrice = localStorage.getItem('customizeSelectedStylingPrice') || localStorage.getItem('selectedStylingPrice');
-        const existingAddOnsPrice = localStorage.getItem('customizeSelectedAddOnsPrice') || localStorage.getItem('selectedAddOnsPrice');
         
         // Calculate prices - capSizePrice should be preserved from localStorage if it exists
         const calculatedPrices = calculatePricesFromSelections(initialCustomization);
@@ -1087,8 +1052,8 @@ export default function BuildAWigPage() {
           lacePrice: (existingLacePrice && existingLacePrice !== '' && !isNaN(parseFloat(existingLacePrice))) ? parseFloat(existingLacePrice) : calculatedPrices.lacePrice,
           texturePrice: (existingTexturePrice && existingTexturePrice !== '' && !isNaN(parseFloat(existingTexturePrice))) ? parseFloat(existingTexturePrice) : calculatedPrices.texturePrice,
           hairlinePrice: (existingHairlinePrice && existingHairlinePrice !== '' && !isNaN(parseFloat(existingHairlinePrice))) ? parseFloat(existingHairlinePrice) : calculatedPrices.hairlinePrice,
-          stylingPrice: (existingStylingPrice && existingStylingPrice !== '' && !isNaN(parseFloat(existingStylingPrice))) ? parseFloat(existingStylingPrice) : calculatedPrices.stylingPrice,
-          addOnsPrice: (existingAddOnsPrice && existingAddOnsPrice !== '' && !isNaN(parseFloat(existingAddOnsPrice))) ? parseFloat(existingAddOnsPrice) : calculatedPrices.addOnsPrice,
+          stylingPrice: calculatedPrices.stylingPrice,
+          addOnsPrice: calculatedPrices.addOnsPrice,
         };
         
         savePricesToLocalStorage(pricesToSave);
@@ -2294,11 +2259,11 @@ export default function BuildAWigPage() {
                 prev.styling
               )
             : isCustomizeMode
-              ? mergeStylingForHub(
+              ? readBawCustomizeHubConfirmedStyling(
+                  savedStyling,
                   localStorage.getItem('customizeSelectedHairStyling'),
                   localStorage.getItem('selectedHairStyling'),
-                  savedStyling,
-                  prev.styling
+                  prev.styling,
                 )
               : savedStyling ?? prev.styling;
 

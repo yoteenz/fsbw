@@ -44,6 +44,7 @@ import {
   clearPendingBawNoirLiveColorWigViews,
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
 } from '../../../utils/bawNoirLivePreviewStorage';
+import { resetBawCustomizeStylingAndAddOnsStorage } from '../../../utils/bawCrossStepSummary';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
@@ -3069,6 +3070,7 @@ function NoirSelection() {
                 /* ignore */
               }
               console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
+              resetBawCustomizeStylingAndAddOnsStorage();
               navigate('/build-a-wig/noir/customize');
           }}
         />

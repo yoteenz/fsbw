@@ -32883,3 +32883,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Conventions:** On customize/edit **sub-pages**, in-progress taps → **`customizeSelected*`** / **`editSelected*`** only (for live preview). Hub tiles, price, and cart/edit state → **`selected*`** updated **only** on **Confirm selection**. Entering customize from PDP still seeds defaults via **`selected*`** + mirrored **`customizeSelected*`**; abandoned draft taps must not change the hub until Confirm.
 
 **Changes:** **`src/utils/bawSubpageSelectionPersist.ts`** (new), **`src/pages/build-a-wig/{length,density,lace,texture,cap-size,color,hairline,styling,addons}/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**. Build passes.
+
+---
+
+## 2026-07-01 — Customize hub: force default styling NONE + empty add-ons (no stale CSV)
+
+**Context (continued chat):** After confirm-only sub-page fix, user reported **customize mode** still showing **styling** and **add-on** options when it should show **default selections only** (styling **NONE**, add-ons **empty**).
+
+**Root cause:** Customize hub **first load** read stale **`selectedHairStyling`** CSV (e.g. `BANGS,LAYERS`) and **`selectedAddOns`** (e.g. auto **BLEACH+PLUCK**) from prior sessions even when **`selectedStyling`** was **NONE**. **`mergeStylingForHub`** on return-from-sub-page used **`selectedHairStyling` twice** as both CSV args. PDP customize seeded **`selectedStyling`** / **`selectedAddOns`** but did not clear **`selectedHairStyling`** or session **`bleachPluckAutoAddedForStyling`**.
+
+**Fix:** **`resetBawCustomizeStylingAndAddOnsStorage()`** + **`readBawCustomizeHubConfirmedStyling()`** in **`bawCrossStepSummary.ts`**. Customize hub **first load** (not **`comingFromSubPage`**) resets styling/add-ons, forces **NONE** / **[]**, styling/add-on prices **0**. Live hub sync ignores stale hair CSV when single-token styling is **NONE**. All six unit PDP **Customize** handlers call **`resetBawCustomizeStylingAndAddOnsStorage()`** before navigate. **Confirm** on styling/add-ons sub-pages still promotes via **`comingFromSubPage`**.
+
+**Changes:** **`src/utils/bawCrossStepSummary.ts`**, **`src/pages/build-a-wig/page.tsx`**, unit PDP pages (**noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl**).
