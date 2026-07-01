@@ -388,31 +388,79 @@ function bawLayersUniformWaveTextureBlock() {
   );
 }
 
-/** UI R + LAYERS/CRIMPS: input = MIDDLE-part after-color WebP. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
-export function buildUiRightSalonFromMiddlePartOutputPrompt(_angle, _salon, includeBangs) {
-  const angleLabel = _angle === 'left' ? 'LEFT 3/4' : _angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
+/** UI L / UI R part: MIDDLE-part FRONT anchor. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
+export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, options) {
+  const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
+  const partTask =
+    targetPart === 'LEFT'
+      ? '**UI L / LEFT part**: visible part groove in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**) — **not** center, **not** UI R.'
+      : '**UI R / RIGHT part**: visible part groove in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** center, **not** UI L.';
   const styleKeep =
-    _salon === 'layers'
-      ? 'Keep the **same uniform voluminous layered S-waves** (not ringlets), volume, length, and color as this image — **only** change where the **part** sits.'
-      : 'Keep the **same crimp texture, scale, length, and color** as this image — **only** change where the **part** sits.';
-  const bangsLine = includeBangs
-    ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
-    : '';
-  const fidelity = BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK;
-  const tail =
-    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.';
-  return (
-    '**INPUT:** This image is the **MIDDLE part** (**center part**) version of this hairstyle for this **same** camera angle — **same** mannequin, scene, lighting, and **hair color**. ' +
-      '**TASK:** **Recreate this photograph** with the **part on the LEFT side of her scalp** (**UI R / RIGHT part**): **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair. ' +
-      styleKeep +
-      ' ' +
-      `**Camera:** **${angleLabel}** — preserve **framing, head pose, brick background, and FRONTAL SLAYER logo**; edit **hair only**. ` +
-      salonOneShoulderDrapeBlock() +
-      bangsLine +
-      ' ' +
-      fidelity +
-      tail
-  );
+    salon === 'layers'
+      ? 'Keep the **same uniform voluminous layered S-waves** (not ringlets), volume, length, and color — **only** change where the **part** sits.'
+      : salon === 'crimps'
+        ? 'Keep the **same crimp texture, scale, length, and color** — **only** change where the **part** sits.'
+        : 'Keep the **same bone-straight flat-ironed** finish, length, and color — **only** change where the **part** sits.';
+  const includeBangs = Boolean(options && options.includeBangs);
+  const bangsLine = includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  return [
+    '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **FRONT** styled output — **same** mannequin, scene, lighting, **hair color**, and **' +
+      salonLabel +
+      '** finish.',
+    '**TASK:** **Recreate this FRONT photograph** with **only** the **part moved** to ' +
+      partTask +
+      ' **Do not** mirror the head; **do not** restyle texture; **do not** change volume, length, or drape except what the new part requires.',
+    ...(targetPart !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(targetPart)] : []),
+    styleKeep,
+    salonOneShoulderDrapeBlock(),
+    ...(bangsLine ? [bangsLine] : []),
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.',
+  ].join(' ');
+}
+
+/** @deprecated Prefer `buildBawSalonSidePartFromMiddleFrontPrompt` / anchor variant in `bawLiveStylingPrompts.ts`. */
+export function buildUiRightSalonFromMiddlePartOutputPrompt(angle, salon, includeBangs, catalog) {
+  const cat = catalog ?? { label: 'hair', hex: '000000' };
+  if (angle === 'front') {
+    return buildBawSalonSidePartFromMiddleFrontPrompt('RIGHT', salon, { includeBangs });
+  }
+  return buildBawSalonSidePartFromMiddleFrontAnchorPrompt(angle, 'RIGHT', salon, cat, { includeBangs });
+}
+
+function buildBawSalonSidePartFromMiddleFrontAnchorPrompt(angle, targetPart, salon, catalog, options) {
+  const hex = String(catalog.hex || '')
+    .replace(/^#/, '')
+    .toUpperCase();
+  const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const partLabel = targetPart === 'LEFT' ? 'UI L / LEFT part' : 'UI R / RIGHT part';
+  const includeBangs = Boolean(options && options.includeBangs);
+  const bangsLine = includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const layersWave = salon === 'layers' ? bawLayersUniformWaveTextureBlock() : null;
+  return [
+    'You get **2 images in order**.',
+    '**IMAGE 1 = CANONICAL MIDDLE PART FRONT (hairstyle + color identity lock):** **MIDDLE part** (**center part**) **FRONT** styled output for **' +
+      salonLabel +
+      '** at **' +
+      catalog.label +
+      '** (**#' +
+      hex +
+      '**). **Reproduce this exact hairstyle** on **' +
+      angleLabel +
+      '** from **IMAGE 2** — **only** move the **part** to **' +
+      partLabel +
+      '**.',
+    '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
+      angleLabel +
+      '**). **Scene fidelity lock:** match head pose, framing, brick, lighting, logo — **ignore** IMAGE 2 hair.',
+    salonPartMustOverrideInputReferenceBlock(targetPart),
+    ...(layersWave ? [layersWave] : []),
+    salonOneShoulderDrapeBlock(),
+    ...(bangsLine ? [bangsLine] : []),
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+    'The **FRONTAL SLAYER** chest logo must stay fully legible. Output must be extremely high-quality, crisp, and pixel-perfect.',
+  ].join(' ');
 }
 
 function salonStyleInvarianceAcrossColorsBlock(canonicalStyleLabel) {

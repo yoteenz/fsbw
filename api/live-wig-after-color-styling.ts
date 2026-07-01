@@ -7,7 +7,8 @@ export const config = { maxDuration: 300 };
  *
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
- * **L/R angles:** when **FRONT (M)** output exists (or was just generated in the same request), **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose, optional styling ref ]** so L/R match **M** hairstyle on the correct 3/4 camera.
+ * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
+ * **UI L / UI R part:** **`buildBawSalonSidePartFromMiddleFrontPrompt`** / **`buildBawSalonSidePartFromMiddleFrontAnchorPrompt`** — **MIDDLE-part FRONT** output is the hairstyle identity lock; **only** the part groove moves (same pattern as angle anchor).
  * **Output:** `.../after-color/.../{angle}.png` (legacy `.webp` still read). Fal **`quality: high`**, **`output_format: png`**.
  * **`WIG_PREVIEW_LIVE_SINGLE_PASS_SALON=1`**: one pass from gray-brick (+ optional styling ref) via `buildBawSalonSinglePassFromGrayBrickPrompt`.
  * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
@@ -42,7 +43,8 @@ import {
   buildBawSalonStylingWithSceneRefPrompt,
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildBawSalonStylingWithFrontAnchorPrompt,
-  buildUiRightSalonFromMiddlePartOutputPrompt,
+  buildBawSalonSidePartFromMiddleFrontPrompt,
+  buildBawSalonSidePartFromMiddleFrontAnchorPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 import {
   bawStylingReferenceStoragePath,
@@ -169,6 +171,24 @@ async function resolveFrontStylingAnchorPublicUrl(
   return pub?.publicUrl ?? null;
 }
 
+function middlePartStorageFolderKey(
+  middleLayers: boolean,
+  middleCrimps: boolean,
+  middleFlatIron: boolean,
+  hasBangs: boolean
+): string | null {
+  if (middleLayers) {
+    return hasBangs ? wigPreviewLiveLayersWithBangsPartFolder('MIDDLE') : wigPreviewLiveLayersPartFolder('MIDDLE');
+  }
+  if (middleCrimps) {
+    return hasBangs ? wigPreviewLiveCrimpsWithBangsPartFolder('MIDDLE') : wigPreviewLiveCrimpsPartFolder('MIDDLE');
+  }
+  if (middleFlatIron) {
+    return hasBangs ? wigPreviewLiveFlatIronWithBangsPartFolder('MIDDLE') : wigPreviewLiveFlatIronPartFolder('MIDDLE');
+  }
+  return null;
+}
+
 function stylingModePayload(
   middleLayers: boolean,
   middleCrimps: boolean,
@@ -289,22 +309,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           )
         : null;
 
-    /** UI R + LAYERS/CRIMPS: prefer **RIGHT-part** BAW styling ref (two-image); fallback = MIDDLE-part output chain. */
+    /** UI L / UI R part: anchor hairstyle identity to **MIDDLE-part FRONT** output (mirrors angle front-anchor chain). */
     const salonMode = liveSalonMode(middleLayers, middleCrimps, middleFlatIron);
-    let useMiddlePartOutputAsUiRightInput =
-      partStyling === 'RIGHT' && (middleLayers || middleCrimps);
-    const middleFolderKeyForUiR = middleLayers
-      ? hasBangs
-        ? wigPreviewLiveLayersWithBangsPartFolder('MIDDLE')
-        : wigPreviewLiveLayersPartFolder('MIDDLE')
-      : middleCrimps
-        ? hasBangs
-          ? wigPreviewLiveCrimpsWithBangsPartFolder('MIDDLE')
-          : wigPreviewLiveCrimpsPartFolder('MIDDLE')
-        : '';
-    const middleOutPathsForUiR =
-      useMiddlePartOutputAsUiRightInput && middleFolderKeyForUiR
-        ? wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, middleFolderKeyForUiR)
+    const useMiddlePartFrontAnchor =
+      (partStyling === 'LEFT' || partStyling === 'RIGHT') && salonMode !== 'none' && !bangsOnly;
+    const middleFolderKey = middlePartStorageFolderKey(middleLayers, middleCrimps, middleFlatIron, hasBangs);
+    const middleOutPaths =
+      useMiddlePartFrontAnchor && middleFolderKey
+        ? wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, middleFolderKey)
         : null;
 
     let supabase;
@@ -314,20 +326,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       sendJson(res, 503, { error: 'SUPABASE_SERVICE_ROLE_KEY required for Storage upload' });
       return;
     }
-
-    if (useMiddlePartOutputAsUiRightInput && salonMode !== 'none') {
-      const rightPartStylingRefUrl = await resolveStylingReferencePublicUrl(
-        supabase,
-        bucket,
-        salonMode,
-        'RIGHT',
-        'front'
-      );
-      if (rightPartStylingRefUrl) {
-        useMiddlePartOutputAsUiRightInput = false;
-      }
-    }
-
 
     /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
     let flatIronLeftRightThumbOverrideUrl: string | null = null;
@@ -425,30 +423,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? await resolveStylingReferencePublicUrl(supabase, bucket, salonMode, partStyling, angle)
           : null;
 
-      if (useMiddlePartOutputAsUiRightInput && middleOutPathsForUiR) {
-        const middlePath = middleOutPathsForUiR[angle];
-        const middleExists = await livePreviewObjectExists(supabase, bucket, middlePath);
-        if (!middleExists) {
+      if (useMiddlePartFrontAnchor && middleOutPaths) {
+        const middleFrontPath = middleOutPaths.front;
+        const middleFrontExists = await livePreviewObjectExists(supabase, bucket, middleFrontPath);
+        if (!middleFrontExists) {
           sendJson(res, 400, {
             error:
-              'RIGHT part needs the **MIDDLE part** version of this style first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate** (or wait for preview), then select **RIGHT** part again.',
+              `${partStyling} part needs the **MIDDLE part FRONT** styled output first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate** (or wait for preview), then select **${partStyling}** part again.`,
             colorTierHash,
-            missingMiddlePartPath: middlePath,
+            missingMiddlePartPath: middleFrontPath,
           });
           return;
         }
-        const { data: pubMid } = supabase.storage.from(bucket).getPublicUrl(middleExists.storagePath);
-        colorPublicUrl = pubMid?.publicUrl ?? '';
-        if (!colorPublicUrl) {
-          sendJson(res, 500, { error: 'Could not build public URL for middle-part styling layer' });
+        const { data: pubMidFront } = supabase.storage.from(bucket).getPublicUrl(middleFrontExists.storagePath);
+        const middlePartFrontUrl = pubMidFront?.publicUrl ?? '';
+        if (!middlePartFrontUrl) {
+          sendJson(res, 500, { error: 'Could not build public URL for middle-part FRONT anchor' });
           return;
         }
-        prompt = buildUiRightSalonFromMiddlePartOutputPrompt(
-          angle,
-          middleLayers ? 'layers' : 'crimps',
-          bangsWithSalon
-        );
-        imageUrls = [colorPublicUrl];
+        const targetPart = partStyling as 'LEFT' | 'RIGHT';
+        if (angle === 'front') {
+          prompt = buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salonMode, salonPromptOpts);
+          imageUrls = [middlePartFrontUrl];
+        } else {
+          prompt = buildBawSalonSidePartFromMiddleFrontAnchorPrompt(
+            angle,
+            targetPart,
+            salonMode,
+            catalog,
+            salonPromptOpts
+          );
+          imageUrls = [middlePartFrontUrl, grayBrickUrl];
+        }
       } else if (
         singlePassSalonEnabled() &&
         salonMode !== 'none' &&
