@@ -419,6 +419,52 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
   ].join(' ');
 }
 
+/** UI L / UI R part L/R cameras: gray-brick scene + front hair donor. Sync with `bawLiveStylingPrompts.ts`. */
+export function buildBawSalonSidePartSideViewFromFrontHairPrompt(angle, targetPart, salon, catalog, options) {
+  const hex = String(catalog?.hex || '')
+    .replace(/^#/, '')
+    .toUpperCase();
+  const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
+  const partLabel = targetPart === 'LEFT' ? 'UI L / LEFT part' : 'UI R / RIGHT part';
+  const includeBangs = Boolean(options && options.includeBangs);
+  const bangsLine = includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const layersWave = salon === 'layers' ? bawLayersUniformWaveTextureBlock() : null;
+  const handedness =
+    angle === 'left'
+      ? 'Nose/temple aims **toward the image LEFT edge** — true **LEFT 3/4**, not front.'
+      : 'Nose/temple aims **toward the image RIGHT edge** — true **RIGHT 3/4**, not front, not **LEFT 3/4**.';
+  return [
+    'You get **2 images in order**.',
+    '**IMAGE 1 = OUTPUT SCENE (pose + camera — copy exactly):** NOIR gray-brick mannequin **' +
+      angleLabel +
+      '** photo. **This is the output photograph template.** Match **IMAGE 1** head turn, bust, brick, lighting, shadows, **FRONTAL SLAYER** logo, and framing **pixel-for-pixel**. **FORBIDDEN:** front-facing head; **FORBIDDEN:** **' +
+      wrongAngle +
+      '**. ' +
+      handedness,
+    '**IMAGE 2 = HAIR DONOR ONLY (this part’s FRONT / M camera — NOT a pose reference):** Already-styled **FRONT** for **' +
+      salonLabel +
+      '**, **' +
+      partLabel +
+      '**, swatch **' +
+      (catalog?.label || 'hair') +
+      '** (**#' +
+      hex +
+      '**). Use **only** from IMAGE 2: hair **color**, curl/wave/crimp **pattern+scale**, **length**, **volume**, salon finish, and **' +
+      partLabel +
+      '** part. **IGNORE from IMAGE 2:** head pose, face direction, camera, shoulders square to camera, background, brick, logo.',
+    '**TASK:** Composite **IMAGE 2**’s **exact hair** onto **IMAGE 1**’s **turned** head — **same hair** as the **M (front)** thumbnail for this part, viewed from **' +
+      angleLabel +
+      '**. **FORBIDDEN:** inventing a new hairstyle; **FORBIDDEN:** pasting IMAGE 2’s **front-facing face** onto IMAGE 1; **FORBIDDEN:** changing IMAGE 1’s head turn.',
+    ...(layersWave ? [layersWave] : []),
+    salonOneShoulderDrapeBlock(),
+    ...(bangsLine ? [bangsLine] : []),
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+    'The **FRONTAL SLAYER** chest logo must stay fully legible. Output must be extremely high-quality, crisp, and pixel-perfect.',
+  ].join(' ');
+}
+
 /** UI L / UI R part L/R cameras: MIDDLE-part **same-angle** anchor. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
 export function buildBawSalonSidePartFromMiddleSameAnglePrompt(angle, targetPart, salon, options) {
   const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';

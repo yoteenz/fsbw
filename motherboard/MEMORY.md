@@ -32673,3 +32673,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen **MIDDLE FRONT** → **side-part FRONT (M)** → **side-part L/R** with **`forceRegenerate`**.
 
+---
+
+## 2026-07-01 — Side-part L/R prompts: scene-first, hair-donor-second (fix front-facing face)
+
+**Context (continued chat):** User reported side-part **L/R** still wrong — Fal **keeps mannequin facing forward** (from **M/front hair image**) instead of **IMAGE 2 gray-brick 3/4 turn** + correct **UI L/R part** on turned head. Prior prompt wording treated **FRONT (M)** as full photo reference; **`bawFalEditPreserveReferenceBlock`** + hair-first image order reinforced front pose.
+
+**Fix:**
+- **`buildBawSalonSidePartSideViewFromFrontHairPrompt`**: **IMAGE 1** = gray-brick **side pose** (output template); **IMAGE 2** = **FRONT (M)** **hair donor only** (ignore pose/face/background). Explicit **FORBIDDEN:** pasting front face; **FORBIDDEN:** straightening head.
+- **`api/live-wig-after-color-styling.ts`**: side-part L/R **`image_urls`** = **`[ grayBrickSide, sidePartFront ]`** + new prompt.
+- **`salonPartSideViewFromFrontDonorBlock`**, **`bawSalonSideViewSceneMasterPreserveBlock`**.
+
+**Ops:** Force regen side-part **L/R** after deploy.
+

@@ -201,6 +201,90 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(
   ].join(' ');
 }
 
+function bawSalonSideViewSceneMasterPreserveBlock(): string {
+  return (
+    'Treat **IMAGE 1** as the **photograph to preserve** — **same** turned head, bust, brick, lighting, shadows, logo sharpness, and **' +
+    '3/4 camera**. **Only** edit **hair**. **Do not** straighten the head to front-facing. **Do not** copy **IMAGE 2**\'s face angle, pose, background, or framing.'
+  );
+}
+
+function salonPartSideViewFromFrontDonorBlock(
+  angle: 'left' | 'right',
+  targetPart: 'LEFT' | 'RIGHT'
+): string {
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const partLabel = targetPart === 'LEFT' ? 'UI L / LEFT part' : 'UI R / RIGHT part';
+  return (
+    '**PART on this ' +
+    angleLabel +
+    ':** Show **' +
+    partLabel +
+    '** — the **same** side part as **IMAGE 2** (front donor), read correctly on this **turned** head. **FORBIDDEN:** center/MIDDLE part. **FORBIDDEN:** rotating the head back to **front** just to show the part line.'
+  );
+}
+
+/**
+ * **UI L / UI R part, L/R camera angles:** **IMAGE 1** = gray-brick **side pose** (scene master); **IMAGE 2** = this part’s **FRONT (M)** (hair donor only).
+ * Stops Fal from keeping the front-facing face from the hair reference instead of **IMAGE 1**’s 3/4 turn.
+ */
+export function buildBawSalonSidePartSideViewFromFrontHairPrompt(
+  angle: 'left' | 'right',
+  targetPart: 'LEFT' | 'RIGHT',
+  salon: 'layers' | 'crimps' | 'flat_iron',
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean }
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const salonLabel = bawSalonModePromptLabel(salon);
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
+  const partLabel = targetPart === 'LEFT' ? 'UI L / LEFT part' : 'UI R / RIGHT part';
+  const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const layersWave = salon === 'layers' ? bawLayersUniformWaveTextureBlock() : null;
+  const handedness =
+    angle === 'left'
+      ? 'Nose/temple aims **toward the image LEFT edge** — true **LEFT 3/4**, not front.'
+      : 'Nose/temple aims **toward the image RIGHT edge** — true **RIGHT 3/4**, not front, not **LEFT 3/4**.';
+
+  return [
+    'You get **2 images in order**.',
+    '**IMAGE 1 = OUTPUT SCENE (pose + camera — copy exactly):** NOIR gray-brick mannequin **' +
+      angleLabel +
+      '** photo. **This is the output photograph template.** Match **IMAGE 1** head turn, bust, brick, lighting, shadows, **FRONTAL SLAYER** logo, and framing **pixel-for-pixel**. **FORBIDDEN:** front-facing head; **FORBIDDEN:** **' +
+      wrongAngle +
+      '**. ' +
+      handedness,
+    '**IMAGE 2 = HAIR DONOR ONLY (this part’s FRONT / M camera — NOT a pose reference):** Already-styled **FRONT** for **' +
+      salonLabel +
+      '**, **' +
+      partLabel +
+      '**, swatch **' +
+      catalog.label +
+      '** (**#' +
+      hex +
+      '**). Use **only** from IMAGE 2: hair **color**, curl/wave/crimp **pattern+scale**, **length**, **volume**, salon finish, and **' +
+      partLabel +
+      '** part. **IGNORE from IMAGE 2:** head pose, face direction, camera, shoulders square to camera, background, brick, logo.',
+    '**TASK:** Composite **IMAGE 2**’s **exact hair** onto **IMAGE 1**’s **turned** head — **same hair** as the **M (front)** thumbnail for this part, viewed from **' +
+      angleLabel +
+      '**. **FORBIDDEN:** inventing a new hairstyle; **FORBIDDEN:** pasting IMAGE 2’s **front-facing face** onto IMAGE 1; **FORBIDDEN:** changing IMAGE 1’s head turn.',
+    bawSalonModeLockBlock(salon),
+    bawSalonFinishLookBlock(salon),
+    ...(layersWave ? [layersWave] : []),
+    salonPartSideViewFromFrontDonorBlock(angle, targetPart),
+    bawSalonOneShoulderDrapeBlock(),
+    bawSalonSideViewSceneMasterPreserveBlock(),
+    ...(bangsLine ? [bangsLine] : []),
+    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+    'Output must be extremely high-quality, crisp and pixel-perfect.',
+    'Composite: **IMAGE 1** exact **' +
+      angleLabel +
+      '** scene + pose + **IMAGE 2** exact **M (front)** hair identity (**' +
+      partLabel +
+      '**).',
+  ].join(' ');
+}
+
 /**
  * **UI L / UI R part, L/R camera angles:** re-part from **MIDDLE-part same-angle** (deprecated for live API).
  * Live API uses **`buildBawSalonStylingWithFrontAnchorPrompt`** with **this side part’s FRONT (M)** + gray-brick side pose.
@@ -679,7 +763,7 @@ function bawSalonFrontAnchorSideSceneLockBlock(angle: 'left' | 'right'): string 
   const handedness =
     angle === 'left'
       ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
-      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Keep true RIGHT 3/4** framing from **IMAGE 2** — **do not** rotate the head toward camera.';
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten the head to front-facing (hair donor may be front — keep **IMAGE 2** scene turn).';
   return (
     '**SCENE LOCK (' +
     angleLabel +
