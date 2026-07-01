@@ -32647,3 +32647,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Regen **MIDDLE** **front → left → right** first; then **LEFT/RIGHT** part triple with **`forceRegenerate`** on **R** (cached wrong-handed files persist until regen).
 
+---
+
+## 2026-07-01 — Stop double Vercel deploys (amend+force-push, script twice)
+
+**Context (continued chat):** User reported agents **still push two deployments for one prompt**. Recent failure mode: **`./scripts/agent-commit.sh "test"`** pushed once, then **`git commit --amend` + `git push --force-with-lease`** to fix message — **two deploys**. Earlier failure modes: separate **`Motherboard:`** commit after code; MEMORY appended **after** first push attempt.
+
+**Fix:**
+- **`.cursor/rules/one-deploy-per-task.mdc`** — forbid amend+force-push after first push; append MEMORY **before** first commit; no second push to fix same task.
+- **`scripts/agent-commit.sh`** — reject short/test messages; refuse if local is ahead of origin (unpushed commits); warn not to amend+force after success.
+- **`motherboard/ADDING.md`**, **`AGENTS.md`** tightened.
+
+**Convention:** One user request → edit code + MEMORY → **`./scripts/agent-commit.sh "final message"`** **once**. If already pushed in this task, **do not push again**.
+

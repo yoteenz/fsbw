@@ -6,31 +6,30 @@ alwaysApply: true
 # One deploy per task (Build-a-Wig)
 
 **Each user prompt / completed task = exactly ONE `git commit` + ONE `git push` to `master`.**  
-Pushing twice for the same task triggers **two Vercel production deploys** — avoid this.
+Every extra push to `master` triggers **another Vercel production deploy** (including **`git push --force-with-lease`** to amend a message).
 
 ## Required order (when code or docs change)
 
-1. **Finish the code/docs change.**
-2. **Append `motherboard/MEMORY.md`** (auto-add) — summarize the **entire conversation so far**, not just the last turn. See `motherboard/ADDING.md`.
-3. **`git add -A`** (or stage **code + docs + `motherboard/MEMORY.md` together**).
-4. **Verify** `motherboard/MEMORY.md` is staged if any non-motherboard file changed:  
-   `git diff --cached --name-only | grep -q motherboard/MEMORY.md`
-5. **One commit** with a descriptive message (feature/fix — **not** a separate `"Motherboard: …"` commit).
-6. **One push:** `git push -u origin master`
+1. **Finish all code/docs edits** for this user request.
+2. **Append `motherboard/MEMORY.md` first** (auto-add) — entire conversation so far. See `motherboard/ADDING.md`. **Do this before any `git commit` or `./scripts/agent-commit.sh` attempt.**
+3. Run **`./scripts/agent-commit.sh "descriptive message"`** once — it stages everything, commits, pushes. **Do not** hand-run separate `git commit` / `git push` steps unless you mirror the same checks.
 
-Prefer **`./scripts/agent-commit.sh "your message"`** — it enforces MEMORY staging before commit.
+## Forbidden (each causes an extra deploy)
 
-## Forbidden
+- Push code, then a follow-up commit for **`MEMORY.md`** or **`Motherboard: …`**.
+- **Two pushes in one task** — e.g. push with a bad/`test` message, then **`git commit --amend`** + **`git push --force-with-lease`** to fix it.
+- **`git push --force`** / **`--force-with-lease`** on `master` to repair the same task (use only if the user explicitly asks to rewrite history).
+- Running **`./scripts/agent-commit.sh`** twice for the same task (first push already deployed).
+- Debug commits with messages like **`test`**, **`wip`**, or **`Motherboard:`** as a second commit after feature code.
 
-- **Do not** push code, then push a follow-up commit only for `MEMORY.md`.
-- **Do not** use commit messages like **`Motherboard: …`** as a second deploy after a code commit in the same task.
-- **Do not** run **`git push`** more than once per completed user request (unless the user explicitly asked for a second change).
+## If something is wrong before the first push
 
-## If you forgot MEMORY before pushing
+- **`git commit --amend`** (fix message or add forgotten files) — then **one** `git push`. Still only one push.
 
-- **Before push:** amend — `git add motherboard/MEMORY.md && git commit --amend --no-edit` — then **one push**.
-- **After push (same task):** do **not** add a second MEMORY-only commit; note the miss and include MEMORY in the **next** code commit, or ask the user before a second push.
+## If you already pushed once in this task
+
+- **Stop.** Do **not** push again to “fix” message, MEMORY, or a typo — that is a **second deploy**. Note the gap; fold fixes into the **next** user-requested change, or ask the user before a second push.
 
 ## Memory-only turns
 
-When the user only asked a question and you changed **nothing** except optionally MEMORY — a MEMORY-only commit is OK (no code deploy impact beyond docs). When **any** code/docs changed, MEMORY **must** be in **that same commit**.
+Q&A with no code change: a MEMORY-only commit is OK. Any code/doc change → **`MEMORY.md` in that same commit**, one push.

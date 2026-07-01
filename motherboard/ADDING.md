@@ -6,7 +6,7 @@ When the user says **"add to motherboard"** (in this or any past chat), follow t
 
 ## Rules
 
-0. **One Vercel deploy per task (critical).** When you change **any** code or docs, **`MEMORY.md` must land in the same git commit and the same `git push`** as those changes. **Never** push code first and a separate `"Motherboard: …"` commit second — that costs **two production deploys** for one prompt. Workflow: **code done → append MEMORY → `git add -A` → one commit → one push**. Use **`./scripts/agent-commit.sh "message"`** to enforce this. See **`.cursor/rules/one-deploy-per-task.mdc`**.
+0. **One Vercel deploy per task (critical).** When you change **any** code or docs, **`MEMORY.md` must land in the same git commit and the same `git push`**. **Append MEMORY before your first commit attempt.** Ship with **`./scripts/agent-commit.sh "message"`** once — **never** push then amend+**force-push** to fix the message (that is **two** deploys). **Never** run the script twice for one user request. See **`.cursor/rules/one-deploy-per-task.mdc`**.
 
 1. **Append only.** Do not remove, replace, or rewrite existing sections in `CORE.md` or `MEMORY.md`. Only add new content.
 2. **No duplicates.** Before adding, read the full `MEMORY.md` and `CORE.md`. If the same fact or decision is already stated, do not add it again. You may add a short cross-reference or "(see entry YYYY-MM-DD)" if useful.

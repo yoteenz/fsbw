@@ -28,9 +28,8 @@ For full command details and protocol, see **`motherboard/README.md`**.
 
 ## One Vercel deploy per task
 
-- **Each completed user request = one commit + one push** to `master`. Pushing code and then a separate **`Motherboard:`** commit triggers **two production deploys** — forbidden for the same task.
-- **Order:** finish code → append **`motherboard/MEMORY.md`** → **`git add -A`** → one commit → **`git push -u origin master`**.
-- Use **`./scripts/agent-commit.sh "message"`** so MEMORY is staged with code before push.
+- **Each completed user request = one `./scripts/agent-commit.sh` run** (one commit + one push). **Append `motherboard/MEMORY.md` before that run.**
+- **Forbidden:** push then **`git commit --amend` + `git push --force-with-lease`**; push then **`Motherboard:`** follow-up; running **`agent-commit.sh` twice** for the same task.
 - Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`** rule 0.
 
 ## Cursor Cloud environment
