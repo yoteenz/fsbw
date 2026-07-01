@@ -32832,3 +32832,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Disk IO should drop after deploy + one-time L/R backfill. If warnings persist: Supabase dashboard → Disk IO charts; consider **compute add-on** upgrade per Supabase email.
 
+---
+
+## 2026-06-30 — LIVE PREVIEW: Forbidden on NOIR color page (diagnosis)
+
+**Context (continued chat):** User saw **`LIVE PREVIEW: Forbidden`** on mobile (`fsbw.vercel.app`) on the NOIR color step. Cached mannequin triple still displayed; founder **regen color L/M/R** links visible.
+
+**What the message is:** Red status line is **`livePreviewError`** in **`src/pages/build-a-wig/color/page.tsx`** — text from a failed **`POST /api/wig-preview/live-noir-color`** (background **`reconcileSidesOnly`** L/R backfill, full triple gen, or founder regen). Cached WebPs load from **public Supabase Storage** first; the error is from the **secondary** API call, not image display.
+
+**Not site auth:** Current **`live-noir-color.ts`** returns **401** `{ error: 'Sign in required' }` without JWT — not **403**. Old founder-only guard returned **Founder admin session required**, not bare **Forbidden**. Production probe without token → **401**.
+
+**Root cause of exact string `Forbidden`:** Handler catch returns **500** `{ error: msg }` where **`msg`** is upstream. **`@fal-ai/client`** **`ApiError`** on HTTP **403** uses **`statusText`** → message **`Forbidden`** when Fal JSON has no `body.message`. Most likely **Fal.ai rejected** the GPT Image 2 edit call (invalid/expired **`FAL_KEY`**, billing/quota, or model access). Less likely: Vercel edge **403** plain body before handler (check Vercel function logs **`[wig-preview/live-noir-color]`**).
+
+**Why it surfaced now:** **`ecc58481`** + **`40f7fa46`** — color page runs **`postWigPreviewLiveNoirColorReconcileSides`** when Storage triple exists (once per swatch per 6h) to backfill L/R missing **`noirColorSidePipelineGen: '3'`** — triggers Fal even when previews look fine.
+
+**Ops for user:** Vercel → **`FAL_KEY`** env + Fal dashboard credits/access for **`openai/gpt-image-2/edit`**; Vercel logs on failed reconcile; after Fal fixed, **regen L/R** or reload color page. Previews remain usable from cache while Fal is broken.
