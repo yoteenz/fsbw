@@ -15,7 +15,7 @@ export type CatalogColorForLayersPrompt = { label: string; hex: string };
 
 /**
  * **LAYERS** live styling: Fal `image_urls` = **color-tier WebP** from Storage (already tinted to the swatch).
- * Keeps **catalog hair color** while restyling to **voluminous layered S-waves** (blended barrel curls, not separated ringlets) + part — fixes black hair when input was HQ black refs.
+ * Keeps **catalog hair color** while restyling to **uniform voluminous layered S-waves** (not ringlets/curl clusters) + part — fixes black hair when input was HQ black refs.
  */
 export function buildLayersStylePromptFromColorTierWebp(
   angle: 'front' | 'left' | 'right',
@@ -231,7 +231,7 @@ function buildLayersStylePromptShared(
   includeBangs: boolean
 ): string {
   const layersLook =
-    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered S-waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. Hair must show **natural root lift**, **strand separation**, and **soft hairline edges** — **FORBIDDEN:** flat **helmet** / molded-cap hair with no internal texture. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls. **FRONT (hero):** **single-shoulder drape** — see **DRAPE SIDE** block above; **never** equal “waterfall” curls on **both** shoulders.';
+    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **uniform voluminous layered S-waves** (full-bodied, glam): **large, soft, repeating S-shaped set waves** — **one wave scale** across the head (**salon-set**, smooth, glossy). **NOT** ringlets, **NOT** spiral curls, **NOT** corkscrews, **NOT** separated curl clumps, **NOT** mixed curl sizes. Waves **merge into one continuous flow** — shorter face-framing layers blend into longer lengths. **FORBIDDEN:** beach-curl perm look or “bunch of curls”. **FRONT:** main forward panel per **DRAPE SIDE**; back length **straight down the back** naturally.';
 
   const crimpsLook =
     'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing** and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural** with visible **strand depth** — **FORBIDDEN:** flat **helmet** blob with no ridge detail. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT (hero):** **single-shoulder crimp drape** — see **DRAPE SIDE**; **never** thick matching crimp panels on **both** shoulders.';
@@ -241,10 +241,10 @@ function buildLayersStylePromptShared(
   const styleNoun = salon === 'crimps' ? 'salon deep-pressed crimps' : 'voluminous layered S-waves';
   const partWordLayers =
     partSelection === 'MIDDLE'
-      ? '**MIDDLE part:** **Center part** at crown. **FRONT:** long waves — **all heavy length** forward over **viewer’s LEFT shoulder only** (**DRAPE SIDE**). **Viewer’s RIGHT** shoulder: minimal / tucked. **FORBIDDEN:** symmetric heavy waves on both shoulders.'
+      ? '**MIDDLE part:** **Center part** at crown. **FRONT:** main waves forward over **viewer’s LEFT** shoulder; length **behind** falls **straight down the back** naturally. **FORBIDDEN:** symmetric heavy waves on both shoulders; **FORBIDDEN:** all back hair swept to one side.'
       : partSelection === 'LEFT'
-        ? '**LEFT part (UI “L”):** **Part + root lift on image RIGHT** scalp (**right third** of forehead). Hair must **sweep** so **all heavy long waves** drape **forward over viewer’s LEFT shoulder only** (cross-body from the part if needed). **FORBIDDEN:** part on **image LEFT** scalp (UI **R**). **FORBIDDEN:** thick forward drape on **viewer’s RIGHT** shoulder.'
-        : '**RIGHT part (UI “R”):** **Not** UI L. **Part + root lift on image LEFT** scalp (**left third** of forehead) — **mirror-opposite** of UI L. **Heavy long waves** per **DRAPE SIDE**. **FORBIDDEN:** part on **image RIGHT** half (that is **UI L**). **FORBIDDEN:** thick drape on **viewer’s RIGHT** shoulder.';
+        ? '**LEFT part (UI “L”):** **Part + root lift on image RIGHT** scalp (**right third** of forehead). **Main forward waves** over **viewer’s LEFT** shoulder; **back length** **straight down the back** — **FORBIDDEN:** part on **image LEFT** scalp (UI **R**); **FORBIDDEN:** thick forward drape on **viewer’s RIGHT**; **FORBIDDEN:** routing all back hair sideways.'
+        : '**RIGHT part (UI “R”):** **Not** UI L. **Part on image LEFT** scalp (**left third**). **Main forward waves** per **DRAPE SIDE**; **back length** **straight down the back**. **FORBIDDEN:** part on **image RIGHT** (UI **L**); **FORBIDDEN:** all hair piled to one side behind the back.';
 
   const partWordCrimps =
     partSelection === 'MIDDLE'
@@ -312,6 +312,7 @@ function buildLayersStylePromptShared(
     salonStyleInvarianceAcrossColorsBlock(styleNoun + (includeBangs ? ' + curtain bangs' : '')),
     salonPartDirectionSemanticsBlock(),
     bawSalonOneShoulderDrapeBlock(),
+    ...(salon === 'layers' ? [bawLayersUniformWaveTextureBlock()] : []),
     'Recreate this photograph. **Only** change the **hairstyle** to **' +
       styleNoun +
       '** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing** and the **hair color** rules above.',
@@ -328,6 +329,12 @@ function buildLayersStylePromptShared(
       (includeBangs ? ' **with curtain bangs** as specified' : '') +
       ' with the specified part; **everything** else must match the reference, including **hair color** per the lock above.',
   ].join(' ');
+}
+
+function bawLayersUniformWaveTextureBlock(): string {
+  return (
+    '**LAYERS TEXTURE LOCK — UNIFORM S-WAVES (not curls):** One **uniform** family of **large soft S-shaped set waves** — **same wave size and rhythm** from roots through ends, blended and cohesive. **FORBIDDEN:** ringlet curls, spiral curls, corkscrews, beach ringlets, separated curl clusters, or **many mixed curl sizes**. **NOT** crimps. **NOT** a curl perm or barrel-curl ringlets. Reads as **salon brushed layered waves**, not individual curls.'
+  );
 }
 
 function bawSalonNaturalHairAntiHelmetBlock(): string {
@@ -356,7 +363,7 @@ function buildBawSalonColorTierTextSpec(
 function bawSalonModeLockBlock(salon: 'layers' | 'crimps' | 'flat_iron'): string {
   if (salon === 'layers') {
     return (
-      '**STYLING MODE LOCK — LAYERS (critical):** Output **voluminous layered S-waves** / brushed-out barrel curls — **NOT** bone-straight, **NOT** flat-ironed, **NOT** crimp ridges. **FORBIDDEN:** sleek straight hair from IMAGE 1 or IMAGE 2.'
+      '**STYLING MODE LOCK — LAYERS (critical):** Output **uniform voluminous layered S-waves** — **NOT** ringlet/spiral curls, **NOT** crimps, **NOT** bone-straight. **FORBIDDEN:** curl perm, separated curl clusters, mixed curl sizes.'
     );
   }
   if (salon === 'crimps') {
@@ -372,7 +379,7 @@ function bawSalonModeLockBlock(salon: 'layers' | 'crimps' | 'flat_iron'): string
 function bawSalonFinishLookBlock(salon: 'layers' | 'crimps' | 'flat_iron'): string {
   if (salon === 'layers') {
     return (
-      '**LAYERS finish spec:** **Long** layered hair past shoulders. **Voluminous layered S-waves** — large soft S-shaped waves, brushed-out barrel curls, blended cohesive flow — **not** tight ringlets, **not** straight.'
+      '**LAYERS finish spec:** **Long** layered hair past shoulders. **Uniform large S-shaped set waves** — one wave scale, blended cohesive flow — **not** ringlets, **not** curls, **not** straight.'
     );
   }
   if (salon === 'crimps') {

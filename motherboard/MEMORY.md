@@ -32547,3 +32547,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** **Regenerate all angles** after deploy (or regen **M** first, then L/R). Single-angle **L/R** regen uses cached **M** as anchor when present.
 
+---
+
+## 2026-06-30 — NOIR LAYERS: uniform S-waves + natural straight back fall (not curl clumps / sideways back sweep)
+
+**Context (continued chat):** User reported LAYERS styling keeps producing **a bunch of curls** instead of **uniform layered S-waves**, and keeps **pushing all hair behind the back to one side** when it should **fall straight down the back** naturally. Same chat arc: styling page LIVE PREVIEW lift, wrong-shoulder drape fix, helmet hair + full text spec, one-deploy motherboard rule, front-anchor L/M/R consistency.
+
+**Root cause:** Prompt copy still said **“brushed-out barrel curls”** and **“all heavy length forward”** over one shoulder — Fal interpreted that as curl perm + routing **all** length (including back) sideways instead of **forward chest panel + vertical back fall**.
+
+**Shipped:**
+- **`api/_lib/bawSalonHairGeometryPrompts.ts`** — **`bawLivePreviewAsymmetricDrapeCoreLines`**: forward cascade on **viewer’s LEFT** only; **BACK FALL** = **straight down the back** with gravity; **FORBIDDEN** sweeping all back hair to one side / ponytail clump behind one shoulder. **`bawOneShoulderDrapeCompactLock`** updated.
+- **`api/_lib/bawLiveStylingPrompts.ts`** — **`bawLayersUniformWaveTextureBlock`**; **`layersLook`**, **`partWordLayers`**, **`bawSalonModeLockBlock`** / **`bawSalonFinishLookBlock`** (layers): **uniform S-waves**, **not** ringlets/spirals/curl clusters; part lines + FRONT angle strings forbid **all back hair swept sideways**.
+- **`scripts/wig-preview/promptTemplate.mjs`** — synced drape block, layers look/part lines, texture lock.
+- **`docs/WIG_PREVIEW_PREGENERATION.md`** — LAYERS line updated (uniform S-waves + straight back fall).
+
+**Ops:** Cached styling PNGs unchanged until **`forceRegenerate`** (regen all or per-angle L/M/R).
+

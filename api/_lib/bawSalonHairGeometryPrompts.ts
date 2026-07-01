@@ -26,15 +26,16 @@ export function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLaye
   );
 }
 
-/** BAW NOIR live preview — primary forward drape on **viewer's LEFT** (image LEFT). */
+/** BAW NOIR live preview — forward cascade on viewer's LEFT; back length falls straight down naturally. */
 export function bawLivePreviewAsymmetricDrapeCoreLines(): string[] {
   return [
-    'Long hair uses a **one-forward-shoulder drape** — only one side gets the forward chest cascade; the opposite side keeps visible hair **behind the shoulder / down the back**, not another forward curtain.',
-    '**PRIMARY FRONT CASCADE:** as you **face** the mannequin in the photo, almost **all** long hair falls **forward over the viewer\'s LEFT shoulder only** — **left side of the image** (closer to the **left edge**). This is the single chest cascade.',
-    '**CLEAR SHOULDER CAP:** on the **viewer\'s RIGHT shoulder** — **right side of the image** — shoulder/collarbone stays mostly visible. Hair on this side reads as a **thin tuck**, hair **behind** the shoulder, or down the back — **no thick forward chest curtain**.',
-    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass on both collarbones; mirror-image forward drapes; piling **all** hair forward on one shoulder with **zero** back/behind-shoulder hair.',
-    '**Shoulder still visible:** keep **gaps**, **separation between strands**, or **semi-sheer** fall so the clear shoulder cap still reads — **FORBIDDEN** an opaque blanket fully hiding that shoulder.',
-    '**Self-check failed if:** there is a forward hair curtain covering each collarbone, or heavy drape on **viewer\'s RIGHT** (image RIGHT). **Correct if:** one forward chest cascade (**image LEFT** / viewer\'s LEFT) + minimal/behind hair on **viewer\'s RIGHT**.',
+    'Long hair uses **asymmetric front drape** — one shoulder gets the **forward chest cascade**; hair **behind** the mannequin falls **straight down the back** with natural gravity (not routed sideways).',
+    '**PRIMARY FRONT CASCADE:** the **main forward panel** falls over the **viewer\'s LEFT shoulder** — **left side of the image** (closer to the **left edge**). This is the **chest/forward** section only — **not** the entire haircut piled forward.',
+    '**BACK FALL (natural gravity):** length **behind** the bust falls **straight down the back** from the nape — **vertical**, **even**, natural — like long hair hanging down the mannequin\'s back. **FORBIDDEN:** sweeping **all** back hair sideways to one side; **FORBIDDEN:** thick ponytail-like clump routed behind one shoulder; **FORBIDDEN:** pushing the whole back section to **one edge** of the back.',
+    '**CLEAR SHOULDER CAP:** on the **viewer\'s RIGHT shoulder** — **right side of the image** — shoulder/collarbone stays visible. Only **thin** face-framing strands there — **no** thick forward chest curtain.',
+    '**FORBIDDEN:** symmetric **forward** twin waterfalls on **both** shoulders with equal heavy mass; mirror-image forward drapes; **all** hair forward on one shoulder with **nothing** falling down the back.',
+    '**Shoulder still visible:** keep **gaps** or **semi-sheer** fall so the clear shoulder cap still reads — **FORBIDDEN** an opaque blanket fully hiding that shoulder.',
+    '**Self-check failed if:** back hair is a **sideways sweep** piled on one side instead of **straight down the back**; or heavy drape on **viewer\'s RIGHT** (image RIGHT). **Correct if:** one forward chest cascade (**image LEFT**) + **natural vertical back fall** behind the bust.',
   ];
 }
 
@@ -63,7 +64,7 @@ export function bawSalonOneShoulderDrapeBlock(): string {
 
 export function bawOneShoulderDrapeCompactLock(): string {
   return [
-    'ONE-FORWARD-SHOULDER DRAPE: heavy length **only** over **viewer\'s LEFT shoulder** (image LEFT) — **FORBIDDEN** thick forward drape on **viewer\'s RIGHT** (image RIGHT).',
+    'DRAPE: main forward panel over **viewer\'s LEFT** (image LEFT); back length falls **straight down the back** naturally — **FORBIDDEN** all hair swept/piled to one side behind the back.',
   ].join(' ');
 }
 
