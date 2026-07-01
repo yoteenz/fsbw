@@ -336,10 +336,54 @@ const BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK =
   'Keep **everything else exactly the same** — same mannequin, brick background, lighting and framing; **only** change the **hair color** as specified. The words on the logo on the chest must read **FRONTAL SLAYER**; keep the logo **consistent** for accuracy.';
 
 const BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK =
-  '**#0 SCENE MASTER (automatic fail if violated):** The input photograph is the **only** source for **crop, canvas size, aspect ratio, camera distance, zoom, head scale, bust scale, bottom alignment, brick tile scale**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Output must be **pixel-aligned** with that reference — **identical composition** across every color swatch. **FORBIDDEN:** zoom in/out, pan, reframe, subject drift, or a tighter/wider crop than the reference. **Only** hair **pigment** may change.';
+  '**#0 SCENE MASTER — FRONT ONLY (automatic fail if violated):** The input photograph is the **only** source for **crop, canvas size, aspect ratio, camera distance, zoom, head scale, bust scale, bottom alignment, brick tile scale**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Output must be **pixel-aligned** with that reference — **identical composition** across every color swatch. **FORBIDDEN:** zoom in/out, pan, reframe, subject drift, or a tighter/wider crop than the reference. **Only** hair **pigment** may change.';
 
 const BAW_GPT2_NOIR_COLOR_FRAMING_LOCK =
   '**Framing lock:** Do **not** resize, reposition, re-crop or zoom the mannequin bust or the leaf-brick background. The figure must stay **the same scale** and **bottom-aligned** in the frame as the reference — **identical crop and zoom to the gray-brick reference on every swatch** — **only** hair pigment changes. **FORBIDDEN:** pan left/right, zoom, reframe, or any shift in composition.';
+
+/** Side L/R: camera angle + 3/4 handedness beat framing/zoom — mirrors styling `bawSalonFrontAnchorSideSceneLockBlock`. */
+function bawColorSideCameraBodyLockBlock(angle: 'left' | 'right', ref: 'input' | 'image2'): string {
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  const wrongAngle = angle === 'left' ? 'RIGHT 3/4' : 'LEFT 3/4';
+  const refLabel = ref === 'image2' ? '**IMAGE 2**' : 'the **input photograph**';
+  const handedness =
+    angle === 'left'
+      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+  const frontDonorNote =
+    ref === 'image2'
+      ? ' **Do not** straighten or twist the head toward front-facing to match **IMAGE 1** (front donor is **hair color/silhouette only** — keep **IMAGE 2** body turn).'
+      : '';
+  return (
+    '**#0 CAMERA + BODY LOCK — HIGHEST PRIORITY (' +
+    angleLabel +
+    ' — automatic fail if violated):** ' +
+    refLabel +
+    ' (NOIR gray-brick **' +
+    angleLabel +
+    '** photograph) is the **only** source for **camera angle**, **head turn**, **neck**, **shoulders**, **bust pose**, **3/4 handedness**, **lighting**, **shadows**, **brick background**, **FRONTAL SLAYER** logo, and **framing**. Output must match ' +
+    refLabel +
+    ' **pixel-for-pixel** on scene/bust — **same** **' +
+    angleLabel +
+    '** camera degree as the reference, **NOT** **' +
+    wrongAngle +
+    '**, **NOT** front-facing.' +
+    frontDonorNote +
+    ' **FORBIDDEN:** rotating the head toward camera; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing to match a front donor. **Only** hair **pigment + silhouette** may change. ' +
+    handedness
+  );
+}
+
+function bawColorSideFramingLockBlock(angle: 'left' | 'right'): string {
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
+  return (
+    '**#1 FRAMING LOCK (' +
+    angleLabel +
+    ' — subordinate to #0 camera lock):** Do **not** resize, reposition, re-crop or zoom vs the gray-brick **' +
+    angleLabel +
+    '** reference — same scale, same bottom alignment, same brick tile scale. **Do not** change camera angle or head turn to fix framing.'
+  );
+}
 
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
@@ -367,15 +411,25 @@ function buildStep2PromptNoLogoAttachment(
       hex +
       ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.';
 
-  return [
-    BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK,
-    recolorLead,
-    angleConstraint,
-    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
-    BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
-    BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
-    'The photo should be extremely high-quality, crisp and pixel-perfect.',
-  ].join(' ');
+  return angle === 'front'
+    ? [
+        BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK,
+        recolorLead,
+        angleConstraint,
+        BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+        BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+        BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
+        'The photo should be extremely high-quality, crisp and pixel-perfect.',
+      ].join(' ')
+    : [
+        bawColorSideCameraBodyLockBlock(angle, 'input'),
+        recolorLead,
+        angleConstraint,
+        BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
+        BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
+        bawColorSideFramingLockBlock(angle),
+        'The photo should be extremely high-quality, crisp and pixel-perfect.',
+      ].join(' ');
 }
 
 async function resolveFrontColorAnchorPublicUrl(
@@ -387,21 +441,6 @@ async function resolveFrontColorAnchorPublicUrl(
   if (!frontExists) return null;
   const { data: pub } = supabase.storage.from(bucket).getPublicUrl(frontExists.storagePath);
   return pub?.publicUrl ?? null;
-}
-
-function bawColorFrontAnchorSideSceneLockBlock(angle: 'front' | 'left' | 'right'): string {
-  if (angle === 'front') return '';
-  const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
-  const handedness =
-    angle === 'left'
-      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten the head toward front-facing to match **IMAGE 1** (front donor is **hair only** — keep **IMAGE 2** body turn).'
-      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten the head toward front-facing to match **IMAGE 1** (front donor is **hair only** — keep **IMAGE 2** body turn).';
-  return (
-    '**MANNEQUIN + LIGHTING LOCK (' +
-    angleLabel +
-    ' — critical):** **IMAGE 2** is the **only** source for **camera angle**, **head pose**, **framing**, **brick background**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo. Rebuild the output to **match IMAGE 2** pixel-for-pixel on scene/bust/lighting — **edit hair pigment + silhouette only**. **FORBIDDEN:** relighting or reframing to match **IMAGE 1**; **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness. ' +
-    handedness
-  );
 }
 
 /** Side color when **FRONT (M)** output exists — mirrors styling `buildBawSalonStylingWithFrontAnchorPrompt`. */
@@ -426,23 +465,20 @@ function buildBawColorWithFrontAnchorPrompt(
       '** — authentically dyed hair, **same** part line, silhouette, length, volume and **one-sided shoulder sweep** as **IMAGE 1**';
 
   return [
+    bawColorSideCameraBodyLockBlock(angle, 'image2'),
     'You get **2 images in order**.',
-    '**#0 SCENE MASTER (automatic fail if violated):** **IMAGE 2** (gray-brick **' +
-      angleLabel +
-      '** photograph) is the **only** source for **crop, zoom, camera distance, head scale, bust scale, bottom alignment, brick tile scale**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo. Output must be **pixel-aligned** with **IMAGE 2** on scene/bust/brick — **identical composition** to the gray-brick reference on every swatch. **FORBIDDEN:** zoom, pan, reframe, or borrowing **IMAGE 1**\'s front-facing crop/lighting. **Only** hair **pigment + silhouette** from **IMAGE 1** may be edited onto **IMAGE 2**.',
     '**IMAGE 1 = CANONICAL FRONT (M) COLOR OUTPUT (hair color + silhouette identity lock):** This is the **already-recolored FRONT** for this swatch. **Reproduce this exact hair** (color, part line, length, volume, **one-sided shoulder sweep**) on the **' +
       angleLabel +
       '** camera from **IMAGE 2** — ' +
       colorLead +
-      '. **FORBIDDEN:** a different shade or restyle; **FORBIDDEN:** re-parting; **FORBIDDEN:** inventing a **similar** but not identical look.',
+      '. **FORBIDDEN:** a different shade or restyle; **FORBIDDEN:** re-parting; **FORBIDDEN:** inventing a **similar** but not identical look. **FORBIDDEN:** copying **IMAGE 1** head angle, neck, shoulders, or lighting — **hair donor only**.',
     '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
       angleLabel +
-      '** photograph). **Scene + lighting lock (overrides IMAGE 1 pose/light):** match **IMAGE 2** head turn, neck, shoulders, bust, framing, brick, **lighting**, **shadows**, **FRONTAL SLAYER** logo pixel-for-pixel — **ignore** IMAGE 2 hair color and hair shape; **do not** borrow **IMAGE 1**\'s front-facing head angle or front lighting.',
-    bawColorFrontAnchorSideSceneLockBlock(angle),
-    '**TASK:** Composite **IMAGE 1** hair (color + silhouette identity) onto **IMAGE 2** scene + lighting — **only** hair edits; bust/brick/logo/lighting must match **IMAGE 2**.',
+      '** photograph). **Mannequin body lock (overrides IMAGE 1 pose):** match **IMAGE 2** head turn, neck, shoulders, bust, framing, brick, **lighting**, **shadows**, **FRONTAL SLAYER** logo pixel-for-pixel — **ignore** IMAGE 2 hair color and hair shape; **do not** borrow **IMAGE 1**\'s front-facing head angle or front lighting.',
+    '**TASK:** Composite **IMAGE 1** hair (color + silhouette identity) onto **IMAGE 2** scene + lighting — **only** hair edits; bust/brick/logo/lighting/camera must match **IMAGE 2**.',
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
-    BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
+    bawColorSideFramingLockBlock(angle),
     'Output must be extremely high-quality, crisp and pixel-perfect.',
     'Composite: **IMAGE 1** exact FRONT hair color + shape identity + **IMAGE 2** exact **' + angleLabel + '** scene.',
   ].join(' ');

@@ -32781,3 +32781,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Existing cached color WebPs keep old framing until **regen color M** (then L/R) per swatch — prompt changes apply on next Fal run only.
 
+---
+
+## 2026-06-30 — Live color L/R: restore #0 camera lock over framing
+
+**Context (continued chat):** After cross-color **framing lock** deploy, user reported **LEFT/RIGHT color cameras** no longer at the correct **3/4 angle** — L and R at **different degrees**; framing/scene-master had outranked camera handedness.
+
+**Fix (`api/wig-preview/live-noir-color.ts`):**
+- **`bawColorSideCameraBodyLockBlock`** — **#0 CAMERA + BODY LOCK** first on all L/R passes (mirrors styling **`bawSalonFrontAnchorSideSceneLockBlock`**): gray-brick ref is master for **camera angle, head turn, 3/4 handedness**; explicit LEFT vs RIGHT checks; forbids front-donor pose bleed.
+- **`bawColorSideFramingLockBlock`** — **#1** zoom/crop only, **subordinate** to camera lock.
+- Removed side-pass **`#0 SCENE MASTER`** that led with crop/zoom without camera degree.
+- **FRONT (M)** keeps **`BAW_GPT2_NOIR_COLOR_SCENE_MASTER_BLOCK`** for cross-swatch zoom consistency.
+- Single-image L/R fallback: camera lock first, not generic scene master.
+
+**Ops:** **Regen color L** and **R** (or full triple) per swatch — cached side files keep wrong angle until regenerated.
+
