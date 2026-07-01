@@ -32606,3 +32606,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Generate **MIDDLE** part + regen all angles first; then **LEFT** or **RIGHT** part regen uses middle FRONT anchor. Cached side-part outputs stale until **`forceRegenerate`**.
 
+---
+
+## 2026-07-01 — NOIR side-part L/R cameras: anchor to side-part FRONT (mirror MIDDLE)
+
+**Context (continued chat):** User reported **LEFT / RIGHT part** selections still produced **new hairstyles** on **left & right camera angles** (not matching middle part’s L/R behavior). Root cause: side-part L/R used **`buildBawSalonSidePartFromMiddleFrontAnchorPrompt`** with **MIDDLE-part FRONT** as IMAGE 1 — re-rolling from center-part front on a side camera instead of copying **this part’s FRONT** onto gray-brick side pose.
+
+**Fix:**
+- **`api/live-wig-after-color-styling.ts`**: **UI L/R part** — **FRONT** unchanged (re-part from **MIDDLE-part FRONT**). **L/R cameras** now use **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`[ sidePartFront, grayBrickSide, optional stylingRef ]`** — **identical chain to MIDDLE part**. Requires side-part **FRONT** in Storage (or same request after FRONT gen).
+- **`buildBawSalonSidePartFromMiddleFrontAnchorPrompt`** marked **deprecated** for live API (scripts/legacy only).
+- **`docs/WIG_PREVIEW_PREGENERATION.md`** updated.
+
+**Ops:** Regen order — **MIDDLE** all angles → **LEFT/RIGHT** **front** → **LEFT/RIGHT** **left/right** (or full triple with **`forceRegenerate`**).
+
