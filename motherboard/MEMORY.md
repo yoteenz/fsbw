@@ -32847,3 +32847,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Why it surfaced now:** **`ecc58481`** + **`40f7fa46`** — color page runs **`postWigPreviewLiveNoirColorReconcileSides`** when Storage triple exists (once per swatch per 6h) to backfill L/R missing **`noirColorSidePipelineGen: '3'`** — triggers Fal even when previews look fine.
 
 **Ops for user:** Vercel → **`FAL_KEY`** env + Fal dashboard credits/access for **`openai/gpt-image-2/edit`**; Vercel logs on failed reconcile; after Fal fixed, **regen L/R** or reload color page. Previews remain usable from cache while Fal is broken.
+
+---
+
+## 2026-06-30 — Restore NOIR hero header position after LIVE PREVIEW lift
+
+**Context (continued chat):** User reported adjusting the **LIVE PREVIEW** status/regen block above the red **NOIR** header incorrectly **shifted the NOIR title upward**; asked to **restore header position only** (keep live preview lift).
+
+**Cause:** Founder LIVE PREVIEW wrappers on **color** and **styling** pages sat in normal flex **document flow** before **`BawNoirWigPreviewHeroThumbs`**, so the tall regen stack reserved layout height and pushed the hero (and **`top-[-20px]`** NOIR label) out of alignment vs other NOIR sub-pages — while **`translateY(-20px)`** / **`-40px`** only moved the preview text visually.
+
+**Fix:** Wig-preview outer column **`position: relative`**. LIVE PREVIEW + regen block **`position: absolute; top/left/right: 0`** with existing lift (**`-20px`** color, **`-40px`** styling), **`pointerEvents: 'none'`** on wrapper + **`auto`** on text/buttons. Hero/NOIR header no longer shifts when founder regen UI mounts.
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
