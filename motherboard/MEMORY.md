@@ -32728,3 +32728,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Force regen **RIGHT part FRONT (M)** then **L/R** — old FRONT cache may still show UI L groove.
 
+---
+
+## 2026-06-30 — UI R part placement reference image (IMG_4665)
+
+**Context (continued chat):** **RIGHT part** still wrong side vs **LEFT part**. User supplied placement reference **`live-preview/Ref Images/IMG_4665.jpeg`** — use for **part groove position only**; ref shows hair on **both shoulders** but BAW output must keep hair on **image LEFT** shoulder only (UI R comb-over), **not** copy ref drape.
+
+**Fix:**
+- **`api/_lib/bawSalonPartPlacementRefs.ts`** — **`bawRightPartPlacementRefPublicUrl()`**, **`bawSalonRightPartPlacementRefPromptBlock()`** (part groove only; ignore dual-shoulder ref hair).
+- **`api/live-wig-after-color-styling.ts`** — **UI R** passes attach ref as **IMAGE 2** (FRONT from middle) or **IMAGE 3** (L/R: front + gray-brick + ref).
+- **`buildBawSalonSidePartFromMiddleFrontPrompt`** / **`buildBawSalonStylingWithFrontAnchorPrompt`** — **`hasRightPartPlacementRef`** option + prompt lines.
+- **`.env.example`** — optional **`WIG_PREVIEW_BAW_RIGHT_PART_PLACEMENT_REF_URL`**.
+
+**Ops:** Force regen **RIGHT part** **FRONT (M)** → **L/R** after deploy.
+

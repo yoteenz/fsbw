@@ -8,7 +8,7 @@ export const config = { maxDuration: 300 };
  * **LAYERS** / **CRIMPS** / **FLAT IRON**: default **`image_urls`** = **[ color-tier PNG, gray-brick mannequin, optional JET BLACK styling ref ]**
  * with `buildBawSalonStylingWithSceneAndShapeRefsPrompt` (IMAGE 3 + **full text spec**) or `buildBawSalonStylingWithSceneRefAndTextSpecPrompt` when no ref.
  * **L/R angles (MIDDLE part):** when **FRONT (M)** output exists, **`buildBawSalonStylingWithFrontAnchorPrompt`** uses **[ front styled, gray-brick side pose ]**.
- * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **L/R cameras:** same chain as **MIDDLE part** — **`buildBawSalonStylingWithFrontAnchorPrompt`** + **`[ side-part FRONT (M), gray-brick side pose ]`** (body/camera lock from gray-brick **IMAGE 2**; hair identity from front **IMAGE 1**).
+ * **UI L / UI R part:** **FRONT (M)** re-parts from **MIDDLE-part FRONT**. **UI R:** **`Ref Images/IMG_4665.jpeg`** attached as part-placement guide (groove only — not ref drape). **L/R cameras:** **`[ side-part FRONT, gray-brick side, optional UI R placement guide ]`**.
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -53,6 +53,7 @@ import {
 } from './_lib/bawGptImage2FalInput.js';
 import { livePreviewObjectExists, livePreviewPublicUrlIfExists } from './_lib/bawLivePreviewStorageDownload.js';
 import { noirFalGrayBrickMannequinPublicUrlForAngle } from './_lib/bawNoirFalMannequinUrls.js';
+import { bawRightPartPlacementRefPublicUrl } from './_lib/bawSalonPartPlacementRefs.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -408,9 +409,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           return;
         }
         const targetPart = partStyling as 'LEFT' | 'RIGHT';
+        const rightPartPlacementRefUrl =
+          targetPart === 'RIGHT' ? bawRightPartPlacementRefPublicUrl() : null;
         if (angle === 'front') {
-          prompt = buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salonMode, salonPromptOpts);
-          imageUrls = [middlePartFrontUrl];
+          prompt = buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salonMode, {
+            ...salonPromptOpts,
+            hasRightPartPlacementRef: targetPart === 'RIGHT',
+          });
+          imageUrls = rightPartPlacementRefUrl
+            ? [middlePartFrontUrl, rightPartPlacementRefUrl]
+            : [middlePartFrontUrl];
         } else {
           /** Same front-anchor chain as **MIDDLE part**: **FRONT (M)** = hairstyle identity; gray-brick = camera/scene lock. */
           const sidePartFrontAnchorUrl =
@@ -430,10 +438,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             targetPart,
             salonMode,
             catalog,
-            salonPromptOpts
+            {
+              ...salonPromptOpts,
+              hasRightPartPlacementRef: targetPart === 'RIGHT',
+            }
           );
-          /** Same as **MIDDLE part** L/R: front = hair identity; gray-brick = mannequin body/camera lock (omit styling ref). */
-          imageUrls = [sidePartFrontAnchorUrl, grayBrickUrl];
+          /** FRONT + gray-brick + optional UI R placement guide (part groove only; not ref drape). */
+          imageUrls = rightPartPlacementRefUrl
+            ? [sidePartFrontAnchorUrl, grayBrickUrl, rightPartPlacementRefUrl]
+            : [sidePartFrontAnchorUrl, grayBrickUrl];
         }
       } else if (
         singlePassSalonEnabled() &&

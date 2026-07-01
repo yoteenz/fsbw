@@ -10,6 +10,7 @@ import {
   salonPartPromptAuthorityBlock,
   type NoirLayersPartSelection,
 } from './bawSalonHairGeometryPrompts.js';
+import { bawSalonRightPartPlacementRefPromptBlock } from './bawSalonPartPlacementRefs.js';
 
 export type { NoirLayersPartSelection };
 
@@ -170,7 +171,7 @@ export function buildLayersStylePromptFromHqMannequinRef(
 export function buildBawSalonSidePartFromMiddleFrontPrompt(
   targetPart: 'LEFT' | 'RIGHT',
   salon: 'layers' | 'crimps' | 'flat_iron',
-  options?: { includeBangs?: boolean }
+  options?: { includeBangs?: boolean; hasRightPartPlacementRef?: boolean }
 ): string {
   const salonLabel = bawSalonModePromptLabel(salon);
   const partTask =
@@ -188,12 +189,18 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(
         ? 'Keep the **same crimp texture, scale, length, and color** — **only** change where the **part** sits.'
         : 'Keep the **same bone-straight flat-ironed** finish, length, and color — **only** change where the **part** sits.';
   const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const placementRefLine =
+    options?.hasRightPartPlacementRef && targetPart === 'RIGHT'
+      ? bawSalonRightPartPlacementRefPromptBlock(2)
+      : null;
 
   return [
+    ...(placementRefLine ? ['You get **2 images in order**.'] : []),
     salonPartPromptAuthorityBlock(targetPart),
     '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **FRONT** styled output — **same** mannequin, scene, lighting, **hair color**, and **' +
       salonLabel +
       '** finish. **IGNORE** its **center part** or any **side-part groove** — only borrow color, texture, length, and finish.',
+    ...(placementRefLine ? [placementRefLine] : []),
     '**TASK:** **Recreate this FRONT photograph** with **only** the **part** and **part-specific drape** changed to ' +
       partTask +
       drapeChange +
@@ -834,19 +841,22 @@ function buildBawSalonFrontAnchorSideSupplement(
  * **Side angles (L/R)** when **FRONT (M)** styled output already exists in Storage (or was just generated):
  * **IMAGE 1** = **canonical FRONT (M)** styled output (hairstyle + color identity),
  * **IMAGE 2** = gray-brick **side** pose (scene/lighting/camera lock),
- * optional **IMAGE 3** = JET BLACK styling ref (supplementary texture only — subordinate to IMAGE 1).
+ * optional **IMAGE 3** = JET BLACK styling ref (supplementary texture only — subordinate to IMAGE 1),
+ * or **UI R part placement guide** (`IMG_4665.jpeg`) when **`hasRightPartPlacementRef`** — part groove only, not ref drape.
  */
 export function buildBawSalonStylingWithFrontAnchorPrompt(
   angle: 'left' | 'right',
   partSelection: NoirLayersPartSelection,
   salon: 'layers' | 'crimps' | 'flat_iron',
   catalog: CatalogColorForLayersPrompt,
-  options?: { includeBangs?: boolean; hasStylingShapeRef?: boolean }
+  options?: { includeBangs?: boolean; hasStylingShapeRef?: boolean; hasRightPartPlacementRef?: boolean }
 ): string {
   const hex = catalog.hex.replace(/^#/, '').toUpperCase();
   const salonLabel = bawSalonModePromptLabel(salon);
   const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
-  const imageCount = options?.hasStylingShapeRef ? 3 : 2;
+  const hasPlacementRef = Boolean(options?.hasRightPartPlacementRef && partSelection === 'RIGHT');
+  const placementRefIndex = (options?.hasStylingShapeRef ? 1 : 0) + 2 + 1;
+  const imageCount = 2 + (options?.hasStylingShapeRef ? 1 : 0) + (hasPlacementRef ? 1 : 0);
   const stylingRefLine = options?.hasStylingShapeRef
     ? '**IMAGE 3** = **BAW salon styling reference** (**' +
       salonLabel +
@@ -854,14 +864,23 @@ export function buildBawSalonStylingWithFrontAnchorPrompt(
       partSelection +
       ' part**, JET BLACK) — **supplementary texture hint only**; **IMAGE 1** (front output) is the **hairstyle identity lock**. Never copy IMAGE 3 color or scene.'
     : null;
+  const placementRefLine = hasPlacementRef
+    ? bawSalonRightPartPlacementRefPromptBlock(placementRefIndex)
+    : null;
   const frontHairLockLine =
     partSelection === 'MIDDLE'
       ? '**Reproduce this exact hairstyle** on the **' +
         angleLabel +
         '** camera from **IMAGE 2** — **same** curl/wave/crimp **pattern and scale**, **same** part line, **same** layering, **same** drape. **FORBIDDEN:** inventing a **new similar** hairstyle.'
-      : '**Reproduce this hairstyle** on the **' +
-        angleLabel +
-        '** camera from **IMAGE 2** — **same** curl/wave/crimp **pattern and scale**, length, and volume from **IMAGE 1**; **part groove on scalp per PART PLACEMENT rules (prompt authority — overrides IMAGE 1 if wrong side)**. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** copying **UI L** groove when **UI R** was requested (or vice versa).';
+      : hasPlacementRef
+        ? '**Reproduce this hairstyle** on the **' +
+          angleLabel +
+          '** camera from **IMAGE 2** — **same** curl/wave/crimp **pattern and scale**, length, and volume from **IMAGE 1**; **part groove** from **IMAGE ' +
+          placementRefIndex +
+          '** placement guide (**part position only**). **FORBIDDEN:** copying **both-shoulder** hair from the placement guide; **FORBIDDEN:** **UI L** groove (**image RIGHT**).'
+        : '**Reproduce this hairstyle** on the **' +
+          angleLabel +
+          '** camera from **IMAGE 2** — **same** curl/wave/crimp **pattern and scale**, length, and volume from **IMAGE 1**; **part groove on scalp per PART PLACEMENT rules (prompt authority — overrides IMAGE 1 if wrong side)**. **FORBIDDEN:** inventing a **new similar** hairstyle; **FORBIDDEN:** copying **UI L** groove when **UI R** was requested (or vice versa).';
 
   return [
     ...(partSelection !== 'MIDDLE' ? [salonPartPromptAuthorityBlock(partSelection)] : []),
@@ -880,6 +899,7 @@ export function buildBawSalonStylingWithFrontAnchorPrompt(
       angleLabel +
       '** photograph). **Mannequin body lock (overrides IMAGE 1 pose):** match **IMAGE 2** head turn, neck, shoulders, bust, framing, brick, lighting, shadows, **FRONTAL SLAYER** logo pixel-for-pixel — **ignore** IMAGE 2 hair; **do not** copy its hair color; **do not** borrow **IMAGE 1**\'s front-facing head angle.',
     ...(stylingRefLine ? [stylingRefLine] : []),
+    ...(placementRefLine ? [placementRefLine] : []),
     bawSalonNaturalHairAntiHelmetBlock(),
     bawSalonFrontAnchorSideSceneLockBlock(angle),
     '=== ' + salonLabel + ' SIDE VIEW (IMAGE 1 front lock — follow every line below) ===',

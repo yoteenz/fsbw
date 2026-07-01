@@ -448,6 +448,17 @@ function bawLayersUniformWaveTextureBlock() {
   );
 }
 
+function bawSalonRightPartPlacementRefPromptBlock(imageIndex) {
+  return [
+    '**IMAGE ' +
+      imageIndex +
+      ' = UI R / RIGHT PART PLACEMENT GUIDE (part groove + part-side roots ONLY — NOT full hair drape):**',
+    'Copy **only** the **part line position** — groove on **image LEFT** scalp (**left third** of forehead).',
+    '**IGNORE from this IMAGE:** hair on **both shoulders**; symmetric drapes; color; pose/background.',
+    '**DRAPE (overrides ref):** **Only** **image LEFT** shoulder gets hair mass; **image RIGHT** shoulder stays clear. Ref may show both shoulders — **do not copy**.',
+  ].join(' ');
+}
+
 /** UI L / UI R part: MIDDLE-part FRONT anchor. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
 export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, options) {
   const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
@@ -466,12 +477,16 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
         ? 'Keep the **same crimp texture, scale, length, and color** — **only** change where the **part** sits.'
         : 'Keep the **same bone-straight flat-ironed** finish, length, and color — **only** change where the **part** sits.';
   const includeBangs = Boolean(options && options.includeBangs);
+  const hasPlacementRef = Boolean(options && options.hasRightPartPlacementRef && targetPart === 'RIGHT');
   const bangsLine = includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
+  const placementRefLine = hasPlacementRef ? bawSalonRightPartPlacementRefPromptBlock(2) : null;
   return [
+    ...(placementRefLine ? ['You get **2 images in order**.'] : []),
     salonPartPromptAuthorityBlock(targetPart),
     '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **FRONT** styled output — **same** mannequin, scene, lighting, **hair color**, and **' +
       salonLabel +
       '** finish. **IGNORE** its **center part** or any **side-part groove** — only borrow color, texture, length, and finish.',
+    ...(placementRefLine ? [placementRefLine] : []),
     '**TASK:** **Recreate this FRONT photograph** with **only** the **part** and **part-specific drape** changed to ' +
       partTask +
       drapeChange +
