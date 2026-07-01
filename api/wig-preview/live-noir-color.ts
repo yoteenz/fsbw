@@ -21,7 +21,7 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
- * **L/R angles:** when **FRONT (M)** color output exists (or was just generated in the same request), side passes use **`[ front colored, gray-brick side pose ]`** so L/R match **M** hair color + silhouette (mirrors styling front-anchor chain). Client should call **front → left → right** sequentially.
+ * **L/R angles:** when **FRONT (M)** color output exists, side passes use **`[ front colored, gray-brick side pose ]`** (hair from FRONT, **lighting/scene from gray-brick**). Client: **front → left → right** sequentially. **L/R cache is skipped** when **FRONT (M)** is newer than the side file (re-anchors after M regen).
  *
  * Model: **`openai/gpt-image-2/edit`** — `image_size` **3:4** (`1536×2048`), `quality: high` (override `WIG_PREVIEW_LIVE_GPT2_QUALITY`), `output_format: png` (override `WIG_PREVIEW_LIVE_OUTPUT_FORMAT=webp`).
  *
@@ -188,6 +188,43 @@ async function livePreviewObjectExists(
   return null;
 }
 
+/** Storage `updated_at` for cache invalidation (side color must re-anchor when FRONT is newer). */
+async function livePreviewStorageObjectUpdatedAt(
+  supabase: SupabaseClient,
+  bucket: string,
+  preferredPath: string
+): Promise<number | null> {
+  const hit = await livePreviewObjectExists(supabase, bucket, preferredPath);
+  if (!hit) return null;
+  const parts = hit.storagePath.split('/');
+  const name = parts.pop();
+  if (!name) return null;
+  const dir = parts.join('/');
+  const { data, error } = await supabase.storage.from(bucket).list(dir, {
+    limit: 200,
+    sortBy: { column: 'name', order: 'asc' },
+  });
+  if (error || !data?.length) return null;
+  const obj = data.find((o) => o.name === name);
+  if (!obj) return null;
+  const ts = obj.updated_at || obj.created_at;
+  return ts ? new Date(ts).getTime() : null;
+}
+
+/** True when FRONT (M) was regenerated after this L/R file — side must re-run with front anchor. */
+async function livePreviewSideColorStaleVsFront(
+  supabase: SupabaseClient,
+  bucket: string,
+  sidePath: string,
+  frontPath: string
+): Promise<boolean> {
+  const frontAt = await livePreviewStorageObjectUpdatedAt(supabase, bucket, frontPath);
+  if (!frontAt) return false;
+  const sideAt = await livePreviewStorageObjectUpdatedAt(supabase, bucket, sidePath);
+  if (!sideAt) return true;
+  return frontAt > sideAt;
+}
+
 function wigPreviewLiveAnglePaths(
   promptVersion: string,
   unitKey: string,
@@ -309,7 +346,7 @@ function buildStep2PromptNoLogoAttachment(
 ): string {
   const angleConstraint =
     angle === 'left'
-      ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
+      ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette. **Keep the same camera angle and framing as the reference** (true left 3/4, not front, not mirrored right); do **not** rotate the head toward camera.'
       : angle === 'right'
         ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette. **Keep the same camera angle and framing as the reference** (true right 3/4, not front, not mirrored left); do **not** rotate the head toward camera.'
         : 'This is the **FRONT view**: keep the **exact** part line, silhouette and **one-sided shoulder sweep** from the reference (same as the black reference — often more hair on one shoulder). Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape and do **not** widen the style to “both shoulders.” **Only** recolor the existing black hair; do **not** change cut, length or volume.';
@@ -353,12 +390,12 @@ function bawColorFrontAnchorSideSceneLockBlock(angle: 'front' | 'left' | 'right'
   const angleLabel = angle === 'left' ? 'LEFT 3/4' : 'RIGHT 3/4';
   const handedness =
     angle === 'left'
-      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4.'
-      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4.';
+      ? '**LEFT 3/4 check:** mannequin nose/temple aims **toward the image LEFT edge** — **NOT** a front view; **NOT** right 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten the head toward front-facing to match **IMAGE 1** (front donor is **hair only** — keep **IMAGE 2** body turn).'
+      : '**RIGHT 3/4 check:** mannequin nose/temple aims **toward the image RIGHT edge** — **NOT** a front view; **NOT** left 3/4; **NOT** a mirrored/wrong-handed 3/4. **Do not** straighten the head toward front-facing to match **IMAGE 1** (front donor is **hair only** — keep **IMAGE 2** body turn).';
   return (
-    '**SCENE LOCK (' +
+    '**MANNEQUIN + LIGHTING LOCK (' +
     angleLabel +
-    ' — critical):** **IMAGE 2** defines the **only** allowed **camera angle**, **head pose**, **framing**, **brick background**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo placement. Rebuild the output photograph to **match IMAGE 2** pixel-for-pixel on scene/bust — **edit hair only**. **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness; **FORBIDDEN:** relighting or reframing. ' +
+    ' — critical):** **IMAGE 2** is the **only** source for **camera angle**, **head pose**, **framing**, **brick background**, **lighting**, **shadows**, and **FRONTAL SLAYER** logo. Rebuild the output to **match IMAGE 2** pixel-for-pixel on scene/bust/lighting — **edit hair pigment + silhouette only**. **FORBIDDEN:** relighting or reframing to match **IMAGE 1**; **FORBIDDEN:** front-facing composition; **FORBIDDEN:** wrong 3/4 handedness. ' +
     handedness
   );
 }
@@ -386,16 +423,16 @@ function buildBawColorWithFrontAnchorPrompt(
 
   return [
     'You get **2 images in order**.',
-    '**IMAGE 1 = CANONICAL FRONT (M) COLOR OUTPUT (hair identity lock):** This is the **already-recolored FRONT** for this swatch. **Reproduce this exact hair** on the **' +
+    '**IMAGE 1 = CANONICAL FRONT (M) COLOR OUTPUT (hair color + silhouette identity lock):** This is the **already-recolored FRONT** for this swatch. **Reproduce this exact hair** (color, part line, length, volume, **one-sided shoulder sweep**) on the **' +
       angleLabel +
       '** camera from **IMAGE 2** — ' +
       colorLead +
       '. **FORBIDDEN:** a different shade or restyle; **FORBIDDEN:** re-parting; **FORBIDDEN:** inventing a **similar** but not identical look.',
     '**IMAGE 2** = **NOIR gray-brick mannequin** (**' +
       angleLabel +
-      '** photograph). **Scene fidelity lock:** match **IMAGE 2** head pose, framing, brick background, lighting, shadows, **FRONTAL SLAYER** logo — **ignore** IMAGE 2 hair color and hair shape.',
+      '** photograph). **Scene + lighting lock (overrides IMAGE 1 pose/light):** match **IMAGE 2** head turn, neck, shoulders, bust, framing, brick, **lighting**, **shadows**, **FRONTAL SLAYER** logo pixel-for-pixel — **ignore** IMAGE 2 hair color and hair shape; **do not** borrow **IMAGE 1**\'s front-facing head angle or front lighting.',
     bawColorFrontAnchorSideSceneLockBlock(angle),
-    '**TASK:** Composite **IMAGE 1** hair (color + silhouette identity) onto **IMAGE 2** scene — **only** hair edits; bust/brick/logo must match **IMAGE 2**.',
+    '**TASK:** Composite **IMAGE 1** hair (color + silhouette identity) onto **IMAGE 2** scene + lighting — **only** hair edits; bust/brick/logo/lighting must match **IMAGE 2**.',
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     BAW_GPT2_LOGO_AND_HAIR_ONLY_LOCK,
     BAW_GPT2_NOIR_COLOR_FRAMING_LOCK,
@@ -494,8 +531,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       if (!forceRegenerate) {
         const exists = await livePreviewObjectExists(supabase, bucket, path);
         if (exists) {
-          skipped.push(angle);
-          continue;
+          const sideStaleVsFront =
+            (angle === 'left' || angle === 'right') &&
+            (await livePreviewSideColorStaleVsFront(supabase, bucket, path, paths.front));
+          if (!sideStaleVsFront) {
+            skipped.push(angle);
+            continue;
+          }
         }
       }
 

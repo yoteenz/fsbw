@@ -32756,3 +32756,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Force regen **RIGHT FRONT (M)** then **L/R** — cached wrong-groove FRONT invalidates side views.
 
+---
+
+## 2026-06-30 — Live color LEFT (L) re-anchors to FRONT (M) when M is newer
+
+**Context (continued chat):** **LEFT camera color (L)** was not matching **MIDDLE/FRONT (M)** hairstyle + lighting like **RIGHT (R)** — L often served **stale Storage cache** from pre-front-anchor single-pass while R was regenerated with **`[ FRONT colored, gray-brick side ]`**.
+
+**Fix (`api/wig-preview/live-noir-color.ts`):**
+- **`livePreviewSideColorStaleVsFront`** — when **FRONT (M)** `updated_at` is newer than L/R file, **do not cache-skip**; re-run Fal with front anchor.
+- **`buildBawColorWithFrontAnchorPrompt`** + **`bawColorFrontAnchorSideSceneLockBlock`**: explicit **lighting/scene from IMAGE 2 (gray-brick)**; hair color/silhouette from **IMAGE 1 (FRONT)**; LEFT 3/4 camera lock aligned with RIGHT.
+- **`buildStep2PromptNoLogoAttachment`**: LEFT fallback gets same camera/framing lock as RIGHT.
+
+**Ops:** Regenerate **FRONT (M)** then **LEFT (L)** (or full L/M/R batch) — L auto-regens when M is newer even without `forceRegenerate`.
+
