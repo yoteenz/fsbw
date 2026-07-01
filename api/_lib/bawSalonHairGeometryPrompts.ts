@@ -18,12 +18,46 @@ export function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLaye
   if (partSelection === 'MIDDLE') return '';
   if (partSelection === 'LEFT') {
     return (
-      '**PART OVERRIDE (critical — ignore the color preview’s part line):** The input may show a **different** part (center, **image LEFT**, or weak/off-center). **Discard** it. **UI L** needs the **visible part groove** in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**). **Re-part** the roots to match — **do not** preserve the reference photo’s part placement. **Success check:** if the groove reads on the **image LEFT** half → wrong (that is **UI R**, not **UI L**).'
+      '**PART OVERRIDE (UI L — critical):** The input may show a **different** part. **Discard** it. **UI L** = part groove **image RIGHT** (**right third** of forehead). **Forward sweep:** lengths from part/top-side cascade to **viewer’s LEFT** shoulder — **not** a behind-shoulder comb-over. **Success check failed if:** groove reads **image LEFT** (that is **UI R**, not **UI L**).'
     );
   }
   return (
-    '**PART OVERRIDE (critical — ignore the color preview’s part line):** Whatever part the preview shows — **discard** it. **UI R** = **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**), **opposite** of **UI L**. **Re-part** the roots to match — **do not** keep the reference part line.'
+    '**PART OVERRIDE (UI R — critical):** **Discard** center part or **image RIGHT** groove (**UI L**). **UI R** = part groove **image LEFT** (**left third** of forehead) on the **same side** as the **image LEFT** shoulder hair mass. **Comb-over:** shoulder bulk from **behind** the mannequin — **NOT** **UI L**’s top-of-head forward cascade. **Success check failed if:** part reads **image RIGHT**; or **image LEFT** shoulder shows **UI L** crown-forward drape instead of comb-over.'
   );
+}
+
+const bawBackFallCompactLine =
+  '**BACK FALL:** length behind the bust falls **straight down the back** naturally — **FORBIDDEN:** sweeping all back hair sideways to one side.';
+
+/** UI L — part image RIGHT; forward chest cascade to viewer’s LEFT shoulder (cross sweep). */
+export function bawUiLeftPartForwardSweepBlock(): string {
+  return [
+    '**UI L (LEFT part) — forward sweep (NOT comb-over):** Part on **image RIGHT** scalp (**right third** of forehead). Lengths sweep **from the part / top-side** into a **forward chest cascade** over **viewer’s LEFT** shoulder (**image LEFT**). Part line and heaviest **forward** drape sit on **opposite** sides (part **image RIGHT**, cascade **image LEFT**).',
+    bawBackFallCompactLine,
+    '**FORBIDDEN:** part **image LEFT** (**UI R**). **FORBIDDEN:** comb-over-from-behind only on **image LEFT** shoulder.',
+  ].join(' ');
+}
+
+/** UI R — part image LEFT; comb-over with shoulder mass from behind on same-side shoulder. */
+export function bawUiRightPartCombOverBlock(): string {
+  return [
+    '**UI R (RIGHT part) — comb-over (NOT UI L):** Part groove on **image LEFT** scalp (**left third** of forehead) — **same side** as the shoulder with visible hair (**viewer’s LEFT** / **image LEFT** shoulder).',
+    '**Shoulder mass = from BEHIND:** Heavy length on **image LEFT** shoulder reads as hair routed **from behind the mannequin** (nape/back panel **over** that shoulder) — a **comb-over**. **NOT** a thick **crown-to-chest forward waterfall** like **UI L**.',
+    '**Top layers:** may sweep from the **image LEFT** part across temple/forehead; **do not** pour **crown/top** hair forward like **UI L**.',
+    bawBackFallCompactLine,
+    '**FORBIDDEN:** **UI L** (part **image RIGHT**). **FORBIDDEN:** copying **UI L** top-forward cascade for **UI R**. **Self-check failed if:** part reads **image RIGHT** or shoulder bulk looks like **UI L** top-sweep.',
+  ].join(' ');
+}
+
+/** Part-specific drape — UI R uses comb-over; UI L forward sweep; MIDDLE uses legacy one-shoulder block. */
+export function bawSalonDrapeBlockForPart(partSelection: NoirLayersPartSelection): string {
+  if (partSelection === 'LEFT') {
+    return ['**DRAPE (UI L):**', bawUiLeftPartForwardSweepBlock()].join(' ');
+  }
+  if (partSelection === 'RIGHT') {
+    return ['**DRAPE (UI R):**', bawUiRightPartCombOverBlock()].join(' ');
+  }
+  return bawSalonOneShoulderDrapeBlock();
 }
 
 /** BAW NOIR live preview — forward cascade on viewer's LEFT; back length falls straight down naturally. */

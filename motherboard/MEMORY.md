@@ -32686,3 +32686,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Ops:** Force regen side-part **L/R** after deploy.
 
+---
+
+## 2026-07-01 — UI R part: comb-over geometry (not UI L mirror)
+
+**Context (continued chat):** **RIGHT part** kept rendering as **LEFT part** because prompts treated all side parts as “heavy drape **viewer’s LEFT** shoulder” (same as UI L forward sweep). User clarified **UI R** = part on **same side** as shoulder hair (**image LEFT**), **comb-over** with bulk from **behind** the shoulder — **NOT** crown/top forward cascade like **UI L**.
+
+**Fix:**
+- **`bawSalonHairGeometryPrompts.ts`**: **`bawUiRightPartCombOverBlock`**, **`bawUiLeftPartForwardSweepBlock`**, **`bawSalonDrapeBlockForPart`**; updated **`salonPartMustOverrideInputReferenceBlock`** for UI R.
+- **`bawLiveStylingPrompts.ts`**: part-specific drape in side-part FRONT/side-view prompts, text spec **partWord** lines, bangs, flat iron.
+- **`scripts/wig-preview/promptTemplate.mjs`** synced.
+
+**Ops:** Regen **MIDDLE FRONT** → **RIGHT part FRONT (M)** → **L/R** with **`forceRegenerate`**.
+

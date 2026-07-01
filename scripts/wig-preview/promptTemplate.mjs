@@ -355,12 +355,30 @@ function salonPartMustOverrideInputReferenceBlock(partSelection) {
   if (partSelection === 'MIDDLE') return '';
   if (partSelection === 'LEFT') {
     return (
-      '**PART OVERRIDE (critical — ignore the color preview’s part line):** The input may show a **different** part (center, **image LEFT**, or weak/off-center). **Discard** it. **UI L** needs the **visible part groove** in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**). **Re-part** the roots to match — **do not** preserve the reference photo’s part placement. **Success check:** if the groove reads on the **image LEFT** half → wrong (that is **UI R**, not **UI L**).'
+      '**PART OVERRIDE (UI L — critical):** **Discard** wrong part. **UI L** = groove **image RIGHT** (**right third**). **Forward sweep** to **viewer’s LEFT** shoulder — **not** comb-over. **Failed if:** groove **image LEFT** (**UI R**).'
     );
   }
   return (
-    '**PART OVERRIDE (critical — ignore the color preview’s part line):** Whatever part the preview shows — **discard** it. **UI R** = **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**), **opposite** of **UI L**. **Re-part** the roots to match — **do not** keep the reference part line.'
+    '**PART OVERRIDE (UI R — critical):** **Discard** **image RIGHT** groove (**UI L**). **UI R** = groove **image LEFT** — **same side** as **image LEFT** shoulder. **Comb-over from behind** — **NOT** UI L top-sweep. **Failed if:** part **image RIGHT** or **UI L** crown-forward drape.'
   );
+}
+
+function bawUiRightPartCombOverBlock() {
+  return [
+    '**UI R (RIGHT part) — comb-over (NOT UI L):** Part **image LEFT** — **same side** as **image LEFT** shoulder hair mass.',
+    '**Shoulder mass = from BEHIND:** **Comb-over** over **image LEFT** shoulder — **NOT** UI L crown-to-chest waterfall.',
+    '**FORBIDDEN:** **UI L** (part **image RIGHT**). **FORBIDDEN:** UI L top-forward cascade on **UI R**.',
+  ].join(' ');
+}
+
+function bawSalonDrapeBlockForPart(partSelection) {
+  if (partSelection === 'RIGHT') {
+    return ['**DRAPE (UI R):**', bawUiRightPartCombOverBlock()].join(' ');
+  }
+  if (partSelection === 'LEFT') {
+    return '**DRAPE (UI L):** Part **image RIGHT**; forward sweep to **image LEFT** shoulder — **NOT** comb-over.';
+  }
+  return salonOneShoulderDrapeBlock();
 }
 
 function salonPartDirectionSemanticsBlock() {
@@ -393,8 +411,12 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
   const salonLabel = salon === 'flat_iron' ? 'FLAT IRON' : salon === 'crimps' ? 'CRIMPS' : 'LAYERS';
   const partTask =
     targetPart === 'LEFT'
-      ? '**UI L / LEFT part**: visible part groove in the **right third** of the forehead/top (**closer to the image’s RIGHT edge**) — **not** center, **not** UI R.'
-      : '**UI R / RIGHT part**: visible part groove in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** center, **not** UI L.';
+      ? '**UI L**: part **image RIGHT**; forward sweep to **image LEFT** shoulder. **Not** UI R.'
+      : '**UI R**: part **image LEFT**; **comb-over** from **behind** on **image LEFT** shoulder — **not** UI L top-sweep. **Not** UI L.';
+  const drapeChange =
+    targetPart === 'RIGHT'
+      ? ' **UI R comb-over** (part + shoulder same side, hair from behind).'
+      : ' **UI L forward sweep** (part image RIGHT, cascade image LEFT).';
   const styleKeep =
     salon === 'layers'
       ? 'Keep the **same uniform voluminous layered S-waves** (not ringlets), volume, length, and color — **only** change where the **part** sits.'
@@ -407,12 +429,13 @@ export function buildBawSalonSidePartFromMiddleFrontPrompt(targetPart, salon, op
     '**INPUT:** **IMAGE 1** is the **MIDDLE part** (**center part**) **FRONT** styled output — **same** mannequin, scene, lighting, **hair color**, and **' +
       salonLabel +
       '** finish.',
-    '**TASK:** **Recreate this FRONT photograph** with **only** the **part moved** to ' +
+    '**TASK:** **Recreate this FRONT photograph** with **only** the **part** and **part-specific drape** changed to ' +
       partTask +
-      ' **Do not** mirror the head; **do not** restyle texture; **do not** change volume, length, or drape except what the new part requires.',
+      drapeChange +
+      ' **Do not** mirror UI L onto UI R.',
     ...(targetPart !== 'MIDDLE' ? [salonPartMustOverrideInputReferenceBlock(targetPart)] : []),
     styleKeep,
-    salonOneShoulderDrapeBlock(),
+    bawSalonDrapeBlockForPart(targetPart),
     ...(bangsLine ? [bangsLine] : []),
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.',
