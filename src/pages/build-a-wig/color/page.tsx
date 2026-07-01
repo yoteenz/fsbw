@@ -1546,21 +1546,14 @@ function ColorSelection() {
             ) : (
               <>
             {/* WIG PREVIEW */}
-            <div
-              className="w-full flex items-center flex-col mb-6 md:mb-8"
-              style={{ transform: 'translateY(20px)', position: 'relative' }}
-            >
+            <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               {founderNoirFalRegenUi && location.pathname.includes('/build-a-wig/noir/') && (
                 <div
                   className="w-full flex flex-col items-center"
                   style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
+                    position: 'relative',
                     zIndex: 30,
                     transform: 'translateY(-20px)',
-                    pointerEvents: 'none',
                   }}
                 >
                   <p
@@ -1570,7 +1563,6 @@ function ColorSelection() {
                       fontSize: '9px',
                       color: livePreviewError ? '#EB1C24' : '#808080',
                       maxWidth: '280px',
-                      pointerEvents: 'auto',
                     }}
                   >
                     {livePreviewLoading
@@ -1582,7 +1574,7 @@ function ColorSelection() {
                   {!livePreviewLoading && (
                     <div
                       className="flex flex-col items-center gap-2 mb-2 px-2"
-                      style={{ maxWidth: '280px', position: 'relative', zIndex: 31, pointerEvents: 'auto' }}
+                      style={{ maxWidth: '280px', position: 'relative', zIndex: 31 }}
                     >
                       <button
                         type="button"
@@ -1682,6 +1674,7 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
+                      ...(founderNoirFalRegenUi ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {
@@ -1696,6 +1689,9 @@ function ColorSelection() {
                         }
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
                           return 'translate(-50%, 2px)';
+                        }
+                        if (founderNoirFalRegenUi) {
+                          return 'translate(-50%, 20px)';
                         }
                         return 'translate(-50%, 0)';
                       })(),

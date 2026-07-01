@@ -1666,10 +1666,7 @@ export default function StylingSelectionPage() {
           ) : (
             <>
           {/* WIG PREVIEW */}
-          <div
-            className="w-full flex items-center flex-col mb-6 md:mb-8"
-            style={{ transform: 'translateY(20px)', position: 'relative' }}
-          >
+          <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
             {showNoirFalHintPremium && !showNoirLiveStylingRegenControls && (
               <p
                 className="text-center mb-2 px-2"
@@ -1689,14 +1686,10 @@ export default function StylingSelectionPage() {
               <div
                 className="w-full flex flex-col items-center"
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
+                  position: 'relative',
                   zIndex: 30,
                   /** Lift above NOIR hero label (`top-[-20px]`, text-5xl) when regen links stack 3 rows deep. */
                   transform: 'translateY(-40px)',
-                  pointerEvents: 'none',
                   ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
                 }}
                 aria-hidden={!showNoirStylingFalRegenText}
@@ -1708,7 +1701,6 @@ export default function StylingSelectionPage() {
                   fontSize: '9px',
                   color: liveStylingError ? '#EB1C24' : '#808080',
                   maxWidth: '280px',
-                  pointerEvents: 'auto',
                 }}
               >
                 {liveStylingLoading
@@ -1723,7 +1715,7 @@ export default function StylingSelectionPage() {
               </p>
               <div
                 className="flex flex-col items-center gap-y-2 mb-2 px-2"
-                style={{ maxWidth: '280px', position: 'relative', zIndex: 31, pointerEvents: 'auto' }}
+                style={{ maxWidth: '280px', position: 'relative', zIndex: 31 }}
               >
                 <button
                   type="button"
@@ -1927,6 +1919,9 @@ export default function StylingSelectionPage() {
                       }
                       if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
                         return 'translate(-50%, 2px)';
+                      }
+                      if (showNoirLiveStylingRegenControls && showNoirStylingFalRegenText) {
+                        return 'translate(-50%, 20px)';
                       }
                       return 'translate(-50%, 0)';
                     })(),

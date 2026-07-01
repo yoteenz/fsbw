@@ -32856,6 +32856,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Cause:** Founder LIVE PREVIEW wrappers on **color** and **styling** pages sat in normal flex **document flow** before **`BawNoirWigPreviewHeroThumbs`**, so the tall regen stack reserved layout height and pushed the hero (and **`top-[-20px]`** NOIR label) out of alignment vs other NOIR sub-pages — while **`translateY(-20px)`** / **`-40px`** only moved the preview text visually.
 
-**Fix:** Wig-preview outer column **`position: relative`**. LIVE PREVIEW + regen block **`position: absolute; top/left/right: 0`** with existing lift (**`-20px`** color, **`-40px`** styling), **`pointerEvents: 'none'`** on wrapper + **`auto`** on text/buttons. Hero/NOIR header no longer shifts when founder regen UI mounts.
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
+
+---
+
+## 2026-06-30 — NOIR hero title: move down 20px when founder LIVE PREVIEW strip shows
+
+**Context (continued chat):** User corrected prior fix — **LIVE PREVIEW** block should stay at its lifted **`translateY(-20px)`** / **`-40px`** position (relative, in flow); the red **NOIR** header had shifted **up** and should move **down** to its prior spot, not the preview text.
+
+**Fix:** Reverted mistaken **`position: absolute`** on LIVE PREVIEW wrappers (restores preview lift). When founder regen UI is visible on NOIR **color** / **styling** sub-pages, NOIR **`heroChildren`** transform **`translate(-50%, 20px)`** (was **`translate(-50%, 0)`** at **`top-[-20px]`**) — **20px lower** than the too-high position. Color page also restores **`pointerEvents: 'none'`** on NOIR when regen strip shows so **regen M** taps pass through.
 
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
