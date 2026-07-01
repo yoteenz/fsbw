@@ -32856,6 +32856,8 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Cause:** Founder LIVE PREVIEW wrappers on **color** and **styling** pages sat in normal flex **document flow** before **`BawNoirWigPreviewHeroThumbs`**, so the tall regen stack reserved layout height and pushed the hero (and **`top-[-20px]`** NOIR label) out of alignment vs other NOIR sub-pages — while **`translateY(-20px)`** / **`-40px`** only moved the preview text visually.
 
+**Wrong fix (reverted next entry):** **`position: absolute`** on LIVE PREVIEW block — moved preview text down instead of correcting NOIR.
+
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
 
 ---

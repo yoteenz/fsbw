@@ -1920,8 +1920,8 @@ export default function StylingSelectionPage() {
                       if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
                         return 'translate(-50%, 2px)';
                       }
-                      if (showNoirLiveStylingRegenControls && showNoirStylingFalRegenText) {
-                        return 'translate(-50%, 20px)';
+                      if (pathname.includes('/noir/')) {
+                        return 'translate(-50%, 5px)';
                       }
                       return 'translate(-50%, 0)';
                     })(),
