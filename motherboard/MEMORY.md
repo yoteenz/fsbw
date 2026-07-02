@@ -33049,3 +33049,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked for **ADD TO BALANCE** button states (**ADDING…**, **ADDED TO BALANCE** then revert to **ADD TO BALANCE**) and **live CURRENT BALANCE** update on success.
 
 **Fix:** **`src/pages/account/load-card/page.tsx`** — `addToBalanceState` idle/adding/added (2s reset, matches add-to-bag pattern); async submit awaits **`persistUserBalance`**; balance **`setUserData`** + **`customStorageChange`** on success; checkmark **ADDED TO BALANCE** success label.
+
+---
+
+## 2026-07-02 — Add Funds: multi-barcode progress labels + per-card errors
+
+**Context:** User asked that when **more than one gift-card barcode** is submitted, the button shows **ADDING 1/2…**, **ADDED 2/2**, etc.; error modals must name **which card** failed.
+
+**Fix:** **`src/pages/account/load-card/page.tsx`** — sequential redeem loop with **`addToBalanceUi`** progress; single code keeps **ADDING…** / **ADDED TO BALANCE**; multi-code uses **ADDING n/total…** and **ADDED succeeded/total**; balance updates after each successful card; modals prefix **THE FOLLOWING CARD(S) COULD NOT BE LOADED:** with **`XXXX-XXXX-XXXX: reason`** lines.

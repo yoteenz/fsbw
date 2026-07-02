@@ -37,10 +37,50 @@ function toCanonicalBarcode(value: string): string {
 }
 
 type DigitalCashHistoryEntry = { date: string; transaction: string; amount: number };
-type AddToBalanceState = 'idle' | 'adding' | 'added';
+type AddToBalanceUiState =
+  | { phase: 'idle' }
+  | { phase: 'adding'; current: number; total: number }
+  | { phase: 'added'; succeeded: number; total: number };
 const ADMIN_TEST_DIGITAL_CASH_MIN = 80;
 const ADD_TO_BALANCE_SUCCESS_RESET_MS = 2000;
 const ADD_TO_BALANCE_MIN_ADDING_MS = 800;
+const ADD_TO_BALANCE_PER_CODE_MS = 450;
+
+type GiftBarcodeRedeemResult =
+  | { ok: true; dollars: number }
+  | { ok: false; error: string };
+
+function redeemGiftBarcode(full: string, seen: Set<string>): GiftBarcodeRedeemResult {
+  const key = full.toUpperCase();
+  if (seen.has(key)) {
+    return { ok: false, error: 'DUPLICATE ENTRY' };
+  }
+  seen.add(key);
+  const promo = findGiftPromoByNormalizedCode(full);
+  if (!promo) {
+    return { ok: false, error: 'INVALID CODE' };
+  }
+  const block = giftPromoRedeemBlockReason(promo);
+  if (block) {
+    return { ok: false, error: block };
+  }
+  const dollars = parseGiftCardDollars(promo.valueLabel);
+  if (dollars == null) {
+    return { ok: false, error: 'INVALID CODE VALUE' };
+  }
+  updateBrandPromoCode(promo.id, { uses: promo.uses + 1 });
+  return { ok: true, dollars };
+}
+
+function addToBalanceAddingLabel(current: number, total: number): string {
+  if (total <= 1) return 'ADDING...';
+  return `ADDING ${current}/${total}...`;
+}
+
+function addToBalanceAddedLabel(succeeded: number, total: number): string {
+  if (total <= 1) return 'ADDED TO BALANCE';
+  return `ADDED ${succeeded}/${total}`;
+}
 
 function pickPreferredDigitalCashHistory(
   currentHistory: unknown,
@@ -162,7 +202,7 @@ function LoadCardPage() {
     return readStoredSignedInUser();
   });
   const [barcodes, setBarcodes] = useState(['', '']);
-  const [addToBalanceState, setAddToBalanceState] = useState<AddToBalanceState>('idle');
+  const [addToBalanceUi, setAddToBalanceUi] = useState<AddToBalanceUiState>({ phase: 'idle' });
   const addToBalanceResetTimerRef = useRef<number | null>(null);
 
   type LoadCardNotice = {
@@ -194,7 +234,7 @@ function LoadCardPage() {
       window.clearTimeout(addToBalanceResetTimerRef.current);
     }
     addToBalanceResetTimerRef.current = window.setTimeout(() => {
-      setAddToBalanceState('idle');
+      setAddToBalanceUi({ phase: 'idle' });
       addToBalanceResetTimerRef.current = null;
     }, ADD_TO_BALANCE_SUCCESS_RESET_MS);
   }, []);
@@ -369,7 +409,7 @@ function LoadCardPage() {
   };
 
   const handleSubmit = async () => {
-    if (addToBalanceState === 'adding' || addToBalanceState === 'added') return;
+    if (addToBalanceUi.phase !== 'idle') return;
     if (!isSignedIn || !userData?.email) {
       setLoadCardNotice({
         title: 'FORGETTING SOMETHING?',
@@ -390,75 +430,73 @@ function LoadCardPage() {
     }
     const seen = new Set<string>();
     let totalAdded = 0;
+    let succeededCount = 0;
     const errors: string[] = [];
     const now = new Date();
     const dateStr = `${now.getMonth() + 1}-${now.getDate()}-${now.getFullYear()}`;
+    const email = String(userData.email || '');
+    const latestStoredUser = readStoredSignedInUser();
+    let runningBalance =
+      typeof latestStoredUser?.giftCardBalance === 'number'
+        ? (latestStoredUser.giftCardBalance as number)
+        : typeof userData.giftCardBalance === 'number'
+          ? userData.giftCardBalance
+          : 0;
+    const totalCodes = codesToTry.length;
+    const perCodeDelayMs = Math.max(
+      ADD_TO_BALANCE_PER_CODE_MS,
+      Math.floor(ADD_TO_BALANCE_MIN_ADDING_MS / Math.max(totalCodes, 1))
+    );
 
-    for (const full of codesToTry) {
-      const key = full.toUpperCase();
-      if (seen.has(key)) {
-        errors.push(`${full}: DUPLICATE ENTRY`);
-        continue;
-      }
-      seen.add(key);
-      const promo = findGiftPromoByNormalizedCode(full);
-      if (!promo) {
-        errors.push(`${full}: INVALID CODE`);
-        continue;
-      }
-      const block = giftPromoRedeemBlockReason(promo);
-      if (block) {
-        errors.push(`${full}: ${block}`);
-        continue;
-      }
-      const dollars = parseGiftCardDollars(promo.valueLabel);
-      if (dollars == null) {
-        errors.push(`${full}: INVALID CODE VALUE`);
-        continue;
-      }
-      updateBrandPromoCode(promo.id, { uses: promo.uses + 1 });
-      totalAdded += dollars;
-    }
+    for (let index = 0; index < codesToTry.length; index++) {
+      const full = codesToTry[index];
+      setAddToBalanceUi({ phase: 'adding', current: index + 1, total: totalCodes });
 
-    if (totalAdded > 0) {
-      const email = String(userData.email || '');
-      const latestStoredUser = readStoredSignedInUser();
-      const prev =
-        typeof latestStoredUser?.giftCardBalance === 'number'
-          ? (latestStoredUser.giftCardBalance as number)
-          : typeof userData.giftCardBalance === 'number'
-            ? userData.giftCardBalance
-            : 0;
+      const result = redeemGiftBarcode(full, seen);
+      if (!result.ok) {
+        errors.push(`${full}: ${result.error}`);
+        if (index < codesToTry.length - 1) {
+          await new Promise<void>((resolve) => {
+            window.setTimeout(resolve, perCodeDelayMs);
+          });
+        }
+        continue;
+      }
 
-      setAddToBalanceState('adding');
+      runningBalance += result.dollars;
+      totalAdded += result.dollars;
+
       try {
         await Promise.all([
-          persistUserBalance(email, prev + totalAdded, {
+          persistUserBalance(email, runningBalance, {
             date: dateStr,
             transaction: 'GIFT CARD BARCODE',
-            amount: totalAdded,
+            amount: result.dollars,
           }),
           new Promise<void>((resolve) => {
-            window.setTimeout(resolve, ADD_TO_BALANCE_MIN_ADDING_MS);
+            window.setTimeout(resolve, perCodeDelayMs);
           }),
         ]);
-        setAddToBalanceState('added');
-        setBarcodes(['', '']);
-        scheduleAddToBalanceIdleReset();
+        succeededCount += 1;
       } catch {
-        setAddToBalanceState('idle');
-        setLoadCardNotice({
-          title: 'UNABLE TO ADD FUNDS',
-          message: 'SOMETHING WENT WRONG. PLEASE TRY AGAIN.',
-        });
-        return;
+        runningBalance -= result.dollars;
+        totalAdded -= result.dollars;
+        errors.push(`${full}: UNABLE TO SAVE BALANCE`);
       }
     }
 
-    if (errors.length && totalAdded === 0) {
+    if (succeededCount > 0) {
+      setAddToBalanceUi({ phase: 'added', succeeded: succeededCount, total: totalCodes });
+      setBarcodes(['', '']);
+      scheduleAddToBalanceIdleReset();
+    } else {
+      setAddToBalanceUi({ phase: 'idle' });
+    }
+
+    if (errors.length && succeededCount === 0) {
       setLoadCardNotice({
         title: 'UNABLE TO ADD FUNDS',
-        message: errors.join('\n'),
+        message: `THE FOLLOWING CARD(S) COULD NOT BE LOADED:\n${errors.join('\n')}`,
         preserveLineBreaks: true,
       });
       return;
@@ -466,10 +504,10 @@ function LoadCardPage() {
     if (errors.length) {
       setLoadCardNotice({
         title: 'PARTIALLY ADDED',
-        message: `ADDED ${formatPrice(totalAdded)}.\n\nSOME CODES FAILED:\n${errors.join('\n')}`,
+        message: `ADDED ${formatPrice(totalAdded)}.\n\nTHE FOLLOWING CARD(S) COULD NOT BE LOADED:\n${errors.join('\n')}`,
         preserveLineBreaks: true,
       });
-    } else if (totalAdded > 0) {
+    } else if (succeededCount > 0) {
       setLoadCardNotice({
         title: 'FUNDS ADDED',
         message: `ADDED ${formatPrice(totalAdded)} TO YOUR ACCOUNT.`,
@@ -947,9 +985,9 @@ function LoadCardPage() {
                   <button
                     type="button"
                     onClick={() => void handleSubmit()}
-                    disabled={addToBalanceState === 'adding'}
+                    disabled={addToBalanceUi.phase === 'adding'}
                     className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                      addToBalanceState === 'adding'
+                      addToBalanceUi.phase === 'adding'
                         ? 'bg-white cursor-not-allowed'
                         : 'bg-white cursor-pointer hover:bg-gray-50'
                     }`}
@@ -960,12 +998,15 @@ function LoadCardPage() {
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    {addToBalanceState === 'idle' && 'ADD TO BALANCE'}
-                    {addToBalanceState === 'adding' && 'ADDING...'}
-                    {addToBalanceState === 'added' && (
+                    {addToBalanceUi.phase === 'idle' && 'ADD TO BALANCE'}
+                    {addToBalanceUi.phase === 'adding' &&
+                      addToBalanceAddingLabel(addToBalanceUi.current, addToBalanceUi.total)}
+                    {addToBalanceUi.phase === 'added' && (
                       <span className="flex items-center justify-center gap-1">
                         <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                        <span style={{ color: '#808080' }}>ADDED TO BALANCE</span>
+                        <span style={{ color: '#808080' }}>
+                          {addToBalanceAddedLabel(addToBalanceUi.succeeded, addToBalanceUi.total)}
+                        </span>
                       </span>
                     )}
                   </button>
