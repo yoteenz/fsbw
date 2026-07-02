@@ -33162,4 +33162,12 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Context:** User asked to change the gray mode line at the top of Build-a-Wig pages from **BUILD-A-WIG TRY / CUSTOMIZE / EDIT** to sentence-style labels: **build a Wig try mode**, **build a Wig customize mode**, **build a Wig edit mode**.
 
-**Fix:** Updated **`bawBuildModeLabel`** in **`src/constants/bawModeGuideConfig.ts`**; removed **`uppercase`** + tightened letter-spacing on the gray line in **`BawModeChrome.tsx`** so mixed case renders correctly. Hub mode label → **build a Wig**.
+**Behavior:** Hub mode label → **BUILD A WIG**.
+
+---
+
+## 2026-07-02 — BAW mode header labels: uppercase only
+
+**Context:** User corrected prior mode-line copy: labels must stay **uppercase** site-wide (nothing lowercase on the website). Wording should read **BUILD A WIG TRY MODE**, **BUILD A WIG CUSTOMIZE MODE**, **BUILD A WIG EDIT MODE** (hub: **BUILD A WIG**).
+
+**Fix:** Restored **`uppercase`** + letter-spacing on gray mode line in **`BawModeChrome.tsx`**; updated **`bawBuildModeLabel`** strings to all-caps in **`bawModeGuideConfig.ts`**.

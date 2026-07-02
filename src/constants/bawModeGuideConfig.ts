@@ -109,12 +109,12 @@ export function getBawModeGuideCopy(mode: BawBuildMode, step: BawGuideStepId): G
 export function bawBuildModeLabel(mode: BawBuildMode): string {
   switch (mode) {
     case 'TRY':
-      return 'build a Wig try mode';
+      return 'BUILD A WIG TRY MODE';
     case 'CUSTOMIZE':
-      return 'build a Wig customize mode';
+      return 'BUILD A WIG CUSTOMIZE MODE';
     case 'EDIT':
-      return 'build a Wig edit mode';
+      return 'BUILD A WIG EDIT MODE';
     case 'HUB':
-      return 'build a Wig';
+      return 'BUILD A WIG';
   }
 }

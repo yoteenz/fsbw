@@ -26,7 +26,7 @@ export function BawModeChrome() {
         </button>
         <div className="text-center">
           <p
-            className="text-[9px] tracking-[0.06em]"
+            className="text-[9px] tracking-[0.2em] uppercase"
             style={{ fontFamily: '"Futura PT Book"', color: '#808080' }}
           >
             {ctx.modeLabel}
