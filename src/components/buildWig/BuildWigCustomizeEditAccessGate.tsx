@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
-import { isBuildAWigCustomizeOrEditPath } from '../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizeOrEditPath, isBuildAWigCustomizePath } from '../../utils/buildAWigRoutes';
+import { isBawEditPath } from '../../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
@@ -14,7 +15,9 @@ function isSignedInFromStorage(): boolean {
 }
 
 /**
- * Guests on customize/edit → sign-in. Signed-in non-premium → upgrade subscription modal.
+ * Guests may browse customize sub-pages (try flow) without sign-in.
+ * Signed-in non-premium: customize browse freely (premium steps use VIEW SUBSCRIPTIONS footer);
+ * edit flows still require premium.
  */
 export function BuildWigCustomizeEditAccessGate() {
   const location = useLocation();
@@ -33,10 +36,17 @@ export function BuildWigCustomizeEditAccessGate() {
     }
     if (!isSignedInFromStorage()) {
       setShowUpgradeModal(false);
+      if (isBuildAWigCustomizePath(location.pathname)) {
+        return;
+      }
       navigate(signInHrefWithReturnTo(location), { replace: true });
       return;
     }
-    setShowUpgradeModal(!isPremiumMemberForGatedFeatures());
+    if (isBawEditPath(location.pathname) && !isPremiumMemberForGatedFeatures()) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    setShowUpgradeModal(false);
   }, [location, navigate, needsMemberAccess]);
 
   useEffect(() => {

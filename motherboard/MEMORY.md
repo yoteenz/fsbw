@@ -33194,3 +33194,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User clarified footer CTAs: **signed-out** → **VIEW SUBSCRIPTIONS** on all BAW pages; **premium members** → **ADD TO BAG** / **CONFIRM SELECTION** everywhere; **signed-in standard** → **ADD TO BAG** + **CONFIRM SELECTION** on non-premium sub-pages (cap, length, density), **VIEW SUBSCRIPTIONS** on premium sub-pages (lace, texture, color, hairline, styling, add-ons). Hub landing for standard still **CUSTOMIZE IN BUILD-A-WIG**.
 
 **Fix:** Rewrote **`isBawViewSubscriptionsFooterMode`** in **`bawClientTestMode.ts`** (signed out = all pages; standard = premium steps only). Hub footer uses single view-subscriptions check; removed hub premium-option navigation gate. Sub-page footer unchanged structurally — uses same helper.
+
+---
+
+## 2026-07-02 — BAW try: guests no sign-in redirect on customize sub-pages
+
+**Context:** Signed-out users selecting a sub-page option from try were redirected to **/sign-in** instead of seeing standard + premium option sub-pages (browse-only with **VIEW SUBSCRIPTIONS** footer).
+
+**Fix:** **`BuildWigCustomizeEditAccessGate`** — guests may browse **`/customize`** paths (including all sub-steps) without sign-in; **edit** paths still require sign-in. Signed-in standard members browse customize without the global upgrade modal (premium steps still use **VIEW SUBSCRIPTIONS** footer; edit still requires premium).
