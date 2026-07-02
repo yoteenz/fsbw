@@ -912,7 +912,7 @@ function LoadCardPage() {
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    SUBMIT CODE(S)
+                    LOAD CASH
                   </button>
                 </div>
               </div>
