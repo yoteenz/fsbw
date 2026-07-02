@@ -1,10 +1,11 @@
 import type { CSSProperties } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import PremiumSubscriptionUpgradeChart from '../membership/PremiumSubscriptionUpgradeChart';
 import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
 import { getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
+import { getBuildAWigCustomizePathFromHub } from '../../utils/buildAWigRoutes';
 
 const defaultButtonStyle: CSSProperties = {
   borderWidth: '1.3px',
@@ -85,6 +86,59 @@ export function BawViewSubscriptionsFooter({
         dataAttribute="baw-subscription-validation"
       />
     </>
+  );
+}
+
+type BawCustomizeInBuildWigFooterProps = {
+  customizePath: string;
+  buttonWidth?: string;
+  className?: string;
+  style?: CSSProperties;
+  fullWidth?: boolean;
+};
+
+export function BawCustomizeInBuildWigFooter({
+  customizePath,
+  buttonWidth = '100%',
+  className = 'border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50',
+  style,
+  fullWidth = true,
+}: BawCustomizeInBuildWigFooterProps) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
+      <button
+        type="button"
+        onClick={() => navigate(customizePath)}
+        className={className}
+        style={{
+          ...defaultButtonStyle,
+          width: buttonWidth,
+          maxWidth: fullWidth ? '100%' : undefined,
+        }}
+      >
+        CUSTOMIZE IN BUILD-A-WIG
+      </button>
+    </div>
+  );
+}
+
+/** Hub landing footer for signed-in standard members. */
+export function BawHubStandardMemberFooter({
+  buttonWidth = '100%',
+  style,
+}: {
+  buttonWidth?: string;
+  style?: CSSProperties;
+}) {
+  const { pathname } = useLocation();
+  return (
+    <BawCustomizeInBuildWigFooter
+      customizePath={getBuildAWigCustomizePathFromHub(pathname)}
+      buttonWidth={buttonWidth}
+      style={style}
+    />
   );
 }
 

@@ -1,16 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { getBuildAWigFlowBasePath } from '../utils/buildAWigRoutes';
+import { getBuildAWigFlowBasePath, pathnameIsBuildWigPremiumMembershipStep } from '../utils/buildAWigRoutes';
 import { isBawClientTestOnlyMode } from '../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../utils/premiumMemberAccess';
 
-/** URL segments for "PREMIUM MEMBERSHIP OPTIONS" steps (lace → add-ons). */
-const PREMIUM_STEP_SEGMENT = /\/(lace|texture|color|hairline|styling|addons)(?:$|[?#])/;
-
-export function pathnameIsBuildWigPremiumMembershipStep(pathname: string): boolean {
-  return PREMIUM_STEP_SEGMENT.test(pathname);
-}
+export { pathnameIsBuildWigPremiumMembershipStep };
 
 /**
  * On lace/texture/color/hairline/styling/addons routes: if the user is not premium, show the upgrade modal

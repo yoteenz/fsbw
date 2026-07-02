@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
-import { BAW_TUTORIAL_ROUTE, isBawTutorialPath } from '../constants/bawTutorialConfig';
+import { getBuildAWigShopMenuTargetPath } from '../utils/buildAWigRoutes';
 import { navigateShopMenuSubItem } from '../utils/shopMobileMenuSubNav';
 
 const SHOP_TAB_ITEMS = [
@@ -35,12 +35,12 @@ export type ShopMobileMenuShopTabProps = {
   closeSubItemMenu: () => void;
   /** If set, also called after top-level static navigations (BCF, order form, build-a-wig, /shop/units). */
   closeAfterStaticNav?: () => void;
-  /** Default `/build-a-wig`. Booking flow uses `/build-a-wig/noir`. */
+  /** Default `/build-a-wig/noir` — used to derive member customize route. Guests use try route. */
   buildAWigPath?: string;
-  /** When set and user is not signed in, BUILD-A-WIG does not navigate — caller shows sign-in modal. */
-  onBuildAWigRequiresSignIn?: () => void;
-  /** Required with `onBuildAWigRequiresSignIn` so the tab knows whether to gate. */
+  /** When false, BUILD-A-WIG navigates to guest try flow. When true, member customize hub. */
   isSignedInForBuildAWig?: boolean;
+  /** Optional legacy hook — unused for guest try routing. */
+  onBuildAWigRequiresSignIn?: () => void;
   labelTranslateX?: string;
   /** Matches pages that attach the same handlers to the outer row for BUILD-A-WIG / BCF static links. */
   duplicateRowClickForStaticLinks?: boolean;
@@ -53,8 +53,8 @@ export function ShopMobileMenuShopTab({
   handleMobileMenuItemToggle,
   closeSubItemMenu,
   closeAfterStaticNav,
-  buildAWigPath = BAW_TUTORIAL_ROUTE,
-  onBuildAWigRequiresSignIn,
+  buildAWigPath = '/build-a-wig/noir',
+  onBuildAWigRequiresSignIn: _onBuildAWigRequiresSignIn,
   isSignedInForBuildAWig,
   labelTranslateX = '7px',
   duplicateRowClickForStaticLinks = false,
@@ -75,13 +75,10 @@ export function ShopMobileMenuShopTab({
       }
       return;
     }
-    if (
-      item.label === 'BUILD-A-WIG' &&
-      !isBawTutorialPath(buildAWigPath) &&
-      onBuildAWigRequiresSignIn &&
-      isSignedInForBuildAWig === false
-    ) {
-      onBuildAWigRequiresSignIn();
+    if (item.label === 'BUILD-A-WIG') {
+      const path = getBuildAWigShopMenuTargetPath(isSignedInForBuildAWig === true, buildAWigPath);
+      navigate(path);
+      closeMenuAfterNav();
       return;
     }
     const path = staticNavPath(item.label, buildAWigPath);

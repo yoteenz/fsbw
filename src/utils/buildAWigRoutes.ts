@@ -3,6 +3,31 @@
  * Keeps breadcrumb navigation and customize-mode detection consistent across the main page and sub-pages.
  */
 
+import { BAW_TUTORIAL_ROUTE, isBawTutorialPath } from '../constants/bawTutorialConfig';
+
+/** URL segments for premium membership option steps (lace → add-ons). */
+const PREMIUM_STEP_SEGMENT = /\/(lace|texture|color|hairline|styling|addons)(?:$|[?#])/;
+
+export function pathnameIsBuildWigPremiumMembershipStep(pathname: string): boolean {
+  return PREMIUM_STEP_SEGMENT.test(pathname);
+}
+
+const BAW_HUB_LANDING_PATHS = new Set([
+  '/build-a-wig',
+  '/build-a-wig/noir',
+  '/build-a-wig/blanco',
+  '/build-a-wig/soft-wave',
+  '/build-a-wig/beach-wave',
+  '/build-a-wig/soft-curl',
+  '/build-a-wig/ocean-curl',
+]);
+
+/** Main hub only — not length/density/etc. sub-steps. */
+export function isBuildAWigHubLandingPath(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return BAW_HUB_LANDING_PATHS.has(p);
+}
+
 const FLOW_BASES_ORDERED: string[] = [
   '/build-a-wig/blanco/customize',
   '/build-a-wig/blanco/edit',
@@ -59,7 +84,32 @@ export function getBuildAWigFlowBasePath(pathname: string): string {
   return '/build-a-wig';
 }
 
-/** SHOP menu BUILD-A-WIG — guest try flow (NOIR default). */
-export function getBuildAWigShopMenuTargetPath(): string {
-  return '/build-a-wig/try';
+/** Member SHOP menu target — product customize hub (default NOIR). */
+export function getBuildAWigMemberMenuTargetPath(buildAWigPath = '/build-a-wig/noir'): string {
+  return getBuildAWigCustomizePathForMenu(buildAWigPath);
+}
+
+/** Guest SHOP menu target — try flow (NOIR default at `/build-a-wig/try`). */
+export function getBuildAWigGuestMenuTargetPath(): string {
+  return BAW_TUTORIAL_ROUTE;
+}
+
+/** Signed-in menu: customize hub; guests: try route. */
+export function getBuildAWigShopMenuTargetPath(isSignedIn: boolean, buildAWigPath = '/build-a-wig/noir'): string {
+  return isSignedIn ? getBuildAWigMemberMenuTargetPath(buildAWigPath) : getBuildAWigGuestMenuTargetPath();
+}
+
+/** Map menu/build path to `/build-a-wig/{unit}/customize`. */
+export function getBuildAWigCustomizePathForMenu(buildAWigPath: string): string {
+  const p = buildAWigPath.replace(/\/$/, '') || '/';
+  if (p.includes('/customize')) return p;
+  if (p === '/build-a-wig' || isBawTutorialPath(p)) return '/build-a-wig/noir/customize';
+  if (p.startsWith('/build-a-wig/')) return `${p}/customize`;
+  return '/build-a-wig/noir/customize';
+}
+
+/** Standard-member hub footer → customize for the active product hub. */
+export function getBuildAWigCustomizePathFromHub(pathname: string): string {
+  const base = getBuildAWigFlowBasePath(pathname);
+  return getBuildAWigCustomizePathForMenu(base);
 }

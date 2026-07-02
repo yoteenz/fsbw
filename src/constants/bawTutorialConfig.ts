@@ -107,6 +107,24 @@ export function resolveBawTutorialUnitLabelFromPathname(pathname: string): strin
   return BAW_TUTORIAL_DEFAULT_SELECTIONS.unit;
 }
 
+export function getBawCustomizePathForTutorialUnit(unitLabel: string): string {
+  switch (unitLabel) {
+    case 'BLANCO':
+      return '/build-a-wig/blanco/customize';
+    case 'SOFT WAVE':
+      return '/build-a-wig/soft-wave/customize';
+    case 'BEACH WAVE':
+      return '/build-a-wig/beach-wave/customize';
+    case 'SOFT CURL':
+      return '/build-a-wig/soft-curl/customize';
+    case 'OCEAN CURL':
+      return '/build-a-wig/ocean-curl/customize';
+    case 'NOIR':
+    default:
+      return '/build-a-wig/noir/customize';
+  }
+}
+
 export function isBawTutorialPath(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
   return p === BAW_TUTORIAL_ROUTE || p.startsWith(`${BAW_TUTORIAL_ROUTE}/`);

@@ -7,6 +7,7 @@ import {
   BAW_TUTORIAL_OPTIONS,
   BAW_TUTORIAL_STEPS,
   BAW_TUTORIAL_ROUTE,
+  getBawCustomizePathForTutorialUnit,
   isBawTryUnitSlug,
   resolveBawTutorialUnitLabelFromPathname,
   type BawTutorialSelections,
@@ -16,7 +17,11 @@ import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequin
 import { applyBawTutorialDraftToBuilderStorage, saveBawTutorialGuestDraft } from '../../../utils/bawTutorialStorage';
 import { renderBawSlayCardPng, shareOrDownloadBawSlayCard } from '../../../utils/bawSlayCard';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
-import { BawViewSubscriptionsFooter } from '../../../components/buildWig/BawViewSubscriptionsFooter';
+import {
+  BawCustomizeInBuildWigFooter,
+  BawViewSubscriptionsFooter,
+} from '../../../components/buildWig/BawViewSubscriptionsFooter';
+import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { trackActivity } from '../../../utils/activity';
 
 function stepIndex(step: BawTutorialStepId): number {
@@ -52,6 +57,7 @@ function OptionChip({
 export default function BawTutorialPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isSignedIn = useSignedInFromStorage();
   const normalizedPath = location.pathname.replace(/\/$/, '') || '/';
   const unitSlug =
     normalizedPath === BAW_TUTORIAL_ROUTE
@@ -347,22 +353,33 @@ export default function BawTutorialPage() {
             >
               {cardBusy ? 'WORKING…' : 'SHARE SLAY CARD'}
             </button>
-            <button
-              type="button"
-              onClick={handleSignInForFullBuilder}
-              className="w-full py-3 text-[11px] uppercase text-white"
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                backgroundColor: '#EB1C24',
-              }}
-            >
-              SIGN IN FOR FULL BUILD-A-WIG
-            </button>
-            <BawViewSubscriptionsFooter
-              className="w-full py-2 text-[10px] uppercase"
-              buttonWidth="100%"
-              style={{ marginTop: 0 }}
-            />
+            {isSignedIn ? (
+              <BawCustomizeInBuildWigFooter
+                customizePath={getBawCustomizePathForTutorialUnit(unitLabel)}
+                className="w-full py-3 text-[11px] uppercase border border-black bg-white"
+                buttonWidth="100%"
+                style={{ marginTop: 0 }}
+              />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSignInForFullBuilder}
+                  className="w-full py-3 text-[11px] uppercase text-white"
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#EB1C24',
+                  }}
+                >
+                  SIGN IN FOR FULL BUILD-A-WIG
+                </button>
+                <BawViewSubscriptionsFooter
+                  className="w-full py-2 text-[10px] uppercase"
+                  buttonWidth="100%"
+                  style={{ marginTop: 0 }}
+                />
+              </>
+            )}
           </div>
         )}
 

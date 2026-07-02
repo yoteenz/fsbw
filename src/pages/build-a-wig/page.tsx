@@ -15,8 +15,9 @@ import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignIn
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
-import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
-import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
+import { isBawClientTestOnlyMode, isBawStandardMemberHubBrowseMode } from '../../utils/bawClientTestMode';
+import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
+import { BawHubStandardMemberFooter, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
 import {
   BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY,
   BUILD_WIG_APPOINTMENT_MODE_KEY,
@@ -48,8 +49,7 @@ import {
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
-import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
-import { BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
 /**
@@ -5953,7 +5953,9 @@ export default function BuildAWigPage() {
         </div>
 
         {!showMobileMenu && (
-          isBawClientTestOnlyMode(location.pathname) ? (
+          isBawStandardMemberHubBrowseMode(location.pathname) ? (
+            <BawHubStandardMemberFooter style={{ marginTop: '2px' }} />
+          ) : isBawClientTestOnlyMode(location.pathname) ? (
             <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
           ) : (
             <>

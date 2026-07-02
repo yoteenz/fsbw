@@ -33073,3 +33073,27 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`try/page.tsx`**: unit label from URL.
 - **Unit PDPs**: product-specific try URLs.
 - **Booking** menu still **`/build-a-wig/noir`** (unchanged).
+
+---
+
+## 2026-07-02 — BAW member vs guest CTAs: menu customize, try/hub/sub-page footers
+
+**Context:** User asked to differentiate Build-a-Wig CTAs by sign-in and membership tier:
+
+- **Standard + Premium (signed in):** SHOP menu **BUILD-A-WIG** routes to that product’s **customize** hub (not try).
+- **Guests only:** **VIEW SUBSCRIPTIONS** on the try flow card step.
+- **Standard members on premium BAW sub-pages** (lace, texture, color, hairline, styling, add-ons): **VIEW SUBSCRIPTIONS** footer.
+- **Standard members on main hub** (`/build-a-wig`, `/build-a-wig/noir`, etc.): **CUSTOMIZE IN BUILD-A-WIG** footer (not VIEW SUBSCRIPTIONS).
+- **Premium members** keep normal **ADD TO BAG** / **CONFIRM SELECTION** on hub and sub-pages.
+
+**Changes:**
+- **`bawClientTestMode.ts`**: `isBawClientTestOnlyMode` → signed-in standard on premium sub-pages only; `isBawStandardMemberHubBrowseMode` → signed-in standard on hub landing; `isBawGuestTryPage`.
+- **`buildAWigRoutes.ts`**: hub landing helpers, `getBuildAWigShopMenuTargetPath` (member → customize, guest → try), customize path helpers.
+- **`BawViewSubscriptionsFooter.tsx`**: `BawCustomizeInBuildWigFooter`, `BawHubStandardMemberFooter`.
+- **`ShopMobileMenuShopTab.tsx`**: menu uses member customize vs guest try routing.
+- **`build-a-wig/page.tsx`**: hub footer branches — standard hub → CUSTOMIZE; premium sub-page test mode → VIEW SUBSCRIPTIONS; else ADD TO BAG + LIVE TRY ON.
+- **`try/page.tsx`**: card step — guests get SIGN IN + VIEW SUBSCRIPTIONS; signed-in members get CUSTOMIZE IN BUILD-A-WIG for active unit.
+- **`bawTutorialConfig.ts`**: `getBawCustomizePathForTutorialUnit`.
+- **`useBuildWigPremiumMembershipStepGate.tsx`**: re-export premium step helper from routes.
+
+**Conventions:** VIEW SUBSCRIPTIONS is guest try + standard-on-premium-sub-pages only; hub customize CTA is standard members only; premium/full members use commerce footers.
