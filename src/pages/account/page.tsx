@@ -2082,7 +2082,7 @@ function AccountPage() {
                           cursor: 'pointer',
                         }}
                       >
-                        VOUCHER:{' '}
+                        VOUCHERS:{' '}
                         {(userData?.voucherList && Array.isArray(userData.voucherList)
                           ? userData.voucherList.length
                           : userData?.voucherCount) ?? 0}{' '}

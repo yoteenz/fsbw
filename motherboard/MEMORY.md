@@ -32935,3 +32935,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Fix:** Bottom action is now **VIEW SPREADSHEET** / **HIDE SPREADSHEET** toggle (no navigation away). New **`src/utils/adminAccountingSpreadsheet.ts`** aggregates the same **`userOrders_*`** feed as admin Revenue — per-line **units, list price, avg sale, revenue, unit cost, COGS, gross profit, margin %** for BAW units, BCF, gift cards, bookings, plus **packaging & fulfillment COGS** per physical order and a **TOTAL (YTD)** row. New **`AccountingSpreadsheetCard`** renders a horizontally scrollable table. **KEY METRICS** and **SCALING METRICS → Gross margin %** now pull live totals from the spreadsheet model when order/revenue data exists.
 
 **Changes:** **`src/utils/adminAccountingSpreadsheet.ts`** (new), **`src/pages/admin/components/AccountingSpreadsheetCard.tsx`** (new), **`src/pages/admin/revenue/accounting-report/page.tsx`**. Build passes.
+
+---
+
+## 2026-07-01 — Account profile: VOUCHER → VOUCHERS (plural label)
+
+**Context (continued chat):** User asked to pluralize the voucher line on the account profile.
+
+**Fix:** **`src/pages/account/page.tsx`** — profile summary line **`VOUCHER:` → `VOUCHERS:`** (e.g. **VOUCHERS: 3 AVAILABLE**).
