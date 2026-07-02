@@ -20,6 +20,8 @@ import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { BawSubpageFooterAction } from '../../../components/buildWig/BawViewSubscriptionsFooter';
 import { BawModeChrome } from '../../../components/buildWig/BawModeChrome';
+import { BuildWigSubscriptionPageRoot } from '../../../components/buildWig/BawSubscriptionViewContext';
+import { BawSubscriptionMainCard } from '../../../components/buildWig/BawSubscriptionMainCard';
 import {
   readBuildWigLivePreviewColor,
   readBuildWigLivePreviewSelections,
@@ -1213,6 +1215,7 @@ function ColorSelection() {
   const totalPrice = getSelectedPrice();
 
   return (
+    <BuildWigSubscriptionPageRoot>
     <>
       {showLoading && <LoadingScreen />}
       <div className="min-h-screen" style={{
@@ -1502,6 +1505,7 @@ function ColorSelection() {
               </div>
             ) : (
               <>
+            <BawSubscriptionMainCard>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               {founderNoirFalRegenUi && location.pathname.includes('/build-a-wig/noir/') && (
@@ -1737,6 +1741,7 @@ function ColorSelection() {
             </div>
 
           </div>
+            </BawSubscriptionMainCard>
             </>
           )}
         </div>
@@ -1800,6 +1805,7 @@ function ColorSelection() {
       />
       {premiumMembershipStepModal}
     </>
+    </BuildWigSubscriptionPageRoot>
   );
 }
 

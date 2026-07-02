@@ -33128,3 +33128,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - Wired into **`build-a-wig/page.tsx`** and sub-pages (length, cap, density, lace, texture, color, hairline, styling, addons).
 
 **Behavior:** Mode line reads e.g. **BUILD-A-WIG CUSTOMIZE** + **NOIR**; guide copy updates per sub-step (length, color, etc.); existing nav/cart/menu header remains below.
+
+---
+
+## 2026-07-02 — BAW VIEW SUBSCRIPTIONS: replace main card (rewards-style toggle)
+
+**Context:** User asked that **VIEW SUBSCRIPTIONS** toggle and **replace** the builder main card (preview + options), not expand a second card below the button — same pattern as **Account → Rewards**.
+
+**Fix:**
+- **`BawSubscriptionViewContext.tsx`**: shared `usePremiumSubscriptionUpgrade` state across BAW hub + sub-pages (`BuildWigSubscriptionPageRoot`).
+- **`BawSubscriptionMainCard.tsx`**: when chart open, swaps builder content for bordered **PREMIUM MEMBERSHIP** card + `PremiumSubscriptionUpgradeChart` (close **X** in header).
+- **`BawViewSubscriptionsFooter.tsx`**: button only — **VIEW SUBSCRIPTIONS** / **CONFIRM SUBSCRIPTION**; removed inline chart above footer.
+- Hub + all option sub-pages wrap preview/selection block in **`BawSubscriptionMainCard`** inside **`BuildWigSubscriptionPageRoot`**.
+
+**Behavior:** Tap **VIEW SUBSCRIPTIONS** → mannequin/options hide, subscription chart fills main card; **X** or route change closes; **CONFIRM SUBSCRIPTION** proceeds to checkout like rewards.

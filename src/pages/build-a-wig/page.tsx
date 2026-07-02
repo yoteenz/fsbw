@@ -19,6 +19,8 @@ import { isBawClientTestOnlyMode, isBawGuestTryPage, isBawStandardMemberHubBrows
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 import { BawHubStandardMemberFooter, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
 import { BawModeChrome } from '../../components/buildWig/BawModeChrome';
+import { BuildWigSubscriptionPageRoot } from '../../components/buildWig/BawSubscriptionViewContext';
+import { BawSubscriptionMainCard } from '../../components/buildWig/BawSubscriptionMainCard';
 import {
   BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY,
   BUILD_WIG_APPOINTMENT_MODE_KEY,
@@ -5003,6 +5005,7 @@ export default function BuildAWigPage() {
   // Get current localStorage values for debug panel
 
   return (
+    <BuildWigSubscriptionPageRoot>
     <>
       {showLoading && <LoadingScreen />}
       <div className="min-h-screen" style={{
@@ -5346,6 +5349,7 @@ export default function BuildAWigPage() {
             </div>
           ) : (
             <>
+            <BawSubscriptionMainCard>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               <BawNoirWigPreviewHeroThumbs
@@ -5970,6 +5974,7 @@ export default function BuildAWigPage() {
                   dangerouslySetInnerHTML={formatPrice(totalPrice)}
               />
             </div>
+            </BawSubscriptionMainCard>
             </>
           )}
         </div>
@@ -6096,5 +6101,6 @@ export default function BuildAWigPage() {
         dataAttribute="upgrade-subscription-modal-build-a-wig-hub-premium-options"
       />
     </>
+    </BuildWigSubscriptionPageRoot>
   );
 }

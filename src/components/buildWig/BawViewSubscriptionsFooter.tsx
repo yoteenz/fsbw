@@ -1,11 +1,9 @@
 import type { CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
-import PremiumSubscriptionUpgradeChart from '../membership/PremiumSubscriptionUpgradeChart';
-import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
-import { getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
 import { getBuildAWigCustomizePathFromHub, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
+import { useBawSubscriptionView } from './BawSubscriptionViewContext';
 
 const defaultButtonStyle: CSSProperties = {
   borderWidth: '1.3px',
@@ -20,47 +18,16 @@ type BawViewSubscriptionsFooterProps = {
   fullWidth?: boolean;
 };
 
-function readHasPremiumSubscription(): boolean {
-  try {
-    const raw = localStorage.getItem('currentUser');
-    if (!raw) return false;
-    const user = JSON.parse(raw) as { subscriptionTier?: string; membershipType?: string };
-    return getEffectiveSubscriptionTier(user) != null;
-  } catch {
-    return false;
-  }
-}
-
 export function BawViewSubscriptionsFooter({
   buttonWidth = '100%',
   className = 'border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50',
   style,
   fullWidth = true,
 }: BawViewSubscriptionsFooterProps) {
-  const premium = usePremiumSubscriptionUpgrade({
-    hasPremiumSubscription: readHasPremiumSubscription(),
-  });
+  const premium = useBawSubscriptionView();
 
   return (
     <>
-      {premium.showPremiumChart ? (
-        <div
-          className="mb-3 border border-black bg-white/80 backdrop-blur-sm overflow-hidden"
-          style={{ borderWidth: '1.3px' }}
-        >
-          <PremiumSubscriptionUpgradeChart
-            embedded
-            onClose={premium.closePremiumChart}
-            hasPremiumSubscription={readHasPremiumSubscription()}
-            selectedTier={premium.selectedTier}
-            setSelectedTier={premium.setSelectedTier}
-            showAllBenefits={premium.showAllBenefits}
-            setShowAllBenefits={premium.setShowAllBenefits}
-            formatPrice={premium.formatPrice}
-            subscriptionTiers={premium.subscriptionTiers}
-          />
-        </div>
-      ) : null}
       <div className="px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
         <button
           type="button"
