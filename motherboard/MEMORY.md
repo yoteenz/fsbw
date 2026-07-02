@@ -33213,3 +33213,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`BawModeChrome`**: **BACK** on option sub-pages (`isBawOptionSubPage`); **BUILD GUIDE** hidden when **`showPremiumChart`**; back target via **`resolveBawModeBackPath`** (try → `/build-a-wig/try`).
 - **`BawSubscriptionMainCard`**: chart uses non-embedded **`PremiumSubscriptionUpgradeChart`** (single card shell).
 - **`BawBuildAreaOuter`**: outer build-area border/padding removed when chart replaces builder content (hub + all sub-pages).
+
+---
+
+## 2026-07-02 — BAW mode header black border matches BUILD GUIDE
+
+**Context:** User asked for the top mode panel (BACK/SHOP | mode title | EXIT) to use the same black border as the BUILD GUIDE card.
+
+**Fix:** **`BawModeChrome`** header — **`rounded-sm border border-black`**, **`1.3px`**, **`bg-white/70 backdrop-blur-sm`** (matches build guide card).
