@@ -33142,3 +33142,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - Hub + all option sub-pages wrap preview/selection block in **`BawSubscriptionMainCard`** inside **`BuildWigSubscriptionPageRoot`**.
 
 **Behavior:** Tap **VIEW SUBSCRIPTIONS** → mannequin/options hide, subscription chart fills main card; **X** or route change closes; **CONFIRM SUBSCRIPTION** proceeds to checkout like rewards.
+
+---
+
+## 2026-07-02 — BAW duplicate nav + double PREMIUM MEMBERSHIP header fix
+
+**Context:** User reported on Build-a-Wig try/hub pages: (1) duplicate **PREMIUM MEMBERSHIP** title row and two **X** close icons when VIEW SUBSCRIPTIONS chart is open; (2) redundant legacy nav bar (back, search, breadcrumb, cart, hamburger) below **BawModeChrome** — BAW pages should only show the top mode panel (SHOP / BUILD-A-WIG {MODE} / unit / EXIT + progress + BUILD GUIDE).
+
+**Fix:**
+- **`BawSubscriptionMainCard.tsx`**: removed outer PREMIUM MEMBERSHIP header + X; embedded **`PremiumSubscriptionUpgradeChart`** already owns that chrome (single header/close).
+- **Hub + all 9 option sub-pages**: removed legacy `{/* HEADER */}` nav blocks; cleaned unused nav imports/handlers (`DynamicCartIcon`, `useShopNavSearchBar`, `handleBack`, cart badge state where only used for header).
+- **cap-size / color**: kept localStorage sync `useEffect`s but dropped cart-count listeners only.
+
+**Behavior:** BAW routes show **BawModeChrome** only at top (no second shop nav bar). Subscription chart shows one PREMIUM MEMBERSHIP row with one close control.

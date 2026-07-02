@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
-import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -13,7 +12,6 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignInModal';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
-import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
 import { isBawClientTestOnlyMode, isBawGuestTryPage, isBawStandardMemberHubBrowseMode } from '../../utils/bawClientTestMode';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
@@ -114,8 +112,6 @@ export default function BuildAWigPage() {
       navigate(BAW_TUTORIAL_ROUTE, { replace: true });
     }
   }, [navigate, rawPathname]);
-
-  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
   const [showPremiumMembershipHubModal, setShowPremiumMembershipHubModal] = useState(false);
@@ -4138,11 +4134,6 @@ export default function BuildAWigPage() {
     }));
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-
   // Check if configuration has changed (for normal mode)
   useEffect(() => {
     const newConfig = generateConfigurationString();
@@ -4876,10 +4867,6 @@ export default function BuildAWigPage() {
     }
   }, [showMobileMenu, bawPathname]);
 
-  const handleMobileMenuToggle = () => {
-    setShowMobileMenu(!showMobileMenu);
-  };
-
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
   };
@@ -5038,179 +5025,6 @@ export default function BuildAWigPage() {
           {/* MAIN CONTENT */}
           <div className="flex flex-col py-5 px-4">
           <BawModeChrome />
-          {/* HEADER */}
-          <div
-            className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
-            style={{ border: '1.3px solid black' }}
-          >
-            <div className="flex gap-5 absolute left-4">
-              {showMobileMenu ? (
-                <>
-                  <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
-                    className="cursor-pointer" 
-                    style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
-                  >
-                    <img
-                      alt="Account icon"
-                      width="16"
-                      height="16"
-                      src="/assets/NOIR/account-icon.svg"
-                    />
-                  </button>
-                  <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
-                    className="cursor-pointer"
-                    style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
-                  >
-                    <img
-                      alt="Wishlist"
-                      width="18"
-                      height="18"
-                      src="/assets/wishlist-heart.svg"
-                    />
-                  </button>
-                </>
-              ) : (
-                <>
-              <button 
-                onClick={handleBack} 
-                className="cursor-pointer"
-                style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-              >
-                <img
-                  alt="Back"
-                  width="21"
-                  height="15"
-                  src="/assets/back-button.svg"
-                />
-              </button>
-              <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt=""
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
-                />
-              </SearchTrigger>
-                </>
-              )}
-            </div>
-            
-            <NavCenter showMobileMenu={showMobileMenu}>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', transform: 'translateY(1px)' }}>
-              {showMobileMenu ? (
-                <>
-                  <span 
-                    style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/lobby')}
-                  >
-                    HOME &gt;
-                  </span>{' '}
-                  <span
-                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500' }}
-                  >
-                    MENU
-                  </span>
-                </>
-              ) : (
-                <>
-              <span 
-                style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => {
-                  const pathname = bawPathname;
-                  // Check for product-specific routes first (main, customize, edit)
-                  if (pathname.startsWith('/build-a-wig/blanco')) navigate('/build-a-wig/blanco');
-                  else if (pathname.startsWith('/build-a-wig/soft-wave')) navigate('/build-a-wig/soft-wave');
-                  else if (pathname.startsWith('/build-a-wig/soft-curl')) navigate('/build-a-wig/soft-curl');
-                  else if (pathname.startsWith('/build-a-wig/beach-wave')) navigate('/build-a-wig/beach-wave');
-                  else if (pathname.startsWith('/build-a-wig/ocean-curl')) navigate('/build-a-wig/ocean-curl');
-                  else if (pathname.startsWith('/build-a-wig/noir')) navigate('/build-a-wig/noir');
-                  else navigate('/build-a-wig');
-                }}
-              >
-                BUILD-A-WIG &gt;
-              </span>{' '}
-              <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontWeight: '500', cursor: 'pointer' }}
-                onClick={() => {
-                  const pathname = bawPathname;
-                  // Check for product-specific routes (main, customize, edit) - order matters!
-                  if (pathname.startsWith('/build-a-wig/blanco')) {
-                    navigate('/straight/blanco');
-                  } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
-                    navigate('/wavy/soft-wave');
-                  } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
-                    navigate('/curly/soft-curl');
-                  } else if (pathname.startsWith('/build-a-wig/beach-wave')) {
-                    navigate('/wavy/beach-wave');
-                  } else if (pathname.startsWith('/build-a-wig/ocean-curl')) {
-                    navigate('/curly/ocean-curl');
-                  } else if (pathname.startsWith('/build-a-wig/noir')) {
-                    navigate('/straight/noir');
-                  } else {
-                    navigate('/straight/noir');
-                  }
-                }}
-              >
-                {(() => {
-                  const pathname = bawPathname;
-                  // Check for product-specific routes - order matters! Check specific products before noir
-                  if (pathname.startsWith('/build-a-wig/blanco')) {
-                    return 'BLANCO';
-                  }
-                  if (pathname.startsWith('/build-a-wig/soft-wave')) {
-                    return 'SOFT WAVE';
-                  }
-                  if (pathname.startsWith('/build-a-wig/soft-curl')) {
-                    return 'SOFT CURL';
-                  }
-                  if (pathname.startsWith('/build-a-wig/beach-wave')) {
-                    return 'BEACH WAVE';
-                  }
-                  if (pathname.startsWith('/build-a-wig/ocean-curl')) {
-                    return 'OCEAN CURL';
-                  }
-                  if (pathname.startsWith('/build-a-wig/noir')) {
-                    return 'NOIR';
-                  }
-                  // Default fallback
-                  return 'NOIR';
-                })()}
-              </span>
-                </>
-              )}
-            </p>
-            </NavCenter>
-            <div className="gap-5 flex absolute" style={{ right: '17px', zIndex: 10 }}>
-              <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                  <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
-                </div>
-                <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'auto', zIndex: 11 }}>
-                  <svg
-                    width="17"
-                    height="18"
-                    viewBox="0 0 16 14"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleMobileMenuToggle();
-                    }}
-                    onTouchStart={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleMobileMenuToggle();
-                    }}
-                    style={{ marginTop: '2px', pointerEvents: 'auto' }}
-                  >
-                    <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black" pointerEvents="none"/>
-                  </svg>
-                </div>
-            </div>
-        </div>
 
         {/* BUILD AREA */}
         <div

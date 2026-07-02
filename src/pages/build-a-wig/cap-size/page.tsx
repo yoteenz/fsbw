@@ -2,24 +2,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
-import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
-import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import {
   markBawConfirmedReturnFromSubpage,
   persistBawScalarConfirmed,
   persistBawScalarDraftTap,
-  revertBawDraftScalarToConfirmed,
 } from '../../../utils/bawSubpageSelectionPersist';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
-import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
@@ -39,7 +36,6 @@ interface CapSizeOption {
 function CapSizeSelection() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [selectedCapSize, setSelectedCapSize] = useState(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -112,11 +108,6 @@ function CapSizeSelection() {
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
 
-  // Cart count state
-  const [cartCount, setCartCount] = useState(() => {
-    return parseInt(localStorage.getItem('cartCount') || '0');
-  });
-
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
@@ -132,16 +123,9 @@ function CapSizeSelection() {
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
-  // Listen for cart count changes
+  // Sync cap size from localStorage on cross-tab / focus events
   useEffect(() => {
-    const handleCartCountUpdate = (event: CustomEvent) => {
-      setCartCount(event.detail);
-    };
-
     const handleStorageChange = () => {
-      const newCartCount = parseInt(localStorage.getItem('cartCount') || '0');
-      setCartCount(newCartCount);
-      
       // Update selected cap size from localStorage
       // CRITICAL: Check editSelected* keys first when in edit mode, then customizeSelected* for customize mode
       // NOTE: Only update if the stored value is different to prevent overwriting user selections
@@ -170,13 +154,11 @@ function CapSizeSelection() {
       handleStorageChange();
     };
 
-    window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('focus', handleStorageChange);
     window.addEventListener('customStorageChange', handleCustomStorageChange);
 
     return () => {
-      window.removeEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
       window.removeEventListener('customStorageChange', handleCustomStorageChange);
@@ -258,10 +240,6 @@ function CapSizeSelection() {
       }
     }
   }, [showMobileMenu, location.pathname]);
-
-  const handleMobileMenuToggle = () => {
-    setShowMobileMenu(!showMobileMenu);
-  };
 
   const handleMobileMenuTabClick = (tab: string) => {
     setMobileMenuActiveTab(tab);
@@ -356,75 +334,6 @@ function CapSizeSelection() {
     const selectedOption = allOptions.find(option => option.id === capSizeId);
     const priceUsd = selectedOption ? selectedOption.price : 0;
     persistBawScalarDraftTap(window.location.pathname, 'CapSize', capSizeId, String(priceUsd));
-  };
-
-  const handleBack = () => {
-    const pathname = location.pathname;
-    
-    // CRITICAL: Only save selections when on product-specific edit/customize sub-page routes
-    // Check if we're on a product-specific edit or customize sub-page route
-    const isOnProductSpecificEditRoute = pathname.startsWith('/build-a-wig/noir/edit/') ||
-                                         pathname.startsWith('/build-a-wig/blanco/edit/') ||
-                                         pathname.startsWith('/build-a-wig/soft-wave/edit/') ||
-                                         pathname.startsWith('/build-a-wig/soft-curl/edit/') ||
-                                         pathname.startsWith('/build-a-wig/ocean-curl/edit/') ||
-                                         pathname.startsWith('/build-a-wig/beach-wave/edit/') ||
-                                         pathname.startsWith('/build-a-wig/edit/');
-    
-    const isOnProductSpecificCustomizeRoute = pathname.startsWith('/build-a-wig/noir/customize/') ||
-                                              pathname.startsWith('/build-a-wig/blanco/customize/') ||
-                                              pathname.startsWith('/build-a-wig/soft-wave/customize/') ||
-                                              pathname.startsWith('/build-a-wig/soft-curl/customize/') ||
-                                              pathname.startsWith('/build-a-wig/ocean-curl/customize/') ||
-                                              pathname.startsWith('/build-a-wig/beach-wave/customize/');
-    
-    if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
-      revertBawDraftScalarToConfirmed(pathname, 'CapSize');
-    }
-    
-    // Determine return route
-    let returnRoute = '/build-a-wig'; // Default
-    
-    // Check for edit routes first, then customize, then main
-    if (pathname.includes('/blanco/edit/')) {
-      returnRoute = '/build-a-wig/blanco/edit';
-    } else if (pathname.includes('/blanco/customize/')) {
-      returnRoute = '/build-a-wig/blanco/customize';
-    } else if (pathname.includes('/blanco/')) {
-      returnRoute = '/build-a-wig/blanco';
-    } else if (pathname.includes('/soft-wave/edit/')) {
-      returnRoute = '/build-a-wig/soft-wave/edit';
-    } else if (pathname.includes('/soft-wave/customize/')) {
-      returnRoute = '/build-a-wig/soft-wave/customize';
-    } else if (pathname.includes('/soft-wave/')) {
-      returnRoute = '/build-a-wig/soft-wave';
-    } else if (pathname.includes('/soft-curl/edit/')) {
-      returnRoute = '/build-a-wig/soft-curl/edit';
-    } else if (pathname.includes('/soft-curl/customize/')) {
-      returnRoute = '/build-a-wig/soft-curl/customize';
-    } else if (pathname.includes('/soft-curl/')) {
-      returnRoute = '/build-a-wig/soft-curl';
-    } else if (pathname.includes('/beach-wave/edit/')) {
-      returnRoute = '/build-a-wig/beach-wave/edit';
-    } else if (pathname.includes('/beach-wave/customize/')) {
-      returnRoute = '/build-a-wig/beach-wave/customize';
-    } else if (pathname.includes('/beach-wave/')) {
-      returnRoute = '/build-a-wig/beach-wave';
-    } else if (pathname.includes('/ocean-curl/edit/')) {
-      returnRoute = '/build-a-wig/ocean-curl/edit';
-    } else if (pathname.includes('/ocean-curl/customize/')) {
-      returnRoute = '/build-a-wig/ocean-curl/customize';
-    } else if (pathname.includes('/ocean-curl/')) {
-      returnRoute = '/build-a-wig/ocean-curl';
-    } else if (pathname.includes('/noir/edit/')) {
-      returnRoute = '/build-a-wig/noir/edit';
-    } else if (pathname.includes('/noir/customize/')) {
-      returnRoute = '/build-a-wig/noir/customize';
-    } else if (pathname.includes('/noir/')) {
-      returnRoute = '/build-a-wig/noir';
-    }
-    
-    navigate(returnRoute);
   };
 
   const handleConfirmSelection = () => {
@@ -628,134 +537,6 @@ function CapSizeSelection() {
           {/* MAIN CONTENT */}
           <div className="flex flex-col py-5 px-4">
           <BawModeChrome />
-        {/* HEADER */}
-        <div
-          className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
-          style={{ border: '1.3px solid black' }}
-        >
-          <div className="flex gap-5 absolute left-4">
-            {showMobileMenu ? (
-              <>
-                <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : signInHrefWithReturnTo(location))}
-                  className="cursor-pointer" 
-                  style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
-                >
-                  <img
-                    alt="Account icon"
-                    width="16"
-                    height="16"
-                    src="/assets/NOIR/account-icon.svg"
-                  />
-                </button>
-                <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : signInHrefWithReturnTo(location))} 
-                  className="cursor-pointer"
-                  style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
-                >
-                  <img
-                    alt="Wishlist"
-                    width="18"
-                    height="18"
-                    src="/assets/wishlist-heart.svg"
-                  />
-                </button>
-              </>
-            ) : (
-              <>
-                <button 
-                  onClick={handleBack} 
-                  className="cursor-pointer"
-                  style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
-                >
-                  <img
-                    alt="Back"
-                    width="21"
-                    height="15"
-                    src="/assets/back-button.svg"
-                  />
-                </button>
-                <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt=""
-                    width="16"
-                    height="15"
-                    src="/assets/search-icon.svg"
-                  />
-                </SearchTrigger>
-              </>
-            )}
-          </div>
-          <NavCenter showMobileMenu={showMobileMenu}>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-            {showMobileMenu ? (
-              <>
-                <span 
-                  style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                  onClick={() => navigate('/lobby')}
-                >
-                  HOME &gt;
-                </span>{' '}
-                <span
-                  style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-                >
-                  MENU
-                </span>
-              </>
-            ) : (
-              <>
-                <span 
-                  style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                  onClick={() => navigate(getBuildAWigFlowBasePath(location.pathname))}
-                >
-                  BUILD-A-WIG &gt;
-                </span>{' '}
-                <span
-                  style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500', cursor: 'pointer' }}
-                  onClick={() => {
-                    const pathname = location.pathname;
-                    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
-                    else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
-                    else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
-                    else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
-                    else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
-                    else navigate('/straight/noir');
-                  }}
-                >
-                  {(() => {
-                    const pathname = location.pathname;
-                    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
-                    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
-                    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
-                    if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
-                    if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
-                    return 'NOIR';
-                  })()}
-                </span>
-              </>
-            )}
-          </p>
-            </NavCenter>
-          <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-            <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
-            </div>
-            <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 16 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer"
-                onClick={handleMobileMenuToggle}
-                style={{ marginTop: '2px' }}
-              >
-                <path d="M0 0H15.75V0.7H7.875H0V0ZM5.25 6.7H10.5H15.375V7.4H10.5H5.25V6.7ZM0 13.1H15.75V13.8H0V13.1Z" fill="black"/>
-              </svg>
-            </div>
-          </div>
-        </div>
 
         {/* MAIN BUILD AREA */}
         <div
