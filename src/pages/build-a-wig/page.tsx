@@ -13,7 +13,7 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignInModal';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
-import { isBawClientTestOnlyMode, isBawGuestTryPage, isBawStandardMemberHubBrowseMode } from '../../utils/bawClientTestMode';
+import { isBawClientTestOnlyMode, isBawStandardMemberHubBrowseMode, isBawTryBrowseMode, isBawViewSubscriptionsFooterMode, setBawTryBrowseActive } from '../../utils/bawClientTestMode';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 import { BawHubStandardMemberFooter, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
 import { BawModeChrome } from '../../components/buildWig/BawModeChrome';
@@ -112,6 +112,13 @@ export default function BuildAWigPage() {
       navigate(BAW_TUTORIAL_ROUTE, { replace: true });
     }
   }, [navigate, rawPathname]);
+
+  useEffect(() => {
+    if (isBawTutorialPath(rawPathname)) {
+      setBawTryBrowseActive(true);
+    }
+  }, [rawPathname]);
+
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
   const [showPremiumMembershipHubModal, setShowPremiumMembershipHubModal] = useState(false);
@@ -3994,10 +4001,14 @@ export default function BuildAWigPage() {
     if (
       isBuildWigPremiumMembershipOptionCategory(category) &&
       !isPremiumMemberForGatedFeatures() &&
-      !isBawClientTestOnlyMode(bawPathname)
+      !isBawViewSubscriptionsFooterMode(rawPathname)
     ) {
       setShowPremiumMembershipHubModal(true);
       return;
+    }
+
+    if (isBawTutorialPath(rawPathname)) {
+      setBawTryBrowseActive(true);
     }
 
     const pathname = bawPathname;
@@ -5794,7 +5805,7 @@ export default function BuildAWigPage() {
         </div>
 
         {!showMobileMenu && (
-          isBawGuestTryPage(rawPathname) ? (
+          isBawTryBrowseMode(rawPathname) ? (
             <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
           ) : isBawStandardMemberHubBrowseMode(rawPathname) ? (
             <BawHubStandardMemberFooter style={{ marginTop: '2px' }} />

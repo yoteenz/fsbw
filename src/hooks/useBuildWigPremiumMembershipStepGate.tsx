@@ -2,14 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { getBuildAWigFlowBasePath, pathnameIsBuildWigPremiumMembershipStep } from '../utils/buildAWigRoutes';
-import { isBawClientTestOnlyMode } from '../utils/bawClientTestMode';
+import { isBawViewSubscriptionsFooterMode } from '../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../utils/premiumMemberAccess';
 
 export { pathnameIsBuildWigPremiumMembershipStep };
 
 /**
  * On lace/texture/color/hairline/styling/addons routes: if the user is not premium, show the upgrade modal
- * (edit/customize flows only). Standard members in client test mode browse freely; footer uses VIEW SUBSCRIPTIONS.
+ * (edit/customize flows only). Try browse and standard-member test browse skip the gate; footer uses VIEW SUBSCRIPTIONS.
  */
 export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
   const location = useLocation();
@@ -26,7 +26,7 @@ export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
       setShowUpgradeModal(false);
       return;
     }
-    if (isBawClientTestOnlyMode(location.pathname)) {
+    if (isBawViewSubscriptionsFooterMode(location.pathname)) {
       setShowUpgradeModal(false);
       return;
     }

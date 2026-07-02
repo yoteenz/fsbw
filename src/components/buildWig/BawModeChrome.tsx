@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 import { resolveBawModeChromeContext } from '../../utils/bawModeChrome';
+import { setBawTryBrowseActive } from '../../utils/bawClientTestMode';
 
 /** Sticky mode header + progress + BUILD GUIDE panel for try / customize / edit / hub. */
 export function BawModeChrome() {
@@ -18,7 +19,10 @@ export function BawModeChrome() {
       >
         <button
           type="button"
-          onClick={() => navigate('/home/shop')}
+          onClick={() => {
+            setBawTryBrowseActive(false);
+            navigate('/home/shop');
+          }}
           className="text-[10px] uppercase"
           style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}
         >
@@ -40,7 +44,10 @@ export function BawModeChrome() {
         </div>
         <button
           type="button"
-          onClick={() => navigate('/home/shop')}
+          onClick={() => {
+            setBawTryBrowseActive(false);
+            navigate('/home/shop');
+          }}
           className="text-[10px] uppercase"
           style={{ fontFamily: '"Futura PT Medium"', color: '#1A1A1A' }}
         >

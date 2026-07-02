@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
-import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
+import { isBawViewSubscriptionsFooterMode } from '../../utils/bawClientTestMode';
 import { getBuildAWigCustomizePathFromHub, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
 import { useBawSubscriptionView } from './BawSubscriptionViewContext';
 
@@ -119,7 +119,7 @@ type BawSubpageFooterActionProps = {
   buttonClassName?: string;
 };
 
-/** Sub-page footer: CONFIRM SELECTION for premium; VIEW SUBSCRIPTIONS for client test mode. */
+/** Sub-page footer: CONFIRM SELECTION for premium; VIEW SUBSCRIPTIONS for try / client test browse. */
 export function BawSubpageFooterAction({
   onConfirm,
   hidden = false,
@@ -129,11 +129,11 @@ export function BawSubpageFooterAction({
   buttonClassName = '',
 }: BawSubpageFooterActionProps) {
   const { pathname } = useLocation();
-  const testMode = isBawClientTestOnlyMode(pathname);
+  const viewSubscriptionsMode = isBawViewSubscriptionsFooterMode(pathname);
 
   if (hidden) return null;
 
-  if (testMode) {
+  if (viewSubscriptionsMode) {
     return (
       <BawViewSubscriptionsFooter
         buttonWidth={buttonWidth}

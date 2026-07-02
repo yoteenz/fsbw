@@ -33171,3 +33171,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User corrected prior mode-line copy: labels must stay **uppercase** site-wide (nothing lowercase on the website). Wording should read **BUILD A WIG TRY MODE**, **BUILD A WIG CUSTOMIZE MODE**, **BUILD A WIG EDIT MODE** (hub: **BUILD A WIG**).
 
 **Fix:** Restored **`uppercase`** + letter-spacing on gray mode line in **`BawModeChrome.tsx`**; updated **`bawBuildModeLabel`** strings to all-caps in **`bawModeGuideConfig.ts`**.
+
+---
+
+## 2026-07-02 — BAW try mode: browse premium steps, no upgrade gate, VIEW SUBSCRIPTIONS
+
+**Context:** User asked that **BUILD A WIG TRY MODE** must not show the **UPGRADE YOUR SUBSCRIPTION** popup gate; guests/signed-in try users should browse all premium option sub-pages freely but **cannot confirm selections** — footer button should be **VIEW SUBSCRIPTIONS** (not CONFIRM SELECTION / CUSTOMIZE IN BUILD-A-WIG).
+
+**Fix:**
+- **`bawClientTestMode.ts`**: **`isBawTryBrowseMode`** (try route + **`bawTryBrowseActive`** session flag after hub navigation); **`isBawViewSubscriptionsFooterMode`**; try excluded from **`isBawStandardMemberHubBrowseMode`**.
+- **`useBuildWigPremiumMembershipStepGate`**: skip upgrade modal when view-subscriptions browse mode.
+- **`BawSubpageFooterAction`**: **VIEW SUBSCRIPTIONS** for try browse on all sub-pages.
+- **`build-a-wig/page.tsx`**: no hub premium-option gate on try; sets try-browse session before sub-page nav; hub footer **VIEW SUBSCRIPTIONS** for all try users.
+- **`BawModeChrome`**: SHOP/EXIT clears try-browse session.
+
+**Behavior:** Try flow opens lace/color/etc. without upgrade modal; every step footer is **VIEW SUBSCRIPTIONS**; selections are preview-only until membership/customize.
