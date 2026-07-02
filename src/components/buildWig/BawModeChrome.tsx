@@ -26,7 +26,7 @@ export function BawModeChrome() {
   return (
     <div className="mb-4 flex flex-col gap-3" data-attribute="baw-mode-chrome">
       <header
-        className="sticky top-0 z-40 flex items-center justify-between py-3 rounded-sm border border-black bg-white/70 backdrop-blur-sm px-4"
+        className="sticky top-0 z-40 flex items-center justify-between py-3 rounded-sm border border-gray-300 bg-white/70 backdrop-blur-sm px-4"
         style={{ borderWidth: '1.3px' }}
       >
         <button

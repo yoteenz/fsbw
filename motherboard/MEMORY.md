@@ -33221,3 +33221,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked for the top mode panel (BACK/SHOP | mode title | EXIT) to use the same black border as the BUILD GUIDE card.
 
 **Fix:** **`BawModeChrome`** header — **`rounded-sm border border-black`**, **`1.3px`**, **`bg-white/70 backdrop-blur-sm`** (matches build guide card).
+
+---
+
+## 2026-07-02 — BAW mode header border gray (not black)
+
+**Context:** User asked to change the top mode panel border only to gray (BUILD GUIDE keeps black border).
+
+**Fix:** **`BawModeChrome`** header uses **`border-gray-300`** instead of **`border-black`**.
