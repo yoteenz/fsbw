@@ -224,14 +224,24 @@ function AccountPage() {
     }
   });
 
+  /** Profile details column (`gap`) — stacks with voucher wrapper `margin-top`. */
+  const PROFILE_DETAILS_COLUMN_GAP_PX = 8;
+
   /**
-   * Nudge voucher / digital cash / load gift down together for real clients only (not founder in admin view).
-   * Applied as **margin-top on a wrapper** so flex layout cannot visually cancel stacked `translateY` on siblings.
+   * Space above voucher / slay tickets / digital cash block for real clients only (not founder admin view).
+   * Column flex gap ({@link PROFILE_DETAILS_COLUMN_GAP_PX}px) stacks on wrapper margin-top — total = gap + margin.
+   * Old wrapper margin was 15px → 23px total with gap; target 19px total (−4px) → wrapper margin 11px.
    */
   const clientProfileVoucherBlockMarginTopPx = React.useMemo(() => {
     if (isAyoteenzAdminAccount(userData) && !founderViewAsClient) return 0;
-    return 11;
+    const CLIENT_VOUCHER_BLOCK_TOP_PX = 19;
+    return Math.max(0, CLIENT_VOUCHER_BLOCK_TOP_PX - PROFILE_DETAILS_COLUMN_GAP_PX);
   }, [userData, founderViewAsClient]);
+
+  const profileUsesClientVoucherSpacing = React.useMemo(
+    () => !(isAyoteenzAdminAccount(userData) && !founderViewAsClient),
+    [userData, founderViewAsClient]
+  );
 
   /** When false, founder mock account uses seeded/mock profile chrome on this page only. */
   const profileUsesMockChrome = React.useMemo(
@@ -1962,7 +1972,7 @@ function AccountPage() {
                   </div>
 
                   {/* Profile Details */}
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'flex-start', transform: 'translateX(6px)' }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: `${PROFILE_DETAILS_COLUMN_GAP_PX}px`, justifyContent: 'flex-start', transform: 'translateX(6px)' }}>
                     <p
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
@@ -2018,7 +2028,7 @@ function AccountPage() {
                               margin: '0',
                               textTransform: 'uppercase',
                               fontWeight: '500',
-                              transform: 'translateY(-8px)',
+                              transform: profileUsesClientVoucherSpacing ? 'translateY(-4px)' : 'translateY(-8px)',
                               color: membershipTextColor
                             }}
                           >

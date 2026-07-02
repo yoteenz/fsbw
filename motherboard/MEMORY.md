@@ -32943,3 +32943,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context (continued chat):** User asked to pluralize the voucher line on the account profile.
 
 **Fix:** **`src/pages/account/page.tsx`** — profile summary line **`VOUCHER:` → `VOUCHERS:`** (e.g. **VOUCHERS: 3 AVAILABLE**).
+
+---
+
+## 2026-07-01 — Account profile: fix voucher spacing not tightening (flex gap + translateY)
+
+**Context (continued chat):** User reported spacing above **VOUCHERS** line was **not reduced** after prior **−4px** change.
+
+**Root cause:** Profile details column uses **`flex` + `gap: 8px`**, which **stacks on top of** voucher wrapper **`margin-top`** (old **15px + 8px gap = 23px** total; changing margin to **11px** only saved 4px layout but looked unchanged). **`translateY(-8px)`** on **REWARDS MEMBER** also leaves dead space below the shifted text (transform does not move the layout box). **Founder admin view** (not VIEW AS CLIENT) keeps **`margin-top: 0`** — no client spacing change by design.
+
+**Fix:** Document **`PROFILE_DETAILS_COLUMN_GAP_PX`**; compute client wrapper margin as **total 19px − gap = 11px**. Clients (incl. VIEW AS CLIENT): membership line **`translateY(-4px)`** instead of **`-8px`** to close visual gap to vouchers; founder admin profile keeps **`-8px`**.
+
+**Changes:** **`src/pages/account/page.tsx`**.
