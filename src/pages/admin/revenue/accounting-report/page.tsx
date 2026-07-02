@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
+import AccountingSpreadsheetCard from '../../components/AccountingSpreadsheetCard';
 import { getAdminRevenue } from '../../../../utils/api';
 import { isSupabaseConfigured } from '../../../../utils/supabase';
 import { isAdminEmail } from '../../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTotalStartingInventoryUnits } from '../../../../utils/adminRevenueStats';
+import { buildAdminAccountingSpreadsheet, formatAccountingUsd } from '../../../../utils/adminAccountingSpreadsheet';
 import { pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
 
 const RECEIPTS_STORAGE_KEY = 'admin_accounting_receipts';
@@ -49,7 +51,13 @@ export default function AdminAccountingReport() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [breakdown, setBreakdown] = useState<{ month: string; value: number }[]>([]);
 
+  const [showSpreadsheet, setShowSpreadsheet] = useState(false);
+
   const orders = buildRevenueOrdersList();
+  const spreadsheet = useMemo(
+    () => buildAdminAccountingSpreadsheet(orders, totalRevenue),
+    [totalRevenue]
+  );
   const depleted = getDepletedInventory(orders);
   const stats = getOrdersStats(orders, totalRevenue);
   const totalStartingUnits = getTotalStartingInventoryUnits();
@@ -135,8 +143,8 @@ export default function AdminAccountingReport() {
           <div className="bg-white/60 backdrop-blur-sm border border-black p-4 mb-4" style={{ borderWidth: '1.3px' }}>
             <h3 style={sectionTitleStyle}>KEY METRICS</h3>
             <div style={rowStyle}><span style={labelStyle}>Total revenue / gross receipts (YTD)</span><span style={valueRedStyle}>${totalRevenue.toLocaleString()}</span></div>
-            <div style={rowStyle}><span style={labelStyle}>Cost of goods sold (COGS) YTD</span><span style={valueStyle}>—</span></div>
-            <div style={rowStyle}><span style={labelStyle}>Gross profit (revenue − COGS)</span><span style={valueStyle}>—</span></div>
+            <div style={rowStyle}><span style={labelStyle}>Cost of goods sold (COGS) YTD</span><span style={valueStyle}>{formatAccountingUsd(spreadsheet.totals.cogsUsd)}</span></div>
+            <div style={rowStyle}><span style={labelStyle}>Gross profit (revenue − COGS)</span><span style={valueRedStyle}>{formatAccountingUsd(spreadsheet.totals.profitUsd)}</span></div>
             <div style={rowStyle}><span style={labelStyle}>Total orders</span><span style={valueStyle}>{totalOrders}</span></div>
             <div style={rowStyle}><span style={labelStyle}>Unfulfilled orders</span><span style={valueStyle}>{stats.unfulfilledCount}</span></div>
             <div style={rowStyle}><span style={labelStyle}>Inventory (available / starting)</span><span style={valueStyle}>{depleted.totalUnits} / {totalStartingUnits}</span></div>
@@ -283,7 +291,7 @@ export default function AdminAccountingReport() {
             <h3 style={sectionTitleStyle}>SCALING METRICS</h3>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginBottom: '8px', textTransform: 'uppercase' }}>TRACK THESE TO GROW PROFITABLY.</p>
             {[
-              { label: 'Gross margin %', value: '—' },
+              { label: 'Gross margin %', value: spreadsheet.totals.marginPct != null ? `${spreadsheet.totals.marginPct.toFixed(1)}%` : '—' },
               { label: 'Net margin %', value: '—' },
               { label: 'Avg order value', value: totalOrders ? `$${Math.round(totalRevenue / totalOrders).toLocaleString()}` : '—' },
               { label: 'Customer acquisition cost', value: '—' },
@@ -387,13 +395,15 @@ export default function AdminAccountingReport() {
             </div>
           </div>
 
+          {showSpreadsheet && <AccountingSpreadsheetCard totalRevenueHint={totalRevenue} />}
+
           <button
             type="button"
-            onClick={() => navigate('/admin/revenue?tab=OVERVIEW')}
+            onClick={() => setShowSpreadsheet((v) => !v)}
             className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50 bg-white"
             style={pageActionButtonStyle}
           >
-            BACK TO OVERVIEW
+            {showSpreadsheet ? 'HIDE SPREADSHEET' : 'VIEW SPREADSHEET'}
           </button>
         </div>
       </div>

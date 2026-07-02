@@ -32925,3 +32925,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context (continued chat):** User asked to change the **gray voucher text line** on the **account profile** to **red**, and **reduce spacing above it by 4px for clients only** — not for the **admin founder profile**.
 
 **Fix:** **`src/pages/account/page.tsx`** — **`VOUCHER: X AVAILABLE`** line **`color`** **`#808080` → `#EB1C24`**. **`clientProfileVoucherBlockMarginTopPx`** for real clients **`15px → 11px`**; founder admin view (not VIEW AS CLIENT) stays **`0`** unchanged.
+
+---
+
+## 2026-07-01 — Admin accounting report: VIEW SPREADSHEET toggle + P&L breakdown
+
+**Context (continued chat):** User asked to replace **BACK TO OVERVIEW** on **`/admin/revenue/accounting-report`** with **VIEW SPREADSHEET**, toggling a card with a spreadsheet that surgically breaks down **cost, price, profit, margin**, etc.
+
+**Fix:** Bottom action is now **VIEW SPREADSHEET** / **HIDE SPREADSHEET** toggle (no navigation away). New **`src/utils/adminAccountingSpreadsheet.ts`** aggregates the same **`userOrders_*`** feed as admin Revenue — per-line **units, list price, avg sale, revenue, unit cost, COGS, gross profit, margin %** for BAW units, BCF, gift cards, bookings, plus **packaging & fulfillment COGS** per physical order and a **TOTAL (YTD)** row. New **`AccountingSpreadsheetCard`** renders a horizontally scrollable table. **KEY METRICS** and **SCALING METRICS → Gross margin %** now pull live totals from the spreadsheet model when order/revenue data exists.
+
+**Changes:** **`src/utils/adminAccountingSpreadsheet.ts`** (new), **`src/pages/admin/components/AccountingSpreadsheetCard.tsx`** (new), **`src/pages/admin/revenue/accounting-report/page.tsx`**. Build passes.
