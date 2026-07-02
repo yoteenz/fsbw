@@ -32963,3 +32963,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context (continued chat):** User asked to change the red **Concierge** description on the account profile to **VIP SUPPORT + MEMBER BENEFITS**.
 
 **Fix:** **`src/pages/account/page.tsx`** — Concierge hub card **`subtitle`** from **WHITE GLOVE SERVICE: VIP SUPPORT + MEMBER BENEFITS** to **VIP SUPPORT + MEMBER BENEFITS** (premium subscribers only, when Concierge card is shown).
+
+---
+
+## 2026-07-01 — Account profile: Concierge card subtitle copy
+
+**Context (continued chat):** User asked to change the red **Concierge** description on the account profile to **VIP SUPPORT + MEMBER BENEFITS**.
+
+**Fix:** **`src/pages/account/page.tsx`** — Concierge hub card **`subtitle`** from **WHITE GLOVE SERVICE: VIP SUPPORT + MEMBER BENEFITS** to **VIP SUPPORT + MEMBER BENEFITS** (premium subscribers only, when Concierge card is shown).

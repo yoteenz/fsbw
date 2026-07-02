@@ -1617,7 +1617,9 @@ function OceanCurlSelection() {
             productName="OCEAN CURL"
             soldOut={isUnitSoldOut('OCEAN CURL')}
             addToBagState={addToBagState}
+            isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
+            onTryFree={() => navigate('/build-a-wig/try')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

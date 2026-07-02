@@ -11,6 +11,7 @@ type UnitPdpCartActionsProps = {
   onCustomize: () => void;
   /** Guest tutorial — no sign-in, static preview + share card. */
   onTryFree?: () => void;
+  isSignedIn?: boolean;
   buttonFontFamily?: string;
   /** `bcf`: no customize row when in stock; notify row only when sold out. */
   variant?: 'unit' | 'bcf';
@@ -29,6 +30,7 @@ export function UnitPdpCartActions({
   onAddToBag,
   onCustomize,
   onTryFree,
+  isSignedIn = true,
   buttonFontFamily = defaultFont,
   variant = 'unit',
   children,
@@ -79,6 +81,10 @@ export function UnitPdpCartActions({
                 setShowNotifyModal(true);
                 return;
               }
+              if (!isSignedIn && onTryFree) {
+                onTryFree();
+                return;
+              }
               onCustomize();
             }}
             className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
@@ -90,9 +96,13 @@ export function UnitPdpCartActions({
                 : buttonFontFamily,
             }}
           >
-            {soldOut ? 'NOTIFY WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
+            {soldOut
+              ? 'NOTIFY WHEN AVAILABLE'
+              : !isSignedIn
+                ? 'TRY BUILD-A-WIG'
+                : 'CUSTOMIZE IN BUILD-A-WIG'}
           </button>
-          {!soldOut && onTryFree ? (
+          {!soldOut && isSignedIn && onTryFree ? (
             <button
               type="button"
               onClick={onTryFree}

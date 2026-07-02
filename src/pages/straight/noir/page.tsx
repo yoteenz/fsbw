@@ -2981,6 +2981,7 @@ function NoirSelection() {
           productName="NOIR"
           soldOut={isNoirSoldOut('NOIR')}
           addToBagState={addToBagState}
+          isSignedIn={isSignedIn}
           onAddToBag={handleAddToBag}
           onTryFree={() => navigate('/build-a-wig/try')}
           onCustomize={() => {

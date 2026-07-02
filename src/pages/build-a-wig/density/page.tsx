@@ -23,6 +23,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { BawSubpageFooterAction } from '../../../components/buildWig/BawViewSubscriptionsFooter';
 
 interface DensityOption {
   id: string;
@@ -1277,22 +1278,14 @@ function DensitySelection() {
           )}
         </div>
 
-        {!showMobileMenu && (
-          /* CONFIRM SELECTION BUTTON */
-        <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-            <button
-              onClick={handleConfirmSelection}
-            className="border border-black font-futura w-full max-w-m text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-            style={{
-              borderWidth: '1.3px',
-              color: '#EB1C24',
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-            }}
-            >
-              CONFIRM SELECTION
-            </button>
-          </div>
-        )}
+        <BawSubpageFooterAction
+          onConfirm={handleConfirmSelection}
+          hidden={showMobileMenu}
+          buttonWidth="100%"
+          buttonClassName="w-full max-w-m"
+          wrapperClassName="px-0 md:px-0"
+          wrapperStyle={{ marginTop: '2px' }}
+        />
           </div>
         </div>
       </div>

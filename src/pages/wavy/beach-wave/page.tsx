@@ -1613,7 +1613,9 @@ fontSize: '11px',
             productName="BEACH WAVE"
             soldOut={isUnitSoldOut('BEACH WAVE')}
             addToBagState={addToBagState}
+            isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
+            onTryFree={() => navigate('/build-a-wig/try')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

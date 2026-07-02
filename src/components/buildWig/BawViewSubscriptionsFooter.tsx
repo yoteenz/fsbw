@@ -1,0 +1,140 @@
+import type { CSSProperties } from 'react';
+import { useLocation } from 'react-router-dom';
+import ConfirmationModal from '../ConfirmationModal';
+import PremiumSubscriptionUpgradeChart from '../membership/PremiumSubscriptionUpgradeChart';
+import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
+import { getEffectiveSubscriptionTier } from '../../utils/adminAuth';
+import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
+
+const defaultButtonStyle: CSSProperties = {
+  borderWidth: '1.3px',
+  color: '#EB1C24',
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+};
+
+type BawViewSubscriptionsFooterProps = {
+  buttonWidth?: string;
+  className?: string;
+  style?: CSSProperties;
+  fullWidth?: boolean;
+};
+
+function readHasPremiumSubscription(): boolean {
+  try {
+    const raw = localStorage.getItem('currentUser');
+    if (!raw) return false;
+    const user = JSON.parse(raw) as { subscriptionTier?: string; membershipType?: string };
+    return getEffectiveSubscriptionTier(user) != null;
+  } catch {
+    return false;
+  }
+}
+
+export function BawViewSubscriptionsFooter({
+  buttonWidth = '100%',
+  className = 'border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50',
+  style,
+  fullWidth = true,
+}: BawViewSubscriptionsFooterProps) {
+  const premium = usePremiumSubscriptionUpgrade({
+    hasPremiumSubscription: readHasPremiumSubscription(),
+  });
+
+  return (
+    <>
+      {premium.showPremiumChart ? (
+        <div
+          className="mb-3 border border-black bg-white/80 backdrop-blur-sm overflow-hidden"
+          style={{ borderWidth: '1.3px' }}
+        >
+          <PremiumSubscriptionUpgradeChart
+            embedded
+            onClose={premium.closePremiumChart}
+            hasPremiumSubscription={readHasPremiumSubscription()}
+            selectedTier={premium.selectedTier}
+            setSelectedTier={premium.setSelectedTier}
+            showAllBenefits={premium.showAllBenefits}
+            setShowAllBenefits={premium.setShowAllBenefits}
+            formatPrice={premium.formatPrice}
+            subscriptionTiers={premium.subscriptionTiers}
+          />
+        </div>
+      ) : null}
+      <div className="px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
+        <button
+          type="button"
+          onClick={premium.handleUpgradeAction}
+          className={className}
+          style={{
+            ...defaultButtonStyle,
+            width: buttonWidth,
+            maxWidth: fullWidth ? '100%' : undefined,
+          }}
+        >
+          {premium.showPremiumChart ? 'CONFIRM SUBSCRIPTION' : 'VIEW SUBSCRIPTIONS'}
+        </button>
+      </div>
+      <ConfirmationModal
+        isOpen={premium.showValidationModal}
+        onClose={() => premium.setShowValidationModal(false)}
+        onConfirm={() => premium.setShowValidationModal(false)}
+        title="FORGETTING SOMETHING?"
+        message="PLEASE SELECT A SUBSCRIPTION TIER TO CONTINUE."
+        confirmText="OK"
+        cancelText=""
+        dataAttribute="baw-subscription-validation"
+      />
+    </>
+  );
+}
+
+type BawSubpageFooterActionProps = {
+  onConfirm: () => void;
+  hidden?: boolean;
+  buttonWidth?: string;
+  wrapperStyle?: CSSProperties;
+  wrapperClassName?: string;
+  buttonClassName?: string;
+};
+
+/** Sub-page footer: CONFIRM SELECTION for premium; VIEW SUBSCRIPTIONS for client test mode. */
+export function BawSubpageFooterAction({
+  onConfirm,
+  hidden = false,
+  buttonWidth = '358px',
+  wrapperStyle = { marginTop: '2px', transform: 'translateY(8px)' },
+  wrapperClassName = 'px-0 md:px-0 flex justify-center',
+  buttonClassName = '',
+}: BawSubpageFooterActionProps) {
+  const { pathname } = useLocation();
+  const testMode = isBawClientTestOnlyMode(pathname);
+
+  if (hidden) return null;
+
+  if (testMode) {
+    return (
+      <BawViewSubscriptionsFooter
+        buttonWidth={buttonWidth}
+        className={`border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50 ${buttonClassName}`}
+        style={wrapperStyle}
+        fullWidth={buttonWidth === '100%'}
+      />
+    );
+  }
+
+  return (
+    <div className={wrapperClassName} style={wrapperStyle}>
+      <button
+        type="button"
+        onClick={onConfirm}
+        className={`border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50 ${buttonClassName}`}
+        style={{
+          ...defaultButtonStyle,
+          width: buttonWidth,
+        }}
+      >
+        CONFIRM SELECTION
+      </button>
+    </div>
+  );
+}

@@ -13,6 +13,7 @@ import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequin
 import { applyBawTutorialDraftToBuilderStorage, saveBawTutorialGuestDraft } from '../../../utils/bawTutorialStorage';
 import { renderBawSlayCardPng, shareOrDownloadBawSlayCard } from '../../../utils/bawSlayCard';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { BawViewSubscriptionsFooter } from '../../../components/buildWig/BawViewSubscriptionsFooter';
 import { trackActivity } from '../../../utils/activity';
 
 function stepIndex(step: BawTutorialStepId): number {
@@ -314,14 +315,11 @@ export default function BawTutorialPage() {
             >
               SIGN IN FOR FULL BUILD-A-WIG
             </button>
-            <button
-              type="button"
-              onClick={() => navigate('/account/rewards')}
+            <BawViewSubscriptionsFooter
               className="w-full py-2 text-[10px] uppercase"
-              style={{ fontFamily: '"Futura PT Book"', color: '#808080' }}
-            >
-              SEE MEMBERSHIP OPTIONS
-            </button>
+              buttonWidth="100%"
+              style={{ marginTop: 0 }}
+            />
           </div>
         )}
 

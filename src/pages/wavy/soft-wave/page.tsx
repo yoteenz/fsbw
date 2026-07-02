@@ -1616,7 +1616,9 @@ function SoftWaveSelection() {
             productName="SOFT WAVE"
             soldOut={isUnitSoldOut('SOFT WAVE')}
             addToBagState={addToBagState}
+            isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
+            onTryFree={() => navigate('/build-a-wig/try')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

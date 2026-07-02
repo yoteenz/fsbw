@@ -1567,7 +1567,9 @@ function SoftCurlSelection() {
             productName="SOFT CURL"
             soldOut={isUnitSoldOut('SOFT CURL')}
             addToBagState={addToBagState}
+            isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
+            onTryFree={() => navigate('/build-a-wig/try')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

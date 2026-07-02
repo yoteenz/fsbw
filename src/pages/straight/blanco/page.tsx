@@ -1615,7 +1615,9 @@ function BlancoSelection() {
             productName="BLANCO"
             soldOut={isUnitSoldOut('BLANCO')}
             addToBagState={addToBagState}
+            isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
+            onTryFree={() => navigate('/build-a-wig/try')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

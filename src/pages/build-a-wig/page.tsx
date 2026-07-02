@@ -48,6 +48,8 @@ import {
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
+import { BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
+import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
 /**
@@ -5947,38 +5949,67 @@ export default function BuildAWigPage() {
         </div>
 
         {!showMobileMenu && (
-          <>
-            {/* ADD TO BAG BUTTON */}
-            <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-              <button
-                onClick={handleAddToBag}
-                disabled={addToBagState === 'adding' || (location.pathname === '/build-a-wig/edit' && !hasChanges)}
-                className={`border border-black font-futura w-full md:max-w-sm lg:max-w-md text-center py-2 md:py-3 lg:py-4 text-[12px] md:text-sm lg:text-base font-semibold whitespace-nowrap ${
-                  addToBagState === 'adding' ? 'bg-gray-100 cursor-not-allowed' : 'bg-white cursor-pointer hover:bg-gray-50'
-                }`}
-                style={{ 
-                  borderWidth: '1.3px', 
-                  color: addToBagState === 'adding' ? '#EB1C24' : '#EB1C24', 
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' 
-                }}
-              >
-                {(() => {
-                  const isEditPage = location.pathname === '/build-a-wig/edit' ||
-                           location.pathname === '/build-a-wig/noir/edit' ||
-                           location.pathname === '/build-a-wig/blanco/edit' ||
-                           location.pathname === '/build-a-wig/soft-wave/edit' ||
-                           location.pathname === '/build-a-wig/soft-curl/edit' ||
-                           location.pathname === '/build-a-wig/beach-wave/edit' ||
-                           location.pathname === '/build-a-wig/ocean-curl/edit';
-                  
-                  // Edit mode: show "SAVE CHANGES" > "SAVING..." > "IN THE BAG"
-                  if (isEditPage) {
-                    if (addToBagState === 'adding') {
-                      return 'SAVING...';
+          isBawClientTestOnlyMode(location.pathname) ? (
+            <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
+          ) : (
+            <>
+              {/* ADD TO BAG BUTTON */}
+              <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
+                <button
+                  onClick={handleAddToBag}
+                  disabled={addToBagState === 'adding' || (location.pathname === '/build-a-wig/edit' && !hasChanges)}
+                  className={`border border-black font-futura w-full md:max-w-sm lg:max-w-md text-center py-2 md:py-3 lg:py-4 text-[12px] md:text-sm lg:text-base font-semibold whitespace-nowrap ${
+                    addToBagState === 'adding' ? 'bg-gray-100 cursor-not-allowed' : 'bg-white cursor-pointer hover:bg-gray-50'
+                  }`}
+                  style={{ 
+                    borderWidth: '1.3px', 
+                    color: addToBagState === 'adding' ? '#EB1C24' : '#EB1C24', 
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' 
+                  }}
+                >
+                  {(() => {
+                    const isEditPage = location.pathname === '/build-a-wig/edit' ||
+                             location.pathname === '/build-a-wig/noir/edit' ||
+                             location.pathname === '/build-a-wig/blanco/edit' ||
+                             location.pathname === '/build-a-wig/soft-wave/edit' ||
+                             location.pathname === '/build-a-wig/soft-curl/edit' ||
+                             location.pathname === '/build-a-wig/beach-wave/edit' ||
+                             location.pathname === '/build-a-wig/ocean-curl/edit';
+                    
+                    // Edit mode: show "SAVE CHANGES" > "SAVING..." > "IN THE BAG"
+                    if (isEditPage) {
+                      if (addToBagState === 'adding') {
+                        return 'SAVING...';
+                      }
+                      if (hasChanges) {
+                        return 'SAVE CHANGES';
+                      } else {
+                        return (
+                          <span className="flex items-center justify-center gap-1">
+                            <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                            <span style={{ color: '#808080' }}>IN THE BAG</span>
+                          </span>
+                        );
+                      }
                     }
-                    if (hasChanges) {
-                      return 'SAVE CHANGES';
-                    } else {
+
+                    if (isActiveBuildWigAppointmentMode()) {
+                      if (addToBagState === 'adding') return 'ADDING...';
+                      if (addToBagState === 'added') {
+                        return (
+                          <span className="flex items-center justify-center gap-1">
+                            <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                            <span style={{ color: '#808080' }}>ADDED TO APPOINTMENT</span>
+                          </span>
+                        );
+                      }
+                      return 'ADD TO APPOINTMENT';
+                    }
+                    
+                    // Normal mode: standard button states
+                    if (addToBagState === 'idle') return 'ADD TO BAG';
+                    if (addToBagState === 'adding') return 'ADDING...';
+                    if (addToBagState === 'added') {
                       return (
                         <span className="flex items-center justify-center gap-1">
                           <img src="/assets/check.svg" alt="Check" width="9" height="9" />
@@ -5986,42 +6017,17 @@ export default function BuildAWigPage() {
                         </span>
                       );
                     }
-                  }
-
-                  if (isActiveBuildWigAppointmentMode()) {
-                    if (addToBagState === 'adding') return 'ADDING...';
-                    if (addToBagState === 'added') {
-                      return (
-                        <span className="flex items-center justify-center gap-1">
-                          <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                          <span style={{ color: '#808080' }}>ADDED TO APPOINTMENT</span>
-                        </span>
-                      );
-                    }
-                    return 'ADD TO APPOINTMENT';
-                  }
-                  
-                  // Normal mode: standard button states
-                  if (addToBagState === 'idle') return 'ADD TO BAG';
-                  if (addToBagState === 'adding') return 'ADDING...';
-                  if (addToBagState === 'added') {
-                    return (
-                      <span className="flex items-center justify-center gap-1">
-                        <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                        <span style={{ color: '#808080' }}>IN THE BAG</span>
-                      </span>
-                    );
-                  }
-                  return 'ADD TO BAG';
-                })()}
-              </button>
-            </div>
-            <div className="px-0 md:px-0" style={{ marginTop: '8px' }}>
-              <LiveTryOnLaunchButton
-                returnTo={{ pathname: location.pathname, search: location.search }}
-              />
-            </div>
-          </>
+                    return 'ADD TO BAG';
+                  })()}
+                </button>
+              </div>
+              <div className="px-0 md:px-0" style={{ marginTop: '8px' }}>
+                <LiveTryOnLaunchButton
+                  returnTo={{ pathname: location.pathname, search: location.search }}
+                />
+              </div>
+            </>
+          )
         )}
           </div>
         </div>
