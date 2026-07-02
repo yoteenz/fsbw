@@ -912,7 +912,7 @@ function LoadCardPage() {
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    LOAD CASH
+                    ADD TO BALANCE
                   </button>
                 </div>
               </div>

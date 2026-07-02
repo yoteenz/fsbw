@@ -33033,3 +33033,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Fix:** **`src/pages/account/page.tsx`** — **`CLIENT_VOUCHER_BLOCK_TOP_PX`** **19 → 16** (wrapper margin **11px → 8px** with 8px column gap); founder admin view still **`marginTop: 0`**.
 
+
+---
+
+## 2026-07-02 — Add Funds: button ADD TO BALANCE
+
+**Context:** User asked to rename the gift-card submit button from **LOAD CASH** to **ADD TO BALANCE**.
+
+**Fix:** **`src/pages/account/load-card/page.tsx`** — primary action button **ADD TO BALANCE**.
