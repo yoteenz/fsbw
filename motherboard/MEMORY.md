@@ -32991,9 +32991,29 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
+## 2026-07-02 — Account profile: client membership line spacing match admin
+
+**Context:** User reported **STANDARD/PREMIUM REWARDS MEMBER** on the **client** account profile had **more space above** the line than the **admin** profile.
+
+**Root cause:** Client profiles used **`translateY(-4px)`** on the membership line; founder admin view used **`-8px`** (tighter to email above).
+
+**Fix:** **`src/pages/account/page.tsx`** — membership line always **`translateY(-8px)`**; removed unused **`profileUsesClientVoucherSpacing`**.
+
+---
+
 ## 2026-07-02 — Add Funds page: load-card helper copy update
 
 **Context:** User asked to update the gray helper paragraph on **Account → Add Funds** (load gift card).
 
 **Fix:** **`src/pages/account/load-card/page.tsx`** — **LOAD A GIFT CARD(S) TO ADD…** → **LOAD GIFT CARDS TO ADD FUNDS TO YOUR ACCOUNT. YOUR AVAILABLE DIGITAL CASH BALANCE WILL BE AUTOMATICALLY APPLIED AT CHECKOUT, WITH NO CODE NEEDED. AVAILABLE FUNDS CAN BE APPLIED TOWARD ANY ELIGIBLE PURCHASE. FOR ADDED FLEXIBILITY, YOU MAY CHOOSE EXACTLY HOW MUCH DIGITAL CASH TO APPLY TO EACH ORDER.**
+
+---
+
+## 2026-07-02 — Account profile: client membership line spacing match admin
+
+**Context:** User reported **STANDARD/PREMIUM REWARDS MEMBER** on the **client** account profile had **more space above** the line than the **admin** profile.
+
+**Root cause:** Client profiles used **`translateY(-4px)`** on the membership line; founder admin view used **`-8px`** (tighter to email above).
+
+**Fix:** **`src/pages/account/page.tsx`** — membership line always **`translateY(-8px)`**; removed unused **`profileUsesClientVoucherSpacing`**.
 

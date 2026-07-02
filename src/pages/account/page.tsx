@@ -238,11 +238,6 @@ function AccountPage() {
     return Math.max(0, CLIENT_VOUCHER_BLOCK_TOP_PX - PROFILE_DETAILS_COLUMN_GAP_PX);
   }, [userData, founderViewAsClient]);
 
-  const profileUsesClientVoucherSpacing = React.useMemo(
-    () => !(isAyoteenzAdminAccount(userData) && !founderViewAsClient),
-    [userData, founderViewAsClient]
-  );
-
   /** When false, founder mock account uses seeded/mock profile chrome on this page only. */
   const profileUsesMockChrome = React.useMemo(
     () => Boolean(userData && isMockProfileChromeActive(userData)),
@@ -2028,7 +2023,7 @@ function AccountPage() {
                               margin: '0',
                               textTransform: 'uppercase',
                               fontWeight: '500',
-                              transform: profileUsesClientVoucherSpacing ? 'translateY(-4px)' : 'translateY(-8px)',
+                              transform: 'translateY(-8px)',
                               color: membershipTextColor
                             }}
                           >
