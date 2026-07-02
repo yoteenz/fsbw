@@ -1152,7 +1152,7 @@ function AccountPage() {
     if (showConcierge) {
       defaultCards.push({
         title: 'CONCIERGE',
-        subtitle: 'WHITE GLOVE SERVICE: VIP SUPPORT + MEMBER BENEFITS',
+        subtitle: 'VIP SUPPORT + MEMBER BENEFITS',
         route: '/account/concierge'
       });
     }

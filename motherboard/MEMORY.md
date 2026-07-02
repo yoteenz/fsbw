@@ -32955,3 +32955,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Fix:** Document **`PROFILE_DETAILS_COLUMN_GAP_PX`**; compute client wrapper margin as **total 19px − gap = 11px**. Clients (incl. VIEW AS CLIENT): membership line **`translateY(-4px)`** instead of **`-8px`** to close visual gap to vouchers; founder admin profile keeps **`-8px`**.
 
 **Changes:** **`src/pages/account/page.tsx`**.
+
+---
+
+## 2026-07-01 — Account profile: Concierge card subtitle copy
+
+**Context (continued chat):** User asked to change the red **Concierge** description on the account profile to **VIP SUPPORT + MEMBER BENEFITS**.
+
+**Fix:** **`src/pages/account/page.tsx`** — Concierge hub card **`subtitle`** from **WHITE GLOVE SERVICE: VIP SUPPORT + MEMBER BENEFITS** to **VIP SUPPORT + MEMBER BENEFITS** (premium subscribers only, when Concierge card is shown).
