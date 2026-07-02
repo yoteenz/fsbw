@@ -19,9 +19,9 @@ export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
   { label: 'CONTACT US', route: '/brand/contact', cardTitle: 'SUBMISSION FORM', navTitle: 'CONTACT' },
   {
     label: 'BECOME A MEMBER',
-    menuLabel: 'MEMBERS ONLY',
+    menuLabel: 'LOYALTY PROGRAM',
     route: '/brand/member',
-    cardTitle: 'MEMBERS ONLY',
+    cardTitle: 'LOYALTY PROGRAM',
     navTitle: 'MEMBERSHIP',
   },
   {

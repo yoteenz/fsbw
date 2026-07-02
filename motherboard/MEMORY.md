@@ -32909,3 +32909,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Conventions:** Unit VIEW DETAILS lists non-default BAW options only (defaults: 24" length, 13X6 lace, product default density/texture/color, NATURAL hairline, NONE styling, no add-ons). **Cap size** stays on the gray CAP SIZE line, not in VIEW DETAILS. Flex cap still toggles VIEW DETAILS when it is the only customization.
 
 **Changes:** **`src/utils/unitCartViewDetails.ts`** (new), **`src/components/CartDropdown.tsx`**, **`src/utils/wishlistListItemDetails.ts`**. Build passes.
+
+---
+
+## 2026-07-01 — Brand menu + member page: MEMBERS ONLY → LOYALTY PROGRAM
+
+**Context (continued chat):** User asked to rename **MEMBERS ONLY** to **LOYALTY PROGRAM** in two places: the **BRAND** tab of the mobile menu toggle, and the **red card header** on **`/brand/member`**.
+
+**Fix:** Updated **`src/constants/brandMenu.ts`** for the **BECOME A MEMBER** route — **`menuLabel`** and **`cardTitle`** from **MEMBERS ONLY** to **LOYALTY PROGRAM**. **`BrandMenuLinks`** reads **`menuLabel`** via **`getBrandMenuLabel`**; **`BrandPage`** red header reads **`cardTitle`** via **`getBrandCardHeaderTitle`**. Nav breadcrumb stays **MEMBERSHIP**; internal **`label`** stays **BECOME A MEMBER** (used where full name is needed).
