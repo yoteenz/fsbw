@@ -7,7 +7,10 @@ import {
   bawBuildModeLabel,
 } from '../constants/bawModeGuideConfig';
 import { isBawTutorialPath } from '../constants/bawTutorialConfig';
-import { resolveBuildAWigTryPathToHubPath } from './buildAWigRoutes';
+import { resolveBuildAWigTryPathToHubPath, getBuildAWigFlowBasePath } from './buildAWigRoutes';
+import { isBawTryBrowseMode } from './bawClientTestMode';
+import { getBawTryRouteForUnitSlug, isBawTryUnitSlug } from '../constants/bawTutorialConfig';
+import type { BawTryUnitSlug } from '../constants/bawTutorialConfig';
 
 export type BawModeChromeContext = {
   mode: BawBuildMode;
@@ -88,4 +91,27 @@ export function resolveBawModeChromeContext(pathname: string): BawModeChromeCont
     guideTitle: copy.title,
     guideBody: copy.body,
   };
+}
+
+/** Option sub-step routes (length, color, etc.) — not hub / customize landing. */
+export function isBawOptionSubPage(pathname: string): boolean {
+  if (!pathname.startsWith('/build-a-wig')) return false;
+  return resolveBawGuideStepFromPathname(pathname) !== 'intro';
+}
+
+/** Header BACK target from an option sub-page. */
+export function resolveBawModeBackPath(pathname: string): string {
+  const hubBase = getBuildAWigFlowBasePath(pathname);
+  if (!isBawTryBrowseMode(pathname)) {
+    return hubBase;
+  }
+  if (hubBase === '/build-a-wig/noir' || hubBase === '/build-a-wig/noir/customize') {
+    return '/build-a-wig/try';
+  }
+  const match = hubBase.match(/^\/build-a-wig\/([^/]+)/);
+  const slug = match?.[1] ?? '';
+  if (slug && isBawTryUnitSlug(slug)) {
+    return getBawTryRouteForUnitSlug(slug as BawTryUnitSlug);
+  }
+  return '/build-a-wig/try';
 }

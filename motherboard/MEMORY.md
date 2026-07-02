@@ -33202,3 +33202,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** Signed-out users selecting a sub-page option from try were redirected to **/sign-in** instead of seeing standard + premium option sub-pages (browse-only with **VIEW SUBSCRIPTIONS** footer).
 
 **Fix:** **`BuildWigCustomizeEditAccessGate`** — guests may browse **`/customize`** paths (including all sub-steps) without sign-in; **edit** paths still require sign-in. Signed-in standard members browse customize without the global upgrade modal (premium steps still use **VIEW SUBSCRIPTIONS** footer; edit still requires premium).
+
+---
+
+## 2026-07-02 — BAW sub-page chrome: BACK, hide guide, subscription card replaces main card
+
+**Context:** On BAW option sub-pages: top-left **SHOP** should be **BACK**; **BUILD GUIDE** should hide when premium subscription chart is open; chart was nested inside the main bordered card (double card) instead of replacing it.
+
+**Fix:**
+- **`BawModeChrome`**: **BACK** on option sub-pages (`isBawOptionSubPage`); **BUILD GUIDE** hidden when **`showPremiumChart`**; back target via **`resolveBawModeBackPath`** (try → `/build-a-wig/try`).
+- **`BawSubscriptionMainCard`**: chart uses non-embedded **`PremiumSubscriptionUpgradeChart`** (single card shell).
+- **`BawBuildAreaOuter`**: outer build-area border/padding removed when chart replaces builder content (hub + all sub-pages).

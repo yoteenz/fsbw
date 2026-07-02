@@ -24,6 +24,7 @@ import { BawSubpageFooterAction } from '../../../components/buildWig/BawViewSubs
 import { BawModeChrome } from '../../../components/buildWig/BawModeChrome';
 import { BuildWigSubscriptionPageRoot } from '../../../components/buildWig/BawSubscriptionViewContext';
 import { BawSubscriptionMainCard } from '../../../components/buildWig/BawSubscriptionMainCard';
+import { BawBuildAreaOuter } from '../../../components/buildWig/BawBuildAreaOuter';
 import { isBawSalonStylingValueConfirmed } from '../../../utils/bawUnitStylingOptions';
 
 function isStylingValueConfirmed(raw: string | null, pathname: string): boolean {
@@ -636,13 +637,7 @@ export default function AddOnsSelectionPage() {
           <BawModeChrome />
 
         {/* MAIN BUILD AREA */}
-        <div
-          className={
-            showMobileMenu
-              ? 'menu-toggle-card border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'
-              : 'border border-black flex flex-col pt-6 pb-4 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out'
-          }
-          style={{ 
+        <BawBuildAreaOuter showMobileMenu={showMobileMenu} style={{ 
             borderWidth: '1.3px',
             paddingLeft: (() => {
               const pathname = window.location.pathname;
@@ -892,7 +887,7 @@ export default function AddOnsSelectionPage() {
             </BawSubscriptionMainCard>
             </>
           )}
-        </div>
+        </BawBuildAreaOuter>
 
         <BawSubpageFooterAction
           onConfirm={handleConfirmSelection}
