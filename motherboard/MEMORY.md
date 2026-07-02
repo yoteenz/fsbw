@@ -32966,8 +32966,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-## 2026-07-01 — Account profile: Concierge card subtitle copy
+## 2026-07-02 — Build-a-Wig client test mode + remove premium gate on premium sub-pages
 
-**Context (continued chat):** User asked to change the red **Concierge** description on the account profile to **VIP SUPPORT + MEMBER BENEFITS**.
+**Context:** User wants Build-a-Wig from the menu to be **test-only** for non-premium clients: no **ADD TO BAG** / **LIVE TRY ON**; bottom action **VIEW SUBSCRIPTIONS** (premium chart toggle). Guest unit PDPs: **TRY BUILD-A-WIG** → `/build-a-wig/try`. Follow-up: **remove premium membership gate** for standard members on premium sub-pages (lace, texture, color, hairline, styling, addons) — browse freely with **VIEW SUBSCRIPTIONS** footer instead of upgrade modal + **CONFIRM SELECTION**.
 
-**Fix:** **`src/pages/account/page.tsx`** — Concierge hub card **`subtitle`** from **WHITE GLOVE SERVICE: VIP SUPPORT + MEMBER BENEFITS** to **VIP SUPPORT + MEMBER BENEFITS** (premium subscribers only, when Concierge card is shown).
+**Decisions:**
+- **`isBawClientTestOnlyMode(pathname)`** (`src/utils/bawClientTestMode.ts`): signed-in non-premium on `/build-a-wig/*` (excludes edit, customize, appointment, `/build-a-wig/try` always test).
+- **`BawViewSubscriptionsFooter`** / **`BawSubpageFooterAction`**: shared footer with **`usePremiumSubscriptionUpgrade`** chart.
+- Premium gate modal (**`useBuildWigPremiumMembershipStepGate`**) and hub premium-tile block **skipped in client test mode**; gate remains for edit/customize non-premium flows.
+
+**Changes (prior commit `73b1b360`):** hub/sub-pages/PDPs/try page + new footer utils.
+
+**Changes (this turn):** **`src/hooks/useBuildWigPremiumMembershipStepGate.tsx`** — no modal when **`isBawClientTestOnlyMode`**. **`src/pages/build-a-wig/page.tsx`** — **`handleOptionSelect`** allows navigation to premium tiles in test mode (no hub upgrade modal).
+
+**Build:** passes.
+

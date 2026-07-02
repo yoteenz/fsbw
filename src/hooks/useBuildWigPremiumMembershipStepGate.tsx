@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { getBuildAWigFlowBasePath } from '../utils/buildAWigRoutes';
+import { isBawClientTestOnlyMode } from '../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../utils/premiumMemberAccess';
 
 /** URL segments for "PREMIUM MEMBERSHIP OPTIONS" steps (lace → add-ons). */
@@ -12,8 +13,8 @@ export function pathnameIsBuildWigPremiumMembershipStep(pathname: string): boole
 }
 
 /**
- * On lace/texture/color/hairline/styling/addons routes: if the user is not premium, show the same upgrade
- * modal pattern as lobby / booking appointment. Re-checks on focus (e.g. after profile sync).
+ * On lace/texture/color/hairline/styling/addons routes: if the user is not premium, show the upgrade modal
+ * (edit/customize flows only). Standard members in client test mode browse freely; footer uses VIEW SUBSCRIPTIONS.
  */
 export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
   const location = useLocation();
@@ -30,8 +31,12 @@ export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
       setShowUpgradeModal(false);
       return;
     }
+    if (isBawClientTestOnlyMode(location.pathname)) {
+      setShowUpgradeModal(false);
+      return;
+    }
     setShowUpgradeModal(!isPremiumMemberForGatedFeatures());
-  }, [needsPremiumHere]);
+  }, [needsPremiumHere, location.pathname]);
 
   useEffect(() => {
     syncModalToEligibility();

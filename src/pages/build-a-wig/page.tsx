@@ -15,6 +15,7 @@ import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignIn
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
+import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import {
   BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY,
@@ -49,7 +50,6 @@ import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 import { BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
-import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
 /**
@@ -3973,7 +3973,11 @@ export default function BuildAWigPage() {
   }, [currencyRates, selectedCurrency]);
 
   const handleOptionSelect = (category: string, optionId: string) => {
-    if (isBuildWigPremiumMembershipOptionCategory(category) && !isPremiumMemberForGatedFeatures()) {
+    if (
+      isBuildWigPremiumMembershipOptionCategory(category) &&
+      !isPremiumMemberForGatedFeatures() &&
+      !isBawClientTestOnlyMode(location.pathname)
+    ) {
       setShowPremiumMembershipHubModal(true);
       return;
     }
