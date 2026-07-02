@@ -33001,6 +33001,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
+## 2026-07-02 — Account profile: client voucher block −3px top spacing
+
+**Context:** User asked to **reduce spacing above VOUCHERS** on the **client** account profile by **3px**; **admin profile unchanged**.
+
+**Fix:** **`src/pages/account/page.tsx`** — **`CLIENT_VOUCHER_BLOCK_TOP_PX`** **19 → 16** (wrapper margin **11px → 8px** with 8px column gap); founder admin view still **`marginTop: 0`**.
+
+---
+
 ## 2026-07-02 — Add Funds page: load-card helper copy update
 
 **Context:** User asked to update the gray helper paragraph on **Account → Add Funds** (load gift card).
@@ -33016,4 +33024,12 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Root cause:** Client profiles used **`translateY(-4px)`** on the membership line; founder admin view used **`-8px`** (tighter to email above).
 
 **Fix:** **`src/pages/account/page.tsx`** — membership line always **`translateY(-8px)`**; removed unused **`profileUsesClientVoucherSpacing`**.
+
+---
+
+## 2026-07-02 — Account profile: client voucher block −3px top spacing
+
+**Context:** User asked to **reduce spacing above VOUCHERS** on the **client** account profile by **3px**; **admin profile unchanged**.
+
+**Fix:** **`src/pages/account/page.tsx`** — **`CLIENT_VOUCHER_BLOCK_TOP_PX`** **19 → 16** (wrapper margin **11px → 8px** with 8px column gap); founder admin view still **`marginTop: 0`**.
 

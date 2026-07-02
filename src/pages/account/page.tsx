@@ -230,11 +230,11 @@ function AccountPage() {
   /**
    * Space above voucher / slay tickets / digital cash block for real clients only (not founder admin view).
    * Column flex gap ({@link PROFILE_DETAILS_COLUMN_GAP_PX}px) stacks on wrapper margin-top — total = gap + margin.
-   * Old wrapper margin was 15px → 23px total with gap; target 19px total (−4px) → wrapper margin 11px.
+   * Target 16px total above voucher block for clients (−3px from prior 19px); admin wrapper margin stays 0.
    */
   const clientProfileVoucherBlockMarginTopPx = React.useMemo(() => {
     if (isAyoteenzAdminAccount(userData) && !founderViewAsClient) return 0;
-    const CLIENT_VOUCHER_BLOCK_TOP_PX = 19;
+    const CLIENT_VOUCHER_BLOCK_TOP_PX = 16;
     return Math.max(0, CLIENT_VOUCHER_BLOCK_TOP_PX - PROFILE_DETAILS_COLUMN_GAP_PX);
   }, [userData, founderViewAsClient]);
 
