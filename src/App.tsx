@@ -12,6 +12,7 @@ import CapSizePage from './pages/build-a-wig/cap-size/page';
 import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
 import BawTutorialPage from './pages/build-a-wig/try/page';
+import { BuildWigCustomizeEditAccessGate } from './components/buildWig/BuildWigCustomizeEditAccessGate';
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
@@ -501,6 +502,7 @@ function App() {
       {!hidePreviewChrome ? <ProductInventorySync /> : null}
       {!hidePreviewChrome ? <PsaChatCopyBootstrap /> : null}
       {!hidePreviewChrome ? <PsaAssistantWidget /> : null}
+      {!hidePreviewChrome ? <BuildWigCustomizeEditAccessGate /> : null}
       <DebugModeShell>
         <Route index element={<HomeLandingRedirect />} />
         <Route path="/" element={<HomeLandingRedirect />} />
@@ -775,6 +777,7 @@ function App() {
         <Route path="/curly/closures" element={<Navigate to="/shop/closures" replace />} />
         <Route path="/curly/frontals" element={<Navigate to="/shop/frontals" replace />} />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
+        <Route path="/build-a-wig/try/:unitSlug" element={<BawTutorialPage />} />
         <Route path="/build-a-wig/try" element={<BawTutorialPage />} />
 
         {/* Noir routes */}

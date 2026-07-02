@@ -33057,3 +33057,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked that when **more than one gift-card barcode** is submitted, the button shows **ADDING 1/2…**, **ADDED 2/2**, etc.; error modals must name **which card** failed.
 
 **Fix:** **`src/pages/account/load-card/page.tsx`** — sequential redeem loop with **`addToBalanceUi`** progress; single code keeps **ADDING…** / **ADDED TO BALANCE**; multi-code uses **ADDING n/total…** and **ADDED succeeded/total**; balance updates after each successful card; modals prefix **THE FOLLOWING CARD(S) COULD NOT BE LOADED:** with **`XXXX-XXXX-XXXX: reason`** lines.
+
+---
+
+## 2026-07-02 — BAW try routes: menu `/build-a-wig/try`, unit PDP slugs, customize/edit gate
+
+**Context:** User asked: menu **BUILD-A-WIG** → **`/build-a-wig/try`** (NOIR default); product **TRY BUILD-A-WIG** → **`/build-a-wig/try/{unit}`** (e.g. soft-wave, blanco); **non-members** on **customize/edit** → **sign-in** (guests) or **upgrade subscription** modal (signed-in non-premium).
+
+**Changes:**
+- **`bawTutorialConfig.ts`**: unit slug helpers + routes.
+- **`ShopMobileMenuShopTab`**: default **`/build-a-wig/try`**; no sign-in gate for try paths.
+- **`buildAWigRoutes.ts`**: **`getBuildAWigShopMenuTargetPath()`** → try; **`isBuildAWigCustomizeOrEditPath`**.
+- **`BuildWigCustomizeEditAccessGate`**: global gate in **`App.tsx`**.
+- **`App.tsx`**: route **`/build-a-wig/try/:unitSlug`**.
+- **`try/page.tsx`**: unit label from URL.
+- **Unit PDPs**: product-specific try URLs.
+- **Booking** menu still **`/build-a-wig/noir`** (unchanged).

@@ -1615,7 +1615,7 @@ fontSize: '11px',
             addToBagState={addToBagState}
             isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
-            onTryFree={() => navigate('/build-a-wig/try')}
+            onTryFree={() => navigate('/build-a-wig/try/beach-wave')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

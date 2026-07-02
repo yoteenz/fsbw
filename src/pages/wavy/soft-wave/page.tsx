@@ -1618,7 +1618,7 @@ function SoftWaveSelection() {
             addToBagState={addToBagState}
             isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
-            onTryFree={() => navigate('/build-a-wig/try')}
+            onTryFree={() => navigate('/build-a-wig/try/soft-wave')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

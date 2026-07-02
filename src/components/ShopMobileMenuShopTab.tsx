@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
+import { BAW_TUTORIAL_ROUTE, isBawTutorialPath } from '../constants/bawTutorialConfig';
 import { navigateShopMenuSubItem } from '../utils/shopMobileMenuSubNav';
 
 const SHOP_TAB_ITEMS = [
@@ -52,7 +53,7 @@ export function ShopMobileMenuShopTab({
   handleMobileMenuItemToggle,
   closeSubItemMenu,
   closeAfterStaticNav,
-  buildAWigPath = '/build-a-wig',
+  buildAWigPath = BAW_TUTORIAL_ROUTE,
   onBuildAWigRequiresSignIn,
   isSignedInForBuildAWig,
   labelTranslateX = '7px',
@@ -74,7 +75,12 @@ export function ShopMobileMenuShopTab({
       }
       return;
     }
-    if (item.label === 'BUILD-A-WIG' && onBuildAWigRequiresSignIn && isSignedInForBuildAWig === false) {
+    if (
+      item.label === 'BUILD-A-WIG' &&
+      !isBawTutorialPath(buildAWigPath) &&
+      onBuildAWigRequiresSignIn &&
+      isSignedInForBuildAWig === false
+    ) {
       onBuildAWigRequiresSignIn();
       return;
     }

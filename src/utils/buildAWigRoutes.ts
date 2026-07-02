@@ -31,6 +31,12 @@ export function isBuildAWigCustomizePath(pathname: string): boolean {
   return pathname.startsWith('/build-a-wig/') && pathname.includes('/customize');
 }
 
+/** Customize hub or edit flow (any unit), including sub-steps. */
+export function isBuildAWigCustomizeOrEditPath(pathname: string): boolean {
+  if (!pathname.startsWith('/build-a-wig')) return false;
+  return pathname.includes('/customize') || pathname.includes('/edit');
+}
+
 /** Exact unit customize hub only: `/build-a-wig/{unit}/customize` — not `/…/customize/color` etc. */
 export function isBuildAWigCustomizeHubPathname(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
@@ -53,7 +59,7 @@ export function getBuildAWigFlowBasePath(pathname: string): string {
   return '/build-a-wig';
 }
 
-/** SHOP menu "BUILD-A-WIG" item — matches main build-a-wig page behavior. */
+/** SHOP menu BUILD-A-WIG — guest try flow (NOIR default). */
 export function getBuildAWigShopMenuTargetPath(): string {
-  return '/build-a-wig';
+  return '/build-a-wig/try';
 }

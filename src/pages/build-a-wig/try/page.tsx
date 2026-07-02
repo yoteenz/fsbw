@@ -1,11 +1,14 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { BawTutorialGuidePanel } from '../../../components/buildWig/BawTutorialGuidePanel';
 import {
   BAW_TUTORIAL_DEFAULT_SELECTIONS,
   BAW_TUTORIAL_OPTIONS,
   BAW_TUTORIAL_STEPS,
+  BAW_TUTORIAL_ROUTE,
+  isBawTryUnitSlug,
+  resolveBawTutorialUnitLabelFromPathname,
   type BawTutorialSelections,
   type BawTutorialStepId,
 } from '../../../constants/bawTutorialConfig';
@@ -48,12 +51,38 @@ function OptionChip({
 
 export default function BawTutorialPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const normalizedPath = location.pathname.replace(/\/$/, '') || '/';
+  const unitSlug =
+    normalizedPath === BAW_TUTORIAL_ROUTE
+      ? undefined
+      : normalizedPath.startsWith(`${BAW_TUTORIAL_ROUTE}/`)
+        ? normalizedPath.slice(`${BAW_TUTORIAL_ROUTE}/`.length).split('/')[0]
+        : undefined;
+  const unitLabel = useMemo(
+    () => resolveBawTutorialUnitLabelFromPathname(location.pathname),
+    [location.pathname]
+  );
+
+  useEffect(() => {
+    if (unitSlug && !isBawTryUnitSlug(unitSlug)) {
+      navigate(BAW_TUTORIAL_ROUTE, { replace: true });
+    }
+  }, [navigate, unitSlug]);
+
   const [step, setStep] = useState<BawTutorialStepId>('intro');
   const [selectedView, setSelectedView] = useState(1);
-  const [selections, setSelections] = useState<BawTutorialSelections>(BAW_TUTORIAL_DEFAULT_SELECTIONS);
+  const [selections, setSelections] = useState<BawTutorialSelections>(() => ({
+    ...BAW_TUTORIAL_DEFAULT_SELECTIONS,
+    unit: unitLabel,
+  }));
   const [cardPreviewUrl, setCardPreviewUrl] = useState<string | null>(null);
   const [cardBusy, setCardBusy] = useState(false);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelections((prev) => ({ ...prev, unit: unitLabel }));
+  }, [unitLabel]);
 
   const wigViews = useMemo(() => [...NOIR_NATURAL_MANNEQUIN_TRIPLE] as [string, string, string], []);
 
@@ -118,9 +147,23 @@ export default function BawTutorialPage() {
   const handleSignInForFullBuilder = useCallback(() => {
     applyBawTutorialDraftToBuilderStorage(selections);
     trackActivity('baw_tutorial_sign_in_for_builder', { unit: selections.unit });
+    const unitPath =
+      selections.unit === 'NOIR'
+        ? 'noir'
+        : selections.unit === 'BLANCO'
+          ? 'blanco'
+          : selections.unit === 'SOFT WAVE'
+            ? 'soft-wave'
+            : selections.unit === 'BEACH WAVE'
+              ? 'beach-wave'
+              : selections.unit === 'SOFT CURL'
+                ? 'soft-curl'
+                : selections.unit === 'OCEAN CURL'
+                  ? 'ocean-curl'
+                  : 'noir';
     navigate(
       signInHrefWithReturnTo({
-        pathname: '/build-a-wig/noir/customize',
+        pathname: `/build-a-wig/${unitPath}/customize`,
         search: '',
       })
     );
@@ -161,7 +204,7 @@ export default function BawTutorialPage() {
             className="text-[11px] tracking-[0.08em] uppercase"
             style={{ fontFamily: '"Futura PT Medium"', color: '#1A1A1A' }}
           >
-            NOIR
+            {unitLabel}
           </p>
         </div>
         <button

@@ -66,6 +66,47 @@ export const BAW_TUTORIAL_GUIDE_COPY: Record<BawTutorialStepId, { title: string;
 
 export const BAW_TUTORIAL_ROUTE = '/build-a-wig/try';
 
+/** URL slugs for product-specific guest try routes (`/build-a-wig/try/{slug}`). */
+export const BAW_TRY_UNIT_SLUGS = [
+  'noir',
+  'blanco',
+  'soft-wave',
+  'beach-wave',
+  'soft-curl',
+  'ocean-curl',
+] as const;
+
+export type BawTryUnitSlug = (typeof BAW_TRY_UNIT_SLUGS)[number];
+
+const BAW_TRY_SLUG_TO_UNIT_LABEL: Record<BawTryUnitSlug, string> = {
+  noir: 'NOIR',
+  blanco: 'BLANCO',
+  'soft-wave': 'SOFT WAVE',
+  'beach-wave': 'BEACH WAVE',
+  'soft-curl': 'SOFT CURL',
+  'ocean-curl': 'OCEAN CURL',
+};
+
+export function isBawTryUnitSlug(value: string): value is BawTryUnitSlug {
+  return (BAW_TRY_UNIT_SLUGS as readonly string[]).includes(value);
+}
+
+/** Menu + default try route is `/build-a-wig/try` (NOIR). Product PDPs use unit slugs. */
+export function getBawTryRouteForUnitSlug(slug: BawTryUnitSlug | 'noir'): string {
+  if (slug === 'noir') return BAW_TUTORIAL_ROUTE;
+  return `${BAW_TUTORIAL_ROUTE}/${slug}`;
+}
+
+export function resolveBawTutorialUnitLabelFromPathname(pathname: string): string {
+  const normalized = pathname.replace(/\/$/, '') || '/';
+  if (normalized === BAW_TUTORIAL_ROUTE) return BAW_TRY_SLUG_TO_UNIT_LABEL.noir;
+  const prefix = `${BAW_TUTORIAL_ROUTE}/`;
+  if (!normalized.startsWith(prefix)) return BAW_TUTORIAL_DEFAULT_SELECTIONS.unit;
+  const slug = normalized.slice(prefix.length).split('/')[0] ?? '';
+  if (isBawTryUnitSlug(slug)) return BAW_TRY_SLUG_TO_UNIT_LABEL[slug];
+  return BAW_TUTORIAL_DEFAULT_SELECTIONS.unit;
+}
+
 export function isBawTutorialPath(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
   return p === BAW_TUTORIAL_ROUTE || p.startsWith(`${BAW_TUTORIAL_ROUTE}/`);

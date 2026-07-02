@@ -1617,7 +1617,7 @@ function BlancoSelection() {
             addToBagState={addToBagState}
             isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
-            onTryFree={() => navigate('/build-a-wig/try')}
+            onTryFree={() => navigate('/build-a-wig/try/blanco')}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {
