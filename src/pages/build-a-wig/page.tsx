@@ -18,6 +18,7 @@ import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigP
 import { isBawClientTestOnlyMode, isBawGuestTryPage, isBawStandardMemberHubBrowseMode } from '../../utils/bawClientTestMode';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 import { BawHubStandardMemberFooter, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
+import { BawModeChrome } from '../../components/buildWig/BawModeChrome';
 import {
   BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY,
   BUILD_WIG_APPOINTMENT_MODE_KEY,
@@ -5033,6 +5034,7 @@ export default function BuildAWigPage() {
         <div className="relative z-10">
           {/* MAIN CONTENT */}
           <div className="flex flex-col py-5 px-4">
+          <BawModeChrome />
           {/* HEADER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"

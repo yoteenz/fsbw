@@ -45,6 +45,7 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { BawSubpageFooterAction } from '../../../components/buildWig/BawViewSubscriptionsFooter';
+import { BawModeChrome } from '../../../components/buildWig/BawModeChrome';
 import { markBawNavigateToCustomizeHubFromOtherStep } from '../../../utils/bawCrossStepSummary';
 import {
   computeBawStylingPriceFromSelectionArray,
@@ -1349,6 +1350,7 @@ export default function StylingSelectionPage() {
         <div className="relative z-10">
       {/* MAIN CONTENT */}
       <div className="flex flex-col py-5 px-4">
+        <BawModeChrome />
         {/* HEADER */}
         <div
           className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"

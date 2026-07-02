@@ -33113,3 +33113,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`bawClientTestMode.ts`**: standard members on try route get hub customize footer.
 
 **Note:** Tutorial-only components (`BawTutorialGuidePanel`, slay card step UI) no longer used on try routes; access gates for customize/edit unchanged.
+
+---
+
+## 2026-07-02 — BAW mode header + BUILD GUIDE on try, customize, edit, hub
+
+**Context:** User liked the try-page header (SHOP / BUILD-A-WIG {MODE} / unit / EXIT), red progress bar, and BUILD GUIDE panel — asked to keep it at the top of Build-a-Wig pages and add the step guide panel to **customize** and **edit** modes as well (while keeping the standard hub UI underneath).
+
+**Fix:** Shared **`BawModeChrome`** component on hub + all option sub-pages.
+
+- **`BawModeChrome.tsx`**: sticky mode header, progress bar, BUILD GUIDE panel.
+- **`bawModeGuideConfig.ts`**: mode labels (TRY / CUSTOMIZE / EDIT / HUB), step copy, flow steps.
+- **`bawModeChrome.ts`**: resolves mode, unit, step, and progress from pathname.
+- Wired into **`build-a-wig/page.tsx`** and sub-pages (length, cap, density, lace, texture, color, hairline, styling, addons).
+
+**Behavior:** Mode line reads e.g. **BUILD-A-WIG CUSTOMIZE** + **NOIR**; guide copy updates per sub-step (length, color, etc.); existing nav/cart/menu header remains below.
