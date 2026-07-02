@@ -38,20 +38,24 @@ export function isBawEditPath(pathname: string): boolean {
 
 /** Signed-in standard members on premium option sub-pages — VIEW SUBSCRIPTIONS footer. */
 export function isBawClientTestOnlyMode(pathname: string): boolean {
-  if (isBawTutorialPath(pathname)) return false;
-  if (isBawTryBrowseMode(pathname)) return false;
+  if (!isSignedInFromStorage()) return false;
+  if (isPremiumMemberForGatedFeatures()) return false;
   if (!pathname.startsWith('/build-a-wig')) return false;
   if (isActiveBuildWigAppointmentMode()) return false;
   if (isBawEditPath(pathname)) return false;
-  if (isBuildAWigCustomizePath(pathname)) return false;
-  if (isPremiumMemberForGatedFeatures()) return false;
-  if (!isSignedInFromStorage()) return false;
   return pathnameIsBuildWigPremiumMembershipStep(pathname);
 }
 
-/** Hub footer + gates: try browse or standard-member premium sub-page browse. */
+/**
+ * Footer shows VIEW SUBSCRIPTIONS instead of ADD TO BAG / CONFIRM SELECTION when:
+ * - Signed out (all BAW pages), or
+ * - Signed-in standard member on premium option sub-pages only.
+ */
 export function isBawViewSubscriptionsFooterMode(pathname: string): boolean {
-  return isBawTryBrowseMode(pathname) || isBawClientTestOnlyMode(pathname);
+  if (!pathname.startsWith('/build-a-wig') && !isBawTutorialPath(pathname)) return false;
+  if (!isSignedInFromStorage()) return true;
+  if (isPremiumMemberForGatedFeatures()) return false;
+  return pathnameIsBuildWigPremiumMembershipStep(pathname);
 }
 
 /** Signed-in standard members on hub landing — CUSTOMIZE IN BUILD-A-WIG footer. */

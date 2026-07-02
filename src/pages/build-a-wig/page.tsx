@@ -12,8 +12,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignInModal';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
-import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
-import { isBawClientTestOnlyMode, isBawStandardMemberHubBrowseMode, isBawTryBrowseMode, isBawViewSubscriptionsFooterMode, setBawTryBrowseActive } from '../../utils/bawClientTestMode';
+import { isBawStandardMemberHubBrowseMode, isBawViewSubscriptionsFooterMode, setBawTryBrowseActive } from '../../utils/bawClientTestMode';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 import { BawHubStandardMemberFooter, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
 import { BawModeChrome } from '../../components/buildWig/BawModeChrome';
@@ -3998,15 +3997,6 @@ export default function BuildAWigPage() {
   }, [currencyRates, selectedCurrency]);
 
   const handleOptionSelect = (category: string, optionId: string) => {
-    if (
-      isBuildWigPremiumMembershipOptionCategory(category) &&
-      !isPremiumMemberForGatedFeatures() &&
-      !isBawViewSubscriptionsFooterMode(rawPathname)
-    ) {
-      setShowPremiumMembershipHubModal(true);
-      return;
-    }
-
     if (isBawTutorialPath(rawPathname)) {
       setBawTryBrowseActive(true);
     }
@@ -5805,12 +5795,10 @@ export default function BuildAWigPage() {
         </div>
 
         {!showMobileMenu && (
-          isBawTryBrowseMode(rawPathname) ? (
+          isBawViewSubscriptionsFooterMode(rawPathname) ? (
             <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
           ) : isBawStandardMemberHubBrowseMode(rawPathname) ? (
             <BawHubStandardMemberFooter style={{ marginTop: '2px' }} />
-          ) : isBawClientTestOnlyMode(bawPathname) ? (
-            <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
           ) : (
             <>
               {/* ADD TO BAG BUTTON */}

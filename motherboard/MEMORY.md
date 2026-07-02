@@ -33186,3 +33186,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`BawModeChrome`**: SHOP/EXIT clears try-browse session.
 
 **Behavior:** Try flow opens lace/color/etc. without upgrade modal; every step footer is **VIEW SUBSCRIPTIONS**; selections are preview-only until membership/customize.
+
+---
+
+## 2026-07-02 — BAW footer rules by membership (standard / premium / signed out)
+
+**Context:** User clarified footer CTAs: **signed-out** → **VIEW SUBSCRIPTIONS** on all BAW pages; **premium members** → **ADD TO BAG** / **CONFIRM SELECTION** everywhere; **signed-in standard** → **ADD TO BAG** + **CONFIRM SELECTION** on non-premium sub-pages (cap, length, density), **VIEW SUBSCRIPTIONS** on premium sub-pages (lace, texture, color, hairline, styling, add-ons). Hub landing for standard still **CUSTOMIZE IN BUILD-A-WIG**.
+
+**Fix:** Rewrote **`isBawViewSubscriptionsFooterMode`** in **`bawClientTestMode.ts`** (signed out = all pages; standard = premium steps only). Hub footer uses single view-subscriptions check; removed hub premium-option navigation gate. Sub-page footer unchanged structurally — uses same helper.

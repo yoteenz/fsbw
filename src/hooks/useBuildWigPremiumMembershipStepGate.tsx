@@ -9,7 +9,7 @@ export { pathnameIsBuildWigPremiumMembershipStep };
 
 /**
  * On lace/texture/color/hairline/styling/addons routes: if the user is not premium, show the upgrade modal
- * (edit/customize flows only). Try browse and standard-member test browse skip the gate; footer uses VIEW SUBSCRIPTIONS.
+ * (edit/customize flows only). Guests and standard members on premium steps browse freely; footer uses VIEW SUBSCRIPTIONS.
  */
 export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
   const location = useLocation();

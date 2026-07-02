@@ -119,7 +119,7 @@ type BawSubpageFooterActionProps = {
   buttonClassName?: string;
 };
 
-/** Sub-page footer: CONFIRM SELECTION for premium; VIEW SUBSCRIPTIONS for try / client test browse. */
+/** Sub-page footer: CONFIRM SELECTION for members; VIEW SUBSCRIPTIONS for guests or standard on premium steps. */
 export function BawSubpageFooterAction({
   onConfirm,
   hidden = false,
