@@ -33097,3 +33097,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`useBuildWigPremiumMembershipStepGate.tsx`**: re-export premium step helper from routes.
 
 **Conventions:** VIEW SUBSCRIPTIONS is guest try + standard-on-premium-sub-pages only; hub customize CTA is standard members only; premium/full members use commerce footers.
+
+---
+
+## 2026-07-02 — BAW try page: restore standard hub UI (not tutorial wizard)
+
+**Context:** User reported the Build-a-Wig **try** page used a separate tutorial UI (wizard, progress bar, slay card flow) and asked to **match all other Build-a-Wig pages** visually — only **buttons and access** should differ.
+
+**Fix:** Removed custom tutorial page UI; **`/build-a-wig/try`** and **`/build-a-wig/try/{unit}`** now render the shared **`BuildAWigPage`** (same nav, mannequin, option grid, mobile menu as product hubs).
+
+- **`App.tsx`**: try routes → **`BuildAWigPage`**.
+- **`buildAWigRoutes.ts`**: **`resolveBuildAWigTryPathToHubPath`** maps try URLs to hub equivalents (`/try` → `/noir`, `/try/blanco` → `/blanco`, etc.).
+- **`build-a-wig/page.tsx`**: **`bawPathname`** alias for all hub logic on try routes; invalid try slugs redirect to `/build-a-wig/try`; footer unchanged — guests **VIEW SUBSCRIPTIONS**, signed-in standard **CUSTOMIZE IN BUILD-A-WIG**, premium **ADD TO BAG**.
+- **`try/page.tsx`**: thin re-export of main page.
+- **`bawClientTestMode.ts`**: standard members on try route get hub customize footer.
+
+**Note:** Tutorial-only components (`BawTutorialGuidePanel`, slay card step UI) no longer used on try routes; access gates for customize/edit unchanged.

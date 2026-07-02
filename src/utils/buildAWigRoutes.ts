@@ -3,7 +3,7 @@
  * Keeps breadcrumb navigation and customize-mode detection consistent across the main page and sub-pages.
  */
 
-import { BAW_TUTORIAL_ROUTE, isBawTutorialPath } from '../constants/bawTutorialConfig';
+import { BAW_TUTORIAL_ROUTE, isBawTutorialPath, isBawTryUnitSlug } from '../constants/bawTutorialConfig';
 
 /** URL segments for premium membership option steps (lace → add-ons). */
 const PREMIUM_STEP_SEGMENT = /\/(lace|texture|color|hairline|styling|addons)(?:$|[?#])/;
@@ -87,6 +87,19 @@ export function getBuildAWigFlowBasePath(pathname: string): string {
 /** Member SHOP menu target — product customize hub (default NOIR). */
 export function getBuildAWigMemberMenuTargetPath(buildAWigPath = '/build-a-wig/noir'): string {
   return getBuildAWigCustomizePathForMenu(buildAWigPath);
+}
+
+/** Map guest try routes to the equivalent product hub path for shared Build-a-Wig UI. */
+export function resolveBuildAWigTryPathToHubPath(pathname: string): string {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (!isBawTutorialPath(p)) return pathname;
+  if (p === BAW_TUTORIAL_ROUTE) return '/build-a-wig/noir';
+  const prefix = `${BAW_TUTORIAL_ROUTE}/`;
+  if (p.startsWith(prefix)) {
+    const slug = p.slice(prefix.length).split('/')[0] ?? '';
+    if (isBawTryUnitSlug(slug)) return `/build-a-wig/${slug}`;
+  }
+  return '/build-a-wig/noir';
 }
 
 /** Guest SHOP menu target — try flow (NOIR default at `/build-a-wig/try`). */

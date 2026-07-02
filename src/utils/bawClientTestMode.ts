@@ -27,7 +27,7 @@ export function isBawClientTestOnlyMode(pathname: string): boolean {
   return pathnameIsBuildWigPremiumMembershipStep(pathname);
 }
 
-/** Signed-in standard members on hub landing — CUSTOMIZE IN BUILD-A-WIG footer. */
+/** Signed-in standard members on hub landing or try route — CUSTOMIZE IN BUILD-A-WIG footer. */
 export function isBawStandardMemberHubBrowseMode(pathname: string): boolean {
   if (!pathname.startsWith('/build-a-wig')) return false;
   if (isActiveBuildWigAppointmentMode()) return false;
@@ -35,6 +35,7 @@ export function isBawStandardMemberHubBrowseMode(pathname: string): boolean {
   if (isBuildAWigCustomizePath(pathname)) return false;
   if (isPremiumMemberForGatedFeatures()) return false;
   if (!isSignedInFromStorage()) return false;
+  if (isBawTutorialPath(pathname)) return true;
   return isBuildAWigHubLandingPath(pathname);
 }
 

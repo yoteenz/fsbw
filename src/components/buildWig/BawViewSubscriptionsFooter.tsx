@@ -5,7 +5,7 @@ import PremiumSubscriptionUpgradeChart from '../membership/PremiumSubscriptionUp
 import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
 import { getEffectiveSubscriptionTier } from '../../utils/adminAuth';
 import { isBawClientTestOnlyMode } from '../../utils/bawClientTestMode';
-import { getBuildAWigCustomizePathFromHub } from '../../utils/buildAWigRoutes';
+import { getBuildAWigCustomizePathFromHub, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
 
 const defaultButtonStyle: CSSProperties = {
   borderWidth: '1.3px',
@@ -133,9 +133,10 @@ export function BawHubStandardMemberFooter({
   style?: CSSProperties;
 }) {
   const { pathname } = useLocation();
+  const hubPath = resolveBuildAWigTryPathToHubPath(pathname);
   return (
     <BawCustomizeInBuildWigFooter
-      customizePath={getBuildAWigCustomizePathFromHub(pathname)}
+      customizePath={getBuildAWigCustomizePathFromHub(hubPath)}
       buttonWidth={buttonWidth}
       style={style}
     />
