@@ -32917,3 +32917,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context (continued chat):** User asked to rename **MEMBERS ONLY** to **LOYALTY PROGRAM** in two places: the **BRAND** tab of the mobile menu toggle, and the **red card header** on **`/brand/member`**.
 
 **Fix:** Updated **`src/constants/brandMenu.ts`** for the **BECOME A MEMBER** route — **`menuLabel`** and **`cardTitle`** from **MEMBERS ONLY** to **LOYALTY PROGRAM**. **`BrandMenuLinks`** reads **`menuLabel`** via **`getBrandMenuLabel`**; **`BrandPage`** red header reads **`cardTitle`** via **`getBrandCardHeaderTitle`**. Nav breadcrumb stays **MEMBERSHIP**; internal **`label`** stays **BECOME A MEMBER** (used where full name is needed).
+
+---
+
+## 2026-07-01 — Account profile: voucher line red + tighter spacing (clients only)
+
+**Context (continued chat):** User asked to change the **gray voucher text line** on the **account profile** to **red**, and **reduce spacing above it by 4px for clients only** — not for the **admin founder profile**.
+
+**Fix:** **`src/pages/account/page.tsx`** — **`VOUCHER: X AVAILABLE`** line **`color`** **`#808080` → `#EB1C24`**. **`clientProfileVoucherBlockMarginTopPx`** for real clients **`15px → 11px`**; founder admin view (not VIEW AS CLIENT) stays **`0`** unchanged.

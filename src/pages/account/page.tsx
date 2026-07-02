@@ -230,7 +230,7 @@ function AccountPage() {
    */
   const clientProfileVoucherBlockMarginTopPx = React.useMemo(() => {
     if (isAyoteenzAdminAccount(userData) && !founderViewAsClient) return 0;
-    return 15;
+    return 11;
   }, [userData, founderViewAsClient]);
 
   /** When false, founder mock account uses seeded/mock profile chrome on this page only. */
@@ -2073,7 +2073,7 @@ function AccountPage() {
                         }}
                         style={{
                           fontFamily: '"Futura PT Medium"',
-                          color: '#808080',
+                          color: '#EB1C24',
                           fontSize: '10px',
                           margin: '0 0 -12px 0',
                           textTransform: 'uppercase',
