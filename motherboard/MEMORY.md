@@ -33041,3 +33041,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to rename the gift-card submit button from **LOAD CASH** to **ADD TO BALANCE**.
 
 **Fix:** **`src/pages/account/load-card/page.tsx`** — primary action button **ADD TO BALANCE**.
+
+---
+
+## 2026-07-02 — Add Funds: ADD TO BALANCE button states + live balance
+
+**Context:** User asked for **ADD TO BALANCE** button states (**ADDING…**, **ADDED TO BALANCE** then revert to **ADD TO BALANCE**) and **live CURRENT BALANCE** update on success.
+
+**Fix:** **`src/pages/account/load-card/page.tsx`** — `addToBalanceState` idle/adding/added (2s reset, matches add-to-bag pattern); async submit awaits **`persistUserBalance`**; balance **`setUserData`** + **`customStorageChange`** on success; checkmark **ADDED TO BALANCE** success label.

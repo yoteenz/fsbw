@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -37,7 +37,10 @@ function toCanonicalBarcode(value: string): string {
 }
 
 type DigitalCashHistoryEntry = { date: string; transaction: string; amount: number };
+type AddToBalanceState = 'idle' | 'adding' | 'added';
 const ADMIN_TEST_DIGITAL_CASH_MIN = 80;
+const ADD_TO_BALANCE_SUCCESS_RESET_MS = 2000;
+const ADD_TO_BALANCE_MIN_ADDING_MS = 800;
 
 function pickPreferredDigitalCashHistory(
   currentHistory: unknown,
@@ -159,6 +162,8 @@ function LoadCardPage() {
     return readStoredSignedInUser();
   });
   const [barcodes, setBarcodes] = useState(['', '']);
+  const [addToBalanceState, setAddToBalanceState] = useState<AddToBalanceState>('idle');
+  const addToBalanceResetTimerRef = useRef<number | null>(null);
 
   type LoadCardNotice = {
     title: string;
@@ -174,6 +179,24 @@ function LoadCardPage() {
       if (fn) queueMicrotask(fn);
       return null;
     });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (addToBalanceResetTimerRef.current != null) {
+        window.clearTimeout(addToBalanceResetTimerRef.current);
+      }
+    };
+  }, []);
+
+  const scheduleAddToBalanceIdleReset = useCallback(() => {
+    if (addToBalanceResetTimerRef.current != null) {
+      window.clearTimeout(addToBalanceResetTimerRef.current);
+    }
+    addToBalanceResetTimerRef.current = window.setTimeout(() => {
+      setAddToBalanceState('idle');
+      addToBalanceResetTimerRef.current = null;
+    }, ADD_TO_BALANCE_SUCCESS_RESET_MS);
   }, []);
 
   // Keep userData in sync with signed-in user so new accounts see their own data, not a previous (e.g. admin) user's
@@ -316,35 +339,37 @@ function LoadCardPage() {
   };
 
   const persistUserBalance = async (email: string, newBalance: number, historyEntry: { date: string; transaction: string; amount: number }) => {
+    const u = readStoredSignedInUser();
+    if (!u) throw new Error('no signed-in user');
+    if (String(u.email || '').toLowerCase() !== email.toLowerCase()) throw new Error('user email mismatch');
+    const updatedHistory = [...(Array.isArray(u.digitalCashHistory) ? u.digitalCashHistory : []), ...(historyEntry.date ? [historyEntry] : [])];
+    const updated = {
+      ...u,
+      giftCardBalance: newBalance,
+      digitalCashHistory: updatedHistory,
+    };
+    localStorage.setItem('currentUser', JSON.stringify(updated));
+    setUserData(updated);
+    const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const idx = registered.findIndex((x: { email?: string }) => (x.email || '').toLowerCase() === email.toLowerCase());
+    if (idx !== -1) {
+      registered[idx] = updated;
+      localStorage.setItem('registeredUsers', JSON.stringify(registered));
+    }
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
     try {
-      const u = readStoredSignedInUser();
-      if (!u) return;
-      if (String(u.email || '').toLowerCase() !== email.toLowerCase()) return;
-      const updatedHistory = [...(Array.isArray(u.digitalCashHistory) ? u.digitalCashHistory : []), ...(historyEntry.date ? [historyEntry] : [])];
-      const updated = {
-        ...u,
-        giftCardBalance: newBalance,
-        digitalCashHistory: updatedHistory,
-      };
-      localStorage.setItem('currentUser', JSON.stringify(updated));
-      setUserData(updated);
-      const registered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      const idx = registered.findIndex((x: { email?: string }) => (x.email || '').toLowerCase() === email.toLowerCase());
-      if (idx !== -1) {
-        registered[idx] = updated;
-        localStorage.setItem('registeredUsers', JSON.stringify(registered));
-      }
       await patchProfileWithRetryQueue({
         giftCardBalance: newBalance,
         digitalCashHistory: updatedHistory,
       });
       appendDigitalCashDepositAccountAlert(email, historyEntry.amount);
     } catch {
-      /* ignore */
+      /* local balance already updated */
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (addToBalanceState === 'adding' || addToBalanceState === 'added') return;
     if (!isSignedIn || !userData?.email) {
       setLoadCardNotice({
         title: 'FORGETTING SOMETHING?',
@@ -404,11 +429,30 @@ function LoadCardPage() {
           : typeof userData.giftCardBalance === 'number'
             ? userData.giftCardBalance
             : 0;
-      void persistUserBalance(email, prev + totalAdded, {
-        date: dateStr,
-        transaction: 'GIFT CARD BARCODE',
-        amount: totalAdded,
-      });
+
+      setAddToBalanceState('adding');
+      try {
+        await Promise.all([
+          persistUserBalance(email, prev + totalAdded, {
+            date: dateStr,
+            transaction: 'GIFT CARD BARCODE',
+            amount: totalAdded,
+          }),
+          new Promise<void>((resolve) => {
+            window.setTimeout(resolve, ADD_TO_BALANCE_MIN_ADDING_MS);
+          }),
+        ]);
+        setAddToBalanceState('added');
+        setBarcodes(['', '']);
+        scheduleAddToBalanceIdleReset();
+      } catch {
+        setAddToBalanceState('idle');
+        setLoadCardNotice({
+          title: 'UNABLE TO ADD FUNDS',
+          message: 'SOMETHING WENT WRONG. PLEASE TRY AGAIN.',
+        });
+        return;
+      }
     }
 
     if (errors.length && totalAdded === 0) {
@@ -425,13 +469,12 @@ function LoadCardPage() {
         message: `ADDED ${formatPrice(totalAdded)}.\n\nSOME CODES FAILED:\n${errors.join('\n')}`,
         preserveLineBreaks: true,
       });
-    } else {
+    } else if (totalAdded > 0) {
       setLoadCardNotice({
         title: 'FUNDS ADDED',
         message: `ADDED ${formatPrice(totalAdded)} TO YOUR ACCOUNT.`,
       });
     }
-    setBarcodes(['', '']);
   };
 
   const formatPrice = (amount: number) => {
@@ -903,8 +946,13 @@ function LoadCardPage() {
                 >
                   <button
                     type="button"
-                    onClick={handleSubmit}
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    onClick={() => void handleSubmit()}
+                    disabled={addToBalanceState === 'adding'}
+                    className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
+                      addToBalanceState === 'adding'
+                        ? 'bg-white cursor-not-allowed'
+                        : 'bg-white cursor-pointer hover:bg-gray-50'
+                    }`}
                     style={{
                       borderWidth: '1.3px',
                       color: '#EB1C24',
@@ -912,7 +960,14 @@ function LoadCardPage() {
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    ADD TO BALANCE
+                    {addToBalanceState === 'idle' && 'ADD TO BALANCE'}
+                    {addToBalanceState === 'adding' && 'ADDING...'}
+                    {addToBalanceState === 'added' && (
+                      <span className="flex items-center justify-center gap-1">
+                        <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                        <span style={{ color: '#808080' }}>ADDED TO BALANCE</span>
+                      </span>
+                    )}
                   </button>
                 </div>
               </div>
