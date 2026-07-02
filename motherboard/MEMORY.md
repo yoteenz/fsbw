@@ -33155,3 +33155,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **cap-size / color**: kept localStorage sync `useEffect`s but dropped cart-count listeners only.
 
 **Behavior:** BAW routes show **BawModeChrome** only at top (no second shop nav bar). Subscription chart shows one PREMIUM MEMBERSHIP row with one close control.
+
+---
+
+## 2026-07-02 — BAW mode header gray label copy
+
+**Context:** User asked to change the gray mode line at the top of Build-a-Wig pages from **BUILD-A-WIG TRY / CUSTOMIZE / EDIT** to sentence-style labels: **build a Wig try mode**, **build a Wig customize mode**, **build a Wig edit mode**.
+
+**Fix:** Updated **`bawBuildModeLabel`** in **`src/constants/bawModeGuideConfig.ts`**; removed **`uppercase`** + tightened letter-spacing on the gray line in **`BawModeChrome.tsx`** so mixed case renders correctly. Hub mode label → **build a Wig**.
