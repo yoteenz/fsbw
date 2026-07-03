@@ -113,7 +113,7 @@ export function BawSlayCardFooterButton({
         }}
         data-attribute="baw-slay-card"
       >
-        {busy ? 'GENERATING...' : 'CREATE SLAY CARD'}
+        {busy ? 'GENERATING...' : 'SAVE SLAY CARD'}
       </button>
     </div>
   );

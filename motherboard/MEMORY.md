@@ -33365,3 +33365,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User wanted spacing above the slay card button to match Admin Revenue **VIEW WAITLIST** (10px between stacked page actions via **`PageActionsBelowCard.Spacer`**) and button label **CREATE SLAY CARD** instead of **SAVE SLAY CARD**.
 
 **Changes:** **`build-a-wig/page.tsx`** — **`PageActionsBelowCard.Spacer`** between **VIEW SUBSCRIPTIONS** and slay card button; **`BawSlayCardFooterButton`** label updated.
+
+---
+
+## 2026-07-03 — BAW slay card button label back to SAVE
+
+**Context:** User asked to revert slay card button label from **CREATE SLAY CARD** to **SAVE SLAY CARD**.
+
+**Changes:** **`BawSlayCardFooterButton`** in **`BawViewSubscriptionsFooter.tsx`**.
