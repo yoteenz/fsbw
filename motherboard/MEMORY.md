@@ -34448,3 +34448,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** AI Studio pipeline is timed UI animation (~720ms/step) only; Generate hides form until reset; Prompt Library favorites use ★ toggle per prompt id.
 
+---
+
+## 2026-07-03 — THE STUDIO Asset Library, Publishing Queue, Analytics (demo frontend)
+
+**Context:** Continuation of THE STUDIO (prior milestones frozen). User requested three modules: **Asset Library** (11 searchable categories), **Publishing Queue** (weekly calendar, drag-and-drop scheduling, 5 statuses, no publishing logic), **Analytics** (per-show demo metrics). Premium dark stage UI; no backend.
+
+**Topics covered (full chat arc):**
+- Prior: M1 hub, Shows, Content Packs, AI Studio, Prompt Library.
+- **Asset Library** (`/admin/studio/asset-library`): categories Environment Images, Background Videos, Music, Voice Profiles, Intro/Outro Animations, Transitions, Graphics, Icons, Logos, Brand Elements; search + category filters; 22 demo assets with detail panel.
+- **Publishing Queue** (`/admin/studio/publishing-queue`): week Jun 30–Jul 6 2026; 8 demo items; statuses Draft/Scheduled/Published/Needs Review/Failed; HTML5 drag-and-drop between day columns; status dropdown per card; localStorage `adminStudioPublishingQueue_v1`.
+- **Analytics** (`/admin/studio/analytics`): per-show selector (all 8 shows); Views, Watch Time, Completion Rate, CTR, Email Opens, Membership Conversions, Products Purchased, Top Episodes, Trending Topics, Most Popular Content — demo data in `adminStudioAnalyticsDemo.ts`.
+
+**Decisions / outcomes:** Reused `AdminStudioStageShell`; new components `AdminStudioAssetCard`, `AdminStudioQueueCard`, `AdminStudioMetricTile`, `AdminStudioRankedList`. Routes before `studio/:sectionId`; `BUILT_SECTIONS` extended. Build verified.
+
+**Changes:** `adminStudioAssetLibraryDemo.ts`, `adminStudioPublishingQueueDemo.ts`, `adminStudioAnalyticsDemo.ts`, hooks, components, `asset-library/page.tsx`, `publishing-queue/page.tsx`, `analytics/page.tsx`, `App.tsx`, `section/page.tsx`.
+
+**Conventions:** Queue drag sets non-published items to Scheduled on day move; Thursday highlighted as “today” in demo week; analytics read-only demo — no API wiring yet.
+
