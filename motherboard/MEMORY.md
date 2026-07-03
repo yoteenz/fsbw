@@ -33764,8 +33764,6 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
----
-
 ## 2026-07-03 — Vercel deploy log fixes (ce3ab09 era errors)
 
 **Context:** User pasted Vercel build log from commit **ce3ab09** showing prebuild `fix_encoding.py` SyntaxError (null bytes), API TS errors (`emailHeroPrompts` duplicates, `send-email` path, `profile` types), and Edge Function **stripe/webhook** blocked by **heroManifest** importing **node:fs**.
@@ -33792,18 +33790,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-## 2026-07-03 — Email template debug editor (copy, typography, batch styles)
-
-**Context:** User wanted **`/tools/email-templates`** to support editing text, font type/size/color, repositioning (padding), saving with correct preview updates, plus **batch/mass edit** so all templates follow the same font guidelines. Prior work in this chat also fixed slay-card debug layout, Fal email heroes, and Vercel build errors.
-
-**Architecture:**
-- **`api/_lib/email/emailLayoutConfig.ts`** — layer types (`brandHeader`, `scriptAccent`, `headline`, `hero`, `body`, `dataRowLabel`, `dataRowValue`, `cta`, `supportFooter`, `supportCta`, `tagline`, `closing`), default styles, coercion/merge helpers.
-- **`api/_lib/email/emailLayoutConfigStore.ts`** — loads persisted store from Supabase **`app_config`** key **`email_layout_debug`** (60s cache); production sends use this.
-- **`layout.ts`** + **`renderTemplate.ts`** — accept optional **`layoutDebug`** store; global layer styles drive inline CSS; per-template **`templates[type]`** copy overrides (script accent, headline, body paragraphs, subject, CTA, tagline, closing, support footer). **`renderEmailWordmark(brandStyle)`** keeps SLAYER image wordmark while **`brandHeader`** layer controls FRONTAL typography/padding.
-- **`api/admin/email-layout-config.ts`** — admin **GET/PUT** for cross-device sync (same pattern as special-offer config).
-- **`api/email/send.ts`** — preview accepts **`layoutDebug`** in POST body; **`sendEmail`** uses **`renderEmailTemplateWithPersistedLayout`** for live sends.
-- **`api/email/templates.ts`** — returns **`templateDefaults`** from registry for editor placeholders.
-- **`src/utils/emailLayoutDebug.ts`** — localStorage + client mirror of config types, batch brand typography preset, patch/reset helpers.
-- **`src/pages/tools/email-templates/page.tsx`** — three editor tabs: **Copy** (per-template), **Styles** (global layers with font/color/padding), **Batch** (apply brand preset to all, reset all global styles). Save syncs localStorage + **`PUT /api/admin/email-layout-config`**. Preview auto-refreshes on store changes.
-
 **Conventions:** Global styles = batch typography/design for **all** templates; per-template copy overrides stored under **`templates[templateType]`**. Bohemy tagline stays lowercase; Futura layers uppercase. Repositioning = **padding** on email table cells (not absolute positioning). Production transactional emails honor saved server config after sync.
+
+---
+
+## 2026-07-03 — BLANCO view mode: noir thumbs + stale try selections
+
+**Context:** User reported **BLANCO view mode** (`/build-a-wig/try/blanco`) showing **NOIR mannequin thumbnails** (grey heads) instead of BLANCO assets, and **stale sub-page selections** (cap/length/density/lace/texture/color/hairline/styling/add-ons) leaking from prior member customize or other unit sessions.
+
+**Root causes:**
+1. **Thumbnails:** **`BawNoirWigPreviewHeroThumbs`** hub framing used raw **`location.pathname`** — **`/build-a-wig/try/blanco`** did not match **`isBawProductHubThumbPathname`** (only **`/build-a-wig/blanco`**) → wrong thumb layout/brick stack. Hub **`baseWigViewsForHub`** duplicated pathname logic instead of shared resolver.
+2. **Stale selections:** Try-hub route effect **skipped** localStorage reset on **`isBawTryHubLandingPath`**; the fallback **else** branch then **loaded all global `selected*` / draft keys** from prior flows. Keys are **not unit-scoped**.
+
+**Fixes:**
+- **`buildAWigRoutes.ts`** — exported **`isBawProductHubThumbPathname`** mapping try URLs via **`resolveBuildAWigTryPathToHubPath`**.
+- **`BawNoirWigPreviewHeroThumbs`** — hub + noir-hub-like thumb checks use mapped hub path.
+- **`build-a-wig/page.tsx`** — **`baseWigViewsForHub`** → **`getBawSubpageStaticWigViews(bawPathname, hairline)`** (same as sub-pages).
+- **`bawTryUnitSelection.ts`** — **`clearBawSelectionStorage`**, **`resetBawTryHubSelections`**, **`shouldResetBawTryHubSelections`**; try hub landing without **`comingFromSubPage`** clears **`selected*` + customize/edit drafts** and applies **unit defaults** (BLANCO → 250% / PLATINUM, etc.). Returning from sub-page still loads saved picks via **`comingFromSubPage`**.
+
+**Changes:** **`bawTryUnitSelection.ts`**, **`buildAWigRoutes.ts`**, **`BawNoirWigPreviewFrames.tsx`**, **`build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Conventions:** Try view-mode hub = fresh unit defaults on each hub entry unless **`comingFromSubPage`**; hero/thumb assets always via **`getBawSubpageStaticWigViews`** / mapped hub path — never raw try pathname checks alone.

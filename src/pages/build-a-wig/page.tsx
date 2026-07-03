@@ -51,6 +51,11 @@ import {
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname, pathnameIncludesBawProductSlug, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
+import { getBawSubpageStaticWigViews } from '../../utils/bawSubpageWigViews';
+import {
+  resetBawTryHubSelections,
+  shouldResetBawTryHubSelections,
+} from '../../utils/bawTryUnitSelection';
 import { BAW_TUTORIAL_ROUTE, getBawTryFlowBasePath, getBawTryOptionSubPagePath, isBawTryHubLandingPath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
@@ -1962,10 +1967,19 @@ export default function BuildAWigPage() {
         localStorage.removeItem('selectedAddOnsPrice');
       }
       
-      // If NOT coming from sub-page AND not in edit mode, clear localStorage and set defaults
-      // CRITICAL: Only clear if truly NOT coming from sub-page (comingFromSubPage must be explicitly false/undefined)
-      // Try-hub keeps sub-page selections in localStorage for SAVE SLAY CARD even without comingFromSubPage.
-      if (!comingFromSubPage && !isEditMode && !isBawTryHubLandingPath(rawPathname)) {
+      // If NOT coming from sub-page AND not in edit mode, clear localStorage and set defaults.
+      // Try-hub: reset when unit slug changes or on first entry (not when returning from a sub-page).
+      const tryHubNeedsReset = shouldResetBawTryHubSelections(rawPathname);
+      if (!comingFromSubPage && !isEditMode && (!isBawTryHubLandingPath(rawPathname) || tryHubNeedsReset)) {
+        if (tryHubNeedsReset) {
+          const defaults = resetBawTryHubSelections(rawPathname);
+          setCustomization(defaults);
+          setRefreshTrigger((prev) => prev + 1);
+          sessionStorage.removeItem('comingFromSubPage');
+          setTimeout(() => {
+            isLoadingFromStorage.current = false;
+          }, 100);
+        } else {
         // Clear localStorage to ensure defaults
         localStorage.removeItem('selectedCapSize');
         localStorage.removeItem('selectedLength');
@@ -2034,6 +2048,7 @@ export default function BuildAWigPage() {
         setTimeout(() => {
           isLoadingFromStorage.current = false;
         }, 100);
+        }
       } else {
         // Coming from sub-page: load from localStorage
         
@@ -3159,69 +3174,10 @@ export default function BuildAWigPage() {
     return colorMap[selectedColor] || (isBlancoRoute ? '#F6F3D2' : '#160604');
   };
 
-  // Get wig views based on selected hairline from customization state
-  // Use useMemo to recalculate when customization.hairline changes or route changes
-  const baseWigViewsForHub = useMemo(() => {
-    const pathname = bawPathname;
-    
-    // Check if we're in product-specific routes (main, customize, edit)
-    if (pathname.startsWith('/build-a-wig/blanco')) {
-      return [
-        '/assets/2D BLANCO LEFT.png',
-        '/assets/2D BLANCO FRONT.png',
-        '/assets/2D BLANCO RIGHT.png'
-      ];
-    }
-    
-    if (pathname.startsWith('/build-a-wig/soft-wave')) {
-      return [
-        '/assets/2D WAVY LEFT.png',
-        '/assets/2D WAVY FRONT.png',
-        '/assets/2D WAVY RIGHT.png'
-      ];
-    }
-    
-    if (pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/ocean-curl')) {
-      return [
-        '/assets/2D CURLY LEFT.png',
-        '/assets/2D CURLY FRONT.png',
-        '/assets/2D CURLY RIGHT.png'
-      ];
-    }
-    
-    if (pathname.startsWith('/build-a-wig/beach-wave')) {
-      return [
-        '/assets/2D WAVY LEFT.png',
-        '/assets/2D WAVY FRONT.png',
-        '/assets/2D WAVY RIGHT.png'
-      ];
-    }
-    
-    if (pathname.startsWith('/build-a-wig/noir')) {
-      // Noir uses hairline-based views, handled below
-    }
-    
-    // Use the hairline from customization state instead of localStorage
-    const selectedHairline = customization.hairline || 'NATURAL';
-    const hasPeak = selectedHairline.includes('PEAK');
-    const hasLagos = selectedHairline.includes('LAGOS');
-    
-    if (hasPeak) {
-      return [
-        '/assets/peak left.png',
-        '/assets/peak front.png', 
-        '/assets/peak right.png'
-      ];
-    } else if (hasLagos) {
-      return [
-        '/assets/lagos left.png',
-        '/assets/lagos front.png',
-        '/assets/lagos right.png'
-      ];
-    } else {
-      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
-    }
-  }, [customization.hairline, bawPathname]);
+  const baseWigViewsForHub = useMemo(
+    () => getBawSubpageStaticWigViews(bawPathname, customization.hairline || 'NATURAL'),
+    [customization.hairline, bawPathname],
+  );
 
   const hubLiveNoirWigViews = useMemo(() => {
     const pathname = bawPathname;

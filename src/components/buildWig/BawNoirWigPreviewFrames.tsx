@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { isBawProductHubThumbPathname, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 import {
   isNoirNaturalFrontMannequinSrc,
@@ -8,31 +9,6 @@ import {
   NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
   scaleNoirFrontMannequinDisplayPx,
 } from '../../utils/bawStaticMannequinReferencePaths';
-
-const BAW_PRODUCT_HUB_UNITS = [
-  'noir',
-  'blanco',
-  'soft-wave',
-  'beach-wave',
-  'soft-curl',
-  'ocean-curl',
-] as const;
-
-/**
- * Main BAW product hub routes — thumbnails use **outer** `.leaf-bg` (Readdy art) **plus** the static mannequin `<img>`
- * (`/assets/` naturals) so the figure stays visible even if `.leaf-bg` stacks incorrectly. Inner CSS brick stays off on hub.
- * Includes **`/build-a-wig/noir/customize`** and **`.../edit`** hub landing pages (not **`.../customize/color`** etc.).
- * Sub-routes: inner brick + `<img>`, no `.leaf-bg` (reverse).
- */
-function isBawProductHubThumbPathname(pathname: string): boolean {
-  const p = pathname.replace(/\/$/, '') || '/';
-  if (p === '/build-a-wig') return true;
-  for (const u of BAW_PRODUCT_HUB_UNITS) {
-    const base = `/build-a-wig/${u}`;
-    if (p === base || p === `${base}/customize` || p === `${base}/edit`) return true;
-  }
-  return false;
-}
 
 /** NOIR customize/edit sub-steps that share hub hero + thumb framing (excludes hairline). */
 const BAW_NOIR_HUB_LIKE_CUSTOMIZE_EDIT_STEPS = new Set([
@@ -51,7 +27,7 @@ const BAW_NOIR_HUB_LIKE_CUSTOMIZE_EDIT_STEPS = new Set([
  * Includes product hub landings plus the eight customize/edit steps — **not** hairline.
  */
 function isBawNoirHubLikeThumbPathname(pathname: string): boolean {
-  const p = pathname.replace(/\/$/, '') || '/';
+  const p = resolveBuildAWigTryPathToHubPath(pathname).replace(/\/$/, '') || '/';
   if (p === '/build-a-wig/noir' || p === '/build-a-wig/noir/customize' || p === '/build-a-wig/noir/edit') {
     return true;
   }

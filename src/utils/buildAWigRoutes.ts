@@ -148,6 +148,29 @@ export function getBuildAWigCustomizePathFromHub(pathname: string): string {
   return getBuildAWigCustomizePathForMenu(base);
 }
 
+const BAW_PRODUCT_HUB_UNITS = [
+  'noir',
+  'blanco',
+  'soft-wave',
+  'beach-wave',
+  'soft-curl',
+  'ocean-curl',
+] as const;
+
+/**
+ * Main BAW product hub routes for hero/thumb framing — includes guest try hub URLs
+ * (`/build-a-wig/try/blanco` → `/build-a-wig/blanco`).
+ */
+export function isBawProductHubThumbPathname(pathname: string): boolean {
+  const p = resolveBuildAWigTryPathToHubPath(pathname).replace(/\/$/, '') || '/';
+  if (p === '/build-a-wig') return true;
+  for (const u of BAW_PRODUCT_HUB_UNITS) {
+    const base = `/build-a-wig/${u}`;
+    if (p === base || p === `${base}/customize` || p === `${base}/edit`) return true;
+  }
+  return false;
+}
+
 /** True for customize, edit, try hub, or try option routes for a product slug. */
 export function pathnameIncludesBawProductSlug(pathname: string, unitSlug: string): boolean {
   if (pathname.includes(`/build-a-wig/${unitSlug}/`)) return true;
