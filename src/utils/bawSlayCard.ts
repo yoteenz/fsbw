@@ -3,7 +3,28 @@ import {
   BAW_TUTORIAL_DEFAULT_SELECTIONS,
   resolveBawTutorialUnitLabelFromPathname,
 } from '../constants/bawTutorialConfig';
-import { NOIR_NATURAL_FRONT_MANNEQUIN_SRC } from './bawStaticMannequinReferencePaths';
+import {
+  bawStaticMannequinFrontReferencePathFromUnitAndHairline,
+  NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
+  isNoirNaturalFrontMannequinSrc,
+} from './bawStaticMannequinReferencePaths';
+
+export const BAW_SLAY_CARD_TEMPLATE_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/00C5D5BE-1F40-4974-A2DF-F02616BD231B.png';
+
+const SLAY_CARD_WIDTH = 1122;
+const SLAY_CARD_HEIGHT = 1402;
+
+/** Tuned to the stock template display case + bottom plaque. */
+const MANNEQUIN_BOX = { x: 252, y: 292, w: 618, h: 748 };
+const HEADER = { centerX: SLAY_CARD_WIDTH / 2, frontalY: 118, slayerY: 170, subtitleY: 218 };
+const TEXT_PANEL = {
+  centerX: SLAY_CARD_WIDTH / 2,
+  unitY: 1146,
+  specsStartY: 1194,
+  lineHeight: 34,
+  footerY: 1334,
+};
 
 export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTutorialSelections {
   const unit = resolveBawTutorialUnitLabelFromPathname(pathname);
@@ -54,54 +75,76 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+async function ensureCanvasFontsReady(): Promise<void> {
+  try {
+    if (typeof document !== 'undefined' && document.fonts?.ready) {
+      await document.fonts.ready;
+    }
+  } catch {
+    /* optional */
+  }
+}
+
+function drawMannequinInBox(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  box: typeof MANNEQUIN_BOX,
+  extraScale = 1
+): void {
+  const scale = Math.min(box.w / img.width, box.h / img.height) * extraScale;
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  const dx = box.x + (box.w - dw) / 2;
+  const dy = box.y + (box.h - dh) / 2;
+  ctx.drawImage(img, dx, dy, dw, dh);
+}
+
 export async function renderBawSlayCardPng(selections: BawTutorialSelections): Promise<Blob> {
   const canvas = document.createElement('canvas');
-  const w = 1080;
-  const h = 1350;
-  canvas.width = w;
-  canvas.height = h;
+  canvas.width = SLAY_CARD_WIDTH;
+  canvas.height = SLAY_CARD_HEIGHT;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas not supported');
 
-  ctx.fillStyle = '#FAFAFA';
-  ctx.fillRect(0, 0, w, h);
+  await ensureCanvasFontsReady();
+
+  const template = await loadImage(BAW_SLAY_CARD_TEMPLATE_SRC);
+  ctx.drawImage(template, 0, 0, SLAY_CARD_WIDTH, SLAY_CARD_HEIGHT);
+
+  const hairline =
+    localStorage.getItem('selectedHairline') ||
+    localStorage.getItem('customizeSelectedHairline') ||
+    'NATURAL';
+  const mannequinSrc = bawStaticMannequinFrontReferencePathFromUnitAndHairline(
+    selections.unit,
+    hairline
+  );
+  const noirFrontScale = isNoirNaturalFrontMannequinSrc(mannequinSrc)
+    ? NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE
+    : 1;
 
   try {
-    const marble = await loadImage('/assets/marble-half.png');
-    ctx.globalAlpha = 0.55;
-    ctx.drawImage(marble, 0, 0, w, h);
-    ctx.globalAlpha = 1;
+    const mannequin = await loadImage(mannequinSrc);
+    drawMannequinInBox(ctx, mannequin, MANNEQUIN_BOX, noirFrontScale);
   } catch {
-    /* marble optional */
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.fillRect(MANNEQUIN_BOX.x, MANNEQUIN_BOX.y, MANNEQUIN_BOX.w, MANNEQUIN_BOX.h);
   }
-
-  ctx.strokeStyle = '#000000';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(48, 48, w - 96, h - 96);
 
   ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+
   ctx.fillStyle = '#1A1A1A';
-  ctx.font = '600 44px Futura, "Futura PT Medium", sans-serif';
-  ctx.fillText('FRONTAL', w / 2, 130);
+  ctx.font = '600 46px "Futura PT Demi", Futura, "Futura PT Medium", sans-serif';
+  ctx.fillText('FRONTAL', HEADER.centerX, HEADER.frontalY);
   ctx.fillStyle = '#EB1C24';
-  ctx.fillText('SLAYER', w / 2, 182);
+  ctx.fillText('SLAYER', HEADER.centerX, HEADER.slayerY);
 
-  ctx.fillStyle = '#808080';
-  ctx.font = '500 28px Futura, "Futura PT Book", sans-serif';
-  ctx.fillText('SLAY CARD — BUILD-A-WIG VIEW', w / 2, 230);
+  ctx.fillStyle = '#1A1A1A';
+  ctx.font = '500 28px "Futura PT Book", Futura, sans-serif';
+  ctx.fillText('SLAY CARD — BUILD-A-WIG VIEW', HEADER.centerX, HEADER.subtitleY);
 
-  try {
-    const mannequin = await loadImage(NOIR_NATURAL_FRONT_MANNEQUIN_SRC);
-    const imgW = 520;
-    const imgH = (mannequin.height / mannequin.width) * imgW;
-    ctx.drawImage(mannequin, (w - imgW) / 2, 280, imgW, imgH);
-  } catch {
-    ctx.fillStyle = '#E5E5E5';
-    ctx.fillRect((w - 520) / 2, 280, 520, 680);
-  }
-
-  const lines = [
-    selections.unit.toUpperCase(),
+  const specLines = [
     `LENGTH ${selections.length}`,
     `DENSITY ${selections.density}`,
     `COLOR ${selections.color}`,
@@ -109,22 +152,21 @@ export async function renderBawSlayCardPng(selections: BawTutorialSelections): P
     `CAP ${selections.capSize}`,
   ];
 
-  let y = 1020;
   ctx.fillStyle = '#EB1C24';
-  ctx.font = '600 36px "Covered By Your Grace", cursive';
-  ctx.fillText(selections.unit.toUpperCase(), w / 2, y);
-  y += 52;
+  ctx.font = '600 40px "Covered By Your Grace", cursive';
+  ctx.fillText(selections.unit.toUpperCase(), TEXT_PANEL.centerX, TEXT_PANEL.unitY);
 
   ctx.fillStyle = '#1A1A1A';
-  ctx.font = '500 26px Futura, "Futura PT Medium", sans-serif';
-  for (const line of lines.slice(1)) {
-    ctx.fillText(line, w / 2, y);
-    y += 40;
+  ctx.font = '500 27px "Futura PT Medium", Futura, sans-serif';
+  let y = TEXT_PANEL.specsStartY;
+  for (const line of specLines) {
+    ctx.fillText(line.toUpperCase(), TEXT_PANEL.centerX, y);
+    y += TEXT_PANEL.lineHeight;
   }
 
   ctx.fillStyle = '#808080';
-  ctx.font = '400 22px Futura, "Futura PT Book", sans-serif';
-  ctx.fillText('TRY THE FULL BUILDER WITH MEMBERSHIP', w / 2, h - 88);
+  ctx.font = '400 22px "Futura PT Book", Futura, sans-serif';
+  ctx.fillText('TRY THE FULL BUILDER WITH MEMBERSHIP', TEXT_PANEL.centerX, TEXT_PANEL.footerY);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
