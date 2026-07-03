@@ -1,7 +1,10 @@
 export const BAW_SLAY_CARD_TEMPLATE_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/00C5D5BE-1F40-4974-A2DF-F02616BD231B.png';
 
-export const BAW_SLAY_CARD_LAYOUT_DEBUG_KEY = 'baw_slay_card_layout_debug_v1';
+export const BAW_SLAY_CARD_SLAYER_LOGO_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/IMG_4820.png';
+
+export const BAW_SLAY_CARD_LAYOUT_DEBUG_KEY = 'baw_slay_card_layout_debug_v2';
 
 export type BawSlayCardTextStyle = {
   x: number;
@@ -19,13 +22,16 @@ export type BawSlayCardMannequinLayout = {
   height: number;
 };
 
+export type BawSlayCardImageLayout = BawSlayCardMannequinLayout;
+
 export type BawSlayCardLayout = {
   canvasWidth: number;
   canvasHeight: number;
   mannequin: BawSlayCardMannequinLayout;
   header: {
     frontal: BawSlayCardTextStyle;
-    slayer: BawSlayCardTextStyle;
+    /** Red SLAYER wordmark image — below FRONTAL. */
+    slayerLogo: BawSlayCardImageLayout;
     subtitle: BawSlayCardTextStyle;
   };
   textPanel: {
@@ -53,17 +59,15 @@ export const DEFAULT_BAW_SLAY_CARD_LAYOUT: BawSlayCardLayout = {
       fontFamily: '"Futura PT Demi", Futura, "Futura PT Medium", sans-serif',
       fontWeight: 600,
     },
-    slayer: {
-      x: 561,
-      y: 170,
-      color: '#EB1C24',
-      fontSize: 46,
-      fontFamily: '"Futura PT Demi", Futura, "Futura PT Medium", sans-serif',
-      fontWeight: 600,
+    slayerLogo: {
+      x: 411,
+      y: 128,
+      width: 300,
+      height: 200,
     },
     subtitle: {
       x: 561,
-      y: 218,
+      y: 340,
       color: '#1A1A1A',
       fontSize: 28,
       fontFamily: '"Futura PT Book", Futura, sans-serif',

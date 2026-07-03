@@ -33400,3 +33400,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`bawSlayCardLayout.ts`** — **`DEFAULT_BAW_SLAY_CARD_LAYOUT`**, localStorage save/load (`baw_slay_card_layout_debug_v1`)
 - **`bawSlayCard.ts`** — **`paintBawSlayCard`**, layout-driven render; **`computeBawSlayCardMannequinDrawBounds`**
 - **`/tools/slay-card-debug`** — live canvas preview, layer picker, numeric/color/font controls, drag-to-move mannequin + text, scroll-wheel resize mannequin box, guide outlines, Copy JSON, Reset, Download PNG; auto-saves layout to localStorage
+
+---
+
+## 2026-07-03 — BAW slay card SLAYER logo image
+
+**Context:** User asked to replace red **SLAYER** text with stock image **IMG_4820.png** below black **FRONTAL** text on slay card.
+
+**Changes:** **`BAW_SLAY_CARD_SLAYER_LOGO_SRC`**; layout **`header.slayerLogo`** (image rect) replaces **`header.slayer`** text; **`paintBawSlayCard`** draws logo image; subtitle default Y moved to **340**; debug page **SLAYER logo** layer controls; layout debug key **v2**.

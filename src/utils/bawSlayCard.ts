@@ -9,13 +9,14 @@ import {
   isNoirNaturalFrontMannequinSrc,
 } from './bawStaticMannequinReferencePaths';
 import {
+  BAW_SLAY_CARD_SLAYER_LOGO_SRC,
   BAW_SLAY_CARD_TEMPLATE_SRC,
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
   type BawSlayCardLayout,
   type BawSlayCardTextStyle,
 } from './bawSlayCardLayout';
 
-export { BAW_SLAY_CARD_TEMPLATE_SRC } from './bawSlayCardLayout';
+export { BAW_SLAY_CARD_TEMPLATE_SRC, BAW_SLAY_CARD_SLAYER_LOGO_SRC } from './bawSlayCardLayout';
 export type { BawSlayCardLayout } from './bawSlayCardLayout';
 
 export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTutorialSelections {
@@ -158,9 +159,15 @@ export async function paintBawSlayCard(
   ctx.font = fontFromStyle(header.frontal);
   ctx.fillText('FRONTAL', header.frontal.x, header.frontal.y);
 
-  ctx.fillStyle = header.slayer.color;
-  ctx.font = fontFromStyle(header.slayer);
-  ctx.fillText('SLAYER', header.slayer.x, header.slayer.y);
+  try {
+    const slayerLogo = await loadImage(BAW_SLAY_CARD_SLAYER_LOGO_SRC);
+    const logo = header.slayerLogo;
+    ctx.drawImage(slayerLogo, logo.x, logo.y, logo.width, logo.height);
+  } catch {
+    ctx.fillStyle = '#EB1C24';
+    ctx.font = '600 46px "Futura PT Demi", Futura, sans-serif';
+    ctx.fillText('SLAYER', header.frontal.x, header.frontal.y + 52);
+  }
 
   ctx.fillStyle = header.subtitle.color;
   ctx.font = fontFromStyle(header.subtitle);

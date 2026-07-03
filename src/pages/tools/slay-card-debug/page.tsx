@@ -18,7 +18,7 @@ const HAIRLINE_OPTIONS = ['NATURAL', 'PEAK', 'LAGOS'] as const;
 type SelectableLayer =
   | 'mannequin'
   | 'frontal'
-  | 'slayer'
+  | 'slayerLogo'
   | 'subtitle'
   | 'unit'
   | 'specs'
@@ -172,6 +172,10 @@ export default function SlayCardDebugPage() {
           result.mannequinBounds.height
         );
       }
+      ctx.strokeStyle = 'rgba(235, 28, 36, 0.9)';
+      ctx.setLineDash([4, 3]);
+      const logo = layout.header.slayerLogo;
+      ctx.strokeRect(logo.x, logo.y, logo.width, logo.height);
       ctx.restore();
     }
   }, [hairline, layout, mannequinSrc, selections, showGuides]);
@@ -197,7 +201,7 @@ export default function SlayCardDebugPage() {
     return () => ro.disconnect();
   }, [layout.canvasWidth, layout.canvasHeight]);
 
-  const updateHeader = (key: keyof BawSlayCardLayout['header'], patch: Partial<BawSlayCardTextStyle>) => {
+  const updateHeaderText = (key: 'frontal' | 'subtitle', patch: Partial<BawSlayCardTextStyle>) => {
     setLayout((prev) => ({
       ...prev,
       header: { ...prev.header, [key]: { ...prev.header[key], ...patch } },
@@ -210,6 +214,13 @@ export default function SlayCardDebugPage() {
 
   const updateMannequin = (patch: Partial<BawSlayCardLayout['mannequin']>) => {
     setLayout((prev) => ({ ...prev, mannequin: { ...prev.mannequin, ...patch } }));
+  };
+
+  const updateSlayerLogo = (patch: Partial<BawSlayCardLayout['header']['slayerLogo']>) => {
+    setLayout((prev) => ({
+      ...prev,
+      header: { ...prev.header, slayerLogo: { ...prev.header.slayerLogo, ...patch } },
+    }));
   };
 
   const canvasPointFromClient = (clientX: number, clientY: number) => {
@@ -235,6 +246,14 @@ export default function SlayCardDebugPage() {
       if (inMannequin) layer = 'mannequin';
     }
 
+    const logo = layout.header.slayerLogo;
+    const inSlayerLogo =
+      pt.x >= logo.x &&
+      pt.x <= logo.x + logo.width &&
+      pt.y >= logo.y &&
+      pt.y <= logo.y + logo.height;
+    if (inSlayerLogo) layer = 'slayerLogo';
+
     setSelectedLayer(layer);
     e.currentTarget.setPointerCapture(e.pointerId);
 
@@ -251,9 +270,21 @@ export default function SlayCardDebugPage() {
       return;
     }
 
-    const textOrigins: Record<Exclude<SelectableLayer, 'mannequin' | 'specs'>, { x: number; y: number }> = {
+    if (layer === 'slayerLogo') {
+      dragRef.current = {
+        layer,
+        startX: pt.x,
+        startY: pt.y,
+        originX: logo.x,
+        originY: logo.y,
+        originW: logo.width,
+        originH: logo.height,
+      };
+      return;
+    }
+
+    const textOrigins: Record<Exclude<SelectableLayer, 'mannequin' | 'specs' | 'slayerLogo'>, { x: number; y: number }> = {
       frontal: layout.header.frontal,
-      slayer: layout.header.slayer,
       subtitle: layout.header.subtitle,
       unit: layout.textPanel.unit,
       footer: layout.textPanel.footer,
@@ -285,9 +316,16 @@ export default function SlayCardDebugPage() {
       return;
     }
 
-    if (drag.layer === 'frontal') updateHeader('frontal', { x: drag.originX + dx, y: drag.originY + dy });
-    if (drag.layer === 'slayer') updateHeader('slayer', { x: drag.originX + dx, y: drag.originY + dy });
-    if (drag.layer === 'subtitle') updateHeader('subtitle', { x: drag.originX + dx, y: drag.originY + dy });
+    if (drag.layer === 'slayerLogo') {
+      updateSlayerLogo({
+        x: Math.round(drag.originX + dx),
+        y: Math.round(drag.originY + dy),
+      });
+      return;
+    }
+
+    if (drag.layer === 'frontal') updateHeaderText('frontal', { x: drag.originX + dx, y: drag.originY + dy });
+    if (drag.layer === 'subtitle') updateHeaderText('subtitle', { x: drag.originX + dx, y: drag.originY + dy });
     if (drag.layer === 'unit') {
       setLayout((prev) => ({
         ...prev,
@@ -310,15 +348,29 @@ export default function SlayCardDebugPage() {
   };
 
   const onWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    if (selectedLayer !== 'mannequin') return;
+    if (selectedLayer !== 'mannequin' && selectedLayer !== 'slayerLogo') return;
     e.preventDefault();
     const delta = e.deltaY > 0 ? -12 : 12;
+    if (selectedLayer === 'mannequin') {
+      setLayout((prev) => ({
+        ...prev,
+        mannequin: {
+          ...prev.mannequin,
+          width: Math.max(120, prev.mannequin.width + delta),
+          height: Math.max(120, prev.mannequin.height + delta),
+        },
+      }));
+      return;
+    }
     setLayout((prev) => ({
       ...prev,
-      mannequin: {
-        ...prev.mannequin,
-        width: Math.max(120, prev.mannequin.width + delta),
-        height: Math.max(120, prev.mannequin.height + delta),
+      header: {
+        ...prev.header,
+        slayerLogo: {
+          ...prev.header.slayerLogo,
+          width: Math.max(80, prev.header.slayerLogo.width + delta),
+          height: Math.max(54, prev.header.slayerLogo.height + Math.round(delta * 0.67)),
+        },
       },
     }));
   };
@@ -426,7 +478,7 @@ export default function SlayCardDebugPage() {
             >
               <option value="mannequin">Mannequin box</option>
               <option value="frontal">FRONTAL</option>
-              <option value="slayer">SLAYER</option>
+              <option value="slayerLogo">SLAYER logo image</option>
               <option value="subtitle">Subtitle</option>
               <option value="unit">Unit name</option>
               <option value="specs">Specs block</option>
@@ -452,13 +504,22 @@ export default function SlayCardDebugPage() {
           ) : null}
 
           {selectedLayer === 'frontal' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">FRONTAL</h2><TextStyleFields style={layout.header.frontal} onChange={(p) => updateHeader('frontal', p)} /></section>
+            <section><h2 className="text-[11px] uppercase font-semibold mb-2">FRONTAL</h2><TextStyleFields style={layout.header.frontal} onChange={(p) => updateHeaderText('frontal', p)} /></section>
           ) : null}
-          {selectedLayer === 'slayer' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">SLAYER</h2><TextStyleFields style={layout.header.slayer} onChange={(p) => updateHeader('slayer', p)} /></section>
+          {selectedLayer === 'slayerLogo' ? (
+            <section>
+              <h2 className="text-[11px] uppercase font-semibold mb-2">SLAYER logo</h2>
+              <p className="text-[9px] text-gray-500 mb-2">IMG_4820.png · drag to move · scroll wheel to resize.</p>
+              <div className="grid grid-cols-2 gap-2">
+                <NumberField label="X" value={layout.header.slayerLogo.x} onChange={(x) => updateSlayerLogo({ x })} />
+                <NumberField label="Y" value={layout.header.slayerLogo.y} onChange={(y) => updateSlayerLogo({ y })} />
+                <NumberField label="Width" value={layout.header.slayerLogo.width} onChange={(width) => updateSlayerLogo({ width })} />
+                <NumberField label="Height" value={layout.header.slayerLogo.height} onChange={(height) => updateSlayerLogo({ height })} />
+              </div>
+            </section>
           ) : null}
           {selectedLayer === 'subtitle' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Subtitle</h2><TextStyleFields style={layout.header.subtitle} onChange={(p) => updateHeader('subtitle', p)} /></section>
+            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Subtitle</h2><TextStyleFields style={layout.header.subtitle} onChange={(p) => updateHeaderText('subtitle', p)} /></section>
           ) : null}
           {selectedLayer === 'unit' ? (
             <section><h2 className="text-[11px] uppercase font-semibold mb-2">Unit name</h2><TextStyleFields style={layout.textPanel.unit} onChange={(p) => updateTextPanel({ unit: { ...layout.textPanel.unit, ...p } })} /></section>
