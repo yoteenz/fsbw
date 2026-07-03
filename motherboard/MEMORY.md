@@ -33279,3 +33279,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - Styling page marble **`backgroundRepeat: 'repeat'`** (was **`no-repeat`**, causing bottom clip).
 
 **Files:** **`buildAWigRoutes.ts`**, **`bawTrySubpageRoutes.ts`**, **`bawUnitStylingOptions.ts`**, hub + 9 sub-pages, **`BawViewSubscriptionsFooter.tsx`**, **`BuildWigCustomizeEditAccessGate.tsx`**.
+
+---
+
+## 2026-07-03 — BAW try BUILD GUIDE intro copy (explore wording)
+
+**Context:** User asked to update try-mode BUILD GUIDE body to **TRY THIS FEATURE FREE OF CHARGE AND EXPLORE A FEW CUSTOMIZATION OPTIONS.**
+
+**Changes:** **`bawModeGuideConfig.ts`** (`MODE_INTRO_OVERRIDES.TRY`) and **`bawTutorialConfig.ts`** (`BAW_TUTORIAL_GUIDE_COPY.intro`).

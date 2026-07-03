@@ -83,7 +83,7 @@ const STEP_COPY: Record<BawGuideStepId, GuideCopy> = {
 const MODE_INTRO_OVERRIDES: Partial<Record<BawBuildMode, GuideCopy>> = {
   TRY: {
     title: 'WELCOME TO BUILD-A-WIG',
-    body: 'TEST THIS FEATURE FREE OF CHARGE AND TRY A FEW CUSTOMIZATION OPTIONS.',
+    body: 'TRY THIS FEATURE FREE OF CHARGE AND EXPLORE A FEW CUSTOMIZATION OPTIONS.',
   },
   CUSTOMIZE: {
     title: 'CUSTOMIZE YOUR UNIT',
