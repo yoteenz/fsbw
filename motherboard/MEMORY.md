@@ -33357,3 +33357,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to change the red BUILD GUIDE title text to **WELCOME TO BUILD-A-WIG!**
 
 **Changes:** Title in **`bawModeGuideConfig.ts`** (`MODE_INTRO_OVERRIDES.TRY`) and **`bawTutorialConfig.ts`** (`BAW_TUTORIAL_GUIDE_COPY.intro`).
+
+---
+
+## 2026-07-03 — BAW slay card button spacing + label
+
+**Context:** User wanted spacing above the slay card button to match Admin Revenue **VIEW WAITLIST** (10px between stacked page actions via **`PageActionsBelowCard.Spacer`**) and button label **CREATE SLAY CARD** instead of **SAVE SLAY CARD**.
+
+**Changes:** **`build-a-wig/page.tsx`** — **`PageActionsBelowCard.Spacer`** between **VIEW SUBSCRIPTIONS** and slay card button; **`BawSlayCardFooterButton`** label updated.

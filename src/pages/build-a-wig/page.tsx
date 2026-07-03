@@ -15,6 +15,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { isBawStandardMemberHubBrowseMode, isBawViewSubscriptionsFooterMode, setBawTryBrowseActive } from '../../utils/bawClientTestMode';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
 import { BawHubStandardMemberFooter, BawSlayCardFooterButton, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
+import { PageActionsBelowCard } from '../../layouts/PageActionsBelowCard';
 import { BawModeChrome } from '../../components/buildWig/BawModeChrome';
 import { BuildWigSubscriptionPageRoot } from '../../components/buildWig/BawSubscriptionViewContext';
 import { BawSubscriptionMainCard } from '../../components/buildWig/BawSubscriptionMainCard';
@@ -5824,7 +5825,10 @@ export default function BuildAWigPage() {
             <>
               <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
               {isBawTryHubLandingPath(rawPathname) ? (
-                <BawSlayCardFooterButton style={{ marginTop: '2px' }} />
+                <>
+                  <PageActionsBelowCard.Spacer />
+                  <BawSlayCardFooterButton />
+                </>
               ) : null}
             </>
           ) : isBawStandardMemberHubBrowseMode(rawPathname) ? (
