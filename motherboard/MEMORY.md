@@ -33349,3 +33349,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:**
 - **`isBawTryOptionSubPagePath`** in `bawTutorialConfig.ts`
 - **`BawSubpageFooterAction`**: on try option sub-pages in view-subscriptions mode, **SAVE SELECTION** calls existing **`onConfirm`** (same persist + return-to-hub as CONFIRM SELECTION); non-try guest sub-pages unchanged (**VIEW SUBSCRIPTIONS**).
+
+---
+
+## 2026-07-03 — BAW view-mode BUILD GUIDE title exclamation
+
+**Context:** User asked to change the red BUILD GUIDE title text to **WELCOME TO BUILD-A-WIG!**
+
+**Changes:** Title in **`bawModeGuideConfig.ts`** (`MODE_INTRO_OVERRIDES.TRY`) and **`bawTutorialConfig.ts`** (`BAW_TUTORIAL_GUIDE_COPY.intro`).
