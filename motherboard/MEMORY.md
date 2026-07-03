@@ -33287,3 +33287,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to update try-mode BUILD GUIDE body to **TRY THIS FEATURE FREE OF CHARGE AND EXPLORE A FEW CUSTOMIZATION OPTIONS.**
 
 **Changes:** **`bawModeGuideConfig.ts`** (`MODE_INTRO_OVERRIDES.TRY`) and **`bawTutorialConfig.ts`** (`BAW_TUTORIAL_GUIDE_COPY.intro`).
+
+---
+
+## 2026-07-03 — BAW try BUILD GUIDE intro copy (our customization)
+
+**Context:** User asked to update try-mode BUILD GUIDE body to **TRY THIS FEATURE FREE OF CHARGE AND EXPLORE OUR CUSTOMIZATION OPTIONS.**
+
+**Changes:** Same intro strings in **`bawModeGuideConfig.ts`** and **`bawTutorialConfig.ts`**.

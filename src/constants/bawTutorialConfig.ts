@@ -40,7 +40,7 @@ export const BAW_TUTORIAL_OPTIONS = {
 export const BAW_TUTORIAL_GUIDE_COPY: Record<BawTutorialStepId, { title: string; body: string }> = {
   intro: {
     title: 'WELCOME TO BUILD-A-WIG',
-    body: 'TRY THIS FEATURE FREE OF CHARGE AND EXPLORE A FEW CUSTOMIZATION OPTIONS.',
+    body: 'TRY THIS FEATURE FREE OF CHARGE AND EXPLORE OUR CUSTOMIZATION OPTIONS.',
   },
   length: {
     title: 'PICK YOUR LENGTH',
