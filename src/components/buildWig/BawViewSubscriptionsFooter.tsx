@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
+import { isBawTryOptionSubPagePath } from '../../constants/bawTutorialConfig';
 import { isBawViewSubscriptionsFooterMode } from '../../utils/bawClientTestMode';
 import { getBuildAWigCustomizePathFromHub, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
 import { trackActivity } from '../../utils/activity';
@@ -181,7 +182,7 @@ type BawSubpageFooterActionProps = {
   buttonClassName?: string;
 };
 
-/** Sub-page footer: CONFIRM SELECTION for members; VIEW SUBSCRIPTIONS for guests or standard on premium steps. */
+/** Sub-page footer: CONFIRM SELECTION for members; SAVE SELECTION on view-mode try sub-pages; VIEW SUBSCRIPTIONS elsewhere for guests. */
 export function BawSubpageFooterAction({
   onConfirm,
   hidden = false,
@@ -192,8 +193,28 @@ export function BawSubpageFooterAction({
 }: BawSubpageFooterActionProps) {
   const { pathname } = useLocation();
   const viewSubscriptionsMode = isBawViewSubscriptionsFooterMode(pathname);
+  const viewModeSaveSelection = viewSubscriptionsMode && isBawTryOptionSubPagePath(pathname);
 
   if (hidden) return null;
+
+  if (viewModeSaveSelection) {
+    return (
+      <div className={wrapperClassName} style={wrapperStyle}>
+        <button
+          type="button"
+          onClick={onConfirm}
+          className={`border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50 ${buttonClassName}`}
+          style={{
+            ...defaultButtonStyle,
+            width: buttonWidth,
+          }}
+          data-attribute="baw-view-save-selection"
+        >
+          SAVE SELECTION
+        </button>
+      </div>
+    );
+  }
 
   if (viewSubscriptionsMode) {
     return (

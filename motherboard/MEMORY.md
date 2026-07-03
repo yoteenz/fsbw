@@ -33339,3 +33339,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to update view-mode BUILD GUIDE intro body to mention no sign-in and the shareable slay card.
 
 **Changes:** Intro body in **`bawModeGuideConfig.ts`** (`MODE_INTRO_OVERRIDES.TRY`) and **`bawTutorialConfig.ts`** (`BAW_TUTORIAL_GUIDE_COPY.intro`) → **TRY THIS FEATURE FREE OF CHARGE AND EXPLORE OUR CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED. FINISH WITH A SHAREABLE SLAY CARD.**
+
+---
+
+## 2026-07-03 — BAW view-mode sub-pages SAVE SELECTION footer
+
+**Context:** User wanted view-mode (`/build-a-wig/try/…`) **option sub-pages only** to show **SAVE SELECTION** instead of **VIEW SUBSCRIPTIONS**, persisting picks to hub `selected*` keys (for slay card) while hub still shows **VIEW SUBSCRIPTIONS** + **SAVE SLAY CARD** and guests still cannot add to cart.
+
+**Changes:**
+- **`isBawTryOptionSubPagePath`** in `bawTutorialConfig.ts`
+- **`BawSubpageFooterAction`**: on try option sub-pages in view-subscriptions mode, **SAVE SELECTION** calls existing **`onConfirm`** (same persist + return-to-hub as CONFIRM SELECTION); non-try guest sub-pages unchanged (**VIEW SUBSCRIPTIONS**).

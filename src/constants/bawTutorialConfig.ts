@@ -130,6 +130,17 @@ export function isBawTutorialPath(pathname: string): boolean {
   return p === BAW_TUTORIAL_ROUTE || p.startsWith(`${BAW_TUTORIAL_ROUTE}/`);
 }
 
+/** View-mode option sub-page — `/build-a-wig/try/{unit}/{step}`, not hub landing. */
+export function isBawTryOptionSubPagePath(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (!isBawTutorialPath(p) || isBawTryHubLandingPath(p)) return false;
+  const prefix = `${BAW_TUTORIAL_ROUTE}/`;
+  if (!p.startsWith(prefix)) return false;
+  const segments = p.slice(prefix.length).split('/').filter(Boolean);
+  if (segments.length < 2) return false;
+  return isBawTryUnitSlug(segments[0]) && isBawTryStepSegment(segments[1]);
+}
+
 /** View-mode hub only — `/build-a-wig/try` or `/build-a-wig/try/{unit}`, not option sub-pages. */
 export function isBawTryHubLandingPath(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
