@@ -39,8 +39,8 @@ export const BAW_TUTORIAL_OPTIONS = {
 /** Generic in-flow guide copy — not PSA / founder branded. */
 export const BAW_TUTORIAL_GUIDE_COPY: Record<BawTutorialStepId, { title: string; body: string }> = {
   intro: {
-    title: 'WELCOME TO THE BUILDER',
-    body: 'TRY A FEW CHOICES FREE — NO SIGN-IN. FINISH WITH A SHAREABLE SLAY CARD.',
+    title: 'WELCOME TO BUILD-A-WIG',
+    body: 'TEST THIS FEATURE AND TRY A FEW CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED.',
   },
   length: {
     title: 'PICK YOUR LENGTH',

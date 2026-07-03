@@ -82,8 +82,8 @@ const STEP_COPY: Record<BawGuideStepId, GuideCopy> = {
 
 const MODE_INTRO_OVERRIDES: Partial<Record<BawBuildMode, GuideCopy>> = {
   TRY: {
-    title: 'WELCOME TO THE BUILDER',
-    body: 'TRY A FEW CHOICES FREE — NO SIGN-IN. FINISH WITH A SHAREABLE SLAY CARD.',
+    title: 'WELCOME TO BUILD-A-WIG',
+    body: 'TEST THIS FEATURE AND TRY A FEW CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED.',
   },
   CUSTOMIZE: {
     title: 'CUSTOMIZE YOUR UNIT',

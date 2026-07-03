@@ -33243,3 +33243,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`build-a-wig/page.tsx`**: **`handleOptionSelect`** navigates to try URLs when on try path; validation allows unit + step segments.
 - **`resolveBawModeBackPath`**: BACK uses try hub URLs.
 - **`pathnameIncludesBawProductSlug`**: sub-pages recognize try URLs for product-specific UI (color, length).
+
+---
+
+## 2026-07-03 — BAW try BUILD GUIDE intro copy
+
+**Context:** User asked try-mode BUILD GUIDE intro to read **WELCOME TO BUILD-A-WIG** (not “welcome to the builder”) with body **TEST THIS FEATURE AND TRY A FEW CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED.**
+
+**Fix:** Updated **`MODE_INTRO_OVERRIDES.TRY`** in **`bawModeGuideConfig.ts`** and matching **`BAW_TUTORIAL_GUIDE_COPY.intro`** in **`bawTutorialConfig.ts`**.
