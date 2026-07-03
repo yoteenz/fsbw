@@ -34506,3 +34506,31 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** New Studio UI should import `ADMIN_STUDIO_THEME` and use light frosted panels — do not reintroduce dark stage backgrounds on built sections.
 
+---
+
+## 2026-07-03 — THE STUDIO Content Brain (brand bible + editorial intelligence)
+
+**Context:** Continuation of THE STUDIO (Milestone 1 frozen — hub cards, dashboard card, placeholder shell untouched). User requested **CONTENT BRAIN** — Frontal Slayer's internal Brand Bible, Show Bible, and Editorial Brain as the single source of truth for all future AI generation. **No OpenAI, FAL, Resend, or any AI provider connections** — intelligence layer only.
+
+**Topics covered (full chat arc):**
+- Prior: M1 hub, Shows, Content Packs, AI Studio, Prompt Library, Asset Library, Publishing Queue, Analytics, Phase 2 stubs, distribution targets, light theme migration.
+- **CONTENT BRAIN hub** (`/admin/studio/content-brain`) with 11 sections: Brand Brain, PSA Personality, Show Bible, Editorial Rules, Prompt Frameworks, Campaign Frameworks, Product Knowledge, CTA Library, Content Engine, Content Calendar, Approval Rules.
+- **Brand Brain:** 14 editable fields (mission, vision, voice, terminology, etc.).
+- **PSA Personality:** 22-field profile — tone, catchphrases, conversation rules, never robotic.
+- **Show Bible:** 8 shows with 22 production fields each (environment, camera, structure, social rules, etc.).
+- **Editorial Rules:** reading level, CTA style, SEO, luxury tone, fact-checking.
+- **Prompt Frameworks:** 11 category templates (video, image, article, email, carousel, pinterest, thumbnail, journal, PSA dialogue, push, voiceover) — search, tags, favorites, version history, restore.
+- **Campaign Frameworks:** 8 blueprints (launch, drop, holiday, membership, reward, affiliate, educational, seasonal).
+- **Product Knowledge:** 6 units (NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL) — searchable, fully editable.
+- **CTA Library:** 10 reusable CTA blocks.
+- **Content Engine:** visual workflow Master Topic → Research → … → Publishing (planning only, no automation).
+- **Content Calendar:** Mon–Fri weekly rhythm (editable).
+- **Approval Rules:** Draft / Needs Review / Approved / Rejected / Scheduled / Published — never auto-publish.
+- **Architecture:** `adminStudioContentBrain*Demo.ts` seeds, `useAdminStudioContentBrainState.ts` hooks, `exportContentBrainSnapshot()`, `contentBrainStudioService` in `STUDIO_SERVICE_REGISTRY` (NOT_CONNECTED for AI query; local snapshot in browser). Entry: AI Studio **OPEN CONTENT BRAIN** button + direct URL. Routes before `studio/:sectionId`.
+
+**Decisions / outcomes:** Light frosted admin aesthetic maintained. All edits persist via new `adminStudioStorage` keys. No content generation. Build verified (`npm run build`).
+
+**Changes:** `adminStudioContentBrainDemo.ts`, `adminStudioContentBrainShowBibleDemo.ts`, `adminStudioContentBrainPromptFrameworksDemo.ts`, `adminStudioContentBrainCampaignsDemo.ts`, `adminStudioContentBrainCatalogDemo.ts`, `useAdminStudioContentBrainState.ts`, Brain UI components, `content-brain/page.tsx`, `content-brain/section/page.tsx`, `services/studio/contentBrain.ts`, `adminStudioRoutes.ts`, `App.tsx`, `ai-studio/page.tsx` (link), `adminStudioStorage.ts`.
+
+**Conventions:** Future AI providers must read `exportContentBrainSnapshot()` / `contentBrainStudioService.getSnapshot()` before generation; all outputs start Draft per Approval Rules; Content Brain not on M1 hub cards — navigate via AI Studio or `/admin/studio/content-brain`.
+

@@ -22,6 +22,9 @@ export type { ScheduleSlotInput, ScheduleSlotOutput } from './scheduling';
 export { distributionStudioService } from './distribution';
 export type { DistributionDispatchInput, DistributionDispatchOutput } from './distribution';
 
+export { contentBrainStudioService } from './contentBrain';
+export type { ContentBrainQueryInput, ContentBrainQueryOutput } from './contentBrain';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -29,10 +32,12 @@ import { psaKnowledgeStudioService } from './psaKnowledge';
 import { publishingStudioService } from './publishing';
 import { schedulingStudioService } from './scheduling';
 import { distributionStudioService } from './distribution';
+import { contentBrainStudioService } from './contentBrain';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
 export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
+  contentBrainStudioService,
   openaiStudioService,
   falStudioService,
   resendStudioService,

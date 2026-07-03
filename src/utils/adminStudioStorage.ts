@@ -7,6 +7,18 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   aiForm: 'adminStudioAiForm_v1',
   promptLibrary: 'adminStudioPromptLibrary_v1',
   promptFavorites: 'adminStudioPromptFavorites_v1',
+  contentBrainBrand: 'adminStudioContentBrainBrand_v1',
+  contentBrainPsa: 'adminStudioContentBrainPsa_v1',
+  contentBrainShowBible: 'adminStudioContentBrainShowBible_v1',
+  contentBrainEditorial: 'adminStudioContentBrainEditorial_v1',
+  contentBrainPromptFrameworks: 'adminStudioContentBrainPromptFrameworks_v1',
+  contentBrainPromptFavorites: 'adminStudioContentBrainPromptFavorites_v1',
+  contentBrainCampaigns: 'adminStudioContentBrainCampaigns_v1',
+  contentBrainProducts: 'adminStudioContentBrainProducts_v1',
+  contentBrainCtas: 'adminStudioContentBrainCtas_v1',
+  contentBrainEngine: 'adminStudioContentBrainEngine_v1',
+  contentBrainCalendar: 'adminStudioContentBrainCalendar_v1',
+  contentBrainApproval: 'adminStudioContentBrainApproval_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

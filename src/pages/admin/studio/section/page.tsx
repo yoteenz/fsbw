@@ -8,6 +8,9 @@ export default function AdminStudioSectionPage() {
   const { sectionId } = useParams<{ sectionId: string }>();
 
   if (sectionId && ADMIN_STUDIO_BUILT_SECTION_SET.has(sectionId)) {
+    if (sectionId === 'content-brain') {
+      return <Navigate to="/admin/studio/content-brain" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

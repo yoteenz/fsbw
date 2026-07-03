@@ -13,6 +13,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'asset-library'
   | 'publishing-queue'
   | 'analytics'
+  | 'content-brain'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -23,6 +24,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'asset-library',
   'publishing-queue',
   'analytics',
+  'content-brain',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -39,6 +41,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   assetLibrary: 'studio/asset-library',
   publishingQueue: 'studio/publishing-queue',
   analytics: 'studio/analytics',
+  contentBrain: 'studio/content-brain',
+  contentBrainSection: 'studio/content-brain/:sectionId',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 

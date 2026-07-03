@@ -166,6 +166,26 @@ export default function AdminStudioAiStudioPage() {
             </span>
           </button>
 
+          <button
+            type="button"
+            onClick={() => navigate('/admin/studio/content-brain')}
+            className="w-full py-2 mt-3 border bg-white/70 transition-colors hover:bg-white"
+            style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            <span
+              className="text-[9px] font-futura uppercase tracking-wider"
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.accent }}
+            >
+              OPEN CONTENT BRAIN →
+            </span>
+            <span
+              className="block text-[7px] font-futura uppercase mt-0.5"
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
+            >
+              BRAND · SHOW · EDITORIAL INTELLIGENCE FOR ALL FUTURE AI
+            </span>
+          </button>
+
           <AdminStudioDisclaimerFooter>NO AI INTEGRATION · FRONTEND ARCHITECTURE ONLY</AdminStudioDisclaimerFooter>
         </>
       )}

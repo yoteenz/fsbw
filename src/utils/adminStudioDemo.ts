@@ -26,7 +26,8 @@ export type AdminStudioSectionId =
   | 'scheduled'
   | 'analytics'
   | 'calendar'
-  | 'recent-generations';
+  | 'recent-generations'
+  | 'content-brain';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;
