@@ -1,4 +1,4 @@
-/** Product PDP — REVIEWS tab placeholder (matches DETAILS/SHIPPING tab typography + rose markers). */
+/** Product PDP — REVIEWS tab placeholder (matches DETAILS/SHIPPING tab typography). */
 
 import {
   NOIR_PRODUCT_TAB_ROSE_ALERT_BADGE_STYLE,
@@ -15,6 +15,14 @@ const BODY_STYLE = {
   textTransform: 'uppercase' as const,
 };
 
+/** Match `/brand/terms` bullet rows (`BrandTermsBody`). */
+const BULLET_STYLE = {
+  ...BODY_STYLE,
+  paddingLeft: '12px',
+};
+
+const BULLET_MARK_STYLE = { color: '#EB1C24' };
+
 const SECTION_TITLE_STYLE = {
   fontFamily: '"Bohemy", cursive',
   fontSize: '20px',
@@ -23,6 +31,13 @@ const SECTION_TITLE_STYLE = {
   margin: '12px 0 8px 0',
   textTransform: 'lowercase' as const,
 };
+
+const REVIEW_ELIGIBILITY_BULLETS = [
+  'LOYALTY POINTS',
+  'EXCLUSIVE REWARDS',
+  'SLAY CAM FEATURES',
+  'SLAY MVP',
+] as const;
 
 const COMING_SOON_FEATURES = [
   'VERIFIED REVIEWS',
@@ -38,8 +53,14 @@ export default function ProductReviewsComingSoonTab() {
       <p style={{ ...BODY_STYLE, marginBottom: '4px' }}>REAL CLIENT EXPERIENCES COMING SOON!</p>
 
       <p style={BODY_STYLE}>
-        THE FIRST FRONTAL SLAYER TRANSFORMATIONS WILL BE SHOWCASED HERE.
+        THE FIRST FRONTAL SLAYER TRANSFORMATIONS WILL BE SHOWCASED HERE. TO KEEP OUR COMMUNITY AUTHENTIC, ONLY VERIFIED PURCHASES CAN LEAVE REVIEWS. EVERY REVIEW YOU SUBMIT AFTER YOUR PURCHASE AUTOMATICALLY BECOMES ELIGIBLE FOR:
       </p>
+
+      {REVIEW_ELIGIBILITY_BULLETS.map((bullet) => (
+        <p key={bullet} style={BULLET_STYLE}>
+          <span style={BULLET_MARK_STYLE}>•</span> {bullet}
+        </p>
+      ))}
 
       <p style={SECTION_TITLE_STYLE}>this space will soon feature:</p>
 

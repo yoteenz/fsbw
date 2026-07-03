@@ -34127,11 +34127,6 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`heroManifestReady.ts`**, download/regen scripts.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-**Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`api/_lib/email/heroManifestReady.ts`**.
-
 ---
 
 ## 2026-07-03 — Email hero 9:16 regen complete
@@ -34141,8 +34136,7 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Outcome:** **`FORCE=1 npm run email:generate-heroes`** — **41/41** success, **0 failures**, all uploaded to Supabase. **`npm run email:sync-hero-manifest`** synced **`heroManifestReady.ts`**. Log: **`/tmp/email-hero-916-regen.log`**, tmux **`email-hero-916-regen`**.
 
 **Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`heroManifestReady.ts`**.
->>>>>>> 3b11f3ba (Regenerate email hero WebPs at 9:16 portrait ratio (41 templates))
-=======
+
 ---
 
 ## 2026-07-03 — Product PDP REVIEWS tab coming-soon (unified layout)
@@ -34158,4 +34152,3 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Future live reviews should extend **`ProductReviewsComingSoonTab`** or replace it in one place so all PDPs stay cohesive.
 
->>>>>>> 97e6abd3 (Unify product REVIEWS tab with coming-soon layout across all PDPs)
