@@ -45,7 +45,11 @@
     "email:sync-hero-manifest": "node scripts/sync-email-hero-manifest.mjs",
     "email:generate-heroes": "node scripts/generate-email-hero-assets.mjs",
     "email:generate-heroes:batch": "node scripts/batch-email-heroes.mjs",
-    "email:generate-heroes:batch:production": "BATCH_MODE=production node scripts/batch-email-heroes.mjs"
+    "email:generate-heroes:batch:production": "BATCH_MODE=production node scripts/batch-email-heroes.mjs",
+    "bcf:videos:manifest": "node scripts/bcf/generate-bcf-video-manifest.mjs",
+    "bcf:videos:generate": "node scripts/bcf/pregenerate-bcf-videos.mjs",
+    "bcf:videos:sync": "node scripts/bcf/sync-bcf-video-manifest.mjs",
+    "bcf:videos:batch": "node scripts/bcf/batch-bcf-videos.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",

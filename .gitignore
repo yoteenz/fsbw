@@ -52,3 +52,6 @@ e2e/.auth/
 
 # Elevator reverse-video script temp download
 public/assets/.elevator-source-tmp.mp4
+
+# BCF Fal video batch temp files
+scripts/bcf/.work/

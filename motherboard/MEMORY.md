@@ -33862,3 +33862,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`slay-card-debug/page.tsx`** — **Card copy** sidebar section with text fields for all labels; per-layer copy fields when a text layer is selected; **double-click** on preview opens inline edit panel; reset button rebuilds spec lines from sample data.
 
 **Conventions:** Slay card debug saves copy with layout (**Save layout** → **`baw_slay_card_layout_debug_v3`**). Static brand copy (FRONTAL/subtitle/footer) applies to try-hub **SAVE SLAY CARD** after save; unit + spec lines on production cards still follow visitor selections unless debug **`copy.specLines`** override is saved (intended for template tuning only).
+
+---
+
+## 2026-07-03 — BCF product video batch pipeline (Fal Kling v3)
+
+**Context:** User requested a permanent batch workflow so every BCF (Bundles, Closures, Frontals) hero product with a static PNG also gets a matching looping **MP4 + WebM** video via **Fal**, using the existing still as reference. Subtle 2–4° side sway only; locked camera; pure white `#FFFFFF` background; 9:16 portrait; skip products that already have video assets; safe reruns.
+
+**Pipeline (`scripts/bcf/`):**
+- **`bcfVideoCatalog.mjs`** — parses **`bcfPdpHeroAssets.ts`** → **75 products** (defaults + per-color heroes); legacy Kling `.mov` map for 9 texture defaults.
+- **`bcfVideoPrompt.mjs`** — locked prompt + negative prompt (no rotation/zoom/warp).
+- **`generate-bcf-video-manifest.mjs`** — scans Supabase storage; writes **`manifests/bcf-videos-v1.json`** with `missing` / `ready_legacy` / `ready`.
+- **`pregenerate-bcf-videos.mjs`** — Fal **`fal-ai/kling-video/v3/pro/image-to-video`** (9:16, ~5s, no audio) → upload **`BCF/videos/v1/{productKey}.mp4`** + optional ffmpeg **WebM**; skips existing MP4 or legacy `.mov` on defaults.
+- **`sync-bcf-video-manifest.mjs`** — syncs to **`public/assets/bcf/videos/manifest.json`** + **`bcfPdpHeroVideos.generated.ts`**.
+- **`batch-bcf-videos.mjs`** — manifest → generate → sync.
+
+**Storefront:**
+- **`src/utils/bcfPdpHeroVideos.ts`** — resolves video by category + texture + color (manifest → legacy fallback).
+- **`texture-category-product/page.tsx`** — PHOTO/VIDEO toggle uses manifest-backed URLs (WebM preferred, MP4 fallback).
+
+**npm:** `bcf:videos:manifest`, `bcf:videos:generate`, `bcf:videos:sync`, `bcf:videos:batch`. Docs: **`docs/BCF_VIDEO_GENERATION.md`**.
+
+**Conventions:** Run **`npm run bcf:videos:batch`** with `FAL_KEY` + Supabase service role; commit synced manifest after batch. **66** color-variant products still need new MP4/WebM; **9** texture defaults currently `ready_legacy` until regenerated to `BCF/videos/v1/*.mp4`.

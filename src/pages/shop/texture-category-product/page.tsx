@@ -23,6 +23,11 @@ import {
   type BcfPdpTexture,
   type BcfPdpCategory,
 } from '../../../utils/bcfPdpHeroAssets';
+import {
+  bcfPdpHeroVideoMp4Fallback,
+  bcfPdpHeroVideoPrimarySrc,
+  bcfPdpHeroVideoSrc,
+} from '../../../utils/bcfPdpHeroVideos';
 import { BcfShopThumb } from '../../../components/shop/BcfShopThumb';
 import {
   BCF_DEFAULT_LENGTH_ID,
@@ -120,45 +125,6 @@ function parseTextureSearch(search: string): Texture | null {
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
-/** Primary straight bundle hero video (upload to this public path when ready). */
-const BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov';
-
-/** Used when Supabase object is missing (404) or `.mov` fails in-browser. */
-const BUNDLE_STRAIGHT_VIDEO_LOCAL_SRC = '/assets/straight-bundle-video.MP4';
-
-const BUNDLE_WAVY_VIDEO_SUPABASE_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__98237.mov';
-const BUNDLE_CURLY_VIDEO_SUPABASE_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__24695.mov';
-
-const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
-  straight: BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC,
-  wavy: BUNDLE_WAVY_VIDEO_SUPABASE_SRC,
-  curly: BUNDLE_CURLY_VIDEO_SUPABASE_SRC,
-};
-
-function bundleHeroVideoSrc(texture: Texture, straightOverride?: string): string {
-  if (texture === 'straight' && straightOverride) return straightOverride;
-  return BUNDLE_VIDEO_BY_TEXTURE[texture];
-}
-
-const BCF_CF_VIDEO: Record<'closures' | 'frontals', Record<Texture, string>> = {
-  closures: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__27854.mov',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__49906.mov',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__28643.mov'
-  },
-  frontals: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__79719.mov',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_slowly_showcas_Kling_30__78091.mov',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__79392.mov'
-  }
-};
 
 /** Portrait bundle hero + texture row: wider/taller so card side margins aren’t excessive (mobile PDP). */
 const BUNDLE_HERO_LAYOUT_SCALE = 1.35;
@@ -377,7 +343,7 @@ export default function ShopTextureCategoryProductPage() {
   const bcfCfVideoRef = useRef<HTMLVideoElement>(null);
   /** Until true, hero video stays transparent so the JPG underlay shows while the `.mov` buffers. */
   const [bcfHeroVideoPaintReady, setBcfHeroVideoPaintReady] = useState(false);
-  const [bundleStraightVideoSrc, setBundleStraightVideoSrc] = useState(BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC);
+  const [bcfHeroVideoPrimarySrc, setBcfHeroVideoPrimarySrc] = useState<string | null>(null);
 
   const [bcfOrigin, setBcfOrigin] = useState<BcfOriginId>(() =>
     typeof window !== 'undefined'
@@ -414,6 +380,16 @@ export default function ShopTextureCategoryProductPage() {
 
   const bcfColorsAvailable = React.useMemo(() => bcfColorOptionsForOrigin(bcfOrigin), [bcfOrigin]);
 
+  const bcfHeroVideoSources = React.useMemo(
+    () => (category ? bcfPdpHeroVideoSrc(category, texture, bcfColor) : null),
+    [category, texture, bcfColor]
+  );
+
+  const bcfHeroVideoSrcResolved = React.useMemo(() => {
+    if (!bcfHeroVideoSources) return null;
+    return bcfHeroVideoPrimarySrc ?? bcfPdpHeroVideoPrimarySrc(bcfHeroVideoSources);
+  }, [bcfHeroVideoPrimarySrc, bcfHeroVideoSources]);
+
   useLayoutEffect(() => {
     const bundlesV = category === 'bundles' && bundleShowVideo;
     const cfV =
@@ -427,12 +403,15 @@ export default function ShopTextureCategoryProductPage() {
     if (el && el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
       setBcfHeroVideoPaintReady(true);
     }
-  }, [texture, category, bundleShowVideo, bcfCfShowVideo, bundleStraightVideoSrc]);
+  }, [texture, category, bundleShowVideo, bcfCfShowVideo, bcfHeroVideoPrimarySrc]);
 
   useEffect(() => {
-    if (category !== 'bundles') return;
-    setBundleStraightVideoSrc(BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC);
-  }, [category, texture, bundleShowVideo]);
+    if (!category || !bcfHeroVideoSources) {
+      setBcfHeroVideoPrimarySrc(null);
+      return;
+    }
+    setBcfHeroVideoPrimarySrc(bcfPdpHeroVideoPrimarySrc(bcfHeroVideoSources));
+  }, [category, texture, bcfColor, bcfHeroVideoSources, bundleShowVideo, bcfCfShowVideo]);
 
   // Warm cache for all three textures’ hero JPGs + videos so switching thumbs reuses network/disk cache.
   useEffect(() => {
@@ -445,21 +424,25 @@ export default function ShopTextureCategoryProductPage() {
       const img = new Image();
       img.src = src;
     });
-    const videos =
-      category === 'bundles'
-        ? [
-            ...TEXTURE_ORDER.map((t) => BUNDLE_VIDEO_BY_TEXTURE[t]),
-            BUNDLE_STRAIGHT_VIDEO_LOCAL_SRC,
-          ]
-        : TEXTURE_ORDER.map((t) => BCF_CF_VIDEO[category][t]);
-    videos.forEach((src) => {
+    TEXTURE_ORDER.forEach((t) => {
+      const sources = bcfPdpHeroVideoSrc(category, t, bcfColor);
+      if (!sources) return;
+      const primary = bcfPdpHeroVideoPrimarySrc(sources);
       const v = document.createElement('video');
       v.preload = 'auto';
       v.muted = true;
-      v.src = src;
+      v.src = primary;
       v.load();
+      const mp4Fallback = bcfPdpHeroVideoMp4Fallback(category, t, sources);
+      if (mp4Fallback && mp4Fallback !== primary) {
+        const v2 = document.createElement('video');
+        v2.preload = 'auto';
+        v2.muted = true;
+        v2.src = mp4Fallback;
+        v2.load();
+      }
     });
-  }, [category]);
+  }, [category, bcfColor]);
 
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     try {
@@ -1264,9 +1247,9 @@ export default function ShopTextureCategoryProductPage() {
                                   style={bcfPdpHeroVideoUnderlayStyle(texture, 'bundles')}
                                 />
                                 <video
-                                  key={`${texture}-video-${texture === 'straight' ? bundleStraightVideoSrc : 'default'}`}
+                                  key={`${texture}-video-${bcfHeroVideoPrimarySrc ?? 'default'}`}
                                   ref={bundleVideoRef}
-                                  src={bundleHeroVideoSrc(texture, bundleStraightVideoSrc)}
+                                  src={bcfHeroVideoSrcResolved ?? undefined}
                                   poster={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   preload="auto"
                                   playsInline
@@ -1276,12 +1259,15 @@ export default function ShopTextureCategoryProductPage() {
                                   onLoadedData={() => setBcfHeroVideoPaintReady(true)}
                                   onCanPlay={() => setBcfHeroVideoPaintReady(true)}
                                   onError={() => {
-                                    if (
-                                      texture === 'straight' &&
-                                      bundleStraightVideoSrc !== BUNDLE_STRAIGHT_VIDEO_LOCAL_SRC
-                                    ) {
+                                    if (!category || !bcfHeroVideoSources) return;
+                                    const fallback = bcfPdpHeroVideoMp4Fallback(
+                                      category,
+                                      texture,
+                                      bcfHeroVideoSources
+                                    );
+                                    if (fallback && bcfHeroVideoPrimarySrc !== fallback) {
                                       setBcfHeroVideoPaintReady(false);
-                                      setBundleStraightVideoSrc(BUNDLE_STRAIGHT_VIDEO_LOCAL_SRC);
+                                      setBcfHeroVideoPrimarySrc(fallback);
                                     }
                                   }}
                                   style={{
@@ -1337,9 +1323,9 @@ export default function ShopTextureCategoryProductPage() {
                                   style={bcfPdpHeroVideoUnderlayStyle(texture, category)}
                                 />
                                 <video
-                                  key={`${category}-${texture}-video`}
+                                  key={`${category}-${texture}-video-${bcfHeroVideoPrimarySrc ?? 'default'}`}
                                   ref={bcfCfVideoRef}
-                                  src={BCF_CF_VIDEO[category][texture]}
+                                  src={bcfHeroVideoSrcResolved ?? undefined}
                                   poster={bcfHeroPhotoSrc ?? bcfHeroPhotoFallback}
                                   preload="auto"
                                   playsInline
@@ -1348,6 +1334,18 @@ export default function ShopTextureCategoryProductPage() {
                                   autoPlay
                                   onLoadedData={() => setBcfHeroVideoPaintReady(true)}
                                   onCanPlay={() => setBcfHeroVideoPaintReady(true)}
+                                  onError={() => {
+                                    if (!category || !bcfHeroVideoSources) return;
+                                    const fallback = bcfPdpHeroVideoMp4Fallback(
+                                      category,
+                                      texture,
+                                      bcfHeroVideoSources
+                                    );
+                                    if (fallback && bcfHeroVideoPrimarySrc !== fallback) {
+                                      setBcfHeroVideoPaintReady(false);
+                                      setBcfHeroVideoPrimarySrc(fallback);
+                                    }
+                                  }}
                                   style={{
                                     ...bcfPdpHeroVideoStyle(texture, category),
                                     opacity: bcfHeroVideoPaintReady ? 1 : 0,
