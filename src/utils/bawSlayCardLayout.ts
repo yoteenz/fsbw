@@ -8,6 +8,25 @@ export const BAW_SLAY_CARD_LAYOUT_DEBUG_KEY = 'baw_slay_card_layout_debug_v3';
 
 export const BAW_SLAY_CARD_SUBTITLE_LABEL = 'personal build-a-wig slay card';
 
+export const BAW_SLAY_CARD_DEFAULT_FOOTER_COPY =
+  'PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.';
+
+/** Editable static copy on the slay card (saved with layout debug). */
+export type BawSlayCardLayoutCopy = {
+  frontal: string;
+  subtitle: string;
+  footer: string;
+  /** When non-empty, replaces spec lines built from wig selections. */
+  specLines: string[];
+};
+
+export const DEFAULT_BAW_SLAY_CARD_COPY: BawSlayCardLayoutCopy = {
+  frontal: 'FRONTAL',
+  subtitle: BAW_SLAY_CARD_SUBTITLE_LABEL,
+  footer: BAW_SLAY_CARD_DEFAULT_FOOTER_COPY,
+  specLines: [],
+};
+
 export type BawSlayCardTextStyle = {
   x: number;
   y: number;
@@ -30,6 +49,7 @@ export type BawSlayCardLayout = {
   canvasWidth: number;
   canvasHeight: number;
   mannequin: BawSlayCardMannequinLayout;
+  copy: BawSlayCardLayoutCopy;
   header: {
     frontal: BawSlayCardTextStyle;
     /** Red SLAYER wordmark image — below FRONTAL. */
@@ -52,6 +72,7 @@ export const DEFAULT_BAW_SLAY_CARD_LAYOUT: BawSlayCardLayout = {
   canvasWidth: 1122,
   canvasHeight: 1402,
   mannequin: { x: 252, y: 292, width: 618, height: 748 },
+  copy: DEFAULT_BAW_SLAY_CARD_COPY,
   header: {
     frontal: {
       x: 561,
@@ -158,6 +179,20 @@ function coerceImageLayout(value: unknown, fallback: BawSlayCardImageLayout): Ba
   };
 }
 
+function coerceCopy(value: unknown, fallback: BawSlayCardLayoutCopy): BawSlayCardLayoutCopy {
+  if (!isObject(value)) return fallback;
+  const specLines = Array.isArray(value.specLines)
+    ? value.specLines.filter((line): line is string => typeof line === 'string' && line.trim() !== '')
+    : fallback.specLines;
+  return {
+    frontal: typeof value.frontal === 'string' && value.frontal.trim() ? value.frontal : fallback.frontal,
+    subtitle:
+      typeof value.subtitle === 'string' && value.subtitle.trim() ? value.subtitle : fallback.subtitle,
+    footer: typeof value.footer === 'string' && value.footer.trim() ? value.footer : fallback.footer,
+    specLines,
+  };
+}
+
 /** Coerce saved debug JSON (string numbers, partial objects) before merging with defaults. */
 export function coerceBawSlayCardLayoutPatch(patch: Partial<BawSlayCardLayout>): Partial<BawSlayCardLayout> {
   const defaults = DEFAULT_BAW_SLAY_CARD_LAYOUT;
@@ -172,6 +207,7 @@ export function coerceBawSlayCardLayoutPatch(patch: Partial<BawSlayCardLayout>):
     canvasWidth: coerceNumber(patch.canvasWidth, defaults.canvasWidth),
     canvasHeight: coerceNumber(patch.canvasHeight, defaults.canvasHeight),
     mannequin: coerceImageLayout(patch.mannequin, defaults.mannequin),
+    copy: coerceCopy(patch.copy, defaults.copy),
     header: {
       frontal: coerceTextStyle(header.frontal, defaults.header.frontal),
       slayerLogo: coerceImageLayout(header.slayerLogo, defaults.header.slayerLogo),
@@ -198,6 +234,7 @@ export function normalizeBawSlayCardLayout(layout: BawSlayCardLayout): BawSlayCa
   const defaults = DEFAULT_BAW_SLAY_CARD_LAYOUT;
   return {
     ...layout,
+    copy: coerceCopy(layout.copy, defaults.copy),
     header: {
       ...layout.header,
       frontal: {

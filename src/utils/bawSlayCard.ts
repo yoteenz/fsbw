@@ -13,6 +13,7 @@ import {
   BAW_SLAY_CARD_SUBTITLE_LABEL,
   BAW_SLAY_CARD_TEMPLATE_SRC,
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
+  DEFAULT_BAW_SLAY_CARD_COPY,
   getActiveBawSlayCardLayout,
   normalizeBawSlayCardLayout,
   type BawSlayCardLayout,
@@ -277,11 +278,17 @@ export async function paintBawSlayCard(
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
 
-  const { header, textPanel } = resolvedLayout;
+  const { header, textPanel, copy } = resolvedLayout;
+  const resolvedCopy = {
+    frontal: copy?.frontal?.trim() || DEFAULT_BAW_SLAY_CARD_COPY.frontal,
+    subtitle: copy?.subtitle?.trim() || BAW_SLAY_CARD_SUBTITLE_LABEL,
+    footer: copy?.footer?.trim() || DEFAULT_BAW_SLAY_CARD_COPY.footer,
+    specLines: copy?.specLines?.length ? copy.specLines : buildBawSlayCardSpecLines(selections),
+  };
 
   ctx.fillStyle = header.frontal.color;
   ctx.font = fontFromStyle(header.frontal);
-  ctx.fillText('FRONTAL', header.frontal.x, header.frontal.y);
+  ctx.fillText(resolvedCopy.frontal.toUpperCase(), header.frontal.x, header.frontal.y);
 
   try {
     const slayerLogoImg = await loadImage(BAW_SLAY_CARD_SLAYER_LOGO_SRC);
@@ -301,9 +308,9 @@ export async function paintBawSlayCard(
 
   ctx.fillStyle = header.subtitle.color;
   ctx.font = fontFromStyle(header.subtitle);
-  ctx.fillText(BAW_SLAY_CARD_SUBTITLE_LABEL, header.subtitle.x, header.subtitle.y);
+  ctx.fillText(resolvedCopy.subtitle, header.subtitle.x, header.subtitle.y);
 
-  const specLines = buildBawSlayCardSpecLines(selections);
+  const specLines = resolvedCopy.specLines;
 
   ctx.fillStyle = textPanel.unit.color;
   ctx.font = fontFromStyle(textPanel.unit);
@@ -320,7 +327,7 @@ export async function paintBawSlayCard(
 
   ctx.fillStyle = textPanel.footer.color;
   ctx.font = fontFromStyle(textPanel.footer);
-  ctx.fillText('PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.', textPanel.footer.x, textPanel.footer.y);
+  ctx.fillText(resolvedCopy.footer.toUpperCase(), textPanel.footer.x, textPanel.footer.y);
 
   return { mannequinBounds };
 }

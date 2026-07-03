@@ -33849,3 +33849,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`src/pages/tools/email-templates/page.tsx`** — replaced plain iframe with **`EmailPreviewFrame`**; wired **`handlePreviewPaddingChange`** + **`handlePreviewCopyChange`** to layout store + draft copy.
 
 **Conventions:** Email debug preview interactivity requires server-rendered **`data-email-layer`** markers in **`layout.ts`** plus **`EmailPreviewFrame`** on the debug page. Reposition = padding drag on selected layer; edit = double-click (or double-tap) on copy layers. Inline copy edits update both **`draftCopy`** and **`layoutStore.templates[type]`** so preview auto-refreshes.
+
+---
+
+## 2026-07-03 — Slay card debug: editable card copy (FRONTAL, subtitle, specs, footer)
+
+**Context:** User could reposition/style slay card layers on **`/tools/slay-card-debug`** but could not change what any text said — FRONTAL, subtitle, footer were hardcoded in **`paintBawSlayCard`**, and there was no copy UI beyond sample selection fields.
+
+**Fixes:**
+- **`bawSlayCardLayout.ts`** — added **`BawSlayCardLayoutCopy`** (`frontal`, `subtitle`, `footer`, optional **`specLines`[]`) on saved layout; defaults preserve existing strings; merged into v3 localStorage key via **`mergeDeep`**.
+- **`bawSlayCard.ts`** — **`paintBawSlayCard`** reads **`layout.copy`** for static labels; **`specLines`** override when non-empty else **`buildBawSlayCardSpecLines(selections)`**; unit name still from live selections on try-hub.
+- **`slay-card-debug/page.tsx`** — **Card copy** sidebar section with text fields for all labels; per-layer copy fields when a text layer is selected; **double-click** on preview opens inline edit panel; reset button rebuilds spec lines from sample data.
+
+**Conventions:** Slay card debug saves copy with layout (**Save layout** → **`baw_slay_card_layout_debug_v3`**). Static brand copy (FRONTAL/subtitle/footer) applies to try-hub **SAVE SLAY CARD** after save; unit + spec lines on production cards still follow visitor selections unless debug **`copy.specLines`** override is saved (intended for template tuning only).

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { paintBawSlayCard, type BawSlayCardSelections } from '../../../utils/bawSlayCard';
+import { buildBawSlayCardSpecLines, paintBawSlayCard, type BawSlayCardSelections } from '../../../utils/bawSlayCard';
 import { bawStaticMannequinFrontReferencePathFromUnitAndHairline } from '../../../utils/bawStaticMannequinReferencePaths';
 import {
-  BAW_SLAY_CARD_SUBTITLE_LABEL,
   formatBawSlayCardLayoutForCopy,
   loadBawSlayCardLayoutDebug,
   mergeBawSlayCardLayout,
   saveBawSlayCardLayoutDebug,
   type BawSlayCardLayout,
+  type BawSlayCardLayoutCopy,
   type BawSlayCardTextStyle,
 } from '../../../utils/bawSlayCardLayout';
 
@@ -36,9 +36,45 @@ const SAMPLE_SELECTIONS: BawSlayCardSelections = {
   addOns: [],
 };
 
-const SUBTITLE_LABEL = BAW_SLAY_CARD_SUBTITLE_LABEL;
-const FOOTER_LABEL = 'PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.';
 const MAX_SPEC_LINE_COUNT = 12;
+
+type TextEditableLayer = 'frontal' | 'subtitle' | 'unit' | 'specs' | 'footer';
+
+function CopyField({
+  label,
+  value,
+  onChange,
+  multiline = false,
+  hint,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  multiline?: boolean;
+  hint?: string;
+}) {
+  return (
+    <label className="block text-[10px] uppercase tracking-wide mb-2" style={{ fontFamily: '"Futura PT Book"' }}>
+      {label}
+      {multiline ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          rows={4}
+          className="mt-0.5 w-full border border-[#EB1C24] px-2 py-1 text-[11px] font-mono normal-case"
+        />
+      ) : (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="mt-0.5 w-full border border-[#EB1C24] px-2 py-1 text-[11px] font-mono normal-case"
+        />
+      )}
+      {hint ? <span className="block mt-1 text-[9px] text-gray-500 normal-case">{hint}</span> : null}
+    </label>
+  );
+}
 
 function pointInRect(
   pt: { x: number; y: number },
@@ -174,6 +210,7 @@ export default function SlayCardDebugPage() {
   const [showGuides, setShowGuides] = useState(true);
   const [previewScale, setPreviewScale] = useState(0.45);
   const [copyStatus, setCopyStatus] = useState('');
+  const [inlineEdit, setInlineEdit] = useState<{ layer: TextEditableLayer; value: string } | null>(null);
   const [savedLayoutJson, setSavedLayoutJson] = useState(() =>
     JSON.stringify(loadBawSlayCardLayoutDebug())
   );
@@ -200,6 +237,22 @@ export default function SlayCardDebugPage() {
   const mannequinSrc = useMemo(
     () => bawStaticMannequinFrontReferencePathFromUnitAndHairline(selections.unit, hairline),
     [selections.unit, hairline]
+  );
+
+  const resolvedSpecLines = useMemo(() => {
+    if (layout.copy.specLines.length) return layout.copy.specLines;
+    return buildBawSlayCardSpecLines(selections);
+  }, [layout.copy.specLines, selections]);
+
+  const resolvedCopy = useMemo(
+    () => ({
+      frontal: layout.copy.frontal,
+      subtitle: layout.copy.subtitle,
+      footer: layout.copy.footer,
+      unit: selections.unit,
+      specLines: resolvedSpecLines,
+    }),
+    [layout.copy, resolvedSpecLines, selections.unit]
   );
 
   const redraw = useCallback(async () => {
@@ -247,15 +300,15 @@ export default function SlayCardDebugPage() {
       };
 
       drawTextGuide(
-        centeredTextBounds('FRONTAL', layout.header.frontal.x, layout.header.frontal.y, layout.header.frontal.fontSize),
+        centeredTextBounds(resolvedCopy.frontal, layout.header.frontal.x, layout.header.frontal.y, layout.header.frontal.fontSize),
         selectedLayer === 'frontal'
       );
       drawTextGuide(
-        centeredTextBounds(SUBTITLE_LABEL, layout.header.subtitle.x, layout.header.subtitle.y, layout.header.subtitle.fontSize),
+        centeredTextBounds(resolvedCopy.subtitle, layout.header.subtitle.x, layout.header.subtitle.y, layout.header.subtitle.fontSize),
         selectedLayer === 'subtitle'
       );
       drawTextGuide(
-        centeredTextBounds(selections.unit.toUpperCase(), layout.textPanel.unit.x, layout.textPanel.unit.y, layout.textPanel.unit.fontSize),
+        centeredTextBounds(resolvedCopy.unit.toUpperCase(), layout.textPanel.unit.x, layout.textPanel.unit.y, layout.textPanel.unit.fontSize),
         selectedLayer === 'unit'
       );
       const specsHeight = layout.textPanel.lineHeight * MAX_SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
@@ -270,12 +323,12 @@ export default function SlayCardDebugPage() {
         selectedLayer === 'specs'
       );
       drawTextGuide(
-        centeredTextBounds(FOOTER_LABEL, layout.textPanel.footer.x, layout.textPanel.footer.y, layout.textPanel.footer.fontSize),
+        centeredTextBounds(resolvedCopy.footer, layout.textPanel.footer.x, layout.textPanel.footer.y, layout.textPanel.footer.fontSize),
         selectedLayer === 'footer'
       );
       ctx.restore();
     }
-  }, [hairline, layout, mannequinSrc, selections, showGuides, selectedLayer]);
+  }, [hairline, layout, mannequinSrc, resolvedCopy, showGuides, selectedLayer]);
 
   useEffect(() => {
     void redraw();
@@ -293,6 +346,10 @@ export default function SlayCardDebugPage() {
     ro.observe(el);
     return () => ro.disconnect();
   }, [layout.canvasWidth, layout.canvasHeight]);
+
+  const updateCopy = (patch: Partial<BawSlayCardLayoutCopy>) => {
+    setLayout((prev) => ({ ...prev, copy: { ...prev.copy, ...patch } }));
+  };
 
   const updateHeaderText = (key: 'frontal' | 'subtitle', patch: Partial<BawSlayCardTextStyle>) => {
     setLayout((prev) => ({
@@ -331,7 +388,7 @@ export default function SlayCardDebugPage() {
     if (pointInRect(pt, logo)) return { layer: 'slayerLogo', hit: true };
 
     const frontalBounds = centeredTextBounds(
-      'FRONTAL',
+      resolvedCopy.frontal,
       layout.header.frontal.x,
       layout.header.frontal.y,
       layout.header.frontal.fontSize
@@ -342,7 +399,7 @@ export default function SlayCardDebugPage() {
     if (pointInRect(pt, layout.mannequin)) return { layer: 'mannequin', hit: true };
 
     const subtitleBounds = centeredTextBounds(
-      SUBTITLE_LABEL,
+      resolvedCopy.subtitle,
       layout.header.subtitle.x,
       layout.header.subtitle.y,
       layout.header.subtitle.fontSize
@@ -350,7 +407,7 @@ export default function SlayCardDebugPage() {
     if (pointInRect(pt, subtitleBounds)) return { layer: 'subtitle', hit: true };
 
     const unitBounds = centeredTextBounds(
-      selections.unit.toUpperCase(),
+      resolvedCopy.unit.toUpperCase(),
       layout.textPanel.unit.x,
       layout.textPanel.unit.y,
       layout.textPanel.unit.fontSize
@@ -358,7 +415,7 @@ export default function SlayCardDebugPage() {
     if (pointInRect(pt, unitBounds)) return { layer: 'unit', hit: true };
 
     const footerBounds = centeredTextBounds(
-      FOOTER_LABEL,
+      resolvedCopy.footer,
       layout.textPanel.footer.x,
       layout.textPanel.footer.y,
       layout.textPanel.footer.fontSize
@@ -538,6 +595,58 @@ export default function SlayCardDebugPage() {
     e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
+  const getInlineEditValue = (layer: TextEditableLayer): string => {
+    switch (layer) {
+      case 'frontal':
+        return layout.copy.frontal;
+      case 'subtitle':
+        return layout.copy.subtitle;
+      case 'footer':
+        return layout.copy.footer;
+      case 'unit':
+        return selections.unit;
+      case 'specs':
+        return resolvedSpecLines.join('\n');
+      default:
+        return '';
+    }
+  };
+
+  const commitInlineEdit = (layer: TextEditableLayer, value: string) => {
+    switch (layer) {
+      case 'frontal':
+        updateCopy({ frontal: value });
+        break;
+      case 'subtitle':
+        updateCopy({ subtitle: value });
+        break;
+      case 'footer':
+        updateCopy({ footer: value });
+        break;
+      case 'unit':
+        setSelections((s) => ({ ...s, unit: value.trim() || s.unit }));
+        break;
+      case 'specs':
+        updateCopy({
+          specLines: value
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean),
+        });
+        break;
+    }
+  };
+
+  const onDoubleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const pt = canvasPointFromClient(e.clientX, e.clientY);
+    const { layer, hit } = pickLayerAtPoint(pt);
+    if (!hit) return;
+    if (layer === 'mannequin' || layer === 'slayerLogo') return;
+    e.preventDefault();
+    setSelectedLayer(layer);
+    setInlineEdit({ layer, value: getInlineEditValue(layer) });
+  };
+
   const handleSaveLayout = () => {
     const normalized = mergeBawSlayCardLayout(layout);
     saveBawSlayCardLayoutDebug(normalized);
@@ -684,8 +793,55 @@ export default function SlayCardDebugPage() {
               Show guide outlines
             </label>
             <p className="text-[9px] text-gray-500 mt-2 leading-snug">
-              Click a layer on the preview to select and drag it, or pick a layer here and drag on empty canvas. Scroll wheel resizes mannequin box and SLAYER logo.
+              Click a text layer to select it, drag to reposition, and double-click to edit copy. Scroll wheel resizes mannequin box and SLAYER logo.
             </p>
+          </section>
+
+          <section>
+            <h2 className="text-[11px] uppercase font-semibold mb-2 text-[#EB1C24]">Card copy</h2>
+            <CopyField
+              label="FRONTAL label"
+              value={layout.copy.frontal}
+              onChange={(frontal) => updateCopy({ frontal })}
+            />
+            <CopyField
+              label="Subtitle"
+              value={layout.copy.subtitle}
+              onChange={(subtitle) => updateCopy({ subtitle })}
+            />
+            <CopyField
+              label="Unit name (preview sample)"
+              value={selections.unit}
+              onChange={(unit) => setSelections((s) => ({ ...s, unit }))}
+              hint="Try-hub cards use the visitor's selected unit."
+            />
+            <CopyField
+              label="Spec lines"
+              value={resolvedSpecLines.join('\n')}
+              onChange={(raw) =>
+                updateCopy({
+                  specLines: raw
+                    .split('\n')
+                    .map((line) => line.trim())
+                    .filter(Boolean),
+                })
+              }
+              multiline
+              hint="One line per spec. Clear all lines to rebuild from sample data below."
+            />
+            <CopyField
+              label="Footer"
+              value={layout.copy.footer}
+              onChange={(footer) => updateCopy({ footer })}
+              multiline
+            />
+            <button
+              type="button"
+              onClick={() => updateCopy({ specLines: [] })}
+              className="w-full border border-gray-400 px-2 py-1 text-[9px] uppercase bg-white text-gray-600"
+            >
+              Reset spec lines from sample data
+            </button>
           </section>
 
           {selectedLayer === 'mannequin' ? (
@@ -702,7 +858,11 @@ export default function SlayCardDebugPage() {
           ) : null}
 
           {selectedLayer === 'frontal' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">FRONTAL</h2><TextStyleFields style={layout.header.frontal} onChange={(p) => updateHeaderText('frontal', p)} lockFont /></section>
+            <section>
+              <h2 className="text-[11px] uppercase font-semibold mb-2">FRONTAL</h2>
+              <CopyField label="Text" value={layout.copy.frontal} onChange={(frontal) => updateCopy({ frontal })} />
+              <TextStyleFields style={layout.header.frontal} onChange={(p) => updateHeaderText('frontal', p)} lockFont />
+            </section>
           ) : null}
           {selectedLayer === 'slayerLogo' ? (
             <section>
@@ -717,14 +877,39 @@ export default function SlayCardDebugPage() {
             </section>
           ) : null}
           {selectedLayer === 'subtitle' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Subtitle</h2><TextStyleFields style={layout.header.subtitle} onChange={(p) => updateHeaderText('subtitle', p)} lockFont /></section>
+            <section>
+              <h2 className="text-[11px] uppercase font-semibold mb-2">Subtitle</h2>
+              <CopyField label="Text" value={layout.copy.subtitle} onChange={(subtitle) => updateCopy({ subtitle })} />
+              <TextStyleFields style={layout.header.subtitle} onChange={(p) => updateHeaderText('subtitle', p)} lockFont />
+            </section>
           ) : null}
           {selectedLayer === 'unit' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Unit name</h2><TextStyleFields style={layout.textPanel.unit} onChange={(p) => updateTextPanel({ unit: { ...layout.textPanel.unit, ...p } })} /></section>
+            <section>
+              <h2 className="text-[11px] uppercase font-semibold mb-2">Unit name</h2>
+              <CopyField
+                label="Text"
+                value={selections.unit}
+                onChange={(unit) => setSelections((s) => ({ ...s, unit }))}
+              />
+              <TextStyleFields style={layout.textPanel.unit} onChange={(p) => updateTextPanel({ unit: { ...layout.textPanel.unit, ...p } })} />
+            </section>
           ) : null}
           {selectedLayer === 'specs' ? (
             <section>
               <h2 className="text-[11px] uppercase font-semibold mb-2">Specs block</h2>
+              <CopyField
+                label="Spec lines"
+                value={resolvedSpecLines.join('\n')}
+                onChange={(raw) =>
+                  updateCopy({
+                    specLines: raw
+                      .split('\n')
+                      .map((line) => line.trim())
+                      .filter(Boolean),
+                  })
+                }
+                multiline
+              />
               <p className="text-[9px] text-gray-500 mb-2">Drag to move all spec lines together.</p>
               <div className="grid grid-cols-2 gap-2">
                 <NumberField label="Start Y" value={layout.textPanel.specsStartY} onChange={(specsStartY) => updateTextPanel({ specsStartY })} />
@@ -745,17 +930,51 @@ export default function SlayCardDebugPage() {
             </section>
           ) : null}
           {selectedLayer === 'footer' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Footer</h2><TextStyleFields style={layout.textPanel.footer} onChange={(p) => updateTextPanel({ footer: { ...layout.textPanel.footer, ...p } })} /></section>
+            <section>
+              <h2 className="text-[11px] uppercase font-semibold mb-2">Footer</h2>
+              <CopyField label="Text" value={layout.copy.footer} onChange={(footer) => updateCopy({ footer })} multiline />
+              <TextStyleFields style={layout.textPanel.footer} onChange={(p) => updateTextPanel({ footer: { ...layout.textPanel.footer, ...p } })} />
+            </section>
           ) : null}
         </aside>
 
-        <main ref={previewWrapRef} className="flex-1 flex items-start justify-center p-4 overflow-auto bg-neutral-200">
+        <main ref={previewWrapRef} className="relative flex-1 flex items-start justify-center p-4 overflow-auto bg-neutral-200">
+          {inlineEdit ? (
+            <div className="absolute left-4 right-4 bottom-4 z-10 border border-[#EB1C24] bg-white p-3 shadow-xl max-w-xl mx-auto">
+              <CopyField
+                label={`Editing ${inlineEdit.layer}`}
+                value={inlineEdit.value}
+                onChange={(value) => setInlineEdit((prev) => (prev ? { ...prev, value } : prev))}
+                multiline={inlineEdit.layer === 'specs' || inlineEdit.layer === 'footer'}
+              />
+              <div className="flex gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    commitInlineEdit(inlineEdit.layer, inlineEdit.value);
+                    setInlineEdit(null);
+                  }}
+                  className="border border-black px-3 py-1 text-[10px] uppercase bg-[#EB1C24] text-white"
+                >
+                  Apply
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInlineEdit(null)}
+                  className="border border-gray-400 px-3 py-1 text-[10px] uppercase bg-white"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : null}
           <canvas
             ref={canvasRef}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
+            onDoubleClick={onDoubleClick}
             onWheel={onWheel}
             className="border border-black bg-white shadow-lg cursor-move touch-none"
             style={{
