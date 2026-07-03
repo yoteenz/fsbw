@@ -66,7 +66,7 @@ export function EmailPreviewFrame({
       title="Email template preview"
       srcDoc={previewHtml}
       className="w-full border-0"
-      style={{ minHeight: '720px', background: '#ececec' }}
+      style={{ minHeight: '920px', background: '#ececec' }}
       onLoad={attach}
     />
   );

@@ -33991,3 +33991,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:**
 - **`pregenerate-bcf-videos.mjs`** — **`JOB_TIMEOUT_MS`** (10 min) + **`DOWNLOAD_TIMEOUT_MS`** (2 min) via **`withTimeout`** in **`bcfVideoEnv.mjs`**; on fail log **`[fail] … — skipping, continuing batch`**, persist manifest **per row**; print failed keys + **`ONLY_FAILED=1 FORCE=1`** retry hint at end.
 - Restarted **6-color** regen (`GINGER, CHERRY, RASPBERRY, TEAL, SLIME, CITRINE`) with timeouts; some rows hit Fal **Forbidden** and continue.
+
+---
+
+## 2026-07-03 — Email hero: tall portrait overlay layout (reference-style graphics)
+
+**Context:** User wanted generated email hero assets **taller in height** so script accent, headline, and CTA sit **on top of the image** like reference marketing emails (Thuya, Ericka J, Celeste, etc.) — not the plain stacked layout (text block → photo → more text).
+
+**Decisions / outcomes:**
+- Heroes generate at **2:3 portrait** (`520×780px` slot) instead of **16:9** landscape.
+- Fal prompts reserve **upper ~38%** as clean marble safe zone for HTML text overlay; product/glass cube scene in **lower 62%**.
+- **`layout.ts`** composite hero: background-image (or marble fallback) with **scriptAccent + headline + CTA overlaid** inside the hero card; body copy and data rows stay **below** the graphic.
+- Subtle top **white gradient scrim** + light **text-shadow** for headline readability on marble.
+- VML rect fallback for Outlook; debug editor layers (`scriptAccent`, `headline`, `cta`) remain nested inside **`data-email-layer="hero"`** for drag/edit.
+
+**Changes:**
+- **`api/_lib/email/heroDimensions.ts`** — `EMAIL_HERO_WIDTH_PX`, `EMAIL_HERO_HEIGHT_PX`, `EMAIL_HERO_ASPECT_RATIO`, product zone spacer.
+- **`api/_lib/email/layout.ts`** — `renderHeroComposite()` replaces separate script/headline/img/CTA rows.
+- **`api/_lib/email/generateHeroAsset.ts`**, **`scripts/generate-email-hero-assets.mjs`** — `aspect_ratio: '2:3'`.
+- **`api/_lib/email/emailHeroPrompts.ts`** + **`emailHeroPrompts.data.json`** (41 prompts) — overlay-safe composition language.
+- **`emailLayoutConfig.ts`** / **`src/utils/emailLayoutDebug.ts`** — overlay padding defaults; **`EmailPreviewFrame`** min-height **920px**.
+- **`docs/EMAIL_SYSTEM.md`** — regen note: `FORCE=1 npm run email:generate-heroes`.
+
+**Regen:** Attempted **`FORCE=1 npm run email:generate-heroes`** — Fal **`403 Forbidden`** (exhausted balance). Existing **16:9** WebPs still render via **`background-size:cover`** until regen after top-up. Run **`FORCE=1 npm run email:generate-heroes`** then **`npm run email:upload-assets`** when Fal billing restored.

@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { EMAIL_HERO_ASPECT_RATIO } from './heroDimensions.js';
 import { emailHeroPromptFor } from './emailHeroPrompts.js';
 import { emailHeroStoragePath } from './heroImages.js';
 import type { EmailTemplateType } from './types.js';
@@ -79,7 +80,7 @@ export async function generateAndUploadEmailHero(
       prompt,
       image_urls: imageUrls,
       num_images: 1,
-      aspect_ratio: '16:9',
+      aspect_ratio: EMAIL_HERO_ASPECT_RATIO,
       output_format: 'webp',
       resolution: '2K',
     },

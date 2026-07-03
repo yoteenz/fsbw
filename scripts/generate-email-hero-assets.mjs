@@ -47,6 +47,7 @@ const OUT_DIR = join(ROOT, 'public/assets/email/heroes');
 const MANIFEST_PATH = join(OUT_DIR, 'manifest.json');
 
 const FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
+const EMAIL_HERO_ASPECT_RATIO = '2:3';
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -117,7 +118,7 @@ async function generateHero(fal, prompt, imageUrls) {
       prompt,
       image_urls: imageUrls,
       num_images: 1,
-      aspect_ratio: '16:9',
+      aspect_ratio: EMAIL_HERO_ASPECT_RATIO,
       output_format: 'webp',
       resolution: '2K',
     },

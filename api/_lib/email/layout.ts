@@ -1,5 +1,10 @@
 import { EMAIL_BRAND } from './brandAssets.js';
 import {
+  EMAIL_HERO_HEIGHT_PX,
+  EMAIL_HERO_PRODUCT_ZONE_PX,
+  EMAIL_HERO_WIDTH_PX,
+} from './heroDimensions.js';
+import {
   emailTdStyleCss,
   emailTextStyleCss,
   resolveEmailLayerStyle,
@@ -47,11 +52,11 @@ function resolveRowValue(row: EmailDataRow, vars: EmailTemplateVariables): strin
 }
 
 /** Rich HTML fallback when Fal hero WebP is not yet uploaded — glass cube + roses + diamonds. */
-function renderFallbackHeroScene(heroIcon: EmailHeroIcon): string {
+function renderFallbackHeroProductScene(heroIcon: EmailHeroIcon): string {
   const iconSvg = heroIconSvg(heroIcon);
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;border-collapse:collapse;">
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
   <tr>
-    <td align="center" style="padding:16px 12px 8px;background-image:url('${EMAIL_BRAND.marbleBackground}');background-repeat:repeat;background-size:contain;border-radius:12px;border:1px solid rgba(255,255,255,0.9);box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+    <td align="center" style="padding:0 12px 8px;">
       <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
         <tr>
           <td align="center" style="width:200px;height:200px;background:rgba(255,255,255,0.45);border:2px solid rgba(255,255,255,0.95);border-radius:12px;box-shadow:inset 0 0 32px rgba(255,255,255,0.6),0 8px 24px rgba(0,0,0,0.06);">
@@ -74,18 +79,87 @@ function renderFallbackHeroScene(heroIcon: EmailHeroIcon): string {
 </table>`;
 }
 
-function renderHeroSection(templateType: EmailTemplateType | undefined, heroIcon: EmailHeroIcon): string {
-  if (templateType && isEmailHeroReady(templateType)) {
-    const heroUrl = escHtml(emailHeroImageUrl(templateType));
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;border-collapse:collapse;">
+function heroOverlayTextShadow(style: EmailLayerStyle): string {
+  if (style.color && style.color.toLowerCase() !== '#ffffff' && style.color.toLowerCase() !== '#fff') {
+    return 'text-shadow:0 1px 10px rgba(255,255,255,0.92),0 0 2px rgba(255,255,255,0.85);';
+  }
+  return 'text-shadow:0 2px 12px rgba(0,0,0,0.45);';
+}
+
+function renderHeroOverlayCta(
+  ctaLabel: string,
+  ctaUrl: string,
+  ctaStyle: EmailLayerStyle
+): string {
+  if (!ctaUrl || ctaUrl === '#') return '';
+  const ctaText = emailTextStyleCss(ctaStyle);
+  return `<tr>
+          <td data-email-layer="cta" align="center" style="${emailTdStyleCss(ctaStyle)}">
+            <a data-email-copy="ctaLabel" href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};text-decoration:none;padding:16px 40px;border-radius:0;box-shadow:0 4px 16px rgba(235,28,36,0.35);${ctaText}">${ctaLabel}</a>
+          </td>
+        </tr>`;
+}
+
+/** Tall hero graphic with script accent, headline, and CTA overlaid on the image (reference-style). */
+function renderHeroComposite(input: {
+  templateType: EmailTemplateType | undefined;
+  heroIcon: EmailHeroIcon;
+  scriptAccent: string;
+  headline: string;
+  ctaLabel: string;
+  ctaUrl: string;
+  scriptStyle: EmailLayerStyle;
+  headlineStyle: EmailLayerStyle;
+  heroStyle: EmailLayerStyle;
+  ctaStyle: EmailLayerStyle;
+}): string {
+  const heroReady = Boolean(input.templateType && isEmailHeroReady(input.templateType));
+  const heroUrl = heroReady && input.templateType ? escHtml(emailHeroImageUrl(input.templateType)) : '';
+  const bgImage = heroReady
+    ? `background-image:url('${heroUrl}');background-size:cover;background-position:center bottom;background-repeat:no-repeat;`
+    : `background-image:url('${escHtml(EMAIL_BRAND.marbleBackground)}');background-repeat:repeat;background-size:contain;`;
+  const vmlFill = heroReady ? `<v:fill type="frame" src="${heroUrl}" color="#ffffff"/>` : `<v:fill type="tile" src="${escHtml(EMAIL_BRAND.marbleBackground)}" color="#ffffff"/>`;
+  const scriptText = `${emailTextStyleCss(input.scriptStyle)};${heroOverlayTextShadow(input.scriptStyle)}`;
+  const headlineText = `${emailTextStyleCss(input.headlineStyle)};${heroOverlayTextShadow(input.headlineStyle)}`;
+  const productScene = heroReady ? '' : renderFallbackHeroProductScene(input.heroIcon);
+  const ctaRow = renderHeroOverlayCta(input.ctaLabel, input.ctaUrl, input.ctaStyle);
+
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:${EMAIL_HERO_WIDTH_PX}px;margin:0 auto;border-collapse:collapse;border-radius:12px;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.1);">
   <tr>
-    <td align="center" style="padding:0;line-height:0;font-size:0;">
-      <img src="${heroUrl}" width="520" alt="" style="display:block;width:100%;max-width:520px;height:auto;border:0;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,0.1);"/>
+    <td align="center" valign="top" background="${heroUrl || escHtml(EMAIL_BRAND.marbleBackground)}" style="padding:0;line-height:normal;${bgImage}">
+      <!--[if gte mso 9]>
+      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:${EMAIL_HERO_WIDTH_PX}px;height:${EMAIL_HERO_HEIGHT_PX}px;">
+        ${vmlFill}
+        <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true">
+      <![endif]-->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;min-height:${EMAIL_HERO_HEIGHT_PX}px;">
+        <tr>
+          <td style="background:linear-gradient(to bottom, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.42) 34%, rgba(255,255,255,0) 52%);">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <tr>
+                <td data-email-layer="scriptAccent" style="${emailTdStyleCss(input.scriptStyle)}">
+                  <div data-email-copy="scriptAccent" style="${scriptText}">${input.scriptAccent}</div>
+                </td>
+              </tr>
+              <tr>
+                <td data-email-layer="headline" style="${emailTdStyleCss(input.headlineStyle)}">
+                  <div data-email-copy="headline" style="${headlineText}">${input.headline}</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" valign="bottom" style="height:${EMAIL_HERO_PRODUCT_ZONE_PX}px;vertical-align:bottom;padding:0;">
+            ${productScene}
+          </td>
+        </tr>
+        ${ctaRow}
+      </table>
+      <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
     </td>
   </tr>
 </table>`;
-  }
-  return renderFallbackHeroScene(heroIcon);
 }
 
 function renderMemberPerksRow(): string {
@@ -241,7 +315,18 @@ ${input.dataRows
       )
       .join('');
 
-  const heroHtml = renderHeroSection(input.templateType, input.heroIcon);
+  const heroHtml = renderHeroComposite({
+    templateType: input.templateType,
+    heroIcon: input.heroIcon,
+    scriptAccent,
+    headline,
+    ctaLabel,
+    ctaUrl,
+    scriptStyle,
+    headlineStyle,
+    heroStyle,
+    ctaStyle,
+  });
   const memberPerksHtml = input.showMemberPerks ? renderMemberPerksRow() : '';
   const supportFooterHtml = renderSupportFooter(
     input.supportCtaUrl || resolveConciergeMessageUrl(),
@@ -274,16 +359,6 @@ ${input.dataRows
             </td>
           </tr>
           <tr>
-            <td data-email-layer="scriptAccent" style="${emailTdStyleCss(scriptStyle)}">
-              <div data-email-copy="scriptAccent" style="${emailTextStyleCss(scriptStyle)}">${scriptAccent}</div>
-            </td>
-          </tr>
-          <tr>
-            <td data-email-layer="headline" style="${emailTdStyleCss(headlineStyle)}">
-              <div data-email-copy="headline" style="${emailTextStyleCss(headlineStyle)}">${headline}</div>
-            </td>
-          </tr>
-          <tr>
             <td data-email-layer="hero" align="center" style="${emailTdStyleCss(heroStyle)}">
               ${heroHtml}
             </td>
@@ -295,15 +370,6 @@ ${input.dataRows
               ${dataRowsHtml}
             </td>
           </tr>
-          ${
-            ctaUrl && ctaUrl !== '#'
-              ? `<tr>
-            <td data-email-layer="cta" align="center" style="${emailTdStyleCss(ctaStyle)}">
-              <a data-email-copy="ctaLabel" href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};text-decoration:none;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);${emailTextStyleCss(ctaStyle)}">${ctaLabel}</a>
-            </td>
-          </tr>`
-              : ''
-          }
           ${supportFooterHtml}
           <tr>
             <td style="padding:28px 32px 0;text-align:center;">
