@@ -33901,3 +33901,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - Full batch (**65 remaining** color rows) kicked off in background: **`SKIP_WEBM=1 npm run bcf:videos:generate`**. After completion run **`npm run bcf:videos:sync`** and commit updated manifest.
 
 **Conventions:** Photo and video resolution must stay aligned — default video only for default-photo colors. Do not show legacy `.mov` for colors that have color-specific PNGs until their **`BCF/videos/v1/{productKey}.mp4`** exists in manifest.
+
+---
+
+## 2026-07-03 — BCF video manifest sync (batch in progress)
+
+**Context:** User asked to sync and commit after batch generation. Full Fal batch still running (~17/75 ready on storage scan at sync time; ~3–4 min per video, ~4h total). **`bundles-curly-copper`** failed once with Fal **Unprocessable Entity** (will retry after batch or with **`FORCE=1`**).
+
+**Synced + committed (partial):**
+- Ran **`npm run bcf:videos:manifest`** (Supabase storage scan) → **17 ready** (9 legacy defaults + **8** new color MP4s: curly ash/auburn/cherry/chestnut/citrine/cobalt/espresso/ginger).
+- **`npm run bcf:videos:sync`** → **`bcfPdpHeroVideos.generated.ts`** + **`public/assets/bcf/videos/manifest.json`**.
+- Post-batch tmux watcher scheduled: when **`pregenerate-bcf-videos.mjs`** exits, re-run manifest + sync → **`/tmp/bcf-batch-sync-done.txt`**.
+
+**Follow-up:** When batch completes, run **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** again and commit remaining color videos (or retry failed rows).

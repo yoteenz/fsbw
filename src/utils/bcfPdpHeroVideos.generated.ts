@@ -9,6 +9,51 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "curly",
     "colorId": "ASH"
   },
+  "bundles-curly-auburn": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-auburn.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-auburn",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "AUBURN"
+  },
+  "bundles-curly-cherry": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-cherry.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-cherry",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "CHERRY"
+  },
+  "bundles-curly-chestnut": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-chestnut.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-chestnut",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "CHESTNUT"
+  },
+  "bundles-curly-citrine": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-citrine.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-citrine",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "CITRINE"
+  },
+  "bundles-curly-cobalt": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-cobalt.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-cobalt",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "COBALT"
+  },
   "bundles-curly-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__24695.mov",
     "webmStoragePath": null,
@@ -17,6 +62,24 @@ export const BCF_PDP_HERO_VIDEOS = {
     "category": "bundles",
     "texture": "curly",
     "colorId": "DEFAULT"
+  },
+  "bundles-curly-espresso": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-espresso.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-espresso",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "ESPRESSO"
+  },
+  "bundles-curly-ginger": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-ginger.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-ginger",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "GINGER"
   },
   "bundles-straight-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov",
