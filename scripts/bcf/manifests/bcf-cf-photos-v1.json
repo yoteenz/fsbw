@@ -1,12 +1,7 @@
 {
   "version": 1,
-<<<<<<< HEAD
-  "promptVersion": "v1",
-  "generatedAt": "2026-07-03T17:41:06.064Z",
-=======
   "promptVersion": "v2",
   "generatedAt": "2026-07-03T19:17:18.227Z",
->>>>>>> a28c3a21 (BCF CF photo regen: v2 prompt preserves hands, 16 user-reported assets)
   "bucket": "live-preview",
   "falModel": "fal-ai/nano-banana-pro/edit",
   "resolution": "2K",

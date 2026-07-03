@@ -34234,3 +34234,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** BCF CF photo recolor prompts must **preserve reference hands** — never forbid “hands” in the negative list. Use **`ONLY_PRODUCT_KEYS` + `FORCE=1`** for targeted regens.
 
+---
+
+## 2026-07-03 — BCF CF photo regen follow-up: manifest conflict-marker cleanup
+
+**Context:** Continuation of BCF CF photo hand-regen task. User sent commit/push reminder; working tree had an uncommitted fix to **`bcf-cf-photos-v1.json`** — rebase had left **`<<<<<<<` / `=======` / `>>>>>>>`** markers in the committed file header while the resolved working copy was correct (**`promptVersion: v2`**).
+
+**Fix:** Staged clean manifest (no conflict markers) + MEMORY append; one commit + push to **`master`**.
+
+**Changes:** **`scripts/bcf/manifests/bcf-cf-photos-v1.json`** (conflict markers removed). This MEMORY entry.
+
