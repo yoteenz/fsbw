@@ -11,8 +11,11 @@ Server-side automated emails using **Resend** and reusable **Frontal Slayer** HT
 
 2. **Supabase Storage assets** (optional but recommended for production):
    - Run migration `supabase/migrations/20260703120000_email_assets_bucket.sql`
-   - Upload assets: `npm run email:upload-assets` (needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`)
-   - Bucket: `email-assets` — marble background, rose, diamond, FS monogram
+   - Upload base assets: `npm run email:upload-assets` (needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`)
+   - **Generate Fal hero scenes** (matches reference design boards): `FAL_KEY=... npm run email:generate-heroes` then `npm run email:upload-assets`
+   - Bucket: `email-assets` — marble background, rose, diamond, FS monogram, `heroes/{templateType}.webp`
+   - Optional: `REFERENCE_IMAGE=path/to/cropped-reference.png` when running generate script for closer Fal edit match
+   - After generation, `public/assets/email/heroes/manifest.json` lists ready heroes; layout uses Fal WebPs when listed, rich HTML glass fallback otherwise
 
 3. **Internal send API** (optional):
    - `EMAIL_SEND_SECRET` — long random string; send header `X-Email-Send-Secret` with `POST /api/email/send`

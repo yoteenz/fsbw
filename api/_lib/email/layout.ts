@@ -1,6 +1,8 @@
 import { EMAIL_BRAND } from './brandAssets.js';
+import { emailHeroImageUrl } from './heroImages.js';
+import { isEmailHeroReady } from './heroManifest.js';
 import { heroIconSvg } from './heroIcons.js';
-import type { EmailDataRow, EmailHeroIcon, EmailTemplateVariables } from './types.js';
+import type { EmailDataRow, EmailHeroIcon, EmailTemplateType, EmailTemplateVariables } from './types.js';
 
 function escHtml(value: string): string {
   return value
@@ -24,7 +26,70 @@ function resolveRowValue(row: EmailDataRow, vars: EmailTemplateVariables): strin
   return row.fallback ?? '—';
 }
 
+/** Rich HTML fallback when Fal hero WebP is not yet uploaded — glass cube + roses + diamonds. */
+function renderFallbackHeroScene(heroIcon: EmailHeroIcon): string {
+  const iconSvg = heroIconSvg(heroIcon);
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;border-collapse:collapse;">
+  <tr>
+    <td align="center" style="padding:16px 12px 8px;background-image:url('${EMAIL_BRAND.marbleBackground}');background-repeat:repeat;background-size:contain;border-radius:12px;border:1px solid rgba(255,255,255,0.9);box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+      <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+        <tr>
+          <td align="center" style="width:200px;height:200px;background:rgba(255,255,255,0.45);border:2px solid rgba(255,255,255,0.95);border-radius:12px;box-shadow:inset 0 0 32px rgba(255,255,255,0.6),0 8px 24px rgba(0,0,0,0.06);">
+            ${iconSvg.replace(/width="64"/g, 'width="96"').replace(/height="64"/g, 'height="96"')}
+          </td>
+        </tr>
+      </table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;border-collapse:collapse;">
+        <tr>
+          <td align="center" style="padding:4px 0;">
+            <img src="${EMAIL_BRAND.roseAccent}" width="28" height="28" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;"/>
+            <img src="${EMAIL_BRAND.diamondAccent}" width="22" height="22" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;"/>
+            <img src="${EMAIL_BRAND.diamondAccent}" width="18" height="18" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;opacity:0.85;"/>
+            <img src="${EMAIL_BRAND.roseAccent}" width="24" height="24" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;"/>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+}
+
+function renderHeroSection(templateType: EmailTemplateType | undefined, heroIcon: EmailHeroIcon): string {
+  if (templateType && isEmailHeroReady(templateType)) {
+    const heroUrl = escHtml(emailHeroImageUrl(templateType));
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;border-collapse:collapse;">
+  <tr>
+    <td align="center" style="padding:0;line-height:0;font-size:0;">
+      <img src="${heroUrl}" width="520" alt="" style="display:block;width:100%;max-width:520px;height:auto;border:0;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,0.1);"/>
+    </td>
+  </tr>
+</table>`;
+  }
+  return renderFallbackHeroScene(heroIcon);
+}
+
+function renderMemberPerksRow(): string {
+  const perks = [
+    { icon: EMAIL_BRAND.diamondAccent, label: 'Earn Loyalty Points' },
+    { icon: EMAIL_BRAND.fsMonogram, label: 'Unlock Exclusive Perks' },
+    { icon: EMAIL_BRAND.roseAccent, label: 'Member Only Access' },
+  ];
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px auto 0;max-width:460px;border-collapse:collapse;">
+  <tr>
+${perks
+  .map(
+    (p) => `    <td align="center" width="33%" style="padding:8px 4px;vertical-align:top;">
+      <img src="${p.icon}" width="24" height="24" alt="" style="display:block;margin:0 auto 6px;"/>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:8px;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;line-height:1.4;">${escHtml(p.label)}</div>
+    </td>`
+  )
+  .join('\n')}
+  </tr>
+</table>`;
+}
+
 export interface RenderEmailLayoutInput {
+  templateType?: EmailTemplateType;
   scriptAccent: string;
   headline: string;
   bodyParagraphs: string[];
@@ -34,8 +99,8 @@ export interface RenderEmailLayoutInput {
   ctaUrl?: string;
   variables: EmailTemplateVariables;
   preheader?: string;
-  /** Newsletter / custom HTML body (inside marble card). */
   customHtmlBody?: string;
+  showMemberPerks?: boolean;
 }
 
 export function renderEmailLayout(input: RenderEmailLayoutInput): string {
@@ -51,16 +116,16 @@ export function renderEmailLayout(input: RenderEmailLayoutInput): string {
 
   const dataRowsHtml =
     input.dataRows && input.dataRows.length > 0
-      ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px auto 0;max-width:420px;border-collapse:collapse;background:rgba(255,255,255,0.72);border:1px solid rgba(156,163,175,0.9);border-radius:4px;">
+      ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px auto 0;max-width:420px;border-collapse:separate;border-spacing:0;background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.95);border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,0.06),inset 0 1px 0 rgba(255,255,255,0.9);">
 ${input.dataRows
   .map((row) => {
     const label = escHtml(row.label.toUpperCase());
     const value = escHtml(resolveRowValue(row, vars).toUpperCase());
     return `<tr>
-  <td style="padding:12px 16px 4px;font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.12em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${label}</td>
+  <td style="padding:14px 20px 4px;font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.14em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${label}</td>
 </tr>
 <tr>
-  <td style="padding:0 16px 12px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:600;color:${EMAIL_BRAND.black};text-transform:uppercase;">${value}</td>
+  <td style="padding:0 20px 14px;font-family:Georgia,'Times New Roman',serif;font-size:14px;font-weight:600;color:${EMAIL_BRAND.black};text-transform:uppercase;letter-spacing:0.04em;">${value}</td>
 </tr>`;
   })
   .join('\n')}
@@ -70,13 +135,15 @@ ${input.dataRows
   const bodyHtml =
     input.customHtmlBody ||
     paragraphs
+      .filter((p) => p.trim())
       .map(
         (p) =>
-          `<p style="margin:0 0 14px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.65;letter-spacing:0.06em;color:${EMAIL_BRAND.gray};text-transform:uppercase;text-align:center;">${p}</p>`
+          `<p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.75;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;text-align:center;">${p}</p>`
       )
       .join('');
 
-  const heroSvg = heroIconSvg(input.heroIcon);
+  const heroHtml = renderHeroSection(input.templateType, input.heroIcon);
+  const memberPerksHtml = input.showMemberPerks ? renderMemberPerksRow() : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -94,60 +161,61 @@ ${input.dataRows
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ececec;">
     <tr>
       <td align="center" style="padding:24px 12px;">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};background-image:url('${EMAIL_BRAND.marbleBackground}');background-repeat:repeat;background-position:center top;border:1px solid #ddd;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};background-image:url('${EMAIL_BRAND.marbleBackground}');background-repeat:repeat;background-position:center top;border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
           <tr>
-            <td style="padding:32px 28px 12px;text-align:center;">
-              <div style="font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:0.35em;color:${EMAIL_BRAND.black};text-transform:uppercase;">
-                FRONTAL <span style="color:${EMAIL_BRAND.red};">SLAYER</span>
+            <td style="padding:36px 32px 16px;text-align:center;">
+              <div style="font-family:Georgia,'Times New Roman',serif;font-size:14px;letter-spacing:0.38em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:400;">
+                FRONTAL <span style="color:${EMAIL_BRAND.red};letter-spacing:0.38em;">SLAYER</span>
               </div>
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 28px 0;text-align:center;">
-              <div style="font-family:'Great Vibes',cursive,Georgia,serif;font-size:28px;line-height:1.2;color:${EMAIL_BRAND.black};">${scriptAccent}</div>
+            <td style="padding:4px 32px 0;text-align:center;">
+              <div style="font-family:'Great Vibes',cursive,Georgia,serif;font-size:34px;line-height:1.15;color:${EMAIL_BRAND.black};">${scriptAccent}</div>
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 28px 20px;text-align:center;">
-              <div style="font-family:Georgia,'Times New Roman',serif;font-size:22px;line-height:1.25;letter-spacing:0.08em;color:${EMAIL_BRAND.red};font-weight:700;text-transform:uppercase;">${headline}</div>
+            <td style="padding:10px 32px 24px;text-align:center;">
+              <div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:1.2;letter-spacing:0.06em;color:${EMAIL_BRAND.red};font-weight:700;text-transform:uppercase;">${headline}</div>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding:0 28px 8px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                <tr>
-                  <td align="center" style="width:140px;height:140px;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.85);border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
-                    ${heroSvg}
-                  </td>
-                </tr>
-              </table>
+            <td align="center" style="padding:0 24px 20px;">
+              ${heroHtml}
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding:4px 28px 8px;">
-              <img src="${EMAIL_BRAND.roseAccent}" width="20" height="20" alt="" style="display:inline-block;margin:0 6px;vertical-align:middle;"/>
-              <img src="${EMAIL_BRAND.diamondAccent}" width="16" height="16" alt="" style="display:inline-block;margin:0 6px;vertical-align:middle;"/>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:12px 36px 8px;text-align:center;">
+            <td style="padding:8px 40px 4px;text-align:center;">
               ${bodyHtml}
+              ${memberPerksHtml}
               ${dataRowsHtml}
             </td>
           </tr>
           ${
             ctaUrl && ctaUrl !== '#'
               ? `<tr>
-            <td align="center" style="padding:28px 28px 12px;">
-              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;padding:14px 32px;border-radius:0;">${ctaLabel}</a>
+            <td align="center" style="padding:32px 32px 16px;">
+              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);">${ctaLabel}</a>
             </td>
           </tr>`
               : ''
           }
           <tr>
-            <td style="padding:32px 28px 28px;text-align:center;border-top:1px solid rgba(0,0,0,0.08);">
-              <div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.22em;color:${EMAIL_BRAND.gray};text-transform:uppercase;margin-bottom:12px;">LUXURY WITHOUT LIMITS.</div>
-              <img src="${EMAIL_BRAND.fsMonogram}" width="24" height="24" alt="FS" style="display:inline-block;opacity:0.85;"/>
+            <td style="padding:28px 32px 0;text-align:center;">
+              <div style="height:3px;background-color:${EMAIL_BRAND.red};max-width:120px;margin:0 auto 20px;"></div>
+              <div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.28em;color:${EMAIL_BRAND.gray};text-transform:uppercase;margin-bottom:16px;">LUXURY WITHOUT LIMITS.</div>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;border-collapse:collapse;">
+                <tr>
+                  <td style="padding:0 8px;"><img src="${EMAIL_BRAND.diamondAccent}" width="18" height="18" alt="" style="display:block;opacity:0.7;"/></td>
+                  <td style="padding:0 8px;"><img src="${EMAIL_BRAND.fsMonogram}" width="18" height="18" alt="" style="display:block;opacity:0.7;"/></td>
+                  <td style="padding:0 8px;"><img src="${EMAIL_BRAND.roseAccent}" width="18" height="18" alt="" style="display:block;opacity:0.7;"/></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 32px 28px;text-align:center;">
+              <div style="font-family:Arial,Helvetica,sans-serif;font-size:7px;letter-spacing:0.12em;color:#aaa;text-transform:uppercase;">Thank you for being part of the Slay Society.</div>
             </td>
           </tr>
         </table>

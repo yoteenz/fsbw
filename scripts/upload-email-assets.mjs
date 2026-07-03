@@ -20,6 +20,19 @@ const ASSETS = [
   { local: 'public/assets/hub-icon.svg', remote: 'hub-icon.svg', contentType: 'image/svg+xml' },
 ];
 
+function collectHeroAssets() {
+  const heroesDir = path.join(ROOT, 'public/assets/email/heroes');
+  if (!fs.existsSync(heroesDir)) return [];
+  return fs
+    .readdirSync(heroesDir)
+    .filter((f) => f.endsWith('.webp'))
+    .map((f) => ({
+      local: `public/assets/email/heroes/${f}`,
+      remote: `heroes/${f}`,
+      contentType: 'image/webp',
+    }));
+}
+
 function mimeFromExt(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   if (ext === '.png') return 'image/png';
@@ -52,7 +65,7 @@ async function main() {
     console.log(`Created bucket "${BUCKET}"`);
   }
 
-  for (const entry of ASSETS) {
+  for (const entry of [...ASSETS, ...collectHeroAssets()]) {
     const abs = path.join(ROOT, entry.local);
     if (!fs.existsSync(abs)) {
       console.warn('Skip missing:', entry.local);

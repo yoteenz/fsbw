@@ -128,4 +128,6 @@ export interface EmailTemplateDefinition {
   defaultCtaLabel: string;
   defaultCtaPath: string;
   preheader?: string;
+  /** Show earn/unlock/access perk icons row (welcome-style templates). */
+  showMemberPerks?: boolean;
 }

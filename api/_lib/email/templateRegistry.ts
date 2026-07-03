@@ -23,13 +23,14 @@ const AFFILIATE_SUBMIT_ROWS = [
 export const EMAIL_TEMPLATE_REGISTRY: Record<EmailTemplateType, EmailTemplateDefinition> = {
   welcome: {
     defaultSubject: 'Welcome to the Slay Society',
-    scriptAccent: 'Welcome',
-    headline: 'Welcome to the Slay Society',
+    scriptAccent: 'Welcome to',
+    headline: 'The Slay Society',
     bodyParagraphs: [
-      'Hi {{customerName}}, thank you for joining Frontal Slayer.',
-      'Earn loyalty points, unlock exclusive perks, and enjoy member-only access.',
+      'Hi {{customerName}}, you\'re in. It\'s time to get rewarded.',
+      'You\'ve officially joined a world of luxury without limits.',
     ],
     heroIcon: 'welcome',
+    showMemberPerks: true,
     defaultCtaLabel: 'START EARNING',
     defaultCtaPath: '/account/rewards',
     preheader: 'Your luxury rewards journey starts now.',
@@ -367,13 +368,14 @@ export const EMAIL_TEMPLATE_REGISTRY: Record<EmailTemplateType, EmailTemplateDef
   },
   membership_welcome: {
     defaultSubject: 'Welcome to Premium Membership',
-    scriptAccent: 'Welcome',
-    headline: 'Premium Membership Active',
+    scriptAccent: 'Welcome to',
+    headline: 'Premium Membership',
     bodyParagraphs: [
       'Hi {{customerName}}, your premium membership is active.',
       'Enjoy exclusive access, early drops, and VIP perks.',
     ],
     heroIcon: 'crown',
+    showMemberPerks: true,
     defaultCtaLabel: 'EXPLORE PERKS',
     defaultCtaPath: '/account/rewards',
   },

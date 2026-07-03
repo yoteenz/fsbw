@@ -33513,3 +33513,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **Debug UI:** **`/tools/email-templates`** — admin-only tabbed preview (Account / Orders / Rewards / Affiliate / Shop); **`GET /api/email/templates`** catalog + iframe preview via **`POST /api/email/send`** with **`preview: true`**. Client helpers in **`src/utils/transactionalEmail.ts`**.
 
 **Changes:** **`api/admin/transactional-notify.ts`**, **`api/admin/rewards-notify.ts`**, **`api/cron/expiring-rewards-emails.ts`**, **`api/inventory/back-in-stock-notify.ts`**, **`api/client/back-in-stock-notify.ts`**, **`api/email/templates.ts`**, **`api/_lib/email/templateCatalog.ts`**, **`orderLifecycle.ts`**, **`expiringRewardsScan.ts`**; wired **`profile.ts`**, **`consult-quotes.ts`**, **`recordProductOrderFromPaymentIntent.ts`**, **`admin/revenue/page.tsx`**, **`unitStockNotify.ts`**; **`src/pages/tools/email-templates/page.tsx`**, **`App.tsx`**, **`vercel.json`**, **`docs/EMAIL_SYSTEM.md`**; **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-07-03 — Email template debug page: hide PSA + fix Forbidden / empty templates
+
+**Context:** User reported **`/tools/email-templates`** showed the floating PSA widget and **`{"error":"Forbidden"}`** with no template list or previews (screenshot: REWARDS tab, empty “Select a template”).
+
+**Root causes:**
+- **`/tools/email-templates`** was not in **`PSA_HIDDEN_PATH_PREFIXES`** / **`PSA_TEST_TOOL_PATH_PREFIXES`** — PSA FAB rendered on the admin debug page.
+- Template **catalog** was fetched from **`GET /api/email/templates`** ( **`requireAdmin`** + Supabase Bearer JWT). Client gate uses **`canAccessAdminPages()`** (localStorage + **`VITE_ADMIN_EMAILS`**), so admins could pass the page gate but API returned **403 Forbidden** when JWT/`ADMIN_EMAILS` did not align — empty list and error banner.
+- **`POST /api/email/send`** with **`preview: true`** also required admin auth, so previews failed even after selecting a template.
+
+**Fixes:**
+- Added **`'/tools/email-templates'`** to **`PSA_TEST_TOOL_PATH_PREFIXES`** in **`src/constants/psaConfig.ts`** (PSA hidden on debug page).
+- New **`src/constants/emailTemplateCatalog.ts`** — client-side catalog + sample variables (mirrors **`api/_lib/email/templateCatalog.ts`**); debug page lists templates without catalog API.
+- **`src/pages/tools/email-templates/page.tsx`** — uses client catalog; removed failed-fetch loading gate.
+- **`api/email/send.ts`** — parse body first; **`preview: true`** skips admin auth (render-only, no Resend send).
+- **`src/utils/transactionalEmail.ts`** — clearer JSON error parsing for preview failures.
+
+**Conventions:** Keep **`emailTemplateCatalog.ts`** in sync when adding templates to **`templateRegistry`**. Debug preview relies on unauthenticated **`preview: true`**; actual sends still require admin or **`EMAIL_SEND_SECRET`**.

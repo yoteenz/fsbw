@@ -40,7 +40,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:install": "playwright install webkit chromium",
-    "email:upload-assets": "node scripts/upload-email-assets.mjs"
+    "email:upload-assets": "node scripts/upload-email-assets.mjs",
+    "email:generate-heroes": "node scripts/generate-email-hero-assets.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",

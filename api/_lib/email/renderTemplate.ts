@@ -53,6 +53,7 @@ export function renderEmailTemplate(
   }
 
   const html = renderEmailLayout({
+    templateType,
     scriptAccent: def.scriptAccent,
     headline: def.headline,
     bodyParagraphs: def.bodyParagraphs,
@@ -63,6 +64,7 @@ export function renderEmailTemplate(
     variables: vars,
     preheader: vars.preheader || def.preheader || def.defaultSubject,
     customHtmlBody,
+    showMemberPerks: def.showMemberPerks,
   });
 
   const textLines = [
