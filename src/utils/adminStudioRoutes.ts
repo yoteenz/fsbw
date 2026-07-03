@@ -15,6 +15,8 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'analytics'
   | 'content-brain'
   | 'creative-director'
+  | 'intelligence-engine'
+  | 'ai-orchestrator'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -27,6 +29,8 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'analytics',
   'content-brain',
   'creative-director',
+  'intelligence-engine',
+  'ai-orchestrator',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -46,6 +50,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   contentBrain: 'studio/content-brain',
   contentBrainSection: 'studio/content-brain/:sectionId',
   creativeDirector: 'studio/creative-director',
+  intelligenceEngine: 'studio/intelligence-engine',
+  aiOrchestrator: 'studio/ai-orchestrator',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 

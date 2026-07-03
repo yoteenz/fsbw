@@ -20,6 +20,8 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   contentBrainCalendar: 'adminStudioContentBrainCalendar_v1',
   contentBrainApproval: 'adminStudioContentBrainApproval_v1',
   creativeDirector: 'adminStudioCreativeDirector_v1',
+  intelligenceEngine: 'adminStudioIntelligenceEngine_v1',
+  orchestrator: 'adminStudioOrchestrator_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

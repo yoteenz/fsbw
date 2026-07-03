@@ -133,6 +133,8 @@ const AdminStudioAnalytics = lazyWithRetry(() => import('./pages/admin/studio/an
 const AdminStudioContentBrain = lazyWithRetry(() => import('./pages/admin/studio/content-brain/page'), 'AdminStudioContentBrain');
 const AdminStudioContentBrainSection = lazyWithRetry(() => import('./pages/admin/studio/content-brain/section/page'), 'AdminStudioContentBrainSection');
 const AdminStudioCreativeDirector = lazyWithRetry(() => import('./pages/admin/studio/creative-director/page'), 'AdminStudioCreativeDirector');
+const AdminStudioIntelligenceEngine = lazyWithRetry(() => import('./pages/admin/studio/intelligence-engine/page'), 'AdminStudioIntelligenceEngine');
+const AdminStudioAiOrchestrator = lazyWithRetry(() => import('./pages/admin/studio/ai-orchestrator/page'), 'AdminStudioAiOrchestrator');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -788,6 +790,16 @@ function App() {
           <Route path="studio/creative-director" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioCreativeDirector />
+            </Suspense>
+          } />
+          <Route path="studio/intelligence-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioIntelligenceEngine />
+            </Suspense>
+          } />
+          <Route path="studio/ai-orchestrator" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAiOrchestrator />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={

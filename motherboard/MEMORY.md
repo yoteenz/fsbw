@@ -34563,3 +34563,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** No AI provider may bypass Creative Director; Phase 2 AI Orchestrator calls `creativeDirectorStudioService.validateBeforeGeneration()` then assembles prompts; never auto-publish; navigate via `/admin/studio/creative-director` or Creative Director footer links to Content Brain / AI Studio.
 
+---
+
+## 2026-07-03 — THE STUDIO Intelligence Engine + AI Orchestration Layer
+
+**Context:** Continuation of THE STUDIO (prior milestones frozen — no redesign of existing Studio pages). User requested two independent backend systems: **Intelligence Engine** (gather evidence, recommend what to create) and **AI Orchestration Layer** (execute via interchangeable provider adapters). Creative decisions must NEVER originate from OpenAI/FAL/OpenArt/Resend — only from Frontal Slayer (Content Brain + Creative Director).
+
+**Topics covered (full chat arc):**
+- Prior: Content Brain, Creative Director, light theme, all earlier Studio milestones.
+- **Intelligence Engine** (`/admin/studio/intelligence-engine`): 21 modular connectors (Google Trends, Pinterest, Instagram, TikTok, YouTube, Website, Supabase, Orders, Memberships, Rewards, Wishlist, BAW Saves, Hair Analysis, PSA, Lounge TV, Slay Cam, Reviews, Affiliate, Email, Referral, Search); 8 intelligence types; evidence-based topic recommendations with confidence % (Low/Medium/High/Very High); never fabricates trends — only active connector signals; topic forecasting windows; customer + performance intelligence; Creative Director feed export (`buildCreativeDirectorFeed`).
+- **AI Orchestrator** (`/admin/studio/ai-orchestrator`): separate from Intelligence; Studio → Orchestrator → adapters only; OpenAI/FAL/OpenArt/Voice/Email adapters with responsibility lists; 13-step pipeline (Topic → Content Brain → Creative Director → Intelligence → Prompt Assembly → Orchestrator → Adapters → Assets → Draft Pack → Review → Approval → Scheduling → Publishing); content packaging (12 asset slots), approval pipeline (Draft → Archived), version history, error handling (timeout, quota, retry steps); never auto-publish.
+- **Services:** `src/services/studio/intelligenceEngine/` (connectors, gather, confidence), `src/services/studio/orchestrator/` (adapters, pipeline, packaging); `intelligenceEngineStudioService` + `aiOrchestratorStudioService` in `STUDIO_SERVICE_REGISTRY`.
+- **Storage:** `adminStudioIntelligenceEngine_v1`, `adminStudioOrchestrator_v1`.
+
+**Decisions / outcomes:** New pages only — existing milestone UIs untouched. Demo connectors via explicit "ENABLE DEMO CONNECTORS" (simulated signals, attributed per connector). Providers NOT_CONNECTED — plan/package demo only. Build verified.
+
+**Changes:** `adminStudioIntelligenceDemo.ts`, `adminStudioOrchestratorDemo.ts`, intelligence/orchestrator service folders, hooks, `intelligence-engine/page.tsx`, `ai-orchestrator/page.tsx`, routes, `App.tsx`, `adminStudioStorage.ts`, `STUDIO_SERVICE_REGISTRY`.
+
+**Conventions:** Intelligence feeds Creative Director; Orchestrator receives assembled prompts after CD quality gate; no provider bypass; future connectors plug into registry without engine core changes.
+

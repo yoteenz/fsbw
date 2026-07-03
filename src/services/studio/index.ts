@@ -35,6 +35,12 @@ export {
   applyEditorReviewAction,
 } from './creativeDirector';
 
+export { intelligenceEngineStudioService, buildIntelligenceSnapshot, buildCreativeDirectorFeed } from './intelligenceEngine';
+export type { IntelligenceEngineSnapshot, CreativeDirectorIntelligenceFeed, ConnectorStateMap } from './intelligenceEngine';
+
+export { aiOrchestratorStudioService, planOrchestratorRun, createEmptyPack } from './orchestrator';
+export type { OrchestratedContentPack } from './orchestrator';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -44,12 +50,16 @@ import { schedulingStudioService } from './scheduling';
 import { distributionStudioService } from './distribution';
 import { contentBrainStudioService } from './contentBrain';
 import { creativeDirectorStudioService } from './creativeDirector/service';
+import { intelligenceEngineStudioService } from './intelligenceEngine';
+import { aiOrchestratorStudioService } from './orchestrator';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
 export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   contentBrainStudioService,
   creativeDirectorStudioService,
+  intelligenceEngineStudioService,
+  aiOrchestratorStudioService,
   openaiStudioService,
   falStudioService,
   resendStudioService,

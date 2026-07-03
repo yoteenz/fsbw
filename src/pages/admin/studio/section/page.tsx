@@ -14,6 +14,12 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'creative-director') {
       return <Navigate to="/admin/studio/creative-director" replace />;
     }
+    if (sectionId === 'intelligence-engine') {
+      return <Navigate to="/admin/studio/intelligence-engine" replace />;
+    }
+    if (sectionId === 'ai-orchestrator') {
+      return <Navigate to="/admin/studio/ai-orchestrator" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 
