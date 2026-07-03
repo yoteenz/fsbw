@@ -54,3 +54,13 @@ export function publicStorageUrl(supabaseUrl, bucket, storagePath) {
 export function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
+
+/** Reject if `promise` does not settle within `ms` (unblocks batch on hung Fal jobs). */
+export function withTimeout(promise, ms, label = 'operation') {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    }),
+  ]);
+}

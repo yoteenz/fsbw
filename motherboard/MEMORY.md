@@ -33981,3 +33981,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - Stopped broader 26-video drift regen (included ASH, AUBURN, etc. user did not report).
 - **`npm run bcf:videos:detect-drift`** — multi-frame hair luma compare; report in **`manifests/bcf-video-color-drift-v1.json`**.
 - After regen: **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** + commit.
+
+---
+
+## 2026-07-03 — BCF video batch: fail-fast skip + circle-back retries
+
+**Context:** User asked batch to auto-skip failed Fal jobs so one hang (e.g. cherry **fetch failed** ~50 min) does not block the rest.
+
+**Changes:**
+- **`pregenerate-bcf-videos.mjs`** — **`JOB_TIMEOUT_MS`** (10 min) + **`DOWNLOAD_TIMEOUT_MS`** (2 min) via **`withTimeout`** in **`bcfVideoEnv.mjs`**; on fail log **`[fail] … — skipping, continuing batch`**, persist manifest **per row**; print failed keys + **`ONLY_FAILED=1 FORCE=1`** retry hint at end.
+- Restarted **6-color** regen (`GINGER, CHERRY, RASPBERRY, TEAL, SLIME, CITRINE`) with timeouts; some rows hit Fal **Forbidden** and continue.

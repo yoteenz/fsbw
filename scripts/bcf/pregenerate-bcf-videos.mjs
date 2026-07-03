@@ -24,6 +24,9 @@
  *   SKIP_PRODUCT_KEYS=bundles-curly-copper
  *   ONLY_PRODUCT_KEYS=bundles-wavy-cherry,bundles-straight-plum
  *   ONLY_COLOR_IDS=GINGER,CHERRY,RASPBERRY,TEAL,SLIME,CITRINE
+ *   ONLY_FAILED=1               — retry manifest rows with status failed (circle back)
+ *   JOB_TIMEOUT_MS=600000         — max ms per Fal job before skip (default 10 min)
+ *   DOWNLOAD_TIMEOUT_MS=120000  — max ms to download rendered MP4 (default 2 min)
  */
 import { createClient } from '@supabase/supabase-js';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -31,7 +34,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { BCF_VIDEO_NEGATIVE_PROMPT, BCF_VIDEO_PROMPT } from './bcfVideoPrompt.mjs';
-import { loadEnvFiles, publicStorageUrl, sleep } from './bcfVideoEnv.mjs';
+import { loadEnvFiles, publicStorageUrl, sleep, withTimeout } from './bcfVideoEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..', '..');
@@ -69,16 +72,19 @@ const onlyColorIds = new Set(
     .map((s) => s.trim().toUpperCase())
     .filter(Boolean),
 );
+const onlyFailed = process.env.ONLY_FAILED === '1' || process.env.ONLY_FAILED === 'true';
+const jobTimeoutMs = parseInt(process.env.JOB_TIMEOUT_MS || '600000', 10);
+const downloadTimeoutMs = parseInt(process.env.DOWNLOAD_TIMEOUT_MS || '120000', 10);
 
 function ffmpegAvailable() {
   const r = spawnSync('ffmpeg', ['-version'], { stdio: 'ignore' });
   return r.status === 0;
 }
 
-async function downloadUrlToBuffer(url) {
-  const res = await fetch(url);
+async function downloadUrlToBuffer(url, label = 'download') {
+  const res = await withTimeout(fetch(url), downloadTimeoutMs, `${label} fetch`);
   if (!res.ok) throw new Error(`Download failed ${res.status} ${url}`);
-  return Buffer.from(await res.arrayBuffer());
+  return Buffer.from(await withTimeout(res.arrayBuffer(), downloadTimeoutMs, `${label} body`));
 }
 
 async function objectExists(supabase, path) {
@@ -139,6 +145,21 @@ function convertMp4ToWebm(mp4Path, webmPath) {
   if (r.status !== 0) throw new Error('ffmpeg WebM conversion failed');
 }
 
+function summarizeManifest(manifest) {
+  manifest.updatedAt = new Date().toISOString();
+  manifest.summary = {
+    total: manifest.items.length,
+    ready: manifest.items.filter((i) => i.status !== 'missing' && i.status !== 'failed').length,
+    missing: manifest.items.filter((i) => i.status === 'missing').length,
+    failed: manifest.items.filter((i) => i.status === 'failed').length,
+  };
+}
+
+function persistManifest(manifest) {
+  summarizeManifest(manifest);
+  writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
+}
+
 async function main() {
   if (!existsSync(MANIFEST_PATH)) {
     console.error('Missing manifest — run: node scripts/bcf/generate-bcf-video-manifest.mjs');
@@ -163,6 +184,9 @@ async function main() {
   if (onlyColorIds.size > 0) {
     items = items.filter((row) => onlyColorIds.has(String(row.colorId || '').toUpperCase()));
   }
+  if (onlyFailed) {
+    items = items.filter((row) => row.status === 'failed');
+  }
   if (limit > 0) items = items.slice(0, limit);
 
   const supabase = dryRun ? null : createClient(supabaseUrl, supabaseKey);
@@ -179,9 +203,10 @@ async function main() {
   let ok = 0;
   let skipped = 0;
   let failed = 0;
+  const failedKeys = [];
 
   console.log(
-    `BCF video batch: rows=${items.length} model=${falModel} duration=${duration}s dryRun=${dryRun} force=${force}`
+    `BCF video batch: rows=${items.length} model=${falModel} duration=${duration}s dryRun=${dryRun} force=${force} jobTimeoutMs=${jobTimeoutMs}`,
   );
 
   for (let i = 0; i < items.length; i++) {
@@ -213,8 +238,12 @@ async function main() {
       const sourceUrl =
         row.sourcePhotoUrl || publicStorageUrl(supabaseUrl, bucket, row.sourcePhotoStoragePath);
       console.log(`[gen] ${label}`);
-      const videoUrl = await generateKlingVideo(fal, sourceUrl, row.prompt || BCF_VIDEO_PROMPT);
-      const mp4Buf = await downloadUrlToBuffer(videoUrl);
+      const videoUrl = await withTimeout(
+        generateKlingVideo(fal, sourceUrl, row.prompt || BCF_VIDEO_PROMPT),
+        jobTimeoutMs,
+        label,
+      );
+      const mp4Buf = await downloadUrlToBuffer(videoUrl, label);
       await uploadBuffer(supabase, row.mp4StoragePath, mp4Buf, 'video/mp4');
 
       if (canWebm) {
@@ -233,27 +262,27 @@ async function main() {
 
       ok++;
       console.log(`[ok] ${label} → ${row.mp4StoragePath}`);
+      if (!dryRun) persistManifest(manifest);
       if (sleepMs > 0) await sleep(sleepMs);
     } catch (e) {
       failed++;
       row.status = 'failed';
       row.lastError = e instanceof Error ? e.message : String(e);
-      console.error(`[fail] ${label}`, row.lastError);
+      row.failedAt = new Date().toISOString();
+      failedKeys.push(row.productKey);
+      console.error(`[fail] ${label} — skipping, continuing batch`, row.lastError);
+      if (!dryRun) persistManifest(manifest);
     }
   }
 
-  if (!dryRun) {
-    manifest.updatedAt = new Date().toISOString();
-    manifest.summary = {
-      total: manifest.items.length,
-      ready: manifest.items.filter((i) => i.status !== 'missing' && i.status !== 'failed').length,
-      missing: manifest.items.filter((i) => i.status === 'missing').length,
-      failed: manifest.items.filter((i) => i.status === 'failed').length,
-    };
-    writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
-  }
+  if (!dryRun) persistManifest(manifest);
 
   console.log(`Done. generated=${ok} skipped=${skipped} failed=${failed} dryRun=${dryRun}`);
+  if (failed > 0) {
+    console.log('Failed product keys (circle back later):');
+    console.log(failedKeys.join(','));
+    console.log('Retry: ONLY_FAILED=1 FORCE=1 npm run bcf:videos:generate');
+  }
   if (ok > 0 && !dryRun) {
     console.log('Run: node scripts/bcf/sync-bcf-video-manifest.mjs');
   }

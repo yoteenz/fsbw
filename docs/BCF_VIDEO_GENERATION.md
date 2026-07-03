@@ -79,7 +79,10 @@ After each successful batch run, **`npm run bcf:videos:sync`** updates the app m
 
 - Idempotent: existing MP4/WebM in storage are skipped
 - Legacy `.mov` skips regeneration for the 9 texture defaults unless `FORCE=1`
-- `LIMIT`, `SLEEP_MS`, `DRY_RUN` for testing
+- Failed jobs are **skipped immediately** (manifest updated per row) — batch never blocks on one bad Fal job
+- **`JOB_TIMEOUT_MS=600000`** (10 min default) — hung Fal calls auto-fail and continue
+- **`ONLY_FAILED=1 FORCE=1`** — circle back to retry failed rows only
+- `LIMIT`, `SLEEP_MS`, `DRY_RUN`, `SKIP_PRODUCT_KEYS`, `ONLY_PRODUCT_KEYS`, `ONLY_COLOR_IDS` for testing / selective regen
 
 ## Env reference
 
@@ -90,4 +93,7 @@ After each successful batch run, **`npm run bcf:videos:sync`** updates the app m
 | `BCF_VIDEO_PREFIX` | `BCF/videos/v1` | Storage folder |
 | `STORAGE_BUCKET` | `live-preview` | Supabase bucket |
 | `FORCE=1` | off | Regenerate even when MP4 exists |
+| `ONLY_FAILED=1` | off | Retry only manifest rows with `status: failed` |
+| `JOB_TIMEOUT_MS` | `600000` | Per-job Fal timeout (ms); fail fast and continue |
+| `DOWNLOAD_TIMEOUT_MS` | `120000` | MP4 download timeout (ms) |
 | `SKIP_WEBM=1` | off | MP4 only |
