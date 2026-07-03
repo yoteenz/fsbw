@@ -10,6 +10,7 @@ import {
 } from './bawStaticMannequinReferencePaths';
 import {
   BAW_SLAY_CARD_SLAYER_LOGO_SRC,
+  BAW_SLAY_CARD_SUBTITLE_LABEL,
   BAW_SLAY_CARD_TEMPLATE_SRC,
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
   getActiveBawSlayCardLayout,
@@ -277,7 +278,7 @@ export async function paintBawSlayCard(
 
   ctx.fillStyle = header.subtitle.color;
   ctx.font = fontFromStyle(header.subtitle);
-  ctx.fillText('PERSONAL BUILD-A-WIG SLAY CARD', header.subtitle.x, header.subtitle.y);
+  ctx.fillText(BAW_SLAY_CARD_SUBTITLE_LABEL, header.subtitle.x, header.subtitle.y);
 
   const specLines = buildBawSlayCardSpecLines(selections);
 

@@ -6,6 +6,8 @@ export const BAW_SLAY_CARD_SLAYER_LOGO_SRC =
 
 export const BAW_SLAY_CARD_LAYOUT_DEBUG_KEY = 'baw_slay_card_layout_debug_v3';
 
+export const BAW_SLAY_CARD_SUBTITLE_LABEL = 'personal build-a-wig slay card';
+
 export type BawSlayCardTextStyle = {
   x: number;
   y: number;
@@ -70,8 +72,8 @@ export const DEFAULT_BAW_SLAY_CARD_LAYOUT: BawSlayCardLayout = {
       y: 340,
       color: '#1A1A1A',
       fontSize: 28,
-      fontFamily: '"Futura PT Book", Futura, sans-serif',
-      fontWeight: 500,
+      fontFamily: '"Bohemy", cursive',
+      fontWeight: 400,
     },
   },
   textPanel: {
@@ -132,7 +134,7 @@ function isCompleteBawSlayCardLayout(value: unknown): value is BawSlayCardLayout
   );
 }
 
-/** Saved debug layout cannot override FRONTAL font or drop the slayer logo. */
+/** Saved debug layout cannot override FRONTAL/subtitle fonts or drop the slayer logo. */
 export function normalizeBawSlayCardLayout(layout: BawSlayCardLayout): BawSlayCardLayout {
   const defaults = DEFAULT_BAW_SLAY_CARD_LAYOUT;
   return {
@@ -143,6 +145,11 @@ export function normalizeBawSlayCardLayout(layout: BawSlayCardLayout): BawSlayCa
         ...layout.header.frontal,
         fontFamily: defaults.header.frontal.fontFamily,
         fontWeight: defaults.header.frontal.fontWeight,
+      },
+      subtitle: {
+        ...layout.header.subtitle,
+        fontFamily: defaults.header.subtitle.fontFamily,
+        fontWeight: defaults.header.subtitle.fontWeight,
       },
       slayerLogo: isValidImageLayout(layout.header?.slayerLogo)
         ? layout.header.slayerLogo

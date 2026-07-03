@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { paintBawSlayCard, type BawSlayCardSelections } from '../../../utils/bawSlayCard';
 import { bawStaticMannequinFrontReferencePathFromUnitAndHairline } from '../../../utils/bawStaticMannequinReferencePaths';
 import {
+  BAW_SLAY_CARD_SUBTITLE_LABEL,
   formatBawSlayCardLayoutForCopy,
   loadBawSlayCardLayoutDebug,
   mergeBawSlayCardLayout,
@@ -35,7 +36,7 @@ const SAMPLE_SELECTIONS: BawSlayCardSelections = {
   addOns: [],
 };
 
-const SUBTITLE_LABEL = 'PERSONAL BUILD-A-WIG SLAY CARD';
+const SUBTITLE_LABEL = BAW_SLAY_CARD_SUBTITLE_LABEL;
 const FOOTER_LABEL = 'PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.';
 const MAX_SPEC_LINE_COUNT = 12;
 
@@ -716,7 +717,7 @@ export default function SlayCardDebugPage() {
             </section>
           ) : null}
           {selectedLayer === 'subtitle' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Subtitle</h2><TextStyleFields style={layout.header.subtitle} onChange={(p) => updateHeaderText('subtitle', p)} /></section>
+            <section><h2 className="text-[11px] uppercase font-semibold mb-2">Subtitle</h2><TextStyleFields style={layout.header.subtitle} onChange={(p) => updateHeaderText('subtitle', p)} lockFont /></section>
           ) : null}
           {selectedLayer === 'unit' ? (
             <section><h2 className="text-[11px] uppercase font-semibold mb-2">Unit name</h2><TextStyleFields style={layout.textPanel.unit} onChange={(p) => updateTextPanel({ unit: { ...layout.textPanel.unit, ...p } })} /></section>

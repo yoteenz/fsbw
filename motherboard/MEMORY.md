@@ -33625,3 +33625,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to replace slay card footer **TRY THE FULL BUILDER WITH MEMBERSHIP** with **PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.**
 
 **Changes:** **`bawSlayCard.ts`** **`paintBawSlayCard`** footer string; **`slay-card-debug/page.tsx`** **`FOOTER_LABEL`** for guide overlay.
+
+---
+
+## 2026-07-03 — Slay card subtitle Bohemy lowercase
+
+**Context:** User asked to render **PERSONAL BUILD-A-WIG SLAY CARD** as lowercase **Bohemy** instead of uppercase Futura.
+
+**Changes:** **`BAW_SLAY_CARD_SUBTITLE_LABEL`** = **`personal build-a-wig slay card`**; default subtitle **`fontFamily`** **Bohemy** **`fontWeight` 400**; **`normalizeBawSlayCardLayout`** locks subtitle font; debug subtitle fields **lockFont**.
