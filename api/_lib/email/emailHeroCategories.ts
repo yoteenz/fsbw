@@ -64,10 +64,10 @@ export const EMAIL_HERO_CATEGORY_ORDER: EmailHeroCategoryId[] = [
 ];
 
 export function templatesForHeroCategory(category: string): string[] {
-  const key = category.trim().toLowerCase() as EmailHeroCategoryId;
+  const key = category.trim().toLowerCase();
   if (key === 'all') {
     return EMAIL_HERO_CATEGORY_ORDER.flatMap((c) => [...EMAIL_HERO_CATEGORIES[c]]);
   }
-  const list = EMAIL_HERO_CATEGORIES[key];
+  const list = EMAIL_HERO_CATEGORIES[key as EmailHeroCategoryId];
   return list ? [...list] : [];
 }

@@ -1,27 +1,12 @@
-import { readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { EMAIL_HERO_MANIFEST_READY } from './heroManifestReady.js';
 import type { EmailTemplateType } from './types.js';
 
 let cachedReady: Set<string> | null = null;
 
-function manifestPath(): string {
-  return join(process.cwd(), 'public/assets/email/heroes/manifest.json');
-}
-
 /** Template types with uploaded Fal hero WebPs (see `npm run email:generate-heroes`). */
 export function loadReadyEmailHeroes(): Set<string> {
   if (cachedReady) return cachedReady;
-  const path = manifestPath();
-  if (!existsSync(path)) {
-    cachedReady = new Set();
-    return cachedReady;
-  }
-  try {
-    const raw = JSON.parse(readFileSync(path, 'utf8')) as { ready?: string[] };
-    cachedReady = new Set(Array.isArray(raw.ready) ? raw.ready : []);
-  } catch {
-    cachedReady = new Set();
-  }
+  cachedReady = new Set(EMAIL_HERO_MANIFEST_READY);
   return cachedReady;
 }
 

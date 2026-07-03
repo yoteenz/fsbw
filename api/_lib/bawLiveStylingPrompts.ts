@@ -456,7 +456,6 @@ function buildBawSalonMiddleFrontAnchorSideSupplement(
   salon: 'layers' | 'crimps' | 'flat_iron',
   options?: { includeBangs?: boolean }
 ): string {
-  const salonLabel = bawSalonModePromptLabel(salon);
   const bangsLine = options?.includeBangs ? curtainBangsAddonForSalonPart(targetPart) : null;
   const layersWave = salon === 'layers' ? bawLayersUniformWaveTextureBlock() : null;
   return [

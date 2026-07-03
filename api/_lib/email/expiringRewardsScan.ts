@@ -4,7 +4,6 @@ import { sendEmailAsync } from './sendEmail.js';
 
 const VOUCHER_VALIDITY_MONTHS = 6;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-const ONE_WEEK_MS = 7 * ONE_DAY_MS;
 const ONE_MONTH_MS = 30 * ONE_DAY_MS;
 
 function parseVoucherDate(dateStr: string): Date | null {

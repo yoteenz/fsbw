@@ -340,8 +340,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       if (!existing) {
         try {
           const { sendEmailAsync } = await import('./_lib/email/sendEmail.js');
-          const first = String(merged.firstName || merged.first_name || '').trim();
-          const last = String(merged.lastName || merged.last_name || '').trim();
+          const mergedRec = merged as Record<string, unknown>;
+          const first = String(mergedRec.firstName || mergedRec.first_name || '').trim();
+          const last = String(mergedRec.lastName || mergedRec.last_name || '').trim();
           sendEmailAsync({
             templateType: 'welcome',
             recipientEmail: user.email,

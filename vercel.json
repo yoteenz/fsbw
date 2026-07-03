@@ -36,6 +36,9 @@
     },
     "api/admin/meeting-client-alert.ts": {
       "maxDuration": 60
+    },
+    "api/admin/generate-email-hero.ts": {
+      "maxDuration": 120
     }
   },
   "crons": [

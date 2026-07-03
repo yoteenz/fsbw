@@ -33562,3 +33562,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Outcome:** System already shipped in prior chats (**`api/_lib/email/`**, 40+ templates, marble/`#EB1C24`/glass layout, wired triggers). This turn: installed **`resend`** npm package; refactored **`sendEmail.ts`** to use Resend SDK (not raw fetch); added **`api/send-email.ts`** alias re-exporting **`api/email/send`** handler. Docs/`.env.example` note both routes.
 
 **Usage:** Set **`RESEND_API_KEY`** (+ **`TRANSACTIONAL_FROM_EMAIL`**, **`SITE_URL`**) on Vercel. Send from server only via **`sendEmail(...)`** or **`POST /api/send-email`** (admin or **`EMAIL_SEND_SECRET`**). Preview: **`preview: true`**. Debug UI: **`/tools/email-templates`**.
+
+---
+
+## 2026-07-03 — Email hero batch generation (Fal) — tooling + production API
+
+**Context:** User asked to batch-generate Fal email hero scenes by category (Account, Orders, Rewards, etc.) without doing it manually.
+
+**Blocker:** Cloud agent env has no **`FAL_KEY`**, **`SUPABASE_*`**, or **`EMAIL_SEND_SECRET`** — local Fal batch cannot run until user adds secrets to **Cursor Cloud Agent environment** (or `.env.local` / `.env.wig-preview` locally).
+
+**Added:**
+- **`api/_lib/email/generateHeroAsset.ts`** — shared Fal generate + Supabase upload + manifest append.
+- **`POST /api/admin/generate-email-hero`** — one template per request (admin or **`X-Email-Send-Secret`**); uses Vercel **`FAL_KEY`**.
+- **`scripts/batch-email-heroes.mjs`** — category batch: local (`npm run email:generate-heroes:batch`) or production (`npm run email:generate-heroes:batch:production` with **`EMAIL_SEND_SECRET`**).
+- **`emailHeroCategories.ts`**, **`CATEGORY=`** filter on generate script, env file auto-load (`.env.local`, `.env.wig-preview`).
+
+**Run (after secrets):** Local: **`npm run email:generate-heroes:batch`**. Production: **`BATCH_MODE=production EMAIL_SEND_SECRET=... npm run email:generate-heroes:batch`**. Single category: **`CATEGORY=orders`**. Then **`npm run email:upload-assets`** if local-only saves.

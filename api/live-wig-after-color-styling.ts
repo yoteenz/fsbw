@@ -37,7 +37,6 @@ import {
   buildBangsOnlyWithSceneRefPrompt,
   buildBawSalonSinglePassFromGrayBrickPrompt,
   buildBawSalonStylingWithSceneAndShapeRefsPrompt,
-  buildBawSalonStylingWithSceneRefPrompt,
   buildBawSalonStylingWithSceneRefAndTextSpecPrompt,
   buildBawSalonStylingWithFrontAnchorPrompt,
   buildBawSalonSidePartFromMiddleFrontPrompt,

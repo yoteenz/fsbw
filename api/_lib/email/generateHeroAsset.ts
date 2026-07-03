@@ -146,4 +146,10 @@ export async function appendEmailHeroManifestReady(templateType: EmailTemplateTy
     manifestPath,
     JSON.stringify({ ready, updatedAt: new Date().toISOString() }, null, 2)
   );
+  const tsPath = join(repoRoot(), 'api/_lib/email/heroManifestReady.ts');
+  writeFileSync(
+    tsPath,
+    '/** Auto-updated by email hero generation scripts. Do not edit by hand. */\n' +
+      `export const EMAIL_HERO_MANIFEST_READY: readonly string[] = ${JSON.stringify(ready, null, 2)};\n`
+  );
 }

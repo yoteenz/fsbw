@@ -142,10 +142,16 @@ async function ensureBucket(supabase) {
 
 function writeManifest(ready) {
   mkdirSync(OUT_DIR, { recursive: true });
+  const sorted = [...ready].sort();
   writeFileSync(
     MANIFEST_PATH,
-    JSON.stringify({ ready: [...ready].sort(), updatedAt: new Date().toISOString() }, null, 2)
+    JSON.stringify({ ready: sorted, updatedAt: new Date().toISOString() }, null, 2)
   );
+  const tsPath = join(ROOT, 'api/_lib/email/heroManifestReady.ts');
+  const tsBody =
+    '/** Auto-updated by email hero generation scripts. Do not edit by hand. */\n' +
+    `export const EMAIL_HERO_MANIFEST_READY: readonly string[] = ${JSON.stringify(sorted, null, 2)};\n`;
+  writeFileSync(tsPath, tsBody);
   console.log('Wrote manifest', MANIFEST_PATH, `(${ready.size} heroes)`);
 }
 

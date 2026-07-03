@@ -14,12 +14,6 @@ export const EMAIL_HERO_FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
 /** Per-template hero scene prompts — match reference design boards (Rewards, Affiliate, Account, Orders, Shop). */
 export const EMAIL_HERO_PROMPTS = heroData.prompts as Record<EmailTemplateType, string>;
 
-/** Fal model for email hero generation (edit with marble reference). */
-export const EMAIL_HERO_FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
-
-/** Per-template hero scene prompts — match reference design boards (Rewards, Affiliate, Account, Orders, Shop). */
-export const EMAIL_HERO_PROMPTS = heroData.prompts as Record<EmailTemplateType, string>;
-
 export function emailHeroPromptFor(templateType: EmailTemplateType): string {
   return EMAIL_HERO_PROMPTS[templateType] || EMAIL_HERO_PROMPTS.welcome;
 }
