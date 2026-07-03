@@ -200,6 +200,7 @@ export const PSA_TALKING_AFTER_REPLY_MS = 2800;
 export const PSA_TEST_TOOL_PATH_PREFIXES = [
   '/tools/live-try-on',
   '/tools/hairstyle-analysis',
+  '/tools/slay-card-debug',
 ] as const;
 
 /** Routes where the floating PSA widget is hidden (admin chrome, full-screen flows, debug/test). */

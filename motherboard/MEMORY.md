@@ -33448,3 +33448,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User reported FRONTAL still not Futura PT Book and SLAYER image missing. Root cause: **saved debug layout in localStorage** merged over code defaults (old Demi font, invalid/missing **slayerLogo** from legacy **header.slayer** text saves).
 
 **Changes:** **`normalizeBawSlayCardLayout`** — always lock FRONTAL to Futura PT Book 500; restore default **slayerLogo** when missing/too small. Legacy v1/v2 key migration strips **header.slayer**. Layout debug key **v3**. **`paintBawSlayCard`** normalizes before draw + preloads fonts. Slayer image draw retries default rect on failure. Debug FRONTAL font fields locked on save.
+
+---
+
+## 2026-07-03 — Hide PSA on slay card debug page
+
+**Context:** User asked to hide PSA from **`/tools/slay-card-debug`**.
+
+**Changes:** Added route to **`PSA_TEST_TOOL_PATH_PREFIXES`** in **`psaConfig.ts`** (same pattern as live-try-on / hairstyle-analysis).
