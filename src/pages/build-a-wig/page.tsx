@@ -50,7 +50,7 @@ import {
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
-import { BAW_TUTORIAL_ROUTE, isBawTutorialPath, isBawTryUnitSlug } from '../../constants/bawTutorialConfig';
+import { BAW_TUTORIAL_ROUTE, getBawTryOptionSubPagePath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
@@ -107,9 +107,15 @@ export default function BuildAWigPage() {
     if (normalized === BAW_TUTORIAL_ROUTE) return;
     const prefix = `${BAW_TUTORIAL_ROUTE}/`;
     if (!normalized.startsWith(prefix)) return;
-    const slug = normalized.slice(prefix.length).split('/')[0] ?? '';
-    if (slug && !isBawTryUnitSlug(slug)) {
+    const segments = normalized.slice(prefix.length).split('/').filter(Boolean);
+    const unitSlug = segments[0] ?? '';
+    if (!unitSlug || !isBawTryUnitSlug(unitSlug)) {
       navigate(BAW_TUTORIAL_ROUTE, { replace: true });
+      return;
+    }
+    const step = segments[1];
+    if (step && !isBawTryStepSegment(step)) {
+      navigate(unitSlug === 'noir' ? BAW_TUTORIAL_ROUTE : `${BAW_TUTORIAL_ROUTE}/${unitSlug}`, { replace: true });
     }
   }, [navigate, rawPathname]);
 
@@ -4029,6 +4035,25 @@ export default function BuildAWigPage() {
     }
 
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+
+    if (isBawTutorialPath(rawPathname)) {
+      const tryStepByCategory: Record<string, string> = {
+        capSize: 'cap',
+        texture: 'texture',
+        length: 'length',
+        density: 'density',
+        lace: 'lace',
+        color: 'color',
+        hairline: 'hairline',
+        styling: 'styling',
+        addOns: 'addons',
+      };
+      const tryStep = tryStepByCategory[category];
+      if (tryStep) {
+        navigate(getBawTryOptionSubPagePath(rawPathname, tryStep));
+        return;
+      }
+    }
 
     if (isBuildAWigCustomizeHubPathname(pathname)) {
       mirrorCustomizeDraftKeysFromSelectedHubKeys();

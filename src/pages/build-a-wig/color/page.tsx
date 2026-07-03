@@ -7,7 +7,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
-import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizePath, pathnameIncludesBawProductSlug } from '../../../utils/buildAWigRoutes';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -715,7 +715,7 @@ function ColorSelection() {
   }, [location.pathname, selectedColor, noirLiveColorPremiumGate]);
 
   // Check if we're in blanco route (both customize and edit modes)
-  const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
+  const isBlancoRoute = pathnameIncludesBawProductSlug(location.pathname, 'blanco');
   
 
   // Color options with accurate hex codes from reference

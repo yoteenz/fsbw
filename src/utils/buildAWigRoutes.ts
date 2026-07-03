@@ -3,7 +3,7 @@
  * Keeps breadcrumb navigation and customize-mode detection consistent across the main page and sub-pages.
  */
 
-import { BAW_TUTORIAL_ROUTE, isBawTutorialPath, isBawTryUnitSlug } from '../constants/bawTutorialConfig';
+import { BAW_TUTORIAL_ROUTE, isBawTutorialPath, isBawTryStepSegment, isBawTryUnitSlug } from '../constants/bawTutorialConfig';
 
 /** URL segments for premium membership option steps (lace → add-ons). */
 const PREMIUM_STEP_SEGMENT = /\/(lace|texture|color|hairline|styling|addons)(?:$|[?#])/;
@@ -94,11 +94,23 @@ export function resolveBuildAWigTryPathToHubPath(pathname: string): string {
   const p = pathname.replace(/\/$/, '') || '/';
   if (!isBawTutorialPath(p)) return pathname;
   if (p === BAW_TUTORIAL_ROUTE) return '/build-a-wig/noir';
+
   const prefix = `${BAW_TUTORIAL_ROUTE}/`;
-  if (p.startsWith(prefix)) {
-    const slug = p.slice(prefix.length).split('/')[0] ?? '';
-    if (isBawTryUnitSlug(slug)) return `/build-a-wig/${slug}`;
+  if (!p.startsWith(prefix)) return '/build-a-wig/noir';
+
+  const segments = p.slice(prefix.length).split('/').filter(Boolean);
+  const first = segments[0] ?? '';
+
+  if (isBawTryUnitSlug(first)) {
+    const unit = first;
+    const step = segments[1];
+    if (step && isBawTryStepSegment(step)) {
+      const hubStep = step === 'cap-size' ? 'cap' : step;
+      return `/build-a-wig/${unit}/customize/${hubStep}`;
+    }
+    return `/build-a-wig/${unit}`;
   }
+
   return '/build-a-wig/noir';
 }
 
@@ -125,4 +137,14 @@ export function getBuildAWigCustomizePathForMenu(buildAWigPath: string): string 
 export function getBuildAWigCustomizePathFromHub(pathname: string): string {
   const base = getBuildAWigFlowBasePath(pathname);
   return getBuildAWigCustomizePathForMenu(base);
+}
+
+/** True for customize, edit, try hub, or try option routes for a product slug. */
+export function pathnameIncludesBawProductSlug(pathname: string, unitSlug: string): boolean {
+  if (pathname.includes(`/build-a-wig/${unitSlug}/`)) return true;
+  if (pathname.includes(`/build-a-wig/try/${unitSlug}`)) return true;
+  if (unitSlug === 'noir' && (pathname.replace(/\/$/, '') === BAW_TUTORIAL_ROUTE || pathname.replace(/\/$/, '') === '/build-a-wig/noir')) {
+    return true;
+  }
+  return false;
 }

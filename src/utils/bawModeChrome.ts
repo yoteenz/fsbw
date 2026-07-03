@@ -6,11 +6,8 @@ import {
   getBawModeGuideCopy,
   bawBuildModeLabel,
 } from '../constants/bawModeGuideConfig';
-import { isBawTutorialPath } from '../constants/bawTutorialConfig';
+import { isBawTutorialPath, getBawTryFlowBasePath } from '../constants/bawTutorialConfig';
 import { resolveBuildAWigTryPathToHubPath, getBuildAWigFlowBasePath } from './buildAWigRoutes';
-import { isBawTryBrowseMode } from './bawClientTestMode';
-import { getBawTryRouteForUnitSlug, isBawTryUnitSlug } from '../constants/bawTutorialConfig';
-import type { BawTryUnitSlug } from '../constants/bawTutorialConfig';
 
 export type BawModeChromeContext = {
   mode: BawBuildMode;
@@ -101,17 +98,8 @@ export function isBawOptionSubPage(pathname: string): boolean {
 
 /** Header BACK target from an option sub-page. */
 export function resolveBawModeBackPath(pathname: string): string {
-  const hubBase = getBuildAWigFlowBasePath(pathname);
-  if (!isBawTryBrowseMode(pathname)) {
-    return hubBase;
+  if (isBawTutorialPath(pathname)) {
+    return getBawTryFlowBasePath(pathname);
   }
-  if (hubBase === '/build-a-wig/noir' || hubBase === '/build-a-wig/noir/customize') {
-    return '/build-a-wig/try';
-  }
-  const match = hubBase.match(/^\/build-a-wig\/([^/]+)/);
-  const slug = match?.[1] ?? '';
-  if (slug && isBawTryUnitSlug(slug)) {
-    return getBawTryRouteForUnitSlug(slug as BawTryUnitSlug);
-  }
-  return '/build-a-wig/try';
+  return getBuildAWigFlowBasePath(pathname);
 }

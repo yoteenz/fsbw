@@ -129,3 +129,55 @@ export function isBawTutorialPath(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
   return p === BAW_TUTORIAL_ROUTE || p.startsWith(`${BAW_TUTORIAL_ROUTE}/`);
 }
+
+/** Option step URL segments under `/build-a-wig/try/{unit}/…`. */
+export const BAW_TRY_STEP_SEGMENTS = [
+  'cap',
+  'cap-size',
+  'length',
+  'density',
+  'lace',
+  'texture',
+  'color',
+  'hairline',
+  'styling',
+  'addons',
+] as const;
+
+export function isBawTryStepSegment(segment: string): boolean {
+  return (BAW_TRY_STEP_SEGMENTS as readonly string[]).includes(segment);
+}
+
+export function resolveBawTryUnitSlugFromPathname(pathname: string): BawTryUnitSlug {
+  const normalized = pathname.replace(/\/$/, '') || '/';
+  if (normalized === BAW_TUTORIAL_ROUTE) return 'noir';
+  const prefix = `${BAW_TUTORIAL_ROUTE}/`;
+  if (!normalized.startsWith(prefix)) return 'noir';
+  const first = normalized.slice(prefix.length).split('/').filter(Boolean)[0] ?? '';
+  if (isBawTryUnitSlug(first)) return first;
+  return 'noir';
+}
+
+/** e.g. `/build-a-wig/try/noir/color` */
+export function getBawTryOptionSubPagePath(pathname: string, stepSegment: string): string {
+  const slug = resolveBawTryUnitSlugFromPathname(pathname);
+  const step = stepSegment === 'cap-size' ? 'cap' : stepSegment;
+  return `${BAW_TUTORIAL_ROUTE}/${slug}/${step}`;
+}
+
+/** Try hub for BACK navigation from a try option sub-page. */
+export function getBawTryFlowBasePath(pathname: string): string {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (!isBawTutorialPath(p)) return BAW_TUTORIAL_ROUTE;
+  if (p === BAW_TUTORIAL_ROUTE) return p;
+  const prefix = `${BAW_TUTORIAL_ROUTE}/`;
+  const segments = p.slice(prefix.length).split('/').filter(Boolean);
+  const first = segments[0] ?? '';
+  if (isBawTryUnitSlug(first)) {
+    if (segments[1] && isBawTryStepSegment(segments[1])) {
+      return first === 'noir' ? BAW_TUTORIAL_ROUTE : `${BAW_TUTORIAL_ROUTE}/${first}`;
+    }
+    return `${BAW_TUTORIAL_ROUTE}/${first}`;
+  }
+  return BAW_TUTORIAL_ROUTE;
+}

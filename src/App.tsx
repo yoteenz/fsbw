@@ -776,6 +776,16 @@ function App() {
         <Route path="/curly/closures" element={<Navigate to="/shop/closures" replace />} />
         <Route path="/curly/frontals" element={<Navigate to="/shop/frontals" replace />} />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
+        {/* Guest try flow — hub + option sub-pages stay on /build-a-wig/try/… */}
+        <Route path="/build-a-wig/try/:unitSlug/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/try/:unitSlug/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/try/:unitSlug/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/try/:unitSlug/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/try/:unitSlug/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/try/:unitSlug/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/try/:unitSlug/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/try/:unitSlug/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/try/:unitSlug/addons" element={<AddOnsPage />} />
         <Route path="/build-a-wig/try/:unitSlug" element={<BuildAWigPage />} />
         <Route path="/build-a-wig/try" element={<BuildAWigPage />} />
 

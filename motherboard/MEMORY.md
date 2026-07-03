@@ -33229,3 +33229,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to change the top mode panel border only to gray (BUILD GUIDE keeps black border).
 
 **Fix:** **`BawModeChrome`** header uses **`border-gray-300`** instead of **`border-black`**.
+
+---
+
+## 2026-07-03 — BAW try mode stays on /build-a-wig/try routes through sub-pages
+
+**Context:** Try mode switched to **CUSTOMIZE** when opening option sub-pages because navigation used `/build-a-wig/{unit}/customize/{step}`. Try should stay **BUILD A WIG TRY MODE** on hub + sub-pages (`/build-a-wig/try/noir/color`, etc.). Customize mode only when members use **CUSTOMIZE** from the unit PDP.
+
+**Fix:**
+- **`getBawTryOptionSubPagePath`**, **`getBawTryFlowBasePath`**, try step helpers in **`bawTutorialConfig.ts`**.
+- **`resolveBuildAWigTryPathToHubPath`** maps try sub-pages to hub customize equivalents for shared UI logic only.
+- **`App.tsx`**: routes for **`/build-a-wig/try/:unitSlug/{cap,length,…}`**.
+- **`build-a-wig/page.tsx`**: **`handleOptionSelect`** navigates to try URLs when on try path; validation allows unit + step segments.
+- **`resolveBawModeBackPath`**: BACK uses try hub URLs.
+- **`pathnameIncludesBawProductSlug`**: sub-pages recognize try URLs for product-specific UI (color, length).
