@@ -3,9 +3,46 @@
  */
 
 import type { ShopTextureCategoryThumbCategory, ShopTextureCategoryThumbTexture } from './shopTextureCategoryThumb';
+import { BCF_PDP_CF_HERO_PHOTOS } from './bcfPdpCfHeroPhotos.generated';
 
 export type BcfPdpCategory = ShopTextureCategoryThumbCategory;
 export type BcfPdpTexture = ShopTextureCategoryThumbTexture;
+
+function slugifyColorId(colorId: string): string {
+  return String(colorId || 'DEFAULT')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function buildCfPhotoProductKey(
+  category: 'closures' | 'frontals',
+  texture: BcfPdpTexture,
+  colorId: string,
+): string {
+  return `${category}-${texture}-${slugifyColorId(colorId)}`;
+}
+
+function cfManifestPhotoUrl(
+  category: 'closures' | 'frontals',
+  texture: BcfPdpTexture,
+  colorId: string,
+): string | null {
+  const productKey = buildCfPhotoProductKey(category, texture, colorId);
+  const photos = BCF_PDP_CF_HERO_PHOTOS as Record<string, { photoStoragePath?: string | null }>;
+  const storagePath = photos[productKey]?.photoStoragePath;
+  if (!storagePath) return null;
+  const sample = BUNDLE_PHOTO_BY_TEXTURE.straight;
+  const marker = '/storage/v1/object/public/live-preview/';
+  const idx = sample.indexOf(marker);
+  if (idx === -1) return null;
+  const base = sample.slice(0, idx + marker.length);
+  return `${base}${storagePath
+    .split('/')
+    .map((part: string) => encodeURIComponent(part))
+    .join('/')}`;
+}
 
 /** Bundles PDP photo URLs (video files remain on mobile PDP). */
 export const BUNDLE_PHOTO_BY_TEXTURE: Record<BcfPdpTexture, string> = {
@@ -168,9 +205,14 @@ export function bcfPdpHeroHasColorSpecificPhoto(
     return Boolean(BUNDLE_COLOR_PHOTO_BY_TEXTURE[texture][colorKey]);
   }
   if (category === 'closures') {
-    return Boolean(CLOSURES_COLOR_PHOTO[texture][colorKey]);
+    return Boolean(
+      cfManifestPhotoUrl('closures', texture, colorKey) ||
+        CLOSURES_COLOR_PHOTO[texture][colorKey],
+    );
   }
-  return Boolean(FRONTALS_COLOR_PHOTO[texture][colorKey]);
+  return Boolean(
+    cfManifestPhotoUrl('frontals', texture, colorKey) || FRONTALS_COLOR_PHOTO[texture][colorKey],
+  );
 }
 
 export function bcfPdpHeroPhotoSrc(
@@ -185,10 +227,14 @@ export function bcfPdpHeroPhotoSrc(
     return BUNDLE_PHOTO_BY_TEXTURE[texture];
   }
   if (category === 'closures') {
+    const manifestHit = cfManifestPhotoUrl('closures', texture, colorKey);
+    if (manifestHit) return manifestHit;
     const tinted = CLOSURES_COLOR_PHOTO[texture][colorKey];
     if (tinted) return tinted;
     return BCF_CF_PHOTO.closures[texture];
   }
+  const manifestHit = cfManifestPhotoUrl('frontals', texture, colorKey);
+  if (manifestHit) return manifestHit;
   const tinted = FRONTALS_COLOR_PHOTO[texture][colorKey];
   if (tinted) return tinted;
   return BCF_CF_PHOTO.frontals[texture];

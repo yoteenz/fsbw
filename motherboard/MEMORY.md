@@ -33914,3 +33914,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - Post-batch tmux watcher scheduled: when **`pregenerate-bcf-videos.mjs`** exits, re-run manifest + sync → **`/tmp/bcf-batch-sync-done.txt`**.
 
 **Follow-up:** When batch completes, run **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** again and commit remaining color videos (or retry failed rows).
+
+---
+
+## 2026-07-03 — BCF closure/frontal color photo Fal batch pipeline
+
+**Context:** User requested a permanent Fal batch workflow for **missing color photo assets** on **closures and frontals only** (bundles already complete). Each color variation gets a static PNG recolored from the existing black default hero (`BCF_CF_PHOTO` JPEG) using a locked prompt with **`[COLOR_NAME]`** + **`[HEX_CODE]`** from the full BCF palette (18 colors; OFF BLACK uses default hero — not generated).
+
+**Pipeline (`scripts/bcf/`):**
+- **`bcfCfPhotoColors.mjs`** — palette + prompt names (GOLDEN BLONDE, PLATINUM BLONDE, ASH BLONDE).
+- **`bcfCfPhotoPrompt.mjs`** — locked recolor prompt template.
+- **`bcfCfPhotoCatalog.mjs`** — **108 rows** (2 categories × 3 textures × 18 colors); bundles excluded; legacy platinum **`IMG_20xx.png`** paths from **`bcfPdpHeroAssets.ts`**; new noir colors → **`{Category} Color/{Straight|Wavy|Curly}/{color-slug}.png`**.
+- **`generate-bcf-cf-photo-manifest.mjs`** — Supabase scan → **`manifests/bcf-cf-photos-v1.json`**.
+- **`pregenerate-bcf-cf-photos.mjs`** — Fal **`fal-ai/nano-banana-pro/edit`** (2K, PNG, aspect auto) → upload; skip existing PNGs.
+- **`sync-bcf-cf-photo-manifest.mjs`** → **`public/assets/bcf/photos/manifest.json`** + **`bcfPdpCfHeroPhotos.generated.ts`**.
+- **`batch-bcf-cf-photos.mjs`** — manifest → generate → sync. Docs: **`docs/BCF_CF_PHOTO_GENERATION.md`**.
+
+**Storefront:**
+- **`bcfPdpHeroAssets.ts`** — **`bcfPdpHeroPhotoSrc()`** / **`bcfPdpHeroHasColorSpecificPhoto()`** merge manifest-backed closure/frontal URLs before legacy hardcoded maps.
+
+**npm:** `bcf:cf-photos:manifest`, `bcf:cf-photos:generate`, `bcf:cf-photos:sync`, `bcf:cf-photos:batch`.
+
+**First run:** manifest **19 ready** (18 legacy platinum trio + test **`closures-curly-auburn`**), **89 missing**; full batch started in tmux. Re-sync + commit when batch completes.

@@ -49,7 +49,11 @@
     "bcf:videos:manifest": "node scripts/bcf/generate-bcf-video-manifest.mjs",
     "bcf:videos:generate": "node scripts/bcf/pregenerate-bcf-videos.mjs",
     "bcf:videos:sync": "node scripts/bcf/sync-bcf-video-manifest.mjs",
-    "bcf:videos:batch": "node scripts/bcf/batch-bcf-videos.mjs"
+    "bcf:videos:batch": "node scripts/bcf/batch-bcf-videos.mjs",
+    "bcf:cf-photos:manifest": "node scripts/bcf/generate-bcf-cf-photo-manifest.mjs",
+    "bcf:cf-photos:generate": "node scripts/bcf/pregenerate-bcf-cf-photos.mjs",
+    "bcf:cf-photos:sync": "node scripts/bcf/sync-bcf-cf-photo-manifest.mjs",
+    "bcf:cf-photos:batch": "node scripts/bcf/batch-bcf-cf-photos.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",

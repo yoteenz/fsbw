@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-03T09:21:42.863Z",
+  "promptVersion": "v1",
+  "bucket": "live-preview",
+  "falModel": "fal-ai/nano-banana-pro/edit",
+  "photos": {
+    "closures-curly-ash": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2037.png",
+      "status": "ready",
+      "productKey": "closures-curly-ash",
+      "category": "closures",
+      "texture": "curly",
+      "colorId": "ASH"
+    },
+    "closures-curly-auburn": {
+      "photoStoragePath": "Closures Color/Curly/auburn.png",
+      "status": "ready",
+      "productKey": "closures-curly-auburn",
+      "category": "closures",
+      "texture": "curly",
+      "colorId": "AUBURN"
+    },
+    "closures-curly-golden": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2035.png",
+      "status": "ready",
+      "productKey": "closures-curly-golden",
+      "category": "closures",
+      "texture": "curly",
+      "colorId": "GOLDEN"
+    },
+    "closures-curly-platinum": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2036.png",
+      "status": "ready",
+      "productKey": "closures-curly-platinum",
+      "category": "closures",
+      "texture": "curly",
+      "colorId": "PLATINUM"
+    },
+    "closures-straight-ash": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2031.png",
+      "status": "ready",
+      "productKey": "closures-straight-ash",
+      "category": "closures",
+      "texture": "straight",
+      "colorId": "ASH"
+    },
+    "closures-straight-golden": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2029.png",
+      "status": "ready",
+      "productKey": "closures-straight-golden",
+      "category": "closures",
+      "texture": "straight",
+      "colorId": "GOLDEN"
+    },
+    "closures-straight-platinum": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2030.png",
+      "status": "ready",
+      "productKey": "closures-straight-platinum",
+      "category": "closures",
+      "texture": "straight",
+      "colorId": "PLATINUM"
+    },
+    "closures-wavy-ash": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2034.png",
+      "status": "ready",
+      "productKey": "closures-wavy-ash",
+      "category": "closures",
+      "texture": "wavy",
+      "colorId": "ASH"
+    },
+    "closures-wavy-golden": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2032.png",
+      "status": "ready",
+      "productKey": "closures-wavy-golden",
+      "category": "closures",
+      "texture": "wavy",
+      "colorId": "GOLDEN"
+    },
+    "closures-wavy-platinum": {
+      "photoStoragePath": "Closures Color/Platinum/IMG_2033.png",
+      "status": "ready",
+      "productKey": "closures-wavy-platinum",
+      "category": "closures",
+      "texture": "wavy",
+      "colorId": "PLATINUM"
+    },
+    "frontals-curly-ash": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2028.png",
+      "status": "ready",
+      "productKey": "frontals-curly-ash",
+      "category": "frontals",
+      "texture": "curly",
+      "colorId": "ASH"
+    },
+    "frontals-curly-golden": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2026.png",
+      "status": "ready",
+      "productKey": "frontals-curly-golden",
+      "category": "frontals",
+      "texture": "curly",
+      "colorId": "GOLDEN"
+    },
+    "frontals-curly-platinum": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2027.png",
+      "status": "ready",
+      "productKey": "frontals-curly-platinum",
+      "category": "frontals",
+      "texture": "curly",
+      "colorId": "PLATINUM"
+    },
+    "frontals-straight-ash": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2017.png",
+      "status": "ready",
+      "productKey": "frontals-straight-ash",
+      "category": "frontals",
+      "texture": "straight",
+      "colorId": "ASH"
+    },
+    "frontals-straight-golden": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2014.png",
+      "status": "ready",
+      "productKey": "frontals-straight-golden",
+      "category": "frontals",
+      "texture": "straight",
+      "colorId": "GOLDEN"
+    },
+    "frontals-straight-platinum": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2016.png",
+      "status": "ready",
+      "productKey": "frontals-straight-platinum",
+      "category": "frontals",
+      "texture": "straight",
+      "colorId": "PLATINUM"
+    },
+    "frontals-wavy-ash": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2025.png",
+      "status": "ready",
+      "productKey": "frontals-wavy-ash",
+      "category": "frontals",
+      "texture": "wavy",
+      "colorId": "ASH"
+    },
+    "frontals-wavy-golden": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2023.png",
+      "status": "ready",
+      "productKey": "frontals-wavy-golden",
+      "category": "frontals",
+      "texture": "wavy",
+      "colorId": "GOLDEN"
+    },
+    "frontals-wavy-platinum": {
+      "photoStoragePath": "Frontals Color/Platinum/IMG_2024.png",
+      "status": "ready",
+      "productKey": "frontals-wavy-platinum",
+      "category": "frontals",
+      "texture": "wavy",
+      "colorId": "PLATINUM"
+    }
+  }
+}
