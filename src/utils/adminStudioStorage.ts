@@ -27,6 +27,8 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   showBibleChecklist: 'adminStudioShowBibleChecklist_v1',
   studioLot: 'adminStudioStudioLot_v1',
   studioLotCustom: 'adminStudioStudioLotCustom_v1',
+  talentAgency: 'adminStudioTalentAgency_v1',
+  talentAgencyCustom: 'adminStudioTalentAgencyCustom_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

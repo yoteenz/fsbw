@@ -34625,3 +34625,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Navigate `/admin/studio/studio-lot`; cross-links to Show Bible / AI Orchestrator at bottom only. Future generation calls `studioLotStudioService.inheritForGeneration(studioId)` — one reusable environment per studio, versioning supported.
 
+---
+
+## 2026-07-03 — THE STUDIO Talent Agency (master cast library milestone)
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested new module **TALENT AGENCY** — subtitle *"The faces behind every Frontal Slayer story."* Master library of recurring digital personalities, presenters, mannequins, AI hosts, virtual experts — reusable production talent, not simple avatars. Every Lounge TV episode, campaign, PSA, social, email, hero, product launch, and future Desktop Mansion experience must reference Talent Agency. AI providers must inherit visual identity, voice, personality, wardrobe, and behavior — never recreate talent independently.
+
+**Topics covered (full chat arc):**
+- Prior: Studio Lot (`c00bf661`), Show Bible, Creative Director, Intelligence Engine, AI Orchestrator, etc. — all unchanged.
+- **Talent Agency** (`/admin/studio/talent-agency`): luxury casting roster landing with 11 default talent + ADD TALENT; portrait cards show name, role, primary shows, status, voice profile, wardrobe count, environment count, last updated.
+- **Default talent:** PSA, Founder Avatar (future), Luxury Stylist, Hair Scientist, Beauty Reporter, Build Specialist, Guest Expert, Luxury Mannequin Collection, Seasonal Guest Host, Campaign Talent, Future Community Spotlight.
+- **12-tab talent profile:** Profile, Visual Identity, Voice, Personality, Wardrobe (searchable catalog), Expressions, Poses, Show Assignments (visual map), Prompts (version history), Production Rules, Continuity, Mansion (design-only mapping).
+- **Data model** `adminStudioTalentAgencyDemo.ts`: `TalentAgencyEntry` with visual/voice/personality fields, wardrobe catalog, expression/pose libraries, production rules, continuity locks, mansion room mapping (not active).
+- **State** `useAdminStudioTalentAgencyState.ts`: localStorage patches + custom talent; prompt version CRUD; wardrobe search.
+- **Service** `talentAgencyStudioService`: `getSnapshot`, `getTalentSnapshot`, `inheritForGeneration` — registered in `STUDIO_SERVICE_REGISTRY`.
+- **Architecture chain:** Brand Brain → Creative Director → Show Bible → Studio Lot → **Talent Agency** → Content Pack → AI Orchestrator → AI Providers → Draft → Publishing.
+
+**Decisions / outcomes:** Separate from generic avatar managers; one master profile per personality with version control; PSA and mannequin collection seeded with show assignments; mansion mapping designed (PSA Suite, Founder Suite, Laboratory, News Studio, etc.) but not activated. Build verified.
+
+**Changes:** `adminStudioTalentAgencyDemo.ts`, `useAdminStudioTalentAgencyState.ts`, `services/studio/talentAgency/service.ts`, `AdminStudioTalentCard`, `AdminStudioTalentFieldGroups`, `talent-agency/page.tsx`, `talent-agency/detail/page.tsx`, `adminStudioRoutes.ts`, `adminStudioDemo.ts`, `adminStudioStorage.ts`, `App.tsx`, `section/page.tsx`, `STUDIO_SERVICE_REGISTRY`.
+
+**Conventions:** Navigate `/admin/studio/talent-agency`; cross-links to Studio Lot / AI Orchestrator at bottom only. Future generation calls `talentAgencyStudioService.inheritForGeneration(talentId)` — never duplicate character definitions.
+

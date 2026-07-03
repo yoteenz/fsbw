@@ -47,6 +47,9 @@ export type { ShowBibleSnapshot, ShowBibleEpisodeInheritance, ShowBibleChecklist
 export { studioLotStudioService, getStudioSnapshot, inheritForGeneration } from './studioLot/service';
 export type { StudioLotSnapshot, StudioLotInheritance } from './studioLot/service';
 
+export { talentAgencyStudioService, getTalentSnapshot, inheritForGeneration as inheritTalentForGeneration } from './talentAgency/service';
+export type { TalentAgencySnapshot, TalentInheritance } from './talentAgency/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -60,6 +63,7 @@ import { intelligenceEngineStudioService } from './intelligenceEngine';
 import { aiOrchestratorStudioService } from './orchestrator';
 import { showBibleStudioService } from './showBible/service';
 import { studioLotStudioService } from './studioLot/service';
+import { talentAgencyStudioService } from './talentAgency/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -68,6 +72,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   creativeDirectorStudioService,
   showBibleStudioService,
   studioLotStudioService,
+  talentAgencyStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

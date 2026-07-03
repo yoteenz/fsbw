@@ -26,6 +26,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'studio-lot') {
       return <Navigate to="/admin/studio/studio-lot" replace />;
     }
+    if (sectionId === 'talent-agency') {
+      return <Navigate to="/admin/studio/talent-agency" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 
