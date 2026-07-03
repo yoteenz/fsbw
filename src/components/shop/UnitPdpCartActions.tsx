@@ -102,20 +102,6 @@ export function UnitPdpCartActions({
                 ? 'TRY BUILD-A-WIG'
                 : 'CUSTOMIZE IN BUILD-A-WIG'}
           </button>
-          {!soldOut && isSignedIn && onTryFree ? (
-            <button
-              type="button"
-              onClick={onTryFree}
-              className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 mt-2"
-              style={{
-                borderWidth: '1.3px',
-                color: '#808080',
-                fontFamily: '"Futura PT Demi", Futura, sans-serif',
-              }}
-            >
-              TRY BUILD-A-WIG FREE
-            </button>
-          ) : null}
         </div>
       ) : null}
 

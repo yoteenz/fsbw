@@ -34244,3 +34244,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`scripts/bcf/manifests/bcf-cf-photos-v1.json`** (conflict markers removed). This MEMORY entry.
 
+---
+
+## 2026-07-03 — Unit PDP: hide TRY BUILD-A-WIG FREE for signed-in members
+
+**Context:** User asked to remove the **TRY BUILD-A-WIG FREE** button on product pages for **standard** and **premium** signed-in members — show try mode only for **guests** browsing without sign-in.
+
+**Cause:** **`UnitPdpCartActions`** rendered a **second** gray **TRY BUILD-A-WIG FREE** button below **CUSTOMIZE IN BUILD-A-WIG** whenever **`isSignedIn && onTryFree`** — so members saw both full customize and free try CTAs.
+
+**Fix:** Removed the signed-in secondary **FREE** button. Guest flow unchanged: primary row shows **TRY BUILD-A-WIG** (routes to **`/build-a-wig/try/...`**). Signed-in users see only **CUSTOMIZE IN BUILD-A-WIG**.
+
+**Changes:** **`src/components/shop/UnitPdpCartActions.tsx`**.
+
+**Conventions:** Unit PDP try-mode CTA = guests only via the primary customize-row button; no secondary **FREE** row for signed-in standard/premium members.
+
