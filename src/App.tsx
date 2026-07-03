@@ -159,6 +159,7 @@ const ToolsPage = lazyWithRetry(() => import('./pages/tools/page'), 'ToolsPage')
 const SlayCamPage = lazyWithRetry(() => import('./pages/slay-cam/page'), 'SlayCamPage');
 const GiftCardPage = lazyWithRetry(() => import('./pages/tools/gift-card/page'), 'GiftCardPage');
 const SlayTicketsPage = lazyWithRetry(() => import('./pages/tools/slay-tickets/page'), 'SlayTicketsPage');
+const SlayCardDebugPage = lazyWithRetry(() => import('./pages/tools/slay-card-debug/page'), 'SlayCardDebugPage');
 const LiveTryOnPage = lazyWithRetry(() => import('./pages/tools/live-try-on/page'), 'LiveTryOnPage');
 const HairstyleAnalysisDemoPage = lazyWithRetry(
   () => import('./pages/HairstyleAnalysisDemo'),
@@ -1044,6 +1045,11 @@ function App() {
         <Route path="/tools/slay-tickets" element={
           <Suspense fallback={<LoadingScreen />}>
             <SlayTicketsPage />
+          </Suspense>
+        } />
+        <Route path="/tools/slay-card-debug" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SlayCardDebugPage />
           </Suspense>
         } />
         <Route path="/tools/live-try-on" element={

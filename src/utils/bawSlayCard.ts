@@ -8,23 +8,15 @@ import {
   NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE,
   isNoirNaturalFrontMannequinSrc,
 } from './bawStaticMannequinReferencePaths';
+import {
+  BAW_SLAY_CARD_TEMPLATE_SRC,
+  DEFAULT_BAW_SLAY_CARD_LAYOUT,
+  type BawSlayCardLayout,
+  type BawSlayCardTextStyle,
+} from './bawSlayCardLayout';
 
-export const BAW_SLAY_CARD_TEMPLATE_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/00C5D5BE-1F40-4974-A2DF-F02616BD231B.png';
-
-const SLAY_CARD_WIDTH = 1122;
-const SLAY_CARD_HEIGHT = 1402;
-
-/** Tuned to the stock template display case + bottom plaque. */
-const MANNEQUIN_BOX = { x: 252, y: 292, w: 618, h: 748 };
-const HEADER = { centerX: SLAY_CARD_WIDTH / 2, frontalY: 118, slayerY: 170, subtitleY: 218 };
-const TEXT_PANEL = {
-  centerX: SLAY_CARD_WIDTH / 2,
-  unitY: 1146,
-  specsStartY: 1194,
-  lineHeight: 34,
-  footerY: 1334,
-};
+export { BAW_SLAY_CARD_TEMPLATE_SRC } from './bawSlayCardLayout';
+export type { BawSlayCardLayout } from './bawSlayCardLayout';
 
 export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTutorialSelections {
   const unit = resolveBawTutorialUnitLabelFromPathname(pathname);
@@ -85,64 +77,94 @@ async function ensureCanvasFontsReady(): Promise<void> {
   }
 }
 
-function drawMannequinInBox(
+function fontFromStyle(style: BawSlayCardTextStyle): string {
+  return `${style.fontWeight} ${style.fontSize}px ${style.fontFamily}`;
+}
+
+function drawMannequinInRect(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
-  box: typeof MANNEQUIN_BOX,
+  rect: BawSlayCardLayout['mannequin'],
   extraScale = 1
 ): void {
-  const scale = Math.min(box.w / img.width, box.h / img.height) * extraScale;
+  const scale = Math.min(rect.width / img.width, rect.height / img.height) * extraScale;
   const dw = img.width * scale;
   const dh = img.height * scale;
-  const dx = box.x + (box.w - dw) / 2;
-  const dy = box.y + (box.h - dh) / 2;
+  const dx = rect.x + (rect.width - dw) / 2;
+  const dy = rect.y + (rect.height - dh) / 2;
   ctx.drawImage(img, dx, dy, dw, dh);
 }
 
-export async function renderBawSlayCardPng(selections: BawTutorialSelections): Promise<Blob> {
-  const canvas = document.createElement('canvas');
-  canvas.width = SLAY_CARD_WIDTH;
-  canvas.height = SLAY_CARD_HEIGHT;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('Canvas not supported');
+/** Returns fitted mannequin draw bounds (for debug hit-testing / handles). */
+export function computeBawSlayCardMannequinDrawBounds(
+  img: HTMLImageElement,
+  layout: BawSlayCardLayout,
+  extraScale = 1
+): { x: number; y: number; width: number; height: number } {
+  const { mannequin: rect } = layout;
+  const scale = Math.min(rect.width / img.width, rect.height / img.height) * extraScale;
+  const width = img.width * scale;
+  const height = img.height * scale;
+  return {
+    x: rect.x + (rect.width - width) / 2,
+    y: rect.y + (rect.height - height) / 2,
+    width,
+    height,
+  };
+}
 
-  await ensureCanvasFontsReady();
+export async function paintBawSlayCard(
+  ctx: CanvasRenderingContext2D,
+  selections: BawTutorialSelections,
+  layout: BawSlayCardLayout = DEFAULT_BAW_SLAY_CARD_LAYOUT,
+  opts?: { hairline?: string; mannequinSrc?: string }
+): Promise<{ mannequinBounds: { x: number; y: number; width: number; height: number } | null }> {
+  const { canvasWidth, canvasHeight } = layout;
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
   const template = await loadImage(BAW_SLAY_CARD_TEMPLATE_SRC);
-  ctx.drawImage(template, 0, 0, SLAY_CARD_WIDTH, SLAY_CARD_HEIGHT);
+  ctx.drawImage(template, 0, 0, canvasWidth, canvasHeight);
 
   const hairline =
-    localStorage.getItem('selectedHairline') ||
-    localStorage.getItem('customizeSelectedHairline') ||
-    'NATURAL';
-  const mannequinSrc = bawStaticMannequinFrontReferencePathFromUnitAndHairline(
-    selections.unit,
-    hairline
-  );
+    opts?.hairline ||
+    (typeof localStorage !== 'undefined'
+      ? localStorage.getItem('selectedHairline') ||
+        localStorage.getItem('customizeSelectedHairline') ||
+        'NATURAL'
+      : 'NATURAL');
+  const mannequinSrc =
+    opts?.mannequinSrc ||
+    bawStaticMannequinFrontReferencePathFromUnitAndHairline(selections.unit, hairline);
   const noirFrontScale = isNoirNaturalFrontMannequinSrc(mannequinSrc)
     ? NOIR_NATURAL_FRONT_MANNEQUIN_DISPLAY_SCALE
     : 1;
 
+  let mannequinBounds: { x: number; y: number; width: number; height: number } | null = null;
   try {
     const mannequin = await loadImage(mannequinSrc);
-    drawMannequinInBox(ctx, mannequin, MANNEQUIN_BOX, noirFrontScale);
+    drawMannequinInRect(ctx, mannequin, layout.mannequin, noirFrontScale);
+    mannequinBounds = computeBawSlayCardMannequinDrawBounds(mannequin, layout, noirFrontScale);
   } catch {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-    ctx.fillRect(MANNEQUIN_BOX.x, MANNEQUIN_BOX.y, MANNEQUIN_BOX.w, MANNEQUIN_BOX.h);
+    ctx.fillRect(layout.mannequin.x, layout.mannequin.y, layout.mannequin.width, layout.mannequin.height);
   }
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
 
-  ctx.fillStyle = '#1A1A1A';
-  ctx.font = '600 46px "Futura PT Demi", Futura, "Futura PT Medium", sans-serif';
-  ctx.fillText('FRONTAL', HEADER.centerX, HEADER.frontalY);
-  ctx.fillStyle = '#EB1C24';
-  ctx.fillText('SLAYER', HEADER.centerX, HEADER.slayerY);
+  const { header, textPanel } = layout;
 
-  ctx.fillStyle = '#1A1A1A';
-  ctx.font = '500 28px "Futura PT Book", Futura, sans-serif';
-  ctx.fillText('SLAY CARD — BUILD-A-WIG VIEW', HEADER.centerX, HEADER.subtitleY);
+  ctx.fillStyle = header.frontal.color;
+  ctx.font = fontFromStyle(header.frontal);
+  ctx.fillText('FRONTAL', header.frontal.x, header.frontal.y);
+
+  ctx.fillStyle = header.slayer.color;
+  ctx.font = fontFromStyle(header.slayer);
+  ctx.fillText('SLAYER', header.slayer.x, header.slayer.y);
+
+  ctx.fillStyle = header.subtitle.color;
+  ctx.font = fontFromStyle(header.subtitle);
+  ctx.fillText('SLAY CARD — BUILD-A-WIG VIEW', header.subtitle.x, header.subtitle.y);
 
   const specLines = [
     `LENGTH ${selections.length}`,
@@ -152,21 +174,37 @@ export async function renderBawSlayCardPng(selections: BawTutorialSelections): P
     `CAP ${selections.capSize}`,
   ];
 
-  ctx.fillStyle = '#EB1C24';
-  ctx.font = '600 40px "Covered By Your Grace", cursive';
-  ctx.fillText(selections.unit.toUpperCase(), TEXT_PANEL.centerX, TEXT_PANEL.unitY);
+  ctx.fillStyle = textPanel.unit.color;
+  ctx.font = fontFromStyle(textPanel.unit);
+  ctx.fillText(selections.unit.toUpperCase(), textPanel.unit.x, textPanel.unit.y);
 
-  ctx.fillStyle = '#1A1A1A';
-  ctx.font = '500 27px "Futura PT Medium", Futura, sans-serif';
-  let y = TEXT_PANEL.specsStartY;
+  ctx.fillStyle = textPanel.specsColor;
+  ctx.font = `${textPanel.specsFontWeight} ${textPanel.specsFontSize}px ${textPanel.specsFontFamily}`;
+  let y = textPanel.specsStartY;
   for (const line of specLines) {
-    ctx.fillText(line.toUpperCase(), TEXT_PANEL.centerX, y);
-    y += TEXT_PANEL.lineHeight;
+    ctx.fillText(line.toUpperCase(), textPanel.unit.x, y);
+    y += textPanel.lineHeight;
   }
 
-  ctx.fillStyle = '#808080';
-  ctx.font = '400 22px "Futura PT Book", Futura, sans-serif';
-  ctx.fillText('TRY THE FULL BUILDER WITH MEMBERSHIP', TEXT_PANEL.centerX, TEXT_PANEL.footerY);
+  ctx.fillStyle = textPanel.footer.color;
+  ctx.font = fontFromStyle(textPanel.footer);
+  ctx.fillText('TRY THE FULL BUILDER WITH MEMBERSHIP', textPanel.footer.x, textPanel.footer.y);
+
+  return { mannequinBounds };
+}
+
+export async function renderBawSlayCardPng(
+  selections: BawTutorialSelections,
+  layout: BawSlayCardLayout = DEFAULT_BAW_SLAY_CARD_LAYOUT
+): Promise<Blob> {
+  const canvas = document.createElement('canvas');
+  canvas.width = layout.canvasWidth;
+  canvas.height = layout.canvasHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas not supported');
+
+  await ensureCanvasFontsReady();
+  await paintBawSlayCard(ctx, selections, layout);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(

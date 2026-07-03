@@ -33389,3 +33389,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User provided Supabase stock template for slay card (`00C5D5BE-1F40-4974-A2DF-F02616BD231B.png`) and asked to use it as the base with unit mannequin + selection text overlaid (like reference attachment).
 
 **Changes:** **`bawSlayCard.ts`** — canvas **1122×1402** from **`BAW_SLAY_CARD_TEMPLATE_SRC`**; unit front mannequin via **`bawStaticMannequinFrontReferencePathFromUnitAndHairline`** (NOIR natural scale); header (**FRONTAL SLAYER**, subtitle) + bottom plaque text (unit script, length/density/color/styling/cap, membership line). Removed hand-drawn marble/frame layout.
+
+---
+
+## 2026-07-03 — BAW slay card layout debug page
+
+**Context:** User asked for a debug page to tune slay card template overlays (mannequin position/size, text position, color, fonts) with live preview.
+
+**Changes:**
+- **`bawSlayCardLayout.ts`** — **`DEFAULT_BAW_SLAY_CARD_LAYOUT`**, localStorage save/load (`baw_slay_card_layout_debug_v1`)
+- **`bawSlayCard.ts`** — **`paintBawSlayCard`**, layout-driven render; **`computeBawSlayCardMannequinDrawBounds`**
+- **`/tools/slay-card-debug`** — live canvas preview, layer picker, numeric/color/font controls, drag-to-move mannequin + text, scroll-wheel resize mannequin box, guide outlines, Copy JSON, Reset, Download PNG; auto-saves layout to localStorage
