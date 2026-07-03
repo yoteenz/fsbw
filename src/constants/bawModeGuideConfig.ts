@@ -109,7 +109,7 @@ export function getBawModeGuideCopy(mode: BawBuildMode, step: BawGuideStepId): G
 export function bawBuildModeLabel(mode: BawBuildMode): string {
   switch (mode) {
     case 'TRY':
-      return 'BUILD-A-WIG TRY MODE';
+      return 'BUILD-A-WIG VIEW MODE';
     case 'CUSTOMIZE':
       return 'BUILD-A-WIG CUSTOMIZE MODE';
     case 'EDIT':

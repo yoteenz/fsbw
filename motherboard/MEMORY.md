@@ -33305,3 +33305,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Root cause:** Sub-page **`getWigViews()`** helpers only matched **`/blanco/customize`** / **`/edit`** paths, not **`/build-a-wig/try/{unit}/…`**, so they fell through to NOIR static mannequins.
 
 **Fix:** Added **`bawSubpageWigViews.ts`** — **`resolveBawProductUnitLabelFromPathname`**, **`getBawSubpageStaticWigViews`**, **`isBawNoirLivePreviewStepPathname`** (try routes skip live NOIR Fal). All 9 option sub-pages now use shared util; live composite overlay only on NOIR customize/edit steps.
+
+---
+
+## 2026-07-03 — Rename try mode to view mode (UI label)
+
+**Context:** User asked to rename **try mode** to **view mode**.
+
+**Changes:** Top panel mode label **BUILD-A-WIG TRY MODE** → **BUILD-A-WIG VIEW MODE** (`bawModeGuideConfig.ts`); slay card header **BUILD-A-WIG TRY** → **BUILD-A-WIG VIEW** (`bawSlayCard.ts`). Guest routes remain **`/build-a-wig/try`**; PDP CTAs (**TRY BUILD-A-WIG**) unchanged.

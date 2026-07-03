@@ -45,7 +45,7 @@ export async function renderBawSlayCardPng(selections: BawTutorialSelections): P
 
   ctx.fillStyle = '#808080';
   ctx.font = '500 28px Futura, "Futura PT Book", sans-serif';
-  ctx.fillText('SLAY CARD — BUILD-A-WIG TRY', w / 2, 230);
+  ctx.fillText('SLAY CARD — BUILD-A-WIG VIEW', w / 2, 230);
 
   try {
     const mannequin = await loadImage(NOIR_NATURAL_FRONT_MANNEQUIN_SRC);
