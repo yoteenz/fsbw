@@ -18,18 +18,29 @@ function supabasePublicObjectUrl(objectPath: string): string | null {
   return `${base.replace(/\/$/, '')}/storage/v1/object/public/${EMAIL_ASSETS_BUCKET}/${clean}`;
 }
 
-/**
- * Resolve a reusable email asset URL.
- * Prefers Supabase Storage (`email-assets` bucket) when SUPABASE_URL is set; falls back to SITE_URL `/assets/`.
- */
-export function emailAssetUrl(relativePath: string): string {
-  const fromStorage = supabasePublicObjectUrl(relativePath);
-  if (fromStorage && process.env.EMAIL_ASSETS_USE_SITE_FALLBACK !== '1') {
-    return fromStorage;
-  }
+function siteAssetUrl(relativePath: string): string {
   const site = resolveSiteOrigin();
   const assetPath = relativePath.startsWith('assets/') ? relativePath : `assets/${relativePath}`;
   return `${site}/${assetPath}`;
+}
+
+/**
+ * Resolve a reusable email asset URL.
+ * Decorative icons + PNGs use SITE_URL (email clients block SVG and Supabase may 404).
+ * Marble/hero assets may use Supabase when configured.
+ */
+export function emailAssetUrl(relativePath: string, options?: { preferSite?: boolean }): string {
+  const preferSite =
+    options?.preferSite === true ||
+    process.env.EMAIL_ASSETS_USE_SITE_FALLBACK === '1' ||
+    relativePath.startsWith('email/icons/') ||
+    relativePath.endsWith('.png');
+
+  if (preferSite) return siteAssetUrl(relativePath);
+
+  const fromStorage = supabasePublicObjectUrl(relativePath);
+  if (fromStorage) return fromStorage;
+  return siteAssetUrl(relativePath);
 }
 
 export const EMAIL_BRAND = {
@@ -39,9 +50,13 @@ export const EMAIL_BRAND = {
   lightGray: '#f5f5f5',
   white: '#ffffff',
   marbleBackground: emailAssetUrl('marble-half.png'),
-  roseAccent: emailAssetUrl('rose-alert.svg'),
-  diamondAccent: emailAssetUrl('points-icon.svg'),
-  fsMonogram: emailAssetUrl('hub-icon.svg'),
+  /** PNG raster icons — run npm run email:build-icons after SVG changes. */
+  roseAccent: emailAssetUrl('email/icons/rose-accent.png', { preferSite: true }),
+  diamondAccent: emailAssetUrl('email/icons/loyalty-points.png', { preferSite: true }),
+  fsMonogram: emailAssetUrl('email/icons/hub-icon.png', { preferSite: true }),
+  perksPoints: emailAssetUrl('email/icons/loyalty-points.png', { preferSite: true }),
+  perksUnlock: emailAssetUrl('email/icons/hub-icon.png', { preferSite: true }),
+  perksMember: emailAssetUrl('email/icons/rose-accent.png', { preferSite: true }),
 } as const;
 
 export { BRAND_RED };

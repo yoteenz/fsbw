@@ -33720,3 +33720,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`emailSupportLinks.ts`**, **`layout.ts`**, **`renderTemplate.ts`**, **`emailSenderMap.ts`**, **`concierge/page.tsx`**, **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`motherboard/MEMORY.md`**.
 
 **Conventions:** Email help CTAs → **`/account/concierge#priority-messages`**; do not add **`reply_to`** real inboxes until product explicitly asks.
+
+---
+
+## 2026-07-03 — Email template broken icons + brand typography fix
+
+**Context:** User reported broken image placeholders in email template preview (perks row + footer icons). Requested actual site social/decorative icons (PNG for email), and brand fonts: uppercase **Covered By Your Grace**, uppercase **Futura PT**, lowercase **Bohemy** only.
+
+**Root cause:** **`layout.ts`** referenced **SVG** URLs (`rose-alert.svg`, `points-icon.svg`, `hub-icon.svg`) via Supabase or site — **Gmail/Outlook do not render SVG in `<img>`**, showing broken placeholders. Typography used Great Vibes / Georgia / Arial instead of brand stack.
+
+**Fixes:**
+- **`scripts/build-email-icon-pngs.mjs`** + **`npm run email:build-icons`** — rasterize site SVGs + loyalty PNG to **`public/assets/email/icons/*.png`**.
+- **`brandAssets.ts`** — decorative icons use **site-origin PNG** paths (`email/icons/…`); PNGs prefer **`SITE_URL`** not Supabase SVG.
+- **`emailSocialLinks.ts`** — footer row uses same **Instagram / X / Facebook** icons + links as **`SocialMenuIcons`** / **`MENU_SOCIAL_LINKS`**.
+- **`emailTypography.ts`** — **`@font-face`** for Futura PT Book/Medium/Demi + Bohemy from **`/assets/`**; Google **Covered By Your Grace**; layout roles: Grace script accent (uppercase), Futura Demi headline (uppercase red), Futura Book body (uppercase), Bohemy tagline only (lowercase **luxury without limits.**).
+- **`upload-email-assets.mjs`** uploads PNG icon set to **`email-assets`** bucket.
+
+**Changes:** **`emailTypography.ts`**, **`emailSocialLinks.ts`**, **`brandAssets.ts`**, **`layout.ts`**, **`build-email-icon-pngs.mjs`**, **`upload-email-assets.mjs`**, **`package.json`**, **`public/assets/email/icons/*`**, **`docs/EMAIL_SYSTEM.md`**, **`motherboard/MEMORY.md`**.
+
+**Conventions:** Email decorative icons must be **PNG** on **`SITE_URL`**; run **`npm run email:build-icons`** after changing source SVGs. No SVG in transactional email HTML.

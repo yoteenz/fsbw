@@ -1,9 +1,20 @@
 import { EMAIL_BRAND } from './brandAssets.js';
+import { EMAIL_SOCIAL_LINKS, resolveEmailSocialIconUrl } from './emailSocialLinks.js';
 import {
   EMAIL_SUPPORT_CTA_LABEL,
   EMAIL_SUPPORT_FOOTER_COPY,
   resolveConciergeMessageUrl,
 } from './emailSupportLinks.js';
+import {
+  EMAIL_FONT_BOHEMY,
+  EMAIL_FONT_FUTURA_BOOK,
+  EMAIL_FONT_FUTURA_DEMI,
+  EMAIL_FONT_FUTURA_MEDIUM,
+  EMAIL_FONT_GRACE,
+  emailBohemy,
+  emailUpper,
+  renderEmailFontFaces,
+} from './emailTypography.js';
 import { emailHeroImageUrl } from './heroImages.js';
 import { isEmailHeroReady } from './heroManifest.js';
 import { heroIconSvg } from './heroIcons.js';
@@ -47,10 +58,10 @@ function renderFallbackHeroScene(heroIcon: EmailHeroIcon): string {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;border-collapse:collapse;">
         <tr>
           <td align="center" style="padding:4px 0;">
-            <img src="${EMAIL_BRAND.roseAccent}" width="28" height="28" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;"/>
-            <img src="${EMAIL_BRAND.diamondAccent}" width="22" height="22" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;"/>
-            <img src="${EMAIL_BRAND.diamondAccent}" width="18" height="18" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;opacity:0.85;"/>
-            <img src="${EMAIL_BRAND.roseAccent}" width="24" height="24" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;"/>
+            <img src="${escHtml(EMAIL_BRAND.roseAccent)}" width="28" height="28" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;border:0;"/>
+            <img src="${escHtml(EMAIL_BRAND.diamondAccent)}" width="22" height="22" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;border:0;"/>
+            <img src="${escHtml(EMAIL_BRAND.diamondAccent)}" width="18" height="18" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;opacity:0.85;border:0;"/>
+            <img src="${escHtml(EMAIL_BRAND.roseAccent)}" width="24" height="24" alt="" style="display:inline-block;margin:0 10px;vertical-align:middle;border:0;"/>
           </td>
         </tr>
       </table>
@@ -75,22 +86,36 @@ function renderHeroSection(templateType: EmailTemplateType | undefined, heroIcon
 
 function renderMemberPerksRow(): string {
   const perks = [
-    { icon: EMAIL_BRAND.diamondAccent, label: 'Earn Loyalty Points' },
-    { icon: EMAIL_BRAND.fsMonogram, label: 'Unlock Exclusive Perks' },
-    { icon: EMAIL_BRAND.roseAccent, label: 'Member Only Access' },
+    { icon: EMAIL_BRAND.perksPoints, label: 'Earn Loyalty Points' },
+    { icon: EMAIL_BRAND.perksUnlock, label: 'Unlock Exclusive Perks' },
+    { icon: EMAIL_BRAND.perksMember, label: 'Member Only Access' },
   ];
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px auto 0;max-width:460px;border-collapse:collapse;">
   <tr>
 ${perks
   .map(
     (p) => `    <td align="center" width="33%" style="padding:8px 4px;vertical-align:top;">
-      <img src="${p.icon}" width="24" height="24" alt="" style="display:block;margin:0 auto 6px;"/>
-      <div style="font-family:Arial,Helvetica,sans-serif;font-size:8px;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;line-height:1.4;">${escHtml(p.label)}</div>
+      <img src="${escHtml(p.icon)}" width="24" height="24" alt="" style="display:block;margin:0 auto 6px;border:0;"/>
+      <div style="font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:8px;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;line-height:1.4;">${escHtml(emailUpper(p.label))}</div>
     </td>`
   )
   .join('\n')}
   </tr>
 </table>`;
+}
+
+function renderSocialFooterRow(): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;border-collapse:collapse;">
+                <tr>
+${EMAIL_SOCIAL_LINKS.map(
+  (link) => `                  <td style="padding:0 10px;">
+                    <a href="${escHtml(link.href)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                      <img src="${escHtml(resolveEmailSocialIconUrl(link.iconPath))}" width="20" height="20" alt="${escHtml(link.label)}" style="display:block;border:0;"/>
+                    </a>
+                  </td>`
+).join('\n')}
+                </tr>
+              </table>`;
 }
 
 export interface RenderEmailLayoutInput {
@@ -112,19 +137,19 @@ export interface RenderEmailLayoutInput {
 
 function renderSupportFooter(supportCtaUrl: string): string {
   const url = escHtml(supportCtaUrl);
-  const copy = escHtml(EMAIL_SUPPORT_FOOTER_COPY);
-  const cta = escHtml(EMAIL_SUPPORT_CTA_LABEL.toUpperCase());
+  const copy = escHtml(emailUpper(EMAIL_SUPPORT_FOOTER_COPY));
+  const cta = escHtml(emailUpper(EMAIL_SUPPORT_CTA_LABEL));
   return `<tr>
             <td style="padding:28px 32px 12px;text-align:center;border-top:1px solid rgba(0,0,0,0.08);">
-              <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.65;letter-spacing:0.04em;color:${EMAIL_BRAND.gray};text-transform:none;">${copy}</p>
-              <a href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};color:${EMAIL_BRAND.red};background-color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;padding:12px 28px;">${cta}</a>
+              <p style="margin:0 0 16px;font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:10px;line-height:1.65;letter-spacing:0.06em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${copy}</p>
+              <a href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};color:${EMAIL_BRAND.red};background-color:#ffffff;font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:10px;font-weight:700;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;padding:12px 28px;">${cta}</a>
             </td>
           </tr>`;
 }
 
 export function renderEmailLayout(input: RenderEmailLayoutInput): string {
   const vars = input.variables;
-  const scriptAccent = escHtml(interpolateCopy(input.scriptAccent, vars));
+  const scriptAccent = escHtml(emailUpper(interpolateCopy(input.scriptAccent, vars)));
   const headline = escHtml(interpolateCopy(input.headline, vars).toUpperCase());
   const preheader = escHtml(interpolateCopy(input.preheader || headline, vars));
   const paragraphs = input.bodyParagraphs.map((p) =>
@@ -141,10 +166,10 @@ ${input.dataRows
     const label = escHtml(row.label.toUpperCase());
     const value = escHtml(resolveRowValue(row, vars).toUpperCase());
     return `<tr>
-  <td style="padding:14px 20px 4px;font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.14em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${label}</td>
+  <td style="padding:14px 20px 4px;font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:9px;letter-spacing:0.14em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${label}</td>
 </tr>
 <tr>
-  <td style="padding:0 20px 14px;font-family:Georgia,'Times New Roman',serif;font-size:14px;font-weight:600;color:${EMAIL_BRAND.black};text-transform:uppercase;letter-spacing:0.04em;">${value}</td>
+  <td style="padding:0 20px 14px;font-family:${EMAIL_FONT_FUTURA_DEMI};font-size:14px;font-weight:600;color:${EMAIL_BRAND.black};text-transform:uppercase;letter-spacing:0.04em;">${value}</td>
 </tr>`;
   })
   .join('\n')}
@@ -157,13 +182,15 @@ ${input.dataRows
       .filter((p) => p.trim())
       .map(
         (p) =>
-          `<p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.75;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;text-align:center;">${p}</p>`
+          `<p style="margin:0 0 16px;font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:11px;line-height:1.75;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;text-align:center;">${p}</p>`
       )
       .join('');
 
   const heroHtml = renderHeroSection(input.templateType, input.heroIcon);
   const memberPerksHtml = input.showMemberPerks ? renderMemberPerksRow() : '';
   const supportFooterHtml = renderSupportFooter(input.supportCtaUrl || resolveConciergeMessageUrl());
+  const socialFooterHtml = renderSocialFooterRow();
+  const fontFaces = renderEmailFontFaces();
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -173,7 +200,7 @@ ${input.dataRows
   <meta name="color-scheme" content="light"/>
   <meta name="supported-color-schemes" content="light"/>
   <title>${headline}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"/>
+  ${fontFaces}
   <!--[if mso]><style>body,table,td{font-family:Arial,Helvetica,sans-serif!important;}</style><![endif]-->
 </head>
 <body style="margin:0;padding:0;background-color:#ececec;">
@@ -184,19 +211,19 @@ ${input.dataRows
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};background-image:url('${EMAIL_BRAND.marbleBackground}');background-repeat:repeat;background-position:center top;border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
           <tr>
             <td style="padding:36px 32px 16px;text-align:center;">
-              <div style="font-family:Georgia,'Times New Roman',serif;font-size:14px;letter-spacing:0.38em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:400;">
+              <div style="font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:14px;letter-spacing:0.38em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:500;">
                 FRONTAL <span style="color:${EMAIL_BRAND.red};letter-spacing:0.38em;">SLAYER</span>
               </div>
             </td>
           </tr>
           <tr>
             <td style="padding:4px 32px 0;text-align:center;">
-              <div style="font-family:'Great Vibes',cursive,Georgia,serif;font-size:34px;line-height:1.15;color:${EMAIL_BRAND.black};">${scriptAccent}</div>
+              <div style="font-family:${EMAIL_FONT_GRACE};font-size:34px;line-height:1.15;color:${EMAIL_BRAND.black};text-transform:uppercase;">${scriptAccent}</div>
             </td>
           </tr>
           <tr>
             <td style="padding:10px 32px 24px;text-align:center;">
-              <div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:1.2;letter-spacing:0.06em;color:${EMAIL_BRAND.red};font-weight:700;text-transform:uppercase;">${headline}</div>
+              <div style="font-family:${EMAIL_FONT_FUTURA_DEMI};font-size:26px;line-height:1.2;letter-spacing:0.06em;color:${EMAIL_BRAND.red};font-weight:600;text-transform:uppercase;">${headline}</div>
             </td>
           </tr>
           <tr>
@@ -215,7 +242,7 @@ ${input.dataRows
             ctaUrl && ctaUrl !== '#'
               ? `<tr>
             <td align="center" style="padding:32px 32px 16px;">
-              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);">${ctaLabel}</a>
+              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};color:#ffffff;font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:11px;font-weight:700;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);">${ctaLabel}</a>
             </td>
           </tr>`
               : ''
@@ -224,19 +251,13 @@ ${input.dataRows
           <tr>
             <td style="padding:28px 32px 0;text-align:center;">
               <div style="height:3px;background-color:${EMAIL_BRAND.red};max-width:120px;margin:0 auto 20px;"></div>
-              <div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.28em;color:${EMAIL_BRAND.gray};text-transform:uppercase;margin-bottom:16px;">LUXURY WITHOUT LIMITS.</div>
-              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;border-collapse:collapse;">
-                <tr>
-                  <td style="padding:0 8px;"><img src="${EMAIL_BRAND.diamondAccent}" width="18" height="18" alt="" style="display:block;opacity:0.7;"/></td>
-                  <td style="padding:0 8px;"><img src="${EMAIL_BRAND.fsMonogram}" width="18" height="18" alt="" style="display:block;opacity:0.7;"/></td>
-                  <td style="padding:0 8px;"><img src="${EMAIL_BRAND.roseAccent}" width="18" height="18" alt="" style="display:block;opacity:0.7;"/></td>
-                </tr>
-              </table>
+              <div style="font-family:${EMAIL_FONT_BOHEMY};font-size:14px;letter-spacing:0.04em;color:${EMAIL_BRAND.gray};text-transform:lowercase;margin-bottom:16px;">${escHtml(emailBohemy('luxury without limits.'))}</div>
+              ${socialFooterHtml}
             </td>
           </tr>
           <tr>
             <td style="padding:8px 32px 28px;text-align:center;">
-              <div style="font-family:Arial,Helvetica,sans-serif;font-size:7px;letter-spacing:0.12em;color:#aaa;text-transform:uppercase;">Thank you for being part of the Slay Society.</div>
+              <div style="font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:7px;letter-spacing:0.12em;color:#aaa;text-transform:uppercase;">${escHtml(emailUpper('Thank you for being part of the Slay Society.'))}</div>
             </td>
           </tr>
         </table>

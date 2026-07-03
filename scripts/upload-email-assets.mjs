@@ -15,9 +15,12 @@ const BUCKET = process.env.EMAIL_ASSETS_BUCKET?.trim() || 'email-assets';
 
 const ASSETS = [
   { local: 'public/assets/marble-half.png', remote: 'marble-half.png', contentType: 'image/png' },
-  { local: 'public/assets/rose-alert.svg', remote: 'rose-alert.svg', contentType: 'image/svg+xml' },
-  { local: 'public/assets/points-icon.svg', remote: 'points-icon.svg', contentType: 'image/svg+xml' },
-  { local: 'public/assets/hub-icon.svg', remote: 'hub-icon.svg', contentType: 'image/svg+xml' },
+  { local: 'public/assets/email/icons/rose-accent.png', remote: 'email/icons/rose-accent.png', contentType: 'image/png' },
+  { local: 'public/assets/email/icons/loyalty-points.png', remote: 'email/icons/loyalty-points.png', contentType: 'image/png' },
+  { local: 'public/assets/email/icons/hub-icon.png', remote: 'email/icons/hub-icon.png', contentType: 'image/png' },
+  { local: 'public/assets/email/icons/instagram-icon.png', remote: 'email/icons/instagram-icon.png', contentType: 'image/png' },
+  { local: 'public/assets/email/icons/twitter-icon.png', remote: 'email/icons/twitter-icon.png', contentType: 'image/png' },
+  { local: 'public/assets/email/icons/facebook-icon.png', remote: 'email/icons/facebook-icon.png', contentType: 'image/png' },
 ];
 
 function collectHeroAssets() {
