@@ -34396,3 +34396,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Lounge TV inner UI = dark streaming glass, **#EB1C24** accents, metadata-driven packs; weekly topics add rows via Supabase/admin without hardcoding Featured/Learn UI.
 
+---
+
+## 2026-07-03 — THE STUDIO admin module (dashboard card + creative HQ shell)
+
+**Context:** Same chat as Lounge TV restructure (above). User then requested a **new flagship admin module THE STUDIO** without redesigning or modifying any existing dashboard cards/pages. Match marble background, Covered By Your Grace red headings, Futura typography, existing StatsCard aesthetic. Routing/layout only — no CMS or AI functionality yet.
+
+**Topics covered (this turn):**
+- **Step 1:** New **STUDIO** dashboard card appended to `statsData` (not hard-positioned) — metric **14**, demo rows (SHOWS 8, DRAFTS 18, SCHEDULED 6, CONTENT PACKS 42, PROMPTS 63, AI GENERATIONS 121), footer **NEXT RELEASE — SLAY REPORT • FRIDAY • 7PM**. Tap → `/admin/studio`.
+- **Step 2:** **THE STUDIO** hub at `/admin/studio` — subtitle *Where every Frontal Slayer story begins*, hero summary card + 2-col grid of 11 landing cards (Shows, Content Packs, AI Studio, Prompt Library, Asset Library, Publishing Queue, Drafts, Scheduled, Analytics, Calendar, Recent Generations). Each card → placeholder via `/admin/studio/:sectionId`.
+- Reusable: `adminStudioDemo.ts`, `AdminStudioHubCard`, `AdminStudioPlaceholderShell`, dynamic `section/page.tsx`.
+
+**Decisions / outcomes:** Zero changes to existing dashboard cards beyond **adding** STUDIO entry + navigation cases. Placeholder pages use same AdminHeader breadcrumb pattern (ADMIN → THE STUDIO → section). Build verified.
+
+**Changes:** `src/utils/adminStudioDemo.ts`, `src/components/admin/studio/*`, `src/pages/admin/studio/page.tsx`, `src/pages/admin/studio/section/page.tsx`, `src/pages/admin/dashboard/page.tsx`, `src/pages/admin/components/StatsCard.tsx`, `src/App.tsx` routes.
+
+**Conventions:** Studio demo metrics live in `adminStudioDemo.ts` for future Supabase/CMS wiring; section ids match URL slugs (`content-packs`, `ai-studio`, etc.).
+

@@ -28,6 +28,11 @@ import {
 } from '../../../utils/adminMeetingsMock';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
+import {
+  ADMIN_STUDIO_DASHBOARD_FOOTER,
+  ADMIN_STUDIO_DASHBOARD_ITEMS,
+  ADMIN_STUDIO_DASHBOARD_METRIC,
+} from '../../../utils/adminStudioDemo';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
@@ -1121,6 +1126,17 @@ export default function AdminDashboard() {
         { label: 'DISABLE / RESET', value: 'Account actions', color: 'text-gray-500' }
       ],
       activity: 'AUDIT TRAIL & MANAGE AUTH USERS'
+    },
+
+    {
+      title: 'STUDIO',
+      count: String(ADMIN_STUDIO_DASHBOARD_METRIC),
+      items: ADMIN_STUDIO_DASHBOARD_ITEMS.map((item) => ({
+        label: item.label,
+        value: item.value,
+        color: item.color,
+      })),
+      activity: ADMIN_STUDIO_DASHBOARD_FOOTER,
     }
   ];
 
@@ -1156,6 +1172,9 @@ export default function AdminDashboard() {
         break;
       case 'BACKEND':
         navigate('/admin/backend');
+        break;
+      case 'STUDIO':
+        navigate('/admin/studio');
         break;
       default:
         break;

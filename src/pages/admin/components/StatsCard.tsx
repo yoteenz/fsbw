@@ -182,6 +182,9 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
       case 'brand':
         navigate('/admin/product-editor');
         break;
+      case 'studio':
+        navigate('/admin/studio');
+        break;
       default:
         console.log(`No navigation defined for: ${title}`);
     }
