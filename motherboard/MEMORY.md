@@ -33764,7 +33764,8 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-07-03 — Vercel deploy log fixes (ce3ab09 era errors)
 
 **Context:** User pasted Vercel build log from commit **ce3ab09** showing prebuild `fix_encoding.py` SyntaxError (null bytes), API TS errors (`emailHeroPrompts` duplicates, `send-email` path, `profile` types), and Edge Function **stripe/webhook** blocked by **heroManifest** importing **node:fs**.
@@ -33772,7 +33773,9 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Already fixed on master before this turn (90b97539+):** duplicate `EMAIL_HERO_*` exports, `send-email.ts` re-export path `./email/send.js`, `profile.ts` merged record cast, `heroManifest.ts` compile-time `heroManifestReady.ts` (no fs), empty manifest synced in **a7e9db16**.
 
 **This turn:** Rewrote **`scripts/fix_encoding.py`** as clean UTF-8 (file was UTF-16 LE with null bytes — ironically broke its own prebuild). Switched **`api/stripe/webhook.ts`** from **edge** to **Node.js** runtime so membership welcome emails via transactional email stack cannot hit Edge `node:fs` bundle restrictions.
-=======
+
+---
+
 ## 2026-07-03 — Email wordmark: SLAYER image beside FRONTAL
 
 **Context:** User asked email template header to use the **SLAYER wordmark image** from the debug slay card page (**`IMG_4820.png` / `BAW_SLAY_CARD_SLAYER_LOGO_SRC`**) instead of red **SLAYER** text, positioned **beside** black **FRONTAL** text (not stacked).
@@ -33786,4 +33789,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`layout.ts`**, **`brandAssets.ts`**, **`upload-email-assets.mjs`**, **`public/assets/email/slayer-logo.png`**, **`motherboard/MEMORY.md`**.
 
 **Conventions:** Email header wordmark = black **FRONTAL** (Futura) + **slayer-logo.png** image — same asset as slay card debug, not typed **SLAYER** text.
->>>>>>> 8b8404f3 (Use slay card SLAYER logo image beside FRONTAL in email wordmark)
+
+---
+
+## 2026-07-03 — Email template debug editor (copy, typography, batch styles)
+
+**Context:** User wanted **`/tools/email-templates`** to support editing text, font type/size/color, repositioning (padding), saving with correct preview updates, plus **batch/mass edit** so all templates follow the same font guidelines. Prior work in this chat also fixed slay-card debug layout, Fal email heroes, and Vercel build errors.
+
+**Architecture:**
+- **`api/_lib/email/emailLayoutConfig.ts`** — layer types (`brandHeader`, `scriptAccent`, `headline`, `hero`, `body`, `dataRowLabel`, `dataRowValue`, `cta`, `supportFooter`, `supportCta`, `tagline`, `closing`), default styles, coercion/merge helpers.
+- **`api/_lib/email/emailLayoutConfigStore.ts`** — loads persisted store from Supabase **`app_config`** key **`email_layout_debug`** (60s cache); production sends use this.
+- **`layout.ts`** + **`renderTemplate.ts`** — accept optional **`layoutDebug`** store; global layer styles drive inline CSS; per-template **`templates[type]`** copy overrides (script accent, headline, body paragraphs, subject, CTA, tagline, closing, support footer). **`renderEmailWordmark(brandStyle)`** keeps SLAYER image wordmark while **`brandHeader`** layer controls FRONTAL typography/padding.
+- **`api/admin/email-layout-config.ts`** — admin **GET/PUT** for cross-device sync (same pattern as special-offer config).
+- **`api/email/send.ts`** — preview accepts **`layoutDebug`** in POST body; **`sendEmail`** uses **`renderEmailTemplateWithPersistedLayout`** for live sends.
+- **`api/email/templates.ts`** — returns **`templateDefaults`** from registry for editor placeholders.
+- **`src/utils/emailLayoutDebug.ts`** — localStorage + client mirror of config types, batch brand typography preset, patch/reset helpers.
+- **`src/pages/tools/email-templates/page.tsx`** — three editor tabs: **Copy** (per-template), **Styles** (global layers with font/color/padding), **Batch** (apply brand preset to all, reset all global styles). Save syncs localStorage + **`PUT /api/admin/email-layout-config`**. Preview auto-refreshes on store changes.
+
+**Conventions:** Global styles = batch typography/design for **all** templates; per-template copy overrides stored under **`templates[templateType]`**. Bohemy tagline stays lowercase; Futura layers uppercase. Repositioning = **padding** on email table cells (not absolute positioning). Production transactional emails honor saved server config after sync.

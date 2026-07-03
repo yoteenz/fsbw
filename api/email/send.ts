@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
-import { sendEmail, renderEmailTemplate } from '../_lib/email/sendEmail.js';
+import { renderEmailTemplate, parseEmailLayoutDebugFromBody } from '../_lib/email/renderTemplate.js';
+import { sendEmail } from '../_lib/email/sendEmail.js';
 import { EMAIL_TEMPLATE_REGISTRY, isEmailTemplateType } from '../_lib/email/templateRegistry.js';
 import type { EmailTemplateVariables } from '../_lib/email/types.js';
 
@@ -67,7 +68,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       : {};
 
   if (previewOnly) {
-    const rendered = renderEmailTemplate(templateType, variables, subject);
+    const layoutDebug =
+      parseEmailLayoutDebugFromBody(body.layoutDebug) ??
+      (body.layoutDebug === null ? null : undefined);
+    const rendered = renderEmailTemplate(templateType, variables, subject, {
+      layoutDebug: layoutDebug === undefined ? null : layoutDebug,
+    });
     return res.status(200).json({
       ok: true,
       preview: true,

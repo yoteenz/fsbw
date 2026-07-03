@@ -1,4 +1,12 @@
 import { EMAIL_BRAND } from './brandAssets.js';
+import {
+  emailTdStyleCss,
+  emailTextStyleCss,
+  resolveEmailLayerStyle,
+  type EmailLayoutDebugStore,
+  type EmailLayerStyle,
+  type EmailTemplateCopyOverrides,
+} from './emailLayoutConfig.js';
 import { EMAIL_SOCIAL_LINKS, resolveEmailSocialIconUrl } from './emailSocialLinks.js';
 import {
   EMAIL_SUPPORT_CTA_LABEL,
@@ -6,11 +14,7 @@ import {
   resolveConciergeMessageUrl,
 } from './emailSupportLinks.js';
 import {
-  EMAIL_FONT_BOHEMY,
   EMAIL_FONT_FUTURA_BOOK,
-  EMAIL_FONT_FUTURA_DEMI,
-  EMAIL_FONT_FUTURA_MEDIUM,
-  EMAIL_FONT_GRACE,
   emailBohemy,
   emailUpper,
   renderEmailFontFaces,
@@ -104,12 +108,13 @@ ${perks
 </table>`;
 }
 
-/** FRONTAL (Futura) + red SLAYER wordmark image inline — matches debug slay card asset. */
-function renderEmailWordmark(): string {
+/** FRONTAL (Futura) + SLAYER wordmark image inline — matches debug slay card asset. */
+function renderEmailWordmark(brandStyle: EmailLayerStyle): string {
   const logoUrl = escHtml(EMAIL_BRAND.slayerLogo);
+  const frontalCss = emailTextStyleCss(brandStyle);
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:collapse;">
   <tr>
-    <td align="right" style="vertical-align:middle;padding:0 4px 0 0;font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:14px;letter-spacing:0.12em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:500;line-height:1;white-space:nowrap;">FRONTAL</td>
+    <td align="right" style="vertical-align:middle;padding:0 4px 0 0;${frontalCss};line-height:1;white-space:nowrap;">FRONTAL</td>
     <td align="left" style="vertical-align:middle;padding:0;line-height:0;font-size:0;">
       <img src="${logoUrl}" width="78" height="52" alt="Slayer" style="display:block;border:0;"/>
     </td>
@@ -146,29 +151,62 @@ export interface RenderEmailLayoutInput {
   showMemberPerks?: boolean;
   /** Defaults to in-app Concierge priority message form. */
   supportCtaUrl?: string;
+  layoutDebug?: EmailLayoutDebugStore | null;
+  copyOverrides?: EmailTemplateCopyOverrides;
 }
 
-function renderSupportFooter(supportCtaUrl: string): string {
+function renderSupportFooter(
+  supportCtaUrl: string,
+  layoutDebug: EmailLayoutDebugStore | null | undefined,
+  copyOverrides?: EmailTemplateCopyOverrides
+): string {
+  const footerStyle = resolveEmailLayerStyle('supportFooter', layoutDebug?.globalLayers);
+  const ctaStyle = resolveEmailLayerStyle('supportCta', layoutDebug?.globalLayers);
   const url = escHtml(supportCtaUrl);
-  const copy = escHtml(emailUpper(EMAIL_SUPPORT_FOOTER_COPY));
-  const cta = escHtml(emailUpper(EMAIL_SUPPORT_CTA_LABEL));
+  const copyRaw = copyOverrides?.supportFooterCopy ?? EMAIL_SUPPORT_FOOTER_COPY;
+  const ctaRaw = copyOverrides?.supportCtaLabel ?? EMAIL_SUPPORT_CTA_LABEL;
+  const copy = escHtml(emailUpper(copyRaw));
+  const cta = escHtml(emailUpper(ctaRaw));
+  const footerTd = emailTdStyleCss(footerStyle);
+  const ctaText = emailTextStyleCss(ctaStyle);
   return `<tr>
-            <td style="padding:28px 32px 12px;text-align:center;border-top:1px solid rgba(0,0,0,0.08);">
-              <p style="margin:0 0 16px;font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:10px;line-height:1.65;letter-spacing:0.06em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${copy}</p>
-              <a href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};color:${EMAIL_BRAND.red};background-color:#ffffff;font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:10px;font-weight:700;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;padding:12px 28px;">${cta}</a>
+            <td style="${footerTd};border-top:1px solid rgba(0,0,0,0.08);">
+              <p style="margin:0 0 16px;${emailTextStyleCss(footerStyle)}">${copy}</p>
+              <a href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};background-color:#ffffff;text-decoration:none;padding:12px 28px;${ctaText}">${cta}</a>
             </td>
           </tr>`;
 }
 
 export function renderEmailLayout(input: RenderEmailLayoutInput): string {
   const vars = input.variables;
-  const scriptAccent = escHtml(emailUpper(interpolateCopy(input.scriptAccent, vars)));
-  const headline = escHtml(interpolateCopy(input.headline, vars).toUpperCase());
-  const preheader = escHtml(interpolateCopy(input.preheader || headline, vars));
-  const paragraphs = input.bodyParagraphs.map((p) =>
+  const layoutDebug = input.layoutDebug;
+  const copy = input.copyOverrides;
+
+  const brandStyle = resolveEmailLayerStyle('brandHeader', layoutDebug?.globalLayers);
+  const scriptStyle = resolveEmailLayerStyle('scriptAccent', layoutDebug?.globalLayers);
+  const headlineStyle = resolveEmailLayerStyle('headline', layoutDebug?.globalLayers);
+  const heroStyle = resolveEmailLayerStyle('hero', layoutDebug?.globalLayers);
+  const bodyStyle = resolveEmailLayerStyle('body', layoutDebug?.globalLayers);
+  const labelStyle = resolveEmailLayerStyle('dataRowLabel', layoutDebug?.globalLayers);
+  const valueStyle = resolveEmailLayerStyle('dataRowValue', layoutDebug?.globalLayers);
+  const ctaStyle = resolveEmailLayerStyle('cta', layoutDebug?.globalLayers);
+  const taglineStyle = resolveEmailLayerStyle('tagline', layoutDebug?.globalLayers);
+  const closingStyle = resolveEmailLayerStyle('closing', layoutDebug?.globalLayers);
+
+  const scriptAccentRaw = copy?.scriptAccent ?? input.scriptAccent;
+  const headlineRaw = copy?.headline ?? input.headline;
+  const bodyParagraphsRaw = copy?.bodyParagraphs ?? input.bodyParagraphs;
+  const preheaderRaw = copy?.preheader ?? input.preheader ?? headlineRaw;
+  const taglineRaw = copy?.tagline ?? 'luxury without limits.';
+  const closingRaw = copy?.closing ?? 'Thank you for being part of the Slay Society.';
+
+  const scriptAccent = escHtml(emailUpper(interpolateCopy(scriptAccentRaw, vars)));
+  const headline = escHtml(interpolateCopy(headlineRaw, vars).toUpperCase());
+  const preheader = escHtml(interpolateCopy(preheaderRaw, vars));
+  const paragraphs = bodyParagraphsRaw.map((p) =>
     escHtml(interpolateCopy(p, vars).toUpperCase())
   );
-  const ctaLabel = escHtml((input.ctaLabel || 'VIEW DETAILS').toUpperCase());
+  const ctaLabel = escHtml((copy?.ctaLabel ?? input.ctaLabel ?? 'VIEW DETAILS').toUpperCase());
   const ctaUrl = escHtml(input.ctaUrl || '#');
 
   const dataRowsHtml =
@@ -179,10 +217,10 @@ ${input.dataRows
     const label = escHtml(row.label.toUpperCase());
     const value = escHtml(resolveRowValue(row, vars).toUpperCase());
     return `<tr>
-  <td style="padding:14px 20px 4px;font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:9px;letter-spacing:0.14em;color:${EMAIL_BRAND.gray};text-transform:uppercase;">${label}</td>
+  <td style="padding:14px 20px 4px;${emailTextStyleCss(labelStyle)}">${label}</td>
 </tr>
 <tr>
-  <td style="padding:0 20px 14px;font-family:${EMAIL_FONT_FUTURA_DEMI};font-size:14px;font-weight:600;color:${EMAIL_BRAND.black};text-transform:uppercase;letter-spacing:0.04em;">${value}</td>
+  <td style="padding:0 20px 14px;${emailTextStyleCss(valueStyle)}">${value}</td>
 </tr>`;
   })
   .join('\n')}
@@ -195,13 +233,17 @@ ${input.dataRows
       .filter((p) => p.trim())
       .map(
         (p) =>
-          `<p style="margin:0 0 16px;font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:11px;line-height:1.75;letter-spacing:0.08em;color:${EMAIL_BRAND.gray};text-transform:uppercase;text-align:center;">${p}</p>`
+          `<p style="margin:0 0 16px;${emailTextStyleCss(bodyStyle)}">${p}</p>`
       )
       .join('');
 
   const heroHtml = renderHeroSection(input.templateType, input.heroIcon);
   const memberPerksHtml = input.showMemberPerks ? renderMemberPerksRow() : '';
-  const supportFooterHtml = renderSupportFooter(input.supportCtaUrl || resolveConciergeMessageUrl());
+  const supportFooterHtml = renderSupportFooter(
+    input.supportCtaUrl || resolveConciergeMessageUrl(),
+    layoutDebug,
+    copy
+  );
   const socialFooterHtml = renderSocialFooterRow();
   const fontFaces = renderEmailFontFaces();
 
@@ -223,27 +265,27 @@ ${input.dataRows
       <td align="center" style="padding:24px 12px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
           <tr>
-            <td style="padding:36px 32px 16px;text-align:center;">
-              ${renderEmailWordmark()}
+            <td style="${emailTdStyleCss(brandStyle)}">
+              ${renderEmailWordmark(brandStyle)}
             </td>
           </tr>
           <tr>
-            <td style="padding:4px 32px 0;text-align:center;">
-              <div style="font-family:${EMAIL_FONT_GRACE};font-size:34px;line-height:1.15;color:${EMAIL_BRAND.black};text-transform:uppercase;">${scriptAccent}</div>
+            <td style="${emailTdStyleCss(scriptStyle)}">
+              <div style="${emailTextStyleCss(scriptStyle)}">${scriptAccent}</div>
             </td>
           </tr>
           <tr>
-            <td style="padding:10px 32px 24px;text-align:center;">
-              <div style="font-family:${EMAIL_FONT_FUTURA_DEMI};font-size:26px;line-height:1.2;letter-spacing:0.06em;color:${EMAIL_BRAND.red};font-weight:600;text-transform:uppercase;">${headline}</div>
+            <td style="${emailTdStyleCss(headlineStyle)}">
+              <div style="${emailTextStyleCss(headlineStyle)}">${headline}</div>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding:0 24px 20px;">
+            <td align="center" style="${emailTdStyleCss(heroStyle)}">
               ${heroHtml}
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 40px 4px;text-align:center;">
+            <td style="${emailTdStyleCss(bodyStyle)}">
               ${bodyHtml}
               ${memberPerksHtml}
               ${dataRowsHtml}
@@ -252,8 +294,8 @@ ${input.dataRows
           ${
             ctaUrl && ctaUrl !== '#'
               ? `<tr>
-            <td align="center" style="padding:32px 32px 16px;">
-              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};color:#ffffff;font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:11px;font-weight:700;letter-spacing:0.16em;text-decoration:none;text-transform:uppercase;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);">${ctaLabel}</a>
+            <td align="center" style="${emailTdStyleCss(ctaStyle)}">
+              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};text-decoration:none;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);${emailTextStyleCss(ctaStyle)}">${ctaLabel}</a>
             </td>
           </tr>`
               : ''
@@ -262,13 +304,13 @@ ${input.dataRows
           <tr>
             <td style="padding:28px 32px 0;text-align:center;">
               <div style="height:3px;background-color:${EMAIL_BRAND.red};max-width:120px;margin:0 auto 20px;"></div>
-              <div style="font-family:${EMAIL_FONT_BOHEMY};font-size:14px;letter-spacing:0.04em;color:${EMAIL_BRAND.gray};text-transform:lowercase;margin-bottom:16px;">${escHtml(emailBohemy('luxury without limits.'))}</div>
+              <div style="margin-bottom:16px;${emailTextStyleCss(taglineStyle)}">${escHtml(emailBohemy(taglineRaw))}</div>
               ${socialFooterHtml}
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 32px 28px;text-align:center;">
-              <div style="font-family:${EMAIL_FONT_FUTURA_BOOK};font-size:7px;letter-spacing:0.12em;color:#aaa;text-transform:uppercase;">${escHtml(emailUpper('Thank you for being part of the Slay Society.'))}</div>
+            <td style="${emailTdStyleCss(closingStyle)}">
+              <div style="${emailTextStyleCss(closingStyle)}">${escHtml(emailUpper(closingRaw))}</div>
             </td>
           </tr>
         </table>

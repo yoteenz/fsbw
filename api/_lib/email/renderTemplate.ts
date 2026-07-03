@@ -1,5 +1,10 @@
 import { resolveSiteOrigin } from './brandAssets.js';
 import {
+  coerceEmailLayoutDebugStore,
+  type EmailLayoutDebugStore,
+} from './emailLayoutConfig.js';
+import { loadEmailLayoutDebugStore } from './emailLayoutConfigStore.js';
+import {
   EMAIL_SUPPORT_CTA_LABEL,
   EMAIL_SUPPORT_FOOTER_COPY,
   resolveConciergeMessageUrl,
@@ -35,10 +40,15 @@ export interface RenderedEmail {
   text: string;
 }
 
+export interface RenderEmailOptions {
+  layoutDebug?: EmailLayoutDebugStore | null;
+}
+
 export function renderEmailTemplate(
   templateType: EmailTemplateType,
   variables: EmailTemplateVariables = {},
-  subjectOverride?: string
+  subjectOverride?: string,
+  options?: RenderEmailOptions
 ): RenderedEmail {
   const def = EMAIL_TEMPLATE_REGISTRY[templateType];
   if (!def) throw new Error(`Unknown email template: ${templateType}`);
@@ -48,9 +58,20 @@ export function renderEmailTemplate(
     ...variables,
   };
 
+  const layoutDebug = options?.layoutDebug ?? null;
+  const copyOverrides = layoutDebug?.templates?.[templateType];
+
   const ctaUrl = resolveCtaUrl(templateType, vars);
-  const ctaLabel = vars.ctaLabel ? String(vars.ctaLabel) : def.defaultCtaLabel;
-  const subject = subjectOverride?.trim() || interpolateCopy(def.defaultSubject, vars);
+  const ctaLabel = copyOverrides?.ctaLabel
+    ? String(copyOverrides.ctaLabel)
+    : vars.ctaLabel
+      ? String(vars.ctaLabel)
+      : def.defaultCtaLabel;
+  const subject =
+    subjectOverride?.trim() ||
+    (copyOverrides?.defaultSubject
+      ? interpolateCopy(copyOverrides.defaultSubject, vars)
+      : interpolateCopy(def.defaultSubject, vars));
 
   let customHtmlBody: string | undefined;
   if (templateType === 'newsletter' && vars.htmlBody) {
@@ -59,18 +80,20 @@ export function renderEmailTemplate(
 
   const html = renderEmailLayout({
     templateType,
-    scriptAccent: def.scriptAccent,
-    headline: def.headline,
-    bodyParagraphs: def.bodyParagraphs,
+    scriptAccent: copyOverrides?.scriptAccent ?? def.scriptAccent,
+    headline: copyOverrides?.headline ?? def.headline,
+    bodyParagraphs: copyOverrides?.bodyParagraphs ?? def.bodyParagraphs,
     heroIcon: def.heroIcon,
     dataRows: def.dataRows,
     ctaLabel,
     ctaUrl,
     variables: vars,
-    preheader: vars.preheader || def.preheader || def.defaultSubject,
+    preheader: copyOverrides?.preheader ?? vars.preheader ?? def.preheader ?? def.defaultSubject,
     customHtmlBody,
     showMemberPerks: def.showMemberPerks,
     supportCtaUrl: resolveConciergeMessageUrl(),
+    layoutDebug,
+    copyOverrides,
   });
 
   const supportUrl = resolveConciergeMessageUrl();
@@ -91,6 +114,21 @@ export function renderEmailTemplate(
   ];
 
   return { html, subject, text: textLines.join('\n') };
+}
+
+/** Load persisted layout debug store and render (production sends). */
+export async function renderEmailTemplateWithPersistedLayout(
+  templateType: EmailTemplateType,
+  variables: EmailTemplateVariables = {},
+  subjectOverride?: string
+): Promise<RenderedEmail> {
+  const layoutDebug = await loadEmailLayoutDebugStore();
+  return renderEmailTemplate(templateType, variables, subjectOverride, { layoutDebug });
+}
+
+export function parseEmailLayoutDebugFromBody(body: unknown): EmailLayoutDebugStore | null {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return null;
+  return coerceEmailLayoutDebugStore(body);
 }
 
 export function assertTemplateType(value: string): EmailTemplateType {

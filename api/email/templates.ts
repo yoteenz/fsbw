@@ -4,6 +4,7 @@ import {
   EMAIL_TEMPLATE_CATEGORIES,
   EMAIL_PREVIEW_SAMPLE_VARIABLES,
 } from '../_lib/email/templateCatalog.js';
+import { EMAIL_TEMPLATE_REGISTRY } from '../_lib/email/templateRegistry.js';
 
 /**
  * GET /api/email/templates — catalog of template types by category (admin only).
@@ -18,8 +19,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const admin = await requireAdmin(req);
   if (!admin) return res.status(403).json({ error: 'Forbidden' });
 
+  const templateDefaults = Object.fromEntries(
+    Object.entries(EMAIL_TEMPLATE_REGISTRY).map(([type, def]) => [
+      type,
+      {
+        scriptAccent: def.scriptAccent,
+        headline: def.headline,
+        bodyParagraphs: def.bodyParagraphs,
+        defaultCtaLabel: def.defaultCtaLabel,
+        defaultSubject: def.defaultSubject,
+        preheader: def.preheader ?? def.defaultSubject,
+      },
+    ])
+  );
+
   return res.status(200).json({
     categories: EMAIL_TEMPLATE_CATEGORIES,
     sampleVariables: EMAIL_PREVIEW_SAMPLE_VARIABLES,
+    templateDefaults,
   });
 }

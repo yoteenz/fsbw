@@ -1,4 +1,5 @@
 import { getAccessToken } from './api';
+import type { EmailLayoutDebugStore } from './emailLayoutDebug';
 
 const API_BASE =
   (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
@@ -35,10 +36,16 @@ export async function previewEmailTemplate(payload: {
   templateType: string;
   variables?: Record<string, string | number>;
   subject?: string;
+  layoutDebug?: EmailLayoutDebugStore | null;
 }): Promise<{ html: string; subject: string }> {
   const res = await emailApiFetch('/api/email/send', {
     method: 'POST',
-    body: { ...payload, recipientEmail: 'preview@frontalslayer.com', preview: true },
+    body: {
+      ...payload,
+      recipientEmail: 'preview@frontalslayer.com',
+      preview: true,
+      layoutDebug: payload.layoutDebug ?? null,
+    },
   });
   if (!res.ok) {
     const text = await res.text();

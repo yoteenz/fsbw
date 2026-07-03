@@ -48,7 +48,7 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
     };
   }
 
-  const { html, subject, text } = renderEmailTemplate(
+  const { html, subject, text } = await renderEmailTemplateWithPersistedLayout(
     templateType,
     params.variables || {},
     params.subject
@@ -97,5 +97,5 @@ export function sendEmailAsync(params: SendEmailParams): void {
   });
 }
 
-export { renderEmailTemplate } from './renderTemplate.js';
+export { renderEmailTemplate, renderEmailTemplateWithPersistedLayout } from './renderTemplate.js';
 export type { EmailTemplateType, EmailTemplateVariables, SendEmailParams, SendEmailResult } from './types.js';

@@ -367,6 +367,26 @@ export async function getAdminPageDebugConfig(): Promise<Record<string, unknown>
   }
 }
 
+/** Admin: read email layout debug store from Supabase. */
+export async function getAdminEmailLayoutConfig(): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await apiFetch('/api/admin/email-layout-config');
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin: upsert email layout debug store to Supabase (production sends use this). */
+export async function putAdminEmailLayoutConfig(config: Record<string, unknown>): Promise<void> {
+  const res = await apiFetch('/api/admin/email-layout-config', { method: 'PUT', body: config });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 /** Admin founder: upsert full page debug store to Supabase. */
 export async function putAdminPageDebugConfig(config: Record<string, unknown>): Promise<void> {
   const res = await apiFetch('/api/admin/page-debug-config', { method: 'PUT', body: config });
