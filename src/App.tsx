@@ -132,6 +132,7 @@ const AdminStudioPublishingQueue = lazyWithRetry(() => import('./pages/admin/stu
 const AdminStudioAnalytics = lazyWithRetry(() => import('./pages/admin/studio/analytics/page'), 'AdminStudioAnalytics');
 const AdminStudioContentBrain = lazyWithRetry(() => import('./pages/admin/studio/content-brain/page'), 'AdminStudioContentBrain');
 const AdminStudioContentBrainSection = lazyWithRetry(() => import('./pages/admin/studio/content-brain/section/page'), 'AdminStudioContentBrainSection');
+const AdminStudioCreativeDirector = lazyWithRetry(() => import('./pages/admin/studio/creative-director/page'), 'AdminStudioCreativeDirector');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -782,6 +783,11 @@ function App() {
           <Route path="studio/content-brain" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioContentBrain />
+            </Suspense>
+          } />
+          <Route path="studio/creative-director" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCreativeDirector />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={

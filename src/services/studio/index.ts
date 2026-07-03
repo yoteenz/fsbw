@@ -25,6 +25,16 @@ export type { DistributionDispatchInput, DistributionDispatchOutput } from './di
 export { contentBrainStudioService } from './contentBrain';
 export type { ContentBrainQueryInput, ContentBrainQueryOutput } from './contentBrain';
 
+export { creativeDirectorStudioService } from './creativeDirector/service';
+export type { CreativeDirectorAssembleInput, CreativeDirectorAssembleOutput } from './creativeDirector/service';
+export type { CreativeDirectorSession, EditorReviewAction } from './creativeDirector';
+export {
+  buildCreativeDirectorPackage,
+  recommendShowForTopic,
+  syncSessionFromRecommendation,
+  applyEditorReviewAction,
+} from './creativeDirector';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -33,11 +43,13 @@ import { publishingStudioService } from './publishing';
 import { schedulingStudioService } from './scheduling';
 import { distributionStudioService } from './distribution';
 import { contentBrainStudioService } from './contentBrain';
+import { creativeDirectorStudioService } from './creativeDirector/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
 export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   contentBrainStudioService,
+  creativeDirectorStudioService,
   openaiStudioService,
   falStudioService,
   resendStudioService,

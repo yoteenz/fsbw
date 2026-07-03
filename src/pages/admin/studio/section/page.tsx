@@ -11,6 +11,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'content-brain') {
       return <Navigate to="/admin/studio/content-brain" replace />;
     }
+    if (sectionId === 'creative-director') {
+      return <Navigate to="/admin/studio/creative-director" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

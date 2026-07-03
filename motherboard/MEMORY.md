@@ -34534,3 +34534,32 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Future AI providers must read `exportContentBrainSnapshot()` / `contentBrainStudioService.getSnapshot()` before generation; all outputs start Draft per Approval Rules; Content Brain not on M1 hub cards — navigate via AI Studio or `/admin/studio/content-brain`.
 
+---
+
+## 2026-07-03 — THE STUDIO Creative Director (internal decision engine)
+
+**Context:** Continuation of THE STUDIO (prior milestones frozen). User requested **CREATIVE DIRECTOR** — subtitle *The mind behind every Frontal Slayer story* — strategic layer between Content Brain → Creative Director → AI Orchestrator → AI Providers → Draft Content. **Not an AI model**; no OpenAI/FAL/Resend connections.
+
+**Topics covered (full chat arc):**
+- Prior: M1 hub, Shows, Content Packs, AI Studio, Prompt Library, Asset Library, Publishing Queue, Analytics, Phase 2 stubs, Content Brain (11 layers), light theme.
+- **Creative Director dashboard** (`/admin/studio/creative-director`): executive widgets — topic, show, campaign goal, audience, membership, CTA, brand alignment %, content score, publishing status, recommended outputs, distribution targets.
+- **Daily Creative Briefing** panel at top (Good Morning Teena, bullets, suggested topic/show/CTA/products, quick actions).
+- **Decision Engine:** show, purpose, CTA, products, rewards, tier, environment, prompt framework, visual language, distribution — manual override.
+- **Show Recommender:** topic → show + confidence % + reason (keyword rules).
+- **Brand Alignment:** 11 dimensions + overall score + threshold 85% + improvement tips.
+- **Content Score:** 10 scorecards (originality, virality, conversion, etc.).
+- **Output Strategist:** required/recommended/optional tiers per channel output.
+- **Prompt Assembler:** visual pipeline Brand Brain → … → Master Prompt (inspectable).
+- **Quality Gate:** 10-check checklist blocks generation until pass.
+- **Distribution Strategist:** ACTIVE + COMING SOON channels with engagement estimates.
+- **Editor Review:** approve/reject/revision/regenerate/duplicate/archive — draft until approved.
+- **Content Opportunities:** trending ideas panel (demo logic).
+- **Creative Timeline:** Idea → Research → … → Analytics progress.
+- **Service layer** `src/services/studio/creativeDirector/` — modular: `decisionEngine`, `brandValidation`, `contentScoring`, `promptAssembler`, `qualityGate`, `approvalLogic`, `creativeDirectorStudioService`.
+
+**Decisions / outcomes:** Light frosted executive aesthetic; tabbed UI (Overview, Decide, Validate, Strategy, Review, Ideas); session persisted `adminStudioCreativeDirector_v1`; **PROCEED TO AI STUDIO** gated on quality gate; flow diagram on overview. M1 hub cards untouched. Build verified.
+
+**Changes:** `adminStudioCreativeDirectorDemo.ts`, `useAdminStudioCreativeDirectorState.ts`, Creative UI components, `creative-director/page.tsx`, `services/studio/creativeDirector/*`, `adminStudioRoutes.ts`, `App.tsx`, `adminStudioStorage.ts`, `STUDIO_SERVICE_REGISTRY`.
+
+**Conventions:** No AI provider may bypass Creative Director; Phase 2 AI Orchestrator calls `creativeDirectorStudioService.validateBeforeGeneration()` then assembles prompts; never auto-publish; navigate via `/admin/studio/creative-director` or Creative Director footer links to Content Brain / AI Studio.
+
