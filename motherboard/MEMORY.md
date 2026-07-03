@@ -34258,3 +34258,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Unit PDP try-mode CTA = guests only via the primary customize-row button; no secondary **FREE** row for signed-in standard/premium members.
 
+---
+
+## 2026-07-03 — Try CTA label: TRY BUILD-A-WIG (no FREE)
+
+**Context:** Follow-up to guest-only try button — user asked to remove **FREE** from the button text; label should be **TRY BUILD-A-WIG** only.
+
+**Fix:** Exported **`UNIT_PDP_GUEST_TRY_LABEL`** (`'TRY BUILD-A-WIG'`) from **`UnitPdpCartActions`** — guest unit PDP button uses shared constant (no **FREE** suffix). **`/home/shop`** (`products/page.tsx`) try promo: helper line **NEW — TRY BUILD-A-WIG, NO SIGN-IN** (was **TRY THE BUILDER FREE**); button uses same constant; block hidden when **`isSignedIn`**.
+
+**Changes:** **`UnitPdpCartActions.tsx`**, **`products/page.tsx`**.
+
+**Conventions:** All guest try CTAs use **`UNIT_PDP_GUEST_TRY_LABEL`** — never **TRY BUILD-A-WIG FREE**.
+

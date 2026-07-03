@@ -22,6 +22,9 @@ type UnitPdpCartActionsProps = {
 const defaultFont =
   '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif';
 
+/** Guest-only unit PDP try CTA — intentionally no "FREE" suffix. */
+export const UNIT_PDP_GUEST_TRY_LABEL = 'TRY BUILD-A-WIG';
+
 /** Shared ADD TO BAG + CUSTOMIZE / NOTIFY row for unit PDPs. */
 export function UnitPdpCartActions({
   productName,
@@ -99,7 +102,7 @@ export function UnitPdpCartActions({
             {soldOut
               ? 'NOTIFY WHEN AVAILABLE'
               : !isSignedIn
-                ? 'TRY BUILD-A-WIG'
+                ? UNIT_PDP_GUEST_TRY_LABEL
                 : 'CUSTOMIZE IN BUILD-A-WIG'}
           </button>
         </div>

@@ -15,6 +15,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { bcfPdpPriceRangeUsd } from '../../utils/bcfProductOptions';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { ShopSearchResultsGrid, type ShopSearchResultProduct } from '../../components/shop/ShopSearchResultsGrid';
+import { UNIT_PDP_GUEST_TRY_LABEL } from '../../components/shop/UnitPdpCartActions';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../components/shop/WigStockPrice';
 import {
@@ -1046,7 +1047,7 @@ function ProductsPage() {
               overflow: 'visible',
               position: 'relative'
             }}>
-              {/* Try Build-A-Wig tutorial */}
+              {!isSignedIn ? (
               <div
                 className="mx-auto mb-3 px-3 py-3 border border-black bg-white/70 backdrop-blur-sm text-center"
                 style={{ borderWidth: '1.3px', maxWidth: '100%' }}
@@ -1060,7 +1061,7 @@ function ProductsPage() {
                     margin: '0 0 8px',
                   }}
                 >
-                  NEW — TRY THE BUILDER FREE, NO SIGN-IN
+                  NEW — TRY BUILD-A-WIG, NO SIGN-IN
                 </p>
                 <button
                   type="button"
@@ -1077,9 +1078,10 @@ function ProductsPage() {
                     maxWidth: '280px',
                   }}
                 >
-                  TRY BUILD-A-WIG
+                  {UNIT_PDP_GUEST_TRY_LABEL}
                 </button>
               </div>
+              ) : null}
 
               {/* Header — match /shop/units marble header spacing */}
               <div style={{ textAlign: 'center', marginBottom: '2px' }}>
