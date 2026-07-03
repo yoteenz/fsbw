@@ -21,6 +21,13 @@ import {
 export { BAW_SLAY_CARD_TEMPLATE_SRC, BAW_SLAY_CARD_SLAYER_LOGO_SRC } from './bawSlayCardLayout';
 export type { BawSlayCardLayout } from './bawSlayCardLayout';
 
+export type BawSlayCardSelections = BawTutorialSelections & {
+  lace: string;
+  texture: string;
+  hairline: string;
+  addOns: string[];
+};
+
 const BAW_SLAY_CARD_CAP_SIZE_DISPLAY: Record<string, string> = {
   XS: 'EXTRA SMALL',
   S: 'SMALL',
@@ -36,12 +43,42 @@ function formatBawSlayCardCapSizeLine(capSize: string): string {
   return `${label} CAP SIZE`;
 }
 
+function readSlayCardScalar(keys: string[], fallback: string): string {
+  if (typeof localStorage === 'undefined') return fallback;
+  for (const key of keys) {
+    const value = localStorage.getItem(key);
+    if (value && value.trim()) return value.trim();
+  }
+  return fallback;
+}
+
+function readSlayCardAddOns(): string[] {
+  if (typeof localStorage === 'undefined') return [];
+  const keys = ['selectedAddOns', 'customizeSelectedAddOns', 'editSelectedAddOns'];
+  for (const key of keys) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === 'string' && item.trim() !== '');
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return [];
+}
+
 /** Detail lines under the unit name — value first, label second; styling omitted when NONE. */
-export function buildBawSlayCardSpecLines(selections: BawTutorialSelections): string[] {
+export function buildBawSlayCardSpecLines(selections: BawSlayCardSelections): string[] {
   const lines = [
     `${selections.length} LENGTH`,
     `${selections.density} DENSITY`,
     `${selections.color} COLOR`,
+    `${selections.lace} LACE`,
+    `${selections.texture} TEXTURE`,
+    `${selections.hairline} HAIRLINE`,
   ];
 
   const styling = (selections.styling || '').trim().toUpperCase();
@@ -49,38 +86,52 @@ export function buildBawSlayCardSpecLines(selections: BawTutorialSelections): st
     lines.push(`${styling} STYLING`);
   }
 
+  for (const addOn of selections.addOns) {
+    lines.push(`${addOn} ADD-ON`);
+  }
+
   lines.push(formatBawSlayCardCapSizeLine(selections.capSize));
   return lines;
 }
 
-export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTutorialSelections {
+export function readBawSlayCardSelectionsFromPathname(pathname: string): BawSlayCardSelections {
   const unit = resolveBawTutorialUnitLabelFromPathname(pathname);
   const isBlanco = unit === 'BLANCO';
-  const capSize =
-    localStorage.getItem('selectedCapSize') ||
-    localStorage.getItem('customizeSelectedCapSize') ||
-    BAW_TUTORIAL_DEFAULT_SELECTIONS.capSize;
-  const length =
-    localStorage.getItem('selectedLength') ||
-    localStorage.getItem('customizeSelectedLength') ||
-    BAW_TUTORIAL_DEFAULT_SELECTIONS.length;
-  const density =
-    localStorage.getItem('selectedDensity') ||
-    localStorage.getItem('customizeSelectedDensity') ||
-    (isBlanco ? '250%' : BAW_TUTORIAL_DEFAULT_SELECTIONS.density);
-  const color =
-    localStorage.getItem('selectedColor') ||
-    localStorage.getItem('customizeSelectedColor') ||
-    (isBlanco ? 'PLATINUM' : BAW_TUTORIAL_DEFAULT_SELECTIONS.color);
-  const hairStyling =
-    localStorage.getItem('selectedHairStyling') ||
-    localStorage.getItem('customizeSelectedHairStyling') ||
-    '';
-  const stylingRaw =
-    localStorage.getItem('selectedStyling') ||
-    localStorage.getItem('customizeSelectedStyling') ||
-    BAW_TUTORIAL_DEFAULT_SELECTIONS.styling;
-  const styling = hairStyling.trim() || stylingRaw || 'NONE';
+  const capSize = readSlayCardScalar(
+    ['selectedCapSize', 'customizeSelectedCapSize', 'editSelectedCapSize'],
+    BAW_TUTORIAL_DEFAULT_SELECTIONS.capSize
+  );
+  const length = readSlayCardScalar(
+    ['selectedLength', 'customizeSelectedLength', 'editSelectedLength'],
+    BAW_TUTORIAL_DEFAULT_SELECTIONS.length
+  );
+  const density = readSlayCardScalar(
+    ['selectedDensity', 'customizeSelectedDensity', 'editSelectedDensity'],
+    isBlanco ? '250%' : BAW_TUTORIAL_DEFAULT_SELECTIONS.density
+  );
+  const color = readSlayCardScalar(
+    ['selectedColor', 'customizeSelectedColor', 'editSelectedColor'],
+    isBlanco ? 'PLATINUM' : BAW_TUTORIAL_DEFAULT_SELECTIONS.color
+  );
+  const hairStyling = readSlayCardScalar(
+    ['selectedHairStyling', 'customizeSelectedHairStyling', 'editSelectedHairStyling'],
+    ''
+  );
+  const stylingRaw = readSlayCardScalar(
+    ['selectedStyling', 'customizeSelectedStyling', 'editSelectedStyling'],
+    BAW_TUTORIAL_DEFAULT_SELECTIONS.styling
+  );
+  const styling = hairStyling || stylingRaw || 'NONE';
+  const lace = readSlayCardScalar(['selectedLace', 'customizeSelectedLace', 'editSelectedLace'], '13X6');
+  const texture = readSlayCardScalar(
+    ['selectedTexture', 'customizeSelectedTexture', 'editSelectedTexture'],
+    'SILKY'
+  );
+  const hairline = readSlayCardScalar(
+    ['selectedHairline', 'customizeSelectedHairline', 'editSelectedHairline'],
+    'NATURAL'
+  );
+  const addOns = readSlayCardAddOns();
 
   return {
     unit,
@@ -89,6 +140,10 @@ export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTuto
     density,
     color,
     styling: styling === '' ? 'NONE' : styling,
+    lace,
+    texture,
+    hairline,
+    addOns,
   };
 }
 
@@ -159,7 +214,7 @@ export function computeBawSlayCardMannequinDrawBounds(
 
 export async function paintBawSlayCard(
   ctx: CanvasRenderingContext2D,
-  selections: BawTutorialSelections,
+  selections: BawSlayCardSelections,
   layout: BawSlayCardLayout = DEFAULT_BAW_SLAY_CARD_LAYOUT,
   opts?: { hairline?: string; mannequinSrc?: string }
 ): Promise<{ mannequinBounds: { x: number; y: number; width: number; height: number } | null }> {
@@ -172,13 +227,7 @@ export async function paintBawSlayCard(
   const template = await loadImage(BAW_SLAY_CARD_TEMPLATE_SRC);
   ctx.drawImage(template, 0, 0, canvasWidth, canvasHeight);
 
-  const hairline =
-    opts?.hairline ||
-    (typeof localStorage !== 'undefined'
-      ? localStorage.getItem('selectedHairline') ||
-        localStorage.getItem('customizeSelectedHairline') ||
-        'NATURAL'
-      : 'NATURAL');
+  const hairline = opts?.hairline || selections.hairline || 'NATURAL';
   const mannequinSrc =
     opts?.mannequinSrc ||
     bawStaticMannequinFrontReferencePathFromUnitAndHairline(selections.unit, hairline);
@@ -252,7 +301,7 @@ export async function paintBawSlayCard(
 }
 
 export async function renderBawSlayCardPng(
-  selections: BawTutorialSelections,
+  selections: BawSlayCardSelections,
   layout?: BawSlayCardLayout
 ): Promise<Blob> {
   const resolvedLayout = layout ?? getActiveBawSlayCardLayout();
@@ -263,7 +312,7 @@ export async function renderBawSlayCardPng(
   if (!ctx) throw new Error('Canvas not supported');
 
   await ensureCanvasFontsReady(resolvedLayout);
-  await paintBawSlayCard(ctx, selections, resolvedLayout);
+  await paintBawSlayCard(ctx, selections, resolvedLayout, { hairline: selections.hairline });
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(

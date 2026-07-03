@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { BawTutorialSelections } from '../../../constants/bawTutorialConfig';
-import { paintBawSlayCard } from '../../../utils/bawSlayCard';
+import { paintBawSlayCard, type BawSlayCardSelections } from '../../../utils/bawSlayCard';
 import { bawStaticMannequinFrontReferencePathFromUnitAndHairline } from '../../../utils/bawStaticMannequinReferencePaths';
 import {
   formatBawSlayCardLayoutForCopy,
@@ -23,18 +22,22 @@ type SelectableLayer =
   | 'specs'
   | 'footer';
 
-const SAMPLE_SELECTIONS: BawTutorialSelections = {
+const SAMPLE_SELECTIONS: BawSlayCardSelections = {
   unit: 'BLANCO',
   capSize: 'M',
   length: '24"',
   density: '250%',
   color: 'PLATINUM',
   styling: 'NONE',
+  lace: '13X6',
+  texture: 'SILKY',
+  hairline: 'NATURAL',
+  addOns: [],
 };
 
 const SUBTITLE_LABEL = 'PERSONAL BUILD-A-WIG SLAY CARD';
 const FOOTER_LABEL = 'TRY THE FULL BUILDER WITH MEMBERSHIP';
-const MAX_SPEC_LINE_COUNT = 5;
+const MAX_SPEC_LINE_COUNT = 12;
 
 function pointInRect(
   pt: { x: number; y: number },
@@ -164,7 +167,7 @@ export default function SlayCardDebugPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewWrapRef = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState<BawSlayCardLayout>(() => loadBawSlayCardLayoutDebug());
-  const [selections, setSelections] = useState<BawTutorialSelections>(SAMPLE_SELECTIONS);
+  const [selections, setSelections] = useState<BawSlayCardSelections>(SAMPLE_SELECTIONS);
   const [hairline, setHairline] = useState('NATURAL');
   const [selectedLayer, setSelectedLayer] = useState<SelectableLayer>('mannequin');
   const [showGuides, setShowGuides] = useState(true);
@@ -205,7 +208,10 @@ export default function SlayCardDebugPage() {
     if (!ctx) return;
     canvas.width = layout.canvasWidth;
     canvas.height = layout.canvasHeight;
-    const result = await paintBawSlayCard(ctx, selections, layout, { hairline, mannequinSrc });
+    const result = await paintBawSlayCard(ctx, selections, layout, {
+      hairline: selections.hairline,
+      mannequinSrc,
+    });
     setMannequinBounds(result.mannequinBounds);
 
     if (showGuides && ctx) {
@@ -627,7 +633,7 @@ export default function SlayCardDebugPage() {
                 <option key={h} value={h}>{h}</option>
               ))}
             </select>
-            {(['length', 'density', 'color', 'styling', 'capSize'] as const).map((field) => (
+            {(['length', 'density', 'color', 'lace', 'texture', 'hairline', 'styling', 'capSize'] as const).map((field) => (
               <label key={field} className="block text-[10px] uppercase mb-1">
                 {field}
                 <input
@@ -638,6 +644,23 @@ export default function SlayCardDebugPage() {
                 />
               </label>
             ))}
+            <label className="block text-[10px] uppercase mb-1">
+              addOns (comma-separated)
+              <input
+                type="text"
+                value={selections.addOns.join(', ')}
+                onChange={(e) =>
+                  setSelections((s) => ({
+                    ...s,
+                    addOns: e.target.value
+                      .split(',')
+                      .map((v) => v.trim())
+                      .filter(Boolean),
+                  }))
+                }
+                className="mt-0.5 w-full border border-gray-400 px-2 py-1 text-[11px] font-mono"
+              />
+            </label>
           </section>
 
           <section>

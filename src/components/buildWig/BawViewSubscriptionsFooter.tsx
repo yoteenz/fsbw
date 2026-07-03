@@ -6,6 +6,7 @@ import { isBawTryOptionSubPagePath } from '../../constants/bawTutorialConfig';
 import { isBawViewSubscriptionsFooterMode } from '../../utils/bawClientTestMode';
 import { getBuildAWigCustomizePathFromHub, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
 import { trackActivity } from '../../utils/activity';
+import { getActiveBawSlayCardLayout } from '../../utils/bawSlayCardLayout';
 import {
   readBawSlayCardSelectionsFromPathname,
   renderBawSlayCardPng,
@@ -85,7 +86,8 @@ export function BawSlayCardFooterButton({
     setBusy(true);
     try {
       const selections = readBawSlayCardSelectionsFromPathname(pathname);
-      const blob = await renderBawSlayCardPng(selections);
+      const layout = getActiveBawSlayCardLayout();
+      const blob = await renderBawSlayCardPng(selections, layout);
       const result = await shareOrDownloadBawSlayCard(blob);
       trackActivity('baw_tutorial_share_card', {
         source: 'baw_view_hub',

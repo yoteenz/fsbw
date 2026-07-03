@@ -121,6 +121,17 @@ function isValidImageLayout(value: unknown): value is BawSlayCardImageLayout {
   );
 }
 
+function isCompleteBawSlayCardLayout(value: unknown): value is BawSlayCardLayout {
+  if (!isObject(value)) return false;
+  return (
+    typeof value.canvasWidth === 'number' &&
+    typeof value.canvasHeight === 'number' &&
+    isObject(value.mannequin) &&
+    isObject(value.header) &&
+    isObject(value.textPanel)
+  );
+}
+
 /** Saved debug layout cannot override FRONTAL font or drop the slayer logo. */
 export function normalizeBawSlayCardLayout(layout: BawSlayCardLayout): BawSlayCardLayout {
   const defaults = DEFAULT_BAW_SLAY_CARD_LAYOUT;
@@ -184,6 +195,9 @@ export function mergeBawSlayCardLayout(patch?: Partial<BawSlayCardLayout> | null
 export function loadBawSlayCardLayoutDebug(): BawSlayCardLayout {
   const patch = readRawBawSlayCardLayoutPatch();
   if (!patch) return DEFAULT_BAW_SLAY_CARD_LAYOUT;
+  if (isCompleteBawSlayCardLayout(patch)) {
+    return normalizeBawSlayCardLayout(patch);
+  }
   return mergeBawSlayCardLayout(patch);
 }
 

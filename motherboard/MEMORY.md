@@ -33595,3 +33595,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`public/assets/email/heroes/*.webp`** (41 files), **`public/assets/email/heroes/manifest.json`**.
 
 **Conventions:** Regenerate subset: **`CATEGORY=orders npm run email:generate-heroes:batch`** or **`TEMPLATES=welcome,order_confirmed npm run email:generate-heroes`**. Production (Vercel Fal): **`BATCH_MODE=production EMAIL_SEND_SECRET=... npm run email:generate-heroes:batch:production`**.
+
+---
+
+## 2026-07-03 — Slay card lace/texture/hairline/add-ons + saved layout on export
+
+**Context:** User reported lace, texture, hairline, and add-on selections not reflected on slay card; saved slay-card debug layout not applied to **SAVE SLAY CARD** output. Also asked about email template debug (PSA + empty templates) — already fixed on **`/tools/email-templates`** in prior deploy (client catalog + **`preview: true`** without admin auth + PSA hidden).
+
+**Slay card selections:** **`BawSlayCardSelections`** adds **lace, texture, hairline, addOns**; **`readBawSlayCardSelectionsFromPathname`** reads **`selected*` / `customize*` / `edit*`** keys. **`buildBawSlayCardSpecLines`** adds **`13X6 LACE`**, **`SILKY TEXTURE`**, **`NATURAL HAIRLINE`**, per-addon **`BLEACH ADD-ON`**, etc. Mannequin uses **`selections.hairline`**.
+
+**Slay card layout:** **`loadBawSlayCardLayoutDebug`** uses saved object directly when complete (**`isCompleteBawSlayCardLayout`**) instead of only partial merge. **`BawSlayCardFooterButton`** explicitly passes **`getActiveBawSlayCardLayout()`** into **`renderBawSlayCardPng`**. Debug page sample fields + **`MAX_SPEC_LINE_COUNT` 12**.
