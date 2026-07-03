@@ -17,6 +17,8 @@ export const EMAIL_LAYER_COPY_FIELD: Partial<
   closing: 'closing',
   supportFooter: 'supportFooterCopy',
   supportCta: 'supportCtaLabel',
+  productPromoTitle: 'productPromoTitle',
+  productPromoCta: 'productPromoCtaLabel',
 };
 
 const EDITOR_STYLE_ID = 'email-preview-editor-styles';

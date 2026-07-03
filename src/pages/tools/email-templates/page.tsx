@@ -301,6 +301,8 @@ export default function EmailTemplatesDebugPage() {
       closing: saved?.closing ?? 'Thank you for being part of the Slay Society.',
       supportFooterCopy: saved?.supportFooterCopy ?? '',
       supportCtaLabel: saved?.supportCtaLabel ?? '',
+      productPromoTitle: saved?.productPromoTitle ?? 'Explore the collection',
+      productPromoCtaLabel: saved?.productPromoCtaLabel ?? 'Shop all',
     });
   }, [selectedType, layoutStore.templates, registryDefaults]);
 
@@ -378,6 +380,12 @@ export default function EmailTemplatesDebugPage() {
     }
     if (patch.supportFooterCopy?.trim()) cleaned.supportFooterCopy = patch.supportFooterCopy.trim();
     if (patch.supportCtaLabel?.trim()) cleaned.supportCtaLabel = patch.supportCtaLabel.trim();
+    if (patch.productPromoTitle?.trim() && patch.productPromoTitle.trim() !== 'Explore the collection') {
+      cleaned.productPromoTitle = patch.productPromoTitle.trim();
+    }
+    if (patch.productPromoCtaLabel?.trim() && patch.productPromoCtaLabel.trim() !== 'Shop all') {
+      cleaned.productPromoCtaLabel = patch.productPromoCtaLabel.trim();
+    }
 
     let next = patchTemplateCopy(layoutStore, selectedType, cleaned);
     if (Object.keys(cleaned).length === 0) {
@@ -601,6 +609,24 @@ export default function EmailTemplatesDebugPage() {
                   type="text"
                   value={draftCopy.closing ?? ''}
                   onChange={(e) => setDraftCopy((d) => ({ ...d, closing: e.target.value }))}
+                  className="mt-0.5 w-full border border-gray-400 px-2 py-1 text-[10px] bg-white/80"
+                />
+              </label>
+              <label className="block text-[9px] uppercase font-futura text-gray-600">
+                Product promo title
+                <input
+                  type="text"
+                  value={draftCopy.productPromoTitle ?? ''}
+                  onChange={(e) => setDraftCopy((d) => ({ ...d, productPromoTitle: e.target.value }))}
+                  className="mt-0.5 w-full border border-gray-400 px-2 py-1 text-[10px] bg-white/80"
+                />
+              </label>
+              <label className="block text-[9px] uppercase font-futura text-gray-600">
+                Product promo CTA label
+                <input
+                  type="text"
+                  value={draftCopy.productPromoCtaLabel ?? ''}
+                  onChange={(e) => setDraftCopy((d) => ({ ...d, productPromoCtaLabel: e.target.value }))}
                   className="mt-0.5 w-full border border-gray-400 px-2 py-1 text-[10px] bg-white/80"
                 />
               </label>

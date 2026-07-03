@@ -27,6 +27,7 @@ import {
 import { emailHeroImageUrl } from './heroImages.js';
 import { isEmailHeroReady } from './heroManifest.js';
 import { heroIconSvg } from './heroIcons.js';
+import { renderEmailProductPromo } from './emailProductPromo.js';
 import type { EmailDataRow, EmailHeroIcon, EmailTemplateType, EmailTemplateVariables } from './types.js';
 
 function escHtml(value: string): string {
@@ -223,6 +224,8 @@ export interface RenderEmailLayoutInput {
   preheader?: string;
   customHtmlBody?: string;
   showMemberPerks?: boolean;
+  /** Cross-promo product grid above the support footer (units + BCF). Defaults to true. */
+  showProductPromo?: boolean;
   /** Defaults to in-app Concierge priority message form. */
   supportCtaUrl?: string;
   layoutDebug?: EmailLayoutDebugStore | null;
@@ -232,7 +235,8 @@ export interface RenderEmailLayoutInput {
 function renderSupportFooter(
   supportCtaUrl: string,
   layoutDebug: EmailLayoutDebugStore | null | undefined,
-  copyOverrides?: EmailTemplateCopyOverrides
+  copyOverrides?: EmailTemplateCopyOverrides,
+  options?: { omitTopBorder?: boolean }
 ): string {
   const footerStyle = resolveEmailLayerStyle('supportFooter', layoutDebug?.globalLayers);
   const ctaStyle = resolveEmailLayerStyle('supportCta', layoutDebug?.globalLayers);
@@ -243,8 +247,9 @@ function renderSupportFooter(
   const cta = escHtml(emailUpper(ctaRaw));
   const footerTd = emailTdStyleCss(footerStyle);
   const ctaText = emailTextStyleCss(ctaStyle);
+  const topBorder = options?.omitTopBorder ? '' : 'border-top:1px solid rgba(0,0,0,0.08);';
   return `<tr>
-            <td style="border-top:1px solid rgba(0,0,0,0.08);padding:0;">
+            <td style="${topBorder}padding:0;">
               <div data-email-layer="supportFooter" style="${footerTd}">
                 <p data-email-copy="supportFooterCopy" style="margin:0 0 16px;${emailTextStyleCss(footerStyle)}">${copy}</p>
               </div>
@@ -328,10 +333,15 @@ ${input.dataRows
     ctaStyle,
   });
   const memberPerksHtml = input.showMemberPerks ? renderMemberPerksRow() : '';
+  const showProductPromo = input.showProductPromo !== false;
+  const productPromoHtml = showProductPromo
+    ? renderEmailProductPromo({ layoutDebug, copyOverrides: copy })
+    : '';
   const supportFooterHtml = renderSupportFooter(
     input.supportCtaUrl || resolveConciergeMessageUrl(),
     layoutDebug,
-    copy
+    copy,
+    { omitTopBorder: showProductPromo }
   );
   const socialFooterHtml = renderSocialFooterRow();
   const fontFaces = renderEmailFontFaces();
@@ -370,6 +380,7 @@ ${input.dataRows
               ${dataRowsHtml}
             </td>
           </tr>
+          ${productPromoHtml}
           ${supportFooterHtml}
           <tr>
             <td style="padding:28px 32px 0;text-align:center;">

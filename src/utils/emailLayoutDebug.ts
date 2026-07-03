@@ -30,6 +30,10 @@ export type EmailLayoutLayerId =
   | 'dataRowLabel'
   | 'dataRowValue'
   | 'cta'
+  | 'productPromo'
+  | 'productPromoTitle'
+  | 'productPromoLabel'
+  | 'productPromoCta'
   | 'supportFooter'
   | 'supportCta'
   | 'tagline'
@@ -46,6 +50,8 @@ export type EmailTemplateCopyOverrides = {
   closing?: string;
   supportFooterCopy?: string;
   supportCtaLabel?: string;
+  productPromoTitle?: string;
+  productPromoCtaLabel?: string;
 };
 
 export type EmailLayoutDebugStore = {
@@ -74,6 +80,10 @@ export const EMAIL_LAYER_OPTIONS: Array<{ id: EmailLayoutLayerId; label: string;
   { id: 'dataRowLabel', label: 'Data row label', group: 'global' },
   { id: 'dataRowValue', label: 'Data row value', group: 'global' },
   { id: 'cta', label: 'CTA button', group: 'global' },
+  { id: 'productPromo', label: 'Product promo spacing', group: 'global' },
+  { id: 'productPromoTitle', label: 'Product promo title', group: 'global' },
+  { id: 'productPromoLabel', label: 'Product promo labels', group: 'global' },
+  { id: 'productPromoCta', label: 'Product promo CTA', group: 'global' },
   { id: 'supportFooter', label: 'Support footer', group: 'global' },
   { id: 'supportCta', label: 'Support CTA', group: 'global' },
   { id: 'tagline', label: 'Tagline', group: 'global' },
@@ -170,6 +180,43 @@ export const DEFAULT_EMAIL_LAYER_STYLES: Record<EmailLayoutLayerId, EmailLayerSt
     paddingBottom: 28,
     paddingLeft: 28,
   },
+  productPromo: {
+    fontFamily: 'futura-book',
+    fontSize: 10,
+    color: '#111111',
+    textAlign: 'center',
+    paddingTop: 32,
+    paddingRight: 24,
+    paddingBottom: 28,
+    paddingLeft: 24,
+  },
+  productPromoTitle: {
+    fontFamily: 'futura-demi',
+    fontSize: 12,
+    color: '#111111',
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    fontWeight: 600,
+  },
+  productPromoLabel: {
+    fontFamily: 'futura-book',
+    fontSize: 9,
+    color: '#111111',
+    letterSpacing: '0.04em',
+    textTransform: 'none',
+    textAlign: 'center',
+    lineHeight: 1.4,
+  },
+  productPromoCta: {
+    fontFamily: 'futura-medium',
+    fontSize: 10,
+    color: '#111111',
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    fontWeight: 700,
+  },
   supportFooter: {
     fontFamily: 'futura-book',
     fontSize: 10,
@@ -257,6 +304,8 @@ function coerceCopyOverrides(value: unknown): EmailTemplateCopyOverrides | null 
   if (typeof value.closing === 'string') out.closing = value.closing;
   if (typeof value.supportFooterCopy === 'string') out.supportFooterCopy = value.supportFooterCopy;
   if (typeof value.supportCtaLabel === 'string') out.supportCtaLabel = value.supportCtaLabel;
+  if (typeof value.productPromoTitle === 'string') out.productPromoTitle = value.productPromoTitle;
+  if (typeof value.productPromoCtaLabel === 'string') out.productPromoCtaLabel = value.productPromoCtaLabel;
   return out;
 }
 
@@ -388,6 +437,10 @@ export function applyBatchTypographyPreset(store: EmailLayoutDebugStore): EmailL
       dataRowLabel: { fontFamily: 'futura-book', textTransform: 'uppercase' },
       dataRowValue: { fontFamily: 'futura-demi', textTransform: 'uppercase' },
       cta: { fontFamily: 'futura-medium', textTransform: 'uppercase' },
+      productPromo: { fontFamily: 'futura-book', textTransform: 'none' },
+      productPromoTitle: { fontFamily: 'futura-demi', textTransform: 'uppercase' },
+      productPromoLabel: { fontFamily: 'futura-book', textTransform: 'none' },
+      productPromoCta: { fontFamily: 'futura-medium', textTransform: 'uppercase' },
       supportFooter: { fontFamily: 'futura-book', textTransform: 'uppercase' },
       supportCta: { fontFamily: 'futura-medium', textTransform: 'uppercase' },
       tagline: { fontFamily: 'bohemy', textTransform: 'lowercase' },

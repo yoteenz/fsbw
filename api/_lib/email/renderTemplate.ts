@@ -9,6 +9,12 @@ import {
   EMAIL_SUPPORT_FOOTER_COPY,
   resolveConciergeMessageUrl,
 } from './emailSupportLinks.js';
+import {
+  EMAIL_PRODUCT_PROMO_CTA_LABEL,
+  EMAIL_PRODUCT_PROMO_CTA_PATH,
+  EMAIL_PRODUCT_PROMO_TILES,
+  EMAIL_PRODUCT_PROMO_TITLE,
+} from './emailProductPromo.js';
 import { interpolateCopy, renderEmailLayout } from './layout.js';
 import { EMAIL_TEMPLATE_REGISTRY, isEmailTemplateType } from './templateRegistry.js';
 import type { EmailTemplateType, EmailTemplateVariables } from './types.js';
@@ -97,6 +103,10 @@ export function renderEmailTemplate(
   });
 
   const supportUrl = resolveConciergeMessageUrl();
+  const promoTitle =
+    copyOverrides?.productPromoTitle?.trim() || EMAIL_PRODUCT_PROMO_TITLE;
+  const promoCtaLabel =
+    copyOverrides?.productPromoCtaLabel?.trim() || EMAIL_PRODUCT_PROMO_CTA_LABEL;
   const textLines = [
     `FRONTAL SLAYER — ${subject.toUpperCase()}`,
     '',
@@ -106,6 +116,12 @@ export function renderEmailTemplate(
     ...def.bodyParagraphs.map((p) => interpolateCopy(p, vars)),
     '',
     ctaLabel.toUpperCase() + ': ' + ctaUrl,
+    '',
+    promoTitle.toUpperCase(),
+    ...EMAIL_PRODUCT_PROMO_TILES.map(
+      (tile) => `${tile.label}: ${absoluteUrl(tile.href)}`
+    ),
+    promoCtaLabel.toUpperCase() + ': ' + absoluteUrl(EMAIL_PRODUCT_PROMO_CTA_PATH),
     '',
     EMAIL_SUPPORT_FOOTER_COPY,
     EMAIL_SUPPORT_CTA_LABEL.toUpperCase() + ': ' + supportUrl,

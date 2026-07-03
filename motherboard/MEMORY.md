@@ -34063,3 +34063,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`generateHeroAsset.ts`** + **`scripts/generate-email-hero-assets.mjs`** — Fal **`aspect_ratio: '9:16'`**.
 
 **Regen:** Existing WebPs remain wrong ratio until **`FORCE=1 npm run email:generate-heroes:batch`** + **`npm run email:upload-assets`** (Fal balance required).
+
+---
+
+## 2026-07-03 — Email product promo grid (units + BCF cross-sell)
+
+**Context:** User asked for a dedicated graphic promo section at the bottom of all transactional email templates, above the “Need help?” support footer — styled like reference brand emails (3-column product grids, centered underlined product links, section title + shop-all CTA). Should cross-promote wig **units** and **BCF** (bundles, closures, frontals).
+
+**Decisions / outcomes:**
+- Added shared **`emailProductPromo.ts`** with canonical **3×3 grid**: six units (NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CURL) + BUNDLES / CLOSURES / FRONTALS. Unit thumbs use site **`/assets/`** 2D mannequin PNGs via **`emailAssetUrl`**; BCF uses same Supabase transparent cutouts as home/shop grid.
+- **`renderEmailProductPromo()`** inserted in **`layout.ts`** between body and **`renderSupportFooter`** on all templates by default (`showProductPromo` opt-out). Divider line above promo; support footer top border omitted when promo present.
+- Default copy: title **“Explore the collection”**, CTA **“Shop all”** → **`/home/shop`**. Editable via layout debug copy overrides **`productPromoTitle`** / **`productPromoCtaLabel`**.
+- Debug editor layers: **`productPromo`**, **`productPromoTitle`**, **`productPromoLabel`**, **`productPromoCta`** — mirrored in **`emailLayoutConfig.ts`**, **`emailLayoutDebug.ts`**, **`emailPreviewEditor.ts`**, **`/tools/email-templates`** Copy tab.
+- Plain-text email version lists all promo tile links + shop-all CTA in **`renderTemplate.ts`**.
+
+**Changes:** **`api/_lib/email/emailProductPromo.ts`** (new), **`layout.ts`**, **`emailLayoutConfig.ts`**, **`renderTemplate.ts`**, **`src/utils/emailLayoutDebug.ts`**, **`emailPreviewEditor.ts`**, **`src/pages/tools/email-templates/page.tsx`**.
+
+**Verify:** Preview any template at **`/tools/email-templates`** after deploy.
+
+**Still open:** Regenerate 9:16 hero WebPs when Fal balance available (separate from promo).
