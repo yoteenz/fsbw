@@ -94,6 +94,8 @@ After each successful batch run, **`npm run bcf:videos:sync`** updates the app m
 | `STORAGE_BUCKET` | `live-preview` | Supabase bucket |
 | `FORCE=1` | off | Regenerate even when MP4 exists |
 | `ONLY_FAILED=1` | off | Retry only manifest rows with `status: failed` |
+| `RETRY_PENDING=1` | off | Retry `failed` + `missing` rows only (resume batch) |
+| `npm run bcf:videos:retry` | — | `RETRY_PENDING=1` + `FORCE=1` + manifest rescan + sync |
 | `JOB_TIMEOUT_MS` | `600000` | Per-job Fal timeout (ms); fail fast and continue |
 | `DOWNLOAD_TIMEOUT_MS` | `120000` | MP4 download timeout (ms) |
 | `SKIP_WEBM=1` | off | MP4 only |

@@ -25,6 +25,7 @@
  *   ONLY_PRODUCT_KEYS=bundles-wavy-cherry,bundles-straight-plum
  *   ONLY_COLOR_IDS=GINGER,CHERRY,RASPBERRY,TEAL,SLIME,CITRINE
  *   ONLY_FAILED=1               — retry manifest rows with status failed (circle back)
+ *   RETRY_PENDING=1             — retry failed + missing rows only (safe resume batch)
  *   JOB_TIMEOUT_MS=600000         — max ms per Fal job before skip (default 10 min)
  *   DOWNLOAD_TIMEOUT_MS=120000  — max ms to download rendered MP4 (default 2 min)
  */
@@ -73,6 +74,7 @@ const onlyColorIds = new Set(
     .filter(Boolean),
 );
 const onlyFailed = process.env.ONLY_FAILED === '1' || process.env.ONLY_FAILED === 'true';
+const retryPending = process.env.RETRY_PENDING === '1' || process.env.RETRY_PENDING === 'true';
 const jobTimeoutMs = parseInt(process.env.JOB_TIMEOUT_MS || '600000', 10);
 const downloadTimeoutMs = parseInt(process.env.DOWNLOAD_TIMEOUT_MS || '120000', 10);
 
@@ -172,7 +174,9 @@ async function main() {
 
   const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8'));
   let items = manifest.items || [];
-  if (!force) {
+  if (retryPending) {
+    items = items.filter((row) => row.status === 'failed' || row.status === 'missing');
+  } else if (!force) {
     items = items.filter((row) => row.status === 'missing' || (!row.hasMp4 && row.status !== 'ready_legacy'));
   }
   if (skipProductKeys.size > 0) {
@@ -282,6 +286,7 @@ async function main() {
     console.log('Failed product keys (circle back later):');
     console.log(failedKeys.join(','));
     console.log('Retry: ONLY_FAILED=1 FORCE=1 npm run bcf:videos:generate');
+    console.log('Resume: RETRY_PENDING=1 FORCE=1 npm run bcf:videos:retry');
   }
   if (ok > 0 && !dryRun) {
     console.log('Run: node scripts/bcf/sync-bcf-video-manifest.mjs');

@@ -34095,3 +34095,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **Desktop Extensions Boutique** (`useBcfShopSelection.ts`): **`selectColor`** allows all colors; **`addToBag`** shows premium gate under same rule.
 
 **Changes:** **`bcfProductOptions.ts`**, **`texture-category-product/page.tsx`**, **`useBcfShopSelection.ts`**.
+
+---
+
+## 2026-07-03 — BCF video retry batch (blocked: missing cloud secrets)
+
+**Context:** User confirmed **“yes do this”** to kick off the BCF video retry batch (**31 pending**: 9 failed + 22 missing) and sync the final manifest when complete.
+
+**Queue (dry-run validated):** `RETRY_PENDING=1` targets **31 rows** — failed bundle colors (cherry, citrine, ginger, raspberry, slime, teal, etc.) + missing wavy bundle colors + platinum-trio closure/frontal videos.
+
+**Tooling added:**
+- **`RETRY_PENDING=1`** filter in **`pregenerate-bcf-videos.mjs`** (failed + missing only).
+- **`scripts/bcf/retry-bcf-videos-batch.mjs`** + **`npm run bcf:videos:retry`** — generate → manifest rescan → sync (skips sync on **`DRY_RUN=1`**).
+- Docs: **`docs/BCF_VIDEO_GENERATION.md`**.
+
+**Blocked:** Cloud agent has **no `FAL_KEY`**, **`SUPABASE_URL`**, or **`SUPABASE_SERVICE_ROLE_KEY`** (not in env or `.env.local`). Batch exits immediately; cannot call Fal Kling or upload to **`live-preview`**.
+
+**To finish:** Add those three vars to **Cursor Cloud environment settings** (see **`.env.wig-preview.example.txt`**), then run **`npm run bcf:videos:retry`** (long-running; ~31 Fal jobs). After success, commit **`public/assets/bcf/videos/manifest.json`** + **`bcfPdpHeroVideos.generated.ts`**.
+
+**Status at attempt:** Photos **108/108 ready**; videos **44/75 ready** in committed manifest (unchanged this turn).
