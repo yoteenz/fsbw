@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { emailSenderCategoryForTemplate, resolveEmailFromAddress } from './emailSenderMap.js';
 import { renderEmailTemplate } from './renderTemplate.js';
 import type { SendEmailParams, SendEmailResult } from './types.js';
 import { assertTemplateType } from './renderTemplate.js';
@@ -16,14 +17,6 @@ function isValidEmail(e: string): boolean {
   const s = e.trim().toLowerCase();
   if (s.length < 3 || s.length > 254) return false;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-}
-
-function resolveFromAddress(): string {
-  return (
-    process.env.TRANSACTIONAL_FROM_EMAIL?.trim() ||
-    process.env.NEWSLETTER_FROM_EMAIL?.trim() ||
-    'Frontal Slayer <onboarding@resend.dev>'
-  );
 }
 
 /**
@@ -62,13 +55,17 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
   );
 
   try {
+    const senderCategory = emailSenderCategoryForTemplate(templateType);
     const { data, error } = await resend.emails.send({
-      from: resolveFromAddress(),
+      from: resolveEmailFromAddress(templateType),
       to: [recipientEmail],
       subject: subject.slice(0, 300),
       html,
       text,
-      tags: [{ name: 'template', value: templateType }],
+      tags: [
+        { name: 'template', value: templateType },
+        { name: 'sender_category', value: senderCategory },
+      ],
     });
 
     if (error) {

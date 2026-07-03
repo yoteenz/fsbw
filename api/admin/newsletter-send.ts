@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
+import { resolveEmailFromAddress } from '../_lib/email/emailSenderMap.js';
 import { writeAuditLog } from '../_lib/auditLog.js';
 
 const MAX_RECIPIENTS = 100;
@@ -28,7 +29,7 @@ function isValidEmail(e: string): boolean {
 
 /**
  * POST /api/admin/newsletter-send — send HTML email to a list of addresses (admin only).
- * Requires RESEND_API_KEY and NEWSLETTER_FROM_EMAIL (or uses Resend onboarding sender in dev).
+ * Requires RESEND_API_KEY. Sends from hello@frontalslayer.com (newsletter template sender).
  * Body: { subject: string, html: string, to: string[] }
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -47,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   if (!apiKey) {
     return res.status(503).json({
-      error: 'Newsletter sending is not configured. Set RESEND_API_KEY (and NEWSLETTER_FROM_EMAIL) in Vercel env.',
+      error: 'Newsletter sending is not configured. Set RESEND_API_KEY in Vercel env.',
     });
   }
 
@@ -81,9 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'No valid email addresses in to[]' });
   }
 
-  const from =
-    process.env.NEWSLETTER_FROM_EMAIL?.trim() ||
-    'Frontal Slayer <onboarding@resend.dev>';
+  const from = resolveEmailFromAddress('newsletter');
 
   const failed: { email: string; error: string }[] = [];
   let sent = 0;

@@ -33667,3 +33667,31 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`heroImages.ts`** — hero URLs now `${SITE}/assets/email/heroes/{type}.webp`.
 - Added **`scripts/sync-email-hero-manifest.mjs`** + **`npm run email:sync-hero-manifest`** to keep TS manifest in sync after hero generation.
 - Debug page copy updated to mention Fal-generated hero scenes.
+
+---
+
+## 2026-07-03 — Branded Resend sender addresses per email category
+
+**Context:** User asked to update the Resend email system so each email category uses a branded `@frontalslayer.com` sender via the Resend `from` field (domain already verified — no separate inboxes).
+
+**Topics covered (entire conversation so far):**
+- Prior same-day work: batch-generated all 41 Fal email hero WebPs + manifest; user then requested category-based branded senders.
+- Added **`api/_lib/email/emailSenderMap.ts`** with six sender categories and addresses:
+  - **orders** → `orders@frontalslayer.com`
+  - **rewards** → `rewards@frontalslayer.com`
+  - **concierge** → `concierge@frontalslayer.com`
+  - **contact** → `contact@frontalslayer.com`
+  - **support** → `support@frontalslayer.com`
+  - **hello** → `hello@frontalslayer.com`
+- **`resolveEmailFromAddress(templateType)`** maps each transactional template automatically (orders/rewards/affiliate templates from hero categories; account split support vs hello; shop split concierge vs hello).
+- **`sendEmail.ts`** uses per-template `from`; Resend tag **`sender_category`** added.
+- **`newsletter-send.ts`** sends admin bulk newsletter from **hello@**; **`contactNotifyEmail.ts`** sends brand contact/FAQ inbound notify from **contact@**.
+- Docs/`.env.example`/NewsletterPanel copy updated; optional dev overrides: **`TRANSACTIONAL_FROM_EMAIL`**, **`EMAIL_FROM_<CATEGORY>`**.
+
+**Decisions / outcomes:**
+- Production sends use verified `@frontalslayer.com` branded addresses by default — no **`NEWSLETTER_FROM_EMAIL`** required.
+- Affiliate templates → **contact@**; consult/meeting alerts → **concierge@**; password/security → **support@**; order lifecycle → **orders@**; rewards → **rewards@**; welcome/newsletter/shop alerts → **hello@**.
+
+**Changes:** **`emailSenderMap.ts`**, **`sendEmail.ts`**, **`newsletter-send.ts`**, **`contactNotifyEmail.ts`**, **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`NewsletterPanel.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Conventions:** Add new templates to **`EMAIL_TEMPLATE_SENDER_CATEGORY`** via **`emailHeroCategories.ts`** group + support/concierge overrides in **`emailSenderMap.ts`**.

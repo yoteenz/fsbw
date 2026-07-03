@@ -1,3 +1,5 @@
+import { resolveEmailFromAddressForCategory } from './email/emailSenderMap.js';
+
 const RESEND_API = 'https://api.resend.com/emails';
 
 function isValidEmail(e: string): boolean {
@@ -35,12 +37,7 @@ export async function sendBrandContactNotifyEmail(payload: {
     return { sent: false, error: 'RESEND_API_KEY not configured' };
   }
 
-  const from =
-    process.env.NEWSLETTER_FROM_EMAIL?.trim() ||
-    'Frontal Slayer <onboarding@resend.dev>';
-
-  const to = resolveContactNotifyRecipients();
-  const subject = `BRAND CONTACT: ${payload.name}`.slice(0, 300);
+  const from = resolveEmailFromAddressForCategory('contact');
   const lines = [
     'NEW CONTACT FORM SUBMISSION',
     '',
@@ -89,9 +86,7 @@ export async function sendBrandFaqQuestionNotifyEmail(payload: {
     return { sent: false, error: 'RESEND_API_KEY not configured' };
   }
 
-  const from =
-    process.env.NEWSLETTER_FROM_EMAIL?.trim() ||
-    'Frontal Slayer <onboarding@resend.dev>';
+  const from = resolveEmailFromAddressForCategory('contact');
 
   const to = resolveContactNotifyRecipients();
   const subject = `BRAND FAQ QUESTION: ${payload.name}`.slice(0, 300);

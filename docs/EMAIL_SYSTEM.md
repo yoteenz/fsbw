@@ -6,8 +6,8 @@ Server-side automated emails using **Resend** and reusable **Frontal Slayer** HT
 
 1. **Resend** — set on Vercel (and `.env.local` for local API testing):
    - `RESEND_API_KEY=re_...`
-   - `TRANSACTIONAL_FROM_EMAIL=Frontal Slayer <hello@yourdomain.com>` (or reuse `NEWSLETTER_FROM_EMAIL`)
    - `SITE_URL=https://your-app.vercel.app` (CTA links)
+   - Branded senders use verified `@frontalslayer.com` addresses automatically per template (see **Sender addresses** below). Optional dev override: `TRANSACTIONAL_FROM_EMAIL` or `EMAIL_FROM_<CATEGORY>`.
 
 2. **Supabase Storage assets** (optional but recommended for production):
    - Run migration `supabase/migrations/20260703120000_email_assets_bucket.sql`
@@ -46,6 +46,23 @@ await sendEmail({
 | Rewards | `points_earned`, `points_redeemed`, `points_expiring`, `voucher_expiring`, `referral_redeemed`, `digital_cash_update`, `tier_upgraded`, `birthday_reward`, `membership_welcome`, `special_offer` |
 | Affiliate | `affiliate_content_received`, `affiliate_content_pending`, `affiliate_content_approved`, `affiliate_content_denied`, `affiliate_points_earned`, `affiliate_payment_sent` |
 | Shop / alerts | `back_in_stock`, `wishlist_price_drop`, `consult_offer_sent`, `meeting_reschedule`, `meeting_cancel`, `newsletter` |
+
+### Sender addresses (Resend `from`)
+
+Each `templateType` maps to a branded `@frontalslayer.com` sender via `api/_lib/email/emailSenderMap.ts`:
+
+| Sender category | From address | Template groups |
+|-----------------|--------------|-----------------|
+| `orders` | Frontal Slayer Orders `<orders@frontalslayer.com>` | All order lifecycle templates |
+| `rewards` | Frontal Slayer Rewards `<rewards@frontalslayer.com>` | Points, vouchers, tier, birthday, special offer, membership welcome |
+| `concierge` | Frontal Slayer Concierge `<concierge@frontalslayer.com>` | Consult offers, meeting reschedule/cancel |
+| `contact` | Frontal Slayer Contact `<contact@frontalslayer.com>` | Affiliate program emails; brand contact form notifications (inbound to admin) |
+| `support` | Frontal Slayer Support `<support@frontalslayer.com>` | Password reset, verification, login alerts |
+| `hello` | Frontal Slayer `<hello@frontalslayer.com>` | Welcome, profile updates, newsletter, back-in-stock, wishlist alerts |
+
+Admin Marketing newsletter bulk sends use `hello@`. No separate inboxes — Resend routes by verified domain + `from` field.
+
+Optional overrides: `TRANSACTIONAL_FROM_EMAIL` (all sends), `EMAIL_FROM_ORDERS`, `EMAIL_FROM_REWARDS`, etc.
 
 ### Common variables
 

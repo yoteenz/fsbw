@@ -271,8 +271,8 @@ const NewsletterPanel = forwardRef<NewsletterPanelHandle, NewsletterPanelProps>(
         Recipients must have <strong style={{ color: '#374151' }}>newsletter</strong> enabled on Account → Settings (
         <code style={{ fontSize: '10px' }}>notificationNewsletter</code>
         ). Choose a template, edit the copy, then select everyone or individual clients. Sending uses{' '}
-        <strong style={{ color: '#374151' }}>Resend</strong> — set <code style={{ fontSize: '10px' }}>RESEND_API_KEY</code> and{' '}
-        <code style={{ fontSize: '10px' }}>NEWSLETTER_FROM_EMAIL</code> on the server (max {CHUNK} per API call; larger sends are chunked automatically).
+        <strong style={{ color: '#374151' }}>Resend</strong> — set <code style={{ fontSize: '10px' }}>RESEND_API_KEY</code> on the server
+        (sends from <code style={{ fontSize: '10px' }}>hello@frontalslayer.com</code>; max {CHUNK} per API call; larger sends are chunked automatically).
       </p>
 
       {loadError && (
