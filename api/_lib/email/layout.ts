@@ -104,6 +104,19 @@ ${perks
 </table>`;
 }
 
+/** FRONTAL (Futura) + red SLAYER wordmark image inline — matches debug slay card asset. */
+function renderEmailWordmark(): string {
+  const logoUrl = escHtml(EMAIL_BRAND.slayerLogo);
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:collapse;">
+  <tr>
+    <td align="right" style="vertical-align:middle;padding:0 4px 0 0;font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:14px;letter-spacing:0.12em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:500;line-height:1;white-space:nowrap;">FRONTAL</td>
+    <td align="left" style="vertical-align:middle;padding:0;line-height:0;font-size:0;">
+      <img src="${logoUrl}" width="78" height="52" alt="Slayer" style="display:block;border:0;"/>
+    </td>
+  </tr>
+</table>`;
+}
+
 function renderSocialFooterRow(): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;border-collapse:collapse;">
                 <tr>
@@ -211,9 +224,7 @@ ${input.dataRows
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
           <tr>
             <td style="padding:36px 32px 16px;text-align:center;">
-              <div style="font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:14px;letter-spacing:0.38em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:500;">
-                FRONTAL <span style="color:${EMAIL_BRAND.red};letter-spacing:0.38em;">SLAYER</span>
-              </div>
+              ${renderEmailWordmark()}
             </td>
           </tr>
           <tr>

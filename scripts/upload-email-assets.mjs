@@ -21,6 +21,7 @@ const ASSETS = [
   { local: 'public/assets/email/icons/instagram-icon.png', remote: 'email/icons/instagram-icon.png', contentType: 'image/png' },
   { local: 'public/assets/email/icons/twitter-icon.png', remote: 'email/icons/twitter-icon.png', contentType: 'image/png' },
   { local: 'public/assets/email/icons/facebook-icon.png', remote: 'email/icons/facebook-icon.png', contentType: 'image/png' },
+  { local: 'public/assets/email/slayer-logo.png', remote: 'email/slayer-logo.png', contentType: 'image/png' },
 ];
 
 function collectHeroAssets() {

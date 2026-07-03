@@ -33764,6 +33764,7 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-03 — Vercel deploy log fixes (ce3ab09 era errors)
 
 **Context:** User pasted Vercel build log from commit **ce3ab09** showing prebuild `fix_encoding.py` SyntaxError (null bytes), API TS errors (`emailHeroPrompts` duplicates, `send-email` path, `profile` types), and Edge Function **stripe/webhook** blocked by **heroManifest** importing **node:fs**.
@@ -33771,3 +33772,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Already fixed on master before this turn (90b97539+):** duplicate `EMAIL_HERO_*` exports, `send-email.ts` re-export path `./email/send.js`, `profile.ts` merged record cast, `heroManifest.ts` compile-time `heroManifestReady.ts` (no fs), empty manifest synced in **a7e9db16**.
 
 **This turn:** Rewrote **`scripts/fix_encoding.py`** as clean UTF-8 (file was UTF-16 LE with null bytes — ironically broke its own prebuild). Switched **`api/stripe/webhook.ts`** from **edge** to **Node.js** runtime so membership welcome emails via transactional email stack cannot hit Edge `node:fs` bundle restrictions.
+=======
+## 2026-07-03 — Email wordmark: SLAYER image beside FRONTAL
+
+**Context:** User asked email template header to use the **SLAYER wordmark image** from the debug slay card page (**`IMG_4820.png` / `BAW_SLAY_CARD_SLAYER_LOGO_SRC`**) instead of red **SLAYER** text, positioned **beside** black **FRONTAL** text (not stacked).
+
+**Fixes:**
+- Copied **`IMG_4820.png`** from Supabase **`live-preview/Stock Content/`** to **`public/assets/email/slayer-logo.png`**.
+- **`brandAssets.ts`** — **`EMAIL_BRAND.slayerLogo`** → site PNG URL.
+- **`layout.ts`** — **`renderEmailWordmark()`** table: Futura **FRONTAL** cell + **`<img>`** slayer logo (78×52) inline beside it; removed red letter-spaced **SLAYER** span.
+- **`upload-email-assets.mjs`** — includes **`email/slayer-logo.png`** for Supabase bucket sync.
+
+**Changes:** **`layout.ts`**, **`brandAssets.ts`**, **`upload-email-assets.mjs`**, **`public/assets/email/slayer-logo.png`**, **`motherboard/MEMORY.md`**.
+
+**Conventions:** Email header wordmark = black **FRONTAL** (Futura) + **slayer-logo.png** image — same asset as slay card debug, not typed **SLAYER** text.
+>>>>>>> 8b8404f3 (Use slay card SLAYER logo image beside FRONTAL in email wordmark)
