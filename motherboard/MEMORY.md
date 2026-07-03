@@ -33695,3 +33695,28 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`emailSenderMap.ts`**, **`sendEmail.ts`**, **`newsletter-send.ts`**, **`contactNotifyEmail.ts`**, **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`NewsletterPanel.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Conventions:** Add new templates to **`EMAIL_TEMPLATE_SENDER_CATEGORY`** via **`emailHeroCategories.ts`** group + support/concierge overrides in **`emailSenderMap.ts`**.
+
+---
+
+## 2026-07-03 — Email support footer: route help to in-app Concierge (not email reply)
+
+**Context:** User asked to verify whether help/reply actions route into the in-app Concierge/admin flow (not real email inboxes). Requested every automated transactional email include a support footer + **MESSAGE PSA** CTA to Concierge; keep branded **`from`** senders; affiliate label **Frontal Slayer Creators**.
+
+**Audit (existing flow — no new inbox needed):**
+- Member: **`/account/concierge`** → **Priority Messages** form → **`POST /api/client/priority-messages`** (6mo+ / BLACK gate).
+- Admin: **`/admin/messages`** INBOX tab loads **`priority_messages`** via **`loadAdminMessagesHubRows`**.
+- No **`mailto:`** or Reply-To inbox wiring in transactional emails before this change.
+
+**Implemented:**
+- **`emailSupportLinks.ts`** — **`/account/concierge#priority-messages`**, footer copy, **`resolveConciergeMessageUrl()`**.
+- **`layout.ts`** — support footer on every **`renderEmailLayout`** email: help text + red-outline **MESSAGE PSA** button (plain-text version in **`renderTemplate.ts`**).
+- **`concierge/page.tsx`** — **`id="priority-messages"`** + hash scroll (same pattern as **`#order-tracking`**).
+- **`emailSenderMap.ts`** — affiliate templates now **`creators@`** with display name **Frontal Slayer Creators**; **`contact@`** reserved for brand contact form admin notifications only.
+
+**Decisions / outcomes:**
+- Customers directed in-app for help — no Google Workspace / external inbox / reply-by-email dependency.
+- Branded **`from`** unchanged (Resend verified domain only).
+
+**Changes:** **`emailSupportLinks.ts`**, **`layout.ts`**, **`renderTemplate.ts`**, **`emailSenderMap.ts`**, **`concierge/page.tsx`**, **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`motherboard/MEMORY.md`**.
+
+**Conventions:** Email help CTAs → **`/account/concierge#priority-messages`**; do not add **`reply_to`** real inboxes until product explicitly asks.

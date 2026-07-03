@@ -1,4 +1,9 @@
 import { resolveSiteOrigin } from './brandAssets.js';
+import {
+  EMAIL_SUPPORT_CTA_LABEL,
+  EMAIL_SUPPORT_FOOTER_COPY,
+  resolveConciergeMessageUrl,
+} from './emailSupportLinks.js';
 import { interpolateCopy, renderEmailLayout } from './layout.js';
 import { EMAIL_TEMPLATE_REGISTRY, isEmailTemplateType } from './templateRegistry.js';
 import type { EmailTemplateType, EmailTemplateVariables } from './types.js';
@@ -65,8 +70,10 @@ export function renderEmailTemplate(
     preheader: vars.preheader || def.preheader || def.defaultSubject,
     customHtmlBody,
     showMemberPerks: def.showMemberPerks,
+    supportCtaUrl: resolveConciergeMessageUrl(),
   });
 
+  const supportUrl = resolveConciergeMessageUrl();
   const textLines = [
     `FRONTAL SLAYER — ${subject.toUpperCase()}`,
     '',
@@ -76,6 +83,9 @@ export function renderEmailTemplate(
     ...def.bodyParagraphs.map((p) => interpolateCopy(p, vars)),
     '',
     ctaLabel.toUpperCase() + ': ' + ctaUrl,
+    '',
+    EMAIL_SUPPORT_FOOTER_COPY,
+    EMAIL_SUPPORT_CTA_LABEL.toUpperCase() + ': ' + supportUrl,
     '',
     'LUXURY WITHOUT LIMITS.',
   ];

@@ -1728,6 +1728,7 @@ function ConciergePage() {
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const orderTrackingSectionRef = useRef<HTMLDivElement | null>(null);
+  const priorityMessagesSectionRef = useRef<HTMLDivElement | null>(null);
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
   const [, setConsultBarTick] = useState(0);
@@ -2259,6 +2260,15 @@ function ConciergePage() {
     }, 100);
     return () => window.clearTimeout(t);
   }, [location.hash, location.search, selectedOrderId]);
+
+  // Email CTA: /account/concierge#priority-messages — scroll to Priority Messages form
+  useEffect(() => {
+    if (location.hash !== '#priority-messages') return;
+    const t = window.setTimeout(() => {
+      priorityMessagesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    return () => window.clearTimeout(t);
+  }, [location.hash]);
 
   // Mark selected order's tracking status as seen when user views it (so badge can clear as they view each)
   useEffect(() => {
@@ -3506,6 +3516,8 @@ function ConciergePage() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {/* Priority Messages Section */}
                 <div
+                  id="priority-messages"
+                  ref={priorityMessagesSectionRef}
                   className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
                     borderWidth: '1.3px',

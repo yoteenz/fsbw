@@ -2,12 +2,20 @@ import { EMAIL_HERO_CATEGORIES } from './emailHeroCategories.js';
 import type { EmailTemplateType } from './types.js';
 
 /** Branded Resend `from` categories — verified @frontalslayer.com addresses (no separate inboxes). */
-export type EmailSenderCategory = 'orders' | 'rewards' | 'concierge' | 'contact' | 'support' | 'hello';
+export type EmailSenderCategory =
+  | 'orders'
+  | 'rewards'
+  | 'concierge'
+  | 'creators'
+  | 'contact'
+  | 'support'
+  | 'hello';
 
 export const EMAIL_SENDER_ADDRESSES: Record<EmailSenderCategory, string> = {
   orders: 'Frontal Slayer Orders <orders@frontalslayer.com>',
   rewards: 'Frontal Slayer Rewards <rewards@frontalslayer.com>',
   concierge: 'Frontal Slayer Concierge <concierge@frontalslayer.com>',
+  creators: 'Frontal Slayer Creators <creators@frontalslayer.com>',
   contact: 'Frontal Slayer Contact <contact@frontalslayer.com>',
   support: 'Frontal Slayer Support <support@frontalslayer.com>',
   hello: 'Frontal Slayer <hello@frontalslayer.com>',
@@ -37,7 +45,7 @@ function buildTemplateSenderCategoryMap(): Record<EmailTemplateType, EmailSender
     map[templateType] = 'rewards';
   }
   for (const templateType of EMAIL_HERO_CATEGORIES.affiliate) {
-    map[templateType] = 'contact';
+    map[templateType] = 'creators';
   }
   for (const templateType of EMAIL_HERO_CATEGORIES.shop) {
     map[templateType] = CONCIERGE_TEMPLATES.has(templateType) ? 'concierge' : 'hello';

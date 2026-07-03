@@ -1,4 +1,9 @@
 import { EMAIL_BRAND } from './brandAssets.js';
+import {
+  EMAIL_SUPPORT_CTA_LABEL,
+  EMAIL_SUPPORT_FOOTER_COPY,
+  resolveConciergeMessageUrl,
+} from './emailSupportLinks.js';
 import { emailHeroImageUrl } from './heroImages.js';
 import { isEmailHeroReady } from './heroManifest.js';
 import { heroIconSvg } from './heroIcons.js';
@@ -101,6 +106,20 @@ export interface RenderEmailLayoutInput {
   preheader?: string;
   customHtmlBody?: string;
   showMemberPerks?: boolean;
+  /** Defaults to in-app Concierge priority message form. */
+  supportCtaUrl?: string;
+}
+
+function renderSupportFooter(supportCtaUrl: string): string {
+  const url = escHtml(supportCtaUrl);
+  const copy = escHtml(EMAIL_SUPPORT_FOOTER_COPY);
+  const cta = escHtml(EMAIL_SUPPORT_CTA_LABEL.toUpperCase());
+  return `<tr>
+            <td style="padding:28px 32px 12px;text-align:center;border-top:1px solid rgba(0,0,0,0.08);">
+              <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.65;letter-spacing:0.04em;color:${EMAIL_BRAND.gray};text-transform:none;">${copy}</p>
+              <a href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};color:${EMAIL_BRAND.red};background-color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.14em;text-decoration:none;text-transform:uppercase;padding:12px 28px;">${cta}</a>
+            </td>
+          </tr>`;
 }
 
 export function renderEmailLayout(input: RenderEmailLayoutInput): string {
@@ -144,6 +163,7 @@ ${input.dataRows
 
   const heroHtml = renderHeroSection(input.templateType, input.heroIcon);
   const memberPerksHtml = input.showMemberPerks ? renderMemberPerksRow() : '';
+  const supportFooterHtml = renderSupportFooter(input.supportCtaUrl || resolveConciergeMessageUrl());
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -200,6 +220,7 @@ ${input.dataRows
           </tr>`
               : ''
           }
+          ${supportFooterHtml}
           <tr>
             <td style="padding:28px 32px 0;text-align:center;">
               <div style="height:3px;background-color:${EMAIL_BRAND.red};max-width:120px;margin:0 auto 20px;"></div>

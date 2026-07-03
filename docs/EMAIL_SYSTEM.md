@@ -56,13 +56,14 @@ Each `templateType` maps to a branded `@frontalslayer.com` sender via `api/_lib/
 | `orders` | Frontal Slayer Orders `<orders@frontalslayer.com>` | All order lifecycle templates |
 | `rewards` | Frontal Slayer Rewards `<rewards@frontalslayer.com>` | Points, vouchers, tier, birthday, special offer, membership welcome |
 | `concierge` | Frontal Slayer Concierge `<concierge@frontalslayer.com>` | Consult offers, meeting reschedule/cancel |
-| `contact` | Frontal Slayer Contact `<contact@frontalslayer.com>` | Affiliate program emails; brand contact form notifications (inbound to admin) |
+| `creators` | Frontal Slayer Creators `<creators@frontalslayer.com>` | Affiliate program emails |
+| `contact` | Frontal Slayer Contact `<contact@frontalslayer.com>` | Brand contact form notifications to admin (inbound only) |
 | `support` | Frontal Slayer Support `<support@frontalslayer.com>` | Password reset, verification, login alerts |
 | `hello` | Frontal Slayer `<hello@frontalslayer.com>` | Welcome, profile updates, newsletter, back-in-stock, wishlist alerts |
 
-Admin Marketing newsletter bulk sends use `hello@`. No separate inboxes — Resend routes by verified domain + `from` field.
+Admin Marketing newsletter bulk sends use `hello@`. No separate inboxes — Resend routes by verified domain + `from` field only. **Do not reply by email** — every transactional template includes a support footer linking members to **Account → Concierge → Priority Messages** (`/account/concierge#priority-messages`), which posts to **`POST /api/client/priority-messages`** and appears in **Admin → Messages** inbox.
 
-Optional overrides: `TRANSACTIONAL_FROM_EMAIL` (all sends), `EMAIL_FROM_ORDERS`, `EMAIL_FROM_REWARDS`, etc.
+Optional overrides: `TRANSACTIONAL_FROM_EMAIL` (all sends), `EMAIL_FROM_ORDERS`, `EMAIL_FROM_REWARDS`, `EMAIL_FROM_CREATORS`, etc.
 
 ### Common variables
 
