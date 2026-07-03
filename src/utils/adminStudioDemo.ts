@@ -30,7 +30,8 @@ export type AdminStudioSectionId =
   | 'content-brain'
   | 'creative-director'
   | 'intelligence-engine'
-  | 'ai-orchestrator';
+  | 'ai-orchestrator'
+  | 'show-bible';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;

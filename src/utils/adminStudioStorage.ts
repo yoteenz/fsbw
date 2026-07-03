@@ -22,6 +22,9 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   creativeDirector: 'adminStudioCreativeDirector_v1',
   intelligenceEngine: 'adminStudioIntelligenceEngine_v1',
   orchestrator: 'adminStudioOrchestrator_v1',
+  showBible: 'adminStudioShowBible_v1',
+  showBibleCustom: 'adminStudioShowBibleCustom_v1',
+  showBibleChecklist: 'adminStudioShowBibleChecklist_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

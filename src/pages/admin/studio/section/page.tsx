@@ -20,6 +20,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'ai-orchestrator') {
       return <Navigate to="/admin/studio/ai-orchestrator" replace />;
     }
+    if (sectionId === 'show-bible') {
+      return <Navigate to="/admin/studio/show-bible" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

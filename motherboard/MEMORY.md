@@ -34582,3 +34582,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Intelligence feeds Creative Director; Orchestrator receives assembled prompts after CD quality gate; no provider bypass; future connectors plug into registry without engine core changes.
 
+---
+
+## 2026-07-03 — THE STUDIO Show Bible (production handbook milestone)
+
+**Context:** Continuation of THE STUDIO — prior milestones frozen (no redesign of existing Studio pages; `/admin/studio/shows` and Content Brain's lighter show-bible subsection untouched). User requested a new flagship section **SHOW BIBLE** — subtitle *"The DNA of every Frontal Slayer show"* — as Netflix-style production handbook + luxury network style guide. Every future AI-generated episode must inherit Show Bible settings; hierarchy: Brand Brain → Creative Director → **Show Bible** → Content Pack → AI Orchestrator → AI Providers → Draft → Publishing.
+
+**Topics covered (full chat arc):**
+- Prior milestones: light theme, Content Brain, Creative Director, Intelligence Engine, AI Orchestrator (all unchanged).
+- **Show Bible** (`/admin/studio/show-bible`): premium show directory (11 default recurring series + unlimited custom shows via ADD SHOW); per-show production profile with 13 tabbed sections — Profile, Personality, Visual, Audio, Structure, Segments, Rules, Prompts, Thumbnail, CTAs, Seasons, Checklist, Analytics.
+- **Data model** `adminStudioShowBibleDemo.ts`: `ShowBibleEntry` (~100+ editable fields), `ShowBibleSeason`, field groups, inheritance chain, production checklist (9 items), default seeds for The Slay Report, Slay Lab, PSA Analyzes, Build Studio, The Vault, Slay Academy, The Lounge, Campaign Films, Product Stories, Founder Notes, Member Briefings.
+- **State** `useAdminStudioShowBibleState.ts`: localStorage patches for defaults + custom show array + per-show checklist toggles; season CRUD; field updates.
+- **Service** `showBibleStudioService`: `getSnapshot`, `getShowSnapshot`, `inheritForEpisode`, `validateChecklist` — registered in `STUDIO_SERVICE_REGISTRY` (AI providers cannot bypass).
+- **UI:** `AdminStudioShowBibleCard`, `AdminStudioShowBibleFieldGroups`, directory page with hierarchy diagram + detail page with visual structure flow, segment list, season status chips (draft → archived), analytics widgets.
+- **Routing:** `show-bible`, `show-bible/:showId` in `adminStudioRoutes.ts`, `App.tsx`, section redirect; `show-bible` added to `AdminStudioSectionId` only (hub cards unchanged per milestone rules).
+
+**Decisions / outcomes:** Separate from Content Brain show-bible subsection and from `/admin/studio/shows` programming deck. All fields editable; prompts auto-inherit Brand Brain + Creative Director + editorial/campaign/product context in template text. Build verified (`npm run build`).
+
+**Changes:** `adminStudioShowBibleDemo.ts`, `useAdminStudioShowBibleState.ts`, `services/studio/showBible/service.ts`, Show Bible components, `show-bible/page.tsx`, `show-bible/detail/page.tsx`, `adminStudioRoutes.ts`, `adminStudioDemo.ts`, `adminStudioStorage.ts`, `App.tsx`, `section/page.tsx`, `STUDIO_SERVICE_REGISTRY`.
+
+**Conventions:** Navigate `/admin/studio/show-bible`; cross-links at bottom to Creative Director / AI Orchestrator only (no edits to prior milestone pages). Future episode generation must call `showBibleStudioService.inheritForEpisode(showId)` before AI Orchestrator adapters.
+
