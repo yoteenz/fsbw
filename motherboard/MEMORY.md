@@ -33331,3 +33331,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`build-a-wig/page.tsx`** — renders slay card button below `BawViewSubscriptionsFooter` on try hub
 
 **Conventions:** Slay card stays hub-only for guests in view mode; sub-pages keep VIEW SUBSCRIPTIONS without slay card duplicate.
+
+---
+
+## 2026-07-03 — BAW view-mode BUILD GUIDE intro (slay card + no sign-in)
+
+**Context:** User asked to update view-mode BUILD GUIDE intro body to mention no sign-in and the shareable slay card.
+
+**Changes:** Intro body in **`bawModeGuideConfig.ts`** (`MODE_INTRO_OVERRIDES.TRY`) and **`bawTutorialConfig.ts`** (`BAW_TUTORIAL_GUIDE_COPY.intro`) → **TRY THIS FEATURE FREE OF CHARGE AND EXPLORE OUR CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED. FINISH WITH A SHAREABLE SLAY CARD.**
