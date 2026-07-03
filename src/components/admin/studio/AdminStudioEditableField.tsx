@@ -1,3 +1,5 @@
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+
 type AdminStudioEditableFieldProps = {
   label: string;
   value: string;
@@ -6,29 +8,32 @@ type AdminStudioEditableFieldProps = {
   accentHex?: string;
 };
 
-/** Inline editable demo field — glass card, no tables. */
+/** Inline editable demo field — light frosted card. */
 export function AdminStudioEditableField({
   label,
   value,
   onChange,
   multiline = false,
-  accentHex = '#EB1C24',
+  accentHex = ADMIN_STUDIO_THEME.accent,
 }: AdminStudioEditableFieldProps) {
   const sharedClass =
-    'w-full bg-white/5 border border-white/15 text-white text-[10px] font-futura uppercase px-3 py-2 outline-none focus:border-white/40 transition-colors placeholder:text-white/25';
-  const sharedStyle = { fontWeight: 515 as const, lineHeight: 1.45 };
+    'w-full bg-white border text-black text-[10px] font-futura uppercase px-3 py-2 outline-none focus:border-black/40 transition-colors placeholder:text-black/25';
+  const sharedStyle = { fontWeight: 515 as const, lineHeight: 1.45, borderColor: ADMIN_STUDIO_THEME.inputBorder };
 
   return (
     <div
       className="rounded-sm p-3"
       style={{
-        background: 'rgba(255,255,255,0.04)',
+        background: ADMIN_STUDIO_THEME.panelBg,
         borderLeft: `2px solid ${accentHex}`,
+        border: `1px solid ${ADMIN_STUDIO_THEME.panelBorder}`,
+        borderLeftWidth: '2px',
+        borderLeftColor: accentHex,
       }}
     >
       <label
         className="block text-[8px] font-futura uppercase mb-1.5 tracking-wider"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
       >
         {label}
       </label>

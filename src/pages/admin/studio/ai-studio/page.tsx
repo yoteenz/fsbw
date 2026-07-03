@@ -16,6 +16,9 @@ import {
   ADMIN_STUDIO_AI_REWARD_OPTIONS,
 } from '../../../../utils/adminStudioAiStudioDemo';
 import { AdminStudioEditableField } from '../../../../components/admin/studio/AdminStudioEditableField';
+import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
+import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
+import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioAiStudioPage() {
   const navigate = useNavigate();
@@ -51,26 +54,19 @@ export default function AdminStudioAiStudioPage() {
         />
       ) : (
         <>
-          <p
-            className="text-lg mb-3"
-            style={{
-              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-              color: '#EB1C24',
-            }}
-          >
-            CREATIVE BRIEF
-          </p>
+          <AdminStudioSectionHeading>CREATIVE BRIEF</AdminStudioSectionHeading>
 
           <div
-            className="mb-4 p-3"
+            className="mb-4 p-3 border bg-white/70"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              borderLeft: '2px solid #EB1C24',
+              background: ADMIN_STUDIO_THEME.panelBg,
+              borderColor: ADMIN_STUDIO_THEME.panelBorder,
+              borderLeft: `2px solid ${ADMIN_STUDIO_THEME.accent}`,
             }}
           >
             <label
               className="block text-[8px] font-futura uppercase mb-2 tracking-wider"
-              style={{ fontWeight: 515, color: '#9A9A9A' }}
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
             >
               YOUR PROMPT
             </label>
@@ -79,7 +75,7 @@ export default function AdminStudioAiStudioPage() {
               value={form.prompt}
               onChange={(e) => updateForm('prompt', e.target.value)}
               placeholder={ADMIN_STUDIO_AI_PROMPT_PLACEHOLDER}
-              className="w-full bg-transparent border-0 text-white text-[11px] font-futura uppercase outline-none resize-none placeholder:text-white/25"
+              className="w-full bg-white border-0 text-black text-[11px] font-futura uppercase outline-none resize-none placeholder:text-black/25"
               style={{
                 fontWeight: 515,
                 lineHeight: 1.55,
@@ -89,7 +85,7 @@ export default function AdminStudioAiStudioPage() {
             />
             <p
               className="mt-2 text-[7px] font-futura uppercase"
-              style={{ fontWeight: 515, color: '#9A9A9A' }}
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
             >
               EXAMPLE: &ldquo;{ADMIN_STUDIO_AI_PROMPT_EXAMPLE}&rdquo;
             </p>
@@ -152,8 +148,8 @@ export default function AdminStudioAiStudioPage() {
             style={{
               background: 'linear-gradient(135deg, #EB1C24 0%, #8B0000 50%, #EB1C24 100%)',
               backgroundSize: '200% 200%',
-              border: '1px solid rgba(255,255,255,0.25)',
-              boxShadow: '0 8px 32px rgba(235,28,36,0.35)',
+              border: `1px solid ${ADMIN_STUDIO_THEME.panelBorderStrong}`,
+              boxShadow: '0 4px 16px rgba(235,28,36,0.2)',
             }}
           >
             <span
@@ -170,12 +166,7 @@ export default function AdminStudioAiStudioPage() {
             </span>
           </button>
 
-          <p
-            className="mt-4 text-[7px] font-futura uppercase text-center"
-            style={{ fontWeight: 515, color: '#9A9A9A' }}
-          >
-            NO AI INTEGRATION · FRONTEND ARCHITECTURE ONLY
-          </p>
+          <AdminStudioDisclaimerFooter>NO AI INTEGRATION · FRONTEND ARCHITECTURE ONLY</AdminStudioDisclaimerFooter>
         </>
       )}
     </AdminStudioStageShell>

@@ -11,6 +11,7 @@ import {
   ADMIN_STUDIO_CONTENT_PACK_TAB_ORDER,
   type AdminStudioContentPackTabId,
 } from '../../../../../utils/adminStudioContentPacksDemo';
+import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 
 export default function AdminStudioContentPackDetailPage() {
   const { packId } = useParams<{ packId: string }>();
@@ -86,7 +87,7 @@ export default function AdminStudioContentPackDetailPage() {
         {activeFields.length === 0 ? (
           <p
             className="text-[8px] font-futura uppercase py-6 text-center"
-            style={{ fontWeight: 515, color: '#9A9A9A' }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
           >
             NO FIELDS IN THIS TAB — ADD DEMO CONTENT IN SEED
           </p>

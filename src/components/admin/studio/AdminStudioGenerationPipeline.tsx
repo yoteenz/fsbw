@@ -2,6 +2,7 @@ import {
   ADMIN_STUDIO_AI_PIPELINE_STEPS,
   type AdminStudioAiPipelineStepId,
 } from '../../../utils/adminStudioAiStudioDemo';
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioGenerationPipelineProps = {
   activeStepIndex: number;
@@ -10,7 +11,6 @@ type AdminStudioGenerationPipelineProps = {
   onReset: () => void;
 };
 
-/** Animated faux-AI pipeline — demo only, no backend. */
 export function AdminStudioGenerationPipeline({
   activeStepIndex,
   completedSteps,
@@ -24,19 +24,18 @@ export function AdminStudioGenerationPipeline({
           className="text-lg"
           style={{
             fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-            color: '#EB1C24',
+            color: ADMIN_STUDIO_THEME.accent,
           }}
         >
           {isComplete ? 'DRAFT COMPLETE' : 'GENERATING PACK'}
         </p>
         {isComplete ? (
           <span
-            className="text-[7px] font-futura uppercase px-2 py-1"
+            className="text-[7px] font-futura uppercase px-2 py-1 bg-white border"
             style={{
               fontWeight: 515,
-              color: '#FBBF24',
-              border: '1px solid #FBBF2455',
-              background: '#FBBF2415',
+              color: '#CA8A04',
+              borderColor: '#CA8A0444',
             }}
           >
             ALL OUTPUTS · DRAFT
@@ -44,14 +43,14 @@ export function AdminStudioGenerationPipeline({
         ) : (
           <span
             className="inline-block w-2 h-2 rounded-full animate-pulse"
-            style={{ background: '#EB1C24' }}
+            style={{ background: ADMIN_STUDIO_THEME.accent }}
           />
         )}
       </div>
 
       <p
         className="text-[8px] font-futura uppercase"
-        style={{ fontWeight: 515, color: '#9A9A9A', lineHeight: 1.5 }}
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}
       >
         {isComplete
           ? 'CONTENT PACK SAVED AS DRAFT — NO PUBLISHING · DEMO PIPELINE ONLY'
@@ -67,27 +66,28 @@ export function AdminStudioGenerationPipeline({
           return (
             <div
               key={step.id}
-              className="flex items-center gap-3 px-3 py-2 transition-all duration-300"
+              className="flex items-center gap-3 px-3 py-2 transition-all duration-300 border bg-white/70"
               style={{
                 background: isActive
-                  ? 'rgba(235,28,36,0.12)'
+                  ? ADMIN_STUDIO_THEME.selectedBg
                   : isDone
-                    ? 'rgba(74,222,128,0.08)'
-                    : 'rgba(255,255,255,0.03)',
+                    ? 'rgba(22,163,74,0.08)'
+                    : ADMIN_STUDIO_THEME.panelBg,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
                 borderLeft: isActive
-                  ? '2px solid #EB1C24'
+                  ? `2px solid ${ADMIN_STUDIO_THEME.accent}`
                   : isDone
-                    ? '2px solid #4ADE80'
-                    : '2px solid rgba(255,255,255,0.08)',
-                opacity: isPending && !isComplete ? 0.45 : 1,
+                    ? '2px solid #16A34A'
+                    : `2px solid ${ADMIN_STUDIO_THEME.panelBorder}`,
+                opacity: isPending && !isComplete ? 0.55 : 1,
               }}
             >
               <span
-                className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-[8px] font-futura"
+                className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-[8px] font-futura bg-white border"
                 style={{
                   fontWeight: 515,
-                  color: isDone ? '#4ADE80' : isActive ? '#EB1C24' : '#9A9A9A',
-                  border: `1px solid ${isDone ? '#4ADE8055' : isActive ? '#EB1C2455' : 'rgba(255,255,255,0.15)'}`,
+                  color: isDone ? '#16A34A' : isActive ? ADMIN_STUDIO_THEME.accent : ADMIN_STUDIO_THEME.textSecondary,
+                  borderColor: ADMIN_STUDIO_THEME.panelBorder,
                   borderRadius: '50%',
                 }}
               >
@@ -97,7 +97,7 @@ export function AdminStudioGenerationPipeline({
                 className="flex-1 text-[9px] font-futura uppercase"
                 style={{
                   fontWeight: 515,
-                  color: isDone ? '#FFFFFF' : isActive ? '#EB1C24' : '#9A9A9A',
+                  color: isDone ? ADMIN_STUDIO_THEME.textPrimary : isActive ? ADMIN_STUDIO_THEME.accent : ADMIN_STUDIO_THEME.textSecondary,
                 }}
               >
                 {step.label}
@@ -105,7 +105,7 @@ export function AdminStudioGenerationPipeline({
               {isActive ? (
                 <span
                   className="text-[6px] font-futura uppercase animate-pulse"
-                  style={{ fontWeight: 515, color: '#EB1C24' }}
+                  style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.accent }}
                 >
                   PROCESSING
                 </span>
@@ -113,7 +113,7 @@ export function AdminStudioGenerationPipeline({
               {isDone && step.id === 'draft-complete' ? (
                 <span
                   className="text-[6px] font-futura uppercase"
-                  style={{ fontWeight: 515, color: '#FBBF24' }}
+                  style={{ fontWeight: 515, color: '#CA8A04' }}
                 >
                   DRAFT
                 </span>
@@ -127,12 +127,11 @@ export function AdminStudioGenerationPipeline({
         <button
           type="button"
           onClick={onReset}
-          className="w-full mt-4 py-3 text-[9px] font-futura uppercase transition-opacity hover:opacity-90"
+          className="w-full mt-4 py-3 text-[9px] font-futura uppercase transition-opacity hover:opacity-90 bg-white border"
           style={{
             fontWeight: 515,
-            color: '#FFFFFF',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.2)',
+            color: ADMIN_STUDIO_THEME.textPrimary,
+            borderColor: ADMIN_STUDIO_THEME.panelBorderStrong,
           }}
         >
           NEW GENERATION

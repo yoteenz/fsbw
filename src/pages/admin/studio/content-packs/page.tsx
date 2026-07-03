@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioContentPackCard } from '../../../../components/admin/studio/AdminStudioContentPackCard';
+import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
 import { listAdminStudioContentPacks } from '../../../../hooks/useAdminStudioEditableState';
+import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioContentPacksPage() {
   const navigate = useNavigate();
@@ -15,18 +17,10 @@ export default function AdminStudioContentPacksPage() {
       breadcrumbParentPath="/admin/studio"
       onBack={() => navigate('/admin/studio')}
     >
+      <AdminStudioSectionHeading>RELEASE VAULT</AdminStudioSectionHeading>
       <p
-        className="text-lg mb-4"
-        style={{
-          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#EB1C24',
-        }}
-      >
-        RELEASE VAULT
-      </p>
-      <p
-        className="text-[8px] font-futura uppercase mb-5"
-        style={{ fontWeight: 515, color: '#9A9A9A', lineHeight: 1.5 }}
+        className="text-[8px] font-futura uppercase mb-5 -mt-2"
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}
       >
         {packs.length} PACKS IN DEMO · TAP TO EDIT ALL CHANNEL TABS
       </p>

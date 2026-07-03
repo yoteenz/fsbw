@@ -1,3 +1,5 @@
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+
 type AdminStudioTabBarProps<T extends string> = {
   tabs: Array<{ id: T; label: string }>;
   activeTab: T;
@@ -5,12 +7,11 @@ type AdminStudioTabBarProps<T extends string> = {
   accentHex?: string;
 };
 
-/** Horizontal scroll tab rail for content pack detail. */
 export function AdminStudioTabBar<T extends string>({
   tabs,
   activeTab,
   onTabChange,
-  accentHex = '#EB1C24',
+  accentHex = ADMIN_STUDIO_THEME.accent,
 }: AdminStudioTabBarProps<T>) {
   return (
     <div
@@ -27,8 +28,8 @@ export function AdminStudioTabBar<T extends string>({
             className="flex-shrink-0 px-2.5 py-1.5 text-[7px] font-futura uppercase transition-colors whitespace-nowrap"
             style={{
               fontWeight: 515,
-              color: isActive ? '#FFFFFF' : '#9A9A9A',
-              background: isActive ? `${accentHex}33` : 'rgba(255,255,255,0.04)',
+              color: isActive ? ADMIN_STUDIO_THEME.textPrimary : ADMIN_STUDIO_THEME.textSecondary,
+              background: isActive ? ADMIN_STUDIO_THEME.chipActiveBg : ADMIN_STUDIO_THEME.chipInactiveBg,
               borderBottom: isActive ? `2px solid ${accentHex}` : '2px solid transparent',
             }}
           >

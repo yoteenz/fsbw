@@ -7,6 +7,7 @@ import { AdminStudioSectionHeading } from '../../../../components/admin/studio/A
 import { AdminStudioFilterBar } from '../../../../components/admin/studio/AdminStudioFilterBar';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { ADMIN_STUDIO_DEFAULT_ANALYTICS } from '../../../../utils/adminStudioAnalyticsDemo';
+import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioAnalyticsPage() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function AdminStudioAnalyticsPage() {
         <div className="space-y-4">
           <p
             className="text-[9px] font-futura uppercase"
-            style={{ fontWeight: 515, color: '#9A9A9A' }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
           >
             {analytics.showName} · DEMO DATA
           </p>
@@ -71,8 +72,8 @@ export default function AdminStudioAnalyticsPage() {
           <div
             className="p-3"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: ADMIN_STUDIO_THEME.panelBg,
+              border: `1px solid ${ADMIN_STUDIO_THEME.panelBorder}`,
             }}
           >
             <p
@@ -88,7 +89,7 @@ export default function AdminStudioAnalyticsPage() {
                   className="text-[7px] font-futura uppercase px-2 py-1"
                   style={{
                     fontWeight: 515,
-                    color: '#FFFFFF',
+                    color: ADMIN_STUDIO_THEME.textPrimary,
                     background: `${analytics.accentHex}22`,
                     border: `1px solid ${analytics.accentHex}44`,
                   }}

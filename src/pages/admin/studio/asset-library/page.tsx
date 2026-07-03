@@ -8,6 +8,7 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { useAdminStudioAssetLibrary } from '../../../../hooks/useAdminStudioAssetLibraryState';
 import { getAdminStudioAssetCategoryLabel } from '../../../../utils/adminStudioAssetLibraryDemo';
 import type { AdminStudioAssetCategoryId } from '../../../../utils/adminStudioAssetLibraryDemo';
+import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioAssetLibraryPage() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function AdminStudioAssetLibraryPage() {
 
       <p
         className="text-[7px] font-futura uppercase mb-3"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
       >
         {assets.length} ASSETS · DEMO CATALOG
       </p>
@@ -56,7 +57,7 @@ export default function AdminStudioAssetLibraryPage() {
         {assets.length === 0 ? (
           <p
             className="col-span-2 text-[8px] font-futura uppercase py-6 text-center"
-            style={{ fontWeight: 515, color: '#9A9A9A' }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
           >
             NO ASSETS MATCH YOUR SEARCH
           </p>
@@ -76,8 +77,8 @@ export default function AdminStudioAssetLibraryPage() {
         <div
           className="p-3 space-y-2"
           style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: ADMIN_STUDIO_THEME.panelBg,
+            border: `1px solid ${ADMIN_STUDIO_THEME.panelBorder}`,
           }}
         >
           <p
@@ -91,14 +92,14 @@ export default function AdminStudioAssetLibraryPage() {
           </p>
           <p
             className="text-[7px] font-futura uppercase"
-            style={{ fontWeight: 515, color: '#9A9A9A', lineHeight: 1.45 }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}
           >
             {getAdminStudioAssetCategoryLabel(selectedAsset.categoryId)} · {selectedAsset.format}
             {selectedAsset.duration ? ` · ${selectedAsset.duration}` : ''}
           </p>
           <p
             className="text-[8px] font-futura uppercase"
-            style={{ fontWeight: 515, color: '#FFFFFF', lineHeight: 1.45 }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary, lineHeight: 1.45 }}
           >
             {selectedAsset.description}
           </p>

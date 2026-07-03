@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioStageShellProps = {
   title: string;
@@ -11,11 +12,11 @@ type AdminStudioStageShellProps = {
   breadcrumbParentLabel?: string;
   breadcrumbParentPath?: string;
   children: ReactNode;
-  /** Optional accent for stage glow */
+  /** Optional accent for subtle header emphasis */
   accentHex?: string;
 };
 
-/** Dark cinematic stage inside marble admin shell — luxury streaming studio feel. */
+/** Light frosted Studio shell — matches admin marble + StatsCard language. */
 export function AdminStudioStageShell({
   title,
   subtitle,
@@ -24,8 +25,9 @@ export function AdminStudioStageShell({
   breadcrumbParentLabel = 'THE STUDIO',
   breadcrumbParentPath = '/admin/studio',
   children,
-  accentHex = '#EB1C24',
+  accentHex: _accentHex = ADMIN_STUDIO_THEME.accent,
 }: AdminStudioStageShellProps) {
+  void _accentHex;
   useRequireAdminPageAccess();
   const navigate = useNavigate();
 
@@ -55,38 +57,18 @@ export function AdminStudioStageShell({
         <div className="pb-8 px-4">
           <div className="max-w-md mx-auto">
             <div
-              className="relative overflow-hidden border border-black shadow-2xl"
-              style={{
-                borderWidth: '1.3px',
-                minHeight: 'calc(100dvh - 200px)',
-                background: 'linear-gradient(165deg, #0a0a0a 0%, #121212 45%, #0d0d0d 100%)',
-              }}
+              className={`bg-white/60 backdrop-blur-sm border border-black p-4 ${ADMIN_STUDIO_THEME.cardShadow}`}
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 200px)' }}
             >
-              <div
-                className="pointer-events-none absolute inset-0 opacity-40"
-                style={{
-                  background: `radial-gradient(ellipse 80% 50% at 50% 0%, ${accentHex}33 0%, transparent 70%)`,
-                }}
-              />
-              <div
-                className="pointer-events-none absolute inset-0 opacity-20"
-                style={{
-                  backgroundImage:
-                    'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px)',
-                }}
-              />
-
-              <div className="relative z-10 p-4">
-                {subtitle ? (
-                  <p
-                    className="text-[9px] font-futura uppercase mb-4 tracking-widest"
-                    style={{ fontWeight: 515, color: '#9A9A9A', lineHeight: 1.45 }}
-                  >
-                    {subtitle}
-                  </p>
-                ) : null}
-                {children}
-              </div>
+              {subtitle ? (
+                <p
+                  className="text-[9px] font-futura uppercase mb-4 tracking-widest"
+                  style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}
+                >
+                  {subtitle}
+                </p>
+              ) : null}
+              {children}
             </div>
           </div>
         </div>

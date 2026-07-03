@@ -10,6 +10,7 @@ import { useAdminStudioPromptLibrary } from '../../../../hooks/useAdminStudioPro
 import {
   ADMIN_STUDIO_PROMPT_CATEGORIES,
 } from '../../../../utils/adminStudioPromptLibraryDemo';
+import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioPromptLibraryPage() {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function AdminStudioPromptLibraryPage() {
           {filteredPrompts.length === 0 ? (
             <p
               className="text-[8px] font-futura uppercase py-4 text-center"
-              style={{ fontWeight: 515, color: '#9A9A9A' }}
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
             >
               NO PROMPTS MATCH YOUR SEARCH
             </p>
@@ -76,8 +77,8 @@ export default function AdminStudioPromptLibraryPage() {
           <div
             className="p-3 space-y-3"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: ADMIN_STUDIO_THEME.panelBg,
+              border: `1px solid ${ADMIN_STUDIO_THEME.panelBorder}`,
             }}
           >
             <div className="flex items-start justify-between gap-2">
@@ -94,7 +95,7 @@ export default function AdminStudioPromptLibraryPage() {
                 type="button"
                 onClick={() => toggleFavorite(selectedPrompt.id)}
                 className="text-[8px] font-futura uppercase flex-shrink-0"
-                style={{ fontWeight: 515, color: favorites.has(selectedPrompt.id) ? '#EB1C24' : '#9A9A9A' }}
+                style={{ fontWeight: 515, color: favorites.has(selectedPrompt.id) ? ADMIN_STUDIO_THEME.accent : ADMIN_STUDIO_THEME.textSecondary }}
               >
                 {favorites.has(selectedPrompt.id) ? '★ FAVORITED' : '☆ FAVORITE'}
               </button>
@@ -107,8 +108,8 @@ export default function AdminStudioPromptLibraryPage() {
                   className="text-[6px] font-futura uppercase px-1.5 py-0.5"
                   style={{
                     fontWeight: 515,
-                    color: '#9A9A9A',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    color: ADMIN_STUDIO_THEME.textSecondary,
+                    border: `1px solid ${ADMIN_STUDIO_THEME.panelBorder}`,
                   }}
                 >
                   {tag}

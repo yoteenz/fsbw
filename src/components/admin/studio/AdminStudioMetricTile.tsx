@@ -1,22 +1,24 @@
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+
 type AdminStudioMetricTileProps = {
   label: string;
   value: string;
   accentHex?: string;
 };
 
-/** Luxury metric card for Studio Analytics. */
-export function AdminStudioMetricTile({ label, value, accentHex = '#EB1C24' }: AdminStudioMetricTileProps) {
+export function AdminStudioMetricTile({ label, value, accentHex = ADMIN_STUDIO_THEME.accent }: AdminStudioMetricTileProps) {
   return (
     <div
-      className="p-3"
+      className="p-3 bg-white/70 border"
       style={{
-        background: 'rgba(255,255,255,0.04)',
+        background: ADMIN_STUDIO_THEME.panelBg,
+        borderColor: ADMIN_STUDIO_THEME.panelBorder,
         borderLeft: `2px solid ${accentHex}`,
       }}
     >
       <p
         className="text-[7px] font-futura uppercase mb-1 tracking-wider"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
       >
         {label}
       </p>
@@ -24,7 +26,7 @@ export function AdminStudioMetricTile({ label, value, accentHex = '#EB1C24' }: A
         className="text-[14px] leading-none"
         style={{
           fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#FFFFFF',
+          color: ADMIN_STUDIO_THEME.textPrimary,
         }}
       >
         {value}

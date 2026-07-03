@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioShowCard } from '../../../../components/admin/studio/AdminStudioShowCard';
+import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
 import { listAdminStudioShows } from '../../../../hooks/useAdminStudioEditableState';
+import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioShowsPage() {
   const navigate = useNavigate();
@@ -15,18 +17,10 @@ export default function AdminStudioShowsPage() {
       breadcrumbParentPath="/admin/studio"
       onBack={() => navigate('/admin/studio')}
     >
+      <AdminStudioSectionHeading>PROGRAM GUIDE</AdminStudioSectionHeading>
       <p
-        className="text-lg mb-4"
-        style={{
-          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#EB1C24',
-        }}
-      >
-        PROGRAM GUIDE
-      </p>
-      <p
-        className="text-[8px] font-futura uppercase mb-5"
-        style={{ fontWeight: 515, color: '#9A9A9A', lineHeight: 1.5 }}
+        className="text-[8px] font-futura uppercase mb-5 -mt-2"
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}
       >
         {shows.length} RECURRING SHOWS · TAP TO OPEN PRODUCTION DECK
       </p>

@@ -1,11 +1,13 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioEditableField } from '../../../../../components/admin/studio/AdminStudioEditableField';
+import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { useAdminStudioShow } from '../../../../../hooks/useAdminStudioEditableState';
 import {
   ADMIN_STUDIO_SHOW_FIELD_GROUPS,
   ADMIN_STUDIO_SHOW_FIELD_LABELS,
 } from '../../../../../utils/adminStudioShowsDemo';
+import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 
 export default function AdminStudioShowDetailPage() {
   const { showId } = useParams<{ showId: string }>();
@@ -37,19 +39,19 @@ export default function AdminStudioShowDetailPage() {
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(180deg, transparent 40%, ${show.accentHex}99 90%, #0a0a0a 100%)`,
+            background: `linear-gradient(180deg, transparent 40%, rgba(255,255,255,0.85) 85%, #FFFFFF 100%)`,
           }}
         />
         <div className="absolute bottom-0 left-0 right-0 p-3">
           <p
             className="text-[8px] font-futura uppercase mb-1"
-            style={{ fontWeight: 515, color: 'rgba(255,255,255,0.8)' }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
           >
             HOST · {show.host}
           </p>
           <p
             className="text-[7px] font-futura uppercase italic"
-            style={{ fontWeight: 515, color: '#FFFFFF', lineHeight: 1.45 }}
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary, lineHeight: 1.45 }}
           >
             &ldquo;{show.openingLine}&rdquo;
           </p>
@@ -81,12 +83,7 @@ export default function AdminStudioShowDetailPage() {
         ))}
       </div>
 
-      <p
-        className="mt-6 text-[7px] font-futura uppercase text-center"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
-      >
-        DEMO CONTENT · EDITS SAVED LOCALLY · NO PUBLISHING
-      </p>
+      <AdminStudioDisclaimerFooter />
     </AdminStudioStageShell>
   );
 }

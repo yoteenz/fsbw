@@ -1,4 +1,5 @@
 import type { AdminStudioPromptEntry } from '../../../utils/adminStudioPromptLibraryDemo';
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioPromptListItemProps = {
   prompt: AdminStudioPromptEntry;
@@ -17,29 +18,25 @@ export function AdminStudioPromptListItem({
 }: AdminStudioPromptListItemProps) {
   return (
     <div
-      className="flex items-stretch gap-0 transition-all"
+      className="flex items-stretch gap-0 transition-all border"
       style={{
-        background: isSelected ? 'rgba(235,28,36,0.1)' : 'rgba(255,255,255,0.03)',
-        border: isSelected ? '1px solid #EB1C2455' : '1px solid rgba(255,255,255,0.08)',
+        background: isSelected ? ADMIN_STUDIO_THEME.selectedBg : 'rgba(255,255,255,0.7)',
+        borderColor: isSelected ? `${ADMIN_STUDIO_THEME.accent}55` : ADMIN_STUDIO_THEME.panelBorder,
       }}
     >
-      <button
-        type="button"
-        onClick={onSelect}
-        className="flex-1 text-left p-2.5 min-w-0"
-      >
+      <button type="button" onClick={onSelect} className="flex-1 text-left p-2.5 min-w-0">
         <p
           className="text-[9px] truncate mb-0.5"
           style={{
             fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-            color: isSelected ? '#EB1C24' : '#FFFFFF',
+            color: isSelected ? ADMIN_STUDIO_THEME.accent : ADMIN_STUDIO_THEME.textPrimary,
           }}
         >
           {prompt.title}
         </p>
         <p
           className="text-[6px] font-futura uppercase truncate"
-          style={{ fontWeight: 515, color: '#9A9A9A' }}
+          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
         >
           {prompt.category}
         </p>
@@ -53,7 +50,7 @@ export function AdminStudioPromptListItem({
         className="flex-shrink-0 px-2 flex items-center"
         aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
       >
-        <span style={{ color: isFavorite ? '#EB1C24' : '#9A9A9A', fontSize: '12px' }}>
+        <span style={{ color: isFavorite ? ADMIN_STUDIO_THEME.accent : ADMIN_STUDIO_THEME.textSecondary, fontSize: '12px' }}>
           {isFavorite ? '★' : '☆'}
         </span>
       </button>

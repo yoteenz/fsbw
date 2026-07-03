@@ -1,5 +1,6 @@
 import type { AdminStudioQueueItem } from '../../../utils/adminStudioPublishingQueueDemo';
 import { ADMIN_STUDIO_STATUS_COLORS } from '../../../utils/adminStudioPublishingQueueDemo';
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioQueueCardProps = {
   item: AdminStudioQueueItem;
@@ -9,7 +10,6 @@ type AdminStudioQueueCardProps = {
   onStatusChange: (status: AdminStudioQueueItem['status']) => void;
 };
 
-/** Draggable publishing queue card — weekly calendar slot. */
 export function AdminStudioQueueCard({
   item,
   isDragging,
@@ -28,11 +28,10 @@ export function AdminStudioQueueCard({
         onDragStart();
       }}
       onDragEnd={onDragEnd}
-      className="p-2 mb-1.5 cursor-grab active:cursor-grabbing transition-opacity"
+      className="p-2 mb-1.5 cursor-grab active:cursor-grabbing transition-opacity bg-white border"
       style={{
         opacity: isDragging ? 0.45 : 1,
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        borderColor: ADMIN_STUDIO_THEME.panelBorder,
         borderLeft: `2px solid ${item.accentHex}`,
       }}
     >
@@ -40,14 +39,14 @@ export function AdminStudioQueueCard({
         className="text-[7px] leading-tight mb-1 truncate"
         style={{
           fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#FFFFFF',
+          color: ADMIN_STUDIO_THEME.textPrimary,
         }}
       >
         {item.title}
       </p>
       <p
         className="text-[6px] font-futura uppercase truncate mb-1"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
       >
         {item.showName} · {item.timeSlot}
       </p>
@@ -55,11 +54,11 @@ export function AdminStudioQueueCard({
         value={item.status}
         onChange={(e) => onStatusChange(e.target.value as AdminStudioQueueItem['status'])}
         onClick={(e) => e.stopPropagation()}
-        className="w-full bg-black/40 border-0 text-[6px] font-futura uppercase py-0.5 outline-none"
+        className="w-full bg-white border-0 text-[6px] font-futura uppercase py-0.5 outline-none"
         style={{ fontWeight: 515, color: statusColor }}
       >
         {(['DRAFT', 'SCHEDULED', 'PUBLISHED', 'NEEDS REVIEW', 'FAILED'] as const).map((s) => (
-          <option key={s} value={s} style={{ background: '#121212' }}>
+          <option key={s} value={s}>
             {s}
           </option>
         ))}

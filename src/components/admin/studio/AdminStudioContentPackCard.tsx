@@ -1,24 +1,21 @@
 import type { AdminStudioContentPack } from '../../../utils/adminStudioContentPacksDemo';
+import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioContentPackCardProps = {
   pack: AdminStudioContentPack;
   onClick: () => void;
 };
 
-/** Luxury content pack card — weekly multi-channel bundle. */
 export function AdminStudioContentPackCard({ pack, onClick }: AdminStudioContentPackCardProps) {
   const statusColor =
-    pack.status === 'PUBLISHED' ? '#4ADE80' : pack.status === 'IN REVIEW' ? '#FBBF24' : '#9A9A9A';
+    pack.status === 'PUBLISHED' ? '#16A34A' : pack.status === 'IN REVIEW' ? '#CA8A04' : ADMIN_STUDIO_THEME.textSecondary;
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group relative w-full text-left overflow-hidden transition-all duration-300 active:scale-[0.99]"
-      style={{
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.1)',
-      }}
+      className="group relative w-full text-left overflow-hidden transition-all duration-300 active:scale-[0.99] bg-white/80 border border-black/15 shadow-md"
+      style={{ borderWidth: '1.3px' }}
     >
       <div className="flex gap-0">
         <div
@@ -32,7 +29,7 @@ export function AdminStudioContentPackCard({ pack, onClick }: AdminStudioContent
           />
           <div
             className="absolute inset-0"
-            style={{ background: `linear-gradient(135deg, ${pack.accentHex}44, transparent 60%)` }}
+            style={{ background: `linear-gradient(135deg, ${pack.accentHex}22, transparent 60%)` }}
           />
         </div>
         <div className="flex-1 p-3 min-w-0 flex flex-col justify-between">
@@ -41,14 +38,14 @@ export function AdminStudioContentPackCard({ pack, onClick }: AdminStudioContent
               className="text-[10px] leading-tight mb-1 truncate"
               style={{
                 fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                color: '#FFFFFF',
+                color: ADMIN_STUDIO_THEME.textPrimary,
               }}
             >
               {pack.title}
             </p>
             <p
               className="text-[7px] font-futura uppercase line-clamp-2"
-              style={{ fontWeight: 515, color: '#9A9A9A', lineHeight: 1.45 }}
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}
             >
               {pack.subtitle}
             </p>
@@ -60,7 +57,7 @@ export function AdminStudioContentPackCard({ pack, onClick }: AdminStudioContent
                 fontWeight: 515,
                 color: statusColor,
                 border: `1px solid ${statusColor}55`,
-                background: `${statusColor}15`,
+                background: `${statusColor}12`,
               }}
             >
               {pack.status}

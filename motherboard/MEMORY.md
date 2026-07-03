@@ -34486,3 +34486,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Phase 2 integrations import from `src/services/studio/index.ts`; content packs carry `distributionTargets[]`; COMING SOON targets never toggle until activation flag in distribution service.
 
+---
+
+## 2026-07-03 — THE STUDIO light theme (frosted admin shell)
+
+**Context:** Continuation of THE STUDIO (all prior milestones frozen). User requested Studio pages switch from the dark cinematic black stage to a **light theme** matching existing admin UI (marble background + frosted `bg-white/60` cards).
+
+**Topics covered (full chat arc):**
+- Prior milestones: M1 hub, Shows, Content Packs, AI Studio, Prompt Library, Asset Library, Publishing Queue, Analytics, Phase 2 service stubs + distribution targets.
+- **Light theme migration:** Replaced dark `#0a0a0a` stage, scanlines, and glass-on-black styling across all built Studio sections with admin-consistent frosted panels (`bg-white/60 backdrop-blur-sm border-black 1.3px`).
+- **Shared tokens:** `src/utils/adminStudioTheme.ts` (`ADMIN_STUDIO_THEME`) — accent `#EB1C24`, black/gray text, light panel/input/chip backgrounds.
+- **Shell:** `AdminStudioStageShell` now uses marble + frosted inner card (same language as `AdminStudioPlaceholderShell` / hub StatsCard).
+- **Components migrated:** EditableField, SearchInput, FilterBar, TabBar, DisclaimerFooter, ChipSelect, SingleSelect, ShowCard, ContentPackCard, AssetCard, PromptListItem, QueueCard, MetricTile, RankedList, DistributionTargets, GenerationPipeline.
+- **Pages:** ai-studio, shows (+ detail), content-packs (+ detail), asset-library, prompt-library, publishing-queue, analytics — inline dark styles removed.
+
+**Decisions / outcomes:** Milestone 1 files unchanged (dashboard card, hub, placeholder shell, `adminStudioDemo.ts` hub cards). Dark cinematic stage retired for built sections; red accent + Futura/Covered By Your Grace typography preserved. Build verified (`npm run build`).
+
+**Changes:** `adminStudioTheme.ts`, `AdminStudioStageShell.tsx`, all `src/components/admin/studio/*` listed above, all built `src/pages/admin/studio/**/page.tsx` routes.
+
+**Conventions:** New Studio UI should import `ADMIN_STUDIO_THEME` and use light frosted panels — do not reintroduce dark stage backgrounds on built sections.
+
