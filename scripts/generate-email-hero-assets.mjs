@@ -52,7 +52,36 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-function resolveTemplates(allTypes, filterCsv) {
+function resolveTemplates(allTypes, filterCsv, category) {
+  if (category?.trim()) {
+    const cat = category.trim().toLowerCase();
+    const map = {
+      account: [
+        'welcome', 'email_verification', 'email_confirmed', 'password_reset', 'password_reset_success',
+        'password_changed', 'profile_updated', 'email_updated', 'account_login_alert', 'newsletter',
+      ],
+      orders: [
+        'order_received', 'order_confirmed', 'order_processing', 'order_shipped', 'order_out_for_delivery',
+        'order_delivered', 'order_delayed', 'order_canceled', 'payment_received', 'partially_shipped',
+      ],
+      rewards: [
+        'points_earned', 'points_redeemed', 'points_expiring', 'voucher_expiring', 'referral_redeemed',
+        'digital_cash_update', 'membership_welcome', 'tier_upgraded', 'birthday_reward', 'special_offer',
+      ],
+      affiliate: [
+        'affiliate_content_received', 'affiliate_content_pending', 'affiliate_content_approved',
+        'affiliate_content_denied', 'affiliate_points_earned', 'affiliate_payment_sent',
+      ],
+      shop: [
+        'back_in_stock', 'wishlist_price_drop', 'consult_offer_sent', 'meeting_reschedule', 'meeting_cancel',
+      ],
+    };
+    if (cat === 'all') {
+      return Object.values(map).flat().filter((t) => allTypes.includes(t));
+    }
+    const list = map[cat];
+    if (list) return list.filter((t) => allTypes.includes(t));
+  }
   if (!filterCsv?.trim()) return allTypes;
   const want = new Set(
     filterCsv
@@ -123,7 +152,7 @@ function writeManifest(ready) {
 async function main() {
   const prompts = await loadEmailHeroPrompts();
   const allTypes = Object.keys(prompts);
-  const types = resolveTemplates(allTypes, process.env.TEMPLATES);
+  const types = resolveTemplates(allTypes, process.env.TEMPLATES, process.env.CATEGORY);
 
   if (!existsSync(marbleRef)) {
     console.error('Missing marble reference:', marbleRef);

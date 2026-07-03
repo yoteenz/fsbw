@@ -33552,3 +33552,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Run after deploy:** `FAL_KEY=... SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run email:generate-heroes` then `npm run email:upload-assets`. Optional per-category reference crop: `REFERENCE_IMAGE=docs/email-refs/rewards-welcome.png TEMPLATES=welcome npm run email:generate-heroes`.
 
 **Changes:** **`layout.ts`**, **`heroImages.ts`**, **`heroManifest.ts`**, **`emailHeroPrompts.*`**, **`renderTemplate.ts`**, **`templateRegistry.ts`**, **`types.ts`**, **`scripts/generate-email-hero-assets.mjs`**, **`scripts/upload-email-assets.mjs`**, **`package.json`**, **`docs/EMAIL_SYSTEM.md`**, **`public/assets/email/heroes/manifest.json`**.
+
+---
+
+## 2026-07-03 — Resend SDK + /api/send-email alias (transactional email spec)
+
+**Context:** User requested Vercel serverless email via Resend: install package, **`/api/send-email`**, branded Frontal Slayer HTML templates, server-only **`sendEmail({ templateType, recipientEmail, subject, variables })`**, **`RESEND_API_KEY`** never on frontend.
+
+**Outcome:** System already shipped in prior chats (**`api/_lib/email/`**, 40+ templates, marble/`#EB1C24`/glass layout, wired triggers). This turn: installed **`resend`** npm package; refactored **`sendEmail.ts`** to use Resend SDK (not raw fetch); added **`api/send-email.ts`** alias re-exporting **`api/email/send`** handler. Docs/`.env.example` note both routes.
+
+**Usage:** Set **`RESEND_API_KEY`** (+ **`TRANSACTIONAL_FROM_EMAIL`**, **`SITE_URL`**) on Vercel. Send from server only via **`sendEmail(...)`** or **`POST /api/send-email`** (admin or **`EMAIL_SEND_SECRET`**). Preview: **`preview: true`**. Debug UI: **`/tools/email-templates`**.

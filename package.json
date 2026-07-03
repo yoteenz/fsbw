@@ -41,7 +41,9 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:install": "playwright install webkit chromium",
     "email:upload-assets": "node scripts/upload-email-assets.mjs",
-    "email:generate-heroes": "node scripts/generate-email-hero-assets.mjs"
+    "email:generate-heroes": "node scripts/generate-email-hero-assets.mjs",
+    "email:generate-heroes:batch": "node scripts/batch-email-heroes.mjs",
+    "email:generate-heroes:batch:production": "BATCH_MODE=production node scripts/batch-email-heroes.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",
