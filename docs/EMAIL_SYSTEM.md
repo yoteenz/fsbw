@@ -55,7 +55,7 @@ Use `{{variableName}}` in template copy where supported.
 
 ## HTTP API
 
-**POST `/api/email/send`** — admin session **or** `X-Email-Send-Secret`.
+**POST `/api/send-email`** or **POST `/api/email/send`** — admin session **or** `X-Email-Send-Secret`.
 
 ```json
 {

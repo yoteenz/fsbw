@@ -1,8 +1,16 @@
-const RESEND_API = 'https://api.resend.com/emails';
-
+import { Resend } from 'resend';
 import { renderEmailTemplate } from './renderTemplate.js';
 import type { SendEmailParams, SendEmailResult } from './types.js';
 import { assertTemplateType } from './renderTemplate.js';
+
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) return null;
+  if (!resendClient) resendClient = new Resend(apiKey);
+  return resendClient;
+}
 
 function isValidEmail(e: string): boolean {
   const s = e.trim().toLowerCase();
@@ -20,7 +28,7 @@ function resolveFromAddress(): string {
 
 /**
  * Server-side transactional email sender (Resend).
- * Never import this from frontend code — API keys stay on Vercel only.
+ * Never import this from frontend code — RESEND_API_KEY stays on Vercel only.
  */
 export async function sendEmail(params: SendEmailParams): Promise<SendEmailResult> {
   const templateType = assertTemplateType(params.templateType);
@@ -37,8 +45,8 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
     };
   }
 
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  if (!apiKey) {
+  const resend = getResendClient();
+  if (!resend) {
     return {
       sent: false,
       error: 'RESEND_API_KEY not configured',
@@ -54,42 +62,25 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
   );
 
   try {
-    const r = await fetch(RESEND_API, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: resolveFromAddress(),
-        to: [recipientEmail],
-        subject: subject.slice(0, 300),
-        html,
-        text,
-        tags: [{ name: 'template', value: templateType }],
-      }),
+    const { data, error } = await resend.emails.send({
+      from: resolveFromAddress(),
+      to: [recipientEmail],
+      subject: subject.slice(0, 300),
+      html,
+      text,
+      tags: [{ name: 'template', value: templateType }],
     });
 
-    if (!r.ok) {
-      let msg = await r.text();
-      try {
-        const j = JSON.parse(msg) as { message?: string };
-        if (typeof j?.message === 'string') msg = j.message;
-      } catch {
-        /* keep text */
-      }
-      return { sent: false, error: msg.slice(0, 500), templateType, recipientEmail };
+    if (error) {
+      return {
+        sent: false,
+        error: error.message?.slice(0, 500) || 'Send failed',
+        templateType,
+        recipientEmail,
+      };
     }
 
-    let id: string | undefined;
-    try {
-      const data = (await r.json()) as { id?: string };
-      id = data?.id;
-    } catch {
-      /* optional */
-    }
-
-    return { sent: true, id, templateType, recipientEmail };
+    return { sent: true, id: data?.id, templateType, recipientEmail };
   } catch (e) {
     return {
       sent: false,

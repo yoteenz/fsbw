@@ -33533,3 +33533,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`src/utils/transactionalEmail.ts`** — clearer JSON error parsing for preview failures.
 
 **Conventions:** Keep **`emailTemplateCatalog.ts`** in sync when adding templates to **`templateRegistry`**. Debug preview relies on unauthenticated **`preview: true`**; actual sends still require admin or **`EMAIL_SEND_SECRET`**.
+
+---
+
+## 2026-07-03 — Email templates luxury redesign + Fal hero generation pipeline
+
+**Context:** User shared reference design boards (Rewards, Affiliate, Account/Newsletter, Orders, Shop/Alerts) and asked why live templates look plain vs references. Requested Fal integration to match glass-cube 3D heroes, marble, roses, diamonds, script + red caps typography.
+
+**Root cause:** Initial email system used small inline SVG icons (~140px) in a minimal layout — not the photorealistic glassmorphism hero scenes from the design boards.
+
+**Decisions / outcomes:**
+- **Luxury layout rewrite** — **`api/_lib/email/layout.ts`**: larger script (Great Vibes) + red serif headline, 520px hero slot, frosted glass data cards, red accent footer bar, member perks row for welcome templates.
+- **Fal hero pipeline** — **`api/_lib/email/emailHeroPrompts.data.json`** + **`emailHeroPrompts.ts`**: 41 per-template prompts matching reference scenes; **`scripts/generate-email-hero-assets.mjs`** (`npm run email:generate-heroes`) uses **`fal-ai/nano-banana-pro/edit`** with marble ref (+ optional **`REFERENCE_IMAGE`** crop); outputs **`public/assets/email/heroes/{type}.webp`**, updates **`manifest.json`**, uploads to **`email-assets`** bucket.
+- **Hero manifest** — **`heroManifest.ts`**: uses Fal WebPs when template listed in manifest; rich HTML glass-cube fallback until generation. Env: **`EMAIL_HERO_FORCE_FAL`**, **`EMAIL_HERO_FORCE_HTML`**.
+- **`renderTemplate.ts`** passes **`templateType`** + **`showMemberPerks`**; welcome/membership copy aligned to reference (“Welcome to / The Slay Society”).
+- **`upload-email-assets.mjs`** uploads generated **`heroes/*.webp`**.
+
+**Run after deploy:** `FAL_KEY=... SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run email:generate-heroes` then `npm run email:upload-assets`. Optional per-category reference crop: `REFERENCE_IMAGE=docs/email-refs/rewards-welcome.png TEMPLATES=welcome npm run email:generate-heroes`.
+
+**Changes:** **`layout.ts`**, **`heroImages.ts`**, **`heroManifest.ts`**, **`emailHeroPrompts.*`**, **`renderTemplate.ts`**, **`templateRegistry.ts`**, **`types.ts`**, **`scripts/generate-email-hero-assets.mjs`**, **`scripts/upload-email-assets.mjs`**, **`package.json`**, **`docs/EMAIL_SYSTEM.md`**, **`public/assets/email/heroes/manifest.json`**.
