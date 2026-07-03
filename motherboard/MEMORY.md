@@ -34114,3 +34114,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **To finish:** Add those three vars to **Cursor Cloud environment settings** (see **`.env.wig-preview.example.txt`**), then run **`npm run bcf:videos:retry`** (long-running; ~31 Fal jobs). After success, commit **`public/assets/bcf/videos/manifest.json`** + **`bcfPdpHeroVideos.generated.ts`**.
 
 **Status at attempt:** Photos **108/108 ready**; videos **44/75 ready** in committed manifest (unchanged this turn).
+
+---
+
+## 2026-07-03 — Email hero full regen (Fal balance restored)
+
+**Context:** User topped up Fal credits and asked to rerun **`FORCE=1 npm run email:generate-heroes`** after prior **403 exhausted balance** failure.
+
+**Outcome:** Full batch completed — **41/41** hero WebPs regenerated with purpose-specific prompts, **marble + slayer-logo.png** Fal refs, uploaded to Supabase **`email-assets/heroes/`**. Five templates hit transient Fal **Forbidden** on first pass; all retried successfully.
+
+**Note:** First regen pass used **2:3** before remote **`9:16`** ratio landed; final push includes assets regenerated at **`EMAIL_HERO_ASPECT_RATIO = '9:16'`** to match layout.
+
+**Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`api/_lib/email/heroManifestReady.ts`**.
