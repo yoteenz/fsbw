@@ -23,6 +23,7 @@ import {
 import SlayTicketProductDetailsTab from '../../../components/shop/SlayTicketProductDetailsTab';
 import SlayTicketProductPolicyTab from '../../../components/shop/SlayTicketProductPolicyTab';
 import ProductReviewsComingSoonTab from '../../../components/shop/ProductReviewsComingSoonTab';
+import { PDP_TABS_WRAPPER_STYLE, UNIT_PDP_TAB_CONTENT_STYLE } from '../../../components/shop/unitPdpLayoutConstants';
 import SlayTicketPackPicker from '../../../components/shop/SlayTicketPackPicker';
 import ThumbBox from '../../../components/ThumbBox';
 import { SLAY_TICKET_PREVIEW_IMAGES } from '../../../constants/slayTicketAssets';
@@ -788,7 +789,7 @@ function SlayTicketsPage() {
             </div>
 
             {/* Tabs — spacing matches BCF texture-category PDP */}
-            <div className="mt-1.5 w-full" style={{ paddingTop: '4px' }}>
+            <div className="mt-1.5 w-full" style={PDP_TABS_WRAPPER_STYLE}>
               <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                 <button
                   type="button"
@@ -834,16 +835,7 @@ function SlayTicketsPage() {
                 </button>
               </div>
 
-              <div
-                className="mt-4 space-y-4"
-                style={{
-                  maxWidth: 'none',
-                  width: '100%',
-                  marginBottom: 0,
-                  paddingTop: '4px',
-                  paddingBottom: '12px',
-                }}
-              >
+              <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
                 {activeTab === 'DETAILS' && <SlayTicketProductDetailsTab />}
                 
                 {activeTab === 'POLICY' && <SlayTicketProductPolicyTab />}

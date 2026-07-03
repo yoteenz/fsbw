@@ -47,16 +47,26 @@ export const UNIT_PDP_TABS_SECTION_STYLE: CSSProperties = {
   marginTop: '13px',
   paddingTop: '4px',
   paddingBottom: '4px',
+  position: 'relative',
+  zIndex: 2,
+  isolation: 'isolate',
+  backgroundColor: 'rgba(255, 255, 255, 0.96)',
+};
+
+/** BCF / tools PDP tab row — same opaque layer as unit tabs (tighter top margin). */
+export const PDP_TABS_WRAPPER_STYLE: CSSProperties = {
+  position: 'relative',
+  zIndex: 2,
+  isolation: 'isolate',
+  backgroundColor: 'rgba(255, 255, 255, 0.96)',
+  paddingTop: '4px',
+  paddingBottom: '4px',
 };
 
 export const UNIT_PDP_TAB_CONTENT_STYLE: CSSProperties = {
   maxWidth: 'none',
   width: '100%',
   marginBottom: 0,
-  position: 'relative',
-  zIndex: 2,
-  isolation: 'isolate',
-  backgroundColor: 'rgba(255, 255, 255, 0.96)',
   paddingTop: '2px',
   paddingBottom: '6px',
 };

@@ -34164,3 +34164,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`ProductReviewsComingSoonTab.tsx`** only (shared across all 9 PDPs).
 
+---
+
+## 2026-07-03 — BCF tab panel bleed-through fix (hidden Bohemy text)
+
+**Context:** User reported stray gray text (looked like a cursive **“i”**) peeking through on BCF **CARE/STORAGE** tab above **hair & lace care**.
+
+**Cause:** Closure/frontal option block uses **`translateY(-106px)`**; Bohemy labels (**hair color**, etc.) overlap the tab body. Frosted card (**`bg-white/60`**) let underlying copy show through the tab panel.
+
+**Fix:**
+- **`UNIT_PDP_TAB_CONTENT_STYLE`** — opaque panel layer (**`rgba(255,255,255,0.96)`**, **`zIndex: 2`**, **`isolation: isolate`**) on all unit PDP tab bodies.
+- **BCF** — **`BCF_PDP_TAB_CONTENT_STYLE`** (same panel + **`marginBottom: -93px`**), options block **`zIndex: 0`**, tabs wrapper **`zIndex: 2`**.
+
+**Changes:** **`unitPdpLayoutConstants.ts`**, **`texture-category-product/page.tsx`**, **`noir/page.tsx`** (uses shared tab content style).
+

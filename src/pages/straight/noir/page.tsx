@@ -58,6 +58,7 @@ import {
   UNIT_PDP_CAP_CHART_ROW_STYLE,
   UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
   UNIT_PDP_TAB_CONTENT_STYLE,
+  UNIT_PDP_TABS_SECTION_STYLE,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
@@ -3188,7 +3189,7 @@ function NoirSelection() {
             </div>
 
               {/* Tabs Section */}
-              <div style={{ marginTop: '13px', paddingTop: '4px', paddingBottom: '4px' }}>
+              <div style={UNIT_PDP_TABS_SECTION_STYLE}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button
