@@ -1,10 +1,19 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T08:20:01.281Z",
+  "updatedAt": "2026-07-03T08:47:44.244Z",
   "promptVersion": "v1",
   "bucket": "live-preview",
   "storagePrefix": "BCF/videos/v1",
   "videos": {
+    "bundles-curly-ash": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-ash.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-ash",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "ASH"
+    },
     "bundles-curly-default": {
       "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__24695.mov",
       "webmStoragePath": null,

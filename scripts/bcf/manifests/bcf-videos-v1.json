@@ -17,11 +17,12 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-ash.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-ash.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain:\n- identical lighting\n- identical shadows\n- identical white background\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain:\n- identical lighting\n- identical shadows\n- identical white background\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
+      "generatedAt": "2026-07-03T08:47:37.096Z"
     },
     {
       "productKey": "bundles-curly-auburn",
@@ -1136,9 +1137,9 @@
   ],
   "summary": {
     "total": 75,
-    "ready": 9,
-    "missing": 66,
-    "readyLegacy": 9,
-    "readyMp4Only": 0
-  }
+    "ready": 10,
+    "missing": 65,
+    "failed": 0
+  },
+  "updatedAt": "2026-07-03T08:47:39.098Z"
 }

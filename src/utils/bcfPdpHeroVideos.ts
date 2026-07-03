@@ -2,7 +2,12 @@
  * BCF PDP hero video URLs — manifest-backed with legacy fallbacks.
  */
 
-import { BUNDLE_PHOTO_BY_TEXTURE, type BcfPdpCategory, type BcfPdpTexture } from './bcfPdpHeroAssets';
+import {
+  BUNDLE_PHOTO_BY_TEXTURE,
+  bcfPdpHeroHasColorSpecificPhoto,
+  type BcfPdpCategory,
+  type BcfPdpTexture,
+} from './bcfPdpHeroAssets';
 import { BCF_PDP_HERO_VIDEOS } from './bcfPdpHeroVideos.generated';
 
 export type BcfPdpHeroVideoSources = {
@@ -79,8 +84,9 @@ function legacyVideoForKey(productKey: string): BcfPdpHeroVideoSources | null {
 }
 
 /**
- * Resolve hero video for a BCF PDP row — prefers color-specific manifest entry,
- * then texture default, then legacy .mov map.
+ * Resolve hero video for a BCF PDP row — prefers color-specific manifest entry.
+ * Falls back to texture default only when the photo also uses the default hero image
+ * (e.g. OFF BLACK). Colors with their own PNG but no generated video return null.
  */
 export function bcfPdpHeroVideoSrc(
   category: BcfPdpCategory,
@@ -90,6 +96,10 @@ export function bcfPdpHeroVideoSrc(
   const colorKey = buildProductKey(category, texture, colorId);
   const colorHit = manifestEntry(colorKey);
   if (colorHit) return colorHit;
+
+  if (bcfPdpHeroHasColorSpecificPhoto(category, texture, colorId)) {
+    return null;
+  }
 
   const defaultKey = buildProductKey(category, texture, 'DEFAULT');
   const defaultHit = manifestEntry(defaultKey) ?? legacyVideoForKey(defaultKey);

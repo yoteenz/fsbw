@@ -33884,3 +33884,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **npm:** `bcf:videos:manifest`, `bcf:videos:generate`, `bcf:videos:sync`, `bcf:videos:batch`. Docs: **`docs/BCF_VIDEO_GENERATION.md`**.
 
 **Conventions:** Run **`npm run bcf:videos:batch`** with `FAL_KEY` + Supabase service role; commit synced manifest after batch. **66** color-variant products still need new MP4/WebM; **9** texture defaults currently `ready_legacy` until regenerated to `BCF/videos/v1/*.mp4`.
+
+---
+
+## 2026-07-03 — BCF color videos: wrong off-black fallback + batch generation fix
+
+**Context:** User reported every color in VIDEO mode showed the same off-black default clip and nothing new was being generated. Prior pipeline commit wired manifest lookup but fell back to texture-default legacy `.mov` when a color-specific MP4 was missing — so PLATINUM/CHERRY/etc. all played the off-black hero while PHOTO correctly showed per-color PNGs.
+
+**Storefront fix:**
+- **`bcfPdpHeroAssets.ts`** — exported **`bcfPdpHeroHasColorSpecificPhoto()`** (true when color has its own PNG map entry).
+- **`bcfPdpHeroVideos.ts`** — **`bcfPdpHeroVideoSrc()`** only falls back to texture-default video when photo also uses default hero (e.g. OFF BLACK). Colors with specific PNG but no manifest video return **`null`** (no wrong-color clip).
+- **`texture-category-product/page.tsx`** — auto-switch to PHOTO when no video for selected color; VIDEO toggle disabled (gray) until manifest has that color; click-to-VIDEO blocked when sources null.
+
+**Generation verified + started:**
+- **`LIMIT=1`** test succeeded: **`bundles-curly-ash`** → **`BCF/videos/v1/bundles-curly-ash.mp4`** via Fal Kling v3; synced to **`bcfPdpHeroVideos.generated.ts`**.
+- Full batch (**65 remaining** color rows) kicked off in background: **`SKIP_WEBM=1 npm run bcf:videos:generate`**. After completion run **`npm run bcf:videos:sync`** and commit updated manifest.
+
+**Conventions:** Photo and video resolution must stay aligned — default video only for default-photo colors. Do not show legacy `.mov` for colors that have color-specific PNGs until their **`BCF/videos/v1/{productKey}.mp4`** exists in manifest.

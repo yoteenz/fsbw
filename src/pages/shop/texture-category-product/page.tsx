@@ -413,6 +413,13 @@ export default function ShopTextureCategoryProductPage() {
     setBcfHeroVideoPrimarySrc(bcfPdpHeroVideoPrimarySrc(bcfHeroVideoSources));
   }, [category, texture, bcfColor, bcfHeroVideoSources, bundleShowVideo, bcfCfShowVideo]);
 
+  /** No color-specific video yet — stay on PHOTO instead of showing the wrong default clip. */
+  useEffect(() => {
+    if (!category || bcfHeroVideoSources) return;
+    if (category === 'bundles' && bundleShowVideo) setBundleShowVideo(false);
+    if ((category === 'closures' || category === 'frontals') && bcfCfShowVideo) setBcfCfShowVideo(false);
+  }, [category, texture, bcfColor, bcfHeroVideoSources, bundleShowVideo, bcfCfShowVideo]);
+
   // Warm cache for all three textures’ hero JPGs + videos so switching thumbs reuses network/disk cache.
   useEffect(() => {
     if (!category || (category !== 'bundles' && category !== 'closures' && category !== 'frontals')) return;
@@ -1132,18 +1139,30 @@ export default function ShopTextureCategoryProductPage() {
                               tabIndex={0}
                               onClick={() => {
                                 if (category === 'bundles') {
-                                  setBundleShowVideo((prev: boolean) => !prev);
+                                  setBundleShowVideo((prev: boolean) => {
+                                    if (prev) return false;
+                                    return Boolean(bcfHeroVideoSources);
+                                  });
                                 } else {
-                                  setBcfCfShowVideo((prev: boolean) => !prev);
+                                  setBcfCfShowVideo((prev: boolean) => {
+                                    if (prev) return false;
+                                    return Boolean(bcfHeroVideoSources);
+                                  });
                                 }
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                   e.preventDefault();
                                   if (category === 'bundles') {
-                                    setBundleShowVideo((prev: boolean) => !prev);
+                                    setBundleShowVideo((prev: boolean) => {
+                                      if (prev) return false;
+                                      return Boolean(bcfHeroVideoSources);
+                                    });
                                   } else {
-                                    setBcfCfShowVideo((prev: boolean) => !prev);
+                                    setBcfCfShowVideo((prev: boolean) => {
+                                      if (prev) return false;
+                                      return Boolean(bcfHeroVideoSources);
+                                    });
                                   }
                                 }
                               }}
@@ -1194,13 +1213,18 @@ export default function ShopTextureCategoryProductPage() {
                                   display: 'inline-block',
                                   width: '3.35em',
                                   textAlign: 'center',
-                                  color: bcfShowHeroVideo ? '#EB1C24' : '#000000',
+                                  color: bcfHeroVideoSources
+                                    ? bcfShowHeroVideo
+                                      ? '#EB1C24'
+                                      : '#000000'
+                                    : '#CCCCCC',
                                   fontFamily: bcfShowHeroVideo
                                     ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
                                     : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                   fontSize: '11px',
                                   fontWeight: bcfShowHeroVideo ? '500' : '400',
-                                  margin: '0'
+                                  margin: '0',
+                                  cursor: bcfHeroVideoSources ? 'pointer' : 'default'
                                 }}
                               >
                                 VIDEO

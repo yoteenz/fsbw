@@ -157,6 +157,22 @@ export const BCF_CF_PHOTO: Record<'closures' | 'frontals', Record<BcfPdpTexture,
   },
 };
 
+/** True when this color has its own PNG (not the texture default hero). */
+export function bcfPdpHeroHasColorSpecificPhoto(
+  category: BcfPdpCategory,
+  texture: BcfPdpTexture,
+  colorId: string,
+): boolean {
+  const colorKey = String(colorId || '').toUpperCase();
+  if (category === 'bundles') {
+    return Boolean(BUNDLE_COLOR_PHOTO_BY_TEXTURE[texture][colorKey]);
+  }
+  if (category === 'closures') {
+    return Boolean(CLOSURES_COLOR_PHOTO[texture][colorKey]);
+  }
+  return Boolean(FRONTALS_COLOR_PHOTO[texture][colorKey]);
+}
+
 export function bcfPdpHeroPhotoSrc(
   category: BcfPdpCategory,
   texture: BcfPdpTexture,
