@@ -7,14 +7,14 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
-import { isBuildAWigCustomizePath, pathnameIncludesBawProductSlug } from '../../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import { resolveBawTrySubpageConfirmReturnPath } from '../../../utils/bawTrySubpageRoutes';
 import {
   isBawCustomizeSubPage,
   isBawEditSubPage,
   markBawConfirmedReturnFromSubpage,
 } from '../../../utils/bawSubpageSelectionPersist';
-import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
+import { getBawSubpageStaticWigViews, isBawNoirLivePreviewStepPathname } from '../../../utils/bawSubpageWigViews';
 import {
   postLiveWigAfterColorStyling,
   postLiveWigAfterColorStylingRegenerateAngle,
@@ -336,79 +336,27 @@ export default function StylingSelectionPage() {
     }
   }, [selectedHairStyling, selectedPartSelection]);
 
-  // Get wig views based on selected hairline from localStorage
-  const getWigViews = () => {
-    const pathname = window.location.pathname;
-    if (pathnameIncludesBawProductSlug(pathname, 'blanco')) {
-      return [
-        '/assets/2D BLANCO LEFT.png',
-        '/assets/2D BLANCO FRONT.png',
-        '/assets/2D BLANCO RIGHT.png'
-      ];
+  const stylingWigHairline = (() => {
+    const p = location.pathname;
+    const isEdit = p.includes('/edit');
+    const isCust = isBuildAWigCustomizePath(p);
+    if (isEdit) {
+      return (
+        localStorage.getItem('editSelectedHairline') ||
+        localStorage.getItem('selectedHairline') ||
+        'NATURAL'
+      );
     }
-    if (
-      pathnameIncludesBawProductSlug(pathname, 'soft-wave') ||
-      pathnameIncludesBawProductSlug(pathname, 'beach-wave')
-    ) {
-      return [
-        '/assets/2D WAVY LEFT.png',
-        '/assets/2D WAVY FRONT.png',
-        '/assets/2D WAVY RIGHT.png'
-      ];
-    }
-    if (
-      pathnameIncludesBawProductSlug(pathname, 'soft-curl') ||
-      pathnameIncludesBawProductSlug(pathname, 'ocean-curl')
-    ) {
-      return [
-        '/assets/2D CURLY LEFT.png',
-        '/assets/2D CURLY FRONT.png',
-        '/assets/2D CURLY RIGHT.png'
-      ];
-    }
-    
-    const selectedHairline = (() => {
-      const p = pathname;
-      const isEdit = p.includes('/edit');
-      const isCust = isBuildAWigCustomizePath(p);
-      if (isEdit) {
-        return (
-          localStorage.getItem('editSelectedHairline') ||
-          localStorage.getItem('selectedHairline') ||
-          'NATURAL'
-        );
+    if (isCust) {
+      const onHairline = p.replace(/\/$/, '').endsWith('/hairline');
+      if (onHairline) {
+        return localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
       }
-      if (isCust) {
-        const onHairline = p.replace(/\/$/, '').endsWith('/hairline');
-        if (onHairline) {
-          return localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
-        }
-        return localStorage.getItem('selectedHairline') || localStorage.getItem('customizeSelectedHairline') || 'NATURAL';
-      }
-      return localStorage.getItem('selectedHairline') || 'NATURAL';
-    })();
-    const hasPeak = selectedHairline.includes('PEAK');
-    const hasLagos = selectedHairline.includes('LAGOS');
-    
-    if (hasPeak) {
-      return [
-        '/assets/peak left.png',
-        '/assets/peak front.png', 
-        '/assets/peak right.png'
-      ];
-    } else if (hasLagos) {
-      return [
-        '/assets/lagos left.png',
-        '/assets/lagos front.png',
-        '/assets/lagos right.png'
-      ];
-    } else {
-      // Default to natural images
-      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
+      return localStorage.getItem('selectedHairline') || localStorage.getItem('customizeSelectedHairline') || 'NATURAL';
     }
-  };
-
-  const baseWigViews = getWigViews();
+    return localStorage.getItem('selectedHairline') || 'NATURAL';
+  })();
+  const baseWigViews = getBawSubpageStaticWigViews(location.pathname, stylingWigHairline);
   const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
   const hasLayersLiveStyling =
     location.pathname.includes('/build-a-wig/noir/') &&
@@ -700,7 +648,7 @@ export default function StylingSelectionPage() {
         ? liveStylingWigViews
         : noirLiveFalEligible && hasBangsOnlyLive && liveBangsWigViews
           ? liveBangsWigViews
-          : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
+          : liveNoirCompositeWigViews && isBawNoirLivePreviewStepPathname(location.pathname)
             ? liveNoirCompositeWigViews
             : baseWigViews;
 

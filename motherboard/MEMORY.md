@@ -33295,3 +33295,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to update try-mode BUILD GUIDE body to **TRY THIS FEATURE FREE OF CHARGE AND EXPLORE OUR CUSTOMIZATION OPTIONS.**
 
 **Changes:** Same intro strings in **`bawModeGuideConfig.ts`** and **`bawTutorialConfig.ts`**.
+
+---
+
+## 2026-07-03 — BAW try sub-page unit-specific hero/thumbnails
+
+**Context:** User reported all units still showed NOIR hero + thumbnails on try-mode option sub-pages (Blanco, Soft Wave, etc.).
+
+**Root cause:** Sub-page **`getWigViews()`** helpers only matched **`/blanco/customize`** / **`/edit`** paths, not **`/build-a-wig/try/{unit}/…`**, so they fell through to NOIR static mannequins.
+
+**Fix:** Added **`bawSubpageWigViews.ts`** — **`resolveBawProductUnitLabelFromPathname`**, **`getBawSubpageStaticWigViews`**, **`isBawNoirLivePreviewStepPathname`** (try routes skip live NOIR Fal). All 9 option sub-pages now use shared util; live composite overlay only on NOIR customize/edit steps.

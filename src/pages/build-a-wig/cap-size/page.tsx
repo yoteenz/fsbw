@@ -13,7 +13,7 @@ import {
   persistBawScalarConfirmed,
   persistBawScalarDraftTap,
 } from '../../../utils/bawSubpageSelectionPersist';
-import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
+import { getBawSubpageStaticWigViews, isBawNoirLivePreviewStepPathname } from '../../../utils/bawSubpageWigViews';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -167,55 +167,15 @@ function CapSizeSelection() {
     };
   }, [selectedCapSize]); // Add selectedCapSize to dependencies to ensure updates
 
-  // Get wig views based on selected hairline from localStorage
-  const getWigViews = () => {
-    const pathname = window.location.pathname;
-    // Check if we're in product-specific customize modes
-    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
-      return [
-        '/assets/2D BLANCO LEFT.png',
-        '/assets/2D BLANCO FRONT.png',
-        '/assets/2D BLANCO RIGHT.png'
-      ];
-    }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
-        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
-      return [
-        '/assets/2D WAVY LEFT.png',
-        '/assets/2D WAVY FRONT.png',
-        '/assets/2D WAVY RIGHT.png'
-      ];
-    }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
-        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
-      return [
-        '/assets/2D CURLY LEFT.png',
-        '/assets/2D CURLY FRONT.png',
-        '/assets/2D CURLY RIGHT.png'
-      ];
-    }
-    
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
-    const hasPeak = selectedHairline.includes('PEAK');
-    const hasLagos = selectedHairline.includes('LAGOS');
-    
-    if (hasPeak) {
-      return [
-        '/assets/peak left.png',
-        '/assets/peak front.png', 
-        '/assets/peak right.png'
-      ];
-    } else if (hasLagos) {
-      return [
-        '/assets/lagos left.png',
-        '/assets/lagos front.png',
-        '/assets/lagos right.png'
-      ];
-    } else {
-      // Default to natural images
-      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
-    }
-  };
+  const baseWigViews = getBawSubpageStaticWigViews(
+    location.pathname,
+    localStorage.getItem('selectedHairline') || 'NATURAL',
+  );
+  const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
+  const wigViews =
+    liveNoirCompositeWigViews && isBawNoirLivePreviewStepPathname(location.pathname)
+      ? liveNoirCompositeWigViews
+      : baseWigViews;
 
   // Update active tab based on current route
   useEffect(() => {
@@ -270,13 +230,6 @@ function CapSizeSelection() {
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };
-
-  const baseWigViews = getWigViews();
-  const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
-  const wigViews =
-    liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
-      ? liveNoirCompositeWigViews
-      : baseWigViews;
 
   // Cap size options - UPDATED to match reference exactly
   const capSizeOptions: CapSizeOption[] = [

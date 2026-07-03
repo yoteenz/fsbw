@@ -8,7 +8,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { isBuildAWigCustomizePath, pathnameIncludesBawProductSlug } from '../../../utils/buildAWigRoutes';
-import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
+import { getBawSubpageStaticWigViews, isBawNoirLivePreviewStepPathname } from '../../../utils/bawSubpageWigViews';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
@@ -490,55 +490,10 @@ function ColorSelection() {
     }
   }, [location.pathname]);
 
-  // Get wig views based on selected hairline from localStorage
-  const getWigViews = () => {
-    const pathname = window.location.pathname;
-    // Check if we're in product-specific customize or edit modes
-    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
-      return [
-        '/assets/2D BLANCO LEFT.png',
-        '/assets/2D BLANCO FRONT.png',
-        '/assets/2D BLANCO RIGHT.png'
-      ];
-    }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
-        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
-      return [
-        '/assets/2D WAVY LEFT.png',
-        '/assets/2D WAVY FRONT.png',
-        '/assets/2D WAVY RIGHT.png'
-      ];
-    }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
-        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
-      return [
-        '/assets/2D CURLY LEFT.png',
-        '/assets/2D CURLY FRONT.png',
-        '/assets/2D CURLY RIGHT.png'
-      ];
-    }
-    
-    const selectedHairline = readHairlineCsvForWigPreviewPath(pathname);
-    const hasPeak = selectedHairline.includes('PEAK');
-    const hasLagos = selectedHairline.includes('LAGOS');
-    
-    if (hasPeak) {
-      return [
-        '/assets/peak left.png',
-        '/assets/peak front.png', 
-        '/assets/peak right.png'
-      ];
-    } else if (hasLagos) {
-      return [
-        '/assets/lagos left.png',
-        '/assets/lagos front.png',
-        '/assets/lagos right.png'
-      ];
-    } else {
-      // Default to natural images
-      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
-    }
-  };
+  const baseWigViews = getBawSubpageStaticWigViews(
+    location.pathname,
+    readHairlineCsvForWigPreviewPath(location.pathname),
+  );
 
   // Update active tab based on current route
   useEffect(() => {
@@ -594,7 +549,6 @@ function ColorSelection() {
     setShowMobileMenu(false);
   };
 
-  const baseWigViews = getWigViews();
   const liveNoirCompositeCommittedViews = useBawSubpageLiveNoirCompositeWigViews();
 
   useEffect(() => {
@@ -610,7 +564,7 @@ function ColorSelection() {
   }, [liveWigViews]);
 
   const noirColorSubPath =
-    location.pathname.includes('/build-a-wig/noir/') &&
+    isBawNoirLivePreviewStepPathname(location.pathname) &&
     (location.pathname.includes('/edit/color') || location.pathname.includes('/customize/color'));
 
   /** OFF BLACK uses the same live `wig-preview-live` WebPs as other colors (fallback to static naturals until generated). */

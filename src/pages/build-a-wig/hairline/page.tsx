@@ -11,7 +11,7 @@ import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalToo
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
-import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../../utils/bawStaticMannequinReferencePaths';
+import { getBawSubpageStaticWigViews, isBawNoirLivePreviewStepPathname } from '../../../utils/bawSubpageWigViews';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
@@ -151,61 +151,13 @@ function HairlineSelection() {
     setShowMobileMenu(false);
   };
 
-  // Dynamic hair views based on selected hairline
-  const getWigViews = () => {
-    const pathname = window.location.pathname;
-    // Check if we're in product-specific customize modes
-    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
-      return [
-        '/assets/2D BLANCO LEFT.png',
-        '/assets/2D BLANCO FRONT.png',
-        '/assets/2D BLANCO RIGHT.png'
-      ];
-    }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
-        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
-      return [
-        '/assets/2D WAVY LEFT.png',
-        '/assets/2D WAVY FRONT.png',
-        '/assets/2D WAVY RIGHT.png'
-      ];
-    }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
-        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
-      return [
-        '/assets/2D CURLY LEFT.png',
-        '/assets/2D CURLY FRONT.png',
-        '/assets/2D CURLY RIGHT.png'
-      ];
-    }
-    
-    const hasPeak = selectedHairline.includes('PEAK');
-    const hasLagos = selectedHairline.includes('LAGOS');
-    
-    if (hasPeak) {
-      // Peak hairline images
-      return [
-        '/assets/peak left.png', // Left thumbnail
-        '/assets/peak front.png', // Middle thumbnail (hero)
-        '/assets/peak right.png'  // Right thumbnail
-      ];
-    } else if (hasLagos) {
-      // Lagos hairline images
-      return [
-        '/assets/lagos left.png', // Left thumbnail
-        '/assets/lagos front.png', // Middle thumbnail (hero)
-        '/assets/lagos right.png'  // Right thumbnail
-      ];
-    } else {
-      // Natural hairline images (default) - using local PNG files for consistent aspect ratio
-      return [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
-    }
-  };
-
-  const baseWigViews = getWigViews();
+  const baseWigViews = getBawSubpageStaticWigViews(
+    location.pathname,
+    selectedHairline.length > 0 ? selectedHairline.join(',') : 'NATURAL',
+  );
   const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
   const wigViews =
-    liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
+    liveNoirCompositeWigViews && isBawNoirLivePreviewStepPathname(location.pathname)
       ? liveNoirCompositeWigViews
       : baseWigViews;
 
