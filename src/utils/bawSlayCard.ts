@@ -181,6 +181,29 @@ function fontFromStyle(style: BawSlayCardTextStyle): string {
   return `${style.fontWeight} ${style.fontSize}px ${style.fontFamily}`;
 }
 
+function resolveBawSlayCardSpecPanel(
+  layout: BawSlayCardLayout,
+  lineCount: number
+): { specsStartY: number; lineHeight: number } {
+  const { textPanel } = layout;
+  const footerPad = 18;
+  const unitGap = 14;
+  const maxBottom = textPanel.footer.y - footerPad;
+  const minStart = textPanel.unit.y + unitGap;
+  const available = Math.max(96, maxBottom - minStart);
+  const count = Math.max(1, lineCount);
+  let lineHeight = textPanel.lineHeight;
+  if (lineHeight * count > available) {
+    lineHeight = Math.max(22, Math.floor(available / count));
+  }
+  const blockHeight = lineHeight * count;
+  let specsStartY = textPanel.specsStartY;
+  if (specsStartY + blockHeight > maxBottom) {
+    specsStartY = Math.max(minStart + lineHeight * 0.5, maxBottom - blockHeight);
+  }
+  return { specsStartY, lineHeight };
+}
+
 function drawMannequinInRect(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -288,10 +311,11 @@ export async function paintBawSlayCard(
 
   ctx.fillStyle = textPanel.specsColor;
   ctx.font = `${textPanel.specsFontWeight} ${textPanel.specsFontSize}px ${textPanel.specsFontFamily}`;
-  let y = textPanel.specsStartY;
+  const { specsStartY, lineHeight } = resolveBawSlayCardSpecPanel(resolvedLayout, specLines.length);
+  let y = specsStartY;
   for (const line of specLines) {
     ctx.fillText(line.toUpperCase(), textPanel.unit.x, y);
-    y += textPanel.lineHeight;
+    y += lineHeight;
   }
 
   ctx.fillStyle = textPanel.footer.color;

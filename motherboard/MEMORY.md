@@ -33633,3 +33633,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to render **PERSONAL BUILD-A-WIG SLAY CARD** as lowercase **Bohemy** instead of uppercase Futura.
 
 **Changes:** **`BAW_SLAY_CARD_SUBTITLE_LABEL`** = **`personal build-a-wig slay card`**; default subtitle **`fontFamily`** **Bohemy** **`fontWeight` 400**; **`normalizeBawSlayCardLayout`** locks subtitle font; debug subtitle fields **lockFont**.
+
+---
+
+## 2026-07-03 — Slay card selections + debug layout persistence fix
+
+**Context:** User repeated that lace, texture, hairline, add-on selections and saved slay-card debug layout were not appearing on the generated **SAVE SLAY CARD** PNG.
+
+**Root causes:**
+1. **Try-hub sync overwrote localStorage** — hub **`customization`** state initialized lace/texture/hairline/add-ons to hardcoded defaults on product main routes; the sync-to-storage effect then wrote those defaults back to **`selected*`** keys, clobbering sub-page saves before **SAVE SLAY CARD** read them.
+2. **Try-hub route effect reset** — visiting try hub without **`comingFromSubPage`** cleared all **`selected*`** keys (including lace/texture/hairline/add-ons).
+3. **Layout load fragility** — saved debug JSON with string numbers or partial nested objects could fail to apply positions; loader now coerces and always merges with defaults.
+4. **Spec line overflow** — extra spec lines (lace/texture/hairline/add-ons) could render below the footer; paint now auto-fits line height and start Y within the footer band.
+
+**Fixes:**
+- **`build-a-wig/page.tsx`:** product-hub initial state reads lace/texture/hairline/add-ons from localStorage; sync effect skips **`isBawTryHubLandingPath`**; route effect no longer clears localStorage on try-hub landing.
+- **`bawSlayCardLayout.ts`:** **`coerceBawSlayCardLayoutPatch`** + **`loadBawSlayCardLayoutDebug`** always **`mergeBawSlayCardLayout`** after coercion.
+- **`bawSlayCard.ts`:** **`resolveBawSlayCardSpecPanel`** keeps all spec lines visible above the footer.

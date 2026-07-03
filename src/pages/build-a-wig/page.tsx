@@ -185,17 +185,31 @@ export default function BuildAWigPage() {
         } else if (isBeachWaveRoute || isSoftWaveRoute) {
           defaultTexture = 'WAVY';
         }
+
+        const readScalar = (key: string, fallback: string) => localStorage.getItem(key) || fallback;
+        let addOns: string[] = [];
+        try {
+          const rawAddOns = localStorage.getItem('selectedAddOns');
+          if (rawAddOns) {
+            const parsed = JSON.parse(rawAddOns) as unknown;
+            if (Array.isArray(parsed)) {
+              addOns = parsed.filter((item): item is string => typeof item === 'string' && item.trim() !== '');
+            }
+          }
+        } catch {
+          /* ignore */
+        }
         
         return {
-          capSize: savedCapSize || 'M',
-          length: '24"',
-          density: isBlancoRoute ? '250%' : '200%',
-          lace: '13X6',
-          texture: defaultTexture,
-          color: isBlancoRoute ? 'PLATINUM' : 'OFF BLACK',
-          hairline: 'NATURAL',
-          styling: 'NONE',
-          addOns: [],
+          capSize: readScalar('selectedCapSize', 'M'),
+          length: readScalar('selectedLength', '24"'),
+          density: readScalar('selectedDensity', isBlancoRoute ? '250%' : '200%'),
+          lace: readScalar('selectedLace', '13X6'),
+          texture: readScalar('selectedTexture', defaultTexture),
+          color: readScalar('selectedColor', isBlancoRoute ? 'PLATINUM' : 'OFF BLACK'),
+          hairline: readScalar('selectedHairline', 'NATURAL'),
+          styling: readScalar('selectedStyling', 'NONE'),
+          addOns,
         };
       }
     }
@@ -1950,7 +1964,8 @@ export default function BuildAWigPage() {
       
       // If NOT coming from sub-page AND not in edit mode, clear localStorage and set defaults
       // CRITICAL: Only clear if truly NOT coming from sub-page (comingFromSubPage must be explicitly false/undefined)
-      if (!comingFromSubPage && !isEditMode) {
+      // Try-hub keeps sub-page selections in localStorage for SAVE SLAY CARD even without comingFromSubPage.
+      if (!comingFromSubPage && !isEditMode && !isBawTryHubLandingPath(rawPathname)) {
         // Clear localStorage to ensure defaults
         localStorage.removeItem('selectedCapSize');
         localStorage.removeItem('selectedLength');
@@ -2430,6 +2445,11 @@ export default function BuildAWigPage() {
       console.log('[SYNC TO STORAGE] Skipping sync - comingFromSubPage is true, route change effect will handle it');
       return;
     }
+
+    // Try-hub selections are written by sub-pages directly to localStorage; do not overwrite with hub state.
+    if (isBawTryHubLandingPath(rawPathname)) {
+      return;
+    }
     
     console.log('[SYNC TO STORAGE] Running sync to localStorage', { isEditMode, isCustomizeMode });
     
@@ -2532,7 +2552,7 @@ export default function BuildAWigPage() {
     localStorage.setItem('selectedHairline', customization.hairline);
     localStorage.setItem('selectedStyling', validStyling);
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
-  }, [customization, bawPathname]);
+  }, [customization, bawPathname, rawPathname]);
   
   // CRITICAL: In edit mode, sync customization state FROM localStorage when customStorageChange events fire
   // This ensures thumbnails update when returning from sub-pages

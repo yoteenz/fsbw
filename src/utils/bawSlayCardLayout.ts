@@ -123,15 +123,74 @@ function isValidImageLayout(value: unknown): value is BawSlayCardImageLayout {
   );
 }
 
-function isCompleteBawSlayCardLayout(value: unknown): value is BawSlayCardLayout {
-  if (!isObject(value)) return false;
-  return (
-    typeof value.canvasWidth === 'number' &&
-    typeof value.canvasHeight === 'number' &&
-    isObject(value.mannequin) &&
-    isObject(value.header) &&
-    isObject(value.textPanel)
-  );
+function coerceNumber(value: unknown, fallback: number): number {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return fallback;
+}
+
+function coerceTextStyle(value: unknown, fallback: BawSlayCardTextStyle): BawSlayCardTextStyle {
+  if (!isObject(value)) return fallback;
+  const fontWeight =
+    typeof value.fontWeight === 'string' || typeof value.fontWeight === 'number'
+      ? value.fontWeight
+      : fallback.fontWeight;
+  return {
+    x: coerceNumber(value.x, fallback.x),
+    y: coerceNumber(value.y, fallback.y),
+    color: typeof value.color === 'string' ? value.color : fallback.color,
+    fontSize: coerceNumber(value.fontSize, fallback.fontSize),
+    fontFamily: typeof value.fontFamily === 'string' ? value.fontFamily : fallback.fontFamily,
+    fontWeight,
+  };
+}
+
+function coerceImageLayout(value: unknown, fallback: BawSlayCardImageLayout): BawSlayCardImageLayout {
+  if (!isObject(value)) return fallback;
+  return {
+    x: coerceNumber(value.x, fallback.x),
+    y: coerceNumber(value.y, fallback.y),
+    width: coerceNumber(value.width, fallback.width),
+    height: coerceNumber(value.height, fallback.height),
+  };
+}
+
+/** Coerce saved debug JSON (string numbers, partial objects) before merging with defaults. */
+export function coerceBawSlayCardLayoutPatch(patch: Partial<BawSlayCardLayout>): Partial<BawSlayCardLayout> {
+  const defaults = DEFAULT_BAW_SLAY_CARD_LAYOUT;
+  const header: Record<string, unknown> = isObject(patch.header) ? patch.header : {};
+  const textPanel: Record<string, unknown> = isObject(patch.textPanel) ? patch.textPanel : {};
+  const specsFontWeight =
+    typeof textPanel.specsFontWeight === 'string' || typeof textPanel.specsFontWeight === 'number'
+      ? textPanel.specsFontWeight
+      : defaults.textPanel.specsFontWeight;
+
+  return {
+    canvasWidth: coerceNumber(patch.canvasWidth, defaults.canvasWidth),
+    canvasHeight: coerceNumber(patch.canvasHeight, defaults.canvasHeight),
+    mannequin: coerceImageLayout(patch.mannequin, defaults.mannequin),
+    header: {
+      frontal: coerceTextStyle(header.frontal, defaults.header.frontal),
+      slayerLogo: coerceImageLayout(header.slayerLogo, defaults.header.slayerLogo),
+      subtitle: coerceTextStyle(header.subtitle, defaults.header.subtitle),
+    },
+    textPanel: {
+      unit: coerceTextStyle(textPanel.unit, defaults.textPanel.unit),
+      specsStartY: coerceNumber(textPanel.specsStartY, defaults.textPanel.specsStartY),
+      lineHeight: coerceNumber(textPanel.lineHeight, defaults.textPanel.lineHeight),
+      specsColor: typeof textPanel.specsColor === 'string' ? textPanel.specsColor : defaults.textPanel.specsColor,
+      specsFontSize: coerceNumber(textPanel.specsFontSize, defaults.textPanel.specsFontSize),
+      specsFontFamily:
+        typeof textPanel.specsFontFamily === 'string'
+          ? textPanel.specsFontFamily
+          : defaults.textPanel.specsFontFamily,
+      specsFontWeight,
+      footer: coerceTextStyle(textPanel.footer, defaults.textPanel.footer),
+    },
+  };
 }
 
 /** Saved debug layout cannot override FRONTAL/subtitle fonts or drop the slayer logo. */
@@ -202,10 +261,7 @@ export function mergeBawSlayCardLayout(patch?: Partial<BawSlayCardLayout> | null
 export function loadBawSlayCardLayoutDebug(): BawSlayCardLayout {
   const patch = readRawBawSlayCardLayoutPatch();
   if (!patch) return DEFAULT_BAW_SLAY_CARD_LAYOUT;
-  if (isCompleteBawSlayCardLayout(patch)) {
-    return normalizeBawSlayCardLayout(patch);
-  }
-  return mergeBawSlayCardLayout(patch);
+  return mergeBawSlayCardLayout(coerceBawSlayCardLayoutPatch(patch));
 }
 
 /** Layout used by try-hub SAVE SLAY CARD — saved debug layout or defaults. */
