@@ -337,6 +337,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         console.error('[api/profile] audit log skipped:', auditErr);
       }
 
+      if (!existing) {
+        try {
+          const { sendEmailAsync } = await import('./_lib/email/sendEmail.js');
+          const first = String(merged.firstName || merged.first_name || '').trim();
+          const last = String(merged.lastName || merged.last_name || '').trim();
+          sendEmailAsync({
+            templateType: 'welcome',
+            recipientEmail: user.email,
+            variables: {
+              customerName: [first, last].filter(Boolean).join(' ') || 'SLAYER',
+            },
+          });
+        } catch (welcomeErr) {
+          console.error('[api/profile] welcome email skipped:', welcomeErr);
+        }
+      }
+
       let out: Record<string, unknown>;
       try {
         out = fromProfileRow(data as Record<string, unknown>);

@@ -4,6 +4,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import { writeAuditLog } from '../_lib/auditLog.js';
+import { triggerTransactionalEmailForUser } from '../_lib/email/triggers.js';
 import { randomInt } from 'node:crypto';
 
 function initialsCode(firstName: string, lastName: string): string {
@@ -136,6 +137,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       resourceType: 'consult_quotes',
       resourceId: quoteId,
       details: { clientEmail, discountCode },
+    });
+
+    void triggerTransactionalEmailForUser(supabase, userId, 'consult_offer_sent', {
+      orderNumber: orderNumForMsg ? `ORDER #${orderNumForMsg}` : 'YOUR CONSULT ORDER',
+      ctaUrl: ordersHref,
     });
 
     return res.status(201).json({

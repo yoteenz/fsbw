@@ -6,6 +6,8 @@ import {
   PRODUCT_INVENTORY_UPDATED_EVENT,
 } from './productInventoryAvailability';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
+import { canAccessAdminPages } from './adminAuth';
+import { notifyBackInStockEmails, notifySelfBackInStock } from './transactionalEmail';
 
 export const UNIT_STOCK_NOTIFY_WAITLIST_KEY = 'unitStockNotifyWaitlist_v1';
 export const UNIT_STOCK_NOTIFY_UPDATED_EVENT = 'unitStockNotifyUpdated';
@@ -225,6 +227,7 @@ export function processUnitStockNotifyWaitlistOnInventoryUpdate(): void {
   if (list.length === 0) return;
 
   const stillWaiting: UnitStockNotifyWaitlistEntry[] = [];
+  const emailBatch: Array<{ email: string; productName: string }> = [];
   for (const entry of list) {
     const unit = normalizeUnitName(entry.productName);
     if (isProductSoldOutForStockNotify(unit)) {
@@ -233,6 +236,20 @@ export function processUnitStockNotifyWaitlistOnInventoryUpdate(): void {
     }
     if (accountExistsForEmail(entry.email) || getSignedInUserEmail() === entry.email) {
       appendBackInStockAlert(entry.email, unit);
+      emailBatch.push({ email: entry.email, productName: unit });
+    }
+  }
+
+  if (emailBatch.length > 0) {
+    if (canAccessAdminPages()) {
+      void notifyBackInStockEmails(emailBatch);
+    } else {
+      const signedIn = getSignedInUserEmail();
+      for (const row of emailBatch) {
+        if (row.email === signedIn) {
+          void notifySelfBackInStock(row.productName);
+        }
+      }
     }
   }
 

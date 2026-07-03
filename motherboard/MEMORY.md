@@ -33477,22 +33477,10 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-<<<<<<< HEAD
-## 2026-07-03 — Custom transactional email system (Frontal Slayer branded templates)
-
-**Context:** User requested a custom automated email system for the React/Vite + Supabase + Vercel app without Mailchimp — server-side Vercel API routes, reusable HTML templates matching Frontal Slayer luxury brand (marble, `#EB1C24`, glass panels, roses/diamonds, uppercase UI), dynamic variables, Supabase Storage assets, and a server-only **`sendEmail({ templateType, recipientEmail, subject, variables })`** function.
-
-**Decisions / outcomes:**
-- **`api/_lib/email/`** — types, **`brandAssets`** (Supabase **`email-assets`** bucket + SITE_URL fallback), table-based **`layout`**, inline SVG **`heroIcons`**, **`templateRegistry`** with **40+** template types (welcome, full order lifecycle, rewards, affiliate, account security, shop alerts, newsletter wrapper), **`renderTemplate`**, **`sendEmail`** / **`sendEmailAsync`** via **Resend** (reuses **`RESEND_API_KEY`**; optional **`TRANSACTIONAL_FROM_EMAIL`**).
-- **`POST /api/email/send`** — admin session or **`X-Email-Send-Secret`**; supports **`preview: true`**; never exposes API keys to frontend.
-- **`scripts/upload-email-assets.mjs`** + migration **`20260703120000_email_assets_bucket.sql`** — marble, rose, diamond, FS monogram in public Storage.
-- **Wired triggers:** Stripe product order → **`order_confirmed`** + **`payment_received`**; subscription checkout → **`membership_welcome`**; affiliate client submit → **`affiliate_content_pending`**; admin pending approve/decline → **`affiliate_content_approved`** / **`affiliate_content_denied`**; admin password reset → branded **`password_reset`** via Supabase **`generateLink`**; meeting client alert → **`meeting_reschedule`** / **`meeting_cancel`**.
-- **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`motherboard/CORE.md`** marketing bullet updated.
-
-**Changes:** New **`api/_lib/email/*`**, **`api/email/send.ts`**, **`scripts/upload-email-assets.mjs`**, **`supabase/migrations/20260703120000_email_assets_bucket.sql`**, **`docs/EMAIL_SYSTEM.md`**; wired **`recordProductOrderFromPaymentIntent.ts`**, **`client/submissions.ts`**, **`admin/pending-queue.ts`**, **`admin/users.ts`**, **`admin/meeting-client-alert.ts`**, **`stripe/webhook.ts`**; **`package.json`** script **`email:upload-assets`**; **`.env.example`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`** (this entry).
-
 **Conventions:** Import **`sendEmail`** / **`triggerTransactionalEmailForUser`** only from server **`api/`** code. Add new lifecycle emails by extending **`templateRegistry`** and calling triggers from the relevant API route (order shipped, points earned, voucher expiring cron, etc.). Upload Storage assets after deploy: **`npm run email:upload-assets`**.
-=======
+
+---
+
 ## 2026-07-03 — BAW slay card spec line format + brand red
 
 **Context:** User asked brand red hex; slay card detail text should be **value-first** (e.g. **`24" LENGTH`**, **`250% DENSITY`**, **`PLATINUM COLOR`**, **`MEDIUM CAP SIZE`**); omit **NONE** styling; when styling is set show **`LAYERS STYLING`** pattern.
@@ -33500,4 +33488,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Decisions:** Brand red remains **`#EB1C24`** (**`motherboard/CORE.md`**).
 
 **Changes:** **`bawSlayCard.ts`** — **`buildBawSlayCardSpecLines`**: value-before-label lines; cap size **M → MEDIUM CAP SIZE** (XS/S/L mapped; flexible caps keep token); styling line only when not **NONE**. **`paintBawSlayCard`** uses helper. Debug page max spec guide lines constant renamed **`MAX_SPEC_LINE_COUNT`** (5).
->>>>>>> 473667c5 (Slay card spec lines value-first; omit NONE styling)
+
+---
+
+## 2026-07-03 — Wire batch email triggers + admin debug template preview page
+
+**Context:** User asked to wire the remaining transactional email templates (order status, rewards, etc.) and create a debug page showing all template designs in a tabbed, organized format by function/type.
+
+**Decisions / outcomes:**
+- **Order lifecycle:** **`POST /api/admin/transactional-notify`** — admin sends by `templateType` or `orderStatus`; Admin → Revenue tracking save calls **`notifyOrderLifecycleEmail`** (`order_shipped` when tracking added, status-based otherwise).
+- **Rewards:** **`POST /api/admin/rewards-notify`** for points/voucher/referral/digital cash/tier events; Stripe order webhook path now also sends **`points_earned`**; daily **`GET /api/cron/expiring-rewards-emails`** (Vercel cron 14:00 UTC) scans profiles for **`voucher_expiring`**.
+- **Shop/alerts:** **`consult_offer_sent`** on admin consult quote; **`welcome`** on first profile PATCH; **`back_in_stock`** via **`POST /api/inventory/back-in-stock-notify`** (admin batch) and **`POST /api/client/back-in-stock-notify`** (signed-in self); waitlist restock in **`unitStockNotify.ts`** triggers emails when admin is signed in or user matches waitlist email.
+- **Debug UI:** **`/tools/email-templates`** — admin-only tabbed preview (Account / Orders / Rewards / Affiliate / Shop); **`GET /api/email/templates`** catalog + iframe preview via **`POST /api/email/send`** with **`preview: true`**. Client helpers in **`src/utils/transactionalEmail.ts`**.
+
+**Changes:** **`api/admin/transactional-notify.ts`**, **`api/admin/rewards-notify.ts`**, **`api/cron/expiring-rewards-emails.ts`**, **`api/inventory/back-in-stock-notify.ts`**, **`api/client/back-in-stock-notify.ts`**, **`api/email/templates.ts`**, **`api/_lib/email/templateCatalog.ts`**, **`orderLifecycle.ts`**, **`expiringRewardsScan.ts`**; wired **`profile.ts`**, **`consult-quotes.ts`**, **`recordProductOrderFromPaymentIntent.ts`**, **`admin/revenue/page.tsx`**, **`unitStockNotify.ts`**; **`src/pages/tools/email-templates/page.tsx`**, **`App.tsx`**, **`vercel.json`**, **`docs/EMAIL_SYSTEM.md`**; **`motherboard/MEMORY.md`** (this entry).

@@ -40,6 +40,7 @@ import {
   patchOrderInUserOrders,
   appendOrderTrackingClientNotification,
 } from '../../../utils/orderTracking';
+import { notifyOrderLifecycleEmail } from '../../../utils/transactionalEmail';
 import { visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
 import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile';
 import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
@@ -720,6 +721,36 @@ export default function AdminRevenue() {
           });
         }
       });
+
+      const orderNumber = String((order as { orderNumber?: string }).orderNumber || order.id || '').toUpperCase();
+      const trackingUrl = tn
+        ? getCarrierTrackingUrl(trackingDraft.trackingCarrier || 'USPS', tn)
+        : undefined;
+      const statusPatch = String(patch.status || order.status || '').trim();
+
+      if (tn) {
+        void notifyOrderLifecycleEmail({
+          recipientEmail: order.userEmail,
+          templateType: 'order_shipped',
+          variables: {
+            orderNumber,
+            trackingNumber: tn,
+            ...(trackingUrl ? { trackingLink: trackingUrl } : {}),
+          },
+        });
+      } else if (statusPatch) {
+        void notifyOrderLifecycleEmail({
+          recipientEmail: order.userEmail,
+          orderStatus: statusPatch,
+          variables: { orderNumber },
+        });
+      } else if (adminOverride != null && adminOverride >= 5) {
+        void notifyOrderLifecycleEmail({
+          recipientEmail: order.userEmail,
+          templateType: 'order_processing',
+          variables: { orderNumber, estimatedDate: trackingDraft.stageNotes[5]?.trim() || '—' },
+        });
+      }
     } else {
       setOrders((prev) =>
         prev.map((o) => (o.id === order.id ? { ...o, ...(patch as object) } : o))

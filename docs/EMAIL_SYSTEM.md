@@ -74,8 +74,18 @@ Preview HTML without sending: `"preview": true`
 | Admin pending affiliate approve / decline | `affiliate_content_approved` / `affiliate_content_denied` |
 | Admin password reset | `password_reset` (branded link via Supabase `generateLink`) |
 | Admin meeting reschedule / cancel alert | `meeting_reschedule` / `meeting_cancel` |
+| Admin consult offer sent | `consult_offer_sent` |
+| First profile create (PATCH /api/profile) | `welcome` |
+| Stripe order + points | `points_earned` (with order confirm) |
+| Admin revenue — tracking saved | `order_shipped` / status-based |
+| Unit restock waitlist | `back_in_stock` |
+| Daily cron (14:00 UTC) | `voucher_expiring` |
 
-Call `triggerTransactionalEmail` / `triggerTransactionalEmailForUser` from `api/_lib/email/triggers.ts` when adding new server events (order shipped, points earned, voucher expiring cron, etc.).
+## Debug preview page
+
+**`/tools/email-templates`** (admin only) — tabbed catalog by category (Account, Orders, Rewards, Affiliate, Shop) with live HTML iframe previews via `POST /api/email/send` (`preview: true`).
+
+Call `triggerTransactionalEmail` / `triggerTransactionalEmailForUser` from `api/_lib/email/triggers.ts` when adding new server events.
 
 ## Admin newsletter
 

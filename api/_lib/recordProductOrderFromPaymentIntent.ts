@@ -1,6 +1,34 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { triggerTransactionalEmailForUser } from './email/triggers.js';
 
+async function fireOrderEmails(
+  supabase: SupabaseClient,
+  userId: string,
+  orderNumber: string,
+  totalUsd: number
+): Promise<void> {
+  const paymentAmount = `$${totalUsd.toFixed(2)}`;
+  void triggerTransactionalEmailForUser(supabase, userId, 'order_confirmed', {
+    orderNumber,
+    paymentAmount,
+  });
+  void triggerTransactionalEmailForUser(supabase, userId, 'payment_received', {
+    orderNumber,
+    paymentAmount,
+  });
+
+  const pointsEarned = Math.max(0, Math.round(totalUsd));
+  if (pointsEarned > 0) {
+    const { data: prof } = await supabase.from('profiles').select('loyalty_points').eq('id', userId).maybeSingle();
+    const balance = Number((prof as { loyalty_points?: number } | null)?.loyalty_points) || pointsEarned;
+    void triggerTransactionalEmailForUser(supabase, userId, 'points_earned', {
+      orderNumber,
+      pointsAmount: pointsEarned.toLocaleString(),
+      balance: balance.toLocaleString(),
+    });
+  }
+}
+
 /**
  * After Stripe `payment_intent.succeeded` for product checkout, append an order to the user's `orders` JSONB.
  * Idempotent on `stripe_payment_intent_id` stored on the order object.
@@ -74,14 +102,7 @@ export async function appendOrderFromProductPaymentIntent(
       })
       .eq('user_id', userId);
     if (upErr) return { ok: false, error: upErr.message };
-    void triggerTransactionalEmailForUser(supabase, userId, 'order_confirmed', {
-      orderNumber: newOrder.orderNumber,
-      paymentAmount: `$${totalUsd.toFixed(2)}`,
-    });
-    void triggerTransactionalEmailForUser(supabase, userId, 'payment_received', {
-      orderNumber: newOrder.orderNumber,
-      paymentAmount: `$${totalUsd.toFixed(2)}`,
-    });
+    void fireOrderEmails(supabase, userId, newOrder.orderNumber, totalUsd);
     return { ok: true };
   }
 
@@ -98,14 +119,7 @@ export async function appendOrderFromProductPaymentIntent(
     .update({ has_made_first_purchase: true, updated_at: now })
     .eq('id', userId);
 
-  void triggerTransactionalEmailForUser(supabase, userId, 'order_confirmed', {
-    orderNumber: newOrder.orderNumber,
-    paymentAmount: `$${totalUsd.toFixed(2)}`,
-  });
-  void triggerTransactionalEmailForUser(supabase, userId, 'payment_received', {
-    orderNumber: newOrder.orderNumber,
-    paymentAmount: `$${totalUsd.toFixed(2)}`,
-  });
+  void fireOrderEmails(supabase, userId, newOrder.orderNumber, totalUsd);
 
   return { ok: true };
 }
