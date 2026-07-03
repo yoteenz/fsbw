@@ -6,6 +6,7 @@ import {
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
   formatBawSlayCardLayoutForCopy,
   loadBawSlayCardLayoutDebug,
+  mergeBawSlayCardLayout,
   saveBawSlayCardLayoutDebug,
   type BawSlayCardLayout,
   type BawSlayCardTextStyle,
@@ -121,10 +122,12 @@ function TextStyleFields({
   style,
   onChange,
   showCenterX = true,
+  lockFont = false,
 }: {
   style: BawSlayCardTextStyle;
   onChange: (patch: Partial<BawSlayCardTextStyle>) => void;
   showCenterX?: boolean;
+  lockFont?: boolean;
 }) {
   return (
     <div className="grid grid-cols-2 gap-2">
@@ -134,20 +137,28 @@ function TextStyleFields({
       <NumberField label="Y" value={style.y} onChange={(y) => onChange({ y })} />
       <ColorField label="Color" value={style.color} onChange={(color) => onChange({ color })} />
       <NumberField label="Font size" value={style.fontSize} onChange={(fontSize) => onChange({ fontSize })} />
-      <label className="col-span-2 block text-[10px] uppercase tracking-wide mb-1" style={{ fontFamily: '"Futura PT Book"' }}>
-        Font family
-        <input
-          type="text"
-          value={style.fontFamily}
-          onChange={(e) => onChange({ fontFamily: e.target.value })}
-          className="mt-0.5 w-full border border-gray-400 px-2 py-1 text-[11px] font-mono"
-        />
-      </label>
-      <NumberField
-        label="Font weight"
-        value={Number(style.fontWeight) || 400}
-        onChange={(fontWeight) => onChange({ fontWeight })}
-      />
+      {lockFont ? (
+        <p className="col-span-2 text-[9px] text-gray-500">
+          Font locked to {style.fontFamily} ({style.fontWeight}).
+        </p>
+      ) : (
+        <>
+          <label className="col-span-2 block text-[10px] uppercase tracking-wide mb-1" style={{ fontFamily: '"Futura PT Book"' }}>
+            Font family
+            <input
+              type="text"
+              value={style.fontFamily}
+              onChange={(e) => onChange({ fontFamily: e.target.value })}
+              className="mt-0.5 w-full border border-gray-400 px-2 py-1 text-[11px] font-mono"
+            />
+          </label>
+          <NumberField
+            label="Font weight"
+            value={Number(style.fontWeight) || 400}
+            onChange={(fontWeight) => onChange({ fontWeight })}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -531,8 +542,10 @@ export default function SlayCardDebugPage() {
   };
 
   const handleSaveLayout = () => {
-    saveBawSlayCardLayoutDebug(layout);
-    setSavedLayoutJson(JSON.stringify(layout));
+    const normalized = mergeBawSlayCardLayout(layout);
+    saveBawSlayCardLayoutDebug(normalized);
+    setLayout(normalized);
+    setSavedLayoutJson(JSON.stringify(normalized));
     setCopyStatus('Layout saved — try-hub SAVE SLAY CARD will use these settings');
     setTimeout(() => setCopyStatus(''), 3500);
   };
@@ -674,7 +687,7 @@ export default function SlayCardDebugPage() {
           ) : null}
 
           {selectedLayer === 'frontal' ? (
-            <section><h2 className="text-[11px] uppercase font-semibold mb-2">FRONTAL</h2><TextStyleFields style={layout.header.frontal} onChange={(p) => updateHeaderText('frontal', p)} /></section>
+            <section><h2 className="text-[11px] uppercase font-semibold mb-2">FRONTAL</h2><TextStyleFields style={layout.header.frontal} onChange={(p) => updateHeaderText('frontal', p)} lockFont /></section>
           ) : null}
           {selectedLayer === 'slayerLogo' ? (
             <section>

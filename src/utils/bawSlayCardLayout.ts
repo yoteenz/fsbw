@@ -4,7 +4,7 @@ export const BAW_SLAY_CARD_TEMPLATE_SRC =
 export const BAW_SLAY_CARD_SLAYER_LOGO_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Stock%20Content/IMG_4820.png';
 
-export const BAW_SLAY_CARD_LAYOUT_DEBUG_KEY = 'baw_slay_card_layout_debug_v2';
+export const BAW_SLAY_CARD_LAYOUT_DEBUG_KEY = 'baw_slay_card_layout_debug_v3';
 
 export type BawSlayCardTextStyle = {
   x: number;
@@ -100,8 +100,65 @@ export const DEFAULT_BAW_SLAY_CARD_LAYOUT: BawSlayCardLayout = {
   },
 };
 
+const LEGACY_BAW_SLAY_CARD_LAYOUT_DEBUG_KEYS = [
+  'baw_slay_card_layout_debug_v2',
+  'baw_slay_card_layout_debug_v1',
+] as const;
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isValidImageLayout(value: unknown): value is BawSlayCardImageLayout {
+  if (!isObject(value)) return false;
+  return (
+    typeof value.x === 'number' &&
+    typeof value.y === 'number' &&
+    typeof value.width === 'number' &&
+    typeof value.height === 'number' &&
+    value.width >= 40 &&
+    value.height >= 24
+  );
+}
+
+/** Saved debug layout cannot override FRONTAL font or drop the slayer logo. */
+export function normalizeBawSlayCardLayout(layout: BawSlayCardLayout): BawSlayCardLayout {
+  const defaults = DEFAULT_BAW_SLAY_CARD_LAYOUT;
+  return {
+    ...layout,
+    header: {
+      ...layout.header,
+      frontal: {
+        ...layout.header.frontal,
+        fontFamily: defaults.header.frontal.fontFamily,
+        fontWeight: defaults.header.frontal.fontWeight,
+      },
+      slayerLogo: isValidImageLayout(layout.header?.slayerLogo)
+        ? layout.header.slayerLogo
+        : defaults.header.slayerLogo,
+    },
+  };
+}
+
+function readRawBawSlayCardLayoutPatch(): Partial<BawSlayCardLayout> | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(BAW_SLAY_CARD_LAYOUT_DEBUG_KEY);
+    if (raw) return JSON.parse(raw) as Partial<BawSlayCardLayout>;
+
+    for (const legacyKey of LEGACY_BAW_SLAY_CARD_LAYOUT_DEBUG_KEYS) {
+      const legacyRaw = localStorage.getItem(legacyKey);
+      if (!legacyRaw) continue;
+      const parsed = JSON.parse(legacyRaw) as Record<string, unknown>;
+      if (isObject(parsed.header)) {
+        delete parsed.header.slayer;
+      }
+      return parsed as Partial<BawSlayCardLayout>;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 function mergeDeep<T>(base: T, patch: Partial<T> | undefined): T {
@@ -121,19 +178,13 @@ function mergeDeep<T>(base: T, patch: Partial<T> | undefined): T {
 }
 
 export function mergeBawSlayCardLayout(patch?: Partial<BawSlayCardLayout> | null): BawSlayCardLayout {
-  return mergeDeep(DEFAULT_BAW_SLAY_CARD_LAYOUT, patch ?? undefined);
+  return normalizeBawSlayCardLayout(mergeDeep(DEFAULT_BAW_SLAY_CARD_LAYOUT, patch ?? undefined));
 }
 
 export function loadBawSlayCardLayoutDebug(): BawSlayCardLayout {
-  if (typeof window === 'undefined') return DEFAULT_BAW_SLAY_CARD_LAYOUT;
-  try {
-    const raw = localStorage.getItem(BAW_SLAY_CARD_LAYOUT_DEBUG_KEY);
-    if (!raw) return DEFAULT_BAW_SLAY_CARD_LAYOUT;
-    const parsed = JSON.parse(raw) as Partial<BawSlayCardLayout>;
-    return mergeBawSlayCardLayout(parsed);
-  } catch {
-    return DEFAULT_BAW_SLAY_CARD_LAYOUT;
-  }
+  const patch = readRawBawSlayCardLayoutPatch();
+  if (!patch) return DEFAULT_BAW_SLAY_CARD_LAYOUT;
+  return mergeBawSlayCardLayout(patch);
 }
 
 /** Layout used by try-hub SAVE SLAY CARD — saved debug layout or defaults. */
@@ -142,11 +193,17 @@ export function getActiveBawSlayCardLayout(): BawSlayCardLayout {
 }
 
 export function saveBawSlayCardLayoutDebug(layout: BawSlayCardLayout): void {
-  localStorage.setItem(BAW_SLAY_CARD_LAYOUT_DEBUG_KEY, JSON.stringify(layout, null, 2));
+  localStorage.setItem(
+    BAW_SLAY_CARD_LAYOUT_DEBUG_KEY,
+    JSON.stringify(normalizeBawSlayCardLayout(layout), null, 2)
+  );
 }
 
 export function clearBawSlayCardLayoutDebug(): void {
   localStorage.removeItem(BAW_SLAY_CARD_LAYOUT_DEBUG_KEY);
+  for (const legacyKey of LEGACY_BAW_SLAY_CARD_LAYOUT_DEBUG_KEYS) {
+    localStorage.removeItem(legacyKey);
+  }
 }
 
 export function formatBawSlayCardLayoutForCopy(layout: BawSlayCardLayout): string {

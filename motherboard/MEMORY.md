@@ -33440,3 +33440,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User could not reposition text on slay card debug page (mannequin/slayer worked). Mannequin hit-test stole pointer events; specs had no drag handler.
 
 **Changes:** When a text/specs layer is selected, drag anywhere on canvas to move it. Click-to-pick text layers with green guide boxes. Specs block drag moves **specsStartY** + center **X**. Helper copy on debug page.
+
+---
+
+## 2026-07-03 — BAW slay card saved layout override fix (FRONTAL font + slayer logo)
+
+**Context:** User reported FRONTAL still not Futura PT Book and SLAYER image missing. Root cause: **saved debug layout in localStorage** merged over code defaults (old Demi font, invalid/missing **slayerLogo** from legacy **header.slayer** text saves).
+
+**Changes:** **`normalizeBawSlayCardLayout`** — always lock FRONTAL to Futura PT Book 500; restore default **slayerLogo** when missing/too small. Legacy v1/v2 key migration strips **header.slayer**. Layout debug key **v3**. **`paintBawSlayCard`** normalizes before draw + preloads fonts. Slayer image draw retries default rect on failure. Debug FRONTAL font fields locked on save.

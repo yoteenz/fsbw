@@ -13,6 +13,7 @@ import {
   BAW_SLAY_CARD_TEMPLATE_SRC,
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
   getActiveBawSlayCardLayout,
+  normalizeBawSlayCardLayout,
   type BawSlayCardLayout,
   type BawSlayCardTextStyle,
 } from './bawSlayCardLayout';
@@ -69,11 +70,20 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-async function ensureCanvasFontsReady(): Promise<void> {
+async function ensureCanvasFontsReady(layout: BawSlayCardLayout): Promise<void> {
   try {
-    if (typeof document !== 'undefined' && document.fonts?.ready) {
-      await document.fonts.ready;
-    }
+    if (typeof document === 'undefined' || !document.fonts?.load) return;
+    const { header, textPanel } = layout;
+    await Promise.all([
+      document.fonts.load(fontFromStyle(header.frontal)),
+      document.fonts.load(fontFromStyle(header.subtitle)),
+      document.fonts.load(fontFromStyle(textPanel.unit)),
+      document.fonts.load(fontFromStyle(textPanel.footer)),
+      document.fonts.load(
+        `${textPanel.specsFontWeight} ${textPanel.specsFontSize}px ${textPanel.specsFontFamily}`
+      ),
+    ]);
+    await document.fonts.ready;
   } catch {
     /* optional */
   }
@@ -121,8 +131,11 @@ export async function paintBawSlayCard(
   layout: BawSlayCardLayout = DEFAULT_BAW_SLAY_CARD_LAYOUT,
   opts?: { hairline?: string; mannequinSrc?: string }
 ): Promise<{ mannequinBounds: { x: number; y: number; width: number; height: number } | null }> {
-  const { canvasWidth, canvasHeight } = layout;
+  const resolvedLayout = normalizeBawSlayCardLayout(layout);
+  const { canvasWidth, canvasHeight } = resolvedLayout;
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+  await ensureCanvasFontsReady(resolvedLayout);
 
   const template = await loadImage(BAW_SLAY_CARD_TEMPLATE_SRC);
   ctx.drawImage(template, 0, 0, canvasWidth, canvasHeight);
@@ -144,30 +157,41 @@ export async function paintBawSlayCard(
   let mannequinBounds: { x: number; y: number; width: number; height: number } | null = null;
   try {
     const mannequin = await loadImage(mannequinSrc);
-    drawMannequinInRect(ctx, mannequin, layout.mannequin, noirFrontScale);
-    mannequinBounds = computeBawSlayCardMannequinDrawBounds(mannequin, layout, noirFrontScale);
+    drawMannequinInRect(ctx, mannequin, resolvedLayout.mannequin, noirFrontScale);
+    mannequinBounds = computeBawSlayCardMannequinDrawBounds(mannequin, resolvedLayout, noirFrontScale);
   } catch {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-    ctx.fillRect(layout.mannequin.x, layout.mannequin.y, layout.mannequin.width, layout.mannequin.height);
+    ctx.fillRect(
+      resolvedLayout.mannequin.x,
+      resolvedLayout.mannequin.y,
+      resolvedLayout.mannequin.width,
+      resolvedLayout.mannequin.height
+    );
   }
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
 
-  const { header, textPanel } = layout;
+  const { header, textPanel } = resolvedLayout;
 
   ctx.fillStyle = header.frontal.color;
   ctx.font = fontFromStyle(header.frontal);
   ctx.fillText('FRONTAL', header.frontal.x, header.frontal.y);
 
   try {
-    const slayerLogo = await loadImage(BAW_SLAY_CARD_SLAYER_LOGO_SRC);
+    const slayerLogoImg = await loadImage(BAW_SLAY_CARD_SLAYER_LOGO_SRC);
     const logo = header.slayerLogo;
-    ctx.drawImage(slayerLogo, logo.x, logo.y, logo.width, logo.height);
+    ctx.drawImage(slayerLogoImg, logo.x, logo.y, logo.width, logo.height);
   } catch {
-    ctx.fillStyle = '#EB1C24';
-    ctx.font = '600 46px "Futura PT Demi", Futura, sans-serif';
-    ctx.fillText('SLAYER', header.frontal.x, header.frontal.y + 52);
+    const fallback = DEFAULT_BAW_SLAY_CARD_LAYOUT.header.slayerLogo;
+    try {
+      const slayerLogoImg = await loadImage(BAW_SLAY_CARD_SLAYER_LOGO_SRC);
+      ctx.drawImage(slayerLogoImg, fallback.x, fallback.y, fallback.width, fallback.height);
+    } catch {
+      ctx.fillStyle = '#EB1C24';
+      ctx.font = '600 46px "Futura PT Demi", Futura, sans-serif';
+      ctx.fillText('SLAYER', header.frontal.x, header.frontal.y + 52);
+    }
   }
 
   ctx.fillStyle = header.subtitle.color;
@@ -212,7 +236,7 @@ export async function renderBawSlayCardPng(
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas not supported');
 
-  await ensureCanvasFontsReady();
+  await ensureCanvasFontsReady(resolvedLayout);
   await paintBawSlayCard(ctx, selections, resolvedLayout);
 
   return new Promise((resolve, reject) => {
