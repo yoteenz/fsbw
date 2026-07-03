@@ -67,9 +67,7 @@ function centeredTextBounds(
   };
 }
 
-function isTextLikeLayer(layer: SelectableLayer): boolean {
-  return layer === 'frontal' || layer === 'subtitle' || layer === 'unit' || layer === 'footer' || layer === 'specs';
-}
+type LayerPickResult = { layer: SelectableLayer; hit: boolean };
 
 function NumberField({
   label,
@@ -322,76 +320,69 @@ export default function SlayCardDebugPage() {
     };
   };
 
-  const pickLayerAtPoint = (pt: { x: number; y: number }): SelectableLayer => {
+  const pickLayerAtPoint = (pt: { x: number; y: number }): LayerPickResult => {
     const logo = layout.header.slayerLogo;
-    if (pointInRect(pt, logo)) return 'slayerLogo';
+    if (pointInRect(pt, logo)) return { layer: 'slayerLogo', hit: true };
 
-    const textHits: { layer: SelectableLayer; bounds: { x: number; y: number; width: number; height: number } }[] = [
-      {
-        layer: 'frontal',
-        bounds: centeredTextBounds('FRONTAL', layout.header.frontal.x, layout.header.frontal.y, layout.header.frontal.fontSize),
-      },
-      {
-        layer: 'subtitle',
-        bounds: centeredTextBounds(
-          SUBTITLE_LABEL,
-          layout.header.subtitle.x,
-          layout.header.subtitle.y,
-          layout.header.subtitle.fontSize
-        ),
-      },
-      {
-        layer: 'unit',
-        bounds: centeredTextBounds(
-          selections.unit.toUpperCase(),
-          layout.textPanel.unit.x,
-          layout.textPanel.unit.y,
-          layout.textPanel.unit.fontSize
-        ),
-      },
-      {
-        layer: 'footer',
-        bounds: centeredTextBounds(
-          FOOTER_LABEL,
-          layout.textPanel.footer.x,
-          layout.textPanel.footer.y,
-          layout.textPanel.footer.fontSize
-        ),
-      },
-    ];
+    const frontalBounds = centeredTextBounds(
+      'FRONTAL',
+      layout.header.frontal.x,
+      layout.header.frontal.y,
+      layout.header.frontal.fontSize
+    );
+    if (pointInRect(pt, frontalBounds)) return { layer: 'frontal', hit: true };
+
+    if (mannequinBounds && pointInRect(pt, mannequinBounds)) return { layer: 'mannequin', hit: true };
+    if (pointInRect(pt, layout.mannequin)) return { layer: 'mannequin', hit: true };
+
+    const subtitleBounds = centeredTextBounds(
+      SUBTITLE_LABEL,
+      layout.header.subtitle.x,
+      layout.header.subtitle.y,
+      layout.header.subtitle.fontSize
+    );
+    if (pointInRect(pt, subtitleBounds)) return { layer: 'subtitle', hit: true };
+
+    const unitBounds = centeredTextBounds(
+      selections.unit.toUpperCase(),
+      layout.textPanel.unit.x,
+      layout.textPanel.unit.y,
+      layout.textPanel.unit.fontSize
+    );
+    if (pointInRect(pt, unitBounds)) return { layer: 'unit', hit: true };
+
+    const footerBounds = centeredTextBounds(
+      FOOTER_LABEL,
+      layout.textPanel.footer.x,
+      layout.textPanel.footer.y,
+      layout.textPanel.footer.fontSize
+    );
+    if (pointInRect(pt, footerBounds)) return { layer: 'footer', hit: true };
 
     const specsWidth = layout.textPanel.specsFontSize * 14;
     const specsHeight = layout.textPanel.lineHeight * SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
-    textHits.push({
-      layer: 'specs',
-      bounds: {
-        x: layout.textPanel.unit.x - specsWidth / 2,
-        y: layout.textPanel.specsStartY - layout.textPanel.specsFontSize * 0.85,
-        width: specsWidth,
-        height: specsHeight,
-      },
-    });
+    const specsBounds = {
+      x: layout.textPanel.unit.x - specsWidth / 2,
+      y: layout.textPanel.specsStartY - layout.textPanel.specsFontSize * 0.85,
+      width: specsWidth,
+      height: specsHeight,
+    };
+    if (pointInRect(pt, specsBounds)) return { layer: 'specs', hit: true };
 
-    for (const hit of textHits) {
-      if (pointInRect(pt, hit.bounds)) return hit.layer;
-    }
-
-    if (mannequinBounds && pointInRect(pt, mannequinBounds)) return 'mannequin';
-    if (pointInRect(pt, layout.mannequin)) return 'mannequin';
-
-    return selectedLayer;
+    return { layer: selectedLayer, hit: false };
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const pt = canvasPointFromClient(e.clientX, e.clientY);
-    const layer = isTextLikeLayer(selectedLayer) ? selectedLayer : pickLayerAtPoint(pt);
+    const { layer, hit } = pickLayerAtPoint(pt);
+    const dragLayer = hit ? layer : selectedLayer;
 
-    setSelectedLayer(layer);
+    if (hit) setSelectedLayer(layer);
     e.currentTarget.setPointerCapture(e.pointerId);
 
-    if (layer === 'mannequin') {
+    if (dragLayer === 'mannequin') {
       dragRef.current = {
-        layer,
+        layer: dragLayer,
         startX: pt.x,
         startY: pt.y,
         originX: layout.mannequin.x,
@@ -402,10 +393,10 @@ export default function SlayCardDebugPage() {
       return;
     }
 
-    if (layer === 'slayerLogo') {
+    if (dragLayer === 'slayerLogo') {
       const logo = layout.header.slayerLogo;
       dragRef.current = {
-        layer,
+        layer: dragLayer,
         startX: pt.x,
         startY: pt.y,
         originX: logo.x,
@@ -416,9 +407,9 @@ export default function SlayCardDebugPage() {
       return;
     }
 
-    if (layer === 'specs') {
+    if (dragLayer === 'specs') {
       dragRef.current = {
-        layer,
+        layer: dragLayer,
         startX: pt.x,
         startY: pt.y,
         originX: layout.textPanel.unit.x,
@@ -434,10 +425,10 @@ export default function SlayCardDebugPage() {
       footer: layout.textPanel.footer,
     };
 
-    const origin = textOrigins[layer as keyof typeof textOrigins];
+    const origin = textOrigins[dragLayer as keyof typeof textOrigins];
     if (!origin) return;
     dragRef.current = {
-      layer,
+      layer: dragLayer,
       startX: pt.x,
       startY: pt.y,
       originX: origin.x,
@@ -669,7 +660,7 @@ export default function SlayCardDebugPage() {
               Show guide outlines
             </label>
             <p className="text-[9px] text-gray-500 mt-2 leading-snug">
-              Select a text layer, then drag anywhere on the preview to move it. Green boxes = text. Click text to auto-select.
+              Click a layer on the preview to select and drag it, or pick a layer here and drag on empty canvas. Scroll wheel resizes mannequin box and SLAYER logo.
             </p>
           </section>
 

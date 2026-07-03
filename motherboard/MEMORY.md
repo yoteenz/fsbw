@@ -33456,3 +33456,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to hide PSA from **`/tools/slay-card-debug`**.
 
 **Changes:** Added route to **`PSA_TEST_TOOL_PATH_PREFIXES`** in **`psaConfig.ts`** (same pattern as live-try-on / hairstyle-analysis).
+
+---
+
+## 2026-07-03 — BAW slay card debug layer drag fix (all assets)
+
+**Context:** User reported slay card debug page was stuck adjusting only the **PERSONAL BUILD-A-WIG SLAY CARD** subtitle — could not reposition mannequin, SLAYER logo, FRONTAL, unit, specs, or footer on the template.
+
+**Root cause:** **`onPointerDown`** pinned every drag to the sidebar-selected text layer via **`isTextLikeLayer(selectedLayer)`**, so once subtitle (or any text layer) was selected, canvas clicks never switched to image/mannequin layers. Subtitle hit box also overlapped the top of the mannequin fit box because mannequin was checked after text layers.
+
+**Changes:** **`slay-card-debug/page.tsx`** — removed text-layer pin; **`pickLayerAtPoint`** now returns **`{ layer, hit }`**: click on a guide/outline selects and drags that layer; click on empty canvas drags the sidebar-selected layer. Reordered hit-test so **mannequin** wins over subtitle in overlap. Updated helper copy. Build verified.
