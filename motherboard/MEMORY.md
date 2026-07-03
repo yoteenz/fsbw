@@ -34272,6 +34272,7 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-03 — Email heroes: true 9:16 full bleed + official logo composite
 
 **Context:** User reported email hero graphics looked like **2:3 scenes letterboxed inside a 9:16 slot** (white bars top/bottom) and Fal was **poorly recreating the logo** instead of using **`slayer-logo.png`**.
@@ -34291,4 +34292,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Email hero brand marks = **always composite real SLAYER PNG**; never prompt Fal to redraw logos.
 
+=======
+## 2026-07-03 — BCF frontal photo regen (espresso curly, chestnut straight) + video asset locations
+
+**Context:** User reported two more bad **frontal** color PNGs — **espresso curly** (distorted/wrong-color hand), **chestnut straight** (distorted hand). Also asked **where closure/frontal video assets live**.
+
+**Photo fix:**
+- **`bcfCfPhotoPrompt.mjs`** → **v3** with explicit **COLOR LOCK** + **HAND LOCK** blocks (no hair color bleed onto hands; anatomically correct fingers).
+- **`FORCE=1 ONLY_PRODUCT_KEYS=frontals-curly-espresso,frontals-straight-chestnut`** → **2/2 ok**; synced manifest.
+
+**Video asset locations (closures & frontals):**
+- **Supabase `live-preview` bucket:** batch MP4s at **`BCF/videos/v1/{category}-{texture}-{color-slug}.mp4`** (e.g. **`frontals-curly-default.mp4`**, **`closures-straight-golden.mp4`**).
+- **Legacy texture-default `.mov`** (OFF BLACK): **`wig-preview-live/make_this_image_shake_the_hair_Kling_30__*.mov`** — mapped in **`bcfPdpHeroVideos.ts`** **`LEGACY_BCF_VIDEO_STORAGE_PATH`**.
+- **Storefront manifests:** **`public/assets/bcf/videos/manifest.json`**, **`src/utils/bcfPdpHeroVideos.generated.ts`** (sync via **`npm run bcf:videos:sync`**).
+- **Batch tooling:** **`scripts/bcf/manifests/bcf-videos-v1.json`**, **`docs/BCF_VIDEO_GENERATION.md`**, **`npm run bcf:videos:batch`**.
+- **Coverage gap:** Closures/frontals currently have videos for **texture defaults** + **ASH/GOLDEN/PLATINUM** only (**9 rows per category**). **Noir palette** color PNGs (espresso, chestnut, cherry, etc.) have **no per-color videos** — **`bcfPdpHeroVideoSrc()`** returns **`null`** when a color-specific photo exists without a matching manifest video (VIDEO toggle hidden on those swatches).
+
+**Changes:** **`bcfCfPhotoPrompt.mjs`**, **`bcfCfPhotoColors.mjs`**, **`bcf-cf-photos-user-reported-missing-hands.json`**, regenerated PNGs + synced photo manifest.
+>>>>>>> 27215ef6 (BCF frontal photo v3 regen: espresso curly + chestnut straight; document CF video paths)
 
