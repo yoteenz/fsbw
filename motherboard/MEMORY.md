@@ -34030,3 +34030,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`api/_lib/email/emailHeroPrompts.ts`**, **`emailHeroPrompts.data.json`**, **`generateHeroAsset.ts`**, **`scripts/generate-email-hero-assets.mjs`**, **`docs/EMAIL_SYSTEM.md`**.
 
 **Regen:** Same as prior — **`FORCE=1 npm run email:generate-heroes`** after Fal balance restored to pick up logo ref + 2:3 prompts.
+
+---
+
+## 2026-07-03 — Email hero prompts: purpose-specific immersive 3D scenes
+
+**Context:** User asked email template hero assets to be **relative to the actual email purpose**, **3D immersive**, **very high quality**, looking like a **professional photographer or graphic designer** created them — not generic repeated glass-cube filler.
+
+**Decisions / outcomes:**
+- Split prompts: **`emailHeroPromptMeta.json`** (composition, commercial CGI quality block, brand rules, logo authenticity) + **`emailHeroPrompts.data.json`** **`purposeScenes`** (41 unique scenes tied to each template intent).
+- Each scene names the email purpose (welcome, shipped, points expiring, consult offer, etc.) with a distinct 3D subject — shipping box in motion, atelier prep hands, hourglass urgency, boutique wig display, etc.
+- Quality block enforces PBR materials, cinematic lighting, magazine-grade grading, no clip-art/cartoon.
+- Brand rules: roses/diamonds only when scene-appropriate; **not** default on every email.
+- **`buildEmailHeroPrompt()`** in **`emailHeroPrompts.ts`**; generate script mirrors same assembly.
+
+**Changes:** **`emailHeroPromptMeta.json`**, **`emailHeroPrompts.data.json`**, **`emailHeroPrompts.ts`**, **`scripts/generate-email-hero-assets.mjs`**, **`docs/EMAIL_SYSTEM.md`**.
+
+**Regen:** **`FORCE=1 npm run email:generate-heroes`** when Fal balance available.

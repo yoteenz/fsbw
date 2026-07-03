@@ -2,8 +2,8 @@
 /**
  * Generate Frontal Slayer transactional email hero scenes via Fal + upload to Supabase.
  *
- * Each template gets a photorealistic glass-cube hero matching the reference design boards
- * (Rewards, Affiliate, Account, Orders, Shop). Uses marble background as Fal edit reference.
+ * Each template gets a purpose-specific immersive 3D hero tied to that email's intent.
+ * Uses marble + official slayer-logo.png as Fal edit references.
  *
  * Env (required unless DRY_RUN=1):
  *   FAL_KEY
@@ -46,6 +46,28 @@ const extraRef = process.env.REFERENCE_IMAGE?.trim()
   : '';
 
 const EMAIL_HERO_LOGO_AUTHENTICITY_PROMPT = `Logo authenticity (critical): A Frontal Slayer logo reference image is attached. If any brand mark, seal, wax stamp, shopping bag logo, monogram, or embossed mark appears in the scene, reproduce ONLY that exact logo — crimson red stylized FS monogram with FRONTAL SLAYER text fully legible. Do NOT invent, redraw, substitute, abbreviate, or stylize a different logo. No other logos or brand marks anywhere in the scene.`;
+
+function loadEmailHeroPromptPack() {
+  const scenes = JSON.parse(
+    readFileSync(join(ROOT, 'api/_lib/email/emailHeroPrompts.data.json'), 'utf8')
+  );
+  const meta = JSON.parse(
+    readFileSync(join(ROOT, 'api/_lib/email/emailHeroPromptMeta.json'), 'utf8')
+  );
+  return { purposeScenes: scenes.purposeScenes ?? scenes.prompts ?? {}, meta };
+}
+
+function buildEmailHeroPrompt(templateType, purposeScenes, meta) {
+  const scene = purposeScenes[templateType] || purposeScenes.welcome;
+  if (!scene) return null;
+  return [
+    meta.composition,
+    meta.quality,
+    meta.brandRules,
+    `Email purpose & hero subject: ${scene}`,
+    meta.logoAuthenticity || EMAIL_HERO_LOGO_AUTHENTICITY_PROMPT,
+  ].join('\n\n');
+}
 
 const OUT_DIR = join(ROOT, 'public/assets/email/heroes');
 const MANIFEST_PATH = join(OUT_DIR, 'manifest.json');
@@ -98,9 +120,8 @@ function resolveTemplates(allTypes, filterCsv, category) {
 }
 
 async function loadEmailHeroPrompts() {
-  const raw = readFileSync(join(ROOT, 'api/_lib/email/emailHeroPrompts.data.json'), 'utf8');
-  const data = JSON.parse(raw);
-  return data.prompts;
+  const { purposeScenes } = loadEmailHeroPromptPack();
+  return purposeScenes;
 }
 
 async function falUpload(fal, filePath) {
@@ -161,8 +182,8 @@ function writeManifest(ready) {
 }
 
 async function main() {
-  const prompts = await loadEmailHeroPrompts();
-  const allTypes = Object.keys(prompts);
+  const { purposeScenes, meta } = loadEmailHeroPromptPack();
+  const allTypes = Object.keys(purposeScenes);
   const types = resolveTemplates(allTypes, process.env.TEMPLATES, process.env.CATEGORY);
 
   if (!existsSync(marbleRef)) {
@@ -178,7 +199,8 @@ async function main() {
   if (dryRun) {
     console.log(`DRY_RUN — ${types.length} templates, model ${FAL_MODEL}`);
     for (const t of types) {
-      console.log('\n---', t, '---\n', prompts[t]?.slice(0, 200), '…');
+      const full = buildEmailHeroPrompt(t, purposeScenes, meta);
+      console.log('\n---', t, '---\n', full?.slice(0, 320), '…');
     }
     return;
   }
@@ -223,13 +245,11 @@ async function main() {
       continue;
     }
 
-    const prompt = prompts[templateType];
-    if (!prompt) {
-      console.warn('No prompt for', templateType);
+    const fullPrompt = buildEmailHeroPrompt(templateType, purposeScenes, meta);
+    if (!fullPrompt) {
+      console.warn('No purpose scene for', templateType);
       continue;
     }
-
-    const fullPrompt = `${prompt}\n\n${EMAIL_HERO_LOGO_AUTHENTICITY_PROMPT}`;
 
     console.log(`Generating ${templateType}…`);
     try {
