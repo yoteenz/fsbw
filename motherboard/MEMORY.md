@@ -33251,3 +33251,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked try-mode BUILD GUIDE intro to read **WELCOME TO BUILD-A-WIG** (not “welcome to the builder”) with body **TEST THIS FEATURE AND TRY A FEW CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED.**
 
 **Fix:** Updated **`MODE_INTRO_OVERRIDES.TRY`** in **`bawModeGuideConfig.ts`** and matching **`BAW_TUTORIAL_GUIDE_COPY.intro`** in **`bawTutorialConfig.ts`**.
+
+---
+
+## 2026-07-03 — BAW try guide copy + hyphenated mode labels
+
+**Context:** User asked to update try-mode BUILD GUIDE body to **TEST THIS FEATURE FREE OF CHARGE AND TRY A FEW CUSTOMIZATION OPTIONS.** and hyphenate top-panel mode labels (**BUILD-A-WIG TRY MODE**, **BUILD-A-WIG CUSTOMIZE MODE**, **BUILD-A-WIG EDIT MODE**, hub **BUILD-A-WIG**).
+
+**Topics covered:** Prior BAW try/customize chrome work (duplicate headers, try route persistence, VIEW SUBSCRIPTIONS footer, BUILD GUIDE welcome copy); this turn refines intro detail text and mode-line branding.
+
+**Changes:** **`bawModeGuideConfig.ts`** — TRY intro body + **`bawBuildModeLabel`** strings; **`bawTutorialConfig.ts`** — matching intro body.

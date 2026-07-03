@@ -83,7 +83,7 @@ const STEP_COPY: Record<BawGuideStepId, GuideCopy> = {
 const MODE_INTRO_OVERRIDES: Partial<Record<BawBuildMode, GuideCopy>> = {
   TRY: {
     title: 'WELCOME TO BUILD-A-WIG',
-    body: 'TEST THIS FEATURE AND TRY A FEW CUSTOMIZATION OPTIONS, NO SIGN-IN REQUIRED.',
+    body: 'TEST THIS FEATURE FREE OF CHARGE AND TRY A FEW CUSTOMIZATION OPTIONS.',
   },
   CUSTOMIZE: {
     title: 'CUSTOMIZE YOUR UNIT',
@@ -109,12 +109,12 @@ export function getBawModeGuideCopy(mode: BawBuildMode, step: BawGuideStepId): G
 export function bawBuildModeLabel(mode: BawBuildMode): string {
   switch (mode) {
     case 'TRY':
-      return 'BUILD A WIG TRY MODE';
+      return 'BUILD-A-WIG TRY MODE';
     case 'CUSTOMIZE':
-      return 'BUILD A WIG CUSTOMIZE MODE';
+      return 'BUILD-A-WIG CUSTOMIZE MODE';
     case 'EDIT':
-      return 'BUILD A WIG EDIT MODE';
+      return 'BUILD-A-WIG EDIT MODE';
     case 'HUB':
-      return 'BUILD A WIG';
+      return 'BUILD-A-WIG';
   }
 }
