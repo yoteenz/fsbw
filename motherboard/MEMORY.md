@@ -33650,3 +33650,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`build-a-wig/page.tsx`:** product-hub initial state reads lace/texture/hairline/add-ons from localStorage; sync effect skips **`isBawTryHubLandingPath`**; route effect no longer clears localStorage on try-hub landing.
 - **`bawSlayCardLayout.ts`:** **`coerceBawSlayCardLayoutPatch`** + **`loadBawSlayCardLayoutDebug`** always **`mergeBawSlayCardLayout`** after coercion.
 - **`bawSlayCard.ts`:** **`resolveBawSlayCardSpecPanel`** keeps all spec lines visible above the footer.
+
+---
+
+## 2026-07-03 — Email debug page Fal hero images not showing
+
+**Context:** User reported `/tools/email-templates` still showed plain HTML fallback heroes (glass cube + icon) instead of Fal-generated template images from reference inspo boards.
+
+**Root causes:**
+1. **`heroManifestReady.ts` was empty** — Vercel deploy fix (90b97539) moved manifest loading off `fs.readFile(manifest.json)` to a compile-time TS export, but the export stayed `[]` even after 41 hero WebPs were committed and `manifest.json` was populated (393a4b26).
+2. **`isEmailHeroReady()` always false** — server used empty `EMAIL_HERO_MANIFEST_READY`, so `renderFallbackHeroScene` ran instead of `<img src="…hero.webp">`.
+3. **Wrong hero URL path** — `emailHeroImageUrl` used `emailAssetUrl('heroes/…')` → `/assets/heroes/…` instead of committed path `/assets/email/heroes/…`.
+
+**Fixes:**
+- Synced **`api/_lib/email/heroManifestReady.ts`** with all 41 types from **`public/assets/email/heroes/manifest.json`**.
+- **`heroImages.ts`** — hero URLs now `${SITE}/assets/email/heroes/{type}.webp`.
+- Added **`scripts/sync-email-hero-manifest.mjs`** + **`npm run email:sync-hero-manifest`** to keep TS manifest in sync after hero generation.
+- Debug page copy updated to mention Fal-generated hero scenes.

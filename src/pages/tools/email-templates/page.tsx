@@ -103,7 +103,7 @@ export default function EmailTemplatesDebugPage() {
         <div className="border border-black bg-white/60 backdrop-blur-sm p-4 mb-3">
           <h1 className="text-[14px] uppercase font-futura font-medium text-black mb-1">Email Templates</h1>
           <p className="text-[9px] uppercase font-futura text-gray-500 leading-relaxed">
-            Preview all Frontal Slayer transactional designs. Live HTML text — not image-only emails.
+            Preview Frontal Slayer transactional emails with Fal-generated hero scenes from your reference boards.
           </p>
         </div>
 
