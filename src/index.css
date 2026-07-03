@@ -4218,6 +4218,17 @@ img.object-contain {
   padding-bottom: calc(34px + 5.5rem) !important;
 }
 
+/* PDP tabs — clip inactive layers; frosted wrapper blocks option-row bleed on BCF */
+.product-tab-panel {
+  overflow: hidden;
+  isolation: isolate;
+  contain: paint;
+}
+
+.bcf-pdp-tabs {
+  isolation: isolate;
+}
+
 /* Client details orders tab: center status tag text vertically in pill (override any conflicting styles) */
 .admin-order-status-pill {
   display: inline-flex !important;

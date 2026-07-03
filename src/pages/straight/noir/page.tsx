@@ -61,6 +61,7 @@ import {
   UNIT_PDP_TABS_SECTION_STYLE,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
+import { ProductTabPanel } from '../../../components/shop/ProductTabPanel';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 import {
   isNoirNaturalFrontMannequinSrc,
@@ -3230,7 +3231,7 @@ function NoirSelection() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={{ ...UNIT_PDP_TAB_CONTENT_STYLE, marginBottom: 0 }}>
+                <ProductTabPanel activeTab={activeTab} style={{ ...UNIT_PDP_TAB_CONTENT_STYLE, marginBottom: 0 }}>
                 {activeTab === 'DETAILS' && <NoirProductDetailsTab />}
                 
                 {activeTab === 'SHIPPING' && <NoirProductShippingTab />}
@@ -3240,7 +3241,7 @@ function NoirSelection() {
                 {activeTab === 'CARE/STORAGE' && <NoirProductCareStorageTab />}
                 
                 {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
-              </div>
+              </ProductTabPanel>
             </div>
           </div>
         </div>

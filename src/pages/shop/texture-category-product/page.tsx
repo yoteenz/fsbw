@@ -65,6 +65,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { BCF_PDP_TAB_CONTENT_STYLE, PDP_TABS_WRAPPER_STYLE, withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
+import { ProductTabPanel } from '../../../components/shop/ProductTabPanel';
 import BundleProductCareStorageTab from '../../../components/shop/BundleProductCareStorageTab';
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
 import BundleProductPolicyTab from '../../../components/shop/BundleProductPolicyTab';
@@ -1838,7 +1839,7 @@ export default function ShopTextureCategoryProductPage() {
                   </div>
 
                 {/* Tabs — Noir-aligned; margin above tab row: was mt-6, then −12px (mt-3), then −6px more (mt-1.5) */}
-                <div className="mt-1.5 w-full bcf-pdp-tabs" style={{ ...PDP_TABS_WRAPPER_STYLE, position: 'relative', zIndex: 2 }}>
+                <div className="mt-1.5 w-full bcf-pdp-tabs" style={PDP_TABS_WRAPPER_STYLE}>
                   <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                     {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button
@@ -1861,7 +1862,7 @@ export default function ShopTextureCategoryProductPage() {
                     ))}
                   </div>
 
-                  <div className="mt-4 space-y-4 bcf-pdp-tab-panel" style={BCF_PDP_TAB_CONTENT_STYLE}>
+                  <ProductTabPanel activeTab={activeTab} className="bcf-pdp-tab-panel" style={BCF_PDP_TAB_CONTENT_STYLE}>
                     {activeTab === 'DETAILS' && category === 'bundles' && <BundleProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'closures' && <ClosureProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'frontals' && <FrontalProductDetailsTab />}
@@ -1875,7 +1876,7 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'CARE/STORAGE' && category === 'closures' && <ClosureProductCareStorageTab />}
                     {activeTab === 'CARE/STORAGE' && category === 'frontals' && <FrontalProductCareStorageTab />}
                     {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
-                  </div>
+                  </ProductTabPanel>
                 </div>
               </div>
 

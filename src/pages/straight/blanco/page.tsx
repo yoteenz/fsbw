@@ -47,6 +47,7 @@ import {
   UNIT_PDP_TABS_SECTION_STYLE,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
+import { ProductTabPanel } from '../../../components/shop/ProductTabPanel';
 import UnitProductDetailsTab from '../../../components/shop/UnitProductDetailsTab';
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
@@ -1879,14 +1880,14 @@ function BlancoSelection() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
+                <ProductTabPanel activeTab={activeTab} style={UNIT_PDP_TAB_CONTENT_STYLE}>
                   {activeTab === 'DETAILS' && <UnitProductDetailsTab unitKey="blanco" />}
                   {activeTab === 'SHIPPING' && <NoirProductShippingTab />}
                   {activeTab === 'POLICY' && <NoirProductPolicyTab />}
                   {activeTab === 'CARE/STORAGE' && <NoirProductCareStorageTab />}
                   
                   {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
-                </div>
+                </ProductTabPanel>
               </div>
             </div>
           </div>

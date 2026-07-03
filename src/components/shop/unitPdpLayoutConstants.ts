@@ -43,21 +43,42 @@ export const UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC =
 /** Product shots + details tabs share `mt-2 mb-4`; tabs must stay inside that wrapper (NOIR layout). */
 export const UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS = 'mt-2 mb-4';
 
+/** BCF / tools PDP tab row — frosted layer matches card; blocks option rows bleeding into tab copy. */
+export const PDP_TABS_WRAPPER_STYLE: CSSProperties = {
+  paddingTop: '4px',
+  position: 'relative',
+  zIndex: 2,
+  isolation: 'isolate',
+  overflow: 'hidden',
+  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+  backdropFilter: 'blur(4px)',
+  WebkitBackdropFilter: 'blur(4px)',
+};
+
 export const UNIT_PDP_TABS_SECTION_STYLE: CSSProperties = {
   marginTop: '13px',
   paddingTop: '4px',
   paddingBottom: '4px',
-};
-
-/** BCF / tools PDP tab row — spacing only (no opaque panel; card stays frosted). */
-export const PDP_TABS_WRAPPER_STYLE: CSSProperties = {
-  paddingTop: '4px',
+  ...PDP_TABS_WRAPPER_STYLE,
 };
 
 export const UNIT_PDP_TAB_CONTENT_STYLE: CSSProperties = {
   maxWidth: 'none',
   width: '100%',
   marginBottom: 0,
+};
+
+/** Tab body shell — clip + isolate so inactive/other layers cannot paint through. */
+export const UNIT_PDP_TAB_PANEL_STYLE: CSSProperties = {
+  overflow: 'hidden',
+  position: 'relative',
+  isolation: 'isolate',
+  contain: 'paint',
+};
+
+export const UNIT_PDP_TAB_ACTIVE_LAYER_STYLE: CSSProperties = {
+  position: 'relative',
+  width: '100%',
 };
 
 /** BCF PDP tab body — Noir-aligned negative margin for card padding. */

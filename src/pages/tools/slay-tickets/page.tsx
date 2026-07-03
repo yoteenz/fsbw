@@ -24,6 +24,7 @@ import SlayTicketProductDetailsTab from '../../../components/shop/SlayTicketProd
 import SlayTicketProductPolicyTab from '../../../components/shop/SlayTicketProductPolicyTab';
 import ProductReviewsComingSoonTab from '../../../components/shop/ProductReviewsComingSoonTab';
 import { PDP_TABS_WRAPPER_STYLE, UNIT_PDP_TAB_CONTENT_STYLE } from '../../../components/shop/unitPdpLayoutConstants';
+import { ProductTabPanel } from '../../../components/shop/ProductTabPanel';
 import SlayTicketPackPicker from '../../../components/shop/SlayTicketPackPicker';
 import ThumbBox from '../../../components/ThumbBox';
 import { SLAY_TICKET_PREVIEW_IMAGES } from '../../../constants/slayTicketAssets';
@@ -835,13 +836,13 @@ function SlayTicketsPage() {
                 </button>
               </div>
 
-              <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
+              <ProductTabPanel activeTab={activeTab} style={UNIT_PDP_TAB_CONTENT_STYLE}>
                 {activeTab === 'DETAILS' && <SlayTicketProductDetailsTab />}
                 
                 {activeTab === 'POLICY' && <SlayTicketProductPolicyTab />}
                 
                 {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
-              </div>
+              </ProductTabPanel>
             </div>
           </div>
 

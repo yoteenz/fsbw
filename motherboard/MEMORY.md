@@ -34360,3 +34360,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** CF hero videos = **never rotate lace**; motion = **horizontal shake only**. CF photo URLs = **`?v=generatedAt`** bust cache after regen.
 
+---
+
+## 2026-07-03 — PDP tab text bleed fix (CARE/STORAGE “hair & lace care” ghost on other tabs)
+
+**Context:** User reported product tabs showing text from other tabs — gray Bohemy **“h”** from **hair & lace care** (CARE/STORAGE on closures/frontals) visible on DETAILS/SHIPPING/etc.
+
+**Cause:** BCF single-card layout pulls option rows up (`translateY(-106px)`) under the tab body; semi-transparent frosted card let underlying Bohemy copy paint through the tab panel. Inactive tab layers could also persist without a keyed remount.
+
+**Fix:**
+- **`ProductTabPanel.tsx`** — shared tab body with **`key={activeTab}`** remount, **`overflow: hidden`**, **`isolation: isolate`**, **`contain: paint`**.
+- **`unitPdpLayoutConstants.ts`** — **`PDP_TABS_WRAPPER_STYLE`** / **`UNIT_PDP_TABS_SECTION_STYLE`**: frosted layer matching card (`rgba(255,255,255,0.6)` + blur) blocks option-row bleed; **`UNIT_PDP_TAB_PANEL_STYLE`** for clip/isolate.
+- Wired on all PDPs: BCF **`texture-category-product`**, six unit pages, gift-card, slay-tickets.
+- **`index.css`** — `.product-tab-panel` + `.bcf-pdp-tabs` isolation rules.
+
+**Conventions:** Product tabs = **one active layer only** (`key` remount); tab zone uses **same frosted stack as card**, not a separate opaque white panel.
+
