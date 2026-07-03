@@ -5,7 +5,8 @@ import sharp from 'sharp';
 import type { EmailTemplateType } from './types.js';
 import { EMAIL_HERO_LOGO_REF_RELATIVE } from './emailHeroPrompts.js';
 
-type LogoPlacement = { xPct: number; yPct: number; widthPct: number };
+type WipeRegion = { xPct: number; yPct: number; wPct: number; hPct: number };
+type LogoPlacement = { xPct: number; yPct: number; widthPct: number; wipes?: WipeRegion[] };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PLACEMENTS_PATH = join(__dirname, 'emailHeroLogoPlacements.json');
@@ -19,6 +20,28 @@ function loadPlacements(): Record<string, LogoPlacement> {
     Object.entries(raw).filter(([k, v]) => k !== '_comment' && typeof v === 'object'),
   ) as Record<string, LogoPlacement>;
   return cachedPlacements;
+}
+
+function wipeRectAttrs(wipe: WipeRegion, W: number, H: number): { left: number; top: number; width: number; height: number } {
+  const width = Math.max(1, Math.round(W * wipe.wPct));
+  const height = Math.max(1, Math.round(H * wipe.hPct));
+  let left = Math.round(W * wipe.xPct - width / 2);
+  let top = Math.round(H * wipe.yPct - height / 2);
+  left = Math.max(0, Math.min(W - width, left));
+  top = Math.max(0, Math.min(H - height, top));
+  return { left, top, width, height };
+}
+
+/** Paint frosted patches over Fal-invented seals/text before pasting the official logo. */
+async function buildWipeOverlay(wipes: WipeRegion[], W: number, H: number): Promise<Buffer> {
+  const rects = wipes
+    .map((wipe) => {
+      const { left, top, width, height } = wipeRectAttrs(wipe, W, H);
+      return `<rect x="${left}" y="${top}" width="${width}" height="${height}" rx="8" fill="rgba(255,255,255,0.93)"/>`;
+    })
+    .join('');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">${rects}</svg>`;
+  return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
 export function emailHeroNeedsLogoComposite(templateType: EmailTemplateType): boolean {
@@ -60,8 +83,15 @@ export async function compositeEmailHeroLogo(
   left = Math.max(0, Math.min(W - logoWidth, left));
   top = Math.max(0, Math.min(H - logoHeight, top));
 
+  const composites: { input: Buffer; left: number; top: number }[] = [];
+  if (placement.wipes?.length) {
+    const wipeBuf = await buildWipeOverlay(placement.wipes, W, H);
+    composites.push({ input: wipeBuf, left: 0, top: 0 });
+  }
+  composites.push({ input: logoBuf, left, top });
+
   return hero
-    .composite([{ input: logoBuf, left, top }])
+    .composite(composites)
     .webp({ quality: 92 })
     .toBuffer();
 }

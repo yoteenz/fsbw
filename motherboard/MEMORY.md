@@ -34272,7 +34272,6 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-03 — Email heroes: true 9:16 full bleed + official logo composite
 
 **Context:** User reported email hero graphics looked like **2:3 scenes letterboxed inside a 9:16 slot** (white bars top/bottom) and Fal was **poorly recreating the logo** instead of using **`slayer-logo.png`**.
@@ -34292,7 +34291,8 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Email hero brand marks = **always composite real SLAYER PNG**; never prompt Fal to redraw logos.
 
-=======
+---
+
 ## 2026-07-03 — BCF frontal photo regen (espresso curly, chestnut straight) + video asset locations
 
 **Context:** User reported two more bad **frontal** color PNGs — **espresso curly** (distorted/wrong-color hand), **chestnut straight** (distorted hand). Also asked **where closure/frontal video assets live**.
@@ -34309,5 +34309,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **Coverage gap:** Closures/frontals currently have videos for **texture defaults** + **ASH/GOLDEN/PLATINUM** only (**9 rows per category**). **Noir palette** color PNGs (espresso, chestnut, cherry, etc.) have **no per-color videos** — **`bcfPdpHeroVideoSrc()`** returns **`null`** when a color-specific photo exists without a matching manifest video (VIDEO toggle hidden on those swatches).
 
 **Changes:** **`bcfCfPhotoPrompt.mjs`**, **`bcfCfPhotoColors.mjs`**, **`bcf-cf-photos-user-reported-missing-hands.json`**, regenerated PNGs + synced photo manifest.
->>>>>>> 27215ef6 (BCF frontal photo v3 regen: espresso curly + chestnut straight; document CF video paths)
+
+---
+
+## 2026-07-03 — Email welcome hero: wrong Fal logo + zoom regression fix
+
+**Context:** User reported on **`fsbw.vercel.app`** email preview (welcome template) that the **incorrect logo** remained (Fal drew **THE SLAY SOCIETY** text, **FS** seal, **SLAY SOCIETY MEMBERSHIP** embossing inside the glass cube) and hero images were **way too zoomed in again** — cube edges cropped off screen.
+
+**Root causes:**
+- Prior **full-bleed** pass switched **`layout.ts`** hero from **`background-size:contain`** to **`cover`**, which crops/zooms when aspect ratios differ slightly and amplifies Fal macro close-ups.
+- **`compositeEmailHeroLogo`** pasted **`slayer-logo.png`** on top of Fal-invented marks **without erasing** them first — wipes were defined in **`emailHeroLogoPlacements.json`** but **not implemented**.
+- Fal prompts still occasionally drew seals/text despite brand rules; welcome scene needed tighter **medium-wide** + **no embossing** language (uncommitted prompt edits).
+
+**Fixes:**
+- **`compositeEmailHeroLogo.ts`** + **`scripts/email-hero-logo-composite.mjs`** — implement **`wipes`** array: paint frosted white SVG patches over Fal-invented mark regions **before** logo paste; CLI: **`node scripts/email-hero-logo-composite.mjs welcome`**.
+- **`emailHeroLogoPlacements.json`** — welcome: **`widthPct: 0.34`**, two wipe regions (center plaque + right seal).
+- **`emailHeroPromptMeta.json`** + **`emailHeroPrompts.data.json`** — medium-wide camera (~50–60% frame height), explicit ban on FS seal / SLAY SOCIETY / MEMBERSHIP embossing, no macro close-up.
+- **`layout.ts`** — revert hero display to **`background-size:100% auto`** + **`center top`** (full scene width, no cover crop).
+
+**Regen:** **`TEMPLATES=welcome FORCE=1 npm run email:generate-heroes`** — welcome hero re-generated + composited + uploaded to Supabase **`email-assets/heroes/welcome.webp`**.
+
+**Conventions:** Email hero logos = **wipe Fal marks → paste official `slayer-logo.png`**; hero HTML display = **`100% auto`**, not **`cover`**.
 

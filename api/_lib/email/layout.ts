@@ -117,7 +117,7 @@ function renderHeroComposite(input: {
   const heroReady = Boolean(input.templateType && isEmailHeroReady(input.templateType));
   const heroUrl = heroReady && input.templateType ? escHtml(emailHeroImageUrl(input.templateType)) : '';
   const bgImage = heroReady
-    ? `background-image:url('${heroUrl}');background-size:cover;background-position:center top;background-repeat:no-repeat;background-color:#ffffff;`
+    ? `background-image:url('${heroUrl}');background-size:100% auto;background-position:center top;background-repeat:no-repeat;background-color:#ffffff;`
     : `background-image:url('${escHtml(EMAIL_BRAND.marbleBackground)}');background-repeat:repeat;background-size:contain;`;
   const vmlFill = heroReady ? `<v:fill type="frame" src="${heroUrl}" color="#ffffff"/>` : `<v:fill type="tile" src="${escHtml(EMAIL_BRAND.marbleBackground)}" color="#ffffff"/>`;
   const scriptText = `${emailTextStyleCss(input.scriptStyle)};${heroOverlayTextShadow(input.scriptStyle)}`;

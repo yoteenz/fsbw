@@ -1,7 +1,15 @@
 {
-  "_comment": "Normalized logo composite anchors on 9:16 hero art (post-Fal). xPct/yPct = center of logo; widthPct = logo width vs hero width.",
+  "_comment": "Normalized logo composite anchors on 9:16 hero art (post-Fal). xPct/yPct = center of logo; widthPct = logo width vs hero width. wipes = frosted patches painted before logo to erase Fal-invented marks.",
   "default": { "xPct": 0.5, "yPct": 0.58, "widthPct": 0.26 },
-  "welcome": { "xPct": 0.5, "yPct": 0.56, "widthPct": 0.28 },
+  "welcome": {
+    "xPct": 0.5,
+    "yPct": 0.58,
+    "widthPct": 0.34,
+    "wipes": [
+      { "xPct": 0.5, "yPct": 0.58, "wPct": 0.44, "hPct": 0.2 },
+      { "xPct": 0.74, "yPct": 0.62, "wPct": 0.24, "hPct": 0.22 }
+    ]
+  },
   "newsletter": { "xPct": 0.5, "yPct": 0.54, "widthPct": 0.24 },
   "email_verification": { "xPct": 0.5, "yPct": 0.6, "widthPct": 0.22 },
   "email_updated": { "xPct": 0.62, "yPct": 0.58, "widthPct": 0.18 },
