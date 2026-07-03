@@ -6,6 +6,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuthUser } from '../_lib/auth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import { clientIp } from '../_lib/rateLimit.js';
+import { triggerTransactionalEmail, formatEmailDate } from '../_lib/email/triggers.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;
@@ -100,6 +101,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
+
+      const firstItem = items[0] as { kind?: string; platform?: string; contentType?: string };
+      triggerTransactionalEmail({
+        templateType: 'affiliate_content_pending',
+        recipientEmail: email,
+        variables: {
+          customerName: String(body.clientName || user.email || 'SLAYER'),
+          submissionDate: formatEmailDate(new Date()),
+          contentType: String(firstItem.contentType || firstItem.kind || 'CONTENT').toUpperCase(),
+          platformName: String(firstItem.platform || '—').toUpperCase(),
+        },
+      });
 
       return res.status(201).json({ ids: Array.isArray(data) ? data.map((r: { id: string }) => r.id) : [] });
     }

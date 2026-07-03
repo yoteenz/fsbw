@@ -33474,3 +33474,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked that **Reset** on slay card debug page revert to the **last saved layout**, not the original hardcoded factory defaults — saving layout should update what Reset restores.
 
 **Changes:** **`handleReset`** now loads from **`savedLayoutJson`** (updated on each **Save layout**) instead of **`DEFAULT_BAW_SLAY_CARD_LAYOUT`**. Button renamed **Reset to saved**; status copy **Reverted to last saved layout**.
+
+---
+
+## 2026-07-03 — Custom transactional email system (Frontal Slayer branded templates)
+
+**Context:** User requested a custom automated email system for the React/Vite + Supabase + Vercel app without Mailchimp — server-side Vercel API routes, reusable HTML templates matching Frontal Slayer luxury brand (marble, `#EB1C24`, glass panels, roses/diamonds, uppercase UI), dynamic variables, Supabase Storage assets, and a server-only **`sendEmail({ templateType, recipientEmail, subject, variables })`** function.
+
+**Decisions / outcomes:**
+- **`api/_lib/email/`** — types, **`brandAssets`** (Supabase **`email-assets`** bucket + SITE_URL fallback), table-based **`layout`**, inline SVG **`heroIcons`**, **`templateRegistry`** with **40+** template types (welcome, full order lifecycle, rewards, affiliate, account security, shop alerts, newsletter wrapper), **`renderTemplate`**, **`sendEmail`** / **`sendEmailAsync`** via **Resend** (reuses **`RESEND_API_KEY`**; optional **`TRANSACTIONAL_FROM_EMAIL`**).
+- **`POST /api/email/send`** — admin session or **`X-Email-Send-Secret`**; supports **`preview: true`**; never exposes API keys to frontend.
+- **`scripts/upload-email-assets.mjs`** + migration **`20260703120000_email_assets_bucket.sql`** — marble, rose, diamond, FS monogram in public Storage.
+- **Wired triggers:** Stripe product order → **`order_confirmed`** + **`payment_received`**; subscription checkout → **`membership_welcome`**; affiliate client submit → **`affiliate_content_pending`**; admin pending approve/decline → **`affiliate_content_approved`** / **`affiliate_content_denied`**; admin password reset → branded **`password_reset`** via Supabase **`generateLink`**; meeting client alert → **`meeting_reschedule`** / **`meeting_cancel`**.
+- **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`motherboard/CORE.md`** marketing bullet updated.
+
+**Changes:** New **`api/_lib/email/*`**, **`api/email/send.ts`**, **`scripts/upload-email-assets.mjs`**, **`supabase/migrations/20260703120000_email_assets_bucket.sql`**, **`docs/EMAIL_SYSTEM.md`**; wired **`recordProductOrderFromPaymentIntent.ts`**, **`client/submissions.ts`**, **`admin/pending-queue.ts`**, **`admin/users.ts`**, **`admin/meeting-client-alert.ts`**, **`stripe/webhook.ts`**; **`package.json`** script **`email:upload-assets`**; **`.env.example`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`** (this entry).
+
+**Conventions:** Import **`sendEmail`** / **`triggerTransactionalEmailForUser`** only from server **`api/`** code. Add new lifecycle emails by extending **`templateRegistry`** and calling triggers from the relevant API route (order shipped, points earned, voucher expiring cron, etc.). Upload Storage assets after deploy: **`npm run email:upload-assets`**.

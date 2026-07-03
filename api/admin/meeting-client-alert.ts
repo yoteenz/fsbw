@@ -4,6 +4,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import { writeAuditLog } from '../_lib/auditLog.js';
+import { triggerTransactionalEmailForUser } from '../_lib/email/triggers.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;
@@ -120,6 +121,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       resourceId: meetingId,
       details: { userId, action, reason },
     });
+
+    void triggerTransactionalEmailForUser(
+      supabase,
+      userId,
+      action === 'cancel' ? 'meeting_cancel' : 'meeting_reschedule',
+      {
+        meetingReason: reason,
+        meetingMessage: message ? message.toUpperCase() : '',
+      }
+    );
 
     return res.status(200).json({ success: true });
   } catch (e) {

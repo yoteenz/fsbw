@@ -15,6 +15,7 @@ import {
   handleOrderFormDeclined,
   normEmail,
 } from '../_lib/pendingQueueHandlers.js';
+import { triggerTransactionalEmailForUser, formatEmailDate } from '../_lib/email/triggers.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;
@@ -163,6 +164,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           resourceId: id,
           details: { reason: reason || undefined },
         });
+        const affPayload = payload as {
+          kind?: string;
+          platform?: string;
+          contentType?: string;
+          points?: number;
+        };
+        void triggerTransactionalEmailForUser(
+          supabase,
+          uid,
+          decision === 'approve' ? 'affiliate_content_approved' : 'affiliate_content_denied',
+          {
+            contentType: String(affPayload.contentType || affPayload.kind || 'CONTENT').toUpperCase(),
+            platformName: String(affPayload.platform || '—').toUpperCase(),
+            pointsAmount: affPayload.points ?? 100,
+            submissionDate: formatEmailDate(new Date()),
+            declineReason: reason || 'DOES NOT MEET GUIDELINES',
+          }
+        );
         return res.status(200).json({ ok: true });
       }
 

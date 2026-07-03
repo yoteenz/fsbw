@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { sendEmail } from '../_lib/email/sendEmail.js';
+import { getProfileContact } from '../_lib/email/triggers.js';
 
 /** GET /api/admin/users – list auth users (admin only). Paginated via ?page=1&per_page=50 */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -68,9 +70,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       if (!targetEmail) return res.status(400).json({ error: 'User has no email' });
       try {
-        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-        const { error: err } = await supabase.auth.resetPasswordForEmail(targetEmail, { redirectTo: `${baseUrl}/account` });
-        if (err) return res.status(400).json({ error: err.message });
+        const siteUrl = (process.env.SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')).replace(/\/$/, '');
+        const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+          type: 'recovery',
+          email: targetEmail,
+          options: { redirectTo: `${siteUrl}/sign-in` },
+        });
+        if (linkErr) return res.status(400).json({ error: linkErr.message });
+        const resetLink =
+          (linkData as { properties?: { action_link?: string } })?.properties?.action_link || '';
+        if (!resetLink) return res.status(500).json({ error: 'Could not generate reset link' });
+
+        let customerName = 'SLAYER';
+        if (userId) {
+          const contact = await getProfileContact(supabase, userId);
+          if (contact) customerName = contact.customerName;
+        }
+
+        const mail = await sendEmail({
+          templateType: 'password_reset',
+          recipientEmail: targetEmail,
+          variables: { customerName, resetLink, ctaUrl: resetLink },
+        });
+        if (!mail.sent) return res.status(503).json({ error: mail.error || 'Email send failed' });
         return res.status(200).json({ success: true, message: 'Password reset email sent' });
       } catch (e) {
         return res.status(500).json({ error: e instanceof Error ? e.message : 'Internal error' });

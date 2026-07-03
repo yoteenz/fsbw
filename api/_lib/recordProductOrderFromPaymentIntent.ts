@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { triggerTransactionalEmailForUser } from './email/triggers.js';
 
 /**
  * After Stripe `payment_intent.succeeded` for product checkout, append an order to the user's `orders` JSONB.
@@ -73,6 +74,14 @@ export async function appendOrderFromProductPaymentIntent(
       })
       .eq('user_id', userId);
     if (upErr) return { ok: false, error: upErr.message };
+    void triggerTransactionalEmailForUser(supabase, userId, 'order_confirmed', {
+      orderNumber: newOrder.orderNumber,
+      paymentAmount: `$${totalUsd.toFixed(2)}`,
+    });
+    void triggerTransactionalEmailForUser(supabase, userId, 'payment_received', {
+      orderNumber: newOrder.orderNumber,
+      paymentAmount: `$${totalUsd.toFixed(2)}`,
+    });
     return { ok: true };
   }
 
@@ -88,6 +97,15 @@ export async function appendOrderFromProductPaymentIntent(
     .from('profiles')
     .update({ has_made_first_purchase: true, updated_at: now })
     .eq('id', userId);
+
+  void triggerTransactionalEmailForUser(supabase, userId, 'order_confirmed', {
+    orderNumber: newOrder.orderNumber,
+    paymentAmount: `$${totalUsd.toFixed(2)}`,
+  });
+  void triggerTransactionalEmailForUser(supabase, userId, 'payment_received', {
+    orderNumber: newOrder.orderNumber,
+    paymentAmount: `$${totalUsd.toFixed(2)}`,
+  });
 
   return { ok: true };
 }

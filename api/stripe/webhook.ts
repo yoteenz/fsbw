@@ -58,6 +58,16 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session, 
     .eq('id', userId);
 
   if (error) console.error('[stripe webhook] checkout.session.completed profile update', error);
+  else {
+    try {
+      const { triggerTransactionalEmailForUser } = await import('../_lib/email/triggers.js');
+      await triggerTransactionalEmailForUser(supabase, userId, 'membership_welcome', {
+        tierName: String(tier).toUpperCase(),
+      });
+    } catch (e) {
+      console.error('[stripe webhook] membership welcome email', e);
+    }
+  }
 }
 
 function priceIdFromSubscriptionItem(item: Stripe.SubscriptionItem): string | null {
