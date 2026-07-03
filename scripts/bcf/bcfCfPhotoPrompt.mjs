@@ -10,9 +10,11 @@ COLOR LOCK (critical):
 - Do NOT leave black, brown, copper, or reference-color bleed in the hair.
 - Do NOT tint, stain, or color-shift the hands, skin, lace, or background.
 
-HAND LOCK (critical):
-- Preserve the model's hands exactly as in the reference: same pose, position, finger count, proportions, and natural skin tone.
-- Hands must look anatomically correct — no extra/missing fingers, no melted or warped fingers, no wrong skin color.
+HAND LOCK (critical — highest priority):
+- Copy the reference hands exactly: same pose, position, finger count (five fingers per hand), proportions, and natural human skin tone.
+- Hands must look anatomically correct — no extra/missing/fused/melted fingers, no warped joints, no wrong skin color.
+- Do NOT color-shift, stain, or tint the hands with hair color — skin must stay natural.
+- If hands are visible in the reference, they MUST remain visible in the output with identical anatomy.
 
 Preserve exactly from the reference image:
 - product type, lace shape, texture, curl/wave pattern, density, silhouette

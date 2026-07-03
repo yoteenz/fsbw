@@ -17,7 +17,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bcfVideoStoragePaths, loadBcfProductCatalog } from './bcfVideoCatalog.mjs';
-import { BCF_VIDEO_PROMPT, BCF_VIDEO_PROMPT_VERSION } from './bcfVideoPrompt.mjs';
+import { BCF_VIDEO_PROMPT_VERSION, bcfVideoPromptFor } from './bcfVideoPrompt.mjs';
 import { loadEnvFiles, publicStorageUrl } from './bcfVideoEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -52,6 +52,7 @@ async function resolveStatus(supabase, row) {
 
   const ready = hasMp4 || hasLegacy;
   const status = ready ? (hasMp4 && hasWebm ? 'ready' : hasMp4 ? 'ready_mp4_only' : 'ready_legacy') : 'missing';
+  const pack = bcfVideoPromptFor(row.category);
 
   return {
     ...row,
@@ -61,7 +62,9 @@ async function resolveStatus(supabase, row) {
     hasMp4,
     hasWebm,
     hasLegacy,
-    prompt: BCF_VIDEO_PROMPT,
+    prompt: pack.prompt,
+    negativePrompt: pack.negativePrompt,
+    cfgScale: pack.cfgScale,
   };
 }
 

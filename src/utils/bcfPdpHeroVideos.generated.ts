@@ -513,6 +513,51 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "wavy",
     "colorId": "TEAL"
   },
+  "closures-curly-ash": {
+    "mp4StoragePath": "BCF/videos/v1/closures-curly-ash.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-curly-ash",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "ASH"
+  },
+  "closures-curly-auburn": {
+    "mp4StoragePath": "BCF/videos/v1/closures-curly-auburn.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-curly-auburn",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "AUBURN"
+  },
+  "closures-curly-cherry": {
+    "mp4StoragePath": "BCF/videos/v1/closures-curly-cherry.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-curly-cherry",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "CHERRY"
+  },
+  "closures-curly-chestnut": {
+    "mp4StoragePath": "BCF/videos/v1/closures-curly-chestnut.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-curly-chestnut",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "CHESTNUT"
+  },
+  "closures-curly-citrine": {
+    "mp4StoragePath": "BCF/videos/v1/closures-curly-citrine.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-curly-citrine",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "CITRINE"
+  },
   "closures-curly-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__28643.mov",
     "webmStoragePath": null,

@@ -30,18 +30,24 @@ function cfManifestPhotoUrl(
   colorId: string,
 ): string | null {
   const productKey = buildCfPhotoProductKey(category, texture, colorId);
-  const photos = BCF_PDP_CF_HERO_PHOTOS as Record<string, { photoStoragePath?: string | null }>;
-  const storagePath = photos[productKey]?.photoStoragePath;
+  const photos = BCF_PDP_CF_HERO_PHOTOS as Record<
+    string,
+    { photoStoragePath?: string | null; generatedAt?: string | null }
+  >;
+  const hit = photos[productKey];
+  const storagePath = hit?.photoStoragePath;
   if (!storagePath) return null;
   const sample = BUNDLE_PHOTO_BY_TEXTURE.straight;
   const marker = '/storage/v1/object/public/live-preview/';
   const idx = sample.indexOf(marker);
   if (idx === -1) return null;
   const base = sample.slice(0, idx + marker.length);
-  return `${base}${storagePath
+  const url = `${base}${storagePath
     .split('/')
     .map((part: string) => encodeURIComponent(part))
     .join('/')}`;
+  const version = hit.generatedAt?.trim();
+  return version ? `${url}?v=${encodeURIComponent(version)}` : url;
 }
 
 /** Bundles PDP photo URLs (video files remain on mobile PDP). */

@@ -34331,3 +34331,32 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Email hero logos = **wipe Fal marks → paste official `slayer-logo.png`**; hero HTML display = **`100% auto`**, not **`cover`**.
 
+---
+
+## 2026-07-03 — BCF closures/frontals: photo cache-bust, full color videos, lace-lock video prompt v3
+
+**Context (conversation arc):**
+1. User said **espresso curly** + **chestnut straight** frontal PNG fixes **did not appear** on site (hands still wrong).
+2. User wants **closures/frontals color videos** matching **bundles** full palette (VIDEO on every swatch).
+3. User reported **closure & frontal videos rotate the lace** — looks obviously AI/fake; wants **side-to-side shake only**, **no lace turn whatsoever**.
+
+**Photo fixes (espresso + chestnut):**
+- Root cause: regen uploaded to same Supabase path → **browser/CDN cache** served old PNGs.
+- **`sync-bcf-cf-photo-manifest.mjs`** — include **`generatedAt`** per photo row.
+- **`bcfPdpHeroAssets.ts`** **`cfManifestPhotoUrl()`** — append **`?v={generatedAt}`** cache-bust query.
+- **`bcfCfPhotoPrompt.mjs`** → **v4** stronger **HAND LOCK** (five fingers, no hair-color bleed on skin).
+- **`FORCE=1 ONLY_PRODUCT_KEYS=frontals-curly-espresso,frontals-straight-chestnut`** → **2/2 ok**; synced photo manifest.
+
+**Full CF color video catalog:**
+- **`bcfVideoCatalog.mjs`** — merge **`loadBcfCfPhotoCatalog()`** (108 noir/blonde rows × 2 categories) so video batch matches bundle coverage; catalog **171** products total.
+- **`npm run bcf:videos:manifest`** → **96 missing** CF color videos (was 75 total / 9 per category only).
+
+**Lace-lock video prompt v3:**
+- **`bcfVideoPrompt.mjs`** — split prompts: **`BCF_VIDEO_PROMPT`** (bundles) vs **`BCF_CF_VIDEO_PROMPT`** (closures/frontals) with **LACE LOCK** block: lace stays camera-facing every frame, **no rotate/turn/spin/flip**, rigid unit **2–3° horizontal sway only**; **`BCF_CF_VIDEO_NEGATIVE_PROMPT`** adds lace-rotation terms; **`cfg_scale: 0.42`** for CF (bundles stay 0.55).
+- **`bcfVideoPromptFor(category)`** used in **`generate-bcf-video-manifest.mjs`** + **`pregenerate-bcf-videos.mjs`**.
+- **`ONLY_CATEGORIES=closures,frontals`** env for targeted regen.
+
+**Regen in progress:** tmux **`bcf-cf-video-lace-v3`** — **`FORCE=1 ONLY_CATEGORIES=closures,frontals SKIP_WEBM=1 npm run bcf:videos:generate`** (**114 rows**). Log: **`/tmp/bcf-cf-video-lace-v3.log`**. When complete: **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** + commit synced manifest (next task if batch still running at deploy time).
+
+**Conventions:** CF hero videos = **never rotate lace**; motion = **horizontal shake only**. CF photo URLs = **`?v=generatedAt`** bust cache after regen.
+

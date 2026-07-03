@@ -1,6 +1,6 @@
 /** BCF closure/frontal color palette for Fal photo recolor batch. Bundles excluded. */
 
-export const BCF_CF_PHOTO_PROMPT_VERSION = 'v3';
+export const BCF_CF_PHOTO_PROMPT_VERSION = 'v4';
 
 /** Colors to generate (OFF BLACK uses default black hero — no separate PNG). */
 export const BCF_CF_PHOTO_COLORS = [

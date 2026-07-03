@@ -874,7 +874,7 @@
       "status": "ready",
       "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301.\n\nCOLOR LOCK (critical):\n- Every visible strand, highlight, and shadow in the hair must match ESPRESSO #3B1301 exactly — same hue, brightness, and saturation as the swatch.\n- Do NOT leave black, brown, copper, or reference-color bleed in the hair.\n- Do NOT tint, stain, or color-shift the hands, skin, lace, or background.\n\nHAND LOCK (critical):\n- Preserve the model's hands exactly as in the reference: same pose, position, finger count, proportions, and natural skin tone.\n- Hands must look anatomically correct — no extra/missing fingers, no melted or warped fingers, no wrong skin color.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
-      "generatedAt": "2026-07-03T21:09:03.921Z"
+      "generatedAt": "2026-07-03T21:29:46.180Z"
     },
     {
       "productKey": "frontals-curly-ginger",
@@ -1071,7 +1071,7 @@
       "status": "ready",
       "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11.\n\nCOLOR LOCK (critical):\n- Every visible strand, highlight, and shadow in the hair must match CHESTNUT #6C2D11 exactly — same hue, brightness, and saturation as the swatch.\n- Do NOT leave black, brown, copper, or reference-color bleed in the hair.\n- Do NOT tint, stain, or color-shift the hands, skin, lace, or background.\n\nHAND LOCK (critical):\n- Preserve the model's hands exactly as in the reference: same pose, position, finger count, proportions, and natural skin tone.\n- Hands must look anatomically correct — no extra/missing fingers, no melted or warped fingers, no wrong skin color.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
-      "generatedAt": "2026-07-03T21:09:37.716Z"
+      "generatedAt": "2026-07-03T21:30:18.598Z"
     },
     {
       "productKey": "frontals-straight-citrine",
@@ -1528,5 +1528,5 @@
     "missing": 0,
     "failed": 0
   },
-  "updatedAt": "2026-07-03T21:09:39.716Z"
+  "updatedAt": "2026-07-03T21:30:20.598Z"
 }

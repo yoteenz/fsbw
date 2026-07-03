@@ -58,7 +58,7 @@ Examples:
 - **Model:** `fal-ai/kling-video/v3/pro/image-to-video` (override with `BCF_VIDEO_FAL_MODEL`)
 - **Aspect:** `9:16`
 - **Duration:** `5` seconds default (`BCF_VIDEO_DURATION=4` … `6`)
-- **Prompt:** `scripts/bcf/bcfVideoPrompt.mjs` — subtle 2–4° side sway, locked camera, pure white `#FFFFFF` background, preserve hair exactly
+- **Prompt:** `scripts/bcf/bcfVideoPrompt.mjs` — **v3**: bundles use subtle 2–4° side sway; **closures/frontals** use stricter **LACE LOCK** (no rotation/turn/spin — rigid side-to-side shake only) + lower `cfg_scale` (0.42)
 
 ## Manifest files
 
@@ -93,7 +93,7 @@ After each successful batch run, **`npm run bcf:videos:sync`** updates the app m
 | `BCF_VIDEO_PREFIX` | `BCF/videos/v1` | Storage folder |
 | `STORAGE_BUCKET` | `live-preview` | Supabase bucket |
 | `FORCE=1` | off | Regenerate even when MP4 exists |
-| `ONLY_FAILED=1` | off | Retry only manifest rows with `status: failed` |
+| `ONLY_CATEGORIES` | — | e.g. `closures,frontals` — regen only those PDP categories |
 | `RETRY_PENDING=1` | off | Retry `failed` + `missing` rows only (resume batch) |
 | `npm run bcf:videos:retry` | — | `RETRY_PENDING=1` + `FORCE=1` + manifest rescan + sync |
 | `JOB_TIMEOUT_MS` | `600000` | Per-job Fal timeout (ms); fail fast and continue |

@@ -494,7 +494,8 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "productKey": "frontals-curly-espresso",
     "category": "frontals",
     "texture": "curly",
-    "colorId": "ESPRESSO"
+    "colorId": "ESPRESSO",
+    "generatedAt": "2026-07-03T21:29:46.180Z"
   },
   "frontals-curly-ginger": {
     "photoStoragePath": "Frontals Color/Curly/ginger.png",
@@ -606,7 +607,8 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "productKey": "frontals-straight-chestnut",
     "category": "frontals",
     "texture": "straight",
-    "colorId": "CHESTNUT"
+    "colorId": "CHESTNUT",
+    "generatedAt": "2026-07-03T21:30:18.598Z"
   },
   "frontals-straight-citrine": {
     "photoStoragePath": "Frontals Color/Straight/citrine.png",

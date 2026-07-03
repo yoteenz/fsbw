@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadBcfCfPhotoCatalog } from './bcfCfPhotoCatalog.mjs';
 import { buildProductKey, ROOT } from './bcfVideoEnv.mjs';
 
 const TEXTURES = ['straight', 'wavy', 'curly'];
@@ -162,19 +163,19 @@ export function loadBcfProductCatalog() {
             LEGACY_BCF_VIDEO_STORAGE_PATH[buildProductKey(category, texture, 'DEFAULT')] ?? null,
         });
       }
-
-      const colorMap = category === 'closures' ? closuresColors[texture] : frontalsColors[texture];
-      for (const [colorId, entry] of Object.entries(colorMap)) {
-        addProduct(products, seen, {
-          productKey: buildProductKey(category, texture, colorId),
-          category,
-          texture,
-          colorId,
-          sourcePhotoStoragePath: resolveColorPhotoPath(ts, entry),
-          legacyVideoStoragePath: null,
-        });
-      }
     }
+  }
+
+  // Full noir + blonde palette — source stills from generated CF color PNGs.
+  for (const row of loadBcfCfPhotoCatalog()) {
+    addProduct(products, seen, {
+      productKey: row.productKey,
+      category: row.category,
+      texture: row.texture,
+      colorId: row.colorId,
+      sourcePhotoStoragePath: row.photoStoragePath,
+      legacyVideoStoragePath: null,
+    });
   }
 
   return products.sort((a, b) => a.productKey.localeCompare(b.productKey));

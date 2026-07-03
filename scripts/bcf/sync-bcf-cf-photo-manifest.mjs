@@ -27,6 +27,7 @@ function photoEntry(row) {
     category: row.category,
     texture: row.texture,
     colorId: row.colorId,
+    ...(row.generatedAt ? { generatedAt: row.generatedAt } : {}),
   };
 }
 

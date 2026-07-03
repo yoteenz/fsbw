@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T21:09:39.828Z",
+  "updatedAt": "2026-07-03T21:32:24.767Z",
   "promptVersion": "v3",
   "bucket": "live-preview",
   "falModel": "fal-ai/nano-banana-pro/edit",
@@ -499,7 +499,8 @@
       "productKey": "frontals-curly-espresso",
       "category": "frontals",
       "texture": "curly",
-      "colorId": "ESPRESSO"
+      "colorId": "ESPRESSO",
+      "generatedAt": "2026-07-03T21:29:46.180Z"
     },
     "frontals-curly-ginger": {
       "photoStoragePath": "Frontals Color/Curly/ginger.png",
@@ -611,7 +612,8 @@
       "productKey": "frontals-straight-chestnut",
       "category": "frontals",
       "texture": "straight",
-      "colorId": "CHESTNUT"
+      "colorId": "CHESTNUT",
+      "generatedAt": "2026-07-03T21:30:18.598Z"
     },
     "frontals-straight-citrine": {
       "photoStoragePath": "Frontals Color/Straight/citrine.png",

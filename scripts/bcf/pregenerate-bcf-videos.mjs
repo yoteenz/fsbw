@@ -24,6 +24,7 @@
  *   SKIP_PRODUCT_KEYS=bundles-curly-copper
  *   ONLY_PRODUCT_KEYS=bundles-wavy-cherry,bundles-straight-plum
  *   ONLY_COLOR_IDS=GINGER,CHERRY,RASPBERRY,TEAL,SLIME,CITRINE
+ *   ONLY_CATEGORIES=closures,frontals   — regen only closure/frontal rows
  *   ONLY_FAILED=1               — retry manifest rows with status failed (circle back)
  *   RETRY_PENDING=1             — retry failed + missing rows only (safe resume batch)
  *   JOB_TIMEOUT_MS=600000         — max ms per Fal job before skip (default 10 min)
@@ -34,7 +35,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { BCF_VIDEO_NEGATIVE_PROMPT, BCF_VIDEO_PROMPT } from './bcfVideoPrompt.mjs';
+import { BCF_VIDEO_PROMPT, bcfVideoPromptFor } from './bcfVideoPrompt.mjs';
 import { loadEnvFiles, publicStorageUrl, sleep, withTimeout } from './bcfVideoEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -73,6 +74,12 @@ const onlyColorIds = new Set(
     .map((s) => s.trim().toUpperCase())
     .filter(Boolean),
 );
+const onlyCategories = new Set(
+  (process.env.ONLY_CATEGORIES || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean),
+);
 const onlyFailed = process.env.ONLY_FAILED === '1' || process.env.ONLY_FAILED === 'true';
 const retryPending = process.env.RETRY_PENDING === '1' || process.env.RETRY_PENDING === 'true';
 const jobTimeoutMs = parseInt(process.env.JOB_TIMEOUT_MS || '600000', 10);
@@ -102,7 +109,7 @@ async function uploadBuffer(supabase, path, buf, contentType) {
   if (error) throw new Error(`Upload ${path}: ${error.message}`);
 }
 
-async function generateKlingVideo(fal, sourcePhotoUrl, prompt) {
+async function generateKlingVideo(fal, sourcePhotoUrl, prompt, negativePrompt, cfgScale) {
   const result = await fal.subscribe(falModel, {
     input: {
       prompt,
@@ -110,8 +117,8 @@ async function generateKlingVideo(fal, sourcePhotoUrl, prompt) {
       duration,
       aspect_ratio: '9:16',
       generate_audio: false,
-      negative_prompt: BCF_VIDEO_NEGATIVE_PROMPT,
-      cfg_scale: 0.55,
+      negative_prompt: negativePrompt,
+      cfg_scale: cfgScale,
     },
     logs: true,
     onQueueUpdate: (update) => {
@@ -188,6 +195,9 @@ async function main() {
   if (onlyColorIds.size > 0) {
     items = items.filter((row) => onlyColorIds.has(String(row.colorId || '').toUpperCase()));
   }
+  if (onlyCategories.size > 0) {
+    items = items.filter((row) => onlyCategories.has(String(row.category || '').toLowerCase()));
+  }
   if (onlyFailed) {
     items = items.filter((row) => row.status === 'failed');
   }
@@ -241,9 +251,13 @@ async function main() {
 
       const sourceUrl =
         row.sourcePhotoUrl || publicStorageUrl(supabaseUrl, bucket, row.sourcePhotoStoragePath);
+      const pack = bcfVideoPromptFor(row.category);
+      const prompt = row.prompt || pack.prompt || BCF_VIDEO_PROMPT;
+      const negativePrompt = row.negativePrompt || pack.negativePrompt;
+      const cfgScale = row.cfgScale ?? pack.cfgScale ?? 0.55;
       console.log(`[gen] ${label}`);
       const videoUrl = await withTimeout(
-        generateKlingVideo(fal, sourceUrl, row.prompt || BCF_VIDEO_PROMPT),
+        generateKlingVideo(fal, sourceUrl, prompt, negativePrompt, cfgScale),
         jobTimeoutMs,
         label,
       );
