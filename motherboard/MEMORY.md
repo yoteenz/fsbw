@@ -34413,3 +34413,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio demo metrics live in `adminStudioDemo.ts` for future Supabase/CMS wiring; section ids match URL slugs (`content-packs`, `ai-studio`, etc.).
 
+---
+
+## 2026-07-03 — THE STUDIO Shows + Content Packs (luxury streaming UI; editable demo)
+
+**Context:** Continuation of THE STUDIO admin module (Milestone 1 frozen — dashboard card, hub, placeholder shell untouched). User requested **SHOWS** and **CONTENT PACKS** sections: premium visual cards (not tables), dedicated detail pages, all fields editable demo content, **no backend / AI / publishing** — frontend architecture only. Luxury streaming-studio feel inside dark cinematic stage, not generic admin tables.
+
+**Topics covered (full chat arc):**
+- Prior: Lounge TV restructure + Studio Milestone 1 (hub + 11 placeholder sections).
+- This task: **SHOWS** — 8 recurring programs (The Slay Report, Slay Lab, PSA Analyzes, Build Studio, The Vault, Slay Academy, Campaigns, The Lounge) as premium cards; click → show detail with grouped editable fields (Name, Description, Host, Opening/Closing Line, Environment, Membership Tier, Publishing Frequency, Thumbnail Style, Music, Transitions, Voice Style, Prompt Template, CTA, Reward Integration, Brand Colors).
+- **CONTENT PACKS** — beautiful pack cards (Cherry Red Forecast + Cutting Your Lace + Soft Wave Reveal); click → tabbed detail (Episode, Journal, Email, Instagram, TikTok, Pinterest, Carousel, Push, Thumbnail, Products, SEO, PSA Knowledge, Metadata, Notes, Status) — all editable.
+- localStorage persistence via `useAdminStudioEditableState` hooks.
+
+**Decisions / outcomes:** Dark stage shell (`AdminStudioStageShell`) inside marble AdminHeader shell; glass editable fields; routes registered **before** `studio/:sectionId` catch-all. Section placeholder redirects `shows` / `content-packs` to dedicated routes. Build verified (`npm run build`).
+
+**Changes:** `src/utils/adminStudioShowsDemo.ts`, `src/utils/adminStudioContentPacksDemo.ts`, `src/hooks/useAdminStudioEditableState.ts`, `src/components/admin/studio/AdminStudioStageShell.tsx`, `AdminStudioEditableField.tsx`, `AdminStudioShowCard.tsx`, `AdminStudioContentPackCard.tsx`, `AdminStudioTabBar.tsx`, `src/pages/admin/studio/shows/page.tsx`, `shows/detail/page.tsx`, `content-packs/page.tsx`, `content-packs/detail/page.tsx`, `src/pages/admin/studio/section/page.tsx` (built-section redirect), `src/App.tsx` routes.
+
+**Conventions:** Studio editable demo state keys `adminStudioShowsEditable_v1` / `adminStudioContentPacksEditable_v1`; show/pack seeds in `adminStudioShowsDemo.ts` / `adminStudioContentPacksDemo.ts`; Milestone 1 files (`adminStudioDemo.ts`, hub page, placeholder shell, dashboard card) remain unchanged.
+

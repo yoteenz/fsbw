@@ -121,6 +121,10 @@ const AdminWorkers = lazyWithRetry(() => import('./pages/admin/workers/page'), '
 const AdminBackend = lazyWithRetry(() => import('./pages/admin/backend/page'), 'AdminBackend');
 const AdminStudio = lazyWithRetry(() => import('./pages/admin/studio/page'), 'AdminStudio');
 const AdminStudioSection = lazyWithRetry(() => import('./pages/admin/studio/section/page'), 'AdminStudioSection');
+const AdminStudioShows = lazyWithRetry(() => import('./pages/admin/studio/shows/page'), 'AdminStudioShows');
+const AdminStudioShowDetail = lazyWithRetry(() => import('./pages/admin/studio/shows/detail/page'), 'AdminStudioShowDetail');
+const AdminStudioContentPacks = lazyWithRetry(() => import('./pages/admin/studio/content-packs/page'), 'AdminStudioContentPacks');
+const AdminStudioContentPackDetail = lazyWithRetry(() => import('./pages/admin/studio/content-packs/detail/page'), 'AdminStudioContentPackDetail');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -716,6 +720,26 @@ function App() {
           <Route path="backend" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminBackend />
+            </Suspense>
+          } />
+          <Route path="studio/shows/:showId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioShowDetail />
+            </Suspense>
+          } />
+          <Route path="studio/shows" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioShows />
+            </Suspense>
+          } />
+          <Route path="studio/content-packs/:packId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioContentPackDetail />
+            </Suspense>
+          } />
+          <Route path="studio/content-packs" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioContentPacks />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={
