@@ -34178,3 +34178,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`unitPdpLayoutConstants.ts`**, **`texture-category-product/page.tsx`**, **`noir/page.tsx`** (uses shared tab content style).
 
+---
+
+## 2026-07-03 — PDP tab bleed audit (all tabs / all PDPs)
+
+**Context:** User asked to confirm other tabs don’t show the same stray Bohemy text bleed as BCF **CARE/STORAGE**.
+
+**Audit:**
+- **BCF** (bundles / closures / frontals): all 5 tabs share **`BCF_PDP_TAB_CONTENT_STYLE`** + **`PDP_TABS_WRAPPER_STYLE`** — protected.
+- **Unit PDPs** (noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl): options in **card 1**, tabs in **card 2** (`overflow: hidden`); lower overlap risk; **`UNIT_PDP_TAB_CONTENT_STYLE`** + **`UNIT_PDP_TABS_SECTION_STYLE`** opaque wrapper on tabs section.
+- **Gift card / Slay tickets** (gap): single-card layout like BCF but lacked opaque tab panel — **fixed** this turn.
+
+**Changes:** Moved opaque layer to full tabs wrapper (**`UNIT_PDP_TABS_SECTION_STYLE`**, **`PDP_TABS_WRAPPER_STYLE`**); wired gift-card + slay-tickets to shared styles; noir tabs section uses **`UNIT_PDP_TABS_SECTION_STYLE`**.
+

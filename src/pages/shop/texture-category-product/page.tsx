@@ -1838,7 +1838,7 @@ export default function ShopTextureCategoryProductPage() {
                   </div>
 
                 {/* Tabs — Noir-aligned; margin above tab row: was mt-6, then −12px (mt-3), then −6px more (mt-1.5) */}
-                <div className="mt-1.5 w-full bcf-pdp-tabs" style={PDP_TABS_WRAPPER_STYLE}>
+                <div className="mt-1.5 w-full bcf-pdp-tabs" style={{ ...PDP_TABS_WRAPPER_STYLE, position: 'relative', zIndex: 2 }}>
                   <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                     {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button
