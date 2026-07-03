@@ -49,6 +49,12 @@ const supabaseUrl = process.env.SUPABASE_URL?.trim() || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || '';
 const falModel = process.env.BCF_VIDEO_FAL_MODEL?.trim() || 'fal-ai/kling-video/v3/pro/image-to-video';
 const duration = process.env.BCF_VIDEO_DURATION?.trim() || '5';
+const skipProductKeys = new Set(
+  (process.env.SKIP_PRODUCT_KEYS || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
 
 function ffmpegAvailable() {
   const r = spawnSync('ffmpeg', ['-version'], { stdio: 'ignore' });
@@ -133,6 +139,9 @@ async function main() {
   let items = manifest.items || [];
   if (!force) {
     items = items.filter((row) => row.status === 'missing' || (!row.hasMp4 && row.status !== 'ready_legacy'));
+  }
+  if (skipProductKeys.size > 0) {
+    items = items.filter((row) => !skipProductKeys.has(row.productKey));
   }
   if (limit > 0) items = items.slice(0, limit);
 

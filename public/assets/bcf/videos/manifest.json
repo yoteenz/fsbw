@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T09:13:12.787Z",
+  "updatedAt": "2026-07-03T13:52:20.787Z",
   "promptVersion": "v1",
   "bucket": "live-preview",
   "storagePrefix": "BCF/videos/v1",
@@ -86,6 +86,150 @@
       "texture": "curly",
       "colorId": "GINGER"
     },
+    "bundles-curly-golden": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-golden.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-golden",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "GOLDEN"
+    },
+    "bundles-curly-honey": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-honey.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-honey",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "HONEY"
+    },
+    "bundles-curly-jet-black": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-jet-black.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-jet-black",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "JET BLACK"
+    },
+    "bundles-curly-platinum": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-platinum.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-platinum",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "PLATINUM"
+    },
+    "bundles-curly-plum": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-plum.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-plum",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "PLUM"
+    },
+    "bundles-curly-raspberry": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-raspberry.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-raspberry",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "RASPBERRY"
+    },
+    "bundles-curly-sangria": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-sangria.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-sangria",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "SANGRIA"
+    },
+    "bundles-curly-slime": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-slime.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-slime",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "SLIME"
+    },
+    "bundles-curly-teal": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-curly-teal.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-curly-teal",
+      "category": "bundles",
+      "texture": "curly",
+      "colorId": "TEAL"
+    },
+    "bundles-straight-ash": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-ash.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-ash",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "ASH"
+    },
+    "bundles-straight-auburn": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-auburn.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-auburn",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "AUBURN"
+    },
+    "bundles-straight-cherry": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-cherry.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-cherry",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "CHERRY"
+    },
+    "bundles-straight-chestnut": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-chestnut.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-chestnut",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "CHESTNUT"
+    },
+    "bundles-straight-citrine": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-citrine.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-citrine",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "CITRINE"
+    },
+    "bundles-straight-cobalt": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-cobalt.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-cobalt",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "COBALT"
+    },
+    "bundles-straight-copper": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-copper.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-copper",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "COPPER"
+    },
     "bundles-straight-default": {
       "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov",
       "webmStoragePath": null,
@@ -95,6 +239,168 @@
       "texture": "straight",
       "colorId": "DEFAULT"
     },
+    "bundles-straight-espresso": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-espresso.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-espresso",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "ESPRESSO"
+    },
+    "bundles-straight-ginger": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-ginger.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-ginger",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "GINGER"
+    },
+    "bundles-straight-golden": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-golden.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-golden",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "GOLDEN"
+    },
+    "bundles-straight-honey": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-honey.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-honey",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "HONEY"
+    },
+    "bundles-straight-jet-black": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-jet-black.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-jet-black",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "JET BLACK"
+    },
+    "bundles-straight-platinum": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-platinum.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-platinum",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "PLATINUM"
+    },
+    "bundles-straight-plum": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-plum.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-plum",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "PLUM"
+    },
+    "bundles-straight-raspberry": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-raspberry.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-raspberry",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "RASPBERRY"
+    },
+    "bundles-straight-sangria": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-sangria.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-sangria",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "SANGRIA"
+    },
+    "bundles-straight-slime": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-slime.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-slime",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "SLIME"
+    },
+    "bundles-straight-teal": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-straight-teal.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-straight-teal",
+      "category": "bundles",
+      "texture": "straight",
+      "colorId": "TEAL"
+    },
+    "bundles-wavy-ash": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-ash.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-ash",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "ASH"
+    },
+    "bundles-wavy-auburn": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-auburn.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-auburn",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "AUBURN"
+    },
+    "bundles-wavy-cherry": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-cherry.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-cherry",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "CHERRY"
+    },
+    "bundles-wavy-chestnut": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-chestnut.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-chestnut",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "CHESTNUT"
+    },
+    "bundles-wavy-citrine": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-citrine.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-citrine",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "CITRINE"
+    },
+    "bundles-wavy-cobalt": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-cobalt.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-cobalt",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "COBALT"
+    },
+    "bundles-wavy-copper": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-copper.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-copper",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "COPPER"
+    },
     "bundles-wavy-default": {
       "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__98237.mov",
       "webmStoragePath": null,
@@ -103,6 +409,24 @@
       "category": "bundles",
       "texture": "wavy",
       "colorId": "DEFAULT"
+    },
+    "bundles-wavy-espresso": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-espresso.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-espresso",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "ESPRESSO"
+    },
+    "bundles-wavy-ginger": {
+      "mp4StoragePath": "BCF/videos/v1/bundles-wavy-ginger.mp4",
+      "webmStoragePath": null,
+      "status": "ready_mp4_only",
+      "productKey": "bundles-wavy-ginger",
+      "category": "bundles",
+      "texture": "wavy",
+      "colorId": "GINGER"
     },
     "closures-curly-default": {
       "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__28643.mov",

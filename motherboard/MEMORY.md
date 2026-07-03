@@ -33948,3 +33948,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Synced + committed:**
 - **`npm run bcf:cf-photos:manifest`** + **`npm run bcf:cf-photos:sync`**
 - **`bcfPdpCfHeroPhotos.generated.ts`** + **`public/assets/bcf/photos/manifest.json`** — all closure/frontal color heroes live on storefront PDPs.
+
+---
+
+## 2026-07-03 — BCF color video manifest sync (53 ready; batch resume)
+
+**Context:** User asked for second video sync + commit when batch finished. Original batch reached **53/75** on storage scan then hung repeatedly on **`bundles-curly-copper`** (Fal hang / earlier Unprocessable Entity — source PNG **`gpt-image-2-edit-1 (2).png`**). Also stuck once on **`bundles-wavy-golden`** mid-queue.
+
+**Synced + committed (partial):**
+- **`npm run bcf:videos:manifest`** → **53 ready**, **22 missing** (9 legacy defaults + **44** new color MP4s).
+- **`npm run bcf:videos:sync`** → **`bcfPdpHeroVideos.generated.ts`** + **`public/assets/bcf/videos/manifest.json`**.
+
+**Resume:** Added **`SKIP_PRODUCT_KEYS`** env to **`pregenerate-bcf-videos.mjs`**; restarted tmux batch for **21** remaining rows with **`SKIP_PRODUCT_KEYS=bundles-curly-copper`**. Retry copper later with **`FORCE=1`** or alternate source still.
+
+**Follow-up:** When resume batch completes → **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** + commit final **~74/75** (copper pending).
