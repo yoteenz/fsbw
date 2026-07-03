@@ -33569,12 +33569,29 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Context:** User asked to batch-generate Fal email hero scenes by category (Account, Orders, Rewards, etc.) without doing it manually.
 
-**Blocker:** Cloud agent env has no **`FAL_KEY`**, **`SUPABASE_*`**, or **`EMAIL_SEND_SECRET`** — local Fal batch cannot run until user adds secrets to **Cursor Cloud Agent environment** (or `.env.local` / `.env.wig-preview` locally).
-
 **Added:**
 - **`api/_lib/email/generateHeroAsset.ts`** — shared Fal generate + Supabase upload + manifest append.
 - **`POST /api/admin/generate-email-hero`** — one template per request (admin or **`X-Email-Send-Secret`**); uses Vercel **`FAL_KEY`**.
 - **`scripts/batch-email-heroes.mjs`** — category batch: local (`npm run email:generate-heroes:batch`) or production (`npm run email:generate-heroes:batch:production` with **`EMAIL_SEND_SECRET`**).
 - **`emailHeroCategories.ts`**, **`CATEGORY=`** filter on generate script, env file auto-load (`.env.local`, `.env.wig-preview`).
 
-**Run (after secrets):** Local: **`npm run email:generate-heroes:batch`**. Production: **`BATCH_MODE=production EMAIL_SEND_SECRET=... npm run email:generate-heroes:batch`**. Single category: **`CATEGORY=orders`**. Then **`npm run email:upload-assets`** if local-only saves.
+**Run:** Local: **`npm run email:generate-heroes:batch`**. Production: **`BATCH_MODE=production EMAIL_SEND_SECRET=... npm run email:generate-heroes:batch:production`**. Single category: **`CATEGORY=orders`**. Then **`npm run email:upload-assets`** if local-only saves.
+
+---
+
+## 2026-07-03 — Batch email heroes: all 41 Fal scenes generated + uploaded
+
+**Context:** User said **"continue batch email heroes"** (prior chat shipped batch tooling + empty **`manifest.json`**). User follow-up **`?`** was a status check while generation ran.
+
+**Topics covered (entire conversation so far):**
+- Ran local batch via **`npm run email:generate-heroes:batch`** with **`FAL_KEY`** + Supabase upload (category order: account → orders → rewards → affiliate → shop).
+- Transient Fal download failures on first pass for **`newsletter`** and **`order_shipped`** — retried with **`FORCE=1`**; both succeeded on retry.
+- All **41** template heroes saved to **`public/assets/email/heroes/{type}.webp`** (~4.4MB total); each uploaded to Supabase **`email-assets/heroes/`**; **`manifest.json`** lists all 41 in **`ready`**.
+
+**Decisions / outcomes:**
+- Batch complete — no missing templates. Email layout will use Fal WebPs per **`heroManifest.ts`** when template is in manifest.
+- Retry pattern for intermittent **`fetch failed`** during Fal image download: **`TEMPLATES=<type> FORCE=1 npm run email:generate-heroes`**.
+
+**Changes:** **`public/assets/email/heroes/*.webp`** (41 files), **`public/assets/email/heroes/manifest.json`**.
+
+**Conventions:** Regenerate subset: **`CATEGORY=orders npm run email:generate-heroes:batch`** or **`TEMPLATES=welcome,order_confirmed npm run email:generate-heroes`**. Production (Vercel Fal): **`BATCH_MODE=production EMAIL_SEND_SECRET=... npm run email:generate-heroes:batch:production`**.
