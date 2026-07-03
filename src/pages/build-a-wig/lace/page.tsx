@@ -7,7 +7,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
-import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizePath, pathnameIncludesBawProductSlug } from '../../../utils/buildAWigRoutes';
 import {
   markBawConfirmedReturnFromSubpage,
   persistBawScalarConfirmed,
@@ -104,8 +104,8 @@ function LaceSelection() {
       ? liveNoirCompositeWigViews
       : baseWigViews;
 
-  // Lace options - Updated with exact order and pricing (13X6 is default)
-  const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
+  // Lace option thumbnails — BLANCO asset on all blanco routes (customize, edit, try).
+  const isBlancoRoute = pathnameIncludesBawProductSlug(location.pathname, 'blanco');
   const laceImage = isBlancoRoute ? '/assets/lace-blanco.png' : 'https://hair-saloon-one.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fimage4.ea33a249.png&w=256&q=75';
   
   const laceOptions: LaceOption[] = [
@@ -695,7 +695,7 @@ function LaceSelection() {
           {/* LACE OPTIONS - Updated to fit 4 containers per row with centered layout */}
           <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]">
             {laceOptions.map((option) => {
-              const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
+              const isBlancoRoute = pathnameIncludesBawProductSlug(location.pathname, 'blanco');
               const imgSize = isBlancoRoute ? 44 : 74; // Match main page edit mode size (44px for BLANCO)
               const containerSize = 54; // Always 54px for all routes (restored to match main page)
               return (

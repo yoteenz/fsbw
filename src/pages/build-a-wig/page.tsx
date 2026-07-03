@@ -50,7 +50,7 @@ import {
   resetBawCustomizeStylingAndAddOnsStorage,
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
-import { isBuildAWigCustomizeHubPathname, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizeHubPathname, pathnameIncludesBawProductSlug, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
 import { BAW_TUTORIAL_ROUTE, getBawTryFlowBasePath, getBawTryOptionSubPagePath, isBawTryHubLandingPath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
@@ -2868,22 +2868,14 @@ export default function BuildAWigPage() {
   };
 
   const getDensityIcon = () => {
-    // Check if we're in blanco route (main, customize, edit)
-    const isBlancoRoute = bawPathname.startsWith('/build-a-wig/blanco') || 
-                         bawPathname.includes('/blanco/customize') || 
-                         bawPathname.includes('/blanco/edit');
-    if (isBlancoRoute) {
+    if (pathnameIncludesBawProductSlug(bawPathname, 'blanco')) {
       return '/assets/density-blanco.png';
     }
     return '/assets/density.png'; // All densities use the same icon
   };
 
   const getLaceIcon = () => {
-    // Check if we're in blanco route (main, customize, edit)
-    const isBlancoRoute = bawPathname.startsWith('/build-a-wig/blanco') || 
-                         bawPathname.includes('/blanco/customize') || 
-                         bawPathname.includes('/blanco/edit');
-    if (isBlancoRoute) {
+    if (pathnameIncludesBawProductSlug(bawPathname, 'blanco')) {
       return '/assets/lace-blanco.png';
     }
     
@@ -2899,9 +2891,7 @@ export default function BuildAWigPage() {
   };
 
   const getTextureIcon = () => {
-    // Use blanco texture SVG for blanco customize mode
-    const pathname = bawPathname;
-    if (pathname.startsWith('/build-a-wig/blanco')) {
+    if (pathnameIncludesBawProductSlug(bawPathname, 'blanco')) {
       return '/assets/blanco texture.svg';
     }
     return '/assets/Texture-icon.svg'; // Default texture icon for other products
@@ -2913,11 +2903,7 @@ export default function BuildAWigPage() {
   };
 
   const getHairlineIcon = () => {
-    // Check if we're in blanco route (main, customize, edit)
-    const isBlancoRoute = bawPathname.startsWith('/build-a-wig/blanco') || 
-                         bawPathname.includes('/blanco/customize') || 
-                         bawPathname.includes('/blanco/edit');
-    if (isBlancoRoute) {
+    if (pathnameIncludesBawProductSlug(bawPathname, 'blanco')) {
       return '/assets/hairline-blanco.png';
     }
     

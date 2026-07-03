@@ -10,7 +10,7 @@ import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
-import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizePath, pathnameIncludesBawProductSlug } from '../../../utils/buildAWigRoutes';
 import { getBawSubpageStaticWigViews, isBawNoirLivePreviewStepPathname } from '../../../utils/bawSubpageWigViews';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -165,8 +165,8 @@ function HairlineSelection() {
   console.log('Selected hairline:', selectedHairline);
 
   // Hairline options - Updated with pricing (NATURAL is default)
-  const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
-  
+  const isBlancoRoute = pathnameIncludesBawProductSlug(location.pathname, 'blanco');
+
   const hairlineOptions: HairlineOption[] = [
     {
       id: 'NATURAL',
@@ -654,7 +654,7 @@ function HairlineSelection() {
           {/* HAIRLINE OPTIONS - Centered 3-column layout */}
           <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '15px' }}>
             {hairlineOptions.map((option) => {
-              const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
+              const isBlancoRoute = pathnameIncludesBawProductSlug(location.pathname, 'blanco');
               const imgSize = isBlancoRoute ? 45 : 75; // Match main page edit mode size (45px for BLANCO)
               return (
                 <ThumbBox

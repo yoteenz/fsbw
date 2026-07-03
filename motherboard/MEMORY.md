@@ -33605,3 +33605,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Slay card selections:** **`BawSlayCardSelections`** adds **lace, texture, hairline, addOns**; **`readBawSlayCardSelectionsFromPathname`** reads **`selected*` / `customize*` / `edit*`** keys. **`buildBawSlayCardSpecLines`** adds **`13X6 LACE`**, **`SILKY TEXTURE`**, **`NATURAL HAIRLINE`**, per-addon **`BLEACH ADD-ON`**, etc. Mannequin uses **`selections.hairline`**.
 
 **Slay card layout:** **`loadBawSlayCardLayoutDebug`** uses saved object directly when complete (**`isCompleteBawSlayCardLayout`**) instead of only partial merge. **`BawSlayCardFooterButton`** explicitly passes **`getActiveBawSlayCardLayout()`** into **`renderBawSlayCardPng`**. Debug page sample fields + **`MAX_SPEC_LINE_COUNT` 12**.
+
+---
+
+## 2026-07-03 — BLANCO lace/hairline thumbnails on try sub-pages
+
+**Context:** User reported BLANCO lace option thumbnails showed NOIR lace art on sub-pages. Asked to confirm other units use correct thumbnails.
+
+**Root cause:** Lace + hairline sub-pages detected BLANCO only via **`/blanco/customize`** or **`/blanco/edit`** in the pathname. **View-mode try** routes (**`/build-a-wig/try/blanco/lace`**, etc.) did not match → fell back to NOIR lace image URL / NOIR hairline SVGs.
+
+**Fix:** **`lace/page.tsx`** and **`hairline/page.tsx`** now use **`pathnameIncludesBawProductSlug(pathname, 'blanco')`** (same as color/density). Hub summary icons in **`build-a-wig/page.tsx`** (**`getLaceIcon`**, **`getHairlineIcon`**, **`getDensityIcon`**, **`getTextureIcon`**) updated the same way.
+
+**Other units verified:** Wig hero/thumb mannequins on all sub-pages already use **`getBawSubpageStaticWigViews`** → **`resolveBawProductUnitLabelFromPathname`** (includes try routes). Texture sub-page already used **`includes('/blanco')`**. Length/cap/add-ons/styling use shared icons (not unit-specific art).
