@@ -64,7 +64,7 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
-import { withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
+import { BCF_PDP_TAB_CONTENT_STYLE, withUnitPdpRecentlyViewedVisibility } from '../../../components/shop/unitPdpLayoutConstants';
 import BundleProductCareStorageTab from '../../../components/shop/BundleProductCareStorageTab';
 import BundleProductDetailsTab from '../../../components/shop/BundleProductDetailsTab';
 import BundleProductPolicyTab from '../../../components/shop/BundleProductPolicyTab';
@@ -1600,6 +1600,8 @@ export default function ShopTextureCategoryProductPage() {
                         width: '100%',
                         padding: '0 8px 12px',
                         boxSizing: 'border-box',
+                        position: 'relative',
+                        zIndex: 0,
                         ...(bcfUsesBundleStyleHero ? { marginTop: '-30px' } : {})
                       }}
                     >
@@ -1836,7 +1838,7 @@ export default function ShopTextureCategoryProductPage() {
                   </div>
 
                 {/* Tabs — Noir-aligned; margin above tab row: was mt-6, then −12px (mt-3), then −6px more (mt-1.5) */}
-                <div className="mt-1.5 w-full" style={{ paddingTop: '4px' }}>
+                <div className="mt-1.5 w-full bcf-pdp-tabs" style={{ paddingTop: '4px', position: 'relative', zIndex: 2 }}>
                   <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                     {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button
@@ -1859,7 +1861,7 @@ export default function ShopTextureCategoryProductPage() {
                     ))}
                   </div>
 
-                  <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                  <div className="mt-4 space-y-4 bcf-pdp-tab-panel" style={BCF_PDP_TAB_CONTENT_STYLE}>
                     {activeTab === 'DETAILS' && category === 'bundles' && <BundleProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'closures' && <ClosureProductDetailsTab />}
                     {activeTab === 'DETAILS' && category === 'frontals' && <FrontalProductDetailsTab />}

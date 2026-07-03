@@ -53,6 +53,18 @@ export const UNIT_PDP_TAB_CONTENT_STYLE: CSSProperties = {
   maxWidth: 'none',
   width: '100%',
   marginBottom: 0,
+  position: 'relative',
+  zIndex: 2,
+  isolation: 'isolate',
+  backgroundColor: 'rgba(255, 255, 255, 0.96)',
+  paddingTop: '2px',
+  paddingBottom: '6px',
+};
+
+/** BCF PDP tab body — Noir-aligned negative margin for card padding (panel opacity from UNIT_PDP_TAB_CONTENT_STYLE). */
+export const BCF_PDP_TAB_CONTENT_STYLE: CSSProperties = {
+  ...UNIT_PDP_TAB_CONTENT_STYLE,
+  marginBottom: '-93px',
 };
 
 /** Toggle to show RECENTLY VIEWED on unit PDPs again (strip stays mounted when false). */

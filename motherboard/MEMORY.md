@@ -34152,3 +34152,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Future live reviews should extend **`ProductReviewsComingSoonTab`** or replace it in one place so all PDPs stay cohesive.
 
+---
+
+## 2026-07-03 — REVIEWS tab copy: verified-purchase bullets + rose coming-soon list
+
+**Context:** Follow-up on unified REVIEWS tab — user refined copy and list styling.
+
+**Decisions / outcomes:**
+- **`ProductReviewsComingSoonTab`** now has two list styles: **red `•` bullets** for post-purchase review eligibility (**Loyalty Points**, **Exclusive Rewards**, **Slay Cam Features**, **Slay MVP**); **rose-alert SVG markers** only for the **this space will soon feature:** list (**Verified Reviews**, **Client Photos**, **Video Reveals**, **Styling Tips**, **Before + Afters**).
+- Body copy updated: verified-purchase-only reviews policy + automatic eligibility messaging after the transformations showcase line.
+
+**Changes:** **`ProductReviewsComingSoonTab.tsx`** only (shared across all 9 PDPs).
+

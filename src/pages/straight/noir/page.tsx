@@ -57,6 +57,7 @@ import {
   UNIT_PDP_CAP_CHART_IMG_STYLE,
   UNIT_PDP_CAP_CHART_ROW_STYLE,
   UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
+  UNIT_PDP_TAB_CONTENT_STYLE,
   withUnitPdpRecentlyViewedVisibility,
 } from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
@@ -3228,7 +3229,7 @@ function NoirSelection() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: 0 }}>
+                <div className="mt-4 space-y-4" style={{ ...UNIT_PDP_TAB_CONTENT_STYLE, marginBottom: 0 }}>
                 {activeTab === 'DETAILS' && <NoirProductDetailsTab />}
                 
                 {activeTab === 'SHIPPING' && <NoirProductShippingTab />}
