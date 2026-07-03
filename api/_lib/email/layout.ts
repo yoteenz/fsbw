@@ -170,9 +170,13 @@ function renderSupportFooter(
   const footerTd = emailTdStyleCss(footerStyle);
   const ctaText = emailTextStyleCss(ctaStyle);
   return `<tr>
-            <td style="${footerTd};border-top:1px solid rgba(0,0,0,0.08);">
-              <p style="margin:0 0 16px;${emailTextStyleCss(footerStyle)}">${copy}</p>
-              <a href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};background-color:#ffffff;text-decoration:none;padding:12px 28px;${ctaText}">${cta}</a>
+            <td style="border-top:1px solid rgba(0,0,0,0.08);padding:0;">
+              <div data-email-layer="supportFooter" style="${footerTd}">
+                <p data-email-copy="supportFooterCopy" style="margin:0 0 16px;${emailTextStyleCss(footerStyle)}">${copy}</p>
+              </div>
+              <div data-email-layer="supportCta" style="${emailTdStyleCss(ctaStyle)}">
+                <a data-email-copy="supportCtaLabel" href="${url}" style="display:inline-block;border:1.3px solid ${EMAIL_BRAND.red};background-color:#ffffff;text-decoration:none;padding:12px 28px;${ctaText}">${cta}</a>
+              </div>
             </td>
           </tr>`;
 }
@@ -265,27 +269,27 @@ ${input.dataRows
       <td align="center" style="padding:24px 12px;">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
           <tr>
-            <td style="${emailTdStyleCss(brandStyle)}">
+            <td data-email-layer="brandHeader" style="${emailTdStyleCss(brandStyle)}">
               ${renderEmailWordmark(brandStyle)}
             </td>
           </tr>
           <tr>
-            <td style="${emailTdStyleCss(scriptStyle)}">
-              <div style="${emailTextStyleCss(scriptStyle)}">${scriptAccent}</div>
+            <td data-email-layer="scriptAccent" style="${emailTdStyleCss(scriptStyle)}">
+              <div data-email-copy="scriptAccent" style="${emailTextStyleCss(scriptStyle)}">${scriptAccent}</div>
             </td>
           </tr>
           <tr>
-            <td style="${emailTdStyleCss(headlineStyle)}">
-              <div style="${emailTextStyleCss(headlineStyle)}">${headline}</div>
+            <td data-email-layer="headline" style="${emailTdStyleCss(headlineStyle)}">
+              <div data-email-copy="headline" style="${emailTextStyleCss(headlineStyle)}">${headline}</div>
             </td>
           </tr>
           <tr>
-            <td align="center" style="${emailTdStyleCss(heroStyle)}">
+            <td data-email-layer="hero" align="center" style="${emailTdStyleCss(heroStyle)}">
               ${heroHtml}
             </td>
           </tr>
           <tr>
-            <td style="${emailTdStyleCss(bodyStyle)}">
+            <td data-email-layer="body" style="${emailTdStyleCss(bodyStyle)}">
               ${bodyHtml}
               ${memberPerksHtml}
               ${dataRowsHtml}
@@ -294,8 +298,8 @@ ${input.dataRows
           ${
             ctaUrl && ctaUrl !== '#'
               ? `<tr>
-            <td align="center" style="${emailTdStyleCss(ctaStyle)}">
-              <a href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};text-decoration:none;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);${emailTextStyleCss(ctaStyle)}">${ctaLabel}</a>
+            <td data-email-layer="cta" align="center" style="${emailTdStyleCss(ctaStyle)}">
+              <a data-email-copy="ctaLabel" href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};text-decoration:none;padding:16px 40px;border-radius:0;box-shadow:0 4px 12px rgba(235,28,36,0.25);${emailTextStyleCss(ctaStyle)}">${ctaLabel}</a>
             </td>
           </tr>`
               : ''
@@ -304,13 +308,15 @@ ${input.dataRows
           <tr>
             <td style="padding:28px 32px 0;text-align:center;">
               <div style="height:3px;background-color:${EMAIL_BRAND.red};max-width:120px;margin:0 auto 20px;"></div>
-              <div style="margin-bottom:16px;${emailTextStyleCss(taglineStyle)}">${escHtml(emailBohemy(taglineRaw))}</div>
+              <div data-email-layer="tagline" style="${emailTdStyleCss(taglineStyle)}">
+                <div data-email-copy="tagline" style="${emailTextStyleCss(taglineStyle)}">${escHtml(emailBohemy(taglineRaw))}</div>
+              </div>
               ${socialFooterHtml}
             </td>
           </tr>
           <tr>
-            <td style="${emailTdStyleCss(closingStyle)}">
-              <div style="${emailTextStyleCss(closingStyle)}">${escHtml(emailUpper(closingRaw))}</div>
+            <td data-email-layer="closing" style="${emailTdStyleCss(closingStyle)}">
+              <div data-email-copy="closing" style="${emailTextStyleCss(closingStyle)}">${escHtml(emailUpper(closingRaw))}</div>
             </td>
           </tr>
         </table>

@@ -31,6 +31,7 @@ import {
   type EmailTextTransform,
 } from '../../../utils/emailLayoutDebug';
 import { previewEmailTemplate } from '../../../utils/transactionalEmail';
+import { EmailPreviewFrame, editorTabForEmailLayer } from '../../../components/tools/EmailPreviewFrame';
 
 type TemplateDefaults = Record<
   string,
@@ -393,6 +394,21 @@ export default function EmailTemplatesDebugPage() {
     setLayoutStore((prev) => patchGlobalLayer(prev, activeLayer, patch));
   };
 
+  const handlePreviewPaddingChange = useCallback(
+    (layerId: EmailLayoutLayerId, patch: Partial<EmailLayerStyle>) => {
+      setLayoutStore((prev) => patchGlobalLayer(prev, layerId, patch));
+    },
+    []
+  );
+
+  const handlePreviewCopyChange = useCallback(
+    (field: keyof EmailTemplateCopyOverrides, value: string | string[]) => {
+      setDraftCopy((prev) => ({ ...prev, [field]: value }));
+      setLayoutStore((prev) => patchTemplateCopy(prev, selectedType, { [field]: value }));
+    },
+    [selectedType]
+  );
+
   const handleResetLayer = () => {
     void persistStore(resetGlobalLayer(layoutStore, activeLayer), `Reset ${activeLayer}`);
   };
@@ -689,11 +705,13 @@ export default function EmailTemplatesDebugPage() {
 
         <div className="border border-gray-400 bg-white overflow-hidden">
           {previewHtml ? (
-            <iframe
-              title={`Email preview: ${selectedType}`}
-              srcDoc={previewHtml}
-              className="w-full border-0"
-              style={{ minHeight: '720px', background: '#ececec' }}
+            <EmailPreviewFrame
+              previewHtml={previewHtml}
+              activeLayer={activeLayer}
+              onSelectLayer={setActiveLayer}
+              onPaddingChange={handlePreviewPaddingChange}
+              onCopyChange={handlePreviewCopyChange}
+              onEditorTabForLayer={(layerId) => setEditorTab(editorTabForEmailLayer(layerId))}
             />
           ) : (
             <div className="p-8 text-center text-[10px] uppercase font-futura text-gray-500">

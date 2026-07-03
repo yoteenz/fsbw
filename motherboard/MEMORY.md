@@ -33794,6 +33794,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
+## 2026-07-03 — Email template debug editor (copy, typography, batch styles)
+
+**Context:** User wanted **`/tools/email-templates`** to support editing text, font type/size/color, repositioning (padding), saving with correct preview updates, plus **batch/mass edit** so all templates follow the same font guidelines. Prior work in this chat also fixed slay-card debug layout, Fal email heroes, and Vercel build errors.
+
+**Architecture:**
+- **`api/_lib/email/emailLayoutConfig.ts`** — layer types (`brandHeader`, `scriptAccent`, `headline`, `hero`, `body`, `dataRowLabel`, `dataRowValue`, `cta`, `supportFooter`, `supportCta`, `tagline`, `closing`), default styles, coercion/merge helpers.
+- **`api/_lib/email/emailLayoutConfigStore.ts`** — loads persisted store from Supabase **`app_config`** key **`email_layout_debug`** (60s cache); production sends use this.
+- **`layout.ts`** + **`renderTemplate.ts`** — accept optional **`layoutDebug`** store; global layer styles drive inline CSS; per-template **`templates[type]`** copy overrides (script accent, headline, body paragraphs, subject, CTA, tagline, closing, support footer). **`renderEmailWordmark(brandStyle)`** keeps SLAYER image wordmark while **`brandHeader`** layer controls FRONTAL typography/padding.
+- **`api/admin/email-layout-config.ts`** — admin **GET/PUT** for cross-device sync (same pattern as special-offer config).
+- **`api/email/send.ts`** — preview accepts **`layoutDebug`** in POST body; **`sendEmail`** uses **`renderEmailTemplateWithPersistedLayout`** for live sends.
+- **`api/email/templates.ts`** — returns **`templateDefaults`** from registry for editor placeholders.
+- **`src/utils/emailLayoutDebug.ts`** — localStorage + client mirror of config types, batch brand typography preset, patch/reset helpers.
+- **`src/pages/tools/email-templates/page.tsx`** — three editor tabs: **Copy** (per-template), **Styles** (global layers with font/color/padding), **Batch** (apply brand preset to all, reset all global styles). Save syncs localStorage + **`PUT /api/admin/email-layout-config`**. Preview auto-refreshes on store changes.
+
+**Conventions:** Global styles = batch typography/design for **all** templates; per-template copy overrides stored under **`templates[templateType]`**. Bohemy tagline stays lowercase; Futura layers uppercase. Repositioning = **padding** on email table cells (not absolute positioning). Production transactional emails honor saved server config after sync.
+
+---
+
 ## 2026-07-03 — BLANCO view mode: noir thumbs + stale try selections
 
 **Context:** User reported **BLANCO view mode** (`/build-a-wig/try/blanco`) showing **NOIR mannequin thumbnails** (grey heads) instead of BLANCO assets, and **stale sub-page selections** (cap/length/density/lace/texture/color/hairline/styling/add-ons) leaking from prior member customize or other unit sessions.
@@ -33811,3 +33829,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`bawTryUnitSelection.ts`**, **`buildAWigRoutes.ts`**, **`BawNoirWigPreviewFrames.tsx`**, **`build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Conventions:** Try view-mode hub = fresh unit defaults on each hub entry unless **`comingFromSubPage`**; hero/thumb assets always via **`getBawSubpageStaticWigViews`** / mapped hub path — never raw try pathname checks alone.
+
+---
+
+## 2026-07-03 — Email template debug: clickable preview layers (select, drag, edit)
+
+**Context:** Full conversation covered email brand fixes (fonts, white card, SLAYER wordmark image), BLANCO try view-mode bugs (noir thumbs + stale selections), and finally **email template debug interactivity** — preview text/layers on `/tools/email-templates` were not clickable, so user could not highlight, drag-reposition, or inline-edit copy.
+
+**Earlier fixes in this chat (already shipped):**
+- **`emailTypography.ts`** — single-quoted font stacks + `<link>` tags (double quotes broke HTML `style` attrs); preview iframe font injection.
+- **`layout.ts`** — solid white main card (removed marble bg); perks unlock icon → **`rewards-icon.png`**; **`renderEmailWordmark()`** uses **`slayer-logo.png`** beside FRONTAL.
+- **BLANCO try** — hub thumb pathname mapping + **`bawTryUnitSelection.ts`** reset on try hub entry.
+
+**Email preview editor (this task):**
+- **Root cause:** Preview used plain `<iframe srcDoc>` with no editor attachment; **`layout.ts`** HTML lacked **`data-email-layer`** / **`data-email-copy`** markers for hit-testing.
+- **`api/_lib/email/layout.ts`** — added **`data-email-layer`** on brandHeader, scriptAccent, headline, hero, body, cta, tagline, closing, supportFooter, supportCta; **`data-email-copy`** on editable text nodes; split support footer into two draggable layers.
+- **`src/utils/emailPreviewEditor.ts`** — **`attachEmailPreviewEditor()`**: click/tap selects layer (red outline), pointer drag on active layer adjusts padding → **`patchGlobalLayer`**, double-click enables contenteditable inline copy edit → **`patchTemplateCopy`**; pointer events for touch.
+- **`src/components/tools/EmailPreviewFrame.tsx`** — iframe wrapper attaching editor on load; syncs active layer highlight; switches editor tab (copy vs styles) on layer select.
+- **`src/pages/tools/email-templates/page.tsx`** — replaced plain iframe with **`EmailPreviewFrame`**; wired **`handlePreviewPaddingChange`** + **`handlePreviewCopyChange`** to layout store + draft copy.
+
+**Conventions:** Email debug preview interactivity requires server-rendered **`data-email-layer`** markers in **`layout.ts`** plus **`EmailPreviewFrame`** on the debug page. Reposition = padding drag on selected layer; edit = double-click (or double-tap) on copy layers. Inline copy edits update both **`draftCopy`** and **`layoutStore.templates[type]`** so preview auto-refreshes.
