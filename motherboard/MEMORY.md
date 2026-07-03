@@ -33432,3 +33432,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to change slay card subtitle from **SLAY CARD — BUILD-A-WIG VIEW** to **personal build-a-Wig slay card**.
 
 **Changes:** **`paintBawSlayCard`** subtitle string → **PERSONAL BUILD-A-WIG SLAY CARD** (uppercase on card).
+
+---
+
+## 2026-07-03 — BAW slay card debug text layer drag fix
+
+**Context:** User could not reposition text on slay card debug page (mannequin/slayer worked). Mannequin hit-test stole pointer events; specs had no drag handler.
+
+**Changes:** When a text/specs layer is selected, drag anywhere on canvas to move it. Click-to-pick text layers with green guide boxes. Specs block drag moves **specsStartY** + center **X**. Helper copy on debug page.

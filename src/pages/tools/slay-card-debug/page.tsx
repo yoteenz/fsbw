@@ -32,6 +32,44 @@ const SAMPLE_SELECTIONS: BawTutorialSelections = {
   styling: 'NONE',
 };
 
+const SUBTITLE_LABEL = 'PERSONAL BUILD-A-WIG SLAY CARD';
+const FOOTER_LABEL = 'TRY THE FULL BUILDER WITH MEMBERSHIP';
+const SPEC_LINE_COUNT = 5;
+
+function pointInRect(
+  pt: { x: number; y: number },
+  rect: { x: number; y: number; width: number; height: number }
+): boolean {
+  return (
+    pt.x >= rect.x &&
+    pt.x <= rect.x + rect.width &&
+    pt.y >= rect.y &&
+    pt.y <= rect.y + rect.height
+  );
+}
+
+/** Approximate centered text box (canvas uses textBaseline alphabetic + textAlign center). */
+function centeredTextBounds(
+  text: string,
+  x: number,
+  y: number,
+  fontSize: number,
+  extraHeight = 0
+): { x: number; y: number; width: number; height: number } {
+  const width = Math.max(fontSize * 0.55 * text.length, fontSize * 2);
+  const height = fontSize + extraHeight;
+  return {
+    x: x - width / 2,
+    y: y - fontSize * 0.85,
+    width,
+    height,
+  };
+}
+
+function isTextLikeLayer(layer: SelectableLayer): boolean {
+  return layer === 'frontal' || layer === 'subtitle' || layer === 'unit' || layer === 'footer' || layer === 'specs';
+}
+
 function NumberField({
   label,
   value,
@@ -182,9 +220,47 @@ export default function SlayCardDebugPage() {
       ctx.setLineDash([4, 3]);
       const logo = layout.header.slayerLogo;
       ctx.strokeRect(logo.x, logo.y, logo.width, logo.height);
+
+      const drawTextGuide = (
+        bounds: { x: number; y: number; width: number; height: number },
+        active: boolean
+      ) => {
+        ctx.strokeStyle = active ? 'rgba(16, 185, 129, 0.95)' : 'rgba(16, 185, 129, 0.55)';
+        ctx.lineWidth = active ? 2 : 1.5;
+        ctx.setLineDash(active ? [] : [3, 3]);
+        ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+      };
+
+      drawTextGuide(
+        centeredTextBounds('FRONTAL', layout.header.frontal.x, layout.header.frontal.y, layout.header.frontal.fontSize),
+        selectedLayer === 'frontal'
+      );
+      drawTextGuide(
+        centeredTextBounds(SUBTITLE_LABEL, layout.header.subtitle.x, layout.header.subtitle.y, layout.header.subtitle.fontSize),
+        selectedLayer === 'subtitle'
+      );
+      drawTextGuide(
+        centeredTextBounds(selections.unit.toUpperCase(), layout.textPanel.unit.x, layout.textPanel.unit.y, layout.textPanel.unit.fontSize),
+        selectedLayer === 'unit'
+      );
+      const specsHeight = layout.textPanel.lineHeight * SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
+      const specsWidth = layout.textPanel.specsFontSize * 14;
+      drawTextGuide(
+        {
+          x: layout.textPanel.unit.x - specsWidth / 2,
+          y: layout.textPanel.specsStartY - layout.textPanel.specsFontSize * 0.85,
+          width: specsWidth,
+          height: specsHeight,
+        },
+        selectedLayer === 'specs'
+      );
+      drawTextGuide(
+        centeredTextBounds(FOOTER_LABEL, layout.textPanel.footer.x, layout.textPanel.footer.y, layout.textPanel.footer.fontSize),
+        selectedLayer === 'footer'
+      );
       ctx.restore();
     }
-  }, [hairline, layout, mannequinSrc, selections, showGuides]);
+  }, [hairline, layout, mannequinSrc, selections, showGuides, selectedLayer]);
 
   useEffect(() => {
     void redraw();
@@ -235,26 +311,69 @@ export default function SlayCardDebugPage() {
     };
   };
 
-  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const pt = canvasPointFromClient(e.clientX, e.clientY);
-    let layer: SelectableLayer = selectedLayer;
+  const pickLayerAtPoint = (pt: { x: number; y: number }): SelectableLayer => {
+    const logo = layout.header.slayerLogo;
+    if (pointInRect(pt, logo)) return 'slayerLogo';
 
-    if (mannequinBounds) {
-      const inMannequin =
-        pt.x >= mannequinBounds.x &&
-        pt.x <= mannequinBounds.x + mannequinBounds.width &&
-        pt.y >= mannequinBounds.y &&
-        pt.y <= mannequinBounds.y + mannequinBounds.height;
-      if (inMannequin) layer = 'mannequin';
+    const textHits: { layer: SelectableLayer; bounds: { x: number; y: number; width: number; height: number } }[] = [
+      {
+        layer: 'frontal',
+        bounds: centeredTextBounds('FRONTAL', layout.header.frontal.x, layout.header.frontal.y, layout.header.frontal.fontSize),
+      },
+      {
+        layer: 'subtitle',
+        bounds: centeredTextBounds(
+          SUBTITLE_LABEL,
+          layout.header.subtitle.x,
+          layout.header.subtitle.y,
+          layout.header.subtitle.fontSize
+        ),
+      },
+      {
+        layer: 'unit',
+        bounds: centeredTextBounds(
+          selections.unit.toUpperCase(),
+          layout.textPanel.unit.x,
+          layout.textPanel.unit.y,
+          layout.textPanel.unit.fontSize
+        ),
+      },
+      {
+        layer: 'footer',
+        bounds: centeredTextBounds(
+          FOOTER_LABEL,
+          layout.textPanel.footer.x,
+          layout.textPanel.footer.y,
+          layout.textPanel.footer.fontSize
+        ),
+      },
+    ];
+
+    const specsWidth = layout.textPanel.specsFontSize * 14;
+    const specsHeight = layout.textPanel.lineHeight * SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
+    textHits.push({
+      layer: 'specs',
+      bounds: {
+        x: layout.textPanel.unit.x - specsWidth / 2,
+        y: layout.textPanel.specsStartY - layout.textPanel.specsFontSize * 0.85,
+        width: specsWidth,
+        height: specsHeight,
+      },
+    });
+
+    for (const hit of textHits) {
+      if (pointInRect(pt, hit.bounds)) return hit.layer;
     }
 
-    const logo = layout.header.slayerLogo;
-    const inSlayerLogo =
-      pt.x >= logo.x &&
-      pt.x <= logo.x + logo.width &&
-      pt.y >= logo.y &&
-      pt.y <= logo.y + logo.height;
-    if (inSlayerLogo) layer = 'slayerLogo';
+    if (mannequinBounds && pointInRect(pt, mannequinBounds)) return 'mannequin';
+    if (pointInRect(pt, layout.mannequin)) return 'mannequin';
+
+    return selectedLayer;
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const pt = canvasPointFromClient(e.clientX, e.clientY);
+    const layer = isTextLikeLayer(selectedLayer) ? selectedLayer : pickLayerAtPoint(pt);
 
     setSelectedLayer(layer);
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -273,6 +392,7 @@ export default function SlayCardDebugPage() {
     }
 
     if (layer === 'slayerLogo') {
+      const logo = layout.header.slayerLogo;
       dragRef.current = {
         layer,
         startX: pt.x,
@@ -285,7 +405,18 @@ export default function SlayCardDebugPage() {
       return;
     }
 
-    const textOrigins: Record<Exclude<SelectableLayer, 'mannequin' | 'specs' | 'slayerLogo'>, { x: number; y: number }> = {
+    if (layer === 'specs') {
+      dragRef.current = {
+        layer,
+        startX: pt.x,
+        startY: pt.y,
+        originX: layout.textPanel.unit.x,
+        originY: layout.textPanel.specsStartY,
+      };
+      return;
+    }
+
+    const textOrigins: Record<'frontal' | 'subtitle' | 'unit' | 'footer', { x: number; y: number }> = {
       frontal: layout.header.frontal,
       subtitle: layout.header.subtitle,
       unit: layout.textPanel.unit,
@@ -326,8 +457,25 @@ export default function SlayCardDebugPage() {
       return;
     }
 
-    if (drag.layer === 'frontal') updateHeaderText('frontal', { x: drag.originX + dx, y: drag.originY + dy });
-    if (drag.layer === 'subtitle') updateHeaderText('subtitle', { x: drag.originX + dx, y: drag.originY + dy });
+    if (drag.layer === 'frontal') {
+      updateHeaderText('frontal', { x: drag.originX + dx, y: drag.originY + dy });
+      return;
+    }
+    if (drag.layer === 'subtitle') {
+      updateHeaderText('subtitle', { x: drag.originX + dx, y: drag.originY + dy });
+      return;
+    }
+    if (drag.layer === 'specs') {
+      setLayout((prev) => ({
+        ...prev,
+        textPanel: {
+          ...prev.textPanel,
+          specsStartY: Math.round(drag.originY + dy),
+          unit: { ...prev.textPanel.unit, x: drag.originX + dx },
+        },
+      }));
+      return;
+    }
     if (drag.layer === 'unit') {
       setLayout((prev) => ({
         ...prev,
@@ -507,6 +655,9 @@ export default function SlayCardDebugPage() {
               <input type="checkbox" checked={showGuides} onChange={(e) => setShowGuides(e.target.checked)} />
               Show guide outlines
             </label>
+            <p className="text-[9px] text-gray-500 mt-2 leading-snug">
+              Select a text layer, then drag anywhere on the preview to move it. Green boxes = text. Click text to auto-select.
+            </p>
           </section>
 
           {selectedLayer === 'mannequin' ? (
@@ -546,6 +697,7 @@ export default function SlayCardDebugPage() {
           {selectedLayer === 'specs' ? (
             <section>
               <h2 className="text-[11px] uppercase font-semibold mb-2">Specs block</h2>
+              <p className="text-[9px] text-gray-500 mb-2">Drag to move all spec lines together.</p>
               <div className="grid grid-cols-2 gap-2">
                 <NumberField label="Start Y" value={layout.textPanel.specsStartY} onChange={(specsStartY) => updateTextPanel({ specsStartY })} />
                 <NumberField label="Line height" value={layout.textPanel.lineHeight} onChange={(lineHeight) => updateTextPanel({ lineHeight })} />
