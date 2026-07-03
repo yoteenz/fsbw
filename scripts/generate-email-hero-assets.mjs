@@ -3,7 +3,7 @@
  * Generate Frontal Slayer transactional email hero scenes via Fal + upload to Supabase.
  *
  * Each template gets a purpose-specific immersive 3D hero tied to that email's intent.
- * Uses marble + official slayer-logo.png as Fal edit references.
+ * Uses marble as Fal edit reference; official slayer-logo.png is composited in post (never redrawn by Fal).
  *
  * Env (required unless DRY_RUN=1):
  *   FAL_KEY
@@ -16,7 +16,7 @@
  *   SLEEP_MS=1500                      — delay between Fal calls
  *   EMAIL_ASSETS_BUCKET=email-assets
  *   MARBLE_REF=public/assets/marble-half.png
- *   EMAIL_HERO_LOGO_REF=public/assets/email/slayer-logo.png — official logo Fal edit ref (always attached)
+ *   EMAIL_HERO_LOGO_REF=public/assets/email/slayer-logo.png — composited after Fal (not sent to Fal)
  *   REFERENCE_IMAGE=path/to/cropped-reference.png — optional extra Fal edit ref per run
  *
  * Usage:
@@ -28,6 +28,7 @@ import { createClient } from '@supabase/supabase-js';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { compositeEmailHeroLogo } from './email-hero-logo-composite.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -44,8 +45,6 @@ const logoRef = join(ROOT, process.env.EMAIL_HERO_LOGO_REF?.trim() || 'public/as
 const extraRef = process.env.REFERENCE_IMAGE?.trim()
   ? join(ROOT, process.env.REFERENCE_IMAGE.replace(/^\//, ''))
   : '';
-
-const EMAIL_HERO_LOGO_AUTHENTICITY_PROMPT = `Logo authenticity (critical): A Frontal Slayer logo reference image is attached. If any brand mark, seal, wax stamp, shopping bag logo, monogram, or embossed mark appears in the scene, reproduce ONLY that exact logo — crimson red stylized FS monogram with FRONTAL SLAYER text fully legible. Do NOT invent, redraw, substitute, abbreviate, or stylize a different logo. No other logos or brand marks anywhere in the scene.`;
 
 function loadEmailHeroPromptPack() {
   const scenes = JSON.parse(
@@ -65,7 +64,7 @@ function buildEmailHeroPrompt(templateType, purposeScenes, meta) {
     meta.quality,
     meta.brandRules,
     `Email purpose & hero subject: ${scene}`,
-    meta.logoAuthenticity || EMAIL_HERO_LOGO_AUTHENTICITY_PROMPT,
+    meta.logoAuthenticity,
   ].join('\n\n');
 }
 
@@ -217,15 +216,13 @@ async function main() {
 
   console.log('Uploading marble reference to Fal storage…');
   const marbleUrl = await falUpload(fal, marbleRef);
-  console.log('Uploading Frontal Slayer logo reference to Fal storage…');
-  const logoUrl = await falUpload(fal, logoRef);
   let extraUrl = null;
   if (extraRef && existsSync(extraRef)) {
     console.log('Uploading extra reference', extraRef);
     extraUrl = await falUpload(fal, extraRef);
   }
 
-  const imageUrls = extraUrl ? [marbleUrl, logoUrl, extraUrl] : [marbleUrl, logoUrl];
+  const imageUrls = extraUrl ? [marbleUrl, extraUrl] : [marbleUrl];
 
   let supabase = null;
   if (uploadEnabled && supabaseUrl && supabaseKey) {
@@ -254,7 +251,8 @@ async function main() {
     console.log(`Generating ${templateType}…`);
     try {
       const imageUrl = await generateHero(fal, fullPrompt, imageUrls);
-      const bytes = await downloadUrlToBuffer(imageUrl);
+      let bytes = await downloadUrlToBuffer(imageUrl);
+      bytes = await compositeEmailHeroLogo(bytes, templateType, logoRef);
       writeFileSync(localPath, bytes);
       ready.add(templateType);
       console.log('Saved', localPath);

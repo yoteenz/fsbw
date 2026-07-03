@@ -34270,3 +34270,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** All guest try CTAs use **`UNIT_PDP_GUEST_TRY_LABEL`** — never **TRY BUILD-A-WIG FREE**.
 
+---
+
+## 2026-07-03 — Email heroes: true 9:16 full bleed + official logo composite
+
+**Context:** User reported email hero graphics looked like **2:3 scenes letterboxed inside a 9:16 slot** (white bars top/bottom) and Fal was **poorly recreating the logo** instead of using **`slayer-logo.png`**.
+
+**Root causes:**
+- Prompts asked Fal to **draw** the logo and wrongly described **“FS monogram + FRONTAL SLAYER”** — actual asset is the red **SLAYER** wordmark (`IMG_4820.png`) beside typed FRONTAL in the header.
+- Composition prompt **“upper 38% empty safe zone”** encouraged Fal to render a floating panel with blank margins, not full-bleed 9:16 art.
+- Layout used **`background-size:contain`** + a fixed **572px empty product-zone row** when Fal heroes were ready, amplifying letterbox feel.
+
+**Fixes:**
+- **`compositeEmailHeroLogo.ts`** + **`emailHeroLogoPlacements.json`** + **`scripts/email-hero-logo-composite.mjs`** — after Fal, paste official **`slayer-logo.png`** onto blank wax seals / bag patches / plaques (13 templates); **logo no longer sent to Fal**.
+- **`emailHeroPromptMeta.json`** + **`emailHeroPrompts.data.json`** — full-bleed 9:16, no letterboxing; scenes leave **blank brand surfaces** (no typography in image).
+- **`layout.ts`** — hero background **`cover`**, drop empty spacer row when Fal hero ready.
+- **`generateHeroAsset.ts`** + **`generate-email-hero-assets.mjs`** — wire post-composite step.
+
+**Regen:** **`FORCE=1 npm run email:generate-heroes`** — **41/41** ok, **0 failures**, uploaded to Supabase + repo WebPs. Log: **`/tmp/email-hero-fullbleed-regen.log`**.
+
+**Conventions:** Email hero brand marks = **always composite real SLAYER PNG**; never prompt Fal to redraw logos.
+
+

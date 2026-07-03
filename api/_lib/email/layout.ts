@@ -117,13 +117,20 @@ function renderHeroComposite(input: {
   const heroReady = Boolean(input.templateType && isEmailHeroReady(input.templateType));
   const heroUrl = heroReady && input.templateType ? escHtml(emailHeroImageUrl(input.templateType)) : '';
   const bgImage = heroReady
-    ? `background-image:url('${heroUrl}');background-size:contain;background-position:center center;background-repeat:no-repeat;background-color:#ffffff;`
+    ? `background-image:url('${heroUrl}');background-size:cover;background-position:center top;background-repeat:no-repeat;background-color:#ffffff;`
     : `background-image:url('${escHtml(EMAIL_BRAND.marbleBackground)}');background-repeat:repeat;background-size:contain;`;
   const vmlFill = heroReady ? `<v:fill type="frame" src="${heroUrl}" color="#ffffff"/>` : `<v:fill type="tile" src="${escHtml(EMAIL_BRAND.marbleBackground)}" color="#ffffff"/>`;
   const scriptText = `${emailTextStyleCss(input.scriptStyle)};${heroOverlayTextShadow(input.scriptStyle)}`;
   const headlineText = `${emailTextStyleCss(input.headlineStyle)};${heroOverlayTextShadow(input.headlineStyle)}`;
   const productScene = heroReady ? '' : renderFallbackHeroProductScene(input.heroIcon);
   const ctaRow = renderHeroOverlayCta(input.ctaLabel, input.ctaUrl, input.ctaStyle);
+  const sceneSpacerRow = heroReady
+    ? ''
+    : `<tr>
+          <td align="center" valign="bottom" style="height:${EMAIL_HERO_PRODUCT_ZONE_PX}px;vertical-align:bottom;padding:0;">
+            ${productScene}
+          </td>
+        </tr>`;
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:${EMAIL_HERO_WIDTH_PX}px;margin:0 auto;border-collapse:collapse;border-radius:12px;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.1);">
   <tr>
@@ -133,7 +140,7 @@ function renderHeroComposite(input: {
         ${vmlFill}
         <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true">
       <![endif]-->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;min-height:${EMAIL_HERO_HEIGHT_PX}px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;min-height:${EMAIL_HERO_HEIGHT_PX}px;height:${EMAIL_HERO_HEIGHT_PX}px;">
         <tr>
           <td style="background:linear-gradient(to bottom, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.42) 34%, rgba(255,255,255,0) 52%);">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
@@ -150,11 +157,7 @@ function renderHeroComposite(input: {
             </table>
           </td>
         </tr>
-        <tr>
-          <td align="center" valign="bottom" style="height:${EMAIL_HERO_PRODUCT_ZONE_PX}px;vertical-align:bottom;padding:0;">
-            ${productScene}
-          </td>
-        </tr>
+        ${sceneSpacerRow}
         ${ctaRow}
       </table>
       <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->

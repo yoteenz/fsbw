@@ -15,7 +15,7 @@ Server-side automated emails using **Resend** and reusable **Frontal Slayer** HT
    - **Generate Fal hero scenes** (9:16 portrait, purpose-specific 3D art per template): `FAL_KEY=... FORCE=1 npm run email:generate-heroes` then `npm run email:upload-assets`
    - Hero slot: **520×924px** (9:16) with script accent, headline, and CTA overlaid on the graphic
    - Prompts: shared quality/composition in `api/_lib/email/emailHeroPromptMeta.json`; per-email purpose scenes in `emailHeroPrompts.data.json`
-   - Fal edit references: marble background + **`public/assets/email/slayer-logo.png`** (official logo — always attached)
+   - Fal edit reference: marble background only (logo is **composited in post** from **`public/assets/email/slayer-logo.png`** — never redrawn by Fal)
    - Regenerate after aspect-ratio changes: `FORCE=1 npm run email:generate-heroes:batch`
    - **Email decorative icons:** `npm run email:build-icons` — rasterizes site SVGs to PNG under `public/assets/email/icons/` (Gmail/Outlook block SVG in `<img>`)
    - Bucket: `email-assets` — marble background, rose, diamond, FS monogram, `heroes/{templateType}.webp`

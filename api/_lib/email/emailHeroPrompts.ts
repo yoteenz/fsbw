@@ -2,7 +2,7 @@ import heroData from './emailHeroPrompts.data.json' with { type: 'json' };
 import meta from './emailHeroPromptMeta.json' with { type: 'json' };
 import type { EmailTemplateType } from './types.js';
 
-/** Official Frontal Slayer logo PNG — always attach as Fal edit reference (`public/assets/email/slayer-logo.png`). */
+/** Official Frontal Slayer SLAYER wordmark PNG — composited onto heroes in post (`public/assets/email/slayer-logo.png`). */
 export const EMAIL_HERO_LOGO_REF_RELATIVE = 'public/assets/email/slayer-logo.png';
 
 /** @deprecated Use emailHeroPromptMeta.json — kept for docs/scripts that grep this export. */

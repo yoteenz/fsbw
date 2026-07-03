@@ -79,8 +79,7 @@ export async function generateAndUploadEmailHero(
   fal.config({ credentials: falKey });
 
   const marbleUrl = await falUpload(fal, marbleRef);
-  const logoUrl = await falUpload(fal, logoRef);
-  const imageUrls = [marbleUrl, logoUrl];
+  const imageUrls = [marbleUrl];
 
   const extraRef = process.env.REFERENCE_IMAGE?.trim();
   if (extraRef) {
@@ -108,6 +107,8 @@ export async function generateAndUploadEmailHero(
   }
 
   const bytes = await downloadUrlToBuffer(imageUrl);
+  const { compositeEmailHeroLogo } = await import('./compositeEmailHeroLogo.js');
+  const finalBytes = await compositeEmailHeroLogo(bytes, templateType);
   let publicUrl: string | undefined;
   let localPath: string | undefined;
 
@@ -116,7 +117,7 @@ export async function generateAndUploadEmailHero(
     const outDir = join(repoRoot(), 'public/assets/email/heroes');
     mkdirSync(outDir, { recursive: true });
     localPath = join(outDir, `${templateType}.webp`);
-    writeFileSync(localPath, bytes);
+    writeFileSync(localPath, finalBytes);
   }
 
   if (uploadToSupabase) {
@@ -128,7 +129,7 @@ export async function generateAndUploadEmailHero(
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(url, key);
     const remote = emailHeroStoragePath(templateType);
-    const { error } = await supabase.storage.from(BUCKET).upload(remote, bytes, {
+    const { error } = await supabase.storage.from(BUCKET).upload(remote, finalBytes, {
       upsert: true,
       contentType: 'image/webp',
     });

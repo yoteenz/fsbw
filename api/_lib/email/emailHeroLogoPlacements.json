@@ -1,0 +1,17 @@
+{
+  "_comment": "Normalized logo composite anchors on 9:16 hero art (post-Fal). xPct/yPct = center of logo; widthPct = logo width vs hero width.",
+  "default": { "xPct": 0.5, "yPct": 0.58, "widthPct": 0.26 },
+  "welcome": { "xPct": 0.5, "yPct": 0.56, "widthPct": 0.28 },
+  "newsletter": { "xPct": 0.5, "yPct": 0.54, "widthPct": 0.24 },
+  "email_verification": { "xPct": 0.5, "yPct": 0.6, "widthPct": 0.22 },
+  "email_updated": { "xPct": 0.62, "yPct": 0.58, "widthPct": 0.18 },
+  "account_login_alert": { "xPct": 0.42, "yPct": 0.57, "widthPct": 0.2 },
+  "order_received": { "xPct": 0.5, "yPct": 0.55, "widthPct": 0.3 },
+  "order_delivered": { "xPct": 0.5, "yPct": 0.58, "widthPct": 0.26 },
+  "points_redeemed": { "xPct": 0.5, "yPct": 0.56, "widthPct": 0.24 },
+  "digital_cash_update": { "xPct": 0.5, "yPct": 0.57, "widthPct": 0.2 },
+  "membership_welcome": { "xPct": 0.5, "yPct": 0.54, "widthPct": 0.32 },
+  "special_offer": { "xPct": 0.5, "yPct": 0.55, "widthPct": 0.26 },
+  "affiliate_payment_sent": { "xPct": 0.5, "yPct": 0.58, "widthPct": 0.22 },
+  "wishlist_price_drop": { "xPct": 0.5, "yPct": 0.55, "widthPct": 0.3 }
+}
