@@ -33408,3 +33408,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to replace red **SLAYER** text with stock image **IMG_4820.png** below black **FRONTAL** text on slay card.
 
 **Changes:** **`BAW_SLAY_CARD_SLAYER_LOGO_SRC`**; layout **`header.slayerLogo`** (image rect) replaces **`header.slayer`** text; **`paintBawSlayCard`** draws logo image; subtitle default Y moved to **340**; debug page **SLAYER logo** layer controls; layout debug key **v2**.
+
+---
+
+## 2026-07-03 — BAW slay card FRONTAL font Futura PT Book
+
+**Context:** User asked to change black **FRONTAL** header text above slayer logo to **Futura PT Book**.
+
+**Changes:** **`DEFAULT_BAW_SLAY_CARD_LAYOUT.header.frontal`** — `fontFamily` → Futura PT Book, `fontWeight` 500.

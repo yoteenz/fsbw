@@ -56,8 +56,8 @@ export const DEFAULT_BAW_SLAY_CARD_LAYOUT: BawSlayCardLayout = {
       y: 118,
       color: '#1A1A1A',
       fontSize: 46,
-      fontFamily: '"Futura PT Demi", Futura, "Futura PT Medium", sans-serif',
-      fontWeight: 600,
+      fontFamily: '"Futura PT Book", Futura, sans-serif',
+      fontWeight: 500,
     },
     slayerLogo: {
       x: 411,
